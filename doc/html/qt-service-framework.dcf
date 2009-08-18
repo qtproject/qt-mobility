@@ -49,7 +49,6 @@
         <keyword ref="qmallocpool.html#PoolType-enum">QMallocPool::Owned</keyword>
         <keyword ref="qmallocpool.html#PoolType-enum">QMallocPool::Shared</keyword>
         <keyword ref="qmallocpool.html#calloc">calloc</keyword>
-        <keyword ref="qmallocpool.html#dumpStats">dumpStats</keyword>
         <keyword ref="qmallocpool.html#free">free</keyword>
         <keyword ref="qmallocpool.html#isValid">isValid</keyword>
         <keyword ref="qmallocpool.html#malloc">malloc</keyword>
@@ -100,10 +99,9 @@
         <keyword ref="qvaluespace.html#availableLayers">availableLayers</keyword>
         <keyword ref="qvaluespace.html#initValuespace">initValuespace</keyword>
         <keyword ref="qvaluespace.html#initValuespaceManager">initValuespaceManager</keyword>
-        <keyword ref="qvaluespace.html#installLayer">installLayer</keyword>
         <keyword ref="qvaluespace.html#reinitValuespace">reinitValuespace</keyword>
-        <keyword ref="qvaluespace.html#QVALUESPACE_APPLICATION_LAYER">QVALUESPACE_APPLICATION_LAYER</keyword>
         <keyword ref="qvaluespace.html#QVALUESPACE_REGISTRY_LAYER">QVALUESPACE_REGISTRY_LAYER</keyword>
+        <keyword ref="qvaluespace.html#QVALUESPACE_SHAREDMEMORY_LAYER">QVALUESPACE_SHAREDMEMORY_LAYER</keyword>
     </section>
     <section ref="qvaluespaceitem.html" title="QValueSpaceItem Class Reference">
         <keyword ref="qvaluespaceitem.html">QValueSpaceItem</keyword>
@@ -137,5 +135,9 @@
         <keyword ref="index.html">Qt Context Framework Developer Resources</keyword>
     </section>
 </section>
-<section ref="examples.html" title="Tutorial &amp; Examples"/>
+<section ref="examples.html" title="Tutorial &amp; Examples">
+    <section ref="publish-subscribe.html" title="Publish and Subscribe Example">
+        <keyword ref="publish-subscribe.html">Publish and Subscribe Example</keyword>
+    </section>
+</section>
 </DCF>

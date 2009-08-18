@@ -17,29 +17,26 @@
 <pre>    #include &lt;QMallocPool&gt;</pre><ul>
 <li><a href="qmallocpool-members.html">List of all members, including inherited members</a></li>
 </ul>
-<hr />
 <a name="public-types"></a>
-<h2>Public Types</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">class </td><td class="memItemRight" valign="bottom"><b><a href="qmallocpool-memorystats.html">MemoryStats</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmallocpool.html#PoolType-enum">PoolType</a></b> { Owned, NewShared, Shared }</td></tr>
-</table>
-<hr />
+<h3>Public Types</h3>
+<ul>
+<li><div class="fn"></div>class <b><a href="qmallocpool-memorystats.html">MemoryStats</a></b></li>
+<li><div class="fn"></div>enum <b><a href="qmallocpool.html#PoolType-enum">PoolType</a></b> { Owned, NewShared, Shared }</li>
+</ul>
 <a name="public-functions"></a>
-<h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmallocpool.html#QMallocPool">QMallocPool</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmallocpool.html#QMallocPool-2">QMallocPool</a></b> ( void * <i>poolBase</i>, unsigned int <i>poolLength</i>, PoolType <i>type</i> = Owned, const QString &amp; <i>name</i> = QString() )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmallocpool.html#dtor.QMallocPool">~QMallocPool</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void * </td><td class="memItemRight" valign="bottom"><b><a href="qmallocpool.html#calloc">calloc</a></b> ( size_t <i>nmemb</i>, size_t <i>size</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmallocpool.html#dumpStats">dumpStats</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmallocpool.html#free">free</a></b> ( void * <i>ptr</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmallocpool.html#isValid">isValid</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void * </td><td class="memItemRight" valign="bottom"><b><a href="qmallocpool.html#malloc">malloc</a></b> ( size_t <i>size</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">MemoryStats </td><td class="memItemRight" valign="bottom"><b><a href="qmallocpool.html#memoryStatistics">memoryStatistics</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void * </td><td class="memItemRight" valign="bottom"><b><a href="qmallocpool.html#realloc">realloc</a></b> ( void * <i>ptr</i>, size_t <i>size</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">size_t </td><td class="memItemRight" valign="bottom"><b><a href="qmallocpool.html#size_of">size_of</a></b> ( void * <i>mem</i> )</td></tr>
-</table>
+<h3>Public Functions</h3>
+<ul>
+<li><div class="fn"></div><b><a href="qmallocpool.html#QMallocPool">QMallocPool</a></b> ()</li>
+<li><div class="fn"></div><b><a href="qmallocpool.html#QMallocPool-2">QMallocPool</a></b> ( void * <i>poolBase</i>, unsigned int <i>poolLength</i>, PoolType <i>type</i> = Owned, const QString &amp; <i>name</i> = QString() )</li>
+<li><div class="fn"></div><b><a href="qmallocpool.html#dtor.QMallocPool">~QMallocPool</a></b> ()</li>
+<li><div class="fn"></div>void * <b><a href="qmallocpool.html#calloc">calloc</a></b> ( size_t <i>nmemb</i>, size_t <i>size</i> )</li>
+<li><div class="fn"></div>void <b><a href="qmallocpool.html#free">free</a></b> ( void * <i>ptr</i> )</li>
+<li><div class="fn"></div>bool <b><a href="qmallocpool.html#isValid">isValid</a></b> () const</li>
+<li><div class="fn"></div>void * <b><a href="qmallocpool.html#malloc">malloc</a></b> ( size_t <i>size</i> )</li>
+<li><div class="fn"></div>MemoryStats <b><a href="qmallocpool.html#memoryStatistics">memoryStatistics</a></b> () const</li>
+<li><div class="fn"></div>void * <b><a href="qmallocpool.html#realloc">realloc</a></b> ( void * <i>ptr</i>, size_t <i>size</i> )</li>
+<li><div class="fn"></div>size_t <b><a href="qmallocpool.html#size_of">size_of</a></b> ( void * <i>mem</i> )</li>
+</ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
@@ -52,14 +49,14 @@
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="PoolType-enum"></a>enum QMallocPool::PoolType</h3>
 <p>Controls the type of pool to be created. In order to manage memory, a small amount of book keeping information is maintained. While this information is not required for reading from the managed pool, it is required for allocations. The PoolType controls where this bookkeeping data is stored.</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QMallocPool::Owned</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The bookkeeping data is maintained in the <a href="qmallocpool.html">QMallocPool</a> instance. Allocation to the pool is only possible via this instance.</td></tr>
 <tr><td valign="top"><tt>QMallocPool::NewShared</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The bookkeeping data is maintained in the managed region itself. This allows multiple <a href="qmallocpool.html">QMallocPool</a> instances, possibly in separate processes, to allocate from the pool.</td></tr>
 </table></p>
 <p>The NewShared PoolType also initializes this bookkeeping data to its default state. Thus, while the bookkeeping data is shared, only one of the sharing instances should use a NewShared type. All other instances should use the Shared pool type.</p>
 <p>The malloc pool bookkeeping data contains absolute pointers. As such, if multiple processes intend to allocate into the malloc pool, is is essential that they map the memory region to the same virtual address location.</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QMallocPool::Shared</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The bookkeeping data is stored in the managed region, and has previously been initialized by another <a href="qmallocpool.html">QMallocPool</a> instance constructed using the NewShared pool type.</td></tr>
 </table></p>
@@ -68,14 +65,12 @@
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QMallocPool"></a>QMallocPool::QMallocPool ()</h3>
 <p>Creates an invalid <a href="qmallocpool.html">QMallocPool</a>.</p>
-<h3 class="fn"><a name="QMallocPool-2"></a>QMallocPool::QMallocPool ( void * <i>poolBase</i>, unsigned int <i>poolLength</i>, <a href="qmallocpool.html#PoolType-enum">PoolType</a> <i>type</i> = Owned, const <a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> &amp; <i>name</i> = QString() )</h3>
+<h3 class="fn"><a name="QMallocPool-2"></a>QMallocPool::QMallocPool ( void * <i>poolBase</i>, unsigned int <i>poolLength</i>, <a href="qmallocpool.html#PoolType-enum">PoolType</a> <i>type</i> = Owned, const QString &amp; <i>name</i> = QString() )</h3>
 <p>Creates a <a href="qmallocpool.html">QMallocPool</a> on the memory region <i>poolBase</i> of length <i>poolLength</i>. The pool will be constructed with the passed <i>type</i> and <i>name</i>. The <i>name</i> is used for diagnostics purposes only.</p>
 <h3 class="fn"><a name="dtor.QMallocPool"></a>QMallocPool::~QMallocPool ()</h3>
 <p>Destroys the malloc pool.</p>
 <h3 class="fn"><a name="calloc"></a>void * QMallocPool::calloc ( size_t <i>nmemb</i>, size_t <i>size</i> )</h3>
 <p>Allocates memory for an array of <i>nmemb</i> elements of <i>size</i> each and returns a pointer to the allocated memory. The memory is set to zero. Returns 0 if the memory could not be allocated.</p>
-<h3 class="fn"><a name="dumpStats"></a>void QMallocPool::dumpStats () const</h3>
-<p>Outputs statistical information regarding the state of the malloc pool using qLog().</p>
 <h3 class="fn"><a name="free"></a>void QMallocPool::free ( void * <i>ptr</i> )</h3>
 <p>Frees the memory space pointed to by <i>ptr</i>, which must have been returned by a previous call to <a href="qmallocpool.html#malloc">malloc</a>(), <a href="qmallocpool.html#calloc">calloc</a>() or <a href="qmallocpool.html#realloc">realloc</a>(). Otherwise, or if <tt>free(ptr)</tt> has already been called before, undefined behaviour occurs. If <i>ptr</i> is 0, no operation is performed.</p>
 <h3 class="fn"><a name="isValid"></a>bool QMallocPool::isValid () const</h3>
