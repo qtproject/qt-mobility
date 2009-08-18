@@ -828,6 +828,7 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
 
         if (!senderName.isEmpty() || !senderAddress.isEmpty()) {
             result.setFrom(createAddress(senderName, senderAddress));
+            QMessagePrivate::setSenderName(result, senderName);
         }
     } else {
         *lastError = QMessageStore::ContentInaccessible;

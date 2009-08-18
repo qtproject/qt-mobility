@@ -64,6 +64,7 @@ public:
 #endif
     QMessage::Type _type;
     QMessageAddress _from;
+    QString _senderName;
     QMessageAddressList _to;
     QMessageAddressList _cc;
     QMessageAddressList _bcc;
@@ -80,5 +81,7 @@ public:
     bool _modified;
 #if defined(Q_OS_WIN)
     static QMessage from(const QMessageId &id);
+    static QString senderName(const QMessage &message);
+    static void setSenderName(const QMessage &message, const QString &senderName);
 #endif
 };

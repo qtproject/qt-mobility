@@ -32,7 +32,7 @@
 ****************************************************************************/
 #include "qmessagesortkey.h"
 #include "qmessagesortkey_p.h"
-#include "qmessage.h"
+#include "qmessage_p.h"
 
 QMessageSortKeyPrivate::QMessageSortKeyPrivate(QMessageSortKey *messageSortKey)
     :q_ptr(messageSortKey)
@@ -80,7 +80,7 @@ bool QMessageSortKeyPrivate::compare(const QMessageSortKey &key, const QMessage 
         switch (field)
         {
         case Type: COMPARE(left->type(), right->type())
-        case Sender: COMPARE(left->from().recipient(), right->from().recipient()) //TODO strip email only use name PR_SENDER_NAME
+        case Sender: COMPARE(QMessagePrivate::senderName(*left), QMessagePrivate::senderName(*right));
         case Recipients: {
             QString leftStr;
             QString rightStr;
@@ -120,7 +120,7 @@ void QMessageSortKeyPrivate::sortTable(QMessageStore::ErrorCode *lastError, cons
                 propTag = PR_MESSAGE_DELIVERY_TIME;
                 break;
             case Sender:
-                propTag = PR_SENDER_NAME;
+                propTag = PR_SENDER_NAME; // MAPI is limited to sorting by sender name only, sender name + sender address does not appear to be supported
                 break;
             case Size:
                 propTag = PR_CONTENT_LENGTH;

@@ -50,6 +50,16 @@ QMessage QMessagePrivate::from(const QMessageId &id)
     return result;
 }
 
+QString QMessagePrivate::senderName(const QMessage &message)
+{
+    return message.d_ptr->_senderName;
+}
+
+void QMessagePrivate::setSenderName(const QMessage &message, const QString &senderName)
+{
+    message.d_ptr->_senderName = senderName;
+}
+
 QMessage::QMessage()
     :d_ptr(new QMessagePrivate(this))
 {
