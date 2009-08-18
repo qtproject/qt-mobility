@@ -18,12 +18,12 @@
 ** Foundation and appearing in the file LICENSE.LGPL included in the
 ** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met:  http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.  
+** will be met:  http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain
 ** additional rights. These rights are described in the Nokia Qt LGPL
 ** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.  
+** package.
 **
 ** If you have questions regarding the use of this file, please
 ** contact Nokia at http://qt.nokia.com/contact.
@@ -544,7 +544,7 @@ unsigned short FixedMemoryTree::offsetOfSubNode(unsigned short node,
             return ii;
     }
 
-    qFatal("ApplicationLayer: Unable to find sub-node %x of %x.", subNode, node);
+    qFatal("SharedMemoryLayer: Unable to find sub-node %x of %x.", subNode, node);
     return 0;
 }
 
@@ -1638,7 +1638,7 @@ unsigned short FixedMemoryTree::newNode(const char * name, unsigned int len,
     return node;
 }
 
-// Use aggregation/composition - the ApplicationLayer "has a" server socket
+// Use aggregation/composition - the SharedMemoryLayer "has a" server socket
 // rather than "is a" server socket - also gets around multiple inheritance
 // issues with QObject since the QLocalServer in Qt is a QObject
 class ALServerImpl : public QLocalServer
@@ -1654,13 +1654,13 @@ ALServerImpl::~ALServerImpl()
 {
 }
 
-// declare ApplicationLayer
-class ApplicationLayer : public QAbstractValueSpaceLayer
+// declare SharedMemoryLayer
+class SharedMemoryLayer : public QAbstractValueSpaceLayer
 {
     Q_OBJECT
 public:
-    ApplicationLayer();
-    virtual ~ApplicationLayer();
+    SharedMemoryLayer();
+    virtual ~SharedMemoryLayer();
 
     /* Common functions */
     QString name();
@@ -1730,7 +1730,7 @@ public:
 
     static QVariant fromDatum(const NodeDatum * data);
 
-    static ApplicationLayer * instance();
+    static SharedMemoryLayer * instance();
 
     void nodeChanged(unsigned short);
 
@@ -1835,32 +1835,32 @@ private:
     QSharedMemory* subShm;
 };
 
-QVALUESPACE_AUTO_INSTALL_LAYER(ApplicationLayer);
+QVALUESPACE_AUTO_INSTALL_LAYER(SharedMemoryLayer);
 
 ///////////////////////////////////////////////////////////////////////////////
-// define ApplicationLayer
+// define SharedMemoryLayer
 ///////////////////////////////////////////////////////////////////////////////
-#define APPLAYER_SIZE 1000000
-#define APPLAYER_ADD 0
-#define APPLAYER_REM 1
-#define APPLAYER_DONE 2
-#define APPLAYER_WRITE 3
-#define APPLAYER_REMOVE 4
-#define APPLAYER_ADDWATCH 5
-#define APPLAYER_REMWATCH 6
-#define APPLAYER_SYNC 7
-#define APPLAYER_SUBINDEX 8
-#define APPLAYER_NOTIFY 9
+#define SHMLAYER_SIZE 1000000
+#define SHMLAYER_ADD 0
+#define SHMLAYER_REM 1
+#define SHMLAYER_DONE 2
+#define SHMLAYER_WRITE 3
+#define SHMLAYER_REMOVE 4
+#define SHMLAYER_ADDWATCH 5
+#define SHMLAYER_REMWATCH 6
+#define SHMLAYER_SYNC 7
+#define SHMLAYER_SUBINDEX 8
+#define SHMLAYER_NOTIFY 9
 
-struct ApplicationLayerClient : public QPacketProtocol
+struct SharedMemoryLayerClient : public QPacketProtocol
 {
-    ApplicationLayerClient(QIODevice *dev, QObject *parent = 0)
+    SharedMemoryLayerClient(QIODevice *dev, QObject *parent = 0)
         : QPacketProtocol(dev, parent), index(0) {}
 
     uchar *index;
 };
 
-ApplicationLayer::ApplicationLayer()
+SharedMemoryLayer::SharedMemoryLayer()
 : type(Client), layer(0), lock(0), todoTimer(0),
   nextPackId(1), lastSentId(0), lastRecvId(0), valid(false),
   forceChangeCount(0), clientIndex(0),
@@ -1871,32 +1871,32 @@ ApplicationLayer::ApplicationLayer()
     sserver = new ALServerImpl( this );
 }
 
-ApplicationLayer::~ApplicationLayer()
+SharedMemoryLayer::~SharedMemoryLayer()
 {
 }
 
-QString ApplicationLayer::name()
+QString SharedMemoryLayer::name()
 {
-    return "Application Layer";
+    return "Shared Memory Layer";
 }
 
-static void AppLayerNodeChanged(unsigned short, void *);
-bool ApplicationLayer::startup(Type type)
+static void ShmLayerNodeChanged(unsigned short, void *);
+bool SharedMemoryLayer::startup(Type type)
 {
     valid = false;
 
     Q_ASSERT(!layer);
     if(Server == type) {
         if(!sserver->listen(socket())) {
-            qWarning() << "ApplicationLayer: Unable to create server socket.  Only "
+            qWarning() << "SharedMemoryLayer: Unable to create server socket.  Only "
                      "local connections will be allowed." << sserver->errorString();
         }
     } else {
         QLocalSocket * sock = new QLocalSocket;
         sock->connectToServer(socket());
         if(!sock->waitForConnected(1000)) {
-            qWarning("ApplicationLayer: Unable to connect to server, "
-                     "application layer will be disabled.");
+            qWarning("SharedMemoryLayer: Unable to connect to server, "
+                     "shared memory layer will be disabled.");
             delete sock;
             return false;
         }
@@ -1919,7 +1919,7 @@ bool ApplicationLayer::startup(Type type)
 
     if(Server == type) {
         shm = new QSharedMemory(socket(), this);
-        bool created = shm->create(APPLAYER_SIZE);
+        bool created = shm->create(SHMLAYER_SIZE);
         if (!created)  {
             //qDebug() << "Reattaching to existing memory";
             shm->attach();
@@ -1931,16 +1931,18 @@ bool ApplicationLayer::startup(Type type)
         qsrand(QTime(0,0,0).secsTo(QTime::currentTime())+QCoreApplication::applicationPid());
         subShm = new QSharedMemory(socket()+QString::number(qrand()), this);
         if (!subShm->create((VERSION_TABLE_ENTRIES + 7) / 8, QSharedMemory::ReadWrite)) {
-            qWarning() << "AppLayer client cannot create clientIndex:" <<subShm->errorString() << subShm->key();
+            qWarning() << "SharedMemoryLayer client cannot create clientIndex:"
+                       << subShm->errorString() << subShm->key();
         }
 
         lock = new QSystemReadWriteLock(key, false);
     }
-    
-    if(shm->error() != QSharedMemory::NoError || 
-            ((!subShm || subShm->error()!= QSharedMemory::NoError) && Server != type)) {
-        qFatal("ApplicationLayer: Unable to create or access shared "
-               "resources. (%s - %s)",shm->errorString().toLatin1().constData(),subShm->errorString().toLatin1().constData() );
+
+    if (shm->error() != QSharedMemory::NoError ||
+        ((!subShm || subShm->error()!= QSharedMemory::NoError) && Server != type)) {
+        qFatal("SharedMemoryLayer: Unable to create or access shared resources. (%s - %s)",
+               shm->errorString().toLatin1().constData(),
+               subShm->errorString().toLatin1().constData());
         return false;
     }
 
@@ -1949,28 +1951,28 @@ bool ApplicationLayer::startup(Type type)
     if(Client == type) {
         QPacket mem;
         mem << (unsigned int)0
-            << (quint8)APPLAYER_SUBINDEX << subShm->key()
-            << (quint8)APPLAYER_DONE;
+            << (quint8)SHMLAYER_SUBINDEX << subShm->key()
+            << (quint8)SHMLAYER_DONE;
         (*connections.begin())->send(mem);
     }
 
     layer = new FixedMemoryTree((char*)shm->data(),
-                                APPLAYER_SIZE,
+                                SHMLAYER_SIZE,
                                 (Server == type));
     if(Server == type)
-        layer->setNodeChangeFunction(&AppLayerNodeChanged, (void *)this);
+        layer->setNodeChangeFunction(&ShmLayerNodeChanged, (void *)this);
 
     this->type = type;
 
     valid = (lock != 0) && (layer != 0);
     if (!valid)
-        qWarning("ApplicationLayer::startup failed");
+        qWarning("SharedMemoryLayer::startup failed");
     return valid;
 }
 
-bool ApplicationLayer::restart()
+bool SharedMemoryLayer::restart()
 {
-    qFatal("ApplicationLayer: restart() not supported.");
+    qFatal("SharedMemoryLayer: restart() not supported.");
 
     // Cleanup previous init
     delete layer;
@@ -1982,18 +1984,18 @@ bool ApplicationLayer::restart()
         shm->detach();
     delete shm;
 
-    // restart application layer
+    // restart shared memory layer
     if(Server == type) {
         if(!sserver->listen(socket())) {
-            qWarning("ApplicationLayer: Unable to create server socket.  Only "
+            qWarning("SharedMemoryLayer: Unable to create server socket.  Only "
                      "local connections will be allowed.");
         }
     } else {
         QLocalSocket * sock = new QLocalSocket;
         sock->connectToServer(socket());
         if(!sock->waitForConnected(1000)) {
-            qWarning("ApplicationLayer: Unable to connect to server, "
-                     "application layer will be disabled.");
+            qWarning("SharedMemoryLayer: Unable to connect to server, "
+                     "shared memory layer will be disabled.");
             delete sock;
             return false;
         }
@@ -2016,7 +2018,7 @@ bool ApplicationLayer::restart()
 
     if(Server == type) {
         shm = new QSharedMemory(socket(), this);
-        bool created = shm->create(APPLAYER_SIZE);
+        bool created = shm->create(SHMLAYER_SIZE);
         if (!created) 
             shm->attach();
         lock = new QSystemReadWriteLock(key, true);
@@ -2027,18 +2029,18 @@ bool ApplicationLayer::restart()
     }
 
     if (shm->error() != QSharedMemory::NoError) {
-        qFatal("ApplicationLayer: Unable to create or access shared "
+        qFatal("SharedMemoryLayer: Unable to create or access shared "
                "resources. (%s)",shm->errorString().toLatin1().constData());
         return false;
     }
 
     layer = new FixedMemoryTree((char *)shm->data(),
-                                APPLAYER_SIZE,
+                                SHMLAYER_SIZE,
                                 (Server == type));
 
     valid = (lock != 0) && (layer != 0);
     if (!valid)
-        qWarning("ApplicationLayer::startup failed");
+        qWarning("SharedMemoryLayer::startup failed");
 
     return true;
 }
@@ -2050,10 +2052,10 @@ void ALServerImpl::incomingConnection(quintptr socketDescriptor)
     sock->setSocketDescriptor(socketDescriptor);
 
     QPacketProtocol * protocol;
-    protocol = new ApplicationLayerClient(sock, this);
+    protocol = new SharedMemoryLayerClient(sock, this);
     sock->setParent(protocol);
 
-    ApplicationLayer *al = static_cast<ApplicationLayer*>( QObject::parent() );
+    SharedMemoryLayer *al = static_cast<SharedMemoryLayer*>( QObject::parent() );
 
     QObject::connect(sock, SIGNAL(stateChanged(QLocalSocket::LocalSocketState)),
                      protocol, SIGNAL(invalidPacket()));
@@ -2067,7 +2069,7 @@ void ALServerImpl::incomingConnection(quintptr socketDescriptor)
     al->connections.insert(protocol);
 }
 
-void ApplicationLayer::timerEvent(QTimerEvent *)
+void SharedMemoryLayer::timerEvent(QTimerEvent *)
 {
     if(Client == type)
         doClientTransmit();
@@ -2075,7 +2077,7 @@ void ApplicationLayer::timerEvent(QTimerEvent *)
         doServerTransmit();
 }
 
-void ApplicationLayer::doServerTransmit()
+void SharedMemoryLayer::doServerTransmit()
 {
     Q_ASSERT(Server == type);
     if(todoTimer) {
@@ -2084,14 +2086,14 @@ void ApplicationLayer::doServerTransmit()
     }
 
     QPacket others;
-    others << (quint8)APPLAYER_SYNC << (unsigned int)0;
+    others << (quint8)SHMLAYER_SYNC << (unsigned int)0;
 
     for(QSet<QPacketProtocol *>::ConstIterator iter = connections.begin();
             iter != connections.end();
             ++iter)  {
 
-        ApplicationLayerClient *client =
-            (ApplicationLayerClient *)(*iter);
+        SharedMemoryLayerClient *client =
+            (SharedMemoryLayerClient *)(*iter);
         if(!client->index) {
             (*iter)->send(others);
         } else {
@@ -2112,7 +2114,7 @@ void ApplicationLayer::doServerTransmit()
     doClientEmit();
 }
 
-void ApplicationLayer::doClientTransmit()
+void SharedMemoryLayer::doClientTransmit()
 {
     Q_ASSERT(Client == type);
     if(todoTimer) {
@@ -2121,7 +2123,7 @@ void ApplicationLayer::doClientTransmit()
     }
 
     if(!todo.isEmpty()) {
-        todo << (quint8)APPLAYER_DONE;
+        todo << (quint8)SHMLAYER_DONE;
         (*connections.begin())->send(todo);
         todo.clear();
     }
@@ -2130,7 +2132,7 @@ void ApplicationLayer::doClientTransmit()
 typedef QHash<QByteArray, QMap<const QPacketProtocol *, uint> > PathsOfInterest;
 Q_GLOBAL_STATIC(PathsOfInterest, pathsOfInterest);
 
-void ApplicationLayer::disconnected()
+void SharedMemoryLayer::disconnected()
 {
     Q_ASSERT(sender());
 
@@ -2139,8 +2141,7 @@ void ApplicationLayer::disconnected()
     protocol->deleteLater();
 
     if(Client == type) {
-        qFatal("ApplicationLayer:  Application layer server unexpectedly "
-               "terminated.");
+        qFatal("SharedMemoryLayer: Shared memory layer server unexpectedly terminated.");
     } else {
         qDebug() << "Removing" << protocol << "from space";
 
@@ -2151,7 +2152,7 @@ void ApplicationLayer::disconnected()
         connections.remove(protocol);
         if(layer->remove("/", owner)) {
             QPacket others;
-            others << (quint8)APPLAYER_SYNC << (unsigned int)0;
+            others << (quint8)SHMLAYER_SYNC << (unsigned int)0;
             for(QSet<QPacketProtocol *>::ConstIterator iter = connections.begin();
                     iter != connections.end();
                     ++iter)
@@ -2191,7 +2192,9 @@ void ApplicationLayer::disconnected()
                     }
                 } else {
                     if (!written.contains(watch.data1)) {
-                        ((QPacketProtocol *)watch.data1)->send() << quint8(APPLAYER_NOTIFY) << watch.data2 << interestPath << false;
+                        ((QPacketProtocol *)watch.data1)->send() << quint8(SHMLAYER_NOTIFY)
+                                                                 << watch.data2 << interestPath
+                                                                 << false;
                         written.insert(watch.data1);
                     }
                 }
@@ -2201,19 +2204,19 @@ void ApplicationLayer::disconnected()
     }
 }
 
-static void AppLayerNodeChanged(unsigned short node, void *ctxt)
+static void ShmLayerNodeChanged(unsigned short node, void *ctxt)
 {
-    ApplicationLayer *layer = (ApplicationLayer *)ctxt;
+    SharedMemoryLayer *layer = (SharedMemoryLayer *)ctxt;
     layer->nodeChanged(node);
 }
 
-void ApplicationLayer::nodeChanged(unsigned short node)
+void SharedMemoryLayer::nodeChanged(unsigned short node)
 {
     if(changedNodesCount != VERSION_TABLE_ENTRIES)
         changedNodes[changedNodesCount++] = node;
 }
 
-void ApplicationLayer::readyRead()
+void SharedMemoryLayer::readyRead()
 {
     Q_ASSERT(sender());
     QPacketProtocol * protocol = (QPacketProtocol *)sender();
@@ -2227,7 +2230,7 @@ void ApplicationLayer::readyRead()
         quint8 op = 0;
         pack >> op;
         switch(op) {
-            case APPLAYER_SYNC:
+            case SHMLAYER_SYNC:
                 {
                     unsigned int recvId = 0;
                     pack >> recvId;
@@ -2236,7 +2239,7 @@ void ApplicationLayer::readyRead()
                     doClientEmit();
                 }
                 break;
-            case APPLAYER_REMOVE:
+            case SHMLAYER_REMOVE:
                 {
                     QByteArray path;
                     pack >> path;
@@ -2244,7 +2247,7 @@ void ApplicationLayer::readyRead()
                 }
                 break;
 
-            case APPLAYER_WRITE:
+            case SHMLAYER_WRITE:
                 {
                     QByteArray path;
                     QVariant val;
@@ -2252,7 +2255,7 @@ void ApplicationLayer::readyRead()
                     doClientWrite(path, val);
                 }
                 break;
-            case APPLAYER_NOTIFY:
+            case SHMLAYER_NOTIFY:
                 {
                     unsigned int owner;
                     QByteArray path;
@@ -2262,8 +2265,8 @@ void ApplicationLayer::readyRead()
                 }
                 break;
             default:
-                qFatal("ApplicationLayer:  Invalid message type %d received from AppLayer server.",
-                       op);
+                qFatal("SharedMemoryLayer: Invalid message type %d "
+                       "received from shared memory layer server.", op);
                 break;
         }
     } else {
@@ -2279,7 +2282,7 @@ void ApplicationLayer::readyRead()
             pack >> op;
 
             switch(op) {
-                case APPLAYER_ADD:
+                case SHMLAYER_ADD:
                     {
                         unsigned long own;
                         QByteArray path;
@@ -2292,7 +2295,7 @@ void ApplicationLayer::readyRead()
                     }
                     break;
 
-                case APPLAYER_REM:
+                case SHMLAYER_REM:
                     {
                         unsigned long own;
                         QByteArray path;
@@ -2304,7 +2307,7 @@ void ApplicationLayer::readyRead()
                     }
                     break;
 
-                case APPLAYER_WRITE:
+                case SHMLAYER_WRITE:
                     {
                         QByteArray path;
                         QVariant value;
@@ -2313,7 +2316,7 @@ void ApplicationLayer::readyRead()
                     }
                     break;
 
-                case APPLAYER_REMOVE:
+                case SHMLAYER_REMOVE:
                     {
                         QByteArray path;
                         pack >> path;
@@ -2321,7 +2324,7 @@ void ApplicationLayer::readyRead()
                     }
                     break;
 
-                case APPLAYER_ADDWATCH:
+                case SHMLAYER_ADDWATCH:
                     {
                         unsigned long own;
                         QByteArray path;
@@ -2333,7 +2336,7 @@ void ApplicationLayer::readyRead()
                     }
                     break;
 
-                case APPLAYER_REMWATCH:
+                case SHMLAYER_REMWATCH:
                     {
                         unsigned long own;
                         QByteArray path;
@@ -2345,26 +2348,28 @@ void ApplicationLayer::readyRead()
                     }
                     break;
 
-                case APPLAYER_DONE:
+                case SHMLAYER_DONE:
                     done = true;
                     break;
 
-                case APPLAYER_SUBINDEX:
+                case SHMLAYER_SUBINDEX:
                     {
                         QString shmkey;
                         pack >> shmkey;
 
                         QSharedMemory* mem = new QSharedMemory(shmkey, protocol);
                         if (!mem->attach(QSharedMemory::ReadOnly)) {
-                            qWarning() << "ApplicationLayer: Unable to shmat with id:" << shmkey << "error:" << mem->errorString();
+                            qWarning() << "SharedMemoryLayer: Unable to shmat with id:"
+                                       << shmkey << "error:" << mem->errorString();
                             delete mem;
                         } else {
-                            static_cast<ApplicationLayerClient *>(protocol)->index = reinterpret_cast<uchar *>(mem->data());
+                            static_cast<SharedMemoryLayerClient *>(protocol)->index =
+                                reinterpret_cast<uchar *>(mem->data());
                         }
                     }
                     break;
 
-                case APPLAYER_NOTIFY:
+                case SHMLAYER_NOTIFY:
                     {
                         QByteArray path;
                         bool interested;
@@ -2373,8 +2378,7 @@ void ApplicationLayer::readyRead()
                     }
                     break;
                 default:
-                    qWarning("ApplicationLayer: Invalid client request %x "
-                             "received.", op);
+                    qWarning("SharedMemoryLayer: Invalid client request %x received.", op);
                     disconnected();
                     return;
             }
@@ -2382,7 +2386,7 @@ void ApplicationLayer::readyRead()
 
         // Send change notification
         QPacket causal;
-        causal << (quint8)APPLAYER_SYNC << packId;
+        causal << (quint8)SHMLAYER_SYNC << packId;
         protocol->send(causal);
 
         if(changed)
@@ -2390,7 +2394,7 @@ void ApplicationLayer::readyRead()
     }
 }
 
-void ApplicationLayer::doClientEmit()
+void SharedMemoryLayer::doClientEmit()
 {
     QMap<QByteArray, ReadHandle *> cpy = handles;
     for(QMap<QByteArray, ReadHandle *>::ConstIterator iter = cpy.begin();
@@ -2441,22 +2445,22 @@ void ApplicationLayer::doClientEmit()
         removeHandle((Handle)*iter);
 }
 
-void ApplicationLayer::shutdown()
+void SharedMemoryLayer::shutdown()
 {
 }
 
-QUuid ApplicationLayer::id()
+QUuid SharedMemoryLayer::id()
 {
     return QUuid(0xd81199c1, 0x6f60, 0x4432, 0x93, 0x4e,
                  0x0c, 0xe4, 0xd3, 0x7e, 0xf2, 0x52);
 }
 
-unsigned int ApplicationLayer::order()
+unsigned int SharedMemoryLayer::order()
 {
     return 0x10000000;
 }
 
-bool ApplicationLayer::remove(Handle handle)
+bool SharedMemoryLayer::remove(Handle handle)
 {
     if (!valid)
         return false;
@@ -2467,7 +2471,7 @@ bool ApplicationLayer::remove(Handle handle)
         if(todo.isEmpty())
             todo << newPackId();
 
-        todo << (quint8)APPLAYER_REMOVE << rhandle->path;
+        todo << (quint8)SHMLAYER_REMOVE << rhandle->path;
         triggerTodo();
     } else {
         bool changed = doRemove(rhandle->path);
@@ -2476,7 +2480,7 @@ bool ApplicationLayer::remove(Handle handle)
     return true;
 }
 
-bool ApplicationLayer::remove(Handle handle, const QByteArray &subPath)
+bool SharedMemoryLayer::remove(Handle handle, const QByteArray &subPath)
 {
     if (!valid)
         return false;
@@ -2490,9 +2494,9 @@ bool ApplicationLayer::remove(Handle handle, const QByteArray &subPath)
             todo << newPackId();
 
         if(rhandle->path != "/")
-            todo << (quint8)APPLAYER_REMOVE << (rhandle->path + subPath);
+            todo << (quint8)SHMLAYER_REMOVE << (rhandle->path + subPath);
         else
-            todo << (quint8)APPLAYER_REMOVE << subPath;
+            todo << (quint8)SHMLAYER_REMOVE << subPath;
 
         triggerTodo();
     } else {
@@ -2506,7 +2510,7 @@ bool ApplicationLayer::remove(Handle handle, const QByteArray &subPath)
     return true;
 }
 
-bool ApplicationLayer::value(Handle handle, QVariant *data)
+bool SharedMemoryLayer::value(Handle handle, QVariant *data)
 {
     if (!valid)
         return false;
@@ -2553,7 +2557,7 @@ bool ApplicationLayer::value(Handle handle, QVariant *data)
     return rv;
 }
 
-bool ApplicationLayer::value(Handle handle, const QByteArray &subPath,
+bool SharedMemoryLayer::value(Handle handle, const QByteArray &subPath,
                              QVariant *data)
 {
     Q_ASSERT(layer);
@@ -2596,7 +2600,7 @@ bool ApplicationLayer::value(Handle handle, const QByteArray &subPath,
     return rv;
 }
 
-QSet<QByteArray> ApplicationLayer::children(Handle handle)
+QSet<QByteArray> SharedMemoryLayer::children(Handle handle)
 {
     Q_ASSERT(layer);
     ReadHandle * rhandle = rh(handle);
@@ -2642,7 +2646,7 @@ QSet<QByteArray> ApplicationLayer::children(Handle handle)
     return rv;
 }
 
-ApplicationLayer::Handle ApplicationLayer::item(Handle parent,
+SharedMemoryLayer::Handle SharedMemoryLayer::item(Handle parent,
                                                 const QByteArray &key)
 {
     Q_UNUSED(parent);
@@ -2679,7 +2683,7 @@ ApplicationLayer::Handle ApplicationLayer::item(Handle parent,
   The layer MUST be locked for reading.
  */
 
-bool ApplicationLayer::refreshHandle(ReadHandle * handle)
+bool SharedMemoryLayer::refreshHandle(ReadHandle * handle)
 {
     Q_ASSERT(handle);
 
@@ -2762,7 +2766,7 @@ bool ApplicationLayer::refreshHandle(ReadHandle * handle)
     return rv;
 }
 
-void ApplicationLayer::clearHandle(ReadHandle *handle)
+void SharedMemoryLayer::clearHandle(ReadHandle *handle)
 {
     handle->currentPath = 0;
     decNode(handle->currentNode);
@@ -2771,7 +2775,7 @@ void ApplicationLayer::clearHandle(ReadHandle *handle)
     handle->creationId = 0;
 }
 
-void ApplicationLayer::triggerTodo()
+void SharedMemoryLayer::triggerTodo()
 {
     if(todoTimer || !valid)
         return;
@@ -2779,12 +2783,12 @@ void ApplicationLayer::triggerTodo()
     todoTimer = startTimer(0);
 }
 
-void ApplicationLayer::setProperty(Handle, Properties)
+void SharedMemoryLayer::setProperty(Handle, Properties)
 {
-    // Properties aren't used by application layer (always emits changed)
+    // Properties aren't used by shared memory layer (always emits changed)
 }
 
-void ApplicationLayer::removeHandle(Handle h)
+void SharedMemoryLayer::removeHandle(Handle h)
 {
     Q_ASSERT(layer);
     Q_ASSERT(h && INVALID_HANDLE != h);
@@ -2801,7 +2805,7 @@ void ApplicationLayer::removeHandle(Handle h)
 
 #ifdef QVALUESPACE_UPDATE_STATS
 
-void ApplicationLayer::updateStats()
+void SharedMemoryLayer::updateStats()
 {
     if(!m_statPoolSize) {
         // Hasn't initialized stats!
@@ -2809,26 +2813,26 @@ void ApplicationLayer::updateStats()
         unsigned int v = 0;
         NodeOwner owner = { 1, 1 };
 
-        layer->insert("/.ValueSpace/AppLayer/Memory/PoolSize",
+        layer->insert("/.ValueSpace/SharedMemoryLayer/Memory/PoolSize",
                       NodeDatum::UInt, (const char *)&v, sizeof(unsigned int),
                       owner);
-        layer->insert("/.ValueSpace/AppLayer/Memory/MaxSystemBytes",
+        layer->insert("/.ValueSpace/SharedMemoryLayer/Memory/MaxSystemBytes",
                       NodeDatum::UInt, (const char *)&v, sizeof(unsigned int),
                       owner);
-        layer->insert("/.ValueSpace/AppLayer/Memory/SystemBytes",
+        layer->insert("/.ValueSpace/SharedMemoryLayer/Memory/SystemBytes",
                       NodeDatum::UInt, (const char *)&v, sizeof(unsigned int),
                       owner);
-        layer->insert("/.ValueSpace/AppLayer/Memory/InuseBytes",
+        layer->insert("/.ValueSpace/SharedMemoryLayer/Memory/InuseBytes",
                       NodeDatum::UInt, (const char *)&v, sizeof(unsigned int),
                       owner);
-        layer->insert("/.ValueSpace/AppLayer/Memory/KeepCost",
+        layer->insert("/.ValueSpace/SharedMemoryLayer/Memory/KeepCost",
                       NodeDatum::UInt, (const char *)&v, sizeof(unsigned int),
                       owner);
 
         const char * out;
         unsigned short node;
         unsigned short baseNode =
-            layer->findClosest("/.ValueSpace/AppLayer/Memory", &out);
+            layer->findClosest("/.ValueSpace/SharedMemoryLayer/Memory", &out);
 
         node = layer->findClosest(baseNode, "/PoolSize", &out);
         m_statPoolSize = (unsigned long *)layer->data(node)->data;
@@ -2852,7 +2856,7 @@ void ApplicationLayer::updateStats()
 
 #endif
 
-QList<NodeWatch> ApplicationLayer::watchers(const QByteArray &path)
+QList<NodeWatch> SharedMemoryLayer::watchers(const QByteArray &path)
 {
     Q_ASSERT(layer);
 
@@ -2881,7 +2885,7 @@ QList<NodeWatch> ApplicationLayer::watchers(const QByteArray &path)
     return owners;
 }
 
-bool ApplicationLayer::doRemove(const QByteArray &path)
+bool SharedMemoryLayer::doRemove(const QByteArray &path)
 {
     QList<NodeWatch> owners = watchers(path);
 
@@ -2897,7 +2901,7 @@ bool ApplicationLayer::doRemove(const QByteArray &path)
             // Remote
             if(!written.contains(watch.data1)) {
                 ((QPacketProtocol *)watch.data1)->send()
-                    << (quint8)APPLAYER_REMOVE << path;
+                    << (quint8)SHMLAYER_REMOVE << path;
                 written.insert(watch.data1);
             }
         }
@@ -2908,7 +2912,7 @@ bool ApplicationLayer::doRemove(const QByteArray &path)
     return true;
 }
 
-bool ApplicationLayer::doWriteItem(const QByteArray &path, const QVariant &val)
+bool SharedMemoryLayer::doWriteItem(const QByteArray &path, const QVariant &val)
 {
     QList<NodeWatch> owners = watchers(path);
 
@@ -2924,7 +2928,7 @@ bool ApplicationLayer::doWriteItem(const QByteArray &path, const QVariant &val)
             // Remote
             if(!written.contains(watch.data1)) {
                 ((QPacketProtocol *)watch.data1)->send()
-                    << (quint8)APPLAYER_WRITE << path << val;
+                    << (quint8)SHMLAYER_WRITE << path << val;
                 written.insert(watch.data1);
             }
         }
@@ -2935,7 +2939,8 @@ bool ApplicationLayer::doWriteItem(const QByteArray &path, const QVariant &val)
     return true;
 }
 
-void ApplicationLayer::doNotify(const QByteArray &path, const QPacketProtocol *protocol, bool interested)
+void SharedMemoryLayer::doNotify(const QByteArray &path, const QPacketProtocol *protocol,
+                                 bool interested)
 {
     bool sendNotification = false;
     if (interested) {
@@ -2971,14 +2976,15 @@ void ApplicationLayer::doNotify(const QByteArray &path, const QPacketProtocol *p
             }
         } else {
             if (!written.contains(watch.data1)) {
-                ((QPacketProtocol *)watch.data1)->send() << quint8(APPLAYER_NOTIFY) << watch.data2 << path << interested;
+                ((QPacketProtocol *)watch.data1)->send() << quint8(SHMLAYER_NOTIFY)
+                                                         << watch.data2 << path << interested;
                 written.insert(watch.data1);
             }
         }
     }
 }
 
-void ApplicationLayer::doNotifyObject(unsigned long own, unsigned long protocol)
+void SharedMemoryLayer::doNotifyObject(unsigned long own, unsigned long protocol)
 {
     QList<QByteArray> paths = pathsOfInterest()->keys();
 
@@ -3004,7 +3010,9 @@ void ApplicationLayer::doNotifyObject(unsigned long own, unsigned long protocol)
                 }
             } else {
                 if (!written.contains(watch.data1)) {
-                    ((QPacketProtocol *)watch.data1)->send() << quint8(APPLAYER_NOTIFY) << watch.data2 << interestPath << true;
+                    ((QPacketProtocol *)watch.data1)->send() << quint8(SHMLAYER_NOTIFY)
+                                                             << watch.data2 << interestPath
+                                                             << true;
                     written.insert(watch.data1);
                 }
             }
@@ -3012,7 +3020,7 @@ void ApplicationLayer::doNotifyObject(unsigned long own, unsigned long protocol)
     }
 }
 
-bool ApplicationLayer::setWatch(NodeWatch watch, const QByteArray &path)
+bool SharedMemoryLayer::setWatch(NodeWatch watch, const QByteArray &path)
 {
     if(path.count() > MAX_PATH_SIZE || path.startsWith("/.ValueSpace") || !valid)
         return false;
@@ -3022,7 +3030,7 @@ bool ApplicationLayer::setWatch(NodeWatch watch, const QByteArray &path)
         if(todo.isEmpty())
             todo << newPackId();
 
-        todo << (quint8)APPLAYER_ADDWATCH << watch.data2 << path;
+        todo << (quint8)SHMLAYER_ADDWATCH << watch.data2 << path;
         triggerTodo();
         return true;
     } else {
@@ -3032,7 +3040,7 @@ bool ApplicationLayer::setWatch(NodeWatch watch, const QByteArray &path)
     }
 }
 
-bool ApplicationLayer::doSetWatch(NodeWatch watch, const QByteArray &path)
+bool SharedMemoryLayer::doSetWatch(NodeWatch watch, const QByteArray &path)
 {
     Q_ASSERT(layer);
 
@@ -3046,7 +3054,7 @@ bool ApplicationLayer::doSetWatch(NodeWatch watch, const QByteArray &path)
     return rv;
 }
 
-bool ApplicationLayer::remWatch(NodeWatch watch, const QByteArray &path)
+bool SharedMemoryLayer::remWatch(NodeWatch watch, const QByteArray &path)
 {
     if(path.count() > MAX_PATH_SIZE || !valid)
         return false;
@@ -3056,7 +3064,7 @@ bool ApplicationLayer::remWatch(NodeWatch watch, const QByteArray &path)
         if(todo.isEmpty())
             todo << newPackId();
 
-        todo << (quint8)APPLAYER_REMWATCH << watch.data2 << path;
+        todo << (quint8)SHMLAYER_REMWATCH << watch.data2 << path;
         triggerTodo();
         return true;
     } else {
@@ -3066,7 +3074,7 @@ bool ApplicationLayer::remWatch(NodeWatch watch, const QByteArray &path)
     }
 }
 
-bool ApplicationLayer::doRemWatch(NodeWatch watch, const QByteArray &path)
+bool SharedMemoryLayer::doRemWatch(NodeWatch watch, const QByteArray &path)
 {
     Q_ASSERT(layer);
 
@@ -3078,12 +3086,12 @@ bool ApplicationLayer::doRemWatch(NodeWatch watch, const QByteArray &path)
     return rv;
 }
 
-bool ApplicationLayer::isValid() const
+bool SharedMemoryLayer::isValid() const
 {
     return valid;
 }
 
-bool ApplicationLayer::setItem(NodeOwner owner, const QByteArray &path,
+bool SharedMemoryLayer::setItem(NodeOwner owner, const QByteArray &path,
                                const QVariant &val)
 {
     if(path.count() > MAX_PATH_SIZE || path.startsWith("/.ValueSpace") || !valid)
@@ -3095,7 +3103,7 @@ bool ApplicationLayer::setItem(NodeOwner owner, const QByteArray &path,
         if(todo.isEmpty())
             todo << newPackId();
 
-        todo << (quint8)APPLAYER_ADD << owner.data2 << path << val;
+        todo << (quint8)SHMLAYER_ADD << owner.data2 << path << val;
         triggerTodo();
         return true;
     } else {
@@ -3106,7 +3114,7 @@ bool ApplicationLayer::setItem(NodeOwner owner, const QByteArray &path,
     return changed;
 }
 
-bool ApplicationLayer::doSetItem(NodeOwner owner, const QByteArray &path,
+bool SharedMemoryLayer::doSetItem(NodeOwner owner, const QByteArray &path,
                                  const QVariant &val)
 {
     bool rv = false;
@@ -3194,7 +3202,7 @@ bool ApplicationLayer::doSetItem(NodeOwner owner, const QByteArray &path,
     return rv;
 }
 
-bool ApplicationLayer::remItems(NodeOwner owner, const QByteArray &path)
+bool SharedMemoryLayer::remItems(NodeOwner owner, const QByteArray &path)
 {
     if (!valid)
         return false;
@@ -3204,7 +3212,7 @@ bool ApplicationLayer::remItems(NodeOwner owner, const QByteArray &path)
         if(todo.isEmpty())
             todo << newPackId();
 
-        todo << (quint8)APPLAYER_REM << owner.data2 << path;
+        todo << (quint8)SHMLAYER_REM << owner.data2 << path;
         triggerTodo();
     } else {
         rv = doRemItems(owner, path);
@@ -3214,7 +3222,7 @@ bool ApplicationLayer::remItems(NodeOwner owner, const QByteArray &path)
     return rv;
 }
 
-bool ApplicationLayer::doRemItems(NodeOwner owner, const QByteArray &path)
+bool SharedMemoryLayer::doRemItems(NodeOwner owner, const QByteArray &path)
 {
     if (!valid)
         return false;
@@ -3224,7 +3232,7 @@ bool ApplicationLayer::doRemItems(NodeOwner owner, const QByteArray &path)
         if(todo.isEmpty())
             todo << newPackId();
 
-        todo << (quint8)APPLAYER_REM << owner.data2 << path;
+        todo << (quint8)SHMLAYER_REM << owner.data2 << path;
         triggerTodo();
 
     } else {
@@ -3288,14 +3296,14 @@ static QString qtTempDir()
     return result;
 }
 
-QString ApplicationLayer::socket() const
+QString SharedMemoryLayer::socket() const
 {
-    const QString socketPath = qtTempDir() + QLatin1String("valuespace_applayer");
+    const QString socketPath = qtTempDir() + QLatin1String("valuespace_shmlayer");
 
     return socketPath;
 }
 
-void ApplicationLayer::sync()
+void SharedMemoryLayer::sync()
 {
     if(Client == type) {
         Q_ASSERT(1 == connections.count());
@@ -3322,7 +3330,7 @@ void ApplicationLayer::sync()
     }
 }
 
-QVariant ApplicationLayer::fromDatum(const NodeDatum * data)
+QVariant SharedMemoryLayer::fromDatum(const NodeDatum * data)
 {
     switch(data->type) {
         case NodeDatum::Boolean:
@@ -3360,12 +3368,12 @@ QVariant ApplicationLayer::fromDatum(const NodeDatum * data)
                 return rv;
             }
         default:
-            qFatal("ApplicationLayer: Unknown datum type.");
+            qFatal("SharedMemoryLayer: Unknown datum type.");
             return QVariant();
     }
 }
 
-void ApplicationLayer::incNode(unsigned short node)
+void SharedMemoryLayer::incNode(unsigned short node)
 {
     if(type == Server || node == INVALID_HANDLE)
         return;
@@ -3380,7 +3388,7 @@ void ApplicationLayer::incNode(unsigned short node)
     }
 }
 
-void ApplicationLayer::decNode(unsigned short node)
+void SharedMemoryLayer::decNode(unsigned short node)
 {
     if(type == Server || node == INVALID_HANDLE)
         return;
@@ -3395,17 +3403,17 @@ void ApplicationLayer::decNode(unsigned short node)
     }
 }
 
-Q_GLOBAL_STATIC(ApplicationLayer, applicationLayer);
-ApplicationLayer * ApplicationLayer::instance()
+Q_GLOBAL_STATIC(SharedMemoryLayer, sharedMemoryLayer);
+SharedMemoryLayer * SharedMemoryLayer::instance()
 {
-    return applicationLayer();
+    return sharedMemoryLayer();
 }
 
 typedef QSet<QValueSpaceObject *> WatchObjects;
 Q_GLOBAL_STATIC(WatchObjects, watchObjects);
 
-// define ApplicationLayer
-void ApplicationLayer::doClientRemove(const QByteArray &path)
+// define SharedMemoryLayer
+void SharedMemoryLayer::doClientRemove(const QByteArray &path)
 {
     // If objects are deleted etc. in here we have a problem
     QSet<QValueSpaceObject *> objects = *watchObjects();
@@ -3426,7 +3434,7 @@ void ApplicationLayer::doClientRemove(const QByteArray &path)
     }
 }
 
-void ApplicationLayer::doClientWrite(const QByteArray &path,
+void SharedMemoryLayer::doClientWrite(const QByteArray &path,
                                      const QVariant &newData)
 {
     // If objects are deleted etc. in here we have a problem
@@ -3447,7 +3455,8 @@ void ApplicationLayer::doClientWrite(const QByteArray &path,
     }
 }
 
-void ApplicationLayer::doClientNotify(QValueSpaceObject *object, const QByteArray &path, bool interested)
+void SharedMemoryLayer::doClientNotify(QValueSpaceObject *object, const QByteArray &path,
+                                       bool interested)
 {
     // Invalid object.
     if (!watchObjects()->contains(object))
@@ -3469,7 +3478,7 @@ void ApplicationLayer::doClientNotify(QValueSpaceObject *object, const QByteArra
     emitItemNotify(object, emitPath, interested);
  }
 
-bool ApplicationLayer::requestSetValue(Handle handle, const QVariant &value)
+bool SharedMemoryLayer::requestSetValue(Handle handle, const QVariant &value)
 {
     if (!valid)
         return false;
@@ -3480,7 +3489,7 @@ bool ApplicationLayer::requestSetValue(Handle handle, const QVariant &value)
         if(todo.isEmpty())
             todo << newPackId();
 
-        todo << (quint8)APPLAYER_WRITE << rhandle->path << value;
+        todo << (quint8)SHMLAYER_WRITE << rhandle->path << value;
         triggerTodo();
     } else {
         bool changed = doWriteItem(rhandle->path, value);
@@ -3489,7 +3498,8 @@ bool ApplicationLayer::requestSetValue(Handle handle, const QVariant &value)
     return true;
 }
 
-bool ApplicationLayer::requestSetValue(Handle handle, const QByteArray &subPath, const QVariant &value)
+bool SharedMemoryLayer::requestSetValue(Handle handle, const QByteArray &subPath,
+                                        const QVariant &value)
 {
     if (!valid)
         return false;
@@ -3503,9 +3513,9 @@ bool ApplicationLayer::requestSetValue(Handle handle, const QByteArray &subPath,
             todo << newPackId();
 
         if(rhandle->path != "/")
-            todo << (quint8)APPLAYER_WRITE << (rhandle->path + subPath) << value;
+            todo << (quint8)SHMLAYER_WRITE << (rhandle->path + subPath) << value;
         else
-            todo << (quint8)APPLAYER_WRITE << subPath << value;
+            todo << (quint8)SHMLAYER_WRITE << subPath << value;
         triggerTodo();
     } else {
         bool changed;
@@ -3519,7 +3529,7 @@ bool ApplicationLayer::requestSetValue(Handle handle, const QByteArray &subPath,
     return true;
 }
 
-bool ApplicationLayer::requestRemoveValue(Handle handle, const QByteArray &subPath)
+bool SharedMemoryLayer::requestRemoveValue(Handle handle, const QByteArray &subPath)
 {
     if (!valid)
         return false;
@@ -3541,7 +3551,7 @@ bool ApplicationLayer::requestRemoveValue(Handle handle, const QByteArray &subPa
         if(todo.isEmpty())
             todo << newPackId();
 
-        todo << (quint8)APPLAYER_REMOVE << fullPath;
+        todo << (quint8)SHMLAYER_REMOVE << fullPath;
 
         triggerTodo();
     } else {
@@ -3551,7 +3561,7 @@ bool ApplicationLayer::requestRemoveValue(Handle handle, const QByteArray &subPa
     return true;
 }
 
-bool ApplicationLayer::notifyInterest(Handle handle, bool interested)
+bool SharedMemoryLayer::notifyInterest(Handle handle, bool interested)
 {
     if (!valid)
         return false;
@@ -3562,7 +3572,7 @@ bool ApplicationLayer::notifyInterest(Handle handle, bool interested)
         if (todo.isEmpty())
             todo << newPackId();
 
-        todo << quint8(APPLAYER_NOTIFY) << rhandle->path << interested;
+        todo << quint8(SHMLAYER_NOTIFY) << rhandle->path << interested;
 
         triggerTodo();
     } else {
@@ -3572,12 +3582,13 @@ bool ApplicationLayer::notifyInterest(Handle handle, bool interested)
     return true;
 }
 
-bool ApplicationLayer::syncRequests()
+bool SharedMemoryLayer::syncRequests()
 {
     return true;
 }
 
-bool ApplicationLayer::setValue(QValueSpaceObject *creator, Handle handle, const QByteArray &path, const QVariant &data)
+bool SharedMemoryLayer::setValue(QValueSpaceObject *creator, Handle handle, const QByteArray &path,
+                                 const QVariant &data)
 {
     ReadHandle *readHandle = reinterpret_cast<ReadHandle *>(handle);
 
@@ -3601,7 +3612,8 @@ bool ApplicationLayer::setValue(QValueSpaceObject *creator, Handle handle, const
     return setItem(owner, fullPath, data);
 }
 
-bool ApplicationLayer::removeValue(QValueSpaceObject *creator, Handle handle, const QByteArray &path)
+bool SharedMemoryLayer::removeValue(QValueSpaceObject *creator, Handle handle,
+                                    const QByteArray &path)
 {
     ReadHandle *readHandle = reinterpret_cast<ReadHandle *>(handle);
 
@@ -3625,7 +3637,7 @@ bool ApplicationLayer::removeValue(QValueSpaceObject *creator, Handle handle, co
     return remItems(owner, fullPath);
 }
 
-bool ApplicationLayer::removeSubTree(QValueSpaceObject *creator, Handle handle)
+bool SharedMemoryLayer::removeSubTree(QValueSpaceObject *creator, Handle handle)
 {
     ReadHandle *readHandle = reinterpret_cast<ReadHandle *>(handle);
 
@@ -3639,7 +3651,7 @@ bool ApplicationLayer::removeSubTree(QValueSpaceObject *creator, Handle handle)
     return remItems(owner, readHandle->path);
 }
 
-void ApplicationLayer::addWatch(QValueSpaceObject *creator, Handle handle)
+void SharedMemoryLayer::addWatch(QValueSpaceObject *creator, Handle handle)
 {
     watchObjects()->insert(creator);
 
@@ -3655,7 +3667,7 @@ void ApplicationLayer::addWatch(QValueSpaceObject *creator, Handle handle)
     setWatch(owner, readHandle->path);
 }
 
-void ApplicationLayer::removeWatches(QValueSpaceObject *creator, Handle parent)
+void SharedMemoryLayer::removeWatches(QValueSpaceObject *creator, Handle parent)
 {
     watchObjects()->remove(creator);
 
@@ -3671,4 +3683,4 @@ void ApplicationLayer::removeWatches(QValueSpaceObject *creator, Handle parent)
     remWatch(owner, readHandle->path);
 }
 
-#include "applayer.moc"
+#include "sharedmemorylayer.moc"

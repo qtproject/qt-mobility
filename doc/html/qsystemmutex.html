@@ -17,23 +17,22 @@
 <pre>    #include &lt;QSystemMutex&gt;</pre><ul>
 <li><a href="qsystemmutex-members.html">List of all members, including inherited members</a></li>
 </ul>
-<hr />
 <a name="public-functions"></a>
-<h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qsystemmutex.html#QSystemMutex">QSystemMutex</a></b> ( unsigned int <i>id</i>, bool <i>owner</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qsystemmutex.html#dtor.QSystemMutex">~QSystemMutex</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">unsigned int </td><td class="memItemRight" valign="bottom"><b><a href="qsystemmutex.html#id">id</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsystemmutex.html#isNull">isNull</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsystemmutex.html#lock">lock</a></b> ( int <i>milliSec</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemmutex.html#unlock">unlock</a></b> ()</td></tr>
-</table>
+<h3>Public Functions</h3>
+<ul>
+<li><div class="fn"></div><b><a href="qsystemmutex.html#QSystemMutex">QSystemMutex</a></b> ( unsigned int <i>id</i>, bool <i>owner</i> )</li>
+<li><div class="fn"></div><b><a href="qsystemmutex.html#dtor.QSystemMutex">~QSystemMutex</a></b> ()</li>
+<li><div class="fn"></div>unsigned int <b><a href="qsystemmutex.html#id">id</a></b> () const</li>
+<li><div class="fn"></div>bool <b><a href="qsystemmutex.html#isNull">isNull</a></b> () const</li>
+<li><div class="fn"></div>bool <b><a href="qsystemmutex.html#lock">lock</a></b> ( int <i>milliSec</i> )</li>
+<li><div class="fn"></div>void <b><a href="qsystemmutex.html#unlock">unlock</a></b> ()</li>
+</ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
 <p>The QSystemMutex class provides mutual exclusion between processes.</p>
 <p>A mutex is a synchronization tool for protecting critical sections of the code. The purpose of a QSystemMutex is to protect an object, data structure or section of code so that only one thread, or process, can access it at a time.</p>
-<p>QSystemMutex behaves much like the <a href="http://doc.qtsoftware.com/4.5/qmutex.html">QMutex</a> class, but it also works across multiple processes (although it also works perfectly well, albeit slightly less efficiently, in a single process). In order to clean up the system resources used to coordinate cross process synchronization, one QSystemMutex instance is designated the lock &quot;owner&quot;. This instance creates the required resources, and removes them when it is destroyed. The lock owner should always be instantiated before any others.</p>
+<p>QSystemMutex behaves much like the QMutex class, but it also works across multiple processes (although it also works perfectly well, albeit slightly less efficiently, in a single process). In order to clean up the system resources used to coordinate cross process synchronization, one QSystemMutex instance is designated the lock &quot;owner&quot;. This instance creates the required resources, and removes them when it is destroyed. The lock owner should always be instantiated before any others.</p>
 <p>System locks are identified by a 32-bit integer, which allows other processes to share the same lock. While the selection of this identifier is left upto the caller, under Linux it is common to use the ftok(3) function call which uses the identity of a specified file to generate such an identifier.</p>
 <pre>    int id = (int)::ftok(&quot;/tmp/my_lock_identifier&quot;, 0);
 

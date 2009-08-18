@@ -17,24 +17,23 @@
 <pre>    #include &lt;QSystemReadWriteLock&gt;</pre><ul>
 <li><a href="qsystemreadwritelock-members.html">List of all members, including inherited members</a></li>
 </ul>
-<hr />
 <a name="public-functions"></a>
-<h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qsystemreadwritelock.html#QSystemReadWriteLock">QSystemReadWriteLock</a></b> ( unsigned int <i>id</i>, bool <i>owner</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qsystemreadwritelock.html#dtor.QSystemReadWriteLock">~QSystemReadWriteLock</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">unsigned int </td><td class="memItemRight" valign="bottom"><b><a href="qsystemreadwritelock.html#id">id</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsystemreadwritelock.html#isNull">isNull</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsystemreadwritelock.html#lockForRead">lockForRead</a></b> ( int <i>milliSec</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsystemreadwritelock.html#lockForWrite">lockForWrite</a></b> ( int <i>milliSec</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemreadwritelock.html#unlock">unlock</a></b> ()</td></tr>
-</table>
+<h3>Public Functions</h3>
+<ul>
+<li><div class="fn"></div><b><a href="qsystemreadwritelock.html#QSystemReadWriteLock">QSystemReadWriteLock</a></b> ( unsigned int <i>id</i>, bool <i>owner</i> )</li>
+<li><div class="fn"></div><b><a href="qsystemreadwritelock.html#dtor.QSystemReadWriteLock">~QSystemReadWriteLock</a></b> ()</li>
+<li><div class="fn"></div>unsigned int <b><a href="qsystemreadwritelock.html#id">id</a></b> () const</li>
+<li><div class="fn"></div>bool <b><a href="qsystemreadwritelock.html#isNull">isNull</a></b> () const</li>
+<li><div class="fn"></div>bool <b><a href="qsystemreadwritelock.html#lockForRead">lockForRead</a></b> ( int <i>milliSec</i> )</li>
+<li><div class="fn"></div>bool <b><a href="qsystemreadwritelock.html#lockForWrite">lockForWrite</a></b> ( int <i>milliSec</i> )</li>
+<li><div class="fn"></div>void <b><a href="qsystemreadwritelock.html#unlock">unlock</a></b> ()</li>
+</ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
 <p>The QSystemReadWriteLock class provides read-write locking between processes.</p>
 <p>A read-write lock is a synchronization tool for protecting resources that can be accessed for reading and writing. This type of lock is useful if you want to allow multiple threads to have simultaneous read-only access, but as soon as one thread wants to write to the resource, all other threads must be blocked until the writing is complete.</p>
-<p>QSystemReadWriteLock behaves much like the <a href="http://doc.qtsoftware.com/4.5/qreadwritelock.html">QReadWriteLock</a> class, but it also works across multiple processes (although it also works perfectly well, albeit slightly less efficiently, in a single process). In order to clean up the system resources used to coordinate cross process synchronization, one <a href="http://doc.qtsoftware.com/4.5/qreadwritelock.html">QReadWriteLock</a> instance is designated the lock &quot;owner&quot;. This instance creates the required system resources, and removes them when it is destroyed. The lock owner should always be instantiated before any others.</p>
+<p>QSystemReadWriteLock behaves much like the QReadWriteLock class, but it also works across multiple processes (although it also works perfectly well, albeit slightly less efficiently, in a single process). In order to clean up the system resources used to coordinate cross process synchronization, one QReadWriteLock instance is designated the lock &quot;owner&quot;. This instance creates the required system resources, and removes them when it is destroyed. The lock owner should always be instantiated before any others.</p>
 <p>System locks are identified by a 32-bit integer, which allows other processes to share the same lock. While the selection of this identifier is left upto the caller, under Linux it is common to use the ftok(3) function call which uses the identity of a specified file to generate such an identifier.</p>
 <p>For example, to create the lock owner:</p>
 <pre>    int id = (int)::ftok(&quot;/tmp/my_lock_identifier&quot;, 0);
@@ -51,7 +50,7 @@
 <h4>Algorithm</h4>
 <p>The QSystemReadWriteLock class uses Linux kernel semaphores to synchronize access between readers and writers. Two semaphores ReadCount and WriteCount are used to allow either multiple concurrent readers or a single exclusive writer. When writers are waiting, any new readers must wait until all writers complete. That is, writers can starve readers.</p>
 <p>The following semaphore conditions determine reader and writer operations.</p>
-<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
+<p><table align="center" cellpadding="2" cellspacing="1" border="0">
 <thead><tr valign="top" class="qt-style"><th>Operation</th><th>Condition Steps</th></tr></thead>
 <tr valign="top" class="odd"><td>Reader Progression</td><td>WAIT(Increment ReadCount) AND WAIT(WriteCount == 0)</td></tr>
 <tr valign="top" class="even"><td>Reader Complete</td><td>WAIT(Decrement ReadCount)</td></tr>

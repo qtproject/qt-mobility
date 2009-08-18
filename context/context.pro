@@ -23,7 +23,7 @@ unix {
 
     SOURCES += qmallocpool.cpp \
                qsystemlock.cpp \
-               applayer.cpp
+               sharedmemorylayer.cpp
 }
 
 win32 {

@@ -47,16 +47,21 @@ subscription to just \c {/Device/Buttons} to be notified when anything
 Internally, the Value Space consists of an arbitrary number of data source
 trees, or layers, which are stacked on top of each other to form the final
 unified view.  If a "higher" layer contains an item, it shadows the value of
-items in the layers below it.  The most important Value Space layers is:
+items in the layers below it.
+
+The Qt Value Space contains the following layers:
 
 \list 1
-\i {The Application Object layer}
-
- The Application Object layer allows applications to add and remove
- "transient" data from the Value Space.  Applications access the Application
- Object layer through the QValueSpaceObject class.
+    \i {Shared Memory Layer}
+         The Shared Memory layer allows applications to add and remove "transient" data from the
+         Value Space using shared memory as a backing store.
+    \i {Registry Layer}
+        The Registry layer allows applications to add and remove "transient" data from the
+        Value Space using the Windows registry as a backing store.
 
 \endlist
+
+Access to the available layers is through the QValueSpaceObject class.
 
 Consider the Value Space item \c {/Device/Buttons}.  If two layer contained
 this item, the value in the layer with the higher layer order (see \l {QAbstractValueSpaceLayer::order()}) 
@@ -69,8 +74,8 @@ value not by path.
 \section2 Architecture
 
 Layers in the Qt Value Space are provided by objects implementing the
-QAbstractValueSpaceLayer interface.  The two internal layers, the Application Object
-layer and the INI layer, are implemented in this fashion.  The Value Space
+QAbstractValueSpaceLayer interface.  The two internal layers, the Shared Memory
+layer and the Registry layer, are implemented in this fashion.  The Value Space
 supports adding new, 3rd party layers through calls to the
 QValueSpace::installLayer() method.  All layers must be installed prior to the
 first Value Space usage.  Although it is legal to have a different set of
@@ -81,31 +86,31 @@ processes communicate.
 The Qt Value Space system is divided into two parts: a single server and
 zero or more clients.  Internally the Value Space system draws no distinction
 between the two - the server is also a client, for example - but certain
-layers, in particular the Application Object layer, do.  The Value Space
+layers, in particular the Shared Memory layer, do.  The Value Space
 server \bold {must} be initialized via a call to
 QValueSpace::initValuespaceManager() prior to any use of the Value Space.
 Value Space clients will automatically initialize the first time Value Space
-functionionality is used.
+functionality is used.
 
-\section3 Application Object layer
+\section3 Shared Memory Layer
 
-The external use of the Application Object layer is described in
-QValueSpaceObject.  The Application Object layer stores all values in a
+The external use of the Shared Memory layer is described in
+QValueSpaceObject.  The Shared Memory layer stores all values in a
 10MB block of shared memory which is reserved when the Value Space
 initializes.  As the layer creates this region at startup, it is assumed that
 the operating system lazily commits memory.  If this assumption is invalid,
-the Application Object layer will unnecessarily consume 10MB of memory.
+the Shared Memory layer will unnecessarily consume 10MB of memory.
 
-Value Space clients read from the Application Object layer's shared memory
+Value Space clients read from the Shared Memory layer's shared memory
 region directly.  A kernel lock is acquired for each read to prevent
 corruption.  While the layer supports concurrent readers, it is possible that
 a faulty or malicious application could acquire and refuse to release this
-lock causing any layer updates to be delayed indefinately.
+lock causing any layer updates to be delayed indefinitely.
 
 Only the Value Space server ever writes to the shared memory region.  When
 clients attempt to add items to the layer, their changes are transmitted via
-a QLocalSocket (e.g. \c {/tmp/qt-N/valuespace_applayer} domain socket on Unix systems) to the server where the
-update is performed.  Updates are batched in-process and sent when the process
+a QLocalSocket (e.g. \c {/tmp/qt-N/valuespace_shmlayer} domain socket on Unix systems) to the
+server where the update is performed.  Updates are batched in-process and sent when the process
 re-enters the Qt event loop.  Transmission and synchronization of changes can
 be forced manually by the QValueSpaceObject::sync() call, although as this
 requires a round trip between the client and server, doing so frequently may

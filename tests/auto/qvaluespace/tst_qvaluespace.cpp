@@ -308,9 +308,9 @@ void tst_QValueSpace::availableLayers()
     QList<QUuid> layers = QValueSpace::availableLayers();
 
 #ifdef Q_OS_UNIX
-    QVERIFY(layers.contains(QVALUESPACE_APPLICATION_LAYER));
+    QVERIFY(layers.contains(QVALUESPACE_SHAREDMEMORY_LAYER));
 #else
-    QVERIFY(!layers.contains(QVALUESPACE_APPLICATION_LAYER));
+    QVERIFY(!layers.contains(QVALUESPACE_SHAREDMEMORY_LAYER));
 #endif
 
 #ifdef Q_OS_WIN
