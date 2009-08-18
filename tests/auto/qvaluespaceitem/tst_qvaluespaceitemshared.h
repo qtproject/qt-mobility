@@ -60,6 +60,7 @@ private slots:
     void interestNotification_data();
     void interestNotification();
     void ipcInterestNotification();
+    void clientServer();
 
 private:
     QValueSpaceObject *root;

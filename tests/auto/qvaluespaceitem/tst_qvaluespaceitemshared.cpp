@@ -35,6 +35,7 @@
 
 #include <qvaluespace.h>
 #include <qvaluespaceobject.h>
+#include <qvaluespacemanager_p.h>
 
 #include <QTest>
 #include <QSet>
@@ -1253,6 +1254,15 @@ void tst_QValueSpaceItem::ipcInterestNotification()
     QTRY_COMPARE(changeSpy.count(), 1);
 
     QCOMPARE(item->value(QString(), 10).toInt(), 5);
+#endif
+}
+
+void tst_QValueSpaceItem::clientServer()
+{
+#if defined(QT_START_VALUESPACE)
+    QVERIFY(QValueSpaceManager::instance()->isServer());
+#else
+    QVERIFY(!QValueSpaceManager::instance()->isServer());
 #endif
 }
 
