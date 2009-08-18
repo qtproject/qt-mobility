@@ -80,8 +80,8 @@ public:
     qint64 duration() const;
     void setDuration(qint64 duration);
 
-    int bitRate() const;
-    void setBitRate(int rate);
+    int audioBitRate() const;
+    void setAudioBitRate(int rate);
 
     int sampleSize() const;
     void setSampleSize(int size);
@@ -91,6 +91,9 @@ public:
 
     int channels() const;
     void setChannels(int channels);
+
+    int videoBitRate() const;
+    void setVideoBitRate(int rate);
 
     QSize resolution() const;
     void setResolution(const QSize &resolution);
@@ -109,7 +112,8 @@ private:
         VideoCodec,
         Size,
         Duration,
-        BitRate,
+        AudioBitRate,
+        VideoBitRate,
         SampleSize,
         Frequency,
         Channels,

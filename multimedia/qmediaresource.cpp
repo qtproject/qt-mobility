@@ -259,25 +259,24 @@ void QMediaResource::setDuration(qint64 duration)
 }
 
 /*!
-    Returns the bit rate in bits per second of a media resource.
+    Returns the bit rate in bits per second of a media resource's audio stream.
 
-    This may be zero if the bit rate is unknown, or the resource is static (i.e the resource is an
-    image).
+    This may be zero if the bit rate is unknown, or the resource contains no audio stream.
 */
-int QMediaResource::bitRate() const
+int QMediaResource::audioBitRate() const
 {
-    return qvariant_cast<int>(values.value(BitRate));
+    return values.value(AudioBitRate).toInt();
 }
 
 /*!
-    Sets the bit \a rate in bits per second of a media resource.
+    Sets the bit \a rate in bits per second of a media resource's video stream.
 */
-void QMediaResource::setBitRate(int rate)
+void QMediaResource::setAudioBitRate(int rate)
 {
     if (rate != 0)
-        values.insert(BitRate, rate);
+        values.insert(AudioBitRate, rate);
     else
-        values.remove(BitRate);
+        values.remove(AudioBitRate);
 }
 
 /*!
@@ -341,6 +340,27 @@ void QMediaResource::setChannels(int channels)
         values.insert(Channels, channels);
     else
         values.remove(Channels);
+}
+
+/*!
+    Returns the bit rate in bits per second of a media resource's video stream.
+
+    This may be zero if the bit rate is unknown, or the resource contains no video stream.
+*/
+int QMediaResource::videoBitRate() const
+{
+    return values.value(VideoBitRate).toInt();
+}
+
+/*!
+    Sets the bit \a rate in bits per second of a media resource's video stream.
+*/
+void QMediaResource::setVideoBitRate(int rate)
+{
+    if (rate != 0)
+        values.insert(VideoBitRate, rate);
+    else
+        values.remove(VideoBitRate);
 }
 
 /*!

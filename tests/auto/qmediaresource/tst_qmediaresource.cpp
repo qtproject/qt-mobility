@@ -60,10 +60,11 @@ void tst_QMediaResource::constructNull()
     QCOMPARE(resource.videoCodec(), QString());
     QCOMPARE(resource.size(), qint64(0));
     QCOMPARE(resource.duration(), qint64(0));
-    QCOMPARE(resource.bitRate(), 0);
+    QCOMPARE(resource.audioBitRate(), 0);
     QCOMPARE(resource.sampleSize(), 0);
     QCOMPARE(resource.frequency(), 0);
     QCOMPARE(resource.channels(), 0);
+    QCOMPARE(resource.videoBitRate(), 0);
     QCOMPARE(resource.resolution(), QSize());
     QCOMPARE(resource.bitsPerPixel(), 0);
 }
@@ -77,10 +78,11 @@ void tst_QMediaResource::construct_data()
     QTest::addColumn<QString>("videoCodec");
     QTest::addColumn<qint64>("size");
     QTest::addColumn<qint64>("duration");
-    QTest::addColumn<int>("bitRate");
+    QTest::addColumn<int>("audioBitRate");
     QTest::addColumn<int>("sampleSize");
     QTest::addColumn<int>("frequency");
     QTest::addColumn<int>("channels");
+    QTest::addColumn<int>("videoBitRate");
     QTest::addColumn<QSize>("resolution");
     QTest::addColumn<int>("bitsPerPixel");
 
@@ -96,6 +98,7 @@ void tst_QMediaResource::construct_data()
             << 8
             << 44100
             << 2
+            << 0
             << QSize()
             << 0;
     QTest::newRow("image content")
@@ -110,6 +113,7 @@ void tst_QMediaResource::construct_data()
             << 0
             << 0
             << 0
+            << 0
             << QSize(640, 480)
             << 12;
     QTest::newRow("video content")
@@ -120,10 +124,11 @@ void tst_QMediaResource::construct_data()
             << QString::fromLatin1("h264")
             << qint64(36245851)
             << qint64(36214)
-            << 750000
+            << 96000
             << 16
             << 44000
             << 5
+            << 750000
             << QSize(720, 576)
             << 16;
     QTest::newRow("thumbnail")
@@ -134,6 +139,7 @@ void tst_QMediaResource::construct_data()
             << QString()
             << qint64(2360)
             << qint64(0)
+            << 0
             << 0
             << 0
             << 0
@@ -151,10 +157,11 @@ void tst_QMediaResource::construct()
     QFETCH(QString, videoCodec);
     QFETCH(qint64, size);
     QFETCH(qint64, duration);
-    QFETCH(int, bitRate);
+    QFETCH(int, audioBitRate);
     QFETCH(int, sampleSize);
     QFETCH(int, frequency);
     QFETCH(int, channels);
+    QFETCH(int, videoBitRate);
     QFETCH(QSize, resolution);
     QFETCH(int, bitsPerPixel);
 
@@ -169,10 +176,11 @@ void tst_QMediaResource::construct()
         QCOMPARE(resource.videoCodec(), QString());
         QCOMPARE(resource.size(), qint64(0));
         QCOMPARE(resource.duration(), qint64(0));
-        QCOMPARE(resource.bitRate(), 0);
+        QCOMPARE(resource.audioBitRate(), 0);
         QCOMPARE(resource.sampleSize(), 0);
         QCOMPARE(resource.frequency(), 0);
         QCOMPARE(resource.channels(), 0);
+        QCOMPARE(resource.videoBitRate(), 0);
         QCOMPARE(resource.resolution(), QSize());
         QCOMPARE(resource.bitsPerPixel(), 0);
     }
@@ -187,10 +195,11 @@ void tst_QMediaResource::construct()
         QCOMPARE(resource.videoCodec(), QString());
         QCOMPARE(resource.size(), qint64(0));
         QCOMPARE(resource.duration(), qint64(0));
-        QCOMPARE(resource.bitRate(), 0);
+        QCOMPARE(resource.audioBitRate(), 0);
         QCOMPARE(resource.sampleSize(), 0);
         QCOMPARE(resource.frequency(), 0);
         QCOMPARE(resource.channels(), 0);
+        QCOMPARE(resource.videoBitRate(), 0);
         QCOMPARE(resource.resolution(), QSize());
         QCOMPARE(resource.bitsPerPixel(), 0);
 
@@ -198,10 +207,11 @@ void tst_QMediaResource::construct()
         resource.setVideoCodec(videoCodec);
         resource.setSize(size);
         resource.setDuration(duration);
-        resource.setBitRate(bitRate);
+        resource.setAudioBitRate(audioBitRate);
         resource.setSampleSize(sampleSize);
         resource.setFrequency(frequency);
         resource.setChannels(channels);
+        resource.setVideoBitRate(videoBitRate);
         resource.setResolution(resolution);
         resource.setBitsPerPixel(bitsPerPixel);
 
@@ -209,10 +219,11 @@ void tst_QMediaResource::construct()
         QCOMPARE(resource.videoCodec(), videoCodec);
         QCOMPARE(resource.size(), size);
         QCOMPARE(resource.duration(), duration);
-        QCOMPARE(resource.bitRate(), bitRate);
+        QCOMPARE(resource.audioBitRate(), audioBitRate);
         QCOMPARE(resource.sampleSize(), sampleSize);
         QCOMPARE(resource.frequency(), frequency);
         QCOMPARE(resource.channels(), channels);
+        QCOMPARE(resource.videoBitRate(), videoBitRate);
         QCOMPARE(resource.resolution(), resolution);
         QCOMPARE(resource.bitsPerPixel(), bitsPerPixel);
     }
@@ -300,31 +311,34 @@ void tst_QMediaResource::equality()
 
     resource1.setDuration(54335);
     resource2.setDuration(443233);
-    resource1.setBitRate(543);
+    resource1.setAudioBitRate(96000);
     resource2.setSampleSize(16);
     resource1.setFrequency(48000);
     resource2.setFrequency(44100);
     resource1.setChannels(0);
+    resource1.setVideoBitRate(900000);
     resource2.setBitsPerPixel(24);
 
-    // Not equal, differing duration, bit rate, sample size, frequency, and bits per pixel.
+    // Not equal, differing duration, audio bit rate, sample size, frequency, video bit rate, and
+    // bits per pixel.
     QCOMPARE(resource1 == resource2, false);
     QCOMPARE(resource1 != resource2, true);
 
     resource1.setDuration(443233);
     resource2.setSampleSize(0);
 
-    // Not equal, differing bit rate, frequency, and bits per pixel.
+    // Not equal, differing audio bit rate, frequency video bit rate, and bits per pixel.
     QCOMPARE(resource1 == resource2, false);
     QCOMPARE(resource1 != resource2, true);
 
-    resource2.setBitRate(543);
+    resource2.setAudioBitRate(96000);
     resource1.setFrequency(44100);
 
-    // Not equal, differing bits per pixel.
+    // Not equal, differing video bit rate, and bits per pixel.
     QCOMPARE(resource1 == resource2, false);
     QCOMPARE(resource1 != resource2, true);
 
+    resource2.setVideoBitRate(900000);
     resource1.setBitsPerPixel(24);
 
     // Equal
