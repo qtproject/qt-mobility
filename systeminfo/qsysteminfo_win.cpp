@@ -899,6 +899,17 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::getSimStatus()
 
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
 {
+#ifdef Q_OS_WINCE
+    HSIM handle;
+    DWORD lockedState;
+    HRESULT result = SimInitialize(0,NULL,NULL,&handle);
+    if(result == S_OK) {
+        SimGetPhoneLockedState(handle,&lockedState);
+        if(lockedState != SIM_LOCKEDSTATE_READY) {
+            return true;
+        }
+    }
+#endif
     return false;
 }
 
