@@ -94,9 +94,9 @@ QMediaPlayer::State QWmpPlayerControl::state() const
     return m_state;
 }
 
-void QWmpPlayerControl::setState(QMediaPlayer::State state)
+QMediaPlayer::MediaStatus QWmpPlayerControl::mediaStatus() const
 {
-    emit stateChanged(m_state = state);
+    return m_status;
 }
 
 QMediaPlaylist *QWmpPlayerControl::mediaPlaylist() const
@@ -161,8 +161,6 @@ qint64 QWmpPlayerControl::duration() const
 
         media->Release();
     }
-
-
 
     return m_duration * 1000;
 }
@@ -350,7 +348,11 @@ void QWmpPlayerControl::proxiedItemsChanged(int start, int end)
 
 void QWmpPlayerControl::bufferingEvent(VARIANT_BOOL buffering)
 {
-    emit bufferingChanged(m_buffering = buffering);
+    if (m_state != QMediaPlayer::StoppedState) {
+        emit mediaStatusChanged(m_status = buffering
+                ? QMediaPlayer::BufferingMedia
+                : QMediaPlayer::BufferedMedia);
+    }
 }
 
 void QWmpPlayerControl::currentItemChangeEvent(IDispatch *dispatch)

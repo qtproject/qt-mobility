@@ -60,6 +60,7 @@ public:
     ~QPhononPlayerControl();
 
     QMediaPlayer::State state() const;
+    QMediaPlayer::MediaStatus mediaStatus() const;
 
     qint64 position() const;
     qint64 duration() const;
@@ -108,6 +109,7 @@ private:
     Phonon::AudioOutput *m_audioOutput;
     QMediaPlaylistNavigator *m_navigator;
     QMediaPlayer::State m_state;
+    QMediaPlayer::MediaStatus m_mediaStatus;
 };
 
 #endif

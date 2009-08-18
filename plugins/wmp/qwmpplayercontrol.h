@@ -51,7 +51,7 @@ public:
     ~QWmpPlayerControl();
 
     QMediaPlayer::State state() const;
-    void setState(QMediaPlayer::State state);
+    QMediaPlayer::MediaStatus mediaStatus() const;
 
     QMediaPlaylist* mediaPlaylist() const;
     bool setMediaPlaylist(QMediaPlaylist *playlist);
@@ -114,7 +114,7 @@ private:
     QMediaPlaylist *m_proxiedPlaylist;
     IWMPPlaylist *m_proxyPlaylist;
     QMediaPlayer::State m_state;
-    int m_status;
+    QMediaPlayer::MediaStatus m_status;
     qint64 m_duration;
     bool m_buffering;
     bool m_videoAvailable;

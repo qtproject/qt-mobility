@@ -40,7 +40,10 @@
 #include <QtCore/qdebug.h>
 
 QPhononPlayerControl::QPhononPlayerControl(Phonon::MediaObject *session, QObject *parent)
-   :QMediaPlayerControl(parent), m_session(session), m_state(QMediaPlayer::StoppedState)
+   : QMediaPlayerControl(parent)
+   , m_session(session)
+   , m_state(QMediaPlayer::StoppedState)
+   , m_mediaStatus(QMediaPlayer::NoMedia)
 {
     QMediaPlaylist *playlist = new QMediaPlaylist(0,this);
     m_navigator = new QMediaPlaylistNavigator(playlist,this);
@@ -99,6 +102,11 @@ qint64 QPhononPlayerControl::duration() const
 QMediaPlayer::State QPhononPlayerControl::state() const
 {
     return m_state;
+}
+
+QMediaPlayer::MediaStatus QPhononPlayerControl::mediaStatus() const
+{
+    return m_mediaStatus;
 }
 
 int QPhononPlayerControl::bufferStatus() const
@@ -230,29 +238,33 @@ void QPhononPlayerControl::updateState(Phonon::State newState, Phonon::State old
     case Phonon::LoadingState:
         break;
     case Phonon::StoppedState:
-        if (m_state != QMediaPlayer::StoppedState)
-            emit stateChanged(m_state = QMediaPlayer::StoppedState);
+        m_mediaStatus = m_session->currentSource().type() != Phonon::MediaSource::Invalid
+                ? QMediaPlayer::LoadedMedia
+                : QMediaPlayer::NoMedia;
+        emit stateChanged(m_state = QMediaPlayer::StoppedState);
+        emit mediaStatusChanged(m_mediaStatus);
         break;
     case Phonon::PlayingState:
-        if (m_state != QMediaPlayer::PlayingState)
-            emit stateChanged(m_state = QMediaPlayer::PlayingState);
+        m_mediaStatus = QMediaPlayer::BufferedMedia;
+        emit stateChanged(m_state = QMediaPlayer::PlayingState);
+        emit mediaStatusChanged(m_mediaStatus);
         break;
     case Phonon::PausedState:
-        if (m_state != QMediaPlayer::PausedState)
-            emit stateChanged(m_state = QMediaPlayer::PausedState);
+        m_mediaStatus = QMediaPlayer::BufferedMedia;
+        emit stateChanged(m_state = QMediaPlayer::PausedState);
+        emit mediaStatusChanged(m_mediaStatus);
         break;
     case Phonon::BufferingState:
-        emit bufferingChanged(true);
+        m_mediaStatus = QMediaPlayer::BufferingMedia;
+        if (oldState == Phonon::StoppedState)
+            emit stateChanged(m_state = QMediaPlayer::PlayingState);
+        emit mediaStatusChanged(m_mediaStatus);
         break;
     case Phonon::ErrorState:
         if (m_session->errorType() == Phonon::FatalError && m_state != QMediaPlayer::StoppedState)
             emit stateChanged(m_state = QMediaPlayer::StoppedState);
         break;
-
     }
-
-    if (oldState == Phonon::BufferingState)
-        emit bufferingChanged(false);
 }
 
 void QPhononPlayerControl::updateVolume()
