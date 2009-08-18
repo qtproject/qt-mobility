@@ -1,7 +1,6 @@
 /****************************************************************************
 **
 ** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
-**
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the QtMultimedia module of the Qt Toolkit.
@@ -27,7 +26,7 @@
 ** package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://www.qtsoftware.com/contact.
+** Nokia at http://qt.nokia.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
