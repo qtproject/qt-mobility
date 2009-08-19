@@ -20,6 +20,7 @@
 #include <QtTracker/Tracker>
 #include <QtTracker/ontologies/nco.h>
 #include <QtTracker/ontologies/nie.h>
+#include <QtTracker/ontologies/nao.h>
 #include <QRegExp>
 
 #include "tracker2qcontact.h"
@@ -145,15 +146,13 @@ QList<QUniqueId> QContactTrackerEngine::contacts(const QContactFilter& filter, c
         RDFVariable rdfContact = RDFVariable::fromType<nco::PersonContact>();
         // Added since
         if (clFilter.changeType() == QContactChangeLogFilter::Added) {
+            rdfContact.property<nao::hasTag>().property<nao::prefLabel>() = LiteralValue("addressbook");
             rdfContact.property<nie::contentCreated>() >= LiteralValue(clFilter.since().toString(Qt::ISODate));
         }
         // Changed since
         else if (clFilter.changeType() == QContactChangeLogFilter::Changed) {
+            rdfContact.property<nao::hasTag>().property<nao::prefLabel>() = LiteralValue("addressbook");
             rdfContact.property<nie::contentLastModified>() >= LiteralValue(clFilter.since().toString(Qt::ISODate));
-        }
-        // Removed since
-        else if (clFilter.changeType() == QContactChangeLogFilter::Removed) {
-            // TODO This information has to be stored and fetched outside tracker
         }
         RDFSelect query;
         query.addColumn("contact_uri", rdfContact);
@@ -252,6 +251,30 @@ bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
         ncoContact = ::tracker()->liveNode(QUrl("contact:"+QString::number(contact->id())));
         ncoContact->setContentLastModified(QDateTime::currentDateTime());
         contactsChanged << contact->id();
+    }
+
+    // Add a special tag for contact added from addressbook, not from fb, telepathy etc.
+    QString strTag = "addressbook";
+    RDFVariable rdfContact = RDFVariable::fromType<nco::PersonContact>();
+    RDFVariable rdfTag = rdfContact.property<nao::hasTag>().property<nao::prefLabel>() = LiteralValue(strTag);
+    LiveNodeList uriList = ::tracker()->modelVariable(rdfTag);
+    if (!uriList.isEmpty()) {
+        qDebug() << QString("Failed to add \"%1\" tag").arg(strTag);
+    }
+    else {
+        RDFVariable tag = RDFVariable::fromType<nao::Tag>();
+        tag.property<nao::prefLabel>() = LiteralValue(strTag);
+        LiveNodeList tagList = ::tracker()->modelVariable(tag);
+        Live<nao::Tag> newTag;
+        if (tagList.isEmpty()) {
+            newTag = ::tracker()->createLiveNode();
+            newTag->setPrefLabel(strTag);
+            ncoContact->addObject(nao::hasTag::iri(), newTag);
+        }
+        else {
+            newTag = tagList[0];
+            ncoContact->addObject(nao::hasTag::iri(), newTag);
+        }
     }
 
     // Iterate the contact details that are set for the contact. Save them.
