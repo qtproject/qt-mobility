@@ -11,6 +11,7 @@ SOURCES += qsysteminfo.cpp
 DEFINES += QT_BUILD_SYSINFO_LIB \
     QT_MAKEDLL
 win32 { 
+   QT+= network
     SOURCES += qsysteminfo_win.cpp \
     wmihelper.cpp
 

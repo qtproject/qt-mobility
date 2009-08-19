@@ -47,6 +47,9 @@
 #include <QDebug>
 #include <QSettings>
 #include <QSysInfo>
+#include <QNetworkInterface>
+#include <QList>
+
 
 #include <locale.h>
 //#include <windows.h>
@@ -286,32 +289,53 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         }
         break;
     case QSystemInfo::WlanFeature :
-        {
-            WMIHelper *wHelper;
-            wHelper = new WMIHelper();
-            QVariant v = wHelper->getWMIData("root/cimv2", "Win32_NetworkAdapter", "AdapterType");
-            qWarning() << v.toString();
-            if(v.toString() == "Wireless") {
-                featureSupported = true;
-            }
-//            qWarning() << "wlan";
-//            DWORD clientVersion;
-//            HANDLE handle;
-//            DWORD result = WlanOpenHandle(1, 0, &clientVersion, &handle);
-//            if (result == ERROR_SUCCESS) {
-//                WLAN_INTERFACE_INFO_LIST *interfaceList;
-//                DWORD result = WlanEnumInterfaces(handle, 0, &interfaceList);
-//                if (result == ERROR_SUCCESS) {
-//                    qWarning() << interfaceList->dwNumberOfItems;
-//                    if(interfaceList->dwNumberOfItems > 1) {
-//                        featureSupported = true;
-//                    }
-//                } else {
-//                    qWarning()  <<"2 not success" << result;
-//                }
-//            } else {
-//                qWarning() << "1 not success"<< result;
-//            }
+        {            
+            QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
+            if (interfaces.isEmpty())
+                interfaces = QNetworkInterface::allInterfaces();
+
+            while (!interfaces.isEmpty()) {
+                QNetworkInterface netInterface = interfaces.takeFirst();
+
+                if (!netInterface.isValid())
+                    continue;
+
+                if (netInterface.flags() & QNetworkInterface::IsLoopBack)
+                    continue;
+
+                unsigned long oid;
+                DWORD bytesWritten;
+
+                NDIS_MEDIUM medium;
+                NDIS_PHYSICAL_MEDIUM physicalMedium;
+
+                HANDLE handle = CreateFile((TCHAR *)QString("\\\\.\\%1").arg(netInterface.name()).utf16(), 0,
+                                           FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
+                if (handle == INVALID_HANDLE_VALUE)
+                    return  false;
+
+                oid = OID_GEN_MEDIA_SUPPORTED;
+                bytesWritten = 0;
+                bool result = DeviceIoControl(handle, IOCTL_NDIS_QUERY_GLOBAL_STATS, &oid, sizeof(oid),
+                                              &medium, sizeof(medium), &bytesWritten, 0);
+                if (!result) {
+                    CloseHandle(handle);
+                    return  false;
+                }
+                oid = OID_GEN_PHYSICAL_MEDIUM;
+                bytesWritten = 0;
+                result = DeviceIoControl(handle, IOCTL_NDIS_QUERY_GLOBAL_STATS, &oid, sizeof(oid),
+                                         &physicalMedium, sizeof(physicalMedium), &bytesWritten, 0);
+                if (!result) {
+                    CloseHandle(handle);
+                    if (medium == NdisMedium802_3) {
+                        if(physicalMedium ==   NdisPhysicalMediumWirelessLan) {
+                            featureSupported = true;
+                        }
+                    }
+                }
+            } //end while interfaces
+
         }
         break;
     case QSystemInfo::SimFeature :

@@ -108,6 +108,7 @@ QVariant WMIHelper::getWMIData(const QString &wmiNamespace, const QString &class
     while (wbemEnumerator) {
         HRESULT hr = wbemEnumerator->Next(WBEM_INFINITE, 1,&wbemCLassObject, &result);
         if(0 == result){
+            qWarning() << "resuilt == 0";
             break;
         }
 
@@ -119,6 +120,7 @@ QVariant WMIHelper::getWMIData(const QString &wmiNamespace, const QString &class
         case CIM_CHAR16:
             {
                 QString str((QChar*)msVariant.bstrVal, wcslen(msVariant.bstrVal));
+                qWarning() << str;
                 QVariant vs(str);
                 returnVariant = vs;
             }
@@ -126,6 +128,7 @@ QVariant WMIHelper::getWMIData(const QString &wmiNamespace, const QString &class
         case CIM_BOOLEAN:
             {
                 QVariant vb(msVariant.boolVal);
+                qWarning() << vb.toBool();
                 returnVariant = vb;
             }
             break;
@@ -138,6 +141,7 @@ QVariant WMIHelper::getWMIData(const QString &wmiNamespace, const QString &class
             case CIM_UINT16:
             {
                 QVariant vb(msVariant.uintVal);
+                qWarning() << vb.toUInt();
                 returnVariant = vb;
             }
             case CIM_UINT32:
