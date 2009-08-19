@@ -63,7 +63,7 @@ public:
     QString errorString;
 
     void _q_stateChanged(QMediaPlayer::State state);
-    void _q_mediaStatusChanged(int status);
+    void _q_mediaStatusChanged(QMediaPlayer::MediaStatus status);
     void _q_error(int error, const QString &errorString);
 };
 
@@ -79,7 +79,7 @@ void QMediaPlayerPrivate::_q_stateChanged(QMediaPlayer::State ps)
     emit q->stateChanged(ps);
 }
 
-void QMediaPlayerPrivate::_q_mediaStatusChanged(int status)
+void QMediaPlayerPrivate::_q_mediaStatusChanged(QMediaPlayer::MediaStatus status)
 {
     Q_Q(QMediaPlayer);
 
@@ -92,7 +92,7 @@ void QMediaPlayerPrivate::_q_mediaStatusChanged(int status)
         q->removePropertyWatch("bufferStatus");
         break;
     }
-    emit q->mediaStatusChanged(QMediaPlayer::MediaStatus(status));
+    emit q->mediaStatusChanged(status);
 }
 
 void QMediaPlayerPrivate::_q_error(int error, const QString &errorString)
@@ -120,12 +120,12 @@ QMediaPlayer::QMediaPlayer(QMediaPlayerService *service, QObject *parent):
     d->service = service;
     d->control = qobject_cast<QMediaPlayerControl *>(service->control(QMediaPlayerControl_iid));
 
-    connect(d->control, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(_q_stateChanged(QMediaPlayer::State)));
-    connect(d->control, SIGNAL(mediaStatusChanged(int)), SLOT(_q_mediaStatusChanged(int)));
+    connect(d->control, SIGNAL(stateChanged(QMediaPlayer::State)),
+            SLOT(_q_stateChanged(QMediaPlayer::State)));
+    connect(d->control, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
+            SLOT(_q_mediaStatusChanged(QMediaPlayer::MediaStatus)));
     connect(d->control, SIGNAL(error(int,QString)), this, SLOT(_q_error(int,QString)));
-    connect(d->control, SIGNAL(bufferingChanged(bool)), this, SLOT(_q_bufferingChanged(bool)));
 
-    connect(d->control, SIGNAL(bufferingChanged(bool)), SIGNAL(bufferingChanged(bool)));
     connect(d->control, SIGNAL(playlistPositionChanged(int)),SIGNAL(playlistPositionChanged(int)));
     connect(d->control, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
     connect(d->control, SIGNAL(videoAvailabilityChanged(bool)), SIGNAL(videoAvailabilityChanged(bool)));
