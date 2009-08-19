@@ -1,19 +1,17 @@
-include(../../../common.pri)
-
 TEMPLATE = app
 TARGET = tst_qmessagestore
-target.path += $$TESTS_INSTALL_ROOT
-INSTALLS += target
 
 CONFIG += testcase
 QT += testlib
 
+include(../../../common.pri)
+
 # Build against the messaging library
-INCLUDEPATH += $$_PRO_FILE_PWD_/../../../messaging
-LIBS += -L$$OUT_PWD/../../../messaging/$$CONFIGMODE -lQtMessaging
+INCLUDEPATH += $$SOURCE_DIR/messaging
+LIBS += -lQtMessaging
 
 # Link against the test support library
-LIBS += -L../support/$$CONFIGMODE -lsupport
+LIBS += -lsupport
 
 symbian|win32 {
 } else {

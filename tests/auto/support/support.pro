@@ -1,30 +1,26 @@
-include(../../../common.pri)
-
 TEMPLATE = lib
 TARGET = support
-target.path += $$LIBRARIES_INSTALL_ROOT
-INSTALLS += target
+
+include(../../../common.pri)
+
+INCLUDEPATH += ../../../messaging
+
+LIBS += -lQtMessaging
 
 HEADERS += \
     support.h
 
-
-INCLUDEPATH += ../../../messaging
-
-
-LIBS += -L$$(OUT_PWD)../../../messaging/$$CONFIGMODE -lQtMessaging
-
 symbian|win32 {
-symbian {
-SOURCES += \
-    support_symbian.cpp
-}
-win32 {
-    DEFINES += QT_BUILD_MESSAGING_LIB
-    !static:DEFINES += QT_MAKEDLL
-    SOURCES += \
-        support_win.cpp
-}
+    symbian {
+        SOURCES += \
+            support_symbian.cpp
+    }
+    win32 {
+        DEFINES += QT_BUILD_MESSAGING_LIB
+        !static:DEFINES += QT_MAKEDLL
+        SOURCES += \
+            support_win.cpp
+    }
 } else {
     # QMF headers must be located at $QMF_INCLUDEDIR
     INCLUDEPATH += $$(QMF_INCLUDEDIR) $$(QMF_INCLUDEDIR)/support

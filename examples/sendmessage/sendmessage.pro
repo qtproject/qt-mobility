@@ -1,23 +1,18 @@
-include(../../common.pri)
-
 TEMPLATE = app
 TARGET = sendmessage
-target.path += $$EXAMPLES_INSTALL_ROOT
-INSTALLS += target
 
 QT += gui
 
+include(../../common.pri)
+
 # Build against the messaging library
-INCLUDEPATH += $$_PRO_FILE_PWD_/../../messaging
-LIBS += -L$$OUT_PWD/../../messaging/$$CONFIGMODE -lQtMessaging
+INCLUDEPATH += $$SOURCE_DIR/messaging
+LIBS += -lQtMessaging
 
 symbian|win32 {
 } else {
 # Temporarily link against local qtopiamail lib (should be part of the platform)
 LIBS += -L $$(QMF_LIBDIR) -lqtopiamail
-
-
-DEFINES += SRCDIR=\\\"$$_PRO_FILE_PWD_\\\"
 }
 
 HEADERS += \
