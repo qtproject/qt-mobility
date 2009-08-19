@@ -30,6 +30,8 @@ CONFIG(debug, debug|release) {
 ## memory / invalid / symbian / windows / vcard / kabc etc.
 CONTACTS_BACKENDS = memory invalid
 
+symbian:CONTACTS_BACKENDS += symbians60
+
 # Figure out the root of where stuff should go (this could be done via configure)
 OUTPUT_DIR = $$PWD
 SOURCE_DIR = $$PWD
@@ -60,11 +62,12 @@ SOURCE_DIR = $$PWD
     DESTDIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin
     MOC_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/moc
     RCC_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/rcc
-    INCLUDEPATH *= $$MOC_DIR
-    INCLUDEPATH *= $$RCC_DIR
 
     LIBS += -L$$OUTPUT_DIR/build/$$SUBDIRPART/bin  #link against library that we test
 }
+
+INCLUDEPATH *= $$MOC_DIR
+INCLUDEPATH *= $$RCC_DIR
 
 # Add files for deployment
 wince {
@@ -72,9 +75,9 @@ wince {
     CONTACTS_DEPLOYMENT.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/QtContacts.dll
     CONTACTS_DEPLOYMENT.path = /Windows
 
-    # Plugins (app local currently)
+    # Plugins
     CONTACTS_PLUGINS_DEPLOYMENT.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/plugins/*.dll
-    CONTACTS_PLUGINS_DEPLOYMENT.path = ./plugins
+    CONTACTS_PLUGINS_DEPLOYMENT.path = /resource/qt/plugins/contacts
 
     DEPLOYMENT += CONTACTS_DEPLOYMENT CONTACTS_PLUGINS_DEPLOYMENT
 }
@@ -83,11 +86,8 @@ symbian {
     CONTACTS_DEPLOYMENT.sources = QtContacts.dll
     CONTACTS_DEPLOYMENT.path = \sys\bin
 
-    # Engine plugins
-    CONTACTS_PLUGINS_DEPLOYMENT.sources = contacts_*.dll
-    CONTACTS_PLUGINS_DEPLOYMENT.path = \resource\qtmobility\plugins\contacts
-
-    DEPLOYMENT += CONTACTS_DEPLOYMENT CONTACTS_PLUGINS_DEPLOYMENT
+    # Engine plugins should be installed in their own .pro
+    DEPLOYMENT += CONTACTS_DEPLOYMENT
 }
 
 # Add the output dirs to the link path too

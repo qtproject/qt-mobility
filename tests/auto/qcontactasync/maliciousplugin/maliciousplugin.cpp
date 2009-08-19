@@ -45,6 +45,7 @@
 
 class MaliciousAsyncManagerEngine : public QContactManagerEngine
 {
+    Q_OBJECT
 public:
     MaliciousAsyncManagerEngine() : QContactManagerEngine() {}
     void deref() {} // leak?
