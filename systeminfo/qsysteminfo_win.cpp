@@ -189,23 +189,23 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
             if(BluetoothFindFirstRadio(&radioParams, &radio) != NULL) {
                 qWarning() << "available";
                 featureSupported = true;
+                BluetoothFindRadioClose(radio);
             } else {
+
                 qWarning() << "Not available" << GetLastError();
             }
         }
             break;
         case QSystemInfo::CameraFeature :
         {
-            ICreateDevEnum *pDevEnum = NULL;
-            IEnumMoniker *pEnum = NULL;
+            ICreateDevEnum *devEnum = NULL;
+            IEnumMoniker *monikerEnum = NULL;
 
             HRESULT hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL,
                                           CLSCTX_INPROC_SERVER, IID_ICreateDevEnum,
-                                          reinterpret_cast<void**>(&pDevEnum));
+                                          reinterpret_cast<void**>(&devEnum));
             if (hr == S_OK) {
-                hr = pDevEnum->CreateClassEnumerator(
-                        CLSID_VideoInputDeviceCategory,
-                        &pEnum, 0);
+                hr = devEnum->CreateClassEnumerator( CLSID_VideoInputDeviceCategory, &monikerEnum, 0);
                 if(hr != S_FALSE) {
                     qWarning() << "available";
                     featureSupported = true;
