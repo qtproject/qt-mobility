@@ -618,9 +618,10 @@ QList<StringPair> decomposeHeaders(const QString &headers)
 
     if (!headers.isEmpty()) {
         int lastIndex = 0;
-        int index = 0;
+        int index = -2;
 
         do {
+            index += 2;
             lastIndex = index;
 
             // Find CRLF not followed by whitespace
@@ -628,7 +629,6 @@ QList<StringPair> decomposeHeaders(const QString &headers)
             index = headers.indexOf(lineSeparator, lastIndex);
 
             QString line = headers.mid(lastIndex, (index == -1 ? -1 : (index - lastIndex)));
-            index += 2;
 
             // Split the current line
             QRegExp headerIdentifier("\\s*(\\w+)\\s*:");
