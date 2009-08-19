@@ -70,7 +70,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, playlistIOLoader,
   If source is null, internal local memory playlist source will be created.
   */
 QMediaPlaylist::QMediaPlaylist(QAbstractMediaObject *mediaObject, QObject *parent)
-    : QAbstractMediaObject(parent)
+    : QObject(parent)
     , d_ptr(new QMediaPlaylistPrivate)
 {
     Q_D(QMediaPlaylist);
@@ -103,22 +103,6 @@ QMediaPlaylist::QMediaPlaylist(QAbstractMediaObject *mediaObject, QObject *paren
 QMediaPlaylist::~QMediaPlaylist()
 {
     delete d_ptr;
-}
-
-/*!
-    \reimp
-*/
-QAbstractMediaService* QMediaPlaylist::service() const
-{
-    return d_func()->service;
-}
-
-/*!
-    \reimp
-*/
-bool QMediaPlaylist::isValid() const
-{
-    return d_func()->control != NULL;
 }
 
 /*!

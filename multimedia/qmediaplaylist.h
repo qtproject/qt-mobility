@@ -44,7 +44,7 @@
 class QMediaPlaylistSource;
 
 class QMediaPlaylistPrivate;
-class Q_MEDIA_EXPORT QMediaPlaylist : public QAbstractMediaObject
+class Q_MEDIA_EXPORT QMediaPlaylist : public QObject
 {
     Q_OBJECT
 
@@ -55,9 +55,6 @@ class Q_MEDIA_EXPORT QMediaPlaylist : public QAbstractMediaObject
 public:
     QMediaPlaylist(QAbstractMediaObject *mediaObject, QObject *parent = 0);
     virtual ~QMediaPlaylist();
-
-    QAbstractMediaService* service() const;
-    bool isValid() const;
 
     QMediaPlaylistProvider* playlistProvider() const;
     bool setPlaylistProvider(QMediaPlaylistProvider *playlist);
