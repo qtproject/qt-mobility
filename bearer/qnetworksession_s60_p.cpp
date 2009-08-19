@@ -204,7 +204,7 @@ QString QNetworkSessionPrivate::errorString() const
     case QNetworkSession::InvalidConfigurationError:
         return tr("The specified configuration cannot be used.");
     case QNetworkSession::RoamingError:
-        return tr("You went on a walkabout and got lost.");
+        return tr("Roaming was aborted or is not possible.");
     }
  
     return QString();
