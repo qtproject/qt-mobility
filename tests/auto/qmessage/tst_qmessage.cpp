@@ -108,11 +108,11 @@ void tst_QMessage::initTestCase()
     Support::clearMessageStore();
 
     {
-            Support::Parameters p;
-            p.insert("name", "testAccount");
+        Support::Parameters p;
+        p.insert("name", "testAccount");
 
-            testAccountId = Support::addAccount(p);
-            QVERIFY(testAccountId.isValid());
+        testAccountId = Support::addAccount(p);
+        QVERIFY(testAccountId.isValid());
     }
 
     {
@@ -209,28 +209,8 @@ void tst_QMessage::testFromTransmissionFormat()
     QFETCH(QByteArray, charset);
     QFETCH(QString, text);
 
-//TODO
-
-/*
     QString path(SRCDIR "/testdata/" + fileName);
     QMessage message(QMessage::fromTransmissionFormatFile(QMessage::Email, path));
-
-    Support::Parameters p;
-    p.insert("to", to);
-    p.insert("from", from);
-    p.insert("date", date);
-    p.insert("subject", subject);
-    p.insert("text", text);
-    p.insert("parentAccountName", testAccountName);
- 
-#ifdef QMESSAGING_OPTIONAL_FOLDER
-    p.insert("parentFolderPath", testFolder.path());
-#endif
-
-    QMessageId messageId(Support::addMessage(p));
-
-*/
-    QMessage message;
 
     QCOMPARE(message.to().first().recipient(), to);
     QCOMPARE(message.from().recipient(), from);
