@@ -11,8 +11,8 @@ INCLUDEPATH += $$SOURCE_DIR/contacts $$SOURCE_DIR/contacts/details $$SOURCE_DIR/
 
 LIBS += -lQtContacts
 
-# App local deployment
-symbian:QCONTACTMANAGER_PLUGINS_DEPLOY.sources = \
+
+TESTDLLS = \
     contacts_testdummy.dll \
     contacts_testotherdummy.dll \
     contacts_testdummycopy.dll \
@@ -20,8 +20,14 @@ symbian:QCONTACTMANAGER_PLUGINS_DEPLOY.sources = \
     contacts_testdummyempty.dll \
     contacts_testdummymemory.dll
 
-wince:QCONTACTMANAGER_PLUGINS_DEPLOY.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/plugins/contact_test*.dll
+# App local deployment
+symbian|wince {
+    symbian:QCONTACTMANAGER_PLUGINS_DEPLOY.sources = $$TESTDLLS
+    wince:QCONTACTMANAGER_PLUGINS_DEPLOY.sources = $$join(TESTDLLS, " ", "$$OUTPUT_DIR/build/$$SUBDIRPART/bin/plugins/")
+    QCONTACTMANAGER_PLUGINS_DEPLOY.path = ./plugins/contacts
+    DEPLOYMENT += QCONTACTMANAGER_PLUGINS_DEPLOY
+}
 
-QCONTACTMANAGER_PLUGINS_DEPLOY.path = ./plugins/contacts
+# all else, we need to copy and install the DLLs to the right place (in a subdir for this test)
 
-DEPLOYMENT += QCONTACTMANAGER_PLUGINS_DEPLOY
+

@@ -33,6 +33,7 @@
 
 #include <QtTest/QtTest>
 
+#include <QCoreApplication>
 #include "qtcontacts.h"
 
 //TESTED_CLASS=
@@ -84,6 +85,7 @@ tst_QContactAsync::~tst_QContactAsync()
 
 void tst_QContactAsync::init()
 {
+    QApplication::addLibraryPath(QApplication::applicationDirPath() + "/dummyplugin");
 }
 
 void tst_QContactAsync::cleanup()

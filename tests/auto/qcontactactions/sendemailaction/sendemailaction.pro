@@ -5,7 +5,7 @@
 ######################################################################
 
 TEMPLATE = lib
-CONFIG += plugin
+CONFIG += plugin testplugin
 TARGET = $$qtLibraryTarget(contacts_sendemailactionfactory)
 
 include(../../../../common.pri)

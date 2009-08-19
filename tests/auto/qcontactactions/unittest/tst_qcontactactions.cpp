@@ -110,7 +110,7 @@ void tst_QContactActions::cleanup()
 void tst_QContactActions::testSendEmail()
 {
     // set the correct path to look for plugins
-    QString path = QApplication::applicationDirPath() + "/dummyplugin/plugins/";
+    QString path = QApplication::applicationDirPath() + "/dummyplugin";
     QApplication::addLibraryPath(path);
 
     QContact c;

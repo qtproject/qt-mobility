@@ -38,15 +38,12 @@ SOURCE_DIR = $$PWD
 !testcase {
     # Normal library/plugin/example code
     OBJECTS_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET
-    !plugin {
+    !plugin:!testplugin {
         DESTDIR = $$OUTPUT_DIR/build/$$SUBDIRPART/bin
     } else {
         # This is where plugins get built
-        DESTDIR = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/plugins
-
-        # This is where we install to
-        target.path = $$[QT_INSTALL_PLUGINS]/contacts
-        INSTALLS += target
+        testplugin:DESTDIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/plugins/contacts
+        !testplugin:DESTDIR = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/plugins/contacts
 
         # And since we're a plugin, add the base lib path to the lib dirs
         LIBS += -L$$OUTPUT_DIR/build/$$SUBDIRPART/bin  #link against base dir as well
