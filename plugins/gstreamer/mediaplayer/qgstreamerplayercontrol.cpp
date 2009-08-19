@@ -50,18 +50,6 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent)
 QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *session, QObject *parent)
    :QMediaPlayerControl(parent), m_session(session)
 {
-    QMediaPlaylist *playlist = new QMediaPlaylist(0,this);
-    m_navigator = new QMediaPlaylistNavigator(playlist,this);
-    m_navigator->setPlaybackMode(QMediaPlaylistNavigator::Linear);
-
-    connect(m_navigator, SIGNAL(activated(QMediaResourceList)),
-            this, SLOT(play(QMediaResourceList)));
-    connect(m_navigator, SIGNAL(currentPositionChanged(int)),
-            this, SIGNAL(playlistPositionChanged(int)));
-
-    connect(m_session, SIGNAL(playbackFinished()),
-            m_navigator, SLOT(advance()));
-
     connect(m_session, SIGNAL(positionChanged(qint64)),
             this, SIGNAL(positionChanged(qint64)));
     connect(m_session, SIGNAL(durationChanged(qint64)),
@@ -72,8 +60,6 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *sessio
             this, SIGNAL(volumeChanged(int)));
     connect(m_session, SIGNAL(stateChanged(QMediaPlayer::State)),
             this, SIGNAL(stateChanged(QMediaPlayer::State)));
-    connect(m_session,SIGNAL(bufferingChanged(bool)),
-            this, SIGNAL(bufferingChanged(bool)));
     connect(m_session,SIGNAL(bufferingProgressChanged(int)),
             this, SIGNAL(bufferStatusChanged(int)));
     connect(m_session, SIGNAL(videoAvailabilityChanged(bool)),
@@ -84,11 +70,6 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *sessio
 
 QGstreamerPlayerControl::~QGstreamerPlayerControl()
 {
-}
-
-int QGstreamerPlayerControl::playlistPosition() const
-{
-    return m_navigator->currentPosition();
 }
 
 qint64 QGstreamerPlayerControl::position() const
@@ -135,21 +116,6 @@ void QGstreamerPlayerControl::setPlaybackRate(float rate)
 {
 }
 
-void QGstreamerPlayerControl::setPlaylistPosition(int playlistPosition)
-{
-    m_navigator->jump(playlistPosition);
-}
-
-void QGstreamerPlayerControl::advance()
-{
-    m_navigator->advance();
-}
-
-void QGstreamerPlayerControl::back()
-{
-    m_navigator->back();
-}
-
 void QGstreamerPlayerControl::setPosition(qint64 pos)
 {
     m_session->seek(pos);
@@ -180,31 +146,24 @@ void QGstreamerPlayerControl::setMuted(bool muted)
     m_session->setMuted(muted);
 }
 
-void QGstreamerPlayerControl::play(const QMediaResourceList &resources)
+QMediaResourceList QGstreamerPlayerControl::currentResources() const
 {
+    return m_currentResource;
+}
+
+void QGstreamerPlayerControl::setCurrentResources(const QMediaResourceList &resources)
+{
+    m_currentResource = resources;
+
     QUrl url;
 
     if (!resources.isEmpty())
         url = resources.first().uri();
 
-    if (url.isValid()) {
-        m_session->stop();
-        m_session->load(url);
-        m_session->play();
-    } else {
-        m_navigator->advance();
-    }
-}
+    m_session->stop();
+    m_session->load(url);
 
-QMediaPlaylist *QGstreamerPlayerControl::mediaPlaylist() const
-{
-    return m_navigator->playlist();
-}
-
-bool QGstreamerPlayerControl::setMediaPlaylist(QMediaPlaylist *playlist)
-{
-    m_navigator->setPlaylist(playlist);
-    return true;
+    emit currentResourcesChanged(m_currentResource);
 }
 
 void QGstreamerPlayerControl::setVideoOutput(QObject *output)

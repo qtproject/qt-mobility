@@ -38,6 +38,7 @@
 #include <QtGui/QWidget>
 
 #include "qmediaplayer.h"
+#include "qmediaplaylist.h"
 #include "qvideowidget.h"
 
 class QLabel;
@@ -83,6 +84,7 @@ private:
     void setStatusInfo(const QString &info);
 
     QMediaPlayer *player;
+    QMediaPlaylist *playlist;
     QMediaMetadata *metaData;
     QVideoWidget *videoWidget;
     QLabel *coverLabel;

@@ -35,7 +35,7 @@
 #ifndef QMEDIAPLAYLISTNAVIGATOR_H
 #define QMEDIAPLAYLISTNAVIGATOR_H
 
-#include "qmediaplaylist.h"
+#include "qmediaplaylistprovider.h"
 #include <QtCore/qobject.h>
 
 class QMediaPlaylistNavigatorPrivate;
@@ -51,11 +51,11 @@ class Q_MEDIA_EXPORT QMediaPlaylistNavigator : public QObject
 public:
     enum PlaybackMode { CurrentItemOnce, CurrentItemInLoop, Linear, Loop, Random };
 
-    QMediaPlaylistNavigator(QMediaPlaylist *playlist, QObject *parent = 0);
+    QMediaPlaylistNavigator(QMediaPlaylistProvider *playlist, QObject *parent = 0);
     virtual ~QMediaPlaylistNavigator();
 
-    QMediaPlaylist *playlist() const;
-    void setPlaylist(QMediaPlaylist *playlist);
+    QMediaPlaylistProvider *playlist() const;
+    void setPlaylist(QMediaPlaylistProvider *playlist);
 
     PlaybackMode playbackMode() const;
 

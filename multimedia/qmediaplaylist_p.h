@@ -46,44 +46,97 @@
 // We mean it.
 //
 
-#include "qmediaplaylist.h"
+#include <qmediaplaylist.h>
+#include <qmediaplaylistcontrol.h>
+#include <qmediaplayer.h>
+#include <qmediaplayercontrol.h>
+#include <qlocalmediaplaylistprovider.h>
 
-class QMediaPlaylistSource;
+class QMediaPlaylistControl;
+class QMediaPlaylistProvider;
 class QMediaPlaylistReader;
 class QMediaPlaylistWritter;
+class QMediaPlayerControl;
 
 class QMediaPlaylistPrivate
 {
     Q_DECLARE_PUBLIC(QMediaPlaylist)
 public:
     QMediaPlaylistPrivate()
-        : source(0)
-        , startPendingInsert(-1)
-        , endPendingInsert(-1)
-        , startPendingRemove(-1)
-        , endPendingRemove(-1)
+        : service(0)
+        , control(0)
     {
     }
 
     virtual ~QMediaPlaylistPrivate() {}
 
-    QMediaPlaylistSource *source;
+    QAbstractMediaService *service;
+    QMediaPlaylistControl *control;
 
-    int startPendingInsert;
-    int endPendingInsert;
-    int startPendingRemove;
-    int endPendingRemove;
+    QMediaPlaylistProvider *playlist() const { return control->playlistProvider(); }
 
     bool readItems(QMediaPlaylistReader *reader);
     bool writeItems(QMediaPlaylistWritter *writter);
 
-    void _q_itemsAboutToBeInserted(int start, int end);
-    void _q_itemsInserted();
-    void _q_itemsAboutToBeRemoved(int start, int end);
-    void _q_itemsRemoved();
-
     QMediaPlaylist *q_ptr;
+};
 
+
+class QLocalMediaPlaylistControl : public QMediaPlaylistControl
+{
+    Q_OBJECT
+public:
+    QLocalMediaPlaylistControl(QMediaPlayerControl *player, QObject *parent)
+        :QMediaPlaylistControl(parent), m_player(player)
+    {
+        QMediaPlaylistProvider *playlist = new QLocalMediaPlaylistProvider(this);
+        m_navigator = new QMediaPlaylistNavigator(playlist,this);
+        m_navigator->setPlaybackMode(QMediaPlaylistNavigator::Linear);
+
+        connect(m_navigator, SIGNAL(activated(QMediaResourceList)),
+                this, SLOT(play(QMediaResourceList)));
+
+        connect(m_navigator, SIGNAL(currentPositionChanged(int)),
+                this, SIGNAL(playlistPositionChanged(int)));
+
+        connect(m_player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
+                this, SLOT(checkForEOS()));
+
+    }
+
+    virtual ~QLocalMediaPlaylistControl() {};
+
+    QMediaPlaylistProvider* playlistProvider() const { return m_navigator->playlist(); }
+    bool setPlaylistProvider(QMediaPlaylistProvider *mediaPlaylist) { m_navigator->setPlaylist(mediaPlaylist); return true; }
+
+    int currentPosition() const { return m_navigator->currentPosition(); }
+    void setCurrentPosition(int position) { m_navigator->jump(position); }
+    int nextPosition(int steps) const { return m_navigator->nextPosition(steps); }
+    int previousPosition(int steps) const { return m_navigator->previousPosition(steps); }
+
+    void advance() { m_navigator->advance(); }
+    void back() { m_navigator->back(); }
+
+    QMediaPlaylistNavigator::PlaybackMode playbackMode() const { return m_navigator->playbackMode(); }
+    void setPlaybackMode(QMediaPlaylistNavigator::PlaybackMode mode) { m_navigator->setPlaybackMode(mode); }
+
+
+public slots:
+    void checkForEOS()
+    {
+        if (m_player->mediaStatus() == QMediaPlayer::EndOfMedia)
+            m_navigator->advance();
+    }
+
+    void play(const QMediaResourceList& resources)
+    {
+        m_player->setCurrentResources(resources);
+        m_player->play();
+    }
+
+private:
+    QMediaPlaylistNavigator *m_navigator;
+    QMediaPlayerControl *m_player;
 };
 
 

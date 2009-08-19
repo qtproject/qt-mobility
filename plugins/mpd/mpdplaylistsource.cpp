@@ -36,11 +36,11 @@
 
 #include "mpddaemon.h"
 #include "mpdplaylistsource.h"
-#include <qmediaplaylistsource_p.h>
+#include <qmediaplaylistprovider_p.h>
 
 
 
-class MpdPlaylistSourcePrivate : public QMediaPlaylistSourcePrivate
+class MpdPlaylistSourcePrivate : public QMediaPlaylistProviderPrivate
 {
 public:
     int entries;
@@ -48,7 +48,7 @@ public:
 };
 
 MpdPlaylistSource::MpdPlaylistSource(MpdDaemon *daemon, QObject *parent):
-    QMediaPlaylistSource(*new MpdPlaylistSourcePrivate, parent)
+    QMediaPlaylistProvider(*new MpdPlaylistSourcePrivate, parent)
 {
     Q_D(MpdPlaylistSource);
 
@@ -151,7 +151,7 @@ void MpdPlaylistSource::loadPlaylist()
     if (ok) {
         d->entries = r.size();
         emit itemsAboutToBeInserted(0, d->entries);
-        emit itemsInserted();
+        emit itemsInserted(0, d->entries);
     }
     else
         d->entries = 0;

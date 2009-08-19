@@ -35,19 +35,42 @@
 #ifndef QMEDIAPLAYLIST_H
 #define QMEDIAPLAYLIST_H
 
-#include "qmediaresource.h"
+#include <qmediaresource.h>
+#include <qabstractmediaobject.h>
+#include <qmediaplaylistnavigator.h>
 
 #include <QtCore/qobject.h>
 
 class QMediaPlaylistSource;
 
 class QMediaPlaylistPrivate;
-class Q_MEDIA_EXPORT QMediaPlaylist : public QObject
+class Q_MEDIA_EXPORT QMediaPlaylist : public QAbstractMediaObject
 {
     Q_OBJECT
+
+    Q_PROPERTY(QMediaPlaylistProvider* playlistProvider READ playlistProvider WRITE setPlaylistProvider NOTIFY playlistProviderChanged)
+    Q_PROPERTY(QMediaResourceList currentResources READ currentResources NOTIFY currentResourcesChanged)
+    Q_PROPERTY(int currentPosition READ currentPosition WRITE setCurrentPosition NOTIFY playlistPositionChanged)
+
 public:
-    QMediaPlaylist(QMediaPlaylistSource *playlistSource = 0, QObject *parent = 0);
+    QMediaPlaylist(QAbstractMediaObject *mediaObject, QObject *parent = 0);
     virtual ~QMediaPlaylist();
+
+    QAbstractMediaService* service() const;
+    bool isValid() const;
+
+    QMediaPlaylistProvider* playlistProvider() const;
+    bool setPlaylistProvider(QMediaPlaylistProvider *playlist);
+
+    QMediaPlaylistNavigator::PlaybackMode playbackMode() const;
+    void setPlaybackMode(QMediaPlaylistNavigator::PlaybackMode mode);
+
+    int currentPosition() const;
+    QMediaResource currentResource() const;
+    QMediaResourceList currentResources() const;
+
+    int nextPosition(int steps = 1) const;
+    int previousPosition(int steps = 1) const;
 
     QMediaResource resource(int index) const;
     QMediaResourceList resources(int position) const;
@@ -72,7 +95,18 @@ public:
 public Q_SLOTS:
     void shuffle();
 
+    void advance();
+    void back();
+
+    void setCurrentPosition(int position);
+
 Q_SIGNALS:
+    void playlistProviderChanged();
+
+    void playlistPositionChanged(int position);
+    void playbackModeChanged(QMediaPlaylistNavigator::PlaybackMode mode);
+    void currentResourcesChanged(const QMediaResourceList&);
+
     void itemsAboutToBeInserted(int start, int end);
     void itemsInserted(int start, int end);
     void itemsAboutToBeRemoved(int start, int end);
@@ -80,16 +114,10 @@ Q_SIGNALS:
     void itemsChanged(int start, int end);
 
 protected:
-    QMediaPlaylist(QMediaPlaylistPrivate &dd, QObject *parent);
 
     QMediaPlaylistPrivate *d_ptr;
 
 private:
-    Q_PRIVATE_SLOT(d_func(), void _q_itemsAboutToBeInserted(int start, int end));
-    Q_PRIVATE_SLOT(d_func(), void _q_itemsInserted());
-    Q_PRIVATE_SLOT(d_func(), void _q_itemsAboutToBeRemoved(int start, int end));
-    Q_PRIVATE_SLOT(d_func(), void _q_itemsRemoved());
-
     Q_DECLARE_PRIVATE(QMediaPlaylist)
 };
 

@@ -62,6 +62,9 @@ public:
     QMediaPlayer::State state() const;
     QMediaPlayer::MediaStatus mediaStatus() const;
 
+    QMediaResourceList currentResources() const;
+    void setCurrentResources(const QMediaResourceList &resources);
+
     qint64 position() const;
     qint64 duration() const;
 
@@ -72,9 +75,6 @@ public:
 
     int playlistPosition() const;
 
-    QMediaPlaylist *mediaPlaylist() const;
-    bool setMediaPlaylist(QMediaPlaylist *);
-
     bool isVideoAvailable() const;
 
     bool isSeekable() const;
@@ -83,10 +83,6 @@ public:
     void setPlaybackRate(float rate);
 
 public Q_SLOTS:
-    void setPlaylistPosition(int playlistPosition);
-    void advance();
-    void back();
-
     void setPosition(qint64 pos);
 
     void play();
@@ -100,16 +96,15 @@ signals:
     void positionChanged(qint64 position);
 
 private slots:
-    void play(const QMediaResourceList &resources);
     void updateState(Phonon::State newState, Phonon::State oldState);
     void updateVolume();
 
 private:
     Phonon::MediaObject *m_session;
     Phonon::AudioOutput *m_audioOutput;
-    QMediaPlaylistNavigator *m_navigator;
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_mediaStatus;
+    QMediaResourceList m_resources;
 };
 
 #endif

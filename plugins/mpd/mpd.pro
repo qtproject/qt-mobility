@@ -1,4 +1,3 @@
-
 TEMPLATE = lib
 CONFIG += plugin
 TARGET = mpd
@@ -15,6 +14,7 @@ INCLUDEPATH += ../../multimedia ../../multimedia/endpoints
 HEADERS = \
     mpddaemon.h \
     mpdplayercontrol.h \
+    mpdplaylistcontrol.h \
     mpdplayerservice.h \
     mpdserviceplugin.h \
     mpdplaylistsource.h \
@@ -23,6 +23,7 @@ HEADERS = \
 SOURCES = \
     mpddaemon.cpp \
     mpdplayercontrol.cpp \
+    mpdplaylistcontrol.cpp \
     mpdplayerservice.cpp \
     mpdserviceplugin.cpp \
     mpdplaylistsource.cpp \

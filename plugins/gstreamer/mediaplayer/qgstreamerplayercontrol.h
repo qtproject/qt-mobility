@@ -66,11 +66,6 @@ public:
     int volume() const;
     bool isMuted() const;
 
-    int playlistPosition() const;
-
-    QMediaPlaylist *mediaPlaylist() const;
-    bool setMediaPlaylist(QMediaPlaylist *);
-
     bool isVideoAvailable() const;
     void setVideoOutput(QObject *output);
 
@@ -79,11 +74,10 @@ public:
     float playbackRate() const;
     void setPlaybackRate(float rate);
 
-public Q_SLOTS:
-    void setPlaylistPosition(int playlistPosition);
-    void advance();
-    void back();
+    QMediaResourceList currentResources() const;
+    void setCurrentResources(const QMediaResourceList&);
 
+public Q_SLOTS:
     void setPosition(qint64 pos);
 
     void play();
@@ -96,12 +90,9 @@ public Q_SLOTS:
 signals:
     void positionChanged(qint64 position);
 
-private slots:
-    void play(const QMediaResourceList &);
-
 private:
     QGstreamerPlayerSession *m_session;
-    QMediaPlaylistNavigator *m_navigator;
+    QMediaResourceList m_currentResource;
 };
 
 #endif

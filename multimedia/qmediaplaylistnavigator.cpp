@@ -33,22 +33,22 @@
 ****************************************************************************/
 
 #include "qmediaplaylistnavigator.h"
-#include "qmediaplaylistsource.h"
+#include "qmediaplaylistprovider.h"
 #include "qmediaplaylist.h"
 
 #include <QtCore/private/qobject_p.h>
 #include <QtCore/qdebug.h>
 
-class QMediaPlaylistNullSource : public QMediaPlaylistSource
+class QMediaPlaylistNullProvider : public QMediaPlaylistProvider
 {
 public:
-    QMediaPlaylistNullSource() :QMediaPlaylistSource() {}
-    virtual ~QMediaPlaylistNullSource() {}
+    QMediaPlaylistNullProvider() :QMediaPlaylistProvider() {}
+    virtual ~QMediaPlaylistNullProvider() {}
     virtual int size() const {return 0;}
     virtual QMediaResourceList resources(int) const { return QMediaResourceList(); }
 };
 
-Q_GLOBAL_STATIC_WITH_ARGS(QMediaPlaylist, _q_nullMediaPlaylist, (new QMediaPlaylistNullSource))
+Q_GLOBAL_STATIC(QMediaPlaylistNullProvider, _q_nullMediaPlaylist)
 
 class QMediaPlaylistNavigatorPrivate
 {
@@ -62,7 +62,7 @@ public:
     {
     }
 
-    QMediaPlaylist *playlist;
+    QMediaPlaylistProvider *playlist;
     int currentPos;
     QMediaPlaylistNavigator::PlaybackMode playbackMode;
     QMediaResourceList currentItem;
@@ -76,7 +76,7 @@ public:
     void _q_itemsInserted(int start, int end);
     void _q_itemsRemoved(int start, int end);
     void _q_itemsChanged(int start, int end);
-    
+
     QMediaPlaylistNavigator *q_ptr;
 };
 
@@ -205,7 +205,7 @@ enum QMediaPlaylistNavigator::PlaybackMode
 /*!
   Create a new \a playlist navigator object.
   */
-QMediaPlaylistNavigator::QMediaPlaylistNavigator(QMediaPlaylist *playlist, QObject *parent)
+QMediaPlaylistNavigator::QMediaPlaylistNavigator(QMediaPlaylistProvider *playlist, QObject *parent)
     : QObject(parent)
     , d_ptr(new QMediaPlaylistNavigatorPrivate)
 {
@@ -252,12 +252,12 @@ void QMediaPlaylistNavigator::setPlaybackMode(QMediaPlaylistNavigator::PlaybackM
     emit surroundingItemsChanged();
 }
 
-QMediaPlaylist *QMediaPlaylistNavigator::playlist() const
+QMediaPlaylistProvider *QMediaPlaylistNavigator::playlist() const
 {
     return d_func()->playlist;
 }
 
-void QMediaPlaylistNavigator::setPlaylist(QMediaPlaylist *playlist)
+void QMediaPlaylistNavigator::setPlaylist(QMediaPlaylistProvider *playlist)
 {
     Q_D(QMediaPlaylistNavigator);
 

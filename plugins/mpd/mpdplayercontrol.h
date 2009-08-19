@@ -50,16 +50,13 @@ public:
 
     QMediaPlayer::State state() const;
 
-    QMediaPlaylist* mediaPlaylist() const;
-    bool setMediaPlaylist(QMediaPlaylist *mediaPlaylist);
+    QMediaResourceList currentResources() const;
+    void setCurrentResources(const QMediaResourceList &resources);
 
     qint64 duration() const;
 
     qint64 position() const;
     void setPosition(qint64);
-
-    int playlistPosition() const;
-    void setPlaylistPosition(int position);
 
     int volume() const;
     void setVolume(int volume);
@@ -81,9 +78,6 @@ public:
     void play();
     void pause();
     void stop();
-
-    void advance();
-    void back();
 
 private slots:
     void notify();

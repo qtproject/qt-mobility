@@ -32,35 +32,56 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCALMEDIAPAYLISTSOURCE_H
-#define QLOCALMEDIAPAYLISTSOURCE_H
+#ifndef QMEDIAPLAYLISTPROVIDER_H
+#define QMEDIAPLAYLISTPROVIDER_H
 
-#include "qmediaplaylistsource.h"
+#include <QObject>
 
-class QLocalMediaPlaylistSourcePrivate;
-class Q_MEDIA_EXPORT QLocalMediaPlaylistSource : public QMediaPlaylistSource
+#include "qmediaresource.h"
+
+class QString;
+
+class QMediaPlaylistProviderPrivate;
+class Q_MEDIA_EXPORT QMediaPlaylistProvider : public QObject
 {
-    Q_OBJECT
+Q_OBJECT
 public:
-    QLocalMediaPlaylistSource(QObject *parent=0);
-    virtual ~QLocalMediaPlaylistSource();
+    QMediaPlaylistProvider(QObject *parent=0);
+    virtual ~QMediaPlaylistProvider();
 
-    virtual int size() const;
-    virtual QMediaResourceList resources(int pos) const;
+    virtual bool load(const QString &location, const char *format = 0);
+    virtual bool load(QIODevice * device, const char *format = 0);
+    virtual bool save(const QString &location, const char *format = 0);
+    virtual bool save(QIODevice * device, const char *format);
+
+    virtual int size() const = 0;
+    virtual QMediaResourceList resources(int index) const = 0;
 
     virtual bool isReadOnly() const;
 
-    virtual bool appendItem(const QMediaResourceList &resources);
-    virtual bool insert(int pos, const QMediaResourceList &resources);
-    virtual bool remove(int pos);
-    virtual bool remove(int start, int end);
+    virtual bool appendItem(const QMediaResourceList &resource);
+    virtual bool insertItem(int index, const QMediaResourceList &resources);
+    virtual bool removeItem(int pos);
+    virtual bool removeItems(int start, int end);
     virtual bool clear();
 
-public slots:
+public Q_SLOTS:
     virtual void shuffle();
 
+Q_SIGNALS:
+    void itemsAboutToBeInserted(int start, int end);
+    void itemsInserted(int start, int end);
+
+    void itemsAboutToBeRemoved(int start, int end);
+    void itemsRemoved(int start, int end);
+
+    void itemsChanged(int start, int end);
+
+protected:
+    QMediaPlaylistProvider(QMediaPlaylistProviderPrivate &dd, QObject *parent);
+
 private:
-    Q_DECLARE_PRIVATE(QLocalMediaPlaylistSource)
+    Q_DECLARE_PRIVATE(QMediaPlaylistProvider);
 };
 
-#endif // QLOCALMEDIAPAYLISTSOURCE_H
+#endif // QMEDIAPLAYLISTPROVIDER_H

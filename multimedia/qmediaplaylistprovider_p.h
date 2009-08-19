@@ -32,8 +32,8 @@
 **
 ****************************************************************************/
 
-#ifndef QMEDIAPLAYLISTSOURCE_P_H
-#define QMEDIAPLAYLISTSOURCE_P_H
+#ifndef QMEDIAPLAYLISTPROVIDER_P_H
+#define QMEDIAPLAYLISTPROVIDER_P_H
 
 //
 //  W A R N I N G
@@ -50,12 +50,12 @@
 
 #include <QtCore/private/qobject_p.h>
 
-class QMediaPlaylistSourcePrivate : public QObjectPrivate
+class QMediaPlaylistProviderPrivate : public QObjectPrivate
 {
 public:
-    QMediaPlaylistSourcePrivate()
+    QMediaPlaylistProviderPrivate()
     {}
-    virtual ~QMediaPlaylistSourcePrivate()
+    virtual ~QMediaPlaylistProviderPrivate()
     {}
 };
 

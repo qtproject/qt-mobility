@@ -55,10 +55,11 @@ Player::Player(QWidget *parent)
 {
     player = new QMediaPlayer;
     metaData = new QMediaMetadata(player);
+    playlist = new QMediaPlaylist(player);
 
     connect(player, SIGNAL(durationChanged(qint64)), SLOT(durationChanged(qint64)));
     connect(player, SIGNAL(positionChanged(qint64)), SLOT(positionChanged(qint64)));
-    connect(player, SIGNAL(playlistPositionChanged(int)), SLOT(playlistPositionChanged(int)));
+    connect(playlist, SIGNAL(positionChanged(int)), SLOT(playlistPositionChanged(int)));
     connect(metaData, SIGNAL(metadataChanged()), SLOT(metadataChanged()));
     connect(player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
             this, SLOT(statusChanged(QMediaPlayer::MediaStatus)));
@@ -80,11 +81,11 @@ Player::Player(QWidget *parent)
     }
 #endif
     playlistModel = new PlaylistModel(this);
-    playlistModel->setPlaylist(player->mediaPlaylist());
+    playlistModel->setPlaylist(playlist);
 
     playlistView = new QTableView;
     playlistView->setModel(playlistModel);
-    playlistView->setCurrentIndex(playlistModel->index(player->playlistPosition(), 0));
+    playlistView->setCurrentIndex(playlistModel->index(playlist->currentPosition(), 0));
 
     connect(playlistView, SIGNAL(activated(QModelIndex)), this, SLOT(jump(QModelIndex)));
 
@@ -105,8 +106,8 @@ Player::Player(QWidget *parent)
     connect(controls, SIGNAL(play()), player, SLOT(play()));
     connect(controls, SIGNAL(pause()), player, SLOT(pause()));
     connect(controls, SIGNAL(stop()), player, SLOT(stop()));
-    connect(controls, SIGNAL(next()), player, SLOT(advance()));
-    connect(controls, SIGNAL(previous()), player, SLOT(back()));
+    connect(controls, SIGNAL(next()), playlist, SLOT(advance()));
+    connect(controls, SIGNAL(previous()), playlist, SLOT(back()));
     connect(controls, SIGNAL(changeVolume(int)), player, SLOT(setVolume(int)));
     connect(controls, SIGNAL(changeMuting(bool)), player, SLOT(setMuted(bool)));
 
@@ -174,10 +175,10 @@ void Player::open()
 
     foreach (QString const &fileName, fileNames) {
 #ifndef Q_OS_WIN
-        player->mediaPlaylist()->appendItem(
+        playlist->appendItem(
                 QMediaResource(QUrl(QLatin1String("file://") + fileName)));
 #else
-        player->mediaPlaylist()->appendItem(
+        playlist->appendItem(
                 QMediaResource(QUrl(QLatin1String("file:///") + fileName)));
 #endif
     }
@@ -220,7 +221,7 @@ void Player::metadataChanged()
 void Player::jump(const QModelIndex &index)
 {
     if (index.isValid()) {
-        player->setPlaylistPosition(index.row());
+        playlist->setCurrentPosition(index.row());
     }
 }
 

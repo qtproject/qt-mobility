@@ -45,22 +45,10 @@ QPhononPlayerControl::QPhononPlayerControl(Phonon::MediaObject *session, QObject
    , m_state(QMediaPlayer::StoppedState)
    , m_mediaStatus(QMediaPlayer::NoMedia)
 {
-    QMediaPlaylist *playlist = new QMediaPlaylist(0,this);
-    m_navigator = new QMediaPlaylistNavigator(playlist,this);
-    m_navigator->setPlaybackMode(QMediaPlaylistNavigator::Linear);
-
     m_audioOutput = new Phonon::AudioOutput(Phonon::VideoCategory, this);
     Phonon::createPath(m_session, m_audioOutput);
 
     m_session->setTickInterval(1000);
-
-    connect(m_navigator, SIGNAL(activated(QMediaResourceList)),
-            this, SLOT(play(QMediaResourceList)));
-    connect(m_navigator, SIGNAL(currentPositionChanged(int)),
-            this, SIGNAL(playlistPositionChanged(int)));
-
-    connect(m_session, SIGNAL(finished()),
-            m_navigator, SLOT(advance()));
 
     connect(m_session, SIGNAL(tick(qint64)),
             this, SIGNAL(positionChanged(qint64)));
@@ -82,11 +70,6 @@ QPhononPlayerControl::QPhononPlayerControl(Phonon::MediaObject *session, QObject
 
 QPhononPlayerControl::~QPhononPlayerControl()
 {
-}
-
-int QPhononPlayerControl::playlistPosition() const
-{
-    return m_navigator->currentPosition();
 }
 
 qint64 QPhononPlayerControl::position() const
@@ -139,21 +122,6 @@ void QPhononPlayerControl::setPlaybackRate(float rate)
     Q_UNUSED(rate);
 }
 
-void QPhononPlayerControl::setPlaylistPosition(int playlistPosition)
-{
-    m_navigator->jump(playlistPosition);
-}
-
-void QPhononPlayerControl::advance()
-{
-    m_navigator->advance();
-}
-
-void QPhononPlayerControl::back()
-{
-    m_navigator->back();
-}
-
 void QPhononPlayerControl::setPosition(qint64 pos)
 {
     m_session->seek(pos);
@@ -200,31 +168,22 @@ void QPhononPlayerControl::setMuted(bool muted)
     m_audioOutput->setMuted(muted);
 }
 
-void QPhononPlayerControl::play(const QMediaResourceList &resources)
+QMediaResourceList QPhononPlayerControl::currentResources() const
 {
+    return m_resources;
+}
+
+void QPhononPlayerControl::setCurrentResources(const QMediaResourceList &resources)
+{
+    m_resources = resources;
+
     QUrl url;
 
     if (!resources.isEmpty())
         url = resources.first().uri();
 
-    if (url.isValid()) {
-        m_session->stop();
-        m_session->setCurrentSource(url);
-        m_session->play();
-    } else {
-        m_navigator->advance();
-    }
-}
-
-QMediaPlaylist *QPhononPlayerControl::mediaPlaylist() const
-{
-    return m_navigator->playlist();
-}
-
-bool QPhononPlayerControl::setMediaPlaylist(QMediaPlaylist *playlist)
-{
-    m_navigator->setPlaylist(playlist);
-    return true;
+    m_session->stop();
+    m_session->setCurrentSource(url);
 }
 
 bool QPhononPlayerControl::isVideoAvailable() const

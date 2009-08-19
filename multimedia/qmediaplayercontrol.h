@@ -51,16 +51,10 @@ public:
 
     virtual QMediaPlayer::MediaStatus mediaStatus() const /* = 0*/;
 
-    virtual QMediaPlaylist* mediaPlaylist() const = 0;
-    virtual bool setMediaPlaylist(QMediaPlaylist *mediaPlaylist) = 0;
-
     virtual qint64 duration() const = 0;
 
     virtual qint64 position() const = 0;
     virtual void setPosition(qint64 position) = 0;
-
-    virtual int playlistPosition() const = 0;
-    virtual void setPlaylistPosition(int position) = 0;
 
     virtual int volume() const = 0;
     virtual void setVolume(int volume) = 0;
@@ -77,18 +71,17 @@ public:
     virtual float playbackRate() const = 0;
     virtual void setPlaybackRate(float rate) = 0;
 
+    virtual QMediaResourceList currentResources() const = 0;
+    virtual void setCurrentResources(const QMediaResourceList &resources) = 0;
+
     virtual void play() = 0;
     virtual void pause() = 0;
     virtual void stop() = 0;
 
-    //playlist navigation
-    virtual void advance() = 0;
-    virtual void back() = 0;
-
 Q_SIGNALS:
+    void currentResourcesChanged(const QMediaResourceList& resources);
     void durationChanged(qint64 duration);
     void positionChanged(qint64 position);
-    void playlistPositionChanged(int position);
     void stateChanged(QMediaPlayer::State newState);
     void mediaStatusChanged(QMediaPlayer::MediaStatus status);
     void volumeChanged(int volume);
@@ -97,7 +90,6 @@ Q_SIGNALS:
     void bufferStatusChanged(int percentFilled);
     void seekableChanged(bool);
     void error(int error, const QString &errorString);
-
 
 protected:
     QMediaPlayerControl(QObject* parent);

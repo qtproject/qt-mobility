@@ -32,11 +32,11 @@
 **
 ****************************************************************************/
 
-#include "qmediaplaylistsource.h"
-#include "qmediaplaylistsource_p.h"
+#include "qmediaplaylistprovider.h"
+#include "qmediaplaylistprovider_p.h"
 
 /*!
-    \class QMediaPlaylistSource
+    \class QMediaPlaylistProvider
     \ingroup multimedia
 
     \preliminary
@@ -45,26 +45,26 @@
     \sa
 */
 
-QMediaPlaylistSource::QMediaPlaylistSource(QObject *parent)
-    :QObject(*new QMediaPlaylistSourcePrivate, parent)
+QMediaPlaylistProvider::QMediaPlaylistProvider(QObject *parent)
+    :QObject(*new QMediaPlaylistProviderPrivate, parent)
 {
 }
 
-QMediaPlaylistSource::QMediaPlaylistSource(QMediaPlaylistSourcePrivate &dd, QObject *parent)
+QMediaPlaylistProvider::QMediaPlaylistProvider(QMediaPlaylistProviderPrivate &dd, QObject *parent)
     :QObject(dd,parent)
 {
 }
 
-QMediaPlaylistSource::~QMediaPlaylistSource()
+QMediaPlaylistProvider::~QMediaPlaylistProvider()
 {
 }
 
 /*!
-    \fn QMediaPlaylistSource::size() const;
+    \fn QMediaPlaylistProvider::size() const;
 */
 
 /*!
-    \fn QMediaPlaylistSource::operator [](int pos) const;
+    \fn QMediaPlaylistProvider::operator [](int pos) const;
 */
 
 
@@ -74,12 +74,12 @@ QMediaPlaylistSource::~QMediaPlaylistSource()
 
   New items are appended to playlist.
 
-  QMediaPlaylist uses QMediaPlaylistSource to load/save playlists first,
+  QMediaPlaylist uses QMediaPlaylistProvider to load/save playlists first,
   than it tries available playlist I/O plugins.
 
   Returns true if playlist was loaded succesfully, otherwise returns false.
 */
-bool QMediaPlaylistSource::load(const QString &location, const char *format)
+bool QMediaPlaylistProvider::load(const QString &location, const char *format)
 {
     Q_UNUSED(location);
     Q_UNUSED(format);
@@ -94,7 +94,7 @@ bool QMediaPlaylistSource::load(const QString &location, const char *format)
 
   Returns true if playlist was loaded succesfully, otherwise returns false.
 */
-bool QMediaPlaylistSource::load(QIODevice * device, const char *format)
+bool QMediaPlaylistProvider::load(QIODevice * device, const char *format)
 {
     Q_UNUSED(device);
     Q_UNUSED(format);
@@ -107,7 +107,7 @@ bool QMediaPlaylistSource::load(QIODevice * device, const char *format)
 
   Returns true if playlist was saved succesfully, otherwise returns false.
   */
-bool QMediaPlaylistSource::save(const QString &location, const char *format)
+bool QMediaPlaylistProvider::save(const QString &location, const char *format)
 {
     Q_UNUSED(location);
     Q_UNUSED(format);
@@ -119,7 +119,7 @@ bool QMediaPlaylistSource::save(const QString &location, const char *format)
 
   Returns true if playlist was saved succesfully, otherwise returns false.
 */
-bool QMediaPlaylistSource::save(QIODevice * device, const char *format)
+bool QMediaPlaylistProvider::save(QIODevice * device, const char *format)
 {
     Q_UNUSED(device);
     Q_UNUSED(format);
@@ -129,17 +129,17 @@ bool QMediaPlaylistSource::save(QIODevice * device, const char *format)
 /*!
   Returns true if the playlist is read-only; otherwise returns false.
 */
-bool QMediaPlaylistSource::isReadOnly() const
+bool QMediaPlaylistProvider::isReadOnly() const
 {
     return true;
 }
 
 /*!
-  Append \a source to the playlist.  
+  Append \a source to the playlist.
 
   Returns true if the operation is successfull, other wise return false.
 */
-bool QMediaPlaylistSource::appendItem(const QMediaResourceList &resources)
+bool QMediaPlaylistProvider::appendItem(const QMediaResourceList &resources)
 {
     Q_UNUSED(resources);
     return false;
@@ -150,7 +150,7 @@ bool QMediaPlaylistSource::appendItem(const QMediaResourceList &resources)
 
   Returns true if the operation is successfull, other wise return false.
 */
-bool QMediaPlaylistSource::insertItem(int pos, const QMediaResourceList &resources)
+bool QMediaPlaylistProvider::insertItem(int pos, const QMediaResourceList &resources)
 {
     Q_UNUSED(pos);
     Q_UNUSED(resources);
@@ -162,7 +162,7 @@ bool QMediaPlaylistSource::insertItem(int pos, const QMediaResourceList &resourc
 
   Returns true if the operation is successfull, other wise return false.
 */
-bool QMediaPlaylistSource::removeItem(int pos)
+bool QMediaPlaylistProvider::removeItem(int pos)
 {
     Q_UNUSED(pos);
     return false;
@@ -173,7 +173,7 @@ bool QMediaPlaylistSource::removeItem(int pos)
 
   Returns true if the operation is successfull, other wise return false.
   */
-bool QMediaPlaylistSource::removeItems(int start, int end)
+bool QMediaPlaylistProvider::removeItems(int start, int end)
 {
     for (int pos=start; pos<=end; pos++) {
         if (!removeItem(pos))
@@ -188,7 +188,7 @@ bool QMediaPlaylistSource::removeItems(int start, int end)
 
   Returns true if the operation is successfull, other wise return false.
   */
-bool QMediaPlaylistSource::clear()
+bool QMediaPlaylistProvider::clear()
 {
     return removeItems(0, size()-1);
 }
@@ -196,6 +196,6 @@ bool QMediaPlaylistSource::clear()
 /*!
   Shuffle items in the playlist.
 */
-void QMediaPlaylistSource::shuffle()
+void QMediaPlaylistProvider::shuffle()
 {
 }

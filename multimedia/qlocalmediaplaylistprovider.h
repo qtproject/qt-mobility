@@ -32,45 +32,35 @@
 **
 ****************************************************************************/
 
+#ifndef QLOCALMEDIAPAYLISTPROVIDER_H
+#define QLOCALMEDIAPAYLISTPROVIDER_H
 
-#ifndef QMEDIAPLAYLISTCONTROL_H
-#define QMEDIAPLAYLISTCONTROL_H
+#include "qmediaplaylistprovider.h"
 
-#include "qabstractmediacontrol.h"
-#include "qmediaplaylistnavigator.h"
-class QMediaPlaylistProvider;
-
-class QMediaPlaylistControl : public QAbstractMediaControl
+class QLocalMediaPlaylistProviderPrivate;
+class Q_MEDIA_EXPORT QLocalMediaPlaylistProvider : public QMediaPlaylistProvider
 {
     Q_OBJECT
 public:
-    virtual ~QMediaPlaylistControl();
+    QLocalMediaPlaylistProvider(QObject *parent=0);
+    virtual ~QLocalMediaPlaylistProvider();
 
-    virtual QMediaPlaylistProvider* playlistProvider() const = 0;
-    virtual bool setPlaylistProvider(QMediaPlaylistProvider *playlist) = 0;
+    virtual int size() const;
+    virtual QMediaResourceList resources(int pos) const;
 
-    virtual int currentPosition() const = 0;
-    virtual void setCurrentPosition(int position) = 0;
-    virtual int nextPosition(int steps) const = 0;
-    virtual int previousPosition(int steps) const = 0;
+    virtual bool isReadOnly() const;
 
-    virtual void advance() = 0;
-    virtual void back() = 0;
+    virtual bool appendItem(const QMediaResourceList &resources);
+    virtual bool insert(int pos, const QMediaResourceList &resources);
+    virtual bool remove(int pos);
+    virtual bool remove(int start, int end);
+    virtual bool clear();
 
-    virtual QMediaPlaylistNavigator::PlaybackMode playbackMode() const = 0;
-    virtual void setPlaybackMode(QMediaPlaylistNavigator::PlaybackMode mode) = 0;
+public slots:
+    virtual void shuffle();
 
-Q_SIGNALS:
-    void playlistProviderChanged();
-    void playlistPositionChanged(int position);
-    void playbackModeChanged(QMediaPlaylistNavigator::PlaybackMode mode);
-
-protected:
-    QMediaPlaylistControl(QObject* parent);
+private:
+    Q_DECLARE_PRIVATE(QLocalMediaPlaylistProvider)
 };
 
-#define QMediaPlaylistControl_iid "com.nokia.qt.MediaPlaylistControl"
-Q_MEDIA_DECLARE_CONTROL(QMediaPlaylistControl, QMediaPlaylistControl_iid)
-
-
-#endif // QMEDIAPLAYLISTCONTROL_H
+#endif // QLOCALMEDIAPAYLISTSOURCE_H

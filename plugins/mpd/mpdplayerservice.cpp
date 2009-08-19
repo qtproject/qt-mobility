@@ -35,6 +35,7 @@
 #include "mpddaemon.h"
 #include "mpdmetadata.h"
 #include "mpdplayercontrol.h"
+#include "mpdplaylistcontrol.h"
 #include "mpdplayerservice.h"
 
 
@@ -46,6 +47,7 @@ MpdPlayerService::MpdPlayerService(QObject *parent):
     connect(daemon, SIGNAL(disconnected()), SLOT(disconnected()));
 
     playerControl = new MpdPlayerControl(daemon, this);
+    playlistControl = new MpdPlaylistControl(daemon, this);
     metadataControl = new MpdMetadata(daemon, this);
 }
 
@@ -57,6 +59,8 @@ QAbstractMediaControl* MpdPlayerService::control(const char *name) const
 {
     if (QLatin1String(name) == QMediaPlayerControl_iid)
         return playerControl;
+    else if (QLatin1String(name) == QMediaPlaylistControl_iid)
+        return playlistControl;
     else if (QLatin1String(name) == QMetadataProviderControl_iid)
         return metadataControl;
 

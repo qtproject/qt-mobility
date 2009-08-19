@@ -32,54 +32,44 @@
 **
 ****************************************************************************/
 
-#ifndef QMEDIAPLAYLISTSOURCE_H
-#define QMEDIAPLAYLISTSOURCE_H
+#ifndef MPDPLAYLISTCONTROL_H
+#define MPDPLAYLISTCONTROL_H
 
-#include <QObject>
+#include <qmediaplaylistcontrol.h>
 
-#include "qmediaresource.h"
 
-class QString;
+class MpdDaemon;
 
-class QMediaPlaylistSourcePrivate;
-class Q_MEDIA_EXPORT QMediaPlaylistSource : public QObject
+class MpdPlaylistControl : public QMediaPlaylistControl
 {
-Q_OBJECT
+    Q_OBJECT
+
 public:
-    QMediaPlaylistSource(QObject *parent=0);
-    virtual ~QMediaPlaylistSource();
+    MpdPlaylistControl(MpdDaemon *mpd, QObject *parent);
+    ~MpdPlaylistControl();
 
-    virtual bool load(const QString &location, const char *format = 0);
-    virtual bool load(QIODevice * device, const char *format = 0);
-    virtual bool save(const QString &location, const char *format = 0);
-    virtual bool save(QIODevice * device, const char *format);
+    QMediaPlaylistProvider* playlistProvider() const;
+    bool setPlaylistProvider(QMediaPlaylistProvider *mediaPlaylist);
 
-    virtual int size() const = 0;
-    virtual QMediaResourceList resources(int index) const = 0;
+    QMediaPlaylistNavigator::PlaybackMode playbackMode() const;
+    void setPlaybackMode(QMediaPlaylistNavigator::PlaybackMode mode);
 
-    virtual bool isReadOnly() const;
+    int currentPosition() const;
+    void setCurrentPosition(int position);
 
-    virtual bool appendItem(const QMediaResourceList &resource);
-    virtual bool insertItem(int index, const QMediaResourceList &resources);
-    virtual bool removeItem(int pos);
-    virtual bool removeItems(int start, int end);
-    virtual bool clear();
+    int nextPosition(int steps) const;
+    int previousPosition(int steps) const;
 
-public Q_SLOTS:
-    virtual void shuffle();
+    void advance();
+    void back();
 
-Q_SIGNALS:
-    void itemsAboutToBeInserted(int start, int end);
-    void itemsInserted();
-    void itemsAboutToBeRemoved(int start, int end);
-    void itemsRemoved();
-    void itemsChanged(int start, int end);
-
-protected:
-    QMediaPlaylistSource(QMediaPlaylistSourcePrivate &dd, QObject *parent);
+private slots:
+    void playlistItemChanged(int position);
 
 private:
-    Q_DECLARE_PRIVATE(QMediaPlaylistSource);
+    MpdDaemon *daemon;
+    QMediaPlaylistProvider *playlist;
+    int playlistPos;
 };
 
-#endif // QMEDIAPLAYLISTSOURCE_H
+#endif  // MPDPLAYLISTCONTROL_H

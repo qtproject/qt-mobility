@@ -36,13 +36,13 @@
 #define MPDPLAYLISTSOURCE_H
 
 
-#include <qmediaplaylistsource.h>
+#include <qmediaplaylistprovider.h>
 
 class MpdDaemon;
 
 
 class MpdPlaylistSourcePrivate;
-class MpdPlaylistSource : public QMediaPlaylistSource
+class MpdPlaylistSource : public QMediaPlaylistProvider
 {
     Q_OBJECT
 

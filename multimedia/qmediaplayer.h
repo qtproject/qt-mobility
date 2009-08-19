@@ -52,9 +52,7 @@ class Q_MEDIA_EXPORT QMediaPlayer : public QAbstractMediaObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QMediaPlaylist* mediaPlaylist READ mediaPlaylist WRITE setMediaPlaylist NOTIFY mediaPlaylistChanged)
     Q_PROPERTY(QMediaResourceList mediaResources READ currentMediaResources NOTIFY currentMediaResourcesChanged)
-    Q_PROPERTY(int playlistPosition READ playlistPosition WRITE setPlaylistPosition NOTIFY playlistPositionChanged)
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(qint64 position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
@@ -103,10 +101,6 @@ public:
 
     bool isValid() const;
 
-    QMediaPlaylist* mediaPlaylist() const;
-    bool setMediaPlaylist(QMediaPlaylist *mediaPlaylist);
-
-    int playlistPosition() const;
     QMediaResourceList currentMediaResources() const;
 
     qint64 duration() const;
@@ -141,15 +135,11 @@ public Q_SLOTS:
     void setVolume(int volume);
     void setMuted(bool muted);
 
-    void advance();
-    void back();
-    void setPlaylistPosition(int playListPosition);
     void setPlaybackRate(float rate);
 
 Q_SIGNALS:
     void durationChanged(qint64 duration);
     void positionChanged(qint64 position);
-    void playlistPositionChanged(int playlistPosition);
     void currentMediaResourcesChanged(const QMediaResourceList &resources);
     void stateChanged(QMediaPlayer::State newState);
     void volumeChanged(int volume);
@@ -169,7 +159,7 @@ private:
     Q_DISABLE_COPY(QMediaPlayer)
     Q_DECLARE_PRIVATE(QMediaPlayer)
     Q_PRIVATE_SLOT(d_func(), void _q_stateChanged(QMediaPlayer::State))
-    Q_PRIVATE_SLOT(d_func(), void _q_mediaStatusChanged(int))
+    Q_PRIVATE_SLOT(d_func(), void _q_mediaStatusChanged(QMediaPlayer::MediaStatus))
     Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &))
 };
 

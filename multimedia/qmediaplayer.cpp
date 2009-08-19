@@ -63,7 +63,7 @@ public:
     QString errorString;
 
     void _q_stateChanged(QMediaPlayer::State state);
-    void _q_mediaStatusChanged(int status);
+    void _q_mediaStatusChanged(QMediaPlayer::MediaStatus status);
     void _q_error(int error, const QString &errorString);
 };
 
@@ -79,7 +79,7 @@ void QMediaPlayerPrivate::_q_stateChanged(QMediaPlayer::State ps)
     emit q->stateChanged(ps);
 }
 
-void QMediaPlayerPrivate::_q_mediaStatusChanged(int status)
+void QMediaPlayerPrivate::_q_mediaStatusChanged(QMediaPlayer::MediaStatus status)
 {
     Q_Q(QMediaPlayer);
 
@@ -121,7 +121,7 @@ QMediaPlayer::QMediaPlayer(QMediaPlayerService *service, QObject *parent):
     d->control = qobject_cast<QMediaPlayerControl *>(service->control(QMediaPlayerControl_iid));
 
     connect(d->control, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(_q_stateChanged(QMediaPlayer::State)));
-    connect(d->control, SIGNAL(mediaStatusChanged(int)), SLOT(_q_mediaStatusChanged(int)));
+    connect(d->control, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), SLOT(_q_mediaStatusChanged(int)));
     connect(d->control, SIGNAL(error(int,QString)), this, SLOT(_q_error(int,QString)));
     connect(d->control, SIGNAL(bufferingChanged(bool)), this, SLOT(_q_bufferingChanged(bool)));
 
@@ -158,6 +158,12 @@ QMediaPlayer::~QMediaPlayer()
 bool QMediaPlayer::isValid() const
 {
     return d_func()->service;
+}
+
+
+QMediaResourceList QMediaPlayer::currentMediaResources() const
+{
+    return d_func()->control->currentResources();
 }
 
 /*!
@@ -204,44 +210,6 @@ QMediaPlayer::MediaStatus QMediaPlayer::mediaStatus() const
     return QMediaPlayer::MediaStatus(d_func()->control->mediaStatus());
 }
 
-
-/*!
-  Returns the playlist used by this media player.
-*/
-QMediaPlaylist* QMediaPlayer::mediaPlaylist() const
-{
-    return d_func()->control->mediaPlaylist();
-}
-
-/*!
-  Set the playlist of this media player to \a mediaPlaylist.
-
-  In many cases it is possible just to use the playlist
-  constructed by player, but sometimes replacing the whole
-  playlist allows to avoid copyting of all the items bettween playlists.
-
-  Returns true if player can use this passed playlist; otherwise returns false.
-*/
-bool QMediaPlayer::setMediaPlaylist(QMediaPlaylist *mediaPlaylist)
-{
-    return d_func()->control->setMediaPlaylist(mediaPlaylist);
-}
-
-/*!
-  Returns position of the current media source in the playlist.
-*/
-int QMediaPlayer::playlistPosition() const
-{
-    return d_func()->control->playlistPosition();
-}
-
-/*!
-  Returns the current media source.
-*/
-QMediaResourceList QMediaPlayer::currentMediaResources() const
-{
-    return mediaPlaylist()->resources(playlistPosition());
-}
 
 /*!
   Returns duration of currently played source in miliseconds.
@@ -417,36 +385,10 @@ void QMediaPlayer::setMuted(bool muted)
     d_func()->control->setMuted(muted);
 }
 
-/*!
-    Advance to the next media source in playlist.
-*/
-void QMediaPlayer::advance()
-{
-    d_func()->control->advance();
-}
-
-/*!
-    Return to the previous media source in playlist.
-*/
-void QMediaPlayer::back()
-{
-    d_func()->control->back();
-}
-
-/*!
-    Activate media source from playlist at position \a playlistPosition.
-*/
-
-void QMediaPlayer::setPlaylistPosition(int playlistPosition)
-{
-    d_func()->control->setPlaylistPosition(playlistPosition);
-}
-
 void QMediaPlayer::setPlaybackRate(float rate)
 {
     d_func()->control->setPlaybackRate(rate);
 }
-
 
 QMediaPlayerService* createMediaPlayerService(QMediaServiceProvider *provider)
 {

@@ -16,7 +16,7 @@ HEADERS = \
     qabstractmediaobject.h \
     qabstractmediaobject_p.h \
     qabstractmediaservice.h \
-    qlocalmediaplaylistsource.h \
+    qlocalmediaplaylistprovider.h \
     qmediaimageviewer.h \
     qmediametadata.h \
     qmetadataprovidercontrol.h \
@@ -27,7 +27,8 @@ HEADERS = \
     qmediaplaylist_p.h \
     qmediaplaylistnavigator.h \
     qmediaplaylistmodel.h \
-    qmediaplaylistsource.h \
+    qmediaplaylistprovider.h \
+    qmediaplaylistprovider_p.h \
     qmediaplaylistioplugin.h \
     qmediaproviderfactory_p.h \
     qmediaresource.h \
@@ -40,7 +41,7 @@ HEADERS = \
     qradioplayer.h \
     qradioservice.h \
     qradioplayercontrol.h \
-    qsharedmediaplaylist.h \
+#    qsharedmediaplaylist.h \
     qvideooutputcontrol.h \
     qvideowidget.h \
     qvideowindowcontrol.h \
@@ -59,7 +60,7 @@ HEADERS = \
 SOURCES = qabstractmediacontrol.cpp \
     qabstractmediaobject.cpp \
     qabstractmediaservice.cpp \
-    qlocalmediaplaylistsource.cpp \
+    qlocalmediaplaylistprovider.cpp \
     qmediaimageviewer.cpp \
     qmediametadata.cpp \
     qmetadataprovidercontrol.cpp \
@@ -70,7 +71,7 @@ SOURCES = qabstractmediacontrol.cpp \
     qmediaplaylistioplugin.cpp \
     qmediaplaylistnavigator.cpp \
     qmediaplaylistmodel.cpp \
-    qmediaplaylistsource.cpp \
+    qmediaplaylistprovider.cpp \
     qmediaproviderfactory.cpp \
     qmediarecorder.cpp \
     qmediarecordercontrol.cpp \
@@ -80,7 +81,7 @@ SOURCES = qabstractmediacontrol.cpp \
     qradioplayer.cpp \
     qradioservice.cpp \
     qradioplayercontrol.cpp \
-    qsharedmediaplaylist.cpp \
+#    qsharedmediaplaylist.cpp \
     qvideooutputcontrol.cpp \
     qvideowidget.cpp \
     qvideowindowcontrol.cpp \

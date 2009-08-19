@@ -39,6 +39,7 @@
 
 class MpdDaemon;
 class MpdPlayerControl;
+class MpdPlaylistControl;
 class MpdMetadata;
 
 class MpdPlayerService : public QMediaPlayerService
@@ -58,6 +59,7 @@ private slots:
 private:
     MpdDaemon *daemon;
     MpdPlayerControl *playerControl;
+    MpdPlaylistControl *playlistControl;
     MpdMetadata *metadataControl;
 };
 
