@@ -50,26 +50,14 @@
 #include <QNetworkInterface>
 #include <QList>
 
-
 #include <locale.h>
-//#include <windows.h>
 #include <Wlanapi.h>
 #include <Wtsapi32.h>
-// #include <afxwin.h>
-#include <initguid.h>
-#include <BatClass.h>
-#include <Setupapi.h>
-
-//#include <Dxva2.lib>
-#include <HighLevelMonitorConfigurationAPI.h>
-#include <Wbemidl.h>
 #include <Bthsdpdef.h>
 #include <BluetoothAPIs.h>
 #include <Dshow.h>
 #include <af_irda.h>
-//#include <mswsock.h>
 
-//#include <winsock2.h>
 #ifdef Q_OS_WINCE
 #include <vibrate.h>
 #include <Led_drvr.h>
@@ -331,11 +319,11 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
                     if (medium == NdisMedium802_3) {
                         if(physicalMedium ==   NdisPhysicalMediumWirelessLan) {
                             featureSupported = true;
+                            break;
                         }
                     }
                 }
             } //end while interfaces
-
         }
         break;
     case QSystemInfo::SimFeature :
