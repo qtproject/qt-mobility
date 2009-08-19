@@ -46,7 +46,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="name" fullname="QNetworkConfiguration::name" href="qnetworkconfiguration.html#name" location="qnetworkconfiguration.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="name() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QNetworkConfiguration::isValid" href="qnetworkconfiguration.html#isValid" location="qnetworkconfiguration.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QNetworkConfigurationManager" href="qnetworkconfigurationmanager.html" location="qnetworkconfigmanager.h" bases="QObject" module="QtNetwork">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QNetworkConfigurationManager" href="qnetworkconfigurationmanager.html" location="qnetworkconfigmanager.h" bases="" module="QtNetwork">
             <enum access="public" threadsafety="unspecified" status="commendable" name="CapabilityFlag" fullname="QNetworkConfigurationManager::CapabilityFlag" href="qnetworkconfigurationmanager.html#CapabilityFlag-enum" location="qnetworkconfigmanager.h" typedef="QNetworkConfigurationManager::CapabilityFlags">
                 <value name="BearerManagement" value="0x00000001"/>
                 <value name="DirectConnectionRouting" value="0x00000002"/>
@@ -83,7 +83,7 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="updateCompleted" fullname="QNetworkConfigurationManager::updateCompleted" href="qnetworkconfigurationmanager.html#updateCompleted" location="qnetworkconfigmanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="updateCompleted()"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QNetworkSession" href="qnetworksession.html" location="qnetworksession.h" bases="QObject" module="QtNetwork">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QNetworkSession" href="qnetworksession.html" location="qnetworksession.h" bases="" module="QtNetwork">
             <contents name="roaming" title="Roaming" level="1"/>
             <enum access="public" threadsafety="unspecified" status="commendable" name="State" fullname="QNetworkSession::State" href="qnetworksession.html#State-enum" location="qnetworksession.h">
                 <value name="Invalid" value="0"/>

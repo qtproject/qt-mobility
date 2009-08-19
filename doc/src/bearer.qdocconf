@@ -12,7 +12,8 @@ sources.fileextensions  = "*.qdoc *.cpp"
 
 outputdir               = ../html
 
-indexes                 = $QTDIR/doc/html/qt.index
+#indexes                 = $QTDIR/doc/html/qt.index
+indexes                 = qt.index
 
 extraimages.HTML        = qtlogo \
                           codeless
