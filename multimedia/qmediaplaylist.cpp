@@ -34,8 +34,8 @@
 
 #include "qmediaplaylist.h"
 #include "qmediaplaylist_p.h"
-#include "qmediaplaylistsource.h"
-#include "qlocalmediaplaylistsource.h"
+#include "qmediaplaylistprovider.h"
+#include "qlocalmediaplaylistprovider.h"
 #include "qmediaplaylistioplugin.h"
 #include <qabstractmediaservice.h>
 #include <qmediaplaylistcontrol.h>
