@@ -166,6 +166,11 @@ void tst_QMessageStoreKeys::initTestCase()
                   << Params()("name", "Alter Ego")
                              ("fromAddress", "UltraMegaLightningBabe@superhero.test");
 
+    foreach (const Support::Parameters &params, accountParams) {
+        accountIds.append(Support::addAccount(params));
+        QVERIFY(accountIds.last().isValid());
+    }
+
 #ifdef QMESSAGING_OPTIONAL_FOLDER
     standardFolderIds = QMessageStore::instance()->queryFolders();
 
@@ -187,7 +192,7 @@ void tst_QMessageStoreKeys::initTestCase()
                             ("displayName", "X-Archived")
                             ("parentFolderPath", "/Inbox/X-Announce");
 
-foreach (const Support::Parameters &params, folderParams) {
+    foreach (const Support::Parameters &params, folderParams) {
         folderIds.append(Support::addFolder(params));
         QVERIFY(folderIds.last().isValid());
     }
@@ -257,10 +262,6 @@ foreach (const Support::Parameters &params, folderParams) {
                              ("status-hasAttachments", "true")
                              ("custom-spam", "filter:yes");
 
-    foreach (const Support::Parameters &params, accountParams) {
-        accountIds.append(Support::addAccount(params));
-        QVERIFY(accountIds.last().isValid());
-    }
         foreach (const Support::Parameters &params, messageParams) {
         messageIds.append(Support::addMessage(params));
         QVERIFY(messageIds.last().isValid());
