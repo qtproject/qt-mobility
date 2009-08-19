@@ -69,8 +69,9 @@ contains(QT_CONFIG, multimedia) {
         exists("$${p}/QtMultimedia/qabstractvideosurface.h"): CONFIG *= videosurface
     }
 
-    !contains(CONFIG, videosurface): DEFINES += QT_NO_VIDEOSURFACE
     DEFINES += AUDIOSERVICES
 }
+
+!contains(CONFIG, videosurface): DEFINES += QT_NO_VIDEOSURFACE
 
 plugin: !isEmpty(PLUGIN_SUBDIR): DESTDIR = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/$$PLUGIN_SUBDIR
