@@ -165,10 +165,14 @@ private slots:
 private:
     //called from both constructors, connecting to all contact NodeList changes signals
     void connectToSignals();
+    bool contactsRemovedSince(QList<QUniqueId>&, const QDateTime& timestamp) const;
+    bool archiveRemovedContactId(QUniqueId id, const QDateTime& timestamp);
+    RDFVariable contactDetail2Rdf(const RDFVariable& rdfContact, const QString& definitionName, const QString& fieldName) const;
 
 private:
     QSharedDataPointer<QContactTrackerEngineData> d;
-    RDFVariable contactDetail2Rdf(const RDFVariable& rdfContact, const QString& definitionName, const QString& fieldName) const;
+    const QString contactArchiveFile;
+    const QString contactArchiveDir;    
 };
 
 class Q_DECL_EXPORT ContactTrackerFactory : public QObject, public QContactManagerEngineFactory

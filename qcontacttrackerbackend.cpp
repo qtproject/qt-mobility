@@ -22,6 +22,8 @@
 #include <QtTracker/ontologies/nie.h>
 #include <QtTracker/ontologies/nao.h>
 #include <QRegExp>
+#include <QDir>
+#include <QFile>
 
 #include "tracker2qcontact.h"
 
@@ -73,7 +75,9 @@ QString ContactTrackerFactory::managerName() const
 Q_EXPORT_PLUGIN2(qtcontacts_tracker, ContactTrackerFactory);
 
 QContactTrackerEngine::QContactTrackerEngine(const QMap<QString, QString>& parameters)
-    : d(new QContactTrackerEngineData)
+    : d(new QContactTrackerEngineData),
+    contactArchiveFile("removed"),
+    contactArchiveDir(QDir::homePath()+"/.contacts")
 {
     Q_UNUSED(parameters);
     // Let's load the settings. Here we store out detail definitions
@@ -144,26 +148,36 @@ QList<QUniqueId> QContactTrackerEngine::contacts(const QContactFilter& filter, c
     if (filter.type() == QContactFilter::ChangeLog) {
         const QContactChangeLogFilter& clFilter = static_cast<const QContactChangeLogFilter&>(filter);
         RDFVariable rdfContact = RDFVariable::fromType<nco::PersonContact>();
-        // Added since
-        if (clFilter.changeType() == QContactChangeLogFilter::Added) {
-            rdfContact.property<nao::hasTag>().property<nao::prefLabel>() = LiteralValue("addressbook");
-            rdfContact.property<nie::contentCreated>() >= LiteralValue(clFilter.since().toString(Qt::ISODate));
+        // Removed since
+        if (clFilter.changeType() == QContactChangeLogFilter::Removed) {
+            // This information has to be stored and fetched outside tracker
+            if (!contactsRemovedSince(ids, clFilter.since())) {
+                error = QContactManager::UnspecifiedError;
+            }
         }
-        // Changed since
-        else if (clFilter.changeType() == QContactChangeLogFilter::Changed) {
-            rdfContact.property<nao::hasTag>().property<nao::prefLabel>() = LiteralValue("addressbook");
-            rdfContact.property<nie::contentLastModified>() >= LiteralValue(clFilter.since().toString(Qt::ISODate));
-        }
-        RDFSelect query;
-        query.addColumn("contact_uri", rdfContact);
-        query.addColumn("contactId", rdfContact.property<nco::contactUID>());
-        foreach (QContactSortOrder sort, sortOrders) {
-            query.orderBy(contactDetail2Rdf(rdfContact, sort.detailDefinitionName(), sort.detailFieldName()),
-                                            sort.direction() == Qt::AscendingOrder);
-        }
-        LiveNodes ncoContacts = ::tracker()->modelQuery(query);
-        for (int i = 0; i < ncoContacts->rowCount(); i++) {
-            ids.append(ncoContacts->index(i, 1).data().toUInt());
+        else {
+            // Added since
+            if (clFilter.changeType() == QContactChangeLogFilter::Added) {
+                rdfContact.property<nao::hasTag>().property<nao::prefLabel>() = LiteralValue("addressbook");
+                rdfContact.property<nie::contentCreated>() >= LiteralValue(clFilter.since().toString(Qt::ISODate));
+            }
+            // Changed since
+            else if (clFilter.changeType() == QContactChangeLogFilter::Changed) {
+                rdfContact.property<nao::hasTag>().property<nao::prefLabel>() = LiteralValue("addressbook");
+                rdfContact.property<nie::contentLastModified>() >= LiteralValue(clFilter.since().toString(Qt::ISODate));
+            }
+
+            RDFSelect query;
+            query.addColumn("contact_uri", rdfContact);
+            query.addColumn("contactId", rdfContact.property<nco::contactUID>());
+            foreach (QContactSortOrder sort, sortOrders) {
+                query.orderBy(contactDetail2Rdf(rdfContact, sort.detailDefinitionName(), sort.detailFieldName()),
+                                                sort.direction() == Qt::AscendingOrder);
+            }
+            LiveNodes ncoContacts = ::tracker()->modelQuery(query);
+            for (int i = 0; i < ncoContacts->rowCount(); i++) {
+                ids.append(ncoContacts->index(i, 1).data().toUInt());
+            }
         }
     }
     error = QContactManager::NoError;
@@ -427,8 +441,9 @@ bool QContactTrackerEngine::removeContact(const QUniqueId& contactId, QSet<QUniq
         media->remove();
     }
     ncoContact->remove();
-    
+
     contactsRemoved << contactId;
+    archiveRemovedContactId(contactId, QDateTime::currentDateTime());
     return true;
 }
 
@@ -768,6 +783,58 @@ bool QContactTrackerEngine::startRequest(QContactAbstractRequest* req)
     return true;
 }
 
+bool QContactTrackerEngine::contactsRemovedSince(QList<QUniqueId> &contacts, const QDateTime& timestamp) const
+{
+    QString fullFilePath = contactArchiveDir + "/" + contactArchiveFile;
+    if ( QFile::exists(fullFilePath) ) {
+        QFile file(fullFilePath);
+        if (!file.open(QIODevice::ReadOnly)) {
+            return false;
+        }
+        QDataStream in(&file);
+        qint32 version;
+        in >> version;
+        if (version != 100) {
+            return false;
+        }
+        in.setVersion(QDataStream::Qt_4_5);
+        QPair<QDateTime, QUniqueId> timestampAndId;
+        while (!in.atEnd()) {
+            in >> timestampAndId;
+            if (timestampAndId.first >= timestamp) {
+                contacts.append(timestampAndId.second);
+            }
+        }
+        file.close();
+    }
+    // If file doesn't exist, there are no removed contacts
+    return true;
+}
 
-
-
+bool QContactTrackerEngine::archiveRemovedContactId(QUniqueId id, const QDateTime& timestamp)
+{
+    QString fullFilePath = contactArchiveDir + "/" + contactArchiveFile;
+    QDir dir(contactArchiveDir);
+    // Create archive file dir, if it doesn't exist
+    if (!dir.exists()) {
+        if (!dir.mkpath(contactArchiveDir)) {
+            return false;
+        }
+    }
+    bool first = false;
+    if (!QFile::exists(fullFilePath)) {
+        first = true;
+    }
+    QFile file(fullFilePath);
+    if (!file.open(QIODevice::ReadWrite | QIODevice::Append)) {
+        return false;
+    }
+    QDataStream out(&file);
+    if (first) {
+        out << (qint32)100;
+    }
+    out.setVersion(QDataStream::Qt_4_5);
+    out << QPair<QDateTime, QUniqueId>(timestamp, id);
+    file.close();
+    return true;
+}
