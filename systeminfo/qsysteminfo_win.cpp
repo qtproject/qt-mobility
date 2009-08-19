@@ -192,14 +192,10 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     switch (feature) {
     case QSystemInfo::BluetoothFeature :
         {
-         //   BLUETOOTH_DEVICE_SEARCH_PARAMS searchParams;
             BLUETOOTH_FIND_RADIO_PARAMS  radioParams = { sizeof(BLUETOOTH_FIND_RADIO_PARAMS)};
             HANDLE radio;
 
-            //BLUETOOTH_DEVICE_INFO btDeviceInfo;
-          //  ZeroMemory(&searchParams, sizeof(BLUETOOTH_DEVICE_SEARCH_PARAMS));
             if(BluetoothFindFirstRadio(&radioParams, &radio) != NULL) {
-//            if(BluetoothFindFirstDevice(&searchParams, &btDeviceInfo) != NULL) {
                 qWarning() << "available";
                 featureSupported = true;
             } else {

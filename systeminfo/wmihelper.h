@@ -45,7 +45,7 @@ public:
     ~WMIHelper();
     QVariant getWMIData(const QString &wmiNamespace,const QString &className, const QString &classProperty);
 private:
-     IWbemLocator *pLoc ;
+     IWbemLocator *wbemLocator ;
 };
 
 #endif // WMIHELPER_H
