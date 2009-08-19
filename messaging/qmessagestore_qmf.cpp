@@ -97,7 +97,6 @@ QMessageStore::QMessageStore(QObject *parent)
     : QObject(parent),
       d_ptr(new QMessageStorePrivate)
 {
-    Q_ASSERT(instance() != 0);
 }
 
 QMessageStore::~QMessageStore()
