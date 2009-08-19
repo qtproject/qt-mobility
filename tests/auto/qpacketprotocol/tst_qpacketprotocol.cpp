@@ -175,15 +175,15 @@ void tst_QPacketProtocol::sendReceive()
     QPacketProtocol writeProtocol(&socket);
     QPacketProtocol readProtocol(serverSocket);
 
+    QByteArray dataString("Data string");
+
     // Test sending with ::send(QPacket).
     for (int i = 1; i <= 10; ++i) {
-        QByteArray b("Data string");
-
         QSignalSpy writeSpy(&writeProtocol, SIGNAL(packetWritten()));
         QSignalSpy readSpy(&readProtocol, SIGNAL(readyRead()));
 
         QPacket sendPacket;
-        sendPacket << b;
+        sendPacket << dataString;
         for (int j = 0; j < i; ++j)
             writeProtocol.send(sendPacket);
 
@@ -195,7 +195,7 @@ void tst_QPacketProtocol::sendReceive()
             QPacket packet = readProtocol.read();
             QByteArray r;
             packet >> r;
-            QCOMPARE(r, b);
+            QCOMPARE(r, dataString);
         }
 
         QCOMPARE(readProtocol.packetsAvailable(), qint64(0));
@@ -203,13 +203,11 @@ void tst_QPacketProtocol::sendReceive()
 
     // Test sending with ::send() << var.
     for (int i = 1; i <= 10; ++i) {
-        QByteArray b("Data string");
-
         QSignalSpy writeSpy(&writeProtocol, SIGNAL(packetWritten()));
         QSignalSpy readSpy(&readProtocol, SIGNAL(readyRead()));
 
         for (int j = 0; j < i; ++j)
-            writeProtocol.send() << b.constData();
+            writeProtocol.send() << dataString.constData();
 
         QTRY_COMPARE(writeSpy.count(), i);
         QTRY_COMPARE(readSpy.count(), i);
@@ -220,7 +218,7 @@ void tst_QPacketProtocol::sendReceive()
             char *string;
             packet >> string;
             QByteArray r(string);
-            QCOMPARE(r, b);
+            QCOMPARE(r, dataString);
         }
 
         QCOMPARE(readProtocol.packetsAvailable(), qint64(0));
@@ -246,6 +244,22 @@ void tst_QPacketProtocol::sendReceive()
         readProtocol.clear();
 
         QCOMPARE(readProtocol.packetsAvailable(), qint64(0));
+    }
+
+    {
+        QSignalSpy writeSpy(&writeProtocol, SIGNAL(packetWritten()));
+        QSignalSpy readSpy(&readProtocol, SIGNAL(readyRead()));
+        QSignalSpy closeSpy(serverSocket, SIGNAL(aboutToClose()));
+
+        writeProtocol.send() << dataString.constData();
+
+        serverSocket->close();
+        socket.close();
+
+        QTRY_VERIFY(!closeSpy.isEmpty());
+
+        QTRY_VERIFY(writeSpy.isEmpty());
+        QTRY_VERIFY(readSpy.isEmpty());
     }
 }
 
