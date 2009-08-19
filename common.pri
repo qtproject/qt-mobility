@@ -80,5 +80,12 @@ DEPLOYMENT += CONTACTS_DEPLOYMENT CONTACTS_PLUGINS_DEPLOYMENT
 LIBS += -L$$DESTDIR
 
 DEPENDPATH += . $$SOURCE_DIR
-INCLUDEPATH += . $$SOURCEDIR
+INCLUDEPATH += . \
+    $$SOURCE_DIR \
+    $$SOURCE_DIR/contacts \
+    $$SOURCE_DIR/contacts/details \
+    $$SOURCE_DIR/contacts/engines \
+    $$SOURCE_DIR/contacts/filters \
+    $$SOURCE_DIR/contacts/requests \
+    $$SOURCE_DIR/contacts/serialisers
 

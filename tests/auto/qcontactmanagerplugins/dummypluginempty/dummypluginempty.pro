@@ -19,8 +19,6 @@ SOURCES += ../dummyplugin/dummyplugin.cpp
 # We need to link against this for all sorts of reasons :)
 LIBS += -lQtContacts
 
-INCLUDEPATH += $$SOURCE_DIR/contacts $$SOURCE_DIR/contacts/details $$SOURCE_DIR/contacts/filters $$SOURCE_DIR/contacts/requests
-    
 symbian {
 	TARGET.EPOCALLOWDLLDATA = 1
 }

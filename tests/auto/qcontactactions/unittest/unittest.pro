@@ -9,8 +9,6 @@ include(../../../../common.pri)
 
 SOURCES  += tst_qcontactactions.cpp
 
-INCLUDEPATH += $$SOURCE_DIR/contacts $$SOURCE_DIR/contacts/details $$SOURCE_DIR/contacts/filters $$SOURCE_DIR/contacts/requests
-
 LIBS += -lQtContacts
 
 QCONTACTACTIONS_PLUGINS_DEPLOY.sources = $$TEST_PLUGIN_DIR/*.dll
