@@ -34,7 +34,7 @@
 
 #include <QtTest/QtTest>
 #include <QDebug>
-#include "qmediaplaylist.h"
+#include "qlocalmediaplaylistprovider.h"
 
 class tst_QMediaPlaylist : public QObject
 {
@@ -58,24 +58,24 @@ void tst_QMediaPlaylist::cleanup()
 
 void tst_QMediaPlaylist::construction()
 {
-    QMediaPlaylist playlist;
-    QVERIFY(playlist.isEmpty());
+    QLocalMediaPlaylistProvider playlist;
     QCOMPARE(playlist.size(), 0);
 }
 
 void tst_QMediaPlaylist::append()
 {
-    QMediaPlaylist playlist;
-    QMediaResource resource1(QUrl(QLatin1String("file:///1")));
+    QLocalMediaPlaylistProvider playlist;
+    QMediaResourceList resource1;
+    resource1 << QUrl(QLatin1String("file:///1"));
     playlist.appendItem(resource1);
-    QVERIFY(!playlist.isEmpty());
     QCOMPARE(playlist.size(), 1);
-    QCOMPARE(playlist.resource(0), resource1);
+    QCOMPARE(playlist.resources(0), resource1);
 
-    QMediaResource resource2(QUrl(QLatin1String("file:///2")));
+    QMediaResourceList resource2;
+    resource2 << QUrl(QLatin1String("file:///2"));
     playlist.appendItem(resource2);
     QCOMPARE(playlist.size(), 2);
-    QCOMPARE(playlist.resource(1), resource2);
+    QCOMPARE(playlist.resources(1), resource2);
 }
 
 QTEST_MAIN(tst_QMediaPlaylist)

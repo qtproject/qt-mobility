@@ -34,7 +34,7 @@
 
 #include <QtTest/QtTest>
 #include <QDebug>
-#include "qmediaplaylist.h"
+#include "qlocalmediaplaylistprovider.h"
 #include "qmediaplaylistnavigator.h"
 
 class tst_QMediaPlaylistNavigator : public QObject
@@ -61,8 +61,7 @@ void tst_QMediaPlaylistNavigator::cleanup()
 
 void tst_QMediaPlaylistNavigator::construction()
 {
-    QMediaPlaylist playlist;
-    QVERIFY(playlist.isEmpty());
+    QLocalMediaPlaylistProvider playlist;
     QCOMPARE(playlist.size(), 0);
 
     QMediaPlaylistNavigator navigator(&playlist);
@@ -74,22 +73,21 @@ void tst_QMediaPlaylistNavigator::setPlaylist()
 {
     QMediaPlaylistNavigator navigator(0);
     QVERIFY(navigator.playlist() != 0);
-    QVERIFY(navigator.playlist()->isEmpty());
+    QCOMPARE(navigator.playlist()->size(), 0);
     QVERIFY(navigator.playlist()->isReadOnly() );
 
-    QMediaPlaylist playlist;
-    QVERIFY(playlist.isEmpty());
+    QLocalMediaPlaylistProvider playlist;
     QCOMPARE(playlist.size(), 0);
 
     navigator.setPlaylist(&playlist);
     QCOMPARE(navigator.playlist(), &playlist);
-    QVERIFY(navigator.playlist()->isEmpty());
+    QCOMPARE(navigator.playlist()->size(), 0);
     QVERIFY(!navigator.playlist()->isReadOnly() );
 }
 
 void tst_QMediaPlaylistNavigator::linearPlayback()
 {
-    QMediaPlaylist playlist;
+    QLocalMediaPlaylistProvider playlist;
     QMediaPlaylistNavigator navigator(&playlist);
 
     navigator.setPlaybackMode(QMediaPlaylistNavigator::Linear);
@@ -98,7 +96,7 @@ void tst_QMediaPlaylistNavigator::linearPlayback()
     QCOMPARE(navigator.currentPosition(), -1);
 
     QMediaResource resource1(QUrl(QLatin1String("file:///1")));
-    playlist.appendItem(resource1);
+    playlist.appendItem(QMediaResourceList() << resource1);
     navigator.jump(0);
     QVERIFY(!navigator.currentItem().isEmpty());
 
@@ -110,7 +108,7 @@ void tst_QMediaPlaylistNavigator::linearPlayback()
     QCOMPARE(navigator.previousItem(2).value(0), QMediaResource());
 
     QMediaResource resource2(QUrl(QLatin1String("file:///2")));
-    playlist.appendItem(resource2);
+    playlist.appendItem(QMediaResourceList() <<resource2);
     QCOMPARE(navigator.currentPosition(), 0);
     QCOMPARE(navigator.currentItem().value(0), resource1);
     QCOMPARE(navigator.nextItem().value(0), resource2);
@@ -139,7 +137,7 @@ void tst_QMediaPlaylistNavigator::linearPlayback()
 
 void tst_QMediaPlaylistNavigator::loopPlayback()
 {
-    QMediaPlaylist playlist;
+    QLocalMediaPlaylistProvider playlist;
     QMediaPlaylistNavigator navigator(&playlist);
 
     navigator.setPlaybackMode(QMediaPlaylistNavigator::Loop);
@@ -148,7 +146,7 @@ void tst_QMediaPlaylistNavigator::loopPlayback()
     QCOMPARE(navigator.currentPosition(), -1);
 
     QMediaResource resource1(QUrl(QLatin1String("file:///1")));
-    playlist.appendItem(resource1);
+    playlist.appendItem( QMediaResourceList() << resource1);
     navigator.jump(0);
     QVERIFY(!navigator.currentItem().isEmpty());
 
@@ -160,7 +158,7 @@ void tst_QMediaPlaylistNavigator::loopPlayback()
     QCOMPARE(navigator.previousItem(2).value(0), resource1);
 
     QMediaResource resource2(QUrl(QLatin1String("file:///2")));
-    playlist.appendItem(resource2);
+    playlist.appendItem(QMediaResourceList() << resource2);
     QCOMPARE(navigator.currentPosition(), 0);
     QCOMPARE(navigator.currentItem().value(0), resource1);
     QCOMPARE(navigator.nextItem().value(0), resource2);
