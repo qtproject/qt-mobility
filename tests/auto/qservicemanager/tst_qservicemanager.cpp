@@ -1216,6 +1216,9 @@ void tst_QServiceManager::serviceAdded()
         QCOMPARE(spyAdd.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
     }
 
+    // Pause between file changes so they are detected separately
+    QTest::qWait(100);
+
     QSignalSpy spyRemove(&mgr_listen, SIGNAL(serviceRemoved(QString,QServiceManager::Scope)));
     QVERIFY(mgr_modify.removeService(serviceName));
     
@@ -1303,8 +1306,12 @@ void tst_QServiceManager::serviceRemoved()
         QTRY_COMPARE(spyAdd.count(), 1);
     }
 
+    // Pause between file changes so they are detected separately
+    QTest::qWait(100);
+
     QSignalSpy spyRemove(&mgr_listen, SIGNAL(serviceRemoved(QString,QServiceManager::Scope)));
     QVERIFY(mgr_modify.removeService(serviceName));
+
     if (!expectSignal) {
         QTest::qWait(2000);
         QCOMPARE(spyRemove.count(), 0);
@@ -1332,6 +1339,10 @@ void tst_QServiceManager::serviceRemoved()
     }
 
     spyRemove.clear();
+
+    // Pause between file changes so they are detected separately
+    QTest::qWait(100);
+
     QVERIFY(mgr_modify.removeService(serviceName));
     if (!expectSignal) {
         QTest::qWait(2000);
@@ -1351,7 +1362,6 @@ void tst_QServiceManager::serviceRemoved_data()
 {
     serviceAdded_data();
 }
-
 QTEST_MAIN(tst_QServiceManager)
 
 #include "tst_qservicemanager.moc"
