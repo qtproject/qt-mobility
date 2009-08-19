@@ -45,6 +45,9 @@
     #include <cmdestination.h>
     #include <cmconnectionmethod.h>
     #include <cmconnectionmethoddef.h>
+    #include <cmpluginwlandef.h>
+    #include <cmpluginpacketdatadef.h>
+    #include <cmplugindialcommondefs.h>
 #endif
 
 QT_BEGIN_NAMESPACE
@@ -140,8 +143,10 @@ void QNetworkConfigurationManagerPrivate::registerPlatformCapabilities()
     capFlags |= QNetworkConfigurationManager::BearerManagement;
     capFlags |= QNetworkConfigurationManager::DirectConnectionRouting;
     capFlags |= QNetworkConfigurationManager::SystemSessionSupport;
+#ifdef SNAP_FUNCTIONALITY_AVAILABLE
     capFlags |= QNetworkConfigurationManager::ApplicationLevelRoaming;
     capFlags |= QNetworkConfigurationManager::ForcedRoaming;
+#endif
     capFlags |= QNetworkConfigurationManager::DataStatistics;
 }
 
@@ -230,6 +235,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
             cpPriv->type = QNetworkConfiguration::ServiceNetwork;
             cpPriv->purpose = QNetworkConfiguration::Unknown;
             cpPriv->roamingSupported = false;
+            cpPriv->manager = this;
 
             QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);
             snapConfigurations.insert(ident, ptr);
@@ -402,6 +408,30 @@ QNetworkConfigurationPrivate* QNetworkConfigurationManagerPrivate::configFromCon
         break;
     }
     
+    TInt error = KErrNone;
+    TUint32 bearerType = connectionMethod.GetIntAttributeL(CMManager::ECmBearerType);
+    switch (bearerType) {
+    case KUidPacketDataBearerType:
+        // "Packet data" Bearer => Mapping is done using "Access point name"
+        TRAP(error, pName = connectionMethod.GetStringAttributeL(CMManager::EPacketDataAPName));
+        break;
+    case KUidWlanBearerType:
+        // "Wireless LAN" Bearer => Mapping is done using "WLAN network name" = SSID
+        TRAP(error, pName = connectionMethod.GetStringAttributeL(CMManager::EWlanSSID));
+        break;
+    }
+    if (!pName) {
+        // "Data call" Bearer or "High Speed (GSM)" Bearer => Mapping is done using "Dial-up number"
+        TRAP(error, pName = connectionMethod.GetStringAttributeL(CMManager::EDialDefaultTelNum));
+    }
+
+    if (error == KErrNone && pName) {
+        CleanupStack::PushL(pName);
+        cpPriv->mappingName = QString::fromUtf16(pName->Ptr(),pName->Length());
+        CleanupStack::PopAndDestroy(pName);
+        pName = NULL;
+    }
+ 
     cpPriv->state = QNetworkConfiguration::Defined;
     TBool isConnected = connectionMethod.GetBoolAttributeL(CMManager::ECmConnected);
     if (isConnected) {
@@ -415,6 +445,7 @@ QNetworkConfigurationPrivate* QNetworkConfigurationManagerPrivate::configFromCon
     cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
     cpPriv->purpose = QNetworkConfiguration::Unknown;
     cpPriv->roamingSupported = false;
+    cpPriv->manager = this;
     
     CleanupStack::Pop(cpPriv);
     return cpPriv;
@@ -532,6 +563,7 @@ void QNetworkConfigurationManagerPrivate::readNetworkConfigurationValuesFromComm
         apNetworkConfiguration->bearer = QNetworkConfigurationPrivate::BearerUnknown;
         break;
     }
+    apNetworkConfiguration->manager = this;
     
     CleanupStack::PopAndDestroy(pApUtils);
     CleanupStack::PopAndDestroy(pAPItem);

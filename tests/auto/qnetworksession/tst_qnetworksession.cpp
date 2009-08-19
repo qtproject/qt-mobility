@@ -235,9 +235,7 @@ void tst_QNetworkSession::userChoiceSession()
                 QTRY_VERIFY(!stateChangedSpy.isEmpty());
 
             QVERIFY(session.state() == QNetworkSession::Connected);
-#ifndef Q_OS_SYMBIAN // QNetworkSession::interface() does not yet work correctly in Symbian            
             QVERIFY(session.interface().isValid());
-#endif            
 
             const QString userChoiceIdentifier =
                 session.property("UserChoiceConfigurationIdentifier").toString();
@@ -365,9 +363,7 @@ void tst_QNetworkSession::sessionOpenCloseStop()
             }
 
             QVERIFY(session.state() == QNetworkSession::Connected);
-#ifndef Q_OS_SYMBIAN // QNetworkSession::interface() does not yet work correctly in Symbian            
             QVERIFY(session.interface().isValid());
-#endif
         } else {
             QFAIL("Timeout waiting for session to open.");
         }
@@ -400,11 +396,9 @@ void tst_QNetworkSession::sessionOpenCloseStop()
         QVERIFY(session2.isActive());
         QVERIFY(session.state() == QNetworkSession::Connected);
         QVERIFY(session2.state() == QNetworkSession::Connected);
-#ifndef Q_OS_SYMBIAN // QNetworkSession::interface() does not yet work correctly in Symbian            
         QVERIFY(session.interface().isValid());
         QCOMPARE(session.interface().hardwareAddress(), session2.interface().hardwareAddress());
         QCOMPARE(session.interface().index(), session2.interface().index());
-#endif        
     }
 
     sessionOpenedSpy2.clear();
@@ -557,11 +551,9 @@ void tst_QNetworkSession::sessionOpenCloseStop()
             QVERIFY(!session2.isActive());
             QVERIFY(session.state() == QNetworkSession::Connected);
             QVERIFY(session2.state() == QNetworkSession::Connected);
-#ifndef Q_OS_SYMBIAN // QNetworkSession::interface() does not yet work correctly in Symbian            
             QVERIFY(session.interface().isValid());
             QCOMPARE(session.interface().hardwareAddress(), session2.interface().hardwareAddress());
             QCOMPARE(session.interface().index(), session2.interface().index());
-#endif            
         }
 
         sessionClosedSpy2.clear();

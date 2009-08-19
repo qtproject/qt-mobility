@@ -131,6 +131,7 @@ private:
     void handleSymbianConnectionStatusChange(TInt aConnectionStatus, TInt aError, TUint accessPointId = 0);
     QNetworkConfiguration bestConfigFromSNAP(const QNetworkConfiguration& snapConfig) const;
     QNetworkConfiguration activeConfiguration(TUint32 iapId = 0) const;
+    QNetworkInterface interface(TUint iapId) const;
 
 private: // data
     // The config set on QNetworkSession
@@ -144,6 +145,8 @@ private: // data
     // This is the actual active configuration currently in use by the session.
     // Either a copy of publicConfig or one of serviceConfig.children().
     mutable QNetworkConfiguration activeConfig;
+    
+    mutable QNetworkInterface activeInterface;
 
     QNetworkSession::State state;
     bool isActive;
@@ -154,7 +157,7 @@ private: // data
     RLibrary iOpenCLibrary;
     TOpenCSetdefaultifFunction iDynamicSetdefaultif;
 
-    RSocketServ iSocketServ;
+    mutable RSocketServ iSocketServ;
     mutable RConnection iConnection;
     mutable RConnectionMonitor iConnectionMonitor;
     ConnectionProgressNotifier* ipConnectionNotifier;

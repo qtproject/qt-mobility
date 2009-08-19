@@ -42,6 +42,7 @@ symbian: {
             -lconnmon \
             -lcentralrepository \
             -lesock \
+            -linsock \
             -lecom \
             -lefsrv \
             -lnetmeta

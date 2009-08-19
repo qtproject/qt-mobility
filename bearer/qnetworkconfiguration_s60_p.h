@@ -83,6 +83,9 @@ public:
     TUint connectionId;
     
     TAny* manager;
+ 
+    QString mappingName;
+ 
     QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> serviceNetworkPtr; 
 
 private:

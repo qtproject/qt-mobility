@@ -34,6 +34,8 @@
 #include "qnetworkconfiguration_s60_p.h"
 #include "qnetworkconfigmanager_s60_p.h"
 #include <es_enum.h>
+#include <es_sock.h>
+#include <in_sock.h>
 #include <stdapis/sys/socket.h>
 #include <stdapis/net/if.h>
 
@@ -138,10 +140,51 @@ void QNetworkSessionPrivate::syncStateWithInterface()
     }
 }
 
+QNetworkInterface QNetworkSessionPrivate::interface(TUint iapId) const
+{
+    QString interfaceName;
+
+    TSoInetInterfaceInfo ifinfo;
+    TPckg<TSoInetInterfaceInfo> ifinfopkg(ifinfo);
+    TSoInetIfQuery ifquery;
+    TPckg<TSoInetIfQuery> ifquerypkg(ifquery);
+ 
+    // Open dummy socket for interface queries
+    RSocket socket;
+    TInt retVal = socket.Open(iSocketServ, _L("udp"));
+    if (retVal != KErrNone) {
+        return QNetworkInterface();
+    }
+ 
+    // Start enumerating interfaces
+    socket.SetOpt(KSoInetEnumInterfaces, KSolInetIfCtrl);
+    while(socket.GetOpt(KSoInetNextInterface, KSolInetIfCtrl, ifinfopkg) == KErrNone) {
+        ifquery.iName = ifinfo.iName;
+        TInt err = socket.GetOpt(KSoInetIfQueryByName, KSolInetIfQuery, ifquerypkg);
+        if(err == KErrNone && ifquery.iZone[1] == iapId) { // IAP ID is index 1 of iZone
+            if(ifinfo.iAddress.Address() > 0) {
+                interfaceName = QString::fromUtf16(ifinfo.iName.Ptr(),ifinfo.iName.Length());
+                break;
+            }
+        }
+    }
+ 
+    socket.Close();
+ 
+    if (interfaceName.isEmpty()) {
+        return QNetworkInterface();
+    }
+ 
+    return QNetworkInterface::interfaceFromName(interfaceName);
+}
 
 QNetworkInterface QNetworkSessionPrivate::currentInterface() const
 {
-    return QNetworkInterface();
+    if (!publicConfig.isValid() || state != QNetworkSession::Connected) {
+        return QNetworkInterface();
+    }
+    
+    return activeInterface;
 }
 
 QVariant QNetworkSessionPrivate::property(const QString& /*key*/)
@@ -151,8 +194,19 @@ QVariant QNetworkSessionPrivate::property(const QString& /*key*/)
 
 QString QNetworkSessionPrivate::errorString() const
 {
-    //TODO
-    //must return translated string
+    switch (iError) {
+    case QNetworkSession::UnknownSessionError:
+        return tr("Unknown session error.");
+    case QNetworkSession::SessionAbortedError:
+        return tr("The session was aborted by the user or system.");
+    case QNetworkSession::OperationNotSupportedError:
+        return tr("The requested operation is not supported by the system.");
+    case QNetworkSession::InvalidConfigurationError:
+        return tr("The specified configuration cannot be used.");
+    case QNetworkSession::RoamingError:
+        return tr("You went on a walkabout and got lost.");
+    }
+ 
     return QString();
 }
 
@@ -215,6 +269,7 @@ void QNetworkSessionPrivate::open()
                     if (connInfo().iIapId == publicConfig.d.data()->numericId) {
                         if (iConnection.Attach(connInfo, RConnection::EAttachTypeNormal) == KErrNone) {
                             activeConfig = publicConfig;
+                            activeInterface = interface(activeConfig.d.data()->numericId);
                             connected = ETrue;
                             startTime = QDateTime::currentDateTime();
                             if (iDynamicSetdefaultif) {
@@ -259,7 +314,7 @@ void QNetworkSessionPrivate::open()
         }
         newState(QNetworkSession::Connecting);
     }
-    
+ 
     if (error != KErrNone) {
         isActive = false;
         iError = QNetworkSession::UnknownSessionError;
@@ -613,20 +668,45 @@ QNetworkConfiguration QNetworkSessionPrivate::activeConfiguration(TUint32 iapId)
         _LIT(KSetting, "IAP\\Id");
         iConnection.GetIntSetting(KSetting, iapId);
     }
-
+ 
+#ifdef SNAP_FUNCTIONALITY_AVAILABLE
     if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
+        // Try to search IAP from the used SNAP using IAP Id
         QList<QNetworkConfiguration> children = publicConfig.children();
         for (int i=0; i < children.count(); i++) {
             if (children[i].d.data()->numericId == iapId) {
                 return children[i];
             }
         }
-        return QNetworkConfiguration();
+
+        // Given IAP Id was not found from the used SNAP
+        // => Try to search matching IAP using mappingName
+        //    mappingName contains:
+        //      1. "Access point name" for "Packet data" Bearer
+        //      2. "WLAN network name" (= SSID) for "Wireless LAN" Bearer
+        //      3. "Dial-up number" for "Data call Bearer" or "High Speed (GSM)" Bearer
+        //    <=> Note: It's possible that in this case reported IAP is
+        //              clone of the one of the IAPs of the used SNAP
+        //              => If mappingName matches, clone has been found
+        QNetworkConfiguration pt;
+        pt.d = ((QNetworkConfigurationManagerPrivate*)publicConfig.d.data()->manager)->accessPointConfigurations.value(QString::number(qHash(iapId)));
+        for (int i=0; i < children.count(); i++) {
+            if (children[i].d.data()->mappingName == pt.d.data()->mappingName) {
+                return children[i];
+            }
+        }
+
+        // Matching IAP was not found from used SNAP
+        // => IAP from another SNAP is returned
+        //    (Note: Returned IAP matches to given IAP Id)
+        return pt;
     }
+#endif
     
     if (publicConfig.type() == QNetworkConfiguration::UserChoice) {
         if (publicConfig.d.data()->manager) {
             QNetworkConfiguration pt;
+            // Try to found User Selected IAP from known IAPs (accessPointConfigurations)
             pt.d = ((QNetworkConfigurationManagerPrivate*)publicConfig.d.data()->manager)->accessPointConfigurations.value(QString::number(qHash(iapId)));
             if (pt.d) {
                 return pt;
@@ -645,27 +725,31 @@ void QNetworkSessionPrivate::RunL()
     switch (statusCode) {
         case KErrNone: // Connection created succesfully
             {
-            QNetworkConfiguration newActiveConfig = activeConfiguration(); 
-            
-            if (iDynamicSetdefaultif) {
+            TInt error = KErrNone;
+            QNetworkConfiguration newActiveConfig = activeConfiguration();
+            if (!newActiveConfig.isValid()) {
+                error = KErrGeneral;
+            } else if (iDynamicSetdefaultif) {
                 // Use name of the IAP to set default IAP
                 QByteArray nameAsByteArray = newActiveConfig.name().toUtf8();
                 ifreq ifr;
                 strcpy(ifr.ifr_name, nameAsByteArray.constData());
 
                 TInt error = iDynamicSetdefaultif(&ifr);
-                if (error != KErrNone) {
-                    isActive = false;
-                    iError = QNetworkSession::UnknownSessionError;
-                    emit q->error(iError);
-                    Cancel();
-                    if (ipConnectionNotifier) {
-                        ipConnectionNotifier->StopNotifications();
-                    }
-                    syncStateWithInterface();
-                    return;
-                }
             }
+            
+            if (error != KErrNone) {
+                isActive = false;
+                iError = QNetworkSession::UnknownSessionError;
+                emit q->error(iError);
+                Cancel();
+                if (ipConnectionNotifier) {
+                    ipConnectionNotifier->StopNotifications();
+                }
+                syncStateWithInterface();
+                return;
+            }
+ 
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
             if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
                 // Activate ALR monitoring
@@ -674,6 +758,7 @@ void QNetworkSessionPrivate::RunL()
 #endif
             isActive = true;
             activeConfig = newActiveConfig;
+            activeInterface = interface(activeConfig.d.data()->numericId);
             if (publicConfig.type() == QNetworkConfiguration::UserChoice) {
                 QNetworkConfiguration pt;
                 pt.d = activeConfig.d.data()->serviceNetworkPtr;
@@ -716,6 +801,7 @@ bool QNetworkSessionPrivate::newState(QNetworkSession::State newState, TUint acc
     if (isActive && publicConfig.type() == QNetworkConfiguration::ServiceNetwork &&
         newState == QNetworkSession::Connected) {
         activeConfig = activeConfiguration(accessPointId);
+        activeInterface = interface(activeConfig.d.data()->numericId);
     }
 
     // Make sure that same state is not signaled twice in a row.
