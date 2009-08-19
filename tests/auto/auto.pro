@@ -1,3 +1,3 @@
 TEMPLATE = subdirs
 SUBDIRS += qvaluespace qvaluespaceobject qvaluespaceitem
-unix:SUBDIRS += qmallocpool
+unix:SUBDIRS += qmallocpool qpacket
