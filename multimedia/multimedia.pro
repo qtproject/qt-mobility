@@ -26,7 +26,6 @@ HEADERS = \
     qmediaplaylist.h \
     qmediaplaylist_p.h \
     qmediaplaylistnavigator.h \
-    qmediaplaylistmodel.h \
     qmediaplaylistprovider.h \
     qmediaplaylistprovider_p.h \
     qmediaplaylistioplugin.h \
@@ -70,7 +69,6 @@ SOURCES = qabstractmediacontrol.cpp \
     qmediaplaylist.cpp \
     qmediaplaylistioplugin.cpp \
     qmediaplaylistnavigator.cpp \
-    qmediaplaylistmodel.cpp \
     qmediaplaylistprovider.cpp \
     qmediaproviderfactory.cpp \
     qmediarecorder.cpp \
