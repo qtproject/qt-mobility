@@ -7,6 +7,8 @@ INCLUDEPATH += ../../../messaging
 
 LIBS += -lQtMessaging
 
+DEFINES += QT_BUILD_MESSAGING_SUPPORT_LIB
+
 HEADERS += \
     support.h
 
@@ -16,10 +18,11 @@ symbian|win32 {
             support_symbian.cpp
     }
     win32 {
-        DEFINES += QT_BUILD_MESSAGING_LIB
         !static:DEFINES += QT_MAKEDLL
         SOURCES += \
             support_win.cpp
+
+        LIBS += mapi32.lib
     }
 } else {
     # QMF headers must be located at $QMF_INCLUDEDIR
