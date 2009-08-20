@@ -965,6 +965,9 @@ void tst_QValueSpaceItem::ipcRemoveKey()
     // Wait for lackey to delete key "/ipcRemoveKey".
     QTRY_COMPARE(changeSpy.count(), 1);
 
+    QList<QString> paths = item.subPaths();
+    if (!paths.isEmpty())
+        qDebug() << item.subPaths();
     QVERIFY(item.subPaths().isEmpty());
     QCOMPARE(item.value("value", 6).toInt(), 6);
 #endif
