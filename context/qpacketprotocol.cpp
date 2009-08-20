@@ -103,8 +103,6 @@ public:
     : QObject(parent), inProgressSize(-1), maxPacketSize(MAX_PACKET_SIZE),
       dev(_dev)
     {
-        Q_ASSERT(4 == sizeof(qint32));
-
         QObject::connect(this, SIGNAL(readyRead()),
                          parent, SIGNAL(readyRead()));
         QObject::connect(this, SIGNAL(packetWritten()),
