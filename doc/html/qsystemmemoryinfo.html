@@ -30,8 +30,8 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qsystemmemoryinfo.html#QSystemMemoryInfo">QSystemMemoryInfo</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qsystemmemoryinfo.html#dtor.QSystemMemoryInfo">~QSystemMemoryInfo</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">qlonglong </td><td class="memItemRight" valign="bottom"><b><a href="qsystemmemoryinfo.html#availableDiskSpace">availableDiskSpace</a></b> ( const QString &amp; <i>volumeDrive</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QSystemMemoryInfo::VolumeType </td><td class="memItemRight" valign="bottom"><b><a href="qsystemmemoryinfo.html#getVolumeType">getVolumeType</a></b> ( const QString &amp; <i>driveVolume</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">qlonglong </td><td class="memItemRight" valign="bottom"><b><a href="qsystemmemoryinfo.html#totalDiskSpace">totalDiskSpace</a></b> ( const QString &amp; <i>volumeDrive</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSystemMemoryInfo::VolumeType </td><td class="memItemRight" valign="bottom"><b><a href="qsystemmemoryinfo.html#volumeType">volumeType</a></b> ( const QString &amp; <i>driveVolume</i> )</td></tr>
 </table>
 <hr />
 <a name="static-public-members"></a>
@@ -62,13 +62,13 @@
 <h3 class="fn"><a name="dtor.QSystemMemoryInfo"></a>QSystemMemoryInfo::~QSystemMemoryInfo ()</h3>
 <p>Destroys the <a href="qsystemmemoryinfo.html">QSystemMemoryInfo</a> object.</p>
 <h3 class="fn"><a name="availableDiskSpace"></a>qlonglong QSystemMemoryInfo::availableDiskSpace ( const QString &amp; <i>volumeDrive</i> )</h3>
-<p>Returns the amount of available free space on the <i>volumeDrive</i>.</p>
-<h3 class="fn"><a name="getVolumeType"></a><a href="qsystemmemoryinfo.html#VolumeType-enum">QSystemMemoryInfo::VolumeType</a> QSystemMemoryInfo::getVolumeType ( const QString &amp; <i>driveVolume</i> )</h3>
-<p>Returns the type of volume <i>driveVolume</i></p>
+<p>Returns the amount of available free space on the <i>volumeDrive</i>, in bytes.</p>
 <h3 class="fn"><a name="listOfVolumes"></a>QStringList QSystemMemoryInfo::listOfVolumes ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a QStringList of volumes or partitions.</p>
 <h3 class="fn"><a name="totalDiskSpace"></a>qlonglong QSystemMemoryInfo::totalDiskSpace ( const QString &amp; <i>volumeDrive</i> )</h3>
-<p>Returns the amount of total space on the <i>volumeDrive</i>.</p>
+<p>Returns the amount of total space on the <i>volumeDrive</i>, in bytes.</p>
+<h3 class="fn"><a name="volumeType"></a><a href="qsystemmemoryinfo.html#VolumeType-enum">QSystemMemoryInfo::VolumeType</a> QSystemMemoryInfo::volumeType ( const QString &amp; <i>driveVolume</i> )</h3>
+<p>Returns the type of volume <i>driveVolume</i></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

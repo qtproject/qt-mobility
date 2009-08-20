@@ -78,7 +78,7 @@ public:
         Firmware
     };
 
-    QString getVersion(QSystemInfo::Version type, const QString &parameter = QString());
+    QString version(QSystemInfo::Version type, const QString &parameter = QString());
 //    QPair<int,float> getVersion(QSystemInfo::Version type, const QString &parameter = QString());
 
     static QString currentCountryCode(); //2 letter ISO 3166-1
@@ -130,7 +130,7 @@ public:
         Roaming
     };
 
-	QSystemNetworkInfo::CellNetworkStatus getCellNetworkStatus();
+    QSystemNetworkInfo::CellNetworkStatus cellNetworkStatus();
 
     enum NetworkMode {
         UnknownMode = 0x00000000,
@@ -200,7 +200,7 @@ public:
     qlonglong availableDiskSpace(const QString &driveVolume);
     static QStringList listOfVolumes();
 
-    QSystemMemoryInfo::VolumeType getVolumeType(const QString &driveVolume); //returns enum
+    QSystemMemoryInfo::VolumeType volumeType(const QString &driveVolume); //returns enum
 
     //bool isDiskSpaceCritical(const QString &driveVolume);
 
@@ -212,6 +212,10 @@ private:
 class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(Profile currentProfile READ currentProfile)
+    Q_PROPERTY(PowerState currentPowerState READ currentPowerState)
+    Q_PROPERTY(SimStatus simStatus READ simStatus)
+
     Q_ENUMS(BatteryLevel)
     Q_ENUMS(PowerState)
     Q_ENUMS(InputMethod)
@@ -247,7 +251,7 @@ public:
     };
     Q_DECLARE_FLAGS(InputMethods, InputMethod)
 
-    QSystemDeviceInfo::InputMethods getInputMethodType();
+    QSystemDeviceInfo::InputMethods inputMethodType();
 
     static QString imei();
     static QString imsi();
@@ -276,10 +280,9 @@ public:
 		Locked
 	};
 
-    QSystemDeviceInfo::SimStatus getSimStatus();
     bool isDeviceLocked();
-    QSystemDeviceInfo::Profile getCurrentProfile();
-
+    QSystemDeviceInfo::SimStatus simStatus();
+    QSystemDeviceInfo::Profile currentProfile();
     QSystemDeviceInfo::PowerState currentPowerState();
 
 Q_SIGNALS:

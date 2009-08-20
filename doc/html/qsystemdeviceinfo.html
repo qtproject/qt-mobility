@@ -29,18 +29,26 @@
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#SimStatus-enum">SimStatus</a></b> { SimNotAvailable, SingleAvailable, DualAvailable, Locked }</td></tr>
 </table>
 <hr />
+<a name="properties"></a>
+<h2>Properties</h2>
+<ul>
+<li><div class="fn"><b><a href="qsystemdeviceinfo.html#currentPowerState-prop">currentPowerState</a></b> : const PowerState</div></li>
+<li><div class="fn"><b><a href="qsystemdeviceinfo.html#currentProfile-prop">currentProfile</a></b> : const Profile</div></li>
+<li><div class="fn"><b><a href="qsystemdeviceinfo.html#simStatus-prop">simStatus</a></b> : const SimStatus</div></li>
+</ul>
+<hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#QSystemDeviceInfo">QSystemDeviceInfo</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#dtor.QSystemDeviceInfo">~QSystemDeviceInfo</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#batteryLevel">batteryLevel</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::PowerState </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#currentPowerState">currentPowerState</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::Profile </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#getCurrentProfile">getCurrentProfile</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::InputMethods </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#getInputMethodType">getInputMethodType</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::SimStatus </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#getSimStatus">getSimStatus</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::PowerState </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#currentPowerState-prop">currentPowerState</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::Profile </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#currentProfile-prop">currentProfile</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::InputMethods </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#inputMethodType">inputMethodType</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#isBatteryCharging">isBatteryCharging</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#isDeviceLocked">isDeviceLocked</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::SimStatus </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#simStatus-prop">simStatus</a></b> ()</td></tr>
 </table>
 <hr />
 <a name="signals"></a>
@@ -118,6 +126,27 @@
 <tr><td valign="top"><tt>QSystemDeviceInfo::Locked</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Device has SIM lock enabled.</td></tr>
 </table></p>
 <hr />
+<h2>Property Documentation</h2>
+<h3 class="fn"><a name="currentPowerState-prop"></a>currentPowerState : const <a href="qsystemdeviceinfo.html#PowerState-enum">PowerState</a></h3>
+<p>This property holds the power state.</p>
+<p>Gets the current device power state</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::PowerState </td><td class="memItemRight" valign="bottom"><b>currentPowerState</b> ()</td></tr>
+</table>
+<h3 class="fn"><a name="currentProfile-prop"></a>currentProfile : const <a href="qsystemdeviceinfo.html#Profile-enum">Profile</a></h3>
+<p>This property holds the device profile Gets the current device profile QSystemDeviceInfo::Profile.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::Profile </td><td class="memItemRight" valign="bottom"><b>currentProfile</b> ()</td></tr>
+</table>
+<h3 class="fn"><a name="simStatus-prop"></a>simStatus : const <a href="qsystemdeviceinfo.html#SimStatus-enum">SimStatus</a></h3>
+<p>This property holds the status of the sim card. Returns status of SIM card.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::SimStatus </td><td class="memItemRight" valign="bottom"><b>simStatus</b> ()</td></tr>
+</table>
+<hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QSystemDeviceInfo"></a>QSystemDeviceInfo::QSystemDeviceInfo ( QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qsystemdeviceinfo.html">QSystemDeviceInfo</a> with the given <i>parent</i>.</p>
@@ -127,18 +156,12 @@
 <p>Returns the battery charge level as percentage 1 - 100 scale</p>
 <h3 class="fn"><a name="batteryLevelChanged"></a>void QSystemDeviceInfo::batteryLevelChanged ( <a href="qsystemdeviceinfo.html#BatteryLevel-enum">QSystemDeviceInfo::BatteryLevel</a> <i>level</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted when battery level has changed. <i>level</i> is the new level.</p>
-<h3 class="fn"><a name="currentPowerState"></a><a href="qsystemdeviceinfo.html#PowerState-enum">QSystemDeviceInfo::PowerState</a> QSystemDeviceInfo::currentPowerState ()</h3>
-<p>Gets the current device power state</p>
-<h3 class="fn"><a name="getCurrentProfile"></a><a href="qsystemdeviceinfo.html#Profile-enum">QSystemDeviceInfo::Profile</a> QSystemDeviceInfo::getCurrentProfile ()</h3>
-<p>Gets the current device profile <a href="qsystemdeviceinfo.html#Profile-enum">QSystemDeviceInfo::Profile</a></p>
-<h3 class="fn"><a name="getInputMethodType"></a><a href="qsystemdeviceinfo.html#InputMethod-enum">QSystemDeviceInfo::InputMethods</a> QSystemDeviceInfo::getInputMethodType ()</h3>
-<p>Returns the InputMethodType that the system uses.</p>
-<h3 class="fn"><a name="getSimStatus"></a><a href="qsystemdeviceinfo.html#SimStatus-enum">QSystemDeviceInfo::SimStatus</a> QSystemDeviceInfo::getSimStatus ()</h3>
-<p>Returns status of SIM card.</p>
 <h3 class="fn"><a name="imei"></a>QString QSystemDeviceInfo::imei ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the International Mobile Equipment Identity (IMEI), or a null QString in the case of none.</p>
 <h3 class="fn"><a name="imsi"></a>QString QSystemDeviceInfo::imsi ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the International Mobile Subscriber Identity (IMSI), or a null QString in the case of none.</p>
+<h3 class="fn"><a name="inputMethodType"></a><a href="qsystemdeviceinfo.html#InputMethod-enum">QSystemDeviceInfo::InputMethods</a> QSystemDeviceInfo::inputMethodType ()</h3>
+<p>Returns the InputMethodType that the system uses.</p>
 <h3 class="fn"><a name="isBatteryCharging"></a>bool QSystemDeviceInfo::isBatteryCharging ()</h3>
 <p>Returns true if the battery is charging, otherwise false;</p>
 <h3 class="fn"><a name="isDeviceLocked"></a>bool QSystemDeviceInfo::isDeviceLocked ()</h3>

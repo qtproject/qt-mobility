@@ -44,7 +44,7 @@ class tst_QSystemNetworkInfo : public QObject
 private slots:
 
     void initTestCase();
-    void tst_getCellNetworkStatus();
+    void tst_cellNetworkStatus();
 
     void tst_networkSignalStrength_data();
     void tst_networkSignalStrength();
@@ -71,10 +71,10 @@ void tst_QSystemNetworkInfo::initTestCase()
 }
 
 
-void tst_QSystemNetworkInfo::tst_getCellNetworkStatus()
+void tst_QSystemNetworkInfo::tst_cellNetworkStatus()
 {
     QSystemNetworkInfo ni;
-    QSystemNetworkInfo::CellNetworkStatus status = ni.getCellNetworkStatus();
+    QSystemNetworkInfo::CellNetworkStatus status = ni.cellNetworkStatus();
     QVERIFY( status == QSystemNetworkInfo::UndefinedStatus
              || status == QSystemNetworkInfo::NoNetworkAvailable
              || status == QSystemNetworkInfo::EmergencyOnly

@@ -59,7 +59,7 @@ public:
     QString currentLanguage() const; // 2 letter ISO 639-1
     QStringList availableLanguages() const;	 // 2 letter ISO 639-1
 
-    QString getVersion(QSystemInfo::Version,  const QString &parameter = QString());
+    QString version(QSystemInfo::Version,  const QString &parameter = QString());
 
     QString currentCountryCode() const; //2 letter ISO 3166-1
 //features
@@ -81,7 +81,7 @@ public:
     QSystemNetworkInfoPrivate(QObject *parent = 0);
     virtual ~QSystemNetworkInfoPrivate();
 
-    QSystemNetworkInfo::CellNetworkStatus getCellNetworkStatus();
+    QSystemNetworkInfo::CellNetworkStatus cellNetworkStatus();
     qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
     int cellId();
     int locationAreaCode();
@@ -125,12 +125,12 @@ public:
     qint64 availableDiskSpace(const QString &driveVolume);
     qint64 totalDiskSpace(const QString &driveVolume);
     QStringList listOfVolumes();
-    QSystemMemoryInfo::VolumeType getVolumeType(const QString &driveVolume); //returns enum
+    QSystemMemoryInfo::VolumeType volumeType(const QString &driveVolume); //returns enum
 
 private:
 #if defined(Q_OS_LINUX) ||  defined(Q_OS_WIN32)
-    QHash<QString, QString> mountEntries;
-    void getMountEntries();
+    QHash<QString, QString> mountEntriesHash;
+    void mountEntries();
 #endif
 };
 
@@ -151,13 +151,13 @@ public:
     static QString model();
     static QString productName();
 
-    QSystemDeviceInfo::InputMethods getInputMethodType();
+    QSystemDeviceInfo::InputMethods inputMethodType();
 
     int  batteryLevel() const;
 
-    QSystemDeviceInfo::SimStatus getSimStatus();
+    QSystemDeviceInfo::SimStatus simStatus();
     bool isDeviceLocked();
-    QSystemDeviceInfo::Profile getCurrentProfile();
+    QSystemDeviceInfo::Profile currentProfile();
     bool isBatteryCharging();
 
     QSystemDeviceInfo::PowerState currentPowerState();

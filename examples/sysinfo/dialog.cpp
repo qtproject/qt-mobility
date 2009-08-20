@@ -111,7 +111,7 @@ void Dialog::setupMemory()
     foreach(QString volName, vols) {
         QString type;
         QSystemMemoryInfo::VolumeType volType;
-        volType = mi.getVolumeType(volName);
+        volType = mi.volumeType(volName);
         if(volType == QSystemMemoryInfo::Internal) {
             type =  "Internal";
         } else
@@ -173,7 +173,7 @@ void Dialog::getVersion(int index)
     };
 
     QSystemInfo si;
-    ui->versionLineEdit->setText(si.getVersion(version));
+    ui->versionLineEdit->setText(si.version(version));
 }
 
 void Dialog::getFeature(int index)

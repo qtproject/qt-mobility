@@ -35,14 +35,14 @@
         <keyword ref="qsystemdeviceinfo.html#SimStatus-enum">QSystemDeviceInfo::DualAvailable</keyword>
         <keyword ref="qsystemdeviceinfo.html#SimStatus-enum">QSystemDeviceInfo::Locked</keyword>
         <keyword ref="qsystemdeviceinfo.html#SimStatus-enum">QSystemDeviceInfo::SingleAvailable</keyword>
+        <keyword ref="qsystemdeviceinfo.html#currentPowerState-prop">currentPowerState</keyword>
+        <keyword ref="qsystemdeviceinfo.html#currentProfile-prop">currentProfile</keyword>
+        <keyword ref="qsystemdeviceinfo.html#simStatus-prop">simStatus</keyword>
         <keyword ref="qsystemdeviceinfo.html#batteryLevel">batteryLevel</keyword>
         <keyword ref="qsystemdeviceinfo.html#batteryLevelChanged">batteryLevelChanged</keyword>
-        <keyword ref="qsystemdeviceinfo.html#currentPowerState">currentPowerState</keyword>
-        <keyword ref="qsystemdeviceinfo.html#getCurrentProfile">getCurrentProfile</keyword>
-        <keyword ref="qsystemdeviceinfo.html#getInputMethodType">getInputMethodType</keyword>
-        <keyword ref="qsystemdeviceinfo.html#getSimStatus">getSimStatus</keyword>
         <keyword ref="qsystemdeviceinfo.html#imei">imei</keyword>
         <keyword ref="qsystemdeviceinfo.html#imsi">imsi</keyword>
+        <keyword ref="qsystemdeviceinfo.html#inputMethodType">inputMethodType</keyword>
         <keyword ref="qsystemdeviceinfo.html#isBatteryCharging">isBatteryCharging</keyword>
         <keyword ref="qsystemdeviceinfo.html#isDeviceLocked">isDeviceLocked</keyword>
         <keyword ref="qsystemdeviceinfo.html#manufacturer">manufacturer</keyword>
@@ -88,8 +88,8 @@
         <keyword ref="qsysteminfo.html#availableLanguages">availableLanguages</keyword>
         <keyword ref="qsysteminfo.html#currentCountryCode">currentCountryCode</keyword>
         <keyword ref="qsysteminfo.html#currentLanguage">currentLanguage</keyword>
-        <keyword ref="qsysteminfo.html#getVersion">getVersion</keyword>
         <keyword ref="qsysteminfo.html#hasFeatureSupported">hasFeatureSupported</keyword>
+        <keyword ref="qsysteminfo.html#version">version</keyword>
         <section ref="qsysteminfo-members.html" title="List of all members"/>
     </section>
     <section ref="qsystemmemoryinfo.html" title="QSystemMemoryInfo Class Reference">
@@ -101,9 +101,9 @@
         <keyword ref="qsystemmemoryinfo.html#VolumeType-enum">QSystemMemoryInfo::NoVolume</keyword>
         <keyword ref="qsystemmemoryinfo.html#VolumeType-enum">QSystemMemoryInfo::Cdrom</keyword>
         <keyword ref="qsystemmemoryinfo.html#availableDiskSpace">availableDiskSpace</keyword>
-        <keyword ref="qsystemmemoryinfo.html#getVolumeType">getVolumeType</keyword>
         <keyword ref="qsystemmemoryinfo.html#listOfVolumes">listOfVolumes</keyword>
         <keyword ref="qsystemmemoryinfo.html#totalDiskSpace">totalDiskSpace</keyword>
+        <keyword ref="qsystemmemoryinfo.html#volumeType">volumeType</keyword>
         <section ref="qsystemmemoryinfo-members.html" title="List of all members"/>
     </section>
     <section ref="qsystemnetworkinfo.html" title="QSystemNetworkInfo Class Reference">
@@ -126,9 +126,9 @@
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::GsmMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::WcdmaMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#cellId">cellId</keyword>
+        <keyword ref="qsystemnetworkinfo.html#cellNetworkStatus">cellNetworkStatus</keyword>
         <keyword ref="qsystemnetworkinfo.html#currentMobileCountryCode">currentMobileCountryCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#currentMobileNetworkCode">currentMobileNetworkCode</keyword>
-        <keyword ref="qsystemnetworkinfo.html#getCellNetworkStatus">getCellNetworkStatus</keyword>
         <keyword ref="qsystemnetworkinfo.html#homeMobileCountryCode">homeMobileCountryCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#homeMobileNetworkCode">homeMobileNetworkCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#isWLANAccessible">isWLANAccessible</keyword>

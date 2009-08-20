@@ -45,7 +45,7 @@ private slots:
     void tst_totalDiskSpace();
     void tst_availableDiskSpace();
     void tst_listOfVolumes();
-    void tst_getVolumeType();
+    void tst_volumeType();
 
 };
 
@@ -78,12 +78,12 @@ void tst_QSystemMemoryInfo::tst_listOfVolumes()
     QVERIFY(mi.listOfVolumes().count() > 0);
 }
 
-void tst_QSystemMemoryInfo::tst_getVolumeType()
+void tst_QSystemMemoryInfo::tst_volumeType()
 {
     QSystemMemoryInfo mi;
     QStringList volList = mi.listOfVolumes();
     foreach(QString vol, volList) {
-        QVERIFY(mi.getVolumeType(vol) != QSystemMemoryInfo::NoVolume);
+        QVERIFY(mi.volumeType(vol) != QSystemMemoryInfo::NoVolume);
     }
 }
 

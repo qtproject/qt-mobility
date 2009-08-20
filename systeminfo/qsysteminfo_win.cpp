@@ -202,7 +202,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
                 featureSupported = true;
                 BluetoothFindRadioClose(radio);
             } else {
-                
+
                 qWarning() << "Not available" << GetLastError();
             }
         }
@@ -288,7 +288,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         }
         break;
     case QSystemInfo::WlanFeature :
-        {            
+        {
             QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
             if (interfaces.isEmpty())
                 interfaces = QNetworkInterface::allInterfaces();
@@ -707,7 +707,7 @@ QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
 }
 
-QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::getCurrentProfile()
+QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 {
     return QSystemDeviceInfo::UnknownProfile;
 }
@@ -823,7 +823,7 @@ int QSystemDeviceInfoPrivate::batteryLevel() const
     return 0;
 }
 
-QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::getSimStatus()
+QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 {
 #ifdef Q_OS_WINCE
     HSIM handle;

@@ -132,7 +132,7 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 }
 
 // "major.minor.build" format.
-/*QPair< int,double >*/ QString QSystemInfoPrivate::getVersion(QSystemInfo::Version type,  const QString &parameter)
+/*QPair< int,double >*/ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
 {
     Q_UNUSED(parameter);
     QString errorStr = "Not Available";
@@ -428,7 +428,7 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
 }
 
-QSystemNetworkInfo::CellNetworkStatus QSystemNetworkInfoPrivate::getCellNetworkStatus()
+QSystemNetworkInfo::CellNetworkStatus QSystemNetworkInfoPrivate::cellNetworkStatus()
 {
     return QSystemNetworkInfo::NoNetworkAvailable;
 }
@@ -603,9 +603,9 @@ QSystemMemoryInfoPrivate::~QSystemMemoryInfoPrivate()
 
 qint64 QSystemMemoryInfoPrivate::availableDiskSpace(const QString &driveVolume)
 {
-    getMountEntries();
+    mountEntries();
     struct statfs fs;
-    if(statfs(mountEntries[driveVolume].toLatin1(), &fs ) ==0 ) {
+    if(statfs(mountEntriesHash[driveVolume].toLatin1(), &fs ) ==0 ) {
         long blockSize = fs.f_bsize;
         long availBlocks = fs.f_bavail;
         return (double)availBlocks * blockSize;
@@ -615,10 +615,10 @@ qint64 QSystemMemoryInfoPrivate::availableDiskSpace(const QString &driveVolume)
 
 qint64 QSystemMemoryInfoPrivate::totalDiskSpace(const QString &driveVolume)
 {
-    getMountEntries();
-    mountEntries[driveVolume];
+    mountEntries();
+    mountEntriesHash[driveVolume];
     struct statfs fs;
-    if(statfs(mountEntries[driveVolume].toLatin1(), &fs ) == 0 ) {
+    if(statfs(mountEntriesHash[driveVolume].toLatin1(), &fs ) == 0 ) {
         long blockSize = fs.f_bsize;
         long totalBlocks = fs.f_blocks;
         return (double)totalBlocks * blockSize;
@@ -626,7 +626,7 @@ qint64 QSystemMemoryInfoPrivate::totalDiskSpace(const QString &driveVolume)
     return 0;
 }
 
-QSystemMemoryInfo::VolumeType QSystemMemoryInfoPrivate::getVolumeType(const QString &driveVolume)
+QSystemMemoryInfo::VolumeType QSystemMemoryInfoPrivate::volumeType(const QString &driveVolume)
 {
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
@@ -655,13 +655,13 @@ QSystemMemoryInfo::VolumeType QSystemMemoryInfoPrivate::getVolumeType(const QStr
 
 QStringList QSystemMemoryInfoPrivate::listOfVolumes()
 {
-    getMountEntries();
-    return mountEntries.keys();
+    mountEntries();
+    return mountEntriesHash.keys();
 }
 
-void QSystemMemoryInfoPrivate::getMountEntries()
+void QSystemMemoryInfoPrivate::mountEntries()
 {
-    mountEntries.clear();
+    mountEntriesHash.clear();
     FILE *mntfp = setmntent( "/proc/mounts", "r" );
     mntent *me = getmntent(mntfp);
     while(me != NULL) {
@@ -670,9 +670,9 @@ void QSystemMemoryInfoPrivate::getMountEntries()
             long blockSize = fs.f_bsize;
             long totalBlocks = fs.f_blocks;
             double total = (double)totalBlocks * blockSize;
-            if(total > 0 && !mountEntries.keys().contains(me->mnt_dir)) {
+            if(total > 0 && !mountEntriesHash.keys().contains(me->mnt_dir)) {
                 qWarning() << me->mnt_type;
-                mountEntries[me->mnt_fsname] = me->mnt_dir;
+                mountEntriesHash[me->mnt_fsname] = me->mnt_dir;
             }
         }
         me = getmntent(mntfp);
@@ -692,12 +692,12 @@ QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
 }
 
-QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::getCurrentProfile()
+QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 {
     return QSystemDeviceInfo::UnknownProfile;
 }
 
-QSystemDeviceInfo::InputMethods QSystemDeviceInfoPrivate::getInputMethodType()
+QSystemDeviceInfo::InputMethods QSystemDeviceInfoPrivate::inputMethodType()
 {
     QSystemDeviceInfo::InputMethods methods = 0;
     if(halIsAvailable) {
@@ -1019,7 +1019,7 @@ int QSystemDeviceInfoPrivate::batteryLevel() const
     return 0;
 }
 
-QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::getSimStatus()
+QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 {
     return QSystemDeviceInfo::SimNotAvailable;
 }
