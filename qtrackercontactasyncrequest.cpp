@@ -67,16 +67,20 @@ QTrackerContactAsyncRequest::QTrackerContactAsyncRequest(
                     RDFVariable::fromType<nco::PersonContact>();
             RDFSelect quer;
 
-
+/*
+ *  // TODO use this to get one phone number, TODO check for querying all phone numbers
+            query.addColumn("Phone", contact.optional().property<nco::hasPhoneNumber>().property<nco::phoneNumber>());
+            query.addColumn("Email", contact.optional().property<nco::emailAddress>().property<nco::emailAddress>());
+*/
             quer.addColumn("contact_uri", RDFContact);
             quer.addColumn("contactId",
                     RDFContact.property<nco::contactUID> ());
             quer.addColumn("firstname",
-                    RDFContact.property<nco::nameGiven> ());
+                    RDFContact.optional().property<nco::nameGiven>());
             quer.addColumn("secondname",
-                    RDFContact.property<nco::nameFamily> ());
+                    RDFContact.optional().property<nco::nameFamily> ());
             quer.addColumn("photo",
-                    RDFContact.property<nco::photo> ());
+                    RDFContact.optional().property<nco::photo> ());
 
             query = ::tracker()->modelQuery(quer);
             // need to store LiveNodes in order to receive notification from model
@@ -137,8 +141,9 @@ void QTrackerContactAsyncRequest::contactsReady()
         result.append(contact);
     }
 
+
     if (engine)
         engine->updateRequest(req, result, QContactManager::NoError, QList<
                 QContactManager::Error> (), QContactAbstractRequest::Finished,
-                false);
+                true);
 }
