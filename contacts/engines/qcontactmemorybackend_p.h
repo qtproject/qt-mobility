@@ -71,7 +71,8 @@ public:
     QContactMemoryEngineData()
     : m_refCount(QAtomicInt(1)),
     m_nextContactId(1),
-    m_nextGroupId(1)
+    m_nextGroupId(1),
+    m_anonymous(false)
     {
     }
 
@@ -79,7 +80,8 @@ public:
         : QSharedData(other),
         m_refCount(QAtomicInt(1)),
         m_nextContactId(other.m_nextContactId),
-        m_nextGroupId(other.m_nextGroupId)
+        m_nextGroupId(other.m_nextGroupId),
+        m_anonymous(other.m_anonymous)
     {
     }
 
@@ -98,6 +100,7 @@ public:
     mutable QSet<QString> m_createOnlyIds; // a list of create only ids.
     QUniqueId m_nextContactId;
     QUniqueId m_nextGroupId;
+    bool m_anonymous;                               // Is this backend ever shared?
 
     QQueue<QContactAbstractRequest*> m_asynchronousOperations; // async requests to be performed.
 };

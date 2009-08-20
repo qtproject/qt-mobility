@@ -60,7 +60,7 @@ public:
 private:
     void dumpContactDifferences(const QContact& a, const QContact& b);
     void dumpContact(const QContact &c);
-    void dumpContacts();
+    void dumpContacts(QContactManager *cm);
     bool isSuperset(const QContact& ca, const QContact& cb);
 
     void addManagers(); // add standard managers to the data
@@ -68,6 +68,9 @@ public slots:
     void init();
     void cleanup();
 private slots:
+
+    void doDump();
+    void doDump_data() {addManagers();}
 
     /* Special test with special data */
     void uriParsing();
@@ -220,13 +223,14 @@ void tst_QContactManager::dumpContact(const QContact& contact)
     }
 }
 
-void tst_QContactManager::dumpContacts()
+void tst_QContactManager::dumpContacts(QContactManager *cm)
 {
-    QContactManager m;
-    QList<QUniqueId> ids = m.contacts();
+    QList<QUniqueId> ids = cm->contacts();
+
+    qDebug() << "There are" << ids.count() << "contacts in" << cm->storeUri();
 
     foreach(QUniqueId id, ids) {
-        QContact c = m.contact(id);
+        QContact c = cm->contact(id);
         dumpContact(c);
     }
 }
@@ -446,6 +450,17 @@ void tst_QContactManager::ctors()
     delete cm6;
 
     /* cm9 should be deleted by ~parent */
+}
+
+void tst_QContactManager::doDump()
+{
+    // Only do this if it has been explicitly selected
+    if (QCoreApplication::arguments().contains("doDump")) {
+        QFETCH(QString, uri);
+        QContactManager* cm = QContactManager::fromUri(uri);
+
+        dumpContacts(cm);
+    }
 }
 
 void tst_QContactManager::groups()
@@ -669,6 +684,10 @@ void tst_QContactManager::add()
     na.setFirst("Alice");
     na.setLast("inWonderland");
     alice.saveDetail(&na);
+    QContactDisplayLabel label = alice.displayLabel();
+    label.setLabel(cm->synthesiseDisplayLabel(alice));
+    label.setSynthesised(true);
+    alice.setDisplayLabel(label);
 
     QContactPhoneNumber ph;
     ph.setNumber("1234567");
@@ -688,7 +707,7 @@ void tst_QContactManager::add()
     QVERIFY(added.id() == alice.id());
 
     if (!isSuperset(added, alice)) {
-        dumpContacts();
+        dumpContacts(cm);
         dumpContactDifferences(added, alice);
     }
     delete cm;
@@ -1665,17 +1684,8 @@ void tst_QContactManager::signalEmission()
     QContactManager* m1 = QContactManager::fromUri(uri);
     QContactManager* m2 = QContactManager::fromUri(uri);
 
-    /* There's a hitch with the memory engine - anonymous engines don't share signals */
-    QString engine;
-    QMap<QString, QString> params;
-    QContactManager::splitUri(uri, &engine, &params);
-
-    // If this is the memory engine, we skip some
-    // cross manager notification tests (anonymous ids)
-    bool skipCross = (engine == "memory" && params["id"].isEmpty());
-
-    // Also, kabc does not support cross notifications at this time
-    // but we QEXPECT_FAIL those since it's transitory
+    QVERIFY(m1->information()->hasFeature(QContactManagerInfo::ExternalNotifications) ==
+        m2->information()->hasFeature(QContactManagerInfo::ExternalNotifications));
 
     qRegisterMetaType<QUniqueId>("QUniqueId");
     qRegisterMetaType<QList<QUniqueId> >("QList<QUniqueId>");
@@ -1828,7 +1838,7 @@ void tst_QContactManager::signalEmission()
     QVERIFY(sigids.contains(c3.id()));
 
     /* Now some cross manager testing */
-    if (!skipCross) {
+    if (m1->information()->hasFeature(QContactManagerInfo::ExternalNotifications)) {
         // verify that signals are emitted for modifications made to other managers (same id).
         QContactName ncs = c.detail(QContactName::DefinitionName);
         ncs.setSuffix("Test");
@@ -1837,12 +1847,9 @@ void tst_QContactManager::signalEmission()
         ncs.setPrefix("Test2");
         c.saveDetail(&ncs);
         m2->saveContact(&c);
-        QEXPECT_FAIL("mgr='kabc'", "Cross engine notification not implemented yet", Continue);
         QCOMPARE(spyCA.count(), 1); // check that we received the update signals.
-        QEXPECT_FAIL("mgr='kabc'", "Cross engine notification not implemented yet", Continue);
         QCOMPARE(spyCM.count(), 1); // check that we received the update signals.
         m2->removeContact(c.id());
-        QEXPECT_FAIL("mgr='kabc'", "Cross engine notification not implemented yet", Continue);
         QCOMPARE(spyCR.count(), 1); // check that we received the remove signal.
     }
 
@@ -1852,7 +1859,7 @@ void tst_QContactManager::signalEmission()
         g1.setName("XXXXXX Group");
 
         /* For cross notification testing, add everything to m2 and watch on m1 */
-        QContactManager *adder = skipCross ? m1 : m2;
+        QContactManager *adder = m2->information()->hasFeature(QContactManagerInfo::ExternalNotifications) ? m2 : m1;
 
         adder->removeContact(c.id());
         adder->removeContact(c2.id());

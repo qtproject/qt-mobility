@@ -58,7 +58,8 @@ public:
         CreateOnlyDetails,
         MutableDefinitions,
         NativeFiltering,
-        NativeSorting
+        NativeSorting,
+        ExternalNotifications
     };
 
     bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;

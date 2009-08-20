@@ -162,12 +162,16 @@ void QContactManagerData::loadFactories()
         }
 
         QStringList paths;
+        QSet<QString> processed;
 
         paths << QApplication::applicationDirPath() << QApplication::libraryPaths();
 
         qDebug() << "Plugin paths:" << paths;
         /* Enumerate our plugin paths */
         for (int i=0; i < paths.count(); i++) {
+            if (processed.contains(paths.at(i)))
+                continue;
+            processed.insert(paths.at(i));
             QDir pluginsDir(paths.at(i));
 #if defined(Q_OS_WIN)
              if (pluginsDir.dirName().toLower() == QLatin1String("debug") || pluginsDir.dirName().toLower() == QLatin1String("release"))

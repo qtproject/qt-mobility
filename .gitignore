@@ -30,3 +30,10 @@ ABLD.BAT
 
 #Carbide project files
 *.project
+
+# MSVS project files
+*.vcproj
+*.sln
+*.suo
+*.ncb
+*.user
