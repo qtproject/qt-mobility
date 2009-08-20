@@ -305,20 +305,14 @@ public:
     QSystemScreenSaver(QObject *parent = 0);
     ~QSystemScreenSaver();
 
-//    enum ScreenSaverState {
-//        UnknownScreenSaverState = 0,
-//        ScreenSaverDisabled,
-//        ScreenSaverEnabled
-//    };
-
     virtual bool screenSaverEnabled();
-    virtual bool  screenBlankingEnabled();
+    virtual bool screenBlankingEnabled();
 
     bool setScreenSaverEnabled(bool b);
     bool setScreenBlankingEnabled(bool b);
 
 private:
-    bool  screenSaverIsEnabled;
+    bool screenSaverIsEnabled;
     bool screenBlankingIsEnabled;
     QSystemScreenSaverPrivate *d;
 };
