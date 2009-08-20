@@ -30,7 +30,6 @@
         <keyword ref="qabstractvaluespacelayer.html#removeWatches">removeWatches</keyword>
         <keyword ref="qabstractvaluespacelayer.html#requestRemoveValue">requestRemoveValue</keyword>
         <keyword ref="qabstractvaluespacelayer.html#requestSetValue">requestSetValue</keyword>
-        <keyword ref="qabstractvaluespacelayer.html#restart">restart</keyword>
         <keyword ref="qabstractvaluespacelayer.html#setProperty">setProperty</keyword>
         <keyword ref="qabstractvaluespacelayer.html#setValue">setValue</keyword>
         <keyword ref="qabstractvaluespacelayer.html#shutdown">shutdown</keyword>
@@ -99,7 +98,6 @@
         <keyword ref="qvaluespace.html#availableLayers">availableLayers</keyword>
         <keyword ref="qvaluespace.html#initValuespace">initValuespace</keyword>
         <keyword ref="qvaluespace.html#initValuespaceManager">initValuespaceManager</keyword>
-        <keyword ref="qvaluespace.html#reinitValuespace">reinitValuespace</keyword>
         <keyword ref="qvaluespace.html#QVALUESPACE_REGISTRY_LAYER">QVALUESPACE_REGISTRY_LAYER</keyword>
         <keyword ref="qvaluespace.html#QVALUESPACE_SHAREDMEMORY_LAYER">QVALUESPACE_SHAREDMEMORY_LAYER</keyword>
     </section>

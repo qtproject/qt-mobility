@@ -41,7 +41,6 @@
 <li><div class="fn"></div>virtual bool <b><a href="qabstractvaluespacelayer.html#requestRemoveValue">requestRemoveValue</a></b> ( Handle <i>handle</i>, const QByteArray &amp; <i>subPath</i> = QByteArray( &quot;/&quot; ) ) = 0</li>
 <li><div class="fn"></div>virtual bool <b><a href="qabstractvaluespacelayer.html#requestSetValue">requestSetValue</a></b> ( Handle <i>handle</i>, const QVariant &amp; <i>value</i> ) = 0</li>
 <li><div class="fn"></div>virtual bool <b><a href="qabstractvaluespacelayer.html#requestSetValue-2">requestSetValue</a></b> ( Handle <i>handle</i>, const QByteArray &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> ) = 0</li>
-<li><div class="fn"></div>virtual bool <b><a href="qabstractvaluespacelayer.html#restart">restart</a></b> () = 0</li>
 <li><div class="fn"></div>virtual void <b><a href="qabstractvaluespacelayer.html#setProperty">setProperty</a></b> ( Handle <i>handle</i>, Properties <i>property</i> ) = 0</li>
 <li><div class="fn"></div>virtual bool <b><a href="qabstractvaluespacelayer.html#setValue">setValue</a></b> ( QValueSpaceObject * <i>creator</i>, Handle <i>handle</i>, const QByteArray &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> ) = 0</li>
 <li><div class="fn"></div>virtual void <b><a href="qabstractvaluespacelayer.html#shutdown">shutdown</a></b> () = 0</li>
@@ -143,9 +142,6 @@
 <h3 class="fn"><a name="requestSetValue-2"></a>bool QAbstractValueSpaceLayer::requestSetValue ( <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i>, const QByteArray &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Process a client side <a href="qvaluespaceitem.html#setValue">QValueSpaceItem::setValue</a>() call by sending a request to the provider of the value space item identified by <i>handle</i> and <i>subPath</i> to set the value to <i>value</i>.</p>
 <p>Returns true if the request was successfully sent; otherwise returns false.</p>
-<h3 class="fn"><a name="restart"></a>bool QAbstractValueSpaceLayer::restart ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Called by the Value Space system to restart each layer.</p>
-<p>Returns true upon success; otherwise returns false.</p>
 <h3 class="fn"><a name="setProperty"></a>void QAbstractValueSpaceLayer::setProperty ( <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i>, <a href="qabstractvaluespacelayer.html#Properties-enum">Properties</a> <i>property</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Apply the specified <i>property</i> mask to <i>handle</i>.</p>
 <h3 class="fn"><a name="setValue"></a>bool QAbstractValueSpaceLayer::setValue ( <a href="qvaluespaceobject.html">QValueSpaceObject</a> * <i>creator</i>, <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i>, const QByteArray &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
