@@ -51,21 +51,4 @@ private:
     QSystemReadWriteLockPrivate * d;
 };
 
-class QSystemMutex_Private;
-class QSystemMutex
-{
-public:
-    QSystemMutex(unsigned int id, bool own);
-    ~QSystemMutex();
-
-    bool isNull() const;
-    unsigned int id() const;
-
-    bool lock(int milliSec);
-    void unlock();
-
-private:
-    QSystemMutex_Private *m_data;
-};
-
 #endif
