@@ -40,7 +40,7 @@ class tst_QSystemDisplayInfo : public QObject
 private slots:
     void tst_displayBrightness();
     void tst_colorDepth();
-    void tst_isScreenLockOn();
+ //   void tst_isScreenLockOn();
 
 };
 
@@ -56,12 +56,12 @@ void tst_QSystemDisplayInfo::tst_colorDepth()
     QVERIFY(di.colorDepth(0) > 0);
 }
 
-void tst_QSystemDisplayInfo::tst_isScreenLockOn()
-{
-    QSystemDisplayInfo di;
-    bool lock = di.isScreenLockOn();
-    QVERIFY(lock == true || lock == false);
-}
+//void tst_QSystemDisplayInfo::tst_isScreenLockOn()
+//{
+//    QSystemDisplayInfo di;
+//    bool lock = di.isScreenLockOn();
+//    QVERIFY(lock == true || lock == false);
+//}
 
 
 

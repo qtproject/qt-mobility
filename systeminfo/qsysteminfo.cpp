@@ -439,16 +439,6 @@ int QSystemDisplayInfo::colorDepth(int screenNumber)
     return dp.colorDepth(screenNumber);
 }
 
-/*!
-    Returns whether the systems screen lock is turned on.
-*/
-bool QSystemDisplayInfo::isScreenLockOn()
-{
-    QSystemDisplayInfoPrivate dp;
-    return dp.isScreenLockOn();
-}
-
-
  /*!
    Constructs a QSystemMemoryInfo with the given \a parent.
  */
@@ -678,6 +668,15 @@ bool QSystemScreenSaver::screenSaverEnabled()
 bool QSystemScreenSaver::screenBlankingEnabled()
 {
     return d->screenBlankingEnabled();
+}
+
+/*!
+    Returns whether the systems screen lock is turned on.
+*/
+bool QSystemScreenSaver::isScreenLockOn()
+{
+    QSystemScreenSaverPrivate dp;
+    return dp.isScreenLockOn();
 }
 
 QT_END_NAMESPACE
