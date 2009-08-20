@@ -37,8 +37,9 @@
 #define QGSTREAMERCAPTURESESSION_H
 
 #include "qmediarecordercontrol.h"
-#include "qmediasink.h"
 #include "qmediarecorder.h"
+
+#include <QtCore/qurl.h>
 
 #include <gst/gst.h>
 
@@ -67,8 +68,8 @@ public:
     QGstreamerCaptureSession(CaptureMode captureMode, QObject *parent);
     ~QGstreamerCaptureSession();
 
-    QMediaSink sink() const;
-    bool setSink(const QMediaSink& sink);
+    QUrl sink() const;
+    bool setSink(const QUrl& sink);
 
     QGstreamerAudioEncode *audioEncodeControl() const { return m_audioEncodeControl; }
     QGstreamerVideoEncode *videoEncodeControl() const { return m_videoEncodeControl; }
@@ -113,7 +114,7 @@ private:
     void waitForStopped();
     void rebuildGraph(QGstreamerCaptureSession::PipelineMode newMode);
 
-    QMediaSink m_sink;
+    QUrl m_sink;
     QString m_captureDevice;
     State m_state;
     PipelineMode m_pipelineMode;

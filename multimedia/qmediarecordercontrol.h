@@ -38,7 +38,7 @@
 #include "qabstractmediacontrol.h"
 #include "qmediarecorder.h"
 
-class QMediaSink;
+class QUrl;
 
 class QMediaRecorderControl : public QAbstractMediaControl
 {
@@ -48,8 +48,8 @@ public:
 
     virtual ~QMediaRecorderControl();
 
-    virtual QMediaSink sink() const = 0;
-    virtual bool setSink(const QMediaSink &sink) = 0;
+    virtual QUrl sink() const = 0;
+    virtual bool setSink(const QUrl &sink) = 0;
 
     virtual QMediaRecorder::State state() const = 0;
 

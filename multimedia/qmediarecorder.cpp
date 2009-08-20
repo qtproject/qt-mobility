@@ -40,6 +40,7 @@
 #include "qmediaserviceprovider.h"
 
 #include <QtCore/qdebug.h>
+#include <QtCore/qurl.h>
 
 
 Q_MEDIA_EXPORT QAbstractMediaService *createMediaCaptureService(QMediaServiceProvider *provider)
@@ -180,16 +181,16 @@ QAbstractMediaService* QMediaRecorder::service() const
     Returns the sink being used.
 */
 
-QMediaSink QMediaRecorder::sink() const
+QUrl QMediaRecorder::sink() const
 {
-    return d_func()->control ? d_func()->control->sink() : QMediaSink();
+    return d_func()->control ? d_func()->control->sink() : QUrl();
 }
 
 /*!
     Returns true if set of sink being used to \a sink is successful.
 */
 
-bool QMediaRecorder::setSink(const QMediaSink &sink)
+bool QMediaRecorder::setSink(const QUrl &sink)
 {
     Q_D(QMediaRecorder);
     return d->control ? d->control->setSink(sink) : false;

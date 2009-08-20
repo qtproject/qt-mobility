@@ -47,12 +47,12 @@ public:
     QGstreamerRecorderControl(QGstreamerCaptureSession *session);
     virtual ~QGstreamerRecorderControl();
 
-    virtual QMediaSink sink() const;
-    virtual bool setSink(const QMediaSink &sink);
+    QUrl sink() const;
+    bool setSink(const QUrl &sink);
 
-    virtual QMediaRecorder::State state() const;
+    QMediaRecorder::State state() const;
 
-    virtual qint64 duration() const;
+    qint64 duration() const;
 
 signals:
     void stateChanged(QMediaRecorder::State state);
@@ -60,9 +60,9 @@ signals:
     void error(int error, const QString &errorString);
 
 public slots:
-    virtual void record();
-    virtual void pause();
-    virtual void stop();
+    void record();
+    void pause();
+    void stop();
 
 private slots:
     void updateState();

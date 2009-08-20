@@ -95,8 +95,7 @@ GstElement *QGstreamerCaptureSession::buildEncodeBin()
     GstElement *muxer = gst_element_factory_make( m_mediaFormatControl->format().toAscii(), "muxer");
     GstElement *fileSink = gst_element_factory_make("filesink", "filesink");
 
-    QUrl url = m_sink.dataLocation().toUrl();
-    g_object_set(G_OBJECT(fileSink), "location", url.toString().toLocal8Bit().constData(), NULL);
+    g_object_set(G_OBJECT(fileSink), "location", m_sink.toString().toLocal8Bit().constData(), NULL);
 
     gst_bin_add_many(GST_BIN(encodeBin), muxer, fileSink,  NULL);
     gst_element_link(muxer, fileSink);
@@ -349,12 +348,12 @@ void QGstreamerCaptureSession::dumpGraph(const QString &fileName)
                                fileName.toAscii());
 }
 
-QMediaSink QGstreamerCaptureSession::sink() const
+QUrl QGstreamerCaptureSession::sink() const
 {
     return m_sink;
 }
 
-bool QGstreamerCaptureSession::setSink(const QMediaSink& sink)
+bool QGstreamerCaptureSession::setSink(const QUrl& sink)
 {
     m_sink = sink;
     return true;

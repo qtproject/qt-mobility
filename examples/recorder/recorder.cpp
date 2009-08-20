@@ -55,7 +55,7 @@ Recorder::Recorder(QWidget *parent) :
     ui->setupUi(this);
 
     audioRecorder = new QMediaRecorder;
-    audioRecorder->setSink(QMediaSink(QUrl("test.ogg")));
+    audioRecorder->setSink(QUrl("test.ogg"));
     audioDevice = audioRecorder->service()->createEndpoint<QAudioDeviceEndpoint*>();
 
     connect(audioRecorder, SIGNAL(durationChanged(qint64)), this, SLOT(updateRecordTime()));

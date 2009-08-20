@@ -72,7 +72,7 @@ CameraCapture::CameraCapture(QWidget *parent) :
     else
         mediaRecorder = new QMediaRecorder();
 
-    mediaRecorder->setSink(QMediaSink(QUrl("test.mkv")));
+    mediaRecorder->setSink(QUrl("test.mkv"));
     if(mediaRecorder->service())
         audioDevice = mediaRecorder->service()->control<QAudioInputDeviceControl*>();
 

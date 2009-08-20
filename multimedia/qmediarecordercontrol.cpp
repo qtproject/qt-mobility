@@ -57,13 +57,13 @@ QMediaRecorderControl::~QMediaRecorderControl()
 }
 
 /*!
-    \fn QMediaSink QMediaRecorderControl::sink() const
+    \fn QUrl QMediaRecorderControl::sink() const
 
     Return the current sink being used.
 */
 
 /*!
-    \fn bool QMediaRecorderControl::setSink(const QMediaSink &sink)
+    \fn bool QMediaRecorderControl::setSink(const QUrl &sink)
 
     Returns true if set of sink being used to \a sink is successful.
 */

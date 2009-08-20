@@ -36,10 +36,9 @@
 #define QMEDIARECORDER_H
 
 #include "qabstractmediaobject.h"
-
 #include "qmediaserviceprovider.h"
-#include "qmediasink.h"
 
+class QUrl;
 
 class QMediaRecorderService;
 extern Q_MEDIA_EXPORT QAbstractMediaService *createMediaCaptureService(QMediaServiceProvider *provider = defaultServiceProvider("audiorecorder"));
@@ -74,8 +73,8 @@ public:
 
     QAbstractMediaService* service() const;
 
-    QMediaSink sink() const;
-    bool setSink(const QMediaSink &sink);
+    QUrl sink() const;
+    bool setSink(const QUrl &sink);
 
     State state() const;
 

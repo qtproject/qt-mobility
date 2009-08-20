@@ -47,12 +47,12 @@ QGstreamerRecorderControl::~QGstreamerRecorderControl()
 {
 }
 
-QMediaSink QGstreamerRecorderControl::sink() const
+QUrl QGstreamerRecorderControl::sink() const
 {
     return m_session->sink();
 }
 
-bool QGstreamerRecorderControl::setSink(const QMediaSink &sink)
+bool QGstreamerRecorderControl::setSink(const QUrl &sink)
 {
     m_session->setSink(sink);
     return true;
