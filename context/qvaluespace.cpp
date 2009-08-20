@@ -486,25 +486,19 @@ struct QValueSpaceItemPrivate
 
 QByteArray qCanonicalPath(const QByteArray &path)
 {
-    if (path.isEmpty())
-        return QByteArray("/");
-
     QByteArray result;
     result.resize(path.length());
     const char *from = path.constData();
     const char *fromend = from + path.length();
     int outc=0;
     char *to = result.data();
-    for (;;) {
-        if (from!=fromend)
-            to[outc++] = '/';
+    do {
+        to[outc++] = '/';
         while (from!=fromend && *from == '/')
             ++from;
         while (from!=fromend && *from != '/')
             to[outc++] = *from++;
-        if (from==fromend)
-            break;
-    }
+    } while (from != fromend);
     if (outc > 1 && to[outc-1] == '/')
         --outc;
     result.resize(outc);
