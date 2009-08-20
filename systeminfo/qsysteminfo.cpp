@@ -631,13 +631,10 @@ QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
  */
 QSystemScreenSaver::~QSystemScreenSaver()
 {
-    qWarning() << Q_FUNC_INFO;
-    //if(screenSaverIsEnabled != screenSaverIsEnabled())
-        if(screenSaverIsEnabled != screenSaverEnabled())
-            setScreenSaverEnabled(screenSaverIsEnabled);
-  //  if(screenBlankingIsEnabled != screenBlankingEnabled)
-        if(screenBlankingIsEnabled != screenBlankingEnabled())
-            setScreenBlankingEnabled(screenBlankingIsEnabled);
+    if(screenSaverIsEnabled != screenSaverEnabled())
+        setScreenSaverEnabled(screenSaverIsEnabled);
+    if(screenBlankingIsEnabled != screenBlankingEnabled())
+        setScreenBlankingEnabled(screenBlankingIsEnabled);
     delete d;
 }
 
