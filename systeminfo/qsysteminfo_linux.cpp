@@ -1079,7 +1079,7 @@ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
 
 }
 
-bool QSystemScreenSaverPrivate::setScreenSaverEnabled(QSystemScreenSaver::ScreenSaverState state)
+bool QSystemScreenSaverPrivate::setScreenSaverEnabled(bool state)
 {
     Q_UNUSED(state);
     QDesktopWidget wid;
@@ -1105,20 +1105,20 @@ bool QSystemScreenSaverPrivate::setScreenSaverEnabled(QSystemScreenSaver::Screen
     return false;
 }
 
-bool QSystemScreenSaverPrivate::setScreenBlankingEnabled(QSystemScreenSaver::ScreenSaverState state)
+bool QSystemScreenSaverPrivate::setScreenBlankingEnabled(bool state)
 {
     Q_UNUSED(state);
     return false;
 }
 
-QSystemScreenSaver::ScreenSaverState QSystemScreenSaverPrivate::screenSaverEnabled()
+bool QSystemScreenSaverPrivate::screenSaverEnabled()
 {
-    return QSystemScreenSaver::UnknownScreenSaverState;
+    return false;
 }
 
-QSystemScreenSaver::ScreenSaverState QSystemScreenSaverPrivate::screenBlankingEnabled()
+bool QSystemScreenSaverPrivate::screenBlankingEnabled()
 {
-    return QSystemScreenSaver::UnknownScreenSaverState;
+    return false;
 }
 
 

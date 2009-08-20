@@ -98,7 +98,9 @@
         <keyword ref="qsystemmemoryinfo.html#VolumeType-enum">VolumeType</keyword>
         <keyword ref="qsystemmemoryinfo.html#VolumeType-enum">QSystemMemoryInfo::Internal</keyword>
         <keyword ref="qsystemmemoryinfo.html#VolumeType-enum">QSystemMemoryInfo::Removable</keyword>
+        <keyword ref="qsystemmemoryinfo.html#VolumeType-enum">QSystemMemoryInfo::Remote</keyword>
         <keyword ref="qsystemmemoryinfo.html#VolumeType-enum">QSystemMemoryInfo::NoVolume</keyword>
+        <keyword ref="qsystemmemoryinfo.html#VolumeType-enum">QSystemMemoryInfo::Cdrom</keyword>
         <keyword ref="qsystemmemoryinfo.html#availableDiskSpace">availableDiskSpace</keyword>
         <keyword ref="qsystemmemoryinfo.html#getVolumeType">getVolumeType</keyword>
         <keyword ref="qsystemmemoryinfo.html#listOfVolumes">listOfVolumes</keyword>
@@ -138,10 +140,6 @@
     </section>
     <section ref="qsystemscreensaver.html" title="QSystemScreenSaver Class Reference">
         <keyword ref="qsystemscreensaver.html">QSystemScreenSaver</keyword>
-        <keyword ref="qsystemscreensaver.html#ScreenSaverState-enum">ScreenSaverState</keyword>
-        <keyword ref="qsystemscreensaver.html#ScreenSaverState-enum">QSystemScreenSaver::ScreenSaverDisabled</keyword>
-        <keyword ref="qsystemscreensaver.html#ScreenSaverState-enum">QSystemScreenSaver::UnknownScreenSaverState</keyword>
-        <keyword ref="qsystemscreensaver.html#ScreenSaverState-enum">QSystemScreenSaver::ScreenSaverEnabled</keyword>
         <keyword ref="qsystemscreensaver.html#screenBlankingEnabled">screenBlankingEnabled</keyword>
         <keyword ref="qsystemscreensaver.html#screenSaverEnabled">screenSaverEnabled</keyword>
         <keyword ref="qsystemscreensaver.html#setScreenBlankingEnabled">setScreenBlankingEnabled</keyword>

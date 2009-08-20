@@ -422,7 +422,7 @@ QSystemDisplayInfo::~QSystemDisplayInfo()
 }
 
 /*!
-    Returns the display brightness in %, 1 - 100 scale
+    Returns the display brightness of \a screen in %, 1 - 100 scale
 */
 int QSystemDisplayInfo::displayBrightness(int screen)
 {
@@ -662,7 +662,7 @@ bool QSystemScreenSaver::setScreenBlankingEnabled(bool b)
 }
 
 /*!
-   Gets if the screensaver is enabled or not.
+   Returns true if the screensaver is enabled, otherwise false.
 */
 bool QSystemScreenSaver::screenSaverEnabled()
 {
@@ -670,7 +670,7 @@ bool QSystemScreenSaver::screenSaverEnabled()
 }
 
 /*!
-   Gets if screen blanking is enabled or not.
+   Returns true if screen blanking is enabled, other wise false.
 */
 bool QSystemScreenSaver::screenBlankingEnabled()
 {
