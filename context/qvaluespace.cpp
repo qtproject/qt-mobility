@@ -137,14 +137,6 @@ void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const Q
 */
 
 /*!
-    \fn bool QAbstractValueSpaceLayer::restart()
-
-    Called by the Value Space system to restart each layer.
-
-    Returns true upon success; otherwise returns false.
-*/
-
-/*!
     \fn void QAbstractValueSpaceLayer::shutdown()
 
     Called by the Value Space system to uninitialize each layer.  The shutdown call can be used to
@@ -391,15 +383,6 @@ void QValueSpace::initValuespace()
 {
     qRegisterMetaType<quintptr>("quintptr");
     QValueSpaceManager::instance()->init();
-}
-
-/*!
-  Re-initialize the value space.  This method only needs to be called by layer
-  implementers to force re-initialization of the value space.
-  */
-void QValueSpace::reinitValuespace()
-{
-    QValueSpaceManager::instance()->reinit();
 }
 
 /*!

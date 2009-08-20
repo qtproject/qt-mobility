@@ -56,7 +56,6 @@ public:
 
     void initServer();
     void init();
-    void reinit();
     bool isServer() const;
 
     void install(QAbstractValueSpaceLayer * layer);
@@ -67,9 +66,7 @@ public:
 
 private:
     void commonInit(QAbstractValueSpaceLayer::Type);
-    void commonReinit();
     bool initLayer(QAbstractValueSpaceLayer* layer);
-    bool reinitLayer(QAbstractValueSpaceLayer* layer);
 
     enum { Uninit, Server, Client } type;
     QList<QAbstractValueSpaceLayer *> layers;

@@ -56,7 +56,6 @@ public:
     enum Type { Server, Client };
 
     virtual bool startup(Type type) = 0;
-    virtual bool restart() = 0;
     virtual void shutdown() = 0;
 
     virtual QUuid id() = 0;
@@ -102,7 +101,6 @@ signals:
 namespace QValueSpace {
     Q_CFW_EXPORT void initValuespaceManager();
     void initValuespace();
-    Q_CFW_EXPORT void reinitValuespace();
 
     typedef QAbstractValueSpaceLayer *(*LayerCreateFunc)();
     void installLayer(LayerCreateFunc func);

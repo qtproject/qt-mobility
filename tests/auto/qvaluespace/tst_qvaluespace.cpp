@@ -47,7 +47,6 @@ public:
     QString name() { return QString("Fake Layer"); }
 
     bool startup(Type) { return true; }
-    bool restart() { return true; }
     void shutdown() { }
 
     QUuid id() { return QUuid(0x76c95ddc, 0xe38d, 0x42f8, 0xb2,

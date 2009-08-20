@@ -1666,7 +1666,6 @@ public:
     QString name();
 
     bool startup(Type);
-    bool restart();
     void shutdown();
 
     QUuid id();
@@ -1969,82 +1968,6 @@ bool SharedMemoryLayer::startup(Type type)
         qWarning("SharedMemoryLayer::startup failed");
     return valid;
 }
-
-bool SharedMemoryLayer::restart()
-{
-    qFatal("SharedMemoryLayer: restart() not supported.");
-
-    // Cleanup previous init
-    delete layer;
-    layer = 0;
-    delete lock;
-    lock = 0;
-    valid = false;
-    if (shm->isAttached())
-        shm->detach();
-    delete shm;
-
-    // restart shared memory layer
-    if(Server == type) {
-        if(!sserver->listen(socket())) {
-            qWarning("SharedMemoryLayer: Unable to create server socket.  Only "
-                     "local connections will be allowed.");
-        }
-    } else {
-        QLocalSocket * sock = new QLocalSocket;
-        sock->connectToServer(socket());
-        if(!sock->waitForConnected(1000)) {
-            qWarning("SharedMemoryLayer: Unable to connect to server, "
-                     "shared memory layer will be disabled.");
-            delete sock;
-            return false;
-        }
-
-        QPacketProtocol * protocol;
-        protocol = new QPacketProtocol(sock, this);
-        sock->setParent(protocol);
-
-        QObject::connect(sock, SIGNAL(stateChanged(QLocalSocket::LocalSocketState)),
-                         protocol, SIGNAL(invalidPacket()));
-        QObject::connect(protocol, SIGNAL(invalidPacket()),
-                         this, SLOT(disconnected()));
-        QObject::connect(protocol, SIGNAL(readyRead()),
-                         this, SLOT(readyRead()));
-
-        connections.insert(protocol);
-    }
-
-    key_t key = ::ftok(socket().toLocal8Bit().constData(), 0x9b);
-
-    if(Server == type) {
-        shm = new QSharedMemory(socket(), this);
-        bool created = shm->create(SHMLAYER_SIZE);
-        if (!created) 
-            shm->attach();
-        lock = new QSystemReadWriteLock(key, true);
-    } else {
-        shm = new QSharedMemory(socket(), this);
-        shm->attach(QSharedMemory::ReadOnly);
-        lock = new QSystemReadWriteLock(key, false);
-    }
-
-    if (shm->error() != QSharedMemory::NoError) {
-        qFatal("SharedMemoryLayer: Unable to create or access shared "
-               "resources. (%s)",shm->errorString().toLatin1().constData());
-        return false;
-    }
-
-    layer = new FixedMemoryTree((char *)shm->data(),
-                                SHMLAYER_SIZE,
-                                (Server == type));
-
-    valid = (lock != 0) && (layer != 0);
-    if (!valid)
-        qWarning("SharedMemoryLayer::startup failed");
-
-    return true;
-}
-
 
 void ALServerImpl::incomingConnection(quintptr socketDescriptor)
 {
