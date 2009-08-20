@@ -588,10 +588,6 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
 #endif
 }
 
-bool QSystemDisplayInfoPrivate::isScreenLockOn()
-{
-    return false;
-}
 
 //////// QSystemMemoryInfo
 QSystemMemoryInfoPrivate::QSystemMemoryInfoPrivate(QObject *parent)
@@ -1121,6 +1117,10 @@ bool QSystemScreenSaverPrivate::screenBlankingEnabled()
     return false;
 }
 
+bool QSystemScreenSaverPrivate::isScreenLockOn()
+{
+    return false;
+}
 
 
 QT_END_NAMESPACE

@@ -55,7 +55,6 @@
         <keyword ref="qsystemdisplayinfo.html">QSystemDisplayInfo</keyword>
         <keyword ref="qsystemdisplayinfo.html#colorDepth">colorDepth</keyword>
         <keyword ref="qsystemdisplayinfo.html#displayBrightness">displayBrightness</keyword>
-        <keyword ref="qsystemdisplayinfo.html#isScreenLockOn">isScreenLockOn</keyword>
         <section ref="qsystemdisplayinfo-members.html" title="List of all members"/>
     </section>
     <section ref="qsysteminfo.html" title="QSystemInfo Class Reference">
@@ -140,6 +139,7 @@
     </section>
     <section ref="qsystemscreensaver.html" title="QSystemScreenSaver Class Reference">
         <keyword ref="qsystemscreensaver.html">QSystemScreenSaver</keyword>
+        <keyword ref="qsystemscreensaver.html#isScreenLockOn">isScreenLockOn</keyword>
         <keyword ref="qsystemscreensaver.html#screenBlankingEnabled">screenBlankingEnabled</keyword>
         <keyword ref="qsystemscreensaver.html#screenSaverEnabled">screenSaverEnabled</keyword>
         <keyword ref="qsystemscreensaver.html#setScreenBlankingEnabled">setScreenBlankingEnabled</keyword>
