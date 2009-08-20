@@ -31,6 +31,7 @@ CONFIG(debug, debug|release) {
 CONTACTS_BACKENDS = memory invalid
 
 symbian:CONTACTS_BACKENDS += symbians60
+wince*:CONTACTS_BACKENDS += wince
 
 # Figure out the root of where stuff should go (this could be done via configure)
 OUTPUT_DIR = $$PWD
@@ -70,7 +71,7 @@ INCLUDEPATH *= $$MOC_DIR
 INCLUDEPATH *= $$RCC_DIR
 
 # Add files for deployment
-wince {
+wince* {
     # Main library
     CONTACTS_DEPLOYMENT.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/QtContacts.dll
     CONTACTS_DEPLOYMENT.path = /Windows

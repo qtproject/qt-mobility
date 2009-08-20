@@ -21,7 +21,7 @@ symbian{
     INSTALLS += target
 }
 
-wince {
+wince* {
     testplugin.sources = $${TARGET}.dll
     testplugin.path = ./plugins
     DEPLOYMENT += testplugin
@@ -30,6 +30,6 @@ wince {
     INSTALLS += target
 }
 
-!symbian:!wince {
+!symbian:!wince* {
     DESTDIR = $$replace(DESTDIR, /plugins/contacts, /dummyplugin/plugins/contacts)
 }
