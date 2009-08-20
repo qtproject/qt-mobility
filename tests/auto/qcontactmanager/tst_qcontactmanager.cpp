@@ -684,6 +684,10 @@ void tst_QContactManager::add()
     na.setFirst("Alice");
     na.setLast("inWonderland");
     alice.saveDetail(&na);
+    QContactDisplayLabel label = alice.displayLabel();
+    label.setLabel(cm->synthesiseDisplayLabel(alice));
+    label.setSynthesised(true);
+    alice.setDisplayLabel(label);
 
     QContactPhoneNumber ph;
     ph.setNumber("1234567");
