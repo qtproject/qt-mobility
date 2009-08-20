@@ -70,6 +70,14 @@
 #  endif
 #endif
 
+#if !defined(Q_MESSAGING_SUPPORT_EXPORT)
+#  if defined(QT_SHARED)
+#    define Q_MESSAGING_SUPPORT_EXPORT Q_DECL_EXPORT
+#  else
+#    define Q_MESSAGING_SUPPORT_EXPORT
+#  endif
+#endif
+
 // A variant of Q_GLOBAL_STATIC for use in class scope
 #define Q_SCOPED_STATIC_DECLARE(TYPE, NAME)                      \
     static TYPE *NAME();
