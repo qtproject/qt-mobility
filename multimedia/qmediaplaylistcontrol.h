@@ -40,7 +40,7 @@
 #include "qmediaplaylistnavigator.h"
 class QMediaPlaylistProvider;
 
-class QMediaPlaylistControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QMediaPlaylistControl : public QAbstractMediaControl
 {
     Q_OBJECT
 public:

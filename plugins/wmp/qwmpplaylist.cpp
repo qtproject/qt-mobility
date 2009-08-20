@@ -43,7 +43,7 @@
 #include <QtCore/qvariant.h>
 
 QWmpPlaylist::QWmpPlaylist(IWMPCore3 *player, QWmpEvents *events, QObject *parent)
-    : QMediaPlaylistSource(parent)
+    : QMediaPlaylistProvider(parent)
     , m_player(player)
     , m_playlist(0)
     , m_count(0)
@@ -233,11 +233,11 @@ void QWmpPlaylist::currentPlaylistChangeEvent(WMPPlaylistChangeEventType change)
         if (count > m_count) {
             emit itemsAboutToBeInserted(m_count, count - 1);
             m_count = count;
-            emit itemsInserted();
+            emit itemsInserted(count, m_count - 1);
         } else if (count < m_count) {
             emit itemsAboutToBeRemoved(count, m_count - 1);
             m_count = count;
-            emit itemsRemoved();
+            emit itemsRemoved(count, m_count - 1);
         }
     }
     if (m_count > 0)
@@ -251,7 +251,7 @@ void QWmpPlaylist::openPlaylistChangeEvent(IDispatch *dispatch)
         m_playlist->Release();
         m_playlist = 0;
         m_count = 0;
-        emit itemsRemoved();
+        emit itemsRemoved(0, m_count - 1);
     } else if (m_playlist) {
         m_playlist->Release();
         m_playlist = 0;
@@ -266,7 +266,7 @@ void QWmpPlaylist::openPlaylistChangeEvent(IDispatch *dispatch)
             emit itemsAboutToBeInserted(0, count - 1);
             m_playlist = playlist;
             m_count = count;
-            emit itemsInserted();
+            emit itemsInserted(0, count - 1);
         } else {
             m_playlist = playlist;
         }

@@ -32,84 +32,46 @@
 **
 ****************************************************************************/
 
-#ifndef QWMPPLAYERCONTROL_H
-#define QWMPPLAYERCONTROL_H
+#ifndef QWMPPLAYLISTCONTROL_H
+#define QWMPPLAYLISTCONTROL_H
 
-#include "qmediaplayercontrol.h"
+#include <multimedia/qmediaplaylistcontrol.h>
 
 #include <wmp.h>
 
 class QWmpEvents;
 class QWmpPlaylist;
 
-class QWmpPlayerControl : public QMediaPlayerControl
+class QWmpPlaylistControl : public QMediaPlaylistControl
 {
     Q_OBJECT
 public:
-    QWmpPlayerControl(
-            IWMPCore3 *player, QWmpEvents *events, QObject *parent = 0);
-    ~QWmpPlayerControl();
+    QWmpPlaylistControl(IWMPCore3 *player, QWmpEvents *events, QObject *parent = 0);
+    ~QWmpPlaylistControl();
 
-    QMediaPlayer::State state() const;
-    QMediaPlayer::MediaStatus mediaStatus() const;
+    QMediaPlaylistProvider *playlistProvider() const;
+    bool setPlaylistProvider(QMediaPlaylistProvider *playlist);
 
-    QMediaPlaylist* mediaPlaylist() const;
-    bool setMediaPlaylist(QMediaPlaylist *playlist);
+    int currentPosition() const;
+    void setCurrentPosition(int position);
 
-    qint64 duration() const;
+    int nextPosition(int steps) const;
+    int previousPosition(int steps) const;
 
-    qint64 position() const;
-    void setPosition(qint64 position);
+    void advance();
+    void back();
 
-    int playlistPosition() const;
-    void setPlaylistPosition(int position);
+    QMediaPlaylistNavigator::PlaybackMode playbackMode() const;
+    void setPlaybackMode(QMediaPlaylistNavigator::PlaybackMode mode);
 
-    int volume() const;
-    void setVolume(int volume);
-
-    bool isMuted() const;
-    void setMuted(bool muted);
-
-    int bufferStatus() const;
-
-    bool isVideoAvailable() const;
-    void setVideoAvailable(bool available);
-
-    float playbackRate() const;
-    void setPlaybackRate(float rate);
-
-    bool isSeekable() const;
-
-    void play();
-    void pause();
-    void stop();
-
-    QMediaResourceList currentResources() const;
-    void setCurrentResources(const QMediaResourceList &resources);
-
-    QUrl url() const;
-    void setUrl(const QUrl &url);
-
-    using QMediaPlayerControl::positionChanged;
-
-private Q_SLOTS:
-
-    void bufferingEvent(VARIANT_BOOL buffering);
+private slots:
     void currentItemChangeEvent(IDispatch *dispatch);
-    void mediaChangeEvent(IDispatch *dispatch);
-    void positionChangeEvent(double from, double to);
-    void playStateChangeEvent(long state);
 
 private:
     IWMPCore3 *m_player;
     IWMPControls *m_controls;
-    IWMPSettings *m_settings;
-    IWMPNetwork *m_network;
-    QMediaPlayer::State m_state;
-    QMediaPlayer::MediaStatus m_status;
-    qint64 m_duration;
-    bool m_buffering;
-    bool m_videoAvailable;
+    QWmpPlaylist *m_playlist;
+    QMediaPlaylistNavigator::PlaybackMode m_playbackMode;
 };
 
 #endif

@@ -35,7 +35,7 @@
 #ifndef QWMPPLAYLIST_H
 #define QWMPPLAYLIST_H
 
-#include "qmediaplaylistsource.h"
+#include "qmediaplaylistprovider.h"
 
 #include <QtCore/qvariant.h>
 
@@ -43,7 +43,7 @@
 
 class QWmpEvents;
 
-class QWmpPlaylist : public QMediaPlaylistSource
+class QWmpPlaylist : public QMediaPlaylistProvider
 {
     Q_OBJECT
 public:

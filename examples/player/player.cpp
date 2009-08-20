@@ -59,7 +59,7 @@ Player::Player(QWidget *parent)
 
     connect(player, SIGNAL(durationChanged(qint64)), SLOT(durationChanged(qint64)));
     connect(player, SIGNAL(positionChanged(qint64)), SLOT(positionChanged(qint64)));
-    connect(playlist, SIGNAL(positionChanged(int)), SLOT(playlistPositionChanged(int)));
+    connect(playlist, SIGNAL(playlistPositionChanged(int)), SLOT(playlistPositionChanged(int)));
     connect(metaData, SIGNAL(metadataChanged()), SLOT(metadataChanged()));
     connect(player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
             this, SLOT(statusChanged(QMediaPlayer::MediaStatus)));

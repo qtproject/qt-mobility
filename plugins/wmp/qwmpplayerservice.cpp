@@ -39,6 +39,7 @@
 #include "qwmpmetadata.h"
 #include "qwmpplayercontrol.h"
 #include "qwmpplaylist.h"
+#include "qwmpplaylistcontrol.h"
 #include "qwmpvideooverlay.h"
 
 #include "qmediaplayer.h"
@@ -60,6 +61,7 @@ QWmpPlayerService::QWmpPlayerService(EmbedMode mode, QObject *parent)
     , m_events(0)
     , m_control(0)
     , m_metaData(0)
+    , m_playlist(0)
     , m_videoOutputControl(0)
     , m_oleVideoOverlay(0)
 #ifdef QWMP_EVR
@@ -104,6 +106,7 @@ QWmpPlayerService::QWmpPlayerService(EmbedMode mode, QObject *parent)
 
         m_events = new QWmpEvents(m_player);
         m_metaData = new QWmpMetaData(m_player, m_events);
+        m_playlist = new QWmpPlaylistControl(m_player, m_events);
         m_control = new QWmpPlayerControl(m_player, m_events);
     }
 }
@@ -112,18 +115,20 @@ QWmpPlayerService::~QWmpPlayerService()
 {
     delete m_control;
     delete m_metaData;
+    delete m_playlist;
     delete m_videoOutputControl;
     delete m_events;
+
+    if (m_oleObject) {
+        m_oleObject->SetClientSite(0);
+        m_oleObject->Release();
+        delete m_oleVideoOverlay;
+    }
 
 #ifdef QWMP_EVR
     delete m_evrVideoOverlay;
 #endif
 
-    if (m_oleObject) {
-        m_oleObject->SetClientSite(0);
-        m_oleObject->Release();    
-        delete m_oleVideoOverlay;
-    }
 
     if (m_player)
         m_player->Release();
@@ -137,6 +142,8 @@ QAbstractMediaControl *QWmpPlayerService::control(const char *name) const
         return m_control;
     } else if (qstrcmp(name, QMetadataProviderControl_iid) == 0) {
         return m_metaData;
+    } else if (qstrcmp(name, QMediaPlaylistControl_iid) == 0) {
+        return m_playlist;
     } else if (qstrcmp(name, QVideoOutputControl_iid) == 0) {
         return m_videoOutputControl;
     } else if (qstrcmp(name, QVideoWindowControl_iid) == 0) {

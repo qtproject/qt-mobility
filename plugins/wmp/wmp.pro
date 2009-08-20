@@ -23,6 +23,7 @@ HEADERS = \
     qwmpplayercontrol.h \
     qwmpplayerservice.h \
     qwmpplaylist.h \
+    qwmpplaylistcontrol.h \
     qwmpserviceprovider.h \
     qwmpvideooutputcontrol.h \
     qwmpvideooverlay.h
@@ -36,6 +37,7 @@ SOURCES = \
     qwmpplayercontrol.cpp \
     qwmpplayerservice.cpp \
     qwmpplaylist.cpp \
+    qwmpplaylistcontrol.cpp \
     qwmpserviceprovider.cpp \
     qwmpvideooutputcontrol.cpp \
     qwmpvideooverlay.cpp

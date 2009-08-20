@@ -48,6 +48,7 @@ class QEvrVideoOverlay;
 class QWmpMetaData;
 class QWmpPlayerControl;
 class QWmpPlaylist;
+class QWmpPlaylistControl;
 class QWmpVideoOverlay;
 
 class QWmpPlayerService
@@ -109,6 +110,7 @@ private:
     QWmpEvents *m_events;
     QWmpPlayerControl *m_control;
     QWmpMetaData *m_metaData;
+    QWmpPlaylistControl *m_playlist;
     QWmpVideoOutputControl *m_videoOutputControl;
     QWmpVideoOverlay *m_oleVideoOverlay;
 #ifdef QWMP_EVR

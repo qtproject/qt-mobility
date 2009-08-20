@@ -125,7 +125,6 @@ QMediaPlayer::QMediaPlayer(QMediaPlayerService *service, QObject *parent):
             SLOT(_q_mediaStatusChanged(QMediaPlayer::MediaStatus)));
     connect(d->control, SIGNAL(error(int,QString)), this, SLOT(_q_error(int,QString)));
 
-    connect(d->control, SIGNAL(playlistPositionChanged(int)),SIGNAL(playlistPositionChanged(int)));
     connect(d->control, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
     connect(d->control, SIGNAL(videoAvailabilityChanged(bool)), SIGNAL(videoAvailabilityChanged(bool)));
     connect(d->control, SIGNAL(volumeChanged(int)), SIGNAL(volumeChanged(int)));
