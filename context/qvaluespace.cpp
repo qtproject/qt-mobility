@@ -32,6 +32,7 @@
 ****************************************************************************/
 
 #include "qvaluespace.h"
+#include "qvaluespace_p.h"
 #include "qvaluespacemanager_p.h"
 #include "qmallocpool.h"
 #include "qvaluespaceobject.h"
@@ -483,7 +484,7 @@ struct QValueSpaceItemPrivate
     Type type;
 };
 
-static QByteArray qCanonicalPath(const QByteArray &path)
+QByteArray qCanonicalPath(const QByteArray &path)
 {
     if (path.isEmpty())
         return QByteArray("/");
