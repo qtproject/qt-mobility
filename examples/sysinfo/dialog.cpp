@@ -2,6 +2,7 @@
 #include "ui_dialog.h"
 #include <QDebug>
 #include <qsysteminfo.h>
+#include <QTreeWidgetItem>
 
 
 Dialog::Dialog(QWidget *parent) :
@@ -107,6 +108,8 @@ void Dialog::setupMemory()
 {
     QSystemMemoryInfo mi;
     ui->memoryTreeWidget->clear();
+    ui->memoryTreeWidget->header()->setResizeMode(QHeaderView::ResizeToContents);
+    //ui->memoryTreeWidget->
     QStringList vols = mi.listOfVolumes();
     foreach(QString volName, vols) {
         QString type;
