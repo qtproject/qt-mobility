@@ -130,11 +130,15 @@ QStringList QSystemInfoPrivate::availableLanguages() const
     switch(type) {
     case QSystemInfo::Os :
         {
-           OSVERSIONINFOEX versionInfo;
-          versionInfo .dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+            OSVERSIONINFOEX versionInfo;
+            versionInfo .dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
 
-           GetVersionEx((OSVERSIONINFO *) &versionInfo);
-           qWarning() << (quint32)versionInfo.dwMajorVersion << versionInfo.dwMinorVersion << versionInfo.dwBuildNumber << versionInfo.dwPlatformId;
+            GetVersionEx((OSVERSIONINFO *) &versionInfo);
+            return QString::number(versionInfo.dwMajorVersion) +"."
+                    +QString::number(versionInfo.dwMinorVersion)+"."
+                    +QString::number(versionInfo.dwBuildNumber)+"."
+                    +QString::number(versionInfo.wServicePackMajor)+"."
+                    +QString::number(versionInfo.wServicePackMinor);
         }
         break;
     case QSystemInfo::QtCore :
@@ -362,6 +366,13 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         {
            //IOCTL_VIDEO_QUERY_AVAIL_MODES
 //VIDEO_MODE_INFORMATION vInfo;
+            WMIHelper *wHelper;
+            wHelper = new WMIHelper();
+            QVariant v = wHelper->getWMIData("root/wmi", "VideoModeDescriptor", "VideoStandardType");
+            qWarning() << v.toUInt() ;
+            if(v.toUInt() > 5) {
+                featureSupported = true;
+            }
         }
         break;
     case QSystemInfo::HapticsFeature:
