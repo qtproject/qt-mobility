@@ -33,6 +33,7 @@
 #include "qsysteminfo.h"
 #include "qsysteminfo_p.h"
 #include "wmihelper.h"
+#include <qt_windows.h>
 
 #include <QStringList>
 #include <QSize>
@@ -478,7 +479,8 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 
 int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 {
-#if WINVER >= 0x0600
+    qWarning() <<"WINVER"<< WINVER;
+#if WINVER > 0x0600
     WMIHelper *wHelper;
     wHelper = new WMIHelper();
     QVariant v = wHelper->getWMIData("root/wmi", "WmiMonitorBrightness", "CurrentBrightness");
