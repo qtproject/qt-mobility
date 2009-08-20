@@ -52,6 +52,8 @@
 #include <qmediaplayercontrol.h>
 #include <qlocalmediaplaylistprovider.h>
 
+#include <QtCore/qdebug.h>
+
 class QMediaPlaylistControl;
 class QMediaPlaylistProvider;
 class QMediaPlaylistReader;
@@ -98,7 +100,7 @@ public:
 
         if (m_player)
             connect(m_player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
-                    this, SLOT(checkForEOS()));
+                    this, SLOT(checkForEOS(QMediaPlayer::MediaStatus)));
 
     }
 
@@ -120,9 +122,9 @@ public:
 
 
 public slots:
-    void checkForEOS()
+    void checkForEOS(QMediaPlayer::MediaStatus status)
     {
-        if (m_player && m_player->mediaStatus() == QMediaPlayer::EndOfMedia)
+        if (status == QMediaPlayer::EndOfMedia)
             m_navigator->advance();
     }
 

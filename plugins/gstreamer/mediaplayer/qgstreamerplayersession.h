@@ -70,6 +70,7 @@ public:
     QUrl url() const;
 
     QMediaPlayer::State state() const { return m_state; }
+    QMediaPlayer::MediaStatus mediaStatus() const { return m_mediaStatus; }
 
     qint64 duration() const;
     qint64 position() const;
@@ -106,6 +107,7 @@ signals:
     void durationChanged(qint64 duration);
     void positionChanged(qint64 position);
     void stateChanged(QMediaPlayer::State state);
+    void mediaStatusChanged(QMediaPlayer::MediaStatus mediaStatus);
     void volumeChanged(int volume);
     void mutedStateChaned(bool muted);
     void videoAvailabilityChanged(bool videoAvailable);
@@ -122,8 +124,11 @@ private slots:
     void setSeekable(bool);
 
 private:
+    void setMediaStatus(QMediaPlayer::MediaStatus);
+
     QUrl m_url;
     QMediaPlayer::State m_state;
+    QMediaPlayer::MediaStatus m_mediaStatus;
     QGstreamerBusHelper* m_busHelper;
     GstElement* m_playbin;
     GstBus* m_bus;

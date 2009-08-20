@@ -60,6 +60,8 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *sessio
             this, SIGNAL(volumeChanged(int)));
     connect(m_session, SIGNAL(stateChanged(QMediaPlayer::State)),
             this, SIGNAL(stateChanged(QMediaPlayer::State)));
+    connect(m_session, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
+            this, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
     connect(m_session,SIGNAL(bufferingProgressChanged(int)),
             this, SIGNAL(bufferStatusChanged(int)));
     connect(m_session, SIGNAL(videoAvailabilityChanged(bool)),
@@ -85,6 +87,11 @@ qint64 QGstreamerPlayerControl::duration() const
 QMediaPlayer::State QGstreamerPlayerControl::state() const
 {
     return m_session->state();
+}
+
+QMediaPlayer::MediaStatus QGstreamerPlayerControl::mediaStatus() const
+{
+    return m_session->mediaStatus();
 }
 
 int QGstreamerPlayerControl::bufferStatus() const
