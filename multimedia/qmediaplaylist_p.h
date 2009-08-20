@@ -63,16 +63,13 @@ class QMediaPlaylistPrivate
     Q_DECLARE_PUBLIC(QMediaPlaylist)
 public:
     QMediaPlaylistPrivate()
-        : service(0)
-        , control(0)
+        :control(0)
     {
     }
 
     virtual ~QMediaPlaylistPrivate() {}
 
-    QAbstractMediaService *service;
     QMediaPlaylistControl *control;
-
     QMediaPlaylistProvider *playlist() const { return control->playlistProvider(); }
 
     bool readItems(QMediaPlaylistReader *reader);
@@ -99,8 +96,9 @@ public:
         connect(m_navigator, SIGNAL(currentPositionChanged(int)),
                 this, SIGNAL(playlistPositionChanged(int)));
 
-        connect(m_player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
-                this, SLOT(checkForEOS()));
+        if (m_player)
+            connect(m_player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
+                    this, SLOT(checkForEOS()));
 
     }
 
@@ -124,14 +122,16 @@ public:
 public slots:
     void checkForEOS()
     {
-        if (m_player->mediaStatus() == QMediaPlayer::EndOfMedia)
+        if (m_player && m_player->mediaStatus() == QMediaPlayer::EndOfMedia)
             m_navigator->advance();
     }
 
     void play(const QMediaResourceList& resources)
     {
-        m_player->setCurrentResources(resources);
-        m_player->play();
+        if (m_player) {
+            m_player->setCurrentResources(resources);
+            m_player->play();
+        }
     }
 
 private:

@@ -78,23 +78,25 @@ QMediaPlaylist::QMediaPlaylist(QAbstractMediaObject *mediaObject, QObject *paren
     d->q_ptr = this;
     d->service = mediaObject->service();
 
-    d->control = d->service->control<QMediaPlaylistControl*>();
+    if (mediaObject) {
+        d->control = mediaObject->service()->control<QMediaPlaylistControl*>();
 
-    if (!d->control) {
-        QMediaPlayerControl *playerControl = d->service->control<QMediaPlayerControl*>();
-        if (playerControl)
+        if (!d->control) {
+            QMediaPlayerControl *playerControl = d->service->control<QMediaPlayerControl*>();
             d->control = new QLocalMediaPlaylistControl(playerControl, this);
+        }
+    } else {
+        d->control = new QLocalMediaPlaylistControl(0, this);
     }
 
-    if (d->control) {
-        QMediaPlaylistProvider *playlist = d->control->playlistProvider();
 
-        connect(playlist, SIGNAL(itemsChanged(int,int)), this, SIGNAL(itemsChanged(int,int)));
-        connect(playlist, SIGNAL(itemsAboutToBeInserted(int,int)), this, SIGNAL(itemsAboutToBeInserted(int,int)));
-        connect(playlist, SIGNAL(itemsInserted(int,int)), this, SIGNAL(itemsInserted(int,int)));
-        connect(playlist, SIGNAL(itemsAboutToBeRemoved(int,int)), this, SIGNAL(itemsAboutToBeRemoved(int,int)));
-        connect(playlist, SIGNAL(itemsRemoved(int,int)), this, SIGNAL(itemsRemoved(int,int)));
-    }
+    QMediaPlaylistProvider *playlist = d->control->playlistProvider();
+
+    connect(playlist, SIGNAL(itemsChanged(int,int)), this, SIGNAL(itemsChanged(int,int)));
+    connect(playlist, SIGNAL(itemsAboutToBeInserted(int,int)), this, SIGNAL(itemsAboutToBeInserted(int,int)));
+    connect(playlist, SIGNAL(itemsInserted(int,int)), this, SIGNAL(itemsInserted(int,int)));
+    connect(playlist, SIGNAL(itemsAboutToBeRemoved(int,int)), this, SIGNAL(itemsAboutToBeRemoved(int,int)));
+    connect(playlist, SIGNAL(itemsRemoved(int,int)), this, SIGNAL(itemsRemoved(int,int)));
 }
 
 /*!
@@ -173,7 +175,7 @@ bool QMediaPlaylist::isReadOnly() const
 }
 
 /*!
-    Returns the primary resource for the media item at \a index.
+    Returns the primary resource for the media item at index \a position.
 */
 QMediaResource QMediaPlaylist::resource(int position) const
 {

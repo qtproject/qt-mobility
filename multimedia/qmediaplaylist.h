@@ -53,7 +53,7 @@ class Q_MEDIA_EXPORT QMediaPlaylist : public QObject
     Q_PROPERTY(int currentPosition READ currentPosition WRITE setCurrentPosition NOTIFY playlistPositionChanged)
 
 public:
-    QMediaPlaylist(QAbstractMediaObject *mediaObject, QObject *parent = 0);
+    QMediaPlaylist(QAbstractMediaObject *mediaObject = 0, QObject *parent = 0);
     virtual ~QMediaPlaylist();
 
     QMediaPlaylistProvider* playlistProvider() const;
@@ -69,7 +69,7 @@ public:
     int nextPosition(int steps = 1) const;
     int previousPosition(int steps = 1) const;
 
-    QMediaResource resource(int index) const;
+    QMediaResource resource(int position) const;
     QMediaResourceList resources(int position) const;
 
     int size() const;
@@ -111,7 +111,6 @@ Q_SIGNALS:
     void itemsChanged(int start, int end);
 
 protected:
-
     QMediaPlaylistPrivate *d_ptr;
 
 private:
