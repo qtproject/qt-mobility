@@ -479,40 +479,39 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 
 int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 {
-    qWarning() <<"WINVER"<< WINVER;
-#if WINVER > 0x0600
+//#if WINVER > 0x0600
     WMIHelper *wHelper;
     wHelper = new WMIHelper();
     QVariant v = wHelper->getWMIData("root/wmi", "WmiMonitorBrightness", "CurrentBrightness");
     qWarning() << v.toUInt();
     return v.toUInt();
-#else
-    //    Q_UNUSED(screen);
-    qint32 brightness = 0;
-    HANDLE display = CreateFile(L"\\\\.\\LCD",FILE_ANY_ACCESS,0,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,0);
-    if(display != INVALID_HANDLE_VALUE) {
-        DISPLAY_BRIGHTNESS brightnessBuffer;
-        memset( &brightnessBuffer, 0, sizeof(brightnessBuffer));
-        DWORD bytesReturned = 0;
-        if(DeviceIoControl(display,IOCTL_VIDEO_QUERY_DISPLAY_BRIGHTNESS,
-                           NULL,0,&brightnessBuffer,256,&bytesReturned,NULL)) {
-            if(bytesReturned > 0) {
-                brightness = brightnessBuffer.ucACBrightness;
-                qWarning()
-                        << brightnessBuffer.ucDisplayPolicy
-                        << brightnessBuffer.ucDCBrightness
-                        << brightnessBuffer.ucACBrightness
-                        << static_cast<int>(brightnessBuffer.ucACBrightness);
-            } else {
-                qWarning() << "bytes not returned" << bytesReturned << GetLastError();
-            }
-        }
-
-        CloseHandle(display);
-    } else {
-        qWarning() << "invalid handle";
-    }
-#endif
+//#else
+//    //    Q_UNUSED(screen);
+//    qint32 brightness = 0;
+//    HANDLE display = CreateFile(L"\\\\.\\LCD",FILE_ANY_ACCESS,0,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,0);
+//    if(display != INVALID_HANDLE_VALUE) {
+//        DISPLAY_BRIGHTNESS brightnessBuffer;
+//        memset( &brightnessBuffer, 0, sizeof(brightnessBuffer));
+//        DWORD bytesReturned = 0;
+//        if(DeviceIoControl(display,IOCTL_VIDEO_QUERY_DISPLAY_BRIGHTNESS,
+//                           NULL,0,&brightnessBuffer,256,&bytesReturned,NULL)) {
+//            if(bytesReturned > 0) {
+//                brightness = brightnessBuffer.ucACBrightness;
+//                qWarning()
+//                        << brightnessBuffer.ucDisplayPolicy
+//                        << brightnessBuffer.ucDCBrightness
+//                        << brightnessBuffer.ucACBrightness
+//                        << static_cast<int>(brightnessBuffer.ucACBrightness);
+//            } else {
+//                qWarning() << "bytes not returned" << bytesReturned << GetLastError();
+//            }
+//        }
+//
+//        CloseHandle(display);
+//    } else {
+//        qWarning() << "invalid handle";
+//    }
+//#endif
 
     // Get the number of physical monitors.
     // vista only
