@@ -32,7 +32,6 @@ private slots:
     void tabChanged(int index);
     void getVersion(int index);
     void getFeature(int index);
-    void doVolumes(int index);
     void setSaverEnabled(bool b);
     void setBlankingEnabled(bool b);
 };

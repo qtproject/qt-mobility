@@ -2,6 +2,7 @@
 #include "ui_dialog.h"
 #include <QDebug>
 #include <qsysteminfo.h>
+#include <QTreeWidgetItem>
 
 
 Dialog::Dialog(QWidget *parent) :
@@ -19,8 +20,6 @@ Dialog::Dialog(QWidget *parent) :
     connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(tabChanged(int)));
    connect(ui->versionComboBox,SIGNAL(activated(int)), this,SLOT(getVersion(int)));
    connect(ui->featureComboBox,SIGNAL(activated(int)), this,SLOT(getFeature(int)));
-   connect(ui->diskComboBox,SIGNAL(activated(int)), this,SLOT(doVolumes(int)));
-   connect(ui->volumesComboBox,SIGNAL(activated(int)), this,SLOT(doVolumes(int)));
 
 }
 
@@ -108,9 +107,31 @@ void Dialog::setupDisplay()
 void Dialog::setupMemory()
 {
     QSystemMemoryInfo mi;
-      ui->volumesComboBox->clear();
-    ui->volumesComboBox->insertItems(0,mi.listOfVolumes());
-
+    ui->memoryTreeWidget->clear();
+    ui->memoryTreeWidget->header()->setResizeMode(QHeaderView::ResizeToContents);
+    //ui->memoryTreeWidget->
+    QStringList vols = mi.listOfVolumes();
+    foreach(QString volName, vols) {
+        QString type;
+        QSystemMemoryInfo::VolumeType volType;
+        volType = mi.getVolumeType(volName);
+        if(volType == QSystemMemoryInfo::Internal) {
+            type =  "Internal";
+        } else
+            if(volType == QSystemMemoryInfo::Removable) {
+            type = "Removable";
+        }
+        if(volType == QSystemMemoryInfo::Cdrom) {
+            type =  "Cdrom";
+        }
+        QStringList items;
+        items << volName;
+        items << type;
+        items << QString::number(mi.totalDiskSpace(volName));
+        items << QString::number(mi.availableDiskSpace(volName));
+        QTreeWidgetItem *item = new QTreeWidgetItem(items);
+        ui->memoryTreeWidget->addTopLevelItem(item);
+    }
 }
 
 void Dialog::setupNetwork()
@@ -206,37 +227,37 @@ void Dialog::getFeature(int index)
     ui->featuresLineEdit->setText((si.hasFeatureSupported(feature) ? "true":"false" ));
 }
 
-void Dialog::doVolumes(int /*index*/)
-{
-    QSystemMemoryInfo mi;
-    QString vol = ui->volumesComboBox->currentText();
-    int index2 = ui->diskComboBox->currentIndex();
-    switch(index2) {
-    case 0:
-        //total
-        ui->diskSpaceLineEdit->setText( QString::number(mi.totalDiskSpace(vol)));
-        break;
-        case 1:
-        //available
-        ui->diskSpaceLineEdit->setText( QString::number(mi.availableDiskSpace(vol)));
-        break;
-        case 2:
-        //type
-        QSystemMemoryInfo::VolumeType volType;
-        volType = mi.getVolumeType(vol);
-        if(volType == QSystemMemoryInfo::Internal) {
-                ui->diskSpaceLineEdit->setText( "Internal");
-        } else
-        if(volType == QSystemMemoryInfo::Removable) {
-                ui->diskSpaceLineEdit->setText( "Removable");
-        }
-        if(volType == QSystemMemoryInfo::Cdrom) {
-                ui->diskSpaceLineEdit->setText( "Cdrom");
-        }
-        break;
-    };
-
-}
+//void Dialog::doVolumes(int /*index*/)
+//{
+//    QSystemMemoryInfo mi;
+//    QString vol = ui->volumesComboBox->currentText();
+//    int index2 = ui->diskComboBox->currentIndex();
+//    switch(index2) {
+//    case 0:
+//        //total
+//        ui->diskSpaceLineEdit->setText( QString::number(mi.totalDiskSpace(vol)));
+//        break;
+//        case 1:
+//        //available
+//        ui->diskSpaceLineEdit->setText( QString::number(mi.availableDiskSpace(vol)));
+//        break;
+//        case 2:
+//        //type
+//        QSystemMemoryInfo::VolumeType volType;
+//        volType = mi.getVolumeType(vol);
+//        if(volType == QSystemMemoryInfo::Internal) {
+//                ui->diskSpaceLineEdit->setText( "Internal");
+//        } else
+//        if(volType == QSystemMemoryInfo::Removable) {
+//                ui->diskSpaceLineEdit->setText( "Removable");
+//        }
+//        if(volType == QSystemMemoryInfo::Cdrom) {
+//                ui->diskSpaceLineEdit->setText( "Cdrom");
+//        }
+//        break;
+//    };
+//
+//}
 
 void Dialog::setupSaver()
 {
