@@ -34,8 +34,6 @@
 #include "qsysteminfo_p.h"
 #include "wmihelper.h"
 
-
-#include <qt_windows.h>
 #include <QStringList>
 #include <QSize>
 #include <QFile>
@@ -49,11 +47,20 @@
 #include <QSysInfo>
 #include <QNetworkInterface>
 #include <QList>
+#include <QSettings>
+
+//#include <Winsock2.h>
+//#include <mswsock.h>
+//#include <ntddndis.h>
 
 #include <locale.h>
 #include <Wlanapi.h>
 #include <Wtsapi32.h>
 #include <Bthsdpdef.h>
+//#include <ws2bth.h>
+
+//#include <bthddi.h>
+
 #include <BluetoothAPIs.h>
 #include <Dshow.h>
 #include <af_irda.h>
@@ -65,17 +72,17 @@
 #include <Ifapi.h>
 #include <Winbase.h>
 #endif
-//#include <Winsock2.h>
 
 #define _WCHAR_T_DEFINED
 #define _TIME64_T_DEFINED
 
-//#include <api/ntddvdeo.h>
+
 typedef struct _DISPLAY_BRIGHTNESS {
     UCHAR ucDisplayPolicy;
     UCHAR ucACBrightness;
     UCHAR ucDCBrightness;
 } DISPLAY_BRIGHTNESS, *PDISPLAY_BRIGHTNESS;
+
 
 
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
@@ -185,18 +192,17 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         {
             BLUETOOTH_FIND_RADIO_PARAMS  radioParams = { sizeof(BLUETOOTH_FIND_RADIO_PARAMS)};
             HANDLE radio;
-
             if(BluetoothFindFirstRadio(&radioParams, &radio) != NULL) {
                 qWarning() << "available";
                 featureSupported = true;
                 BluetoothFindRadioClose(radio);
             } else {
-
+                
                 qWarning() << "Not available" << GetLastError();
             }
         }
-            break;
-        case QSystemInfo::CameraFeature :
+        break;
+    case QSystemInfo::CameraFeature :
         {
             ICreateDevEnum *devEnum = NULL;
             IEnumMoniker *monikerEnum = NULL;
@@ -572,7 +578,16 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
 
 bool QSystemDisplayInfoPrivate::isScreenLockOn()
 {
-    return false;
+    bool screenLockEnabled;
+    if (::SystemParametersInfo (SPI_GETSCREENSAVESECURE,0,&screenLockEnabled,0)) {
+        if (screenLockEnabled) {
+            return true;
+        }
+    } else {
+        qWarning() << "SystemParametersInfo failed" << GetLastError();
+    }
+
+        return false;
 }
 
 //////// QSystemMemoryInfo
@@ -852,32 +867,82 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
 //////////////
 ///////
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
-        : QSystemScreenSaver(parent)
+        : QObject(parent)
 {
+    screenSaverSecure = false;
+    QSettings screenSettingsTmp("HKEY_CURRENT_USER\\Software\\Policies\\Microsoft\\Windows\\Control Panel\\Desktop", QSettings::NativeFormat);
+    if(!screenSettingsTmp.value("SCRNSAVE.EXE").toString().isEmpty()) {
+        settingsPath = "HKEY_CURRENT_USER\\Software\\Policies\\Microsoft\\Windows\\Control Panel\\Desktop";
+    } else {
+        settingsPath = "HKEY_CURRENT_USER\\Control Panel\\Desktop";
+    }
 
+    QSettings screenSettings(settingsPath, QSettings::NativeFormat);
+    if(screenSettings.value("ScreenSaverIsSecure").toString() == "1") {
+        screenSaverSecure = true;
+    }
+    screenPath = screenSettings.value("SCRNSAVE.EXE").toString();
+    qWarning() << "Original screenpath is" << screenPath;
 }
 
-bool QSystemScreenSaverPrivate::setScreenSaverEnabled(QSystemScreenSaver::ScreenSaverState state)
-{
-    Q_UNUSED(state);
 
+bool QSystemScreenSaverPrivate::setScreenSaverEnabled(bool state)
+{
+    if(screenSaverSecure)
+        return false;
+    QString save =  "0";
+    QSettings screenSettings(settingsPath, QSettings::NativeFormat);
+    if(state ) {
+        save =  "1";
+        screenSettings.setValue("SCRNSAVE.EXE",  screenPath);
+    } else {
+        screenSettings.remove("SCRNSAVE.EXE");
+    }
+
+    screenSettings.setValue("ScreenSaveActive", save);
+    qWarning() << screenSettings.value("ScreenSaveActive").toString();
+    return screenSettings.value("ScreenSaveActive").toString() == save;
+}
+
+bool QSystemScreenSaverPrivate::setScreenBlankingEnabled(bool state)
+{
+    if(screenSaverSecure)
+        return false;
+    QSettings screenSettings(settingsPath, QSettings::NativeFormat);
+    QString winDir;
+    WMIHelper *wHelper;
+    wHelper = new WMIHelper();
+    QVariant v = wHelper->getWMIData("root/cimv2", "Win32_OperatingSystem", "SystemDirectory");
+    if(settingsPath.contains("Policies")) {
+        winDir = "";
+    } else {
+        winDir = v.toString();
+    }
+
+    if(state) {
+        screenSettings.setValue("SCRNSAVE.EXE", winDir+"\\scrnsave.scr");
+        if(screenSettings.value("SCRNSAVE.EXE").toString().contains("scrnsave.scr")) {
+            return true;
+        }
+    } else {
+        screenSettings.setValue("SCRNSAVE.EXE", screenPath);
+        if(screenSettings.value("SCRNSAVE.EXE").toString().contains(screenPath)) {
+            return true;
+        }
+    }
     return false;
 }
 
-bool QSystemScreenSaverPrivate::setScreenBlankingEnabled(QSystemScreenSaver::ScreenSaverState state)
+bool QSystemScreenSaverPrivate::screenSaverEnabled()
 {
-    Q_UNUSED(state);
-    return false;
+    QSettings screenSettings(settingsPath, QSettings::NativeFormat);
+    return !screenSettings.value("SCRNSAVE.EXE").toString().isEmpty();
 }
 
-QSystemScreenSaver::ScreenSaverState QSystemScreenSaverPrivate::screenSaverEnabled()
+bool QSystemScreenSaverPrivate::screenBlankingEnabled()
 {
-    return QSystemScreenSaver::UnknownScreenSaverState;
-}
-
-QSystemScreenSaver::ScreenSaverState QSystemScreenSaverPrivate::screenBlankingEnabled()
-{
-    return QSystemScreenSaver::UnknownScreenSaverState;
+    QSettings screenSettings(settingsPath, QSettings::NativeFormat);
+    return screenSettings.value("SCRNSAVE.EXE").toString().contains("scrnsave.scr");
 }
 
 

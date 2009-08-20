@@ -642,29 +642,32 @@ QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
  */
 QSystemScreenSaver::~QSystemScreenSaver()
 {
+    qWarning() << Q_FUNC_INFO;
     //if(screenSaverIsEnabled != screenSaverIsEnabled())
-        setScreenSaverEnabled(screenSaverIsEnabled);
+        if(screenSaverIsEnabled != screenSaverEnabled())
+            setScreenSaverEnabled(screenSaverIsEnabled);
   //  if(screenBlankingIsEnabled != screenBlankingEnabled)
-        setScreenBlankingEnabled(screenBlankingIsEnabled);
+        if(screenBlankingIsEnabled != screenBlankingEnabled())
+            setScreenBlankingEnabled(screenBlankingIsEnabled);
     delete d;
 }
 
 /*!
-    Temporarily sets the screensaver on to QSystemScreenSaver::ScreenSaverState \a b.
+    Temporarily sets the screensaver on to  \a b.
 Will be reverted upon destruction of the QSystemScreenSaver object.
 Returns true on success, otherwise false.
 */
-bool QSystemScreenSaver::setScreenSaverEnabled(QSystemScreenSaver::ScreenSaverState b)
+bool QSystemScreenSaver::setScreenSaverEnabled(bool b)
 {
     return d->setScreenSaverEnabled(b);
 }
 
 /*!
-    Temporarily sets the screen blanking on to QSystemScreenSaver::ScreenSaverState \a b
+    Temporarily sets the screen blanking on to  \a b
 Will be reverted upon destruction of the QSystemScreenSaver object.
 Returns true on success, otherwise false.
 */
-bool QSystemScreenSaver::setScreenBlankingEnabled(QSystemScreenSaver::ScreenSaverState b)
+bool QSystemScreenSaver::setScreenBlankingEnabled(bool b)
 {
     return d->setScreenBlankingEnabled(b);
 }
@@ -672,17 +675,17 @@ bool QSystemScreenSaver::setScreenBlankingEnabled(QSystemScreenSaver::ScreenSave
 /*!
    Gets if the screensaver is enabled or not.
 */
-QSystemScreenSaver::ScreenSaverState QSystemScreenSaver::screenSaverEnabled()
+bool QSystemScreenSaver::screenSaverEnabled()
 {
-    return QSystemScreenSaver::UnknownScreenSaverState;
+    return d->screenSaverEnabled();
 }
 
 /*!
    Gets if screen blanking is enabled or not.
 */
-QSystemScreenSaver::ScreenSaverState QSystemScreenSaver::screenBlankingEnabled()
+bool QSystemScreenSaver::screenBlankingEnabled()
 {
-    return QSystemScreenSaver::UnknownScreenSaverState;
+    return d->screenBlankingEnabled();
 }
 
 QT_END_NAMESPACE

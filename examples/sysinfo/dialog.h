@@ -2,6 +2,7 @@
 #define DIALOG_H
 
 #include <QDialog>
+class QSystemScreenSaver;
 
 namespace Ui {
     class Dialog;
@@ -23,13 +24,17 @@ private:
     void setupDisplay();
     void setupMemory();
     void setupNetwork();
+    void setupSaver();
 
+    QSystemScreenSaver *saver;
 
 private slots:
     void tabChanged(int index);
     void getVersion(int index);
     void getFeature(int index);
     void doVolumes(int index);
+    void setSaverEnabled(bool b);
+    void setBlankingEnabled(bool b);
 };
 
 #endif // DIALOG_H
