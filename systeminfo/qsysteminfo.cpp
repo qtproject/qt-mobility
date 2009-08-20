@@ -631,13 +631,10 @@ QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
  */
 QSystemScreenSaver::~QSystemScreenSaver()
 {
-    qWarning() << Q_FUNC_INFO;
-    //if(screenSaverIsEnabled != screenSaverIsEnabled())
-        if(screenSaverIsEnabled != screenSaverEnabled())
-            setScreenSaverEnabled(screenSaverIsEnabled);
-  //  if(screenBlankingIsEnabled != screenBlankingEnabled)
-        if(screenBlankingIsEnabled != screenBlankingEnabled())
-            setScreenBlankingEnabled(screenBlankingIsEnabled);
+    if(screenSaverIsEnabled != screenSaverEnabled())
+        setScreenSaverEnabled(screenSaverIsEnabled);
+    if(screenBlankingIsEnabled != screenBlankingEnabled())
+        setScreenBlankingEnabled(screenBlankingIsEnabled);
     delete d;
 }
 
@@ -645,6 +642,9 @@ QSystemScreenSaver::~QSystemScreenSaver()
     Temporarily sets the screensaver on to  \a b.
 Will be reverted upon destruction of the QSystemScreenSaver object.
 Returns true on success, otherwise false.
+
+On Windows platform, if screensaver is secure by policy, the policy will be honored
+and this will fail.
 */
 bool QSystemScreenSaver::setScreenSaverEnabled(bool b)
 {
@@ -655,6 +655,9 @@ bool QSystemScreenSaver::setScreenSaverEnabled(bool b)
     Temporarily sets the screen blanking on to  \a b
 Will be reverted upon destruction of the QSystemScreenSaver object.
 Returns true on success, otherwise false.
+
+On Windows platform, if screensaver is secure by policy, the policy will be honored
+and this will fail.
 */
 bool QSystemScreenSaver::setScreenBlankingEnabled(bool b)
 {
