@@ -227,17 +227,6 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QSystemScreenSaver::ScreenSaverState
-    This enum describes the state of the screen saver.
-
-    \value UnknownScreenSaverState    Screensaver state is unknown.
-    \value ScreenSaverDisabled        Screensaver is disabled.
-    \value ScreenSaverEnabled         Screensaver is enabled.
-
-*/
-
-
-/*!
     \class QSystemScreenSaver
 
     \brief The QSystemScreenSaver class provides access to screen saver and blanking.
