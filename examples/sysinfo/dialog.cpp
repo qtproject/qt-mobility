@@ -2,7 +2,6 @@
 #include "ui_dialog.h"
 #include <QDebug>
 #include <qsysteminfo.h>
-#include <QTreeWidgetItem>
 
 
 Dialog::Dialog(QWidget *parent) :
@@ -101,15 +100,13 @@ void Dialog::setupDisplay()
     ui->brightnessLineEdit->setText(QString::number(di.displayBrightness(0)));
     ui->colorDepthLineEdit->setText(QString::number(di.colorDepth((0))));
 
-    ui->screenLockCheckBox->setChecked(di.isScreenLockOn());
 }
 
 void Dialog::setupMemory()
 {
     QSystemMemoryInfo mi;
     ui->memoryTreeWidget->clear();
-    ui->memoryTreeWidget->header()->setResizeMode(QHeaderView::ResizeToContents);
-    //ui->memoryTreeWidget->
+
     QStringList vols = mi.listOfVolumes();
     foreach(QString volName, vols) {
         QString type;
@@ -267,6 +264,7 @@ void Dialog::setupSaver()
 
     ui->saverEnabledPushButton->setChecked(saverEnabled);
     ui->blankingEnabledPushButton->setChecked(blankingEnabled);
+    ui->screenLockCheckBox->setChecked(saver->isScreenLockOn());
 
     connect( ui->saverEnabledPushButton, SIGNAL(clicked(bool)),
              this,SLOT(setSaverEnabled(bool)));

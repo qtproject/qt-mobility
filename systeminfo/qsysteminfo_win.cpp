@@ -587,20 +587,6 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
     return bpp;
 }
 
-bool QSystemDisplayInfoPrivate::isScreenLockOn()
-{
-    bool screenLockEnabled;
-    if (::SystemParametersInfo (SPI_GETSCREENSAVESECURE,0,&screenLockEnabled,0)) {
-        if (screenLockEnabled) {
-            return true;
-        }
-    } else {
-        qWarning() << "SystemParametersInfo failed" << GetLastError();
-    }
-
-        return false;
-}
-
 //////// QSystemMemoryInfo
 QSystemMemoryInfoPrivate::QSystemMemoryInfoPrivate(QObject *parent)
         : QObject(parent)
@@ -954,6 +940,15 @@ bool QSystemScreenSaverPrivate::screenBlankingEnabled()
 {
     QSettings screenSettings(settingsPath, QSettings::NativeFormat);
     return screenSettings.value("SCRNSAVE.EXE").toString().contains("scrnsave.scr");
+}
+
+bool QSystemScreenSaverPrivate::isScreenLockOn()
+{
+    QSettings screenSettings(settingsPath, QSettings::NativeFormat);
+    if(screenSettings.value("ScreenSaverIsSecure").toString() == "1") {
+        return true;
+    }
+    return false;
 }
 
 

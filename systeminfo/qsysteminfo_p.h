@@ -110,7 +110,6 @@ public:
 // display
     int displayBrightness(int screen);
     int colorDepth(int screen);
-    bool isScreenLockOn();
 };
 
 class QSystemMemoryInfoPrivate : public QObject
@@ -181,6 +180,8 @@ public:
     bool screenBlankingEnabled();
     bool setScreenSaverEnabled(bool b);
     bool setScreenBlankingEnabled(bool b);
+    bool isScreenLockOn();
+
 private:
     QString screenPath;
     QString settingsPath;
