@@ -120,7 +120,7 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 }
 
 // "major.minor.build" format.
-/*QPair< int, double >*/ QString QSystemInfoPrivate::getVersion(QSystemInfo::Version type,  const QString &parameter)
+/*QPair< int, double >*/ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
 {
     Q_UNUSED(parameter);
     QString errorStr = "Not Available";
@@ -259,7 +259,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
             QSystemMemoryInfo mi;
             QStringList drives = mi.listOfVolumes();
             foreach(QString drive, drives) {
-                if(mi.getVolumeType(drive) == QSystemMemoryInfo::Removable) {
+                if(mi.volumeType(drive) == QSystemMemoryInfo::Removable) {
                     featureSupported = true;
                 }
             }
@@ -396,7 +396,7 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
 }
 
-QSystemNetworkInfo::CellNetworkStatus QSystemNetworkInfoPrivate::getCellNetworkStatus()
+QSystemNetworkInfo::CellNetworkStatus QSystemNetworkInfoPrivate::cellNetworkStatus()
 {
     return QSystemNetworkInfo::NoNetworkAvailable;
 }
@@ -626,7 +626,7 @@ qint64 QSystemMemoryInfoPrivate::totalDiskSpace(const QString &driveVolume)
     return totalBytes;
 }
 
-QSystemMemoryInfo::VolumeType QSystemMemoryInfoPrivate::getVolumeType(const QString &driveVolume)
+QSystemMemoryInfo::VolumeType QSystemMemoryInfoPrivate::volumeType(const QString &driveVolume)
 {
     Q_UNUSED(driveVolume);
     uint result =   GetDriveType(driveVolume.utf16());
@@ -712,7 +712,7 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
     return QSystemDeviceInfo::UnknownProfile;
 }
 
-QSystemDeviceInfo::InputMethods QSystemDeviceInfoPrivate::getInputMethodType()
+QSystemDeviceInfo::InputMethods QSystemDeviceInfoPrivate::inputMethodType()
 {
     QSystemDeviceInfo::InputMethod methods;
     return methods;
