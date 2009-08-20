@@ -17,7 +17,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>5</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="generaltab">
       <attribute name="title">
@@ -512,43 +512,28 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
        <item row="0" column="0">
-        <widget class="QLabel" name="label_16">
-         <property name="text">
-          <string>TextLabel</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2">
-        <widget class="QComboBox" name="diskComboBox">
-         <item>
+        <widget class="QTreeWidget" name="memoryTreeWidget">
+         <column>
           <property name="text">
-           <string>Total Disk Space</string>
+           <string>Volume Name</string>
           </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Available Disk Space</string>
-          </property>
-         </item>
-         <item>
+         </column>
+         <column>
           <property name="text">
            <string>Type of Volume</string>
           </property>
-         </item>
+         </column>
+         <column>
+          <property name="text">
+           <string>Total Disk Space</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Available Disk Space</string>
+          </property>
+         </column>
         </widget>
-       </item>
-       <item row="1" column="0" colspan="2">
-        <widget class="QLabel" name="label_17">
-         <property name="text">
-          <string>list of volumes</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="2">
-        <widget class="QComboBox" name="volumesComboBox"/>
-       </item>
-       <item row="2" column="1" colspan="2">
-        <widget class="QLineEdit" name="diskSpaceLineEdit"/>
        </item>
       </layout>
      </widget>
