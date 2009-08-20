@@ -278,9 +278,9 @@ Note: Version will always be returned in "major.minor.build" format.
 If a particular element is not available at all, an error "Not Installed" will be returned by
 the API.
 */
-QString QSystemInfo::getVersion(QSystemInfo::Version type, const QString &parameter)
+QString QSystemInfo::version(QSystemInfo::Version type, const QString &parameter)
 {
-    return d->getVersion(type, parameter);
+    return d->version(type, parameter);
 }
 
 /*!
@@ -320,8 +320,8 @@ QSystemNetworkInfo::~QSystemNetworkInfo()
 /*!
     Returns the status of the cell network.
 */
-QSystemNetworkInfo::CellNetworkStatus QSystemNetworkInfo::getCellNetworkStatus() {
-    return d->getCellNetworkStatus();
+QSystemNetworkInfo::CellNetworkStatus QSystemNetworkInfo::cellNetworkStatus() {
+    return d->cellNetworkStatus();
 }
 
 /*!
@@ -484,9 +484,9 @@ QStringList QSystemMemoryInfo::listOfVolumes()
 /*!
   Returns the type of volume \a driveVolume
 */
-QSystemMemoryInfo::VolumeType QSystemMemoryInfo::getVolumeType(const QString &driveVolume)
+QSystemMemoryInfo::VolumeType QSystemMemoryInfo::volumeType(const QString &driveVolume)
 {
-    return d->getVolumeType(driveVolume);
+    return d->volumeType(driveVolume);
 }
 
 // device
@@ -509,9 +509,9 @@ QSystemDeviceInfo::~QSystemDeviceInfo()
 /*!
     Returns the InputMethodType that the system uses.
 */
-QSystemDeviceInfo::InputMethods QSystemDeviceInfo::getInputMethodType()
+QSystemDeviceInfo::InputMethods QSystemDeviceInfo::inputMethodType()
 {
- return d->getInputMethodType();
+ return d->inputMethodType();
 }
 /*!
     Returns the International Mobile Equipment Identity (IMEI), or a null QString in the case of none.
@@ -576,9 +576,9 @@ bool QSystemDeviceInfo::isBatteryCharging()
 /*!
   Returns status of SIM card.
 */
-QSystemDeviceInfo::SimStatus QSystemDeviceInfo::getSimStatus()
+QSystemDeviceInfo::SimStatus QSystemDeviceInfo::simStatus()
 {
-    return d->getSimStatus();
+    return d->simStatus();
 }
 /*!
   Returns true if the device is locked, otherwise false.
@@ -591,9 +591,9 @@ bool QSystemDeviceInfo::isDeviceLocked()
 /*!
   Gets the current device profile QSystemDeviceInfo::Profile
 */
-QSystemDeviceInfo::Profile QSystemDeviceInfo::getCurrentProfile()
+QSystemDeviceInfo::Profile QSystemDeviceInfo::currentProfile()
 {
-    return d->getCurrentProfile();
+    return d->currentProfile();
 }
 
 /*!

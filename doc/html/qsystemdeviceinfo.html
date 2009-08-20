@@ -36,11 +36,11 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#dtor.QSystemDeviceInfo">~QSystemDeviceInfo</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#batteryLevel">batteryLevel</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::PowerState </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#currentPowerState">currentPowerState</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::Profile </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#getCurrentProfile">getCurrentProfile</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::InputMethods </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#getInputMethodType">getInputMethodType</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::SimStatus </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#getSimStatus">getSimStatus</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::Profile </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#currentProfile">currentProfile</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::InputMethods </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#inputMethodType">inputMethodType</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#isBatteryCharging">isBatteryCharging</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#isDeviceLocked">isDeviceLocked</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::SimStatus </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#simStatus">simStatus</a></b> ()</td></tr>
 </table>
 <hr />
 <a name="signals"></a>
@@ -129,16 +129,14 @@
 <p>This signal is emitted when battery level has changed. <i>level</i> is the new level.</p>
 <h3 class="fn"><a name="currentPowerState"></a><a href="qsystemdeviceinfo.html#PowerState-enum">QSystemDeviceInfo::PowerState</a> QSystemDeviceInfo::currentPowerState ()</h3>
 <p>Gets the current device power state</p>
-<h3 class="fn"><a name="getCurrentProfile"></a><a href="qsystemdeviceinfo.html#Profile-enum">QSystemDeviceInfo::Profile</a> QSystemDeviceInfo::getCurrentProfile ()</h3>
+<h3 class="fn"><a name="currentProfile"></a><a href="qsystemdeviceinfo.html#Profile-enum">QSystemDeviceInfo::Profile</a> QSystemDeviceInfo::currentProfile ()</h3>
 <p>Gets the current device profile <a href="qsystemdeviceinfo.html#Profile-enum">QSystemDeviceInfo::Profile</a></p>
-<h3 class="fn"><a name="getInputMethodType"></a><a href="qsystemdeviceinfo.html#InputMethod-enum">QSystemDeviceInfo::InputMethods</a> QSystemDeviceInfo::getInputMethodType ()</h3>
-<p>Returns the InputMethodType that the system uses.</p>
-<h3 class="fn"><a name="getSimStatus"></a><a href="qsystemdeviceinfo.html#SimStatus-enum">QSystemDeviceInfo::SimStatus</a> QSystemDeviceInfo::getSimStatus ()</h3>
-<p>Returns status of SIM card.</p>
 <h3 class="fn"><a name="imei"></a>QString QSystemDeviceInfo::imei ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the International Mobile Equipment Identity (IMEI), or a null QString in the case of none.</p>
 <h3 class="fn"><a name="imsi"></a>QString QSystemDeviceInfo::imsi ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the International Mobile Subscriber Identity (IMSI), or a null QString in the case of none.</p>
+<h3 class="fn"><a name="inputMethodType"></a><a href="qsystemdeviceinfo.html#InputMethod-enum">QSystemDeviceInfo::InputMethods</a> QSystemDeviceInfo::inputMethodType ()</h3>
+<p>Returns the InputMethodType that the system uses.</p>
 <h3 class="fn"><a name="isBatteryCharging"></a>bool QSystemDeviceInfo::isBatteryCharging ()</h3>
 <p>Returns true if the battery is charging, otherwise false;</p>
 <h3 class="fn"><a name="isDeviceLocked"></a>bool QSystemDeviceInfo::isDeviceLocked ()</h3>
@@ -151,6 +149,8 @@
 <p>This signal is emitted when the power state has changed, such as when a phone gets plugged qint32o the wall. <i>state</i> is the new power state.</p>
 <h3 class="fn"><a name="productName"></a>QString QSystemDeviceInfo::productName ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the product name of the device.</p>
+<h3 class="fn"><a name="simStatus"></a><a href="qsystemdeviceinfo.html#SimStatus-enum">QSystemDeviceInfo::SimStatus</a> QSystemDeviceInfo::simStatus ()</h3>
+<p>Returns status of SIM card.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

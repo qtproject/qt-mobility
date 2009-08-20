@@ -60,7 +60,7 @@ class tst_QSystemDeviceInfo : public QObject
 private slots:
 
     void initTestCase();
-    void tst_getInputMethodType();
+    void tst_inputMethodType();
 
     void tst_imei();
     void tst_imsi();
@@ -71,9 +71,9 @@ private slots:
     void tst_isBatteryCharging();
     void tst_batteryLevel();
 
-    void tst_getCurrentProfile();
+    void tst_currentProfile();
 
-    void tst_getSimStatus();
+    void tst_simStatus();
 
     void tst_isDeviceLocked();
 
@@ -100,10 +100,10 @@ void tst_QSystemDeviceInfo::initTestCase()
     qRegisterMetaType<QSystemDeviceInfo::SimStatus>("QSystemDeviceInfo::SimStatus");
 }
 
-void tst_QSystemDeviceInfo::tst_getInputMethodType()
+void tst_QSystemDeviceInfo::tst_inputMethodType()
 {
     QSystemDeviceInfo di;
-    QVERIFY( di.getInputMethodType() != 0);
+    QVERIFY( di.inputMethodType() != 0);
 
 }
 
@@ -156,10 +156,10 @@ void tst_QSystemDeviceInfo::tst_batteryLevel()
     QVERIFY(di.batteryLevel() > -1);
 }
 
-void tst_QSystemDeviceInfo::tst_getCurrentProfile()
+void tst_QSystemDeviceInfo::tst_currentProfile()
 {
     QSystemDeviceInfo di;
-    QSystemDeviceInfo::Profile profile = di.getCurrentProfile();
+    QSystemDeviceInfo::Profile profile = di.currentProfile();
     QVERIFY( profile == QSystemDeviceInfo::UnknownProfile
              || profile == QSystemDeviceInfo::SilentProfile
              || profile == QSystemDeviceInfo::NormalProfile
@@ -170,10 +170,10 @@ void tst_QSystemDeviceInfo::tst_getCurrentProfile()
              || profile == QSystemDeviceInfo::CustomProfile);
 }
 
-void tst_QSystemDeviceInfo::tst_getSimStatus()
+void tst_QSystemDeviceInfo::tst_simStatus()
 {
     QSystemDeviceInfo di;
-    bool simStat = di.getSimStatus();
+    bool simStat = di.simStatus();
     QVERIFY(simStat == true || simStat == false);
 
 }
