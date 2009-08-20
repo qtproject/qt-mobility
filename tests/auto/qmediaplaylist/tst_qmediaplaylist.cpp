@@ -34,7 +34,7 @@
 
 #include <QtTest/QtTest>
 #include <QDebug>
-#include "qlocalmediaplaylistprovider.h"
+#include "qmediaplaylist.h"
 
 class tst_QMediaPlaylist : public QObject
 {
@@ -46,6 +46,7 @@ public slots:
 private slots:
     void construction();
     void append();
+    void currentItem();
 };
 
 void tst_QMediaPlaylist::init()
@@ -58,13 +59,13 @@ void tst_QMediaPlaylist::cleanup()
 
 void tst_QMediaPlaylist::construction()
 {
-    QLocalMediaPlaylistProvider playlist;
+    QMediaPlaylist playlist;
     QCOMPARE(playlist.size(), 0);
 }
 
 void tst_QMediaPlaylist::append()
 {
-    QLocalMediaPlaylistProvider playlist;
+    QMediaPlaylist playlist;
     QMediaResourceList resource1;
     resource1 << QUrl(QLatin1String("file:///1"));
     playlist.appendItem(resource1);
@@ -78,5 +79,36 @@ void tst_QMediaPlaylist::append()
     QCOMPARE(playlist.resources(1), resource2);
 }
 
+void tst_QMediaPlaylist::currentItem()
+{
+    QMediaPlaylist playlist;
+
+    QMediaResourceList resource1;
+    resource1 << QUrl(QLatin1String("file:///1"));
+    playlist.appendItem(resource1);
+
+
+    QMediaResourceList resource2;
+    resource2 << QUrl(QLatin1String("file:///2"));
+    playlist.appendItem(resource2);
+
+
+    QCOMPARE(playlist.currentPosition(), -1);
+    QCOMPARE(playlist.currentResources(), QMediaResourceList());
+
+    playlist.setCurrentPosition(0);
+    QCOMPARE(playlist.currentPosition(), 0);
+    QCOMPARE(playlist.currentResources(), resource1);
+
+    playlist.setCurrentPosition(1);
+    QCOMPARE(playlist.currentPosition(), 1);
+    QCOMPARE(playlist.currentResources(), resource2);
+
+    playlist.setCurrentPosition(2); //warning is expected
+    QCOMPARE(playlist.currentPosition(), 1);
+    QCOMPARE(playlist.currentResources(), resource2);
+}
+
 QTEST_MAIN(tst_QMediaPlaylist)
 #include "tst_qmediaplaylist.moc"
+
