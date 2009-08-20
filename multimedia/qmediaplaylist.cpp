@@ -76,13 +76,12 @@ QMediaPlaylist::QMediaPlaylist(QAbstractMediaObject *mediaObject, QObject *paren
     Q_D(QMediaPlaylist);
 
     d->q_ptr = this;
-    d->service = mediaObject->service();
 
     if (mediaObject) {
         d->control = mediaObject->service()->control<QMediaPlaylistControl*>();
 
         if (!d->control) {
-            QMediaPlayerControl *playerControl = d->service->control<QMediaPlayerControl*>();
+            QMediaPlayerControl *playerControl = mediaObject->service()->control<QMediaPlayerControl*>();
             d->control = new QLocalMediaPlaylistControl(playerControl, this);
         }
     } else {
