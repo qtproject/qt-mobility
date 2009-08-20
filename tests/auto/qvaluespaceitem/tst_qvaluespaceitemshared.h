@@ -54,6 +54,7 @@ private slots:
     void value();
     void ipcTests();
     void setValue();
+    void copySetValue();
     void ipcSetValue();
     void removeValue();
     void ipcRemoveKey();
