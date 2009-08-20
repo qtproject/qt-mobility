@@ -92,7 +92,6 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="colorDepth" fullname="QSystemDisplayInfo::colorDepth" href="qsystemdisplayinfo.html#colorDepth" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="int" signature="colorDepth(int screenNumber)">
                 <parameter left="int" right="" name="screenNumber" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isScreenLockOn" fullname="QSystemDisplayInfo::isScreenLockOn" href="qsystemdisplayinfo.html#isScreenLockOn" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="bool" signature="isScreenLockOn()"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QSystemMemoryInfo" href="qsystemmemoryinfo.html" location="qsysteminfo.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QSystemMemoryInfo" fullname="QSystemMemoryInfo::QSystemMemoryInfo" href="qsystemmemoryinfo.html#QSystemMemoryInfo" location="qsysteminfo.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSystemMemoryInfo(QObject * parent)">
@@ -191,6 +190,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setScreenBlankingEnabled" fullname="QSystemScreenSaver::setScreenBlankingEnabled" href="qsystemscreensaver.html#setScreenBlankingEnabled" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="setScreenBlankingEnabled(bool b)">
                 <parameter left="bool" right="" name="b" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isScreenLockOn" fullname="QSystemScreenSaver::isScreenLockOn" href="qsystemscreensaver.html#isScreenLockOn" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="bool" signature="isScreenLockOn()"/>
         </class>
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="System Information Library Developer Resources" fulltitle="System Information Library Developer Resources" subtitle="" location="index.qdoc">
             <contents name="introduction" title="Introduction" level="1"/>
