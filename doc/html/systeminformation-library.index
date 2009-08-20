@@ -103,6 +103,8 @@
                 <value name="NoVolume" value="0"/>
                 <value name="Internal" value="1"/>
                 <value name="Removable" value="2"/>
+                <value name="Remote" value="3"/>
+                <value name="Cdrom" value="4"/>
             </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="totalDiskSpace" fullname="QSystemMemoryInfo::totalDiskSpace" href="qsystemmemoryinfo.html#totalDiskSpace" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="qlonglong" signature="totalDiskSpace(const QString &amp; volumeDrive)">
                 <parameter left="const QString &amp;" right="" name="volumeDrive" default=""/>
@@ -147,7 +149,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="manufacturer" fullname="QSystemDeviceInfo::manufacturer" href="qsystemdeviceinfo.html#manufacturer" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QString" signature="manufacturer()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="model" fullname="QSystemDeviceInfo::model" href="qsystemdeviceinfo.html#model" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QString" signature="model()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="productName" fullname="QSystemDeviceInfo::productName" href="qsystemdeviceinfo.html#productName" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QString" signature="productName()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="batteryLevel" fullname="QSystemDeviceInfo::batteryLevel" href="qsystemdeviceinfo.html#batteryLevel" location="qsysteminfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QSystemDeviceInfo::BatteryLevel" signature="batteryLevel() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="batteryLevel" fullname="QSystemDeviceInfo::batteryLevel" href="qsystemdeviceinfo.html#batteryLevel" location="qsysteminfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="batteryLevel() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="isBatteryCharging" fullname="QSystemDeviceInfo::isBatteryCharging" href="qsystemdeviceinfo.html#isBatteryCharging" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="isBatteryCharging()"/>
             <enum access="public" threadsafety="unspecified" status="commendable" name="Profile" fullname="QSystemDeviceInfo::Profile" href="qsystemdeviceinfo.html#Profile-enum" location="qsysteminfo.h">
                 <value name="UnknownProfile" value="0"/>
@@ -181,18 +183,13 @@
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QSystemScreenSaver" fullname="QSystemScreenSaver::~QSystemScreenSaver" href="qsystemscreensaver.html#dtor.QSystemScreenSaver" location="qsysteminfo.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QSystemScreenSaver()"/>
-            <enum access="public" threadsafety="unspecified" status="commendable" name="ScreenSaverState" fullname="QSystemScreenSaver::ScreenSaverState" href="qsystemscreensaver.html#ScreenSaverState-enum" location="qsysteminfo.h">
-                <value name="UnknownScreenSaverState" value="0"/>
-                <value name="ScreenSaverDisabled" value="1"/>
-                <value name="ScreenSaverEnabled" value="2"/>
-            </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="screenSaverEnabled" fullname="QSystemScreenSaver::screenSaverEnabled" href="qsystemscreensaver.html#screenSaverEnabled" location="qsysteminfo.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="QSystemScreenSaver::ScreenSaverState" signature="screenSaverEnabled()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="screenBlankingEnabled" fullname="QSystemScreenSaver::screenBlankingEnabled" href="qsystemscreensaver.html#screenBlankingEnabled" location="qsysteminfo.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="QSystemScreenSaver::ScreenSaverState" signature="screenBlankingEnabled()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setScreenSaverEnabled" fullname="QSystemScreenSaver::setScreenSaverEnabled" href="qsystemscreensaver.html#setScreenSaverEnabled" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="setScreenSaverEnabled(QSystemScreenSaver::ScreenSaverState b)">
-                <parameter left="QSystemScreenSaver::ScreenSaverState" right="" name="b" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="screenSaverEnabled" fullname="QSystemScreenSaver::screenSaverEnabled" href="qsystemscreensaver.html#screenSaverEnabled" location="qsysteminfo.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="screenSaverEnabled()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="screenBlankingEnabled" fullname="QSystemScreenSaver::screenBlankingEnabled" href="qsystemscreensaver.html#screenBlankingEnabled" location="qsysteminfo.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="screenBlankingEnabled()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setScreenSaverEnabled" fullname="QSystemScreenSaver::setScreenSaverEnabled" href="qsystemscreensaver.html#setScreenSaverEnabled" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="setScreenSaverEnabled(bool b)">
+                <parameter left="bool" right="" name="b" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setScreenBlankingEnabled" fullname="QSystemScreenSaver::setScreenBlankingEnabled" href="qsystemscreensaver.html#setScreenBlankingEnabled" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="setScreenBlankingEnabled(QSystemScreenSaver::ScreenSaverState b)">
-                <parameter left="QSystemScreenSaver::ScreenSaverState" right="" name="b" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setScreenBlankingEnabled" fullname="QSystemScreenSaver::setScreenBlankingEnabled" href="qsystemscreensaver.html#setScreenBlankingEnabled" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="setScreenBlankingEnabled(bool b)">
+                <parameter left="bool" right="" name="b" default=""/>
             </function>
         </class>
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="System Information Library Developer Resources" fulltitle="System Information Library Developer Resources" subtitle="" location="index.qdoc">
