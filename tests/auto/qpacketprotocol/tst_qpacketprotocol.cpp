@@ -146,7 +146,10 @@ void tst_QPacketProtocol::maximumPacketSize()
             writeProtocol.send(sendPacket);
 
             QSignalSpy spy(&readProtocol, SIGNAL(readyRead()));
+            QSignalSpy invalidSpy(&readProtocol, SIGNAL(invalidPacket()));
+
             QTRY_COMPARE(spy.count(), readCount);
+            QTRY_COMPARE(invalidSpy.count(), 1 - readCount);
 
             QCOMPARE(readProtocol.packetsAvailable(), qint64(readCount));
 
