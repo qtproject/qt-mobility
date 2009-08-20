@@ -252,6 +252,7 @@ bool Tracker2QContact::copyContactData(const Live<nco::PersonContact>& ncoContac
         presence.setValue(QContactPresence::FieldNickname, imAccount->getImNickname());
         presence.setValue(QContactPresence::FieldPresence, imAccount->getImStatus());
         presence.setValue(QContactPresence::FieldStatusMessage, imAccount->getImStatusMessage());
+qDebug()<<Q_FUNC_INFO<<imAccount->getImStatusMessage();
         qcontact.saveDetail(&presence);
 
     }
