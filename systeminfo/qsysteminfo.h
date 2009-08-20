@@ -212,6 +212,10 @@ private:
 class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(Profile currentProfile READ currentProfile)
+    Q_PROPERTY(PowerState currentPowerState READ currentPowerState)
+    Q_PROPERTY(SimStatus simStatus READ simStatus)
+
     Q_ENUMS(BatteryLevel)
     Q_ENUMS(PowerState)
     Q_ENUMS(InputMethod)
@@ -276,10 +280,9 @@ public:
 		Locked
 	};
 
-    QSystemDeviceInfo::SimStatus simStatus();
     bool isDeviceLocked();
+    QSystemDeviceInfo::SimStatus simStatus();
     QSystemDeviceInfo::Profile currentProfile();
-
     QSystemDeviceInfo::PowerState currentPowerState();
 
 Q_SIGNALS:

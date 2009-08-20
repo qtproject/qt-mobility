@@ -457,7 +457,8 @@ QSystemMemoryInfo::~QSystemMemoryInfo()
 }
 
 /*!
-    Returns the amount of total space on the \a volumeDrive.
+    Returns the amount of total space on the \a volumeDrive,
+    in bytes.
 */
 qlonglong QSystemMemoryInfo::totalDiskSpace(const QString &volumeDrive)
 {
@@ -465,7 +466,8 @@ qlonglong QSystemMemoryInfo::totalDiskSpace(const QString &volumeDrive)
 }
 
 /*!
-    Returns the amount of available free space on the \a volumeDrive.
+    Returns the amount of available free space on the \a volumeDrive,
+in bytes.
 */
 qlonglong QSystemMemoryInfo::availableDiskSpace(const QString &volumeDrive)
 {
@@ -574,6 +576,8 @@ bool QSystemDeviceInfo::isBatteryCharging()
 }
 
 /*!
+  \property QSystemDeviceInfo::simStatus
+  \brief the status of the sim card.
   Returns status of SIM card.
 */
 QSystemDeviceInfo::SimStatus QSystemDeviceInfo::simStatus()
@@ -589,6 +593,8 @@ bool QSystemDeviceInfo::isDeviceLocked()
 }
 
 /*!
+  \property QSystemDeviceInfo::currentProfile
+  \brief the device profile
   Gets the current device profile QSystemDeviceInfo::Profile
 */
 QSystemDeviceInfo::Profile QSystemDeviceInfo::currentProfile()
@@ -597,6 +603,9 @@ QSystemDeviceInfo::Profile QSystemDeviceInfo::currentProfile()
 }
 
 /*!
+  \property QSystemDeviceInfo::currentPowerState
+  \brief the power state.
+
   Gets the current device power state
 */
 QSystemDeviceInfo::PowerState QSystemDeviceInfo::currentPowerState()

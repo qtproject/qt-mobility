@@ -35,10 +35,11 @@
         <keyword ref="qsystemdeviceinfo.html#SimStatus-enum">QSystemDeviceInfo::DualAvailable</keyword>
         <keyword ref="qsystemdeviceinfo.html#SimStatus-enum">QSystemDeviceInfo::Locked</keyword>
         <keyword ref="qsystemdeviceinfo.html#SimStatus-enum">QSystemDeviceInfo::SingleAvailable</keyword>
+        <keyword ref="qsystemdeviceinfo.html#currentPowerState-prop">currentPowerState</keyword>
+        <keyword ref="qsystemdeviceinfo.html#currentProfile-prop">currentProfile</keyword>
+        <keyword ref="qsystemdeviceinfo.html#simStatus-prop">simStatus</keyword>
         <keyword ref="qsystemdeviceinfo.html#batteryLevel">batteryLevel</keyword>
         <keyword ref="qsystemdeviceinfo.html#batteryLevelChanged">batteryLevelChanged</keyword>
-        <keyword ref="qsystemdeviceinfo.html#currentPowerState">currentPowerState</keyword>
-        <keyword ref="qsystemdeviceinfo.html#currentProfile">currentProfile</keyword>
         <keyword ref="qsystemdeviceinfo.html#imei">imei</keyword>
         <keyword ref="qsystemdeviceinfo.html#imsi">imsi</keyword>
         <keyword ref="qsystemdeviceinfo.html#inputMethodType">inputMethodType</keyword>
@@ -48,7 +49,6 @@
         <keyword ref="qsystemdeviceinfo.html#model">model</keyword>
         <keyword ref="qsystemdeviceinfo.html#powerStateChanged">powerStateChanged</keyword>
         <keyword ref="qsystemdeviceinfo.html#productName">productName</keyword>
-        <keyword ref="qsystemdeviceinfo.html#simStatus">simStatus</keyword>
         <section ref="qsystemdeviceinfo-members.html" title="List of all members"/>
     </section>
     <section ref="qsystemdisplayinfo.html" title="QSystemDisplayInfo Class Reference">

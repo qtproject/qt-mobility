@@ -117,6 +117,15 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QSystemDeviceInfo" href="qsystemdeviceinfo.html" location="qsysteminfo.h" bases="" module="">
+            <property access="public" threadsafety="unspecified" status="commendable" name="currentProfile" fullname="QSystemDeviceInfo::currentProfile" href="qsystemdeviceinfo.html#currentProfile-prop" location="qsysteminfo.h" type="Profile">
+                <getter name="currentProfile"/>
+            </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="currentPowerState" fullname="QSystemDeviceInfo::currentPowerState" href="qsystemdeviceinfo.html#currentPowerState-prop" location="qsysteminfo.h" type="PowerState">
+                <getter name="currentPowerState"/>
+            </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="simStatus" fullname="QSystemDeviceInfo::simStatus" href="qsystemdeviceinfo.html#simStatus-prop" location="qsysteminfo.h" type="SimStatus">
+                <getter name="simStatus"/>
+            </property>
             <function access="public" threadsafety="unspecified" status="commendable" name="QSystemDeviceInfo" fullname="QSystemDeviceInfo::QSystemDeviceInfo" href="qsystemdeviceinfo.html#QSystemDeviceInfo" location="qsysteminfo.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSystemDeviceInfo(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
@@ -166,10 +175,10 @@
                 <value name="DualAvailable" value="2"/>
                 <value name="Locked" value="3"/>
             </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="simStatus" fullname="QSystemDeviceInfo::simStatus" href="qsystemdeviceinfo.html#simStatus" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QSystemDeviceInfo::SimStatus" signature="simStatus()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="isDeviceLocked" fullname="QSystemDeviceInfo::isDeviceLocked" href="qsystemdeviceinfo.html#isDeviceLocked" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="isDeviceLocked()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="currentProfile" fullname="QSystemDeviceInfo::currentProfile" href="qsystemdeviceinfo.html#currentProfile" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QSystemDeviceInfo::Profile" signature="currentProfile()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="currentPowerState" fullname="QSystemDeviceInfo::currentPowerState" href="qsystemdeviceinfo.html#currentPowerState" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QSystemDeviceInfo::PowerState" signature="currentPowerState()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="simStatus" fullname="QSystemDeviceInfo::simStatus" href="qsystemdeviceinfo.html#simStatus-prop" location="qsysteminfo.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="simStatus" type="QSystemDeviceInfo::SimStatus" signature="simStatus()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="currentProfile" fullname="QSystemDeviceInfo::currentProfile" href="qsystemdeviceinfo.html#currentProfile-prop" location="qsysteminfo.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="currentProfile" type="QSystemDeviceInfo::Profile" signature="currentProfile()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="currentPowerState" fullname="QSystemDeviceInfo::currentPowerState" href="qsystemdeviceinfo.html#currentPowerState-prop" location="qsysteminfo.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="currentPowerState" type="QSystemDeviceInfo::PowerState" signature="currentPowerState()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="batteryLevelChanged" fullname="QSystemDeviceInfo::batteryLevelChanged" href="qsystemdeviceinfo.html#batteryLevelChanged" location="qsysteminfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="batteryLevelChanged(QSystemDeviceInfo::BatteryLevel level)">
                 <parameter left="QSystemDeviceInfo::BatteryLevel" right="" name="level" default=""/>
             </function>
