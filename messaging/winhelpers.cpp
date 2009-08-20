@@ -774,7 +774,7 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
     QByteArray bodySubType;
     bool hasAttachments = false;
 
-    SizedSPropTagArray( 9, msgCols) = { 9, { PR_RECORD_KEY, 
+    SizedSPropTagArray( 10, msgCols) = { 10, { PR_RECORD_KEY, 
                                              PR_MESSAGE_FLAGS, 
                                              PR_SENDER_NAME, 
                                              PR_SENDER_EMAIL_ADDRESS, 
@@ -782,7 +782,8 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
                                              PR_MESSAGE_DELIVERY_TIME, 
                                              PR_TRANSPORT_MESSAGE_HEADERS, 
                                              PR_HASATTACH,
-                                             PR_SUBJECT }};
+                                             PR_SUBJECT,
+                                             PR_MESSAGE_SIZE /*TODO: Use PR_CONTENT_LENGTH on WinCE */ }};
     ULONG count = 0;
     LPSPropValue properties;
     HRESULT rv = message->GetProps(reinterpret_cast<LPSPropTagArray>(&msgCols), MAPI_UNICODE, &count, &properties);
@@ -821,6 +822,10 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
                 break;
             case PR_HASATTACH:
                 hasAttachments = (properties[n].Value.b != FALSE);
+                break;
+            case PR_MESSAGE_SIZE: /*TODO: Use PR_CONTENT_LENGTH on WinCE */
+                QMessagePrivate::setSize(result, properties[n].Value.ul);
+                break;
             default:
                 break;
             }

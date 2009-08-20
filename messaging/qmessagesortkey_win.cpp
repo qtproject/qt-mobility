@@ -140,7 +140,7 @@ void QMessageSortKeyPrivate::sortTable(QMessageStore::ErrorCode *lastError, cons
                 propTag = PR_SENDER_NAME; // MAPI is limited to sorting by sender name only, sender name + sender address does not appear to be supported
                 break;
             case Size:
-                propTag = PR_CONTENT_LENGTH;
+                propTag = PR_MESSAGE_SIZE; /*TODO: Use PR_CONTENT_LENGTH on WinCE */
                 break;
             default:
                 propTag = PR_SUBJECT; // TODO handle all cases

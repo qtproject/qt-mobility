@@ -60,6 +60,12 @@ void QMessagePrivate::setSenderName(const QMessage &message, const QString &send
     message.d_ptr->_senderName = senderName;
 }
 
+void QMessagePrivate::setSize(const QMessage &message, uint size)
+{
+    message.d_ptr->_size = size;
+}
+
+
 QMessage::QMessage()
     :d_ptr(new QMessagePrivate(this))
 {
