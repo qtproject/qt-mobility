@@ -185,6 +185,9 @@ void tst_QPacketProtocol::sendReceive()
         QSignalSpy writeSpy(&writeProtocol, SIGNAL(packetWritten()));
         QSignalSpy readSpy(&readProtocol, SIGNAL(readyRead()));
 
+        // Test sending an empty packet.
+        writeProtocol.send(QPacket());
+
         QPacket sendPacket;
         sendPacket << dataString;
         for (int j = 0; j < i; ++j)
@@ -208,6 +211,9 @@ void tst_QPacketProtocol::sendReceive()
     for (int i = 1; i <= 10; ++i) {
         QSignalSpy writeSpy(&writeProtocol, SIGNAL(packetWritten()));
         QSignalSpy readSpy(&readProtocol, SIGNAL(readyRead()));
+
+        // Test sending an empty packet.
+        writeProtocol.send();
 
         for (int j = 0; j < i; ++j)
             writeProtocol.send() << dataString.constData();
