@@ -1074,7 +1074,7 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
 //////////////
 ///////
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
-        : QSystemScreenSaver(parent)
+        : QObject(parent)
 {
 
 }

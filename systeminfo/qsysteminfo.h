@@ -298,27 +298,28 @@ class QSystemScreenSaverPrivate;
 class  Q_SYSINFO_EXPORT QSystemScreenSaver : public QObject
 {
     Q_OBJECT
+    Q_ENUMS(ScreenSaverState)
 
 public:
 
     QSystemScreenSaver(QObject *parent = 0);
     ~QSystemScreenSaver();
 
-    enum ScreenSaverState {
-        UnknownScreenSaverState = 0,
-        ScreenSaverDisabled,
-        ScreenSaverEnabled
-    };
+//    enum ScreenSaverState {
+//        UnknownScreenSaverState = 0,
+//        ScreenSaverDisabled,
+//        ScreenSaverEnabled
+//    };
 
-    virtual QSystemScreenSaver::ScreenSaverState screenSaverEnabled();
-    virtual QSystemScreenSaver::ScreenSaverState screenBlankingEnabled();
+    virtual bool screenSaverEnabled();
+    virtual bool  screenBlankingEnabled();
 
-    bool setScreenSaverEnabled(QSystemScreenSaver::ScreenSaverState b);
-    bool setScreenBlankingEnabled(QSystemScreenSaver::ScreenSaverState b);
+    bool setScreenSaverEnabled(bool b);
+    bool setScreenBlankingEnabled(bool b);
 
 private:
-    QSystemScreenSaver::ScreenSaverState screenSaverIsEnabled;
-    QSystemScreenSaver::ScreenSaverState screenBlankingIsEnabled;
+    bool  screenSaverIsEnabled;
+    bool screenBlankingIsEnabled;
     QSystemScreenSaverPrivate *d;
 };
 

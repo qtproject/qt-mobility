@@ -39,6 +39,7 @@
 
 #include "qsysteminfo.h"
 #include <qsysinfoglobal.h>
+//#define _WINSOCKAPI_
 
 QT_BEGIN_HEADER
 
@@ -168,7 +169,7 @@ private:
 };
 
 
-class QSystemScreenSaverPrivate : public QSystemScreenSaver
+class QSystemScreenSaverPrivate : public QObject
 {
     Q_OBJECT
 
@@ -176,11 +177,14 @@ public:
 
     QSystemScreenSaverPrivate(QObject *parent = 0);
 
-    QSystemScreenSaver::ScreenSaverState screenSaverEnabled();
-    QSystemScreenSaver::ScreenSaverState screenBlankingEnabled();
-    bool setScreenSaverEnabled(QSystemScreenSaver::ScreenSaverState);
-    bool setScreenBlankingEnabled(QSystemScreenSaver::ScreenSaverState);
-    
+    bool screenSaverEnabled();
+    bool screenBlankingEnabled();
+    bool setScreenSaverEnabled(bool b);
+    bool setScreenBlankingEnabled(bool b);
+private:
+    QString screenPath;
+    QString settingsPath;
+    bool screenSaverSecure;
 };
 
 QT_END_NAMESPACE

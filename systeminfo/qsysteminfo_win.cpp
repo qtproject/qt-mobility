@@ -34,8 +34,6 @@
 #include "qsysteminfo_p.h"
 #include "wmihelper.h"
 
-
-#include <qt_windows.h>
 #include <QStringList>
 #include <QSize>
 #include <QFile>
@@ -47,26 +45,26 @@
 #include <QDebug>
 #include <QSettings>
 #include <QSysInfo>
+#include <QNetworkInterface>
+#include <QList>
+#include <QSettings>
+
+//#include <Winsock2.h>
+//#include <mswsock.h>
+//#include <ntddndis.h>
 
 #include <locale.h>
-//#include <windows.h>
 #include <Wlanapi.h>
 #include <Wtsapi32.h>
-// #include <afxwin.h>
-#include <initguid.h>
-#include <BatClass.h>
-#include <Setupapi.h>
-
-//#include <Dxva2.lib>
-#include <HighLevelMonitorConfigurationAPI.h>
-#include <Wbemidl.h>
 #include <Bthsdpdef.h>
+//#include <ws2bth.h>
+
+//#include <bthddi.h>
+
 #include <BluetoothAPIs.h>
 #include <Dshow.h>
 #include <af_irda.h>
-//#include <mswsock.h>
 
-//#include <winsock2.h>
 #ifdef Q_OS_WINCE
 #include <vibrate.h>
 #include <Led_drvr.h>
@@ -74,17 +72,17 @@
 #include <Ifapi.h>
 #include <Winbase.h>
 #endif
-//#include <Winsock2.h>
 
 #define _WCHAR_T_DEFINED
 #define _TIME64_T_DEFINED
 
-//#include <api/ntddvdeo.h>
+
 typedef struct _DISPLAY_BRIGHTNESS {
     UCHAR ucDisplayPolicy;
     UCHAR ucACBrightness;
     UCHAR ucDCBrightness;
 } DISPLAY_BRIGHTNESS, *PDISPLAY_BRIGHTNESS;
+
 
 
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
@@ -192,33 +190,28 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     switch (feature) {
     case QSystemInfo::BluetoothFeature :
         {
-         //   BLUETOOTH_DEVICE_SEARCH_PARAMS searchParams;
             BLUETOOTH_FIND_RADIO_PARAMS  radioParams = { sizeof(BLUETOOTH_FIND_RADIO_PARAMS)};
             HANDLE radio;
-
-            //BLUETOOTH_DEVICE_INFO btDeviceInfo;
-          //  ZeroMemory(&searchParams, sizeof(BLUETOOTH_DEVICE_SEARCH_PARAMS));
             if(BluetoothFindFirstRadio(&radioParams, &radio) != NULL) {
-//            if(BluetoothFindFirstDevice(&searchParams, &btDeviceInfo) != NULL) {
                 qWarning() << "available";
                 featureSupported = true;
+                BluetoothFindRadioClose(radio);
             } else {
+                
                 qWarning() << "Not available" << GetLastError();
             }
         }
-            break;
-        case QSystemInfo::CameraFeature :
+        break;
+    case QSystemInfo::CameraFeature :
         {
-            ICreateDevEnum *pDevEnum = NULL;
-            IEnumMoniker *pEnum = NULL;
+            ICreateDevEnum *devEnum = NULL;
+            IEnumMoniker *monikerEnum = NULL;
 
             HRESULT hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL,
                                           CLSCTX_INPROC_SERVER, IID_ICreateDevEnum,
-                                          reinterpret_cast<void**>(&pDevEnum));
+                                          reinterpret_cast<void**>(&devEnum));
             if (hr == S_OK) {
-                hr = pDevEnum->CreateClassEnumerator(
-                        CLSID_VideoInputDeviceCategory,
-                        &pEnum, 0);
+                hr = devEnum->CreateClassEnumerator( CLSID_VideoInputDeviceCategory, &monikerEnum, 0);
                 if(hr != S_FALSE) {
                     qWarning() << "available";
                     featureSupported = true;
@@ -290,32 +283,53 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         }
         break;
     case QSystemInfo::WlanFeature :
-        {
-            WMIHelper *wHelper;
-            wHelper = new WMIHelper();
-            QVariant v = wHelper->getWMIData("root/cimv2", "Win32_NetworkAdapter", "AdapterType");
-            qWarning() << v.toString();
-            if(v.toString() == "Wireless") {
-                featureSupported = true;
-            }
-//            qWarning() << "wlan";
-//            DWORD clientVersion;
-//            HANDLE handle;
-//            DWORD result = WlanOpenHandle(1, 0, &clientVersion, &handle);
-//            if (result == ERROR_SUCCESS) {
-//                WLAN_INTERFACE_INFO_LIST *interfaceList;
-//                DWORD result = WlanEnumInterfaces(handle, 0, &interfaceList);
-//                if (result == ERROR_SUCCESS) {
-//                    qWarning() << interfaceList->dwNumberOfItems;
-//                    if(interfaceList->dwNumberOfItems > 1) {
-//                        featureSupported = true;
-//                    }
-//                } else {
-//                    qWarning()  <<"2 not success" << result;
-//                }
-//            } else {
-//                qWarning() << "1 not success"<< result;
-//            }
+        {            
+            QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
+            if (interfaces.isEmpty())
+                interfaces = QNetworkInterface::allInterfaces();
+
+            while (!interfaces.isEmpty()) {
+                QNetworkInterface netInterface = interfaces.takeFirst();
+
+                if (!netInterface.isValid())
+                    continue;
+
+                if (netInterface.flags() & QNetworkInterface::IsLoopBack)
+                    continue;
+
+                unsigned long oid;
+                DWORD bytesWritten;
+
+                NDIS_MEDIUM medium;
+                NDIS_PHYSICAL_MEDIUM physicalMedium;
+
+                HANDLE handle = CreateFile((TCHAR *)QString("\\\\.\\%1").arg(netInterface.name()).utf16(), 0,
+                                           FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
+                if (handle == INVALID_HANDLE_VALUE)
+                    return  false;
+
+                oid = OID_GEN_MEDIA_SUPPORTED;
+                bytesWritten = 0;
+                bool result = DeviceIoControl(handle, IOCTL_NDIS_QUERY_GLOBAL_STATS, &oid, sizeof(oid),
+                                              &medium, sizeof(medium), &bytesWritten, 0);
+                if (!result) {
+                    CloseHandle(handle);
+                    return  false;
+                }
+                oid = OID_GEN_PHYSICAL_MEDIUM;
+                bytesWritten = 0;
+                result = DeviceIoControl(handle, IOCTL_NDIS_QUERY_GLOBAL_STATS, &oid, sizeof(oid),
+                                         &physicalMedium, sizeof(physicalMedium), &bytesWritten, 0);
+                if (!result) {
+                    CloseHandle(handle);
+                    if (medium == NdisMedium802_3) {
+                        if(physicalMedium ==   NdisPhysicalMediumWirelessLan) {
+                            featureSupported = true;
+                            break;
+                        }
+                    }
+                }
+            } //end while interfaces
         }
         break;
     case QSystemInfo::SimFeature :
@@ -564,7 +578,16 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
 
 bool QSystemDisplayInfoPrivate::isScreenLockOn()
 {
-    return false;
+    bool screenLockEnabled;
+    if (::SystemParametersInfo (SPI_GETSCREENSAVESECURE,0,&screenLockEnabled,0)) {
+        if (screenLockEnabled) {
+            return true;
+        }
+    } else {
+        qWarning() << "SystemParametersInfo failed" << GetLastError();
+    }
+
+        return false;
 }
 
 //////// QSystemMemoryInfo
@@ -844,32 +867,82 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
 //////////////
 ///////
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
-        : QSystemScreenSaver(parent)
+        : QObject(parent)
 {
+    screenSaverSecure = false;
+    QSettings screenSettingsTmp("HKEY_CURRENT_USER\\Software\\Policies\\Microsoft\\Windows\\Control Panel\\Desktop", QSettings::NativeFormat);
+    if(!screenSettingsTmp.value("SCRNSAVE.EXE").toString().isEmpty()) {
+        settingsPath = "HKEY_CURRENT_USER\\Software\\Policies\\Microsoft\\Windows\\Control Panel\\Desktop";
+    } else {
+        settingsPath = "HKEY_CURRENT_USER\\Control Panel\\Desktop";
+    }
 
+    QSettings screenSettings(settingsPath, QSettings::NativeFormat);
+    if(screenSettings.value("ScreenSaverIsSecure").toString() == "1") {
+        screenSaverSecure = true;
+    }
+    screenPath = screenSettings.value("SCRNSAVE.EXE").toString();
+    qWarning() << "Original screenpath is" << screenPath;
 }
 
-bool QSystemScreenSaverPrivate::setScreenSaverEnabled(QSystemScreenSaver::ScreenSaverState state)
-{
-    Q_UNUSED(state);
 
+bool QSystemScreenSaverPrivate::setScreenSaverEnabled(bool state)
+{
+    if(screenSaverSecure)
+        return false;
+    QString save =  "0";
+    QSettings screenSettings(settingsPath, QSettings::NativeFormat);
+    if(state ) {
+        save =  "1";
+        screenSettings.setValue("SCRNSAVE.EXE",  screenPath);
+    } else {
+        screenSettings.remove("SCRNSAVE.EXE");
+    }
+
+    screenSettings.setValue("ScreenSaveActive", save);
+    qWarning() << screenSettings.value("ScreenSaveActive").toString();
+    return screenSettings.value("ScreenSaveActive").toString() == save;
+}
+
+bool QSystemScreenSaverPrivate::setScreenBlankingEnabled(bool state)
+{
+    if(screenSaverSecure)
+        return false;
+    QSettings screenSettings(settingsPath, QSettings::NativeFormat);
+    QString winDir;
+    WMIHelper *wHelper;
+    wHelper = new WMIHelper();
+    QVariant v = wHelper->getWMIData("root/cimv2", "Win32_OperatingSystem", "SystemDirectory");
+    if(settingsPath.contains("Policies")) {
+        winDir = "";
+    } else {
+        winDir = v.toString();
+    }
+
+    if(state) {
+        screenSettings.setValue("SCRNSAVE.EXE", winDir+"\\scrnsave.scr");
+        if(screenSettings.value("SCRNSAVE.EXE").toString().contains("scrnsave.scr")) {
+            return true;
+        }
+    } else {
+        screenSettings.setValue("SCRNSAVE.EXE", screenPath);
+        if(screenSettings.value("SCRNSAVE.EXE").toString().contains(screenPath)) {
+            return true;
+        }
+    }
     return false;
 }
 
-bool QSystemScreenSaverPrivate::setScreenBlankingEnabled(QSystemScreenSaver::ScreenSaverState state)
+bool QSystemScreenSaverPrivate::screenSaverEnabled()
 {
-    Q_UNUSED(state);
-    return false;
+    QSettings screenSettings(settingsPath, QSettings::NativeFormat);
+    return !screenSettings.value("SCRNSAVE.EXE").toString().isEmpty();
 }
 
-QSystemScreenSaver::ScreenSaverState QSystemScreenSaverPrivate::screenSaverEnabled()
+bool QSystemScreenSaverPrivate::screenBlankingEnabled()
 {
-    return QSystemScreenSaver::UnknownScreenSaverState;
-}
-
-QSystemScreenSaver::ScreenSaverState QSystemScreenSaverPrivate::screenBlankingEnabled()
-{
-    return QSystemScreenSaver::UnknownScreenSaverState;
+    QSettings screenSettings(settingsPath, QSettings::NativeFormat);
+    return screenSettings.value("SCRNSAVE.EXE").toString().contains("scrnsave.scr");
 }
 
 

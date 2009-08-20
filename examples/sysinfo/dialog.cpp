@@ -14,6 +14,7 @@ Dialog::Dialog(QWidget *parent) :
     setupDisplay();
     setupMemory();
     setupNetwork();
+    setupSaver();
 
     connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(tabChanged(int)));
    connect(ui->versionComboBox,SIGNAL(activated(int)), this,SLOT(getVersion(int)));
@@ -57,6 +58,9 @@ void Dialog::tabChanged(int index)
         break;
     case 4:
         setupNetwork();
+        break;
+        case 5:
+        setupSaver();
         break;
     };
 }
@@ -232,4 +236,32 @@ void Dialog::doVolumes(int /*index*/)
         break;
     };
 
+}
+
+void Dialog::setupSaver()
+{
+    saver = new QSystemScreenSaver();
+    bool saverEnabled = saver->screenSaverEnabled();
+    bool blankingEnabled = saver->screenBlankingEnabled();
+
+    ui->saverEnabledPushButton->setChecked(saverEnabled);
+    ui->blankingEnabledPushButton->setChecked(blankingEnabled);
+
+    connect( ui->saverEnabledPushButton, SIGNAL(clicked(bool)),
+             this,SLOT(setSaverEnabled(bool)));
+    connect( ui->blankingEnabledPushButton, SIGNAL(clicked(bool)),
+             this,SLOT(setBlankingEnabled(bool)));
+}
+
+
+void Dialog::setSaverEnabled(bool b)
+{
+    if(!saver->setScreenSaverEnabled(b))
+        ui->saverEnabledPushButton->setChecked(!b);
+}
+
+void Dialog::setBlankingEnabled(bool b)
+{
+    if(!saver->setScreenBlankingEnabled(b))
+        ui->blankingEnabledPushButton->setChecked(!b);
 }

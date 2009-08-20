@@ -43,17 +43,17 @@ WMIHelper::WMIHelper()
     HRESULT hres;
     hres = CoInitializeEx(0, COINIT_MULTITHREADED);
     if (hres == S_FALSE) {
-        qWarning() << "Failed to initialize COM library. Error code = 0x" << hex << hres;
+        qWarning() << "Failed to initialize COM library.";
         return;
     }
 
-    pLoc = NULL;
+    wbemLocator = NULL;
 
     hres = CoCreateInstance(CLSID_WbemLocator,0,CLSCTX_INPROC_SERVER,
-                            IID_IWbemLocator, (LPVOID *) &pLoc);
+                            IID_IWbemLocator, (LPVOID *) &wbemLocator);
 
-    if (FAILED(hres)) {
-        qWarning() << "Failed to create IWbemLocator object." << " Err code = 0x"<< hex << hres;
+    if (hres != S_OK) {
+        qWarning() << "Failed to create IWbemLocator object.";
         return;
     }
 }
@@ -68,123 +68,95 @@ QVariant WMIHelper::getWMIData(const QString &wmiNamespace, const QString &class
     qWarning() << wmiNamespace << className << classProperty;
     QVariant returnVariant;
     HRESULT hres;
-
-    IWbemServices *pSvc = NULL;
-
-    hres = pLoc->ConnectServer(
-            ::SysAllocString(wmiNamespace.utf16()),NULL,NULL,0,NULL,0,0,&pSvc);
+    IWbemServices *wbemServices = NULL;
+    hres = wbemLocator->ConnectServer(::SysAllocString(wmiNamespace.utf16()),NULL,NULL,0,NULL,0,0,&wbemServices);
 
     if (hres != WBEM_S_NO_ERROR){
-        qWarning() << "Could not connect. Error code = 0x" << hex << hres;
-        pLoc->Release();
+        qWarning() << "Could not connect";
+        wbemLocator->Release();
         return returnVariant;
     }
 
     /////////////////////
-    hres = CoSetProxyBlanket(
-            pSvc,                        // Indicates the proxy to set
-            RPC_C_AUTHN_WINNT,           // RPC_C_AUTHN_xxx
-            RPC_C_AUTHZ_NONE,            // RPC_C_AUTHZ_xxx
-            NULL,                        // Server principal name
-            RPC_C_AUTHN_LEVEL_CALL,      // RPC_C_AUTHN_LEVEL_xxx
-            RPC_C_IMP_LEVEL_IMPERSONATE, // RPC_C_IMP_LEVEL_xxx
-            NULL,                        // client identity
-            EOAC_NONE                    // proxy capabilities
-            );
+    hres = CoSetProxyBlanket( wbemServices, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE, NULL,
+                              RPC_C_AUTHN_LEVEL_CALL,  RPC_C_IMP_LEVEL_IMPERSONATE, NULL, EOAC_NONE );
 
-    if (FAILED(hres)) {
-        qWarning() << "Could not set proxy blanket. Error code = 0x"
-                << hex << hres;
-        pSvc->Release();
-        pLoc->Release();
+    if (hres != S_OK) {
+        qWarning() << "Could not set proxy blanket";
+        wbemServices->Release();
+        wbemLocator->Release();
         return returnVariant;
     }
     ////////////////////////
-    IEnumWbemClassObject* pEnumerator = NULL;
+    IEnumWbemClassObject* wbemEnumerator = NULL;
     BSTR bstrWQL = ::SysAllocString(L"WQL");
     QString aString = "SELECT * FROM " + className;
     BSTR bstrQuery = ::SysAllocString(aString.utf16());
 
-    hres = pSvc->ExecQuery(
-            bstrWQL,
-            bstrQuery,
-            WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY,
-            NULL,
-            &pEnumerator);
+    hres = wbemServices->ExecQuery( bstrWQL,  bstrQuery,
+            WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY, NULL,&wbemEnumerator);
 
     if (hres != WBEM_S_NO_ERROR){
-        qWarning() << "WMI Query failed."
-                << " Error code = 0x"
-                << hex << hres;
-        pSvc->Release();
-        pLoc->Release();
-        pEnumerator->Release();
+        qWarning() << "WMI Query failed.";
+        wbemLocator->Release();
+        wbemEnumerator->Release();
         return returnVariant;
     }
     ///////////////////////
-    IWbemClassObject *pclsObj;
-    ULONG uReturn = 0;
-
-    while (pEnumerator) {
-        HRESULT hr = pEnumerator->Next(WBEM_INFINITE, 1,&pclsObj, &uReturn);
-//        if(hr != WBEM_S_NO_ERROR) {
-//            qWarning() << "enumerating query failed."
-//                    << " Error code = 0x"
-//                    << hex << hres << hr << GetLastError();
-//        }
-
-        if(0 == uReturn){
+    IWbemClassObject *wbemCLassObject;
+    ULONG result = 0;
+    while (wbemEnumerator) {
+        HRESULT hr = wbemEnumerator->Next(WBEM_INFINITE, 1,&wbemCLassObject, &result);
+        if(0 == result){
+            qWarning() << "resuilt == 0";
             break;
         }
 
-        VARIANT vtProp;
+        VARIANT msVariant;
         CIMTYPE variantType;
-        hr = pclsObj->Get(classProperty.utf16(), 0, &vtProp, &variantType, 0);
-        qWarning() << "variant type" << variantType;
+        hr = wbemCLassObject->Get(classProperty.utf16(), 0, &msVariant, &variantType, 0);
         switch(variantType) {
         case CIM_STRING:
-//            {
-//                QVariant vb(vtProp.bstrVal);
-//                returnVariant = vb;
-//            }
-//            break;
         case CIM_CHAR16:
             {
-                QString str((QChar*)vtProp.bstrVal, wcslen(vtProp.bstrVal));
+                QString str((QChar*)msVariant.bstrVal, wcslen(msVariant.bstrVal));
+                qWarning() << str;
                 QVariant vs(str);
                 returnVariant = vs;
             }
             break;
         case CIM_BOOLEAN:
             {
-                QVariant vb(vtProp.boolVal);
+                QVariant vb(msVariant.boolVal);
+                qWarning() << vb.toBool();
                 returnVariant = vb;
             }
             break;
             case CIM_UINT8:
             {
-                QVariant vb(vtProp.uintVal);
+                QVariant vb(msVariant.uintVal);
                 returnVariant = vb;
             }
             break;
             case CIM_UINT16:
             {
-                QVariant vb(vtProp.uintVal);
+                QVariant vb(msVariant.uintVal);
+                qWarning() << vb.toUInt();
                 returnVariant = vb;
             }
             case CIM_UINT32:
             {
-                QVariant vb(vtProp.uintVal);
+                QVariant vb(msVariant.uintVal);
                 returnVariant = vb;
             }
             break;
         };
-        VariantClear(&vtProp);
-        pclsObj->Release();
+        VariantClear(&msVariant);
+        wbemCLassObject->Release();
     }
 
-    pSvc->Release();
-    pLoc->Release();
-    pEnumerator->Release();
+    wbemServices->Release();
+    wbemLocator->Release();
+    wbemEnumerator->Release();
     return returnVariant;
 }
