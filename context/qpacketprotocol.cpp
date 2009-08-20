@@ -385,7 +385,7 @@ QIODevice * QPacketProtocol::device()
   Constructs an empty write-only packet.
   */
 QPacket::QPacket()
-: QDataStream(), buf(0)
+: QDataStream()
 {
     buf = new QBuffer(&b);
     buf->open(QIODevice::WriteOnly);
@@ -397,10 +397,7 @@ QPacket::QPacket()
   */
 QPacket::~QPacket()
 {
-    if(buf) {
-        delete buf;
-        buf = 0;
-    }
+    delete buf;
 }
 
 /*!
@@ -408,7 +405,7 @@ QPacket::~QPacket()
   two packets are otherwise independant.
  */
 QPacket::QPacket(const QPacket & other)
-: QDataStream(), b(other.b), buf(0)
+: QDataStream(), b(other.b)
 {
     buf = new QBuffer(&b);
     buf->open(other.buf->openMode());
@@ -419,7 +416,7 @@ QPacket::QPacket(const QPacket & other)
   \internal
   */
 QPacket::QPacket(const QByteArray & ba)
-: QDataStream(), b(ba), buf(0)
+: QDataStream(), b(ba)
 {
     buf = new QBuffer(&b);
     buf->open(QIODevice::ReadOnly);
