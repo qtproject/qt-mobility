@@ -33,7 +33,7 @@
 #include <QtTest/QtTest>
 #include "qsysteminfo.h"
 
-Q_DECLARE_METATYPE(QSystemNetworkInfo::CellNetworkStatus);
+Q_DECLARE_METATYPE(QSystemNetworkInfo::NetworkStatus);
 Q_DECLARE_METATYPE(QSystemNetworkInfo::NetworkMode);
 
 
@@ -44,7 +44,7 @@ class tst_QSystemNetworkInfo : public QObject
 private slots:
 
     void initTestCase();
-    void tst_cellNetworkStatus();
+    void tst_networkStatus();
 
     void tst_networkSignalStrength_data();
     void tst_networkSignalStrength();
@@ -66,15 +66,15 @@ private slots:
 
 void tst_QSystemNetworkInfo::initTestCase()
 {
-    qRegisterMetaType<QSystemNetworkInfo::CellNetworkStatus>("QSystemNetworkInfo::CellNetworkStatus");
+    qRegisterMetaType<QSystemNetworkInfo::NetworkStatus>("QSystemNetworkInfo::NetworkStatus");
     qRegisterMetaType<QSystemNetworkInfo::NetworkMode>("QSystemNetworkInfo::NetworkMode");
 }
 
 
-void tst_QSystemNetworkInfo::tst_cellNetworkStatus()
+void tst_QSystemNetworkInfo::tst_networkStatus()
 {
     QSystemNetworkInfo ni;
-    QSystemNetworkInfo::CellNetworkStatus status = ni.cellNetworkStatus();
+    QSystemNetworkInfo::NetworkStatus status = ni.networkStatus();
     QVERIFY( status == QSystemNetworkInfo::UndefinedStatus
              || status == QSystemNetworkInfo::NoNetworkAvailable
              || status == QSystemNetworkInfo::EmergencyOnly
