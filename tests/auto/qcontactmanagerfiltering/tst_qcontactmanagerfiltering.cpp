@@ -1817,40 +1817,40 @@ void tst_QContactManagerFiltering::multiSorting()
 
 void tst_QContactManagerFiltering::actionPlugins()
 {
-    QStringList actions = QContactManager::availableActions();
+    QStringList actions = QContactAction::availableActions();
     QVERIFY(actions.contains("Boolean"));
     QVERIFY(actions.contains("Number"));
 
     /* Ignore the version if the vendor is not set */
-    actions = QContactManager::availableActions(QString(), 555);
+    actions = QContactAction::availableActions(QString(), 555);
     QVERIFY(actions.contains("Boolean"));
     QVERIFY(actions.contains("Number"));
 
-    actions = QContactManager::availableActions("NumberCo");
+    actions = QContactAction::availableActions("NumberCo");
     QVERIFY(actions.contains("Number"));
     QVERIFY(!actions.contains("Boolean"));
 
-    actions = QContactManager::availableActions("IntegerCo");
+    actions = QContactAction::availableActions("IntegerCo");
     QVERIFY(actions.contains("Number"));
     QVERIFY(!actions.contains("Boolean"));
 
-    actions = QContactManager::availableActions("BooleanCo");
+    actions = QContactAction::availableActions("BooleanCo");
     QVERIFY(!actions.contains("Number"));
     QVERIFY(actions.contains("Boolean"));
 
-    actions = QContactManager::availableActions("IntegerCo", 5);
+    actions = QContactAction::availableActions("IntegerCo", 5);
     QVERIFY(actions.contains("Number"));
     QVERIFY(!actions.contains("Boolean"));
 
-    actions = QContactManager::availableActions("IntegerCo", 3);
+    actions = QContactAction::availableActions("IntegerCo", 3);
     QVERIFY(!actions.contains("Number"));
     QVERIFY(!actions.contains("Boolean"));
 
-    actions = QContactManager::availableActions("BooleanCo", 3);
+    actions = QContactAction::availableActions("BooleanCo", 3);
     QVERIFY(!actions.contains("Number"));
     QVERIFY(actions.contains("Boolean"));
 
-    actions = QContactManager::availableActions("BooleanCo", 555);
+    actions = QContactAction::availableActions("BooleanCo", 555);
     QVERIFY(!actions.contains("Number"));
     QVERIFY(!actions.contains("Boolean"));
 }

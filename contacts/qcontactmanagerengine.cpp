@@ -1328,7 +1328,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
             {
                 // Find any matching actions, and do a union filter on their filter objects
                 QContactActionFilter af(filter);
-                QList<QContactAction*> actions = QContactManager::actions(af.actionName(), af.vendorName(), af.vendorVersion());
+                QList<QContactAction*> actions = QContactAction::actions(af.actionName(), af.vendorName(), af.vendorVersion());
 
                 // There's a small wrinkle if there's a value specified in the action filter
                 // we have to adjust any contained QContactDetailFilters to have that value

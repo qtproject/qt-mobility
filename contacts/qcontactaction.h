@@ -60,6 +60,10 @@ public:
     virtual bool supportsDetail(const QContactDetail& detail) const = 0;    // whether this implementation supports the given detail
     virtual QList<QContactDetail> supportedDetails(const QContact& contact) const;
     virtual void performAction(const QContact& contact, const QContactDetail& detail = QContactDetail()) = 0;
+
+    /* return a list of actions which are available */
+    static QStringList availableActions(const QString& vendor = QString(), int implementationVersion = -1);
+    static QList<QContactAction*> actions(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1);
 };
 
 #endif

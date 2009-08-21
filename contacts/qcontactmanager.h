@@ -123,10 +123,6 @@ public:
     /* return a list of available backends for which a QContactManager can be constructed. */
     static QStringList availableManagers();
 
-    /* return a list of actions which are available */
-    static QStringList availableActions(const QString& vendor = QString(), int implementationVersion = -1);
-    static QList<QContactAction*> actions(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1);
-
 signals:
     void contactsAdded(const QList<QUniqueId>& contactIds);
     void contactsChanged(const QList<QUniqueId>& contactIds);

@@ -66,6 +66,7 @@
  * \value MutableDefinitions The manager suppotrs saving, updating or removing detail definitions.  Some built-in definitions may still be immutable
  * \value NativeFiltering The manager supports native filtering of some description
  * \value NativeSorting The manager supports native sorting of some description
+ * \value ExternalNotifications The manager is able to notify clients of changes made to the database via native API or another QContactManager
  */
 
 /*! Frees the memory used by this instance */
