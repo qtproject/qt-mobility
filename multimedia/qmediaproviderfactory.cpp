@@ -32,28 +32,27 @@
 **
 ****************************************************************************/
 
+#include <QtCore/qdebug.h>
 
 #include "qmediaproviderfactory_p.h"
 #include "qmediaserviceproviderplugin.h"
 
 #include "qmediaserviceprovider.h"
 
-#include <private/qfactoryloader_p.h>
-#include <QDebug>
+#include <qmediapluginloader_p.h>
 
-Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
+Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, loader,
         (QMediaServiceProviderFactoryInterface_iid, QLatin1String("/mediaservice"), Qt::CaseInsensitive))
 
 
 QMediaServiceProvider* QMediaProviderFactory::defaultServiceProvider(QString const &key)
 {
     QMediaServiceProviderPlugin *plugin = qobject_cast<QMediaServiceProviderPlugin*>(loader()->instance(key));
-    //qDebug() << "plugin" << plugin << "of" << key;
-    if(plugin) {
+
+    if (plugin != 0)
         return plugin->create(key);
-    } else {
-        qWarning()<<"no plugin found for: "<<key;
-        return 0;
-    }
+
+    qWarning() << "QMediaProviderFactory::defaultServiceProvider(): no plugin found for -" << key;
+    return 0;
 }
 

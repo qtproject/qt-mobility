@@ -44,9 +44,9 @@
 #include <QtCore/qlist.h>
 #include <QtCore/qfile.h>
 
-#include <private/qfactoryloader_p.h>
+#include <qmediapluginloader_p.h>
 
-Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, playlistIOLoader,
+Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
         (QMediaPlaylistIOInterface_iid, QLatin1String("/playlistformats"), Qt::CaseInsensitive))
 
 
