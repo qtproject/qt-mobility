@@ -32,44 +32,51 @@
 **
 ****************************************************************************/
 
-#ifndef QCAMERACONTROL_H
-#define QCAMERACONTROL_H
+#ifndef QCAMERAFOCUSCONTROL_H
+#define QCAMERAFOCUSCONTROL_H
 
 #include "qabstractmediacontrol.h"
 #include "qabstractmediaobject.h"
 
 #include "qcamera.h"
 
-class QCameraControl : public QAbstractMediaControl
+class QCameraFocusControl : public QAbstractMediaControl
 {
     Q_OBJECT
 
 public:
-    ~QCameraControl();
+    ~QCameraFocusControl();
 
-    virtual void start() = 0;
-    virtual void stop() = 0;
-    virtual QCamera::State state() const = 0;
+    virtual QCamera::FocusMode focusMode() const = 0;
+    virtual void setFocusMode(QCamera::FocusMode mode) = 0;
+    virtual QCamera::FocusModes supportedFocusModes() const = 0;
+    virtual QCamera::FocusStatus focusStatus() const = 0;
 
-    //TODO: move white balance to image settings/processing/etc control
-    virtual QCamera::WhiteBalanceMode whiteBalanceMode() const;
-    virtual void setWhiteBalanceMode(QCamera::WhiteBalanceMode mode);
-    virtual QCamera::WhiteBalanceModes supportedWhiteBalanceModes() const;
-    virtual int manualWhiteBalance() const;
-    virtual void setManualWhiteBalance(int colorTemperature);
+    virtual bool macroFocusingEnabled() const = 0;
+    virtual bool isMacroFocusingSupported() const = 0;
+    virtual void setMacroFocusingEnabled(bool) = 0;
 
-    virtual void setDevice(const QByteArray &device) = 0;
+    virtual double maximumOpticalZoom() const = 0;
+    virtual double maximumDigitalZoom() const = 0;
+    virtual double zoomValue() const = 0;
+    virtual void zoomTo(int value) = 0;
 
+    virtual bool isFocusLocked() const = 0;
+
+public Q_SLOTS:
+    virtual void lockFocus() = 0;
+    virtual void unlockFocus() = 0;
 
 Q_SIGNALS:
-    void stateChanged(QCamera::State);
+    void zoomValueChanged(double);
+    void focusLocked();
 
 protected:
-    QCameraControl(QObject* parent);
+    QCameraFocusControl(QObject* parent);
 };
 
-#define QCameraControl_iid "com.nokia.qt.CameraControl"
-Q_MEDIA_DECLARE_CONTROL(QCameraControl, QCameraControl_iid)
+#define QCameraFocusControl_iid "com.nokia.qt.CameraFocusingControl"
+Q_MEDIA_DECLARE_CONTROL(QCameraFocusControl, QCameraFocusControl_iid)
 
-#endif  // QCAMERACONTROL_H
+#endif  // QCAMERAFOCUSCONTROL_H
 
