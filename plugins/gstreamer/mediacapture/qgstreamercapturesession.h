@@ -99,6 +99,8 @@ public slots:
     void dumpGraph(const QString &fileName);
     void enablePreview(bool enabled);
 
+    void setMetadata(const QMap<QString, QVariant>&);
+
 private slots:
     void busMessage(const QGstreamerMessage &message);
 
@@ -120,6 +122,7 @@ private:
     PipelineMode m_pipelineMode;
     QGstreamerCaptureSession::CaptureMode m_captureMode;
     bool m_previewEnabled;
+    QMap<QString, QVariant> m_metadata;
 
     QGstreamerElementFactory *m_audioInputFactory;
     QGstreamerElementFactory *m_audioPreviewFactory;

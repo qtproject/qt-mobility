@@ -44,6 +44,7 @@
 #include <qmediaformatcontrol.h>
 #include <qcamera.h>
 #include <qvideowidget.h>
+#include <qmediametadata.h>
 
 #ifdef AUDIOSERVICES
 #include <QtMultimedia/qaudioformat.h>
@@ -147,6 +148,9 @@ CameraCapture::CameraCapture(QWidget *parent) :
     } else {
         ui->containerFormatBox->setEnabled(false);
     }
+
+    metadata = new QMediaMetadata(camera);
+    metadata->setMetadata("title", QVariant(QLatin1String("Test Title")));
 
 #ifdef USE_VIDEOWIDGET
     QWidget *videoWidget = new QVideoWidget(mediaRecorder);
@@ -253,6 +257,7 @@ void CameraCapture::record()
 {
     if (mediaRecorder)
         mediaRecorder->record();
+
     updateRecordTime();
 }
 

@@ -14,6 +14,7 @@ class QGstreamerBusHelper;
 class QGstreamerVideoRenderer;
 class QGstreamerVideoOverlay;
 class QGstreamerElementFactory;
+class QGstreamerCaptureMetadataControl;
 
 class QGstreamerCaptureService : public QAbstractMediaService
 {
@@ -43,6 +44,7 @@ private:
 
     QGstreamerCaptureSession *m_captureSession;
     QGstreamerCameraControl *m_cameraControl;
+    QGstreamerCaptureMetadataControl *m_metadataControl;
 
     QAudioInputDeviceControl *m_audioInputDevice;
 

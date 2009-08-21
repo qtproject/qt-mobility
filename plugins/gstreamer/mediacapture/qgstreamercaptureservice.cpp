@@ -9,6 +9,7 @@
 #include "qgstreamervideorenderer.h"
 #include "qgstreamerbushelper.h"
 #include "qgstreamercameracontrol.h"
+#include "qgstreamercapturemetadatacontrol.h"
 
 #include "qgstreamervideooutputcontrol.h"
 #include "qgstreameraudioinputdevicecontrol.h"
@@ -16,6 +17,7 @@
 #include "qgstreamervideowidget.h"
 #include "qgstreamervideooverlay.h"
 #include "qgstreamervideorenderer.h"
+
 
 
 class QGstreamerVideoRendererWrapper : public QGstreamerElementFactory
@@ -112,6 +114,10 @@ QGstreamerCaptureService::QGstreamerCaptureService(const char *interface, QObjec
 
     m_audioInputDevice = new QGstreamerAudioInputDeviceControl(this);
     connect(m_audioInputDevice, SIGNAL(selectedDeviceChanged(QString)), m_captureSession, SLOT(setCaptureDevice(QString)));
+
+    m_metadataControl = new QGstreamerCaptureMetadataControl(this);
+    connect(m_metadataControl, SIGNAL(metadataChanged(QMap<QString,QVariant>)),
+            m_captureSession, SLOT(setMetadata(QMap<QString,QVariant>)));
 }
 
 QGstreamerCaptureService::~QGstreamerCaptureService()
@@ -223,6 +229,9 @@ QAbstractMediaControl *QGstreamerCaptureService::control(const char *name) const
 
     if (qstrcmp(name,QCameraControl_iid) == 0)
         return m_cameraControl;
+
+    if (qstrcmp(name,QMetadataProviderControl_iid) == 0)
+        return m_metadataControl;
 
     return 0;
 }
