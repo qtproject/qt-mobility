@@ -429,6 +429,21 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
+    switch(mode) {
+        case QSystemNetworkInfo::GsmMode:
+        break;
+        case QSystemNetworkInfo::CdmaMode:
+        break;
+        case QSystemNetworkInfo::WcdmaMode:
+        break;
+        case QSystemNetworkInfo::WlanMode:
+        {
+
+        }
+        break;
+        case QSystemNetworkInfo::EthMode:
+        break;
+    };
     return QSystemNetworkInfo::NoNetworkAvailable;
 }
 

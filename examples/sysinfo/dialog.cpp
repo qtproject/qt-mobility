@@ -137,8 +137,43 @@ void Dialog::setupNetwork()
     ui->wlanCheckBox->setChecked(ni.isWlanReachable());
     connect(ui->netStrengthComboBox,SIGNAL(activated(int)),
             this, SLOT(netComboActivated(int)));
+    connect(ui->netStatusComboBox,SIGNAL(activated(int)),
+            this, SLOT(netStatusComboActivated(int)));
+
+    ui->cellIdLabel->setText(QString::number(ni.cellId()));
+    ui->locationAreaCodeLabel->setText(QString::number(ni.locationAreaCode()));
+    ui->currentMMCLabel->setText(ni.currentMobileCountryCode());
+    ui->currentMNCLabel->setText(ni.currentMobileNetworkCode());
+
+    ui->homeMMCLabel->setText(ni.homeMobileCountryCode());
+    ui->homeMNCLabel->setText(ni.homeMobileNetworkCode());
+    ui->operatorNameLabel->setText(ni.operatorName());
+}
+void Dialog::netStatusComboActivated(int index)
+{
+    QString status;
+    QSystemNetworkInfo::NetworkMode mode;
+    switch(index) {
+    case 1:
+        mode = QSystemNetworkInfo::GsmMode;
+        break;
+    case 2:
+        mode = QSystemNetworkInfo::CdmaMode;
+        break;
+    case 3:
+        mode = QSystemNetworkInfo::WcdmaMode;
+        break;
+    case 4:
+        mode = QSystemNetworkInfo::WlanMode;
+        break;
+    case 5:
+        mode = QSystemNetworkInfo::EthMode;
+        break;
+    };
+
     QString stat;
-    switch(ni.networkStatus()) {
+    QSystemNetworkInfo ni;
+    switch(ni.networkStatus(mode)) {
     case QSystemNetworkInfo::UndefinedStatus:
         stat = "Undefined";
         break;
@@ -168,16 +203,7 @@ void Dialog::setupNetwork()
         break;
     };
     ui->cellNetworkStatusLabel->setText(stat);
-
-    ui->cellIdLabel->setText(QString::number(ni.cellId()));
-    ui->locationAreaCodeLabel->setText(QString::number(ni.locationAreaCode()));
-    ui->currentMMCLabel->setText(ni.currentMobileCountryCode());
-    ui->currentMNCLabel->setText(ni.currentMobileNetworkCode());
-
-    ui->homeMMCLabel->setText(ni.homeMobileCountryCode());
-    ui->homeMNCLabel->setText(ni.homeMobileNetworkCode());
-    ui->operatorNameLabel->setText(ni.operatorName());
-    }
+}
 
 void Dialog::netComboActivated(int index)
 {
