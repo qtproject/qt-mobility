@@ -395,7 +395,7 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
 }
 
-QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus()
+QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
     return QSystemNetworkInfo::NoNetworkAvailable;
 }

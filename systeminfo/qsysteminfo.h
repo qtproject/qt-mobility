@@ -130,8 +130,6 @@ public:
         Roaming
     };
 
-    QSystemNetworkInfo::NetworkStatus networkStatus();
-
     enum NetworkMode {
         UnknownMode = 0x00000000,
         GsmMode = 0x00000001,
@@ -142,6 +140,7 @@ public:
     };
     Q_DECLARE_FLAGS(NetworkModes, NetworkMode)
 
+    QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
     static int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
 
     static int cellId();

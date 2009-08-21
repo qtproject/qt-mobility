@@ -61,7 +61,6 @@
                 <value name="Denied" value="7"/>
                 <value name="Roaming" value="8"/>
             </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="networkStatus" fullname="QSystemNetworkInfo::networkStatus" href="qsystemnetworkinfo.html#networkStatus" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QSystemNetworkInfo::NetworkStatus" signature="networkStatus()"/>
             <enum access="public" threadsafety="unspecified" status="commendable" name="NetworkMode" fullname="QSystemNetworkInfo::NetworkMode" href="qsystemnetworkinfo.html#NetworkMode-enum" location="qsysteminfo.h" typedef="QSystemNetworkInfo::NetworkModes">
                 <value name="UnknownMode" value="0x00000000"/>
                 <value name="GsmMode" value="0x00000001"/>
@@ -71,6 +70,9 @@
                 <value name="EthMode" value="0x00000010"/>
             </enum>
             <typedef access="public" threadsafety="unspecified" status="commendable" name="NetworkModes" fullname="QSystemNetworkInfo::NetworkModes" href="qsystemnetworkinfo.html#NetworkModes-typedef" location="qsysteminfo.h" enum="QSystemNetworkInfo::NetworkMode"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="networkStatus" fullname="QSystemNetworkInfo::networkStatus" href="qsystemnetworkinfo.html#networkStatus" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QSystemNetworkInfo::NetworkStatus" signature="networkStatus(QSystemNetworkInfo::NetworkMode mode)">
+                <parameter left="QSystemNetworkInfo::NetworkMode" right="" name="mode" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="networkSignalStrength" fullname="QSystemNetworkInfo::networkSignalStrength" href="qsystemnetworkinfo.html#networkSignalStrength" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="int" signature="networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)">
                 <parameter left="QSystemNetworkInfo::NetworkMode" right="" name="mode" default=""/>
             </function>

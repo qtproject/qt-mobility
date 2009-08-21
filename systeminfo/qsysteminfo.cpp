@@ -318,10 +318,10 @@ QSystemNetworkInfo::~QSystemNetworkInfo()
 }
 
 /*!
-    Returns the status of the cell network.
+    Returns the status of the network \a mode.
 */
-QSystemNetworkInfo::NetworkStatus QSystemNetworkInfo::networkStatus() {
-    return d->networkStatus();
+QSystemNetworkInfo::NetworkStatus QSystemNetworkInfo::networkStatus(QSystemNetworkInfo::NetworkMode mode) {
+    return d->networkStatus(mode);
 }
 
 /*!
