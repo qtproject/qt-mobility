@@ -388,7 +388,7 @@ QString QSystemNetworkInfo::homeMobileNetworkCode()
 }
 
 /*!
-    Returns true if the system has a lireless lan that is reachable, otherwise false.
+    Returns true if the system has a wireless lan that is reachable, otherwise false.
 */
 bool QSystemNetworkInfo::isWlanReachable()
 {

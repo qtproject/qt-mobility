@@ -130,7 +130,7 @@
         <keyword ref="qsystemnetworkinfo.html#currentMobileNetworkCode">currentMobileNetworkCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#homeMobileCountryCode">homeMobileCountryCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#homeMobileNetworkCode">homeMobileNetworkCode</keyword>
-        <keyword ref="qsystemnetworkinfo.html#isWLANAccessible">isWLANAccessible</keyword>
+        <keyword ref="qsystemnetworkinfo.html#isWlanReachable">isWlanReachable</keyword>
         <keyword ref="qsystemnetworkinfo.html#locationAreaCode">locationAreaCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#networkSignalStrength">networkSignalStrength</keyword>
         <keyword ref="qsystemnetworkinfo.html#operatorName">operatorName</keyword>
