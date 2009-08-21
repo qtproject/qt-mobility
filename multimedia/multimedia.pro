@@ -51,6 +51,8 @@ HEADERS = \
     qimageencodecontrol.h \
     qcamera.h \
     qcameracontrol.h \
+    qcameraexposurecontrol.h \
+    qcamerafocuscontrol.h \
     qcameraservice.h \
     qmediaformatcontrol.h \
     qmediaplaylistcontrol.h \
@@ -91,6 +93,8 @@ SOURCES = qabstractmediacontrol.cpp \
     qimageencodecontrol.cpp \
     qcamera.cpp \
     qcameracontrol.cpp \
+    qcameraexposurecontrol.cpp \
+    qcamerafocuscontrol.cpp \
     qcameraservice.cpp \
     qmediaformatcontrol.cpp \
     qmediaplaylistcontrol.cpp \

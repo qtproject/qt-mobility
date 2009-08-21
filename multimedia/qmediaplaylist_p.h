@@ -90,7 +90,7 @@ public:
     {
         QMediaPlaylistProvider *playlist = new QLocalMediaPlaylistProvider(this);
         m_navigator = new QMediaPlaylistNavigator(playlist,this);
-        m_navigator->setPlaybackMode(QMediaPlaylistNavigator::Linear);
+        m_navigator->setPlaybackMode(QMediaPlaylist::Linear);
 
         connect(m_navigator, SIGNAL(activated(QMediaResourceList)),
                 this, SLOT(play(QMediaResourceList)));
@@ -117,8 +117,8 @@ public:
     void advance() { m_navigator->advance(); }
     void back() { m_navigator->back(); }
 
-    QMediaPlaylistNavigator::PlaybackMode playbackMode() const { return m_navigator->playbackMode(); }
-    void setPlaybackMode(QMediaPlaylistNavigator::PlaybackMode mode) { m_navigator->setPlaybackMode(mode); }
+    QMediaPlaylist::PlaybackMode playbackMode() const { return m_navigator->playbackMode(); }
+    void setPlaybackMode(QMediaPlaylist::PlaybackMode mode) { m_navigator->setPlaybackMode(mode); }
 
 
 public slots:

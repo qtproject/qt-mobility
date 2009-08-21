@@ -41,6 +41,8 @@
 #include "qmediastreams.h"
 #include "qmediarecorder.h"
 
+#include <gst/gsttagsetter.h>
+
 #include <QDebug>
 #include <QUrl>
 #include <QSet>
@@ -294,6 +296,9 @@ void QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
                 ok &= gst_element_link(m_videoSrc, m_encodeBin);
             }
 
+            if (!m_metadata.isEmpty())
+                setMetadata(m_metadata);
+
             break;
         case PreviewAndRecordingPipeline:
             m_encodeBin = buildEncodeBin();
@@ -324,6 +329,10 @@ void QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
                 ok &= gst_element_link(m_videoPreviewQueue, m_videoPreview);
                 ok &= gst_element_link(m_videoTee, m_encodeBin);
             }
+
+            if (!m_metadata.isEmpty())
+                setMetadata(m_metadata);
+
 
             break;
     }
@@ -466,6 +475,56 @@ void QGstreamerCaptureSession::enablePreview(bool enabled)
     }
 }
 
+void QGstreamerCaptureSession::setMetadata(const QMap<QString, QVariant> &data)
+{
+    //qDebug() << "QGstreamerCaptureSession::setMetadata" << data;
+    m_metadata = data;
+
+    if (m_encodeBin) {
+        GstIterator *elements = gst_bin_iterate_all_by_interface(GST_BIN(m_encodeBin), GST_TYPE_TAG_SETTER);
+        GstElement *element = 0;
+        while (gst_iterator_next(elements, (void**)&element) == GST_ITERATOR_OK) {
+            //qDebug() << "found element with tag setter interface:" << gst_element_get_name(element);
+            QMapIterator<QString, QVariant> it(data);
+            while (it.hasNext()) {
+                it.next();
+                const QString tagName = it.key();
+                const QVariant tagValue = it.value();
+
+
+                switch(tagValue.type()) {
+                    case QVariant::String:
+                        gst_tag_setter_add_tags(GST_TAG_SETTER(element),
+                            GST_TAG_MERGE_REPLACE_ALL,
+                            tagName.toUtf8().constData(),
+                            tagValue.toString().toUtf8().constData(),
+                            NULL);
+                        break;
+                    case QVariant::Int:
+                    case QVariant::LongLong:
+                        gst_tag_setter_add_tags(GST_TAG_SETTER(element),
+                            GST_TAG_MERGE_REPLACE_ALL,
+                            tagName.toUtf8().constData(),
+                            tagValue.toInt(),
+                            NULL);
+                        break;
+                    case QVariant::Double:
+                        gst_tag_setter_add_tags(GST_TAG_SETTER(element),
+                            GST_TAG_MERGE_REPLACE_ALL,
+                            tagName.toUtf8().constData(),
+                            tagValue.toDouble(),
+                            NULL);
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+
+        }
+    }
+}
+
 void QGstreamerCaptureSession::busMessage(const QGstreamerMessage &message)
 {
     GstMessage* gm = message.rawMessage();
@@ -517,6 +576,9 @@ void QGstreamerCaptureSession::busMessage(const QGstreamerMessage &message)
                         if (m_state != PausedState)
                             emit stateChanged(m_state = PausedState);
                         dumpGraph("paused");
+
+                        if (m_pipelineMode == RecordingPipeline && !m_metadata.isEmpty())
+                            setMetadata(m_metadata);
                         break;
                     case GST_STATE_PLAYING:
                         {

@@ -57,13 +57,13 @@ public:
     virtual void advance() = 0;
     virtual void back() = 0;
 
-    virtual QMediaPlaylistNavigator::PlaybackMode playbackMode() const = 0;
-    virtual void setPlaybackMode(QMediaPlaylistNavigator::PlaybackMode mode) = 0;
+    virtual QMediaPlaylist::PlaybackMode playbackMode() const = 0;
+    virtual void setPlaybackMode(QMediaPlaylist::PlaybackMode mode) = 0;
 
 Q_SIGNALS:
     void playlistProviderChanged();
     void playlistPositionChanged(int position);
-    void playbackModeChanged(QMediaPlaylistNavigator::PlaybackMode mode);
+    void playbackModeChanged(QMediaPlaylist::PlaybackMode mode);
 
 protected:
     QMediaPlaylistControl(QObject* parent);

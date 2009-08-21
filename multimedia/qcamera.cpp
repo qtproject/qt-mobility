@@ -38,6 +38,8 @@
 
 #include "qabstractmediaobject_p.h"
 #include "qcameracontrol.h"
+#include "qcameraexposurecontrol.h"
+#include "qcamerafocuscontrol.h"
 #include "qcameraservice.h"
 #include "qmediarecordercontrol.h"
 
@@ -56,6 +58,8 @@ class QCameraPrivate : public QAbstractMediaObjectPrivate
 public:
     QAbstractMediaService* service;
     QCameraControl* control;
+    QCameraExposureControl* exposureControl;
+    QCameraFocusControl* focusControl;
 };
 
 /*!
@@ -70,15 +74,27 @@ QCamera::QCamera(QAbstractMediaService *service, QObject *parent)
     if(service) {
         d->service = service;
         d->control = qobject_cast<QCameraControl *>(service->control(QCameraControl_iid));
+        d->exposureControl = qobject_cast<QCameraExposureControl *>(service->control(QCameraExposureControl_iid));
+        d->focusControl = qobject_cast<QCameraFocusControl *>(service->control(QCameraFocusControl_iid));
+
         connect(d->control, SIGNAL(stateChanged(QCamera::State)), this, SIGNAL(stateChanged(QCamera::State)));
-        connect(d->control, SIGNAL(flashReady(bool)), this, SIGNAL(flashReady(bool)));
-        connect(d->control, SIGNAL(focusStatusChanged(QCamera::FocusStatus)), this, SIGNAL(focusStatusChanged(QCamera::FocusStatus)));
-        connect(d->control, SIGNAL(zoomValueChanged(double)), this, SIGNAL(zoomValueChanged(double)));
-        connect(d->control, SIGNAL(exposureLocked()), this, SIGNAL(exposureLocked()));
-        connect(d->control, SIGNAL(focusLocked()), this, SIGNAL(focusLocked()));
+
+        if (d->exposureControl) {
+            connect(d->exposureControl, SIGNAL(flashReady(bool)), this, SIGNAL(flashReady(bool)));
+            connect(d->exposureControl, SIGNAL(exposureLocked()), this, SIGNAL(exposureLocked()));
+        }
+
+        if (d->focusControl) {
+            connect(d->focusControl, SIGNAL(focusStatusChanged(QCamera::FocusStatus)),
+                    this, SIGNAL(focusStatusChanged(QCamera::FocusStatus)));
+            connect(d->focusControl, SIGNAL(zoomValueChanged(double)), this, SIGNAL(zoomValueChanged(double)));
+            connect(d->focusControl, SIGNAL(focusLocked()), this, SIGNAL(focusLocked()));
+        }
     } else {
         d->service = 0;
         d->control = 0;
+        d->exposureControl = 0;
+        d->focusControl = 0;
     }
 }
 
@@ -122,8 +138,8 @@ void QCamera::lockExposure()
 {
     Q_D(QCamera);
 
-    if(d->control)
-        d->control->lockExposure();
+    if(d->exposureControl)
+        d->exposureControl->lockExposure();
 }
 
 /*!
@@ -134,8 +150,8 @@ void QCamera::unlockExposure()
 {
     Q_D(QCamera);
 
-    if(d->control)
-        d->control->unlockExposure();
+    if(d->exposureControl)
+        d->exposureControl->unlockExposure();
 }
 
 /*!
@@ -146,8 +162,8 @@ void QCamera::lockFocus()
 {
     Q_D(QCamera);
 
-    if(d->control)
-        d->control->lockFocus();
+    if(d->focusControl)
+        d->focusControl->lockFocus();
 }
 
 /*!
@@ -158,8 +174,8 @@ void QCamera::unlockFocus()
 {
     Q_D(QCamera);
 
-    if(d->control)
-        d->control->unlockFocus();
+    if(d->focusControl)
+        d->focusControl->unlockFocus();
 }
 
 /*!
@@ -226,7 +242,7 @@ bool QCamera::isValid() const
 
 QCamera::FlashMode QCamera::flashMode() const
 {
-    return d_func()->control ? d_func()->control->flashMode() : QCamera::FlashOff;
+    return d_func()->exposureControl ? d_func()->exposureControl->flashMode() : QCamera::FlashOff;
 }
 
 /*!
@@ -235,8 +251,8 @@ QCamera::FlashMode QCamera::flashMode() const
 
 void QCamera::setFlashMode(QCamera::FlashMode mode)
 {
-    if (d_func()->control)
-        d_func()->control->setFlashMode(mode);
+    if (d_func()->exposureControl)
+        d_func()->exposureControl->setFlashMode(mode);
 }
 
 /*!
@@ -245,7 +261,7 @@ void QCamera::setFlashMode(QCamera::FlashMode mode)
 
 QCamera::FlashModes QCamera::supportedFlashModes() const
 {
-    return d_func()->control ? d_func()->control->supportedFlashModes() : QCamera::FlashOff;
+    return d_func()->exposureControl ? d_func()->exposureControl->supportedFlashModes() : QCamera::FlashOff;
 }
 
 /*!
@@ -254,7 +270,7 @@ QCamera::FlashModes QCamera::supportedFlashModes() const
 
 bool QCamera::isFlashReady() const
 {
-    return d_func()->control ? d_func()->control->isFlashReady() : true;
+    return d_func()->exposureControl ? d_func()->exposureControl->isFlashReady() : true;
 }
 
 /*!
@@ -263,7 +279,7 @@ bool QCamera::isFlashReady() const
 
 QCamera::FocusMode QCamera::focusMode() const
 {
-    return d_func()->control ? d_func()->control->focusMode() : QCamera::AutoFocus;
+    return d_func()->focusControl ? d_func()->focusControl->focusMode() : QCamera::AutoFocus;
 }
 
 /*!
@@ -272,8 +288,8 @@ QCamera::FocusMode QCamera::focusMode() const
 
 void QCamera::setFocusMode(QCamera::FocusMode mode)
 {
-    if (d_func()->control)
-        d_func()->control->setFocusMode(mode);
+    if (d_func()->focusControl)
+        d_func()->focusControl->setFocusMode(mode);
 }
 
 /*!
@@ -282,7 +298,7 @@ void QCamera::setFocusMode(QCamera::FocusMode mode)
 
 QCamera::FocusModes QCamera::supportedFocusModes() const
 {
-    return d_func()->control ? d_func()->control->supportedFocusModes() : QCamera::AutoFocus;
+    return d_func()->focusControl ? d_func()->focusControl->supportedFocusModes() : QCamera::AutoFocus;
 }
 
 /*!
@@ -291,7 +307,7 @@ QCamera::FocusModes QCamera::supportedFocusModes() const
 
 QCamera::FocusStatus QCamera::focusStatus() const
 {
-    return d_func()->control ? d_func()->control->focusStatus() : QCamera::FocusDisabled;
+    return d_func()->focusControl ? d_func()->focusControl->focusStatus() : QCamera::FocusDisabled;
 }
 
 /*!
@@ -300,7 +316,7 @@ QCamera::FocusStatus QCamera::focusStatus() const
 
 bool QCamera::macroFocusingEnabled() const
 {
-    return d_func()->control ? d_func()->control->macroFocusingEnabled() : false;
+    return d_func()->focusControl ? d_func()->focusControl->macroFocusingEnabled() : false;
 }
 
 /*!
@@ -309,7 +325,7 @@ bool QCamera::macroFocusingEnabled() const
 
 bool QCamera::isMacroFocusingSupported() const
 {
-    return d_func()->control ? d_func()->control->isMacroFocusingSupported() : false;
+    return d_func()->focusControl ? d_func()->focusControl->isMacroFocusingSupported() : false;
 }
 
 /*!
@@ -318,8 +334,8 @@ bool QCamera::isMacroFocusingSupported() const
 
 void QCamera::setMacroFocusingEnabled(bool enabled)
 {
-    if (d_func()->control)
-        d_func()->control->setMacroFocusingEnabled(enabled);
+    if (d_func()->focusControl)
+        d_func()->focusControl->setMacroFocusingEnabled(enabled);
 }
 
 /*!
@@ -328,7 +344,7 @@ void QCamera::setMacroFocusingEnabled(bool enabled)
 
 QCamera::ExposureMode QCamera::exposureMode() const
 {
-    return d_func()->control ? d_func()->control->exposureMode() : QCamera::ExposureAuto;
+    return d_func()->exposureControl ? d_func()->exposureControl->exposureMode() : QCamera::ExposureAuto;
 }
 
 /*!
@@ -337,8 +353,8 @@ QCamera::ExposureMode QCamera::exposureMode() const
 
 void QCamera::setExposureMode(QCamera::ExposureMode mode)
 {
-    if (d_func()->control)
-        d_func()->control->setExposureMode(mode);
+    if (d_func()->exposureControl)
+        d_func()->exposureControl->setExposureMode(mode);
 }
 
 /*!
@@ -347,7 +363,7 @@ void QCamera::setExposureMode(QCamera::ExposureMode mode)
 
 QCamera::ExposureModes QCamera::supportedExposureModes() const
 {
-    return d_func()->control ? d_func()->control->supportedExposureModes() : QCamera::ExposureAuto;
+    return d_func()->exposureControl ? d_func()->exposureControl->supportedExposureModes() : QCamera::ExposureAuto;
 }
 
 /*!
@@ -356,7 +372,7 @@ QCamera::ExposureModes QCamera::supportedExposureModes() const
 
 double QCamera::exposureCompensation() const
 {
-    return d_func()->control ? d_func()->control->exposureCompensation() : 0;
+    return d_func()->exposureControl ? d_func()->exposureControl->exposureCompensation() : 0;
 }
 
 /*!
@@ -365,8 +381,8 @@ double QCamera::exposureCompensation() const
 
 void QCamera::setExposureCompensation(double ev)
 {
-    if (d_func()->control)
-        d_func()->control->setExposureCompensation(ev);
+    if (d_func()->exposureControl)
+        d_func()->exposureControl->setExposureCompensation(ev);
 }
 
 /*!
@@ -375,7 +391,7 @@ void QCamera::setExposureCompensation(double ev)
 
 QCamera::MeteringMode QCamera::meteringMode() const
 {
-    return d_func()->control ? d_func()->control->meteringMode() : QCamera::MeteringMatrix;
+    return d_func()->exposureControl ? d_func()->exposureControl->meteringMode() : QCamera::MeteringMatrix;
 }
 
 /*!
@@ -384,8 +400,8 @@ QCamera::MeteringMode QCamera::meteringMode() const
 
 void QCamera::setMeteringMode(QCamera::MeteringMode mode)
 {
-    if (d_func()->control)
-        d_func()->control->setMeteringMode(mode);
+    if (d_func()->exposureControl)
+        d_func()->exposureControl->setMeteringMode(mode);
 }
 
 /*!
@@ -394,7 +410,7 @@ void QCamera::setMeteringMode(QCamera::MeteringMode mode)
 
 QCamera::MeteringModes QCamera::supportedMeteringModes() const
 {
-    return d_func()->control ? d_func()->control->supportedMeteringModes() : QCamera::MeteringMatrix;
+    return d_func()->exposureControl ? d_func()->exposureControl->supportedMeteringModes() : QCamera::MeteringMatrix;
 }
 
 /*!
@@ -450,7 +466,7 @@ void QCamera::setManualWhiteBalance(int colorTemperature)
 
 int QCamera::isoSensitivity() const
 {
-    return d_func()->control ? d_func()->control->isoSensitivity() : -1;
+    return d_func()->exposureControl ? d_func()->exposureControl->isoSensitivity() : -1;
 }
 
 /*!
@@ -459,7 +475,7 @@ int QCamera::isoSensitivity() const
 
 QPair<int, int> QCamera::supportedIsoSensitivityRange() const
 {
-    return d_func()->control ? d_func()->control->supportedIsoSensitivityRange() : qMakePair<int,int>(-1,-1);
+    return d_func()->exposureControl ? d_func()->exposureControl->supportedIsoSensitivityRange() : qMakePair<int,int>(-1,-1);
 }
 
 /*!
@@ -468,8 +484,8 @@ QPair<int, int> QCamera::supportedIsoSensitivityRange() const
 
 void QCamera::setManualIsoSensitivity(int iso)
 {
-    if (d_func()->control)
-        d_func()->control->setManualIsoSensitivity(iso);
+    if (d_func()->exposureControl)
+        d_func()->exposureControl->setManualIsoSensitivity(iso);
 }
 
 /*!
@@ -478,8 +494,8 @@ void QCamera::setManualIsoSensitivity(int iso)
 
 void QCamera::setAutoIsoSensitivity()
 {
-    if (d_func()->control)
-        d_func()->control->setAutoIsoSensitivity();
+    if (d_func()->exposureControl)
+        d_func()->exposureControl->setAutoIsoSensitivity();
 }
 
 /*!
@@ -488,7 +504,7 @@ void QCamera::setAutoIsoSensitivity()
 
 double QCamera::aperture() const
 {
-    return d_func()->control ? d_func()->control->aperture() : -1.0;
+    return d_func()->exposureControl ? d_func()->exposureControl->aperture() : -1.0;
 }
 
 /*!
@@ -497,7 +513,7 @@ double QCamera::aperture() const
 
 QPair<double, double> QCamera::supportedApertureRange() const
 {
-    return d_func()->control ? d_func()->control->supportedApertureRange() : qMakePair<double,double>(-1,-1);
+    return d_func()->exposureControl ? d_func()->exposureControl->supportedApertureRange() : qMakePair<double,double>(-1,-1);
 }
 
 /*!
@@ -506,8 +522,8 @@ QPair<double, double> QCamera::supportedApertureRange() const
 
 void QCamera::setManualAperture(double aperture)
 {
-    if (d_func()->control)
-        d_func()->control->setManualAperture(aperture);
+    if (d_func()->exposureControl)
+        d_func()->exposureControl->setManualAperture(aperture);
 }
 
 /*!
@@ -516,8 +532,8 @@ void QCamera::setManualAperture(double aperture)
 
 void QCamera::setAutoAperture()
 {
-    if (d_func()->control)
-        d_func()->control->setAutoAperture();
+    if (d_func()->exposureControl)
+        d_func()->exposureControl->setAutoAperture();
 }
 
 /*!
@@ -526,7 +542,7 @@ void QCamera::setAutoAperture()
 
 double QCamera::shutterSpeed() const
 {
-    return d_func()->control ? d_func()->control->shutterSpeed() : -1;
+    return d_func()->exposureControl ? d_func()->exposureControl->shutterSpeed() : -1;
 }
 
 /*!
@@ -535,7 +551,7 @@ double QCamera::shutterSpeed() const
 
 QPair<double, double> QCamera::supportedShutterSpeedRange() const
 {
-    return d_func()->control ? d_func()->control->supportedShutterSpeedRange() : qMakePair<double,double>(-1,-1);
+    return d_func()->exposureControl ? d_func()->exposureControl->supportedShutterSpeedRange() : qMakePair<double,double>(-1,-1);
 }
 
 /*!
@@ -544,8 +560,8 @@ QPair<double, double> QCamera::supportedShutterSpeedRange() const
 
 void QCamera::setManualShutterSpeed(double seconds)
 {
-    if (d_func()->control)
-        d_func()->control->setManualShutterSpeed(seconds);
+    if (d_func()->exposureControl)
+        d_func()->exposureControl->setManualShutterSpeed(seconds);
 }
 
 /*!
@@ -554,8 +570,8 @@ void QCamera::setManualShutterSpeed(double seconds)
 
 void QCamera::setAutoShutterSpeed()
 {
-    if (d_func()->control)
-        d_func()->control->setAutoShutterSpeed();
+    if (d_func()->exposureControl)
+        d_func()->exposureControl->setAutoShutterSpeed();
 }
 
 /*!
@@ -564,7 +580,7 @@ void QCamera::setAutoShutterSpeed()
 
 double QCamera::maximumOpticalZoom() const
 {
-    return d_func()->control ? d_func()->control->maximumOpticalZoom() : 1.0;
+    return d_func()->focusControl ? d_func()->focusControl->maximumOpticalZoom() : 1.0;
 }
 
 /*!
@@ -573,7 +589,7 @@ double QCamera::maximumOpticalZoom() const
 
 double QCamera::maximumDigitalZoom() const
 {
-    return d_func()->control ? d_func()->control->maximumDigitalZoom() : 1.0;
+    return d_func()->focusControl ? d_func()->focusControl->maximumDigitalZoom() : 1.0;
 }
 
 /*!
@@ -582,7 +598,7 @@ double QCamera::maximumDigitalZoom() const
 
 double QCamera::zoomValue() const
 {
-    return d_func()->control ? d_func()->control->zoomValue() : 1.0;
+    return d_func()->focusControl ? d_func()->focusControl->zoomValue() : 1.0;
 }
 
 /*!
@@ -591,8 +607,8 @@ double QCamera::zoomValue() const
 
 void QCamera::zoomTo(int value)
 {
-    if (d_func()->control)
-        d_func()->control->zoomTo(value);
+    if (d_func()->focusControl)
+        d_func()->focusControl->zoomTo(value);
 }
 
 /*!
@@ -601,7 +617,7 @@ void QCamera::zoomTo(int value)
 
 bool QCamera::isExposureLocked() const
 {
-    return d_func()->control ? d_func()->control->isExposureLocked() : true;
+    return d_func()->exposureControl ? d_func()->exposureControl->isExposureLocked() : true;
 }
 
 /*!
@@ -610,7 +626,7 @@ bool QCamera::isExposureLocked() const
 
 bool QCamera::isFocusLocked() const
 {
-    return d_func()->control ? d_func()->control->isFocusLocked() : true;
+    return d_func()->focusControl ? d_func()->focusControl->isFocusLocked() : true;
 }
 
 /*!

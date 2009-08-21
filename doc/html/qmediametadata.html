@@ -15,6 +15,7 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMediaMetadata Class Reference</h1>
 <p>Use this class to extract Metadata from a Multimedia object. <a href="#details">More...</a></p>
 <pre>    #include &lt;QMediaMetadata&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<p>Inherits <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a>.</p>
 <ul>
 <li><a href="qmediametadata-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -25,6 +26,9 @@
 <li><div class="fn"><b><a href="qmediametadata.html#metadataAvailable-prop">metadataAvailable</a></b> : const bool</div></li>
 <li><div class="fn"><b><a href="qmediametadata.html#readOnly-prop">readOnly</a></b> : const bool</div></li>
 <li><div class="fn"><b><a href="qmediametadata.html#resources-prop">resources</a></b> : const QMediaResourceList</div></li>
+</ul>
+<ul>
+<li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
 </ul>
 <hr />
 <a name="public-functions"></a>
@@ -39,6 +43,9 @@
 <tr><td class="memItemLeft" align="right" valign="top">QMediaResourceList </td><td class="memItemRight" valign="bottom"><b><a href="qmediametadata.html#resources-prop">resources</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediametadata.html#setMetadata">setMetadata</a></b> ( QString const &amp; <i>name</i>, QVariant const &amp; <i>value</i> )</td></tr>
 </table>
+<ul>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
+</ul>
 <hr />
 <a name="signals"></a>
 <h2>Signals</h2>
@@ -47,6 +54,17 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediametadata.html#metadataChanged">metadataChanged</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediametadata.html#readOnlyChanged">readOnlyChanged</a></b> ( bool <i>readOnly</i> )</td></tr>
 </table>
+<ul>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-variables">QObject</a></li>
+</ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
@@ -76,9 +94,9 @@
 <p>Construct a <a href="qmediametadata.html">QMediaMetadata</a> to read and or write Metadata from the Mulitmedia object <i>mediaObject</i>.</p>
 <h3 class="fn"><a name="dtor.QMediaMetadata"></a>QMediaMetadata::~QMediaMetadata ()</h3>
 <p>Destroys the metadata object.</p>
-<h3 class="fn"><a name="availableMetadata"></a>QList&lt;QString&gt; QMediaMetadata::availableMetadata () const</h3>
+<h3 class="fn"><a name="availableMetadata"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>&gt; QMediaMetadata::availableMetadata () const</h3>
 <p>Returns a list of the names of all the metadata elements available.</p>
-<h3 class="fn"><a name="metadata"></a>QVariant QMediaMetadata::metadata ( QString const &amp; <i>name</i> ) const</h3>
+<h3 class="fn"><a name="metadata"></a><a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> QMediaMetadata::metadata ( <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> const &amp; <i>name</i> ) const</h3>
 <p>Returns the metadata for the element named <i>name</i>.</p>
 <p>See also <a href="qmediametadata.html#setMetadata">setMetadata</a>().</p>
 <h3 class="fn"><a name="metadataAvailabilityChanged"></a>void QMediaMetadata::metadataAvailabilityChanged ( bool <i>available</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
@@ -86,7 +104,7 @@
 <p>Signal the metadata has changed.</p>
 <h3 class="fn"><a name="readOnlyChanged"></a>void QMediaMetadata::readOnlyChanged ( bool <i>readOnly</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal a change in the read only status of meta data, <i>readOnly</i> will be true if metadata elements can not be added or adjusted.</p>
-<h3 class="fn"><a name="setMetadata"></a>void QMediaMetadata::setMetadata ( QString const &amp; <i>name</i>, QVariant const &amp; <i>value</i> )</h3>
+<h3 class="fn"><a name="setMetadata"></a>void QMediaMetadata::setMetadata ( <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> const &amp; <i>name</i>, <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> const &amp; <i>value</i> )</h3>
 <p>Change the value of the metadata element named <i>name</i>, to <i>value</i>.</p>
 <p>See also <a href="qmediametadata.html#metadata">metadata</a>().</p>
 <p /><address><hr /><div align="center">

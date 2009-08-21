@@ -64,6 +64,28 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
 */
 
 
+/*!
+enum QMediaPlaylist::PlaybackMode
+
+\item
+    CurrentItemOnce The current item is played only once.
+
+\item
+    CurrentItemInLoop The current item is played in the loop.
+
+\item Linear
+    Playback starts from the first to the last items and stops.
+    next item is a null item when the last one is currently playing.
+
+\item Loop
+    Playback continues from the first item after the last one finished playing.
+
+\item Random
+    Play items in random order.
+*/
+
+
+
 
 /*!
   Create a new playlist object for playlist \a source with the given \a parent.
@@ -96,6 +118,13 @@ QMediaPlaylist::QMediaPlaylist(QAbstractMediaObject *mediaObject, QObject *paren
     connect(playlist, SIGNAL(itemsInserted(int,int)), this, SIGNAL(itemsInserted(int,int)));
     connect(playlist, SIGNAL(itemsAboutToBeRemoved(int,int)), this, SIGNAL(itemsAboutToBeRemoved(int,int)));
     connect(playlist, SIGNAL(itemsRemoved(int,int)), this, SIGNAL(itemsRemoved(int,int)));
+
+    connect(d->control, SIGNAL(playbackModeChanged(QMediaPlaylist::PlaybackMode)),
+            this, SIGNAL(playbackModeChanged(QMediaPlaylist::PlaybackMode)));
+    connect(d->control, SIGNAL(playlistProviderChanged()),
+            this, SIGNAL(playlistProviderChanged()));
+    connect(d->control, SIGNAL(playlistPositionChanged(int)),
+            this, SIGNAL(playlistPositionChanged(int)));
 }
 
 /*!
@@ -126,6 +155,17 @@ QMediaPlaylistProvider* QMediaPlaylist::playlistProvider() const
 bool QMediaPlaylist::setPlaylistProvider(QMediaPlaylistProvider *playlist)
 {
     return d_func()->control->setPlaylistProvider(playlist);
+}
+
+QMediaPlaylist::PlaybackMode QMediaPlaylist::playbackMode() const
+{
+    return d_func()->control->playbackMode();
+}
+
+void QMediaPlaylist::setPlaybackMode(QMediaPlaylist::PlaybackMode mode)
+{
+    Q_D(QMediaPlaylist);
+    d->control->setPlaybackMode(mode);
 }
 
 /*!

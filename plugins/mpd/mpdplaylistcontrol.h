@@ -51,8 +51,8 @@ public:
     QMediaPlaylistProvider* playlistProvider() const;
     bool setPlaylistProvider(QMediaPlaylistProvider *mediaPlaylist);
 
-    QMediaPlaylistNavigator::PlaybackMode playbackMode() const;
-    void setPlaybackMode(QMediaPlaylistNavigator::PlaybackMode mode);
+    QMediaPlaylist::PlaybackMode playbackMode() const;
+    void setPlaybackMode(QMediaPlaylist::PlaybackMode mode);
 
     int currentPosition() const;
     void setCurrentPosition(int position);

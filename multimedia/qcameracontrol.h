@@ -51,77 +51,18 @@ public:
     virtual void stop() = 0;
     virtual QCamera::State state() const = 0;
 
-    virtual QCamera::FlashMode flashMode() const;
-    virtual void setFlashMode(QCamera::FlashMode mode);
-    virtual QCamera::FlashModes supportedFlashModes() const;
-    virtual bool isFlashReady() const;
-
-    virtual QCamera::FocusMode focusMode() const;
-    virtual void setFocusMode(QCamera::FocusMode mode);
-    virtual QCamera::FocusModes supportedFocusModes() const;
-    virtual QCamera::FocusStatus focusStatus() const;
-
-    virtual bool macroFocusingEnabled() const;
-    virtual bool isMacroFocusingSupported() const;
-    virtual void setMacroFocusingEnabled(bool);
-
-    virtual QCamera::ExposureMode exposureMode() const;
-    virtual void setExposureMode(QCamera::ExposureMode mode);
-    virtual QCamera::ExposureModes supportedExposureModes() const;
-
-    virtual double exposureCompensation() const;
-    virtual void setExposureCompensation(double ev);
-
-    virtual QCamera::MeteringMode meteringMode() const;
-    virtual void setMeteringMode(QCamera::MeteringMode mode);
-    virtual QCamera::MeteringModes supportedMeteringModes() const;
-
+    //TODO: move white balance to image settings/processing/etc control
     virtual QCamera::WhiteBalanceMode whiteBalanceMode() const;
     virtual void setWhiteBalanceMode(QCamera::WhiteBalanceMode mode);
     virtual QCamera::WhiteBalanceModes supportedWhiteBalanceModes() const;
     virtual int manualWhiteBalance() const;
     virtual void setManualWhiteBalance(int colorTemperature);
 
-    virtual int isoSensitivity() const;
-    virtual QPair<int, int> supportedIsoSensitivityRange() const;
-    virtual void setManualIsoSensitivity(int iso);
-    virtual void setAutoIsoSensitivity();
-
-    virtual double aperture() const;
-    virtual QPair<double, double> supportedApertureRange() const;
-    virtual void setManualAperture(double aperture);
-    virtual void setAutoAperture();
-
-    virtual double shutterSpeed() const;
-    virtual QPair<double, double> supportedShutterSpeedRange() const;
-    virtual void setManualShutterSpeed(double seconds);
-    virtual void setAutoShutterSpeed();
-
-    virtual double maximumOpticalZoom() const;
-    virtual double maximumDigitalZoom() const;
-    virtual double zoomValue() const;
-    virtual void zoomTo(int value);
-
     virtual void setDevice(const QByteArray &device) = 0;
 
-    virtual bool isExposureLocked() const;
-    virtual bool isFocusLocked() const;
-
-public Q_SLOTS:
-    virtual void lockExposure();
-    virtual void unlockExposure();
-
-    virtual void lockFocus();
-    virtual void unlockFocus();
 
 Q_SIGNALS:
     void stateChanged(QCamera::State);
-
-    void flashReady(bool);
-    void focusStatusChanged(QCamera::FocusStatus status);
-    void zoomValueChanged(double);
-    void exposureLocked();
-    void focusLocked();
 
 protected:
     QCameraControl(QObject* parent);

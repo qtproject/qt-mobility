@@ -15,6 +15,7 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMediaStreams Class Reference</h1>
 <p>The QMediaStreams class provides access to media sessions streams. <a href="#details">More...</a></p>
 <pre>    #include &lt;QMediaStreams&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<p>Inherits <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a>.</p>
 <ul>
 <li><a href="qmediastreams-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -25,10 +26,15 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediastreams.html#QMediaStreams">QMediaStreams</a></b> ( QAbstractMediaObject * <i>mediaObject</i>, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qmediastreams.html#dtor.QMediaStreams">~QMediaStreams</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMediaStreamInfo </td><td class="memItemRight" valign="bottom"><b><a href="qmediastreams.html#activeStream">activeStream</a></b> ( QMediaStreamInfo::StreamType <i>streamType</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qmediastreams.html#defaultLanguage">defaultLanguage</a></b> ( QMediaStreamInfo::StreamType <i>streamType</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediastreams.html#isStreamsInformationAvailable">isStreamsInformationAvailable</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediastreams.html#setActiveStream">setActiveStream</a></b> ( const QMediaStreamInfo &amp; <i>stream</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediastreams.html#setDefaultLanguage">setDefaultLanguage</a></b> ( QMediaStreamInfo::StreamType <i>streamType</i>, const QString &amp; <i>language</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QMediaStreamInfo&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qmediastreams.html#streams">streams</a></b> ( QMediaStreamInfo::StreamType <i>streamType</i> ) const</td></tr>
 </table>
+<ul>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
+</ul>
 <hr />
 <a name="signals"></a>
 <h2>Signals</h2>
@@ -36,6 +42,18 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediastreams.html#activeStreamsChanged">activeStreamsChanged</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediastreams.html#streamsChanged">streamsChanged</a></b> ()</td></tr>
 </table>
+<ul>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-variables">QObject</a></li>
+</ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
@@ -44,7 +62,7 @@
 <p>See also <a href="qmediastreaminfo.html">QMediaStreamInfo</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QMediaStreams"></a>QMediaStreams::QMediaStreams ( <a href="qabstractmediaobject.html">QAbstractMediaObject</a> * <i>mediaObject</i>, QObject * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QMediaStreams"></a>QMediaStreams::QMediaStreams ( <a href="qabstractmediaobject.html">QAbstractMediaObject</a> * <i>mediaObject</i>, <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>Constructs the <a href="qmediastreams.html">QMediaStreams</a> object for <i>mediaObject</i>.</p>
 <h3 class="fn"><a name="dtor.QMediaStreams"></a>QMediaStreams::~QMediaStreams ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the media streams object.</p>
@@ -52,12 +70,18 @@
 <p>Returns the active stream of type <i>streamType</i>.</p>
 <p>See also <a href="qmediastreams.html#setActiveStream">setActiveStream</a>().</p>
 <h3 class="fn"><a name="activeStreamsChanged"></a>void QMediaStreams::activeStreamsChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="defaultLanguage"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMediaStreams::defaultLanguage ( <a href="qmediastreaminfo.html#StreamType-enum">QMediaStreamInfo::StreamType</a> <i>streamType</i> ) const</h3>
+<p>Returns the default <i>language</i> code for stream of type <i>streamType</i> or null string if no default language was set.</p>
+<p>See also <a href="qmediastreams.html#setDefaultLanguage">setDefaultLanguage</a>() and <a href="qmediastreaminfo.html#streamLanguage">QMediaStreamInfo::streamLanguage</a>().</p>
 <h3 class="fn"><a name="isStreamsInformationAvailable"></a>bool QMediaStreams::isStreamsInformationAvailable () const</h3>
 <p>Returns true if the service provides information about media streams.</p>
 <h3 class="fn"><a name="setActiveStream"></a>void QMediaStreams::setActiveStream ( const <a href="qmediastreaminfo.html">QMediaStreamInfo</a> &amp; <i>stream</i> )</h3>
 <p>Activate the <i>stream</i>.</p>
 <p>See also <a href="qmediastreams.html#activeStream">activeStream</a>().</p>
-<h3 class="fn"><a name="streams"></a>QList&lt;<a href="qmediastreaminfo.html">QMediaStreamInfo</a>&gt; QMediaStreams::streams ( <a href="qmediastreaminfo.html#StreamType-enum">QMediaStreamInfo::StreamType</a> <i>streamType</i> ) const</h3>
+<h3 class="fn"><a name="setDefaultLanguage"></a>void QMediaStreams::setDefaultLanguage ( <a href="qmediastreaminfo.html#StreamType-enum">QMediaStreamInfo::StreamType</a> <i>streamType</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>language</i> )</h3>
+<p>Set the default <i>language</i> code for stream of type <i>streamType</i>. Next time the set of streams is changed, the stream with the same language code will be automaticaly activated.</p>
+<p>See also <a href="qmediastreams.html#defaultLanguage">defaultLanguage</a>().</p>
+<h3 class="fn"><a name="streams"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qmediastreaminfo.html">QMediaStreamInfo</a>&gt; QMediaStreams::streams ( <a href="qmediastreaminfo.html#StreamType-enum">QMediaStreamInfo::StreamType</a> <i>streamType</i> ) const</h3>
 <p>Returns the list of streams with type of <i>streamType</i>.</p>
 <h3 class="fn"><a name="streamsChanged"></a>void QMediaStreams::streamsChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p /><address><hr /><div align="center">

@@ -57,14 +57,14 @@ public:
     QMediaPlaylistNavigatorPrivate()
         :playlist(0),
         currentPos(-1),
-        playbackMode(QMediaPlaylistNavigator::Linear),
+        playbackMode(QMediaPlaylist::Linear),
         randomPositionsOffset(-1)
     {
     }
 
     QMediaPlaylistProvider *playlist;
     int currentPos;
-    QMediaPlaylistNavigator::PlaybackMode playbackMode;
+    QMediaPlaylist::PlaybackMode playbackMode;
     QMediaResourceList currentItem;
 
     mutable QList<int> randomModePositions;
@@ -90,18 +90,18 @@ int QMediaPlaylistNavigatorPrivate::nextItemPos(int steps) const
         return currentPos;
 
     switch (playbackMode) {
-        case QMediaPlaylistNavigator::CurrentItemOnce:
+        case QMediaPlaylist::CurrentItemOnce:
             return -1;
-        case QMediaPlaylistNavigator::CurrentItemInLoop:
+        case QMediaPlaylist::CurrentItemInLoop:
             return currentPos;
-        case QMediaPlaylistNavigator::Linear:
+        case QMediaPlaylist::Linear:
             {
                 int nextPos = currentPos+steps;
                 return nextPos < playlist->size() ? nextPos : -1;
             }
-        case QMediaPlaylistNavigator::Loop:
+        case QMediaPlaylist::Loop:
             return (currentPos+steps) % playlist->size();
-        case QMediaPlaylistNavigator::Random:
+        case QMediaPlaylist::Random:
             {
                 //TODO: limit the history size
 
@@ -135,23 +135,23 @@ int QMediaPlaylistNavigatorPrivate::previousItemPos(int steps) const
         return currentPos;
 
     switch (playbackMode) {
-        case QMediaPlaylistNavigator::CurrentItemOnce:
+        case QMediaPlaylist::CurrentItemOnce:
             return -1;
-        case QMediaPlaylistNavigator::CurrentItemInLoop:
+        case QMediaPlaylist::CurrentItemInLoop:
             return currentPos;
-        case QMediaPlaylistNavigator::Linear:
+        case QMediaPlaylist::Linear:
             {
                 int prevPos = currentPos - steps;
                 return prevPos>=0 ? prevPos : -1;
             }
-        case QMediaPlaylistNavigator::Loop:
+        case QMediaPlaylist::Loop:
             {
                 int prevPos = currentPos - steps;
                 while (prevPos<0)
                     prevPos += playlist->size();
                 return prevPos;
             }
-        case QMediaPlaylistNavigator::Random:
+        case QMediaPlaylist::Random:
             {
                 //TODO: limit the history size
 
@@ -180,27 +180,6 @@ int QMediaPlaylistNavigatorPrivate::previousItemPos(int steps) const
 }
 
 
-/*!
-enum QMediaPlaylistNavigator::PlaybackMode
-
-\item
-    CurrentItemOnce The current item is played only once.
-
-\item
-    CurrentItemInLoop The current item is played in the loop.
-
-\item Linear
-    Playback starts from the first to the last items and stops.
-    QMediaPlaylistNavigator::nextItem() returns null item when the last
-    one is currently playing.
-
-\item Loop
-    Playback continues from the first item after the last one finished playing.
-
-\item Random
-    Play items in random order.
-*/
-
 
 /*!
   Create a new \a playlist navigator object.
@@ -225,23 +204,23 @@ QMediaPlaylistNavigator::~QMediaPlaylistNavigator()
 
 /*!
   */
-QMediaPlaylistNavigator::PlaybackMode QMediaPlaylistNavigator::playbackMode() const
+QMediaPlaylist::PlaybackMode QMediaPlaylistNavigator::playbackMode() const
 {
     return d_func()->playbackMode;
 }
 
 /*!
   */
-void QMediaPlaylistNavigator::setPlaybackMode(QMediaPlaylistNavigator::PlaybackMode mode)
+void QMediaPlaylistNavigator::setPlaybackMode(QMediaPlaylist::PlaybackMode mode)
 {
     Q_D(QMediaPlaylistNavigator);
     if (d->playbackMode == mode)
         return;
 
-    if (mode == Random) {
+    if (mode == QMediaPlaylist::Random) {
         d->randomPositionsOffset = 0;
         d->randomModePositions.append(d->currentPos);
-    } else if (d->playbackMode == Random) {
+    } else if (d->playbackMode == QMediaPlaylist::Random) {
         d->randomPositionsOffset = -1;
         d->randomModePositions.clear();
     }
@@ -369,7 +348,7 @@ int QMediaPlaylistNavigator::previousPosition(int steps) const
 /*!
   Advance to the next item in the playlist.
 
-  \sa back(), seek(int), QMediaPlaylistNavigator::PlaybackMode
+  \sa back(), seek(int), playbackMode()
   */
 void QMediaPlaylistNavigator::advance()
 {
@@ -377,13 +356,13 @@ void QMediaPlaylistNavigator::advance()
 
     int nextPos = d->nextItemPos();
     if (nextPos >= 0) {
-        if ( playbackMode() == Random )
+        if ( playbackMode() == QMediaPlaylist::Random )
             d->randomPositionsOffset++;
 
         jump(nextPos);
 
-        if (playbackMode() == CurrentItemInLoop ||
-            (playbackMode() == Loop && d->playlist->size() == 1)) {
+        if (playbackMode() == QMediaPlaylist::CurrentItemInLoop ||
+            (playbackMode() == QMediaPlaylist::Loop && d->playlist->size() == 1)) {
                 emit activated(d->currentItem);
         }
     }
@@ -393,7 +372,7 @@ void QMediaPlaylistNavigator::advance()
   Advance to the previously item in the playlist,
   depending on playback mode.
 
-  \sa advance(), seek(int), QMediaPlaylistNavigator::PlaybackMode
+  \sa advance(), seek(int), playbackMode()
   */
 void QMediaPlaylistNavigator::back()
 {
@@ -401,13 +380,13 @@ void QMediaPlaylistNavigator::back()
 
     int prevPos = d->previousItemPos();
     if (prevPos >= 0) {
-        if ( playbackMode() == Random )
+        if ( playbackMode() == QMediaPlaylist::Random )
             d->randomPositionsOffset--;
 
         jump(prevPos);
 
-        if (playbackMode() == CurrentItemInLoop ||
-            (playbackMode() == Loop && d->playlist->size() == 1)) {
+        if (playbackMode() == QMediaPlaylist::CurrentItemInLoop ||
+            (playbackMode() == QMediaPlaylist::Loop && d->playlist->size() == 1)) {
                 emit activated(d->currentItem);
         }
     }
@@ -426,7 +405,7 @@ void QMediaPlaylistNavigator::jump(int pos)
         return;
     }
 
-    if (playbackMode() == Random) {
+    if (playbackMode() == QMediaPlaylist::Random) {
         if (d->randomModePositions[d->randomPositionsOffset] != pos) {
             d->randomModePositions.clear();
             d->randomModePositions.append(pos);

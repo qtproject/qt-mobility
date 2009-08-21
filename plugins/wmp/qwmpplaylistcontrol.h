@@ -61,8 +61,8 @@ public:
     void advance();
     void back();
 
-    QMediaPlaylistNavigator::PlaybackMode playbackMode() const;
-    void setPlaybackMode(QMediaPlaylistNavigator::PlaybackMode mode);
+    QMediaPlaylist::PlaybackMode playbackMode() const;
+    void setPlaybackMode(QMediaPlaylist::PlaybackMode mode);
 
 private slots:
     void currentItemChangeEvent(IDispatch *dispatch);
@@ -71,7 +71,7 @@ private:
     IWMPCore3 *m_player;
     IWMPControls *m_controls;
     QWmpPlaylist *m_playlist;
-    QMediaPlaylistNavigator::PlaybackMode m_playbackMode;
+    QMediaPlaylist::PlaybackMode m_playbackMode;
 };
 
 #endif
