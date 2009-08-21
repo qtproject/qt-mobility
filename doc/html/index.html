@@ -34,7 +34,7 @@
 <a name="the-api-in-details"></a>
 <h2>The API in details</h2>
 <p>Computer systems manage their network interfaces via a set of configurations. Each configuration describes a set of parameters which instruct the system how a particular network interface is started. One of the most simplistic examples might be an Ethernet configuration that links a network card to a DHCP server. A more complex example might be a Wireless LAN configuration which may comprise of hardware details such as the WLAN card address, WLAN access point details (e.g ESSID, encryption details) and user specific information (for example username and password). Once the network interface was configured and started according to the configuration blue print, multiple applications are free to use this link layer connection/session for their own socket operations. This API carefully distinguishes a network session and the network connections (represented by socket sessions) which it supports.</p>
-<p>The distinction between physical network interfaces, their mappping to multiple configurations, how such a mapping can create an active link layer connection and a network connection that can be created once the session has been established is important to understand the various elements of this API. The Bearer Management API in conjunction with QNetworkInterface follows the same principle. QNetworkInterface already provides the required abstraction for physical network interface. In addition <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> encapsulates a network configuration which can be used to create, destroy and monitor link layer connections (represented by <a href="qnetworksession.html">QNetworkSession</a> object).</p>
+<p>The distinction between physical network interfaces, their mappping to multiple configurations, how such a mapping can create an active link layer connection and a network connection that can be created once the session has been established is important to understand the various elements of this API. The Bearer Management API in conjunction with <a href="http://qt.nokia.com/doc/4.5/qnetworkinterface.html">QNetworkInterface</a> follows the same principle. <a href="http://qt.nokia.com/doc/4.5/qnetworkinterface.html">QNetworkInterface</a> already provides the required abstraction for physical network interface. In addition <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> encapsulates a network configuration which can be used to create, destroy and monitor link layer connections (represented by <a href="qnetworksession.html">QNetworkSession</a> object).</p>
 <a name="service-networks"></a>
 <h3>Service networks</h3>
 <p>Some mobile platforms use the concept of grouped access points (also called SNAP or Service Network Access Point). In principle multiple configurations are grouped together and possibly even prioritized when compared to each other. This is useful for use cases where all configurations serve a similar purpose or context. A common context could be that they provide access to the public Internet or possibly only to the office Intranet. By providing a pool of configurations the system can make a decision based on given priorities which usually map to factors such as speed, availability and cost. Furthermore the system can automatically roam from one access point to the next one while ensuring minimal impact on the user experience.</p>
@@ -70,7 +70,7 @@
 <a name="platform-capabilities"></a>
 <h3>Platform capabilities</h3>
 <p>Some API features are not available on all platforms. The <a href="qnetworkconfigurationmanager.html#CapabilityFlag-enum">QNetworkConfigurationManager::CapabilityFlag</a> should be used to detect platform features at runtime. The following table lists the various platform API's being used by this API. This may assist in the process of determining the feature support:</p>
-<p><table align="center" cellpadding="2" cellspacing="1" border="0">
+<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
 <thead><tr valign="top" class="qt-style"><th>Platform</th><th>Backend capabilities</th></tr></thead>
 <tr valign="top" class="odd"><td>Linux&#xae;</td><td>Linux uses the <a href="http://projects.gnome.org/NetworkManager">NetworkManager API</a> which supports interface notifications and starting and stopping of network interfaces.</td></tr>
 <tr valign="top" class="even"><td>Windows&#xae; XP</td><td>This platform supports interface notifications without active polling.</td></tr>
@@ -83,7 +83,7 @@
 <h2>Building and compiling</h2>
 <p>This library requires Qt 4.5 to be installed.</p>
 <p>To build the library, run <tt>qmake</tt> and <tt>make</tt>.</p>
-<p>Linux supports a NetworkManager based backend and generic backend using QNetworkInterface only. By default the generic backend is selected. If the NetworkManager backend is required run qmake as follows:</p>
+<p>Linux supports a NetworkManager based backend and generic backend using <a href="http://qt.nokia.com/doc/4.5/qnetworkinterface.html">QNetworkInterface</a> only. By default the generic backend is selected. If the NetworkManager backend is required run qmake as follows:</p>
 <pre>    qmake BACKEND=NetworkManager</pre>
 <p>The backend selection is expected to disappear once the API is integrated into Qt.</p>
 <a name="reference-documentation"></a>
