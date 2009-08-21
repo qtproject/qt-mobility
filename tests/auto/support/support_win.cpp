@@ -58,6 +58,8 @@
 
 namespace {
 
+GUID GuidPublicStrings = { 0x00020329, 0x0000, 0x0000, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46 };
+
 void doInit()
 {
     static QMessageStore *store(0);
@@ -211,6 +213,107 @@ QByteArray objectProperty(IMAPIProp *object, ULONG tag)
             MAPIFreeBuffer(prop);
         } else {
             qWarning() << "objectProperty: HrGetOneProp failed";
+        }
+    }
+
+    return result;
+}
+
+ULONG createNamedProperty(IMAPIProp *object, const QString &name)
+{
+    ULONG result = 0;
+
+    if (!name.isEmpty()) {
+        wchar_t *nameBuffer = new wchar_t[name.length() + 1];
+        name.toWCharArray(nameBuffer);
+        nameBuffer[name.length()] = 0;
+
+        MAPINAMEID propName = { 0 };
+        propName.lpguid = &GuidPublicStrings;
+        propName.ulKind = MNID_STRING;
+        propName.Kind.lpwstrName = nameBuffer;
+
+        LPMAPINAMEID propNames = &propName;
+
+        SPropTagArray *props;
+        HRESULT rv = object->GetIDsFromNames(1, &propNames, MAPI_CREATE, &props);
+        if (HR_SUCCEEDED(rv)) {
+            result = PROP_TAG( PT_UNICODE, props->aulPropTag[0] );
+
+            MAPIFreeBuffer(props);
+        } else {
+            qWarning() << "createNamedProperty: GetIDsFromNames failed";
+        }
+
+        delete [] nameBuffer;
+    }
+
+    return result;
+}
+
+ULONG getNamedPropertyTag(IMAPIProp *object, const QString &name)
+{
+    ULONG result = 0;
+
+    if (!name.isEmpty()) {
+        wchar_t *nameBuffer = new wchar_t[name.length() + 1];
+        name.toWCharArray(nameBuffer);
+        nameBuffer[name.length()] = 0;
+
+        MAPINAMEID propName = { 0 };
+        propName.lpguid = &GuidPublicStrings;
+        propName.ulKind = MNID_STRING;
+        propName.Kind.lpwstrName = nameBuffer;
+
+        LPMAPINAMEID propNames = &propName;
+
+        SPropTagArray *props;
+        HRESULT rv = object->GetIDsFromNames(1, &propNames, 0, &props);
+        if (HR_SUCCEEDED(rv)) {
+            result = PROP_TAG( PT_UNICODE, props->aulPropTag[0] );
+
+            MAPIFreeBuffer(props);
+        } else {
+            qWarning() << "getNamedPropertyTag: GetIDsFromNames failed";
+        }
+
+        delete [] nameBuffer;
+    }
+
+    return result;
+}
+
+bool setNamedProperty(IMAPIProp *object, ULONG tag, const QString &value)
+{
+    if (object && tag && !value.isEmpty()) {
+        SPropValue prop = { 0 };
+        prop.ulPropTag = PROP_TAG( PT_UNICODE, tag );
+        prop.Value.LPSZ = reinterpret_cast<LPTSTR>(const_cast<quint16*>(value.utf16()));
+
+        HRESULT rv = object->SetProps(1, &prop, 0);
+        if (HR_SUCCEEDED(rv)) {
+            return true;
+        } else {
+            qWarning() << "setNamedProperty: SetProps failed";
+        }
+    }
+
+    return false;
+}
+
+QString getNamedProperty(IMAPIProp *object, ULONG tag)
+{
+    QString result;
+
+    if (object && tag) {
+        SPropValue *prop(0);
+        HRESULT rv = HrGetOneProp(object, PROP_TAG( PT_UNICODE, tag ), &prop);
+        if (HR_SUCCEEDED(rv)) {
+            result = QString::fromUtf16(reinterpret_cast<quint16*>(prop->Value.LPSZ));
+
+            MAPIFreeBuffer(prop);
+        } else {
+            qWarning() << "getNamedProperty: HrGetOneProp failed";
         }
     }
 
@@ -626,6 +729,11 @@ QMessageFolderId addFolder(const Parameters &params)
                     if (folder) {
                         IMAPIFolder *newFolder = createFolder(folderName, folder);
                         if (newFolder) {
+                            ULONG tag = createNamedProperty(newFolder, "path");
+                            if (tag) {
+                                setNamedProperty(newFolder, tag, folderPath);
+                            }
+
                             QByteArray recordKey = folderRecordKey(newFolder);
                             QByteArray entryId = folderEntryId(newFolder);
                             QByteArray storeKey = storeRecordKey(store);
