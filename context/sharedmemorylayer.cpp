@@ -1695,43 +1695,9 @@ public:
     void removeWatches(QValueSpaceObject *creator, Handle parent);
     void sync();
 
-    // Other
-    bool remove(Handle);
-    bool remove(Handle, const QByteArray &);
-
-    bool doRemove(const QByteArray &path);
-    bool doWriteItem(const QByteArray &path, const QVariant &val);
-    bool isValid() const;
-    bool setItem(NodeOwner owner,
-                 const QByteArray &path,
-                 const QVariant &val);
-    bool doSetItem(NodeOwner owner,
-                 const QByteArray &path,
-                 const QVariant &val);
-    bool remItems(NodeOwner owner,
-                  const QByteArray &path);
-    bool doRemItems(NodeOwner owner,
-                    const QByteArray &path);
-    bool setWatch(NodeWatch watch,
-                  const QByteArray &path);
-    bool doSetWatch(NodeWatch watch,
-                    const QByteArray &path);
-    bool remWatch(NodeWatch watch,
-                  const QByteArray &path);
-    bool doRemWatch(NodeWatch watch,
-                    const QByteArray &path);
-
-    void doNotify(const QByteArray &path, const QPacketProtocol *protocol, bool interested);
-    void doClientNotify(QValueSpaceObject *object, const QByteArray &path, bool interested);
-    void doNotifyObject(unsigned long own, unsigned long protocol);
-
-    QString socket() const;
-
-    static QVariant fromDatum(const NodeDatum * data);
+    void nodeChanged(unsigned short);
 
     static SharedMemoryLayer * instance();
-
-    void nodeChanged(unsigned short);
 
 private slots:
     void disconnected();
@@ -1752,6 +1718,23 @@ private:
     void doClientWrite(const QByteArray &path, const QVariant &newData);
     void doClientTransmit();
     void doServerTransmit();
+    bool doRemove(const QByteArray &path);
+    bool doWriteItem(const QByteArray &path, const QVariant &val);
+    bool setItem(NodeOwner owner, const QByteArray &path, const QVariant &val);
+    bool doSetItem(NodeOwner owner, const QByteArray &path, const QVariant &val);
+    bool remItems(NodeOwner owner, const QByteArray &path);
+    bool doRemItems(NodeOwner owner, const QByteArray &path);
+    bool setWatch(NodeWatch watch, const QByteArray &path);
+    bool doSetWatch(NodeWatch watch, const QByteArray &path);
+    bool remWatch(NodeWatch watch, const QByteArray &path);
+    bool doRemWatch(NodeWatch watch, const QByteArray &path);
+    void doNotify(const QByteArray &path, const QPacketProtocol *protocol, bool interested);
+    void doClientNotify(QValueSpaceObject *object, const QByteArray &path, bool interested);
+    void doNotifyObject(unsigned long own, unsigned long protocol);
+
+    QString socket() const;
+
+    static QVariant fromDatum(const NodeDatum * data);
 
     struct ReadHandle
     {
@@ -2383,56 +2366,6 @@ unsigned int SharedMemoryLayer::order()
     return 0x10000000;
 }
 
-bool SharedMemoryLayer::remove(Handle handle)
-{
-    if (!valid)
-        return false;
-    Q_ASSERT(layer);
-    ReadHandle * rhandle = rh(handle);
-
-    if(Client == type) {
-        if(todo.isEmpty())
-            todo << newPackId();
-
-        todo << (quint8)SHMLAYER_REMOVE << rhandle->path;
-        triggerTodo();
-    } else {
-        bool changed = doRemove(rhandle->path);
-        if(changed) triggerTodo();
-    }
-    return true;
-}
-
-bool SharedMemoryLayer::remove(Handle handle, const QByteArray &subPath)
-{
-    if (!valid)
-        return false;
-    Q_ASSERT(layer);
-    Q_ASSERT(!subPath.isEmpty());
-    Q_ASSERT(*subPath.constData() == '/');
-
-    ReadHandle * rhandle = rh(handle);
-    if(Client == type) {
-        if(todo.isEmpty())
-            todo << newPackId();
-
-        if(rhandle->path != "/")
-            todo << (quint8)SHMLAYER_REMOVE << (rhandle->path + subPath);
-        else
-            todo << (quint8)SHMLAYER_REMOVE << subPath;
-
-        triggerTodo();
-    } else {
-        bool changed;
-        if(rhandle->path != "/")
-            changed = doRemove(rhandle->path + subPath);
-        else
-            changed = doRemove(subPath);
-        if(changed) triggerTodo();
-    }
-    return true;
-}
-
 bool SharedMemoryLayer::value(Handle handle, QVariant *data)
 {
     if (!valid)
@@ -3007,11 +2940,6 @@ bool SharedMemoryLayer::doRemWatch(NodeWatch watch, const QByteArray &path)
     lock->unlock();
 
     return rv;
-}
-
-bool SharedMemoryLayer::isValid() const
-{
-    return valid;
 }
 
 bool SharedMemoryLayer::setItem(NodeOwner owner, const QByteArray &path,
