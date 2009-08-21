@@ -55,17 +55,12 @@ public:
     ~Qt7PlayerControl();
 
     QMediaPlayer::State state() const;
-
-    QMediaPlaylist* mediaPlaylist() const;
-    bool setMediaPlaylist(QMediaPlaylist *mediaPlaylist);
+    QMediaPlayer::MediaStatus mediaStatus() const;
 
     qint64 duration() const;
 
     qint64 position() const;
     void setPosition(qint64);
-
-    int playlistPosition() const;
-    void setPlaylistPosition(int position);
 
     int volume() const;
     void setVolume(int volume);
@@ -73,16 +68,16 @@ public:
     bool isMuted() const;
     void setMuted(bool muted);
 
-    bool isBuffering() const;
-
     int bufferStatus() const;
 
     bool isVideoAvailable() const;
-
     bool isSeekable() const;
 
     float playbackRate() const;
     void setPlaybackRate(float rate);
+
+    QMediaResourceList currentResources() const;
+    void setCurrentResources(const QMediaResourceList &resources);
 
     void play();
     void pause();
@@ -100,9 +95,6 @@ private slots:
 private:
     Qt7PlayerControlPrivate* d;
 
-    QMediaPlaylist  *playlist;
-    QMediaPlaylistNavigator *navigator;
-    int playlistPos;
     QTimer* updateTimer;
 };
 
