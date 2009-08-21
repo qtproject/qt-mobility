@@ -9,7 +9,7 @@ sourcedirs = ../../multimedia ../../multimedia/endpoints .
 
 sources.fileextensions  = "*.qdoc *.cpp"
 
-indexes                 = $QTDIR/doc/html/qt.index
+indexes                 = qt.index
 
 outputdir               = ../html
 
