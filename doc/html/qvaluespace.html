@@ -16,28 +16,30 @@
 <p>The QValueSpace namespace provides methods that are useful to Value Space layer implementors. <a href="#details">More...</a></p>
 <pre>    #include &lt;QValueSpace&gt;</pre><ul>
 </ul>
+<hr />
 <a name="functions"></a>
-<h3>Functions</h3>
-<ul>
-<li><div class="fn"></div>QList&lt;QUuid&gt; <b><a href="qvaluespace.html#availableLayers">availableLayers</a></b> ()</li>
-<li><div class="fn"></div>void <b><a href="qvaluespace.html#initValuespace">initValuespace</a></b> ()</li>
-<li><div class="fn"></div>void <b><a href="qvaluespace.html#initValuespaceManager">initValuespaceManager</a></b> ()</li>
-<li><div class="fn"></div>void <b><a href="qvaluespace.html#reinitValuespace">reinitValuespace</a></b> ()</li>
-</ul>
+<h2>Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QUuid&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespace.html#availableLayers">availableLayers</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespace.html#initValuespace">initValuespace</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespace.html#initValuespaceManager">initValuespaceManager</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespace.html#reinitValuespace">reinitValuespace</a></b> ()</td></tr>
+</table>
+<hr />
 <a name="macros"></a>
-<h3>Macros</h3>
-<ul>
-<li><div class="fn"></div><b><a href="qvaluespace.html#QVALUESPACE_REGISTRY_LAYER">QVALUESPACE_REGISTRY_LAYER</a></b></li>
-<li><div class="fn"></div><b><a href="qvaluespace.html#QVALUESPACE_SHAREDMEMORY_LAYER">QVALUESPACE_SHAREDMEMORY_LAYER</a></b></li>
-</ul>
+<h2>Macros</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespace.html#QVALUESPACE_REGISTRY_LAYER">QVALUESPACE_REGISTRY_LAYER</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespace.html#QVALUESPACE_SHAREDMEMORY_LAYER">QVALUESPACE_SHAREDMEMORY_LAYER</a></b></td></tr>
+</table>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
 <p>The QValueSpace namespace provides methods that are useful to Value Space layer implementors.</p>
-<p>Value Space layers that are available at link time can be automatically installed using <a href="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER">QVALUESPACE_AUTO_INSTALL_LAYER</a>() macro. The method <tt>QAbstractValueSpaceLayer * name::instance()</tt> must exist and return a pointer to the layer to install. The <a href="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER">QVALUESPACE_AUTO_INSTALL_LAYER</a>() macro will only invoke this method <i>after</i> QApplication has been constructed, making it safe to use any Qt class in your layer's constructor.</p>
+<p>Value Space layers that are available at link time can be automatically installed using <a href="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER">QVALUESPACE_AUTO_INSTALL_LAYER</a>() macro. The method <tt>QAbstractValueSpaceLayer * name::instance()</tt> must exist and return a pointer to the layer to install. The <a href="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER">QVALUESPACE_AUTO_INSTALL_LAYER</a>() macro will only invoke this method <i>after</i> <a href="http://qt.nokia.com/doc/4.5/qapplication.html">QApplication</a> has been constructed, making it safe to use any Qt class in your layer's constructor.</p>
 <hr />
 <h2>Function Documentation</h2>
-<h3 class="fn"><a name="availableLayers"></a>QList&lt;QUuid&gt; QValueSpace::availableLayers ()</h3>
+<h3 class="fn"><a name="availableLayers"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.5/quuid.html">QUuid</a>&gt; QValueSpace::availableLayers ()</h3>
 <p>Returns a List of QUuids of the available layers.</p>
 <h3 class="fn"><a name="initValuespace"></a>void QValueSpace::initValuespace ()</h3>
 <p>Initialize the value space. This method only needs to be called by layer implementers to force initialization of the value space.</p>
@@ -48,11 +50,11 @@
 <hr />
 <h2>Macro Documentation</h2>
 <h3 class="fn"><a name="QVALUESPACE_REGISTRY_LAYER"></a>QVALUESPACE_REGISTRY_LAYER</h3>
-<p>The UUID of the Registry Layer as a QUuid. The actual UUID value is {8ceb5811-4968-470f-8fc2-264767e0bbd9}.</p>
+<p>The UUID of the Registry Layer as a <a href="http://qt.nokia.com/doc/4.5/quuid.html">QUuid</a>. The actual UUID value is {8ceb5811-4968-470f-8fc2-264767e0bbd9}.</p>
 <p>This value can be passed to the constructor of <a href="qvaluespaceobject.html">QValueSpaceObject</a> to force the constructed value space object to publish its values in the Registry Layer.</p>
 <p>You can test if the Registry Layer is available by checking if the list returned by <a href="qvaluespace.html#availableLayers">QValueSpace::availableLayers</a>() contains this value. The Registry Layer is only available on Windows platforms.</p>
 <h3 class="fn"><a name="QVALUESPACE_SHAREDMEMORY_LAYER"></a>QVALUESPACE_SHAREDMEMORY_LAYER</h3>
-<p>The UUID of the Shared Memory Layer as a QUuid. The actual UUID value is {d81199c1-6f60-4432-934e-0ce4d37ef252}.</p>
+<p>The UUID of the Shared Memory Layer as a <a href="http://qt.nokia.com/doc/4.5/quuid.html">QUuid</a>. The actual UUID value is {d81199c1-6f60-4432-934e-0ce4d37ef252}.</p>
 <p>This value can be passed to the constructor of <a href="qvaluespaceobject.html">QValueSpaceObject</a> to force the constructed value space object to publish its values in the Shared Memory Layer.</p>
 <p>You can test if the Shared Memory Layer is available by checking if the list returned by <a href="qvaluespace.html#availableLayers">QValueSpace::availableLayers</a>() contains this value.</p>
 <p /><address><hr /><div align="center">
