@@ -67,31 +67,31 @@
 <p>Constructs a new detail range filter</p>
 <h3 class="fn"><a name="QContactDetailRangeFilter-2"></a>QContactDetailRangeFilter::QContactDetailRangeFilter ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i> if possible, otherwise constructs a new detail range filter</p>
-<h3 class="fn"><a name="detailDefinitionName"></a>QString QContactDetailRangeFilter::detailDefinitionName () const</h3>
+<h3 class="fn"><a name="detailDefinitionName"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactDetailRangeFilter::detailDefinitionName () const</h3>
 <p>Returns the definition name of the details which will be inspected for matching values</p>
 <p>See also <a href="qcontactdetailrangefilter.html#setDetailDefinitionName">setDetailDefinitionName</a>().</p>
-<h3 class="fn"><a name="detailFieldName"></a>QString QContactDetailRangeFilter::detailFieldName () const</h3>
+<h3 class="fn"><a name="detailFieldName"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactDetailRangeFilter::detailFieldName () const</h3>
 <p>Returns the name of the field which contains the value which will be matched against the value criterion</p>
 <p>See also <a href="qcontactdetailrangefilter.html#setDetailDefinitionName">setDetailDefinitionName</a>().</p>
-<h3 class="fn"><a name="matchFlags"></a>Qt::MatchFlags QContactDetailRangeFilter::matchFlags () const</h3>
+<h3 class="fn"><a name="matchFlags"></a><a href="http://qt.nokia.com/doc/4.5/qt.html#MatchFlags-typedef">Qt::MatchFlags</a> QContactDetailRangeFilter::matchFlags () const</h3>
 <p>Returns the match flags of the criterion, which define semantics such as case sensitivity, prefix matching, exact matching, etc.</p>
 <p>See also <a href="qcontactdetailrangefilter.html#setMatchFlags">setMatchFlags</a>().</p>
-<h3 class="fn"><a name="maxValue"></a>QVariant QContactDetailRangeFilter::maxValue () const</h3>
+<h3 class="fn"><a name="maxValue"></a><a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> QContactDetailRangeFilter::maxValue () const</h3>
 <p>Returns the upper bound of the value range criterion</p>
 <p>See also <a href="qcontactdetailrangefilter.html#setRange">setRange</a>().</p>
-<h3 class="fn"><a name="minValue"></a>QVariant QContactDetailRangeFilter::minValue () const</h3>
+<h3 class="fn"><a name="minValue"></a><a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> QContactDetailRangeFilter::minValue () const</h3>
 <p>Returns the lower bound of the value range criterion</p>
 <p>See also <a href="qcontactdetailrangefilter.html#setRange">setRange</a>().</p>
 <h3 class="fn"><a name="rangeFlags"></a><a href="qcontactdetailrangefilter.html#RangeFlag-enum">RangeFlags</a> QContactDetailRangeFilter::rangeFlags () const</h3>
 <p>Returns a set of flags which defines the boundary condition semantics of the value range criterion</p>
 <p>See also <a href="qcontactdetailrangefilter.html#setRange">setRange</a>().</p>
-<h3 class="fn"><a name="setDetailDefinitionName"></a>void QContactDetailRangeFilter::setDetailDefinitionName ( const QString &amp; <i>definitionName</i>, const QString &amp; <i>fieldName</i> = QString() )</h3>
+<h3 class="fn"><a name="setDetailDefinitionName"></a>void QContactDetailRangeFilter::setDetailDefinitionName ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>definitionName</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>fieldName</i> = QString() )</h3>
 <p>Sets the name of the detail definition of which type details will be inspected for matching values to <i>definitionName</i>, and the name of the field which will be inspected in details of that definition to <i>fieldName</i>.</p>
 <p>See also <a href="qcontactdetailrangefilter.html#detailDefinitionName">detailDefinitionName</a>() and <a href="qcontactdetailrangefilter.html#detailFieldName">detailFieldName</a>().</p>
-<h3 class="fn"><a name="setMatchFlags"></a>void QContactDetailRangeFilter::setMatchFlags ( Qt::MatchFlags <i>flags</i> )</h3>
+<h3 class="fn"><a name="setMatchFlags"></a>void QContactDetailRangeFilter::setMatchFlags ( <a href="http://qt.nokia.com/doc/4.5/qt.html#MatchFlags-typedef">Qt::MatchFlags</a> <i>flags</i> )</h3>
 <p>Sets the match flags of the filter criterion to <i>flags</i></p>
 <p>See also <a href="qcontactdetailrangefilter.html#matchFlags">matchFlags</a>().</p>
-<h3 class="fn"><a name="setRange"></a>void QContactDetailRangeFilter::setRange ( const QVariant &amp; <i>min</i>, const QVariant &amp; <i>max</i>, <a href="qcontactdetailrangefilter.html#RangeFlag-enum">RangeFlags</a> <i>flags</i> = 0 )</h3>
+<h3 class="fn"><a name="setRange"></a>void QContactDetailRangeFilter::setRange ( const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>min</i>, const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>max</i>, <a href="qcontactdetailrangefilter.html#RangeFlag-enum">RangeFlags</a> <i>flags</i> = 0 )</h3>
 <p>Sets the value range criterion of the filter to within <i>min</i> and <i>max</i>, with boundary conditions specified in the given <i>flags</i></p>
 <p>See also <a href="qcontactdetailrangefilter.html#minValue">minValue</a>() and <a href="qcontactdetailrangefilter.html#maxValue">maxValue</a>().</p>
 <p /><address><hr /><div align="center">

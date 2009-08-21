@@ -84,26 +84,26 @@
 <p>Initializes this <a href="qcontact.html">QContact</a> from <i>other</i></p>
 <h3 class="fn"><a name="dtor.QContact"></a>QContact::~QContact ()</h3>
 <p>Frees the memory used by this <a href="qcontact.html">QContact</a></p>
-<h3 class="fn"><a name="availableActions"></a>QStringList QContact::availableActions () const</h3>
+<h3 class="fn"><a name="availableActions"></a><a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> QContact::availableActions () const</h3>
 <p>Return a list of actions available to be performed on this contact</p>
-<h3 class="fn"><a name="detail"></a><a href="qcontactdetail.html">QContactDetail</a> QContact::detail ( const QString &amp; <i>definitionName</i> ) const</h3>
+<h3 class="fn"><a name="detail"></a><a href="qcontactdetail.html">QContactDetail</a> QContact::detail ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>definitionName</i> ) const</h3>
 <p>Returns the first detail stored in the contact which is of the given <i>definitionName</i></p>
 <h3 class="fn"><a name="detail-2"></a>T QContact::detail () const</h3>
 <p>Returns the first detail of the template type</p>
-<h3 class="fn"><a name="detailWithAction"></a><a href="qcontactdetail.html">QContactDetail</a> QContact::detailWithAction ( const QString &amp; <i>actionName</i> ) const</h3>
+<h3 class="fn"><a name="detailWithAction"></a><a href="qcontactdetail.html">QContactDetail</a> QContact::detailWithAction ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>actionName</i> ) const</h3>
 <p>Retrieve the first detail for which the given <i>actionName</i> is available</p>
-<h3 class="fn"><a name="details"></a>QList&lt;<a href="qcontactdetail.html">QContactDetail</a>&gt; QContact::details ( const QString &amp; <i>definitionName</i> = QString() ) const</h3>
+<h3 class="fn"><a name="details"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactdetail.html">QContactDetail</a>&gt; QContact::details ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>definitionName</i> = QString() ) const</h3>
 <p>Returns a list of details of the given <i>definitionName</i></p>
-<h3 class="fn"><a name="details-2"></a>QList&lt;T&gt; QContact::details () const</h3>
+<h3 class="fn"><a name="details-2"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;T&gt; QContact::details () const</h3>
 <p>Returns a list of details of the template type</p>
-<h3 class="fn"><a name="detailsWithAction"></a>QList&lt;<a href="qcontactdetail.html">QContactDetail</a>&gt; QContact::detailsWithAction ( const QString &amp; <i>actionName</i> ) const</h3>
+<h3 class="fn"><a name="detailsWithAction"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactdetail.html">QContactDetail</a>&gt; QContact::detailsWithAction ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>actionName</i> ) const</h3>
 <p>Retrieve any details for which the given <i>actionName</i> is available</p>
 <h3 class="fn"><a name="displayLabel"></a><a href="qcontactdisplaylabel.html">QContactDisplayLabel</a> QContact::displayLabel () const</h3>
 <p>Returns the display label of the contact. Every contact has exactly one display label which is either set manually (by saving a modified copy of the <a href="qcontactdisplaylabel.html">QContactDisplayLabel</a> in the contact, or by calling <a href="qcontact.html#setDisplayLabel">setDisplayLabel</a>()) or synthesised by the manager from which the contact is retrieved.</p>
 <p>See also <a href="qcontact.html#setDisplayLabel">setDisplayLabel</a>().</p>
 <h3 class="fn"><a name="error"></a><a href="qcontact.html#Error-enum">Error</a> QContact::error () const</h3>
 <p>Returns the code of the error of the most recent operation</p>
-<h3 class="fn"><a name="groups"></a>QList&lt;QUniqueId&gt; QContact::groups () const</h3>
+<h3 class="fn"><a name="groups"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QUniqueId&gt; QContact::groups () const</h3>
 <p>Returns a list of QUniqueIds that identify any QContactGroups that this contact is a member of.</p>
 <p>You should check that your <a href="qcontactmanager.html">QContactManager</a> supports groups.</p>
 <p>See also <a href="qcontact.html#setGroups">setGroups</a>() and <a href="qcontactgroup.html">QContactGroup</a>.</p>
@@ -113,9 +113,9 @@
 <h3 class="fn"><a name="isEmpty"></a>bool QContact::isEmpty () const</h3>
 <p>Returns true if this <a href="qcontact.html">QContact</a> is empty, false if not.</p>
 <p>An empty <a href="qcontact.html">QContact</a> has an empty label and no extra details.</p>
-<h3 class="fn"><a name="isPreferredDetail"></a>bool QContact::isPreferredDetail ( const QString &amp; <i>actionName</i>, const <a href="qcontactdetail.html">QContactDetail</a> &amp; <i>detail</i> ) const</h3>
+<h3 class="fn"><a name="isPreferredDetail"></a>bool QContact::isPreferredDetail ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>actionName</i>, const <a href="qcontactdetail.html">QContactDetail</a> &amp; <i>detail</i> ) const</h3>
 <p>Returns true if the given <i>detail</i> is a preferred detail for the given <i>actionName</i>, or for any action if the <i>actionName</i> is empty</p>
-<h3 class="fn"><a name="preferredDetail"></a><a href="qcontactdetail.html">QContactDetail</a> QContact::preferredDetail ( const QString &amp; <i>actionName</i> ) const</h3>
+<h3 class="fn"><a name="preferredDetail"></a><a href="qcontactdetail.html">QContactDetail</a> QContact::preferredDetail ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>actionName</i> ) const</h3>
 <p>Returns the preferred detail for a given <i>actionName</i></p>
 <p>See also <a href="qcontact.html#setPreferredDetail">setPreferredDetail</a>().</p>
 <h3 class="fn"><a name="removeDetail"></a>bool QContact::removeDetail ( <a href="qcontactdetail.html">QContactDetail</a> * <i>detail</i> )</h3>
@@ -132,11 +132,11 @@
 <p>The corresponding &quot;synthesised&quot; flag in this contact will be cleared.</p>
 <p>Returns true on success, false otherwise.</p>
 <p>See also <a href="qcontact.html#displayLabel">displayLabel</a>().</p>
-<h3 class="fn"><a name="setDisplayLabel-2"></a>bool QContact::setDisplayLabel ( const QString &amp; <i>label</i> )</h3>
+<h3 class="fn"><a name="setDisplayLabel-2"></a>bool QContact::setDisplayLabel ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>label</i> )</h3>
 <p>Set the display label of the contact to <i>label</i>.</p>
 <p>The corresponding &quot;synthesised&quot; flag in this contact will be cleared.</p>
 <p>Returns true on success, false otherwise.</p>
-<h3 class="fn"><a name="setGroups"></a>bool QContact::setGroups ( const QList&lt;QUniqueId&gt; &amp; <i>groups</i> )</h3>
+<h3 class="fn"><a name="setGroups"></a>bool QContact::setGroups ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QUniqueId&gt; &amp; <i>groups</i> )</h3>
 <p>Sets the list of QContactGroups that this contact is a member of to those identified in <i>groups</i>. Returns true if the contact was added to the groups successfully, otherwise returns false.</p>
 <p>You should check that your <a href="qcontactmanager.html">QContactManager</a> supports groups.</p>
 <p>See also <a href="qcontact.html#groups">groups</a>() and <a href="qcontactgroup.html">QContactGroup</a>.</p>
@@ -145,7 +145,7 @@
 <p>If you change the id of a contact and save the contact in a manager, the previously existing contact will still exist. You can do this to create copies (possibly modified) of an existing contact.</p>
 <p>Returns true if the <i>id</i> was set successfully, otherwise returns false.</p>
 <p>See also <a href="qcontact.html#id">id</a>().</p>
-<h3 class="fn"><a name="setPreferredDetail"></a>bool QContact::setPreferredDetail ( const QString &amp; <i>actionName</i>, const <a href="qcontactdetail.html">QContactDetail</a> &amp; <i>preferredDetail</i> )</h3>
+<h3 class="fn"><a name="setPreferredDetail"></a>bool QContact::setPreferredDetail ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>actionName</i>, const <a href="qcontactdetail.html">QContactDetail</a> &amp; <i>preferredDetail</i> )</h3>
 <p>Set a particular detail as the <i>preferredDetail</i> for a given <i>actionName</i>. Returns true if the detail was successfully set as the preferred detail for the action identified by <i>actionName</i>, otherwise returns false</p>
 <p>See also <a href="qcontact.html#preferredDetail">preferredDetail</a>().</p>
 <h3 class="fn"><a name="operator-not-eq"></a>bool QContact::operator!= ( const QContact &amp; <i>other</i> ) const</h3>

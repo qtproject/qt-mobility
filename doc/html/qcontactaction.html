@@ -14,7 +14,8 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QContactAction Class Reference</h1>
 <p>This class provides an interface for performing an action on a <a href="qcontact.html">QContact</a> or <a href="qcontactdetail.html">QContactDetail</a> <a href="#details">More...</a></p>
-<pre>    #include &lt;QContactAction&gt;</pre><ul>
+<pre>    #include &lt;QContactAction&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a>.</p>
+<ul>
 <li><a href="qcontactaction-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
@@ -31,6 +32,19 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaction.html#supportsDetail">supportsDetail</a></b> ( const QContactDetail &amp; <i>detail</i> ) const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaction.html#vendor">vendor</a></b> () const = 0</td></tr>
 </table>
+<ul>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-variables">QObject</a></li>
+</ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
@@ -40,22 +54,22 @@
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="dtor.QContactAction"></a>QContactAction::~QContactAction ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Clears any memory in use by this instance of the action implementation</p>
-<h3 class="fn"><a name="actionName"></a>QString QContactAction::actionName () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="actionName"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactAction::actionName () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the name of the action provided by this implementation. The name of the action identifies the action provided; different implementations of an action with the same name must provide the same functionality, but may differ in implementation semantics. Hence, the action name includes the major version of the interface definition implemented.</p>
-<h3 class="fn"><a name="contactFilter"></a><a href="qcontactfilter.html">QContactFilter</a> QContactAction::contactFilter ( const QVariant &amp; <i>value</i> = QVariant() ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="contactFilter"></a><a href="qcontactfilter.html">QContactFilter</a> QContactAction::contactFilter ( const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>value</i> = QVariant() ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns a filter which may be used to filter contacts by the availability of this action implementation for them. If <i>value</i> is valid, only contacts which have a detail with the given value and for which the action is available are returned</p>
 <h3 class="fn"><a name="implementationVersion"></a>int QContactAction::implementationVersion () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the (minor) version of the implementation of this action. Note that the major version (which describes the semantics/outcomes of the action) is included in the action name itself.</p>
-<h3 class="fn"><a name="metadata"></a>QVariantMap QContactAction::metadata () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="metadata"></a><a href="http://qt.nokia.com/doc/4.5/qvariant.html#QVariantMap-typedef">QVariantMap</a> QContactAction::metadata () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the metadata associated with this action, such as icons, labels or sound cues</p>
 <h3 class="fn"><a name="performAction"></a>void QContactAction::performAction ( const <a href="qcontact.html">QContact</a> &amp; <i>contact</i>, const <a href="qcontactdetail.html">QContactDetail</a> &amp; <i>detail</i> = QContactDetail() )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Performs the implemented action on the specified <i>detail</i> of the given <i>contact</i>, or on the first eligible detail saved in the contact if the given <i>detail</i> is empty.</p>
-<h3 class="fn"><a name="supportedDetails"></a>QList&lt;<a href="qcontactdetail.html">QContactDetail</a>&gt; QContactAction::supportedDetails ( const <a href="qcontact.html">QContact</a> &amp; <i>contact</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="supportedDetails"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactdetail.html">QContactDetail</a>&gt; QContactAction::supportedDetails ( const <a href="qcontact.html">QContact</a> &amp; <i>contact</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns a list of the details saved in the given <i>contact</i> which contain the fields required for this action to be performed on them.</p>
 <p>The default implementation of this function simply tests all the details in the contact using <a href="qcontactaction.html#supportsDetail">supportsDetail</a>()</p>
 <h3 class="fn"><a name="supportsDetail"></a>bool QContactAction::supportsDetail ( const <a href="qcontactdetail.html">QContactDetail</a> &amp; <i>detail</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns true if the provided <i>detail</i> contains the fields required for this action to be performed on it; otherwise, returns false</p>
-<h3 class="fn"><a name="vendor"></a>QString QContactAction::vendor () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="vendor"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactAction::vendor () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the identification string of the vendor which has provided this implementation</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

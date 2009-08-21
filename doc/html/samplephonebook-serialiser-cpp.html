@@ -41,7 +41,7 @@
     ** package.
     **
     ** If you have questions regarding the use of this file, please
-    ** contact Nokia at http://www.qtsoftware.com/contact.
+    ** contact Nokia at http://qt.nokia.com/contact.
     ** $QT_END_LICENSE$
     **
     ****************************************************************************/</span>
@@ -340,7 +340,9 @@
 
         <span class="comment">// having parsed the definitionName, values, attributes, and preferences we build the detail.</span>
         QContactDetail retn(definitionName);
-        retn.setValues(values);
+        QStringList keys = values.keys();
+        foreach (const QString&amp; key, keys)
+            retn.setValue(key, values.value(key));
         retn.setAttributes(attrs);
         return retn;
     }
