@@ -18,18 +18,19 @@
 <ul>
 <li><a href="qmessageid-members.html">List of all members, including inherited members</a></li>
 </ul>
+<hr />
 <a name="public-functions"></a>
-<h3>Public Functions</h3>
-<ul>
-<li><div class="fn"></div><b><a href="qmessageid.html#QMessageId">QMessageId</a></b> ()</li>
-<li><div class="fn"></div><b><a href="qmessageid.html#QMessageId-2">QMessageId</a></b> ( const QMessageId &amp; <i>other</i> )</li>
-<li><div class="fn"></div><b><a href="qmessageid.html#QMessageId-3">QMessageId</a></b> ( const QString &amp; <i>id</i> )</li>
-<li><div class="fn"></div><b><a href="qmessageid.html#dtor.QMessageId">~QMessageId</a></b> ()</li>
-<li><div class="fn"></div>bool <b><a href="qmessageid.html#isValid">isValid</a></b> () const</li>
-<li><div class="fn"></div>QString <b><a href="qmessageid.html#toString">toString</a></b> () const</li>
-<li><div class="fn"></div>QMessageId &amp; <b><a href="qmessageid.html#operator-eq">operator=</a></b> ( const QMessageId &amp; <i>other</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qmessageid.html#operator-eq-eq">operator==</a></b> ( const QMessageId &amp; <i>other</i> ) const</li>
-</ul>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmessageid.html#QMessageId">QMessageId</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmessageid.html#QMessageId-2">QMessageId</a></b> ( const QMessageId &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmessageid.html#QMessageId-3">QMessageId</a></b> ( const QString &amp; <i>id</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmessageid.html#dtor.QMessageId">~QMessageId</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessageid.html#isValid">isValid</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qmessageid.html#toString">toString</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMessageId &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qmessageid.html#operator-eq">operator=</a></b> ( const QMessageId &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessageid.html#operator-eq-eq">operator==</a></b> ( const QMessageId &amp; <i>other</i> ) const</td></tr>
+</table>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
@@ -45,14 +46,14 @@
 <p>Creates an invalid identifier, <a href="qmessageid.html#toString">toString</a>() will return a null string.</p>
 <h3 class="fn"><a name="QMessageId-2"></a>QMessageId::QMessageId ( const QMessageId &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i>.</p>
-<h3 class="fn"><a name="QMessageId-3"></a>QMessageId::QMessageId ( const QString &amp; <i>id</i> )</h3>
+<h3 class="fn"><a name="QMessageId-3"></a>QMessageId::QMessageId ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>id</i> )</h3>
 <p>Constructs an identifier from <i>id</i>.</p>
 <p>See also <a href="qmessageid.html#toString">toString</a>().</p>
 <h3 class="fn"><a name="dtor.QMessageId"></a>QMessageId::~QMessageId ()</h3>
 <p>Destroys the identifier.</p>
 <h3 class="fn"><a name="isValid"></a>bool QMessageId::isValid () const</h3>
 <p>Returns true if this identifier is valid; otherwise returns false.</p>
-<h3 class="fn"><a name="toString"></a>QString QMessageId::toString () const</h3>
+<h3 class="fn"><a name="toString"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMessageId::toString () const</h3>
 <p>Returns the string representation of this identifier.</p>
 <p>A null string should be returned if and only if the identifier is invalid.</p>
 <p>String representations of identifiers should not be used to test for equality, instead the equality operator should be used.</p>
