@@ -389,15 +389,6 @@ QString QSystemNetworkInfo::homeMobileNetworkCode()
 }
 
 /*!
-    Returns true if the system has a wireless lan that is reachable, otherwise false.
-*/
-bool QSystemNetworkInfo::isWlanReachable()
-{
-    QSystemNetworkInfoPrivate dnp;
-    return dnp.isWlanReachable();
-}
-
-/*!
   Returns the name of the operator.
 */
 QString QSystemNetworkInfo::operatorName()

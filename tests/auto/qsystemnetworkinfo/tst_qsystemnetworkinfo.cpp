@@ -57,8 +57,6 @@ private slots:
     void tst_homeMobileCountryCode();
     void tst_homeMobileNetworkCode();
 
-    void tst_isWlanReachable();
-
     void tst_operatorName();
 };
 //signal todo:
@@ -158,15 +156,6 @@ void  tst_QSystemNetworkInfo::tst_homeMobileNetworkCode()
     QSystemNetworkInfo ni;
     QVERIFY(!ni.homeMobileNetworkCode().isEmpty());
 }
-
-void  tst_QSystemNetworkInfo::tst_isWlanReachable()
-{
-    QSystemNetworkInfo ni;
-    bool wifi = ni.isWlanReachable();
-    QVERIFY(wifi == false
-            || wifi== true);
-}
-
 
 void  tst_QSystemNetworkInfo::tst_operatorName()
 {
