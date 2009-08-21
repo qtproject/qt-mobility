@@ -152,7 +152,7 @@ public:
     static QString homeMobileCountryCode();
     static QString homeMobileNetworkCode();
 
-    static bool isWLANAccessible();
+    static bool isWlanReachable();
 
     static QString operatorName();
 

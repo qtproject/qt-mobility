@@ -469,7 +469,7 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
     return "No Network";
 }
 
-bool QSystemNetworkInfoPrivate::isWLANAccessible() const
+bool QSystemNetworkInfoPrivate::isWlanReachable() const
 {
     return false;
 }

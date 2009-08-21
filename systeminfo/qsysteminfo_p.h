@@ -92,7 +92,7 @@ public:
     QString homeMobileCountryCode();
     QString homeMobileNetworkCode();
 
-    bool isWLANAccessible() const;
+    bool isWlanReachable() const;
     QString operatorName();
 
 };

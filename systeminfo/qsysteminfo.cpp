@@ -388,12 +388,12 @@ QString QSystemNetworkInfo::homeMobileNetworkCode()
 }
 
 /*!
-    Returns true if the system has an accessab;e WLan, otherwise false.
+    Returns true if the system has a lireless lan that is reachable, otherwise false.
 */
-bool QSystemNetworkInfo::isWLANAccessible()
+bool QSystemNetworkInfo::isWlanReachable()
 {
     QSystemNetworkInfoPrivate dnp;
-    return dnp.isWLANAccessible();
+    return dnp.isWlanReachable();
 }
 
 /*!
