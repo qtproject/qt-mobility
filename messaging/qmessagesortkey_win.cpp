@@ -101,17 +101,34 @@ bool QMessageSortKeyPrivate::compare(const QMessageSortKey &key, const QMessage 
     return false; // equality
 }
 
+const int maxSortOrders(16);  // 16 levels of sort ordering should be more than sufficient
+struct MapiSortOrderSet
+{
+    ULONG cSorts;
+    ULONG cCategories;
+    ULONG cExpanded;
+    SSortOrder aSort[maxSortOrders];
+};
+
 void QMessageSortKeyPrivate::sortTable(QMessageStore::ErrorCode *lastError, const QMessageSortKey &key, LPMAPITABLE messagesTable)
 {
-    // TODO support sort fields other than subject and multiple sort fields
-    ULONG propTag(PR_SUBJECT);
-    ULONG order(TABLE_SORT_ASCEND);
-
+    MapiSortOrderSet multiSort;
     QMessageSortKeyPrivate *d(key.d_ptr);
-    if (d && !d->_fieldOrderList.isEmpty()) {
-        if (d->_fieldOrderList.first().second == Qt::DescendingOrder)
+    QList<QPair<Field, Qt::SortOrder> > fieldOrderList(d->_fieldOrderList);
+    multiSort.cSorts = qMin<int>(maxSortOrders, fieldOrderList.count());
+    multiSort.cCategories = 0;
+    multiSort.cExpanded = 0;
+
+    if (!d || fieldOrderList.isEmpty())
+        return;
+    
+    for (int i = 0; i < qMin<int>(maxSortOrders, fieldOrderList.count()); ++i) {
+        ULONG order(TABLE_SORT_ASCEND);
+        if (fieldOrderList[i].second == Qt::DescendingOrder)
             order = TABLE_SORT_DESCEND;
-        switch (d->_fieldOrderList.first().first)
+        
+        ULONG propTag(PR_SUBJECT);
+        switch (fieldOrderList[i].first)
         {
         case Subject:
                 propTag = PR_SUBJECT;
@@ -123,15 +140,17 @@ void QMessageSortKeyPrivate::sortTable(QMessageStore::ErrorCode *lastError, cons
                 propTag = PR_SENDER_NAME; // MAPI is limited to sorting by sender name only, sender name + sender address does not appear to be supported
                 break;
             case Size:
-                propTag = PR_CONTENT_LENGTH;
+                propTag = PR_MESSAGE_SIZE; /*TODO: Use PR_CONTENT_LENGTH on WinCE */
                 break;
             default:
                 propTag = PR_SUBJECT; // TODO handle all cases
         }
+        multiSort.aSort[i].ulPropTag = propTag;
+        multiSort.aSort[i].ulOrder = order;
     }
 
-    SizedSSortOrderSet(1, sortOrderSet) = { 1, 0, 0, { propTag, order } };
-    if (messagesTable->SortTable(reinterpret_cast<SSortOrderSet*>(&sortOrderSet), 0) != S_OK) {
+    //Note: WinCE does not support multiple level of sort leves and should return an error if more than 1 level is used
+    if (messagesTable->SortTable(reinterpret_cast<SSortOrderSet*>(&multiSort), 0) != S_OK) {
         *lastError = QMessageStore::NotYetImplemented;
         return;
     }
@@ -172,14 +191,16 @@ bool QMessageSortKey::isEmpty() const
 
 QMessageSortKey QMessageSortKey::operator+(const QMessageSortKey& other) const
 {
-    Q_UNUSED(other)
-    return QMessageSortKey(); // TODO implement it
+    QMessageSortKey sum;
+    sum.d_ptr = new QMessageSortKeyPrivate(&sum);
+    sum.d_ptr->_fieldOrderList = d_ptr->_fieldOrderList + other.d_ptr->_fieldOrderList;
+    return sum;
 }
 
 QMessageSortKey& QMessageSortKey::operator+=(const QMessageSortKey& other)
 {
-    Q_UNUSED(other)
-    return *this; // TODO implement it
+    d_ptr->_fieldOrderList += other.d_ptr->_fieldOrderList;
+    return *this;
 }
 
 bool QMessageSortKey::operator==(const QMessageSortKey& other) const
