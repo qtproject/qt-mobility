@@ -41,6 +41,7 @@
 
 class QAbstractButton;
 class QAbstractSlider;
+class QComboBox;
 
 class PlayerControls : public QWidget
 {
@@ -52,11 +53,13 @@ public:
 
     int volume() const;
     bool isMuted() const;
+    float playbackRate() const;
 
 public slots:
     void setState(QMediaPlayer::State state);
     void setVolume(int volume);
     void setMuted(bool muted);
+    void setPlaybackRate(float rate);
 
 signals:
     void play();
@@ -66,10 +69,12 @@ signals:
     void previous();
     void changeVolume(int volume);
     void changeMuting(bool muting);
+    void changeRate(float rate);
 
 private slots:
     void playClicked();
     void muteClicked();
+    void updateRate();
 
 private:
     QMediaPlayer::State playerState;
@@ -80,6 +85,7 @@ private:
     QAbstractButton *previousButton;
     QAbstractButton *muteButton;
     QAbstractSlider *volumeSlider;
+    QComboBox *rateBox;
 };
 
 #endif

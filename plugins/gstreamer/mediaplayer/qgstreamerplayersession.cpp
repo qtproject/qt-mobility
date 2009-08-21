@@ -52,6 +52,7 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
      m_bus(0),
      m_renderer(0),
      m_volume(100),
+     m_playbackRate(1.0),
      m_muted(false),
      m_videoAvailable(false),
      m_seekable(false),
@@ -118,6 +119,24 @@ qint64 QGstreamerPlayerSession::position() const
         return position / 1000000;
     else
         return 0;
+}
+
+float QGstreamerPlayerSession::playbackRate() const
+{
+    return m_playbackRate;
+}
+
+void QGstreamerPlayerSession::setPlaybackRate(float rate)
+{
+    m_playbackRate = rate;
+
+    if (m_playbin) {
+        gst_element_seek(m_playbin, rate, GST_FORMAT_TIME,
+                         GstSeekFlags(GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_SEGMENT),
+                         GST_SEEK_TYPE_NONE,0,
+                         GST_SEEK_TYPE_NONE,0 );
+    }
+
 }
 
 bool QGstreamerPlayerSession::isBuffering() const
@@ -325,19 +344,23 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
 
                         //check for seekable
                         if (oldState == GST_STATE_READY) {
-                            GstFormat   format = GST_FORMAT_TIME;
-                            gint64      position = 0;
-
                             /*
                             //gst_element_seek_simple doesn't work reliably here, have to find a better solution
+
+                            GstFormat   format = GST_FORMAT_TIME;
+                            gint64      position = 0;
                             bool seekable = false;
                             if (gst_element_query_position(m_playbin, &format, &position)) {
                                 seekable = gst_element_seek_simple(m_playbin, format, GST_SEEK_FLAG_NONE, position);
                             }
 
-                            setSeekable(seekable);*/
+                            setSeekable(seekable);
+                            */
 
                             setSeekable(true);
+
+                            if (!qFuzzyCompare(m_playbackRate, float(1.0)))
+                                setPlaybackRate(m_playbackRate);
 
                         }
 

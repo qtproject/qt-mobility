@@ -38,6 +38,7 @@
 #include <QtGui/qslider.h>
 #include <QtGui/qstyle.h>
 #include <QtGui/qtoolbutton.h>
+#include <QtGui/qcombobox.h>
 
 PlayerControls::PlayerControls(QWidget *parent)
     : QWidget(parent)
@@ -49,6 +50,7 @@ PlayerControls::PlayerControls(QWidget *parent)
     , previousButton(0)
     , muteButton(0)
     , volumeSlider(0)
+    , rateBox(0)
 {
     playButton = new QToolButton;
     playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
@@ -81,6 +83,14 @@ PlayerControls::PlayerControls(QWidget *parent)
 
     connect(volumeSlider, SIGNAL(sliderMoved(int)), this, SIGNAL(changeVolume(int)));
 
+    rateBox = new QComboBox;
+    rateBox->addItem("0.5x", QVariant(0.5));
+    rateBox->addItem("1.0x", QVariant(1.0));
+    rateBox->addItem("2.0x", QVariant(2.0));
+    rateBox->setCurrentIndex(1);
+
+    connect(rateBox, SIGNAL(activated(int)), SLOT(updateRate()));
+
     QBoxLayout *layout = new QHBoxLayout;
     layout->setMargin(0);
     layout->addWidget(stopButton);
@@ -89,6 +99,7 @@ PlayerControls::PlayerControls(QWidget *parent)
     layout->addWidget(nextButton);
     layout->addWidget(muteButton);
     layout->addWidget(volumeSlider);
+    layout->addWidget(rateBox);
     setLayout(layout);
 }
 
@@ -161,4 +172,27 @@ void PlayerControls::playClicked()
 void PlayerControls::muteClicked()
 {
     emit changeMuting(!playerMuted);
+}
+
+float PlayerControls::playbackRate() const
+{
+    return rateBox->itemData(rateBox->currentIndex()).toDouble();
+}
+
+void PlayerControls::setPlaybackRate(float rate)
+{
+    for (int i=0; i<rateBox->count(); i++) {
+        if (qFuzzyCompare(rate, float(rateBox->itemData(i).toDouble()))) {
+            rateBox->setCurrentIndex(i);
+            return;
+        }
+    }
+
+    rateBox->addItem( QString("%1x").arg(rate), QVariant(rate));
+    rateBox->setCurrentIndex(rateBox->count()-1);
+}
+
+void PlayerControls::updateRate()
+{
+    emit changeRate(playbackRate());
 }

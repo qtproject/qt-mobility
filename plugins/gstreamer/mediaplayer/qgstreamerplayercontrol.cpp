@@ -116,11 +116,12 @@ bool QGstreamerPlayerControl::isSeekable() const
 
 float QGstreamerPlayerControl::playbackRate() const
 {
-    return 1;
+    return m_session->playbackRate();
 }
 
 void QGstreamerPlayerControl::setPlaybackRate(float rate)
 {
+    m_session->setPlaybackRate(rate);
 }
 
 void QGstreamerPlayerControl::setPosition(qint64 pos)
