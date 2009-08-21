@@ -37,6 +37,7 @@
 #include <qmessageid.h>
 #include <qmessagestore.h>
 #include <QDataStream>
+#include <QFile>
 #include <QDebug>
 
 #include <Mapidefs.h>
@@ -99,6 +100,11 @@ QList<ProfileDetail> profileDetails(LPPROFADMIN profAdmin)
     return result;
 }
 
+QByteArray binaryResult(const SPropValue &prop)
+{
+    return QByteArray(reinterpret_cast<const char*>(prop.Value.bin.lpb), prop.Value.bin.cb);
+}
+
 typedef QPair<QByteArray, MAPIUID> ServiceDetail;
 
 QList<ServiceDetail> serviceDetails(LPSERVICEADMIN svcAdmin)
@@ -149,7 +155,7 @@ QList<StoreDetail> storeDetails(LPMAPISESSION session)
             for (uint n = 0; n < rows->cRows; ++n) {
                 if (rows->aRow[n].lpProps[0].ulPropTag == PR_DISPLAY_NAME_A) {
                     QByteArray storeName(rows->aRow[n].lpProps[0].Value.lpszA);
-                    QByteArray recordKey(reinterpret_cast<const char*>(rows->aRow[n].lpProps[1].Value.bin.lpb), rows->aRow[n].lpProps[1].Value.bin.cb); 
+                    QByteArray recordKey(binaryResult(rows->aRow[n].lpProps[1]));
                     result.append(qMakePair(storeName, recordKey));
                 }
             }
@@ -176,6 +182,288 @@ QMessageAccountId accountIdFromRecordKey(const QByteArray &recordKey)
     }
 
     return QMessageAccountId(encodedId.toBase64());
+}
+
+QMessageFolderId folderIdFromProperties(const QByteArray &recordKey, const QByteArray &entryId, const QByteArray &storeKey)
+{
+    QByteArray encodedId;
+    {
+        QDataStream encodedIdStream(&encodedId, QIODevice::WriteOnly);
+        encodedIdStream << recordKey << storeKey;
+        if (!entryId.isEmpty()) {
+            encodedIdStream << entryId;
+        }
+    }
+
+    return QMessageFolderId(encodedId.toBase64());
+}
+
+QByteArray objectProperty(IMAPIProp *object, ULONG tag)
+{
+    QByteArray result;
+
+    if (object) {
+        SPropValue *prop(0);
+        HRESULT rv = HrGetOneProp(object, tag, &prop);
+        if (HR_SUCCEEDED(rv)) {
+            result = binaryResult(*prop);
+
+            MAPIFreeBuffer(prop);
+        } else {
+            qWarning() << "objectProperty: HrGetOneProp failed";
+        }
+    }
+
+    return result;
+}
+
+IProviderAdmin *serviceProvider(MAPIUID &svcUid, LPSERVICEADMIN svcAdmin)
+{
+    IProviderAdmin *provider(0);
+
+    if (svcAdmin) {
+        HRESULT rv = svcAdmin->AdminProviders(&svcUid, 0, &provider);
+        if (HR_FAILED(rv)) {
+            provider = 0;
+            qWarning() << "serviceProvider: AdminProviders failed";
+        }
+    }
+
+    return provider;
+}
+
+bool deleteExistingService(MAPIUID &svcUid, LPSERVICEADMIN svcAdmin)
+{
+    if (svcAdmin) {
+        QByteArray storePath;
+
+        // Find the Provider for this service
+        IProviderAdmin *provider = serviceProvider(svcUid, svcAdmin);
+        if (provider) {
+            IMAPITable *providerTable(0);
+            HRESULT rv = provider->GetProviderTable(0, &providerTable);
+            if (HR_SUCCEEDED(rv)) {
+                MAPIUID providerUid = { 0 };
+                bool foundProvider(false);
+
+                LPSRowSet rows(0);
+                SizedSPropTagArray(2, cols) = {2, {PR_SERVICE_NAME_A, PR_PROVIDER_UID}};
+                rv = HrQueryAllRows(providerTable, reinterpret_cast<LPSPropTagArray>(&cols), 0, 0, 0, &rows);
+                if (HR_SUCCEEDED(rv)) {
+                    for (uint n = 0; n < rows->cRows; ++n) {
+                        if (rows->aRow[n].lpProps[0].ulPropTag == PR_SERVICE_NAME_A) {
+                            QByteArray serviceName(rows->aRow[n].lpProps[0].Value.lpszA);
+                            if (serviceName.toUpper() == "MSUPST MS") {
+                                providerUid = *(reinterpret_cast<MAPIUID*>(rows->aRow[n].lpProps[1].Value.bin.lpb));
+                                foundProvider = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    FreeProws(rows);
+                } else {
+                    qWarning() << "deleteExistingService: HrQueryAllRows failed";
+                }
+
+                providerTable->Release();
+
+                if (foundProvider) {
+                    // Bypass the MAPI_E_NO_ACCESS_ERROR, as described at http://support.microsoft.com/kb/822977
+                    const ULONG MAPI_FORCE_ACCESS = 0x00080000;
+
+                    IProfSect *profileSection(0);
+                    HRESULT rv = provider->OpenProfileSection(&providerUid, 0, MAPI_FORCE_ACCESS, &profileSection);
+                    if (HR_SUCCEEDED(rv)) {
+                        SPropValue *prop(0);
+                        rv = HrGetOneProp(profileSection, PR_PST_PATH_A, &prop);
+                        if (HR_SUCCEEDED(rv)) {
+                            storePath = QByteArray(prop->Value.lpszA);
+
+                            MAPIFreeBuffer(prop);
+                        } else {
+                            qWarning() << "deleteExistingService: HrGetOneProp failed";
+                        }
+
+                        profileSection->Release();
+                    } else {
+                        qWarning() << "deleteExistingService: OpenProfileSection failed";
+                    }
+                }
+            } else {
+                qWarning() << "deleteExistingService: GetProviderTable failed";
+            }
+
+            provider->Release();
+        }
+
+        if (!storePath.isEmpty()) {
+            // Delete the existing service
+            HRESULT rv = svcAdmin->DeleteMsgService(&svcUid);
+            if (HR_SUCCEEDED(rv)) {
+                // Delete the storage file
+                if (QFile::exists(storePath)) {
+                    if (!QFile::remove(storePath)) {
+                        qWarning() << "deleteExistingService: Unable to remove PST file at:" << storePath;
+                    }
+                }
+                return true;
+            } else {
+                qWarning() << "deleteExistingService: DeleteMsgService failed";
+            }
+        }
+    }
+
+    return false;
+}
+
+QByteArray defaultProfile()
+{
+    QByteArray result;
+
+    LPPROFADMIN profAdmin(0);
+    HRESULT rv = MAPIAdminProfiles(0, &profAdmin);
+    if (HR_SUCCEEDED(rv)) {
+        // Find the default profile
+        foreach (const ProfileDetail &profile, profileDetails(profAdmin)) {
+            if (profile.second) {
+                result = profile.first;
+                break;
+            }
+        }
+    } else {
+        qWarning() << "defaultProfile: MAPIAdminProfiles failed";
+    }
+
+    return result;
+}
+
+LPMAPISESSION profileSession(const QByteArray &profileName)
+{
+    LPMAPISESSION session(0);
+
+    if (!profileName.isEmpty()) {
+        // Open a session on the profile
+        QByteArray name(profileName);
+        HRESULT rv = MAPILogonEx(0, reinterpret_cast<LPTSTR>(name.data()), 0, MAPI_EXTENDED | MAPI_NEW_SESSION | MAPI_NO_MAIL, &session);
+        if (HR_FAILED(rv)) {
+            session = 0;
+            qWarning() << "profileSession: MAPILogonEx failed";
+        }
+    }
+
+    return session;
+}
+
+
+IMsgStore *openStore(const QByteArray &storeName, IMAPISession* session)
+{
+    IMsgStore *store(0);
+
+    if (session && !storeName.isEmpty()) {
+        QByteArray entryId;
+
+        // Find the store with the specified name
+        IMAPITable *storesTable(0);
+        HRESULT rv = session->GetMsgStoresTable(0, &storesTable);
+        if (HR_SUCCEEDED(rv)) {
+            LPSRowSet rows(0);
+            SizedSPropTagArray(2, cols) = {2, {PR_DISPLAY_NAME_A, PR_ENTRYID}};
+            rv = HrQueryAllRows(storesTable, reinterpret_cast<LPSPropTagArray>(&cols), 0, 0, 0, &rows);
+            if (HR_SUCCEEDED(rv)) {
+                for (uint n = 0; n < rows->cRows; ++n) {
+                    if (rows->aRow[n].lpProps[0].ulPropTag == PR_DISPLAY_NAME_A) {
+                        QByteArray name(rows->aRow[n].lpProps[0].Value.lpszA);
+                        if (name.toLower() == storeName.toLower()) {
+                            entryId = binaryResult(rows->aRow[n].lpProps[1]);
+                            break;
+                        }
+                    }
+                }
+
+                FreeProws(rows);
+            } else {
+                qWarning() << "openStore: HrQueryAllRows failed";
+            }
+
+            storesTable->Release();
+        } else {
+            qWarning() << "openStore: GetMsgStoresTable failed";
+        }
+
+        if (!entryId.isEmpty()) {
+            rv = session->OpenMsgStore(0, entryId.length(), reinterpret_cast<LPENTRYID>(entryId.data()), 0, MDB_NO_MAIL | MDB_WRITE, reinterpret_cast<LPMDB*>(&store));
+            if (HR_FAILED(rv)) {
+                store = 0;
+                qWarning() << "openStore: OpenMsgStore failed";
+            }
+        }
+    }
+
+    return store;
+}
+
+QByteArray rootFolderEntryId(IMsgStore *store)
+{
+    return objectProperty(store, PR_IPM_SUBTREE_ENTRYID);
+}
+
+IMAPIFolder *openFolder(const QByteArray &entryId, IMsgStore *store)
+{
+    IMAPIFolder *folder(0);
+
+    if (store && !entryId.isEmpty()) {
+        ULONG type(0);
+        QByteArray entry(entryId);
+        HRESULT rv = store->OpenEntry(entry.length(), reinterpret_cast<LPENTRYID>(entry.data()), 0, MAPI_MODIFY, &type, reinterpret_cast<LPUNKNOWN*>(&folder));
+        if (HR_FAILED(rv)) {
+            folder = 0;
+            qWarning() << "openFolder: OpenEntry failed";
+        }
+    }
+
+    return folder;
+}
+
+IMAPIFolder *subFolder(const QString &path, IMAPIFolder *folder, IMsgStore *store)
+{
+    IMAPIFolder *result(0);
+
+    if (store && folder && !path.isEmpty()) {
+        // TODO
+    }
+
+    return result;
+}
+
+IMAPIFolder *createFolder(const QString &name, IMAPIFolder *folder)
+{
+    IMAPIFolder *newFolder(0);
+
+    if (folder && !name.isEmpty()) {
+        HRESULT rv = folder->CreateFolder(FOLDER_GENERIC, reinterpret_cast<LPTSTR>(const_cast<quint16*>(name.utf16())), 0, 0, MAPI_UNICODE, &newFolder);
+        if (HR_FAILED(rv)) {
+            newFolder = 0;
+            qWarning() << "createFolder: CreateFolder failed";
+        }
+    }
+
+    return newFolder;
+}
+
+QByteArray folderRecordKey(IMAPIFolder *folder)
+{
+    return objectProperty(folder, PR_RECORD_KEY);
+}
+
+QByteArray folderEntryId(IMAPIFolder *folder)
+{
+    return objectProperty(folder, PR_ENTRYID);
+}
+
+QByteArray storeRecordKey(IMsgStore *store)
+{
+    return objectProperty(store, PR_RECORD_KEY);
 }
 
 }
@@ -233,12 +521,8 @@ QMessageAccountId addAccount(const Parameters &params)
                         }
 
                         if (serviceExists) {
-                            // Delete the existing service
-                            rv = svcAdmin->DeleteMsgService(&svcUid);
-                            if (HR_SUCCEEDED(rv)) {
+                            if (deleteExistingService(svcUid, svcAdmin)) {
                                 serviceExists = false;
-                            } else {
-                                qWarning() << "DeleteMsgService failed";
                             }
                         }
 
@@ -305,14 +589,66 @@ QMessageAccountId addAccount(const Parameters &params)
 
     return result;
 }
+
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolderId addFolder(const Parameters &params)
 {
-    Q_UNUSED(params)
+    QMessageFolderId result;
 
-    return QMessageFolderId();
+    doInit();
+
+    QString folderName(params["displayName"]);
+    QString folderPath(params["path"]);
+    QString parentPath(params["parentFolderPath"]);
+    QByteArray accountName(params["parentAccountName"].toAscii());
+
+    if (!folderName.isEmpty() && !folderPath.isEmpty() && !accountName.isEmpty()) {
+        // Open a session on the default profile
+        LPMAPISESSION session(profileSession(defaultProfile()));
+        if (session) {
+            // Open the store for modification
+            IMsgStore *store = openStore(accountName, session);
+            if (store) {
+                // Find the identifier of the root folder
+                QByteArray rootId(rootFolderEntryId(store));
+                if (!rootId.isEmpty()) {
+                    // Open the root folder for modification
+                    IMAPIFolder *folder = openFolder(rootId, store);
+                    if (folder) {
+                        // Find the parent folder for the new folder
+                        if (!parentPath.isEmpty()) {
+                            IMAPIFolder *parentFolder = subFolder(parentPath, folder, store);
+                            folder->Release();
+                            folder = parentFolder;
+                        }
+                    }
+
+                    if (folder) {
+                        IMAPIFolder *newFolder = createFolder(folderName, folder);
+                        if (newFolder) {
+                            QByteArray recordKey = folderRecordKey(newFolder);
+                            QByteArray entryId = folderEntryId(newFolder);
+                            QByteArray storeKey = storeRecordKey(store);
+                            result = folderIdFromProperties(recordKey, entryId, storeKey);
+
+                            newFolder->Release();
+                        }
+
+                        folder->Release();
+                    }
+                }
+
+                store->Release();
+            }
+
+            session->Release();
+        }
+    }
+
+    return result;
 }
 #endif
+
 QMessageId addMessage(const Parameters &params)
 {
     Q_UNUSED(params)
