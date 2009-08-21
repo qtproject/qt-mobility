@@ -75,7 +75,6 @@ QT_BEGIN_NAMESPACE
     \enum QSystemInfo::Feature
     This enum describes the features of the device or computer.
 
-    \value UnknownFeature         Unknown feature or error.
     \value BluetoothFeature       Bluetooth feature available.
     \value CameraFeature          Camera feature available.
     \value FmradioFeature         FM Radio feature available.
@@ -389,12 +388,12 @@ QString QSystemNetworkInfo::homeMobileNetworkCode()
 }
 
 /*!
-    Returns true if the system has an accessab;e WLan, otherwise false.
+    Returns true if the system has a wireless lan that is reachable, otherwise false.
 */
-bool QSystemNetworkInfo::isWLANAccessible()
+bool QSystemNetworkInfo::isWlanReachable()
 {
     QSystemNetworkInfoPrivate dnp;
-    return dnp.isWLANAccessible();
+    return dnp.isWlanReachable();
 }
 
 /*!

@@ -378,7 +378,6 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::HapticsFeature:
         break;
-    case QSystemInfo::UnknownFeature :
     default:
         featureSupported = false;
         break;
@@ -439,7 +438,7 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
     return "No Network";
 }
 
-bool QSystemNetworkInfoPrivate::isWLANAccessible() const
+bool QSystemNetworkInfoPrivate::isWlanReachable() const
 {
     HANDLE phClientHandle = NULL;
     DWORD result;

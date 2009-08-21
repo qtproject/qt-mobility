@@ -27,20 +27,19 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="currentCountryCode" fullname="QSystemInfo::currentCountryCode" href="qsysteminfo.html#currentCountryCode" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QString" signature="currentCountryCode()"/>
             <enum access="public" threadsafety="unspecified" status="commendable" name="Feature" fullname="QSystemInfo::Feature" href="qsysteminfo.html#Feature-enum" location="qsysteminfo.h">
-                <value name="UnknownFeature" value="0"/>
-                <value name="BluetoothFeature" value="1"/>
-                <value name="CameraFeature" value="2"/>
-                <value name="FmradioFeature" value="3"/>
-                <value name="IrFeature" value="4"/>
-                <value name="LedFeature" value="5"/>
-                <value name="MemcardFeature" value="6"/>
-                <value name="UsbFeature" value="7"/>
-                <value name="VibFeature" value="8"/>
-                <value name="WlanFeature" value="9"/>
-                <value name="SimFeature" value="10"/>
-                <value name="LocationFeature" value="11"/>
-                <value name="VideoOutFeature" value="12"/>
-                <value name="HapticsFeature" value="13"/>
+                <value name="BluetoothFeature" value="0"/>
+                <value name="CameraFeature" value="1"/>
+                <value name="FmradioFeature" value="2"/>
+                <value name="IrFeature" value="3"/>
+                <value name="LedFeature" value="4"/>
+                <value name="MemcardFeature" value="5"/>
+                <value name="UsbFeature" value="6"/>
+                <value name="VibFeature" value="7"/>
+                <value name="WlanFeature" value="8"/>
+                <value name="SimFeature" value="9"/>
+                <value name="LocationFeature" value="10"/>
+                <value name="VideoOutFeature" value="11"/>
+                <value name="HapticsFeature" value="12"/>
             </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="hasFeatureSupported" fullname="QSystemInfo::hasFeatureSupported" href="qsysteminfo.html#hasFeatureSupported" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="hasFeatureSupported(QSystemInfo::Feature feature)">
                 <parameter left="QSystemInfo::Feature" right="" name="feature" default=""/>
@@ -80,7 +79,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="currentMobileNetworkCode" fullname="QSystemNetworkInfo::currentMobileNetworkCode" href="qsystemnetworkinfo.html#currentMobileNetworkCode" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QString" signature="currentMobileNetworkCode()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="homeMobileCountryCode" fullname="QSystemNetworkInfo::homeMobileCountryCode" href="qsystemnetworkinfo.html#homeMobileCountryCode" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QString" signature="homeMobileCountryCode()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="homeMobileNetworkCode" fullname="QSystemNetworkInfo::homeMobileNetworkCode" href="qsystemnetworkinfo.html#homeMobileNetworkCode" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QString" signature="homeMobileNetworkCode()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isWLANAccessible" fullname="QSystemNetworkInfo::isWLANAccessible" href="qsystemnetworkinfo.html#isWLANAccessible" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="bool" signature="isWLANAccessible()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isWlanReachable" fullname="QSystemNetworkInfo::isWlanReachable" href="qsystemnetworkinfo.html#isWlanReachable" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="bool" signature="isWlanReachable()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="operatorName" fullname="QSystemNetworkInfo::operatorName" href="qsystemnetworkinfo.html#operatorName" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QString" signature="operatorName()"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QSystemDisplayInfo" href="qsystemdisplayinfo.html" location="qsysteminfo.h" bases="" module="">

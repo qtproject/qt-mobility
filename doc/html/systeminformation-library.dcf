@@ -69,7 +69,6 @@
         <keyword ref="qsysteminfo.html#Feature-enum">QSystemInfo::WlanFeature</keyword>
         <keyword ref="qsysteminfo.html#Feature-enum">QSystemInfo::LocationFeature</keyword>
         <keyword ref="qsysteminfo.html#Feature-enum">QSystemInfo::VideoOutFeature</keyword>
-        <keyword ref="qsysteminfo.html#Feature-enum">QSystemInfo::UnknownFeature</keyword>
         <keyword ref="qsysteminfo.html#Feature-enum">QSystemInfo::BluetoothFeature</keyword>
         <keyword ref="qsysteminfo.html#Feature-enum">QSystemInfo::SimFeature</keyword>
         <keyword ref="qsysteminfo.html#Feature-enum">QSystemInfo::FmradioFeature</keyword>
@@ -131,7 +130,7 @@
         <keyword ref="qsystemnetworkinfo.html#currentMobileNetworkCode">currentMobileNetworkCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#homeMobileCountryCode">homeMobileCountryCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#homeMobileNetworkCode">homeMobileNetworkCode</keyword>
-        <keyword ref="qsystemnetworkinfo.html#isWLANAccessible">isWLANAccessible</keyword>
+        <keyword ref="qsystemnetworkinfo.html#isWlanReachable">isWlanReachable</keyword>
         <keyword ref="qsystemnetworkinfo.html#locationAreaCode">locationAreaCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#networkSignalStrength">networkSignalStrength</keyword>
         <keyword ref="qsystemnetworkinfo.html#operatorName">operatorName</keyword>

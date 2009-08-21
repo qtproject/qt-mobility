@@ -85,8 +85,7 @@ public:
 
 // features
     enum Feature {
-        UnknownFeature = 0,
-        BluetoothFeature,
+        BluetoothFeature=0,
         CameraFeature,
         FmradioFeature,
         IrFeature,
@@ -153,7 +152,7 @@ public:
     static QString homeMobileCountryCode();
     static QString homeMobileNetworkCode();
 
-    static bool isWLANAccessible();
+    static bool isWlanReachable();
 
     static QString operatorName();
 
