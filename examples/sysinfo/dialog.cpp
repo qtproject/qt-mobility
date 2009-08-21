@@ -134,7 +134,6 @@ void Dialog::setupMemory()
 void Dialog::setupNetwork()
 {
     QSystemNetworkInfo ni;
-    ui->wlanCheckBox->setChecked(ni.isWlanReachable());
     connect(ui->netStrengthComboBox,SIGNAL(activated(int)),
             this, SLOT(netComboActivated(int)));
     connect(ui->netStatusComboBox,SIGNAL(activated(int)),
