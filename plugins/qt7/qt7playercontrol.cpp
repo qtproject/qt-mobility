@@ -36,7 +36,6 @@
 #include <QtCore/qtimer.h>
 
 #include <qmediaplaylist.h>
-#include <qmediaplaylistnavigator.h>
 
 #include "qt7playercontrol.h"
 #include "qt7movie.h"
@@ -55,13 +54,6 @@ Qt7PlayerControl::Qt7PlayerControl(QObject *parent):
     QMediaPlayerControl(parent),
     d(new Qt7PlayerControlPrivate)
 {
-    playlist = new QMediaPlaylist(0, this);
-
-    navigator = new QMediaPlaylistNavigator(playlist, this);
-    navigator->setPlaybackMode(QMediaPlaylistNavigator::Linear);
-    connect(navigator, SIGNAL(activated(QMediaResourceList)), SLOT(setSource(QMediaResourceList)));
-    connect(navigator, SIGNAL(currentPositionChanged(int)), SIGNAL(playlistPositionChanged(int)));
-
     d->movie = new Qt7Movie(this);
 
     updateTimer = new QTimer(this);
@@ -82,20 +74,9 @@ QMediaPlayer::State Qt7PlayerControl::state() const
     return d->state;
 }
 
-QMediaPlaylist* Qt7PlayerControl::mediaPlaylist() const
+QMediaPlayer::MediaStatus Qt7PlayerControl::mediaStatus() const
 {
-    return playlist;
-}
-
-bool Qt7PlayerControl::setMediaPlaylist(QMediaPlaylist *mediaPlaylist)
-{
-    if (mediaPlaylist == 0 || playlist == mediaPlaylist)
-        return false;
-
-    if (playlist->parent() == this)
-        delete playlist;
-    playlist = mediaPlaylist;
-    return true;
+    return QMediaPlayer::MediaStatus(0);
 }
 
 qint64 Qt7PlayerControl::duration() const
@@ -111,16 +92,6 @@ qint64 Qt7PlayerControl::position() const
 void Qt7PlayerControl::setPosition(qint64 position)
 {
     d->movie->setPosition(position);
-}
-
-int Qt7PlayerControl::playlistPosition() const
-{
-    return navigator->currentPosition();
-}
-
-void Qt7PlayerControl::setPlaylistPosition(int position)
-{
-    navigator->jump(position);
 }
 
 int Qt7PlayerControl::volume() const
@@ -168,8 +139,17 @@ void Qt7PlayerControl::setPlaybackRate(float rate)
     d->movie->setRate(rate);
 }
 
+QMediaResourceList Qt7PlayerControl::currentResources() const
+{
+}
+
+void Qt7PlayerControl::setCurrentResources(const QMediaResourceList &resources)
+{
+}
+
 void Qt7PlayerControl::play()
 {
+    /*
     switch (d->state) {
     case QMediaPlayer::StoppedState: {
         d->movie->setSource(navigator->currentItem());
@@ -185,6 +165,7 @@ void Qt7PlayerControl::play()
 
     updateTimer->start(500);
     emit stateChanged(d->state = QMediaPlayer::PlayingState);
+    */
 }
 
 void Qt7PlayerControl::pause()
@@ -204,15 +185,6 @@ void Qt7PlayerControl::stop()
     }
 }
 
-void Qt7PlayerControl::advance()
-{
-    navigator->advance();
-}
-
-void Qt7PlayerControl::back()
-{
-    navigator->back();
-}
 
 Qt7Movie* Qt7PlayerControl::movie() const
 {
