@@ -9,6 +9,7 @@ DEFINES += QT_BUILD_CFW_LIB QT_MAKEDLL
 HEADERS += qcontextglobal.h \
            qpacketprotocol.h \
            qvaluespace.h \
+           qvaluespace_p.h \
            qvaluespacemanager_p.h \
            qvaluespaceobject.h
 

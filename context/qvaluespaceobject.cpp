@@ -33,6 +33,7 @@
 
 #include "qvaluespaceobject.h"
 #include "qvaluespace.h"
+#include "qvaluespace_p.h"
 #include "qvaluespacemanager_p.h"
 
 #include <QtCore/qcoreapplication.h>
@@ -139,33 +140,6 @@ QT_BEGIN_NAMESPACE
 */
 
 #define VS_CALL_ASSERT Q_ASSERT(!QCoreApplication::instance() || QCoreApplication::instance()->thread() == QThread::currentThread());
-
-static QByteArray qCanonicalPath(const QByteArray &path)
-{
-    if (path.isEmpty())
-        return QByteArray("/");
-
-    QByteArray result;
-    result.resize(path.length());
-    const char *from = path.constData();
-    const char *fromend = from + path.length();
-    int outc=0;
-    char *to = result.data();
-    for (;;) {
-        if (from!=fromend)
-            to[outc++] = '/';
-        while (from!=fromend && *from == '/')
-            ++from;
-        while (from!=fromend && *from != '/')
-            to[outc++] = *from++;
-        if (from==fromend)
-            break;
-    }
-    if (outc > 1 && to[outc-1] == '/')
-        --outc;
-    result.resize(outc);
-    return result;
-}
 
 class QValueSpaceObjectPrivate
 {

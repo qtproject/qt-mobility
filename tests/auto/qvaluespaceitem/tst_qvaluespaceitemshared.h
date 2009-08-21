@@ -54,12 +54,14 @@ private slots:
     void value();
     void ipcTests();
     void setValue();
+    void copySetValue();
     void ipcSetValue();
     void removeValue();
     void ipcRemoveKey();
     void interestNotification_data();
     void interestNotification();
     void ipcInterestNotification();
+    void clientServer();
 
 private:
     QValueSpaceObject *root;

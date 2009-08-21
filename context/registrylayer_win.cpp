@@ -57,7 +57,6 @@ public:
     QString name();
 
     bool startup(Type t);
-    bool restart();
     void shutdown();
 
     QUuid id();
@@ -184,11 +183,6 @@ QString RegistryLayer::name()
 }
 
 bool RegistryLayer::startup(Type)
-{
-    return true;
-}
-
-bool RegistryLayer::restart()
 {
     return true;
 }

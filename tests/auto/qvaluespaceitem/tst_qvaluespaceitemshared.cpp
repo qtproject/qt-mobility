@@ -35,6 +35,7 @@
 
 #include <qvaluespace.h>
 #include <qvaluespaceobject.h>
+#include <qvaluespacemanager_p.h>
 
 #include <QTest>
 #include <QSet>
@@ -77,6 +78,8 @@ Q_DECLARE_METATYPE(QList<QString>)
 
 void tst_QValueSpaceItem::initTestCase()
 {
+    qRegisterMetaType<QVariant>("QVariant");
+
 #if defined(QT_START_VALUESPACE)
     QValueSpace::initValuespaceManager();
 #endif
@@ -860,6 +863,54 @@ void tst_QValueSpaceItem::setValue()
     delete rel_object;
 }
 
+void tst_QValueSpaceItem::copySetValue()
+{
+    QValueSpaceObject *object = new QValueSpaceObject("/copySetValue");
+    object->setAttribute("value", 500);
+    object->sync();
+
+    QValueSpaceItem item("/copySetValue/value");
+    QCOMPARE(item.value("", 600).toInt(), 500);
+
+    ChangeListener listener;
+    connect(object, SIGNAL(itemSetValue(QByteArray,QVariant)),
+            &listener, SIGNAL(changeValue(QByteArray,QVariant)));
+    QSignalSpy spy(&listener, SIGNAL(changeValue(QByteArray,QVariant)));
+
+    if (item.setValue(501)) {
+        // Copy item with pending request.
+        QValueSpaceItem copy(item);
+
+        // Sync first item.
+        item.sync();
+
+        QTRY_COMPARE(spy.count(), 1);
+        QList<QVariant> arguments = spy.takeFirst();
+
+        QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
+        QCOMPARE(arguments.at(0).toByteArray(),QByteArray("/value"));
+        QCOMPARE(arguments.at(1).type(),QVariant::UserType);
+        QCOMPARE(arguments.at(1).value<QVariant>().toInt(),501);
+        QCOMPARE(item.value("", 600).toInt(), 500);
+
+        spy.clear();
+
+        // Sync copy.
+        copy.sync();
+
+        QTRY_COMPARE(spy.count(), 1);
+        arguments = spy.takeFirst();
+
+        QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
+        QCOMPARE(arguments.at(0).toByteArray(),QByteArray("/value"));
+        QCOMPARE(arguments.at(1).type(),QVariant::UserType);
+        QCOMPARE(arguments.at(1).value<QVariant>().toInt(),501);
+        QCOMPARE(copy.value("", 600).toInt(), 500);
+    }
+
+    delete object;
+}
+
 void tst_QValueSpaceItem::removeValue()
 {
     QValueSpaceObject* object = new QValueSpaceObject("/usr/intern/changeRequests");
@@ -964,6 +1015,9 @@ void tst_QValueSpaceItem::ipcRemoveKey()
     // Wait for lackey to delete key "/ipcRemoveKey".
     QTRY_COMPARE(changeSpy.count(), 1);
 
+    QList<QString> paths = item.subPaths();
+    if (!paths.isEmpty())
+        qDebug() << item.subPaths();
     QVERIFY(item.subPaths().isEmpty());
     QCOMPARE(item.value("value", 6).toInt(), 6);
 #endif
@@ -1253,6 +1307,15 @@ void tst_QValueSpaceItem::ipcInterestNotification()
     QTRY_COMPARE(changeSpy.count(), 1);
 
     QCOMPARE(item->value(QString(), 10).toInt(), 5);
+#endif
+}
+
+void tst_QValueSpaceItem::clientServer()
+{
+#if defined(QT_START_VALUESPACE)
+    QVERIFY(QValueSpaceManager::instance()->isServer());
+#else
+    QVERIFY(!QValueSpaceManager::instance()->isServer());
 #endif
 }
 

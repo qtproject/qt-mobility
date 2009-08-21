@@ -1666,7 +1666,6 @@ public:
     QString name();
 
     bool startup(Type);
-    bool restart();
     void shutdown();
 
     QUuid id();
@@ -1696,43 +1695,9 @@ public:
     void removeWatches(QValueSpaceObject *creator, Handle parent);
     void sync();
 
-    // Other
-    bool remove(Handle);
-    bool remove(Handle, const QByteArray &);
-
-    bool doRemove(const QByteArray &path);
-    bool doWriteItem(const QByteArray &path, const QVariant &val);
-    bool isValid() const;
-    bool setItem(NodeOwner owner,
-                 const QByteArray &path,
-                 const QVariant &val);
-    bool doSetItem(NodeOwner owner,
-                 const QByteArray &path,
-                 const QVariant &val);
-    bool remItems(NodeOwner owner,
-                  const QByteArray &path);
-    bool doRemItems(NodeOwner owner,
-                    const QByteArray &path);
-    bool setWatch(NodeWatch watch,
-                  const QByteArray &path);
-    bool doSetWatch(NodeWatch watch,
-                    const QByteArray &path);
-    bool remWatch(NodeWatch watch,
-                  const QByteArray &path);
-    bool doRemWatch(NodeWatch watch,
-                    const QByteArray &path);
-
-    void doNotify(const QByteArray &path, const QPacketProtocol *protocol, bool interested);
-    void doClientNotify(QValueSpaceObject *object, const QByteArray &path, bool interested);
-    void doNotifyObject(unsigned long own, unsigned long protocol);
-
-    QString socket() const;
-
-    static QVariant fromDatum(const NodeDatum * data);
+    void nodeChanged(unsigned short);
 
     static SharedMemoryLayer * instance();
-
-    void nodeChanged(unsigned short);
 
 private slots:
     void disconnected();
@@ -1753,6 +1718,23 @@ private:
     void doClientWrite(const QByteArray &path, const QVariant &newData);
     void doClientTransmit();
     void doServerTransmit();
+    bool doRemove(const QByteArray &path);
+    bool doWriteItem(const QByteArray &path, const QVariant &val);
+    bool setItem(NodeOwner owner, const QByteArray &path, const QVariant &val);
+    bool doSetItem(NodeOwner owner, const QByteArray &path, const QVariant &val);
+    bool remItems(NodeOwner owner, const QByteArray &path);
+    bool doRemItems(NodeOwner owner, const QByteArray &path);
+    bool setWatch(NodeWatch watch, const QByteArray &path);
+    bool doSetWatch(NodeWatch watch, const QByteArray &path);
+    bool remWatch(NodeWatch watch, const QByteArray &path);
+    bool doRemWatch(NodeWatch watch, const QByteArray &path);
+    void doNotify(const QByteArray &path, const QPacketProtocol *protocol, bool interested);
+    void doClientNotify(QValueSpaceObject *object, const QByteArray &path, bool interested);
+    void doNotifyObject(unsigned long own, unsigned long protocol);
+
+    QString socket() const;
+
+    static QVariant fromDatum(const NodeDatum * data);
 
     struct ReadHandle
     {
@@ -1969,82 +1951,6 @@ bool SharedMemoryLayer::startup(Type type)
         qWarning("SharedMemoryLayer::startup failed");
     return valid;
 }
-
-bool SharedMemoryLayer::restart()
-{
-    qFatal("SharedMemoryLayer: restart() not supported.");
-
-    // Cleanup previous init
-    delete layer;
-    layer = 0;
-    delete lock;
-    lock = 0;
-    valid = false;
-    if (shm->isAttached())
-        shm->detach();
-    delete shm;
-
-    // restart shared memory layer
-    if(Server == type) {
-        if(!sserver->listen(socket())) {
-            qWarning("SharedMemoryLayer: Unable to create server socket.  Only "
-                     "local connections will be allowed.");
-        }
-    } else {
-        QLocalSocket * sock = new QLocalSocket;
-        sock->connectToServer(socket());
-        if(!sock->waitForConnected(1000)) {
-            qWarning("SharedMemoryLayer: Unable to connect to server, "
-                     "shared memory layer will be disabled.");
-            delete sock;
-            return false;
-        }
-
-        QPacketProtocol * protocol;
-        protocol = new QPacketProtocol(sock, this);
-        sock->setParent(protocol);
-
-        QObject::connect(sock, SIGNAL(stateChanged(QLocalSocket::LocalSocketState)),
-                         protocol, SIGNAL(invalidPacket()));
-        QObject::connect(protocol, SIGNAL(invalidPacket()),
-                         this, SLOT(disconnected()));
-        QObject::connect(protocol, SIGNAL(readyRead()),
-                         this, SLOT(readyRead()));
-
-        connections.insert(protocol);
-    }
-
-    key_t key = ::ftok(socket().toLocal8Bit().constData(), 0x9b);
-
-    if(Server == type) {
-        shm = new QSharedMemory(socket(), this);
-        bool created = shm->create(SHMLAYER_SIZE);
-        if (!created) 
-            shm->attach();
-        lock = new QSystemReadWriteLock(key, true);
-    } else {
-        shm = new QSharedMemory(socket(), this);
-        shm->attach(QSharedMemory::ReadOnly);
-        lock = new QSystemReadWriteLock(key, false);
-    }
-
-    if (shm->error() != QSharedMemory::NoError) {
-        qFatal("SharedMemoryLayer: Unable to create or access shared "
-               "resources. (%s)",shm->errorString().toLatin1().constData());
-        return false;
-    }
-
-    layer = new FixedMemoryTree((char *)shm->data(),
-                                SHMLAYER_SIZE,
-                                (Server == type));
-
-    valid = (lock != 0) && (layer != 0);
-    if (!valid)
-        qWarning("SharedMemoryLayer::startup failed");
-
-    return true;
-}
-
 
 void ALServerImpl::incomingConnection(quintptr socketDescriptor)
 {
@@ -2458,56 +2364,6 @@ QUuid SharedMemoryLayer::id()
 unsigned int SharedMemoryLayer::order()
 {
     return 0x10000000;
-}
-
-bool SharedMemoryLayer::remove(Handle handle)
-{
-    if (!valid)
-        return false;
-    Q_ASSERT(layer);
-    ReadHandle * rhandle = rh(handle);
-
-    if(Client == type) {
-        if(todo.isEmpty())
-            todo << newPackId();
-
-        todo << (quint8)SHMLAYER_REMOVE << rhandle->path;
-        triggerTodo();
-    } else {
-        bool changed = doRemove(rhandle->path);
-        if(changed) triggerTodo();
-    }
-    return true;
-}
-
-bool SharedMemoryLayer::remove(Handle handle, const QByteArray &subPath)
-{
-    if (!valid)
-        return false;
-    Q_ASSERT(layer);
-    Q_ASSERT(!subPath.isEmpty());
-    Q_ASSERT(*subPath.constData() == '/');
-
-    ReadHandle * rhandle = rh(handle);
-    if(Client == type) {
-        if(todo.isEmpty())
-            todo << newPackId();
-
-        if(rhandle->path != "/")
-            todo << (quint8)SHMLAYER_REMOVE << (rhandle->path + subPath);
-        else
-            todo << (quint8)SHMLAYER_REMOVE << subPath;
-
-        triggerTodo();
-    } else {
-        bool changed;
-        if(rhandle->path != "/")
-            changed = doRemove(rhandle->path + subPath);
-        else
-            changed = doRemove(subPath);
-        if(changed) triggerTodo();
-    }
-    return true;
 }
 
 bool SharedMemoryLayer::value(Handle handle, QVariant *data)
@@ -3084,11 +2940,6 @@ bool SharedMemoryLayer::doRemWatch(NodeWatch watch, const QByteArray &path)
     lock->unlock();
 
     return rv;
-}
-
-bool SharedMemoryLayer::isValid() const
-{
-    return valid;
 }
 
 bool SharedMemoryLayer::setItem(NodeOwner owner, const QByteArray &path,

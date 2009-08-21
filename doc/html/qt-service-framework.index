@@ -151,19 +151,6 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="unlock" fullname="QSystemReadWriteLock::unlock" href="qsystemreadwritelock.html#unlock" location="qsystemlock.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="unlock()"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QSystemMutex" href="qsystemmutex.html" location="qsystemlock.h" bases="" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QSystemMutex" fullname="QSystemMutex::QSystemMutex" href="qsystemmutex.html#QSystemMutex" location="qsystemlock.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSystemMutex(unsigned int id, bool owner)">
-                <parameter left="unsigned int" right="" name="id" default=""/>
-                <parameter left="bool" right="" name="owner" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QSystemMutex" fullname="QSystemMutex::~QSystemMutex" href="qsystemmutex.html#dtor.QSystemMutex" location="qsystemlock.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QSystemMutex()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isNull" fullname="QSystemMutex::isNull" href="qsystemmutex.html#isNull" location="qsystemlock.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isNull() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="id" fullname="QSystemMutex::id" href="qsystemmutex.html#id" location="qsystemlock.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="unsigned int" signature="id() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="lock" fullname="QSystemMutex::lock" href="qsystemmutex.html#lock" location="qsystemlock.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="lock(int milliSec)">
-                <parameter left="int" right="" name="milliSec" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="unlock" fullname="QSystemMutex::unlock" href="qsystemmutex.html#unlock" location="qsystemlock.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="unlock()"/>
-        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QAbstractValueSpaceLayer" href="qabstractvaluespacelayer.html" location="qvaluespace.h" bases="QObject" module="">
             <typedef access="public" threadsafety="unspecified" status="commendable" name="Handle" fullname="QAbstractValueSpaceLayer::Handle" href="qabstractvaluespacelayer.html#Handle-typedef" location="qvaluespace.h"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="name" fullname="QAbstractValueSpaceLayer::name" href="qabstractvaluespacelayer.html#name" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="QString" signature="name()"/>
@@ -174,7 +161,6 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="startup" fullname="QAbstractValueSpaceLayer::startup" href="qabstractvaluespacelayer.html#startup" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="startup(Type type)">
                 <parameter left="Type" right="" name="type" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="restart" fullname="QAbstractValueSpaceLayer::restart" href="qabstractvaluespacelayer.html#restart" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="restart()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="shutdown" fullname="QAbstractValueSpaceLayer::shutdown" href="qabstractvaluespacelayer.html#shutdown" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="shutdown()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="id" fullname="QAbstractValueSpaceLayer::id" href="qabstractvaluespacelayer.html#id" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="QUuid" signature="id()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="order" fullname="QAbstractValueSpaceLayer::order" href="qabstractvaluespacelayer.html#order" location="qvaluespace.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="unsigned int" signature="order()"/>
@@ -268,7 +254,6 @@
         <namespace access="public" threadsafety="unspecified" status="commendable" name="QValueSpace" href="qvaluespace.html" location="qvaluespace.h" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="initValuespaceManager" fullname="QValueSpace::initValuespaceManager" href="qvaluespace.html#initValuespaceManager" location="qvaluespace.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="initValuespaceManager()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="initValuespace" fullname="QValueSpace::initValuespace" href="qvaluespace.html#initValuespace" location="qvaluespace.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="initValuespace()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="reinitValuespace" fullname="QValueSpace::reinitValuespace" href="qvaluespace.html#reinitValuespace" location="qvaluespace.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="reinitValuespace()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="availableLayers" fullname="QValueSpace::availableLayers" href="qvaluespace.html#availableLayers" location="qvaluespace.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QList&lt;QUuid&gt;" signature="availableLayers()"/>
         </namespace>
         <class access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceItem" href="qvaluespaceitem.html" location="qvaluespace.h" bases="QObject" module="">

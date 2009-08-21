@@ -62,14 +62,6 @@ void QValueSpaceManager::init()
     commonInit(QAbstractValueSpaceLayer::Client);
 }
 
-void QValueSpaceManager::reinit()
-{
-    if(Uninit == type)
-        return; // Not already initialized
-
-    commonReinit();
-}
-
 void QValueSpaceManager::commonInit(QAbstractValueSpaceLayer::Type vsltype)
 {
     Q_ASSERT(Uninit == type);
@@ -83,18 +75,6 @@ void QValueSpaceManager::commonInit(QAbstractValueSpaceLayer::Type vsltype)
 
     for(int ii = 0; ii < layers.count(); ++ii) {
         if(!initLayer(layers.at(ii))) {
-            layers.removeAt(ii);
-            --ii;
-        }
-    }
-}
-
-void QValueSpaceManager::commonReinit()
-{
-    Q_ASSERT(Uninit != type);
-
-    for(int ii = 0; ii < layers.count(); ++ii) {
-        if(!reinitLayer(layers.at(ii))) {
             layers.removeAt(ii);
             --ii;
         }
@@ -153,13 +133,6 @@ bool QValueSpaceManager::initLayer(QAbstractValueSpaceLayer* layer)
 
     return layer->startup((type==Client)?QAbstractValueSpaceLayer::Client:
                                          QAbstractValueSpaceLayer::Server);
-}
-
-bool QValueSpaceManager::reinitLayer(QAbstractValueSpaceLayer* layer)
-{
-    Q_ASSERT(Uninit != type);
-
-    return layer->restart();
 }
 
 QT_END_NAMESPACE

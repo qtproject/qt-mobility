@@ -70,6 +70,11 @@ void tst_QMallocPool::testConstructor()
     }
 
     {
+        QMallocPool invalidPool(0, 0, QMallocPool::Shared);
+        QVERIFY(!invalidPool.isValid());
+    }
+
+    {
         const unsigned int poolLength = 1024 * 1024;
         char *poolBase = new char[poolLength];
         for (unsigned int i = 0; i < poolLength; ++i)

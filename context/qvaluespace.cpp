@@ -32,6 +32,7 @@
 ****************************************************************************/
 
 #include "qvaluespace.h"
+#include "qvaluespace_p.h"
 #include "qvaluespacemanager_p.h"
 #include "qmallocpool.h"
 #include "qvaluespaceobject.h"
@@ -132,14 +133,6 @@ void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const Q
     Called by the Value Space system to initialize each layer.  The \a type parameter will be set
     accordingly, and layer implementors can use this to implement a client/server architecture if
     desired.
-
-    Returns true upon success; otherwise returns false.
-*/
-
-/*!
-    \fn bool QAbstractValueSpaceLayer::restart()
-
-    Called by the Value Space system to restart each layer.
 
     Returns true upon success; otherwise returns false.
 */
@@ -394,15 +387,6 @@ void QValueSpace::initValuespace()
 }
 
 /*!
-  Re-initialize the value space.  This method only needs to be called by layer
-  implementers to force re-initialization of the value space.
-  */
-void QValueSpace::reinitValuespace()
-{
-    QValueSpaceManager::instance()->reinit();
-}
-
-/*!
   Used by value space layer implementations to install themselves into the
   system.  \a layer should be a pointer to the layer to install.
   */
@@ -500,27 +484,21 @@ struct QValueSpaceItemPrivate
     Type type;
 };
 
-static QByteArray qCanonicalPath(const QByteArray &path)
+QByteArray qCanonicalPath(const QByteArray &path)
 {
-    if (path.isEmpty())
-        return QByteArray("/");
-
     QByteArray result;
     result.resize(path.length());
     const char *from = path.constData();
     const char *fromend = from + path.length();
     int outc=0;
     char *to = result.data();
-    for (;;) {
-        if (from!=fromend)
-            to[outc++] = '/';
+    do {
+        to[outc++] = '/';
         while (from!=fromend && *from == '/')
             ++from;
         while (from!=fromend && *from != '/')
             to[outc++] = *from++;
-        if (from==fromend)
-            break;
-    }
+    } while (from != fromend);
     if (outc > 1 && to[outc-1] == '/')
         --outc;
     result.resize(outc);
