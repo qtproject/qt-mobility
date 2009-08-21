@@ -31,7 +31,7 @@
 <p>The QServicePluginInterface class defines the interface that every plug-in based service must implement.</p>
 <hr />
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="createInstance"></a><a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> * QServicePluginInterface::createInstance ( const <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> &amp; <i>descriptor</i>, <a href="qservicecontext.html">QServiceContext</a> * <i>context</i>, <a href="qabstractsecuritysession.html">QAbstractSecuritySession</a> * <i>securitySession</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="createInstance"></a><a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * QServicePluginInterface::createInstance ( const <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> &amp; <i>descriptor</i>, <a href="qservicecontext.html">QServiceContext</a> * <i>context</i>, <a href="qabstractsecuritysession.html">QAbstractSecuritySession</a> * <i>securitySession</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Creates a new instance of the service specified by <i>descriptor</i>. The service may use the given <i>context</i> and <i>securitySession</i>. <i>context</i> and <i>securitySession</i> object are owned by the client of the service.</p>
 <p>This function returns a null pointer if the plug-in doesn't support the given <i>descriptor</i>.</p>
 <h3 class="fn"><a name="installService"></a>void QServicePluginInterface::installService ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>

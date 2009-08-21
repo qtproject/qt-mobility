@@ -123,11 +123,11 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="clearCustomProperties" fullname="QServiceFilter::clearCustomProperties" href="qservicefilter.html#clearCustomProperties" location="qservicefilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="clearCustomProperties()"/>
         </class>
-        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qservicefilter.html#operator&lt;&lt;-68" location="qservicefilter.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="68" relates="QServiceFilter" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; out, const QServiceFilter &amp; sf)">
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qservicefilter.html#operator&lt;&lt;-75" location="qservicefilter.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="75" relates="QServiceFilter" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; out, const QServiceFilter &amp; sf)">
             <parameter left="QDataStream &amp;" right="" name="out" default=""/>
             <parameter left="const QServiceFilter &amp;" right="" name="sf" default=""/>
         </function>
-        <function access="public" threadsafety="unspecified" status="commendable" name="operator&gt;&gt;" href="qservicefilter.html#operator&gt;&gt;-66" location="qservicefilter.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="66" relates="QServiceFilter" type="QDataStream &amp;" signature="operator&gt;&gt;(QDataStream &amp; in, QServiceFilter &amp; sf)">
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&gt;&gt;" href="qservicefilter.html#operator&gt;&gt;-72" location="qservicefilter.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="72" relates="QServiceFilter" type="QDataStream &amp;" signature="operator&gt;&gt;(QDataStream &amp; in, QServiceFilter &amp; sf)">
             <parameter left="QDataStream &amp;" right="" name="in" default=""/>
             <parameter left="QServiceFilter &amp;" right="" name="sf" default=""/>
         </function>
@@ -364,11 +364,11 @@
                 <parameter left="const QString &amp;" right="" name="key" default=""/>
             </function>
         </class>
-        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qserviceinterfacedescriptor.html#operator&lt;&lt;-70" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="70" relates="QServiceInterfaceDescriptor" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; out, const QServiceInterfaceDescriptor &amp; dc)">
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qserviceinterfacedescriptor.html#operator&lt;&lt;-77" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="77" relates="QServiceInterfaceDescriptor" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; out, const QServiceInterfaceDescriptor &amp; dc)">
             <parameter left="QDataStream &amp;" right="" name="out" default=""/>
             <parameter left="const QServiceInterfaceDescriptor &amp;" right="" name="dc" default=""/>
         </function>
-        <function access="public" threadsafety="unspecified" status="commendable" name="operator&gt;&gt;" href="qserviceinterfacedescriptor.html#operator&gt;&gt;-68" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="68" relates="QServiceInterfaceDescriptor" type="QDataStream &amp;" signature="operator&gt;&gt;(QDataStream &amp; in, QServiceInterfaceDescriptor &amp; dc)">
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&gt;&gt;" href="qserviceinterfacedescriptor.html#operator&gt;&gt;-74" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="74" relates="QServiceInterfaceDescriptor" type="QDataStream &amp;" signature="operator&gt;&gt;(QDataStream &amp; in, QServiceInterfaceDescriptor &amp; dc)">
             <parameter left="QDataStream &amp;" right="" name="in" default=""/>
             <parameter left="QServiceInterfaceDescriptor &amp;" right="" name="dc" default=""/>
         </function>

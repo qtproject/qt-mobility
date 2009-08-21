@@ -13,7 +13,7 @@ sourcedirs = ../../bearer \
 
 exampledirs = ../../examples
 
-indexes                 = $QTDIR/doc/html/qt.index
+indexes                 = qt.index
 
 sources.fileextensions  = "*.qdoc *.cpp"
 
