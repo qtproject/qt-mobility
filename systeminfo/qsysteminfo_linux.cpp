@@ -471,6 +471,25 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 
 bool QSystemNetworkInfoPrivate::isWlanReachable() const
 {
+    QString result;
+    QString baseSysDir = "/sys/class/net/";
+    QDir wDir(baseSysDir);
+    QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
+    foreach(QString dir, dirs) {
+        QString devFile = baseSysDir + dir;
+        QFileInfo fi(devFile + "/wireless");
+        if(fi.exists()) {
+            QFile rx(devFile + "/operstate");
+            if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                QTextStream in(&rx);
+                in >> result;
+                rx.close();
+                if(result.contains("up")) {
+                    return true;
+                }
+            }
+        }
+    }
     return false;
 }
 

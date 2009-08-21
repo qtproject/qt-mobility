@@ -133,6 +133,8 @@ void Dialog::setupMemory()
 
 void Dialog::setupNetwork()
 {
+    QSystemNetworkInfo ni;
+    ui->wlanCheckBox->setChecked(ni.isWlanReachable());
 
 }
 
