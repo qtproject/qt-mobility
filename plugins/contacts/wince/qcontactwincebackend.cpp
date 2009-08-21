@@ -51,13 +51,12 @@ QContactWinCEEngine::QContactWinCEEngine(const QMap<QString, QString>& , QContac
 {
     error = QContactManager::NoError;
 
-    if (SUCCEEDED(CoInitializeEx( NULL, 0))) {
+    if (SUCCEEDED(d->m_cominit.hr())) {
         if (SUCCEEDED(CoCreateInstance(CLSID_Application, NULL,
                                        CLSCTX_INPROC_SERVER, IID_IPOutlookApp2,
                                        reinterpret_cast<void **>(&d->m_app)))) {
             if(FAILED(d->m_app->Logon(NULL))) {
                 qDebug() << "Failed to log on";
-                d->m_app->Release();
                 d->m_app = 0;
             } else {
                 if(SUCCEEDED(d->m_app->GetDefaultFolder(olFolderContacts, &d->m_folder))) {
@@ -134,13 +133,7 @@ QContactWinCEEngine::~QContactWinCEEngine()
 {
     if (d->m_app) {
         d->m_app->Logoff();
-        d->m_app->Release();
     }
-    if (d->m_collection)
-        d->m_collection->Release();
-    if (d->m_items2)
-        d->m_items2->Release();
-    CoUninitialize();
 }
 
 void QContactWinCEEngine::deref()
@@ -731,13 +724,12 @@ QContact QContactWinCEEngine::contact(const QUniqueId& contactId, QContactManage
     // id == 0 gives a bad argument error from POOM, so don't even try it
     if (contactId != 0) {
         // Fetch!
-        IItem* item = 0;
+        SimpleComPointer<IItem> item = 0;
         HRESULT hr = d->m_app->GetItemFromOidEx(contactId, 0, &item);
         if (SUCCEEDED(hr)) {
             if (item) {
                 error = QContactManager::NoError;
                 ret = convertContact(item);
-                item->Release();
             } else {
                 error = QContactManager::DoesNotExistError;
             }
@@ -769,7 +761,7 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QSet<QUniqueId>& contac
         return false;
     }
 
-    IItem *icontact = 0;
+    SimpleComPointer<IItem> icontact;
     bool wasOld = false;
     // Figure out if this is a new or old contact
     if (d->m_ids.contains(contact->id())) {
@@ -783,8 +775,8 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QSet<QUniqueId>& contac
         }
     } else {
         // new contact!
-        IDispatch* idisp = 0;
-        HRESULT hr = d->m_collection->Add((IDispatch**) &idisp);
+        SimpleComPointer<IDispatch> idisp = 0;
+        HRESULT hr = d->m_collection->Add(&idisp);
         if (SUCCEEDED(hr)) {
             // now get an actual item out of it (was IContact, which is not IItem)
             hr = idisp->QueryInterface<IItem>(&icontact);
@@ -794,7 +786,6 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QSet<QUniqueId>& contac
                 qDebug() << "Failed to query interface" << HRESULT_CODE(hr);
                 error = QContactManager::UnspecifiedError;
             }
-            idisp->Release();
         } else {
             qDebug() << "Failed to create contact: "<< HRESULT_CODE(hr);
             error = QContactManager::OutOfMemoryError;
@@ -817,7 +808,6 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QSet<QUniqueId>& contac
                         contactsAdded.insert(contact->id());
                     d->m_ids.append(contact->id());
                     error = QContactManager::NoError;
-                    icontact->Release();
                     return true;
                 }
                 qDebug() << "Saved contact, but couldn't retrieve id again??" << HRESULT_CODE(hr);
@@ -829,7 +819,6 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QSet<QUniqueId>& contac
         } else {
             qDebug() << "Failed to convert contact";
         }
-        icontact->Release();
     }
 
     // error should have been set.
@@ -840,13 +829,12 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QSet<QUniqueId>& contac
 bool QContactWinCEEngine::removeContact(const QUniqueId& contactId, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& , QContactManager::Error& error)
 {
     // Fetch an IItem* for this
-    IItem* item = 0;
+    SimpleComPointer<IItem> item ;
     HRESULT hr = d->m_app->GetItemFromOidEx(contactId, 0, &item);
     if (SUCCEEDED(hr)) {
         hr = item->Delete();
         if (SUCCEEDED(hr)) {
             contactsChanged.insert(contactId);
-            item->Release();
             error = QContactManager::NoError;
             d->m_ids.removeAll(contactId);
             return true;

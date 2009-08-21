@@ -59,13 +59,94 @@
 #include "qcontactmanagerengine.h"
 #include "qcontactmanagerenginefactory.h"
 
+
+/*
+ * Simple "smart" pointer for IUnknown management - takes ownership when assigning, calls release at dtor
+ *
+ * typename T is expected to be the base interface class, not a pointer to it
+ *
+ * (e.g. SCP<IUnknown> foo, not SCP<IUnknown*> foo)
+ *
+ * but all other usage acts like a pointer thereof.
+ */
+template <typename T> class SimpleComPointer {
+public:
+    SimpleComPointer()
+        : mPtr(0)
+    {
+    }
+
+    SimpleComPointer(T* assign)
+        : mPtr(assign)
+    {
+    }
+
+    ~SimpleComPointer()
+    {
+        if (mPtr)
+            mPtr->Release();
+    }
+
+    // These are const incorrect.
+    // cast operator, not operator*
+    operator T * () const
+    {
+        return mPtr;
+    }
+
+    T* operator ->() const
+    {
+        return mPtr;
+    }
+
+    // Releases, since this is non const.
+    T** operator&()
+    {
+        if (mPtr)
+            mPtr->Release();
+        mPtr = 0;
+        return &mPtr;
+    }
+
+    SimpleComPointer<T>& operator=(T* other)
+    {
+        if (mPtr != other) {
+            if (mPtr)
+                mPtr->Release();
+            mPtr = other;
+        }
+        return *this;
+    }
+    SimpleComPointer<T>& operator=(const SimpleComPointer<T>& other)
+    {
+        if (&other != this && other.mPtr != mPtr) {
+            if (mPtr)
+                mPtr->Release();
+            mPtr = other.mPtr;
+        }
+        return *this;
+    }
+
+private:
+    T* mPtr;
+};
+
+class ComInit
+{
+public:
+    ComInit() {mHr = CoInitializeEx( NULL, 0);}
+    ~ComInit() {if (SUCCEEDED(mHr)) CoUninitialize(); }
+    HRESULT hr() const {return mHr;}
+private:
+    HRESULT mHr;
+};
+
 class QContactWinCEEngineData : public QSharedData
 {
 public:
     QContactWinCEEngineData()
         : QSharedData(),
         m_refCount(QAtomicInt(1)),
-        m_app(0),
         m_phonemeta(PIMPR_INVALID_ID),
         m_emailmeta(PIMPR_INVALID_ID)
     {
@@ -74,7 +155,6 @@ public:
     QContactWinCEEngineData(const QContactWinCEEngineData& other)
         : QSharedData(other),
         m_refCount(QAtomicInt(1)),
-        m_app(0),
         m_phonemeta(PIMPR_INVALID_ID),
         m_emailmeta(PIMPR_INVALID_ID)
     {
@@ -86,10 +166,13 @@ public:
     }
 
     QAtomicInt m_refCount;
-    IPOutlookApp2* m_app;
-    IFolder* m_folder;
-    IPOutlookItemCollection* m_collection;
-    IPOlItems2* m_items2;
+
+    ComInit m_cominit;
+
+    SimpleComPointer<IPOutlookApp2> m_app;
+    SimpleComPointer<IFolder> m_folder;
+    SimpleComPointer<IPOutlookItemCollection> m_collection;
+    SimpleComPointer<IPOlItems2> m_items2;
 
     // The ID of our sekrit extra phone number and email metadata id
     PROPID m_phonemeta;

@@ -126,7 +126,7 @@ void QContactMemoryEngine::deref()
 QMap<QString, QString> QContactMemoryEngine::parameters() const
 {
     QMap<QString, QString> params;
-    params.insert("id", d->m_id);
+    params.insert(QLatin1String("id"), d->m_id);
     return params;
 }
 
