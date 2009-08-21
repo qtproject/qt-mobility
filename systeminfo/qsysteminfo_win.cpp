@@ -378,7 +378,6 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::HapticsFeature:
         break;
-    case QSystemInfo::UnknownFeature :
     default:
         featureSupported = false;
         break;
