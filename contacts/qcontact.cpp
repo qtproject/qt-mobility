@@ -501,16 +501,18 @@ QContactDetail QContact::preferredDetail(const QString& actionName) const
         return QContactDetail();
     }
 
-    QContactData::setError(d, QContact::NoError);
+    QContactData::setError(d, QContact::UnspecifiedError);
+    QContactDetail retn;
     quint32 detId = d->m_preferences.value(actionName);
     for (int i = 0; i < d->m_details.size(); i++) {
         QContactDetail det = d->m_details.at(i);
         if (det.d->m_id == detId) {
-            return det;
+            // found it.
+            QContactData::setError(d, QContact::NoError);
+            retn = det;
+            break;
         }
     }
 
-    // some strange error occurred...
-    QContactData::setError(d, QContact::UnspecifiedError);
-    return QContactDetail();
+    return retn;
 }
