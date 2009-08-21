@@ -135,7 +135,69 @@ void Dialog::setupNetwork()
 {
     QSystemNetworkInfo ni;
     ui->wlanCheckBox->setChecked(ni.isWlanReachable());
+    connect(ui->netStrengthComboBox,SIGNAL(activated(int)),
+            this, SLOT(netComboActivated(int)));
+    QString stat;
+    switch(ni.cellNetworkStatus()) {
+    case QSystemNetworkInfo::UndefinedStatus:
+        stat = "Undefined";
+        break;
+    case QSystemNetworkInfo::NoNetworkAvailable:
+        stat = "No Network Available";
+        break;
+    case QSystemNetworkInfo::EmergencyOnly:
+        stat = "Emergency Only";
+        break;
+    case QSystemNetworkInfo::Searching:
+        stat = "Searching";
+        break;
+    case QSystemNetworkInfo::Busy:
+        stat = "Busy";
+        break;
+    case QSystemNetworkInfo::HomeNetwork:
+        stat = "Home Network";
+        break;
+    case QSystemNetworkInfo::Denied:
+        stat = "Denied";
+        break;
+    case QSystemNetworkInfo::Roaming:
+        stat = "Roaming";
+        break;
+    };
+    ui->cellNetworkStatusLabel->setText(stat);
 
+    ui->cellIdLabel->setText(QString::number(ni.cellId()));
+    ui->locationAreaCodeLabel->setText(QString::number(ni.locationAreaCode()));
+    ui->currentMMCLabel->setText(ni.currentMobileCountryCode());
+    ui->currentMNCLabel->setText(ni.currentMobileNetworkCode());
+
+    ui->homeMMCLabel->setText(ni.homeMobileCountryCode());
+    ui->homeMNCLabel->setText(ni.homeMobileNetworkCode());
+    ui->operatorNameLabel->setText(ni.operatorName());
+    }
+
+void Dialog::netComboActivated(int index)
+{
+    QSystemNetworkInfo::NetworkMode mode;
+    switch(index) {
+    case 1:
+        mode = QSystemNetworkInfo::GsmMode;
+        break;
+    case 2:
+        mode = QSystemNetworkInfo::CdmaMode;
+        break;
+    case 3:
+        mode = QSystemNetworkInfo::WcdmaMode;
+        break;
+    case 4:
+        mode = QSystemNetworkInfo::WlanMode;
+        break;
+    case 5:
+        mode = QSystemNetworkInfo::EthMode;
+        break;
+    };
+    QSystemNetworkInfo ni;
+    ui->signalLevelProgressBar->setValue(ni.networkSignalStrength(mode));
 }
 
 void Dialog::getVersion(int index)
