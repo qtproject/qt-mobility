@@ -60,7 +60,7 @@ QObject* QMediaPluginLoader::instance(QString const &key)
 
 void QMediaPluginLoader::load()
 {
-    if (!m_providers.isEmpty())
+    if (!m_instances.isEmpty())
         return;
 
     QStringList     paths = QCoreApplication::libraryPaths();
