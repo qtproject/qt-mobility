@@ -69,7 +69,6 @@
         <keyword ref="qsysteminfo.html#Feature-enum">QSystemInfo::WlanFeature</keyword>
         <keyword ref="qsysteminfo.html#Feature-enum">QSystemInfo::LocationFeature</keyword>
         <keyword ref="qsysteminfo.html#Feature-enum">QSystemInfo::VideoOutFeature</keyword>
-        <keyword ref="qsysteminfo.html#Feature-enum">QSystemInfo::UnknownFeature</keyword>
         <keyword ref="qsysteminfo.html#Feature-enum">QSystemInfo::BluetoothFeature</keyword>
         <keyword ref="qsysteminfo.html#Feature-enum">QSystemInfo::SimFeature</keyword>
         <keyword ref="qsysteminfo.html#Feature-enum">QSystemInfo::FmradioFeature</keyword>

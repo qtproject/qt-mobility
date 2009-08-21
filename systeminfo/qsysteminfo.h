@@ -85,8 +85,7 @@ public:
 
 // features
     enum Feature {
-        UnknownFeature = 0,
-        BluetoothFeature,
+        BluetoothFeature=0,
         CameraFeature,
         FmradioFeature,
         IrFeature,

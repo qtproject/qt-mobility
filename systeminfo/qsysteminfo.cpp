@@ -75,7 +75,6 @@ QT_BEGIN_NAMESPACE
     \enum QSystemInfo::Feature
     This enum describes the features of the device or computer.
 
-    \value UnknownFeature         Unknown feature or error.
     \value BluetoothFeature       Bluetooth feature available.
     \value CameraFeature          Camera feature available.
     \value FmradioFeature         FM Radio feature available.
