@@ -1616,7 +1616,7 @@ void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
             QContactDetailDefinitionRemoveRequest* r = static_cast<QContactDetailDefinitionRemoveRequest*>(req);
             emit r->progress(r);
         }
-        break;
+        // fall through.
 
         default: // unknown request type.
         break;
