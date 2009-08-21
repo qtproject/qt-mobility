@@ -138,7 +138,7 @@ void Dialog::setupNetwork()
     connect(ui->netStrengthComboBox,SIGNAL(activated(int)),
             this, SLOT(netComboActivated(int)));
     QString stat;
-    switch(ni.cellNetworkStatus()) {
+    switch(ni.networkStatus()) {
     case QSystemNetworkInfo::UndefinedStatus:
         stat = "Undefined";
         break;
@@ -153,6 +153,9 @@ void Dialog::setupNetwork()
         break;
     case QSystemNetworkInfo::Busy:
         stat = "Busy";
+        break;
+    case QSystemNetworkInfo::Connected:
+        stat = "Connected";
         break;
     case QSystemNetworkInfo::HomeNetwork:
         stat = "Home Network";

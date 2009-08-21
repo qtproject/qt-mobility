@@ -118,18 +118,19 @@ public:
     QSystemNetworkInfo(QObject *parent = 0);
     ~QSystemNetworkInfo();
 
-    enum CellNetworkStatus {
+    enum NetworkStatus {
         UndefinedStatus = 0,
         NoNetworkAvailable,
         EmergencyOnly,
         Searching,
         Busy,
+        Connected,
         HomeNetwork,
         Denied,
         Roaming
     };
 
-    QSystemNetworkInfo::CellNetworkStatus cellNetworkStatus();
+    QSystemNetworkInfo::NetworkStatus networkStatus();
 
     enum NetworkMode {
         UnknownMode = 0x00000000,

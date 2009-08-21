@@ -427,7 +427,7 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
 }
 
-QSystemNetworkInfo::CellNetworkStatus QSystemNetworkInfoPrivate::cellNetworkStatus()
+QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus()
 {
     return QSystemNetworkInfo::NoNetworkAvailable;
 }

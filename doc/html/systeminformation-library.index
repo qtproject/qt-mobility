@@ -50,17 +50,18 @@
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QSystemNetworkInfo" fullname="QSystemNetworkInfo::~QSystemNetworkInfo" href="qsystemnetworkinfo.html#dtor.QSystemNetworkInfo" location="qsysteminfo.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QSystemNetworkInfo()"/>
-            <enum access="public" threadsafety="unspecified" status="commendable" name="CellNetworkStatus" fullname="QSystemNetworkInfo::CellNetworkStatus" href="qsystemnetworkinfo.html#CellNetworkStatus-enum" location="qsysteminfo.h">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="NetworkStatus" fullname="QSystemNetworkInfo::NetworkStatus" href="qsystemnetworkinfo.html#NetworkStatus-enum" location="qsysteminfo.h">
                 <value name="UndefinedStatus" value="0"/>
                 <value name="NoNetworkAvailable" value="1"/>
                 <value name="EmergencyOnly" value="2"/>
                 <value name="Searching" value="3"/>
                 <value name="Busy" value="4"/>
-                <value name="HomeNetwork" value="5"/>
-                <value name="Denied" value="6"/>
-                <value name="Roaming" value="7"/>
+                <value name="Connected" value="5"/>
+                <value name="HomeNetwork" value="6"/>
+                <value name="Denied" value="7"/>
+                <value name="Roaming" value="8"/>
             </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="cellNetworkStatus" fullname="QSystemNetworkInfo::cellNetworkStatus" href="qsystemnetworkinfo.html#cellNetworkStatus" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QSystemNetworkInfo::CellNetworkStatus" signature="cellNetworkStatus()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="networkStatus" fullname="QSystemNetworkInfo::networkStatus" href="qsystemnetworkinfo.html#networkStatus" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QSystemNetworkInfo::NetworkStatus" signature="networkStatus()"/>
             <enum access="public" threadsafety="unspecified" status="commendable" name="NetworkMode" fullname="QSystemNetworkInfo::NetworkMode" href="qsystemnetworkinfo.html#NetworkMode-enum" location="qsysteminfo.h" typedef="QSystemNetworkInfo::NetworkModes">
                 <value name="UnknownMode" value="0x00000000"/>
                 <value name="GsmMode" value="0x00000001"/>

@@ -97,14 +97,15 @@ QT_BEGIN_NAMESPACE
 
   */
 /*!
-    \enum QSystemNetworkInfo::CellNetworkStatus
+    \enum QSystemNetworkInfo::NetworkStatus
     This enum describes the status of the network connection:
 
     \value UndefinedStatus        There is no network device, or error.
     \value NoNetworkAvailable     There is no network available.
     \value EmergencyOnly          Emergency calls only.
-    \value Searching              Searching for network.
+    \value Searching              Searching for or connecting with the network.
     \value Busy                   Network is busy.
+    \value Connected              Connected to newtwork.
     \value HomeNetwork            On Home Network.
     \value Denied                 Network access denied.
     \value Roaming                On Roaming network.
@@ -319,8 +320,8 @@ QSystemNetworkInfo::~QSystemNetworkInfo()
 /*!
     Returns the status of the cell network.
 */
-QSystemNetworkInfo::CellNetworkStatus QSystemNetworkInfo::cellNetworkStatus() {
-    return d->cellNetworkStatus();
+QSystemNetworkInfo::NetworkStatus QSystemNetworkInfo::networkStatus() {
+    return d->networkStatus();
 }
 
 /*!
