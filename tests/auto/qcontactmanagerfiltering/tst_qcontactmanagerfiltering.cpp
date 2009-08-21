@@ -49,6 +49,13 @@ Q_DECLARE_METATYPE(QVariant)
 Q_DECLARE_METATYPE(QContactManager*)
 Q_DECLARE_METATYPE(QList<QUniqueId>)
 
+/*
+ * Global variables:
+ * These are the definition and field names used by the actions for their matching.
+ */
+QMap<QString, QPair<QString, QString> > defAndFieldNamesForTypeForActions;
+
+
 class tst_QContactManagerFiltering : public QObject
 {
 Q_OBJECT
@@ -1927,7 +1934,8 @@ void tst_QContactManagerFiltering::actionFiltering()
     QFETCH(QVariant, value);
     QFETCH(QString, expected);
 
-    QSKIP("The actions currently use predefined definition names; skipping test.  FIXME!", SkipSingle);
+    /* Load the definition and field names for the various variant types for the current manager */
+    defAndFieldNamesForTypeForActions = defAndFieldNamesForTypePerManager.value(cm);
 
     QContactActionFilter af;
     af.setActionName(actionName);
@@ -2639,13 +2647,15 @@ public:
     QContactFilter contactFilter(const QVariant& value) const
     {
         QContactDetailFilter df;
-        df.setDetailDefinitionName("Integer", "value");
+        QPair<QString, QString> defAndFieldName = defAndFieldNamesForTypeForActions.value("Integer");
+        df.setDetailDefinitionName(defAndFieldName.first, defAndFieldName.second);
         df.setValue(value);
         return df;
     }
     bool supportsDetail(const QContactDetail& detail) const
     {
-        return detail.definitionName() == "Integer" && !detail.variantValue("value").isNull();
+        return detail.definitionName() == defAndFieldNamesForTypeForActions.value("Integer").first
+                && !detail.variantValue(defAndFieldNamesForTypeForActions.value("Integer").second).isNull();
     }
 
     void performAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
@@ -2672,11 +2682,13 @@ public:
     QContactFilter contactFilter(const QVariant& value) const
     {
         QContactDetailFilter df;
-        df.setDetailDefinitionName("Double", "value");
+        QPair<QString, QString> defAndFieldName = defAndFieldNamesForTypeForActions.value("Double");
+        df.setDetailDefinitionName(defAndFieldName.first, defAndFieldName.second);
         df.setValue(value);
 
         QContactDetailFilter df2;
-        df2.setDetailDefinitionName("Integer", "value");
+        defAndFieldName = defAndFieldNamesForTypeForActions.value("Integer");
+        df2.setDetailDefinitionName(defAndFieldName.first, defAndFieldName.second);
         df2.setValue(value);
 
         /* We like either doubles or integers */
@@ -2684,10 +2696,16 @@ public:
     }
     bool supportsDetail(const QContactDetail& detail) const
     {
-        if (detail.definitionName() == "Double" && !detail.variantValue("value").isNull())
+        if (detail.definitionName() == defAndFieldNamesForTypeForActions.value("Double").first
+                && !detail.variantValue(defAndFieldNamesForTypeForActions.value("Double").second).isNull()) {
             return true;
-        if (detail.definitionName() == "Integer" && !detail.variantValue("value").isNull())
+        }
+
+        if (detail.definitionName() == defAndFieldNamesForTypeForActions.value("Integer").first
+                && !detail.variantValue(defAndFieldNamesForTypeForActions.value("Integer").second).isNull()) {
             return true;
+        }
+
         return false;
     }
 
@@ -2717,7 +2735,8 @@ public:
         if (value.isNull() || (value.type() == QVariant::Bool && value.toBool() == true)) {
             /* This only likes bools that are true */
             QContactDetailFilter df;
-            df.setDetailDefinitionName("Bool", "value");
+            QPair<QString, QString> defAndFieldName = defAndFieldNamesForTypeForActions.value("Bool");
+            df.setDetailDefinitionName(defAndFieldName.first, defAndFieldName.second);
             df.setValue(true);
             return df;
         } else {
@@ -2726,7 +2745,8 @@ public:
     }
     bool supportsDetail(const QContactDetail& detail) const
     {
-        return detail.definitionName() == "Bool" && (detail.value<bool>("value") == true);
+        return detail.definitionName() == defAndFieldNamesForTypeForActions.value("Bool").first
+                && (detail.value<bool>(defAndFieldNamesForTypeForActions.value("Bool").second) == true);
     }
 
     void performAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
