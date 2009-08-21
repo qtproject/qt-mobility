@@ -37,30 +37,35 @@
 
 #include <qmediaresource.h>
 #include <qabstractmediaobject.h>
-#include <qmediaplaylistnavigator.h>
 
 #include <QtCore/qobject.h>
 
-class QMediaPlaylistSource;
+class QMediaPlaylistProvider;
 
 class QMediaPlaylistPrivate;
 class Q_MEDIA_EXPORT QMediaPlaylist : public QObject
 {
     Q_OBJECT
 
+    Q_ENUMS(PlaybackMode)
+
     Q_PROPERTY(QMediaPlaylistProvider* playlistProvider READ playlistProvider WRITE setPlaylistProvider NOTIFY playlistProviderChanged)
+    Q_PROPERTY(QMediaPlaylist::PlaybackMode playbackMode READ playbackMode WRITE setPlaybackMode NOTIFY playbackModeChanged)
     Q_PROPERTY(QMediaResourceList currentResources READ currentResources NOTIFY currentResourcesChanged)
     Q_PROPERTY(int currentPosition READ currentPosition WRITE setCurrentPosition NOTIFY playlistPositionChanged)
 
 public:
+
+    enum PlaybackMode { CurrentItemOnce, CurrentItemInLoop, Linear, Loop, Random };
+
     QMediaPlaylist(QAbstractMediaObject *mediaObject = 0, QObject *parent = 0);
     virtual ~QMediaPlaylist();
 
     QMediaPlaylistProvider* playlistProvider() const;
     bool setPlaylistProvider(QMediaPlaylistProvider *playlist);
 
-    QMediaPlaylistNavigator::PlaybackMode playbackMode() const;
-    void setPlaybackMode(QMediaPlaylistNavigator::PlaybackMode mode);
+    PlaybackMode playbackMode() const;
+    void setPlaybackMode(PlaybackMode mode);
 
     int currentPosition() const;
     QMediaResource currentResource() const;
@@ -101,7 +106,7 @@ Q_SIGNALS:
     void playlistProviderChanged();
 
     void playlistPositionChanged(int position);
-    void playbackModeChanged(QMediaPlaylistNavigator::PlaybackMode mode);
+    void playbackModeChanged(QMediaPlaylist::PlaybackMode mode);
     void currentResourcesChanged(const QMediaResourceList&);
 
     void itemsAboutToBeInserted(int start, int end);

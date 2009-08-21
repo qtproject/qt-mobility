@@ -64,12 +64,12 @@ bool MpdPlaylistControl::setPlaylistProvider(QMediaPlaylistProvider *mediaPlayli
     return false;
 }
 
-QMediaPlaylistNavigator::PlaybackMode MpdPlaylistControl::playbackMode() const
+QMediaPlaylist::PlaybackMode MpdPlaylistControl::playbackMode() const
 {
-    return QMediaPlaylistNavigator::Linear;
+    return QMediaPlaylist::Linear;
 }
 
-void MpdPlaylistControl::setPlaybackMode(QMediaPlaylistNavigator::PlaybackMode mode)
+void MpdPlaylistControl::setPlaybackMode(QMediaPlaylist::PlaybackMode mode)
 {
     Q_UNUSED(mode);
     return;

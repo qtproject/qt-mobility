@@ -43,7 +43,7 @@ QWmpPlaylistControl::QWmpPlaylistControl(IWMPCore3 *player, QWmpEvents *events, 
     , m_player(player)
     , m_controls(0)
     , m_playlist(new QWmpPlaylist(player, events))
-    , m_playbackMode(QMediaPlaylistNavigator::Linear)
+    , m_playbackMode(QMediaPlaylist::Linear)
 {
     m_player->get_controls(&m_controls);
 
@@ -122,12 +122,12 @@ void QWmpPlaylistControl::back()
         m_controls->previous();
 }
 
-QMediaPlaylistNavigator::PlaybackMode QWmpPlaylistControl::playbackMode() const
+QMediaPlaylist::PlaybackMode QWmpPlaylistControl::playbackMode() const
 {
     return m_playbackMode;
 }
 
-void QWmpPlaylistControl::setPlaybackMode(QMediaPlaylistNavigator::PlaybackMode mode)
+void QWmpPlaylistControl::setPlaybackMode(QMediaPlaylist::PlaybackMode mode)
 {
     m_playbackMode = mode;
 }
