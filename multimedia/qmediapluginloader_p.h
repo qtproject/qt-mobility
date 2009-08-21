@@ -36,7 +36,7 @@
 #define QMEDIAPLUGINLOADER_H
 
 #include <QtCore/qstring.h>
-#include <QtCore/qset.h>
+#include <QtCore/qmap.h>
 
 class QMediaServiceProviderPlugin;
 
@@ -56,8 +56,8 @@ private:
 
     QByteArray  m_iid;
     QString     m_location;
-    QSet<QString> m_keys;
-    QList<QMediaServiceProviderPlugin*> m_providers;
+    QMap<QString, QObject*> m_instances;
+    QList<QFactoryInterface*> m_providers;
 };
 
 #endif  // QMEDIAPLUGINLOADER_H

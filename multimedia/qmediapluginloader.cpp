@@ -50,17 +50,12 @@ QMediaPluginLoader::QMediaPluginLoader(const char *iid, const QString &location,
 
 QStringList QMediaPluginLoader::keys() const
 {
-    return m_keys.toList();
+    return m_instances.keys();
 }
 
 QObject* QMediaPluginLoader::instance(QString const &key)
 {
-    foreach (QMediaServiceProviderPlugin* plugin, m_providers) {
-        if (plugin->keys().contains(key))
-            return plugin;
-    }
-
-    return 0;
+    return m_instances[key];
 }
 
 void QMediaPluginLoader::load()
@@ -82,12 +77,10 @@ void QMediaPluginLoader::load()
 
             QObject *o = loader.instance();
             if (o != 0 && o->qt_metacast(m_iid) != 0) {
-                QMediaServiceProviderPlugin* p = qobject_cast<QMediaServiceProviderPlugin*>(o);
+                QFactoryInterface* p = qobject_cast<QFactoryInterface*>(o);
                 if (p != 0) {
                     foreach (QString const &key, p->keys())
-                        m_keys << key;
-
-                    m_providers << p;
+                        m_instances.insert(key, o);
                 }
 
                 continue;
