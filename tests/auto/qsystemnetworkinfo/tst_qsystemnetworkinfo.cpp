@@ -74,15 +74,25 @@ void tst_QSystemNetworkInfo::initTestCase()
 void tst_QSystemNetworkInfo::tst_networkStatus()
 {
     QSystemNetworkInfo ni;
-    QSystemNetworkInfo::NetworkStatus status = ni.networkStatus();
-    QVERIFY( status == QSystemNetworkInfo::UndefinedStatus
-             || status == QSystemNetworkInfo::NoNetworkAvailable
-             || status == QSystemNetworkInfo::EmergencyOnly
-             || status == QSystemNetworkInfo::Searching
-             || status == QSystemNetworkInfo::Busy
-             || status == QSystemNetworkInfo::HomeNetwork
-             || status == QSystemNetworkInfo::Denied
-             || status == QSystemNetworkInfo::Roaming);
+    QList<QSystemNetworkInfo::NetworkMode> modeList;
+    modeList << QSystemNetworkInfo::GsmMode;
+    modeList << QSystemNetworkInfo::CdmaMode;
+    modeList << QSystemNetworkInfo::WcdmaMode;
+    modeList << QSystemNetworkInfo::WlanMode;
+    modeList << QSystemNetworkInfo::EthMode;
+    foreach(QSystemNetworkInfo::NetworkMode mode, modeList) {
+        QSystemNetworkInfo::NetworkStatus status = ni.networkStatus(mode);
+
+        QVERIFY( status == QSystemNetworkInfo::UndefinedStatus
+                 || status == QSystemNetworkInfo::NoNetworkAvailable
+                 || status == QSystemNetworkInfo::EmergencyOnly
+                 || status == QSystemNetworkInfo::Searching
+                 || status == QSystemNetworkInfo::Busy
+                 || status == QSystemNetworkInfo::Connected
+                 || status == QSystemNetworkInfo::HomeNetwork
+                 || status == QSystemNetworkInfo::Denied
+                 || status == QSystemNetworkInfo::Roaming);
+    }
 
 }
 
