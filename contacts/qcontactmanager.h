@@ -113,9 +113,9 @@ public:
 
     /* Definitions - Accessors and Mutators */
     QMap<QString, QContactDetailDefinition> detailDefinitions() const;
-    QContactDetailDefinition detailDefinition(const QString& definitionId) const;
+    QContactDetailDefinition detailDefinition(const QString& definitionName) const;
     bool saveDetailDefinition(const QContactDetailDefinition& def);
-    bool removeDetailDefinition(const QString& definitionId);
+    bool removeDetailDefinition(const QString& definitionName);
 
     /* Functionality reporting */
     QContactManagerInfo* information() const;

@@ -490,10 +490,10 @@ QMap<QString, QContactDetailDefinition> QContactManager::detailDefinitions() con
     return d->m_engine->detailDefinitions(d->m_error);
 }
 
-/*! Returns the definition identified by the given \a definitionId that is valid for the contacts in this store, or a default-constructed QContactDetailDefinition if no such definition exists */
-QContactDetailDefinition QContactManager::detailDefinition(const QString& definitionId) const
+/*! Returns the definition identified by the given \a definitionName that is valid for the contacts in this store, or a default-constructed QContactDetailDefinition if no such definition exists */
+QContactDetailDefinition QContactManager::detailDefinition(const QString& definitionName) const
 {
-    return d->m_engine->detailDefinition(definitionId, d->m_error);
+    return d->m_engine->detailDefinition(definitionName, d->m_error);
 }
 
 /*! Persists the given definition \a def in the database.  Returns true if the definition was saved successfully, otherwise returns false */
@@ -502,10 +502,10 @@ bool QContactManager::saveDetailDefinition(const QContactDetailDefinition& def)
     return d->m_engine->saveDetailDefinition(def, d->m_error);
 }
 
-/*! Removes the detail definition identified by \a definitionId from the database.  Returns true if the definition was removed successfully, otherwise returns false */
-bool QContactManager::removeDetailDefinition(const QString& definitionId)
+/*! Removes the detail definition identified by \a definitionName from the database.  Returns true if the definition was removed successfully, otherwise returns false */
+bool QContactManager::removeDetailDefinition(const QString& definitionName)
 {
-    return d->m_engine->removeDetailDefinition(definitionId, d->m_error);
+    return d->m_engine->removeDetailDefinition(definitionName, d->m_error);
 }
 
 /*!

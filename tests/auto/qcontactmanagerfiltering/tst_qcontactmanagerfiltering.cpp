@@ -63,11 +63,14 @@ private:
     void dumpContacts();
     bool isSuperset(const QContact& ca, const QContact& cb);
 
+    QPair<QString, QString> definitionAndField(QContactManager *cm, QVariant::Type type, bool *nativelyFilterable);
     QList<QUniqueId> prepareModel(QContactManager* cm); // add the standard contacts
-
     QString convertIds(QList<QUniqueId> allIds, QList<QUniqueId> ids); // convert back to "abcd"
 
-    QList<QContactManager*> cleanupStack;
+    QMap<QContactManager*, QMap<QString, QPair<QString, QString> > > defAndFieldNamesForTypePerManager;
+    QMultiMap<QContactManager*, QUniqueId> contactsAddedToManagers;
+    QMultiMap<QContactManager*, QString> detailDefinitionsAddedToManagers;
+    QList<QContactManager*> managers;
 
 private slots:
     void rangeFiltering(); // XXX should take all managers
@@ -104,19 +107,56 @@ private slots:
     void multiSorting();
     void multiSorting_data();
 
+    void invalidFiltering_data();
     void invalidFiltering();
+
+    void allFiltering_data();
     void allFiltering();
 };
 
 tst_QContactManagerFiltering::tst_QContactManagerFiltering()
 {
+    // firstly, build a list of the managers we wish to test.
+    QContactManager *manager = new QContactManager("memory");
+    managers.append(manager);
+
+    // for each manager that we wish to test, prepare the model.
+    foreach (QContactManager* cm, managers) {
+        QList<QUniqueId> addedContacts = prepareModel(cm);
+        if (addedContacts != contactsAddedToManagers.values(cm)) {
+            qDebug() << "prepareModel returned:" << addedContacts;
+            qDebug() << "contactsAdded are:    " << contactsAddedToManagers.values(cm);
+            Q_ASSERT_X(false, "prepareModel", "returned list different from saved contacts list!");
+        }
+    }
+
+    qDebug() << "Finished preparing each manager for test!";
 }
 
 tst_QContactManagerFiltering::~tst_QContactManagerFiltering()
 {
-    // Cleanup whatever is left over
-    qDeleteAll(cleanupStack);
-    cleanupStack.clear();
+    // first, remove any contacts that we've added to any managers.
+    foreach (QContactManager* manager, managers) {
+        QList<QUniqueId> contactIds = contactsAddedToManagers.values(manager);
+        foreach (const QUniqueId& cid, contactIds) {
+            manager->removeContact(cid);
+        }
+    }
+    contactsAddedToManagers.clear();
+
+    // then, remove any detail definitions that we've added.
+    foreach (QContactManager* manager, managers) {
+        QStringList definitionNames = detailDefinitionsAddedToManagers.values(manager);
+        foreach (const QString& definitionName, definitionNames) {
+            manager->removeDetailDefinition(definitionName);
+        }
+    }
+    detailDefinitionsAddedToManagers.clear();
+
+    // finally, we can delete all of our manager instances
+    qDeleteAll(managers);
+    managers.clear();
+    defAndFieldNamesForTypePerManager.clear();
 }
 
 QString tst_QContactManagerFiltering::convertIds(QList<QUniqueId> allIds, QList<QUniqueId> ids)
@@ -132,6 +172,7 @@ QString tst_QContactManagerFiltering::convertIds(QList<QUniqueId> allIds, QList<
 
 void tst_QContactManagerFiltering::detailStringFiltering_data()
 {
+    QTest::addColumn<QContactManager *>("cm");
     QTest::addColumn<QString>("defname");
     QTest::addColumn<QString>("fieldname");
     QTest::addColumn<QVariant>("value");
@@ -144,62 +185,62 @@ void tst_QContactManagerFiltering::detailStringFiltering_data()
     QString name = QContactName::DefinitionName;
     QString firstname = QContactName::FieldFirst;
 
-    QTest::newRow("Name == Aaron") << name << firstname << QVariant("Aaron") << 0 << "a";
-    QTest::newRow("Name == aaron") << name << firstname << QVariant("aaron") << 0 << "a";
-    QTest::newRow("Name == Aaron, case sensitive") << name << firstname << QVariant("Aaron") << (int)(Qt::MatchCaseSensitive) << "a";
-    QTest::newRow("Name == aaron, case sensitive") << name << firstname << QVariant("aaron") << (int)(Qt::MatchCaseSensitive) << es;
+    for (int i = 0; i < managers.size(); i++) {
+        QContactManager *manager = managers.at(i);
+        QTest::newRow("Name == Aaron") << manager << name << firstname << QVariant("Aaron") << 0 << "a";
+        QTest::newRow("Name == aaron") << manager << name << firstname << QVariant("aaron") << 0 << "a";
+        QTest::newRow("Name == Aaron, case sensitive") << manager << name << firstname << QVariant("Aaron") << (int)(Qt::MatchCaseSensitive) << "a";
+        QTest::newRow("Name == aaron, case sensitive") << manager << name << firstname << QVariant("aaron") << (int)(Qt::MatchCaseSensitive) << es;
 
-    QTest::newRow("Name == Aaron, begins") << name << firstname << QVariant("Aaron") << (int)(Qt::MatchStartsWith) << "a";
-    QTest::newRow("Name == aaron, begins") << name << firstname << QVariant("aaron") << (int)(Qt::MatchStartsWith) << "a";
-    QTest::newRow("Name == Aaron, begins, case sensitive") << name << firstname << QVariant("Aaron") << (int)(Qt::MatchStartsWith | Qt::MatchCaseSensitive) << "a";
-    QTest::newRow("Name == aaron, begins, case sensitive") << name << firstname << QVariant("aaron") << (int)(Qt::MatchStartsWith | Qt::MatchCaseSensitive) << es;
+        QTest::newRow("Name == Aaron, begins") << manager << name << firstname << QVariant("Aaron") << (int)(Qt::MatchStartsWith) << "a";
+        QTest::newRow("Name == aaron, begins") << manager << name << firstname << QVariant("aaron") << (int)(Qt::MatchStartsWith) << "a";
+        QTest::newRow("Name == Aaron, begins, case sensitive") << manager << name << firstname << QVariant("Aaron") << (int)(Qt::MatchStartsWith | Qt::MatchCaseSensitive) << "a";
+        QTest::newRow("Name == aaron, begins, case sensitive") << manager << name << firstname << QVariant("aaron") << (int)(Qt::MatchStartsWith | Qt::MatchCaseSensitive) << es;
 
-    QTest::newRow("Name == Aar, begins") << name << firstname << QVariant("Aar") << (int)(Qt::MatchStartsWith) << "a";
-    QTest::newRow("Name == aar, begins") << name << firstname << QVariant("aar") << (int)(Qt::MatchStartsWith) << "a";
-    QTest::newRow("Name == Aar, begins, case sensitive") << name << firstname << QVariant("Aar") << (int)(Qt::MatchStartsWith | Qt::MatchCaseSensitive) << "a";
-    QTest::newRow("Name == aar, begins, case sensitive") << name << firstname << QVariant("aar") << (int)(Qt::MatchStartsWith | Qt::MatchCaseSensitive) << es;
+        QTest::newRow("Name == Aar, begins") << manager << name << firstname << QVariant("Aar") << (int)(Qt::MatchStartsWith) << "a";
+        QTest::newRow("Name == aar, begins") << manager << name << firstname << QVariant("aar") << (int)(Qt::MatchStartsWith) << "a";
+        QTest::newRow("Name == Aar, begins, case sensitive") << manager << name << firstname << QVariant("Aar") << (int)(Qt::MatchStartsWith | Qt::MatchCaseSensitive) << "a";
+        QTest::newRow("Name == aar, begins, case sensitive") << manager << name << firstname << QVariant("aar") << (int)(Qt::MatchStartsWith | Qt::MatchCaseSensitive) << es;
 
-    QTest::newRow("Name == aro, contains") << name << firstname << QVariant("aro") << (int)(Qt::MatchContains) << "a";
-    QTest::newRow("Name == ARO, contains") << name << firstname << QVariant("ARO") << (int)(Qt::MatchContains) << "a";
-    QTest::newRow("Name == aro, contains, case sensitive") << name << firstname << QVariant("aro") << (int)(Qt::MatchContains | Qt::MatchCaseSensitive) << "a";
-    QTest::newRow("Name == ARO, contains, case sensitive") << name << firstname << QVariant("ARO") << (int)(Qt::MatchContains | Qt::MatchCaseSensitive) << es;
+        QTest::newRow("Name == aro, contains") << manager << name << firstname << QVariant("aro") << (int)(Qt::MatchContains) << "a";
+        QTest::newRow("Name == ARO, contains") << manager << name << firstname << QVariant("ARO") << (int)(Qt::MatchContains) << "a";
+        QTest::newRow("Name == aro, contains, case sensitive") << manager << name << firstname << QVariant("aro") << (int)(Qt::MatchContains | Qt::MatchCaseSensitive) << "a";
+        QTest::newRow("Name == ARO, contains, case sensitive") << manager << name << firstname << QVariant("ARO") << (int)(Qt::MatchContains | Qt::MatchCaseSensitive) << es;
 
-    QTest::newRow("Name == ron, ends") << name << firstname << QVariant("ron") << (int)(Qt::MatchEndsWith) << "a";
-    QTest::newRow("Name == ARON, ends") << name << firstname << QVariant("ARON") << (int)(Qt::MatchEndsWith) << "a";
-    QTest::newRow("Name == aron, ends, case sensitive") << name << firstname << QVariant("aron") << (int)(Qt::MatchEndsWith | Qt::MatchCaseSensitive) << "a";
-    QTest::newRow("Name == ARON, ends, case sensitive") << name << firstname << QVariant("ARON") << (int)(Qt::MatchEndsWith | Qt::MatchCaseSensitive) << es;
+        QTest::newRow("Name == ron, ends") << manager << name << firstname << QVariant("ron") << (int)(Qt::MatchEndsWith) << "a";
+        QTest::newRow("Name == ARON, ends") << manager << name << firstname << QVariant("ARON") << (int)(Qt::MatchEndsWith) << "a";
+        QTest::newRow("Name == aron, ends, case sensitive") << manager << name << firstname << QVariant("aron") << (int)(Qt::MatchEndsWith | Qt::MatchCaseSensitive) << "a";
+        QTest::newRow("Name == ARON, ends, case sensitive") << manager << name << firstname << QVariant("ARON") << (int)(Qt::MatchEndsWith | Qt::MatchCaseSensitive) << es;
 
-    QTest::newRow("Name == Aaron, fixed") << name << firstname << QVariant("Aaron") << (int)(Qt::MatchFixedString) << "a";
-    QTest::newRow("Name == aaron, fixed") << name << firstname << QVariant("aaron") << (int)(Qt::MatchFixedString) << "a";
-    QTest::newRow("Name == Aaron, fixed, case sensitive") << name << firstname << QVariant("Aaron") << (int)(Qt::MatchFixedString | Qt::MatchCaseSensitive) << "a";
-    QTest::newRow("Name == aaron, fixed, case sensitive") << name << firstname << QVariant("aaron") << (int)(Qt::MatchFixedString | Qt::MatchCaseSensitive) << es;
+        QTest::newRow("Name == Aaron, fixed") << manager << name << firstname << QVariant("Aaron") << (int)(Qt::MatchFixedString) << "a";
+        QTest::newRow("Name == aaron, fixed") << manager << name << firstname << QVariant("aaron") << (int)(Qt::MatchFixedString) << "a";
+        QTest::newRow("Name == Aaron, fixed, case sensitive") << manager << name << firstname << QVariant("Aaron") << (int)(Qt::MatchFixedString | Qt::MatchCaseSensitive) << "a";
+        QTest::newRow("Name == aaron, fixed, case sensitive") << manager << name << firstname << QVariant("aaron") << (int)(Qt::MatchFixedString | Qt::MatchCaseSensitive) << es;
 
-    /* Converting other types to strings */
-    QTest::newRow("integer == 20") << "Integer" << "value" << QVariant("20") << 0 << es;
-    QTest::newRow("integer == 20, as string") << "Integer" << "value" << QVariant("20") << (int)(Qt::MatchFixedString) << "b";
-    QTest::newRow("integer == 20, begins with, string") << "Integer" << "value" << QVariant("20") << (int)(Qt::MatchFixedString | Qt::MatchStartsWith) << "b";
-    QTest::newRow("integer == 2, begins with, string") << "Integer" << "value" << QVariant("2") << (int)(Qt::MatchFixedString | Qt::MatchStartsWith) << "b";
-    QTest::newRow("integer == 20, ends with, string") << "Integer" << "value" << QVariant("20") << (int)(Qt::MatchFixedString | Qt::MatchEndsWith) << "bc";
-    QTest::newRow("integer == 0, ends with, string") << "Integer" << "value" << QVariant("0") << (int)(Qt::MatchFixedString | Qt::MatchEndsWith) << "abc";
-    QTest::newRow("integer == 20, contains, string") << "Integer" << "value" << QVariant("20") << (int)(Qt::MatchFixedString | Qt::MatchContains) << "bc";
-    QTest::newRow("integer == 0, contains, string") << "Integer" << "value" << QVariant("0") << (int)(Qt::MatchFixedString | Qt::MatchContains) << "abc";
+        /* Converting other types to strings */
+        QPair<QString, QString> defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Integer");
+        QTest::newRow("integer == 20") << manager << defAndFieldNames.first << defAndFieldNames.second << QVariant("20") << 0 << es;
+        QTest::newRow("integer == 20, as string") << manager << defAndFieldNames.first << defAndFieldNames.second << QVariant("20") << (int)(Qt::MatchFixedString) << "b";
+        QTest::newRow("integer == 20, begins with, string") << manager << defAndFieldNames.first << defAndFieldNames.second << QVariant("20") << (int)(Qt::MatchFixedString | Qt::MatchStartsWith) << "b";
+        QTest::newRow("integer == 2, begins with, string") << manager << defAndFieldNames.first << defAndFieldNames.second << QVariant("2") << (int)(Qt::MatchFixedString | Qt::MatchStartsWith) << "b";
+        QTest::newRow("integer == 20, ends with, string") << manager << defAndFieldNames.first << defAndFieldNames.second << QVariant("20") << (int)(Qt::MatchFixedString | Qt::MatchEndsWith) << "bc";
+        QTest::newRow("integer == 0, ends with, string") << manager << defAndFieldNames.first << defAndFieldNames.second << QVariant("0") << (int)(Qt::MatchFixedString | Qt::MatchEndsWith) << "abc";
+        QTest::newRow("integer == 20, contains, string") << manager << defAndFieldNames.first << defAndFieldNames.second << QVariant("20") << (int)(Qt::MatchFixedString | Qt::MatchContains) << "bc";
+        QTest::newRow("integer == 0, contains, string") << manager << defAndFieldNames.first << defAndFieldNames.second << QVariant("0") << (int)(Qt::MatchFixedString | Qt::MatchContains) << "abc";
+    }
 }
 
 void tst_QContactManagerFiltering::detailStringFiltering()
 {
+    QFETCH(QContactManager*, cm);
     QFETCH(QString, defname);
     QFETCH(QString, fieldname);
     QFETCH(QVariant, value);
     QFETCH(QString, expected);
     QFETCH(int, matchflags);
 
-    /* Try the memory database first */
-    QContactManager* cm = new QContactManager("memory");
-
-    QList<QUniqueId> contacts = prepareModel(cm);
+    QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
     QList<QUniqueId> ids;
-
-    QVERIFY(contacts.count() == 4);
 
     QContactDetailFilter df;
     df.setDetailDefinitionName(defname, fieldname);
@@ -214,12 +255,11 @@ void tst_QContactManagerFiltering::detailStringFiltering()
     QString output = convertIds(contacts, ids);
     QEXPECT_FAIL("integer == 20", "Not sure if this should pass or fail", Continue);
     QCOMPARE(output, expected);
-
-    delete cm;
 }
 
 void tst_QContactManagerFiltering::detailVariantFiltering_data()
 {
+    QTest::addColumn<QContactManager *>("cm");
     QTest::addColumn<QString>("defname");
     QTest::addColumn<QString>("fieldname");
     QTest::addColumn<bool>("setValue");
@@ -229,229 +269,219 @@ void tst_QContactManagerFiltering::detailVariantFiltering_data()
     QVariant ev; // empty variant
     QString es; // empty string
 
-    /* Nothings */
-    QTest::newRow("no name") << es << es << false << ev << es;
-    QTest::newRow("no def name") << es << "value" << false << ev << es;
+    for (int i = 0; i < managers.size(); i++) {
+        QContactManager *manager = managers.at(i);
 
-    /* Strings (name) */
-    QTest::newRow("first name presence") << "Name" << QString(QLatin1String(QContactName::FieldFirst)) << false << ev << "abcd";
-    QTest::newRow("first name == Aaron") << "Name" << QString(QLatin1String(QContactName::FieldFirst)) << true << QVariant("Aaron") << "a";
+        /* Nothings */
+        QTest::newRow("no name") << manager << es << es << false << ev << es;
+        QTest::newRow("no def name") << manager << es << "value" << false << ev << es;
 
-    /*
-     * Doubles
-     * B has double(4.0)
-     * C has double(4.0)
-     * D has double(-128.0)
-     */
-    QTest::newRow("double presence") << "Double" << es << false << ev << "bcd";
-    QTest::newRow("double presence (inc field)") << "Double" << "value" << false << ev << "bcd";
-    QTest::newRow("double presence (wrong field)") << "Double" << "Trouble" << false << ev << es;
+        /* Strings (name) */
+        QTest::newRow("first name presence") << manager << "Name" << QString(QLatin1String(QContactName::FieldFirst)) << false << ev << "abcdefg";
+        QTest::newRow("first name == Aaron") << manager << "Name" << QString(QLatin1String(QContactName::FieldFirst)) << true << QVariant("Aaron") << "a";
 
-    QTest::newRow("double value (no match)") << "Double" << "value" << true << QVariant(3.5) << es;
-    QTest::newRow("double value (wrong type)") << "Double" << "value" << true << QVariant(QDateTime()) << es;
-//    QTest::newRow("double value (string type)") << "Double" << "value" << true << QVariant("4.0") << es;
-    QTest::newRow("double value (wrong field, no match)") << "Double" << "Trouble" << true << QVariant(3.5) << es;
-    QTest::newRow("double value") << "Double" << "value" << true << QVariant(4.0) << "bc";
-    QTest::newRow("double value (wrong field)") << "Double" << "Trouble" << true << QVariant(4.0) << es;
-    QTest::newRow("double value 2") << "Double" << "value" << true << QVariant(-128.0) << "d";
-    QTest::newRow("double value 2 (wrong field)") << "Double" << "Trouble" << true << QVariant(-128.0) << es;
+        /*
+         * Doubles
+         * B has double(4.0)
+         * C has double(4.0)
+         * D has double(-128.0)
+         */
+        QPair<QString, QString> defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Double");
+        QTest::newRow("double presence") << manager << defAndFieldNames.first << es << false << ev << "bcd";
+        QTest::newRow("double presence (inc field)") << manager << defAndFieldNames.first << defAndFieldNames.second << false << ev << "bcd";
+        QTest::newRow("double presence (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << false << ev << es;
+        QTest::newRow("double value (no match)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(3.5) << es;
+        QTest::newRow("double value (wrong type)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(QDateTime()) << es;
+        QTest::newRow("double value (wrong field, no match)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(3.5) << es;
+        QTest::newRow("double value") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(4.0) << "bc";
+        QTest::newRow("double value (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(4.0) << es;
+        QTest::newRow("double value 2") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(-128.0) << "d";
+        QTest::newRow("double value 2 (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(-128.0) << es;
 
-    /*
-     * Integers
-     * A has 10
-     * B has 20
-     * C has -20
-     */
-    QTest::newRow("integer presence") << "Integer" << es << false << ev << "abc";
-    QTest::newRow("integer presence (inc field)") << "Integer" << "value" << false << ev << "abc";
-    QTest::newRow("integer presence (wrong field)") << "Integer" << "Trouble" << false << ev << es;
+        /*
+         * Integers
+         * A has 10
+         * B has 20
+         * C has -20
+         */
+        defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Integer");
+        QTest::newRow("integer presence") << manager << defAndFieldNames.first << es << false << ev << "abc";
+        QTest::newRow("integer presence (inc field)") << manager << defAndFieldNames.first << defAndFieldNames.second << false << ev << "abc";
+        QTest::newRow("integer presence (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << false << ev << es;
+        QTest::newRow("integer value (no match)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(50) << es;
+        QTest::newRow("integer value (wrong type)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(3.5) << es;
+        QTest::newRow("integer value (wrong field, no match)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(50) << es;
+        QTest::newRow("integer value") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(10) << "a";
+        QTest::newRow("integer value (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(10) << es;
+        QTest::newRow("integer value 2") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(-20) << "c";
+        QTest::newRow("integer value 2 (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(-20) << es;
 
-    QTest::newRow("integer value (no match)") << "Integer" << "value" << true << QVariant(50) << es;
-    QTest::newRow("integer value (wrong type)") << "Integer" << "value" << true << QVariant(3.5) << es;
-//    QTest::newRow("integer value (string type)") << "Integer" << "value" << true << QVariant("20") << es;
-    QTest::newRow("integer value (wrong field, no match)") << "Integer" << "Trouble" << true << QVariant(50) << es;
-    QTest::newRow("integer value") << "Integer" << "value" << true << QVariant(10) << "a";
-    QTest::newRow("integer value (wrong field)") << "Integer" << "Trouble" << true << QVariant(10) << es;
-    QTest::newRow("integer value 2") << "Integer" << "value" << true << QVariant(-20) << "c";
-    QTest::newRow("integer value 2 (wrong field)") << "Integer" << "Trouble" << true << QVariant(-20) << es;
+        /*
+         * Date times
+         * A has QDateTime(QDate(2009, 06, 29), QTime(16, 52, 23, 0))
+         * C has QDateTime(QDate(2009, 06, 29), QTime(16, 54, 17, 0))
+         */
+        const QDateTime adt(QDate(2009, 06, 29), QTime(16, 52, 23, 0));
+        const QDateTime cdt(QDate(2009, 06, 29), QTime(16, 54, 17, 0));
 
-    /*
-     * Date times
-     * A has QDateTime(QDate(2009, 06, 29), QTime(16, 52, 23, 0))
-     * C has QDateTime(QDate(2009, 06, 29), QTime(16, 54, 17, 0))
-     */
-    const QDateTime adt(QDate(2009, 06, 29), QTime(16, 52, 23, 0));
-    const QDateTime cdt(QDate(2009, 06, 29), QTime(16, 54, 17, 0));
+        defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("DateTime");
+        QTest::newRow("datetime presence") << manager << defAndFieldNames.first << es << false << ev << "ac";
+        QTest::newRow("datetime presence (inc field)") << manager << defAndFieldNames.first << defAndFieldNames.second << false << ev << "ac";
+        QTest::newRow("datetime presence (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << false << ev << es;
+        QTest::newRow("datetime value (no match)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(QDateTime(QDate(2100,5,13), QTime(5,5,5))) << es;
+        QTest::newRow("datetime value (wrong type)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(3.5) << es;
+        QTest::newRow("datetime value (wrong field, no match)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(QDateTime(QDate(2100,5,13), QTime(5,5,5))) << es;
+        QTest::newRow("datetime value") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(adt) << "a";
+        QTest::newRow("datetime value (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(adt) << es;
+        QTest::newRow("datetime value 2") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(cdt)<< "c";
+        QTest::newRow("datetime value 2 (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(cdt) << es;
 
-    QTest::newRow("datetime presence") << "DateTime" << es << false << ev << "ac";
-    QTest::newRow("datetime presence (inc field)") << "DateTime" << "value" << false << ev << "ac";
-    QTest::newRow("datetime presence (wrong field)") << "DateTime" << "Trouble" << false << ev << es;
+        /*
+         * Dates
+         * A has QDate(1988, 1, 26)
+         * B has QDate(1492, 5, 5)
+         * D has QDate(1770, 10, 1)
+         */
+        const QDate ad(1988, 1, 26);
+        const QDate bd(1492, 5, 5);
+        const QDate dd(1770, 10, 1);
 
-    QTest::newRow("datetime value (no match)") << "DateTime" << "value" << true << QVariant(QDateTime(QDate(2100,5,13), QTime(5,5,5))) << es;
-    QTest::newRow("datetime value (wrong type)") << "DateTime" << "value" << true << QVariant(3.5) << es;
-//    QTest::newRow("datetime value (string type)") << "DateTime" << "value" << true << QVariant(adt.toString(Qt::ISODate)) << es;
-    QTest::newRow("datetime value (wrong field, no match)") << "DateTime" << "Trouble" << true << QVariant(QDateTime(QDate(2100,5,13), QTime(5,5,5))) << es;
-    QTest::newRow("datetime value") << "DateTime" << "value" << true << QVariant(adt) << "a";
-    QTest::newRow("datetime value (wrong field)") << "DateTime" << "Trouble" << true << QVariant(adt) << es;
-    QTest::newRow("datetime value 2") << "DateTime" << "value" << true << QVariant(cdt)<< "c";
-    QTest::newRow("datetime value 2 (wrong field)") << "DateTime" << "Trouble" << true << QVariant(cdt) << es;
-
-    /*
-     * Dates
-     * A has QDate(1988, 1, 26)
-     * B has QDate(1492, 5, 5)
-     * D has QDate(1770, 10, 1)
-     */
-    const QDate ad(1988, 1, 26);
-    const QDate bd(1492, 5, 5);
-    const QDate dd(1770, 10, 1);
-    QTest::newRow("date presence") << "Date" << es << false << ev << "abd";
-    QTest::newRow("date presence (inc field)") << "Date" << "value" << false << ev << "abd";
-    QTest::newRow("date presence (wrong field)") << "Date" << "Trouble" << false << ev << es;
-
-    QTest::newRow("date value (no match)") << "Date" << "value" << true << QVariant(QDate(2100,5,13)) << es;
-    QTest::newRow("date value (wrong type)") << "Date" << "value" << true << QVariant(3.5) << es;
-//    QTest::newRow("date value (string type)") << "Date" << "value" << true << QVariant(ad.toString(Qt::ISODate)) << es;
-    QTest::newRow("date value (wrong field, no match)") << "Date" << "Trouble" << true << QVariant(QDate(2100,5,13)) << es;
-    QTest::newRow("date value") << "Date" << "value" << true << QVariant(ad) << "a";
-    QTest::newRow("date value (wrong field)") << "Date" << "Trouble" << true << QVariant(ad) << es;
-    QTest::newRow("date value 2") << "Date" << "value" << true << QVariant(bd)<< "b";
-    QTest::newRow("date value 2 (wrong field)") << "Date" << "Trouble" << true << QVariant(bd) << es;
-    QTest::newRow("date value 3") << "Date" << "value" << true << QVariant(dd)<< "d";
-    QTest::newRow("date value 3 (wrong field)") << "Date" << "Trouble" << true << QVariant(dd) << es;
-
-
-    /*
-     * Times
-     * A has QTime(16,52,23,0)
-     * B has QTime(15,52,23,0)
-     */
-    const QTime at = QTime(16,52,23,0);
-    const QTime bt = QTime(15,52,23,0);
-    QTest::newRow("time presence") << "Time" << es << false << ev << "ab";
-    QTest::newRow("time presence (inc field)") << "Time" << "value" << false << ev << "ab";
-    QTest::newRow("time presence (wrong field)") << "Time" << "Trouble" << false << ev << es;
-
-    QTest::newRow("time value (no match)") << "Time" << "value" << true << QVariant(QTime(5,5,5)) << es;
-    QTest::newRow("time value (wrong type)") << "Time" << "value" << true << QVariant(3.5) << es;
-//    QTest::newRow("time value (string type)") << "Time" << "value" << true << QVariant(at.toString(Qt::ISOTime)) << es;
-    QTest::newRow("time value (wrong field, no match)") << "Time" << "Trouble" << true << QVariant(QTime(5,5,5)) << es;
-    QTest::newRow("time value") << "Time" << "value" << true << QVariant(at) << "a";
-    QTest::newRow("time value (wrong field)") << "Time" << "Trouble" << true << QVariant(at) << es;
-    QTest::newRow("time value 2") << "Time" << "value" << true << QVariant(bt)<< "b";
-    QTest::newRow("time value 2 (wrong field)") << "Time" << "Trouble" << true << QVariant(bt) << es;
+        defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Date");
+        QTest::newRow("date presence") << manager << defAndFieldNames.first << es << false << ev << "abd";
+        QTest::newRow("date presence (inc field)") << manager << defAndFieldNames.first << defAndFieldNames.second << false << ev << "abd";
+        QTest::newRow("date presence (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << false << ev << es;
+        QTest::newRow("date value (no match)") << manager << defAndFieldNames.first <<defAndFieldNames.second << true << QVariant(QDate(2100,5,13)) << es;
+        QTest::newRow("date value (wrong type)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(3.5) << es;
+        QTest::newRow("date value (wrong field, no match)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(QDate(2100,5,13)) << es;
+        QTest::newRow("date value") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(ad) << "a";
+        QTest::newRow("date value (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(ad) << es;
+        QTest::newRow("date value 2") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(bd)<< "b";
+        QTest::newRow("date value 2 (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(bd) << es;
+        QTest::newRow("date value 3") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(dd)<< "d";
+        QTest::newRow("date value 3 (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(dd) << es;
 
 
-    /*
-     * Bool
-     * A has bool(true)
-     * B has bool(false)
-     * C has bool(false)
-     */
-    QTest::newRow("bool presence") << "Bool" << es << false << ev << "abc";
-    QTest::newRow("bool presence (inc field)") << "Bool" << "value" << false << ev << "abc";
-    QTest::newRow("bool presence (wrong field)") << "Bool" << "Trouble" << false << ev << es;
+        /*
+         * Times
+         * A has QTime(16,52,23,0)
+         * B has QTime(15,52,23,0)
+         */
+        const QTime at = QTime(16,52,23,0);
+        const QTime bt = QTime(15,52,23,0);
 
-    //QTest::newRow("bool value (no match)") << "Bool" << "value" << true << QVariant(false) << es;// we have both possible
-    QTest::newRow("bool value (wrong type)") << "Bool" << "value" << true << QVariant(4.0) << es;
-//    QTest::newRow("bool value (string type)") << "Bool" << "value" << true << QVariant("4.0") << es;
-    //QTest::newRow("bool value (wrong field, no match)") << "Bool" << "Trouble" << true << QVariant(false) << es;// ditto
-    QTest::newRow("bool value") << "Bool" << "value" << true << QVariant(true) << "a";
-    QTest::newRow("bool value (wrong field)") << "Bool" << "Trouble" << true << QVariant(true) << es;
-    QTest::newRow("bool value 2") << "Bool" << "value" << true << QVariant(false) << "bc";
-    QTest::newRow("bool value 2 (wrong field)") << "Bool" << "Trouble" << true << QVariant(false) << es;
+        defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Time");
+        QTest::newRow("time presence") << manager << defAndFieldNames.first << es << false << ev << "ab";
+        QTest::newRow("time presence (inc field)") << manager << defAndFieldNames.first << defAndFieldNames.second << false << ev << "ab";
+        QTest::newRow("time presence (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << false << ev << es;
+        QTest::newRow("time value (no match)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(QTime(5,5,5)) << es;
+        QTest::newRow("time value (wrong type)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(3.5) << es;
+        QTest::newRow("time value (wrong field, no match)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(QTime(5,5,5)) << es;
+        QTest::newRow("time value") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(at) << "a";
+        QTest::newRow("time value (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(at) << es;
+        QTest::newRow("time value 2") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(bt)<< "b";
+        QTest::newRow("time value 2 (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(bt) << es;
 
-    /*
-     * LongLong
-     * C has LongLong(8000000000LL)
-     * D has LongLong(-14000000000LL)
-     */
-    QTest::newRow("longlong presence") << "LongLong" << es << false << ev << "cd";
-    QTest::newRow("longlong presence (inc field)") << "LongLong" << "value" << false << ev << "cd";
-    QTest::newRow("longlong presence (wrong field)") << "LongLong" << "Trouble" << false << ev << es;
 
-    QTest::newRow("longlong value (no match)") << "LongLong" << "value" << true << QVariant(50000000000LL) << es;
-    QTest::newRow("longlong value (wrong type)") << "LongLong" << "value" << true << QVariant(3.5) << es;
-//    QTest::newRow("longlong value (string type)") << "LongLong" << "value" << true << QVariant("20") << es;
-    QTest::newRow("longlong value (wrong field, no match)") << "LongLong" << "Trouble" << true << QVariant(50000000000LL) << es;
-    QTest::newRow("longlong value") << "LongLong" << "value" << true << QVariant(8000000000LL) << "c";
-    QTest::newRow("longlong value (wrong field)") << "LongLong" << "Trouble" << true << QVariant(8000000000LL) << es;
-    QTest::newRow("longlong value 2") << "LongLong" << "value" << true << QVariant(-14000000000LL) << "d";
-    QTest::newRow("longlong value 2 (wrong field)") << "LongLong" << "Trouble" << true << QVariant(-14000000000LL) << es;
+        /*
+         * Bool
+         * A has bool(true)
+         * B has bool(false)
+         * C has bool(false)
+         */
+        defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Bool");
+        QTest::newRow("bool presence") << manager << defAndFieldNames.first << es << false << ev << "abc";
+        QTest::newRow("bool presence (inc field)") << manager << defAndFieldNames.first << defAndFieldNames.second << false << ev << "abc";
+        QTest::newRow("bool presence (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << false << ev << es;
+        QTest::newRow("bool value (wrong type)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(4.0) << es;
+        QTest::newRow("bool value") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(true) << "a";
+        QTest::newRow("bool value (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(true) << es;
+        QTest::newRow("bool value 2") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(false) << "bc";
+        QTest::newRow("bool value 2 (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(false) << es;
 
-    /*
-     * ULongLong
-     * A has ULongLong(120000000000ULL)
-     * B has ULongLong(80000000000ULL)
-     * C has ULongLong(80000000000ULL)
-     */
-        QTest::newRow("ulonglong presence") << "ULongLong" << es << false << ev << "abc";
-    QTest::newRow("ulonglong presence (inc field)") << "ULongLong" << "value" << false << ev << "abc";
-    QTest::newRow("ulonglong presence (wrong field)") << "ULongLong" << "Trouble" << false << ev << es;
+        /*
+         * LongLong
+         * C has LongLong(8000000000LL)
+         * D has LongLong(-14000000000LL)
+         */
+        defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("LongLong");
+        QTest::newRow("longlong presence") << manager << defAndFieldNames.first << es << false << ev << "cd";
+        QTest::newRow("longlong presence (inc field)") << manager << defAndFieldNames.first << defAndFieldNames.second << false << ev << "cd";
+        QTest::newRow("longlong presence (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << false << ev << es;
+        QTest::newRow("longlong value (no match)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(50000000000LL) << es;
+        QTest::newRow("longlong value (wrong type)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(3.5) << es;
+        QTest::newRow("longlong value (wrong field, no match)") << manager << defAndFieldNames.first<< "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(50000000000LL) << es;
+        QTest::newRow("longlong value") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(8000000000LL) << "c";
+        QTest::newRow("longlong value (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(8000000000LL) << es;
+        QTest::newRow("longlong value 2") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(-14000000000LL) << "d";
+        QTest::newRow("longlong value 2 (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(-14000000000LL) << es;
 
-    QTest::newRow("ulonglong value (no match)") << "ULongLong" << "value" << true << QVariant(50000000000ULL) << es;
-    QTest::newRow("ulonglong value (wrong type)") << "ULongLong" << "value" << true << QVariant(3.5) << es;
-//    QTest::newRow("ulonglong value (string type)") << "ULongLong" << "value" << true << QVariant("20") << es;
-    QTest::newRow("ulonglong value (wrong field, no match)") << "ULongLong" << "Trouble" << true << QVariant(50000000000ULL) << es;
-    QTest::newRow("ulonglong value") << "ULongLong" << "value" << true << QVariant(120000000000ULL) << "a";
-    QTest::newRow("ulonglong value (wrong field)") << "ULongLong" << "Trouble" << true << QVariant(120000000000ULL) << es;
-    QTest::newRow("ulonglong value 2") << "ULongLong" << "value" << true << QVariant(80000000000ULL) << "bc";
-    QTest::newRow("ulonglong value 2 (wrong field)") << "ULongLong" << "Trouble" << true << QVariant(80000000000ULL) << es;
+        /*
+         * ULongLong
+         * A has ULongLong(120000000000ULL)
+         * B has ULongLong(80000000000ULL)
+         * C has ULongLong(80000000000ULL)
+         */
+        defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("ULongLong");
+        QTest::newRow("ulonglong presence") << manager << defAndFieldNames.first << es << false << ev << "abc";
+        QTest::newRow("ulonglong presence (inc field)") << manager << defAndFieldNames.first << defAndFieldNames.second << false << ev << "abc";
+        QTest::newRow("ulonglong presence (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << false << ev << es;
+        QTest::newRow("ulonglong value (no match)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(50000000000ULL) << es;
+        QTest::newRow("ulonglong value (wrong type)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(3.5) << es;
+        QTest::newRow("ulonglong value (wrong field, no match)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(50000000000ULL) << es;
+        QTest::newRow("ulonglong value") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(120000000000ULL) << "a";
+        QTest::newRow("ulonglong value (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(120000000000ULL) << es;
+        QTest::newRow("ulonglong value 2") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(80000000000ULL) << "bc";
+        QTest::newRow("ulonglong value 2 (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(80000000000ULL) << es;
 
-    /*
-     * UInt
-     * B has UInt(4000000000u)
-     * D has UInt(3000000000u)
-     */
-    QTest::newRow("unsigned integer presence") << "UInt" << es << false << ev << "bd";
-    QTest::newRow("unsigned integer presence (inc field)") << "UInt" << "value" << false << ev << "bd";
-    QTest::newRow("unsigned integer presence (wrong field)") << "UInt" << "Trouble" << false << ev << es;
+        /*
+         * UInt
+         * B has UInt(4000000000u)
+         * D has UInt(3000000000u)
+         */
+        defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("UInt");
+        QTest::newRow("unsigned integer presence") << manager << defAndFieldNames.first << es << false << ev << "bd";
+        QTest::newRow("unsigned integer presence (inc field)") << manager << defAndFieldNames.first << defAndFieldNames.second << false << ev << "bd";
+        QTest::newRow("unsigned integer presence (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << false << ev << es;
+        QTest::newRow("unsigned integer value (no match)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(3500000000u) << es;
+        QTest::newRow("unsigned integer value (wrong type)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(3.5) << es;
+        QTest::newRow("unsigned integer value (wrong field, no match)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(3500000000u) << es;
+        QTest::newRow("unsigned integer value") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(4000000000u) << "b";
+        QTest::newRow("unsigned integer value (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(4000000000u) << es;
+        QTest::newRow("unsigned integer value 2") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(3000000000u) << "d";
+        QTest::newRow("unsigned integer value 2 (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(3000000000u) << es;
 
-    QTest::newRow("unsigned integer value (no match)") << "UInt" << "value" << true << QVariant(3500000000u) << es;
-    QTest::newRow("unsigned integer value (wrong type)") << "UInt" << "value" << true << QVariant(3.5) << es;
-//    QTest::newRow("unsigned integer value (string type)") << "UInt" << "value" << true << QVariant("20") << es;
-    QTest::newRow("unsigned integer value (wrong field, no match)") << "UInt" << "Trouble" << true << QVariant(3500000000u) << es;
-    QTest::newRow("unsigned integer value") << "UInt" << "value" << true << QVariant(4000000000u) << "b";
-    QTest::newRow("unsigned integer value (wrong field)") << "UInt" << "Trouble" << true << QVariant(4000000000u) << es;
-    QTest::newRow("unsigned integer value 2") << "UInt" << "value" << true << QVariant(3000000000u) << "d";
-    QTest::newRow("unsigned integer value 2 (wrong field)") << "UInt" << "Trouble" << true << QVariant(3000000000u) << es;
-
-    /*
-     * Char
-     * B has QChar('b')
-     * C has QChar('c')
-     */
-    const QChar bchar('b');
-    const QChar cchar('c');
-    QTest::newRow("char presence") << "Char" << es << false << ev << "bc";
-    QTest::newRow("char presence (inc field)") << "Char" << "value" << false << ev << "bc";
-    QTest::newRow("char presence (wrong field)") << "Char" << "Trouble" << false << ev << es;
-
-    QTest::newRow("char value (no match)") << "Char" << "value" << true << QVariant(QChar('a')) << es;
-    QTest::newRow("char value (wrong type)") << "Char" << "value" << true << QVariant(3.5) << es;
-//    QTest::newRow("char value (string type)") << "Char" << "value" << true << QVariant(at.toString(Qt::ISOTime)) << es;
-    QTest::newRow("char value (wrong field, no match)") << "Char" << "Trouble" << true << QVariant(QChar('a')) << es;
-    QTest::newRow("char value") << "Char" << "value" << true << QVariant(bchar) << "b";
-    QTest::newRow("char value (wrong field)") << "Char" << "Trouble" << true << QVariant(bchar) << es;
-    QTest::newRow("char value 2") << "Char" << "value" << true << QVariant(cchar)<< "c";
-    QTest::newRow("char value 2 (wrong field)") << "Char" << "Trouble" << true << QVariant(cchar) << es;
+        /*
+         * Char
+         * B has QChar('b')
+         * C has QChar('c')
+         */
+        const QChar bchar('b');
+        const QChar cchar('c');
+        defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Char");
+        QTest::newRow("char presence") << manager << defAndFieldNames.first << es << false << ev << "bc";
+        QTest::newRow("char presence (inc field)") << manager << defAndFieldNames.first << defAndFieldNames.second << false << ev << "bc";
+        QTest::newRow("char presence (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << false << ev << es;
+        QTest::newRow("char value (no match)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(QChar('a')) << es;
+        QTest::newRow("char value (wrong type)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(3.5) << es;
+        QTest::newRow("char value (wrong field, no match)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(QChar('a')) << es;
+        QTest::newRow("char value") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(bchar) << "b";
+        QTest::newRow("char value (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(bchar) << es;
+        QTest::newRow("char value 2") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(cchar)<< "c";
+        QTest::newRow("char value 2 (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(cchar) << es;
+    }
 }
 
 void tst_QContactManagerFiltering::detailVariantFiltering()
 {
+    QFETCH(QContactManager*, cm);
     QFETCH(QString, defname);
     QFETCH(QString, fieldname);
     QFETCH(bool, setValue);
     QFETCH(QVariant, value);
     QFETCH(QString, expected);
 
-    /* Try the memory database first */
-    QContactManager* cm = new QContactManager("memory");
-
-    QList<QUniqueId> contacts = prepareModel(cm);
+    QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
     QList<QUniqueId> ids;
-
-    QVERIFY(contacts.count() == 4);
 
     QContactDetailFilter df;
     df.setDetailDefinitionName(defname, fieldname);
@@ -465,12 +495,11 @@ void tst_QContactManagerFiltering::detailVariantFiltering()
 
     QString output = convertIds(contacts, ids);
     QCOMPARE(output, expected);
-
-    delete cm;
 }
 
 void tst_QContactManagerFiltering::rangeFiltering_data()
 {
+    QTest::addColumn<QContactManager *>("cm");
     QTest::addColumn<QString>("defname");
     QTest::addColumn<QString>("fieldname");
     QTest::addColumn<QVariant>("minrange");
@@ -493,119 +522,125 @@ void tst_QContactManagerFiltering::rangeFiltering_data()
 
     int csflag = (int)Qt::MatchCaseSensitive;
 
-    /* First, cover the "empty defname / fieldname / ranges" cases */
-    QTest::newRow("invalid defname") << es << firstname << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << es;
-    QTest::newRow("defn presence test") << namedef << es << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << "abcd";
-    QTest::newRow("field presence test") << phonedef << phonenum << QVariant() << QVariant() << false << 0 << true << 0 << "ab";
-    QTest::newRow("good def, bad field") << namedef << "Bongo" << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << es;
-    QTest::newRow("bad def") << "Bongo" << es << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << es;
+    for (int i = 0; i < managers.size(); i++) {
+        QContactManager *manager = managers.at(i);
 
-    /* Presence for fields that aren't there */
-    QTest::newRow("defn presence test negative") << "Burgers" << es << ev << ev << false << 0 << false << 0 << es;
-    QTest::newRow("field presence test negative") << "Burgers" << "Beef" << ev << ev << false << 0 << false << 0 << es;
-    QTest::newRow("defn yes, field no presence test negative") << namedef << "Burger" << ev << ev << false << 0 << false << 0 << es;
+        /* First, cover the "empty defname / fieldname / ranges" cases */
+        QTest::newRow("invalid defname") << manager << es << firstname << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << es;
+        QTest::newRow("defn presence test") << manager << namedef << es << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << "abcdefg";
+        QTest::newRow("field presence test") << manager << phonedef << phonenum << QVariant() << QVariant() << false << 0 << true << 0 << "ab";
+        QTest::newRow("good def, bad field") << manager << namedef << "Bongo" << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << es;
+        QTest::newRow("bad def") << manager << "Bongo" << es << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << es;
 
-    QTest::newRow("no max, all results") << namedef << firstname << QVariant("a") << QVariant() << false << 0 << true << 0 << "abcd";
-    QTest::newRow("no max, some results") << namedef << firstname << QVariant("BOB") << QVariant() << false << 0 << true << 0 << "bcd";
-    QTest::newRow("no max, no results") << namedef << firstname << QVariant("ZamBeZI") << QVariant() << false << 0 << true << 0 << es;
-    QTest::newRow("no min, all results") << namedef << firstname << QVariant() << QVariant("zambezi") << false << 0 << true << 0 << "abcd";
-    QTest::newRow("no min, some results") << namedef << firstname << QVariant() << QVariant("bOb") << false << 0 << true << 0 << "a";
-    QTest::newRow("no min, no results") << namedef << firstname << QVariant() << QVariant("aardvark") << false << 0 << true << 0 << es;
+        /* Presence for fields that aren't there */
+        QTest::newRow("defn presence test negative") << manager << "Burgers" << es << ev << ev << false << 0 << false << 0 << es;
+        QTest::newRow("field presence test negative") << manager << "Burgers" << "Beef" << ev << ev << false << 0 << false << 0 << es;
+        QTest::newRow("defn yes, field no presence test negative") << manager << namedef << "Burger" << ev << ev << false << 0 << false << 0 << es;
 
-    /* now case sensitive */
-    QTest::newRow("no max, cs, all results") << namedef << firstname << QVariant("A") << QVariant() << false << 0 << true << csflag << "abcd";
-    QTest::newRow("no max, cs, some results") << namedef << firstname << QVariant("Bob") << QVariant() << false << 0 << true << csflag << "bcd";
-    QTest::newRow("no max, cs, no results") << namedef << firstname << QVariant("Zambezi") << QVariant() << false << 0 << true << csflag << es;
-    QTest::newRow("no min, cs, all results") << namedef << firstname << QVariant() << QVariant("Zambezi") << false << 0 << true << csflag << "abcd";
-    QTest::newRow("no min, cs, some results") << namedef << firstname << QVariant() << QVariant("Bob") << false << 0 << true << csflag << "a";
-    QTest::newRow("no min, cs, no results") << namedef << firstname << QVariant() << QVariant("Aardvark") << false << 0 << true << csflag << es;
+        QTest::newRow("no max, all results") << manager << namedef << firstname << QVariant("a") << QVariant() << false << 0 << true << 0 << "abcdefg";
+        QTest::newRow("no max, some results") << manager << namedef << firstname << QVariant("BOB") << QVariant() << false << 0 << true << 0 << "bcdefg";
+        QTest::newRow("no max, no results") << manager << namedef << firstname << QVariant("ZamBeZI") << QVariant() << false << 0 << true << 0 << es;
+        QTest::newRow("no min, all results") << manager << namedef << firstname << QVariant() << QVariant("zambezi") << false << 0 << true << 0 << "abcdefg";
+        QTest::newRow("no min, some results") << manager << namedef << firstname << QVariant() << QVariant("bOb") << false << 0 << true << 0 << "a";
+        QTest::newRow("no min, no results") << manager << namedef << firstname << QVariant() << QVariant("aardvark") << false << 0 << true << 0 << es;
 
-    /* due to ascii sorting, most lower case parameters give all results, which is boring */
-    QTest::newRow("no max, cs, badcase, all results") << namedef << firstname << QVariant("A") << QVariant() << false << 0 << true << csflag << "abcd";
-    QTest::newRow("no max, cs, badcase, some results") << namedef << firstname << QVariant("BOB") << QVariant() << false << 0 << true << csflag << "bcd";
-    QTest::newRow("no max, cs, badcase, no results") << namedef << firstname << QVariant("ZAMBEZI") << QVariant() << false << 0 << true << csflag << es;
-    QTest::newRow("no min, cs, badcase, all results") << namedef << firstname << QVariant() << QVariant("ZAMBEZI") << false << 0 << true << csflag << "abcd";
-    QTest::newRow("no min, cs, badcase, some results") << namedef << firstname << QVariant() << QVariant("BOB") << false << 0 << true << csflag << "a";
-    QTest::newRow("no min, cs, badcase, no results") << namedef << firstname << QVariant() << QVariant("AARDVARK") << false << 0 << true << csflag << es;
+        /* now case sensitive */
+        QTest::newRow("no max, cs, all results") << manager << namedef << firstname << QVariant("A") << QVariant() << false << 0 << true << csflag << "abcdefg";
+        QTest::newRow("no max, cs, some results") << manager << namedef << firstname << QVariant("Bob") << QVariant() << false << 0 << true << csflag << "bcdefg";
+        QTest::newRow("no max, cs, no results") << manager << namedef << firstname << QVariant("Zambezi") << QVariant() << false << 0 << true << csflag << es;
+        QTest::newRow("no min, cs, all results") << manager << namedef << firstname << QVariant() << QVariant("Zambezi") << false << 0 << true << csflag << "abcdefg";
+        QTest::newRow("no min, cs, some results") << manager << namedef << firstname << QVariant() << QVariant("Bob") << false << 0 << true << csflag << "a";
+        QTest::newRow("no min, cs, no results") << manager << namedef << firstname << QVariant() << QVariant("Aardvark") << false << 0 << true << csflag << es;
 
-    /* 'a' has phone number ("555-1212") */
-    QTest::newRow("range1") << phonedef << phonenum << QVariant("555-1200") << QVariant("555-1220") << false << 0 << false << 0 << "a";
+        /* due to ascii sorting, most lower case parameters give all results, which is boring */
+        QTest::newRow("no max, cs, badcase, all results") << manager << namedef << firstname << QVariant("A") << QVariant() << false << 0 << true << csflag << "abcdefg";
+        QTest::newRow("no max, cs, badcase, some results") << manager << namedef << firstname << QVariant("BOB") << QVariant() << false << 0 << true << csflag << "bcdefg";
+        QTest::newRow("no max, cs, badcase, no results") << manager << namedef << firstname << QVariant("ZAMBEZI") << QVariant() << false << 0 << true << csflag << es;
+        QTest::newRow("no min, cs, badcase, all results") << manager << namedef << firstname << QVariant() << QVariant("ZAMBEZI") << false << 0 << true << csflag << "abcdefg";
+        QTest::newRow("no min, cs, badcase, some results") << manager << namedef << firstname << QVariant() << QVariant("BOB") << false << 0 << true << csflag << "a";
+        QTest::newRow("no min, cs, badcase, no results") << manager << namedef << firstname << QVariant() << QVariant("AARDVARK") << false << 0 << true << csflag << es;
 
-    /* A(Aaron Aaronson), B(Bob Aaronsen), C(Boris Aaronsun), D(Dennis FitzMacyntire) */
-    // string range matching - no matchflags set.
-    QTest::newRow("string range - no matchflags - 1") << namedef << firstname << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << "a";
-    QTest::newRow("string range - no matchflags - 2") << namedef << firstname << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << 0 << "a";
-    QTest::newRow("string range - no matchflags - 3") << namedef << firstname << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << 0 << "a";
-    QTest::newRow("string range - no matchflags - 4") << namedef << firstname << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << true << 0 << "ab";
-    QTest::newRow("string range - no matchflags - 5") << namedef << firstname << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper) << true << 0 << "ab";
-    QTest::newRow("string range - no matchflags - 6") << namedef << firstname << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper) << true << 0 << "c";
-    QTest::newRow("string range - no matchflags - 7") << namedef << firstname << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << 0 << "bc";
-    QTest::newRow("string range - no matchflags - 8") << namedef << firstname << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << true << 0 << "bc";
-    QTest::newRow("string range - no matchflags - 9") << namedef << firstname << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << 0 << "c";
-    QTest::newRow("string range - no matchflags - 10") << namedef << firstname << QVariant("Barry") << QVariant("C") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << 0 << "bc";
+        /* 'a' has phone number ("555-1212") */
+        QTest::newRow("range1") << manager << phonedef << phonenum << QVariant("555-1200") << QVariant("555-1220") << false << 0 << false << 0 << "a";
 
-    // string range matching - Qt::MatchStartsWith should produce the same results as without matchflags set.
-    QTest::newRow("string range - startswith - 1") << namedef << firstname << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchStartsWith) << "a";
-    QTest::newRow("string range - startswith - 2") << namedef << firstname << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchStartsWith) << "a";
-    QTest::newRow("string range - startswith - 3") << namedef << firstname << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchStartsWith) << "ab";
-    QTest::newRow("string range - startswith - 4") << namedef << firstname << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchStartsWith) << "ab";
-    QTest::newRow("string range - startswith - 5") << namedef << firstname << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchStartsWith) << "c";
-    QTest::newRow("string range - startswith - 6") << namedef << firstname << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchStartsWith) << "bc";
-    QTest::newRow("string range - startswith - 7") << namedef << firstname << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchStartsWith) << "bc";
-    QTest::newRow("string range - startswith - 8") << namedef << firstname << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchStartsWith) << "c";
-    QTest::newRow("string range - startswith - 9") << namedef << firstname << QVariant("Barry") << QVariant("C") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchStartsWith) << "bc";
+        /* A(Aaron Aaronson), B(Bob Aaronsen), C(Boris Aaronsun), D(Dennis FitzMacyntire) */
+        // string range matching - no matchflags set.
+        QTest::newRow("string range - no matchflags - 1") << manager << namedef << firstname << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << "a";
+        QTest::newRow("string range - no matchflags - 2") << manager << namedef << firstname << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << 0 << "a";
+        QTest::newRow("string range - no matchflags - 3") << manager << namedef << firstname << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << 0 << "a";
+        QTest::newRow("string range - no matchflags - 4") << manager << namedef << firstname << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << true << 0 << "ab";
+        QTest::newRow("string range - no matchflags - 5") << manager << namedef << firstname << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper) << true << 0 << "ab";
+        QTest::newRow("string range - no matchflags - 6") << manager << namedef << firstname << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper) << true << 0 << "c";
+        QTest::newRow("string range - no matchflags - 7") << manager << namedef << firstname << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << 0 << "bc";
+        QTest::newRow("string range - no matchflags - 8") << manager << namedef << firstname << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << true << 0 << "bc";
+        QTest::newRow("string range - no matchflags - 9") << manager << namedef << firstname << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << 0 << "c";
+        QTest::newRow("string range - no matchflags - 10") << manager << namedef << firstname << QVariant("Barry") << QVariant("C") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << 0 << "bc";
 
-    // Open ended starts with
-    QTest::newRow("string range - startswith open top - 1") << namedef << firstname << QVariant("A") << ev << true << (int)(QContactDetailRangeFilter::IncludeLower) << true << (int)(Qt::MatchStartsWith) << "abcd";
-    QTest::newRow("string range - startswith open top - 2") << namedef << firstname << QVariant("A") << ev << true << (int)(QContactDetailRangeFilter::ExcludeLower) << true << (int)(Qt::MatchStartsWith) << "abcd";
-    QTest::newRow("string range - startswith open top - 3") << namedef << firstname << QVariant("Aaron") << ev << true << (int)(QContactDetailRangeFilter::IncludeLower) << true << (int)(Qt::MatchStartsWith) << "abcd";
-    QTest::newRow("string range - startswith open top - 4") << namedef << firstname << QVariant("Aaron") << ev << true << (int)(QContactDetailRangeFilter::ExcludeLower) << true << (int)(Qt::MatchStartsWith) << "bcd";
-    QTest::newRow("string range - startswith open bottom - 1") << namedef << firstname << ev << QVariant("Borit") << true << (int)(QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchStartsWith) << "abc";
-    QTest::newRow("string range - startswith open bottom - 2") << namedef << firstname << ev << QVariant("Borit") << true << (int)(QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchStartsWith) << "abc";
-    QTest::newRow("string range - startswith open bottom - 3") << namedef << firstname << ev << QVariant("Boris") << true << (int)(QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchStartsWith) << "abc";
-    QTest::newRow("string range - startswith open bottom - 4") << namedef << firstname << ev << QVariant("Boris") << true << (int)(QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchStartsWith) << "ab";
+        // string range matching - Qt::MatchStartsWith should produce the same results as without matchflags set.
+        QTest::newRow("string range - startswith - 1") << manager << namedef << firstname << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchStartsWith) << "a";
+        QTest::newRow("string range - startswith - 2") << manager << namedef << firstname << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchStartsWith) << "a";
+        QTest::newRow("string range - startswith - 3") << manager << namedef << firstname << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchStartsWith) << "ab";
+        QTest::newRow("string range - startswith - 4") << manager << namedef << firstname << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchStartsWith) << "ab";
+        QTest::newRow("string range - startswith - 5") << manager << namedef << firstname << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchStartsWith) << "c";
+        QTest::newRow("string range - startswith - 6") << manager << namedef << firstname << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchStartsWith) << "bc";
+        QTest::newRow("string range - startswith - 7") << manager << namedef << firstname << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchStartsWith) << "bc";
+        QTest::newRow("string range - startswith - 8") << manager << namedef << firstname << QVariant("Bob") << QVariant("C") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchStartsWith) << "c";
+        QTest::newRow("string range - startswith - 9") << manager << namedef << firstname << QVariant("Barry") << QVariant("C") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchStartsWith) << "bc";
 
-    // Qt::MatchContains with range is invalid
-    QTest::newRow("string range - contains - 1") << namedef << firstname << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchContains) << es;
+        // Open ended starts with
+        QTest::newRow("string range - startswith open top - 1") << manager << namedef << firstname << QVariant("A") << ev << true << (int)(QContactDetailRangeFilter::IncludeLower) << true << (int)(Qt::MatchStartsWith) << "abcdefg";
+        QTest::newRow("string range - startswith open top - 2") << manager << namedef << firstname << QVariant("A") << ev << true << (int)(QContactDetailRangeFilter::ExcludeLower) << true << (int)(Qt::MatchStartsWith) << "abcdefg";
+        QTest::newRow("string range - startswith open top - 3") << manager << namedef << firstname << QVariant("Aaron") << ev << true << (int)(QContactDetailRangeFilter::IncludeLower) << true << (int)(Qt::MatchStartsWith) << "abcdefg";
+        QTest::newRow("string range - startswith open top - 4") << manager << namedef << firstname << QVariant("Aaron") << ev << true << (int)(QContactDetailRangeFilter::ExcludeLower) << true << (int)(Qt::MatchStartsWith) << "bcdefg";
+        QTest::newRow("string range - startswith open bottom - 1") << manager << namedef << firstname << ev << QVariant("Borit") << true << (int)(QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchStartsWith) << "abc";
+        QTest::newRow("string range - startswith open bottom - 2") << manager << namedef << firstname << ev << QVariant("Borit") << true << (int)(QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchStartsWith) << "abc";
+        QTest::newRow("string range - startswith open bottom - 3") << manager << namedef << firstname << ev << QVariant("Boris") << true << (int)(QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchStartsWith) << "abc";
+        QTest::newRow("string range - startswith open bottom - 4") << manager << namedef << firstname << ev << QVariant("Boris") << true << (int)(QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchStartsWith) << "ab";
 
-    // Check EndsWith with range: A == son, B == sen, C == sun
-    QTest::newRow("string range - endswith - 1") << namedef << lastname << QVariant("sen") << QVariant("son") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchEndsWith) << es;
-    QTest::newRow("string range - endswith - 2") << namedef << lastname << QVariant("sen") << QVariant("son") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchEndsWith) << "b";
-    QTest::newRow("string range - endswith - 3") << namedef << lastname << QVariant("sen") << QVariant("son") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchEndsWith) << "a";
-    QTest::newRow("string range - endswith - 4") << namedef << lastname << QVariant("sen") << QVariant("son") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchEndsWith) << "ab";
-    QTest::newRow("string range - endswith - 5") << namedef << lastname << QVariant("sen") << QVariant("sun") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchEndsWith) << "ac";
-    QTest::newRow("string range - endswith - 6") << namedef << lastname << QVariant("sen") << QVariant("sun") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchEndsWith) << "a";
+        // Qt::MatchContains with range is invalid
+        QTest::newRow("string range - contains - 1") << manager << namedef << firstname << QVariant("A") << QVariant("Bob") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchContains) << es;
 
-    // Endswith with open ends
-    QTest::newRow("string range - endswith no max - 1") << namedef << lastname << QVariant("sen") << ev << true << (int)(QContactDetailRangeFilter::ExcludeLower) << true << (int)(Qt::MatchEndsWith) << "acd";
-    QTest::newRow("string range - endswith no max - 2") << namedef << lastname << QVariant("sen") << ev << true << (int)(QContactDetailRangeFilter::IncludeLower) << true << (int)(Qt::MatchEndsWith) << "abcd";
-    QTest::newRow("string range - endswith no max - 3") << namedef << lastname << QVariant("sem") << ev << true << (int)(QContactDetailRangeFilter::ExcludeLower) << true << (int)(Qt::MatchEndsWith) << "abcd";
-    QTest::newRow("string range - endswith no max - 4") << namedef << lastname << QVariant("sem") << ev << true << (int)(QContactDetailRangeFilter::IncludeLower) << true << (int)(Qt::MatchEndsWith) << "abcd";
-    QTest::newRow("string range - endswith no min - 1") << namedef << lastname << ev << QVariant("sen") << true << (int)(QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchEndsWith) << es;
-    QTest::newRow("string range - endswith no min - 2") << namedef << lastname << ev << QVariant("sen") << true << (int)(QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchEndsWith) << "b";
-    QTest::newRow("string range - endswith no min - 3") << namedef << lastname << ev << QVariant("seo") << true << (int)(QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchEndsWith) << "b";
-    QTest::newRow("string range - endswith no min - 4") << namedef << lastname << ev << QVariant("seo") << true << (int)(QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchEndsWith) << "b";
+        // Check EndsWith with range: A == son, B == sen, C == sun
+        QTest::newRow("string range - endswith - 1") << manager << namedef << lastname << QVariant("sen") << QVariant("son") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchEndsWith) << es;
+        QTest::newRow("string range - endswith - 2") << manager << namedef << lastname << QVariant("sen") << QVariant("son") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchEndsWith) << "b";
+        QTest::newRow("string range - endswith - 3") << manager << namedef << lastname << QVariant("sen") << QVariant("son") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchEndsWith) << "a";
+        QTest::newRow("string range - endswith - 4") << manager << namedef << lastname << QVariant("sen") << QVariant("son") << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchEndsWith) << "ab";
+        QTest::newRow("string range - endswith - 5") << manager << namedef << lastname << QVariant("sen") << QVariant("sun") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchEndsWith) << "ac";
+        QTest::newRow("string range - endswith - 6") << manager << namedef << lastname << QVariant("sen") << QVariant("sun") << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchEndsWith) << "a";
 
-    /* A(10), B(20), C(-20) */
-    // Now integer range testing
-    QTest::newRow("int range - no rangeflags - 1") << "Integer" << "value" << QVariant(9) << QVariant(9) << false << 0 << false << 0 << es;
-    QTest::newRow("int range - no rangeflags - 2") << "Integer" << "value" << QVariant(9) << QVariant(10) << false << 0 << false << 0 << es;
-    QTest::newRow("int range - no rangeflags - 3") << "Integer" << "value" << QVariant(9) << QVariant(11) << false << 0 << false << 0 << "a";
-    QTest::newRow("int range - no rangeflags - 4") << "Integer" << "value" << QVariant(10) << QVariant(10) << false << 0 << false << 0 << es;
-    QTest::newRow("int range - rangeflags - 1") << "Integer" << "value" << QVariant(10) << QVariant(10) << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << false << 0 << es;
-    QTest::newRow("int range - rangeflags - 2") << "Integer" << "value" << QVariant(10) << QVariant(10) << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::ExcludeUpper) << false << 0 << es;
-    QTest::newRow("int range - rangeflags - 3") << "Integer" << "value" << QVariant(10) << QVariant(10) << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper) << false << 0 << es;
-    QTest::newRow("int range - rangeflags - 4") << "Integer" << "value" << QVariant(10) << QVariant(10) << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << false << 0 << "a";
-    QTest::newRow("int range - rangeflags - 5") << "Integer" << "value" << QVariant(10) << QVariant(11) << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << false << 0 << "a";
-    QTest::newRow("int range - rangeflags - 6") << "Integer" << "value" << QVariant(11) << QVariant(11) << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << false << 0 << es;
-    QTest::newRow("int range - rangeflags - 7") << "Integer" << "value" << QVariant(-30) << QVariant(-19) << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << false << 0 << "c";
-    QTest::newRow("int range - rangeflags - 8") << "Integer" << "value" << QVariant(-20) << QVariant(-30) << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << false << 0 << es;
-    QTest::newRow("int range - rangeflags - variant - 1") << "Integer" << "value" << QVariant(9) << QVariant() << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << false << 0 << "ab";
-    QTest::newRow("int range - rangeflags - variant - 2") << "Integer" << "value" << QVariant() << QVariant(11) << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << false << 0 << "ac";
+        // Endswith with open ends
+        QTest::newRow("string range - endswith no max - 1") << manager << namedef << lastname << QVariant("sen") << ev << true << (int)(QContactDetailRangeFilter::ExcludeLower) << true << (int)(Qt::MatchEndsWith) << "acdg";
+        QTest::newRow("string range - endswith no max - 2") << manager << namedef << lastname << QVariant("sen") << ev << true << (int)(QContactDetailRangeFilter::IncludeLower) << true << (int)(Qt::MatchEndsWith) << "abcdg";
+        QTest::newRow("string range - endswith no max - 3") << manager << namedef << lastname << QVariant("sem") << ev << true << (int)(QContactDetailRangeFilter::ExcludeLower) << true << (int)(Qt::MatchEndsWith) << "abcdg";
+        QTest::newRow("string range - endswith no max - 4") << manager << namedef << lastname << QVariant("sem") << ev << true << (int)(QContactDetailRangeFilter::IncludeLower) << true << (int)(Qt::MatchEndsWith) << "abcdg";
+        QTest::newRow("string range - endswith no min - 1") << manager << namedef << lastname << ev << QVariant("sen") << true << (int)(QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchEndsWith) << "ef";
+        QTest::newRow("string range - endswith no min - 2") << manager << namedef << lastname << ev << QVariant("sen") << true << (int)(QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchEndsWith) << "bef";
+        QTest::newRow("string range - endswith no min - 3") << manager << namedef << lastname << ev << QVariant("seo") << true << (int)(QContactDetailRangeFilter::ExcludeUpper) << true << (int)(Qt::MatchEndsWith) << "bef";
+        QTest::newRow("string range - endswith no min - 4") << manager << namedef << lastname << ev << QVariant("seo") << true << (int)(QContactDetailRangeFilter::IncludeUpper) << true << (int)(Qt::MatchEndsWith) << "bef";
+
+        /* A(10), B(20), C(-20) */
+        // Now integer range testing
+        QPair<QString, QString> defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Integer");
+        QTest::newRow("int range - no rangeflags - 1") << manager << defAndFieldNames.first << defAndFieldNames.second << QVariant(9) << QVariant(9) << false << 0 << false << 0 << es;
+        QTest::newRow("int range - no rangeflags - 2") << manager << defAndFieldNames.first << defAndFieldNames.second << QVariant(9) << QVariant(10) << false << 0 << false << 0 << es;
+        QTest::newRow("int range - no rangeflags - 3") << manager << defAndFieldNames.first << defAndFieldNames.second << QVariant(9) << QVariant(11) << false << 0 << false << 0 << "a";
+        QTest::newRow("int range - no rangeflags - 4") << manager << defAndFieldNames.first << defAndFieldNames.second << QVariant(10) << QVariant(10) << false << 0 << false << 0 << es;
+        QTest::newRow("int range - rangeflags - 1") << manager << defAndFieldNames.first << defAndFieldNames.second << QVariant(10) << QVariant(10) << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper) << false << 0 << es;
+        QTest::newRow("int range - rangeflags - 2") << manager << defAndFieldNames.first << defAndFieldNames.second << QVariant(10) << QVariant(10) << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::ExcludeUpper) << false << 0 << es;
+        QTest::newRow("int range - rangeflags - 3") << manager << defAndFieldNames.first << defAndFieldNames.second << QVariant(10) << QVariant(10) << true << (int)(QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::IncludeUpper) << false << 0 << es;
+        QTest::newRow("int range - rangeflags - 4") << manager << defAndFieldNames.first << defAndFieldNames.second << QVariant(10) << QVariant(10) << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << false << 0 << "a";
+        QTest::newRow("int range - rangeflags - 5") << manager << defAndFieldNames.first << defAndFieldNames.second << QVariant(10) << QVariant(11) << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << false << 0 << "a";
+        QTest::newRow("int range - rangeflags - 6") << manager << defAndFieldNames.first << defAndFieldNames.second << QVariant(11) << QVariant(11) << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << false << 0 << es;
+        QTest::newRow("int range - rangeflags - 7") << manager << defAndFieldNames.first << defAndFieldNames.second << QVariant(-30) << QVariant(-19) << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << false << 0 << "c";
+        QTest::newRow("int range - rangeflags - 8") << manager << defAndFieldNames.first << defAndFieldNames.second << QVariant(-20) << QVariant(-30) << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << false << 0 << es;
+        QTest::newRow("int range - rangeflags - variant - 1") << manager << defAndFieldNames.first << defAndFieldNames.second << QVariant(9) << QVariant() << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << false << 0 << "ab";
+        QTest::newRow("int range - rangeflags - variant - 2") << manager << defAndFieldNames.first << defAndFieldNames.second << QVariant() << QVariant(11) << true << (int)(QContactDetailRangeFilter::IncludeLower | QContactDetailRangeFilter::IncludeUpper) << false << 0 << "ac";
+    }
 }
 
 void tst_QContactManagerFiltering::rangeFiltering()
 {
+    QFETCH(QContactManager*, cm);
     QFETCH(QString, defname);
     QFETCH(QString, fieldname);
     QFETCH(QVariant, minrange);
@@ -619,13 +654,8 @@ void tst_QContactManagerFiltering::rangeFiltering()
     QContactDetailRangeFilter::RangeFlags rangeflags = (QContactDetailRangeFilter::RangeFlags)rangeflagsi;
     Qt::MatchFlags matchflags = (Qt::MatchFlags) matchflagsi;
 
-    /* Try the memory database first */
-    QContactManager* cm = new QContactManager("memory");
-
-    QList<QUniqueId> contacts = prepareModel(cm);
+    QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
     QList<QUniqueId> ids;
-
-    QVERIFY(contacts.count() == 4);
 
     /* Build the range filter */
     QContactDetailRangeFilter drf;
@@ -638,41 +668,40 @@ void tst_QContactManagerFiltering::rangeFiltering()
         drf.setMatchFlags(matchflags);
 
     /* At this point, since we're using memory, assume the filter isn't really supported */
-    QVERIFY(cm->information()->filterSupported(drf) == false);
+    QContactManagerInfo *info = cm->information();
+    QVERIFY(info->filterSupported(drf) == false);
 
     ids = cm->contacts(drf);
 
     QString output = convertIds(contacts, ids);
     QCOMPARE(output, expected);
-
-    delete cm;
 }
 
 void tst_QContactManagerFiltering::groupMembershipFiltering_data()
 {
+    QTest::addColumn<QContactManager *>("cm");
     QTest::addColumn<QString>("expectedone");
     QTest::addColumn<QString>("expectedtwo");
 
     QString es; // empty string.
 
-    QTest::newRow("1") << "abcd" << es;
-    QTest::newRow("2") << "abcd" << "abcd";
-    QTest::newRow("3") << "ad" << "ab";
-    QTest::newRow("4") << es << "c";
+    for (int i = 0; i < managers.size(); i++) {
+        QContactManager *manager = managers.at(i);
+        QTest::newRow("1") << manager << "abcd" << es;
+        QTest::newRow("2") << manager << "abcd" << "abcd";
+        QTest::newRow("3") << manager << "ad" << "ab";
+        QTest::newRow("4") << manager << es << "c";
+    }
 }
 
 void tst_QContactManagerFiltering::groupMembershipFiltering()
 {
+    QFETCH(QContactManager*, cm);
     QFETCH(QString, expectedone);
     QFETCH(QString, expectedtwo);
 
-    /* Try the memory database first */
-    QContactManager* cm = new QContactManager("memory");
-
-    QList<QUniqueId> contacts = prepareModel(cm);
+    QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
     QList<QUniqueId> idsone, idstwo;
-
-    QVERIFY(contacts.count() == 4);
 
     QContactGroup g1, g2;
     g1.setName("GroupOne");
@@ -704,12 +733,11 @@ void tst_QContactManagerFiltering::groupMembershipFiltering()
 
     output = convertIds(contacts, idstwo);
     QCOMPARE(output, expectedtwo);
-
-    delete cm;
 }
 
 void tst_QContactManagerFiltering::intersectionFiltering_data()
 {
+    QTest::addColumn<QContactManager *>("cm");
     QTest::addColumn<bool>("firstfilter");
     QTest::addColumn<int>("fftype"); // 1 = detail, 2 = detailrange, 3 = groupmembership, 4 = union, 5 = intersection
     QTest::addColumn<QString>("ffdefname");
@@ -731,220 +759,275 @@ void tst_QContactManagerFiltering::intersectionFiltering_data()
 
     QString es; // empty string.
 
-    // for the following tests, terminology:
-    // X will be an (empty) intersection filter created in the test
-    // Y will be the first filter defined here
-    // Z will be the second filter defined here
+    for (int i = 0; i < managers.size(); i++) {
+        QContactManager *manager = managers.at(i);
 
-    // WITH Y AND Z AS DETAIL FILTERS (with no overlap between Y and Z results)
-    // For these tests, Y matches "bc" and Z matches "a"
-    // X && Y - X empty so es
-    QTest::newRow("A1") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << false << 1 << "Integer" << "value" << false << QVariant(10) << QVariant() << QVariant()
-                        << "XY" << es;
-    // Y && X - X empty so es
-    QTest::newRow("A2") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << false << 1 << "Integer" << "value" << false << QVariant(10) << QVariant() << QVariant()
-                        << "YX" << es;
-    // Y && Z  - matches "a" and "bc" - so intersected = es
-    QTest::newRow("A3") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
-                        << "YZ" << es;
-    // Z && Y - matches "bc" and "a" - so intersected = es
-    QTest::newRow("A4") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
-                        << "ZY" << es;
-    // X && Z - X empty so es
-    QTest::newRow("A5") << false << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
-                        << "XZ" << es;
-    // Z && X - X empty so es
-    QTest::newRow("A6") << false << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
-                        << "ZX" << es;
-    // X && Y && Z - X empty so es
-    QTest::newRow("A7") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
-                        << "XYZ" << es;
-    // X && Z && Y - X empty so es
-    QTest::newRow("A8") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
-                        << "XZY" << es;
-    // Y && X && Z - X empty so es
-    QTest::newRow("A9") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
-                        << "YXZ" << es;
-    // Z && X && Y - X empty so es
-    QTest::newRow("A10") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                         << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
-                         << "ZXY" << es;
-    // Y && Z && X - X empty so es
-    QTest::newRow("A11") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                         << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
-                         << "YZX" << es;
-    // Z && Y && X - X empty so es
-    QTest::newRow("A12") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                         << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
-                         << "ZYX" << es;
+        // for the following tests, terminology:
+        // X will be an (empty) intersection filter created in the test
+        // Y will be the first filter defined here
+        // Z will be the second filter defined here
 
-    // WITH Y AND Z AS DETAIL FILTERS (with some overlap between Y and Z results)
-    // For these tests, Y matches "bc", Z matches "b"
-    // X && Y - X empty so es
-    QTest::newRow("B1") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << false << 1 << "Integer" << "value" << false << QVariant(20) << QVariant() << QVariant()
-                        << "XY" << es;
-    // Y && X - X empty so es
-    QTest::newRow("B2") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << false << 1 << "Integer" << "value" << false << QVariant(20) << QVariant() << QVariant()
-                        << "YX" << es;
-    // Y && Z  - matches "b" and "bc" - so intersected = "b"
-    QTest::newRow("B3") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
-                        << "YZ" << "b";
-    // Z && Y - matches "bc" and "b" - so intersected = "b"
-    QTest::newRow("B4") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
-                        << "ZY" << "b";
-    // X && Z - X empty so es
-    QTest::newRow("B5") << false << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
-                        << "XZ" << es;
-    // Z && X - X empty so es
-    QTest::newRow("B6") << false << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
-                        << "ZX" << es;
-    // X && Y && Z - X empty so es
-    QTest::newRow("B7") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
-                        << "XYZ" << es;
-    // X && Z && Y - X empty so es
-    QTest::newRow("B8") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
-                        << "XZY" << es;
-    // Y && X && Z - X empty so es
-    QTest::newRow("B9") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
-                        << "YXZ" << es;
-    // Z && X && Y - X empty so es
-    QTest::newRow("B10") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                         << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
-                         << "ZXY" << es;
-    // Y && Z && X - X empty so es
-    QTest::newRow("B11") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                         << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
-                         << "YZX" << es;
-    // Z && Y && X - X empty so es
-    QTest::newRow("B12") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                         << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
-                         << "ZYX" << es;
+        // WITH Y AND Z AS DETAIL FILTERS (with no overlap between Y and Z results)
+        // For these tests, Y matches "bc" and Z matches "a"
+        // X && Y - X empty so es
+        QPair<QString, QString> integerDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Integer");
+        QPair<QString, QString> booleanDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Bool");
+        QTest::newRow("A1") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << false << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(10) << QVariant() << QVariant()
+                            << "XY" << es;
+        // Y && X - X empty so es
+        QTest::newRow("A2") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << false << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(10) << QVariant() << QVariant()
+                            << "YX" << es;
+        // Y && Z  - matches "a" and "bc" - so intersected = es
+        QTest::newRow("A3") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(10) << QVariant() << QVariant()
+                            << "YZ" << es;
+        // Z && Y - matches "bc" and "a" - so intersected = es
+        QTest::newRow("A4") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(10) << QVariant() << QVariant()
+                            << "ZY" << es;
+        // X && Z - X empty so es
+        QTest::newRow("A5") << manager
+                            << false << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(10) << QVariant() << QVariant()
+                            << "XZ" << es;
+        // Z && X - X empty so es
+        QTest::newRow("A6") << manager
+                            << false << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(10) << QVariant() << QVariant()
+                            << "ZX" << es;
+        // X && Y && Z - X empty so es
+        QTest::newRow("A7") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(10) << QVariant() << QVariant()
+                            << "XYZ" << es;
+        // X && Z && Y - X empty so es
+        QTest::newRow("A8") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(10) << QVariant() << QVariant()
+                            << "XZY" << es;
+        // Y && X && Z - X empty so es
+        QTest::newRow("A9") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(10) << QVariant() << QVariant()
+                            << "YXZ" << es;
+        // Z && X && Y - X empty so es
+        QTest::newRow("A10") << manager
+                             << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                             << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(10) << QVariant() << QVariant()
+                             << "ZXY" << es;
+        // Y && Z && X - X empty so es
+        QTest::newRow("A11") << manager
+                             << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                             << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(10) << QVariant() << QVariant()
+                             << "YZX" << es;
+        // Z && Y && X - X empty so es
+        QTest::newRow("A12") << manager
+                             << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                             << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(10) << QVariant() << QVariant()
+                             << "ZYX" << es;
 
-    //---------------------------
+        // WITH Y AND Z AS DETAIL FILTERS (with some overlap between Y and Z results)
+        // For these tests, Y matches "bc", Z matches "b"
+        // X && Y - X empty so es
+        QTest::newRow("B1") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << false << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(20) << QVariant() << QVariant()
+                            << "XY" << es;
+        // Y && X - X empty so es
+        QTest::newRow("B2") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << false << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(20) << QVariant() << QVariant()
+                            << "YX" << es;
+        // Y && Z  - matches "b" and "bc" - so intersected = "b"
+        QTest::newRow("B3") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(20) << QVariant() << QVariant()
+                            << "YZ" << "b";
+        // Z && Y - matches "bc" and "b" - so intersected = "b"
+        QTest::newRow("B4") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(20) << QVariant() << QVariant()
+                            << "ZY" << "b";
+        // X && Z - X empty so es
+        QTest::newRow("B5") << manager
+                            << false << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(20) << QVariant() << QVariant()
+                            << "XZ" << es;
+        // Z && X - X empty so es
+        QTest::newRow("B6") << manager
+                            << false << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(20) << QVariant() << QVariant()
+                            << "ZX" << es;
+        // X && Y && Z - X empty so es
+        QTest::newRow("B7") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(20) << QVariant() << QVariant()
+                            << "XYZ" << es;
+        // X && Z && Y - X empty so es
+        QTest::newRow("B8") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(20) << QVariant() << QVariant()
+                            << "XZY" << es;
+        // Y && X && Z - X empty so es
+        QTest::newRow("B9") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(20) << QVariant() << QVariant()
+                            << "YXZ" << es;
+        // Z && X && Y - X empty so es
+        QTest::newRow("B10") << manager
+                             << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                             << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(20) << QVariant() << QVariant()
+                             << "ZXY" << es;
+        // Y && Z && X - X empty so es
+        QTest::newRow("B11") << manager
+                             << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                             << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(20) << QVariant() << QVariant()
+                             << "YZX" << es;
+        // Z && Y && X - X empty so es
+        QTest::newRow("B12") << manager
+                             << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                             << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(20) << QVariant() << QVariant()
+                             << "ZYX" << es;
 
-    // WITH Y AND Z AS RANGE FILTERS (with no overlap between Y and Z results)
-    // For these tests, Y matches "a", Z matches "b"
-    // X && Y - X empty so es
-    QTest::newRow("C1") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
-                        << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "XY" << es;
-    // Y && X - X empty so es
-    QTest::newRow("C2") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
-                        << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "YX" << es;
-    // Y && Z - no overlap so es
-    QTest::newRow("C3") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
-                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "YZ" << es;
-    // Z && Y - no overlap so es
-    QTest::newRow("C4") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
-                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "ZY" << es;
-    // X && Z - X empty so es
-    QTest::newRow("C5") << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
-                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "XZ" << es;
-    // Z && X - X empty so es
-    QTest::newRow("C6") << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
-                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "ZX" << es;
-    // X && Y && Z - X empty so es
-    QTest::newRow("C7") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
-                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "XYZ" << es;
-    // X && Z && Y - X empty so es
-    QTest::newRow("C8") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
-                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "XZY" << es;
-    // Y && X && Z - X empty so es
-    QTest::newRow("C9") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
-                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "YXZ" << es;
-    // Z && X && Y - X empty so es
-    QTest::newRow("C10") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
-                         << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                         << "ZXY" << es;
-    // Y && Z && X - X empty so es
-    QTest::newRow("C11") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
-                         << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                         << "YZX" << es;
-    // Z && Y && X - X empty so es
-    QTest::newRow("C12") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
-                         << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                         << "ZYX" << es;
+        //---------------------------
 
-    // WITH Y AND Z AS RANGE FILTERS (with some overlap between Y and Z results)
-    // For these tests, Y matches "ab", Z matches "b"
-    // X && Y - X empty so es
-    QTest::newRow("D1") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
-                        << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "XY" << es;
-    // Y && X - X empty so es
-    QTest::newRow("D2") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
-                        << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "YX" << es;
-    // Y && Z - Y matches "ab", Z matches "b", intersection = "b"
-    QTest::newRow("D3") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
-                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "YZ" << "b";
-    // Z && Y - Y matches "ab", Z matches "b", intersection = "b"
-    QTest::newRow("D4") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
-                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "ZY" << "b";
-    // X && Z - X empty so es
-    QTest::newRow("D5") << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
-                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "XZ" << es;
-    // Z && X - X empty so es
-    QTest::newRow("D6") << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
-                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "ZX" << es;
-    // X && Y && Z - X empty so es
-    QTest::newRow("D7") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
-                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "XYZ" << es;
-    // X && Z && Y - X empty so es
-    QTest::newRow("D8") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
-                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "XZY" << es;
-    // Y && X && Z - X empty so es
-    QTest::newRow("D9") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
-                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "YXZ" << es;
-    // Z && X && Y - X empty so es
-    QTest::newRow("D10") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
-                         << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                         << "ZXY" << es;
-    // Y && Z && X - X empty so es
-    QTest::newRow("D11") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
-                         << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                         << "YZX" << es;
-    // Z && Y && X - X empty so es
-    QTest::newRow("D12") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
-                         << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                         << "ZYX" << es;
+        // WITH Y AND Z AS RANGE FILTERS (with no overlap between Y and Z results)
+        // For these tests, Y matches "a", Z matches "b"
+        // X && Y - X empty so es
+        QTest::newRow("C1") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(15)
+                            << false << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "XY" << es;
+        // Y && X - X empty so es
+        QTest::newRow("C2") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(15)
+                            << false << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "YX" << es;
+        // Y && Z - no overlap so es
+        QTest::newRow("C3") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(15)
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "YZ" << es;
+        // Z && Y - no overlap so es
+        QTest::newRow("C4") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(15)
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "ZY" << es;
+        // X && Z - X empty so es
+        QTest::newRow("C5") << manager
+                            << false << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(15)
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "XZ" << es;
+        // Z && X - X empty so es
+        QTest::newRow("C6") << manager
+                            << false << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(15)
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "ZX" << es;
+        // X && Y && Z - X empty so es
+        QTest::newRow("C7") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(15)
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "XYZ" << es;
+        // X && Z && Y - X empty so es
+        QTest::newRow("C8") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(15)
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "XZY" << es;
+        // Y && X && Z - X empty so es
+        QTest::newRow("C9") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(15)
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "YXZ" << es;
+        // Z && X && Y - X empty so es
+        QTest::newRow("C10") << manager
+                             << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(15)
+                             << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                             << "ZXY" << es;
+        // Y && Z && X - X empty so es
+        QTest::newRow("C11") << manager
+                             << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(15)
+                             << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                             << "YZX" << es;
+        // Z && Y && X - X empty so es
+        QTest::newRow("C12") << manager
+                             << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(15)
+                             << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                             << "ZYX" << es;
+
+        // WITH Y AND Z AS RANGE FILTERS (with some overlap between Y and Z results)
+        // For these tests, Y matches "ab", Z matches "b"
+        // X && Y - X empty so es
+        QTest::newRow("D1") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(25)
+                            << false << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "XY" << es;
+        // Y && X - X empty so es
+        QTest::newRow("D2") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(25)
+                            << false << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "YX" << es;
+        // Y && Z - Y matches "ab", Z matches "b", intersection = "b"
+        QTest::newRow("D3") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(25)
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "YZ" << "b";
+        // Z && Y - Y matches "ab", Z matches "b", intersection = "b"
+        QTest::newRow("D4") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(25)
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "ZY" << "b";
+        // X && Z - X empty so es
+        QTest::newRow("D5") << manager
+                            << false << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(25)
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "XZ" << es;
+        // Z && X - X empty so es
+        QTest::newRow("D6") << manager
+                            << false << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(25)
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "ZX" << es;
+        // X && Y && Z - X empty so es
+        QTest::newRow("D7") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(25)
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "XYZ" << es;
+        // X && Z && Y - X empty so es
+        QTest::newRow("D8") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(25)
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "XZY" << es;
+        // Y && X && Z - X empty so es
+        QTest::newRow("D9") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(25)
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "YXZ" << es;
+        // Z && X && Y - X empty so es
+        QTest::newRow("D10") << manager
+                             << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(25)
+                             << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                             << "ZXY" << es;
+        // Y && Z && X - X empty so es
+        QTest::newRow("D11") << manager
+                             << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(25)
+                             << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                             << "YZX" << es;
+        // Z && Y && X - X empty so es
+        QTest::newRow("D12") << manager
+                             << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(25)
+                             << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                             << "ZYX" << es;
+    }
 }
 
 void tst_QContactManagerFiltering::intersectionFiltering()
 {
+    QFETCH(QContactManager*, cm);
     QFETCH(bool, firstfilter);
     QFETCH(int, fftype); // 1 = detail, 2 = detailrange, 3 = groupmembership, 4 = union, 5 = intersection
     QFETCH(QString, ffdefname);
@@ -1078,13 +1161,8 @@ void tst_QContactManagerFiltering::intersectionFiltering()
             resultFilter = *z && *y;
     }
 
-    /* Try the memory database first */
-    QContactManager* cm = new QContactManager("memory");
-
-    QList<QUniqueId> contacts = prepareModel(cm);
+    QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
     QList<QUniqueId> ids;
-
-    QVERIFY(contacts.count() == 4);
 
     ids = cm->contacts(resultFilter);
 
@@ -1094,11 +1172,11 @@ void tst_QContactManagerFiltering::intersectionFiltering()
     delete x;
     if (y) delete y;
     if (z) delete z;
-    delete cm;
 }
 
 void tst_QContactManagerFiltering::unionFiltering_data()
 {
+    QTest::addColumn<QContactManager *>("cm");
     QTest::addColumn<bool>("firstfilter");
     QTest::addColumn<int>("fftype"); // 1 = detail, 2 = detailrange, 3 = groupmembership, 4 = union, 5 = intersection
     QTest::addColumn<QString>("ffdefname");
@@ -1120,220 +1198,275 @@ void tst_QContactManagerFiltering::unionFiltering_data()
 
     QString es; // empty string.
 
-    // for the following tests, terminology:
-    // X will be an (empty) union filter created in the test
-    // Y will be the first filter defined here
-    // Z will be the second filter defined here
+    for (int i = 0; i < managers.size(); i++) {
+        QContactManager *manager = managers.at(i);
 
-    // WITH Y AND Z AS DETAIL FILTERS (with no overlap between Y and Z results)
-    // For these tests, Y matches "bc" and Z matches "a"
-    // X || Y - X empty, Y matches "bc" so union = "bc"
-    QTest::newRow("A1") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << false << 1 << "Integer" << "value" << false << QVariant(10) << QVariant() << QVariant()
-                        << "XY" << "bc";
-    // Y || X - Y matches "bc", X empty so union = "bc"
-    QTest::newRow("A2") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << false << 1 << "Integer" << "value" << false << QVariant(10) << QVariant() << QVariant()
-                        << "YX" << "bc";
-    // Y || Z  - Y matches "bc" and Z matches "a" - so union = "abc"
-    QTest::newRow("A3") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
-                        << "YZ" << "abc";
-    // Z || Y - Y matches "bc" and Z matches "a" - so union = "abc"
-    QTest::newRow("A4") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
-                        << "ZY" << "abc";
-    // X || Z - X empty, Z matches "a" so "a"
-    QTest::newRow("A5") << false << 1 << "Bool" << "value" << false << QVariant(false) << QVariant() << QVariant()
-                        << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
-                        << "XZ" << "a";
-    // Z || X - X empty, Z matches "a" so "a"
-    QTest::newRow("A6") << false << 1 << "Bool" << "value" << false << QVariant(false) << QVariant() << QVariant()
-                        << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
-                        << "ZX" << "a";
-    // X || Y || Z - X empty, Y matches "bc", Z matches "a" so "abc"
-    QTest::newRow("A7") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
-                        << "XYZ" << "abc";
-    // X || Z || Y - X empty, Y matches "bc", Z matches "a" so "abc"
-    QTest::newRow("A8") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
-                        << "XZY" << "abc";
-    // Y || X || Z - X empty, Y matches "bc", Z matches "a" so "abc"
-    QTest::newRow("A9") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
-                        << "YXZ" << "abc";
-    // Z || X || Y - X empty, Y matches "bc", Z matches "a" so "abc"
-    QTest::newRow("A10") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                         << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
-                         << "ZXY" << "abc";
-    // Y || Z || X - X empty, Y matches "bc", Z matches "a" so "abc"
-    QTest::newRow("A11") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                         << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
-                         << "YZX" << "abc";
-    // Z || Y || X - X empty, Y matches "bc", Z matches "a" so "abc"
-    QTest::newRow("A12") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                         << true << 1 << "Integer" << "value" << true << QVariant(10) << QVariant() << QVariant()
-                         << "ZYX" << "abc";
+        // for the following tests, terminology:
+        // X will be an (empty) union filter created in the test
+        // Y will be the first filter defined here
+        // Z will be the second filter defined here
 
-    // WITH Y AND Z AS DETAIL FILTERS (with some overlap between Y and Z results)
-    // For these tests, Y matches "bc", Z matches "b"
-    // X || Y - X empty, Y matches "b", so "bc"
-    QTest::newRow("B1") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << false << 1 << "Integer" << "value" << false << QVariant(20) << QVariant() << QVariant()
-                        << "XY" << "bc";
-    // Y || X - X empty, Y matches "bc", so "bc"
-    QTest::newRow("B2") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << false << 1 << "Integer" << "value" << false << QVariant(20) << QVariant() << QVariant()
-                        << "YX" << "bc";
-    // Y || Z  - X empty, Y matches "bc", Z matches "b" so "bc"
-    QTest::newRow("B3") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
-                        << "YZ" << "bc";
-    // Z || Y - X empty, Y matches "bc", Z matches "b" so "bc"
-    QTest::newRow("B4") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
-                        << "ZY" << "bc";
-    // X || Z - X empty, Z matches "b" so "b"
-    QTest::newRow("B5") << false << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
-                        << "XZ" << "b";
-    // Z || X - X empty, Z matches "b" so "b"
-    QTest::newRow("B6") << false << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
-                        << "ZX" << "b";
-    // X || Y || Z - X empty, Y matches "bc", Z matches "b" so "bc"
-    QTest::newRow("B7") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
-                        << "XYZ" << "bc";
-    // X || Z || Y - X empty, Y matches "bc", Z matches "b" so "bc"
-    QTest::newRow("B8") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
-                        << "XZY" << "bc";
-    // Y || X || Z - X empty, Y matches "bc", Z matches "b" so "bc"
-    QTest::newRow("B9") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                        << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
-                        << "YXZ" << "bc";
-    // Z || X || Y - X empty, Y matches "bc", Z matches "b" so "bc"
-    QTest::newRow("B10") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                         << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
-                         << "ZXY" << "bc";
-    // Y || Z || X - X empty, Y matches "bc", Z matches "b" so "bc"
-    QTest::newRow("B11") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                         << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
-                         << "YZX" << "bc";
-    // Z || Y || X - X empty, Y matches "bc", Z matches "b" so "bc"
-    QTest::newRow("B12") << true << 1 << "Bool" << "value" << true << QVariant(false) << QVariant() << QVariant()
-                         << true << 1 << "Integer" << "value" << true << QVariant(20) << QVariant() << QVariant()
-                         << "ZYX" << "bc";
+        // WITH Y AND Z AS DETAIL FILTERS (with no overlap between Y and Z results)
+        // For these tests, Y matches "bc" and Z matches "a"
+        // X || Y - X empty, Y matches "bc" so union = "bc"
+        QPair<QString, QString> integerDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Integer");
+        QPair<QString, QString> booleanDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Bool");
+        QTest::newRow("A1") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << false << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(10) << QVariant() << QVariant()
+                            << "XY" << "bc";
+        // Y || X - Y matches "bc", X empty so union = "bc"
+        QTest::newRow("A2") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << false << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(10) << QVariant() << QVariant()
+                            << "YX" << "bc";
+        // Y || Z  - Y matches "bc" and Z matches "a" - so union = "abc"
+        QTest::newRow("A3") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(10) << QVariant() << QVariant()
+                            << "YZ" << "abc";
+        // Z || Y - Y matches "bc" and Z matches "a" - so union = "abc"
+        QTest::newRow("A4") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(10) << QVariant() << QVariant()
+                            << "ZY" << "abc";
+        // X || Z - X empty, Z matches "a" so "a"
+        QTest::newRow("A5") << manager
+                            << false << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << false << QVariant(false) << QVariant() << QVariant()
+                            << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(10) << QVariant() << QVariant()
+                            << "XZ" << "a";
+        // Z || X - X empty, Z matches "a" so "a"
+        QTest::newRow("A6") << manager
+                            << false << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << false << QVariant(false) << QVariant() << QVariant()
+                            << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(10) << QVariant() << QVariant()
+                            << "ZX" << "a";
+        // X || Y || Z - X empty, Y matches "bc", Z matches "a" so "abc"
+        QTest::newRow("A7") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(10) << QVariant() << QVariant()
+                            << "XYZ" << "abc";
+        // X || Z || Y - X empty, Y matches "bc", Z matches "a" so "abc"
+        QTest::newRow("A8") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(10) << QVariant() << QVariant()
+                            << "XZY" << "abc";
+        // Y || X || Z - X empty, Y matches "bc", Z matches "a" so "abc"
+        QTest::newRow("A9") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(10) << QVariant() << QVariant()
+                            << "YXZ" << "abc";
+        // Z || X || Y - X empty, Y matches "bc", Z matches "a" so "abc"
+        QTest::newRow("A10") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                             << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(10) << QVariant() << QVariant()
+                             << "ZXY" << "abc";
+        // Y || Z || X - X empty, Y matches "bc", Z matches "a" so "abc"
+        QTest::newRow("A11") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                             << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(10) << QVariant() << QVariant()
+                             << "YZX" << "abc";
+        // Z || Y || X - X empty, Y matches "bc", Z matches "a" so "abc"
+        QTest::newRow("A12") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                             << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(10) << QVariant() << QVariant()
+                             << "ZYX" << "abc";
 
-    //---------------------------
+        // WITH Y AND Z AS DETAIL FILTERS (with some overlap between Y and Z results)
+        // For these tests, Y matches "bc", Z matches "b"
+        // X || Y - X empty, Y matches "b", so "bc"
+        QTest::newRow("B1") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << false << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(20) << QVariant() << QVariant()
+                            << "XY" << "bc";
+        // Y || X - X empty, Y matches "bc", so "bc"
+        QTest::newRow("B2") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << false << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(20) << QVariant() << QVariant()
+                            << "YX" << "bc";
+        // Y || Z  - X empty, Y matches "bc", Z matches "b" so "bc"
+        QTest::newRow("B3") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(20) << QVariant() << QVariant()
+                            << "YZ" << "bc";
+        // Z || Y - X empty, Y matches "bc", Z matches "b" so "bc"
+        QTest::newRow("B4") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(20) << QVariant() << QVariant()
+                            << "ZY" << "bc";
+        // X || Z - X empty, Z matches "b" so "b"
+        QTest::newRow("B5") << manager
+                            << false << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(20) << QVariant() << QVariant()
+                            << "XZ" << "b";
+        // Z || X - X empty, Z matches "b" so "b"
+        QTest::newRow("B6") << manager
+                            << false << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(20) << QVariant() << QVariant()
+                            << "ZX" << "b";
+        // X || Y || Z - X empty, Y matches "bc", Z matches "b" so "bc"
+        QTest::newRow("B7") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(20) << QVariant() << QVariant()
+                            << "XYZ" << "bc";
+        // X || Z || Y - X empty, Y matches "bc", Z matches "b" so "bc"
+        QTest::newRow("B8") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(20) << QVariant() << QVariant()
+                            << "XZY" << "bc";
+        // Y || X || Z - X empty, Y matches "bc", Z matches "b" so "bc"
+        QTest::newRow("B9") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                            << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(20) << QVariant() << QVariant()
+                            << "YXZ" << "bc";
+        // Z || X || Y - X empty, Y matches "bc", Z matches "b" so "bc"
+        QTest::newRow("B10") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                             << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(20) << QVariant() << QVariant()
+                             << "ZXY" << "bc";
+        // Y || Z || X - X empty, Y matches "bc", Z matches "b" so "bc"
+        QTest::newRow("B11") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                             << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(20) << QVariant() << QVariant()
+                             << "YZX" << "bc";
+        // Z || Y || X - X empty, Y matches "bc", Z matches "b" so "bc"
+        QTest::newRow("B12") << manager
+                            << true << 1 << booleanDefAndFieldNames.first << booleanDefAndFieldNames.second << true << QVariant(false) << QVariant() << QVariant()
+                             << true << 1 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << true << QVariant(20) << QVariant() << QVariant()
+                             << "ZYX" << "bc";
 
-    // WITH Y AND Z AS RANGE FILTERS (with no overlap between Y and Z results)
-    // For these tests, Y matches "a", Z matches "b"
-    // X || Y - X empty, Y matches "a" so "a"
-    QTest::newRow("C1") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
-                        << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "XY" << "a";
-    // Y || X - X empty, Y matches "a" so "a"
-    QTest::newRow("C2") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
-                        << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "YX" << "a";
-    // Y || Z - Y matches "a", Z matches "b" so "ab"
-    QTest::newRow("C3") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
-                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "YZ" << "ab";
-    // Z || Y - Y matches "a", Z matches "b" so "ab"
-    QTest::newRow("C4") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
-                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "ZY" << "ab";
-    // X || Z - X empty, Z matches "b" so "b"
-    QTest::newRow("C5") << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
-                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "XZ" << "b";
-    // Z || X - X empty, Z matches "b" so "b"
-    QTest::newRow("C6") << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
-                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "ZX" << "b";
-    // X || Y || Z - X empty, Y matches "a", Z matches "b" so "ab"
-    QTest::newRow("C7") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
-                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "XYZ" << "ab";
-    // X || Z || Y - X empty, Y matches "a", Z matches "b" so "ab"
-    QTest::newRow("C8") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
-                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "XZY" << "ab";
-    // Y || X || Z - X empty, Y matches "a", Z matches "b" so "ab"
-    QTest::newRow("C9") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
-                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "YXZ" << "ab";
-    // Z || X || Y - X empty, Y matches "a", Z matches "b" so "ab"
-    QTest::newRow("C10") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
-                         << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                         << "ZXY" << "ab";
-    // Y || Z || X - X empty, Y matches "a", Z matches "b" so "ab"
-    QTest::newRow("C11") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
-                         << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                         << "YZX" << "ab";
-    // Z || Y || X - X empty, Y matches "a", Z matches "b" so "ab"
-    QTest::newRow("C12") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(15)
-                         << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                         << "ZYX" << "ab";
+        //---------------------------
 
-    // WITH Y AND Z AS RANGE FILTERS (with some overlap between Y and Z results)
-    // For these tests, Y matches "ab", Z matches "b"
-    // X || Y - X empty, Y matches "ab" so "ab"
-    QTest::newRow("D1") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
-                        << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "XY" << "ab";
-    // Y || X - X empty, Y matches "ab" so "ab"
-    QTest::newRow("D2") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
-                        << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "YX" << "ab";
-    // Y || Z - Y matches "ab", Z matches "b", union = "ab"
-    QTest::newRow("D3") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
-                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "YZ" << "ab";
-    // Z || Y - Y matches "ab", Z matches "b", union = "ab"
-    QTest::newRow("D4") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
-                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "ZY" << "ab";
-    // X || Z - X empty, Z matches "b" so "b"
-    QTest::newRow("D5") << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
-                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "XZ" << "b";
-    // Z || X - X empty, Z matches "b" so "b"
-    QTest::newRow("D6") << false << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
-                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "ZX" << "b";
-    // X || Y || Z - X empty, Y matches "ab", Z matches "b" so "ab"
-    QTest::newRow("D7") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
-                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "XYZ" << "ab";
-    // X || Z || Y - X empty, Y matches "ab", Z matches "b" so "ab"
-    QTest::newRow("D8") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
-                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "XZY" << "ab";
-    // Y || X || Z - X empty, Y matches "ab", Z matches "b" so "ab"
-    QTest::newRow("D9") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
-                        << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                        << "YXZ" << "ab";
-    // Z || X || Y - X empty, Y matches "ab", Z matches "b" so "ab"
-    QTest::newRow("D10") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
-                         << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                         << "ZXY" << "ab";
-    // Y || Z || X - X empty, Y matches "ab", Z matches "b" so "ab"
-    QTest::newRow("D11") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
-                         << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                         << "YZX" << "ab";
-    // Z || Y || X - X empty, Y matches "ab", Z matches "b" so "ab"
-    QTest::newRow("D12") << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(5) << QVariant(25)
-                         << true << 2 << "Integer" << "value" << false << QVariant(0) << QVariant(15) << QVariant(25)
-                         << "ZYX" << "ab";
+        // WITH Y AND Z AS RANGE FILTERS (with no overlap between Y and Z results)
+        // For these tests, Y matches "a", Z matches "b"
+        // X || Y - X empty, Y matches "a" so "a"
+        QTest::newRow("C1") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(15)
+                            << false << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "XY" << "a";
+        // Y || X - X empty, Y matches "a" so "a"
+        QTest::newRow("C2") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(15)
+                            << false << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "YX" << "a";
+        // Y || Z - Y matches "a", Z matches "b" so "ab"
+        QTest::newRow("C3") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(15)
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "YZ" << "ab";
+        // Z || Y - Y matches "a", Z matches "b" so "ab"
+        QTest::newRow("C4") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(15)
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "ZY" << "ab";
+        // X || Z - X empty, Z matches "b" so "b"
+        QTest::newRow("C5") << manager
+                            << false << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(15)
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "XZ" << "b";
+        // Z || X - X empty, Z matches "b" so "b"
+        QTest::newRow("C6") << manager
+                            << false << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(15)
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "ZX" << "b";
+        // X || Y || Z - X empty, Y matches "a", Z matches "b" so "ab"
+        QTest::newRow("C7") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(15)
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "XYZ" << "ab";
+        // X || Z || Y - X empty, Y matches "a", Z matches "b" so "ab"
+        QTest::newRow("C8") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(15)
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "XZY" << "ab";
+        // Y || X || Z - X empty, Y matches "a", Z matches "b" so "ab"
+        QTest::newRow("C9") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(15)
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "YXZ" << "ab";
+        // Z || X || Y - X empty, Y matches "a", Z matches "b" so "ab"
+        QTest::newRow("C10") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(15)
+                             << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                             << "ZXY" << "ab";
+        // Y || Z || X - X empty, Y matches "a", Z matches "b" so "ab"
+        QTest::newRow("C11") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(15)
+                             << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                             << "YZX" << "ab";
+        // Z || Y || X - X empty, Y matches "a", Z matches "b" so "ab"
+        QTest::newRow("C12") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(15)
+                             << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                             << "ZYX" << "ab";
+
+        // WITH Y AND Z AS RANGE FILTERS (with some overlap between Y and Z results)
+        // For these tests, Y matches "ab", Z matches "b"
+        // X || Y - X empty, Y matches "ab" so "ab"
+        QTest::newRow("D1") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(25)
+                            << false << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "XY" << "ab";
+        // Y || X - X empty, Y matches "ab" so "ab"
+        QTest::newRow("D2") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(25)
+                            << false << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "YX" << "ab";
+        // Y || Z - Y matches "ab", Z matches "b", union = "ab"
+        QTest::newRow("D3") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(25)
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "YZ" << "ab";
+        // Z || Y - Y matches "ab", Z matches "b", union = "ab"
+        QTest::newRow("D4") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(25)
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "ZY" << "ab";
+        // X || Z - X empty, Z matches "b" so "b"
+        QTest::newRow("D5") << manager
+                            << false << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(25)
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "XZ" << "b";
+        // Z || X - X empty, Z matches "b" so "b"
+        QTest::newRow("D6") << manager
+                            << false << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(25)
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "ZX" << "b";
+        // X || Y || Z - X empty, Y matches "ab", Z matches "b" so "ab"
+        QTest::newRow("D7") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(25)
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "XYZ" << "ab";
+        // X || Z || Y - X empty, Y matches "ab", Z matches "b" so "ab"
+        QTest::newRow("D8") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(25)
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "XZY" << "ab";
+        // Y || X || Z - X empty, Y matches "ab", Z matches "b" so "ab"
+        QTest::newRow("D9") << manager
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(25)
+                            << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                            << "YXZ" << "ab";
+        // Z || X || Y - X empty, Y matches "ab", Z matches "b" so "ab"
+        QTest::newRow("D10") << manager
+                             << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(25)
+                             << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                             << "ZXY" << "ab";
+        // Y || Z || X - X empty, Y matches "ab", Z matches "b" so "ab"
+        QTest::newRow("D11") << manager
+                             << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(25)
+                             << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                             << "YZX" << "ab";
+        // Z || Y || X - X empty, Y matches "ab", Z matches "b" so "ab"
+        QTest::newRow("D12") << manager
+                             << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(5) << QVariant(25)
+                             << true << 2 << integerDefAndFieldNames.first << integerDefAndFieldNames.second << false << QVariant(0) << QVariant(15) << QVariant(25)
+                             << "ZYX" << "ab";
+    }
 }
 
 void tst_QContactManagerFiltering::unionFiltering()
 {
+    QFETCH(QContactManager*, cm);
     QFETCH(bool, firstfilter);
     QFETCH(int, fftype); // 1 = detail, 2 = detailrange, 3 = groupmembership, 4 = union, 5 = intersection
     QFETCH(QString, ffdefname);
@@ -1467,13 +1600,8 @@ void tst_QContactManagerFiltering::unionFiltering()
             resultFilter = *z || *y;
     }
 
-    /* Try the memory database first */
-    QContactManager* cm = new QContactManager("memory");
-
-    QList<QUniqueId> contacts = prepareModel(cm);
+    QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
     QList<QUniqueId> ids;
-
-    QVERIFY(contacts.count() == 4);
 
     ids = cm->contacts(resultFilter);
 
@@ -1483,11 +1611,11 @@ void tst_QContactManagerFiltering::unionFiltering()
     delete x;
     if (y) delete y;
     if (z) delete z;
-    delete cm;
 }
 
 void tst_QContactManagerFiltering::sorting_data()
 {
+    QTest::addColumn<QContactManager *>("cm");
     QTest::addColumn<QString>("defname");
     QTest::addColumn<QString>("fieldname");
     QTest::addColumn<int>("directioni");
@@ -1501,20 +1629,28 @@ void tst_QContactManagerFiltering::sorting_data()
     QString urldef = QContactUrl::DefinitionName;
     QString urlfield = QContactUrl::FieldUrl;
 
-    QTest::newRow("first ascending") << namedef << firstname << (int)(Qt::AscendingOrder) << false << 0 << "abcd";
-    QTest::newRow("first descending") << namedef << firstname << (int)(Qt::DescendingOrder) << false << 0 << "dcba";
-    QTest::newRow("last ascending") << namedef << lastname << (int)(Qt::AscendingOrder) << false << 0 << "bacd";
-    QTest::newRow("last descending") << namedef << lastname << (int)(Qt::DescendingOrder) << false << 0 << "dcab";
-    QTest::newRow("integer ascending, blanks last") << "Integer" << "value" << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksLast) << "cabd";
-    QTest::newRow("integer descending, blanks last") << "Integer" << "value" << (int)(Qt::DescendingOrder) << true << (int)(QContactSortOrder::BlanksLast) << "bacd";
-    QTest::newRow("integer ascending, blanks first") << "Integer" << "value" << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksFirst) << "dcab";
-    QTest::newRow("integer descending, blanks first") << "Integer" << "value" << (int)(Qt::DescendingOrder) << true << (int)(QContactSortOrder::BlanksFirst) << "dbac";
-    QTest::newRow("url ascending (null value), blanks first") << urldef << urlfield << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksFirst) << "abcd";
-    QTest::newRow("url ascending (null value), blanks last") << urldef << urlfield << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksLast) << "dcba";
+    for (int i = 0; i < managers.size(); i++) {
+        QContactManager *manager = managers.at(i);
+
+        QPair<QString, QString> integerDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Integer");
+        QPair<QString, QString> stringDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("String");
+
+        QTest::newRow("first ascending") << manager << namedef << firstname << (int)(Qt::AscendingOrder) << false << 0 << "abcdefg";
+        QTest::newRow("first descending") << manager << namedef << firstname << (int)(Qt::DescendingOrder) << false << 0 << "efgdcba";
+        QTest::newRow("last ascending") << manager << namedef << lastname << (int)(Qt::AscendingOrder) << false << 0 << "bacdefg";
+        QTest::newRow("last descending") << manager << namedef << lastname << (int)(Qt::DescendingOrder) << false << 0 << "gfedcab";
+        QTest::newRow("integer ascending, blanks last") << manager << integerDefAndFieldNames.first << integerDefAndFieldNames.second << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksLast) << "cabgfed";
+        QTest::newRow("integer descending, blanks last") << manager << integerDefAndFieldNames.first << integerDefAndFieldNames.second << (int)(Qt::DescendingOrder) << true << (int)(QContactSortOrder::BlanksLast) << "bacgfed";
+        QTest::newRow("integer ascending, blanks first") << manager << integerDefAndFieldNames.first << integerDefAndFieldNames.second << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksFirst) << "defgcab";
+        QTest::newRow("integer descending, blanks first") << manager << integerDefAndFieldNames.first << integerDefAndFieldNames.second << (int)(Qt::DescendingOrder) << true << (int)(QContactSortOrder::BlanksFirst) << "defgbac";
+        QTest::newRow("string ascending (null value), blanks first") << manager << stringDefAndFieldNames.first << stringDefAndFieldNames.second << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksFirst) << "efgabcd";
+        QTest::newRow("string ascending (null value), blanks last") << manager << stringDefAndFieldNames.first << stringDefAndFieldNames.second << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksLast) << "abcdgfe";
+    }
 }
 
 void tst_QContactManagerFiltering::sorting()
 {
+    QFETCH(QContactManager*, cm);
     QFETCH(QString, defname);
     QFETCH(QString, fieldname);
     QFETCH(int, directioni);
@@ -1525,13 +1661,8 @@ void tst_QContactManagerFiltering::sorting()
     Qt::SortOrder direction = (Qt::SortOrder)directioni;
     QContactSortOrder::BlankPolicy blankpolicy = (QContactSortOrder::BlankPolicy)blankpolicyi;
 
-    /* Try the memory database first */
-    QContactManager* cm = new QContactManager("memory");
-
-    QList<QUniqueId> contacts = prepareModel(cm);
+    QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
     QList<QUniqueId> ids;
-
-    QVERIFY(contacts.count() == 4);
 
     /* Build the sort order */
     QContactSortOrder s;
@@ -1550,13 +1681,12 @@ void tst_QContactManagerFiltering::sorting()
     ids = cm->contacts(presenceName, s);
     output = convertIds(contacts, ids);
     QCOMPARE(output, expected);
-
-
-    delete cm;
 }
 
 void tst_QContactManagerFiltering::multiSorting_data()
 {
+    QTest::addColumn<QContactManager *>("cm");
+
     QTest::addColumn<bool>("firstsort");
     QTest::addColumn<QString>("fsdefname");
     QTest::addColumn<QString>("fsfieldname");
@@ -1575,61 +1705,76 @@ void tst_QContactManagerFiltering::multiSorting_data()
     QString firstname = QContactName::FieldFirst;
     QString lastname = QContactName::FieldLast;
     QString namedef = QContactName::DefinitionName;
-    QString urldef = QContactUrl::DefinitionName;
-    QString urlfield = QContactUrl::FieldUrl;
     QString phonedef = QContactPhoneNumber::DefinitionName;
     QString numberfield = QContactPhoneNumber::FieldNumber;
 
-    QTest::newRow("1") << true << namedef << firstname << (int)(Qt::AscendingOrder)
-                       << true << namedef << lastname << (int)(Qt::AscendingOrder)
-                       << "abcdefg";
-    QTest::newRow("2") << true << namedef << firstname << (int)(Qt::AscendingOrder)
-                       << true << namedef << lastname << (int)(Qt::DescendingOrder)
-                       << "abcdgfe";
-    QTest::newRow("3") << true << namedef << firstname << (int)(Qt::DescendingOrder)
-                       << true << namedef << lastname << (int)(Qt::AscendingOrder)
-                       << "efgdcba";
-    QTest::newRow("4") << true << namedef << firstname << (int)(Qt::DescendingOrder)
-                       << true << namedef << lastname << (int)(Qt::DescendingOrder)
-                       << "gfedcba";
+    for (int i = 0; i < managers.size(); i++) {
+        QContactManager *manager = managers.at(i);
+        QPair<QString, QString> stringDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("String");
 
-    QTest::newRow("5") << true << namedef << firstname << (int)(Qt::AscendingOrder)
-                       << false << namedef << lastname << (int)(Qt::AscendingOrder)
-                       << "abcdefg";
+        QTest::newRow("1") << manager
+                           << true << namedef << firstname << (int)(Qt::AscendingOrder)
+                           << true << namedef << lastname << (int)(Qt::AscendingOrder)
+                           << "abcdefg";
+        QTest::newRow("2") << manager
+                           << true << namedef << firstname << (int)(Qt::AscendingOrder)
+                           << true << namedef << lastname << (int)(Qt::DescendingOrder)
+                           << "abcdgfe";
+        QTest::newRow("3") << manager
+                           << true << namedef << firstname << (int)(Qt::DescendingOrder)
+                           << true << namedef << lastname << (int)(Qt::AscendingOrder)
+                           << "efgdcba";
+        QTest::newRow("4") << manager
+                           << true << namedef << firstname << (int)(Qt::DescendingOrder)
+                           << true << namedef << lastname << (int)(Qt::DescendingOrder)
+                           << "gfedcba";
 
-    QTest::newRow("5b") << true << namedef << firstname << (int)(Qt::AscendingOrder)
-                       << true << es << es << (int)(Qt::AscendingOrder)
-                       << "abcdefg";
+        QTest::newRow("5") << manager
+                           << true << namedef << firstname << (int)(Qt::AscendingOrder)
+                           << false << namedef << lastname << (int)(Qt::AscendingOrder)
+                           << "abcdefg";
 
-    QTest::newRow("6") << false << namedef << firstname << (int)(Qt::AscendingOrder)
-                       << true << namedef << lastname << (int)(Qt::AscendingOrder)
-                       << "bacdefg";
+        QTest::newRow("5b") << manager
+                           << true << namedef << firstname << (int)(Qt::AscendingOrder)
+                           << true << es << es << (int)(Qt::AscendingOrder)
+                           << "abcdefg";
 
-    QTest::newRow("7") << false << namedef << firstname << (int)(Qt::AscendingOrder)
-                       << false << namedef << lastname << (int)(Qt::AscendingOrder)
-                       << "abcdefg";
+        QTest::newRow("6") << manager
+                           << false << namedef << firstname << (int)(Qt::AscendingOrder)
+                           << true << namedef << lastname << (int)(Qt::AscendingOrder)
+                           << "bacdefg";
 
-    QTest::newRow("8") << true << urldef << urlfield << (int)(Qt::AscendingOrder)
-                       << false << urldef << urlfield << (int)(Qt::DescendingOrder)
-                       << "gfedcba";
+        QTest::newRow("7") << manager
+                           << false << namedef << firstname << (int)(Qt::AscendingOrder)
+                           << false << namedef << lastname << (int)(Qt::AscendingOrder)
+                           << "abcdefg";
 
-    QTest::newRow("8b") << true << urldef << urlfield << (int)(Qt::AscendingOrder)
-                       << false << es << es << (int)(Qt::DescendingOrder)
-                       << "gfedcba";
+        QTest::newRow("8") << manager
+                           << true << stringDefAndFieldNames.first << stringDefAndFieldNames.second << (int)(Qt::AscendingOrder)
+                           << false << stringDefAndFieldNames.first << stringDefAndFieldNames.second << (int)(Qt::DescendingOrder)
+                           << "abcdgfe";
 
-    QTest::newRow("9") << true << phonedef << numberfield << (int)(Qt::AscendingOrder)
-                       << true << namedef << lastname << (int)(Qt::DescendingOrder)
-                       << "abgfedc";
+        QTest::newRow("8b") << manager
+                           << true << stringDefAndFieldNames.first << stringDefAndFieldNames.second << (int)(Qt::AscendingOrder)
+                           << false << es << es << (int)(Qt::DescendingOrder)
+                           << "abcdgfe";
 
-    QTest::newRow("10") << true << namedef << firstname << (int)(Qt::AscendingOrder)
-                        << true << namedef << firstname << (int)(Qt::DescendingOrder)
-                        << "abcdefg";
+        QTest::newRow("9") << manager
+                           << true << phonedef << numberfield << (int)(Qt::AscendingOrder)
+                           << true << namedef << lastname << (int)(Qt::DescendingOrder)
+                           << "abgfedc";
 
+        QTest::newRow("10") << manager
+                            << true << namedef << firstname << (int)(Qt::AscendingOrder)
+                            << true << namedef << firstname << (int)(Qt::DescendingOrder)
+                            << "abcdefg";
 
+    }
 }
 
 void tst_QContactManagerFiltering::multiSorting()
 {
+    QFETCH(QContactManager*, cm);
     QFETCH(bool, firstsort);
     QFETCH(QString, fsdefname);
     QFETCH(QString, fsfieldname);
@@ -1643,28 +1788,7 @@ void tst_QContactManagerFiltering::multiSorting()
     Qt::SortOrder fsdirection = (Qt::SortOrder)fsdirectioni;
     Qt::SortOrder ssdirection = (Qt::SortOrder)ssdirectioni;
 
-    /* Try the memory database first */
-    QContactManager* cm = new QContactManager("memory");
-
-    QContact e,f,g;
-    QContactName n;
-    n.setFirst("John");
-    n.setLast("Smithee");
-    e.saveDetail(&n);
-    n.setLast("Smithey");
-    f.saveDetail(&n);
-    n.setLast("Smithy");
-    g.saveDetail(&n);
-
-    QList<QUniqueId> contacts = prepareModel(cm);
-    QList<QUniqueId> ids;
-
-    Q_ASSERT(cm->saveContact(&e));
-    Q_ASSERT(cm->saveContact(&f));
-    Q_ASSERT(cm->saveContact(&g));
-
-    contacts = cm->contacts();
-    QCOMPARE(contacts.count(), 7);
+    QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
 
     /* Build the sort orders */
     QContactSortOrder fs;
@@ -1679,11 +1803,9 @@ void tst_QContactManagerFiltering::multiSorting()
     if (secondsort)
         sortOrders.append(ss);
 
-    ids = cm->contacts(sortOrders);
+    QList<QUniqueId> ids = cm->contacts(sortOrders);
     QString output = convertIds(contacts, ids);
     QCOMPARE(output, expected);
-
-    delete cm;
 }
 
 void tst_QContactManagerFiltering::actionPlugins()
@@ -1728,6 +1850,7 @@ void tst_QContactManagerFiltering::actionPlugins()
 
 void tst_QContactManagerFiltering::actionFiltering_data()
 {
+    QTest::addColumn<QContactManager *>("cm");
     QTest::addColumn<QString>("actionName");
     QTest::addColumn<QString>("vendorName");
     QTest::addColumn<int>("version");
@@ -1737,114 +1860,115 @@ void tst_QContactManagerFiltering::actionFiltering_data()
     QString es;
     QVariant ev;
 
-    QTest::newRow("empty (any action matches)") << es << es << -1 << ev << "abcd";
-    QTest::newRow("bad actionname") << "No such action" << es << -1 << ev << es;
-    QTest::newRow("bad vendor") << es << "Vendor missing" << -1 << ev << es;
-    /* versions are ignored if vendors are not specified */
-    QTest::newRow("ignored version") << es << es << 793434 << ev << "abcd";
+    for (int i = 0; i < managers.size(); i++) {
+        QContactManager *manager = managers.at(i);
 
-    QTest::newRow("Number") << "Number" << es << -1 << ev << "abcd";
-    QTest::newRow("Number (IntegerCo)") << "Number" << "IntegerCo" << -1 << ev << "abc";
-    QTest::newRow("Number (NumberCo)") << "Number" << "NumberCo" << -1 << ev << "abcd";
-    QTest::newRow("Number (BooleanCo)") << "Number" << "BooleanCo" << -1 << ev << es;
+        QTest::newRow("empty (any action matches)") << manager << es << es << -1 << ev << "abcd";
+        QTest::newRow("bad actionname") << manager << "No such action" << es << -1 << ev << es;
+        QTest::newRow("bad vendor") << manager << es << "Vendor missing" << -1 << ev << es;
+        /* versions are ignored if vendors are not specified */
+        QTest::newRow("ignored version") << manager << es << es << 793434 << ev << "abcd";
 
-    QTest::newRow("Number (IntegerCo, good version)") << "Number" << "IntegerCo" << 5 << ev << "abc";
-    QTest::newRow("Number (NumberCo, good version)") << "Number" << "NumberCo" << 42 << ev << "abcd";
+        QTest::newRow("Number") << manager << "Number" << es << -1 << ev << "abcd";
+        QTest::newRow("Number (IntegerCo)") << manager << "Number" << "IntegerCo" << -1 << ev << "abc";
+        QTest::newRow("Number (NumberCo)") << manager << "Number" << "NumberCo" << -1 << ev << "abcd";
+        QTest::newRow("Number (BooleanCo)") << manager << "Number" << "BooleanCo" << -1 << ev << es;
 
-    QTest::newRow("Number (IntegerCo, bad version)") << "Number" << "IntegerCo" << 345345 << ev << es;
-    QTest::newRow("Number (NumberCo, bad version)") << "Number" << "NumberCo" << 7547544 << ev << es;
+        QTest::newRow("Number (IntegerCo, good version)") << manager << "Number" << "IntegerCo" << 5 << ev << "abc";
+        QTest::newRow("Number (NumberCo, good version)") << manager << "Number" << "NumberCo" << 42 << ev << "abcd";
 
-    /* versions are ignored if vendors are not specified */
-    QTest::newRow("Number (ignored version)") << "Number" << es << 345345 << ev << "abcd";
+        QTest::newRow("Number (IntegerCo, bad version)") << manager << "Number" << "IntegerCo" << 345345 << ev << es;
+        QTest::newRow("Number (NumberCo, bad version)") << manager << "Number" << "NumberCo" << 7547544 << ev << es;
 
-    /* Vendor specific */
-    QTest::newRow("NumberCo") << es << "NumberCo" << -1 << ev << "abcd";
-    QTest::newRow("NumberCo (good version)") << es << "NumberCo" << 42 << ev << "abcd";
-    QTest::newRow("NumberCo (bad version)") << es << "NumberCo" << 41 << ev << es;
+        /* versions are ignored if vendors are not specified */
+        QTest::newRow("Number (ignored version)") << manager << "Number" << es << 345345 << ev << "abcd";
 
-    QTest::newRow("IntegerCo") << es << "IntegerCo" << -1 << ev << "abc";
-    QTest::newRow("IntegerCo (good version)") << es << "IntegerCo" << 5 << ev << "abc";
-    QTest::newRow("IntegerCo (bad version)") << es << "IntegerCo" << 41 << ev << es;
+        /* Vendor specific */
+        QTest::newRow("NumberCo") << manager << es << "NumberCo" << -1 << ev << "abcd";
+        QTest::newRow("NumberCo (good version)") << manager << es << "NumberCo" << 42 << ev << "abcd";
+        QTest::newRow("NumberCo (bad version)") << manager << es << "NumberCo" << 41 << ev << es;
+
+        QTest::newRow("IntegerCo") << manager << es << "IntegerCo" << -1 << ev << "abc";
+        QTest::newRow("IntegerCo (good version)") << manager << es << "IntegerCo" << 5 << ev << "abc";
+        QTest::newRow("IntegerCo (bad version)") << manager << es << "IntegerCo" << 41 << ev << es;
 
 
-    /* Boolean testing */
-    QTest::newRow("Boolean action") << "Boolean" << es << -1 << ev << "a";
-    QTest::newRow("BooleanCo") << es << "BooleanCo" << -1 << ev << "a";
-    QTest::newRow("BooleanCo (good version)") << es << "BooleanCo" << 3 << ev << "a";
-    QTest::newRow("BooleanCo (bad version)") << es << "BooleanCo" << 3234243 << ev << es;
+        /* Boolean testing */
+        QTest::newRow("Boolean action") << manager << "Boolean" << es << -1 << ev << "a";
+        QTest::newRow("BooleanCo") << manager << es << "BooleanCo" << -1 << ev << "a";
+        QTest::newRow("BooleanCo (good version)") << manager << es << "BooleanCo" << 3 << ev << "a";
+        QTest::newRow("BooleanCo (bad version)") << manager << es << "BooleanCo" << 3234243 << ev << es;
 
-    /* Value filtering */
-    QTest::newRow("Any action matching 20") << es << es << -1 << QVariant(20) << "b";
-    QTest::newRow("Any action matching 4.0") << es << es << -1 << QVariant(4.0) << "bc";
-    QTest::newRow("NumberCo with 20") << es << "NumberCo" << -1 << QVariant(20) << "b";
-    QTest::newRow("NumberCo with 4.0") << es << "NumberCo" << -1 << QVariant(4.0) << "bc";
-    QTest::newRow("IntegerCo with 20") << es << "IntegerCo" << -1 << QVariant(20) << "b";
-    QTest::newRow("IntegerCo with 4.0") << es << "IntegerCo" << -1 << QVariant(4.0) << es;
-    QTest::newRow("Boolean action matching true") << es << "BooleanCo" << -1 << QVariant(true) << "a";
-    QTest::newRow("Boolean action matching false") << es << "BooleanCo" << -1 << QVariant(false) << es;
+        /* Value filtering */
+        QTest::newRow("Any action matching 20") << manager << es << es << -1 << QVariant(20) << "b";
+        QTest::newRow("Any action matching 4.0") << manager << es << es << -1 << QVariant(4.0) << "bc";
+        QTest::newRow("NumberCo with 20") << manager << es << "NumberCo" << -1 << QVariant(20) << "b";
+        QTest::newRow("NumberCo with 4.0") << manager << es << "NumberCo" << -1 << QVariant(4.0) << "bc";
+        QTest::newRow("IntegerCo with 20") << manager << es << "IntegerCo" << -1 << QVariant(20) << "b";
+        QTest::newRow("IntegerCo with 4.0") << manager << es << "IntegerCo" << -1 << QVariant(4.0) << es;
+        QTest::newRow("Boolean action matching true") << manager << es << "BooleanCo" << -1 << QVariant(true) << "a";
+        QTest::newRow("Boolean action matching false") << manager << es << "BooleanCo" << -1 << QVariant(false) << es;
 
-    /* Recursive filtering */
-    QTest::newRow("Recursive action 1") << "IntersectionRecursive" << es << -1 << QVariant(false) << es;
-    QTest::newRow("Recursive action 2") << "UnionRecursive" << es << -1 << QVariant(false) << es;
-    QTest::newRow("Recursive action 3") << "PairRecursive" << es << -1 << QVariant(false) << es;
-    QTest::newRow("Recursive action 4") << "AnotherPairRecursive" << es << -1 << QVariant(false) << es;
-    QTest::newRow("Recursive action 5") << "Recursive" << es << -1 << QVariant(false) << es;
+        /* Recursive filtering */
+        QTest::newRow("Recursive action 1") << manager << "IntersectionRecursive" << es << -1 << QVariant(false) << es;
+        QTest::newRow("Recursive action 2") << manager << "UnionRecursive" << es << -1 << QVariant(false) << es;
+        QTest::newRow("Recursive action 3") << manager << "PairRecursive" << es << -1 << QVariant(false) << es;
+        QTest::newRow("Recursive action 4") << manager << "AnotherPairRecursive" << es << -1 << QVariant(false) << es;
+        QTest::newRow("Recursive action 5") << manager << "Recursive" << es << -1 << QVariant(false) << es;
+    }
 }
 
 void tst_QContactManagerFiltering::actionFiltering()
 {
-    QContactManager* cm = new QContactManager("memory");
-
+    QFETCH(QContactManager*, cm);
     QFETCH(QString, actionName);
     QFETCH(QString, vendorName);
     QFETCH(int, version);
     QFETCH(QVariant, value);
     QFETCH(QString, expected);
 
-    QList<QUniqueId> contacts = prepareModel(cm);
-    QList<QUniqueId> ids;
-
-    QVERIFY(contacts.count() == 4);
+    QSKIP("The actions currently use predefined definition names; skipping test.  FIXME!", SkipSingle);
 
     QContactActionFilter af;
     af.setActionName(actionName);
     af.setValue(value);
     af.setVendor(vendorName, version);
 
-    ids = cm->contacts(af);
+    QList<QUniqueId> ids = cm->contacts(af);
+    QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
 
     QString output = convertIds(contacts, ids);
     QCOMPARE(output, expected);
-
-    delete cm;
 }
 
 void tst_QContactManagerFiltering::idListFiltering_data()
 {
+    QTest::addColumn<QContactManager *>("cm");
     QTest::addColumn<QString>("input");
     QTest::addColumn<QString>("expected");
 
     QString es;
-    QTest::newRow("empty") << es << es;
-    QTest::newRow("a") << "a" << "a";
-    QTest::newRow("ab") << "ab" << "ab";
-    QTest::newRow("aa") << "aa" << "a";
-    QTest::newRow("ba") << "ba" << "ab";
-    QTest::newRow("abcd") << "abcd" << "abcd";
-    QTest::newRow("abcdefg") << "abcdefg" << "abcd";
+
+    for (int i = 0; i < managers.size(); i++) {
+        QContactManager *manager = managers.at(i);
+        QTest::newRow("empty") << manager << es << es;
+        QTest::newRow("a") << manager << "a" << "a";
+        QTest::newRow("ab") << manager << "ab" << "ab";
+        QTest::newRow("aa") << manager << "aa" << "a";
+        QTest::newRow("ba") << manager << "ba" << "ab";
+        QTest::newRow("abcd") << manager << "abcd" << "abcd";
+        QTest::newRow("abcdefg") << manager << "abcdefg" << "abcd";
+    }
 }
 
 void tst_QContactManagerFiltering::idListFiltering()
 {
-    QContactManager* cm = new QContactManager("memory");
-
+    QFETCH(QContactManager*, cm);
     QFETCH(QString, input);
     QFETCH(QString, expected);
 
-    QList<QUniqueId> contacts = prepareModel(cm);
+    QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
     QList<QUniqueId> ids;
-
-    QVERIFY(contacts.count() == 4);
 
     // 3 extra ids that (hopefully) won't exist
     QUniqueId e = 0x54555657;
@@ -1878,23 +2002,25 @@ void tst_QContactManagerFiltering::idListFiltering()
 
     QString output = convertIds(contacts, ids);
     QCOMPARE(output, expected);
+}
 
-    delete cm;
+void tst_QContactManagerFiltering::invalidFiltering_data()
+{
+    QTest::addColumn<QContactManager*>("cm");
+
+    for (int i = 0; i < managers.size(); i++) {
+        QContactManager *manager = managers.at(i);
+        QTest::newRow(manager->managerName().toAscii().constData()) << manager;
+    }
 }
 
 void tst_QContactManagerFiltering::invalidFiltering()
 {
-    QContactManager* cm = new QContactManager("memory");
+    QFETCH(QContactManager*, cm);
 
-    QList<QUniqueId> contacts = prepareModel(cm);
-    QList<QUniqueId> ids;
-
-    QVERIFY(contacts.count() == 4);
-
+    QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
     QContactInvalidFilter f; // invalid
-
-    ids = cm->contacts(f);
-
+    QList<QUniqueId> ids = cm->contacts(f);
     QVERIFY(ids.count() == 0);
 
     // Try unions/intersections of invalids too
@@ -1903,41 +2029,37 @@ void tst_QContactManagerFiltering::invalidFiltering()
 
     ids = cm->contacts(f && f);
     QVERIFY(ids.count() == 0);
+}
 
-    delete cm;
+void tst_QContactManagerFiltering::allFiltering_data()
+{
+    QTest::addColumn<QContactManager*>("cm");
+
+    for (int i = 0; i < managers.size(); i++) {
+        QContactManager *manager = managers.at(i);
+        QTest::newRow(manager->managerName().toAscii().constData()) << manager;
+    }
 }
 
 void tst_QContactManagerFiltering::allFiltering()
 {
-    QContactManager* cm = new QContactManager("memory");
+    QFETCH(QContactManager*, cm);
 
-    QList<QUniqueId> contacts = prepareModel(cm);
-    QList<QUniqueId> ids;
-
-    QVERIFY(contacts.count() == 4);
-
+    QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
     QContactFilter f; // default = permissive
-
-    ids = cm->contacts(f);
-
-    QVERIFY(ids.count() == 4);
+    QList<QUniqueId> ids = cm->contacts(f);
+    QVERIFY(ids.count() == contacts.size());
 
     // Try unions/intersections of defaults
     ids = cm->contacts(f || f);
-    QVERIFY(ids.count() == 4);
+    QVERIFY(ids.count() == contacts.size());
 
     ids = cm->contacts(f && f);
-    QVERIFY(ids.count() == 4);
-
-    delete cm;
+    QVERIFY(ids.count() == contacts.size());
 }
 
 void tst_QContactManagerFiltering::changelogFiltering_data()
 {
-    // Clean out the cleanup stack
-    qDeleteAll(cleanupStack);
-    cleanupStack.clear();
-
     QTest::addColumn<QContactManager *>("cm");
     QTest::addColumn<QList<QUniqueId> >("contacts");
     QTest::addColumn<int>("changeType");
@@ -1948,82 +2070,55 @@ void tst_QContactManagerFiltering::changelogFiltering_data()
     int changed = (int)QContactChangeLogFilter::Changed;
     int removed = (int)QContactChangeLogFilter::Removed;
 
-    QContactManager *manager = new QContactManager("memory");
-    QList<QUniqueId> contacts;
+    for (int i = 0; i < managers.size(); i++) {
+        QContactManager *manager = managers.at(i);
+        QList<QUniqueId> contacts = contactsAddedToManagers.values(manager);
+        QContact a,b,c,d;
+        a = manager->contact(contacts.at(0));
+        b = manager->contact(contacts.at(1));
+        c = manager->contact(contacts.at(2));
+        d = manager->contact(contacts.at(3));
 
-    // Manually create contacts with the appropriate changes
-    QContact a,b,c,d;
-    a.setDisplayLabel("Alfred");
-    b.setDisplayLabel("Bob");
-    c.setDisplayLabel("Carol");
-    d.setDisplayLabel("David");
+        QDateTime ac = a.detail<QContactTimestamp>().created();
+        QDateTime bc = b.detail<QContactTimestamp>().created();
+        QDateTime cc = c.detail<QContactTimestamp>().created();
+        QDateTime dc = d.detail<QContactTimestamp>().created();
 
-    qDebug() << "Generating contacts with different timestamps, please wait..";
-    manager->saveContact(&a);
-    QTest::qSleep(2000);
-    manager->saveContact(&b);
-    QTest::qSleep(2000);
-    manager->saveContact(&c);
-    QTest::qSleep(2000);
-    manager->saveContact(&d);
+        QDateTime am = a.detail<QContactTimestamp>().lastModified();
+        QDateTime bm = b.detail<QContactTimestamp>().lastModified();
+        QDateTime cm = c.detail<QContactTimestamp>().lastModified();
+        QDateTime dm = d.detail<QContactTimestamp>().lastModified();
 
-    // now update c
-    QTest::qSleep(2000);
-    c.setDisplayLabel("Clarence");
-    manager->saveContact(&c);
-    // b
-    QTest::qSleep(2000);
-    b.setDisplayLabel("Boris");
-    manager->saveContact(&b);
-    // a
-    QTest::qSleep(2000);
-    a.setDisplayLabel("Albert");
-    manager->saveContact(&a);
-    qDebug() << "Done!";
+        QTest::newRow("Added since before start") << manager << contacts << added << ac.addSecs(-1) << "abcdefg";
+        QTest::newRow("Added since first") << manager << contacts << added << ac << "abcdefg";
+        QTest::newRow("Added since second") << manager << contacts << added << bc << "bcdefg";
+        QTest::newRow("Added since third") << manager << contacts << added << cc << "cdefg";
+        QTest::newRow("Added since fourth") << manager << contacts << added << dc << "defg";
+        QTest::newRow("Added since after fourth") << manager << contacts << added << dc.addSecs(1) << "efg";
+        QTest::newRow("Added since first changed") << manager << contacts << added << am << "";
+        QTest::newRow("Added since second changed") << manager << contacts << added << bm << "";
+        QTest::newRow("Added since third changed") << manager << contacts << added << cm << "";
+        QTest::newRow("Added since fourth changed") << manager << contacts << added << cm << "";
 
-    contacts << a.id() << b.id() << c.id() << d.id();
+        QTest::newRow("Changed since before start") << manager << contacts << changed << ac.addSecs(-1) << "abcdefg";
+        QTest::newRow("Changed since first") << manager << contacts << changed << ac << "abcdefg";
+        QTest::newRow("Changed since second") << manager << contacts << changed << bc << "abcdefg";
+        QTest::newRow("Changed since third") << manager << contacts << changed << cc << "abcdefg";
+        QTest::newRow("Changed since fourth") << manager << contacts << changed << dc << "abcdefg";
+        QTest::newRow("Changed since after fourth") << manager << contacts << changed << dc.addSecs(1) << "abcefg";
+        QTest::newRow("Changed since first changed") << manager << contacts << changed << am << "a";
+        QTest::newRow("Changed since second changed") << manager << contacts << changed << bm << "ab";
+        QTest::newRow("Changed since third changed") << manager << contacts << changed << cm << "abc";
+        QTest::newRow("Changed since fourth changed") << manager << contacts << changed << dm << "abcdefg";
 
-    QDateTime ac = a.detail<QContactTimestamp>().created();
-    QDateTime bc = b.detail<QContactTimestamp>().created();
-    QDateTime cc = c.detail<QContactTimestamp>().created();
-    QDateTime dc = d.detail<QContactTimestamp>().created();
-
-    QDateTime am = a.detail<QContactTimestamp>().lastModified();
-    QDateTime bm = b.detail<QContactTimestamp>().lastModified();
-    QDateTime cm = c.detail<QContactTimestamp>().lastModified();
-    QDateTime dm = d.detail<QContactTimestamp>().lastModified();
-
-    QTest::newRow("Added since before start") << manager << contacts << added << ac.addSecs(-1) << "abcd";
-    QTest::newRow("Added since first") << manager << contacts << added << ac << "abcd";
-    QTest::newRow("Added since second") << manager << contacts << added << bc << "bcd";
-    QTest::newRow("Added since third") << manager << contacts << added << cc << "cd";
-    QTest::newRow("Added since fourth") << manager << contacts << added << dc << "d";
-    QTest::newRow("Added since after fourth") << manager << contacts << added << dc.addSecs(1) << "";
-    QTest::newRow("Added since first changed") << manager << contacts << added << am << "";
-    QTest::newRow("Added since second changed") << manager << contacts << added << bm << "";
-    QTest::newRow("Added since third changed") << manager << contacts << added << cm << "";
-    QTest::newRow("Added since fourth changed") << manager << contacts << added << cm << "";
-
-    QTest::newRow("Changed since before start") << manager << contacts << changed << ac.addSecs(-1) << "abcd";
-    QTest::newRow("Changed since first") << manager << contacts << changed << ac << "abcd";
-    QTest::newRow("Changed since second") << manager << contacts << changed << bc << "abcd";
-    QTest::newRow("Changed since third") << manager << contacts << changed << cc << "abcd";
-    QTest::newRow("Changed since fourth") << manager << contacts << changed << dc << "abcd";
-    QTest::newRow("Changed since after fourth") << manager << contacts << changed << dc.addSecs(1) << "abc";
-    QTest::newRow("Changed since first changed") << manager << contacts << changed << am << "a";
-    QTest::newRow("Changed since second changed") << manager << contacts << changed << bm << "ab";
-    QTest::newRow("Changed since third changed") << manager << contacts << changed << cm << "abc";
-    QTest::newRow("Changed since fourth changed") << manager << contacts << changed << dm << "abcd";
-
-    // These are currently useless..
-    QTest::newRow("Removed since before start") << manager << contacts << removed << ac.addSecs(-1) << "";
-    QTest::newRow("Removed since first") << manager << contacts << removed << ac << "";
-    QTest::newRow("Removed since second") << manager << contacts << removed << bc << "";
-    QTest::newRow("Removed since third") << manager << contacts << removed << cc << "";
-    QTest::newRow("Removed since fourth") << manager << contacts << removed << dc << "";
-    QTest::newRow("Removed since after fourth") << manager << contacts << removed << dc.addSecs(1) << "";
-
-    cleanupStack << manager;
+        // These are currently useless..
+        QTest::newRow("Removed since before start") << manager << contacts << removed << ac.addSecs(-1) << "";
+        QTest::newRow("Removed since first") << manager << contacts << removed << ac << "";
+        QTest::newRow("Removed since second") << manager << contacts << removed << bc << "";
+        QTest::newRow("Removed since third") << manager << contacts << removed << cc << "";
+        QTest::newRow("Removed since fourth") << manager << contacts << removed << dc << "";
+        QTest::newRow("Removed since after fourth") << manager << contacts << removed << dc.addSecs(1) << "";
+    }
 }
 
 void tst_QContactManagerFiltering::changelogFiltering()
@@ -2036,8 +2131,6 @@ void tst_QContactManagerFiltering::changelogFiltering()
 
     QList<QUniqueId> ids;
 
-    QVERIFY(contacts.count() == 4);
-
     QContactChangeLogFilter clf((QContactChangeLogFilter::ChangeType)changeType);
     clf.setSince(since);
 
@@ -2047,175 +2140,360 @@ void tst_QContactManagerFiltering::changelogFiltering()
     QCOMPARE(output, expected);
 }
 
+QPair<QString, QString> tst_QContactManagerFiltering::definitionAndField(QContactManager *cm, QVariant::Type type, bool *nativelyFilterable)
+{
+    QPair<QString, QString> result;
+    QString definitionName, fieldName;
+
+    // step one: search for an existing definition with a field of the specified type
+    QContactManagerInfo *info = cm->information();
+    QMap<QString, QContactDetailDefinition> allDefs = cm->detailDefinitions();
+    QStringList defNames = allDefs.keys();
+    bool found = false;
+    bool isNativelyFilterable = false;
+    foreach (const QString& defName, defNames) {
+        // check the current definition.
+        QContactDetailDefinition def = allDefs.value(defName);
+
+        // if unique or read/create only, we cannot use this definition.
+        if (def.isUnique() || def.accessConstraint() != QContactDetailDefinition::Any) {
+            continue;
+        }
+
+        // grab the fields and search for a field of the required type
+        QMap<QString, QContactDetailDefinition::Field> allFields = def.fields();
+        QList<QString> fNames = allFields.keys();
+        foreach (const QString& fName, fNames) {
+            QContactDetailDefinition::Field field = allFields.value(fName);
+            if (field.dataType == type) {
+                // this field of the current definition is of the required type.
+                definitionName = defName;
+                fieldName = fName;
+                found = true;
+
+                // step two: check to see whether the definition/field is natively filterable
+                QContactDetailFilter filter;
+                filter.setDetailDefinitionName(definitionName, fieldName);
+                bool isNativelyFilterable = info->filterSupported(filter);
+
+                if (isNativelyFilterable) {
+                    // we've found the optimal definition + field for our test.
+                    break;
+                }
+            }
+        }
+
+        if (found && isNativelyFilterable) {
+            // we've found the optimal definition + field for our test.
+            break;
+        }
+    }
+
+    if (found) {
+        // whether it is natively filterable or not, we found a definition that matches our requirements.
+        result.first = definitionName;
+        result.second = fieldName;
+        *nativelyFilterable = isNativelyFilterable;
+        return result;
+    }
+
+    // step three (or, if not step one): check to see whether the manager allows mutable definitions
+    // no existing definition matched our requirements, but we might be able to add one that does.
+    if (info->supportedDataTypes().contains(type) && info->hasFeature(QContactManagerInfo::MutableDefinitions)) {
+        // ok, the manager does not have a definition matching our criteria, but we could probably add it.
+        int defCount = detailDefinitionsAddedToManagers.values(cm).count();
+        QString generatedDefinitionName = QString("x-nokia-mobility-contacts-test-definition-") + QString::number((defCount+1));
+
+        // build a definition that matches the criteria.
+        QContactDetailDefinition generatedDefinition;
+        generatedDefinition.setName(generatedDefinitionName);
+        QContactDetailDefinition::Field generatedField;
+        generatedField.dataType = type;
+        QMap<QString, QContactDetailDefinition::Field> fields;
+        fields.insert("generatedField", generatedField);
+        generatedDefinition.setFields(fields);
+        generatedDefinition.setAccessConstraint(QContactDetailDefinition::Any);
+        generatedDefinition.setUnique(false);
+
+        // attempt to save it to the manager.
+        if (cm->saveDetailDefinition(generatedDefinition)) {
+            // successfully added definition.
+            definitionName = generatedDefinitionName;
+            fieldName = "generatedField";
+            detailDefinitionsAddedToManagers.insert(cm, definitionName); // cleanup stack.
+        }
+    }
+
+    result.first = definitionName;
+    result.second = fieldName;
+    *nativelyFilterable = false;
+    return result;
+}
+
 QList<QUniqueId> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
 {
-    /* Make sure it's empty */
-    QList<QUniqueId> ids = cm->contacts();
-    cm->removeContacts(&ids);
+    /* Discover the definition and field names required for testing */
+    QMap<QString, QPair<QString, QString> > definitionDetails; // per value type string
+    QPair<QString, QString> defAndFieldNames;
+    bool nativelyFilterable;
 
-    /* Register details for testing */
-    QContactDetailDefinition def;
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field field;
+    /* String */
+    defAndFieldNames = definitionAndField(cm, QVariant::String, &nativelyFilterable);
+    definitionDetails.insert("String", defAndFieldNames);
+    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    defAndFieldNames.first = QString();
+    defAndFieldNames.second = QString();
 
     /* Integer */
-    def.setName("Integer");
-    fields["value"].dataType = QVariant::Int;
-    def.setFields(fields);
-    Q_ASSERT(cm->saveDetailDefinition(def));
+    defAndFieldNames = definitionAndField(cm, QVariant::Int, &nativelyFilterable);
+    definitionDetails.insert("Integer", defAndFieldNames);
+    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    defAndFieldNames.first = QString();
+    defAndFieldNames.second = QString();
 
     /* Date time detail */
-    def.setName("DateTime");
-    fields["value"].dataType = QVariant::DateTime;
-    def.setFields(fields);
-    Q_ASSERT(cm->saveDetailDefinition(def));
+    defAndFieldNames = definitionAndField(cm, QVariant::DateTime, &nativelyFilterable);
+    definitionDetails.insert("DateTime", defAndFieldNames);
+    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    defAndFieldNames.first = QString();
+    defAndFieldNames.second = QString();
 
     /* double detail */
-    def.setName("Double");
-    fields["value"].dataType = QVariant::Double;
-    def.setFields(fields);
-    Q_ASSERT(cm->saveDetailDefinition(def));
+    defAndFieldNames = definitionAndField(cm, QVariant::Double, &nativelyFilterable);
+    definitionDetails.insert("Double", defAndFieldNames);
+    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    defAndFieldNames.first = QString();
+    defAndFieldNames.second = QString();
 
     /* bool */
-    def.setName("Bool");
-    fields["value"].dataType = QVariant::Bool;
-    def.setFields(fields);
-    Q_ASSERT(cm->saveDetailDefinition(def));
+    defAndFieldNames = definitionAndField(cm, QVariant::Bool, &nativelyFilterable);
+    definitionDetails.insert("Bool", defAndFieldNames);
+    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    defAndFieldNames.first = QString();
+    defAndFieldNames.second = QString();
 
     /* long long */
-    def.setName("LongLong");
-    fields["value"].dataType = QVariant::LongLong;
-    def.setFields(fields);
-    Q_ASSERT(cm->saveDetailDefinition(def));
+    defAndFieldNames = definitionAndField(cm, QVariant::LongLong, &nativelyFilterable);
+    definitionDetails.insert("LongLong", defAndFieldNames);
+    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    defAndFieldNames.first = QString();
+    defAndFieldNames.second = QString();
 
     /* unsigned long long */
-    def.setName("ULongLong");
-    fields["value"].dataType = QVariant::ULongLong;
-    def.setFields(fields);
-    Q_ASSERT(cm->saveDetailDefinition(def));
+    defAndFieldNames = definitionAndField(cm, QVariant::ULongLong, &nativelyFilterable);
+    definitionDetails.insert("ULongLong", defAndFieldNames);
+    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    defAndFieldNames.first = QString();
+    defAndFieldNames.second = QString();
 
     /* date */
-    def.setName("Date");
-    fields["value"].dataType = QVariant::Date;
-    def.setFields(fields);
-    Q_ASSERT(cm->saveDetailDefinition(def));
+    defAndFieldNames = definitionAndField(cm, QVariant::Date, &nativelyFilterable);
+    definitionDetails.insert("Date", defAndFieldNames);
+    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    defAndFieldNames.first = QString();
+    defAndFieldNames.second = QString();
 
     /* time */
-    def.setName("Time");
-    fields["value"].dataType = QVariant::Time;
-    def.setFields(fields);
-    Q_ASSERT(cm->saveDetailDefinition(def));
+    defAndFieldNames = definitionAndField(cm, QVariant::Time, &nativelyFilterable);
+    definitionDetails.insert("Time", defAndFieldNames);
+    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    defAndFieldNames.first = QString();
+    defAndFieldNames.second = QString();
 
     /* uint */
-    def.setName("UInt");
-    fields["value"].dataType = QVariant::UInt;
-    def.setFields(fields);
-    Q_ASSERT(cm->saveDetailDefinition(def));
+    defAndFieldNames = definitionAndField(cm, QVariant::UInt, &nativelyFilterable);
+    definitionDetails.insert("UInt", defAndFieldNames);
+    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    defAndFieldNames.first = QString();
+    defAndFieldNames.second = QString();
 
     /* char */
-    def.setName("Char");
-    fields["value"].dataType = QVariant::Char;
-    def.setFields(fields);
-    Q_ASSERT(cm->saveDetailDefinition(def));
+    defAndFieldNames = definitionAndField(cm, QVariant::Char, &nativelyFilterable);
+    definitionDetails.insert("Char", defAndFieldNames);
+    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    defAndFieldNames.first = QString();
+    defAndFieldNames.second = QString();
 
     /* Add some contacts */
     QContact a, b, c, d;
-    QContactName name;;
+    QContactName name;
     QContactPhoneNumber number;
-    QContactDetail integer("Integer");
-    QContactDetail datetime("DateTime");
-    QContactDetail dubble("Double");
-    QContactDetail boool("Bool");
-    QContactDetail llong("LongLong");
-    QContactDetail ullong("ULongLong");
-    QContactDetail date("Date");
-    QContactDetail time("Time");
-    QContactDetail uintt("UInt");
-    QContactDetail charr("Char");
+    QContactDetail string(definitionDetails.value("String").first);
+    QContactDetail integer(definitionDetails.value("Integer").first);
+    QContactDetail datetime(definitionDetails.value("DateTime").first);
+    QContactDetail dubble(definitionDetails.value("Double").first);
+    QContactDetail boool(definitionDetails.value("Bool").first);
+    QContactDetail llong(definitionDetails.value("LongLong").first);
+    QContactDetail ullong(definitionDetails.value("ULongLong").first);
+    QContactDetail date(definitionDetails.value("Date").first);
+    QContactDetail time(definitionDetails.value("Time").first);
+    QContactDetail uintt(definitionDetails.value("UInt").first);
+    QContactDetail charr(definitionDetails.value("Char").first);
 
     name.setFirst("Aaron");
     name.setLast("Aaronson");
     number.setNumber("555-1212");
-    integer.setValue("value", 10);
-    datetime.setValue("value", QDateTime(QDate(2009, 06, 29), QTime(16, 52, 23, 0)));
-    boool.setValue("value", true);
-    ullong.setValue("value", (qulonglong)120000000000LL); // 120B
-    date.setValue("value", QDate(1988, 1, 26));
-    time.setValue("value", QTime(16,52,23,0));
+    string.setValue(definitionDetails.value("String").second, "Aaron Aaronson");
+    integer.setValue(definitionDetails.value("Integer").second, 10);
+    datetime.setValue(definitionDetails.value("DateTime").second, QDateTime(QDate(2009, 06, 29), QTime(16, 52, 23, 0)));
+    boool.setValue(definitionDetails.value("Bool").second, true);
+    ullong.setValue(definitionDetails.value("ULongLong").second, (qulonglong)120000000000LL); // 120B
+    date.setValue(definitionDetails.value("Date").second, QDate(1988, 1, 26));
+    time.setValue(definitionDetails.value("Time").second, QTime(16,52,23,0));
 
     a.saveDetail(&name);
     a.saveDetail(&number);
-    a.saveDetail(&integer);
-    a.saveDetail(&datetime);
-    a.saveDetail(&boool);
-    a.saveDetail(&ullong);
-    a.saveDetail(&date);
-    a.saveDetail(&time);
+    if (!definitionDetails.value("String").first.isEmpty() && !definitionDetails.value("String").second.isEmpty())
+        a.saveDetail(&string);
+    if (!definitionDetails.value("Integer").first.isEmpty() && !definitionDetails.value("Integer").second.isEmpty())
+        a.saveDetail(&integer);
+    if (!definitionDetails.value("DateTime").first.isEmpty() && !definitionDetails.value("DateTime").second.isEmpty())
+        a.saveDetail(&datetime);
+    if (!definitionDetails.value("Bool").first.isEmpty() && !definitionDetails.value("Bool").second.isEmpty())
+        a.saveDetail(&boool);
+    if (!definitionDetails.value("ULongLong").first.isEmpty() && !definitionDetails.value("ULongLong").second.isEmpty())
+        a.saveDetail(&ullong);
+    if (!definitionDetails.value("Date").first.isEmpty() && !definitionDetails.value("Date").second.isEmpty())
+        a.saveDetail(&date);
+    if (!definitionDetails.value("Time").first.isEmpty() && !definitionDetails.value("Time").second.isEmpty())
+        a.saveDetail(&time);
 
     name.setFirst("Bob");
     name.setLast("Aaronsen");
     number.setNumber("555-3456");
-    integer.setValue("value", 20);
-    dubble.setValue("value", 4.0);
-    boool.setValue("value", false);
-    ullong.setValue("value", (qulonglong) 80000000000LL); // 80B
-    uintt.setValue("value", 4000000000u); // 4B
-    date.setValue("value", QDate(1492, 5, 5));
-    time.setValue("value", QTime(15,52,23,0));
-    charr.setValue("value", QVariant(QChar('b')));
+    string.setValue(definitionDetails.value("String").second, "Bob Aaronsen");
+    integer.setValue(definitionDetails.value("Integer").second, 20);
+    dubble.setValue(definitionDetails.value("Double").second, 4.0);
+    boool.setValue(definitionDetails.value("Bool").second, false);
+    ullong.setValue(definitionDetails.value("ULongLong").second, (qulonglong) 80000000000LL); // 80B
+    uintt.setValue(definitionDetails.value("UInt").second, 4000000000u); // 4B
+    date.setValue(definitionDetails.value("Date").second, QDate(1492, 5, 5));
+    time.setValue(definitionDetails.value("Time").second, QTime(15,52,23,0));
+    charr.setValue(definitionDetails.value("Char").second, QVariant(QChar('b')));
 
     b.saveDetail(&name);
     b.saveDetail(&number);
-    b.saveDetail(&integer);
-    b.saveDetail(&dubble);
-    b.saveDetail(&boool);
-    b.saveDetail(&ullong);
-    b.saveDetail(&uintt);
-    b.saveDetail(&date);
-    b.saveDetail(&time);
-    b.saveDetail(&charr);
+    if (!definitionDetails.value("String").first.isEmpty() && !definitionDetails.value("String").second.isEmpty())
+        b.saveDetail(&string);
+    if (!definitionDetails.value("Integer").first.isEmpty() && !definitionDetails.value("Integer").second.isEmpty())
+        b.saveDetail(&integer);
+    if (!definitionDetails.value("Double").first.isEmpty() && !definitionDetails.value("Double").second.isEmpty())
+        b.saveDetail(&dubble);
+    if (!definitionDetails.value("Bool").first.isEmpty() && !definitionDetails.value("Bool").second.isEmpty())
+        b.saveDetail(&boool);
+    if (!definitionDetails.value("ULongLong").first.isEmpty() && !definitionDetails.value("ULongLong").second.isEmpty())
+        b.saveDetail(&ullong);
+    if (!definitionDetails.value("UInt").first.isEmpty() && !definitionDetails.value("UInt").second.isEmpty())
+        b.saveDetail(&uintt);
+    if (!definitionDetails.value("Date").first.isEmpty() && !definitionDetails.value("Date").second.isEmpty())
+        b.saveDetail(&date);
+    if (!definitionDetails.value("Time").first.isEmpty() && !definitionDetails.value("Time").second.isEmpty())
+        b.saveDetail(&time);
+    if (!definitionDetails.value("Char").first.isEmpty() && !definitionDetails.value("Char").second.isEmpty())
+        b.saveDetail(&charr);
 
     name.setFirst("Boris");
     name.setLast("Aaronsun");
-    integer.setValue("value", -20);
-    datetime.setValue("value", QDateTime(QDate(2009, 06, 29), QTime(16, 54, 17, 0)));
-    llong.setValue("value", (qlonglong)8000000000LL); // 8B
-    charr.setValue("value", QVariant(QChar('c')));
+    string.setValue(definitionDetails.value("String").second, "Boris Aaronsun");
+    integer.setValue(definitionDetails.value("Integer").second, -20);
+    datetime.setValue(definitionDetails.value("DateTime").second, QDateTime(QDate(2009, 06, 29), QTime(16, 54, 17, 0)));
+    llong.setValue(definitionDetails.value("LongLong").second, (qlonglong)8000000000LL); // 8B
+    charr.setValue(definitionDetails.value("Char").second, QVariant(QChar('c')));
 
     c.saveDetail(&name);
-    c.saveDetail(&integer);
-    c.saveDetail(&datetime);
-    c.saveDetail(&dubble);
-    c.saveDetail(&boool);
-    c.saveDetail(&llong);
-    c.saveDetail(&ullong);
-    c.saveDetail(&charr);
+    if (!definitionDetails.value("String").first.isEmpty() && !definitionDetails.value("String").second.isEmpty())
+        c.saveDetail(&string);
+    if (!definitionDetails.value("Integer").first.isEmpty() && !definitionDetails.value("Integer").second.isEmpty())
+        c.saveDetail(&integer);
+    if (!definitionDetails.value("DateTime").first.isEmpty() && !definitionDetails.value("DateTime").second.isEmpty())
+        c.saveDetail(&datetime);
+    if (!definitionDetails.value("Double").first.isEmpty() && !definitionDetails.value("Double").second.isEmpty())
+        c.saveDetail(&dubble);
+    if (!definitionDetails.value("Bool").first.isEmpty() && !definitionDetails.value("Bool").second.isEmpty())
+        c.saveDetail(&boool);
+    if (!definitionDetails.value("LongLong").first.isEmpty() && !definitionDetails.value("LongLong").second.isEmpty())
+        c.saveDetail(&llong);
+    if (!definitionDetails.value("ULongLong").first.isEmpty() && !definitionDetails.value("ULongLong").second.isEmpty())
+        c.saveDetail(&ullong);
+    if (!definitionDetails.value("Char").first.isEmpty() && !definitionDetails.value("Char").second.isEmpty())
+        c.saveDetail(&charr);
 
     name.setFirst("Dennis");
     name.setLast("FitzMacintyre");
-    dubble.setValue("value", -128.0);
-    llong.setValue("value", (qlonglong)-14000000000LL);
-    uintt.setValue("value", 3000000000u); // 3B
-    date.setValue("value", QDate(1770, 10, 1));
+    string.setValue(definitionDetails.value("String").second, "Dennis FitzMacintyre");
+    dubble.setValue(definitionDetails.value("Double").second, -128.0);
+    llong.setValue(definitionDetails.value("LongLong").second, (qlonglong)-14000000000LL);
+    uintt.setValue(definitionDetails.value("UInt").second, 3000000000u); // 3B
+    date.setValue(definitionDetails.value("Date").second, QDate(1770, 10, 1));
 
     d.saveDetail(&name);
-    d.saveDetail(&dubble);
-    d.saveDetail(&llong);
-    d.saveDetail(&uintt);
-    d.saveDetail(&date);
+    if (!definitionDetails.value("String").first.isEmpty() && !definitionDetails.value("String").second.isEmpty())
+        d.saveDetail(&string);
+    if (!definitionDetails.value("Double").first.isEmpty() && !definitionDetails.value("Double").second.isEmpty())
+        d.saveDetail(&dubble);
+    if (!definitionDetails.value("LongLong").first.isEmpty() && !definitionDetails.value("LongLong").second.isEmpty())
+        d.saveDetail(&llong);
+    if (!definitionDetails.value("UInt").first.isEmpty() && !definitionDetails.value("UInt").second.isEmpty())
+        d.saveDetail(&uintt);
+    if (!definitionDetails.value("Date").first.isEmpty() && !definitionDetails.value("Date").second.isEmpty())
+        d.saveDetail(&date);
 
+    qDebug() << "Generating contacts with different timestamps, please wait..";
+    int originalContactCount = cm->contacts().count();
     Q_ASSERT(cm->saveContact(&a));
+    QTest::qSleep(2000);
     Q_ASSERT(cm->saveContact(&b));
+    QTest::qSleep(2000);
     Q_ASSERT(cm->saveContact(&c));
+    QTest::qSleep(2000);
     Q_ASSERT(cm->saveContact(&d));
+    QTest::qSleep(2000);
 
-    Q_ASSERT(cm->contacts().count() == 4);
+    /* Now add some contacts specifically for multisorting */
+    QContact e,f,g;
+    QContactName n;
+    n.setFirst("John");
+    n.setLast("Smithee");
+    e.saveDetail(&n);
+    n.setLast("Smithey");
+    f.saveDetail(&n);
+    n.setLast("Smithy");
+    g.saveDetail(&n);
+    Q_ASSERT(cm->saveContact(&e));
+    Q_ASSERT(cm->saveContact(&f));
+    Q_ASSERT(cm->saveContact(&g));
+    originalContactCount += 7;
+    Q_ASSERT(cm->contacts().count() == originalContactCount);
+
+    /* Ensure the last modified times are different */
+    QTest::qSleep(2000);
+    c.setDisplayLabel("Clarence");
+    cm->saveContact(&c);
+    QTest::qSleep(2000);
+    b.setDisplayLabel("Boris");
+    cm->saveContact(&b);
+    QTest::qSleep(2000);
+    a.setDisplayLabel("Albert");
+    cm->saveContact(&a);
+    QTest::qSleep(2000);
+
+    /* Add our newly saved contacts to our internal list of added contacts */
+    contactsAddedToManagers.insert(cm, g.id());
+    contactsAddedToManagers.insert(cm, f.id());
+    contactsAddedToManagers.insert(cm, e.id());
+    contactsAddedToManagers.insert(cm, d.id());
+    contactsAddedToManagers.insert(cm, c.id());
+    contactsAddedToManagers.insert(cm, b.id());
+    contactsAddedToManagers.insert(cm, a.id());
 
     /* Reload the contacts to pick up any changes */
     a = cm->contact(a.id());
     b = cm->contact(b.id());
     c = cm->contact(c.id());
     d = cm->contact(d.id());
+    e = cm->contact(e.id());
+    f = cm->contact(f.id());
+    g = cm->contact(g.id());
 
     QList<QUniqueId> list;
     if (!a.isEmpty())
@@ -2226,6 +2504,12 @@ QList<QUniqueId> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
         list << c.id();
     if (!d.isEmpty())
         list << d.id();
+    if (!e.isEmpty())
+        list << e.id();
+    if (!f.isEmpty())
+        list << f.id();
+    if (!g.isEmpty())
+        list << g.id();
     return list;
 }
 
