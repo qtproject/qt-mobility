@@ -312,7 +312,7 @@ QString getNamedProperty(IMAPIProp *object, ULONG tag)
             result = QString::fromUtf16(reinterpret_cast<quint16*>(prop->Value.LPSZ));
 
             MAPIFreeBuffer(prop);
-        } else {
+        } else if (rv != MAPI_E_NOT_FOUND) {
             qWarning() << "getNamedProperty: HrGetOneProp failed";
         }
     }
@@ -528,12 +528,84 @@ IMAPIFolder *openFolder(const QByteArray &entryId, IMsgStore *store)
     return folder;
 }
 
-IMAPIFolder *subFolder(const QString &path, IMAPIFolder *folder, IMsgStore *store)
+IMAPIFolder *openFolder(const QByteArray &entryId, IMAPIFolder *container)
+{
+    IMAPIFolder *folder(0);
+
+    if (container && !entryId.isEmpty()) {
+        ULONG type(0);
+        QByteArray entry(entryId);
+        HRESULT rv = container->OpenEntry(entry.length(), reinterpret_cast<LPENTRYID>(entry.data()), 0, MAPI_MODIFY, &type, reinterpret_cast<LPUNKNOWN*>(&folder));
+        if (HR_FAILED(rv)) {
+            folder = 0;
+            qWarning() << "openFolder: OpenEntry failed";
+        }
+    }
+
+    return folder;
+}
+
+QList<QByteArray> subFolderEntryIds(IMAPIFolder *folder)
+{
+    QList<QByteArray> result;
+
+    if (folder) {
+        IMAPITable *hierarchyTable(0);
+        HRESULT rv = folder->GetHierarchyTable(MAPI_UNICODE, &hierarchyTable);
+        if (HR_SUCCEEDED(rv)) {
+            LPSRowSet rows(0);
+            SizedSPropTagArray(2, cols) = {2, {PR_OBJECT_TYPE, PR_ENTRYID}};
+            rv = HrQueryAllRows(hierarchyTable, reinterpret_cast<LPSPropTagArray>(&cols), NULL, NULL, 0, &rows);
+            if (HR_SUCCEEDED(rv)) {
+                for (uint n = 0; n < rows->cRows; ++n) {
+                    if ((rows->aRow[n].lpProps[0].ulPropTag == PR_OBJECT_TYPE) &&
+                        (rows->aRow[n].lpProps[0].Value.l == MAPI_FOLDER)) {
+                        result.append(binaryResult(rows->aRow[n].lpProps[1]));
+                    }
+                }
+
+                FreeProws(rows);
+            } else {
+                qWarning() << "subFolderEntryIds: HrQueryAllRows failed";
+            }
+
+            hierarchyTable->Release();
+        }
+    }
+
+    return result;
+}
+
+IMAPIFolder *subFolder(const QString &path, IMAPIFolder *folder)
 {
     IMAPIFolder *result(0);
 
-    if (store && folder && !path.isEmpty()) {
-        // TODO
+    if (folder && !path.isEmpty()) {
+        // Find all folders in the current folder
+        foreach (const QByteArray &entryId, subFolderEntryIds(folder)) {
+            IMAPIFolder *childFolder = openFolder(entryId, folder);
+            if (childFolder) {
+                ULONG tag = getNamedPropertyTag(childFolder, "path");
+                if (tag) {
+                    QString childPath(getNamedProperty(childFolder, tag));
+                    if (childPath == path) {
+                        // This is the folder we're looking for
+                        result = childFolder;
+                    } else if (path.startsWith(childPath)) {
+                        // This must be a parent of the folder we're looking for
+                        result = subFolder(path, childFolder);
+                    }
+                }
+
+                if (childFolder != result) {
+                    childFolder->Release();
+                }
+            }
+
+            if (result) {
+                break;
+            }
+        }
     }
 
     return result;
@@ -712,18 +784,14 @@ QMessageFolderId addFolder(const Parameters &params)
             // Open the store for modification
             IMsgStore *store = openStore(accountName, session);
             if (store) {
-                // Find the identifier of the root folder
-                QByteArray rootId(rootFolderEntryId(store));
-                if (!rootId.isEmpty()) {
-                    // Open the root folder for modification
-                    IMAPIFolder *folder = openFolder(rootId, store);
-                    if (folder) {
-                        // Find the parent folder for the new folder
-                        if (!parentPath.isEmpty()) {
-                            IMAPIFolder *parentFolder = subFolder(parentPath, folder, store);
-                            folder->Release();
-                            folder = parentFolder;
-                        }
+                // Open the root folder for modification
+                IMAPIFolder *folder = openFolder(rootFolderEntryId(store), store);
+                if (folder) {
+                    // Find the parent folder for the new folder
+                    if (!parentPath.isEmpty()) {
+                        IMAPIFolder *parentFolder = subFolder(parentPath, folder);
+                        folder->Release();
+                        folder = parentFolder;
                     }
 
                     if (folder) {
@@ -743,7 +811,11 @@ QMessageFolderId addFolder(const Parameters &params)
                         }
 
                         folder->Release();
+                    } else {
+                        qWarning() << "Unable to locate parent folder for addition";
                     }
+                } else {
+                    qWarning() << "Unable to open root folder for addition";
                 }
 
                 store->Release();
