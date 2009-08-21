@@ -93,7 +93,8 @@ public:
     QString homeMobileNetworkCode();
 
     QString operatorName();
-
+    QString wlanSsid();
+    QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 };
 
 class QSystemDisplayInfoPrivate : public QObject

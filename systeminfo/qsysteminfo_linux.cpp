@@ -514,6 +514,16 @@ QString QSystemNetworkInfoPrivate::operatorName()
     return "No Operator";
 }
 
+QString QSystemNetworkInfoPrivate::wlanSsid()
+{
+    return QString();
+}
+
+QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
+{
+    return QString();
+}
+
 //////// QSystemDisplayInfo
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
         : QObject(parent)

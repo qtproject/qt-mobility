@@ -136,12 +136,15 @@ public:
         CdmaMode = 0x00000002,
         WcdmaMode = 0x00000004,
         WlanMode = 0x00000008,
-        EthMode = 0x00000010
+        EthMode = 0x00000020,
+        WimaxMode = 0x00000040
     };
     Q_DECLARE_FLAGS(NetworkModes, NetworkMode)
 
     QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
     static int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
+    QString wlanSsid();
+    QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
     static int cellId();
     static int locationAreaCode();
@@ -151,9 +154,6 @@ public:
 
     static QString homeMobileCountryCode();
     static QString homeMobileNetworkCode();
-
-    static bool isWlanReachable();
-
     static QString operatorName();
 
 private:

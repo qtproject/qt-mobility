@@ -109,6 +109,7 @@
         <keyword ref="qsystemnetworkinfo.html">QSystemNetworkInfo</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">NetworkMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">NetworkModes</keyword>
+        <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::WimaxMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::CdmaMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::EthMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::UnknownMode</keyword>
@@ -130,11 +131,12 @@
         <keyword ref="qsystemnetworkinfo.html#currentMobileNetworkCode">currentMobileNetworkCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#homeMobileCountryCode">homeMobileCountryCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#homeMobileNetworkCode">homeMobileNetworkCode</keyword>
-        <keyword ref="qsystemnetworkinfo.html#isWlanReachable">isWlanReachable</keyword>
         <keyword ref="qsystemnetworkinfo.html#locationAreaCode">locationAreaCode</keyword>
+        <keyword ref="qsystemnetworkinfo.html#macAddress">macAddress</keyword>
         <keyword ref="qsystemnetworkinfo.html#networkSignalStrength">networkSignalStrength</keyword>
         <keyword ref="qsystemnetworkinfo.html#networkStatus">networkStatus</keyword>
         <keyword ref="qsystemnetworkinfo.html#operatorName">operatorName</keyword>
+        <keyword ref="qsystemnetworkinfo.html#wlanSsid">wlanSsid</keyword>
         <section ref="qsystemnetworkinfo-members.html" title="List of all members"/>
     </section>
     <section ref="qsystemscreensaver.html" title="QSystemScreenSaver Class Reference">

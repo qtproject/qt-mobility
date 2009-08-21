@@ -121,6 +121,7 @@ QT_BEGIN_NAMESPACE
     \value WcdmaMode               Wideband Code Division Multiple Access (W-CDMA) network.
     \value WlanMode                Wireless Local Area Network (WLAN) network.
     \value EthMode                 Wired Local Area network.
+    \value WimaxMode               Wimax network.
 
   */
 
@@ -395,6 +396,22 @@ QString QSystemNetworkInfo::operatorName()
 {
     QSystemNetworkInfoPrivate dnp;
     return dnp.operatorName();
+}
+
+/*!
+  Returns the wlan network's current SSID
+  */
+QString QSystemNetworkInfo::wlanSsid()
+{
+    return d->wlanSsid();
+}
+
+/*!
+  Returns the MAC address for the interface servicing the network \a mode.
+  */
+QString QSystemNetworkInfo::macAddress(QSystemNetworkInfo::NetworkMode mode)
+{
+    return d->macAddress(mode);
 }
 
 // display
