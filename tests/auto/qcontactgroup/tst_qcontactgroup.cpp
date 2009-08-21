@@ -55,6 +55,7 @@ private slots:
     void members();
     void id();
     void empty();
+    void equals();
 };
 
 tst_QContactGroup::tst_QContactGroup()
@@ -212,6 +213,67 @@ void tst_QContactGroup::empty()
 
     g.setId(0);
     QVERIFY(g.isEmpty());
+}
+
+void tst_QContactGroup::equals()
+{
+    QList<QUniqueId> g1members;
+    QList<QUniqueId> g2members;
+    g1members.append(5);
+    g2members.append(6);
+
+    QContactGroup g1,g2;
+    g1.setId(1);
+    g2.setId(2);
+    g1.setName("one");
+    g2.setName("two");
+    g1.setMembers(g1members);
+    g2.setMembers(g2members);
+
+    // different id, name and members
+    QVERIFY(g1 != g2);
+
+    // different id, name, but same members
+    g2.setMembers(g1members);
+    QVERIFY(g1 != g2);
+    g2.setMembers(g2members);
+
+    // different id, members, but same name
+    g2.setName("one");
+    QVERIFY(g1 != g2);
+    g2.setName("two");
+
+    // different name, members, but same id
+    g2.setId(1);
+    QVERIFY(g1 != g2);
+    g2.setId(2);
+
+    // different id, same name, members
+    g2.setName("one");
+    g2.setMembers(g1members);
+    QVERIFY(g1 != g2);
+    g2.setName("two");
+    g2.setMembers(g2members);
+
+    // different name, same id, members
+    g2.setId(1);
+    g2.setMembers(g1members);
+    QVERIFY(g1 != g2);
+    g2.setId(2);
+    g2.setMembers(g2members);
+
+    // different members, same id, name
+    g2.setId(1);
+    g2.setName("one");
+    QVERIFY(g1 != g2);
+    g2.setId(2);
+    g2.setName("two");
+
+    // same id, name and members: should be equal.
+    g2.setId(1);
+    g2.setName("one");
+    g2.setMembers(g1members);
+    QVERIFY(g1 == g2);
 }
 
 QTEST_MAIN(tst_QContactGroup)
