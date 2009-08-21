@@ -152,28 +152,10 @@ void Dialog::setupNetwork()
 void Dialog::netStatusComboActivated(int index)
 {
     QString status;
-    QSystemNetworkInfo::NetworkMode mode;
-    switch(index) {
-    case 1:
-        mode = QSystemNetworkInfo::GsmMode;
-        break;
-    case 2:
-        mode = QSystemNetworkInfo::CdmaMode;
-        break;
-    case 3:
-        mode = QSystemNetworkInfo::WcdmaMode;
-        break;
-    case 4:
-        mode = QSystemNetworkInfo::WlanMode;
-        break;
-    case 5:
-        mode = QSystemNetworkInfo::EthMode;
-        break;
-    };
 
     QString stat;
     QSystemNetworkInfo ni;
-    switch(ni.networkStatus(mode)) {
+    switch(ni.networkStatus( (QSystemNetworkInfo::NetworkMode)index)) {
     case QSystemNetworkInfo::UndefinedStatus:
         stat = "Undefined";
         break;
