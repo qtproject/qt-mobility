@@ -710,6 +710,70 @@ void tst_QContactManager::add()
         dumpContacts(cm);
         dumpContactDifferences(added, alice);
     }
+
+    // now try adding a "megacontact"
+    // - get list of all definitions supported by the manager
+    // - add one detail of each definition to a contact
+    // - save the contact
+    // - read it back
+    // - ensure that it's the same.
+    QContact megacontact;
+    QMap<QString, QContactDetailDefinition> defmap = cm->detailDefinitions();
+    QList<QContactDetailDefinition> defs = defmap.values();
+    foreach (const QContactDetailDefinition def, defs) {
+        QContactDetail det(def.name());
+        QMap<QString, QContactDetailDefinition::Field> fieldmap = def.fields();
+        QStringList fieldKeys = fieldmap.keys();
+        foreach (const QString& fieldKey, fieldKeys) {
+            QContactDetailDefinition::Field currentField = fieldmap.value(fieldKey);
+            if (!currentField.allowableValues.isEmpty()) {
+                // we want to save a value that will be accepted.
+                det.setValue(fieldKey, currentField.allowableValues.first());
+            } else {
+                // any value of the correct type will be accepted
+                bool savedSuccessfully = false;
+                QVariant dummyValue = QVariant(42);
+                if (dummyValue.canConvert(currentField.dataType)) {
+                    savedSuccessfully = dummyValue.convert(currentField.dataType);
+                    if (savedSuccessfully) {
+                        // we have successfully created a (supposedly) valid field for this detail.
+                        det.setValue(fieldKey, dummyValue);
+                        break;
+                    }
+                }
+
+                // nope, couldn't save the integer value (42); try a string.
+                dummyValue = QVariant("test");
+                if (dummyValue.canConvert(currentField.dataType)) {
+                    savedSuccessfully = dummyValue.convert(currentField.dataType);
+                    if (savedSuccessfully) {
+                        // we have successfully created a (supposedly) valid field for this detail.
+                        det.setValue(fieldKey, dummyValue);
+                        break;
+                    }
+                }
+
+                // nope, couldn't save the string value (test); try a date.
+                dummyValue = QVariant(QDate::currentDate());
+                if (dummyValue.canConvert(currentField.dataType)) {
+                    savedSuccessfully = dummyValue.convert(currentField.dataType);
+                    if (savedSuccessfully) {
+                        // we have successfully created a (supposedly) valid field for this detail.
+                        det.setValue(fieldKey, dummyValue);
+                        break;
+                    }
+                }
+
+                // if we get here, we don't know what sort of value can be saved...
+            }
+        }
+        megacontact.saveDetail(&det);
+    }
+
+    QVERIFY(cm->saveContact(&megacontact)); // must be able to save since built from definitions.
+    QContact retrievedMegacontact = cm->contact(megacontact.id());
+    QCOMPARE(retrievedMegacontact, megacontact); // should be the same.
+
     delete cm;
 }
 
