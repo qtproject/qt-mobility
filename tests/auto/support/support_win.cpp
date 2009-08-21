@@ -107,7 +107,7 @@ QByteArray binaryResult(const SPropValue &prop)
     return QByteArray(reinterpret_cast<const char*>(prop.Value.bin.lpb), prop.Value.bin.cb);
 }
 
-typedef QPair<QByteArray, MAPIUID> ServiceDetail;
+typedef QPair<QPair<QByteArray, QByteArray>, MAPIUID> ServiceDetail;
 
 QList<ServiceDetail> serviceDetails(LPSERVICEADMIN svcAdmin)
 {
@@ -117,14 +117,18 @@ QList<ServiceDetail> serviceDetails(LPSERVICEADMIN svcAdmin)
     HRESULT rv = svcAdmin->GetMsgServiceTable(0, &svcTable);
     if (HR_SUCCEEDED(rv)) {
         LPSRowSet rows(0);
-        SizedSPropTagArray(2, cols) = {2, {PR_SERVICE_NAME_A, PR_SERVICE_UID}};
+        SizedSPropTagArray(3, cols) = {3, {PR_SERVICE_NAME_A, PR_DISPLAY_NAME_A, PR_SERVICE_UID}};
         rv = HrQueryAllRows(svcTable, reinterpret_cast<LPSPropTagArray>(&cols), 0, 0, 0, &rows);
         if (HR_SUCCEEDED(rv)) {
             for (uint n = 0; n < rows->cRows; ++n) {
                 if (rows->aRow[n].lpProps[0].ulPropTag == PR_SERVICE_NAME_A) {
                     QByteArray svcName(rows->aRow[n].lpProps[0].Value.lpszA);
-                    MAPIUID svcUid(*(reinterpret_cast<MAPIUID*>(rows->aRow[n].lpProps[1].Value.bin.lpb)));
-                    result.append(qMakePair(svcName, svcUid));
+                    QByteArray displayName;
+                    if (rows->aRow[n].lpProps[1].ulPropTag == PR_DISPLAY_NAME_A) {
+                        displayName = QByteArray(rows->aRow[n].lpProps[1].Value.lpszA);
+                    }
+                    MAPIUID svcUid(*(reinterpret_cast<MAPIUID*>(rows->aRow[n].lpProps[2].Value.bin.lpb)));
+                    result.append(qMakePair(qMakePair(svcName, displayName), svcUid));
                 }
             }
 
@@ -686,12 +690,18 @@ QMessageAccountId addAccount(const Parameters &params)
                         char *providerName = "MSUPST MS";
                         bool serviceExists(false);
                         MAPIUID svcUid = { 0 };
+                        QList<QByteArray> existingServices;
 
                         foreach (const ServiceDetail &svc, serviceDetails(svcAdmin)) {
-                            if (svc.first.toLower() == QByteArray(providerName).toLower()) {
-                                svcUid = svc.second;
-                                serviceExists = true;
-                                break;
+                            // Find all services that have our provider
+                            if (svc.first.first.toLower() == QByteArray(providerName).toLower()) {
+                                if (svc.first.second.toLower() == name.toLower()) {
+                                    // This is existing service we need to remove
+                                    svcUid = svc.second;
+                                    serviceExists = true;
+                                } else {
+                                    existingServices.append(QByteArray(reinterpret_cast<const char*>(&svc.second), sizeof(MAPIUID)));
+                                }
                             }
                         }
 
@@ -703,11 +713,13 @@ QMessageAccountId addAccount(const Parameters &params)
 
                         if (!serviceExists) {
                             // Create a message service for this profile using the standard provider
-                            rv = svcAdmin->CreateMsgService(reinterpret_cast<LPTSTR>(providerName), reinterpret_cast<LPTSTR>(name.data()), 0, 0);
+                            rv = svcAdmin->CreateMsgService(reinterpret_cast<LPTSTR>(providerName), 0, 0, 0);
                             if (HR_SUCCEEDED(rv)) {
+                                // Find which of the now-extant services was not in the previous set
                                 foreach (const ServiceDetail &svc, serviceDetails(svcAdmin)) {
-                                    // Find the name/UID for the service we added
-                                    if (svc.first.toLower() == QByteArray(providerName).toLower()) {
+                                    QByteArray uidData(reinterpret_cast<const char*>(&svc.second), sizeof(MAPIUID));
+                                    if ((svc.first.first.toLower() == QByteArray(providerName).toLower()) &&
+                                        !existingServices.contains(uidData)) {
                                         // Create a .PST message store for this service
                                         QByteArray path(QString("%1.pst").arg(name.constData()).toAscii());
 
