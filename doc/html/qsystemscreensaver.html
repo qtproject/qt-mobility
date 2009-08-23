@@ -57,24 +57,24 @@
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QSystemScreenSaver"></a>QSystemScreenSaver::QSystemScreenSaver ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
-<p>Constructs a <a href="qsystemscreensaver.html">QSystemScreenSaver</a> with the given <i>parent</i>.</p>
+<p>Constructs a <a href="qsystemscreensaver.html">QSystemScreenSaver</a> object with the given <i>parent</i>.</p>
 <h3 class="fn"><a name="dtor.QSystemScreenSaver"></a>QSystemScreenSaver::~QSystemScreenSaver ()</h3>
-<p>Desctoys the QSyatemScreenSaver object.</p>
+<p>Destroys the QSyatemScreenSaver object.</p>
 <h3 class="fn"><a name="isScreenLockOn"></a>bool QSystemScreenSaver::isScreenLockOn ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns whether the systems screen lock is turned on.</p>
 <h3 class="fn"><a name="screenBlankingEnabled"></a>bool QSystemScreenSaver::screenBlankingEnabled ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Returns true if screen blanking is enabled, other wise false.</p>
+<p>Returns true if screen blanking is enabled, otherwise false.</p>
 <p>See also <a href="qsystemscreensaver.html#setScreenBlankingEnabled">setScreenBlankingEnabled</a>().</p>
 <h3 class="fn"><a name="screenSaverEnabled"></a>bool QSystemScreenSaver::screenSaverEnabled ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns true if the screensaver is enabled, otherwise false.</p>
 <p>See also <a href="qsystemscreensaver.html#setScreenSaverEnabled">setScreenSaverEnabled</a>().</p>
 <h3 class="fn"><a name="setScreenBlankingEnabled"></a>bool QSystemScreenSaver::setScreenBlankingEnabled ( bool <i>b</i> )</h3>
 <p>Temporarily sets the screen blanking on to <i>b</i> Will be reverted upon destruction of the <a href="qsystemscreensaver.html">QSystemScreenSaver</a> object. Returns true on success, otherwise false.</p>
-<p>On Windows platform, if screensaver is secure by policy, the policy will be honored and this will fail.</p>
+<p>On platforms that support it, if screensaver is secure by policy, the policy will be honored and this will fail.</p>
 <p>See also <a href="qsystemscreensaver.html#screenBlankingEnabled">screenBlankingEnabled</a>().</p>
 <h3 class="fn"><a name="setScreenSaverEnabled"></a>bool QSystemScreenSaver::setScreenSaverEnabled ( bool <i>b</i> )</h3>
 <p>Temporarily sets the screensaver on to <i>b</i>. Will be reverted upon destruction of the <a href="qsystemscreensaver.html">QSystemScreenSaver</a> object. Returns true on success, otherwise false.</p>
-<p>On Windows platform, if screensaver is secure by policy, the policy will be honored and this will fail.</p>
+<p>On platforms that support it, if screensaver is secure by policy, the policy will be honored and this will fail.</p>
 <p>See also <a href="qsystemscreensaver.html#screenSaverEnabled">screenSaverEnabled</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

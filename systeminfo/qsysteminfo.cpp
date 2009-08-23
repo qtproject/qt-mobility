@@ -237,7 +237,7 @@ QT_BEGIN_NAMESPACE
 
 
  /*!
-   Constructs a QSystemInfo with the given \a parent.
+   Constructs a QSystemInfo object with the given \a parent.
  */
 QSystemInfo::QSystemInfo(QObject *parent)
 {
@@ -271,9 +271,9 @@ QStringList QSystemInfo::availableLanguages()
 
 /*!
   Returns the version of QSystemInfo::Version \a type,
- with optional \a parameter as a string.
+  with optional platform dependent \a parameter as a string.
 
-Note: Version will always be returned in "major.minor.build" format.
+  Version will be returned in "major.minor.build" form.
 
   In case a particular version does not use the "build" part, it is set to 0.
 If a particular element is not available at all, an error "Not Installed" will be returned by
@@ -294,7 +294,7 @@ QString QSystemInfo::currentCountryCode()
 }
 
 /*!
-    Returns true if feature \a feature is supported, otherwise false.
+    Returns true if the QSystemInfo::Feature \a feature is supported, otherwise false.
 */
 
 bool QSystemInfo::hasFeatureSupported(QSystemInfo::Feature feature)
@@ -303,7 +303,7 @@ bool QSystemInfo::hasFeatureSupported(QSystemInfo::Feature feature)
 }
 
  /*!
-   Constructs a QSystemNetworkInfo with the given \a parent.
+   Constructs a QSystemNetworkInfo object with the given \a parent.
  */
 QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
 {
@@ -345,7 +345,7 @@ int QSystemNetworkInfo::cellId()
 }
 
 /*!
-    Returns the Location Area Code.
+    Returns the Location Area Code. In the case of none such as a Desktop, "No Mobile Network."
 */
 int QSystemNetworkInfo::locationAreaCode()
 {
@@ -354,7 +354,7 @@ int QSystemNetworkInfo::locationAreaCode()
 }
 
  /*!
-    Returns the current Mobile Country Code
+    Returns the current Mobile Country Code. In the case of none such as a Desktop, "No Mobile Network."
 /*/
 QString QSystemNetworkInfo::currentMobileCountryCode()
 {
@@ -363,7 +363,7 @@ QString QSystemNetworkInfo::currentMobileCountryCode()
 }
 
 /*!
-    Returns the current Mobile Network Code
+    Returns the current Mobile Network Code. In the case of none such as a Desktop, "No Mobile Network."
 */
 QString QSystemNetworkInfo::currentMobileNetworkCode()
 {
@@ -372,7 +372,7 @@ QString QSystemNetworkInfo::currentMobileNetworkCode()
 }
 
 /*!
-    Returns the home Mobile Network Code
+    Returns the home Mobile Network Code. In the case of none such as a Desktop, "No Mobile Network."
 */
 QString QSystemNetworkInfo::homeMobileCountryCode()
 {
@@ -381,7 +381,7 @@ QString QSystemNetworkInfo::homeMobileCountryCode()
 }
 
 /*!
-    Returns the home Mobile Country Code
+    Returns the home Mobile Country Code. In the case of none such as a Desktop, "No Mobile Network."
 */
 QString QSystemNetworkInfo::homeMobileNetworkCode()
 {
@@ -390,7 +390,7 @@ QString QSystemNetworkInfo::homeMobileNetworkCode()
 }
 
 /*!
-  Returns the name of the operator.
+  Returns the name of the operator. In the case of none such as a desktop, "No Operator".
 */
 QString QSystemNetworkInfo::operatorName()
 {
@@ -416,7 +416,7 @@ QString QSystemNetworkInfo::macAddress(QSystemNetworkInfo::NetworkMode mode)
 
 // display
  /*!
-   Constructs a QSystemDisplayInfo.
+   Constructs a QSystemDisplayInfo object.
  */
 QSystemDisplayInfo::QSystemDisplayInfo()
 {
@@ -448,7 +448,7 @@ int QSystemDisplayInfo::colorDepth(int screenNumber)
 }
 
  /*!
-   Constructs a QSystemMemoryInfo with the given \a parent.
+   Constructs a QSystemMemoryInfo object with the given \a parent.
  */
 QSystemMemoryInfo::QSystemMemoryInfo(QObject *parent)
 {
@@ -517,7 +517,7 @@ QSystemDeviceInfo::~QSystemDeviceInfo()
 }
 
 /*!
-    Returns the InputMethodType that the system uses.
+    Returns the QSystemDeviceInfo::InputMethods InputMethodType that the system uses.
 */
 QSystemDeviceInfo::InputMethods QSystemDeviceInfo::inputMethodType()
 {
@@ -542,7 +542,8 @@ QString QSystemDeviceInfo::imsi()
 }
 
 /*!
-    Returns the name of the manufacturer.
+    Returns the name of the manufacturer of this device. In the case of desktops, the name of the vendor
+    of the motherboard.
 */
 QString QSystemDeviceInfo::manufacturer()
 {
@@ -551,7 +552,9 @@ QString QSystemDeviceInfo::manufacturer()
 }
 
 /*!
-    Returns the model of the device, 0r in the case of desktops, the CPU.
+    Returns the model information of the device. In the case of desktops where no
+    model information is present, the CPU architect, such as i686, and machine type, such as Server,
+    Desktop or Laptop.
 */
 QString QSystemDeviceInfo::model()
 {
@@ -560,7 +563,8 @@ QString QSystemDeviceInfo::model()
 }
 
 /*!
-    Returns the product name of the device.
+    Returns the product name of the device. In the case where no product information is available,
+
 */
 QString QSystemDeviceInfo::productName()
 {
@@ -568,7 +572,7 @@ QString QSystemDeviceInfo::productName()
     return dip.productName();
 }
 /*!
-    Returns the battery charge level as percentage 1 - 100 scale
+    Returns the battery charge level as percentage 1 - 100 scale.
 */
 int QSystemDeviceInfo::batteryLevel() const
 {
@@ -576,7 +580,7 @@ int QSystemDeviceInfo::batteryLevel() const
 }
 
 /*!
-    Returns true if the battery is charging, otherwise false;
+    Returns true if the battery is charging, otherwise false.
 */
 bool QSystemDeviceInfo::isBatteryCharging()
 {
@@ -586,7 +590,7 @@ bool QSystemDeviceInfo::isBatteryCharging()
 /*!
   \property QSystemDeviceInfo::simStatus
   \brief the status of the sim card.
-  Returns status of SIM card.
+  Returns the QSystemDeviceInfo::simStatus status of SIM card.
 */
 QSystemDeviceInfo::SimStatus QSystemDeviceInfo::simStatus()
 {
@@ -603,7 +607,7 @@ bool QSystemDeviceInfo::isDeviceLocked()
 /*!
   \property QSystemDeviceInfo::currentProfile
   \brief the device profile
-  Gets the current device profile QSystemDeviceInfo::Profile
+  Gets the current QSystemDeviceInfo::currentProfile device profile.
 */
 QSystemDeviceInfo::Profile QSystemDeviceInfo::currentProfile()
 {
@@ -614,7 +618,7 @@ QSystemDeviceInfo::Profile QSystemDeviceInfo::currentProfile()
   \property QSystemDeviceInfo::currentPowerState
   \brief the power state.
 
-  Gets the current device power state
+  Gets the current QSystemDeviceInfo::currentPowerState state.
 */
 QSystemDeviceInfo::PowerState QSystemDeviceInfo::currentPowerState()
 {
@@ -624,7 +628,7 @@ return d->currentPowerState();
 
 /////
  /*!
-   Constructs a QSystemScreenSaver with the given \a parent.
+   Constructs a QSystemScreenSaver object with the given \a parent.
  */
 QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
 {
@@ -634,7 +638,7 @@ QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
 }
 
 /*!
-  Desctoys the QSyatemScreenSaver object.
+  Destroys the QSyatemScreenSaver object.
  */
 QSystemScreenSaver::~QSystemScreenSaver()
 {
@@ -647,11 +651,11 @@ QSystemScreenSaver::~QSystemScreenSaver()
 
 /*!
     Temporarily sets the screensaver on to  \a b.
-Will be reverted upon destruction of the QSystemScreenSaver object.
-Returns true on success, otherwise false.
+    Will be reverted upon destruction of the QSystemScreenSaver object.
+    Returns true on success, otherwise false.
 
-On Windows platform, if screensaver is secure by policy, the policy will be honored
-and this will fail.
+    On platforms that support it, if screensaver is secure by policy, the policy will be honored
+    and this will fail.
 */
 bool QSystemScreenSaver::setScreenSaverEnabled(bool b)
 {
@@ -660,11 +664,11 @@ bool QSystemScreenSaver::setScreenSaverEnabled(bool b)
 
 /*!
     Temporarily sets the screen blanking on to  \a b
-Will be reverted upon destruction of the QSystemScreenSaver object.
-Returns true on success, otherwise false.
+    Will be reverted upon destruction of the QSystemScreenSaver object.
+    Returns true on success, otherwise false.
 
-On Windows platform, if screensaver is secure by policy, the policy will be honored
-and this will fail.
+    On platforms that support it, if screensaver is secure by policy, the policy will be honored
+    and this will fail.
 */
 bool QSystemScreenSaver::setScreenBlankingEnabled(bool b)
 {
@@ -680,7 +684,7 @@ bool QSystemScreenSaver::screenSaverEnabled()
 }
 
 /*!
-   Returns true if screen blanking is enabled, other wise false.
+   Returns true if screen blanking is enabled, otherwise false.
 */
 bool QSystemScreenSaver::screenBlankingEnabled()
 {
