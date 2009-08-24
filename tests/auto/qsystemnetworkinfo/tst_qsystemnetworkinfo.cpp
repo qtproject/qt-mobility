@@ -33,7 +33,7 @@
 #include <QtTest/QtTest>
 #include "qsysteminfo.h"
 
-Q_DECLARE_METATYPE(QSystemNetworkInfo::CellNetworkStatus);
+Q_DECLARE_METATYPE(QSystemNetworkInfo::NetworkStatus);
 Q_DECLARE_METATYPE(QSystemNetworkInfo::NetworkMode);
 
 
@@ -44,7 +44,7 @@ class tst_QSystemNetworkInfo : public QObject
 private slots:
 
     void initTestCase();
-    void tst_cellNetworkStatus();
+    void tst_networkStatus();
 
     void tst_networkSignalStrength_data();
     void tst_networkSignalStrength();
@@ -57,8 +57,6 @@ private slots:
     void tst_homeMobileCountryCode();
     void tst_homeMobileNetworkCode();
 
-    void tst_isWlanReachable();
-
     void tst_operatorName();
 };
 //signal todo:
@@ -66,23 +64,33 @@ private slots:
 
 void tst_QSystemNetworkInfo::initTestCase()
 {
-    qRegisterMetaType<QSystemNetworkInfo::CellNetworkStatus>("QSystemNetworkInfo::CellNetworkStatus");
+    qRegisterMetaType<QSystemNetworkInfo::NetworkStatus>("QSystemNetworkInfo::NetworkStatus");
     qRegisterMetaType<QSystemNetworkInfo::NetworkMode>("QSystemNetworkInfo::NetworkMode");
 }
 
 
-void tst_QSystemNetworkInfo::tst_cellNetworkStatus()
+void tst_QSystemNetworkInfo::tst_networkStatus()
 {
     QSystemNetworkInfo ni;
-    QSystemNetworkInfo::CellNetworkStatus status = ni.cellNetworkStatus();
-    QVERIFY( status == QSystemNetworkInfo::UndefinedStatus
-             || status == QSystemNetworkInfo::NoNetworkAvailable
-             || status == QSystemNetworkInfo::EmergencyOnly
-             || status == QSystemNetworkInfo::Searching
-             || status == QSystemNetworkInfo::Busy
-             || status == QSystemNetworkInfo::HomeNetwork
-             || status == QSystemNetworkInfo::Denied
-             || status == QSystemNetworkInfo::Roaming);
+    QList<QSystemNetworkInfo::NetworkMode> modeList;
+    modeList << QSystemNetworkInfo::GsmMode;
+    modeList << QSystemNetworkInfo::CdmaMode;
+    modeList << QSystemNetworkInfo::WcdmaMode;
+    modeList << QSystemNetworkInfo::WlanMode;
+    modeList << QSystemNetworkInfo::EthMode;
+    foreach(QSystemNetworkInfo::NetworkMode mode, modeList) {
+        QSystemNetworkInfo::NetworkStatus status = ni.networkStatus(mode);
+
+        QVERIFY( status == QSystemNetworkInfo::UndefinedStatus
+                 || status == QSystemNetworkInfo::NoNetworkAvailable
+                 || status == QSystemNetworkInfo::EmergencyOnly
+                 || status == QSystemNetworkInfo::Searching
+                 || status == QSystemNetworkInfo::Busy
+                 || status == QSystemNetworkInfo::Connected
+                 || status == QSystemNetworkInfo::HomeNetwork
+                 || status == QSystemNetworkInfo::Denied
+                 || status == QSystemNetworkInfo::Roaming);
+    }
 
 }
 
@@ -148,15 +156,6 @@ void  tst_QSystemNetworkInfo::tst_homeMobileNetworkCode()
     QSystemNetworkInfo ni;
     QVERIFY(!ni.homeMobileNetworkCode().isEmpty());
 }
-
-void  tst_QSystemNetworkInfo::tst_isWlanReachable()
-{
-    QSystemNetworkInfo ni;
-    bool wifi = ni.isWlanReachable();
-    QVERIFY(wifi == false
-            || wifi== true);
-}
-
 
 void  tst_QSystemNetworkInfo::tst_operatorName()
 {

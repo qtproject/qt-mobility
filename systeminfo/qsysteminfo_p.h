@@ -81,7 +81,7 @@ public:
     QSystemNetworkInfoPrivate(QObject *parent = 0);
     virtual ~QSystemNetworkInfoPrivate();
 
-    QSystemNetworkInfo::CellNetworkStatus cellNetworkStatus();
+    QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
     qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
     int cellId();
     int locationAreaCode();
@@ -92,9 +92,9 @@ public:
     QString homeMobileCountryCode();
     QString homeMobileNetworkCode();
 
-    bool isWlanReachable() const;
     QString operatorName();
-
+    QString wlanSsid();
+    QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 };
 
 class QSystemDisplayInfoPrivate : public QObject

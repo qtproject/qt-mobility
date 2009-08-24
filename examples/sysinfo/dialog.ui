@@ -14,10 +14,10 @@
    <string>Sysinfo</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
+   <item row="0" column="1">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="generaltab">
       <attribute name="title">
@@ -538,63 +538,12 @@
        <item row="0" column="0" colspan="2">
         <widget class="QLabel" name="label_5">
          <property name="text">
-          <string>Cell Network Status</string>
+          <string>Network Status</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="4" colspan="2">
-        <widget class="QComboBox" name="comboBox_4">
-         <item>
-          <property name="text">
-           <string>Undefined</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>No Network</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Emergency Only</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Searching</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Busy</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Home network</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Denied</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Roaming</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="1" column="0" colspan="3">
-        <widget class="QLabel" name="label_6">
-         <property name="text">
-          <string>Network Signal Strength</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="4" colspan="2">
-        <widget class="QComboBox" name="comboBox_5">
+       <item row="0" column="3">
+        <widget class="QComboBox" name="netStatusComboBox">
          <item>
           <property name="text">
            <string>Unknown</string>
@@ -627,8 +576,69 @@
          </item>
         </widget>
        </item>
-       <item row="1" column="6" colspan="2">
-        <widget class="QLineEdit" name="signalLineEdit"/>
+       <item row="0" column="4">
+        <widget class="QLabel" name="cellNetworkStatusLabel">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Sunken</enum>
+         </property>
+         <property name="text">
+          <string>.</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="3">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Network Signal Strength</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3">
+        <widget class="QComboBox" name="netStrengthComboBox">
+         <item>
+          <property name="text">
+           <string>Unknown</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Gsm</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Cdma</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Wcdma</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Wlan</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Ethernet</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="4" colspan="2">
+        <widget class="QProgressBar" name="signalLevelProgressBar">
+         <property name="value">
+          <number>0</number>
+         </property>
+         <property name="format">
+          <string>%v</string>
+         </property>
+        </widget>
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="label_7">
@@ -637,8 +647,18 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="1" colspan="4">
-        <widget class="QLineEdit" name="cellIdLineEdit"/>
+       <item row="2" column="2">
+        <widget class="QLabel" name="cellIdLabel">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Sunken</enum>
+         </property>
+         <property name="text">
+          <string>.</string>
+         </property>
+        </widget>
        </item>
        <item row="3" column="0" colspan="2">
         <widget class="QLabel" name="label_8">
@@ -647,65 +667,183 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="3" colspan="2">
-        <widget class="QLineEdit" name="lacLineEdit"/>
+       <item row="3" column="2">
+        <widget class="QLabel" name="locationAreaCodeLabel">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Sunken</enum>
+         </property>
+         <property name="text">
+          <string>.</string>
+         </property>
+        </widget>
        </item>
        <item row="4" column="0" colspan="2">
         <widget class="QLabel" name="label_9">
          <property name="text">
-          <string>current MMC</string>
+          <string>current MMC:</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="2" colspan="3">
-        <widget class="QLineEdit" name="curMmcLineEdit"/>
+       <item row="4" column="2">
+        <widget class="QLabel" name="currentMMCLabel">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Sunken</enum>
+         </property>
+         <property name="text">
+          <string>.</string>
+         </property>
+        </widget>
        </item>
-       <item row="4" column="5" colspan="2">
+       <item row="4" column="3">
+        <spacer name="horizontalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>131</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="4" column="4">
         <widget class="QLabel" name="label_11">
          <property name="text">
-          <string>home MMC</string>
+          <string>home MMC:</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="7">
-        <widget class="QLineEdit" name="homeMmcLineEdit"/>
+       <item row="4" column="5">
+        <widget class="QLabel" name="homeMMCLabel">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Sunken</enum>
+         </property>
+         <property name="text">
+          <string>.</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="6">
+        <spacer name="horizontalSpacer_5">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>131</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
        <item row="5" column="0" colspan="2">
         <widget class="QLabel" name="label_10">
          <property name="text">
-          <string>current MNC</string>
+          <string>current MNC:</string>
          </property>
         </widget>
        </item>
-       <item row="5" column="2" colspan="3">
-        <widget class="QLineEdit" name="curMncLineEdit"/>
+       <item row="5" column="2">
+        <widget class="QLabel" name="currentMNCLabel">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Sunken</enum>
+         </property>
+         <property name="text">
+          <string>.</string>
+         </property>
+        </widget>
        </item>
-       <item row="5" column="5" colspan="2">
+       <item row="5" column="3">
+        <spacer name="horizontalSpacer_6">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>131</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="5" column="4">
         <widget class="QLabel" name="label_12">
          <property name="text">
-          <string>home MNC</string>
+          <string>home MNC:</string>
          </property>
         </widget>
        </item>
-       <item row="5" column="7">
-        <widget class="QLineEdit" name="homeMncLineEdit"/>
-       </item>
-       <item row="6" column="0" colspan="4">
-        <widget class="QCheckBox" name="checkBox">
+       <item row="5" column="5">
+        <widget class="QLabel" name="homeMNCLabel">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Sunken</enum>
+         </property>
          <property name="text">
-          <string>Wlan Accessable</string>
+          <string>.</string>
          </property>
         </widget>
        </item>
-       <item row="7" column="0" colspan="2">
+       <item row="5" column="6">
+        <spacer name="horizontalSpacer_7">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>74</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="6" column="0" colspan="2">
         <widget class="QLabel" name="label_13">
          <property name="text">
           <string>operator Name</string>
          </property>
         </widget>
        </item>
-       <item row="7" column="3" colspan="2">
-        <widget class="QLineEdit" name="operatorNameLineEdit"/>
+       <item row="6" column="2">
+        <widget class="QLabel" name="operatorNameLabel">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Sunken</enum>
+         </property>
+         <property name="text">
+          <string>.</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1">
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>213</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>

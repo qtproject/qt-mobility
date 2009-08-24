@@ -395,8 +395,43 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
 }
 
-QSystemNetworkInfo::CellNetworkStatus QSystemNetworkInfoPrivate::cellNetworkStatus()
+QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
+    switch(mode) {
+        case QSystemNetworkInfo::GsmMode:
+        break;
+        case QSystemNetworkInfo::CdmaMode:
+        break;
+        case QSystemNetworkInfo::WcdmaMode:
+        break;
+        case QSystemNetworkInfo::WlanMode:
+        {
+
+        }
+        break;
+        case QSystemNetworkInfo::EthMode:
+        break;
+    };
+/*
+    HANDLE phClientHandle = NULL;
+    DWORD result;
+    DWORD pdwNegotiatedVersion = 0;
+
+    PWLAN_INTERFACE_INFO_LIST pIntfList = NULL;
+
+    result = WlanOpenHandle(WLAN_API_VERSION, NULL, &pdwNegotiatedVersion, &phClientHandle);
+    if( result != ERROR_SUCCESS ) {
+        qWarning() << "Error opening Wlanapi" << result ;
+        return false;
+    }
+
+    result = WlanEnumInterfaces(phClientHandle, NULL, &pIntfList);
+
+    if( result != ERROR_SUCCESS ) {
+        qWarning() << "Error in WlanEnumInterfaces" <<  result;
+        return false;
+    }
+*/
     return QSystemNetworkInfo::NoNetworkAvailable;
 }
 
@@ -438,33 +473,21 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
     return "No Network";
 }
 
-bool QSystemNetworkInfoPrivate::isWlanReachable() const
-{
-    HANDLE phClientHandle = NULL;
-    DWORD result;
-    DWORD pdwNegotiatedVersion = 0;
-
-    PWLAN_INTERFACE_INFO_LIST pIntfList = NULL;
-
-    result = WlanOpenHandle(WLAN_API_VERSION, NULL, &pdwNegotiatedVersion, &phClientHandle);
-    if( result != ERROR_SUCCESS ) {
-        qWarning() << "Error opening Wlanapi" << result ;
-        return false;
-    }
-
-    result = WlanEnumInterfaces(phClientHandle, NULL, &pIntfList);
-
-    if( result != ERROR_SUCCESS ) {
-        qWarning() << "Error in WlanEnumInterfaces" <<  result;
-        return false;
-    }
-    return false;
-}
-
 QString QSystemNetworkInfoPrivate::operatorName()
 {
     return "No Operator";
 }
+
+QString QSystemNetworkInfoPrivate::wlanSsid()
+{
+    return QString();
+}
+
+QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
+{
+    return QString();
+}
+
 
 //////// QSystemDisplayInfo
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)

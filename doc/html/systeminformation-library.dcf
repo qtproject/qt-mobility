@@ -107,33 +107,36 @@
     </section>
     <section ref="qsystemnetworkinfo.html" title="QSystemNetworkInfo Class Reference">
         <keyword ref="qsystemnetworkinfo.html">QSystemNetworkInfo</keyword>
-        <keyword ref="qsystemnetworkinfo.html#CellNetworkStatus-enum">CellNetworkStatus</keyword>
-        <keyword ref="qsystemnetworkinfo.html#CellNetworkStatus-enum">QSystemNetworkInfo::NoNetworkAvailable</keyword>
-        <keyword ref="qsystemnetworkinfo.html#CellNetworkStatus-enum">QSystemNetworkInfo::Roaming</keyword>
-        <keyword ref="qsystemnetworkinfo.html#CellNetworkStatus-enum">QSystemNetworkInfo::HomeNetwork</keyword>
-        <keyword ref="qsystemnetworkinfo.html#CellNetworkStatus-enum">QSystemNetworkInfo::Busy</keyword>
-        <keyword ref="qsystemnetworkinfo.html#CellNetworkStatus-enum">QSystemNetworkInfo::Searching</keyword>
-        <keyword ref="qsystemnetworkinfo.html#CellNetworkStatus-enum">QSystemNetworkInfo::UndefinedStatus</keyword>
-        <keyword ref="qsystemnetworkinfo.html#CellNetworkStatus-enum">QSystemNetworkInfo::Denied</keyword>
-        <keyword ref="qsystemnetworkinfo.html#CellNetworkStatus-enum">QSystemNetworkInfo::EmergencyOnly</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">NetworkMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">NetworkModes</keyword>
+        <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::WimaxMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::CdmaMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::EthMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::UnknownMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::WlanMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::GsmMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::WcdmaMode</keyword>
+        <keyword ref="qsystemnetworkinfo.html#NetworkStatus-enum">NetworkStatus</keyword>
+        <keyword ref="qsystemnetworkinfo.html#NetworkStatus-enum">QSystemNetworkInfo::NoNetworkAvailable</keyword>
+        <keyword ref="qsystemnetworkinfo.html#NetworkStatus-enum">QSystemNetworkInfo::Roaming</keyword>
+        <keyword ref="qsystemnetworkinfo.html#NetworkStatus-enum">QSystemNetworkInfo::HomeNetwork</keyword>
+        <keyword ref="qsystemnetworkinfo.html#NetworkStatus-enum">QSystemNetworkInfo::Connected</keyword>
+        <keyword ref="qsystemnetworkinfo.html#NetworkStatus-enum">QSystemNetworkInfo::Busy</keyword>
+        <keyword ref="qsystemnetworkinfo.html#NetworkStatus-enum">QSystemNetworkInfo::Searching</keyword>
+        <keyword ref="qsystemnetworkinfo.html#NetworkStatus-enum">QSystemNetworkInfo::UndefinedStatus</keyword>
+        <keyword ref="qsystemnetworkinfo.html#NetworkStatus-enum">QSystemNetworkInfo::Denied</keyword>
+        <keyword ref="qsystemnetworkinfo.html#NetworkStatus-enum">QSystemNetworkInfo::EmergencyOnly</keyword>
         <keyword ref="qsystemnetworkinfo.html#cellId">cellId</keyword>
-        <keyword ref="qsystemnetworkinfo.html#cellNetworkStatus">cellNetworkStatus</keyword>
         <keyword ref="qsystemnetworkinfo.html#currentMobileCountryCode">currentMobileCountryCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#currentMobileNetworkCode">currentMobileNetworkCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#homeMobileCountryCode">homeMobileCountryCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#homeMobileNetworkCode">homeMobileNetworkCode</keyword>
-        <keyword ref="qsystemnetworkinfo.html#isWlanReachable">isWlanReachable</keyword>
         <keyword ref="qsystemnetworkinfo.html#locationAreaCode">locationAreaCode</keyword>
+        <keyword ref="qsystemnetworkinfo.html#macAddress">macAddress</keyword>
         <keyword ref="qsystemnetworkinfo.html#networkSignalStrength">networkSignalStrength</keyword>
+        <keyword ref="qsystemnetworkinfo.html#networkStatus">networkStatus</keyword>
         <keyword ref="qsystemnetworkinfo.html#operatorName">operatorName</keyword>
+        <keyword ref="qsystemnetworkinfo.html#wlanSsid">wlanSsid</keyword>
         <section ref="qsystemnetworkinfo-members.html" title="List of all members"/>
     </section>
     <section ref="qsystemscreensaver.html" title="QSystemScreenSaver Class Reference">

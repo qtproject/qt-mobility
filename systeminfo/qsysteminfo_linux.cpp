@@ -427,13 +427,53 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
 }
 
-QSystemNetworkInfo::CellNetworkStatus QSystemNetworkInfoPrivate::cellNetworkStatus()
+QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
+    switch(mode) {
+        case QSystemNetworkInfo::GsmMode:
+        break;
+        case QSystemNetworkInfo::CdmaMode:
+        break;
+        case QSystemNetworkInfo::WcdmaMode:
+        break;
+        case QSystemNetworkInfo::WlanMode:
+        {
+
+        }
+        break;
+        case QSystemNetworkInfo::EthMode:
+        break;
+    };
     return QSystemNetworkInfo::NoNetworkAvailable;
 }
 
 int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
+    switch(mode) {
+    case QSystemNetworkInfo::WlanMode:
+        {
+            QString result;
+            QString baseSysDir = "/sys/class/net/";
+            QDir wDir(baseSysDir);
+            QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
+            foreach(QString dir, dirs) {
+                QString devFile = baseSysDir + dir;
+                QFileInfo fi(devFile + "/wireless/link");
+                if(fi.exists()) {
+                    QFile rx(fi.absoluteFilePath());
+                    if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                        QTextStream in(&rx);
+                        in >> result;
+                        rx.close();
+                       return result.toInt();
+
+                    }
+                }
+            }
+        }
+        break;
+    };
+
     return -1;
 }
 
@@ -450,33 +490,38 @@ int QSystemNetworkInfoPrivate::locationAreaCode()
 // Mobile Country Code
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
-    return "No Network";
+    return "No Mobile Network";
 }
 
 // Mobile Network Code
 QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
 {
-    return "No Network";
+    return "No Mobile Network";
 }
 
 QString QSystemNetworkInfoPrivate::homeMobileCountryCode()
 {
-    return "No Network";
+    return "No Mobile Network";
 }
 
 QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 {
-    return "No Network";
-}
-
-bool QSystemNetworkInfoPrivate::isWlanReachable() const
-{
-    return false;
+    return "No Mobile Network";
 }
 
 QString QSystemNetworkInfoPrivate::operatorName()
 {
     return "No Operator";
+}
+
+QString QSystemNetworkInfoPrivate::wlanSsid()
+{
+    return QString();
+}
+
+QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
+{
+    return QString();
 }
 
 //////// QSystemDisplayInfo
@@ -670,10 +715,11 @@ void QSystemMemoryInfoPrivate::mountEntries()
             long totalBlocks = fs.f_blocks;
             double total = (double)totalBlocks * blockSize;
             if(total > 0 && !mountEntriesHash.keys().contains(me->mnt_dir)) {
-                qWarning() << me->mnt_type;
+//                qWarning() << me->mnt_type;
                 mountEntriesHash[me->mnt_fsname] = me->mnt_dir;
             }
         }
+
         me = getmntent(mntfp);
     }
     endmntent(mntfp);
