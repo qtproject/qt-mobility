@@ -164,8 +164,9 @@ QMessageSortKey QMessageSortKey::receptionTimeStamp(Qt::SortOrder order)
     return key;
 }
 
-QMessageSortKey QMessageSortKey::status(Qt::SortOrder order)
+QMessageSortKey QMessageSortKey::status(QMessage::Status flag, Qt::SortOrder order)
 {
+    //TODO: Support flag
     QMessageSortKey key;
     key.d_ptr->_key = QMailMessageSortKey::status(order);
     return key;

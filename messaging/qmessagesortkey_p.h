@@ -46,7 +46,7 @@ public:
 
     QMessageSortKey *q_ptr;
 #if defined(Q_OS_WIN)
-    enum Field { Type = 0, Sender, Recipients, Subject, TimeStamp, ReceptionTimeStamp, Status, Priority, Size };
+    enum Field { Type = 0, Sender, Recipients, Subject, TimeStamp, ReceptionTimeStamp, Read, HasAttachments, Incoming, Removed, Priority, Size };
     QList<QPair<Field, Qt::SortOrder> > _fieldOrderList;
     static bool compare(const QMessageSortKey &key, const QMessage &left, const QMessage &right);
     static void sortTable(QMessageStore::ErrorCode *lastError, const QMessageSortKey &key, LPMAPITABLE);

@@ -262,9 +262,18 @@ QMessageSortKey QMessageSortKey::receptionTimeStamp(Qt::SortOrder order)
     return QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::ReceptionTimeStamp, order);
 }
 
-QMessageSortKey QMessageSortKey::status(Qt::SortOrder order)
+QMessageSortKey QMessageSortKey::status(QMessage::Status flag, Qt::SortOrder order)
 {
-    return QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Status, order);
+    switch (flag) {
+    case QMessage::Read:
+        return QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Read, order);
+    case QMessage::HasAttachments:
+        return QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::HasAttachments, order);
+    case QMessage::Incoming:
+        return QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Incoming, order);
+    case QMessage::Removed:
+        return QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Removed, order);
+    }
 }
 
 QMessageSortKey QMessageSortKey::priority(Qt::SortOrder order)
