@@ -86,7 +86,7 @@ protected:
     QRadioPlayerControl(QObject *parent = 0);
 };
 
-#define QRadioPlayerControl_iid "com.nokia.qt.RadioPlayerControl"
+#define QRadioPlayerControl_iid "com.nokia.qt.QRadioPlayerControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QRadioPlayerControl, QRadioPlayerControl_iid)
 
 #endif  // QRADIOPLAYERCONTROL_H

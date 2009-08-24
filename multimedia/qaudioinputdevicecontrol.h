@@ -31,7 +31,7 @@ protected:
     QAudioInputDeviceControl(QObject *parent);
 };
 
-#define QAudioInputDeviceControl_iid "com.nokia.qt.AudioInputDeviceControl"
+#define QAudioInputDeviceControl_iid "com.nokia.qt.QAudioInputDeviceControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QAudioInputDeviceControl, QAudioInputDeviceControl_iid)
 
 
