@@ -116,13 +116,15 @@ QString QSystemInfoPrivate::currentLanguage() const
 // 2 letter ISO 639-1
 QStringList QSystemInfoPrivate::availableLanguages() const
 {
-    QDir localeDir("/usr/lib/locale");
-    if(localeDir.exists()) {
-        QStringList langList;
-        QStringList localeList = localeDir.entryList( QStringList() ,QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
+    QDir transDir(QLibraryInfo::location (QLibraryInfo::TranslationsPath));
+    QStringList langList;
+
+    if(transDir.exists()) {
+        QStringList localeList = transDir.entryList( QStringList() << "qt_*.qm" ,QDir::Files
+                                                     | QDir::NoDotAndDotDot, QDir::Name);
         foreach(QString localeName, localeList) {
-            QString lang = localeName.left(2);
-            if(!langList.contains(lang) && !lang.isEmpty()) {
+            QString lang = localeName.mid(3,2);
+            if(!langList.contains(lang) && !lang.isEmpty() && !lang.contains("help")) {
                 langList <<lang;
             }
         }
@@ -228,7 +230,7 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 //2 letter ISO 3166-1
 QString QSystemInfoPrivate::currentCountryCode() const
 {
-    return QString(setlocale(LC_ALL,"")).mid(3,2);
+    return QLocale::system().name().mid(3,2);
 }
 
 #if !defined(QT_NO_DBUS)
@@ -623,10 +625,9 @@ int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 
 int QSystemDisplayInfoPrivate::colorDepth(int screen)
 {
-    Q_UNUSED(screen);
 #ifdef Q_WS_X11
     QDesktopWidget wid;
-    return wid.x11Info().depth();
+    return wid.screen(screen)->x11Info().depth();
 #else
         return QPixmap::defaultDepth();
 #endif

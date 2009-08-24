@@ -49,6 +49,7 @@
 #include <QNetworkInterface>
 #include <QList>
 #include <QSettings>
+#include <QDir>
 
 //#include <Winsock2.h>
 //#include <mswsock.h>
@@ -99,22 +100,26 @@ QSystemInfoPrivate::~QSystemInfoPrivate()
 // 2 letter ISO 639-1
 QString QSystemInfoPrivate::currentLanguage() const
 {////Win32_Product Language
-    return QString(setlocale(LC_ALL,NULL)).left(2);
+    return QLocale::system().name().left(2);
+    //return QString(setlocale(LC_ALL,NULL)).left(2);
 }
 
 // 2 letter ISO 639-1
 QStringList QSystemInfoPrivate::availableLanguages() const
 {
-    QString rSubKey = "SOFTWARE\\Classes\\MIME\\Database\\Rfc1766";
-    QStringList lgList;
-    QSettings languageSetting("HKEY_LOCAL_MACHINE\\" + rSubKey, QSettings::NativeFormat);
-    QStringList grp = languageSetting.childKeys();
-    for (int i = 0; i < grp.count(); i++) {
-        QString lg = languageSetting.value(grp.at(i)).toString().left(2);
-        if(!lgList.contains(lg)) {
-            lgList <<  lg;
-         //   qWarning() << lg;
+    QDir transDir(QLibraryInfo::location (QLibraryInfo::TranslationsPath));
+    QStringList langList;
+
+    if(transDir.exists()) {
+        QStringList localeList = transDir.entryList( QStringList() << "qt_*.qm" ,QDir::Files
+                                                     | QDir::NoDotAndDotDot, QDir::Name);
+        foreach(QString localeName, localeList) {
+            QString lang = localeName.mid(3,2);
+            if(!langList.contains(lang) && !lang.isEmpty() && !lang.contains("help")) {
+                langList <<lang;
+            }
         }
+        return langList;
     }
     return lgList;
 }

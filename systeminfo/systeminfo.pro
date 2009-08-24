@@ -46,6 +46,7 @@ unix: {
             SOURCES += qhalservice.cpp
             HEADERS += qhalservice.h
         }
+        LIBS += -lXxf86vm
     }
     macx::
     symbian::
