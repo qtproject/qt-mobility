@@ -250,15 +250,6 @@ qint64 QMediaRecorder::duration() const
 }
 
 /*!
-    Set the duration update period to \a ms in milliseconds.
-*/
-
-void QMediaRecorder::setPositionUpdatePeriod(int ms)
-{
-    setNotifyInterval(ms);
-}
-
-/*!
     Start recording.
 */
 
