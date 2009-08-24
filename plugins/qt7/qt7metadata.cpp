@@ -72,6 +72,13 @@ void Qt7Metadata::setMetadata(QString const &name, QVariant const &value)
     Q_UNUSED(name);
     Q_UNUSED(value);
 }
+
+QMediaResourceList Qt7Metadata::resources() const
+{
+    return QMediaResourceList();
+}
+
+
 /*
 void Qt7Metadata::playlistItemChanged(int position)
 {

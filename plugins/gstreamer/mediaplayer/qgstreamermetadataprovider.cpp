@@ -43,6 +43,11 @@ void QGstreamerMetadataProvider::setMetadata(QString const &name, QVariant const
     Q_UNUSED(value);
 }
 
+QMediaResourceList QGstreamerMetadataProvider::resources() const
+{
+    return QMediaResourceList();
+}
+
 void QGstreamerMetadataProvider::updateTags()
 {
     emit metadataChanged();

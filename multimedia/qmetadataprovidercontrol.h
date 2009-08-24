@@ -54,7 +54,7 @@ public:
     virtual QVariant metadata(QString const &name) const = 0;
     virtual void setMetadata(QString const &name, QVariant const &value) = 0;
 
-    virtual QMediaResourceList resources() const;
+    virtual QMediaResourceList resources() const = 0;
 
 Q_SIGNALS:
     void metadataChanged();

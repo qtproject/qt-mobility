@@ -57,8 +57,3 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 {
 }
 
-QMediaPlayer::MediaStatus QMediaPlayerControl::mediaStatus() const
-{
-    return QMediaPlayer::UnknownMediaStatus;
-}
-

@@ -22,6 +22,8 @@ public:
     QVariant metadata(QString const &name) const;
     void setMetadata(QString const &name, QVariant const &value);
 
+    QMediaResourceList resources() const;
+
 Q_SIGNALS:
     void metadataChanged();
     void readOnlyChanged(bool readOnly);
