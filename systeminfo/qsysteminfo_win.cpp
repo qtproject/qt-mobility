@@ -99,7 +99,8 @@ QSystemInfoPrivate::~QSystemInfoPrivate()
 // 2 letter ISO 639-1
 QString QSystemInfoPrivate::currentLanguage() const
 {////Win32_Product Language
-    return QString(setlocale(LC_ALL,NULL)).left(2);
+    return QLocale::system().name().left(2);
+    //return QString(setlocale(LC_ALL,NULL)).left(2);
 }
 
 // 2 letter ISO 639-1

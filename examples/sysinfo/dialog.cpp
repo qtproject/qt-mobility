@@ -68,6 +68,7 @@ void Dialog::setupGeneral()
     QSystemInfo si;
     ui->curLanguageLineEdit->setText( si.currentLanguage());
     ui->languagesComboBox->insertItems(0,si.availableLanguages());
+    ui->countryCodeLabel->setText(si.currentCountryCode());
 }
 
 void Dialog::setupDevice()

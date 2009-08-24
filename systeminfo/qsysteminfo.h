@@ -62,9 +62,21 @@ public:
      virtual ~QSystemInfo();
 
 // general
-    static QString currentLanguage(); // 2 letter ISO 639-1
-    static QStringList availableLanguages();	 // 2 letter ISO 639-1
 
+     //TODO: to Qt QLocale
+    static QString currentLanguage(); // 2 letter ISO 639-1
+    //TODO: to Qt QLocale
+    static QStringList availableLanguages(); // 2 letter ISO 639-1
+    //TODO: to Qt QLocale
+    static QString currentCountryCode(); //2 letter ISO 3166-1
+//
+// //TODO: to Qt QLocale
+//    static QString currentSystemIsoLanguage(); // 2 letter ISO 639-1
+//    //TODO: to Qt QLocale
+//    static QStringList availableSystemIsoLanguages(); // 2 letter ISO 639-1
+//    //TODO: to Qt QLocale
+//    static QString currentSystemIsoCountry(); //2 letter ISO 3166-1
+//
     enum Version {
         Os = 1,
         QtCore,
@@ -81,7 +93,6 @@ public:
     QString version(QSystemInfo::Version type, const QString &parameter = QString());
 //    QPair<int,float> getVersion(QSystemInfo::Version type, const QString &parameter = QString());
 
-    static QString currentCountryCode(); //2 letter ISO 3166-1
 
 // features
     enum Feature {
@@ -169,7 +180,9 @@ public:
     QSystemDisplayInfo();
     ~QSystemDisplayInfo();
 
+     //TODO: to Qt QDesktopWidget
     static int displayBrightness(int screen);
+     //TODO: to Qt QDesktopWidget
     static int colorDepth(int screen);
 
 
@@ -313,11 +326,16 @@ public:
 //        ScreenSaverEnabled
 //    };
 
-    virtual bool screenSaverEnabled();
-    virtual bool  screenBlankingEnabled();
+     //TODO: to Qt QDesktopWidget
+    bool screenSaverEnabled();
+     //TODO: to Qt QDesktopWidget
+    bool screenBlankingEnabled();
 
+     //TODO: to Qt QDesktopWidget
     bool setScreenSaverEnabled(bool b);
+     //TODO: to Qt QDesktopWidget
     bool setScreenBlankingEnabled(bool b);
+     //TODO: to Qt QDesktopWidget
     static bool isScreenLockOn();
 
 private:

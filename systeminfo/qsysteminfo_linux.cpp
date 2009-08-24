@@ -228,7 +228,7 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 //2 letter ISO 3166-1
 QString QSystemInfoPrivate::currentCountryCode() const
 {
-    return QString(setlocale(LC_ALL,"")).mid(3,2);
+    return QLocale::system().name().mid(3,2);
 }
 
 #if !defined(QT_NO_DBUS)
@@ -626,7 +626,7 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
     Q_UNUSED(screen);
 #ifdef Q_WS_X11
     QDesktopWidget wid;
-    return wid.x11Info().depth();
+    return wid.screen(screen)->x11Info().depth();
 #else
         return QPixmap::defaultDepth();
 #endif
