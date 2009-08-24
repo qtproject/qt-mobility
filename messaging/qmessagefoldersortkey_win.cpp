@@ -36,10 +36,12 @@
 
 
 QMessageFolderSortKey::QMessageFolderSortKey()
+    : d_ptr(new QMessageFolderSortKeyPrivate(this))
 {
 }
 
 QMessageFolderSortKey::QMessageFolderSortKey(const QMessageFolderSortKey &other)
+    : d_ptr(new QMessageFolderSortKeyPrivate(this))
 {
     Q_UNUSED(other)
 }
