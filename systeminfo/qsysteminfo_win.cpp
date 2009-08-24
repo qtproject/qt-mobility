@@ -108,7 +108,6 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 {
     QDir transDir(QLibraryInfo::location (QLibraryInfo::TranslationsPath));
     QStringList langList;
-//qWarning() << transDir.absolutePath();
     if(transDir.exists()) {
         QStringList localeList = transDir.entryList( QStringList() << "qt_*.qm" ,QDir::Files
                                                      | QDir::NoDotAndDotDot, QDir::Name);
@@ -440,7 +439,6 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
                 ULONG size = 0;
                 PWLAN_CONNECTION_ATTRIBUTES   connAtts = NULL;
                 result = WlanQueryInterface( clientHandle, &guid,  wlan_intf_opcode_current_connection, NULL, &size, (PVOID *) &connAtts, NULL );
-
                 if( result != ERROR_SUCCESS ) {
                     qWarning() << "Error querying wireless interfaces"<< result ;
                     continue;
