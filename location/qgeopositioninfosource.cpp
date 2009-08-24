@@ -104,8 +104,8 @@ QGeoPositionInfoSource::~QGeoPositionInfoSource()
 
 /*!
     Sets the source to emit updates every \a msec milliseconds.
-    If \a msec is 0, interval-based updates are disabled and the source
-    provides updates whenever they are available.
+    If \a msec is 0, the source will provide updates using a default interval
+    or some internal logic that determines when an update should be provided.
 
     If \a msec is not 0 and is less than the value returned by
     minimumUpdateInterval(), the interval will be set to the minimum interval.
@@ -114,9 +114,6 @@ QGeoPositionInfoSource::~QGeoPositionInfoSource()
     interval specified. For example, a given millisecond interval value may be
     rounded to the nearest second if the implementation does not support
     intervals specified to millisecond precision.
-
-    If an implementation cannot provide an update at a particular interval,
-    it will provide the next update as soon as it becomes available.
 
     \bold {Note:} When reimplementing this method, subclasses must call the
     base method implementation to ensure updateInterval() returns the correct
@@ -140,12 +137,14 @@ int QGeoPositionInfoSource::updateInterval() const
 /*!
     Sets the preferred positioning methods for this source to \a methods.
 
+    If \a methods includes a method that is not supported by the source, the
+    unsupported method will be ignored.
+
     \bold {Note:} When reimplementing this method, subclasses must call the
     base method implementation to ensure preferredPositioningMethods() returns the correct value.
 
     \sa supportedPositioningMethods()
 */
-
 void QGeoPositionInfoSource::setPreferredPositioningMethods(PositioningMethods methods)
 {
     d->methods = methods;
