@@ -56,7 +56,9 @@ public:
     ~QMessageServiceAction();
 
     bool queryMessages(const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), uint limit = 0, uint offset = 0) const;
-    bool queryMessages(const QString &body, const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), uint limit = 0, uint offset = 0) const;
+    bool queryMessages(const QString &body, QMessageDataComparator::Options options, const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), uint limit = 0, uint offset = 0) const;
+    bool countMessages(const QMessageFilterKey &key = QMessageFilterKey(), uint limit = 0) const;
+    bool countMessages(const QString &body, QMessageDataComparator::Options options, const QMessageFilterKey &key = QMessageFilterKey(), uint limit = 0) const;
 
     bool send(QMessage &message);
     bool compose(const QMessage &message);
@@ -74,6 +76,7 @@ public slots:
 signals:
     void activityChanged(QMessageServiceAction::Activity a);
     void messagesFound(const QMessageIdList &ids);
+    void messagesCounted(int count);
     void progressChanged(uint value, uint total);
 
 private:
