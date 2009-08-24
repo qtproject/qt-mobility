@@ -638,7 +638,7 @@ QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
 }
 
 /*!
-  Destroys the QSyatemScreenSaver object.
+  Destroys the QSystemScreenSaver object.
  */
 QSystemScreenSaver::~QSystemScreenSaver()
 {

@@ -110,7 +110,7 @@ private:
 class  Q_SYSINFO_EXPORT QSystemNetworkInfo : public QObject
 {
     Q_OBJECT
-    Q_ENUMS(CellNetworkStatus)
+    Q_ENUMS(NetworkStatus)
     Q_ENUMS(NetworkMode)
 
 public:
