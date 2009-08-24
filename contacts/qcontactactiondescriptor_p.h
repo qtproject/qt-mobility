@@ -31,8 +31,8 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTSENDEMAILACTION_P_H
-#define QCONTACTSENDEMAILACTION_P_H
+#ifndef QCONTACTACTIONDESCRIPTOR_P_H
+#define QCONTACTACTIONDESCRIPTOR_P_H
 
 //
 //  W A R N I N G
@@ -45,43 +45,46 @@
 // We mean it.
 //
 
-#include "qcontactaction.h"
-#include "qcontactactionfactory.h"
-
 #include <QSharedData>
 #include <QString>
-#include <QVariantMap>
 
-class Q_DECL_EXPORT QContactSendEmailActionFactory : public QContactActionFactory
+class QContactActionDescriptorPrivate : public QSharedData
 {
-    Q_OBJECT
-    Q_INTERFACES(QContactActionFactory)
-
 public:
-    QContactSendEmailActionFactory();
-    ~QContactSendEmailActionFactory();
+    QContactActionDescriptorPrivate(const QString& action, const QString& vendor, int version)
+            : QSharedData(),
+            m_actionName(action),
+            m_vendorName(vendor),
+            m_vendorVersion(version)
+    {
+    }
 
-    QString name() const;
-    QList<QContactActionDescriptor> actionDescriptors() const;
-    QContactAction* instance(const QContactActionDescriptor& descriptor) const;
-};
+    ~QContactActionDescriptorPrivate()
+    {
+    }
 
-class QContactSendEmailAction : public QContactAction
-{
-    Q_OBJECT
+    /*
+    bool operator <(const QContactActionDescriptorPrivate& other) const
+    {
+        if (m_actionName < other.m_actionName)
+            return true;
+        if (m_actionName == other.m_actionName) {
+            if (m_vendorName < other.m_vendorName)
+                return true;
+            else if (m_vendorName == other.m_vendorName) {
+                if (m_vendorVersion < other.m_vendorVersion)
+                    return true;
+                else if (m_vendorVersion == other.m_vendorVersion)
+                    return this < &other; // equality, try to be stable
+            }
+        }
+        return false;
+    }
+    */
 
-public:
-    QContactSendEmailAction();
-    ~QContactSendEmailAction();
-
-    QString actionName() const;
-    QVariantMap metadata() const;
-    virtual QString vendor() const;
-    virtual int implementationVersion() const;
-
-    QContactFilter contactFilter(const QVariant& value) const;
-    bool supportsDetail(const QContactDetail& detail) const;
-    void performAction(const QContact& contact, const QContactDetail& detail = QContactDetail());
+    QString m_actionName;
+    QString m_vendorName;
+    int m_vendorVersion;
 };
 
 #endif

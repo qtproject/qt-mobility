@@ -37,9 +37,9 @@ QContactActionFactory::~QContactActionFactory()
 {
 }
 
-uint qHash(const QContactActionFactory::ActionDescriptor& ad)
+uint qHash(const QContactActionDescriptor& ad)
 {
-    return qHash(ad.actionName) + qHash(ad.vendorName) + ad.vendorVersion;
+    return qHash(ad.actionName()) + qHash(ad.vendorName()) + ad.vendorVersion();
 }
 
 /*!

@@ -55,6 +55,7 @@
 #include "qcontactmanagerengine.h"
 #include "qcontactmanagerinfo.h"
 
+#include "qcontactactiondescriptor.h"
 #include "qcontactactionfactory.h"
 
 class QContactManagerEngineFactory;
@@ -97,9 +98,9 @@ public:
     static void loadFactories();
 
     /* Action Implementations */
-    typedef QHash<QContactActionFactory::ActionDescriptor, QContactActionFactory*> DescriptorHash;
+    typedef QHash<QContactActionDescriptor, QContactActionFactory*> DescriptorHash;
     static QList<QContactActionFactory*> m_actionfactories; // list of all factories
-    static QList<QContactActionFactory::ActionDescriptor> m_descriptors; // all descriptors
+    static QList<QContactActionDescriptor> m_descriptors; // all descriptors
     static DescriptorHash m_descriptormap;
     static QHash<QString, int> m_actionmap;
     static QHash<QString, int> m_vendormap;

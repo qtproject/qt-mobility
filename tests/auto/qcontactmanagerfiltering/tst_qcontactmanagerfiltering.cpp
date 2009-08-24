@@ -2879,42 +2879,42 @@ public:
         return QString("FilterActionFactory");
     }
 
-    QList<QContactActionFactory::ActionDescriptor> actionDescriptors() const
+    QList<QContactActionDescriptor> actionDescriptors() const
     {
-        QList<QContactActionFactory::ActionDescriptor> ret;
+        QList<QContactActionDescriptor> ret;
 
-        ret << ActionDescriptor("Number", "NumberCo", 42)
-                << ActionDescriptor("Number", "IntegerCo", 5)
-                << ActionDescriptor("Boolean", "BooleanCo", 3)
-                << ActionDescriptor("Recursive", "RecursiveCo", 3)
-                << ActionDescriptor("Recursive", "RecursiveCo", 4)
-                << ActionDescriptor("PairRecursive", "RecursiveCo", 3)
-                << ActionDescriptor("AnotherPairRecursive", "RecursiveCo", 3)
-                << ActionDescriptor("IntersectionRecursive", "RecursiveCo", 3)
-                << ActionDescriptor("UnionRecursive", "RecursiveCo", 3);
+        ret << QContactActionDescriptor("Number", "NumberCo", 42)
+                << QContactActionDescriptor("Number", "IntegerCo", 5)
+                << QContactActionDescriptor("Boolean", "BooleanCo", 3)
+                << QContactActionDescriptor("Recursive", "RecursiveCo", 3)
+                << QContactActionDescriptor("Recursive", "RecursiveCo", 4)
+                << QContactActionDescriptor("PairRecursive", "RecursiveCo", 3)
+                << QContactActionDescriptor("AnotherPairRecursive", "RecursiveCo", 3)
+                << QContactActionDescriptor("IntersectionRecursive", "RecursiveCo", 3)
+                << QContactActionDescriptor("UnionRecursive", "RecursiveCo", 3);
 
         return ret;
     }
 
-    QContactAction* instance(const QContactActionFactory::ActionDescriptor& descriptor) const
+    QContactAction* instance(const QContactActionDescriptor& descriptor) const
     {
-        if (descriptor.actionName == "Number") {
-            if (descriptor.vendorName == "IntegerCo")
+        if (descriptor.actionName() == "Number") {
+            if (descriptor.vendorName() == "IntegerCo")
                 return new QIntegerAction;
             else
                 return new QNumberAction;
-        } else if (descriptor.actionName == "Boolean") {
+        } else if (descriptor.actionName() == "Boolean") {
             return new QBooleanAction;
-        } else if (descriptor.actionName == "Recursive") {
-            if (descriptor.vendorVersion == 3)
+        } else if (descriptor.actionName() == "Recursive") {
+            if (descriptor.vendorVersion() == 3)
                 return new RecursiveAction;
             else
                 return new AnotherRecursiveAction;
-        } else if (descriptor.actionName == "PairRecursive") {
+        } else if (descriptor.actionName() == "PairRecursive") {
             return new PairRecursiveAction;
-        } else if (descriptor.actionName == "AnotherPairRecursive") {
+        } else if (descriptor.actionName() == "AnotherPairRecursive") {
             return new AnotherPairRecursiveAction;
-        } else if (descriptor.actionName == "IntersectionRecursive") {
+        } else if (descriptor.actionName() == "IntersectionRecursive") {
             return new IntersectionRecursiveAction;
         } else {
             return new UnionRecursiveAction;

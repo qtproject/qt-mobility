@@ -62,12 +62,12 @@ QString QContactSendEmailActionFactory::name() const
 }
 Q_EXPORT_PLUGIN2(ACTIONFACTORYPLUGINTARGET, QContactSendEmailActionFactory);
 
-QList<QContactActionFactory::ActionDescriptor> QContactSendEmailActionFactory::actionDescriptors() const
+QList<QContactActionDescriptor> QContactSendEmailActionFactory::actionDescriptors() const
 {
-    return QList<QContactActionFactory::ActionDescriptor>() << QContactActionFactory::ActionDescriptor("SendEmail", "Test", 1);
+    return QList<QContactActionDescriptor>() << QContactActionDescriptor("SendEmail", "Test", 1);
 }
 
-QContactAction* QContactSendEmailActionFactory::instance(const QContactActionFactory::ActionDescriptor&) const
+QContactAction* QContactSendEmailActionFactory::instance(const QContactActionDescriptor&) const
 {
     return new QContactSendEmailAction;
 }

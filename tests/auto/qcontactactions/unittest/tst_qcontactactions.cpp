@@ -74,12 +74,12 @@ public:
         return QString("dummystaticactionfactory");
     }
 
-    QList<QContactActionFactory::ActionDescriptor> actionDescriptors() const
+    QList<QContactActionDescriptor> actionDescriptors() const
     {
-        return QList<QContactActionFactory::ActionDescriptor>();
+        return QList<QContactActionDescriptor>();
     }
 
-    QContactAction* instance(const QContactActionFactory::ActionDescriptor&) const
+    QContactAction* instance(const QContactActionDescriptor&) const
     {
         return 0;
     }

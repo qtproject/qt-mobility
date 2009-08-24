@@ -36,6 +36,7 @@
 #define QCONTACTACTIONFACTORY_H
 
 #include "qtcontactsglobal.h"
+#include "qcontactactiondescriptor.h"
 
 #include <QObject>
 #include <QtPlugin>
@@ -45,59 +46,18 @@
 #include <QHash>
 
 class QContactAction;
-
 class QTCONTACTS_EXPORT QContactActionFactory : public QObject
 {
     Q_OBJECT
 
 public:
     virtual ~QContactActionFactory() = 0;
-
-    struct ActionDescriptor {
-        QString actionName;
-        QString vendorName;
-        int vendorVersion;
-
-        ActionDescriptor(const QString& action, const QString& vendor, int version)
-                : actionName(action),
-                vendorName(vendor),
-                vendorVersion(version)
-        {
-        }
-
-        /*
-        bool operator <(const ActionDescriptor& other) const
-        {
-            if (actionName < other.actionName)
-                return true;
-            if (actionName == other.actionName) {
-                if (vendorName < other.vendorName)
-                    return true;
-                else if (vendorName == other.vendorName) {
-                    if (vendorVersion < other.vendorVersion)
-                        return true;
-                    else if (vendorVersion == other.vendorVersion)
-                        return this < &other; // equality, try to be stable
-                }
-            }
-            return false;
-        }
-        */
-
-        bool operator ==(const ActionDescriptor& other) const
-        {
-            return actionName == other.actionName
-                    && vendorName == other.vendorName
-                    && vendorVersion == other.vendorVersion;
-        }
-    };
-
     virtual QString name() const = 0;
-    virtual QList<ActionDescriptor> actionDescriptors() const = 0;
-    virtual QContactAction* instance(const ActionDescriptor& descriptor) const = 0;
+    virtual QList<QContactActionDescriptor> actionDescriptors() const = 0;
+    virtual QContactAction* instance(const QContactActionDescriptor& descriptor) const = 0;
 };
 
-uint qHash(const QContactActionFactory::ActionDescriptor& ad);
+uint qHash(const QContactActionDescriptor& ad);
 
 #define QT_CONTACTS_ACTION_FACTORY_INTERFACE "com.nokia.qt.mobility.contacts.actionfactory/1.0"
 Q_DECLARE_INTERFACE(QContactActionFactory, QT_CONTACTS_ACTION_FACTORY_INTERFACE);

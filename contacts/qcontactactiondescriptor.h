@@ -31,57 +31,36 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTSENDEMAILACTION_P_H
-#define QCONTACTSENDEMAILACTION_P_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#ifndef QCONTACTACTIONDESCRIPTOR_H
+#define QCONTACTACTIONDESCRIPTOR_H
 
-#include "qcontactaction.h"
-#include "qcontactactionfactory.h"
-
-#include <QSharedData>
+#include "qtcontactsglobal.h"
 #include <QString>
-#include <QVariantMap>
+#include <QSharedDataPointer>
 
-class Q_DECL_EXPORT QContactSendEmailActionFactory : public QContactActionFactory
+class QContactActionDescriptorPrivate;
+class QTCONTACTS_EXPORT QContactActionDescriptor
 {
-    Q_OBJECT
-    Q_INTERFACES(QContactActionFactory)
-
 public:
-    QContactSendEmailActionFactory();
-    ~QContactSendEmailActionFactory();
+    QContactActionDescriptor(const QString& actionName = QString(), const QString& vendorName = QString(), int vendorVersion = -1);
+    QContactActionDescriptor(const QContactActionDescriptor& other);
+    QContactActionDescriptor& operator=(const QContactActionDescriptor& other);
+    ~QContactActionDescriptor();
 
-    QString name() const;
-    QList<QContactActionDescriptor> actionDescriptors() const;
-    QContactAction* instance(const QContactActionDescriptor& descriptor) const;
-};
+    bool isEmpty() const;
+    bool operator ==(const QContactActionDescriptor& other) const;
 
-class QContactSendEmailAction : public QContactAction
-{
-    Q_OBJECT
-
-public:
-    QContactSendEmailAction();
-    ~QContactSendEmailAction();
+    void setActionName(const QString& actionName);
+    void setVendorName(const QString& vendorName);
+    void setVendorVersion(int vendorVersion);
 
     QString actionName() const;
-    QVariantMap metadata() const;
-    virtual QString vendor() const;
-    virtual int implementationVersion() const;
+    QString vendorName() const;
+    int vendorVersion() const;
 
-    QContactFilter contactFilter(const QVariant& value) const;
-    bool supportsDetail(const QContactDetail& detail) const;
-    void performAction(const QContact& contact, const QContactDetail& detail = QContactDetail());
+private:
+    QSharedDataPointer<QContactActionDescriptorPrivate> d;
 };
 
 #endif
