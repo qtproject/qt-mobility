@@ -45,6 +45,11 @@ void QPhononMetadataProvider::setMetadata(QString const &name, QVariant const &v
     Q_UNUSED(value);
 }
 
+QMediaResourceList QPhononMetadataProvider::resources() const
+{
+    return QMediaResourceList();
+}
+
 void QPhononMetadataProvider::updateTags()
 {
     emit metadataChanged();

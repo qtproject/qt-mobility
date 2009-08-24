@@ -76,6 +76,11 @@ void MpdMetadata::setMetadata(QString const &name, QVariant const &value)
     Q_UNUSED(value);
 }
 
+QMediaResourceList MpdMetadata::resources() const
+{
+    return QMediaResourceList();
+}
+
 void MpdMetadata::playlistItemChanged(int position)
 {
     const bool wasEmpty = saved.isEmpty();

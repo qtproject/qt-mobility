@@ -66,6 +66,12 @@ QMediaPlayer::State MpdPlayerControl::state() const
     return QMediaPlayer::StoppedState;
 }
 
+QMediaPlayer::MediaStatus MpdPlayerControl::mediaStatus() const
+{
+    return QMediaPlayer::BufferedMedia;
+}
+
+
 QMediaResourceList MpdPlayerControl::currentResources() const
 {
     return QMediaResourceList();
@@ -182,6 +188,7 @@ void MpdPlayerControl::mixerChanged()
 
 void MpdPlayerControl::playlistItemChanged(int position)
 {
+    Q_UNUSED(position);
     //emit currentResourcesChanged(QMediaResourcesList());
 }
 

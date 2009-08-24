@@ -49,7 +49,7 @@ public:
 
     virtual QMediaPlayer::State state() const = 0;
 
-    virtual QMediaPlayer::MediaStatus mediaStatus() const /* = 0*/;
+    virtual QMediaPlayer::MediaStatus mediaStatus() const = 0;
 
     virtual qint64 duration() const = 0;
 

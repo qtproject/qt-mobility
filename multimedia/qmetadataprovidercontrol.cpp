@@ -83,12 +83,10 @@ QMetadataProviderControl::~QMetadataProviderControl()
 */
 
 /*!
+    \fn QMediaResourceList QMetadataProviderControl::resources() const
+
     Returns a list of resources belonging to a media item.
 */
-QMediaResourceList QMetadataProviderControl::resources() const
-{
-    return QMediaResourceList();
-}
 
 /*!
     \fn void QMetadataProviderControl::metadataChanged()
@@ -112,7 +110,7 @@ QMediaResourceList QMetadataProviderControl::resources() const
 
 /*!
     Construct a QMetadataProviderControl with \a parent. This class is meant as s base class
-    for service specific metadata providers so this contructor is protected.
+    for service specific metadata providers so this constructor is protected.
 */
 
 QMetadataProviderControl::QMetadataProviderControl(QObject *parent):

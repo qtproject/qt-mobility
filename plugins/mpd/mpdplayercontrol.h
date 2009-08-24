@@ -49,6 +49,7 @@ public:
     ~MpdPlayerControl();
 
     QMediaPlayer::State state() const;
+    QMediaPlayer::MediaStatus mediaStatus() const;
 
     QMediaResourceList currentResources() const;
     void setCurrentResources(const QMediaResourceList &resources);
