@@ -64,6 +64,7 @@ public:
     QString name() const;
     QList<QContactActionDescriptor> actionDescriptors() const;
     QContactAction* instance(const QContactActionDescriptor& descriptor) const;
+    QVariantMap actionMetadata(const QContactActionDescriptor& descriptor) const;
 };
 
 class QContactSendEmailAction : public QContactAction

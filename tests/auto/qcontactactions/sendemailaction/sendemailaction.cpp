@@ -72,6 +72,16 @@ QContactAction* QContactSendEmailActionFactory::instance(const QContactActionDes
     return new QContactSendEmailAction;
 }
 
+QVariantMap QContactSendEmailActionFactory::actionMetadata(const QContactActionDescriptor& descriptor) const
+{
+    if (descriptor.actionName() != "SendEmail")
+        return QVariantMap();
+
+    QVariantMap ret;
+    ret.insert("Label", "Email Contact!");
+    return ret;
+}
+
 QContactSendEmailAction::QContactSendEmailAction() : QContactAction()
 {
 }

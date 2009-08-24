@@ -83,6 +83,11 @@ public:
     {
         return 0;
     }
+
+    QVariantMap actionMetadata(const QContactActionDescriptor& descriptor) const
+    {
+        return QVariantMap();
+    }
 };
 
 /* Statically import it (and a duplicate copy of it, purely for testing purposes) */

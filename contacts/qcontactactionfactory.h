@@ -42,6 +42,7 @@
 #include <QtPlugin>
 #include <QString>
 #include <QList>
+#include <QVariantMap>
 #include <QStringList>
 #include <QHash>
 
@@ -55,6 +56,7 @@ public:
     virtual QString name() const = 0;
     virtual QList<QContactActionDescriptor> actionDescriptors() const = 0;
     virtual QContactAction* instance(const QContactActionDescriptor& descriptor) const = 0;
+    virtual QVariantMap actionMetadata(const QContactActionDescriptor& descriptor) const = 0;
 };
 
 uint qHash(const QContactActionDescriptor& ad);

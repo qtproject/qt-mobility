@@ -2920,6 +2920,12 @@ public:
             return new UnionRecursiveAction;
         }
     }
+
+    QVariantMap actionMetadata(const QContactActionDescriptor& descriptor) const
+    {
+        Q_UNUSED(descriptor);
+        return QVariantMap();
+    }
 };
 
 /* Statically import it (and a duplicate copy of it, purely for testing purposes) */
