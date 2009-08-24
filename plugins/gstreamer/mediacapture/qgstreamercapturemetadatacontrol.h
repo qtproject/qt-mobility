@@ -18,6 +18,8 @@ public:
     QVariant metadata(QString const &name) const { return m_values.value(name); }
     void setMetadata(QString const &name, QVariant const &value);
 
+	QMediaResourceList resources() const { return QMediaResourceList(); }
+
 Q_SIGNALS:
     void metadataChanged();
     void metadataChanged(const QMap<QString, QVariant>&);

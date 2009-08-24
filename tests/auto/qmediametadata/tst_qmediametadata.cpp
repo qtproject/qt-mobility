@@ -76,6 +76,11 @@ public:
             data[name] = value;
     }
 
+	QMediaResourceList resources() const
+	{
+		return QMediaResourceList();
+	}	
+
     void setNoMetadata()
     {
         m_metadataAvailable = false;
