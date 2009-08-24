@@ -15,7 +15,7 @@
 
 #include <QtTracker/Tracker>
 #include <QtTracker/QLive>
-
+#include <qcontact.h>
 class QContactAbstractRequest;
 class QContactManagerEngine;
 
@@ -33,10 +33,23 @@ public:
 public slots:
     void modelUpdated();
     void contactsReady();
+    void phoneNumbersReady();
+    void iMAcountsReady();
+
+private:
+    // fills received phone number from tracker to list of contacts to QContactPhoneMumber details
+    void processQueryPhoneNumbers(SopranoLive::LiveNodes queryPhoneNumbers, QList<QContact>& contacts);
+    void processQueryIMAccounts(SopranoLive::LiveNodes queryIMAccounts, QList<QContact>& contacts);
 
 protected:
     QContactAbstractRequest* req;
     SopranoLive::LiveNodes query;
+
+    SopranoLive::LiveNodes queryPhoneNumbersNodes;
+    bool queryPhoneNumbersNodesReady; // remove after figuring out how to check if data in LiveNodes is updated
+    SopranoLive::LiveNodes queryIMAccountNodes;
+    bool queryIMAccountNodesReady; // remove after figuring out how to check if data in LiveNodes is updated
+
 };
 
 #endif /* QTRACKERCONTACTASYNCREQUEST_H_ */

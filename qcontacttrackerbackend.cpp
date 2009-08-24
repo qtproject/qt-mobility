@@ -300,7 +300,6 @@ bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
             ncoContact->setNameGiven(det.value(QContactName::FieldFirst));
             ncoContact->setNameAdditional(det.value(QContactName::FieldMiddle));
             ncoContact->setNameFamily(det.value(QContactName::FieldLast));
-
         /* Save address data */
         } else if(definition == QContactAddress::DefinitionName) {
             // OrganizationContact or PersonalContact depending on the context
