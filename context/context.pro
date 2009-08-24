@@ -8,22 +8,22 @@ DEFINES += QT_BUILD_CFW_LIB QT_MAKEDLL
 
 HEADERS += qcontextglobal.h \
            qpacketprotocol.h \
+           qmallocpool.h \
            qvaluespace.h \
            qvaluespace_p.h \
            qvaluespacemanager_p.h \
            qvaluespaceobject.h
 
 SOURCES += qpacketprotocol.cpp \
+           qmallocpool.cpp \
            qvaluespace.cpp \
            qvaluespacemanager.cpp \
            qvaluespaceobject.cpp
 
 unix {
-    HEADERS += qmallocpool.h \
-               qsystemreadwritelock.h
+    HEADERS += qsystemreadwritelock.h
 
-    SOURCES += qmallocpool.cpp \
-               sharedmemorylayer.cpp \
+    SOURCES += sharedmemorylayer.cpp \
                qsystemreadwritelock.cpp
 }
 

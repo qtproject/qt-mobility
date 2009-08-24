@@ -94,19 +94,6 @@ void tst_QMallocPool::testConstructor()
         pool.free(alloc);
         QVERIFY(pool.memoryStatistics().inuseBytes == 0);
 
-        // test big malloc
-        alloc = pool.malloc(1048548);
-        QVERIFY(alloc != 0);
-        QVERIFY(pool.size_of(alloc) >= 1048548);
-        QVERIFY(pool.memoryStatistics().inuseBytes >= 1048548);
-        pool.free(alloc);
-        QVERIFY(pool.memoryStatistics().inuseBytes == 0);
-
-        // test big malloc + 1, should fail.
-        alloc = pool.malloc(1048549);
-        QVERIFY(alloc == 0);
-        QVERIFY(pool.memoryStatistics().inuseBytes == 0);
-
         // test malloc of poolLength, should fail.
         alloc = pool.malloc(poolLength);
         QVERIFY(alloc == 0);
@@ -164,17 +151,6 @@ void tst_QMallocPool::testShared()
     QVERIFY(pool.size_of(alloc) >= 1024);
     QVERIFY(pool.size_of(alloc) == pool2.size_of(alloc));
     pool.free(alloc);
-
-    // test big malloc
-    alloc = pool.malloc(1047660);
-    QVERIFY(alloc != 0);
-    QVERIFY(pool.size_of(alloc) >= 1047660);
-    QVERIFY(pool.size_of(alloc) == pool2.size_of(alloc));
-    pool.free(alloc);
-
-    // test big malloc + 1, should fail.
-    alloc = pool.malloc(1047661);
-    QVERIFY(alloc == 0);
 
     // test malloc of poolLength, should fail.
     alloc = pool.malloc(poolLength);

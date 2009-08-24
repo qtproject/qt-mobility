@@ -31,7 +31,6 @@
 **
 ****************************************************************************/
 #include "qmallocpool.h"
-#include <unistd.h>
 #include <qglobal.h>
 
 static void* qmallocpool_sbrk(intptr_t increment);
@@ -39,6 +38,7 @@ static void* qmallocpool_sbrk(intptr_t increment);
 #define USE_DL_PREFIX
 #define MORECORE qmallocpool_sbrk
 #define HAVE_MMAP 0
+#define __STD_C 1
 
 struct malloc_state;
 static QMallocPoolPrivate * qmallocpool_instance = 0;
@@ -46,7 +46,6 @@ static struct malloc_state * qmallocpool_state(QMallocPoolPrivate *);
 #define get_malloc_state() (qmallocpool_state(qmallocpool_instance))
 
 #include "dlmalloc.c"
-#include <strings.h>
 
 class QMallocPoolPrivate
 {
@@ -59,11 +58,11 @@ public:
         Q_ASSERT(poolLength > 0);
 
         if(QMallocPool::Owned == type) {
-            ::bzero(&owned_mstate, sizeof(struct malloc_state));
+            qMemSet(&owned_mstate, 0, sizeof(struct malloc_state));
             mstate = &owned_mstate;
         } else if(QMallocPool::NewShared == type) {
             Q_ASSERT(poolLength >= sizeof(struct malloc_state));
-            ::bzero(pool, sizeof(struct malloc_state));
+            qMemSet(pool, 0, sizeof(struct malloc_state));
             mstate = (struct malloc_state *)pool;
             pool += sizeof(struct malloc_state);
             poolLength -= sizeof(struct malloc_state);

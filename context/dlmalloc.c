@@ -242,12 +242,16 @@
 #define LACKS_SYS_MMAN_H
 
 /* Use the supplied emulation of sbrk */
+#ifndef MORECORE
 #define MORECORE sbrk
+#endif
 #define MORECORE_CONTIGUOUS 1
 #define MORECORE_FAILURE    ((void*)(-1))
 
 /* Use the supplied emulation of mmap and munmap */
+#ifndef HAVE_MMAP
 #define HAVE_MMAP 1
+#endif
 #define MUNMAP_FAILURE  (-1)
 #define MMAP_CLEARS 1
 
@@ -5000,7 +5004,8 @@ typedef struct _region_list_entry {
 
 /* Allocate and link a region entry in the region list */
 static int region_list_append (region_list_entry **last, void *base_reserved, long reserve_size) {
-    region_list_entry *next = HeapAlloc (GetProcessHeap (), 0, sizeof (region_list_entry));
+    region_list_entry *next =
+        (region_list_entry *)HeapAlloc (GetProcessHeap (), 0, sizeof (region_list_entry));
     if (! next)
         return FALSE;
     next->top_allocated = (char *) base_reserved;
