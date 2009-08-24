@@ -140,6 +140,8 @@ void QCamera::lockExposure()
 
     if(d->exposureControl)
         d->exposureControl->lockExposure();
+    else
+        emit exposureLocked();
 }
 
 /*!
@@ -164,6 +166,8 @@ void QCamera::lockFocus()
 
     if(d->focusControl)
         d->focusControl->lockFocus();
+    else
+        emit focusLocked();
 }
 
 /*!

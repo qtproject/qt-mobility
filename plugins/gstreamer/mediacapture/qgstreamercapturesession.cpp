@@ -111,7 +111,7 @@ GstElement *QGstreamerCaptureSession::buildEncodeBin()
         gst_bin_add_many(GST_BIN(encodeBin), audioConvert, audioQueue, volume, audioEncoder,  NULL);
 
         gst_element_link_many(audioConvert, audioQueue, volume, audioEncoder, muxer, NULL);
-        g_object_set(G_OBJECT(volume), "volume", 10.0, NULL);
+        //g_object_set(G_OBJECT(volume), "volume", 10.0, NULL);
 
         // add ghostpads
         GstPad *pad = gst_element_get_static_pad(audioConvert, "sink");

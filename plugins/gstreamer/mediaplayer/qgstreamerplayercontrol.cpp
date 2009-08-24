@@ -41,12 +41,6 @@
 #include <QtCore/qdebug.h>
 
 
-QMediaPlayerControl::QMediaPlayerControl(QObject *parent)
-    :QAbstractMediaControl(parent)
-{
-}
-
-
 QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *session, QObject *parent)
    :QMediaPlayerControl(parent), m_session(session)
 {

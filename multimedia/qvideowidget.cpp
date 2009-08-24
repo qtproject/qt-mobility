@@ -80,6 +80,8 @@ public:
     QVideoWidget::DisplayMode displayMode;
     Qt::WindowFlags windowedFlags;
 
+    QRect displayRect() const;
+
     void _q_overlayFullscreenChanged(bool fullscreen);
     void _q_dimensionsChanged();
 };
@@ -95,6 +97,26 @@ void QVideoWidgetPrivate::_q_overlayFullscreenChanged(bool fullscreen)
 void QVideoWidgetPrivate::_q_dimensionsChanged()
 {
     q_func()->updateGeometry();
+}
+
+QRect QVideoWidgetPrivate::displayRect() const
+{
+    QRect displayRect = q_func()->rect();
+    displayRect.moveTo(q_func()->mapTo(q_func()->nativeParentWidget(), displayRect.topLeft()));
+
+    if (overlay) {
+        //TODO: take into account display aspect ratio, if not 1
+        QSize videoSize = overlay->nativeSize();
+        if (!videoSize.isEmpty()) {
+            videoSize.scale(displayRect.size(), Qt::KeepAspectRatio);
+            QRect videoRect(QPoint(0,0), videoSize);
+            videoRect.moveCenter(displayRect.center());
+
+            return videoRect;
+        }
+    }
+
+    return displayRect;
 }
 
 /*!
@@ -401,9 +423,7 @@ void QVideoWidget::moveEvent(QMoveEvent *event)
     QWidget::moveEvent(event);
 
     if (d->overlay) {
-        QRect displayRect = rect();
-        displayRect.moveTo(mapTo(nativeParentWidget(), displayRect.topLeft()));
-        d->overlay->setDisplayRect(displayRect);
+        d->overlay->setDisplayRect(d->displayRect());
     }
 }
 
@@ -417,9 +437,7 @@ void QVideoWidget::resizeEvent(QResizeEvent *event)
     QWidget::resizeEvent(event);
 
     if (d->overlay) {
-        QRect displayRect = rect();
-        displayRect.moveTo(mapTo(nativeParentWidget(), displayRect.topLeft()));
-        d->overlay->setDisplayRect(displayRect);
+        d->overlay->setDisplayRect(d->displayRect());
     }
 }
 

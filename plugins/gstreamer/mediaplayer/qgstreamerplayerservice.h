@@ -65,11 +65,6 @@ public:
 
     void setVideoOutput(QObject *output);
 
-    QList<QByteArray> supportedEndpointInterfaces(
-            QMediaEndpointInterface::Direction direction) const;
-
-    QObject *createEndpoint(const char *interface);
-
     QAbstractMediaControl *control(const char *name) const;
 
 private slots:
