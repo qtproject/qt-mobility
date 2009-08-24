@@ -262,6 +262,7 @@ QString QSystemInfo::currentLanguage()
 }
 /*!
     Returns a QStringList of available Qt language translations in 2 letter ISO 639-1 format.
+    If the Qt translations cannot be found, returns the current system language.
   */
 QStringList QSystemInfo::availableLanguages()
 {
