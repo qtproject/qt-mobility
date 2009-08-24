@@ -97,6 +97,11 @@ void QVideoWidgetPrivate::_q_overlayFullscreenChanged(bool fullscreen)
 void QVideoWidgetPrivate::_q_dimensionsChanged()
 {
     q_func()->updateGeometry();
+
+    if (overlay)
+        overlay->setDisplayRect(displayRect());
+
+    q_func()->update();
 }
 
 QRect QVideoWidgetPrivate::displayRect() const
