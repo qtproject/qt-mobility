@@ -254,13 +254,10 @@ GstElement *QGstreamerVideoEncode::createEncoder()
             gst_caps_append_structure(caps,structure);
         }
 
-        qDebug() << "set video caps filter:" << gst_caps_to_string(caps);
+        //qDebug() << "set video caps filter:" << gst_caps_to_string(caps);
 
         g_object_set(G_OBJECT(capsFilter), "caps", caps, NULL);
     }
-
-
-    //TODO: set caps filter, if necessary
 
     return GST_ELEMENT(encoderBin);
 }

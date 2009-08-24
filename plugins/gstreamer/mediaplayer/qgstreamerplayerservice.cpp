@@ -99,28 +99,6 @@ void QGstreamerPlayerService::setVideoOutput(QObject *output)
     QAbstractMediaService::setVideoOutput(output);
 }
 
-QList<QByteArray> QGstreamerPlayerService::supportedEndpointInterfaces(
-            QMediaEndpointInterface::Direction direction) const
-{
-    QList<QByteArray> res;
-
-    if (direction == QMediaEndpointInterface::Output) {
-        res << QMediaWidgetEndpoint_iid;
-    }
-
-    return res;
-}
-
-QObject *QGstreamerPlayerService::createEndpoint(const char *interface)
-{
-    //qDebug() << "request for endpoint" << interface;
-    if (qstrcmp(interface,QMediaWidgetEndpoint_iid) == 0) {
-        return new QGstreamerVideoWidget;
-    }
-
-    return 0;
-}
-
 void QGstreamerPlayerService::videoOutputChanged(QVideoOutputControl::Output output)
 {
 #ifdef QT_NO_VIDEOSURFACE
