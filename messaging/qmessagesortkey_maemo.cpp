@@ -51,6 +51,11 @@ bool QMessageSortKey::isEmpty() const
     return false; // stub
 }
 
+bool QMessageSortKey::isSupported() const
+{
+    return true; // stub
+}
+
 QMessageSortKey QMessageSortKey::operator+(const QMessageSortKey& other) const
 {
     Q_UNUSED(other)

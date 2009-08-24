@@ -52,6 +52,11 @@ bool QMessageAccountSortKey::isEmpty() const
     return false; // stub
 }
 
+bool QMessageAccountSortKey::isSupported() const
+{
+    return true; // stub
+}
+
 bool QMessageAccountSortKey::operator==(const QMessageAccountSortKey& other) const
 {
     Q_UNUSED(other)

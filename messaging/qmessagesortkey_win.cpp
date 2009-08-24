@@ -189,6 +189,11 @@ bool QMessageSortKey::isEmpty() const
     return !d_ptr;
 }
 
+bool QMessageSortKey::isSupported() const
+{
+    return true; // TODO: Implement
+}
+
 QMessageSortKey QMessageSortKey::operator+(const QMessageSortKey& other) const
 {
     QMessageSortKey sum;

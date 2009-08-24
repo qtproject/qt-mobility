@@ -95,6 +95,11 @@ bool QMessageSortKey::isEmpty() const
     return d_ptr->_key.isEmpty();
 }
 
+bool QMessageSortKey::isSupported() const
+{
+    return true; // stub
+}
+
 QMessageSortKey QMessageSortKey::operator+(const QMessageSortKey& other) const
 {
     QMessageSortKey key;

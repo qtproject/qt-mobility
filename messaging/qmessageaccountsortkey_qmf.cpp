@@ -91,6 +91,11 @@ bool QMessageAccountSortKey::isEmpty() const
     return d_ptr->_key.isEmpty();
 }
 
+bool QMessageAccountSortKey::isSupported() const
+{
+    return true; // stub
+}
+
 bool QMessageAccountSortKey::operator==(const QMessageAccountSortKey& other) const
 {
     return d_ptr->_key == other.d_ptr->_key;

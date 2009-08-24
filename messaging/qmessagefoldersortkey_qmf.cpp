@@ -92,6 +92,11 @@ bool QMessageFolderSortKey::isEmpty() const
     return d_ptr->_key.isEmpty();
 }
 
+bool QMessageFolderSortKey::isSupported() const
+{
+    return true; // stub
+}
+
 QMessageFolderSortKey QMessageFolderSortKey::operator+(const QMessageFolderSortKey& other) const
 {
     QMessageFolderSortKey key;
