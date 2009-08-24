@@ -152,7 +152,7 @@ void QGstreamerVideoEncode::setBitrate(int value)
 
 qreal QGstreamerVideoEncode::quality() const
 {
-    return m_options.value(QLatin1String("quality"), QVariant(8.0)).toDouble();
+    return m_options.value(QLatin1String("quality"), QVariant(50.0)).toDouble();
 }
 
 void QGstreamerVideoEncode::setQuality(qreal value)

@@ -93,7 +93,7 @@ void QGstreamerAudioEncode::setBitrate(int value)
 
 qreal QGstreamerAudioEncode::quality() const
 {
-    return m_options.value(QLatin1String("quality"), QVariant(8.0)).toDouble();
+    return m_options.value(QLatin1String("quality"), QVariant(50.0)).toDouble();
 }
 
 void QGstreamerAudioEncode::setQuality(qreal value)
@@ -184,7 +184,7 @@ GstElement *QGstreamerAudioEncode::createEncoder()
                 } else if (m_codec == QLatin1String("speex")) {
                     //0-10 range with default 8
                     double q = 10.0*pow(qualityValue/100.0, 0.32);
-                    g_object_set(G_OBJECT(encoderElement), "quality", qualityValue, NULL);
+                    g_object_set(G_OBJECT(encoderElement), "quality", q, NULL);
                 }
 
             } else {
