@@ -123,6 +123,11 @@ bool QMessageFilterKey::isEmpty() const
     return d_ptr->_key.isEmpty();
 }
 
+bool QMessageFilterKey::isSupported() const
+{
+    return true; // TODO: Implement
+}
+
 QMessageFilterKey QMessageFilterKey::operator~() const
 {
     QMessageFilterKey result;

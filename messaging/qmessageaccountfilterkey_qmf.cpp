@@ -107,6 +107,11 @@ bool QMessageAccountFilterKey::isEmpty() const
     return d_ptr->_key.isEmpty();
 }
 
+bool QMessageAccountFilterKey::isSupported() const
+{
+    return true; // TODO: Implement
+}
+
 QMessageAccountFilterKey QMessageAccountFilterKey::operator~() const
 {
     QMessageAccountFilterKey result;

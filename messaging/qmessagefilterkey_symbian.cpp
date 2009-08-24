@@ -61,6 +61,11 @@ bool QMessageFilterKey::isEmpty() const
     return false; // stub
 }
 
+bool QMessageFilterKey::isSupported() const
+{
+    return true; // TODO: Implement
+}
+
 QMessageFilterKey QMessageFilterKey::operator~() const
 {
     return QMessageFilterKey(); // stub
