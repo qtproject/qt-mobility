@@ -623,7 +623,6 @@ int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 
 int QSystemDisplayInfoPrivate::colorDepth(int screen)
 {
-    Q_UNUSED(screen);
 #ifdef Q_WS_X11
     QDesktopWidget wid;
     return wid.screen(screen)->x11Info().depth();
