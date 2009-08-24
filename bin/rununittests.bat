@@ -11,6 +11,8 @@ tst_qvaluespace.exe
 tst_qvaluespaceobject.exe
 tst_qvaluespaceitem.exe
 tst_qvaluespaceitem_oop.exe
+tst_qsystemreadwritelock.exe
+tst_qsystemreadwritelock_oop.exe
 
 cd %SAVED_PWD%
 

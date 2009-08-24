@@ -39,7 +39,7 @@
 #include <sys/ipc.h>
 #include <errno.h>
 #include <QSet>
-#include "qsystemlock.h"
+#include "qsystemreadwritelock.h"
 #include <sys/types.h>
 #include <unistd.h>
 #include <QCoreApplication>
@@ -1855,6 +1855,10 @@ SharedMemoryLayer::SharedMemoryLayer()
 
 SharedMemoryLayer::~SharedMemoryLayer()
 {
+    if(Server == type) {
+        delete lock;
+        lock = 0;
+    }
 }
 
 QString SharedMemoryLayer::name()
@@ -1906,7 +1910,7 @@ bool SharedMemoryLayer::startup(Type type)
             //qDebug() << "Reattaching to existing memory";
             shm->attach();
         }
-        lock = new QSystemReadWriteLock(key, true);
+        lock = new QSystemReadWriteLock(socket(), QSystemReadWriteLock::Create);
     } else {
         shm = new QSharedMemory(socket(), this);
         shm->attach(QSharedMemory::ReadOnly);
@@ -1917,7 +1921,7 @@ bool SharedMemoryLayer::startup(Type type)
                        << subShm->errorString() << subShm->key();
         }
 
-        lock = new QSystemReadWriteLock(key, false);
+        lock = new QSystemReadWriteLock(socket(), QSystemReadWriteLock::Open);
     }
 
     if (shm->error() != QSharedMemory::NoError ||
@@ -2375,7 +2379,7 @@ bool SharedMemoryLayer::value(Handle handle, QVariant *data)
 
     ReadHandle * rhandle = rh(handle);
 
-    lock->lockForRead(-1);
+    lock->lockForRead();
 
     if(0xFFFFFFFF != rhandle->currentPath)
         if(refreshHandle(rhandle)) {
@@ -2423,7 +2427,7 @@ bool SharedMemoryLayer::value(Handle handle, const QByteArray &subPath,
 
     ReadHandle * rhandle = rh(handle);
 
-    lock->lockForRead(-1);
+    lock->lockForRead();
 
     if(0xFFFFFFFF != rhandle->currentPath)
         if(refreshHandle(rhandle)) {
@@ -2462,7 +2466,7 @@ QSet<QByteArray> SharedMemoryLayer::children(Handle handle)
     ReadHandle * rhandle = rh(handle);
 
     QSet<QByteArray> rv;
-    lock->lockForRead(-1);
+    lock->lockForRead();
 
     if(0xFFFFFFFF != rhandle->currentPath)
         if(refreshHandle(rhandle)) {
@@ -2516,7 +2520,7 @@ SharedMemoryLayer::Handle SharedMemoryLayer::item(Handle parent,
     } else {
         ReadHandle * handle = new ReadHandle(key);
         clearHandle(handle);
-        lock->lockForRead(-1);
+        lock->lockForRead();
         refreshHandle(handle);
         lock->unlock();
         handles.insert(key, handle);
@@ -2716,7 +2720,7 @@ QList<NodeWatch> SharedMemoryLayer::watchers(const QByteArray &path)
 {
     Q_ASSERT(layer);
 
-    lock->lockForRead(-1);
+    lock->lockForRead();
 
     const char * matched = 0;
     unsigned short node = layer->findClosest(path.constData(), &matched);
@@ -2900,7 +2904,7 @@ bool SharedMemoryLayer::doSetWatch(NodeWatch watch, const QByteArray &path)
 {
     Q_ASSERT(layer);
 
-    lock->lockForWrite(-1);
+    lock->lockForWrite();
     bool rv = layer->addWatch(path.constData(), watch);
     updateStats();
     lock->unlock();
@@ -2934,7 +2938,7 @@ bool SharedMemoryLayer::doRemWatch(NodeWatch watch, const QByteArray &path)
 {
     Q_ASSERT(layer);
 
-    lock->lockForWrite(-1);
+    lock->lockForWrite();
     bool rv = layer->remWatch(path.constData(), watch);
     updateStats();
     lock->unlock();
@@ -2970,7 +2974,7 @@ bool SharedMemoryLayer::doSetItem(NodeOwner owner, const QByteArray &path,
 {
     bool rv = false;
 
-    lock->lockForWrite(-1);
+    lock->lockForWrite();
 
     switch(val.type()) {
         case QVariant::Bool:
@@ -3088,7 +3092,7 @@ bool SharedMemoryLayer::doRemItems(NodeOwner owner, const QByteArray &path)
 
     } else {
         Q_ASSERT(layer);
-        lock->lockForWrite(-1);
+        lock->lockForWrite();
         rv = layer->remove(path.constData(), owner);
         updateStats();
         lock->unlock();

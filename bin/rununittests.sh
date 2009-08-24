@@ -16,6 +16,8 @@ export PATH=.
 ./tst_qvaluespaceobject
 ./tst_qvaluespaceitem
 ./tst_qvaluespaceitem_oop
+./tst_qsystemreadwritelock
+./tst_qsystemreadwritelock_oop
 
 cd $SAVED_PWD
 

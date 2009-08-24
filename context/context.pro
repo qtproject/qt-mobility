@@ -20,11 +20,11 @@ SOURCES += qpacketprotocol.cpp \
 
 unix {
     HEADERS += qmallocpool.h \
-               qsystemlock.h
+               qsystemreadwritelock.h
 
     SOURCES += qmallocpool.cpp \
-               qsystemlock.cpp \
-               sharedmemorylayer.cpp
+               sharedmemorylayer.cpp \
+               qsystemreadwritelock.cpp
 }
 
 win32 {
