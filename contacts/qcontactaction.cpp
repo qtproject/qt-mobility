@@ -33,6 +33,7 @@
 
 #include "qcontactaction.h"
 #include "qcontactmanager_p.h"
+#include "qcontactactiondescriptor.h"
 
 #include <QSet>
 #include <QString>
@@ -155,7 +156,21 @@ QStringList QContactAction::availableActions(const QString& vendor, int implemen
  */
 QList<QContactAction*> QContactAction::actions(const QString& actionName, const QString& vendor, int implementationVersion)
 {
-    // the caller takes ownership
+    // the caller takes ownership?
     QContactManagerData::loadFactories();
     return QContactManagerData::actions(actionName, vendor, implementationVersion);
+}
+
+/*!
+ * Returns a pointer to a new instance of the action implementation identified by the given \a descriptor.
+ * The caller takes ownership of the newly constructed action implementation.
+ */
+QContactAction* QContactAction::action(const QContactActionDescriptor& descriptor)
+{
+    // the caller takes ownership
+    QContactManagerData::loadFactories();
+    QList<QContactAction*> matching = QContactManagerData::actions(descriptor.actionName(), descriptor.vendorName(), descriptor.vendorVersion());
+    if (matching.isEmpty())
+        return 0; // no such action.
+    return matching.first();
 }
