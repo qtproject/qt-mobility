@@ -50,6 +50,7 @@ public:
 private:
     QStringList m_codecs;
     QMap<QString,QString> m_codecDescriptions;
+    QMap<QString,QByteArray> m_elementNames;
     QMap<QString,QStringList> m_codecOptions;
 
     QString m_codec;
