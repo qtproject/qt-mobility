@@ -446,7 +446,7 @@ QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
             LPSPropValue recordKeyProp(&properties[recordKeyColumn]);
             MapiRecordKey folderKey(reinterpret_cast<const char*>(recordKeyProp->Value.bin.lpb), recordKeyProp->Value.bin.cb);
             LPSPropValue entryIdProp(&properties[parentEntryIdColumn]);
-            MapiEntryId parentEntryId(reinterpret_cast<const char*>(entryIdProp->Value.bin.lpb), entryIdProp->Value.bin.cb);
+            MapiEntryId parentEntryId(entryIdProp->Value.bin.lpb, entryIdProp->Value.bin.cb);
             QString displayName(QStringFromLpctstr(properties[displayNameColumn].Value.LPSZ));
             QMessageFolderId folderId(QMessageFolderIdPrivate::from(folderKey, storeRecordKey, entryId));
             QMessageAccountId accountId(QMessageAccountIdPrivate::from(storeRecordKey));
@@ -480,8 +480,8 @@ QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
                     }
 
                     // Prepare to consider next ancestor
-                    LPSPropValue entryIdProp(&ancestorProperties[parentEntryIdColumn]);                    
-                    ancestorEntryId = MapiEntryId(reinterpret_cast<const char*>(entryIdProp->Value.bin.lpb), entryIdProp->Value.bin.cb);
+                    LPSPropValue entryIdProp(&ancestorProperties[parentEntryIdColumn]);
+                    ancestorEntryId = MapiEntryId(entryIdProp->Value.bin.lpb, entryIdProp->Value.bin.cb);
                     previousRecordKey = ancestorRecordKey;
                     path.prepend(QStringFromLpctstr(ancestorProperties[displayNameColumn].Value.LPSZ));
                     ancestorFolder->Release();

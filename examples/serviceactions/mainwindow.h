@@ -39,6 +39,7 @@
 class QComboBox;
 class QListView;
 class QMessageServiceAction;
+class QTabWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -46,8 +47,7 @@ public:
     MainWindow(QWidget* parent = 0, Qt::WindowFlags f = 0);
 
 private:
-    QComboBox* m_accountsCombo;
-    QListView* m_messageList;
+    QTabWidget* m_tabWidget;
     QMessageServiceAction* m_serviceAction;
 };
 

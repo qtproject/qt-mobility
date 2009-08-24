@@ -90,6 +90,25 @@ void MapiFolder::findSubFolders(QMessageStore::ErrorCode *lastError)
         _subFolders = subFolders;
 }
 
+MapiFolder* MapiFolder::create(LPMAPIFOLDER folder, MapiEntryId entryId, MapiRecordKey storeKey)
+{
+    const int nCols(4);
+    enum { displayNameColumn = 0, recordKeyColumn, countColumn, subFoldersColumn };
+    SizedSPropTagArray(nCols, columns) = {nCols, {PR_DISPLAY_NAME, PR_RECORD_KEY, PR_CONTENT_COUNT, PR_SUBFOLDERS}};
+    SPropValue *properties(0);
+    ULONG count;
+
+    if (folder->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &properties) == S_OK) {
+        LPSPropValue recordKeyProp(&properties[recordKeyColumn]);
+        MapiRecordKey recordKey(reinterpret_cast<const char*>(recordKeyProp->Value.bin.lpb), recordKeyProp->Value.bin.cb);
+        QString name(QStringFromLpctstr(properties[displayNameColumn].Value.LPSZ));
+        bool hasSubFolders = properties[subFoldersColumn].Value.b;
+        uint messageCount = properties[countColumn].Value.ul;
+        return new MapiFolder(folder, recordKey, storeKey, QString(), entryId, hasSubFolders, messageCount);
+    }
+    return 0;
+}
+
 MapiFolder::MapiFolder(LPMAPIFOLDER folder, MapiRecordKey key, MapiRecordKey parentStoreKey, const QString &name, const MapiEntryId &entryId, bool hasSubFolders, uint messageCount)
     :_valid(true),
      _folder(folder),
@@ -150,7 +169,7 @@ MapiFolderPtr MapiFolder::nextSubFolder(QMessageStore::ErrorCode *lastError)
             LPENTRYID lpEntryId(reinterpret_cast<LPENTRYID>(entryIdProp->Value.bin.lpb));
             LPSPropValue recordKeyProp(&rows->aRow[0].lpProps[recordKeyColumn]);
             folderKey = MapiRecordKey(reinterpret_cast<const char*>(recordKeyProp->Value.bin.lpb), recordKeyProp->Value.bin.cb);
-            entryId = MapiEntryId(reinterpret_cast<const char*>(entryIdProp->Value.bin.lpb), entryIdProp->Value.bin.cb);
+            entryId = MapiEntryId(entryIdProp->Value.bin.lpb, entryIdProp->Value.bin.cb);
             if (_folder->OpenEntry(cbEntryId, lpEntryId, 0, 0, &objectType, reinterpret_cast<LPUNKNOWN*>(&subFolder)) == S_OK) {
                 name = QStringFromLpctstr(rows->aRow[0].lpProps[nameColumn].Value.LPSZ);
                 subHasSubFolders = rows->aRow[0].lpProps[subFoldersColumn].Value.b;
@@ -170,6 +189,7 @@ MapiFolderPtr MapiFolder::nextSubFolder(QMessageStore::ErrorCode *lastError)
         return MapiFolder::null();
     return MapiFolderPtr(new MapiFolder(subFolder, folderKey, _parentStoreKey, name, entryId, subHasSubFolders, subMessageCount));
 }
+
 
 QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
 {
@@ -227,7 +247,7 @@ QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, co
 
             LPSPropValue recordKeyProp(&rows->aRow[0].lpProps[recordKeyColumn]);
             MapiRecordKey recordKey(reinterpret_cast<const char*>(recordKeyProp->Value.bin.lpb), recordKeyProp->Value.bin.cb);
-            MapiEntryId entryId(reinterpret_cast<const char*>(entryIdProp->Value.bin.lpb), entryIdProp->Value.bin.cb);
+            MapiEntryId entryId(entryIdProp->Value.bin.lpb, entryIdProp->Value.bin.cb);
             result.append(QMessageIdPrivate::from(recordKey, _key, _parentStoreKey, entryId));
         }
         FreeProws(rows);
@@ -261,7 +281,7 @@ MapiEntryId MapiFolder::messageEntryId(QMessageStore::ErrorCode *lastError, cons
     restriction.res.resProperty.relop = RELOP_EQ;
     restriction.res.resProperty.ulPropTag = PR_RECORD_KEY;
     restriction.res.resProperty.lpProp = &keyProp;
-    
+
     keyProp.ulPropTag = PR_RECORD_KEY;
     keyProp.Value.bin.cb = key.count();
     keyProp.Value.bin.lpb = reinterpret_cast<LPBYTE>(key.data());
@@ -284,7 +304,7 @@ MapiEntryId MapiFolder::messageEntryId(QMessageStore::ErrorCode *lastError, cons
     if (messagesTable->QueryRows(1, 0, &rows) == S_OK) {
         if (rows->cRows == 1) {
             LPSPropValue entryIdProp(&rows->aRow[0].lpProps[entryIdColumn]);
-            MapiEntryId entryId(reinterpret_cast<const char*>(entryIdProp->Value.bin.lpb), entryIdProp->Value.bin.cb);
+            MapiEntryId entryId(entryIdProp->Value.bin.lpb, entryIdProp->Value.bin.cb);
             result = entryId;
         } else {
             *lastError = QMessageStore::InvalidId;
@@ -304,6 +324,80 @@ QMessageFolderId MapiFolder::id()
     return QMessageFolderIdPrivate::from(_key, _parentStoreKey, _entryId);
 }
 #endif
+
+static unsigned long commonFolderMap(MapiFolder::CommonFolder folder)
+{
+    static bool init = false;
+    static QMap<MapiFolder::CommonFolder,unsigned long> propertyMap;
+
+    if(!init)
+    {
+        propertyMap.insert(MapiFolder::Drafts,PROP_TAG(PT_BINARY, 0x36D7));
+        propertyMap.insert(MapiFolder::Tasks,PROP_TAG(PT_BINARY, 0x36D4));
+        propertyMap.insert(MapiFolder::Notes,PROP_TAG(PT_BINARY, 0x36D3));
+        propertyMap.insert(MapiFolder::Appointments,PROP_TAG(PT_BINARY, 0x36D0));
+        propertyMap.insert(MapiFolder::Journal,PROP_TAG(PT_BINARY, 0x36D2));
+        propertyMap.insert(MapiFolder::Contacts,PROP_TAG(PT_BINARY, 0x36D1));
+        init = true;
+    }
+
+    return propertyMap.value(folder);
+
+}
+
+MapiFolderPtr MapiFolder::subFolder(CommonFolder commonFolder, QMessageStore::ErrorCode *lastError)
+{
+    MapiFolderPtr result(MapiFolder::null());
+
+    LPSPropValue props= 0;
+    ULONG cValues=0;
+    ULONG rgTags[]={ 1, commonFolderMap(commonFolder)};
+    LPMAPIFOLDER targetFolder = 0;
+    HRESULT hr = _folder->GetProps((LPSPropTagArray) rgTags, 0, &cValues, &props);
+
+    if(hr != S_OK)
+    {
+        *lastError = QMessageStore::ContentInaccessible;
+        return result;
+    }
+
+    ULONG eIdSize = props[0].Value.bin.cb;
+    LPENTRYID eId = (LPENTRYID)props[0].Value.bin.lpb;
+    MapiEntryId entryId(eId, eIdSize);
+
+    DWORD objectType = 0;
+#if 0 // NO_MAPI_CACHING
+    if (_store->OpenEntry(cbEntryId, lpEntryId, 0, (ULONG)0x00000200, &ulObjectType, reinterpret_cast<LPUNKNOWN FAR *>(&mapiFolder)) != S_OK)
+#else
+        hr = _folder->OpenEntry(eIdSize,eId, 0, MAPI_MODIFY | MAPI_BEST_ACCESS, &objectType, (LPUNKNOWN*)&targetFolder);
+#endif
+
+    if(hr != S_OK || !targetFolder)
+    {
+        *lastError = QMessageStore::ContentInaccessible;
+        return result;
+    }
+
+    if(MapiFolder* r = create(targetFolder,entryId,_parentStoreKey))
+        result = MapiFolderPtr(r);
+    else
+        *lastError = QMessageStore::FrameworkFault;
+
+    return result;
+}
+
+
+LPMESSAGE MapiFolder::createMessage(QMessageStore::ErrorCode* lastError)
+{
+    LPMESSAGE message = 0;
+
+    if(HRESULT hr = _folder->CreateMessage(NULL, 0, (LPMESSAGE*)&message)!=S_OK)
+    {
+        *lastError = QMessageStore::FrameworkFault;
+        if(message) message->Release(); message =0;
+    }
+    return message;
+}
 
 MapiStore::MapiStore()
     :_valid(false),
@@ -359,7 +453,7 @@ MapiFolderPtr MapiStore::rootFolder(QMessageStore::ErrorCode *lastError)
     ULONG ulObjectType;
     ULONG cbEntryId(rgProps[0].Value.bin.cb);
     LPENTRYID lpEntryId(reinterpret_cast<LPENTRYID>(rgProps[0].Value.bin.lpb));
-    MapiEntryId entryId(reinterpret_cast<const char*>(rgProps[0].Value.bin.lpb), rgProps[0].Value.bin.cb);
+    MapiEntryId entryId(rgProps[0].Value.bin.lpb, rgProps[0].Value.bin.cb);
 #if 0 // NO_MAPI_CACHING
     if (_store->OpenEntry(cbEntryId, lpEntryId, 0, (ULONG)0x00000200, &ulObjectType, reinterpret_cast<LPUNKNOWN FAR *>(&mapiFolder)) != S_OK) {
 #else
@@ -370,22 +464,50 @@ MapiFolderPtr MapiStore::rootFolder(QMessageStore::ErrorCode *lastError)
     }
 
     MAPIFreeBuffer(rgProps);
-    if (mapiFolder) {
-        const int nCols(4);
-        enum { displayNameColumn = 0, recordKeyColumn, countColumn, subFoldersColumn };
-        SizedSPropTagArray(nCols, columns) = {nCols, {PR_DISPLAY_NAME, PR_RECORD_KEY, PR_CONTENT_COUNT, PR_SUBFOLDERS}};
-        SPropValue *properties(0);
-        ULONG count;
 
-        if (mapiFolder->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &properties) == S_OK) {
-            LPSPropValue recordKeyProp(&properties[recordKeyColumn]);
-            MapiRecordKey recordKey(reinterpret_cast<const char*>(recordKeyProp->Value.bin.lpb), recordKeyProp->Value.bin.cb);
-            QString name(QStringFromLpctstr(properties[displayNameColumn].Value.LPSZ));
-            bool hasSubFolders = properties[subFoldersColumn].Value.b;
-            uint messageCount = properties[countColumn].Value.ul;
-            result = MapiFolderPtr(new MapiFolder(mapiFolder, recordKey, _key, QString(), entryId, hasSubFolders, messageCount));
-        }
+    if (mapiFolder) {
+        if(MapiFolder* r = MapiFolder::create(mapiFolder,entryId,_key))
+            result = MapiFolderPtr(r);
     }
+
+    return result;
+}
+
+MapiFolderPtr MapiStore::receiveFolder(QMessageStore::ErrorCode *lastError)
+{
+    MapiFolderPtr result(MapiFolder::null());
+
+    ULONG entryIdSize = 0;
+	LPENTRYID entryIdPtr = 0;
+
+	HRESULT hr = _store->GetReceiveFolder(NULL, 0, &entryIdSize, &entryIdPtr, NULL);
+
+    if(hr != S_OK)
+    {
+       *lastError = QMessageStore::FrameworkFault;
+       return result;
+    }
+
+	DWORD objectType;
+	LPMAPIFOLDER inboxFolderPtr;
+
+#if 0 // NO_MAPI_CACHING
+    if (_store->OpenEntry(cbEntryId, lpEntryId, 0, (ULONG)0x00000200, &ulObjectType, reinterpret_cast<LPUNKNOWN FAR *>(&mapiFolder)) != S_OK) {
+#else
+    hr = _store->OpenEntry(entryIdSize, entryIdPtr, 0, MAPI_MODIFY | MAPI_BEST_ACCESS, &objectType, reinterpret_cast<LPUNKNOWN FAR *>(&inboxFolderPtr));
+#endif
+
+    if(hr != S_OK || !inboxFolderPtr)
+    {
+        *lastError = QMessageStore::ContentInaccessible;
+        return result;
+    }
+
+    if(MapiFolder* r = MapiFolder::create(inboxFolderPtr,MapiEntryId(entryIdPtr,entryIdSize),_key))
+         result = MapiFolderPtr(r);
+    else
+        *lastError = QMessageStore::FrameworkFault;
+
     return result;
 }
 
@@ -1090,4 +1212,69 @@ QByteArray MapiSession::attachmentData(QMessageStore::ErrorCode *lastError, cons
 
     message->Release();
     return result;
+}
+
+bool MapiSession::showForm(LPMESSAGE message, LPMAPIFOLDER folder, LPMDB store)
+{
+    ULONG messageToken;
+
+    if(_mapiSession->PrepareForm(NULL,message, &messageToken )== S_OK)
+    {
+        ULONG messageStatus = 0;
+        LPSPropValue pProp = 0;
+        ULONG propertyCount = 0;
+        ULONG p[2]={ 1,PR_MSG_STATUS};
+
+        if(message->GetProps((LPSPropTagArray)p, MAPI_UNICODE, &propertyCount, &pProp) == S_OK)
+        {
+            messageStatus = pProp->Value.l;
+            MAPIFreeBuffer(pProp);
+        }
+
+        ULONG messageFlags = 0;
+        p[1] = PR_MESSAGE_FLAGS;
+        if(message->GetProps((LPSPropTagArray)p, MAPI_UNICODE, &propertyCount, &pProp) == S_OK)
+        {
+            messageFlags = pProp->Value.l;
+            MAPIFreeBuffer(pProp);
+        }
+
+        ULONG messageAccess = 0;
+        p[1] = PR_ACCESS;
+        if(message->GetProps((LPSPropTagArray)p, MAPI_UNICODE, &propertyCount, &pProp) == S_OK)
+        {
+            messageAccess = pProp->Value.l;
+            MAPIFreeBuffer(pProp);
+        }
+
+        propertyCount = 0;
+        p[1] = PR_MESSAGE_CLASS;
+        if(message->GetProps((LPSPropTagArray)p, MAPI_UNICODE, &propertyCount, &pProp) == S_OK)
+        {
+#ifdef UNICODE
+            char szMessageClass[256];
+            WideCharToMultiByte(CP_ACP, 0, pProp->Value.LPSZ,-1, szMessageClass,255, NULL, NULL);
+#else
+            char* szMessageClass=pProp->Value.LPSZ;
+#endif
+            HRESULT hr=_mapiSession->ShowForm(NULL, store, folder, NULL,messageToken, NULL, 0,messageStatus,messageFlags,messageAccess, szMessageClass);
+            MAPIFreeBuffer(pProp);
+            if(hr!=S_OK)
+            {
+                qWarning() << "Show form failed";
+                return false;
+            }
+            else if(hr==MAPI_E_USER_CANCEL)
+            {
+                qWarning() << "Show form cancelled";
+                return false;
+            }
+        }
+        else
+        {
+            qWarning() << "Failed to show form";
+            return false;
+        }
+    }
+    return true;
 }

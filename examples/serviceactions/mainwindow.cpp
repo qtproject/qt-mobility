@@ -37,36 +37,118 @@
 #include <QListView>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QTabWidget>
+#include <QPointer>
+#include <QPushButton>
+#include <QDebug>
+
+typedef QPointer<QMessageServiceAction> QMessageServiceActionPtr;
 
 static const QSize WindowGeometry(400,300);
 static const QString WindowTitle("QMessageServiceAction Example");
 
+class ComposeSendWidget : public QWidget
+{
+    Q_OBJECT
+
+public:
+    ComposeSendWidget(QMessageServiceAction* service, QWidget* parent = 0);
+
+private slots:
+    void composeButtonClicked();
+
+private:
+    QMessageServiceAction* m_service;
+    QPushButton* m_composeButton;
+};
+
+ComposeSendWidget::ComposeSendWidget(QMessageServiceAction* service, QWidget* parent)
+:
+QWidget(parent),
+m_service(service)
+{
+    QVBoxLayout* layout = new QVBoxLayout(this);
+
+    QLabel* infoLabel = new QLabel("Click to compose a message using the platform messaging client",this);
+    infoLabel->setAlignment(Qt::AlignCenter);
+    layout->addWidget(infoLabel);
+
+    m_composeButton = new QPushButton("Compose",this);
+    connect(m_composeButton,SIGNAL(clicked(bool)),this,SLOT(composeButtonClicked()));
+    layout->addWidget(m_composeButton);
+}
+
+void ComposeSendWidget::composeButtonClicked()
+{
+    qWarning() << "COMPOSE BUTTON CLICKED";
+    m_service->compose(QMessage());
+}
+
+class RetrieveWidget : public QWidget
+{
+public:
+    RetrieveWidget(QMessageServiceAction* service, QWidget* parent = 0);
+
+private:
+    QMessageServiceAction* m_service;
+};
+
+RetrieveWidget::RetrieveWidget(QMessageServiceAction* service, QWidget* parent)
+:
+QWidget(parent),
+m_service(service)
+{
+}
+
+class ShowWidget : public QWidget
+{
+public:
+    ShowWidget(QMessageServiceAction* service, QWidget* parent = 0);
+
+private:
+    QMessageServiceAction* m_service;
+};
+
+ShowWidget::ShowWidget(QMessageServiceAction* service, QWidget* parent)
+:
+QWidget(parent),
+m_service(service)
+{
+}
+
+class QueryWidget : public QWidget
+{
+public:
+    QueryWidget(QMessageServiceAction* service, QWidget* parent = 0);
+
+private:
+    QMessageServiceAction* m_service;
+};
+
+QueryWidget::QueryWidget(QMessageServiceAction* service, QWidget* parent)
+:
+QWidget(parent),
+m_service(service)
+{
+}
+
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f)
 :
 QMainWindow(parent,f),
-m_accountsCombo(0),
-m_messageList(0)
+m_tabWidget(0)
 {
-    QWidget* c = new QWidget(this);
-    setCentralWidget(c);
-    QVBoxLayout* mainLayout = new QVBoxLayout(c);
-
-    QHBoxLayout* accountsLayout = new QHBoxLayout();
-    accountsLayout->setSpacing(4);
-    mainLayout->addLayout(accountsLayout);
-
-    accountsLayout->addWidget(new QLabel("Account",this));
-
-    m_accountsCombo = new QComboBox(this);
-    m_accountsCombo->addItem("Balls");
-    accountsLayout->addWidget(m_accountsCombo,1);
-
-    m_messageList = new QListView(this);
-    mainLayout->addWidget(m_messageList);
+    m_tabWidget = new QTabWidget(this);
+    setCentralWidget(m_tabWidget);
 
     m_serviceAction = new QMessageServiceAction(this);
+
+    m_tabWidget->addTab(new ComposeSendWidget(m_serviceAction,this),"Compose and Send");
+    m_tabWidget->addTab(new RetrieveWidget(m_serviceAction,this),"Retrieve");
+    m_tabWidget->addTab(new ShowWidget(m_serviceAction,this),"Show");
+    m_tabWidget->addTab(new QueryWidget(m_serviceAction,this),"Query");
 
     setWindowTitle(WindowTitle);
     resize(WindowGeometry);
 }
 
+#include <mainwindow.moc>
