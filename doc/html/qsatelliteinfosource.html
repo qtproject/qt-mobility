@@ -14,7 +14,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QSatelliteInfoSource Class Reference</h1>
 <p>The QSatelliteInfoSource class is an abstract base class for the distribution of satellite information updates. <a href="#details">More...</a></p>
-<pre>    #include &lt;QSatelliteInfoSource&gt;</pre><p>Inherits <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a>.</p>
+<pre>    #include &lt;QSatelliteInfoSource&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a>.</p>
 <ul>
 <li><a href="qsatelliteinfosource-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -25,7 +25,7 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qsatelliteinfosource.html#QSatelliteInfoSource">QSatelliteInfoSource</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-functions">QObject</a></li>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
 <a name="public-slots"></a>
@@ -36,7 +36,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qsatelliteinfosource.html#stopUpdates">stopUpdates</a></b> () = 0</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-slots">QObject</a></li>
+<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-slots">QObject</a></li>
 </ul>
 <hr />
 <a name="signals"></a>
@@ -47,7 +47,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsatelliteinfosource.html#satellitesInViewUpdated">satellitesInViewUpdated</a></b> ( const QList&lt;QSatelliteInfo&gt; &amp; <i>satellites</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#signals">QObject</a></li>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
 </ul>
 <hr />
 <a name="static-public-members"></a>
@@ -56,14 +56,14 @@
 <tr><td class="memItemLeft" align="right" valign="top">QSatelliteInfoSource * </td><td class="memItemRight" valign="bottom"><b><a href="qsatelliteinfosource.html#createSource">createSource</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>4 static public members inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#static-public-members">QObject</a></li>
+<li><div bar="2" class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#static-public-members">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li><div class="fn"></div>1 property inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#properties">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#public-variables">QObject</a></li>
-<li><div class="fn"></div>7 protected functions inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#protected-functions">QObject</a></li>
-<li><div class="fn"></div>2 protected variables inherited from <a href="http://doc.qtsoftware.com/4.5/qobject.html#protected-variables">QObject</a></li>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -73,9 +73,9 @@
 <p>Call <a href="qsatelliteinfosource.html#startUpdates">startUpdates</a>() and <a href="qsatelliteinfosource.html#stopUpdates">stopUpdates</a>() to start and stop regular updates, or <a href="qsatelliteinfosource.html#requestUpdate">requestUpdate</a>() to request a single update. When an update is available, <a href="qsatelliteinfosource.html#satellitesInViewUpdated">satellitesInViewUpdated</a>() and/or <a href="qsatelliteinfosource.html#satellitesInUseUpdated">satellitesInUseUpdated</a>() will be emitted.</p>
 <hr />
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QSatelliteInfoSource"></a>QSatelliteInfoSource::QSatelliteInfoSource ( <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QSatelliteInfoSource"></a>QSatelliteInfoSource::QSatelliteInfoSource ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>Creates a source with the specified <i>parent</i>.</p>
-<h3 class="fn"><a name="createSource"></a>QSatelliteInfoSource * QSatelliteInfoSource::createSource ( <a href="http://doc.qtsoftware.com/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="createSource"></a>QSatelliteInfoSource * QSatelliteInfoSource::createSource ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Creates and returns a source with the specified <i>parent</i> that reads from the system's default source of satellite update information.</p>
 <p>Returns 0 if the system has no default source.</p>
 <h3 class="fn"><a name="requestTimeout"></a>void QSatelliteInfoSource::requestTimeout ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
@@ -83,11 +83,11 @@
 <h3 class="fn"><a name="requestUpdate"></a>void QSatelliteInfoSource::requestUpdate ( int <i>timeout</i> = 5000 )&nbsp;&nbsp;<tt> [pure virtual slot]</tt></h3>
 <p>Attempts to get the current satellite information and emit <a href="qsatelliteinfosource.html#satellitesInViewUpdated">satellitesInViewUpdated</a>() and <a href="qsatelliteinfosource.html#satellitesInUseUpdated">satellitesInUseUpdated</a>() with this information. This is useful if you do not need the regular updates provided by <a href="qsatelliteinfosource.html#startUpdates">startUpdates</a>(). If the current position cannot be found within the given <i>timeout</i> (in milliseconds), <a href="qsatelliteinfosource.html#requestTimeout">requestTimeout</a>() is emitted.</p>
 <p>This does nothing if another update request is in progress. However it can be called even if <a href="qsatelliteinfosource.html#startUpdates">startUpdates</a>() has already been called and regular updates are in progress.</p>
-<h3 class="fn"><a name="satellitesInUseUpdated"></a>void QSatelliteInfoSource::satellitesInUseUpdated ( const <a href="http://doc.qtsoftware.com/4.5/qlist.html">QList</a>&lt;<a href="qsatelliteinfo.html">QSatelliteInfo</a>&gt; &amp; <i>satellites</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="satellitesInUseUpdated"></a>void QSatelliteInfoSource::satellitesInUseUpdated ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qsatelliteinfo.html">QSatelliteInfo</a>&gt; &amp; <i>satellites</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>If <a href="qsatelliteinfosource.html#startUpdates">startUpdates</a>() or <a href="qsatelliteinfosource.html#requestUpdate">requestUpdate</a>() is called, this signal is emitted when an update is available on the number of satellites that are currently in use.</p>
 <p>These are the satellites that are used to get a &quot;fix&quot; - that is, those used to determine the current position.</p>
 <p>The <i>satellites</i> parameter holds the satellites currently in use.</p>
-<h3 class="fn"><a name="satellitesInViewUpdated"></a>void QSatelliteInfoSource::satellitesInViewUpdated ( const <a href="http://doc.qtsoftware.com/4.5/qlist.html">QList</a>&lt;<a href="qsatelliteinfo.html">QSatelliteInfo</a>&gt; &amp; <i>satellites</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="satellitesInViewUpdated"></a>void QSatelliteInfoSource::satellitesInViewUpdated ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qsatelliteinfo.html">QSatelliteInfo</a>&gt; &amp; <i>satellites</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>If <a href="qsatelliteinfosource.html#startUpdates">startUpdates</a>() or <a href="qsatelliteinfosource.html#requestUpdate">requestUpdate</a>() is called, this signal is emitted when an update is available on the satellites that are currently in view.</p>
 <p>The <i>satellites</i> parameter holds the satellites currently in view.</p>
 <h3 class="fn"><a name="startUpdates"></a>void QSatelliteInfoSource::startUpdates ()&nbsp;&nbsp;<tt> [pure virtual slot]</tt></h3>

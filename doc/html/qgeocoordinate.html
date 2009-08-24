@@ -97,11 +97,11 @@
 <p>Returns the altitude (meters above sea level).</p>
 <p>The return value is undefined if the altitude has not been set.</p>
 <p>See also <a href="qgeocoordinate.html#setAltitude">setAltitude</a>() and <a href="qgeocoordinate.html#type">type</a>().</p>
-<h3 class="fn"><a name="azimuthTo"></a><a href="http://doc.qtsoftware.com/4.5/qtglobal.html#qreal-typedef">qreal</a> QGeoCoordinate::azimuthTo ( const QGeoCoordinate &amp; <i>other</i> ) const</h3>
+<h3 class="fn"><a name="azimuthTo"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> QGeoCoordinate::azimuthTo ( const QGeoCoordinate &amp; <i>other</i> ) const</h3>
 <p>Returns the azimuth (or bearing) in degrees from this coordinate to the coordinate specified by <i>other</i>. Altitude is not used in the calculation.</p>
 <p>There is an assumption that the Earth is spherical for the purpose of this calculation.</p>
 <p>Returns 0 if the type of this coordinate or the type of <i>other</i> is <a href="qgeocoordinate.html#CoordinateType-enum">QGeoCoordinate::InvalidCoordinate</a>.</p>
-<h3 class="fn"><a name="distanceTo"></a><a href="http://doc.qtsoftware.com/4.5/qtglobal.html#qreal-typedef">qreal</a> QGeoCoordinate::distanceTo ( const QGeoCoordinate &amp; <i>other</i> ) const</h3>
+<h3 class="fn"><a name="distanceTo"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> QGeoCoordinate::distanceTo ( const QGeoCoordinate &amp; <i>other</i> ) const</h3>
 <p>Returns the distance (in meters) from this coordinate to the coordinate specified by <i>other</i>. Altitude is not used in the calculation.</p>
 <p>This calculation returns the great-circle distance between the two coordinates, with an assumption that the Earth is spherical for the purpose of this calculation.</p>
 <p>Returns 0 if the type of this coordinate or the type of <i>other</i> is <a href="qgeocoordinate.html#CoordinateType-enum">QGeoCoordinate::InvalidCoordinate</a>.</p>
@@ -126,7 +126,7 @@
 <p>Sets the longitude (in decimal degrees) to <i>longitude</i>. The value should be in the WGS84 datum.</p>
 <p>To be valid, the longitude must be between -180 to 180 inclusive.</p>
 <p>See also <a href="qgeocoordinate.html#longitude">longitude</a>().</p>
-<h3 class="fn"><a name="toString"></a><a href="http://doc.qtsoftware.com/4.5/qstring.html">QString</a> QGeoCoordinate::toString ( <a href="qgeocoordinate.html#CoordinateFormat-enum">CoordinateFormat</a> <i>format</i> = DegreesMinutesSecondsWithHemisphere ) const</h3>
+<h3 class="fn"><a name="toString"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QGeoCoordinate::toString ( <a href="qgeocoordinate.html#CoordinateFormat-enum">CoordinateFormat</a> <i>format</i> = DegreesMinutesSecondsWithHemisphere ) const</h3>
 <p>Returns this coordinate as a string in the specified <i>format</i>.</p>
 <p>For example, if this coordinate has a latitude of -27.46758, a longitude of 153.027892 and an altitude of 28.1, these are the strings returned depending on <i>format</i>:</p>
 <p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
