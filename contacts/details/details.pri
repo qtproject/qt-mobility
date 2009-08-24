@@ -12,6 +12,7 @@ PUBLIC_HEADERS += \
     details/qcontactgeolocation.h \
     details/qcontactguid.h \
     details/qcontactname.h \
+    details/qcontactnickname.h \
     details/qcontactonlineaccount.h \
     details/qcontactorganisation.h \
     details/qcontactphonenumber.h \

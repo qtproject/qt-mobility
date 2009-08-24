@@ -84,6 +84,11 @@
  */
 
 /*!
+ * \class QContactNickname
+ * \brief A nickname of a contact
+ */
+
+/*!
  * \class QContactOnlineAccount
  * \brief An online account which the contact uses to communicate with friends and family
  */
@@ -133,6 +138,12 @@
  * The constant string which identifies the definition of details which are names
  */
 Q_DEFINE_LATIN1_LITERAL(QContactName::DefinitionName, "Name");
+
+/*!
+ * \variable QContactNickname::DefinitionName
+ * The constant string which identifies the definition of details which are nicknames
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactNickname::DefinitionName, "Nickname");
 
 /*!
  * \variable QContactAvatar::DefinitionName
@@ -297,6 +308,12 @@ Q_DEFINE_LATIN1_LITERAL(QContactName::FieldLast, "Last");
  * The constant key for which the name suffix value is stored in details of the QContactName type
  */
 Q_DEFINE_LATIN1_LITERAL(QContactName::FieldSuffix, "Suffix");
+
+/*!
+ * \variable QContactNickname::FieldNickname
+ * The constant key for which the nickname value is stored in details of the QContactNickname type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactNickname::FieldNickname, "Nickname");
 
 /*!
  * \variable QContactAddress::FieldDisplayLabel
@@ -1050,6 +1067,16 @@ QString QContactAddress::displayLabel() const
 /*!
  * \fn QContactName::setSuffix(const QString& suffix)
  * Sets the suffix segment of the name stored in this detail to \a suffix
+ */
+
+/*!
+ * \fn QContactNickname::setNickname(const QString& nickname)
+ * Sets the nickname of the contact which is stored in this detail to \a nickname
+ */
+
+/*!
+ * \fn QContactNickname::nickname() const
+ * Returns the nickname of the contact which is stored in this detail
  */
 
 /*!
