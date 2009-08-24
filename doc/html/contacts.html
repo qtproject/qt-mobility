@@ -32,6 +32,7 @@
 <li><a href="#detail-leaf-classes">Detail leaf classes</a></li>
 <li><a href="#asynchronous-requests">Asynchronous Requests</a></li>
 <li><a href="#contact-selection">Contact Selection</a></li>
+<li><a href="#actions">Actions</a></li>
 <li><a href="#implementing-backends">Implementing Backends</a></li>
 <li><a href="#manager-information-and-functionality-reporting">Manager information and functionality reporting</a></li>
 <li><a href="#examples">Examples</a></li>
@@ -277,6 +278,7 @@
 <li><a href="qcontactgeolocation.html">QContactGeolocation</a></li>
 <li><a href="qcontactguid.html">QContactGuid</a></li>
 <li><a href="qcontactname.html">QContactName</a></li>
+<li><a href="qcontactnickname.html">QContactNickname</a></li>
 <li><a href="qcontactonlineaccount.html">QContactOnlineAccount</a></li>
 <li><a href="qcontactorganisation.html">QContactOrganisation</a></li>
 <li><a href="qcontactphonenumber.html">QContactPhoneNumber</a></li>
@@ -317,6 +319,10 @@
 <li><a href="qcontactunionfilter.html">QContactUnionFilter</a></li>
 </ul>
 <p>A client can also request that the results of such a selection be sorted, by passing a <a href="qcontactsortorder.html">QContactSortOrder</a> (or list of sort orders) to the manager.</p>
+<a name="actions"></a>
+<h3>Actions</h3>
+<p>Clients can perform actions on contacts which support them. Actions are things like &quot;Send Email&quot; or &quot;Dial&quot;, and can be provided from various sources including Qt Plugins or the Qt Mobility Service Framework. Every action implementation is uniquely identified by a combination of its name, the name of the vendor which provided the implementation, and the version of the implementation according to the vendor. These pieces of data may be encapsulated in a <a href="qcontactactiondescriptor.html">QContactActionDescriptor</a> which can be used to retrieve an instance of the implementation from a <a href="qcontactactionfactory.html">QContactActionFactory</a>.</p>
+<p>When an instance of a <a href="qcontactaction.html">QContactAction</a> is created, the caller takes ownership of the instance, and must delete it after use. The semantics of ownership are currently under discussion; they are subject to change prior to the Alpha release of Qt Mobility.</p>
 <a name="implementing-backends"></a>
 <h3>Implementing Backends</h3>
 <p>A manager backend may be implemented by subclassing <a href="qcontactmanagerengine.html">QContactManagerEngine</a>, and providing a <a href="qcontactmanagerenginefactory.html">QContactManagerEngineFactory</a> which can instantiate it when required.</p>
