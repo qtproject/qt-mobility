@@ -43,6 +43,7 @@ public:
 
 private:
     QStringList m_codecs;
+    QMap<QString,QByteArray> m_elementNames;
     QMap<QString,QString> m_codecDescriptions;
     QMap<QString,QStringList> m_codecOptions;
 
