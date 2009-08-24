@@ -116,13 +116,15 @@ QString QSystemInfoPrivate::currentLanguage() const
 // 2 letter ISO 639-1
 QStringList QSystemInfoPrivate::availableLanguages() const
 {
-    QDir localeDir("/usr/lib/locale");
-    if(localeDir.exists()) {
-        QStringList langList;
-        QStringList localeList = localeDir.entryList( QStringList() ,QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
+    QDir transDir(QLibraryInfo::location (QLibraryInfo::TranslationsPath));
+    QStringList langList;
+
+    if(transDir.exists()) {
+        QStringList localeList = transDir.entryList( QStringList() << "qt_*.qm" ,QDir::Files
+                                                     | QDir::NoDotAndDotDot, QDir::Name);
         foreach(QString localeName, localeList) {
-            QString lang = localeName.left(2);
-            if(!langList.contains(lang) && !lang.isEmpty()) {
+            QString lang = localeName.mid(3,2);
+            if(!langList.contains(lang) && !lang.isEmpty() && !lang.contains("help")) {
                 langList <<lang;
             }
         }

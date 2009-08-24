@@ -9,6 +9,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="~QSystemInfo" fullname="QSystemInfo::~QSystemInfo" href="qsysteminfo.html#dtor.QSystemInfo" location="qsysteminfo.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QSystemInfo()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="currentLanguage" fullname="QSystemInfo::currentLanguage" href="qsysteminfo.html#currentLanguage" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QString" signature="currentLanguage()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="availableLanguages" fullname="QSystemInfo::availableLanguages" href="qsysteminfo.html#availableLanguages" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QStringList" signature="availableLanguages()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="currentCountryCode" fullname="QSystemInfo::currentCountryCode" href="qsysteminfo.html#currentCountryCode" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QString" signature="currentCountryCode()"/>
             <enum access="public" threadsafety="unspecified" status="commendable" name="Version" fullname="QSystemInfo::Version" href="qsysteminfo.html#Version-enum" location="qsysteminfo.h">
                 <value name="Os" value="1"/>
                 <value name="QtCore" value="2"/>
@@ -25,7 +26,6 @@
                 <parameter left="QSystemInfo::Version" right="" name="type" default=""/>
                 <parameter left="const QString &amp;" right="" name="parameter" default="QString()"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="currentCountryCode" fullname="QSystemInfo::currentCountryCode" href="qsysteminfo.html#currentCountryCode" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QString" signature="currentCountryCode()"/>
             <enum access="public" threadsafety="unspecified" status="commendable" name="Feature" fullname="QSystemInfo::Feature" href="qsysteminfo.html#Feature-enum" location="qsysteminfo.h">
                 <value name="BluetoothFeature" value="0"/>
                 <value name="CameraFeature" value="1"/>
@@ -197,8 +197,8 @@
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QSystemScreenSaver" fullname="QSystemScreenSaver::~QSystemScreenSaver" href="qsystemscreensaver.html#dtor.QSystemScreenSaver" location="qsysteminfo.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QSystemScreenSaver()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="screenSaverEnabled" fullname="QSystemScreenSaver::screenSaverEnabled" href="qsystemscreensaver.html#screenSaverEnabled" location="qsysteminfo.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="screenSaverEnabled()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="screenBlankingEnabled" fullname="QSystemScreenSaver::screenBlankingEnabled" href="qsystemscreensaver.html#screenBlankingEnabled" location="qsysteminfo.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="screenBlankingEnabled()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="screenSaverEnabled" fullname="QSystemScreenSaver::screenSaverEnabled" href="qsystemscreensaver.html#screenSaverEnabled" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="screenSaverEnabled()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="screenBlankingEnabled" fullname="QSystemScreenSaver::screenBlankingEnabled" href="qsystemscreensaver.html#screenBlankingEnabled" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="screenBlankingEnabled()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setScreenSaverEnabled" fullname="QSystemScreenSaver::setScreenSaverEnabled" href="qsystemscreensaver.html#setScreenSaverEnabled" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="setScreenSaverEnabled(bool b)">
                 <parameter left="bool" right="" name="b" default=""/>
             </function>
