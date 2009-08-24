@@ -35,6 +35,11 @@
 #include "qcontactactiondescriptor_p.h"
 
 /*!
+ * \class QContactActionDescriptor
+ * \brief Contains information that uniquely identifies a specific implementation of an action
+ */
+
+/*!
  * Constructs a new action descriptor for the implementation of the action identified by the given \a actionName
  * of the given implementation \a vendorVersion, as implemented by the vendor identified by the given \a vendorName
  */
