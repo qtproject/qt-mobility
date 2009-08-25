@@ -76,20 +76,17 @@ public:
     float playbackRate() const;
     void setPlaybackRate(float rate);
 
-    QMediaResourceList currentResources() const;
-    void setCurrentResources(const QMediaResourceList &resources);
+    QMediaSource currentSource() const;
+    void setCurrentSource(const QMediaSource &source);
 
     void play();
     void pause();
     void stop();
 
-    void advance();
-    void back();
-
     Qt7Movie* movie() const;
 
 private slots:
-    void setSource(QMediaResourceList const &resources);
+    void setSource(QMediaSource const &source);
     void update();
 
 private:

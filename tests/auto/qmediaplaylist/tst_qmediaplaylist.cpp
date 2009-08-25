@@ -66,47 +66,41 @@ void tst_QMediaPlaylist::construction()
 void tst_QMediaPlaylist::append()
 {
     QMediaPlaylist playlist;
-    QMediaResourceList resource1;
-    resource1 << QUrl(QLatin1String("file:///1"));
-    playlist.appendItem(resource1);
+    QMediaSource source1(QUrl(QLatin1String("file:///1")));
+    playlist.appendItem(source1);
     QCOMPARE(playlist.size(), 1);
-    QCOMPARE(playlist.resources(0), resource1);
+    QCOMPARE(playlist.resources(0), source1);
 
-    QMediaResourceList resource2;
-    resource2 << QUrl(QLatin1String("file:///2"));
-    playlist.appendItem(resource2);
+    QMediaSource source2(QUrl(QLatin1String("file:///2")));
+    playlist.appendItem(source2);
     QCOMPARE(playlist.size(), 2);
-    QCOMPARE(playlist.resources(1), resource2);
+    QCOMPARE(playlist.resources(1), source2);
 }
 
 void tst_QMediaPlaylist::currentItem()
 {
     QMediaPlaylist playlist;
 
-    QMediaResourceList resource1;
-    resource1 << QUrl(QLatin1String("file:///1"));
-    playlist.appendItem(resource1);
+    QMediaSource source1(QUrl(QLatin1String("file:///1")));
+    playlist.appendItem(source1);
 
-
-    QMediaResourceList resource2;
-    resource2 << QUrl(QLatin1String("file:///2"));
-    playlist.appendItem(resource2);
-
+    QMediaSource source2(QUrl(QLatin1String("file:///2")));
+    playlist.appendItem(source2);
 
     QCOMPARE(playlist.currentPosition(), -1);
-    QCOMPARE(playlist.currentResources(), QMediaResourceList());
+    QCOMPARE(playlist.currentSource(), QMediaSource());
 
     playlist.setCurrentPosition(0);
     QCOMPARE(playlist.currentPosition(), 0);
-    QCOMPARE(playlist.currentResources(), resource1);
+    QCOMPARE(playlist.currentSource(), source1);
 
     playlist.setCurrentPosition(1);
     QCOMPARE(playlist.currentPosition(), 1);
-    QCOMPARE(playlist.currentResources(), resource2);
+    QCOMPARE(playlist.currentSource(), source2);
 
     playlist.setCurrentPosition(2); //warning is expected
     QCOMPARE(playlist.currentPosition(), 1);
-    QCOMPARE(playlist.currentResources(), resource2);
+    QCOMPARE(playlist.currentSource(), source2);
 }
 
 QTEST_MAIN(tst_QMediaPlaylist)

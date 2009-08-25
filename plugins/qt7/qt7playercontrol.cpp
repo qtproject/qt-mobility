@@ -139,11 +139,11 @@ void Qt7PlayerControl::setPlaybackRate(float rate)
     d->movie->setRate(rate);
 }
 
-QMediaResourceList Qt7PlayerControl::currentResources() const
+QMediaSource Qt7PlayerControl::currentSource() const
 {
 }
 
-void Qt7PlayerControl::setCurrentResources(const QMediaResourceList &resources)
+void Qt7PlayerControl::setCurrentSource(const QMediaSource &source)
 {
 }
 
@@ -191,9 +191,9 @@ Qt7Movie* Qt7PlayerControl::movie() const
     return d->movie;
 }
 
-void Qt7PlayerControl::setSource(QMediaResourceList const &resources)
+void Qt7PlayerControl::setSource(QMediaSource const &source)
 {
-    d->movie->setSource(resources);
+    d->movie->setSource(source);
     if (d->state == QMediaPlayer::PlayingState)
         d->movie->play();
 }

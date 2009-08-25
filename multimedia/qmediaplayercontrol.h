@@ -71,15 +71,15 @@ public:
     virtual float playbackRate() const = 0;
     virtual void setPlaybackRate(float rate) = 0;
 
-    virtual QMediaResourceList currentResources() const = 0;
-    virtual void setCurrentResources(const QMediaResourceList &resources) = 0;
+    virtual QMediaSource currentSource() const = 0;
+    virtual void setCurrentSource(const QMediaSource &source) = 0;
 
     virtual void play() = 0;
     virtual void pause() = 0;
     virtual void stop() = 0;
 
 Q_SIGNALS:
-    void currentResourcesChanged(const QMediaResourceList& resources);
+    void currentSourceChanged(const QMediaSource& source);
     void durationChanged(qint64 duration);
     void positionChanged(qint64 position);
     void stateChanged(QMediaPlayer::State newState);

@@ -75,8 +75,8 @@ public:
     float playbackRate() const;
     void setPlaybackRate(float rate);
 
-    QMediaResourceList currentResources() const;
-    void setCurrentResources(const QMediaResourceList&);
+    QMediaSource currentResources() const;
+    void setCurrentResources(const QMediaSource&);
 
 public Q_SLOTS:
     void setPosition(qint64 pos);
@@ -93,7 +93,7 @@ signals:
 
 private:
     QGstreamerPlayerSession *m_session;
-    QMediaResourceList m_currentResource;
+    QMediaSource m_currentResource;
 };
 
 #endif

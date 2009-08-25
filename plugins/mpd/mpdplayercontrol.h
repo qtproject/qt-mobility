@@ -51,8 +51,8 @@ public:
     QMediaPlayer::State state() const;
     QMediaPlayer::MediaStatus mediaStatus() const;
 
-    QMediaResourceList currentResources() const;
-    void setCurrentResources(const QMediaResourceList &resources);
+    QMediaSource currentSource() const;
+    void setCurrentSource(const QMediaSource &source);
 
     qint64 duration() const;
 

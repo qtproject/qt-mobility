@@ -191,7 +191,7 @@ void QWmpMetaData::setValue(IWMPMedia *media, const QString &key, const QVariant
         media->setItemInfo(QAutoBStr(key), QAutoBStr(value.toString()));
 }
 
-QMediaResourceList QWmpMetaData::resources(IWMPMedia *media)
+QMediaSource QWmpMetaData::resources(IWMPMedia *media)
 {
     QMediaResourceList resources;
 

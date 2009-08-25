@@ -72,14 +72,14 @@ QMediaPlayer::MediaStatus MpdPlayerControl::mediaStatus() const
 }
 
 
-QMediaResourceList MpdPlayerControl::currentResources() const
+QMediaSource MpdPlayerControl::currentSource() const
 {
-    return QMediaResourceList();
+    return QMediaSource();
 }
 
-void MpdPlayerControl::setCurrentResources(const QMediaResourceList &resources)
+void MpdPlayerControl::setCurrentSource(const QMediaSource &source)
 {
-    Q_UNUSED(resources);
+    Q_UNUSED(source);
 }
 
 

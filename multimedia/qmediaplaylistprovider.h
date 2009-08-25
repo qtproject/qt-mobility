@@ -37,7 +37,7 @@
 
 #include <QObject>
 
-#include "qmediaresource.h"
+#include "qmediasource.h"
 
 class QString;
 
@@ -55,12 +55,12 @@ public:
     virtual bool save(QIODevice * device, const char *format);
 
     virtual int size() const = 0;
-    virtual QMediaResourceList resources(int index) const = 0;
+    virtual QMediaSource resources(int index) const = 0;
 
     virtual bool isReadOnly() const;
 
-    virtual bool appendItem(const QMediaResourceList &resource);
-    virtual bool insertItem(int index, const QMediaResourceList &resources);
+    virtual bool appendItem(const QMediaSource &source);
+    virtual bool insertItem(int index, const QMediaSource &source);
     virtual bool removeItem(int pos);
     virtual bool removeItems(int start, int end);
     virtual bool clear();

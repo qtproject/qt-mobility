@@ -45,9 +45,10 @@ class Q_MEDIA_EXPORT QMediaPlaylistNavigator : public QObject
     Q_OBJECT
     Q_PROPERTY(QMediaPlaylist::PlaybackMode playbackMode READ playbackMode WRITE setPlaybackMode NOTIFY playbackModeChanged)
     Q_PROPERTY(int currentPosition READ currentPosition WRITE jump NOTIFY currentPositionChanged)
-    Q_PROPERTY(QMediaResourceList currentItem READ currentItem NOTIFY currentItemChanged)
-    Q_PROPERTY(QMediaResourceList nextItem READ nextItem)
-    Q_PROPERTY(QMediaResourceList previousItem READ previousItem)
+    Q_PROPERTY(QMediaSource currentItem READ currentItem NOTIFY currentItemChanged)
+    Q_PROPERTY(QMediaSource nextItem READ nextItem)
+    Q_PROPERTY(QMediaSource previousItem READ previousItem)
+
 public:
 
     QMediaPlaylistNavigator(QMediaPlaylistProvider *playlist, QObject *parent = 0);
@@ -58,11 +59,11 @@ public:
 
     QMediaPlaylist::PlaybackMode playbackMode() const;
 
-    QMediaResourceList currentItem() const;
-    QMediaResourceList nextItem(int steps = 1) const;
-    QMediaResourceList previousItem(int steps = 1) const;
+    QMediaSource currentItem() const;
+    QMediaSource nextItem(int steps = 1) const;
+    QMediaSource previousItem(int steps = 1) const;
 
-    QMediaResourceList itemAt(int position) const;
+    QMediaSource itemAt(int position) const;
 
     int currentPosition() const;
     int nextPosition(int steps = 1) const;
@@ -77,7 +78,7 @@ public Q_SLOTS:
     void setPlaybackMode(QMediaPlaylist::PlaybackMode mode);
 
 Q_SIGNALS:
-    void activated(const QMediaResourceList &resources);
+    void activated(const QMediaSource &source);
     void currentPositionChanged(int);
     void playbackModeChanged(QMediaPlaylist::PlaybackMode mode);
 

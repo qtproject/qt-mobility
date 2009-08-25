@@ -148,19 +148,19 @@ void QGstreamerPlayerControl::setMuted(bool muted)
     m_session->setMuted(muted);
 }
 
-QMediaResourceList QGstreamerPlayerControl::currentResources() const
+QMediaSource QGstreamerPlayerControl::currentSource() const
 {
     return m_currentResource;
 }
 
-void QGstreamerPlayerControl::setCurrentResources(const QMediaResourceList &resources)
+void QGstreamerPlayerControl::setCurrentSource(const QMediaSource &source)
 {
-    m_currentResource = resources;
+    m_currentResource = source;
 
     QUrl url;
 
-    if (!resources.isEmpty())
-        url = resources.first().uri();
+    if (!source.isNull())
+        url = source.contentUri();
 
     m_session->stop();
     m_session->load(url);

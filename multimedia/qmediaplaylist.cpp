@@ -179,7 +179,8 @@ int QMediaPlaylist::currentPosition() const
 /*!
   Returns the current media source.
 */
-QMediaResourceList QMediaPlaylist::currentResources() const
+
+QMediaSource QMediaPlaylist::currentSource() const
 {
     return d_func()->playlist()->resources(currentPosition());
 }
@@ -216,15 +217,17 @@ bool QMediaPlaylist::isReadOnly() const
 /*!
     Returns the primary resource for the media item at index \a position.
 */
+
 QMediaResource QMediaPlaylist::resource(int position) const
 {
-    return resources(position).value(0);
+    return resources(position).contentResource();
 }
 
 /*!
   Returns the media source at index \a position in the playlist.
-  */
-QMediaResourceList QMediaPlaylist::resources(int position) const
+*/
+
+QMediaSource QMediaPlaylist::resources(int position) const
 {
     return d_func()->playlist()->resources(position);
 }
@@ -233,7 +236,8 @@ QMediaResourceList QMediaPlaylist::resources(int position) const
   Append the media \a source to the playlist.
 
   Returns true if the operation is successfull, other wise return false.
-  */
+*/
+
 bool QMediaPlaylist::appendItem(const QMediaResource &resource)
 {
     return !resource.isNull()
@@ -246,16 +250,17 @@ bool QMediaPlaylist::appendItem(const QMediaResource &resource)
 
   Returns true if the operation is successfull, other wise return false.
   */
-bool QMediaPlaylist::appendItem(const QMediaResourceList &resources)
+bool QMediaPlaylist::appendItem(const QMediaSource &source)
 {
-    return d_func()->control->playlistProvider()->appendItem(resources);
+    return d_func()->control->playlistProvider()->appendItem(source);
 }
 
 /*!
   Insert the media \a source to the playlist at position \a pos.
 
   Returns true if the operation is successfull, other wise return false.
-  */
+*/
+
 bool QMediaPlaylist::insertItem(int pos, const QMediaResource &resource)
 {
     return !resource.isNull()
@@ -263,9 +268,9 @@ bool QMediaPlaylist::insertItem(int pos, const QMediaResource &resource)
             : false;
 }
 
-bool QMediaPlaylist::insertItem(int index, const QMediaResourceList &resources)
+bool QMediaPlaylist::insertItem(int index, const QMediaSource &source)
 {
-    return d_func()->playlist()->insertItem(index, resources);
+    return d_func()->playlist()->insertItem(index, source);
 }
 
 /*!

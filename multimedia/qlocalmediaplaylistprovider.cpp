@@ -60,32 +60,33 @@ int QLocalMediaPlaylistProvider::size() const
     return d_func()->resources.size();
 }
 
-QMediaResourceList QLocalMediaPlaylistProvider::resources(int pos) const
+QMediaSource QLocalMediaPlaylistProvider::resources(int pos) const
 {
     return d_func()->resources.value(pos);
 }
 
-bool QLocalMediaPlaylistProvider::appendItem(const QMediaResourceList &resources)
+bool QLocalMediaPlaylistProvider::appendItem(const QMediaSource &source)
 {
     Q_D(QLocalMediaPlaylistProvider);
 
     int pos = d->resources.count();
+    /*
 
     emit itemsAboutToBeInserted(pos, pos+resources.size()-1);
     d->resources.append(resources);
     emit itemsInserted(pos, pos+resources.size()-1);
-
+*/
     return true;
 }
 
-bool QLocalMediaPlaylistProvider::insert(int pos, const QMediaResourceList &resources)
+bool QLocalMediaPlaylistProvider::insert(int pos, const QMediaSource &source)
 {
     Q_D(QLocalMediaPlaylistProvider);
-
+/*
     emit itemsAboutToBeInserted(pos, pos);
     d->resources.insert(pos, resources);
     emit itemsInserted(pos,pos);
-
+*/
     return true;
 }
 

@@ -32,35 +32,41 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCALMEDIAPAYLISTPROVIDER_H
-#define QLOCALMEDIAPAYLISTPROVIDER_H
+#ifndef QMEDIASOURCE_H
+#define QMEDIASOURCE_H
 
-#include "qmediaplaylistprovider.h"
+#include <QtCore/qshareddata.h>
 
-class QLocalMediaPlaylistProviderPrivate;
-class Q_MEDIA_EXPORT QLocalMediaPlaylistProvider : public QMediaPlaylistProvider
+#include <qmediaresource.h>
+
+#include "qmultimediaglobal.h"
+
+
+class QMediaSourcePrivate;
+class Q_MEDIA_EXPORT QMediaSource
 {
-    Q_OBJECT
 public:
-    QLocalMediaPlaylistProvider(QObject *parent=0);
-    virtual ~QLocalMediaPlaylistProvider();
+    QMediaSource();
+    QMediaSource(const QUrl &contentUrl);
+    QMediaSource(const QMediaResource &contentResource);
+    QMediaSource(const QMediaResourceList &resources);
+    QMediaSource(const QMediaSource &other);
+    ~QMediaSource();
 
-    virtual int size() const;
-    virtual QMediaSource resources(int pos) const;
+    QMediaSource& operator=(const QMediaSource &other);
 
-    virtual bool isReadOnly() const;
+    bool operator==(const QMediaSource &other) const;
+    bool operator!=(const QMediaSource &other) const;
 
-    virtual bool appendItem(const QMediaSource &source);
-    virtual bool insert(int pos, const QMediaSource &source);
-    virtual bool remove(int pos);
-    virtual bool remove(int start, int end);
-    virtual bool clear();
+    bool isNull() const;
 
-public slots:
-    virtual void shuffle();
+    QUrl contentUri() const;
+    QMediaResource contentResource() const;
+
+    QMediaResourceList resources(QMediaResource::ResourceRole role) const;
 
 private:
-    Q_DECLARE_PRIVATE(QLocalMediaPlaylistProvider)
+    QSharedDataPointer<QMediaSourcePrivate> d;
 };
 
-#endif // QLOCALMEDIAPAYLISTSOURCE_H
+#endif  // QMEDIASOURCE_H

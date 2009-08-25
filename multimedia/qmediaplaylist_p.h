@@ -92,11 +92,8 @@ public:
         m_navigator = new QMediaPlaylistNavigator(playlist,this);
         m_navigator->setPlaybackMode(QMediaPlaylist::Linear);
 
-        connect(m_navigator, SIGNAL(activated(QMediaResourceList)),
-                this, SLOT(play(QMediaResourceList)));
-
-        connect(m_navigator, SIGNAL(currentPositionChanged(int)),
-                this, SIGNAL(playlistPositionChanged(int)));
+        connect(m_navigator, SIGNAL(activated(QMediaSource)), SLOT(play(QMediaSource)));
+        connect(m_navigator, SIGNAL(currentPositionChanged(int)), SIGNAL(playlistPositionChanged(int)));
 
         if (m_player)
             connect(m_player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
@@ -128,10 +125,10 @@ public slots:
             m_navigator->advance();
     }
 
-    void play(const QMediaResourceList& resources)
+    void play(const QMediaSource& source)
     {
         if (m_player) {
-            m_player->setCurrentResources(resources);
+            m_player->setCurrentSource(source);
             m_player->play();
         }
     }

@@ -88,10 +88,10 @@ int MpdPlaylistSource::size() const
     return d_func()->entries;
 }
 
-QMediaResourceList MpdPlaylistSource::resources(int pos) const
+QMediaSource MpdPlaylistSource::resources(int pos) const
 {
     Q_ASSERT(size() >= pos);
-    return QMediaResourceList();
+    return QMediaSource();
 }
 
 bool MpdPlaylistSource::isReadOnly() const
@@ -99,12 +99,12 @@ bool MpdPlaylistSource::isReadOnly() const
     return false;
 }
 
-bool MpdPlaylistSource::appendItem(const QMediaResourceList &resource)
+bool MpdPlaylistSource::appendItem(const QMediaSource &source)
 {
     return false;
 }
 
-bool MpdPlaylistSource::insertItem(int pos, const QMediaResourceList &resource)
+bool MpdPlaylistSource::insertItem(int pos, const QMediaSource &source)
 {
     return false;
 }

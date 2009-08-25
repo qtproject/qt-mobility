@@ -168,19 +168,19 @@ void QPhononPlayerControl::setMuted(bool muted)
     m_audioOutput->setMuted(muted);
 }
 
-QMediaResourceList QPhononPlayerControl::currentResources() const
+QMediaSource QPhononPlayerControl::currentSource() const
 {
     return m_resources;
 }
 
-void QPhononPlayerControl::setCurrentResources(const QMediaResourceList &resources)
+void QPhononPlayerControl::setCurrentSource(const QMediaSource &source)
 {
-    m_resources = resources;
+    m_resources = source;
 
     QUrl url;
 
-    if (!resources.isEmpty())
-        url = resources.first().uri();
+    if (!source.isNull())
+        url = source.contentUri();
 
     m_session->stop();
     m_session->setCurrentSource(url);

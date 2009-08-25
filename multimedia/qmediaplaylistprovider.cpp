@@ -139,9 +139,9 @@ bool QMediaPlaylistProvider::isReadOnly() const
 
   Returns true if the operation is successfull, other wise return false.
 */
-bool QMediaPlaylistProvider::appendItem(const QMediaResourceList &resources)
+bool QMediaPlaylistProvider::appendItem(const QMediaSource &source)
 {
-    Q_UNUSED(resources);
+    Q_UNUSED(source);
     return false;
 }
 
@@ -150,10 +150,10 @@ bool QMediaPlaylistProvider::appendItem(const QMediaResourceList &resources)
 
   Returns true if the operation is successfull, other wise return false.
 */
-bool QMediaPlaylistProvider::insertItem(int pos, const QMediaResourceList &resources)
+bool QMediaPlaylistProvider::insertItem(int pos, const QMediaSource &source)
 {
     Q_UNUSED(pos);
-    Q_UNUSED(resources);
+    Q_UNUSED(source);
     return false;
 }
 

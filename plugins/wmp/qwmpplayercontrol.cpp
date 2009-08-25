@@ -213,7 +213,7 @@ void QWmpPlayerControl::stop()
         m_controls->stop();
 }
 
-QMediaResourceList QWmpPlayerControl::currentResources() const
+QMediaSource QWmpPlayerControl::currentSource() const
 {
     QMediaResourceList resources;
 
@@ -225,10 +225,10 @@ QMediaResourceList QWmpPlayerControl::currentResources() const
     return resources;
 }
 
-void QWmpPlayerControl::setCurrentResources(const QMediaResourceList &resources)
+void QWmpPlayerControl::setCurrentSource(const QMediaSource &source)
 {
-    if (!resources.isEmpty())
-        setUrl(resources.first().uri());
+    if (!source.isNull())
+        setUrl(source.contentUri());
     else
         setUrl(QUrl());
 }

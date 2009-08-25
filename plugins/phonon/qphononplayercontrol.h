@@ -62,8 +62,8 @@ public:
     QMediaPlayer::State state() const;
     QMediaPlayer::MediaStatus mediaStatus() const;
 
-    QMediaResourceList currentResources() const;
-    void setCurrentResources(const QMediaResourceList &resources);
+    QMediaSource currentSource() const;
+    void setCurrentSource(const QMediaSource &resources);
 
     qint64 position() const;
     qint64 duration() const;
@@ -104,7 +104,7 @@ private:
     Phonon::AudioOutput *m_audioOutput;
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_mediaStatus;
-    QMediaResourceList m_resources;
+    QMediaSource m_resources;
 };
 
 #endif

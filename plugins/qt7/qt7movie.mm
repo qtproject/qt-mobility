@@ -157,12 +157,12 @@ void Qt7Movie::setVideoWidget(Qt7Widget *video)
     d->widget = video;
 }
 
-void Qt7Movie::setSource(QMediaResourceList const &resources)
+void Qt7Movie::setSource(QMediaSource const &source)
 {
     if (d->movie != nil)
         [d->movie release];
 
-    QUrl qurl = resources.value(0).uri();
+    QUrl qurl = source.contentUri();
     d->movie = [[QTMovie movieWithURL:[NSURL URLWithString:[NSString stringWithUTF8String:qurl.toEncoded().constData()]]
                                 error:nil] retain];
 }

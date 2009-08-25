@@ -159,9 +159,9 @@ bool QMediaPlayer::isValid() const
 }
 
 
-QMediaResourceList QMediaPlayer::currentMediaResources() const
+QMediaSource QMediaPlayer::currentMediaSource() const
 {
-    return d_func()->control->currentResources();
+    return d_func()->control->currentSource();
 }
 
 /*!
@@ -543,9 +543,9 @@ QMediaPlayerService* createMediaPlayerService(QMediaServiceProvider *provider)
 */
 
 /*!
-    \fn void QMediaPlayer::currentMediaResourcesChanged(const QMediaResourceList &resources)
+    \fn void QMediaPlayer::currentMediaSource(const QMediaSource &source)
 
-    Signals that the current media \a resources have changed.
+    Signals that the current media \a source has changed.
 
     \sa playlistPositionChanged()
 */
