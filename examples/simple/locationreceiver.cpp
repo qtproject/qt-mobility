@@ -30,11 +30,13 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <QtCore>
+
 #include <qgeopositioninfosource.h>
 
 #include "locationreceiver.h"
 
-LocationReceiver::LocationReceiver(QObject *parent = 0)
+LocationReceiver::LocationReceiver(QObject *parent)
     : QObject(parent)
 {
     QGeoPositionInfoSource *source = QGeoPositionInfoSource::createSource();
