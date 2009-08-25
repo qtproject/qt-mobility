@@ -459,6 +459,8 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
                         QString result = rx.readAll();
                         if(result.contains(dir)) {
                             return QSystemNetworkInfo::Connected;
+                        } else {
+                            return QSystemNetworkInfo::NoNetworkAvailable;
                         }
                     }
                 }
@@ -479,6 +481,8 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
                         QString result = rx.readAll();
                         if(result.contains(dir)) {
                             return QSystemNetworkInfo::Connected;
+                        } else {
+                            return QSystemNetworkInfo::NoNetworkAvailable;
                         }
                     }
                 }
@@ -488,7 +492,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
     case QSystemNetworkInfo::WimaxMode:
         break;
     };
-    return QSystemNetworkInfo::NoNetworkAvailable;
+    return QSystemNetworkInfo::UndefinedStatus;
 }
 
 int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
