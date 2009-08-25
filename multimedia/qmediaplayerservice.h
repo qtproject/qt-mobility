@@ -54,5 +54,6 @@ protected:
 };
 
 #define QMediaPlayerService_iid "com.nokia.Qt.QMediaPlayerService/1.0"
+#define QRemoteMediaPlayerService_iid "com.nokia.Qt.QRemoteMediaPlayerService/1.0"
 
 #endif  // QMEDIAPLAYERSERVICE_H

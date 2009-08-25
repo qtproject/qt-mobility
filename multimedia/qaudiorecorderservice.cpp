@@ -32,43 +32,13 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qstring.h>
-#include <QtCore/qdebug.h>
+#include "qaudiorecorderservice.h"
 
-#include "qphononserviceplugin.h"
-#include "qphononplayerservice.h"
-
-#include <qmediaserviceprovider.h>
-
-
-class QPhononProvider : public QMediaServiceProvider
+QAudioRecorderService::QAudioRecorderService(QObject *parent)
+    : QAbstractMediaService(parent)
 {
-    Q_OBJECT
-public:
-    QObject* createObject(const char *interface) const
-    {
-        if (QLatin1String(interface) == QLatin1String(QMediaPlayerService_iid))
-            return new QPhononPlayerService;
-
-        return 0;
-    }
-};
-
-QStringList QPhononServicePlugin::keys() const
-{
-    return QStringList() << "mediaplayer";
 }
 
-QMediaServiceProvider* QPhononServicePlugin::create(QString const& key)
+QAudioRecorderService::~QAudioRecorderService()
 {
-    if (key == "mediaplayer")
-        return new QPhononProvider;
-
-    qDebug() << "unsupported key:" << key;
-    return 0;
 }
-
-#include "qphononserviceplugin.moc"
-
-Q_EXPORT_PLUGIN2(gst_serviceplugin, QPhononServicePlugin);
-

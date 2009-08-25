@@ -54,14 +54,14 @@ public:
     QObject* createObject(const char *interface) const
     {
 #ifdef QMEDIA_GSTREAMER_PLAYER
-        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.MediaPlayer/1.0"))
+        if (QLatin1String(interface) == QLatin1String(QMediaPlayerService_iid))
             return new QGstreamerPlayerService;
 #endif
 #ifdef QMEDIA_GSTREAMER_CAPTURE
-        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.AudioRecorder/1.0"))
+        if (QLatin1String(interface) == QLatin1String(QAudioRecorderService_iid))
             return new QGstreamerCaptureService(interface);
 
-        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.Camera/1.0"))
+        if (QLatin1String(interface) == QLatin1String(QCameraService_iid))
             return new QGstreamerCaptureService(interface);
 #endif
         return 0;

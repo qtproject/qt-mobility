@@ -38,9 +38,9 @@
 
 QObject *QWmpServiceProvider::createObject(const char *iid) const
 {
-    if (qstrcmp(iid, "com.nokia.qt.MediaPlayer/1.0") == 0)
+    if (qstrcmp(iid, QMediaPlayerService_iid) == 0)
         return new QWmpPlayerService(QWmpPlayerService::LocalEmbed);
-    else if (qstrcmp(iid, "com.nokia.qt.RemoteMediaPlayer/1.0") == 0)
+    else if (qstrcmp(iid, QRemoteMediaPlayerService_iid) == 0)
         return new QWmpPlayerService(QWmpPlayerService::RemoteEmbed);
     return 0;
 }
