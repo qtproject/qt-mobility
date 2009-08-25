@@ -163,7 +163,10 @@ public:
     virtual QMessage replyToAll() const;
     virtual QMessage forward() const;
 
-private:
+// TODO: Why is there no setParentFolderId()?
+//private:
+    friend class QMessageStore;
+
     QMessagePrivate *d_ptr;
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(QMessage::TypeFlags)

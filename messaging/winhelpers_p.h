@@ -80,6 +80,8 @@ public:
     uint messageCount() { return _messageCount; }
     LPMAPITABLE subFolders(QMessageStore::ErrorCode *lastError) { if (!_init) findSubFolders(lastError); return _subFolders; }
 
+    LPMESSAGE openMessage(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId);
+
     static MapiFolderPtr null() { return MapiFolderPtr(new MapiFolder()); }
 
 private:
@@ -138,6 +140,7 @@ public:
     HRESULT openEntry(QMessageStore::ErrorCode *lastError, MapiEntryId entryId, LPUNKNOWN *unknown) const;
     MapiStorePtr findStore(QMessageStore::ErrorCode *lastError, const QMessageAccountId &id = QMessageAccountId()) const;
     MapiStorePtr defaultStore(QMessageStore::ErrorCode *lastError) { return findStore(lastError); }
+    QList<MapiStorePtr> allStores(QMessageStore::ErrorCode *lastError) const;
     QMessage message(QMessageStore::ErrorCode *lastError, const QMessageId& id) const;
     QByteArray attachmentData(QMessageStore::ErrorCode *lastError, const QMessageId& id, ULONG number) const;
     static MapiSessionPtr null() { return MapiSessionPtr(new MapiSession()); }

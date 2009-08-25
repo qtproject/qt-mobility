@@ -35,6 +35,7 @@
 #include <qmessageaccountid.h>
 #include <qmessagefolderid.h>
 #include <qmessageid.h>
+#include <qmessage_p.h>
 #include <qmessagestore.h>
 #include <QDataStream>
 #include <QFile>
@@ -843,7 +844,149 @@ QMessageFolderId addFolder(const Parameters &params)
 
 QMessageId addMessage(const Parameters &params)
 {
-    Q_UNUSED(params)
+    QString parentAccountName(params["parentAccountName"]);
+    QString parentFolderPath(params["parentFolderPath"]);
+    QString to(params["to"]);
+    QString from(params["from"]);
+    QString date(params["date"]);
+    QString receivedDate(params["receivedDate"]);
+    QString subject(params["subject"]);
+    QString text(params["text"]);
+    QString priority(params["priority"]);
+    QString size(params["size"]);
+    QString type(params["type"]);
+    QString read(params["status-read"]);
+    QString hasAttachments(params["status-hasAttachments"]);
+
+    if (!to.isEmpty() && !from.isEmpty() && !date.isEmpty() && !subject.isEmpty() &&
+        !parentAccountName.isEmpty() && !parentFolderPath.isEmpty()) {
+        // Find the named account
+        QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilterKey::name(parentAccountName)));
+#if defined(Q_OS_WIN) && !defined(ACCOUNT_FILTERING_IMPLEMENTED)
+{
+    // Keys aren't implemented yet...
+    QMessageAccountIdList::iterator it = accountIds.begin(), end = accountIds.end();
+    while (it != end) {
+        QMessageAccount acct(*it);
+        if (acct.name() == parentAccountName) {
+            accountIds.clear();
+            accountIds.append(acct.id());
+            break;
+        }
+        if (++it == end) {
+            accountIds.clear();
+        }
+    }
+}
+#endif
+        if (accountIds.count() == 1) {
+            // Find the specified folder
+            QMessageFolderFilterKey key(QMessageFolderFilterKey::path(parentFolderPath) & QMessageFolderFilterKey::parentAccountId(accountIds.first()));
+            QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders(key));
+#if defined(Q_OS_WIN) && !defined(FOLDER_FILTERING_IMPLEMENTED)
+{
+    // Keys aren't implemented yet...
+    QMessageFolderIdList::iterator it = folderIds.begin(), end = folderIds.end();
+    while (it != end) {
+        QMessageFolder fldr(*it);
+        if ((fldr.path() == parentFolderPath) && (fldr.parentAccountId() == accountIds.first())) {
+            folderIds.clear();
+            folderIds.append(fldr.id());
+            break;
+        }
+        if (++it == end) {
+            folderIds.clear();
+        }
+    }
+}
+#endif
+            if (folderIds.count() == 1) {
+                QMessage message;
+
+                message.setParentAccountId(accountIds.first());
+                // TODO: is this to be added?
+                //message.setParentFolderId(folderIds.first());
+                message.d_ptr->_parentFolderId = folderIds.first();
+
+                /*
+                message.setTo(QMailAddress::fromStringList(to));
+                message.setFrom(QMailAddress(from));
+                */
+                message.setSubject(subject);
+
+                /*
+                QDateTime dt(QDateTime::fromString(date, Qt::ISODate));
+                dt.setTimeSpec(Qt::UTC);
+                message.setDate(QMailTimeStamp(dt));
+
+                if (type.isEmpty()) {
+                    message.setMessageType(QMailMessage::Email);
+                } else {
+                    if (type.toLower() == "mms") {
+                        message.setMessageType(QMailMessage::Mms);
+                    } else if (type.toLower() == "sms") {
+                        message.setMessageType(QMailMessage::Sms);
+                    } else if (type.toLower() == "xmpp") {
+                        message.setMessageType(QMailMessage::Instant);
+                    } else {
+                        message.setMessageType(QMailMessage::Email);
+                    }
+                }
+
+                if (!receivedDate.isEmpty()) {
+                    QDateTime dt(QDateTime::fromString(receivedDate, Qt::ISODate));
+                    dt.setTimeSpec(Qt::UTC);
+                    message.setReceivedDate(QMailTimeStamp(dt));
+                }
+
+                if (!priority.isEmpty()) {
+                    if (priority.toLower() == "high") {
+                        message.setStatus(QmfHelpers::highPriorityMask(), true);
+                    } else if (priority.toLower() == "low") {
+                        message.setStatus(QmfHelpers::lowPriorityMask(), true);
+                    }
+                }
+
+                if (!size.isEmpty()) {
+                    message.setSize(size.toUInt());
+                }
+
+                if (!text.isEmpty()) {
+                    QMailMessageContentType ct("text/plain; charset=UTF-8");
+                    message.setBody(QMailMessageBody::fromData(text, ct, QMailMessageBody::Base64));
+                    message.setStatus(QMailMessage::ContentAvailable, true);
+                }
+
+                if (read.toLower() == "true") {
+                    message.setStatus(QMailMessage::Read, true);
+                }
+
+                if (hasAttachments.toLower() == "true") {
+                    message.setStatus(QMailMessage::HasAttachments, true);
+                }
+
+                Parameters::const_iterator it = params.begin(), end = params.end();
+                for ( ; it != end; ++it) {
+                    if (it.key().startsWith("custom-")) {
+                        message.setCustomField(it.key().mid(7), it.value());
+                    }
+                }
+                */
+
+                if (!QMessageStore::instance()->addMessage(&message)) {
+                    qWarning() << "Unable to addMessage:" << to << from << date << subject;
+                } else {
+                    return message.id();
+                }
+            } else {
+                qWarning() << "Unable to locate parent folder:" << parentFolderPath;
+            }
+        } else {
+            qWarning() << "Unable to locate parent account:" << parentAccountName;
+        }
+    } else {
+        qWarning() << "Necessary information missing";
+    }
 
     return QMessageId();
 }

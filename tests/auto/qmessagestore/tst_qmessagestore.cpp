@@ -189,12 +189,6 @@ void tst_QMessageStore::testFolder()
 
 void tst_QMessageStore::testMessage_data()
 {
-    /*
-    QTest::addColumn<QString>("fileName");
-
-    QTest::newRow("1") << "1.txt";
-    */
-
     QTest::addColumn<QString>("to");
     QTest::addColumn<QString>("from");
     QTest::addColumn<QString>("date");
@@ -216,21 +210,59 @@ void tst_QMessageStore::testMessage()
 
     QMessageAccountId testAccountId;
     QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilterKey::name(testAccountName)));
+#if defined(Q_OS_WIN) && !defined(ACCOUNT_FILTERING_IMPLEMENTED)
+{
+    // Key filtering is not implemented yet
+    QMessageAccountIdList::iterator it = accountIds.begin(), end = accountIds.end();
+    while (it != end) {
+        QMessageAccount acct(*it);
+        if (acct.name() == testAccountName) {
+            accountIds.clear();
+            accountIds.append(acct.id());
+            break;
+        }
+        if (++it == end) {
+            accountIds.clear();
+        }
+    }
+}
+#endif
     if (accountIds.isEmpty()) {
         Support::Parameters p;
         p.insert("name", testAccountName);
         testAccountId = Support::addAccount(p);
     } else {
         testAccountId = accountIds.first();
+        QMessageAccount acc(testAccountId);
     }
     QVERIFY(testAccountId.isValid());
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolderId testFolderId;
-    QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders(QMessageFolderFilterKey::parentAccountId(testAccountId)));
+    QMessageFolderFilterKey key(QMessageFolderFilterKey::displayName("Inbox") & QMessageFolderFilterKey::parentAccountId(testAccountId));
+    QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders(key));
+#if defined(Q_OS_WIN) && !defined(FOLDER_FILTERING_IMPLEMENTED)
+{
+    // Key filtering is not implemented yet
+    QMessageFolderIdList::iterator it = folderIds.begin(), end = folderIds.end();
+    while (it != end) {
+        QMessageFolder fldr(*it);
+        if ((fldr.parentAccountId() == accountIds.first()) && (fldr.displayName() == "Inbox")) {
+            folderIds.clear();
+            folderIds.append(fldr.id());
+            break;
+        }
+        if (++it == end) {
+            folderIds.clear();
+        }
+    }
+}
+#endif
     if (folderIds.isEmpty()) {
         Support::Parameters p;
-        p.insert("path", "INBOX");
+        p.insert("path", "Inbox");
+        p.insert("displayName", "Inbox");
+        p.insert("parentAccountName", testAccountName);
         testFolderId = Support::addFolder(p);
     } else {
         testFolderId = folderIds.first();
@@ -238,15 +270,7 @@ void tst_QMessageStore::testMessage()
     QVERIFY(testFolderId.isValid());
 
     QMessageFolder testFolder(testFolderId);
-
 #endif
-    /*
-    QFETCH(QString, fileName);
-
-    QString path(SRCDIR "/testdata/" + fileName);
-
-    QMessage message(QMessage::fromTransmissionFormatFile(QMessage::Email, path));
-    */
 
     QFETCH(QString, to);
     QFETCH(QString, from);
