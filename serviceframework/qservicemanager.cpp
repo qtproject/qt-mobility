@@ -449,7 +449,7 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     the service is already registered and implements any of the same interface
     versions that the new plugin implements.
 
-    \sa setInterfaceDefault()
+    \sa removeService(), setInterfaceDefault()
 */
 bool QServiceManager::addService(const QString& xmlFilePath)
 {
@@ -480,7 +480,7 @@ bool QServiceManager::addService(const QString& xmlFilePath)
     Services are always added based on the \l scope() of the current 
     service manager instance.
 
-    \sa setInterfaceDefault()
+    \sa removeService(), setInterfaceDefault()
 */
 bool QServiceManager::addService(QIODevice *device)
 {
@@ -528,6 +528,8 @@ bool QServiceManager::addService(QIODevice *device)
 
     Services are always removed based on the \l scope() of the current 
     service manager instance.
+
+    \sa addService()
 */
 bool QServiceManager::removeService(const QString& serviceName)
 {
