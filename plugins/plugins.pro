@@ -12,7 +12,7 @@ win32 {
 
 mac: SUBDIRS += qt7
 
-unix:contains(QT_CONFIG, alsa) {
+unix: {
     TMP_GST_LIBS = \
         gstreamer-0.10 >= 0.10.19 \
         gstreamer-base-0.10 >= 0.10.19 \

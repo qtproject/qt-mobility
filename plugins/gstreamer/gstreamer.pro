@@ -13,8 +13,11 @@ INCLUDEPATH += . \
     ../../multimedia \
     ../../multimedia/endpoints
 
+unix:contains(QT_CONFIG, alsa) {
+DEFINES += HAVE_ALSA
 LIBS += \
     -lasound
+}
 
 CONFIG += link_pkgconfig
 
