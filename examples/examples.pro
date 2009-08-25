@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS += simple logfilepositionsource
+SUBDIRS += simple logfilepositionsource fetchgooglemaps
