@@ -180,6 +180,13 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
        break;
     case QSystemInfo::ServiceFramework :
         {
+           /*
+           //#include <QServiceInterfaceDescriptor>
+             // -lQtServiceFramework
+             QServiceInterfaceDescriptor service;
+             return QString::number(service.majorVersion) +"."+
+             QString::number(service.minorVersion);
+             */
         }
        break;
     case QSystemInfo::WrtExtensions :
@@ -437,14 +444,48 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         break;
         case QSystemNetworkInfo::WcdmaMode:
         break;
-        case QSystemNetworkInfo::WlanMode:
+    case QSystemNetworkInfo::WlanMode:
         {
-
+            QString baseSysDir = "/sys/class/net/";
+            QDir wDir(baseSysDir);
+            QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
+            foreach(QString dir, dirs) {
+                QString devFile = baseSysDir + dir;
+                QFileInfo wiFi(devFile + "/wireless");
+                QFileInfo fi("/proc/net/route");
+                if(wiFi.exists() && fi.exists()) {
+                    QFile rx(fi.absoluteFilePath());
+                    if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                        QString result = rx.readAll();
+                        if(result.contains(dir)) {
+                            return QSystemNetworkInfo::Connected;
+                        }
+                    }
+                }
+            }
         }
         break;
-        case QSystemNetworkInfo::EthMode:
+    case QSystemNetworkInfo::EthMode:
+        {
+            QString baseSysDir = "/sys/class/net/";
+            QDir eDir(baseSysDir);
+            QStringList dirs = eDir.entryList(QStringList() << "eth*", QDir::AllDirs | QDir::NoDotAndDotDot);
+            foreach(QString dir, dirs) {
+                QString devFile = baseSysDir + dir;
+                QFileInfo fi("/proc/net/route");
+                if(fi.exists()) {
+                    QFile rx(fi.absoluteFilePath());
+                    if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                        QString result = rx.readAll();
+                        if(result.contains(dir)) {
+                            return QSystemNetworkInfo::Connected;
+                        }
+                    }
+                }
+            }
+        }
         break;
-        case QSystemNetworkInfo::WimaxMode:
+    case QSystemNetworkInfo::WimaxMode:
         break;
     };
     return QSystemNetworkInfo::NoNetworkAvailable;
@@ -482,6 +523,26 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
         }
         break;
     case QSystemNetworkInfo::EthMode:
+        {
+            QString result;
+            QString baseSysDir = "/sys/class/net/";
+            QDir eDir(baseSysDir);
+            QStringList dirs = eDir.entryList(QStringList() << "eth*", QDir::AllDirs | QDir::NoDotAndDotDot);
+            foreach(QString dir, dirs) {
+                QString devFile = baseSysDir + dir;
+                QFileInfo fi(devFile + "/carrier");
+                if(fi.exists()) {
+                    QFile rx(fi.absoluteFilePath());
+                    if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                        QTextStream in(&rx);
+                        in >> result;
+                        rx.close();
+                        return result.toInt() * 100;
+
+                    }
+                }
+            }
+        }
         break;
     case QSystemNetworkInfo::WimaxMode:
         break;
