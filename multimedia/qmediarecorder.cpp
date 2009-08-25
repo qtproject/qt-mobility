@@ -117,17 +117,21 @@ void QMediaRecorderPrivate::_q_error(int error, const QString &errorString)
     this->errorString = errorString;
 
     emit q->error(this->error);
-    emit q->errorStringChanged(this->errorString);
 }
 
 /*!
-    Construct a media recorder object with \a service and \a parent.
+    Construct a media recorder object with \a parent.
+
+    The QMediaRecorder will use a default recording service.
 */
 
-QMediaRecorder::QMediaRecorder(QAbstractMediaService *service, QObject *parent)
-    :QAbstractMediaObject(*new QMediaRecorderPrivate(service), parent)
+QMediaRecorder::QMediaRecorder(QObject *parent):
+    QAbstractMediaObject(*new QMediaRecorderPrivate(0), parent)
 {
     Q_D(QMediaRecorder);
+
+    d->service = createMediaCaptureService();
+    d->control = qobject_cast<QMediaRecorderControl*>(d->service->control(QMediaRecorderControl_iid));
 
     if (d->control) {
         connect(d->control, SIGNAL(stateChanged(QMediaRecorder::State)), SLOT(_q_stateChanged(QMediaRecorder::State)));
@@ -139,8 +143,8 @@ QMediaRecorder::QMediaRecorder(QAbstractMediaService *service, QObject *parent)
     Construct a media recorder object with \a mediaObject and \a parent.
 */
 
-QMediaRecorder::QMediaRecorder(QAbstractMediaObject *mediaObject, QObject *parent)
-    :QAbstractMediaObject(*new QMediaRecorderPrivate(mediaObject->service()), parent)
+QMediaRecorder::QMediaRecorder(QAbstractMediaObject *mediaObject, QObject *parent):
+    QAbstractMediaObject(*new QMediaRecorderPrivate(mediaObject->service()), parent)
 {
     Q_D(QMediaRecorder);
 
@@ -149,6 +153,22 @@ QMediaRecorder::QMediaRecorder(QAbstractMediaObject *mediaObject, QObject *paren
         connect(d->control, SIGNAL(error(int,QString)), SLOT(_q_error(int,QString)));
     }
 }
+
+/*!
+    Construct a media recorder object with \a service and \a parent.
+*/
+
+QMediaRecorder::QMediaRecorder(QAbstractMediaService *service, QObject *parent):
+    QAbstractMediaObject(*new QMediaRecorderPrivate(service), parent)
+{
+    Q_D(QMediaRecorder);
+
+    if (d->control) {
+        connect(d->control, SIGNAL(stateChanged(QMediaRecorder::State)), SLOT(_q_stateChanged(QMediaRecorder::State)));
+        connect(d->control, SIGNAL(error(int,QString)), SLOT(_q_error(int,QString)));
+    }
+}
+
 
 /*!
     Destruct the media recorder object.
@@ -224,18 +244,6 @@ QString QMediaRecorder::errorString() const
 }
 
 /*!
-    Clear the current error.
-*/
-
-void QMediaRecorder::unsetError()
-{
-    Q_D(QMediaRecorder);
-
-    d->error = NoError;
-    d->errorString = QString();
-}
-
-/*!
     \property QMediaRecorder::duration
     \brief Recorded media duration in milliseconds.
 */
@@ -256,6 +264,11 @@ qint64 QMediaRecorder::duration() const
 void QMediaRecorder::record()
 {
     Q_D(QMediaRecorder);
+
+    // reset error
+    d->error = NoError;
+    d->errorString = QString();
+
     if (d->control)
         d->control->record();
 }

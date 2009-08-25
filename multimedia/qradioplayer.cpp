@@ -71,6 +71,27 @@ public:
     QRadioPlayerControl* control;
 };
 
+QRadioPlayer::QRadioPlayer(QObject *parent):
+    QAbstractMediaObject(*new QRadioPlayerPrivate, parent)
+{
+    Q_D(QRadioPlayer);
+
+    d->service = createRadioService();
+    Q_ASSERT(d->service != 0);
+
+    d->control = d->service->control<QRadioPlayerControl*>();
+    connect(d->control, SIGNAL(bandChanged(QRadioPlayer::Band)), SIGNAL(bandChanged(QRadioPlayer::Band)));
+    connect(d->control, SIGNAL(frequencyChanged(int)), SIGNAL(frequencyChanged(int)));
+    connect(d->control, SIGNAL(stereoStatusChanged(bool)), SIGNAL(stereoStatusChanged(bool)));
+    connect(d->control, SIGNAL(searchingStatusChanged(bool)), SIGNAL(searchingStatusChanged(bool)));
+    connect(d->control, SIGNAL(signalStrengthChanged(int)), SIGNAL(signalStrengthChanged(int)));
+    connect(d->control, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
+    connect(d->control, SIGNAL(volumeChanged(int)), SIGNAL(volumeChanged(int)));
+    connect(d->control, SIGNAL(mutingChanged(bool)), SIGNAL(mutingChanged(bool)));
+
+    addPropertyWatch("duration");
+}
+
 /*!
     Contruct a QRadioPlayer object with \a service and \a parent.
 */
@@ -78,23 +99,20 @@ public:
 QRadioPlayer::QRadioPlayer(QRadioService* service, QObject *parent):
     QAbstractMediaObject(*new QRadioPlayerPrivate, parent)
 {
-    Q_ASSERT(service != 0);
-
     Q_D(QRadioPlayer);
 
     d->service = service;
-    d->control = service->control<QRadioPlayerControl*>();
+    Q_ASSERT(service != 0);
 
-    if(d->control) {
-        connect(d->control,SIGNAL(bandChanged(QRadioPlayer::Band)),this,SIGNAL(bandChanged(QRadioPlayer::Band)));
-        connect(d->control,SIGNAL(frequencyChanged(int)),this,SIGNAL(frequencyChanged(int)));
-        connect(d->control,SIGNAL(stereoStatusChanged(bool)),this,SIGNAL(stereoStatusChanged(bool)));
-        connect(d->control,SIGNAL(searchingStatusChanged(bool)),this,SIGNAL(searchingStatusChanged(bool)));
-        connect(d->control,SIGNAL(signalStrengthChanged(int)),this,SIGNAL(signalStrengthChanged(int)));
-        connect(d->control,SIGNAL(durationChanged(qint64)),this,SIGNAL(durationChanged(qint64)));
-        connect(d->control,SIGNAL(volumeChanged(int)),this,SIGNAL(volumeChanged(int)));
-        connect(d->control,SIGNAL(mutingChanged(bool)),this,SIGNAL(mutingChanged(bool)));
-    }
+    d->control = service->control<QRadioPlayerControl*>();
+    connect(d->control, SIGNAL(bandChanged(QRadioPlayer::Band)), SIGNAL(bandChanged(QRadioPlayer::Band)));
+    connect(d->control, SIGNAL(frequencyChanged(int)), SIGNAL(frequencyChanged(int)));
+    connect(d->control, SIGNAL(stereoStatusChanged(bool)), SIGNAL(stereoStatusChanged(bool)));
+    connect(d->control, SIGNAL(searchingStatusChanged(bool)), SIGNAL(searchingStatusChanged(bool)));
+    connect(d->control, SIGNAL(signalStrengthChanged(int)), SIGNAL(signalStrengthChanged(int)));
+    connect(d->control, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
+    connect(d->control, SIGNAL(volumeChanged(int)), SIGNAL(volumeChanged(int)));
+    connect(d->control, SIGNAL(mutingChanged(bool)), SIGNAL(mutingChanged(bool)));
 
     addPropertyWatch("duration");
 }

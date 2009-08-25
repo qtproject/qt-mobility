@@ -65,13 +65,12 @@ public:
         FormatError
     };
 
-    QMediaRecorder(QAbstractMediaService *service = createMediaCaptureService(), QObject *parent = 0);
+    QMediaRecorder(QObject *parent = 0);
     QMediaRecorder(QAbstractMediaObject *mediaObject, QObject *parent = 0);
-    virtual ~QMediaRecorder();
+    QMediaRecorder(QAbstractMediaService *service, QObject *parent = 0);
+    ~QMediaRecorder();
 
     bool isValid() const;
-
-    QAbstractMediaService* service() const;
 
     QUrl sink() const;
     bool setSink(const QUrl &sink);
@@ -80,9 +79,10 @@ public:
 
     Error error() const;
     QString errorString() const;
-    void unsetError();
 
     qint64 duration() const;
+
+    QAbstractMediaService* service() const;
 
 public slots:
     void record();
@@ -93,8 +93,6 @@ signals:
     void stateChanged(QMediaRecorder::State state);
     void durationChanged(qint64 duration);
     void error(QMediaRecorder::Error error);
-    void errorStringChanged(const QString &error);
-
 
 private:
     Q_DISABLE_COPY(QMediaRecorder)

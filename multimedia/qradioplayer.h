@@ -64,7 +64,8 @@ class Q_MEDIA_EXPORT QRadioPlayer : public QAbstractMediaObject
 public:
     enum Band { AM, FM, SW, LW };
 
-    QRadioPlayer(QRadioService *radioService = createRadioService(), QObject *parent = 0);
+    QRadioPlayer(QObject *parent = 0);
+    QRadioPlayer(QRadioService *radioService, QObject *parent = 0);
     ~QRadioPlayer();
 
     bool isValid() const;
