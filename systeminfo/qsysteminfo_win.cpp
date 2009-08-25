@@ -100,8 +100,7 @@ QSystemInfoPrivate::~QSystemInfoPrivate()
 // 2 letter ISO 639-1
 QString QSystemInfoPrivate::currentLanguage() const
 {////Win32_Product Language
-    return QLocale::system().name().left(2);
-    //return QString(setlocale(LC_ALL,NULL)).left(2);
+    return QString(setlocale(LC_ALL,NULL)).left(2);
 }
 
 // 2 letter ISO 639-1
@@ -109,7 +108,6 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 {
     QDir transDir(QLibraryInfo::location (QLibraryInfo::TranslationsPath));
     QStringList langList;
-
     if(transDir.exists()) {
         QStringList localeList = transDir.entryList( QStringList() << "qt_*.qm" ,QDir::Files
                                                      | QDir::NoDotAndDotDot, QDir::Name);
@@ -121,7 +119,7 @@ QStringList QSystemInfoPrivate::availableLanguages() const
         }
         return langList;
     }
-    return lgList;
+    return QStringList() << currentLanguage();
 }
 
 // "major.minor.build" format.
@@ -409,40 +407,125 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         break;
         case QSystemNetworkInfo::WcdmaMode:
         break;
-        case QSystemNetworkInfo::WlanMode:
+    case QSystemNetworkInfo::WlanMode:
         {
+            DWORD version =  0;
+            HANDLE clientHandle = NULL;
+            DWORD result;
 
+            PWLAN_INTERFACE_INFO_LIST interfacesInfoList = NULL;
+            result = WlanOpenHandle( 2, NULL, &version, &clientHandle );
+            if( result != ERROR_SUCCESS != result ) {
+                qWarning() << "Error opening Wlanapi" << result ;
+                return QSystemNetworkInfo::NoNetworkAvailable;
+            }
+            result = WlanEnumInterfaces(clientHandle, NULL, &interfacesInfoList);
+
+            if( result != ERROR_SUCCESS) {
+                qWarning() << "Error in enumerating wireless interfaces" << result;
+                return QSystemNetworkInfo::NoNetworkAvailable;
+            }
+
+            for( uint i = 0; i < interfacesInfoList->dwNumberOfItems; i++ ) {
+                PWLAN_INTERFACE_INFO interfaceInfo = &interfacesInfoList->InterfaceInfo[i];
+                GUID& guid = interfaceInfo->InterfaceGuid;
+                WLAN_INTERFACE_STATE wlanInterfaceState = interfaceInfo->isState;
+
+                if( wlanInterfaceState == wlan_interface_state_not_ready ) {
+                    qWarning() << "Interface not ready";
+                    continue;
+                }
+
+                ULONG size = 0;
+                PWLAN_CONNECTION_ATTRIBUTES   connAtts = NULL;
+                result = WlanQueryInterface( clientHandle, &guid,  wlan_intf_opcode_current_connection, NULL, &size, (PVOID *) &connAtts, NULL );
+                if( result != ERROR_SUCCESS ) {
+                    qWarning() << "Error querying wireless interfaces"<< result ;
+                    continue;
+                }
+
+                if(connAtts->isState  == wlan_interface_state_connected) {
+                    qWarning() << "Is connected";
+                    return QSystemNetworkInfo::Connected;
+                } else {
+                    qWarning() << "is not connected";
+                }
+                WlanFreeMemory(connAtts);
+            }
         }
         break;
         case QSystemNetworkInfo::EthMode:
+        {
+            WMIHelper *wHelper;
+            wHelper = new WMIHelper();
+            QVariant v = wHelper->getWMIData("root/cimv2", "Win32_NetworkConnection", "ConnectionState");
+            qWarning() << v.toString();
+        }
+        break;
+        case QSystemNetworkInfo::WimaxMode:
         break;
     };
-/*
-    HANDLE phClientHandle = NULL;
-    DWORD result;
-    DWORD pdwNegotiatedVersion = 0;
-
-    PWLAN_INTERFACE_INFO_LIST pIntfList = NULL;
-
-    result = WlanOpenHandle(WLAN_API_VERSION, NULL, &pdwNegotiatedVersion, &phClientHandle);
-    if( result != ERROR_SUCCESS ) {
-        qWarning() << "Error opening Wlanapi" << result ;
-        return false;
-    }
-
-    result = WlanEnumInterfaces(phClientHandle, NULL, &pIntfList);
-
-    if( result != ERROR_SUCCESS ) {
-        qWarning() << "Error in WlanEnumInterfaces" <<  result;
-        return false;
-    }
-*/
     return QSystemNetworkInfo::NoNetworkAvailable;
 }
 
 int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
-    Q_UNUSED(mode);
+    qWarning() << Q_FUNC_INFO << mode;
+    switch(mode) {
+        case QSystemNetworkInfo::GsmMode:
+        break;
+        case QSystemNetworkInfo::CdmaMode:
+        break;
+        case QSystemNetworkInfo::WcdmaMode:
+        break;
+    case QSystemNetworkInfo::WlanMode:
+        {
+            DWORD version =  0;
+            HANDLE clientHandle = NULL;
+            DWORD result;
+
+            PWLAN_INTERFACE_INFO_LIST interfacesInfoList = NULL;
+            result = WlanOpenHandle( 2, NULL, &version, &clientHandle );
+            if( result != ERROR_SUCCESS != result ) {
+                qWarning() << "Error opening Wlanapi" << result ;
+                return QSystemNetworkInfo::NoNetworkAvailable;
+            }
+            result = WlanEnumInterfaces(clientHandle, NULL, &interfacesInfoList);
+
+            if( result != ERROR_SUCCESS) {
+                qWarning() << "Error in enumerating wireless interfaces" << result;
+                return QSystemNetworkInfo::NoNetworkAvailable;
+            }
+
+            for( uint i = 0; i < interfacesInfoList->dwNumberOfItems; i++ ) {
+                PWLAN_INTERFACE_INFO interfaceInfo = &interfacesInfoList->InterfaceInfo[i];
+                GUID& guid = interfaceInfo->InterfaceGuid;
+                WLAN_INTERFACE_STATE wlanInterfaceState = interfaceInfo->isState;
+
+                if( wlanInterfaceState == wlan_interface_state_not_ready ) {
+                    qWarning() << "Interface not ready";
+                    continue;
+                }
+
+                ULONG size = 0;
+                PWLAN_CONNECTION_ATTRIBUTES  connAtts = NULL;
+                result = WlanQueryInterface( clientHandle, &guid,  wlan_intf_opcode_current_connection, NULL, &size, (PVOID*) &connAtts, NULL );
+
+                if( result != ERROR_SUCCESS ) {
+                    qWarning() << "Error querying wireless interfaces"<< result ;
+                    continue;
+                }
+               ulong sig =  connAtts->wlanAssociationAttributes.wlanSignalQuality;
+                WlanFreeMemory(connAtts);
+                return sig;
+            }
+        }
+        break;
+        case QSystemNetworkInfo::EthMode:
+        break;
+        case QSystemNetworkInfo::WimaxMode:
+        break;
+    };
     return -1;
 }
 
