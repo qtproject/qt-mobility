@@ -134,9 +134,8 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 }
 
 // "major.minor.build" format.
-/*QPair< int,double >*/ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
+QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
 {
-    Q_UNUSED(parameter);
     QString errorStr = "Not Available";
     bool useDate = false;
     if(parameter == "versionDate") {
@@ -445,6 +444,8 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         break;
         case QSystemNetworkInfo::EthMode:
         break;
+        case QSystemNetworkInfo::WimaxMode:
+        break;
     };
     return QSystemNetworkInfo::NoNetworkAvailable;
 }
@@ -452,6 +453,12 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
 int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
     switch(mode) {
+    case QSystemNetworkInfo::GsmMode:
+        break;
+    case QSystemNetworkInfo::CdmaMode:
+        break;
+    case QSystemNetworkInfo::WcdmaMode:
+        break;
     case QSystemNetworkInfo::WlanMode:
         {
             QString result;
@@ -467,12 +474,16 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
                         QTextStream in(&rx);
                         in >> result;
                         rx.close();
-                       return result.toInt();
+                        return result.toInt();
 
                     }
                 }
             }
         }
+        break;
+    case QSystemNetworkInfo::EthMode:
+        break;
+    case QSystemNetworkInfo::WimaxMode:
         break;
     };
 
@@ -523,6 +534,23 @@ QString QSystemNetworkInfoPrivate::wlanSsid()
 
 QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
 {
+    switch(mode) {
+        case QSystemNetworkInfo::GsmMode:
+        break;
+        case QSystemNetworkInfo::CdmaMode:
+        break;
+        case QSystemNetworkInfo::WcdmaMode:
+        break;
+        case QSystemNetworkInfo::WlanMode:
+        {
+
+        }
+        break;
+        case QSystemNetworkInfo::EthMode:
+        break;
+        case QSystemNetworkInfo::WimaxMode:
+        break;
+    };
     return QString();
 }
 
@@ -539,6 +567,7 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 
 int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 {
+    Q_UNUSED(screen)
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
         QHalInterface iface;
@@ -982,7 +1011,7 @@ bool QSystemDeviceInfoPrivate::isBatteryCharging()
     }
     QFile statefile("/proc/acpi/battery/BAT0/state");
     if (!statefile.open(QIODevice::ReadOnly)) {
-        qWarning() << "Could not open /proc/acpi/battery/BAT0/state";
+      //  qWarning() << "Could not open /proc/acpi/battery/BAT0/state";
     } else {
         QTextStream batstate(&statefile);
         QString line = batstate.readLine();
@@ -1025,7 +1054,7 @@ int QSystemDeviceInfoPrivate::batteryLevel() const
     }
     QFile infofile("/proc/acpi/battery/BAT0/info");
     if (!infofile.open(QIODevice::ReadOnly)) {
-        qWarning() << "Could not open /proc/acpi/battery/BAT0/info";
+     //   qWarning() << "Could not open /proc/acpi/battery/BAT0/info";
         return QSystemDeviceInfo::NoBatteryLevel;
     } else {
         QTextStream batinfo(&infofile);
@@ -1043,7 +1072,7 @@ int QSystemDeviceInfoPrivate::batteryLevel() const
 
     QFile statefile("/proc/acpi/battery/BAT0/state");
     if (!statefile.open(QIODevice::ReadOnly)) {
-        qWarning() << "Could not open /proc/acpi/battery/BAT0/state";
+   //     qWarning() << "Could not open /proc/acpi/battery/BAT0/state";
         return QSystemDeviceInfo::NoBatteryLevel;
     } else {
         QTextStream batstate(&statefile);

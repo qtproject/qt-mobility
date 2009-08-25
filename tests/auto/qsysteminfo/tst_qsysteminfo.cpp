@@ -110,7 +110,6 @@ void tst_QSystemInfo::tst_versions()
         QFETCH(QString, parameter);
         QSystemInfo si;
         QString vers = si.version(version, parameter);
-        qWarning() << vers;
         QVERIFY(!vers.isEmpty());
     }
 }
