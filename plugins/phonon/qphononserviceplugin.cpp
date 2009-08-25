@@ -70,5 +70,5 @@ QMediaServiceProvider* QPhononServicePlugin::create(QString const& key)
 
 #include "qphononserviceplugin.moc"
 
-Q_EXPORT_PLUGIN2(gst_serviceplugin, QPhononServicePlugin);
+Q_EXPORT_PLUGIN2(phonon_serviceplugin, QPhononServicePlugin);
 

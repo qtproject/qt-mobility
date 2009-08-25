@@ -1,28 +1,63 @@
 #ifndef QGSTREAMERVIDEOWIDGET_H
 #define QGSTREAMERVIDEOWIDGET_H
 
-#include "qmediawidgetendpoint.h"
+#include "qvideowidgetcontrol.h"
+#include "qvideooutputcontrol.h"
 
 #include <Phonon/VideoWidget>
 
-class QPhononVideoWidget : public QMediaWidgetEndpoint
+class QPhononVideoWidget : public QVideoWidgetControl
 {
     Q_OBJECT
-    Q_PROPERTY(bool fullscreen READ isFullscreen WRITE setFullscreen)
 public:
-    QPhononVideoWidget(Phonon::VideoWidget *videoWidget, QWidget *parent = 0);
+    QPhononVideoWidget(Phonon::VideoWidget *videoWidget, QObject *parent = 0);
     virtual ~QPhononVideoWidget();
 
-    Phonon::VideoWidget *videoWidget() { return m_videoWidget; }
+    QWidget *videoWidget() { return m_videoWidget; }
 
-protected:
-    virtual void resizeEvent(QResizeEvent*);
+    QVideoWidgetControl::AspectRatio aspectRatio() const;
+    QSize customAspectRatio() const;
 
-protected slots:
-    virtual void setAspectRatio(QMediaWidgetEndpoint::AspectRatio ratio);
-    virtual void setCustomAspectRatio(const QSize &ratio);
+    void setAspectRatio(QVideoWidgetControl::AspectRatio ratio);
+    void setCustomAspectRatio(const QSize &customRatio);
+
+    bool isFullscreen() const;
+    void setFullscreen(bool fullscreen);
+
+    int brightness() const;
+    void setBrightness(int brightness);
+
+    int contrast() const;
+    void setContrast(int contrast);
+
+    int hue() const;
+    void setHue(int hue);
+
+    int saturation() const;
+    void setSaturation(int saturation);
+
 private:
     Phonon::VideoWidget *m_videoWidget;
+    QVideoWidgetControl::AspectRatio m_aspectRatio;
+    QSize m_customAspectRatio;
+};
+
+class QPhononVideoOutputControl : public QVideoOutputControl
+{
+    Q_OBJECT
+public:
+
+    QPhononVideoOutputControl(QObject *parent = 0)
+        :QVideoOutputControl(parent) {}
+    ~QPhononVideoOutputControl() {}
+
+    virtual QList<Output> availableOutputs() const
+    {
+        return QList<Output>() << WidgetOutput;
+    }
+
+    Output output() const { return WidgetOutput; }
+    void setOutput(Output) {}
 };
 
 #endif // QGSTREAMERVIDEOWIDGET_H
