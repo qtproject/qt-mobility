@@ -75,8 +75,8 @@ public:
     float playbackRate() const;
     void setPlaybackRate(float rate);
 
-    QMediaSource currentResources() const;
-    void setCurrentResources(const QMediaSource&);
+    QMediaSource currentSource() const;
+    void setCurrentSource(const QMediaSource&);
 
 public Q_SLOTS:
     void setPosition(qint64 pos);

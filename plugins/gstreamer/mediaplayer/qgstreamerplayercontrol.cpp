@@ -165,7 +165,7 @@ void QGstreamerPlayerControl::setCurrentSource(const QMediaSource &source)
     m_session->stop();
     m_session->load(url);
 
-    emit currentResourcesChanged(m_currentResource);
+    emit currentSourceChanged(m_currentResource);
 }
 
 void QGstreamerPlayerControl::setVideoOutput(QObject *output)
