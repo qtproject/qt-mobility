@@ -142,13 +142,12 @@ public:
     };
 
     enum NetworkMode {
-        UnknownMode = 0x00000000,
-        GsmMode = 0x00000001,
-        CdmaMode = 0x00000002,
-        WcdmaMode = 0x00000004,
-        WlanMode = 0x00000008,
-        EthMode = 0x00000020,
-        WimaxMode = 0x00000040
+        GsmMode=0,
+        CdmaMode,
+        WcdmaMode,
+        WlanMode,
+        EthMode,
+        WimaxMode
     };
     Q_DECLARE_FLAGS(NetworkModes, NetworkMode)
 
