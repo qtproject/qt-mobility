@@ -573,11 +573,6 @@
         <widget class="QComboBox" name="netStatusComboBox">
          <item>
           <property name="text">
-           <string>Unknown</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
            <string>Gsm</string>
           </property>
          </item>
@@ -625,11 +620,6 @@
        </item>
        <item row="1" column="3">
         <widget class="QComboBox" name="netStrengthComboBox">
-         <item>
-          <property name="text">
-           <string>Unknown</string>
-          </property>
-         </item>
          <item>
           <property name="text">
            <string>Gsm</string>

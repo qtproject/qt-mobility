@@ -152,7 +152,6 @@ void Dialog::setupNetwork()
 void Dialog::netStatusComboActivated(int index)
 {
     QString status;
-
     QString stat;
     QSystemNetworkInfo ni;
     switch(ni.networkStatus( (QSystemNetworkInfo::NetworkMode)index)) {
@@ -189,26 +188,8 @@ void Dialog::netStatusComboActivated(int index)
 
 void Dialog::netComboActivated(int index)
 {
-    QSystemNetworkInfo::NetworkMode mode;
-    switch(index) {
-    case 1:
-        mode = QSystemNetworkInfo::GsmMode;
-        break;
-    case 2:
-        mode = QSystemNetworkInfo::CdmaMode;
-        break;
-    case 3:
-        mode = QSystemNetworkInfo::WcdmaMode;
-        break;
-    case 4:
-        mode = QSystemNetworkInfo::WlanMode;
-        break;
-    case 5:
-        mode = QSystemNetworkInfo::EthMode;
-        break;
-    };
     QSystemNetworkInfo ni;
-    ui->signalLevelProgressBar->setValue(ni.networkSignalStrength(mode));
+    ui->signalLevelProgressBar->setValue(ni.networkSignalStrength(( QSystemNetworkInfo::NetworkMode)index));
 }
 
 void Dialog::getVersion(int index)
