@@ -215,7 +215,7 @@ QNmeaPositionInfoSourcePrivate::~QNmeaPositionInfoSourcePrivate()
 bool QNmeaPositionInfoSourcePrivate::openSourceDevice()
 {
     if (!m_device) {
-        qWarning("QNmeaPositionInfoSource: invalid QIODevice data source");
+        qWarning("QNmeaPositionInfoSource: no QIODevice data source, call setDevice() first");
         return false;
     }
 
