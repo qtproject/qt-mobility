@@ -52,7 +52,7 @@
                 <parameter left="Property" right="" name="property" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QSatelliteInfoSource" href="qsatelliteinfosource.html" location="qsatelliteinfosource.h" bases="QObject" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QSatelliteInfoSource" href="qsatelliteinfosource.html" location="qsatelliteinfosource.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QSatelliteInfoSource" fullname="QSatelliteInfoSource::QSatelliteInfoSource" href="qsatelliteinfosource.html#QSatelliteInfoSource" location="qsatelliteinfosource.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSatelliteInfoSource(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
@@ -72,7 +72,7 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="requestTimeout" fullname="QSatelliteInfoSource::requestTimeout" href="qsatelliteinfosource.html#requestTimeout" location="qsatelliteinfosource.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="requestTimeout()"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QGeoAreaMonitor" href="qgeoareamonitor.html" location="qgeoareamonitor.h" bases="QObject" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QGeoAreaMonitor" href="qgeoareamonitor.html" location="qgeoareamonitor.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QGeoAreaMonitor" fullname="QGeoAreaMonitor::QGeoAreaMonitor" href="qgeoareamonitor.html#QGeoAreaMonitor" location="qgeoareamonitor.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeoAreaMonitor(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
@@ -154,7 +154,7 @@
                 <parameter left="CoordinateFormat" right="" name="format" default="DegreesMinutesSecondsWithHemisphere"/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QGeoPositionInfoSource" href="qgeopositioninfosource.html" location="qgeopositioninfosource.h" bases="QObject" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QGeoPositionInfoSource" href="qgeopositioninfosource.html" location="qgeopositioninfosource.h" bases="" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="PositioningMethod" fullname="QGeoPositionInfoSource::PositioningMethod" href="qgeopositioninfosource.html#PositioningMethod-enum" location="qgeopositioninfosource.h" typedef="QGeoPositionInfoSource::PositioningMethods">
                 <value name="SatellitePositioningMethods" value="0x000000ff"/>
                 <value name="NonSatellitePositioningMethods" value="0xffffff00"/>
@@ -263,8 +263,12 @@
         </class>
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Location Library Developer Resources" fulltitle="Location Library Developer Resources" subtitle="" location="index.qdoc">
             <contents name="introduction" title="Introduction" level="1"/>
-            <contents name="reference-documentation" title="Reference documentation" level="1"/>
-            <contents name="main-classes" title="Main classes" level="2"/>
+            <contents name="requirements" title="Requirements" level="1"/>
+            <contents name="overview" title="Overview" level="1"/>
+            <contents name="requesting-location-data-from-data-sources" title="Requesting location data from data sources" level="1"/>
+            <contents name="controlling-aspects-of-data-sources" title="Controlling aspects of data sources" level="2"/>
+            <contents name="reading-nmea-data" title="Reading NMEA data" level="2"/>
+            <contents name="creating-a-custom-location-data-source" title="Creating a custom location data source" level="1"/>
         </page>
     </namespace>
 </INDEX>
