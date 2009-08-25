@@ -164,14 +164,13 @@ QMessageSortKey QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Field field
 {
     QMessageSortKey result;
     QPair<QMessageSortKeyPrivate::Field, Qt::SortOrder> fieldOrder(field, order);
-    result.d_ptr = new QMessageSortKeyPrivate(&result);
     result.d_ptr->_fieldOrderList.append(fieldOrder);
     return result;
 }
 
 
 QMessageSortKey::QMessageSortKey()
-    :d_ptr(0)
+    :d_ptr(new QMessageSortKeyPrivate(this))
 {
 }
 
@@ -182,14 +181,14 @@ QMessageSortKey::~QMessageSortKey()
 }
 
 QMessageSortKey::QMessageSortKey(const QMessageSortKey &other)
-    :d_ptr(0)
+    :d_ptr(new QMessageSortKeyPrivate(this))
 {
     this->operator=(other);
 }
 
 bool QMessageSortKey::isEmpty() const
 {
-    return !d_ptr;
+    return d_ptr->_fieldOrderList.isEmpty();
 }
 
 bool QMessageSortKey::isSupported() const
@@ -200,7 +199,6 @@ bool QMessageSortKey::isSupported() const
 QMessageSortKey QMessageSortKey::operator+(const QMessageSortKey& other) const
 {
     QMessageSortKey sum;
-    sum.d_ptr = new QMessageSortKeyPrivate(&sum);
     sum.d_ptr->_fieldOrderList = d_ptr->_fieldOrderList + other.d_ptr->_fieldOrderList;
     return sum;
 }
@@ -213,28 +211,13 @@ QMessageSortKey& QMessageSortKey::operator+=(const QMessageSortKey& other)
 
 bool QMessageSortKey::operator==(const QMessageSortKey& other) const
 {
-    if (!isEmpty()) {
-        if (!other.isEmpty()) {
-            return (d_ptr->_fieldOrderList == other.d_ptr->_fieldOrderList);
-        }
-        return false;
-    } else {
-        return other.isEmpty();
-    }
+    return (d_ptr->_fieldOrderList == other.d_ptr->_fieldOrderList);
 }
 
 const QMessageSortKey& QMessageSortKey::operator=(const QMessageSortKey& other)
 {
     if (&other != this) {
-        if (!other.isEmpty()) {
-            if (!d_ptr) {
-                d_ptr = new QMessageSortKeyPrivate(this);
-            }
-            d_ptr->_fieldOrderList = other.d_ptr->_fieldOrderList;
-        } else {
-            delete d_ptr;
-            d_ptr = 0;
-        }
+        d_ptr->_fieldOrderList = other.d_ptr->_fieldOrderList;
     }
 
     return *this;
