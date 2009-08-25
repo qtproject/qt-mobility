@@ -69,7 +69,7 @@ protected:
     QMediaPlaylistControl(QObject* parent);
 };
 
-#define QMediaPlaylistControl_iid "com.nokia.qt.MediaPlaylistControl"
+#define QMediaPlaylistControl_iid "com.nokia.Qt.QMediaPlaylistControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QMediaPlaylistControl, QMediaPlaylistControl_iid)
 
 

@@ -36,7 +36,7 @@
 
 #include "qmediarecordercontrol.h"
 #include "qabstractmediaobject_p.h"
-#include "qabstractmediaservice.h"
+#include "qaudiorecorderservice.h"
 #include "qmediaserviceprovider.h"
 
 #include <QtCore/qdebug.h>
@@ -45,7 +45,7 @@
 
 Q_MEDIA_EXPORT QAbstractMediaService *createMediaCaptureService(QMediaServiceProvider *provider)
 {
-    QObject *object = provider ? provider->createObject("com.nokia.qt.AudioRecorder/1.0") : 0;
+    QObject *object = provider ? provider->createObject(QAudioRecorderService_iid) : 0;
 
     if (object != 0) {
         QAbstractMediaService *service = qobject_cast<QAbstractMediaService*>(object);

@@ -50,7 +50,7 @@ struct Q_MEDIA_EXPORT QMediaServiceProviderFactoryInterface : public QFactoryInt
 };
 
 #define QMediaServiceProviderFactoryInterface_iid \
-    "com.nokia.qt.QMediaServiceProviderFactoryInterface"
+    "com.nokia.Qt.QMediaServiceProviderFactoryInterface/1.0"
 Q_DECLARE_INTERFACE(QMediaServiceProviderFactoryInterface, QMediaServiceProviderFactoryInterface_iid)
 
 class Q_MEDIA_EXPORT QMediaServiceProviderPlugin : public QObject, public QMediaServiceProviderFactoryInterface

@@ -51,4 +51,6 @@ protected:
 
 };
 
+#define QRadioService_iid "com.nokia.Qt.QRadioService/1.0"
+
 #endif
