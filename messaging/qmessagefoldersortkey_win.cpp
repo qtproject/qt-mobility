@@ -57,6 +57,11 @@ bool QMessageFolderSortKey::isEmpty() const
     return false; // stub
 }
 
+bool QMessageFolderSortKey::isSupported() const
+{
+    return true; // stub
+}
+
 QMessageFolderSortKey QMessageFolderSortKey::operator+(const QMessageFolderSortKey& other) const
 {
     Q_UNUSED(other)

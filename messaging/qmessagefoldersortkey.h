@@ -46,6 +46,7 @@ public:
     QMessageFolderSortKey(const QMessageFolderSortKey &other);
     virtual ~QMessageFolderSortKey();
     bool isEmpty() const;
+    bool isSupported() const;
 
     QMessageFolderSortKey operator+(const QMessageFolderSortKey &other) const;
     QMessageFolderSortKey& operator+=(const QMessageFolderSortKey &other);

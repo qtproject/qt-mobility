@@ -34,6 +34,7 @@
 #define QMESSAGESORTKEY_H
 #include <Qt>
 #include <qmessageglobal.h>
+#include <qmessage.h>
 
 class QMessageSortKeyPrivate;
 
@@ -45,6 +46,7 @@ public:
     QMessageSortKey(const QMessageSortKey &other);
     virtual ~QMessageSortKey();
     bool isEmpty() const;
+    bool isSupported() const;
 
     QMessageSortKey operator+(const QMessageSortKey &other) const;
     QMessageSortKey& operator+=(const QMessageSortKey &other);
@@ -58,7 +60,7 @@ public:
     static QMessageSortKey subject(Qt::SortOrder order = Qt::AscendingOrder);
     static QMessageSortKey timeStamp(Qt::SortOrder order = Qt::AscendingOrder);
     static QMessageSortKey receptionTimeStamp(Qt::SortOrder order = Qt::AscendingOrder);
-    static QMessageSortKey status(Qt::SortOrder order = Qt::AscendingOrder);
+    static QMessageSortKey status(QMessage::Status flag, Qt::SortOrder order = Qt::AscendingOrder);
     static QMessageSortKey priority(Qt::SortOrder order = Qt::AscendingOrder);
 
     static QMessageSortKey size(Qt::SortOrder order = Qt::AscendingOrder);

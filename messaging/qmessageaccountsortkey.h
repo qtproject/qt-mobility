@@ -45,6 +45,7 @@ public:
     QMessageAccountSortKey(const QMessageAccountSortKey &other);
     virtual ~QMessageAccountSortKey();
     bool isEmpty() const;
+    bool isSupported() const;
 
     bool operator==(const QMessageAccountSortKey &other) const;
     const QMessageAccountSortKey& operator=(const QMessageAccountSortKey &other);

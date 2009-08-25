@@ -62,6 +62,9 @@
     
     The folder and account a message is associated with are returned by parentFolderId() and
     parentAccountId() respectively.
+
+    Message data that is less commonly accessed or relatively large should be lazily retrieved 
+    on demand by the associated getter function.
     
     The following transmission formats are used both when constructing and encapsulating messages:
     \list

@@ -51,6 +51,11 @@ bool QMessageSortKey::isEmpty() const
     return false; // stub
 }
 
+bool QMessageSortKey::isSupported() const
+{
+    return true; // stub
+}
+
 QMessageSortKey QMessageSortKey::operator+(const QMessageSortKey& other) const
 {
     Q_UNUSED(other)
@@ -111,8 +116,9 @@ QMessageSortKey QMessageSortKey::receptionTimeStamp(Qt::SortOrder order)
     return QMessageSortKey(); // stub
 }
 
-QMessageSortKey QMessageSortKey::status(Qt::SortOrder order)
+QMessageSortKey QMessageSortKey::status(QMessage::Status flag, Qt::SortOrder order)
 {
+    Q_UNUSED(flag)
     Q_UNUSED(order)
     return QMessageSortKey(); // stub
 }

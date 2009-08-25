@@ -93,7 +93,10 @@ bool QMessageSortKeyPrivate::compare(const QMessageSortKey &key, const QMessage 
         case Subject: COMPARE(left->subject(), right->subject())
         case TimeStamp: COMPARE(left->date(), right->date())
         case ReceptionTimeStamp: COMPARE(left->receivedDate(), right->receivedDate())
-        case Status: COMPARE(left->status(), right->status())
+        case Read: COMPARE(left->status() & QMessage::Read, right->status() & QMessage::Read)
+        case HasAttachments: COMPARE(left->status() & QMessage::Read, right->status() & QMessage::Read)
+        case Incoming: COMPARE(left->status() & QMessage::Read, right->status() & QMessage::Read)
+        case Removed: COMPARE(left->status() & QMessage::Read, right->status() & QMessage::Read)
         case Priority: COMPARE(left->priority(), right->priority())
         case Size: COMPARE(left->size(), right->size())
         }
@@ -189,6 +192,11 @@ bool QMessageSortKey::isEmpty() const
     return !d_ptr;
 }
 
+bool QMessageSortKey::isSupported() const
+{
+    return true; // TODO: Implement
+}
+
 QMessageSortKey QMessageSortKey::operator+(const QMessageSortKey& other) const
 {
     QMessageSortKey sum;
@@ -262,9 +270,20 @@ QMessageSortKey QMessageSortKey::receptionTimeStamp(Qt::SortOrder order)
     return QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::ReceptionTimeStamp, order);
 }
 
-QMessageSortKey QMessageSortKey::status(Qt::SortOrder order)
+QMessageSortKey QMessageSortKey::status(QMessage::Status flag, Qt::SortOrder order)
 {
-    return QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Status, order);
+    switch (flag) {
+    case QMessage::Read:
+        return QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Read, order);
+    case QMessage::HasAttachments:
+        return QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::HasAttachments, order);
+    case QMessage::Incoming:
+        return QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Incoming, order);
+    case QMessage::Removed:
+        return QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Removed, order);
+    default:
+        return QMessageSortKey();
+    }
 }
 
 QMessageSortKey QMessageSortKey::priority(Qt::SortOrder order)

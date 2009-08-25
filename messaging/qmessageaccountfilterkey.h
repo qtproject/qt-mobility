@@ -50,6 +50,7 @@ public:
     QMessageAccountFilterKey(const QMessageAccountFilterKey &other);
     virtual ~QMessageAccountFilterKey();
     bool isEmpty() const;
+    bool isSupported() const;
 
     QMessageAccountFilterKey operator~() const;
     QMessageAccountFilterKey operator&(const QMessageAccountFilterKey &other) const;

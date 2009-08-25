@@ -50,14 +50,33 @@ bool QMessageServiceAction::queryMessages(const QMessageFilterKey &key, const QM
     return false; // stub
 }
 
-bool QMessageServiceAction::queryMessages(const QString &body, const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
+bool QMessageServiceAction::queryMessages(const QString &body, QMessageDataComparator::Options options, const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
 {
+    Q_UNUSED(options);
     Q_UNUSED(body);
     Q_UNUSED(key);
     Q_UNUSED(sortKey);
     Q_UNUSED(limit);
     Q_UNUSED(offset);
     return false; // stub
+}
+
+bool QMessageServiceAction::countMessages(const QMessageFilterKey &key, uint limit) const
+{
+    // TODO: Implement this
+    Q_UNUSED(key);
+    Q_UNUSED(limit);
+    return false;
+}
+
+bool QMessageServiceAction::countMessages(const QString &body, QMessageDataComparator::Options options, const QMessageFilterKey &key, uint limit) const
+{
+    // TODO: Implement this
+    Q_UNUSED(body);
+    Q_UNUSED(options);
+    Q_UNUSED(key);
+    Q_UNUSED(limit);
+    return false;
 }
 
 bool QMessageServiceAction::send(QMessage &message)

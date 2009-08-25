@@ -110,6 +110,11 @@ bool QMessageFolderFilterKey::isEmpty() const
     return d_ptr->_key.isEmpty();
 }
 
+bool QMessageFolderFilterKey::isSupported() const
+{
+    return true; // TODO: Implement
+}
+
 QMessageFolderFilterKey QMessageFolderFilterKey::operator~() const
 {
     QMessageFolderFilterKey result;

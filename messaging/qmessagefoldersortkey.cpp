@@ -83,6 +83,12 @@
 */
 
 /*!
+    \fn QMessageFolderSortKey::isSupported() const
+  
+    Returns true if the key is supported on the current platform; otherwise returns false.
+*/
+
+/*!
     \fn QMessageFolderSortKey::operator+(const QMessageFolderSortKey& other) const
   
     Returns a key that which is the result of concatenating the vaue of this key and the value 

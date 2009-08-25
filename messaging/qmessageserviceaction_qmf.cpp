@@ -283,8 +283,9 @@ bool QMessageServiceAction::queryMessages(const QMessageFilterKey &key, const QM
     return false;
 }
 
-bool QMessageServiceAction::queryMessages(const QString &body, const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
+bool QMessageServiceAction::queryMessages(const QString &body, QMessageDataComparator::Options options, const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
 {
+    //TODO: Support options
     if (body.isEmpty()) {
         return queryMessages(key, sortKey, limit, offset);
     }
@@ -318,6 +319,24 @@ bool QMessageServiceAction::queryMessages(const QString &body, const QMessageFil
         return true;
     }
 
+    return false;
+}
+
+bool QMessageServiceAction::countMessages(const QMessageFilterKey &key, uint limit) const
+{
+    // TODO: Implement this
+    Q_UNUSED(key);
+    Q_UNUSED(limit);
+    return false;
+}
+
+bool QMessageServiceAction::countMessages(const QString &body, QMessageDataComparator::Options options, const QMessageFilterKey &key, uint limit) const
+{
+    // TODO: Implement this
+    Q_UNUSED(body);
+    Q_UNUSED(options);
+    Q_UNUSED(key);
+    Q_UNUSED(limit);
     return false;
 }
 

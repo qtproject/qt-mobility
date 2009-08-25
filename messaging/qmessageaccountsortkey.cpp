@@ -82,6 +82,12 @@
 */
 
 /*!
+    \fn QMessageAccountSortKey::isSupported() const
+  
+    Returns true if the key is supported on the current platform; otherwise returns false.
+*/
+
+/*!
     \fn QMessageAccountSortKey::operator==(const QMessageAccountSortKey& other) const
   
     Returns \c true if the value of this key is the same as the key \a other. Returns 

@@ -422,7 +422,7 @@ bool QMessageStore::addMessage(QMessage *m)
                             rv = message->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), 0, &count, &properties);
                             if (HR_SUCCEEDED(rv)) {
                                 MapiRecordKey recordKey(reinterpret_cast<const char*>(properties[0].Value.bin.lpb), properties[0].Value.bin.cb);
-                                MapiEntryId entryId(reinterpret_cast<const char*>(properties[1].Value.bin.lpb), properties[1].Value.bin.cb);
+                                MapiEntryId entryId(properties[1].Value.bin.lpb, properties[1].Value.bin.cb);
                                 m->d_ptr->_id = QMessageIdPrivate::from(recordKey, mapiFolder->recordKey(), mapiFolder->storeKey(), entryId);
 
                                 MAPIFreeBuffer(properties);
@@ -548,7 +548,7 @@ QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
             MapiRecordKey folderKey(reinterpret_cast<const char*>(recordKeyProp->Value.bin.lpb), recordKeyProp->Value.bin.cb);
 
             LPSPropValue entryIdProp(&properties[parentEntryIdColumn]);
-            MapiEntryId parentEntryId(reinterpret_cast<const char*>(entryIdProp->Value.bin.lpb), entryIdProp->Value.bin.cb);
+            MapiEntryId parentEntryId(entryIdProp->Value.bin.lpb, entryIdProp->Value.bin.cb);
 
             QString displayName(QStringFromLpctstr(properties[displayNameColumn].Value.LPSZ));
             QMessageFolderId folderId(QMessageFolderIdPrivate::from(folderKey, storeRecordKey, entryId));
@@ -579,7 +579,7 @@ QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
                     }
 
                     LPSPropValue entryIdProp(&ancestorProperties[parentEntryIdColumn]);                    
-                    ancestorEntryId = MapiEntryId(reinterpret_cast<const char*>(entryIdProp->Value.bin.lpb), entryIdProp->Value.bin.cb);
+                    ancestorEntryId = MapiEntryId(entryIdProp->Value.bin.lpb, entryIdProp->Value.bin.cb);
 
                     MAPIFreeBuffer(ancestorProperties);
 

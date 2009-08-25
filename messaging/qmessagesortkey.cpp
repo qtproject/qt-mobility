@@ -89,6 +89,12 @@
 */
 
 /*!
+    \fn QMessageSortKey::isSupported() const
+  
+    Returns true if the key is supported on the current platform; otherwise returns false.
+*/
+
+/*!
     \fn QMessageSortKey::operator+(const QMessageSortKey& other) const
   
     Returns a key that which is the result of concatenating the vaue of this key and the value 
@@ -168,9 +174,9 @@
 */
 
 /*!
-    \fn QMessageSortKey::status(Qt::SortOrder order)
+    \fn QMessageSortKey::status(QMessage::StatusFlag flag, Qt::SortOrder order)
   
-    Returns a key that sorts messages by their status values, according to \a order.
+    Returns a key that sorts messages by their status value \a flag, according to \a order.
 
     \sa QMessage::status()
 */

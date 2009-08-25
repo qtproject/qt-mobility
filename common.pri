@@ -19,6 +19,7 @@ win32|mac {
 
 CONFIG(debug, debug|release) {
     SUBDIRPART = Debug
+    CONFIG += console
 } else {
     SUBDIRPART = Release
 }

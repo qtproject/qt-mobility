@@ -104,9 +104,6 @@
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
     
-    Returns the number of progress steps required to perform the query if known;
-    otherwise returns 0.
-    
     Calling this function may result in the messagesFound() and progressChanged() 
     signals  being emitted multiple times. An emission of the progressChanged()
     signal with a total of 0 indicates that the number of progress steps is
@@ -114,25 +111,23 @@
     
     Returns true if the action can be initiated; otherwise returns false.
     
-    \sa  QMessage, QMessageFilterKey, QMessageSortKey, messagesFound(), progressChanged()
+    \sa  QMessage, QMessageFilterKey, QMessageSortKey, messagesFound(), progressChanged(), countMessages()
 */
 
 /*!
-    \fn QMessageServiceAction::queryMessages(const QString &body, const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
+    \fn QMessageServiceAction::queryMessages(const QString &body, QMessageDataComparator::Options options, const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
     
     Emits via the messagesFound() signal \l{QMessageId}s of messages in the messaging 
     store. If \a key is not empty only identifiers for messages matching the parameters 
     set by \a key and with a body containing the string \a body will be emitted, 
-    otherwise identifiers for all messages with a body containing \a body will be emitted.
+    otherwise identifiers for all messages with a body containing \a body using 
+    search options \a options will be emitted.
     If \a sortKey is not empty, then the identifiers will be sorted by the parameters 
     set by \a sortKey.
     If \a limit is not zero, then \a limit places an upper bound on the number of 
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
      
-    Returns the number of progress steps required to perform the query if known;
-    otherwise returns 0.
-    
     Calling this function may result in the messagesFound() and progressChanged() 
     signals being emitted multiple times. An emission of the progressChanged()
     signal with a total of 0 indicates that the number of progress steps is
@@ -140,7 +135,46 @@
 
     Returns true if the action can be initiated; otherwise returns false.
     
-    \sa  QMessage, QMessageFilterKey, QMessageSortKey, messagesFound(), progressChanged()
+    \sa  QMessage, QMessageFilterKey, QMessageSortKey, messagesFound(), progressChanged(), countMessages()
+*/
+
+/*!
+    \fn QMessageServiceAction::countMessages(const QMessageFilterKey &key, uint limit) const
+    
+    Emits via a messagesCounted() signal the number messages in the messaging 
+    store matching \a key.
+    
+    Unless \a limit is lower and not zero, in which case a count of \a limit will be emitted
+    via the messagesCounted() signal.
+    
+    Calling this function may result in the progressChanged() 
+    signal  being emitted multiple times. An emission of the progressChanged()
+    signal with a total of 0 indicates that the number of progress steps is
+    unknown.
+    
+    Returns true if the action can be initiated; otherwise returns false.
+    
+    \sa  QMessage, QMessageFilterKey, messagesCounted(), progressChanged(), queryMessages()
+*/
+
+/*!
+    \fn QMessageServiceAction::countMessages(const QString &body, QMessageDataComparator::Options options, const QMessageFilterKey &key, uint limit) const
+    
+    Emits via a messagesCounted() signal the number messages in the messaging 
+    store matching \a key and with a body containing the string \a body using 
+    searching options \a options.
+    
+    Unless \a limit is lower and not zero, in which case a count of \a limit will be emitted
+    via the messagesCounted() signal.
+    
+    Calling this function may result in the progressChanged() 
+    signal  being emitted multiple times. An emission of the progressChanged()
+    signal with a total of 0 indicates that the number of progress steps is
+    unknown.
+    
+    Returns true if the action can be initiated; otherwise returns false.
+    
+    \sa  QMessage, QMessageFilterKey, messagesCounted(), progressChanged(), queryMessages()
 */
 
 /*!
@@ -265,6 +299,17 @@
     messages.
 
     \a ids is the list of identifiers of messages found.
+
+    \sa queryMessages()
+*/
+
+/*!
+    \fn QMessageServiceAction::messagesCounted(int count);
+
+    This signal is emitted when a countMessages() operation has counted
+    messages.
+
+    \a count is the number of matching messages found.
 
     \sa queryMessages()
 */

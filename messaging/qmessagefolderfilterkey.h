@@ -54,6 +54,7 @@ public:
     QMessageFolderFilterKey(const QMessageFolderFilterKey &other);
     virtual ~QMessageFolderFilterKey();
     bool isEmpty() const;
+    bool isSupported() const;
 
     QMessageFolderFilterKey operator~() const;
     QMessageFolderFilterKey operator&(const QMessageFolderFilterKey &other) const;

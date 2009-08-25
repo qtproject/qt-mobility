@@ -109,6 +109,12 @@
 */
 
 /*!
+    \fn QMessageFolderFilterKey::isSupported() const
+  
+    Returns true if the key is supported on the current platform; otherwise returns false.
+*/
+
+/*!
     \fn QMessageFolderFilterKey::operator~() const
   
     Returns a key that is the logical NOT of the value of this key.
