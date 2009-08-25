@@ -38,6 +38,7 @@
 #include "qmessagefolder_p.h"
 #include "qmessageaccount_p.h"
 #include "qmessagesortkey_p.h"
+#include "qmessagefilterkey_p.h"
 #include <qdebug.h>
 #include <shlwapi.h>
 #include <shlguid.h>
@@ -220,6 +221,10 @@ QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, co
     }
 
     QMessageSortKeyPrivate::sortTable(lastError, sortKey, messagesTable);
+    if (*lastError != QMessageStore::NoError)
+        return QMessageIdList();
+
+    QMessageFilterKeyPrivate::filterTable(lastError, key, messagesTable);
     if (*lastError != QMessageStore::NoError)
         return QMessageIdList();
 

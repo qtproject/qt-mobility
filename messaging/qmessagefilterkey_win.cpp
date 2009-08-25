@@ -32,6 +32,38 @@
 ****************************************************************************/
 #include "qmessagefilterkey.h"
 #include "qmessagefilterkey_p.h"
+#include "qvariant.h"
+
+QMessageFilterKey QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Field field, const QVariant &value, QMessageDataComparator::EqualityComparator cmp)
+{
+    Q_UNUSED(field)
+    Q_UNUSED(value)
+    Q_UNUSED(cmp)
+    return QMessageFilterKey();
+}
+
+QMessageFilterKey QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Field field, const QVariant &value, QMessageDataComparator::RelationComparator cmp)
+{
+    Q_UNUSED(field)
+    Q_UNUSED(value)
+    Q_UNUSED(cmp)
+    return QMessageFilterKey();
+}
+
+QMessageFilterKey QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Field field, const QVariant &value, QMessageDataComparator::InclusionComparator cmp)
+{
+    Q_UNUSED(field)
+    Q_UNUSED(value)
+    Q_UNUSED(cmp)
+    return QMessageFilterKey();
+}
+
+void QMessageFilterKeyPrivate::filterTable(QMessageStore::ErrorCode *lastError, const QMessageFilterKey &key, LPMAPITABLE)
+{
+    Q_UNUSED(lastError)
+    Q_UNUSED(key)
+}
+
 
 void QMessageFilterKey::setOptions(QMessageDataComparator::Options options)
 {

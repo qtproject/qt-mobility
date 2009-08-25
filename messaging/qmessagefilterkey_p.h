@@ -31,6 +31,10 @@
 **
 ****************************************************************************/
 #include "qmessagefilterkey.h"
+#if defined(Q_OS_WIN)
+#include "qmessagestore.h"
+#include "winhelpers_p.h"
+#endif
 
 class QMessageFilterKeyPrivate
 {
@@ -43,4 +47,11 @@ public:
     }
 
     QMessageFilterKey *q_ptr;
+#if defined(Q_OS_WIN)
+    enum Field { Id = 0, Type, Sender, Recipients, Subject, TimeStamp, ReceptionTimeStamp, Status, Priority, Size, CustomField, ParentAccountId, ParentFolderId, AncestorFolderIds };
+    static void filterTable(QMessageStore::ErrorCode *lastError, const QMessageFilterKey &key, LPMAPITABLE);
+    static QMessageFilterKey from(QMessageFilterKeyPrivate::Field field, const QVariant &value, QMessageDataComparator::EqualityComparator cmp);
+    static QMessageFilterKey from(QMessageFilterKeyPrivate::Field field, const QVariant &value, QMessageDataComparator::RelationComparator cmp);
+    static QMessageFilterKey from(QMessageFilterKeyPrivate::Field field, const QVariant &value, QMessageDataComparator::InclusionComparator cmp);
+#endif
 };
