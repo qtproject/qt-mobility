@@ -67,7 +67,7 @@ protected:
     QImageEncodeControl(QObject *parent);
 };
 
-#define QImageEncodeControl_iid "com.nokia.qt.ImageEncodeControl"
+#define QImageEncodeControl_iid "com.nokia.Qt.QImageEncodeControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QImageEncodeControl, QImageEncodeControl_iid)
 
 #endif // QVIDEOCAPTUREPROPERTIESCONTROL_H

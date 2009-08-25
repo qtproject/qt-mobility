@@ -4,7 +4,9 @@
 #include <QtCore/QDir>
 #include <QtCore/QDebug>
 
+#ifdef HAVE_ALSA
 #include <alsa/asoundlib.h>
+#endif
 
 QGstreamerAudioInputDeviceControl::QGstreamerAudioInputDeviceControl(QObject *parent)
     :QAudioInputDeviceControl(parent)
@@ -68,6 +70,7 @@ void QGstreamerAudioInputDeviceControl::update()
 
 void QGstreamerAudioInputDeviceControl::updateAlsaDevices()
 {
+#ifdef HAVE_ALSA
     void **hints, **n;
     if (snd_device_name_hint(-1, "pcm", &hints) < 0) {
         qWarning()<<"no alsa devices available";
@@ -96,6 +99,7 @@ void QGstreamerAudioInputDeviceControl::updateAlsaDevices()
         n++;
     }
     snd_device_name_free_hint(hints);
+#endif
 }
 
 void QGstreamerAudioInputDeviceControl::updateOssDevices()

@@ -16,6 +16,7 @@ HEADERS = \
     qabstractmediaobject.h \
     qabstractmediaobject_p.h \
     qabstractmediaservice.h \
+    qaudiorecorderservice.h \
     qlocalmediaplaylistprovider.h \
     qmediametadata.h \
     qmetadataprovidercontrol.h \
@@ -44,6 +45,7 @@ HEADERS = \
     qvideooutputcontrol.h \
     qvideowidget.h \
     qvideowindowcontrol.h \
+    qvideowidgetcontrol.h \
     qmediastreams.h \
     qmediastreamscontrol.h \
     qaudioencodecontrol.h \
@@ -62,6 +64,7 @@ HEADERS = \
 SOURCES = qabstractmediacontrol.cpp \
     qabstractmediaobject.cpp \
     qabstractmediaservice.cpp \
+    qaudiorecorderservice.cpp \
     qlocalmediaplaylistprovider.cpp \
     qmediametadata.cpp \
     qmetadataprovidercontrol.cpp \
@@ -86,6 +89,7 @@ SOURCES = qabstractmediacontrol.cpp \
     qvideooutputcontrol.cpp \
     qvideowidget.cpp \
     qvideowindowcontrol.cpp \
+    qvideowidgetcontrol.cpp \
     qmediastreams.cpp \
     qmediastreamscontrol.cpp \
     qaudioencodecontrol.cpp \

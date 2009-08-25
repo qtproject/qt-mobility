@@ -261,7 +261,7 @@ QMediaStreams::QMediaStreams(QAbstractMediaObject *mediaObject, QObject *parent)
     d->q_ptr = this;
 
     d->service = mediaObject->service();
-    d->control = qobject_cast<QMediaStreamsControl*>(d->service->control("com.nokia.qt.MediaStreamsControl"));
+    d->control = d->service->control<QMediaStreamsControl *>();
     if (d->control != 0) {
         connect(d->control, SIGNAL(streamsChanged()), this, SLOT(_q_updateStreams()));
         connect(d->control, SIGNAL(activeStreamsChanged()), this, SLOT(_q_updateActiveStreams()));

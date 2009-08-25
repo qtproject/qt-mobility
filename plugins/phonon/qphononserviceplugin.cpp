@@ -47,7 +47,7 @@ class QPhononProvider : public QMediaServiceProvider
 public:
     QObject* createObject(const char *interface) const
     {
-        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.MediaPlayer/1.0"))
+        if (QLatin1String(interface) == QLatin1String(QMediaPlayerService_iid))
             return new QPhononPlayerService;
 
         return 0;
@@ -70,5 +70,5 @@ QMediaServiceProvider* QPhononServicePlugin::create(QString const& key)
 
 #include "qphononserviceplugin.moc"
 
-Q_EXPORT_PLUGIN2(gst_serviceplugin, QPhononServicePlugin);
+Q_EXPORT_PLUGIN2(phonon_serviceplugin, QPhononServicePlugin);
 

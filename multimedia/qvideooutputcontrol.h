@@ -46,6 +46,7 @@ public:
         NoOutput,
         WindowOutput,
         RendererOutput,
+        WidgetOutput,
         UserOutput = 100,
         MaxUserOutput = 1000
     };

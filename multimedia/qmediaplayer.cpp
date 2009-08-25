@@ -398,7 +398,7 @@ QMediaPlayerService* createMediaPlayerService(QMediaServiceProvider *provider)
                 : "mediaplayer");
     }
 
-    QObject *object = provider ? provider->createObject("com.nokia.qt.MediaPlayer/1.0") : 0;
+    QObject *object = provider ? provider->createObject(QMediaPlayerService_iid) : 0;
 
     if (object != 0) {
         QMediaPlayerService *service = qobject_cast<QMediaPlayerService*>(object);

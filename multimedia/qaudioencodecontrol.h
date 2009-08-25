@@ -93,7 +93,7 @@ protected:
     QAudioEncodeControl(QObject *parent);
 };
 
-#define QAudioEncodeControl_iid "com.nokia.qt.AudioEncodeControl"
+#define QAudioEncodeControl_iid "com.nokia.Qt.QAudioEncodeControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QAudioEncodeControl, QAudioEncodeControl_iid)
 
 #endif // QAUDIOCAPTUREPROPERTIESCONTROL_H

@@ -41,6 +41,7 @@
 #include <Phonon/VideoWidget>
 
 #include "qmediaplayerservice.h"
+#include "qphononvideowidget.h"
 
 
 class QMediaMetaData;
@@ -61,19 +62,16 @@ public:
     QPhononPlayerService(QObject *parent = 0);
     ~QPhononPlayerService();
 
-    void setVideoOutput(QObject *output);
-
-    QList<QByteArray> supportedEndpointInterfaces(
-            QMediaEndpointInterface::Direction direction) const;
-
-    QObject *createEndpoint(const char *interface);
-
-    QAbstractMediaControl *control(const char *name) const;    
+    QAbstractMediaControl *control(const char *name) const;
 private:
     Phonon::MediaObject *m_mediaObject;
     Phonon::VideoWidget *m_videoWidget;
+    QPhononVideoWidget *m_videoWidgetControl;
+    QPhononVideoOutputControl *m_videoOutputControl;
     QPhononPlayerControl *m_control;
     QPhononMetadataProvider *m_metadata;
 };
+
+
 
 #endif

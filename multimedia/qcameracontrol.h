@@ -68,7 +68,7 @@ protected:
     QCameraControl(QObject* parent);
 };
 
-#define QCameraControl_iid "com.nokia.qt.CameraControl"
+#define QCameraControl_iid "com.nokia.Qt.QCameraControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QCameraControl, QCameraControl_iid)
 
 #endif  // QCAMERACONTROL_H

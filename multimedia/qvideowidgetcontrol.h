@@ -32,44 +32,57 @@
 **
 ****************************************************************************/
 
-#ifndef QMEDIARECORDERCONTROL_H
-#define QMEDIARECORDERCONTROL_H
+#ifndef QVIDEOWIDGETCONTROL_H
+#define QVIDEOWIDGETCONTROL_H
 
 #include "qabstractmediacontrol.h"
-#include "qmediarecorder.h"
 
-class QUrl;
+#include <QtGui/qwidget.h>
 
-class QMediaRecorderControl : public QAbstractMediaControl
+class QVideoWidgetControlPrivate;
+
+class Q_MEDIA_EXPORT QVideoWidgetControl : public QAbstractMediaControl
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-    Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
+    enum AspectRatio { AspectRatioAuto, AspectRatioWidget, AspectRatioCustom };
 
-    virtual ~QMediaRecorderControl();
+    QVideoWidgetControl(QObject *parent = 0);
+    virtual ~QVideoWidgetControl();
 
-    virtual QUrl sink() const = 0;
-    virtual bool setSink(const QUrl &sink) = 0;
+    virtual QWidget *videoWidget() = 0;
 
-    virtual QMediaRecorder::State state() const = 0;
+    virtual AspectRatio aspectRatio() const = 0;
+    virtual QSize customAspectRatio() const = 0;
 
-    virtual qint64 duration() const = 0;
+    virtual void setAspectRatio(AspectRatio ratio) = 0;
+    virtual void setCustomAspectRatio(const QSize &customRatio) = 0;
 
-signals:
-    void stateChanged(QMediaRecorder::State state);
-    void durationChanged(qint64 position);
-    void error(int error, const QString &errorString);
+    virtual bool isFullscreen() const = 0;
+    virtual void setFullscreen(bool fullscreen) = 0;
 
-public slots:
-    virtual void record() = 0;
-    virtual void pause() = 0;
-    virtual void stop() = 0;
+    virtual int brightness() const = 0;
+    virtual void setBrightness(int brightness) = 0;
 
-protected:
-    QMediaRecorderControl(QObject* parent);
+    virtual int contrast() const = 0;
+    virtual void setContrast(int contrast) = 0;
+
+    virtual int hue() const = 0;
+    virtual void setHue(int hue) = 0;
+
+    virtual int saturation() const = 0;
+    virtual void setSaturation(int saturation) = 0;
+
+Q_SIGNALS:
+    void fullscreenChanged(bool fullscreen);
+    void brightnessChanged(int brightness);
+    void contrastChanged(int contrast);
+    void hueChanged(int hue);
+    void saturationChanged(int saturation);
 };
 
-#define QMediaRecorderControl_iid "com.nokia.Qt.QMediaRecorderControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QMediaRecorderControl, QMediaRecorderControl_iid)
+#define QVideoWidgetControl_iid "com.nokia.Qt.QVideoWidgetControl/1.0"
+
+Q_MEDIA_DECLARE_CONTROL(QVideoWidgetControl, QVideoWidgetControl_iid)
 
 #endif

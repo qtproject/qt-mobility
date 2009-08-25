@@ -53,6 +53,10 @@ QPhononPlayerService::QPhononPlayerService(QObject *parent)
     m_videoWidget = new Phonon::VideoWidget();
     m_control = new QPhononPlayerControl(m_mediaObject, this);
     m_metadata = new QPhononMetadataProvider(m_mediaObject, this);
+
+    Phonon::createPath(m_mediaObject, m_videoWidget);
+    m_videoWidgetControl = new QPhononVideoWidget(m_videoWidget, this);
+    m_videoOutputControl = new QPhononVideoOutputControl(this);
 }
 
 QPhononPlayerService::~QPhononPlayerService()
@@ -67,32 +71,11 @@ QAbstractMediaControl *QPhononPlayerService::control(const char *name) const
     if (qstrcmp(name, QMetadataProviderControl_iid) == 0)
         return m_metadata;
 
-    return 0;
-}
+    if (qstrcmp(name, QVideoWidgetControl_iid) == 0)
+        return m_videoWidgetControl;
 
-void QPhononPlayerService::setVideoOutput(QObject *output)
-{
-    Phonon::createPath(m_mediaObject, m_videoWidget);
-    QAbstractMediaService::setVideoOutput(output);
-}
-
-QList<QByteArray> QPhononPlayerService::supportedEndpointInterfaces(
-            QMediaEndpointInterface::Direction direction) const
-{
-    QList<QByteArray> res;
-
-    if (direction == QMediaEndpointInterface::Output)
-        res << QMediaWidgetEndpoint_iid;
-
-    return res;
-}
-
-QObject *QPhononPlayerService::createEndpoint(const char *interface)
-{
-    qDebug() << "request for endpoint" << interface;
-    if (qstrcmp(interface,QMediaWidgetEndpoint_iid) == 0) {
-        return new QPhononVideoWidget(m_videoWidget);
-    }
+    if (qstrcmp(name, QVideoOutputControl_iid) == 0)
+        return m_videoOutputControl;
 
     return 0;
 }

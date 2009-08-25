@@ -3,23 +3,33 @@
 
 #include <QtCore/qdebug.h>
 
+#include <math.h>
+
 QGstreamerVideoEncode::QGstreamerVideoEncode(QObject *parent)
     :QVideoEncodeControl(parent)
 {
     m_frameRate = qMakePair<int,int>(-1,1);
 
     QList<QByteArray> codecCandidates;
-    codecCandidates << "x264enc" << "xvidenc" << "ffenc_mpeg4" << "ffenc_mpeg1video" << "ffenc_mpeg2video" << "theoraenc";
+    codecCandidates << "h264" << "xvid" << "mpeg4" << "mpeg1" << "mpeg2" << "theora";
 
-    m_codecOptions["x264enc"] = QStringList() << "quality" << "bitrate" << "quantizer";
-    m_codecOptions["xvidenc"] = QStringList() << "quality" << "bitrate" << "quantizer" << "profile";
-    m_codecOptions["ffenc_mpeg4"] = QStringList() << "quality" << "bitrate" << "quantizer";
-    m_codecOptions["ffenc_mpeg1video"] = QStringList() << "quality" << "bitrate" << "quantizer";
-    m_codecOptions["ffenc_mpeg2video"] = QStringList() << "quality" << "bitrate" << "quantizer";
-    m_codecOptions["theoraenc"] = QStringList() << "quality" << "bitrate";
+    m_elementNames["h264"] = "x264enc";
+    m_elementNames["xvid"] = "xvidenc";
+    m_elementNames["mpeg4"] = "ffenc_mpeg4";
+    m_elementNames["mpeg1"] = "ffenc_mpeg1video";
+    m_elementNames["mpeg2"] = "ffenc_mpeg2video";
+    m_elementNames["theora"] = "theoraenc";
+
+    m_codecOptions["h264"] = QStringList() << "quality" << "bitrate" << "quantizer";
+    m_codecOptions["xvid"] = QStringList() << "quality" << "bitrate" << "quantizer" << "profile";
+    m_codecOptions["mpeg4"] = QStringList() << "quality" << "bitrate" << "quantizer";
+    m_codecOptions["mpeg1"] = QStringList() << "quality" << "bitrate" << "quantizer";
+    m_codecOptions["mpeg2"] = QStringList() << "quality" << "bitrate" << "quantizer";
+    m_codecOptions["theora"] = QStringList() << "quality" << "bitrate";
 
     foreach( const QByteArray& codecName, codecCandidates ) {
-        GstElementFactory *factory = gst_element_factory_find(codecName.constData());
+        QByteArray elementName = m_elementNames[codecName];
+        GstElementFactory *factory = gst_element_factory_find(elementName.constData());
         if (factory) {
             m_codecs.append(codecName);
             const gchar *descr = gst_element_factory_get_description(factory);
@@ -142,7 +152,7 @@ void QGstreamerVideoEncode::setBitrate(int value)
 
 qreal QGstreamerVideoEncode::quality() const
 {
-    return m_options.value(QLatin1String("quality"), QVariant(8.0)).toDouble();
+    return m_options.value(QLatin1String("quality"), QVariant(50.0)).toDouble();
 }
 
 void QGstreamerVideoEncode::setQuality(qreal value)
@@ -178,7 +188,7 @@ GstElement *QGstreamerVideoEncode::createEncoder()
 
     qDebug() << "create encoder for video codec" << m_codec;
 
-    GstElement *encoderElement = gst_element_factory_make(m_codec.toAscii(), "video-encoder");
+    GstElement *encoderElement = gst_element_factory_make( m_elementNames.value(m_codec).constData(), "video-encoder");
     gst_bin_add(encoderBin, encoderElement);
 
     gst_element_link_many(capsFilter, colorspace, encoderElement, NULL);
@@ -202,14 +212,25 @@ GstElement *QGstreamerVideoEncode::createEncoder()
             if (option == QLatin1String("quality")) {
                 double qualityValue = value.toDouble();
 
-                if (m_codec == QLatin1String("vorbisenc")) {
-                    g_object_set(G_OBJECT(encoderElement), "quality", qualityValue/10.0, NULL);
-                } else if (m_codec == QLatin1String("lame")) {
-                    int presets[] = {1006, 1001, 1002, 1003}; //Medium, Standard, Extreme, Insane
-                    int preset = presets[ qBound(0, qRound(qualityValue*0.3), 3) ];
-                    g_object_set(G_OBJECT(encoderElement), "preset", preset, NULL);
-                } else if (m_codec == QLatin1String("speexenc")) {
-                    g_object_set(G_OBJECT(encoderElement), "quality", qualityValue, NULL);
+                if (m_codec == QLatin1String("h264")) {
+                    //qant(0) = 50, quant(50) = 21, quant(100) = 1
+                    int quant = qRound(50-49*(pow(qualityValue/100.0, 0.7567288)));
+                    g_object_set(G_OBJECT(encoderElement), "quantizer", quant, NULL);
+                } else if (m_codec == QLatin1String("xvid")) {
+                    //quant from 2 to 32, default 4
+
+                    int quant = qRound(31-29*(pow(qualityValue/100.0, 0.1)));
+                    g_object_set(G_OBJECT(encoderElement), "quantizer", quant, NULL);
+                } else if (m_codec == QLatin1String("mpeg4") ||
+                           m_codec == QLatin1String("mpeg1") ||
+                           m_codec == QLatin1String("mpeg2") ) {
+                    //quant from 1 to 30, default ~3
+                    double quant = 30.0-29*(pow(qualityValue/100.0, 0.15));
+                    g_object_set(G_OBJECT(encoderElement), "quantizer", quant, NULL);
+                } else if (m_codec == QLatin1String("theora")) {
+                    //quality from 0 to 63, default 16
+                    int quality = 63*(pow(qualityValue/100.0, 1.977));
+                    g_object_set(G_OBJECT(encoderElement), "quality", quality, NULL);
                 }
 
             } else {

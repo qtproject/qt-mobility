@@ -48,7 +48,7 @@ class MpdProvider : public QMediaServiceProvider
 public:
     QObject* createObject(const char *interface) const
     {
-        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.MediaPlayer/1.0"))
+        if (QLatin1String(interface) == QLatin1String(QMediaPlayerService_iid))
             return new MpdPlayerService;
 
         return 0;

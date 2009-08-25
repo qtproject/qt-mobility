@@ -3,19 +3,29 @@
 
 #include <QtCore/qdebug.h>
 
+#include <math.h>
+
 QGstreamerAudioEncode::QGstreamerAudioEncode(QObject *parent)
     :QAudioEncodeControl(parent)
 {
     QList<QByteArray> codecCandidates;
-    codecCandidates << "lame" << "vorbisenc" << "speexenc" << "gsmenc";
+    codecCandidates << "mp3" << "vorbis" << "speex" << "gsm";
+
+    m_elementNames["mp3"] = "lame";
+    m_elementNames["vorbis"] = "vorbisenc";
+    m_elementNames["speex"] = "speexenc";
+    m_elementNames["gsm"] = "gsmenc";
+
 
     m_codecOptions["vorbis"] = QStringList() << "quality" << "bitrate" << "min-bitrate" << "max-bitrate";
-    m_codecOptions["lame"] = QStringList() << "quality" << "bitrate" << "mode" << "vbr";
-    m_codecOptions["speexenc"] = QStringList() << "quality" << "bitrate" << "mode" << "vbr" << "vad" << "dtx";
-    m_codecOptions["gsmenc"] = QStringList();
+    m_codecOptions["mp3"] = QStringList() << "quality" << "bitrate" << "mode" << "vbr";
+    m_codecOptions["speex"] = QStringList() << "quality" << "bitrate" << "mode" << "vbr" << "vad" << "dtx";
+    m_codecOptions["gsm"] = QStringList();
 
     foreach( const QByteArray& codecName, codecCandidates ) {
-        GstElementFactory *factory = gst_element_factory_find(codecName.constData());
+        QByteArray elementName = m_elementNames[codecName];
+        GstElementFactory *factory = gst_element_factory_find(elementName.constData());
+
         if (factory) {
             m_codecs.append(codecName);
             const gchar *descr = gst_element_factory_get_description(factory);
@@ -83,7 +93,7 @@ void QGstreamerAudioEncode::setBitrate(int value)
 
 qreal QGstreamerAudioEncode::quality() const
 {
-    return m_options.value(QLatin1String("quality"), QVariant(8.0)).toDouble();
+    return m_options.value(QLatin1String("quality"), QVariant(50.0)).toDouble();
 }
 
 void QGstreamerAudioEncode::setQuality(qreal value)
@@ -112,7 +122,7 @@ GstElement *QGstreamerAudioEncode::createEncoder()
     Q_ASSERT(encoderBin);
 
     GstElement *capsFilter = gst_element_factory_make("capsfilter", NULL);
-    GstElement *encoderElement = gst_element_factory_make(m_codec.toAscii(), NULL);
+    GstElement *encoderElement = gst_element_factory_make(m_elementNames.value(m_codec).constData(), NULL);
 
     Q_ASSERT(encoderElement);
 
@@ -160,14 +170,21 @@ GstElement *QGstreamerAudioEncode::createEncoder()
             if (option == QLatin1String("quality")) {
                 double qualityValue = value.toDouble();
 
-                if (m_codec == QLatin1String("vorbisenc")) {
+                if (m_codec == QLatin1String("vorbis")) {
                     g_object_set(G_OBJECT(encoderElement), "quality", qualityValue/10.0, NULL);
-                } else if (m_codec == QLatin1String("lame")) {
-                    int presets[] = {1006, 1001, 1002, 1003}; //Medium, Standard, Extreme, Insane
-                    int preset = presets[ qBound(0, qRound(qualityValue*0.3), 3) ];
+                } else if (m_codec == QLatin1String("mp3")) {
+                    int preset = 1006; // Medium
+                    if (qualityValue > 40)
+                        preset = 1001; // Standard
+                    if (qualityValue > 60)
+                        preset = 1002; // Extreme
+                    if (qualityValue > 80 )
+                        preset = 1003; // Insane
                     g_object_set(G_OBJECT(encoderElement), "preset", preset, NULL);
-                } else if (m_codec == QLatin1String("speexenc")) {
-                    g_object_set(G_OBJECT(encoderElement), "quality", qualityValue, NULL);
+                } else if (m_codec == QLatin1String("speex")) {
+                    //0-10 range with default 8
+                    double q = 10.0*pow(qualityValue/100.0, 0.32);
+                    g_object_set(G_OBJECT(encoderElement), "quality", q, NULL);
                 }
 
             } else {

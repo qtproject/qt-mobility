@@ -83,7 +83,6 @@ public:
     void unsetError();
 
     qint64 duration() const;
-    void setPositionUpdatePeriod(int ms);
 
 public slots:
     void record();

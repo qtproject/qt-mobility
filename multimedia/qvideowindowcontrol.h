@@ -32,8 +32,8 @@
 **
 ****************************************************************************/
 
-#ifndef QVIDEOOVERLAYENDPOINT_H
-#define QVIDEOOVERLAYENDPOINT_H
+#ifndef QVIDEOWINDOWCONTROL_H
+#define QVIDEOWINDOWCONTROL_H
 
 #include "qabstractmediacontrol.h"
 
