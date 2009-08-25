@@ -100,7 +100,7 @@ QSystemInfoPrivate::~QSystemInfoPrivate()
 // 2 letter ISO 639-1
 QString QSystemInfoPrivate::currentLanguage() const
 {////Win32_Product Language
-    return QString(setlocale(LC_ALL,NULL)).left(2);
+   return QLocale::system().name().left(2);
 }
 
 // 2 letter ISO 639-1
@@ -188,7 +188,7 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 //2 letter ISO 3166-1
 QString QSystemInfoPrivate::currentCountryCode() const
 {
-    return QString(setlocale(LC_ALL,"")).mid(3,2);
+    return QLocale::system().name().mid(3,2);
 }
 
 
