@@ -65,7 +65,7 @@ public:
 */
 
 /*!
-    Constructs a new video overlay end point with the given \a parent.
+    Constructs a new video window control with the given \a parent.
 */
 QVideoWindowControl::QVideoWindowControl(QObject *parent)
     : QAbstractMediaControl(*new QVideoWindowControlPrivate, parent)
@@ -73,7 +73,7 @@ QVideoWindowControl::QVideoWindowControl(QObject *parent)
 }
 
 /*!
-    Destroys a video overlay end point.
+    Destroys a video window control.
 */
 QVideoWindowControl::~QVideoWindowControl()
 {

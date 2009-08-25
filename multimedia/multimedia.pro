@@ -45,6 +45,7 @@ HEADERS = \
     qvideooutputcontrol.h \
     qvideowidget.h \
     qvideowindowcontrol.h \
+    qvideowidgetcontrol.h \
     qmediastreams.h \
     qmediastreamscontrol.h \
     qaudioencodecontrol.h \
@@ -88,6 +89,7 @@ SOURCES = qabstractmediacontrol.cpp \
     qvideooutputcontrol.cpp \
     qvideowidget.cpp \
     qvideowindowcontrol.cpp \
+    qvideowidgetcontrol.cpp \
     qmediastreams.cpp \
     qmediastreamscontrol.cpp \
     qaudioencodecontrol.cpp \

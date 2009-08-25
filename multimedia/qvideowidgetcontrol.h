@@ -32,39 +32,57 @@
 **
 ****************************************************************************/
 
-#ifndef QVIDEOOUTPUTCONTROL_H
-#define QVIDEOOUTPUTCONTROL_H
+#ifndef QVIDEOWIDGETCONTROL_H
+#define QVIDEOWIDGETCONTROL_H
 
 #include "qabstractmediacontrol.h"
 
-class Q_MEDIA_EXPORT QVideoOutputControl : public QAbstractMediaControl
+#include <QtGui/qwidget.h>
+
+class QVideoWidgetControlPrivate;
+
+class Q_MEDIA_EXPORT QVideoWidgetControl : public QAbstractMediaControl
 {
     Q_OBJECT
 public:
-    enum Output
-    {
-        NoOutput,
-        WindowOutput,
-        RendererOutput,
-        WidgetOutput,
-        UserOutput = 100,
-        MaxUserOutput = 1000
-    };
+    enum AspectRatio { AspectRatioAuto, AspectRatioWidget, AspectRatioCustom };
 
-    QVideoOutputControl(QObject *parent = 0);
-    ~QVideoOutputControl();
+    QVideoWidgetControl(QObject *parent = 0);
+    virtual ~QVideoWidgetControl();
 
-    virtual QList<Output> availableOutputs() const = 0;
+    virtual QWidget *videoWidget() = 0;
 
-    virtual Output output() const = 0;
-    virtual void setOutput(Output output) = 0;
+    virtual AspectRatio aspectRatio() const = 0;
+    virtual QSize customAspectRatio() const = 0;
+
+    virtual void setAspectRatio(AspectRatio ratio) = 0;
+    virtual void setCustomAspectRatio(const QSize &customRatio) = 0;
+
+    virtual bool isFullscreen() const = 0;
+    virtual void setFullscreen(bool fullscreen) = 0;
+
+    virtual int brightness() const = 0;
+    virtual void setBrightness(int brightness) = 0;
+
+    virtual int contrast() const = 0;
+    virtual void setContrast(int contrast) = 0;
+
+    virtual int hue() const = 0;
+    virtual void setHue(int hue) = 0;
+
+    virtual int saturation() const = 0;
+    virtual void setSaturation(int saturation) = 0;
 
 Q_SIGNALS:
-    void availableOutputsChanged(const QList<QVideoOutputControl::Output>  &outputs);
+    void fullscreenChanged(bool fullscreen);
+    void brightnessChanged(int brightness);
+    void contrastChanged(int contrast);
+    void hueChanged(int hue);
+    void saturationChanged(int saturation);
 };
 
-#define QVideoOutputControl_iid "com.nokia.Qt.QVideoOutputControl/1.0"
+#define QVideoWidgetControl_iid "com.nokia.Qt.QVideoWidgetControl/1.0"
 
-Q_MEDIA_DECLARE_CONTROL(QVideoOutputControl, QVideoOutputControl_iid)
+Q_MEDIA_DECLARE_CONTROL(QVideoWidgetControl, QVideoWidgetControl_iid)
 
 #endif
