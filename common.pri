@@ -29,6 +29,8 @@ CONFIG(debug, debug|release) {
 # Which backend we're building
 ## memory / invalid / symbian / windows / vcard / kabc etc.
 CONTACTS_BACKENDS = memory invalid
+wince*: CONTACTS_BACKENDS += wince
+symbian: CONTACTS_BACKENDS += symbian
 
 symbian:CONTACTS_BACKENDS += symbians60
 wince*:CONTACTS_BACKENDS += wince
