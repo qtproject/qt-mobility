@@ -13,5 +13,5 @@ include(../../common.pri)
 LIBS += -lQtLocation
 
 logfile.path = $$DESTDIR
-logfile.files = log.txt
+logfile.files = simplelog.txt
 INSTALLS += logfile
