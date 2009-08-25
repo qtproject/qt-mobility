@@ -648,7 +648,7 @@ QAbstractMediaService *QCamera::service() const
 
 QAbstractMediaService* createCameraService(QMediaServiceProvider *provider)
 {
-    QObject *object = provider ? provider->createObject("com.nokia.qt.Camera/1.0") : 0;
+    QObject *object = provider ? provider->createObject(QCameraService_iid) : 0;
 
     if (object) {
         QAbstractMediaService *service = qobject_cast<QAbstractMediaService *>(object);

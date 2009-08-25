@@ -65,7 +65,7 @@ protected:
     QMetadataProviderControl(QObject *parent = 0);
 };
 
-#define QMetadataProviderControl_iid "com.nokia.qt.QMetadataProviderControl/1.0"
+#define QMetadataProviderControl_iid "com.nokia.Qt.QMetadataProviderControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QMetadataProviderControl, QMetadataProviderControl_iid)
 
 #endif  // QMETADATAPROVIDER_H

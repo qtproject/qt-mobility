@@ -330,7 +330,7 @@ void QRadioPlayer::cancelSearch()
 
 QRadioService* createRadioService(QMediaServiceProvider *provider)
 {
-    QObject *object = provider ? provider->createObject("com.nokia.qt.RadioService/1.0") : 0;
+    QObject *object = provider ? provider->createObject(QRadioService_iid) : 0;
 
     if (object) {
         QRadioService *service = qobject_cast<QRadioService*>(object);

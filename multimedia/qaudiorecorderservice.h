@@ -32,44 +32,22 @@
 **
 ****************************************************************************/
 
-#ifndef QMEDIARECORDERCONTROL_H
-#define QMEDIARECORDERCONTROL_H
+#ifndef QAUDIORECORDERSERVICE_H
+#define QAUDIORECORDERSERVICE_H
 
-#include "qabstractmediacontrol.h"
-#include "qmediarecorder.h"
+#include "qabstractmediaservice.h"
 
-class QUrl;
-
-class QMediaRecorderControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QAudioRecorderService : public QAbstractMediaService
 {
-Q_OBJECT
+    Q_OBJECT
+
 public:
-    Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
-
-    virtual ~QMediaRecorderControl();
-
-    virtual QUrl sink() const = 0;
-    virtual bool setSink(const QUrl &sink) = 0;
-
-    virtual QMediaRecorder::State state() const = 0;
-
-    virtual qint64 duration() const = 0;
-
-signals:
-    void stateChanged(QMediaRecorder::State state);
-    void durationChanged(qint64 position);
-    void error(int error, const QString &errorString);
-
-public slots:
-    virtual void record() = 0;
-    virtual void pause() = 0;
-    virtual void stop() = 0;
+    ~QAudioRecorderService();
 
 protected:
-    QMediaRecorderControl(QObject* parent);
+    QAudioRecorderService(QObject *parent);
 };
 
-#define QMediaRecorderControl_iid "com.nokia.Qt.QMediaRecorderControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QMediaRecorderControl, QMediaRecorderControl_iid)
+#define QAudioRecorderService_iid "com.nokia.Qt.QAudioRecorderService/1.0"
 
 #endif
