@@ -62,13 +62,12 @@
                 <value name="Roaming" value="8"/>
             </enum>
             <enum access="public" threadsafety="unspecified" status="commendable" name="NetworkMode" fullname="QSystemNetworkInfo::NetworkMode" href="qsystemnetworkinfo.html#NetworkMode-enum" location="qsysteminfo.h" typedef="QSystemNetworkInfo::NetworkModes">
-                <value name="UnknownMode" value="0x00000000"/>
-                <value name="GsmMode" value="0x00000001"/>
-                <value name="CdmaMode" value="0x00000002"/>
-                <value name="WcdmaMode" value="0x00000004"/>
-                <value name="WlanMode" value="0x00000008"/>
-                <value name="EthMode" value="0x00000020"/>
-                <value name="WimaxMode" value="0x00000040"/>
+                <value name="GsmMode" value="0"/>
+                <value name="CdmaMode" value="1"/>
+                <value name="WcdmaMode" value="2"/>
+                <value name="WlanMode" value="3"/>
+                <value name="EthMode" value="4"/>
+                <value name="WimaxMode" value="5"/>
             </enum>
             <typedef access="public" threadsafety="unspecified" status="commendable" name="NetworkModes" fullname="QSystemNetworkInfo::NetworkModes" href="qsystemnetworkinfo.html#NetworkModes-typedef" location="qsysteminfo.h" enum="QSystemNetworkInfo::NetworkMode"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="networkStatus" fullname="QSystemNetworkInfo::networkStatus" href="qsystemnetworkinfo.html#networkStatus" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QSystemNetworkInfo::NetworkStatus" signature="networkStatus(QSystemNetworkInfo::NetworkMode mode)">
