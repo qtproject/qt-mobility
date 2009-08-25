@@ -18,6 +18,7 @@ PUBLIC_HEADERS += \
     qcontact.h \
     qcontactabstractrequest.h \
     qcontactaction.h \
+    qcontactactiondescriptor.h \
     qcontactactionfactory.h \
     qcontactdetail.h \
     qcontactdetaildefinition.h \
@@ -35,6 +36,7 @@ PUBLIC_HEADERS += \
 PRIVATE_HEADERS += \
     qcontact_p.h \
     qcontactabstractrequest_p.h \
+    qcontactactiondescriptor_p.h \
     qcontactdetail_p.h \
     qcontactdetaildefinition_p.h \
     qcontactfilter_p.h \
@@ -47,6 +49,7 @@ SOURCES += \
     qcontact.cpp \
     qcontactabstractrequest.cpp \
     qcontactaction.cpp \
+    qcontactactiondescriptor.cpp \
     qcontactactionfactory.cpp \
     qcontactdetail.cpp \
     qcontactdetaildefinition.cpp \

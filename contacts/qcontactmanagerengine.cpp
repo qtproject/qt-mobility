@@ -426,6 +426,17 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     d.setAccessConstraint(QContactDetailDefinition::Any);
     retn.insert(d.name(), d);
 
+    // nickname
+    fields.clear();
+    f.dataType = QVariant::String;
+    f.allowableValues = QVariantList();
+    d.setName(QContactNickname::DefinitionName);
+    fields.insert(QContactNickname::FieldNickname, f);
+    d.setFields(fields);
+    d.setUnique(false);
+    d.setAccessConstraint(QContactDetailDefinition::Any);
+    retn.insert(d.name(), d);
+
     // url
     fields.clear();
     f.dataType = QVariant::String;
@@ -525,12 +536,13 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     d.setAccessConstraint(QContactDetailDefinition::Any);
     retn.insert(d.name(), d);
 
-#if 0 // leaf class not yet accepted into master
     // geolocation
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
     d.setName(QContactGeolocation::DefinitionName);
+    fields.insert(QContactGeolocation::FieldLabel, f);
+    f.dataType = QVariant::Double;
     fields.insert(QContactGeolocation::FieldLatitude, f);
     fields.insert(QContactGeolocation::FieldLongitude, f);
     fields.insert(QContactGeolocation::FieldAccuracy, f);
@@ -538,13 +550,12 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.insert(QContactGeolocation::FieldAltitudeAccuracy, f);
     fields.insert(QContactGeolocation::FieldSpeed, f);
     fields.insert(QContactGeolocation::FieldHeading, f);
-    f.dataType = QVariant::QDateTime;
-    fields.insert(QContactGeolocation::FieldUpdateTimestamp, f);
+    f.dataType = QVariant::DateTime;
+    fields.insert(QContactGeolocation::FieldTimestamp, f);
     d.setFields(fields);
     d.setUnique(false);
     d.setAccessConstraint(QContactDetailDefinition::Any);
     retn.insert(d.name(), d);
-#endif
 
     // street address
     fields.clear();
@@ -1146,7 +1157,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
 
                 /* See if we need to check the values */
                 if (cdf.detailFieldName().isEmpty())
-                    return true;                    /* just testing for the presence of one of these details */
+                    return true;  /* just testing for the presence of a detail of the specified definition */
 
                 /* Now figure out what tests we are doing */
                 const bool valueTest = cdf.value().isValid();
@@ -1156,7 +1167,9 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                 if (presenceTest) {
                     for(int j=0; j < details.count(); j++) {
                         const QContactDetail& detail = details.at(j);
-                        if (detail.values().contains(cdf.detailFieldName()))
+
+                        /* Check that the field is present and has a non-empty value */
+                        if (detail.values().contains(cdf.detailFieldName()) && !detail.value(cdf.detailFieldName()).isEmpty())
                             return true;
                     }
                     return false;

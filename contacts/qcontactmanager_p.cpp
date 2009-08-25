@@ -40,6 +40,7 @@
 #include "qcontact_p.h"
 
 #include "qcontactaction.h"
+#include "qcontactactiondescriptor.h"
 #include "qcontactactionfactory.h"
 
 #include <QSharedData>
@@ -57,7 +58,7 @@
 
 /* Shared QContactManager stuff here, default engine stuff below */
 QList<QContactActionFactory*> QContactManagerData::m_actionfactories; // list of all factories
-QList<QContactActionFactory::ActionDescriptor> QContactManagerData::m_descriptors;
+QList<QContactActionDescriptor> QContactManagerData::m_descriptors;
 QHash<QString, QContactManagerEngineFactory*> QContactManagerData::m_engines;
 QContactManagerData::DescriptorHash QContactManagerData::m_descriptormap;
 QHash<QString, int> QContactManagerData::m_vendormap;
@@ -149,14 +150,14 @@ void QContactManagerData::loadFactories()
 
                 m_actionfactories.append(g);
 
-                QList<QContactActionFactory::ActionDescriptor> actions = g->actionDescriptors();
-                QMap<QContactActionFactory::ActionDescriptor, QContactActionFactory*>::iterator it;
+                QList<QContactActionDescriptor> actions = g->actionDescriptors();
+                QMap<QContactActionDescriptor, QContactActionFactory*>::iterator it;
                 for (int j = 0; j < actions.size(); j++) {
-                    const QContactActionFactory::ActionDescriptor& desc = actions.at(j);
+                    QContactActionDescriptor desc = actions.at(j);
                     m_descriptormap.insert(desc, g);
                     m_descriptors.append(desc);
-                    m_actionmap.insertMulti(desc.actionName, m_descriptors.count() - 1);
-                    m_vendormap.insertMulti(desc.vendorName, m_descriptors.count() - 1);
+                    m_actionmap.insertMulti(desc.actionName(), m_descriptors.count() - 1);
+                    m_vendormap.insertMulti(desc.vendorName(), m_descriptors.count() - 1);
                 }
             }
         }
@@ -218,14 +219,14 @@ void QContactManagerData::loadFactories()
 
                 m_actionfactories.append(g);
 
-                QList<QContactActionFactory::ActionDescriptor> actions = g->actionDescriptors();
-                QMap<QContactActionFactory::ActionDescriptor, QContactActionFactory*>::iterator it;
+                QList<QContactActionDescriptor> actions = g->actionDescriptors();
+                QMap<QContactActionDescriptor, QContactActionFactory*>::iterator it;
                 for (int j = 0; j < actions.size(); j++) {
-                    const QContactActionFactory::ActionDescriptor& desc = actions.at(j);
+                    const QContactActionDescriptor& desc = actions.at(j);
                     m_descriptormap.insert(desc, g);
                     m_descriptors.append(desc);
-                    m_actionmap.insertMulti(desc.actionName, m_descriptors.count() - 1);
-                    m_vendormap.insertMulti(desc.vendorName, m_descriptors.count() - 1);
+                    m_actionmap.insertMulti(desc.actionName(), m_descriptors.count() - 1);
+                    m_vendormap.insertMulti(desc.vendorName(), m_descriptors.count() - 1);
                 }
             }
         }
@@ -243,7 +244,7 @@ QList<QContactAction*> QContactManagerData::actions(const QString& actionName, c
 
     bool restrict = false;
     QSet<int> subset;
-    QList<QContactActionFactory::ActionDescriptor> descriptors;
+    QList<QContactActionDescriptor> descriptors;
 
     // Go through our list of descriptors, looking for a match
     if (!actionName.isEmpty()) {
@@ -262,7 +263,7 @@ QList<QContactAction*> QContactManagerData::actions(const QString& actionName, c
         if (implementationVersion != -1) {
             QMutableSetIterator<int> it(subset);
             while(it.hasNext()) {
-                if (m_descriptors.at(it.next()).vendorVersion != implementationVersion)
+                if (m_descriptors.at(it.next()).vendorVersion() != implementationVersion)
                     it.remove();
             }
         }
@@ -280,7 +281,7 @@ QList<QContactAction*> QContactManagerData::actions(const QString& actionName, c
 
     /* Now loop over the valid descriptors */
     for (int j=0; j < descriptors.size(); j++) {
-        const QContactActionFactory::ActionDescriptor& descriptor = descriptors.at(j);
+        const QContactActionDescriptor& descriptor = descriptors.at(j);
         retn += m_descriptormap.value(descriptor)->instance(descriptor);
     }
 

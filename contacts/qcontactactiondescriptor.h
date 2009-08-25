@@ -32,36 +32,35 @@
 ****************************************************************************/
 
 
-#ifndef QCONTACTACTIONFACTORY_H
-#define QCONTACTACTIONFACTORY_H
+#ifndef QCONTACTACTIONDESCRIPTOR_H
+#define QCONTACTACTIONDESCRIPTOR_H
 
 #include "qtcontactsglobal.h"
-#include "qcontactactiondescriptor.h"
-
-#include <QObject>
-#include <QtPlugin>
 #include <QString>
-#include <QList>
-#include <QVariantMap>
-#include <QStringList>
-#include <QHash>
+#include <QSharedDataPointer>
 
-class QContactAction;
-class QTCONTACTS_EXPORT QContactActionFactory : public QObject
+class QContactActionDescriptorPrivate;
+class QTCONTACTS_EXPORT QContactActionDescriptor
 {
-    Q_OBJECT
-
 public:
-    virtual ~QContactActionFactory() = 0;
-    virtual QString name() const = 0;
-    virtual QList<QContactActionDescriptor> actionDescriptors() const = 0;
-    virtual QContactAction* instance(const QContactActionDescriptor& descriptor) const = 0;
-    virtual QVariantMap actionMetadata(const QContactActionDescriptor& descriptor) const = 0;
+    QContactActionDescriptor(const QString& actionName = QString(), const QString& vendorName = QString(), int vendorVersion = -1);
+    QContactActionDescriptor(const QContactActionDescriptor& other);
+    QContactActionDescriptor& operator=(const QContactActionDescriptor& other);
+    ~QContactActionDescriptor();
+
+    bool isEmpty() const;
+    bool operator ==(const QContactActionDescriptor& other) const;
+
+    void setActionName(const QString& actionName);
+    void setVendorName(const QString& vendorName);
+    void setVendorVersion(int vendorVersion);
+
+    QString actionName() const;
+    QString vendorName() const;
+    int vendorVersion() const;
+
+private:
+    QSharedDataPointer<QContactActionDescriptorPrivate> d;
 };
-
-uint qHash(const QContactActionDescriptor& ad);
-
-#define QT_CONTACTS_ACTION_FACTORY_INTERFACE "com.nokia.qt.mobility.contacts.actionfactory/1.0"
-Q_DECLARE_INTERFACE(QContactActionFactory, QT_CONTACTS_ACTION_FACTORY_INTERFACE);
 
 #endif

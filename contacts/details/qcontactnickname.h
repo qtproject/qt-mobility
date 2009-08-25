@@ -31,37 +31,30 @@
 **
 ****************************************************************************/
 
+#ifndef QCONTACTNICKNAME_H
+#define QCONTACTNICKNAME_H
 
-#ifndef QCONTACTACTIONFACTORY_H
-#define QCONTACTACTIONFACTORY_H
+#include <QString>
 
 #include "qtcontactsglobal.h"
-#include "qcontactactiondescriptor.h"
+#include "qcontactdetail.h"
+#include "qcontact.h"
 
-#include <QObject>
-#include <QtPlugin>
-#include <QString>
-#include <QList>
-#include <QVariantMap>
-#include <QStringList>
-#include <QHash>
-
-class QContactAction;
-class QTCONTACTS_EXPORT QContactActionFactory : public QObject
+/* Leaf class */
+class QTCONTACTS_EXPORT QContactNickname : public QContactDetail
 {
-    Q_OBJECT
-
 public:
-    virtual ~QContactActionFactory() = 0;
-    virtual QString name() const = 0;
-    virtual QList<QContactActionDescriptor> actionDescriptors() const = 0;
-    virtual QContactAction* instance(const QContactActionDescriptor& descriptor) const = 0;
-    virtual QVariantMap actionMetadata(const QContactActionDescriptor& descriptor) const = 0;
+#ifdef Q_QDOC
+    const char* DefinitionName;
+    const char* FieldNickname;
+#else
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactNickname, "Nickname")
+    Q_DECLARE_LATIN1_LITERAL(FieldNickname, "Nickname");
+#endif
+
+    void setNickname(const QString& nickname) {setValue(FieldNickname, nickname);}
+    QString nickname() const {return value(FieldNickname);}
 };
 
-uint qHash(const QContactActionDescriptor& ad);
-
-#define QT_CONTACTS_ACTION_FACTORY_INTERFACE "com.nokia.qt.mobility.contacts.actionfactory/1.0"
-Q_DECLARE_INTERFACE(QContactActionFactory, QT_CONTACTS_ACTION_FACTORY_INTERFACE);
-
 #endif
+

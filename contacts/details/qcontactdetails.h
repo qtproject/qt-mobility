@@ -55,6 +55,7 @@
 #include "qcontactgeolocation.h"
 #include "qcontactguid.h"
 #include "qcontactname.h"
+#include "qcontactnickname.h"
 #include "qcontactonlineaccount.h"
 #include "qcontactorganisation.h"
 #include "qcontactphonenumber.h"

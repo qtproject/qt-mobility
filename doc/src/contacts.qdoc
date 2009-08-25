@@ -153,6 +153,7 @@ they may offer their own which provide similar functionality.
     \o \l{QContactGeolocation}
     \o \l{QContactGuid}
     \o \l{QContactName}
+    \o \l{QContactNickname}
     \o \l{QContactOnlineAccount}
     \o \l{QContactOrganisation}
     \o \l{QContactPhoneNumber}
@@ -202,6 +203,19 @@ and flexible selection of contacts according to various criteria:
 
 A client can also request that the results of such a selection be sorted, by passing a \l{QContactSortOrder} (or
 list of sort orders) to the manager.
+
+\section2 Actions
+
+Clients can perform actions on contacts which support them.  Actions are things like "Send Email" or "Dial", and
+can be provided from various sources including Qt Plugins or the \l{Qt Mobility Service Framework}.
+Every action implementation is uniquely identified by a combination of its name, the name of the vendor which provided
+the implementation, and the version of the implementation according to the vendor.  These pieces of data may be
+encapsulated in a \l{QContactActionDescriptor} which can be used to retrieve an instance of the implementation
+from a \l{QContactActionFactory}.
+
+When an instance of a \l{QContactAction} is created, the caller takes ownership of the instance, and must delete
+it after use.  The semantics of ownership are currently under discussion; they are subject to change prior to
+the Alpha release of Qt Mobility.
 
 \section2 Implementing Backends
 

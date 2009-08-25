@@ -33,13 +33,18 @@
 
 #include "qcontactactionfactory.h"
 
+/*!
+ * \class QContactActionFactory
+ * \brief Provides an interface for clients to retrieve instances of action implementations
+ */
+
 QContactActionFactory::~QContactActionFactory()
 {
 }
 
-uint qHash(const QContactActionFactory::ActionDescriptor& ad)
+uint qHash(const QContactActionDescriptor& ad)
 {
-    return qHash(ad.actionName) + qHash(ad.vendorName) + ad.vendorVersion;
+    return qHash(ad.actionName()) + qHash(ad.vendorName()) + ad.vendorVersion();
 }
 
 /*!
@@ -60,7 +65,12 @@ uint qHash(const QContactActionFactory::ActionDescriptor& ad)
  */
 
 /*!
- * \fn QContactActionFactory::instance(const ActionDescriptor& descriptor) const
+ * \fn QContactActionFactory::instance(const QContactActionDescriptor& descriptor) const
  * Returns a pointer to an instance of the implementation of the action described by the given \a descriptor
+ */
+
+/*!
+ * \fn QContactActionFactory::actionMetadata(const QContactActionDescriptor& descriptor) const
+ * Returns the metadata associated with the action identified by the given \a descriptor
  */
 

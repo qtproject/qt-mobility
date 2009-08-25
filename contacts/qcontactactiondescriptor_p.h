@@ -31,37 +31,60 @@
 **
 ****************************************************************************/
 
+#ifndef QCONTACTACTIONDESCRIPTOR_P_H
+#define QCONTACTACTIONDESCRIPTOR_P_H
 
-#ifndef QCONTACTACTIONFACTORY_H
-#define QCONTACTACTIONFACTORY_H
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include "qtcontactsglobal.h"
-#include "qcontactactiondescriptor.h"
-
-#include <QObject>
-#include <QtPlugin>
+#include <QSharedData>
 #include <QString>
-#include <QList>
-#include <QVariantMap>
-#include <QStringList>
-#include <QHash>
 
-class QContactAction;
-class QTCONTACTS_EXPORT QContactActionFactory : public QObject
+class QContactActionDescriptorPrivate : public QSharedData
 {
-    Q_OBJECT
-
 public:
-    virtual ~QContactActionFactory() = 0;
-    virtual QString name() const = 0;
-    virtual QList<QContactActionDescriptor> actionDescriptors() const = 0;
-    virtual QContactAction* instance(const QContactActionDescriptor& descriptor) const = 0;
-    virtual QVariantMap actionMetadata(const QContactActionDescriptor& descriptor) const = 0;
+    QContactActionDescriptorPrivate(const QString& action, const QString& vendor, int version)
+            : QSharedData(),
+            m_actionName(action),
+            m_vendorName(vendor),
+            m_vendorVersion(version)
+    {
+    }
+
+    ~QContactActionDescriptorPrivate()
+    {
+    }
+
+    /*
+    bool operator <(const QContactActionDescriptorPrivate& other) const
+    {
+        if (m_actionName < other.m_actionName)
+            return true;
+        if (m_actionName == other.m_actionName) {
+            if (m_vendorName < other.m_vendorName)
+                return true;
+            else if (m_vendorName == other.m_vendorName) {
+                if (m_vendorVersion < other.m_vendorVersion)
+                    return true;
+                else if (m_vendorVersion == other.m_vendorVersion)
+                    return this < &other; // equality, try to be stable
+            }
+        }
+        return false;
+    }
+    */
+
+    QString m_actionName;
+    QString m_vendorName;
+    int m_vendorVersion;
 };
-
-uint qHash(const QContactActionDescriptor& ad);
-
-#define QT_CONTACTS_ACTION_FACTORY_INTERFACE "com.nokia.qt.mobility.contacts.actionfactory/1.0"
-Q_DECLARE_INTERFACE(QContactActionFactory, QT_CONTACTS_ACTION_FACTORY_INTERFACE);
 
 #endif
