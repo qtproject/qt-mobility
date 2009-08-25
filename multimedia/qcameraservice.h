@@ -58,4 +58,6 @@ protected:
     QCameraService(QObject *parent);
 };
 
+#define QCameraService_iid "com.nokia.Qt.QCameraService/1.0"
+
 #endif  // QCAMERASERVICE_H

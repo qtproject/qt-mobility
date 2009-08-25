@@ -53,4 +53,6 @@ protected:
     QMediaPlayerService(QObject *parent);
 };
 
+#define QMediaPlayerService_iid "com.nokia.Qt.QMediaPlayerService/1.0"
+
 #endif  // QMEDIAPLAYERSERVICE_H
