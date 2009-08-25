@@ -34,7 +34,6 @@ private slots:
     void getFeature(int index);
     void setSaverEnabled(bool b);
     void setBlankingEnabled(bool b);
-    void netComboActivated(int);
     void netStatusComboActivated(int);
 };
 

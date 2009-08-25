@@ -135,8 +135,8 @@ void Dialog::setupMemory()
 void Dialog::setupNetwork()
 {
     QSystemNetworkInfo ni;
-    connect(ui->netStrengthComboBox,SIGNAL(activated(int)),
-            this, SLOT(netComboActivated(int)));
+    connect(ui->netStatusComboBox,SIGNAL(activated(int)),
+            this, SLOT(netStatusComboActivated(int)));
     connect(ui->netStatusComboBox,SIGNAL(activated(int)),
             this, SLOT(netStatusComboActivated(int)));
 
@@ -154,7 +154,7 @@ void Dialog::netStatusComboActivated(int index)
     QString status;
     QString stat;
     QSystemNetworkInfo ni;
-    switch(ni.networkStatus( (QSystemNetworkInfo::NetworkMode)index)) {
+    switch(ni.networkStatus((QSystemNetworkInfo::NetworkMode)index)) {
     case QSystemNetworkInfo::UndefinedStatus:
         stat = "Undefined";
         break;
@@ -184,12 +184,16 @@ void Dialog::netStatusComboActivated(int index)
         break;
     };
     ui->cellNetworkStatusLabel->setText(stat);
-}
 
-void Dialog::netComboActivated(int index)
-{
-    QSystemNetworkInfo ni;
-    ui->signalLevelProgressBar->setValue(ni.networkSignalStrength(( QSystemNetworkInfo::NetworkMode)index));
+    int strength = ni.networkSignalStrength((QSystemNetworkInfo::NetworkMode)index);
+    if(strength < 0)
+        strength = 0;
+    ui->signalLevelProgressBar->setValue(strength);
+
+    if((QSystemNetworkInfo::NetworkMode)index == QSystemNetworkInfo::WlanMode) {
+        ui->ssidLabel->setText(ni.wlanSsid());
+    }
+    ui->macAddressLabel->setText(ni.macAddress((QSystemNetworkInfo::NetworkMode)index));
 }
 
 void Dialog::getVersion(int index)

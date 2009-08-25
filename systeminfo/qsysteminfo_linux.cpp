@@ -608,10 +608,45 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
         break;
         case QSystemNetworkInfo::WlanMode:
         {
-
+            QString result;
+            QString baseSysDir = "/sys/class/net/";
+            QDir wDir(baseSysDir);
+            QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
+            foreach(QString dir, dirs) {
+                QString devFile = baseSysDir + dir;
+                QFileInfo fi(devFile + "/wireless");
+                if(fi.exists()) {
+                    QFile rx(devFile + "/address");
+                    if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                        QTextStream in(&rx);
+                        in >> result;
+                        rx.close();
+                        return result;
+                    }
+                }
+            }
         }
         break;
         case QSystemNetworkInfo::EthMode:
+        {
+            QString result;
+            QString baseSysDir = "/sys/class/net/";
+            QDir eDir(baseSysDir);
+            QStringList dirs = eDir.entryList(QStringList() << "eth*", QDir::AllDirs | QDir::NoDotAndDotDot);
+            foreach(QString dir, dirs) {
+                QString devFile = baseSysDir + dir;
+                QFileInfo fi(devFile + "/address");
+                if(fi.exists()) {
+                    QFile rx(fi.absoluteFilePath());
+                    if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                        QTextStream in(&rx);
+                        in >> result;
+                        rx.close();
+                        return result;
+                    }
+                }
+            }
+        }
         break;
         case QSystemNetworkInfo::WimaxMode:
         break;
