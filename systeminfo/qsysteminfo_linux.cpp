@@ -982,7 +982,7 @@ bool QSystemDeviceInfoPrivate::isBatteryCharging()
     }
     QFile statefile("/proc/acpi/battery/BAT0/state");
     if (!statefile.open(QIODevice::ReadOnly)) {
-        qWarning() << "Could not open /proc/acpi/battery/BAT0/state";
+      //  qWarning() << "Could not open /proc/acpi/battery/BAT0/state";
     } else {
         QTextStream batstate(&statefile);
         QString line = batstate.readLine();
@@ -1025,7 +1025,7 @@ int QSystemDeviceInfoPrivate::batteryLevel() const
     }
     QFile infofile("/proc/acpi/battery/BAT0/info");
     if (!infofile.open(QIODevice::ReadOnly)) {
-        qWarning() << "Could not open /proc/acpi/battery/BAT0/info";
+     //   qWarning() << "Could not open /proc/acpi/battery/BAT0/info";
         return QSystemDeviceInfo::NoBatteryLevel;
     } else {
         QTextStream batinfo(&infofile);
@@ -1043,7 +1043,7 @@ int QSystemDeviceInfoPrivate::batteryLevel() const
 
     QFile statefile("/proc/acpi/battery/BAT0/state");
     if (!statefile.open(QIODevice::ReadOnly)) {
-        qWarning() << "Could not open /proc/acpi/battery/BAT0/state";
+   //     qWarning() << "Could not open /proc/acpi/battery/BAT0/state";
         return QSystemDeviceInfo::NoBatteryLevel;
     } else {
         QTextStream batstate(&statefile);
