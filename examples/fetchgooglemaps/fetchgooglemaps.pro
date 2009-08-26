@@ -1,7 +1,9 @@
+requires(contains(QT_CONFIG,webkit))
+
 TEMPLATE=app
 INCLUDEPATH += ../../location
 
-QT += network webkit 
+QT += webkit 
 
 HEADERS = mapwindow.h
 SOURCES = mapwindow.cpp \
