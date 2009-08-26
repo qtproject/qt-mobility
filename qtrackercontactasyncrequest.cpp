@@ -37,6 +37,27 @@ void applyFilterToRDFVariable(RDFVariable &variable,
     }
 }
 
+void addSortingPartToRDFSelectQuery(RDFSelect &query, RDFVariable &contact, QList<QContactSortOrder> sorting)
+{
+    foreach(QContactSortOrder sort, sorting)
+    {
+        if( sort.detailDefinitionName() == QContactName::DefinitionName)
+        {
+            if( sort.detailFieldName() == QContactName::FieldFirst)
+            {
+                query.orderBy(contact.optional().property<nco::nameGiven>());
+            }
+            if( sort.detailFieldName() == QContactName::FieldLast)
+            {
+                query.orderBy(contact.optional().property<nco::nameFamily>());
+            }
+            else
+                qWarning()<<"QTrackerContactAsyncRequest"<<"sorting by"<<sort.detailDefinitionName()<<sort.detailFieldName()<<"is not yet supported";
+
+        }else
+            qWarning()<<"QTrackerContactAsyncRequest"<<"sorting by"<<sort.detailDefinitionName()<<"is not yet supported";
+    }
+}
 
 QTrackerContactAsyncRequest::QTrackerContactAsyncRequest(
         QContactAbstractRequest* request, QContactManagerEngine* parent) :
@@ -72,27 +93,25 @@ QTrackerContactAsyncRequest::QTrackerContactAsyncRequest(
         {
             QContactFetchRequest* r =
                     static_cast<QContactFetchRequest*> (req);
-            QContactFilter filter = r->filter();
-            QList<QContactSortOrder> sorting = r->sorting();
-            Q_UNUSED(filter)
-            Q_UNUSED(sorting)
 
             RDFVariable RDFContact = RDFVariable::fromType<nco::PersonContact>();
             applyFilterToRDFVariable(RDFContact,r->filter());
             if( r->definitionRestrictions().contains( QContactPhoneNumber::DefinitionName ) )
             {
                 // prepare query to get all phone numbers
-                RDFVariable rdfcontact1 = RDFContact.child();
+                RDFVariable rdfcontact1 = RDFVariable::fromType<nco::PersonContact>();
+                applyFilterToRDFVariable(rdfcontact1,r->filter());
                 // criteria - only those with phone numbers
-                rdfcontact1.property<nco::hasPhoneNumber>();
+                RDFVariable phone = rdfcontact1.property<nco::hasPhoneNumber>();
+                RDFVariable type = phone.type();
+                type.property<rdfs::subClassOf>() = nco::PhoneNumber::iri(); // sparql cannot handle exact type but returns all super types as junk rows
+
                 // columns
                 RDFSelect queryidsnumbers;
                 queryidsnumbers.addColumn("contactId", rdfcontact1.property<nco::contactUID> ());
-                queryidsnumbers.addColumn("phoneno", rdfcontact1.property<nco::hasPhoneNumber> ().property<nco::phoneNumber> ());
+                queryidsnumbers.addColumn("phoneno", phone.property<nco::phoneNumber> ());
                 // rdfcontact1.property<nco::hasPhoneNumber> ().isOfType( nco::PhoneNumber::iri(), true);
-                queryidsnumbers.addColumn("type", rdfcontact1.property<nco::hasPhoneNumber> ().type());
-
-
+                queryidsnumbers.addColumn("type", type);
 
                 queryPhoneNumbersNodes = ::tracker()->modelQuery(queryidsnumbers);
                 // need to store LiveNodes in order to receive notification from model
@@ -104,7 +123,8 @@ QTrackerContactAsyncRequest::QTrackerContactAsyncRequest(
                     || r->definitionRestrictions().contains(QContactOnlineAccount::DefinitionName))
             {
                 // prepare query to get all im accounts
-                RDFVariable rdfcontact1 = RDFContact.child();
+                RDFVariable rdfcontact1 = RDFVariable::fromType<nco::PersonContact>();
+                applyFilterToRDFVariable(rdfcontact1,r->filter());
                 // criteria - only those with im accounts
                 rdfcontact1.property<nco::hasIMAccount> ();
                 // columns
@@ -130,11 +150,15 @@ QTrackerContactAsyncRequest::QTrackerContactAsyncRequest(
             quer.addColumn("secondname", RDFContact1.optional().property<nco::nameFamily> ());
             quer.addColumn("photo",      RDFContact1.optional().property<nco::photo> ());
 
+
             if (r->definitionRestrictions().contains(QContactEmailAddress::DefinitionName))
             {
                 // constraints for start: reading only one of items
                 quer.addColumn("email", RDFContact.optional().property<nco::hasEmailAddress>().property<nco::emailAddress>());
             }
+
+            // supporting sorting only here, difficult and no requirements in UI for sorting in multivalue details (phones, emails)
+            addSortingPartToRDFSelectQuery( quer, RDFContact1, r->sorting());
 
             query = ::tracker()->modelQuery(quer);
             // need to store LiveNodes in order to receive notification from model
@@ -225,7 +249,6 @@ void QTrackerContactAsyncRequest::contactsReady()
 void QTrackerContactAsyncRequest::phoneNumbersReady()
 {
     queryPhoneNumbersNodesReady = true;
-    // now we know that the query is ready before get all contacts, check how it works with transactions
 }
 
 void QTrackerContactAsyncRequest::iMAcountsReady()
@@ -266,6 +289,7 @@ void QTrackerContactAsyncRequest::processQueryPhoneNumbers(SopranoLive::LiveNode
     Q_ASSERT_X( queryPhoneNumbersNodesReady, Q_FUNC_INFO, "Phonenumbers query was supposed to be ready and it is not." );
     for(int i = 0; i < queryPhoneNumbers->rowCount(); i++)
     {
+        qDebug()<<Q_FUNC_INFO<<i<<queryPhoneNumbers->rowCount()<<queryPhoneNumbers->columnCount()<<queryPhoneNumbers->index(i, 0).data().toString()<<queryPhoneNumbers->index(i, 1).data().toString()<<queryPhoneNumbers->index(i, 2).data().toString();
         // ignore if next one is the same - asked iridian about making query to ignore supertypes
         // TODO remove after his answer
         if( i+1 < queryPhoneNumbers->rowCount()

@@ -205,6 +205,8 @@ QList<QUniqueId> QContactTrackerEngine::contacts(const QList<QContactSortOrder>&
 
 QContact QContactTrackerEngine::contact(const QUniqueId& contactId, QContactManager::Error& error ) const
 {
+    qWarning()<<"QContactManager::contact()"<<"api is not supported for tracker plugin. Please use asynchronous API QContactFetchRequest.";
+    // leave the code for now while not all other code is fixed
     error = QContactManager::NoError;
 
     // TODO: Do with LiveNodes when they support strict querying.
@@ -248,13 +250,23 @@ bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
         return false;
     }
 
+    RDFTransactionPtr transaction = RDFTransactionPtr();//::tracker()->initiateTransaction();
+
+    RDFServicePtr service;
+    if(transaction)
+        // if transaction was obtained, grab the service from inside it and use it
+        service = transaction->service();
+    else
+        // otherwise, use tracker directly, with no transactions.
+        service = ::tracker();
+
     Live<nco::PersonContact> ncoContact;
     bool newContact = false;
     if(contact->id() == 0) {
         // Save new contact
         newContact = true;
         d->m_lastUsedId += 1;
-        ncoContact = ::tracker()->liveNode(QUrl("contact:"+(QString::number(d->m_lastUsedId))));
+        ncoContact = service->liveNode(QUrl("contact:"+(QString::number(d->m_lastUsedId))));
         QSettings definitions(QSettings::IniFormat, QSettings::UserScope, "Nokia", "Trackerplugin");
         contact->setId(d->m_lastUsedId);
         ncoContact->setContactUID(QString::number(d->m_lastUsedId));
@@ -262,7 +274,7 @@ bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
         definitions.setValue("nextAvailableContactId", QString::number(d->m_lastUsedId));
         contactsAdded << contact->id();
     }  else {
-        ncoContact = ::tracker()->liveNode(QUrl("contact:"+QString::number(contact->id())));
+        ncoContact = service->liveNode(QUrl("contact:"+QString::number(contact->id())));
         ncoContact->setContentLastModified(QDateTime::currentDateTime());
         contactsChanged << contact->id();
     }
@@ -271,17 +283,17 @@ bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
     QString strTag = "addressbook";
     RDFVariable rdfContact = RDFVariable::fromType<nco::PersonContact>();
     RDFVariable rdfTag = rdfContact.property<nao::hasTag>().property<nao::prefLabel>() = LiteralValue(strTag);
-    LiveNodeList uriList = ::tracker()->modelVariable(rdfTag);
+    LiveNodeList uriList = service->modelVariable(rdfTag);
     if (!uriList.isEmpty()) {
         qDebug() << QString("Failed to add \"%1\" tag").arg(strTag);
     }
     else {
         RDFVariable tag = RDFVariable::fromType<nao::Tag>();
         tag.property<nao::prefLabel>() = LiteralValue(strTag);
-        LiveNodeList tagList = ::tracker()->modelVariable(tag);
+        LiveNodeList tagList = service->modelVariable(tag);
         Live<nao::Tag> newTag;
         if (tagList.isEmpty()) {
-            newTag = ::tracker()->createLiveNode();
+            newTag = service->createLiveNode();
             newTag->setPrefLabel(strTag);
             ncoContact->addObject(nao::hasTag::iri(), newTag);
         }
@@ -327,6 +339,7 @@ bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
             // Save mobile phone number.
             if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactPhoneNumber::AttributeSubTypeMobile)) {
                 Live<nco::CellPhoneNumber> number = d->nodeByClasstype<nco::CellPhoneNumber>(numbers);
+                // TODO previous doesnt work - nodeByClasstype was supposed to create multiple new nodes but it always return existing.
                 if(!number.isLive()) {
                     number = contact->addHasPhoneNumber();
                 }
@@ -357,7 +370,7 @@ bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
         } else if(definition == QContactAvatar::DefinitionName) {
             QUrl avatar = det.value(QContactAvatar::FieldAvatar);
             Live<nco::Contact> contact = d->contactByContext(det, ncoContact);
-            Live<nie::DataObject> fdo = ::tracker()->liveNode( avatar );
+            Live<nie::DataObject> fdo = service->liveNode( avatar );
             contact->setPhoto(fdo);
         /* Save url */
         } else if(definition == QContactUrl::DefinitionName) {
@@ -399,6 +412,9 @@ bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
             liveIMAccount->setImAccountType(serviceName);
         }
     }
+    // remember to commit the transaction, otherwise all changes will be rolled back.
+    if(transaction)
+        transaction->commit();
 
 /*! commented out as it is fired from QContactManager
     if(!batch) {
