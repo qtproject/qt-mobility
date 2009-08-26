@@ -116,7 +116,11 @@ QSystemInfoPrivate::~QSystemInfoPrivate()
 // 2 letter ISO 639-1
 QString QSystemInfoPrivate::currentLanguage() const
 {
-    return QLocale::system().name().left(2);
+    QString lang = QLocale::system().name().left(2);
+    if(lang.isEmpty() || lang == "C") {
+        lang = "en";
+    }
+    return lang;
 }
 
 // 2 letter ISO 639-1
