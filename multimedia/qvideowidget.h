@@ -94,6 +94,7 @@ protected:
     void resizeEvent(QResizeEvent *event);
     void paintEvent(QPaintEvent *event);
     void keyPressEvent(QKeyEvent *event);
+    bool eventFilter(QObject*, QEvent*);
 
 protected:
     QVideoWidgetPrivate *d_ptr;
