@@ -85,7 +85,7 @@ QPair<int,int> QGstreamerVideoEncode::frameRate() const
     return m_frameRate;
 }
 
-QPair<int,int> QGstreamerVideoEncode::minumumFrameRate() const
+QPair<int,int> QGstreamerVideoEncode::minimumFrameRate() const
 {
     return qMakePair<int,int>(1,1);
 }

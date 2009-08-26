@@ -23,7 +23,7 @@ public:
     void setResolution(const QSize &);
 
     QPair<int,int> frameRate() const;
-    QPair<int,int> minumumFrameRate() const;
+    QPair<int,int> minimumFrameRate() const;
     QPair<int,int> maximumFrameRate() const;
     QList< QPair<int,int> > supportedFrameRates() const;
     void setFrameRate(const QPair<int,int> &rate);
