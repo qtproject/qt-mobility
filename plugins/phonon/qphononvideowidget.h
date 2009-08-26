@@ -15,10 +15,10 @@ public:
 
     QWidget *videoWidget() { return m_videoWidget; }
 
-    QVideoWidgetControl::AspectRatio aspectRatio() const;
+    QVideoWidget::AspectRatio aspectRatio() const;
     QSize customAspectRatio() const;
 
-    void setAspectRatio(QVideoWidgetControl::AspectRatio ratio);
+    void setAspectRatio(QVideoWidget::AspectRatio ratio);
     void setCustomAspectRatio(const QSize &customRatio);
 
     bool isFullscreen() const;
@@ -38,7 +38,7 @@ public:
 
 private:
     Phonon::VideoWidget *m_videoWidget;
-    QVideoWidgetControl::AspectRatio m_aspectRatio;
+    QVideoWidget::AspectRatio m_aspectRatio;
     QSize m_customAspectRatio;
 };
 

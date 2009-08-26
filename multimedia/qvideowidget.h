@@ -47,7 +47,10 @@ class Q_MEDIA_EXPORT QVideoWidget : public QWidget
 {
     Q_OBJECT
     Q_ENUMS(DisplayMode)
+    Q_ENUMS(AspectRatio)
     Q_PROPERTY(DisplayMode displayMode READ displayMode WRITE setDisplayMode NOTIFY displayModeChanged)
+    Q_PROPERTY(AspectRatio aspectRatio READ aspectRatio WRITE setAspectRatio NOTIFY aspectRatioChanged)
+    Q_PROPERTY(QSize customPixelAspectRatio READ customPixelAspectRatio WRITE setCustomPixelAspectRatio NOTIFY customPixelAspectRatioChanged)
     Q_PROPERTY(int brightness READ brightness WRITE setBrightness NOTIFY brightnessChanged)
     Q_PROPERTY(int contrast READ contrast WRITE setContrast NOTIFY contrastChanged)
     Q_PROPERTY(int hue READ hue WRITE setHue NOTIFY hueChanged)
@@ -60,10 +63,16 @@ public:
         FullscreenDisplay
     };
 
+    enum AspectRatio { AspectRatioAuto, AspectRatioWidget, AspectRatioCustom };
+
     QVideoWidget(QAbstractMediaObject *object, QWidget *parent = 0);
     ~QVideoWidget();
 
     DisplayMode displayMode() const;
+
+    AspectRatio aspectRatio() const;
+    QSize customPixelAspectRatio() const;
+
 
     int brightness() const;
     int contrast() const;
@@ -75,6 +84,8 @@ public:
 public Q_SLOTS:
     void setVisible(bool visible);
     void setDisplayMode(DisplayMode mode);
+    void setAspectRatio(AspectRatio ratio);
+    void setCustomPixelAspectRatio(const QSize &customRatio);
     void setBrightness(int brightness);
     void setContrast(int contrast);
     void setHue(int hue);
@@ -82,6 +93,8 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void displayModeChanged(QVideoWidget::DisplayMode mode);
+    void aspectRatioChanged(QVideoWidget::AspectRatio);
+    void customPixelAspectRatioChanged(const QSize&);
     void brightnessChanged(int brightness);
     void contrastChanged(int contrast);
     void hueChanged(int hue);

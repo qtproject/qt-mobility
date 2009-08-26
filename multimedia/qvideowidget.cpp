@@ -67,6 +67,8 @@ public:
         , surface(0)
 #endif
         , displayMode(QVideoWidget::WindowedDisplay)
+        , aspectRatio(QVideoWidget::AspectRatioAuto)
+        , customPixelAspectRatio(1,1)
         , windowedFlags(0)
     {
     }
@@ -81,6 +83,9 @@ public:
     QPainterVideoSurface *surface;
 #endif
     QVideoWidget::DisplayMode displayMode;
+    QVideoWidget::AspectRatio aspectRatio;
+    QSize customPixelAspectRatio;
+
     Qt::WindowFlags windowedFlags;
 
     QRect displayRect() const;
@@ -113,14 +118,16 @@ QRect QVideoWidgetPrivate::displayRect() const
     displayRect.moveTo(q_func()->mapTo(q_func()->nativeParentWidget(), displayRect.topLeft()));
 
     if (overlay) {
-        //TODO: take into account display aspect ratio, if not 1
-        QSize videoSize = overlay->nativeSize();
-        if (!videoSize.isEmpty()) {
-            videoSize.scale(displayRect.size(), Qt::KeepAspectRatio);
-            QRect videoRect(QPoint(0,0), videoSize);
-            videoRect.moveCenter(displayRect.center());
+        if (aspectRatio == QVideoWidget::AspectRatioAuto) {
+            //TODO: take into account display aspect ratio, if not 1
+            QSize videoSize = overlay->nativeSize();
+            if (!videoSize.isEmpty()) {
+                videoSize.scale(displayRect.size(), Qt::KeepAspectRatio);
+                QRect videoRect(QPoint(0,0), videoSize);
+                videoRect.moveCenter(displayRect.center());
 
-            return videoRect;
+                return videoRect;
+            }
         }
     }
 
@@ -215,6 +222,40 @@ QVideoWidget::~QVideoWidget()
 QVideoWidget::DisplayMode QVideoWidget::displayMode() const
 {
     return d_func()->displayMode;
+}
+
+QVideoWidget::AspectRatio QVideoWidget::aspectRatio() const
+{
+    return d_func()->aspectRatio;
+}
+
+QSize QVideoWidget::customPixelAspectRatio() const
+{
+    return d_func()->customPixelAspectRatio;
+}
+
+void QVideoWidget::setAspectRatio(QVideoWidget::AspectRatio ratio)
+{
+    Q_D(QVideoWidget);
+    d->aspectRatio = ratio;
+
+    if (d->overlay)
+        d->overlay->setDisplayRect(d->displayRect());
+
+    if (d->videoWidgetControl)
+        d->videoWidgetControl->setAspectRatio(ratio);
+}
+
+void QVideoWidget::setCustomPixelAspectRatio(const QSize &customRatio)
+{
+    Q_D(QVideoWidget);
+    d->customPixelAspectRatio = customRatio;
+
+    if (d->overlay)
+        d->overlay->setDisplayRect(d->displayRect());
+
+    if (d->videoWidgetControl)
+        d->videoWidgetControl->setCustomAspectRatio(customRatio);
 }
 
 void QVideoWidget::setDisplayMode(DisplayMode mode)
