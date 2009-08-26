@@ -86,6 +86,47 @@ typedef struct _DISPLAY_BRIGHTNESS {
 } DISPLAY_BRIGHTNESS, *PDISPLAY_BRIGHTNESS;
 
 
+PWLAN_CONNECTION_ATTRIBUTES  getWifiConnectionAttributes()
+{
+    DWORD version =  0;
+    HANDLE clientHandle = NULL;
+    DWORD result;
+    PWLAN_CONNECTION_ATTRIBUTES  connAtts = NULL;
+
+    PWLAN_INTERFACE_INFO_LIST interfacesInfoList = NULL;
+    result = WlanOpenHandle( 2, NULL, &version, &clientHandle );
+    if( result != ERROR_SUCCESS != result ) {
+        qWarning() << "Error opening Wlanapi" << result ;
+        return connAtts;
+    }
+    result = WlanEnumInterfaces(clientHandle, NULL, &interfacesInfoList);
+
+    if( result != ERROR_SUCCESS) {
+        qWarning() << "Error in enumerating wireless interfaces" << result;
+        return connAtts;
+    }
+
+    for( uint i = 0; i < interfacesInfoList->dwNumberOfItems; i++ ) {
+        PWLAN_INTERFACE_INFO interfaceInfo = &interfacesInfoList->InterfaceInfo[i];
+        GUID& guid = interfaceInfo->InterfaceGuid;
+        WLAN_INTERFACE_STATE wlanInterfaceState = interfaceInfo->isState;
+
+        if( wlanInterfaceState == wlan_interface_state_not_ready ) {
+            qWarning() << "Interface not ready";
+            continue;
+        }
+
+        ULONG size = 0;
+        result = WlanQueryInterface( clientHandle, &guid,  wlan_intf_opcode_current_connection, NULL, &size, (PVOID*) &connAtts, NULL );
+
+        if( result != ERROR_SUCCESS ) {
+            qWarning() << "Error querying wireless interfaces"<< result ;
+            continue;
+        }
+    }
+    return connAtts;
+}
+
 
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
  : QObject(parent)
@@ -273,7 +314,6 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
             WMIHelper *wHelper;
             wHelper = new WMIHelper();
             QVariant v = wHelper->getWMIData("root/cimv2", "Win32_USBHub", "ConfigManagerErrorCode");
-            qWarning() << v.toUInt();
             if(v.toUInt() == 0) {
                 featureSupported = true;
             }
@@ -373,7 +413,6 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
             WMIHelper *wHelper;
             wHelper = new WMIHelper();
             QVariant v = wHelper->getWMIData("root/wmi", "VideoModeDescriptor", "VideoStandardType");
-            qWarning() << v.toUInt() ;
             if(v.toUInt() > 5) {
                 featureSupported = true;
             }
@@ -409,49 +448,12 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         break;
     case QSystemNetworkInfo::WlanMode:
         {
-            DWORD version =  0;
-            HANDLE clientHandle = NULL;
-            DWORD result;
+            PWLAN_CONNECTION_ATTRIBUTES   connAtts = getWifiConnectionAttributes();
 
-            PWLAN_INTERFACE_INFO_LIST interfacesInfoList = NULL;
-            result = WlanOpenHandle( 2, NULL, &version, &clientHandle );
-            if( result != ERROR_SUCCESS != result ) {
-                qWarning() << "Error opening Wlanapi" << result ;
-                return QSystemNetworkInfo::NoNetworkAvailable;
+            if(connAtts->isState  == wlan_interface_state_connected) {
+                return QSystemNetworkInfo::Connected;
             }
-            result = WlanEnumInterfaces(clientHandle, NULL, &interfacesInfoList);
-
-            if( result != ERROR_SUCCESS) {
-                qWarning() << "Error in enumerating wireless interfaces" << result;
-                return QSystemNetworkInfo::NoNetworkAvailable;
-            }
-
-            for( uint i = 0; i < interfacesInfoList->dwNumberOfItems; i++ ) {
-                PWLAN_INTERFACE_INFO interfaceInfo = &interfacesInfoList->InterfaceInfo[i];
-                GUID& guid = interfaceInfo->InterfaceGuid;
-                WLAN_INTERFACE_STATE wlanInterfaceState = interfaceInfo->isState;
-
-                if( wlanInterfaceState == wlan_interface_state_not_ready ) {
-                    qWarning() << "Interface not ready";
-                    continue;
-                }
-
-                ULONG size = 0;
-                PWLAN_CONNECTION_ATTRIBUTES   connAtts = NULL;
-                result = WlanQueryInterface( clientHandle, &guid,  wlan_intf_opcode_current_connection, NULL, &size, (PVOID *) &connAtts, NULL );
-                if( result != ERROR_SUCCESS ) {
-                    qWarning() << "Error querying wireless interfaces"<< result ;
-                    continue;
-                }
-
-                if(connAtts->isState  == wlan_interface_state_connected) {
-                    qWarning() << "Is connected";
-                    return QSystemNetworkInfo::Connected;
-                } else {
-                    qWarning() << "is not connected";
-                }
-                WlanFreeMemory(connAtts);
-            }
+            WlanFreeMemory(connAtts);
         }
         break;
         case QSystemNetworkInfo::EthMode:
@@ -459,7 +461,6 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
             WMIHelper *wHelper;
             wHelper = new WMIHelper();
             QVariant v = wHelper->getWMIData("root/cimv2", "Win32_NetworkConnection", "ConnectionState");
-            qWarning() << v.toString();
         }
         break;
         case QSystemNetworkInfo::WimaxMode:
@@ -470,7 +471,6 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
 
 int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
-    qWarning() << Q_FUNC_INFO << mode;
     switch(mode) {
         case QSystemNetworkInfo::GsmMode:
         break;
@@ -480,45 +480,10 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
         break;
     case QSystemNetworkInfo::WlanMode:
         {
-            DWORD version =  0;
-            HANDLE clientHandle = NULL;
-            DWORD result;
-
-            PWLAN_INTERFACE_INFO_LIST interfacesInfoList = NULL;
-            result = WlanOpenHandle( 2, NULL, &version, &clientHandle );
-            if( result != ERROR_SUCCESS != result ) {
-                qWarning() << "Error opening Wlanapi" << result ;
-                return QSystemNetworkInfo::NoNetworkAvailable;
-            }
-            result = WlanEnumInterfaces(clientHandle, NULL, &interfacesInfoList);
-
-            if( result != ERROR_SUCCESS) {
-                qWarning() << "Error in enumerating wireless interfaces" << result;
-                return QSystemNetworkInfo::NoNetworkAvailable;
-            }
-
-            for( uint i = 0; i < interfacesInfoList->dwNumberOfItems; i++ ) {
-                PWLAN_INTERFACE_INFO interfaceInfo = &interfacesInfoList->InterfaceInfo[i];
-                GUID& guid = interfaceInfo->InterfaceGuid;
-                WLAN_INTERFACE_STATE wlanInterfaceState = interfaceInfo->isState;
-
-                if( wlanInterfaceState == wlan_interface_state_not_ready ) {
-                    qWarning() << "Interface not ready";
-                    continue;
-                }
-
-                ULONG size = 0;
-                PWLAN_CONNECTION_ATTRIBUTES  connAtts = NULL;
-                result = WlanQueryInterface( clientHandle, &guid,  wlan_intf_opcode_current_connection, NULL, &size, (PVOID*) &connAtts, NULL );
-
-                if( result != ERROR_SUCCESS ) {
-                    qWarning() << "Error querying wireless interfaces"<< result ;
-                    continue;
-                }
-               ulong sig =  connAtts->wlanAssociationAttributes.wlanSignalQuality;
-                WlanFreeMemory(connAtts);
-                return sig;
-            }
+            PWLAN_CONNECTION_ATTRIBUTES  connAtts = getWifiConnectionAttributes();
+            ulong sig =  connAtts->wlanAssociationAttributes.wlanSignalQuality;
+            WlanFreeMemory(connAtts);
+            return sig;
         }
         break;
         case QSystemNetworkInfo::EthMode:
@@ -568,11 +533,45 @@ QString QSystemNetworkInfoPrivate::operatorName()
 
 QString QSystemNetworkInfoPrivate::wlanSsid()
 {
-    return QString();
+    QString essid;
+    PWLAN_CONNECTION_ATTRIBUTES   connAtts = getWifiConnectionAttributes();
+    DOT11_SSID ssid;
+    ssid = connAtts->wlanAssociationAttributes.dot11Ssid;
+    for(uint i = 0; i < ssid.uSSIDLength;i++) {
+        essid += ssid.ucSSID[i];
+    }
+    WlanFreeMemory(connAtts);
+    return essid;
 }
 
 QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
 {
+    switch(mode) {
+        case QSystemNetworkInfo::GsmMode:
+        break;
+        case QSystemNetworkInfo::CdmaMode:
+        break;
+        case QSystemNetworkInfo::WcdmaMode:
+        break;
+    case QSystemNetworkInfo::WlanMode:
+        {
+//            QString macAddress;
+//            PWLAN_CONNECTION_ATTRIBUTES   connAtts = getWifiConnectionAttributes();
+//            DOT11_MAC_ADDRESS mac;
+//            mac = connAtts->wlanAssociationAttributes.dot11Bssid;
+//            mac
+//                    for(uint i = 0; i < ssid.uSSIDLength;i++) {
+//                mac += ssid.ucSSID[i];
+//            }
+//            WlanFreeMemory(connAtts);
+            //connAtts->wlanAssociationAttributes.dot11Bssid
+        }
+        break;
+        case QSystemNetworkInfo::EthMode:
+        break;
+        case QSystemNetworkInfo::WimaxMode:
+        break;
+    };
     return QString();
 }
 
@@ -593,7 +592,6 @@ int QSystemDisplayInfoPrivate::displayBrightness(int screen)
     WMIHelper *wHelper;
     wHelper = new WMIHelper();
     QVariant v = wHelper->getWMIData("root/wmi", "WmiMonitorBrightness", "CurrentBrightness");
-    qWarning() << v.toUInt();
     return v.toUInt();
 //#else
 //    //    Q_UNUSED(screen);
@@ -690,7 +688,6 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
     HDC deviceContextHandle = GetDC(hWnd);
     int bpp = GetDeviceCaps(deviceContextHandle ,BITSPIXEL);
     int planes = GetDeviceCaps(deviceContextHandle, PLANES);
-    qWarning() << planes << bpp;
     if(planes > 1) {
         bpp = 1 << planes;
     }
@@ -900,12 +897,9 @@ bool QSystemDeviceInfoPrivate::isBatteryCharging()
 #else
         SYSTEM_POWER_STATUS status;
     if(GetSystemPowerStatus( &status) ) {
-        qWarning() << status.ACLineStatus << status.BatteryFlag << status.BatteryLifePercent;
         if(status.ACLineStatus == 1) {
             isCharging = true;
         }
-    } else {
-       qWarning() << "Battery status failed";
     }
 #endif
     return isCharging;
@@ -924,11 +918,8 @@ int QSystemDeviceInfoPrivate::batteryLevel() const
 #else
     SYSTEM_POWER_STATUS status;
     if(GetSystemPowerStatus( &status) ) {
-        qWarning() <<"battery level" <</* status.ACLineStatus << status.BatteryFlag <<*/ status.BatteryLifePercent;
         return status.BatteryLifePercent;
-} else {
-       qWarning() << "Battery status failed";
-    }
+}
 #endif
     return 0;
 }
@@ -991,7 +982,6 @@ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
         screenSaverSecure = true;
     }
     screenPath = screenSettings.value("SCRNSAVE.EXE").toString();
-    qWarning() << "Original screenpath is" << screenPath;
 }
 
 
@@ -1009,7 +999,6 @@ bool QSystemScreenSaverPrivate::setScreenSaverEnabled(bool state)
     }
 
     screenSettings.setValue("ScreenSaveActive", save);
-    qWarning() << screenSettings.value("ScreenSaveActive").toString();
     return screenSettings.value("ScreenSaveActive").toString() == save;
 }
 

@@ -37,7 +37,7 @@
 #include <QObject>
 #include <QVariant>
 #include <QString>
-#include <Wbemidl.h>
+//#include <Wbemidl.h>
 class WMIHelper : public QObject
 {
 public:
@@ -45,7 +45,6 @@ public:
     ~WMIHelper();
     QVariant getWMIData(const QString &wmiNamespace,const QString &className, const QString &classProperty);
 private:
-     IWbemLocator *wbemLocator ;
 };
 
 #endif // WMIHELPER_H
