@@ -44,8 +44,6 @@
 
 #include <QtGui>
 
-#define USE_VIDEOWIDGET
-
 Player::Player(QWidget *parent)
     : QWidget(parent)
     , videoWidget(0)
@@ -65,21 +63,11 @@ Player::Player(QWidget *parent)
             this, SLOT(statusChanged(QMediaPlayer::MediaStatus)));
     connect(player, SIGNAL(bufferStatusChanged(int)), this, SLOT(bufferingProgress(int)));
 
-#ifdef USE_VIDEOWIDGET
     videoWidget = new QVideoWidget(player);
 
     connect(videoWidget, SIGNAL(displayModeChanged(QVideoWidget::DisplayMode)),
             this, SLOT(displayModeChanged(QVideoWidget::DisplayMode)));
-#else
-    QWidget *videoWidget = player->service()->createEndpoint<QMediaWidgetEndpoint *>();
 
-    if (videoWidget) {
-        qDebug() << "service supports video widgets, nice";
-        player->service()->setVideoOutput(videoWidget);
-    } else {
-        coverLabel = new QLabel;
-    }
-#endif
     playlistModel = new PlaylistModel(this);
     playlistModel->setPlaylist(playlist);
 
@@ -146,11 +134,6 @@ Player::Player(QWidget *parent)
 
         splitter->addWidget(videoWidget);
         splitter->addWidget(playlistView);
-
-        /*
-        connect(player, SIGNAL(videoAvailabilityChanged(bool)), videoWidget, SLOT(setVisible(bool)));
-        videoWidget->setMinimumSize(64,64);
-        videoWidget->setVisible(false);*/
 
         layout->addWidget(splitter);
     } else {
