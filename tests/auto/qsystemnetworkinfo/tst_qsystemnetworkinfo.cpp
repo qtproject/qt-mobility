@@ -98,7 +98,6 @@ void tst_QSystemNetworkInfo::tst_networkSignalStrength_data()
 {
     QTest::addColumn<QSystemNetworkInfo::NetworkMode>("mode");
 
-    QTest::newRow("UnknownMode") << QSystemNetworkInfo::UnknownMode;
     QTest::newRow("GsmMode") << QSystemNetworkInfo::GsmMode;
     QTest::newRow("CdmaMode") << QSystemNetworkInfo::CdmaMode;
     QTest::newRow("WcdmaMode") << QSystemNetworkInfo::WcdmaMode;

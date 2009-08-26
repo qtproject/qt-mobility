@@ -112,7 +112,6 @@
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::WimaxMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::CdmaMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::EthMode</keyword>
-        <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::UnknownMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::WlanMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::GsmMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::WcdmaMode</keyword>

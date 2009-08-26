@@ -115,7 +115,6 @@ QT_BEGIN_NAMESPACE
     \enum QSystemNetworkInfo::NetworkMode
     This enum describes the type of network:
 
-    \value UnknownMode             No network, or error.
     \value GsmMode                 Global System for Mobile (GSM) network.
     \value CdmaMode                Code division multiple access (CDMA) network.
     \value WcdmaMode               Wideband Code Division Multiple Access (W-CDMA) network.
@@ -329,6 +328,9 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfo::networkStatus(QSystemNetwo
 /*!
     Returns the strength of the network signal, per network \a mode , 0 - 100 linear scaling,
     or -1 in the case of unknown network mode or error.
+
+    In the case of QSystemNetworkInfo::EthMode, it will either be 100 for carrier active, or 0 for when
+    there is no carrier or cable connected.
 */
 int QSystemNetworkInfo::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
