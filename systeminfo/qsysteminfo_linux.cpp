@@ -46,7 +46,7 @@
 #include <QLibraryInfo>
 
 #if !defined(QT_NO_DBUS)
-#include <qhalservice.h>
+#include <qhalservice_p.h>
 #include <QtDBus>
 #include <QDBusConnection>
 #include <QDBusError>
