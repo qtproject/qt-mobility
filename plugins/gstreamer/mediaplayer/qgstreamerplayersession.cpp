@@ -232,7 +232,7 @@ static void addTagToMap(const GstTagList *list,
                         const gchar *tag,
                         gpointer user_data)
 {
-    QMap<QString,QVariant> *map = reinterpret_cast< QMap<QString,QVariant>* >(user_data);
+    QMap<QByteArray, QVariant> *map = reinterpret_cast<QMap<QByteArray, QVariant>* >(user_data);
 
     GValue val;
     val.g_type = 0;
@@ -243,26 +243,26 @@ static void addTagToMap(const GstTagList *list,
         case G_TYPE_STRING:
         {
             const gchar *str_value = g_value_get_string(&val);
-            map->insert(QString::fromLatin1(tag), QString::fromUtf8(str_value));
+            map->insert(QByteArray(tag), QString::fromUtf8(str_value));
             break;
         }
         case G_TYPE_INT:
-            map->insert(QString::fromLatin1(tag), g_value_get_int(&val));
+            map->insert(QByteArray(tag), g_value_get_int(&val));
             break;
         case G_TYPE_UINT:
-            map->insert(QString::fromLatin1(tag), g_value_get_uint(&val));
+            map->insert(QByteArray(tag), g_value_get_uint(&val));
             break;
         case G_TYPE_LONG:
-            map->insert(QString::fromLatin1(tag), qint64(g_value_get_long(&val)));
+            map->insert(QByteArray(tag), qint64(g_value_get_long(&val)));
             break;
         case G_TYPE_BOOLEAN:
-            map->insert(QString::fromLatin1(tag), g_value_get_boolean(&val));
+            map->insert(QByteArray(tag), g_value_get_boolean(&val));
             break;
         case G_TYPE_CHAR:
-            map->insert(QString::fromLatin1(tag), g_value_get_char(&val));
+            map->insert(QByteArray(tag), g_value_get_char(&val));
             break;
         case G_TYPE_DOUBLE:
-            map->insert(QString::fromLatin1(tag), g_value_get_double(&val));
+            map->insert(QByteArray(tag), g_value_get_double(&val));
             break;
         default:
             break;

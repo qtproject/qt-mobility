@@ -56,10 +56,11 @@ public:
     void setReadOnly(bool readonly);
 
     QList<QString> availableMetadata() const;
-    QVariant metadata(QString const &name) const;
-    void setMetadata(QString const &name, QVariant const &value);
+    QVariant metadata(QMediaMetadata::Key key) const;
+    void setMetadata(QMediaMetadata::Key key, const QVariant &value);
 
-    QMediaResourceList resources() const;
+    QVariant extendedMetadata(const QString &key) const ;
+    void setExtendedMetadata(const QString &key, const QVariant &value);
 
 private slots:
     void playlistItemChanged(int pos);
