@@ -36,32 +36,95 @@
 
 QMessageFilterKey QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Field field, const QVariant &value, QMessageDataComparator::EqualityComparator cmp)
 {
-    Q_UNUSED(field)
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey();
+    QMessageFilterKey result;
+    result.d_ptr->_field = field;
+    result.d_ptr->_value = value;
+    result.d_ptr->_comparatorType = Equality;
+    result.d_ptr->_comparatorValue = static_cast<int>(cmp);
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Field field, const QVariant &value, QMessageDataComparator::RelationComparator cmp)
 {
-    Q_UNUSED(field)
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey();
+    QMessageFilterKey result;
+    result.d_ptr->_field = field;
+    result.d_ptr->_value = value;
+    result.d_ptr->_comparatorType = Relation;
+    result.d_ptr->_comparatorValue = static_cast<int>(cmp);
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Field field, const QVariant &value, QMessageDataComparator::InclusionComparator cmp)
 {
-    Q_UNUSED(field)
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFilterKey();
+    QMessageFilterKey result;
+    result.d_ptr->_field = field;
+    result.d_ptr->_value = value;
+    result.d_ptr->_comparatorType = Inclusion;
+    result.d_ptr->_comparatorValue = static_cast<int>(cmp);
+    return result;
 }
 
-void QMessageFilterKeyPrivate::filterTable(QMessageStore::ErrorCode *lastError, const QMessageFilterKey &key, LPMAPITABLE)
+void QMessageFilterKeyPrivate::filterTable(QMessageStore::ErrorCode *lastError, const QMessageFilterKey &key, LPMAPITABLE messagesTable)
 {
-    Q_UNUSED(lastError)
-    Q_UNUSED(key)
+    SRestriction restriction;
+    SPropValue keyProp;
+    bool notRestriction(false);
+
+    switch (_comparatorType) {
+    case Equality: {
+        restriction.rt = RES_PROPERTY;
+        QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(_comparatorValue));
+        if (cmp == QMessageDataComparator::Equal)
+            restriction.res.resProperty.relop = RELOP_EQ;
+        else
+            restriction.res.resProperty.relop = RELOP_NE;
+    }
+    case Relation: {
+        restriction.rt = RES_PROPERTY;
+        QMessageDataComparator::RelationComparator cmp(static_cast<QMessageDataComparator::RelationComparator>(_comparatorValue));
+        switch (cmp) {
+        case QMessageDataComparator::LessThan:
+            restriction.res.resProperty.relop = RELOP_LT;
+            break;
+        case QMessageDataComparator::LessThanEqual:
+            restriction.res.resProperty.relop = RELOP_LE;
+            break;
+        case QMessageDataComparator::GreaterThan:
+            restriction.res.resProperty.relop = RELOP_GT;
+            break;
+        case QMessageDataComparator::GreaterThanEqual:
+            restriction.res.resProperty.relop = RELOP_GE;
+            break;
+        }
+    }
+    case Inclusion: {
+        QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(_comparatorValue));
+        restriction.rt = RES_CONTENT;
+        // May need to add with SExistRestriction see http://msdn.microsoft.com/en-us/library/aa454981.aspx
+        if (_options & QMessageDataComparator::FullWord)
+            restriction.res.resContent.ulFuzzyLevel = FL_FULLSTRING;
+        else
+            restriction.res.resContent.ulFuzzyLevel = FL_SUBSTRING;
+        if ((_options & QMessageDataComparator::CaseSensitive) != 0)
+            restriction.res.resContent.ulFuzzyLevel |= FL_IGNORECASE;
+        if (cmp == QMessageDataComparator::Excludes)
+            notRestriction = true;
+    }
+    }
+/*
+    TODO set the property tag and value
+    restriction.res.resProperty.ulPropTag = PR_RECORD_KEY;
+    restriction.res.resProperty.lpProp = &keyProp;
+    keyProp.ulPropTag = PR_RECORD_KEY;
+    keyProp.Value.bin.cb = key.count();
+    keyProp.Value.bin.lpb = reinterpret_cast<LPBYTE>(key.data());
+
+    ULONG flags(0);
+    if (messagesTable->Restrict(&restriction, flags) != S_OK) {
+        *lastError = QMessageStore::ContentInaccessible;
+        return result; // TODO error handling, framework fault
+    }
+*/
 }
 
 void QMessageFilterKey::setOptions(QMessageDataComparator::Options options)
