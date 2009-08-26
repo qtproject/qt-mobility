@@ -25,6 +25,13 @@ HEADERS +=  qlocationglobal.h \
             qnmeapositioninfosource.h \
             qnmeapositioninfosource_p.h
 
+symbian {
+HEADERS += s60/QGeoPositionInfoSourceS60.h \
+           s60/QMLBackendAO.h \
+           s60/NotificationCallback.h
+}
+
+
 SOURCES +=  qlocationutils.cpp \
             qgeocoordinate.cpp \
             qgeopositioninfo.cpp \
@@ -33,3 +40,8 @@ SOURCES +=  qlocationutils.cpp \
             qgeopositioninfosource.cpp \
             qgeoareamonitor.cpp \
             qnmeapositioninfosource.cpp
+
+symbian {
+SOURCES += s60/QGeoPositionInfoSourceS60.cpp \
+           s60/QMLBackendAO.cpp
+}
