@@ -47,7 +47,7 @@ class QContactFetchRequest;
 class QContactIdFetchRequest;
 
 class QContactListModelPrivate;
-class QTCONTACTS_EXPORT QContactListModel : public QAbstractListModel
+class QContactListModel : public QAbstractListModel
 {
     Q_OBJECT
 

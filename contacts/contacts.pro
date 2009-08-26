@@ -11,7 +11,6 @@ include(../common.pri)
 include(details/details.pri)
 include(engines/engines.pri)
 include(filters/filters.pri)
-include(models/models.pri)
 include(requests/requests.pri)
 
 # Input
