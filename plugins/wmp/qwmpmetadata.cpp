@@ -37,12 +37,89 @@
 #include "qwmpevents.h"
 #include "qwmpglobal.h"
 
+#include "qmediasource.h"
+
+#include <QtCore/qdatetime.h>
 #include <QtCore/qdir.h>
 #include <QtCore/qfileinfo.h>
 #include <QtCore/qsize.h>
 #include <QtCore/qstringlist.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qvariant.h>
+
+
+struct QWmpMetadataKeyLookup
+{
+    QMediaMetadata::Key key;
+    const wchar_t *token;
+};
+
+static const QWmpMetadataKeyLookup qt_wmpMetadataKeys[] =
+{
+    { QMediaMetadata::Title, L"Title" },
+    { QMediaMetadata::SubTitle, L"WM/SubTitle" },
+    { QMediaMetadata::Author, L"Author" },
+    { QMediaMetadata::Comment, L"Comment" },
+    { QMediaMetadata::Description, L"Description" },
+    { QMediaMetadata::Category, L"WM/Category" },
+    { QMediaMetadata::Genre, L"WM/Genre" },
+    //{ QMediaMetadata::Date, 0 },
+    { QMediaMetadata::Year, L"WM/Year" },
+    { QMediaMetadata::UserRating, L"UserRating" },
+    //{ QMediaMetadata::Keywords, 0 },
+    { QMediaMetadata::Language, L"Language" },
+    { QMediaMetadata::Publisher, L"WM/Publisher" },
+    { QMediaMetadata::Copyright, L"Copyright" },
+    { QMediaMetadata::ParentalRating, L"ParentalRating" },
+    { QMediaMetadata::RatingOrganisation, L"RatingOrganisation" },
+
+    // Media
+    { QMediaMetadata::Size, L"FileSize" },
+    { QMediaMetadata::MediaType, L"MediaType" },
+    { QMediaMetadata::Duration, L"Duration" },
+
+    // Audio
+    { QMediaMetadata::AudioBitrate, L"AudioBitrate" },
+    { QMediaMetadata::AudioCodec, L"AudioCodec" },
+    { QMediaMetadata::Channels, L"Channels" },
+    { QMediaMetadata::Frequency, L"Frequency" },
+
+    // Music
+    { QMediaMetadata::AlbumTitle, L"WM/AlbumTitle" },
+    { QMediaMetadata::AlbumArtist, L"WM/AlbumArtist" },
+    { QMediaMetadata::ContributingArtist, L"Author" },
+    { QMediaMetadata::Composer, L"WM/Composer" },
+    { QMediaMetadata::Conductor, L"WM/Conductor" },
+    { QMediaMetadata::Lyrics, L"WM/Lyrics" },
+    { QMediaMetadata::Mood, L"WM/Mood" },
+    { QMediaMetadata::TrackNumber, L"WM/TrackNumber" },
+    //{ QMediaMetadata::TrackCount, 0 },
+    //{ QMediaMetadata::CoverArtUriSmall, 0 },
+    //{ QMediaMetadata::CoverArtUriLarge, 0 },
+
+    // Image/Video
+    //{ QMediaMetadata::Resolution, 0 },
+    //{ QMediaMetadata::PixelAspectRatio, 0 },
+
+    // Video
+    //{ QMediaMetadata::FrameRate, 0 },
+    { QMediaMetadata::VideoBitRate, L"VideoBitRate" },
+    { QMediaMetadata::VideoCodec, L"VideoCodec" },
+
+    //{ QMediaMetadata::PosterUri, 0 },
+
+    // Movie
+    { QMediaMetadata::ChapterNumber, L"ChapterNumber" },
+    { QMediaMetadata::Director, L"WM/Director" },
+    { QMediaMetadata::LeadPerformer, L"LeadPerformer" },
+    { QMediaMetadata::Writer, L"WM/Writer" },
+
+    // Photos
+    { QMediaMetadata::CameraManufacturer, L"CameraManufacturer" },
+    { QMediaMetadata::CameraModel, L"CameraModel" },
+    { QMediaMetadata::Event, L"Event" },
+    { QMediaMetadata::Subject, L"Subject" }
+};
 
 QWmpMetaData::QWmpMetaData(IWMPCore3 *player, QWmpEvents *events, QObject *parent)
     : QMetadataProviderControl(parent)
@@ -71,24 +148,75 @@ bool QWmpMetaData::isReadOnly() const
     return false;
 }
 
-QList<QString> QWmpMetaData::availableMetadata() const
+QVariant QWmpMetaData::metadata(QMediaMetadata::Key key) const
 {
-    return keys(m_media);
+    static const int  count = sizeof(qt_wmpMetadataKeys) / sizeof(QWmpMetadataKeyLookup);
+
+    switch (key) {
+    case QMediaMetadata::Date:
+        {
+            QVariant day = value(m_media, QAutoBStr(L"ReleaseDateDay"));
+            QVariant month = value(m_media, QAutoBStr(L"ReleaseDateMonth"));
+            QVariant year = value(m_media, QAutoBStr(L"ReleaseDateYear"));
+
+            if (!day.isNull() && !month.isNull() && !year.isNull())
+                return QDate(year.toInt(), month.toInt(), day.toInt());
+        }
+        break;
+    case QMediaMetadata::CoverArtUriSmall:
+        return albumArtUri(m_media, "_Small.jpg");
+    case QMediaMetadata::CoverArtUriLarge:
+        return albumArtUri(m_media, "_Large.jpg");
+    case QMediaMetadata::Resolution:
+        {
+            QVariant width = value(m_media, QAutoBStr(L"WM/VideoWidth"));
+            QVariant height = value(m_media, QAutoBStr(L"WM/VideoHeight"));
+
+            if (!width.isNull() && !height.isNull())
+                return QSize(width.toInt(), height.toInt());
+        }
+        break;
+    case QMediaMetadata::PixelAspectRatio:
+        {
+            QVariant x = value(m_media, QAutoBStr(L"PixelAspectRatioX"));
+            QVariant y = value(m_media, QAutoBStr(L"PixelAspectRatioY"));
+
+            if (!x.isNull() && !y.isNull())
+                return QSize(x.toInt(), y.toInt());
+        }
+        break;
+    case QMediaMetadata::FrameRate:
+        break;
+    default:
+        for (int i = 0; i < count; ++i) {
+            if (qt_wmpMetadataKeys[i].key == key)
+                return value(m_media, QAutoBStr(qt_wmpMetadataKeys[i].token));
+        }
+        break;
+    }
+    return QVariant();
 }
 
-QVariant QWmpMetaData::metadata(const QString &name) const
+QVariant QWmpMetaData::metadata(const QString &key) const
 {
-    return value(m_media, name);
+    return value(m_media, QAutoBStr(key));
 }
 
-void QWmpMetaData::setMetadata(const QString &name, const QVariant &value)
+void QWmpMetaData::setMetadata(QMediaMetadata::Key key, const QVariant &value)
 {
-    setValue(m_media, name, value);
+    static const int  count = sizeof(qt_wmpMetadataKeys) / sizeof(QWmpMetadataKeyLookup);
+
+    for (int i = 0; i < count; ++i) {
+        if (qt_wmpMetadataKeys[i].key == key) {
+            setValue(m_media, QAutoBStr(qt_wmpMetadataKeys[i].token), value);
+            return;
+        }
+    }
 }
 
-QMediaResourceList QWmpMetaData::resources() const
+void QWmpMetaData::setMetadata(const QString &key, const QVariant &value)
 {
-    return resources(m_media);
+    setValue(m_media, QAutoBStr(key), value);
 }
 
 void QWmpMetaData::currentItemChangeEvent(IDispatch *dispatch)
@@ -143,16 +271,14 @@ QStringList QWmpMetaData::keys(IWMPMedia *media)
     return keys;
 }
 
-QVariant QWmpMetaData::value(IWMPMedia *media, const QString &key)
+QVariant QWmpMetaData::value(IWMPMedia *media, BSTR key)
 {
-    const QAutoBStr bstrKey(key);
-
     QVariantList values;
     IWMPMedia3 *media3 = 0;
     if (media && media->QueryInterface(
             __uuidof(IWMPMedia3), reinterpret_cast<void **>(&media3)) == S_OK) {
         long count = 0;
-        media3->getAttributeCountByType(bstrKey, 0, &count);
+        media3->getAttributeCountByType(key, 0, &count);
 
         // The count appears to only be valid for static properties, dynamic properties like
         // PlaylistIndex will have a count of zero but return a value for index 0.
@@ -163,7 +289,7 @@ QVariant QWmpMetaData::value(IWMPMedia *media, const QString &key)
             VARIANT var;
             VariantInit(&var);
 
-            if (media3->getItemInfoByType(bstrKey, 0, i, &var) == S_OK) {
+            if (media3->getItemInfoByType(key, 0, i, &var) == S_OK) {
                 QVariant value = convertVariant(var);
 
                 if (!value.isNull())
@@ -185,13 +311,13 @@ QVariant QWmpMetaData::value(IWMPMedia *media, const QString &key)
     }
 }
 
-void QWmpMetaData::setValue(IWMPMedia *media, const QString &key, const QVariant &value)
+void QWmpMetaData::setValue(IWMPMedia *media, BSTR key, const QVariant &value)
 {
     if (qVariantCanConvert<QString>(value))
-        media->setItemInfo(QAutoBStr(key), QAutoBStr(value.toString()));
+        media->setItemInfo(key, QAutoBStr(value.toString()));
 }
 
-QMediaSource QWmpMetaData::resources(IWMPMedia *media)
+QMediaResourceList QWmpMetaData::resources(IWMPMedia *media)
 {
     QMediaResourceList resources;
 
@@ -294,5 +420,29 @@ QVariant QWmpMetaData::convertVariant(const VARIANT &variant)
         break;
     }
 
+    return QVariant();
+}
+
+QVariant QWmpMetaData::albumArtUri(IWMPMedia *media, const char *suffix)
+{
+    BSTR string = 0;
+    if (media && media->get_sourceURL(&string) == S_OK) {
+        QString uri = QString::fromWCharArray(static_cast<const wchar_t *>(string));
+        ::SysFreeString(string);
+
+        if (media->getItemInfo(QAutoBStr(L"WM/WMCollectionGroupID"), &string) == S_OK) {
+            QString uuid = QString::fromWCharArray(static_cast<const wchar_t *>(string));
+            ::SysFreeString(string);
+
+            QString fileName = QLatin1String("AlbumArt_") + uuid + QLatin1String(suffix);
+
+            QDir dir = QFileInfo(uri).absoluteDir();
+
+            if (dir.exists(fileName)) {
+                return qVariantFromValue(
+                        QUrl(QLatin1String("file:///") + dir.absoluteFilePath(fileName)));
+            }
+        }
+    }
     return QVariant();
 }

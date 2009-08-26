@@ -90,7 +90,7 @@ public:
     float playbackRate() const;
     void setPlaybackRate(float rate);
 
-    QMap<QString,QVariant> tags() const { return m_tags; }
+    QMap<QByteArray ,QVariant> tags() const { return m_tags; }
     QMap<QString,QVariant> streamProperties(int streamNumber) const { return m_streamProperties[streamNumber]; }
     int streamCount() const { return m_streamProperties.count(); }
 
@@ -137,7 +137,7 @@ private:
     GstBus* m_bus;
     QGstreamerVideoRendererInterface *m_renderer;
 
-    QMap<QString,QVariant> m_tags;
+    QMap<QByteArray, QVariant> m_tags;
     QList< QMap<QString,QVariant> > m_streamProperties;
 
 

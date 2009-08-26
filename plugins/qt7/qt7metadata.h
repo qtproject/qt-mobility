@@ -55,11 +55,10 @@ public:
     bool isReadOnly() const;
     void setReadOnly(bool readonly);
 
-    QList<QString> availableMetadata() const;
-    QVariant metadata(QString const &name) const;
-    void setMetadata(QString const &name, QVariant const &value);
-
-    QMediaResourceList resources() const;
+    QVariant metadata(QMediaMetadata::Key key) const;
+    QVariant metadata(const QString &key) const ;
+    void setMetadata(QMediaMetadata::Key key, const QVariant &value);
+    void setMetadata(const QString &key, const QVariant &value);
 
 private:
     QMap<QString, QVariant> saved;

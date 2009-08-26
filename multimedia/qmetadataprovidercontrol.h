@@ -36,6 +36,7 @@
 #define QMETADATAPROVIDERCONTROL_H
 
 #include <qabstractmediacontrol.h>
+#include "qmediametadata.h"
 
 #include "qmediaresource.h"
 
@@ -50,11 +51,11 @@ public:
     virtual bool metadataAvailable() const = 0;
     virtual bool isReadOnly() const = 0;
 
-    virtual QList<QString> availableMetadata() const = 0;
-    virtual QVariant metadata(QString const &name) const = 0;
-    virtual void setMetadata(QString const &name, QVariant const &value) = 0;
+    virtual QVariant metadata(QMediaMetadata::Key key) const = 0;
+    virtual QVariant metadata(const QString &key) const = 0;
+    virtual void setMetadata(QMediaMetadata::Key key, const QVariant &value) = 0;
+    virtual void setMetadata(const QString &key, const QVariant &value) = 0;
 
-    virtual QMediaResourceList resources() const = 0;
 
 Q_SIGNALS:
     void metadataChanged();

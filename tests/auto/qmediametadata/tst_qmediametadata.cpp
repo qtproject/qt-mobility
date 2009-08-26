@@ -60,9 +60,11 @@ public:
         return m_readOnly;
     }
 
-    QList<QString> availableMetadata() const
+    QVariant metadata(QMediaMetadata::Key key) const
     {
-        return data.keys();
+        Q_UNUSED(key);
+
+        return QVariant();
     }
 
     QVariant metadata(QString const &name) const
@@ -70,16 +72,17 @@ public:
         return data[name];
     }
 
+    void setMetadata(QMediaMetadata::Key key, QVariant const &value)
+    {
+        Q_UNUSED(key);
+        Q_UNUSED(value);
+    }
+
     void setMetadata(QString const &name, QVariant const &value)
     {
         if (!m_readOnly)
             data[name] = value;
     }
-
-	QMediaResourceList resources() const
-	{
-		return QMediaResourceList();
-	}	
 
     void setNoMetadata()
     {
@@ -160,7 +163,6 @@ public slots:
 private slots:
     void testMetadataAvailable();
     void testReadOnly();
-    void testListAvailable();
     void testChanged();
     void testReadMetadata();
     void testWriteMetadata();
@@ -202,12 +204,6 @@ void tst_QMediaMetadata::testReadOnly()
     QVERIFY(metadata->isReadOnly());
 
     // check signal
-}
-
-void tst_QMediaMetadata::testListAvailable()
-{
-    mock->setMetadata();
-    QCOMPARE(metadata->availableMetadata().size(), 3);
 }
 
 void tst_QMediaMetadata::testChanged()

@@ -47,20 +47,90 @@ class Q_MEDIA_EXPORT QMediaMetadata : public QObject
     Q_OBJECT
     Q_PROPERTY(bool metadataAvailable READ metadataAvailable NOTIFY metadataAvailabilityChanged)
     Q_PROPERTY(bool readOnly READ isReadOnly NOTIFY readOnlyChanged)
-    Q_PROPERTY(QMediaResourceList resources READ resources)
-
 public:
+    enum Key
+    {
+        // Common
+        Title,
+        SubTitle,
+        Author,
+        Comment,
+        Description,
+        Category,
+        Genre,
+        Year,
+        Date,
+        UserRating,
+        Keywords,
+        Language,
+        Publisher,
+        Copyright,
+        ParentalRating,
+        RatingOrganisation,
+
+        // Media
+        Size,
+        MediaType,
+        Duration,
+
+        // Audio
+        AudioBitrate,
+        AudioCodec,
+        AverageLevel,
+        Channels,
+        PeakValue,
+        Frequency,
+
+        // Music
+        AlbumTitle,
+        AlbumArtist,
+        ContributingArtist,
+        Composer,
+        Conductor,
+        Lyrics,
+        Mood,
+        TrackNumber,
+        TrackCount,
+
+        CoverArtUriSmall,
+        CoverArtUriLarge,
+
+        // Image/Video
+        Resolution,
+        PixelAspectRatio,
+
+        // Video
+        FrameRate,
+        VideoBitRate,
+        VideoCodec,
+
+        PosterUri,
+
+        // Movie
+        ChapterNumber,
+        Director,
+        LeadPerformer,
+        Writer,
+
+        // Photos
+        CameraManufacturer,
+        CameraModel,
+        Event,
+        Subject
+    };
+
     QMediaMetadata(QAbstractMediaObject *mediaObject);
     ~QMediaMetadata();
 
     bool metadataAvailable() const;
     bool isReadOnly() const;
 
-    QList<QString> availableMetadata() const;
-    QVariant metadata(QString const &name) const;
-    void setMetadata(QString const &name, QVariant const &value);
+    QVariant metadata(Key key) const;
+    QVariant metadata(const QString &key) const;
+    void setMetadata(Key key, const QVariant &value);
+    void setMetadata(const QString &key, const QVariant &value);
 
-    QMediaResourceList resources() const;
+    QString toString(Key key) const;
 
 Q_SIGNALS:
     void metadataChanged();

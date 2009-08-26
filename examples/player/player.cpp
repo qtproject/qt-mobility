@@ -180,23 +180,17 @@ void Player::positionChanged(qint64 progress)
 
 void Player::metadataChanged()
 {
-    qDebug() << "update metadata" << metaData->metadata(QLatin1String("title")).toString();
+    qDebug() << "update metadata" << metaData->metadata(QMediaMetadata::Title).toString();
     if (metaData->metadataAvailable()) {
         setTrackInfo(QString("%1 - %2")
-                .arg(metaData->metadata(QLatin1String("Artist")).toString())
-                .arg(metaData->metadata(QLatin1String("Title")).toString()));
+                .arg(metaData->metadata(QMediaMetadata::AlbumArtist).toString())
+                .arg(metaData->metadata(QMediaMetadata::Title).toString()));
 
         if (coverLabel) {
-            QMediaResource cover;
-            foreach (const QMediaResource &resource, metaData->resources()) {
-                if (resource.role() == QMediaResource::CoverArtRole
-                        && (cover.isNull()
-                        || resource.resolution().height() > cover.resolution().height())) {
-                    cover = resource;
-                }
-            }
-            coverLabel->setPixmap(!cover.isNull()
-                    ? QPixmap(cover.uri().toString())
+            QUrl uri = metaData->metadata(QMediaMetadata::CoverArtUriLarge).value<QUrl>();
+
+            coverLabel->setPixmap(!uri.isEmpty()
+                    ? QPixmap(uri.toString())
                     : QPixmap());
         }
     }

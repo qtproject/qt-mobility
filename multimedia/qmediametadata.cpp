@@ -40,6 +40,80 @@
 #include "qabstractmediaobject.h"
 #include "qabstractmediaservice.h"
 
+struct QMediaMetadataKeyLookup
+{
+    QMediaMetadata::Key key;
+    const char *token;
+};
+
+static const QMediaMetadataKeyLookup qt_mediaMetadataKeys[] =
+{
+    { QMediaMetadata::Title, "Title" },
+    { QMediaMetadata::SubTitle, "SubTitle" },
+    { QMediaMetadata::Author, "Author" },
+    { QMediaMetadata::Comment, "Comment" },
+    { QMediaMetadata::Description, "Description" },
+    { QMediaMetadata::Category, "Category" },
+    { QMediaMetadata::Genre, "Genre" },
+    { QMediaMetadata::Date, "Date" },
+    { QMediaMetadata::Year, "Year" },
+    { QMediaMetadata::UserRating, "UserRating" },
+    { QMediaMetadata::Keywords, "Keywords" },
+    { QMediaMetadata::Language, "Language" },
+    { QMediaMetadata::Publisher, "Publisher" },
+    { QMediaMetadata::Copyright, "Copyright" },
+    { QMediaMetadata::ParentalRating, "ParentalRating" },
+    { QMediaMetadata::RatingOrganisation, "RatingOrganisation" },
+
+    // Media
+    { QMediaMetadata::Size, "Size" },
+    { QMediaMetadata::MediaType, "MediaType" },
+    { QMediaMetadata::Duration, "Duration" },
+
+    // Audio
+    { QMediaMetadata::AudioBitrate, "AudioBitrate" },
+    { QMediaMetadata::AudioCodec, "AudioCodec" },
+    { QMediaMetadata::Channels, "Channels" },
+    { QMediaMetadata::Frequency, "Frequency" },
+
+    // Music
+    { QMediaMetadata::AlbumTitle, "AlbumTitle" },
+    { QMediaMetadata::AlbumArtist, "AlbumArtist" },
+    { QMediaMetadata::ContributingArtist, "ContributingArtist" },
+    { QMediaMetadata::Composer, "Composer" },
+    { QMediaMetadata::Conductor, "Conductor" },
+    { QMediaMetadata::Lyrics, "Lyrics" },
+    { QMediaMetadata::Mood, "Mood" },
+    { QMediaMetadata::TrackNumber, "TrackNumber" },
+    { QMediaMetadata::TrackCount, "TrackCount" },
+    { QMediaMetadata::CoverArtUriSmall, "CoverArtUriSmall" },
+    { QMediaMetadata::CoverArtUriLarge, "CoverArtUriLarge" },
+
+    // Image/Video
+    { QMediaMetadata::Resolution, "Resolution" },
+    { QMediaMetadata::PixelAspectRatio, "PixelAspectRatio" },
+
+    // Video
+    { QMediaMetadata::FrameRate, "FrameRate" },
+    { QMediaMetadata::VideoBitRate, "VideoBitRate" },
+    { QMediaMetadata::VideoCodec, "VideoCodec" },
+
+    { QMediaMetadata::PosterUri, "PosterUri" },
+
+    // Movie
+    { QMediaMetadata::ChapterNumber, "ChapterNumber" },
+    { QMediaMetadata::Director, "Director" },
+    { QMediaMetadata::LeadPerformer, "LeadPerformer" },
+    { QMediaMetadata::Writer, "Writer" },
+
+    // Photos
+    { QMediaMetadata::CameraManufacturer, "CameraManufacturer" },
+    { QMediaMetadata::CameraModel, "CameraModel" },
+    { QMediaMetadata::Event, "Event" },
+    { QMediaMetadata::Subject, "Subject" }
+};
+
+
 
 /*!
     \class QMediaMetadata
@@ -47,6 +121,80 @@
 
     \preliminary
     \brief Use this class to extract Metadata from a Multimedia object.
+*/
+
+/*!
+    \enum QMediaMetadata::Key
+
+    Common attributes
+    \value Title The title of the media.  QString.
+    \value SubTitle The sub-title of the media. QString.
+    \value Author The authors of the media. QStringList.
+    \value Comment A user comment about the media. QString.
+    \value Description A description of the media.  QString
+    \value Category The category of the media.  QStringList.
+    \value Genre The genre of the media.  QStringList.
+    \value Year The year of release of the media.  int.
+    \value Date The date of the media. QDate.
+    \value UserRating A user rating of the media. int [0..100].
+    \value Keywords A list of keywords describing the media.  QStringList.
+    \value Language
+
+    \value Publisher The publisher of the media.  QString.
+    \value Copyright The media's copyright notice.  QString.
+    \value ParentalRating  The parental rating of the media.  QString.
+    \value RatingOrganisation The organisation responsible for the parental rating of the media.
+    QString.
+
+    Media attributes
+    \value Size The size in bytes of the media. qint64
+    \value MediaType The type of the media (audio, video, etc).  QString.
+    \value Duration The duration in millseconds of the media.  qint64.
+
+    Audio attributes
+    \value AudioBitrate The bit rate of the media's audio stream in bits per second.  int.
+    \value AudioCodec The codec of the media's audio stream.  QString.
+    \value AverageLevel The average volume level of the media.  int.
+    \value Channels The number of channels in the media's audio stream. int.
+    \value PeakValue The peak volume of the media's audio stream. int
+    \value Frequency The frequency of the media's audio stream. int
+
+    Music attributes
+    \value AlbumTitle The title of the album the media belongs to.  QString.
+    \value AlbumArtist The principal artist of the album the media belongs to.  QString.
+    \value ContributingArtist The artists contributing to the media.  QStringList.
+    \value Composer The composer of the media.  QStringList.
+    \value Conductor The conductor of the media. QString.
+    \value Lyrics The lyrics to the media. QString.
+    \value Mood The mood of the media.  QString.
+    \value TrackNumber The track number of the media.  int.
+    \value TrackCount The number of tracks on the album containing the media.  int.
+
+    \value CoverArtUriSmall The URI of a small cover art image. QUrl.
+    \value CoverArtUriLarge The URI of a large cover art image. QUrl.
+
+    Image and video attributes
+    \value Resolution The dimensions of an image or video.  QSize.
+    \value PixelAspectRatio The pixel aspect ratio of an image or video.  QSize.
+
+    Video attributes
+    \value FrameRate The frame rate of the media's video stream.  QPair<int, int>.
+    \value VideoBitRate The bit rate of the media's video stream in bits per second.  int.
+    \value VideoCodec The codec of the media's video stream.  QString.
+
+    \value PosterUri The URI of a poster image.  QUrl.
+
+    Movie attributes
+    \value ChapterNumber The chapter number of the media.  int.
+    \value Director The director of the media.  QString.
+    \value LeadPerformer The lead performer in the media.  QStringList.
+    \value Writer The writer of the media.  QStringList.
+
+    Photo attributes
+    \value CameraManufacturer The manufacturer of the camera used to capture the media.  QString.
+    \value CameraModel The model of the camera used to capture the media.  QString.
+    \value Event The event during which the media was captured.  QString.
+    \value Subject The subject of the media.  QString.
 */
 
 class QMediaMetadataPrivate
@@ -108,59 +256,55 @@ bool QMediaMetadata::isReadOnly() const
 }
 
 /*!
-    Returns a list of the names of all the metadata elements available.
+    Returns the metadata for the attribute with the given \a key.
 */
 
-QList<QString> QMediaMetadata::availableMetadata() const
-{
-    Q_D(const QMediaMetadata);
-
-    if (d->provider == 0)
-        return QList<QString>();
-
-    return d->provider->availableMetadata();
-}
-
-/*!
-    Returns the metadata for the element named \a name.
-*/
-
-QVariant QMediaMetadata::metadata(QString const &name) const
+QVariant QMediaMetadata::metadata(Key key) const
 {
     Q_D(const QMediaMetadata);
 
     if (d->provider == 0)
         return QVariant();
 
-    return d->provider->metadata(name);
+    return d->provider->metadata(key);
 }
 
 /*!
-    Change the value of the metadata element named \a name, to \a value.
+    Returns the metadata for the attribute with the given \a key.
 */
 
-void QMediaMetadata::setMetadata(QString const &name, QVariant const &value)
+QVariant QMediaMetadata::metadata(const QString &key) const
+{
+    Q_D(const QMediaMetadata);
+
+    if (d->provider == 0)
+        return QVariant();
+
+    return d->provider->metadata(key);
+}
+
+/*!
+    Sets the the \a value of the metadata attribute with the given \a key.
+*/
+
+void QMediaMetadata::setMetadata(Key key, const QVariant &value)
 {
     Q_D(QMediaMetadata);
 
     if (d->provider != 0 && !d->provider->isReadOnly())
-        d->provider->setMetadata(name, value);
+        d->provider->setMetadata(key, value);
 }
 
 /*!
-    \property QMediaMetaData::resources
-    \brief a list a resources belonging to a media item.
-
-    The first resource is always the media item's primary content source, subsequent resources may
-    be alternate encodings of the content or decorative representations of the content such as
-    thumbnails or cover art as given by the role of the resource.
+    Sets the \a value of the metadata attribute with the given \a key.
 */
 
-QMediaResourceList QMediaMetadata::resources() const
+void QMediaMetadata::setMetadata(const QString &key, const QVariant &value)
 {
-    return d_func()->provider
-            ? d_func()->provider->resources()
-            : QMediaResourceList();
+    Q_D(QMediaMetadata);
+
+    if (d->provider != 0)
+        d->provider->setMetadata(key, value);
 }
 
 /*!

@@ -16,15 +16,10 @@ public:
     bool isReadOnly() const;
     void setReadOnly(bool readonly);
 
-    QList<QString> availableMetadata() const;
-    QVariant metadata(QString const &name) const;
-    void setMetadata(QString const &name, QVariant const &value);
-
-    QMediaResourceList resources() const;
-
-Q_SIGNALS:
-    void metadataChanged();
-    void readOnlyChanged(bool readOnly);
+    QVariant metadata(QMediaMetadata::Key key) const;
+    QVariant metadata(const QString &key) const ;
+    void setMetadata(QMediaMetadata::Key key, const QVariant &value);
+    void setMetadata(const QString &key, const QVariant &value);
 
 private slots:
     void updateTags();

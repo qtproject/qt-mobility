@@ -29,25 +29,43 @@ void QPhononMetadataProvider::setReadOnly(bool readonly)
     Q_UNUSED(readonly);
 }
 
-QList<QString> QPhononMetadataProvider::availableMetadata() const
+QVariant QPhononMetadataProvider::metadata(QMediaMetadata::Key key) const
 {
-    return m_session->metaData().keys();
+    switch (key) {
+    case QMediaMetadata::ContributingArtist:
+        return m_session->metaData(Phonon::ArtistMetaData);
+    case QMediaMetadata::AlbumTitle:
+        return m_session->metaData(Phonon::AlbumMetaData);
+    case QMediaMetadata::Title:
+        return m_session->metaData(Phonon::TitleMetaData);
+    case QMediaMetadata::Date:
+        return m_session->metaData(Phonon::DateMetaData);
+    case QMediaMetadata::TrackNumber:
+        return m_session->metaData(Phonon::TracknumberMetaData);
+    case QMediaMetadata::Description:
+        return m_session->metaData(Phonon::DescriptionMetaData);
+    default:
+        return QVariant();
+    }
 }
 
-QVariant QPhononMetadataProvider::metadata(QString const &name) const
+QVariant QPhononMetadataProvider::metadata(const QString &key) const
 {
-    return m_session->metaData(name.toUpper());
+    Q_UNUSED(key);
+
+    return QVariant();
 }
 
-void QPhononMetadataProvider::setMetadata(QString const &name, QVariant const &value)
+void QPhononMetadataProvider::setMetadata(QMediaMetadata::Key key, QVariant const &value)
 {
-    Q_UNUSED(name);
+    Q_UNUSED(key);
     Q_UNUSED(value);
 }
 
-QMediaResourceList QPhononMetadataProvider::resources() const
+void QPhononMetadataProvider::setMetadata(const QString &key, QVariant const &value)
 {
-    return QMediaResourceList();
+    Q_UNUSED(key);
+    Q_UNUSED(value);
 }
 
 void QPhononMetadataProvider::updateTags()

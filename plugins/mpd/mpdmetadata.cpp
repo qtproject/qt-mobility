@@ -60,25 +60,27 @@ bool MpdMetadata::isReadOnly() const
     return true;
 }
 
-QList<QString> MpdMetadata::availableMetadata() const
+QVariant MpdMetadata::metadata(QMediaMetadata::Key key) const
 {
-    return saved.keys();
+    return QVariant();
 }
 
-QVariant MpdMetadata::metadata(QString const &name) const
+QVariant MpdMetadata::metadata(const QString &key) const
 {
-    return saved[name];
+    return saved[key];
 }
 
-void MpdMetadata::setMetadata(QString const &name, QVariant const &value)
+void MpdMetadata::setMetadata(QMediaMetadata::Key key, QVariant const &value)
 {
-    Q_UNUSED(name);
+    Q_UNUSED(key);
     Q_UNUSED(value);
 }
 
-QMediaResourceList MpdMetadata::resources() const
+
+void MpdMetadata::setMetadata(const QString &key, QVariant const &value)
 {
-    return QMediaResourceList();
+    Q_UNUSED(key);
+    Q_UNUSED(value);
 }
 
 void MpdMetadata::playlistItemChanged(int position)
