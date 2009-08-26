@@ -103,6 +103,5 @@ INCLUDEPATH += . \
     $$SOURCE_DIR/contacts/details \
     $$SOURCE_DIR/contacts/engines \
     $$SOURCE_DIR/contacts/filters \
-    $$SOURCE_DIR/contacts/requests \
-    $$SOURCE_DIR/contacts/serialisers
+    $$SOURCE_DIR/contacts/requests
 
