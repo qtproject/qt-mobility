@@ -137,8 +137,6 @@ void Dialog::setupNetwork()
     QSystemNetworkInfo ni;
     connect(ui->netStatusComboBox,SIGNAL(activated(int)),
             this, SLOT(netStatusComboActivated(int)));
-    connect(ui->netStatusComboBox,SIGNAL(activated(int)),
-            this, SLOT(netStatusComboActivated(int)));
 
     ui->cellIdLabel->setText(QString::number(ni.cellId()));
     ui->locationAreaCodeLabel->setText(QString::number(ni.locationAreaCode()));
@@ -192,7 +190,10 @@ void Dialog::netStatusComboActivated(int index)
 
     if((QSystemNetworkInfo::NetworkMode)index == QSystemNetworkInfo::WlanMode) {
         ui->ssidLabel->setText(ni.wlanSsid());
+    } else {
+        ui->ssidLabel->setText("");
     }
+
     ui->macAddressLabel->setText(ni.macAddress((QSystemNetworkInfo::NetworkMode)index));
 }
 
