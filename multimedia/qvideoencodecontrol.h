@@ -56,10 +56,10 @@ public:
     virtual void setResolution(const QSize &) = 0;
 
     virtual QPair<int,int> frameRate() const = 0;
-    virtual QPair<int,int> minumumFrameRate() const = 0;
+    virtual QPair<int,int> minimumFrameRate() const = 0;
     virtual QPair<int,int> maximumFrameRate() const = 0;
     virtual QList< QPair<int,int> > supportedFrameRates() const;
-    virtual void setFrameRate(QPair<int,int>) = 0;
+    virtual void setFrameRate(const QPair<int,int> &rate) = 0;
 
     virtual QStringList supportedVideoCodecs() const = 0;
     virtual QString videoCodec() const = 0;
@@ -75,7 +75,7 @@ public:
     virtual void setQuality(qreal) = 0;
 
     virtual QStringList supportedEncodingOptions() const;
-    virtual QVariant encodingOption(const QString &name);
+    virtual QVariant encodingOption(const QString &name) const;
     virtual void setEncodingOption(const QString &name, const QVariant &value);
 
 protected:

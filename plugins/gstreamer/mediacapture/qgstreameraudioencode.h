@@ -25,7 +25,7 @@ public:
     bool setFormat(const QAudioFormat &format);
 
     QStringList supportedAudioCodecs() const;
-    QString codecDescription(const QString &codecName);
+    QString codecDescription(const QString &codecName) const;
     bool setAudioCodec(const QString &codecName);
     QString audioCodec() const;
 
@@ -35,8 +35,8 @@ public:
     qreal quality() const;
     void setQuality(qreal);
 
-    QStringList supportedEncodingOptions();
-    QVariant encodingOption(const QString &name);
+    QStringList supportedEncodingOptions() const;
+    QVariant encodingOption(const QString &name) const;
     void setEncodingOption(const QString &name, const QVariant &value);
 
     GstElement *createEncoder();

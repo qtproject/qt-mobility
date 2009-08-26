@@ -108,7 +108,7 @@ QList< QPair<int,int> > QGstreamerVideoEncode::supportedFrameRates() const
     return res;
 }
 
-void QGstreamerVideoEncode::setFrameRate(QPair<int,int> rate)
+void QGstreamerVideoEncode::setFrameRate(const QPair<int,int> &rate)
 {
     m_frameRate = rate;
 }
@@ -160,12 +160,12 @@ void QGstreamerVideoEncode::setQuality(qreal value)
     setEncodingOption(QLatin1String("quality"), QVariant(value));
 }
 
-QStringList QGstreamerVideoEncode::supportedEncodingOptions()
+QStringList QGstreamerVideoEncode::supportedEncodingOptions() const
 {
     return m_codecOptions.value(m_codec);
 }
 
-QVariant QGstreamerVideoEncode::encodingOption(const QString &name)
+QVariant QGstreamerVideoEncode::encodingOption(const QString &name) const
 {
     return m_options.value(name);
 }

@@ -26,7 +26,7 @@ public:
     QPair<int,int> minumumFrameRate() const;
     QPair<int,int> maximumFrameRate() const;
     QList< QPair<int,int> > supportedFrameRates() const;
-    void setFrameRate(QPair<int,int>);
+    void setFrameRate(const QPair<int,int> &rate);
 
     QStringList supportedVideoCodecs() const;
     QString videoCodecDescription(const QString &codecName) const;
@@ -41,8 +41,8 @@ public:
     qreal quality() const;
     void setQuality(qreal);
 
-    QStringList supportedEncodingOptions();
-    QVariant encodingOption(const QString &name);
+    QStringList supportedEncodingOptions() const;
+    QVariant encodingOption(const QString &name) const;
     void setEncodingOption(const QString &name, const QVariant &value);
 
     GstElement *createEncoder();

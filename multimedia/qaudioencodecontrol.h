@@ -77,7 +77,7 @@ public:
     virtual QString audioCodec() const = 0;
     virtual bool setAudioCodec(const QString &codecName) = 0;
 
-    virtual QString codecDescription(const QString &codecName) = 0;
+    virtual QString codecDescription(const QString &codecName) const = 0;
 
     virtual int bitrate() const = 0;
     virtual void setBitrate(int) = 0;
@@ -86,7 +86,7 @@ public:
     virtual void setQuality(qreal) = 0;
 
     virtual QStringList supportedEncodingOptions() const;
-    virtual QVariant encodingOption(const QString &name);
+    virtual QVariant encodingOption(const QString &name) const;
     virtual void setEncodingOption(const QString &name, const QVariant &value);
 
 protected:

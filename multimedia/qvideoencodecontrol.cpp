@@ -52,7 +52,7 @@ QStringList QVideoEncodeControl::supportedEncodingOptions() const
     return QStringList();
 }
 
-QVariant QVideoEncodeControl::encodingOption(const QString &name)
+QVariant QVideoEncodeControl::encodingOption(const QString &name) const
 {
     Q_UNUSED(name);
     return QVariant();

@@ -48,7 +48,10 @@ public:
     virtual QString format() const = 0;
     virtual void setFormat(const QString &formatMimeType) = 0;
 
-    virtual QString formatDescription(const QString &formatMimeType) = 0;
+    virtual QString formatDescription(const QString &formatMimeType) const = 0;
+
+signals:
+    void formatChanged(const QString &formatMimeType);
 
 protected:
     QMediaFormatControl(QObject *parent);
