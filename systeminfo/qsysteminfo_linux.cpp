@@ -134,7 +134,9 @@ QStringList QSystemInfoPrivate::availableLanguages() const
                 langList <<lang;
             }
         }
-        return langList;
+        if(langList.count() > 0) {
+            return langList;
+        }
     }
     return QStringList() << currentLanguage();
 }
@@ -710,7 +712,6 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 
 int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 {
-    Q_UNUSED(screen)
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
         QHalInterface iface;
