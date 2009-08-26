@@ -197,11 +197,6 @@ QVariant QWmpMetaData::metadata(QMediaMetadata::Key key) const
     return QVariant();
 }
 
-QVariant QWmpMetaData::metadata(const QString &key) const
-{
-    return value(m_media, QAutoBStr(key));
-}
-
 void QWmpMetaData::setMetadata(QMediaMetadata::Key key, const QVariant &value)
 {
     static const int  count = sizeof(qt_wmpMetadataKeys) / sizeof(QWmpMetadataKeyLookup);
@@ -214,7 +209,12 @@ void QWmpMetaData::setMetadata(QMediaMetadata::Key key, const QVariant &value)
     }
 }
 
-void QWmpMetaData::setMetadata(const QString &key, const QVariant &value)
+QVariant QWmpMetaData::extendedMetadata(const QString &key) const
+{
+    return value(m_media, QAutoBStr(key));
+}
+
+void QWmpMetaData::setExtendedMetadata(const QString &key, const QVariant &value)
 {
     setValue(m_media, QAutoBStr(key), value);
 }

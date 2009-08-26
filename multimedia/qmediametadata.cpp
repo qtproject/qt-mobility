@@ -40,81 +40,6 @@
 #include "qabstractmediaobject.h"
 #include "qabstractmediaservice.h"
 
-struct QMediaMetadataKeyLookup
-{
-    QMediaMetadata::Key key;
-    const char *token;
-};
-
-static const QMediaMetadataKeyLookup qt_mediaMetadataKeys[] =
-{
-    { QMediaMetadata::Title, "Title" },
-    { QMediaMetadata::SubTitle, "SubTitle" },
-    { QMediaMetadata::Author, "Author" },
-    { QMediaMetadata::Comment, "Comment" },
-    { QMediaMetadata::Description, "Description" },
-    { QMediaMetadata::Category, "Category" },
-    { QMediaMetadata::Genre, "Genre" },
-    { QMediaMetadata::Date, "Date" },
-    { QMediaMetadata::Year, "Year" },
-    { QMediaMetadata::UserRating, "UserRating" },
-    { QMediaMetadata::Keywords, "Keywords" },
-    { QMediaMetadata::Language, "Language" },
-    { QMediaMetadata::Publisher, "Publisher" },
-    { QMediaMetadata::Copyright, "Copyright" },
-    { QMediaMetadata::ParentalRating, "ParentalRating" },
-    { QMediaMetadata::RatingOrganisation, "RatingOrganisation" },
-
-    // Media
-    { QMediaMetadata::Size, "Size" },
-    { QMediaMetadata::MediaType, "MediaType" },
-    { QMediaMetadata::Duration, "Duration" },
-
-    // Audio
-    { QMediaMetadata::AudioBitrate, "AudioBitrate" },
-    { QMediaMetadata::AudioCodec, "AudioCodec" },
-    { QMediaMetadata::Channels, "Channels" },
-    { QMediaMetadata::Frequency, "Frequency" },
-
-    // Music
-    { QMediaMetadata::AlbumTitle, "AlbumTitle" },
-    { QMediaMetadata::AlbumArtist, "AlbumArtist" },
-    { QMediaMetadata::ContributingArtist, "ContributingArtist" },
-    { QMediaMetadata::Composer, "Composer" },
-    { QMediaMetadata::Conductor, "Conductor" },
-    { QMediaMetadata::Lyrics, "Lyrics" },
-    { QMediaMetadata::Mood, "Mood" },
-    { QMediaMetadata::TrackNumber, "TrackNumber" },
-    { QMediaMetadata::TrackCount, "TrackCount" },
-    { QMediaMetadata::CoverArtUriSmall, "CoverArtUriSmall" },
-    { QMediaMetadata::CoverArtUriLarge, "CoverArtUriLarge" },
-
-    // Image/Video
-    { QMediaMetadata::Resolution, "Resolution" },
-    { QMediaMetadata::PixelAspectRatio, "PixelAspectRatio" },
-
-    // Video
-    { QMediaMetadata::FrameRate, "FrameRate" },
-    { QMediaMetadata::VideoBitRate, "VideoBitRate" },
-    { QMediaMetadata::VideoCodec, "VideoCodec" },
-
-    { QMediaMetadata::PosterUri, "PosterUri" },
-
-    // Movie
-    { QMediaMetadata::ChapterNumber, "ChapterNumber" },
-    { QMediaMetadata::Director, "Director" },
-    { QMediaMetadata::LeadPerformer, "LeadPerformer" },
-    { QMediaMetadata::Writer, "Writer" },
-
-    // Photos
-    { QMediaMetadata::CameraManufacturer, "CameraManufacturer" },
-    { QMediaMetadata::CameraModel, "CameraModel" },
-    { QMediaMetadata::Event, "Event" },
-    { QMediaMetadata::Subject, "Subject" }
-};
-
-
-
 /*!
     \class QMediaMetadata
     \ingroup multimedia
@@ -270,20 +195,6 @@ QVariant QMediaMetadata::metadata(Key key) const
 }
 
 /*!
-    Returns the metadata for the attribute with the given \a key.
-*/
-
-QVariant QMediaMetadata::metadata(const QString &key) const
-{
-    Q_D(const QMediaMetadata);
-
-    if (d->provider == 0)
-        return QVariant();
-
-    return d->provider->metadata(key);
-}
-
-/*!
     Sets the the \a value of the metadata attribute with the given \a key.
 */
 
@@ -296,15 +207,29 @@ void QMediaMetadata::setMetadata(Key key, const QVariant &value)
 }
 
 /*!
+    Returns the metadata for the attribute with the given \a key.
+*/
+
+QVariant QMediaMetadata::extendedMetadata(const QString &key) const
+{
+    Q_D(const QMediaMetadata);
+
+    if (d->provider == 0)
+        return QVariant();
+
+    return d->provider->extendedMetadata(key);
+}
+
+/*!
     Sets the \a value of the metadata attribute with the given \a key.
 */
 
-void QMediaMetadata::setMetadata(const QString &key, const QVariant &value)
+void QMediaMetadata::setExtendedMetadata(const QString &key, const QVariant &value)
 {
     Q_D(QMediaMetadata);
 
     if (d->provider != 0)
-        d->provider->setMetadata(key, value);
+        d->provider->setExtendedMetadata(key, value);
 }
 
 /*!

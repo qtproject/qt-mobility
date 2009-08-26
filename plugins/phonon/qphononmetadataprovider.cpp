@@ -49,20 +49,20 @@ QVariant QPhononMetadataProvider::metadata(QMediaMetadata::Key key) const
     }
 }
 
-QVariant QPhononMetadataProvider::metadata(const QString &key) const
-{
-    Q_UNUSED(key);
-
-    return QVariant();
-}
-
 void QPhononMetadataProvider::setMetadata(QMediaMetadata::Key key, QVariant const &value)
 {
     Q_UNUSED(key);
     Q_UNUSED(value);
 }
 
-void QPhononMetadataProvider::setMetadata(const QString &key, QVariant const &value)
+QVariant QPhononMetadataProvider::extendedMetadata(const QString &key) const
+{
+    Q_UNUSED(key);
+
+    return QVariant();
+}
+
+void QPhononMetadataProvider::setExtendedMetadata(const QString &key, QVariant const &value)
 {
     Q_UNUSED(key);
     Q_UNUSED(value);

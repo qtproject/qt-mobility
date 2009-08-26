@@ -126,11 +126,10 @@ public:
     bool isReadOnly() const;
 
     QVariant metadata(Key key) const;
-    QVariant metadata(const QString &key) const;
     void setMetadata(Key key, const QVariant &value);
-    void setMetadata(const QString &key, const QVariant &value);
 
-    QString toString(Key key) const;
+    QVariant extendedMetadata(const QString &key) const;
+    void setExtendedMetadata(const QString &key, const QVariant &value);
 
 Q_SIGNALS:
     void metadataChanged();

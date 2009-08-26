@@ -65,19 +65,19 @@ QVariant MpdMetadata::metadata(QMediaMetadata::Key key) const
     return QVariant();
 }
 
-QVariant MpdMetadata::metadata(const QString &key) const
-{
-    return saved[key];
-}
-
 void MpdMetadata::setMetadata(QMediaMetadata::Key key, QVariant const &value)
 {
     Q_UNUSED(key);
     Q_UNUSED(value);
 }
 
+QVariant MpdMetadata::extendedMetadata(const QString &key) const
+{
+    return saved[key];
+}
 
-void MpdMetadata::setMetadata(const QString &key, QVariant const &value)
+
+void MpdMetadata::setExtendedMetadata(const QString &key, QVariant const &value)
 {
     Q_UNUSED(key);
     Q_UNUSED(value);

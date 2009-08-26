@@ -52,9 +52,10 @@ public:
     virtual bool isReadOnly() const = 0;
 
     virtual QVariant metadata(QMediaMetadata::Key key) const = 0;
-    virtual QVariant metadata(const QString &key) const = 0;
     virtual void setMetadata(QMediaMetadata::Key key, const QVariant &value) = 0;
-    virtual void setMetadata(const QString &key, const QVariant &value) = 0;
+
+    virtual QVariant extendedMetadata(const QString &key) const = 0;
+    virtual void setExtendedMetadata(const QString &key, const QVariant &value) = 0;
 
 
 Q_SIGNALS:
