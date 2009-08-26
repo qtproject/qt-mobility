@@ -35,6 +35,7 @@
 #include <qmessageaccountid.h>
 #include <qmessagefolderid.h>
 #include <qmessageid.h>
+#include <qmessage_p.h>
 #include <qmessagestore.h>
 #include <QDataStream>
 #include <QFile>
@@ -107,7 +108,7 @@ QByteArray binaryResult(const SPropValue &prop)
     return QByteArray(reinterpret_cast<const char*>(prop.Value.bin.lpb), prop.Value.bin.cb);
 }
 
-typedef QPair<QByteArray, MAPIUID> ServiceDetail;
+typedef QPair<QPair<QByteArray, QByteArray>, MAPIUID> ServiceDetail;
 
 QList<ServiceDetail> serviceDetails(LPSERVICEADMIN svcAdmin)
 {
@@ -117,14 +118,18 @@ QList<ServiceDetail> serviceDetails(LPSERVICEADMIN svcAdmin)
     HRESULT rv = svcAdmin->GetMsgServiceTable(0, &svcTable);
     if (HR_SUCCEEDED(rv)) {
         LPSRowSet rows(0);
-        SizedSPropTagArray(2, cols) = {2, {PR_SERVICE_NAME_A, PR_SERVICE_UID}};
+        SizedSPropTagArray(3, cols) = {3, {PR_SERVICE_NAME_A, PR_DISPLAY_NAME_A, PR_SERVICE_UID}};
         rv = HrQueryAllRows(svcTable, reinterpret_cast<LPSPropTagArray>(&cols), 0, 0, 0, &rows);
         if (HR_SUCCEEDED(rv)) {
             for (uint n = 0; n < rows->cRows; ++n) {
                 if (rows->aRow[n].lpProps[0].ulPropTag == PR_SERVICE_NAME_A) {
                     QByteArray svcName(rows->aRow[n].lpProps[0].Value.lpszA);
-                    MAPIUID svcUid(*(reinterpret_cast<MAPIUID*>(rows->aRow[n].lpProps[1].Value.bin.lpb)));
-                    result.append(qMakePair(svcName, svcUid));
+                    QByteArray displayName;
+                    if (rows->aRow[n].lpProps[1].ulPropTag == PR_DISPLAY_NAME_A) {
+                        displayName = QByteArray(rows->aRow[n].lpProps[1].Value.lpszA);
+                    }
+                    MAPIUID svcUid(*(reinterpret_cast<MAPIUID*>(rows->aRow[n].lpProps[2].Value.bin.lpb)));
+                    result.append(qMakePair(qMakePair(svcName, displayName), svcUid));
                 }
             }
 
@@ -686,12 +691,18 @@ QMessageAccountId addAccount(const Parameters &params)
                         char *providerName = "MSUPST MS";
                         bool serviceExists(false);
                         MAPIUID svcUid = { 0 };
+                        QList<QByteArray> existingServices;
 
                         foreach (const ServiceDetail &svc, serviceDetails(svcAdmin)) {
-                            if (svc.first.toLower() == QByteArray(providerName).toLower()) {
-                                svcUid = svc.second;
-                                serviceExists = true;
-                                break;
+                            // Find all services that have our provider
+                            if (svc.first.first.toLower() == QByteArray(providerName).toLower()) {
+                                if (svc.first.second.toLower() == name.toLower()) {
+                                    // This is existing service we need to remove
+                                    svcUid = svc.second;
+                                    serviceExists = true;
+                                } else {
+                                    existingServices.append(QByteArray(reinterpret_cast<const char*>(&svc.second), sizeof(MAPIUID)));
+                                }
                             }
                         }
 
@@ -703,11 +714,13 @@ QMessageAccountId addAccount(const Parameters &params)
 
                         if (!serviceExists) {
                             // Create a message service for this profile using the standard provider
-                            rv = svcAdmin->CreateMsgService(reinterpret_cast<LPTSTR>(providerName), reinterpret_cast<LPTSTR>(name.data()), 0, 0);
+                            rv = svcAdmin->CreateMsgService(reinterpret_cast<LPTSTR>(providerName), 0, 0, 0);
                             if (HR_SUCCEEDED(rv)) {
+                                // Find which of the now-extant services was not in the previous set
                                 foreach (const ServiceDetail &svc, serviceDetails(svcAdmin)) {
-                                    // Find the name/UID for the service we added
-                                    if (svc.first.toLower() == QByteArray(providerName).toLower()) {
+                                    QByteArray uidData(reinterpret_cast<const char*>(&svc.second), sizeof(MAPIUID));
+                                    if ((svc.first.first.toLower() == QByteArray(providerName).toLower()) &&
+                                        !existingServices.contains(uidData)) {
                                         // Create a .PST message store for this service
                                         QByteArray path(QString("%1.pst").arg(name.constData()).toAscii());
 
@@ -831,7 +844,149 @@ QMessageFolderId addFolder(const Parameters &params)
 
 QMessageId addMessage(const Parameters &params)
 {
-    Q_UNUSED(params)
+    QString parentAccountName(params["parentAccountName"]);
+    QString parentFolderPath(params["parentFolderPath"]);
+    QString to(params["to"]);
+    QString from(params["from"]);
+    QString date(params["date"]);
+    QString receivedDate(params["receivedDate"]);
+    QString subject(params["subject"]);
+    QString text(params["text"]);
+    QString priority(params["priority"]);
+    QString size(params["size"]);
+    QString type(params["type"]);
+    QString read(params["status-read"]);
+    QString hasAttachments(params["status-hasAttachments"]);
+
+    if (!to.isEmpty() && !from.isEmpty() && !date.isEmpty() && !subject.isEmpty() &&
+        !parentAccountName.isEmpty() && !parentFolderPath.isEmpty()) {
+        // Find the named account
+        QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilterKey::name(parentAccountName)));
+#if defined(Q_OS_WIN) && !defined(ACCOUNT_FILTERING_IMPLEMENTED)
+{
+    // Keys aren't implemented yet...
+    QMessageAccountIdList::iterator it = accountIds.begin(), end = accountIds.end();
+    while (it != end) {
+        QMessageAccount acct(*it);
+        if (acct.name() == parentAccountName) {
+            accountIds.clear();
+            accountIds.append(acct.id());
+            break;
+        }
+        if (++it == end) {
+            accountIds.clear();
+        }
+    }
+}
+#endif
+        if (accountIds.count() == 1) {
+            // Find the specified folder
+            QMessageFolderFilterKey key(QMessageFolderFilterKey::path(parentFolderPath) & QMessageFolderFilterKey::parentAccountId(accountIds.first()));
+            QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders(key));
+#if defined(Q_OS_WIN) && !defined(FOLDER_FILTERING_IMPLEMENTED)
+{
+    // Keys aren't implemented yet...
+    QMessageFolderIdList::iterator it = folderIds.begin(), end = folderIds.end();
+    while (it != end) {
+        QMessageFolder fldr(*it);
+        if ((fldr.path() == parentFolderPath) && (fldr.parentAccountId() == accountIds.first())) {
+            folderIds.clear();
+            folderIds.append(fldr.id());
+            break;
+        }
+        if (++it == end) {
+            folderIds.clear();
+        }
+    }
+}
+#endif
+            if (folderIds.count() == 1) {
+                QMessage message;
+
+                message.setParentAccountId(accountIds.first());
+                // TODO: is this to be added?
+                //message.setParentFolderId(folderIds.first());
+                message.d_ptr->_parentFolderId = folderIds.first();
+
+                /*
+                message.setTo(QMailAddress::fromStringList(to));
+                message.setFrom(QMailAddress(from));
+                */
+                message.setSubject(subject);
+
+                /*
+                QDateTime dt(QDateTime::fromString(date, Qt::ISODate));
+                dt.setTimeSpec(Qt::UTC);
+                message.setDate(QMailTimeStamp(dt));
+
+                if (type.isEmpty()) {
+                    message.setMessageType(QMailMessage::Email);
+                } else {
+                    if (type.toLower() == "mms") {
+                        message.setMessageType(QMailMessage::Mms);
+                    } else if (type.toLower() == "sms") {
+                        message.setMessageType(QMailMessage::Sms);
+                    } else if (type.toLower() == "xmpp") {
+                        message.setMessageType(QMailMessage::Instant);
+                    } else {
+                        message.setMessageType(QMailMessage::Email);
+                    }
+                }
+
+                if (!receivedDate.isEmpty()) {
+                    QDateTime dt(QDateTime::fromString(receivedDate, Qt::ISODate));
+                    dt.setTimeSpec(Qt::UTC);
+                    message.setReceivedDate(QMailTimeStamp(dt));
+                }
+
+                if (!priority.isEmpty()) {
+                    if (priority.toLower() == "high") {
+                        message.setStatus(QmfHelpers::highPriorityMask(), true);
+                    } else if (priority.toLower() == "low") {
+                        message.setStatus(QmfHelpers::lowPriorityMask(), true);
+                    }
+                }
+
+                if (!size.isEmpty()) {
+                    message.setSize(size.toUInt());
+                }
+
+                if (!text.isEmpty()) {
+                    QMailMessageContentType ct("text/plain; charset=UTF-8");
+                    message.setBody(QMailMessageBody::fromData(text, ct, QMailMessageBody::Base64));
+                    message.setStatus(QMailMessage::ContentAvailable, true);
+                }
+
+                if (read.toLower() == "true") {
+                    message.setStatus(QMailMessage::Read, true);
+                }
+
+                if (hasAttachments.toLower() == "true") {
+                    message.setStatus(QMailMessage::HasAttachments, true);
+                }
+
+                Parameters::const_iterator it = params.begin(), end = params.end();
+                for ( ; it != end; ++it) {
+                    if (it.key().startsWith("custom-")) {
+                        message.setCustomField(it.key().mid(7), it.value());
+                    }
+                }
+                */
+
+                if (!QMessageStore::instance()->addMessage(&message)) {
+                    qWarning() << "Unable to addMessage:" << to << from << date << subject;
+                } else {
+                    return message.id();
+                }
+            } else {
+                qWarning() << "Unable to locate parent folder:" << parentFolderPath;
+            }
+        } else {
+            qWarning() << "Unable to locate parent account:" << parentAccountName;
+        }
+    } else {
+        qWarning() << "Necessary information missing";
+    }
 
     return QMessageId();
 }

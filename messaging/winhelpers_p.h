@@ -97,6 +97,8 @@ public:
     LPMAPITABLE subFolders(QMessageStore::ErrorCode *lastError) { if (!_init) findSubFolders(lastError); return _subFolders; }
     LPMESSAGE createMessage(QMessageStore::ErrorCode* lastError);
 
+    LPMESSAGE openMessage(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId);
+
     static MapiFolderPtr null() { return MapiFolderPtr(new MapiFolder()); }
 
     static MapiFolder* create(LPMAPIFOLDER mapifolder, MapiEntryId entryId, MapiRecordKey storeKey);
@@ -160,6 +162,7 @@ public:
     HRESULT openEntry(QMessageStore::ErrorCode *lastError, MapiEntryId entryId, LPUNKNOWN *unknown) const;
     MapiStorePtr findStore(QMessageStore::ErrorCode *lastError, const QMessageAccountId &id = QMessageAccountId()) const;
     MapiStorePtr defaultStore(QMessageStore::ErrorCode *lastError) { return findStore(lastError); }
+    QList<MapiStorePtr> allStores(QMessageStore::ErrorCode *lastError) const;
     QMessage message(QMessageStore::ErrorCode *lastError, const QMessageId& id) const;
     QByteArray attachmentData(QMessageStore::ErrorCode *lastError, const QMessageId& id, ULONG number) const;
     bool showForm(LPMESSAGE message, LPMAPIFOLDER folder, LPMDB store);
