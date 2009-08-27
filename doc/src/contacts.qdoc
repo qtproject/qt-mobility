@@ -207,7 +207,7 @@ list of sort orders) to the manager.
 \section2 Actions
 
 Clients can perform actions on contacts which support them.  Actions are things like "Send Email" or "Dial", and
-can be provided from various sources including Qt Plugins or the \l{Qt Mobility Service Framework}.
+can be provided from various sources including Qt Plugins or the Qt Mobility Service Framework.
 Every action implementation is uniquely identified by a combination of its name, the name of the vendor which provided
 the implementation, and the version of the implementation according to the vendor.  These pieces of data may be
 encapsulated in a \l{QContactActionDescriptor} which can be used to retrieve an instance of the implementation
