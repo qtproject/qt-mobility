@@ -37,7 +37,7 @@
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QPushButton>
-#include <qml.h>
+#include <QUrl>
 
 class MainWidget : public QWidget
 {
@@ -57,10 +57,10 @@ MainWidget::MainWidget()
     setLayout(vbox);
 
     view = new QFxView(this);
-    view->setFixedSize(240, 320);
+    view->setFixedSize(100, 230);
     vbox->addWidget(view);
 
-    view->setUrl(QUrl::fromLocalFile(":battery-meter.qml"));
+    view->setUrl(QUrl("qrc:/battery-meter.qml"));
     view->execute();
 
     QPushButton *quitButton = new QPushButton("Quit");

@@ -38,8 +38,6 @@
 
 #include <QTimer>
 
-#include <QDebug>
-
 BatteryProvider::BatteryProvider(QWidget *parent) :
         QDialog(parent),
         ui(new Ui::BatteryProvider),
@@ -86,7 +84,6 @@ void BatteryProvider::timerEvent(QTimerEvent *)
 
 void BatteryProvider::chargeChanged(int newCharge)
 {
-    qDebug() << Q_FUNC_INFO;
     object->setAttribute("charge", newCharge);
 }
 
@@ -96,7 +93,7 @@ void BatteryProvider::chargingToggled(bool charging)
     object->setAttribute("charging", charging);
 
     if (charging)
-        chargeTimer = startTimer(30000 / 100);
+        chargeTimer = startTimer(2000);
     else
         killTimer(chargeTimer);
 }

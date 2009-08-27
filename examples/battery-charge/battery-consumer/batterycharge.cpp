@@ -38,7 +38,7 @@
 QML_DEFINE_TYPE(Example, 1, 0, 0, BatteryCharge, BatteryCharge);
 
 BatteryCharge::BatteryCharge(QObject *parent)
-:   QObject(parent), item(0)
+:   QObject(parent), m_item(0), m_charging(false), m_charge(0)
 {
 }
 
@@ -48,17 +48,37 @@ BatteryCharge::~BatteryCharge()
 
 QString BatteryCharge::path() const
 {
-    return item ? item->itemName() : QString();
+    return m_item ? m_item->itemName() : QString();
 }
 
 void BatteryCharge::setPath(const QString &path)
 {
-    delete item;
-    item = new QValueSpaceItem(path);
-    connect(item, SIGNAL(contentsChanged()), this, SIGNAL(chargeChanged()));
+    delete m_item;
+    m_item = new QValueSpaceItem(path);
+    connect(m_item, SIGNAL(contentsChanged()), this, SLOT(contentsChanged()));
 }
 
 int BatteryCharge::charge() const
 {
-    return item ? item->value("", 0).toInt() : 0;
+    return m_item ? m_item->value("charge", 0).toInt() : 0;
+}
+
+bool BatteryCharge::charging() const
+{
+    return m_item ? m_item->value("charging", false).toBool() : false;
+}
+
+void BatteryCharge::contentsChanged()
+{
+    int charge = m_item->value("charge", 0).toInt();
+    if (m_charge != charge) {
+        m_charge = charge;
+        emit chargeChanged();
+    }
+
+    bool charging = m_item->value("charging", false).toBool();
+    if (m_charging != charging) {
+        m_charging = charging;
+        emit chargingChanged();
+    }
 }

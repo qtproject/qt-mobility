@@ -45,6 +45,7 @@ class BatteryCharge : public QObject
 
     Q_PROPERTY(QString path READ path WRITE setPath NOTIFY pathChanged);
     Q_PROPERTY(int charge READ charge NOTIFY chargeChanged);
+    Q_PROPERTY(bool charging READ charging NOTIFY chargingChanged);
 
 public:
     BatteryCharge(QObject *parent = 0);
@@ -55,12 +56,20 @@ public:
 
     int charge() const;
 
+    bool charging() const;
+
 signals:
     void pathChanged();
     void chargeChanged();
+    void chargingChanged();
+
+private slots:
+    void contentsChanged();
 
 private:
-    QValueSpaceItem *item;
+    QValueSpaceItem *m_item;
+    bool m_charging;
+    int m_charge;
 };
 
 QML_DECLARE_TYPE(BatteryCharge);
