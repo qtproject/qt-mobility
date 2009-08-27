@@ -55,6 +55,50 @@ MpdPlayerService::~MpdPlayerService()
 {
 }
 
+bool MpdPlayerService::isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType)
+{
+    Q_UNUSED(endpointType);
+    return false;
+}
+
+void MpdPlayerService::setInputStream(QIODevice* stream)
+{
+    Q_UNUSED(stream);
+}
+
+QIODevice* MpdPlayerService::inputStream() const
+{
+    return 0;
+}
+
+void MpdPlayerService::setOutputStream(QIODevice* stream)
+{
+    Q_UNUSED(stream);
+}
+
+QIODevice* MpdPlayerService::outputStream() const
+{
+    return 0;
+}
+
+QString MpdPlayerService::activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType)
+{
+    Q_UNUSED(endpointType);
+    return QString();
+}
+
+void MpdPlayerService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const char *interface)
+{
+    Q_UNUSED(endpointType);
+    Q_UNUSED(interface);
+}
+
+QList<QString> MpdPlayerService::supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const
+{
+    Q_UNUSED(endpointType);
+    return QList<QString>();
+}
+
 QAbstractMediaControl* MpdPlayerService::control(const char *name) const
 {
     if (QLatin1String(name) == QMediaPlayerControl_iid)

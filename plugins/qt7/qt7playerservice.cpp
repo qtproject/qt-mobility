@@ -51,13 +51,60 @@ Qt7PlayerService::~Qt7PlayerService()
 {
 }
 
+bool Qt7PlayerService::isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType)
+{
+    Q_UNUSED(endpointType);
+    return false;
+}
+
+void Qt7PlayerService::setInputStream(QIODevice* stream)
+{
+    Q_UNUSED(stream);
+}
+
+QIODevice* Qt7PlayerService::inputStream() const
+{
+    return 0;
+}
+
+void Qt7PlayerService::setOutputStream(QIODevice* stream)
+{
+    Q_UNUSED(stream);
+}
+
+QIODevice* Qt7PlayerService::outputStream() const
+{
+    return 0;
+}
+
+QString Qt7PlayerService::activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType)
+{
+    Q_UNUSED(endpointType);
+    return QString();
+}
+
+void Qt7PlayerService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const char *interface)
+{
+    Q_UNUSED(endpointType);
+    Q_UNUSED(interface);
+}
+
+QList<QString> Qt7PlayerService::supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const
+{
+    Q_UNUSED(endpointType);
+    return QList<QString>();
+}
+
 void Qt7PlayerService::setVideoOutput(QObject *output)
 {
+    Q_UNUSED(output);
+    /*
     Qt7Widget *vout = qobject_cast<Qt7Widget*>(output);
     if (vout != 0) {
         QMediaPlayerService::setVideoOutput(output);
         playerControl->movie()->setVideoWidget(vout);
     }
+    */
 }
 
 QList<QByteArray> Qt7PlayerService::supportedEndpointInterfaces(QMediaEndpointInterface::Direction direction) const

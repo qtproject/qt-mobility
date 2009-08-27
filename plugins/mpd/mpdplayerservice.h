@@ -50,7 +50,19 @@ public:
     MpdPlayerService(QObject *parent = 0);
     ~MpdPlayerService();
 
-    virtual QAbstractMediaControl* control(const char *name) const;
+    bool isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType);
+
+    void setInputStream(QIODevice* stream);
+    QIODevice* inputStream() const;
+
+    void setOutputStream(QIODevice* stream);
+    QIODevice* outputStream() const;
+
+    QString activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType);
+    void setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const char *interface);
+    QList<QString> supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const;
+
+    QAbstractMediaControl* control(const char *name) const;
 
 private slots:
     void stateChanged(int state);

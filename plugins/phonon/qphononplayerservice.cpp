@@ -63,6 +63,50 @@ QPhononPlayerService::~QPhononPlayerService()
 {
 }
 
+bool QPhononPlayerService::isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType)
+{
+    Q_UNUSED(endpointType);
+    return false;
+}
+
+void QPhononPlayerService::setInputStream(QIODevice* stream)
+{
+    Q_UNUSED(stream);
+}
+
+QIODevice* QPhononPlayerService::inputStream() const
+{
+    return 0;
+}
+
+void QPhononPlayerService::setOutputStream(QIODevice* stream)
+{
+    Q_UNUSED(stream);
+}
+
+QIODevice* QPhononPlayerService::outputStream() const
+{
+    return 0;
+}
+
+QString QPhononPlayerService::activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType)
+{
+    Q_UNUSED(endpointType);
+    return QString();
+}
+
+void QPhononPlayerService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const char *interface)
+{
+    Q_UNUSED(endpointType);
+    Q_UNUSED(interface);
+}
+
+QList<QString> QPhononPlayerService::supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const
+{
+    Q_UNUSED(endpointType);
+    return QList<QString>();
+}
+
 QAbstractMediaControl *QPhononPlayerService::control(const char *name) const
 {
     if (qstrcmp(name, QMediaPlayerControl_iid) == 0)
