@@ -45,7 +45,7 @@ public:
     QMediaPlaylistNullProvider() :QMediaPlaylistProvider() {}
     virtual ~QMediaPlaylistNullProvider() {}
     virtual int size() const {return 0;}
-    virtual QMediaSource resources(int) const { return QMediaSource(); }
+    virtual QMediaSource media(int) const { return QMediaSource(); }
 };
 
 Q_GLOBAL_STATIC(QMediaPlaylistNullProvider, _q_nullMediaPlaylist)
@@ -304,7 +304,7 @@ QMediaSource QMediaPlaylistNavigator::previousItem(int steps) const
   */
 QMediaSource QMediaPlaylistNavigator::itemAt(int pos) const
 {
-    return d_func()->playlist->resources(pos);
+    return d_func()->playlist->media(pos);
 }
 
 /*!
@@ -420,7 +420,7 @@ void QMediaPlaylistNavigator::jump(int pos)
         emit surroundingItemsChanged();
     }
 
-    QMediaSource src = d->playlist->resources(pos);
+    QMediaSource src = d->playlist->media(pos);
     if (src != d->currentItem) {
         d->currentItem = src;
         emit activated(src);
@@ -471,7 +471,7 @@ void QMediaPlaylistNavigatorPrivate::_q_itemsChanged(int start, int end)
     Q_Q(QMediaPlaylistNavigator);
 
     if (currentPos >= start && currentPos<=end) {
-        QMediaSource src = playlist->resources(currentPos);
+        QMediaSource src = playlist->media(currentPos);
         if (src != currentItem) {
             currentItem = src;
             emit q->activated(src);

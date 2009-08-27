@@ -56,7 +56,7 @@ public:
     bool save(QIODevice *device, const char *format);
 
     int size() const;
-    QMediaSource resources(int pos) const;
+    QMediaSource media(int pos) const;
 
     bool isReadOnly() const;
 

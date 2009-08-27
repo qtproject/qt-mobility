@@ -60,7 +60,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
     Depending on playlist source implementation,
     most of playlist modifcation operations can be asynchronous.
 
-    \sa QMediaResource
+    \sa QMediaSource
 */
 
 
@@ -180,9 +180,9 @@ int QMediaPlaylist::currentPosition() const
   Returns the current media source.
 */
 
-QMediaSource QMediaPlaylist::currentSource() const
+QMediaSource QMediaPlaylist::currentMedia() const
 {
-    return d_func()->playlist()->resources(currentPosition());
+    return d_func()->playlist()->media(currentPosition());
 }
 
 
@@ -215,34 +215,12 @@ bool QMediaPlaylist::isReadOnly() const
 }
 
 /*!
-    Returns the primary resource for the media item at index \a position.
-*/
-
-QMediaResource QMediaPlaylist::resource(int position) const
-{
-    return resources(position).contentResource();
-}
-
-/*!
   Returns the media source at index \a position in the playlist.
 */
 
-QMediaSource QMediaPlaylist::resources(int position) const
+QMediaSource QMediaPlaylist::media(int position) const
 {
-    return d_func()->playlist()->resources(position);
-}
-
-/*!
-  Append the media \a source to the playlist.
-
-  Returns true if the operation is successfull, other wise return false.
-*/
-
-bool QMediaPlaylist::appendItem(const QMediaResource &resource)
-{
-    return !resource.isNull()
-            ? d_func()->playlist()->appendItem(QMediaResourceList() << resource)
-            : false;
+    return d_func()->playlist()->media(position);
 }
 
 /*!
@@ -258,19 +236,12 @@ bool QMediaPlaylist::appendItem(const QMediaSource &source)
 /*!
   Insert the media \a source to the playlist at position \a pos.
 
-  Returns true if the operation is successfull, other wise return false.
+  Returns true if the operation is successful, otherwise false.
 */
 
-bool QMediaPlaylist::insertItem(int pos, const QMediaResource &resource)
+bool QMediaPlaylist::insertItem(int pos, const QMediaSource &source)
 {
-    return !resource.isNull()
-            ? d_func()->playlist()->insertItem(pos, QMediaResourceList() << resource)
-            : false;
-}
-
-bool QMediaPlaylist::insertItem(int index, const QMediaSource &source)
-{
-    return d_func()->playlist()->insertItem(index, source);
+    return d_func()->playlist()->insertItem(pos, source);
 }
 
 /*!
@@ -317,7 +288,7 @@ bool QMediaPlaylistPrivate::readItems(QMediaPlaylistReader *reader)
 bool QMediaPlaylistPrivate::writeItems(QMediaPlaylistWritter *writter)
 {
     for (int i=0; i<playlist()->size(); i++) {
-        if (!writter->writeItem(playlist()->resources(i)))
+        if (!writter->writeItem(playlist()->media(i)))
             return false;
     }
     writter->close();

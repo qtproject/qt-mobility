@@ -36,6 +36,7 @@
 
 #include "qmediasource.h"
 
+
 class QMediaSourcePrivate : public QSharedData
 {
 public:
@@ -46,15 +47,44 @@ public:
     QMediaResourceList  resources;
 };
 
+
+/*!
+    \class QMediaSource
+    \preliminary
+    \brief The QMediaSource class provides access to the resources relating to a media content.
+
+    QMediaSource is used within the multimedia framework as the logical handle
+    to media content.  Media content can have multiple forms or other meta-data
+    like items attached, some examples would be different quality variants of
+    the primary stream, or extended meta-data such as a Poster for a movie.
+
+    A non-null QMediaSource will always have a primary or canonical reference to
+    the content available through the contentUri() or contentResource()
+    methods, all other resources are optional.
+*/
+
+
+/*!
+    Constructs a null QMediaSource.
+*/
+
 QMediaSource::QMediaSource()
 {
 }
 
-QMediaSource::QMediaSource(const QUrl &contentUrl):
+/*!
+    Constructs a media source with \a contentUri providing a reference to the content.
+*/
+
+QMediaSource::QMediaSource(const QUrl &contentUri):
     d(new QMediaSourcePrivate)
 {
-    d->resources << QMediaResource(contentUrl);
+    d->resources << QMediaResource(contentUri);
 }
+
+/*!
+    Constructs a media source with \a contentResource providing a reference to the content.
+*/
 
 QMediaSource::QMediaSource(const QMediaResource &contentResource):
     d(new QMediaSourcePrivate)
@@ -62,25 +92,45 @@ QMediaSource::QMediaSource(const QMediaResource &contentResource):
     d->resources << contentResource;
 }
 
+/*!
+    Constructs a media source with \a resources providing a reference to the content.
+*/
+
 QMediaSource::QMediaSource(const QMediaResourceList &resources):
     d(new QMediaSourcePrivate(resources))
 {
 }
+
+/*!
+    Constructs a copy of media source \a other.
+*/
 
 QMediaSource::QMediaSource(const QMediaSource &other):
     d(other.d)
 {
 }
 
+/*!
+    Destroys the media source object.
+*/
+
 QMediaSource::~QMediaSource()
 {
 }
+
+/*!
+    Assigns the value of \a other to this media source.
+*/
 
 QMediaSource& QMediaSource::operator=(const QMediaSource &other)
 {
     d = other.d;
     return *this;
 }
+
+/*!
+    Returns true if \a other is equivalent to this media source; false otherwise.
+*/
 
 bool QMediaSource::operator==(const QMediaSource &other) const
 {
@@ -89,20 +139,36 @@ bool QMediaSource::operator==(const QMediaSource &other) const
              d->resources == other.d->resources);
 }
 
+/*!
+    Returns true if \a other is not equivalent to this media source; false otherwise.
+*/
+
 bool QMediaSource::operator!=(const QMediaSource &other) const
 {
     return !(*this == other);
 }
+
+/*!
+    Returns true if this media source is null (uninitialized); false otherwise.
+*/
 
 bool QMediaSource::isNull() const
 {
     return d.constData() == 0;
 }
 
+/*!
+    Returns a QUrl that represents that canonical content resource for this media source.
+*/
+
 QUrl QMediaSource::contentUri() const
 {
     return contentResource().uri();
 }
+
+/*!
+    Returns a QMediaResource that represents that canonical content resource for this media source.
+*/
 
 QMediaResource QMediaSource::contentResource() const
 {
@@ -113,6 +179,12 @@ QMediaResource QMediaSource::contentResource() const
 
     return QMediaResource();
 }
+
+/*!
+    Returns a QMediaResourceList that contains all the QMediaResources that match the resource \a role.
+
+    \sa QMediaResource::ResourceRole
+*/
 
 QMediaResourceList QMediaSource::resources(QMediaResource::ResourceRole role) const
 {
