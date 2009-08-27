@@ -38,9 +38,15 @@
 #include "qabstractmediaobject_p.h"
 #include "qaudiorecorderservice.h"
 #include "qmediaserviceprovider.h"
+#include "qaudioencodecontrol.h"
+#include "qvideoencodecontrol.h"
+#include "qmediaformatcontrol.h"
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qurl.h>
+#include <QtCore/qstringlist.h>
+
+#include <QtMultimedia/QAudioFormat>
 
 
 Q_MEDIA_EXPORT QAbstractMediaService *createMediaCaptureService(QMediaServiceProvider *provider)
@@ -76,8 +82,12 @@ class QMediaRecorderPrivate : public QAbstractMediaObjectPrivate
 public:
     QMediaRecorderPrivate(QAbstractMediaService *service);
 
-    QAbstractMediaService* service;
-    QMediaRecorderControl* control;
+    QAbstractMediaService *service;
+    QMediaRecorderControl *control;
+    QMediaFormatControl *formatControl;
+    QAudioEncodeControl *audioControl;
+    QVideoEncodeControl *videoControl;
+
     QMediaRecorder::Error error;
     QString errorString;
 
@@ -90,10 +100,17 @@ QMediaRecorderPrivate::QMediaRecorderPrivate(QAbstractMediaService *service)
      service(service),
      error(QMediaRecorder::NoError)
 {
-    if(service)
+    if(service) {
         control = qobject_cast<QMediaRecorderControl *>(service->control(QMediaRecorderControl_iid));
-    else
+        formatControl = qobject_cast<QMediaFormatControl *>(service->control(QMediaFormatControl_iid));
+        audioControl = qobject_cast<QAudioEncodeControl *>(service->control(QAudioEncodeControl_iid));
+        videoControl = qobject_cast<QVideoEncodeControl *>(service->control(QVideoEncodeControl_iid));
+    } else {
         control = 0;
+        formatControl = 0;
+        audioControl = 0;
+        videoControl = 0;
+    }
 }
 
 void QMediaRecorderPrivate::_q_stateChanged(QMediaRecorder::State ps)
@@ -256,6 +273,317 @@ qint64 QMediaRecorder::duration() const
 {
     return d_func()->control ? d_func()->control->duration() : 0;
 }
+
+
+/*!
+*/
+QStringList QMediaRecorder::supportedFormats() const
+{
+    return d_func()->formatControl ?
+           d_func()->formatControl->supportedFormats() : QStringList();
+}
+
+/*!
+*/
+QString QMediaRecorder::formatDescription(const QString &formatMimeType) const
+{
+    return d_func()->formatControl ?
+           d_func()->formatControl->formatDescription(formatMimeType) : QString();
+}
+
+/*!
+*/
+QString QMediaRecorder::format() const
+{
+    return d_func()->formatControl ?
+           d_func()->formatControl->format() : QString();
+}
+
+/*!
+*/
+void QMediaRecorder::setFormat(const QString &formatMimeType)
+{
+    if (d_func()->formatControl)
+        d_func()->formatControl->setFormat(formatMimeType);
+}
+
+/*!
+*/
+QAudioFormat QMediaRecorder::audioFormat() const
+{
+    return d_func()->audioControl ?
+           d_func()->audioControl->format() :  QAudioFormat();
+}
+
+/*!
+*/
+bool QMediaRecorder::isAudioFormatSupported(const QAudioFormat &format) const
+{
+    return d_func()->audioControl ?
+           d_func()->audioControl->isFormatSupported(format) : false;
+}
+
+/*!
+*/
+bool QMediaRecorder::setAudioFormat(const QAudioFormat &format)
+{
+    return d_func()->audioControl ?
+           d_func()->audioControl->setFormat(format) : false;
+}
+
+/*!
+*/
+QStringList QMediaRecorder::supportedAudioCodecs() const
+{
+    return d_func()->audioControl ?
+           d_func()->audioControl->supportedAudioCodecs() : QStringList();
+}
+
+/*!
+*/
+QString QMediaRecorder::codecDescription(const QString &codecName) const
+{
+    return d_func()->audioControl ?
+           d_func()->audioControl->codecDescription(codecName) : QString();
+}
+
+/*!
+*/
+QString QMediaRecorder::audioCodec() const
+{
+    return d_func()->audioControl ?
+           d_func()->audioControl->audioCodec() : QString();
+}
+
+/*!
+*/
+bool QMediaRecorder::setAudioCodec(const QString &codecName)
+{
+    return d_func()->audioControl ?
+           d_func()->audioControl->setAudioCodec(codecName) : false;
+}
+
+/*!
+*/
+int QMediaRecorder::audioBitrate() const
+{
+    return d_func()->audioControl ?
+           d_func()->audioControl->bitrate() : -1;
+}
+
+/*!
+*/
+void QMediaRecorder::setAudioBitrate(int bitrate)
+{
+    if (d_func()->audioControl)
+        d_func()->audioControl->setBitrate(bitrate);
+}
+
+/*!
+*/
+qreal QMediaRecorder::audioQuality() const
+{
+    return d_func()->audioControl ?
+           d_func()->audioControl->quality() : -1.0;
+}
+
+/*!
+*/
+void QMediaRecorder::setAudioQuality(qreal quality)
+{
+    if (d_func()->audioControl)
+        d_func()->audioControl->setQuality(quality);
+}
+
+/*!
+*/
+QStringList QMediaRecorder::supportedAudioEncodingOptions() const
+{
+    return d_func()->audioControl ?
+           d_func()->audioControl->supportedEncodingOptions() : QStringList();
+}
+
+/*!
+*/
+QVariant QMediaRecorder::audioEncodingOption(const QString &name) const
+{
+    return d_func()->audioControl ?
+           d_func()->audioControl->encodingOption(name) : QVariant();
+}
+
+/*!
+*/
+void QMediaRecorder::setAudioEncodingOption(const QString &name, const QVariant &value)
+{
+    if (d_func()->audioControl)
+        d_func()->audioControl->setEncodingOption(name, value);
+}
+
+/*!
+*/
+QSize QMediaRecorder::resolution() const
+{
+    return d_func()->videoControl ?
+           d_func()->videoControl->resolution() : QSize();
+}
+
+/*!
+*/
+QSize QMediaRecorder::minimumResolution() const
+{
+    return d_func()->videoControl ?
+           d_func()->videoControl->minimumResolution() : QSize();
+}
+
+/*!
+*/
+QSize QMediaRecorder::maximumResolution() const
+{
+    return d_func()->videoControl ?
+           d_func()->videoControl->maximumResolution() : QSize();
+}
+
+/*!
+*/
+QList<QSize> QMediaRecorder::supportedResolutions() const
+{
+    return d_func()->videoControl ?
+           d_func()->videoControl->supportedResolutions() : QList<QSize>();
+}
+
+/*!
+*/
+void QMediaRecorder::setResolution(const QSize &resolution)
+{
+    if (d_func()->videoControl)
+        d_func()->videoControl->setResolution(resolution);
+}
+
+/*!
+*/
+QPair<int,int> QMediaRecorder::frameRate() const
+{
+    return d_func()->videoControl ?
+           d_func()->videoControl->frameRate() : qMakePair<int,int>(-1,-1);
+}
+
+/*!
+*/
+QPair<int,int> QMediaRecorder::minimumFrameRate()
+{
+    return d_func()->videoControl ?
+           d_func()->videoControl->minimumFrameRate() : qMakePair<int,int>(-1,-1);
+}
+
+/*!
+*/
+QPair<int,int> QMediaRecorder::maximumFrameRate()
+{
+    return d_func()->videoControl ?
+           d_func()->videoControl->maximumFrameRate() : qMakePair<int,int>(-1,-1);
+}
+
+/*!
+*/
+QList< QPair<int,int> > QMediaRecorder::supportedFrameRates() const
+{
+    return d_func()->videoControl ?
+           d_func()->videoControl->supportedFrameRates() : QList< QPair<int,int> >();
+}
+
+/*!
+*/
+void QMediaRecorder::setFrameRate(const QPair<int,int> &rate)
+{
+    if (d_func()->videoControl)
+        d_func()->videoControl->setFrameRate(rate);
+}
+
+/*!
+*/
+QStringList QMediaRecorder::supportedVideoCodecs() const
+{
+    return d_func()->videoControl ?
+           d_func()->videoControl->supportedVideoCodecs() : QStringList();
+}
+
+/*!
+*/
+QString QMediaRecorder::videoCodecDescription(const QString &codecName) const
+{
+    return d_func()->videoControl ?
+           d_func()->videoControl->videoCodecDescription(codecName) : QString();
+}
+
+/*!
+*/
+QString QMediaRecorder::videoCodec() const
+{
+    return d_func()->videoControl ?
+           d_func()->videoControl->videoCodec() : QString();
+}
+
+/*!
+*/
+bool QMediaRecorder::setVideoCodec(const QString &codecName)
+{
+    return d_func()->videoControl ?
+           d_func()->videoControl->setVideoCodec(codecName) : false;
+}
+
+/*!
+*/
+int QMediaRecorder::videoBitrate() const
+{
+    return d_func()->videoControl ?
+           d_func()->videoControl->bitrate() : -1;
+}
+
+/*!
+*/
+void QMediaRecorder::setVideoBitrate(int bitrate)
+{
+    if (d_func()->videoControl)
+        d_func()->videoControl->setBitrate(bitrate);
+}
+
+/*!
+*/
+qreal QMediaRecorder::videoQuality() const
+{
+    return d_func()->videoControl ?
+           d_func()->videoControl->quality() : -1.0;
+}
+/*!
+*/
+void QMediaRecorder::setVideoQuality(qreal quality)
+{
+    if (d_func()->videoControl)
+        d_func()->videoControl->setQuality(quality);
+}
+/*!
+*/
+QStringList QMediaRecorder::supportedVideoEncodingOptions() const
+{
+    return d_func()->videoControl ?
+           d_func()->videoControl->supportedEncodingOptions() : QStringList();
+}
+/*!
+*/
+QVariant QMediaRecorder::videoEncodingOption(const QString &name) const
+{
+    return d_func()->videoControl ?
+           d_func()->videoControl->encodingOption(name) : QVariant();
+}
+
+/*!
+*/
+void QMediaRecorder::setVideoEncodingOption(const QString &name, const QVariant &value)
+{
+    if (d_func()->videoControl)
+        d_func()->videoControl->setEncodingOption(name, value);
+}
+
 
 /*!
     Start recording.
