@@ -79,7 +79,7 @@ QMediaSource::QMediaSource()
 QMediaSource::QMediaSource(const QUrl &contentUri):
     d(new QMediaSourcePrivate)
 {
-    d->resources << QMediaResource(contentUrl);
+    d->resources << QMediaResource(contentUri);
 }
 
 /*!
