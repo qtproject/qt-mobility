@@ -301,11 +301,11 @@ void V4LCameraSession::setFrameSize(const QSize& s)
         m_output->setFrameSize(s);
 }
 
-void V4LCameraSession::setDevice(const QByteArray &device)
+void V4LCameraSession::setDevice(const QString &device)
 {
     available = false;
     m_state = QCamera::StoppedState;
-    m_device = device;
+    m_device = QByteArray(device.toLocal8Bit().constData());
 
     sfd = ::open(m_device.constData(), O_RDWR);
 
@@ -357,14 +357,14 @@ QList<QSize> V4LCameraSession::supportedResolutions()
     return list;
 }
 
-bool V4LCameraSession::setSink(const QMediaSink &sink)
+bool V4LCameraSession::setSink(const QUrl &sink)
 {
     m_sink = sink;
 
     return true;
 }
 
-QMediaSink V4LCameraSession::sink() const
+QUrl V4LCameraSession::sink() const
 {
     return m_sink;
 }

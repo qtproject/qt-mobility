@@ -43,6 +43,7 @@
 #include "v4lmediacontrol.h"
 #include "v4lcamerasession.h"
 #include "v4lvideowidget.h"
+#include "v4lvideooutputcontrol.h"
 #include "v4lmediaformatcontrol.h"
 #include "v4lvideoencode.h"
 
@@ -54,6 +55,8 @@ V4LCameraService::V4LCameraService(QObject *parent)
     m_media = new V4LMediaControl(m_session);
     m_mediaFormat = new V4LMediaFormatControl(m_session);
     m_videoEncode = new V4LVideoEncode(m_session);
+    m_videoOutput = new V4LVideoOutputControl(m_session);
+    m_device = QByteArray("/dev/video0");
 }
 
 V4LCameraService::~V4LCameraService()
@@ -63,8 +66,9 @@ V4LCameraService::~V4LCameraService()
     delete m_session;
     delete m_videoEncode;
     delete m_mediaFormat;
+    delete m_videoOutput;
 }
-
+/*
 void V4LCameraService::setVideoOutput(QObject *output)
 {
     V4LVideoWidget *videoWidget = qobject_cast<V4LVideoWidget*>(output);
@@ -73,6 +77,33 @@ void V4LCameraService::setVideoOutput(QObject *output)
     }
 
     QAbstractMediaService::setVideoOutput(output);
+}
+*/
+
+bool V4LCameraService::isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType)
+{
+    if(endpointType == QAbstractMediaService::VideoInput)
+        return true;
+
+    return false;
+}
+
+QString V4LCameraService::activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType)
+{
+    return m_device;
+}
+
+void V4LCameraService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const char *interface)
+{
+    m_device = QByteArray(interface);
+    m_session->setDevice(m_device);
+}
+
+QList<QString> V4LCameraService::supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const
+{
+    QList<QString> list;
+    list << "/dev/video0" << "/dev/video1";
+    return list;
 }
 
 QAbstractMediaControl *V4LCameraService::control(const char *name) const
@@ -89,20 +120,12 @@ QAbstractMediaControl *V4LCameraService::control(const char *name) const
     if(qstrcmp(name,QMediaFormatControl_iid) == 0)
         return m_mediaFormat;
 
+    if(qstrcmp(name,QVideoOutputControl_iid) == 0)
+        return m_videoOutput;
+
     return 0;
 }
-
-QList<QByteArray> V4LCameraService::supportedEndpointInterfaces(
-        QMediaEndpointInterface::Direction direction) const
-{
-    QList<QByteArray> list;
-
-    if (direction == QMediaEndpointInterface::Input)
-        list << QByteArray(QMediaWidgetEndpoint_iid);
-
-    return list;
-}
-
+/*
 QObject *V4LCameraService::createEndpoint(const char *interface)
 {
     if (qstrcmp(interface, QMediaWidgetEndpoint_iid) == 0) {
@@ -111,13 +134,4 @@ QObject *V4LCameraService::createEndpoint(const char *interface)
 
     return 0;
 }
-
-QList<QByteArray> V4LCameraService::deviceList()
-{
-    QList<QByteArray> devices;
-
-    devices << "/dev/video0" << "/dev/video1";
-
-    return devices;
-}
-
+*/

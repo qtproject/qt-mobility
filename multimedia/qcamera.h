@@ -134,9 +134,9 @@ public:
 
     //static QAbstractMediaService * createCameraService(const QByteArray &device);
 
-    QList<QByteArray> deviceList();
-    void setDevice(const QByteArray& device);
-    static QString deviceDescription(const QByteArray &device);
+    QList<QString> deviceList();
+    void setDevice(const QString& device);
+    static QString deviceDescription(const QString &device);
 
     bool isValid() const;
     QAbstractMediaService* service() const;

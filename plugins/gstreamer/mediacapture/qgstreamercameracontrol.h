@@ -47,7 +47,7 @@ public:
 
     bool isValid() const { return true; }
 
-    void setDevice(const QByteArray &device);
+    void setDevice(const QString &device);
 
     QCamera::State state() const;
 

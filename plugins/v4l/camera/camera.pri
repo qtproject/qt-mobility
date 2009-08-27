@@ -7,6 +7,7 @@ HEADERS += \
     $$PWD/v4lvideowidget.h \
     $$PWD/v4lmediaformatcontrol.h \
     $$PWD/v4lvideoencode.h \
+    $$PWD/v4lvideooutputcontrol.h \
     $$PWD/cameraformatconverter.h \
     $$PWD/v4lcameraservice.h
 
@@ -17,6 +18,7 @@ SOURCES += \
     $$PWD/v4lvideowidget.cpp \
     $$PWD/v4lmediaformatcontrol.cpp \
     $$PWD/v4lvideoencode.cpp \
+    $$PWD/v4lvideooutputcontrol.cpp \
     $$PWD/cameraformatconverter.cpp \
     $$PWD/v4lcameraservice.cpp
 

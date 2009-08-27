@@ -59,23 +59,24 @@ bool Qt7Metadata::isReadOnly() const
 
 QVariant Qt7Metadata::metadata(QMediaMetadata::Key key) const
 {
+    Q_UNUSED(key);
     return QVariant();
-}
-
-QVariant Qt7Metadata::metadata(QString const &name) const
-{
-    return saved[name];
 }
 
 void Qt7Metadata::setMetadata(QMediaMetadata::Key key, QVariant const &value)
 {
-    Q_UNUSED(name);
+    Q_UNUSED(key);
     Q_UNUSED(value);
 }
 
-void Qt7Metadata::setMetadata(QString const &name, QVariant const &value)
+QVariant Qt7Metadata::extendedMetadata(QString const &key) const
 {
-    Q_UNUSED(name);
+    return saved[key];
+}
+
+void Qt7Metadata::setExtendedMetadata(QString const &key, QVariant const &value)
+{
+    Q_UNUSED(key);
     Q_UNUSED(value);
 }
 

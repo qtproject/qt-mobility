@@ -58,7 +58,7 @@ public:
     virtual int manualWhiteBalance() const;
     virtual void setManualWhiteBalance(int colorTemperature);
 
-    virtual void setDevice(const QByteArray &device) = 0;
+    virtual void setDevice(const QString &device) = 0;
 
 
 Q_SIGNALS:

@@ -104,7 +104,7 @@ int QWmpPlaylist::size() const
     return m_count;
 }
 
-QMediaSource QWmpPlaylist::resources(int pos) const
+QMediaSource QWmpPlaylist::media(int pos) const
 {
     QMediaResourceList resources;
 

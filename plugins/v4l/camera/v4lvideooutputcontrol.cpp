@@ -32,48 +32,34 @@
 **
 ****************************************************************************/
 
-#ifndef V4LCAMERASERVICE_H
-#define V4LCAMERASERVICE_H
+#include "v4lvideooutputcontrol.h"
 
-#include <QtCore/qobject.h>
-
-#include "qcameraservice.h"
-
-class V4LMediaFormatControl;
-class V4LVideoEncode;
-class V4LCameraControl;
-class V4LMediaControl;
-class V4LCameraSession;
-class V4LVideoOutputControl;
-
-class V4LCameraService : public QCameraService
+V4LVideoOutputControl::V4LVideoOutputControl(QObject *parent)
+    : QVideoOutputControl(parent)
+    , m_output(NoOutput)
 {
-    Q_OBJECT
-public:
-    V4LCameraService(QObject *parent = 0);
-    ~V4LCameraService();
+}
 
-    bool isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType);
-    void setInputStream(QIODevice* stream) {};
-    QIODevice* inputStream() const { return 0; };
+QList<QVideoOutputControl::Output> V4LVideoOutputControl::availableOutputs() const
+{
+    return m_outputs;
+}
 
-    void setOutputStream(QIODevice* stream) {};
-    QIODevice* outputStream() const { return 0; };
+void V4LVideoOutputControl::setAvailableOutputs(const QList<Output> &outputs)
+{
+    emit availableOutputsChanged(m_outputs = outputs);
+}
 
-    QString activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType);
-    void setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const char *interface);
-    QList<QString> supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const;
+QVideoOutputControl::Output V4LVideoOutputControl::output() const
+{
+    return m_output;
+}
 
-    QAbstractMediaControl *control(const char *name) const;
+void V4LVideoOutputControl::setOutput(Output output)
+{
+    if (!m_outputs.contains(output))
+        output = NoOutput;
 
-private:
-    V4LMediaFormatControl *m_mediaFormat;
-    V4LVideoEncode *m_videoEncode;
-    V4LCameraControl *m_control;
-    V4LMediaControl  *m_media;
-    V4LCameraSession *m_session;
-    V4LVideoOutputControl *m_videoOutput;
-    QByteArray m_device;
-};
-
-#endif
+    if (m_output != output)
+        emit outputChanged(m_output = output);
+}

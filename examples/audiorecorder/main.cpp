@@ -32,48 +32,16 @@
 **
 ****************************************************************************/
 
-#ifndef V4LCAMERASERVICE_H
-#define V4LCAMERASERVICE_H
+#include "audiorecorder.h"
 
-#include <QtCore/qobject.h>
+#include <QtGui>
 
-#include "qcameraservice.h"
-
-class V4LMediaFormatControl;
-class V4LVideoEncode;
-class V4LCameraControl;
-class V4LMediaControl;
-class V4LCameraSession;
-class V4LVideoOutputControl;
-
-class V4LCameraService : public QCameraService
+int main(int argc, char *argv[])
 {
-    Q_OBJECT
-public:
-    V4LCameraService(QObject *parent = 0);
-    ~V4LCameraService();
+    QApplication app(argc, argv);
 
-    bool isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType);
-    void setInputStream(QIODevice* stream) {};
-    QIODevice* inputStream() const { return 0; };
+    AudioRecorder recorder;
+    recorder.show();
 
-    void setOutputStream(QIODevice* stream) {};
-    QIODevice* outputStream() const { return 0; };
-
-    QString activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType);
-    void setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const char *interface);
-    QList<QString> supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const;
-
-    QAbstractMediaControl *control(const char *name) const;
-
-private:
-    V4LMediaFormatControl *m_mediaFormat;
-    V4LVideoEncode *m_videoEncode;
-    V4LCameraControl *m_control;
-    V4LMediaControl  *m_media;
-    V4LCameraSession *m_session;
-    V4LVideoOutputControl *m_videoOutput;
-    QByteArray m_device;
+    return app.exec();
 };
-
-#endif

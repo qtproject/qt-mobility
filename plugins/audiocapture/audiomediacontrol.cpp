@@ -49,12 +49,12 @@ AudioMediaControl::~AudioMediaControl()
 {
 }
 
-QMediaSink AudioMediaControl::sink() const
+QUrl AudioMediaControl::sink() const
 {
     return m_session->sink();
 }
 
-bool AudioMediaControl::setSink(const QMediaSink& sink)
+bool AudioMediaControl::setSink(const QUrl& sink)
 {
     return m_session->setSink(sink);
 }

@@ -32,48 +32,50 @@
 **
 ****************************************************************************/
 
-#ifndef V4LCAMERASERVICE_H
-#define V4LCAMERASERVICE_H
+#ifndef AUDIORECORDER_H
+#define AUDIORECORDER_H
 
-#include <QtCore/qobject.h>
+#include <QtGui>
+#include <QPair>
 
-#include "qcameraservice.h"
+#include <qmediarecorder.h>
 
-class V4LMediaFormatControl;
-class V4LVideoEncode;
-class V4LCameraControl;
-class V4LMediaControl;
-class V4LCameraSession;
-class V4LVideoOutputControl;
+class QComboBox;
+class QLabel;
 
-class V4LCameraService : public QCameraService
+class QAudioEncodeControl;
+class QMediaFormatControl;
+
+class AudioRecorder : public QMainWindow
 {
     Q_OBJECT
 public:
-    V4LCameraService(QObject *parent = 0);
-    ~V4LCameraService();
+    AudioRecorder();
+    ~AudioRecorder();
 
-    bool isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType);
-    void setInputStream(QIODevice* stream) {};
-    QIODevice* inputStream() const { return 0; };
-
-    void setOutputStream(QIODevice* stream) {};
-    QIODevice* outputStream() const { return 0; };
-
-    QString activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType);
-    void setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const char *interface);
-    QList<QString> supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const;
-
-    QAbstractMediaControl *control(const char *name) const;
+private slots:
+    void deviceChanged(int idx);
+    void paramsChanged(int idx);
+    void selectOutputFile();
+    void togglePlay();
+    void stateChanged(QMediaRecorder::State);
+    void updateProgress(qint64 pos);
 
 private:
-    V4LMediaFormatControl *m_mediaFormat;
-    V4LVideoEncode *m_videoEncode;
-    V4LCameraControl *m_control;
-    V4LMediaControl  *m_media;
-    V4LCameraSession *m_session;
-    V4LVideoOutputControl *m_videoOutput;
-    QByteArray m_device;
+    QMediaRecorder* capture;
+    QAudioEncodeControl      *audioEncodeControl;
+    QMediaFormatControl      *formatControl;
+
+    QComboBox*     deviceBox;
+    QComboBox*     paramsBox;
+    QLabel*        recTime;
+    QPushButton*   button;
+    QPushButton*   fileButton;
+    bool           active;
+    int            currentTime;
+    QUrl           destination;
+
+    QList< QPair<int, int> > formats;
 };
 
 #endif

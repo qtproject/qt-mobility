@@ -48,12 +48,12 @@ V4LMediaControl::~V4LMediaControl()
 {
 }
 
-QMediaSink V4LMediaControl::sink() const
+QUrl V4LMediaControl::sink() const
 {
     return m_session->sink();
 }
 
-bool V4LMediaControl::setSink(const QMediaSink& sink)
+bool V4LMediaControl::setSink(const QUrl& sink)
 {
     return m_session->setSink(sink);
 }

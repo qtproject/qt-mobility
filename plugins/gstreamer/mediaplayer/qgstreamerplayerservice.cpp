@@ -92,11 +92,51 @@ QAbstractMediaControl *QGstreamerPlayerService::control(const char *name) const
 
     return 0;
 }
-
+/*
 void QGstreamerPlayerService::setVideoOutput(QObject *output)
 {
     m_control->setVideoOutput(output);
     QAbstractMediaService::setVideoOutput(output);
+}
+*/
+
+bool QGstreamerPlayerService::isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType)
+{
+    if(endpointType == QAbstractMediaService::VideoOutput)
+        return true;
+
+    return false;
+}
+
+QString QGstreamerPlayerService::activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType)
+{
+    switch(endpointType) {
+        case QAbstractMediaService::VideoOutput:
+            //TODO, return current video output endpoint
+            return QString();
+            break;
+        default:
+            return QString();
+    }
+}
+
+void QGstreamerPlayerService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const char *interface)
+{
+    if(endpointType == QAbstractMediaService::VideoOutput) {
+        //TODO
+        qWarning()<<"set video output: "<<interface;
+    }
+}
+
+QList<QString> QGstreamerPlayerService::supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const
+{
+    QList<QString> list;
+    if(endpointType == QAbstractMediaService::VideoOutput) {
+        list.append("RendererOutput");
+        list.append("WindowOutput");
+        list.append("No video output");
+    }
+    return list;
 }
 
 void QGstreamerPlayerService::videoOutputChanged(QVideoOutputControl::Output output)
@@ -106,7 +146,8 @@ void QGstreamerPlayerService::videoOutputChanged(QVideoOutputControl::Output out
 #else
     switch (output) {
     case QVideoOutputControl::NoOutput:
-        m_control->setVideoOutput(videoOutput());
+        //m_control->setVideoOutput(videoOutput());
+        m_control->setVideoOutput(0);
         break;
     case QVideoOutputControl::RendererOutput:
         m_control->setVideoOutput(m_videoRenderer);

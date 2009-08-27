@@ -36,8 +36,8 @@
 #define V4LMEDIACONTROL_H
 
 #include <QtCore/qobject.h>
+#include <QUrl>
 
-#include "qmediasink.h"
 #include "qmediarecorder.h"
 #include "qmediarecordercontrol.h"
 #include "qcameracontrol.h"
@@ -51,8 +51,8 @@ public:
     V4LMediaControl(QObject *parent = 0);
     ~V4LMediaControl();
 
-    QMediaSink sink() const;
-    bool setSink(const QMediaSink &sink);
+    QUrl sink() const;
+    bool setSink(const QUrl &sink);
 
     QMediaRecorder::State state() const;
 

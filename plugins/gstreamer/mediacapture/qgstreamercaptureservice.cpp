@@ -124,6 +124,33 @@ QGstreamerCaptureService::~QGstreamerCaptureService()
 {
 }
 
+bool QGstreamerCaptureService::isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType)
+{
+    if(endpointType == QAbstractMediaService::VideoOutput)
+        return true;
+
+    return false;
+
+}
+
+QString QGstreamerCaptureService::activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType)
+{
+    //TODO
+    return QString();
+}
+
+void QGstreamerCaptureService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const char *interface)
+{
+    //TODO
+}
+
+QList<QString> QGstreamerCaptureService::supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const
+{
+    QList<QString> list;
+    //TODO
+    return list;
+}
+
 QAbstractMediaControl *QGstreamerCaptureService::control(const char *name) const
 {
     if (qstrcmp(name, QVideoOutputControl_iid) == 0)

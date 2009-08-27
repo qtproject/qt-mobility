@@ -128,6 +128,7 @@ void V4LRadioControl::setBand(QRadioPlayer::Band b)
         step = 500; // 500Hz steps
         emit bandChanged(currentBand);
     }
+    playTime.restart();
 }
 
 int V4LRadioControl::frequency() const
@@ -164,6 +165,7 @@ void V4LRadioControl::setFrequency(int frequency)
             emit frequencyChanged(currentFreq);
         }
     }
+    playTime.restart();
 }
 
 bool V4LRadioControl::isStereo() const

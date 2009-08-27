@@ -38,6 +38,8 @@
 #include "qradioplayercontrol.h"
 #include "qradioservice.h"
 
+#include <QDebug>
+
 /*!
     \class QRadioPlayer
     \brief The QRadioPlayer class provides an interface to the systems radio device.
@@ -102,17 +104,21 @@ QRadioPlayer::QRadioPlayer(QRadioService* service, QObject *parent):
     Q_D(QRadioPlayer);
 
     d->service = service;
-    Q_ASSERT(service != 0);
 
-    d->control = service->control<QRadioPlayerControl*>();
-    connect(d->control, SIGNAL(bandChanged(QRadioPlayer::Band)), SIGNAL(bandChanged(QRadioPlayer::Band)));
-    connect(d->control, SIGNAL(frequencyChanged(int)), SIGNAL(frequencyChanged(int)));
-    connect(d->control, SIGNAL(stereoStatusChanged(bool)), SIGNAL(stereoStatusChanged(bool)));
-    connect(d->control, SIGNAL(searchingStatusChanged(bool)), SIGNAL(searchingStatusChanged(bool)));
-    connect(d->control, SIGNAL(signalStrengthChanged(int)), SIGNAL(signalStrengthChanged(int)));
-    connect(d->control, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
-    connect(d->control, SIGNAL(volumeChanged(int)), SIGNAL(volumeChanged(int)));
-    connect(d->control, SIGNAL(mutingChanged(bool)), SIGNAL(mutingChanged(bool)));
+    if(!d->service)
+        d->service = createRadioService();
+
+    d->control = qobject_cast<QRadioPlayerControl *>(d->service->control(QRadioPlayerControl_iid));
+    if(d->control) {
+        connect(d->control,SIGNAL(bandChanged(QRadioPlayer::Band)),this,SIGNAL(bandChanged(QRadioPlayer::Band)));
+        connect(d->control,SIGNAL(frequencyChanged(int)),this,SIGNAL(frequencyChanged(int)));
+        connect(d->control,SIGNAL(stereoStatusChanged(bool)),this,SIGNAL(stereoStatusChanged(bool)));
+        connect(d->control,SIGNAL(searchingStatusChanged(bool)),this,SIGNAL(searchingStatusChanged(bool)));
+        connect(d->control,SIGNAL(signalStrengthChanged(int)),this,SIGNAL(signalStrengthChanged(int)));
+        connect(d->control,SIGNAL(durationChanged(qint64)),this,SIGNAL(durationChanged(qint64)));
+        connect(d->control,SIGNAL(volumeChanged(int)),this,SIGNAL(volumeChanged(int)));
+        connect(d->control,SIGNAL(mutingChanged(bool)),this,SIGNAL(mutingChanged(bool)));
+    }
 
     addPropertyWatch("duration");
 }
@@ -350,10 +356,10 @@ QRadioService* createRadioService(QMediaServiceProvider *provider)
 {
     QObject *object = provider ? provider->createObject(QRadioService_iid) : 0;
 
-    if (object) {
+    if (object != 0) {
         QRadioService *service = qobject_cast<QRadioService*>(object);
 
-        if (service)
+        if (service != 0)
             return service;
 
         delete object;

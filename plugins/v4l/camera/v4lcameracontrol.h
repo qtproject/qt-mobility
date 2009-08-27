@@ -104,7 +104,7 @@ public:
     double zoomValue() const;
     void zoomTo(int value);
 
-    void setDevice(const QByteArray &device);
+    void setDevice(const QString &device);
 
     bool isExposureLocked() const;
     bool isFocusLocked() const;
