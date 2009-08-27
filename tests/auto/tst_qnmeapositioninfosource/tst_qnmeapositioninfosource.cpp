@@ -170,210 +170,230 @@ private:
     QNmeaPositionInfoSource::UpdateMode m_mode;
 
 private slots:
-    void initTestCase()
-    {
-        qRegisterMetaType<QGeoPositionInfo>();
-    }
+    void initTestCase();
 
-    void constructor()
-    {
-        QObject o;
-        QNmeaPositionInfoSource source(m_mode, &o);
-        QCOMPARE(source.updateMode(), m_mode);
-        QCOMPARE(source.parent(), &o);
-    }
+    void constructor();
+    void supportedPositioningMethods();
+    void minimumUpdateInterval();
 
-    void supportedPositioningMethods()
-    {
-        QNmeaPositionInfoSource source(m_mode);
-        QCOMPARE(source.supportedPositioningMethods(), QNmeaPositionInfoSource::SatellitePositioningMethods);
-    }
+    void testWithBufferedData();
+    void testWithBufferedData_data();
 
-    void minimumUpdateInterval()
-    {
-        QNmeaPositionInfoSource source(m_mode);
-        QCOMPARE(source.minimumUpdateInterval(), 0);
-    }
+    void startUpdates_waitForValidDateTime();
+    void startUpdates_waitForValidDateTime_data();
 
-    void testWithBufferedData()
-    {
-        // In SimulationMode, data stored in the QIODevice is read when
-        // startUpdates() or requestUpdate() is called.
-        // In RealTimeMode, all existing data in the QIODevice is ignored -
-        // only new data will be read.
+    void requestUpdate_waitForValidDateTime();
+    void requestUpdate_waitForValidDateTime_data();
 
-        QFETCH(QList<QDateTime>, dateTimes);
-        QFETCH(UpdateTriggerMethod, trigger);
-
-        QByteArray bytes;
-        for (int i=0; i<dateTimes.count(); i++)
-            bytes += tst_qnmeapositioninfosource_createRmcSentence(dateTimes[i]).toLatin1();
-        QBuffer buffer;
-        buffer.setData(bytes);
-
-        QNmeaPositionInfoSource source(m_mode);
-        QSignalSpy spy(&source, SIGNAL(positionUpdated(QGeoPositionInfo)));
-        source.setDevice(&buffer);
-
-        if (trigger == StartUpdatesMethod)
-            source.startUpdates();
-        else if (trigger == RequestUpdatesMethod)
-            source.requestUpdate();
-
-        if (m_mode == QNmeaPositionInfoSource::RealTimeMode) {
-            QTest::qWait(300);
-            QCOMPARE(spy.count(), 0);
-        } else {
-            if (trigger == StartUpdatesMethod) {
-                QTRY_COMPARE(spy.count(), dateTimes.count());
-                for (int i=0; i<dateTimes.count(); i++)
-                    QCOMPARE(spy.at(i).at(0).value<QGeoPositionInfo>().dateTime(), dateTimes[i]);
-            } else if (trigger == RequestUpdatesMethod) {
-                QTRY_COMPARE(spy.count(), 1);
-                QCOMPARE(spy.at(0).at(0).value<QGeoPositionInfo>().dateTime(), dateTimes.first());
-            }
-        }
-    }
-
-    void testWithBufferedData_data()
-    {
-        QTest::addColumn<QList<QDateTime> >("dateTimes");
-        QTest::addColumn<UpdateTriggerMethod>("trigger");
-
-        QList<QDateTime> dateTimes;
-        dateTimes << QDateTime::currentDateTime().toUTC();
-
-        QTest::newRow("startUpdates(), 1 update in buffer") << dateTimes << StartUpdatesMethod;
-        QTest::newRow("requestUpdate(), 1 update in buffer") << dateTimes << RequestUpdatesMethod;
-
-        for (int i=1; i<3; i++)
-            dateTimes << dateTimes[0].addDays(i);
-        QTest::newRow("startUpdates(), multiple updates in buffer") << dateTimes << StartUpdatesMethod;
-        QTest::newRow("requestUpdate(), multiple updates in buffer") << dateTimes << RequestUpdatesMethod;
-    }
-
-    void startUpdates_waitForValidDateTime()
-    {
-        // Tests that the class does not emit an update until it receives a
-        // sentences with a valid date *and* time. All sentences before this
-        // should be ignored, and any sentences received after this that do
-        // not have a date should use the known date.
-
-        QFETCH(QByteArray, bytes);
-        QFETCH(QList<QDateTime>, dateTimes);
-
-        QNmeaPositionInfoSourceProxyFactory factory(QNmeaPositionInfoSource::SimulationMode);
-        QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy());
-
-        QSignalSpy spy(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
-        proxy->source()->startUpdates();
-
-        proxy->feedBytes(bytes);
-        QTRY_COMPARE(spy.count(), dateTimes.count());
-
-        for (int i=0; i<spy.count(); i++)
-            QCOMPARE(spy[i][0].value<QGeoPositionInfo>().dateTime(), dateTimes[i]);
-    }
-
-    void startUpdates_waitForValidDateTime_data()
-    {
-        QTest::addColumn<QByteArray>("bytes");
-        QTest::addColumn<QList<QDateTime> >("dateTimes");
-
-        QDateTime dt = QDateTime::currentDateTime().toUTC();
-        QByteArray bytes;
-
-        // should only receive RMC sentence and the GGA sentence *after* it
-        bytes += tst_qnmeapositioninfosource_createGgaSentence(dt.addSecs(1).time()).toLatin1();
-        bytes += tst_qnmeapositioninfosource_createRmcSentence(dt.addSecs(2)).toLatin1();
-        bytes += tst_qnmeapositioninfosource_createGgaSentence(dt.addSecs(3).time()).toLatin1();
-        QTest::newRow("Feed GGA,RMC,GGA; expect RMC, second GGA only")
-                << bytes << (QList<QDateTime>() << dt.addSecs(2) << dt.addSecs(3));
-
-        // should not receive ZDA (has no coordinates) but should get the GGA
-        // sentence after it since it got the date/time from ZDA
-        bytes.clear();
-        bytes += tst_qnmeapositioninfosource_createGgaSentence(dt.addSecs(1).time()).toLatin1();
-        bytes += tst_qnmeapositioninfosource_createZdaSentence(dt.addSecs(2)).toLatin1();
-        bytes += tst_qnmeapositioninfosource_createGgaSentence(dt.addSecs(3).time()).toLatin1();
-        QTest::newRow("Feed GGA,ZDA,GGA; expect second GGA only")
-                << bytes << (QList<QDateTime>() << dt.addSecs(3));
-
-        // should ignore sentence with a date/time before the known date/time
-        bytes.clear();
-        bytes += tst_qnmeapositioninfosource_createRmcSentence(dt.addSecs(1)).toLatin1();
-        bytes += tst_qnmeapositioninfosource_createRmcSentence(dt.addSecs(-2)).toLatin1();
-        bytes += tst_qnmeapositioninfosource_createRmcSentence(dt.addSecs(2)).toLatin1();
-        QTest::newRow("Feed good RMC, RMC with bad date/time, good RMC; expect first and third RMC only")
-                << bytes << (QList<QDateTime>() << dt.addSecs(1) << dt.addSecs(2));
-    }
-
-    void requestUpdate_waitForValidDateTime()
-    {
-        QFETCH(QByteArray, bytes);
-        QFETCH(QList<QDateTime>, dateTimes);
-
-        QNmeaPositionInfoSourceProxyFactory factory(QNmeaPositionInfoSource::SimulationMode);
-        QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy());
-
-        QSignalSpy spy(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
-        proxy->source()->requestUpdate();
-
-        proxy->feedBytes(bytes);
-        QTRY_COMPARE(spy.count(), 1);
-        QCOMPARE(spy[0][0].value<QGeoPositionInfo>().dateTime(), dateTimes[0]);
-    }
-
-    void requestUpdate_waitForValidDateTime_data()
-    {
-        startUpdates_waitForValidDateTime_data();
-    }
-
-    void testWithBadNmea()
-    {
-        QFETCH(QByteArray, bytes);
-        QFETCH(QList<QDateTime>, dateTimes);
-        QFETCH(UpdateTriggerMethod, trigger);
-
-        QNmeaPositionInfoSourceProxyFactory factory(QNmeaPositionInfoSource::SimulationMode);
-        QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy());
-
-        QSignalSpy spy(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
-        if (trigger == StartUpdatesMethod)
-            proxy->source()->startUpdates();
-        else
-            proxy->source()->requestUpdate();
-
-        proxy->feedBytes(bytes);
-        QTRY_COMPARE(spy.count(), dateTimes.count());
-        for (int i=0; i<dateTimes.count(); i++)
-            QCOMPARE(spy[i][0].value<QGeoPositionInfo>().dateTime(), dateTimes[i]);
-    }
-
-    void testWithBadNmea_data()
-    {
-        QTest::addColumn<QByteArray>("bytes");
-        QTest::addColumn<QList<QDateTime> >("dateTimes");
-        QTest::addColumn<UpdateTriggerMethod>("trigger");
-
-        QDateTime firstDateTime = QDateTime::currentDateTime().toUTC();
-        QByteArray bad = tst_qnmeapositioninfosource_createRmcSentence(firstDateTime.addSecs(1)).toLatin1();
-        bad = bad.mid(bad.length()/2);
-        QDateTime lastDateTime = firstDateTime.addSecs(2);
-
-        QByteArray bytes;
-        bytes += tst_qnmeapositioninfosource_createRmcSentence(firstDateTime).toLatin1();
-        bytes += bad;
-        bytes += tst_qnmeapositioninfosource_createRmcSentence(lastDateTime).toLatin1();
-        QTest::newRow("requestUpdate(), bad second sentence") << bytes
-                << (QList<QDateTime>() << firstDateTime) << RequestUpdatesMethod;
-        QTest::newRow("startUpdates(), bad second sentence") << bytes
-                << (QList<QDateTime>() << firstDateTime << lastDateTime) << StartUpdatesMethod;
-    }
-
+    void testWithBadNmea();
+    void testWithBadNmea_data();
 };
 
 Q_DECLARE_METATYPE(tst_QNmeaPositionInfoSource::UpdateTriggerMethod)
+
+void tst_QNmeaPositionInfoSource::initTestCase()
+{
+    qRegisterMetaType<QGeoPositionInfo>();
+}
+
+void tst_QNmeaPositionInfoSource::constructor()
+{
+    QObject o;
+    QNmeaPositionInfoSource source(m_mode, &o);
+    QCOMPARE(source.updateMode(), m_mode);
+    QCOMPARE(source.parent(), &o);
+}
+
+void tst_QNmeaPositionInfoSource::supportedPositioningMethods()
+{
+    QNmeaPositionInfoSource source(m_mode);
+    QCOMPARE(source.supportedPositioningMethods(), QNmeaPositionInfoSource::SatellitePositioningMethods);
+}
+
+void tst_QNmeaPositionInfoSource::minimumUpdateInterval()
+{
+    QNmeaPositionInfoSource source(m_mode);
+    QCOMPARE(source.minimumUpdateInterval(), 0);
+}
+
+void tst_QNmeaPositionInfoSource::testWithBufferedData()
+{
+    // In SimulationMode, data stored in the QIODevice is read when
+    // startUpdates() or requestUpdate() is called.
+    // In RealTimeMode, all existing data in the QIODevice is ignored -
+    // only new data will be read.
+
+    QFETCH(QList<QDateTime>, dateTimes);
+    QFETCH(UpdateTriggerMethod, trigger);
+
+    QByteArray bytes;
+    for (int i=0; i<dateTimes.count(); i++)
+        bytes += tst_qnmeapositioninfosource_createRmcSentence(dateTimes[i]).toLatin1();
+    QBuffer buffer;
+    buffer.setData(bytes);
+
+    QNmeaPositionInfoSource source(m_mode);
+    QSignalSpy spy(&source, SIGNAL(positionUpdated(QGeoPositionInfo)));
+    source.setDevice(&buffer);
+
+    if (trigger == StartUpdatesMethod)
+        source.startUpdates();
+    else if (trigger == RequestUpdatesMethod)
+        source.requestUpdate();
+
+    if (m_mode == QNmeaPositionInfoSource::RealTimeMode) {
+        QTest::qWait(300);
+        QCOMPARE(spy.count(), 0);
+    } else {
+        if (trigger == StartUpdatesMethod) {
+            QTRY_COMPARE(spy.count(), dateTimes.count());
+            for (int i=0; i<dateTimes.count(); i++)
+                QCOMPARE(spy.at(i).at(0).value<QGeoPositionInfo>().dateTime(), dateTimes[i]);
+        } else if (trigger == RequestUpdatesMethod) {
+            QTRY_COMPARE(spy.count(), 1);
+            QCOMPARE(spy.at(0).at(0).value<QGeoPositionInfo>().dateTime(), dateTimes.first());
+        }
+    }
+}
+
+void tst_QNmeaPositionInfoSource::testWithBufferedData_data()
+{
+    QTest::addColumn<QList<QDateTime> >("dateTimes");
+    QTest::addColumn<UpdateTriggerMethod>("trigger");
+
+    QList<QDateTime> dateTimes;
+    dateTimes << QDateTime::currentDateTime().toUTC();
+
+    QTest::newRow("startUpdates(), 1 update in buffer") << dateTimes << StartUpdatesMethod;
+    QTest::newRow("requestUpdate(), 1 update in buffer") << dateTimes << RequestUpdatesMethod;
+
+    for (int i=1; i<3; i++)
+        dateTimes << dateTimes[0].addDays(i);
+    QTest::newRow("startUpdates(), multiple updates in buffer") << dateTimes << StartUpdatesMethod;
+    QTest::newRow("requestUpdate(), multiple updates in buffer") << dateTimes << RequestUpdatesMethod;
+}
+
+void tst_QNmeaPositionInfoSource::startUpdates_waitForValidDateTime()
+{
+    // Tests that the class does not emit an update until it receives a
+    // sentences with a valid date *and* time. All sentences before this
+    // should be ignored, and any sentences received after this that do
+    // not have a date should use the known date.
+
+    QFETCH(QByteArray, bytes);
+    QFETCH(QList<QDateTime>, dateTimes);
+
+    QNmeaPositionInfoSourceProxyFactory factory(QNmeaPositionInfoSource::SimulationMode);
+    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy());
+
+    QSignalSpy spy(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
+    proxy->source()->startUpdates();
+
+    proxy->feedBytes(bytes);
+    QTRY_COMPARE(spy.count(), dateTimes.count());
+
+    for (int i=0; i<spy.count(); i++)
+        QCOMPARE(spy[i][0].value<QGeoPositionInfo>().dateTime(), dateTimes[i]);
+}
+
+void tst_QNmeaPositionInfoSource::startUpdates_waitForValidDateTime_data()
+{
+    QTest::addColumn<QByteArray>("bytes");
+    QTest::addColumn<QList<QDateTime> >("dateTimes");
+
+    QDateTime dt = QDateTime::currentDateTime().toUTC();
+    QByteArray bytes;
+
+    // should only receive RMC sentence and the GGA sentence *after* it
+    bytes += tst_qnmeapositioninfosource_createGgaSentence(dt.addSecs(1).time()).toLatin1();
+    bytes += tst_qnmeapositioninfosource_createRmcSentence(dt.addSecs(2)).toLatin1();
+    bytes += tst_qnmeapositioninfosource_createGgaSentence(dt.addSecs(3).time()).toLatin1();
+    QTest::newRow("Feed GGA,RMC,GGA; expect RMC, second GGA only")
+            << bytes << (QList<QDateTime>() << dt.addSecs(2) << dt.addSecs(3));
+
+    // should not receive ZDA (has no coordinates) but should get the GGA
+    // sentence after it since it got the date/time from ZDA
+    bytes.clear();
+    bytes += tst_qnmeapositioninfosource_createGgaSentence(dt.addSecs(1).time()).toLatin1();
+    bytes += tst_qnmeapositioninfosource_createZdaSentence(dt.addSecs(2)).toLatin1();
+    bytes += tst_qnmeapositioninfosource_createGgaSentence(dt.addSecs(3).time()).toLatin1();
+    QTest::newRow("Feed GGA,ZDA,GGA; expect second GGA only")
+            << bytes << (QList<QDateTime>() << dt.addSecs(3));
+
+    // should ignore sentence with a date/time before the known date/time
+    bytes.clear();
+    bytes += tst_qnmeapositioninfosource_createRmcSentence(dt.addSecs(1)).toLatin1();
+    bytes += tst_qnmeapositioninfosource_createRmcSentence(dt.addSecs(-2)).toLatin1();
+    bytes += tst_qnmeapositioninfosource_createRmcSentence(dt.addSecs(2)).toLatin1();
+    QTest::newRow("Feed good RMC, RMC with bad date/time, good RMC; expect first and third RMC only")
+            << bytes << (QList<QDateTime>() << dt.addSecs(1) << dt.addSecs(2));
+}
+
+void tst_QNmeaPositionInfoSource::requestUpdate_waitForValidDateTime()
+{
+    QFETCH(QByteArray, bytes);
+    QFETCH(QList<QDateTime>, dateTimes);
+
+    QNmeaPositionInfoSourceProxyFactory factory(QNmeaPositionInfoSource::SimulationMode);
+    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy());
+
+    QSignalSpy spy(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
+    proxy->source()->requestUpdate();
+
+    proxy->feedBytes(bytes);
+    QTRY_COMPARE(spy.count(), 1);
+    QCOMPARE(spy[0][0].value<QGeoPositionInfo>().dateTime(), dateTimes[0]);
+}
+
+void tst_QNmeaPositionInfoSource::requestUpdate_waitForValidDateTime_data()
+{
+    startUpdates_waitForValidDateTime_data();
+}
+
+void tst_QNmeaPositionInfoSource::testWithBadNmea()
+{
+    QFETCH(QByteArray, bytes);
+    QFETCH(QList<QDateTime>, dateTimes);
+    QFETCH(UpdateTriggerMethod, trigger);
+
+    QNmeaPositionInfoSourceProxyFactory factory(QNmeaPositionInfoSource::SimulationMode);
+    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy());
+
+    QSignalSpy spy(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
+    if (trigger == StartUpdatesMethod)
+        proxy->source()->startUpdates();
+    else
+        proxy->source()->requestUpdate();
+
+    proxy->feedBytes(bytes);
+    QTRY_COMPARE(spy.count(), dateTimes.count());
+    for (int i=0; i<dateTimes.count(); i++)
+        QCOMPARE(spy[i][0].value<QGeoPositionInfo>().dateTime(), dateTimes[i]);
+}
+
+void tst_QNmeaPositionInfoSource::testWithBadNmea_data()
+{
+    QTest::addColumn<QByteArray>("bytes");
+    QTest::addColumn<QList<QDateTime> >("dateTimes");
+    QTest::addColumn<UpdateTriggerMethod>("trigger");
+
+    QDateTime firstDateTime = QDateTime::currentDateTime().toUTC();
+    QByteArray bad = tst_qnmeapositioninfosource_createRmcSentence(firstDateTime.addSecs(1)).toLatin1();
+    bad = bad.mid(bad.length()/2);
+    QDateTime lastDateTime = firstDateTime.addSecs(2);
+
+    QByteArray bytes;
+    bytes += tst_qnmeapositioninfosource_createRmcSentence(firstDateTime).toLatin1();
+    bytes += bad;
+    bytes += tst_qnmeapositioninfosource_createRmcSentence(lastDateTime).toLatin1();
+    QTest::newRow("requestUpdate(), bad second sentence") << bytes
+            << (QList<QDateTime>() << firstDateTime) << RequestUpdatesMethod;
+    QTest::newRow("startUpdates(), bad second sentence") << bytes
+            << (QList<QDateTime>() << firstDateTime << lastDateTime) << StartUpdatesMethod;
+}
+
+
+
 
 //------------------------------------------------
 
