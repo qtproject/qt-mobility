@@ -77,7 +77,7 @@ QModelIndex PlaylistModel::parent(const QModelIndex &child) const
 QVariant PlaylistModel::data(const QModelIndex &index, int role) const
 {
     if (index.isValid() && role == Qt::DisplayRole) {
-        QVariant    value = m_data[index];
+        QVariant value = m_data[index];
         if (!value.isValid() && index.column() == Title) {
             QUrl location = m_playlist->media(index.row()).contentUri();
             return QFileInfo(location.path()).fileName();
@@ -180,7 +180,7 @@ bool PlaylistModel::setData(const QModelIndex &index, const QVariant &value, int
     Q_UNUSED(role);
     m_data[index] = value;
     emit dataChanged(index, index);
-	return true;
+    return true;
 }
 
 void PlaylistModel::beginInsertItems(int start, int end)
