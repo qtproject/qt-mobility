@@ -57,4 +57,42 @@ QAbstractMediaControl *V4LRadioService::control(const char* name) const
     return m_control;
 }
 
+bool V4LRadioService::isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType)
+{
+    return false;
+}
+
+void V4LRadioService::setInputStream(QIODevice* stream)
+{
+}
+
+QIODevice* V4LRadioService::inputStream() const
+{
+    return 0;
+}
+
+void V4LRadioService::setOutputStream(QIODevice* stream)
+{
+}
+
+QIODevice* V4LRadioService::outputStream() const
+{
+    return 0;
+}
+
+QString V4LRadioService::activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType)
+{
+    return QByteArray();
+}
+
+void V4LRadioService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const char *interface)
+{
+}
+
+QList<QString> V4LRadioService::supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const
+{
+    QList<QString> list;
+    //TODO
+    return list;
+}
 

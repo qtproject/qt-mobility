@@ -11,9 +11,9 @@ LIBS += -lQtMedia
 QMAKE_RPATHDIR += $$DESTDIR
 
 HEADERS = \
-    camera.h
+    audiorecorder.h
   
 SOURCES = \
     main.cpp \
-    camera.cpp
+    audiorecorder.cpp
     

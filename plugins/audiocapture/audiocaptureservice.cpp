@@ -39,6 +39,8 @@
 #include "audiocapturesession.h"
 #include "audioencodecontrol.h"
 #include "audiomediacontrol.h"
+#include "audioformatcontrol.h"
+#include "audioinputdevicecontrol.h"
 
 AudioCaptureService::AudioCaptureService(QObject *parent)
     :QAbstractMediaService(parent)
@@ -46,12 +48,16 @@ AudioCaptureService::AudioCaptureService(QObject *parent)
     m_session = new AudioCaptureSession(this);
     m_encode  = new AudioEncodeControl(m_session);
     m_media   = new AudioMediaControl(m_session);
+    m_format  = new AudioFormatControl(m_session);
+    m_audio   = new AudioInputDeviceControl(m_session);
 }
 
 AudioCaptureService::~AudioCaptureService()
 {
+    delete m_audio;
     delete m_encode;
     delete m_media;
+    delete m_format;
     delete m_session;
 }
 
@@ -63,43 +69,71 @@ QAbstractMediaControl *AudioCaptureService::control(const char *name) const
     if (qstrcmp(name,QAudioEncodeControl_iid) == 0)
         return m_encode;
 
+    if (qstrcmp(name,QAudioInputDeviceControl_iid) == 0)
+        return m_audio;
+
+    if (qstrcmp(name,QMediaFormatControl_iid) == 0)
+        return m_format;
+
     return 0;
 }
 
-QList<QByteArray> AudioCaptureService::supportedEndpointInterfaces(
-        QMediaEndpointInterface::Direction direction) const
+QString AudioCaptureService::activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType)
 {
-    QList<QByteArray> list;
+    switch(endpointType) {
+        case QAbstractMediaService::AudioInput:
+            // TODO, get from m_audio
+            return QString("default");
+        default:
+            return QString();
+    }
+}
 
-    if (direction == QMediaEndpointInterface::Input)
-        list << QByteArray(QAudioDeviceEndpoint_iid);
+void AudioCaptureService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const char *interface)
+{
+    if(endpointType == QAbstractMediaService::AudioInput) {
+        qWarning()<<"set capture device to: "<<interface;
+        m_session->setCaptureDevice(interface);
+    }
+}
 
+QList<QString> AudioCaptureService::supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const
+{
+    QList<QString> list;
+    if(endpointType == QAbstractMediaService::AudioInput) {
+        int numDevices = m_audio->deviceCount();
+        for(int i=0;i<numDevices;i++)
+            list.append(m_audio->name(i).toLocal8Bit().constData());
+    }
     return list;
 }
 
-QObject *AudioCaptureService::createEndpoint(const char *interface)
+bool AudioCaptureService::isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType)
 {
-    if (qstrcmp(interface, QAudioDeviceEndpoint_iid) == 0) {
-        return new AudioDeviceEndpoint(this);
+    switch(endpointType) {
+        case QAbstractMediaService::AudioInput:
+            return true;
+        default:
+            return false;
     }
+}
 
+QIODevice* AudioCaptureService::inputStream() const
+{
     return 0;
 }
 
-void AudioCaptureService::setAudioInput(QObject *input)
+void AudioCaptureService::setInputStream(QIODevice* stream)
 {
-    AudioDeviceEndpoint *endPoint = qobject_cast<AudioDeviceEndpoint*>(input);
-
-    if (endPoint) {
-        endPoint->setDirectionFilter(AudioDeviceEndpoint::InputDevice);
-
-        if (audioInput())
-            disconnect(audioInput(), SIGNAL(selectedDeviceChanged(QString)), m_session, SLOT(setCaptureDevice(QString)));
-
-        connect(endPoint, SIGNAL(selectedDeviceChanged(QString)), m_session, SLOT(setCaptureDevice(QString)));
-    }
-    QAbstractMediaService::setAudioInput(endPoint);
 }
 
+QIODevice* AudioCaptureService::outputStream() const
+{
+    return 0;
+}
+
+void AudioCaptureService::setOutputStream(QIODevice* stream)
+{
+}
 
 

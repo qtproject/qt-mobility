@@ -2,12 +2,13 @@
 #define AUDIOENCODECONTROL_H
 
 #include "qaudioencodecontrol.h"
-class AudioCaptureSession;
 
 #include <QtCore/qstringlist.h>
 #include <QtCore/qmap.h>
 
 #include <QtMultimedia/qaudioformat.h>
+
+class AudioCaptureSession;
 
 class AudioEncodeControl : public QAudioEncodeControl
 {
@@ -36,12 +37,7 @@ public:
     void setEncodingOption(const QString &name, const QVariant &value);
 
 private:
-    QAudioFormat m_format;
-    QMap<QString, QVariant> m_options;
-    QString m_codec;
-    QStringList m_codecs;
-    QMap<QString,QString> m_codecDescriptions;
-    QMap<QString,QStringList> m_codecOptions;
+    AudioCaptureSession* m_session;
 };
 
 #endif

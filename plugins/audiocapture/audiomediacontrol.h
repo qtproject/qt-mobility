@@ -50,8 +50,8 @@ public:
     AudioMediaControl(QObject *parent = 0);
     ~AudioMediaControl();
 
-    QMediaSink sink() const;
-    bool setSink(const QMediaSink &sink);
+    QUrl sink() const;
+    bool setSink(const QUrl &sink);
 
     QMediaRecorder::State state() const;
 

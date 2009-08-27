@@ -63,7 +63,7 @@ QCameraControl::~QCameraControl()
 }
 
 /*!
-    \fn QCameraControl::setDevice(const QByteArray& device)
+    \fn QCameraControl::setDevice(const QString& device)
 
     Set the camera device to \a device.
 */

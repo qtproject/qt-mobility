@@ -39,6 +39,7 @@
 #include "audiocaptureservice.h"
 
 #include <qmediaserviceprovider.h>
+#include <qaudiorecorderservice.h>
 
 
 class AudioCaptureProvider : public QMediaServiceProvider
@@ -47,7 +48,7 @@ class AudioCaptureProvider : public QMediaServiceProvider
 public:
     QObject* createObject(const char *interface) const
     {
-        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.AudioRecorder/1.0"))
+        if (QLatin1String(interface) == QLatin1String(QAudioRecorderService_iid))
             return new AudioCaptureService;
 
         return 0;

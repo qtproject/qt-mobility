@@ -65,9 +65,9 @@ void QGstreamerCameraControl::stop()
     m_session->enablePreview(false);
 }
 
-void QGstreamerCameraControl::setDevice(const QByteArray &device)
+void QGstreamerCameraControl::setDevice(const QString &device)
 {
-    m_device = device;
+    m_device = device.toLocal8Bit().constData();
 }
 
 QCamera::State QGstreamerCameraControl::state() const

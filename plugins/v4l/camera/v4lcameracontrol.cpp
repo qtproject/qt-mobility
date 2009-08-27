@@ -267,7 +267,7 @@ void V4LCameraControl::zoomTo(int value)
     Q_UNUSED(value);
 }
 
-void V4LCameraControl::setDevice(const QByteArray &device)
+void V4LCameraControl::setDevice(const QString &device)
 {
     m_session->setDevice(device);
 }

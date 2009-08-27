@@ -32,48 +32,30 @@
 **
 ****************************************************************************/
 
-#ifndef V4LCAMERASERVICE_H
-#define V4LCAMERASERVICE_H
 
-#include <QtCore/qobject.h>
+#ifndef AUDIOFORMATCONTROL_H
+#define AUDIOFORMATCONTROL_H
 
-#include "qcameraservice.h"
+#include "qmediaformatcontrol.h"
+#include <QtCore/qstringlist.h>
 
-class V4LMediaFormatControl;
-class V4LVideoEncode;
-class V4LCameraControl;
-class V4LMediaControl;
-class V4LCameraSession;
-class V4LVideoOutputControl;
-
-class V4LCameraService : public QCameraService
+class AudioFormatControl : public QMediaFormatControl
 {
-    Q_OBJECT
+Q_OBJECT
 public:
-    V4LCameraService(QObject *parent = 0);
-    ~V4LCameraService();
+    AudioFormatControl(QObject *parent);
+    virtual ~AudioFormatControl() {};
 
-    bool isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType);
-    void setInputStream(QIODevice* stream) {};
-    QIODevice* inputStream() const { return 0; };
+    virtual QStringList supportedFormats() const { return m_supportedFormats; }
+    virtual QString format() const { return m_format; }
+    virtual void setFormat(const QString &formatMimeType) { m_format = formatMimeType; }
 
-    void setOutputStream(QIODevice* stream) {};
-    QIODevice* outputStream() const { return 0; };
-
-    QString activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType);
-    void setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const char *interface);
-    QList<QString> supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const;
-
-    QAbstractMediaControl *control(const char *name) const;
+    virtual QString formatDescription(const QString &formatMimeType) { return m_formatDescriptions.value(formatMimeType); }
 
 private:
-    V4LMediaFormatControl *m_mediaFormat;
-    V4LVideoEncode *m_videoEncode;
-    V4LCameraControl *m_control;
-    V4LMediaControl  *m_media;
-    V4LCameraSession *m_session;
-    V4LVideoOutputControl *m_videoOutput;
-    QByteArray m_device;
+    QString m_format;
+    QStringList m_supportedFormats;
+    QMap<QString, QString> m_formatDescriptions;
 };
 
-#endif
+#endif // AUDIOFORMATCONTROL_H

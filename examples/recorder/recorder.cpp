@@ -56,19 +56,33 @@ Recorder::Recorder(QWidget *parent) :
 
     audioRecorder = new QMediaRecorder;
     audioRecorder->setSink(QUrl("test.ogg"));
-    audioDevice = audioRecorder->service()->createEndpoint<QAudioDeviceEndpoint*>();
+    //audioDevice = audioRecorder->service()->createEndpoint<QAudioDeviceEndpoint*>();
 
     connect(audioRecorder, SIGNAL(durationChanged(qint64)), this, SLOT(updateRecordTime()));
     connect(audioRecorder, SIGNAL(error(QMediaRecorder::Error)), this, SLOT(displayErrorMessage()));
 
-    if (audioDevice) {
-        audioRecorder->service()->setAudioInput(audioDevice);
-        audioDevice->setDirectionFilter(QAudioDeviceEndpoint::InputDevice);
-        for (int i=0; i<audioDevice->deviceCount(); i++) {
-             ui->inputDeviceBox->addItem(audioDevice->description(i));
-        }
-    } else
-        ui->inputDeviceBox->setEnabled(false);
+    if(audioRecorder->service()) {
+        // Audio Input
+        QList<QString> audioInputs;
+        audioInputs = audioRecorder->service()->supportedEndpoints(QAbstractMediaService::AudioInput);
+        if(audioInputs.size() > 0) {
+            qWarning()<<"FOUND audioInputs: "<<audioInputs;
+            audioRecorder->service()->setActiveEndpoint(QAbstractMediaService::AudioInput,audioInputs.first().toLocal8Bit().constData());
+            for(int i = 0; i < audioInputs.size(); ++i) {
+                ui->inputDeviceBox->addItem(audioInputs.at(i));
+            }
+        } else
+            ui->inputDeviceBox->setEnabled(false);
+    }
+
+    //if (audioDevice) {
+    //    audioRecorder->service()->setAudioInput(audioDevice);
+    //    audioDevice->setDirectionFilter(QAudioDeviceEndpoint::InputDevice);
+    //    for (int i=0; i<audioDevice->deviceCount(); i++) {
+    //         ui->inputDeviceBox->addItem(audioDevice->description(i));
+    //    }
+    //} else
+    //    ui->inputDeviceBox->setEnabled(false);
 
     encodeControl = qobject_cast<QAudioEncodeControl*>(
             audioRecorder->service()->control(QAudioEncodeControl_iid));
@@ -101,14 +115,33 @@ Recorder::Recorder(QWidget *parent) :
     //    ui->containerFormatBox->setEnabled(false);
     }
 
-    QWidget *videoWidget = audioRecorder->service()->createEndpoint<QMediaWidgetEndpoint *>();
+    if(audioRecorder->service()) {
+        // Video Output
+        QList<QString> videoOutputs;
+        videoOutputs = audioRecorder->service()->supportedEndpoints(QAbstractMediaService::VideoOutput);
 
-    if (videoWidget) {
-        qDebug() << "service supports video widgets, nice";
-        audioRecorder->service()->setVideoOutput(videoWidget);
+        // default video output
+        if(videoOutputs.size() > 0)
+            audioRecorder->service()->setActiveEndpoint(QAbstractMediaService::VideoOutput,videoOutputs.first().toLocal8Bit().constData());
+
+        // try to find a specific one, videoWidget
+        for(int i=0;i<videoOutputs.size();i++) {
+            if(qstrcmp(videoOutputs.at(i).toLocal8Bit().constData(),"videoWidget") == 0) {
+                audioRecorder->service()->setActiveEndpoint(QAbstractMediaService::VideoOutput,videoOutputs.at(i).toLocal8Bit().constData());
+                break;
+            }
+        }
+        // TODO: how do I show?
     }
 
-    videoWidget->show();
+    //QWidget *videoWidget = audioRecorder->service()->createEndpoint<QMediaWidgetEndpoint *>();
+
+    //if (videoWidget) {
+    //    qDebug() << "service supports video widgets, nice";
+        //audioRecorder->service()->setVideoOutput(videoWidget);
+    //}
+
+    //videoWidget->show();
 
 }
 

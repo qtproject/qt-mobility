@@ -8,16 +8,14 @@
 AudioEncodeControl::AudioEncodeControl(QObject *parent)
     :QAudioEncodeControl(parent)
 {
-    m_codecs.append("pcm");
-    m_codecDescriptions.insert("pcm", "WAV encoding");
+    QAudioFormat fmt;
+    fmt.setSampleSize(8);
+    fmt.setChannels(1);
+    fmt.setFrequency(8000);
+    fmt.setSampleType(QAudioFormat::SignedInt);
+    fmt.setCodec("audio/pcm");
 
-    if (!m_codecs.isEmpty())
-        setAudioCodec(m_codecs[0]);
-
-    m_format.setFrequency(8000);
-    m_format.setChannels(1);
-    m_format.setSampleSize(8);
-    m_format.setCodec("audio/pcm");
+    m_session = qobject_cast<AudioCaptureSession*>(parent);
 }
 
 AudioEncodeControl::~AudioEncodeControl()
@@ -26,78 +24,92 @@ AudioEncodeControl::~AudioEncodeControl()
 
 QAudioFormat AudioEncodeControl::format() const
 {
-    return m_format;
+    return m_session->format();
 }
 
 bool AudioEncodeControl::isFormatSupported(const QAudioFormat &format) const
 {
-    Q_UNUSED(format);
-    return true;
+    return m_session->isFormatSupported(format);
 }
 
 bool AudioEncodeControl::setFormat(const QAudioFormat &format)
 {
-    if(format.frequency() == -1)
-        return false;
-
-    m_format = format;
-    return true;
+    return m_session->setFormat(format);
 }
 
 QStringList AudioEncodeControl::supportedAudioCodecs() const
 {
-    return m_codecs;
+    return m_session->supportedAudioCodecs();
 }
 
 QString AudioEncodeControl::codecDescription(const QString &codecName)
 {
-    return m_codecDescriptions.value(codecName);
+    if(qstrcmp(codecName.toLocal8Bit().constData(),"audio/x-wav") == 0)
+        return QString("wav file format");
+
+    return QString();
 }
 
 QString AudioEncodeControl::audioCodec() const
 {
-    return m_codec;
+    return m_session->format().codec();
 }
 
 bool AudioEncodeControl::setAudioCodec(const QString &codecName)
 {
-    Q_UNUSED(codecName)
-
-    return true;
+    QAudioFormat fmt = m_session->format();
+    fmt.setCodec(codecName);
+    return m_session->setFormat(fmt);
 }
 
 int AudioEncodeControl::bitrate() const
 {
-    return m_options.value(QLatin1String("bitrate"), QVariant(int(-1))).toInt();
-    return 0;
+    return (m_session->format().frequency()*m_session->format().channels()*(m_session->format().sampleSize()/8));
 }
 
 void AudioEncodeControl::setBitrate(int value)
 {
-    setEncodingOption(QLatin1String("bitrate"), QVariant(value));
+
 }
 
 qreal AudioEncodeControl::quality() const
 {
-    return m_options.value(QLatin1String("quality"), QVariant(8.0)).toDouble();
+    return 0;
 }
 
 void AudioEncodeControl::setQuality(qreal value)
 {
-    setEncodingOption(QLatin1String("quality"), QVariant(value));
 }
 
 QStringList AudioEncodeControl::supportedEncodingOptions()
 {
-    return m_codecOptions.value(m_codec);
+    QStringList options;
+    options << "bitrate";
+    return options;
 }
 
 QVariant AudioEncodeControl::encodingOption(const QString &name)
 {
-    return m_options.value(name);
+    if(qstrcmp(name.toLocal8Bit().constData(),"bitrate") == 0) {
+        return QVariant(8000);
+    }
+
+    return QVariant();
 }
 
 void AudioEncodeControl::setEncodingOption(const QString &name, const QVariant &value)
 {
-    m_options.insert(name,value);
+    QAudioFormat fmt = m_session->format();
+
+    if(qstrcmp(name.toLocal8Bit().constData(),"bitrate") == 0) {
+        //TODO
+
+    } else if(qstrcmp(name.toLocal8Bit().constData(),"quality") == 0) {
+        //TODO
+
+    } else
+        qWarning()<<"option: "<<name<<" is an unknown option!";
 }
+
+
+

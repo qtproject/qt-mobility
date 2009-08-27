@@ -32,47 +32,17 @@
 **
 ****************************************************************************/
 
-#ifndef CAMERA_H
-#define CAMERA_H
+#include "audioformatcontrol.h"
 
-#include <QtGui>
-
-#include <qcamera.h>
-#include <qmediarecorder.h>
-
-class QComboBox;
-class QLabel;
-class QAudioDeviceEndpoint;
-class QAudioEncodeControl;
-class QVideoEncodeControl;
-
-
-class Camera : public QMainWindow
+AudioFormatControl::AudioFormatControl(QObject *parent)
+    :QMediaFormatControl(parent)
 {
-    Q_OBJECT
-public:
-    Camera();
-    ~Camera();
+    m_supportedFormats.clear();
+    m_formatDescriptions.clear();
 
-private slots:
-    void deviceChanged(int idx);
-    void togglePlay();
-    void stateChanged(QMediaRecorder::State);
-    void updateProgress(qint64 pos);
+    m_supportedFormats.append("audio/pcm");
+    m_formatDescriptions.insert("audio/pcm","Raw audio format");
 
-private:
-    QMediaRecorder* capture;
-    QCamera*       camera;
-    QAudioDeviceEndpoint *audioDevice;
-    QAudioEncodeControl *audioEncodeControl;
-    QVideoEncodeControl *videoEncodeControl;
-    QComboBox*     deviceBox;
-    QLabel*        recTime;
-    QPushButton*   button;
-    bool           active;
-    int            currentTime;
-    int            framerate;
-    QMediaSink     destination;
-};
+    setFormat(m_supportedFormats[0]);
+}
 
-#endif

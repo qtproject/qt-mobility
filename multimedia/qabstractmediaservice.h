@@ -46,35 +46,28 @@ class QAbstractMediaServicePrivate;
 class Q_MEDIA_EXPORT QAbstractMediaService : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QObject* audioOutput READ audioOutput WRITE setAudioOutput)
-    Q_PROPERTY(QObject* videoOutput READ videoOutput WRITE setVideoOutput)
-    Q_PROPERTY(QObject* dataOutput READ dataOutput WRITE setDataOutput)
-    Q_PROPERTY(QObject* audioInput READ audioInput WRITE setAudioInput)
-    Q_PROPERTY(QObject* videoInput READ videoInput WRITE setVideoInput)
-    Q_PROPERTY(QObject* dataInput READ dataInput WRITE setDataInput)
 public:
-    QObject *audioOutput() const;
-    virtual void setAudioOutput(QObject *output);
+    enum MediaEndpoint
+    {
+        VideoInput,
+        VideoOutput,
+        AudioInput,
+        AudioOutput,
+        StreamInput,
+        StreamOutput
+    };
 
-    QObject *videoOutput() const;
-    virtual void setVideoOutput(QObject *output);
+    virtual bool isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType) = 0;
 
-    QObject *dataOutput() const;
-    virtual void setDataOutput(QObject *output);
+    virtual void setInputStream(QIODevice* stream) = 0;
+    virtual QIODevice* inputStream() const = 0;
 
-    QObject *audioInput() const;
-    virtual void setAudioInput(QObject *input);
+    virtual void setOutputStream(QIODevice* stream) = 0;
+    virtual QIODevice* outputStream() const = 0;
 
-    QObject *videoInput() const;
-    virtual void setVideoInput(QObject *input);
-
-    QObject *dataInput() const;
-    virtual void setDataInput(QObject *input);
-
-    virtual QList<QByteArray> supportedEndpointInterfaces(
-            QMediaEndpointInterface::Direction direction) const;
-
-    virtual QObject *createEndpoint(const char *interface);
+    virtual QString activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType) = 0;
+    virtual void setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const char *interface) = 0;
+    virtual QList<QString> supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const;
 
     virtual QAbstractMediaControl* control(const char *name) const = 0;
 
@@ -82,15 +75,6 @@ public:
     template <typename T> inline T control() const {
         if (QObject *object = control(qmediacontrol_iid<T>())) {
             return qobject_cast<T>(object);
-        }
-        return 0;
-    }
-
-    template <typename T> inline T createEndpoint() {
-        if (QObject *object = createEndpoint(qmediaendpoint_iid<T>())) {
-            if (T endpoint = qobject_cast<T>(object))
-                return endpoint;
-            delete object;
         }
         return 0;
     }

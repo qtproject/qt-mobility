@@ -39,6 +39,8 @@
 #include "v4lcameraservice.h"
 #include "v4lradioservice.h"
 
+#include <qradioplayercontrol.h>
+
 #include <qmediaserviceprovider.h>
 
 
@@ -48,10 +50,10 @@ class V4LProvider : public QMediaServiceProvider
 public:
     QObject* createObject(const char *interface) const
     {
-        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.RadioService/1.0"))
+        if (qstrcmp(interface,QRadioService_iid) == 0)
             return new V4LRadioService;
 
-        if (QLatin1String(interface) == QLatin1String("com.nokia.qt.Camera/1.0"))
+        if (qstrcmp(interface,QCameraService_iid) == 0)
             return new V4LCameraService;
 
         return 0;
@@ -60,7 +62,10 @@ public:
 
 QStringList V4LServicePlugin::keys() const
 {
-    return QStringList() << QLatin1String("radio") << QLatin1String("camera");
+    QStringList list;
+    list << QLatin1String("radio");
+    list << QLatin1String("camera");
+    return list;
 }
 
 QMediaServiceProvider* V4LServicePlugin::create(QString const& key)

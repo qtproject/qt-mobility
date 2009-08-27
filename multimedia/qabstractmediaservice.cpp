@@ -40,21 +40,15 @@ class QAbstractMediaServicePrivate
 {
 public:
     QAbstractMediaServicePrivate()
-        : audioOutput(0)
-        , videoOutput(0)
-        , dataOutput(0)
-        , audioInput(0)
-        , videoInput(0)
-        , dataInput(0)
     {
     }
 
-    QObject *audioOutput;
-    QObject *videoOutput;
-    QObject *dataOutput;
-    QObject *audioInput;
-    QObject *videoInput;
-    QObject *dataInput;
+    QByteArray audioOutput;
+    QByteArray videoOutput;
+    QByteArray dataOutput;
+    QByteArray audioInput;
+    QByteArray videoInput;
+    QByteArray dataInput;
 };
 
 /*!
@@ -78,205 +72,18 @@ QAbstractMediaService::~QAbstractMediaService()
 }
 
 /*!
-    \property QAbstractMediaService::audioOutput
-
-    The output that a media service renders audio to.
+    Returns the currently active endpoint id for \endpointType.
 */
 
 /*!
-    Returns the output that a media service renders audio to.
+    Sets the active endpoint for \a endpointType to \a endpoint
 */
-QObject *QAbstractMediaService::audioOutput() const
+
+/*!
+    Returns a list of endpoints available for the \a endpointType.
+*/
+
+QList<QString> QAbstractMediaService::supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const
 {
-    return d_func()->audioOutput;
+    return QList<QString>();
 }
-
-/*!
-    Sets the \a output that a media service renders audio to.
-
-    The output must be a media end point constructed by the createEndpoint() function of the media
-    service.
-
-    \sa createEndpoint()
-*/
-void QAbstractMediaService::setAudioOutput(QObject *output)
-{
-    d_func()->audioOutput = output;
-}
-
-/*!
-    \property QAbstractMediaService::videoOutput
-
-    The output that a media service renders video to.
-*/
-
-/*!
-    Returns the output that a media service renders video to.
-*/
-QObject *QAbstractMediaService::videoOutput() const
-{
-    return d_func()->videoOutput;
-}
-
-/*!
-    Sets the \a output that a media service renders video to.
-
-    The output must be a media end point constructed by the createEndpoint() function of the media
-    service.
-
-    \sa createEndpoint()
-*/
-void QAbstractMediaService::setVideoOutput(QObject *output)
-{
-    d_func()->videoOutput = output;
-}
-
-/*!
-    \property QAbstractMediaService::dataOutput
-
-    The output that a media service writes data to.
-*/
-
-/*!
-    Returns the output that a media service writes data to.
-*/
-QObject *QAbstractMediaService::dataOutput() const
-{
-    return d_func()->dataOutput;
-}
-
-/*!
-    Sets the \a output that a media service writes data to.
-
-    The output must be a media end point constructed by the createEndpoint() function of the media
-    service.
-
-    \sa createEndpoint()
-*/
-void QAbstractMediaService::setDataOutput(QObject *output)
-{
-    d_func()->dataOutput = output;
-}
-
-/*!
-    \property QAbstractMediaService::audioInput
-
-    The input that a media service source audio from.
-*/
-
-/*!
-    Returns the input that a media service sources audio from.
-*/
-QObject *QAbstractMediaService::audioInput() const
-{
-    return d_func()->audioInput;
-}
-
-/*!
-    Sets the \a input that a media service sources audio from.
-
-    The input media be a media end point constructed by the createEndpoint() function of the media
-    service.
-
-    \sa createEndpoint()
-*/
-void QAbstractMediaService::setAudioInput(QObject *input)
-{
-    d_func()->audioInput = input;
-}
-
-/*!
-    \property QAbstractMediaService::videoInput
-
-    The input that a media service source video data from.
-*/
-
-/*!
-    Returns the input that a media service sources video from.
-*/
-QObject *QAbstractMediaService::videoInput() const
-{
-    return d_func()->videoInput;
-}
-
-/*!
-    Sets the \a input that a media service sources video from.
-
-    The input media be a media end point constructed by the createEndpoint() function of the media
-    service.
-
-    \sa createEndpoint()
-*/
-void QAbstractMediaService::setVideoInput(QObject *input)
-{
-    d_func()->videoInput = input;
-}
-
-/*!
-    \property QAbstractMediaService::dataInput
-
-    The input that a media service reads data from.
-*/
-
-/*!
-    Returns the input that a media service reads data from.
-*/
-QObject *QAbstractMediaService::dataInput() const
-{
-    return d_func()->dataInput;
-}
-
-/*!
-    Sets the \a input that a media service reads data from.
-
-    The input media be a media end point constructed by the createEndpoint() function of the media
-    service.
-
-    \sa createEndpoint()
-*/
-void QAbstractMediaService::setDataInput(QObject *input)
-{
-    d_func()->dataInput = input;
-}
-
-/*!
-    Returns a list of interfaces for \a direction media end point objects that can be created by a
-    media service.
-
-    \sa createEndpoint()
-*/
-QList<QByteArray> QAbstractMediaService::supportedEndpointInterfaces(
-        QMediaEndpointInterface::Direction direction) const
-{
-    Q_UNUSED(direction);
-
-    return QList<QByteArray>();
-}
-
-/*!
-    Creates a new media end point object from the given \a interface name.
-
-    An end point object may be an input or output to a media service and can only be used with the
-    service object that created it.
-
-    A list of supported end point interfaces can be queried using the supportedEndpointInterfaces()
-    function.
-
-    \sa supportedEndpointInterfaces(), setAudioOutput(), setVideoOutput()
-*/
-QObject *QAbstractMediaService::createEndpoint(const char *interface)
-{
-    Q_UNUSED(interface);
-
-    return 0;
-}
-
-
-/*!
-    \fn QAbstractMediaService::createEndpoint()
-
-    Creates a new media end point object of type \c T.
-
-    \c T must be a pointer to a class that inherits from QObject and has been declared as a media
-    endpoint using Q_MEDIA_DECLARE_ENDPOINT.
-*/

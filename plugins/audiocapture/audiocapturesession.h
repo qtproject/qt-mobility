@@ -36,10 +36,10 @@
 #define AUDIOCAPTURESESSION_H
 
 #include <QFile>
+#include <QUrl>
 
 #include "audioencodecontrol.h"
 #include "qmediarecordercontrol.h"
-#include "qmediasink.h"
 #include "qmediarecorder.h"
 
 #include <QtMultimedia/qaudioformat.h>
@@ -73,8 +73,8 @@ public:
 
     // media controls
 
-    QMediaSink sink() const;
-    bool setSink(const QMediaSink& sink);
+    QUrl sink() const;
+    bool setSink(const QUrl& sink);
     qint64 position() const;
     int state() const;
     void record();
@@ -95,7 +95,7 @@ private slots:
 private:
     QFile file;
     QString m_captureDevice;
-    QMediaSink m_sink;
+    QUrl m_sink;
     QMediaRecorder::State m_state;
     QAudioInput *m_audioInput;
     QAudioDeviceInfo *m_deviceInfo;

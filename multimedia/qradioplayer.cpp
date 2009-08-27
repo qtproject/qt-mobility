@@ -38,6 +38,8 @@
 #include "qradioplayercontrol.h"
 #include "qradioservice.h"
 
+#include <QDebug>
+
 /*!
     \class QRadioPlayer
     \brief The QRadioPlayer class provides an interface to the systems radio device.
@@ -78,13 +80,14 @@ public:
 QRadioPlayer::QRadioPlayer(QRadioService* service, QObject *parent):
     QAbstractMediaObject(*new QRadioPlayerPrivate, parent)
 {
-    Q_ASSERT(service != 0);
-
     Q_D(QRadioPlayer);
 
     d->service = service;
-    d->control = service->control<QRadioPlayerControl*>();
 
+    if(!d->service)
+        d->service = createRadioService();
+
+    d->control = qobject_cast<QRadioPlayerControl *>(d->service->control(QRadioPlayerControl_iid));
     if(d->control) {
         connect(d->control,SIGNAL(bandChanged(QRadioPlayer::Band)),this,SIGNAL(bandChanged(QRadioPlayer::Band)));
         connect(d->control,SIGNAL(frequencyChanged(int)),this,SIGNAL(frequencyChanged(int)));
@@ -332,10 +335,10 @@ QRadioService* createRadioService(QMediaServiceProvider *provider)
 {
     QObject *object = provider ? provider->createObject(QRadioService_iid) : 0;
 
-    if (object) {
+    if (object != 0) {
         QRadioService *service = qobject_cast<QRadioService*>(object);
 
-        if (service)
+        if (service != 0)
             return service;
 
         delete object;

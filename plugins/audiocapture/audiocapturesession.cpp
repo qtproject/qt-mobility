@@ -176,15 +176,15 @@ void AudioCaptureSession::setEncodingOption(const QString &name, const QVariant 
     //TODO
 }
 
-QMediaSink AudioCaptureSession::sink() const
+QUrl AudioCaptureSession::sink() const
 {
     return m_sink;
 }
 
-bool AudioCaptureSession::setSink(const QMediaSink& sink)
+bool AudioCaptureSession::setSink(const QUrl& sink)
 {
     m_sink = sink;
-    file.setFileName(sink.dataLocation().toString());
+    file.setFileName(sink.toLocalFile());
     return true;
 }
 
@@ -239,7 +239,6 @@ void AudioCaptureSession::stop()
 
 void AudioCaptureSession::stateChanged(QAudio::State state)
 {
-    qWarning()<<"stateChanged state="<<state;
     switch(state) {
         case QAudio::ActiveState:
             emit stateChanged(QMediaRecorder::RecordingState);
@@ -255,7 +254,6 @@ void AudioCaptureSession::stateChanged(QAudio::State state)
 
 void AudioCaptureSession::notify()
 {
-    qWarning()<<"notify() pos = "<<m_position;
     m_position += m_audioInput->notifyInterval();
     emit positionChanged(m_position);
 }
@@ -263,4 +261,23 @@ void AudioCaptureSession::notify()
 void AudioCaptureSession::setCaptureDevice(const QString &deviceName)
 {
     m_captureDevice = deviceName;
+    if(m_deviceInfo)
+        delete m_deviceInfo;
+
+    m_deviceInfo = 0;
+
+    QList<QAudioDeviceId> devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
+    for(int i = 0; i < devices.size(); i++) {
+        if(qstrcmp(m_captureDevice.toLocal8Bit().constData(),
+                    QAudioDeviceInfo(devices.at(i)).deviceName().toLocal8Bit().constData())==0){
+            //TODO: this doesn't work? isFormatSupported fails? investigate
+            //m_deviceInfo = new QAudioDeviceInfo(devices.at(i),this);
+            m_deviceInfo = new QAudioDeviceInfo(QAudioDeviceInfo::defaultInputDevice(),this);
+            return;
+        }
+    }
+    m_deviceInfo = new QAudioDeviceInfo(QAudioDeviceInfo::defaultInputDevice(),this);
 }
+
+
+

@@ -38,6 +38,7 @@
 #include <QtCore/qobject.h>
 #include <QSocketNotifier>
 #include <QTime>
+#include <QUrl>
 
 #include "qmediasink.h"
 #include "qcamera.h"
@@ -88,7 +89,7 @@ public:
 
     QSize frameSize() const;
     void setFrameSize(const QSize& s);
-    void setDevice(const QByteArray &device);
+    void setDevice(const QString &device);
     QList<QVideoFrame::PixelFormat> supportedPixelFormats();
     QVideoFrame::PixelFormat pixelFormat() const;
     void setPixelFormat(QVideoFrame::PixelFormat fmt);
@@ -96,8 +97,8 @@ public:
 
     // media control
 
-    bool setSink(const QMediaSink &sink);
-    QMediaSink sink() const;
+    bool setSink(const QUrl &sink);
+    QUrl sink() const;
     qint64 position() const;
     int state() const;
     void record();
@@ -121,7 +122,7 @@ private:
     bool available;
     QCamera::State m_state;
     QByteArray m_device;
-    QMediaSink m_sink;
+    QUrl m_sink;
     V4LVideoWidget*   m_output;
     QVideoFrame::PixelFormat pixelF;
     QSize m_windowSize;

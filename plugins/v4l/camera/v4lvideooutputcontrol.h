@@ -32,16 +32,29 @@
 **
 ****************************************************************************/
 
-#include "camera.h"
+#ifndef V4LVIDEOOUTPUTCONTROL_H
+#define V4LVIDEOOUTPUTCONTROL_H
 
-#include <QtGui>
+#include "qvideooutputcontrol.h"
 
-int main(int argc, char *argv[])
+class V4LVideoOutputControl : public QVideoOutputControl
 {
-    QApplication app(argc, argv);
+    Q_OBJECT
+public:
+    V4LVideoOutputControl(QObject *parent = 0);
 
-    Camera camera;
-    camera.show();
+    QList<Output> availableOutputs() const;
+    void setAvailableOutputs(const QList<Output> &outputs);
 
-    return app.exec();
+    Output output() const;
+    void setOutput(Output output);
+
+Q_SIGNALS:
+    void outputChanged(QVideoOutputControl::Output output);
+
+private:
+    QList<Output> m_outputs;
+    Output m_output;
 };
+
+#endif

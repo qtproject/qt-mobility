@@ -19,11 +19,15 @@ HEADERS += audioencodecontrol.h \
     audiodeviceendpoint.h \
     audiocaptureservice.h \
     audiocaptureserviceplugin.h \
-    audiocapturesession.h
+    audiocapturesession.h \
+    audioinputdevicecontrol.h \
+    audioformatcontrol.h
 
 SOURCES += audioencodecontrol.cpp \
     audiomediacontrol.cpp \
     audiodeviceendpoint.cpp \
     audiocaptureservice.cpp \
     audiocaptureserviceplugin.cpp \
-    audiocapturesession.cpp
+    audiocapturesession.cpp \
+    audioinputdevicecontrol.cpp \
+    audioformatcontrol.cpp
