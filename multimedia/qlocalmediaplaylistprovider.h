@@ -46,7 +46,7 @@ public:
     virtual ~QLocalMediaPlaylistProvider();
 
     virtual int size() const;
-    virtual QMediaSource resources(int pos) const;
+    virtual QMediaSource media(int pos) const;
 
     virtual bool isReadOnly() const;
 

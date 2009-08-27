@@ -61,7 +61,7 @@ int QLocalMediaPlaylistProvider::size() const
     return d_func()->resources.size();
 }
 
-QMediaSource QLocalMediaPlaylistProvider::resources(int pos) const
+QMediaSource QLocalMediaPlaylistProvider::media(int pos) const
 {
     return d_func()->resources.value(pos);
 }

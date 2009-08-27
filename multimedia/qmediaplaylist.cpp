@@ -182,7 +182,7 @@ int QMediaPlaylist::currentPosition() const
 
 QMediaSource QMediaPlaylist::currentMedia() const
 {
-    return d_func()->playlist()->resources(currentPosition());
+    return d_func()->playlist()->media(currentPosition());
 }
 
 
@@ -220,7 +220,7 @@ bool QMediaPlaylist::isReadOnly() const
 
 QMediaSource QMediaPlaylist::media(int position) const
 {
-    return d_func()->playlist()->resources(position);
+    return d_func()->playlist()->media(position);
 }
 
 /*!
@@ -288,7 +288,7 @@ bool QMediaPlaylistPrivate::readItems(QMediaPlaylistReader *reader)
 bool QMediaPlaylistPrivate::writeItems(QMediaPlaylistWritter *writter)
 {
     for (int i=0; i<playlist()->size(); i++) {
-        if (!writter->writeItem(playlist()->resources(i)))
+        if (!writter->writeItem(playlist()->media(i)))
             return false;
     }
     writter->close();
