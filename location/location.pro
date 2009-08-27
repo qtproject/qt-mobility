@@ -5,6 +5,8 @@ QT = core
 include(../common.pri)
 
 symbian {
+    LIBS += -llbs
+    INCLUDEPATH += \epoc32\include\osextensions
     TARGET.UID3 = 0xEEA0E2D0
     TARGET.CAPABILITY = ALL -TCB
 }
@@ -26,9 +28,9 @@ HEADERS +=  qlocationglobal.h \
             qnmeapositioninfosource_p.h
 
 symbian {
-HEADERS += s60/QGeoPositionInfoSourceS60.h \
-           s60/QMLBackendAO.h \
-           s60/NotificationCallback.h
+HEADERS += s60_QGeoPositionInfoSourceS60.h \
+           s60_QMLBackendAO.h \
+           s60_NotificationCallback.h
 }
 
 
@@ -40,8 +42,7 @@ SOURCES +=  qlocationutils.cpp \
             qgeopositioninfosource.cpp \
             qgeoareamonitor.cpp \
             qnmeapositioninfosource.cpp
-
 symbian {
-SOURCES += s60/QGeoPositionInfoSourceS60.cpp \
-           s60/QMLBackendAO.cpp
+SOURCES += s60_QGeoPositionInfoSourceS60.cpp \
+           s60_QMLBackendAO.cpp
 }
