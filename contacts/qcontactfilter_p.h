@@ -72,6 +72,10 @@ public:
     {
     }
 
+    virtual ~QContactFilterPrivate()
+    {
+    }
+
     virtual bool compare(const QContactFilterPrivate* other) const = 0;
     virtual QContactFilterPrivate* clone() const = 0;
     virtual QContactFilter::FilterType type() const = 0;

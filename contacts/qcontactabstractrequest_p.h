@@ -61,7 +61,7 @@ public:
     {
     }
 
-    ~QContactAbstractRequestPrivate()
+    virtual ~QContactAbstractRequestPrivate()
     {
     }
 
