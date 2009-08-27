@@ -87,6 +87,8 @@ QContactAbstractRequest::~QContactAbstractRequest()
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
     if (engine)
         engine->requestDestroyed(this);
+    if (d_ptr)
+        delete d_ptr;
 }
 
 /*!
