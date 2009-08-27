@@ -53,8 +53,20 @@ class Q_MEDIA_EXPORT QMediaRecorder : public QAbstractMediaObject
 {
     Q_OBJECT
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
+    Q_PROPERTY(QString format READ format WRITE setFormat NOTIFY formatChanged)
+    Q_PROPERTY(QAudioFormat audioFormat READ audioFormat WRITE setAudioFormat NOTIFY audioFormatChanged)
+    Q_PROPERTY(QString audioCodec READ audioCodec WRITE setAudioCodec NOTIFY audioCodecChanged)
+    Q_PROPERTY(int audioBitrate READ audioBitrate WRITE setAudioBitrate NOTIFY audioBitrateChanged)
+    Q_PROPERTY(qreal audioQuality READ audioQuality WRITE setAudioQuality NOTIFY audioQualityChanged)
+    Q_PROPERTY(QSize resolution READ resolution WRITE setResolution NOTIFY resolutionChanged)
+    Q_PROPERTY(QMediaRecorder::FrameRate frameRate READ frameRate WRITE setFrameRate NOTIFY frameRateChanged)
+    Q_PROPERTY(QString videoCodec READ videoCodec WRITE setVideoCodec NOTIFY videoCodecChanged)
+    Q_PROPERTY(int videoBitrate READ videoBitrate WRITE setVideoBitrate NOTIFY videoBitrateChanged)
+    Q_PROPERTY(qreal videoQuality READ videoQuality WRITE setVideoQuality NOTIFY videoQualityChanged)
 
 public:
+    typedef QPair<int, int> FrameRate;
+
     enum State
     {
         StoppedState,
@@ -91,51 +103,37 @@ public:
     QStringList supportedFormats() const;
     QString formatDescription(const QString &formatMimeType) const;
     QString format() const;
-    void setFormat(const QString &formatMimeType);
 
     QAudioFormat audioFormat() const;
     bool isAudioFormatSupported(const QAudioFormat &format) const;
-    bool setAudioFormat(const QAudioFormat &format);
-
 
     QStringList supportedAudioCodecs() const;
     QString codecDescription(const QString &codecName) const;
     QString audioCodec() const;
-    bool setAudioCodec(const QString &codecName);
 
     int audioBitrate() const;
-    void setAudioBitrate(int);
-
     qreal audioQuality() const;
-    void setAudioQuality(qreal);
 
     QStringList supportedAudioEncodingOptions() const;
     QVariant audioEncodingOption(const QString &name) const;
     void setAudioEncodingOption(const QString &name, const QVariant &value);
 
-
     QSize resolution() const;
     QSize minimumResolution() const;
     QSize maximumResolution() const;
     QList<QSize> supportedResolutions() const;
-    void setResolution(const QSize &);
 
-    QPair<int,int> frameRate() const;
-    QPair<int,int> minimumFrameRate();
-    QPair<int,int> maximumFrameRate();
-    QList< QPair<int,int> > supportedFrameRates() const;
-    void setFrameRate(const QPair<int,int> &rate);
+    FrameRate frameRate() const;
+    FrameRate minimumFrameRate();
+    FrameRate maximumFrameRate();
+    QList<FrameRate> supportedFrameRates() const;
 
     QStringList supportedVideoCodecs() const;
     QString videoCodecDescription(const QString &codecName) const;
     QString videoCodec() const;
-    bool setVideoCodec(const QString &codecName);
 
     int videoBitrate() const;
-    void setVideoBitrate(int bitrate);
-
     qreal videoQuality() const;
-    void setVideoQuality(qreal);
 
     QStringList supportedVideoEncodingOptions() const;
     QVariant videoEncodingOption(const QString &name) const;
@@ -146,9 +144,36 @@ public slots:
     void pause();
     void stop();
 
+    void setFormat(const QString &formatMimeType);
+
+    bool setAudioFormat(const QAudioFormat &format);
+    bool setAudioCodec(const QString &codecName);
+    void setAudioBitrate(int bitrate);
+    void setAudioQuality(qreal quality);
+
+    void setResolution(const QSize &);
+    void setFrameRate(const QMediaRecorder::FrameRate &rate);
+    bool setVideoCodec(const QString &codecName);
+    void setVideoBitrate(int bitrate);
+    void setVideoQuality(qreal);
+
 signals:
     void stateChanged(QMediaRecorder::State state);
     void durationChanged(qint64 duration);
+
+    void formatChanged(const QString &formatMimeType);
+
+    void audioFormatChanged(const QAudioFormat &format);
+    void audioCodecChanged(const QString &codecName);
+    void audioBitrateChanged(int bitrate);
+    void audioQualityChanged(qreal quality);
+
+    void resolutionChanged(const QSize &);
+    void frameRateChanged(const QMediaRecorder::FrameRate &rate);
+    void videoCodecChanged(const QString &codecName);
+    void videoBitrateChanged(int bitrate);
+    void videoQualityChanged(qreal);
+
     void error(QMediaRecorder::Error error);
 
 private:
@@ -157,5 +182,7 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_stateChanged(QMediaRecorder::State))
     Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &));
 };
+
+//Q_DECLARE_METATYPE(QMediaRecorder::FrameRate);
 
 #endif  // QMEDIARECORDER_H

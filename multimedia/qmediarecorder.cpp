@@ -81,6 +81,8 @@ class QMediaRecorderPrivate : public QAbstractMediaObjectPrivate
 
 public:
     QMediaRecorderPrivate(QAbstractMediaService *service);
+    void initControls();
+
 
     QAbstractMediaService *service;
     QMediaRecorderControl *control;
@@ -98,18 +100,67 @@ public:
 QMediaRecorderPrivate::QMediaRecorderPrivate(QAbstractMediaService *service)
     :QAbstractMediaObjectPrivate(),
      service(service),
+     control(0),
+     formatControl(0),
+     audioControl(0),
+     videoControl(0),
      error(QMediaRecorder::NoError)
 {
-    if(service) {
-        control = qobject_cast<QMediaRecorderControl *>(service->control(QMediaRecorderControl_iid));
-        formatControl = qobject_cast<QMediaFormatControl *>(service->control(QMediaFormatControl_iid));
-        audioControl = qobject_cast<QAudioEncodeControl *>(service->control(QAudioEncodeControl_iid));
-        videoControl = qobject_cast<QVideoEncodeControl *>(service->control(QVideoEncodeControl_iid));
-    } else {
-        control = 0;
-        formatControl = 0;
-        audioControl = 0;
-        videoControl = 0;
+}
+
+void QMediaRecorderPrivate::initControls()
+{
+    Q_Q(QMediaRecorder);
+
+    if (!service)
+        return;
+
+    control = qobject_cast<QMediaRecorderControl*>(service->control(QMediaRecorderControl_iid));
+    formatControl = qobject_cast<QMediaFormatControl *>(service->control(QMediaFormatControl_iid));
+    audioControl = qobject_cast<QAudioEncodeControl *>(service->control(QAudioEncodeControl_iid));
+    videoControl = qobject_cast<QVideoEncodeControl *>(service->control(QVideoEncodeControl_iid));
+
+    if (control) {
+        q->connect(control, SIGNAL(stateChanged(QMediaRecorder::State)),
+                q, SLOT(_q_stateChanged(QMediaRecorder::State)));
+
+        q->connect(control, SIGNAL(error(int,QString)),
+                q, SLOT(_q_error(int,QString)));
+    }
+
+    if (formatControl)
+        q->connect(formatControl, SIGNAL(formatChanged(QString)), q, SIGNAL(formatChanged(QString)));
+
+    if (audioControl) {
+        q->connect(audioControl, SIGNAL(audioFormatChanged(QAudioFormat)),
+                q, SIGNAL(audioFormatChanged(QAudioFormat)));
+
+        q->connect(audioControl, SIGNAL(audioCodecChanged(QString)),
+                q, SIGNAL(audioCodecChanged(QString)));
+
+        q->connect(audioControl, SIGNAL(audioBitrateChanged(int)),
+                q, SIGNAL(audioBitrateChanged(int)));
+
+        q->connect(audioControl, SIGNAL(audioQualityChanged(qreal)),
+                q, SIGNAL(audioQualityChanged(qreal)));
+    }
+
+    if (videoControl) {
+        q->connect(videoControl, SIGNAL(resolutionChanged(QSize)),
+                q, SIGNAL(resolutionChanged(QSize)));
+
+        q->connect(videoControl, SIGNAL(frameRateChanged(QMediaRecorder::FrameRate)),
+                q, SIGNAL(frameRateChanged(QMediaRecorder::FrameRate)));
+
+        q->connect(videoControl, SIGNAL(videoCodecChanged(QString)),
+                q, SIGNAL(videoCodecChanged(QString)));
+
+        q->connect(videoControl, SIGNAL(videoBitrateChanged(int)),
+                q, SIGNAL(videoBitrateChanged(int)));
+
+        q->connect(videoControl, SIGNAL(videoQualityChanged(qreal)),
+                q, SIGNAL(videoQualityChanged(qreal)));
+
     }
 }
 
@@ -148,12 +199,7 @@ QMediaRecorder::QMediaRecorder(QObject *parent):
     Q_D(QMediaRecorder);
 
     d->service = createMediaCaptureService();
-    d->control = qobject_cast<QMediaRecorderControl*>(d->service->control(QMediaRecorderControl_iid));
-
-    if (d->control) {
-        connect(d->control, SIGNAL(stateChanged(QMediaRecorder::State)), SLOT(_q_stateChanged(QMediaRecorder::State)));
-        connect(d->control, SIGNAL(error(int,QString)), SLOT(_q_error(int,QString)));
-    }
+    d->initControls();
 }
 
 /*!
@@ -164,11 +210,7 @@ QMediaRecorder::QMediaRecorder(QAbstractMediaObject *mediaObject, QObject *paren
     QAbstractMediaObject(*new QMediaRecorderPrivate(mediaObject->service()), parent)
 {
     Q_D(QMediaRecorder);
-
-    if (d->control) {
-        connect(d->control, SIGNAL(stateChanged(QMediaRecorder::State)), SLOT(_q_stateChanged(QMediaRecorder::State)));
-        connect(d->control, SIGNAL(error(int,QString)), SLOT(_q_error(int,QString)));
-    }
+    d->initControls();
 }
 
 /*!
@@ -179,11 +221,7 @@ QMediaRecorder::QMediaRecorder(QAbstractMediaService *service, QObject *parent):
     QAbstractMediaObject(*new QMediaRecorderPrivate(service), parent)
 {
     Q_D(QMediaRecorder);
-
-    if (d->control) {
-        connect(d->control, SIGNAL(stateChanged(QMediaRecorder::State)), SLOT(_q_stateChanged(QMediaRecorder::State)));
-        connect(d->control, SIGNAL(error(int,QString)), SLOT(_q_error(int,QString)));
-    }
+    d->initControls();
 }
 
 
@@ -276,6 +314,7 @@ qint64 QMediaRecorder::duration() const
 
 
 /*!
+  Returns the list of supported container formats.
 */
 QStringList QMediaRecorder::supportedFormats() const
 {
@@ -284,14 +323,16 @@ QStringList QMediaRecorder::supportedFormats() const
 }
 
 /*!
+  Returns the description of container \a format.
 */
-QString QMediaRecorder::formatDescription(const QString &formatMimeType) const
+QString QMediaRecorder::formatDescription(const QString &format) const
 {
     return d_func()->formatControl ?
-           d_func()->formatControl->formatDescription(formatMimeType) : QString();
+           d_func()->formatControl->formatDescription(format) : QString();
 }
 
 /*!
+  Returns the
 */
 QString QMediaRecorder::format() const
 {
@@ -461,7 +502,7 @@ void QMediaRecorder::setResolution(const QSize &resolution)
 
 /*!
 */
-QPair<int,int> QMediaRecorder::frameRate() const
+QMediaRecorder::FrameRate QMediaRecorder::frameRate() const
 {
     return d_func()->videoControl ?
            d_func()->videoControl->frameRate() : qMakePair<int,int>(-1,-1);
@@ -469,7 +510,7 @@ QPair<int,int> QMediaRecorder::frameRate() const
 
 /*!
 */
-QPair<int,int> QMediaRecorder::minimumFrameRate()
+QMediaRecorder::FrameRate QMediaRecorder::minimumFrameRate()
 {
     return d_func()->videoControl ?
            d_func()->videoControl->minimumFrameRate() : qMakePair<int,int>(-1,-1);
@@ -477,7 +518,7 @@ QPair<int,int> QMediaRecorder::minimumFrameRate()
 
 /*!
 */
-QPair<int,int> QMediaRecorder::maximumFrameRate()
+QMediaRecorder::FrameRate QMediaRecorder::maximumFrameRate()
 {
     return d_func()->videoControl ?
            d_func()->videoControl->maximumFrameRate() : qMakePair<int,int>(-1,-1);
@@ -485,15 +526,15 @@ QPair<int,int> QMediaRecorder::maximumFrameRate()
 
 /*!
 */
-QList< QPair<int,int> > QMediaRecorder::supportedFrameRates() const
+QList< QMediaRecorder::FrameRate > QMediaRecorder::supportedFrameRates() const
 {
     return d_func()->videoControl ?
-           d_func()->videoControl->supportedFrameRates() : QList< QPair<int,int> >();
+           d_func()->videoControl->supportedFrameRates() : QList<QMediaRecorder::FrameRate>();
 }
 
 /*!
 */
-void QMediaRecorder::setFrameRate(const QPair<int,int> &rate)
+void QMediaRecorder::setFrameRate(const QMediaRecorder::FrameRate &rate)
 {
     if (d_func()->videoControl)
         d_func()->videoControl->setFrameRate(rate);

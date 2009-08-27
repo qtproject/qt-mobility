@@ -80,24 +80,24 @@ void QGstreamerVideoEncode::setResolution(const QSize &r)
     m_resolution = r;
 }
 
-QPair<int,int> QGstreamerVideoEncode::frameRate() const
+QMediaRecorder::FrameRate QGstreamerVideoEncode::frameRate() const
 {
     return m_frameRate;
 }
 
-QPair<int,int> QGstreamerVideoEncode::minimumFrameRate() const
+QMediaRecorder::FrameRate QGstreamerVideoEncode::minimumFrameRate() const
 {
     return qMakePair<int,int>(1,1);
 }
 
-QPair<int,int> QGstreamerVideoEncode::maximumFrameRate() const
+QMediaRecorder::FrameRate QGstreamerVideoEncode::maximumFrameRate() const
 {
     return qMakePair<int,int>(30,1);
 }
 
-QList< QPair<int,int> > QGstreamerVideoEncode::supportedFrameRates() const
+QList< QMediaRecorder::FrameRate > QGstreamerVideoEncode::supportedFrameRates() const
 {
-    QList< QPair<int,int> > res;
+    QList<QMediaRecorder::FrameRate> res;
     res << qMakePair<int,int>(30,1);
     res << qMakePair<int,int>(25,1);
     res << qMakePair<int,int>(20,1);
@@ -108,7 +108,7 @@ QList< QPair<int,int> > QGstreamerVideoEncode::supportedFrameRates() const
     return res;
 }
 
-void QGstreamerVideoEncode::setFrameRate(const QPair<int,int> &rate)
+void QGstreamerVideoEncode::setFrameRate(const QMediaRecorder::FrameRate &rate)
 {
     m_frameRate = rate;
 }

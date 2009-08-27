@@ -69,7 +69,7 @@ QList<QSize> QVideoEncodeControl::supportedResolutions() const
     return QList<QSize>();
 }
 
-QList< QPair<int,int> > QVideoEncodeControl::supportedFrameRates() const
+QList<QMediaRecorder::FrameRate> QVideoEncodeControl::supportedFrameRates() const
 {
-    return QList< QPair<int,int> >();
+    return QList< QMediaRecorder::FrameRate >();
 }
