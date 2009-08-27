@@ -41,7 +41,7 @@ LocationReceiver::LocationReceiver(QObject *parent)
 {
     QGeoPositionInfoSource *source = QGeoPositionInfoSource::createSource();
     if (!source) {
-        qWarning("No default position source available for this system!");
+        qWarning("There is no default position source available for this system.");
         return;
     }
 
