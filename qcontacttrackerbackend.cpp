@@ -30,11 +30,8 @@
 Live<nco::Role> QContactTrackerEngineData::contactByContext(const QContactDetail& det, const Live<nco::PersonContact>& ncoContact) {
     if (locationContext(det) == ContactContext::Work) {
         // For "work" properties, we need to get the affiliation containing job related contact data
-        // TODO report bug this doesnt work - always return like there something existing  and then not saving anything
-        //Live<nco::Affiliation> role = ncoContact->getHasAffiliation();
-        Live<nco::Affiliation> role = ncoContact->addHasAffiliation(); // add always until fixed in other API
-        // apparently this line always adds only one, if none existing, so no problems
-        return role;
+        // #135682 bug this doesnt work - always return like there something existing  and then not saving anything
+        return ncoContact->getHasAffiliation();
     } else {   // Assume home context.
         // Tracker will return the same contact as we are editing - we want to add "home" properties to it.
         return ncoContact;
@@ -248,7 +245,7 @@ bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
         return false;
     }
 
-    RDFTransactionPtr transaction = RDFTransactionPtr();//::tracker()->initiateTransaction();
+    RDFTransactionPtr transaction = RDFTransactionPtr();// still segfaults with 1.6.0.1 ::tracker()->initiateTransaction();
 
     RDFServicePtr service;
     if(transaction)
