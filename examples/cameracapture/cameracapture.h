@@ -83,9 +83,6 @@ private:
     QCamera *camera;
     QMediaMetadata *metadata;
     QAudioInputDeviceControl *audioDevice;
-    QAudioEncodeControl *audioEncodeControl;
-    QVideoEncodeControl *videoEncodeControl;
-    QMediaFormatControl *formatControl;
 };
 
 #endif
