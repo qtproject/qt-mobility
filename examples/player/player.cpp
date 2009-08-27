@@ -159,11 +159,9 @@ void Player::open()
 
     foreach (QString const &fileName, fileNames) {
 #ifndef Q_OS_WIN
-        playlist->appendItem(
-                QMediaResource(QUrl(QLatin1String("file://") + fileName)));
+        playlist->appendItem(QMediaSource(QUrl(QLatin1String("file://") + fileName)));
 #else
-        playlist->appendItem(
-                QMediaResource(QUrl(QLatin1String("file:///") + fileName)));
+        playlist->appendItem(QMediaSource(QUrl(QLatin1String("file:///") + fileName)));
 #endif
     }
 }
