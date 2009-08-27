@@ -127,14 +127,14 @@ QCameraExposureControl::~QCameraExposureControl()
 
 
 /*!
-  \fn double QCameraExposureControl::exposureCompensation() const
+  \fn qreal QCameraExposureControl::exposureCompensation() const
 
   Returns the exposure compensation in EV.
 */
 
 
 /*!
-  \fn void QCameraExposureControl::setExposureCompensation(double ev)
+  \fn void QCameraExposureControl::setExposureCompensation(qreal ev)
 
   Set the exposure compensation to \a ev
 */
@@ -188,21 +188,21 @@ Set the metering mode to \a mode.
 
 
 /*!
-  \fn double QCameraExposureControl::aperture() const
+  \fn qreal QCameraExposureControl::aperture() const
 
   Returns the aperture
 */
 
 
 /*!
-  \fn QPair<double, double> QCameraExposureControl::supportedApertureRange() const
+  \fn QPair<qreal, qreal> QCameraExposureControl::supportedApertureRange() const
 
   Returns the supported aperture ranges.
 */
 
 
 /*!
-  \fn void QCameraExposureControl::setManualAperture(double aperture)
+  \fn void QCameraExposureControl::setManualAperture(qreal aperture)
 
   Set the aperture to \a aperture
 */
@@ -217,21 +217,21 @@ Set the metering mode to \a mode.
 
 
 /*!
-  \fn double QCameraExposureControl::shutterSpeed() const
+  \fn qreal QCameraExposureControl::shutterSpeed() const
 
   Returns the shutter speed
 */
 
 
 /*!
-  \fn QPair<double, double> QCameraExposureControl::supportedShutterSpeedRange() const
+  \fn QPair<qreal, qreal> QCameraExposureControl::supportedShutterSpeedRange() const
 
   Returns the available shutter speed ranges.
 */
 
 
 /*!
-  \fn void QCameraExposureControl::setManualShutterSpeed(double seconds)
+  \fn void QCameraExposureControl::setManualShutterSpeed(qreal seconds)
 
   Set the shutter speed to \a seconds
 */

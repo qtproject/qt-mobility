@@ -125,21 +125,21 @@ QCameraFocusControl::~QCameraFocusControl()
 
 
 /*!
-  \fn double QCameraFocusControl::maximumOpticalZoom() const
+  \fn qreal QCameraFocusControl::maximumOpticalZoom() const
 
   Returns the maximum optical zoom
 */
 
 
 /*!
-  \fn double QCameraFocusControl::maximumDigitalZoom() const
+  \fn qreal QCameraFocusControl::maximumDigitalZoom() const
 
   Return the maximum digital zoom
 */
 
 
 /*!
-  double QCameraFocusControl::zoomValue() const
+  qreal QCameraFocusControl::zoomValue() const
 
   Return the zoom value.
 */
@@ -172,7 +172,7 @@ QCameraFocusControl::~QCameraFocusControl()
 
 
 /*!
-    \fn void QCameraFocusControl::zoomValueChanged(double zoom)
+    \fn void QCameraFocusControl::zoomValueChanged(qreal zoom)
 
     Signal emitted when \a zoom value changed.
 */

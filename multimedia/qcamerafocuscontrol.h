@@ -56,9 +56,9 @@ public:
     virtual bool isMacroFocusingSupported() const = 0;
     virtual void setMacroFocusingEnabled(bool) = 0;
 
-    virtual double maximumOpticalZoom() const = 0;
-    virtual double maximumDigitalZoom() const = 0;
-    virtual double zoomValue() const = 0;
+    virtual qreal maximumOpticalZoom() const = 0;
+    virtual qreal maximumDigitalZoom() const = 0;
+    virtual qreal zoomValue() const = 0;
     virtual void zoomTo(int value) = 0;
 
     virtual bool isFocusLocked() const = 0;
@@ -68,7 +68,7 @@ public Q_SLOTS:
     virtual void unlockFocus() = 0;
 
 Q_SIGNALS:
-    void zoomValueChanged(double);
+    void zoomValueChanged(qreal);
     void focusLocked();
 
 protected:

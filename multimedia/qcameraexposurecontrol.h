@@ -56,8 +56,8 @@ public:
     virtual void setExposureMode(QCamera::ExposureMode mode) = 0;
     virtual QCamera::ExposureModes supportedExposureModes() const = 0;
 
-    virtual double exposureCompensation() const = 0;
-    virtual void setExposureCompensation(double ev) = 0;
+    virtual qreal exposureCompensation() const = 0;
+    virtual void setExposureCompensation(qreal ev) = 0;
 
     virtual QCamera::MeteringMode meteringMode() const = 0;
     virtual void setMeteringMode(QCamera::MeteringMode mode) = 0;
@@ -68,14 +68,14 @@ public:
     virtual void setManualIsoSensitivity(int iso) = 0;
     virtual void setAutoIsoSensitivity() = 0;
 
-    virtual double aperture() const = 0;
-    virtual QPair<double, double> supportedApertureRange() const = 0;
-    virtual void setManualAperture(double aperture) = 0;
+    virtual qreal aperture() const = 0;
+    virtual QPair<qreal, qreal> supportedApertureRange() const = 0;
+    virtual void setManualAperture(qreal aperture) = 0;
     virtual void setAutoAperture() = 0;
 
-    virtual double shutterSpeed() const = 0;
-    virtual QPair<double, double> supportedShutterSpeedRange() const = 0;
-    virtual void setManualShutterSpeed(double seconds) = 0;
+    virtual qreal shutterSpeed() const = 0;
+    virtual QPair<qreal, qreal> supportedShutterSpeedRange() const = 0;
+    virtual void setManualShutterSpeed(qreal seconds) = 0;
     virtual void setAutoShutterSpeed() = 0;
 
     virtual bool isExposureLocked() const = 0;

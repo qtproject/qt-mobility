@@ -164,8 +164,8 @@ public:
     void setExposureMode(ExposureMode mode);
     ExposureModes supportedExposureModes() const;
 
-    double exposureCompensation() const;
-    void setExposureCompensation(double ev);
+    qreal exposureCompensation() const;
+    void setExposureCompensation(qreal ev);
 
     MeteringMode meteringMode() const;
     void setMeteringMode(MeteringMode mode);
@@ -182,19 +182,19 @@ public:
     void setManualIsoSensitivity(int iso);
     void setAutoIsoSensitivity();
 
-    double aperture() const;
-    QPair<double, double> supportedApertureRange() const;
-    void setManualAperture(double aperture);
+    qreal aperture() const;
+    QPair<qreal, qreal> supportedApertureRange() const;
+    void setManualAperture(qreal aperture);
     void setAutoAperture();
 
-    double shutterSpeed() const;
-    QPair<double, double> supportedShutterSpeedRange() const;
-    void setManualShutterSpeed(double seconds);
+    qreal shutterSpeed() const;
+    QPair<qreal, qreal> supportedShutterSpeedRange() const;
+    void setManualShutterSpeed(qreal seconds);
     void setAutoShutterSpeed();
 
-    double maximumOpticalZoom() const;
-    double maximumDigitalZoom() const;
-    double zoomValue() const;
+    qreal maximumOpticalZoom() const;
+    qreal maximumDigitalZoom() const;
+    qreal zoomValue() const;
     void zoomTo(int value);
 
     bool isExposureLocked() const;
@@ -210,7 +210,7 @@ public Q_SLOTS:
 Q_SIGNALS:
     void flashReady(bool);
     void focusStatusChanged(FocusStatus);
-    void zoomValueChanged(double);
+    void zoomValueChanged(qreal);
     void exposureLocked();
     void focusLocked();
 

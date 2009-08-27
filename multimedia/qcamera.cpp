@@ -87,7 +87,7 @@ QCamera::QCamera(QAbstractMediaService *service, QObject *parent)
         if (d->focusControl) {
             connect(d->focusControl, SIGNAL(focusStatusChanged(QCamera::FocusStatus)),
                     this, SIGNAL(focusStatusChanged(QCamera::FocusStatus)));
-            connect(d->focusControl, SIGNAL(zoomValueChanged(double)), this, SIGNAL(zoomValueChanged(double)));
+            connect(d->focusControl, SIGNAL(zoomValueChanged(qreal)), this, SIGNAL(zoomValueChanged(qreal)));
             connect(d->focusControl, SIGNAL(focusLocked()), this, SIGNAL(focusLocked()));
         }
     } else {
@@ -375,7 +375,7 @@ QCamera::ExposureModes QCamera::supportedExposureModes() const
     Returns the exposure compensation.
 */
 
-double QCamera::exposureCompensation() const
+qreal QCamera::exposureCompensation() const
 {
     return d_func()->exposureControl ? d_func()->exposureControl->exposureCompensation() : 0;
 }
@@ -384,7 +384,7 @@ double QCamera::exposureCompensation() const
     Sets the exposure compensation to \a ev
 */
 
-void QCamera::setExposureCompensation(double ev)
+void QCamera::setExposureCompensation(qreal ev)
 {
     if (d_func()->exposureControl)
         d_func()->exposureControl->setExposureCompensation(ev);
@@ -507,7 +507,7 @@ void QCamera::setAutoIsoSensitivity()
     Returns the current aperture.
 */
 
-double QCamera::aperture() const
+qreal QCamera::aperture() const
 {
     return d_func()->exposureControl ? d_func()->exposureControl->aperture() : -1.0;
 }
@@ -516,16 +516,16 @@ double QCamera::aperture() const
     Returns the supported aperture ranges available.
 */
 
-QPair<double, double> QCamera::supportedApertureRange() const
+QPair<qreal, qreal> QCamera::supportedApertureRange() const
 {
-    return d_func()->exposureControl ? d_func()->exposureControl->supportedApertureRange() : qMakePair<double,double>(-1,-1);
+    return d_func()->exposureControl ? d_func()->exposureControl->supportedApertureRange() : qMakePair<qreal,qreal>(-1,-1);
 }
 
 /*!
     Sets the aperture to \a aperture
 */
 
-void QCamera::setManualAperture(double aperture)
+void QCamera::setManualAperture(qreal aperture)
 {
     if (d_func()->exposureControl)
         d_func()->exposureControl->setManualAperture(aperture);
@@ -545,7 +545,7 @@ void QCamera::setAutoAperture()
     Return the current shutter speed.
 */
 
-double QCamera::shutterSpeed() const
+qreal QCamera::shutterSpeed() const
 {
     return d_func()->exposureControl ? d_func()->exposureControl->shutterSpeed() : -1;
 }
@@ -554,16 +554,16 @@ double QCamera::shutterSpeed() const
     Return the shutter speed ranges available.
 */
 
-QPair<double, double> QCamera::supportedShutterSpeedRange() const
+QPair<qreal, qreal> QCamera::supportedShutterSpeedRange() const
 {
-    return d_func()->exposureControl ? d_func()->exposureControl->supportedShutterSpeedRange() : qMakePair<double,double>(-1,-1);
+    return d_func()->exposureControl ? d_func()->exposureControl->supportedShutterSpeedRange() : qMakePair<qreal,qreal>(-1,-1);
 }
 
 /*!
     Set the shutter speed to \a seconds
 */
 
-void QCamera::setManualShutterSpeed(double seconds)
+void QCamera::setManualShutterSpeed(qreal seconds)
 {
     if (d_func()->exposureControl)
         d_func()->exposureControl->setManualShutterSpeed(seconds);
@@ -583,7 +583,7 @@ void QCamera::setAutoShutterSpeed()
     Returns the maximum optical zoom
 */
 
-double QCamera::maximumOpticalZoom() const
+qreal QCamera::maximumOpticalZoom() const
 {
     return d_func()->focusControl ? d_func()->focusControl->maximumOpticalZoom() : 1.0;
 }
@@ -592,7 +592,7 @@ double QCamera::maximumOpticalZoom() const
     Returns the maximum digital zoom
 */
 
-double QCamera::maximumDigitalZoom() const
+qreal QCamera::maximumDigitalZoom() const
 {
     return d_func()->focusControl ? d_func()->focusControl->maximumDigitalZoom() : 1.0;
 }
@@ -601,7 +601,7 @@ double QCamera::maximumDigitalZoom() const
     Returns the current zoom.
 */
 
-double QCamera::zoomValue() const
+qreal QCamera::zoomValue() const
 {
     return d_func()->focusControl ? d_func()->focusControl->zoomValue() : 1.0;
 }
@@ -780,7 +780,7 @@ QAbstractMediaService* createCameraService(QMediaServiceProvider *provider)
 */
 
 /*!
-    \fn void QCamera::zoomValueChanged(double value)
+    \fn void QCamera::zoomValueChanged(qreal value)
 
     Signal emitted when zoom value changes to new \a value.
 */
