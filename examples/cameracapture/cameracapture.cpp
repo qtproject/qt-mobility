@@ -150,7 +150,7 @@ CameraCapture::CameraCapture(QWidget *parent) :
     }
 
     metadata = new QMediaMetadata(camera);
-    metadata->setMetadata("title", QVariant(QLatin1String("Test Title")));
+    metadata->setMetadata(QMediaMetadata::Title, QVariant(QLatin1String("Test Title")));
 
 #ifdef USE_VIDEOWIDGET
     QWidget *videoWidget = new QVideoWidget(mediaRecorder);
