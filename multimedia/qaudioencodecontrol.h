@@ -89,6 +89,12 @@ public:
     virtual QVariant encodingOption(const QString &name) const;
     virtual void setEncodingOption(const QString &name, const QVariant &value);
 
+signals:
+    void audioFormatChanged(const QAudioFormat &format);
+    void audioCodecChanged(const QString &codecName);
+    void audioBitrateChanged(int bitrate);
+    void audioQualityChanged(qreal quality);
+
 protected:
     QAudioEncodeControl(QObject *parent);
 };

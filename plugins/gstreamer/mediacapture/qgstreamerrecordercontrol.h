@@ -54,11 +54,6 @@ public:
 
     qint64 duration() const;
 
-signals:
-    void stateChanged(QMediaRecorder::State state);
-    void durationChanged(qint64 duration);
-    void error(int error, const QString &errorString);
-
 public slots:
     void record();
     void pause();
