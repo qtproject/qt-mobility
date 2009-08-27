@@ -61,6 +61,16 @@ public:
     int cacheSize() const;
     bool setCacheSize(int size);
 
+    enum AsynchronousRequestPolicy {
+        CancelOnCacheUpdatePolicy = 0,      // cancel old requests whenever a cache update should occur
+        CancelOnCacheMissPolicy,            // cancel if old centrepoint outside current cache window
+        CancelOnCompleteCacheMissPolicy,    // cancel if no overlap between request and current cache windows
+        NeverCancelPolicy                   // never cancel old requests
+    };
+
+    AsynchronousRequestPolicy requestPolicy() const;
+    void setRequestPolicy(AsynchronousRequestPolicy policy = CancelOnCacheMissPolicy);
+
     QString relevantDefinitionName() const;
     QString relevantFieldName() const;
     bool setRelevantDetailDefinitionAndFieldNames(const QString& definitionName = QContactPhoneNumber::DefinitionName, const QString& fieldName = QContactPhoneNumber::FieldNumber);

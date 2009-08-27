@@ -49,15 +49,19 @@
 #include "qtcontactsglobal.h"
 #include "qcontactphonenumber.h"
 
+#include "qcontactlistmodel.h"
+
 #include <QSharedData>
 #include <QMap>
 
+class QContactAbstractRequest;
 class QContactListModelPrivate : public QSharedData
 {
 public:
     QContactListModelPrivate()
             : QSharedData(),
             m_manager(0),
+            m_requestPolicy(QContactListModel::CancelOnCacheMissPolicy),
             m_halfCacheSize(10),
             m_quarterCacheSize(5),
             m_lastCacheCentreRow(-1),
@@ -73,11 +77,13 @@ public:
             m_idsToRows(other.m_idsToRows),
             m_rowsToIds(other.m_rowsToIds),
             m_manager(other.m_manager),
+            m_requestPolicy(other.m_requestPolicy),
             m_halfCacheSize(other.m_halfCacheSize),
             m_quarterCacheSize(other.m_quarterCacheSize),
             m_cache(other.m_cache),
             m_lastCacheCentreRow(other.m_lastCacheCentreRow),
             m_currentRow(other.m_currentRow),
+            m_requestCentreRows(other.m_requestCentreRows),
             m_relevantDefinitionName(other.m_relevantDefinitionName),
             m_relevantFieldName(other.m_relevantFieldName),
             m_idRequest(other.m_idRequest)
@@ -92,11 +98,13 @@ public:
     QMap<int, QUniqueId> m_rowsToIds;
 
     QContactManager* m_manager;
+    QContactListModel::AsynchronousRequestPolicy m_requestPolicy;
     int m_halfCacheSize;
     int m_quarterCacheSize;
     mutable QMap<int, QContact> m_cache;
     mutable int m_lastCacheCentreRow;
     mutable int m_currentRow;
+    mutable QMap<QContactAbstractRequest*, int> m_requestCentreRows;
 
     QString m_relevantDefinitionName;
     QString m_relevantFieldName;

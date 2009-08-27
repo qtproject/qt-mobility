@@ -13,7 +13,6 @@ QContactListModel::QContactListModel(QContactManager* manager, int cacheSize)
 {
     setCacheSize(cacheSize);
     setManager(manager);
-    backendChanged(); // kick off request for ids.
 }
 
 QContactListModel::~QContactListModel()
@@ -29,10 +28,21 @@ QContactManager* QContactListModel::manager() const
 
 void QContactListModel::setManager(QContactManager* manager)
 {
-    // also need to cancel all requests from the old  manager
-    // TODO when we track requests (in a queue or something)
+    // first, cancel and delete any requests made of the old manager
+    QMap<QContactAbstractRequest*, int> updatedRequestCentreRows;
+    QList<QContactAbstractRequest*> requests = d->m_requestCentreRows.keys();
+    for (int i = 0; i < requests.size(); i++) {
+        QContactAbstractRequest* current = requests.at(i);
+        if (current->manager() == d->m_manager) {
+            current->cancel();
+            delete current;
+        } else {
+            updatedRequestCentreRows.insert(current, d->m_requestCentreRows.value(current));
+        }
+    }
+    d->m_requestCentreRows = updatedRequestCentreRows;
 
-    // set up the new manager.
+    // then set up the new manager.
     d->m_manager = manager;
     delete d->m_idRequest;
     d->m_idRequest = new QContactIdFetchRequest;
@@ -43,11 +53,24 @@ void QContactListModel::setManager(QContactManager* manager)
         connect(manager, SIGNAL(contactsChanged(QList<QUniqueId>)), this, SLOT(backendChanged()));
         connect(manager, SIGNAL(contactsRemoved(QList<QUniqueId>)), this, SLOT(backendChanged()));
     }
+
+    // and kick of a request for the ids.
+    backendChanged();
 }
 
 int QContactListModel::cacheSize() const
 {
     return (d->m_halfCacheSize * 2);
+}
+
+QContactListModel::AsynchronousRequestPolicy QContactListModel::requestPolicy() const
+{
+    return d->m_requestPolicy;
+}
+
+void QContactListModel::setRequestPolicy(QContactListModel::AsynchronousRequestPolicy policy)
+{
+    d->m_requestPolicy = policy;
 }
 
 bool QContactListModel::setCacheSize(int size)
@@ -137,12 +160,54 @@ QVariant QContactListModel::data(const QModelIndex& index, int role) const
         } else {
             // we can only cache a window of the entire dataset.
             for (int i = lowerBound; i <= upperBound; i++) {
+                // wrap-around at top and bottom of cache.
                 int rowNumber = i;
                 if (i < 0)
                     rowNumber += d->m_rowsToIds.count();
                 if (i >= d->m_rowsToIds.count())
                     rowNumber -= d->m_rowsToIds.count();
                 newCacheRows.append(rowNumber);
+            }
+        }
+
+        // clean up any old requests depending on policy
+        // please note that this branching is _slow_; might be best to remove it
+        // and just always do the default (cancel on cache centrepoint miss)...
+        if (d->m_requestPolicy != QContactListModel::NeverCancelPolicy) {
+            QList<QContactAbstractRequest*> oldRequests = d->m_requestCentreRows.keys();
+            bool cancelRequest = false;
+
+            // we could pull the conditionals outside the loop for better performance...
+            for (int i = 0; i < oldRequests.size(); i++) {
+                QContactAbstractRequest* current = oldRequests.at(i);
+                if (d->m_requestPolicy == QContactListModel::CancelOnCacheUpdatePolicy) {
+                    // immediately cancel since update is required.
+                    cancelRequest = true;
+                } else if (d->m_requestPolicy == QContactListModel::CancelOnCacheMissPolicy) {
+                    // slow solution... should probably do bounds checking instead of .contains().
+                    if (!newCacheRows.contains(d->m_requestCentreRows.value(current))) {
+                        cancelRequest = true;
+                    }
+                } else {
+                    int cacheSize = d->m_halfCacheSize * 2;
+                    int requestCentre = d->m_requestCentreRows.value(current);
+                    int requestWindowMax = (requestCentre + d->m_halfCacheSize) % cacheSize;
+                    int requestWindowMin = (requestCentre - d->m_halfCacheSize) % cacheSize;
+                    // slow solution... should probably do bounds checking instead of .contains().
+                    if (!newCacheRows.contains(requestWindowMax) && !newCacheRows.contains(requestWindowMin) && !newCacheRows.contains(requestCentre)) {
+                        cancelRequest = true;
+                    }
+                }
+
+                // cancel (and clean up) the request if required by the policy.
+                if (cancelRequest) {
+                    current->cancel();
+                    d->m_requestCentreRows.remove(current);
+                    delete current;
+                }
+
+                // reset the control variable.
+                cancelRequest = false;
             }
         }
 
@@ -333,7 +398,8 @@ void QContactListModel::contactFetchRequestProgress(QContactFetchRequest* reques
     Q_UNUSED(appendOnly);
 
     // first, check to make sure that the request is still valid.
-    if (d->m_manager != request->manager()) {
+    if (d->m_manager != request->manager() || request->status() == QContactAbstractRequest::Cancelled) {
+        d->m_requestCentreRows.remove(request);
         delete request;
         return; // ignore these results.
     }
@@ -352,9 +418,11 @@ void QContactListModel::contactFetchRequestProgress(QContactFetchRequest* reques
         rowMap.insert(fetchedRow, fetchedRow);
     }
 
-    // check to see if the request status is "finished" or "cancelled" - if so, delete the request.
-    if (request->status() == QContactAbstractRequest::Finished || request->status() == QContactAbstractRequest::Cancelled)
+    // check to see if the request status is "finished" - clean up.
+    if (request->status() == QContactAbstractRequest::Finished) {
+        d->m_requestCentreRows.remove(request);
         delete request;
+    }
 
     // emit data changed for those that have changed.
     QList<int> rows = rowMap.keys();
