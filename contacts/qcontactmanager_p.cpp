@@ -263,7 +263,7 @@ QList<QContactAction*> QContactManagerData::actions(const QString& actionName, c
         if (implementationVersion != -1) {
             QMutableSetIterator<int> it(subset);
             while(it.hasNext()) {
-                if (m_descriptors.at(it.next()).vendorVersion() != implementationVersion)
+                if (m_descriptors.at(it.next()).implementationVersion() != implementationVersion)
                     it.remove();
             }
         }

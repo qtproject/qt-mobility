@@ -54,7 +54,7 @@ public:
 
     virtual QString actionName() const = 0;                                 // name of action this instance implements
     virtual QVariantMap metadata() const = 0;                               // label, icon etc
-    virtual QString vendor() const = 0;                                     // vendor identification string
+    virtual QString vendorName() const = 0;                                 // vendor identification string
     virtual int implementationVersion() const = 0;                          // (minor) implementation version
 
     virtual QContactFilter contactFilter(const QVariant& value = QVariant()) const = 0; // use for matching

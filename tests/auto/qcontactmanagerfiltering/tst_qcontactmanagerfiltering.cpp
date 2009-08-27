@@ -2685,7 +2685,7 @@ public:
 
     QString actionName() const {return "Number";}
     QVariantMap metadata() const {return QVariantMap();}
-    virtual QString vendor() const {return "IntegerCo";}
+    virtual QString vendorName() const {return "IntegerCo";}
     virtual int implementationVersion() const {return 5;}
 
     QContactFilter contactFilter(const QVariant& value) const
@@ -2720,7 +2720,7 @@ public:
 
     QString actionName() const {return "Number";}
     QVariantMap metadata() const {return QVariantMap();}
-    virtual QString vendor() const {return "NumberCo";}
+    virtual QString vendorName() const {return "NumberCo";}
     virtual int implementationVersion() const {return 42;}
 
     QContactFilter contactFilter(const QVariant& value) const
@@ -2771,7 +2771,7 @@ public:
 
     QString actionName() const {return "Boolean";}
     QVariantMap metadata() const {return QVariantMap();}
-    QString vendor() const {return "BooleanCo";}
+    QString vendorName() const {return "BooleanCo";}
     int implementationVersion() const {return 3;}
 
     QContactFilter contactFilter(const QVariant& value) const
@@ -2811,7 +2811,7 @@ public:
 
     QString actionName() const {return "Recursive";}
     QVariantMap metadata() const {return QVariantMap();}
-    QString vendor() const {return "RecursiveCo";}
+    QString vendorName() const {return "RecursiveCo";}
     int implementationVersion() const {return 3;}
 
     QContactFilter contactFilter(const QVariant& value) const
@@ -2950,7 +2950,7 @@ public:
         } else if (descriptor.actionName() == "Boolean") {
             return new QBooleanAction;
         } else if (descriptor.actionName() == "Recursive") {
-            if (descriptor.vendorVersion() == 3)
+            if (descriptor.implementationVersion() == 3)
                 return new RecursiveAction;
             else
                 return new AnotherRecursiveAction;

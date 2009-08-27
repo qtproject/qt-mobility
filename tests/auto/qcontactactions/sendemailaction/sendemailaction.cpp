@@ -100,7 +100,7 @@ QVariantMap QContactSendEmailAction::metadata() const
     return QVariantMap();
 }
 
-QString QContactSendEmailAction::vendor() const
+QString QContactSendEmailAction::vendorName() const
 {
     return QString("Test");
 }

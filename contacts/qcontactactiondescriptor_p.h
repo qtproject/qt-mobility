@@ -55,7 +55,7 @@ public:
             : QSharedData(),
             m_actionName(action),
             m_vendorName(vendor),
-            m_vendorVersion(version)
+            m_implementationVersion(version)
     {
     }
 
@@ -72,9 +72,9 @@ public:
             if (m_vendorName < other.m_vendorName)
                 return true;
             else if (m_vendorName == other.m_vendorName) {
-                if (m_vendorVersion < other.m_vendorVersion)
+                if (m_implementationVersion < other.m_implementationVersion)
                     return true;
-                else if (m_vendorVersion == other.m_vendorVersion)
+                else if (m_implementationVersion == other.m_implementationVersion)
                     return this < &other; // equality, try to be stable
             }
         }
@@ -84,7 +84,7 @@ public:
 
     QString m_actionName;
     QString m_vendorName;
-    int m_vendorVersion;
+    int m_implementationVersion;
 };
 
 #endif

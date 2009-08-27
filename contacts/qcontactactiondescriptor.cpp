@@ -91,9 +91,9 @@ void QContactActionDescriptor::setVendorName(const QString& vendorName)
 /*!
  * Sets the vendor-specified implementation version of the action implementation identified by this action descriptor to \a vendorVersion
  */
-void QContactActionDescriptor::setVendorVersion(int vendorVersion)
+void QContactActionDescriptor::setImplementationVersion(int implementationVersion)
 {
-    d->m_vendorVersion = vendorVersion;
+    d->m_implementationVersion = implementationVersion;
 }
 
 /*!
@@ -115,9 +115,9 @@ QString QContactActionDescriptor::vendorName() const
 /*!
  * Returns the vendor-specified version of the action implementation which is identified by the action descriptor
  */
-int QContactActionDescriptor::vendorVersion() const
+int QContactActionDescriptor::implementationVersion() const
 {
-    return d->m_vendorVersion;
+    return d->m_implementationVersion;
 }
 
 /*!
@@ -130,7 +130,7 @@ bool QContactActionDescriptor::isEmpty() const
         return true;
     if (d->m_vendorName.isEmpty())
         return true;
-    if (d->m_vendorVersion <= 0)
+    if (d->m_implementationVersion <= 0)
         return true;
     return false;
 }
@@ -143,5 +143,14 @@ bool QContactActionDescriptor::operator ==(const QContactActionDescriptor& other
 {
     return d->m_actionName == other.d->m_actionName
             && d->m_vendorName == other.d->m_vendorName
-            && d->m_vendorVersion == other.d->m_vendorVersion;
+            && d->m_implementationVersion == other.d->m_implementationVersion;
+}
+
+/*!
+ * Returns true if the action name, vendor name or vendor-specified implementation version
+ * specified by this action descriptor are different to that specified by \a other
+ */
+bool QContactActionDescriptor::operator !=(const QContactActionDescriptor& other) const
+{
+    return !(*this == other);
 }

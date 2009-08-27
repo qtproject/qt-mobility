@@ -72,7 +72,7 @@ QContactAction::~QContactAction()
  */
 
 /*!
- * \fn QContactAction::vendor() const
+ * \fn QContactAction::vendorName() const
  * Returns the identification string of the vendor which has provided this implementation
  */
 
@@ -169,7 +169,7 @@ QContactAction* QContactAction::action(const QContactActionDescriptor& descripto
 {
     // the caller takes ownership
     QContactManagerData::loadFactories();
-    QList<QContactAction*> matching = QContactManagerData::actions(descriptor.actionName(), descriptor.vendorName(), descriptor.vendorVersion());
+    QList<QContactAction*> matching = QContactManagerData::actions(descriptor.actionName(), descriptor.vendorName(), descriptor.implementationVersion());
     if (matching.isEmpty())
         return 0; // no such action.
     return matching.first();

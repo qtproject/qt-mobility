@@ -50,14 +50,15 @@ public:
 
     bool isEmpty() const;
     bool operator ==(const QContactActionDescriptor& other) const;
+    bool operator !=(const QContactActionDescriptor& other) const;
 
     void setActionName(const QString& actionName);
     void setVendorName(const QString& vendorName);
-    void setVendorVersion(int vendorVersion);
+    void setImplementationVersion(int implementationVersion);
 
     QString actionName() const;
     QString vendorName() const;
-    int vendorVersion() const;
+    int implementationVersion() const;
 
 private:
     QSharedDataPointer<QContactActionDescriptorPrivate> d;

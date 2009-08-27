@@ -77,7 +77,7 @@ public:
 
     QString actionName() const;
     QVariantMap metadata() const;
-    virtual QString vendor() const;
+    virtual QString vendorName() const;
     virtual int implementationVersion() const;
 
     QContactFilter contactFilter(const QVariant& value) const;
