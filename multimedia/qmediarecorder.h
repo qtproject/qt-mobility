@@ -108,7 +108,7 @@ public:
     bool isAudioFormatSupported(const QAudioFormat &format) const;
 
     QStringList supportedAudioCodecs() const;
-    QString codecDescription(const QString &codecName) const;
+    QString audioCodecDescription(const QString &codecName) const;
     QString audioCodec() const;
 
     int audioBitrate() const;
