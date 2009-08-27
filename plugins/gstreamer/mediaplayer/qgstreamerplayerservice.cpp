@@ -120,11 +120,11 @@ QString QGstreamerPlayerService::activeEndpoint(QAbstractMediaService::MediaEndp
     }
 }
 
-void QGstreamerPlayerService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const char *interface)
+void QGstreamerPlayerService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint)
 {
     if(endpointType == QAbstractMediaService::VideoOutput) {
         //TODO
-        qWarning()<<"set video output: "<<interface;
+        qWarning()<<"set video output: "<<endpoint;
     }
 }
 

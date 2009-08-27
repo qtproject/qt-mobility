@@ -69,7 +69,7 @@ AudioRecorder::AudioRecorder()
         audioInputs = capture->service()->supportedEndpoints(QAbstractMediaService::AudioInput);
         if(audioInputs.size() > 0) {
             qWarning()<<"FOUND audioInputs: "<<audioInputs;
-            capture->service()->setActiveEndpoint(QAbstractMediaService::AudioInput,audioInputs.first().toLocal8Bit().constData());
+            capture->service()->setActiveEndpoint(QAbstractMediaService::AudioInput,audioInputs.first());
             for(int i = 0; i < audioInputs.size(); ++i) {
                 deviceBox->addItem(audioInputs.at(i));
             }
@@ -155,7 +155,7 @@ void AudioRecorder::stateChanged(QMediaRecorder::State state)
 
 void AudioRecorder::deviceChanged(int idx)
 {
-    capture->service()->setActiveEndpoint(QAbstractMediaService::AudioInput,deviceBox->itemText(idx).toLocal8Bit().constData());
+    capture->service()->setActiveEndpoint(QAbstractMediaService::AudioInput,deviceBox->itemText(idx));
 }
 
 void AudioRecorder::paramsChanged(int idx)

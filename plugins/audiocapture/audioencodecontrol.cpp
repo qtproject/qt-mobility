@@ -42,7 +42,7 @@ QStringList AudioEncodeControl::supportedAudioCodecs() const
     return m_session->supportedAudioCodecs();
 }
 
-QString AudioEncodeControl::codecDescription(const QString &codecName)
+QString AudioEncodeControl::codecDescription(const QString &codecName) const
 {
     if(qstrcmp(codecName.toLocal8Bit().constData(),"audio/x-wav") == 0)
         return QString("wav file format");

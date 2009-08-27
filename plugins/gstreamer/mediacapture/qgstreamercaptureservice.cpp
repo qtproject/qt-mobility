@@ -139,7 +139,7 @@ QString QGstreamerCaptureService::activeEndpoint(QAbstractMediaService::MediaEnd
     return QString();
 }
 
-void QGstreamerCaptureService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const char *interface)
+void QGstreamerCaptureService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint)
 {
     //TODO
 }

@@ -28,34 +28,6 @@ V4LVideoEncode::V4LVideoEncode(QObject *parent)
         m_codecs << "uyvy";
         m_codecDescriptions.insert("uyvy", "uyvy image format");
     }
-
-    /*
-    m_frameRate = qMakePair<int,int>(-1,1);
-
-    QList<QByteArray> codecCandidates;
-    codecCandidates << "x264enc" << "xvidenc" << "ffenc_mpeg4" << "ffenc_mpeg1video" << "ffenc_mpeg2video" << "theoraenc";
-
-    m_codecOptions["x264enc"] = QStringList() << "quality" << "bitrate" << "quantizer";
-    m_codecOptions["xvidenc"] = QStringList() << "quality" << "bitrate" << "quantizer" << "profile";
-    m_codecOptions["ffenc_mpeg4"] = QStringList() << "quality" << "bitrate" << "quantizer";
-    m_codecOptions["ffenc_mpeg1video"] = QStringList() << "quality" << "bitrate" << "quantizer";
-    m_codecOptions["ffenc_mpeg2video"] = QStringList() << "quality" << "bitrate" << "quantizer";
-    m_codecOptions["theoraenc"] = QStringList() << "quality" << "bitrate";
-
-    foreach( const QByteArray& codecName, codecCandidates ) {
-        GstElementFactory *factory = gst_element_factory_find(codecName.constData());
-        if (factory) {
-            m_codecs.append(codecName);
-            const gchar *descr = gst_element_factory_get_description(factory);
-            m_codecDescriptions.insert(codecName, QString::fromUtf8(descr));
-
-            gst_object_unref(GST_OBJECT(factory));
-        }
-    }
-
-    if (!m_codecs.isEmpty())
-        setVideoCodec(m_codecs[0]);
-        */
 }
 
 V4LVideoEncode::~V4LVideoEncode()
@@ -72,8 +44,6 @@ QSize V4LVideoEncode::minimumResolution() const
     QSize minimumSize;
     QList<QSize> sizes = m_session->supportedResolutions();
 
-qWarning()<<minimumSize;
-
     minimumSize = sizes.first();
 
     for(int i=0;i<sizes.size();i++) {
@@ -88,8 +58,6 @@ QSize V4LVideoEncode::maximumResolution() const
 {
     QSize maxSize;
     QList<QSize> sizes = m_session->supportedResolutions();
-
-qWarning()<<maxSize;
 
     maxSize = sizes.first();
 
@@ -107,24 +75,31 @@ void V4LVideoEncode::setResolution(const QSize &r)
     m_session->setFrameSize(r);
 }
 
-QPair<int,int> V4LVideoEncode::frameRate() const
+QMediaRecorder::FrameRate V4LVideoEncode::frameRate() const
 {
     return m_frameRate;
 }
 
-QPair<int,int> V4LVideoEncode::minumumFrameRate() const
+QMediaRecorder::FrameRate V4LVideoEncode::minimumFrameRate() const
 {
     return qMakePair<int,int>(1,1);
 }
 
-QPair<int,int> V4LVideoEncode::maximumFrameRate() const
+QMediaRecorder::FrameRate V4LVideoEncode::maximumFrameRate() const
 {
     return qMakePair<int,int>(1024,1);
 }
 
-void V4LVideoEncode::setFrameRate(QPair<int,int> rate)
+void V4LVideoEncode::setFrameRate(const QMediaRecorder::FrameRate& rate)
 {
     Q_UNUSED(rate)
+}
+
+QList< QMediaRecorder::FrameRate > V4LVideoEncode::supportedFrameRates() const
+{
+    QList<QMediaRecorder::FrameRate> res;
+    res << qMakePair<int,int>(25,1);
+    return res;
 }
 
 

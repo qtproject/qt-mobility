@@ -80,20 +80,29 @@ QAbstractMediaControl *AudioCaptureService::control(const char *name) const
 
 QString AudioCaptureService::activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType)
 {
+    int idx = 0;
+
     switch(endpointType) {
         case QAbstractMediaService::AudioInput:
-            // TODO, get from m_audio
-            return QString("default");
+            idx = m_audio->selectedDevice();
+            return m_audio->name(idx);
         default:
             return QString();
     }
 }
 
-void AudioCaptureService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const char *interface)
+void AudioCaptureService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint)
 {
     if(endpointType == QAbstractMediaService::AudioInput) {
-        qWarning()<<"set capture device to: "<<interface;
-        m_session->setCaptureDevice(interface);
+        qWarning()<<"set capture device to: "<<endpoint;
+        int numDevices = m_audio->deviceCount();
+        for(int i=0;i<numDevices;i++) {
+            if(qstrcmp(endpoint.toLocal8Bit().constData(),m_audio->name(i).toLocal8Bit().constData()) == 0) {
+                m_session->setCaptureDevice(endpoint);
+                m_audio->setSelectedDevice(i);
+                break;
+            }
+        }
     }
 }
 
@@ -103,7 +112,7 @@ QList<QString> AudioCaptureService::supportedEndpoints(QAbstractMediaService::Me
     if(endpointType == QAbstractMediaService::AudioInput) {
         int numDevices = m_audio->deviceCount();
         for(int i=0;i<numDevices;i++)
-            list.append(m_audio->name(i).toLocal8Bit().constData());
+            list.append(m_audio->name(i));
     }
     return list;
 }

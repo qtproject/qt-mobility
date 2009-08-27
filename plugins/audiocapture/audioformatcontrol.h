@@ -50,7 +50,7 @@ public:
     virtual QString format() const { return m_format; }
     virtual void setFormat(const QString &formatMimeType) { m_format = formatMimeType; }
 
-    virtual QString formatDescription(const QString &formatMimeType) { return m_formatDescriptions.value(formatMimeType); }
+    virtual QString formatDescription(const QString &formatMimeType) const { return m_formatDescriptions.value(formatMimeType); }
 
 private:
     QString m_format;

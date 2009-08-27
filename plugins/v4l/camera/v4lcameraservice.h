@@ -61,7 +61,7 @@ public:
     QIODevice* outputStream() const { return 0; };
 
     QString activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType);
-    void setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const char *interface);
+    void setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint);
     QList<QString> supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const;
 
     QAbstractMediaControl *control(const char *name) const;

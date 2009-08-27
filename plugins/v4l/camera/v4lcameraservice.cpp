@@ -93,9 +93,9 @@ QString V4LCameraService::activeEndpoint(QAbstractMediaService::MediaEndpoint en
     return m_device;
 }
 
-void V4LCameraService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const char *interface)
+void V4LCameraService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint)
 {
-    m_device = QByteArray(interface);
+    m_device = QByteArray(endpoint.toLocal8Bit().constData());
     m_session->setDevice(m_device);
 }
 
