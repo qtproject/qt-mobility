@@ -181,17 +181,48 @@ QTrackerContactAsyncRequest::QTrackerContactAsyncRequest(
             RDFVariable RDFContact1 = RDFVariable::fromType<nco::PersonContact>();
             applyFilterToRDFVariable(RDFContact1, r->filter());
             RDFSelect quer;
-            quer.addColumn("contactId",  RDFContact1.property<nco::contactUID> ());
+            quer.addColumn("contactId",  RDFContact1.property<nco::contactUID>());
             quer.addColumn("firstname",  RDFContact1.optional().property<nco::nameGiven>());
-            quer.addColumn("secondname", RDFContact1.optional().property<nco::nameFamily> ());
-            quer.addColumn("photo",      RDFContact1.optional().property<nco::photo> ());
+            quer.addColumn("secondname", RDFContact1.optional().property<nco::nameFamily>());
+            quer.addColumn("photo",      RDFContact1.optional().property<nco::photo>());
 
 
+            // for now adding columns to main query. later separate queries
             if (r->definitionRestrictions().contains(QContactEmailAddress::DefinitionName))
             {
-                // constraints for start: reading only one of items
                 quer.addColumn("email", RDFContact.optional().property<nco::hasEmailAddress>().property<nco::emailAddress>());
             }
+            if (r->definitionRestrictions().contains(QContactUrl::DefinitionName))
+            {
+                quer.addColumn("homepage", RDFContact.optional().property<nco::websiteUrl>());
+            }
+            if (r->definitionRestrictions().contains(QContactBirthday::DefinitionName))
+            {
+                quer.addColumn("birth", RDFContact.optional().property<nco::birthDate>());
+            }
+            if (r->definitionRestrictions().contains(QContactGender::DefinitionName))
+            {
+                quer.addColumn("gender", RDFContact.optional().property<nco::gender>());
+            }
+            if (r->definitionRestrictions().contains(QContactOrganisation::DefinitionName))
+            {
+                RDFVariable rdforg = RDFContact.optional().property<nco::hasAffiliation>().optional().property<nco::org>();
+                quer.addColumn("org", rdforg.optional().property<nco::fullname>());
+                quer.addColumn("logo", rdforg.optional().property<nco::logo>());
+            }
+            if (r->definitionRestrictions().contains(QContactAddress::DefinitionName))
+            {
+                RDFVariable address = RDFContact.optional().property<nco::addressLocation>();
+                quer.addColumn("street", address.optional().property<nco::streetAddress>());
+                quer.addColumn("city", address.optional().property<nco::locality>());
+                quer.addColumn("country", address.optional().property<nco::country>());
+                quer.addColumn("pcode", address.optional().property<nco::postalcode>());
+                quer.addColumn("reg", address.optional().property<nco::region>());
+            }
+
+            // QContactAnniversary - no such thing in tracker
+            // QContactGeolocation - nco:hasLocation is not having class defined in nco yet. no properties. maybe rdfs:Resource:label
+
 
             // supporting sorting only here, difficult and no requirements in UI for sorting in multivalue details (phones, emails)
             addSortingPartToRDFSelectQuery( quer, RDFContact1, r->sorting());
@@ -256,13 +287,74 @@ void QTrackerContactAsyncRequest::contactsReady()
 
         QContactAvatar avatar;
         avatar.setAvatar(query->index(i, column++).data().toString());
-        contact.saveDetail(&avatar);
+        if( avatar.avatar().isEmpty() )
+            contact.saveDetail(&avatar);
 
+        // TODO extract generic from bellow ... mapping field names
         if (request->definitionRestrictions().contains(QContactEmailAddress::DefinitionName))
         {
+            // no office mails yet
             QContactEmailAddress mail; // constraint here for start only one email
             mail.setEmailAddress(query->index(i, column++).data().toString());
-            contact.saveDetail(&mail);
+            if( mail.emailAddress().isEmpty() )
+                contact.saveDetail(&mail);
+        }
+        if (request->definitionRestrictions().contains(QContactUrl::DefinitionName))
+        {
+            QContactUrl url;
+            url.setUrl(query->index(i, column++).data().toString());
+            if(!url.url().isEmpty())
+                contact.saveDetail(&url);
+        }
+        if (request->definitionRestrictions().contains(QContactBirthday::DefinitionName))
+        {
+            QVariant var = query->index(i, column++).data();
+            if( !var.toString().isEmpty() /* enable reading wrong && var.toDate().isValid()*/)
+            {
+                QContactBirthday birth;
+                birth.setDate(var.toDate());
+                contact.saveDetail(&birth);
+            }
+        }
+        if (request->definitionRestrictions().contains(QContactGender::DefinitionName))
+        {
+            QString var = query->index(i, column++).data().toString();
+            if( !var.isEmpty() )
+            {
+                QContactGender g;
+                g.setGender(var);
+                contact.saveDetail(&g);
+            }
+        }
+        if (request->definitionRestrictions().contains(QContactOrganisation::DefinitionName))
+        {
+            QString org = query->index(i, column++).data().toString();
+            QString logo = query->index(i, column++).data().toString();
+            if( !( org.isEmpty() && logo.isEmpty()) )
+            {
+                QContactOrganisation o;
+                o.setDisplayLabel(org);
+                o.setLogo(logo);
+                contact.saveDetail(&o);
+            }
+        }
+        if (request->definitionRestrictions().contains(QContactAddress::DefinitionName))
+        {
+            QString street = query->index(i, column++).data().toString();
+            QString loc = query->index(i, column++).data().toString();
+            QString country = query->index(i, column++).data().toString();
+            QString pcode = query->index(i, column++).data().toString();
+            QString region = query->index(i, column++).data().toString();
+            if (!(country.isEmpty() && pcode.isEmpty() && region.isEmpty()
+                    && street.isEmpty() && loc.isEmpty()))
+            {
+                QContactAddress a;
+                a.setStreet(street);
+                a.setLocality(loc);
+                a.setCountry(country);
+                a.setPostcode(pcode);
+                a.setRegion(region);
+            }
         }
         result.append(contact);
     }
