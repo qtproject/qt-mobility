@@ -38,17 +38,17 @@ public slots:
 
 private:
     // fills received phone number from tracker to list of contacts to QContactPhoneMumber details
-    void processQueryPhoneNumbers(SopranoLive::LiveNodes queryPhoneNumbers, QList<QContact>& contacts);
-    void processQueryIMAccounts(SopranoLive::LiveNodes queryIMAccounts, QList<QContact>& contacts);
+    void processQueryPhoneNumbers(SopranoLive::LiveNodes queryPhoneNumbers, QList<QContact>& contacts, bool officeStuff);
+    void processQueryIMAccounts(SopranoLive::LiveNodes queryIMAccounts, QList<QContact>& contacts, bool officeStuff);
 
 protected:
     QContactAbstractRequest* req;
     SopranoLive::LiveNodes query;
 
-    SopranoLive::LiveNodes queryPhoneNumbersNodes;
-    bool queryPhoneNumbersNodesReady; // remove after figuring out how to check if data in LiveNodes is updated
-    SopranoLive::LiveNodes queryIMAccountNodes;
-    bool queryIMAccountNodesReady; // remove after figuring out how to check if data in LiveNodes is updated
+    QList<SopranoLive::LiveNodes> queryPhoneNumbersNodes; // 2 - one for affiliations and another one for PersonContact
+    int queryPhoneNumbersNodesReady; // remove after figuring out how to check if data in LiveNodes is updated
+    QList<SopranoLive::LiveNodes> queryIMAccountNodes; // 2 - one for affiliations and another one for PersonContact
+    int queryIMAccountNodesReady; // remove after figuring out how to check if data in LiveNodes is updated
 
 };
 

@@ -271,22 +271,21 @@ bool Tracker2QContact::copyContactData(const Live<nco::PersonContact>& ncoContac
 
     LiveNodes affiliations = ncoContact->getHasAffiliations();
     foreach( const Live<nco::Affiliation>& affiliation, affiliations ) {
-        Live<nco::OrganizationContact> org = affiliation->getOrg();
-        LiveNodes addresses = org->getHasPostalAddresss();//Work addresses
+        LiveNodes addresses = affiliation->getHasPostalAddresss();//Work addresses
         foreach( const Live<nco::PostalAddress>& address, addresses ) {
             QContactAddress detail;
             copyDetailData(address, detail);
             detail.setAttribute(QContactAddress::AttributeContext, QContactAddress::AttributeContextWork);
             qcontact.saveDetail(&detail);
         }
-        LiveNodes phoneNumbers = org->getHasPhoneNumbers(); //Work phone
+        LiveNodes phoneNumbers = affiliation->getHasPhoneNumbers(); //Work phone
         foreach( const Live<nco::PhoneNumber>& phoneNumber, phoneNumbers) {
             QContactPhoneNumber detail;
             copyDetailData(phoneNumber, detail);
             detail.setAttribute(QContactPhoneNumber::AttributeContext, QContactPhoneNumber::AttributeContextWork);
             qcontact.saveDetail(&detail);
         }
-        LiveNodes emailAddresses = org->getHasEmailAddresss(); //Work email addresses
+        LiveNodes emailAddresses = affiliation->getHasEmailAddresss(); //Work email addresses
         foreach( const Live<nco::EmailAddress>& ncoEmail, emailAddresses) {
             QContactEmailAddress detail;
             copyDetailData(ncoEmail, detail);
@@ -294,16 +293,7 @@ bool Tracker2QContact::copyContactData(const Live<nco::PersonContact>& ncoContac
             detail.setAttribute(QContactEmailAddress::AttributeSubType, QContactEmailAddress::AttributeSubTypeInternet);
             qcontact.saveDetail(&detail);
         }
-        foreach( Live<nfo::FileDataObject> fdo, org->getPhotos() ) //Work avatars
-        {
-            if( fdo != 0 ) {
-                QContactAvatar detail;
-                copyDetailData(fdo, detail);
-                detail.setAttribute(QContactAvatar::AttributeContext, QContactAvatar::AttributeContextWork);
-                qcontact.saveDetail(&detail);
-            }
-        }
-        foreach( Live< rdfs::Resource > url, org->getUrls() ) { //Work homepage urls
+        foreach( Live< rdfs::Resource > url, affiliation->getUrls() ) { //Work homepage urls
             QContactUrl detail;
             copyDetailData(url, detail);
             detail.setAttribute(QContactUrl::AttributeContext, QContactUrl::AttributeContextWork);

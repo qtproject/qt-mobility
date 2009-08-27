@@ -27,16 +27,14 @@
 
 #include "tracker2qcontact.h"
 
-Live<nco::Contact> QContactTrackerEngineData::contactByContext(const QContactDetail& det, const Live<nco::PersonContact>& ncoContact) {
-    // Our contact node - this can either be an OrganizationContact or PersonContact depending on
-    // if we are saving a work or home phone number.
-    Live<nco::Contact> contact;
-
+Live<nco::Role> QContactTrackerEngineData::contactByContext(const QContactDetail& det, const Live<nco::PersonContact>& ncoContact) {
     if (locationContext(det) == ContactContext::Work) {
-        // For "work" properties, we need to get the affiliation relationship and the OrganizationContact from that.
-        // Tracker will create new nodes for us if these don't already exist.
-        Live<nco::Affiliation> aff = ncoContact->getHasAffiliation();
-        return contact = aff->getOrg();
+        // For "work" properties, we need to get the affiliation containing job related contact data
+        // TODO report bug this doesnt work - always return like there something existing  and then not saving anything
+        //Live<nco::Affiliation> role = ncoContact->getHasAffiliation();
+        Live<nco::Affiliation> role = ncoContact->addHasAffiliation(); // add always until fixed in other API
+        // apparently this line always adds only one, if none existing, so no problems
+        return role;
     } else {   // Assume home context.
         // Tracker will return the same contact as we are editing - we want to add "home" properties to it.
         return ncoContact;
@@ -44,9 +42,9 @@ Live<nco::Contact> QContactTrackerEngineData::contactByContext(const QContactDet
 }
 
 ContactContext::Location QContactTrackerEngineData::locationContext(const QContactDetail& det) const {
-    if (det.attributes().value(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextHome)) {
+    if (det.attribute(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextHome)) {
         return ContactContext::Home;
-    } else if(det.attributes().value(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextWork)) {
+    } else if(det.attribute(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextWork)) {
         return ContactContext::Work;
     }
     return ContactContext::Unknown;
@@ -315,7 +313,7 @@ bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
         /* Save address data */
         } else if(definition == QContactAddress::DefinitionName) {
             // OrganizationContact or PersonalContact depending on the context
-            Live<nco::Contact> contact = d->contactByContext(det, ncoContact);
+            Live<nco::Role> contact = d->contactByContext(det, ncoContact);
             Live<nco::PostalAddress> ncoPostalAddress = contact->getHasPostalAddress();
 
             // Found the correct address resource. Now update the data.
@@ -331,13 +329,13 @@ bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
             QString phoneNumber = det.value(QContactPhoneNumber::FieldNumber);
 
             // OrganizationContact or PersonalContact depending on the context
-            Live<nco::Contact> contact = d->contactByContext(det, ncoContact);
+            Live<nco::Role> contact = d->contactByContext(det, ncoContact);
 
             // Get all existing phone numbers from the Contact node.
             LiveNodes numbers = contact->getHasPhoneNumbers();
 
             // Save mobile phone number.
-            if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactPhoneNumber::AttributeSubTypeMobile)) {
+            if (det.attribute(QContactDetail::AttributeSubType).contains(QContactPhoneNumber::AttributeSubTypeMobile)) {
                 Live<nco::CellPhoneNumber> number = d->nodeByClasstype<nco::CellPhoneNumber>(numbers);
                 // TODO previous doesnt work - nodeByClasstype was supposed to create multiple new nodes but it always return existing.
                 if(!number.isLive()) {
@@ -356,7 +354,7 @@ bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
         /* Save emails */
         } else if(definition == QContactEmailAddress::DefinitionName) {
             QString email = det.value(QContactEmailAddress::FieldEmailAddress);
-            Live<nco::Contact> contact = d->contactByContext(det, ncoContact);
+            Live<nco::Role> contact = d->contactByContext(det, ncoContact);
 
             // TODO: Known issue: we support only one of each type at the moment.
             //       We should somehow get a notification from UI if we are adding
@@ -369,13 +367,12 @@ bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
         /* Save avatar */
         } else if(definition == QContactAvatar::DefinitionName) {
             QUrl avatar = det.value(QContactAvatar::FieldAvatar);
-            Live<nco::Contact> contact = d->contactByContext(det, ncoContact);
             Live<nie::DataObject> fdo = service->liveNode( avatar );
-            contact->setPhoto(fdo);
+            ncoContact->setPhoto(fdo);
         /* Save url */
         } else if(definition == QContactUrl::DefinitionName) {
             QUrl url = det.value(QContactUrl::FieldUrl);
-            Live<nco::Contact> contact = d->contactByContext(det, ncoContact);
+            Live<nco::Role> contact = d->contactByContext(det, ncoContact);
 
             if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactUrl::AttributeSubTypeHomePage)){
                 Live< rdfs::Resource > liveUrl = contact->addWebsiteUrl();
@@ -403,7 +400,7 @@ bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
             // TODO parse URI, once it is defined
             QString account = det.value("Account");
             QString serviceName = det.value("ServiceName");
-            Live<nco::Contact> contact = d->contactByContext(det, ncoContact);
+            Live<nco::Role> contact = d->contactByContext(det, ncoContact);
             Live<nco::IMAccount> liveIMAccount = contact->firstHasIMAccount();
             if (0 == liveIMAccount) {
                 liveIMAccount = contact->addHasIMAccount();

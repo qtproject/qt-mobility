@@ -87,17 +87,17 @@ public:
     Live<T> nodeByClasstype(QList<Live<nco::ContactMedium> > contactMediums) const;
 
     /**
-     * Return a nco::Contact that is either a nco::OrganizationContact or
-     * nco::PersonContact depending on the context for the given contact detail.
+     * Return a nco::Contact that is either a nco::Affiliation or
+     * nco::PersonContact depending on the context (work or home) for the given contact detail.
      *
      * \param det The contact detail that we are currently interested in and which
      *            context we are examining.
      * \param ncoContact The nco::PersonContact that we want to store the contact
      *                    detail for.
-     * \return Returns a nco::OrganizationContact is the QContactDetail context is
+     * \return Returns a nco::Affiliation is the QContactDetail context is
      *         work. Otherwise returns nco::PersonContact.
      */
-    Live<nco::Contact> contactByContext(const QContactDetail& det, const Live<nco::PersonContact>& ncoContact);
+    Live<nco::Role> contactByContext(const QContactDetail& det, const Live<nco::PersonContact>& ncoContact);
 
 private:
     ContactContext::Location locationContext(const QContactDetail& det) const;

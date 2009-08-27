@@ -59,6 +59,53 @@ void addSortingPartToRDFSelectQuery(RDFSelect &query, RDFVariable &contact, QLis
     }
 }
 
+/*
+ * To understand why all the following methods have for affiliation param, check nco ontology:
+ * every contact has all these properties and also linked to affiliations (also contacts - nco:Role)
+ * that again have the same properties. So it was needed to make the same query 2-ce - once for contact
+ * and once for affiliations
+ */
+RDFSelect preparePhoneNumbersQuery(RDFVariable &rdfcontact1, bool forAffiliations)
+{
+    RDFVariable phone;
+    if( !forAffiliations )
+        phone = rdfcontact1.property<nco::hasPhoneNumber>();
+    else
+        phone = rdfcontact1.property<nco::hasAffiliation>().property<nco::hasPhoneNumber>();
+    RDFVariable type = phone.type();
+    type.property<rdfs::subClassOf>() = nco::PhoneNumber::iri(); // sparql cannot handle exact type but returns all super types as junk rows
+
+    // columns
+    RDFSelect queryidsnumbers;
+    queryidsnumbers.addColumn("contactId", rdfcontact1.property<nco::contactUID> ());
+    queryidsnumbers.addColumn("phoneno", phone.property<nco::phoneNumber> ());
+    // rdfcontact1.property<nco::hasPhoneNumber> ().isOfType( nco::PhoneNumber::iri(), true);
+    queryidsnumbers.addColumn("type", type);
+    return queryidsnumbers;
+}
+
+RDFSelect prepareIMAccountsQuery(RDFVariable &rdfcontact1, bool forAffiliations)
+{
+    RDFVariable imaccount;
+    if (!forAffiliations)
+        imaccount = rdfcontact1.property<nco::hasIMAccount> ();
+    else
+        imaccount = rdfcontact1.property<nco::hasAffiliation> ().property<nco::hasIMAccount> ();
+    // columns
+    RDFSelect queryidsimacccounts;
+    queryidsimacccounts.addColumn("contactId", rdfcontact1.property<nco::contactUID> ());
+
+    queryidsimacccounts.addColumn("IMId", imaccount.property<nco::imID> ());
+    queryidsimacccounts.addColumn("status", imaccount.optional().property<nco::imStatus> ());
+    queryidsimacccounts.addColumn("message", imaccount.optional().property<nco::imStatusMessage> ());
+    queryidsimacccounts.addColumn("nick", imaccount.optional().property<nco::imNickname> ());
+    queryidsimacccounts.addColumn("type", imaccount.optional().property<nco::imAccountType> ());
+    return queryidsimacccounts;
+}
+
+
+
+
 QTrackerContactAsyncRequest::QTrackerContactAsyncRequest(
         QContactAbstractRequest* request, QContactManagerEngine* parent) :
     QObject(parent), queryPhoneNumbersNodesReady(false)
@@ -98,46 +145,35 @@ QTrackerContactAsyncRequest::QTrackerContactAsyncRequest(
             applyFilterToRDFVariable(RDFContact,r->filter());
             if( r->definitionRestrictions().contains( QContactPhoneNumber::DefinitionName ) )
             {
-                // prepare query to get all phone numbers
-                RDFVariable rdfcontact1 = RDFVariable::fromType<nco::PersonContact>();
-                applyFilterToRDFVariable(rdfcontact1,r->filter());
-                // criteria - only those with phone numbers
-                RDFVariable phone = rdfcontact1.property<nco::hasPhoneNumber>();
-                RDFVariable type = phone.type();
-                type.property<rdfs::subClassOf>() = nco::PhoneNumber::iri(); // sparql cannot handle exact type but returns all super types as junk rows
-
-                // columns
-                RDFSelect queryidsnumbers;
-                queryidsnumbers.addColumn("contactId", rdfcontact1.property<nco::contactUID> ());
-                queryidsnumbers.addColumn("phoneno", phone.property<nco::phoneNumber> ());
-                // rdfcontact1.property<nco::hasPhoneNumber> ().isOfType( nco::PhoneNumber::iri(), true);
-                queryidsnumbers.addColumn("type", type);
-
-                queryPhoneNumbersNodes = ::tracker()->modelQuery(queryidsnumbers);
-                // need to store LiveNodes in order to receive notification from model
-                QObject::connect(queryPhoneNumbersNodes.model(), SIGNAL(modelUpdated()), this,
-                        SLOT(phoneNumbersReady()));
+                queryPhoneNumbersNodes.clear(); queryIMAccountNodesReady = 0;
+                for (int forAffiliations = 0; forAffiliations <= 1; forAffiliations++ )
+                {
+                    // prepare query to get all phone numbers
+                    RDFVariable rdfcontact1 = RDFVariable::fromType<nco::PersonContact>();
+                    applyFilterToRDFVariable(rdfcontact1,r->filter());
+                    // criteria - only those with phone numbers
+                    RDFSelect queryidsnumbers = preparePhoneNumbersQuery(rdfcontact1, forAffiliations);
+                    queryPhoneNumbersNodes<< ::tracker()->modelQuery(queryidsnumbers);
+                    // need to store LiveNodes in order to receive notification from model
+                    QObject::connect(queryPhoneNumbersNodes[forAffiliations].model(), SIGNAL(modelUpdated()), this,
+                            SLOT(phoneNumbersReady()));
+                }
             }
 
             if (r->definitionRestrictions().contains(QContactPresence::DefinitionName)
                     || r->definitionRestrictions().contains(QContactOnlineAccount::DefinitionName))
             {
-                // prepare query to get all im accounts
-                RDFVariable rdfcontact1 = RDFVariable::fromType<nco::PersonContact>();
-                applyFilterToRDFVariable(rdfcontact1,r->filter());
-                // criteria - only those with im accounts
-                rdfcontact1.property<nco::hasIMAccount> ();
-                // columns
-                RDFSelect queryidsimacccounts;
-                queryidsimacccounts.addColumn("contactId", rdfcontact1.property<nco::contactUID> ());
-
-                queryidsimacccounts.addColumn("IMId", rdfcontact1.property<nco::hasIMAccount>().property<nco::imID> ());
-                queryidsimacccounts.addColumn("status", rdfcontact1.property<nco::hasIMAccount>().optional().property<nco::imStatus> ());
-                queryidsimacccounts.addColumn("message", rdfcontact1.property<nco::hasIMAccount> ().optional().property<nco::imStatusMessage> ());
-                queryidsimacccounts.addColumn("nick", rdfcontact1.property<nco::hasIMAccount> ().optional().property<nco::imNickname> ());
-                queryidsimacccounts.addColumn("type", rdfcontact1.property<nco::hasIMAccount> ().optional().property<nco::imAccountType> ());
-                queryIMAccountNodes = ::tracker()->modelQuery(queryidsimacccounts);
-                QObject::connect(queryIMAccountNodes.model(),SIGNAL(modelUpdated()),SLOT(iMAcountsReady()));
+                queryIMAccountNodes.clear(); queryIMAccountNodesReady = 0;
+                for (int forAffiliations = 0; forAffiliations <= 1; forAffiliations++ )
+                {
+                    // prepare query to get all im accounts
+                    RDFVariable rdfcontact1 = RDFVariable::fromType<nco::PersonContact>();
+                    applyFilterToRDFVariable(rdfcontact1,r->filter());
+                    // criteria - only those with im accounts
+                    RDFSelect queryidsimacccounts = prepareIMAccountsQuery(rdfcontact1, forAffiliations);
+                    queryIMAccountNodes << ::tracker()->modelQuery(queryidsimacccounts);
+                    QObject::connect(queryIMAccountNodes[forAffiliations].model(),SIGNAL(modelUpdated()),SLOT(iMAcountsReady()));
+                }
             }
 
 
@@ -232,12 +268,16 @@ void QTrackerContactAsyncRequest::contactsReady()
     }
     if(request->definitionRestrictions().contains( QContactPhoneNumber::DefinitionName ))
     {
-        processQueryPhoneNumbers(queryPhoneNumbersNodes, result);
+        Q_ASSERT(queryPhoneNumbersNodes.size() == 2);
+        for( int cnt = 0; cnt < queryPhoneNumbersNodes.size(); cnt++)
+            processQueryPhoneNumbers(queryPhoneNumbersNodes[cnt], result, cnt);
     }
     if (request->definitionRestrictions().contains(QContactPresence::DefinitionName)
             || request->definitionRestrictions().contains(QContactOnlineAccount::DefinitionName))
     {
-        processQueryIMAccounts(queryIMAccountNodes, result);
+        Q_ASSERT(queryIMAccountNodes.size() == 2);
+        for( int cnt = 0; cnt < queryIMAccountNodes.size(); cnt++)
+            processQueryIMAccounts(queryIMAccountNodes[cnt], result, cnt);
     }
 
     if (engine)
@@ -248,12 +288,12 @@ void QTrackerContactAsyncRequest::contactsReady()
 
 void QTrackerContactAsyncRequest::phoneNumbersReady()
 {
-    queryPhoneNumbersNodesReady = true;
+    queryPhoneNumbersNodesReady++;
 }
 
 void QTrackerContactAsyncRequest::iMAcountsReady()
 {
-    queryIMAccountNodesReady = true;
+    queryIMAccountNodesReady++;
     // now we know that the query is ready before get all contacts, check how it works with transactions
 }
 
@@ -284,9 +324,9 @@ const QString rdfPhoneType2QContactSubtype(const QString rdfPhoneType)
     return "";
 }
 
-void QTrackerContactAsyncRequest::processQueryPhoneNumbers(SopranoLive::LiveNodes queryPhoneNumbers, QList<QContact>& contacts)
+void QTrackerContactAsyncRequest::processQueryPhoneNumbers(SopranoLive::LiveNodes queryPhoneNumbers, QList<QContact>& contacts, bool officeStuff)
 {
-    Q_ASSERT_X( queryPhoneNumbersNodesReady, Q_FUNC_INFO, "Phonenumbers query was supposed to be ready and it is not." );
+    Q_ASSERT_X( queryPhoneNumbersNodesReady==2, Q_FUNC_INFO, "Phonenumbers query was supposed to be ready and it is not." );
     for(int i = 0; i < queryPhoneNumbers->rowCount(); i++)
     {
         qDebug()<<Q_FUNC_INFO<<i<<queryPhoneNumbers->rowCount()<<queryPhoneNumbers->columnCount()<<queryPhoneNumbers->index(i, 0).data().toString()<<queryPhoneNumbers->index(i, 1).data().toString()<<queryPhoneNumbers->index(i, 2).data().toString();
@@ -307,6 +347,8 @@ void QTrackerContactAsyncRequest::processQueryPhoneNumbers(SopranoLive::LiveNode
             if( contacts[j].id() == contactid )
             {
                 QContactPhoneNumber number;
+                if( officeStuff )
+                    number.setContextAttribute(QContactPhoneNumber::AttributeContextWork);
                 number.setNumber(queryPhoneNumbers->index(i, 1).data().toString());
                 number.setSubTypeAttribute(subtype);
                 contacts[j].saveDetail(&number);
@@ -316,9 +358,9 @@ void QTrackerContactAsyncRequest::processQueryPhoneNumbers(SopranoLive::LiveNode
     }
 }
 
-void QTrackerContactAsyncRequest::processQueryIMAccounts(SopranoLive::LiveNodes queryIMAccounts, QList<QContact>& contacts)
+void QTrackerContactAsyncRequest::processQueryIMAccounts(SopranoLive::LiveNodes queryIMAccounts, QList<QContact>& contacts, bool officeStuff)
 {
-    Q_ASSERT_X( queryIMAccountNodesReady, Q_FUNC_INFO, "IMAccount query was supposed to be ready and it is not." );
+    Q_ASSERT_X( queryIMAccountNodesReady==2, Q_FUNC_INFO, "IMAccount query was supposed to be ready and it is not." );
     for(int i = 0; i < queryIMAccounts->rowCount(); i++)
     {   //contactid, imid, status, message, nick, type
 
@@ -331,11 +373,15 @@ void QTrackerContactAsyncRequest::processQueryIMAccounts(SopranoLive::LiveNodes 
             if( contacts[j].id() == contactid )
             {
                 // TODo replace when QtMobility guys implement support for IMAccount
-                QContactOnlineAccount account;;
+                QContactOnlineAccount account;
+                if( officeStuff )
+                    account.setContextAttribute(QContactOnlineAccount::AttributeContextWork);
                 account.setValue("Account", queryIMAccounts->index(i, 1).data().toString()); // IMId
                 account.setValue("ServiceName", queryIMAccounts->index(i, 5).data().toString()); // getImAccountType?
                 contacts[j].saveDetail(&account);
                 QContactPresence presence;
+                if( officeStuff )
+                    presence.setContextAttribute(QContactPresence::AttributeContextWork);
                 presence.setValue(QContactPresence::FieldNickname, queryIMAccounts->index(i, 4).data().toString()); // nick
                 presence.setValue(QContactPresence::FieldPresence, queryIMAccounts->index(i, 2).data().toString()); // imStatus
                 presence.setValue(QContactPresence::FieldStatusMessage, queryIMAccounts->index(i, 3).data().toString()); // imStatusMessage
