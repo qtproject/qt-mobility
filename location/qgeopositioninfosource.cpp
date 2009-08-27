@@ -33,7 +33,7 @@
 #include "qgeopositioninfosource.h"
 
 #if defined(Q_OS_SYMBIAN)
-#   include "s60/QGeoPositionInfoSourceS60.h"
+#   include "s60_QGeoPositionInfoSourceS60.h"
 #endif
 
 /*!
