@@ -12,22 +12,19 @@ public:
 
 
     bool metadataAvailable() const { return true; }
-    bool isReadOnly() const { return false; }
+    bool isReadOnly() const { return false; }  
 
-    QList<QString> availableMetadata() const;
-    QVariant metadata(QString const &name) const { return m_values.value(name); }
-    void setMetadata(QString const &name, QVariant const &value);
+    QVariant metadata(QMediaMetadata::Key key) const;
+    void setMetadata(QMediaMetadata::Key key, const QVariant &value);
 
-	QMediaResourceList resources() const { return QMediaResourceList(); }
+    QVariant extendedMetadata(QString const &name) const;
+    void setExtendedMetadata(QString const &name, QVariant const &value);
 
 Q_SIGNALS:
-    void metadataChanged();
-    void metadataChanged(const QMap<QString, QVariant>&);
-    void metadataAvailabilityChanged(bool available);
-    void readOnlyChanged(bool readOnly);
+    void metadataChanged(const QMap<QByteArray, QVariant>&);
 
 private:
-    QMap<QString, QVariant> m_values;
+    QMap<QByteArray, QVariant> m_values;
 };
 
 #endif // QGSTREAMERCAPTUREMETADATACONTROL_H

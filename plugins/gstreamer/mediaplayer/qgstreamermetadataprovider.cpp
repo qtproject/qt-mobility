@@ -113,7 +113,7 @@ QVariant QGstreamerMetadataProvider::metadata(QMediaMetadata::Key key) const
     return QVariant();
 }
 
-void QGstreamerMetadataProvider::setMetadata(const QString &key, QVariant const &value)
+void QGstreamerMetadataProvider::setMetadata(QMediaMetadata::Key key, QVariant const &value)
 {
     Q_UNUSED(key);
     Q_UNUSED(value);
@@ -124,11 +124,12 @@ QVariant QGstreamerMetadataProvider::extendedMetadata(const QString &key) const
     return m_session->tags().value(key.toLatin1());
 }
 
-void QGstreamerMetadataProvider::setExtendedMetadata(QMediaMetadata::Key key, QVariant const &value)
+void QGstreamerMetadataProvider::setExtendedMetadata(const QString &key, QVariant const &value)
 {
     Q_UNUSED(key);
     Q_UNUSED(value);
 }
+
 
 void QGstreamerMetadataProvider::updateTags()
 {
