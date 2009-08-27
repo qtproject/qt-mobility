@@ -32,23 +32,17 @@
 ****************************************************************************/
 
 #include "qvaluespace.h"
-#include "qmallocpool.h"
+#include "qmallocpool_p.h"
 #include "qvaluespaceobject.h"
+#include "qsystemreadwritelock_p.h"
+#include "qpacketprotocol_p.h"
 
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <errno.h>
 #include <QSet>
-#include "qsystemreadwritelock.h"
-#include <sys/types.h>
-#include <unistd.h>
 #include <QCoreApplication>
-#include <QThread>
 #include <QLocalSocket>
 #include <QLocalServer>
 #include <QDir>
 
-#include "qpacketprotocol.h"
 #include <QMutex>
 #include <QWaitCondition>
 #include <QSharedMemory>
@@ -1900,8 +1894,6 @@ bool SharedMemoryLayer::startup(Type type)
 
         connections.insert(protocol);
     }
-
-    key_t key = ::ftok(socket().toLocal8Bit().constData(), 0x9b);
 
     if(Server == type) {
         shm = new QSharedMemory(socket(), this);

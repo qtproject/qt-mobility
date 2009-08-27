@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 
-#include <qmallocpool.h>
+#include <qmallocpool_p.h>
 
 #include <QtTest/QTest>
 

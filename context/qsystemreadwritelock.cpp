@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 
-#include "qsystemreadwritelock.h"
+#include "qsystemreadwritelock_p.h"
 
 #include <QSharedMemory>
 #include <QSystemSemaphore>

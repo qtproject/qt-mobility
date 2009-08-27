@@ -76,15 +76,6 @@
         <keyword ref="qpacketprotocol.html#setMaximumPacketSize">setMaximumPacketSize</keyword>
         <section ref="qpacketprotocol-members.html" title="List of all members"/>
     </section>
-    <section ref="qsystemreadwritelock.html" title="QSystemReadWriteLock Class Reference">
-        <keyword ref="qsystemreadwritelock.html">QSystemReadWriteLock</keyword>
-        <keyword ref="qsystemreadwritelock.html#id">id</keyword>
-        <keyword ref="qsystemreadwritelock.html#isNull">isNull</keyword>
-        <keyword ref="qsystemreadwritelock.html#lockForRead">lockForRead</keyword>
-        <keyword ref="qsystemreadwritelock.html#lockForWrite">lockForWrite</keyword>
-        <keyword ref="qsystemreadwritelock.html#unlock">unlock</keyword>
-        <section ref="qsystemreadwritelock-members.html" title="List of all members"/>
-    </section>
     <section ref="qvaluespace.html" title="QValueSpace Namespace Reference">
         <keyword ref="qvaluespace.html">QValueSpace</keyword>
         <keyword ref="qvaluespace.html#availableLayers">availableLayers</keyword>

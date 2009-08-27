@@ -30,7 +30,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmallocpool.h"
+#include "qmallocpool_p.h"
 #include <qglobal.h>
 
 static void* qmallocpool_sbrk(intptr_t increment);

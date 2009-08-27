@@ -33,7 +33,7 @@
 
 #include <QDebug>
 #include <QStringList>
-#include "qsystemreadwritelock.h"
+#include "qsystemreadwritelock_p.h"
 #include "../common.h"
 #include <QFile>
 #include <QtTest/QtTest>

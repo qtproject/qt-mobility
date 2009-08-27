@@ -32,7 +32,7 @@
 ****************************************************************************/
 
 #include <QtTest/QtTest>
-#include "qsystemreadwritelock.h"
+#include "qsystemreadwritelock_p.h"
 #include <QThread>
 
 bool volatile readThreadDone;

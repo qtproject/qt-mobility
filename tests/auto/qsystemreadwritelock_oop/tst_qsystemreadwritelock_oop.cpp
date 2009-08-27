@@ -33,7 +33,7 @@
 
 #include <QtTest/QtTest>
 #include <QProcess>
-#include "qsystemreadwritelock.h"
+#include "qsystemreadwritelock_p.h"
 #include "common.h"
 
 class tst_QSystemReadWriteLock_oop : public QObject{

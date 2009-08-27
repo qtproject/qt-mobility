@@ -40,7 +40,7 @@
 
 class QMallocPoolPrivate;
 
-class Q_CFW_EXPORT QMallocPool
+class Q_AUTOTEST_EXPORT QMallocPool
 {
 public:
     enum PoolType { Owned, NewShared, Shared };
