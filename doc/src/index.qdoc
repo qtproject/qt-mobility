@@ -140,15 +140,10 @@ Here are the key methods in the class implementation:
     \printuntil LogFilePositionSource::readNextPosition
     \printuntil /^\}/
 
+
+The example includes a \c ClientApplication class that requests updates from the \c LogFilePositionSource class. Run the exaple to see the data that is received by \c ClientApplication.
+
+Before running the example, make sure you have done both \tt make and \tt {make install}.
+
 */
-
-
-
-
-
-
-
-
-
-
 
