@@ -57,7 +57,7 @@ public:
     QIODevice* outputStream() const;
 
     QString activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType);
-    void setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const char *interface);
+    void setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint);
     QList<QString> supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const;
 
     void setVideoOutput(QObject *output);

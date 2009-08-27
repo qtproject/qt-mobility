@@ -83,10 +83,10 @@ QString Qt7PlayerService::activeEndpoint(QAbstractMediaService::MediaEndpoint en
     return QString();
 }
 
-void Qt7PlayerService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const char *interface)
+void Qt7PlayerService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint)
 {
     Q_UNUSED(endpointType);
-    Q_UNUSED(interface);
+    Q_UNUSED(endpoint);
 }
 
 QList<QString> Qt7PlayerService::supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const

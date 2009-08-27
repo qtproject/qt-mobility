@@ -95,10 +95,10 @@ QString QPhononPlayerService::activeEndpoint(QAbstractMediaService::MediaEndpoin
     return QString();
 }
 
-void QPhononPlayerService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const char *interface)
+void QPhononPlayerService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint)
 {
     Q_UNUSED(endpointType);
-    Q_UNUSED(interface);
+    Q_UNUSED(endpoint);
 }
 
 QList<QString> QPhononPlayerService::supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const

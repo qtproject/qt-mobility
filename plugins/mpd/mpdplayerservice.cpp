@@ -87,10 +87,10 @@ QString MpdPlayerService::activeEndpoint(QAbstractMediaService::MediaEndpoint en
     return QString();
 }
 
-void MpdPlayerService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const char *interface)
+void MpdPlayerService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint)
 {
     Q_UNUSED(endpointType);
-    Q_UNUSED(interface);
+    Q_UNUSED(endpoint);
 }
 
 QList<QString> MpdPlayerService::supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const
