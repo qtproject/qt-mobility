@@ -25,6 +25,7 @@
 <li><div class="fn"></div><b><a href="qmessagesortkey.html#QMessageSortKey-2">QMessageSortKey</a></b> ( const QMessageSortKey &amp; <i>other</i> )</li>
 <li><div class="fn"></div>virtual <b><a href="qmessagesortkey.html#dtor.QMessageSortKey">~QMessageSortKey</a></b> ()</li>
 <li><div class="fn"></div>bool <b><a href="qmessagesortkey.html#isEmpty">isEmpty</a></b> () const</li>
+<li><div class="fn"></div>bool <b><a href="qmessagesortkey.html#isSupported">isSupported</a></b> () const</li>
 <li><div class="fn"></div>QMessageSortKey <b><a href="qmessagesortkey.html#operator-2b">operator+</a></b> ( const QMessageSortKey &amp; <i>other</i> ) const</li>
 <li><div class="fn"></div>QMessageSortKey &amp; <b><a href="qmessagesortkey.html#operator-2b-eq">operator+=</a></b> ( const QMessageSortKey &amp; <i>other</i> )</li>
 <li><div class="fn"></div>const QMessageSortKey &amp; <b><a href="qmessagesortkey.html#operator-eq">operator=</a></b> ( const QMessageSortKey &amp; <i>other</i> )</li>
@@ -38,7 +39,7 @@
 <li><div class="fn"></div>QMessageSortKey <b><a href="qmessagesortkey.html#recipients">recipients</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</li>
 <li><div class="fn"></div>QMessageSortKey <b><a href="qmessagesortkey.html#sender">sender</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</li>
 <li><div class="fn"></div>QMessageSortKey <b><a href="qmessagesortkey.html#size">size</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</li>
-<li><div class="fn"></div>QMessageSortKey <b><a href="qmessagesortkey.html#status">status</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</li>
+<li><div class="fn"></div>QMessageSortKey <b><a href="qmessagesortkey.html#status">status</a></b> ( QMessage::Status <i>flag</i>, Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</li>
 <li><div class="fn"></div>QMessageSortKey <b><a href="qmessagesortkey.html#subject">subject</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</li>
 <li><div class="fn"></div>QMessageSortKey <b><a href="qmessagesortkey.html#timeStamp">timeStamp</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</li>
 <li><div class="fn"></div>QMessageSortKey <b><a href="qmessagesortkey.html#type">type</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</li>
@@ -66,6 +67,8 @@
 <p>Destroys the key.</p>
 <h3 class="fn"><a name="isEmpty"></a>bool QMessageSortKey::isEmpty () const</h3>
 <p>Returns true if the key remains empty after default construction; otherwise returns false.</p>
+<h3 class="fn"><a name="isSupported"></a>bool QMessageSortKey::isSupported () const</h3>
+<p>Returns true if the key is supported on the current platform; otherwise returns false.</p>
 <h3 class="fn"><a name="priority"></a>QMessageSortKey QMessageSortKey::priority ( <a href="http://qt.nokia.com/doc/4.5/qt.html#SortOrder-enum">Qt::SortOrder</a> <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a key that sorts messages by their priority, according to <i>order</i>.</p>
 <p>See also <a href="qmessage.html#priority">QMessage::priority</a>().</p>
@@ -81,8 +84,8 @@
 <h3 class="fn"><a name="size"></a>QMessageSortKey QMessageSortKey::size ( <a href="http://qt.nokia.com/doc/4.5/qt.html#SortOrder-enum">Qt::SortOrder</a> <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a key that sorts messages by their size, according to <i>order</i>.</p>
 <p>See also <a href="qmessage.html#size">QMessage::size</a>().</p>
-<h3 class="fn"><a name="status"></a>QMessageSortKey QMessageSortKey::status ( <a href="http://qt.nokia.com/doc/4.5/qt.html#SortOrder-enum">Qt::SortOrder</a> <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>
-<p>Returns a key that sorts messages by their status values, according to <i>order</i>.</p>
+<h3 class="fn"><a name="status"></a>QMessageSortKey QMessageSortKey::status ( <a href="qmessage.html#Status-enum">QMessage::Status</a> <i>flag</i>, <a href="http://qt.nokia.com/doc/4.5/qt.html#SortOrder-enum">Qt::SortOrder</a> <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Returns a key that sorts messages by their status value <i>flag</i>, according to <i>order</i>.</p>
 <p>See also <a href="qmessage.html#status">QMessage::status</a>().</p>
 <h3 class="fn"><a name="subject"></a>QMessageSortKey QMessageSortKey::subject ( <a href="http://qt.nokia.com/doc/4.5/qt.html#SortOrder-enum">Qt::SortOrder</a> <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a key that sorts messages by their subject, according to <i>order</i>.</p>

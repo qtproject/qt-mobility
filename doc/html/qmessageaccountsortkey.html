@@ -25,6 +25,7 @@
 <li><div class="fn"></div><b><a href="qmessageaccountsortkey.html#QMessageAccountSortKey-2">QMessageAccountSortKey</a></b> ( const QMessageAccountSortKey &amp; <i>other</i> )</li>
 <li><div class="fn"></div>virtual <b><a href="qmessageaccountsortkey.html#dtor.QMessageAccountSortKey">~QMessageAccountSortKey</a></b> ()</li>
 <li><div class="fn"></div>bool <b><a href="qmessageaccountsortkey.html#isEmpty">isEmpty</a></b> () const</li>
+<li><div class="fn"></div>bool <b><a href="qmessageaccountsortkey.html#isSupported">isSupported</a></b> () const</li>
 <li><div class="fn"></div>const QMessageAccountSortKey &amp; <b><a href="qmessageaccountsortkey.html#operator-eq">operator=</a></b> ( const QMessageAccountSortKey &amp; <i>other</i> )</li>
 <li><div class="fn"></div>bool <b><a href="qmessageaccountsortkey.html#operator-eq-eq">operator==</a></b> ( const QMessageAccountSortKey &amp; <i>other</i> ) const</li>
 </ul>
@@ -53,6 +54,8 @@
 <p>Destroys the key.</p>
 <h3 class="fn"><a name="isEmpty"></a>bool QMessageAccountSortKey::isEmpty () const</h3>
 <p>Returns true if the key remains empty after default construction; otherwise returns false.</p>
+<h3 class="fn"><a name="isSupported"></a>bool QMessageAccountSortKey::isSupported () const</h3>
+<p>Returns true if the key is supported on the current platform; otherwise returns false.</p>
 <h3 class="fn"><a name="name"></a>QMessageAccountSortKey QMessageAccountSortKey::name ( <a href="http://qt.nokia.com/doc/4.5/qt.html#SortOrder-enum">Qt::SortOrder</a> <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a key that sorts accounts by name, according to <i>order</i>.</p>
 <p>See also <a href="qmessageaccount.html#name">QMessageAccount::name</a>().</p>

@@ -93,6 +93,7 @@
         <keyword ref="qmessageaccountfilterkey.html#fromAddress">fromAddress</keyword>
         <keyword ref="qmessageaccountfilterkey.html#id">id</keyword>
         <keyword ref="qmessageaccountfilterkey.html#isEmpty">isEmpty</keyword>
+        <keyword ref="qmessageaccountfilterkey.html#isSupported">isSupported</keyword>
         <keyword ref="qmessageaccountfilterkey.html#name">name</keyword>
         <keyword ref="qmessageaccountfilterkey.html#options">options</keyword>
         <keyword ref="qmessageaccountfilterkey.html#setOptions">setOptions</keyword>
@@ -116,6 +117,7 @@
     <section ref="qmessageaccountsortkey.html" title="QMessageAccountSortKey Class Reference">
         <keyword ref="qmessageaccountsortkey.html">QMessageAccountSortKey</keyword>
         <keyword ref="qmessageaccountsortkey.html#isEmpty">isEmpty</keyword>
+        <keyword ref="qmessageaccountsortkey.html#isSupported">isSupported</keyword>
         <keyword ref="qmessageaccountsortkey.html#name">name</keyword>
         <keyword ref="qmessageaccountsortkey.html#operator-eq">operator=</keyword>
         <keyword ref="qmessageaccountsortkey.html#operator-eq-eq">operator==</keyword>
@@ -208,6 +210,7 @@
         <keyword ref="qmessagefilterkey.html#customField">customField</keyword>
         <keyword ref="qmessagefilterkey.html#id">id</keyword>
         <keyword ref="qmessagefilterkey.html#isEmpty">isEmpty</keyword>
+        <keyword ref="qmessagefilterkey.html#isSupported">isSupported</keyword>
         <keyword ref="qmessagefilterkey.html#options">options</keyword>
         <keyword ref="qmessagefilterkey.html#parentAccountId">parentAccountId</keyword>
         <keyword ref="qmessagefilterkey.html#parentFolderId">parentFolderId</keyword>
@@ -246,6 +249,7 @@
         <keyword ref="qmessagefolderfilterkey.html#displayName">displayName</keyword>
         <keyword ref="qmessagefolderfilterkey.html#id">id</keyword>
         <keyword ref="qmessagefolderfilterkey.html#isEmpty">isEmpty</keyword>
+        <keyword ref="qmessagefolderfilterkey.html#isSupported">isSupported</keyword>
         <keyword ref="qmessagefolderfilterkey.html#options">options</keyword>
         <keyword ref="qmessagefolderfilterkey.html#parentAccountId">parentAccountId</keyword>
         <keyword ref="qmessagefolderfilterkey.html#parentFolderId">parentFolderId</keyword>
@@ -272,6 +276,7 @@
         <keyword ref="qmessagefoldersortkey.html">QMessageFolderSortKey</keyword>
         <keyword ref="qmessagefoldersortkey.html#displayName">displayName</keyword>
         <keyword ref="qmessagefoldersortkey.html#isEmpty">isEmpty</keyword>
+        <keyword ref="qmessagefoldersortkey.html#isSupported">isSupported</keyword>
         <keyword ref="qmessagefoldersortkey.html#path">path</keyword>
         <keyword ref="qmessagefoldersortkey.html#operator-2b">operator+</keyword>
         <keyword ref="qmessagefoldersortkey.html#operator-2b-eq">operator+=</keyword>
@@ -298,8 +303,10 @@
         <keyword ref="qmessageserviceaction.html#activityChanged">activityChanged</keyword>
         <keyword ref="qmessageserviceaction.html#cancelOperation">cancelOperation</keyword>
         <keyword ref="qmessageserviceaction.html#compose">compose</keyword>
+        <keyword ref="qmessageserviceaction.html#countMessages">countMessages</keyword>
         <keyword ref="qmessageserviceaction.html#exportUpdates">exportUpdates</keyword>
         <keyword ref="qmessageserviceaction.html#lastError">lastError</keyword>
+        <keyword ref="qmessageserviceaction.html#messagesCounted">messagesCounted</keyword>
         <keyword ref="qmessageserviceaction.html#messagesFound">messagesFound</keyword>
         <keyword ref="qmessageserviceaction.html#progressChanged">progressChanged</keyword>
         <keyword ref="qmessageserviceaction.html#queryMessages">queryMessages</keyword>
@@ -313,6 +320,7 @@
     <section ref="qmessagesortkey.html" title="QMessageSortKey Class Reference">
         <keyword ref="qmessagesortkey.html">QMessageSortKey</keyword>
         <keyword ref="qmessagesortkey.html#isEmpty">isEmpty</keyword>
+        <keyword ref="qmessagesortkey.html#isSupported">isSupported</keyword>
         <keyword ref="qmessagesortkey.html#priority">priority</keyword>
         <keyword ref="qmessagesortkey.html#receptionTimeStamp">receptionTimeStamp</keyword>
         <keyword ref="qmessagesortkey.html#recipients">recipients</keyword>

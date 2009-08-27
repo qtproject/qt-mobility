@@ -25,6 +25,7 @@
 <li><div class="fn"></div><b><a href="qmessagefolderfilterkey.html#QMessageFolderFilterKey-2">QMessageFolderFilterKey</a></b> ( const QMessageFolderFilterKey &amp; <i>other</i> )</li>
 <li><div class="fn"></div>virtual <b><a href="qmessagefolderfilterkey.html#dtor.QMessageFolderFilterKey">~QMessageFolderFilterKey</a></b> ()</li>
 <li><div class="fn"></div>bool <b><a href="qmessagefolderfilterkey.html#isEmpty">isEmpty</a></b> () const</li>
+<li><div class="fn"></div>bool <b><a href="qmessagefolderfilterkey.html#isSupported">isSupported</a></b> () const</li>
 <li><div class="fn"></div>QMessageDataComparator::Options <b><a href="qmessagefolderfilterkey.html#options">options</a></b> () const</li>
 <li><div class="fn"></div>void <b><a href="qmessagefolderfilterkey.html#setOptions">setOptions</a></b> ( QMessageDataComparator::Options <i>options</i> )</li>
 <li><div class="fn"></div>QMessageFolderFilterKey <b><a href="qmessagefolderfilterkey.html#operator-and">operator&amp;</a></b> ( const QMessageFolderFilterKey &amp; <i>other</i> ) const</li>
@@ -96,6 +97,8 @@
 <p>An empty key matches all folders.</p>
 <p>The result of combining an empty key with a non-empty key is the original non-empty key. This is true regardless of whether the combination is formed by an AND or an OR operation.</p>
 <p>The result of combining two empty keys is an empty key.</p>
+<h3 class="fn"><a name="isSupported"></a>bool QMessageFolderFilterKey::isSupported () const</h3>
+<p>Returns true if the key is supported on the current platform; otherwise returns false.</p>
 <h3 class="fn"><a name="options"></a><a href="qmessagedatacomparator.html#Option-enum">QMessageDataComparator::Options</a> QMessageFolderFilterKey::options () const</h3>
 <p>Return the options for the search key.</p>
 <p>Default is no options set.</p>
