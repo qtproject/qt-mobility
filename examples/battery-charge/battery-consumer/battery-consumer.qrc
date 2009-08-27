@@ -1,0 +1,5 @@
+<RCC>
+    <qresource>
+        <file>battery-meter.qml</file>
+    </qresource>
+</RCC>
