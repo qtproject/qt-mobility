@@ -69,19 +69,21 @@ void QMessageFilterKeyPrivate::filterTable(QMessageStore::ErrorCode *lastError, 
     SRestriction restriction;
     SPropValue keyProp;
     bool notRestriction(false);
+    bool valid(false);
 
-    switch (_comparatorType) {
+    switch (key.d_ptr->_comparatorType) {
     case Equality: {
         restriction.rt = RES_PROPERTY;
-        QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(_comparatorValue));
+        QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(key.d_ptr->_comparatorValue));
         if (cmp == QMessageDataComparator::Equal)
             restriction.res.resProperty.relop = RELOP_EQ;
         else
             restriction.res.resProperty.relop = RELOP_NE;
+        break;
     }
     case Relation: {
         restriction.rt = RES_PROPERTY;
-        QMessageDataComparator::RelationComparator cmp(static_cast<QMessageDataComparator::RelationComparator>(_comparatorValue));
+        QMessageDataComparator::RelationComparator cmp(static_cast<QMessageDataComparator::RelationComparator>(key.d_ptr->_comparatorValue));
         switch (cmp) {
         case QMessageDataComparator::LessThan:
             restriction.res.resProperty.relop = RELOP_LT;
@@ -96,21 +98,37 @@ void QMessageFilterKeyPrivate::filterTable(QMessageStore::ErrorCode *lastError, 
             restriction.res.resProperty.relop = RELOP_GE;
             break;
         }
+        switch (key.d_ptr->_field) {
+        case Size:
+            restriction.res.resProperty.ulPropTag = PR_MESSAGE_SIZE;
+            restriction.res.resProperty.lpProp = &keyProp;
+            keyProp.ulPropTag = PR_MESSAGE_SIZE;
+            keyProp.Value.ul = key.d_ptr->_value.toInt();
+            valid = true;
+            break;
+        default:
+            qWarning("Unhandled restriction criteria");
+        }
+        break;
     }
     case Inclusion: {
-        QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(_comparatorValue));
+        QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(key.d_ptr->_comparatorValue));
         restriction.rt = RES_CONTENT;
-        // May need to add with SExistRestriction see http://msdn.microsoft.com/en-us/library/aa454981.aspx
-        if (_options & QMessageDataComparator::FullWord)
+        // May need to complement with SExistRestriction see http://msdn.microsoft.com/en-us/library/aa454981.aspx
+        if (key.d_ptr->_options & QMessageDataComparator::FullWord)
             restriction.res.resContent.ulFuzzyLevel = FL_FULLSTRING;
         else
             restriction.res.resContent.ulFuzzyLevel = FL_SUBSTRING;
-        if ((_options & QMessageDataComparator::CaseSensitive) != 0)
+        if ((key.d_ptr->_options & QMessageDataComparator::CaseSensitive) != 0)
             restriction.res.resContent.ulFuzzyLevel |= FL_IGNORECASE;
         if (cmp == QMessageDataComparator::Excludes)
             notRestriction = true;
+        break;
     }
     }
+
+    if (!valid)
+        return; //TODO set lastError to unsupported
 /*
     TODO set the property tag and value
     restriction.res.resProperty.ulPropTag = PR_RECORD_KEY;
@@ -118,13 +136,11 @@ void QMessageFilterKeyPrivate::filterTable(QMessageStore::ErrorCode *lastError, 
     keyProp.ulPropTag = PR_RECORD_KEY;
     keyProp.Value.bin.cb = key.count();
     keyProp.Value.bin.lpb = reinterpret_cast<LPBYTE>(key.data());
+*/
 
     ULONG flags(0);
-    if (messagesTable->Restrict(&restriction, flags) != S_OK) {
-        *lastError = QMessageStore::ContentInaccessible;
-        return result; // TODO error handling, framework fault
-    }
-*/
+    if (messagesTable->Restrict(&restriction, flags) != S_OK)
+        *lastError = QMessageStore::ConstraintFailure;
 }
 
 void QMessageFilterKey::setOptions(QMessageDataComparator::Options options)

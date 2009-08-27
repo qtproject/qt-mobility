@@ -58,7 +58,7 @@ public:
     QMessageFilterKey *_left;
     QMessageFilterKey *_right;
 
-    void filterTable(QMessageStore::ErrorCode *lastError, const QMessageFilterKey &key, LPMAPITABLE);
+    static void filterTable(QMessageStore::ErrorCode *lastError, const QMessageFilterKey &key, LPMAPITABLE);
     static QMessageFilterKey from(QMessageFilterKeyPrivate::Field field, const QVariant &value, QMessageDataComparator::EqualityComparator cmp);
     static QMessageFilterKey from(QMessageFilterKeyPrivate::Field field, const QVariant &value, QMessageDataComparator::RelationComparator cmp);
     static QMessageFilterKey from(QMessageFilterKeyPrivate::Field field, const QVariant &value, QMessageDataComparator::InclusionComparator cmp);
