@@ -777,7 +777,9 @@ QDateTime fromFileTime(const FILETIME &ft)
     SYSTEMTIME st = {0};
     FileTimeToSystemTime(&ft, &st);
     QString dateStr(QString("yyyy%1M%2d%3h%4m%5s%6z%7").arg(st.wYear).arg(st.wMonth).arg(st.wDay).arg(st.wHour).arg(st.wMinute).arg(st.wSecond).arg(st.wMilliseconds)); 
-    return QDateTime::fromString(dateStr, "'yyyy'yyyy'M'M'd'd'h'h'm'm's's'z'z");
+    QDateTime dt(QDateTime::fromString(dateStr, "'yyyy'yyyy'M'M'd'd'h'h'm'm's's'z'z"));
+    dt.setTimeSpec(Qt::UTC);
+    return dt;
 }
 
 typedef QPair<QString, QString> StringPair;
@@ -931,7 +933,7 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
     QByteArray bodySubType;
     bool hasAttachments = false;
 
-    SizedSPropTagArray( 10, msgCols) = { 10, { PR_RECORD_KEY, 
+    SizedSPropTagArray(10, msgCols) = {10, { PR_RECORD_KEY, 
                                              PR_MESSAGE_FLAGS, 
                                              PR_SENDER_NAME, 
                                              PR_SENDER_EMAIL_ADDRESS, 
