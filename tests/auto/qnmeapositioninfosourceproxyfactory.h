@@ -30,31 +30,46 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QLOCATIONTESTUTILS_P_H
-#define QLOCATIONTESTUTILS_P_H
+#ifndef QNMEAPOSITIONINFOSOURCEPROXYFACTORY_H
+#define QNMEAPOSITIONINFOSOURCEPROXYFACTORY_H
 
-#include <QString>
-#include <QTest>
+#include <QObject>
 
-#define QTRY_COMPARE(a,e)                       \
-    for (int _i = 0; _i < 5000; _i += 100) {    \
-        if ((a) == (e)) break;                  \
-        QTest::qWait(100);                      \
-    }                                           \
-    QCOMPARE(a, e)
+#include "qgeopositioninfosourcesubclasstest_p.h"
+#include <qnmeapositioninfosource.h>
 
+class QTcpServer;
+class QNmeaPositionInfoSource;
+class QIODevice;
 
-class QLocationTestUtils
+class QNmeaPositionInfoSourceProxy : public QGeoPositionInfoSourceProxy
 {
 public:
-    static void uheap_mark();
-    static void uheap_mark_end();
+    QNmeaPositionInfoSourceProxy(QNmeaPositionInfoSource *source, QIODevice *outDevice);
+    ~QNmeaPositionInfoSourceProxy();
 
-    static QString addNmeaChecksumAndBreaks(const QString &sentence);
+    QGeoPositionInfoSource *source() const;
 
-    static QString createRmcSentence(const QDateTime &dt);
-    static QString createGgaSentence(const QTime &time);
-    static QString createZdaSentence(const QDateTime &dt);
+    void feedUpdate(const QDateTime &dt);
+
+    void feedBytes(const QByteArray &bytes);
+
+private:
+    QNmeaPositionInfoSource *m_source;
+    QIODevice *m_outDevice;
+};
+
+class QNmeaPositionInfoSourceProxyFactory : public QObject, public QGeoPositionInfoSourceProxyFactory
+{
+    Q_OBJECT
+public:
+    QNmeaPositionInfoSourceProxyFactory(QNmeaPositionInfoSource::UpdateMode mode);
+
+    QGeoPositionInfoSourceProxy *createProxy();
+
+private:
+    QTcpServer *m_server;
+    QNmeaPositionInfoSource::UpdateMode m_mode;
 };
 
 #endif

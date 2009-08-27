@@ -30,31 +30,49 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QLOCATIONTESTUTILS_P_H
-#define QLOCATIONTESTUTILS_P_H
+#ifndef TST_QNMEAPOSITIONINFOSOURCE_H
+#define TST_QNMEAPOSITIONINFOSOURCE_H
 
-#include <QString>
-#include <QTest>
+#include <QMetaType>
 
-#define QTRY_COMPARE(a,e)                       \
-    for (int _i = 0; _i < 5000; _i += 100) {    \
-        if ((a) == (e)) break;                  \
-        QTest::qWait(100);                      \
-    }                                           \
-    QCOMPARE(a, e)
+#include <qnmeapositioninfosource.h>
 
-
-class QLocationTestUtils
+class tst_QNmeaPositionInfoSource : public QObject
 {
+    Q_OBJECT
+
 public:
-    static void uheap_mark();
-    static void uheap_mark_end();
+    enum UpdateTriggerMethod
+    {
+        StartUpdatesMethod,
+        RequestUpdatesMethod
+    };
 
-    static QString addNmeaChecksumAndBreaks(const QString &sentence);
+    tst_QNmeaPositionInfoSource(QNmeaPositionInfoSource::UpdateMode mode, QObject *parent = 0);
 
-    static QString createRmcSentence(const QDateTime &dt);
-    static QString createGgaSentence(const QTime &time);
-    static QString createZdaSentence(const QDateTime &dt);
+private:
+    QNmeaPositionInfoSource::UpdateMode m_mode;
+
+private slots:
+    void initTestCase();
+
+    void constructor();
+    void supportedPositioningMethods();
+    void minimumUpdateInterval();
+
+    void testWithBufferedData();
+    void testWithBufferedData_data();
+
+    void startUpdates_waitForValidDateTime();
+    void startUpdates_waitForValidDateTime_data();
+
+    void requestUpdate_waitForValidDateTime();
+    void requestUpdate_waitForValidDateTime_data();
+
+    void testWithBadNmea();
+    void testWithBadNmea_data();
 };
+
+Q_DECLARE_METATYPE(tst_QNmeaPositionInfoSource::UpdateTriggerMethod)
 
 #endif

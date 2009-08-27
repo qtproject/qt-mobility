@@ -30,31 +30,27 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QLOCATIONTESTUTILS_P_H
-#define QLOCATIONTESTUTILS_P_H
+#include "../qnmeapositioninfosourceproxyfactory.h"
+#include "../qgeopositioninfosourcesubclasstest_p.h"
 
-#include <QString>
+#include <QObject>
 #include <QTest>
 
-#define QTRY_COMPARE(a,e)                       \
-    for (int _i = 0; _i < 5000; _i += 100) {    \
-        if ((a) == (e)) break;                  \
-        QTest::qWait(100);                      \
-    }                                           \
-    QCOMPARE(a, e)
-
-
-class QLocationTestUtils
+class tst_QNmeaPositionInfoSource_Sim : public QGeoPositionInfoSourceSubclassTest
 {
+    Q_OBJECT
 public:
-    static void uheap_mark();
-    static void uheap_mark_end();
+    tst_QNmeaPositionInfoSource_Sim(QObject *parent = 0)
+        : QGeoPositionInfoSourceSubclassTest(new QNmeaPositionInfoSourceProxyFactory(QNmeaPositionInfoSource::SimulationMode), parent)
+    {
+    }
 
-    static QString addNmeaChecksumAndBreaks(const QString &sentence);
-
-    static QString createRmcSentence(const QDateTime &dt);
-    static QString createGgaSentence(const QTime &time);
-    static QString createZdaSentence(const QDateTime &dt);
+    ~tst_QNmeaPositionInfoSource_Sim()
+    {
+        delete factory();
+    }
 };
 
-#endif
+QTEST_MAIN(tst_QNmeaPositionInfoSource_Sim)
+
+#include "tst_qnmeapositioninfosource_sim.moc"
