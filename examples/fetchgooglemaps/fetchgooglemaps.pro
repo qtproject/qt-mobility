@@ -1,5 +1,3 @@
-requires(contains(QT_CONFIG,webkit))
-
 TEMPLATE=app
 INCLUDEPATH += ../../location
 
