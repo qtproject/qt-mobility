@@ -55,7 +55,7 @@ public:
     virtual bool save(QIODevice * device, const char *format);
 
     virtual int size() const = 0;
-    virtual QMediaSource resources(int index) const = 0;
+    virtual QMediaSource media(int index) const = 0;
 
     virtual bool isReadOnly() const;
 

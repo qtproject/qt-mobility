@@ -65,27 +65,27 @@ QMetadataProviderControl::~QMetadataProviderControl()
 */
 
 /*!
-    \fn QList<QString> QMetadataProviderControl::availableMetadata() const
+    \fn QVariant QMetadataProviderControl::metadata(QMediaMetadata::Key key) const
 
-    Returns a list of the names of all the metadata elements available.
+    Returns the metadata for the given \a key.
 */
 
 /*!
-    \fn QVariant QMetadataProviderControl::metadata(QString const &name) const
+    \fn QMetadataProviderControl::metadata(const QString &key) const
 
-    Returns the metadata for the element named \a name.
+    Returns the metadata for the given \a key.
 */
 
 /*!
-    \fn void QMetadataProviderControl::setMetadata(QString const &name, QVariant const &value)
+    \fn void QMetadataProviderControl::setMetadata(QMediaMetadata::Key key, const QVariant &value)
 
-    Change the value of the metadata element named \a name, to \a value.
+    Change the value of the metadata element with the given \a key to \a value.
 */
 
 /*!
-    \fn QMediaResourceList QMetadataProviderControl::resources() const
+    \fn QMetadataProviderControl::setMetadata(const QString &key, const QVariant &value)
 
-    Returns a list of resources belonging to a media item.
+    Change the value of the metadata element with the given \a key to \a value.
 */
 
 /*!

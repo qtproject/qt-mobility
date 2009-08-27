@@ -52,17 +52,18 @@ public:
     bool metadataAvailable() const;
     bool isReadOnly() const;
 
-    QList<QString> availableMetadata() const;
-    QVariant metadata(QString const &name) const;
-    void setMetadata(QString const &name, QVariant const &value);
+    QVariant metadata(QMediaMetadata::Key key) const;
+    void setMetadata(QMediaMetadata::Key key, const QVariant &value);
 
-    QMediaResourceList resources() const;
+    QVariant extendedMetadata(const QString &key) const ;
+    void setExtendedMetadata(const QString &key, const QVariant &value);
 
     static QStringList keys(IWMPMedia *media);
-    static QVariant value(IWMPMedia *media, const QString &key);
-    static void setValue(IWMPMedia *media, const QString &key, const QVariant &value);
+    static QVariant value(IWMPMedia *media, BSTR key);
+    static void setValue(IWMPMedia *media, BSTR key, const QVariant &value);
     static QMediaResourceList resources(IWMPMedia *media);
     static QVariant convertVariant(const VARIANT &variant);
+    static QVariant albumArtUri(IWMPMedia *media, const char *suffix);
 
 private Q_SLOTS:
     void currentItemChangeEvent(IDispatch *dispatch);

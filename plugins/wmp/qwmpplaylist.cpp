@@ -104,7 +104,7 @@ int QWmpPlaylist::size() const
     return m_count;
 }
 
-QMediaSource QWmpPlaylist::resources(int pos) const
+QMediaSource QWmpPlaylist::media(int pos) const
 {
     QMediaResourceList resources;
 
@@ -143,8 +143,8 @@ bool QWmpPlaylist::insertItem(int pos, const QMediaSource &source)
     bool inserted = false;
 
     IWMPMedia *media = 0;
-    if (!resources.isEmpty() && m_playlist && m_player && m_player->newMedia(
-            QAutoBStr(resources.first().uri()), &media) == S_OK) {
+    if (m_playlist && m_player && m_player->newMedia(
+            QAutoBStr(source.contentUri()), &media) == S_OK) {
         inserted = m_playlist->insertItem(pos, media) == S_OK;
 
         media->Release();
@@ -211,7 +211,7 @@ QVariant QWmpPlaylist::value(int index, const QString &key) const
     
     IWMPMedia *media = 0;
     if (m_playlist && m_playlist->get_item(index, &media) == S_OK) {
-        v = QWmpMetaData::value(media, key);
+        v = QWmpMetaData::value(media, QAutoBStr(key));
 
         media->Release();
     }
@@ -282,7 +282,7 @@ void QWmpPlaylist::mediaChangeEvent(IDispatch *dispatch)
         VARIANT_BOOL isMember = VARIANT_FALSE;
 
         if (media->isMemberOf(m_playlist, &isMember) == S_OK && isMember) {
-            int index = QWmpMetaData::value(media, QLatin1String("PlaylistIndex")).toInt();
+            int index = QWmpMetaData::value(media, QAutoBStr(L"PlaylistIndex")).toInt();
 
             if (index >= 0)
                 emit itemsChanged(index, index);

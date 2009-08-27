@@ -36,6 +36,7 @@
 #define QVIDEOWIDGETCONTROL_H
 
 #include "qabstractmediacontrol.h"
+#include "qvideowidget.h"
 
 #include <QtGui/qwidget.h>
 
@@ -45,17 +46,15 @@ class Q_MEDIA_EXPORT QVideoWidgetControl : public QAbstractMediaControl
 {
     Q_OBJECT
 public:
-    enum AspectRatio { AspectRatioAuto, AspectRatioWidget, AspectRatioCustom };
-
     QVideoWidgetControl(QObject *parent = 0);
     virtual ~QVideoWidgetControl();
 
     virtual QWidget *videoWidget() = 0;
 
-    virtual AspectRatio aspectRatio() const = 0;
+    virtual QVideoWidget::AspectRatio aspectRatio() const = 0;
     virtual QSize customAspectRatio() const = 0;
 
-    virtual void setAspectRatio(AspectRatio ratio) = 0;
+    virtual void setAspectRatio(QVideoWidget::AspectRatio ratio) = 0;
     virtual void setCustomAspectRatio(const QSize &customRatio) = 0;
 
     virtual bool isFullscreen() const = 0;

@@ -36,6 +36,7 @@
 #define QVIDEOENCODECONTROL_H
 
 #include "qabstractmediacontrol.h"
+#include "qmediarecorder.h"
 
 #include <QtCore/qpair.h>
 #include <QtCore/qsize.h>
@@ -55,11 +56,11 @@ public:
     virtual QList<QSize> supportedResolutions() const;
     virtual void setResolution(const QSize &) = 0;
 
-    virtual QPair<int,int> frameRate() const = 0;
-    virtual QPair<int,int> minumumFrameRate() const = 0;
-    virtual QPair<int,int> maximumFrameRate() const = 0;
-    virtual QList< QPair<int,int> > supportedFrameRates() const;
-    virtual void setFrameRate(QPair<int,int>) = 0;
+    virtual QMediaRecorder::FrameRate frameRate() const = 0;
+    virtual QMediaRecorder::FrameRate minimumFrameRate() const = 0;
+    virtual QMediaRecorder::FrameRate maximumFrameRate() const = 0;
+    virtual QList<QMediaRecorder::FrameRate> supportedFrameRates() const;
+    virtual void setFrameRate(const QMediaRecorder::FrameRate &rate) = 0;
 
     virtual QStringList supportedVideoCodecs() const = 0;
     virtual QString videoCodec() const = 0;
@@ -75,8 +76,16 @@ public:
     virtual void setQuality(qreal) = 0;
 
     virtual QStringList supportedEncodingOptions() const;
-    virtual QVariant encodingOption(const QString &name);
+    virtual QVariant encodingOption(const QString &name) const;
     virtual void setEncodingOption(const QString &name, const QVariant &value);
+
+signals:
+    void resolutionChanged(const QSize &);
+    void frameRateChanged(const QMediaRecorder::FrameRate &rate);
+    void videoCodecChanged(const QString &codecName);
+    void videoBitrateChanged(int bitrate);
+    void videoQualityChanged(qreal);
+
 
 protected:
     QVideoEncodeControl(QObject *parent);

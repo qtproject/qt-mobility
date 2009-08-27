@@ -65,7 +65,7 @@ QStringList QGstreamerAudioEncode::supportedAudioCodecs() const
     return m_codecs;
 }
 
-QString QGstreamerAudioEncode::codecDescription(const QString &codecName)
+QString QGstreamerAudioEncode::codecDescription(const QString &codecName) const
 {
     return m_codecDescriptions.value(codecName);
 }
@@ -101,12 +101,12 @@ void QGstreamerAudioEncode::setQuality(qreal value)
     setEncodingOption(QLatin1String("quality"), QVariant(value));
 }
 
-QStringList QGstreamerAudioEncode::supportedEncodingOptions()
+QStringList QGstreamerAudioEncode::supportedEncodingOptions() const
 {
     return m_codecOptions.value(m_codec);
 }
 
-QVariant QGstreamerAudioEncode::encodingOption(const QString &name)
+QVariant QGstreamerAudioEncode::encodingOption(const QString &name) const
 {
     return m_options.value(name);
 }

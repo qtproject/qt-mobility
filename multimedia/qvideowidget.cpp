@@ -38,6 +38,7 @@
 #include "qabstractmediaservice.h"
 #include "qvideooutputcontrol.h"
 #include "qvideowindowcontrol.h"
+#include "qvideowidgetcontrol.h"
 
 #ifndef QT_NO_VIDEOSURFACE
 #include "qpaintervideosurface_p.h"
@@ -60,11 +61,14 @@ public:
         : service(0)
         , output(0)
         , overlay(0)
+        , videoWidgetControl(0)
 #ifndef QT_NO_VIDEOSURFACE
         , renderer(0)
         , surface(0)
 #endif
         , displayMode(QVideoWidget::WindowedDisplay)
+        , aspectRatio(QVideoWidget::AspectRatioAuto)
+        , customPixelAspectRatio(1,1)
         , windowedFlags(0)
     {
     }
@@ -73,11 +77,15 @@ public:
     QAbstractMediaService *service;
     QVideoOutputControl *output;
     QVideoWindowControl *overlay;
+    QVideoWidgetControl *videoWidgetControl;
 #ifndef QT_NO_VIDEOSURFACE
     QVideoRendererControl *renderer;
     QPainterVideoSurface *surface;
 #endif
     QVideoWidget::DisplayMode displayMode;
+    QVideoWidget::AspectRatio aspectRatio;
+    QSize customPixelAspectRatio;
+
     Qt::WindowFlags windowedFlags;
 
     QRect displayRect() const;
@@ -110,14 +118,16 @@ QRect QVideoWidgetPrivate::displayRect() const
     displayRect.moveTo(q_func()->mapTo(q_func()->nativeParentWidget(), displayRect.topLeft()));
 
     if (overlay) {
-        //TODO: take into account display aspect ratio, if not 1
-        QSize videoSize = overlay->nativeSize();
-        if (!videoSize.isEmpty()) {
-            videoSize.scale(displayRect.size(), Qt::KeepAspectRatio);
-            QRect videoRect(QPoint(0,0), videoSize);
-            videoRect.moveCenter(displayRect.center());
+        if (aspectRatio == QVideoWidget::AspectRatioAuto) {
+            //TODO: take into account display aspect ratio, if not 1
+            QSize videoSize = overlay->nativeSize();
+            if (!videoSize.isEmpty()) {
+                videoSize.scale(displayRect.size(), Qt::KeepAspectRatio);
+                QRect videoRect(QPoint(0,0), videoSize);
+                videoRect.moveCenter(displayRect.center());
 
-            return videoRect;
+                return videoRect;
+            }
         }
     }
 
@@ -164,7 +174,22 @@ QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
                 this, SIGNAL(hueChanged(int)));
         connect(d->overlay, SIGNAL(saturationChanged(int)),
                 this, SIGNAL(saturationChanged(int)));
+    } else if ((d->videoWidgetControl = d->service->control<QVideoWidgetControl *>())) {
+        d->videoWidgetControl->videoWidget()->setParent(this);
+        d->videoWidgetControl->videoWidget()->installEventFilter(this);
+
+        connect(d->videoWidgetControl, SIGNAL(fullscreenChanged(bool)),
+                this, SLOT(_q_overlayFullscreenChanged(bool)));
+        connect(d->videoWidgetControl, SIGNAL(brightnessChanged(int)),
+                this, SIGNAL(brightnessChanged(int)));
+        connect(d->videoWidgetControl, SIGNAL(contrastChanged(int)),
+                this, SIGNAL(contrastChanged(int)));
+        connect(d->videoWidgetControl, SIGNAL(hueChanged(int)),
+                this, SIGNAL(hueChanged(int)));
+        connect(d->videoWidgetControl, SIGNAL(saturationChanged(int)),
+                this, SIGNAL(saturationChanged(int)));
     }
+
 #ifndef QT_NO_VIDEOSURFACE
     if ((d->renderer = d->service->control<QVideoRendererControl *>())) {
         d->surface = new QPainterVideoSurface;
@@ -178,7 +203,7 @@ QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
     }
 #endif
 
-    setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 }
 
 /*!
@@ -199,6 +224,40 @@ QVideoWidget::DisplayMode QVideoWidget::displayMode() const
     return d_func()->displayMode;
 }
 
+QVideoWidget::AspectRatio QVideoWidget::aspectRatio() const
+{
+    return d_func()->aspectRatio;
+}
+
+QSize QVideoWidget::customPixelAspectRatio() const
+{
+    return d_func()->customPixelAspectRatio;
+}
+
+void QVideoWidget::setAspectRatio(QVideoWidget::AspectRatio ratio)
+{
+    Q_D(QVideoWidget);
+    d->aspectRatio = ratio;
+
+    if (d->overlay)
+        d->overlay->setDisplayRect(d->displayRect());
+
+    if (d->videoWidgetControl)
+        d->videoWidgetControl->setAspectRatio(ratio);
+}
+
+void QVideoWidget::setCustomPixelAspectRatio(const QSize &customRatio)
+{
+    Q_D(QVideoWidget);
+    d->customPixelAspectRatio = customRatio;
+
+    if (d->overlay)
+        d->overlay->setDisplayRect(d->displayRect());
+
+    if (d->videoWidgetControl)
+        d->videoWidgetControl->setCustomAspectRatio(customRatio);
+}
+
 void QVideoWidget::setDisplayMode(DisplayMode mode)
 {
     Q_D(QVideoWidget);
@@ -215,6 +274,8 @@ void QVideoWidget::setDisplayMode(DisplayMode mode)
 
         if (d->overlay) {
             d->overlay->setFullscreen(true);
+        } else if (d->videoWidgetControl) {
+            d->videoWidgetControl->setFullscreen(true);
 #ifndef QT_NO_VIDEOSURFACE
         } else if (d->surface) {
             emit displayModeChanged(d->displayMode = mode);
@@ -228,6 +289,8 @@ void QVideoWidget::setDisplayMode(DisplayMode mode)
 
         if (d->overlay) {
             d->overlay->setFullscreen(false);
+        } else if (d->videoWidgetControl) {
+            d->videoWidgetControl->setFullscreen(false);
 #ifndef QT_NO_VIDEOSURFACE
         } else if (d->surface) {
             emit displayModeChanged(d->displayMode = mode);
@@ -253,7 +316,12 @@ int QVideoWidget::brightness() const
 {
     Q_D(const QVideoWidget);
 
-    return d->overlay ? d->overlay->brightness() : 0;
+    if (d->overlay)
+        return d->overlay->brightness();
+    else if (d->videoWidgetControl)
+        return d->videoWidgetControl->brightness();
+    else
+        return 0;
 }
 
 void QVideoWidget::setBrightness(int brightness)
@@ -262,6 +330,8 @@ void QVideoWidget::setBrightness(int brightness)
 
     if (d->overlay)
         d->overlay->setBrightness(qBound(-100, brightness, 100));
+    else if (d->videoWidgetControl)
+        d->videoWidgetControl->setBrightness(qBound(-100, brightness, 100));
 }
 
 /*!
@@ -282,7 +352,12 @@ int QVideoWidget::contrast() const
 {
     Q_D(const QVideoWidget);
 
-    return d->overlay ? d->overlay->contrast() : 0;
+    if (d->overlay)
+        return d->overlay->contrast();
+    else if (d->videoWidgetControl)
+        return d->videoWidgetControl->contrast();
+    else
+        return 0;
 }
 
 void QVideoWidget::setContrast(int contrast)
@@ -291,6 +366,8 @@ void QVideoWidget::setContrast(int contrast)
 
     if (d->overlay)
         d->overlay->setContrast(qBound(-100, contrast, 100));
+    else if (d->videoWidgetControl)
+        d->videoWidgetControl->setContrast(qBound(-100, contrast, 100));
 }
 
 /*!
@@ -310,7 +387,12 @@ int QVideoWidget::hue() const
 {
     Q_D(const QVideoWidget);
 
-    return d->overlay ? d->overlay->hue() : 0;
+    if (d->overlay)
+        return d->overlay->hue();
+    else if (d->videoWidgetControl)
+        return d->videoWidgetControl->hue();
+    else
+        return 0;
 }
 
 void QVideoWidget::setHue(int hue)
@@ -319,6 +401,8 @@ void QVideoWidget::setHue(int hue)
 
     if (d->overlay)
         d->overlay->setHue(qBound(-100, hue, 100));
+    else if (d->videoWidgetControl)
+        d->videoWidgetControl->setHue(qBound(-100, hue, 100));
 }
 
 /*!
@@ -338,7 +422,12 @@ int QVideoWidget::saturation() const
 {
     Q_D(const QVideoWidget);
 
-    return d->overlay ? d->overlay->saturation() : 0;
+    if (d->overlay)
+        return d->overlay->saturation();
+    else if (d->videoWidgetControl)
+        return d->videoWidgetControl->saturation();
+    else
+        return 0;
 }
 
 void QVideoWidget::setSaturation(int saturation)
@@ -347,6 +436,8 @@ void QVideoWidget::setSaturation(int saturation)
 
     if (d->overlay)
         d->overlay->setSaturation(qBound(-100, saturation, 100));
+    else if (d->videoWidgetControl)
+        d->videoWidgetControl->setSaturation(qBound(-100, saturation, 100));
 }
 
 /*!
@@ -364,6 +455,8 @@ QSize QVideoWidget::sizeHint() const
 
     if (d->overlay)
         return d->overlay->nativeSize();
+    else if (d->videoWidgetControl)
+        return d->videoWidgetControl->videoWidget()->sizeHint();
 #ifndef QT_NO_VIDEOSURFACE
     else if (d->surface)
         return d->surface->surfaceFormat().sizeHint();
@@ -383,7 +476,7 @@ void QVideoWidget::setVisible(bool visible)
         return;
 
     if (visible) {
-        if ((window() && window()->testAttribute(Qt::WA_DontShowOnScreen)) || !d->overlay) {
+        if ((window() && window()->testAttribute(Qt::WA_DontShowOnScreen)) || (!d->overlay && !d->videoWidgetControl)) {
 #ifndef QT_NO_VIDEOSURFACE
             if (d->renderer)
                 d->output->setOutput(QVideoOutputControl::RendererOutput);
@@ -395,7 +488,11 @@ void QVideoWidget::setVisible(bool visible)
         } else if (d->overlay) {
             d->overlay->setWinId(winId());
             d->output->setOutput(QVideoOutputControl::WindowOutput);
+        } else if (d->videoWidgetControl) {
+            d->output->setOutput(QVideoOutputControl::WidgetOutput);
+            d->videoWidgetControl->videoWidget()->show();
         }
+
     } else {
         d->output->setOutput(QVideoOutputControl::NoOutput);
     }
@@ -407,7 +504,14 @@ void QVideoWidget::setVisible(bool visible)
 */
 void QVideoWidget::showEvent(QShowEvent *event)
 {
+    Q_D(QVideoWidget);
+
     QWidget::showEvent(event);
+
+    if (d->videoWidgetControl) {
+        d->videoWidgetControl->videoWidget()->show();
+        d->videoWidgetControl->videoWidget()->setGeometry(0, 0, width(), height());
+    }
 }
 
 /*!
@@ -443,6 +547,10 @@ void QVideoWidget::resizeEvent(QResizeEvent *event)
 
     if (d->overlay) {
         d->overlay->setDisplayRect(d->displayRect());
+    }
+
+    if (d->videoWidgetControl) {
+        d->videoWidgetControl->videoWidget()->setGeometry(0, 0, width(), height());
     }
 }
 
@@ -481,6 +589,24 @@ void QVideoWidget::keyPressEvent(QKeyEvent *event)
     } else {
         QWidget::keyPressEvent(event);
     }
+}
+
+bool QVideoWidget::eventFilter(QObject *obj, QEvent *event)
+{
+    Q_D(QVideoWidget);
+
+    if (d->videoWidgetControl &&
+        obj == d->videoWidgetControl->videoWidget() &&
+        d->displayMode == FullscreenDisplay &&
+        event->type() == QEvent::KeyPress)
+    {
+        QKeyEvent *ke = reinterpret_cast<QKeyEvent*>(event);
+        if (ke->key() == Qt::Key_Escape) {
+            setDisplayMode(WindowedDisplay);
+            return true;
+        }
+    }
+    return false;
 }
 
 #include "moc_qvideowidget.cpp"

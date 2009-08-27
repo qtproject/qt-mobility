@@ -107,17 +107,51 @@ void QMediaPlayerPrivate::_q_error(int error, const QString &errorString)
 }
 
 /*!
+    Construct a QMediaPlayer parented to \a parent.
+
+    The QMediaPlayer will use the system default playback service.
+*/
+
+QMediaPlayer::QMediaPlayer(QObject *parent):
+    QAbstractMediaObject(*new QMediaPlayerPrivate, parent)
+{
+    Q_D(QMediaPlayer);
+
+    d->service = createMediaPlayerService();
+    Q_ASSERT(d->service != 0);
+
+    d->control = qobject_cast<QMediaPlayerControl*>(d->service->control(QMediaPlayerControl_iid));
+
+    connect(d->control, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(_q_stateChanged(QMediaPlayer::State)));
+    connect(d->control, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
+            SLOT(_q_mediaStatusChanged(QMediaPlayer::MediaStatus)));
+    connect(d->control, SIGNAL(error(int,QString)), SLOT(_q_error(int,QString)));
+
+    connect(d->control, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
+    connect(d->control, SIGNAL(videoAvailabilityChanged(bool)), SIGNAL(videoAvailabilityChanged(bool)));
+    connect(d->control, SIGNAL(volumeChanged(int)), SIGNAL(volumeChanged(int)));
+    connect(d->control, SIGNAL(mutingChanged(bool)), SIGNAL(mutingChanged(bool)));
+    connect(d->control, SIGNAL(seekableChanged(bool)), SIGNAL(seekableChanged(bool)));
+
+    if (d->control->state() == PlayingState)
+        addPropertyWatch("position");
+
+    if (d->control->mediaStatus() == StalledMedia || d->control->mediaStatus() == BufferingMedia)
+        addPropertyWatch("bufferStatus");
+}
+
+/*!
     Construct a QMediaPlayer to operate on the QMediaPlayerService \a service, parented to \a parent.
 */
 
 QMediaPlayer::QMediaPlayer(QMediaPlayerService *service, QObject *parent):
     QAbstractMediaObject(*new QMediaPlayerPrivate, parent)
 {
-    Q_ASSERT(service != 0);
-
     Q_D(QMediaPlayer);
 
     d->service = service;
+    Q_ASSERT(d->service != 0);
+
     d->control = qobject_cast<QMediaPlayerControl *>(service->control(QMediaPlayerControl_iid));
 
     connect(d->control, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(_q_stateChanged(QMediaPlayer::State)));
@@ -130,7 +164,6 @@ QMediaPlayer::QMediaPlayer(QMediaPlayerService *service, QObject *parent):
     connect(d->control, SIGNAL(volumeChanged(int)), SIGNAL(volumeChanged(int)));
     connect(d->control, SIGNAL(mutingChanged(bool)), SIGNAL(mutingChanged(bool)));
     connect(d->control, SIGNAL(seekableChanged(bool)), SIGNAL(seekableChanged(bool)));
-
 
     if (d->control->state() == PlayingState)
         addPropertyWatch("position");
@@ -153,6 +186,7 @@ QMediaPlayer::~QMediaPlayer()
 /*!
     \reimp
 */
+
 bool QMediaPlayer::isValid() const
 {
     return d_func()->service;
@@ -273,7 +307,7 @@ float QMediaPlayer::playbackRate() const
 /*!
     Returns the last error condition.
 
-    \sa errorString(), unsetError()
+    \sa errorString()
 */
 QMediaPlayer::Error QMediaPlayer::error() const
 {
@@ -309,19 +343,6 @@ QString QMediaPlayer::errorString() const
 }
 
 /*!
-    Resets the value of error() to NoError, and clears the value or errorString().
-
-    \sa error() errorString()
-*/
-void QMediaPlayer::unsetError()
-{
-    Q_D(QMediaPlayer);
-
-    d->error = NoError;
-    d->errorString = QString();
-}
-
-/*!
     Returns the session object being controlled by this Player.
 */
 
@@ -336,7 +357,13 @@ QAbstractMediaService* QMediaPlayer::service() const
 */
 void QMediaPlayer::play()
 {
-    d_func()->control->play();
+    Q_D(QMediaPlayer);
+
+    // Reset error conditions
+    d->error = NoError;
+    d->errorString = QString();
+
+    d->control->play();
 }
 
 /*!
@@ -566,14 +593,6 @@ QMediaPlayerService* createMediaPlayerService(QMediaServiceProvider *provider)
     \fn void QMediaPlayer::videoAvailabilityChanged(bool videoAvailable)
 
     Signal the availability of visual cntent has changed to \a videoAvailable.
-*/
-
-/*!
-    \fn void QMediaPlayer::bufferingChanged(bool buffering)
-
-    Signal the state of buffering has changed to \a buffering. When true some
-    amount of the content is being buffered locally; when false local buffering
-    has stopped.
 */
 
 /*!

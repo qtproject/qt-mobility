@@ -35,6 +35,7 @@
 #include "qwmpplaylistcontrol.h"
 
 #include "qwmpevents.h"
+#include "qwmpglobal.h"
 #include "qwmpmetadata.h"
 #include "qwmpplaylist.h"
 
@@ -77,7 +78,7 @@ int QWmpPlaylistControl::currentPosition() const
 
     IWMPMedia *media = 0;
     if (m_controls && m_player->get_currentMedia(&media) == S_OK) {
-        position = QWmpMetaData::value(media, QLatin1String("PlaylistIndex")).toInt();
+        position = QWmpMetaData::value(media, QAutoBStr(L"PlaylistIndex")).toInt();
 
         media->Release();
     }
@@ -137,7 +138,7 @@ void QWmpPlaylistControl::currentItemChangeEvent(IDispatch *dispatch)
     IWMPMedia *media = 0;
     if (dispatch && dispatch->QueryInterface(
             __uuidof(IWMPMedia), reinterpret_cast<void **>(&media)) == S_OK) {
-        int index = QWmpMetaData::value(media, QLatin1String("PlaylistIndex")).toInt();
+        int index = QWmpMetaData::value(media, QAutoBStr(L"PlaylistIndex")).toInt();
 
         emit playlistPositionChanged(index);
     }

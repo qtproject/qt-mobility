@@ -64,8 +64,10 @@ class Q_MEDIA_EXPORT QMediaPlayer : public QAbstractMediaObject
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(MediaStatus mediaStatus READ mediaStatus NOTIFY mediaStatusChanged)
     Q_PROPERTY(QString error READ errorString NOTIFY errorStringChanged)
+
     Q_ENUMS(State)
     Q_ENUMS(MediaStatus)
+
 public:
     enum State
     {
@@ -96,33 +98,31 @@ public:
         AccessDeniedError
     };
 
-    QMediaPlayer(QMediaPlayerService *service = createMediaPlayerService(), QObject *parent = 0);
+    QMediaPlayer(QObject *parent = 0);
+    QMediaPlayer(QMediaPlayerService *service, QObject *parent = 0);
     ~QMediaPlayer();
 
     bool isValid() const;
 
     QMediaSource currentMediaSource() const;
 
+    State state() const;
+    MediaStatus mediaStatus() const;
+
     qint64 duration() const;
     qint64 position() const;
 
     int volume() const;
     bool isMuted() const;
+    bool isVideoAvailable() const;
 
     int bufferStatus() const;
 
-    bool isVideoAvailable() const;
-
     bool isSeekable() const;
-
     float playbackRate() const;
-
-    State state() const;
-    MediaStatus mediaStatus() const;
 
     Error error() const;
     QString errorString() const;
-    void unsetError();
 
     QAbstractMediaService* service() const;
 
@@ -138,19 +138,22 @@ public Q_SLOTS:
     void setPlaybackRate(float rate);
 
 Q_SIGNALS:
+    void currentMediaSourceChanged(const QMediaSource &source);
+
+    void stateChanged(QMediaPlayer::State newState);
+    void mediaStatusChanged(QMediaPlayer::MediaStatus status);
+
     void durationChanged(qint64 duration);
     void positionChanged(qint64 position);
-    void currentMediaSourceChanged(const QMediaSource &source);
-    void stateChanged(QMediaPlayer::State newState);
+
     void volumeChanged(int volume);
     void mutingChanged(bool muted);
     void videoAvailabilityChanged(bool videoAvailable);
-    void bufferingChanged(bool buffering);
+
     void bufferStatusChanged(int percentFilled);
+
     void seekableChanged(bool seekable);
     void playbackRateChanged(float rate);
-
-    void mediaStatusChanged(QMediaPlayer::MediaStatus status);
 
     void error(QMediaPlayer::Error error);
     void errorStringChanged(const QString &error);

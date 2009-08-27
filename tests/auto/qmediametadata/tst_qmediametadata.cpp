@@ -60,26 +60,29 @@ public:
         return m_readOnly;
     }
 
-    QList<QString> availableMetadata() const
+    QVariant metadata(QMediaMetadata::Key key) const
     {
-        return data.keys();
+        Q_UNUSED(key);
+
+        return QVariant();
     }
 
-    QVariant metadata(QString const &name) const
+    void setMetadata(QMediaMetadata::Key key, QVariant const &value)
+    {
+        Q_UNUSED(key);
+        Q_UNUSED(value);
+    }
+
+    QVariant extendedMetadata(QString const &name) const
     {
         return data[name];
     }
 
-    void setMetadata(QString const &name, QVariant const &value)
+    void setExtendedMetadata(QString const &name, QVariant const &value)
     {
         if (!m_readOnly)
             data[name] = value;
     }
-
-	QMediaResourceList resources() const
-	{
-		return QMediaResourceList();
-	}	
 
     void setNoMetadata()
     {
@@ -160,7 +163,6 @@ public slots:
 private slots:
     void testMetadataAvailable();
     void testReadOnly();
-    void testListAvailable();
     void testChanged();
     void testReadMetadata();
     void testWriteMetadata();
@@ -204,12 +206,6 @@ void tst_QMediaMetadata::testReadOnly()
     // check signal
 }
 
-void tst_QMediaMetadata::testListAvailable()
-{
-    mock->setMetadata();
-    QCOMPARE(metadata->availableMetadata().size(), 3);
-}
-
 void tst_QMediaMetadata::testChanged()
 {
     // check signal
@@ -219,8 +215,8 @@ void tst_QMediaMetadata::testReadMetadata()
 {
     mock->setMetadata();
 
-    QCOMPARE(metadata->metadata("Artist").toString(), QString("Dead Can Dance"));
-    QCOMPARE(metadata->metadata("Title").toString(), QString("Host of Seraphim"));
+    QCOMPARE(metadata->extendedMetadata("Artist").toString(), QString("Dead Can Dance"));
+    QCOMPARE(metadata->extendedMetadata("Title").toString(), QString("Host of Seraphim"));
 }
 
 void tst_QMediaMetadata::testWriteMetadata()
@@ -228,8 +224,8 @@ void tst_QMediaMetadata::testWriteMetadata()
     mock->setMetadata();
     mock->setNoReadOnly();
 
-    metadata->setMetadata("Title", QLatin1String("In the Kingdom of the Blind the One eyed are Kings"));
-    QCOMPARE(metadata->metadata("Title").toString(), QLatin1String("In the Kingdom of the Blind the One eyed are Kings"));
+    metadata->setExtendedMetadata("Title", QLatin1String("In the Kingdom of the Blind the One eyed are Kings"));
+    QCOMPARE(metadata->extendedMetadata("Title").toString(), QLatin1String("In the Kingdom of the Blind the One eyed are Kings"));
 }
 
 

@@ -57,27 +57,28 @@ bool Qt7Metadata::isReadOnly() const
     return true;
 }
 
-QList<QString> Qt7Metadata::availableMetadata() const
+QVariant Qt7Metadata::metadata(QMediaMetadata::Key key) const
 {
-    return saved.keys();
+    Q_UNUSED(key);
+    return QVariant();
 }
 
-QVariant Qt7Metadata::metadata(QString const &name) const
+void Qt7Metadata::setMetadata(QMediaMetadata::Key key, QVariant const &value)
 {
-    return saved[name];
-}
-
-void Qt7Metadata::setMetadata(QString const &name, QVariant const &value)
-{
-    Q_UNUSED(name);
+    Q_UNUSED(key);
     Q_UNUSED(value);
 }
 
-QMediaResourceList Qt7Metadata::resources() const
+QVariant Qt7Metadata::extendedMetadata(QString const &key) const
 {
-    return QMediaResourceList();
+    return saved[key];
 }
 
+void Qt7Metadata::setExtendedMetadata(QString const &key, QVariant const &value)
+{
+    Q_UNUSED(key);
+    Q_UNUSED(value);
+}
 
 /*
 void Qt7Metadata::playlistItemChanged(int position)

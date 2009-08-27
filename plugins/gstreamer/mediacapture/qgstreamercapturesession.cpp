@@ -475,7 +475,7 @@ void QGstreamerCaptureSession::enablePreview(bool enabled)
     }
 }
 
-void QGstreamerCaptureSession::setMetadata(const QMap<QString, QVariant> &data)
+void QGstreamerCaptureSession::setMetadata(const QMap<QByteArray, QVariant> &data)
 {
     //qDebug() << "QGstreamerCaptureSession::setMetadata" << data;
     m_metadata = data;
@@ -485,7 +485,7 @@ void QGstreamerCaptureSession::setMetadata(const QMap<QString, QVariant> &data)
         GstElement *element = 0;
         while (gst_iterator_next(elements, (void**)&element) == GST_ITERATOR_OK) {
             //qDebug() << "found element with tag setter interface:" << gst_element_get_name(element);
-            QMapIterator<QString, QVariant> it(data);
+            QMapIterator<QByteArray, QVariant> it(data);
             while (it.hasNext()) {
                 it.next();
                 const QString tagName = it.key();

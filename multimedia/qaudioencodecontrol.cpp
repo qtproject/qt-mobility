@@ -77,7 +77,7 @@ QStringList QAudioEncodeControl::supportedEncodingOptions() const
     return QStringList();
 }
 
-QVariant QAudioEncodeControl::encodingOption(const QString &name)
+QVariant QAudioEncodeControl::encodingOption(const QString &name) const
 {
     Q_UNUSED(name);
     return QVariant();

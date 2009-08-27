@@ -88,7 +88,7 @@ int MpdPlaylistSource::size() const
     return d_func()->entries;
 }
 
-QMediaSource MpdPlaylistSource::resources(int pos) const
+QMediaSource MpdPlaylistSource::media(int pos) const
 {
     Q_ASSERT(size() >= pos);
     return QMediaSource();

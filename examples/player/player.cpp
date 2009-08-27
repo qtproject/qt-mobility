@@ -44,8 +44,6 @@
 
 #include <QtGui>
 
-#define USE_VIDEOWIDGET
-
 Player::Player(QWidget *parent)
     : QWidget(parent)
     , videoWidget(0)
@@ -65,21 +63,11 @@ Player::Player(QWidget *parent)
             this, SLOT(statusChanged(QMediaPlayer::MediaStatus)));
     connect(player, SIGNAL(bufferStatusChanged(int)), this, SLOT(bufferingProgress(int)));
 
-#ifdef USE_VIDEOWIDGET
     videoWidget = new QVideoWidget(player);
 
     connect(videoWidget, SIGNAL(displayModeChanged(QVideoWidget::DisplayMode)),
             this, SLOT(displayModeChanged(QVideoWidget::DisplayMode)));
-#else
-    QWidget *videoWidget = player->service()->createEndpoint<QMediaWidgetEndpoint *>();
 
-    if (videoWidget) {
-        qDebug() << "service supports video widgets, nice";
-        player->service()->setVideoOutput(videoWidget);
-    } else {
-        coverLabel = new QLabel;
-    }
-#endif
     playlistModel = new PlaylistModel(this);
     playlistModel->setPlaylist(playlist);
 
@@ -147,11 +135,6 @@ Player::Player(QWidget *parent)
         splitter->addWidget(videoWidget);
         splitter->addWidget(playlistView);
 
-        /*
-        connect(player, SIGNAL(videoAvailabilityChanged(bool)), videoWidget, SLOT(setVisible(bool)));
-        videoWidget->setMinimumSize(64,64);
-        videoWidget->setVisible(false);*/
-
         layout->addWidget(splitter);
     } else {
         layout->addWidget(coverLabel, 0, Qt::AlignCenter);
@@ -176,11 +159,9 @@ void Player::open()
 
     foreach (QString const &fileName, fileNames) {
 #ifndef Q_OS_WIN
-        playlist->appendItem(
-                QMediaResource(QUrl(QLatin1String("file://") + fileName)));
+        playlist->appendItem(QMediaSource(QUrl(QLatin1String("file://") + fileName)));
 #else
-        playlist->appendItem(
-                QMediaResource(QUrl(QLatin1String("file:///") + fileName)));
+        playlist->appendItem(QMediaSource(QUrl(QLatin1String("file:///") + fileName)));
 #endif
     }
 }
@@ -197,23 +178,17 @@ void Player::positionChanged(qint64 progress)
 
 void Player::metadataChanged()
 {
-    qDebug() << "update metadata" << metaData->metadata(QLatin1String("title")).toString();
+    qDebug() << "update metadata" << metaData->metadata(QMediaMetadata::Title).toString();
     if (metaData->metadataAvailable()) {
         setTrackInfo(QString("%1 - %2")
-                .arg(metaData->metadata(QLatin1String("Artist")).toString())
-                .arg(metaData->metadata(QLatin1String("Title")).toString()));
+                .arg(metaData->metadata(QMediaMetadata::AlbumArtist).toString())
+                .arg(metaData->metadata(QMediaMetadata::Title).toString()));
 
         if (coverLabel) {
-            QMediaResource cover;
-            foreach (const QMediaResource &resource, metaData->resources()) {
-                if (resource.role() == QMediaResource::CoverArtRole
-                        && (cover.isNull()
-                        || resource.resolution().height() > cover.resolution().height())) {
-                    cover = resource;
-                }
-            }
-            coverLabel->setPixmap(!cover.isNull()
-                    ? QPixmap(cover.uri().toString())
+            QUrl uri = metaData->metadata(QMediaMetadata::CoverArtUriLarge).value<QUrl>();
+
+            coverLabel->setPixmap(!uri.isEmpty()
+                    ? QPixmap(uri.toString())
                     : QPixmap());
         }
     }

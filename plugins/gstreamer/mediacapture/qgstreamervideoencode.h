@@ -22,11 +22,11 @@ public:
     QList<QSize> supportedResolutions() const;
     void setResolution(const QSize &);
 
-    QPair<int,int> frameRate() const;
-    QPair<int,int> minumumFrameRate() const;
-    QPair<int,int> maximumFrameRate() const;
-    QList< QPair<int,int> > supportedFrameRates() const;
-    void setFrameRate(QPair<int,int>);
+    QMediaRecorder::FrameRate frameRate() const;
+    QMediaRecorder::FrameRate minimumFrameRate() const;
+    QMediaRecorder::FrameRate maximumFrameRate() const;
+    QList< QMediaRecorder::FrameRate > supportedFrameRates() const;
+    void setFrameRate(const QMediaRecorder::FrameRate &rate);
 
     QStringList supportedVideoCodecs() const;
     QString videoCodecDescription(const QString &codecName) const;
@@ -41,8 +41,8 @@ public:
     qreal quality() const;
     void setQuality(qreal);
 
-    QStringList supportedEncodingOptions();
-    QVariant encodingOption(const QString &name);
+    QStringList supportedEncodingOptions() const;
+    QVariant encodingOption(const QString &name) const;
     void setEncodingOption(const QString &name, const QVariant &value);
 
     GstElement *createEncoder();
@@ -56,7 +56,7 @@ private:
     QString m_codec;
     QMap<QString, QVariant> m_options;
     QSize m_resolution;
-    QPair<int,int> m_frameRate;
+    QMediaRecorder::FrameRate m_frameRate;
 };
 
 #endif

@@ -52,17 +52,12 @@
 
 #include <QtGui>
 
-#define USE_VIDEOWIDGET
-
 CameraCapture::CameraCapture(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::CameraCapture),
     mediaRecorder(0),
     camera(0),
-    audioDevice(0),
-    audioEncodeControl(0),
-    videoEncodeControl(0),
-    formatControl(0)
+    audioDevice(0)
 {
     ui->setupUi(this);
 
@@ -74,8 +69,7 @@ CameraCapture::CameraCapture(QWidget *parent) :
         mediaRecorder = new QMediaRecorder();
 
     mediaRecorder->setSink(QUrl("test.mkv"));
-    if(mediaRecorder->service())
-        audioDevice = mediaRecorder->service()->control<QAudioInputDeviceControl*>();
+    audioDevice = mediaRecorder->service()->control<QAudioInputDeviceControl*>();
 
     connect(mediaRecorder, SIGNAL(durationChanged(qint64)), this, SLOT(updateRecordTime()));
     connect(mediaRecorder, SIGNAL(error(QMediaRecorder::Error)), this, SLOT(displayErrorMessage()));
@@ -87,87 +81,53 @@ CameraCapture::CameraCapture(QWidget *parent) :
     } else
         ui->audioInputDeviceBox->setEnabled(false);
 
-    if(mediaRecorder->service())
-        audioEncodeControl = mediaRecorder->service()->control<QAudioEncodeControl*>();
-
-    if (audioEncodeControl) {
-        foreach(const QString &codecName, audioEncodeControl->supportedAudioCodecs()) {
-            QString description = audioEncodeControl->codecDescription(codecName);
-            ui->audioCodecBox->addItem(codecName+": "+description);
-            if (codecName == audioEncodeControl->audioCodec())
-                ui->audioCodecBox->setCurrentIndex(ui->audioCodecBox->count()-1);
-        }
-
-        ui->audioQualitySlider->setValue(qRound(audioEncodeControl->quality()));
-    } else {
-        ui->audioCodecBox->setEnabled(false);
-        ui->audioQualitySlider->setEnabled(false);
+    //audio codecs
+    foreach(const QString &codecName, mediaRecorder->supportedAudioCodecs()) {
+        QString description = mediaRecorder->codecDescription(codecName);
+        ui->audioCodecBox->addItem(codecName+": "+description);
+        if (codecName == mediaRecorder->audioCodec())
+            ui->audioCodecBox->setCurrentIndex(ui->audioCodecBox->count()-1);
     }
 
-    if(mediaRecorder->service())
-        videoEncodeControl = mediaRecorder->service()->control<QVideoEncodeControl*>();
+    ui->audioQualitySlider->setValue(qRound(mediaRecorder->audioQuality()));
 
-    if (videoEncodeControl) {
-        foreach(const QString &codecName, videoEncodeControl->supportedVideoCodecs()) {
-            QString description = videoEncodeControl->videoCodecDescription(codecName);
-            ui->videoCodecBox->addItem(codecName+": "+description);
-            if (codecName == videoEncodeControl->videoCodec())
-                ui->videoCodecBox->setCurrentIndex(ui->videoCodecBox->count()-1);
-        }
-
-        ui->videoQualitySlider->setValue(qRound(videoEncodeControl->quality()));
-
-        ui->videoResolutionBox->addItem(tr("Default"));
-        QList<QSize> supportedResolutions = videoEncodeControl->supportedResolutions();
-        foreach(const QSize &resolution, supportedResolutions) {
-            ui->videoResolutionBox->addItem(QString("%1x%2").arg(resolution.width()).arg(resolution.height()));
-        }
-
-        ui->videoFramerateBox->addItem(tr("Default"));
-        QList< QPair<int,int> > supportedFrameRates = videoEncodeControl->supportedFrameRates();
-        QPair<int,int> rate;
-        foreach(rate, supportedFrameRates) {
-            ui->videoFramerateBox->addItem(QString("%1/%2").arg(rate.first).arg(rate.second));
-        }
-
-    } else {
-        ui->videoCodecBox->setEnabled(false);
-        ui->videoQualitySlider->setEnabled(false);
+    //video codecs
+    foreach(const QString &codecName, mediaRecorder->supportedVideoCodecs()) {
+        QString description = mediaRecorder->videoCodecDescription(codecName);
+        ui->videoCodecBox->addItem(codecName+": "+description);
+        if (codecName == mediaRecorder->videoCodec())
+            ui->videoCodecBox->setCurrentIndex(ui->videoCodecBox->count()-1);
     }
 
-    if(mediaRecorder->service())
-        formatControl = mediaRecorder->service()->control<QMediaFormatControl*>();
+    ui->videoQualitySlider->setValue(qRound(mediaRecorder->videoQuality()));
 
-    if (formatControl) {
-        foreach(const QString &formatName, formatControl->supportedFormats()) {
-            QString description = formatControl->formatDescription(formatName);
-            ui->containerFormatBox->addItem(formatName+": "+description);
-            if (formatName == formatControl->format())
-                ui->containerFormatBox->setCurrentIndex(ui->containerFormatBox->count()-1);
-        }
-    } else {
-        ui->containerFormatBox->setEnabled(false);
+    ui->videoResolutionBox->addItem(tr("Default"));
+    QList<QSize> supportedResolutions = mediaRecorder->supportedResolutions();
+    foreach(const QSize &resolution, supportedResolutions) {
+        ui->videoResolutionBox->addItem(QString("%1x%2").arg(resolution.width()).arg(resolution.height()));
+    }
+
+    ui->videoFramerateBox->addItem(tr("Default"));
+    QList< QPair<int,int> > supportedFrameRates = mediaRecorder->supportedFrameRates();
+    QPair<int,int> rate;
+    foreach(rate, supportedFrameRates) {
+        ui->videoFramerateBox->addItem(QString("%1/%2").arg(rate.first).arg(rate.second));
+    }
+
+    //container format selection
+    foreach(const QString &formatName, mediaRecorder->supportedFormats()) {
+        QString description = mediaRecorder->formatDescription(formatName);
+        ui->containerFormatBox->addItem(formatName+": "+description);
+        if (formatName == mediaRecorder->format())
+            ui->containerFormatBox->setCurrentIndex(ui->containerFormatBox->count()-1);
     }
 
     metadata = new QMediaMetadata(camera);
-    metadata->setMetadata("title", QVariant(QLatin1String("Test Title")));
+    metadata->setMetadata(QMediaMetadata::Title, QVariant(QLatin1String("Test Title")));
 
-#ifdef USE_VIDEOWIDGET
     QWidget *videoWidget = new QVideoWidget(mediaRecorder);
     videoWidget->resize(640,480);
     videoWidget->show();
-#else
-    QWidget *videoWidget = 0;
-    if(mediaRecorder->service())
-        videoWidget = mediaRecorder->service()->createEndpoint<QMediaWidgetEndpoint*>();
-
-    if (videoWidget) {
-        qDebug() << "service supports video widgets, nice";
-        mediaRecorder->service()->setVideoOutput(videoWidget);
-        videoWidget->show();
-    }
-#endif
-
 }
 
 CameraCapture::~CameraCapture()
@@ -192,41 +152,40 @@ void CameraCapture::setCameraDevice(int idx)
 
 void CameraCapture::setAudioCodec(int idx)
 {
-    if (audioEncodeControl) {
-        QString codecName = audioEncodeControl->supportedAudioCodecs()[idx];
-        audioEncodeControl->setAudioCodec(codecName);
 
-        QAudioFormat audioFormat;
-        //speex works better with 32kHz sample rate
-        if (codecName == QLatin1String("speexenc")) {
-            audioFormat.setFrequency(32000);
-        }
+    QString codecName = mediaRecorder->supportedAudioCodecs()[idx];
+    mediaRecorder->setAudioCodec(codecName);
 
-        audioEncodeControl->setFormat(audioFormat);
-
+    QAudioFormat audioFormat;
+    //speex works better with 32kHz sample rate
+    if (codecName == QLatin1String("speexenc")) {
+        audioFormat.setFrequency(32000);
     }
+
+    mediaRecorder->setAudioFormat(audioFormat);
+
 }
 
 void CameraCapture::setVideoCodec(int idx)
 {
-    QString codecName = videoEncodeControl->supportedVideoCodecs()[idx];
-    videoEncodeControl->setVideoCodec(codecName);
+    QString codecName = mediaRecorder->supportedVideoCodecs()[idx];
+    mediaRecorder->setVideoCodec(codecName);
 }
 
 void CameraCapture::setAudioQuality(int value)
 {
-    audioEncodeControl->setQuality(value);
+    mediaRecorder->setAudioQuality(value);
 }
 
 void CameraCapture::setVideoQuality(int value)
 {
-    videoEncodeControl->setQuality(value);
+    mediaRecorder->setVideoQuality(value);
 }
 
 void CameraCapture::setContainerFormat(int idx)
 {
-    if (formatControl)
-        formatControl->setFormat(formatControl->supportedFormats()[idx]);
+    if (mediaRecorder)
+        mediaRecorder->setFormat(mediaRecorder->supportedFormats()[idx]);
 }
 
 void CameraCapture::setVideoResolution()
@@ -238,7 +197,7 @@ void CameraCapture::setVideoResolution()
         resolution.setHeight(resolutionParts[1].toInt());
     }
 
-    videoEncodeControl->setResolution(resolution);
+    mediaRecorder->setResolution(resolution);
 }
 
 void CameraCapture::setVideoFramerate()
@@ -250,27 +209,23 @@ void CameraCapture::setVideoFramerate()
         frameRate.second = rateParts[1].toInt();
     }
 
-    videoEncodeControl->setFrameRate(frameRate);
+    mediaRecorder->setFrameRate(frameRate);
 }
 
 void CameraCapture::record()
 {
-    if (mediaRecorder)
-        mediaRecorder->record();
-
+    mediaRecorder->record();
     updateRecordTime();
 }
 
 void CameraCapture::pause()
 {
-    if (mediaRecorder)
-        mediaRecorder->pause();
+    mediaRecorder->pause();
 }
 
 void CameraCapture::stop()
 {
-    if (mediaRecorder)
-        mediaRecorder->stop();
+    mediaRecorder->stop();
 }
 
 void CameraCapture::enablePreview(bool enabled)

@@ -7,14 +7,14 @@
 QPhononVideoWidget::QPhononVideoWidget(Phonon::VideoWidget *videoWidget, QObject *parent)
     :QVideoWidgetControl(parent), m_videoWidget(videoWidget)
 {
-    setAspectRatio(AspectRatioAuto);
+    setAspectRatio(QVideoWidget::AspectRatioAuto);
 }
 
 QPhononVideoWidget::~QPhononVideoWidget()
 {
 }
 
-QVideoWidgetControl::AspectRatio QPhononVideoWidget::aspectRatio() const
+QVideoWidget::AspectRatio QPhononVideoWidget::aspectRatio() const
 {
     return m_aspectRatio;
 }
@@ -24,14 +24,14 @@ QSize QPhononVideoWidget::customAspectRatio() const
     return m_customAspectRatio;
 }
 
-void QPhononVideoWidget::setAspectRatio(QVideoWidgetControl::AspectRatio ratio)
+void QPhononVideoWidget::setAspectRatio(QVideoWidget::AspectRatio ratio)
 {
     m_aspectRatio = ratio;
     switch (ratio) {
-        case AspectRatioAuto:
+        case QVideoWidget::AspectRatioAuto:
             m_videoWidget->setAspectRatio(Phonon::VideoWidget::AspectRatioAuto);
             break;
-        case AspectRatioWidget:
+        case QVideoWidget::AspectRatioWidget:
             m_videoWidget->setAspectRatio(Phonon::VideoWidget::AspectRatioWidget);
             break;
         default:
