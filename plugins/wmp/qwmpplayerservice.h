@@ -70,12 +70,24 @@ public:
 
     QAbstractMediaControl *control(const char *name) const;
 
-    void setVideoOutput(QObject *output);
+    bool isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType);
 
-    QList<QByteArray> supportedEndpointInterfaces(
-            QMediaEndpointInterface::Direction direction) const;
+    void setInputStream(QIODevice* stream);
+    QIODevice* inputStream() const;
 
-    QObject *createEndpoint(const char *iid);
+    void setOutputStream(QIODevice* stream);
+    QIODevice* outputStream() const;
+
+    QString activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType);
+    void setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint);
+    QList<QString> supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const;
+
+    //void setVideoOutput(QObject *output);
+
+    //QList<QByteArray> supportedEndpointInterfaces(
+    //        QMediaEndpointInterface::Direction direction) const;
+
+    //QObject *createEndpoint(const char *iid);
 
     // IUnknown
     HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **object);
