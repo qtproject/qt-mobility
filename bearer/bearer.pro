@@ -8,11 +8,12 @@ DEFINES += QT_BUILD_BEARER_LIB QT_MAKEDLL
 
 #DEFINES += BEARER_MANAGEMENT_DEBUG
 
-HEADERS += qnetworkconfiguration.h \
+PUBLIC_HEADERS += qnetworkconfiguration.h \
            qnetworksession.h \
            qnetworkconfigmanager.h \
            qbearerglobal.h
 
+HEADERS += $$PUBLIC_HEADERS
 SOURCES += qnetworksession.cpp \
            qnetworkconfigmanager.cpp \
            qnetworkconfiguration.cpp
@@ -46,6 +47,11 @@ symbian: {
             -lecom \
             -lefsrv \
             -lnetmeta
+
+    deploy.path = /
+    exportheaders.sources = $$PUBLIC_HEADERS
+    exportheaders.path = epoc32/include
+    DEPLOYMENT += exportheaders
 
     TARGET.CAPABILITY = All -TCB
 } else {
