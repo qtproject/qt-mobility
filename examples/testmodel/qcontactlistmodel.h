@@ -35,6 +35,17 @@
 #ifndef QCONTACTLISTMODEL_H
 #define QCONTACTLISTMODEL_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include "qtcontactsglobal.h"
 #include "qcontact.h"
 #include "qcontactphonenumber.h"
@@ -53,6 +64,8 @@ class QContactListModel : public QAbstractListModel
 
 public:
     QContactListModel(QContactManager* manager = 0, int cacheSize = 50);
+    QContactListModel(const QContactListModel& other);
+    QContactListModel& operator=(const QContactListModel& other);
     ~QContactListModel();
 
     QContactManager* manager() const;

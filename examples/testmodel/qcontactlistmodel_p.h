@@ -48,13 +48,13 @@
 
 #include "qtcontactsglobal.h"
 #include "qcontactphonenumber.h"
+#include "qcontactrequests.h"
 
 #include "qcontactlistmodel.h"
 
 #include <QSharedData>
 #include <QMap>
 
-class QContactAbstractRequest;
 class QContactListModelPrivate : public QSharedData
 {
 public:
@@ -68,7 +68,8 @@ public:
             m_currentRow(-1),
             m_relevantDefinitionName(QString(QLatin1String(QContactPhoneNumber::DefinitionName))),
             m_relevantFieldName(QString(QLatin1String(QContactPhoneNumber::FieldNumber))),
-            m_idRequest(0)
+            m_idRequest(0),
+            debug_count(0)
     {
     }
 
@@ -86,12 +87,25 @@ public:
             m_requestCentreRows(other.m_requestCentreRows),
             m_relevantDefinitionName(other.m_relevantDefinitionName),
             m_relevantFieldName(other.m_relevantFieldName),
-            m_idRequest(other.m_idRequest)
+            m_idRequest(other.m_idRequest),
+            debug_count(other.debug_count)
     {
     }
 
     ~QContactListModelPrivate()
     {
+        if (m_idRequest) {
+            m_idRequest->cancel();
+            delete m_idRequest;
+        }
+
+        QList<QContactAbstractRequest*> requests = m_requestCentreRows.keys();
+        for (int i = 0; i < requests.size(); i++) {
+            QContactAbstractRequest* current = requests.at(i);
+            current->cancel();
+            m_requestCentreRows.remove(current);
+            delete current;
+        }
     }
 
     QMap<QUniqueId, int> m_idsToRows;
@@ -110,6 +124,8 @@ public:
     QString m_relevantFieldName;
 
     QContactIdFetchRequest* m_idRequest;
+
+    mutable int debug_count;
 };
 
 #endif

@@ -7,6 +7,12 @@
 #include "qcontactrequests.h"
 #include "qcontactfilters.h"
 
+/*!
+ * Constructs a new QContactListModel which will request data from the given \a manager
+ * and cache approximately \a cacheSize contacts.
+ *
+ * \sa setManager(), setCacheSize()
+ */
 QContactListModel::QContactListModel(QContactManager* manager, int cacheSize)
         : QAbstractListModel(),
         d(new QContactListModelPrivate)
@@ -15,17 +21,45 @@ QContactListModel::QContactListModel(QContactManager* manager, int cacheSize)
     setManager(manager);
 }
 
-QContactListModel::~QContactListModel()
+/*!
+ * Constructs a new copy of the \a other model
+ */
+QContactListModel::QContactListModel(const QContactListModel& other)
+        : QAbstractListModel(), d(other.d)
 {
-    if (d->m_idRequest)
-        delete d->m_idRequest;
 }
 
+/*!
+ * Assigns this model to be equal to \a other
+ */
+QContactListModel& QContactListModel::operator=(const QContactListModel& other)
+{
+    d = other.d;
+    return *this;
+}
+
+
+/*!
+ * Cleans up any memory in use by the model
+ */
+QContactListModel::~QContactListModel()
+{
+}
+
+/*!
+ * Returns a pointer to the manager from which this model requests contact data
+ */
 QContactManager* QContactListModel::manager() const
 {
     return d->m_manager;
 }
 
+/*!
+ * Sets the manager from which this model requests contact data to \a manager.
+ * Any requests made of the old manager will be cancelled and deleted.
+ *
+ * \sa backendChanged()
+ */
 void QContactListModel::setManager(QContactManager* manager)
 {
     // first, cancel and delete any requests made of the old manager
@@ -35,12 +69,17 @@ void QContactListModel::setManager(QContactManager* manager)
         QContactAbstractRequest* current = requests.at(i);
         if (current->manager() == d->m_manager) {
             current->cancel();
+d->debug_count -= 1;
             delete current;
         } else {
             updatedRequestCentreRows.insert(current, d->m_requestCentreRows.value(current));
         }
     }
     d->m_requestCentreRows = updatedRequestCentreRows;
+
+    // secondly, disconnect the signals from the old manager
+    if (d->m_manager)
+        d->m_manager->disconnect(this);
 
     // then set up the new manager.
     d->m_manager = manager;
@@ -58,21 +97,23 @@ void QContactListModel::setManager(QContactManager* manager)
     backendChanged();
 }
 
+/*!
+ * Returns the number of contacts that this model will cache
+ */
 int QContactListModel::cacheSize() const
 {
     return (d->m_halfCacheSize * 2);
 }
 
-QContactListModel::AsynchronousRequestPolicy QContactListModel::requestPolicy() const
-{
-    return d->m_requestPolicy;
-}
-
-void QContactListModel::setRequestPolicy(QContactListModel::AsynchronousRequestPolicy policy)
-{
-    d->m_requestPolicy = policy;
-}
-
+/*!
+ * Sets the number of contacts that this model will cache to be approximately \a size contacts.
+ * The exact size of the cache will be the next higher size which is divisible by 4, or
+ * \a size if \a size is divisible by 4, unless the next higher size would cause integer overflow.
+ * Returns true if the cache size was set successfully, and false if a non-positive \a size was
+ * specified.
+ *
+ * \sa cacheSize()
+ */
 bool QContactListModel::setCacheSize(int size)
 {
     // size will be rounded up to nearest where modulo 4 == 0,
@@ -97,16 +138,52 @@ bool QContactListModel::setCacheSize(int size)
     return false;
 }
 
+/*!
+ * Returns the policy that the model uses to determine when asynchronous requests should be cleaned up.
+ *
+ * \sa setRequestPolicy()
+ */
+QContactListModel::AsynchronousRequestPolicy QContactListModel::requestPolicy() const
+{
+    return d->m_requestPolicy;
+}
+
+/*!
+ * Sets the policy that the model uses to determine when to clean up asynchronous requests to \a policy.
+ *
+ * \sa requestPolicy()
+ */
+void QContactListModel::setRequestPolicy(QContactListModel::AsynchronousRequestPolicy policy)
+{
+    d->m_requestPolicy = policy;
+}
+
+/*!
+ * Returns the definition name of the relevant data detail which is cached by the model
+ *
+ * \sa setRelevantDetailDefinitionAndFieldNames()
+ */
 QString QContactListModel::relevantDefinitionName() const
 {
     return d->m_relevantDefinitionName;
 }
 
+/*!
+ * Returns the name of the field of the relevant data detail which is cached by the model
+ *
+ * \sa setRelevantDetailDefinitionAndFieldNames()
+ */
 QString QContactListModel::relevantFieldName() const
 {
     return d->m_relevantFieldName;
 }
 
+/*!
+ * Sets the definition name of the relevant detail which is cached by the model to \a definitionName,
+ * and the name of the field of such details which is cached to \a fieldName.
+ *
+ * \sa relevantDefinitionName(), relevantFieldName()
+ */
 bool QContactListModel::setRelevantDetailDefinitionAndFieldNames(const QString& definitionName, const QString& fieldName)
 {
     if (definitionName.isEmpty() || fieldName.isEmpty())
@@ -117,12 +194,18 @@ bool QContactListModel::setRelevantDetailDefinitionAndFieldNames(const QString& 
     return true;
 }
 
+/*!
+ * \reimp
+ */
 int QContactListModel::rowCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent);
     return d->m_rowsToIds.count();
 }
 
+/*!
+ * \reimp
+ */
 QVariant QContactListModel::data(const QModelIndex& index, int role) const
 {
     if (index.row() == -1)
@@ -203,6 +286,7 @@ QVariant QContactListModel::data(const QModelIndex& index, int role) const
                 if (cancelRequest) {
                     current->cancel();
                     d->m_requestCentreRows.remove(current);
+d->debug_count -= 1;
                     delete current;
                 }
 
@@ -215,7 +299,9 @@ QVariant QContactListModel::data(const QModelIndex& index, int role) const
         QList<int> oldCacheRows = d->m_cache.keys();
         foreach (int row, newCacheRows) {
             if (!d->m_cache.contains(row)) {
-                d->m_cache.insert(row, QContact());
+                QContact temp;
+                temp.setDisplayLabel(QString(tr("Loading...")));
+                d->m_cache.insert(row, temp);
             }
         }
 
@@ -239,6 +325,8 @@ QVariant QContactListModel::data(const QModelIndex& index, int role) const
 
         // now fire off an asynchronous request to update our cache
         QContactFetchRequest* req = new QContactFetchRequest;
+        d->m_requestCentreRows.insert(req, d->m_lastCacheCentreRow);
+d->debug_count += 1;
         QContactIdListFilter idFil;
         QList<QUniqueId> newCacheIds;
         for (int i = 0; i < newCacheRows.size(); i++) {
@@ -314,6 +402,9 @@ QVariant QContactListModel::data(const QModelIndex& index, int role) const
     return ret;
 }
 
+/*!
+ * \reimp
+ */
 QVariant QContactListModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     Q_UNUSED(section);
@@ -359,6 +450,9 @@ QVariant QContactListModel::headerData(int section, Qt::Orientation orientation,
     return ret;
 }
 
+/*!
+ * \reimp
+ */
 bool QContactListModel::insertRows(int row, int count, const QModelIndex& parent)
 {
     beginInsertRows(parent, row, count);
@@ -370,6 +464,9 @@ bool QContactListModel::insertRows(int row, int count, const QModelIndex& parent
     return false;
 }
 
+/*!
+ * \reimp
+ */
 bool QContactListModel::removeRows(int row, int count, const QModelIndex& parent)
 {
     beginRemoveRows(parent, row, count);
@@ -381,11 +478,18 @@ bool QContactListModel::removeRows(int row, int count, const QModelIndex& parent
     return false;
 }
 
+/*!
+ * Returns the row number at which the data of the contact with the given \a contactId is stored, or
+ * -1 if no such contact exists in the model
+ */
 int QContactListModel::contactRow(const QUniqueId& contactId) const
 {
-    return d->m_idsToRows.value(contactId);
+    return d->m_idsToRows.value(contactId, -1);
 }
 
+/*!
+ * Returns the entire contact which exists in the model at the specified \a index
+ */
 QContact QContactListModel::contact(const QModelIndex& index) const
 {
     if (d->m_manager)
@@ -393,6 +497,12 @@ QContact QContactListModel::contact(const QModelIndex& index) const
     return QContact();
 }
 
+/*!
+ * Processes the progress of the \a request.
+ * If the request is still valid, the results are placed in the cache at the required positions.
+ * If the cache is updated, the dataChanged() signal is emitted.
+ * This implementation ignores the \a appendOnly flag.
+ */
 void QContactListModel::contactFetchRequestProgress(QContactFetchRequest* request, bool appendOnly)
 {
     Q_UNUSED(appendOnly);
@@ -400,6 +510,7 @@ void QContactListModel::contactFetchRequestProgress(QContactFetchRequest* reques
     // first, check to make sure that the request is still valid.
     if (d->m_manager != request->manager() || request->status() == QContactAbstractRequest::Cancelled) {
         d->m_requestCentreRows.remove(request);
+d->debug_count -= 1;
         delete request;
         return; // ignore these results.
     }
@@ -421,6 +532,7 @@ void QContactListModel::contactFetchRequestProgress(QContactFetchRequest* reques
     // check to see if the request status is "finished" - clean up.
     if (request->status() == QContactAbstractRequest::Finished) {
         d->m_requestCentreRows.remove(request);
+d->debug_count -= 1;
         delete request;
     }
 
@@ -455,6 +567,12 @@ void QContactListModel::contactFetchRequestProgress(QContactFetchRequest* reques
     }
 }
 
+/*!
+ * Processes the results of a contact id fetch request.
+ * If the \a appendOnly flag is set, the new data is appended to the existing data
+ * and the dataChanged() signal is emitted; otherwise, the model emits the reset() signal
+ * once the new data has been loaded.
+ */
 void QContactListModel::contactIdFetchRequestProgress(QContactIdFetchRequest* request, bool appendOnly)
 {
     // first, if it's not append only, we need to rebuild the entire list + cache.
@@ -480,6 +598,9 @@ void QContactListModel::contactIdFetchRequestProgress(QContactIdFetchRequest* re
         emit dataChanged(QAbstractItemModel::createIndex(startIndex,0), QAbstractItemModel::createIndex(endIndex,0));
 }
 
+/*!
+ * Requests data from the new backend.
+ */
 void QContactListModel::backendChanged()
 {
     d->m_idRequest->start();

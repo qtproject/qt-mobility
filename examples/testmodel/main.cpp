@@ -4,9 +4,8 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-
-    TestModelUi *ui = new TestModelUi;
-    ui->show();
-
-    return app.exec();
+    TestModelUi ui;
+    ui.show();
+    int retn = app.exec();
+    return retn;
 }

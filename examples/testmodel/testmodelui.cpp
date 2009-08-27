@@ -2,7 +2,6 @@
 #include "qtcontacts.h"
 #include "qcontactlistmodel.h"
 
-#include <QDebug>
 #include <QtGui>
 
 TestModelView::TestModelView(QContactManager* manager)
@@ -18,6 +17,7 @@ TestModelView::~TestModelView()
 }
 
 TestModelUi::TestModelUi()
+        : QWidget()
 {
     manager = new QContactManager("memory");
     generateMoreContacts(); // only one generate = should be able to cache whole lot.
@@ -58,7 +58,6 @@ TestModelUi::~TestModelUi()
 
 void TestModelUi::generateMoreContacts()
 {
-qDebug() << "generating contacts...";
     // create some contacts, add to manager.
     for (int i = 0; i < 10; i++) {
         QContact c;
