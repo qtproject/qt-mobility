@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 
-#include "qpacketprotocol.h"
+#include "qpacketprotocol_p.h"
 #include <QBuffer>
 
 #define MAX_PACKET_SIZE 0x7FFFFFFF

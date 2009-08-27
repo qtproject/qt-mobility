@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 
-#include <qpacketprotocol.h>
+#include <qpacketprotocol_p.h>
 
 #include <QByteArray>
 #include <QBuffer>

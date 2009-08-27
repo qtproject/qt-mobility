@@ -6,25 +6,34 @@ include(../common.pri)
 
 DEFINES += QT_BUILD_CFW_LIB QT_MAKEDLL
 
-HEADERS += qcontextglobal.h \
-           qpacketprotocol.h \
+
+PUBLIC_HEADERS += qcontextglobal.h \
            qvaluespace.h \
-           qvaluespace_p.h \
-           qvaluespacemanager_p.h \
            qvaluespaceobject.h
 
+PRIVATE_HEADERS += qpacketprotocol_p.h \
+           qmallocpool_p.h \
+           qvaluespace_p.h \
+           qvaluespacemanager_p.h \
+
+HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
+
 SOURCES += qpacketprotocol.cpp \
+           qmallocpool.cpp \
            qvaluespace.cpp \
            qvaluespacemanager.cpp \
            qvaluespaceobject.cpp
-
+symbian {
+    deploy.path = /
+    exportheaders.sources = $$PUBLIC_HEADERS
+    exportheaders.path = epoc32/include
+    DEPLOYMENT += exportheaders
+}
 unix {
-    HEADERS += qmallocpool.h \
-               qsystemlock.h
+    HEADERS += qsystemreadwritelock_p.h
 
-    SOURCES += qmallocpool.cpp \
-               qsystemlock.cpp \
-               sharedmemorylayer.cpp
+    SOURCES += sharedmemorylayer.cpp \
+               qsystemreadwritelock.cpp
 }
 
 win32 {

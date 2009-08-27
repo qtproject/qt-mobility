@@ -31,43 +31,40 @@
 **
 ****************************************************************************/
 
-#include <qpacketprotocol_p.h>
+#ifndef QSYSTEMREADWRITELOCK_H
+#define QSYSTEMREADWRITELOCK_H
 
-#include <QtTest/QTest>
+#include <QString>
 
-class tst_QPacket : public QObject
+class QSystemReadWriteLockPrivate;
+class QSystemReadWriteLock
 {
-    Q_OBJECT
+public:
+    enum AccessMode{Create, Open};
+    enum SystemReadWriteLockError{
+        NoError,
+        PermissionDenied,
+        KeyError,
+        NotFound,
+        LockError,
+        OutOfResources,
+        FailedToInitialize,
+        UnknownError
+    };
+                                
+    QSystemReadWriteLock(const QString &key, AccessMode mode = Open);
+    ~QSystemReadWriteLock();
 
-private slots:
-    void test();
+    bool lockForRead();
+    bool lockForWrite();
+    bool unlock();
+
+    SystemReadWriteLockError error();
+    QString errorString();
+
+    QString key() const;
+private:
+    QSystemReadWriteLockPrivate *d;
 };
 
-void tst_QPacket::test()
-{
-    {
-        QPacket packet;
-
-        QVERIFY(packet.isEmpty());
-
-        packet << "data";
-
-        QVERIFY(!packet.isEmpty());
-
-        packet.clear();
-
-        QVERIFY(packet.isEmpty());
-    }
-
-    {
-        QPacket packet;
-        packet << "data";
-
-        QPacket copy(packet);
-
-        QVERIFY(!packet.isEmpty());
-    }
-}
-
-QTEST_MAIN(tst_QPacket)
-#include "tst_qpacket.moc"
+#endif

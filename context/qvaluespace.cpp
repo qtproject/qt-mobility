@@ -34,8 +34,9 @@
 #include "qvaluespace.h"
 #include "qvaluespace_p.h"
 #include "qvaluespacemanager_p.h"
-#include "qmallocpool.h"
+#include "qmallocpool_p.h"
 #include "qvaluespaceobject.h"
+#include "qpacketprotocol_p.h"
 
 #include <QByteArray>
 #include <QObject>
@@ -46,7 +47,6 @@
 #include <QSet>
 #include <QString>
 #include <QVarLengthArray>
-#include <qpacketprotocol.h>
 
 #include <QtCore/qdebug.h>
 

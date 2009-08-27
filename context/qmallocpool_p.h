@@ -30,25 +30,45 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QSYSTEMLOCK_H
-#define QSYSTEMLOCK_H
+#ifndef QMALLOCPOOL_H
+#define QMALLOCPOOL_H
 
-class QSystemReadWriteLockPrivate;
-class QSystemReadWriteLock
+#include <cstdlib>
+#include <QString>
+
+#include "qcontextglobal.h"
+
+class QMallocPoolPrivate;
+
+class Q_AUTOTEST_EXPORT QMallocPool
 {
 public:
-    QSystemReadWriteLock(unsigned int id, bool own);
-    ~QSystemReadWriteLock();
+    enum PoolType { Owned, NewShared, Shared };
+    QMallocPool();
+    QMallocPool(void * poolBase, unsigned int poolLength,
+                PoolType type = Owned, const QString& name = QString());
+    ~QMallocPool();
 
-    bool isNull() const;
-    unsigned int id() const;
+    size_t size_of(void *);
+    void *calloc(size_t nmemb, size_t size);
+    void *malloc(size_t size);
+    void free(void *ptr);
+    void *realloc(void *ptr, size_t size);
 
-    bool lockForRead(int milliSec);
-    bool lockForWrite(int milliSec);
-    void unlock();
+    bool isValid() const;
+
+    struct MemoryStats {
+        unsigned long poolSize;
+        unsigned long maxSystemBytes;
+        unsigned long systemBytes;
+        unsigned long inuseBytes;
+        unsigned long keepCost;
+    };
+    MemoryStats memoryStatistics() const;
 
 private:
-    QSystemReadWriteLockPrivate * d;
+    Q_DISABLE_COPY(QMallocPool)
+    QMallocPoolPrivate * d;
 };
 
 #endif
