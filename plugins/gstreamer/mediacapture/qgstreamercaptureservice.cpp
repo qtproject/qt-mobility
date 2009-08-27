@@ -126,7 +126,9 @@ QGstreamerCaptureService::~QGstreamerCaptureService()
 
 bool QGstreamerCaptureService::isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType)
 {
-    if(endpointType == QAbstractMediaService::VideoOutput)
+    if(endpointType == QAbstractMediaService::VideoInput)
+        return true;
+    if(endpointType == QAbstractMediaService::AudioInput)
         return true;
 
     return false;
@@ -135,19 +137,57 @@ bool QGstreamerCaptureService::isEndpointSupported(QAbstractMediaService::MediaE
 
 QString QGstreamerCaptureService::activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType)
 {
-    //TODO
-    return QString();
+    int idx = 0;
+
+    switch(endpointType) {
+        case QAbstractMediaService::AudioInput:
+            idx = m_audioInputDevice->selectedDevice();
+            return m_audioInputDevice->name(idx);
+
+        case QAbstractMediaService::VideoInput:
+            //TODO, m_cameraControl
+            return QString();
+        default:
+            return QString();
+    }
 }
 
 void QGstreamerCaptureService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint)
 {
-    //TODO
+    int numDevices = 0;
+
+    switch(endpointType) {
+        case QAbstractMediaService::AudioInput:
+            numDevices = m_audioInputDevice->deviceCount();
+            for(int i=0;i<numDevices;i++) {
+                if(qstrcmp(endpoint.toLocal8Bit().constData(),m_audioInputDevice->name(i).toLocal8Bit().constData()) == 0) {
+                    m_audioInputDevice->setSelectedDevice(i);
+                    break;
+                }
+            }
+            break;
+        case QAbstractMediaService::VideoInput:
+            //TODO, m_cameraControl
+            break;
+        default:
+            return;
+    }
 }
 
 QList<QString> QGstreamerCaptureService::supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const
 {
     QList<QString> list;
-    //TODO
+
+    if(endpointType == QAbstractMediaService::AudioInput) {
+        int numDevices = m_audioInputDevice->deviceCount();
+        for(int i=0;i<numDevices;i++)
+            list.append(m_audioInputDevice->name(i));
+
+    } else if(endpointType == QAbstractMediaService::VideoInput) {
+        //TODO, m_cameraControl
+
+    }
+
     return list;
 }
 
