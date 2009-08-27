@@ -89,12 +89,6 @@ QMetadataProviderControl::~QMetadataProviderControl()
 */
 
 /*!
-    \fn QMediaResourceList QMetadataProviderControl::resources() const
-
-    Returns a list of resources belonging to a media item.
-*/
-
-/*!
     \fn void QMetadataProviderControl::metadataChanged()
 
     Signal the changes of metadata.
