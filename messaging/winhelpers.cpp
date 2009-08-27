@@ -322,9 +322,9 @@ MapiEntryId MapiFolder::messageEntryId(QMessageStore::ErrorCode *lastError, cons
     return result;
 }
 
-LPMESSAGE MapiFolder::openMessage(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId)
+IMessage *MapiFolder::openMessage(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId)
 {
-    LPMESSAGE message(0);
+    IMessage *message(0);
 
     LPENTRYID entryIdPtr(reinterpret_cast<LPENTRYID>(const_cast<char*>(entryId.data())));
     ULONG objectType(0);
@@ -405,11 +405,11 @@ MapiFolderPtr MapiFolder::subFolder(CommonFolder commonFolder, QMessageStore::Er
 }
 
 
-LPMESSAGE MapiFolder::createMessage(QMessageStore::ErrorCode* lastError)
+IMessage *MapiFolder::createMessage(QMessageStore::ErrorCode* lastError)
 {
-    LPMESSAGE message = 0;
+    IMessage *message = 0;
 
-    if(HRESULT hr = _folder->CreateMessage(NULL, 0, (LPMESSAGE*)&message)!=S_OK)
+    if(HRESULT hr = _folder->CreateMessage(NULL, 0, &message)!=S_OK)
     {
         *lastError = QMessageStore::FrameworkFault;
         if(message) message->Release(); message =0;
@@ -597,6 +597,48 @@ QMessageFolder MapiStore::folderFromId(QMessageStore::ErrorCode *lastError, cons
     return result;
 }
 #endif
+
+IMessage *MapiStore::openMessage(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId)
+{
+    IMessage *message(0);
+
+    LPENTRYID entryIdPtr(reinterpret_cast<LPENTRYID>(const_cast<char*>(entryId.data())));
+    ULONG objectType(0);
+    HRESULT rv = _store->OpenEntry(entryId.count(), entryIdPtr, 0, MAPI_BEST_ACCESS, &objectType, reinterpret_cast<LPUNKNOWN*>(&message));
+    if (HR_SUCCEEDED(rv)) {
+        if (objectType != MAPI_MESSAGE) {
+            qWarning() << "Wrong object type:" << objectType;
+            message->Release();
+            message = 0;
+            *lastError = QMessageStore::InvalidId;
+        }
+    } else {
+        *lastError = QMessageStore::InvalidId;
+    }
+
+    return message;
+}
+
+IMAPIFolder *MapiStore::openFolder(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId)
+{
+    IMAPIFolder *folder(0);
+
+    LPENTRYID entryIdPtr(reinterpret_cast<LPENTRYID>(const_cast<char*>(entryId.data())));
+    ULONG objectType(0);
+    HRESULT rv = _store->OpenEntry(entryId.count(), entryIdPtr, 0, MAPI_BEST_ACCESS, &objectType, reinterpret_cast<LPUNKNOWN*>(&folder));
+    if (HR_SUCCEEDED(rv)) {
+        if (objectType != MAPI_FOLDER) {
+            qWarning() << "Wrong object type:" << objectType;
+            folder->Release();
+            folder = 0;
+            *lastError = QMessageStore::InvalidId;
+        }
+    } else {
+        *lastError = QMessageStore::InvalidId;
+    }
+
+    return folder;
+}
 
 QMessageAccountId MapiStore::id()
 {
@@ -911,19 +953,13 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
 {
     QMessage result;
 
-    MapiEntryId entryId(QMessageIdPrivate::entryId(id));
-    MapiRecordKey messageRecordKey(QMessageIdPrivate::messageRecordKey(id));
-    MapiRecordKey folderRecordKey(QMessageIdPrivate::folderRecordKey(id));
     MapiRecordKey storeRecordKey(QMessageIdPrivate::storeRecordKey(id));
     MapiStorePtr mapiStore(findStore(lastError, QMessageAccountIdPrivate::from(storeRecordKey)));
     if (*lastError != QMessageStore::NoError)
         return result;
 
-    MapiFolderPtr parentFolder(mapiStore->findFolder(lastError, folderRecordKey));
-    if (*lastError != QMessageStore::NoError)
-        return result;
-
-    LPMESSAGE message = parentFolder->openMessage(lastError, entryId);
+    MapiEntryId entryId(QMessageIdPrivate::entryId(id));
+    IMessage *message = mapiStore->openMessage(lastError, entryId);
     if (*lastError != QMessageStore::NoError)
         return result;
 
@@ -1220,27 +1256,15 @@ QByteArray MapiSession::attachmentData(QMessageStore::ErrorCode *lastError, cons
 {
     QByteArray result;
 
-    MapiEntryId entryId(QMessageIdPrivate::entryId(id));
-    MapiRecordKey messageRecordKey(QMessageIdPrivate::messageRecordKey(id));
-    MapiRecordKey folderRecordKey(QMessageIdPrivate::folderRecordKey(id));
     MapiRecordKey storeRecordKey(QMessageIdPrivate::storeRecordKey(id));
     MapiStorePtr mapiStore(findStore(lastError, QMessageAccountIdPrivate::from(storeRecordKey)));
     if (*lastError != QMessageStore::NoError)
         return result;
 
-    LPMESSAGE message;
-    QMessageStore::ErrorCode ignoredError;
-    if (openEntry(&ignoredError, entryId, &message) != S_OK) {
-        MapiFolderPtr parentFolder(mapiStore->findFolder(lastError, folderRecordKey));
-        if (*lastError != QMessageStore::NoError)
-            return result;
-
-        entryId = parentFolder->messageEntryId(lastError, messageRecordKey);
-        if (!entryId.count() || (openEntry(lastError, entryId, &message) != S_OK)) {
-            *lastError = QMessageStore::InvalidId;
-            return result;
-        }
-    }
+    MapiEntryId entryId(QMessageIdPrivate::entryId(id));
+    IMessage *message = mapiStore->openMessage(lastError, entryId);
+    if (*lastError != QMessageStore::NoError)
+        return result;
 
     LPATTACH attachment(0);
     HRESULT rv = message->OpenAttach(number, 0, 0, &attachment);
