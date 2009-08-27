@@ -50,6 +50,8 @@
 #include <QList>
 #include <QSettings>
 #include <QDir>
+#include <QNetworkInterface>
+#include <QString>
 
 //#include <Winsock2.h>
 //#include <mswsock.h>
@@ -86,7 +88,7 @@ typedef struct _DISPLAY_BRIGHTNESS {
 } DISPLAY_BRIGHTNESS, *PDISPLAY_BRIGHTNESS;
 
 
-PWLAN_CONNECTION_ATTRIBUTES  getWifiConnectionAttributes()
+static PWLAN_CONNECTION_ATTRIBUTES  getWifiConnectionAttributes()
 {
     DWORD version =  0;
     HANDLE clientHandle = NULL;
@@ -95,15 +97,18 @@ PWLAN_CONNECTION_ATTRIBUTES  getWifiConnectionAttributes()
 
     PWLAN_INTERFACE_INFO_LIST interfacesInfoList = NULL;
     result = WlanOpenHandle( 2, NULL, &version, &clientHandle );
-    if( result != ERROR_SUCCESS != result ) {
+    if( result != ERROR_SUCCESS) {
         qWarning() << "Error opening Wlanapi" << result ;
-        return connAtts;
+        WlanFreeMemory(connAtts);
+        return NULL;
     }
     result = WlanEnumInterfaces(clientHandle, NULL, &interfacesInfoList);
 
     if( result != ERROR_SUCCESS) {
         qWarning() << "Error in enumerating wireless interfaces" << result;
-        return connAtts;
+        WlanCloseHandle(clientHandle, NULL);
+        WlanFreeMemory(connAtts);
+        return NULL;
     }
 
     for( uint i = 0; i < interfacesInfoList->dwNumberOfItems; i++ ) {
@@ -118,16 +123,85 @@ PWLAN_CONNECTION_ATTRIBUTES  getWifiConnectionAttributes()
 
         ULONG size = 0;
         result = WlanQueryInterface( clientHandle, &guid,  wlan_intf_opcode_current_connection, NULL, &size, (PVOID*) &connAtts, NULL );
-
         if( result != ERROR_SUCCESS ) {
             qWarning() << "Error querying wireless interfaces"<< result ;
             continue;
         }
     }
+    WlanCloseHandle(clientHandle, NULL);
     return connAtts;
 }
 
+static QSystemNetworkInfo::NetworkMode interfaceType(const QNetworkInterface &netInterface)
+{
+    unsigned long oid;
+    DWORD bytesWritten;
 
+    NDIS_MEDIUM medium;
+    NDIS_PHYSICAL_MEDIUM physicalMedium;
+
+    HANDLE handle = CreateFile((TCHAR *)QString("\\\\.\\%1").arg(netInterface.name()).utf16(), 0,
+                               FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
+    if (handle == INVALID_HANDLE_VALUE)
+        return QSystemNetworkInfo::UnknownMode;
+
+    oid = OID_GEN_MEDIA_SUPPORTED;
+    bytesWritten = 0;
+    bool result = DeviceIoControl(handle, IOCTL_NDIS_QUERY_GLOBAL_STATS, &oid, sizeof(oid),
+                                  &medium, sizeof(medium), &bytesWritten, 0);
+    if (!result) {
+        CloseHandle(handle);
+        return QSystemNetworkInfo::UnknownMode;
+    }
+
+    oid = OID_GEN_PHYSICAL_MEDIUM;
+    bytesWritten = 0;
+    result = DeviceIoControl(handle, IOCTL_NDIS_QUERY_GLOBAL_STATS, &oid, sizeof(oid),
+                             &physicalMedium, sizeof(physicalMedium), &bytesWritten, 0);
+    if (!result) {
+        CloseHandle(handle);
+
+        if (medium == NdisMedium802_3)
+           return QSystemNetworkInfo::EthernetMode;
+        else
+           return QSystemNetworkInfo::UnknownMode;
+    }
+
+    CloseHandle(handle);
+
+    if (medium == NdisMedium802_3) {
+        switch (physicalMedium) {
+        case NdisPhysicalMediumWirelessLan:
+           return QSystemNetworkInfo::WlanMode;//"Wlan";
+        case NdisPhysicalMediumBluetooth:
+           return QSystemNetworkInfo::BluetoothMode;//"Bluetooth";
+        case NdisPhysicalMediumWiMax:
+           return QSystemNetworkInfo::WimaxMode;//"WiMAX";
+        default:
+           return QSystemNetworkInfo::EthernetMode;//"Ethernet";
+        }
+    }
+    return QSystemNetworkInfo::UnknownMode;//QString();
+}
+
+static bool isInterfaceType(QSystemNetworkInfo::NetworkMode mode)
+    {
+    QList<QNetworkInterface> interfaceList;
+    interfaceList = QNetworkInterface::allInterfaces();
+
+    while (!interfaceList.isEmpty()) {
+        QNetworkInterface netInterface = interfaceList.takeFirst();
+
+        if (!netInterface.isValid() || (netInterface.flags() & QNetworkInterface::IsLoopBack))
+            continue;
+
+        if (interfaceType(netInterface) == mode)
+            return  true;
+    }
+    return false;
+}
+
+////////
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
  : QObject(parent)
 {
@@ -167,7 +241,7 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 }
 
 // "major.minor.build" format.
-/*QPair< int, double >*/ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
+QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
 {
     Q_UNUSED(parameter);
     QString errorStr = "Not Available";
@@ -242,7 +316,24 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     switch (feature) {
     case QSystemInfo::BluetoothFeature :
         {
-            BLUETOOTH_FIND_RADIO_PARAMS  radioParams = { sizeof(BLUETOOTH_FIND_RADIO_PARAMS)};
+            WMIHelper *wHelper;
+            wHelper = new WMIHelper();
+            wHelper->setWmiNamespace("root/cimv2");
+            wHelper->setClassName("Win32_NetworkAdapter");
+            wHelper->setClassProperty(QStringList() << "Description");
+            wHelper->setConditional("WHERE MACAddress = '00:24:7E:2C:B2:2A'");
+            QVariant v = wHelper->getWMIData();
+
+            qWarning() << wHelper->wmiVariantList.count();
+            foreach(QVariant adapter,  wHelper->wmiVariantList) {
+               qWarning() << adapter.toString();
+            }
+
+
+
+
+/*
+  BLUETOOTH_FIND_RADIO_PARAMS  radioParams = { sizeof(BLUETOOTH_FIND_RADIO_PARAMS)};
             HANDLE radio;
             if(BluetoothFindFirstRadio(&radioParams, &radio) != NULL) {
                 qWarning() << "available";
@@ -252,6 +343,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 
                 qWarning() << "Not available" << GetLastError();
             }
+*/
         }
         break;
     case QSystemInfo::CameraFeature :
@@ -283,7 +375,11 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         {
             WMIHelper *wHelper;
             wHelper = new WMIHelper();
-            QVariant v = wHelper->getWMIData("root/cimv2", "Win32_InfraredDevice", "ConfigManagerErrorCode");
+            wHelper->setWmiNamespace("root/cimv2");
+            wHelper->setClassName("Win32_InfraredDevice");
+            wHelper->setClassProperty(QStringList() << "ConfigManagerErrorCode");
+
+            QVariant v = wHelper->getWMIData();
             if(v.toUInt() == 1) {
                 featureSupported = true;
             }
@@ -316,7 +412,10 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         {
             WMIHelper *wHelper;
             wHelper = new WMIHelper();
-            QVariant v = wHelper->getWMIData("root/cimv2", "Win32_USBHub", "ConfigManagerErrorCode");
+            wHelper->setWmiNamespace("root/cimv2");
+            wHelper->setClassName("Win32_USBHub");
+            wHelper->setClassProperty(QStringList() << "ConfigManagerErrorCode");
+            QVariant v = wHelper->getWMIData();
             if(v.toUInt() == 0) {
                 featureSupported = true;
             }
@@ -335,52 +434,9 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::WlanFeature :
         {
-            QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
-            if (interfaces.isEmpty())
-                interfaces = QNetworkInterface::allInterfaces();
-
-            while (!interfaces.isEmpty()) {
-                QNetworkInterface netInterface = interfaces.takeFirst();
-
-                if (!netInterface.isValid())
-                    continue;
-
-                if (netInterface.flags() & QNetworkInterface::IsLoopBack)
-                    continue;
-
-                unsigned long oid;
-                DWORD bytesWritten;
-
-                NDIS_MEDIUM medium;
-                NDIS_PHYSICAL_MEDIUM physicalMedium;
-
-                HANDLE handle = CreateFile((TCHAR *)QString("\\\\.\\%1").arg(netInterface.name()).utf16(), 0,
-                                           FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
-                if (handle == INVALID_HANDLE_VALUE)
-                    return  false;
-
-                oid = OID_GEN_MEDIA_SUPPORTED;
-                bytesWritten = 0;
-                bool result = DeviceIoControl(handle, IOCTL_NDIS_QUERY_GLOBAL_STATS, &oid, sizeof(oid),
-                                              &medium, sizeof(medium), &bytesWritten, 0);
-                if (!result) {
-                    CloseHandle(handle);
-                    return  false;
-                }
-                oid = OID_GEN_PHYSICAL_MEDIUM;
-                bytesWritten = 0;
-                result = DeviceIoControl(handle, IOCTL_NDIS_QUERY_GLOBAL_STATS, &oid, sizeof(oid),
-                                         &physicalMedium, sizeof(physicalMedium), &bytesWritten, 0);
-                if (!result) {
-                    CloseHandle(handle);
-                    if (medium == NdisMedium802_3) {
-                        if(physicalMedium ==   NdisPhysicalMediumWirelessLan) {
-                            featureSupported = true;
-                            break;
-                        }
-                    }
-                }
-            } //end while interfaces
+            if(isInterfaceType(QSystemNetworkInfo::WlanMode)) {
+                featureSupported = true;
+            }
         }
         break;
     case QSystemInfo::SimFeature :
@@ -415,7 +471,10 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 //VIDEO_MODE_INFORMATION vInfo;
             WMIHelper *wHelper;
             wHelper = new WMIHelper();
-            QVariant v = wHelper->getWMIData("root/wmi", "VideoModeDescriptor", "VideoStandardType");
+            wHelper->setWmiNamespace("root/cimv2");
+            wHelper->setClassName("VideoModeDescriptor");
+            wHelper->setClassProperty(QStringList() << "VideoStandardType");
+            QVariant v = wHelper->getWMIData();
             if(v.toUInt() > 5) {
                 featureSupported = true;
             }
@@ -452,18 +511,23 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
     case QSystemNetworkInfo::WlanMode:
         {
             PWLAN_CONNECTION_ATTRIBUTES   connAtts = getWifiConnectionAttributes();
-
-            if(connAtts->isState  == wlan_interface_state_connected) {
-                return QSystemNetworkInfo::Connected;
+            if(connAtts != NULL) {
+                if(connAtts->isState  == wlan_interface_state_connected) {
+                    WlanFreeMemory(connAtts);
+                    return QSystemNetworkInfo::Connected;
+                }
             }
-            WlanFreeMemory(connAtts);
+                    WlanFreeMemory(connAtts);
         }
         break;
-        case QSystemNetworkInfo::EthMode:
+        case QSystemNetworkInfo::EthernetMode:
         {
             WMIHelper *wHelper;
             wHelper = new WMIHelper();
-            QVariant v = wHelper->getWMIData("root/cimv2", "Win32_NetworkConnection", "ConnectionState");
+            wHelper->setWmiNamespace("root/cimv2");
+            wHelper->setClassName("Win32_NetworkConnection");
+            wHelper->setClassProperty(QStringList() << "Win32_NetworkConnection");
+            QVariant v = wHelper->getWMIData();
         }
         break;
         case QSystemNetworkInfo::WimaxMode:
@@ -483,13 +547,54 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
         break;
     case QSystemNetworkInfo::WlanMode:
         {
-            PWLAN_CONNECTION_ATTRIBUTES  connAtts = getWifiConnectionAttributes();
-            ulong sig =  connAtts->wlanAssociationAttributes.wlanSignalQuality;
-            WlanFreeMemory(connAtts);
-            return sig;
-        }
-        break;
-        case QSystemNetworkInfo::EthMode:
+        DWORD version =  0;
+            HANDLE clientHandle = NULL;
+            DWORD result;
+
+            PWLAN_INTERFACE_INFO_LIST interfacesInfoList = NULL;
+            result = WlanOpenHandle( 2, NULL, &version, &clientHandle );
+            if( result != ERROR_SUCCESS != result ) {
+                qWarning() << "Error opening Wlanapi" << result ;
+                return QSystemNetworkInfo::NoNetworkAvailable;
+            }
+            result = WlanEnumInterfaces(clientHandle, NULL, &interfacesInfoList);
+
+            if( result != ERROR_SUCCESS) {
+                qWarning() << "Error in enumerating wireless interfaces" << result;
+                return QSystemNetworkInfo::NoNetworkAvailable;
+            }
+
+            for( uint i = 0; i < interfacesInfoList->dwNumberOfItems; i++ ) {
+                PWLAN_INTERFACE_INFO interfaceInfo = &interfacesInfoList->InterfaceInfo[i];
+                GUID& guid = interfaceInfo->InterfaceGuid;
+                WLAN_INTERFACE_STATE wlanInterfaceState = interfaceInfo->isState;
+
+                if( wlanInterfaceState == wlan_interface_state_not_ready ) {
+                    qWarning() << "Interface not ready";
+                    continue;
+                }
+
+                ULONG size = 0;
+                PWLAN_CONNECTION_ATTRIBUTES  connAtts = NULL;
+                result = WlanQueryInterface( clientHandle, &guid,  wlan_intf_opcode_current_connection, NULL, &size, (PVOID*) &connAtts, NULL );
+
+                if( result != ERROR_SUCCESS ) {
+                    qWarning() << "Error querying wireless interfaces"<< result ;
+                    continue;
+                }
+               ulong sig =  connAtts->wlanAssociationAttributes.wlanSignalQuality;
+                WlanFreeMemory(connAtts);
+                return sig;
+            }//            ulong sig;
+//            PWLAN_CONNECTION_ATTRIBUTES   connAtts = getWifiConnectionAttributes();
+//            if(connAtts != NULL) {
+//                    sig =  connAtts->wlanAssociationAttributes.wlanSignalQuality;
+//                }
+//            WlanFreeMemory(connAtts);
+//            return (int)sig;
+            }
+            break;
+        case QSystemNetworkInfo::EthernetMode:
         break;
         case QSystemNetworkInfo::WimaxMode:
         break;
@@ -538,10 +643,12 @@ QString QSystemNetworkInfoPrivate::wlanSsid()
 {
     QString essid;
     PWLAN_CONNECTION_ATTRIBUTES   connAtts = getWifiConnectionAttributes();
-    DOT11_SSID ssid;
-    ssid = connAtts->wlanAssociationAttributes.dot11Ssid;
-    for(uint i = 0; i < ssid.uSSIDLength;i++) {
-        essid += ssid.ucSSID[i];
+    if(connAtts != NULL) {
+        DOT11_SSID ssid;
+        ssid = connAtts->wlanAssociationAttributes.dot11Ssid;
+        for(uint i = 0; i < ssid.uSSIDLength;i++) {
+            essid += ssid.ucSSID[i];
+        }
     }
     WlanFreeMemory(connAtts);
     return essid;
@@ -558,21 +665,53 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
         break;
     case QSystemNetworkInfo::WlanMode:
         {
-//            QString macAddress;
-//            PWLAN_CONNECTION_ATTRIBUTES   connAtts = getWifiConnectionAttributes();
-//            DOT11_MAC_ADDRESS mac;
-//            mac = connAtts->wlanAssociationAttributes.dot11Bssid;
-//            mac
-//                    for(uint i = 0; i < ssid.uSSIDLength;i++) {
-//                mac += ssid.ucSSID[i];
-//            }
-//            WlanFreeMemory(connAtts);
-            //connAtts->wlanAssociationAttributes.dot11Bssid
+            QList<QNetworkInterface> interfaceList;
+            interfaceList = QNetworkInterface::allInterfaces();
+
+            while (!interfaceList.isEmpty()) {
+                QNetworkInterface netInterface = interfaceList.takeFirst();
+
+                if (!netInterface.isValid() || (netInterface.flags() & QNetworkInterface::IsLoopBack))
+                    continue;
+
+                if (interfaceType(netInterface) == QSystemNetworkInfo::WlanMode)
+                   return  netInterface.hardwareAddress();
+            }
         }
         break;
-        case QSystemNetworkInfo::EthMode:
+    case QSystemNetworkInfo::EthernetMode:
+        {
+            QList<QNetworkInterface> interfaceList;
+            interfaceList = QNetworkInterface::allInterfaces();
+
+            while (!interfaceList.isEmpty()) {
+                QNetworkInterface netInterface = interfaceList.takeFirst();
+
+                if (!netInterface.isValid() || (netInterface.flags() & QNetworkInterface::IsLoopBack))
+                    continue;
+
+                if (interfaceType(netInterface) == QSystemNetworkInfo::EthernetMode)
+                    return  netInterface.hardwareAddress();
+            }
+        }
         break;
-        case QSystemNetworkInfo::WimaxMode:
+    case QSystemNetworkInfo::BluetoothMode:
+        break;
+    case QSystemNetworkInfo::WimaxMode:
+        {
+            QList<QNetworkInterface> interfaceList;
+            interfaceList = QNetworkInterface::allInterfaces();
+
+            while (!interfaceList.isEmpty()) {
+                QNetworkInterface netInterface = interfaceList.takeFirst();
+
+                if (!netInterface.isValid() || (netInterface.flags() & QNetworkInterface::IsLoopBack))
+                    continue;
+
+                if (interfaceType(netInterface) == QSystemNetworkInfo::WimaxMode)
+                    return  netInterface.hardwareAddress();
+            }
+        }
         break;
     };
     return QString();
@@ -594,7 +733,11 @@ int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 //#if WINVER > 0x0600
     WMIHelper *wHelper;
     wHelper = new WMIHelper();
-    QVariant v = wHelper->getWMIData("root/wmi", "WmiMonitorBrightness", "CurrentBrightness");
+    wHelper->setWmiNamespace("root/wmi");
+    wHelper->setClassName("WmiMonitorBrightness");
+    wHelper->setClassProperty(QStringList() << "CurrentBrightness");
+
+    QVariant v = wHelper->getWMIData();
     return v.toUInt();
 //#else
 //    //    Q_UNUSED(screen);
@@ -822,9 +965,51 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
     return QSystemDeviceInfo::UnknownProfile;
 }
 
-QSystemDeviceInfo::InputMethods QSystemDeviceInfoPrivate::inputMethodType()
+QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
 {
-    QSystemDeviceInfo::InputMethod methods;
+    QSystemDeviceInfo::InputMethodFlags methods;
+    WMIHelper *wHelper;
+    wHelper = new WMIHelper();
+    wHelper->setWmiNamespace("root/cimv2");
+    wHelper->setClassName("Win32_PointingDevice");
+    wHelper->setClassProperty(QStringList() << "PointingType");
+ //   wHelper->setConditional("WHERE ConfigManagerErrorCode = 0");
+
+    QVariant v = wHelper->getWMIData();
+    foreach(QVariant var, wHelper->wmiVariantList) {
+        switch(var.toUInt()) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+        case 9:
+            {
+                if((methods & QSystemDeviceInfo::Mouse) != QSystemDeviceInfo::Mouse) {
+                    methods |= QSystemDeviceInfo::Mouse;
+                }
+            }
+            break;
+        case 8:
+            {
+                if((methods & QSystemDeviceInfo::SingleTouch) != QSystemDeviceInfo::SingleAvailable) {
+                    methods |= QSystemDeviceInfo::SingleTouch;
+                }
+            }
+            break;
+        };
+    }
+
+    wHelper->setClassName("Win32_Keyboard");
+    wHelper->setClassProperty(QStringList() << "ConfigManagerErrorCode");
+   // wHelper->setConditional("");
+    v = wHelper->getWMIData();
+    if(v.toUInt() == 0) {
+        methods = methods | QSystemDeviceInfo::Keyboard;
+    }
+
     return methods;
 }
 
@@ -841,7 +1026,10 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 #else
     WMIHelper *wHelper;
     wHelper = new WMIHelper();
-    QVariant v = wHelper->getWMIData("root/cimv2", "Win32_Battery", "BatteryStatus");
+    wHelper->setWmiNamespace("root/cimv2");
+    wHelper->setClassName("Win32_Battery");
+    wHelper->setClassProperty(QStringList() << "BatteryStatus");
+    QVariant v = wHelper->getWMIData();
     if(v.toUInt() == 1) {
         return QSystemDeviceInfo::BatteryPower;
     } else {
@@ -867,7 +1055,10 @@ QString QSystemDeviceInfoPrivate::manufacturer()
 {
     WMIHelper *wHelper;
     wHelper = new WMIHelper();
-    QVariant v = wHelper->getWMIData("root/cimv2", "Win32_ComputerSystem", "Manufacturer");
+    wHelper->setWmiNamespace("root/cimv2");
+    wHelper->setClassName("Win32_ComputerSystem");
+    wHelper->setClassProperty(QStringList() << "Manufacturer");
+    QVariant v = wHelper->getWMIData();
     return v.toString();
 }
 
@@ -875,7 +1066,10 @@ QString QSystemDeviceInfoPrivate::model()
 {
     WMIHelper *wHelper;
     wHelper = new WMIHelper();
-    QVariant v = wHelper->getWMIData("root/cimv2", "Win32_ComputerSystem", "Model");
+    wHelper->setWmiNamespace("root/cimv2");
+    wHelper->setClassName("Win32_ComputerSystem");
+    wHelper->setClassProperty(QStringList() << "Model");
+    QVariant v = wHelper->getWMIData();
     return v.toString();
 }
 
@@ -883,7 +1077,10 @@ QString QSystemDeviceInfoPrivate::productName()
 {
     WMIHelper *wHelper;
     wHelper = new WMIHelper();
-    QVariant v = wHelper->getWMIData("root/cimv2", "Win32_ComputerSystemProduct", "Name");
+    wHelper->setWmiNamespace("root/cimv2");
+    wHelper->setClassName("Win32_ComputerSystemProduct");
+    wHelper->setClassProperty(QStringList() << "Name");
+    QVariant v = wHelper->getWMIData();
     return v.toString();
     return QString();
 }
@@ -1013,7 +1210,10 @@ bool QSystemScreenSaverPrivate::setScreenBlankingEnabled(bool state)
     QString winDir;
     WMIHelper *wHelper;
     wHelper = new WMIHelper();
-    QVariant v = wHelper->getWMIData("root/cimv2", "Win32_OperatingSystem", "SystemDirectory");
+    wHelper->setWmiNamespace("root/cimv2");
+    wHelper->setClassName("Win32_OperatingSystem");
+    wHelper->setClassProperty(QStringList() << "SystemDirectory");
+    QVariant v = wHelper->getWMIData();
     if(settingsPath.contains("Policies")) {
         winDir = "";
     } else {

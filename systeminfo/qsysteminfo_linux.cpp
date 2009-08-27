@@ -479,7 +479,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
             }
         }
         break;
-    case QSystemNetworkInfo::EthMode:
+    case QSystemNetworkInfo::EthernetMode:
         {
             QString baseSysDir = "/sys/class/net/";
             QDir eDir(baseSysDir);
@@ -500,6 +500,8 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
                 }
             }
         }
+        break;
+    case QSystemNetworkInfo::BluetoothMode:
         break;
     case QSystemNetworkInfo::WimaxMode:
         break;
@@ -538,7 +540,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
             }
         }
         break;
-    case QSystemNetworkInfo::EthMode:
+    case QSystemNetworkInfo::EthernetMode:
         {
             QString result;
             QString baseSysDir = "/sys/class/net/";
@@ -559,6 +561,8 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
                 }
             }
         }
+        break;
+    case QSystemNetworkInfo::BluetoothMode:
         break;
     case QSystemNetworkInfo::WimaxMode:
         break;
@@ -676,7 +680,7 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
             }
         }
         break;
-        case QSystemNetworkInfo::EthMode:
+        case QSystemNetworkInfo::EthernetMode:
         {
             QString result;
             QString baseSysDir = "/sys/class/net/";
@@ -696,6 +700,8 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
                 }
             }
         }
+        break;
+        case QSystemNetworkInfo::BluetoothMode:
         break;
         case QSystemNetworkInfo::WimaxMode:
         break;

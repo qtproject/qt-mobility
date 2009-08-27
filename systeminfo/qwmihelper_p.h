@@ -48,14 +48,31 @@
 #include <QObject>
 #include <QVariant>
 #include <QString>
-//#include <Wbemidl.h>
+#include <Wbemidl.h>
+
+#include <QStringList>
+
 class WMIHelper : public QObject
 {
 public:
     WMIHelper();
     ~WMIHelper();
-    QVariant getWMIData(const QString &wmiNamespace,const QString &className, const QString &classProperty);
+    QVariant getWMIData();
+    QVariant getWMIData(const QString &wmiNamespace,const QString &className, const QStringList &classProperties);
+    QList <QVariant> wmiVariantList;
+   void setWmiNamespace(const QString &wmiNamespace);
+   void setClassName(const QString &className);
+   void setClassProperty(const QStringList &classProperties);
+
+   void setConditional(const QString &conditional); //see WQL SQL for WMI)
+
 private:
+   QString m_className;
+   QStringList m_classProperties;
+   QString m_conditional;
+   QString m_wmiNamespace;
+   QVariant  msVariantToQVariant(VARIANT msVariant, CIMTYPE variantType);
+
 };
 
 #endif // WMIHELPER_H

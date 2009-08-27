@@ -93,6 +93,29 @@ void Dialog::setupDevice()
     } else {
         ui->radioButton->setChecked(true);
     }
+
+    QSystemDeviceInfo::InputMethodFlags methods = di.inputMethodType();
+    QStringList inputs;
+    if((methods & QSystemDeviceInfo::Keys)){
+        inputs << "Keys";
+    }
+    if((methods & QSystemDeviceInfo::Keypad)) {
+        inputs << "Keypad";
+    }
+    if((methods & QSystemDeviceInfo::Keyboard)) {
+        inputs << "Keyboard";
+    }
+    if((methods & QSystemDeviceInfo::SingleTouch)) {
+        inputs << "Touch Screen";
+    }
+    if((methods & QSystemDeviceInfo::MultiTouch)) {
+        inputs << "Multi touch";
+    }
+    if((methods & QSystemDeviceInfo::Mouse)){
+        inputs << "Mouse";
+    }
+
+    ui->inputMethodLabel->setText(inputs.join(" "));
 }
 
 void Dialog::setupDisplay()
@@ -152,7 +175,9 @@ void Dialog::netStatusComboActivated(int index)
     QString status;
     QString stat;
     QSystemNetworkInfo ni;
-    switch(ni.networkStatus((QSystemNetworkInfo::NetworkMode)index)) {
+    int reIndex = index +1;
+
+    switch(ni.networkStatus((QSystemNetworkInfo::NetworkMode)reIndex)) {
     case QSystemNetworkInfo::UndefinedStatus:
         stat = "Undefined";
         break;
@@ -182,19 +207,19 @@ void Dialog::netStatusComboActivated(int index)
         break;
     };
     ui->cellNetworkStatusLabel->setText(stat);
+    ui->macAddressLabel->setText(ni.macAddress((QSystemNetworkInfo::NetworkMode)reIndex));
 
-    int strength = ni.networkSignalStrength((QSystemNetworkInfo::NetworkMode)index);
+    int strength = ni.networkSignalStrength((QSystemNetworkInfo::NetworkMode)reIndex);
     if(strength < 0)
         strength = 0;
     ui->signalLevelProgressBar->setValue(strength);
 
-    if((QSystemNetworkInfo::NetworkMode)index == QSystemNetworkInfo::WlanMode) {
+    if((QSystemNetworkInfo::NetworkMode)reIndex == QSystemNetworkInfo::WlanMode) {
         ui->ssidLabel->setText(ni.wlanSsid());
     } else {
         ui->ssidLabel->setText("");
     }
 
-    ui->macAddressLabel->setText(ni.macAddress((QSystemNetworkInfo::NetworkMode)index));
 }
 
 void Dialog::getVersion(int index)

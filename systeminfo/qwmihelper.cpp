@@ -31,16 +31,17 @@
 **
 ****************************************************************************/
 
-#include "wmihelper.h"
+#include "qwmihelper_p.h"
 #include <QDebug>
 
 #include <Objbase.h>
 #include <Wbemidl.h>
 #include <Oleauto.h>
+#include <QStringList>
 
 WMIHelper::WMIHelper()
 {
-
+   m_conditional = QString();
 }
 
 WMIHelper::~WMIHelper()
@@ -48,7 +49,15 @@ WMIHelper::~WMIHelper()
     CoUninitialize();
 }
 
-QVariant WMIHelper::getWMIData(const QString &wmiNamespace, const QString &className, const QString &classProperty)
+QVariant WMIHelper::getWMIData()
+{
+   if (!m_wmiNamespace.isEmpty() && !m_className.isEmpty() && !m_classProperties.isEmpty()) {
+      return getWMIData(m_wmiNamespace, m_className, m_classProperties);
+   }
+   return QVariant();
+}
+
+QVariant WMIHelper::getWMIData(const QString &wmiNamespace, const QString &className, const QStringList &classProperty)
 {
     IWbemLocator *wbemLocator ;
     QVariant returnVariant;
@@ -90,7 +99,13 @@ QVariant WMIHelper::getWMIData(const QString &wmiNamespace, const QString &class
     ////////////////////////
     IEnumWbemClassObject* wbemEnumerator = NULL;
     BSTR bstrWQL = ::SysAllocString(L"WQL");
-    QString aString = "SELECT * FROM " + className;
+    if (!m_conditional.isEmpty()) {
+        if (m_conditional.left(1) != " ") {
+            m_conditional.prepend(" ");
+        }
+    }
+
+    QString aString = "SELECT * FROM " + className + m_conditional;
     BSTR bstrQuery = ::SysAllocString(aString.utf16());
 
     hres = wbemServices->ExecQuery( bstrWQL,  bstrQuery,
@@ -105,49 +120,25 @@ QVariant WMIHelper::getWMIData(const QString &wmiNamespace, const QString &class
     ///////////////////////
     IWbemClassObject *wbemCLassObject;
     ULONG result = 0;
+
+    wmiVariantList.clear();
     while (wbemEnumerator) {
         HRESULT hr = wbemEnumerator->Next(WBEM_INFINITE, 1,&wbemCLassObject, &result);
         if(0 == result){
             break;
         }
 
+        foreach(QString property,  classProperty) {
         VARIANT msVariant;
         CIMTYPE variantType;
-        hr = wbemCLassObject->Get(classProperty.utf16(), 0, &msVariant, &variantType, 0);
-        switch(variantType) {
-        case CIM_STRING:
-        case CIM_CHAR16:
-            {
-                QString str((QChar*)msVariant.bstrVal, wcslen(msVariant.bstrVal));
-                QVariant vs(str);
-                returnVariant = vs;
-            }
-            break;
-        case CIM_BOOLEAN:
-            {
-                QVariant vb(msVariant.boolVal);
-                returnVariant = vb;
-            }
-            break;
-            case CIM_UINT8:
-            {
-                QVariant vb(msVariant.uintVal);
-                returnVariant = vb;
-            }
-            break;
-            case CIM_UINT16:
-            {
-                QVariant vb(msVariant.uintVal);
-                returnVariant = vb;
-            }
-            case CIM_UINT32:
-            {
-                QVariant vb(msVariant.uintVal);
-                returnVariant = vb;
-            }
-            break;
-        };
+        hr = wbemCLassObject->Get(property.utf16(), 0, &msVariant, &variantType, 0);
+        returnVariant = msVariantToQVariant(msVariant, variantType);
+        wmiVariantList << returnVariant;
+
         VariantClear(&msVariant);
+
+        }
+
         wbemCLassObject->Release();
     }
 
@@ -156,3 +147,64 @@ QVariant WMIHelper::getWMIData(const QString &wmiNamespace, const QString &class
     wbemEnumerator->Release();
     return returnVariant;
 }
+
+QVariant WMIHelper::msVariantToQVariant(VARIANT msVariant, CIMTYPE variantType)
+{
+    QVariant returnVariant;
+    switch(variantType) {
+    case CIM_STRING:
+    case CIM_CHAR16:
+        {
+            QString str((QChar*)msVariant.bstrVal, wcslen(msVariant.bstrVal));
+            QVariant vs(str);
+            returnVariant = vs;
+        }
+        break;
+    case CIM_BOOLEAN:
+        {
+            QVariant vb(msVariant.boolVal);
+            returnVariant = vb;
+        }
+        break;
+            case CIM_UINT8:
+        {
+            QVariant vb(msVariant.uintVal);
+            returnVariant = vb;
+        }
+        break;
+            case CIM_UINT16:
+        {
+            QVariant vb(msVariant.uintVal);
+            returnVariant = vb;
+        }
+            case CIM_UINT32:
+        {
+            QVariant vb(msVariant.uintVal);
+            returnVariant = vb;
+        }
+        break;
+    };
+    VariantClear(&msVariant);
+    return returnVariant;
+}
+
+  void WMIHelper::setWmiNamespace(const QString &wmiNamespace)
+{
+   m_wmiNamespace = wmiNamespace;
+}
+
+   void WMIHelper::setClassName(const QString &className)
+{
+   m_className = className;
+}
+
+void WMIHelper::setClassProperty(const QStringList &classProperties)
+{
+   m_classProperties = classProperties;
+}
+
+void WMIHelper::setConditional(const QString &conditional)
+{
+   m_conditional = conditional;
+}
+

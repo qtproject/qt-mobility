@@ -59,7 +59,7 @@ QT_BEGIN_HEADER
 QT_BEGIN_NAMESPACE
 
 class QStringList;
-
+class QSystemNetworkInfo;
 class QSystemInfoPrivate : public QObject
 {
     Q_OBJECT
@@ -108,6 +108,7 @@ public:
     QString operatorName();
     QString wlanSsid();
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
+//    QString interfaceType(const QNetworkInterface &netInterface);
 };
 
 class QSystemDisplayInfoPrivate : public QObject
@@ -164,7 +165,7 @@ public:
     static QString model();
     static QString productName();
 
-    QSystemDeviceInfo::InputMethods inputMethodType();
+    QSystemDeviceInfo::InputMethodFlags inputMethodType();
 
     int  batteryLevel() const;
 

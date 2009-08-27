@@ -37,6 +37,7 @@
 #include <QObject>
 #include <QSize>
 #include <QPair>
+#include <QString>
 
 QT_BEGIN_HEADER
 
@@ -49,6 +50,7 @@ class QSystemNetworkInfoPrivate;
 class QSystemMemoryInfoPrivate;
 class QSystemDeviceInfoPrivate;
 class QSystemDisplayInfoPrivate;
+class QNetworkInterface;
 
 class Q_SYSINFO_EXPORT QSystemInfo : public QObject
 {
@@ -142,11 +144,13 @@ public:
     };
 
     enum NetworkMode {
-        GsmMode=0,
+        UnknownMode=0,
+        GsmMode,
         CdmaMode,
         WcdmaMode,
         WlanMode,
-        EthMode,
+        EthernetMode,
+        BluetoothMode,
         WimaxMode
     };
     Q_DECLARE_FLAGS(NetworkModes, NetworkMode)
@@ -162,9 +166,11 @@ public:
     static QString currentMobileCountryCode();
     static QString currentMobileNetworkCode();
 
+//    static QString interfaceType(const QNetworkInterface &netInterface);
     static QString homeMobileCountryCode();
     static QString homeMobileNetworkCode();
     static QString operatorName();
+
 
 private:
     QSystemNetworkInfoPrivate *d;
@@ -260,9 +266,9 @@ public:
         MultiTouch = 0x0000010,
         Mouse = 0x0000020
     };
-    Q_DECLARE_FLAGS(InputMethods, InputMethod)
+    Q_DECLARE_FLAGS(InputMethodFlags, InputMethod)
 
-    QSystemDeviceInfo::InputMethods inputMethodType();
+    QSystemDeviceInfo::InputMethodFlags inputMethodType();
 
     static QString imei();
     static QString imsi();
@@ -284,12 +290,14 @@ public:
         PowersaveProfile,
         CustomProfile
     };
+
     enum SimStatus {
         SimNotAvailable = 0,
 		SingleAvailable,
 		DualAvailable,
 		Locked
 	};
+    Q_DECLARE_FLAGS(SimStatusFlags, SimStatus)
 
     bool isDeviceLocked();
     QSystemDeviceInfo::SimStatus simStatus();
