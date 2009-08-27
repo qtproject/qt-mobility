@@ -83,7 +83,7 @@ CameraCapture::CameraCapture(QWidget *parent) :
 
     //audio codecs
     foreach(const QString &codecName, mediaRecorder->supportedAudioCodecs()) {
-        QString description = mediaRecorder->codecDescription(codecName);
+        QString description = mediaRecorder->audioCodecDescription(codecName);
         ui->audioCodecBox->addItem(codecName+": "+description);
         if (codecName == mediaRecorder->audioCodec())
             ui->audioCodecBox->setCurrentIndex(ui->audioCodecBox->count()-1);

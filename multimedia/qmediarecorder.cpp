@@ -332,16 +332,16 @@ QString QMediaRecorder::formatDescription(const QString &format) const
 }
 
 /*!
-  Returns the
+  \property QMediaRecorder::format
+  \brief Conteiner format mime type.
 */
+
 QString QMediaRecorder::format() const
 {
     return d_func()->formatControl ?
            d_func()->formatControl->format() : QString();
 }
 
-/*!
-*/
 void QMediaRecorder::setFormat(const QString &formatMimeType)
 {
     if (d_func()->formatControl)
@@ -349,7 +349,11 @@ void QMediaRecorder::setFormat(const QString &formatMimeType)
 }
 
 /*!
+  \property QMediaRecorder::audioFormat
+  \brief Audio format.
 */
+
+
 QAudioFormat QMediaRecorder::audioFormat() const
 {
     return d_func()->audioControl ?
@@ -357,6 +361,7 @@ QAudioFormat QMediaRecorder::audioFormat() const
 }
 
 /*!
+  Returns true if audio \a format is supported.
 */
 bool QMediaRecorder::isAudioFormatSupported(const QAudioFormat &format) const
 {
@@ -364,8 +369,6 @@ bool QMediaRecorder::isAudioFormatSupported(const QAudioFormat &format) const
            d_func()->audioControl->isFormatSupported(format) : false;
 }
 
-/*!
-*/
 bool QMediaRecorder::setAudioFormat(const QAudioFormat &format)
 {
     return d_func()->audioControl ?
@@ -373,6 +376,7 @@ bool QMediaRecorder::setAudioFormat(const QAudioFormat &format)
 }
 
 /*!
+  Returns the list of supported audio codecs.
 */
 QStringList QMediaRecorder::supportedAudioCodecs() const
 {
@@ -381,23 +385,25 @@ QStringList QMediaRecorder::supportedAudioCodecs() const
 }
 
 /*!
+  Returns description of audio \a codec.
 */
-QString QMediaRecorder::codecDescription(const QString &codecName) const
+QString QMediaRecorder::audioCodecDescription(const QString &codec) const
 {
     return d_func()->audioControl ?
-           d_func()->audioControl->codecDescription(codecName) : QString();
+           d_func()->audioControl->codecDescription(codec) : QString();
 }
 
 /*!
+  \property QMediaRecorder::audioCodec
+  \brief Audio codec name.
 */
+
 QString QMediaRecorder::audioCodec() const
 {
     return d_func()->audioControl ?
            d_func()->audioControl->audioCodec() : QString();
 }
 
-/*!
-*/
 bool QMediaRecorder::setAudioCodec(const QString &codecName)
 {
     return d_func()->audioControl ?
@@ -405,15 +411,16 @@ bool QMediaRecorder::setAudioCodec(const QString &codecName)
 }
 
 /*!
+  \property QMediaRecorder::audioBitrate
+  \brief Bitrate of encoded audio stream.
 */
+
 int QMediaRecorder::audioBitrate() const
 {
     return d_func()->audioControl ?
            d_func()->audioControl->bitrate() : -1;
 }
 
-/*!
-*/
 void QMediaRecorder::setAudioBitrate(int bitrate)
 {
     if (d_func()->audioControl)
@@ -421,6 +428,18 @@ void QMediaRecorder::setAudioBitrate(int bitrate)
 }
 
 /*!
+  \property QMediaRecorder::audioQuality
+  \brief Quality of encoded audio stream.
+
+  The quality value is normalized in range from 0 to 100,
+  with 0 means the lowest quality the audio codec supports,
+  100 - the best quality the codec supports.
+
+  The default quality value is 50 and usually means
+  some reasonable quality settings.
+
+  Depending on codec, the quality property may affect
+  different parameters, like bitrate or presets.
 */
 qreal QMediaRecorder::audioQuality() const
 {
@@ -428,8 +447,6 @@ qreal QMediaRecorder::audioQuality() const
            d_func()->audioControl->quality() : -1.0;
 }
 
-/*!
-*/
 void QMediaRecorder::setAudioQuality(qreal quality)
 {
     if (d_func()->audioControl)
@@ -437,6 +454,7 @@ void QMediaRecorder::setAudioQuality(qreal quality)
 }
 
 /*!
+  Returns the list of codec specific audio encoding options.
 */
 QStringList QMediaRecorder::supportedAudioEncodingOptions() const
 {
@@ -445,30 +463,46 @@ QStringList QMediaRecorder::supportedAudioEncodingOptions() const
 }
 
 /*!
+  Returns value of audio encoding \a option.
 */
-QVariant QMediaRecorder::audioEncodingOption(const QString &name) const
+QVariant QMediaRecorder::audioEncodingOption(const QString &option) const
 {
     return d_func()->audioControl ?
-           d_func()->audioControl->encodingOption(name) : QVariant();
+           d_func()->audioControl->encodingOption(option) : QVariant();
 }
 
 /*!
+  Set the codec specific \a option to \a value.
 */
-void QMediaRecorder::setAudioEncodingOption(const QString &name, const QVariant &value)
+void QMediaRecorder::setAudioEncodingOption(const QString &option, const QVariant &value)
 {
     if (d_func()->audioControl)
-        d_func()->audioControl->setEncodingOption(name, value);
+        d_func()->audioControl->setEncodingOption(option, value);
 }
 
 /*!
+  \property QMediaRecorder::resolution
+  \brief Resolution of encoded video stream.
+
+  \sa minimumResolution(), maximumResolution(), supportedResolutions()
 */
+
 QSize QMediaRecorder::resolution() const
 {
     return d_func()->videoControl ?
            d_func()->videoControl->resolution() : QSize();
 }
 
+void QMediaRecorder::setResolution(const QSize &resolution)
+{
+    if (d_func()->videoControl)
+        d_func()->videoControl->setResolution(resolution);
+}
+
 /*!
+  Returns the smallest resolution, video encoder supports.
+
+  \sa resolution
 */
 QSize QMediaRecorder::minimumResolution() const
 {
@@ -477,6 +511,9 @@ QSize QMediaRecorder::minimumResolution() const
 }
 
 /*!
+  Returns the largest resolution, video encoder supports.
+
+  \sa resolution
 */
 QSize QMediaRecorder::maximumResolution() const
 {
@@ -485,6 +522,10 @@ QSize QMediaRecorder::maximumResolution() const
 }
 
 /*!
+  Returns the list of resolutions if the video encoder supports only the limited set
+  of video frame sizes, otherwise returns an empty list.
+
+  \sa resolution(), minimumResolution(), maximumResolution()
 */
 QList<QSize> QMediaRecorder::supportedResolutions() const
 {
@@ -492,23 +533,28 @@ QList<QSize> QMediaRecorder::supportedResolutions() const
            d_func()->videoControl->supportedResolutions() : QList<QSize>();
 }
 
-/*!
-*/
-void QMediaRecorder::setResolution(const QSize &resolution)
-{
-    if (d_func()->videoControl)
-        d_func()->videoControl->setResolution(resolution);
-}
 
 /*!
+  \property QMediaRecorder::frameRate
+  \brief Frame rate of video stream.
 */
+
 QMediaRecorder::FrameRate QMediaRecorder::frameRate() const
 {
     return d_func()->videoControl ?
            d_func()->videoControl->frameRate() : qMakePair<int,int>(-1,-1);
 }
 
+void QMediaRecorder::setFrameRate(const QMediaRecorder::FrameRate &rate)
+{
+    if (d_func()->videoControl)
+        d_func()->videoControl->setFrameRate(rate);
+}
+
 /*!
+  Returns the smallest frame rate, video encoder supports.
+
+  \sa frameRate
 */
 QMediaRecorder::FrameRate QMediaRecorder::minimumFrameRate()
 {
@@ -517,6 +563,9 @@ QMediaRecorder::FrameRate QMediaRecorder::minimumFrameRate()
 }
 
 /*!
+  Returns the largest frame rate, video encoder supports.
+
+  \sa frameRate
 */
 QMediaRecorder::FrameRate QMediaRecorder::maximumFrameRate()
 {
@@ -525,6 +574,10 @@ QMediaRecorder::FrameRate QMediaRecorder::maximumFrameRate()
 }
 
 /*!
+  Returns the list of frame rates if the video encoder supports only the limited set
+  of video frame rates, otherwise returns an empty list.
+
+  \sa frameRate
 */
 QList< QMediaRecorder::FrameRate > QMediaRecorder::supportedFrameRates() const
 {
@@ -532,15 +585,9 @@ QList< QMediaRecorder::FrameRate > QMediaRecorder::supportedFrameRates() const
            d_func()->videoControl->supportedFrameRates() : QList<QMediaRecorder::FrameRate>();
 }
 
-/*!
-*/
-void QMediaRecorder::setFrameRate(const QMediaRecorder::FrameRate &rate)
-{
-    if (d_func()->videoControl)
-        d_func()->videoControl->setFrameRate(rate);
-}
 
 /*!
+  Returns the list of supported video codecs.
 */
 QStringList QMediaRecorder::supportedVideoCodecs() const
 {
@@ -549,14 +596,17 @@ QStringList QMediaRecorder::supportedVideoCodecs() const
 }
 
 /*!
+  Returns description of video \a codec.
 */
-QString QMediaRecorder::videoCodecDescription(const QString &codecName) const
+QString QMediaRecorder::videoCodecDescription(const QString &codec) const
 {
     return d_func()->videoControl ?
-           d_func()->videoControl->videoCodecDescription(codecName) : QString();
+           d_func()->videoControl->videoCodecDescription(codec) : QString();
 }
 
 /*!
+  \property QMediaRecorder::videoCodec
+  \brief Video codec name.
 */
 QString QMediaRecorder::videoCodec() const
 {
@@ -564,8 +614,6 @@ QString QMediaRecorder::videoCodec() const
            d_func()->videoControl->videoCodec() : QString();
 }
 
-/*!
-*/
 bool QMediaRecorder::setVideoCodec(const QString &codecName)
 {
     return d_func()->videoControl ?
@@ -573,6 +621,8 @@ bool QMediaRecorder::setVideoCodec(const QString &codecName)
 }
 
 /*!
+  \property QMediaRecorder::videoBitrate
+  \brief Video bitrate.
 */
 int QMediaRecorder::videoBitrate() const
 {
@@ -580,8 +630,6 @@ int QMediaRecorder::videoBitrate() const
            d_func()->videoControl->bitrate() : -1;
 }
 
-/*!
-*/
 void QMediaRecorder::setVideoBitrate(int bitrate)
 {
     if (d_func()->videoControl)
@@ -589,20 +637,25 @@ void QMediaRecorder::setVideoBitrate(int bitrate)
 }
 
 /*!
+  \property QMediaRecorder::videoQuality
+  \brief Video quality value.
+
+  It has the same meaning and range as audioQuality property.
 */
 qreal QMediaRecorder::videoQuality() const
 {
     return d_func()->videoControl ?
            d_func()->videoControl->quality() : -1.0;
 }
-/*!
-*/
+
 void QMediaRecorder::setVideoQuality(qreal quality)
 {
     if (d_func()->videoControl)
         d_func()->videoControl->setQuality(quality);
 }
+
 /*!
+  Returns the list of codec specific video encoding options.
 */
 QStringList QMediaRecorder::supportedVideoEncodingOptions() const
 {
@@ -610,19 +663,21 @@ QStringList QMediaRecorder::supportedVideoEncodingOptions() const
            d_func()->videoControl->supportedEncodingOptions() : QStringList();
 }
 /*!
+  Returns value of audio encoding \a option.
 */
-QVariant QMediaRecorder::videoEncodingOption(const QString &name) const
+QVariant QMediaRecorder::videoEncodingOption(const QString &option) const
 {
     return d_func()->videoControl ?
-           d_func()->videoControl->encodingOption(name) : QVariant();
+           d_func()->videoControl->encodingOption(option) : QVariant();
 }
 
 /*!
+  Set the codec specific \a option to \a value.
 */
-void QMediaRecorder::setVideoEncodingOption(const QString &name, const QVariant &value)
+void QMediaRecorder::setVideoEncodingOption(const QString &option, const QVariant &value)
 {
     if (d_func()->videoControl)
-        d_func()->videoControl->setEncodingOption(name, value);
+        d_func()->videoControl->setEncodingOption(option, value);
 }
 
 
@@ -703,5 +758,67 @@ void QMediaRecorder::stop()
 
     Signal emitted when \a error changed.
 */
+
+/*!
+    \fn formatChanged(const QString &format);
+
+    Signal emitted when container \a format changed.
+*/
+
+/*!
+    \fn audioFormatChanged(const QAudioFormat &format);
+
+    Signal emitted when audio \a format changed.
+*/
+
+/*!
+    \fn audioCodecChanged(const QString &codecName);
+
+    Signal emitted when audio \a codec changed.
+*/
+
+/*!
+    \fn audioBitrateChanged(int bitrate);
+
+    Signal emitted when audio \a bitrate changed.
+*/
+
+/*!
+    \fn audioQualityChanged(qreal quality);
+
+    Signal emitted when audio \a quality changed.
+*/
+
+/*!
+    \fn resolutionChanged(const QSize &resolution);
+
+    Signal emitted when video \a resolution changed.
+*/
+
+/*!
+    \fn frameRateChanged(const QMediaRecorder::FrameRate &rate);
+
+    Signal emitted when frame \a rate changed.
+*/
+
+/*!
+    \fn videoCodecChanged(const QString &codec);
+
+    Signal emitted when video \a codec changed.
+*/
+
+/*!
+    \fn videoBitrateChanged(int bitrate);
+
+    Signal emitted when video \a bitrate changed.
+*/
+
+/*!
+    \fn videoQualityChanged(qreal quality);
+
+    Signal emitted when video \a quality value is changed.
+*/
+
+
 
 #include "moc_qmediarecorder.cpp"
