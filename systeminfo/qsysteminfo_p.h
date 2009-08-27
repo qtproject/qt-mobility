@@ -33,6 +33,19 @@
 #ifndef QSYSTEMINFO_P_H
 #define QSYSTEMINFO_P_H
 
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+
 #include <QObject>
 #include <QSize>
 #include <QHash>
@@ -46,7 +59,7 @@ QT_BEGIN_HEADER
 QT_BEGIN_NAMESPACE
 
 class QStringList;
-
+class QSystemNetworkInfo;
 class QSystemInfoPrivate : public QObject
 {
     Q_OBJECT
@@ -95,6 +108,7 @@ public:
     QString operatorName();
     QString wlanSsid();
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
+//    QString interfaceType(const QNetworkInterface &netInterface);
 };
 
 class QSystemDisplayInfoPrivate : public QObject
@@ -151,7 +165,7 @@ public:
     static QString model();
     static QString productName();
 
-    QSystemDeviceInfo::InputMethods inputMethodType();
+    QSystemDeviceInfo::InputMethodFlags inputMethodType();
 
     int  batteryLevel() const;
 

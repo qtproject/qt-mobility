@@ -115,11 +115,13 @@ QT_BEGIN_NAMESPACE
     \enum QSystemNetworkInfo::NetworkMode
     This enum describes the type of network:
 
+    \value UnknownMode             Unknown network.or netowrk error.
     \value GsmMode                 Global System for Mobile (GSM) network.
     \value CdmaMode                Code division multiple access (CDMA) network.
     \value WcdmaMode               Wideband Code Division Multiple Access (W-CDMA) network.
     \value WlanMode                Wireless Local Area Network (WLAN) network.
-    \value EthMode                 Wired Local Area network.
+    \value EthernetMode            Wired Local Area network.
+    \value BluetoothMode           Bluetooth network.
     \value WimaxMode               Wimax network.
 
   */
@@ -417,6 +419,15 @@ QString QSystemNetworkInfo::macAddress(QSystemNetworkInfo::NetworkMode mode)
     return d->macAddress(mode);
 }
 
+///*!
+//  Returns the QSystemNetworkInfo::NetworkMode for the \a netInterface
+//*/
+//QString  QSystemNetworkInfo::interfaceType(const QNetworkInterface &netInterface)
+//{
+//   return d->interfaceType(netInterface);
+//}
+
+
 // display
  /*!
    Constructs a QSystemDisplayInfo object.
@@ -520,9 +531,9 @@ QSystemDeviceInfo::~QSystemDeviceInfo()
 }
 
 /*!
-    Returns the QSystemDeviceInfo::InputMethods InputMethodType that the system uses.
+    Returns the QSystemDeviceInfo::InputMethodFlags InputMethodType that the system uses.
 */
-QSystemDeviceInfo::InputMethods QSystemDeviceInfo::inputMethodType()
+QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfo::inputMethodType()
 {
  return d->inputMethodType();
 }

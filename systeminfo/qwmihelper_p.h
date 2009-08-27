@@ -34,18 +34,45 @@
 #ifndef WMIHELPER_H
 #define WMIHELPER_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include <QObject>
 #include <QVariant>
 #include <QString>
 #include <Wbemidl.h>
+
+#include <QStringList>
+
 class WMIHelper : public QObject
 {
 public:
     WMIHelper();
     ~WMIHelper();
-    QVariant getWMIData(const QString &wmiNamespace,const QString &className, const QString &classProperty);
+    QVariant getWMIData();
+    QVariant getWMIData(const QString &wmiNamespace,const QString &className, const QStringList &classProperties);
+    QList <QVariant> wmiVariantList;
+   void setWmiNamespace(const QString &wmiNamespace);
+   void setClassName(const QString &className);
+   void setClassProperty(const QStringList &classProperties);
+
+   void setConditional(const QString &conditional); //see WQL SQL for WMI)
+
 private:
-     IWbemLocator *wbemLocator ;
+   QString m_className;
+   QStringList m_classProperties;
+   QString m_conditional;
+   QString m_wmiNamespace;
+   QVariant  msVariantToQVariant(VARIANT msVariant, CIMTYPE variantType);
+
 };
 
 #endif // WMIHELPER_H

@@ -13,9 +13,9 @@ DEFINES += QT_BUILD_SYSINFO_LIB \
 win32 { 
    QT+= network
     SOURCES += qsysteminfo_win.cpp \
-    wmihelper.cpp
+    qwmihelper.cpp
 
-    HEADERS += wmihelper.h
+    HEADERS += qwmihelper_p.h
     LIBS += Wlanapi.lib \
         Ole32.lib \
         Strmiids.lib \
@@ -27,9 +27,11 @@ win32 {
         Oleaut32.lib \
         Setupapi.lib
 
-    INCLUDEPATH += "C:\Program Files\Microsoft SDKs\Windows\v6.0A\Include" \
-        "C:\Program Files\Microsoft Visual Studio 9.0\VC\include" \
-        "C:\Program Files\Microsoft SDKs\Windows\v6.1\Include"
+     #DEPENDPATH += C:\Program Files\Microsoft SDKs\Windows\v6.1\Lib
+
+#    INCLUDEPATH += "C:\Program Files\Microsoft SDKs\Windows\v6.0A\Include" \
+        #"C:\Program Files\Microsoft Visual Studio 9.0\VC\include" \
+ #       "C:\Program Files\Microsoft SDKs\Windows\v6.1\Include"
 
     wince*:LIBS += aygshell.lib \
         Nleddrv.lib \
@@ -44,7 +46,7 @@ unix: {
         contains(QT_CONFIG,dbus): { 
             QT += dbus
             SOURCES += qhalservice.cpp
-            HEADERS += qhalservice.h
+            HEADERS += qhalservice_p.h
         }
         LIBS += -lXxf86vm
     }

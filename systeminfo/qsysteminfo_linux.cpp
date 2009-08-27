@@ -46,7 +46,7 @@
 #include <QLibraryInfo>
 
 #if !defined(QT_NO_DBUS)
-#include <qhalservice.h>
+#include <qhalservice_p.h>
 #include <QtDBus>
 #include <QDBusConnection>
 #include <QDBusError>
@@ -116,7 +116,11 @@ QSystemInfoPrivate::~QSystemInfoPrivate()
 // 2 letter ISO 639-1
 QString QSystemInfoPrivate::currentLanguage() const
 {
-    return QLocale::system().name().left(2);
+    QString lang = QLocale::system().name().left(2);
+    if(lang.isEmpty() || lang == "C") {
+        lang = "en";
+    }
+    return lang;
 }
 
 // 2 letter ISO 639-1
@@ -134,7 +138,9 @@ QStringList QSystemInfoPrivate::availableLanguages() const
                 langList <<lang;
             }
         }
-        return langList;
+        if(langList.count() > 0) {
+            return langList;
+        }
     }
     return QStringList() << currentLanguage();
 }
@@ -473,7 +479,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
             }
         }
         break;
-    case QSystemNetworkInfo::EthMode:
+    case QSystemNetworkInfo::EthernetMode:
         {
             QString baseSysDir = "/sys/class/net/";
             QDir eDir(baseSysDir);
@@ -494,6 +500,8 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
                 }
             }
         }
+        break;
+    case QSystemNetworkInfo::BluetoothMode:
         break;
     case QSystemNetworkInfo::WimaxMode:
         break;
@@ -532,7 +540,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
             }
         }
         break;
-    case QSystemNetworkInfo::EthMode:
+    case QSystemNetworkInfo::EthernetMode:
         {
             QString result;
             QString baseSysDir = "/sys/class/net/";
@@ -553,6 +561,8 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
                 }
             }
         }
+        break;
+    case QSystemNetworkInfo::BluetoothMode:
         break;
     case QSystemNetworkInfo::WimaxMode:
         break;
@@ -670,7 +680,7 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
             }
         }
         break;
-        case QSystemNetworkInfo::EthMode:
+        case QSystemNetworkInfo::EthernetMode:
         {
             QString result;
             QString baseSysDir = "/sys/class/net/";
@@ -691,6 +701,8 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
             }
         }
         break;
+        case QSystemNetworkInfo::BluetoothMode:
+        break;
         case QSystemNetworkInfo::WimaxMode:
         break;
     };
@@ -710,7 +722,6 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 
 int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 {
-    Q_UNUSED(screen)
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
         QHalInterface iface;

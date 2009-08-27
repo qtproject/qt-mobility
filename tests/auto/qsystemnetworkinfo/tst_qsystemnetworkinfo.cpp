@@ -58,6 +58,10 @@ private slots:
     void tst_homeMobileNetworkCode();
 
     void tst_operatorName();
+    void tst_wlanSsid();
+
+    void tst_macAddress_data();
+    void tst_macAddress();
 };
 //signal todo:
 //    void networkStatusChanged(QSystemNetworkInfo::NetworkMode netmode, QSystemNetworkInfo::CellNetworkStatus netStatus);
@@ -77,7 +81,10 @@ void tst_QSystemNetworkInfo::tst_networkStatus()
     modeList << QSystemNetworkInfo::CdmaMode;
     modeList << QSystemNetworkInfo::WcdmaMode;
     modeList << QSystemNetworkInfo::WlanMode;
-    modeList << QSystemNetworkInfo::EthMode;
+    modeList << QSystemNetworkInfo::EthernetMode;
+    modeList << QSystemNetworkInfo::BluetoothMode;
+    modeList << QSystemNetworkInfo::WimaxMode;
+
     foreach(QSystemNetworkInfo::NetworkMode mode, modeList) {
         QSystemNetworkInfo::NetworkStatus status = ni.networkStatus(mode);
 
@@ -102,7 +109,9 @@ void tst_QSystemNetworkInfo::tst_networkSignalStrength_data()
     QTest::newRow("CdmaMode") << QSystemNetworkInfo::CdmaMode;
     QTest::newRow("WcdmaMode") << QSystemNetworkInfo::WcdmaMode;
     QTest::newRow("WlanMode") << QSystemNetworkInfo::WlanMode;
-    QTest::newRow("EthMode") << QSystemNetworkInfo::EthMode;
+    QTest::newRow("EthernetMode") << QSystemNetworkInfo::EthernetMode;
+    QTest::newRow("BluetoothMode") << QSystemNetworkInfo::BluetoothMode;
+    QTest::newRow("WimaxMode") << QSystemNetworkInfo::WimaxMode;
 }
 
 void tst_QSystemNetworkInfo::tst_networkSignalStrength()
@@ -161,6 +170,32 @@ void  tst_QSystemNetworkInfo::tst_operatorName()
     QSystemNetworkInfo ni;
     QVERIFY(!ni.operatorName().isEmpty());
 
+}
+
+void tst_QSystemNetworkInfo::tst_wlanSsid()
+{
+    QSystemNetworkInfo ni;
+    if (ni.networkStatus(QSystemNetworkInfo::WlanMode) == QSystemNetworkInfo::Connected) {
+       QVERIFY(!ni.wlanSsid().isEmpty());
+    } else {
+       QVERIFY(ni.wlanSsid().isEmpty());
+    }
+}
+
+void tst_QSystemNetworkInfo::tst_macAddress_data()
+{
+   tst_networkSignalStrength_data();
+}
+
+void tst_QSystemNetworkInfo::tst_macAddress()
+{
+   QFETCH(QSystemNetworkInfo::NetworkMode, mode);
+   QSystemNetworkInfo ni;
+   QString mac = ni.macAddress(mode);
+   if (!mac.isEmpty()) {
+      QVERIFY(mac.length() == 17);
+      QVERIFY(mac.contains(":"));
+   }
 }
 
 QTEST_MAIN(tst_QSystemNetworkInfo)

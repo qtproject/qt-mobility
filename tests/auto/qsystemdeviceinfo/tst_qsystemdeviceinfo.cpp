@@ -48,7 +48,7 @@
 
 Q_DECLARE_METATYPE(QSystemDeviceInfo::BatteryLevel);
 Q_DECLARE_METATYPE(QSystemDeviceInfo::PowerState);
-Q_DECLARE_METATYPE(QSystemDeviceInfo::InputMethods);
+Q_DECLARE_METATYPE(QSystemDeviceInfo::InputMethodFlags);
 Q_DECLARE_METATYPE(QSystemDeviceInfo::Profile);
 Q_DECLARE_METATYPE(QSystemDeviceInfo::SimStatus);
 
@@ -94,7 +94,7 @@ void tst_QSystemDeviceInfo::initTestCase()
     qRegisterMetaType<QSystemDeviceInfo::BatteryLevel>("QSystemDeviceInfo::BatteryLevel");
     qRegisterMetaType<QSystemDeviceInfo::PowerState>("QSystemDeviceInfo::PowerState");
 
-    qRegisterMetaType<QSystemDeviceInfo::InputMethods>("QSystemDeviceInfo::InputMethods");
+    qRegisterMetaType<QSystemDeviceInfo::InputMethodFlags>("QSystemDeviceInfo::InputMethodFlags");
     qRegisterMetaType<QSystemDeviceInfo::Profile>("QSystemDeviceInfo::Profile");
 
     qRegisterMetaType<QSystemDeviceInfo::SimStatus>("QSystemDeviceInfo::SimStatus");
