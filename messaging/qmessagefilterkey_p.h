@@ -34,6 +34,7 @@
 #if defined(Q_OS_WIN)
 #include "qmessagestore.h"
 #include "winhelpers_p.h"
+#include <qvariant.h>
 #endif
 
 class QMessageFilterKeyPrivate
@@ -41,14 +42,22 @@ class QMessageFilterKeyPrivate
     Q_DECLARE_PUBLIC(QMessageFilterKey)
 
 public:
-    QMessageFilterKeyPrivate(QMessageFilterKey *messageFilterKey)
-        :q_ptr(messageFilterKey)
-    {
-    }
+    QMessageFilterKeyPrivate(QMessageFilterKey *messageFilterKey);
 
     QMessageFilterKey *q_ptr;
+    QMessageDataComparator::Options _options;
 #if defined(Q_OS_WIN)
-    enum Field { Id = 0, Type, Sender, Recipients, Subject, TimeStamp, ReceptionTimeStamp, Status, Priority, Size, CustomField, ParentAccountId, ParentFolderId, AncestorFolderIds };
+    enum Field { None = 0, Id, Type, Sender, Recipients, Subject, TimeStamp, ReceptionTimeStamp, Status, Priority, Size, CustomField, ParentAccountId, ParentFolderId, AncestorFolderIds };
+    enum Comparator { Equality = 0, Relation, Inclusion };
+    enum Operator { Identity = 0, And, Or, Not, Nand, Nor, OperatorEnd };
+    QMessageFilterKeyPrivate::Field _field;
+    QVariant _value;
+    Comparator _comparatorType;
+    int _comparatorValue;
+    Operator _operator;
+    QMessageFilterKey *_left;
+    QMessageFilterKey *_right;
+
     static void filterTable(QMessageStore::ErrorCode *lastError, const QMessageFilterKey &key, LPMAPITABLE);
     static QMessageFilterKey from(QMessageFilterKeyPrivate::Field field, const QVariant &value, QMessageDataComparator::EqualityComparator cmp);
     static QMessageFilterKey from(QMessageFilterKeyPrivate::Field field, const QVariant &value, QMessageDataComparator::RelationComparator cmp);
