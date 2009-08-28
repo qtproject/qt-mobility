@@ -1,0 +1,50 @@
+######################################################################
+#
+# Contacts Mobility API
+#
+######################################################################
+
+TEMPLATE = lib
+CONFIG += plugin
+TARGET = $$qtLibraryTarget(mobapicontactspluginsymbian)
+
+include(../../../common.pri)
+
+symbian: { 
+	TARGET.CAPABILITY = CAP_GENERAL_DLL
+	TARGET.EPOCALLOWDLLDATA = 1
+  TARGET.UID3 = 0xE5E2F4B4
+  
+  INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
+  
+  INCLUDEPATH += inc
+	#INCLUDEPATH += ../
+	INCLUDEPATH += $$SOURCE_DIR/contacts 
+	INCLUDEPATH += $$SOURCE_DIR/contacts/details 
+	INCLUDEPATH += $$SOURCE_DIR/contacts/filters 
+	INCLUDEPATH += $$SOURCE_DIR/contacts/requests
+
+	
+  HEADERS += \
+  		$$PUBLIC_HEADERS \
+  		inc/qcontactsymbianbackend_p.h \
+      inc/qcontactsymbianengine_p.h \
+      inc/qcontactfieldmap.h \
+      inc/qfieldmapping.h
+  SOURCES += \
+  		src/qcontactsymbianbackend.cpp \
+  		src/qcontactsymbianengine_p.cpp \
+      src/qcontactfieldmap.cpp
+      
+  LIBS += \
+  				-lcntmodel \
+  				-lQtContacts 
+
+target.path = /sys/bin
+INSTALLS += target
+
+symbianplugin.sources = $${TARGET}.dll
+symbianplugin.path = /resource/qt/plugins/contacts
+DEPLOYMENT += symbianplugin
+
+}
