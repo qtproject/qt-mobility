@@ -108,7 +108,8 @@ public:
     QString operatorName();
     QString wlanSsid();
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
-//    QString interfaceType(const QNetworkInterface &netInterface);
+
+    QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
 };
 
 class QSystemDisplayInfoPrivate : public QObject
