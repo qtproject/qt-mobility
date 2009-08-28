@@ -101,8 +101,8 @@ namespace QValueSpace {
     Q_CFW_EXPORT void initValuespaceManager();
 
     typedef QAbstractValueSpaceLayer *(*LayerCreateFunc)();
-    void installLayer(LayerCreateFunc func);
-    Q_AUTOTEST_EXPORT void installLayer(QAbstractValueSpaceLayer * layer);
+    Q_CFW_EXPORT void installLayer(LayerCreateFunc func);
+    Q_CFW_EXPORT void installLayer(QAbstractValueSpaceLayer *layer);
 
     struct AutoInstall {
         AutoInstall(LayerCreateFunc func) { installLayer(func); }
