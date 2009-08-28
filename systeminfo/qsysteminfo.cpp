@@ -45,6 +45,7 @@
 #include <QDesktopWidget>
 #include <QDebug>
 
+
 #include <locale.h>
 
 QT_BEGIN_NAMESPACE
@@ -417,6 +418,14 @@ QString QSystemNetworkInfo::wlanSsid()
 QString QSystemNetworkInfo::macAddress(QSystemNetworkInfo::NetworkMode mode)
 {
     return d->macAddress(mode);
+}
+
+/*!
+  Returns the first found QNetworkInterface for type \a mode.
+  */
+QNetworkInterface QSystemNetworkInfo::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
+{
+    return d->interfaceForMode(mode);
 }
 
 ///*!

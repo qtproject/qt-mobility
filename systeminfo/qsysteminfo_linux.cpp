@@ -709,6 +709,11 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
     return QString();
 }
 
+QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
+{
+    return QNetworkInterface();
+}
+
 //////// QSystemDisplayInfo
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
         : QObject(parent)
@@ -926,9 +931,9 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
     return QSystemDeviceInfo::UnknownProfile;
 }
 
-QSystemDeviceInfo::InputMethods QSystemDeviceInfoPrivate::inputMethodType()
+QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
 {
-    QSystemDeviceInfo::InputMethods methods = 0;
+    QSystemDeviceInfo::InputMethodFlags methods = 0;
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
         QHalInterface iface2;

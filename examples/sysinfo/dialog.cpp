@@ -138,12 +138,16 @@ void Dialog::setupMemory()
         volType = mi.volumeType(volName);
         if(volType == QSystemMemoryInfo::Internal) {
             type =  "Internal";
-        } else
-            if(volType == QSystemMemoryInfo::Removable) {
+        }
+
+        if(volType == QSystemMemoryInfo::Removable) {
             type = "Removable";
         }
         if(volType == QSystemMemoryInfo::Cdrom) {
             type =  "Cdrom";
+        }
+        if(volType == QSystemMemoryInfo::Remote) {
+            type =  "Network";
         }
         QStringList items;
         items << volName;

@@ -38,7 +38,7 @@
 #include <QSize>
 #include <QPair>
 #include <QString>
-
+#include <QNetworkInterface>
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
@@ -50,7 +50,7 @@ class QSystemNetworkInfoPrivate;
 class QSystemMemoryInfoPrivate;
 class QSystemDeviceInfoPrivate;
 class QSystemDisplayInfoPrivate;
-class QNetworkInterface;
+
 
 class Q_SYSINFO_EXPORT QSystemInfo : public QObject
 {
@@ -165,11 +165,10 @@ public:
 
     static QString currentMobileCountryCode();
     static QString currentMobileNetworkCode();
-
-//    static QString interfaceType(const QNetworkInterface &netInterface);
     static QString homeMobileCountryCode();
     static QString homeMobileNetworkCode();
     static QString operatorName();
+    /*static*/ QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
 
 
 private:
