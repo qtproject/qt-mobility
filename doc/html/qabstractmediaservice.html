@@ -18,44 +18,25 @@
 <li><a href="qabstractmediaservice-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
-<a name="properties"></a>
-<h2>Properties</h2>
-<p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
-<tr><td width="45%" valign="top"><ul>
-<li><div class="fn"><b><a href="qabstractmediaservice.html#audioInput-prop">audioInput</a></b> : QObject *</div></li>
-<li><div class="fn"><b><a href="qabstractmediaservice.html#audioOutput-prop">audioOutput</a></b> : QObject *</div></li>
-<li><div class="fn"><b><a href="qabstractmediaservice.html#dataInput-prop">dataInput</a></b> : QObject *</div></li>
-</ul></td><td valign="top"><ul>
-<li><div class="fn"><b><a href="qabstractmediaservice.html#dataOutput-prop">dataOutput</a></b> : QObject *</div></li>
-<li><div class="fn"><b><a href="qabstractmediaservice.html#videoInput-prop">videoInput</a></b> : QObject *</div></li>
-<li><div class="fn"><b><a href="qabstractmediaservice.html#videoOutput-prop">videoOutput</a></b> : QObject *</div></li>
-</ul>
-</td></tr>
-</table></p>
-<ul>
-<li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
-</ul>
+<a name="public-types"></a>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#MediaEndpoint-enum">MediaEndpoint</a></b> { VideoInput, VideoOutput, AudioInput, AudioOutput, StreamInput, StreamOutput }</td></tr>
+</table>
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#audioInput-prop">audioInput</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#audioOutput-prop">audioOutput</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QString </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#activeEndpoint">activeEndpoint</a></b> ( QAbstractMediaService::MediaEndpoint <i>endpointType</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QAbstractMediaControl * </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#control">control</a></b> ( const char * <i>name</i> ) const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">T </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#control-2">control</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QObject * </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#createEndpoint">createEndpoint</a></b> ( const char * <i>interface</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">T </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#createEndpoint-2">createEndpoint</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#dataInput-prop">dataInput</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#dataOutput-prop">dataOutput</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#audioInput-prop">setAudioInput</a></b> ( QObject * <i>input</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#audioOutput-prop">setAudioOutput</a></b> ( QObject * <i>output</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#dataInput-prop">setDataInput</a></b> ( QObject * <i>input</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#dataOutput-prop">setDataOutput</a></b> ( QObject * <i>output</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#videoInput-prop">setVideoInput</a></b> ( QObject * <i>input</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#videoOutput-prop">setVideoOutput</a></b> ( QObject * <i>output</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QByteArray&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#supportedEndpointInterfaces">supportedEndpointInterfaces</a></b> ( QMediaEndpointInterface::Direction <i>direction</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#videoInput-prop">videoInput</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#videoOutput-prop">videoOutput</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QIODevice * </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#inputStream">inputStream</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#isEndpointSupported">isEndpointSupported</a></b> ( QAbstractMediaService::MediaEndpoint <i>endpointType</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QIODevice * </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#outputStream">outputStream</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#setActiveEndpoint">setActiveEndpoint</a></b> ( QAbstractMediaService::MediaEndpoint <i>endpointType</i>, const QString &amp; <i>endpoint</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#setInputStream">setInputStream</a></b> ( QIODevice * <i>stream</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#setOutputStream">setOutputStream</a></b> ( QIODevice * <i>stream</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QString&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qabstractmediaservice.html#supportedEndpoints">supportedEndpoints</a></b> ( QAbstractMediaService::MediaEndpoint <i>endpointType</i> ) const</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
@@ -72,6 +53,7 @@
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-slots">QObject</a></li>
 <li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
 <li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-variables">QObject</a></li>
@@ -82,67 +64,33 @@
 <hr />
 <h2>Detailed Description</h2>
 <hr />
-<h2>Property Documentation</h2>
-<h3 class="fn"><a name="audioInput-prop"></a>audioInput : <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> *</h3>
-<p>The input that a media service source audio from.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b>audioInput</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setAudioInput</b> ( QObject * <i>input</i> )</td></tr>
-</table>
-<h3 class="fn"><a name="audioOutput-prop"></a>audioOutput : <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> *</h3>
-<p>The output that a media service renders audio to.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b>audioOutput</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setAudioOutput</b> ( QObject * <i>output</i> )</td></tr>
-</table>
-<h3 class="fn"><a name="dataInput-prop"></a>dataInput : <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> *</h3>
-<p>The input that a media service reads data from.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b>dataInput</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setDataInput</b> ( QObject * <i>input</i> )</td></tr>
-</table>
-<h3 class="fn"><a name="dataOutput-prop"></a>dataOutput : <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> *</h3>
-<p>The output that a media service writes data to.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b>dataOutput</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setDataOutput</b> ( QObject * <i>output</i> )</td></tr>
-</table>
-<h3 class="fn"><a name="videoInput-prop"></a>videoInput : <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> *</h3>
-<p>The input that a media service source video data from.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b>videoInput</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setVideoInput</b> ( QObject * <i>input</i> )</td></tr>
-</table>
-<h3 class="fn"><a name="videoOutput-prop"></a>videoOutput : <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> *</h3>
-<p>The output that a media service renders video to.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QObject * </td><td class="memItemRight" valign="bottom"><b>videoOutput</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setVideoOutput</b> ( QObject * <i>output</i> )</td></tr>
-</table>
+<h2>Member Type Documentation</h2>
+<h3 class="fn"><a name="MediaEndpoint-enum"></a>enum QAbstractMediaService::MediaEndpoint</h3>
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QAbstractMediaService"></a>QAbstractMediaService::QAbstractMediaService ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
 <p>Construct a <a href="qabstractmediaservice.html">QAbstractMediaService</a> with <i>parent</i>. This class is meant as a base class for Multimedia services so this constructor is protected.</p>
 <h3 class="fn"><a name="dtor.QAbstractMediaService"></a>QAbstractMediaService::~QAbstractMediaService ()&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<h3 class="fn"><a name="activeEndpoint"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QAbstractMediaService::activeEndpoint ( <a href="qabstractmediaservice.html#MediaEndpoint-enum">QAbstractMediaService::MediaEndpoint</a> <i>endpointType</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Returns the currently active endpoint id for <font color="red"><b><code>\endpointType</code></b></font>.</p>
+<p>See also <a href="qabstractmediaservice.html#setActiveEndpoint">setActiveEndpoint</a>().</p>
 <h3 class="fn"><a name="control"></a><a href="qabstractmediacontrol.html">QAbstractMediaControl</a> * QAbstractMediaService::control ( const char * <i>name</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <h3 class="fn"><a name="control-2"></a>T QAbstractMediaService::control () const</h3>
-<h3 class="fn"><a name="createEndpoint"></a><a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * QAbstractMediaService::createEndpoint ( const char * <i>interface</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Creates a new media end point object from the given <i>interface</i> name.</p>
-<p>An end point object may be an input or output to a media service and can only be used with the service object that created it.</p>
-<p>A list of supported end point interfaces can be queried using the <a href="qabstractmediaservice.html#supportedEndpointInterfaces">supportedEndpointInterfaces</a>() function.</p>
-<p>See also <a href="qabstractmediaservice.html#supportedEndpointInterfaces">supportedEndpointInterfaces</a>(), <a href="qabstractmediaservice.html#audioOutput-prop">setAudioOutput</a>(), and <a href="qabstractmediaservice.html#videoOutput-prop">setVideoOutput</a>().</p>
-<h3 class="fn"><a name="createEndpoint-2"></a>T QAbstractMediaService::createEndpoint ()</h3>
-<p>Creates a new media end point object of type <tt>T</tt>.</p>
-<p><tt>T</tt> must be a pointer to a class that inherits from <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> and has been declared as a media endpoint using Q_MEDIA_DECLARE_ENDPOINT.</p>
-<h3 class="fn"><a name="supportedEndpointInterfaces"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a>&gt; QAbstractMediaService::supportedEndpointInterfaces ( <a href="qmediaendpointinterface.html#Direction-enum">QMediaEndpointInterface::Direction</a> <i>direction</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Returns a list of interfaces for <i>direction</i> media end point objects that can be created by a media service.</p>
-<p>See also <a href="qabstractmediaservice.html#createEndpoint">createEndpoint</a>().</p>
+<h3 class="fn"><a name="inputStream"></a><a href="http://qt.nokia.com/doc/4.5/qiodevice.html">QIODevice</a> * QAbstractMediaService::inputStream () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>See also <a href="qabstractmediaservice.html#setInputStream">setInputStream</a>().</p>
+<h3 class="fn"><a name="isEndpointSupported"></a>bool QAbstractMediaService::isEndpointSupported ( <a href="qabstractmediaservice.html#MediaEndpoint-enum">QAbstractMediaService::MediaEndpoint</a> <i>endpointType</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Return true if <i>endpointType</i> is available.</p>
+<h3 class="fn"><a name="outputStream"></a><a href="http://qt.nokia.com/doc/4.5/qiodevice.html">QIODevice</a> * QAbstractMediaService::outputStream () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>See also <a href="qabstractmediaservice.html#setOutputStream">setOutputStream</a>().</p>
+<h3 class="fn"><a name="setActiveEndpoint"></a>void QAbstractMediaService::setActiveEndpoint ( <a href="qabstractmediaservice.html#MediaEndpoint-enum">QAbstractMediaService::MediaEndpoint</a> <i>endpointType</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>endpoint</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Sets the active endpoint for <i>endpointType</i> to <i>endpoint</i></p>
+<p>See also <a href="qabstractmediaservice.html#activeEndpoint">activeEndpoint</a>().</p>
+<h3 class="fn"><a name="setInputStream"></a>void QAbstractMediaService::setInputStream ( <a href="http://qt.nokia.com/doc/4.5/qiodevice.html">QIODevice</a> * <i>stream</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>See also <a href="qabstractmediaservice.html#inputStream">inputStream</a>().</p>
+<h3 class="fn"><a name="setOutputStream"></a>void QAbstractMediaService::setOutputStream ( <a href="http://qt.nokia.com/doc/4.5/qiodevice.html">QIODevice</a> * <i>stream</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>See also <a href="qabstractmediaservice.html#outputStream">outputStream</a>().</p>
+<h3 class="fn"><a name="supportedEndpoints"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>&gt; QAbstractMediaService::supportedEndpoints ( <a href="qabstractmediaservice.html#MediaEndpoint-enum">QAbstractMediaService::MediaEndpoint</a> <i>endpointType</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Returns a list of endpoints available for the <i>endpointType</i>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

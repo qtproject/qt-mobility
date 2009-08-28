@@ -18,22 +18,31 @@
     </section>
     <section ref="qabstractmediaservice.html" title="QAbstractMediaService Class Reference">
         <keyword ref="qabstractmediaservice.html">QAbstractMediaService</keyword>
-        <keyword ref="qabstractmediaservice.html#audioInput-prop">audioInput</keyword>
-        <keyword ref="qabstractmediaservice.html#audioInput-prop">setAudioInput</keyword>
-        <keyword ref="qabstractmediaservice.html#audioOutput-prop">audioOutput</keyword>
-        <keyword ref="qabstractmediaservice.html#audioOutput-prop">setAudioOutput</keyword>
-        <keyword ref="qabstractmediaservice.html#dataInput-prop">dataInput</keyword>
-        <keyword ref="qabstractmediaservice.html#dataInput-prop">setDataInput</keyword>
-        <keyword ref="qabstractmediaservice.html#dataOutput-prop">dataOutput</keyword>
-        <keyword ref="qabstractmediaservice.html#dataOutput-prop">setDataOutput</keyword>
-        <keyword ref="qabstractmediaservice.html#videoInput-prop">videoInput</keyword>
-        <keyword ref="qabstractmediaservice.html#videoInput-prop">setVideoInput</keyword>
-        <keyword ref="qabstractmediaservice.html#videoOutput-prop">videoOutput</keyword>
-        <keyword ref="qabstractmediaservice.html#videoOutput-prop">setVideoOutput</keyword>
+        <keyword ref="qabstractmediaservice.html#MediaEndpoint-enum">MediaEndpoint</keyword>
+        <keyword ref="qabstractmediaservice.html#activeEndpoint">activeEndpoint</keyword>
         <keyword ref="qabstractmediaservice.html#control">control</keyword>
-        <keyword ref="qabstractmediaservice.html#createEndpoint">createEndpoint</keyword>
-        <keyword ref="qabstractmediaservice.html#supportedEndpointInterfaces">supportedEndpointInterfaces</keyword>
+        <keyword ref="qabstractmediaservice.html#inputStream">inputStream</keyword>
+        <keyword ref="qabstractmediaservice.html#isEndpointSupported">isEndpointSupported</keyword>
+        <keyword ref="qabstractmediaservice.html#outputStream">outputStream</keyword>
+        <keyword ref="qabstractmediaservice.html#setActiveEndpoint">setActiveEndpoint</keyword>
+        <keyword ref="qabstractmediaservice.html#setInputStream">setInputStream</keyword>
+        <keyword ref="qabstractmediaservice.html#setOutputStream">setOutputStream</keyword>
+        <keyword ref="qabstractmediaservice.html#supportedEndpoints">supportedEndpoints</keyword>
         <section ref="qabstractmediaservice-members.html" title="List of all members"/>
+    </section>
+    <section ref="qaudiodevicecontrol.html" title="QAudioDeviceControl Class Reference">
+        <keyword ref="qaudiodevicecontrol.html">QAudioDeviceControl</keyword>
+        <keyword ref="qaudiodevicecontrol.html#selectedDevice-prop">selectedDevice</keyword>
+        <keyword ref="qaudiodevicecontrol.html#selectedDevice-prop">setSelectedDevice</keyword>
+        <keyword ref="qaudiodevicecontrol.html#defaultDevice">defaultDevice</keyword>
+        <keyword ref="qaudiodevicecontrol.html#description">description</keyword>
+        <keyword ref="qaudiodevicecontrol.html#deviceCount">deviceCount</keyword>
+        <keyword ref="qaudiodevicecontrol.html#devicesChanged">devicesChanged</keyword>
+        <keyword ref="qaudiodevicecontrol.html#icon">icon</keyword>
+        <keyword ref="qaudiodevicecontrol.html#name">name</keyword>
+        <keyword ref="qaudiodevicecontrol.html#selectedDeviceChanged">selectedDeviceChanged</keyword>
+        <keyword ref="qaudiodevicecontrol.html#QAudioDeviceControl_iid">QAudioDeviceControl_iid</keyword>
+        <section ref="qaudiodevicecontrol-members.html" title="List of all members"/>
     </section>
     <section ref="qaudiodeviceendpoint.html" title="QAudioDeviceEndpoint Class Reference">
         <keyword ref="qaudiodeviceendpoint.html">QAudioDeviceEndpoint</keyword>
@@ -228,63 +237,69 @@
     </section>
     <section ref="qcameracontrol.html" title="QCameraControl Class Reference">
         <keyword ref="qcameracontrol.html">QCameraControl</keyword>
-        <keyword ref="qcameracontrol.html#aperture">aperture</keyword>
-        <keyword ref="qcameracontrol.html#exposureCompensation">exposureCompensation</keyword>
-        <keyword ref="qcameracontrol.html#exposureLocked">exposureLocked</keyword>
-        <keyword ref="qcameracontrol.html#exposureMode">exposureMode</keyword>
-        <keyword ref="qcameracontrol.html#flashMode">flashMode</keyword>
-        <keyword ref="qcameracontrol.html#flashReady">flashReady</keyword>
-        <keyword ref="qcameracontrol.html#focusLocked">focusLocked</keyword>
-        <keyword ref="qcameracontrol.html#focusMode">focusMode</keyword>
-        <keyword ref="qcameracontrol.html#focusStatus">focusStatus</keyword>
-        <keyword ref="qcameracontrol.html#focusStatusChanged">focusStatusChanged</keyword>
-        <keyword ref="qcameracontrol.html#isExposureLocked">isExposureLocked</keyword>
-        <keyword ref="qcameracontrol.html#isFlashReady">isFlashReady</keyword>
-        <keyword ref="qcameracontrol.html#isFocusLocked">isFocusLocked</keyword>
-        <keyword ref="qcameracontrol.html#isMacroFocusingSupported">isMacroFocusingSupported</keyword>
-        <keyword ref="qcameracontrol.html#isoSensitivity">isoSensitivity</keyword>
-        <keyword ref="qcameracontrol.html#lockExposure">lockExposure</keyword>
-        <keyword ref="qcameracontrol.html#lockFocus">lockFocus</keyword>
-        <keyword ref="qcameracontrol.html#macroFocusingEnabled">macroFocusingEnabled</keyword>
         <keyword ref="qcameracontrol.html#manualWhiteBalance">manualWhiteBalance</keyword>
-        <keyword ref="qcameracontrol.html#maximumDigitalZoom">maximumDigitalZoom</keyword>
-        <keyword ref="qcameracontrol.html#maximumOpticalZoom">maximumOpticalZoom</keyword>
-        <keyword ref="qcameracontrol.html#meteringMode">meteringMode</keyword>
-        <keyword ref="qcameracontrol.html#setAutoAperture">setAutoAperture</keyword>
-        <keyword ref="qcameracontrol.html#setAutoIsoSensitivity">setAutoIsoSensitivity</keyword>
-        <keyword ref="qcameracontrol.html#setAutoShutterSpeed">setAutoShutterSpeed</keyword>
         <keyword ref="qcameracontrol.html#setDevice">setDevice</keyword>
-        <keyword ref="qcameracontrol.html#setExposureCompensation">setExposureCompensation</keyword>
-        <keyword ref="qcameracontrol.html#setExposureMode">setExposureMode</keyword>
-        <keyword ref="qcameracontrol.html#setFlashMode">setFlashMode</keyword>
-        <keyword ref="qcameracontrol.html#setFocusMode">setFocusMode</keyword>
-        <keyword ref="qcameracontrol.html#setMacroFocusingEnabled">setMacroFocusingEnabled</keyword>
-        <keyword ref="qcameracontrol.html#setManualAperture">setManualAperture</keyword>
-        <keyword ref="qcameracontrol.html#setManualIsoSensitivity">setManualIsoSensitivity</keyword>
-        <keyword ref="qcameracontrol.html#setManualShutterSpeed">setManualShutterSpeed</keyword>
         <keyword ref="qcameracontrol.html#setManualWhiteBalance">setManualWhiteBalance</keyword>
-        <keyword ref="qcameracontrol.html#setMeteringMode">setMeteringMode</keyword>
         <keyword ref="qcameracontrol.html#setWhiteBalanceMode">setWhiteBalanceMode</keyword>
-        <keyword ref="qcameracontrol.html#shutterSpeed">shutterSpeed</keyword>
         <keyword ref="qcameracontrol.html#start">start</keyword>
         <keyword ref="qcameracontrol.html#state">state</keyword>
         <keyword ref="qcameracontrol.html#stateChanged">stateChanged</keyword>
         <keyword ref="qcameracontrol.html#stop">stop</keyword>
-        <keyword ref="qcameracontrol.html#supportedApertureRange">supportedApertureRange</keyword>
-        <keyword ref="qcameracontrol.html#supportedExposureModes">supportedExposureModes</keyword>
-        <keyword ref="qcameracontrol.html#supportedFlashModes">supportedFlashModes</keyword>
-        <keyword ref="qcameracontrol.html#supportedFocusModes">supportedFocusModes</keyword>
-        <keyword ref="qcameracontrol.html#supportedIsoSensitivityRange">supportedIsoSensitivityRange</keyword>
-        <keyword ref="qcameracontrol.html#supportedMeteringModes">supportedMeteringModes</keyword>
-        <keyword ref="qcameracontrol.html#supportedShutterSpeedRange">supportedShutterSpeedRange</keyword>
         <keyword ref="qcameracontrol.html#supportedWhiteBalanceModes">supportedWhiteBalanceModes</keyword>
-        <keyword ref="qcameracontrol.html#unlockExposure">unlockExposure</keyword>
-        <keyword ref="qcameracontrol.html#unlockFocus">unlockFocus</keyword>
         <keyword ref="qcameracontrol.html#whiteBalanceMode">whiteBalanceMode</keyword>
-        <keyword ref="qcameracontrol.html#zoomTo">zoomTo</keyword>
-        <keyword ref="qcameracontrol.html#zoomValue">zoomValue</keyword>
-        <keyword ref="qcameracontrol.html#zoomValueChanged">zoomValueChanged</keyword>
         <section ref="qcameracontrol-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcameraexposurecontrol.html" title="QCameraExposureControl Class Reference">
+        <keyword ref="qcameraexposurecontrol.html">QCameraExposureControl</keyword>
+        <keyword ref="qcameraexposurecontrol.html#aperture">aperture</keyword>
+        <keyword ref="qcameraexposurecontrol.html#exposureCompensation">exposureCompensation</keyword>
+        <keyword ref="qcameraexposurecontrol.html#exposureLocked">exposureLocked</keyword>
+        <keyword ref="qcameraexposurecontrol.html#exposureMode">exposureMode</keyword>
+        <keyword ref="qcameraexposurecontrol.html#flashMode">flashMode</keyword>
+        <keyword ref="qcameraexposurecontrol.html#isExposureLocked">isExposureLocked</keyword>
+        <keyword ref="qcameraexposurecontrol.html#isFlashReady">isFlashReady</keyword>
+        <keyword ref="qcameraexposurecontrol.html#isoSensitivity">isoSensitivity</keyword>
+        <keyword ref="qcameraexposurecontrol.html#lockExposure">lockExposure</keyword>
+        <keyword ref="qcameraexposurecontrol.html#meteringMode">meteringMode</keyword>
+        <keyword ref="qcameraexposurecontrol.html#setAutoAperture">setAutoAperture</keyword>
+        <keyword ref="qcameraexposurecontrol.html#setAutoIsoSensitivity">setAutoIsoSensitivity</keyword>
+        <keyword ref="qcameraexposurecontrol.html#setAutoShutterSpeed">setAutoShutterSpeed</keyword>
+        <keyword ref="qcameraexposurecontrol.html#setExposureCompensation">setExposureCompensation</keyword>
+        <keyword ref="qcameraexposurecontrol.html#setExposureMode">setExposureMode</keyword>
+        <keyword ref="qcameraexposurecontrol.html#setFlashMode">setFlashMode</keyword>
+        <keyword ref="qcameraexposurecontrol.html#setManualAperture">setManualAperture</keyword>
+        <keyword ref="qcameraexposurecontrol.html#setManualIsoSensitivity">setManualIsoSensitivity</keyword>
+        <keyword ref="qcameraexposurecontrol.html#setManualShutterSpeed">setManualShutterSpeed</keyword>
+        <keyword ref="qcameraexposurecontrol.html#setMeteringMode">setMeteringMode</keyword>
+        <keyword ref="qcameraexposurecontrol.html#shutterSpeed">shutterSpeed</keyword>
+        <keyword ref="qcameraexposurecontrol.html#supportedApertureRange">supportedApertureRange</keyword>
+        <keyword ref="qcameraexposurecontrol.html#supportedExposureModes">supportedExposureModes</keyword>
+        <keyword ref="qcameraexposurecontrol.html#supportedFlashModes">supportedFlashModes</keyword>
+        <keyword ref="qcameraexposurecontrol.html#supportedIsoSensitivityRange">supportedIsoSensitivityRange</keyword>
+        <keyword ref="qcameraexposurecontrol.html#supportedMeteringModes">supportedMeteringModes</keyword>
+        <keyword ref="qcameraexposurecontrol.html#supportedShutterSpeedRange">supportedShutterSpeedRange</keyword>
+        <keyword ref="qcameraexposurecontrol.html#unlockExposure">unlockExposure</keyword>
+        <section ref="qcameraexposurecontrol-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcamerafocuscontrol.html" title="QCameraFocusControl Class Reference">
+        <keyword ref="qcamerafocuscontrol.html">QCameraFocusControl</keyword>
+        <keyword ref="qcamerafocuscontrol.html#focusLocked">focusLocked</keyword>
+        <keyword ref="qcamerafocuscontrol.html#focusMode">focusMode</keyword>
+        <keyword ref="qcamerafocuscontrol.html#focusStatus">focusStatus</keyword>
+        <keyword ref="qcamerafocuscontrol.html#isFocusLocked">isFocusLocked</keyword>
+        <keyword ref="qcamerafocuscontrol.html#isMacroFocusingSupported">isMacroFocusingSupported</keyword>
+        <keyword ref="qcamerafocuscontrol.html#lockFocus">lockFocus</keyword>
+        <keyword ref="qcamerafocuscontrol.html#macroFocusingEnabled">macroFocusingEnabled</keyword>
+        <keyword ref="qcamerafocuscontrol.html#maximumDigitalZoom">maximumDigitalZoom</keyword>
+        <keyword ref="qcamerafocuscontrol.html#maximumOpticalZoom">maximumOpticalZoom</keyword>
+        <keyword ref="qcamerafocuscontrol.html#setFocusMode">setFocusMode</keyword>
+        <keyword ref="qcamerafocuscontrol.html#setMacroFocusingEnabled">setMacroFocusingEnabled</keyword>
+        <keyword ref="qcamerafocuscontrol.html#supportedFocusModes">supportedFocusModes</keyword>
+        <keyword ref="qcamerafocuscontrol.html#unlockFocus">unlockFocus</keyword>
+        <keyword ref="qcamerafocuscontrol.html#zoomTo">zoomTo</keyword>
+        <keyword ref="qcamerafocuscontrol.html#zoomValue">zoomValue</keyword>
+        <keyword ref="qcamerafocuscontrol.html#zoomValueChanged">zoomValueChanged</keyword>
+        <section ref="qcamerafocuscontrol-members.html" title="List of all members"/>
     </section>
     <section ref="qiodeviceendpoint.html" title="QIODeviceEndpoint Class Reference">
         <keyword ref="qiodeviceendpoint.html">QIODeviceEndpoint</keyword>
@@ -304,33 +319,68 @@
         <keyword ref="qmediaendpointinterface.html#Q_MEDIA_DECLARE_ENDPOINT">Q_MEDIA_DECLARE_ENDPOINT</keyword>
         <section ref="qmediaendpointinterface-members.html" title="List of all members"/>
     </section>
-    <section ref="qmediaimageviewer.html" title="QMediaImageViewer Class Reference">
-        <keyword ref="qmediaimageviewer.html">QMediaImageViewer</keyword>
-        <keyword ref="qmediaimageviewer.html#State-enum">State</keyword>
-        <keyword ref="qmediaimageviewer.html#interval-prop">interval</keyword>
-        <keyword ref="qmediaimageviewer.html#mediaResources-prop">mediaResources</keyword>
-        <keyword ref="qmediaimageviewer.html#mediaResources-prop">setMediaResources</keyword>
-        <keyword ref="qmediaimageviewer.html#state-prop">state</keyword>
-        <keyword ref="qmediaimageviewer.html#intervalChanged">intervalChanged</keyword>
-        <keyword ref="qmediaimageviewer.html#pause">pause</keyword>
-        <keyword ref="qmediaimageviewer.html#play">play</keyword>
-        <keyword ref="qmediaimageviewer.html#skipBackward">skipBackward</keyword>
-        <keyword ref="qmediaimageviewer.html#skipForward">skipForward</keyword>
-        <keyword ref="qmediaimageviewer.html#stateChanged">stateChanged</keyword>
-        <keyword ref="qmediaimageviewer.html#stop">stop</keyword>
-        <section ref="qmediaimageviewer-members.html" title="List of all members"/>
-    </section>
     <section ref="qmediametadata.html" title="QMediaMetadata Class Reference">
         <keyword ref="qmediametadata.html">QMediaMetadata</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">Key</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::CameraManufacturer</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::PeakValue</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::Event</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::TrackCount</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::Category</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::AlbumTitle</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::CoverArtUriSmall</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::LeadPerformer</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::Title</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::SubTitle</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::CameraModel</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::Genre</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::PosterUri</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::FrameRate</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::Lyrics</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::Comment</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::Keywords</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::Duration</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::Mood</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::VideoBitRate</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::AudioBitrate</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::Composer</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::AverageLevel</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::ChapterNumber</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::Language</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::Publisher</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::UserRating</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::Channels</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::RatingOrganisation</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::Year</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::Frequency</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::TrackNumber</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::VideoCodec</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::Director</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::Resolution</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::Subject</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::AlbumArtist</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::Description</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::Copyright</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::Author</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::Conductor</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::ParentalRating</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::MediaType</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::ContributingArtist</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::PixelAspectRatio</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::Writer</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::CoverArtUriLarge</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::Date</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::AudioCodec</keyword>
+        <keyword ref="qmediametadata.html#Key-enum">QMediaMetadata::Size</keyword>
         <keyword ref="qmediametadata.html#metadataAvailable-prop">metadataAvailable</keyword>
         <keyword ref="qmediametadata.html#readOnly-prop">readOnly</keyword>
         <keyword ref="qmediametadata.html#readOnly-prop">isReadOnly</keyword>
-        <keyword ref="qmediametadata.html#resources-prop">resources</keyword>
-        <keyword ref="qmediametadata.html#availableMetadata">availableMetadata</keyword>
+        <keyword ref="qmediametadata.html#extendedMetadata">extendedMetadata</keyword>
         <keyword ref="qmediametadata.html#metadata">metadata</keyword>
         <keyword ref="qmediametadata.html#metadataAvailabilityChanged">metadataAvailabilityChanged</keyword>
         <keyword ref="qmediametadata.html#metadataChanged">metadataChanged</keyword>
         <keyword ref="qmediametadata.html#readOnlyChanged">readOnlyChanged</keyword>
+        <keyword ref="qmediametadata.html#setExtendedMetadata">setExtendedMetadata</keyword>
         <keyword ref="qmediametadata.html#setMetadata">setMetadata</keyword>
         <section ref="qmediametadata-members.html" title="List of all members"/>
     </section>
@@ -360,8 +410,8 @@
         <keyword ref="qmediaplayer.html#duration-prop">duration</keyword>
         <keyword ref="qmediaplayer.html#error-prop">error</keyword>
         <keyword ref="qmediaplayer.html#error-prop">errorString</keyword>
-        <keyword ref="qmediaplayer.html#mediaResources-prop">mediaResources</keyword>
-        <keyword ref="qmediaplayer.html#mediaResources-prop">currentMediaResources</keyword>
+        <keyword ref="qmediaplayer.html#mediaSource-prop">mediaSource</keyword>
+        <keyword ref="qmediaplayer.html#mediaSource-prop">currentMediaSource</keyword>
         <keyword ref="qmediaplayer.html#mediaStatus-prop">mediaStatus</keyword>
         <keyword ref="qmediaplayer.html#muted-prop">muted</keyword>
         <keyword ref="qmediaplayer.html#muted-prop">isMuted</keyword>
@@ -378,8 +428,7 @@
         <keyword ref="qmediaplayer.html#volume-prop">volume</keyword>
         <keyword ref="qmediaplayer.html#volume-prop">setVolume</keyword>
         <keyword ref="qmediaplayer.html#bufferStatusChanged">bufferStatusChanged</keyword>
-        <keyword ref="qmediaplayer.html#bufferingChanged">bufferingChanged</keyword>
-        <keyword ref="qmediaplayer.html#currentMediaResourcesChanged">currentMediaResourcesChanged</keyword>
+        <keyword ref="qmediaplayer.html#currentMediaSourceChanged">currentMediaSourceChanged</keyword>
         <keyword ref="qmediaplayer.html#durationChanged">durationChanged</keyword>
         <keyword ref="qmediaplayer.html#error">error</keyword>
         <keyword ref="qmediaplayer.html#errorStringChanged">errorStringChanged</keyword>
@@ -394,7 +443,6 @@
         <keyword ref="qmediaplayer.html#service">service</keyword>
         <keyword ref="qmediaplayer.html#stateChanged">stateChanged</keyword>
         <keyword ref="qmediaplayer.html#stop">stop</keyword>
-        <keyword ref="qmediaplayer.html#unsetError">unsetError</keyword>
         <keyword ref="qmediaplayer.html#videoAvailabilityChanged">videoAvailabilityChanged</keyword>
         <keyword ref="qmediaplayer.html#volumeChanged">volumeChanged</keyword>
         <section ref="qmediaplayer-members.html" title="List of all members"/>
@@ -403,8 +451,8 @@
         <keyword ref="qmediaplayercontrol.html">QMediaPlayerControl</keyword>
         <keyword ref="qmediaplayercontrol.html#bufferStatus">bufferStatus</keyword>
         <keyword ref="qmediaplayercontrol.html#bufferStatusChanged">bufferStatusChanged</keyword>
-        <keyword ref="qmediaplayercontrol.html#currentResources">currentResources</keyword>
-        <keyword ref="qmediaplayercontrol.html#currentResourcesChanged">currentResourcesChanged</keyword>
+        <keyword ref="qmediaplayercontrol.html#currentSource">currentSource</keyword>
+        <keyword ref="qmediaplayercontrol.html#currentSourceChanged">currentSourceChanged</keyword>
         <keyword ref="qmediaplayercontrol.html#duration">duration</keyword>
         <keyword ref="qmediaplayercontrol.html#durationChanged">durationChanged</keyword>
         <keyword ref="qmediaplayercontrol.html#error">error</keyword>
@@ -420,7 +468,7 @@
         <keyword ref="qmediaplayercontrol.html#position">position</keyword>
         <keyword ref="qmediaplayercontrol.html#positionChanged">positionChanged</keyword>
         <keyword ref="qmediaplayercontrol.html#seekableChanged">seekableChanged</keyword>
-        <keyword ref="qmediaplayercontrol.html#setCurrentResources">setCurrentResources</keyword>
+        <keyword ref="qmediaplayercontrol.html#setCurrentSource">setCurrentSource</keyword>
         <keyword ref="qmediaplayercontrol.html#setMuted">setMuted</keyword>
         <keyword ref="qmediaplayercontrol.html#setPlaybackRate">setPlaybackRate</keyword>
         <keyword ref="qmediaplayercontrol.html#setPosition">setPosition</keyword>
@@ -435,17 +483,19 @@
     </section>
     <section ref="qmediaplaylist.html" title="QMediaPlaylist Class Reference">
         <keyword ref="qmediaplaylist.html">QMediaPlaylist</keyword>
+        <keyword ref="qmediaplaylist.html#PlaybackMode-enum">PlaybackMode</keyword>
+        <keyword ref="qmediaplaylist.html#currentMedia-prop">currentMedia</keyword>
         <keyword ref="qmediaplaylist.html#currentPosition-prop">currentPosition</keyword>
         <keyword ref="qmediaplaylist.html#currentPosition-prop">setCurrentPosition</keyword>
-        <keyword ref="qmediaplaylist.html#currentResources-prop">currentResources</keyword>
+        <keyword ref="qmediaplaylist.html#playbackMode-prop">playbackMode</keyword>
+        <keyword ref="qmediaplaylist.html#playbackMode-prop">setPlaybackMode</keyword>
         <keyword ref="qmediaplaylist.html#playlistProvider-prop">playlistProvider</keyword>
         <keyword ref="qmediaplaylist.html#playlistProvider-prop">setPlaylistProvider</keyword>
         <keyword ref="qmediaplaylist.html#advance">advance</keyword>
         <keyword ref="qmediaplaylist.html#appendItem">appendItem</keyword>
         <keyword ref="qmediaplaylist.html#back">back</keyword>
         <keyword ref="qmediaplaylist.html#clear">clear</keyword>
-        <keyword ref="qmediaplaylist.html#currentResource">currentResource</keyword>
-        <keyword ref="qmediaplaylist.html#currentResourcesChanged">currentResourcesChanged</keyword>
+        <keyword ref="qmediaplaylist.html#currentMediaChanged">currentMediaChanged</keyword>
         <keyword ref="qmediaplaylist.html#insertItem">insertItem</keyword>
         <keyword ref="qmediaplaylist.html#isEmpty">isEmpty</keyword>
         <keyword ref="qmediaplaylist.html#isReadOnly">isReadOnly</keyword>
@@ -455,18 +505,15 @@
         <keyword ref="qmediaplaylist.html#itemsInserted">itemsInserted</keyword>
         <keyword ref="qmediaplaylist.html#itemsRemoved">itemsRemoved</keyword>
         <keyword ref="qmediaplaylist.html#load">load</keyword>
+        <keyword ref="qmediaplaylist.html#media">media</keyword>
         <keyword ref="qmediaplaylist.html#nextPosition">nextPosition</keyword>
-        <keyword ref="qmediaplaylist.html#playbackMode">playbackMode</keyword>
         <keyword ref="qmediaplaylist.html#playbackModeChanged">playbackModeChanged</keyword>
         <keyword ref="qmediaplaylist.html#playlistPositionChanged">playlistPositionChanged</keyword>
         <keyword ref="qmediaplaylist.html#playlistProviderChanged">playlistProviderChanged</keyword>
         <keyword ref="qmediaplaylist.html#previousPosition">previousPosition</keyword>
         <keyword ref="qmediaplaylist.html#removeItem">removeItem</keyword>
         <keyword ref="qmediaplaylist.html#removeItems">removeItems</keyword>
-        <keyword ref="qmediaplaylist.html#resource">resource</keyword>
-        <keyword ref="qmediaplaylist.html#resources">resources</keyword>
         <keyword ref="qmediaplaylist.html#save">save</keyword>
-        <keyword ref="qmediaplaylist.html#setPlaybackMode">setPlaybackMode</keyword>
         <keyword ref="qmediaplaylist.html#shuffle">shuffle</keyword>
         <keyword ref="qmediaplaylist.html#size">size</keyword>
         <section ref="qmediaplaylist-members.html" title="List of all members"/>
@@ -500,9 +547,9 @@
         <keyword ref="qmediaplaylistprovider.html#itemsInserted">itemsInserted</keyword>
         <keyword ref="qmediaplaylistprovider.html#itemsRemoved">itemsRemoved</keyword>
         <keyword ref="qmediaplaylistprovider.html#load">load</keyword>
+        <keyword ref="qmediaplaylistprovider.html#media">media</keyword>
         <keyword ref="qmediaplaylistprovider.html#removeItem">removeItem</keyword>
         <keyword ref="qmediaplaylistprovider.html#removeItems">removeItems</keyword>
-        <keyword ref="qmediaplaylistprovider.html#resources">resources</keyword>
         <keyword ref="qmediaplaylistprovider.html#save">save</keyword>
         <keyword ref="qmediaplaylistprovider.html#shuffle">shuffle</keyword>
         <keyword ref="qmediaplaylistprovider.html#size">size</keyword>
@@ -514,26 +561,73 @@
         <keyword ref="qmediarecorder.html#Error-enum">QMediaRecorder::NoError</keyword>
         <keyword ref="qmediarecorder.html#Error-enum">QMediaRecorder::FormatError</keyword>
         <keyword ref="qmediarecorder.html#Error-enum">QMediaRecorder::ResourceError</keyword>
+        <keyword ref="qmediarecorder.html#FrameRate-typedef">FrameRate</keyword>
         <keyword ref="qmediarecorder.html#State-enum">State</keyword>
         <keyword ref="qmediarecorder.html#State-enum">QMediaRecorder::RecordingState</keyword>
         <keyword ref="qmediarecorder.html#State-enum">QMediaRecorder::PausedState</keyword>
         <keyword ref="qmediarecorder.html#State-enum">QMediaRecorder::StoppedState</keyword>
+        <keyword ref="qmediarecorder.html#audioBitrate-prop">audioBitrate</keyword>
+        <keyword ref="qmediarecorder.html#audioBitrate-prop">setAudioBitrate</keyword>
+        <keyword ref="qmediarecorder.html#audioCodec-prop">audioCodec</keyword>
+        <keyword ref="qmediarecorder.html#audioCodec-prop">setAudioCodec</keyword>
+        <keyword ref="qmediarecorder.html#audioFormat-prop">audioFormat</keyword>
+        <keyword ref="qmediarecorder.html#audioFormat-prop">setAudioFormat</keyword>
+        <keyword ref="qmediarecorder.html#audioQuality-prop">audioQuality</keyword>
+        <keyword ref="qmediarecorder.html#audioQuality-prop">setAudioQuality</keyword>
         <keyword ref="qmediarecorder.html#duration-prop">duration</keyword>
+        <keyword ref="qmediarecorder.html#format-prop">format</keyword>
+        <keyword ref="qmediarecorder.html#format-prop">setFormat</keyword>
+        <keyword ref="qmediarecorder.html#frameRate-prop">frameRate</keyword>
+        <keyword ref="qmediarecorder.html#frameRate-prop">setFrameRate</keyword>
+        <keyword ref="qmediarecorder.html#resolution-prop">resolution</keyword>
+        <keyword ref="qmediarecorder.html#resolution-prop">setResolution</keyword>
+        <keyword ref="qmediarecorder.html#videoBitrate-prop">videoBitrate</keyword>
+        <keyword ref="qmediarecorder.html#videoBitrate-prop">setVideoBitrate</keyword>
+        <keyword ref="qmediarecorder.html#videoCodec-prop">videoCodec</keyword>
+        <keyword ref="qmediarecorder.html#videoCodec-prop">setVideoCodec</keyword>
+        <keyword ref="qmediarecorder.html#videoQuality-prop">videoQuality</keyword>
+        <keyword ref="qmediarecorder.html#videoQuality-prop">setVideoQuality</keyword>
+        <keyword ref="qmediarecorder.html#audioBitrateChanged">audioBitrateChanged</keyword>
+        <keyword ref="qmediarecorder.html#audioCodecChanged">audioCodecChanged</keyword>
+        <keyword ref="qmediarecorder.html#audioCodecDescription">audioCodecDescription</keyword>
+        <keyword ref="qmediarecorder.html#audioEncodingOption">audioEncodingOption</keyword>
+        <keyword ref="qmediarecorder.html#audioFormatChanged">audioFormatChanged</keyword>
+        <keyword ref="qmediarecorder.html#audioQualityChanged">audioQualityChanged</keyword>
         <keyword ref="qmediarecorder.html#durationChanged">durationChanged</keyword>
         <keyword ref="qmediarecorder.html#error">error</keyword>
         <keyword ref="qmediarecorder.html#errorString">errorString</keyword>
-        <keyword ref="qmediarecorder.html#errorStringChanged">errorStringChanged</keyword>
+        <keyword ref="qmediarecorder.html#formatChanged">formatChanged</keyword>
+        <keyword ref="qmediarecorder.html#formatDescription">formatDescription</keyword>
+        <keyword ref="qmediarecorder.html#frameRateChanged">frameRateChanged</keyword>
+        <keyword ref="qmediarecorder.html#isAudioFormatSupported">isAudioFormatSupported</keyword>
         <keyword ref="qmediarecorder.html#isValid">isValid</keyword>
+        <keyword ref="qmediarecorder.html#maximumFrameRate">maximumFrameRate</keyword>
+        <keyword ref="qmediarecorder.html#maximumResolution">maximumResolution</keyword>
+        <keyword ref="qmediarecorder.html#minimumFrameRate">minimumFrameRate</keyword>
+        <keyword ref="qmediarecorder.html#minimumResolution">minimumResolution</keyword>
         <keyword ref="qmediarecorder.html#pause">pause</keyword>
         <keyword ref="qmediarecorder.html#record">record</keyword>
+        <keyword ref="qmediarecorder.html#resolutionChanged">resolutionChanged</keyword>
         <keyword ref="qmediarecorder.html#service">service</keyword>
-        <keyword ref="qmediarecorder.html#setPositionUpdatePeriod">setPositionUpdatePeriod</keyword>
+        <keyword ref="qmediarecorder.html#setAudioEncodingOption">setAudioEncodingOption</keyword>
         <keyword ref="qmediarecorder.html#setSink">setSink</keyword>
+        <keyword ref="qmediarecorder.html#setVideoEncodingOption">setVideoEncodingOption</keyword>
         <keyword ref="qmediarecorder.html#sink">sink</keyword>
         <keyword ref="qmediarecorder.html#state">state</keyword>
         <keyword ref="qmediarecorder.html#stateChanged">stateChanged</keyword>
         <keyword ref="qmediarecorder.html#stop">stop</keyword>
-        <keyword ref="qmediarecorder.html#unsetError">unsetError</keyword>
+        <keyword ref="qmediarecorder.html#supportedAudioCodecs">supportedAudioCodecs</keyword>
+        <keyword ref="qmediarecorder.html#supportedAudioEncodingOptions">supportedAudioEncodingOptions</keyword>
+        <keyword ref="qmediarecorder.html#supportedFormats">supportedFormats</keyword>
+        <keyword ref="qmediarecorder.html#supportedFrameRates">supportedFrameRates</keyword>
+        <keyword ref="qmediarecorder.html#supportedResolutions">supportedResolutions</keyword>
+        <keyword ref="qmediarecorder.html#supportedVideoCodecs">supportedVideoCodecs</keyword>
+        <keyword ref="qmediarecorder.html#supportedVideoEncodingOptions">supportedVideoEncodingOptions</keyword>
+        <keyword ref="qmediarecorder.html#videoBitrateChanged">videoBitrateChanged</keyword>
+        <keyword ref="qmediarecorder.html#videoCodecChanged">videoCodecChanged</keyword>
+        <keyword ref="qmediarecorder.html#videoCodecDescription">videoCodecDescription</keyword>
+        <keyword ref="qmediarecorder.html#videoEncodingOption">videoEncodingOption</keyword>
+        <keyword ref="qmediarecorder.html#videoQualityChanged">videoQualityChanged</keyword>
         <section ref="qmediarecorder-members.html" title="List of all members"/>
     </section>
     <section ref="qmediarecordercontrol.html" title="QMediaRecorderControl Class Reference">
@@ -601,6 +695,17 @@
         <keyword ref="qmediasink.html#operator-eq-eq">operator==</keyword>
         <section ref="qmediasink-members.html" title="List of all members"/>
     </section>
+    <section ref="qmediasource.html" title="QMediaSource Class Reference">
+        <keyword ref="qmediasource.html">QMediaSource</keyword>
+        <keyword ref="qmediasource.html#contentResource">contentResource</keyword>
+        <keyword ref="qmediasource.html#contentUri">contentUri</keyword>
+        <keyword ref="qmediasource.html#isNull">isNull</keyword>
+        <keyword ref="qmediasource.html#resources">resources</keyword>
+        <keyword ref="qmediasource.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qmediasource.html#operator-eq">operator=</keyword>
+        <keyword ref="qmediasource.html#operator-eq-eq">operator==</keyword>
+        <section ref="qmediasource-members.html" title="List of all members"/>
+    </section>
     <section ref="qmediastreaminfo.html" title="QMediaStreamInfo Class Reference">
         <keyword ref="qmediastreaminfo.html">QMediaStreamInfo</keyword>
         <keyword ref="qmediastreaminfo.html#StreamType-enum">StreamType</keyword>
@@ -651,14 +756,14 @@
     </section>
     <section ref="qmetadataprovidercontrol.html" title="QMetadataProviderControl Class Reference">
         <keyword ref="qmetadataprovidercontrol.html">QMetadataProviderControl</keyword>
-        <keyword ref="qmetadataprovidercontrol.html#availableMetadata">availableMetadata</keyword>
+        <keyword ref="qmetadataprovidercontrol.html#extendedMetadata">extendedMetadata</keyword>
         <keyword ref="qmetadataprovidercontrol.html#isReadOnly">isReadOnly</keyword>
         <keyword ref="qmetadataprovidercontrol.html#metadata">metadata</keyword>
         <keyword ref="qmetadataprovidercontrol.html#metadataAvailabilityChanged">metadataAvailabilityChanged</keyword>
         <keyword ref="qmetadataprovidercontrol.html#metadataAvailable">metadataAvailable</keyword>
         <keyword ref="qmetadataprovidercontrol.html#metadataChanged">metadataChanged</keyword>
         <keyword ref="qmetadataprovidercontrol.html#readOnlyChanged">readOnlyChanged</keyword>
-        <keyword ref="qmetadataprovidercontrol.html#resources">resources</keyword>
+        <keyword ref="qmetadataprovidercontrol.html#setExtendedMetadata">setExtendedMetadata</keyword>
         <keyword ref="qmetadataprovidercontrol.html#setMetadata">setMetadata</keyword>
         <section ref="qmetadataprovidercontrol-members.html" title="List of all members"/>
     </section>
@@ -736,6 +841,20 @@
         <keyword ref="qsharedmediaplaylist.html#sharedPlaylists">sharedPlaylists</keyword>
         <section ref="qsharedmediaplaylist-members.html" title="List of all members"/>
     </section>
+    <section ref="qvideodevicecontrol.html" title="QVideoDeviceControl Class Reference">
+        <keyword ref="qvideodevicecontrol.html">QVideoDeviceControl</keyword>
+        <keyword ref="qvideodevicecontrol.html#selectedDevice-prop">selectedDevice</keyword>
+        <keyword ref="qvideodevicecontrol.html#selectedDevice-prop">setSelectedDevice</keyword>
+        <keyword ref="qvideodevicecontrol.html#defaultDevice">defaultDevice</keyword>
+        <keyword ref="qvideodevicecontrol.html#description">description</keyword>
+        <keyword ref="qvideodevicecontrol.html#deviceCount">deviceCount</keyword>
+        <keyword ref="qvideodevicecontrol.html#devicesChanged">devicesChanged</keyword>
+        <keyword ref="qvideodevicecontrol.html#icon">icon</keyword>
+        <keyword ref="qvideodevicecontrol.html#name">name</keyword>
+        <keyword ref="qvideodevicecontrol.html#selectedDeviceChanged">selectedDeviceChanged</keyword>
+        <keyword ref="qvideodevicecontrol.html#QVideoDeviceControl_iid">QVideoDeviceControl_iid</keyword>
+        <section ref="qvideodevicecontrol-members.html" title="List of all members"/>
+    </section>
     <section ref="qvideorenderercontrol.html" title="QVideoRendererControl Class Reference">
         <keyword ref="qvideorenderercontrol.html">QVideoRendererControl</keyword>
         <keyword ref="qvideorenderercontrol.html#surface-prop">surface</keyword>
@@ -745,20 +864,28 @@
     </section>
     <section ref="qvideowidget.html" title="QVideoWidget Class Reference">
         <keyword ref="qvideowidget.html">QVideoWidget</keyword>
+        <keyword ref="qvideowidget.html#AspectRatio-enum">AspectRatio</keyword>
         <keyword ref="qvideowidget.html#DisplayMode-enum">DisplayMode</keyword>
+        <keyword ref="qvideowidget.html#aspectRatio-prop">aspectRatio</keyword>
+        <keyword ref="qvideowidget.html#aspectRatio-prop">setAspectRatio</keyword>
         <keyword ref="qvideowidget.html#brightness-prop">brightness</keyword>
         <keyword ref="qvideowidget.html#brightness-prop">setBrightness</keyword>
         <keyword ref="qvideowidget.html#contrast-prop">contrast</keyword>
         <keyword ref="qvideowidget.html#contrast-prop">setContrast</keyword>
+        <keyword ref="qvideowidget.html#customPixelAspectRatio-prop">customPixelAspectRatio</keyword>
+        <keyword ref="qvideowidget.html#customPixelAspectRatio-prop">setCustomPixelAspectRatio</keyword>
         <keyword ref="qvideowidget.html#displayMode-prop">displayMode</keyword>
         <keyword ref="qvideowidget.html#displayMode-prop">setDisplayMode</keyword>
         <keyword ref="qvideowidget.html#hue-prop">hue</keyword>
         <keyword ref="qvideowidget.html#hue-prop">setHue</keyword>
         <keyword ref="qvideowidget.html#saturation-prop">saturation</keyword>
         <keyword ref="qvideowidget.html#saturation-prop">setSaturation</keyword>
+        <keyword ref="qvideowidget.html#aspectRatioChanged">aspectRatioChanged</keyword>
         <keyword ref="qvideowidget.html#brightnessChanged">brightnessChanged</keyword>
         <keyword ref="qvideowidget.html#contrastChanged">contrastChanged</keyword>
+        <keyword ref="qvideowidget.html#customPixelAspectRatioChanged">customPixelAspectRatioChanged</keyword>
         <keyword ref="qvideowidget.html#displayModeChanged">displayModeChanged</keyword>
+        <keyword ref="qvideowidget.html#eventFilter">eventFilter</keyword>
         <keyword ref="qvideowidget.html#hideEvent">hideEvent</keyword>
         <keyword ref="qvideowidget.html#hueChanged">hueChanged</keyword>
         <keyword ref="qvideowidget.html#keyPressEvent">keyPressEvent</keyword>
@@ -770,6 +897,30 @@
         <keyword ref="qvideowidget.html#showEvent">showEvent</keyword>
         <keyword ref="qvideowidget.html#sizeHint">sizeHint</keyword>
         <section ref="qvideowidget-members.html" title="List of all members"/>
+    </section>
+    <section ref="qvideowidgetcontrol.html" title="QVideoWidgetControl Class Reference">
+        <keyword ref="qvideowidgetcontrol.html">QVideoWidgetControl</keyword>
+        <keyword ref="qvideowidgetcontrol.html#aspectRatio">aspectRatio</keyword>
+        <keyword ref="qvideowidgetcontrol.html#brightness">brightness</keyword>
+        <keyword ref="qvideowidgetcontrol.html#brightnessChanged">brightnessChanged</keyword>
+        <keyword ref="qvideowidgetcontrol.html#contrast">contrast</keyword>
+        <keyword ref="qvideowidgetcontrol.html#contrastChanged">contrastChanged</keyword>
+        <keyword ref="qvideowidgetcontrol.html#customAspectRatio">customAspectRatio</keyword>
+        <keyword ref="qvideowidgetcontrol.html#fullscreenChanged">fullscreenChanged</keyword>
+        <keyword ref="qvideowidgetcontrol.html#hue">hue</keyword>
+        <keyword ref="qvideowidgetcontrol.html#hueChanged">hueChanged</keyword>
+        <keyword ref="qvideowidgetcontrol.html#isFullscreen">isFullscreen</keyword>
+        <keyword ref="qvideowidgetcontrol.html#saturation">saturation</keyword>
+        <keyword ref="qvideowidgetcontrol.html#saturationChanged">saturationChanged</keyword>
+        <keyword ref="qvideowidgetcontrol.html#setAspectRatio">setAspectRatio</keyword>
+        <keyword ref="qvideowidgetcontrol.html#setBrightness">setBrightness</keyword>
+        <keyword ref="qvideowidgetcontrol.html#setContrast">setContrast</keyword>
+        <keyword ref="qvideowidgetcontrol.html#setCustomAspectRatio">setCustomAspectRatio</keyword>
+        <keyword ref="qvideowidgetcontrol.html#setFullscreen">setFullscreen</keyword>
+        <keyword ref="qvideowidgetcontrol.html#setHue">setHue</keyword>
+        <keyword ref="qvideowidgetcontrol.html#setSaturation">setSaturation</keyword>
+        <keyword ref="qvideowidgetcontrol.html#videoWidget">videoWidget</keyword>
+        <section ref="qvideowidgetcontrol-members.html" title="List of all members"/>
     </section>
     <section ref="qvideowindowcontrol.html" title="QVideoWindowControl Class Reference">
         <keyword ref="qvideowindowcontrol.html">QVideoWindowControl</keyword>

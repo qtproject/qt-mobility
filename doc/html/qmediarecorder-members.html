@@ -17,11 +17,23 @@
 <p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td width="45%" valign="top"><ul>
 <li><div class="fn">enum <b><a href="qmediarecorder.html#Error-enum">Error</a></b></div></li>
+<li><div class="fn">typedef <b><a href="qmediarecorder.html#FrameRate-typedef">FrameRate</a></b></div></li>
 <li><div class="fn">enum <b><a href="qmediarecorder.html#State-enum">State</a></b></div></li>
-<li><div class="fn"><b><a href="qmediarecorder.html#QMediaRecorder">QMediaRecorder</a></b> ( QAbstractMediaService *, QObject * )</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#QMediaRecorder">QMediaRecorder</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="qmediarecorder.html#QMediaRecorder-2">QMediaRecorder</a></b> ( QAbstractMediaObject *, QObject * )</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#QMediaRecorder-3">QMediaRecorder</a></b> ( QAbstractMediaService *, QObject * )</div></li>
 <li><div class="fn"><b><a href="qmediarecorder.html#dtor.QMediaRecorder">~QMediaRecorder</a></b> ()</div></li>
 <li><div class="fn"><b><a href="qabstractmediaobject.html#addPropertyWatch">addPropertyWatch</a></b> ( QByteArray const &amp; )</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#audioBitrate-prop">audioBitrate</a></b> () const : int</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#audioBitrateChanged">audioBitrateChanged</a></b> ( int )</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#audioCodec-prop">audioCodec</a></b> () const : QString</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#audioCodecChanged">audioCodecChanged</a></b> ( const QString &amp; )</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#audioCodecDescription">audioCodecDescription</a></b> ( const QString &amp; ) const : QString</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#audioEncodingOption">audioEncodingOption</a></b> ( const QString &amp; ) const : QVariant</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#audioFormat-prop">audioFormat</a></b> () const : QAudioFormat</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#audioFormatChanged">audioFormatChanged</a></b> ( const QAudioFormat &amp; )</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#audioQuality-prop">audioQuality</a></b> () const : qreal</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#audioQualityChanged">audioQualityChanged</a></b> ( qreal )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#blockSignals">blockSignals</a></b> ( bool )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#childEvent">childEvent</a></b> ( QChildEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#children">children</a></b> () const</div></li>
@@ -44,19 +56,28 @@
 <li><div class="fn"><b><a href="qmediarecorder.html#error">error</a></b> () const : Error</div></li>
 <li><div class="fn"><b><a href="qmediarecorder.html#error-2">error</a></b> ( QMediaRecorder::Error )</div></li>
 <li><div class="fn"><b><a href="qmediarecorder.html#errorString">errorString</a></b> () const : QString</div></li>
-<li><div class="fn"><b><a href="qmediarecorder.html#errorStringChanged">errorStringChanged</a></b> ( const QString &amp; )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#event">event</a></b> ( QEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#eventFilter">eventFilter</a></b> ( QObject *, QEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#findChild">findChild</a></b> ( const QString &amp; ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#findChildren">findChildren</a></b> ( const QString &amp; ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#findChildren-2">findChildren</a></b> ( const QRegExp &amp; ) const</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#format-prop">format</a></b> () const : QString</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#formatChanged">formatChanged</a></b> ( const QString &amp; )</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#formatDescription">formatDescription</a></b> ( const QString &amp; ) const : QString</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#frameRate-prop">frameRate</a></b> () const : FrameRate</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#frameRateChanged">frameRateChanged</a></b> ( const QMediaRecorder::FrameRate &amp; )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#inherits">inherits</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#installEventFilter">installEventFilter</a></b> ( QObject * )</div></li>
-</ul></td><td valign="top"><ul>
+<li><div class="fn"><b><a href="qmediarecorder.html#isAudioFormatSupported">isAudioFormatSupported</a></b> ( const QAudioFormat &amp; ) const : bool</div></li>
 <li><div class="fn"><b><a href="qmediarecorder.html#isValid">isValid</a></b> () const : bool</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#isWidgetType">isWidgetType</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#killTimer">killTimer</a></b> ( int )</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#maximumFrameRate">maximumFrameRate</a></b> () : FrameRate</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#maximumResolution">maximumResolution</a></b> () const : QSize</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#metaObject">metaObject</a></b> () const</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#minimumFrameRate">minimumFrameRate</a></b> () : FrameRate</div></li>
+</ul></td><td valign="top"><ul>
+<li><div class="fn"><b><a href="qmediarecorder.html#minimumResolution">minimumResolution</a></b> () const : QSize</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#moveToThread">moveToThread</a></b> ( QThread * )</div></li>
 <li><div class="fn"><b><a href="qabstractmediaobject.html#notifyInterval-prop">notifyInterval</a></b> () const : int</div></li>
 <li><div class="fn"><b><a href="qabstractmediaobject.html#notifyIntervalChanged">notifyIntervalChanged</a></b> ( int )</div></li>
@@ -68,14 +89,27 @@
 <li><div class="fn"><b><a href="qmediarecorder.html#record">record</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#removeEventFilter">removeEventFilter</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="qabstractmediaobject.html#removePropertyWatch">removePropertyWatch</a></b> ( QByteArray const &amp; )</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#resolution-prop">resolution</a></b> () const : QSize</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#resolutionChanged">resolutionChanged</a></b> ( const QSize &amp; )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#sender">sender</a></b> () const</div></li>
 <li><div class="fn"><b><a href="qmediarecorder.html#service">service</a></b> () const : QAbstractMediaService *</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#audioBitrate-prop">setAudioBitrate</a></b> ( int )</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#audioCodec-prop">setAudioCodec</a></b> ( const QString &amp; ) : bool</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#setAudioEncodingOption">setAudioEncodingOption</a></b> ( const QString &amp;, const QVariant &amp; )</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#audioFormat-prop">setAudioFormat</a></b> ( const QAudioFormat &amp; ) : bool</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#audioQuality-prop">setAudioQuality</a></b> ( qreal )</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#format-prop">setFormat</a></b> ( const QString &amp; )</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#frameRate-prop">setFrameRate</a></b> ( const QMediaRecorder::FrameRate &amp; )</div></li>
 <li><div class="fn"><b><a href="qabstractmediaobject.html#notifyInterval-prop">setNotifyInterval</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#objectName-prop">setObjectName</a></b> ( const QString &amp; )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#setParent">setParent</a></b> ( QObject * )</div></li>
-<li><div class="fn"><b><a href="qmediarecorder.html#setPositionUpdatePeriod">setPositionUpdatePeriod</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#setProperty">setProperty</a></b> ( const char *, const QVariant &amp; )</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#resolution-prop">setResolution</a></b> ( const QSize &amp; )</div></li>
 <li><div class="fn"><b><a href="qmediarecorder.html#setSink">setSink</a></b> ( const QUrl &amp; ) : bool</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#videoBitrate-prop">setVideoBitrate</a></b> ( int )</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#videoCodec-prop">setVideoCodec</a></b> ( const QString &amp; ) : bool</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#setVideoEncodingOption">setVideoEncodingOption</a></b> ( const QString &amp;, const QVariant &amp; )</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#videoQuality-prop">setVideoQuality</a></b> ( qreal )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#signalsBlocked">signalsBlocked</a></b> () const</div></li>
 <li><div class="fn"><b><a href="qmediarecorder.html#sink">sink</a></b> () const : QUrl</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#startTimer">startTimer</a></b> ( int )</div></li>
@@ -84,11 +118,25 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#staticMetaObject-var">staticMetaObject</a></b> : </div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#staticQtMetaObject-var">staticQtMetaObject</a></b> : </div></li>
 <li><div class="fn"><b><a href="qmediarecorder.html#stop">stop</a></b> ()</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#supportedAudioCodecs">supportedAudioCodecs</a></b> () const : QStringList</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#supportedAudioEncodingOptions">supportedAudioEncodingOptions</a></b> () const : QStringList</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#supportedFormats">supportedFormats</a></b> () const : QStringList</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#supportedFrameRates">supportedFrameRates</a></b> () const : QList&lt;FrameRate&gt;</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#supportedResolutions">supportedResolutions</a></b> () const : QList&lt;QSize&gt;</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#supportedVideoCodecs">supportedVideoCodecs</a></b> () const : QStringList</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#supportedVideoEncodingOptions">supportedVideoEncodingOptions</a></b> () const : QStringList</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#thread">thread</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#timerEvent">timerEvent</a></b> ( QTimerEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#tr">tr</a></b> ( const char *, const char *, int )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#trUtf8">trUtf8</a></b> ( const char *, const char *, int )</div></li>
-<li><div class="fn"><b><a href="qmediarecorder.html#unsetError">unsetError</a></b> ()</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#videoBitrate-prop">videoBitrate</a></b> () const : int</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#videoBitrateChanged">videoBitrateChanged</a></b> ( int )</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#videoCodec-prop">videoCodec</a></b> () const : QString</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#videoCodecChanged">videoCodecChanged</a></b> ( const QString &amp; )</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#videoCodecDescription">videoCodecDescription</a></b> ( const QString &amp; ) const : QString</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#videoEncodingOption">videoEncodingOption</a></b> ( const QString &amp; ) const : QVariant</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#videoQuality-prop">videoQuality</a></b> () const : qreal</div></li>
+<li><div class="fn"><b><a href="qmediarecorder.html#videoQualityChanged">videoQualityChanged</a></b> ( qreal )</div></li>
 </ul>
 </td></tr>
 </table></p>

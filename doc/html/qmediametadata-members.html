@@ -16,9 +16,9 @@
 <p>This is the complete list of members for <a href="qmediametadata.html">QMediaMetadata</a>, including inherited members.</p>
 <p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td width="45%" valign="top"><ul>
+<li><div class="fn">enum <b><a href="qmediametadata.html#Key-enum">Key</a></b></div></li>
 <li><div class="fn"><b><a href="qmediametadata.html#QMediaMetadata">QMediaMetadata</a></b> ( QAbstractMediaObject * )</div></li>
 <li><div class="fn"><b><a href="qmediametadata.html#dtor.QMediaMetadata">~QMediaMetadata</a></b> ()</div></li>
-<li><div class="fn"><b><a href="qmediametadata.html#availableMetadata">availableMetadata</a></b> () const : QList&lt;QString&gt;</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#blockSignals">blockSignals</a></b> ( bool )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#childEvent">childEvent</a></b> ( QChildEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#children">children</a></b> () const</div></li>
@@ -38,6 +38,7 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#dynamicPropertyNames">dynamicPropertyNames</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#event">event</a></b> ( QEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#eventFilter">eventFilter</a></b> ( QObject *, QEvent * )</div></li>
+<li><div class="fn"><b><a href="qmediametadata.html#extendedMetadata">extendedMetadata</a></b> ( const QString &amp; ) const : QVariant</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#findChild">findChild</a></b> ( const QString &amp; ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#findChildren">findChildren</a></b> ( const QString &amp; ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#findChildren-2">findChildren</a></b> ( const QRegExp &amp; ) const</div></li>
@@ -48,7 +49,7 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#isWidgetType">isWidgetType</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#killTimer">killTimer</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#metaObject">metaObject</a></b> () const</div></li>
-<li><div class="fn"><b><a href="qmediametadata.html#metadata">metadata</a></b> ( QString const &amp; ) const : QVariant</div></li>
+<li><div class="fn"><b><a href="qmediametadata.html#metadata">metadata</a></b> ( Key ) const : QVariant</div></li>
 <li><div class="fn"><b><a href="qmediametadata.html#metadataAvailabilityChanged">metadataAvailabilityChanged</a></b> ( bool )</div></li>
 <li><div class="fn"><b><a href="qmediametadata.html#metadataAvailable-prop">metadataAvailable</a></b> () const : bool</div></li>
 <li><div class="fn"><b><a href="qmediametadata.html#metadataChanged">metadataChanged</a></b> ()</div></li>
@@ -59,9 +60,9 @@
 <li><div class="fn"><b><a href="qmediametadata.html#readOnlyChanged">readOnlyChanged</a></b> ( bool )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#receivers">receivers</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#removeEventFilter">removeEventFilter</a></b> ( QObject * )</div></li>
-<li><div class="fn"><b><a href="qmediametadata.html#resources-prop">resources</a></b> () const : QMediaResourceList</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#sender">sender</a></b> () const</div></li>
-<li><div class="fn"><b><a href="qmediametadata.html#setMetadata">setMetadata</a></b> ( QString const &amp;, QVariant const &amp; )</div></li>
+<li><div class="fn"><b><a href="qmediametadata.html#setExtendedMetadata">setExtendedMetadata</a></b> ( const QString &amp;, const QVariant &amp; )</div></li>
+<li><div class="fn"><b><a href="qmediametadata.html#setMetadata">setMetadata</a></b> ( Key, const QVariant &amp; )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#objectName-prop">setObjectName</a></b> ( const QString &amp; )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#setParent">setParent</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#setProperty">setProperty</a></b> ( const char *, const QVariant &amp; )</div></li>
