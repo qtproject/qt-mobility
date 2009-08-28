@@ -36,12 +36,6 @@
 #include "qmessageaccountid_p.h"
 #include "qmessagestore.h"
 
-//TODO: For the set* functions rather than updating shadowed MAPI structures, 
-//TODO: consider using an EntryId to update a MAPI object directly.
-//TODO: Note, this will require keeping the MAPI message open which may not
-//TODO: be appropriate for many messages (as it may exhaust system resources
-//TODO: and crash the OS).
-
 QMessage QMessagePrivate::from(const QMessageId &id)
 {
     QMessage result;
