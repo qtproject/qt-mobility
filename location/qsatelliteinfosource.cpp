@@ -62,7 +62,7 @@ QSatelliteInfoSource::QSatelliteInfoSource(QObject *parent)
 
     Returns 0 if the system has no default source.
 */
-QSatelliteInfoSource *QSatelliteInfoSource::createSource(QObject *parent)
+QSatelliteInfoSource *QSatelliteInfoSource::createSource(QObject * /*parent*/)
 {
     return 0;
 }
