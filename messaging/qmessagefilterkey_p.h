@@ -54,7 +54,7 @@ public:
     QMessageFilterKeyPrivate::Field _field;
     QVariant _value;
     Comparator _comparatorType;
-    int _comparatorValue;
+    int _comparatorValue; //TODO: Consider using a union here to get rid of ugly static casts in implementation
     Operator _operator;
     QMessageFilterKey *_left;
     QMessageFilterKey *_right;

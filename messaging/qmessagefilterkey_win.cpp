@@ -48,6 +48,14 @@ void QDateTimeToFileTime(const QDateTime &dt, FILETIME *ft)
     SystemTimeToFileTime(&st, ft);
 }
 
+void QStringToWCharArray(const QString &str, wchar_t **buffer)
+{
+    delete *buffer;
+    *buffer = new wchar_t[str.length() +1];
+    memcpy(*buffer, str.utf16(), str.length() * sizeof(wchar_t));
+    (*buffer)[str.length()] = 0;
+}
+
 QMessageFilterKey QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Field field, const QVariant &value, QMessageDataComparator::EqualityComparator cmp)
 {
     QMessageFilterKey result;
@@ -81,48 +89,50 @@ QMessageFilterKey QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Field
 void QMessageFilterKeyPrivate::filterTable(QMessageStore::ErrorCode *lastError, const QMessageFilterKey &key, LPMAPITABLE messagesTable)
 {
     SRestriction restriction;
+    SRestriction subRestriction[2];
     SPropValue keyProp;
     bool notRestriction(false);
     bool valid(false);
 
     switch (key.d_ptr->_comparatorType) {
-    case Equality: {
-        restriction.rt = RES_PROPERTY;
-        QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(key.d_ptr->_comparatorValue));
-        if (cmp == QMessageDataComparator::Equal)
-            restriction.res.resProperty.relop = RELOP_EQ;
-        else
-            restriction.res.resProperty.relop = RELOP_NE;
-        break;
-    }
+    case Equality:
     case Relation: {
-        restriction.rt = RES_PROPERTY;
-        QMessageDataComparator::RelationComparator cmp(static_cast<QMessageDataComparator::RelationComparator>(key.d_ptr->_comparatorValue));
-        switch (cmp) {
-        case QMessageDataComparator::LessThan:
-            restriction.res.resProperty.relop = RELOP_LT;
-            break;
-        case QMessageDataComparator::LessThanEqual:
-            restriction.res.resProperty.relop = RELOP_LE;
-            break;
-        case QMessageDataComparator::GreaterThan:
-            restriction.res.resProperty.relop = RELOP_GT;
-            break;
-        case QMessageDataComparator::GreaterThanEqual:
-            restriction.res.resProperty.relop = RELOP_GE;
-            break;
+        if (key.d_ptr->_comparatorType == Equality) {
+            restriction.rt = RES_PROPERTY;
+            QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(key.d_ptr->_comparatorValue));
+            if (cmp == QMessageDataComparator::Equal)
+                restriction.res.resProperty.relop = RELOP_EQ;
+            else
+                restriction.res.resProperty.relop = RELOP_NE;
+        } else { // Relation
+            restriction.rt = RES_PROPERTY;
+            QMessageDataComparator::RelationComparator cmp(static_cast<QMessageDataComparator::RelationComparator>(key.d_ptr->_comparatorValue));
+            switch (cmp) {
+            case QMessageDataComparator::LessThan:
+                restriction.res.resProperty.relop = RELOP_LT;
+                break;
+            case QMessageDataComparator::LessThanEqual:
+                restriction.res.resProperty.relop = RELOP_LE;
+                break;
+            case QMessageDataComparator::GreaterThan:
+                restriction.res.resProperty.relop = RELOP_GT;
+                break;
+            case QMessageDataComparator::GreaterThanEqual:
+                restriction.res.resProperty.relop = RELOP_GE;
+                break;
+            }
         }
+        restriction.res.resProperty.lpProp = &keyProp;
         switch (key.d_ptr->_field) {
-        case Size:
+        case Size: {
             restriction.res.resProperty.ulPropTag = PR_MESSAGE_SIZE;
-            restriction.res.resProperty.lpProp = &keyProp;
             keyProp.ulPropTag = PR_MESSAGE_SIZE;
             keyProp.Value.ul = key.d_ptr->_value.toInt();
             valid = true;
             break;
+        }
         case ReceptionTimeStamp: {
             restriction.res.resProperty.ulPropTag = PR_MESSAGE_DELIVERY_TIME;
-            restriction.res.resProperty.lpProp = &keyProp;
             keyProp.ulPropTag = PR_MESSAGE_DELIVERY_TIME;
             QDateTime dt(key.d_ptr->_value.toDateTime());
             QDateTimeToFileTime(dt, &keyProp.Value.ft);
@@ -131,10 +141,18 @@ void QMessageFilterKeyPrivate::filterTable(QMessageStore::ErrorCode *lastError, 
         }
         case TimeStamp: {
             restriction.res.resProperty.ulPropTag = PR_CLIENT_SUBMIT_TIME;
-            restriction.res.resProperty.lpProp = &keyProp;
             keyProp.ulPropTag = PR_CLIENT_SUBMIT_TIME;
             QDateTime dt(key.d_ptr->_value.toDateTime());
             QDateTimeToFileTime(dt, &keyProp.Value.ft);
+            valid = true;
+            break;
+        }
+        case Subject: {
+            restriction.res.resProperty.ulPropTag = PR_SUBJECT;
+            keyProp.ulPropTag = PR_SUBJECT;
+            QString subj(key.d_ptr->_value.toString());
+            QStringToWCharArray(subj, &key.d_ptr->_buffer); 
+            keyProp.Value.LPSZ = key.d_ptr->_buffer;
             valid = true;
             break;
         }
@@ -161,11 +179,29 @@ void QMessageFilterKeyPrivate::filterTable(QMessageStore::ErrorCode *lastError, 
             restriction.res.resContent.lpProp = &keyProp;
             keyProp.ulPropTag = PR_SUBJECT;
             QString subj(key.d_ptr->_value.toString());
-            delete key.d_ptr->_buffer;
-            key.d_ptr->_buffer = new wchar_t[subj.length() +1];
-            memcpy(key.d_ptr->_buffer, subj.utf16(), subj.length() * sizeof(wchar_t));
-            key.d_ptr->_buffer[subj.length()] = 0;
+            QStringToWCharArray(subj, &key.d_ptr->_buffer); 
             keyProp.Value.LPSZ = key.d_ptr->_buffer;
+            valid = true;
+            break;
+        }
+        case Sender: {
+            //TODO: Split search address into name and address part
+            //TODO: Look for the name part in PR_SENDER_NAME
+            //TODO: And address aprt in PR_SENDER_EMAIL_ADDRESS
+            restriction.res.resContent.ulPropTag = PR_SENDER_EMAIL_ADDRESS;
+            restriction.res.resContent.lpProp = &keyProp;
+            keyProp.ulPropTag = PR_SENDER_EMAIL_ADDRESS;
+            QString subj(key.d_ptr->_value.toString());
+            QStringToWCharArray(subj, &key.d_ptr->_buffer); 
+            keyProp.Value.LPSZ = key.d_ptr->_buffer;
+            subRestriction[1] = restriction;
+            restriction.rt = RES_AND;
+            restriction.res.resAnd.cRes = 2;
+            restriction.res.resAnd.lpRes = &subRestriction[0];
+            subRestriction[0].rt = RES_EXIST;
+            subRestriction[0].res.resExist.ulReserved1 = 0;
+            subRestriction[0].res.resExist.ulPropTag = PR_SENDER_EMAIL_ADDRESS;
+            subRestriction[0].res.resExist.ulReserved2 = 0;
             valid = true;
             break;
         }
@@ -178,14 +214,6 @@ void QMessageFilterKeyPrivate::filterTable(QMessageStore::ErrorCode *lastError, 
 
     if (!valid)
         return; //TODO set lastError to unsupported
-/*
-    TODO set the property tag and value
-    restriction.res.resProperty.ulPropTag = PR_RECORD_KEY;
-    restriction.res.resProperty.lpProp = &keyProp;
-    keyProp.ulPropTag = PR_RECORD_KEY;
-    keyProp.Value.bin.cb = key.count();
-    keyProp.Value.bin.lpb = reinterpret_cast<LPBYTE>(key.data());
-*/
 
     ULONG flags(0);
     if (messagesTable->Restrict(&restriction, flags) != S_OK)
