@@ -51,10 +51,10 @@ QByteArray attachmentContent(const QMessageId &id, ULONG number)
 {
     QByteArray result;
 
-    MapiSession session;
-    if (session.isValid()) {
-        QMessageStore::ErrorCode error(QMessageStore::NoError);
-        result = session.attachmentData(&error, id, number);
+    QMessageStore::ErrorCode error(QMessageStore::NoError);
+    MapiSessionPtr session(MapiSession::createSession(&error, false));
+    if (session && session->isValid()) {
+        result = session->attachmentData(&error, id, number);
     }
 
     return result;
@@ -64,10 +64,10 @@ QString attachmentTextContent(const QMessageId &id, ULONG number, const QByteArr
 {
     QString result;
 
-    MapiSession session;
-    if (session.isValid()) {
-        QMessageStore::ErrorCode error(QMessageStore::NoError);
-        QByteArray data = session.attachmentData(&error, id, number);
+    QMessageStore::ErrorCode error(QMessageStore::NoError);
+    MapiSessionPtr session(MapiSession::createSession(&error, false));
+    if (session && session->isValid()) {
+        QByteArray data = session->attachmentData(&error, id, number);
 
         if (error == QMessageStore::NoError) {
             // Convert attachment data to string form

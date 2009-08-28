@@ -143,8 +143,7 @@ bool QMessageServiceAction::compose(const QMessage &message)
     //login to a MAPI session
 
     QMessageStore::ErrorCode lastError = QMessageStore::NoError;
-    MapiSession mapiSession(&lastError,true);
-
+    MapiSessionPtr mapiSession(MapiSession::createSession(&lastError, false));
     if(lastError != QMessageStore::NoError)
     {
         qWarning() << "Unable to open session with default profile";
@@ -153,7 +152,7 @@ bool QMessageServiceAction::compose(const QMessage &message)
 
     //open default store
 
-    MapiStorePtr mapiStore = mapiSession.findStore(&lastError);
+    MapiStorePtr mapiStore = mapiSession->defaultStore(&lastError);
 
     if(lastError != QMessageStore::NoError)
     {
@@ -173,7 +172,7 @@ bool QMessageServiceAction::compose(const QMessage &message)
 
     //get the drafts folder
 
-    MapiFolderPtr draftsFolder = inboxFolder->subFolder(MapiFolder::Drafts,&lastError);
+    MapiFolderPtr draftsFolder = inboxFolder->subFolder(&lastError, MapiFolder::Drafts, *mapiStore);
 
     if(lastError != QMessageStore::NoError)
     {
@@ -193,7 +192,7 @@ bool QMessageServiceAction::compose(const QMessage &message)
 
     //show draft message
 
-    mapiSession.showForm(draftMessage,draftsFolder->folder(),mapiStore->store());
+    mapiSession->showForm(draftMessage,draftsFolder->folder(),mapiStore->store());
 
    if(draftMessage) draftMessage->Release(); draftMessage = 0;
 

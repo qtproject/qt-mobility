@@ -32,6 +32,7 @@
 ****************************************************************************/
 #ifndef QMESSAGEWINHELPERPRIVATE_H
 #define QMESSAGEWINHELPERPRIVATE_H
+#include <QHash>
 #include <QPair>
 #include <QSharedPointer>
 #include <QString>
@@ -75,16 +76,17 @@ public:
 
     enum CommonFolder { Drafts, Tasks, Notes, Journal, Contacts, Appointments };
 
+    static MapiFolderPtr createFolder(QMessageStore::ErrorCode *lastError, IMAPIFolder *folder, const MapiRecordKey &recordKey, const MapiRecordKey &storeKey, const QString &name, const MapiEntryId &entryId, bool hasSubFolders, uint messageCount);
 
-    MapiFolder();
-    MapiFolder(LPMAPIFOLDER folder, MapiRecordKey key, MapiRecordKey parentStoreKey, const QString &name, const MapiEntryId &entryId, bool hasSubFolders, uint messageCount);
     ~MapiFolder();
-    MapiFolderPtr nextSubFolder(QMessageStore::ErrorCode *lastError);
+
+    MapiFolderPtr nextSubFolder(QMessageStore::ErrorCode *lastError, const MapiStore &store);
     QMessageIdList queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), uint limit = 0, uint offset = 0) const;
     MapiEntryId messageEntryId(QMessageStore::ErrorCode *lastError, const MapiRecordKey &messagekey);
 #ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolderId id();
 #endif
+
     bool isValid() { return _valid; }
     LPMAPIFOLDER folder() { return _folder; }
     MapiRecordKey recordKey() { return _key; }
@@ -93,18 +95,21 @@ public:
     MapiEntryId entryId() { return _entryId; }
     bool hasSubFolders() { return _hasSubFolders; }
     uint messageCount() { return _messageCount; }
-    MapiFolderPtr subFolder(CommonFolder commonFolder, QMessageStore::ErrorCode *lastError);
+
+    MapiFolderPtr subFolder(QMessageStore::ErrorCode *lastError, CommonFolder commonFolder, const MapiStore &store);
+
     LPMAPITABLE subFolders(QMessageStore::ErrorCode *lastError) { if (!_init) findSubFolders(lastError); return _subFolders; }
     IMessage *createMessage(QMessageStore::ErrorCode* lastError);
 
     IMessage *openMessage(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId);
 
-    static MapiFolderPtr null() { return MapiFolderPtr(new MapiFolder()); }
-
-    static MapiFolder* create(LPMAPIFOLDER mapifolder, MapiEntryId entryId, MapiRecordKey storeKey);
-
 private:
+    MapiFolder();
+    MapiFolder(IMAPIFolder *folder, const MapiRecordKey &recordKey, const MapiRecordKey &storeKey, const QString &name, const MapiEntryId &entryId, bool hasSubFolders, uint messageCount);
+
     void findSubFolders(QMessageStore::ErrorCode *lastError);
+
+    friend class MapiStore;
 
     bool _valid;
     LPMAPIFOLDER _folder;
@@ -123,8 +128,8 @@ private:
 
 class MapiStore {
 public:
-    MapiStore();
-    MapiStore(LPMDB store, MapiRecordKey key, const QString &name);
+    static MapiStorePtr createStore(QMessageStore::ErrorCode *lastError, LPMDB store, const MapiRecordKey &key, const MapiEntryId &entryId, const QString &name);
+
     ~MapiStore();
 
     bool isValid();
@@ -136,45 +141,64 @@ public:
     QMessageFolder folderFromId(QMessageStore::ErrorCode *lastError, const QMessageFolderId &folderId);
 #endif
     QMessageAccountId id();
-    QString name() { return _name; }
+    MapiEntryId entryId() const { return _entryId; }
+    QString name() const { return _name; }
 
     IMessage *openMessage(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId);
-    IMAPIFolder *openFolder(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId);
 
     LPMDB store() { return _store; }
 
-    static MapiStorePtr null() { return MapiStorePtr(new MapiStore()); }
+    MapiFolderPtr openFolder(QMessageStore::ErrorCode *lastError, const MapiEntryId& id) const;
 
 private:
+    MapiStore();
+    MapiStore(LPMDB store, const MapiRecordKey &key, const MapiEntryId &entryId, const QString &name);
+
+    IMAPIFolder *openMapiFolder(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId) const;
+
     bool _valid;
     LPMDB _store;
     MapiRecordKey _key;
+    MapiEntryId _entryId;
     QString _name;
+
+    static QHash<MapiEntryId, QWeakPointer<MapiFolder> > _folderMap;
 };
 
 class MapiSession {
 public:
-    MapiSession();
-    MapiSession(QMessageStore::ErrorCode *lastError, bool mapiInitialized);
+    static MapiSessionPtr createSession(QMessageStore::ErrorCode *lastError, bool mapiInitialized);
+
     ~MapiSession();
 
     bool isValid();
 
-    HRESULT openEntry(QMessageStore::ErrorCode *lastError, MapiEntryId entryId, LPMESSAGE *message) const;
-    HRESULT openEntry(QMessageStore::ErrorCode *lastError, MapiEntryId entryId, LPMAPIFOLDER *folder) const;
-    HRESULT openEntry(QMessageStore::ErrorCode *lastError, MapiEntryId entryId, LPUNKNOWN *unknown) const;
     MapiStorePtr findStore(QMessageStore::ErrorCode *lastError, const QMessageAccountId &id = QMessageAccountId()) const;
     MapiStorePtr defaultStore(QMessageStore::ErrorCode *lastError) { return findStore(lastError); }
     QList<MapiStorePtr> allStores(QMessageStore::ErrorCode *lastError) const;
+
     QMessage message(QMessageStore::ErrorCode *lastError, const QMessageId& id) const;
     QByteArray attachmentData(QMessageStore::ErrorCode *lastError, const QMessageId& id, ULONG number) const;
     bool showForm(LPMESSAGE message, LPMAPIFOLDER folder, LPMDB store);
 
+    MapiStorePtr openStore(QMessageStore::ErrorCode *lastError, const MapiEntryId& id) const;
+
     IMAPISession* session() { return _mapiSession; }
-    static MapiSessionPtr null() { return MapiSessionPtr(new MapiSession()); }
 
 private:
+    MapiSession();
+    MapiSession(QMessageStore::ErrorCode *lastError, bool mapiInitialized);
+
+    IMsgStore *openMapiStore(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId) const;
+
     bool _valid;
     IMAPISession* _mapiSession;
+
+    // Singleton behaviour, for the moment...
+    //static QWeakPointer<MapiSession> _session;
+    static MapiSessionPtr _session;
+
+    static QHash<MapiEntryId, QWeakPointer<MapiStore> > _storeMap;
 };
+
 #endif
