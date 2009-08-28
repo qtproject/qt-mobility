@@ -68,6 +68,13 @@ MapiFolder::MapiFolder()
 {
 }
 
+#ifndef PR_IS_NEWSGROUP
+#define PR_IS_NEWSGROUP PROP_TAG( PT_BOOLEAN, 0x6697 )
+#endif
+#ifndef PR_IS_NEWSGROUP_ANCHOR
+#define PR_IS_NEWSGROUP_ANCHOR PROP_TAG( PT_BOOLEAN, 0x6696 )
+#endif
+
 void MapiFolder::findSubFolders(QMessageStore::ErrorCode *lastError)
 {
     if (_init)
@@ -84,9 +91,7 @@ void MapiFolder::findSubFolders(QMessageStore::ErrorCode *lastError)
         return;
     }
 
-    // Order of properties must be consistent with columnOrder enum.
-    const int nCols(5);
-    SizedSPropTagArray(nCols, columns) = {nCols, {PR_ENTRYID, PR_DISPLAY_NAME, PR_RECORD_KEY, PR_CONTENT_COUNT, PR_SUBFOLDERS}};
+    SizedSPropTagArray(3, columns) = {3, {PR_ENTRYID, PR_IS_NEWSGROUP, PR_IS_NEWSGROUP_ANCHOR}};
     if (subFolders->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0) == S_OK)
         _subFolders = subFolders;
 }
@@ -142,17 +147,32 @@ MapiFolderPtr MapiFolder::nextSubFolder(QMessageStore::ErrorCode *lastError, con
         return result;
     }
 
-    LPSRowSet rows(0);
-    if (_subFolders->QueryRows(1, 0, &rows) == S_OK) {
-        if (rows->cRows == 1) {
-            LPSPropValue entryIdProp(&rows->aRow[0].lpProps[entryIdColumn]);
-            MapiEntryId entryId(entryIdProp->Value.bin.lpb, entryIdProp->Value.bin.cb);
-            result = store.openFolder(lastError, entryId);
-        }
+    while (true) {
+        LPSRowSet rows(0);
+        if (_subFolders->QueryRows(1, 0, &rows) == S_OK) {
+            if (rows->cRows == 1) {
+                SRow *row(&rows->aRow[0]);
+                MapiEntryId entryId(row->lpProps[0].Value.bin.lpb, row->lpProps[0].Value.bin.cb);
+                bool isNewsGroup = (row->lpProps[1].ulPropTag == PR_IS_NEWSGROUP && row->lpProps[1].Value.b);
+                bool isNewsGroupAnchor = (row->lpProps[2].ulPropTag == PR_IS_NEWSGROUP_ANCHOR && row->lpProps[2].Value.b);
 
-        FreeProws(rows);
-    } else {
-        *lastError = QMessageStore::ContentInaccessible;
+                FreeProws(rows);
+
+                if (isNewsGroup || isNewsGroupAnchor) {
+                    // Doesn't contain messages...
+                }  else {
+                    result = store.openFolder(lastError, entryId);
+                    break;
+                }
+            } else {
+                // We have retrieved all rows
+                FreeProws(rows);
+                break;
+            }
+        } else {
+            *lastError = QMessageStore::ContentInaccessible;
+            break;
+        }
     }
 
     return result;
@@ -689,9 +709,9 @@ MapiStorePtr MapiSession::findStore(QMessageStore::ErrorCode *lastError, const Q
     }
 
     IMAPITable *mapiMessageStoresTable(0);
-    const int nCols(4);
-    enum { defaultStoreColumn = 0, nameColumn, entryIdColumn, recordKeyColumn };
-    SizedSPropTagArray(nCols, columns) = {nCols, {PR_DEFAULT_STORE, PR_DISPLAY_NAME, PR_ENTRYID, PR_RECORD_KEY}};
+    const int nCols(3);
+    enum { defaultStoreColumn = 0, entryIdColumn, recordKeyColumn };
+    SizedSPropTagArray(nCols, columns) = {nCols, {PR_DEFAULT_STORE, PR_ENTRYID, PR_RECORD_KEY}};
     LPSRowSet rows(0);
 
     if (_mapiSession->GetMsgStoresTable(0, &mapiMessageStoresTable) != S_OK) {
