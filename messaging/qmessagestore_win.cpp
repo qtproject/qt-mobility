@@ -237,8 +237,6 @@ QMessageStore::ErrorCode QMessageStore::lastError() const
 
 QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
 {
-    Q_UNUSED(key)
-    Q_UNUSED(sortKey)
     QMessageIdList result;
     d_ptr->p_ptr->lastError = QMessageStore::NoError;
 
