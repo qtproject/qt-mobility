@@ -43,6 +43,7 @@
 #include <QSet>
 
 #include <qvaluespace.h>
+#include <qvaluespaceitem.h>
 #include <qvaluespaceobject.h>
 
 #ifdef USE_READLINE

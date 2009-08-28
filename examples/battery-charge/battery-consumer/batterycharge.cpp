@@ -33,7 +33,7 @@
 
 #include "batterycharge.h"
 
-#include <qvaluespace.h>
+#include <qvaluespaceitem.h>
 
 QML_DEFINE_TYPE(Example, 1, 0, 0, BatteryCharge, BatteryCharge);
 

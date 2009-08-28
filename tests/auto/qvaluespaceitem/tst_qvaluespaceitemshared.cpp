@@ -33,7 +33,7 @@
 
 #include "tst_qvaluespaceitemshared.h"
 
-#include <qvaluespace.h>
+#include <qvaluespaceitem.h>
 #include <qvaluespaceobject.h>
 #include <qvaluespacemanager_p.h>
 

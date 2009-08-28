@@ -30,6 +30,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QVALUESPACE_H
 #define QVALUESPACE_H
 
@@ -123,59 +124,5 @@ namespace QValueSpace {
     } \
     static QValueSpace::AutoInstall _qvaluespaceauto_ ## name(_qvaluespaceauto_layercreate_ ## name);
 
-struct QValueSpaceItemPrivate;
-class QValueSpaceSubItemIterator;
-class Q_CFW_EXPORT QValueSpaceItem : public QObject
-{
-Q_OBJECT
-public:
-    QValueSpaceItem(const QValueSpaceItem &base, const QByteArray &path, QObject* parent = 0);
-    QValueSpaceItem(const QValueSpaceItem &base, const QString &path, QObject* parent = 0);
-    QValueSpaceItem(const QValueSpaceItem &base, const char * path, QObject* parent = 0);
-    QValueSpaceItem(const QValueSpaceItem &other, QObject* parent = 0 );
-    explicit QValueSpaceItem(const QByteArray &path, QObject* parent = 0);
-    explicit QValueSpaceItem(const QString &path, QObject* parent = 0);
-    explicit QValueSpaceItem(const char *path, QObject* parent = 0);
-
-    explicit QValueSpaceItem(QObject* parent = 0);
-    virtual ~QValueSpaceItem();
-
-    QString itemName() const;
-
-    QList<QString> subPaths() const;
-
-    bool remove();
-    bool remove(const QByteArray &subPath);
-    bool remove(const char *subPath);
-    bool remove(const QString &subPath);
-    bool setValue(const QVariant &value);
-    bool setValue(const QByteArray & subPath,
-                  const QVariant &value);
-    bool setValue(const char * subPath,
-                  const QVariant &value);
-    bool setValue(const QString & subPath,
-                  const QVariant &value);
-    bool sync();
-
-    QVariant value(const QByteArray & subPath = QByteArray(),
-                   const QVariant &def = QVariant()) const;
-    QVariant value(const char * subPath,
-                   const QVariant &def = QVariant()) const;
-    QVariant value(const QString & subPath,
-                   const QVariant &def = QVariant()) const;
-
-    QValueSpaceItem &operator=(const QValueSpaceItem&);
-signals:
-    void contentsChanged();
-
-protected:
-    virtual void connectNotify(const char *);
-    virtual void disconnectNotify(const char *);
-
-private:
-    QValueSpaceItemPrivate * d;
-    friend class QValueSpaceSubItemIterator;
-    friend class QValueSpaceSubItemIteratorPrivate;
-};
 
 #endif // _QVALUESPACE_H_

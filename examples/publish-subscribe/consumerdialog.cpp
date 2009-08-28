@@ -34,7 +34,7 @@
 #include "consumerdialog.h"
 #include "ui_consumerdialog.h"
 
-#include <qvaluespace.h>
+#include <qvaluespaceitem.h>
 
 #include <QDebug>
 
