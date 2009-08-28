@@ -136,7 +136,7 @@ int QGeoAreaMonitor::radius() const
 
     Returns 0 if the system has no support for position monitoring.
 */
-QGeoAreaMonitor *QGeoAreaMonitor::createMonitor(QObject *parent)
+QGeoAreaMonitor *QGeoAreaMonitor::createMonitor(QObject * /*parent*/)
 {
     return 0;
 }
