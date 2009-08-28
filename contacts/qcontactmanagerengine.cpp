@@ -41,6 +41,7 @@
 #include "qcontactsortorder.h"
 #include "qcontactfilters.h"
 #include "qcontactaction.h"
+#include "qcontactactiondescriptor.h"
 #include "qcontactabstractrequest.h"
 #include "qcontactabstractrequest_p.h"
 #include "qcontactrequests.h"
@@ -1341,7 +1342,11 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
             {
                 // Find any matching actions, and do a union filter on their filter objects
                 QContactActionFilter af(filter);
-                QList<QContactAction*> actions = QContactAction::actions(af.actionName(), af.vendorName(), af.vendorVersion());
+                //QContactActionDescriptor ad;
+                //ad.setActionName(af.actionName());
+                //ad.setVendorName(af.vendorName());
+                //ad.setImplementationVersion(af.implementationVersion());
+                QList<QContactAction*> actions = QContactAction::actions(af.actionName(), af.vendorName(), af.implementationVersion());
 
                 // There's a small wrinkle if there's a value specified in the action filter
                 // we have to adjust any contained QContactDetailFilters to have that value

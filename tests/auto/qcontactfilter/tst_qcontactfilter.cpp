@@ -349,7 +349,7 @@ void tst_QContactFilter::actionFilter()
     QVERIFY(af.actionName().isEmpty());
     QVERIFY(af.value().isNull());
     QVERIFY(af.vendorName().isEmpty());
-    QVERIFY(af.vendorVersion() == -1);
+    QVERIFY(af.implementationVersion() == -1);
 
     af.setActionName("Action Name");
     QVERIFY(af.actionName() == "Action Name");
@@ -365,38 +365,38 @@ void tst_QContactFilter::actionFilter()
 
     af.setVendor("Vendor");
     QVERIFY(af.vendorName() == "Vendor");
-    QVERIFY(af.vendorVersion() == -1);
+    QVERIFY(af.implementationVersion() == -1);
 
     af.setVendor(QString());
     QVERIFY(af.vendorName().isEmpty());
-    QVERIFY(af.vendorVersion() == -1);
+    QVERIFY(af.implementationVersion() == -1);
 
     af.setVendor(QString(), 10);
     QVERIFY(af.vendorName().isEmpty());
-    QVERIFY(af.vendorVersion() == -1);
+    QVERIFY(af.implementationVersion() == -1);
 
     af.setVendor("Vendor", 10);
     QVERIFY(af.vendorName() == "Vendor");
-    QVERIFY(af.vendorVersion() == 10);
+    QVERIFY(af.implementationVersion() == 10);
 
     af.setVendor("Vendor", -1);
     QVERIFY(af.vendorName() == "Vendor");
-    QVERIFY(af.vendorVersion() == -1);
+    QVERIFY(af.implementationVersion() == -1);
 
     af.setVendor("Vendor", 10);
     QVERIFY(af.vendorName() == "Vendor");
-    QVERIFY(af.vendorVersion() == 10);
+    QVERIFY(af.implementationVersion() == 10);
 
     af.setVendor("Vendor");
     QVERIFY(af.vendorName() == "Vendor");
-    QVERIFY(af.vendorVersion() == -1);
+    QVERIFY(af.implementationVersion() == -1);
 
     // Make sure there isn't a shadow copy
     af.setVendor("Vendor", 10);
     af.setVendor(QString());
-    QVERIFY(af.vendorVersion() == -1);
+    QVERIFY(af.implementationVersion() == -1);
     af.setVendor("Vendor");
-    QVERIFY(af.vendorVersion() == -1);
+    QVERIFY(af.implementationVersion() == -1);
 
     /* Test op= */
     QContactFilter f = af;

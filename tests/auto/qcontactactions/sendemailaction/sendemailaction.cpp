@@ -49,11 +49,14 @@
 #define makename(x) makestr(x)
 
 QContactSendEmailActionFactory::QContactSendEmailActionFactory()
+        : m_instance(new QContactSendEmailAction)
 {
 }
 
 QContactSendEmailActionFactory::~QContactSendEmailActionFactory()
 {
+    if (m_instance)
+        delete m_instance;
 }
 
 QString QContactSendEmailActionFactory::name() const
@@ -67,9 +70,11 @@ QList<QContactActionDescriptor> QContactSendEmailActionFactory::actionDescriptor
     return QList<QContactActionDescriptor>() << QContactActionDescriptor("SendEmail", "Test", 1);
 }
 
-QContactAction* QContactSendEmailActionFactory::instance(const QContactActionDescriptor&) const
+QContactAction* QContactSendEmailActionFactory::instance(const QContactActionDescriptor& descriptor) const
 {
-    return new QContactSendEmailAction;
+    if (descriptor.actionName() != QString("SendEmail") || descriptor.vendorName() != QString("Test") || descriptor.implementationVersion() != 1)
+        return 0;
+    return m_instance;
 }
 
 QVariantMap QContactSendEmailActionFactory::actionMetadata(const QContactActionDescriptor& descriptor) const
@@ -90,24 +95,18 @@ QContactSendEmailAction::~QContactSendEmailAction()
 {
 }
 
-QString QContactSendEmailAction::actionName() const
+QContactActionDescriptor QContactSendEmailAction::actionDescriptor() const
 {
-    return QString("SendEmail");
+    QContactActionDescriptor ret;
+    ret.setActionName("SendEmail");
+    ret.setVendorName("Test");
+    ret.setImplementationVersion(1);
+    return ret;
 }
 
 QVariantMap QContactSendEmailAction::metadata() const
 {
     return QVariantMap();
-}
-
-QString QContactSendEmailAction::vendorName() const
-{
-    return QString("Test");
-}
-
-int QContactSendEmailAction::implementationVersion() const
-{
-    return 1;
 }
 
 QContactFilter QContactSendEmailAction::contactFilter(const QVariant& value) const

@@ -440,7 +440,7 @@ QStringList QContact::availableActions() const
     for (int i = 0; i < implementations.size(); i++) {
         QContactAction* aptr = implementations.at(i);
         if (QContactManagerEngine::testFilter(aptr->contactFilter(), *this))
-            validActions.insert(aptr->actionName());
+            validActions.insert(aptr->actionDescriptor().actionName());
     }
 
     return validActions.toList();

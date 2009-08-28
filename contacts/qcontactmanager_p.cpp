@@ -236,10 +236,8 @@ void QContactManagerData::loadFactories()
     }
 }
 
-QList<QContactAction*> QContactManagerData::actions(const QString& actionName, const QString& vendor, int implementationVersion)
+QList<QContactActionDescriptor> QContactManagerData::actionDescriptors(const QString& actionName, const QString& vendorName, int implementationVersion)
 {
-    QList<QContactAction*> retn;
-
     loadFactories();
 
     bool restrict = false;
@@ -252,11 +250,11 @@ QList<QContactAction*> QContactManagerData::actions(const QString& actionName, c
         restrict = true;
     }
 
-    if (!vendor.isEmpty()) {
+    if (!vendorName.isEmpty()) {
         if (restrict)
-            subset &= m_vendormap.values(vendor).toSet();
+            subset &= m_vendormap.values(vendorName).toSet();
         else
-            subset = m_vendormap.values(vendor).toSet();
+            subset = m_vendormap.values(vendorName).toSet();
         restrict = true;
 
         /* We still have to check versions, since we don't hash that */
@@ -279,6 +277,14 @@ QList<QContactAction*> QContactManagerData::actions(const QString& actionName, c
         descriptors = m_descriptors;
     }
 
+    return descriptors;
+}
+
+QList<QContactAction*> QContactManagerData::actions(const QString& actionName, const QString& vendorName, int implementationVersion)
+{
+    QList<QContactAction*> retn;
+    QList<QContactActionDescriptor> descriptors = actionDescriptors(actionName, vendorName, implementationVersion);
+
     /* Now loop over the valid descriptors */
     for (int j=0; j < descriptors.size(); j++) {
         const QContactActionDescriptor& descriptor = descriptors.at(j);
@@ -286,6 +292,15 @@ QList<QContactAction*> QContactManagerData::actions(const QString& actionName, c
     }
 
     return retn;
+}
+
+QContactAction* QContactManagerData::action(const QContactActionDescriptor& actionDescriptor)
+{
+    loadFactories();
+    QContactActionFactory* actionFactory = m_descriptormap.value(actionDescriptor, 0);
+    if (actionFactory)
+        return actionFactory->instance(actionDescriptor);
+    return 0;
 }
 
 // trampoline for private classes

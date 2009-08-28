@@ -2683,10 +2683,8 @@ public:
     QIntegerAction() {}
     ~QIntegerAction() {}
 
-    QString actionName() const {return "Number";}
+    QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Number", "IntegerCo", 5); }
     QVariantMap metadata() const {return QVariantMap();}
-    virtual QString vendorName() const {return "IntegerCo";}
-    virtual int implementationVersion() const {return 5;}
 
     QContactFilter contactFilter(const QVariant& value) const
     {
@@ -2718,10 +2716,8 @@ public:
     QNumberAction() {}
     ~QNumberAction() {}
 
-    QString actionName() const {return "Number";}
+    QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Number", "NumberCo", 42); }
     QVariantMap metadata() const {return QVariantMap();}
-    virtual QString vendorName() const {return "NumberCo";}
-    virtual int implementationVersion() const {return 42;}
 
     QContactFilter contactFilter(const QVariant& value) const
     {
@@ -2769,10 +2765,8 @@ public:
     QBooleanAction() {}
     ~QBooleanAction() {}
 
-    QString actionName() const {return "Boolean";}
+    QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Boolean", "BooleanCo", 3); }
     QVariantMap metadata() const {return QVariantMap();}
-    QString vendorName() const {return "BooleanCo";}
-    int implementationVersion() const {return 3;}
 
     QContactFilter contactFilter(const QVariant& value) const
     {
@@ -2809,10 +2803,8 @@ public:
     RecursiveAction() {}
     ~RecursiveAction() {}
 
-    QString actionName() const {return "Recursive";}
+    QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Recursive", "RecursiveCo", 3); }
     QVariantMap metadata() const {return QVariantMap();}
-    QString vendorName() const {return "RecursiveCo";}
-    int implementationVersion() const {return 3;}
 
     QContactFilter contactFilter(const QVariant& value) const
     {
@@ -2853,7 +2845,13 @@ class PairRecursiveAction : public RecursiveAction {
     Q_OBJECT
 
 public:
-    QString actionName() const {return "PairRecursive";}
+    QContactActionDescriptor actionDescriptor() const
+    {
+        QContactActionDescriptor ret = RecursiveAction::actionDescriptor();
+        ret.setActionName("PairRecursive");
+        return ret;
+    }
+
     QContactFilter contactFilter(const QVariant& value) const
     {
         Q_UNUSED(value);
@@ -2868,7 +2866,13 @@ class AnotherPairRecursiveAction : public RecursiveAction {
     Q_OBJECT
 
 public:
-    QString actionName() const {return "AnotherPairRecursive";}
+    QContactActionDescriptor actionDescriptor() const
+    {
+        QContactActionDescriptor ret = RecursiveAction::actionDescriptor();
+        ret.setActionName("AnotherPairRecursive");
+        return ret;
+    }
+
     QContactFilter contactFilter(const QVariant& value) const
     {
         Q_UNUSED(value);
@@ -2883,7 +2887,13 @@ class IntersectionRecursiveAction : public RecursiveAction {
     Q_OBJECT
 
 public:
-    QString actionName() const {return "IntersectionRecursive";}
+    QContactActionDescriptor actionDescriptor() const
+    {
+        QContactActionDescriptor ret = RecursiveAction::actionDescriptor();
+        ret.setActionName("IntersectionRecursive");
+        return ret;
+    }
+
     QContactFilter contactFilter(const QVariant& value) const
     {
         Q_UNUSED(value);
@@ -2898,7 +2908,13 @@ class UnionRecursiveAction : public RecursiveAction {
     Q_OBJECT
 
 public:
-    QString actionName() const {return "UnionRecursive";}
+    QContactActionDescriptor actionDescriptor() const
+    {
+        QContactActionDescriptor ret = RecursiveAction::actionDescriptor();
+        ret.setActionName("UnionRecursive");
+        return ret;
+    }
+
     QContactFilter contactFilter(const QVariant& value) const
     {
         Q_UNUSED(value);

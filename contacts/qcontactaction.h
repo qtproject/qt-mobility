@@ -52,22 +52,25 @@ class QTCONTACTS_EXPORT QContactAction : public QObject
 public:
     virtual ~QContactAction() = 0;
 
-    virtual QString actionName() const = 0;                                 // name of action this instance implements
+    virtual QContactActionDescriptor actionDescriptor() const = 0;          // the descriptor which uniquely identifies this action
     virtual QVariantMap metadata() const = 0;                               // label, icon etc
-    virtual QString vendorName() const = 0;                                 // vendor identification string
-    virtual int implementationVersion() const = 0;                          // (minor) implementation version
 
     virtual QContactFilter contactFilter(const QVariant& value = QVariant()) const = 0; // use for matching
     virtual bool supportsDetail(const QContactDetail& detail) const = 0;    // whether this implementation supports the given detail
     virtual QList<QContactDetail> supportedDetails(const QContact& contact) const;
     virtual void performAction(const QContact& contact, const QContactDetail& detail = QContactDetail()) = 0;
 
-    /* return a list of actions which are available */
+    /* return a list of names of actions which are available */
     static QStringList availableActions(const QString& vendor = QString(), int implementationVersion = -1);
-    static QList<QContactAction*> actions(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1);
+
+    /* return a list of descriptors for action implementations matching the given criteria */
+    static QList<QContactActionDescriptor> actionDescriptors(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1);
 
     /* return a pointer to an implementation of the action identified by the given descriptor */
     static QContactAction* action(const QContactActionDescriptor& descriptor);
+
+    /* return a list of points to action implementations which match the given criteria */
+    static QList<QContactAction*> actions(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1);
 };
 
 #endif

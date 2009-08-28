@@ -89,7 +89,7 @@ void QContactActionDescriptor::setVendorName(const QString& vendorName)
 }
 
 /*!
- * Sets the vendor-specified implementation version of the action implementation identified by this action descriptor to \a vendorVersion
+ * Sets the vendor-specified implementation version of the action implementation identified by this action descriptor to \a implementationVersion
  */
 void QContactActionDescriptor::setImplementationVersion(int implementationVersion)
 {

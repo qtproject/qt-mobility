@@ -80,19 +80,19 @@ void QContactActionFilter::setValue(const QVariant& value)
 }
 
 /*!
- * Sets the vendor criterion of the action whose availability is required to the given \a vendorName and \a version
- * \sa vendorName(), vendorVersion()
+ * Sets the vendor details criterion of the action whose availability is required to the given \a vendorName and \a implementationVersion
+ * \sa vendorName(), implementationVersion()
  */
-void QContactActionFilter::setVendor(const QString& vendorName, int version)
+void QContactActionFilter::setVendor(const QString& vendorName, int implementationVersion)
 {
     Q_D(QContactActionFilter);
     d->m_vendorName = vendorName;
     if (!vendorName.isEmpty()) {
-        d->m_vendorVersion = version;
+        d->m_implementationVersion = implementationVersion;
         return;
     }
 
-    d->m_vendorVersion = -1;
+    d->m_implementationVersion = -1;
 }
 
 /*!
@@ -126,11 +126,11 @@ QString QContactActionFilter::vendorName() const
 }
 
 /*!
- * Returns the vendor version criterion of the filter
+ * Returns the vendor-specified action implementation version criterion of the filter
  * \sa setVendor()
  */
-int QContactActionFilter::vendorVersion() const
+int QContactActionFilter::implementationVersion() const
 {
     Q_D(const QContactActionFilter);
-    return d->m_vendorVersion;
+    return d->m_implementationVersion;
 }

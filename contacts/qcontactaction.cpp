@@ -59,27 +59,21 @@ QContactAction::~QContactAction()
  */
 
 /*!
- * \fn QContactAction::actionName() const
- * Returns the name of the action provided by this implementation.
+ * \fn QContactAction::actionDescriptor() const
+ * Returns the descriptor which uniquely identifies this action implementation.  A descriptor
+ * consists of an action name, a vendor name and an implementation version.
  * The name of the action identifies the action provided; different implementations of an action
  * with the same name must provide the same functionality, but may differ in implementation semantics.
  * Hence, the action name includes the major version of the interface definition implemented.
+ * The vendor name is the identification string of the vendor which has provided this implementation.
+ * The implementation version is the (minor) version of the implementation, and is vendor-specific.
+ *
+ * \sa QContactActionDescriptor
  */
 
 /*!
  * \fn QContactAction::metadata() const
  * Returns the metadata associated with this action, such as icons, labels or sound cues
- */
-
-/*!
- * \fn QContactAction::vendorName() const
- * Returns the identification string of the vendor which has provided this implementation
- */
-
-/*!
- * \fn QContactAction::implementationVersion() const
- * Returns the (minor) version of the implementation of this action.  Note that the major version
- * (which describes the semantics/outcomes of the action) is included in the action name itself.
  */
 
 /*!
@@ -129,48 +123,47 @@ QStringList QContactAction::availableActions(const QString& vendor, int implemen
     // SLOW naive implementation...
     QSet<QString> ret;
     QContactManagerData::loadFactories();
-    QList<QContactAction*> actionImpls = QContactManagerData::actions(QString(), vendor, implementationVersion);
-    for (int i = 0; i < actionImpls.size(); i++) {
-        QContactAction* actionImpl = actionImpls.at(i);
-        ret.insert(actionImpl->actionName());
-
-        // we took ownership; clean up.
-        // TODO: fix this.  currently, we don't take ownership, so don't delete.
-        //delete actionImpl;
+    QList<QContactActionDescriptor> actionDescriptors = QContactManagerData::actionDescriptors(QString(), vendor, implementationVersion);
+    for (int i = 0; i < actionDescriptors.size(); i++) {
+        QContactActionDescriptor descriptor = actionDescriptors.at(i);
+        ret.insert(descriptor.actionName());
     }
 
     return ret.toList();
 }
 
 /*!
- * Returns a list of QContactAction instances which implement the given \a actionName and is provided by the
- * given \a vendor and is of the given \a implementationVersion.  If \a actionName is empty,
- * implementations of all actions are returned; if \a vendor is empty, implementations provided by any vendor and
- * of any implementation version are returned; if \a implementationVersion is empty, any implementations provided by the
+ * Returns a list of QContactActionDescriptor instances which identified implementations of the given \a actionName which are provided by the
+ * given \a vendor and are of the given \a implementationVersion.  If \a actionName is empty, descriptors for
+ * implementations of all actions are returned; if \a vendor is empty, descriptors for implementations provided by any vendor and
+ * of any implementation version are returned; if \a implementationVersion is empty, descriptors for any implementations provided by the
  * given \a vendor of the given \a actionName are returned.
- *
- * The caller DOES NOT take ownership of each instance returned in the list, and MUST NOT delete them when finished using them
- * to avoid leaking memory as this will result in undefined behaviour.
- *
- * TODO: fix this.
  */
-QList<QContactAction*> QContactAction::actions(const QString& actionName, const QString& vendor, int implementationVersion)
+QList<QContactActionDescriptor> QContactAction::actionDescriptors(const QString& actionName, const QString& vendor, int implementationVersion)
 {
-    // the caller takes ownership?
     QContactManagerData::loadFactories();
-    return QContactManagerData::actions(actionName, vendor, implementationVersion);
+    return QContactManagerData::actionDescriptors(actionName, vendor, implementationVersion);
 }
 
 /*!
  * Returns a pointer to a new instance of the action implementation identified by the given \a descriptor.
- * The caller takes ownership of the newly constructed action implementation.
+ * The caller does not take ownership of the action implementation; the lifetime is managed by its factory.
  */
 QContactAction* QContactAction::action(const QContactActionDescriptor& descriptor)
 {
-    // the caller takes ownership
     QContactManagerData::loadFactories();
-    QList<QContactAction*> matching = QContactManagerData::actions(descriptor.actionName(), descriptor.vendorName(), descriptor.implementationVersion());
-    if (matching.isEmpty())
-        return 0; // no such action.
-    return matching.first();
+    return QContactManagerData::action(descriptor);
+}
+
+/*!
+ * Returns a list of pointers to instances of the action implementations of the given \a actionName which are provided by the
+ * given \a vendor and are of the given \a implementationVersion.  If \a actionName is empty, a list of pointers to
+ * implementations of all actions are returned; if \a vendor is empty, pointers to implementations provided by any vendor and
+ * of any implementation version are returned; if \a implementationVersion is empty, pointers to any implementations provided by the
+ * given \a vendor of the given \a actionName are returned.
+ */
+QList<QContactAction*> QContactAction::actions(const QString& actionName, const QString& vendor, int implementationVersion)
+{
+    QContactManagerData::loadFactories();
+    return QContactManagerData::actions(actionName, vendor, implementationVersion);
 }

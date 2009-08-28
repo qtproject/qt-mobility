@@ -66,7 +66,8 @@ uint qHash(const QContactActionDescriptor& ad)
 
 /*!
  * \fn QContactActionFactory::instance(const QContactActionDescriptor& descriptor) const
- * Returns a pointer to an instance of the implementation of the action described by the given \a descriptor
+ * Returns a pointer to an instance of the implementation of the action described by the given \a descriptor.
+ * The caller does not take ownership of the action; the factory maintains the lifetime of the object.
  */
 
 /*!

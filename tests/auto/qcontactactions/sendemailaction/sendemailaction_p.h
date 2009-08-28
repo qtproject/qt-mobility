@@ -52,6 +52,22 @@
 #include <QString>
 #include <QVariantMap>
 
+class QContactSendEmailAction : public QContactAction
+{
+    Q_OBJECT
+
+public:
+    QContactSendEmailAction();
+    ~QContactSendEmailAction();
+
+    QContactActionDescriptor actionDescriptor() const;
+    QVariantMap metadata() const;
+
+    QContactFilter contactFilter(const QVariant& value) const;
+    bool supportsDetail(const QContactDetail& detail) const;
+    void performAction(const QContact& contact, const QContactDetail& detail = QContactDetail());
+};
+
 class Q_DECL_EXPORT QContactSendEmailActionFactory : public QContactActionFactory
 {
     Q_OBJECT
@@ -65,24 +81,9 @@ public:
     QList<QContactActionDescriptor> actionDescriptors() const;
     QContactAction* instance(const QContactActionDescriptor& descriptor) const;
     QVariantMap actionMetadata(const QContactActionDescriptor& descriptor) const;
-};
 
-class QContactSendEmailAction : public QContactAction
-{
-    Q_OBJECT
-
-public:
-    QContactSendEmailAction();
-    ~QContactSendEmailAction();
-
-    QString actionName() const;
-    QVariantMap metadata() const;
-    virtual QString vendorName() const;
-    virtual int implementationVersion() const;
-
-    QContactFilter contactFilter(const QVariant& value) const;
-    bool supportsDetail(const QContactDetail& detail) const;
-    void performAction(const QContact& contact, const QContactDetail& detail = QContactDetail());
+private:
+    QContactSendEmailAction* m_instance;
 };
 
 #endif
