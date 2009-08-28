@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    QValueSpace::initValuespaceManager();
+    QValueSpace::initValueSpaceManager();
 
     BatteryProvider batteryProvider;
     batteryProvider.show();

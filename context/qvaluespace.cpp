@@ -371,7 +371,7 @@ void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const Q
   space manager process, and should be called before any process in the system
   uses a value space class.
  */
-void QValueSpace::initValuespaceManager()
+void QValueSpace::initValueSpaceManager()
 {
     QValueSpaceManager::instance()->initServer();
 }

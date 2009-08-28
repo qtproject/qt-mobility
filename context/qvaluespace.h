@@ -98,7 +98,7 @@ signals:
 };
 
 namespace QValueSpace {
-    Q_CFW_EXPORT void initValuespaceManager();
+    Q_CFW_EXPORT void initValueSpaceManager();
 
     typedef QAbstractValueSpaceLayer *(*LayerCreateFunc)();
     Q_CFW_EXPORT void installLayer(LayerCreateFunc func);

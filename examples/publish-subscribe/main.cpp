@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 
     for (int i = 1; i < argc; ++i) {
         if (argv[i] == QLatin1String("-manager")) {
-            QValueSpace::initValuespaceManager();
+            QValueSpace::initValueSpaceManager();
         } else if (argv[i] == QLatin1String("-provider")) {
             createProvider = true;
             createDefault = false;

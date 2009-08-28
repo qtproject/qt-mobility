@@ -822,7 +822,7 @@ int main(int argc, char ** argv)
     }
 
     if(manager)
-        QValueSpace::initValuespaceManager();
+        QValueSpace::initValueSpaceManager();
 
     if(dump) {
         QValueSpaceItem item("/");

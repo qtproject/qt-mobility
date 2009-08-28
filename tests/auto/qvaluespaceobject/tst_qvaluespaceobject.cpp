@@ -92,7 +92,7 @@ void tst_QValueSpaceObject::initTestCase()
 {
     variantMetaTypeId = qRegisterMetaType<QVariant>("QVariant");
 
-    QValueSpace::initValuespaceManager();
+    QValueSpace::initValueSpaceManager();
 }
 
 void tst_QValueSpaceObject::cleanupTestCase()
