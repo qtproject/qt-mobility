@@ -357,6 +357,8 @@ void tst_QContactActions::testDescriptor()
     QContactActionDescriptor sendEmailDescriptor3(sendEmailDescriptor2);
     QContactActionDescriptor sendEmailDescriptor4 = sendEmailAction->actionDescriptor();
     QContactActionDescriptor sendEmailDescriptor5 = QContactAction::actionDescriptors(sendEmailDescriptor.actionName(), sendEmailDescriptor.vendorName(), sendEmailDescriptor.implementationVersion()).at(0);
+    QContactActionDescriptor sendEmailDescriptor6(sendEmailDescriptor);
+    sendEmailDescriptor6 = sendEmailDescriptor5;
     QVERIFY(sendEmailDescriptor2.actionName() == sendEmailDescriptor.actionName());
     QVERIFY(sendEmailDescriptor2.vendorName() == sendEmailDescriptor.vendorName());
     QVERIFY(sendEmailDescriptor2.implementationVersion() == sendEmailDescriptor.implementationVersion());
@@ -364,6 +366,7 @@ void tst_QContactActions::testDescriptor()
     QVERIFY(sendEmailDescriptor == sendEmailDescriptor3);
     QVERIFY(sendEmailDescriptor == sendEmailDescriptor4);
     QVERIFY(sendEmailDescriptor == sendEmailDescriptor5);
+    QVERIFY(sendEmailDescriptor == sendEmailDescriptor6);
 
     QVERIFY(!sendEmailDescriptor2.isEmpty());
     sendEmailDescriptor2.setActionName("");
