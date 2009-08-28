@@ -25,12 +25,12 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactactionfilter.html#QContactActionFilter">QContactActionFilter</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactactionfilter.html#QContactActionFilter-2">QContactActionFilter</a></b> ( const QContactFilter &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactactionfilter.html#actionName">actionName</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qcontactactionfilter.html#implementationVersion">implementationVersion</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactactionfilter.html#setActionName">setActionName</a></b> ( const QString &amp; <i>action</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactactionfilter.html#setValue">setValue</a></b> ( const QVariant &amp; <i>value</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactactionfilter.html#setVendor">setVendor</a></b> ( const QString &amp; <i>vendorName</i>, int <i>version</i> = -1 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactactionfilter.html#setVendor">setVendor</a></b> ( const QString &amp; <i>vendorName</i>, int <i>implementationVersion</i> = -1 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactactionfilter.html#value">value</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactactionfilter.html#vendorName">vendorName</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qcontactactionfilter.html#vendorVersion">vendorVersion</a></b> () const</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>4 public functions inherited from <a href="qcontactfilter.html#public-functions">QContactFilter</a></li>
@@ -49,23 +49,23 @@
 <h3 class="fn"><a name="actionName"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactActionFilter::actionName () const</h3>
 <p>Returns the action name criterion of the filter</p>
 <p>See also <a href="qcontactactionfilter.html#setActionName">setActionName</a>().</p>
+<h3 class="fn"><a name="implementationVersion"></a>int QContactActionFilter::implementationVersion () const</h3>
+<p>Returns the vendor-specified action implementation version criterion of the filter</p>
+<p>See also <a href="qcontactactionfilter.html#setVendor">setVendor</a>().</p>
 <h3 class="fn"><a name="setActionName"></a>void QContactActionFilter::setActionName ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>action</i> )</h3>
 <p>Sets the name of the action whose availability is required to <i>action</i></p>
 <p>See also <a href="qcontactactionfilter.html#actionName">actionName</a>().</p>
 <h3 class="fn"><a name="setValue"></a>void QContactActionFilter::setValue ( const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
 <p>Sets the value criterion of the detail for which the action must be available to <i>value</i></p>
 <p>See also <a href="qcontactactionfilter.html#value">value</a>().</p>
-<h3 class="fn"><a name="setVendor"></a>void QContactActionFilter::setVendor ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>vendorName</i>, int <i>version</i> = -1 )</h3>
-<p>Sets the vendor criterion of the action whose availability is required to the given <i>vendorName</i> and <i>version</i></p>
-<p>See also <a href="qcontactactionfilter.html#vendorName">vendorName</a>() and <a href="qcontactactionfilter.html#vendorVersion">vendorVersion</a>().</p>
+<h3 class="fn"><a name="setVendor"></a>void QContactActionFilter::setVendor ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>vendorName</i>, int <i>implementationVersion</i> = -1 )</h3>
+<p>Sets the vendor details criterion of the action whose availability is required to the given <i>vendorName</i> and <i>implementationVersion</i></p>
+<p>See also <a href="qcontactactionfilter.html#vendorName">vendorName</a>() and <a href="qcontactactionfilter.html#implementationVersion">implementationVersion</a>().</p>
 <h3 class="fn"><a name="value"></a><a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> QContactActionFilter::value () const</h3>
 <p>Returns the value criterion of the filter</p>
 <p>See also <a href="qcontactactionfilter.html#setValue">setValue</a>().</p>
 <h3 class="fn"><a name="vendorName"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactActionFilter::vendorName () const</h3>
 <p>Returns the vendor name criterion of the filter</p>
-<p>See also <a href="qcontactactionfilter.html#setVendor">setVendor</a>().</p>
-<h3 class="fn"><a name="vendorVersion"></a>int QContactActionFilter::vendorVersion () const</h3>
-<p>Returns the vendor version criterion of the filter</p>
 <p>See also <a href="qcontactactionfilter.html#setVendor">setVendor</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

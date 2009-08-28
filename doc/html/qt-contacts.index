@@ -1021,10 +1021,8 @@
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactAction" href="qcontactaction.html" location="qcontactaction.h" bases="QObject" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="~QContactAction" fullname="QContactAction::~QContactAction" href="qcontactaction.html#dtor.QContactAction" location="qcontactaction.cpp" virtual="pure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QContactAction()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="actionName" fullname="QContactAction::actionName" href="qcontactaction.html#actionName" location="qcontactaction.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QString" signature="actionName() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="actionDescriptor" fullname="QContactAction::actionDescriptor" href="qcontactaction.html#actionDescriptor" location="qcontactaction.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QContactActionDescriptor" signature="actionDescriptor() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="metadata" fullname="QContactAction::metadata" href="qcontactaction.html#metadata" location="qcontactaction.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QVariantMap" signature="metadata() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="vendor" fullname="QContactAction::vendor" href="qcontactaction.html#vendor" location="qcontactaction.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QString" signature="vendor() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="implementationVersion" fullname="QContactAction::implementationVersion" href="qcontactaction.html#implementationVersion" location="qcontactaction.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="implementationVersion() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="contactFilter" fullname="QContactAction::contactFilter" href="qcontactaction.html#contactFilter" location="qcontactaction.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QContactFilter" signature="contactFilter(const QVariant &amp; value) const">
                 <parameter left="const QVariant &amp;" right="" name="value" default="QVariant()"/>
             </function>
@@ -1042,13 +1040,18 @@
                 <parameter left="const QString &amp;" right="" name="vendor" default="QString()"/>
                 <parameter left="int" right="" name="implementationVersion" default="-1"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="actions" fullname="QContactAction::actions" href="qcontactaction.html#actions" location="qcontactaction.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QList&lt;QContactAction *&gt;" signature="actions(const QString &amp; actionName, const QString &amp; vendor, int implementationVersion)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="actionDescriptors" fullname="QContactAction::actionDescriptors" href="qcontactaction.html#actionDescriptors" location="qcontactaction.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QList&lt;QContactActionDescriptor&gt;" signature="actionDescriptors(const QString &amp; actionName, const QString &amp; vendor, int implementationVersion)">
                 <parameter left="const QString &amp;" right="" name="actionName" default="QString()"/>
                 <parameter left="const QString &amp;" right="" name="vendor" default="QString()"/>
                 <parameter left="int" right="" name="implementationVersion" default="-1"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="action" fullname="QContactAction::action" href="qcontactaction.html#action" location="qcontactaction.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QContactAction *" signature="action(const QContactActionDescriptor &amp; descriptor)">
                 <parameter left="const QContactActionDescriptor &amp;" right="" name="descriptor" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="actions" fullname="QContactAction::actions" href="qcontactaction.html#actions" location="qcontactaction.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QList&lt;QContactAction *&gt;" signature="actions(const QString &amp; actionName, const QString &amp; vendor, int implementationVersion)">
+                <parameter left="const QString &amp;" right="" name="actionName" default="QString()"/>
+                <parameter left="const QString &amp;" right="" name="vendor" default="QString()"/>
+                <parameter left="int" right="" name="implementationVersion" default="-1"/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactRemoveRequest" href="qcontactremoverequest.html" location="qcontactremoverequest.h" bases="QContactAbstractRequest" module="">
@@ -1201,18 +1204,21 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="operator==" fullname="QContactActionDescriptor::operator==" href="qcontactactiondescriptor.html#operator==" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator==(const QContactActionDescriptor &amp; other) const">
                 <parameter left="const QContactActionDescriptor &amp;" right="" name="other" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator!=" fullname="QContactActionDescriptor::operator!=" href="qcontactactiondescriptor.html#operator!=" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator!=(const QContactActionDescriptor &amp; other) const">
+                <parameter left="const QContactActionDescriptor &amp;" right="" name="other" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setActionName" fullname="QContactActionDescriptor::setActionName" href="qcontactactiondescriptor.html#setActionName" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setActionName(const QString &amp; actionName)">
                 <parameter left="const QString &amp;" right="" name="actionName" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setVendorName" fullname="QContactActionDescriptor::setVendorName" href="qcontactactiondescriptor.html#setVendorName" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setVendorName(const QString &amp; vendorName)">
                 <parameter left="const QString &amp;" right="" name="vendorName" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setVendorVersion" fullname="QContactActionDescriptor::setVendorVersion" href="qcontactactiondescriptor.html#setVendorVersion" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setVendorVersion(int vendorVersion)">
-                <parameter left="int" right="" name="vendorVersion" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setImplementationVersion" fullname="QContactActionDescriptor::setImplementationVersion" href="qcontactactiondescriptor.html#setImplementationVersion" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setImplementationVersion(int implementationVersion)">
+                <parameter left="int" right="" name="implementationVersion" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="actionName" fullname="QContactActionDescriptor::actionName" href="qcontactactiondescriptor.html#actionName" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="actionName() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="vendorName" fullname="QContactActionDescriptor::vendorName" href="qcontactactiondescriptor.html#vendorName" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="vendorName() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="vendorVersion" fullname="QContactActionDescriptor::vendorVersion" href="qcontactactiondescriptor.html#vendorVersion" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="vendorVersion() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="implementationVersion" fullname="QContactActionDescriptor::implementationVersion" href="qcontactactiondescriptor.html#implementationVersion" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="implementationVersion() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactMemoryEngine" href="qcontactmemoryengine.html" location="qcontactmemorybackend_p.h" bases="QContactManagerEngine" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="createMemoryEngine" fullname="QContactMemoryEngine::createMemoryEngine" href="qcontactmemoryengine.html#createMemoryEngine" location="qcontactmemorybackend_p.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QContactMemoryEngine *" signature="createMemoryEngine(const QMap&lt;QString, QString&gt; &amp; parameters)">
@@ -1466,14 +1472,14 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setValue" fullname="QContactActionFilter::setValue" href="qcontactactionfilter.html#setValue" location="qcontactactionfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setValue(const QVariant &amp; value)">
                 <parameter left="const QVariant &amp;" right="" name="value" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setVendor" fullname="QContactActionFilter::setVendor" href="qcontactactionfilter.html#setVendor" location="qcontactactionfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setVendor(const QString &amp; vendorName, int version)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="setVendor" fullname="QContactActionFilter::setVendor" href="qcontactactionfilter.html#setVendor" location="qcontactactionfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setVendor(const QString &amp; vendorName, int implementationVersion)">
                 <parameter left="const QString &amp;" right="" name="vendorName" default=""/>
-                <parameter left="int" right="" name="version" default="-1"/>
+                <parameter left="int" right="" name="implementationVersion" default="-1"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="actionName" fullname="QContactActionFilter::actionName" href="qcontactactionfilter.html#actionName" location="qcontactactionfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="actionName() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QContactActionFilter::value" href="qcontactactionfilter.html#value" location="qcontactactionfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="value() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="vendorName" fullname="QContactActionFilter::vendorName" href="qcontactactionfilter.html#vendorName" location="qcontactactionfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="vendorName() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="vendorVersion" fullname="QContactActionFilter::vendorVersion" href="qcontactactionfilter.html#vendorVersion" location="qcontactactionfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="vendorVersion() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="implementationVersion" fullname="QContactActionFilter::implementationVersion" href="qcontactactionfilter.html#implementationVersion" location="qcontactactionfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="implementationVersion() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactOrganisation" href="qcontactorganisation.html" location="qcontactorganisation.h" bases="QContactDetail" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactOrganisation::DefinitionName" href="qcontactorganisation.html#DefinitionName-var" location="qcontactorganisation.h" type="const char *" static="false"/>

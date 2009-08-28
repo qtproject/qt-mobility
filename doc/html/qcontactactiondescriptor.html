@@ -25,12 +25,13 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactactiondescriptor.html#QContactActionDescriptor-2">QContactActionDescriptor</a></b> ( const QContactActionDescriptor &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactactiondescriptor.html#dtor.QContactActionDescriptor">~QContactActionDescriptor</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactactiondescriptor.html#actionName">actionName</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qcontactactiondescriptor.html#implementationVersion">implementationVersion</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactactiondescriptor.html#isEmpty">isEmpty</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactactiondescriptor.html#setActionName">setActionName</a></b> ( const QString &amp; <i>actionName</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactactiondescriptor.html#setImplementationVersion">setImplementationVersion</a></b> ( int <i>implementationVersion</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactactiondescriptor.html#setVendorName">setVendorName</a></b> ( const QString &amp; <i>vendorName</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactactiondescriptor.html#setVendorVersion">setVendorVersion</a></b> ( int <i>vendorVersion</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactactiondescriptor.html#vendorName">vendorName</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qcontactactiondescriptor.html#vendorVersion">vendorVersion</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactactiondescriptor.html#operator-not-eq">operator!=</a></b> ( const QContactActionDescriptor &amp; <i>other</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QContactActionDescriptor &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactactiondescriptor.html#operator-eq">operator=</a></b> ( const QContactActionDescriptor &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactactiondescriptor.html#operator-eq-eq">operator==</a></b> ( const QContactActionDescriptor &amp; <i>other</i> ) const</td></tr>
 </table>
@@ -49,23 +50,25 @@
 <h3 class="fn"><a name="actionName"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactActionDescriptor::actionName () const</h3>
 <p>Returns the name of the action which is identified by the action descriptor</p>
 <p>See also <a href="qcontactactiondescriptor.html#setActionName">setActionName</a>().</p>
+<h3 class="fn"><a name="implementationVersion"></a>int QContactActionDescriptor::implementationVersion () const</h3>
+<p>Returns the vendor-specified version of the action implementation which is identified by the action descriptor</p>
+<p>See also <a href="qcontactactiondescriptor.html#setImplementationVersion">setImplementationVersion</a>().</p>
 <h3 class="fn"><a name="isEmpty"></a>bool QContactActionDescriptor::isEmpty () const</h3>
 <p>Returns true if either the name, vendor and version of the descriptor are missing from the descriptor. An empty descriptor cannot uniquely identify an action.</p>
 <h3 class="fn"><a name="setActionName"></a>void QContactActionDescriptor::setActionName ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>actionName</i> )</h3>
 <p>Sets the name of the action identified by this action descriptor to <i>actionName</i></p>
 <p>See also <a href="qcontactactiondescriptor.html#actionName">actionName</a>().</p>
+<h3 class="fn"><a name="setImplementationVersion"></a>void QContactActionDescriptor::setImplementationVersion ( int <i>implementationVersion</i> )</h3>
+<p>Sets the vendor-specified implementation version of the action implementation identified by this action descriptor to <i>implementationVersion</i></p>
+<p>See also <a href="qcontactactiondescriptor.html#implementationVersion">implementationVersion</a>().</p>
 <h3 class="fn"><a name="setVendorName"></a>void QContactActionDescriptor::setVendorName ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>vendorName</i> )</h3>
 <p>Sets the name of the vendor of the action implementation identified by this action descriptor to <i>vendorName</i></p>
 <p>See also <a href="qcontactactiondescriptor.html#vendorName">vendorName</a>().</p>
-<h3 class="fn"><a name="setVendorVersion"></a>void QContactActionDescriptor::setVendorVersion ( int <i>vendorVersion</i> )</h3>
-<p>Sets the vendor-specified implementation version of the action implementation identified by this action descriptor to <i>vendorVersion</i></p>
-<p>See also <a href="qcontactactiondescriptor.html#vendorVersion">vendorVersion</a>().</p>
 <h3 class="fn"><a name="vendorName"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactActionDescriptor::vendorName () const</h3>
 <p>Returns the name of the vendor of the action implementation which is identified by the action descriptor</p>
 <p>See also <a href="qcontactactiondescriptor.html#setVendorName">setVendorName</a>().</p>
-<h3 class="fn"><a name="vendorVersion"></a>int QContactActionDescriptor::vendorVersion () const</h3>
-<p>Returns the vendor-specified version of the action implementation which is identified by the action descriptor</p>
-<p>See also <a href="qcontactactiondescriptor.html#setVendorVersion">setVendorVersion</a>().</p>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QContactActionDescriptor::operator!= ( const QContactActionDescriptor &amp; <i>other</i> ) const</h3>
+<p>Returns true if the action name, vendor name or vendor-specified implementation version specified by this action descriptor are different to that specified by <i>other</i></p>
 <h3 class="fn"><a name="operator-eq"></a>QContactActionDescriptor &amp; QContactActionDescriptor::operator= ( const QContactActionDescriptor &amp; <i>other</i> )</h3>
 <p>Assigns this action descriptor to be equal to <i>other</i></p>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QContactActionDescriptor::operator== ( const QContactActionDescriptor &amp; <i>other</i> ) const</h3>

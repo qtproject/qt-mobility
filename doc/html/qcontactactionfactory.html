@@ -54,7 +54,7 @@
 <h3 class="fn"><a name="actionMetadata"></a><a href="http://qt.nokia.com/doc/4.5/qvariant.html#QVariantMap-typedef">QVariantMap</a> QContactActionFactory::actionMetadata ( const <a href="qcontactactiondescriptor.html">QContactActionDescriptor</a> &amp; <i>descriptor</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the metadata associated with the action identified by the given <i>descriptor</i></p>
 <h3 class="fn"><a name="instance"></a><a href="qcontactaction.html">QContactAction</a> * QContactActionFactory::instance ( const <a href="qcontactactiondescriptor.html">QContactActionDescriptor</a> &amp; <i>descriptor</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Returns a pointer to an instance of the implementation of the action described by the given <i>descriptor</i></p>
+<p>Returns a pointer to an instance of the implementation of the action described by the given <i>descriptor</i>. The caller does not take ownership of the action; the factory maintains the lifetime of the object.</p>
 <h3 class="fn"><a name="name"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactActionFactory::name () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the name of this factory. The name is used to identify the factory when it is retrieved using the Qt Plugin framework.</p>
 <p /><address><hr /><div align="center">

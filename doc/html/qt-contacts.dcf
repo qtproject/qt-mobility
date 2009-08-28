@@ -77,27 +77,27 @@
     <section ref="qcontactaction.html" title="QContactAction Class Reference">
         <keyword ref="qcontactaction.html">QContactAction</keyword>
         <keyword ref="qcontactaction.html#action">action</keyword>
-        <keyword ref="qcontactaction.html#actionName">actionName</keyword>
+        <keyword ref="qcontactaction.html#actionDescriptor">actionDescriptor</keyword>
+        <keyword ref="qcontactaction.html#actionDescriptors">actionDescriptors</keyword>
         <keyword ref="qcontactaction.html#actions">actions</keyword>
         <keyword ref="qcontactaction.html#availableActions">availableActions</keyword>
         <keyword ref="qcontactaction.html#contactFilter">contactFilter</keyword>
-        <keyword ref="qcontactaction.html#implementationVersion">implementationVersion</keyword>
         <keyword ref="qcontactaction.html#metadata">metadata</keyword>
         <keyword ref="qcontactaction.html#performAction">performAction</keyword>
         <keyword ref="qcontactaction.html#supportedDetails">supportedDetails</keyword>
         <keyword ref="qcontactaction.html#supportsDetail">supportsDetail</keyword>
-        <keyword ref="qcontactaction.html#vendor">vendor</keyword>
         <section ref="qcontactaction-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactactiondescriptor.html" title="QContactActionDescriptor Class Reference">
         <keyword ref="qcontactactiondescriptor.html">QContactActionDescriptor</keyword>
         <keyword ref="qcontactactiondescriptor.html#actionName">actionName</keyword>
+        <keyword ref="qcontactactiondescriptor.html#implementationVersion">implementationVersion</keyword>
         <keyword ref="qcontactactiondescriptor.html#isEmpty">isEmpty</keyword>
         <keyword ref="qcontactactiondescriptor.html#setActionName">setActionName</keyword>
+        <keyword ref="qcontactactiondescriptor.html#setImplementationVersion">setImplementationVersion</keyword>
         <keyword ref="qcontactactiondescriptor.html#setVendorName">setVendorName</keyword>
-        <keyword ref="qcontactactiondescriptor.html#setVendorVersion">setVendorVersion</keyword>
         <keyword ref="qcontactactiondescriptor.html#vendorName">vendorName</keyword>
-        <keyword ref="qcontactactiondescriptor.html#vendorVersion">vendorVersion</keyword>
+        <keyword ref="qcontactactiondescriptor.html#operator-not-eq">operator!=</keyword>
         <keyword ref="qcontactactiondescriptor.html#operator-eq">operator=</keyword>
         <keyword ref="qcontactactiondescriptor.html#operator-eq-eq">operator==</keyword>
         <section ref="qcontactactiondescriptor-members.html" title="List of all members"/>
@@ -113,12 +113,12 @@
     <section ref="qcontactactionfilter.html" title="QContactActionFilter Class Reference">
         <keyword ref="qcontactactionfilter.html">QContactActionFilter</keyword>
         <keyword ref="qcontactactionfilter.html#actionName">actionName</keyword>
+        <keyword ref="qcontactactionfilter.html#implementationVersion">implementationVersion</keyword>
         <keyword ref="qcontactactionfilter.html#setActionName">setActionName</keyword>
         <keyword ref="qcontactactionfilter.html#setValue">setValue</keyword>
         <keyword ref="qcontactactionfilter.html#setVendor">setVendor</keyword>
         <keyword ref="qcontactactionfilter.html#value">value</keyword>
         <keyword ref="qcontactactionfilter.html#vendorName">vendorName</keyword>
-        <keyword ref="qcontactactionfilter.html#vendorVersion">vendorVersion</keyword>
         <section ref="qcontactactionfilter-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactaddress.html" title="QContactAddress Class Reference">
