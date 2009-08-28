@@ -1,8 +1,8 @@
 /*
  * Proposals under discussion:
  *    - vCard serialiser
- *    - nested groups
+ *    - groups as contacts (membership via IsMemberOfGroup relationship?)
  *    - database locking
- *    - contact linking
  *    - duplicate detection
+ *    - detail attributes (subtype + context) as details
  */
