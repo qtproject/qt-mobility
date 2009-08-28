@@ -4,26 +4,26 @@ QT = core
 
 include(../common.pri)
 
-symbian {
-    TARGET.UID3 = 0xEEA0E2D0
-    TARGET.CAPABILITY = ALL -TCB
-}
-
 DEFINES += QT_BUILD_LOCATION_LIB QT_MAKEDLL
 
 INCLUDEPATH += .
 DEPENDPATH += .
 
-HEADERS +=  qlocationglobal.h \
-            qlocationutils_p.h \
+PUBLIC_HEADERS +=
+
+PUBLIC_HEADERS +=  qlocationglobal.h \
             qgeocoordinate.h \
             qgeopositioninfo.h \
             qsatelliteinfo.h \
             qsatelliteinfosource.h \
             qgeopositioninfosource.h \
             qgeoareamonitor.h \
-            qnmeapositioninfosource.h \
+            qnmeapositioninfosource.h
+
+PRIVATE_HEADERS += qlocationutils_p.h \
             qnmeapositioninfosource_p.h
+
+HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 SOURCES +=  qlocationutils.cpp \
             qgeocoordinate.cpp \
@@ -33,3 +33,14 @@ SOURCES +=  qlocationutils.cpp \
             qgeopositioninfosource.cpp \
             qgeoareamonitor.cpp \
             qnmeapositioninfosource.cpp
+
+symbian {
+    TARGET.CAPABILITY = ALL -TCB
+
+    deploy.path = /
+    exportheaders.sources = $$PUBLIC_HEADERS
+    exportheaders.path = epoc32/include
+    DEPLOYMENT += exportheaders
+}
+
+
