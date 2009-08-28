@@ -377,16 +377,6 @@ void QValueSpace::initValuespaceManager()
 }
 
 /*!
-  Initialize the value space.  This method only needs to be called by layer
-  implementers to force initialization of the value space.
-  */
-void QValueSpace::initValuespace()
-{
-    qRegisterMetaType<quintptr>("quintptr");
-    QValueSpaceManager::instance()->init();
-}
-
-/*!
   Used by value space layer implementations to install themselves into the
   system.  \a layer should be a pointer to the layer to install.
   */

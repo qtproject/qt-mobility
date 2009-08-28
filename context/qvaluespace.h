@@ -97,10 +97,8 @@ signals:
     void handleChanged(quintptr);
 };
 
-// syncqtopia header QValueSpace
 namespace QValueSpace {
     Q_CFW_EXPORT void initValuespaceManager();
-    void initValuespace();
 
     typedef QAbstractValueSpaceLayer *(*LayerCreateFunc)();
     void installLayer(LayerCreateFunc func);
