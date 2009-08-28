@@ -862,6 +862,19 @@ QVariant QValueSpaceItem::value(const QByteArray & subPath, const QVariant &def)
     return def;
 }
 
+bool QValueSpaceItem::notify() const
+{
+    return false;
+}
+
+void QValueSpaceItem::setNotify(bool notify)
+{
+    if (notify)
+        connectNotify(SIGNAL(contentsChanged()));
+    else
+        disconnectNotify(SIGNAL(contentsChanged()));
+}
+
 /*! \internal */
 void QValueSpaceItem::connectNotify(const char *signal)
 {

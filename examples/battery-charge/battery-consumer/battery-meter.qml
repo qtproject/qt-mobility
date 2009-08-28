@@ -77,9 +77,11 @@ Rectangle {
     ValueSpaceItem {
         id: batteryCharge
         path: "/power/battery/charge"
+        notify: true
     }
     ValueSpaceItem {
         id: batteryCharging
         path: "/power/battery/charging"
+        notify: true
     }
 }

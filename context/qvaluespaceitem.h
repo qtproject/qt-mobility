@@ -50,6 +50,7 @@ class Q_CFW_EXPORT QValueSpaceItem : public QObject
 
     Q_PROPERTY(QString path READ path WRITE setPath);
     Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY contentsChanged);
+    Q_PROPERTY(bool notify READ notify WRITE setNotify);
 
 public:
     QValueSpaceItem(const QValueSpaceItem &base, const QByteArray &path, QObject *parent = 0);
@@ -85,6 +86,9 @@ public:
     QVariant value(const QString &subPath, const QVariant &def = QVariant()) const;
 
     QValueSpaceItem &operator=(const QValueSpaceItem &other);
+
+    void setNotify(bool notify);
+    bool notify() const;
 
 signals:
     void contentsChanged();
