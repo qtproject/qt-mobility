@@ -220,7 +220,6 @@ QMessageStore::QMessageStore(QObject *parent)
 {
     Q_ASSERT(d_ptr != 0);
     Q_ASSERT(d_ptr->q_ptr == 0); // QMessageStore should be singleton
-    d_ptr->initialize(this);
 }
 
 QMessageStore::~QMessageStore()
