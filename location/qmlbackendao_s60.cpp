@@ -31,8 +31,8 @@
 **
 ****************************************************************************/
 
-#include "s60_QGeoPositionInfoSourceS60.h"
-#include "s60_QMLBackendAO.h"
+#include "qgeopositioninfosource_s60_p.h"
+#include "qmlbackendao_s60_p.h"
 
 //The name of the requestor //Added by PM
 _LIT(KRequestor,"QTMobility Location");

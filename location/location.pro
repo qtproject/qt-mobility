@@ -11,27 +11,28 @@ DEPENDPATH += .
 
 PUBLIC_HEADERS +=
 
-PUBLIC_HEADERS +=  qlocationglobal.h \
-            qgeocoordinate.h \
-            qgeopositioninfo.h \
-            qsatelliteinfo.h \
-            qsatelliteinfosource.h \
-            qgeopositioninfosource.h \
-            qgeoareamonitor.h \
-            qnmeapositioninfosource.h
+PUBLIC_HEADERS += qlocationglobal.h \
+                  qgeocoordinate.h \
+                  qgeopositioninfo.h \
+                  qsatelliteinfo.h \
+                  qsatelliteinfosource.h \
+                  qgeopositioninfosource.h \
+                  qgeoareamonitor.h \
+                  qnmeapositioninfosource.h
 
 PRIVATE_HEADERS += qlocationutils_p.h \
-            qnmeapositioninfosource_p.h
-
-HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
+                   qnmeapositioninfosource_p.h
 
 symbian {
-    HEADERS += s60_QGeoPositionInfoSourceS60.h \
-           s60_QMLBackendAO.h \
-           s60_NotificationCallback.h
-    SOURCES += s60_QGeoPositionInfoSourceS60.cpp \
-           s60_QMLBackendAO.cpp
+    PRIVATE_HEADERS += qgeopositioninfosource_s60_p.h \
+                       qmlbackendao_s60_p.h \
+                       notificationcallback_s60_p.h
+
+    SOURCES += qgeopositioninfosource_s60.cpp \
+               qmlbackendao_s60.cpp
 }
+
+HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 SOURCES +=  qlocationutils.cpp \
             qgeocoordinate.cpp \

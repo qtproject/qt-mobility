@@ -35,9 +35,9 @@
 
 #include <QObject>
 #include <QDateTime>
-#include "s60_QGeoPositionInfoSourceS60.h"
+#include "qgeopositioninfosource_s60_p.h"
 #include "qgeopositioninfosource.h"
-#include "s60_QMLBackendAO.h"
+#include "qmlbackendao_s60_p.h"
 
 // constructor
 CQGeoPositionInfoSourceS60::CQGeoPositionInfoSourceS60(QObject * parent) : QGeoPositionInfoSource(parent),

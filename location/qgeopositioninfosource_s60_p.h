@@ -39,8 +39,8 @@
 #include <e32base.h>
 #include <lbs.h>
 #include "qgeopositioninfosource.h"
-#include "s60_QMLBackendAO.h"
-#include "s60_NotificationCallback.h"
+#include "qmlbackendao_s60_p.h"
+#include "notificationcallback_s60_p.h"
 
 #define MAX_SIZE 5
 
