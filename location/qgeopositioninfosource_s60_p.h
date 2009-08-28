@@ -31,8 +31,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPOSITIONINFOSOURCES60_H
-#define QGEOPOSITIONINFOSOURCES60_H
+#ifndef QGEOPOSITIONINFOSOURCE_S60_P_H
+#define QGEOPOSITIONINFOSOURCE_S60_P_H
 
 // INCLUDES
 #include <e32std.h>
@@ -271,4 +271,4 @@ private:
     TUint8  ModuleFlags;
     };
 
-#endif // CQGEOPOSITIONINFOSOURCES60_H
+#endif // QGEOPOSITIONINFOSOURCE_S60_P_H

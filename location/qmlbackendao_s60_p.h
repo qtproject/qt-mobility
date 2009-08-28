@@ -31,9 +31,8 @@
 **
 ****************************************************************************/
 
-
-#ifndef QMLBACKENDAO_H
-#define QMLBACKENDAO_H
+#ifndef QMLBACKENDAO_S60_P_H
+#define QMLBACKENDAO_S60_P_H
 
 #include <e32base.h>	// For CActive, link against: euser.lib
 #include <lbs.h>
@@ -143,4 +142,4 @@ private:
 
     };
 
-#endif // QMLBACKENDAO_H
+#endif // QMLBACKENDAO_S60_P_H
