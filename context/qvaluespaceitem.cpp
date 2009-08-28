@@ -493,9 +493,36 @@ QValueSpaceItem::~QValueSpaceItem()
 }
 
 /*!
-    Returns the item name of this QValueSpaceItem.
+    Sets the path to \a path.
+
+    Calling this function causes the QValueSpaceItem to disconnect and reconnect to the value
+    space with the new \a path.
+
+    Calling this function disconnects all signal/slot connections.
 */
-QString QValueSpaceItem::itemName() const
+void QValueSpaceItem::setPath(const QString &path)
+{
+    VS_CALL_ASSERT;
+
+    QVALUESPACEITEM_D(d);
+    if (md->path == path.toUtf8())
+        return;
+
+    if (d->type == QValueSpaceItemPrivate::Write)
+        delete d;
+
+    md->Release();
+
+    disconnect();
+
+    d = new QValueSpaceItemPrivateData(path.toUtf8());
+    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
+}
+
+/*!
+    Returns the path this QValueSpaceItem.
+*/
+QString QValueSpaceItem::path() const
 {
     VS_CALL_ASSERT;
     QVALUESPACEITEM_D(d);

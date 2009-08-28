@@ -46,7 +46,10 @@ QT_BEGIN_NAMESPACE
 struct QValueSpaceItemPrivate;
 class Q_CFW_EXPORT QValueSpaceItem : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
+
+    Q_PROPERTY(QString path READ path WRITE setPath);
+    Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY contentsChanged);
 
 public:
     QValueSpaceItem(const QValueSpaceItem &base, const QByteArray &path, QObject *parent = 0);
@@ -59,7 +62,8 @@ public:
     explicit QValueSpaceItem(QObject *parent = 0);
     virtual ~QValueSpaceItem();
 
-    QString itemName() const;
+    void setPath(const QString &path);
+    QString path() const;
 
     QList<QString> subPaths() const;
 
