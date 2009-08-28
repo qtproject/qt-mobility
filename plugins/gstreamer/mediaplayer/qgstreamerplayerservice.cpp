@@ -100,45 +100,6 @@ void QGstreamerPlayerService::setVideoOutput(QObject *output)
 }
 */
 
-bool QGstreamerPlayerService::isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType)
-{
-    if(endpointType == QAbstractMediaService::VideoOutput)
-        return true;
-
-    return false;
-}
-
-QString QGstreamerPlayerService::activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType)
-{
-    switch(endpointType) {
-        case QAbstractMediaService::VideoOutput:
-            //TODO, return current video output endpoint
-            return QString();
-            break;
-        default:
-            return QString();
-    }
-}
-
-void QGstreamerPlayerService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint)
-{
-    if(endpointType == QAbstractMediaService::VideoOutput) {
-        //TODO
-        qWarning()<<"set video output: "<<endpoint;
-    }
-}
-
-QList<QString> QGstreamerPlayerService::supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const
-{
-    QList<QString> list;
-    if(endpointType == QAbstractMediaService::VideoOutput) {
-        list.append("RendererOutput");
-        list.append("WindowOutput");
-        list.append("No video output");
-    }
-    return list;
-}
-
 void QGstreamerPlayerService::videoOutputChanged(QVideoOutputControl::Output output)
 {
 #ifdef QT_NO_VIDEOSURFACE

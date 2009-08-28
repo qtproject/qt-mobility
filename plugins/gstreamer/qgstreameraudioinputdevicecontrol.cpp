@@ -9,7 +9,7 @@
 #endif
 
 QGstreamerAudioInputDeviceControl::QGstreamerAudioInputDeviceControl(QObject *parent)
-    :QAudioInputDeviceControl(parent)
+    :QAudioDeviceControl(parent)
 {
     update();
 }

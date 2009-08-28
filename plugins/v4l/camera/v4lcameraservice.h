@@ -53,17 +53,6 @@ public:
     V4LCameraService(QObject *parent = 0);
     ~V4LCameraService();
 
-    bool isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType);
-    void setInputStream(QIODevice* stream) {};
-    QIODevice* inputStream() const { return 0; };
-
-    void setOutputStream(QIODevice* stream) {};
-    QIODevice* outputStream() const { return 0; };
-
-    QString activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType);
-    void setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint);
-    QList<QString> supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const;
-
     QAbstractMediaControl *control(const char *name) const;
 
 private:

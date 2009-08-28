@@ -57,16 +57,16 @@ public:
         StreamOutput
     };
 
-    virtual bool isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType) = 0;
+    virtual bool isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType);
 
-    virtual void setInputStream(QIODevice* stream) = 0;
-    virtual QIODevice* inputStream() const = 0;
+    virtual void setInputStream(QIODevice* stream);
+    virtual QIODevice* inputStream() const;
 
-    virtual void setOutputStream(QIODevice* stream) = 0;
-    virtual QIODevice* outputStream() const = 0;
+    virtual void setOutputStream(QIODevice* stream);
+    virtual QIODevice* outputStream() const;
 
-    virtual QString activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType) = 0;
-    virtual void setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint) = 0;
+    virtual QString activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType);
+    virtual void setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint);
     virtual QList<QString> supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const;
 
     virtual QAbstractMediaControl* control(const char *name) const = 0;

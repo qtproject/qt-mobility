@@ -44,7 +44,7 @@ class AudioCaptureSession;
 class AudioEncodeControl;
 class AudioMediaControl;
 class AudioFormatControl;
-class QAudioInputDeviceControl;
+class QAudioDeviceControl;
 
 class AudioCaptureService : public QAbstractMediaService
 {
@@ -53,25 +53,13 @@ public:
     AudioCaptureService(QObject *parent = 0);
     ~AudioCaptureService();
 
-    bool isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType);
-
-    void setInputStream(QIODevice* stream);
-    QIODevice* inputStream() const;
-
-    void setOutputStream(QIODevice* stream);
-    QIODevice* outputStream() const;
-
-    QString activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType);
-    void setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint);
-    QList<QString> supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const;
-
     QAbstractMediaControl *control(const char *name) const;
 private:
     AudioCaptureSession *m_session;
     AudioEncodeControl  *m_encode;
     AudioMediaControl   *m_media;
     AudioFormatControl  *m_format;
-    QAudioInputDeviceControl *m_audio;
+    QAudioDeviceControl *m_audio;
 };
 
 #endif

@@ -69,7 +69,7 @@ QAbstractMediaControl *AudioCaptureService::control(const char *name) const
     if (qstrcmp(name,QAudioEncodeControl_iid) == 0)
         return m_encode;
 
-    if (qstrcmp(name,QAudioInputDeviceControl_iid) == 0)
+    if (qstrcmp(name,QAudioDeviceControl_iid) == 0)
         return m_audio;
 
     if (qstrcmp(name,QMediaFormatControl_iid) == 0)
@@ -77,72 +77,4 @@ QAbstractMediaControl *AudioCaptureService::control(const char *name) const
 
     return 0;
 }
-
-QString AudioCaptureService::activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType)
-{
-    int idx = 0;
-
-    switch(endpointType) {
-        case QAbstractMediaService::AudioInput:
-            idx = m_audio->selectedDevice();
-            return m_audio->name(idx);
-        default:
-            return QString();
-    }
-}
-
-void AudioCaptureService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint)
-{
-    if(endpointType == QAbstractMediaService::AudioInput) {
-        qWarning()<<"set capture device to: "<<endpoint;
-        int numDevices = m_audio->deviceCount();
-        for(int i=0;i<numDevices;i++) {
-            if(qstrcmp(endpoint.toLocal8Bit().constData(),m_audio->name(i).toLocal8Bit().constData()) == 0) {
-                m_session->setCaptureDevice(endpoint);
-                m_audio->setSelectedDevice(i);
-                break;
-            }
-        }
-    }
-}
-
-QList<QString> AudioCaptureService::supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const
-{
-    QList<QString> list;
-    if(endpointType == QAbstractMediaService::AudioInput) {
-        int numDevices = m_audio->deviceCount();
-        for(int i=0;i<numDevices;i++)
-            list.append(m_audio->name(i));
-    }
-    return list;
-}
-
-bool AudioCaptureService::isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType)
-{
-    switch(endpointType) {
-        case QAbstractMediaService::AudioInput:
-            return true;
-        default:
-            return false;
-    }
-}
-
-QIODevice* AudioCaptureService::inputStream() const
-{
-    return 0;
-}
-
-void AudioCaptureService::setInputStream(QIODevice* stream)
-{
-}
-
-QIODevice* AudioCaptureService::outputStream() const
-{
-    return 0;
-}
-
-void AudioCaptureService::setOutputStream(QIODevice* stream)
-{
-}
-
 

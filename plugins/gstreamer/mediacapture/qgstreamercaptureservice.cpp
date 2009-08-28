@@ -124,73 +124,6 @@ QGstreamerCaptureService::~QGstreamerCaptureService()
 {
 }
 
-bool QGstreamerCaptureService::isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType)
-{
-    if(endpointType == QAbstractMediaService::VideoInput)
-        return true;
-    if(endpointType == QAbstractMediaService::AudioInput)
-        return true;
-
-    return false;
-
-}
-
-QString QGstreamerCaptureService::activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType)
-{
-    int idx = 0;
-
-    switch(endpointType) {
-        case QAbstractMediaService::AudioInput:
-            idx = m_audioInputDevice->selectedDevice();
-            return m_audioInputDevice->name(idx);
-
-        case QAbstractMediaService::VideoInput:
-            //TODO, m_cameraControl
-            return QString();
-        default:
-            return QString();
-    }
-}
-
-void QGstreamerCaptureService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint)
-{
-    int numDevices = 0;
-
-    switch(endpointType) {
-        case QAbstractMediaService::AudioInput:
-            numDevices = m_audioInputDevice->deviceCount();
-            for(int i=0;i<numDevices;i++) {
-                if(qstrcmp(endpoint.toLocal8Bit().constData(),m_audioInputDevice->name(i).toLocal8Bit().constData()) == 0) {
-                    m_audioInputDevice->setSelectedDevice(i);
-                    break;
-                }
-            }
-            break;
-        case QAbstractMediaService::VideoInput:
-            //TODO, m_cameraControl
-            break;
-        default:
-            return;
-    }
-}
-
-QList<QString> QGstreamerCaptureService::supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const
-{
-    QList<QString> list;
-
-    if(endpointType == QAbstractMediaService::AudioInput) {
-        int numDevices = m_audioInputDevice->deviceCount();
-        for(int i=0;i<numDevices;i++)
-            list.append(m_audioInputDevice->name(i));
-
-    } else if(endpointType == QAbstractMediaService::VideoInput) {
-        //TODO, m_cameraControl
-
-    }
-
-    return list;
-}
-
 QAbstractMediaControl *QGstreamerCaptureService::control(const char *name) const
 {
     if (qstrcmp(name, QVideoOutputControl_iid) == 0)
@@ -204,7 +137,7 @@ QAbstractMediaControl *QGstreamerCaptureService::control(const char *name) const
         return m_videoWindow;
 #endif
 
-    if (qstrcmp(name,QAudioInputDeviceControl_iid) == 0)
+    if (qstrcmp(name,QAudioDeviceControl_iid) == 0)
         return m_audioInputDevice;
 
     if (qstrcmp(name,QMediaRecorderControl_iid) == 0)

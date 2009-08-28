@@ -50,80 +50,18 @@ Qt7PlayerService::Qt7PlayerService(QObject *parent):
 Qt7PlayerService::~Qt7PlayerService()
 {
 }
-
-bool Qt7PlayerService::isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType)
-{
-    Q_UNUSED(endpointType);
-    return false;
-}
-
-void Qt7PlayerService::setInputStream(QIODevice* stream)
-{
-    Q_UNUSED(stream);
-}
-
-QIODevice* Qt7PlayerService::inputStream() const
-{
-    return 0;
-}
-
-void Qt7PlayerService::setOutputStream(QIODevice* stream)
-{
-    Q_UNUSED(stream);
-}
-
-QIODevice* Qt7PlayerService::outputStream() const
-{
-    return 0;
-}
-
-QString Qt7PlayerService::activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType)
-{
-    Q_UNUSED(endpointType);
-    return QString();
-}
-
-void Qt7PlayerService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint)
-{
-    Q_UNUSED(endpointType);
-    Q_UNUSED(endpoint);
-}
-
-QList<QString> Qt7PlayerService::supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const
-{
-    Q_UNUSED(endpointType);
-    return QList<QString>();
-}
-
+/*
 void Qt7PlayerService::setVideoOutput(QObject *output)
 {
     Q_UNUSED(output);
-    /*
     Qt7Widget *vout = qobject_cast<Qt7Widget*>(output);
     if (vout != 0) {
         QMediaPlayerService::setVideoOutput(output);
         playerControl->movie()->setVideoWidget(vout);
     }
-    */
 }
+*/
 
-QList<QByteArray> Qt7PlayerService::supportedEndpointInterfaces(QMediaEndpointInterface::Direction direction) const
-{
-    QList<QByteArray>   rc;
-
-    if (direction == QMediaEndpointInterface::Output)
-        rc << QMediaWidgetEndpoint_iid;
-
-    return rc;
-}
-
-QObject* Qt7PlayerService::createEndpoint(const char *interface)
-{
-    if (QLatin1String(interface) == QMediaWidgetEndpoint_iid)
-        return new Qt7Widget;
-
-    return 0;
-}
 
 QAbstractMediaControl* Qt7PlayerService::control(const char *name) const
 {
