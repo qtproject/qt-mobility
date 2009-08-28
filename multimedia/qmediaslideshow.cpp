@@ -184,26 +184,33 @@ void QMediaSlideShowPrivate::_q_getFinished()
 
 /*!
     \class QMediaSlideShow
+    \brief The QMediaSlideShow class presents a slide show of images from a playlist.
+    \preliminary
+
+    A slide show playlist may be composed of a variety of media.  If a playlist item itself isn't
+    an image a representive image may be displayed instead, for music this may be the album cover
+    art or for video a poster image.
 */
 
 /*!
     \enum QMediaSlideShow::State
 
-    \value StoppedState
-    \value PlayingState
-    \value PausedState
+    \value StoppedState The slide show is not progressing, and has been reset.
+    \value PlayingState The slide show is progressing.
+    \value PausedState The slide show is not progressing.
 */
 
 /*!
     \enum QMediaSlideShow::MediaStatus
 
-    \value NoMedia
-    \value LoadingMedia
-    \value LoadedMedia
-    \value InvalidMedia
+    \value NoMedia  There is no current media.
+    \value LoadingMedia The slide show is loading the current media.
+    \value LoadedMedia The slide show has loaded the current media.
+    \value InvalidMedia The current media cannot be loaded.
 */
 
 /*!
+    Constructs a new slide show with the given \a parent.
 */
 QMediaSlideShow::QMediaSlideShow(QObject *parent)
     : QAbstractMediaObject(*new QMediaSlideShowPrivate, parent)
@@ -220,6 +227,7 @@ QMediaSlideShow::QMediaSlideShow(QObject *parent)
 }
 
 /*!
+    Destroys a slide show.
 */
 QMediaSlideShow::~QMediaSlideShow()
 {
@@ -249,6 +257,7 @@ bool QMediaSlideShow::isValid() const
 
 /*!
     \property QMediaSlideShow::state
+    \brief the playback state of a slide show.
 */
 
 QMediaSlideShow::State QMediaSlideShow::state() const
@@ -257,11 +266,14 @@ QMediaSlideShow::State QMediaSlideShow::state() const
 }
 
 /*!
-    \fn QMediaSlideShow::stateChanged(QMediaSlideShow::State state);
+    \fn QMediaSlideShow::stateChanged(QMediaSlideShow::State state)
+
+    Signals that the playback \a state of a slide show has changed.
 */
 
 /*!
     \property QMediaSlideShow::mediaStatus
+    \brief the status of the current media.
 */
 
 QMediaSlideShow::MediaStatus QMediaSlideShow::mediaStatus() const
@@ -275,10 +287,18 @@ QMediaSlideShow::MediaStatus QMediaSlideShow::mediaStatus() const
 
 /*!
     \fn QMediaSlideShow::mediaStatusChanged(QMediaSlideShow::MediaStatus status)
+
+    Signals the the \a status of the current media has changed.
 */
 
 /*!
     \property QMediaSlideShow::media
+    \brief the media a slide show is presenting.
+
+    This is the media used to initially populate the playlist, and may not be representive of the
+    currently displayed media.
+
+    \sa currentMedia
 */
 
 QMediaSource QMediaSlideShow::media() const
@@ -322,11 +342,14 @@ void QMediaSlideShow::setMedia(const QMediaSource &media)
 }
 
 /*!
-    \fn QMediaSlideShow::mediaChanged(const QMediaSource &media);
+    \fn QMediaSlideShow::mediaChanged(const QMediaSource &media)
+
+    Signals that the \a media a slide show is presenting.
 */
 
 /*!
     \property QMediaSlideShow::currentMedia
+    \brief the actual media resource the slide show is currently displaying.
 */
 
 QMediaResource QMediaSlideShow::currentMedia() const
@@ -339,11 +362,14 @@ QMediaResource QMediaSlideShow::currentMedia() const
 }
 
 /*!
-    \fn QMediaSlideShow::currentMediaChanged(const QMediaResource &media);
+    \fn QMediaSlideShow::currentMediaChanged(const QMediaResource &media)
+
+    Signals that the \a media resource a slide show is presenting has changed.
 */
 
 /*!
     \property QMediaSlideShow::currentIndex
+    \brief the index in the playlist of the current media.
 */
 
 int QMediaSlideShow::currentIndex() const
@@ -371,11 +397,14 @@ void QMediaSlideShow::setCurrentIndex(int index)
 }
 
 /*!
-    \fn QMediaSlideShow::currentIndexChanged(int index);
+    \fn QMediaSlideShow::currentIndexChanged(int index)
+
+    Signals that the \a index in the playlist of the current media has changed.
 */
 
 /*!
     \property QMediaSlideShow::playlist
+    \brief a playlist containing the media displayed in a slide show.
 */
 
 QMediaPlaylistProvider *QMediaSlideShow::playlist() const
@@ -385,6 +414,7 @@ QMediaPlaylistProvider *QMediaSlideShow::playlist() const
 
 /*!
     \property QMediaSlideShow::timeout
+    \brief the amount of time an image is displayed for before moving to the next image.
 */
 
 int QMediaSlideShow::timeout() const
@@ -400,6 +430,10 @@ void QMediaSlideShow::setTimeout(int timeout)
 }
 
 /*!
+    Starts a slide show.
+
+    If there is no current index set this will start at the beginning of the playlist, otherwise it
+    will resume from the current index.
 */
 void QMediaSlideShow::play()
 {
@@ -427,6 +461,9 @@ void QMediaSlideShow::play()
 }
 
 /*!
+    Pauses a slide show.
+
+    The current index is retained.
 */
 void QMediaSlideShow::pause()
 {
@@ -440,6 +477,9 @@ void QMediaSlideShow::pause()
 }
 
 /*!
+    Stops a slide show.
+
+    This will reset the current index and media to null states.
 */
 void QMediaSlideShow::stop()
 {
@@ -463,6 +503,9 @@ void QMediaSlideShow::stop()
 }
 
 /*!
+    Moves the slide show to the next image.
+
+    If there is no current index this will display the first item in the playlist.
 */
 void QMediaSlideShow::next()
 {
@@ -472,6 +515,9 @@ void QMediaSlideShow::next()
 }
 
 /*!
+    Moves the sldie show to the previous image.
+
+    If there is no current index this will display the last item in the playlist.
 */
 void QMediaSlideShow::previous()
 {
