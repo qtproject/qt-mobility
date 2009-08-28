@@ -122,8 +122,6 @@ private:
     bool _hasSubFolders;
     uint _messageCount;
     bool _init;
-
-    enum columnOrder { entryIdColumn = 0, nameColumn, recordKeyColumn, countColumn, subFoldersColumn };
 };
 
 class MapiStore {
