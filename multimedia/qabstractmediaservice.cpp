@@ -33,22 +33,12 @@
 ****************************************************************************/
 
 #include "qabstractmediaservice.h"
+#include "qabstractmediaservice_p.h"
+
 #include "qaudiodevicecontrol.h"
 #include "qvideodevicecontrol.h"
 
 #include <QtCore/qtimer.h>
-
-class QAbstractMediaServicePrivate
-{
-public:
-    QAbstractMediaServicePrivate()
-    {
-        inputStream  = 0;
-        outputStream = 0;
-    }
-    QIODevice* inputStream;
-    QIODevice* outputStream;
-};
 
 /*!
     \class QAbstractMediaService
@@ -63,6 +53,17 @@ QAbstractMediaService::QAbstractMediaService(QObject *parent)
     : QObject(parent)
     , d_ptr(new QAbstractMediaServicePrivate)
 {
+    d_ptr->q_ptr = this;
+}
+
+/*!
+    \internal
+*/
+QAbstractMediaService::QAbstractMediaService(QAbstractMediaServicePrivate &dd, QObject *parent)
+    : QObject(parent)
+    , d_ptr(&dd)
+{
+    d_ptr->q_ptr = this;
 }
 
 QAbstractMediaService::~QAbstractMediaService()

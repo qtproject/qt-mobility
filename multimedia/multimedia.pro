@@ -5,6 +5,7 @@ TARGET = QtMedia
 
 include (../common.pri)
 
+QT += network
 contains(QT_CONFIG, multimedia): QT += multimedia
 
 !static:DEFINES += QT_MAKEDLL
@@ -16,6 +17,7 @@ HEADERS = \
     qabstractmediaobject.h \
     qabstractmediaobject_p.h \
     qabstractmediaservice.h \
+    qabstractmediaservice_p.h  \
     qaudiorecorderservice.h \
     qlocalmediaplaylistprovider.h \
     qmediametadata.h \
@@ -37,6 +39,8 @@ HEADERS = \
     qmediaserviceprovider.h \
     qmediaserviceproviderplugin.h \
     qmediasink.h \
+    qmediaslideshow.h \
+    qmediaslideshowservice_p.h \
     qmultimediaglobal.h \
     qradioplayer.h \
     qradioservice.h \
@@ -83,6 +87,8 @@ SOURCES = qabstractmediacontrol.cpp \
     qmediaresource.cpp \
     qmediaserviceprovider.cpp \
     qmediasink.cpp \
+    qmediaslideshow.cpp \
+    qmediaslideshowservice.cpp \
     qradioplayer.cpp \
     qradioservice.cpp \
     qradioplayercontrol.cpp \

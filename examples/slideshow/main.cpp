@@ -32,45 +32,16 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qmetaobject.h>
-#include <QtCore/qtimer.h>
+#include "slideshow.h"
 
-#include "qabstractmediacontrol.h"
-#include "qabstractmediacontrol_p.h"
+#include <QtGui>
 
-
-
-/*!
-    \class QAbstractMediaControl
-    \ingroup multimedia
-
-    \preliminary
-    \brief The base Multimedia control object.
-
-    \sa QAbstractMediaService, QAbstractMediaObject
-*/
-
-QAbstractMediaControl::~QAbstractMediaControl()
+int main(int argc, char *argv[])
 {
-    delete d_ptr;
+    QApplication app(argc, argv);
+
+    SlideShow slideShow;
+    slideShow.show();
+
+    return app.exec();
 }
-
-QAbstractMediaControl::QAbstractMediaControl(QObject *parent)
-    : QObject(parent)
-    , d_ptr(new QAbstractMediaControlPrivate)
-{
-    d_ptr->q_ptr = this;
-}
-
-/*!
-    \internal
-*/
-
-QAbstractMediaControl::QAbstractMediaControl(QAbstractMediaControlPrivate &dd, QObject *parent)
-    : QObject(parent)
-    , d_ptr(&dd)
-
-{
-    d_ptr->q_ptr = this;
-}
-

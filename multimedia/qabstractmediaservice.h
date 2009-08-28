@@ -82,6 +82,7 @@ public:
 
 protected:
     QAbstractMediaService(QObject* parent);
+    QAbstractMediaService(QAbstractMediaServicePrivate &dd, QObject *parent);
     ~QAbstractMediaService();
 
     QAbstractMediaServicePrivate *d_ptr;

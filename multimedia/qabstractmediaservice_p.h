@@ -32,45 +32,36 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qmetaobject.h>
-#include <QtCore/qtimer.h>
+#ifndef QABSTRACTMEDIASERVICE_P_H
+#define QABSTRACTMEDIASERVICE_P_H
 
-#include "qabstractmediacontrol.h"
-#include "qabstractmediacontrol_p.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
 
-
-/*!
-    \class QAbstractMediaControl
-    \ingroup multimedia
-
-    \preliminary
-    \brief The base Multimedia control object.
-
-    \sa QAbstractMediaService, QAbstractMediaObject
-*/
-
-QAbstractMediaControl::~QAbstractMediaControl()
+class QAbstractMediaServicePrivate
 {
-    delete d_ptr;
-}
+public:
+    QAbstractMediaServicePrivate()
+        : q_ptr(0)
+        , inputStream(0)
+        , outputStream(0)
+    {
+    }
 
-QAbstractMediaControl::QAbstractMediaControl(QObject *parent)
-    : QObject(parent)
-    , d_ptr(new QAbstractMediaControlPrivate)
-{
-    d_ptr->q_ptr = this;
-}
+    QAbstractMediaService *q_ptr;
 
-/*!
-    \internal
-*/
+    QIODevice* inputStream;
+    QIODevice* outputStream;
+};
 
-QAbstractMediaControl::QAbstractMediaControl(QAbstractMediaControlPrivate &dd, QObject *parent)
-    : QObject(parent)
-    , d_ptr(&dd)
 
-{
-    d_ptr->q_ptr = this;
-}
-
+#endif

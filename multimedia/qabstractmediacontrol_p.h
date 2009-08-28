@@ -46,10 +46,14 @@
 // We mean it.
 //
 
+class QAbstractMediaControl;
+
 class QAbstractMediaControlPrivate
 {
 public:
     virtual ~QAbstractMediaControlPrivate() {}
+
+    QAbstractMediaControl *q_ptr;
 };
 
 #endif

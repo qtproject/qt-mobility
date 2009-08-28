@@ -32,45 +32,36 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qmetaobject.h>
-#include <QtCore/qtimer.h>
+#ifndef SLIDESHOW_H
+#define SLIDESHOW_H
 
-#include "qabstractmediacontrol.h"
-#include "qabstractmediacontrol_p.h"
+#include <QWidget>
+#include <multimedia/qmediaslideshow.h>
 
+class QAbstractButton;
+class QLabel;
 
-
-/*!
-    \class QAbstractMediaControl
-    \ingroup multimedia
-
-    \preliminary
-    \brief The base Multimedia control object.
-
-    \sa QAbstractMediaService, QAbstractMediaObject
-*/
-
-QAbstractMediaControl::~QAbstractMediaControl()
+class SlideShow : public QWidget
 {
-    delete d_ptr;
-}
+    Q_OBJECT
+public:
+    SlideShow(QWidget *parent = 0);
 
-QAbstractMediaControl::QAbstractMediaControl(QObject *parent)
-    : QObject(parent)
-    , d_ptr(new QAbstractMediaControlPrivate)
-{
-    d_ptr->q_ptr = this;
-}
+private slots:
+    void openPlaylist();
+    void openDirectory();
+    void openLocation();
 
-/*!
-    \internal
-*/
+    void play();
 
-QAbstractMediaControl::QAbstractMediaControl(QAbstractMediaControlPrivate &dd, QObject *parent)
-    : QObject(parent)
-    , d_ptr(&dd)
+    void stateChanged(QMediaSlideShow::State state);
+    void setImage(const QImage &image);
 
-{
-    d_ptr->q_ptr = this;
-}
+private:
+    QMediaSlideShow *slideShow;
+    QLabel *imageLabel;
+    QAbstractButton *playButton;
+    QAbstractButton *stopButton;
+};
 
+#endif
