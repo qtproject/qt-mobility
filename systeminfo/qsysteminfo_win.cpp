@@ -160,10 +160,12 @@ QStringList QSystemInfoPrivate::availableLanguages() const
         foreach(QString localeName, localeList) {
             QString lang = localeName.mid(3,2);
             if(!langList.contains(lang) && !lang.isEmpty() && !lang.contains("help")) {
-                langList <<lang;
+                langList << lang;
             }
         }
-        return langList;
+        if(!langList.isEmpty()) {
+            return langList;
+        }
     }
     return QStringList() << currentLanguage();
 }
@@ -885,7 +887,6 @@ QSystemMemoryInfo::VolumeType QSystemMemoryInfoPrivate::volumeType(const QString
 
 QStringList QSystemMemoryInfoPrivate::listOfVolumes()
 {
-
     QStringList drivesList;
 
     WMIHelper *wHelper;
@@ -1004,10 +1005,14 @@ QString QSystemDeviceInfoPrivate::manufacturer()
     WMIHelper *wHelper;
     wHelper = new WMIHelper();
     wHelper->setWmiNamespace("root/cimv2");
-    wHelper->setClassName("Win32_ComputerSystem");
-    wHelper->setClassProperty(QStringList() << "Manufacturer");
+    wHelper->setClassName("Win32_ComputerSystemProduct");
+    wHelper->setClassProperty(QStringList() << "Vendor");
     QVariant v = wHelper->getWMIData();
-    return v.toString();
+    QString manu = v.toString();
+    if(manu.isEmpty()) {
+        manu = "System manufacturer";
+    }
+    return manu;
 }
 
 QString QSystemDeviceInfoPrivate::model()
@@ -1015,10 +1020,66 @@ QString QSystemDeviceInfoPrivate::model()
     WMIHelper *wHelper;
     wHelper = new WMIHelper();
     wHelper->setWmiNamespace("root/cimv2");
-    wHelper->setClassName("Win32_ComputerSystem");
-    wHelper->setClassProperty(QStringList() << "Model");
+    wHelper->setClassName("Win32_Processor");
+    wHelper->setClassProperty(QStringList() << "Architecture");
     QVariant v = wHelper->getWMIData();
-    return v.toString();
+    QString model;
+    switch(v.toUInt()) {
+    case 0:
+        model = "x86 ";
+        break;
+    case 1:
+        model = "MIPS ";
+        break;
+    case 2:
+        model = "Alpha ";
+        break;
+    case 3:
+        model = "PowerPC ";
+        break;
+    case 6:
+        model = "Intel Itanium ";
+        break;
+    case 9:
+        model = "x64 ";
+        break;
+    }
+
+    wHelper->setClassName("Win32_ComputerSystem");
+    wHelper->setClassProperty(QStringList() << "PCSystemType");
+    v = wHelper->getWMIData();
+    switch(v.toUInt()) {
+    case 0:
+        model += "";
+        break;
+    case 1:
+        model += "Desktop";
+        break;
+    case 2:
+        model += "Mobile";
+        break;
+    case 3:
+        model += "Workstation";
+        break;
+    case 4:
+        model += "Enterprise Server";
+        break;
+    case 5:
+        model += "Small/Home Server";
+        break;
+    case 6:
+        model += "Applicance PC";
+        break;
+    case 7:
+        model += "Performace Server";
+        break;
+    case 8:
+        model += "Maximum";
+        break;
+
+    };
+
+    return model;
 }
 
 QString QSystemDeviceInfoPrivate::productName()
@@ -1029,8 +1090,19 @@ QString QSystemDeviceInfoPrivate::productName()
     wHelper->setClassName("Win32_ComputerSystemProduct");
     wHelper->setClassProperty(QStringList() << "Name");
     QVariant v = wHelper->getWMIData();
-    return v.toString();
-    return QString();
+    QString name = v.toString();
+
+    if(name.isEmpty()) {
+        wHelper->setClassName("Win32_ComputerSystem");
+        wHelper->setClassProperty(QStringList() << "PCSystemType");        
+        v = wHelper->getWMIData();
+        name = v.toString();
+        if(name.isEmpty()) {
+            name = "Unspecified product";
+        }
+    }
+    
+    return name;
 }
 
 bool QSystemDeviceInfoPrivate::isBatteryCharging()
