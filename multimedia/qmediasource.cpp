@@ -43,6 +43,13 @@ public:
     QMediaSourcePrivate() {}
     QMediaSourcePrivate(const QMediaResourceList &r):
         resources(r) {}
+    QMediaSourcePrivate(const QMediaSourcePrivate &other):
+        resources(other.resources) {}
+
+    QMediaSourcePrivate& operator=(const QMediaSourcePrivate &other)
+    {
+        resources = other.resources;
+    }
 
     QMediaResourceList  resources;
 };
@@ -172,9 +179,11 @@ QUrl QMediaSource::contentUri() const
 
 QMediaResource QMediaSource::contentResource() const
 {
-    foreach (const QMediaResource &resource, d->resources) {
-        if (resource.role() == QMediaResource::ContentRole)
-            return resource;
+    if (d.constData() != 0) {
+        foreach (const QMediaResource &resource, d->resources) {
+            if (resource.role() == QMediaResource::ContentRole)
+                return resource;
+        }
     }
 
     return QMediaResource();
@@ -190,9 +199,11 @@ QMediaResourceList QMediaSource::resources(QMediaResource::ResourceRole role) co
 {
     QMediaResourceList rc;
 
-    foreach (const QMediaResource &resource, d->resources) {
-        if (resource.role() == role)
-            rc << resource;
+    if (d.constData() != 0) {
+        foreach (const QMediaResource &resource, d->resources) {
+            if (resource.role() == role)
+                rc << resource;
+        }
     }
 
     return rc;
