@@ -48,22 +48,6 @@ public:
     Qt7PlayerService(QObject *parent = 0);
     ~Qt7PlayerService();
 
-    bool isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType);
-
-    void setInputStream(QIODevice* stream);
-    QIODevice* inputStream() const;
-
-    void setOutputStream(QIODevice* stream);
-    QIODevice* outputStream() const;
-
-    QString activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType);
-    void setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint);
-    QList<QString> supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const;
-
-    void setVideoOutput(QObject *output);
-    QList<QByteArray> supportedEndpointInterfaces(QMediaEndpointInterface::Direction direction) const;
-    QObject* createEndpoint(const char *interface);
-
     QAbstractMediaControl* control(const char *name) const;
 
 private:

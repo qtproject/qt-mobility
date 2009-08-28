@@ -1,10 +1,10 @@
 #ifndef AUDIOINPUTDEVICECONTROL_H
 #define AUDIOINPUTDEVICECONTROL_H
 
-#include <qaudioinputdevicecontrol.h>
+#include <qaudiodevicecontrol.h>
 #include <QtCore/qstringlist.h>
 
-class AudioInputDeviceControl : public QAudioInputDeviceControl
+class AudioInputDeviceControl : public QAudioDeviceControl
 {
 Q_OBJECT
 public:

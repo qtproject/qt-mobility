@@ -157,49 +157,6 @@ QAbstractMediaControl *QWmpPlayerService::control(const char *name) const
     }
 }
 
-bool QWmpPlayerService::isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType)
-{
-    if(endpointType == QAbstractMediaService::VideoOutput)
-        return true;
-
-    return false;
-}
-
-void QWmpPlayerService::setInputStream(QIODevice* stream)
-{
-    Q_UNUSED(stream)
-}
-
-QIODevice* QWmpPlayerService::inputStream() const
-{
-    return 0;
-}
-
-void QWmpPlayerService::setOutputStream(QIODevice* stream)
-{
-    Q_UNUSED(stream)
-}
-
-QIODevice* QWmpPlayerService::outputStream() const
-{
-    return 0;
-}
-
-QString QWmpPlayerService::activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType)
-{
-    return QString();
-}
-
-void QWmpPlayerService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint)
-{
-}
-
-QList<QString> QWmpPlayerService::supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const
-{
-    QList<QString> list;
-    return list;
-}
-
 /*
 void QWmpPlayerService::setVideoOutput(QObject *output)
 {

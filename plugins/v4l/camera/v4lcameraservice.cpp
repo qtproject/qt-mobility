@@ -80,32 +80,6 @@ void V4LCameraService::setVideoOutput(QObject *output)
 }
 */
 
-bool V4LCameraService::isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType)
-{
-    if(endpointType == QAbstractMediaService::VideoInput)
-        return true;
-
-    return false;
-}
-
-QString V4LCameraService::activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType)
-{
-    return m_device;
-}
-
-void V4LCameraService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint)
-{
-    m_device = QByteArray(endpoint.toLocal8Bit().constData());
-    m_session->setDevice(m_device);
-}
-
-QList<QString> V4LCameraService::supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const
-{
-    QList<QString> list;
-    list << "/dev/video0" << "/dev/video1";
-    return list;
-}
-
 QAbstractMediaControl *V4LCameraService::control(const char *name) const
 {
     if (qstrcmp(name,QMediaRecorderControl_iid) == 0)

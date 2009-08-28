@@ -32,46 +32,41 @@
 **
 ****************************************************************************/
 
-#ifndef QGSTREAMERPLAYERSERVICE_H
-#define QGSTREAMERPLAYERSERVICE_H
+#ifndef QVIDEODEVICECONTROL_H
+#define QVIDEODEVICECONTROL_H
 
-#include <QtCore/qobject.h>
+#include <qabstractmediacontrol.h>
 
-#include <Phonon/MediaObject>
-#include <Phonon/VideoWidget>
-
-#include "qmediaplayerservice.h"
-#include "qphononvideowidget.h"
-
-
-class QMediaMetaData;
-class QMediaPlayerControl;
-class QMediaPlaylist;
-
-class QPhononMetaData;
-class QPhononPlayerControl;
-class QPhononPlayerSession;
-class QPhononMetadataProvider;
-
-class QMediaPlaylistNavigator;
-
-class QPhononPlayerService : public QMediaPlayerService
+class Q_MEDIA_EXPORT QVideoDeviceControl : public QAbstractMediaControl
 {
     Q_OBJECT
-
+    Q_PROPERTY(int selectedDevice READ selectedDevice WRITE setSelectedDevice NOTIFY selectedDeviceChanged)
 public:
-    QPhononPlayerService(QObject *parent = 0);
-    ~QPhononPlayerService();
+    virtual ~QVideoDeviceControl();
 
-    QAbstractMediaControl *control(const char *name) const;
+    virtual int deviceCount() const = 0;
 
-private:
-    Phonon::MediaObject *m_mediaObject;
-    Phonon::VideoWidget *m_videoWidget;
-    QPhononVideoWidget *m_videoWidgetControl;
-    QPhononVideoOutputControl *m_videoOutputControl;
-    QPhononPlayerControl *m_control;
-    QPhononMetadataProvider *m_metadata;
+    virtual QString name(int index) const = 0;
+    virtual QString description(int index) const = 0;
+    virtual QIcon icon(int index) const = 0;
+
+    virtual int defaultDevice() const = 0;
+    virtual int selectedDevice() const = 0;
+
+public Q_SLOTS:
+    virtual void setSelectedDevice(int index) = 0;
+
+Q_SIGNALS:
+    void selectedDeviceChanged(int index);
+    void selectedDeviceChanged(const QString &deviceName);
+    void devicesChanged();
+
+protected:
+    QVideoDeviceControl(QObject *parent);
 };
 
-#endif
+#define QVideoDeviceControl_iid "com.nokia.Qt.QVideoDeviceControl/1.0"
+Q_MEDIA_DECLARE_CONTROL(QVideoDeviceControl, QVideoDeviceControl_iid)
+
+
+#endif // QVIDEODEVICECONTROL_H

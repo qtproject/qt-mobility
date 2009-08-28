@@ -8,7 +8,7 @@
 
 
 AudioInputDeviceControl::AudioInputDeviceControl(QObject *parent)
-    :QAudioInputDeviceControl(parent)
+    :QAudioDeviceControl(parent)
 {
     update();
 }
