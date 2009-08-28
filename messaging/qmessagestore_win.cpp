@@ -264,9 +264,16 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
                 continue;
             }
 
-            MapiFolderPtr folder(folders.back()->nextSubFolder(&d_ptr->p_ptr->lastError, *store));
-            if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
-                return result;
+            QMessageStore::ErrorCode ignored(QMessageStore::NoError);
+            MapiFolderPtr folder(folders.back()->nextSubFolder(&ignored, *store));
+            if ((!folder || !folder->isValid()) && (ignored == QMessageStore::NoError)) {
+                folders.pop_back(); // No more subfolders
+                continue;
+            }
+            if (ignored != QMessageStore::NoError) {
+                continue; // Bad subfolder, skip it
+            }
+
             if (folder && folder->isValid()) {
                 FolderHeapNodePtr node(new FolderHeapNode);
                 node->store = store;
