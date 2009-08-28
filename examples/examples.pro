@@ -1,5 +1,5 @@
 TEMPLATE = subdirs
-SUBDIRS += simple logfilepositionsource
+SUBDIRS += logfilepositionsource
 
 contains(QT_CONFIG, webkit) {
     SUBDIRS += fetchgooglemaps
