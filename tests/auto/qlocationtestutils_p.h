@@ -51,6 +51,10 @@ public:
     static void uheap_mark_end();
 
     static QString addNmeaChecksumAndBreaks(const QString &sentence);
+
+    static QString createRmcSentence(const QDateTime &dt);
+    static QString createGgaSentence(const QTime &time);
+    static QString createZdaSentence(const QDateTime &dt);
 };
 
 #endif

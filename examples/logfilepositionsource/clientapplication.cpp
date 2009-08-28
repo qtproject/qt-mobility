@@ -47,5 +47,6 @@ ClientApplication::ClientApplication(QObject *parent)
 
 void ClientApplication::positionUpdated(const QGeoPositionInfo &info)
 {
-    qDebug() << "Position updated:" << info;
+    qDebug() << "Position updated: Date/time =" << info.dateTime()
+        << "Coordinate =" << info.coordinate();
 }

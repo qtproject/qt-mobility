@@ -30,27 +30,27 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QtCore>
+#include "../qnmeapositioninfosourceproxyfactory.h"
+#include "../qgeopositioninfosourcesubclasstest_p.h"
 
-#include <qgeopositioninfosource.h>
+#include <QObject>
+#include <QTest>
 
-#include "locationreceiver.h"
-
-LocationReceiver::LocationReceiver(QObject *parent)
-    : QObject(parent)
+class tst_QNmeaPositionInfoSource_Sim : public QGeoPositionInfoSourceSubclassTest
 {
-    QGeoPositionInfoSource *source = QGeoPositionInfoSource::createSource();
-    if (!source) {
-        qWarning("There is no default position source available for this system.");
-        return;
+    Q_OBJECT
+public:
+    tst_QNmeaPositionInfoSource_Sim(QObject *parent = 0)
+        : QGeoPositionInfoSourceSubclassTest(new QNmeaPositionInfoSourceProxyFactory(QNmeaPositionInfoSource::SimulationMode), parent)
+    {
     }
 
-    connect(source, SIGNAL(positionUpdated(QGeoPositionInfo)),
-            this, SLOT(positionUpdated(QGeoPositionInfo)));
-    source->startUpdates();
-}
+    ~tst_QNmeaPositionInfoSource_Sim()
+    {
+        delete factory();
+    }
+};
 
-void LocationReceiver::positionUpdated(const QGeoPositionInfo &info)
-{
-    qDebug() << "Position updated:" << info;
-}
+QTEST_MAIN(tst_QNmeaPositionInfoSource_Sim)
+
+#include "tst_qnmeapositioninfosource_sim.moc"

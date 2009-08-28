@@ -25,6 +25,14 @@ PRIVATE_HEADERS += qlocationutils_p.h \
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
+symbian {
+    HEADERS += s60_QGeoPositionInfoSourceS60.h \
+           s60_QMLBackendAO.h \
+           s60_NotificationCallback.h
+    SOURCES += s60_QGeoPositionInfoSourceS60.cpp \
+           s60_QMLBackendAO.cpp
+}
+
 SOURCES +=  qlocationutils.cpp \
             qgeocoordinate.cpp \
             qgeopositioninfo.cpp \
@@ -36,11 +44,12 @@ SOURCES +=  qlocationutils.cpp \
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
+    INCLUDEPATH += \epoc32\include\osextensions
+    LIBS += -llbs
 
     deploy.path = /
     exportheaders.sources = $$PUBLIC_HEADERS
     exportheaders.path = epoc32/include
     DEPLOYMENT += exportheaders
 }
-
 

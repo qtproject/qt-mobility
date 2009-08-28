@@ -30,27 +30,49 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QtCore>
+#ifndef TST_QNMEAPOSITIONINFOSOURCE_H
+#define TST_QNMEAPOSITIONINFOSOURCE_H
 
-#include <qgeopositioninfosource.h>
+#include <QMetaType>
 
-#include "locationreceiver.h"
+#include <qnmeapositioninfosource.h>
 
-LocationReceiver::LocationReceiver(QObject *parent)
-    : QObject(parent)
+class tst_QNmeaPositionInfoSource : public QObject
 {
-    QGeoPositionInfoSource *source = QGeoPositionInfoSource::createSource();
-    if (!source) {
-        qWarning("There is no default position source available for this system.");
-        return;
-    }
+    Q_OBJECT
 
-    connect(source, SIGNAL(positionUpdated(QGeoPositionInfo)),
-            this, SLOT(positionUpdated(QGeoPositionInfo)));
-    source->startUpdates();
-}
+public:
+    enum UpdateTriggerMethod
+    {
+        StartUpdatesMethod,
+        RequestUpdatesMethod
+    };
 
-void LocationReceiver::positionUpdated(const QGeoPositionInfo &info)
-{
-    qDebug() << "Position updated:" << info;
-}
+    tst_QNmeaPositionInfoSource(QNmeaPositionInfoSource::UpdateMode mode, QObject *parent = 0);
+
+private:
+    QNmeaPositionInfoSource::UpdateMode m_mode;
+
+private slots:
+    void initTestCase();
+
+    void constructor();
+    void supportedPositioningMethods();
+    void minimumUpdateInterval();
+
+    void testWithBufferedData();
+    void testWithBufferedData_data();
+
+    void startUpdates_waitForValidDateTime();
+    void startUpdates_waitForValidDateTime_data();
+
+    void requestUpdate_waitForValidDateTime();
+    void requestUpdate_waitForValidDateTime_data();
+
+    void testWithBadNmea();
+    void testWithBadNmea_data();
+};
+
+Q_DECLARE_METATYPE(tst_QNmeaPositionInfoSource::UpdateTriggerMethod)
+
+#endif

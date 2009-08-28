@@ -26,31 +26,26 @@
 ** package.
 **
 ** If you have questions regarding the use of this file, please
-** contact Nokia at http://qt.nokia.com/contact.
+** contact Nokia at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QtCore>
 
-#include <qgeopositioninfosource.h>
 
-#include "locationreceiver.h"
+#ifndef NOTIFICATIONCALLBACK_H
+#define NOTIFICATIONCALLBACK_H
 
-LocationReceiver::LocationReceiver(QObject *parent)
-    : QObject(parent)
+#include <e32base.h>	// For CActive, link against: euser.lib
+#include <lbs.h>
+#include <lbscommon.h>
+
+
+class INotificationCallback
 {
-    QGeoPositionInfoSource *source = QGeoPositionInfoSource::createSource();
-    if (!source) {
-        qWarning("There is no default position source available for this system.");
-        return;
-    }
+public:
+	virtual void UpdateDeviceStatus(void) = 0 ;
+        virtual void UpdatePosition(HPositionGenericInfo  *mPosInfo, int error) = 0 ;
+};
 
-    connect(source, SIGNAL(positionUpdated(QGeoPositionInfo)),
-            this, SLOT(positionUpdated(QGeoPositionInfo)));
-    source->startUpdates();
-}
 
-void LocationReceiver::positionUpdated(const QGeoPositionInfo &info)
-{
-    qDebug() << "Position updated:" << info;
-}
+#endif // NOTIFICATIONCALLBACK_H

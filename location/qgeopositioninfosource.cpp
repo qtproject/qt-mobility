@@ -32,6 +32,10 @@
 ****************************************************************************/
 #include "qgeopositioninfosource.h"
 
+#if defined(Q_OS_SYMBIAN)
+#   include "s60_QGeoPositionInfoSourceS60.h"
+#endif
+
 /*!
     \class QGeoPositionInfoSource
     \brief The QGeoPositionInfoSource class is an abstract base class for the distribution of positional updates.
@@ -165,8 +169,13 @@ QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSource::preferredPosi
     Returns 0 if the system has no default position source.
 */
 
-QGeoPositionInfoSource *QGeoPositionInfoSource::createSource(QObject *)
+QGeoPositionInfoSource *QGeoPositionInfoSource::createSource(QObject *parent)
 {
+#if defined(Q_OS_SYMBIAN)
+    return CQGeoPositionInfoSourceS60::NewL(parent);
+#else
+    Q_UNUSED(parent);
+#endif
     return 0;
 }
 

@@ -62,3 +62,27 @@ QString QLocationTestUtils::addNmeaChecksumAndBreaks(const QString &sentence)
     sum.sprintf("%02x", result);
     return sentence + sum + "\r\n";
 }
+
+QString QLocationTestUtils::createRmcSentence(const QDateTime &dt)
+{
+    QString time = dt.toString("hhmmss.zzz");
+    QString date = dt.toString("ddMMyy");
+    QString nmea = QString("$GPRMC,%1,A,2730.83609,S,15301.87844,E,0.7,9.0,%2,11.2,W,A*")
+        .arg(time).arg(date);
+    return addNmeaChecksumAndBreaks(nmea);
+}
+
+QString QLocationTestUtils::createGgaSentence(const QTime &time)
+{
+    QString nmea = QString("$GPGGA,%1,2734.76859,S,15305.99361,E,1,04,3.5,49.4,M,39.2,M,,*")
+            .arg(time.toString("hhmmss.zzz"));
+    return addNmeaChecksumAndBreaks(nmea);
+}
+
+QString QLocationTestUtils::createZdaSentence(const QDateTime &dt)
+{
+    QString time = dt.toString("hhmmss.zzz");
+    QString nmea = QString("$GPZDA,%1,%2,%3,%4,,*")
+        .arg(time).arg(dt.toString("dd")).arg(dt.toString("MM")).arg(dt.toString("yyyy"));
+    return addNmeaChecksumAndBreaks(nmea);
+}

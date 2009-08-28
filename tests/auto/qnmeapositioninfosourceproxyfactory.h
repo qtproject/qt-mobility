@@ -30,27 +30,46 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QtCore>
+#ifndef QNMEAPOSITIONINFOSOURCEPROXYFACTORY_H
+#define QNMEAPOSITIONINFOSOURCEPROXYFACTORY_H
 
-#include <qgeopositioninfosource.h>
+#include <QObject>
 
-#include "locationreceiver.h"
+#include "qgeopositioninfosourcesubclasstest_p.h"
+#include <qnmeapositioninfosource.h>
 
-LocationReceiver::LocationReceiver(QObject *parent)
-    : QObject(parent)
+class QTcpServer;
+class QNmeaPositionInfoSource;
+class QIODevice;
+
+class QNmeaPositionInfoSourceProxy : public QGeoPositionInfoSourceProxy
 {
-    QGeoPositionInfoSource *source = QGeoPositionInfoSource::createSource();
-    if (!source) {
-        qWarning("There is no default position source available for this system.");
-        return;
-    }
+public:
+    QNmeaPositionInfoSourceProxy(QNmeaPositionInfoSource *source, QIODevice *outDevice);
+    ~QNmeaPositionInfoSourceProxy();
 
-    connect(source, SIGNAL(positionUpdated(QGeoPositionInfo)),
-            this, SLOT(positionUpdated(QGeoPositionInfo)));
-    source->startUpdates();
-}
+    QGeoPositionInfoSource *source() const;
 
-void LocationReceiver::positionUpdated(const QGeoPositionInfo &info)
+    void feedUpdate(const QDateTime &dt);
+
+    void feedBytes(const QByteArray &bytes);
+
+private:
+    QNmeaPositionInfoSource *m_source;
+    QIODevice *m_outDevice;
+};
+
+class QNmeaPositionInfoSourceProxyFactory : public QObject, public QGeoPositionInfoSourceProxyFactory
 {
-    qDebug() << "Position updated:" << info;
-}
+    Q_OBJECT
+public:
+    QNmeaPositionInfoSourceProxyFactory(QNmeaPositionInfoSource::UpdateMode mode);
+
+    QGeoPositionInfoSourceProxy *createProxy();
+
+private:
+    QTcpServer *m_server;
+    QNmeaPositionInfoSource::UpdateMode m_mode;
+};
+
+#endif
