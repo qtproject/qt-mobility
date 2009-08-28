@@ -398,6 +398,111 @@ bool QMessageStore::removeMessages(const QMessageFilterKey& key, QMessageStore::
     return true; // stub
 }
 
+
+namespace {
+
+FILETIME toFileTime(const QDateTime &dt)
+{
+    FILETIME ft = {0};
+
+    QDate date(dt.date());
+    QTime time(dt.time());
+
+    SYSTEMTIME st = {0};
+    st.wYear = date.year();
+    st.wMonth = date.month();
+    st.wDay = date.day();
+    st.wHour = time.hour();
+    st.wMinute = time.minute();
+    st.wSecond = time.second();
+    st.wMilliseconds = time.msec();
+
+    SystemTimeToFileTime(&st, &ft);
+    return ft;
+}
+
+ADRLIST *createAddressList(int count)
+{
+    ADRLIST *list(0);
+
+    uint size = CbNewADRLIST(count);
+    MAPIAllocateBuffer(size, reinterpret_cast<LPVOID*>(&list));
+    if (list) {
+        memset(list, 0, size);
+        list->cEntries = count;
+
+        for (int i = 0; i < count; ++i) {
+            list->aEntries[i].cValues = 2;
+            MAPIAllocateBuffer(2 * sizeof(SPropValue), reinterpret_cast<LPVOID*>(&list->aEntries[i].rgPropVals));
+        }
+    }
+
+    return list;
+}
+
+void fillAddressEntry(ADRENTRY &entry, const QMessageAddress &addr, LONG type, QList<LPTSTR> &addresses)
+{
+    entry.rgPropVals[0].ulPropTag = PR_RECIPIENT_TYPE;
+    entry.rgPropVals[0].Value.l = type;
+
+    QString addressStr("[%1:%2]");
+    addressStr = addressStr.arg(addr.type() == QMessageAddress::Phone ? "SMS" : "SMTP");
+    addressStr = addressStr.arg(addr.recipient());
+
+    // TODO: Escape illegal characters, as per: http://msdn.microsoft.com/en-us/library/cc842281.aspx
+
+    uint len = addressStr.length();
+    LPTSTR address = new TCHAR[len + 1];
+    memcpy(address, addressStr.utf16(), len * sizeof(TCHAR));
+    address[len] = 0;
+
+    entry.rgPropVals[1].ulPropTag = PR_DISPLAY_NAME;
+    entry.rgPropVals[1].Value.LPSZ = address;
+
+    addresses.append(address);
+}
+
+bool resolveAddressList(ADRLIST *list, IMAPISession *session)
+{
+    bool result(false);
+
+    if (session) {
+        IAddrBook *book(0);
+        HRESULT rv = session->OpenAddressBook(0, 0, AB_NO_DIALOG, &book);
+        if (HR_SUCCEEDED(rv)) {
+            rv = book->ResolveName(0, MAPI_UNICODE, 0, list);
+            if (HR_SUCCEEDED(rv)) {
+                result = true;
+            } else {
+                qWarning() << "Unable to resolve addresses.";
+            }
+
+            book->Release();
+        } else {
+            qWarning() << "Unable to open address book.";
+        }
+    }
+
+    return result;
+}
+
+void destroyAddressList(ADRLIST *list, QList<LPTSTR> &addresses)
+{
+    foreach (LPTSTR address, addresses) {
+        delete [] address;
+    }
+
+    addresses.clear();
+
+    for (uint i = 0; i < list->cEntries; ++i) {
+        MAPIFreeBuffer(list->aEntries[i].rgPropVals);
+    }
+    
+    MAPIFreeBuffer(list);
+}
+
+}
+
 bool QMessageStore::addMessage(QMessage *m)
 {
     bool result(false);
@@ -425,36 +530,133 @@ bool QMessageStore::addMessage(QMessage *m)
 
                                 MAPIFreeBuffer(properties);
 
-                                QString subj("Test message");
-                                wchar_t *buffer = new wchar_t[subj.length() + 1];
-                                subj.toWCharArray(buffer);
-                                buffer[subj.length()] = 0;
-
                                 // Set the message's properties
                                 {
+                                    QString subject(m->subject());
                                     SPropValue prop = { 0 };
                                     prop.ulPropTag = PR_SUBJECT;
-                                    prop.Value.LPSZ = buffer;
+                                    prop.Value.LPSZ = reinterpret_cast<LPWSTR>(const_cast<quint16*>(subject.utf16()));
                                     rv = HrSetOneProp(message, &prop);
                                     if (HR_FAILED(rv)) {
-                                        qWarning() << "Unable to set subject in message...";
+                                        qWarning() << "Unable to set subject in message.";
                                     }
                                 }
-
-                                delete [] buffer;
 
                                 {
                                     SPropValue prop = { 0 };
                                     prop.ulPropTag = PR_MESSAGE_FLAGS;
-                                    prop.Value.l = (MSGFLAG_UNSENT | MSGFLAG_FROMME);
+                                    prop.Value.l = (MSGFLAG_UNSENT | MSGFLAG_UNMODIFIED | MSGFLAG_FROMME);
+                                    if (m->status() & QMessage::HasAttachments) {
+                                        prop.Value.l |= MSGFLAG_HASATTACH;
+                                    }
                                     rv = HrSetOneProp(message, &prop);
                                     if (HR_FAILED(rv)) {
-                                        qWarning() << "Unable to set flags in message...";
+                                        qWarning() << "Unable to set flags in message.";
+                                    }
+                                }
+
+                                {
+                                    QString emailAddress = m->from().recipient();
+                                    SPropValue prop = { 0 };
+                                    prop.ulPropTag = PR_SENDER_EMAIL_ADDRESS;
+                                    prop.Value.LPSZ = reinterpret_cast<LPWSTR>(const_cast<quint16*>(emailAddress.utf16()));
+                                    rv = HrSetOneProp(message, &prop);
+                                    if (HR_FAILED(rv)) {
+                                        qWarning() << "Unable to set sender address in message.";
+                                    }
+                                }
+
+                                {
+                                    QStringList headers;
+                                    foreach (const QByteArray &name, m->headerFields()) {
+                                        foreach (const QString &value, m->headerFieldValues(name)) {
+                                            // TODO: Do we need soft line-breaks?
+                                            headers.append(QString("%1: %2").arg(QString(name)).arg(value));
+                                        }
+                                    }
+                                    QString transportHeaders = headers.join("\r\n").append("\r\n\r\n");
+                                    SPropValue prop = { 0 };
+                                    prop.ulPropTag = PR_TRANSPORT_MESSAGE_HEADERS;
+                                    prop.Value.LPSZ = reinterpret_cast<LPWSTR>(const_cast<quint16*>(transportHeaders.utf16()));
+                                    rv = HrSetOneProp(message, &prop);
+                                    if (HR_FAILED(rv)) {
+                                        qWarning() << "Unable to set transport headers in message.";
+                                    }
+                                }
+
+                                {
+                                    SPropValue prop = { 0 };
+                                    prop.ulPropTag = PR_CLIENT_SUBMIT_TIME;
+                                    prop.Value.ft = toFileTime(m->date());
+                                    rv = HrSetOneProp(message, &prop);
+                                    if (HR_FAILED(rv)) {
+                                        qWarning() << "Unable to set submit time in message.";
+                                    }
+                                }
+
+                                uint recipientCount(m->to().count() + m->cc().count() + m->bcc().count());
+                                if (recipientCount) {
+                                    ADRLIST *list = createAddressList(recipientCount);
+                                    if (list) {
+                                        int index = 0;
+                                        QList<LPTSTR> addresses;
+
+                                        foreach (const QMessageAddress &addr, m->to()) {
+                                            ADRENTRY &entry(list->aEntries[index]);
+                                            fillAddressEntry(entry, addr, MAPI_TO, addresses);
+                                            ++index;
+                                        }
+
+                                        foreach (const QMessageAddress &addr, m->cc()) {
+                                            ADRENTRY &entry(list->aEntries[index]);
+                                            fillAddressEntry(entry, addr, MAPI_CC, addresses);
+                                            ++index;
+                                        }
+
+                                        foreach (const QMessageAddress &addr, m->bcc()) {
+                                            ADRENTRY &entry(list->aEntries[index]);
+                                            fillAddressEntry(entry, addr, MAPI_BCC, addresses);
+                                            ++index;
+                                        }
+
+                                        if (resolveAddressList(list, session->session())) {
+                                            rv = message->ModifyRecipients(MODRECIP_ADD, list);
+                                            if (HR_FAILED(rv)) {
+                                                qWarning() << "Unable to store address list for message.";
+                                            }
+                                        } else {
+                                            qWarning() << "Unable to resolve address list for message.";
+                                        }
+
+                                        destroyAddressList(list, addresses);
+                                    } else {
+                                        qWarning() << "Unable to allocate address list for message.";
+                                    }
+                                }
+                                
+                                if (!m->contentIds().isEmpty()) {
+                                    // This is a multipart message
+                                    // TODO: multipart addition
+                                } else {
+                                    // This message has only a body
+                                    QByteArray subType(m->contentSubType().toLower());
+
+                                    if ((subType == "rtf") || (subType == "html")) {
+                                        // TODO: non-plain storage
+                                    } else {
+                                        QString body(m->decodedTextContent());
+                                        SPropValue prop = { 0 };
+                                        prop.ulPropTag = PR_BODY;
+                                        prop.Value.LPSZ = reinterpret_cast<LPWSTR>(const_cast<quint16*>(body.utf16()));
+                                        rv = HrSetOneProp(message, &prop);
+                                        if (HR_FAILED(rv)) {
+                                            qWarning() << "Unable to set body in message.";
+                                        }
                                     }
                                 }
 
                                 if (HR_FAILED(message->SaveChanges(0))) {
-                                    qWarning() << "Unable to save changes on message...";
+                                    qWarning() << "Unable to save changes on message.";
                                 }
 
                                 message->Release();

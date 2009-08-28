@@ -111,6 +111,7 @@
 <p>If a message has been modified since it was last constructed <a href="qmessage.html#dataModified">dataModified</a>() returns true.</p>
 <p>A list of attachments identifiers will be returned by <a href="qmessage.html#attachments">attachments</a>() and an identifier for the message body will be returned by <a href="qmessage.html#body">body</a>(). Attachments can be appended to the content of the message using <a href="qmessage.html#appendAttachments">appendAttachments</a>(), the body of the message can be set with <a href="qmessage.html#setBody">setBody</a>() or <a href="qmessage.html#setBodyFromFile">setBodyFromFile</a>().</p>
 <p>The folder and account a message is associated with are returned by <a href="qmessage.html#parentFolderId">parentFolderId</a>() and <a href="qmessage.html#parentAccountId">parentAccountId</a>() respectively.</p>
+<p>Message data that is less commonly accessed or relatively large should be lazily retrieved on demand by the associated getter function.</p>
 <p>The following transmission formats are used both when constructing and encapsulating messages:</p>
 <ul>
 <li><a href="qmessage.html#Type-enum">QMessage::Sms</a> <a href="http://www.3gpp.org/ftp/Specs/html-info/23040.htm">3GPP TS 23.040</a> (Technical realization of the Short Message Service).</li>

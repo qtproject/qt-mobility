@@ -82,7 +82,7 @@ QMessage::QMessage(const QMessageId& id)
 }
 
 QMessage::QMessage(const QMessage &other)
-    :QMessageContentContainer(other),
+    :QMessageContentContainer(),
      d_ptr(new QMessagePrivate(this))
 {
     this->operator=(other);
@@ -92,6 +92,7 @@ QMessage::QMessage(const QMessage &other)
 const QMessage& QMessage::operator=(const QMessage& other)
 {
     if (&other != this) {
+        QMessageContentContainer::operator=(other);
         *d_ptr = *other.d_ptr;
         setDerivedMessage(this);
     }

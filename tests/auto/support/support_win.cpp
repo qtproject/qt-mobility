@@ -908,63 +908,69 @@ QMessageId addMessage(const Parameters &params)
                 //message.setParentFolderId(folderIds.first());
                 message.d_ptr->_parentFolderId = folderIds.first();
 
-                /*
-                message.setTo(QMailAddress::fromStringList(to));
-                message.setFrom(QMailAddress(from));
-                */
+                QList<QMessageAddress> toList;
+                foreach (const QString &addr, to.split(",")) {
+                    toList.append(QMessageAddress(addr.trimmed(), QMessageAddress::Email));
+                }
+                message.setTo(toList);
+                message.setFrom(QMessageAddress(from, QMessageAddress::Email));
                 message.setSubject(subject);
 
-                /*
                 QDateTime dt(QDateTime::fromString(date, Qt::ISODate));
                 dt.setTimeSpec(Qt::UTC);
-                message.setDate(QMailTimeStamp(dt));
+                message.setDate(dt);
 
                 if (type.isEmpty()) {
-                    message.setMessageType(QMailMessage::Email);
+                    message.setType(QMessage::Email);
                 } else {
                     if (type.toLower() == "mms") {
-                        message.setMessageType(QMailMessage::Mms);
+                        message.setType(QMessage::Mms);
                     } else if (type.toLower() == "sms") {
-                        message.setMessageType(QMailMessage::Sms);
+                        message.setType(QMessage::Sms);
                     } else if (type.toLower() == "xmpp") {
-                        message.setMessageType(QMailMessage::Instant);
+                        message.setType(QMessage::Xmpp);
                     } else {
-                        message.setMessageType(QMailMessage::Email);
+                        message.setType(QMessage::Email);
                     }
                 }
 
                 if (!receivedDate.isEmpty()) {
                     QDateTime dt(QDateTime::fromString(receivedDate, Qt::ISODate));
                     dt.setTimeSpec(Qt::UTC);
-                    message.setReceivedDate(QMailTimeStamp(dt));
+                    message.setReceivedDate(dt);
                 }
 
                 if (!priority.isEmpty()) {
                     if (priority.toLower() == "high") {
-                        message.setStatus(QmfHelpers::highPriorityMask(), true);
+                        message.setPriority(QMessage::High);
                     } else if (priority.toLower() == "low") {
-                        message.setStatus(QmfHelpers::lowPriorityMask(), true);
+                        message.setPriority(QMessage::Low);
                     }
                 }
 
+                /*
                 if (!size.isEmpty()) {
+                    // TODO: add setSize to QMessageContentCOntainer
                     message.setSize(size.toUInt());
                 }
+                */
 
                 if (!text.isEmpty()) {
-                    QMailMessageContentType ct("text/plain; charset=UTF-8");
-                    message.setBody(QMailMessageBody::fromData(text, ct, QMailMessageBody::Base64));
-                    message.setStatus(QMailMessage::ContentAvailable, true);
+                    message.setContentType("text");
+                    message.setContentSubType("plain");
+                    message.setContent(text);
                 }
 
+                QMessage::StatusFlags flags(0);
                 if (read.toLower() == "true") {
-                    message.setStatus(QMailMessage::Read, true);
+                    flags |= QMessage::Read;
                 }
-
                 if (hasAttachments.toLower() == "true") {
-                    message.setStatus(QMailMessage::HasAttachments, true);
+                    flags |= QMessage::HasAttachments;
                 }
+                message.setStatus(flags);
 
+                /*
                 Parameters::const_iterator it = params.begin(), end = params.end();
                 for ( ; it != end; ++it) {
                     if (it.key().startsWith("custom-")) {

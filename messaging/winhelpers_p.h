@@ -95,9 +95,9 @@ public:
     uint messageCount() { return _messageCount; }
     MapiFolderPtr subFolder(CommonFolder commonFolder, QMessageStore::ErrorCode *lastError);
     LPMAPITABLE subFolders(QMessageStore::ErrorCode *lastError) { if (!_init) findSubFolders(lastError); return _subFolders; }
-    LPMESSAGE createMessage(QMessageStore::ErrorCode* lastError);
+    IMessage *createMessage(QMessageStore::ErrorCode* lastError);
 
-    LPMESSAGE openMessage(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId);
+    IMessage *openMessage(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId);
 
     static MapiFolderPtr null() { return MapiFolderPtr(new MapiFolder()); }
 
@@ -137,6 +137,9 @@ public:
 #endif
     QMessageAccountId id();
     QString name() { return _name; }
+
+    IMessage *openMessage(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId);
+    IMAPIFolder *openFolder(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId);
 
     LPMDB store() { return _store; }
 
