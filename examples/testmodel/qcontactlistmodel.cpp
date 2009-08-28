@@ -367,6 +367,7 @@ d->debug_count += 1;
                 break;
             }
 
+            // grab the possible presence values; they should be in order from (unknown) to least present to most present.
             QContactDetailDefinition presenceDef = d->m_manager->detailDefinition(QContactPresence::DefinitionName);
             QList<QVariant> allowablePresenceValues = presenceDef.fields().value(QContactPresence::FieldPresence).allowableValues;
             if (presenceDef.isEmpty() || allowablePresenceValues.isEmpty()) {
@@ -374,7 +375,7 @@ d->debug_count += 1;
                 break;
             }
 
-            // grab the possible presence values; they should be in order from (unknown) to least present to most present.
+            // calculate the "global presence" of the contact in a naive way.
             int bestPresenceSoFar = 0; // unknown
             QList<QContactDetail> presenceDetails = currentContact.details(QContactPresence::DefinitionName);
             foreach (const QContactPresence& pres, presenceDetails) {

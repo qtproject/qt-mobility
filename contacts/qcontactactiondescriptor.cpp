@@ -139,7 +139,7 @@ bool QContactActionDescriptor::isEmpty() const
  * Returns true if the action name, vendor name and vendor-specified implementation version
  * specified by this action descriptor are equal to those specified by \a other
  */
-bool QContactActionDescriptor::operator ==(const QContactActionDescriptor& other) const
+bool QContactActionDescriptor::operator==(const QContactActionDescriptor& other) const
 {
     return d->m_actionName == other.d->m_actionName
             && d->m_vendorName == other.d->m_vendorName
@@ -150,7 +150,7 @@ bool QContactActionDescriptor::operator ==(const QContactActionDescriptor& other
  * Returns true if the action name, vendor name or vendor-specified implementation version
  * specified by this action descriptor are different to that specified by \a other
  */
-bool QContactActionDescriptor::operator !=(const QContactActionDescriptor& other) const
+bool QContactActionDescriptor::operator!=(const QContactActionDescriptor& other) const
 {
     return !(*this == other);
 }

@@ -312,6 +312,10 @@ void tst_QContactActions::testSendEmail()
 
 void tst_QContactActions::testDescriptor()
 {
+    // first, test retrieving an action when no factories are loaded
+    QContactAction* invalidAction = QContactAction::action(QContactActionDescriptor());
+    QVERIFY(invalidAction == 0); // should be null.
+
     // set the correct path to look for plugins
     QString path = QApplication::applicationDirPath() + "/dummyplugin";
     QApplication::addLibraryPath(path);
@@ -327,7 +331,7 @@ void tst_QContactActions::testDescriptor()
     QVERIFY(QContactAction::availableActions(QString(), -200).contains("SendEmail"));
 
     QList<QContactAction*> impls = QContactAction::actions();
-    QContactAction* sendEmailAction;
+    QContactAction* sendEmailAction = 0;
     bool foundSendEmail = false;
     for (int i = 0; i < impls.size(); i++) {
         if (impls.at(i)->actionDescriptor().actionName() == QString("SendEmail")) {
@@ -344,16 +348,22 @@ void tst_QContactActions::testDescriptor()
     sendEmailDescriptor.setVendorName(sendEmailAction->actionDescriptor().vendorName());
     sendEmailDescriptor.setImplementationVersion(sendEmailAction->actionDescriptor().implementationVersion());
 
-    // TODO: once ownership issue is solved, the following test should work.
-    //QContactAction* sendEmailAction2 = QContactAction::action(sendEmailDescriptor);
-    //QCOMPARE(sendEmailAction, sendEmailAction2);
+    // ensure that action implementations are owned by the factory (ie, singleton)
+    QContactAction* sendEmailAction2 = QContactAction::action(sendEmailDescriptor);
+    QCOMPARE(sendEmailAction, sendEmailAction2);
 
-    // secondly, test operator= and operator==
+    // secondly, test operator= and operator==, and copy constructor
     QContactActionDescriptor sendEmailDescriptor2 = sendEmailDescriptor;
+    QContactActionDescriptor sendEmailDescriptor3(sendEmailDescriptor2);
+    QContactActionDescriptor sendEmailDescriptor4 = sendEmailAction->actionDescriptor();
+    QContactActionDescriptor sendEmailDescriptor5 = QContactAction::actionDescriptors(sendEmailDescriptor.actionName(), sendEmailDescriptor.vendorName(), sendEmailDescriptor.implementationVersion()).at(0);
     QVERIFY(sendEmailDescriptor2.actionName() == sendEmailDescriptor.actionName());
     QVERIFY(sendEmailDescriptor2.vendorName() == sendEmailDescriptor.vendorName());
     QVERIFY(sendEmailDescriptor2.implementationVersion() == sendEmailDescriptor.implementationVersion());
-    QVERIFY(sendEmailDescriptor2 == sendEmailDescriptor);
+    QVERIFY(sendEmailDescriptor == sendEmailDescriptor2);
+    QVERIFY(sendEmailDescriptor == sendEmailDescriptor3);
+    QVERIFY(sendEmailDescriptor == sendEmailDescriptor4);
+    QVERIFY(sendEmailDescriptor == sendEmailDescriptor5);
 
     QVERIFY(!sendEmailDescriptor2.isEmpty());
     sendEmailDescriptor2.setActionName("");

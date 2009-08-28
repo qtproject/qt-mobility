@@ -309,6 +309,10 @@ QList<QVariant::Type> QContactManagerEngine::supportedDataTypes() const
 /*! Returns the base schema definitions */
 QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions()
 {
+    // This implementation provides the base schema.
+    // The schema documentation (contactsschema.qdoc)
+    // MUST BE KEPT UP TO DATE as definitions are added here.
+
     // the map we will eventually return
     QMap<QString, QContactDetailDefinition> retn;
 

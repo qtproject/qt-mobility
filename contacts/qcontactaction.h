@@ -61,16 +61,16 @@ public:
     virtual void performAction(const QContact& contact, const QContactDetail& detail = QContactDetail()) = 0;
 
     /* return a list of names of actions which are available */
-    static QStringList availableActions(const QString& vendor = QString(), int implementationVersion = -1);
+    static QStringList availableActions(const QString& vendorName = QString(), int implementationVersion = -1);
 
     /* return a list of descriptors for action implementations matching the given criteria */
-    static QList<QContactActionDescriptor> actionDescriptors(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1);
+    static QList<QContactActionDescriptor> actionDescriptors(const QString& actionName = QString(), const QString& vendorName = QString(), int implementationVersion = -1);
 
     /* return a pointer to an implementation of the action identified by the given descriptor */
     static QContactAction* action(const QContactActionDescriptor& descriptor);
 
     /* return a list of points to action implementations which match the given criteria */
-    static QList<QContactAction*> actions(const QString& actionName = QString(), const QString& vendor = QString(), int implementationVersion = -1);
+    static QList<QContactAction*> actions(const QString& actionName = QString(), const QString& vendorName = QString(), int implementationVersion = -1);
 };
 
 #endif
