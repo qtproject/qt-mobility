@@ -36,6 +36,10 @@
 
 #include <QtCore/qglobal.h>
 
+QT_BEGIN_HEADER
+
+QT_BEGIN_NAMESPACE
+
 #if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)
 #  if defined(QT_NODLL)
 #    undef QT_MAKEDLL
@@ -62,5 +66,9 @@
 #    define Q_CFW_EXPORT
 #  endif
 #endif
+
+QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif // QCONTEXTFRAMEWORKGLOBAL_H

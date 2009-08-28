@@ -890,6 +890,6 @@ QList<QString> QValueSpaceItem::subPaths() const
     return rvs;
 }
 
-#include "qvaluespaceitem.moc"
-
 QT_END_NAMESPACE
+
+#include "qvaluespaceitem.moc"

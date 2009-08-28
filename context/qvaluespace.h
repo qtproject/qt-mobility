@@ -42,6 +42,10 @@
 
 #include "qcontextglobal.h"
 
+QT_BEGIN_HEADER
+
+QT_BEGIN_NAMESPACE
+
 class QValueSpaceObject;
 
 class Q_CFW_EXPORT QAbstractValueSpaceLayer : public QObject
@@ -124,5 +128,8 @@ namespace QValueSpace {
     } \
     static QValueSpace::AutoInstall _qvaluespaceauto_ ## name(_qvaluespaceauto_layercreate_ ## name);
 
+QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif // _QVALUESPACE_H_

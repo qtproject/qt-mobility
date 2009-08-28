@@ -50,6 +50,8 @@
 
 #include <QtCore/qdebug.h>
 
+QT_BEGIN_NAMESPACE
+
 void QAbstractValueSpaceLayer::emitItemRemove(QValueSpaceObject *object, const QByteArray &path)
 {
    emit object->itemRemove(path);
@@ -456,3 +458,5 @@ QByteArray qCanonicalPath(const QByteArray &path)
     result.resize(outc);
     return result;
 }
+
+QT_END_NAMESPACE

@@ -38,6 +38,8 @@
 
 #include "qcontextglobal.h"
 
+QT_BEGIN_NAMESPACE
+
 class QMallocPoolPrivate;
 
 class Q_AUTOTEST_EXPORT QMallocPool
@@ -70,5 +72,7 @@ private:
     Q_DISABLE_COPY(QMallocPool)
     QMallocPoolPrivate * d;
 };
+
+QT_END_NAMESPACE
 
 #endif

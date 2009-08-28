@@ -30,8 +30,11 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include "qmallocpool_p.h"
 #include <qglobal.h>
+
+QT_BEGIN_NAMESPACE
 
 static void* qmallocpool_sbrk(intptr_t increment);
 
@@ -305,3 +308,4 @@ QMallocPool::MemoryStats QMallocPool::memoryStatistics() const
     return rv;
 }
 
+QT_END_NAMESPACE

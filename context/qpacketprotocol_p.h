@@ -38,6 +38,8 @@
 
 #include "qcontextglobal.h"
 
+QT_BEGIN_NAMESPACE
+
 class QIODevice;
 class QBuffer;
 class QPacket;
@@ -101,5 +103,7 @@ private:
     QPacketAutoSend(QPacketProtocol *);
     QPacketProtocol * p;
 };
+
+QT_END_NAMESPACE
 
 #endif
