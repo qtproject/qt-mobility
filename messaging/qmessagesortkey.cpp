@@ -174,7 +174,7 @@
 */
 
 /*!
-    \fn QMessageSortKey::status(QMessage::StatusFlag flag, Qt::SortOrder order)
+    \fn QMessageSortKey::status(QMessage::Status flag, Qt::SortOrder order)
   
     Returns a key that sorts messages by their status value \a flag, according to \a order.
 

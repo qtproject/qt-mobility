@@ -33,6 +33,20 @@
 #include "qmessagefilterkey.h"
 #include "qmessagefilterkey_p.h"
 #include "qvariant.h"
+#include "winhelpers_p.h"
+
+void QDateTimeToFileTime(const QDateTime &dt, FILETIME *ft)
+{
+    SYSTEMTIME st;
+    st.wYear = dt.date().year();
+    st.wMonth = dt.date().month();
+    st.wDay = dt.date().day();
+    st.wHour = dt.time().hour();
+    st.wMinute = dt.time().minute();
+    st.wSecond = dt.time().second();
+    st.wMilliseconds = dt.time().msec();
+    SystemTimeToFileTime(&st, ft);
+}
 
 QMessageFilterKey QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Field field, const QVariant &value, QMessageDataComparator::EqualityComparator cmp)
 {
@@ -106,6 +120,24 @@ void QMessageFilterKeyPrivate::filterTable(QMessageStore::ErrorCode *lastError, 
             keyProp.Value.ul = key.d_ptr->_value.toInt();
             valid = true;
             break;
+        case ReceptionTimeStamp: {
+            restriction.res.resProperty.ulPropTag = PR_MESSAGE_DELIVERY_TIME;
+            restriction.res.resProperty.lpProp = &keyProp;
+            keyProp.ulPropTag = PR_MESSAGE_DELIVERY_TIME;
+            QDateTime dt(key.d_ptr->_value.toDateTime());
+            QDateTimeToFileTime(dt, &keyProp.Value.ft);
+            valid = true;
+            break;
+        }
+        case TimeStamp: {
+            restriction.res.resProperty.ulPropTag = PR_CLIENT_SUBMIT_TIME;
+            restriction.res.resProperty.lpProp = &keyProp;
+            keyProp.ulPropTag = PR_CLIENT_SUBMIT_TIME;
+            QDateTime dt(key.d_ptr->_value.toDateTime());
+            QDateTimeToFileTime(dt, &keyProp.Value.ft);
+            valid = true;
+            break;
+        }
         default:
             qWarning("Unhandled restriction criteria");
         }
@@ -119,10 +151,27 @@ void QMessageFilterKeyPrivate::filterTable(QMessageStore::ErrorCode *lastError, 
             restriction.res.resContent.ulFuzzyLevel = FL_FULLSTRING;
         else
             restriction.res.resContent.ulFuzzyLevel = FL_SUBSTRING;
-        if ((key.d_ptr->_options & QMessageDataComparator::CaseSensitive) != 0)
+        if ((key.d_ptr->_options & QMessageDataComparator::CaseSensitive) == 0)
             restriction.res.resContent.ulFuzzyLevel |= FL_IGNORECASE;
         if (cmp == QMessageDataComparator::Excludes)
             notRestriction = true;
+        switch (key.d_ptr->_field) {
+        case Subject: {
+            restriction.res.resContent.ulPropTag = PR_SUBJECT;
+            restriction.res.resContent.lpProp = &keyProp;
+            keyProp.ulPropTag = PR_SUBJECT;
+            QString subj(key.d_ptr->_value.toString());
+            delete key.d_ptr->_buffer;
+            key.d_ptr->_buffer = new wchar_t[subj.length() +1];
+            memcpy(key.d_ptr->_buffer, subj.utf16(), subj.length() * sizeof(wchar_t));
+            key.d_ptr->_buffer[subj.length()] = 0;
+            keyProp.Value.LPSZ = key.d_ptr->_buffer;
+            valid = true;
+            break;
+        }
+        default:
+            qWarning("Unhandled restriction criteria");
+        }
         break;
     }
     }
@@ -160,8 +209,15 @@ QMessageFilterKeyPrivate::QMessageFilterKeyPrivate(QMessageFilterKey *messageFil
      _comparatorValue(QMessageDataComparator::Equal),
      _operator(Identity),
      _left(0),
-     _right(0)
+     _right(0),
+     _buffer(0)
 {
+}
+
+QMessageFilterKeyPrivate::~QMessageFilterKeyPrivate()
+{
+    delete _buffer;
+    _buffer = 0;
 }
 
 QMessageFilterKey::QMessageFilterKey()
@@ -273,11 +329,14 @@ const QMessageFilterKey& QMessageFilterKey::operator=(const QMessageFilterKey& o
     d_ptr->_left = 0;
     delete d_ptr->_right;
     d_ptr->_right = 0;
+    d_ptr->_options = other.d_ptr->_options;
     d_ptr->_field = other.d_ptr->_field;
     d_ptr->_value = other.d_ptr->_value;
     d_ptr->_comparatorType = other.d_ptr->_comparatorType;
     d_ptr->_comparatorValue = other.d_ptr->_comparatorValue;
     d_ptr->_operator = other.d_ptr->_operator;
+    d_ptr->_buffer = 0; // Delay construction of buffer until it is used
+
     if (other.d_ptr->_left)
         d_ptr->_left = new QMessageFilterKey(*other.d_ptr->_left);
     if (other.d_ptr->_right)
