@@ -711,7 +711,7 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
 
 QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
-    return QNetworkInterface;
+    return QNetworkInterface();
 }
 
 //////// QSystemDisplayInfo
