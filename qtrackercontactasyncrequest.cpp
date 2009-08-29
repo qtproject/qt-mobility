@@ -37,28 +37,6 @@ void applyFilterToRDFVariable(RDFVariable &variable,
     }
 }
 
-void addSortingPartToRDFSelectQuery(RDFSelect &query, RDFVariable &contact, QList<QContactSortOrder> sorting)
-{
-    foreach(QContactSortOrder sort, sorting)
-    {
-        if( sort.detailDefinitionName() == QContactName::DefinitionName)
-        {
-            if( sort.detailFieldName() == QContactName::FieldFirst)
-            {
-                query.orderBy(contact.optional().property<nco::nameGiven>());
-            }
-            if( sort.detailFieldName() == QContactName::FieldLast)
-            {
-                query.orderBy(contact.optional().property<nco::nameFamily>());
-            }
-            else
-                qWarning()<<"QTrackerContactAsyncRequest"<<"sorting by"<<sort.detailDefinitionName()<<sort.detailFieldName()<<"is not yet supported";
-
-        }else
-            qWarning()<<"QTrackerContactAsyncRequest"<<"sorting by"<<sort.detailDefinitionName()<<"is not yet supported";
-    }
-}
-
 /*
  * To understand why all the following methods have for affiliation param, check nco ontology:
  * every contact has all these properties and also linked to affiliations (also contacts - nco:Role)
@@ -181,9 +159,11 @@ QTrackerContactAsyncRequest::QTrackerContactAsyncRequest(
             RDFVariable RDFContact1 = RDFVariable::fromType<nco::PersonContact>();
             applyFilterToRDFVariable(RDFContact1, r->filter());
             RDFSelect quer;
+            RDFVariable lastname = RDFContact1.optional().property<nco::nameFamily>();
+            RDFVariable firstname = RDFContact1.optional().property<nco::nameGiven>();
             quer.addColumn("contactId",  RDFContact1.property<nco::contactUID>());
-            quer.addColumn("firstname",  RDFContact1.optional().property<nco::nameGiven>());
-            quer.addColumn("secondname", RDFContact1.optional().property<nco::nameFamily>());
+            quer.addColumn("firstname",  firstname);
+            quer.addColumn("secondname", lastname);
             quer.addColumn("photo",      RDFContact1.optional().property<nco::photo>());
 
 
@@ -223,9 +203,20 @@ QTrackerContactAsyncRequest::QTrackerContactAsyncRequest(
             // QContactAnniversary - no such thing in tracker
             // QContactGeolocation - nco:hasLocation is not having class defined in nco yet. no properties. maybe rdfs:Resource:label
 
-
             // supporting sorting only here, difficult and no requirements in UI for sorting in multivalue details (phones, emails)
-            addSortingPartToRDFSelectQuery( quer, RDFContact1, r->sorting());
+            foreach(QContactSortOrder sort, r->sorting())
+            {
+                if( sort.detailDefinitionName() == QContactName::DefinitionName)
+                {
+                    if( sort.detailFieldName() == QContactName::FieldFirst)
+                        quer.orderBy(firstname);
+                    else if( sort.detailFieldName() == QContactName::FieldLast)
+                        quer.orderBy(lastname);
+                    else
+                        qWarning()<<"QTrackerContactAsyncRequest"<<"sorting by"<<sort.detailDefinitionName()<<sort.detailFieldName()<<"is not yet supported";
+                }else
+                    qWarning()<<"QTrackerContactAsyncRequest"<<"sorting by"<<sort.detailDefinitionName()<<"is not yet supported";
+            }
 
             query = ::tracker()->modelQuery(quer);
             // need to store LiveNodes in order to receive notification from model
