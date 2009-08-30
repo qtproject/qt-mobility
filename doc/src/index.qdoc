@@ -131,7 +131,7 @@ The following table lists the various platform API's being used by this API. Thi
         \o Symbian Platform & S60 3.2+
         \o This platform enjoys the most comprehensive feature set. In addition to the features support by the S60 3.1 Network roaming is supported.
     \row
-        \o All other platforms (*nix, MacOS\unicode{0xAE}, Windows Mobile)
+        \o All other platforms (*nix, Mac OS\unicode{0xAE}, Windows Mobile)
         \o This backend is the fallback for all platforms supports network interface notifications via active polling only.
 \endtable
 
