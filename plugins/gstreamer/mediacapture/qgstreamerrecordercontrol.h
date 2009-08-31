@@ -41,8 +41,9 @@
 
 class QGstreamerRecorderControl : public QMediaRecorderControl
 {
-Q_OBJECT
-Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
+    Q_OBJECT
+    Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
+
 public:
     QGstreamerRecorderControl(QGstreamerCaptureSession *session);
     virtual ~QGstreamerRecorderControl();

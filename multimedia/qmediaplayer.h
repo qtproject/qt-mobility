@@ -49,7 +49,6 @@ class QMediaPlayerPrivate;
 class Q_MEDIA_EXPORT QMediaPlayer : public QAbstractMediaObject
 {
     Q_OBJECT
-
     Q_PROPERTY(QMediaSource mediaSource READ currentMediaSource NOTIFY currentMediaSourceChanged)
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(qint64 position READ position WRITE setPosition NOTIFY positionChanged)
@@ -62,7 +61,6 @@ class Q_MEDIA_EXPORT QMediaPlayer : public QAbstractMediaObject
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(MediaStatus mediaStatus READ mediaStatus NOTIFY mediaStatusChanged)
     Q_PROPERTY(QString error READ errorString NOTIFY errorStringChanged)
-
     Q_ENUMS(State)
     Q_ENUMS(MediaStatus)
 

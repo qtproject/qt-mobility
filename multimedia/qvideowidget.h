@@ -46,8 +46,6 @@ class QVideoWidgetPrivate;
 class Q_MEDIA_EXPORT QVideoWidget : public QWidget
 {
     Q_OBJECT
-    Q_ENUMS(DisplayMode)
-    Q_ENUMS(AspectRatio)
     Q_PROPERTY(DisplayMode displayMode READ displayMode WRITE setDisplayMode NOTIFY displayModeChanged)
     Q_PROPERTY(AspectRatio aspectRatio READ aspectRatio WRITE setAspectRatio NOTIFY aspectRatioChanged)
     Q_PROPERTY(QSize customPixelAspectRatio READ customPixelAspectRatio WRITE setCustomPixelAspectRatio NOTIFY customPixelAspectRatioChanged)
@@ -55,7 +53,9 @@ class Q_MEDIA_EXPORT QVideoWidget : public QWidget
     Q_PROPERTY(int contrast READ contrast WRITE setContrast NOTIFY contrastChanged)
     Q_PROPERTY(int hue READ hue WRITE setHue NOTIFY hueChanged)
     Q_PROPERTY(int saturation READ saturation WRITE setSaturation NOTIFY saturationChanged)
-    Q_DECLARE_PRIVATE(QVideoWidget)
+    Q_ENUMS(DisplayMode)
+    Q_ENUMS(AspectRatio)
+
 public:
     enum DisplayMode
     {
@@ -113,6 +113,7 @@ protected:
     QVideoWidgetPrivate *d_ptr;
 
 private:
+    Q_DECLARE_PRIVATE(QVideoWidget)
     Q_PRIVATE_SLOT(d_func(), void _q_overlayFullscreenChanged(bool));
     Q_PRIVATE_SLOT(d_func(), void _q_dimensionsChanged());
 };

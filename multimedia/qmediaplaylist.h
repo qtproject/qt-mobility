@@ -46,13 +46,11 @@ class QMediaPlaylistPrivate;
 class Q_MEDIA_EXPORT QMediaPlaylist : public QObject
 {
     Q_OBJECT
-
-    Q_ENUMS(PlaybackMode)
-
     Q_PROPERTY(QMediaPlaylistProvider* playlistProvider READ playlistProvider WRITE setPlaylistProvider NOTIFY playlistProviderChanged)
     Q_PROPERTY(QMediaPlaylist::PlaybackMode playbackMode READ playbackMode WRITE setPlaybackMode NOTIFY playbackModeChanged)
     Q_PROPERTY(QMediaSource currentMedia READ currentMedia NOTIFY currentMediaChanged)
     Q_PROPERTY(int currentPosition READ currentPosition WRITE setCurrentPosition NOTIFY playlistPositionChanged)
+    Q_ENUMS(PlaybackMode)
 
 public:
 

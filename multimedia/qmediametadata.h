@@ -47,6 +47,7 @@ class Q_MEDIA_EXPORT QMediaMetadata : public QObject
     Q_OBJECT
     Q_PROPERTY(bool metadataAvailable READ metadataAvailable NOTIFY metadataAvailabilityChanged)
     Q_PROPERTY(bool readOnly READ isReadOnly NOTIFY readOnlyChanged)
+
 public:
     enum Key
     {

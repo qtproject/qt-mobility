@@ -48,7 +48,6 @@ class QRadioPlayerPrivate;
 class Q_MEDIA_EXPORT QRadioPlayer : public QAbstractMediaObject
 {
     Q_OBJECT
-
     Q_PROPERTY(Band band READ band WRITE setBand NOTIFY bandChanged)
     Q_PROPERTY(int frequency READ frequency WRITE setFrequency NOTIFY frequencyChanged)
     Q_PROPERTY(bool stereo READ isStereo WRITE setStereo NOTIFY stereoStatusChanged)
@@ -57,7 +56,6 @@ class Q_MEDIA_EXPORT QRadioPlayer : public QAbstractMediaObject
     Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
     Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutingChanged)
     Q_PROPERTY(bool searching READ isSearching NOTIFY searchingStatusChanged)
-
     Q_ENUMS(Band)
 
 public:

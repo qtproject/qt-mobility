@@ -47,13 +47,16 @@ class Q_MEDIA_EXPORT QVideoRendererControl : public QAbstractMediaControl
 {
     Q_OBJECT
     Q_PROPERTY(QAbstractVideoSurface* surface READ surface WRITE setSurface)
-    Q_DECLARE_PRIVATE(QVideoRendererControl)
+
 public:
     QVideoRendererControl(QObject *parent = 0);
     ~QVideoRendererControl();
 
     QAbstractVideoSurface *surface() const;
     virtual void setSurface(QAbstractVideoSurface *surface);
+
+private:
+    Q_DECLARE_PRIVATE(QVideoRendererControl)
 };
 
 #define QVideoRendererControl_iid "com.nokia.Qt.QVideoRendererControl/1.0"

@@ -40,7 +40,7 @@
 class Q_MEDIA_EXPORT QAudioDeviceControl : public QAbstractMediaControl
 {
     Q_OBJECT
-    Q_PROPERTY(int selectedDevice READ selectedDevice WRITE setSelectedDevice NOTIFY selectedDeviceChanged)
+
 public:
     virtual ~QAudioDeviceControl();
 

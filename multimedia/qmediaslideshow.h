@@ -46,7 +46,6 @@ class QMediaSlideShowPrivate;
 class Q_MEDIA_EXPORT QMediaSlideShow : public QAbstractMediaObject
 {
     Q_OBJECT
-    Q_ENUMS(State MediaStatus)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(MediaStatus mediaStatus READ mediaStatus NOTIFY mediaStatusChanged)
     Q_PROPERTY(QMediaSource media READ media WRITE setMedia NOTIFY mediaChanged)
@@ -54,6 +53,8 @@ class Q_MEDIA_EXPORT QMediaSlideShow : public QAbstractMediaObject
     Q_PROPERTY(int currentIndex READ currentIndex WRITE setCurrentIndex NOTIFY currentIndexChanged)
     Q_PROPERTY(QMediaPlaylistProvider* playlist READ playlist)
     Q_PROPERTY(int timeout READ timeout WRITE setTimeout)
+    Q_ENUMS(State MediaStatus)
+
 public:
     enum State
     {
