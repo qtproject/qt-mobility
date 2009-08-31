@@ -4,12 +4,6 @@ QT = core sql
 
 include(../common.pri)
 
-symbian {
-    TARGET.CAPABILITY = ALL -TCB
-}
-
- 
-
 DEFINES += QT_BUILD_SFW_LIB QT_MAKEDLL
 
 PUBLIC_HEADERS +=  qserviceglobal.h \
@@ -37,6 +31,14 @@ SOURCES +=  servicemetadata.cpp \
             qabstractsecuritysession.cpp \
             qserviceinterfacedescriptor.cpp \
             qservicefilter.cpp
+
+symbian {
+    TARGET.CAPABILITY = ALL -TCB
+    deploy.path = /
+    exportheaders.sources = $$PUBLIC_HEADERS
+    exportheaders.path = epoc32/include
+    DEPLOYMENT += exportheaders
+}
 
 
 headers.files = $$PUBLIC_HEADERS
