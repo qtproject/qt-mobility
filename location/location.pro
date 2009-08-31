@@ -43,6 +43,10 @@ SOURCES +=  qlocationutils.cpp \
             qgeoareamonitor.cpp \
             qnmeapositioninfosource.cpp
 
+headers.files = $$PUBLIC_HEADERS
+headers.path = $$OUTPUT_DIR/include
+INSTALLS+=headers
+
 symbian {
     TARGET.CAPABILITY = ALL -TCB
     INCLUDEPATH += \epoc32\include\osextensions
