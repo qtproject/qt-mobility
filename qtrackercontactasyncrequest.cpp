@@ -25,8 +25,7 @@ using namespace SopranoLive;
 void applyFilterToRDFVariable(RDFVariable &variable,
         const QContactFilter &filter)
 {
-    if (filter.type() == QContactFilter::IdList)
-    {
+    if (filter.type() == QContactFilter::IdList){
         QContactIdListFilter filt = filter;
         // for now only works for one ID, TODO ask iridian how to do it in one query
 
@@ -34,6 +33,23 @@ void applyFilterToRDFVariable(RDFVariable &variable,
             variable.property<nco::contactUID>() = LiteralValue(filt.ids()[0]);
         else
             qWarning()<<Q_FUNC_INFO<<"QContactIdListFilter idlist is empty";
+    }
+    else if (filter.type() == QContactFilter::ContactDetail){
+        // right now implementing this for phone numbers
+        // later for the rest of fields
+        QContactDetailFilter filt = filter;
+        if( filt.matchFlags() & ( Qt::MatchExactly));// | Qt::MatchEndsWith | Qt::MatchStartsWith | Qt::MatchContains ) )
+        {
+            //qDebug()<<filt.detailDefinitionName()<<filt.detailFieldName();
+            if( QContactPhoneNumber::DefinitionName == filt.detailDefinitionName()
+                    && QContactPhoneNumber::FieldNumber == filt.detailFieldName() )
+            {
+                RDFVariable rdfPhoneNumber;
+                rdfPhoneNumber = variable.property<nco::hasPhoneNumber>();
+                // TODO figure out how to use filter, now only exact match
+                rdfPhoneNumber.property<nco::phoneNumber>() = LiteralValue(filt.value().toString());
+            }
+        }
     }
 }
 
