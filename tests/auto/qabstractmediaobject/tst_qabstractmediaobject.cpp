@@ -41,10 +41,16 @@
 class tst_QAbstractMediaObject : public QObject
 {
     Q_OBJECT
+
 private slots:
     void propertyWatch();
+    void notifySignals_data();
+    void notifySignals();
     void notifyInterval_data();
     void notifyInterval();
+
+private:
+    void setupNotifyTests();
 };
 
 class QtTestMediaObject : public QAbstractMediaObject
@@ -216,7 +222,7 @@ void tst_QAbstractMediaObject::propertyWatch()
     QCOMPARE(cSpy.count(), cCount);
 }
 
-void tst_QAbstractMediaObject::notifyInterval_data()
+void tst_QAbstractMediaObject::setupNotifyTests()
 {
     QTest::addColumn<int>("interval");
     QTest::addColumn<int>("count");
@@ -240,7 +246,12 @@ void tst_QAbstractMediaObject::notifyInterval_data()
             << 400;
 }
 
-void tst_QAbstractMediaObject::notifyInterval()
+void tst_QAbstractMediaObject::notifySignals_data()
+{
+    setupNotifyTests();
+}
+
+void tst_QAbstractMediaObject::notifySignals()
 {
     QFETCH(int, interval);
     QFETCH(int, count);
@@ -261,6 +272,21 @@ void tst_QAbstractMediaObject::notifyInterval()
 
     QVERIFY(spy.count() >= count);
     QVERIFY(spy.count() < count + 2);
+}
+
+void tst_QAbstractMediaObject::notifyInterval_data()
+{
+    setupNotifyTests();
+}
+
+void tst_QAbstractMediaObject::notifyInterval()
+{
+    QFETCH(int, interval);
+
+    QtTestMediaObject object;
+    object.setNotifyInterval(interval);
+
+    QCOMPARE(object.notifyInterval(), interval);
 }
 
 QTEST_MAIN(tst_QAbstractMediaObject)
