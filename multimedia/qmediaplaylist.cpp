@@ -100,10 +100,10 @@ QMediaPlaylist::QMediaPlaylist(QAbstractMediaObject *mediaObject, QObject *paren
     d->q_ptr = this;
 
     if (mediaObject) {
-        d->control = mediaObject->service()->control<QMediaPlaylistControl*>();
+        d->control = qobject_cast<QMediaPlaylistControl*>(mediaObject->service()->control(QMediaPlaylistControl_iid));
 
         if (!d->control) {
-            QMediaPlayerControl *playerControl = mediaObject->service()->control<QMediaPlayerControl*>();
+            QMediaPlayerControl *playerControl = qobject_cast<QMediaPlayerControl*>(mediaObject->service()->control(QMediaPlayerControl_iid));
             d->control = new QLocalMediaPlaylistControl(playerControl, this);
         }
     } else {

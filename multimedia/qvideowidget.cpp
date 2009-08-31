@@ -159,47 +159,40 @@ QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
     if (!d->service)
         return;
 
-    d->output = d->service->control<QVideoOutputControl *>();
+    d->output = qobject_cast<QVideoOutputControl*>(d->service->control(QVideoOutputControl_iid));
+    d->overlay = qobject_cast<QVideoWindowControl*>(d->service->control(QVideoWindowControl_iid));
 
-    if ((d->overlay = d->service->control<QVideoWindowControl *>())) {
-        connect(d->overlay, SIGNAL(fullscreenChanged(bool)),
-                this, SLOT(_q_overlayFullscreenChanged(bool)));
-        connect(d->overlay, SIGNAL(nativeSizeChanged()),
-                this, SLOT(_q_dimensionsChanged()));
-        connect(d->overlay, SIGNAL(brightnessChanged(int)),
-                this, SIGNAL(brightnessChanged(int)));
-        connect(d->overlay, SIGNAL(contrastChanged(int)),
-                this, SIGNAL(contrastChanged(int)));
-        connect(d->overlay, SIGNAL(hueChanged(int)),
-                this, SIGNAL(hueChanged(int)));
-        connect(d->overlay, SIGNAL(saturationChanged(int)),
-                this, SIGNAL(saturationChanged(int)));
-    } else if ((d->videoWidgetControl = d->service->control<QVideoWidgetControl *>())) {
-        d->videoWidgetControl->videoWidget()->setParent(this);
-        d->videoWidgetControl->videoWidget()->installEventFilter(this);
+    if (d->overlay != 0) {
+        connect(d->overlay, SIGNAL(fullscreenChanged(bool)), SLOT(_q_overlayFullscreenChanged(bool)));
+        connect(d->overlay, SIGNAL(nativeSizeChanged()), SLOT(_q_dimensionsChanged()));
+        connect(d->overlay, SIGNAL(brightnessChanged(int)), SIGNAL(brightnessChanged(int)));
+        connect(d->overlay, SIGNAL(contrastChanged(int)), SIGNAL(contrastChanged(int)));
+        connect(d->overlay, SIGNAL(hueChanged(int)), SIGNAL(hueChanged(int)));
+        connect(d->overlay, SIGNAL(saturationChanged(int)), SIGNAL(saturationChanged(int)));
+    }
+    else {
+        d->videoWidgetControl = qobject_cast<QVideoWidgetControl*>(d->service->control(QVideoWidgetControl_iid));
+        if (d->videoWidgetControl != 0) {
+            d->videoWidgetControl->videoWidget()->setParent(this);
+            d->videoWidgetControl->videoWidget()->installEventFilter(this);
 
-        connect(d->videoWidgetControl, SIGNAL(fullscreenChanged(bool)),
-                this, SLOT(_q_overlayFullscreenChanged(bool)));
-        connect(d->videoWidgetControl, SIGNAL(brightnessChanged(int)),
-                this, SIGNAL(brightnessChanged(int)));
-        connect(d->videoWidgetControl, SIGNAL(contrastChanged(int)),
-                this, SIGNAL(contrastChanged(int)));
-        connect(d->videoWidgetControl, SIGNAL(hueChanged(int)),
-                this, SIGNAL(hueChanged(int)));
-        connect(d->videoWidgetControl, SIGNAL(saturationChanged(int)),
-                this, SIGNAL(saturationChanged(int)));
+            connect(d->videoWidgetControl, SIGNAL(fullscreenChanged(bool)), SLOT(_q_overlayFullscreenChanged(bool)));
+            connect(d->videoWidgetControl, SIGNAL(brightnessChanged(int)), SIGNAL(brightnessChanged(int)));
+            connect(d->videoWidgetControl, SIGNAL(contrastChanged(int)), SIGNAL(contrastChanged(int)));
+            connect(d->videoWidgetControl, SIGNAL(hueChanged(int)), SIGNAL(hueChanged(int)));
+            connect(d->videoWidgetControl, SIGNAL(saturationChanged(int)), SIGNAL(saturationChanged(int)));
+        }
     }
 
 #ifndef QT_NO_VIDEOSURFACE
-    if ((d->renderer = d->service->control<QVideoRendererControl *>())) {
+    d->renderer = qobject_cast<QVideoRendererControl*>(d->service->control(QVideoRendererControl_iid));
+    if (d->renderer != 0) {
         d->surface = new QPainterVideoSurface;
 
         d->renderer->setSurface(d->surface);
 
-        connect(d->surface, SIGNAL(frameChanged()), this, SLOT(update()));
-
-        connect(d->surface, SIGNAL(surfaceFormatChanged(QVideoSurfaceFormat)),
-                this, SLOT(_q_dimensionsChanged()));
+        connect(d->surface, SIGNAL(frameChanged()), SLOT(update()));
+        connect(d->surface, SIGNAL(surfaceFormatChanged(QVideoSurfaceFormat)), SLOT(_q_dimensionsChanged()));
     }
 #endif
 

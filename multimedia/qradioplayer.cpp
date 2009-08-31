@@ -111,7 +111,7 @@ QRadioPlayer::QRadioPlayer(QObject *parent, QRadioService* service):
     d->service = service == 0 ? createRadioService() : service;
     Q_ASSERT(d->service != 0);
 
-    d->control = d->service->control<QRadioPlayerControl*>();
+    d->control = qobject_cast<QRadioPlayerControl*>(d->service->control(QRadioPlayerControl_iid));
     connect(d->control, SIGNAL(bandChanged(QRadioPlayer::Band)), SIGNAL(bandChanged(QRadioPlayer::Band)));
     connect(d->control, SIGNAL(frequencyChanged(int)), SIGNAL(frequencyChanged(int)));
     connect(d->control, SIGNAL(stereoStatusChanged(bool)), SIGNAL(stereoStatusChanged(bool)));

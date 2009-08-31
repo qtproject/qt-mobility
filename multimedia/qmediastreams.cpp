@@ -261,7 +261,7 @@ QMediaStreams::QMediaStreams(QAbstractMediaObject *mediaObject, QObject *parent)
     d->q_ptr = this;
 
     d->service = mediaObject->service();
-    d->control = d->service->control<QMediaStreamsControl *>();
+    d->control = qobject_cast<QMediaStreamsControl*>(d->service->control(QMediaStreamsControl_iid));
     if (d->control != 0) {
         connect(d->control, SIGNAL(streamsChanged()), this, SLOT(_q_updateStreams()));
         connect(d->control, SIGNAL(activeStreamsChanged()), this, SLOT(_q_updateActiveStreams()));

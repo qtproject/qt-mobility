@@ -223,7 +223,7 @@ QMediaSlideShow::QMediaSlideShow(QObject *parent)
     d->service = new QMediaSlideShowService;
     d->service->setNetworkManager(d->network);
 
-    d->slideControl = d->service->QAbstractMediaService::control<QMediaSlideShowControl *>();
+    d->slideControl = qobject_cast<QMediaSlideShowControl*>(d->service->control(QMediaSlideShowControl_iid));
 }
 
 /*!
