@@ -56,6 +56,7 @@ public:
     QMessageStore::ErrorCode _error;
     QMessageIdList _candidateIds;
 
+public slots:
     void completed();
     void reportMatchingIds();
 
