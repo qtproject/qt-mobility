@@ -172,7 +172,7 @@ public:
     bool isValid();
 
     MapiStorePtr findStore(QMessageStore::ErrorCode *lastError, const QMessageAccountId &id = QMessageAccountId()) const;
-    MapiStorePtr defaultStore(QMessageStore::ErrorCode *lastError) { return findStore(lastError); }
+    MapiStorePtr defaultStore(QMessageStore::ErrorCode *lastError) const { return findStore(lastError); }
     QList<MapiStorePtr> allStores(QMessageStore::ErrorCode *lastError) const;
 
     QMessage message(QMessageStore::ErrorCode *lastError, const QMessageId& id) const;
