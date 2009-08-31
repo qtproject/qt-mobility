@@ -35,8 +35,6 @@
 #include "qgstreamerplayersession.h"
 #include "qgstreamerbushelper.h"
 
-#include "qmediastreams.h"
-
 #include <QDebug>
 
 QGstreamerVideoRendererInterface::~QGstreamerVideoRendererInterface()
@@ -419,7 +417,6 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
 
 void QGstreamerPlayerSession::getStreamsInfo()
 {
-
     GstFormat   format = GST_FORMAT_TIME;
     gint64      duration = 0;
 
@@ -445,47 +442,16 @@ void QGstreamerPlayerSession::getStreamsInfo()
     g_object_get(G_OBJECT(m_playbin), "stream-info", &streamInfo, NULL);
 
     bool haveVideo = false;
-    m_streamProperties.clear();
-
 
     for (; streamInfo != 0; streamInfo = g_list_next(streamInfo)) {
         gint        type;
         GObject*    obj = G_OBJECT(streamInfo->data);
 
-        gchar *languageCode = 0;
         g_object_get(obj, "type", &type, NULL);
-        g_object_get(obj, "language-code", &languageCode, NULL);
-
-        QMap<QString, QVariant> streamProperties;
-
-        QMediaStreamInfo::StreamType streamType = QMediaStreamInfo::UnknownStream;
-
-        switch (type) {
-            case GST_STREAM_TYPE_VIDEO:
-                streamType = QMediaStreamInfo::VideoStream;
-                break;
-            case GST_STREAM_TYPE_AUDIO:
-                streamType = QMediaStreamInfo::AudioStream;
-                break;
-            case GST_STREAM_TYPE_SUBPICTURE:
-                streamType = QMediaStreamInfo::SubPictureStream;
-                break;
-            default:
-                streamType = QMediaStreamInfo::UnknownStream;
-                break;
-        }
-
-        streamProperties["Type"] = int(streamType);
-        streamProperties["Language"] = QString::fromUtf8(languageCode);
-
-        m_streamProperties.append(streamProperties);
 
         if (type == GST_STREAM_TYPE_VIDEO)
             haveVideo = true;
-
     }
-
-    emit streamsChanged();
 
     if (haveVideo != m_videoAvailable) {
         m_videoAvailable = haveVideo;

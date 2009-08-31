@@ -118,7 +118,6 @@ signals:
     void bufferingProgressChanged(int percentFilled);
     void playbackFinished();
     void tagsChanged();
-    void streamsChanged();
     void seekableChanged(bool);
 
 private slots:

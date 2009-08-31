@@ -50,8 +50,6 @@ HEADERS = \
     qvideowidget.h \
     qvideowindowcontrol.h \
     qvideowidgetcontrol.h \
-    qmediastreams.h \
-    qmediastreamscontrol.h \
     qaudioencodecontrol.h \
     qvideoencodecontrol.h \
     qimageencodecontrol.h \
@@ -97,8 +95,6 @@ SOURCES = qabstractmediacontrol.cpp \
     qvideowidget.cpp \
     qvideowindowcontrol.cpp \
     qvideowidgetcontrol.cpp \
-    qmediastreams.cpp \
-    qmediastreamscontrol.cpp \
     qaudioencodecontrol.cpp \
     qvideoencodecontrol.cpp \
     qimageencodecontrol.cpp \
