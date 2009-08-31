@@ -14,8 +14,7 @@
 #include "qcontactgroup_p.h"
 #include "qcontactmanager.h"
 #include "qcontactmanager_p.h"
-//#include "qcontactmanagercapabilities.h"
-//#include "qcontactmanagercapabilities_p.h"
+
 
 #include <QtTracker/Tracker>
 #include <QtTracker/ontologies/nco.h>
@@ -138,7 +137,7 @@ void QContactTrackerEngine::deref()
 
 QList<QUniqueId> QContactTrackerEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
-    // TODO Implement sorting for all the supported fields (only QContactName for now)
+    // TODO Implement sorting
     QList<QUniqueId> ids;
     if (filter.type() == QContactFilter::ChangeLog) {
         const QContactChangeLogFilter& clFilter = static_cast<const QContactChangeLogFilter&>(filter);
@@ -225,6 +224,107 @@ QContact QContactTrackerEngine::contact(const QUniqueId& contactId, QContactMana
     return Tracker2QContact::copyContactData( ncoContacts->liveNode(0), contact ) ? contact : QContact();
 }
 
+/*!
+ * Not very good solution, but we add "addressbook" tag to identify which contacts
+ * are added but addressbook ( in order to separate them from facebook and telepathy
+ * contacts
+ */
+void createTagIfItDoesntExistAlready(const QString &tag)
+{
+    static bool checked = false;
+    // only once, if someone remove tag we are in problems (lost contacts)
+    if( !checked )
+    {
+        checked = true;
+        RDFVariable rdfTag = RDFVariable::fromType<nao::Tag>();
+        RDFVariable labelVar = rdfTag.property<nao::prefLabel>();
+        labelVar = LiteralValue(tag);
+        QList<LiveNode> tags = ::tracker()->modelVariable(labelVar);
+        if( tags.isEmpty() )
+        {
+            Live<nao::Tag>(::tracker()->createLiveNode())->setPrefLabel(tag);
+        }
+    }
+}
+
+void addTag(RDFServicePtr service, RDFVariable &var, const QString &tag)
+{
+    // TODO do all in one RDF query: create tag if not existing
+    createTagIfItDoesntExistAlready(tag);
+    RDFUpdate up;
+    RDFVariable rdftag;
+    rdftag.property<nao::prefLabel>() = LiteralValue(tag);
+    up.addInsertion(var, nao::hasTag::iri(), rdftag);
+    service->executeQuery(up);
+}
+
+/*!
+ * Saving has to go in such way that all names are saved at once, all phone numbers together
+ * filled to rdfupdate query etc.
+ * This method goes through the contact and collect which contact detail definitions are there
+ */
+QStringList detailsDefinitionsInContact(const QContact &c)
+{
+    QStringList definitions;
+    foreach(const QContactDetail& det, c.details())
+    {
+        definitions<<det.definitionName();
+    }
+    definitions.removeDuplicates();
+    return definitions;
+}
+
+// just moving this code out of saveContact to make it shorter
+bool contactHasWorkRelatedDetails(const QContact &c)
+{
+    foreach(const QContactDetail& det, c.details())
+    {
+        if( QContactDetail::AttributeContextWork == det.attribute(QContactDetail::AttributeContext))
+           return true;
+    }
+    return false;
+}
+
+/*!
+ * write all phone numbers on one query to tracker
+ * TODO this is temporary code for creating new, saving contacts need to handle only what was
+ * changed.
+ */
+void appendPhoneNumbersUpdate(RDFUpdate &up, RDFVariable &var, const QList<QContactDetail> &details )
+{
+
+    // not perfect way, supposed to delete all and add all in one rdf update,
+    // fix after learning how to use sparql modify
+    RDFVariable varForInsert = var.deepCopy();
+    RDFVariable phones = var.property<nco::hasPhoneNumber>();
+    RDFVariable types = phones.property<rdf::type>();
+    up.addDeletion(RDFVariableStatement(var, nco::hasPhoneNumber::iri(), phones));
+    up.addDeletion(phones, rdf::type::iri(), types);
+    foreach(const QContactDetail& det, details)
+    {
+        QString type = det.attribute(QContactPhoneNumber::AttributeSubType);
+        QUrl newPhone = ::tracker()->createLiveNode().uri();
+        if( QContactPhoneNumber::AttributeSubTypeMobile == type)
+            up.addInsertion(newPhone, rdf::type::iri(), nco::CellPhoneNumber::iri());
+        else if( QContactPhoneNumber::AttributeSubTypeCar == type)
+            up.addInsertion(newPhone, rdf::type::iri(), nco::CarPhoneNumber::iri());
+        else if( QContactPhoneNumber::AttributeSubTypeBulletinBoardSystem == type)
+            up.addInsertion(newPhone, rdf::type::iri(), nco::BbsNumber::iri());
+        else if( QContactPhoneNumber::AttributeSubTypeFacsimile == type)
+            up.addInsertion(newPhone, rdf::type::iri(), nco::FaxNumber::iri());
+        else if( QContactPhoneNumber::AttributeSubTypeModem == type)
+            up.addInsertion(newPhone, rdf::type::iri(), nco::ModemNumber::iri());
+        else if( QContactPhoneNumber::AttributeSubTypePager == type)
+            up.addInsertion(newPhone, rdf::type::iri(), nco::PagerNumber::iri());
+        else if( QContactPhoneNumber::AttributeSubTypeMessagingCapable == type)
+            up.addInsertion(newPhone, rdf::type::iri(), nco::MessagingNumber::iri());
+        else
+            up.addInsertion(newPhone, rdf::type::iri(), nco::VoicePhoneNumber::iri());
+
+        up.addInsertion(newPhone, nco::phoneNumber::iri(), LiteralValue(det.value(QContactPhoneNumber::FieldNumber)));
+        up.addInsertion(RDFVariableStatement(varForInsert, nco::hasPhoneNumber::iri(), newPhone));
+    }
+}
 
 
 bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error)
@@ -233,7 +333,7 @@ bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
     groupsChanged.clear(); // TODO not yet supported
     contactsAdded.clear();
     contactsChanged.clear();
-    
+
     if(contact == 0) {
         error = QContactManager::BadArgumentError;
         return false;
@@ -273,154 +373,135 @@ bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
         ncoContact->setContentLastModified(QDateTime::currentDateTime());
         contactsChanged << contact->id();
     }
+    // if there are work related details, need to be saved to Affiliation.
+    Live<nco::Affiliation> ncoWorkingTime;
+    if( contactHasWorkRelatedDetails(*contact))
+        ncoWorkingTime = ncoContact->getHasAffiliation();
 
     // Add a special tag for contact added from addressbook, not from fb, telepathy etc.
-    QString strTag = "addressbook";
     RDFVariable rdfContact = RDFVariable::fromType<nco::PersonContact>();
-    RDFVariable rdfTag = rdfContact.property<nao::hasTag>().property<nao::prefLabel>() = LiteralValue(strTag);
-    LiveNodeList uriList = service->modelVariable(rdfTag);
-    if (!uriList.isEmpty()) {
-        qDebug() << QString("Failed to add \"%1\" tag").arg(strTag);
-    }
-    else {
-        RDFVariable tag = RDFVariable::fromType<nao::Tag>();
-        tag.property<nao::prefLabel>() = LiteralValue(strTag);
-        LiveNodeList tagList = service->modelVariable(tag);
-        Live<nao::Tag> newTag;
-        if (tagList.isEmpty()) {
-            newTag = service->createLiveNode();
-            newTag->setPrefLabel(strTag);
-            ncoContact->addObject(nao::hasTag::iri(), newTag);
-        }
-        else {
-            newTag = tagList[0];
-            ncoContact->addObject(nao::hasTag::iri(), newTag);
-        }
-    }
+    rdfContact.property<nco::contactUID>() = LiteralValue(QString::number(contact->id()));
+    addTag(service, rdfContact, "addressbook");
 
-    // Iterate the contact details that are set for the contact. Save them.
-    foreach(const QContactDetail& det, contact->details()) {
-        QString definition = det.definitionName();
+    QStringList detailDefinitionsToSave = detailsDefinitionsInContact(*contact);
 
+    foreach(QString definition, detailDefinitionsToSave) {
+        QList<QContactDetail> details = contact->details(definition);
+        QContactDetail detail;
+        Q_ASSERT(!details.isEmpty());
+        detail = details[0]; // temporary as fixing items one by one
         /* Save name data */
         if(definition == QContactName::DefinitionName) {
-            ncoContact->setNameGiven(det.value(QContactName::FieldFirst));
-            ncoContact->setNameAdditional(det.value(QContactName::FieldMiddle));
-            ncoContact->setNameFamily(det.value(QContactName::FieldLast));
+            ncoContact->setNameGiven(detail.value(QContactName::FieldFirst));
+            ncoContact->setNameAdditional(detail.value(QContactName::FieldMiddle));
+            ncoContact->setNameFamily(detail.value(QContactName::FieldLast));
         /* Save address data */
         } else if(definition == QContactAddress::DefinitionName) {
             // OrganizationContact or PersonalContact depending on the context
-            Live<nco::Role> contact = d->contactByContext(det, ncoContact);
+            Live<nco::Role> contact = d->contactByContext(detail, ncoContact);
             Live<nco::PostalAddress> ncoPostalAddress = contact->getHasPostalAddress();
 
             // Found the correct address resource. Now update the data.
-            ncoPostalAddress->setStreetAddress(det.value(QContactAddress::FieldStreet));
-            ncoPostalAddress->setLocality(det.value(QContactAddress::FieldLocality));
-            ncoPostalAddress->setPostalcode(det.value(QContactAddress::FieldPostcode));
-            ncoPostalAddress->setRegion(det.value(QContactAddress::FieldRegion));
-            ncoPostalAddress->setCountry(det.value(QContactAddress::FieldCountry));
+            ncoPostalAddress->setStreetAddress(detail.value(QContactAddress::FieldStreet));
+            ncoPostalAddress->setLocality(detail.value(QContactAddress::FieldLocality));
+            ncoPostalAddress->setPostalcode(detail.value(QContactAddress::FieldPostcode));
+            ncoPostalAddress->setRegion(detail.value(QContactAddress::FieldRegion));
+            ncoPostalAddress->setCountry(detail.value(QContactAddress::FieldCountry));
 
-        /* Save phone numbers. */
-        } else if(definition == QContactPhoneNumber::DefinitionName) {
-            // The new phone number field to save into Tracker.
-            QString phoneNumber = det.value(QContactPhoneNumber::FieldNumber);
-
-            // OrganizationContact or PersonalContact depending on the context
-            Live<nco::Role> contact = d->contactByContext(det, ncoContact);
-
-            // Get all existing phone numbers from the Contact node.
-            LiveNodes numbers = contact->getHasPhoneNumbers();
-
-            // Save mobile phone number.
-            if (det.attribute(QContactDetail::AttributeSubType).contains(QContactPhoneNumber::AttributeSubTypeMobile)) {
-                Live<nco::CellPhoneNumber> number = d->nodeByClasstype<nco::CellPhoneNumber>(numbers);
-                // TODO previous doesnt work - nodeByClasstype was supposed to create multiple new nodes but it always return existing.
-                if(!number.isLive()) {
-                    number = contact->addHasPhoneNumber();
-                }
-                number->setPhoneNumber(phoneNumber);
-            // Or save as general voice number.
-            } else {
-                Live<nco::VoicePhoneNumber> number = d->nodeByClasstype<nco::VoicePhoneNumber>(numbers);
-                if(!number.isLive()) {
-                    number = contact->addHasPhoneNumber();
-                }
-                number->setPhoneNumber(phoneNumber);
-            }
-
-        /* Save emails */
-        } else if(definition == QContactEmailAddress::DefinitionName) {
-            QString email = det.value(QContactEmailAddress::FieldEmailAddress);
-            Live<nco::Role> contact = d->contactByContext(det, ncoContact);
-
-            // TODO: Known issue: we support only one of each type at the moment.
-            //       We should somehow get a notification from UI if we are adding
-            //       a new detail field, or editing the existing one.
-            Live<nco::EmailAddress> liveEmail = contact->firstHasEmailAddress();
-            if(liveEmail == 0) {
-                liveEmail = contact->addHasEmailAddress();
-            }
-            liveEmail->setEmailAddress(email);
-        /* Save avatar */
-        } else if(definition == QContactAvatar::DefinitionName) {
-            QUrl avatar = det.value(QContactAvatar::FieldAvatar);
-            Live<nie::DataObject> fdo = service->liveNode( avatar );
-            ncoContact->setPhoto(fdo);
-        /* Save url */
-        } else if(definition == QContactUrl::DefinitionName) {
-            QUrl url = det.value(QContactUrl::FieldUrl);
-            Live<nco::Role> contact = d->contactByContext(det, ncoContact);
-
-            if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactUrl::AttributeSubTypeHomePage)){
-                Live< rdfs::Resource > liveUrl = contact->addWebsiteUrl();
-                liveUrl = url;
-                contact->setWebsiteUrl(liveUrl);
-                // At the moment the url is a homepage or not. Waiting for tracker ontology additions for the rest.
-                //            } else if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactUrl::AttributeSubTypeFavourite)){
-                //qDebug() << "Favourite subtype not implemented!!!" << __FUNCTION__;
-                //} else if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactUrl::AttributeSubTypeSocialNetworking)){
-                // qDebug() << "SocialNetworking subtype not implemented!!!" << __FUNCTION__;
-            } else {
-                Live< rdfs::Resource > liveUrl = contact->addUrl();
-                liveUrl = url;
-                contact->setUrl(liveUrl);
-            }
         }
-/*
- *      
-        else if (definition == QContactServiceId::DefinitionName) {
-            QString account = det.value(QContactServiceId::FieldAccount);
-            QString serviceName = det.value(QContactServiceId::FieldServiceName);
-*/      
-        // TODO replace when IMaccount is implemented by QtMobility team          
-        else if (definition == QContactOnlineAccount::DefinitionName) {
-            // TODO parse URI, once it is defined
-            QString account = det.value("Account");
-            QString serviceName = det.value("ServiceName");
-            Live<nco::Role> contact = d->contactByContext(det, ncoContact);
-            Live<nco::IMAccount> liveIMAccount = contact->firstHasIMAccount();
-            if (0 == liveIMAccount) {
-                liveIMAccount = contact->addHasIMAccount();
+        else{
+
+            // all the rest might need to save to PersonContact and to Affiliation contact
+            RDFVariable rdfPerson = RDFVariable::fromType<nco::PersonContact>();
+            rdfPerson.property<nco::contactUID>() = LiteralValue(QString::number(contact->id()));
+
+            RDFVariable rdfPerson1 = RDFVariable::fromType<nco::PersonContact>();
+            rdfPerson1.property<nco::contactUID>() = LiteralValue(QString::number(contact->id()));
+            RDFVariable rdfAffiliation = RDFVariable::fromType<nco::Affiliation>();
+            rdfPerson1.property<nco::hasAffiliation>() = rdfAffiliation;
+            RDFUpdate updateQuery;
+
+            QList<QContactDetail> toAffiliation;
+            QList<QContactDetail> toPerson;
+            foreach(const QContactDetail& det, details)
+            {
+                if( QContactDetail::AttributeContextWork == det.attribute(QContactDetail::AttributeContext))
+                    toAffiliation << det;
+                else
+                    toPerson << det;
             }
-            liveIMAccount->setImID(account);
-            liveIMAccount->setImAccountType(serviceName);
+            /* Save all phone numbers at once */
+            if(definition == QContactPhoneNumber::DefinitionName) {
+                if (!toPerson.isEmpty())
+                    appendPhoneNumbersUpdate(updateQuery, rdfPerson, toPerson);
+                if( !toAffiliation.isEmpty())
+                    appendPhoneNumbersUpdate(updateQuery, rdfAffiliation, toAffiliation);
+                service->executeQuery(updateQuery);
+            }
+            else
+            {
+              // Work in progress. soon writing them in single rdf update too
+              foreach(const QContactDetail &det, details )
+              {
+                definition = det.definitionName();
+                /* Save emails */ // TODO all in one rdf update
+                if(definition == QContactEmailAddress::DefinitionName) {
+                    QString email = det.value(QContactEmailAddress::FieldEmailAddress);
+                    Live<nco::Role> contact = d->contactByContext(det, ncoContact);
+
+                    // TODO: Known issue: we support only one of each type at the moment.
+                    //       We should somehow get a notification from UI if we are adding
+                    //       a new detail field, or editing the existing one.
+                    Live<nco::EmailAddress> liveEmail = contact->firstHasEmailAddress();
+                    if(liveEmail == 0) {
+                        liveEmail = contact->addHasEmailAddress();
+                    }
+                    liveEmail->setEmailAddress(email);
+                /* Save avatar */
+                } else if(definition == QContactAvatar::DefinitionName) {
+                    QUrl avatar = det.value(QContactAvatar::FieldAvatar);
+                    Live<nie::DataObject> fdo = service->liveNode( avatar );
+                    ncoContact->setPhoto(fdo);
+                    /* Save url */
+                } else if(definition == QContactUrl::DefinitionName) {
+                    QUrl url = det.value(QContactUrl::FieldUrl);
+                    Live<nco::Role> contact = d->contactByContext(det, ncoContact);
+
+                    if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactUrl::AttributeSubTypeHomePage)){
+                        Live< rdfs::Resource > liveUrl = contact->addWebsiteUrl();
+                        liveUrl = url;
+                        contact->setWebsiteUrl(liveUrl);
+                        // At the moment the url is a homepage or not. Waiting for tracker ontology additions for the rest.
+                        //            } else if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactUrl::AttributeSubTypeFavourite)){
+                        //qDebug() << "Favourite subtype not implemented!!!" << __FUNCTION__;
+                        //} else if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactUrl::AttributeSubTypeSocialNetworking)){
+                        // qDebug() << "SocialNetworking subtype not implemented!!!" << __FUNCTION__;
+                    } else {
+                        Live< rdfs::Resource > liveUrl = contact->addUrl();
+                        liveUrl = url;
+                        contact->setUrl(liveUrl);
+                    }
+                }
+                else if (definition == QContactOnlineAccount::DefinitionName){
+                    // TODO parse URI, once it is defined
+                    QString account = det.value("Account");
+                    QString serviceName = det.value("ServiceName");
+                    Live<nco::Role> contact = d->contactByContext(det, ncoContact);
+                    Live<nco::IMAccount> liveIMAccount = contact->firstHasIMAccount();
+                    if (0 == liveIMAccount)
+                    {
+                        liveIMAccount = contact->addHasIMAccount();
+                    }
+                    liveIMAccount->setImID(account);
+                    liveIMAccount->setImAccountType(serviceName);
+                }
+            } // end foreach detail
+           }
         }
     }
     // remember to commit the transaction, otherwise all changes will be rolled back.
     if(transaction)
         transaction->commit();
-
-/*! commented out as it is fired from QContactManager
-    if(!batch) {
-        QList<QUniqueId> emitList;
-        emitList.append(contact->id());
-        if (newContact) {
-            emit contactsAdded(emitList);
-        } else {
-            emit contactsChanged(emitList);
-        }
-    }
-*/
     error = QContactManager::NoError;
     return true;
 }
@@ -645,26 +726,7 @@ QList<QVariant::Type> QContactTrackerEngine::supportedDataTypes() const
 RDFVariable QContactTrackerEngine::contactDetail2Rdf(const RDFVariable& rdfContact, const QString& definitionName,
                                                       const QString& fieldName) const
 {
-    if (definitionName == QContactAddress::DefinitionName) {
-
-    }
-//    else if (definitionName == QContactAnniversary::DefinitionName) {
-//    }
-    else if (definitionName == QContactAvatar::DefinitionName) {
-    }
-//    else if (definitionName == QContactBirthday::DefinitionName) {
-//    }
-//    else if (definitionName == QContactDisplayLabel::DefinitionName) {
-//    }
-    else if (definitionName == QContactEmailAddress::DefinitionName) {
-    }
-//    else if (definitionName == QContactGender::DefinitionName) {
-//    }
-//    else if (definitionName == QContactGeolocation::DefinitionName) {
-//    }
-//    else if (definitionName == QContactGuid::DefinitionName) {
-//    }
-    else if (definitionName == QContactName::DefinitionName) {
+    if (definitionName == QContactName::DefinitionName) {
         if (fieldName == QContactName::FieldFirst) {
             return rdfContact.property<nco::nameGiven>();
         }
@@ -680,23 +742,6 @@ RDFVariable QContactTrackerEngine::contactDetail2Rdf(const RDFVariable& rdfConta
         else if (fieldName == QContactName::FieldSuffix) {
             return rdfContact.property<nco::nameHonorificSuffix>();
         }
-    }
-//    else if (definitionName == QContactOnlineAccount::DefinitionName) {
-//    }
-//    else if (definitionName == QContactOrganisation::DefinitionName) {
-//    }
-    else if (definitionName == QContactPhoneNumber::DefinitionName) {
-    }
-//    else if (definitionName == QContactPresence::DefinitionName) {
-//    }
-//    else if (definitionName == QContactRelationship::DefinitionName) {
-//    }
-//    else if (definitionName == QContactSyncTarget::DefinitionName) {
-//    }
-//    else if (definitionName == QContactTimestamp::DefinitionName) {
-//    }
-    else if (definitionName == QContactUrl::DefinitionName) {
-
     }
     return RDFVariable();
 }
