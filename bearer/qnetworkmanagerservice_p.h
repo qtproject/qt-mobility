@@ -86,6 +86,7 @@ public:
     QList <QDBusObjectPath> activeConnections() const;
     quint32 state();
     bool setConnections();
+    bool isValid();
     
 Q_SIGNALS:
     void deviceAdded(QDBusObjectPath);
@@ -161,6 +162,7 @@ public:
     quint32 maxBitrate() const;
     quint32 strength() const;
     bool setConnections();
+    bool isValid();
     
 Q_SIGNALS:
     void propertiesChanged(QMap <QString,QVariant>);
@@ -191,6 +193,7 @@ public:
     
     QDBusObjectPath ip4config() const;
     bool setConnections();
+    bool isValid();
     
 Q_SIGNALS:
     void stateChanged(const QString &, quint32);
@@ -216,6 +219,7 @@ public:
     quint32 speed() const;
     bool carrier() const;
     bool setConnections();
+    bool isValid();
     
 Q_SIGNALS:
     void propertiesChanged( const QString &, QMap<QString,QVariant>);
@@ -255,6 +259,7 @@ public:
     QDBusObjectPath activeAccessPoint() const;
     quint32 wirelessCapabilities() const;
     bool setConnections();
+    bool isValid();
     
 Q_SIGNALS:
     void propertiesChanged( const QString &, QMap<QString,QVariant>);
@@ -279,6 +284,8 @@ public:
     QDBusInterface  *connectionInterface() const;
     QList <QDBusObjectPath> listConnections();
     bool setConnections();
+    bool isValid();
+
 Q_SIGNALS:
     void newConnection(QDBusObjectPath);
 private:
@@ -300,13 +307,23 @@ public:
     QNmSettingsMap getSettings();
     //    void update(QNmSettingsMap map);
     bool setConnections();
+    NMDeviceType getType();
+    bool isAutoConnect();
+    quint64 getTimestamp();
+    QString getId();
+    QString getUuid();
+    QString getSsid();
+    QString getMacAddress();
+    QStringList getSeenBssids();
+    bool isValid();
 
 Q_SIGNALS:
     
     void updated(QMap< QString, QMap<QString,QVariant> > s);
-    void removed();
+    void removed(const QString &);
 
 private:
+    QNmDBusHelper *nmDBusHelper;
     QNetworkManagerSettingsConnectionPrivate *d;
 }; //end QNetworkManagerSettingsConnection
 
@@ -335,6 +352,8 @@ public:
     quint32 state() const;
     bool defaultRoute() const;
     bool setConnections();
+    bool isValid();
+
     
 Q_SIGNALS:
     void propertiesChanged(QList<QDBusObjectPath>);
@@ -356,6 +375,7 @@ public:
 
 	//    QList<quint32> nameservers();
     QStringList domains() const;
+    bool isValid();
 
  private:
 	QNetworkManagerIp4ConfigPrivate *d;    

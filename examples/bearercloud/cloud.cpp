@@ -48,10 +48,11 @@
 
 static QMap<QString, QSvgRenderer *> svgCache;
 
+//! [0]
 Cloud::Cloud(const QNetworkConfiguration &config, QGraphicsItem *parent)
 :   QGraphicsItem(parent), configuration(config), deleteAfterAnimation(false)
 {
-    session = new QNetworkSession(configuration);
+    session = new QNetworkSession(configuration, this);
     connect(session, SIGNAL(newConfigurationActivated()),
             this, SLOT(newConfigurationActivated()));
     connect(session, SIGNAL(stateChanged(QNetworkSession::State)),
@@ -70,10 +71,10 @@ Cloud::Cloud(const QNetworkConfiguration &config, QGraphicsItem *parent)
 
     newConfigurationActivated();
 }
+//! [0]
 
 Cloud::~Cloud()
 {
-    delete session;
 }
 
 void Cloud::setFinalScale(qreal factor)
@@ -173,7 +174,8 @@ bool Cloud::advance()
         animated = true;
         if (qAbs(finalScale - currentScale) > 0.0) {
             // use scale as reference
-            setOpacity(opacity() + scaleDelta * (finalOpacity - opacity()) / qAbs(finalScale - currentScale));
+            setOpacity(opacity() + scaleDelta * (finalOpacity - opacity()) /
+                       qAbs(finalScale - currentScale));
         } else {
             setOpacity(finalOpacity);
         }
@@ -194,6 +196,7 @@ void Cloud::paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *)
 {
 }
 
+//! [4]
 QVariant Cloud::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
 {
     switch (change) {
@@ -206,89 +209,9 @@ QVariant Cloud::itemChange(QGraphicsItem::GraphicsItemChange change, const QVari
 
     return QGraphicsItem::itemChange(change, value);
 }
+//! [4]
 
-static QDebug operator<<(QDebug dbg, QNetworkConfiguration::StateFlags state)
-{
-    bool displayed = false;
-
-    if ((state & QNetworkConfiguration::Active) == QNetworkConfiguration::Active) {
-        dbg.nospace() << "Active";
-        displayed = true;
-    }
-    if ((state & QNetworkConfiguration::Discovered) == QNetworkConfiguration::Discovered) {
-        if (displayed)
-            dbg.nospace() << " | ";
-        dbg.nospace() << "Discovered";
-        displayed = true;
-    }
-    if ((state & QNetworkConfiguration::Defined) == QNetworkConfiguration::Defined) {
-        if (displayed)
-            dbg.nospace() << " | ";
-        dbg.nospace() << "Defined";
-        displayed = true;
-    }
-    if ((state & QNetworkConfiguration::Undefined) == QNetworkConfiguration::Undefined) {
-        if (displayed)
-            dbg.nospace() << " | ";
-        dbg.nospace() << "Undefined";
-        displayed = true;
-    }
-
-    return dbg.space();
-}
-
-static QDebug operator<<(QDebug dbg, QNetworkSession::State state)
-{
-    switch (state) {
-    case QNetworkSession::Invalid:
-        dbg.nospace() << "Invalid";
-        break;
-    case QNetworkSession::NotAvailable:
-        dbg.nospace() << "Not Available";
-        break;
-    case QNetworkSession::Connecting:
-        dbg.nospace() << "Connecting";
-        break;
-    case QNetworkSession::Connected:
-        dbg.nospace() << "Connected";
-        break;
-    case QNetworkSession::Closing:
-        dbg.nospace() << "Closing";
-        break;
-    case QNetworkSession::Disconnected:
-        dbg.nospace() << "Disconnected";
-        break;
-    case QNetworkSession::Roaming:
-        dbg.nospace() << "Roaming";
-        break;
-    };
-
-    return dbg.space();
-}
-
-void Cloud::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-    if (event->button() == Qt::RightButton) {
-        qWarning() << configuration.name() << configuration.identifier();
-        qWarning() << "    configuration state:" << configuration.state();
-        qWarning() << "    session bearername:" << session->bearerName();
-        qWarning() << "    active time:"<< session->activeTime();
-        qWarning() << "    session state:" << session->state();
-        qWarning() << "    sent data:"<< session->sentData();
-        qWarning() << "    received sdata:"<< session->receivedData();
-
-
-        if (configuration.type() == QNetworkConfiguration::ServiceNetwork) {
-            qWarning() << "    service network children:";
-            foreach (const QNetworkConfiguration &config, configuration.children()) {
-                qWarning() << "        "<< config.name() << config.identifier() << config.state();
-            }
-        }
-
-        event->accept();
-    }
-}
-
+//! [3]
 void Cloud::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {
@@ -300,7 +223,9 @@ void Cloud::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
         event->accept();
     }
 }
+//! [3]
 
+//! [2]
 void Cloud::stateChanged(QNetworkSession::State state)
 {
     if (configuration.name().isEmpty())
@@ -366,7 +291,9 @@ void Cloud::stateChanged(QNetworkSession::State state)
 
     setToolTip(tooltip);
 }
+//! [2]
 
+//! [1]
 void Cloud::newConfigurationActivated()
 {
     const QString bearerName = session->bearerName();
@@ -399,6 +326,7 @@ void Cloud::newConfigurationActivated()
 
     stateChanged(session->state());
 }
+//! [1]
 
 qreal Cloud::getRadiusForState(QNetworkConfiguration::StateFlags state)
 {

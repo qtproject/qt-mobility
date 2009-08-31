@@ -1,16 +1,19 @@
 # Qt bearer management library
 TEMPLATE = lib
-TARGET = bearer
+TARGET = QtBearer
+
+QT += network
 
 DEFINES += QT_BUILD_BEARER_LIB QT_MAKEDLL
 
 #DEFINES += BEARER_MANAGEMENT_DEBUG
 
-HEADERS += qnetworkconfiguration.h \
+PUBLIC_HEADERS += qnetworkconfiguration.h \
            qnetworksession.h \
            qnetworkconfigmanager.h \
            qbearerglobal.h
 
+HEADERS += $$PUBLIC_HEADERS
 SOURCES += qnetworksession.cpp \
            qnetworkconfigmanager.cpp \
            qnetworkconfiguration.cpp
@@ -40,55 +43,61 @@ symbian: {
             -lconnmon \
             -lcentralrepository \
             -lesock \
+            -linsock \
             -lecom \
             -lefsrv \
             -lnetmeta
 
+    deploy.path = /
+    exportheaders.sources = $$PUBLIC_HEADERS
+    exportheaders.path = epoc32/include
+    DEPLOYMENT += exportheaders
+
     TARGET.CAPABILITY = All -TCB
 } else {
+    DEFINES += BEARER_ENGINE
+
     HEADERS += qnetworkconfigmanager_p.h \
                qnetworkconfiguration_p.h \
-               qnetworksession_p.h
+               qnetworksession_p.h \
+               qnetworksessionengine_p.h \
+               qgenericengine_p.h
 
-    win32:DEFINES += BEARER_ENGINE
+    SOURCES += qnetworkconfigmanager_p.cpp \
+               qnetworksession_p.cpp \
+               qnetworksessionengine.cpp \
+               qgenericengine.cpp
 
-    contains(DEFINES, BEARER_ENGINE) {
-        HEADERS += qnetworksessionengine_p.h \
-                   qgenericengine_p.h
+    unix:!mac:contains(BACKEND, NetworkManager) {
+        contains(QT_CONFIG,dbus) {
+            DEFINES += BACKEND_NM
+            QT += dbus
 
-        SOURCES += qnetworkconfigmanager_p.cpp \
-                   qnetworksession_p.cpp \
-                   qnetworksessionengine.cpp \
-                   qgenericengine.cpp
-    }
+            HEADERS += qnmdbushelper_p.h \
+                       qnetworkmanagerservice_p.h \
+                       qnmwifiengine_unix_p.h
 
-    !mac:unix:SOURCES += qnetworkconfigmanager_unix.cpp \
-                    qnetworkconfiguration_unix.cpp \
-                    qnetworksession_unix.cpp
-
-    !mac:unix:contains(QT_CONFIG,dbus): {
-        QT += dbus
-        HEADERS += qnmdbushelper_p.h qnetworkmanagerservice_p.h
-        SOURCES += qnmdbushelper.cpp qnetworkmanagerservice_p.cpp
+            SOURCES += qnmdbushelper.cpp \
+                       qnetworkmanagerservice_p.cpp \
+                       qnmwifiengine_unix.cpp
+        } else {
+            message("NetworkManager backend requires Qt DBus support");
+        }
     }
 
     win32: {
         HEADERS += qnlaengine_win_p.h
 
-        !wince*:HEADERS += qnativewifiengine_win_p.h \
-                           qioctlwifiengine_win_p.h
+        !wince*:HEADERS += qnativewifiengine_win_p.h
 
         SOURCES += qnlaengine_win.cpp
 
-        !wince*:SOURCES += qnativewifiengine_win.cpp \
-                           qioctlwifiengine_win.cpp
+        !wince*:SOURCES += qnativewifiengine_win.cpp
 
         !wince*:LIBS += -lWs2_32
         wince*:LIBS += -lWs2
     }
 }
-
-QT += network
 
 include (../common.pri)
 

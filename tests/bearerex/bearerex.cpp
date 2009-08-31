@@ -37,7 +37,7 @@
 Q_DECLARE_METATYPE(QNetworkConfiguration)
 
 BearerEx::BearerEx(QWidget* parent)
-     : QMainWindow(parent), m_monitor(false)
+     : QMainWindow(parent)
 {
     setupUi(this);
     
@@ -76,6 +76,16 @@ void BearerEx::showConfigurations()
     QListWidgetItem* listItem;
     
     QNetworkConfiguration defaultConfig = m_NetworkConfigurationManager.defaultConfiguration();
+    if (defaultConfig.type() == QNetworkConfiguration::UserChoice) {
+        listItem = new QListWidgetItem();
+        QFont font = listItem->font();
+        font.setBold(true);
+        font.setUnderline(true);
+        listItem->setFont(font);        
+        listItem->setText("       UserChoice");
+        listItem->setData(Qt::UserRole, qVariantFromValue(defaultConfig));
+        listWidget->addItem(listItem);
+    }
     
     QList<QNetworkConfiguration> configurations = m_NetworkConfigurationManager.allConfigurations();
     for (int i=0; i<configurations.count(); i++)
@@ -138,77 +148,67 @@ void BearerEx::on_createSessionButton_clicked()
         return;
     }    
     QNetworkConfiguration networkConfiguration = qVariantValue<QNetworkConfiguration>(item->data(Qt::UserRole));
-    SessionDialog sessionDialog(&networkConfiguration,&m_NetworkConfigurationManager,this);
-    sessionDialog.exec();
+    int newTabIndex = mainTabWidget->count();
+    SessionTab* newTab = new SessionTab(&networkConfiguration,&m_NetworkConfigurationManager,eventListWidget,newTabIndex-1);
+    QString label = QString("S")+QString::number(newTabIndex-1);
+    mainTabWidget->insertTab(newTabIndex,newTab,label);
+    mainTabWidget->setCurrentIndex(newTabIndex);
 }
 
-void BearerEx::on_monitorConfigurationsButton_clicked()
+void BearerEx::on_clearEventListButton_clicked()
 {
-    if (m_monitor) {
-        monitorConfigurationsButton->setText("Start Monitoring");
-        m_monitor = false;
-    } else {
-        monitorConfigurationsButton->setText("Stop Monitoring");
-        m_monitor = true;
-    }
+    eventListWidget->clear();
 }
-
 
 void BearerEx::configurationAdded(const QNetworkConfiguration& config)
 {
-    if (m_monitor) {
-        QMessageBox msgBox;
-        msgBox.setText(QString("New configuration added :\n")+config.name());
-        msgBox.exec();
-    }
+    QListWidgetItem* listItem = new QListWidgetItem();
+    listItem->setText(QString("Added: ")+config.name());
+    eventListWidget->addItem(listItem);
 }
 
 void BearerEx::configurationRemoved(const QNetworkConfiguration& config)
 {
-    if (m_monitor) {
-        QMessageBox msgBox;
-        msgBox.setText(QString("Configuration removed :\n")+config.name());
-        msgBox.exec();
-    }
+    QListWidgetItem* listItem = new QListWidgetItem();
+    listItem->setText(QString("Removed: ")+config.name());
+    eventListWidget->addItem(listItem);
 }
 
 void BearerEx::onlineStateChanged(bool isOnline)
 {
-    if (m_monitor) {
-        QMessageBox msgBox;
-        if (isOnline) {
-            msgBox.setText("Device Online");
-        } else {
-            msgBox.setText("Device Offline");
-        }
-        msgBox.exec();
+    QListWidgetItem* listItem = new QListWidgetItem();
+    QFont font = listItem->font();
+    font.setBold(true);
+    listItem->setFont(font);        
+    if (isOnline) {
+        listItem->setText(QString("> Online"));
+    } else {
+        listItem->setText(QString("< Offline"));
     }
+    eventListWidget->addItem(listItem);
 }
 
 void BearerEx::configurationChanged(const QNetworkConfiguration & config)
 {
-    if (m_monitor) {
-        QString state;
-        switch (config.state())
-        {
-            case QNetworkConfiguration::Undefined:
-                state = "Undefined";
-                break;
-            case QNetworkConfiguration::Defined:
-                state = "Defined";
-                break;
-            case QNetworkConfiguration::Discovered:
-                state = "Discovered";
-                break;
-            case QNetworkConfiguration::Active:
-                state = "Active";
-                break;
-        }
-    
-        QMessageBox msgBox;
-        msgBox.setText(QString("Configuration state changed :\n")+config.name()+QString("\n")+state);
-        msgBox.exec();
+    QListWidgetItem* listItem = new QListWidgetItem();
+    QString state;
+    switch (config.state())
+    {
+        case QNetworkConfiguration::Undefined:
+            state = "Undef : ";
+            break;
+        case QNetworkConfiguration::Defined:
+            state = "Def : ";
+            break;
+        case QNetworkConfiguration::Discovered:
+            state = "Disc : ";
+            break;
+        case QNetworkConfiguration::Active:
+            state = "Act : ";
+            break;
     }
+    listItem->setText(state+config.name());
+    eventListWidget->addItem(listItem);
 }
 
 void BearerEx::configurationsUpdateCompleted()
@@ -250,19 +250,22 @@ DetailedInfoDialog::DetailedInfoDialog(QNetworkConfiguration* apNetworkConfigura
 #endif
 }
 
-SessionDialog::SessionDialog(QNetworkConfiguration* apNetworkConfiguration,
-                             QNetworkConfigurationManager* configManager, 
-                             QWidget * parent)
-    : QDialog(parent), m_http(0), m_httpRequestOngoing(false)
+SessionTab::SessionTab(QNetworkConfiguration* apNetworkConfiguration,
+                       QNetworkConfigurationManager* configManager,
+                       QListWidget* eventListWidget,
+                       int index,
+                       BearerEx * parent)
+    : QWidget(parent), m_http(0), m_eventListWidget(eventListWidget),
+     m_index(index), m_httpRequestOngoing(false), m_alrEnabled (false)
 {
     setupUi(this);
-    
-    m_ConfigManager = configManager;
 
-    m_alrEnabled = false;
+    m_ConfigManager = configManager;
     m_NetworkSession = new QNetworkSession(*apNetworkConfiguration);
-    stateChanged(m_NetworkSession->state());
-    
+
+    // Update initial Session state to UI
+    newState(m_NetworkSession->state());
+
     connect(m_NetworkSession, SIGNAL(newConfigurationActivated()), this, SLOT(newConfigurationActivated()));
     connect(m_NetworkSession, SIGNAL(stateChanged(QNetworkSession::State)),
             this, SLOT(stateChanged(QNetworkSession::State)));
@@ -287,19 +290,15 @@ SessionDialog::SessionDialog(QNetworkConfiguration* apNetworkConfiguration,
     bearerLineEdit->setFocusPolicy(Qt::NoFocus);
     sentRecDataLineEdit->setFocusPolicy(Qt::NoFocus);
     stateLineEdit->setFocusPolicy(Qt::NoFocus);
-    
-#ifdef Q_OS_SYMBIAN
-    this->showMaximized();
-#endif
 }
 
-SessionDialog::~SessionDialog()
+SessionTab::~SessionTab()
 {
     delete m_NetworkSession;
     delete m_http;
 }
 
-void SessionDialog::on_createQHttpButton_clicked()
+void SessionTab::on_createQHttpButton_clicked()
 {
     if (m_httpRequestOngoing) {
         return;
@@ -314,7 +313,7 @@ void SessionDialog::on_createQHttpButton_clicked()
     connect(m_http, SIGNAL(done(bool)), this, SLOT(done(bool)));    
 }
 
-void SessionDialog::on_sendRequestButton_clicked()
+void SessionTab::on_sendRequestButton_clicked()
 {
     if (m_http) {
         QString urlstring("http://www.google.com");
@@ -329,28 +328,28 @@ void SessionDialog::on_sendRequestButton_clicked()
     }
 }
 
-void SessionDialog::on_openSessionButton_clicked()
+void SessionTab::on_openSessionButton_clicked()
 {
     m_NetworkSession->open();
     if (m_NetworkSession->isActive()) {
-        stateChanged(m_NetworkSession->state()); 
+        newState(m_NetworkSession->state()); 
     }
 }
 
-void SessionDialog::on_closeSessionButton_clicked()
+void SessionTab::on_closeSessionButton_clicked()
 {
     m_NetworkSession->close();
     if (!m_NetworkSession->isActive()) {
-        stateChanged(m_NetworkSession->state()); 
+        newState(m_NetworkSession->state()); 
     }
 }
 
-void SessionDialog::on_stopConnectionButton_clicked()
+void SessionTab::on_stopConnectionButton_clicked()
 {
     m_NetworkSession->stop();
 }
 
-void SessionDialog::on_alrButton_clicked()
+void SessionTab::on_alrButton_clicked()
 {
     if (!m_alrEnabled) {
         connect(m_NetworkSession, SIGNAL(preferredConfigurationChanged(const QNetworkConfiguration&, bool)),
@@ -364,13 +363,13 @@ void SessionDialog::on_alrButton_clicked()
     }
 }
 
-void SessionDialog::on_deleteSessionButton_clicked()
+void SessionTab::on_deleteSessionButton_clicked()
 {
     setWindowTitle("Bearer Example");
-    accept();
+    delete this;
 }
 
-void SessionDialog::newConfigurationActivated()
+void SessionTab::newConfigurationActivated()
 {
     QMessageBox msgBox;
     msgBox.setText("New configuration activated.");
@@ -385,7 +384,7 @@ void SessionDialog::newConfigurationActivated()
     }
 }
 
-void SessionDialog::preferredConfigurationChanged(const QNetworkConfiguration& config, bool /*isSeamless*/)
+void SessionTab::preferredConfigurationChanged(const QNetworkConfiguration& config, bool /*isSeamless*/)
 {
     m_config =  config;
     QMessageBox msgBox;
@@ -400,8 +399,15 @@ void SessionDialog::preferredConfigurationChanged(const QNetworkConfiguration& c
     }
 }
 
-void SessionDialog::sessionOpened()
+void SessionTab::sessionOpened()
 {
+    QListWidgetItem* listItem = new QListWidgetItem();
+    QFont font = listItem->font();
+    font.setBold(true);
+    listItem->setFont(font);        
+    listItem->setText(QString("S")+QString::number(m_index)+QString(" - ")+QString("Opened"));
+    m_eventListWidget->addItem(listItem);
+    
     QVariant identifier = m_NetworkSession->property("ActiveConfigurationIdentifier");
     if (!identifier.isNull()) {
         QString configId = identifier.toString();
@@ -411,85 +417,121 @@ void SessionDialog::sessionOpened()
         }
     }
 
-    QMessageBox msgBox;
-    msgBox.setText("Session opened.");
-    msgBox.exec();
+    if (m_NetworkSession->configuration().type() == QNetworkConfiguration::UserChoice) {
+        QVariant identifier = m_NetworkSession->property("UserChoiceConfigurationIdentifier");
+        if (!identifier.isNull()) {
+            QString configId = identifier.toString();
+            QNetworkConfiguration config = m_ConfigManager->configurationFromIdentifier(configId);
+            if (config.isValid() && (config.type() == QNetworkConfiguration::ServiceNetwork)) {
+                snapLineEdit->setText(config.name());
+            }
+        }
+    }
 }
 
-void SessionDialog::sessionClosed()
+void SessionTab::sessionClosed()
 {
-    QMessageBox msgBox;
-    msgBox.setText("Session closed.");
-    msgBox.exec();
+    QListWidgetItem* listItem = new QListWidgetItem();
+    QFont font = listItem->font();
+    font.setBold(true);
+    listItem->setFont(font);        
+    listItem->setText(QString("S")+QString::number(m_index)+QString(" - ")+QString("Closed"));
+    m_eventListWidget->addItem(listItem);
 }
 
-void SessionDialog::stateChanged(QNetworkSession::State state)    
+QString SessionTab::stateString(QNetworkSession::State state)
 {
+    QString stateString;
+    switch (state)
+    {
+        case QNetworkSession::Invalid:
+            stateString = "Invalid";
+            break;
+        case QNetworkSession::NotAvailable:
+            stateString = "NotAvailable";
+            break;
+        case QNetworkSession::Connecting:
+            stateString = "Connecting";
+            break;
+        case QNetworkSession::Connected:
+            stateString = "Connected";
+            break;
+        case QNetworkSession::Closing:
+            stateString = "Closing";
+            break;
+        case QNetworkSession::Disconnected:
+            stateString = "Disconnected";
+            break;
+        case QNetworkSession::Roaming:
+            stateString = "Roaming";
+            break;
+    }
+    return stateString;
+}
+
+void SessionTab::stateChanged(QNetworkSession::State state)    
+{
+    newState(state);
+    
+    QListWidgetItem* listItem = new QListWidgetItem();
+    listItem->setText(QString("S")+QString::number(m_index)+QString(" - ")+stateString(state));
+    m_eventListWidget->addItem(listItem);
+}
+
+void SessionTab::newState(QNetworkSession::State state)
+{
+    if (state == QNetworkSession::Connected) {
+        QVariant identifier = m_NetworkSession->property("ActiveConfigurationIdentifier");
+        if (!identifier.isNull()) {
+            QString configId = identifier.toString();
+            QNetworkConfiguration config = m_ConfigManager->configurationFromIdentifier(configId);
+            if (config.isValid()) {
+                iapLineEdit->setText(config.name()+" ("+config.identifier()+")");
+            }
+        }
+    }
+
+    bearerLineEdit->setText(m_NetworkSession->bearerName());
+
     QString active;
     if (m_NetworkSession->isActive()) {
         active = " (A)";
     }
-
-    switch (state)
-    {
-        case QNetworkSession::Invalid:
-            stateLineEdit->setText(QString("Invalid")+active);
-            break;
-        case QNetworkSession::NotAvailable:
-            stateLineEdit->setText(QString("NotAvailable")+active);
-            break;
-        case QNetworkSession::Connecting:
-            stateLineEdit->setText(QString("Connecting")+active);
-            break;
-        case QNetworkSession::Connected:
-        {
-            stateLineEdit->setText(QString("Connected")+active);
-            QVariant identifier = m_NetworkSession->property("ActiveConfigurationIdentifier");
-            if (!identifier.isNull()) {
-                QString configId = identifier.toString();
-                QNetworkConfiguration config = m_ConfigManager->configurationFromIdentifier(configId);
-                if (config.isValid()) {
-                    iapLineEdit->setText(config.name()+" ("+config.identifier()+")");
-                }
-            }
-            break;
-        }                
-        case QNetworkSession::Closing:
-            stateLineEdit->setText(QString("Closing")+active);
-            break;
-        case QNetworkSession::Disconnected:
-            stateLineEdit->setText(QString("Disconnected")+active);
-            break;
-        case QNetworkSession::Roaming:
-            stateLineEdit->setText(QString("Roaming")+active);
-            break;
-    }
-
-    bearerLineEdit->setText(m_NetworkSession->bearerName());
+    stateLineEdit->setText(stateString(state)+active);
 }
 
-void SessionDialog::error(QNetworkSession::SessionError error)
+void SessionTab::error(QNetworkSession::SessionError error)
 {
+    QListWidgetItem* listItem = new QListWidgetItem();
     QMessageBox msgBox;
+    
+    QString errorString;
     switch (error)
     {
         case QNetworkSession::UnknownSessionError:
-            msgBox.setText("UnknownSessionError");
+            errorString = "UnknownSessionError";
             break;
         case QNetworkSession::SessionAbortedError:
-            msgBox.setText("SessionAbortedError");
+            errorString = "SessionAbortedError";
             break;
         case QNetworkSession::RoamingError:
-            msgBox.setText("RoamingError");
+            errorString = "RoamingError";
             break;
         case QNetworkSession::OperationNotSupportedError:
-            msgBox.setText("OperationNotSupportedError");
+            errorString = "OperationNotSupportedError";
+            break;
+        case QNetworkSession::InvalidConfigurationError:
+            errorString = "InvalidConfigurationError";
             break;
     }
+    listItem->setText(QString("S")+QString::number(m_index)+QString(" - ")+errorString);
+    m_eventListWidget->addItem(listItem);
+    
+    msgBox.setText(errorString);
     msgBox.exec();
 }
 
-void SessionDialog::done(bool error)
+void SessionTab::done(bool error)
 {
     m_httpRequestOngoing = false;
 

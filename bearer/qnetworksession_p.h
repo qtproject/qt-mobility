@@ -30,7 +30,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #ifndef QNETWORKSESSIONPRIVATE_H
 #define QNETWORKSESSIONPRIVATE_H
 
@@ -54,12 +53,6 @@
 #include <qnetworksession.h>
 #include <QNetworkInterface>
 #include <QDateTime>
-
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && !defined(BEARER_ENGINE)
-#include <QDBusPendingCallWatcher>
-#endif
-
-QT_BEGIN_NAMESPACE
 
 #ifdef BEARER_ENGINE
 class QNetworkSessionEngine;
@@ -113,23 +106,8 @@ private Q_SLOTS:
 #ifdef BEARER_ENGINE
     void networkConfigurationsChanged();
     void configurationChanged(const QNetworkConfiguration &config);
-    void connectionError(const QString &id, QNetworkSessionEngine::ConnectionError error);
-#endif
-
-#if defined(BEARER_ENGINE) || defined(Q_OS_UNIX)
     void forcedSessionClose(const QNetworkConfiguration &config);
-#endif
-
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && !defined(BEARER_ENGINE)
-    void deviceStateChanged(quint32);
-    void slotActivationFinished(QDBusPendingCallWatcher*);
-
-    void updateDeviceInterfaceState(const QString &, quint32);
-    void propertiesChanged( const QString & path, QMap<QString,QVariant> map);
-    void configChanged(const QNetworkConfiguration &config);
-
-    void activateNmSession(const QNetworkConfiguration &config);
-    void deactivateNmSession(const QNetworkConfiguration &config);
+    void connectionError(const QString &id, QNetworkSessionEngine::ConnectionError error);
 #endif
 
 private:
@@ -164,28 +142,13 @@ private:
     QNetworkSession* q;
     friend class QNetworkSession;
 
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && !defined(BEARER_ENGINE)
-    bool keepActive;
-    qint32 triedServiceConnection;
+#if defined(BEARER_ENGINE) && defined(BACKEND_NM)
     QDateTime startTime;
-    QString currentBearerName;
-    QString currentConnectionPath;
-    QString activeConnectionPath;
-    QString getConnectionPath(const QString &name = QString());
-    QString getActiveConnectionPath();
-    QString getBearerName(quint32 type);
     void setActiveTimeStamp();
-    void updateNetworkConfigurations();
-    void activateConnection(/*QDBusInterface &iface,*/ const QString & connPath, const QString &devicePath);
-    QNetworkManagerInterface * iface;
-    QNetworkManagerInterfaceDevice *devIface;
-    QNetworkManagerInterfaceDeviceWireless *devWirelessIface;
-    QNetworkManagerInterfaceAccessPoint *accessPointIface;
-    QNetworkManagerInterfaceDeviceWired * devWiredIface;
-
 #endif
 };
 
 QT_END_NAMESPACE
 
 #endif //QNETWORKSESSIONPRIVATE_H
+

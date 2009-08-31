@@ -271,6 +271,9 @@ bool QNetworkSession::waitForOpened(int msecs)
     if (d->isActive)
         return true;
 
+    if (d->state != Connecting)
+        return false;
+
     QEventLoop* loop = new QEventLoop(this);
     QObject::connect(d, SIGNAL(quitPendingWaitsForOpened()),
                      loop, SLOT(quit()));

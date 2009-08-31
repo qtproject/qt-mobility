@@ -52,8 +52,10 @@ public:
     void timerEvent(QTimerEvent *event);
 
 private Q_SLOTS:
+    void configurationAdded(const QNetworkConfiguration &config);
+    void configurationRemoved(const QNetworkConfiguration &config);
+    void configurationChanged(const QNetworkConfiguration &config);
     void updateConfigurations();
-    void triggerUpdate();
 
 private:
     QNetworkConfigurationManager manager;
@@ -62,8 +64,8 @@ private:
     QHash<QString, Cloud *> configurations;
 
     QMap<QNetworkConfiguration::StateFlags, qreal> offset;
+    QMultiMap<QNetworkConfiguration::StateFlags, QString> configStates;
 
-    bool updateTriggered;
     int timerId;
 };
 

@@ -9,5 +9,4 @@ SUBDIRS += servicemetadata \                #service framework
            qservicecontext \
            qnetworkconfigmanager \          #Bearer management
            qnetworkconfiguration
-
-win32:SUBDIRS += qnetworksession
+           qnetworksession

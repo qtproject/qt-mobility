@@ -123,11 +123,6 @@ void BearerDialog::configurationAdded(const QNetworkConfiguration &config, QTree
     }
 }
 
-void BearerDialog::configurationAdded(const QNetworkConfiguration &config)
-{
-    configurationAdded(config, 0);
-}
-
 void BearerDialog::configurationRemoved(const QNetworkConfiguration &config)
 {
     for (int i = 0; i < treeWidget->topLevelItemCount(); ++i) {

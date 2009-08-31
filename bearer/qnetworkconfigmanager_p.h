@@ -53,22 +53,14 @@
 QT_BEGIN_NAMESPACE
 
 #ifdef BEARER_ENGINE
+class QNetworkSessionEngine;
 class QGenericEngine;
 class QNlaEngine;
 class QNativeWifiEngine;
-class QIoctlWifiEngine;
+class QNmWifiEngine;
 #endif
 
 #include <QStringList>
-
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && !defined(BEARER_ENGINE)
-#include <qnetworkmanagerservice_p.h>
-
-#include <QDBusConnection>
-#include <QDBusMessage>
-#include <QObject>
-#include <QDBusObjectPath>
-#endif
 
 class QNetworkConfigurationManagerPrivate : public QObject
 {
@@ -111,10 +103,14 @@ public:
     QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > accessPointConfigurations;
     QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > snapConfigurations;
     QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > userChoiceConfigurations;
+#ifdef BEARER_ENGINE
+    QHash<QString, QNetworkSessionEngine *> configurationEngine;
+#endif
     bool firstUpdate;
 
 public slots:
     void updateConfigurations();
+
 Q_SIGNALS:
     void configurationAdded(const QNetworkConfiguration& config);
     void configurationRemoved(const QNetworkConfiguration& config);
@@ -124,47 +120,9 @@ Q_SIGNALS:
 
 private:
 #ifdef BEARER_ENGINE
-    void updateAccessPointConfiguration(QNetworkConfigurationPrivate *cpPriv, QList<QString> &knownConfigs);
-    void updateGenericConfigurations(QList<QString> &knownConfigs);
-#ifdef Q_OS_WIN
-    void updateNlaConfigurations(QList<QString> &knownConfigs);
-#ifndef Q_OS_WINCE
-    bool updateWlanNativeConfigurations(QList<QString> &knownConfigs);
-    void updateWlanIoctlConfigurations(QList<QString> &knownConfigs);
-    void updateWlanConfigurations(QList<QString> &knownConfigs);
-#endif
-#endif
-    void updateInternetServiceConfiguration(QList<QString> &knownConfigs);
+    void updateInternetServiceConfiguration();
 
     void abort();
-#endif
-
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && !defined(BEARER_ENGINE)
-//    QNetworkManagerInterface *iface;
-
-    QStringList knownSsids;
-    bool updating;
-    QString currentActiveAP;
-    QString defaultConnectionPath;
-    QStringList getKnownSsids();
-
-    void updateEthConfigurations(QNetworkManagerInterfaceDevice *devIface);
-    void updateWifiConfigurations(QNetworkManagerInterfaceDevice *devIface);
-    void updateServiceNetworks(QNetworkManagerInterfaceDevice *devIface);
-
-    void updateServiceNetworkState(bool isWifi);
-    void updateState(const QString &ident, quint32 state);
-
-    QString getNameForConfiguration(QNetworkManagerInterfaceDevice *devIface);
-
-    QStringList getActiveConnectionsPaths(QDBusInterface &iface);
-    QNetworkConfiguration::StateFlags getAPState(qint32 vState, bool isKnown);
-
-     QNetworkManagerInterfaceDeviceWireless *devWirelessIface;
-     QNetworkManagerInterfaceDevice *devIface;
-     QNetworkManagerInterface *iface;
-
-    //    QStringList getActiveDevicesPaths(QDBusInterface &iface);
 #endif
 
 #ifdef BEARER_ENGINE
@@ -173,8 +131,10 @@ private:
     QNlaEngine *nla;
 #ifndef Q_OS_WINCE
     QNativeWifiEngine *nativeWifi;
-    QIoctlWifiEngine *ioctlWifi;
 #endif
+#endif
+#ifdef BACKEND_NM
+    QNmWifiEngine *nmWifi;
 #endif
 
     uint onlineConfigurations;
@@ -185,25 +145,20 @@ private:
         GenericUpdating = 0x02,
         NlaUpdating = 0x04,
         NativeWifiUpdating = 0x08,
-        IoctlWifiUpdating = 0x10,
+        NmUpdating = 0x20,
     };
     Q_DECLARE_FLAGS(EngineUpdateState, EngineUpdate)
 
     EngineUpdateState updateState;
 #endif
-private slots:
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC) && !defined(BEARER_ENGINE)
-    void cmpPropertiesChanged(const QString &, QMap<QString,QVariant> map);
-    void accessPointAdded(const QString &, QDBusObjectPath );
-    void accessPointRemoved( const QString &, QDBusObjectPath );
-    void updateDeviceInterfaceState(const QString &, quint32);
-    void updateAccessPointState(const QString &, quint32);
+
+private Q_SLOTS:
+#ifdef BEARER_ENGINE
+    void configurationAdded(QNetworkConfigurationPrivate *cpPriv, QNetworkSessionEngine *engine);
+    void configurationRemoved(const QString &id);
+    void configurationChanged(QNetworkConfigurationPrivate *cpPriv);
 #endif
-
-
 };
-
-
 
 QT_END_NAMESPACE
 

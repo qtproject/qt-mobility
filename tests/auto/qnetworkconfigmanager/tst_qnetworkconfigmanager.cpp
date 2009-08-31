@@ -80,6 +80,11 @@ void tst_QNetworkConfigurationManager::allConfigurations()
     QNetworkConfigurationManager manager;
     QList<QNetworkConfiguration> preScanConfigs = manager.allConfigurations();
 
+    foreach(QNetworkConfiguration c, preScanConfigs)
+    {
+        QVERIFY2(c.type()!=QNetworkConfiguration::UserChoice, "allConfiguration must not return UserChoice configs");
+    }
+
     QSignalSpy spy(&manager, SIGNAL(updateCompleted()));
     manager.updateConfigurations(); //initiate scans
     QTRY_VERIFY(spy.count() == 1); //wait for scan to complete
@@ -93,6 +98,7 @@ void tst_QNetworkConfigurationManager::allConfigurations()
         QVERIFY(p.isValid());
         printConfigurationDetails(p);
         QVERIFY(p.type() != QNetworkConfiguration::Invalid);
+        QVERIFY(p.type() != QNetworkConfiguration::UserChoice);
     }
 
     configs = manager.allConfigurations(QNetworkConfiguration::Undefined);
@@ -151,19 +157,44 @@ void tst_QNetworkConfigurationManager::allConfigurations()
 void tst_QNetworkConfigurationManager::defaultConfiguration()
 {
     QNetworkConfigurationManager manager;
+    QSignalSpy spy(&manager, SIGNAL(updateCompleted()));
+    manager.updateConfigurations(); //initiate scans
+    QTRY_VERIFY(spy.count() == 1); //wait for scan to complete
+
     QList<QNetworkConfiguration> configs = manager.allConfigurations();
     QNetworkConfiguration defaultConfig = manager.defaultConfiguration();
 
     bool confirm = configs.contains(defaultConfig);
-    QVERIFY(confirm || !defaultConfig.isValid());
-    QVERIFY(!(confirm && !defaultConfig.isValid()));
+    bool isUserChoice = (defaultConfig.type() == QNetworkConfiguration::UserChoice);
+
+    //user choice config is not part of allConfigurations()
+    QVERIFY(isUserChoice != confirm);
+    if (!isUserChoice) {
+        QVERIFY(confirm || !defaultConfig.isValid());
+        QVERIFY(!(confirm && !defaultConfig.isValid()));
+    } else {
+        QVERIFY(defaultConfig.isValid());
+        QCOMPARE(defaultConfig.name(), QString("UserChoice"));
+        QCOMPARE(defaultConfig.children().count(), 0);
+        QVERIFY(!defaultConfig.roamingAvailable());
+        QCOMPARE(defaultConfig.state(), QNetworkConfiguration::Discovered);
+        QNetworkConfiguration copy = manager.configurationFromIdentifier(defaultConfig.identifier());
+        QVERIFY(copy == defaultConfig);
+    }
 }
 
 void tst_QNetworkConfigurationManager::configurationFromIdentifier()
 {
     QNetworkConfigurationManager manager;
     QSet<QString> allIdentifier;
+
+    //force an update to get maximum number of configs
+    QSignalSpy spy(&manager, SIGNAL(updateCompleted()));
+    manager.updateConfigurations(); //initiate scans
+    QTRY_VERIFY(spy.count() == 1); //wait for scan to complete
+    
     QList<QNetworkConfiguration> configs = manager.allConfigurations();
+
     foreach(QNetworkConfiguration c, configs) {
         QVERIFY(!allIdentifier.contains(c.identifier()));
         allIdentifier.insert(c.identifier());

@@ -233,10 +233,23 @@
 <h4>Roaming</h4>
 <a name="platform-capabilities"></a>
 <h4>Platform capabilities</h4>
+<p>Some API features are not available on all platforms. The <a href="qnetworkconfigurationmanager.html#CapabilityFlag-enum">QNetworkConfigurationManager::CapabilityFlag</a> should be used to detect platform features at runtime. The following table lists the various platform API's being used by this API. This may assist in the process of determining the feature support:</p>
+<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
+<thead><tr valign="top" class="qt-style"><th>Platform</th><th>Backend capabilities</th></tr></thead>
+<tr valign="top" class="odd"><td>Linux&#xae;</td><td>Linux uses the <a href="http://projects.gnome.org/NetworkManager">NetworkManager API</a> which supports interface notifications and starting and stopping of network interfaces.</td></tr>
+<tr valign="top" class="even"><td>Windows&#xae; XP</td><td>This platform supports interface notifications without active polling.</td></tr>
+<tr valign="top" class="odd"><td>Windows XP SP2+Hotfixes, Windows XP SP3, Windows Vista, Windows 7</td><td>In addition to standard Windows XP wifi access point monitoring has been improved which includes the ability to start and stop wifi interfaces. This requires Windows to manage the wifi interfaces.</td></tr>
+<tr valign="top" class="even"><td>Symbian&#xae; Platform &amp; S60 3.1</td><td>Symbian support is based on Symbian platforms RConnection. In addition to interface notifications, starting and stopping of network it provides system wide session support and direct connection routing.</td></tr>
+<tr valign="top" class="odd"><td>Symbian Platform &amp; S60 3.2+</td><td>This platform enjoys the most comprehensive feature set. In addition to the features support by the S60 3.1 Network roaming is supported.</td></tr>
+<tr valign="top" class="even"><td>All other platforms (*nix, Mac OS&#xae;, Windows Mobile)</td><td>This backend is the fallback for all platforms supports network interface notifications via active polling only.</td></tr>
+</table></p>
 <a name="building-and-compiling"></a>
 <h2>Building and compiling</h2>
 <p>This library requires Qt 4.5 to be installed.</p>
 <p>To build the library, run <tt>qmake</tt> and <tt>make</tt>.</p>
+<p>Linux supports a NetworkManager based backend and generic backend using <a href="http://qt.nokia.com/doc/4.5/qnetworkinterface.html">QNetworkInterface</a> only. By default the generic backend is selected. If the NetworkManager backend is required run qmake as follows:</p>
+<pre>        qmake BACKEND=NetworkManager</pre>
+<p>The backend selection is expected to disappear once the API is integrated into Qt.</p>
 <a name="reference-documentation"></a>
 <h2>Reference documentation</h2>
 <a name="main-classes"></a>
@@ -267,7 +280,11 @@
 <li><a href="servicebrowser.html">Service Browser Example</a></li>
 </ul>
 </li>
-<li>Bearer Management</li>
+<li>Bearer Management<ul>
+<li><a href="bearercloud.html">Bearer Cloud</a></li>
+<li><a href="bearermonitor.html">Bearer Monitor</a></li>
+</ul>
+</li>
 </ul>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

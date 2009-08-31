@@ -201,7 +201,10 @@ void tst_QNetworkSession::userChoiceSession()
 
         session.open();
 
-        QTRY_VERIFY(!sessionOpenedSpy.isEmpty() || !errorSpy.isEmpty());
+        session.waitForOpened();
+
+        if (session.isActive())
+            QVERIFY(!sessionOpenedSpy.isEmpty() || !errorSpy.isEmpty());
         if (!errorSpy.isEmpty()) {
             QNetworkSession::SessionError error =
                 qvariant_cast<QNetworkSession::SessionError>(errorSpy.first().at(0));
@@ -218,6 +221,8 @@ void tst_QNetworkSession::userChoiceSession()
                 } else {
                     QSKIP("Cannot test session for non-Discovered configuration.", SkipSingle);
                 }
+            } else if (error == QNetworkSession::UnknownSessionError) {
+                    QSKIP("Unknown session error.", SkipSingle);
             } else {
                 QFAIL("Error opening session.");
             }
@@ -230,6 +235,7 @@ void tst_QNetworkSession::userChoiceSession()
                 QTRY_VERIFY(!stateChangedSpy.isEmpty());
 
             QVERIFY(session.state() == QNetworkSession::Connected);
+            QVERIFY(session.interface().isValid());
 
             const QString userChoiceIdentifier =
                 session.property("UserChoiceConfigurationIdentifier").toString();
@@ -312,7 +318,10 @@ void tst_QNetworkSession::sessionOpenCloseStop()
 
         session.open();
 
-        QTRY_VERIFY(!sessionOpenedSpy.isEmpty() || !errorSpy.isEmpty());
+        session.waitForOpened();
+
+        if (session.isActive())
+            QVERIFY(!sessionOpenedSpy.isEmpty() || !errorSpy.isEmpty());
         if (!errorSpy.isEmpty()) {
             QNetworkSession::SessionError error =
                 qvariant_cast<QNetworkSession::SessionError>(errorSpy.first().at(0));
@@ -332,6 +341,8 @@ void tst_QNetworkSession::sessionOpenCloseStop()
                 } else {
                     QSKIP("Cannot test session for non-Discovered configuration.", SkipSingle);
                 }
+            } else if (error == QNetworkSession::UnknownSessionError) {
+                    QSKIP("Unknown Session error.", SkipSingle);
             } else {
                 QFAIL("Error opening session.");
             }
@@ -352,6 +363,7 @@ void tst_QNetworkSession::sessionOpenCloseStop()
             }
 
             QVERIFY(session.state() == QNetworkSession::Connected);
+            QVERIFY(session.interface().isValid());
         } else {
             QFAIL("Timeout waiting for session to open.");
         }
@@ -378,12 +390,15 @@ void tst_QNetworkSession::sessionOpenCloseStop()
 
         session2.open();
 
-        QTRY_VERIFY(!sessionOpenedSpy2.isEmpty());
+        QTRY_VERIFY(!sessionOpenedSpy2.isEmpty() || !errorSpy2.isEmpty());
 
         QVERIFY(session.isActive());
         QVERIFY(session2.isActive());
         QVERIFY(session.state() == QNetworkSession::Connected);
         QVERIFY(session2.state() == QNetworkSession::Connected);
+        QVERIFY(session.interface().isValid());
+        QCOMPARE(session.interface().hardwareAddress(), session2.interface().hardwareAddress());
+        QCOMPARE(session.interface().index(), session2.interface().index());
     }
 
     sessionOpenedSpy2.clear();
@@ -391,7 +406,12 @@ void tst_QNetworkSession::sessionOpenCloseStop()
     if (forceSessionStop) {
         // Test forcing the second session to stop the interface.
         QNetworkSession::State previousState = session.state();
+#ifdef Q_CC_NOKIAX86
+        // For S60 emulator builds: RConnection::Stop does not work on all Emulators
+        bool expectStateChange = false;
+#else
         bool expectStateChange = previousState != QNetworkSession::Disconnected;
+#endif
 
         session2.stop();
 
@@ -445,21 +465,59 @@ void tst_QNetworkSession::sessionOpenCloseStop()
                 QFAIL("Error stopping session.");
             }
         } else if (!sessionClosedSpy2.isEmpty()) {
+            bool roamedSuccessfully = false;        
+        
             if (expectStateChange) {
-                QCOMPARE(stateChangedSpy2.count(), 2);
+                if (configuration.type() == QNetworkConfiguration::ServiceNetwork) {
+                    QCOMPARE(stateChangedSpy2.count(), 4);
 
-                QNetworkSession::State state =
-                    qvariant_cast<QNetworkSession::State>(stateChangedSpy2.at(0).at(0));
-                QVERIFY(state == QNetworkSession::Closing);
+                    QNetworkSession::State state =
+                        qvariant_cast<QNetworkSession::State>(stateChangedSpy2.at(0).at(0));
+                    QVERIFY(state == QNetworkSession::Connecting);
 
-                state = qvariant_cast<QNetworkSession::State>(stateChangedSpy2.at(1).at(0));
-                QVERIFY(state == QNetworkSession::Disconnected);
+                    state = qvariant_cast<QNetworkSession::State>(stateChangedSpy2.at(1).at(0));
+                    QVERIFY(state == QNetworkSession::Connected);
 
+                    state = qvariant_cast<QNetworkSession::State>(stateChangedSpy2.at(2).at(0));
+                    QVERIFY(state == QNetworkSession::Closing);
+
+                    state = qvariant_cast<QNetworkSession::State>(stateChangedSpy2.at(3).at(0));
+                    QVERIFY(state == QNetworkSession::Disconnected);
+                    
+                    QTRY_VERIFY(stateChangedSpy.count() > 0);
+                    state = qvariant_cast<QNetworkSession::State>(stateChangedSpy.at(0).at(0));
+                    if (state == QNetworkSession::Roaming) {
+                        QTRY_VERIFY(!errorSpy.isEmpty() || stateChangedSpy.count() > 1);
+                        if (stateChangedSpy.count() > 1) {
+                            state = qvariant_cast<QNetworkSession::State>(stateChangedSpy.at(1).at(0));
+                            if (state == QNetworkSession::Connected) {
+                                roamedSuccessfully = true;
+                                session.close();
+                                QTRY_VERIFY(session.state() == QNetworkSession::Disconnected);
+                                QTRY_VERIFY(session2.state() == QNetworkSession::Disconnected);
+                            }
+                        }
+                    }
+                } else {
+                    QCOMPARE(stateChangedSpy2.count(), 2);
+
+                    QNetworkSession::State state =
+                        qvariant_cast<QNetworkSession::State>(stateChangedSpy2.at(0).at(0));
+                    QVERIFY(state == QNetworkSession::Closing);
+
+                    state = qvariant_cast<QNetworkSession::State>(stateChangedSpy2.at(1).at(0));
+                    QVERIFY(state == QNetworkSession::Disconnected);
+                }
+
+                QTRY_VERIFY(!sessionClosedSpy.isEmpty());
                 QVERIFY(session.state() == QNetworkSession::Disconnected);
                 QVERIFY(session2.state() == QNetworkSession::Disconnected);
             }
 
-            QVERIFY(errorSpy.isEmpty());
+#ifndef Q_CC_NOKIAX86
+            if (!roamedSuccessfully)
+                QVERIFY(!errorSpy.isEmpty());
+#endif
             QVERIFY(errorSpy2.isEmpty());
 
             ++inProcessSessionManagementCount;
@@ -467,17 +525,25 @@ void tst_QNetworkSession::sessionOpenCloseStop()
             QFAIL("Timeout waiting for session to stop.");
         }
 
+#ifndef Q_CC_NOKIAX86
         QVERIFY(!sessionClosedSpy.isEmpty());
+#endif
         QVERIFY(!sessionClosedSpy2.isEmpty());
 
+#ifndef Q_CC_NOKIAX86
         QVERIFY(!session.isActive());
+#endif
         QVERIFY(!session2.isActive());
     } else {
         // Test closing the second session.
         {
+            int stateChangedCountBeforeClose = stateChangedSpy2.count();
             session2.close();
 
             QTRY_VERIFY(!sessionClosedSpy2.isEmpty());
+#ifndef Q_CC_NOKIAX86        
+            QVERIFY(stateChangedSpy2.count() == stateChangedCountBeforeClose);
+#endif        
 
             QVERIFY(sessionClosedSpy.isEmpty());
 
@@ -485,14 +551,23 @@ void tst_QNetworkSession::sessionOpenCloseStop()
             QVERIFY(!session2.isActive());
             QVERIFY(session.state() == QNetworkSession::Connected);
             QVERIFY(session2.state() == QNetworkSession::Connected);
+            QVERIFY(session.interface().isValid());
+            QCOMPARE(session.interface().hardwareAddress(), session2.interface().hardwareAddress());
+            QCOMPARE(session.interface().index(), session2.interface().index());
         }
 
         sessionClosedSpy2.clear();
 
         // Test closing the first session.
         {
+#ifdef Q_CC_NOKIAX86
+            // For S60 emulator builds: RConnection::Close does not actually
+            //                          close network connection on all Emulators
+            bool expectStateChange = false;
+#else
             bool expectStateChange = session.state() != QNetworkSession::Disconnected &&
                                      manager.capabilities() & QNetworkConfigurationManager::SystemSessionSupport;
+#endif
 
             session.close();
 
@@ -530,7 +605,7 @@ void tst_QNetworkSession::sessionOpenCloseStop()
                 QVERIFY(errorSpy.isEmpty());
 
                 if (expectStateChange)
-                    QVERIFY(session.state() == QNetworkSession::Disconnected);
+                    QTRY_VERIFY(session.state() == QNetworkSession::Disconnected);
 
                 ++inProcessSessionManagementCount;
             } else {

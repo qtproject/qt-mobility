@@ -81,6 +81,12 @@ public:
     QNetworkConfigurationPrivate::Bearer bearer;
     TUint32 numericId;
     TUint connectionId;
+    
+    TAny* manager;
+ 
+    QString mappingName;
+ 
+    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> serviceNetworkPtr; 
 
 private:
     // disallow detaching

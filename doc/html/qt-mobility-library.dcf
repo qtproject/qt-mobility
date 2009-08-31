@@ -199,6 +199,12 @@
     </section>
 </section>
 <section ref="examples.html" title="Tutorial &amp; Examples">
+    <section ref="bearercloud.html" title="Bearer Cloud Example">
+        <keyword ref="bearercloud.html">Bearer Cloud Example</keyword>
+    </section>
+    <section ref="bearermonitor.html" title="Bearer Monitor Example">
+        <keyword ref="bearermonitor.html">Bearer Monitor Example</keyword>
+    </section>
     <section ref="bluetoothtransferplugin.html" title="Bluetooth Transfer Plugin Example">
         <keyword ref="bluetoothtransferplugin.html">Bluetooth Transfer Plugin Example</keyword>
     </section>

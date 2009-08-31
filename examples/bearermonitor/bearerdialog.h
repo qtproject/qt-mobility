@@ -49,8 +49,7 @@ public:
     ~BearerDialog();
 
 private slots:
-    void configurationAdded(const QNetworkConfiguration &config, QTreeWidgetItem *parent);
-    void configurationAdded(const QNetworkConfiguration &config);
+    void configurationAdded(const QNetworkConfiguration &config, QTreeWidgetItem *parent = 0);
     void configurationRemoved(const QNetworkConfiguration &config);
     void configurationChanged(const QNetworkConfiguration &config);
     void updateSnapConfiguration(QTreeWidgetItem *parent, const QNetworkConfiguration &snap);

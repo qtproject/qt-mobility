@@ -31,52 +31,11 @@
 **
 ****************************************************************************/
 
-#ifndef QIOCTLWIFIENGINE_P_H
-#define QIOCTLWIFIENGINE_P_H
+/*!
+    \example bearermonitor
+    \title Bearer Monitor Example
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+    The Bearer Monitor example shows how to use the Bearer Management API.
 
-#include "qnetworksessionengine_p.h"
-#include <QtCore/qtimer.h>
-
-QT_BEGIN_NAMESPACE
-
-class QNetworkConfigurationPrivate;
-
-class QIoctlWifiEngine : public QNetworkSessionEngine
-{
-    Q_OBJECT
-
-public:
-    QIoctlWifiEngine(QObject *parent = 0);
-    ~QIoctlWifiEngine();
-
-    QList<QNetworkConfigurationPrivate *> getConfigurations(bool *ok = 0);
-    QString getInterfaceFromId(const QString &id);
-    bool hasIdentifier(const QString &id);
-
-    QString bearerName(const QString &id);
-
-    void connectToId(const QString &id);
-    void disconnectFromId(const QString &id);
-
-    void requestUpdate();
-
-    static QIoctlWifiEngine *instance();
-
-private:
-    QTimer pollTimer;
-};
-
-QT_END_NAMESPACE
-
-#endif
+    \image bearermonitor-example.png
+*/

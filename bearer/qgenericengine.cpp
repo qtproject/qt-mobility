@@ -128,7 +128,7 @@ QGenericEngine::QGenericEngine(QObject *parent)
 :   QNetworkSessionEngine(parent)
 {
     connect(&pollTimer, SIGNAL(timeout()), this, SIGNAL(configurationsChanged()));
-    pollTimer.start(10000);
+    pollTimer.setInterval(10000);
 }
 
 QGenericEngine::~QGenericEngine()
@@ -186,6 +186,8 @@ QList<QNetworkConfigurationPrivate *> QGenericEngine::getConfigurations(bool *ok
 
         foundConfigurations.append(cpPriv);
     }
+
+    pollTimer.start();
 
     return foundConfigurations;
 }

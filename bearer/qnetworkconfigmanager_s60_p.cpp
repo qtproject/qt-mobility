@@ -45,11 +45,15 @@
     #include <cmdestination.h>
     #include <cmconnectionmethod.h>
     #include <cmconnectionmethoddef.h>
+    #include <cmpluginwlandef.h>
+    #include <cmpluginpacketdatadef.h>
+    #include <cmplugindialcommondefs.h>
 #endif
 
 QT_BEGIN_NAMESPACE
 
 static const int KValueThatWillBeAddedToSNAPId = 1000;
+static const int KUserChoiceIAPId = 0;
 
 QNetworkConfigurationManagerPrivate::QNetworkConfigurationManagerPrivate()
     : QObject(0), CActive(CActive::EPriorityIdle), capFlags(0), iFirstUpdate(true), iInitOk(true)
@@ -73,6 +77,21 @@ QNetworkConfigurationManagerPrivate::QNetworkConfigurationManagerPrivate()
         return;
     }
 #endif
+    
+    QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
+    cpPriv->name = "UserChoice";
+    cpPriv->bearer = QNetworkConfigurationPrivate::BearerUnknown;
+    cpPriv->state = QNetworkConfiguration::Discovered;
+    cpPriv->isValid = true;
+    cpPriv->id = QString::number(qHash(KUserChoiceIAPId));
+    cpPriv->numericId = KUserChoiceIAPId;
+    cpPriv->connectionId = 0;
+    cpPriv->type = QNetworkConfiguration::UserChoice;
+    cpPriv->purpose = QNetworkConfiguration::Unknown;
+    cpPriv->roamingSupported = false;
+    cpPriv->manager = this;
+    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);
+    userChoiceConfigurations.insert(cpPriv->id, ptr);
 
     updateConfigurations();
     updateStatesToSnaps();
@@ -99,6 +118,14 @@ QNetworkConfigurationManagerPrivate::~QNetworkConfigurationManagerPrivate()
         priv->id.clear();
     }
 
+    configIdents = userChoiceConfigurations.keys();
+    foreach(QString oldIface, configIdents) {
+        QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = userChoiceConfigurations.take(oldIface);
+        priv->isValid = false;
+        priv->id.clear();
+        priv->manager = 0;
+    }
+
     iConnectionMonitor.CancelNotifications();
     iConnectionMonitor.Close();
     
@@ -116,8 +143,10 @@ void QNetworkConfigurationManagerPrivate::registerPlatformCapabilities()
     capFlags |= QNetworkConfigurationManager::BearerManagement;
     capFlags |= QNetworkConfigurationManager::DirectConnectionRouting;
     capFlags |= QNetworkConfigurationManager::SystemSessionSupport;
+#ifdef SNAP_FUNCTIONALITY_AVAILABLE
     capFlags |= QNetworkConfigurationManager::ApplicationLevelRoaming;
     capFlags |= QNetworkConfigurationManager::ForcedRoaming;
+#endif
     capFlags |= QNetworkConfigurationManager::DataStatistics;
 }
 
@@ -205,7 +234,8 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
             cpPriv->state = QNetworkConfiguration::Defined;
             cpPriv->type = QNetworkConfiguration::ServiceNetwork;
             cpPriv->purpose = QNetworkConfiguration::Unknown;
-            cpPriv->roamingSupported = true;
+            cpPriv->roamingSupported = false;
+            cpPriv->manager = this;
 
             QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);
             snapConfigurations.insert(ident, ptr);
@@ -232,6 +262,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
                 TRAP(error, cpPriv = configFromConnectionMethodL(connectionMethod));
                 if (error == KErrNone) {
                     QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);
+                    ptr.data()->serviceNetworkPtr = privSNAP;
                     accessPointConfigurations.insert(cpPriv->id, ptr);
                     if (!iFirstUpdate) {
                         QNetworkConfiguration item;
@@ -251,12 +282,19 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
                     }
                 }
                 if (!iapFound) {
+                    priv.data()->serviceNetworkPtr = privSNAP; 
                     privSNAP->serviceNetworkMembers.append(priv);
                 }
             }
             
             CleanupStack::PopAndDestroy(&connectionMethod);
         }
+        
+        if (privSNAP->serviceNetworkMembers.count() > 1) {
+            // Roaming is supported only if SNAP contains more than one IAP
+            privSNAP->roamingSupported = true;
+        }
+        
         CleanupStack::PopAndDestroy(&destination);
     }
     CleanupStack::PopAndDestroy(&destinations);
@@ -370,7 +408,31 @@ QNetworkConfigurationPrivate* QNetworkConfigurationManagerPrivate::configFromCon
         break;
     }
     
-    cpPriv->state |= QNetworkConfiguration::Defined;
+    TInt error = KErrNone;
+    TUint32 bearerType = connectionMethod.GetIntAttributeL(CMManager::ECmBearerType);
+    switch (bearerType) {
+    case KUidPacketDataBearerType:
+        // "Packet data" Bearer => Mapping is done using "Access point name"
+        TRAP(error, pName = connectionMethod.GetStringAttributeL(CMManager::EPacketDataAPName));
+        break;
+    case KUidWlanBearerType:
+        // "Wireless LAN" Bearer => Mapping is done using "WLAN network name" = SSID
+        TRAP(error, pName = connectionMethod.GetStringAttributeL(CMManager::EWlanSSID));
+        break;
+    }
+    if (!pName) {
+        // "Data call" Bearer or "High Speed (GSM)" Bearer => Mapping is done using "Dial-up number"
+        TRAP(error, pName = connectionMethod.GetStringAttributeL(CMManager::EDialDefaultTelNum));
+    }
+
+    if (error == KErrNone && pName) {
+        CleanupStack::PushL(pName);
+        cpPriv->mappingName = QString::fromUtf16(pName->Ptr(),pName->Length());
+        CleanupStack::PopAndDestroy(pName);
+        pName = NULL;
+    }
+ 
+    cpPriv->state = QNetworkConfiguration::Defined;
     TBool isConnected = connectionMethod.GetBoolAttributeL(CMManager::ECmConnected);
     if (isConnected) {
         cpPriv->state = QNetworkConfiguration::Active;
@@ -383,6 +445,7 @@ QNetworkConfigurationPrivate* QNetworkConfigurationManagerPrivate::configFromCon
     cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
     cpPriv->purpose = QNetworkConfiguration::Unknown;
     cpPriv->roamingSupported = false;
+    cpPriv->manager = this;
     
     CleanupStack::Pop(cpPriv);
     return cpPriv;
@@ -424,6 +487,14 @@ QNetworkConfiguration QNetworkConfigurationManagerPrivate::defaultConfigurationL
         }
     } 
 #endif
+    
+    if (!item.isValid()) {
+        QString iface = QString::number(qHash(KUserChoiceIAPId));
+        QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = userChoiceConfigurations.value(iface);
+        if (priv.data() != 0) {
+            item.d = priv;
+        }
+    }
     
     return item;
 }
@@ -492,6 +563,7 @@ void QNetworkConfigurationManagerPrivate::readNetworkConfigurationValuesFromComm
         apNetworkConfiguration->bearer = QNetworkConfigurationPrivate::BearerUnknown;
         break;
     }
+    apNetworkConfiguration->manager = this;
     
     CleanupStack::PopAndDestroy(pApUtils);
     CleanupStack::PopAndDestroy(pAPItem);
@@ -789,12 +861,18 @@ void QNetworkConfigurationManagerPrivate::EventL(const CConnMonEventBase& aEvent
                 updateStatesToSnaps();
             }
         }
-        TUint connectionCount;
-        TRequestStatus status;
-        iConnectionMonitor.GetConnectionCount(connectionCount, status);
-        User::WaitForRequest(status);
-        if (connectionCount == 0) {
-            iOnline = false;
+        
+        bool online = false;
+        QList<QString> iapConfigs = accessPointConfigurations.keys();
+        foreach (QString iface, iapConfigs) {
+            QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.value(iface);
+            if (priv.data()->state == QNetworkConfiguration::Active) {
+                online = true;
+                break;
+            }
+        }
+        if (iOnline != online) {
+            iOnline = online;
             emit this->onlineStateChanged(iOnline);
         }
         }

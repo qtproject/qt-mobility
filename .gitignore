@@ -36,3 +36,6 @@ plugin_commonU.def
 #Visual Studio files
 *.sln
 *.vcproj
+
+#QtCreator project files
+*.pro.user
