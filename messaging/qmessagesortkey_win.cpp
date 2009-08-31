@@ -73,9 +73,7 @@ bool QMessageSortKeyPrivate::compare(const QMessageSortKey &key, const QMessage 
         }
 
         //TODO: Type and Priority will require multiple filter passes in QMessageStore
-        //TODO: On windows mobile TimeStamp and RecievedTimeStamp should both use MESSAGE_DELIVERY_TIME
-        //TODO: Recipients won't be supported on windows mobile, and will 
-        //      require further investigation on desktop
+        //TODO: Recipients won't be supported
         //TODO: Status may require multiple passes, or may not be implementable with MAPI
 
         switch (field)
@@ -147,7 +145,11 @@ void QMessageSortKeyPrivate::sortTable(QMessageStore::ErrorCode *lastError, cons
             propTag = PR_SENDER_NAME; // MAPI is limited to sorting by sender name only, sender name + sender address does not appear to be supported
             break;
         case Size:
-            propTag = PR_MESSAGE_SIZE; /*TODO: Use PR_CONTENT_LENGTH on WinCE */
+#ifdef _WIN32_WCE
+            propTag = PR_CONTENT_LENGTH;
+#else
+            propTag = PR_MESSAGE_SIZE;
+#endif
             break;
         default:
             qWarning("Unhandled sort criteria");
@@ -157,7 +159,7 @@ void QMessageSortKeyPrivate::sortTable(QMessageStore::ErrorCode *lastError, cons
         multiSort.aSort[i].ulOrder = order;
     }
 
-    //Note: WinCE does not support multiple level of sort leves and should return an error if more than 1 level is used
+    //Note: WinCE does not support multiple sort levels and should return an error if more than 1 level is used
     //TODO: Update doc to reflect this
     if (messagesTable->SortTable(reinterpret_cast<SSortOrderSet*>(&multiSort), 0) != S_OK) {
         *lastError = QMessageStore::NotYetImplemented;
