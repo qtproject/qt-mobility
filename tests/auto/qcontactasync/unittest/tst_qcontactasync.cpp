@@ -51,37 +51,55 @@ public slots:
     void init();
     void cleanup();
 
+private:
+    void addManagers(); // add standard managers to the data
+
 private slots:
     void testDestructor();
+    void testDestructor_data() { addManagers(); }
 
     void contactFetch();
+    void contactFetch_data() { addManagers(); }
     void contactIdFetch();
+    void contactIdFetch_data() { addManagers(); }
     void contactRemove();
+    void contactRemove_data() { addManagers(); }
     void contactSave();
+    void contactSave_data() { addManagers(); }
 
     void groupFetch();
+    void groupFetch_data() { addManagers(); }
     void groupRemove();
+    void groupRemove_data() { addManagers(); }
     void groupSave();
+    void groupSave_data() { addManagers(); }
 
     void definitionFetch();
+    void definitionFetch_data() { addManagers(); }
     void definitionRemove();
+    void definitionRemove_data() { addManagers(); }
     void definitionSave();
+    void definitionSave_data() { addManagers(); }
 
-    void maliciousManager();
+    void maliciousManager(); // uses it's own custom data (manager)
+
     void threadDelivery();
-
     void progressReceived(QContactFetchRequest* request, bool appendOnly);
+    void threadDelivery_data() { addManagers(); }
 
 private:
     bool containsIgnoringTimestamps(const QList<QContact>& list, const QContact& c);
     bool compareIgnoringTimestamps(const QContact& ca, const QContact& cb);
-    QContactManager* prepareModel();
+    QContactManager* prepareModel(const QString& uri);
 
     Qt::HANDLE m_mainThreadId;
 };
 
 tst_QContactAsync::tst_QContactAsync()
 {
+    QApplication::addLibraryPath(QApplication::applicationDirPath() + "/plugins/contacts");
+    QApplication::addLibraryPath(QApplication::applicationDirPath() + "/maliciousplugin");
+    QApplication::addLibraryPath(QApplication::applicationDirPath() + "/dummyplugin");
 }
 
 tst_QContactAsync::~tst_QContactAsync()
@@ -90,7 +108,6 @@ tst_QContactAsync::~tst_QContactAsync()
 
 void tst_QContactAsync::init()
 {
-    QApplication::addLibraryPath(QApplication::applicationDirPath() + "/dummyplugin");
 }
 
 void tst_QContactAsync::cleanup()
@@ -145,11 +162,12 @@ bool tst_QContactAsync::compareIgnoringTimestamps(const QContact& ca, const QCon
 
 void tst_QContactAsync::testDestructor()
 {
-    QContactManager* cm = prepareModel();
+    QFETCH(QString, uri);
+    QContactManager* cm = prepareModel(uri);
     QContactFetchRequest* req = new QContactFetchRequest;
     req->setManager(cm);
 
-    QContactManager* cm2 = prepareModel();
+    QContactManager* cm2 = prepareModel(uri);
     QContactFetchRequest* req2 = new QContactFetchRequest;
     req2->setManager(cm2);
 
@@ -164,7 +182,8 @@ void tst_QContactAsync::testDestructor()
 
 void tst_QContactAsync::contactFetch()
 {
-    QContactManager* cm = prepareModel();
+    QFETCH(QString, uri);
+    QContactManager* cm = prepareModel(uri);
     QContactFetchRequest cfr;
     QVERIFY(cfr.type() == QContactAbstractRequest::ContactFetch);
 
@@ -337,7 +356,8 @@ void tst_QContactAsync::contactFetch()
 
 void tst_QContactAsync::contactIdFetch()
 {
-    QContactManager* cm = prepareModel();
+    QFETCH(QString, uri);
+    QContactManager* cm = prepareModel(uri);
     QContactIdFetchRequest cfr;
     QVERIFY(cfr.type() == QContactAbstractRequest::ContactIdFetch);
 
@@ -467,7 +487,8 @@ void tst_QContactAsync::contactIdFetch()
 
 void tst_QContactAsync::contactRemove()
 {
-    QContactManager* cm = prepareModel();
+    QFETCH(QString, uri);
+    QContactManager* cm = prepareModel(uri);
     QContactRemoveRequest crr;
     QVERIFY(crr.type() == QContactAbstractRequest::ContactRemove);
 
@@ -578,7 +599,8 @@ void tst_QContactAsync::contactRemove()
 
 void tst_QContactAsync::contactSave()
 {
-    QContactManager* cm = prepareModel();
+    QFETCH(QString, uri);
+    QContactManager* cm = prepareModel(uri);
     QContactSaveRequest csr;
     QVERIFY(csr.type() == QContactAbstractRequest::ContactSave);
 
@@ -719,7 +741,8 @@ void tst_QContactAsync::contactSave()
 
 void tst_QContactAsync::groupFetch()
 {
-    QContactManager* cm = prepareModel();
+    QFETCH(QString, uri);
+    QContactManager* cm = prepareModel(uri);
     QContactGroupFetchRequest gfr;
     QVERIFY(gfr.type() == QContactAbstractRequest::GroupFetch);
 
@@ -827,7 +850,8 @@ void tst_QContactAsync::groupFetch()
 
 void tst_QContactAsync::groupRemove()
 {
-    QContactManager* cm = prepareModel();
+    QFETCH(QString, uri);
+    QContactManager* cm = prepareModel(uri);
     QContactGroupRemoveRequest grr;
     QVERIFY(grr.type() == QContactAbstractRequest::GroupRemove);
 
@@ -972,7 +996,8 @@ void tst_QContactAsync::groupRemove()
 
 void tst_QContactAsync::groupSave()
 {
-    QContactManager* cm = prepareModel();
+    QFETCH(QString, uri);
+    QContactManager* cm = prepareModel(uri);
     QContactGroupSaveRequest gsr;
     QVERIFY(gsr.type() == QContactAbstractRequest::GroupSave);
 
@@ -1109,7 +1134,8 @@ void tst_QContactAsync::groupSave()
 
 void tst_QContactAsync::definitionFetch()
 {
-    QContactManager* cm = prepareModel();
+    QFETCH(QString, uri);
+    QContactManager* cm = prepareModel(uri);
     QContactDetailDefinitionFetchRequest dfr;
     QVERIFY(dfr.type() == QContactAbstractRequest::DetailDefinitionFetch);
 
@@ -1211,7 +1237,8 @@ void tst_QContactAsync::definitionFetch()
 
 void tst_QContactAsync::definitionRemove()
 {
-    QContactManager* cm = prepareModel();
+    QFETCH(QString, uri);
+    QContactManager* cm = prepareModel(uri);
     QContactDetailDefinitionRemoveRequest drr;
     QVERIFY(drr.type() == QContactAbstractRequest::DetailDefinitionRemove);
 
@@ -1356,7 +1383,8 @@ void tst_QContactAsync::definitionRemove()
 
 void tst_QContactAsync::definitionSave()
 {
-    QContactManager* cm = prepareModel();
+    QFETCH(QString, uri);
+    QContactManager* cm = prepareModel(uri);
     QContactDetailDefinitionSaveRequest dsr;
     QVERIFY(dsr.type() == QContactAbstractRequest::DetailDefinitionSave);
 
@@ -1494,11 +1522,6 @@ void tst_QContactAsync::definitionSave()
 
 void tst_QContactAsync::maliciousManager()
 {
-    /* Add a path to our plugin path */
-    QString path = QApplication::applicationDirPath() + "/maliciousplugin";
-    QApplication::addLibraryPath(path);
-    QApplication::addLibraryPath("/"); // strictly to test a cdUp :/
-
     // use the invalid manager: passes all requests through to base class
     QContactManager cm("invalid");
     QContactFilter fil; // matches everything
@@ -1513,7 +1536,8 @@ void tst_QContactAsync::maliciousManager()
 
     // now use a malicious manager that deliberately calls
     // incorrect "updateRequest" functions in base class:
-    QContactManager mcm("maliciousplugin");
+    QContactManager *mcm = new QContactManager("maliciousplugin");
+    QCOMPARE(mcm->managerName(), QString("maliciousplugin"));
     QList<QContact> emptyCList;
     QList<QUniqueId> emptyIList;
     QList<QContactGroup> emptyGList;
@@ -1521,7 +1545,7 @@ void tst_QContactAsync::maliciousManager()
     QStringList emptyDNList;
     QMap<QString, QContactDetailDefinition> emptyDMap;
     cfr.setFilter(fil);
-    cfr.setManager(&mcm);
+    cfr.setManager(mcm);
     QVERIFY(cfr.start());
     QVERIFY(cfr.cancel());
     QVERIFY(!cfr.waitForProgress(100));
@@ -1533,7 +1557,7 @@ void tst_QContactAsync::maliciousManager()
 
     QContactIdFetchRequest cifr;
     cifr.setFilter(fil);
-    cifr.setManager(&mcm);
+    cifr.setManager(mcm);
     QVERIFY(cifr.start());
     QVERIFY(cifr.cancel());
     QVERIFY(!cifr.waitForProgress(100));
@@ -1545,7 +1569,7 @@ void tst_QContactAsync::maliciousManager()
 
     QContactRemoveRequest crr;
     crr.setFilter(fil);
-    crr.setManager(&mcm);
+    crr.setManager(mcm);
     QVERIFY(crr.start());
     QVERIFY(crr.cancel());
     QVERIFY(!crr.waitForProgress(100));
@@ -1557,7 +1581,7 @@ void tst_QContactAsync::maliciousManager()
 
     QContactSaveRequest csr;
     csr.setContacts(emptyCList);
-    csr.setManager(&mcm);
+    csr.setManager(mcm);
     QVERIFY(csr.start());
     QVERIFY(csr.cancel());
     QVERIFY(!csr.waitForProgress(100));
@@ -1569,7 +1593,7 @@ void tst_QContactAsync::maliciousManager()
 
     QContactGroupFetchRequest gfr;
     gfr.setIds(emptyIList);
-    gfr.setManager(&mcm);
+    gfr.setManager(mcm);
     QVERIFY(gfr.start());
     QVERIFY(gfr.cancel());
     QVERIFY(!gfr.waitForProgress(100));
@@ -1581,7 +1605,7 @@ void tst_QContactAsync::maliciousManager()
 
     QContactGroupSaveRequest gsr;
     gsr.setGroups(emptyGList);
-    gsr.setManager(&mcm);
+    gsr.setManager(mcm);
     QVERIFY(gsr.start());
     QVERIFY(gsr.cancel());
     QVERIFY(!gsr.waitForProgress(100));
@@ -1593,7 +1617,7 @@ void tst_QContactAsync::maliciousManager()
 
     QContactGroupRemoveRequest grr;
     grr.setIds(emptyIList);
-    grr.setManager(&mcm);
+    grr.setManager(mcm);
     QVERIFY(grr.start());
     QVERIFY(grr.cancel());
     QVERIFY(!grr.waitForProgress(100));
@@ -1605,7 +1629,7 @@ void tst_QContactAsync::maliciousManager()
 
     QContactDetailDefinitionFetchRequest dfr;
     dfr.setNames(emptyDNList);
-    dfr.setManager(&mcm);
+    dfr.setManager(mcm);
     QVERIFY(dfr.start());
     QVERIFY(dfr.cancel());
     QVERIFY(!dfr.waitForProgress(100));
@@ -1617,7 +1641,7 @@ void tst_QContactAsync::maliciousManager()
 
     QContactDetailDefinitionSaveRequest dsr;
     dsr.setDefinitions(emptyDList);
-    dsr.setManager(&mcm);
+    dsr.setManager(mcm);
     QVERIFY(dsr.start());
     QVERIFY(dsr.cancel());
     QVERIFY(!dsr.waitForProgress(100));
@@ -1629,7 +1653,7 @@ void tst_QContactAsync::maliciousManager()
 
     QContactDetailDefinitionRemoveRequest drr;
     drr.setNames(emptyDNList);
-    drr.setManager(&mcm);
+    drr.setManager(mcm);
     QVERIFY(drr.start());
     QVERIFY(drr.cancel());
     QVERIFY(!drr.waitForProgress(100));
@@ -1638,11 +1662,14 @@ void tst_QContactAsync::maliciousManager()
     QVERIFY(!drr.waitForProgress(100));
     QVERIFY(!drr.waitForFinished(100));
     QVERIFY(drr.cancel());
+
+    delete mcm;
 }
 
 void tst_QContactAsync::threadDelivery()
 {
-    QContactManager *cm = prepareModel();
+    QFETCH(QString, uri);
+    QContactManager *cm = prepareModel(uri);
     m_mainThreadId = cm->thread()->currentThreadId();
 
     // now perform a fetch request and check that the progress is delivered to the correct thread.
@@ -1656,9 +1683,37 @@ void tst_QContactAsync::threadDelivery()
     delete req;
 }
 
-QContactManager* tst_QContactAsync::prepareModel()
+void tst_QContactAsync::progressReceived(QContactFetchRequest* request, bool appendOnly)
 {
-    QContactManager* cm = new QContactManager("memory");
+    Q_UNUSED(appendOnly);
+    // ensure that the progress signal is being delivered to the main thread.
+    QCOMPARE(m_mainThreadId, request->thread()->currentThreadId());
+}
+
+void tst_QContactAsync::addManagers()
+{
+    QTest::addColumn<QString>("uri");
+
+    QStringList managers = QContactManager::availableManagers();
+
+    /* Known ones that we know will not pass */
+    managers.removeAll("invalid");
+    managers.removeAll("maliciousplugin");
+    managers.removeAll("testdummy");
+
+    foreach(QString mgr, managers) {
+        QMap<QString, QString> params;
+        QTest::newRow(QString("mgr='%1'").arg(mgr).toLatin1().constData()) << QContactManager::buildUri(mgr, params);
+        if (mgr == "memory") {
+            params.insert("id", "tst_QContactManager");
+            QTest::newRow(QString("mgr='%1', params").arg(mgr).toLatin1().constData()) << QContactManager::buildUri(mgr, params);
+        }
+    }
+}
+
+QContactManager* tst_QContactAsync::prepareModel(const QString& managerUri)
+{
+    QContactManager* cm = QContactManager::fromUri(managerUri);
 
     QContact a, b, c;
     a.setDisplayLabel("Aaron Aaronson");
@@ -1697,13 +1752,6 @@ QContactManager* tst_QContactAsync::prepareModel()
     cm->saveGroup(&gc);
 
     return cm;
-}
-
-void tst_QContactAsync::progressReceived(QContactFetchRequest* request, bool appendOnly)
-{
-    Q_UNUSED(appendOnly);
-    // ensure that the progress signal is being delivered to the main thread.
-    QCOMPARE(m_mainThreadId, request->thread()->currentThreadId());
 }
 
 QTEST_MAIN(tst_QContactAsync)

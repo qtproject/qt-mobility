@@ -35,81 +35,74 @@
 #define MALICIOUSPLUGINTARGET contacts_maliciousplugin
 #endif
 
+#ifndef MALICIOUSPLUGINNAME
+#define MALICIOUSPLUGINNAME maliciousplugin
+#endif
+
 #define makestr(x) (#x)
 #define makename(x) makestr(x)
+
+#include "maliciousplugin_p.h"
 
 #include "qcontact_p.h"
 #include "qcontactgroup_p.h"
 #include "qcontactmanager.h"
 #include "qcontactmanager_p.h"
 
-class MaliciousAsyncManagerEngine : public QContactManagerEngine
+MaliciousAsyncManagerEngine::MaliciousAsyncManagerEngine()
+        : QContactManagerEngine()
 {
-    Q_OBJECT
-public:
-    MaliciousAsyncManagerEngine() : QContactManagerEngine() {}
-    void deref() {} // leak?
+}
 
-    QString synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const
-    {
-        Q_UNUSED(contact);
-        error = QContactManager::NotSupportedError;
-        return QString();
-    }
-
-    bool startRequest(QContactAbstractRequest* req)
-    {
-        QContactManager::Error errorResult = QContactManager::NoError;
-        QList<QContactManager::Error> errorsResult;
-        QList<QUniqueId> idResult;
-        QList<QContact> contactResult;
-        QList<QContactGroup> groupResult;
-        QList<QContactDetailDefinition> defResult;
-        QMap<QString, QContactDetailDefinition> defMapResult;
-
-        // maliciously attempt to update the request with every result type
-        updateRequestStatus(req, errorResult, errorsResult, QContactAbstractRequest::Active, false);
-        updateRequest(req, idResult, errorResult, errorsResult, QContactAbstractRequest::Active, false);
-        updateRequest(req, contactResult, errorResult, errorsResult, QContactAbstractRequest::Active, false);
-        updateRequest(req, groupResult, errorResult, errorsResult, QContactAbstractRequest::Active, false);
-        updateRequest(req, defResult, errorResult, errorsResult, QContactAbstractRequest::Active);
-        updateRequest(req, defMapResult, errorResult, errorsResult, QContactAbstractRequest::Active, false);
-
-        QContactManagerEngine::startRequest(req);
-        return true;
-    }
-
-    bool cancelRequest(QContactAbstractRequest *req)
-    {
-        QContactManager::Error errorResult = QContactManager::NoError;
-        QList<QContactManager::Error> errorsResult;
-        updateRequestStatus(req, errorResult, errorsResult, QContactAbstractRequest::Cancelled, false);
-        QContactManagerEngine::cancelRequest(req);
-        return true;
-    }
-};
-
-class MaliciousEngineFactory : public QObject, public QContactManagerEngineFactory
+void MaliciousAsyncManagerEngine::deref()
 {
-    Q_OBJECT
-    Q_INTERFACES(QContactManagerEngineFactory)
-    public:
-        QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
-        QString managerName() const;
+    // does this leak?
+}
 
-    private:
-        MaliciousAsyncManagerEngine mame;
-};
+QString MaliciousAsyncManagerEngine::synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const
+{
+    Q_UNUSED(contact);
+    error = QContactManager::NotSupportedError;
+    return QString();
+}
+
+bool MaliciousAsyncManagerEngine::startRequest(QContactAbstractRequest* req)
+{
+    QContactManager::Error errorResult = QContactManager::NoError;
+    QList<QContactManager::Error> errorsResult;
+    QList<QUniqueId> idResult;
+    QList<QContact> contactResult;
+    QList<QContactGroup> groupResult;
+    QList<QContactDetailDefinition> defResult;
+    QMap<QString, QContactDetailDefinition> defMapResult;
+
+    // maliciously attempt to update the request with every result type
+    updateRequestStatus(req, errorResult, errorsResult, QContactAbstractRequest::Active, false);
+    updateRequest(req, idResult, errorResult, errorsResult, QContactAbstractRequest::Active, false);
+    updateRequest(req, contactResult, errorResult, errorsResult, QContactAbstractRequest::Active, false);
+    updateRequest(req, groupResult, errorResult, errorsResult, QContactAbstractRequest::Active, false);
+    updateRequest(req, defResult, errorResult, errorsResult, QContactAbstractRequest::Active);
+    updateRequest(req, defMapResult, errorResult, errorsResult, QContactAbstractRequest::Active, false);
+
+    QContactManagerEngine::startRequest(req);
+    return true;
+}
+
+bool MaliciousAsyncManagerEngine::cancelRequest(QContactAbstractRequest *req)
+{
+    QContactManager::Error errorResult = QContactManager::NoError;
+    QList<QContactManager::Error> errorsResult;
+    updateRequestStatus(req, errorResult, errorsResult, QContactAbstractRequest::Cancelled, false);
+    QContactManagerEngine::cancelRequest(req);
+    return true;
+}
+
 
 QString MaliciousEngineFactory::managerName() const
 {
-#ifdef MALICIOUSPLUGINNAME
     return QString(makename(MALICIOUSPLUGINNAME));
-#else
-    return QString("maliciousplugin");
-#endif
 }
-Q_EXPORT_PLUGIN2(contacts_maliciousplugin, MaliciousEngineFactory);
+Q_EXPORT_PLUGIN2(MALICIOUSPLUGINTARGET, MaliciousEngineFactory);
 
 QContactManagerEngine* MaliciousEngineFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
 {
@@ -117,5 +110,3 @@ QContactManagerEngine* MaliciousEngineFactory::engine(const QMap<QString, QStrin
     error = QContactManager::NoError;
     return &mame;
 }
-
-#include "maliciousplugin.moc"

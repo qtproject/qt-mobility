@@ -121,10 +121,10 @@ bool QContactSendEmailAction::supportsDetail(const QContactDetail& detail) const
 {
     return (detail.definitionName() == QContactEmailAddress::DefinitionName);
 }
+
 void QContactSendEmailAction::performAction(const QContact& contact, const QContactDetail& detail)
 {
     Q_UNUSED(contact);
     Q_UNUSED(detail);
     QMessageBox::information(0, "SendEmail Action", "This example action exists as an example of how the action interface may be implemented; it does not offer the advertised functionality.");
 }
-
