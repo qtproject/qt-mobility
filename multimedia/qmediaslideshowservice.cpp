@@ -39,26 +39,188 @@
 
 #include "qmediasource.h"
 #include "qmediaresource.h"
+#include "qvideooutputcontrol.h"
+#ifndef QT_NO_VIDEOSURFACE
+#include "qvideorenderercontrol.h"
+#endif
 
 #include <QtCore/qurl.h>
 #include <QtGui/qimage.h>
+#include <QtGui/qimagereader.h>
 #include <QtNetwork/qnetworkaccessmanager.h>
 #include <QtNetwork/qnetworkreply.h>
 #include <QtNetwork/qnetworkrequest.h>
+
+#ifndef QT_NO_VIDEOSURFACE
+#include <QtMultimedia/qabstractvideosurface.h>
+#include <QtMultimedia/qvideosurfaceformat.h>
+
+class QMediaSlideShowRenderer : public QVideoRendererControl
+{
+    Q_OBJECT
+public:
+    QMediaSlideShowRenderer(QObject *parent = 0);
+    ~QMediaSlideShowRenderer();
+
+    QAbstractVideoSurface *surface() const;
+    void setSurface(QAbstractVideoSurface *surface);
+
+Q_SIGNALS:
+    void surfaceChanged(QAbstractVideoSurface *surface);
+
+private:
+    QAbstractVideoSurface *m_surface;
+};
+
+QMediaSlideShowRenderer::QMediaSlideShowRenderer(QObject *parent)
+    : QVideoRendererControl(parent)
+    , m_surface(0)
+{
+}
+
+QMediaSlideShowRenderer::~QMediaSlideShowRenderer()
+{
+}
+
+QAbstractVideoSurface *QMediaSlideShowRenderer::surface() const
+{
+    return m_surface;
+}
+
+void QMediaSlideShowRenderer::setSurface(QAbstractVideoSurface *surface)
+{
+    emit surfaceChanged(m_surface = surface);
+}
+#endif
+
+class QMediaSlideShowOutputControl : public QVideoOutputControl
+{
+    Q_OBJECT
+public:
+    QMediaSlideShowOutputControl(QObject *parent = 0);
+
+    QList<Output> availableOutputs() const;
+
+    Output output() const;
+    void setOutput(Output output);
+
+private:
+};
+
+QMediaSlideShowOutputControl::QMediaSlideShowOutputControl(QObject *parent)
+    : QVideoOutputControl(parent)
+{
+}
+
+
+QList<QVideoOutputControl::Output> QMediaSlideShowOutputControl::availableOutputs() const
+{
+    return QList<Output>() << RendererOutput;
+}
+
+QVideoOutputControl::Output QMediaSlideShowOutputControl::output() const
+{
+    return RendererOutput;
+}
+
+void QMediaSlideShowOutputControl::setOutput(Output output)
+{
+    Q_UNUSED(output);
+}
 
 class QMediaSlideShowServicePrivate : public QAbstractMediaServicePrivate
 {
 public:
     QMediaSlideShowServicePrivate()
         : slideControl(0)
+        , outputControl(0)
+        , rendererControl(0)
         , network(0)
     {
     }
 
+    bool load(QIODevice *device);
+    void clear();
+#ifndef QT_NO_VIDEOSURFACE
+    void _q_surfaceChanged(QAbstractVideoSurface *surface);
+#endif
     QMediaSlideShowControl *slideControl;
+    QMediaSlideShowOutputControl *outputControl;
+    QMediaSlideShowRenderer *rendererControl;
     QNetworkAccessManager *network;
-    QImage currentImage;
+
+#ifndef QT_NO_VIDEOSURFACE
+    QAbstractVideoSurface *surface;
+#endif
 };
+
+bool QMediaSlideShowServicePrivate::load(QIODevice *device)
+{
+#ifndef QT_NO_VIDEOSURFACE
+    if (!surface)
+        return false;
+
+    QImageReader reader(device);
+
+    if (!reader.canRead())
+        return false;
+
+    if (!device->isSequential()
+            && reader.supportsOption(QImageIOHandler::ImageFormat)
+            && reader.supportsOption(QImageIOHandler::Size)) {
+
+        QImage::Format imageFormat = reader.imageFormat();
+
+        QVideoSurfaceFormat format(reader.size(), QVideoFrame::equivalentPixelFormat(imageFormat));
+        QVideoSurfaceFormat preferredFormat;
+
+        bool supported = surface->isFormatSupported(format, &preferredFormat);
+
+        if (preferredFormat.isValid()
+                && preferredFormat.viewport().size() != format.frameSize()
+                && (reader.supportsOption(QImageIOHandler::ScaledSize) || !supported)) {
+            preferredFormat = QVideoSurfaceFormat(
+                    preferredFormat.viewport().size(), format.pixelFormat());
+
+            if (surface->isFormatSupported(preferredFormat)) {
+                reader.setScaledSize(preferredFormat.frameSize());
+                format = preferredFormat;
+                supported = true;
+            }
+        }
+
+        if (supported && surface->start(format))
+            return surface->present(QVideoFrame(reader.read()));
+    } else {
+        QImage image = reader.read();
+
+        if (!image.isNull()) {
+            QVideoSurfaceFormat format(
+                    image.size(), QVideoFrame::equivalentPixelFormat(image.format()));
+
+            if (surface->start(format))
+                return surface->present(QVideoFrame(image));
+        }
+    }
+#endif
+    return false;
+
+}
+
+void QMediaSlideShowServicePrivate::clear()
+{
+#ifndef QT_NO_VIDEOSURFACE
+    if (surface)
+        surface->stop();
+#endif
+}
+
+#ifndef QT_NO_VIDEOSURFACE
+void QMediaSlideShowServicePrivate::_q_surfaceChanged(QAbstractVideoSurface *surface)
+{
+    this->surface = surface;
+}
+#endif
 
 /*!
     \class QMediaSlideShowService
@@ -73,6 +235,11 @@ QMediaSlideShowService::QMediaSlideShowService(QObject *parent)
     Q_D(QMediaSlideShowService);
 
     d->slideControl = new QMediaSlideShowControl(this);
+    d->outputControl = new QMediaSlideShowOutputControl;
+    d->rendererControl = new QMediaSlideShowRenderer;
+
+    connect(d->rendererControl, SIGNAL(surfaceChanged(QAbstractVideoSurface*)),
+            this, SLOT(_q_surfaceChanged(QAbstractVideoSurface*)));
 }
 
 /*!
@@ -81,6 +248,8 @@ QMediaSlideShowService::~QMediaSlideShowService()
 {
     Q_D(QMediaSlideShowService);
 
+    delete d->rendererControl;
+    delete d->outputControl;
     delete d->slideControl;
 }
 
@@ -92,6 +261,12 @@ QAbstractMediaControl *QMediaSlideShowService::control(const char *name) const
 
     if (qstrcmp(name, QMediaSlideShowControl_iid) == 0) {
         return d->slideControl;
+    } else if (qstrcmp(name, QVideoOutputControl_iid) == 0) {
+        return d->outputControl;
+#ifndef QT_NO_VIDEOSURFACE
+    } else if (qstrcmp(name, QVideoRendererControl_iid) == 0) {
+        return d->rendererControl;
+#endif
     } else {
         return 0;
     }
@@ -110,24 +285,6 @@ void QMediaSlideShowService::setNetworkManager(QNetworkAccessManager *manager)
 {
     d_func()->network = manager;
 }
-
-/*!
-*/
-QImage QMediaSlideShowService::currentImage() const
-{
-    return d_func()->currentImage;
-}
-
-/*!
-*/
-void QMediaSlideShowService::setCurrentImage(const QImage &image)
-{
-    emit currentImageChanged(d_func()->currentImage = image);
-}
-
-/*!
-    \fn QMediaSlideShowService::currentImageChanged(const QImage &image)
-*/
 
 class QMediaSlideShowControlPrivate : public QAbstractMediaControlPrivate
 {
@@ -230,10 +387,8 @@ void QMediaSlideShowControlPrivate::_q_getFinished()
 {
     QImage image;
 
-    if (image.load(getReply, 0)) {
+    if (service->d_func()->load(getReply)) {
         possibleResources.clear();
-
-        service->setCurrentImage(image);
 
         status = QMediaSlideShow::LoadedMedia;
 
@@ -313,6 +468,7 @@ void QMediaSlideShowControl::setMedia(const QMediaSource &media)
 
     if (media.isNull()) {    
         d->cancelRequests();
+        d->service->d_func()->clear();
 
         d->status = QMediaSlideShow::NoMedia;
 
@@ -344,4 +500,4 @@ QMediaResource QMediaSlideShowControl::currentMedia() const
 */
 
 #include "moc_qmediaslideshowservice_p.cpp"
-
+#include "qmediaslideshowservice.moc"

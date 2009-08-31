@@ -38,6 +38,7 @@
 #include <qabstractmediaservice.h>
 #include <qmediaslideshow.h>
 
+class QAbstractVideoSurface;
 class QNetworkAccessManager;
 
 class QMediaSlideShowServicePrivate;
@@ -54,14 +55,12 @@ public:
     QNetworkAccessManager *networkManager() const;
     void setNetworkManager(QNetworkAccessManager *manager);
 
-    QImage currentImage() const;
-    void setCurrentImage(const QImage &image);
-
-Q_SIGNALS:
-    void currentImageChanged(const QImage &image);
-
 private:
     Q_DECLARE_PRIVATE(QMediaSlideShowService)
+    Q_PRIVATE_SLOT(d_func(), void _q_surfaceChanged(QAbstractVideoSurface *surface));
+
+    friend class QMediaSlideShowControl;
+    friend class QMediaSlideShowControlPrivate;
 };
 
 class QMediaSlideShowControlPrivate;

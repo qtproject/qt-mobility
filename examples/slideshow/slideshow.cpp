@@ -36,6 +36,7 @@
 
 #include <multimedia/qabstractmediaservice.h>
 #include <multimedia/qmediaplaylistprovider.h>
+#include <multimedia/qvideowidget.h>
 
 #include <QtGui>
 
@@ -48,16 +49,10 @@ SlideShow::SlideShow(QWidget *parent)
 {
     slideShow = new QMediaSlideShow(this);
 
-    connect(slideShow->service(), SIGNAL(currentImageChanged(QImage)),
-            this, SLOT(setImage(QImage)));
     connect(slideShow, SIGNAL(stateChanged(QMediaSlideShow::State)),
             this, SLOT(stateChanged(QMediaSlideShow::State)));
 
-    imageLabel = new QLabel;
-    imageLabel->setScaledContents(true);
-    imageLabel->setMinimumSize(320, 240);
-    imageLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-
+    QVideoWidget *videoWidget = new QVideoWidget(slideShow);
 
     QMenu *openMenu = new QMenu(this);
     openMenu->addAction(tr("Directory..."), this, SLOT(openDirectory()));
@@ -101,7 +96,7 @@ SlideShow::SlideShow(QWidget *parent)
     controlLayout->addStretch(1);
 
     QBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(imageLabel, Qt::AlignCenter);
+    layout->addWidget(videoWidget, Qt::AlignCenter);
     layout->addLayout(controlLayout);
 
     setLayout(layout);
@@ -198,9 +193,4 @@ void SlideShow::stateChanged(QMediaSlideShow::State state)
         playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
         break;
     }
-}
-
-void SlideShow::setImage(const QImage &image)
-{
-    imageLabel->setPixmap(QPixmap::fromImage(image));
 }
