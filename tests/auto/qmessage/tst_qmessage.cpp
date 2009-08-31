@@ -316,7 +316,7 @@ void tst_QMessage::testToTransmissionFormat_multipart()
 
     const QByteArray p4ContentType("application");
     const QByteArray p4ContentSubType("octet-stream");
-    const QByteArray p4ContentData(10, 0xff);
+    const QByteArray p4ContentData(10, static_cast<char>(0xffu));
 
     QMessage m1;
 
