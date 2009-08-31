@@ -1,10 +1,18 @@
 TEMPLATE = subdirs
 
+#ServiceFramework examples
 SUBDIRS += filemanagerplugin \
            bluetoothtransferplugin \
            servicebrowser
 
+#BearerManagement examples
 SUBDIRS += bearermonitor bearercloud
 contains(QT_CONFIG, declarative) {
     SUBDIRS += declarative
+}
+
+#Location examples
+SUBDIRS += logfilepositionsource
+contains(QT_CONFIG, webkit) {
+    SUBDIRS += fetchgooglemaps
 }

@@ -5,10 +5,12 @@ imagedirs = images
 
 headerdirs = ../../bearer \
              ../../serviceframework \
+             ../../location \
              .
 
 sourcedirs = ../../bearer \
              ../../serviceframework \
+             ../../location \
              .
 
 exampledirs = ../../examples
@@ -19,7 +21,6 @@ sources.fileextensions  = "*.qdoc *.cpp"
 
 outputdir               = ../html
 
-#indexes                 = $QTDIR/doc/html/qt.index
 indexes                 = qt.index
 
 extraimages.HTML        = qtlogo \

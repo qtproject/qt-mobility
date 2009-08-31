@@ -19,6 +19,14 @@ LD_LIBRARY_PATH=$shell_path/../build/Debug/bin:$LD_LIBRARY_PATH
 ./tst_qnetworkconfiguration
 ./tst_qnetworkconfigurationmanager
 ./tst_qnetworksession
+./tst_qgeocoordinate
+./tst_qgeopositioninfo
+./tst_qsatelliteinfo
+./tst_qsatelliteinfosource
+./tst_qgeopositioninfosource
+./tst_qgeoareamonitor
+./tst_qlocationutils
+./tst_qnmeapositioninfosource
 
 cd $SAVED_PWD
 

@@ -2,4 +2,4 @@
 
 make clean
 find . -name "Makefile*" |xargs rm
-rm -rf build
+rm -rf build include
