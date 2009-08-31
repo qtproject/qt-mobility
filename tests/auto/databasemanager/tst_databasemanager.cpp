@@ -1288,4 +1288,6 @@ void DatabaseManagerUnitTest::cleanupTestCase()
 }
 
 QTEST_MAIN(DatabaseManagerUnitTest)
-#include "tst_databasemanagertest.moc"
+
+#include "tst_databasemanager.moc"
+

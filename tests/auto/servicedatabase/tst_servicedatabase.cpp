@@ -1369,4 +1369,6 @@ void ServiceDatabaseUnitTest::cleanupTestCase()
     QFile::remove(database.databasePath());
 }
 QTEST_MAIN(ServiceDatabaseUnitTest)
-#include "tst_servicedatabasetest.moc"
+
+#include "tst_servicedatabase.moc"
+
