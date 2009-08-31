@@ -1217,7 +1217,7 @@ void tst_QServiceManager::serviceAdded()
     }
 
     // Pause between file changes so they are detected separately
-    QTest::qWait(100);
+    QTest::qWait(1000);
 
     QSignalSpy spyRemove(&mgr_listen, SIGNAL(serviceRemoved(QString,QServiceManager::Scope)));
     QVERIFY(mgr_modify.removeService(serviceName));
@@ -1307,7 +1307,7 @@ void tst_QServiceManager::serviceRemoved()
     }
 
     // Pause between file changes so they are detected separately
-    QTest::qWait(100);
+    QTest::qWait(1000);
 
     QSignalSpy spyRemove(&mgr_listen, SIGNAL(serviceRemoved(QString,QServiceManager::Scope)));
     QVERIFY(mgr_modify.removeService(serviceName));
@@ -1341,7 +1341,7 @@ void tst_QServiceManager::serviceRemoved()
     spyRemove.clear();
 
     // Pause between file changes so they are detected separately
-    QTest::qWait(100);
+    QTest::qWait(1000);
 
     QVERIFY(mgr_modify.removeService(serviceName));
     if (!expectSignal) {
