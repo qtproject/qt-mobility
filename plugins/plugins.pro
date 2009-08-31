@@ -10,8 +10,6 @@ win32 {
     for(p, TMP_SEARCHPATHS): exists($${p}/wmp.h): SUBDIRS *= wmp
 }
 
-mac: SUBDIRS += qt7
-
 unix: {
     TMP_GST_LIBS = \
         gstreamer-0.10 >= 0.10.19 \
