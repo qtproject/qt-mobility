@@ -34,7 +34,7 @@
 #include "qservicemanager.h"
 #include "qserviceplugininterface.h"
 #include "qabstractsecuritysession.h"
-#include "databasemanager.h"
+#include "databasemanager_p.h"
 
 #include <QObject>
 #include <QPluginLoader>

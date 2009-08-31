@@ -36,7 +36,7 @@
 #include <qserviceinterfacedescriptor.h>
 #include <qserviceinterfacedescriptor_p.h>
 #include "../../../serviceframework/qserviceinterfacedescriptor.cpp"
-#include <servicedatabase.h>
+#include <servicedatabase_p.h>
 #include "../../../serviceframework/servicemetadata.cpp"
 #include "../../../serviceframework/servicedatabase.cpp"
 #include <qservicefilter.h>

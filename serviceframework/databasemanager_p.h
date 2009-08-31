@@ -34,7 +34,7 @@
 #ifndef DATABASEMANAGER_H_
 #define DATABASEMANAGER_H_
 
-#include "servicedatabase.h"
+#include "servicedatabase_p.h"
 #include <QObject>
 #include "qserviceglobal.h"
 
