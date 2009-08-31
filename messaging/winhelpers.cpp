@@ -96,16 +96,16 @@ void MapiFolder::findSubFolders(QMessageStore::ErrorCode *lastError)
         _subFolders = subFolders;
 }
 
-MapiFolderPtr MapiFolder::createFolder(QMessageStore::ErrorCode *lastError, IMAPIFolder *folder, const MapiRecordKey &recordKey, const MapiRecordKey &storeKey, const QString &name, const MapiEntryId &entryId, bool hasSubFolders, uint messageCount)
+MapiFolderPtr MapiFolder::createFolder(QMessageStore::ErrorCode *lastError, const MapiStorePtr &store, IMAPIFolder *folder, const MapiRecordKey &recordKey, const QString &name, const MapiEntryId &entryId, bool hasSubFolders, uint messageCount)
 {
-    return MapiFolderPtr(new MapiFolder(folder, recordKey, storeKey, name, entryId, hasSubFolders, messageCount));
+    return MapiFolderPtr(new MapiFolder(store, folder, recordKey, name, entryId, hasSubFolders, messageCount));
 }
 
-MapiFolder::MapiFolder(IMAPIFolder *folder, const MapiRecordKey &recordKey, const MapiRecordKey &storeKey, const QString &name, const MapiEntryId &entryId, bool hasSubFolders, uint messageCount)
-    :_valid(true),
+MapiFolder::MapiFolder(const MapiStorePtr &store, IMAPIFolder *folder, const MapiRecordKey &recordKey, const QString &name, const MapiEntryId &entryId, bool hasSubFolders, uint messageCount)
+    :_store(store),
+     _valid(true),
      _folder(folder),
      _key(recordKey),
-     _parentStoreKey(storeKey),
      _name(name),
      _subFolders(0),
      _entryId(entryId),
@@ -233,7 +233,7 @@ QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, co
             LPSPropValue recordKeyProp(&rows->aRow[0].lpProps[recordKeyColumn]);
             MapiRecordKey recordKey(reinterpret_cast<const char*>(recordKeyProp->Value.bin.lpb), recordKeyProp->Value.bin.cb);
             MapiEntryId entryId(entryIdProp->Value.bin.lpb, entryIdProp->Value.bin.cb);
-            result.append(QMessageIdPrivate::from(recordKey, _key, _parentStoreKey, entryId));
+            result.append(QMessageIdPrivate::from(recordKey, _key, _store->recordKey(), entryId));
         }
         FreeProws(rows);
         if (limit && !workingLimit)
@@ -316,11 +316,16 @@ IMessage *MapiFolder::openMessage(QMessageStore::ErrorCode *lastError, const Map
 }
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
-QMessageFolderId MapiFolder::id()
+QMessageFolderId MapiFolder::id() const
 {
-    return QMessageFolderIdPrivate::from(_key, _parentStoreKey, _entryId);
+    return QMessageFolderIdPrivate::from(_key, _store->recordKey(), _entryId);
 }
 #endif
+
+MapiRecordKey MapiFolder::storeKey() const
+{
+    return _store->recordKey();
+}
 
 static unsigned long commonFolderMap(MapiFolder::CommonFolder folder)
 {
@@ -383,13 +388,14 @@ MapiStore::MapiStore()
 
 QHash<MapiEntryId, QWeakPointer<MapiFolder> > MapiStore::_folderMap;
 
-MapiStorePtr MapiStore::createStore(QMessageStore::ErrorCode *lastError, LPMDB store, const MapiRecordKey &key, const MapiEntryId &entryId, const QString &name)
+MapiStorePtr MapiStore::createStore(QMessageStore::ErrorCode *lastError, const MapiSessionPtr &session, LPMDB store, const MapiRecordKey &key, const MapiEntryId &entryId, const QString &name)
 {
-    return MapiStorePtr(new MapiStore(store, key, entryId, name));
+    return MapiStorePtr(new MapiStore(session, store, key, entryId, name));
 }
 
-MapiStore::MapiStore(LPMDB store, const MapiRecordKey &key, const MapiEntryId &entryId, const QString &name)
-    :_valid(true),
+MapiStore::MapiStore(const MapiSessionPtr &session, LPMDB store, const MapiRecordKey &key, const MapiEntryId &entryId, const QString &name)
+    :_session(session),
+     _valid(true),
      _store(store),
      _key(key),
      _entryId(entryId),
@@ -407,11 +413,6 @@ MapiStore::~MapiStore()
     _store = 0;
     _valid = false;
 };
-
-bool MapiStore::isValid()
-{
-    return _valid;
-}
 
 MapiFolderPtr MapiStore::rootFolder(QMessageStore::ErrorCode *lastError)
 {
@@ -574,7 +575,7 @@ IMAPIFolder *MapiStore::openMapiFolder(QMessageStore::ErrorCode *lastError, cons
     return folder;
 }
 
-QMessageAccountId MapiStore::id()
+QMessageAccountId MapiStore::id() const
 {
     return QMessageAccountIdPrivate::from(_key);
 }
@@ -608,7 +609,8 @@ MapiFolderPtr MapiStore::openFolder(QMessageStore::ErrorCode *lastError, const M
             uint messageCount = properties[2].Value.ul;
             bool hasSubFolders = properties[3].Value.b;
 
-            MapiFolderPtr folderPtr = MapiFolder::createFolder(lastError, folder, recordKey, _key, name, entryId, hasSubFolders, messageCount);
+            MapiStorePtr self(_session->openStore(lastError, _entryId));
+            MapiFolderPtr folderPtr = MapiFolder::createFolder(lastError, self, folder, recordKey, name, entryId, hasSubFolders, messageCount);
             if (*lastError == QMessageStore::NoError) {
                 result = folderPtr;
 
@@ -629,15 +631,12 @@ MapiFolderPtr MapiStore::openFolder(QMessageStore::ErrorCode *lastError, const M
 }
 
 
-// If the session is closed, the entry IDs will be invalid - make the session a singleton for now
-//QWeakPointer<MapiSession> MapiSession::_session;
-MapiSessionPtr MapiSession::_session;
+QWeakPointer<MapiSession> MapiSession::_session;
 
 QHash<MapiEntryId, QWeakPointer<MapiStore> > MapiSession::_storeMap;
 
 MapiSessionPtr MapiSession::createSession(QMessageStore::ErrorCode *lastError, bool mapiInitialized)
 {
-    /*
     // See if we can create a new pointer to an existing session
     MapiSessionPtr ptr(_session.toStrongRef());
     if (ptr.isNull()) {
@@ -650,12 +649,6 @@ MapiSessionPtr MapiSession::createSession(QMessageStore::ErrorCode *lastError, b
     }
 
     return ptr;
-    */
-    if (_session.isNull()) {
-        _session = MapiSessionPtr(new MapiSession(lastError, mapiInitialized));
-    }
-
-    return _session;
 }
 
 MapiSession::MapiSession()
@@ -692,11 +685,6 @@ MapiSession::~MapiSession()
     }
     _mapiSession = 0;
     _valid = false;
-}
-
-bool MapiSession::isValid()
-{
-    return _valid;
 }
 
 MapiStorePtr MapiSession::findStore(QMessageStore::ErrorCode *lastError, const QMessageAccountId &id) const
@@ -826,7 +814,8 @@ MapiStorePtr MapiSession::openStore(QMessageStore::ErrorCode *lastError, const M
             QString name(QStringFromLpctstr(properties[0].Value.LPSZ));
             MapiRecordKey recordKey(reinterpret_cast<const char*>(properties[1].Value.bin.lpb), properties[1].Value.bin.cb);
 
-            MapiStorePtr storePtr = MapiStore::createStore(lastError, store, recordKey, entryId, name);
+            MapiSessionPtr self(MapiSession::createSession(lastError, true));
+            MapiStorePtr storePtr = MapiStore::createStore(lastError, self, store, recordKey, entryId, name);
             if (*lastError == QMessageStore::NoError) {
                 result = storePtr;
 

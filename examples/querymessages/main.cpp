@@ -57,6 +57,6 @@ int main(int argc, char *argv[])
     }
     foreach (QString summary, summaries)
         qDebug() << summary;
-    return app.exec();
+    return 0;
 }
 
