@@ -278,7 +278,7 @@ void QTrackerContactAsyncRequest::contactsReady()
 
         QContactAvatar avatar;
         avatar.setAvatar(query->index(i, column++).data().toString());
-        if( avatar.avatar().isEmpty() )
+        if( !avatar.avatar().isEmpty() )
             contact.saveDetail(&avatar);
 
         // TODO extract generic from bellow ... mapping field names
