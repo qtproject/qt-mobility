@@ -49,6 +49,7 @@
 // TODO Consider wrapping LPMAPITABLE and LPSRowSet
 // TODO proper iterators for folders (for sub folders, messages, their entry ids and their record ids)
 
+// Note: UNICODE is always defined
 QString QStringFromLpctstr(LPCTSTR lpszValue)
 {
     if (::IsBadStringPtr(lpszValue, (UINT_PTR)-1)) // Don't crash when MAPI returns a bad string (and it does).
@@ -56,6 +57,20 @@ QString QStringFromLpctstr(LPCTSTR lpszValue)
     if (lpszValue)
         return QString::fromUtf16(reinterpret_cast<const ushort*>(lpszValue));
     return QString::null;
+}
+
+void LptstrFromQString(const QString &src, LPTSTR* dst)
+{
+    uint length(src.length());
+    *dst = new TCHAR[length + 1];
+
+    const quint16 *data = src.utf16();
+    const quint16 *it = data, *end = data + length;
+    TCHAR *oit = *dst;
+    for ( ; it != end; ++it, ++oit) {
+        *oit = static_cast<TCHAR>(*it);
+    }
+    *oit = TCHAR('\0');
 }
 
 MapiFolder::MapiFolder()
@@ -931,16 +946,13 @@ QByteArray contentTypeFromExtension(const QString &extension)
         HRESULT rv = AssocCreate(CLSID_QueryAssociations, IID_PPV_ARGS(&associations));
         if (HR_SUCCEEDED(rv)) {
             // Create the extension string to search for
-            wchar_t *ext = new wchar_t[extension.length() + 2];
-            wchar_t *v = ext;
-            if (!extension.startsWith('.')) {
-                *v++ = '.';
+            QString dotExtension(extension);
+            if (!dotExtension.startsWith('.')) {
+                dotExtension.prepend('.');
             }
 
-            QString::const_iterator it = extension.begin(), end = extension.end();
-            for ( ; it != end; ++it) {
-                *v++ = (*it).unicode();
-            }
+            LPTSTR ext(0);
+            LptstrFromQString(dotExtension, &ext);
 
             rv = associations->Init(0, ext, 0, 0);
             if (HR_SUCCEEDED(rv)) {
@@ -950,12 +962,11 @@ QByteArray contentTypeFromExtension(const QString &extension)
                 if ((rv == S_FALSE) && length) {
                     // Retrieve the string
                     wchar_t *buffer = new wchar_t[length + 1];
+                    buffer[length] = '\0';
                     rv = associations->GetString(0, ASSOCSTR_CONTENTTYPE, 0, buffer, &length);
                     if (rv == S_OK) {
-                        result.clear();
-                        for (wchar_t *v = buffer; length > 0; ++v, --length) {
-                            result.append(*v & 0xff);
-                        }
+                        QString output(QString::fromUtf16(reinterpret_cast<quint16*>(buffer)));
+                        result = output.toLatin1();
                     }
 
                     delete [] buffer;
