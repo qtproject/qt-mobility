@@ -38,7 +38,6 @@ HEADERS = \
     qmediarecordercontrol.h \
     qmediaserviceprovider.h \
     qmediaserviceproviderplugin.h \
-    qmediasink.h \
     qmediaslideshow.h \
     qmediaslideshowservice_p.h \
     qmultimediaglobal.h \
@@ -86,7 +85,6 @@ SOURCES = qabstractmediacontrol.cpp \
     qmediasource.cpp \
     qmediaresource.cpp \
     qmediaserviceprovider.cpp \
-    qmediasink.cpp \
     qmediaslideshow.cpp \
     qmediaslideshowservice.cpp \
     qradioplayer.cpp \

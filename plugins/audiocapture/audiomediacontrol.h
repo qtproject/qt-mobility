@@ -37,7 +37,6 @@
 
 #include <QtCore/qobject.h>
 
-#include "qmediasink.h"
 #include "qmediarecorder.h"
 #include "qmediarecordercontrol.h"
 

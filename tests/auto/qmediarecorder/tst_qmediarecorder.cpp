@@ -38,7 +38,6 @@
 #include <qabstractmediacontrol.h>
 #include <qabstractmediaservice.h>
 #include <qmediarecordercontrol.h>
-#include <qmediasink.h>
 #include <qmediarecorder.h>
 
 class MockProvider : public QMediaRecorderControl
@@ -51,12 +50,12 @@ public:
     m_state((int)QMediaRecorder::StoppedState),
     m_position(0) {}
 
-    QMediaSink sink() const
+    QUrl sink() const
     {
         return m_sink;
     }
 
-    bool setSink(const QMediaSink &sink)
+    bool setSink(const QUrl &sink)
     {
         m_sink = sink;
         return true;
@@ -95,7 +94,7 @@ public slots:
     }
 
 public:
-    QMediaSink m_sink;
+    QUrl m_sink;
     int        m_state;
     qint64     m_position;
 };
@@ -170,8 +169,8 @@ void tst_QMediaRecorder::cleanup()
 
 void tst_QMediaRecorder::testSink()
 {
-    capture->setSink(QMediaSink(QUrl("test.tmp")));
-    QMediaSink s = capture->sink();
+    capture->setSink(QUrl("test.tmp"));
+    QUrl s = capture->sink();
     QCOMPARE(s.dataLocation().toString(), QString("test.tmp"));
 }
 

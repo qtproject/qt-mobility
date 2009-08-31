@@ -40,7 +40,6 @@
 #include <QTime>
 #include <QUrl>
 
-#include "qmediasink.h"
 #include "qcamera.h"
 #include <QtMultimedia/qvideoframe.h>
 
