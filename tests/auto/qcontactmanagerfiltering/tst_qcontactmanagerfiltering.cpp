@@ -124,8 +124,24 @@ private slots:
 tst_QContactManagerFiltering::tst_QContactManagerFiltering()
 {
     // firstly, build a list of the managers we wish to test.
-    QContactManager *manager = new QContactManager("memory");
-    managers.append(manager);
+    QStringList managerNames = QContactManager::availableManagers();
+
+    /* Known one that will not pass */
+    managerNames.removeAll("invalid");
+
+    foreach(QString mgr, managerNames) {
+        QMap<QString, QString> params;
+        QString mgrUri = QContactManager::buildUri(mgr, params);
+        QContactManager* cm = QContactManager::fromUri(mgrUri);
+        managers.append(cm);
+
+        if (mgr == "memory") {
+            params.insert("id", "tst_QContactManager");
+            mgrUri = QContactManager::buildUri(mgr, params);
+            cm = QContactManager::fromUri(mgrUri);
+            managers.append(cm);
+        }
+    }
 
     // for each manager that we wish to test, prepare the model.
     foreach (QContactManager* cm, managers) {

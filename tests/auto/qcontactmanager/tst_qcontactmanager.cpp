@@ -774,6 +774,23 @@ void tst_QContactManager::add()
     QContact retrievedMegacontact = cm->contact(megacontact.id());
     QCOMPARE(retrievedMegacontact, megacontact); // should be the same.
 
+    // now a contact with many details of a particular definition
+    // this will fail on some backends; how do we query for this capability?
+    QContact veryContactable;
+    veryContactable.setDisplayLabel("Very Contactable");
+    for (int i = 0; i < 50; i++) {
+        QString phnStr = QString::number(i);
+        QContactPhoneNumber vcphn;
+        vcphn.setNumber(phnStr);
+        QVERIFY(veryContactable.saveDetail(&vcphn));
+    }
+
+    // check that all the numbers were added successfully, and that it can be saved.
+    QVERIFY(veryContactable.details(QContactPhoneNumber::DefinitionName).size() == 50);
+    QVERIFY(cm->saveContact(&veryContactable));
+    QContact retrievedContactable = cm->contact(veryContactable.id());
+    QCOMPARE(retrievedContactable, veryContactable);
+
     delete cm;
 }
 
