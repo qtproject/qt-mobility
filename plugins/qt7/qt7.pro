@@ -7,7 +7,7 @@ PLUGIN_SUBDIR = mediaservice
 
 include (../../common.pri)
 
-INCLUDEPATH += ../../multimedia ../../multimedia/endpoints
+INCLUDEPATH += ../../multimedia
 LIBS += -lQtMedia -framework QTKit -framework QuickTime
 
 
@@ -16,7 +16,6 @@ HEADERS = \
     qt7playerservice.h \
     qt7serviceplugin.h \
     qt7metadata.h \
-    qt7widget.h \
     qt7movie.h
 
 SOURCES = \
@@ -24,5 +23,4 @@ SOURCES = \
     qt7playerservice.cpp \
     qt7serviceplugin.cpp \
     qt7metadata.cpp \
-    qt7widget.mm \
     qt7movie.mm

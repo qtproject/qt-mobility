@@ -56,7 +56,7 @@ public:
     The interface name of QVideoRendererControl is \c com.nokia.Qt.QVideoRendererControl/1.0 as
     defined in QVideoRendererControl_iid.
 
-    \sa QAbstractMediaService::createEndpoint(), QAbstractMediaService::setVideoOutput()
+    \sa QAbstractMediaService::control(), QAbstractMediaService::setActiveEndpoint()
 */
 
 /*!

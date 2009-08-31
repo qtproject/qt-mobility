@@ -35,7 +35,6 @@
 #ifndef QABSTRACTMEDIASERVICE_H
 #define QABSTRACTMEDIASERVICE_H
 
-#include "qmediaendpointinterface.h"
 #include "qabstractmediacontrol.h"
 
 #include <QtCore/qobject.h>

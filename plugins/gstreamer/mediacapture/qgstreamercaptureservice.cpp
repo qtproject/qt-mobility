@@ -1,11 +1,9 @@
 #include "qgstreamercaptureservice.h"
-#include "qgstaudiodeviceendpoint.h"
 #include "qgstreamercapturesession.h"
 #include "qgstreamerrecordercontrol.h"
 #include "qgstreamermediaformatcontrol.h"
 #include "qgstreameraudioencode.h"
 #include "qgstreamervideoencode.h"
-#include "qgstreamervideowidget.h"
 #include "qgstreamervideorenderer.h"
 #include "qgstreamerbushelper.h"
 #include "qgstreamercameracontrol.h"
@@ -14,7 +12,6 @@
 #include "qgstreamervideooutputcontrol.h"
 #include "qgstreameraudioinputdevicecontrol.h"
 
-#include "qgstreamervideowidget.h"
 #include "qgstreamervideooverlay.h"
 #include "qgstreamervideorenderer.h"
 

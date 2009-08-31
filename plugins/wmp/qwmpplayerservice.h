@@ -70,13 +70,6 @@ public:
 
     QAbstractMediaControl *control(const char *name) const;
 
-    //void setVideoOutput(QObject *output);
-
-    //QList<QByteArray> supportedEndpointInterfaces(
-    //        QMediaEndpointInterface::Direction direction) const;
-
-    //QObject *createEndpoint(const char *iid);
-
     // IUnknown
     HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **object);
     ULONG STDMETHODCALLTYPE AddRef();

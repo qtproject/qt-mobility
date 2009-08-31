@@ -40,7 +40,6 @@
 #include "qphononplayercontrol.h"
 #include "qphononmetadataprovider.h"
 
-//#include "qmediawidgetendpoint.h"
 #include "qphononvideowidget.h"
 
 #include "qmediaplaylistnavigator.h"

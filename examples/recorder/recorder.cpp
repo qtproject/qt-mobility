@@ -37,8 +37,7 @@
 
 #include <qabstractmediaservice.h>
 #include <qmediarecorder.h>
-#include <qaudiodeviceendpoint.h>
-#include <qmediawidgetendpoint.h>
+#include <qaudiodevicecontrol.h>
 #include <qaudioencodecontrol.h>
 #include <qmediaformatcontrol.h>
 
@@ -56,7 +55,6 @@ Recorder::Recorder(QWidget *parent) :
 
     audioRecorder = new QMediaRecorder;
     audioRecorder->setSink(QUrl("test.ogg"));
-    //audioDevice = audioRecorder->service()->createEndpoint<QAudioDeviceEndpoint*>();
 
     connect(audioRecorder, SIGNAL(durationChanged(qint64)), this, SLOT(updateRecordTime()));
     connect(audioRecorder, SIGNAL(error(QMediaRecorder::Error)), this, SLOT(displayErrorMessage()));
@@ -74,6 +72,9 @@ Recorder::Recorder(QWidget *parent) :
         } else
             ui->inputDeviceBox->setEnabled(false);
     }
+
+    audioDevice = qobject_cast<QAudioDeviceControl*>(
+            audioRecorder->service()->control(QAudioDeviceControl_iid));
 
     //if (audioDevice) {
     //    audioRecorder->service()->setAudioInput(audioDevice);
@@ -133,16 +134,6 @@ Recorder::Recorder(QWidget *parent) :
         }
         // TODO: how do I show?
     }
-
-    //QWidget *videoWidget = audioRecorder->service()->createEndpoint<QMediaWidgetEndpoint *>();
-
-    //if (videoWidget) {
-    //    qDebug() << "service supports video widgets, nice";
-        //audioRecorder->service()->setVideoOutput(videoWidget);
-    //}
-
-    //videoWidget->show();
-
 }
 
 Recorder::~Recorder()

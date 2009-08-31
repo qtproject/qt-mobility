@@ -10,8 +10,7 @@ LIBS += -lQtMedia
 
 DEPENDPATH += .
 INCLUDEPATH += . \
-    ../../multimedia \
-    ../../multimedia/endpoints
+    ../../multimedia
 
 unix:contains(QT_CONFIG, alsa) {
 DEFINES += HAVE_ALSA
@@ -33,21 +32,17 @@ HEADERS += \
     qgstreamermessage.h \
     qgstreamerbushelper.h \
     qgstreamervideooutputcontrol.h \
-    qgstreamervideowidget.h \
     qgstreamervideorenderer.h \
     qgstreamerserviceplugin.h \
-    qgstreameraudioinputdevicecontrol.h \
-    qgstaudiodeviceendpoint.h
+    qgstreameraudioinputdevicecontrol.h
 
 SOURCES += \
     qgstreamermessage.cpp \
     qgstreamerbushelper.cpp \
     qgstreamervideooutputcontrol.cpp \
-    qgstreamervideowidget.cpp \
     qgstreamervideorenderer.cpp \
     qgstreamerserviceplugin.cpp \
-    qgstreameraudioinputdevicecontrol.cpp \
-    qgstaudiodeviceendpoint.cpp
+    qgstreameraudioinputdevicecontrol.cpp
 
 videosurface {
     QT += multimedia

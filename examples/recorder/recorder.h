@@ -42,7 +42,7 @@ namespace Ui {
 #include <QMainWindow>
 
 class QMediaRecorder;
-class QAudioDeviceEndpoint;
+class QAudioDeviceControl;
 class QAudioEncodeControl;
 class QMediaFormatControl;
 
@@ -70,7 +70,7 @@ private:
     Ui::Recorder *ui;
 
     QMediaRecorder* audioRecorder;
-    QAudioDeviceEndpoint *audioDevice;
+    QAudioDeviceControl *audioDevice;
     QAudioEncodeControl *encodeControl;
     QMediaFormatControl *formatControl;
 };
