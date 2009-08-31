@@ -48,15 +48,14 @@
 class QCameraService;
 class QCameraControl;
 
-extern Q_MEDIA_EXPORT QAbstractMediaService *createCameraService(QMediaServiceProvider *provider = defaultServiceProvider("camera"));
 
 class QCameraPrivate;
-
 class Q_MEDIA_EXPORT QCamera : public QAbstractMediaObject
 {
     Q_OBJECT
 
     Q_ENUMS(State)
+
 public:
     enum State { ActiveState, StoppedState };
 
@@ -128,11 +127,8 @@ public:
 
     Q_PROPERTY(QCamera::State state READ state NOTIFY stateChanged)
 
-    QCamera(QAbstractMediaService *service = createCameraService(), QObject *parent = 0);
-    //QCamera(const QByteArray &device, QObject *parent = 0);
+    QCamera(QObject *parent = 0, QAbstractMediaService *service = 0);
     ~QCamera();
-
-    //static QAbstractMediaService * createCameraService(const QByteArray &device);
 
     QList<QString> deviceList();
     void setDevice(const QString& device);

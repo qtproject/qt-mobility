@@ -66,6 +66,28 @@
 
 */
 
+/*!
+    \a internal
+*/
+
+QRadioService* createRadioService()
+{
+    QMediaServiceProvider *provider = defaultServiceProvider("radio");
+    QObject *object = provider ? provider->createObject(QRadioService_iid) : 0;
+
+    if (object != 0) {
+        QRadioService *service = qobject_cast<QRadioService*>(object);
+
+        if (service != 0)
+            return service;
+
+        delete object;
+    }
+
+    return 0;
+}
+
+
 class QRadioPlayerPrivate : public QAbstractMediaObjectPrivate
 {
 public:
@@ -73,12 +95,20 @@ public:
     QRadioPlayerControl* control;
 };
 
-QRadioPlayer::QRadioPlayer(QObject *parent):
+
+
+/*!
+    Contruct a QRadioPlayer object with \a service and \a parent.
+
+    If the service is not specified the system default will be used.
+*/
+
+QRadioPlayer::QRadioPlayer(QObject *parent, QRadioService* service):
     QAbstractMediaObject(*new QRadioPlayerPrivate, parent)
 {
     Q_D(QRadioPlayer);
 
-    d->service = createRadioService();
+    d->service = service == 0 ? createRadioService() : service;
     Q_ASSERT(d->service != 0);
 
     d->control = d->service->control<QRadioPlayerControl*>();
@@ -90,35 +120,6 @@ QRadioPlayer::QRadioPlayer(QObject *parent):
     connect(d->control, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
     connect(d->control, SIGNAL(volumeChanged(int)), SIGNAL(volumeChanged(int)));
     connect(d->control, SIGNAL(mutingChanged(bool)), SIGNAL(mutingChanged(bool)));
-
-    addPropertyWatch("duration");
-}
-
-/*!
-    Contruct a QRadioPlayer object with \a service and \a parent.
-*/
-
-QRadioPlayer::QRadioPlayer(QRadioService* service, QObject *parent):
-    QAbstractMediaObject(*new QRadioPlayerPrivate, parent)
-{
-    Q_D(QRadioPlayer);
-
-    d->service = service;
-
-    if(!d->service)
-        d->service = createRadioService();
-
-    d->control = qobject_cast<QRadioPlayerControl *>(d->service->control(QRadioPlayerControl_iid));
-    if(d->control) {
-        connect(d->control,SIGNAL(bandChanged(QRadioPlayer::Band)),this,SIGNAL(bandChanged(QRadioPlayer::Band)));
-        connect(d->control,SIGNAL(frequencyChanged(int)),this,SIGNAL(frequencyChanged(int)));
-        connect(d->control,SIGNAL(stereoStatusChanged(bool)),this,SIGNAL(stereoStatusChanged(bool)));
-        connect(d->control,SIGNAL(searchingStatusChanged(bool)),this,SIGNAL(searchingStatusChanged(bool)));
-        connect(d->control,SIGNAL(signalStrengthChanged(int)),this,SIGNAL(signalStrengthChanged(int)));
-        connect(d->control,SIGNAL(durationChanged(qint64)),this,SIGNAL(durationChanged(qint64)));
-        connect(d->control,SIGNAL(volumeChanged(int)),this,SIGNAL(volumeChanged(int)));
-        connect(d->control,SIGNAL(mutingChanged(bool)),this,SIGNAL(mutingChanged(bool)));
-    }
 
     addPropertyWatch("duration");
 }
@@ -346,25 +347,6 @@ void QRadioPlayer::searchBackward()
 void QRadioPlayer::cancelSearch()
 {
     d_func()->control->cancelSearch();
-}
-
-/*!
-    Create a new radio service with parent \a provider.
-*/
-
-QRadioService* createRadioService(QMediaServiceProvider *provider)
-{
-    QObject *object = provider ? provider->createObject(QRadioService_iid) : 0;
-
-    if (object != 0) {
-        QRadioService *service = qobject_cast<QRadioService*>(object);
-
-        if (service != 0)
-            return service;
-
-        delete object;
-    }
-    return 0;
 }
 
 /*!

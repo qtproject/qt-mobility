@@ -53,6 +53,27 @@
     \sa
 */
 
+/*!
+    \a internal
+*/
+
+QCameraService* createCameraService()
+{
+    QMediaServiceProvider *provider = defaultServiceProvider("camera");
+    QObject *object = provider ? provider->createObject(QCameraService_iid) : 0;
+
+    if (object != 0) {
+        QCameraService *service = qobject_cast<QCameraService*>(object);
+
+        if (service)
+            return service;
+
+        delete object;
+    }
+
+    return 0;
+}
+
 class QCameraPrivate : public QAbstractMediaObjectPrivate
 {
 public:
@@ -66,35 +87,30 @@ public:
     Construct a QCamera from \a service with \a parent.
 */
 
-QCamera::QCamera(QAbstractMediaService *service, QObject *parent)
-    : QAbstractMediaObject(*new QCameraPrivate, parent)
+QCamera::QCamera(QObject *parent, QAbstractMediaService *service):
+    QAbstractMediaObject(*new QCameraPrivate, parent)
 {
     Q_D(QCamera);
 
-    if(service) {
-        d->service = service;
-        d->control = qobject_cast<QCameraControl *>(service->control(QCameraControl_iid));
-        d->exposureControl = qobject_cast<QCameraExposureControl *>(service->control(QCameraExposureControl_iid));
-        d->focusControl = qobject_cast<QCameraFocusControl *>(service->control(QCameraFocusControl_iid));
+    d->service = service == 0 ? createCameraService() : service;
+    Q_ASSERT(d->service != 0);
 
-        connect(d->control, SIGNAL(stateChanged(QCamera::State)), this, SIGNAL(stateChanged(QCamera::State)));
+    d->control = qobject_cast<QCameraControl *>(service->control(QCameraControl_iid));
+    d->exposureControl = qobject_cast<QCameraExposureControl *>(service->control(QCameraExposureControl_iid));
+    d->focusControl = qobject_cast<QCameraFocusControl *>(service->control(QCameraFocusControl_iid));
 
-        if (d->exposureControl) {
-            connect(d->exposureControl, SIGNAL(flashReady(bool)), this, SIGNAL(flashReady(bool)));
-            connect(d->exposureControl, SIGNAL(exposureLocked()), this, SIGNAL(exposureLocked()));
-        }
+    connect(d->control, SIGNAL(stateChanged(QCamera::State)), this, SIGNAL(stateChanged(QCamera::State)));
 
-        if (d->focusControl) {
-            connect(d->focusControl, SIGNAL(focusStatusChanged(QCamera::FocusStatus)),
-                    this, SIGNAL(focusStatusChanged(QCamera::FocusStatus)));
-            connect(d->focusControl, SIGNAL(zoomValueChanged(qreal)), this, SIGNAL(zoomValueChanged(qreal)));
-            connect(d->focusControl, SIGNAL(focusLocked()), this, SIGNAL(focusLocked()));
-        }
-    } else {
-        d->service = 0;
-        d->control = 0;
-        d->exposureControl = 0;
-        d->focusControl = 0;
+    if (d->exposureControl) {
+        connect(d->exposureControl, SIGNAL(flashReady(bool)), this, SIGNAL(flashReady(bool)));
+        connect(d->exposureControl, SIGNAL(exposureLocked()), this, SIGNAL(exposureLocked()));
+    }
+
+    if (d->focusControl) {
+        connect(d->focusControl, SIGNAL(focusStatusChanged(QCamera::FocusStatus)),
+                this, SIGNAL(focusStatusChanged(QCamera::FocusStatus)));
+        connect(d->focusControl, SIGNAL(zoomValueChanged(qreal)), this, SIGNAL(zoomValueChanged(qreal)));
+        connect(d->focusControl, SIGNAL(focusLocked()), this, SIGNAL(focusLocked()));
     }
 }
 
@@ -643,24 +659,6 @@ QAbstractMediaService *QCamera::service() const
     return d_func()->service;
 }
 
-/*!
-    Creates a camera service with parent \a provider
-*/
-
-QAbstractMediaService* createCameraService(QMediaServiceProvider *provider)
-{
-    QObject *object = provider ? provider->createObject(QCameraService_iid) : 0;
-
-    if (object) {
-        QAbstractMediaService *service = qobject_cast<QAbstractMediaService *>(object);
-
-        if (service)
-            return service;
-
-        delete object;
-    }
-    return 0;
-}
 
 /*!
     \enum QCamera::State

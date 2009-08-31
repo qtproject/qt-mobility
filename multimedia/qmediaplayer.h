@@ -44,8 +44,6 @@
 class QMediaPlayerService;
 class QMediaPlaylist;
 
-extern Q_MEDIA_EXPORT QMediaPlayerService *createMediaPlayerService(QMediaServiceProvider *provider = 0);
-
 
 class QMediaPlayerPrivate;
 class Q_MEDIA_EXPORT QMediaPlayer : public QAbstractMediaObject
@@ -98,8 +96,7 @@ public:
         AccessDeniedError
     };
 
-    QMediaPlayer(QObject *parent = 0);
-    QMediaPlayer(QMediaPlayerService *service, QObject *parent = 0);
+    QMediaPlayer(QObject *parent = 0, QMediaPlayerService *service = 0);
     ~QMediaPlayer();
 
     bool isValid() const;

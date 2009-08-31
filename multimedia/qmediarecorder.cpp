@@ -41,6 +41,7 @@
 #include "qaudioencodecontrol.h"
 #include "qvideoencodecontrol.h"
 #include "qmediaformatcontrol.h"
+#include "qmediarecorderservice.h"
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qurl.h>
@@ -48,22 +49,6 @@
 
 #include <QtMultimedia/QAudioFormat>
 
-
-Q_MEDIA_EXPORT QAbstractMediaService *createMediaCaptureService(QMediaServiceProvider *provider)
-{
-    QObject *object = provider ? provider->createObject(QAudioRecorderService_iid) : 0;
-
-    if (object != 0) {
-        QAbstractMediaService *service = qobject_cast<QAbstractMediaService*>(object);
-
-        if (service != 0)
-            return service;
-
-        delete object;
-    }
-
-    return 0;
-}
 
 /*!
     \class QMediaRecorder
@@ -75,16 +60,34 @@ Q_MEDIA_EXPORT QAbstractMediaService *createMediaCaptureService(QMediaServicePro
     \sa
 */
 
+QMediaRecorderService *createMediaRecorderService()
+{
+    QMediaServiceProvider *provider = defaultServiceProvider("mediarecorder");
+
+    QObject *object = provider ? provider->createObject(QAudioRecorderService_iid) : 0;
+
+    if (object != 0) {
+        QMediaRecorderService *service = qobject_cast<QMediaRecorderService*>(object);
+
+        if (service != 0)
+            return service;
+
+        delete object;
+    }
+
+    return 0;
+}
+
+
 class QMediaRecorderPrivate : public QAbstractMediaObjectPrivate
 {
     Q_DECLARE_PUBLIC(QMediaRecorder)
 
 public:
-    QMediaRecorderPrivate(QAbstractMediaService *service);
+    QMediaRecorderPrivate();
     void initControls();
 
-
-    QAbstractMediaService *service;
+    QMediaRecorderService *service;
     QMediaRecorderControl *control;
     QMediaFormatControl *formatControl;
     QAudioEncodeControl *audioControl;
@@ -97,9 +100,8 @@ public:
     void _q_error(int error, const QString &errorString);
 };
 
-QMediaRecorderPrivate::QMediaRecorderPrivate(QAbstractMediaService *service)
-    :QAbstractMediaObjectPrivate(),
-     service(service),
+QMediaRecorderPrivate::QMediaRecorderPrivate():
+     service(0),
      control(0),
      formatControl(0),
      audioControl(0),
@@ -187,29 +189,19 @@ void QMediaRecorderPrivate::_q_error(int error, const QString &errorString)
     emit q->error(this->error);
 }
 
-/*!
-    Construct a media recorder object with \a parent.
-
-    The QMediaRecorder will use a default recording service.
-*/
-
-QMediaRecorder::QMediaRecorder(QObject *parent):
-    QAbstractMediaObject(*new QMediaRecorderPrivate(0), parent)
-{
-    Q_D(QMediaRecorder);
-
-    d->service = createMediaCaptureService();
-    d->initControls();
-}
 
 /*!
     Construct a media recorder object with \a mediaObject and \a parent.
 */
 
-QMediaRecorder::QMediaRecorder(QAbstractMediaObject *mediaObject, QObject *parent):
-    QAbstractMediaObject(*new QMediaRecorderPrivate(mediaObject->service()), parent)
+QMediaRecorder::QMediaRecorder(QAbstractMediaObject *mediaObject):
+    QAbstractMediaObject(*new QMediaRecorderPrivate, mediaObject)
 {
     Q_D(QMediaRecorder);
+
+    d->service = qobject_cast<QMediaRecorderService*>(mediaObject->service());
+    Q_ASSERT(d->service != 0);
+
     d->initControls();
 }
 
@@ -217,10 +209,14 @@ QMediaRecorder::QMediaRecorder(QAbstractMediaObject *mediaObject, QObject *paren
     Construct a media recorder object with \a service and \a parent.
 */
 
-QMediaRecorder::QMediaRecorder(QAbstractMediaService *service, QObject *parent):
-    QAbstractMediaObject(*new QMediaRecorderPrivate(service), parent)
+QMediaRecorder::QMediaRecorder(QObject *parent, QMediaRecorderService *service):
+    QAbstractMediaObject(*new QMediaRecorderPrivate, parent)
 {
     Q_D(QMediaRecorder);
+
+    d->service = service == 0 ? createMediaRecorderService() : service;
+    Q_ASSERT(d->service != 0);
+
     d->initControls();
 }
 

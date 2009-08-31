@@ -52,6 +52,33 @@
     \sa
 */
 
+/*!
+    \internal
+*/
+
+QMediaPlayerService* createMediaPlayerService()
+{
+    QByteArray providerKey = qgetenv("QT_MEDIAPLAYER_PROVIDER");
+
+    QMediaServiceProvider *provider = defaultServiceProvider(!providerKey.isNull()
+            ? providerKey.constData()
+            : "mediaplayer");
+
+    QObject *object = provider ? provider->createObject(QMediaPlayerService_iid) : 0;
+
+    if (object != 0) {
+        QMediaPlayerService *service = qobject_cast<QMediaPlayerService*>(object);
+
+        if (service != 0)
+            return service;
+
+        delete object;
+    }
+
+    return 0;
+}
+
+
 class QMediaPlayerPrivate : public QAbstractMediaObjectPrivate
 {
     Q_DECLARE_PUBLIC(QMediaPlayer)
@@ -106,58 +133,26 @@ void QMediaPlayerPrivate::_q_error(int error, const QString &errorString)
     emit q->errorStringChanged(this->errorString);
 }
 
-/*!
-    Construct a QMediaPlayer parented to \a parent.
 
-    The QMediaPlayer will use the system default playback service.
+/*!
+    Construct a QMediaPlayer to operate on the QMediaPlayerService \a service, parented to \a parent.
+
+    If a playback service is not specified the system default will be used.
 */
 
-QMediaPlayer::QMediaPlayer(QObject *parent):
+QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayerService *service):
     QAbstractMediaObject(*new QMediaPlayerPrivate, parent)
 {
     Q_D(QMediaPlayer);
 
-    d->service = createMediaPlayerService();
+    d->service = service == 0 ? createMediaPlayerService() : service;
     Q_ASSERT(d->service != 0);
 
-    d->control = qobject_cast<QMediaPlayerControl*>(d->service->control(QMediaPlayerControl_iid));
-
+    d->control = qobject_cast<QMediaPlayerControl*>(service->control(QMediaPlayerControl_iid));
     connect(d->control, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(_q_stateChanged(QMediaPlayer::State)));
     connect(d->control, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
             SLOT(_q_mediaStatusChanged(QMediaPlayer::MediaStatus)));
     connect(d->control, SIGNAL(error(int,QString)), SLOT(_q_error(int,QString)));
-
-    connect(d->control, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
-    connect(d->control, SIGNAL(videoAvailabilityChanged(bool)), SIGNAL(videoAvailabilityChanged(bool)));
-    connect(d->control, SIGNAL(volumeChanged(int)), SIGNAL(volumeChanged(int)));
-    connect(d->control, SIGNAL(mutingChanged(bool)), SIGNAL(mutingChanged(bool)));
-    connect(d->control, SIGNAL(seekableChanged(bool)), SIGNAL(seekableChanged(bool)));
-
-    if (d->control->state() == PlayingState)
-        addPropertyWatch("position");
-
-    if (d->control->mediaStatus() == StalledMedia || d->control->mediaStatus() == BufferingMedia)
-        addPropertyWatch("bufferStatus");
-}
-
-/*!
-    Construct a QMediaPlayer to operate on the QMediaPlayerService \a service, parented to \a parent.
-*/
-
-QMediaPlayer::QMediaPlayer(QMediaPlayerService *service, QObject *parent):
-    QAbstractMediaObject(*new QMediaPlayerPrivate, parent)
-{
-    Q_D(QMediaPlayer);
-
-    d->service = service;
-    Q_ASSERT(d->service != 0);
-
-    d->control = qobject_cast<QMediaPlayerControl *>(service->control(QMediaPlayerControl_iid));
-
-    connect(d->control, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(_q_stateChanged(QMediaPlayer::State)));
-    connect(d->control, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
-            SLOT(_q_mediaStatusChanged(QMediaPlayer::MediaStatus)));
-    connect(d->control, SIGNAL(error(int,QString)), this, SLOT(_q_error(int,QString)));
 
     connect(d->control, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
     connect(d->control, SIGNAL(videoAvailabilityChanged(bool)), SIGNAL(videoAvailabilityChanged(bool)));
@@ -415,29 +410,6 @@ void QMediaPlayer::setPlaybackRate(float rate)
     d_func()->control->setPlaybackRate(rate);
 }
 
-QMediaPlayerService* createMediaPlayerService(QMediaServiceProvider *provider)
-{
-    if (!provider) {
-        QByteArray providerKey = qgetenv("QT_MEDIAPLAYER_PROVIDER");
-
-        provider = defaultServiceProvider(!providerKey.isNull()
-                ? providerKey.constData()
-                : "mediaplayer");
-    }
-
-    QObject *object = provider ? provider->createObject(QMediaPlayerService_iid) : 0;
-
-    if (object != 0) {
-        QMediaPlayerService *service = qobject_cast<QMediaPlayerService*>(object);
-
-        if (service != 0)
-            return service;
-
-        delete object;
-    }
-
-    return 0;
-}
 
 /*!
     \enum QMediaPlayer::State

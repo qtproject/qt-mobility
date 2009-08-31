@@ -40,15 +40,13 @@
 
 #include <QtCore/qpair.h>
 
+
 class QUrl;
 class QAudioFormat;
 class QSize;
-
 class QMediaRecorderService;
-extern Q_MEDIA_EXPORT QAbstractMediaService *createMediaCaptureService(QMediaServiceProvider *provider = defaultServiceProvider("audiorecorder"));
 
 class QMediaRecorderPrivate;
-
 class Q_MEDIA_EXPORT QMediaRecorder : public QAbstractMediaObject
 {
     Q_OBJECT
@@ -81,9 +79,8 @@ public:
         FormatError
     };
 
-    QMediaRecorder(QObject *parent = 0);
-    QMediaRecorder(QAbstractMediaObject *mediaObject, QObject *parent = 0);
-    QMediaRecorder(QAbstractMediaService *service, QObject *parent = 0);
+    QMediaRecorder(QAbstractMediaObject *mediaObject);
+    QMediaRecorder(QObject *parent = 0, QMediaRecorderService *service = 0);
     ~QMediaRecorder();
 
     bool isValid() const;
