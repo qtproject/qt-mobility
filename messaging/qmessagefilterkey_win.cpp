@@ -35,6 +35,11 @@
 #include "qvariant.h"
 #include "winhelpers_p.h"
 
+// Not sure if this will work on WinCE
+#ifndef PR_SMTP_ADDRESS
+#define PR_SMTP_ADDRESS 0x39FE001E
+#endif
+
 void QDateTimeToFileTime(const QDateTime &dt, FILETIME *ft)
 {
     SYSTEMTIME st;
@@ -86,74 +91,194 @@ QMessageFilterKey QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Field
     return result;
 }
 
-void QMessageFilterKeyPrivate::filterTable(QMessageStore::ErrorCode *lastError, const QMessageFilterKey &key, LPMAPITABLE messagesTable)
+QMessageFilterKeyPrivate* QMessageFilterKeyPrivate::implementation(const QMessageFilterKey &key)
 {
-    SRestriction restriction;
-    SRestriction subRestriction[2];
-    SPropValue keyProp;
-    bool notRestriction(false);
-    bool valid(false);
+    return key.d_ptr;
+}
 
-    switch (key.d_ptr->_comparatorType) {
-    case Equality:
-    case Relation: {
-        if (key.d_ptr->_comparatorType == Equality) {
-            restriction.rt = RES_PROPERTY;
-            QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(key.d_ptr->_comparatorValue));
+class MapiRestriction {
+public:
+    MapiRestriction(const QMessageFilterKey &key);
+    ~MapiRestriction();
+    SRestriction *sRestriction();
+    bool isValid() { return _valid; }
+    bool isEmpty() { return _empty; }
+
+private:
+    SRestriction _restriction;
+    SRestriction _subRestriction[2];
+    SPropValue _keyProp;
+    SPropValue _keyProp2;
+    SRestriction *_notRestriction;
+    SRestriction *_recipientRestriction;
+    bool _valid;
+    bool _empty;
+    MapiRestriction *_left;
+    MapiRestriction *_right;
+};
+
+MapiRestriction::MapiRestriction(const QMessageFilterKey &key)
+    :_notRestriction(0),
+    _recipientRestriction(0),
+     _valid(false),
+     _empty(false),
+     _left(0),
+     _right(0)
+{
+    // TODO: Could refactor this code so that different Operators/Fields each have a separate class, with a separate constructor
+    QMessageFilterKeyPrivate *d_ptr(QMessageFilterKeyPrivate::implementation(key));
+    if (!d_ptr->_valid) {
+        qWarning("Invalid filter application ignored.");
+        return;
+    }
+    if (d_ptr->_operator != QMessageFilterKeyPrivate::Identity) {
+        switch (d_ptr->_operator) {
+        case QMessageFilterKeyPrivate::Not: // fall through
+        case QMessageFilterKeyPrivate::Nand: // fall through
+        case QMessageFilterKeyPrivate::Nor:
+            _notRestriction = new SRestriction;
+            _notRestriction->rt = RES_NOT;
+            _notRestriction->res.resNot.ulReserved = 0;
+            _notRestriction->res.resNot.lpRes = &_restriction;
+            break;
+        default:
+            break;
+        } //end switch
+        switch (d_ptr->_operator) {
+        case QMessageFilterKeyPrivate::Not: {
+            if (d_ptr->_field == QMessageFilterKeyPrivate::None) {
+                _restriction.rt = RES_EXIST;
+                _restriction.res.resExist.ulReserved1 = 0;
+                _restriction.res.resExist.ulPropTag = PR_ENTRYID; // Should match all, so not this is a non-matching key
+                _restriction.res.resExist.ulReserved2 = 0;
+                _valid = true;
+                return;
+            }
+            break;
+        }
+        case QMessageFilterKeyPrivate::Nand: // fall through
+        case QMessageFilterKeyPrivate::And: {
+            Q_ASSERT(d_ptr->_left);
+            Q_ASSERT(d_ptr->_right);
+            if (!d_ptr->_left || !d_ptr->_right)
+                return;
+            _left = new MapiRestriction(*d_ptr->_left);
+            _right = new MapiRestriction(*d_ptr->_right);
+            _subRestriction[0] = *_left->sRestriction();
+            _subRestriction[1] = *_right->sRestriction();
+            _restriction.rt = RES_AND;
+            _restriction.res.resAnd.cRes = 2;
+            _restriction.res.resAnd.lpRes = &_subRestriction[0];
+            _valid = true;
+            return;
+        }
+        case QMessageFilterKeyPrivate::Nor: // fall through
+        case QMessageFilterKeyPrivate::Or: {
+            Q_ASSERT(d_ptr->_left);
+            Q_ASSERT(d_ptr->_right);
+            if (!d_ptr->_left || !d_ptr->_right)
+                return;
+            _left = new MapiRestriction(*d_ptr->_left);
+            _right = new MapiRestriction(*d_ptr->_right);
+            _subRestriction[0] = *_left->sRestriction();
+            _subRestriction[1] = *_right->sRestriction();
+            _restriction.rt = RES_OR; 
+            _restriction.res.resOr.cRes = 2;
+            _restriction.res.resOr.lpRes = &_subRestriction[0];
+            _valid = true;
+            return;
+        }
+        default:
+            Q_ASSERT(false);
+            qWarning("Unsupported filter boolean algebra case.");
+        } // end switch
+    } else { // identity operator
+        if (d_ptr->_field == QMessageFilterKeyPrivate::None) {
+            _valid = true;
+            _empty = true;
+            return;
+        }
+    }
+    switch (d_ptr->_comparatorType) {
+    case QMessageFilterKeyPrivate::Equality:
+    case QMessageFilterKeyPrivate::Relation: {
+        _restriction.rt = RES_PROPERTY;
+        if (d_ptr->_comparatorType == QMessageFilterKeyPrivate::Equality) {
+            QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(d_ptr->_comparatorValue));
             if (cmp == QMessageDataComparator::Equal)
-                restriction.res.resProperty.relop = RELOP_EQ;
+                _restriction.res.resProperty.relop = RELOP_EQ;
             else
-                restriction.res.resProperty.relop = RELOP_NE;
+                _restriction.res.resProperty.relop = RELOP_NE;
         } else { // Relation
-            restriction.rt = RES_PROPERTY;
-            QMessageDataComparator::RelationComparator cmp(static_cast<QMessageDataComparator::RelationComparator>(key.d_ptr->_comparatorValue));
+            QMessageDataComparator::RelationComparator cmp(static_cast<QMessageDataComparator::RelationComparator>(d_ptr->_comparatorValue));
             switch (cmp) {
             case QMessageDataComparator::LessThan:
-                restriction.res.resProperty.relop = RELOP_LT;
+                _restriction.res.resProperty.relop = RELOP_LT;
                 break;
             case QMessageDataComparator::LessThanEqual:
-                restriction.res.resProperty.relop = RELOP_LE;
+                _restriction.res.resProperty.relop = RELOP_LE;
                 break;
             case QMessageDataComparator::GreaterThan:
-                restriction.res.resProperty.relop = RELOP_GT;
+                _restriction.res.resProperty.relop = RELOP_GT;
                 break;
             case QMessageDataComparator::GreaterThanEqual:
-                restriction.res.resProperty.relop = RELOP_GE;
+                _restriction.res.resProperty.relop = RELOP_GE;
                 break;
             }
         }
-        restriction.res.resProperty.lpProp = &keyProp;
-        switch (key.d_ptr->_field) {
-        case Size: {
-            restriction.res.resProperty.ulPropTag = PR_MESSAGE_SIZE;
-            keyProp.ulPropTag = PR_MESSAGE_SIZE;
-            keyProp.Value.ul = key.d_ptr->_value.toInt();
-            valid = true;
+        _restriction.res.resProperty.lpProp = &_keyProp;
+        switch (d_ptr->_field) {
+        case QMessageFilterKeyPrivate::Size: {
+            _restriction.res.resProperty.ulPropTag = PR_MESSAGE_SIZE;
+            _keyProp.ulPropTag = PR_MESSAGE_SIZE;
+            _keyProp.Value.ul = d_ptr->_value.toInt();
+            _valid = true;
             break;
         }
-        case ReceptionTimeStamp: {
-            restriction.res.resProperty.ulPropTag = PR_MESSAGE_DELIVERY_TIME;
-            keyProp.ulPropTag = PR_MESSAGE_DELIVERY_TIME;
-            QDateTime dt(key.d_ptr->_value.toDateTime());
-            QDateTimeToFileTime(dt, &keyProp.Value.ft);
-            valid = true;
+        case QMessageFilterKeyPrivate::ReceptionTimeStamp: {
+            _restriction.res.resProperty.ulPropTag = PR_MESSAGE_DELIVERY_TIME;
+            _keyProp.ulPropTag = PR_MESSAGE_DELIVERY_TIME;
+            QDateTime dt(d_ptr->_value.toDateTime());
+            QDateTimeToFileTime(dt, &_keyProp.Value.ft);
+            _valid = true;
             break;
         }
-        case TimeStamp: {
-            restriction.res.resProperty.ulPropTag = PR_CLIENT_SUBMIT_TIME;
-            keyProp.ulPropTag = PR_CLIENT_SUBMIT_TIME;
-            QDateTime dt(key.d_ptr->_value.toDateTime());
-            QDateTimeToFileTime(dt, &keyProp.Value.ft);
-            valid = true;
+        case QMessageFilterKeyPrivate::TimeStamp: {
+            _restriction.res.resProperty.ulPropTag = PR_CLIENT_SUBMIT_TIME;
+            _keyProp.ulPropTag = PR_CLIENT_SUBMIT_TIME;
+            QDateTime dt(d_ptr->_value.toDateTime());
+            QDateTimeToFileTime(dt, &_keyProp.Value.ft);
+            _valid = true;
             break;
         }
-        case Subject: {
-            restriction.res.resProperty.ulPropTag = PR_SUBJECT;
-            keyProp.ulPropTag = PR_SUBJECT;
-            QString subj(key.d_ptr->_value.toString());
-            QStringToWCharArray(subj, &key.d_ptr->_buffer); 
-            keyProp.Value.LPSZ = key.d_ptr->_buffer;
-            valid = true;
+        case QMessageFilterKeyPrivate::Subject: {
+            _restriction.res.resProperty.ulPropTag = PR_SUBJECT;
+            _keyProp.ulPropTag = PR_SUBJECT;
+            QString subj(d_ptr->_value.toString());
+            QStringToWCharArray(subj, &d_ptr->_buffer); 
+            _keyProp.Value.LPSZ = d_ptr->_buffer;
+            _valid = true;
+            break;
+        }
+        case QMessageFilterKeyPrivate::Priority: {
+            _restriction.res.resProperty.ulPropTag = PR_IMPORTANCE;
+            _keyProp.ulPropTag = PR_IMPORTANCE;
+            QMessage::Priority priority(static_cast<QMessage::Priority>(d_ptr->_value.toInt()));
+            switch (priority) { // TODO: Double check that priority filtering is working
+            case QMessage::High:
+                _keyProp.Value.ul = PRIO_URGENT;
+                break;
+            case QMessage::Normal:
+                _keyProp.Value.ul = PRIO_NORMAL;
+                break;
+            case QMessage::Low:
+                _keyProp.Value.ul = PRIO_NONURGENT;
+                break;
+            default:
+                qWarning("Unknown priority encountered during filter processing");
+                return;
+            }
+            _valid = true;
             break;
         }
         default:
@@ -161,48 +286,140 @@ void QMessageFilterKeyPrivate::filterTable(QMessageStore::ErrorCode *lastError, 
         }
         break;
     }
-    case Inclusion: {
-        QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(key.d_ptr->_comparatorValue));
-        restriction.rt = RES_CONTENT;
-        // May need to complement with SExistRestriction see http://msdn.microsoft.com/en-us/library/aa454981.aspx
-        if (key.d_ptr->_options & QMessageDataComparator::FullWord)
-            restriction.res.resContent.ulFuzzyLevel = FL_FULLSTRING;
-        else
-            restriction.res.resContent.ulFuzzyLevel = FL_SUBSTRING;
-        if ((key.d_ptr->_options & QMessageDataComparator::CaseSensitive) == 0)
-            restriction.res.resContent.ulFuzzyLevel |= FL_IGNORECASE;
-        if (cmp == QMessageDataComparator::Excludes)
-            notRestriction = true;
-        switch (key.d_ptr->_field) {
-        case Subject: {
-            restriction.res.resContent.ulPropTag = PR_SUBJECT;
-            restriction.res.resContent.lpProp = &keyProp;
-            keyProp.ulPropTag = PR_SUBJECT;
-            QString subj(key.d_ptr->_value.toString());
-            QStringToWCharArray(subj, &key.d_ptr->_buffer); 
-            keyProp.Value.LPSZ = key.d_ptr->_buffer;
-            valid = true;
+    case QMessageFilterKeyPrivate::Inclusion: {
+        QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(d_ptr->_comparatorValue));
+        if (cmp == QMessageDataComparator::Excludes) {
+            if (_notRestriction) { // double negative
+                delete _notRestriction;
+                _notRestriction = 0;
+            } else {
+                _notRestriction = new SRestriction;
+                _notRestriction->rt = RES_NOT;
+                _notRestriction->res.resNot.ulReserved = 0;
+                _notRestriction->res.resNot.lpRes = &_restriction;
+            }
+        }
+        if (d_ptr->_field == QMessageFilterKeyPrivate::Status) {
+            _restriction.rt = RES_BITMASK;
+            QMessage::Status status(static_cast<QMessage::Status>(d_ptr->_value.toUInt()));
+            switch (status) {
+            case QMessage::Incoming:
+                _restriction.res.resBitMask.relBMR = BMR_EQZ;
+                _restriction.res.resBitMask.ulPropTag = PR_MESSAGE_FLAGS;
+                _restriction.res.resBitMask.ulMask = MSGFLAG_FROMME;
+                _valid = true;
+                return;
+            case QMessage::Read:
+                _restriction.res.resBitMask.relBMR = BMR_NEZ;
+                _restriction.res.resBitMask.ulPropTag = PR_MESSAGE_FLAGS;
+                _restriction.res.resBitMask.ulMask = MSGFLAG_READ;
+                _valid = true;
+                return;
+            case QMessage::Removed:
+                _restriction.res.resBitMask.relBMR = BMR_NEZ;
+                _restriction.res.resBitMask.ulPropTag = PR_MSG_STATUS;
+                _restriction.res.resBitMask.ulMask = MSGSTATUS_DELMARKED; // Untested
+                _valid = true;
+                return;
+            case QMessage::HasAttachments:
+                _restriction.res.resBitMask.relBMR = BMR_NEZ;
+                _restriction.res.resBitMask.ulPropTag = PR_MESSAGE_FLAGS;
+                _restriction.res.resBitMask.ulMask = MSGFLAG_HASATTACH; // Found in PR_HASATTACH msdn doc, but not covered in PR_MESSAGE_FLAGS doc
+                _valid = true;
+                return;
+            default:
+                qWarning("Unimplemented status filter"); // Has attachments not done
+                return;
+            }
+        }
+        if (d_ptr->_field == QMessageFilterKeyPrivate::Recipients) {
+            _restriction.rt = RES_SUBRESTRICTION;
+            _restriction.res.resSub.ulSubObject = PR_MESSAGE_RECIPIENTS;
+
+            QString email(d_ptr->_value.toString()); // TODO split the string into name and email address
+            QString name; // TODO find name part
+//            name = email; // TODO remove these two lines of debugging code.
+//            email = "";
+            if (name.isEmpty()) {
+                _restriction.res.resSub.lpRes = &_subRestriction[1];
+            } else if (email.isEmpty()) {
+                _restriction.res.resSub.lpRes = &_subRestriction[0];
+            } else {
+                _recipientRestriction = new SRestriction;
+                _recipientRestriction->rt = RES_AND;
+                _recipientRestriction->res.resAnd.cRes = 2;
+                _recipientRestriction->res.resAnd.lpRes = &_subRestriction[0];
+                _restriction.res.resSub.lpRes = _recipientRestriction;
+            }
+
+            // Name
+            _subRestriction[0].rt = RES_CONTENT;
+            if (d_ptr->_options & QMessageDataComparator::FullWord)
+                _subRestriction[0].res.resContent.ulFuzzyLevel = FL_FULLSTRING;
+            else
+                _subRestriction[0].res.resContent.ulFuzzyLevel = FL_SUBSTRING;
+            if ((d_ptr->_options & QMessageDataComparator::CaseSensitive) == 0)
+                _subRestriction[0].res.resContent.ulFuzzyLevel |= FL_IGNORECASE;
+            _subRestriction[0].res.resContent.ulPropTag = PR_DISPLAY_NAME;
+            _subRestriction[0].res.resContent.lpProp = &_keyProp;
+            _keyProp.ulPropTag = PR_DISPLAY_NAME;
+            QStringToWCharArray(name, &d_ptr->_buffer); 
+            _keyProp.Value.LPSZ = d_ptr->_buffer;
+
+            // Email
+            _subRestriction[1].rt = RES_CONTENT;
+            if (d_ptr->_options & QMessageDataComparator::FullWord)
+                _subRestriction[1].res.resContent.ulFuzzyLevel = FL_FULLSTRING;
+            else
+                _subRestriction[1].res.resContent.ulFuzzyLevel = FL_SUBSTRING;
+            if ((d_ptr->_options & QMessageDataComparator::CaseSensitive) == 0)
+                _subRestriction[1].res.resContent.ulFuzzyLevel |= FL_IGNORECASE;
+            _subRestriction[1].res.resContent.ulPropTag = PR_SMTP_ADDRESS; // PR_EMAIL_ADDRESS returns unsatisfactory results
+            _subRestriction[1].res.resContent.lpProp = &_keyProp2;
+            _keyProp2.ulPropTag = PR_SMTP_ADDRESS;
+            QStringToWCharArray(email, &d_ptr->_buffer2); 
+            _keyProp2.Value.LPSZ = d_ptr->_buffer2;
+            _valid = true;
             break;
         }
-        case Sender: {
+
+        _restriction.rt = RES_CONTENT;
+        if (d_ptr->_options & QMessageDataComparator::FullWord)
+            _restriction.res.resContent.ulFuzzyLevel = FL_FULLSTRING;
+        else
+            _restriction.res.resContent.ulFuzzyLevel = FL_SUBSTRING;
+        if ((d_ptr->_options & QMessageDataComparator::CaseSensitive) == 0)
+            _restriction.res.resContent.ulFuzzyLevel |= FL_IGNORECASE;
+        switch (d_ptr->_field) {
+        case QMessageFilterKeyPrivate::Subject: {
+            _restriction.res.resContent.ulPropTag = PR_SUBJECT;
+            _restriction.res.resContent.lpProp = &_keyProp;
+            _keyProp.ulPropTag = PR_SUBJECT;
+            QString subj(d_ptr->_value.toString());
+            QStringToWCharArray(subj, &d_ptr->_buffer); 
+            _keyProp.Value.LPSZ = d_ptr->_buffer;
+            _valid = true;
+            break;
+        }
+        case QMessageFilterKeyPrivate::Sender: {
             //TODO: Split search address into name and address part
             //TODO: Look for the name part in PR_SENDER_NAME
-            //TODO: And address aprt in PR_SENDER_EMAIL_ADDRESS
-            restriction.res.resContent.ulPropTag = PR_SENDER_EMAIL_ADDRESS;
-            restriction.res.resContent.lpProp = &keyProp;
-            keyProp.ulPropTag = PR_SENDER_EMAIL_ADDRESS;
-            QString subj(key.d_ptr->_value.toString());
-            QStringToWCharArray(subj, &key.d_ptr->_buffer); 
-            keyProp.Value.LPSZ = key.d_ptr->_buffer;
-            subRestriction[1] = restriction;
-            restriction.rt = RES_AND;
-            restriction.res.resAnd.cRes = 2;
-            restriction.res.resAnd.lpRes = &subRestriction[0];
-            subRestriction[0].rt = RES_EXIST;
-            subRestriction[0].res.resExist.ulReserved1 = 0;
-            subRestriction[0].res.resExist.ulPropTag = PR_SENDER_EMAIL_ADDRESS;
-            subRestriction[0].res.resExist.ulReserved2 = 0;
-            valid = true;
+            //TODO: And address part in PR_SENDER_EMAIL_ADDRESS
+            _restriction.res.resContent.ulPropTag = PR_SENDER_EMAIL_ADDRESS;
+            _restriction.res.resContent.lpProp = &_keyProp;
+            _keyProp.ulPropTag = PR_SENDER_EMAIL_ADDRESS;
+            QString subj(d_ptr->_value.toString());
+            QStringToWCharArray(subj, &d_ptr->_buffer); 
+            _keyProp.Value.LPSZ = d_ptr->_buffer;
+            _subRestriction[1] = _restriction;
+            _restriction.rt = RES_AND;
+            _restriction.res.resAnd.cRes = 2;
+            _restriction.res.resAnd.lpRes = &_subRestriction[0];
+            _subRestriction[0].rt = RES_EXIST;
+            _subRestriction[0].res.resExist.ulReserved1 = 0;
+            _subRestriction[0].res.resExist.ulPropTag = PR_SENDER_EMAIL_ADDRESS;
+            _subRestriction[0].res.resExist.ulReserved2 = 0;
+            _valid = true;
             break;
         }
         default:
@@ -211,12 +428,37 @@ void QMessageFilterKeyPrivate::filterTable(QMessageStore::ErrorCode *lastError, 
         break;
     }
     }
+}
 
-    if (!valid)
-        return; //TODO set lastError to unsupported
+MapiRestriction::~MapiRestriction()
+{
+    delete _notRestriction;
+    _notRestriction = 0;
+    delete _recipientRestriction;
+    _recipientRestriction = 0;
+    delete _left;
+    _left = 0;
+    delete _right;
+    _right = 0;
+}
+
+SRestriction *MapiRestriction::sRestriction()
+{
+    if (_notRestriction)
+        return _notRestriction;
+    return &_restriction;
+}
+
+void QMessageFilterKeyPrivate::filterTable(QMessageStore::ErrorCode *lastError, const QMessageFilterKey &key, LPMAPITABLE messagesTable)
+{
+    MapiRestriction restriction(key);
+    if (!restriction.isValid())
+        return;
+    if (restriction.isEmpty())
+        return; // nothing to do
 
     ULONG flags(0);
-    if (messagesTable->Restrict(&restriction, flags) != S_OK)
+    if (messagesTable->Restrict(restriction.sRestriction(), flags) != S_OK)
         *lastError = QMessageStore::ConstraintFailure;
 }
 
@@ -238,7 +480,9 @@ QMessageFilterKeyPrivate::QMessageFilterKeyPrivate(QMessageFilterKey *messageFil
      _operator(Identity),
      _left(0),
      _right(0),
-     _buffer(0)
+     _buffer(0),
+     _buffer2(0),
+     _valid(true)
 {
 }
 
@@ -246,6 +490,8 @@ QMessageFilterKeyPrivate::~QMessageFilterKeyPrivate()
 {
     delete _buffer;
     _buffer = 0;
+    delete _buffer2;
+    _buffer2 = 0;
 }
 
 QMessageFilterKey::QMessageFilterKey()
@@ -273,7 +519,7 @@ bool QMessageFilterKey::isEmpty() const
 
 bool QMessageFilterKey::isSupported() const
 {
-    return true; // TODO: Implement
+    return d_ptr->_valid;
 }
 
 QMessageFilterKey QMessageFilterKey::operator~() const
@@ -288,24 +534,38 @@ QMessageFilterKey QMessageFilterKey::operator~() const
 
 QMessageFilterKey QMessageFilterKey::operator&(const QMessageFilterKey& other) const
 {
+    if (isEmpty())
+        return QMessageFilterKey(other);
     QMessageFilterKey result;
     result.d_ptr->_left = new QMessageFilterKey(*this);
     result.d_ptr->_right = new QMessageFilterKey(other);
     result.d_ptr->_operator = QMessageFilterKeyPrivate::And;
+    if (!result.d_ptr->_left->d_ptr->_valid || !result.d_ptr->_right->d_ptr->_valid)
+        result.d_ptr->_valid = false;
     return result;
 }
 
 QMessageFilterKey QMessageFilterKey::operator|(const QMessageFilterKey& other) const
 {
+    if (isEmpty())
+        return QMessageFilterKey(*this);
     QMessageFilterKey result;
     result.d_ptr->_left = new QMessageFilterKey(*this);
     result.d_ptr->_right = new QMessageFilterKey(other);
     result.d_ptr->_operator = QMessageFilterKeyPrivate::Or;
+    if (!result.d_ptr->_left->d_ptr->_valid || !result.d_ptr->_right->d_ptr->_valid)
+        result.d_ptr->_valid = false;
     return result;
 }
 
 const QMessageFilterKey& QMessageFilterKey::operator&=(const QMessageFilterKey& other)
 {
+    if (&other == this)
+        return *this;
+    if (isEmpty()) {
+        *this = other;
+        return *this;
+    }
     QMessageFilterKey default;
     QMessageFilterKey *left(new QMessageFilterKey(*this));
     QMessageFilterKey *right(new QMessageFilterKey(other));
@@ -313,11 +573,17 @@ const QMessageFilterKey& QMessageFilterKey::operator&=(const QMessageFilterKey& 
     d_ptr->_left = left;
     d_ptr->_right = right;
     d_ptr->_operator = QMessageFilterKeyPrivate::And;
+    if (!d_ptr->_left->d_ptr->_valid || !d_ptr->_right->d_ptr->_valid)
+        d_ptr->_valid = false;
     return *this;
 }
 
 const QMessageFilterKey& QMessageFilterKey::operator|=(const QMessageFilterKey& other)
 {
+    if (&other == this)
+        return *this;
+    if (isEmpty())
+        return *this;
     QMessageFilterKey default;
     QMessageFilterKey *left(new QMessageFilterKey(*this));
     QMessageFilterKey *right(new QMessageFilterKey(other));
@@ -325,6 +591,8 @@ const QMessageFilterKey& QMessageFilterKey::operator|=(const QMessageFilterKey& 
     d_ptr->_left = left;
     d_ptr->_right = right;
     d_ptr->_operator = QMessageFilterKeyPrivate::Or;
+    if (!d_ptr->_left->d_ptr->_valid || !d_ptr->_right->d_ptr->_valid)
+        d_ptr->_valid = false;
     return *this;
 }
 
@@ -347,12 +615,15 @@ bool QMessageFilterKey::operator==(const QMessageFilterKey& other) const
         && d_ptr->_right == other.d_ptr->_left)
         return true;
 
-    // TODO: Association, De Morgan's law, and more?
+    // TODO: For a system of determining equality of boolean algebra expressions see:
+    // TODO:  Completely distributed normal form http://wikpedia.org/wiki/Boolean_algebra(logic)
     return false;
 }
 
 const QMessageFilterKey& QMessageFilterKey::operator=(const QMessageFilterKey& other)
 {
+    if (&other == this)
+        return *this;
     delete d_ptr->_left;
     d_ptr->_left = 0;
     delete d_ptr->_right;
@@ -364,6 +635,7 @@ const QMessageFilterKey& QMessageFilterKey::operator=(const QMessageFilterKey& o
     d_ptr->_comparatorValue = other.d_ptr->_comparatorValue;
     d_ptr->_operator = other.d_ptr->_operator;
     d_ptr->_buffer = 0; // Delay construction of buffer until it is used
+    d_ptr->_valid = other.d_ptr->_valid;
 
     if (other.d_ptr->_left)
         d_ptr->_left = new QMessageFilterKey(*other.d_ptr->_left);
@@ -374,62 +646,101 @@ const QMessageFilterKey& QMessageFilterKey::operator=(const QMessageFilterKey& o
 
 QMessageFilterKey QMessageFilterKey::id(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp)
 {
-    return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Id, QVariant(id.toString()), cmp);
+    // Not implemented
+    QMessageFilterKey result(QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Id, QVariant(id.toString()), cmp)); // stub
+    result.d_ptr->_valid = false;
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::id(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp)
 {
+    // Not implemented
     QStringList idList;
     foreach(QMessageId id, ids)
         idList << id.toString();
-    return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Id, QVariant(idList), cmp);
+    QMessageFilterKey result(QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Id, QVariant(idList), cmp)); // stub
+    result.d_ptr->_valid = false;
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::id(const QMessageFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
 {
-    //TODO
+    // Not implemented
     Q_UNUSED(key)
     Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result; // stub
+    result.d_ptr->_valid = false; // Will require synchronous filter evaluation
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::type(QMessage::Type type, QMessageDataComparator::EqualityComparator cmp)
 {
-    return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Type, QVariant(type), cmp);
+    // Not implemented
+    QMessageFilterKey result(QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Type, QVariant(type), cmp)); // stub
+    result.d_ptr->_valid = false; // Not natively implementable
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::type(QMessage::TypeFlags type, QMessageDataComparator::InclusionComparator cmp)
 {
-    return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Type, QVariant(type), cmp);
+    // Not implemented
+    QMessageFilterKey result(QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Type, QVariant(type), cmp)); // stub
+    result.d_ptr->_valid = false; // Not natively implementable
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::sender(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
-    return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Sender, QVariant(value), cmp);
+    Q_UNUSED(value)
+    Q_UNUSED(cmp)
+    QMessageFilterKey result(QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Sender, QVariant(value), cmp)); // stub
+    result.d_ptr->_valid = false; // Not implemented
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::sender(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
+    // Partially implemented, search email address but not name
+    if (value.isEmpty()) {
+        if (cmp == QMessageDataComparator::Includes)
+            return QMessageFilterKey();
+        return ~QMessageFilterKey();
+    }
     return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Sender, QVariant(value), cmp);
 }
 
 QMessageFilterKey QMessageFilterKey::recipients(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
-    return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Recipients, QVariant(value), cmp);
+    // Not implemented
+    QMessageFilterKey result(QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Recipients, QVariant(value), cmp));
+    result.d_ptr->_valid = false; // Not supported
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::recipients(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
+    // Implementing now!! XXX
+    if (value.isEmpty()) {
+        if (cmp == QMessageDataComparator::Includes)
+            return QMessageFilterKey();
+        return ~QMessageFilterKey();
+    }
     return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Recipients, QVariant(value), cmp);
 }
 
 QMessageFilterKey QMessageFilterKey::subject(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
+    // TODO: Test this filter
     return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Subject, QVariant(value), cmp);
 }
 
 QMessageFilterKey QMessageFilterKey::subject(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
+    if (value.isEmpty()) {
+        if (cmp == QMessageDataComparator::Includes)
+            return QMessageFilterKey();
+        return ~QMessageFilterKey();
+    }
     return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Subject, QVariant(value), cmp);
 }
 
@@ -455,12 +766,29 @@ QMessageFilterKey QMessageFilterKey::receptionTimeStamp(const QDateTime &value, 
 
 QMessageFilterKey QMessageFilterKey::status(QMessage::Status value, QMessageDataComparator::EqualityComparator cmp)
 {
-    return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Status, QVariant(value), cmp);
+    QMessageDataComparator::InclusionComparator comparator(QMessageDataComparator::Excludes);
+    if (cmp == QMessageDataComparator::Equal)
+        comparator = QMessageDataComparator::Includes;
+    return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Status, QVariant(value), comparator);
 }
 
 QMessageFilterKey QMessageFilterKey::status(QMessage::StatusFlags mask, QMessageDataComparator::InclusionComparator cmp)
 {
-    return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Status, QVariant(mask), cmp);
+    QMessageFilterKey result;
+    QMessageDataComparator::EqualityComparator comparator(QMessageDataComparator::NotEqual);
+    if (cmp == QMessageDataComparator::Includes)
+        comparator = QMessageDataComparator::Equal;
+    if (mask & QMessage::Incoming)
+        result &= QMessageFilterKey::status(QMessage::Incoming, comparator);
+    if (mask & QMessage::Read)
+        result &= QMessageFilterKey::status(QMessage::Read, comparator);
+    if (mask & QMessage::Removed)
+        result &= QMessageFilterKey::status(QMessage::Removed, comparator);
+    if (mask & QMessage::HasAttachments)
+        result &= QMessageFilterKey::status(QMessage::HasAttachments, comparator);
+    if (result.isEmpty()) // Be consistent with QMF, but seems wrong. TODO verify correctness
+        return ~result;
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::priority(QMessage::Priority value, QMessageDataComparator::EqualityComparator cmp)
@@ -470,6 +798,7 @@ QMessageFilterKey QMessageFilterKey::priority(QMessage::Priority value, QMessage
 
 QMessageFilterKey QMessageFilterKey::size(int value, QMessageDataComparator::EqualityComparator cmp)
 {
+    // TODO: Test this filer
     return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Size, QVariant(value), cmp);
 }
 
@@ -483,7 +812,10 @@ QMessageFilterKey QMessageFilterKey::customField(const QString &name, const QStr
     QStringList nameValue;
     nameValue << name;
     nameValue << value;
-    return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::CustomField, QVariant(nameValue), cmp);
+    QMessageFilterKey result(QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::CustomField, QVariant(nameValue), cmp));
+    // Not natively implementable?
+    result.d_ptr->_valid = false;
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::customField(const QString &name, const QString &value, QMessageDataComparator::InclusionComparator cmp)
@@ -491,46 +823,70 @@ QMessageFilterKey QMessageFilterKey::customField(const QString &name, const QStr
     QStringList nameValue;
     nameValue << name;
     nameValue << value;
-    return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::CustomField, QVariant(nameValue), cmp);
+    QMessageFilterKey result(QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::CustomField, QVariant(nameValue), cmp));
+    // Not natively implementable?
+    result.d_ptr->_valid = false;
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::parentAccountId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
 {
-    return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::ParentAccountId, QVariant(id.toString()), cmp);
+    // Not implemented
+    QMessageFilterKey result(QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::ParentAccountId, QVariant(id.toString()), cmp));
+    // Not natively implementable?
+    result.d_ptr->_valid = false;
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::parentAccountId(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
 {
-    //TODO
+    // Not implemented
     Q_UNUSED(key)
     Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result; // stub
+    // Not natively implementable?
+    result.d_ptr->_valid = false;
+    return result;
 }
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFilterKey QMessageFilterKey::parentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
 {
-    return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::ParentFolderId, QVariant(id.toString()), cmp);
+    // Not implemented
+    QMessageFilterKey result(QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::ParentFolderId, QVariant(id.toString()), cmp)); // stub
+    // Not natively implementable?
+    result.d_ptr->_valid = false;
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::parentFolderId(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
 {
-    //TODO
+    // Not implemented
     Q_UNUSED(key)
     Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result; // stub
+    // Not natively implementable?
+    result.d_ptr->_valid = false;
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::ancestorFolderIds(const QMessageFolderId &id, QMessageDataComparator::InclusionComparator cmp)
 {
-    return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::AncestorFolderIds, QVariant(id.toString()), cmp);
+    // Not implemented
+    QMessageFilterKey result(QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::AncestorFolderIds, QVariant(id.toString()), cmp));
+    // Not natively implementable?
+    result.d_ptr->_valid = false;
+    return result;
 }
 
 QMessageFilterKey QMessageFilterKey::ancestorFolderIds(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
 {
-    //TODO
+    // Not implemented
     Q_UNUSED(key)
     Q_UNUSED(cmp)
-    return QMessageFilterKey(); // stub
+    QMessageFilterKey result; // stub
+    // Not natively implementable?
+    result.d_ptr->_valid = false;
+    return result;
 }
 #endif

@@ -205,6 +205,8 @@ QMessageSortKey QMessageSortKey::operator+(const QMessageSortKey& other) const
 
 QMessageSortKey& QMessageSortKey::operator+=(const QMessageSortKey& other)
 {
+    if (&other == this)
+        return *this;
     d_ptr->_fieldOrderList += other.d_ptr->_fieldOrderList;
     return *this;
 }
