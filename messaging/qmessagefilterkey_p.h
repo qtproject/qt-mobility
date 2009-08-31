@@ -58,11 +58,14 @@ public:
     Operator _operator;
     QMessageFilterKey *_left;
     QMessageFilterKey *_right;
-    wchar_t *_buffer;
+    wchar_t *_buffer; // TODO: Consider trying to move these into MapiRestriction
+    wchar_t *_buffer2;
+    bool _valid;
 
     static void filterTable(QMessageStore::ErrorCode *lastError, const QMessageFilterKey &key, LPMAPITABLE);
     static QMessageFilterKey from(QMessageFilterKeyPrivate::Field field, const QVariant &value, QMessageDataComparator::EqualityComparator cmp);
     static QMessageFilterKey from(QMessageFilterKeyPrivate::Field field, const QVariant &value, QMessageDataComparator::RelationComparator cmp);
     static QMessageFilterKey from(QMessageFilterKeyPrivate::Field field, const QVariant &value, QMessageDataComparator::InclusionComparator cmp);
+    static QMessageFilterKeyPrivate* implementation(const QMessageFilterKey &key);
 #endif
 };
