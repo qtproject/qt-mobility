@@ -1,7 +1,5 @@
 TEMPLATE = subdirs
 
-SUBDIRS = mpd
-
 contains(QT_CONFIG, phonon): SUBDIRS += phonon
 
 win32 {
