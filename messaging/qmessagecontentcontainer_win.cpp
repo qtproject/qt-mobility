@@ -188,8 +188,16 @@ QString QMessageContentContainer::decodedTextContent() const
     if (d_ptr->_textContent.isEmpty() && d_ptr->_attachmentNumber != 0) {
         d_ptr->_textContent = attachmentTextContent(d_ptr->_containingMessageId, d_ptr->_attachmentNumber, d_ptr->_charset);
     }
+    if (!d_ptr->_textContent.isEmpty()) {
+        return d_ptr->_textContent;
+    }
 
-    return d_ptr->_textContent;
+    QTextCodec *codec = QTextCodec::codecForName(d_ptr->_charset.data());
+    if (codec) {
+        return codec->toUnicode(d_ptr->_content);
+    } else {
+        return QString::fromLatin1(d_ptr->_content);
+    }
 }
 
 QByteArray QMessageContentContainer::decodedContent() const
@@ -227,6 +235,7 @@ void QMessageContentContainer::setContent(const QString &text)
     d_ptr->_subType = "plain";
     d_ptr->_textContent = text;
     //d_ptr->_charset = charsetFor(text);
+    d_ptr->_available = true;
 
     if (!d_ptr->_content.isEmpty()) {
         d_ptr->_content = QByteArray();
@@ -239,6 +248,7 @@ void QMessageContentContainer::setContent(const QString &text)
 void QMessageContentContainer::setContent(const QByteArray &data)
 {
     d_ptr->_content = data;
+    d_ptr->_available = true;
 
     if (!d_ptr->_textContent.isEmpty()) {
         d_ptr->_textContent = QString();
@@ -251,6 +261,7 @@ void QMessageContentContainer::setContent(const QByteArray &data)
 void QMessageContentContainer::setContentFromFile(const QString &fileName)
 {
     d_ptr->_filename = fileName;
+    d_ptr->_available = true;
 
     if (!d_ptr->_content.isEmpty()) {
         d_ptr->_content = QByteArray();
