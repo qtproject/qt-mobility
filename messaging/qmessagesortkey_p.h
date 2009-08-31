@@ -45,6 +45,7 @@ public:
     QMessageSortKeyPrivate(QMessageSortKey *messageSortKey);
 
     QMessageSortKey *q_ptr;
+    bool _valid;
 #if defined(Q_OS_WIN)
     enum Field { Type = 0, Sender, Recipients, Subject, TimeStamp, ReceptionTimeStamp, Read, HasAttachments, Incoming, Removed, Priority, Size };
     QList<QPair<Field, Qt::SortOrder> > _fieldOrderList;
