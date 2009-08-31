@@ -3,8 +3,7 @@ CONFIG += example
 
 contains(QT_CONFIG, multimedia): QT += multimedia
 
-INCLUDEPATH += $$PWD/../../multimedia \
-    $$PWD/../../multimedia/endpoints
+INCLUDEPATH += $$PWD/../../multimedia
 
 include(../../common.pri)
 

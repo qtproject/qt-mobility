@@ -42,7 +42,6 @@
 #include "qgstreamermetadataprovider.h"
 #include "qgstreamervideooutputcontrol.h"
 
-#include "qgstreamervideowidget.h"
 #include "qgstreamervideooverlay.h"
 #include "qgstreamervideorenderer.h"
 
@@ -92,13 +91,6 @@ QAbstractMediaControl *QGstreamerPlayerService::control(const char *name) const
 
     return 0;
 }
-/*
-void QGstreamerPlayerService::setVideoOutput(QObject *output)
-{
-    m_control->setVideoOutput(output);
-    QAbstractMediaService::setVideoOutput(output);
-}
-*/
 
 void QGstreamerPlayerService::videoOutputChanged(QVideoOutputControl::Output output)
 {
@@ -107,7 +99,6 @@ void QGstreamerPlayerService::videoOutputChanged(QVideoOutputControl::Output out
 #else
     switch (output) {
     case QVideoOutputControl::NoOutput:
-        //m_control->setVideoOutput(videoOutput());
         m_control->setVideoOutput(0);
         break;
     case QVideoOutputControl::RendererOutput:

@@ -9,7 +9,7 @@ include (../../common.pri)
 
 LIBS += -lQtMedia
 
-INCLUDEPATH += ../../multimedia ../../multimedia/endpoints
+INCLUDEPATH += ../../multimedia
 
 HEADERS = \
     mpddaemon.h \

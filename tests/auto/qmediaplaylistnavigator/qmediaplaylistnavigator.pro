@@ -6,7 +6,7 @@ SOURCES += tst_qmediaplaylistnavigator.cpp
 
 include (../../../common.pri)
 
-INCLUDEPATH += ../../../multimedia ../../../multimedia/endpoints
+INCLUDEPATH += ../../../multimedia
 
 LIBS += -lQtMedia
 

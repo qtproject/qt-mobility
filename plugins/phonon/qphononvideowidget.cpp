@@ -105,11 +105,3 @@ void QPhononVideoWidget::setSaturation(int saturation)
     m_videoWidget->setSaturation(saturation/100.0);
     emit saturationChanged(saturation);
 }
-
-
-/*void QPhononVideoWidget::resizeEvent(QResizeEvent *e)
-{
-    qDebug() << "QPhononVideoWidget::resizeEvent" << geometry();
-    m_videoWidget->setGeometry(0,0,width(),height());
-    QMediaWidgetEndpoint::resizeEvent(e);
-}*/

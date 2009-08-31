@@ -12,8 +12,7 @@ LIBS += -lQtMedia
 
 DEPENDPATH += .
 INCLUDEPATH += . \
-    ../../multimedia \
-    ../../multimedia/endpoints
+    ../../multimedia
 
 HEADERS += \
     qphononplayercontrol.h \

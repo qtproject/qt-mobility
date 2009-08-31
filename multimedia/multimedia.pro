@@ -45,7 +45,6 @@ HEADERS = \
     qradioplayer.h \
     qradioservice.h \
     qradioplayercontrol.h \
-#    qsharedmediaplaylist.h \
     qvideooutputcontrol.h \
     qvideowidget.h \
     qvideowindowcontrol.h \
@@ -92,7 +91,6 @@ SOURCES = qabstractmediacontrol.cpp \
     qradioplayer.cpp \
     qradioservice.cpp \
     qradioplayercontrol.cpp \
-#    qsharedmediaplaylist.cpp \
     qvideooutputcontrol.cpp \
     qvideowidget.cpp \
     qvideowindowcontrol.cpp \
@@ -122,5 +120,3 @@ videosurface {
         qpaintervideosurface.cpp \
         qvideorenderercontrol.cpp
 }
-
-include (endpoints/endpoints.pri)

@@ -5,6 +5,6 @@ include (../../../common.pri)
 
 SOURCES += tst_qvideowidget.cpp
 
-INCLUDEPATH += ../../../multimedia ../../../multimedia/endpoints
+INCLUDEPATH += ../../../multimedia
 
 LIBS += -lQtMedia

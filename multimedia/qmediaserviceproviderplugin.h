@@ -38,8 +38,7 @@
 #include <QtCore/qstringlist.h>
 #include <QtCore/qplugin.h>
 #include <QtCore/qfactoryinterface.h>
-
-#include "qmediaendpointinterface.h"
+#include <multimedia/qmultimediaglobal.h>
 
 class QMediaServiceProvider;
 

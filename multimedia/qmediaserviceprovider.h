@@ -36,8 +36,7 @@
 #define QMEDIASERVICEPROVIDER_H
 
 #include <QtCore/qobject.h>
-
-#include "qmediaendpointinterface.h"
+#include <multimedia/qmultimediaglobal.h>
 
 class Q_MEDIA_EXPORT QMediaServiceProvider : public QObject
 {

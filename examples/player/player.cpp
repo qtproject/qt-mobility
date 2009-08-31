@@ -40,7 +40,6 @@
 #include <qabstractmediaservice.h>
 #include <qmediaplaylist.h>
 #include <qmediametadata.h>
-#include <qmediawidgetendpoint.h>
 
 #include <QtGui>
 

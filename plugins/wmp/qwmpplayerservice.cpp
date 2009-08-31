@@ -157,31 +157,6 @@ QAbstractMediaControl *QWmpPlayerService::control(const char *name) const
     }
 }
 
-/*
-void QWmpPlayerService::setVideoOutput(QObject *output)
-{
-    QAbstractMediaService::setVideoOutput(output);
-}
-*/
-/*
-QList<QByteArray> QWmpPlayerService::supportedEndpointInterfaces(
-        QMediaEndpointInterface::Direction direction) const
-{
-    QList<QByteArray> interfaces;
-    if (direction == QMediaEndpointInterface::Output && m_embedMode == LocalEmbed)
-        interfaces << QVideoWindowControl_iid;
-
-    return interfaces;
-}
-*/
-/*
-QObject *QWmpPlayerService::createEndpoint(const char *iid)
-{
-    Q_UNUSED(iid);
-
-    return 0;
-}
-*/
 void QWmpPlayerService::videoOutputChanged(QVideoOutputControl::Output output)
 {
     if (m_oleVideoOverlay) {
