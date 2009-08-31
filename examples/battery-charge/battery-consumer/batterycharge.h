@@ -18,61 +18,60 @@
 ** Foundation and appearing in the file LICENSE.LGPL included in the
 ** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met:  http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.  
+** will be met:  http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain
 ** additional rights. These rights are described in the Nokia Qt LGPL
 ** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.  
+** package.
 **
 ** If you have questions regarding the use of this file, please
 ** contact Nokia at http://qt.nokia.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QMALLOCPOOL_H
-#define QMALLOCPOOL_H
 
-#include <cstdlib>
-#include <QString>
+#ifndef BATTERYCHARGE_H
+#define BATTERYCHARGE_H
 
-#include "qcontextglobal.h"
+#include <QObject>
+#include <qml.h>
 
-QT_BEGIN_NAMESPACE
+class QValueSpaceItem;
 
-class QMallocPoolPrivate;
-
-class Q_AUTOTEST_EXPORT QMallocPool
+class BatteryCharge : public QObject
 {
+    Q_OBJECT
+
+    Q_PROPERTY(QString path READ path WRITE setPath NOTIFY pathChanged);
+    Q_PROPERTY(int charge READ charge NOTIFY chargeChanged);
+    Q_PROPERTY(bool charging READ charging NOTIFY chargingChanged);
+
 public:
-    enum PoolType { Owned, NewShared, Shared };
-    QMallocPool();
-    QMallocPool(void * poolBase, unsigned int poolLength,
-                PoolType type = Owned, const QString& name = QString());
-    ~QMallocPool();
+    BatteryCharge(QObject *parent = 0);
+    ~BatteryCharge();
 
-    size_t size_of(void *);
-    void *calloc(size_t nmemb, size_t size);
-    void *malloc(size_t size);
-    void free(void *ptr);
-    void *realloc(void *ptr, size_t size);
+    QString path() const;
+    void setPath(const QString &path);
 
-    bool isValid() const;
+    int charge() const;
 
-    struct MemoryStats {
-        unsigned long poolSize;
-        unsigned long maxSystemBytes;
-        unsigned long systemBytes;
-        unsigned long inuseBytes;
-        unsigned long keepCost;
-    };
-    MemoryStats memoryStatistics() const;
+    bool charging() const;
+
+signals:
+    void pathChanged();
+    void chargeChanged();
+    void chargingChanged();
+
+private slots:
+    void contentsChanged();
 
 private:
-    Q_DISABLE_COPY(QMallocPool)
-    QMallocPoolPrivate * d;
+    QValueSpaceItem *m_item;
+    bool m_charging;
+    int m_charge;
 };
 
-QT_END_NAMESPACE
+QML_DECLARE_TYPE(BatteryCharge);
 
-#endif
+#endif // BATTERYCHARGE_H

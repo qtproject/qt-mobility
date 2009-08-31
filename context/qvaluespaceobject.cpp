@@ -196,7 +196,7 @@ QValueSpaceObject::QValueSpaceObject(const char *objectPath, const QUuid &layer,
 :   QObject(parent), d(new QValueSpaceObjectPrivate(layer, objectPath))
 {
     VS_CALL_ASSERT;
-    QValueSpace::initValuespace();
+    QValueSpaceManager::instance()->init();
 }
 
 /*!
@@ -210,7 +210,7 @@ QValueSpaceObject::QValueSpaceObject(const QString &objectPath, const QUuid &lay
 :   QObject(parent), d(new QValueSpaceObjectPrivate(layer, objectPath.toUtf8()))
 {
     VS_CALL_ASSERT;
-    QValueSpace::initValuespace();
+    QValueSpaceManager::instance()->init();
 }
 
 /*!
@@ -223,7 +223,7 @@ QValueSpaceObject::QValueSpaceObject(const QByteArray &objectPath, const QUuid &
 :   QObject(parent), d(new QValueSpaceObjectPrivate(layer, objectPath))
 {
     VS_CALL_ASSERT;
-    QValueSpace::initValuespace();
+    QValueSpaceManager::instance()->init();
 }
 
 /*!

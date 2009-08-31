@@ -18,61 +18,50 @@
 ** Foundation and appearing in the file LICENSE.LGPL included in the
 ** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met:  http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.  
+** will be met:  http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain
 ** additional rights. These rights are described in the Nokia Qt LGPL
 ** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.  
+** package.
 **
 ** If you have questions regarding the use of this file, please
 ** contact Nokia at http://qt.nokia.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QMALLOCPOOL_H
-#define QMALLOCPOOL_H
 
-#include <cstdlib>
-#include <QString>
+#ifndef BATTERYPROVIDER_H
+#define BATTERYPROVIDER_H
 
-#include "qcontextglobal.h"
+#include <QDialog>
 
-QT_BEGIN_NAMESPACE
+namespace Ui {
+    class BatteryProvider;
+}
 
-class QMallocPoolPrivate;
+class QValueSpaceObject;
 
-class Q_AUTOTEST_EXPORT QMallocPool
+class BatteryProvider : public QDialog
 {
+    Q_OBJECT
+
 public:
-    enum PoolType { Owned, NewShared, Shared };
-    QMallocPool();
-    QMallocPool(void * poolBase, unsigned int poolLength,
-                PoolType type = Owned, const QString& name = QString());
-    ~QMallocPool();
+    BatteryProvider(QWidget *parent = 0);
+    ~BatteryProvider();
 
-    size_t size_of(void *);
-    void *calloc(size_t nmemb, size_t size);
-    void *malloc(size_t size);
-    void free(void *ptr);
-    void *realloc(void *ptr, size_t size);
+protected:
+    void changeEvent(QEvent *e);
+    void timerEvent(QTimerEvent *e);
 
-    bool isValid() const;
-
-    struct MemoryStats {
-        unsigned long poolSize;
-        unsigned long maxSystemBytes;
-        unsigned long systemBytes;
-        unsigned long inuseBytes;
-        unsigned long keepCost;
-    };
-    MemoryStats memoryStatistics() const;
+private slots:
+    void chargeChanged(int newCharge);
+    void chargingToggled(bool charging);
 
 private:
-    Q_DISABLE_COPY(QMallocPool)
-    QMallocPoolPrivate * d;
+    Ui::BatteryProvider *ui;
+    QValueSpaceObject *object;
+    int chargeTimer;
 };
 
-QT_END_NAMESPACE
-
-#endif
+#endif // BATTERYPROVIDER_H

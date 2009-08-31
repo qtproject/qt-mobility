@@ -117,6 +117,9 @@
     </section>
 </section>
 <section ref="examples.html" title="Tutorial &amp; Examples">
+    <section ref="battery-charge.html" title="Accessing Publish and Subscribe from QML">
+        <keyword ref="battery-charge.html">Accessing Publish and Subscribe from QML</keyword>
+    </section>
     <section ref="publish-subscribe.html" title="Publish and Subscribe Example">
         <keyword ref="publish-subscribe.html">Publish and Subscribe Example</keyword>
     </section>

@@ -18,61 +18,33 @@
 ** Foundation and appearing in the file LICENSE.LGPL included in the
 ** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met:  http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.  
+** will be met:  http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain
 ** additional rights. These rights are described in the Nokia Qt LGPL
 ** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.  
+** package.
 **
 ** If you have questions regarding the use of this file, please
 ** contact Nokia at http://qt.nokia.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QMALLOCPOOL_H
-#define QMALLOCPOOL_H
 
-#include <cstdlib>
-#include <QString>
+#include <QApplication>
 
-#include "qcontextglobal.h"
+#include <qvaluespace.h>
 
-QT_BEGIN_NAMESPACE
+#include "batteryprovider.h"
 
-class QMallocPoolPrivate;
-
-class Q_AUTOTEST_EXPORT QMallocPool
+int main(int argc, char *argv[])
 {
-public:
-    enum PoolType { Owned, NewShared, Shared };
-    QMallocPool();
-    QMallocPool(void * poolBase, unsigned int poolLength,
-                PoolType type = Owned, const QString& name = QString());
-    ~QMallocPool();
+    QApplication app(argc, argv);
 
-    size_t size_of(void *);
-    void *calloc(size_t nmemb, size_t size);
-    void *malloc(size_t size);
-    void free(void *ptr);
-    void *realloc(void *ptr, size_t size);
+    QValueSpace::initValueSpaceManager();
 
-    bool isValid() const;
+    BatteryProvider batteryProvider;
+    batteryProvider.show();
 
-    struct MemoryStats {
-        unsigned long poolSize;
-        unsigned long maxSystemBytes;
-        unsigned long systemBytes;
-        unsigned long inuseBytes;
-        unsigned long keepCost;
-    };
-    MemoryStats memoryStatistics() const;
-
-private:
-    Q_DISABLE_COPY(QMallocPool)
-    QMallocPoolPrivate * d;
-};
-
-QT_END_NAMESPACE
-
-#endif
+    return app.exec();
+}

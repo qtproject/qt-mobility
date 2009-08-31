@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 
-#include <qvaluespace.h>
+#include <qvaluespaceitem.h>
 #include <qvaluespaceobject.h>
 
 #include <QCoreApplication>

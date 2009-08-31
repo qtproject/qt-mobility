@@ -9,7 +9,8 @@ DEFINES += QT_BUILD_CFW_LIB QT_MAKEDLL
 
 PUBLIC_HEADERS += qcontextglobal.h \
            qvaluespace.h \
-           qvaluespaceobject.h
+           qvaluespaceobject.h \
+           qvaluespaceitem.h
 
 PRIVATE_HEADERS += qpacketprotocol_p.h \
            qmallocpool_p.h \
@@ -22,7 +23,9 @@ SOURCES += qpacketprotocol.cpp \
            qmallocpool.cpp \
            qvaluespace.cpp \
            qvaluespacemanager.cpp \
-           qvaluespaceobject.cpp
+           qvaluespaceobject.cpp \
+           qvaluespaceitem.cpp
+
 symbian {
     deploy.path = /
     exportheaders.sources = $$PUBLIC_HEADERS

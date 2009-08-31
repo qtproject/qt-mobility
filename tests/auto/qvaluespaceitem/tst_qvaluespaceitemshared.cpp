@@ -33,7 +33,7 @@
 
 #include "tst_qvaluespaceitemshared.h"
 
-#include <qvaluespace.h>
+#include <qvaluespaceitem.h>
 #include <qvaluespaceobject.h>
 #include <qvaluespacemanager_p.h>
 
@@ -81,7 +81,7 @@ void tst_QValueSpaceItem::initTestCase()
     qRegisterMetaType<QVariant>("QVariant");
 
 #if defined(QT_START_VALUESPACE)
-    QValueSpace::initValuespaceManager();
+    QValueSpace::initValueSpaceManager();
 #endif
 
     root = new QValueSpaceObject("/");

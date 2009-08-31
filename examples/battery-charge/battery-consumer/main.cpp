@@ -18,61 +18,64 @@
 ** Foundation and appearing in the file LICENSE.LGPL included in the
 ** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met:  http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.  
+** will be met:  http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain
 ** additional rights. These rights are described in the Nokia Qt LGPL
 ** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.  
+** package.
 **
 ** If you have questions regarding the use of this file, please
 ** contact Nokia at http://qt.nokia.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QMALLOCPOOL_H
-#define QMALLOCPOOL_H
 
-#include <cstdlib>
-#include <QString>
+#include <QApplication>
+#include <QObject>
+#include <QFxView>
+#include <QWidget>
+#include <QVBoxLayout>
+#include <QPushButton>
+#include <QUrl>
 
-#include "qcontextglobal.h"
-
-QT_BEGIN_NAMESPACE
-
-class QMallocPoolPrivate;
-
-class Q_AUTOTEST_EXPORT QMallocPool
+class MainWidget : public QWidget
 {
+    Q_OBJECT
+
 public:
-    enum PoolType { Owned, NewShared, Shared };
-    QMallocPool();
-    QMallocPool(void * poolBase, unsigned int poolLength,
-                PoolType type = Owned, const QString& name = QString());
-    ~QMallocPool();
-
-    size_t size_of(void *);
-    void *calloc(size_t nmemb, size_t size);
-    void *malloc(size_t size);
-    void free(void *ptr);
-    void *realloc(void *ptr, size_t size);
-
-    bool isValid() const;
-
-    struct MemoryStats {
-        unsigned long poolSize;
-        unsigned long maxSystemBytes;
-        unsigned long systemBytes;
-        unsigned long inuseBytes;
-        unsigned long keepCost;
-    };
-    MemoryStats memoryStatistics() const;
+    MainWidget();
 
 private:
-    Q_DISABLE_COPY(QMallocPool)
-    QMallocPoolPrivate * d;
+    QFxView *view;
 };
 
-QT_END_NAMESPACE
+MainWidget::MainWidget()
+{
+    QVBoxLayout *vbox = new QVBoxLayout;
+    vbox->setMargin(0);
+    setLayout(vbox);
 
-#endif
+    view = new QFxView(this);
+    view->setFixedSize(100, 230);
+    vbox->addWidget(view);
+
+    view->setUrl(QUrl("qrc:/battery-meter.qml"));
+    view->execute();
+
+    QPushButton *quitButton = new QPushButton("Quit");
+    vbox->addWidget(quitButton);
+    connect(quitButton, SIGNAL(clicked()), qApp, SLOT(quit()));
+}
+
+int main(int argc, char *argv[])
+{
+    QApplication app(argc, argv);
+
+    MainWidget mainWidget;
+    mainWidget.show();
+
+    return app.exec();
+}
+
+#include "main.moc"

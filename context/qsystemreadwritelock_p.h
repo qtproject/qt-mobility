@@ -36,6 +36,8 @@
 
 #include <QString>
 
+QT_BEGIN_NAMESPACE
+
 class QSystemReadWriteLockPrivate;
 class QSystemReadWriteLock
 {
@@ -66,5 +68,7 @@ public:
 private:
     QSystemReadWriteLockPrivate *d;
 };
+
+QT_END_NAMESPACE
 
 #endif

@@ -43,6 +43,7 @@
 #include <QSet>
 
 #include <qvaluespace.h>
+#include <qvaluespaceitem.h>
 #include <qvaluespaceobject.h>
 
 #ifdef USE_READLINE
@@ -822,7 +823,7 @@ int main(int argc, char ** argv)
     }
 
     if(manager)
-        QValueSpace::initValuespaceManager();
+        QValueSpace::initValueSpaceManager();
 
     if(dump) {
         QValueSpaceItem item("/");

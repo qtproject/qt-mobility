@@ -142,7 +142,8 @@ To build the library, run \tt qmake and \tt make.
 \section2 Examples
 
 \list
-   \o \l{publish-subscribe}{Publish & Subscribe}
+   \o \l{publish-subscribe}{Publish and Subscribe}
+   \o \l{battery-charge}{Accessing Publish and Subscribe from QML}
 \endlist
 
 */

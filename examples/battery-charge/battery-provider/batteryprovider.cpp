@@ -31,51 +31,69 @@
 **
 ****************************************************************************/
 
-#include "providerdialog.h"
-#include "consumerdialog.h"
+#include "batteryprovider.h"
+#include "ui_batteryprovider.h"
 
-#include <QApplication>
+#include <qvaluespaceobject.h>
 
-#include <qvaluespace.h>
+#include <QTimer>
 
-int main(int argc, char *argv[])
+BatteryProvider::BatteryProvider(QWidget *parent) :
+        QDialog(parent),
+        ui(new Ui::BatteryProvider),
+        chargeTimer(0)
 {
-    QApplication app(argc, argv);
+    ui->setupUi(this);
 
-    bool createDefault = true;
-    bool createProvider = false;
-    bool createConsumer = false;
+    object = new QValueSpaceObject("/power/battery");
 
-    for (int i = 1; i < argc; ++i) {
-        if (argv[i] == QLatin1String("-manager")) {
-            QValueSpace::initValueSpaceManager();
-        } else if (argv[i] == QLatin1String("-provider")) {
-            createProvider = true;
-            createDefault = false;
-        } else if (argv[i] == QLatin1String("-consumer")) {
-            createConsumer = true;
-            createDefault = false;
-        }
+    connect(ui->batteryCharge, SIGNAL(valueChanged(int)),
+            this, SLOT(chargeChanged(int)));
+    connect(ui->charging, SIGNAL(toggled(bool)),
+            this, SLOT(chargingToggled(bool)));
+
+    chargeChanged(ui->batteryCharge->value());
+}
+
+BatteryProvider::~BatteryProvider()
+{
+    delete ui;
+    delete object;
+}
+
+void BatteryProvider::changeEvent(QEvent *e)
+{
+    QDialog::changeEvent(e);
+    switch (e->type()) {
+    case QEvent::LanguageChange:
+        ui->retranslateUi(this);
+        break;
+    default:
+        break;
     }
+}
 
-    ProviderDialog *provider = 0;
-    if (createDefault || createProvider) {
-        provider = new ProviderDialog;
-        QObject::connect(provider, SIGNAL(rejected()), &app, SLOT(quit()));
-        provider->show();
-    }
+void BatteryProvider::timerEvent(QTimerEvent *)
+{
+    int newCharge = ui->batteryCharge->value() + 1;
+    ui->batteryCharge->setValue(newCharge);
 
-    ConsumerDialog *consumer = 0;
-    if (createDefault || createConsumer) {
-        consumer = new ConsumerDialog;
-        QObject::connect(consumer, SIGNAL(rejected()), &app, SLOT(quit()));
-        consumer->show();
-    }
+    if (newCharge >= 100)
+        ui->charging->setChecked(false);
+}
 
-    app.exec();
+void BatteryProvider::chargeChanged(int newCharge)
+{
+    object->setAttribute("charge", newCharge);
+}
 
-    if (provider)
-        delete provider;
-    if (consumer)
-        delete consumer;
+void BatteryProvider::chargingToggled(bool charging)
+{
+    ui->batteryCharge->setEnabled(!charging);
+    object->setAttribute("charging", charging);
+
+    if (charging)
+        chargeTimer = startTimer(2000);
+    else
+        killTimer(chargeTimer);
 }

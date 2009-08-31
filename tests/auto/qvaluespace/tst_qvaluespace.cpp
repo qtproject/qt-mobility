@@ -32,6 +32,7 @@
 ****************************************************************************/
 
 #include <qvaluespace.h>
+#include <qvaluespaceitem.h>
 #include <qvaluespaceobject.h>
 
 #include <QtTest/QTest>
@@ -294,7 +295,7 @@ void tst_QValueSpace::initTestCase()
 
     fakeLayer = new FakeLayer;
     QValueSpace::installLayer(fakeLayer);
-    QValueSpace::initValuespaceManager();
+    QValueSpace::initValueSpaceManager();
 }
 
 void tst_QValueSpace::cleanupTestCase()

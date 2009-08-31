@@ -34,6 +34,10 @@
 #ifndef QVALUESPACE_P_H
 #define QVALUESPACE_P_H
 
+QT_BEGIN_NAMESPACE
+
 QByteArray qCanonicalPath(const QByteArray &path);
+
+QT_END_NAMESPACE
 
 #endif // QVALUESPACE_P_H

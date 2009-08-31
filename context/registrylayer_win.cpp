@@ -45,6 +45,8 @@
 #define _WIN32_WINNT 0x0500
 #include <windows.h>
 
+QT_BEGIN_NAMESPACE
+
 class RegistryLayer : public QAbstractValueSpaceLayer
 {
     Q_OBJECT
@@ -1031,3 +1033,5 @@ bool RegistryLayer::syncRequests()
 {
     return true;
 }
+
+QT_END_NAMESPACE
