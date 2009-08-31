@@ -2,11 +2,89 @@
 <!DOCTYPE QDOCINDEX>
 <INDEX url="" title="Multimedia Library Reference Documentation" version="">
     <namespace access="public" threadsafety="unspecified" status="commendable" name="" href="" location="" module="">
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QVideoDeviceControl" href="qvideodevicecontrol.html" location="qvideodevicecontrol.h" bases="QAbstractMediaControl" module="">
-            <property access="public" threadsafety="unspecified" status="commendable" name="selectedDevice" fullname="QVideoDeviceControl::selectedDevice" href="qvideodevicecontrol.html#selectedDevice-prop" location="qvideodevicecontrol.h" type="int">
-                <getter name="selectedDevice"/>
-                <setter name="setSelectedDevice"/>
+        <class access="public" threadsafety="unspecified" status="preliminary" name="QMediaSlideShow" href="qmediaslideshow.html" location="qmediaslideshow.h" bases="QAbstractMediaObject" module="">
+            <property access="public" threadsafety="unspecified" status="commendable" name="state" fullname="QMediaSlideShow::state" href="qmediaslideshow.html#state-prop" location="qmediaslideshow.h" type="State">
+                <getter name="state"/>
             </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="mediaStatus" fullname="QMediaSlideShow::mediaStatus" href="qmediaslideshow.html#mediaStatus-prop" location="qmediaslideshow.h" type="MediaStatus">
+                <getter name="mediaStatus"/>
+            </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="media" fullname="QMediaSlideShow::media" href="qmediaslideshow.html#media-prop" location="qmediaslideshow.h" type="QMediaSource">
+                <getter name="media"/>
+                <setter name="setMedia"/>
+            </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="currentMedia" fullname="QMediaSlideShow::currentMedia" href="qmediaslideshow.html#currentMedia-prop" location="qmediaslideshow.h" type="QMediaResource">
+                <getter name="currentMedia"/>
+            </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="currentIndex" fullname="QMediaSlideShow::currentIndex" href="qmediaslideshow.html#currentIndex-prop" location="qmediaslideshow.h" type="int">
+                <getter name="currentIndex"/>
+                <setter name="setCurrentIndex"/>
+            </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="playlist" fullname="QMediaSlideShow::playlist" href="qmediaslideshow.html#playlist-prop" location="qmediaslideshow.h" type="QMediaPlaylistProvider *">
+                <getter name="playlist"/>
+            </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="timeout" fullname="QMediaSlideShow::timeout" href="qmediaslideshow.html#timeout-prop" location="qmediaslideshow.h" type="int">
+                <getter name="timeout"/>
+                <setter name="setTimeout"/>
+            </property>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="State" fullname="QMediaSlideShow::State" href="qmediaslideshow.html#State-enum" location="qmediaslideshow.h">
+                <value name="StoppedState" value="0"/>
+                <value name="PlayingState" value="1"/>
+                <value name="PausedState" value="2"/>
+            </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="MediaStatus" fullname="QMediaSlideShow::MediaStatus" href="qmediaslideshow.html#MediaStatus-enum" location="qmediaslideshow.h">
+                <value name="NoMedia" value="0"/>
+                <value name="LoadingMedia" value="1"/>
+                <value name="LoadedMedia" value="2"/>
+                <value name="InvalidMedia" value="3"/>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaSlideShow" fullname="QMediaSlideShow::QMediaSlideShow" href="qmediaslideshow.html#QMediaSlideShow" location="qmediaslideshow.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMediaSlideShow(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QMediaSlideShow" fullname="QMediaSlideShow::~QMediaSlideShow" href="qmediaslideshow.html#dtor.QMediaSlideShow" location="qmediaslideshow.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMediaSlideShow()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="service" fullname="QMediaSlideShow::service" href="qmediaslideshow.html#service" location="qmediaslideshow.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QAbstractMediaService *" signature="service() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QMediaSlideShow::isValid" href="qmediaslideshow.html#isValid" location="qmediaslideshow.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="state" fullname="QMediaSlideShow::state" href="qmediaslideshow.html#state-prop" location="qmediaslideshow.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="state" type="State" signature="state() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="mediaStatus" fullname="QMediaSlideShow::mediaStatus" href="qmediaslideshow.html#mediaStatus-prop" location="qmediaslideshow.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="mediaStatus" type="MediaStatus" signature="mediaStatus() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="media" fullname="QMediaSlideShow::media" href="qmediaslideshow.html#media-prop" location="qmediaslideshow.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="media" type="QMediaSource" signature="media() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setMedia" fullname="QMediaSlideShow::setMedia" href="qmediaslideshow.html#media-prop" location="qmediaslideshow.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="media" type="void" signature="setMedia(const QMediaSource &amp; media)">
+                <parameter left="const QMediaSource &amp;" right="" name="media" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="currentMedia" fullname="QMediaSlideShow::currentMedia" href="qmediaslideshow.html#currentMedia-prop" location="qmediaslideshow.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="currentMedia" type="QMediaResource" signature="currentMedia() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="currentIndex" fullname="QMediaSlideShow::currentIndex" href="qmediaslideshow.html#currentIndex-prop" location="qmediaslideshow.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="currentIndex" type="int" signature="currentIndex() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="playlist" fullname="QMediaSlideShow::playlist" href="qmediaslideshow.html#playlist-prop" location="qmediaslideshow.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="playlist" type="QMediaPlaylistProvider *" signature="playlist() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="timeout" fullname="QMediaSlideShow::timeout" href="qmediaslideshow.html#timeout-prop" location="qmediaslideshow.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="timeout" type="int" signature="timeout() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="play" fullname="QMediaSlideShow::play" href="qmediaslideshow.html#play" location="qmediaslideshow.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="play()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="pause" fullname="QMediaSlideShow::pause" href="qmediaslideshow.html#pause" location="qmediaslideshow.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="pause()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="stop" fullname="QMediaSlideShow::stop" href="qmediaslideshow.html#stop" location="qmediaslideshow.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="stop()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="next" fullname="QMediaSlideShow::next" href="qmediaslideshow.html#next" location="qmediaslideshow.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="next()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="previous" fullname="QMediaSlideShow::previous" href="qmediaslideshow.html#previous" location="qmediaslideshow.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="previous()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setCurrentIndex" fullname="QMediaSlideShow::setCurrentIndex" href="qmediaslideshow.html#currentIndex-prop" location="qmediaslideshow.cpp" virtual="non" meta="slot" const="false" static="false" overload="false" associated-property="currentIndex" type="void" signature="setCurrentIndex(int index)">
+                <parameter left="int" right="" name="index" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setTimeout" fullname="QMediaSlideShow::setTimeout" href="qmediaslideshow.html#timeout-prop" location="qmediaslideshow.cpp" virtual="non" meta="slot" const="false" static="false" overload="false" associated-property="timeout" type="void" signature="setTimeout(int timeout)">
+                <parameter left="int" right="" name="timeout" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="stateChanged" fullname="QMediaSlideShow::stateChanged" href="qmediaslideshow.html#stateChanged" location="qmediaslideshow.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="stateChanged(QMediaSlideShow::State state)">
+                <parameter left="QMediaSlideShow::State" right="" name="state" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="mediaStatusChanged" fullname="QMediaSlideShow::mediaStatusChanged" href="qmediaslideshow.html#mediaStatusChanged" location="qmediaslideshow.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="mediaStatusChanged(QMediaSlideShow::MediaStatus status)">
+                <parameter left="QMediaSlideShow::MediaStatus" right="" name="status" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="mediaChanged" fullname="QMediaSlideShow::mediaChanged" href="qmediaslideshow.html#mediaChanged" location="qmediaslideshow.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="mediaChanged(const QMediaSource &amp; media)">
+                <parameter left="const QMediaSource &amp;" right="" name="media" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="currentMediaChanged" fullname="QMediaSlideShow::currentMediaChanged" href="qmediaslideshow.html#currentMediaChanged" location="qmediaslideshow.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="currentMediaChanged(const QMediaResource &amp; media)">
+                <parameter left="const QMediaResource &amp;" right="" name="media" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="currentIndexChanged" fullname="QMediaSlideShow::currentIndexChanged" href="qmediaslideshow.html#currentIndexChanged" location="qmediaslideshow.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="currentIndexChanged(int index)">
+                <parameter left="int" right="" name="index" default=""/>
+            </function>
+            <function access="protected" threadsafety="unspecified" status="commendable" name="timerEvent" fullname="QMediaSlideShow::timerEvent" href="qmediaslideshow.html#timerEvent" location="qmediaslideshow.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="timerEvent(QTimerEvent * event)">
+                <parameter left="QTimerEvent *" right="" name="event" default=""/>
+            </function>
+        </class>
+        <class access="public" threadsafety="unspecified" status="preliminary" name="QVideoDeviceControl" href="qvideodevicecontrol.html" location="qvideodevicecontrol.h" bases="QAbstractMediaControl" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="~QVideoDeviceControl" fullname="QVideoDeviceControl::~QVideoDeviceControl" href="qvideodevicecontrol.html#dtor.QVideoDeviceControl" location="qvideodevicecontrol.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QVideoDeviceControl()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="deviceCount" fullname="QVideoDeviceControl::deviceCount" href="qvideodevicecontrol.html#deviceCount" location="qvideodevicecontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="deviceCount() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="name" fullname="QVideoDeviceControl::name" href="qvideodevicecontrol.html#name" location="qvideodevicecontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QString" signature="name(int device) const">
@@ -19,8 +97,8 @@
                 <parameter left="int" right="" name="device" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="defaultDevice" fullname="QVideoDeviceControl::defaultDevice" href="qvideodevicecontrol.html#defaultDevice" location="qvideodevicecontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="defaultDevice() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="selectedDevice" fullname="QVideoDeviceControl::selectedDevice" href="qvideodevicecontrol.html#selectedDevice-prop" location="qvideodevicecontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" associated-property="selectedDevice" type="int" signature="selectedDevice() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setSelectedDevice" fullname="QVideoDeviceControl::setSelectedDevice" href="qvideodevicecontrol.html#selectedDevice-prop" location="qvideodevicecontrol.h" virtual="pure" meta="slot" const="false" static="false" overload="false" associated-property="selectedDevice" type="void" signature="setSelectedDevice(int index)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="selectedDevice" fullname="QVideoDeviceControl::selectedDevice" href="qvideodevicecontrol.html#selectedDevice" location="qvideodevicecontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="selectedDevice() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setSelectedDevice" fullname="QVideoDeviceControl::setSelectedDevice" href="qvideodevicecontrol.html#setSelectedDevice" location="qvideodevicecontrol.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="setSelectedDevice(int index)">
                 <parameter left="int" right="" name="index" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="selectedDeviceChanged" fullname="QVideoDeviceControl::selectedDeviceChanged" href="qvideodevicecontrol.html#selectedDeviceChanged" location="qvideodevicecontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="selectedDeviceChanged(int index)">
@@ -213,15 +291,6 @@
             </function>
             <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QVideoWidget::d_ptr" href="qvideowidget.html#d_ptr-var" location="qvideowidget.h" type="QVideoWidgetPrivate *" static="false"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QMediaEndpointInterface" href="qmediaendpointinterface.html" location="qmediaendpointinterface.h" bases="" module="">
-            <enum access="public" threadsafety="unspecified" status="commendable" name="Direction" fullname="QMediaEndpointInterface::Direction" href="qmediaendpointinterface.html#Direction-enum" location="qmediaendpointinterface.h">
-                <value name="Input" value="0x01"/>
-                <value name="Output" value="0x02"/>
-                <value name="InputOutput" value="Input | Output"/>
-            </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QMediaEndpointInterface" fullname="QMediaEndpointInterface::~QMediaEndpointInterface" href="qmediaendpointinterface.html#dtor.QMediaEndpointInterface" location="qmediaendpointinterface.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMediaEndpointInterface()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="direction" fullname="QMediaEndpointInterface::direction" href="qmediaendpointinterface.html#direction" location="qmediaendpointinterface.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="Direction" signature="direction() const"/>
-        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QRadioPlayer" href="qradioplayer.html" location="qradioplayer.h" bases="QAbstractMediaObject" module="">
             <property access="public" threadsafety="unspecified" status="commendable" name="band" fullname="QRadioPlayer::band" href="qradioplayer.html#band-prop" location="qradioplayer.h" type="Band">
                 <getter name="band"/>
@@ -258,12 +327,9 @@
                 <value name="SW" value="2"/>
                 <value name="LW" value="3"/>
             </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QRadioPlayer" fullname="QRadioPlayer::QRadioPlayer" href="qradioplayer.html#QRadioPlayer" location="qradioplayer.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QRadioPlayer(QObject * parent)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QRadioPlayer" fullname="QRadioPlayer::QRadioPlayer" href="qradioplayer.html#QRadioPlayer" location="qradioplayer.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QRadioPlayer(QObject * parent, QRadioService * service)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QRadioPlayer" fullname="QRadioPlayer::QRadioPlayer" href="qradioplayer.html#QRadioPlayer-2" location="qradioplayer.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QRadioPlayer(QRadioService * service, QObject * parent)">
-                <parameter left="QRadioService *" right="" name="service" default=""/>
-                <parameter left="QObject *" right="" name="parent" default="0"/>
+                <parameter left="QRadioService *" right="" name="service" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QRadioPlayer" fullname="QRadioPlayer::~QRadioPlayer" href="qradioplayer.html#dtor.QRadioPlayer" location="qradioplayer.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QRadioPlayer()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QRadioPlayer::isValid" href="qradioplayer.html#isValid" location="qradioplayer.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"/>
@@ -321,18 +387,6 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="mutingChanged" fullname="QRadioPlayer::mutingChanged" href="qradioplayer.html#mutingChanged" location="qradioplayer.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="mutingChanged(bool muted)">
                 <parameter left="bool" right="" name="muted" default=""/>
             </function>
-        </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QAudioRendererEndpoint" href="qaudiorendererendpoint.html" location="qaudiorendererendpoint.h" bases="QMediaEndpointInterface,QObject" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QAudioRendererEndpoint" fullname="QAudioRendererEndpoint::QAudioRendererEndpoint" href="qaudiorendererendpoint.html#QAudioRendererEndpoint" location="qaudiorendererendpoint.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QAudioRendererEndpoint(QObject * parent)">
-                <parameter left="QObject *" right="" name="parent" default="0"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QAudioRendererEndpoint" fullname="QAudioRendererEndpoint::~QAudioRendererEndpoint" href="qaudiorendererendpoint.html#dtor.QAudioRendererEndpoint" location="qaudiorendererendpoint.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QAudioRendererEndpoint()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="direction" fullname="QAudioRendererEndpoint::direction" href="qaudiorendererendpoint.html#direction" location="qaudiorendererendpoint.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="Direction" signature="direction() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="device" fullname="QAudioRendererEndpoint::device" href="qaudiorendererendpoint.html#device" location="qaudiorendererendpoint.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QIODevice *" signature="device() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setDevice" fullname="QAudioRendererEndpoint::setDevice" href="qaudiorendererendpoint.html#setDevice" location="qaudiorendererendpoint.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setDevice(QIODevice * device)">
-                <parameter left="QIODevice *" right="" name="device" default=""/>
-            </function>
-            <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QAudioRendererEndpoint::d_ptr" href="qaudiorendererendpoint.html#d_ptr-var" location="qaudiorendererendpoint.h" type="QAudioRendererEndpointPrivate *" static="false"/>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QCamera" href="qcamera.html" location="qcamera.h" bases="QAbstractMediaObject" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="State" fullname="QCamera::State" href="qcamera.html#State-enum" location="qcamera.h">
@@ -401,9 +455,9 @@
             <property access="public" threadsafety="unspecified" status="commendable" name="state" fullname="QCamera::state" href="qcamera.html#state-prop" location="qcamera.h" type="QCamera::State">
                 <getter name="state"/>
             </property>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QCamera" fullname="QCamera::QCamera" href="qcamera.html#QCamera" location="qcamera.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QCamera(QAbstractMediaService * service, QObject * parent)">
-                <parameter left="QAbstractMediaService *" right="" name="service" default="createCameraService()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QCamera" fullname="QCamera::QCamera" href="qcamera.html#QCamera" location="qcamera.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QCamera(QObject * parent, QAbstractMediaService * service)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
+                <parameter left="QAbstractMediaService *" right="" name="service" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QCamera" fullname="QCamera::~QCamera" href="qcamera.html#dtor.QCamera" location="qcamera.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QCamera()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="deviceList" fullname="QCamera::deviceList" href="qcamera.html#deviceList" location="qcamera.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QList&lt;QString&gt;" signature="deviceList()"/>
@@ -568,10 +622,6 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QAudioDeviceControl" href="qaudiodevicecontrol.html" location="qaudiodevicecontrol.h" bases="QAbstractMediaControl" module="">
-            <property access="public" threadsafety="unspecified" status="commendable" name="selectedDevice" fullname="QAudioDeviceControl::selectedDevice" href="qaudiodevicecontrol.html#selectedDevice-prop" location="qaudiodevicecontrol.h" type="int">
-                <getter name="selectedDevice"/>
-                <setter name="setSelectedDevice"/>
-            </property>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QAudioDeviceControl" fullname="QAudioDeviceControl::~QAudioDeviceControl" href="qaudiodevicecontrol.html#dtor.QAudioDeviceControl" location="qaudiodevicecontrol.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QAudioDeviceControl()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="deviceCount" fullname="QAudioDeviceControl::deviceCount" href="qaudiodevicecontrol.html#deviceCount" location="qaudiodevicecontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="deviceCount() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="name" fullname="QAudioDeviceControl::name" href="qaudiodevicecontrol.html#name" location="qaudiodevicecontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QString" signature="name(int device) const">
@@ -584,8 +634,8 @@
                 <parameter left="int" right="" name="device" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="defaultDevice" fullname="QAudioDeviceControl::defaultDevice" href="qaudiodevicecontrol.html#defaultDevice" location="qaudiodevicecontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="defaultDevice() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="selectedDevice" fullname="QAudioDeviceControl::selectedDevice" href="qaudiodevicecontrol.html#selectedDevice-prop" location="qaudiodevicecontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" associated-property="selectedDevice" type="int" signature="selectedDevice() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setSelectedDevice" fullname="QAudioDeviceControl::setSelectedDevice" href="qaudiodevicecontrol.html#selectedDevice-prop" location="qaudiodevicecontrol.h" virtual="pure" meta="slot" const="false" static="false" overload="false" associated-property="selectedDevice" type="void" signature="setSelectedDevice(int index)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="selectedDevice" fullname="QAudioDeviceControl::selectedDevice" href="qaudiodevicecontrol.html#selectedDevice" location="qaudiodevicecontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="selectedDevice() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setSelectedDevice" fullname="QAudioDeviceControl::setSelectedDevice" href="qaudiodevicecontrol.html#setSelectedDevice" location="qaudiodevicecontrol.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="setSelectedDevice(int index)">
                 <parameter left="int" right="" name="index" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="selectedDeviceChanged" fullname="QAudioDeviceControl::selectedDeviceChanged" href="qaudiodevicecontrol.html#selectedDeviceChanged" location="qaudiodevicecontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="selectedDeviceChanged(int index)">
@@ -720,127 +770,14 @@
                 <parameter left="QObject *" right="" name="parent" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QAudioDeviceEndpoint" href="qaudiodeviceendpoint.html" location="qaudiodeviceendpoint.h" bases="QMediaEndpointInterface,QObject" module="">
-            <property access="public" threadsafety="unspecified" status="commendable" name="directionFilter" fullname="QAudioDeviceEndpoint::directionFilter" href="qaudiodeviceendpoint.html#directionFilter-prop" location="qaudiodeviceendpoint.h" type="DeviceDirection">
-                <getter name="directionFilter"/>
-                <setter name="setDirectionFilter"/>
-            </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="roleFilter" fullname="QAudioDeviceEndpoint::roleFilter" href="qaudiodeviceendpoint.html#roleFilter-prop" location="qaudiodeviceendpoint.h" type="Roles">
-                <getter name="roleFilter"/>
-                <setter name="setRoleFilter"/>
-            </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="formFactorFilter" fullname="QAudioDeviceEndpoint::formFactorFilter" href="qaudiodeviceendpoint.html#formFactorFilter-prop" location="qaudiodeviceendpoint.h" type="FormFactors">
-                <getter name="formFactorFilter"/>
-                <setter name="setFormFactorFilter"/>
-            </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="selectedDevice" fullname="QAudioDeviceEndpoint::selectedDevice" href="qaudiodeviceendpoint.html#selectedDevice-prop" location="qaudiodeviceendpoint.h" type="int">
-                <getter name="selectedDevice"/>
-                <setter name="setSelectedDevice"/>
-            </property>
-            <enum access="public" threadsafety="unspecified" status="commendable" name="DeviceDirection" fullname="QAudioDeviceEndpoint::DeviceDirection" href="qaudiodeviceendpoint.html#DeviceDirection-enum" location="qaudiodeviceendpoint.h">
-                <value name="InputDevice" value="0x01"/>
-                <value name="OutputDevice" value="0x02"/>
-                <value name="InputOutputDevice" value="InputDevice | OutputDevice"/>
-            </enum>
-            <enum access="public" threadsafety="unspecified" status="commendable" name="Role" fullname="QAudioDeviceEndpoint::Role" href="qaudiodeviceendpoint.html#Role-enum" location="qaudiodeviceendpoint.h" typedef="QAudioDeviceEndpoint::Roles">
-                <value name="ConsoleRole" value="0x01"/>
-                <value name="MultimediaRole" value="0x02"/>
-                <value name="CommunicationsRole" value="0x04"/>
-                <value name="AllRoles" value="~0"/>
-            </enum>
-            <typedef access="public" threadsafety="unspecified" status="commendable" name="Roles" fullname="QAudioDeviceEndpoint::Roles" href="qaudiodeviceendpoint.html#Roles-typedef" location="qaudiodeviceendpoint.h" enum="QAudioDeviceEndpoint::Role"/>
-            <enum access="public" threadsafety="unspecified" status="commendable" name="FormFactor" fullname="QAudioDeviceEndpoint::FormFactor" href="qaudiodeviceendpoint.html#FormFactor-enum" location="qaudiodeviceendpoint.h" typedef="QAudioDeviceEndpoint::FormFactors">
-                <value name="UnknownFormFactor" value="0x0000"/>
-                <value name="RemoteNetworkDevice" value="0x0001"/>
-                <value name="Speakers" value="0x0002"/>
-                <value name="LineLevel" value="0x0004"/>
-                <value name="Headphones" value="0x0008"/>
-                <value name="Microphone" value="0x0010"/>
-                <value name="Headset" value="0x0020"/>
-                <value name="Handset" value="0x0040"/>
-                <value name="UnknownDigitalPassthrough" value="0x0080"/>
-                <value name="SPDIF" value="0x0100"/>
-                <value name="HDMI" value="0x0200"/>
-                <value name="AllFormFactors" value="~0"/>
-            </enum>
-            <typedef access="public" threadsafety="unspecified" status="commendable" name="FormFactors" fullname="QAudioDeviceEndpoint::FormFactors" href="qaudiodeviceendpoint.html#FormFactors-typedef" location="qaudiodeviceendpoint.h" enum="QAudioDeviceEndpoint::FormFactor"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QAudioDeviceEndpoint" fullname="QAudioDeviceEndpoint::QAudioDeviceEndpoint" href="qaudiodeviceendpoint.html#QAudioDeviceEndpoint" location="qaudiodeviceendpoint.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QAudioDeviceEndpoint(QObject * parent)">
-                <parameter left="QObject *" right="" name="parent" default="0"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QAudioDeviceEndpoint" fullname="QAudioDeviceEndpoint::~QAudioDeviceEndpoint" href="qaudiodeviceendpoint.html#dtor.QAudioDeviceEndpoint" location="qaudiodeviceendpoint.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QAudioDeviceEndpoint()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="direction" fullname="QAudioDeviceEndpoint::direction" href="qaudiodeviceendpoint.html#direction" location="qaudiodeviceendpoint.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="Direction" signature="direction() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="directionFilter" fullname="QAudioDeviceEndpoint::directionFilter" href="qaudiodeviceendpoint.html#directionFilter-prop" location="qaudiodeviceendpoint.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="directionFilter" type="DeviceDirection" signature="directionFilter() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setDirectionFilter" fullname="QAudioDeviceEndpoint::setDirectionFilter" href="qaudiodeviceendpoint.html#directionFilter-prop" location="qaudiodeviceendpoint.h" virtual="impure" meta="plain" const="false" static="false" overload="false" associated-property="directionFilter" type="void" signature="setDirectionFilter(DeviceDirection direction)">
-                <parameter left="DeviceDirection" right="" name="direction" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="roleFilter" fullname="QAudioDeviceEndpoint::roleFilter" href="qaudiodeviceendpoint.html#roleFilter-prop" location="qaudiodeviceendpoint.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="roleFilter" type="Roles" signature="roleFilter() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setRoleFilter" fullname="QAudioDeviceEndpoint::setRoleFilter" href="qaudiodeviceendpoint.html#roleFilter-prop" location="qaudiodeviceendpoint.h" virtual="impure" meta="plain" const="false" static="false" overload="false" associated-property="roleFilter" type="void" signature="setRoleFilter(QFlags&lt;QAudioDeviceEndpoint::Role&gt; roles)">
-                <parameter left="QFlags&lt;QAudioDeviceEndpoint::Role&gt;" right="" name="roles" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="formFactorFilter" fullname="QAudioDeviceEndpoint::formFactorFilter" href="qaudiodeviceendpoint.html#formFactorFilter-prop" location="qaudiodeviceendpoint.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="formFactorFilter" type="FormFactors" signature="formFactorFilter() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setFormFactorFilter" fullname="QAudioDeviceEndpoint::setFormFactorFilter" href="qaudiodeviceendpoint.html#formFactorFilter-prop" location="qaudiodeviceendpoint.h" virtual="impure" meta="plain" const="false" static="false" overload="false" associated-property="formFactorFilter" type="void" signature="setFormFactorFilter(QFlags&lt;QAudioDeviceEndpoint::FormFactor&gt; form)">
-                <parameter left="QFlags&lt;QAudioDeviceEndpoint::FormFactor&gt;" right="" name="form" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="deviceCount" fullname="QAudioDeviceEndpoint::deviceCount" href="qaudiodeviceendpoint.html#deviceCount" location="qaudiodeviceendpoint.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="deviceCount() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="direction" fullname="QAudioDeviceEndpoint::direction" href="qaudiodeviceendpoint.html#direction-2" location="qaudiodeviceendpoint.h" virtual="pure" meta="plain" const="true" static="false" overload="true" overload-number="2" type="int" signature="direction(int device) const">
-                <parameter left="int" right="" name="device" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="roles" fullname="QAudioDeviceEndpoint::roles" href="qaudiodeviceendpoint.html#roles" location="qaudiodeviceendpoint.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="Roles" signature="roles(int device) const">
-                <parameter left="int" right="" name="device" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="formFactor" fullname="QAudioDeviceEndpoint::formFactor" href="qaudiodeviceendpoint.html#formFactor" location="qaudiodeviceendpoint.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="FormFactor" signature="formFactor(int device) const">
-                <parameter left="int" right="" name="device" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="name" fullname="QAudioDeviceEndpoint::name" href="qaudiodeviceendpoint.html#name" location="qaudiodeviceendpoint.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QString" signature="name(int device) const">
-                <parameter left="int" right="" name="device" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="description" fullname="QAudioDeviceEndpoint::description" href="qaudiodeviceendpoint.html#description" location="qaudiodeviceendpoint.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QString" signature="description(int device) const">
-                <parameter left="int" right="" name="device" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="icon" fullname="QAudioDeviceEndpoint::icon" href="qaudiodeviceendpoint.html#icon" location="qaudiodeviceendpoint.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QIcon" signature="icon(int device) const">
-                <parameter left="int" right="" name="device" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="defaultInputDevice" fullname="QAudioDeviceEndpoint::defaultInputDevice" href="qaudiodeviceendpoint.html#defaultInputDevice" location="qaudiodeviceendpoint.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="defaultInputDevice(Role role) const">
-                <parameter left="Role" right="" name="role" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="defaultOutputDevice" fullname="QAudioDeviceEndpoint::defaultOutputDevice" href="qaudiodeviceendpoint.html#defaultOutputDevice" location="qaudiodeviceendpoint.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="defaultOutputDevice(Role role) const">
-                <parameter left="Role" right="" name="role" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="selectedDevice" fullname="QAudioDeviceEndpoint::selectedDevice" href="qaudiodeviceendpoint.html#selectedDevice-prop" location="qaudiodeviceendpoint.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="selectedDevice" type="int" signature="selectedDevice() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setSelectedDevice" fullname="QAudioDeviceEndpoint::setSelectedDevice" href="qaudiodeviceendpoint.html#selectedDevice-prop" location="qaudiodeviceendpoint.h" virtual="impure" meta="slot" const="false" static="false" overload="false" associated-property="selectedDevice" type="void" signature="setSelectedDevice(int device)">
-                <parameter left="int" right="" name="device" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="selectedDeviceChanged" fullname="QAudioDeviceEndpoint::selectedDeviceChanged" href="qaudiodeviceendpoint.html#selectedDeviceChanged" location="qaudiodeviceendpoint.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="selectedDeviceChanged(int index)">
-                <parameter left="int" right="" name="index" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="selectedDeviceChanged" fullname="QAudioDeviceEndpoint::selectedDeviceChanged" href="qaudiodeviceendpoint.html#selectedDeviceChanged-2" location="qaudiodeviceendpoint.h" virtual="non" meta="signal" const="false" static="false" overload="true" overload-number="2" type="void" signature="selectedDeviceChanged(const QString &amp; deviceName)">
-                <parameter left="const QString &amp;" right="" name="deviceName" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="devicesInserted" fullname="QAudioDeviceEndpoint::devicesInserted" href="qaudiodeviceendpoint.html#devicesInserted" location="qaudiodeviceendpoint.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="devicesInserted(int index, int count)">
-                <parameter left="int" right="" name="index" default=""/>
-                <parameter left="int" right="" name="count" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="devicesRemoved" fullname="QAudioDeviceEndpoint::devicesRemoved" href="qaudiodeviceendpoint.html#devicesRemoved" location="qaudiodeviceendpoint.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="devicesRemoved(int index, int count)">
-                <parameter left="int" right="" name="index" default=""/>
-                <parameter left="int" right="" name="count" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="devicesChanged" fullname="QAudioDeviceEndpoint::devicesChanged" href="qaudiodeviceendpoint.html#devicesChanged" location="qaudiodeviceendpoint.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="devicesChanged(int index, int count)">
-                <parameter left="int" right="" name="index" default=""/>
-                <parameter left="int" right="" name="count" default=""/>
-            </function>
-            <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QAudioDeviceEndpoint::d_ptr" href="qaudiodeviceendpoint.html#d_ptr-var" location="qaudiodeviceendpoint.h" type="QAudioDeviceEndpointPrivate *" static="false"/>
-        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QMediaRecorderControl" href="qmediarecordercontrol.html" location="qmediarecordercontrol.h" bases="QAbstractMediaControl" module="">
-            <property access="public" threadsafety="unspecified" status="commendable" name="duration" fullname="QMediaRecorderControl::duration" href="qmediarecordercontrol.html#duration-prop" location="qmediarecordercontrol.h" type="qint64">
-                <getter name="duration"/>
-            </property>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QMediaRecorderControl" fullname="QMediaRecorderControl::~QMediaRecorderControl" href="qmediarecordercontrol.html#dtor.QMediaRecorderControl" location="qmediarecordercontrol.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMediaRecorderControl()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="sink" fullname="QMediaRecorderControl::sink" href="qmediarecordercontrol.html#sink" location="qmediarecordercontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QUrl" signature="sink() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setSink" fullname="QMediaRecorderControl::setSink" href="qmediarecordercontrol.html#setSink" location="qmediarecordercontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="setSink(const QUrl &amp; sink)">
                 <parameter left="const QUrl &amp;" right="" name="sink" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="state" fullname="QMediaRecorderControl::state" href="qmediarecordercontrol.html#state" location="qmediarecordercontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QMediaRecorder::State" signature="state() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="duration" fullname="QMediaRecorderControl::duration" href="qmediarecordercontrol.html#duration-prop" location="qmediarecordercontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" associated-property="duration" type="qint64" signature="duration() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="duration" fullname="QMediaRecorderControl::duration" href="qmediarecordercontrol.html#duration" location="qmediarecordercontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="qint64" signature="duration() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="stateChanged" fullname="QMediaRecorderControl::stateChanged" href="qmediarecordercontrol.html#stateChanged" location="qmediarecordercontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="stateChanged(QMediaRecorder::State state)">
                 <parameter left="QMediaRecorder::State" right="" name="state" default=""/>
             </function>
@@ -908,80 +845,6 @@
                 <parameter left="int" right="" name="saturation" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QMediaStreamInfo" href="qmediastreaminfo.html" location="qmediastreams.h" bases="" module="">
-            <enum access="public" threadsafety="unspecified" status="commendable" name="StreamType" fullname="QMediaStreamInfo::StreamType" href="qmediastreaminfo.html#StreamType-enum" location="qmediastreams.h">
-                <value name="UnknownStream" value="0"/>
-                <value name="VideoStream" value="1"/>
-                <value name="AudioStream" value="2"/>
-                <value name="SubPictureStream" value="3"/>
-                <value name="DataStream" value="4"/>
-            </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaStreamInfo" fullname="QMediaStreamInfo::QMediaStreamInfo" href="qmediastreaminfo.html#QMediaStreamInfo" location="qmediastreams.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMediaStreamInfo()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaStreamInfo" fullname="QMediaStreamInfo::QMediaStreamInfo" href="qmediastreaminfo.html#QMediaStreamInfo-2" location="qmediastreams.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMediaStreamInfo(StreamType streamType, int streamId)">
-                <parameter left="StreamType" right="" name="streamType" default=""/>
-                <parameter left="int" right="" name="streamId" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaStreamInfo" fullname="QMediaStreamInfo::QMediaStreamInfo" href="qmediastreaminfo.html#QMediaStreamInfo-3" location="qmediastreams.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="3" type="" signature="QMediaStreamInfo(const QMediaStreamInfo &amp; other)">
-                <parameter left="const QMediaStreamInfo &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QMediaStreamInfo::operator=" href="qmediastreaminfo.html#operator=" location="qmediastreams.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QMediaStreamInfo &amp;" signature="operator=(const QMediaStreamInfo &amp; other)">
-                <parameter left="const QMediaStreamInfo &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QMediaStreamInfo" fullname="QMediaStreamInfo::~QMediaStreamInfo" href="qmediastreaminfo.html#dtor.QMediaStreamInfo" location="qmediastreams.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMediaStreamInfo()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isNull" fullname="QMediaStreamInfo::isNull" href="qmediastreaminfo.html#isNull" location="qmediastreams.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isNull() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QMediaStreamInfo::type" href="qmediastreaminfo.html#type" location="qmediastreams.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="StreamType" signature="type() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="streamId" fullname="QMediaStreamInfo::streamId" href="qmediastreaminfo.html#streamId" location="qmediastreams.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="streamId() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="streamName" fullname="QMediaStreamInfo::streamName" href="qmediastreaminfo.html#streamName" location="qmediastreams.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="streamName() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setStreamName" fullname="QMediaStreamInfo::setStreamName" href="qmediastreaminfo.html#setStreamName" location="qmediastreams.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setStreamName(const QString &amp; name)">
-                <parameter left="const QString &amp;" right="" name="name" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="streamLanguage" fullname="QMediaStreamInfo::streamLanguage" href="qmediastreaminfo.html#streamLanguage" location="qmediastreams.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="streamLanguage() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setStreamLanguage" fullname="QMediaStreamInfo::setStreamLanguage" href="qmediastreaminfo.html#setStreamLanguage" location="qmediastreams.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setStreamLanguage(const QString &amp; language)">
-                <parameter left="const QString &amp;" right="" name="language" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="property" fullname="QMediaStreamInfo::property" href="qmediastreaminfo.html#property" location="qmediastreams.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="property(const QString &amp; name) const">
-                <parameter left="const QString &amp;" right="" name="name" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="propertyNames" fullname="QMediaStreamInfo::propertyNames" href="qmediastreaminfo.html#propertyNames" location="qmediastreams.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="propertyNames() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setProperty" fullname="QMediaStreamInfo::setProperty" href="qmediastreaminfo.html#setProperty" location="qmediastreams.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setProperty(const QString &amp; name, const QVariant &amp; value)">
-                <parameter left="const QString &amp;" right="" name="name" default=""/>
-                <parameter left="const QVariant &amp;" right="" name="value" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="clearProperty" fullname="QMediaStreamInfo::clearProperty" href="qmediastreaminfo.html#clearProperty" location="qmediastreams.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="clearProperty(const QString &amp; name)">
-                <parameter left="const QString &amp;" right="" name="name" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="properties" fullname="QMediaStreamInfo::properties" href="qmediastreaminfo.html#properties" location="qmediastreams.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMap&lt;QString, QVariant&gt;" signature="properties() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setProperties" fullname="QMediaStreamInfo::setProperties" href="qmediastreaminfo.html#setProperties" location="qmediastreams.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setProperties(const QMap&lt;QString, QVariant&gt; &amp; properties)">
-                <parameter left="const QMap&lt;QString, QVariant&gt; &amp;" right="" name="properties" default=""/>
-            </function>
-        </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QMediaStreams" href="qmediastreams.html" location="qmediastreams.h" bases="QObject" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaStreams" fullname="QMediaStreams::QMediaStreams" href="qmediastreams.html#QMediaStreams" location="qmediastreams.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMediaStreams(QAbstractMediaObject * mediaObject, QObject * parent)">
-                <parameter left="QAbstractMediaObject *" right="" name="mediaObject" default=""/>
-                <parameter left="QObject *" right="" name="parent" default="0"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QMediaStreams" fullname="QMediaStreams::~QMediaStreams" href="qmediastreams.html#dtor.QMediaStreams" location="qmediastreams.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMediaStreams()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isStreamsInformationAvailable" fullname="QMediaStreams::isStreamsInformationAvailable" href="qmediastreams.html#isStreamsInformationAvailable" location="qmediastreams.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isStreamsInformationAvailable() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="defaultLanguage" fullname="QMediaStreams::defaultLanguage" href="qmediastreams.html#defaultLanguage" location="qmediastreams.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="defaultLanguage(QMediaStreamInfo::StreamType streamType) const">
-                <parameter left="QMediaStreamInfo::StreamType" right="" name="streamType" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setDefaultLanguage" fullname="QMediaStreams::setDefaultLanguage" href="qmediastreams.html#setDefaultLanguage" location="qmediastreams.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDefaultLanguage(QMediaStreamInfo::StreamType streamType, const QString &amp; language)">
-                <parameter left="QMediaStreamInfo::StreamType" right="" name="streamType" default=""/>
-                <parameter left="const QString &amp;" right="" name="language" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="streams" fullname="QMediaStreams::streams" href="qmediastreams.html#streams" location="qmediastreams.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QMediaStreamInfo&gt;" signature="streams(QMediaStreamInfo::StreamType streamType) const">
-                <parameter left="QMediaStreamInfo::StreamType" right="" name="streamType" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="activeStream" fullname="QMediaStreams::activeStream" href="qmediastreams.html#activeStream" location="qmediastreams.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMediaStreamInfo" signature="activeStream(QMediaStreamInfo::StreamType streamType) const">
-                <parameter left="QMediaStreamInfo::StreamType" right="" name="streamType" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setActiveStream" fullname="QMediaStreams::setActiveStream" href="qmediastreams.html#setActiveStream" location="qmediastreams.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setActiveStream(const QMediaStreamInfo &amp; stream)">
-                <parameter left="const QMediaStreamInfo &amp;" right="" name="stream" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="streamsChanged" fullname="QMediaStreams::streamsChanged" href="qmediastreams.html#streamsChanged" location="qmediastreams.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="streamsChanged()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="activeStreamsChanged" fullname="QMediaStreams::activeStreamsChanged" href="qmediastreams.html#activeStreamsChanged" location="qmediastreams.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="activeStreamsChanged()"/>
-            <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QMediaStreams::d_ptr" href="qmediastreams.html#d_ptr-var" location="qmediastreams.h" type="QMediaStreamsPrivate *" static="false"/>
-        </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMediaRecorder" href="qmediarecorder.html" location="qmediarecorder.h" bases="QAbstractMediaObject" module="">
             <property access="public" threadsafety="unspecified" status="commendable" name="duration" fullname="QMediaRecorder::duration" href="qmediarecorder.html#duration-prop" location="qmediarecorder.h" type="qint64">
                 <getter name="duration"/>
@@ -1037,16 +900,12 @@
                 <value name="ResourceError" value="1"/>
                 <value name="FormatError" value="2"/>
             </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaRecorder" fullname="QMediaRecorder::QMediaRecorder" href="qmediarecorder.html#QMediaRecorder" location="qmediarecorder.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMediaRecorder(QObject * parent)">
-                <parameter left="QObject *" right="" name="parent" default="0"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaRecorder" fullname="QMediaRecorder::QMediaRecorder" href="qmediarecorder.html#QMediaRecorder-2" location="qmediarecorder.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMediaRecorder(QAbstractMediaObject * mediaObject, QObject * parent)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaRecorder" fullname="QMediaRecorder::QMediaRecorder" href="qmediarecorder.html#QMediaRecorder" location="qmediarecorder.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMediaRecorder(QAbstractMediaObject * mediaObject)">
                 <parameter left="QAbstractMediaObject *" right="" name="mediaObject" default=""/>
-                <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaRecorder" fullname="QMediaRecorder::QMediaRecorder" href="qmediarecorder.html#QMediaRecorder-3" location="qmediarecorder.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="3" type="" signature="QMediaRecorder(QAbstractMediaService * service, QObject * parent)">
-                <parameter left="QAbstractMediaService *" right="" name="service" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaRecorder" fullname="QMediaRecorder::QMediaRecorder" href="qmediarecorder.html#QMediaRecorder-2" location="qmediarecorder.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMediaRecorder(QObject * parent, QMediaRecorderService * service)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
+                <parameter left="QMediaRecorderService *" right="" name="service" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QMediaRecorder" fullname="QMediaRecorder::~QMediaRecorder" href="qmediarecorder.html#dtor.QMediaRecorder" location="qmediarecorder.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMediaRecorder()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QMediaRecorder::isValid" href="qmediarecorder.html#isValid" location="qmediarecorder.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"/>
@@ -1335,12 +1194,9 @@
                 <value name="NetworkError" value="3"/>
                 <value name="AccessDeniedError" value="4"/>
             </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaPlayer" fullname="QMediaPlayer::QMediaPlayer" href="qmediaplayer.html#QMediaPlayer" location="qmediaplayer.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMediaPlayer(QObject * parent)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaPlayer" fullname="QMediaPlayer::QMediaPlayer" href="qmediaplayer.html#QMediaPlayer" location="qmediaplayer.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMediaPlayer(QObject * parent, QMediaPlayerService * service)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaPlayer" fullname="QMediaPlayer::QMediaPlayer" href="qmediaplayer.html#QMediaPlayer-2" location="qmediaplayer.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMediaPlayer(QMediaPlayerService * service, QObject * parent)">
-                <parameter left="QMediaPlayerService *" right="" name="service" default=""/>
-                <parameter left="QObject *" right="" name="parent" default="0"/>
+                <parameter left="QMediaPlayerService *" right="" name="service" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QMediaPlayer" fullname="QMediaPlayer::~QMediaPlayer" href="qmediaplayer.html#dtor.QMediaPlayer" location="qmediaplayer.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMediaPlayer()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QMediaPlayer::isValid" href="qmediaplayer.html#isValid" location="qmediaplayer.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"/>
@@ -1509,20 +1365,7 @@
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QSharedMediaPlaylist" href="qsharedmediaplaylist.html" location="qsharedmediaplaylist.h" bases="QMediaPlaylist" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QSharedMediaPlaylist" fullname="QSharedMediaPlaylist::QSharedMediaPlaylist" href="qsharedmediaplaylist.html#QSharedMediaPlaylist" location="qsharedmediaplaylist.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSharedMediaPlaylist(const QString &amp; name, QObject * parent)">
-                <parameter left="const QString &amp;" right="" name="name" default=""/>
-                <parameter left="QObject *" right="" name="parent" default="0"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QSharedMediaPlaylist" fullname="QSharedMediaPlaylist::~QSharedMediaPlaylist" href="qsharedmediaplaylist.html#dtor.QSharedMediaPlaylist" location="qsharedmediaplaylist.cpp" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QSharedMediaPlaylist()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="name" fullname="QSharedMediaPlaylist::name" href="qsharedmediaplaylist.html#name" location="qsharedmediaplaylist.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="name() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="sharedPlaylists" fullname="QSharedMediaPlaylist::sharedPlaylists" href="qsharedmediaplaylist.html#sharedPlaylists" location="qsharedmediaplaylist.cpp" virtual="non" meta="plain" const="false" static="true" overload="false" type="QStringList" signature="sharedPlaylists()"/>
-        </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QAudioInputDeviceControl" href="qaudioinputdevicecontrol.html" location="qaudioinputdevicecontrol.h" bases="QAbstractMediaControl" module="">
-            <property access="public" threadsafety="unspecified" status="commendable" name="selectedDevice" fullname="QAudioInputDeviceControl::selectedDevice" href="qaudioinputdevicecontrol.html#selectedDevice-prop" location="qaudioinputdevicecontrol.h" type="int">
-                <getter name="selectedDevice"/>
-                <setter name="setSelectedDevice"/>
-            </property>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QAudioInputDeviceControl" fullname="QAudioInputDeviceControl::~QAudioInputDeviceControl" href="qaudioinputdevicecontrol.html#dtor.QAudioInputDeviceControl" location="qaudioinputdevicecontrol.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QAudioInputDeviceControl()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="deviceCount" fullname="QAudioInputDeviceControl::deviceCount" href="qaudioinputdevicecontrol.html#deviceCount" location="qaudioinputdevicecontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="deviceCount() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="name" fullname="QAudioInputDeviceControl::name" href="qaudioinputdevicecontrol.html#name" location="qaudioinputdevicecontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QString" signature="name(int device) const">
@@ -1535,8 +1378,8 @@
                 <parameter left="int" right="" name="device" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="defaultDevice" fullname="QAudioInputDeviceControl::defaultDevice" href="qaudioinputdevicecontrol.html#defaultDevice" location="qaudioinputdevicecontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="defaultDevice() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="selectedDevice" fullname="QAudioInputDeviceControl::selectedDevice" href="qaudioinputdevicecontrol.html#selectedDevice-prop" location="qaudioinputdevicecontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" associated-property="selectedDevice" type="int" signature="selectedDevice() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setSelectedDevice" fullname="QAudioInputDeviceControl::setSelectedDevice" href="qaudioinputdevicecontrol.html#selectedDevice-prop" location="qaudioinputdevicecontrol.h" virtual="pure" meta="slot" const="false" static="false" overload="false" associated-property="selectedDevice" type="void" signature="setSelectedDevice(int index)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="selectedDevice" fullname="QAudioInputDeviceControl::selectedDevice" href="qaudioinputdevicecontrol.html#selectedDevice" location="qaudioinputdevicecontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="selectedDevice() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setSelectedDevice" fullname="QAudioInputDeviceControl::setSelectedDevice" href="qaudioinputdevicecontrol.html#setSelectedDevice" location="qaudioinputdevicecontrol.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="setSelectedDevice(int index)">
                 <parameter left="int" right="" name="index" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="selectedDeviceChanged" fullname="QAudioInputDeviceControl::selectedDeviceChanged" href="qaudioinputdevicecontrol.html#selectedDeviceChanged" location="qaudioinputdevicecontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="selectedDeviceChanged(int index)">
@@ -1614,43 +1457,6 @@
                 <parameter left="QAbstractVideoSurface *" right="" name="surface" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QMediaWidgetEndpoint" href="qmediawidgetendpoint.html" location="qmediawidgetendpoint.h" bases="QMediaEndpointInterface,QWidget" module="">
-            <property access="public" threadsafety="unspecified" status="commendable" name="fullscreen" fullname="QMediaWidgetEndpoint::fullscreen" href="qmediawidgetendpoint.html#fullscreen-prop" location="qmediawidgetendpoint.h" type="bool">
-                <getter name="isFullscreen"/>
-                <setter name="setFullscreen"/>
-            </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="aspectRatio" fullname="QMediaWidgetEndpoint::aspectRatio" href="qmediawidgetendpoint.html#aspectRatio-prop" location="qmediawidgetendpoint.h" type="AspectRatio">
-                <getter name="aspectRatio"/>
-                <setter name="setAspectRatio"/>
-            </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="customAspectRatio" fullname="QMediaWidgetEndpoint::customAspectRatio" href="qmediawidgetendpoint.html#customAspectRatio-prop" location="qmediawidgetendpoint.h" type="QSize">
-                <getter name="customAspectRatio"/>
-                <setter name="setCustomAspectRatio"/>
-            </property>
-            <enum access="public" threadsafety="unspecified" status="commendable" name="AspectRatio" fullname="QMediaWidgetEndpoint::AspectRatio" href="qmediawidgetendpoint.html#AspectRatio-enum" location="qmediawidgetendpoint.h">
-                <value name="AspectRatioAuto" value="0"/>
-                <value name="AspectRatioWidget" value="1"/>
-                <value name="AspectRatioCustom" value="2"/>
-            </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaWidgetEndpoint" fullname="QMediaWidgetEndpoint::QMediaWidgetEndpoint" href="qmediawidgetendpoint.html#QMediaWidgetEndpoint" location="qmediawidgetendpoint.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMediaWidgetEndpoint(QWidget * parent)">
-                <parameter left="QWidget *" right="" name="parent" default="0"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QMediaWidgetEndpoint" fullname="QMediaWidgetEndpoint::~QMediaWidgetEndpoint" href="qmediawidgetendpoint.html#dtor.QMediaWidgetEndpoint" location="qmediawidgetendpoint.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMediaWidgetEndpoint()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="direction" fullname="QMediaWidgetEndpoint::direction" href="qmediawidgetendpoint.html#direction" location="qmediawidgetendpoint.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="Direction" signature="direction() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isFullscreen" fullname="QMediaWidgetEndpoint::isFullscreen" href="qmediawidgetendpoint.html#fullscreen-prop" location="qmediawidgetendpoint.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="fullscreen" type="bool" signature="isFullscreen() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="aspectRatio" fullname="QMediaWidgetEndpoint::aspectRatio" href="qmediawidgetendpoint.html#aspectRatio-prop" location="qmediawidgetendpoint.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="aspectRatio" type="AspectRatio" signature="aspectRatio() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="customAspectRatio" fullname="QMediaWidgetEndpoint::customAspectRatio" href="qmediawidgetendpoint.html#customAspectRatio-prop" location="qmediawidgetendpoint.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="customAspectRatio" type="QSize" signature="customAspectRatio() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setFullscreen" fullname="QMediaWidgetEndpoint::setFullscreen" href="qmediawidgetendpoint.html#fullscreen-prop" location="qmediawidgetendpoint.cpp" virtual="impure" meta="slot" const="false" static="false" overload="false" associated-property="fullscreen" type="void" signature="setFullscreen(bool fullscreen)">
-                <parameter left="bool" right="" name="fullscreen" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setAspectRatio" fullname="QMediaWidgetEndpoint::setAspectRatio" href="qmediawidgetendpoint.html#aspectRatio-prop" location="qmediawidgetendpoint.cpp" virtual="impure" meta="slot" const="false" static="false" overload="false" associated-property="aspectRatio" type="void" signature="setAspectRatio(AspectRatio ratio)">
-                <parameter left="AspectRatio" right="" name="ratio" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setCustomAspectRatio" fullname="QMediaWidgetEndpoint::setCustomAspectRatio" href="qmediawidgetendpoint.html#customAspectRatio-prop" location="qmediawidgetendpoint.cpp" virtual="impure" meta="slot" const="false" static="false" overload="false" associated-property="customAspectRatio" type="void" signature="setCustomAspectRatio(const QSize &amp; customRatio)">
-                <parameter left="const QSize &amp;" right="" name="customRatio" default=""/>
-            </function>
-            <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QMediaWidgetEndpoint::d_ptr" href="qmediawidgetendpoint.html#d_ptr-var" location="qmediawidgetendpoint.h" type="QMediaWidgetEndpointPrivate *" static="false"/>
-        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QAbstractMediaService" href="qabstractmediaservice.html" location="qabstractmediaservice.h" bases="QObject" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="MediaEndpoint" fullname="QAbstractMediaService::MediaEndpoint" href="qabstractmediaservice.html#MediaEndpoint-enum" location="qabstractmediaservice.h">
                 <value name="VideoInput" value="0"/>
@@ -1690,22 +1496,6 @@
             </function>
             <function access="protected" threadsafety="unspecified" status="commendable" name="~QAbstractMediaService" fullname="QAbstractMediaService::~QAbstractMediaService" href="qabstractmediaservice.html#dtor.QAbstractMediaService" location="qabstractmediaservice.cpp" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QAbstractMediaService()"/>
             <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QAbstractMediaService::d_ptr" href="qabstractmediaservice.html#d_ptr-var" location="qabstractmediaservice.h" type="QAbstractMediaServicePrivate *" static="false"/>
-        </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QIODeviceEndpoint" href="qiodeviceendpoint.html" location="qiodeviceendpoint.h" bases="QMediaEndpointInterface,QObject" module="">
-            <property access="public" threadsafety="unspecified" status="commendable" name="device" fullname="QIODeviceEndpoint::device" href="qiodeviceendpoint.html#device-prop" location="qiodeviceendpoint.h" type="QIODevice *">
-                <getter name="device"/>
-                <setter name="setDevice"/>
-            </property>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QIODeviceEndpoint" fullname="QIODeviceEndpoint::QIODeviceEndpoint" href="qiodeviceendpoint.html#QIODeviceEndpoint" location="qiodeviceendpoint.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QIODeviceEndpoint(QObject * parent)">
-                <parameter left="QObject *" right="" name="parent" default="0"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QIODeviceEndpoint" fullname="QIODeviceEndpoint::~QIODeviceEndpoint" href="qiodeviceendpoint.html#dtor.QIODeviceEndpoint" location="qiodeviceendpoint.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QIODeviceEndpoint()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="direction" fullname="QIODeviceEndpoint::direction" href="qiodeviceendpoint.html#direction" location="qiodeviceendpoint.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="Direction" signature="direction() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="device" fullname="QIODeviceEndpoint::device" href="qiodeviceendpoint.html#device-prop" location="qiodeviceendpoint.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="device" type="QIODevice *" signature="device() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setDevice" fullname="QIODeviceEndpoint::setDevice" href="qiodeviceendpoint.html#device-prop" location="qiodeviceendpoint.h" virtual="impure" meta="plain" const="false" static="false" overload="false" associated-property="device" type="void" signature="setDevice(QIODevice * device)">
-                <parameter left="QIODevice *" right="" name="device" default=""/>
-            </function>
-            <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QIODeviceEndpoint::d_ptr" href="qiodeviceendpoint.html#d_ptr-var" location="qiodeviceendpoint.h" type="QIODeviceEndpointPrivate *" static="false"/>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMediaPlaylist" href="qmediaplaylist.html" location="qmediaplaylist.h" bases="QObject" module="">
             <property access="public" threadsafety="unspecified" status="commendable" name="playlistProvider" fullname="QMediaPlaylist::playlistProvider" href="qmediaplaylist.html#playlistProvider-prop" location="qmediaplaylist.h" type="QMediaPlaylistProvider *">
@@ -1992,42 +1782,7 @@
                 <parameter left="QObject *" right="" name="parent" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QMediaSink" href="qmediasink.html" location="qmediasink.h" bases="" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaSink" fullname="QMediaSink::QMediaSink" href="qmediasink.html#QMediaSink" location="qmediasink.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMediaSink()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaSink" fullname="QMediaSink::QMediaSink" href="qmediasink.html#QMediaSink-2" location="qmediasink.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMediaSink(const QVariant &amp; url)">
-                <parameter left="const QVariant &amp;" right="" name="url" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QMediaSink" fullname="QMediaSink::~QMediaSink" href="qmediasink.html#dtor.QMediaSink" location="qmediasink.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMediaSink()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaSink" fullname="QMediaSink::QMediaSink" href="qmediasink.html#QMediaSink-3" location="qmediasink.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="3" type="" signature="QMediaSink(const QMediaSink &amp; other)">
-                <parameter left="const QMediaSink &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QMediaSink::operator=" href="qmediasink.html#operator=" location="qmediasink.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QMediaSink &amp;" signature="operator=(const QMediaSink &amp; other)">
-                <parameter left="const QMediaSink &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isNull" fullname="QMediaSink::isNull" href="qmediasink.html#isNull" location="qmediasink.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isNull() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="mimeType" fullname="QMediaSink::mimeType" href="qmediasink.html#mimeType" location="qmediasink.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="mimeType() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setMimeType" fullname="QMediaSink::setMimeType" href="qmediasink.html#setMimeType" location="qmediasink.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setMimeType(const QString &amp; mimeType)">
-                <parameter left="const QString &amp;" right="" name="mimeType" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="dataLocation" fullname="QMediaSink::dataLocation" href="qmediasink.html#dataLocation" location="qmediasink.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="dataLocation() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setDataLocation" fullname="QMediaSink::setDataLocation" href="qmediasink.html#setDataLocation" location="qmediasink.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDataLocation(const QVariant &amp; url)">
-                <parameter left="const QVariant &amp;" right="" name="url" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="operator==" fullname="QMediaSink::operator==" href="qmediasink.html#operator==" location="qmediasink.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator==(const QMediaSink &amp; other) const">
-                <parameter left="const QMediaSink &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="operator!=" fullname="QMediaSink::operator!=" href="qmediasink.html#operator!=" location="qmediasink.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator!=(const QMediaSink &amp; other) const">
-                <parameter left="const QMediaSink &amp;" right="" name="other" default=""/>
-            </function>
-        </class>
-        <function access="public" threadsafety="unspecified" status="commendable" name="QAudioDeviceEndpoint_iid" href="qaudiodeviceendpoint.html#QAudioDeviceEndpoint_iid" location="qaudiodeviceendpoint.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QAudioDeviceEndpoint" type="" signature="QAudioDeviceEndpoint_iid()"/>
-        <function access="public" threadsafety="unspecified" status="commendable" name="QIODeviceEndpoint_iid" href="qiodeviceendpoint.html#QIODeviceEndpoint_iid" location="qiodeviceendpoint.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QIODeviceEndpoint" type="" signature="QIODeviceEndpoint_iid()"/>
-        <function access="public" threadsafety="unspecified" status="commendable" name="Q_MEDIA_DECLARE_ENDPOINT" href="qmediaendpointinterface.html#Q_MEDIA_DECLARE_ENDPOINT" location="" virtual="non" meta="macrowithparams" const="false" static="false" overload="false" relates="QMediaEndpointInterface" type="" signature="Q_MEDIA_DECLARE_ENDPOINT( Type,  IId)">
-            <parameter left="" right="" name="Type" default=""/>
-            <parameter left="" right="" name="IId" default=""/>
-        </function>
         <function access="public" threadsafety="unspecified" status="commendable" name="QAudioInputDeviceControl_iid" href="qaudioinputdevicecontrol.html#QAudioInputDeviceControl_iid" location="qaudioinputdevicecontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QAudioInputDeviceControl" type="" signature="QAudioInputDeviceControl_iid()"/>
-        <function access="public" threadsafety="unspecified" status="commendable" name="QAudioRendererEndpoint_iid" href="qaudiorendererendpoint.html#QAudioRendererEndpoint_iid" location="qaudiorendererendpoint.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QAudioRendererEndpoint" type="" signature="QAudioRendererEndpoint_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoRendererControl_iid" href="qvideorenderercontrol.html#QVideoRendererControl_iid" location="qvideorenderercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoRendererControl" type="" signature="QVideoRendererControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoDeviceControl_iid" href="qvideodevicecontrol.html#QVideoDeviceControl_iid" location="qvideodevicecontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoDeviceControl" type="" signature="QVideoDeviceControl_iid()"/>
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Multimedia Library Developer Resources" fulltitle="Multimedia Library Developer Resources" subtitle="" location="index.qdoc">
@@ -2037,6 +1792,5 @@
             <contents name="classes-for-service-implementers" title="Classes for service implementers." level="2"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QAudioDeviceControl_iid" href="qaudiodevicecontrol.html#QAudioDeviceControl_iid" location="qaudiodevicecontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QAudioDeviceControl" type="" signature="QAudioDeviceControl_iid()"/>
-        <function access="public" threadsafety="unspecified" status="commendable" name="QMediaWidgetEndpoint_iid" href="qmediawidgetendpoint.html#QMediaWidgetEndpoint_iid" location="qmediawidgetendpoint.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMediaWidgetEndpoint" type="" signature="QMediaWidgetEndpoint_iid()"/>
     </namespace>
 </INDEX>

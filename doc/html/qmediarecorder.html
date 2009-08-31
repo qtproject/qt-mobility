@@ -54,9 +54,8 @@
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#QMediaRecorder">QMediaRecorder</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#QMediaRecorder-2">QMediaRecorder</a></b> ( QAbstractMediaObject * <i>mediaObject</i>, QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#QMediaRecorder-3">QMediaRecorder</a></b> ( QAbstractMediaService * <i>service</i>, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#QMediaRecorder">QMediaRecorder</a></b> ( QAbstractMediaObject * <i>mediaObject</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#QMediaRecorder-2">QMediaRecorder</a></b> ( QObject * <i>parent</i> = 0, QMediaRecorderService * <i>service</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#dtor.QMediaRecorder">~QMediaRecorder</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#audioBitrate-prop">audioBitrate</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#audioCodec-prop">audioCodec</a></b> () const</td></tr>
@@ -261,12 +260,9 @@
 </table>
 <hr />
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QMediaRecorder"></a>QMediaRecorder::QMediaRecorder ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
-<p>Construct a media recorder object with <i>parent</i>.</p>
-<p>The <a href="qmediarecorder.html">QMediaRecorder</a> will use a default recording service.</p>
-<h3 class="fn"><a name="QMediaRecorder-2"></a>QMediaRecorder::QMediaRecorder ( <a href="qabstractmediaobject.html">QAbstractMediaObject</a> * <i>mediaObject</i>, <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QMediaRecorder"></a>QMediaRecorder::QMediaRecorder ( <a href="qabstractmediaobject.html">QAbstractMediaObject</a> * <i>mediaObject</i> )</h3>
 <p>Construct a media recorder object with <i>mediaObject</i> and <i>parent</i>.</p>
-<h3 class="fn"><a name="QMediaRecorder-3"></a>QMediaRecorder::QMediaRecorder ( <a href="qabstractmediaservice.html">QAbstractMediaService</a> * <i>service</i>, <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QMediaRecorder-2"></a>QMediaRecorder::QMediaRecorder ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0, QMediaRecorderService * <i>service</i> = 0 )</h3>
 <p>Construct a media recorder object with <i>service</i> and <i>parent</i>.</p>
 <h3 class="fn"><a name="dtor.QMediaRecorder"></a>QMediaRecorder::~QMediaRecorder ()</h3>
 <p>Destruct the media recorder object.</p>

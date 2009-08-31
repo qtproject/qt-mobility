@@ -32,89 +32,31 @@
     </section>
     <section ref="qaudiodevicecontrol.html" title="QAudioDeviceControl Class Reference">
         <keyword ref="qaudiodevicecontrol.html">QAudioDeviceControl</keyword>
-        <keyword ref="qaudiodevicecontrol.html#selectedDevice-prop">selectedDevice</keyword>
-        <keyword ref="qaudiodevicecontrol.html#selectedDevice-prop">setSelectedDevice</keyword>
         <keyword ref="qaudiodevicecontrol.html#defaultDevice">defaultDevice</keyword>
         <keyword ref="qaudiodevicecontrol.html#description">description</keyword>
         <keyword ref="qaudiodevicecontrol.html#deviceCount">deviceCount</keyword>
         <keyword ref="qaudiodevicecontrol.html#devicesChanged">devicesChanged</keyword>
         <keyword ref="qaudiodevicecontrol.html#icon">icon</keyword>
         <keyword ref="qaudiodevicecontrol.html#name">name</keyword>
+        <keyword ref="qaudiodevicecontrol.html#selectedDevice">selectedDevice</keyword>
         <keyword ref="qaudiodevicecontrol.html#selectedDeviceChanged">selectedDeviceChanged</keyword>
+        <keyword ref="qaudiodevicecontrol.html#setSelectedDevice">setSelectedDevice</keyword>
         <keyword ref="qaudiodevicecontrol.html#QAudioDeviceControl_iid">QAudioDeviceControl_iid</keyword>
         <section ref="qaudiodevicecontrol-members.html" title="List of all members"/>
     </section>
-    <section ref="qaudiodeviceendpoint.html" title="QAudioDeviceEndpoint Class Reference">
-        <keyword ref="qaudiodeviceendpoint.html">QAudioDeviceEndpoint</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#DeviceDirection-enum">DeviceDirection</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#DeviceDirection-enum">QAudioDeviceEndpoint::InputDevice</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#DeviceDirection-enum">QAudioDeviceEndpoint::OutputDevice</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#DeviceDirection-enum">QAudioDeviceEndpoint::InputOutputDevice</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#FormFactor-enum">FormFactor</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#FormFactor-enum">FormFactors</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#FormFactor-enum">QAudioDeviceEndpoint::SPDIF</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#FormFactor-enum">QAudioDeviceEndpoint::LineLevel</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#FormFactor-enum">QAudioDeviceEndpoint::Headphones</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#FormFactor-enum">QAudioDeviceEndpoint::RemoteNetworkDevice</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#FormFactor-enum">QAudioDeviceEndpoint::Microphone</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#FormFactor-enum">QAudioDeviceEndpoint::Headset</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#FormFactor-enum">QAudioDeviceEndpoint::Handset</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#FormFactor-enum">QAudioDeviceEndpoint::HDMI</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#FormFactor-enum">QAudioDeviceEndpoint::AllFormFactors</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#FormFactor-enum">QAudioDeviceEndpoint::UnknownFormFactor</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#FormFactor-enum">QAudioDeviceEndpoint::UnknownDigitalPassthrough</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#FormFactor-enum">QAudioDeviceEndpoint::Speakers</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#Role-enum">Role</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#Role-enum">Roles</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#Role-enum">QAudioDeviceEndpoint::ConsoleRole</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#Role-enum">QAudioDeviceEndpoint::AllRoles</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#Role-enum">QAudioDeviceEndpoint::MultimediaRole</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#Role-enum">QAudioDeviceEndpoint::CommunicationsRole</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#directionFilter-prop">directionFilter</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#directionFilter-prop">setDirectionFilter</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#formFactorFilter-prop">formFactorFilter</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#formFactorFilter-prop">setFormFactorFilter</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#roleFilter-prop">roleFilter</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#roleFilter-prop">setRoleFilter</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#selectedDevice-prop">selectedDevice</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#selectedDevice-prop">setSelectedDevice</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#defaultInputDevice">defaultInputDevice</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#defaultOutputDevice">defaultOutputDevice</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#description">description</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#deviceCount">deviceCount</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#devicesChanged">devicesChanged</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#devicesInserted">devicesInserted</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#devicesRemoved">devicesRemoved</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#direction">direction</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#formFactor">formFactor</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#icon">icon</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#name">name</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#roles">roles</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#selectedDeviceChanged">selectedDeviceChanged</keyword>
-        <keyword ref="qaudiodeviceendpoint.html#QAudioDeviceEndpoint_iid">QAudioDeviceEndpoint_iid</keyword>
-        <section ref="qaudiodeviceendpoint-members.html" title="List of all members"/>
-    </section>
     <section ref="qaudioinputdevicecontrol.html" title="QAudioInputDeviceControl Class Reference">
         <keyword ref="qaudioinputdevicecontrol.html">QAudioInputDeviceControl</keyword>
-        <keyword ref="qaudioinputdevicecontrol.html#selectedDevice-prop">selectedDevice</keyword>
-        <keyword ref="qaudioinputdevicecontrol.html#selectedDevice-prop">setSelectedDevice</keyword>
         <keyword ref="qaudioinputdevicecontrol.html#defaultDevice">defaultDevice</keyword>
         <keyword ref="qaudioinputdevicecontrol.html#description">description</keyword>
         <keyword ref="qaudioinputdevicecontrol.html#deviceCount">deviceCount</keyword>
         <keyword ref="qaudioinputdevicecontrol.html#devicesChanged">devicesChanged</keyword>
         <keyword ref="qaudioinputdevicecontrol.html#icon">icon</keyword>
         <keyword ref="qaudioinputdevicecontrol.html#name">name</keyword>
+        <keyword ref="qaudioinputdevicecontrol.html#selectedDevice">selectedDevice</keyword>
         <keyword ref="qaudioinputdevicecontrol.html#selectedDeviceChanged">selectedDeviceChanged</keyword>
+        <keyword ref="qaudioinputdevicecontrol.html#setSelectedDevice">setSelectedDevice</keyword>
         <keyword ref="qaudioinputdevicecontrol.html#QAudioInputDeviceControl_iid">QAudioInputDeviceControl_iid</keyword>
         <section ref="qaudioinputdevicecontrol-members.html" title="List of all members"/>
-    </section>
-    <section ref="qaudiorendererendpoint.html" title="QAudioRendererEndpoint Class Reference">
-        <keyword ref="qaudiorendererendpoint.html">QAudioRendererEndpoint</keyword>
-        <keyword ref="qaudiorendererendpoint.html#device">device</keyword>
-        <keyword ref="qaudiorendererendpoint.html#direction">direction</keyword>
-        <keyword ref="qaudiorendererendpoint.html#setDevice">setDevice</keyword>
-        <keyword ref="qaudiorendererendpoint.html#QAudioRendererEndpoint_iid">QAudioRendererEndpoint_iid</keyword>
-        <section ref="qaudiorendererendpoint-members.html" title="List of all members"/>
     </section>
     <section ref="qcamera.html" title="QCamera Class Reference">
         <keyword ref="qcamera.html">QCamera</keyword>
@@ -300,24 +242,6 @@
         <keyword ref="qcamerafocuscontrol.html#zoomValue">zoomValue</keyword>
         <keyword ref="qcamerafocuscontrol.html#zoomValueChanged">zoomValueChanged</keyword>
         <section ref="qcamerafocuscontrol-members.html" title="List of all members"/>
-    </section>
-    <section ref="qiodeviceendpoint.html" title="QIODeviceEndpoint Class Reference">
-        <keyword ref="qiodeviceendpoint.html">QIODeviceEndpoint</keyword>
-        <keyword ref="qiodeviceendpoint.html#device-prop">device</keyword>
-        <keyword ref="qiodeviceendpoint.html#device-prop">setDevice</keyword>
-        <keyword ref="qiodeviceendpoint.html#direction">direction</keyword>
-        <keyword ref="qiodeviceendpoint.html#QIODeviceEndpoint_iid">QIODeviceEndpoint_iid</keyword>
-        <section ref="qiodeviceendpoint-members.html" title="List of all members"/>
-    </section>
-    <section ref="qmediaendpointinterface.html" title="QMediaEndpointInterface Class Reference">
-        <keyword ref="qmediaendpointinterface.html">QMediaEndpointInterface</keyword>
-        <keyword ref="qmediaendpointinterface.html#Direction-enum">Direction</keyword>
-        <keyword ref="qmediaendpointinterface.html#Direction-enum">QMediaEndpointInterface::Input</keyword>
-        <keyword ref="qmediaendpointinterface.html#Direction-enum">QMediaEndpointInterface::Output</keyword>
-        <keyword ref="qmediaendpointinterface.html#Direction-enum">QMediaEndpointInterface::InputOutput</keyword>
-        <keyword ref="qmediaendpointinterface.html#direction">direction</keyword>
-        <keyword ref="qmediaendpointinterface.html#Q_MEDIA_DECLARE_ENDPOINT">Q_MEDIA_DECLARE_ENDPOINT</keyword>
-        <section ref="qmediaendpointinterface-members.html" title="List of all members"/>
     </section>
     <section ref="qmediametadata.html" title="QMediaMetadata Class Reference">
         <keyword ref="qmediametadata.html">QMediaMetadata</keyword>
@@ -632,7 +556,7 @@
     </section>
     <section ref="qmediarecordercontrol.html" title="QMediaRecorderControl Class Reference">
         <keyword ref="qmediarecordercontrol.html">QMediaRecorderControl</keyword>
-        <keyword ref="qmediarecordercontrol.html#duration-prop">duration</keyword>
+        <keyword ref="qmediarecordercontrol.html#duration">duration</keyword>
         <keyword ref="qmediarecordercontrol.html#durationChanged">durationChanged</keyword>
         <keyword ref="qmediarecordercontrol.html#error">error</keyword>
         <keyword ref="qmediarecordercontrol.html#pause">pause</keyword>
@@ -683,17 +607,41 @@
         <keyword ref="qmediaresource.html#operator-eq-eq">operator==</keyword>
         <section ref="qmediaresource-members.html" title="List of all members"/>
     </section>
-    <section ref="qmediasink.html" title="QMediaSink Class Reference">
-        <keyword ref="qmediasink.html">QMediaSink</keyword>
-        <keyword ref="qmediasink.html#dataLocation">dataLocation</keyword>
-        <keyword ref="qmediasink.html#isNull">isNull</keyword>
-        <keyword ref="qmediasink.html#mimeType">mimeType</keyword>
-        <keyword ref="qmediasink.html#setDataLocation">setDataLocation</keyword>
-        <keyword ref="qmediasink.html#setMimeType">setMimeType</keyword>
-        <keyword ref="qmediasink.html#operator-not-eq">operator!=</keyword>
-        <keyword ref="qmediasink.html#operator-eq">operator=</keyword>
-        <keyword ref="qmediasink.html#operator-eq-eq">operator==</keyword>
-        <section ref="qmediasink-members.html" title="List of all members"/>
+    <section ref="qmediaslideshow.html" title="QMediaSlideShow Class Reference">
+        <keyword ref="qmediaslideshow.html">QMediaSlideShow</keyword>
+        <keyword ref="qmediaslideshow.html#MediaStatus-enum">MediaStatus</keyword>
+        <keyword ref="qmediaslideshow.html#MediaStatus-enum">QMediaSlideShow::InvalidMedia</keyword>
+        <keyword ref="qmediaslideshow.html#MediaStatus-enum">QMediaSlideShow::LoadingMedia</keyword>
+        <keyword ref="qmediaslideshow.html#MediaStatus-enum">QMediaSlideShow::LoadedMedia</keyword>
+        <keyword ref="qmediaslideshow.html#MediaStatus-enum">QMediaSlideShow::NoMedia</keyword>
+        <keyword ref="qmediaslideshow.html#State-enum">State</keyword>
+        <keyword ref="qmediaslideshow.html#State-enum">QMediaSlideShow::PausedState</keyword>
+        <keyword ref="qmediaslideshow.html#State-enum">QMediaSlideShow::PlayingState</keyword>
+        <keyword ref="qmediaslideshow.html#State-enum">QMediaSlideShow::StoppedState</keyword>
+        <keyword ref="qmediaslideshow.html#currentIndex-prop">currentIndex</keyword>
+        <keyword ref="qmediaslideshow.html#currentIndex-prop">setCurrentIndex</keyword>
+        <keyword ref="qmediaslideshow.html#currentMedia-prop">currentMedia</keyword>
+        <keyword ref="qmediaslideshow.html#media-prop">media</keyword>
+        <keyword ref="qmediaslideshow.html#media-prop">setMedia</keyword>
+        <keyword ref="qmediaslideshow.html#mediaStatus-prop">mediaStatus</keyword>
+        <keyword ref="qmediaslideshow.html#playlist-prop">playlist</keyword>
+        <keyword ref="qmediaslideshow.html#state-prop">state</keyword>
+        <keyword ref="qmediaslideshow.html#timeout-prop">timeout</keyword>
+        <keyword ref="qmediaslideshow.html#timeout-prop">setTimeout</keyword>
+        <keyword ref="qmediaslideshow.html#currentIndexChanged">currentIndexChanged</keyword>
+        <keyword ref="qmediaslideshow.html#currentMediaChanged">currentMediaChanged</keyword>
+        <keyword ref="qmediaslideshow.html#isValid">isValid</keyword>
+        <keyword ref="qmediaslideshow.html#mediaChanged">mediaChanged</keyword>
+        <keyword ref="qmediaslideshow.html#mediaStatusChanged">mediaStatusChanged</keyword>
+        <keyword ref="qmediaslideshow.html#next">next</keyword>
+        <keyword ref="qmediaslideshow.html#pause">pause</keyword>
+        <keyword ref="qmediaslideshow.html#play">play</keyword>
+        <keyword ref="qmediaslideshow.html#previous">previous</keyword>
+        <keyword ref="qmediaslideshow.html#service">service</keyword>
+        <keyword ref="qmediaslideshow.html#stateChanged">stateChanged</keyword>
+        <keyword ref="qmediaslideshow.html#stop">stop</keyword>
+        <keyword ref="qmediaslideshow.html#timerEvent">timerEvent</keyword>
+        <section ref="qmediaslideshow-members.html" title="List of all members"/>
     </section>
     <section ref="qmediasource.html" title="QMediaSource Class Reference">
         <keyword ref="qmediasource.html">QMediaSource</keyword>
@@ -705,54 +653,6 @@
         <keyword ref="qmediasource.html#operator-eq">operator=</keyword>
         <keyword ref="qmediasource.html#operator-eq-eq">operator==</keyword>
         <section ref="qmediasource-members.html" title="List of all members"/>
-    </section>
-    <section ref="qmediastreaminfo.html" title="QMediaStreamInfo Class Reference">
-        <keyword ref="qmediastreaminfo.html">QMediaStreamInfo</keyword>
-        <keyword ref="qmediastreaminfo.html#StreamType-enum">StreamType</keyword>
-        <keyword ref="qmediastreaminfo.html#clearProperty">clearProperty</keyword>
-        <keyword ref="qmediastreaminfo.html#isNull">isNull</keyword>
-        <keyword ref="qmediastreaminfo.html#properties">properties</keyword>
-        <keyword ref="qmediastreaminfo.html#property">property</keyword>
-        <keyword ref="qmediastreaminfo.html#propertyNames">propertyNames</keyword>
-        <keyword ref="qmediastreaminfo.html#setProperties">setProperties</keyword>
-        <keyword ref="qmediastreaminfo.html#setProperty">setProperty</keyword>
-        <keyword ref="qmediastreaminfo.html#setStreamLanguage">setStreamLanguage</keyword>
-        <keyword ref="qmediastreaminfo.html#setStreamName">setStreamName</keyword>
-        <keyword ref="qmediastreaminfo.html#streamId">streamId</keyword>
-        <keyword ref="qmediastreaminfo.html#streamLanguage">streamLanguage</keyword>
-        <keyword ref="qmediastreaminfo.html#streamName">streamName</keyword>
-        <keyword ref="qmediastreaminfo.html#type">type</keyword>
-        <keyword ref="qmediastreaminfo.html#operator-eq">operator=</keyword>
-        <section ref="qmediastreaminfo-members.html" title="List of all members"/>
-    </section>
-    <section ref="qmediastreams.html" title="QMediaStreams Class Reference">
-        <keyword ref="qmediastreams.html">QMediaStreams</keyword>
-        <keyword ref="qmediastreams.html#activeStream">activeStream</keyword>
-        <keyword ref="qmediastreams.html#activeStreamsChanged">activeStreamsChanged</keyword>
-        <keyword ref="qmediastreams.html#defaultLanguage">defaultLanguage</keyword>
-        <keyword ref="qmediastreams.html#isStreamsInformationAvailable">isStreamsInformationAvailable</keyword>
-        <keyword ref="qmediastreams.html#setActiveStream">setActiveStream</keyword>
-        <keyword ref="qmediastreams.html#setDefaultLanguage">setDefaultLanguage</keyword>
-        <keyword ref="qmediastreams.html#streams">streams</keyword>
-        <keyword ref="qmediastreams.html#streamsChanged">streamsChanged</keyword>
-        <section ref="qmediastreams-members.html" title="List of all members"/>
-    </section>
-    <section ref="qmediawidgetendpoint.html" title="QMediaWidgetEndpoint Class Reference">
-        <keyword ref="qmediawidgetendpoint.html">QMediaWidgetEndpoint</keyword>
-        <keyword ref="qmediawidgetendpoint.html#AspectRatio-enum">AspectRatio</keyword>
-        <keyword ref="qmediawidgetendpoint.html#AspectRatio-enum">QMediaWidgetEndpoint::AspectRatioAuto</keyword>
-        <keyword ref="qmediawidgetendpoint.html#AspectRatio-enum">QMediaWidgetEndpoint::AspectRatioCustom</keyword>
-        <keyword ref="qmediawidgetendpoint.html#AspectRatio-enum">QMediaWidgetEndpoint::AspectRatioWidget</keyword>
-        <keyword ref="qmediawidgetendpoint.html#aspectRatio-prop">aspectRatio</keyword>
-        <keyword ref="qmediawidgetendpoint.html#aspectRatio-prop">setAspectRatio</keyword>
-        <keyword ref="qmediawidgetendpoint.html#customAspectRatio-prop">customAspectRatio</keyword>
-        <keyword ref="qmediawidgetendpoint.html#customAspectRatio-prop">setCustomAspectRatio</keyword>
-        <keyword ref="qmediawidgetendpoint.html#fullscreen-prop">fullscreen</keyword>
-        <keyword ref="qmediawidgetendpoint.html#fullscreen-prop">isFullscreen</keyword>
-        <keyword ref="qmediawidgetendpoint.html#fullscreen-prop">setFullscreen</keyword>
-        <keyword ref="qmediawidgetendpoint.html#direction">direction</keyword>
-        <keyword ref="qmediawidgetendpoint.html#QMediaWidgetEndpoint_iid">QMediaWidgetEndpoint_iid</keyword>
-        <section ref="qmediawidgetendpoint-members.html" title="List of all members"/>
     </section>
     <section ref="qmetadataprovidercontrol.html" title="QMetadataProviderControl Class Reference">
         <keyword ref="qmetadataprovidercontrol.html">QMetadataProviderControl</keyword>
@@ -835,23 +735,17 @@
         <keyword ref="qradioplayercontrol.html#volumeChanged">volumeChanged</keyword>
         <section ref="qradioplayercontrol-members.html" title="List of all members"/>
     </section>
-    <section ref="qsharedmediaplaylist.html" title="QSharedMediaPlaylist Class Reference">
-        <keyword ref="qsharedmediaplaylist.html">QSharedMediaPlaylist</keyword>
-        <keyword ref="qsharedmediaplaylist.html#name">name</keyword>
-        <keyword ref="qsharedmediaplaylist.html#sharedPlaylists">sharedPlaylists</keyword>
-        <section ref="qsharedmediaplaylist-members.html" title="List of all members"/>
-    </section>
     <section ref="qvideodevicecontrol.html" title="QVideoDeviceControl Class Reference">
         <keyword ref="qvideodevicecontrol.html">QVideoDeviceControl</keyword>
-        <keyword ref="qvideodevicecontrol.html#selectedDevice-prop">selectedDevice</keyword>
-        <keyword ref="qvideodevicecontrol.html#selectedDevice-prop">setSelectedDevice</keyword>
         <keyword ref="qvideodevicecontrol.html#defaultDevice">defaultDevice</keyword>
         <keyword ref="qvideodevicecontrol.html#description">description</keyword>
         <keyword ref="qvideodevicecontrol.html#deviceCount">deviceCount</keyword>
         <keyword ref="qvideodevicecontrol.html#devicesChanged">devicesChanged</keyword>
         <keyword ref="qvideodevicecontrol.html#icon">icon</keyword>
         <keyword ref="qvideodevicecontrol.html#name">name</keyword>
+        <keyword ref="qvideodevicecontrol.html#selectedDevice">selectedDevice</keyword>
         <keyword ref="qvideodevicecontrol.html#selectedDeviceChanged">selectedDeviceChanged</keyword>
+        <keyword ref="qvideodevicecontrol.html#setSelectedDevice">setSelectedDevice</keyword>
         <keyword ref="qvideodevicecontrol.html#QVideoDeviceControl_iid">QVideoDeviceControl_iid</keyword>
         <section ref="qvideodevicecontrol-members.html" title="List of all members"/>
     </section>

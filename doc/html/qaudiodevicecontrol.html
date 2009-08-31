@@ -20,15 +20,6 @@
 <li><a href="qaudiodevicecontrol-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
-<a name="properties"></a>
-<h2>Properties</h2>
-<ul>
-<li><div class="fn"><b><a href="qaudiodevicecontrol.html#selectedDevice-prop">selectedDevice</a></b> : int</div></li>
-</ul>
-<ul>
-<li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
-</ul>
-<hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -38,7 +29,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodevicecontrol.html#deviceCount">deviceCount</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QIcon </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodevicecontrol.html#icon">icon</a></b> ( int <i>device</i> ) const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QString </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodevicecontrol.html#name">name</a></b> ( int <i>device</i> ) const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodevicecontrol.html#selectedDevice-prop">selectedDevice</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodevicecontrol.html#selectedDevice">selectedDevice</a></b> () const = 0</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
@@ -47,7 +38,7 @@
 <a name="public-slots"></a>
 <h2>Public Slots</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodevicecontrol.html#selectedDevice-prop">setSelectedDevice</a></b> ( int <i>index</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qaudiodevicecontrol.html#setSelectedDevice">setSelectedDevice</a></b> ( int <i>index</i> ) = 0</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-slots">QObject</a></li>
@@ -80,6 +71,7 @@
 </table>
 <h3>Additional Inherited Members</h3>
 <ul>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-variables">QObject</a></li>
@@ -90,15 +82,6 @@
 <p>The QAudioDeviceControl class provides an audio input/output device selector media control.</p>
 <p>The QAudioDeviceControl class provides descriptions of the audio devices available on a system and allows one to be selected as the input/outut of a media service.</p>
 <p>The interface name of QAudioDeviceControl is <tt>com.nokia.Qt.AudioDeviceControl</tt> as defined in <a href="qaudiodevicecontrol.html#QAudioDeviceControl_iid">QAudioDeviceControl_iid</a>.</p>
-<hr />
-<h2>Property Documentation</h2>
-<h3 class="fn"><a name="selectedDevice-prop"></a>selectedDevice : int</h3>
-<p>The index of the selected audio device.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b>selectedDevice</b> () const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setSelectedDevice</b> ( int <i>index</i> ) = 0</td></tr>
-</table>
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QAudioDeviceControl"></a>QAudioDeviceControl::QAudioDeviceControl ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
@@ -117,8 +100,12 @@
 <p>Returns an icon for a <i>device</i>.</p>
 <h3 class="fn"><a name="name"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QAudioDeviceControl::name ( int <i>device</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the name of a <i>device</i>.</p>
+<h3 class="fn"><a name="selectedDevice"></a>int QAudioDeviceControl::selectedDevice () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>See also <a href="qaudiodevicecontrol.html#setSelectedDevice">setSelectedDevice</a>().</p>
 <h3 class="fn"><a name="selectedDeviceChanged"></a>void QAudioDeviceControl::selectedDeviceChanged ( int <i>index</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <h3 class="fn"><a name="selectedDeviceChanged-2"></a>void QAudioDeviceControl::selectedDeviceChanged ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>deviceName</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="setSelectedDevice"></a>void QAudioDeviceControl::setSelectedDevice ( int <i>index</i> )&nbsp;&nbsp;<tt> [pure virtual slot]</tt></h3>
+<p>See also <a href="qaudiodevicecontrol.html#selectedDevice">selectedDevice</a>().</p>
 <hr />
 <h2>Macro Documentation</h2>
 <h3 class="fn"><a name="QAudioDeviceControl_iid"></a>QAudioDeviceControl_iid</h3>
