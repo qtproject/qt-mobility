@@ -19,7 +19,7 @@ CONFIG+=testcase
 include(../../../common.pri)
 
 # Input 
-SOURCES += tst_servicedatabasetest.cpp
+SOURCES += tst_servicedatabase.cpp
 
 LIBS += -lQtServiceFramework
 
