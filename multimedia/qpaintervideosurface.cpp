@@ -66,6 +66,7 @@ QList<QVideoFrame::PixelFormat> QPainterVideoSurface::supportedPixelFormats(
     if (handleType == QAbstractVideoBuffer::NoHandle) {
         return QList<QVideoFrame::PixelFormat>()
             << QVideoFrame::Format_RGB32
+            << QVideoFrame::Format_RGB24
             << QVideoFrame::Format_ARGB32
             << QVideoFrame::Format_ARGB32_Premultiplied
             << QVideoFrame::Format_RGB565

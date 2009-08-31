@@ -14,12 +14,16 @@ class QGstreamerVideoRenderer : public QVideoRendererControl, public QGstreamerV
 public:
     QGstreamerVideoRenderer(QObject *parent = 0);
     virtual ~QGstreamerVideoRenderer();
+    
+    QAbstractVideoSurface *surface() const;
+    void setSurface(QAbstractVideoSurface *surface);
 
     GstElement *videoSink();
     void precessNewStream() {}
 
 private:    
     GstElement *m_videoSink;
+    QAbstractVideoSurface *m_surface;
 };
 
 #endif

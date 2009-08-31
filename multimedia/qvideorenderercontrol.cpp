@@ -36,17 +36,6 @@
 
 #include "qabstractmediacontrol_p.h"
 
-class QVideoRendererControlPrivate : public QAbstractMediaControlPrivate
-{
-public:
-    QVideoRendererControlPrivate()
-        : surface(0)
-    {
-    }
-
-    QAbstractVideoSurface *surface;
-};
-
 /*!
     \class QVideoRendererControl
     \preliminary
@@ -64,7 +53,7 @@ public:
 
     \c com.nokia.Qt.QVideoRendererControl/1.0
 
-    Defines the interface name of QVideoRendererControl.
+    Defines the interface name of the QVideoRendererControl class.
 
     \relates QVideoRendererControl
 */
@@ -73,7 +62,7 @@ public:
     Constructs a new video renderer media end point with the given \a parent.
 */
 QVideoRendererControl::QVideoRendererControl(QObject *parent)
-    : QAbstractMediaControl(*new QVideoRendererControlPrivate, parent)
+    : QAbstractMediaControl(parent)
 {
 }
 
@@ -85,18 +74,13 @@ QVideoRendererControl::~QVideoRendererControl()
 }
 
 /*!
-    \property QVideoRendererControl::surface
+    \fn QVideoRendererControl::surface()
 
-    The surface a video producer renders to.
+    Returns the surface a video producer renders to.
 */
 
-QAbstractVideoSurface *QVideoRendererControl::surface() const
-{
-    return d_func()->surface;
-}
+/*!
+    \fn QVideoRendererControl::setSurface(QAbstractVideoSurface *surface)
 
-void QVideoRendererControl::setSurface(QAbstractVideoSurface *surface)
-{
-    d_func()->surface = surface;
-}
-
+    Sets the \a surface a video producer renders to.
+*/

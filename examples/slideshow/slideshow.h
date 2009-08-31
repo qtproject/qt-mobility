@@ -55,7 +55,6 @@ private slots:
     void play();
 
     void stateChanged(QMediaSlideShow::State state);
-    void setImage(const QImage &image);
 
 private:
     QMediaSlideShow *slideShow;
