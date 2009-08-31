@@ -16,6 +16,7 @@
 #include "qgstreamervideorenderer.h"
 
 
+#ifndef QT_NO_VIDEOSURFACE
 
 class QGstreamerVideoRendererWrapper : public QGstreamerElementFactory
 {
@@ -73,7 +74,7 @@ private:
     GstElement *m_colorspace;
 };
 
-
+#endif
 
 QGstreamerCaptureService::QGstreamerCaptureService(const char *interface, QObject *parent)
     :QAbstractMediaService(parent)
