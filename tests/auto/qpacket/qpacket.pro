@@ -1,0 +1,12 @@
+TARGET = tst_qpacket
+INCLUDEPATH += ../../../context
+CONFIG += testcase
+QT = core
+include(../../../common.pri)
+
+# Input
+SOURCES += tst_qpacket.cpp
+
+LIBS += -lQtContextFramework
+symbian:TARGET.CAPABILITY = ALL \
+    -TCB

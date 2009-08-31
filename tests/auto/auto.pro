@@ -19,4 +19,13 @@ SUBDIRS += servicemetadata \                #service framework
            tst_qlocationutils \
            tst_qnmeapositioninfosource \
            tst_qnmeapositioninfosource_realtime \
-           tst_qnmeapositioninfosource_sim 
+           tst_qnmeapositioninfosource_sim \ 
+           qvaluespace \                    #Publish and Subscribe
+           qvaluespaceobject \
+           qvaluespaceitem \
+           qmallocpool
+
+unix:SUBDIRS += qpacket \
+                qpacketprotocol \
+                qsystemreadwritelock \
+                qsystemreadwritelock_oop

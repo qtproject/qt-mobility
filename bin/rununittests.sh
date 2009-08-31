@@ -27,6 +27,15 @@ LD_LIBRARY_PATH=$shell_path/../build/Debug/bin:$LD_LIBRARY_PATH
 ./tst_qgeoareamonitor
 ./tst_qlocationutils
 ./tst_qnmeapositioninfosource
+./tst_qmallocpool
+./tst_qpacket
+./tst_qpacketprotocol
+./tst_qvaluespace
+./tst_qvaluespaceobject
+./tst_qvaluespaceitem
+./tst_qvaluespaceitem_oop
+./tst_qsystemreadwritelock
+./tst_qsystemreadwritelock_oop
 
 cd $SAVED_PWD
 

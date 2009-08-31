@@ -16,3 +16,9 @@ SUBDIRS += logfilepositionsource
 contains(QT_CONFIG, webkit) {
     SUBDIRS += fetchgooglemaps
 }
+
+#Publish and Sbscribe examples
+SUBDIRS += publish-subscribe
+contains(QT_CONFIG, declarative) {
+    SUBDIRS += battery-charge
+}

@@ -11,10 +11,26 @@ tst_qservicemanager.exe
 tst_qservicefilter.exe
 tst_qserviceinterfacedescriptor.exe
 tst_qabstractsecuritysession.exe
-tst_qnetworkconfiguration
-tst_qnetworkconfigurationmanager
-tst_qnetworksession
-
+tst_qnetworkconfiguration.exe
+tst_qnetworkconfigurationmanager.exe
+tst_qnetworksession.exe
+tst_qgeocoordinate.exe
+tst_qgeopositioninfo.exe
+tst_qsatelliteinfo.exe
+tst_qsatelliteinfosource.exe
+tst_qgeopositioninfosource.exe
+tst_qgeoareamonitor.exe
+tst_qlocationutils.exe
+tst_qnmeapositioninfosource.exe
+tst_qmallocpool.exe
+tst_qpacket.exe
+tst_qpacketprotocol.exe
+tst_qvaluespace.exe
+tst_qvaluespaceobject.exe
+tst_qvaluespaceitem.exe
+tst_qvaluespaceitem_oop.exe
+tst_qsystemreadwritelock.exe
+tst_qsystemreadwritelock_oop.exe
 
 cd %SAVED_PWD%
 

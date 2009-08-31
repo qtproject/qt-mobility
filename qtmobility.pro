@@ -1,3 +1,3 @@
 TEMPLATE = subdirs
 CONFIG+=ordered
-SUBDIRS += serviceframework bearer tools tests examples
+SUBDIRS += serviceframework bearer location context tools tests examples

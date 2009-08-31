@@ -6,11 +6,13 @@ imagedirs = images
 headerdirs = ../../bearer \
              ../../serviceframework \
              ../../location \
+             ../../context \
              .
 
 sourcedirs = ../../bearer \
              ../../serviceframework \
              ../../location \
+             ../../context \
              .
 
 exampledirs = ../../examples
