@@ -42,6 +42,8 @@ using namespace WinHelpers;
 
 class QMessageServiceActionPrivate : public QObject
 {
+    Q_OBJECT
+
 public:
     QMessageServiceActionPrivate(QMessageServiceAction* parent);
 
@@ -284,3 +286,4 @@ QMessageStore::ErrorCode QMessageServiceAction::lastError() const
     return QMessageStore::NoError;
 }
 
+#include "qmessageserviceaction_win.moc"
