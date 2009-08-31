@@ -35,6 +35,7 @@
 #include <objbase.h>
 #include <mapiutil.h>
 #include <QDebug>
+#include <QTimer>
 #include "winhelpers_p.h"
 
 using namespace WinHelpers;
@@ -49,8 +50,32 @@ public:
 
 public:
     QMessageServiceAction* q_ptr;
+    bool _active;
+    QMessageStore::ErrorCode _error;
+    QMessageIdList _candidateIds;
 
+    void completed();
+    void reportMatchingIds();
+
+signals:
+    void activityChanged(QMessageServiceAction::Activity);
+    void messagesFound(const QMessageIdList&);
+    void progressChanged(uint, uint);
 };
+
+void QMessageServiceActionPrivate::completed()
+{
+    _active = false;
+    emit activityChanged(QMessageServiceAction::Successful);
+}
+
+void QMessageServiceActionPrivate::reportMatchingIds()
+{
+    emit messagesFound(_candidateIds);
+    completed();
+}
+
+
 
 bool QMessageServiceActionPrivate::init()
 {
@@ -77,8 +102,8 @@ void QMessageServiceActionPrivate::shutdown()
 }
 
 QMessageServiceActionPrivate::QMessageServiceActionPrivate(QMessageServiceAction* parent)
-:
-q_ptr(parent)
+    :q_ptr(parent),
+     _active(false)
 {
 }
 
@@ -87,21 +112,36 @@ QMessageServiceAction::QMessageServiceAction(QObject *parent)
     d_ptr(new QMessageServiceActionPrivate(this))
 {
     d_ptr->init();
+    connect(d_ptr, SIGNAL(activityChanged(QMessageServiceAction::Activity)),
+        this, SIGNAL(activityChanged(QMessageServiceAction::Activity)));
+    connect(d_ptr, SIGNAL(messagesFound(const QMessageIdList&)),
+        this, SIGNAL(messagesFound(const QMessageIdList&)));
+    connect(d_ptr, SIGNAL(progressChanged(uint, uint)),
+        this, SIGNAL(progressChanged(uint, uint)));
 }
 
 QMessageServiceAction::~QMessageServiceAction()
 {
     d_ptr->shutdown();
-      delete d_ptr; d_ptr = 0;
+    delete d_ptr;
+    d_ptr = 0;
 }
 
 bool QMessageServiceAction::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
 {
-    Q_UNUSED(key);
-    Q_UNUSED(sortKey);
-    Q_UNUSED(limit);
-    Q_UNUSED(offset);
-    return false; // stub
+    if (d_ptr->_active) {
+        qWarning() << "Action is currently busy";
+        return false;
+    }
+    d_ptr->_active = true;
+    d_ptr->_candidateIds = QMessageStore::instance()->queryMessages(key, sortKey, limit, offset);
+    d_ptr->_error = QMessageStore::instance()->lastError();
+
+    if (d_ptr->_error == QMessageStore::NoError) {
+        QTimer::singleShot(0, d_ptr, SLOT(reportMatchingIds()));
+        return true;
+    }
+    return false;
 }
 
 bool QMessageServiceAction::queryMessages(const QString &body, QMessageDataComparator::Options options, const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
@@ -139,6 +179,7 @@ bool QMessageServiceAction::send(QMessage &message)
 
 bool QMessageServiceAction::compose(const QMessage &message)
 {
+    Q_UNUSED(message)
 
     //login to a MAPI session
 
