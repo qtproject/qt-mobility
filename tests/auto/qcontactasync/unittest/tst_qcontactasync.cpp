@@ -68,11 +68,16 @@ private slots:
     void definitionSave();
 
     void maliciousManager();
+    void threadDelivery();
+
+    void progressReceived(QContactFetchRequest* request, bool appendOnly);
 
 private:
     bool containsIgnoringTimestamps(const QList<QContact>& list, const QContact& c);
     bool compareIgnoringTimestamps(const QContact& ca, const QContact& cb);
     QContactManager* prepareModel();
+
+    Qt::HANDLE m_mainThreadId;
 };
 
 tst_QContactAsync::tst_QContactAsync()
@@ -1487,49 +1492,6 @@ void tst_QContactAsync::definitionSave()
     delete cm;
 }
 
-QContactManager* tst_QContactAsync::prepareModel()
-{
-    QContactManager* cm = new QContactManager("memory");
-
-    QContact a, b, c;
-    a.setDisplayLabel("Aaron Aaronson");
-    b.setDisplayLabel("Bob Aaronsen");
-    c.setDisplayLabel("Borris Aaronsun");
-
-    QContactPhoneNumber phn;
-    phn.setNumber("0123");
-    c.saveDetail(&phn);
-    phn.setNumber("3456");
-    b.saveDetail(&phn);
-    phn.setNumber("6789");
-    a.saveDetail(&phn);
-
-    QContactUrl url;
-    url.setUrl("http://test.nokia.com");
-    a.saveDetail(&url);
-
-    cm->saveContact(&a);
-    cm->saveContact(&b);
-    cm->saveContact(&c);
-
-    QContactGroup ga, gb, gc;
-    ga.setName("Group One");
-    gb.setName("Group Two");
-    gc.setName("Group Three");
-
-    ga.addMember(a.id());
-    gb.addMember(b.id());
-    gb.addMember(c.id());
-    gc.addMember(a.id());
-    gc.addMember(c.id());
-
-    cm->saveGroup(&ga);
-    cm->saveGroup(&gb);
-    cm->saveGroup(&gc);
-
-    return cm;
-}
-
 void tst_QContactAsync::maliciousManager()
 {
     /* Add a path to our plugin path */
@@ -1676,6 +1638,72 @@ void tst_QContactAsync::maliciousManager()
     QVERIFY(!drr.waitForProgress(100));
     QVERIFY(!drr.waitForFinished(100));
     QVERIFY(drr.cancel());
+}
+
+void tst_QContactAsync::threadDelivery()
+{
+    QContactManager *cm = prepareModel();
+    m_mainThreadId = cm->thread()->currentThreadId();
+
+    // now perform a fetch request and check that the progress is delivered to the correct thread.
+    QContactFetchRequest *req = new QContactFetchRequest;
+    req->setManager(cm);
+    connect(req, SIGNAL(progress(QContactFetchRequest*,bool)), this, SLOT(progressReceived(QContactFetchRequest*, bool)));
+    req->start();
+    while (req->status() != QContactAbstractRequest::Finished) {
+        QTest::qWait(200); // spin until done
+    }
+    delete req;
+}
+
+QContactManager* tst_QContactAsync::prepareModel()
+{
+    QContactManager* cm = new QContactManager("memory");
+
+    QContact a, b, c;
+    a.setDisplayLabel("Aaron Aaronson");
+    b.setDisplayLabel("Bob Aaronsen");
+    c.setDisplayLabel("Borris Aaronsun");
+
+    QContactPhoneNumber phn;
+    phn.setNumber("0123");
+    c.saveDetail(&phn);
+    phn.setNumber("3456");
+    b.saveDetail(&phn);
+    phn.setNumber("6789");
+    a.saveDetail(&phn);
+
+    QContactUrl url;
+    url.setUrl("http://test.nokia.com");
+    a.saveDetail(&url);
+
+    cm->saveContact(&a);
+    cm->saveContact(&b);
+    cm->saveContact(&c);
+
+    QContactGroup ga, gb, gc;
+    ga.setName("Group One");
+    gb.setName("Group Two");
+    gc.setName("Group Three");
+
+    ga.addMember(a.id());
+    gb.addMember(b.id());
+    gb.addMember(c.id());
+    gc.addMember(a.id());
+    gc.addMember(c.id());
+
+    cm->saveGroup(&ga);
+    cm->saveGroup(&gb);
+    cm->saveGroup(&gc);
+
+    return cm;
+}
+
+void tst_QContactAsync::progressReceived(QContactFetchRequest* request, bool appendOnly)
+{
+    Q_UNUSED(appendOnly);
+    // ensure that the progress signal is being delivered to the main thread.
+    QCOMPARE(m_mainThreadId, request->thread()->currentThreadId());
 }
 
 QTEST_MAIN(tst_QContactAsync)
