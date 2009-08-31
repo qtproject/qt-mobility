@@ -8,5 +8,5 @@ SUBDIRS += servicemetadata \                #service framework
            qabstractsecuritysession \
            qservicecontext \
            qnetworkconfigmanager \          #Bearer management
-           qnetworkconfiguration
+           qnetworkconfiguration \
            qnetworksession
