@@ -35,7 +35,8 @@
 #include "qmessage_p.h"
 
 QMessageSortKeyPrivate::QMessageSortKeyPrivate(QMessageSortKey *messageSortKey)
-    :q_ptr(messageSortKey)
+    :q_ptr(messageSortKey),
+     _valid(true)
 {
 }
 
@@ -134,25 +135,30 @@ void QMessageSortKeyPrivate::sortTable(QMessageStore::ErrorCode *lastError, cons
         switch (fieldOrderList[i].first)
         {
         case Subject:
-                propTag = PR_SUBJECT;
-                break;
-            case ReceptionTimeStamp:
-                propTag = PR_MESSAGE_DELIVERY_TIME;
-                break;
-            case Sender:
-                propTag = PR_SENDER_NAME; // MAPI is limited to sorting by sender name only, sender name + sender address does not appear to be supported
-                break;
-            case Size:
-                propTag = PR_MESSAGE_SIZE; /*TODO: Use PR_CONTENT_LENGTH on WinCE */
-                break;
-            default:
-                propTag = PR_SUBJECT; // TODO handle all cases
+            propTag = PR_SUBJECT;
+            break;
+        case TimeStamp:
+            propTag = PR_CLIENT_SUBMIT_TIME;
+            break;
+        case ReceptionTimeStamp:
+            propTag = PR_MESSAGE_DELIVERY_TIME;
+            break;
+        case Sender:
+            propTag = PR_SENDER_NAME; // MAPI is limited to sorting by sender name only, sender name + sender address does not appear to be supported
+            break;
+        case Size:
+            propTag = PR_MESSAGE_SIZE; /*TODO: Use PR_CONTENT_LENGTH on WinCE */
+            break;
+        default:
+            qWarning("Unhandled sort criteria");
+            propTag = PR_SUBJECT; // TODO handle all cases
         }
         multiSort.aSort[i].ulPropTag = propTag;
         multiSort.aSort[i].ulOrder = order;
     }
 
     //Note: WinCE does not support multiple level of sort leves and should return an error if more than 1 level is used
+    //TODO: Update doc to reflect this
     if (messagesTable->SortTable(reinterpret_cast<SSortOrderSet*>(&multiSort), 0) != S_OK) {
         *lastError = QMessageStore::NotYetImplemented;
         return;
@@ -193,13 +199,17 @@ bool QMessageSortKey::isEmpty() const
 
 bool QMessageSortKey::isSupported() const
 {
-    return true; // TODO: Implement
+    return d_ptr->_valid;
 }
 
 QMessageSortKey QMessageSortKey::operator+(const QMessageSortKey& other) const
 {
     QMessageSortKey sum;
     sum.d_ptr->_fieldOrderList = d_ptr->_fieldOrderList + other.d_ptr->_fieldOrderList;
+#ifdef _WIN32_WCE
+    // Multiple sort orders are not supported on WinCE
+    sum.d_ptr->_valid = false;
+#endif
     return sum;
 }
 
@@ -208,6 +218,10 @@ QMessageSortKey& QMessageSortKey::operator+=(const QMessageSortKey& other)
     if (&other == this)
         return *this;
     d_ptr->_fieldOrderList += other.d_ptr->_fieldOrderList;
+#ifdef _WIN32_WCE
+    // Multiple sort orders are not supported on WinCE
+    d__ptr->_valid = false;
+#endif;
     return *this;
 }
 
@@ -220,6 +234,7 @@ const QMessageSortKey& QMessageSortKey::operator=(const QMessageSortKey& other)
 {
     if (&other != this) {
         d_ptr->_fieldOrderList = other.d_ptr->_fieldOrderList;
+        d_ptr->_valid = other.d_ptr->_valid;
     }
 
     return *this;
@@ -227,27 +242,38 @@ const QMessageSortKey& QMessageSortKey::operator=(const QMessageSortKey& other)
 
 QMessageSortKey QMessageSortKey::type(Qt::SortOrder order)
 {
-    return QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Type, order);
+    QMessageSortKey result(QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Type, order)); // stub
+    result.d_ptr->_valid = false; // Not yet implemented
+    return result;
 }
 
 QMessageSortKey QMessageSortKey::sender(Qt::SortOrder order)
 {
+    // Partially implemented, can sort by sender name only not sender email address
+    // TODO: Update doc to reflect this
     return QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Sender, order);
 }
 
 QMessageSortKey QMessageSortKey::recipients(Qt::SortOrder order)
 {
-    return QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Recipients, order);
+    QMessageSortKey result(QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Recipients, order));
+    result.d_ptr->_valid = false; // Not supported
+    return result;
 }
 
 QMessageSortKey QMessageSortKey::subject(Qt::SortOrder order)
 {
-    return QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Subject, order);
+    QMessageSortKey result(QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Subject, order));
+    return result;
 }
 
 QMessageSortKey QMessageSortKey::timeStamp(Qt::SortOrder order)
 {
-    return QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::TimeStamp, order);
+    QMessageSortKey result(QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::TimeStamp, order));
+#ifdef _WIN32_WCE
+    result.d__ptr->_valid = false; // Not supported on WinCE
+#endif
+    return result;
 }
 
 QMessageSortKey QMessageSortKey::receptionTimeStamp(Qt::SortOrder order)
@@ -257,23 +283,26 @@ QMessageSortKey QMessageSortKey::receptionTimeStamp(Qt::SortOrder order)
 
 QMessageSortKey QMessageSortKey::status(QMessage::Status flag, Qt::SortOrder order)
 {
+    QMessageSortKey result;
     switch (flag) {
     case QMessage::Read:
-        return QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Read, order);
+        result = QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Read, order);
     case QMessage::HasAttachments:
-        return QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::HasAttachments, order);
+        result = QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::HasAttachments, order);
     case QMessage::Incoming:
-        return QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Incoming, order);
+        result = QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Incoming, order);
     case QMessage::Removed:
-        return QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Removed, order);
-    default:
-        return QMessageSortKey();
+        result = QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Removed, order);
     }
+    result.d_ptr->_valid = false; // Not yet implemented
+    return result;
 }
 
 QMessageSortKey QMessageSortKey::priority(Qt::SortOrder order)
 {
-    return QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Priority, order);
+    QMessageSortKey result(QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Priority, order));
+    result.d_ptr->_valid = false; // Not yet implemented
+    return result;
 }
 
 QMessageSortKey QMessageSortKey::size(Qt::SortOrder order)
