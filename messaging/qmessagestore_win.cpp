@@ -292,16 +292,20 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
     if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
         return result;
 
-    uint workingLimit(offset + limit); // TODO: Improve this it's inefficient
+    int count = 0 - offset;
     while (!folderHeap.isEmpty()) {
-        if (!workingLimit)
+        // TODO: avoid retrieving unwanted messages
+        if (limit && (count == limit))
             break;
+
         QMessage front(folderHeap.takeFront(&d_ptr->p_ptr->lastError));
         if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
             return result;
-        qDebug() << "got:" << front.subject();
-        result.append(front.id());
-        --workingLimit;
+
+        if (count >= 0) {
+            result.append(front.id());
+        }
+        ++count;
     }
 
     if (offset) {
@@ -782,6 +786,8 @@ QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
                     LPSPropValue entryIdProp(&ancestorProperties[parentEntryIdColumn]);                    
                     ancestorEntryId = MapiEntryId(entryIdProp->Value.bin.lpb, entryIdProp->Value.bin.cb);
 
+                    QString ancestorName(QStringFromLpctstr(ancestorProperties[displayNameColumn].Value.LPSZ));
+
                     MAPIFreeBuffer(ancestorProperties);
 
                     if (ancestorRecordKey == storeRoot->recordKey()) {
@@ -790,7 +796,6 @@ QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
                     }
 
                     // Prepare to consider next ancestor
-                    QString ancestorName(QStringFromLpctstr(ancestorProperties[displayNameColumn].Value.LPSZ));
                     if (!ancestorName.isEmpty())
                         path.prepend(ancestorName);
                 } else {

@@ -1088,7 +1088,9 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
 
             for (uint n = 0; n < rows->cRows; ++n) {
                 QMessageAddressList *list = 0;
-                switch (rows->aRow[n].lpProps[2].Value.l) {
+
+                SPropValue *props = rows->aRow[n].lpProps;
+                switch (props[2].Value.l) {
                 case MAPI_TO:
                     list = &to;
                     break;
@@ -1103,10 +1105,17 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
                 }
 
                 if (list) {
-                    QString name(QStringFromLpctstr(rows->aRow[n].lpProps[0].Value.LPSZ));
-                    QString address(QStringFromLpctstr(rows->aRow[n].lpProps[1].Value.LPSZ));
+                    QString name;
+                    QString address;
 
-                    list->append(createAddress(name, address));
+                    if (props[0].ulPropTag == PR_DISPLAY_NAME)
+                        name = QStringFromLpctstr(rows->aRow[n].lpProps[0].Value.LPSZ);
+                    if (props[1].ulPropTag == PR_EMAIL_ADDRESS)
+                        address = QStringFromLpctstr(rows->aRow[n].lpProps[1].Value.LPSZ);
+
+                    if (!name.isEmpty() || ! address.isEmpty()) {
+                        list->append(createAddress(name, address));
+                    }
                 }
             }
 
