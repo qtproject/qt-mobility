@@ -35,7 +35,7 @@
 
 #include <QDir>
 #include <QSet>
-#include "servicedatabase.h"
+#include "servicedatabase_p.h"
 #include <qserviceinterfacedescriptor.h>
 #include <qserviceinterfacedescriptor_p.h>
 #include <QUuid>

@@ -12,27 +12,21 @@ symbian {
 
 DEFINES += QT_BUILD_SFW_LIB QT_MAKEDLL
 
-
-#INCLUDEPATH +=  .       
-
-#DEPENDPATH += servicemetadata \
-#              servicedatabase \
-#              serviceresolution \
-#              servicehandler 
-
-HEADERS +=  qserviceglobal.h \
-            servicemetadata_p.h \
-            servicedatabase.h \
-            databasemanager.h \
+PUBLIC_HEADERS +=  qserviceglobal.h \
             qservicemanager.h \
             qserviceplugininterface.h \
             qservicecontext.h \
             qabstractsecuritysession.h \
             qserviceinterfacedescriptor.h \
-            qserviceinterfacedescriptor_p.h \
             qservicefilter.h
 
+PRIVATE_HEADERS += servicemetadata_p.h \
+            qserviceinterfacedescriptor_p.h \
+            databasemanager_p.h \
+            servicedatabase_p.h \
 
+
+HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 SOURCES +=  servicemetadata.cpp \
             servicedatabase.cpp \
@@ -44,3 +38,8 @@ SOURCES +=  servicemetadata.cpp \
             qserviceinterfacedescriptor.cpp \
             qservicefilter.cpp
 
+
+headers.files = $$PUBLIC_HEADERS
+headers.path = $$OUTPUT_DIR/include
+INSTALLS+=headers
+#build_pass:ALL_DEPS += install_headers

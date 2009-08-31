@@ -115,13 +115,13 @@
 <p>Registers the service defined by the XML file at <i>xmlFilePath</i>. Returns true if the registration succeeded, and false otherwise.</p>
 <p>If a previously unkown interface is added the newly registered service automatically becomes the new default service provider for the new interface.</p>
 <p>A service plugin cannot be added if another service is already registered with the same plugin file path. A service plugin also cannot be added if the service is already registered and implements any of the same interface versions that the new plugin implements.</p>
-<p>See also <a href="qservicemanager.html#setInterfaceDefault">setInterfaceDefault</a>().</p>
+<p>See also <a href="qservicemanager.html#removeService">removeService</a>() and <a href="qservicemanager.html#setInterfaceDefault">setInterfaceDefault</a>().</p>
 <h3 class="fn"><a name="addService-2"></a>bool QServiceManager::addService ( <a href="http://qt.nokia.com/doc/4.5/qiodevice.html">QIODevice</a> * <i>device</i> )</h3>
 <p>Registers the service defined by the XML data from the given <i>device</i>. Returns true if the registration succeeded, and false otherwise. If a previously unkown interface is added the newly registered service automatically becomes the new default service provider for the new interface.</p>
 <p>Registering a service also causes <a href="qserviceplugininterface.html#installService">QServicePluginInterface::installService</a>() to be called on the service. If the service plugin is not accessible (e.g&#x2e; if the plugin file is not found) and <tt>installService()</tt> cannot be invoked on the service, the registration fails and this method returns false.</p>
 <p>A service plugin cannot be added if another service is already registered with the same plugin file path. A service plugin also cannot be added if the service is already registered and implements any of the same interface versions that the new plugin implements.</p>
 <p>Services are always added based on the <a href="qservicemanager.html#scope">scope</a>() of the current service manager instance.</p>
-<p>See also <a href="qservicemanager.html#setInterfaceDefault">setInterfaceDefault</a>().</p>
+<p>See also <a href="qservicemanager.html#removeService">removeService</a>() and <a href="qservicemanager.html#setInterfaceDefault">setInterfaceDefault</a>().</p>
 <h3 class="fn"><a name="error"></a><a href="qservicemanager.html#Error-enum">Error</a> QServiceManager::error () const</h3>
 <p>Returns the type of error that last occurred.</p>
 <h3 class="fn"><a name="findInterfaces"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a>&gt; QServiceManager::findInterfaces ( const <a href="qservicefilter.html">QServiceFilter</a> &amp; <i>filter</i> = QServiceFilter() ) const</h3>
@@ -158,6 +158,7 @@
 <p>Returns true if the unregistration succeeded, and false otherwise.</p>
 <p>If a default service implementation is removed and there are other implementations for the same interface, the service manager chooses the implementation with the highest version number as the new default. If there is more than one serivce with the same version number, the service manager makes a random choice with regards to the new default implementation. If this is not the desired behaviour the default selection should be updated via <a href="qservicemanager.html#setInterfaceDefault">setInterfaceDefault</a>().</p>
 <p>Services are always removed based on the <a href="qservicemanager.html#scope">scope</a>() of the current service manager instance.</p>
+<p>See also <a href="qservicemanager.html#addService">addService</a>().</p>
 <h3 class="fn"><a name="scope"></a><a href="qservicemanager.html#Scope-enum">Scope</a> QServiceManager::scope () const</h3>
 <p>Returns the scope used for registering and searching of services.</p>
 <h3 class="fn"><a name="serviceAdded"></a>void QServiceManager::serviceAdded ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>serviceName</i>, <a href="qservicemanager.html#Scope-enum">QServiceManager::Scope</a> <i>scope</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>

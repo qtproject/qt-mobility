@@ -37,6 +37,7 @@
 #include <QFile>
 #include <QSettings>
 #include <QDebug>
+#include <QCoreApplication>
 
 void QSfwTestUtil::setupTempUserDb()
 {
@@ -81,7 +82,8 @@ QString QSfwTestUtil::systemDirectory()
 QString QSfwTestUtil::tempSettingsPath(const char *path)
 {
     // Temporary path for files that are specified explictly in the constructor.
-    QString tempPath = QDir::tempPath();
+    //QString tempPath = QDir::tempPath();
+    QString tempPath = QCoreApplication::applicationDirPath();
     if (tempPath.endsWith("/"))
         tempPath.truncate(tempPath.size() - 1);
     return QDir::toNativeSeparators(tempPath + "/QtServiceFramework_tests/" + QLatin1String(path));
