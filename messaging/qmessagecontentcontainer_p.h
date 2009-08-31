@@ -56,6 +56,27 @@ public:
     ~QMessageContentContainerPrivate()
     {
         delete _attachments;
+        _attachments = 0;
+    }
+
+    const QMessageContentContainerPrivate &QMessageContentContainerPrivate::operator=(const QMessageContentContainerPrivate &other)
+    {
+        if (&other != this) {
+            _type = other._type;
+            _subType = other._subType;
+            _charset = other._charset;
+            _name = other._name;
+            _content = other._content;
+            _textContent = other._textContent;
+            _filename = other._filename;
+            _messageId = other._messageId;
+            _id = other._id;
+            _available = other._available;
+            _size = other._size;
+            _header = other._header;
+        }
+
+        return *this;
     }
 
     QMessageContentContainer *q_ptr;
