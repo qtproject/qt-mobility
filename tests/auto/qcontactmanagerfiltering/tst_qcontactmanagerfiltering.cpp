@@ -1700,8 +1700,8 @@ void tst_QContactManagerFiltering::sorting_data()
             QTest::newRow("integer descending, blanks first") << manager << integerDefAndFieldNames.first << integerDefAndFieldNames.second << (int)(Qt::DescendingOrder) << true << (int)(QContactSortOrder::BlanksFirst) << "defgbac";
         }
         if (!stringDefAndFieldNames.first.isEmpty() && !stringDefAndFieldNames.second.isEmpty()) {
-            QTest::newRow("string ascending (null value), blanks first") << manager << stringDefAndFieldNames.first << stringDefAndFieldNames.second << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksFirst) << "efgabcd";
-            QTest::newRow("string ascending (null value), blanks last") << manager << stringDefAndFieldNames.first << stringDefAndFieldNames.second << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksLast) << "abcdgfe";
+            QTest::newRow("string ascending (null value), blanks first") << manager << stringDefAndFieldNames.first << stringDefAndFieldNames.second << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksFirst) << "fgeabcd";
+            QTest::newRow("string ascending (null value), blanks last") << manager << stringDefAndFieldNames.first << stringDefAndFieldNames.second << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksLast) << "eabcdgf";
         }
     }
 }
@@ -1811,12 +1811,12 @@ void tst_QContactManagerFiltering::multiSorting_data()
             QTest::newRow("8") << manager
                                << true << stringDefAndFieldNames.first << stringDefAndFieldNames.second << (int)(Qt::AscendingOrder)
                                << false << stringDefAndFieldNames.first << stringDefAndFieldNames.second << (int)(Qt::DescendingOrder)
-                               << "abcdgfe";
+                               << "eabcdgf";
 
             QTest::newRow("8b") << manager
                                << true << stringDefAndFieldNames.first << stringDefAndFieldNames.second << (int)(Qt::AscendingOrder)
                                << false << es << es << (int)(Qt::DescendingOrder)
-                               << "abcdgfe";
+                               << "eabcdgf";
         }
 
         QTest::newRow("9") << manager
@@ -2522,6 +2522,9 @@ QList<QUniqueId> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
     QContactName n;
     n.setFirst("John");
     n.setLast("Smithee");
+    string.setValue(definitionDetails.value("String").second, "");
+    if (!definitionDetails.value("String").first.isEmpty() && !definitionDetails.value("String").second.isEmpty())
+        e.saveDetail(&string);
     e.saveDetail(&n);
     n.setLast("Smithey");
     f.saveDetail(&n);

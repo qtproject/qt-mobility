@@ -694,6 +694,18 @@ void tst_QContactDetail::values()
     //QVERIFY(p.removeValue("string"));
     //QCOMPARE(p.values().count(), 0);
 
+    /* Check adding a null value removes the field */
+    p.setValue("string", "stringvalue");
+    QVERIFY(p.values().contains("string"));
+    QVERIFY(p.value("string") == QString("stringvalue"));
+    p.setValue("string", QVariant());
+    QVERIFY(!p.values().contains("string"));
+
+    /* Check adding a field whose value is an empty string */
+    p.setValue("string", "");
+    QVERIFY(p.values().contains("string"));
+    QVERIFY(p.value("string") == QString(""));
+
     /* Check accessing a missing value */
     QCOMPARE(p.value("nonexistent"), QString());
     QCOMPARE(p.error(), QContactDetail::MissingValueError);
