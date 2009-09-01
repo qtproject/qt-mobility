@@ -304,9 +304,17 @@ MapiRestriction::MapiRestriction(const QMessageFilterKey &key)
             QMessage::Status status(static_cast<QMessage::Status>(d_ptr->_value.toUInt()));
             switch (status) {
             case QMessage::Incoming:
-                _restriction.res.resBitMask.relBMR = BMR_EQZ;
-                _restriction.res.resBitMask.ulPropTag = PR_MESSAGE_FLAGS;
-                _restriction.res.resBitMask.ulMask = MSGFLAG_FROMME;
+                _restriction.rt = RES_OR;
+                _restriction.res.resAnd.cRes = 2;
+                _restriction.res.resAnd.lpRes = &_subRestriction[0];
+                _subRestriction[0].rt = RES_EXIST;
+                _subRestriction[0].res.resExist.ulReserved1 = 0;
+                _subRestriction[0].res.resExist.ulPropTag = PR_RECEIVED_BY_ENTRYID;
+                _subRestriction[0].res.resExist.ulReserved2 = 0;
+                _subRestriction[1].rt = RES_EXIST;
+                _subRestriction[1].res.resExist.ulReserved1 = 0;
+                _subRestriction[1].res.resExist.ulPropTag = PR_END_DATE;
+                _subRestriction[1].res.resExist.ulReserved2 = 0;
                 _valid = true;
                 return;
             case QMessage::Read:
@@ -536,6 +544,8 @@ QMessageFilterKey QMessageFilterKey::operator&(const QMessageFilterKey& other) c
 {
     if (isEmpty())
         return QMessageFilterKey(other);
+    if (other.isEmpty())
+        return QMessageFilterKey(*this);
     QMessageFilterKey result;
     result.d_ptr->_left = new QMessageFilterKey(*this);
     result.d_ptr->_right = new QMessageFilterKey(other);
@@ -549,6 +559,8 @@ QMessageFilterKey QMessageFilterKey::operator|(const QMessageFilterKey& other) c
 {
     if (isEmpty())
         return QMessageFilterKey(*this);
+    if (other.isEmpty())
+        return QMessageFilterKey(other);
     QMessageFilterKey result;
     result.d_ptr->_left = new QMessageFilterKey(*this);
     result.d_ptr->_right = new QMessageFilterKey(other);
@@ -566,6 +578,8 @@ const QMessageFilterKey& QMessageFilterKey::operator&=(const QMessageFilterKey& 
         *this = other;
         return *this;
     }
+    if (other.isEmpty())
+        return *this;
     QMessageFilterKey default;
     QMessageFilterKey *left(new QMessageFilterKey(*this));
     QMessageFilterKey *right(new QMessageFilterKey(other));
@@ -584,6 +598,10 @@ const QMessageFilterKey& QMessageFilterKey::operator|=(const QMessageFilterKey& 
         return *this;
     if (isEmpty())
         return *this;
+    if (other.isEmpty()) {
+        *this = other;
+        return *this;
+    }
     QMessageFilterKey default;
     QMessageFilterKey *left(new QMessageFilterKey(*this));
     QMessageFilterKey *right(new QMessageFilterKey(other));
@@ -719,7 +737,6 @@ QMessageFilterKey QMessageFilterKey::recipients(const QString &value, QMessageDa
 
 QMessageFilterKey QMessageFilterKey::recipients(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
-    // Implementing now!! XXX
     if (value.isEmpty()) {
         if (cmp == QMessageDataComparator::Includes)
             return QMessageFilterKey();
