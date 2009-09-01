@@ -64,7 +64,7 @@ public:
     QString avatar() const {return value(FieldAvatar);}
 
     void setSubTypes(const QStringList& subTypes) {setValue(FieldSubType, subTypes);}
-    QStringList subTypes() const {return value(FieldSubType);}
+    QStringList subTypes() const {return value<QStringList>(FieldSubType);}
 };
 
 #endif

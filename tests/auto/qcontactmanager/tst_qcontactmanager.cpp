@@ -168,12 +168,12 @@ void tst_QContactManager::dumpContactDifferences(const QContact& ca, const QCont
     bDetails = b.details();
     foreach(QContactDetail d, aDetails) {
         if (d.definitionName() != QContactDisplayLabel::DefinitionName)
-            qDebug() << "A contact had extra detail:" << d.definitionName() << d.attributes() << d.values();
+            qDebug() << "A contact had extra detail:" << d.definitionName() << d.values();
     }
     // and same for B
     foreach(QContactDetail d, bDetails) {
         if (d.definitionName() != QContactDisplayLabel::DefinitionName)
-            qDebug() << "B contact had extra detail:" << d.definitionName() << d.attributes() << d.values();
+            qDebug() << "B contact had extra detail:" << d.definitionName() << d.values();
     }
 
     QCOMPARE(b, a);
@@ -218,7 +218,6 @@ void tst_QContactManager::dumpContact(const QContact& contact)
     QList<QContactDetail> details = contact.details();
     foreach(QContactDetail d, details) {
         qDebug() << "  " << d.definitionName() << ":";
-        qDebug() << "    Attr:" << d.attributes();
         qDebug() << "    Vals:" << d.values();
     }
 }
@@ -691,8 +690,8 @@ void tst_QContactManager::add()
 
     QContactPhoneNumber ph;
     ph.setNumber("1234567");
-    ph.setAttribute("Context", "Home");
-    ph.setAttribute("SubType", "Mobile");
+    ph.setContexts(QStringList("Home"));
+    ph.setSubTypes(QStringList("Mobile"));
 
     alice.saveDetail(&ph);
     int currCount = cm->contacts().count();
@@ -781,6 +780,10 @@ void tst_QContactManager::add()
         megacontact.saveDetail(&det);
     }
 
+    QContactDisplayLabel testLabel;
+    testLabel.setLabel("testlabel");
+    testLabel.setSynthesised(false);
+    megacontact.setDisplayLabel(testLabel);
     QVERIFY(cm->saveContact(&megacontact)); // must be able to save since built from definitions.
     QContact retrievedMegacontact = cm->contact(megacontact.id());
     QCOMPARE(retrievedMegacontact, megacontact); // should be the same.
@@ -819,8 +822,8 @@ void tst_QContactManager::update()
 
     QContactPhoneNumber ph;
     ph.setNumber("1234567");
-    ph.setAttribute("Context", "Home");
-    ph.setAttribute("SubType", "Mobile");
+    ph.setContexts(QStringList("Home"));
+    ph.setSubTypes(QStringList("Mobile"));
 
     alice.saveDetail(&ph);
 
@@ -865,8 +868,8 @@ void tst_QContactManager::remove()
 
     QContactPhoneNumber ph;
     ph.setNumber("1234567");
-    ph.setAttribute("Context", "Home");
-    ph.setAttribute("SubType", "Mobile");
+    ph.setContexts(QStringList("Home"));
+    ph.setSubTypes(QStringList("Mobile"));
 
     alice.saveDetail(&ph);
 

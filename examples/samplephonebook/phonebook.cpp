@@ -301,29 +301,28 @@ QContact PhoneBook::buildContact() const
 
     QContactEmailAddress emailAddress;
     emailAddress.setEmailAddress(emailLine->text());
-    emailAddress.setAttribute(QContactDetail::AttributeSubType, QContactEmailAddress::AttributeSubTypeInternet);
     c.saveDetail(&emailAddress);
 
     QContactPhoneNumber homePhone;
     homePhone.setNumber(homePhoneLine->text());
-    homePhone.setAttribute(QContactDetail::AttributeContext, QContactDetail::AttributeContextHome);
-    homePhone.setAttribute(QContactDetail::AttributeSubType, QContactPhoneNumber::AttributeSubTypeLandline);
+    homePhone.setContexts(QStringList(QContactDetail::ContextHome));
+    homePhone.setSubTypes(QStringList(QContactPhoneNumber::SubTypeLandline));
     c.saveDetail(&homePhone);
 
     QContactPhoneNumber workPhone;
     workPhone.setNumber(workPhoneLine->text());
-    workPhone.setAttribute(QContactDetail::AttributeContext, QContactDetail::AttributeContextWork);
-    workPhone.setAttribute(QContactDetail::AttributeSubType, QContactPhoneNumber::AttributeSubTypeLandline);
+    homePhone.setContexts(QStringList(QContactDetail::ContextWork));
+    homePhone.setSubTypes(QStringList(QContactPhoneNumber::SubTypeLandline));
     c.saveDetail(&workPhone);
 
     QContactPhoneNumber mobilePhone;
     mobilePhone.setNumber(mobilePhoneLine->text());
-    mobilePhone.setAttribute(QContactDetail::AttributeSubType, QContactPhoneNumber::AttributeSubTypeMobile);
+    homePhone.setSubTypes(QStringList(QContactPhoneNumber::SubTypeMobile));
     c.saveDetail(&mobilePhone);
 
     QContactAddress address;
     address.setDisplayLabel(addressText->toPlainText());
-    address.setAttribute(QContactDetail::AttributeSubType, QContactAddress::AttributeSubTypeDomestic + "," + QContactAddress::AttributeSubTypeParcel + "," + QContactAddress::AttributeSubTypePostal);
+    address.setSubTypes(QStringList() << QContactAddress::SubTypeDomestic << QContactAddress::SubTypeParcel << QContactAddress::SubTypePostal);
     c.saveDetail(&address);
 
     return c;
@@ -348,10 +347,10 @@ void PhoneBook::displayContact()
     bool foundMobilePhone = false;
     for (int i = 0; i < phns.size(); i++) {
         QContactPhoneNumber current = phns.at(i);
-        if (current.attribute(QContactDetail::AttributeSubType).contains(QContactPhoneNumber::AttributeSubTypeMobile)) {
+        if (current.subTypes().contains(QContactPhoneNumber::SubTypeMobile)) {
             mobilePhoneLine->setText(current.number());
             foundMobilePhone = true;
-        } else if (current.attribute(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextWork)) {
+        } else if (current.contexts().contains(QContactDetail::ContextWork)) {
             workPhoneLine->setText(current.number());
             foundWorkPhone = true;
         } else {

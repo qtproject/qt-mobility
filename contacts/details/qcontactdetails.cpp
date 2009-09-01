@@ -286,6 +286,12 @@ Q_DEFINE_LATIN1_LITERAL(QContactSyncTarget::FieldSyncTarget, "SyncTarget");
 Q_DEFINE_LATIN1_LITERAL(QContactAvatar::FieldAvatar, "Avatar");
 
 /*!
+ * \variable QContactAvatar::FieldSubType
+ * The constant key for which the subtypes value is stored in details of the QContactAvatar type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactAvatar::FieldSubType, "SubType");
+
+/*!
  * \variable QContactName::FieldPrefix
  * The constant key for which the name prefix value is stored in details of the QContactName type
  */
@@ -358,10 +364,22 @@ Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldPostcode, "Postcode");
 Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldCountry, "Country");
 
 /*!
+ * \variable QContactAddress::FieldSubType
+ * The constant key for which the subtypes value is stored in details of the QContactAddress type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldSubType, "SubType");
+
+/*!
  * \variable QContactUrl::FieldUrl
  * The constant key for which the url value is stored in details of the QContactUrl type
  */
 Q_DEFINE_LATIN1_LITERAL(QContactUrl::FieldUrl, "Url");
+
+/*!
+ * \variable QContactUrl::FieldSubType
+ * The constant key for which the subtypes value is stored in details of the QContactUrl type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactUrl::FieldSubType, "SubType");
 
 /*!
  * \variable QContactBirthday::FieldBirthday
@@ -386,6 +404,12 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::FieldEvent, "Event");
  * The constant key for which the value of the identifier of the associated calendar entry is stored in details of the QContactAnniversary type
  */
 Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::FieldCalendarId, "CalendarId");
+
+/*!
+ * \variable QContactAnniversary::FieldSubType
+ * The constant key for which the subtypes value is stored in details of the QContactAnniversary type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::FieldSubType, "SubType");
 
 /*!
  * \variable QContactGender::FieldGender

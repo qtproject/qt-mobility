@@ -87,7 +87,7 @@ public:
     QString country() const {return value(FieldCountry);}
 
     void setSubTypes(const QStringList& subTypes) {setValue(FieldSubType, subTypes);}
-    QStringList subTypes() const {return value(FieldSubType);}
+    QStringList subTypes() const {return value<QStringList>(FieldSubType);}
 };
 
 #endif

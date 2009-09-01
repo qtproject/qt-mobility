@@ -92,32 +92,32 @@ public:
         return variantValue(key).value<T>();
     }
 
-    void removeContext(const QString& context)
-    {
-        QStringList contexts = contexts();
-        if (!contexts.contains(context))
-            return;
-        contexts.removeAll(context);
-        setContexts(contexts);
-    }
-
-    void addContext(const QString& context)
-    {
-        QStringList contexts = contexts();
-        if (contexts.contains(context))
-            return;
-        contexts.append(context);
-        setContexts(contexts);
-    }
-
     void setContexts(const QStringList& contexts)
     {
-        setValue(Context, contexts);
+        setValue(FieldContext, contexts);
     }
 
     QStringList contexts() const
     {
-        return value(Context);
+        return value<QStringList>(FieldContext);
+    }
+
+    void removeContext(const QString& context)
+    {
+        QStringList currContexts = contexts();
+        if (!currContexts.contains(context))
+            return;
+        currContexts.removeAll(context);
+        setContexts(currContexts);
+    }
+
+    void addContext(const QString& context)
+    {
+        QStringList currContexts = contexts();
+        if (currContexts.contains(context))
+            return;
+        currContexts.append(context);
+        setContexts(currContexts);
     }
 
 

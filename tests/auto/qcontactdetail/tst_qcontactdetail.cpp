@@ -53,7 +53,7 @@ public slots:
 private slots:
     void classHierarchy();
     void templates();
-    void attributes();
+    void contexts();
     void values();
 };
 
@@ -167,11 +167,11 @@ void tst_QContactDetail::classHierarchy()
     QVERIFY(m2.definitionName() == QContactName::DefinitionName);
     QVERIFY(m2.isEmpty());
 
-    /* Check attributes are considered for equality */
+    /* Check contexts are considered for equality */
     p2 = p1;
-    p2.setAttribute(QContactPhoneNumber::AttributeContext, QContactPhoneNumber::AttributeContextHome);
+    p2.addContext(QContactDetail::ContextHome);
     QVERIFY(p1 != p2);
-    p2.removeAttribute(QContactPhoneNumber::AttributeContext);
+    p2.removeValue(QContactDetail::FieldContext); // note, context is a value.
     QVERIFY(p1 == p2);
 
     /* Copy ctor from valid type */
@@ -441,40 +441,49 @@ void tst_QContactDetail::templates()
     QCOMPARE(l2.at(1), p2);
 }
 
-void tst_QContactDetail::attributes()
+void tst_QContactDetail::contexts()
 {
     QContactDetail d;
-    QVERIFY(d.attributes().count() == 0);
+    QVERIFY(d.contexts().count() == 0);
 
-    QMap<QString, QString> mine;
-    mine.insert("string", "string");
-    mine.insert("one", "1");
-    mine.insert("two", "2");
+    // test add context
+    d.addContext(QContactDetail::ContextWork);
+    QVERIFY(d.contexts().count() == 1);
+    d.addContext(QContactDetail::ContextOther);
+    QVERIFY(d.contexts().count() == 2);
+    QVERIFY(d.contexts().contains(QContactDetail::ContextWork));
+    QVERIFY(d.contexts().contains(QContactDetail::ContextOther));
+    QVERIFY(!d.contexts().contains(QContactDetail::ContextHome));
 
-    QVERIFY(d.setAttributes(QMap<QString, QString>()));
-    QVERIFY(d.attributes().count() == 0);
+    // test removing nonexistent context - no effect.
+    d.removeContext(QContactDetail::ContextHome);
+    QVERIFY(d.contexts().count() == 2);
+    QVERIFY(d.contexts().contains(QContactDetail::ContextWork));
+    QVERIFY(d.contexts().contains(QContactDetail::ContextOther));
+    QVERIFY(!d.contexts().contains(QContactDetail::ContextHome));
 
-    QVERIFY(d.setAttribute("exists", "value"));
-    QCOMPARE(d.attributes().count(), 1);
-    QCOMPARE(d.attribute("exists"), QString("value"));
+    // test removing existing context
+    d.removeContext(QContactDetail::ContextWork);
+    QVERIFY(d.contexts().count() == 1);
+    QVERIFY(!d.contexts().contains(QContactDetail::ContextWork));
+    QVERIFY(d.contexts().contains(QContactDetail::ContextOther));
+    QVERIFY(!d.contexts().contains(QContactDetail::ContextHome));
 
-    QVERIFY(d.setAttributes(mine));
-    QCOMPARE(mine, d.attributes());
+    // test set contexts
+    QStringList contexts;
+    contexts.append(QContactDetail::ContextHome);
+    contexts.append(QContactDetail::ContextWork);
+    contexts.append("CustomContext");
+    d.setContexts(contexts);
+    QVERIFY(d.contexts().count() == 3);
+    QVERIFY(d.contexts().contains(QContactDetail::ContextWork));
+    QVERIFY(!d.contexts().contains(QContactDetail::ContextOther));
+    QVERIFY(d.contexts().contains(QContactDetail::ContextHome));
+    QVERIFY(d.contexts().contains("CustomContext"));
+    QCOMPARE(d.contexts(), contexts);
 
-    QCOMPARE(d.attribute("string"), QString("string"));
-    QCOMPARE(d.attribute("one"), QString("1"));
-    QCOMPARE(d.attribute("two"), QString("2"));
-    QCOMPARE(d.attribute("nonexistent"), QString());
-    QCOMPARE(d.attribute(QString()), QString());
-    QCOMPARE(d.attribute("exists"), QString()); // should not exist any more
-
-    QVERIFY(d.setAttribute("three", "3"));
-    QCOMPARE(d.attribute("three"), QString("3"));
-
-    QVERIFY(d.removeAttribute("three"));
-    QCOMPARE(d.attribute("three"), QString());
-
-    QCOMPARE(d.attributes(), mine);
+    // test that contexts are values.
+    QCOMPARE(d.value<QStringList>(QContactDetail::FieldContext), d.contexts());
 }
 
 void tst_QContactDetail::values()

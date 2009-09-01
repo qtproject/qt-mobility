@@ -310,6 +310,35 @@ QVariantMap QContactDetail::values() const
 }
 
 /*!
+ * \fn void QContactDetail::setContexts(const QStringList& contexts)
+ *
+ * This is a convenience function that sets the \c Context field of this detail to the given \a contexts.
+ *
+ * Not all details have meaningful values for the \c Context field - refer to either the
+ * schema or specific classes like \l QContactPhoneNumber for more information.
+ *
+ * It is equivalent to the following code:
+ * \code
+ * setValue(QContactDetail::FieldContext, contexts);
+ * \endcode
+ *
+ * \sa setValue()
+ */
+
+/*!
+ * \fn QStringList QContactDetail::contexts() const
+ *
+ * This is a convenience function to return the \c Context field of this detail.
+ *
+ * It is equivalent to the following code:
+ * \code
+ * value(QContactDetail::FieldContext);
+ * \endcode
+ *
+ * \sa value()
+ */
+
+/*!
  * \fn void QContactDetail::removeContext(const QString& context)
  *
  * This is a convenience function that removes the given \a context from the list of contexts for
@@ -345,33 +374,4 @@ QVariantMap QContactDetail::values() const
  * \endcode
  *
  * \sa setContexts()
- */
-
-/*!
- * \fn void QContactDetail::setContexts(const QStringList& contexts)
- *
- * This is a convenience function that sets the \c Context field of this detail to the given \a contexts.
- *
- * Not all details have meaningful values for the \c Context field - refer to either the
- * schema or specific classes like \l QContactPhoneNumber for more information.
- *
- * It is equivalent to the following code:
- * \code
- * setValue(QContactDetail::FieldContext, contexts);
- * \endcode
- *
- * \sa setValue()
- */
-
-/*!
- * \fn QStringList QContactDetail::contexts() const
- *
- * This is a convenience function to return the \c Context field of this detail.
- *
- * It is equivalent to the following code:
- * \code
- * value(QContactDetail::FieldContext);
- * \endcode
- *
- * \sa value()
  */

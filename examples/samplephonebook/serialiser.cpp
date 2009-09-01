@@ -56,7 +56,7 @@ QString Serialiser::escaped(const QString& input)
 QString Serialiser::convertDetail(const QContact& contact, const QContactDetail& detail, const QString& vcardField)
 {
     // the format of the converted detail will be:
-    // X-com-nokia-mobility-contacts-vcard-detail-UUID;vcardField;definitionName;key=value,key=value;attr=bute,attr=bute;preferredFor=actionId,actionId
+    // X-com-nokia-mobility-contacts-vcard-detail-UUID;vcardField;definitionName;key=value,key=value;preferredFor=actionId,actionId
     // where each of the elements are escaped strings.
     QString retn = "X-com-nokia-mobility-contacts-vcard-detail-";
     retn += escaped(QUuid::createUuid().toString());
@@ -71,16 +71,6 @@ QString Serialiser::convertDetail(const QContact& contact, const QContactDetail&
         retn += escaped(key);
         retn += "=";
         retn += escaped(vals.value(key).toString());
-        retn += ",";
-    }
-    retn.chop(1);
-    retn += ";";
-
-    QMap<QString, QString> attrs = detail.attributes();
-    foreach (const QString& key, attrs.keys()) {
-        retn += escaped(key);
-        retn += "=";
-        retn += escaped(attrs.value(key));
         retn += ",";
     }
     retn.chop(1);
@@ -328,7 +318,6 @@ QContactDetail Serialiser::convertCustomString(const QString& customString)
     QStringList keys = values.keys();
     foreach (const QString& key, keys)
         retn.setValue(key, values.value(key));
-    retn.setAttributes(attrs);
     return retn;
 }
 
@@ -367,24 +356,29 @@ QContact Serialiser::convertVcard(const QStringList& vcardLines)
                 // this must be another program's custom field.  ignore it.
             } else {
                 // this is a built-in vcard supported field.  build the detail.
-                det.setAttribute(QContactDetail::AttributeContext, parseContext(line));
-                det.setAttribute(QContactDetail::AttributeSubType, parseAttributes(line));
+                QStringList contexts = parseContext(line);
+                if (!contexts.isEmpty())
+                    det.setContexts(contexts);
                 if (defId == QContactPhoneNumber::DefinitionName) {
+                    det.setValue(QContactPhoneNumber::FieldSubType, parseAttributes(line));
                     det.setValue(QContactPhoneNumber::FieldNumber, parseValue(line));
                     vcardDetails.insert("TEL", det);
                 } else if (defId == QContactEmailAddress::DefinitionName) {
                     det.setValue(QContactEmailAddress::FieldEmailAddress, parseValue(line));
                     vcardDetails.insert("EMAIL", det);
                 } else if (defId == "Url") {
-                    det.setValue("Url", parseValue(line));
+                    det.setValue(QContactUrl::FieldSubType, parseAttributes(line));
+                    det.setValue(QContactUrl::DefinitionName, parseValue(line));
                     vcardDetails.insert("URL", det);
                 } else if (defId == QContactAvatar::DefinitionName) {
+                    det.setValue(QContactAvatar::FieldSubType, parseAttributes(line));
                     det.setValue(QContactAvatar::FieldAvatar, parseValue(line));
                     vcardDetails.insert("PHOTO", det);
                 } else if (defId == QContactGuid::DefinitionName) {
                     det.setValue(QContactGuid::FieldGuid, parseValue(line));
                     vcardDetails.insert("UID", det);
                 } else if (defId == QContactAddress::DefinitionName) {
+                    det.setValue(QContactAddress::FieldSubType, parseAttributes(line));
                     QStringList fieldValues = parseValue(line).split(";");
                     // ignore values 0 and 1 (extended and postal address) in this implementation
                     det.setValue(QContactAddress::FieldStreet, fieldValues.value(2));
@@ -556,13 +550,13 @@ QContactDetail Serialiser::parsePropertyType(const QString& line)
     return QContactDetail();
 }
 
-QString Serialiser::parseContext(const QString& line)
+QStringList Serialiser::parseContext(const QString& line)
 {
     // depending on the TYPE= section, return a context (work/home/...)
     // returns the first one found.
-    QString result = "";
+    QStringList result;
     QStringList contexts;
-    contexts << QContactDetail::AttributeContextHome << QContactDetail::AttributeContextWork << "Other";
+    contexts << QContactDetail::ContextHome << QContactDetail::ContextWork << QContactDetail::ContextOther;
     QStringList semiColonSplit = line.split(";");
     for (int i = 0; i < semiColonSplit.size(); i++) {
         QString currSplit = semiColonSplit.at(i);
@@ -570,7 +564,7 @@ QString Serialiser::parseContext(const QString& line)
             for (int j = 0; j < contexts.size(); j++) {
                 QString currContext = contexts.at(j);
                 if (currSplit.contains(currContext.toLower()) && !result.contains(currContext)) {
-                    result = currContext;
+                    result.append(currContext);
                     return result;
                 }
             }
@@ -596,7 +590,7 @@ QString Serialiser::parseAttributes(const QString& line)
     // return any special attributes of this field
     QString result = "";
     QStringList contexts;
-    contexts << QContactDetail::AttributeContextHome << QContactDetail::AttributeContextWork << "Other";
+    contexts << QContactDetail::ContextHome << QContactDetail::ContextWork << QContactDetail::ContextOther;
     QStringList semiColonSplit = line.split(";");
     for (int i = 0; i < semiColonSplit.size(); i++) {
         QString currSplit = semiColonSplit.at(i);
@@ -729,12 +723,15 @@ QStringList Serialiser::convertContact(const QContact& contact)
             // any number of address fields are allowed.
             entry = "ADR;TYPE=";
             QString typestr = "";
-            if (det.attributes().value(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextHome)) typestr += "home,";
-            if (det.attributes().value(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextWork)) typestr += "work,";
-            if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactAddress::AttributeSubTypeDomestic)) typestr += "dom,";
-            if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactAddress::AttributeSubTypeInternational)) typestr += "intl,";
-            if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactAddress::AttributeSubTypeParcel)) typestr += "parcel,";
-            if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactAddress::AttributeSubTypePostal)) typestr += "postal,";
+            QStringList subTypes = det.value<QStringList>(QContactAddress::FieldSubType);
+            QStringList contexts = det.contexts();
+            if (contexts.contains(QContactDetail::ContextHome)) typestr += "home,";
+            if (contexts.contains(QContactDetail::ContextWork)) typestr += "work,";
+            if (contexts.contains(QContactDetail::ContextOther)) typestr += "other,";
+            if (subTypes.contains(QContactAddress::SubTypeDomestic)) typestr += "dom,";
+            if (subTypes.contains(QContactAddress::SubTypeInternational)) typestr += "intl,";
+            if (subTypes.contains(QContactAddress::SubTypeParcel)) typestr += "parcel,";
+            if (subTypes.contains(QContactAddress::SubTypePostal)) typestr += "postal,";
             if (detailIsPreferredForAnything(contact, det)) typestr += "pref,";
             typestr.chop(1);
             entry += typestr + ":;;" + det.value(QContactAddress::FieldStreet) + ";" + det.value(QContactAddress::FieldLocality) + ";" + det.value(QContactAddress::FieldRegion) + ";" + det.value(QContactAddress::FieldPostcode) + ";" + det.value(QContactAddress::FieldCountry);
@@ -762,16 +759,19 @@ QStringList Serialiser::convertContact(const QContact& contact)
             // any number of telephone fields are allowed.
             entry = "TEL;TYPE=";
             QString typeStr = "";
-            if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactPhoneNumber::AttributeSubTypeMobile)) typeStr += "cell,";
-            if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactPhoneNumber::AttributeSubTypeFacsimile)) typeStr += "fax,";
-            if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactPhoneNumber::AttributeSubTypeVideo)) typeStr += "video,";
-            if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactPhoneNumber::AttributeSubTypePager)) typeStr += "pager,";
-            if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactPhoneNumber::AttributeSubTypeModem)) typeStr += "modem,";
-            if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactPhoneNumber::AttributeSubTypeBulletinBoardSystem)) typeStr += "bbs,";
-            if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactPhoneNumber::AttributeSubTypeMessagingCapable)) typeStr += "msg,";
-            if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactPhoneNumber::AttributeSubTypeLandline) || typeStr.isEmpty()) typeStr += "voice,";
-            if (det.attributes().value(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextHome)) typeStr = "home," + typeStr;
-            if (det.attributes().value(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextWork)) typeStr = "work," + typeStr;
+            QStringList subTypes = det.value<QStringList>(QContactAddress::FieldSubType);
+            QStringList contexts = det.contexts();
+            if (subTypes.contains(QContactPhoneNumber::SubTypeMobile)) typeStr += "cell,";
+            if (subTypes.contains(QContactPhoneNumber::SubTypeFacsimile)) typeStr += "fax,";
+            if (subTypes.contains(QContactPhoneNumber::SubTypeVideo)) typeStr += "video,";
+            if (subTypes.contains(QContactPhoneNumber::SubTypePager)) typeStr += "pager,";
+            if (subTypes.contains(QContactPhoneNumber::SubTypeModem)) typeStr += "modem,";
+            if (subTypes.contains(QContactPhoneNumber::SubTypeBulletinBoardSystem)) typeStr += "bbs,";
+            if (subTypes.contains(QContactPhoneNumber::SubTypeMessagingCapable)) typeStr += "msg,";
+            if (subTypes.contains(QContactPhoneNumber::SubTypeLandline) || typeStr.isEmpty()) typeStr += "voice,";
+            if (contexts.contains(QContactDetail::ContextHome)) typeStr = "home," + typeStr;
+            if (contexts.contains(QContactDetail::ContextWork)) typeStr = "work," + typeStr;
+            if (contexts.contains(QContactDetail::ContextOther)) typeStr = "other," + typeStr;
             if (detailIsPreferredForAnything(contact, det)) typeStr += "pref,";
             typeStr.chop(1);
             entry += typeStr + ":" + det.value(QContactPhoneNumber::FieldNumber);

@@ -95,16 +95,16 @@ void addContact(QContactManager* cm)
 
     /* Add a phone number */
     QContactPhoneNumber number;
-    number.setAttribute("Context", "Home");
-    number.setAttribute("SubType", "Mobile");
+    number.addContext("Home");
+    number.setSubTypes(QStringList("Mobile"));
     number.setNumber("12345678");
     alice.saveDetail(&number);
     alice.setPreferredDetail("DialAction", number);
 
     /* Add a second phone number */
     QContactPhoneNumber number2;
-    number2.setAttribute("Context", "Work");
-    number2.setAttribute("SubType", "Landline");
+    number2.addContext("Work");
+    number2.setSubTypes(QStringList("Landline"));
     number2.setNumber("555-4444");
     alice.saveDetail(&number2);
 
@@ -235,8 +235,7 @@ void editView(QContactManager* cm)
     /* Add an email address */
     QContactEmailAddress email;
     email.setEmailAddress("alice.jones@example");
-    email.setAttribute("Context", "Work");
-    email.setAttribute("Subtype", "Internet");
+    email.addContext("Work");
     email.setValue("Label", "Alice's Work Email Address");
 
     /* Save the updated details to the contact. */

@@ -80,7 +80,7 @@ public:
     QString number() const {return value(FieldNumber);}
 
     void setSubTypes(const QStringList& subTypes) {setValue(FieldSubType, subTypes);}
-    QStringList subTypes() const {return value(FieldSubType);}
+    QStringList subTypes() const {return value<QStringList>(FieldSubType);}
 };
 //! [0]
 

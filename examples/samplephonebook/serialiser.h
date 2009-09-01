@@ -53,7 +53,7 @@ private:
     static QContactDetail convertCustomString(const QString& customString);
     static QStringList removeClutter(const QStringList& vcard);
     static QContactDetail parsePropertyType(const QString& line);
-    static QString parseContext(const QString& line);
+    static QStringList parseContext(const QString& line);
     static QString parseValue(const QString& line);
     static QString parseAttributes(const QString& line);
     static bool parsePreferred(const QString& line);
