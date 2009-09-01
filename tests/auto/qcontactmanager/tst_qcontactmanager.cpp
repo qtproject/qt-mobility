@@ -738,7 +738,12 @@ void tst_QContactManager::add()
             QContactDetailDefinition::Field currentField = fieldmap.value(fieldKey);
             if (!currentField.allowableValues.isEmpty()) {
                 // we want to save a value that will be accepted.
-                det.setValue(fieldKey, currentField.allowableValues.first());
+                if (currentField.dataType == QVariant::StringList)
+                    det.setValue(fieldKey, QStringList() << currentField.allowableValues.first().toString());
+                else if (currentField.dataType == QVariant::List)
+                    det.setValue(fieldKey, QVariantList() << currentField.allowableValues.first());
+                else
+                    det.setValue(fieldKey, currentField.allowableValues.first());
             } else {
                 // any value of the correct type will be accepted
                 bool savedSuccessfully = false;
