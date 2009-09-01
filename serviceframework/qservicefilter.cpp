@@ -52,6 +52,7 @@ public:
     QServiceFilter::VersionMatchRule matchingRule;
     QHash<QString,QString> customProperties;
     friend class QServiceFilter;
+    QStringList capabilities;
 };
 
 
@@ -60,6 +61,9 @@ public:
     \brief The QServiceFilter class defines criteria for defining a sub-set of 
     all available services.
 
+    A QServiceFilter can be used to constrain the number of services when searching
+    for services. Only those services that match all filter criteria are returned
+    by \l QServiceManager::findInterfaces().
     
 
     \sa QServiceInterfaceDescriptor, QServiceManager
@@ -309,6 +313,28 @@ QList<QString> QServiceFilter::customKeys() const
     return d->customProperties.keys();
 }
 
+/*!
+    Returns the list of \a capabilities which are used to constrain
+    searches for services. An empty list is considered a wild card
+    and matches any service.
+    
+    \sa capabilities(), QAbstractSecuritySession
+*/
+void QServiceFilter::setCapabilities(const QStringList& capabilities)
+{
+    d->capabilities = capabilities;
+}
+
+/*!
+    Returns the list of capabilities which are used to limit services searches.
+
+    \sa setCapabilities(), QAbstractSecuritySession
+*/
+QStringList QServiceFilter::capabilities() const
+{
+    return d->capabilities;
+}
+
 #ifndef QT_NO_DATASTREAM
 /*! 
     \fn QDataStream &operator<<(QDataStream &out, const QServiceFilter &sf)
@@ -320,7 +346,6 @@ QList<QString> QServiceFilter::customKeys() const
 
 QDataStream &operator<<(QDataStream &out, const QServiceFilter &sf)
 {
-
     const qint32 mj = sf.d->majorVersion;
     const qint32 mn = sf.d->minorVersion;
     const qint32 rule = (qint32) sf.d->matchingRule;
@@ -330,6 +355,7 @@ QDataStream &operator<<(QDataStream &out, const QServiceFilter &sf)
     out << mn;
     out << rule;
     out << sf.d->customProperties;
+    out << sf.d->capabilities;
     return out;
 }
 
@@ -350,6 +376,7 @@ QDataStream &operator>>(QDataStream &in, QServiceFilter &sf)
     in >> mn;
     in >> rule;
     in >> sf.d->customProperties;
+    in >> sf.d->capabilities;
 
     sf.d->majorVersion = mj;
     sf.d->minorVersion = mn;

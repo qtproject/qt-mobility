@@ -24,6 +24,7 @@
         <keyword ref="qservicefilter.html#VersionMatchRule-enum">VersionMatchRule</keyword>
         <keyword ref="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::ExactVersionMatch</keyword>
         <keyword ref="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::MinimumVersionMatch</keyword>
+        <keyword ref="qservicefilter.html#capabilities">capabilities</keyword>
         <keyword ref="qservicefilter.html#clearCustomProperties">clearCustomProperties</keyword>
         <keyword ref="qservicefilter.html#customKeys">customKeys</keyword>
         <keyword ref="qservicefilter.html#customProperty">customProperty</keyword>
@@ -32,6 +33,7 @@
         <keyword ref="qservicefilter.html#interfaceName">interfaceName</keyword>
         <keyword ref="qservicefilter.html#removeCustomProperty">removeCustomProperty</keyword>
         <keyword ref="qservicefilter.html#serviceName">serviceName</keyword>
+        <keyword ref="qservicefilter.html#setCapabilities">setCapabilities</keyword>
         <keyword ref="qservicefilter.html#setCustomProperty">setCustomProperty</keyword>
         <keyword ref="qservicefilter.html#setInterface">setInterface</keyword>
         <keyword ref="qservicefilter.html#setServiceName">setServiceName</keyword>

@@ -31,6 +31,7 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#QServiceFilter-2">QServiceFilter</a></b> ( const QServiceFilter &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#QServiceFilter-3">QServiceFilter</a></b> ( const QString &amp; <i>interfaceName</i>, const QString &amp; <i>version</i> = QString(), QServiceFilter::VersionMatchRule <i>rule</i> = QServiceFilter::MinimumVersionMatch )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#dtor.QServiceFilter">~QServiceFilter</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#capabilities">capabilities</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#clearCustomProperties">clearCustomProperties</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QString&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#customKeys">customKeys</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#customProperty">customProperty</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
@@ -39,6 +40,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#interfaceName">interfaceName</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#removeCustomProperty">removeCustomProperty</a></b> ( const QString &amp; <i>key</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#serviceName">serviceName</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#setCapabilities">setCapabilities</a></b> ( const QStringList &amp; <i>capabilities</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#setCustomProperty">setCustomProperty</a></b> ( const QString &amp; <i>key</i>, const QString &amp; <i>value</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#setInterface">setInterface</a></b> ( const QString &amp; <i>interfaceName</i>, const QString &amp; <i>version</i> = QString(), QServiceFilter::VersionMatchRule <i>rule</i> = QServiceFilter::MinimumVersionMatch )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#setServiceName">setServiceName</a></b> ( const QString &amp; <i>serviceName</i> )</td></tr>
@@ -56,6 +58,7 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QServiceFilter class defines criteria for defining a sub-set of all available services.</p>
+<p>A QServiceFilter can be used to constrain the number of services when searching for services. Only those services that match all filter criteria are returned by <a href="qservicemanager.html#findInterfaces">QServiceManager::findInterfaces</a>().</p>
 <p>See also <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> and <a href="qservicemanager.html">QServiceManager</a>.</p>
 <hr />
 <h2>Member Type Documentation</h2>
@@ -76,6 +79,9 @@
 <p>Creates a new filter object that matches all service implementations implementing <i>interfaceName</i> that match the specified <i>version</i> using the given <i>rule</i>.</p>
 <h3 class="fn"><a name="dtor.QServiceFilter"></a>QServiceFilter::~QServiceFilter ()</h3>
 <p>Destroys this instance of <a href="qservicefilter.html">QServiceFilter</a>.</p>
+<h3 class="fn"><a name="capabilities"></a><a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> QServiceFilter::capabilities () const</h3>
+<p>Returns the list of capabilities which are used to limit services searches.</p>
+<p>See also <a href="qservicefilter.html#setCapabilities">setCapabilities</a>() and <a href="qabstractsecuritysession.html">QAbstractSecuritySession</a>.</p>
 <h3 class="fn"><a name="clearCustomProperties"></a>void QServiceFilter::clearCustomProperties ()</h3>
 <p>Clears all custom properties from the filter's set of constraints</p>
 <p>See also <a href="qservicefilter.html#removeCustomProperty">removeCustomProperty</a>().</p>
@@ -99,6 +105,9 @@
 <h3 class="fn"><a name="serviceName"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QServiceFilter::serviceName () const</h3>
 <p>Returns the service name for this filter.</p>
 <p>See also <a href="qservicefilter.html#setServiceName">setServiceName</a>().</p>
+<h3 class="fn"><a name="setCapabilities"></a>void QServiceFilter::setCapabilities ( const <a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> &amp; <i>capabilities</i> )</h3>
+<p>Returns the list of <i>capabilities</i> which are used to constrain searches for services. An empty list is considered a wild card and matches any service.</p>
+<p>See also <a href="qservicefilter.html#capabilities">capabilities</a>() and <a href="qabstractsecuritysession.html">QAbstractSecuritySession</a>.</p>
 <h3 class="fn"><a name="setCustomProperty"></a>void QServiceFilter::setCustomProperty ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>key</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>value</i> )</h3>
 <p>The filter only matches implementations which have the custom property <i>key</i> with the given <i>value</i>. Such constraints are specified via the <i>&lt;customproperty&gt;</i> tag within the service xml.</p>
 <p>See also <a href="qservicefilter.html#customProperty">customProperty</a>() and <a href="qservicefilter.html#removeCustomProperty">removeCustomProperty</a>().</p>

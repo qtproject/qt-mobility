@@ -34,7 +34,7 @@
 #ifndef QSERVICEFILTER_H
 #define QSERVICEFILTER_H
 
-#include <QString>
+#include <QStringList>
 
 #include "qserviceglobal.h"
 
@@ -77,6 +77,9 @@ public:
     void setCustomProperty(const QString& key, const QString& value);
     void removeCustomProperty(const QString &key);
     void clearCustomProperties();
+
+    void setCapabilities(const QStringList& capabilities);
+    QStringList capabilities() const;
 
 private:
     QServiceFilterPrivate *d;

@@ -222,6 +222,10 @@
                 <parameter left="const QString &amp;" right="" name="key" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="clearCustomProperties" fullname="QServiceFilter::clearCustomProperties" href="qservicefilter.html#clearCustomProperties" location="qservicefilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="clearCustomProperties()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setCapabilities" fullname="QServiceFilter::setCapabilities" href="qservicefilter.html#setCapabilities" location="qservicefilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCapabilities(const QStringList &amp; capabilities)">
+                <parameter left="const QStringList &amp;" right="" name="capabilities" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="capabilities" fullname="QServiceFilter::capabilities" href="qservicefilter.html#capabilities" location="qservicefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="capabilities() const"/>
         </class>
         <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qservicefilter.html#operator&lt;&lt;-78" location="qservicefilter.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="78" relates="QServiceFilter" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; out, const QServiceFilter &amp; sf)">
             <parameter left="QDataStream &amp;" right="" name="out" default=""/>
