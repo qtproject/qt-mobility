@@ -24,7 +24,6 @@
 #include <QDir>
 #include <QFile>
 
-#include "tracker2qcontact.h"
 
 Live<nco::Role> QContactTrackerEngineData::contactByContext(const QContactDetail& det, const Live<nco::PersonContact>& ncoContact) {
     if (locationContext(det) == ContactContext::Work) {
@@ -44,16 +43,6 @@ ContactContext::Location QContactTrackerEngineData::locationContext(const QConta
         return ContactContext::Work;
     }
     return ContactContext::Unknown;
-}
-
-template <class T>
-Live<T> QContactTrackerEngineData::nodeByClasstype(QList<Live<nco::ContactMedium> > contactMediums) const {
-    foreach(Live<nco::ContactMedium> media, contactMediums) {
-        if(media.hasType<T>()) {
-            return media;
-        }
-    }
-    return Live<T>();
 }
 
 QContactManagerEngine* ContactTrackerFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
@@ -137,6 +126,7 @@ void QContactTrackerEngine::deref()
 
 QList<QUniqueId> QContactTrackerEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
+    
     // TODO Implement sorting
     QList<QUniqueId> ids;
     if (filter.type() == QContactFilter::ChangeLog) {
@@ -199,29 +189,47 @@ QList<QUniqueId> QContactTrackerEngine::contacts(const QList<QContactSortOrder>&
 
 QContact QContactTrackerEngine::contact(const QUniqueId& contactId, QContactManager::Error& error ) const
 {
+    
     qWarning()<<"QContactManager::contact()"<<"api is not supported for tracker plugin. Please use asynchronous API QContactFetchRequest.";
+    
+    // the rest of the code is for internal usage, unit tests etc.
+    QContactIdListFilter idlist;
+    QList<QUniqueId> ids; ids << contactId;
+    idlist.setIds(ids);
+    QContactFetchRequest request;
+    QStringList fields; fields << QContactPhoneNumber::DefinitionName<<QContactPresence::DefinitionName;
+    fields << QContactAvatar::DefinitionName
+            << QContactBirthday::DefinitionName
+            << QContactAddress::DefinitionName
+            << QContactEmailAddress::DefinitionName
+            << QContactDisplayLabel::DefinitionName
+            << QContactGender::DefinitionName
+            << QContactAnniversary::DefinitionName
+            << QContactName::DefinitionName
+            << QContactOnlineAccount::DefinitionName
+            << QContactOrganisation::DefinitionName
+            << QContactPhoneNumber::DefinitionName
+            << QContactPresence::DefinitionName;
+    request.setDefinitionRestrictions(fields);
+    request.setFilter(idlist);
+
+    QContactTrackerEngine engine(*this);
+    engine.startRequest(&request);
+    // 10 seconds should be enough
+    for(int i = 0; i < 100; i++)
+    {
+        usleep(100000);
+        QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+        if(request.isFinished())
+            break;
+    }
+    if( request.isFinished())
+        error = QContactManager::UnspecifiedError;
     // leave the code for now while not all other code is fixed
     error = QContactManager::NoError;
-
-    // TODO: Do with LiveNodes when they support strict querying.
-    RDFVariable rDFContact = RDFVariable::fromType<nco::PersonContact>();
-
-    rDFContact.property<nco::contactUID>() = LiteralValue(QString::number(contactId));
-
-    RDFSelect query;
-    query.addColumn("contact_id", rDFContact);
-
-    LiveNodes ncoContacts = ::tracker()->modelQuery(query);
-
-    Q_ASSERT( ncoContacts.value().size() <= 1 );
-
-    if(ncoContacts->rowCount() == 0) {
-        error = QContactManager::DoesNotExistError;
-        return QContact();
-    }
-
-    QContact contact;
-    return Tracker2QContact::copyContactData( ncoContacts->liveNode(0), contact ) ? contact : QContact();
+    if( request.contacts().size()>0)
+        return request.contacts()[0];
+    return QContact();
 }
 
 /*!
@@ -724,7 +732,7 @@ QStringList QContactTrackerEngine::fastFilterableDefinitions() const
 }
 
 /*!
- * Returns the list of data types supported by the vCard engine
+ * Returns the list of data types supported by the Tracker engine
  */
 QList<QVariant::Type> QContactTrackerEngine::supportedDataTypes() const
 {

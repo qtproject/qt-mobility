@@ -15,10 +15,8 @@ INCLUDEPATH += .
 
 LIBS += -lqttracker
 HEADERS += qcontacttrackerbackend_p.h \
-    tracker2qcontact.h \
     qtrackercontactasyncrequest.h
 SOURCES += qcontacttrackerbackend.cpp \
-    tracker2qcontact.cpp \
     qtrackercontactasyncrequest.cpp
 
 # QT += contacts

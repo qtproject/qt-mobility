@@ -71,20 +71,6 @@ public:
     mutable QMap<QString, QContactDetailDefinition> m_definitions;
     mutable QMap<QContactAbstractRequest*, QTrackerContactAsyncRequest*> m_requests;
 
-    /**
-     * Get a LiveNode from a list of nodes based on the type of the LiveNode.
-     * This is handy especially if you have for example a a set of nodes
-     * representing phone numbers (nco::Contact->getHasPhoneNumbers) and you
-     * are interested in a specific phone number type i.e. CellPhoneNumber.
-     *
-     * \param contactMediums A list nodes representing contact mediums of a
-     *        nco:Contact.
-     * \return A LiveNode representing the given type of node. If no such type
-     *         was found in the list, an empty LiveNode is returned (that is not
-     *         live, that is !node.isLive().
-     */
-    template <class T>
-    Live<T> nodeByClasstype(QList<Live<nco::ContactMedium> > contactMediums) const;
 
     /**
      * Return a nco::Contact that is either a nco::Affiliation or

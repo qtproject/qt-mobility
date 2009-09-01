@@ -38,7 +38,8 @@ void applyFilterToRDFVariable(RDFVariable &variable,
         // right now implementing this for phone numbers
         // later for the rest of fields
         QContactDetailFilter filt = filter;
-        if( filt.matchFlags() & ( Qt::MatchExactly));// | Qt::MatchEndsWith | Qt::MatchStartsWith | Qt::MatchContains ) )
+        // TODO doesnt pass at the moment, check the reason 
+        //if( filt.matchFlags() &  Qt::MatchExactly)// | Qt::MatchEndsWith | Qt::MatchStartsWith | Qt::MatchContains ) )
         {
             //qDebug()<<filt.detailDefinitionName()<<filt.detailFieldName();
             if( QContactPhoneNumber::DefinitionName == filt.detailDefinitionName()
