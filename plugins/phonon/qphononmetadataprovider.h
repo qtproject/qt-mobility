@@ -58,10 +58,6 @@ public:
     QVariant extendedMetadata(const QString &key) const;
     void setExtendedMetadata(const QString &key, const QVariant &value);
 
-Q_SIGNALS:
-    void metadataChanged();
-    void readOnlyChanged(bool readOnly);
-
 private slots:
     void updateTags();
 
