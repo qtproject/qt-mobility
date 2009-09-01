@@ -59,7 +59,7 @@ public:
         _attachments = 0;
     }
 
-    const QMessageContentContainerPrivate &QMessageContentContainerPrivate::operator=(const QMessageContentContainerPrivate &other)
+    const QMessageContentContainerPrivate &operator=(const QMessageContentContainerPrivate &other)
     {
         if (&other != this) {
             _type = other._type;
