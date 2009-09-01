@@ -84,11 +84,14 @@ QContactAbstractRequest::QContactAbstractRequest(QContactAbstractRequestPrivate*
 /*! Cleans up the memory used by this request */
 QContactAbstractRequest::~QContactAbstractRequest()
 {
-    QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
-    if (engine)
-        engine->requestDestroyed(this);
-    if (d_ptr)
+    if (d_ptr) {
+        QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
+        if (engine) {
+            engine->requestDestroyed(this);
+        }
+
         delete d_ptr;
+    }
 }
 
 /*!
