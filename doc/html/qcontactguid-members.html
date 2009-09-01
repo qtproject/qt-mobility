@@ -17,34 +17,26 @@
 <p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td width="45%" valign="top"><ul>
 <li><div class="fn">enum <b><a href="qcontactdetail.html#Error-enum">Error</a></b></div></li>
-<li><div class="fn"><b><a href="qcontactdetail.html#AttributeContext-var">AttributeContext</a></b> : const char *</div></li>
-<li><div class="fn"><b><a href="qcontactdetail.html#AttributeContextHome-var">AttributeContextHome</a></b> : const char *</div></li>
-<li><div class="fn"><b><a href="qcontactdetail.html#AttributeContextOther-var">AttributeContextOther</a></b> : const char *</div></li>
-<li><div class="fn"><b><a href="qcontactdetail.html#AttributeContextWork-var">AttributeContextWork</a></b> : const char *</div></li>
-<li><div class="fn"><b><a href="qcontactdetail.html#AttributeSubType-var">AttributeSubType</a></b> : const char *</div></li>
-<li><div class="fn"><b><a href="qcontactguid.html#AttributeSubTypeOther-var">AttributeSubTypeOther</a></b> : const char *</div></li>
-<li><div class="fn"><b><a href="qcontactguid.html#AttributeSubTypeSync-var">AttributeSubTypeSync</a></b> : const char *</div></li>
+<li><div class="fn"><b><a href="qcontactdetail.html#ContextHome-var">ContextHome</a></b> : const char *</div></li>
+<li><div class="fn"><b><a href="qcontactdetail.html#ContextOther-var">ContextOther</a></b> : const char *</div></li>
+<li><div class="fn"><b><a href="qcontactdetail.html#ContextWork-var">ContextWork</a></b> : const char *</div></li>
 <li><div class="fn"><b><a href="qcontactguid.html#DefinitionName-var">DefinitionName</a></b> : const char *</div></li>
+<li><div class="fn"><b><a href="qcontactdetail.html#FieldContext-var">FieldContext</a></b> : const char *</div></li>
 <li><div class="fn"><b><a href="qcontactguid.html#FieldGuid-var">FieldGuid</a></b> : const char *</div></li>
+<li><div class="fn"><b><a href="qcontactdetail.html#addContext">addContext</a></b> ( const QString &amp; )</div></li>
 <li><div class="fn"><b><a href="qcontactdetail.html#assign">assign</a></b> ( const QContactDetail &amp;, const QString &amp; ) : QContactDetail &amp;</div></li>
-<li><div class="fn"><b><a href="qcontactdetail.html#attribute">attribute</a></b> ( const QString &amp; ) const : QString</div></li>
-<li><div class="fn"><b><a href="qcontactdetail.html#attributes">attributes</a></b> () const : QMap&lt;QString, QString&gt;</div></li>
-<li><div class="fn"><b><a href="qcontactdetail.html#contextAttribute">contextAttribute</a></b> () const : QString</div></li>
+<li><div class="fn"><b><a href="qcontactdetail.html#contexts">contexts</a></b> () const : QStringList</div></li>
 <li><div class="fn"><b><a href="qcontactdetail.html#definitionName">definitionName</a></b> () const : QString</div></li>
 <li><div class="fn"><b><a href="qcontactdetail.html#error">error</a></b> () const : QContactDetail::Error</div></li>
 <li><div class="fn"><b><a href="qcontactguid.html#guid">guid</a></b> () const : QString</div></li>
 <li><div class="fn"><b><a href="qcontactdetail.html#hasValue">hasValue</a></b> ( const QString &amp; ) const : bool</div></li>
 </ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="qcontactdetail.html#isEmpty">isEmpty</a></b> () const : bool</div></li>
-<li><div class="fn"><b><a href="qcontactdetail.html#removeAttribute">removeAttribute</a></b> ( const QString &amp; ) : bool</div></li>
+<li><div class="fn"><b><a href="qcontactdetail.html#removeContext">removeContext</a></b> ( const QString &amp; )</div></li>
 <li><div class="fn"><b><a href="qcontactdetail.html#removeValue">removeValue</a></b> ( const QString &amp; ) : bool</div></li>
-<li><div class="fn"><b><a href="qcontactdetail.html#setAttribute">setAttribute</a></b> ( const QString &amp;, const QString &amp; ) : bool</div></li>
-<li><div class="fn"><b><a href="qcontactdetail.html#setAttributes">setAttributes</a></b> ( const QMap&lt;QString, QString&gt; &amp; ) : bool</div></li>
-<li><div class="fn"><b><a href="qcontactdetail.html#setContextAttribute">setContextAttribute</a></b> ( const QString &amp; )</div></li>
+<li><div class="fn"><b><a href="qcontactdetail.html#setContexts">setContexts</a></b> ( const QStringList &amp; )</div></li>
 <li><div class="fn"><b><a href="qcontactguid.html#setGuid">setGuid</a></b> ( const QString &amp; )</div></li>
-<li><div class="fn"><b><a href="qcontactdetail.html#setSubTypeAttribute">setSubTypeAttribute</a></b> ( const QString &amp; )</div></li>
 <li><div class="fn"><b><a href="qcontactdetail.html#setValue">setValue</a></b> ( const QString &amp;, const QVariant &amp; ) : bool</div></li>
-<li><div class="fn"><b><a href="qcontactdetail.html#subTypeAttribute">subTypeAttribute</a></b> () const : QString</div></li>
 <li><div class="fn"><b><a href="qcontactdetail.html#value">value</a></b> ( const QString &amp; ) const : T</div></li>
 <li><div class="fn"><b><a href="qcontactdetail.html#value-2">value</a></b> ( const QString &amp; ) const : QString</div></li>
 <li><div class="fn"><b><a href="qcontactdetail.html#values">values</a></b> () const : QVariantMap</div></li>

@@ -316,30 +316,30 @@
 
         QContactEmailAddress emailAddress;
         emailAddress.setEmailAddress(emailLine-&gt;text());
-        emailAddress.setAttribute(QContactDetail::AttributeSubType, QContactEmailAddress::AttributeSubTypeInternet);
         c.saveDetail(&amp;emailAddress);
 
         QContactPhoneNumber homePhone;
         homePhone.setNumber(homePhoneLine-&gt;text());
-        homePhone.setAttribute(QContactDetail::AttributeContext, QContactDetail::AttributeContextHome);
-        homePhone.setAttribute(QContactDetail::AttributeSubType, QContactPhoneNumber::AttributeSubTypeLandline);
+        homePhone.setContexts(QStringList(QContactDetail::ContextHome));
+        homePhone.setSubTypes(QStringList(QContactPhoneNumber::SubTypeLandline));
         c.saveDetail(&amp;homePhone);
 
         QContactPhoneNumber workPhone;
         workPhone.setNumber(workPhoneLine-&gt;text());
-        workPhone.setAttribute(QContactDetail::AttributeContext, QContactDetail::AttributeContextWork);
-        workPhone.setAttribute(QContactDetail::AttributeSubType, QContactPhoneNumber::AttributeSubTypeLandline);
+        workPhone.setContexts(QStringList(QContactDetail::ContextWork));
+        workPhone.setSubTypes(QStringList(QContactPhoneNumber::SubTypeLandline));
         c.saveDetail(&amp;workPhone);
 
         QContactPhoneNumber mobilePhone;
         mobilePhone.setNumber(mobilePhoneLine-&gt;text());
-        mobilePhone.setAttribute(QContactDetail::AttributeSubType, QContactPhoneNumber::AttributeSubTypeMobile);
+        mobilePhone.setSubTypes(QStringList(QContactPhoneNumber::SubTypeMobile));
         c.saveDetail(&amp;mobilePhone);
 
         QContactAddress address;
         address.setDisplayLabel(addressText-&gt;toPlainText());
-        address.setAttribute(QContactDetail::AttributeSubType, QContactAddress::AttributeSubTypeDomestic + &quot;,&quot; + QContactAddress::AttributeSubTypeParcel + &quot;,&quot; + QContactAddress::AttributeSubTypePostal);
-        c.saveDetail(&amp;address);
+        address.setSubTypes(QStringList() &lt;&lt; QContactAddress::SubTypeDomestic &lt;&lt; QContactAddress::SubTypeParcel &lt;&lt; QContactAddress::SubTypePostal);
+        if (!address.displayLabel().isEmpty())
+            c.saveDetail(&amp;address);
 
         return c;
     }
@@ -362,10 +362,10 @@
         bool foundMobilePhone = false;
         for (int i = 0; i &lt; phns.size(); i++) {
             QContactPhoneNumber current = phns.at(i);
-            if (current.attribute(QContactDetail::AttributeSubType).contains(QContactPhoneNumber::AttributeSubTypeMobile)) {
+            if (current.subTypes().contains(QContactPhoneNumber::SubTypeMobile)) {
                 mobilePhoneLine-&gt;setText(current.number());
                 foundMobilePhone = true;
-            } else if (current.attribute(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextWork)) {
+            } else if (current.contexts().contains(QContactDetail::ContextWork)) {
                 workPhoneLine-&gt;setText(current.number());
                 foundWorkPhone = true;
             } else {

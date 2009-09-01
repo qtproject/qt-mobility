@@ -19,8 +19,6 @@
 <ul><li><a href="#immutable-schema">Immutable Schema</a></li>
 <ul><li><a href="#qcontactmanagerinfo-features">QContactManagerInfo features</a></li>
 <li><a href="#access-constraints">Access constraints</a></li>
-<li><a href="#attribute-keys">Attribute keys</a></li>
-<li><a href="#context-attribute-values">Context-attribute values</a></li>
 <li><a href="#qcontactmanager-error-codes">QContactManager error codes</a></li>
 <li><a href="#qcontact-error-codes">QContact error codes</a></li>
 <li><a href="#qcontactgroup-error-codes">QContactGroup error codes</a></li>
@@ -86,24 +84,6 @@
 <tr valign="top" class="even"><td>CreateOnly</td><td>Details of this definition may be read at any time, and can only be written when the detail is first saved to a contact</td></tr>
 <tr valign="top" class="odd"><td>ReadOnly</td><td>Details of this definition may be read at any time, but cannot be written or created</td></tr>
 </table></p>
-<a name="attribute-keys"></a>
-<h4>Attribute keys</h4>
-<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
-<thead><tr valign="top" class="qt-style"><th>Attribute Key</th><th>Key Value</th></tr></thead>
-<tr valign="top" class="odd"><td><a href="qcontactdetail.html#AttributeContext-var">QContactDetail::AttributeContext</a></td><td>&quot;Context&quot;</td></tr>
-<tr valign="top" class="even"><td><a href="qcontactdetail.html#AttributeSubType-var">QContactDetail::AttributeSubType</a></td><td>&quot;SubType&quot;</td></tr>
-</table></p>
-<p>Note that clients are not limited to using only these attributes; if they wish to provide more attributes for a particular detail, they may - subject to whatever checks the backend wishes to perform when the contact to which the detail was added is saved.</p>
-<a name="context-attribute-values"></a>
-<h4>Context-attribute values</h4>
-<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
-<thead><tr valign="top" class="qt-style"><th>Context-attribute</th><th>Value</th></tr></thead>
-<tr valign="top" class="odd"><td><a href="qcontactdetail.html#AttributeContextHome-var">QContactDetail::AttributeContextHome</a></td><td>&quot;Home&quot;</td></tr>
-<tr valign="top" class="even"><td><a href="qcontactdetail.html#AttributeContextWork-var">QContactDetail::AttributeContextWork</a></td><td>&quot;Work&quot;</td></tr>
-<tr valign="top" class="odd"><td><a href="qcontactdetail.html#AttributeContextOther-var">QContactDetail::AttributeContextOther</a></td><td>&quot;Other&quot;</td></tr>
-</table></p>
-<p>Note that clients are not limited to using only these contexts; if they wish to define a detail as being valid for a context not contained in this list (for example, &quot;Ovi&quot;), they may do so - subject to whatever checks the backend wishes to perform when the contact to which the detail was added is saved.</p>
-<p>The value stored in a detail for the Context-attribute key is a comma-separated list of the allowable Context-attribute values. For example, &quot;Home,Work&quot; is a valid value.</p>
 <a name="qcontactmanager-error-codes"></a>
 <h4>QContactManager error codes</h4>
 <p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">

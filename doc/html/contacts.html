@@ -80,16 +80,16 @@
 
         <span class="comment">/* Add a phone number */</span>
         QContactPhoneNumber number;
-        number.setAttribute(&quot;Context&quot;, &quot;Home&quot;);
-        number.setAttribute(&quot;SubType&quot;, &quot;Mobile&quot;);
+        number.addContext(&quot;Home&quot;);
+        number.setSubTypes(QStringList(&quot;Mobile&quot;));
         number.setNumber(&quot;12345678&quot;);
         alice.saveDetail(&amp;number);
         alice.setPreferredDetail(&quot;DialAction&quot;, number);
 
         <span class="comment">/* Add a second phone number */</span>
         QContactPhoneNumber number2;
-        number2.setAttribute(&quot;Context&quot;, &quot;Work&quot;);
-        number2.setAttribute(&quot;SubType&quot;, &quot;Landline&quot;);
+        number2.addContext(&quot;Work&quot;);
+        number2.setSubTypes(QStringList(&quot;Landline&quot;));
         number2.setNumber(&quot;555-4444&quot;);
         alice.saveDetail(&amp;number2);
 
@@ -201,8 +201,7 @@
         <span class="comment">/* Add an email address */</span>
         QContactEmailAddress email;
         email.setEmailAddress(&quot;alice.jones@example&quot;);
-        email.setAttribute(&quot;Context&quot;, &quot;Work&quot;);
-        email.setAttribute(&quot;Subtype&quot;, &quot;Internet&quot;);
+        email.addContext(&quot;Work&quot;);
         email.setValue(&quot;Label&quot;, &quot;Alice's Work Email Address&quot;);
 
         <span class="comment">/* Save the updated details to the contact. */</span>

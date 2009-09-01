@@ -135,11 +135,9 @@
         <keyword ref="qcontactaddress.html#setPostcode">setPostcode</keyword>
         <keyword ref="qcontactaddress.html#setRegion">setRegion</keyword>
         <keyword ref="qcontactaddress.html#setStreet">setStreet</keyword>
+        <keyword ref="qcontactaddress.html#setSubTypes">setSubTypes</keyword>
         <keyword ref="qcontactaddress.html#street">street</keyword>
-        <keyword ref="qcontactaddress.html#AttributeSubTypeDomestic-var">AttributeSubTypeDomestic</keyword>
-        <keyword ref="qcontactaddress.html#AttributeSubTypeInternational-var">AttributeSubTypeInternational</keyword>
-        <keyword ref="qcontactaddress.html#AttributeSubTypeParcel-var">AttributeSubTypeParcel</keyword>
-        <keyword ref="qcontactaddress.html#AttributeSubTypePostal-var">AttributeSubTypePostal</keyword>
+        <keyword ref="qcontactaddress.html#subTypes">subTypes</keyword>
         <keyword ref="qcontactaddress.html#DefinitionName-var">DefinitionName</keyword>
         <keyword ref="qcontactaddress.html#FieldCountry-var">FieldCountry</keyword>
         <keyword ref="qcontactaddress.html#FieldDisplayLabel-var">FieldDisplayLabel</keyword>
@@ -147,6 +145,11 @@
         <keyword ref="qcontactaddress.html#FieldPostcode-var">FieldPostcode</keyword>
         <keyword ref="qcontactaddress.html#FieldRegion-var">FieldRegion</keyword>
         <keyword ref="qcontactaddress.html#FieldStreet-var">FieldStreet</keyword>
+        <keyword ref="qcontactaddress.html#FieldSubType-var">FieldSubType</keyword>
+        <keyword ref="qcontactaddress.html#SubTypeDomestic-var">SubTypeDomestic</keyword>
+        <keyword ref="qcontactaddress.html#SubTypeInternational-var">SubTypeInternational</keyword>
+        <keyword ref="qcontactaddress.html#SubTypeParcel-var">SubTypeParcel</keyword>
+        <keyword ref="qcontactaddress.html#SubTypePostal-var">SubTypePostal</keyword>
         <section ref="qcontactaddress-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactanniversary.html" title="QContactAnniversary Class Reference">
@@ -157,26 +160,32 @@
         <keyword ref="qcontactanniversary.html#setCalendarId">setCalendarId</keyword>
         <keyword ref="qcontactanniversary.html#setEvent">setEvent</keyword>
         <keyword ref="qcontactanniversary.html#setOriginalDate">setOriginalDate</keyword>
-        <keyword ref="qcontactanniversary.html#AttributeSubTypeEmployment-var">AttributeSubTypeEmployment</keyword>
-        <keyword ref="qcontactanniversary.html#AttributeSubTypeEngagement-var">AttributeSubTypeEngagement</keyword>
-        <keyword ref="qcontactanniversary.html#AttributeSubTypeHouse-var">AttributeSubTypeHouse</keyword>
-        <keyword ref="qcontactanniversary.html#AttributeSubTypeMemorial-var">AttributeSubTypeMemorial</keyword>
-        <keyword ref="qcontactanniversary.html#AttributeSubTypeWedding-var">AttributeSubTypeWedding</keyword>
+        <keyword ref="qcontactanniversary.html#setSubTypes">setSubTypes</keyword>
+        <keyword ref="qcontactanniversary.html#subTypes">subTypes</keyword>
         <keyword ref="qcontactanniversary.html#DefinitionName-var">DefinitionName</keyword>
         <keyword ref="qcontactanniversary.html#FieldCalendarId-var">FieldCalendarId</keyword>
         <keyword ref="qcontactanniversary.html#FieldEvent-var">FieldEvent</keyword>
         <keyword ref="qcontactanniversary.html#FieldOriginalDate-var">FieldOriginalDate</keyword>
+        <keyword ref="qcontactanniversary.html#FieldSubType-var">FieldSubType</keyword>
+        <keyword ref="qcontactanniversary.html#SubTypeEmployment-var">SubTypeEmployment</keyword>
+        <keyword ref="qcontactanniversary.html#SubTypeEngagement-var">SubTypeEngagement</keyword>
+        <keyword ref="qcontactanniversary.html#SubTypeHouse-var">SubTypeHouse</keyword>
+        <keyword ref="qcontactanniversary.html#SubTypeMemorial-var">SubTypeMemorial</keyword>
+        <keyword ref="qcontactanniversary.html#SubTypeWedding-var">SubTypeWedding</keyword>
         <section ref="qcontactanniversary-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactavatar.html" title="QContactAvatar Class Reference">
         <keyword ref="qcontactavatar.html">QContactAvatar</keyword>
         <keyword ref="qcontactavatar.html#avatar">avatar</keyword>
         <keyword ref="qcontactavatar.html#setAvatar">setAvatar</keyword>
-        <keyword ref="qcontactavatar.html#AttributeSubTypeImage-var">AttributeSubTypeImage</keyword>
-        <keyword ref="qcontactavatar.html#AttributeSubTypeTexturedMesh-var">AttributeSubTypeTexturedMesh</keyword>
-        <keyword ref="qcontactavatar.html#AttributeSubTypeVideo-var">AttributeSubTypeVideo</keyword>
+        <keyword ref="qcontactavatar.html#setSubTypes">setSubTypes</keyword>
+        <keyword ref="qcontactavatar.html#subTypes">subTypes</keyword>
         <keyword ref="qcontactavatar.html#DefinitionName-var">DefinitionName</keyword>
         <keyword ref="qcontactavatar.html#FieldAvatar-var">FieldAvatar</keyword>
+        <keyword ref="qcontactavatar.html#FieldSubType-var">FieldSubType</keyword>
+        <keyword ref="qcontactavatar.html#SubTypeImage-var">SubTypeImage</keyword>
+        <keyword ref="qcontactavatar.html#SubTypeTexturedMesh-var">SubTypeTexturedMesh</keyword>
+        <keyword ref="qcontactavatar.html#SubTypeVideo-var">SubTypeVideo</keyword>
         <section ref="qcontactavatar-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactbirthday.html" title="QContactBirthday Class Reference">
@@ -206,22 +215,17 @@
         <keyword ref="qcontactdetail.html#Error-enum">QContactDetail::MissingValueError</keyword>
         <keyword ref="qcontactdetail.html#Error-enum">QContactDetail::OutOfMemoryError</keyword>
         <keyword ref="qcontactdetail.html#Error-enum">QContactDetail::IncompatibleAssignmentError</keyword>
+        <keyword ref="qcontactdetail.html#addContext">addContext</keyword>
         <keyword ref="qcontactdetail.html#assign">assign</keyword>
-        <keyword ref="qcontactdetail.html#attribute">attribute</keyword>
-        <keyword ref="qcontactdetail.html#attributes">attributes</keyword>
-        <keyword ref="qcontactdetail.html#contextAttribute">contextAttribute</keyword>
+        <keyword ref="qcontactdetail.html#contexts">contexts</keyword>
         <keyword ref="qcontactdetail.html#definitionName">definitionName</keyword>
         <keyword ref="qcontactdetail.html#error">error</keyword>
         <keyword ref="qcontactdetail.html#hasValue">hasValue</keyword>
         <keyword ref="qcontactdetail.html#isEmpty">isEmpty</keyword>
-        <keyword ref="qcontactdetail.html#removeAttribute">removeAttribute</keyword>
+        <keyword ref="qcontactdetail.html#removeContext">removeContext</keyword>
         <keyword ref="qcontactdetail.html#removeValue">removeValue</keyword>
-        <keyword ref="qcontactdetail.html#setAttribute">setAttribute</keyword>
-        <keyword ref="qcontactdetail.html#setAttributes">setAttributes</keyword>
-        <keyword ref="qcontactdetail.html#setContextAttribute">setContextAttribute</keyword>
-        <keyword ref="qcontactdetail.html#setSubTypeAttribute">setSubTypeAttribute</keyword>
+        <keyword ref="qcontactdetail.html#setContexts">setContexts</keyword>
         <keyword ref="qcontactdetail.html#setValue">setValue</keyword>
-        <keyword ref="qcontactdetail.html#subTypeAttribute">subTypeAttribute</keyword>
         <keyword ref="qcontactdetail.html#value">value</keyword>
         <keyword ref="qcontactdetail.html#values">values</keyword>
         <keyword ref="qcontactdetail.html#variantValue">variantValue</keyword>
@@ -318,7 +322,6 @@
         <keyword ref="qcontactemailaddress.html">QContactEmailAddress</keyword>
         <keyword ref="qcontactemailaddress.html#emailAddress">emailAddress</keyword>
         <keyword ref="qcontactemailaddress.html#setEmailAddress">setEmailAddress</keyword>
-        <keyword ref="qcontactemailaddress.html#AttributeSubTypeInternet-var">AttributeSubTypeInternet</keyword>
         <keyword ref="qcontactemailaddress.html#DefinitionName-var">DefinitionName</keyword>
         <keyword ref="qcontactemailaddress.html#FieldEmailAddress-var">FieldEmailAddress</keyword>
         <section ref="qcontactemailaddress-members.html" title="List of all members"/>
@@ -451,8 +454,6 @@
         <keyword ref="qcontactguid.html">QContactGuid</keyword>
         <keyword ref="qcontactguid.html#guid">guid</keyword>
         <keyword ref="qcontactguid.html#setGuid">setGuid</keyword>
-        <keyword ref="qcontactguid.html#AttributeSubTypeOther-var">AttributeSubTypeOther</keyword>
-        <keyword ref="qcontactguid.html#AttributeSubTypeSync-var">AttributeSubTypeSync</keyword>
         <keyword ref="qcontactguid.html#DefinitionName-var">DefinitionName</keyword>
         <keyword ref="qcontactguid.html#FieldGuid-var">FieldGuid</keyword>
         <section ref="qcontactguid-members.html" title="List of all members"/>
@@ -688,18 +689,21 @@
         <keyword ref="qcontactphonenumber.html">QContactPhoneNumber</keyword>
         <keyword ref="qcontactphonenumber.html#number">number</keyword>
         <keyword ref="qcontactphonenumber.html#setNumber">setNumber</keyword>
-        <keyword ref="qcontactphonenumber.html#AttributeSubTypeBulletinBoardSystem-var">AttributeSubTypeBulletinBoardSystem</keyword>
-        <keyword ref="qcontactphonenumber.html#AttributeSubTypeCar-var">AttributeSubTypeCar</keyword>
-        <keyword ref="qcontactphonenumber.html#AttributeSubTypeFacsimile-var">AttributeSubTypeFacsimile</keyword>
-        <keyword ref="qcontactphonenumber.html#AttributeSubTypeLandline-var">AttributeSubTypeLandline</keyword>
-        <keyword ref="qcontactphonenumber.html#AttributeSubTypeMessagingCapable-var">AttributeSubTypeMessagingCapable</keyword>
-        <keyword ref="qcontactphonenumber.html#AttributeSubTypeMobile-var">AttributeSubTypeMobile</keyword>
-        <keyword ref="qcontactphonenumber.html#AttributeSubTypeModem-var">AttributeSubTypeModem</keyword>
-        <keyword ref="qcontactphonenumber.html#AttributeSubTypePager-var">AttributeSubTypePager</keyword>
-        <keyword ref="qcontactphonenumber.html#AttributeSubTypeVideo-var">AttributeSubTypeVideo</keyword>
-        <keyword ref="qcontactphonenumber.html#AttributeSubTypeVoice-var">AttributeSubTypeVoice</keyword>
+        <keyword ref="qcontactphonenumber.html#setSubTypes">setSubTypes</keyword>
+        <keyword ref="qcontactphonenumber.html#subTypes">subTypes</keyword>
         <keyword ref="qcontactphonenumber.html#DefinitionName-var">DefinitionName</keyword>
         <keyword ref="qcontactphonenumber.html#FieldNumber-var">FieldNumber</keyword>
+        <keyword ref="qcontactphonenumber.html#FieldSubType-var">FieldSubType</keyword>
+        <keyword ref="qcontactphonenumber.html#SubTypeBulletinBoardSystem-var">SubTypeBulletinBoardSystem</keyword>
+        <keyword ref="qcontactphonenumber.html#SubTypeCar-var">SubTypeCar</keyword>
+        <keyword ref="qcontactphonenumber.html#SubTypeFacsimile-var">SubTypeFacsimile</keyword>
+        <keyword ref="qcontactphonenumber.html#SubTypeLandline-var">SubTypeLandline</keyword>
+        <keyword ref="qcontactphonenumber.html#SubTypeMessagingCapable-var">SubTypeMessagingCapable</keyword>
+        <keyword ref="qcontactphonenumber.html#SubTypeMobile-var">SubTypeMobile</keyword>
+        <keyword ref="qcontactphonenumber.html#SubTypeModem-var">SubTypeModem</keyword>
+        <keyword ref="qcontactphonenumber.html#SubTypePager-var">SubTypePager</keyword>
+        <keyword ref="qcontactphonenumber.html#SubTypeVideo-var">SubTypeVideo</keyword>
+        <keyword ref="qcontactphonenumber.html#SubTypeVoice-var">SubTypeVoice</keyword>
         <section ref="qcontactphonenumber-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactpresence.html" title="QContactPresence Class Reference">
@@ -802,13 +806,16 @@
     </section>
     <section ref="qcontacturl.html" title="QContactUrl Class Reference">
         <keyword ref="qcontacturl.html">QContactUrl</keyword>
+        <keyword ref="qcontacturl.html#setSubTypes">setSubTypes</keyword>
         <keyword ref="qcontacturl.html#setUrl">setUrl</keyword>
+        <keyword ref="qcontacturl.html#subTypes">subTypes</keyword>
         <keyword ref="qcontacturl.html#url">url</keyword>
-        <keyword ref="qcontacturl.html#AttributeSubTypeFavourite-var">AttributeSubTypeFavourite</keyword>
-        <keyword ref="qcontacturl.html#AttributeSubTypeHomePage-var">AttributeSubTypeHomePage</keyword>
-        <keyword ref="qcontacturl.html#AttributeSubTypeSocialNetworking-var">AttributeSubTypeSocialNetworking</keyword>
         <keyword ref="qcontacturl.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontacturl.html#FieldSubType-var">FieldSubType</keyword>
         <keyword ref="qcontacturl.html#FieldUrl-var">FieldUrl</keyword>
+        <keyword ref="qcontacturl.html#SubTypeFavourite-var">SubTypeFavourite</keyword>
+        <keyword ref="qcontacturl.html#SubTypeHomePage-var">SubTypeHomePage</keyword>
+        <keyword ref="qcontacturl.html#SubTypeSocialNetworking-var">SubTypeSocialNetworking</keyword>
         <section ref="qcontacturl-members.html" title="List of all members"/>
     </section>
 </section>
