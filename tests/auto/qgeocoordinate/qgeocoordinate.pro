@@ -1,5 +1,4 @@
 TEMPLATE = app
-TARGET = tst_qgeocoordinate
 CONFIG+=testcase
 
 include (../../../common.pri)

@@ -1,5 +1,4 @@
 TEMPLATE = app
-TARGET = tst_qgeopositioninfosource
 CONFIG+=testcase
 
 include (../../../common.pri)
@@ -7,7 +6,7 @@ include (../../../common.pri)
 INCLUDEPATH += ../../../location
 
 # Input 
-SOURCES += tst_qgeopositioninfosource.cpp
+SOURCES += tst_qgeopositioninfo.cpp
 
 LIBS += -lQtLocation
 

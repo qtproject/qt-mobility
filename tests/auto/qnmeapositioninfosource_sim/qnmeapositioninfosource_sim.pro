@@ -1,5 +1,4 @@
 TEMPLATE = app
-TARGET = tst_qnmeapositioninfosource_realtime
 CONFIG+=testcase
 QT += network
 
@@ -14,7 +13,7 @@ HEADERS += ../qgeopositioninfosourcesubclasstest_p.h \
 SOURCES += ../qgeopositioninfosourcesubclasstest.cpp \
            ../qnmeapositioninfosourceproxyfactory.cpp \
            ../qlocationtestutils.cpp \
-           tst_qnmeapositioninfosource_realtime.cpp
+           tst_qnmeapositioninfosource_sim.cpp
 
 LIBS += -lQtLocation
 

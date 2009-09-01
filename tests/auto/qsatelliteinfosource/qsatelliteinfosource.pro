@@ -1,5 +1,4 @@
 TEMPLATE = app
-TARGET = tst_qsatelliteinfosource
 CONFIG+=testcase
 
 include (../../../common.pri)

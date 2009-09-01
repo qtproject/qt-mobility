@@ -1,5 +1,4 @@
 TEMPLATE = app
-TARGET = tst_qnmeapositioninfosource
 CONFIG+=testcase
 QT += network
 
