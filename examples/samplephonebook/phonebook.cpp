@@ -311,19 +311,20 @@ QContact PhoneBook::buildContact() const
 
     QContactPhoneNumber workPhone;
     workPhone.setNumber(workPhoneLine->text());
-    homePhone.setContexts(QStringList(QContactDetail::ContextWork));
-    homePhone.setSubTypes(QStringList(QContactPhoneNumber::SubTypeLandline));
+    workPhone.setContexts(QStringList(QContactDetail::ContextWork));
+    workPhone.setSubTypes(QStringList(QContactPhoneNumber::SubTypeLandline));
     c.saveDetail(&workPhone);
 
     QContactPhoneNumber mobilePhone;
     mobilePhone.setNumber(mobilePhoneLine->text());
-    homePhone.setSubTypes(QStringList(QContactPhoneNumber::SubTypeMobile));
+    mobilePhone.setSubTypes(QStringList(QContactPhoneNumber::SubTypeMobile));
     c.saveDetail(&mobilePhone);
 
     QContactAddress address;
     address.setDisplayLabel(addressText->toPlainText());
     address.setSubTypes(QStringList() << QContactAddress::SubTypeDomestic << QContactAddress::SubTypeParcel << QContactAddress::SubTypePostal);
-    c.saveDetail(&address);
+    if (!address.displayLabel().isEmpty())
+        c.saveDetail(&address);
 
     return c;
 }

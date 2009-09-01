@@ -638,6 +638,9 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.insert(QContactAddress::FieldDisplayLabel, f);
     f.dataType = QVariant::StringList;
     f.allowableValues = QVariantList();
+    fields.insert(QContactUrl::FieldSubType, f);
+    f.dataType = QVariant::StringList;
+    f.allowableValues = QVariantList();
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(false);
