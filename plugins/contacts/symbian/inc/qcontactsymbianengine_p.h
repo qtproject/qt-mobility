@@ -83,11 +83,11 @@ public:
 
     /* Groups functionality */
 	//Leaving functions for groups functionality
-		QList<QUniqueId> groups() const;
-		QContactGroup group(const QUniqueId& groupId) const;
-		bool saveGroup(QContactGroup& group);
-		bool removeGroup(const QUniqueId& groupId);
-		QUniqueId simPhonebookGroupId() const;
+	QList<QUniqueId> groups() const;
+	QContactGroup group(const QUniqueId& groupId) const;
+	bool saveGroup(QContactGroup& group, QContactManager::Error& error);
+	bool removeGroup(const QUniqueId& groupId);
+	QUniqueId simPhonebookGroupId() const;
     
 public:
 	// From MContactDbObserver
@@ -108,7 +108,8 @@ private:
 	CContactItem *transformContact(QContact &contact) const;
 	
 	// Utility function to convert symbian error to QContactManager error
-	QContactManager::Error transformError(TInt error) const;
+	// returns true if no error otherwise false
+	bool transformError(TInt symbianError, QContactManager::Error& qtError) const;
 		
 	// Leaving functions implementing CNTMODEL interaction.
 	QContact contactL(const QUniqueId &id) const;

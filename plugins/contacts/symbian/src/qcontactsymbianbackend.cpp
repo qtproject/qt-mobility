@@ -43,7 +43,7 @@
 #include "qcontactgroup_p.h"
 #include "qcontactmanager_p.h"
 
-#include "qcontactsymbianbackend_p.h"
+#include "qcontactsymbianbackend.h"
 #include "qcontactsymbianengine_p.h" 
 
 QContactSymbianEngine::QContactSymbianEngine(const QMap<QString, QString>& /*parameters*/, QContactManager::Error& error)
@@ -92,12 +92,12 @@ QContactSymbianEngine::~QContactSymbianEngine()
 
 void QContactSymbianEngine::deref()
 {
-		//d->deref();
-    
-    /*if (!d->m_refCount.deref())
-        delete this;*/
+	//This class is not using a private shared class so should this be always deleted?
+	//d->deref();
+	
+	/*if (!d->m_refCount.deref())
+ 	delete this;*/ 
 }
-
 
 QList<QUniqueId> QContactSymbianEngine::contacts(const QList<QContactSortOrder>& /*sortOrders*/, QContactManager::Error& /*error*/) const
 {
@@ -129,6 +129,27 @@ bool QContactSymbianEngine::removeContact(const QUniqueId& contactId, QSet<QUniq
 {
 	return d->removeContact(contactId);
 }
+
+QList<QUniqueId> QContactSymbianEngine::groups(QContactManager::Error& /*error*/) const
+{
+	return d->groups();
+}
+
+QContactGroup QContactSymbianEngine::group(const QUniqueId& groupId, QContactManager::Error& /*error*/) const
+{
+	return d->group(groupId);
+}
+
+bool QContactSymbianEngine::saveGroup(QContactGroup* group, QSet<QUniqueId>& /*groupsAdded*/, QSet<QUniqueId>& /*groupsChanged*/, QSet<QUniqueId>& /*contactsChanged*/, QContactManager::Error& error)
+{
+	return d->saveGroup(*group, error);
+}
+
+bool QContactSymbianEngine::removeGroup(const QUniqueId& groupId, QSet<QUniqueId>& /*groupsRemoved*/, QSet<QUniqueId>& /*contactsChanged*/, QContactManager::Error& /*error*/)
+{
+	return d->removeGroup(groupId);
+}
+
 
 
 QMap<QString, QContactDetailDefinition> QContactSymbianEngine::detailDefinitions(QContactManager::Error& error) const
@@ -182,12 +203,7 @@ QList<QVariant::Type> QContactSymbianEngine::supportedDataTypes() const
 {
     QList<QVariant::Type> st;
     st.append(QVariant::String);
-   /* st.append(QVariant::Int);
-    st.append(QVariant::UInt);
-    st.append(QVariant::Double);
-    st.append(QVariant::Date);
-    st.append(QVariant::DateTime);*/
-
+    
     return st;
 }
 

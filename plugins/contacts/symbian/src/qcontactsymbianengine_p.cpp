@@ -98,7 +98,7 @@ QContact QContactSymbianEngineData::contact(const QUniqueId& contactId, QContact
 	//TRAP_IGNORE(contact = contactL(contactId));
 	TRAPD(errorId, contact = contactL(contactId));
 	
-	error = transformError(errorId);
+	transformError(errorId, error);
 	
 	// TODO: This should never be heap allocated to start with.
 	return contact;
@@ -267,10 +267,10 @@ QContactGroup QContactSymbianEngineData::group(const QUniqueId& groupId) const
  * \param group The contact group object to be saved.
  * \return a bool indicating whether the operation was successful.
  */
-bool QContactSymbianEngineData::saveGroup(QContactGroup& group)
+bool QContactSymbianEngineData::saveGroup(QContactGroup& group, QContactManager::Error& error)
 {
 	TRAPD(err, saveGroupL(group));
-	return err == KErrNone;
+	return transformError(err, error);
 }
 
 /*!
@@ -338,9 +338,8 @@ void QContactSymbianEngineData::HandleDatabaseEventL(TContactDbObserverEvent aEv
  * \param contact A reference to a Symbian contact to be converted.
  * \return A Qt contact with the same fields and content as the CContactItem.
 */
-QContactManager::Error QContactSymbianEngineData::transformError(TInt error) const
+bool QContactSymbianEngineData::transformError(TInt symbianError, QContactManager::Error& qtError) const
 {
-	QContactManager::Error contactError(QContactManager::NoError);
 	
 	/*
 	NoError = 0,
@@ -355,20 +354,22 @@ QContactManager::Error QContactSymbianEngineData::transformError(TInt error) con
     BadArgumentError,
     UnspecifiedError
     */
+	bool noError(true);
 	
-	switch(error)
+	switch(symbianError)
 	{
 		case 0: 
 		{
-			contactError = QContactManager::NoError;
+			qtError = QContactManager::NoError;
 		}
 		default:
 		{
-			contactError = QContactManager::UnspecifiedError;
+			qtError = QContactManager::UnspecifiedError;
+			noError = false;
 		}
 	}
 	
-	return contactError;
+	return noError;
 }
 
 /*! Transform a Symbian contact to a QContact. Note that the contact ID

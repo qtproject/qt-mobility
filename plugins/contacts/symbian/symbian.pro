@@ -27,7 +27,7 @@ symbian: {
 	
   HEADERS += \
   		$$PUBLIC_HEADERS \
-  		inc/qcontactsymbianbackend_p.h \
+  		inc/qcontactsymbianbackend.h \
       inc/qcontactsymbianengine_p.h \
       inc/qcontactfieldmap.h \
       inc/qfieldmapping.h
