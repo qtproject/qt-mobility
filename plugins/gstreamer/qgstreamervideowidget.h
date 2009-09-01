@@ -35,8 +35,9 @@
 #ifndef QGSTREAMERVIDEOWIDGET_H
 #define QGSTREAMERVIDEOWIDGET_H
 
-#include "qgstreamerplayersession.h"
 #include "qvideowidgetcontrol.h"
+
+#include "qgstreamervideorendererinterface.h"
 
 class QGstreamerVideoWidgetControl
         : public QVideoWidgetControl

@@ -32,6 +32,7 @@ HEADERS += \
     qgstreamermessage.h \
     qgstreamerbushelper.h \
     qgstreamervideooutputcontrol.h \
+    qgstreamervideorendererinterface.h \
     qgstreamervideowidget.h \
     qgstreamerserviceplugin.h \
     qgstreameraudioinputdevicecontrol.h
@@ -40,6 +41,7 @@ SOURCES += \
     qgstreamermessage.cpp \
     qgstreamerbushelper.cpp \
     qgstreamervideooutputcontrol.cpp \
+    qgstreamervideorendererinterface.cpp \
     qgstreamervideowidget.cpp \
     qgstreamerserviceplugin.cpp \
     qgstreameraudioinputdevicecontrol.cpp

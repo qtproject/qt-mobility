@@ -37,6 +37,16 @@
 
 #include "qvideooutputcontrol.h"
 
+#include <gst/gst.h>
+
+class QGstreamerVideoRendererInterface
+{
+public:
+    virtual ~QGstreamerVideoRendererInterface();
+    virtual GstElement *videoSink() = 0;
+    virtual void precessNewStream() {}
+};
+
 class QGstreamerVideoOutputControl : public QVideoOutputControl
 {
     Q_OBJECT

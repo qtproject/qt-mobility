@@ -32,36 +32,23 @@
 **
 ****************************************************************************/
 
-#ifndef QGSTREAMERVIDEORENDERER_H
-#define QGSTREAMERVIDEORENDERER_H
+#ifndef QGSTREAMERVIDEOOUTPUTCONTROL_H
+#define QGSTREAMERVIDEOOUTPUTCONTROL_H
 
-#ifndef QT_NO_VIDEOSURFACE
+#include <gst/gst.h>
 
-#include "qvideorenderercontrol.h"
-#include "qvideosurfacegstsink.h"
+#include <QtCore/qobject.h>
 
-#include "qgstreamervideorendererinterface.h"
-
-
-class QGstreamerVideoRenderer : public QVideoRendererControl, public QGstreamerVideoRendererInterface
+class QGstreamerVideoRendererInterface
 {
-    Q_OBJECT
-    Q_INTERFACES(QGstreamerVideoRendererInterface)
 public:
-    QGstreamerVideoRenderer(QObject *parent = 0);
-    virtual ~QGstreamerVideoRenderer();
-    
-    QAbstractVideoSurface *surface() const;
-    void setSurface(QAbstractVideoSurface *surface);
-
-    GstElement *videoSink();
-    void precessNewStream() {}
-
-private:    
-    GstElement *m_videoSink;
-    QAbstractVideoSurface *m_surface;
+    virtual ~QGstreamerVideoRendererInterface();
+    virtual GstElement *videoSink() = 0;
+    virtual void precessNewStream() {}
 };
 
-#endif
+#define QGstreamerVideoRendererInterface_iid "com.nokia.Qt.QGstreamerVideoRendererInterface/1.0"
 
-#endif // QGSTREAMERVIDEORENDRER_H
+Q_DECLARE_INTERFACE(QGstreamerVideoRendererInterface, QGstreamerVideoRendererInterface_iid)
+
+#endif

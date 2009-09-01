@@ -38,7 +38,9 @@
 #ifndef QT_NO_VIDEOSURFACE
 
 #include "qvideowindowcontrol.h"
-#include "qgstreamerplayersession.h"
+
+#include "qgstreamervideorendererinterface.h"
+
 
 class QAbstractVideoSurface;
 class QX11VideoSurface;

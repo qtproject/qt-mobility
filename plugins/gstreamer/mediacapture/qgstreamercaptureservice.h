@@ -14,6 +14,7 @@ class QGstreamerMessage;
 class QGstreamerBusHelper;
 class QGstreamerVideoRenderer;
 class QGstreamerVideoOverlay;
+class QGstreamerVideoWidgetControl;
 class QGstreamerElementFactory;
 class QGstreamerCaptureMetadataControl;
 
@@ -45,6 +46,8 @@ private:
     QGstreamerVideoOverlay *m_videoWindow;
     QGstreamerElementFactory *m_videoWindowFactory;
 #endif
+    QGstreamerVideoWidgetControl *m_videoWidgetControl;
+    QGstreamerElementFactory *m_videoWidgetFactory;
 };
 
 #endif // QGSTREAMERCAPTURESERVICE_H
