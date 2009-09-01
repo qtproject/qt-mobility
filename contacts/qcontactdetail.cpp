@@ -36,11 +36,10 @@
 #include "qcontactmanager.h"
 
 /* Definitions of predefined string constants */
-Q_DEFINE_LATIN1_LITERAL(QContactDetail::AttributeContext, "Context");
-Q_DEFINE_LATIN1_LITERAL(QContactDetail::AttributeSubType, "SubType");
-Q_DEFINE_LATIN1_LITERAL(QContactDetail::AttributeContextOther, "Other");
-Q_DEFINE_LATIN1_LITERAL(QContactDetail::AttributeContextHome, "Home");
-Q_DEFINE_LATIN1_LITERAL(QContactDetail::AttributeContextWork, "Work");
+Q_DEFINE_LATIN1_LITERAL(QContactDetail::FieldContext, "Context");
+Q_DEFINE_LATIN1_LITERAL(QContactDetail::ContextOther, "Other");
+Q_DEFINE_LATIN1_LITERAL(QContactDetail::ContextHome, "Home");
+Q_DEFINE_LATIN1_LITERAL(QContactDetail::ContextWork, "Work");
 
 /*!
  * \class QContactDetail
@@ -55,22 +54,9 @@ Q_DEFINE_LATIN1_LITERAL(QContactDetail::AttributeContextWork, "Work");
  * restrictions on their values, and any restrictions on creating or updating details of that
  * definition.
  *
- * A detail might also has some metadata, stored in "attributes".  What these attributes
- * are used for varies a little depending on the detail, but two common attributes are
- * \c Context and \c SubType.
- *
- * \list
- * \o The \c Context attribute (with id \l AttributeContext) is intended to store the
+ * A field which is common to all details is the context field.  This field is intended to store the
  * context that this detail is associated with.  Commonly this will be something like
- * "Home" or "Work".
- *
- * \o The \c SubType attribute (with id \l AttributeSubType) is intended to store any
- * particular distinctions between details of this type.  For example, a phone number
- * might have a SubType of "Mobile" or "Fax".
- * \endlist
- *
- * In general, a given attribute has a single value.  In some cases, if you wish to
- * associate more than one value, you need to comma separate the values.
+ * "Home" or "Work", although no limitations are placed on which values may be stored in this field.
  *
  * It is possible to inherit from QContactDetail to provide convenience or
  * standardized access to values.  For example, \l QContactPhoneNumber provides
@@ -127,7 +113,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactDetail::AttributeContextWork, "Work");
  * it interoperates with other contact functionality.
  *
  * Here is an example of a class (\l QContactPhoneNumber) using this macro.
- * Note that the class provides some predefined constants for attributes,
+ * Note that the class provides some predefined constants
  * and some convenience methods that return values associated with schema
  * fields.
  *
@@ -137,7 +123,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactDetail::AttributeContextWork, "Work");
 
 /*!
  * \fn QContactDetail::operator!=(const QContactDetail& other) const
- * Returns true if the values, attributes or id of this detail is different to those of the \a other detail
+ * Returns true if the values or id of this detail is different to those of the \a other detail
  */
 
 /*!
@@ -235,13 +221,10 @@ QString QContactDetail::definitionName() const
     return d.constData()->m_definitionName;
 }
 
-/*! Compares this detail to \a other.  Returns true if the definition, attributes and values of \a other are equal to those of this detail */
+/*! Compares this detail to \a other.  Returns true if the definition and values of \a other are equal to those of this detail */
 bool QContactDetail::operator==(const QContactDetail& other) const
 {
     if (d.constData()->m_definitionName != other.d.constData()->m_definitionName)
-        return false;
-
-    if (d.constData()->m_attributes != other.d.constData()->m_attributes)
         return false;
 
     if (d.constData()->m_values != other.d.constData()->m_values)
@@ -250,49 +233,11 @@ bool QContactDetail::operator==(const QContactDetail& other) const
     return true;
 }
 
-/*! Sets the attributes of this detail to \a attributes.  Returns true if the operation succeeded. */
-bool QContactDetail::setAttributes(const QMap<QString, QString>& attributes)
-{
-    QContactDetailPrivate::setError(d, QContactDetail::NoError);
-    d->m_attributes = attributes;
-    return true;
-}
-
-/*! Returns the value of the attribute identified by the key \a attribute.  Detail attributes may include things like the context for which this detail is valid, detail type metadata, or user defined metadata */
-QString QContactDetail::attribute(const QString& attribute) const
-{
-    return d.constData()->m_attributes.value(attribute);
-}
-
-/*! Sets the value of the attribute identified by the key \a attribute to be the given \a value.  The value associated with any key in the attribute map may be a comma-separated list of valid values, or user-defined values.  Returns true if the attribute was set successfully, otherwise returns false */
-bool QContactDetail::setAttribute(const QString& attribute, const QString& value)
-{
-    QContactDetailPrivate::setError(d, QContactDetail::NoError);
-    d->m_attributes.insert(attribute, value);
-    return true;
-}
-
-/*! Removes the attribute identified by the key \a attribute from the detail's list of attributes.  Returns true if the attribute was removed successfully, otherwise returns false */
-bool QContactDetail::removeAttribute(const QString& attribute)
-{
-    QContactDetailPrivate::setError(d, QContactDetail::NoError);
-    d->m_attributes.remove(attribute);
-    return true;
-}
-
-/*! Returns the attributes of this detail */
-QMap<QString, QString> QContactDetail::attributes() const
-{
-    return d.constData()->m_attributes;
-}
-
-/*! Returns true if no values are contained in this detail.  Note: even if attributes have been set on this detail, this function will return true if no values are contained in this detail */
+/*! Returns true if no values are contained in this detail.  Note that context is stored as a value; hence, if a context is set, this function will return false. */
 bool QContactDetail::isEmpty() const
 {
     if (!d.constData()->m_values.isEmpty())
         return false;
-
-    /* XXX should we check attributes? */
     return true;
 }
 
@@ -365,54 +310,68 @@ QVariantMap QContactDetail::values() const
 }
 
 /*!
- * \fn void QContactDetail::setSubTypeAttribute(const QString& subType)
+ * \fn void QContactDetail::removeContext(const QString& context)
  *
- * This is a convenience function that sets the \c SubType attribute of this detail to \a subType.
+ * This is a convenience function that removes the given \a context from the list of contexts for
+ * which this detail is valid.  If the given \a context is not a part of the list, this function has
+ * no effect.
  *
- * Not all details have meaningful values for the \c SubType attribute - refer to either the
+ * It is equivalent to the following code:
+ * \code
+ * QStringList contexts = contexts();
+ * if (!contexts.contains(context))
+ *     return;
+ * contexts.removeAll(context);
+ * setContexts(contexts);
+ * \endcode
+ *
+ * \sa setContexts()
+ */
+
+/*!
+ * \fn void QContactDetail::addContext(const QString& context)
+ *
+ * This is a convenience function that adds the given \a context to the list of contexts for which
+ * this detail is valid.  If the given \a context is already part of the list, this function has
+ * no effect.
+ *
+ * It is equivalent to the following code:
+ * \code
+ * QStringList contexts = contexts();
+ * if (contexts.contains(context))
+ *     return;
+ * contexts.append(context);
+ * setContexts(contexts);
+ * \endcode
+ *
+ * \sa setContexts()
+ */
+
+/*!
+ * \fn void QContactDetail::setContexts(const QStringList& contexts)
+ *
+ * This is a convenience function that sets the \c Context field of this detail to the given \a contexts.
+ *
+ * Not all details have meaningful values for the \c Context field - refer to either the
  * schema or specific classes like \l QContactPhoneNumber for more information.
  *
  * It is equivalent to the following code:
  * \code
- * setAttribute(QContactDetail::AttributeSubType, subType);
+ * setValue(QContactDetail::FieldContext, contexts);
  * \endcode
+ *
+ * \sa setValue()
  */
 
 /*!
- * \fn QString QContactDetail::subTypeAttribute() const
+ * \fn QStringList QContactDetail::contexts() const
  *
- * This is a convenience function to return the \c SubType attribute of this detail.
- *
- * Not all details have meaningful values for the \c SubType attribute - refer to either the
- * schema or specific classes like \l QContactPhoneNumber for more information.
+ * This is a convenience function to return the \c Context field of this detail.
  *
  * It is equivalent to the following code:
  * \code
- * attribute(QContactDetail::AttributeSubType);
+ * value(QContactDetail::FieldContext);
  * \endcode
- */
-
-/*!
- * \fn void QContactDetail::setContextAttribute(const QString& context)
  *
- * This is a convenience function that sets the \c Context attribute of this detail to \a context.
- *
- * Not all details have meaningful values for the \c Context attribute - refer to either the
- * schema or specific classes like \l QContactPhoneNumber for more information.
- *
- * It is equivalent to the following code:
- * \code
- * setAttribute(QContactDetail::AttributeContext, context);
- * \endcode
- */
-
-/*!
- * \fn QString QContactDetail::contextAttribute() const
- *
- * This is a convenience function to return the \c Context attribute of this detail.
- *
- * It is equivalent to the following code:
- * \code
- * attribute(QContactDetail::AttributeContext);
- * \endcode
+ * \sa value()
  */

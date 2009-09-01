@@ -49,21 +49,23 @@ public:
     const char* FieldCalendarId;
     const char* FieldOriginalDate;
     const char* FieldEvent;
-    const char* AttributeSubTypeWedding;
-    const char* AttributeSubTypeEngagement;
-    const char* AttributeSubTypeHouse;
-    const char* AttributeSubTypeEmployment;
-    const char* AttributeSubTypeMemorial;
+    const char* FieldSubType;
+    const char* SubTypeWedding;
+    const char* SubTypeEngagement;
+    const char* SubTypeHouse;
+    const char* SubTypeEmployment;
+    const char* SubTypeMemorial;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAnniversary, "Anniversary")
     Q_DECLARE_LATIN1_LITERAL(FieldCalendarId, "CalendarId");
     Q_DECLARE_LATIN1_LITERAL(FieldOriginalDate, "OriginalDate");
     Q_DECLARE_LATIN1_LITERAL(FieldEvent, "Event");
-    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeWedding, "Wedding");
-    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeEngagement, "Engagement");
-    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeHouse, "House");
-    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeEmployment, "Employment");
-    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeMemorial, "Memorial");
+    Q_DECLARE_LATIN1_LITERAL(FieldSubType, "SubType");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeWedding, "Wedding");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeEngagement, "Engagement");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeHouse, "House");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeEmployment, "Employment");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeMemorial, "Memorial");
 #endif
 
     void setOriginalDate(const QDate& date) {setValue(FieldOriginalDate, date);}
@@ -72,6 +74,9 @@ public:
     QString calendarId() const {return value(FieldCalendarId);}
     void setEvent(const QString& event) {setValue(FieldEvent, event);}
     QString event() const {return value(FieldEvent);}
+
+    void setSubTypes(const QStringList& subTypes) {setValue(FieldSubType, subTypes);}
+    QStringList subTypes() const {return value(FieldSubType);}
 };
 
 #endif

@@ -47,19 +47,24 @@ public:
 #ifdef Q_QDOC
     const char* DefinitionName;
     const char* FieldUrl;
-    const char* AttributeSubTypeHomePage;
-    const char* AttributeSubTypeFavourite;
-    const char* AttributeSubTypeSocialNetworking;
+    const char* FieldSubType;
+    const char* SubTypeHomePage;
+    const char* SubTypeFavourite;
+    const char* SubTypeSocialNetworking;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactUrl, "Url")
     Q_DECLARE_LATIN1_LITERAL(FieldUrl, "Url");
-    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeHomePage, "HomePage");
-    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeFavourite, "Favourite");
-    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeSocialNetworking, "SocialNetworking");
+    Q_DECLARE_LATIN1_LITERAL(FieldSubType, "SubType");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeHomePage, "HomePage");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeFavourite, "Favourite");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeSocialNetworking, "SocialNetworking");
 #endif
 
     void setUrl(const QString& url) {setValue(FieldUrl, url);}
     QString url() const {return value(FieldUrl);}
+
+    void setSubTypes(const QStringList& subTypes) {setValue(FieldSubType, subTypes);}
+    QStringList subTypes() const {return value(FieldSubType);}
 };
 
 #endif

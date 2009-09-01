@@ -53,10 +53,11 @@ public:
     const char* FieldRegion;
     const char* FieldPostcode;
     const char* FieldCountry;
-    const char* AttributeSubTypeParcel;
-    const char* AttributeSubTypePostal;
-    const char* AttributeSubTypeDomestic;
-    const char* AttributeSubTypeInternational;
+    const char* FieldSubType;
+    const char* SubTypeParcel;
+    const char* SubTypePostal;
+    const char* SubTypeDomestic;
+    const char* SubTypeInternational;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAddress, "StreetAddress")
     Q_DECLARE_LATIN1_LITERAL(FieldDisplayLabel, "DisplayLabel");
@@ -65,10 +66,11 @@ public:
     Q_DECLARE_LATIN1_LITERAL(FieldRegion, "Region");
     Q_DECLARE_LATIN1_LITERAL(FieldPostcode, "Postcode");
     Q_DECLARE_LATIN1_LITERAL(FieldCountry, "Country");
-    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeParcel, "Parcel");
-    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypePostal, "Postal");
-    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeDomestic, "Domestic");
-    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeInternational, "International");
+    Q_DECLARE_LATIN1_LITERAL(FieldSubType, "SubType");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeParcel, "Parcel");
+    Q_DECLARE_LATIN1_LITERAL(SubTypePostal, "Postal");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeDomestic, "Domestic");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeInternational, "International");
 #endif
 
     void setDisplayLabel(const QString& displayLabel) {setValue(FieldDisplayLabel, displayLabel);}
@@ -83,6 +85,9 @@ public:
     QString postcode() const {return value(FieldPostcode);}
     void setCountry(const QString& country) {setValue(FieldCountry, country);}
     QString country() const {return value(FieldCountry);}
+
+    void setSubTypes(const QStringList& subTypes) {setValue(FieldSubType, subTypes);}
+    QStringList subTypes() const {return value(FieldSubType);}
 };
 
 #endif

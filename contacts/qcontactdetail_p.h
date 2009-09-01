@@ -65,7 +65,6 @@ public:
         : QSharedData(other),
         m_error(QContactDetail::NoError),
         m_id(other.m_id),
-        m_attributes(other.m_attributes),
         m_definitionName(other.m_definitionName),
         m_values(other.m_values)
     {
@@ -85,7 +84,6 @@ public:
 
     QContactDetail::Error m_error;
     quint32 m_id; // internal, unique id.
-    QMap<QString, QString> m_attributes;
     QString m_definitionName;
     QVariantMap m_values; // the value(s) stored in this field.
 };

@@ -49,33 +49,38 @@ public:
 #ifdef Q_QDOC
     const char* DefinitionName;
     const char* FieldNumber;
-    const char* AttributeSubTypeLandline;
-    const char* AttributeSubTypeMobile;
-    const char* AttributeSubTypeFacsimile;
-    const char* AttributeSubTypePager;
-    const char* AttributeSubTypeVoice;
-    const char* AttributeSubTypeModem;
-    const char* AttributeSubTypeVideo;
-    const char* AttributeSubTypeCar;
-    const char* AttributeSubTypeBulletinBoardSystem;
-    const char* AttributeSubTypeMessagingCapable;
+    const char* FieldSubType;
+    const char* SubTypeLandline;
+    const char* SubTypeMobile;
+    const char* SubTypeFacsimile;
+    const char* SubTypePager;
+    const char* SubTypeVoice;
+    const char* SubTypeModem;
+    const char* SubTypeVideo;
+    const char* SubTypeCar;
+    const char* SubTypeBulletinBoardSystem;
+    const char* SubTypeMessagingCapable;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPhoneNumber, "PhoneNumber")
     Q_DECLARE_LATIN1_LITERAL(FieldNumber, "PhoneNumber");
-    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeLandline, "Landline");
-    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeMobile, "Mobile");
-    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeFacsimile, "Facsimile");
-    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypePager, "Pager");
-    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeVoice, "Voice");
-    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeModem, "Modem");
-    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeVideo, "Video");
-    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeCar, "Car");
-    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeBulletinBoardSystem, "BulletinBoardSystem");
-    Q_DECLARE_LATIN1_LITERAL(AttributeSubTypeMessagingCapable, "MessagingCapable");
+    Q_DECLARE_LATIN1_LITERAL(FieldSubType, "SubType");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeLandline, "Landline");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeMobile, "Mobile");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeFacsimile, "Facsimile");
+    Q_DECLARE_LATIN1_LITERAL(SubTypePager, "Pager");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeVoice, "Voice");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeModem, "Modem");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeVideo, "Video");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeCar, "Car");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeBulletinBoardSystem, "BulletinBoardSystem");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeMessagingCapable, "MessagingCapable");
 #endif
 
     void setNumber(const QString& number) {setValue(FieldNumber, number);}
     QString number() const {return value(FieldNumber);}
+
+    void setSubTypes(const QStringList& subTypes) {setValue(FieldSubType, subTypes);}
+    QStringList subTypes() const {return value(FieldSubType);}
 };
 //! [0]
 

@@ -61,17 +61,15 @@ public:
 
     // Predefined attribute names and values
 #ifdef Q_QDOC
-    const char* AttributeContext;
-    const char* AttributeSubType;
-    const char* AttributeContextHome;
-    const char* AttributeContextWork;
-    const char* AttributeContextOther;
+    const char* FieldContext;
+    const char* FieldContextHome;
+    const char* FieldContextWork;
+    const char* FieldContextOther;
 #else
-    Q_DECLARE_LATIN1_LITERAL(AttributeContext, "Context");
-    Q_DECLARE_LATIN1_LITERAL(AttributeSubType, "SubType");
-    Q_DECLARE_LATIN1_LITERAL(AttributeContextHome, "Home");
-    Q_DECLARE_LATIN1_LITERAL(AttributeContextWork, "Work");
-    Q_DECLARE_LATIN1_LITERAL(AttributeContextOther, "Other");
+    Q_DECLARE_LATIN1_LITERAL(FieldContext, "Context");
+    Q_DECLARE_LATIN1_LITERAL(ContextHome, "Home");
+    Q_DECLARE_LATIN1_LITERAL(ContextWork, "Work");
+    Q_DECLARE_LATIN1_LITERAL(ContextOther, "Other");
 #endif
 
     QContactDetail::Error error() const;
@@ -81,13 +79,6 @@ public:
 
     QString definitionName() const;
     bool isEmpty() const;
-
-    QMap<QString, QString> attributes() const;
-    bool setAttributes(const QMap<QString, QString>& attributes);
-
-    QString attribute(const QString& attribute) const;
-    bool setAttribute(const QString& attribute, const QString& value);
-    bool removeAttribute(const QString& attribute);
 
     QVariantMap values() const;
     QString value(const QString& key) const;
@@ -101,24 +92,32 @@ public:
         return variantValue(key).value<T>();
     }
 
-    void setSubTypeAttribute(const QString& subType)
+    void removeContext(const QString& context)
     {
-        setAttribute(AttributeSubType, subType);
+        QStringList contexts = contexts();
+        if (!contexts.contains(context))
+            return;
+        contexts.removeAll(context);
+        setContexts(contexts);
     }
 
-    QString subTypeAttribute() const
+    void addContext(const QString& context)
     {
-        return attribute(AttributeSubType);
+        QStringList contexts = contexts();
+        if (contexts.contains(context))
+            return;
+        contexts.append(context);
+        setContexts(contexts);
     }
 
-    void setContextAttribute(const QString& context)
+    void setContexts(const QStringList& contexts)
     {
-        setAttribute(AttributeContext, context);
+        setValue(Context, contexts);
     }
 
-    QString contextAttribute() const
+    QStringList contexts() const
     {
-        return attribute(AttributeContext);
+        return value(Context);
     }
 
 
