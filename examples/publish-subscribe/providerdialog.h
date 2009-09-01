@@ -53,10 +53,12 @@ public:
 protected:
     void changeEvent(QEvent *e);
 
+//! [0]
 private slots:
     void createNewObject();
     void intValueChanged(int value);
     void setStringValue();
+//! [0]
 
 private:
     Ui::ProviderDialog *ui;
