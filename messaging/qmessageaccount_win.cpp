@@ -34,11 +34,12 @@
 #include "qmessageaccount_p.h"
 #include "qmessagestore.h"
 
-QMessageAccount QMessageAccountPrivate::from(const QMessageAccountId &id, const QString &name, const QMessage::TypeFlags &types)
+QMessageAccount QMessageAccountPrivate::from(const QMessageAccountId &id, const QString &name, const QMessageAddress &address, const QMessage::TypeFlags &types)
 {
     QMessageAccount result;
     result.d_ptr->_id = id;
     result.d_ptr->_name = name;
+    result.d_ptr->_address = address;
     result.d_ptr->_types = types;
     return result;
 }
@@ -86,7 +87,7 @@ QString QMessageAccount::name() const
 
 QMessageAddress QMessageAccount::fromAddress() const
 {
-    return QMessageAddress(); // stub
+    return d_ptr->_address;
 }
 
 QMessage::TypeFlags QMessageAccount::types() const
