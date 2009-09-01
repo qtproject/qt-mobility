@@ -340,6 +340,64 @@ IProviderAdmin *serviceProvider(MAPIUID &svcUid, LPSERVICEADMIN svcAdmin)
     return provider;
 }
 
+MAPIUID findProviderUid(const QByteArray &name, IProviderAdmin *providerAdmin)
+{
+    MAPIUID result = { 0 };
+
+    IMAPITable *providerTable(0);
+    HRESULT rv = providerAdmin->GetProviderTable(0, &providerTable);
+    if (HR_SUCCEEDED(rv)) {
+        LPSRowSet rows(0);
+        SizedSPropTagArray(2, cols) = {2, {PR_SERVICE_NAME_A, PR_PROVIDER_UID}};
+        rv = HrQueryAllRows(providerTable, reinterpret_cast<LPSPropTagArray>(&cols), 0, 0, 0, &rows);
+        if (HR_SUCCEEDED(rv)) {
+            for (uint n = 0; n < rows->cRows; ++n) {
+                SPropValue *props(rows->aRow[n].lpProps);
+                if (props[0].ulPropTag == PR_SERVICE_NAME_A) {
+                    QByteArray serviceName(props[0].Value.lpszA);
+                    if (name.isEmpty() || (serviceName.toLower() == name.toLower())) {
+                        result = *(reinterpret_cast<MAPIUID*>(props[1].Value.bin.lpb));
+                        break;
+                    }
+                }
+            }
+
+            FreeProws(rows);
+        } else {
+            qWarning() << "findProviderUid: HrQueryAllRows failed";
+        }
+
+        providerTable->Release();
+    } else {
+        qWarning() << "findProviderUid: GetProviderTable failed";
+    }
+
+    return result;
+}
+
+IProfSect *openProfileSection(MAPIUID &providerUid, IProviderAdmin *providerAdmin)
+{
+    IProfSect *profileSection(0);
+
+    // Bypass the MAPI_E_NO_ACCESS_ERROR, as described at http://support.microsoft.com/kb/822977
+    const ULONG MAPI_FORCE_ACCESS = 0x00080000;
+
+    HRESULT rv = providerAdmin->OpenProfileSection(&providerUid, 0, MAPI_FORCE_ACCESS, &profileSection);
+    if (HR_FAILED(rv)) {
+        qWarning() << "openProfileSection: OpenProfileSection failed";
+        profileSection = 0;
+    }
+
+    return profileSection;
+}
+
+template<typename T>
+bool isEmpty(const T &v)
+{
+    const char empty[sizeof(T)] = { 0 };
+    return memcmp(empty, &v, sizeof(T));
+}
+
 bool deleteExistingService(MAPIUID &svcUid, LPSERVICEADMIN svcAdmin)
 {
     if (svcAdmin) {
@@ -348,58 +406,22 @@ bool deleteExistingService(MAPIUID &svcUid, LPSERVICEADMIN svcAdmin)
         // Find the Provider for this service
         IProviderAdmin *provider = serviceProvider(svcUid, svcAdmin);
         if (provider) {
-            IMAPITable *providerTable(0);
-            HRESULT rv = provider->GetProviderTable(0, &providerTable);
-            if (HR_SUCCEEDED(rv)) {
-                MAPIUID providerUid = { 0 };
-                bool foundProvider(false);
-
-                LPSRowSet rows(0);
-                SizedSPropTagArray(2, cols) = {2, {PR_SERVICE_NAME_A, PR_PROVIDER_UID}};
-                rv = HrQueryAllRows(providerTable, reinterpret_cast<LPSPropTagArray>(&cols), 0, 0, 0, &rows);
-                if (HR_SUCCEEDED(rv)) {
-                    for (uint n = 0; n < rows->cRows; ++n) {
-                        if (rows->aRow[n].lpProps[0].ulPropTag == PR_SERVICE_NAME_A) {
-                            QByteArray serviceName(rows->aRow[n].lpProps[0].Value.lpszA);
-                            if (serviceName.toUpper() == "MSUPST MS") {
-                                providerUid = *(reinterpret_cast<MAPIUID*>(rows->aRow[n].lpProps[1].Value.bin.lpb));
-                                foundProvider = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    FreeProws(rows);
-                } else {
-                    qWarning() << "deleteExistingService: HrQueryAllRows failed";
-                }
-
-                providerTable->Release();
-
-                if (foundProvider) {
-                    // Bypass the MAPI_E_NO_ACCESS_ERROR, as described at http://support.microsoft.com/kb/822977
-                    const ULONG MAPI_FORCE_ACCESS = 0x00080000;
-
-                    IProfSect *profileSection(0);
-                    HRESULT rv = provider->OpenProfileSection(&providerUid, 0, MAPI_FORCE_ACCESS, &profileSection);
+            MAPIUID providerUid = findProviderUid("MSUPST MS", provider);
+            if (!isEmpty(providerUid)) {
+                IProfSect *profileSection = openProfileSection(providerUid, provider);
+                if (profileSection) {
+                    SPropValue *prop(0);
+                    HRESULT rv = HrGetOneProp(profileSection, PR_PST_PATH_A, &prop);
                     if (HR_SUCCEEDED(rv)) {
-                        SPropValue *prop(0);
-                        rv = HrGetOneProp(profileSection, PR_PST_PATH_A, &prop);
-                        if (HR_SUCCEEDED(rv)) {
-                            storePath = QByteArray(prop->Value.lpszA);
+                        storePath = QByteArray(prop->Value.lpszA);
 
-                            MAPIFreeBuffer(prop);
-                        } else {
-                            qWarning() << "deleteExistingService: HrGetOneProp failed";
-                        }
-
-                        profileSection->Release();
+                        MAPIFreeBuffer(prop);
                     } else {
-                        qWarning() << "deleteExistingService: OpenProfileSection failed";
+                        qWarning() << "deleteExistingService: HrGetOneProp failed";
                     }
+
+                    profileSection->Release();
                 }
-            } else {
-                qWarning() << "deleteExistingService: GetProviderTable failed";
             }
 
             provider->Release();
@@ -663,6 +685,8 @@ QMessageAccountId addAccount(const Parameters &params)
     doInit();
 
     QString accountName(params["name"]);
+    QString fromAddress(params["fromAddress"]);
+
     if (!accountName.isEmpty()) {
         // Profile name must be ASCII
         QByteArray name(accountName.toAscii());
@@ -736,6 +760,27 @@ QMessageAccountId addAccount(const Parameters &params)
                                         rv = svcAdmin->ConfigureMsgService(&svcUid, 0, 0, 3, props);
                                         if (HR_SUCCEEDED(rv)) {
                                             serviceExists = true;
+
+                                            // Try to set the address for this service, as a property of the profile section
+
+                                            // Find the Provider for this service
+                                            IProviderAdmin *provider = serviceProvider(svcUid, svcAdmin);
+                                            if (provider) {
+                                                MAPIUID providerUid = findProviderUid("MSUPST MS", provider);
+                                                if (!isEmpty(providerUid)) {
+                                                    IProfSect *profileSection = openProfileSection(providerUid, provider);
+                                                    if (profileSection) {
+                                                        ULONG tag = createNamedProperty(profileSection, "fromAddress");
+                                                        if (tag) {
+                                                            setNamedProperty(profileSection, tag, fromAddress);
+                                                        }
+
+                                                        profileSection->Release();
+                                                    }
+                                                }
+
+                                                provider->Release();
+                                            }
                                         } else {
                                             qWarning() << "ConfigureMsgService failed";
                                         }

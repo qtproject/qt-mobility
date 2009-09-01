@@ -829,14 +829,9 @@ QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
 
     MapiStorePtr mapiStore(mapiSession->findStore(&d_ptr->p_ptr->lastError, id));
     if (mapiStore && mapiStore->isValid()) {
-        QMessageAccountId id(mapiStore->id());
-        QString name(mapiStore->name());
-        QMessage::TypeFlags types(QMessage::Email);
-        if (mapiStore->name() == "SMS") { // On Windows Mobile SMS store is named "SMS"
-            types = QMessage::TypeFlags(QMessage::Sms);
-        }
-        result = QMessageAccountPrivate::from(id, name, types);
+        result = QMessageAccountPrivate::from(mapiStore->id(), mapiStore->name(), mapiStore->address(), mapiStore->types());
     }
+
     return result;
 }
 

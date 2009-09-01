@@ -144,6 +144,8 @@ public:
     QString name() const { return _name; }
     LPMDB store() const { return _store; }
     MapiRecordKey recordKey() const { return _key; }
+    QMessage::TypeFlags types() const;
+    QMessageAddress address() const;
 
     IMessage *openMessage(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId);
 

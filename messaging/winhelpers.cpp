@@ -583,7 +583,6 @@ IMAPIFolder *MapiStore::openMapiFolder(QMessageStore::ErrorCode *lastError, cons
         }
     } else {
         *lastError = QMessageStore::InvalidId;
-        qDebug() << "rv:" << hex << (ULONG)rv;
         qDebug() << "Invalid folder entryId:" << entryId.toBase64();
     }
 
@@ -593,6 +592,28 @@ IMAPIFolder *MapiStore::openMapiFolder(QMessageStore::ErrorCode *lastError, cons
 QMessageAccountId MapiStore::id() const
 {
     return QMessageAccountIdPrivate::from(_key);
+}
+
+QMessage::TypeFlags MapiStore::types() const
+{
+    QMessage::TypeFlags flags(QMessage::Email);
+
+#ifdef _WIN32_WCE
+    if (name().toUpper() == "SMS") {
+        // On Windows Mobile SMS store is named "SMS"
+        flags = QMessage::Sms;
+    }
+#endif
+
+    return flags;
+}
+
+QMessageAddress MapiStore::address() const
+{
+    QMessageAddress result;
+
+
+    return result;
 }
 
 MapiFolderPtr MapiStore::openFolder(QMessageStore::ErrorCode *lastError, const MapiEntryId& entryId) const
@@ -795,7 +816,6 @@ IMsgStore *MapiSession::openMapiStore(QMessageStore::ErrorCode *lastError, const
     HRESULT rv = _mapiSession->OpenMsgStore(0, entryId.count(), entryIdPtr, 0, MAPI_BEST_ACCESS | MDB_WRITE, reinterpret_cast<LPMDB*>(&store));
     if (HR_FAILED(rv)) {
         *lastError = QMessageStore::InvalidId;
-        qDebug() << "rv:" << hex << (ULONG)rv;
         qDebug() << "Invalid store entryId:" << entryId.toBase64();
     }
 
