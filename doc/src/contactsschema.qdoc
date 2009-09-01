@@ -111,45 +111,6 @@ include the feature in its list of supported features.
     \o Details of this definition may be read at any time, but cannot be written or created
 \endtable
 
-\section3 Attribute keys
-\table
-\header
-    \o Attribute Key
-    \o Key Value
-\row
-    \o \l{QContactDetail::AttributeContext}
-    \o "Context"
-\row
-    \o \l{QContactDetail::AttributeSubType}
-    \o "SubType"
-\endtable
-Note that clients are not limited to using only these attributes; if they wish to provide
-more attributes for a particular detail, they may - subject to whatever checks the backend
-wishes to perform when the contact to which the detail was added is saved.
-
-\section3 Context-attribute values
-\table
-\header
-    \o Context-attribute
-    \o Value
-\row
-    \o \l{QContactDetail::AttributeContextHome}
-    \o "Home"
-\row
-    \o \l{QContactDetail::AttributeContextWork}
-    \o "Work"
-\row
-    \o \l{QContactDetail::AttributeContextOther}
-    \o "Other"
-\endtable
-Note that clients are not limited to using only these contexts; if they wish to define
-a detail as being valid for a context not contained in this list (for example, "Ovi"),
-they may do so - subject to whatever checks the backend wishes to perform when the
-contact to which the detail was added is saved.
-
-The value stored in a detail for the Context-attribute key is a comma-separated list of
-the allowable Context-attribute values.  For example, "Home,Work" is a valid value.
-
 \section3 QContactManager error codes
 \table
 \header

@@ -820,6 +820,16 @@ QString QContactAddress::displayLabel() const
  */
 
 /*!
+ * \fn QContactAnniversary::setSubTypes(const QStringList& subTypes)
+ * Sets the subtypes which this detail implements to be those contained in the list of given \a subTypes
+ */
+
+/*!
+ * \fn QContactAnniversary::subTypes() const
+ * Returns the list of subtypes that this detail implements
+ */
+
+/*!
  * \fn QContactAvatar::avatar() const
  * Returns the location of an avatar file associated with the contact
  */
@@ -827,6 +837,16 @@ QString QContactAddress::displayLabel() const
 /*!
  * \fn QContactAvatar::setAvatar(const QString& avatar)
  * Sets the location of an avatar file associated with the contact to \a avatar
+ */
+
+/*!
+ * \fn QContactAvatar::setSubTypes(const QStringList& subTypes)
+ * Sets the subtypes which this detail implements to be those contained in the list of given \a subTypes
+ */
+
+/*!
+ * \fn QContactAvatar::subTypes() const
+ * Returns the list of subtypes that this detail implements
  */
 
 /*!
@@ -892,6 +912,16 @@ QString QContactAddress::displayLabel() const
  */
 
 /*!
+ * \fn QContactAddress::setSubTypes(const QStringList& subTypes)
+ * Sets the subtypes which this detail implements to be those contained in the list of given \a subTypes
+ */
+
+/*!
+ * \fn QContactAddress::subTypes() const
+ * Returns the list of subtypes that this detail implements
+ */
+
+/*!
  * \fn QContactUrl::url() const
  * Returns the url stored in this detail
  */
@@ -902,6 +932,16 @@ QString QContactAddress::displayLabel() const
  */
 
 /*!
+ * \fn QContactUrl::setSubTypes(const QStringList& subTypes)
+ * Sets the subtypes which this detail implements to be those contained in the list of given \a subTypes
+ */
+
+/*!
+ * \fn QContactUrl::subTypes() const
+ * Returns the list of subtypes that this detail implements
+ */
+
+/*!
  * \fn QContactPhoneNumber::number() const
  * Returns the phone number stored in this detail
  */
@@ -909,6 +949,16 @@ QString QContactAddress::displayLabel() const
 /*!
  * \fn QContactPhoneNumber::setNumber(const QString& number)
  * Sets the phone number stored in this detail to \a number
+ */
+
+/*!
+ * \fn QContactPhoneNumber::setSubTypes(const QStringList& subTypes)
+ * Sets the subtypes which this detail implements to be those contained in the list of given \a subTypes
+ */
+
+/*!
+ * \fn QContactPhoneNumber::subTypes() const
+ * Returns the list of subtypes that this detail implements
  */
 
 /*!

@@ -62,9 +62,9 @@ public:
     // Predefined attribute names and values
 #ifdef Q_QDOC
     const char* FieldContext;
-    const char* FieldContextHome;
-    const char* FieldContextWork;
-    const char* FieldContextOther;
+    const char* ContextHome;
+    const char* ContextWork;
+    const char* ContextOther;
 #else
     Q_DECLARE_LATIN1_LITERAL(FieldContext, "Context");
     Q_DECLARE_LATIN1_LITERAL(ContextHome, "Home");
