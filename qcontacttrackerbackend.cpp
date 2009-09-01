@@ -327,6 +327,21 @@ void appendPhoneNumbersUpdate(RDFUpdate &up, RDFVariable &var, const QList<QCont
 }
 
 
+// create nco::Affiliation if there is not one already in tracker
+void createAffiliationIfItDoesntExist(QUniqueId contactId)
+{
+    RDFVariable contact = RDFVariable::fromType<nco::PersonContact>();
+    contact.property<nco::contactUID> () = LiteralValue(QString::number(contactId));
+    RDFVariable affiliation =
+            contact.optional().property<nco::hasAffiliation> ();
+    RDFFilter doesntExist = affiliation.not_().isBound();// do not create if it already exist
+    RDFUpdate up;
+    QUrl newAffiliation = ::tracker()->createLiveNode().uri();
+    up.addInsertion(newAffiliation, rdf::type::iri(), nco::Affiliation::iri()); // create node
+    up.addInsertion(contact, nco::hasAffiliation::iri(), newAffiliation); // add Affiliation node to nco::PersonContact
+    ::tracker()->executeQuery(up);
+}
+
 bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error)
 {
     //::tracker()->setVerbosity(3);
@@ -374,9 +389,8 @@ bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
         contactsChanged << contact->id();
     }
     // if there are work related details, need to be saved to Affiliation.
-    Live<nco::Affiliation> ncoWorkingTime;
     if( contactHasWorkRelatedDetails(*contact))
-        ncoWorkingTime = ncoContact->getHasAffiliation();
+        createAffiliationIfItDoesntExist(contact->id());
 
     // Add a special tag for contact added from addressbook, not from fb, telepathy etc.
     RDFVariable rdfContact = RDFVariable::fromType<nco::PersonContact>();
