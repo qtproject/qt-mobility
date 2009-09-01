@@ -134,6 +134,7 @@ QServiceFilter& QServiceFilter::operator=(const QServiceFilter& other)
     d->minorVersion = other.d->minorVersion;
     d->matchingRule = other.d->matchingRule;
     d->customProperties = other.d->customProperties;
+    d->capabilities = other.d->capabilities;
 
     return *this;
 }
