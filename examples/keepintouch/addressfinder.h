@@ -77,6 +77,7 @@ private:
     QMessageIdList exclusionMessages;
 
     QSet<QString> excludedAddresses;
+    QSet<QString> includedAddresses;
     QMap<QString, QStringList> addressMessages;
 };
 
