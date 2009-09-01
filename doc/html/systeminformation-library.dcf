@@ -10,7 +10,7 @@
         <keyword ref="qsystemdeviceinfo.html#BatteryLevel-enum">QSystemDeviceInfo::BatteryLow</keyword>
         <keyword ref="qsystemdeviceinfo.html#BatteryLevel-enum">QSystemDeviceInfo::BatteryNormal</keyword>
         <keyword ref="qsystemdeviceinfo.html#InputMethod-enum">InputMethod</keyword>
-        <keyword ref="qsystemdeviceinfo.html#InputMethod-enum">InputMethods</keyword>
+        <keyword ref="qsystemdeviceinfo.html#InputMethod-enum">InputMethodFlags</keyword>
         <keyword ref="qsystemdeviceinfo.html#InputMethod-enum">QSystemDeviceInfo::Mouse</keyword>
         <keyword ref="qsystemdeviceinfo.html#InputMethod-enum">QSystemDeviceInfo::Keys</keyword>
         <keyword ref="qsystemdeviceinfo.html#InputMethod-enum">QSystemDeviceInfo::Keypad</keyword>
@@ -31,6 +31,7 @@
         <keyword ref="qsystemdeviceinfo.html#Profile-enum">QSystemDeviceInfo::UnknownProfile</keyword>
         <keyword ref="qsystemdeviceinfo.html#Profile-enum">QSystemDeviceInfo::CustomProfile</keyword>
         <keyword ref="qsystemdeviceinfo.html#SimStatus-enum">SimStatus</keyword>
+        <keyword ref="qsystemdeviceinfo.html#SimStatus-enum">SimStatusFlags</keyword>
         <keyword ref="qsystemdeviceinfo.html#SimStatus-enum">QSystemDeviceInfo::SimNotAvailable</keyword>
         <keyword ref="qsystemdeviceinfo.html#SimStatus-enum">QSystemDeviceInfo::DualAvailable</keyword>
         <keyword ref="qsystemdeviceinfo.html#SimStatus-enum">QSystemDeviceInfo::Locked</keyword>
@@ -111,9 +112,11 @@
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">NetworkModes</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::WimaxMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::CdmaMode</keyword>
-        <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::EthMode</keyword>
+        <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::UnknownMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::WlanMode</keyword>
+        <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::BluetoothMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::GsmMode</keyword>
+        <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::EthernetMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::WcdmaMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkStatus-enum">NetworkStatus</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkStatus-enum">QSystemNetworkInfo::NoNetworkAvailable</keyword>
@@ -130,6 +133,7 @@
         <keyword ref="qsystemnetworkinfo.html#currentMobileNetworkCode">currentMobileNetworkCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#homeMobileCountryCode">homeMobileCountryCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#homeMobileNetworkCode">homeMobileNetworkCode</keyword>
+        <keyword ref="qsystemnetworkinfo.html#interfaceForMode">interfaceForMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#locationAreaCode">locationAreaCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#macAddress">macAddress</keyword>
         <keyword ref="qsystemnetworkinfo.html#networkSignalStrength">networkSignalStrength</keyword>

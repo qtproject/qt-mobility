@@ -405,7 +405,7 @@ QString QSystemNetworkInfo::operatorName()
 }
 
 /*!
-  Returns the wlan network's current SSID
+  Returns the wlan network's current SSID, if available.
   */
 QString QSystemNetworkInfo::wlanSsid()
 {
@@ -428,15 +428,6 @@ QNetworkInterface QSystemNetworkInfo::interfaceForMode(QSystemNetworkInfo::Netwo
     return d->interfaceForMode(mode);
 }
 
-///*!
-//  Returns the QSystemNetworkInfo::NetworkMode for the \a netInterface
-//*/
-//QString  QSystemNetworkInfo::interfaceType(const QNetworkInterface &netInterface)
-//{
-//   return d->interfaceType(netInterface);
-//}
-
-
 // display
  /*!
    Constructs a QSystemDisplayInfo object.
@@ -453,7 +444,12 @@ QSystemDisplayInfo::~QSystemDisplayInfo()
 }
 
 /*!
-    Returns the display brightness of \a screen in %, 1 - 100 scale
+    Returns the display brightness of \a screen in %, 1 - 100 scale.
+
+    Depending on platform, displayBrightness may not be available due to
+    differing hardware, software or driver implementation. In which case this
+    will return 0.
+
 */
 int QSystemDisplayInfo::displayBrightness(int screen)
 {
@@ -476,7 +472,6 @@ int QSystemDisplayInfo::colorDepth(int screenNumber)
 QSystemMemoryInfo::QSystemMemoryInfo(QObject *parent)
 {
     d = new QSystemMemoryInfoPrivate(parent);
-  //  connect(d,SIGNAL(newMemoryCardAdded(QString)),this,SIGNAL(newMemoryCard(QString)));
 }
 
 /*!
@@ -652,6 +647,9 @@ return d->currentPowerState();
 /////
  /*!
    Constructs a QSystemScreenSaver object with the given \a parent.
+
+   On platforms where there is no one default screensaver mechanism, such as Linux, this class
+   may not be available.
  */
 QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
 {
