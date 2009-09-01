@@ -151,10 +151,14 @@ QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
 {
     Q_D(QVideoWidget);
 
+    qDebug(Q_FUNC_INFO);
+
     d->q_ptr = this;
 
     if (object)
         d->service = object->service();
+
+    qDebug("service %d", int(d->service));
 
     if (!d->service)
         return;
@@ -163,14 +167,15 @@ QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
     d->overlay = qobject_cast<QVideoWindowControl*>(d->service->control(QVideoWindowControl_iid));
 
     if (d->overlay != 0) {
+        qDebug("Use overlay");
         connect(d->overlay, SIGNAL(fullscreenChanged(bool)), SLOT(_q_overlayFullscreenChanged(bool)));
         connect(d->overlay, SIGNAL(nativeSizeChanged()), SLOT(_q_dimensionsChanged()));
         connect(d->overlay, SIGNAL(brightnessChanged(int)), SIGNAL(brightnessChanged(int)));
         connect(d->overlay, SIGNAL(contrastChanged(int)), SIGNAL(contrastChanged(int)));
         connect(d->overlay, SIGNAL(hueChanged(int)), SIGNAL(hueChanged(int)));
         connect(d->overlay, SIGNAL(saturationChanged(int)), SIGNAL(saturationChanged(int)));
-    }
-    else {
+    } else {
+        qDebug("User video widget");
         d->videoWidgetControl = qobject_cast<QVideoWidgetControl*>(d->service->control(QVideoWidgetControl_iid));
         if (d->videoWidgetControl != 0) {
             d->videoWidgetControl->videoWidget()->setParent(this);

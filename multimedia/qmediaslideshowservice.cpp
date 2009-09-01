@@ -134,7 +134,9 @@ public:
     QMediaSlideShowServicePrivate()
         : slideControl(0)
         , outputControl(0)
+#ifndef QT_NO_VIDEOSURFACE
         , rendererControl(0)
+#endif
         , network(0)
     {
     }
@@ -146,7 +148,9 @@ public:
 #endif
     QMediaSlideShowControl *slideControl;
     QMediaSlideShowOutputControl *outputControl;
+#ifndef QT_NO_VIDEOSURFACE
     QMediaSlideShowRenderer *rendererControl;
+#endif
     QNetworkAccessManager *network;
 
 #ifndef QT_NO_VIDEOSURFACE
@@ -236,10 +240,13 @@ QMediaSlideShowService::QMediaSlideShowService(QObject *parent)
 
     d->slideControl = new QMediaSlideShowControl(this);
     d->outputControl = new QMediaSlideShowOutputControl;
+
+#ifndef QT_NO_VIDEOSURFACE
     d->rendererControl = new QMediaSlideShowRenderer;
 
     connect(d->rendererControl, SIGNAL(surfaceChanged(QAbstractVideoSurface*)),
             this, SLOT(_q_surfaceChanged(QAbstractVideoSurface*)));
+#endif
 }
 
 /*!
@@ -247,8 +254,9 @@ QMediaSlideShowService::QMediaSlideShowService(QObject *parent)
 QMediaSlideShowService::~QMediaSlideShowService()
 {
     Q_D(QMediaSlideShowService);
-
+#ifndef QT_NO_VIDEOSURFACE
     delete d->rendererControl;
+#endif
     delete d->outputControl;
     delete d->slideControl;
 }

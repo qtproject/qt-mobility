@@ -148,7 +148,7 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayerService *service):
     d->service = service == 0 ? createMediaPlayerService() : service;
     Q_ASSERT(d->service != 0);
 
-    d->control = qobject_cast<QMediaPlayerControl*>(service->control(QMediaPlayerControl_iid));
+    d->control = qobject_cast<QMediaPlayerControl*>(d->service->control(QMediaPlayerControl_iid));
     connect(d->control, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(_q_stateChanged(QMediaPlayer::State)));
     connect(d->control, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
             SLOT(_q_mediaStatusChanged(QMediaPlayer::MediaStatus)));

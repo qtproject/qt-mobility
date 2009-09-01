@@ -54,6 +54,7 @@ class QGstreamerMetadataProvider;
 class QGstreamerVideoRenderer;
 class QGstreamerVideoOverlay;
 #endif
+class QGstreamerVideoWidgetControl;
 
 class QMediaPlaylistNavigator;
 
@@ -80,6 +81,7 @@ private:
     QGstreamerVideoRenderer *m_videoRenderer;
     QGstreamerVideoOverlay *m_videoWindow;
 #endif
+    QGstreamerVideoWidgetControl *m_videoWidget;
 };
 
 #endif
