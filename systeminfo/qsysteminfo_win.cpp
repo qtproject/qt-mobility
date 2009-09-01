@@ -842,7 +842,7 @@ qint64 QSystemMemoryInfoPrivate::availableDiskSpace(const QString &driveVolume)
     bool ok = GetDiskFreeSpaceEx(driveVolume.utf16(),(PULARGE_INTEGER)&freeBytes, (PULARGE_INTEGER)&totalBytes, (PULARGE_INTEGER)&totalFreeBytes);
 //    qWarning() << ok << freeBytes << totalBytes << totalFreeBytes;
     if(!ok)
-        totalFreeBytes = -1;
+        totalFreeBytes = 0;
     return totalFreeBytes;
 }
 
@@ -855,7 +855,7 @@ qint64 QSystemMemoryInfoPrivate::totalDiskSpace(const QString &driveVolume)
     bool ok = GetDiskFreeSpaceEx(driveVolume.utf16(),(PULARGE_INTEGER)&freeBytes, (PULARGE_INTEGER)&totalBytes, (PULARGE_INTEGER)&totalFreeBytes);
 //    qWarning() << ok << freeBytes << totalBytes << totalFreeBytes;
     if(!ok)
-        totalBytes = -1;
+        totalBytes = 0;
     return totalBytes;
 }
 
