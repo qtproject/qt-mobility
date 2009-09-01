@@ -304,6 +304,13 @@ void tst_QContact::details()
     // Now see if we got any updates to ref/one
     QVERIFY(ref == one);
     QVERIFY(ref != three);
+
+    // test saving of a detail with an empty field.
+    QContactPhoneNumber four;
+    four.setNumber("");
+    c.saveDetail(&four);
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 2);
+    QVERIFY(!four.values().isEmpty()); // an empty qstring is not invalid; make sure it exists in the detail.
 }
 
 void tst_QContact::actions()

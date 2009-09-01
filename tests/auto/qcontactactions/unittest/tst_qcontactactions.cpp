@@ -100,10 +100,15 @@ Q_IMPORT_PLUGIN(contacts_testdummystaticactionfactorycopy)
 
 tst_QContactActions::tst_QContactActions()
 {
+    // set the correct path to look for plugins
+    QString path = QApplication::applicationDirPath() + "/dummyplugin";
+    QApplication::addLibraryPath(path);
 }
 
 tst_QContactActions::~tst_QContactActions()
 {
+    QString path = QApplication::applicationDirPath() + "/dummyplugin";
+    QApplication::removeLibraryPath(path);
 }
 
 void tst_QContactActions::init()
@@ -116,10 +121,6 @@ void tst_QContactActions::cleanup()
 
 void tst_QContactActions::testSendEmail()
 {
-    // set the correct path to look for plugins
-    QString path = QApplication::applicationDirPath() + "/dummyplugin";
-    QApplication::addLibraryPath(path);
-
     QContact c;
     QContactEmailAddress e;
     e.setEmailAddress("test@nokia.com");
@@ -315,10 +316,6 @@ void tst_QContactActions::testDescriptor()
     // first, test retrieving an action when no factories are loaded
     QContactAction* invalidAction = QContactAction::action(QContactActionDescriptor());
     QVERIFY(invalidAction == 0); // should be null.
-
-    // set the correct path to look for plugins
-    QString path = QApplication::applicationDirPath() + "/dummyplugin";
-    QApplication::addLibraryPath(path);
 
     QContact c;
     QContactEmailAddress e;
