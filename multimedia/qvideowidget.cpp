@@ -158,8 +158,6 @@ QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
     if (object)
         d->service = object->service();
 
-    qDebug("service %d", int(d->service));
-
     if (!d->service)
         return;
 
