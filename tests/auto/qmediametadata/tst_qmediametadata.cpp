@@ -62,15 +62,23 @@ public:
 
     QVariant metadata(QMediaMetadata::Key key) const
     {
-        Q_UNUSED(key);
+        switch (key) {
+        case QMediaMetadata::AlbumArtist: return data["Artist"];
+        case QMediaMetadata::Title: return data["Title"];
+        default:
+            ;
+        }
 
         return QVariant();
     }
 
     void setMetadata(QMediaMetadata::Key key, QVariant const &value)
     {
-        Q_UNUSED(key);
-        Q_UNUSED(value);
+        switch (key) {
+        case QMediaMetadata::Title: data["Title"] = value; break;
+        default:
+            ;
+        }
     }
 
     QVariant extendedMetadata(QString const &name) const
@@ -166,6 +174,8 @@ private slots:
     void testChanged();
     void testReadMetadata();
     void testWriteMetadata();
+    void testReadExtendedMetadata();
+    void testWriteExtendedMetadat();
 
 private:
     MockObject      *object;
@@ -215,8 +225,8 @@ void tst_QMediaMetadata::testReadMetadata()
 {
     mock->setMetadata();
 
-    QCOMPARE(metadata->extendedMetadata("Artist").toString(), QString("Dead Can Dance"));
-    QCOMPARE(metadata->extendedMetadata("Title").toString(), QString("Host of Seraphim"));
+    QCOMPARE(metadata->metadata(QMediaMetadata::AlbumArtist).toString(), QString("Dead Can Dance"));
+    QCOMPARE(metadata->metadata(QMediaMetadata::Title).toString(), QString("Host of Seraphim"));
 }
 
 void tst_QMediaMetadata::testWriteMetadata()
@@ -224,10 +234,26 @@ void tst_QMediaMetadata::testWriteMetadata()
     mock->setMetadata();
     mock->setNoReadOnly();
 
+    metadata->setMetadata(QMediaMetadata::Title, QLatin1String("In the Kingdom of the Blind the One eyed are Kings"));
+    QCOMPARE(metadata->metadata(QMediaMetadata::Title).toString(), QLatin1String("In the Kingdom of the Blind the One eyed are Kings"));
+}
+
+void tst_QMediaMetadata::testReadExtendedMetadata()
+{
+    mock->setMetadata();
+
+    QCOMPARE(metadata->extendedMetadata("Artist").toString(), QString("Dead Can Dance"));
+    QCOMPARE(metadata->extendedMetadata("Title").toString(), QString("Host of Seraphim"));
+}
+
+void tst_QMediaMetadata::testWriteExtendedMetadat()
+{
+    mock->setMetadata();
+    mock->setNoReadOnly();
+
     metadata->setExtendedMetadata("Title", QLatin1String("In the Kingdom of the Blind the One eyed are Kings"));
     QCOMPARE(metadata->extendedMetadata("Title").toString(), QLatin1String("In the Kingdom of the Blind the One eyed are Kings"));
 }
-
 
 QTEST_MAIN(tst_QMediaMetadata)
 
