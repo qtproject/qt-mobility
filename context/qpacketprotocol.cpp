@@ -40,6 +40,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
   \class QPacketProtocol
+  \internal
 
   \brief The QPacketProtocol class encapsulates communicating discrete packets
   across fragmented IO channels, such as TCP sockets.
@@ -343,6 +344,7 @@ QIODevice * QPacketProtocol::device()
 
 /*!
   \class QPacket
+  \internal
 
   \brief The QPacket class encapsulates an unfragmentable packet of data to be
   transmitted by QPacketProtocol.

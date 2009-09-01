@@ -129,6 +129,7 @@ struct QMallocPtr
 
 /*!
   \class QMallocPool
+  \internal
 
   \brief The QMallocPool class allows management of allocations within a
   designated memory region.
@@ -148,8 +149,7 @@ struct QMallocPtr
   projects, including several versions of Linux libc.
 
   QMallocPool is not thread safe.
-
- */
+*/
 
 /*!
   \enum QMallocPool::PoolType
