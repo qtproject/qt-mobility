@@ -59,7 +59,6 @@ public:
     QString name();
 
     bool startup(Type t);
-    void shutdown();
 
     QUuid id();
     unsigned int order();
@@ -187,10 +186,6 @@ QString RegistryLayer::name()
 bool RegistryLayer::startup(Type)
 {
     return true;
-}
-
-void RegistryLayer::shutdown()
-{
 }
 
 QUuid RegistryLayer::id()

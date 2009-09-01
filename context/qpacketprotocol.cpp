@@ -380,7 +380,7 @@ QIODevice * QPacketProtocol::device()
   Only packets returned from QPacketProtocol::read() may be read from.  QPacket
   instances constructed by directly by applications are for transmission only 
   and are considered "write only".  Attempting to read data from them will 
-  result in undefined behaviour.
+  result in undefined behavior.
 
   \sa QPacketProtocol
  */
@@ -406,7 +406,7 @@ QPacket::~QPacket()
 
 /*!
   Creates a copy of \a other.  The initial stream positions are shared, but the
-  two packets are otherwise independant.
+  two packets are otherwise independent.
  */
 QPacket::QPacket(const QPacket & other)
 : QDataStream(), b(other.b)
@@ -447,7 +447,7 @@ bool QPacket::isEmpty() const
   protocol.send(packet);
 
   packet.clear();
-  packet << "Goodbyte world!" << 789;
+  packet << "Goodbye world!" << 789;
   protocol.send(packet);
   \endcode
  */

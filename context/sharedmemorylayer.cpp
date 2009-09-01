@@ -1662,7 +1662,6 @@ public:
     QString name();
 
     bool startup(Type);
-    void shutdown();
 
     QUuid id();
     unsigned int order();
@@ -2347,10 +2346,6 @@ void SharedMemoryLayer::doClientEmit()
             iter != cpy.end();
             ++iter)
         removeHandle((Handle)*iter);
-}
-
-void SharedMemoryLayer::shutdown()
-{
 }
 
 QUuid SharedMemoryLayer::id()
@@ -3272,7 +3267,7 @@ void SharedMemoryLayer::doClientRemove(const QByteArray &path)
 
         QValueSpaceObject * obj = *iter;
 
-        const QByteArray objectPath = obj->objectPath().toUtf8();
+        const QByteArray objectPath = obj->path().toUtf8();
 
         if (objectPath.length() < path.length()) {
             if (path.startsWith(objectPath) && path.at(objectPath.length()) == '/')
@@ -3293,7 +3288,7 @@ void SharedMemoryLayer::doClientWrite(const QByteArray &path,
             ++iter) {
         QValueSpaceObject * obj = *iter;
 
-        const QByteArray objectPath = obj->objectPath().toUtf8();
+        const QByteArray objectPath = obj->path().toUtf8();
 
         if (objectPath.length() < path.length()) {
             if (path.startsWith(objectPath) && path.at(objectPath.length()) == '/')
@@ -3313,7 +3308,7 @@ void SharedMemoryLayer::doClientNotify(QValueSpaceObject *object, const QByteArr
 
     QByteArray emitPath;
 
-    const QByteArray objectPath = object->objectPath().toUtf8();
+    const QByteArray objectPath = object->path().toUtf8();
     if (path.startsWith(objectPath)) {
         // path is under objectPath
         emitPath = path.mid(objectPath.length());

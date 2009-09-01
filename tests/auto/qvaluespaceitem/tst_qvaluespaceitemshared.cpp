@@ -169,7 +169,7 @@ void tst_QValueSpaceItem::testConstructor_data()
     QTest::addColumn< QVariant >("testItem");
     QTest::addColumn< QVariant >("value");
     QTest::addColumn< QList<QString> >("subPaths");
-    QTest::addColumn< QString >("itemName");
+    QTest::addColumn< QString >("path");
     QTest::addColumn< QString >("relItemPath");
     QTest::addColumn< int >("expectedValue");
 
@@ -557,7 +557,7 @@ void tst_QValueSpaceItem::testConstructor()
     QFETCH(QVariant, testItem);
     QFETCH(QVariant, value);
     QFETCH(QList<QString>, subPaths);
-    QFETCH(QString, itemName);
+    QFETCH(QString, path);
     QFETCH(QString, relItemPath);
     QFETCH(int, expectedValue);
 
@@ -566,7 +566,7 @@ void tst_QValueSpaceItem::testConstructor()
     QCOMPARE(item->parent(), this);
     QCOMPARE(item->value(), value);
     QCOMPARE(item->subPaths().toSet(), subPaths.toSet());
-    QCOMPARE(item->itemName(), itemName);
+    QCOMPARE(item->path(), path);
     QCOMPARE(item->value(relItemPath, 100).toInt(), expectedValue);
 }
 

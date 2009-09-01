@@ -59,7 +59,7 @@ public:
     explicit QValueSpaceItem(QObject *parent = 0);
     virtual ~QValueSpaceItem();
 
-    QString itemName() const;
+    QString path() const;
 
     QList<QString> subPaths() const;
 

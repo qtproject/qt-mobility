@@ -48,7 +48,7 @@ BatteryCharge::~BatteryCharge()
 
 QString BatteryCharge::path() const
 {
-    return m_item ? m_item->itemName() : QString();
+    return m_item ? m_item->path() : QString();
 }
 
 void BatteryCharge::setPath(const QString &path)
