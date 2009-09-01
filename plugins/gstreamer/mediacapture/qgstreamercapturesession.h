@@ -32,7 +32,6 @@
 **
 ****************************************************************************/
 
-
 #ifndef QGSTREAMERCAPTURESESSION_H
 #define QGSTREAMERCAPTURESESSION_H
 
