@@ -223,7 +223,7 @@ void Dialog::netStatusComboActivated(int index)
     } else {
         ui->ssidLabel->setText("");
     }
-
+    ui->InterfaceLabel->setText(ni.interfaceForMode((QSystemNetworkInfo::NetworkMode)reIndex).humanReadableName());
 }
 
 void Dialog::getVersion(int index)

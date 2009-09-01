@@ -450,12 +450,6 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
     switch(mode) {
-        case QSystemNetworkInfo::GsmMode:
-        break;
-        case QSystemNetworkInfo::CdmaMode:
-        break;
-        case QSystemNetworkInfo::WcdmaMode:
-        break;
     case QSystemNetworkInfo::WlanMode:
         {
             QString baseSysDir = "/sys/class/net/";
@@ -501,9 +495,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
             }
         }
         break;
-    case QSystemNetworkInfo::BluetoothMode:
-        break;
-    case QSystemNetworkInfo::WimaxMode:
+    default:
         break;
     };
     return QSystemNetworkInfo::UndefinedStatus;
@@ -512,12 +504,6 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
 int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
     switch(mode) {
-    case QSystemNetworkInfo::GsmMode:
-        break;
-    case QSystemNetworkInfo::CdmaMode:
-        break;
-    case QSystemNetworkInfo::WcdmaMode:
-        break;
     case QSystemNetworkInfo::WlanMode:
         {
             QString result;
@@ -562,9 +548,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
             }
         }
         break;
-    case QSystemNetworkInfo::BluetoothMode:
-        break;
-    case QSystemNetworkInfo::WimaxMode:
+    default:
         break;
     };
 
@@ -653,12 +637,6 @@ QString QSystemNetworkInfoPrivate::wlanSsid()
 QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
 {
     switch(mode) {
-        case QSystemNetworkInfo::GsmMode:
-        break;
-        case QSystemNetworkInfo::CdmaMode:
-        break;
-        case QSystemNetworkInfo::WcdmaMode:
-        break;
         case QSystemNetworkInfo::WlanMode:
         {
             QString result;
@@ -701,9 +679,7 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
             }
         }
         break;
-        case QSystemNetworkInfo::BluetoothMode:
-        break;
-        case QSystemNetworkInfo::WimaxMode:
+    default:
         break;
     };
     return QString();
@@ -711,6 +687,41 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
 
 QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
+    QList<QNetworkInterface> interfaceList;
+    interfaceList = QNetworkInterface::allInterfaces();
+
+    QString result;
+    QString baseSysDir = "/sys/class/net/";
+    QDir eDir(baseSysDir);
+    QStringList dirs = eDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
+    foreach(QString dir, dirs) {
+        QString devFile = baseSysDir + dir;
+        QFileInfo devfi(devFile + "/device");
+        if(!devfi.exists()) {
+            continue;
+        }
+        switch(mode) {
+        case QSystemNetworkInfo::WlanMode:
+            {
+                qWarning() << devFile;
+                QFileInfo fi(devFile + "/wireless");
+                if(fi.exists()) {
+                    return QNetworkInterface::interfaceFromName(dir);
+                }
+            }
+            break;
+        case QSystemNetworkInfo::EthernetMode:
+            {
+                QFileInfo fi(devFile + "/wireless");
+                if(!fi.exists()) {
+                    return QNetworkInterface::interfaceFromName(dir);
+                }
+            }
+            break;
+            default:
+            break;
+        };
+    }
     return QNetworkInterface();
 }
 
