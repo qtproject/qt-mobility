@@ -490,7 +490,7 @@ QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
         connect(widgetControl, SIGNAL(saturationChanged(int)), SLOT(_q_saturationChanged(int)));
         connect(widgetControl, SIGNAL(fullscreenChanged(bool)), SLOT(_q_fullScreenChanged(bool)));
 
-        connect(d->widgetBackend, SIGNAL(aspectRatioModeChanged(QVideoWiget::AspectRatio)),
+        connect(d->widgetBackend, SIGNAL(aspectRatioModeChanged(QVideoWidget::AspectRatio)),
                 SLOT(_q_aspectRatioModeChanged(QVideoWidget::AspectRatio)));
         connect(d->widgetBackend, SIGNAL(customAspectRatioChanged(QSize)),
                 SLOT(_q_customAspectRatioChanged(QSize)));
