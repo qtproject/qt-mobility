@@ -463,7 +463,9 @@ QCamera::WhiteBalanceModes QCamera::supportedWhiteBalanceModes() const
 }
 
 /*!
-    Returns ?
+    Returns the current color temperature if the
+    manual white balance is active, otherwise the
+    return value is undefined.
 */
 
 int QCamera::manualWhiteBalance() const
@@ -482,7 +484,7 @@ void QCamera::setManualWhiteBalance(int colorTemperature)
 }
 
 /*!
-    Returns the sensitivity
+    Returns the ISO sensitivity.
 */
 
 int QCamera::isoSensitivity() const
