@@ -1,6 +1,8 @@
 SOURCES += main.cpp
 TARGET = vsiTestLackey
 INCLUDEPATH += ../../../../context
+DEPENDPATH += ../../../../context
+
 QT = core
 
 CONFIG+= testcase
