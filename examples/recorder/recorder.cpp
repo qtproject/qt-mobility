@@ -45,7 +45,7 @@
 #include <QtMultimedia/qaudioformat.h>
 #else
 #include <qaudioformat.h>
-#endif#
+#endif
 
 #include <QtGui>
 
