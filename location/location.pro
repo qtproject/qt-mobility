@@ -49,10 +49,10 @@ INSTALLS+=headers
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
-    INCLUDEPATH += \epoc32\include\osextensions
+    INCLUDEPATH += $$EPOCROOT\epoc32\include\osextensions
     LIBS += -llbs
 
-    deploy.path = /
+    deploy.path = $$EPOCROOT
     exportheaders.sources = $$PUBLIC_HEADERS
     exportheaders.path = epoc32/include
     DEPLOYMENT += exportheaders
