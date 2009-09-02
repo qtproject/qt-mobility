@@ -1,21 +1,79 @@
-/*!
+/****************************************************************************
+**
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the documentation of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain
+** additional rights.  These rights are described in the Nokia Qt LGPL
+** Exception version 1.1, included in the file LGPL_EXCEPTION.txt in this
+** package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
 
+
+/*!
 \page index.html
 
 \title Messaging Library Developer Resources
+
+\brief The Messaging API enables access to messaging services to send 
+messages and retrieve message data is provided, as well as messaging 
+services to compose, reply to, forward and show messages using a 
+native application.
+
 
 \tableofcontents
 
 
 \section1 Overview
 
-The messaging library provides a set of APIs for accessing messaging data. Interfaces are provided to retrieve and query messages, folders and accounts, also interfaces to create, modify, and store messages are provided. A unified interface for manipulation and storage of SMS, MMS, Email and XMPP messages is provided. Handling of internet media (MIME) messages that have only been partially retrieved is supported.
+The messaging library provides a set of APIs for accessing messaging data. 
+Interfaces are provided to retrieve and query messages, folders and 
+accounts, also interfaces to create, modify, and store messages are 
+provided. A unified interface for manipulation and storage of SMS, MMS, 
+Email and XMPP messages is provided. Handling of internet media (MIME) 
+messages that have only been partially retrieved is supported.
 
-An API to access messaging services to send messages and retrieve message data is provided, as well as messaging services to compose, reply to, forward and show messages using a native application.
+An API to access messaging services to send messages and retrieve message 
+data is provided, as well as messaging services to compose, reply to, 
+forward and show messages using a native application.
 
-Notifications of addition, removal and updating of stored messages can be enabled.
+Notifications of addition, removal and updating of stored messages can be 
+enabled.
 
-The library provides unified access to the messaging data on a device including concurrent access to messaging data by multiple applications, and independence from the mechanism used to store the messaging data on the device.
+The library provides unified access to the messaging data on a device 
+including concurrent access to messaging data by multiple applications, 
+and independence from the mechanism used to store the messaging data on 
+the device.
 
 This library requires Qt 4.5 to be installed.
 
@@ -48,9 +106,12 @@ To build the library, run qmake and make.
 
 \section1 Composition and Manipulation of Messages
 
-The library provides a number of classes to assist with the composition and manipulation of message data.
-Messages of all supported types are represented uniformly, although not all transport mechanisms are able to deliver more complex message formulations.
-Messages can be composed of multiple parts and constructed hierarchically. Composition of multipart messages from individual part objects is supported.
+The library provides a number of classes to assist with the composition 
+and manipulation of message data. Messages of all supported types are 
+represented uniformly, although not all transport mechanisms are able to 
+deliver more complex message formulations. Messages can be composed of 
+multiple parts and constructed hierarchically. Composition of multipart 
+messages from individual part objects is supported.
 
 Classes to assist with composition and manipulation of messages:
 
@@ -64,8 +125,8 @@ Classes to assist with composition and manipulation of messages:
 
 \section1 Message Accounts
 
-The library provides classes for accessing information about messaging accounts both outgoing and 
-incoming.
+The library provides classes for accessing information about messaging 
+accounts both outgoing and incoming.
 
 Classes relating to messaging accounts:
 
@@ -79,17 +140,20 @@ Classes relating to messaging accounts:
 
 \section1 Sorting and Filtering Functionality
 
-The library provides a number of sort and filter functions to aid in selecting a useful view of 
-data. This reduces the burden on the client of the library for managing the messaging data, as 
-well as allowing better use of the underlying storage mechanism.
+The library provides a number of sort and filter functions to aid in 
+selecting a useful view of data. This reduces the burden on the client 
+of the library for managing the messaging data, as well as allowing 
+better use of the underlying storage mechanism.
 
-Sorting is accomplished by providing a sorting key, specifying the sort order, and the message 
-property upon which to sort.
+Sorting is accomplished by providing a sorting key, specifying the sort 
+order, and the message property upon which to sort.
 
-Filtering is accomplished by providing a filtering condition, specifying a value, the property 
-to match, and the desired relation between the value and the property.
+Filtering is accomplished by providing a filtering condition, specifying a 
+value, the property to match, and the desired relation between the value 
+and the property.
 
-Filters can be combined using boolean operators to produce filters of arbitrary complexity.
+Filters can be combined using boolean operators to produce filters of 
+arbitrary complexity.
 
 Classes to assist with sorting and filtering messages:
 
@@ -106,14 +170,22 @@ Classes to assist with sorting and filtering messages:
 
 \section1 Messaging Services
 
-The library provides the QMessageServiceAction class, which provides an interface to communicate with the system's native messaging services, including sending messages, retrieving message data, and composing or showing a message using a native application.
+The library provides the QMessageServiceAction class, which provides an 
+interface to communicate with the system's native messaging services, 
+including sending messages, retrieving message data, and composing or 
+showing a message using a native application.
 
 Service actions communciate their operational status by emitting signals.
 
 \section1 Concurrent Access to Messaging Data
 
-The library provides a level of concurrent access to messaging data by multiple clients.
-The concurrent access does guarantee that data won't be corrupted by concurrent access, however it does not give any guarantees as to performance of messaging data access if accessed concurrently by multiple clients.
+The library provides a level of concurrent access to messaging data by 
+multiple clients.
+
+The concurrent access does guarantee that data won't be corrupted by 
+concurrent access, however it does not give any guarantees as to 
+performance of messaging data access if accessed concurrently by 
+multiple clients.
 
 \section1 Abstraction of Messaging Data Storage Mechanism
 
