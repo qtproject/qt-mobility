@@ -84,8 +84,8 @@ public:
     void pause();
     void stop();
 
-    QMediaSource currentSource() const;
-    void setCurrentSource(const QMediaSource &source);
+    QMediaSource media() const;
+    void setMedia(const QMediaSource &source);
 
     QUrl url() const;
     void setUrl(const QUrl &url);
