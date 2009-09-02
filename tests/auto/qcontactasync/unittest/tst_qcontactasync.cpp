@@ -1697,8 +1697,10 @@ void tst_QContactAsync::threadDelivery()
 
         // break after 30 seconds.
         if (totalWaitTime > 30000) {
+            delete req;
+            delete cm;
             QSKIP("Asynchronous request not complete after 30 seconds!", SkipSingle);
-            break;
+            return;
         }
     }
 
