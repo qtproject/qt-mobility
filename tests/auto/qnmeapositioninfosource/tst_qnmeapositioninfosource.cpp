@@ -136,7 +136,7 @@ void tst_QNmeaPositionInfoSource::minimumUpdateInterval()
     QFETCH(QNmeaPositionInfoSource::UpdateMode, mode);
 
     QNmeaPositionInfoSource source(mode);
-    QCOMPARE(source.minimumUpdateInterval(), 0);
+    QCOMPARE(source.minimumUpdateInterval(), 100);
 }
 
 void tst_QNmeaPositionInfoSource::minimumUpdateInterval_data()
