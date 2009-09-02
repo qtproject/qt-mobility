@@ -297,15 +297,16 @@ void QTrackerContactAsyncRequest::contactsReady()
         avatar.setAvatar(query->index(i, column++).data().toString());
         if( !avatar.avatar().isEmpty() )
             contact.saveDetail(&avatar);
-
         // TODO extract generic from bellow ... mapping field names
         if (request->definitionRestrictions().contains(QContactEmailAddress::DefinitionName))
         {
             // no office mails yet
             QContactEmailAddress mail; // constraint here for start only one email
             mail.setEmailAddress(query->index(i, column++).data().toString());
-            if( mail.emailAddress().isEmpty() )
+            if( !mail.emailAddress().isEmpty() )
+            {
                 contact.saveDetail(&mail);
+            }
         }
         if (request->definitionRestrictions().contains(QContactUrl::DefinitionName))
         {

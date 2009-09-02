@@ -334,6 +334,28 @@ void appendPhoneNumbersUpdate(RDFUpdate &up, RDFVariable &var, const QList<QCont
     }
 }
 
+/*!
+ * write all phone numbers on one query to tracker
+ * TODO this is temporary code for creating new, saving contacts need to handle only what was
+ * changed.
+ */
+void appendEmailsUpdate(RDFUpdate &up, RDFVariable &var, const QList<QContactDetail> &details )
+{
+
+    RDFVariable varForInsert = var.deepCopy();
+    RDFVariable emails = var.property<nco::hasEmailAddress>();
+    RDFVariable types = emails.property<rdf::type>();
+    up.addDeletion(RDFVariableStatement(var, nco::hasEmailAddress::iri(), emails));
+    up.addDeletion(emails, rdf::type::iri(), types);
+    foreach(const QContactDetail& det, details)
+    {
+        QUrl newEmail = ::tracker()->createLiveNode().uri();
+        up.addInsertion(newEmail, rdf::type::iri(), nco::EmailAddress::iri());
+        up.addInsertion(newEmail, nco::emailAddress::iri(), LiteralValue(det.value(QContactEmailAddress::FieldEmailAddress)));
+        up.addInsertion(RDFVariableStatement(varForInsert, nco::hasEmailAddress::iri(), newEmail));
+    }
+}
+
 
 // create nco::Affiliation if there is not one already in tracker
 void createAffiliationIfItDoesntExist(QUniqueId contactId)
@@ -345,8 +367,9 @@ void createAffiliationIfItDoesntExist(QUniqueId contactId)
     RDFFilter doesntExist = affiliation.not_().isBound();// do not create if it already exist
     RDFUpdate up;
     QUrl newAffiliation = ::tracker()->createLiveNode().uri();
-    up.addInsertion(newAffiliation, rdf::type::iri(), nco::Affiliation::iri()); // create node
     up.addInsertion(contact, nco::hasAffiliation::iri(), newAffiliation); // add Affiliation node to nco::PersonContact
+    up.addInsertion(affiliation, rdf::type::iri(), nco::Affiliation::iri()); // create node
+
     ::tracker()->executeQuery(up);
 }
 
@@ -460,27 +483,20 @@ bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
                     appendPhoneNumbersUpdate(updateQuery, rdfAffiliation, toAffiliation);
                 service->executeQuery(updateQuery);
             }
+            else if(definition == QContactEmailAddress::DefinitionName) {
+                if (!toPerson.isEmpty())
+                    appendEmailsUpdate(updateQuery, rdfPerson, toPerson);
+                if( !toAffiliation.isEmpty())
+                    appendEmailsUpdate(updateQuery, rdfAffiliation, toAffiliation);
+                service->executeQuery(updateQuery);
+            }
             else
             {
               // Work in progress. soon writing them in single rdf update too
               foreach(const QContactDetail &det, details )
               {
                 definition = det.definitionName();
-                /* Save emails */ // TODO all in one rdf update
-                if(definition == QContactEmailAddress::DefinitionName) {
-                    QString email = det.value(QContactEmailAddress::FieldEmailAddress);
-                    Live<nco::Role> contact = d->contactByContext(det, ncoContact);
-
-                    // TODO: Known issue: we support only one of each type at the moment.
-                    //       We should somehow get a notification from UI if we are adding
-                    //       a new detail field, or editing the existing one.
-                    Live<nco::EmailAddress> liveEmail = contact->firstHasEmailAddress();
-                    if(liveEmail == 0) {
-                        liveEmail = contact->addHasEmailAddress();
-                    }
-                    liveEmail->setEmailAddress(email);
-                /* Save avatar */
-                } else if(definition == QContactAvatar::DefinitionName) {
+                if(definition == QContactAvatar::DefinitionName) {
                     QUrl avatar = det.value(QContactAvatar::FieldAvatar);
                     Live<nie::DataObject> fdo = service->liveNode( avatar );
                     ncoContact->setPhoto(fdo);
