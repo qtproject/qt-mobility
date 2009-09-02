@@ -268,7 +268,7 @@
             <contents name="requesting-location-data-from-data-sources" title="Requesting location data from data sources" level="1"/>
             <contents name="controlling-aspects-of-data-sources" title="Controlling aspects of data sources" level="2"/>
             <contents name="reading-nmea-data" title="Reading NMEA data" level="2"/>
-            <contents name="creating-a-custom-location-data-source" title="Creating a custom location data source" level="1"/>
+            <contents name="example-logfile-position-source-creating-a-custom-location-data-source" title="Example: Logfile Position Source - Creating a custom location data source" level="1"/>
         </page>
     </namespace>
 </INDEX>
