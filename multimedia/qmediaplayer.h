@@ -49,7 +49,7 @@ class QMediaPlayerPrivate;
 class Q_MEDIA_EXPORT QMediaPlayer : public QAbstractMediaObject
 {
     Q_OBJECT
-    Q_PROPERTY(QMediaSource mediaSource READ currentMediaSource NOTIFY currentMediaSourceChanged)
+    Q_PROPERTY(QMediaSource media READ media WRITE setMedia NOTIFY mediaChanged)
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(qint64 position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
@@ -60,7 +60,7 @@ class Q_MEDIA_EXPORT QMediaPlayer : public QAbstractMediaObject
     Q_PROPERTY(float playbackRate READ playbackRate WRITE setPlaybackRate NOTIFY playbackRateChange)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(MediaStatus mediaStatus READ mediaStatus NOTIFY mediaStatusChanged)
-    Q_PROPERTY(QString error READ errorString NOTIFY errorStringChanged)
+    Q_PROPERTY(QString error READ errorString)
     Q_ENUMS(State)
     Q_ENUMS(MediaStatus)
 
@@ -99,7 +99,7 @@ public:
 
     bool isValid() const;
 
-    QMediaSource currentMediaSource() const;
+    QMediaSource media() const;
 
     State state() const;
     MediaStatus mediaStatus() const;
@@ -132,8 +132,10 @@ public Q_SLOTS:
 
     void setPlaybackRate(float rate);
 
+    void setMedia(const QMediaSource &media);
+
 Q_SIGNALS:
-    void currentMediaSourceChanged(const QMediaSource &source);
+    void mediaChanged(const QMediaSource &media);
 
     void stateChanged(QMediaPlayer::State newState);
     void mediaStatusChanged(QMediaPlayer::MediaStatus status);
@@ -151,7 +153,6 @@ Q_SIGNALS:
     void playbackRateChanged(float rate);
 
     void error(QMediaPlayer::Error error);
-    void errorStringChanged(const QString &error);
 
 private:
     Q_DISABLE_COPY(QMediaPlayer)
@@ -160,5 +161,10 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_mediaStatusChanged(QMediaPlayer::MediaStatus))
     Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &))
 };
+
+Q_DECLARE_METATYPE(QMediaPlayer::State);
+Q_DECLARE_METATYPE(QMediaPlayer::MediaStatus);
+Q_DECLARE_METATYPE(QMediaPlayer::Error);
+
 
 #endif  // QMEDIAPLAYER_H

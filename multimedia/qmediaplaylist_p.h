@@ -128,7 +128,7 @@ public slots:
     void play(const QMediaSource& source)
     {
         if (m_player) {
-            m_player->setCurrentSource(source);
+            m_player->setMedia(source);
             m_player->play();
         }
     }
