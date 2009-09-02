@@ -179,6 +179,8 @@ public:
     MapiStorePtr defaultStore(QMessageStore::ErrorCode *lastError) const { return findStore(lastError); }
     QList<MapiStorePtr> allStores(QMessageStore::ErrorCode *lastError) const;
 
+    QMessageFolder folder(QMessageStore::ErrorCode *lastError, const QMessageFolderId& id) const;
+
     QMessage message(QMessageStore::ErrorCode *lastError, const QMessageId& id) const;
     QByteArray attachmentData(QMessageStore::ErrorCode *lastError, const QMessageId& id, ULONG number) const;
     bool showForm(LPMESSAGE message, LPMAPIFOLDER folder, LPMDB store);

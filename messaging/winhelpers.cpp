@@ -1003,6 +1003,84 @@ QByteArray contentTypeFromExtension(const QString &extension)
 
 }
 
+QMessageFolder MapiSession::folder(QMessageStore::ErrorCode *lastError, const QMessageFolderId& id) const
+{
+    QMessageFolder result;
+
+    MapiRecordKey storeRecordKey(QMessageFolderIdPrivate::storeRecordKey(id));
+    MapiStorePtr mapiStore(findStore(lastError, QMessageAccountIdPrivate::from(storeRecordKey)));
+    if (*lastError != QMessageStore::NoError)
+        return result;
+
+    // Find the root folder for this store
+    MapiFolderPtr storeRoot(mapiStore->rootFolder(lastError));
+    if (*lastError != QMessageStore::NoError)
+        return result;
+
+    MapiEntryId entryId(QMessageFolderIdPrivate::entryId(id));
+    MapiFolderPtr folder = mapiStore->openFolder(lastError, entryId);
+    if (folder && (*lastError == QMessageStore::NoError)) {
+        SizedSPropTagArray(3, columns) = {3, {PR_DISPLAY_NAME, PR_RECORD_KEY, PR_PARENT_ENTRYID}};
+        SPropValue *properties(0);
+        ULONG count;
+        HRESULT rv = folder->folder()->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &properties);
+        if (HR_SUCCEEDED(rv)) {
+            QString displayName(QStringFromLpctstr(properties[0].Value.LPSZ));
+            MapiRecordKey folderKey(reinterpret_cast<const char*>(properties[1].Value.bin.lpb), properties[1].Value.bin.cb);
+            MapiEntryId parentEntryId(properties[2].Value.bin.lpb, properties[2].Value.bin.cb);
+
+            MAPIFreeBuffer(properties);
+
+            QMessageFolderId folderId(QMessageFolderIdPrivate::from(folderKey, storeRecordKey, entryId));
+
+            QStringList path;
+            path.append(displayName);
+
+            QMessageFolderId parentId;
+            MapiEntryId ancestorEntryId(parentEntryId);
+            MapiFolderPtr ancestorFolder;
+
+            // Iterate through ancestors towards the root
+            while ((ancestorFolder = mapiStore->openFolder(lastError, ancestorEntryId)) &&
+                   (ancestorFolder && (*lastError == QMessageStore::NoError))) {
+                SPropValue *ancestorProperties(0);
+                if (ancestorFolder->folder()->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &ancestorProperties) == S_OK) {
+                    SPropValue &ancestorRecordKeyProp(ancestorProperties[1]);
+                    MapiRecordKey ancestorRecordKey(reinterpret_cast<const char*>(ancestorRecordKeyProp.Value.bin.lpb), ancestorRecordKeyProp.Value.bin.cb);
+
+                    if (ancestorEntryId == parentEntryId) {
+                        // This ancestor is the parent of the folder being retrieved, create a QMessageFolderId for the parent
+                        parentId = QMessageFolderIdPrivate::from(ancestorRecordKey, storeRecordKey, parentEntryId);
+                    }
+
+                    SPropValue &entryIdProp(ancestorProperties[2]);
+                    ancestorEntryId = MapiEntryId(entryIdProp.Value.bin.lpb, entryIdProp.Value.bin.cb);
+
+                    QString ancestorName(QStringFromLpctstr(ancestorProperties[0].Value.LPSZ));
+
+                    MAPIFreeBuffer(ancestorProperties);
+
+                    if (ancestorRecordKey == storeRoot->recordKey()) {
+                        // Reached the root and have a complete path for the folder being retrieved
+                        QMessageAccountId accountId(QMessageAccountIdPrivate::from(storeRecordKey));
+                        return QMessageFolderPrivate::from(folderId, accountId, parentId, displayName, path.join("/"));
+                    }
+
+                    // Prepare to consider next ancestor
+                    if (!ancestorName.isEmpty())
+                        path.prepend(ancestorName);
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+
+    // Failed to quickly retrieve the folder, fallback to an exhaustive search of all folders
+    result = mapiStore->folderFromId(lastError, id);
+    return result;
+}
+
 QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessageId& id) const
 {
     QMessage result;
