@@ -42,8 +42,8 @@
 #include <QtGui>
 #include <QDesktopWidget>
 #include <QDebug>
-
-#include <QLibraryInfo>
+#include <QTimer>
+#include <QDir>
 
 #if !defined(QT_NO_DBUS)
 #include <qhalservice_p.h>
@@ -58,11 +58,6 @@
 #include <QDBusPendingCall>
 #endif
 
-#include <QLocale>
-#include <QTimer>
-#include <QDir>
-#include <QTextStream>
-
 #include <locale.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -75,13 +70,10 @@
 #include <X11/Xlib.h>
 
 #endif
-#include <net/if.h>
-#include <arpa/inet.h>
+
 #include <sys/socket.h>
-#include <linux/if_ether.h>
-#include <netinet/ip.h>
-#include <sys/ioctl.h>
-#include <linux/wireless.h>
+#include <iwlib.h>
+
 QT_BEGIN_NAMESPACE
 
 static bool halAvailable()
@@ -747,7 +739,7 @@ int QSystemDisplayInfoPrivate::displayBrightness(int screen)
                 foreach(QString lapDev, list) {
                     QHalDeviceInterface ifaceDevice(lapDev);
                     QHalDeviceLaptopPanelInterface lapIface(lapDev);
-                    float numLevels = ifaceDevice.getPropertyInt("laptop_panel.num_levels");
+                    float numLevels = ifaceDevice.getPropertyInt("laptop_panel.num_levels") - 1;
                     float curLevel = lapIface.getBrightness();
                     return curLevel / numLevels * 100;
                 }
@@ -1211,56 +1203,63 @@ int QSystemDeviceInfoPrivate::batteryLevel() const
             foreach(QString dev, list) {
                 QHalDeviceInterface ifaceDevice(dev);
                 if (ifaceDevice.isValid()) {
-                    if(!ifaceDevice.getPropertyBool("battery.present") ){
-                        return QSystemDeviceInfo::NoBatteryLevel;
+                    qWarning() << ifaceDevice.getPropertyString("battery.type")
+                            << ifaceDevice.getPropertyInt("battery.charge_level.percentage");
+                    if(!ifaceDevice.getPropertyBool("battery.present")
+                        && ifaceDevice.getPropertyString("battery.type") != "pda"
+                             || ifaceDevice.getPropertyString("battery.type") != "primary") {
+                        qWarning() << "XXXXXXXXXXXXX";
+                        return 0;
                     } else {
-                        levelWhenFull = ifaceDevice.getPropertyInt("battery.charge_level.last_full");
-                        level = ifaceDevice.getPropertyInt("battery.charge_level.current");
+                        level = ifaceDevice.getPropertyInt("battery.charge_level.percentage");
+                        return level;
                     }
                 }
             }
         }
 #endif
-    }
-    QFile infofile("/proc/acpi/battery/BAT0/info");
-    if (!infofile.open(QIODevice::ReadOnly)) {
-     //   qWarning() << "Could not open /proc/acpi/battery/BAT0/info";
-        return QSystemDeviceInfo::NoBatteryLevel;
     } else {
-        QTextStream batinfo(&infofile);
-        QString line = batinfo.readLine();
-        while (!line.isNull()) {
-            if(line.contains("design capacity")) {
-                levelWhenFull = line.split(" ").at(1).trimmed().toFloat();
-                infofile.close();
-                break;
+        QFile infofile("/proc/acpi/battery/BAT0/info");
+        if (!infofile.open(QIODevice::ReadOnly)) {
+            //   qWarning() << "Could not open /proc/acpi/battery/BAT0/info";
+            return QSystemDeviceInfo::NoBatteryLevel;
+        } else {
+            QTextStream batinfo(&infofile);
+            QString line = batinfo.readLine();
+            while (!line.isNull()) {
+                if(line.contains("design capacity")) {
+                    levelWhenFull = line.split(" ").at(1).trimmed().toFloat();
+                    qWarning() << levelWhenFull;
+                    infofile.close();
+                    break;
+                }
+                line = batinfo.readLine();
             }
-            line = batinfo.readLine();
+            infofile.close();
         }
-        infofile.close();
-    }
 
-    QFile statefile("/proc/acpi/battery/BAT0/state");
-    if (!statefile.open(QIODevice::ReadOnly)) {
-   //     qWarning() << "Could not open /proc/acpi/battery/BAT0/state";
-        return QSystemDeviceInfo::NoBatteryLevel;
-    } else {
-        QTextStream batstate(&statefile);
-        QString line = batstate.readLine();
-        while (!line.isNull()) {
-            if(line.contains("remaining capacity")) {
-                level = line.split(" ").at(1).trimmed().toFloat();
-                statefile.close();
-                break;
+        QFile statefile("/proc/acpi/battery/BAT0/state");
+        if (!statefile.open(QIODevice::ReadOnly)) {
+            //     qWarning() << "Could not open /proc/acpi/battery/BAT0/state";
+            return QSystemDeviceInfo::NoBatteryLevel;
+        } else {
+            QTextStream batstate(&statefile);
+            QString line = batstate.readLine();
+            while (!line.isNull()) {
+                if(line.contains("remaining capacity")) {
+                    level = line.split(" ").at(1).trimmed().toFloat();
+                    qWarning() << level;
+                    statefile.close();
+                    break;
+                }
+                line = batstate.readLine();
             }
-            line = batstate.readLine();
+        }
+        if(level != 0 && levelWhenFull != 0) {
+            level = level / levelWhenFull * 100;
+            return level;
         }
     }
-    if(level != 0 && levelWhenFull != 0) {
-        level = level / levelWhenFull * 100;
-        return level;
-    }
-
     return 0;
 }
 
@@ -1298,7 +1297,7 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
                 qWarning() <<"battery"<< dev;
                 QHalDeviceInterface ifaceDevice(dev);
                 if (ifaceDevice.isValid()) {
-                    if(ifaceDevice.getPropertyBool("battery.rechargable.is_discharging") ){
+                    if(ifaceDevice.getPropertyBool("battery.rechargeable.is_discharging") ){
                         return QSystemDeviceInfo::BatteryPower;
                     } else {
                         return QSystemDeviceInfo::WallPower;
@@ -1306,9 +1305,23 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
                 }
             }
         }
+#else
+        QFile statefile("/proc/acpi/battery/BAT0/state");
+        if (!statefile.open(QIODevice::ReadOnly)) {
+            //  qWarning() << "Could not open /proc/acpi/battery/BAT0/state";
+        } else {
+            QTextStream batstate(&statefile);
+            QString line = batstate.readLine();
+            while (!line.isNull()) {
+                if(line.contains("charging state")) {
+                    if(line.split(" ").at(1).trimmed() == "discharging") {
+                        return QSystemDeviceInfo::BatteryPower;
+                    }
+                }
+            }
+        }
 #endif
-
-        return QSystemDeviceInfo::UnknownPower;
+        return QSystemDeviceInfo::WallPower;
  }
 
 
