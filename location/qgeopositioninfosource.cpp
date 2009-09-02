@@ -201,7 +201,11 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createSource(QObject *parent)
 /*!
     \fn virtual int QGeoPositionInfoSource::minimumUpdateInterval() const = 0;
 
-    Returns the minimum value accepted by setUpdateInterval().
+    Returns the minimum time (in milliseconds) required to retrieve a
+    position update.
+
+    This is the minimum value accepted by setUpdateInterval() and 
+    requestUpdate().
 */
 
 
@@ -225,9 +229,11 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createSource(QObject *parent)
 
     Attempts to get the current position and emit positionUpdated() with
     this information. This is useful if you do not need the regular updates
-    provided by startUpdates(). If the current position cannot be found
-    within the given \a timeout (in milliseconds), requestTimeout() is
-    emitted.
+    provided by startUpdates().
+
+    If the current position cannot be found within the given \a timeout
+    (in milliseconds) or if \a timeout is less than the value returned by
+    minimumUpdateInterval(), requestTimeout() is emitted.
 
     This does nothing if another update request is in progress. However
     it can be called even if startUpdates() has already been called and
