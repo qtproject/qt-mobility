@@ -79,6 +79,7 @@ private:
     QSet<QString> excludedAddresses;
     QSet<QString> includedAddresses;
     QMap<QString, QStringList> addressMessages;
+    QMap<QString, QStringList> addressLongForm;
 };
 
 #endif

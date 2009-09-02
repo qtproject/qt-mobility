@@ -32,6 +32,7 @@
 ****************************************************************************/
 
 #include "addressfinder.h"
+#include "addresshelper.h"
 
 #include <QComboBox>
 #include <QDateTime>
@@ -42,6 +43,30 @@
 #include <QPushButton>
 #include <QTimer>
 #include <QDebug>
+
+void parseAddress(const QString& addressText, QString *name, QString *address)
+{
+    QString suffix;
+    QString input = addressText.trimmed();
+
+    if (!addressText.isEmpty()) {
+        QString input = addressText.trimmed();
+
+        // See whether this address is a group
+        if (qContainsGroupSpecifier(input)) {
+            QRegExp groupFormat("(.*):(.*);");
+            if (groupFormat.indexIn(input) != -1) {
+                *name = groupFormat.cap(1).trimmed();
+                *address = groupFormat.cap(2).trimmed();
+            }
+        } else {
+            qParseMailbox(input, *name, *address, suffix);
+            *address = address->toLower();
+        }
+    } else {
+        *name = *address = QString();
+    }
+}
 
 AddressFinder::AddressFinder(QWidget *parent, Qt::WindowFlags flags)
     : QWidget(parent, flags),
@@ -152,9 +177,12 @@ void AddressFinder::includePeriodChanged(int selected)
 
 void AddressFinder::addressSelected(const QString &address)
 {
+    QString name;
+    QString addressOnly;
+    parseAddress(address, &name, &addressOnly);
     messageList->clear();
 
-    foreach (const QString &message, addressMessages[address]) {
+    foreach (const QString &message, addressMessages[addressOnly]) {
         messageList->addItem(new QListWidgetItem(message));
     }
 }
@@ -195,6 +223,7 @@ void AddressFinder::searchMessages()
 
     QMessageFilterKey includeFilter(QMessageFilterKey::timeStamp(minimumDate, QMessageDataComparator::GreaterThanEqual));
     QMessageFilterKey excludeFilter(QMessageFilterKey::timeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual));
+    // Would be faster and more accurate to just examine the sent folder, outgoingFilter also includes drafts.
     QMessageFilterKey outgoingFilter(QMessageFilterKey::status(QMessage::Incoming, QMessageDataComparator::Excludes));
     
     // Search for messages containing addresses to exclude
@@ -236,15 +265,18 @@ void AddressFinder::messagesFound(const QMessageIdList &ids)
 
 void AddressFinder::continueSearch()
 {
+    QString name;
+    QString addressOnly;
     if (!exclusionMessages.isEmpty()) {
         QMessageId id(exclusionMessages.takeFirst());
         const QMessage message(id);
 
         // All recipient addresses are to be excluded
         foreach (const QMessageAddress &address, message.to() + message.cc() + message.bcc()) {
-            if (!excludedAddresses.contains(address.recipient()))
-                qDebug() << "Exclude" << address.recipient();
-            excludedAddresses.insert(address.recipient());
+            parseAddress(address.recipient(), &name, &addressOnly);
+            if (!excludedAddresses.contains(addressOnly))
+                qDebug() << "Exclude" << addressOnly;
+            excludedAddresses.insert(addressOnly);
         }
     } else if (!inclusionMessages.isEmpty()) {
         QMessageId id(inclusionMessages.takeFirst());
@@ -255,13 +287,14 @@ void AddressFinder::continueSearch()
 
         foreach (const QMessageAddress &address, message.to() + message.cc() + message.bcc()) {
             QString recipient(address.recipient());
-            if (!includedAddresses.contains(recipient))
-                qDebug() << "Include" << recipient;
-            includedAddresses.insert(recipient);
-            if (!excludedAddresses.contains(recipient)) {
+            parseAddress(address.recipient(), &name, &addressOnly);
+            if (!includedAddresses.contains(addressOnly))
+                qDebug() << "Include" << addressOnly;
+            includedAddresses.insert(addressOnly);
+            if (!excludedAddresses.contains(addressOnly)) {
                 // Link this message to this address
-                qDebug() << "Exclude" << recipient;
-                QStringList &messages = addressMessages[recipient];
+                qDebug() << "Exclude" << addressOnly;
+                QStringList &messages = addressMessages[addressOnly];
                 if (messages.isEmpty()) {
                     addressList->addItem(recipient);
                 }

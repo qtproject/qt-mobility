@@ -16,9 +16,12 @@ LIBS += -L $$(QMF_LIBDIR) -lqtopiamail
 }
 
 HEADERS += \
-    addressfinder.h
+    addressfinder.h \
+    addresshelper.h
+
 
 SOURCES += \
     addressfinder.cpp\
+    addresshelper.cpp\
     main.cpp
 
