@@ -165,7 +165,7 @@ void tst_QValueSpaceObject::testConstructor()
         QFAIL("Invalid type.");
     };
 
-    QCOMPARE(object->objectPath(), canonical);
+    QCOMPARE(object->path(), canonical);
     QCOMPARE(object->isValid(), valid);
 
     if (layer) {
