@@ -323,7 +323,7 @@ QVariantMap QContactDetail::values() const
  */
 
 /*!
- * \fn void QContactDetail::setContexts(const QString& contexts)
+ * \fn void QContactDetail::setContexts(const QString& context)
  *
  * This is a convenience function that sets the \c Context field of this detail to the given \a context.
  * It is useful if the detail is only valid in a single context.

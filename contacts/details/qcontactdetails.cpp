@@ -364,7 +364,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldPostcode, "Postcode");
 Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldCountry, "Country");
 
 /*!
- * \variable QContactAddress::FieldSubType
+ * \variable QContactAddress::FieldSubTypes
  * The constant key for which the subtypes value is stored in details of the QContactAddress type
  */
 Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldSubTypes, "SubTypes");
@@ -825,8 +825,8 @@ QString QContactAddress::displayLabel() const
  */
 
 /*!
- * \fn QContactAnniversary::subTypes() const
- * Returns the list of subtypes that this detail implements
+ * \fn QContactAnniversary::subType() const
+ * Returns the subtype that this detail implements, if defined
  */
 
 /*!
@@ -845,8 +845,8 @@ QString QContactAddress::displayLabel() const
  */
 
 /*!
- * \fn QContactAvatar::subTypes() const
- * Returns the list of subtypes that this detail implements
+ * \fn QContactAvatar::subType() const
+ * Returns the subtype that this detail implements, if defined
  */
 
 /*!
@@ -942,8 +942,8 @@ QString QContactAddress::displayLabel() const
  */
 
 /*!
- * \fn QContactUrl::subTypes() const
- * Returns the list of subtypes that this detail implements
+ * \fn QContactUrl::subType() const
+ * Returns the subtype that this detail implements, if defined
  */
 
 /*!
