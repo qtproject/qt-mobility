@@ -95,6 +95,7 @@ RDFSelect prepareIMAccountsQuery(RDFVariable &rdfcontact1, bool forAffiliations)
     queryidsimacccounts.addColumn("message", imaccount.optional().property<nco::imStatusMessage> ());
     queryidsimacccounts.addColumn("nick", imaccount.optional().property<nco::imNickname> ());
     queryidsimacccounts.addColumn("type", imaccount.optional().property<nco::imAccountType> ());
+    queryidsimacccounts.addColumn("comment", imaccount.optional().property<nco::contactMediumComment>());
     return queryidsimacccounts;
 }
 
@@ -478,7 +479,9 @@ void QTrackerContactAsyncRequest::processQueryIMAccounts(SopranoLive::LiveNodes 
                 if( officeStuff )
                     account.setContextAttribute(QContactOnlineAccount::AttributeContextWork);
                 account.setValue("Account", queryIMAccounts->index(i, 1).data().toString()); // IMId
-                account.setValue("ServiceName", queryIMAccounts->index(i, 5).data().toString()); // getImAccountType?
+                account.setValue("AccountPath", queryIMAccounts->index(i, 5).data().toString()); // getImAccountType?
+                account.setValue("Capabilities", queryIMAccounts->index(i, 6).data().toString()); // getImAccountType?
+                contacts[j].saveDetail(&account);
                 contacts[j].saveDetail(&account);
                 QContactPresence presence;
                 if( officeStuff )
