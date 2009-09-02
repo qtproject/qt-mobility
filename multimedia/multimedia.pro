@@ -118,3 +118,7 @@ contains(QT_CONFIG, multimedia) {
         qpaintervideosurface.cpp \
         qvideorenderercontrol.cpp
 }
+else {
+    HEADERS += qaudioformat.h
+    SOURCES += qaudioformat.cpp
+}

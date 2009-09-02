@@ -40,28 +40,6 @@
 class QAudioFormat;
 class QStringList;
 
-#ifndef AUDIOSERVICES
-class Q_MEDIA_EXPORT QAudioFormat
-{
-public:
-    QAudioFormat();
-
-    bool isNull() const { return m_null; }
-    int frequency() const { return m_frequency; }
-    void setFrequency(int frequency);
-    int channels() const { return m_channels; }
-    void setChannels(int channels);
-    int sampleSize() const { return m_sampleSize; }
-    void setSampleSize(int sampleSize);
-
-private:
-    bool m_null;
-    int m_frequency;
-    int m_channels;
-    int m_sampleSize;
-};
-
-#endif
 
 class Q_MEDIA_EXPORT QAudioEncodeControl : public QAbstractMediaControl
 {

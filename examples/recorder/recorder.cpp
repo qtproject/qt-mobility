@@ -41,9 +41,11 @@
 #include <qaudioencodecontrol.h>
 #include <qmediaformatcontrol.h>
 
-#ifdef AUDIOSERVICES
+#ifndef QT_NO_MULTIMEDIA
 #include <QtMultimedia/qaudioformat.h>
-#endif
+#else
+#include <qaudioformat.h>
+#endif#
 
 #include <QtGui>
 
