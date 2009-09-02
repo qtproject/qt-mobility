@@ -71,8 +71,8 @@ public:
     virtual float playbackRate() const = 0;
     virtual void setPlaybackRate(float rate) = 0;
 
-    virtual QMediaSource currentSource() const = 0;
-    virtual void setCurrentSource(const QMediaSource &source) = 0;
+    virtual QMediaSource media() const = 0;
+    virtual void setMedia(const QMediaSource &media) = 0;
 
     virtual void play() = 0;
     virtual void pause() = 0;

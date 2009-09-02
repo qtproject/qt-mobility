@@ -35,7 +35,7 @@
 #ifndef QVIDEORENDERERENDPOINT_H
 #define QVIDEORENDERERENDPOINT_H
 
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
 
 #include "qabstractmediacontrol.h"
 

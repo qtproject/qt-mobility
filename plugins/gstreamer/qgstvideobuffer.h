@@ -35,7 +35,7 @@
 #ifndef QGSTVIDEOBUFFER_H
 #define QGSTVIDEOBUFFER_H
 
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
 
 #include <QtMultimedia/QAbstractVideoBuffer>
 

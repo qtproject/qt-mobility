@@ -47,8 +47,11 @@
 #include <QtCore/qurl.h>
 #include <QtCore/qstringlist.h>
 
+#ifndef QT_NO_MULTIMEDIA
 #include <QtMultimedia/QAudioFormat>
-
+#else
+#include "qaudioformat.h"
+#endif
 
 /*!
     \class QMediaRecorder

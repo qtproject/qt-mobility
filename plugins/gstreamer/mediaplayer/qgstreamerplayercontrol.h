@@ -51,6 +51,7 @@ class QMediaPlaylistNavigator;
 class QGstreamerPlayerControl : public QMediaPlayerControl
 {
     Q_OBJECT
+
 public:
     QGstreamerPlayerControl(QGstreamerPlayerSession *session, QObject *parent = 0);
     ~QGstreamerPlayerControl();
@@ -74,8 +75,8 @@ public:
     float playbackRate() const;
     void setPlaybackRate(float rate);
 
-    QMediaSource currentSource() const;
-    void setCurrentSource(const QMediaSource&);
+    QMediaSource media() const;
+    void setMedia(const QMediaSource&);
 
 public Q_SLOTS:
     void setPosition(qint64 pos);

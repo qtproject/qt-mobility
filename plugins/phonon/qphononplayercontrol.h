@@ -54,7 +54,7 @@ class QMediaPlaylistNavigator;
 class QPhononPlayerControl : public QMediaPlayerControl
 {
     Q_OBJECT
-    Q_PROPERTY(qint64 position READ position WRITE setPosition NOTIFY positionChanged)
+
 public:
     QPhononPlayerControl(Phonon::MediaObject *session, QObject *parent = 0);
     ~QPhononPlayerControl();
@@ -62,8 +62,8 @@ public:
     QMediaPlayer::State state() const;
     QMediaPlayer::MediaStatus mediaStatus() const;
 
-    QMediaSource currentSource() const;
-    void setCurrentSource(const QMediaSource &resources);
+    QMediaSource media() const;
+    void setMedia(const QMediaSource &resources);
 
     qint64 position() const;
     qint64 duration() const;
@@ -91,9 +91,6 @@ public Q_SLOTS:
 
     void setVolume(int volume);
     void setMuted(bool muted);
-
-signals:
-    void positionChanged(qint64 position);
 
 private slots:
     void updateState(Phonon::State newState, Phonon::State oldState);

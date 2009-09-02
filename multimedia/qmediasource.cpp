@@ -44,11 +44,13 @@ public:
     QMediaSourcePrivate(const QMediaResourceList &r):
         resources(r) {}
     QMediaSourcePrivate(const QMediaSourcePrivate &other):
+        QSharedData(other),
         resources(other.resources) {}
 
     QMediaSourcePrivate& operator=(const QMediaSourcePrivate &other)
     {
         resources = other.resources;
+        return *this;
     }
 
     QMediaResourceList  resources;

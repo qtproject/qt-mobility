@@ -35,7 +35,7 @@
 #ifndef QGSTREAMERVIDEOOVERLAY_H
 #define QGSTREAMERVIDEOOVERLAY_H
 
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
 
 #include "qvideowindowcontrol.h"
 

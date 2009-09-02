@@ -6,7 +6,6 @@ TARGET = QtMedia
 include (../common.pri)
 
 QT += network
-contains(QT_CONFIG, multimedia): QT += multimedia
 
 !static:DEFINES += QT_MAKEDLL
 DEFINES += QT_BUILD_MEDIA_LIB
@@ -47,6 +46,7 @@ HEADERS = \
     qradioplayercontrol.h \
     qvideooutputcontrol.h \
     qvideowidget.h \
+    qvideowidget_p.h \
     qvideowindowcontrol.h \
     qvideowidgetcontrol.h \
     qaudioencodecontrol.h \
@@ -107,7 +107,9 @@ SOURCES = qabstractmediacontrol.cpp \
     qvideodevicecontrol.cpp \
     qmediapluginloader.cpp
 
-videosurface {
+contains(QT_CONFIG, multimedia) {
+    QT += multimedia
+
     HEADERS += \
         qpaintervideosurface_p.h \
         qvideorenderercontrol.h
@@ -115,4 +117,8 @@ videosurface {
     SOURCES += \
         qpaintervideosurface.cpp \
         qvideorenderercontrol.cpp
+}
+else {
+    HEADERS += qaudioformat.h
+    SOURCES += qaudioformat.cpp
 }

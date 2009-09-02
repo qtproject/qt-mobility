@@ -32,63 +32,52 @@
 **
 ****************************************************************************/
 
-#ifndef QPAINTERVIDEOSURFACE_P_H
-#define QPAINTERVIDEOSURFACE_P_H
+#ifndef QAUDIOFORMAT_H
+#define QAUDIOFORMAT_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include <QtCore/qobject.h>
+#include <QtCore/qglobal.h>
+#include <QtCore/qshareddata.h>
 
-#ifndef QT_NO_MULTIMEDIA
+#include "qmultimediaglobal.h"
 
-#include <QtCore/qsize.h>
-#include <QtGui/qimage.h>
-#include <QtMultimedia/qabstractvideosurface.h>
-#include <QtMultimedia/qvideoframe.h>
-
-#include <qmultimediaglobal.h>
-
-class Q_MEDIA_EXPORT QPainterVideoSurface : public QAbstractVideoSurface
+class QAudioFormatPrivate;
+class Q_MEDIA_EXPORT QAudioFormat
 {
-    Q_OBJECT
 public:
-    QPainterVideoSurface(QObject *parent = 0);
-    ~QPainterVideoSurface();
+    enum SampleType { Unknown, SignedInt, UnSignedInt, Float };
+    enum Endian { BigEndian = QSysInfo::BigEndian, LittleEndian = QSysInfo::LittleEndian };
 
-    QList<QVideoFrame::PixelFormat> supportedPixelFormats(
-            QAbstractVideoBuffer::HandleType handleType = QAbstractVideoBuffer::NoHandle) const;
+    QAudioFormat();
+    QAudioFormat(const QAudioFormat &other);
+    ~QAudioFormat();
 
-    bool isFormatSupported(const QVideoSurfaceFormat &format, QVideoSurfaceFormat *similar = 0);
+    QAudioFormat& operator=(const QAudioFormat &other);
+    bool operator==(const QAudioFormat &other) const;
+    bool operator!=(const QAudioFormat &other) const;
 
-    bool start(const QVideoSurfaceFormat &format);
-    void stop();
+    bool isNull() const;
 
-    bool present(const QVideoFrame &frame);
+    void setFrequency(int frequency);
+    int frequency() const;
 
-    bool isReady() const;
-    void setReady(bool ready);
+    void setChannels(int channels);
+    int channels() const;
 
-    void paint(QPainter *painter, const QRect &rect);
+    void setSampleSize(int sampleSize);
+    int sampleSize() const;
 
-Q_SIGNALS:
-    void frameChanged();
+    void setCodec(QString codec);
+    QString codec() const;
+
+    void setByteOrder(QAudioFormat::Endian byteOrder);
+    QAudioFormat::Endian byteOrder() const;
+
+    void setSampleType(QAudioFormat::SampleType sampleType);
+    QAudioFormat::SampleType sampleType() const;
 
 private:
-    QVideoFrame m_frame;
-    QVideoFrame::PixelFormat m_pixelFormat;
-    QImage::Format m_imageFormat;
-    QSize m_imageSize;
-    QRect m_sourceRect;
-    bool m_ready;
+    QSharedDataPointer<QAudioFormatPrivate> d;
 };
 
-#endif
-
-#endif
+#endif  // QAUDIOFORMAT_H

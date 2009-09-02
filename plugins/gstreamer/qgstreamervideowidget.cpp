@@ -156,11 +156,26 @@ void QGstreamerVideoWidgetControl::setCustomAspectRatio(const QSize &ratio)
 
 bool QGstreamerVideoWidgetControl::isFullscreen() const
 {
-    return false;
+    return m_widget->isFullScreen();
 }
 
 void QGstreamerVideoWidgetControl::setFullscreen(bool fullscreen)
 {
+    if (fullscreen) {
+        m_widget->setWindowFlags(m_widget->windowFlags() | Qt::Window | Qt::WindowStaysOnTopHint);
+        m_widget->setWindowState(m_widget->windowState() | Qt::WindowFullScreen);
+
+        m_widget->show();
+
+        emit fullscreenChanged(m_widget->isFullScreen());
+    } else {
+        m_widget->setWindowFlags(m_widget->windowFlags() & ~(Qt::Window | Qt::WindowStaysOnTopHint));
+        m_widget->setWindowState(m_widget->windowState() & ~Qt::WindowFullScreen);
+
+        m_widget->show();
+
+        emit fullscreenChanged(m_widget->isFullScreen());
+    }
 }
 
 int QGstreamerVideoWidgetControl::brightness() const

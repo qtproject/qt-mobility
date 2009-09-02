@@ -168,12 +168,12 @@ void QPhononPlayerControl::setMuted(bool muted)
     m_audioOutput->setMuted(muted);
 }
 
-QMediaSource QPhononPlayerControl::currentSource() const
+QMediaSource QPhononPlayerControl::media() const
 {
     return m_resources;
 }
 
-void QPhononPlayerControl::setCurrentSource(const QMediaSource &source)
+void QPhononPlayerControl::setMedia(const QMediaSource &source)
 {
     m_resources = source;
 

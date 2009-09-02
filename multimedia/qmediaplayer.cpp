@@ -130,7 +130,6 @@ void QMediaPlayerPrivate::_q_error(int error, const QString &errorString)
     this->errorString = errorString;
 
     emit q->error(this->error);
-    emit q->errorStringChanged(this->errorString);
 }
 
 
@@ -155,6 +154,7 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayerService *service):
     connect(d->control, SIGNAL(error(int,QString)), SLOT(_q_error(int,QString)));
 
     connect(d->control, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
+    connect(d->control, SIGNAL(positionChanged(qint64)), SIGNAL(positionChanged(qint64)));
     connect(d->control, SIGNAL(videoAvailabilityChanged(bool)), SIGNAL(videoAvailabilityChanged(bool)));
     connect(d->control, SIGNAL(volumeChanged(int)), SIGNAL(volumeChanged(int)));
     connect(d->control, SIGNAL(mutingChanged(bool)), SIGNAL(mutingChanged(bool)));
@@ -188,9 +188,9 @@ bool QMediaPlayer::isValid() const
 }
 
 
-QMediaSource QMediaPlayer::currentMediaSource() const
+QMediaSource QMediaPlayer::media() const
 {
-    return d_func()->control->currentSource();
+    return d_func()->control->media();
 }
 
 /*!
@@ -383,16 +383,23 @@ void QMediaPlayer::stop()
 */
 void QMediaPlayer::setPosition(qint64 position)
 {
-    d_func()->control->setPosition(position);
+    if (!isSeekable())
+        return;
+
+    d_func()->control->setPosition(qMax(qint64(0), qMin(duration(), position)));
 }
 
 /*!
     Set the current volume [ 0 - 100 ] to  \a volume.
     This method is not guaranteed to be synchronous.
 */
-void QMediaPlayer::setVolume(int volume)
+void QMediaPlayer::setVolume(int v)
 {
-    d_func()->control->setVolume(volume);
+    int clamped = qMax(0, qMin(100, v));
+    if (clamped == volume())
+        return;
+
+    d_func()->control->setVolume(clamped);
 }
 
 /*!
@@ -402,12 +409,20 @@ void QMediaPlayer::setVolume(int volume)
 */
 void QMediaPlayer::setMuted(bool muted)
 {
+    if (muted == isMuted())
+        return;
+
     d_func()->control->setMuted(muted);
 }
 
 void QMediaPlayer::setPlaybackRate(float rate)
 {
     d_func()->control->setPlaybackRate(rate);
+}
+
+void QMediaPlayer::setMedia(const QMediaSource &media)
+{
+    d_func()->control->setMedia(media);
 }
 
 

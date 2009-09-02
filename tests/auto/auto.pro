@@ -8,5 +8,6 @@ SUBDIRS += \
         qmediaplaylistnavigator \
         qmediaresource \
         qmediasource \
-        qvideowidget
+        qvideowidget \
+        qmediaplayer
 

@@ -148,12 +148,12 @@ void QGstreamerPlayerControl::setMuted(bool muted)
     m_session->setMuted(muted);
 }
 
-QMediaSource QGstreamerPlayerControl::currentSource() const
+QMediaSource QGstreamerPlayerControl::media() const
 {
     return m_currentResource;
 }
 
-void QGstreamerPlayerControl::setCurrentSource(const QMediaSource &source)
+void QGstreamerPlayerControl::setMedia(const QMediaSource &source)
 {
     m_currentResource = source;
 

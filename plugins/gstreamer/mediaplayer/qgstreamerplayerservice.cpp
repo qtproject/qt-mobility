@@ -42,7 +42,7 @@
 #include "qgstreamermetadataprovider.h"
 #include "qgstreamervideooutputcontrol.h"
 
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
 #include "qgstreamervideooverlay.h"
 #include "qgstreamervideorenderer.h"
 #endif
@@ -61,14 +61,14 @@ QGstreamerPlayerService::QGstreamerPlayerService(QObject *parent)
     m_videoOutput = new QGstreamerVideoOutputControl(this);
     connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
             this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
     m_videoRenderer = new QGstreamerVideoRenderer(this);
     m_videoWindow = new QGstreamerVideoOverlay(this);
 #endif
     m_videoWidget = new QGstreamerVideoWidgetControl(this);
 
     m_videoOutput->setAvailableOutputs(QList<QVideoOutputControl::Output>()
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
             << QVideoOutputControl::RendererOutput
             << QVideoOutputControl::WindowOutput
 #endif
@@ -93,7 +93,7 @@ QAbstractMediaControl *QGstreamerPlayerService::control(const char *name) const
     if (qstrcmp(name, QVideoWidgetControl_iid) == 0)
         return m_videoWidget;
 
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
     if (qstrcmp(name, QVideoRendererControl_iid) == 0)
         return m_videoRenderer;
 
@@ -110,7 +110,7 @@ void QGstreamerPlayerService::videoOutputChanged(QVideoOutputControl::Output out
     case QVideoOutputControl::NoOutput:
         m_control->setVideoOutput(0);
         break;
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
     case QVideoOutputControl::RendererOutput:
         m_control->setVideoOutput(m_videoRenderer);
         break;

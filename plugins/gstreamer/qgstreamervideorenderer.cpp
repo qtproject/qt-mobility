@@ -35,7 +35,7 @@
 #include "qgstreamervideorenderer.h"
 #include "qvideosurfacegstsink.h"
 
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
 
 #include <QEvent>
 #include <QApplication>

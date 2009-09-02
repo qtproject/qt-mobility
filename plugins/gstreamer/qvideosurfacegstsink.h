@@ -35,7 +35,7 @@
 #ifndef VIDEOSURFACEGSTSINK_H
 #define VIDEOSURFACEGSTSINK_H
 
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
 
 #include <gst/video/gstvideosink.h>
 

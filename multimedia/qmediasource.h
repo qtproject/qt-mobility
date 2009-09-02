@@ -35,6 +35,7 @@
 #ifndef QMEDIASOURCE_H
 #define QMEDIASOURCE_H
 
+#include <QtCore/qmetatype.h>
 #include <QtCore/qshareddata.h>
 
 #include <qmediaresource.h>
@@ -68,5 +69,8 @@ public:
 private:
     QSharedDataPointer<QMediaSourcePrivate> d;
 };
+
+Q_DECLARE_METATYPE(QMediaSource)
+
 
 #endif  // QMEDIASOURCE_H
