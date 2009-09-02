@@ -43,10 +43,13 @@
 #ifndef QT_NO_MULTIMEDIA
 #include "qvideorenderercontrol.h"
 #endif
+#include "qvideowidgetcontrol.h"
 
 #include <QtCore/qurl.h>
 #include <QtGui/qimage.h>
 #include <QtGui/qimagereader.h>
+#include <QtGui/qpainter.h>
+
 #include <QtNetwork/qnetworkaccessmanager.h>
 #include <QtNetwork/qnetworkreply.h>
 #include <QtNetwork/qnetworkrequest.h>
@@ -93,6 +96,215 @@ void QMediaSlideShowRenderer::setSurface(QAbstractVideoSurface *surface)
 }
 #endif
 
+class QMediaSlideShowWidget : public QWidget
+{
+    Q_OBJECT
+public:
+    QMediaSlideShowWidget(QWidget *parent = 0);
+
+    QImage image() const;
+    void setImage(const QImage &image);
+
+    QVideoWidget::AspectRatio aspectRatio() const;
+    void setAspectRatio(QVideoWidget::AspectRatio ratio);
+
+protected:
+    void paintEvent(QPaintEvent *event);
+
+private:
+    QVideoWidget::AspectRatio m_aspectRatio;
+    QImage m_image;
+};
+
+QMediaSlideShowWidget::QMediaSlideShowWidget(QWidget *parent)
+    : QWidget(parent)
+    , m_aspectRatio(QVideoWidget::AspectRatioAuto)
+{
+}
+
+QImage QMediaSlideShowWidget::image() const
+{
+    return m_image;
+}
+
+void QMediaSlideShowWidget::setImage(const QImage &image)
+{
+    m_image = image;
+
+    update();
+}
+
+QVideoWidget::AspectRatio QMediaSlideShowWidget::aspectRatio() const
+{
+    return m_aspectRatio;
+}
+
+void QMediaSlideShowWidget::setAspectRatio(QVideoWidget::AspectRatio ratio)
+{
+    m_aspectRatio = ratio;
+
+    update();
+}
+
+void QMediaSlideShowWidget::paintEvent(QPaintEvent *)
+{
+    if (!m_image.isNull()) {
+        QPainter painter(this);
+
+        QRect displayRect = rect();
+
+        switch (m_aspectRatio) {
+        case QVideoWidget::AspectRatioAuto:
+            {
+                QSize size = m_image.size();
+
+                size.scale(displayRect.size(), Qt::KeepAspectRatio);
+
+                QRect rect(QPoint(0, 0), size);
+                rect.moveCenter(displayRect.center());
+
+                displayRect = rect;
+            }
+            break;
+        case QVideoWidget::AspectRatioWidget:
+            break;
+        case QVideoWidget::AspectRatioCustom:
+            break;
+        }
+
+        painter.drawImage(displayRect, m_image);
+    }
+}
+
+class QMediaSlideShowWidgetControl : public QVideoWidgetControl
+{
+    Q_OBJECT
+public:
+    QMediaSlideShowWidgetControl(QMediaSlideShowWidget *widget, QObject *parent = 0);
+
+    QWidget *videoWidget();
+
+    QVideoWidget::AspectRatio aspectRatio() const;
+    void setAspectRatio(QVideoWidget::AspectRatio ratio);
+
+    QSize customAspectRatio() const;
+    void setCustomAspectRatio(const QSize &customRatio);
+
+    bool isFullscreen() const;
+    void setFullscreen(bool fullscreen);
+
+    int brightness() const;
+    void setBrightness(int brightness);
+
+    int contrast() const;
+    void setContrast(int contrast);
+
+    int hue() const;
+    void setHue(int hue);
+
+    int saturation() const;
+    void setSaturation(int saturation);
+
+private:
+    QMediaSlideShowWidget *m_widget;
+};
+
+QMediaSlideShowWidgetControl::QMediaSlideShowWidgetControl(
+        QMediaSlideShowWidget *widget, QObject *parent)
+    : QVideoWidgetControl(parent)
+    , m_widget(widget)
+{
+}
+
+QWidget *QMediaSlideShowWidgetControl::videoWidget()
+{
+    return m_widget;
+}
+
+QVideoWidget::AspectRatio QMediaSlideShowWidgetControl::aspectRatio() const
+{
+    return m_widget->aspectRatio();
+}
+
+void QMediaSlideShowWidgetControl::setAspectRatio(QVideoWidget::AspectRatio ratio)
+{
+    m_widget->setAspectRatio(ratio);
+}
+
+QSize QMediaSlideShowWidgetControl::customAspectRatio() const
+{
+    return QSize(1, 1);
+}
+
+void QMediaSlideShowWidgetControl::setCustomAspectRatio(const QSize &customRatio)
+{
+    Q_UNUSED(customRatio);
+}
+
+bool QMediaSlideShowWidgetControl::isFullscreen() const
+{
+    return m_widget->isFullScreen();
+}
+
+void QMediaSlideShowWidgetControl::setFullscreen(bool fullscreen)
+{
+    if (fullscreen) {
+        m_widget->setWindowFlags(m_widget->windowFlags() | Qt::Window | Qt::WindowStaysOnTopHint);
+        m_widget->setWindowState(m_widget->windowState() | Qt::WindowFullScreen);
+
+        m_widget->show();
+
+        emit fullscreenChanged(m_widget->isFullScreen());
+    } else {
+        m_widget->setWindowFlags(m_widget->windowFlags() & ~(Qt::Window | Qt::WindowStaysOnTopHint));
+        m_widget->setWindowState(m_widget->windowState() & ~Qt::WindowFullScreen);
+
+        m_widget->show();
+
+        emit fullscreenChanged(m_widget->isFullScreen());
+    }
+}
+
+int QMediaSlideShowWidgetControl::brightness() const
+{
+    return 0;
+}
+
+void QMediaSlideShowWidgetControl::setBrightness(int brightness)
+{
+    Q_UNUSED(brightness);
+}
+
+int QMediaSlideShowWidgetControl::contrast() const
+{
+    return 0;
+}
+
+void QMediaSlideShowWidgetControl::setContrast(int contrast)
+{
+    Q_UNUSED(contrast);
+}
+
+int QMediaSlideShowWidgetControl::hue() const
+{
+    return 0;
+}
+
+void QMediaSlideShowWidgetControl::setHue(int hue)
+{
+    Q_UNUSED(hue);
+}
+
+int QMediaSlideShowWidgetControl::saturation() const
+{
+    return 0;
+}
+
+void QMediaSlideShowWidgetControl::setSaturation(int saturation)
+{
+    Q_UNUSED(saturation);
+}
+
 class QMediaSlideShowOutputControl : public QVideoOutputControl
 {
     Q_OBJECT
@@ -104,28 +316,46 @@ public:
     Output output() const;
     void setOutput(Output output);
 
+Q_SIGNALS:
+    void outputChanged(QVideoOutputControl::Output output);
+
 private:
+    Output m_output;
 };
 
 QMediaSlideShowOutputControl::QMediaSlideShowOutputControl(QObject *parent)
     : QVideoOutputControl(parent)
+    , m_output(NoOutput)
 {
 }
 
 
 QList<QVideoOutputControl::Output> QMediaSlideShowOutputControl::availableOutputs() const
 {
-    return QList<Output>() << RendererOutput;
+    return QList<Output>()
+#ifndef QT_NO_MULTIMEDIA
+            << RendererOutput
+#endif
+            << WidgetOutput;
 }
 
 QVideoOutputControl::Output QMediaSlideShowOutputControl::output() const
 {
-    return RendererOutput;
+    return m_output;
 }
 
 void QMediaSlideShowOutputControl::setOutput(Output output)
 {
-    Q_UNUSED(output);
+    switch (output) {
+#ifndef QT_NO_MULTIMEDIA
+    case RendererOutput:
+#endif
+    case WidgetOutput:
+        m_output = output;
+        break;
+    default:
+        m_output = NoOutput;
+    }
 }
 
 class QMediaSlideShowServicePrivate : public QAbstractMediaServicePrivate
@@ -146,11 +376,15 @@ public:
 #ifndef QT_NO_MULTIMEDIA
     void _q_surfaceChanged(QAbstractVideoSurface *surface);
 #endif
+    void _q_outputChanged(QVideoOutputControl::Output output);
+
     QMediaSlideShowControl *slideControl;
     QMediaSlideShowOutputControl *outputControl;
 #ifndef QT_NO_MULTIMEDIA
     QMediaSlideShowRenderer *rendererControl;
 #endif
+    QMediaSlideShowWidgetControl *widgetControl;
+    QMediaSlideShowWidget *widget;
     QNetworkAccessManager *network;
 
 #ifndef QT_NO_MULTIMEDIA
@@ -160,55 +394,60 @@ public:
 
 bool QMediaSlideShowServicePrivate::load(QIODevice *device)
 {
-#ifndef QT_NO_MULTIMEDIA
-    if (!surface)
-        return false;
-
     QImageReader reader(device);
 
     if (!reader.canRead())
         return false;
 
-    if (!device->isSequential()
-            && reader.supportsOption(QImageIOHandler::ImageFormat)
-            && reader.supportsOption(QImageIOHandler::Size)) {
-
-        QImage::Format imageFormat = reader.imageFormat();
-
-        QVideoSurfaceFormat format(reader.size(), QVideoFrame::equivalentPixelFormat(imageFormat));
-        QVideoSurfaceFormat preferredFormat;
-
-        bool supported = surface->isFormatSupported(format, &preferredFormat);
-
-        if (preferredFormat.isValid()
-                && preferredFormat.viewport().size() != format.frameSize()
-                && (reader.supportsOption(QImageIOHandler::ScaledSize) || !supported)) {
-            preferredFormat = QVideoSurfaceFormat(
-                    preferredFormat.viewport().size(), format.pixelFormat());
-
-            if (surface->isFormatSupported(preferredFormat)) {
-                reader.setScaledSize(preferredFormat.frameSize());
-                format = preferredFormat;
-                supported = true;
-            }
-        }
-
-        if (supported && surface->start(format))
-            return surface->present(QVideoFrame(reader.read()));
-    } else {
+    if (outputControl->output() == QVideoOutputControl::WidgetOutput) {
         QImage image = reader.read();
 
-        if (!image.isNull()) {
+        widget->setImage(image);
+
+        return !image.isNull();
+#ifndef QT_NO_MULTIMEDIA
+    } else if (outputControl->output() == QVideoOutputControl::WidgetOutput && surface != 0) {
+        if (!device->isSequential()
+                && reader.supportsOption(QImageIOHandler::ImageFormat)
+                && reader.supportsOption(QImageIOHandler::Size)) {
+
+            QImage::Format imageFormat = reader.imageFormat();
+
             QVideoSurfaceFormat format(
-                    image.size(), QVideoFrame::equivalentPixelFormat(image.format()));
+                    reader.size(), QVideoFrame::equivalentPixelFormat(imageFormat));
+            QVideoSurfaceFormat preferredFormat;
 
-            if (surface->start(format))
-                return surface->present(QVideoFrame(image));
+            bool supported = surface->isFormatSupported(format, &preferredFormat);
+
+            if (preferredFormat.isValid()
+                    && preferredFormat.viewport().size() != format.frameSize()
+                    && (reader.supportsOption(QImageIOHandler::ScaledSize) || !supported)) {
+                preferredFormat = QVideoSurfaceFormat(
+                        preferredFormat.viewport().size(), format.pixelFormat());
+
+                if (surface->isFormatSupported(preferredFormat)) {
+                    reader.setScaledSize(preferredFormat.frameSize());
+                    format = preferredFormat;
+                    supported = true;
+                }
+            }
+
+            if (supported && surface->start(format))
+                return surface->present(QVideoFrame(reader.read()));
+        } else {
+            QImage image = reader.read();
+
+            if (!image.isNull()) {
+                QVideoSurfaceFormat format(
+                        image.size(), QVideoFrame::equivalentPixelFormat(image.format()));
+
+                if (surface->start(format))
+                    return surface->present(QVideoFrame(image));
+            }
         }
-    }
 #endif
+    }
     return false;
-
 }
 
 void QMediaSlideShowServicePrivate::clear()
@@ -217,6 +456,7 @@ void QMediaSlideShowServicePrivate::clear()
     if (surface)
         surface->stop();
 #endif
+    widget->setImage(QImage());
 }
 
 #ifndef QT_NO_MULTIMEDIA
@@ -225,6 +465,17 @@ void QMediaSlideShowServicePrivate::_q_surfaceChanged(QAbstractVideoSurface *sur
     this->surface = surface;
 }
 #endif
+
+void QMediaSlideShowServicePrivate::_q_outputChanged(QVideoOutputControl::Output output)
+{
+    if (output != QVideoOutputControl::WidgetOutput) {
+        widget->setImage(QImage());
+#ifndef QT_NO_MULTIMEDIA
+    } else if (output != QVideoOutputControl::RendererOutput && surface != 0) {
+        surface->stop();
+#endif
+    }
+}
 
 /*!
     \class QMediaSlideShowService
@@ -240,6 +491,8 @@ QMediaSlideShowService::QMediaSlideShowService(QObject *parent)
 
     d->slideControl = new QMediaSlideShowControl(this);
     d->outputControl = new QMediaSlideShowOutputControl;
+    connect(d->outputControl, SIGNAL(outputChanged(QVideoOutputControl::Output)),
+            SLOT(_q_outputChanged(QVideoOutputControl::Output)));
 
 #ifndef QT_NO_MULTIMEDIA
     d->rendererControl = new QMediaSlideShowRenderer;
@@ -247,6 +500,8 @@ QMediaSlideShowService::QMediaSlideShowService(QObject *parent)
     connect(d->rendererControl, SIGNAL(surfaceChanged(QAbstractVideoSurface*)),
             this, SLOT(_q_surfaceChanged(QAbstractVideoSurface*)));
 #endif
+    d->widget = new QMediaSlideShowWidget;
+    d->widgetControl = new QMediaSlideShowWidgetControl(d->widget);
 }
 
 /*!
@@ -254,6 +509,9 @@ QMediaSlideShowService::QMediaSlideShowService(QObject *parent)
 QMediaSlideShowService::~QMediaSlideShowService()
 {
     Q_D(QMediaSlideShowService);
+
+    delete d->widgetControl;
+    delete d->widget;
 #ifndef QT_NO_MULTIMEDIA
     delete d->rendererControl;
 #endif
@@ -275,6 +533,8 @@ QAbstractMediaControl *QMediaSlideShowService::control(const char *name) const
     } else if (qstrcmp(name, QVideoRendererControl_iid) == 0) {
         return d->rendererControl;
 #endif
+    } else if (qstrcmp(name, QVideoWidgetControl_iid) == 0) {
+        return d->widgetControl;
     } else {
         return 0;
     }
