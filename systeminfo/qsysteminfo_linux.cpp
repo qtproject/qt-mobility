@@ -75,13 +75,10 @@
 #include <X11/Xlib.h>
 
 #endif
-#include <net/if.h>
-#include <arpa/inet.h>
+
 #include <sys/socket.h>
-#include <linux/if_ether.h>
-#include <netinet/ip.h>
-#include <sys/ioctl.h>
-#include <linux/wireless.h>
+#include <iwlib.h>
+
 QT_BEGIN_NAMESPACE
 
 static bool halAvailable()
