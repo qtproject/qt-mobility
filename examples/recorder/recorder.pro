@@ -5,6 +5,8 @@ include(../../common.pri)
 
 INCLUDEPATH += $$PWD/../../multimedia
 
+contains(QT_CONFIG, multimedia) QT += multimedia
+
 LIBS += -lQtMedia
 
 HEADERS = recorder.h
