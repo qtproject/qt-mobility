@@ -21,10 +21,14 @@
     </section>
     <section ref="qservicefilter.html" title="QServiceFilter Class Reference">
         <keyword ref="qservicefilter.html">QServiceFilter</keyword>
+        <keyword ref="qservicefilter.html#CapabilityMatchRule-enum">CapabilityMatchRule</keyword>
+        <keyword ref="qservicefilter.html#CapabilityMatchRule-enum">QServiceFilter::MatchAll</keyword>
+        <keyword ref="qservicefilter.html#CapabilityMatchRule-enum">QServiceFilter::MatchLoadable</keyword>
         <keyword ref="qservicefilter.html#VersionMatchRule-enum">VersionMatchRule</keyword>
         <keyword ref="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::ExactVersionMatch</keyword>
         <keyword ref="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::MinimumVersionMatch</keyword>
         <keyword ref="qservicefilter.html#capabilities">capabilities</keyword>
+        <keyword ref="qservicefilter.html#capabilityMatchRule">capabilityMatchRule</keyword>
         <keyword ref="qservicefilter.html#clearCustomProperties">clearCustomProperties</keyword>
         <keyword ref="qservicefilter.html#customKeys">customKeys</keyword>
         <keyword ref="qservicefilter.html#customProperty">customProperty</keyword>

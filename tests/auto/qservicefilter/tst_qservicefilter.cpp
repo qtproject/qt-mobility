@@ -225,7 +225,6 @@ void tst_QServiceFilter::testAssignmentOperator()
     QServiceFilter emptyFilter;
     QServiceFilter tempFilter(emptyFilter);
    
-
     //assign empty filter to empty filter 
     QCOMPARE(emptyFilter.interfaceMajorVersion(), -1);
     QCOMPARE(emptyFilter.interfaceMinorVersion(), -1);
@@ -234,6 +233,7 @@ void tst_QServiceFilter::testAssignmentOperator()
     QCOMPARE(emptyFilter.interfaceName(), QString(""));
     QCOMPARE(emptyFilter.customProperty("key1"), QString());
     QCOMPARE(emptyFilter.capabilities(), QStringList());
+    QCOMPARE(emptyFilter.capabilityMatchRule(), QServiceFilter::MatchAll);
 
     QCOMPARE(tempFilter.interfaceMajorVersion(), -1);
     QCOMPARE(tempFilter.interfaceMinorVersion(), -1);
@@ -242,6 +242,7 @@ void tst_QServiceFilter::testAssignmentOperator()
     QCOMPARE(tempFilter.interfaceName(), QString(""));
     QCOMPARE(tempFilter.customProperty("key1"), QString());
     QCOMPARE(tempFilter.capabilities(), QStringList());
+    QCOMPARE(tempFilter.capabilityMatchRule(), QServiceFilter::MatchAll);
 
     tempFilter = emptyFilter;
     
@@ -252,12 +253,13 @@ void tst_QServiceFilter::testAssignmentOperator()
     QCOMPARE(tempFilter.interfaceName(), QString(""));
     QCOMPARE(tempFilter.customProperty("key1"), QString());
     QCOMPARE(tempFilter.capabilities(), QStringList());
+    QCOMPARE(tempFilter.capabilityMatchRule(), QServiceFilter::MatchAll);
    
     //assign filter to new filter via constructor
     tempFilter.setInterface("com.nokia.qt.valid", "4.77", QServiceFilter::ExactVersionMatch);
     tempFilter.setServiceName("ServiceName");
     tempFilter.setCustomProperty("key1", "value1");
-    tempFilter.setCapabilities(QStringList() << "read" << "write");
+    tempFilter.setCapabilities(QServiceFilter::MatchLoadable, QStringList() << "read" << "write");
     QCOMPARE(tempFilter.interfaceMajorVersion(), 4);
     QCOMPARE(tempFilter.interfaceMinorVersion(), 77);
     QCOMPARE(tempFilter.versionMatchRule(), QServiceFilter::ExactVersionMatch);
@@ -265,6 +267,7 @@ void tst_QServiceFilter::testAssignmentOperator()
     QCOMPARE(tempFilter.interfaceName(), QString("com.nokia.qt.valid"));
     QCOMPARE(tempFilter.customProperty("key1"), QString("value1"));
     QCOMPARE(tempFilter.capabilities(), (QStringList() << "read" << "write"));
+    QCOMPARE(tempFilter.capabilityMatchRule(), QServiceFilter::MatchLoadable);
 
     QServiceFilter constructFilter(tempFilter);
     QCOMPARE(constructFilter.interfaceMajorVersion(), 4);
@@ -274,13 +277,14 @@ void tst_QServiceFilter::testAssignmentOperator()
     QCOMPARE(constructFilter.interfaceName(), QString("com.nokia.qt.valid"));
     QCOMPARE(constructFilter.customProperty("key1"), QString("value1"));
     QCOMPARE(constructFilter.capabilities(), (QStringList() << "read" << "write"));
+    QCOMPARE(constructFilter.capabilityMatchRule(), QServiceFilter::MatchLoadable);
 
     //ensure that we don't have any potential references between tempFilter and 
     //constructedFilter
     tempFilter.setServiceName("NewServiceName");
     tempFilter.setInterface("com.nokia.qt.valid2", "5.88", QServiceFilter::MinimumVersionMatch);
     tempFilter.setCustomProperty("key2", "value2");
-    tempFilter.setCapabilities(QStringList() << "execute");
+    tempFilter.setCapabilities(QServiceFilter::MatchAll,QStringList() << "execute");
     QCOMPARE(tempFilter.interfaceMajorVersion(), 5);
     QCOMPARE(tempFilter.interfaceMinorVersion(), 88);
     QCOMPARE(tempFilter.versionMatchRule(), QServiceFilter::MinimumVersionMatch);
@@ -289,6 +293,7 @@ void tst_QServiceFilter::testAssignmentOperator()
     QCOMPARE(tempFilter.customProperty("key1"), QString("value1"));
     QCOMPARE(tempFilter.customProperty("key2"), QString("value2"));
     QCOMPARE(tempFilter.capabilities(), (QStringList() << "execute"));
+    QCOMPARE(tempFilter.capabilityMatchRule(), QServiceFilter::MatchAll);
     QCOMPARE(constructFilter.interfaceMajorVersion(), 4);
     QCOMPARE(constructFilter.interfaceMinorVersion(), 77);
     QCOMPARE(constructFilter.versionMatchRule(), QServiceFilter::ExactVersionMatch);
@@ -297,6 +302,7 @@ void tst_QServiceFilter::testAssignmentOperator()
     QCOMPARE(constructFilter.customProperty("key1"), QString("value1"));
     QCOMPARE(constructFilter.customProperty("key2"), QString());
     QCOMPARE(constructFilter.capabilities(), (QStringList() << "read" << "write"));
+    QCOMPARE(constructFilter.capabilityMatchRule(), QServiceFilter::MatchLoadable);
 
     //assign empty filter to filter with values
     constructFilter = emptyFilter;
@@ -308,6 +314,7 @@ void tst_QServiceFilter::testAssignmentOperator()
     QCOMPARE(constructFilter.customProperty("key1"), QString());
     QCOMPARE(constructFilter.customProperty("key2"), QString());
     QCOMPARE(constructFilter.capabilities(), QStringList());
+    QCOMPARE(constructFilter.capabilityMatchRule(), QServiceFilter::MatchAll);
 }
 
 void tst_QServiceFilter::testConstructor()
@@ -362,6 +369,7 @@ void tst_QServiceFilter::streamTest()
     QCOMPARE(emptyFilter.interfaceName(), QString(""));
     QCOMPARE(emptyFilter.customProperty("key1"), QString());
     QCOMPARE(emptyFilter.capabilities(), QStringList());
+    QCOMPARE(emptyFilter.capabilityMatchRule(), QServiceFilter::MatchAll);
 
     buffer.seek(0);
     stream << emptyFilter;
@@ -374,6 +382,7 @@ void tst_QServiceFilter::streamTest()
     QCOMPARE(tempFilter.interfaceName(), QString(""));
     QCOMPARE(tempFilter.customProperty("key1"), QString());
     QCOMPARE(tempFilter.capabilities(), QStringList());
+    QCOMPARE(tempFilter.capabilityMatchRule(), QServiceFilter::MatchAll);
 
     buffer.seek(0);
     stream >> tempFilter;
@@ -385,12 +394,13 @@ void tst_QServiceFilter::streamTest()
     QCOMPARE(tempFilter.interfaceName(), QString(""));
     QCOMPARE(tempFilter.customProperty("key1"), QString());
     QCOMPARE(tempFilter.capabilities(), QStringList());
+    QCOMPARE(tempFilter.capabilityMatchRule(), QServiceFilter::MatchAll);
    
     //assign filter to new filter via constructor
     tempFilter.setInterface("com.nokia.qt.valid", "4.77", QServiceFilter::ExactVersionMatch);
     tempFilter.setServiceName("ServiceName");
     tempFilter.setCustomProperty("key1", "value1");
-    tempFilter.setCapabilities(QStringList() << "execute" << "delete");
+    tempFilter.setCapabilities(QServiceFilter::MatchLoadable, QStringList() << "execute" << "delete");
     QCOMPARE(tempFilter.interfaceMajorVersion(), 4);
     QCOMPARE(tempFilter.interfaceMinorVersion(), 77);
     QCOMPARE(tempFilter.versionMatchRule(), QServiceFilter::ExactVersionMatch);
@@ -398,6 +408,7 @@ void tst_QServiceFilter::streamTest()
     QCOMPARE(tempFilter.interfaceName(), QString("com.nokia.qt.valid"));
     QCOMPARE(tempFilter.customProperty("key1"), QString("value1"));
     QCOMPARE(tempFilter.capabilities(), (QStringList()<<"execute" << "delete"));
+    QCOMPARE(tempFilter.capabilityMatchRule(), QServiceFilter::MatchLoadable);
     buffer.seek(0);
     stream << tempFilter;
 
@@ -411,6 +422,7 @@ void tst_QServiceFilter::streamTest()
     QCOMPARE(constructFilter.interfaceName(), QString("com.nokia.qt.valid"));
     QCOMPARE(constructFilter.customProperty("key1"), QString("value1"));
     QCOMPARE(constructFilter.capabilities(), (QStringList()<<"execute" << "delete"));
+    QCOMPARE(constructFilter.capabilityMatchRule(), QServiceFilter::MatchLoadable);
 
     //assign empty filter to filter with values
 
@@ -425,6 +437,7 @@ void tst_QServiceFilter::streamTest()
     QCOMPARE(constructFilter.interfaceName(), QString(""));
     QCOMPARE(constructFilter.customProperty("key1"), QString());
     QCOMPARE(constructFilter.capabilities(), QStringList());
+    QCOMPARE(constructFilter.capabilityMatchRule(), QServiceFilter::MatchAll);
 }
 #endif 
 
@@ -452,12 +465,27 @@ void tst_QServiceFilter::testCapabilities()
 {
     QServiceFilter filter;
     QCOMPARE(filter.capabilities(), QStringList());
-    filter.setCapabilities(QStringList() << "execute");
+    QCOMPARE(filter.capabilityMatchRule(), QServiceFilter::MatchAll);
+    
+    filter.setCapabilities(QServiceFilter::MatchAll, QStringList() << "execute");
     QCOMPARE(filter.capabilities(), (QStringList() << "execute"));
-    filter.setCapabilities(QStringList() << "execute" << "read");
+    QCOMPARE(filter.capabilityMatchRule(), QServiceFilter::MatchAll);
+    
+    filter.setCapabilities(QServiceFilter::MatchAll, QStringList() << "execute" << "read");
     QCOMPARE(filter.capabilities(), (QStringList() << "execute" << "read"));
-    filter.setCapabilities(QStringList());
+    QCOMPARE(filter.capabilityMatchRule(), QServiceFilter::MatchAll);
+    
+    filter.setCapabilities(QServiceFilter::MatchAll);
     QCOMPARE(filter.capabilities(), QStringList());
+    QCOMPARE(filter.capabilityMatchRule(), QServiceFilter::MatchAll);
+    
+    filter.setCapabilities(QServiceFilter::MatchLoadable, QStringList() << "execute" << "read");
+    QCOMPARE(filter.capabilities(), (QStringList() << "execute" << "read"));
+    QCOMPARE(filter.capabilityMatchRule(), QServiceFilter::MatchLoadable);
+    
+    filter.setCapabilities(QServiceFilter::MatchLoadable);
+    QCOMPARE(filter.capabilities(), QStringList());
+    QCOMPARE(filter.capabilityMatchRule(), QServiceFilter::MatchLoadable);
 }
 
 void tst_QServiceFilter::cleanupTestCase()

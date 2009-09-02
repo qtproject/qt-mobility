@@ -52,6 +52,11 @@ public:
         MinimumVersionMatch
     };
 
+    enum CapabilityMatchRule {
+        MatchAll = 0,
+        MatchLoadable
+    };
+
     QServiceFilter();
     ~QServiceFilter();
     QServiceFilter(const QServiceFilter& other);
@@ -78,8 +83,9 @@ public:
     void removeCustomProperty(const QString &key);
     void clearCustomProperties();
 
-    void setCapabilities(const QStringList& capabilities);
+    void setCapabilities(QServiceFilter::CapabilityMatchRule, const QStringList& capabilities = QStringList() );
     QStringList capabilities() const;
+    CapabilityMatchRule capabilityMatchRule() const;
 
 private:
     QServiceFilterPrivate *d;

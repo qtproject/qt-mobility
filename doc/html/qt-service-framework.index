@@ -184,6 +184,10 @@
                 <value name="ExactVersionMatch" value="0"/>
                 <value name="MinimumVersionMatch" value="1"/>
             </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="CapabilityMatchRule" fullname="QServiceFilter::CapabilityMatchRule" href="qservicefilter.html#CapabilityMatchRule-enum" location="qservicefilter.h">
+                <value name="MatchAll" value="0"/>
+                <value name="MatchLoadable" value="1"/>
+            </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="QServiceFilter" fullname="QServiceFilter::QServiceFilter" href="qservicefilter.html#QServiceFilter" location="qservicefilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QServiceFilter()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QServiceFilter" fullname="QServiceFilter::~QServiceFilter" href="qservicefilter.html#dtor.QServiceFilter" location="qservicefilter.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QServiceFilter()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QServiceFilter" fullname="QServiceFilter::QServiceFilter" href="qservicefilter.html#QServiceFilter-2" location="qservicefilter.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QServiceFilter(const QServiceFilter &amp; other)">
@@ -222,10 +226,12 @@
                 <parameter left="const QString &amp;" right="" name="key" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="clearCustomProperties" fullname="QServiceFilter::clearCustomProperties" href="qservicefilter.html#clearCustomProperties" location="qservicefilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="clearCustomProperties()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setCapabilities" fullname="QServiceFilter::setCapabilities" href="qservicefilter.html#setCapabilities" location="qservicefilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCapabilities(const QStringList &amp; capabilities)">
-                <parameter left="const QStringList &amp;" right="" name="capabilities" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setCapabilities" fullname="QServiceFilter::setCapabilities" href="qservicefilter.html#setCapabilities" location="qservicefilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCapabilities(QServiceFilter::CapabilityMatchRule rule, const QStringList &amp; capabilities)">
+                <parameter left="QServiceFilter::CapabilityMatchRule" right="" name="rule" default=""/>
+                <parameter left="const QStringList &amp;" right="" name="capabilities" default="QStringList()"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="capabilities" fullname="QServiceFilter::capabilities" href="qservicefilter.html#capabilities" location="qservicefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="capabilities() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="capabilityMatchRule" fullname="QServiceFilter::capabilityMatchRule" href="qservicefilter.html#capabilityMatchRule" location="qservicefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="CapabilityMatchRule" signature="capabilityMatchRule() const"/>
         </class>
         <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qservicefilter.html#operator&lt;&lt;-78" location="qservicefilter.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="78" relates="QServiceFilter" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; out, const QServiceFilter &amp; sf)">
             <parameter left="QDataStream &amp;" right="" name="out" default=""/>

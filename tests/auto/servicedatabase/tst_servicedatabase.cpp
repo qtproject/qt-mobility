@@ -57,6 +57,7 @@ private slots:
     void searchByInterfaceName();
     void searchByInterfaceAndService();
     void searchByCustomProperty();
+    void searchByCapability();
     void properties();
     void getServiceNames();
     void defaultExternalIfaceIDs();
@@ -499,6 +500,88 @@ void ServiceDatabaseUnitTest::searchByInterfaceAndService()
     QVERIFY(database.close());
 }
 
+void ServiceDatabaseUnitTest::searchByCapability()
+{
+    QServiceFilter filter;
+    QList<QServiceInterfaceDescriptor> interfaces;
+    QHash<QString,QString> customs;
+    QHash<QString,QString> customsW = customs;
+    customsW["weapon"] = "";
+
+    QVERIFY(database.open());
+
+    filter.setServiceName("Decepticon");
+    interfaces = database.getInterfaces(filter);
+    QCOMPARE(interfaces.count(),4);
+
+    filter.setCapabilities(QServiceFilter::MatchLoadable, QStringList());
+    interfaces = database.getInterfaces(filter);
+    QCOMPARE(interfaces.count(),1);
+    QVERIFY(compareDescriptor(interfaces[0], "com.cybertron.transform", "Decepticon", 5, 3,
+                QStringList(), customs, "C:/Cybertron/unicron.dll", "Decepticon Elimination Services", "Transformation interface"));
+
+    QStringList caps;
+    caps << "hunt" << "spy";
+    filter.setCapabilities(QServiceFilter::MatchAll, caps);
+    interfaces = database.getInterfaces(filter);
+    QCOMPARE(interfaces.count(),2);
+    QVERIFY(compareDescriptor(interfaces[0], "com.cybertron.transform", "Decepticon", 2, 0,
+                (QStringList()<<"hunt" << "spy" << "kill"), customs, "C:/Cybertron/unicron.dll", "Decepticon Elimination Services", "Transformation interface"));
+    QVERIFY(compareDescriptor(interfaces[1], "com.cybertron.transform", "Decepticon", 2, 5,
+                (QStringList()<<"hunt" << "spy"), customs, "C:/Cybertron/unicron.dll", "Decepticon Elimination Services", "Transformation interface"));
+
+    filter.setCapabilities(QServiceFilter::MatchLoadable, caps);
+    interfaces = database.getInterfaces(filter);
+    QCOMPARE(interfaces.count(),3);
+    QVERIFY(compareDescriptor(interfaces[0], "com.cybertron.transform", "Decepticon", 1, 1,
+                QStringList()<<"hunt", customsW, "C:/Cybertron/unicron.dll", "Decepticon Elimination Services", "Transformation interface"));
+    QVERIFY(compareDescriptor(interfaces[1], "com.cybertron.transform", "Decepticon", 5, 3,
+                QStringList() , customs, "C:/Cybertron/unicron.dll", "Decepticon Elimination Services", "Transformation interface"));
+    QVERIFY(compareDescriptor(interfaces[2], "com.cybertron.transform", "Decepticon", 2, 5,
+                (QStringList()<<"hunt" << "spy"), customs, "C:/Cybertron/unicron.dll", "Decepticon Elimination Services", "Transformation interface"));
+    
+    caps.clear();
+    caps << "hunt";
+    filter.setCapabilities(QServiceFilter::MatchAll, caps);
+    interfaces = database.getInterfaces(filter);
+    QCOMPARE(interfaces.count(),3);
+    QVERIFY(compareDescriptor(interfaces[0], "com.cybertron.transform", "Decepticon", 2, 0,
+                (QStringList()<<"hunt" << "spy" << "kill"), customs, "C:/Cybertron/unicron.dll", "Decepticon Elimination Services", "Transformation interface"));
+    QVERIFY(compareDescriptor(interfaces[1], "com.cybertron.transform", "Decepticon", 1, 1,
+                QStringList()<<"hunt" , customsW, "C:/Cybertron/unicron.dll", "Decepticon Elimination Services", "Transformation interface"));
+    QVERIFY(compareDescriptor(interfaces[2], "com.cybertron.transform", "Decepticon", 2, 5,
+                (QStringList()<<"hunt" << "spy"), customs, "C:/Cybertron/unicron.dll", "Decepticon Elimination Services", "Transformation interface"));
+
+
+    filter.setCapabilities(QServiceFilter::MatchLoadable, caps);
+    interfaces = database.getInterfaces(filter);
+    QCOMPARE(interfaces.count(),2);
+    QVERIFY(compareDescriptor(interfaces[0], "com.cybertron.transform", "Decepticon", 1, 1,
+                QStringList()<<"hunt", customsW, "C:/Cybertron/unicron.dll", "Decepticon Elimination Services", "Transformation interface"));
+    QVERIFY(compareDescriptor(interfaces[1], "com.cybertron.transform", "Decepticon", 5, 3,
+                QStringList(), customs, "C:/Cybertron/unicron.dll", "Decepticon Elimination Services", "Transformation interface"));
+
+    caps.clear();
+    filter.setCapabilities(QServiceFilter::MatchAll, caps);
+    interfaces = database.getInterfaces(filter);
+    QCOMPARE(interfaces.count(),4);
+    QVERIFY(compareDescriptor(interfaces[0], "com.cybertron.transform", "Decepticon", 2, 0,
+                (QStringList()<<"hunt" << "spy" << "kill"), customs, "C:/Cybertron/unicron.dll", "Decepticon Elimination Services", "Transformation interface"));
+    QVERIFY(compareDescriptor(interfaces[1], "com.cybertron.transform", "Decepticon", 1, 1,
+                QStringList()<<"hunt", customsW, "C:/Cybertron/unicron.dll", "Decepticon Elimination Services", "Transformation interface"));
+    QVERIFY(compareDescriptor(interfaces[2], "com.cybertron.transform", "Decepticon", 5, 3,
+                QStringList(), customs, "C:/Cybertron/unicron.dll", "Decepticon Elimination Services", "Transformation interface"));
+    QVERIFY(compareDescriptor(interfaces[3], "com.cybertron.transform", "Decepticon", 2, 5,
+                (QStringList()<<"hunt" << "spy"), customs, "C:/Cybertron/unicron.dll", "Decepticon Elimination Services", "Transformation interface"));
+    
+
+    filter.setCapabilities(QServiceFilter::MatchLoadable, caps);
+    interfaces = database.getInterfaces(filter);
+    QCOMPARE(interfaces.count(),1);
+    QVERIFY(compareDescriptor(interfaces[0], "com.cybertron.transform", "Decepticon", 5, 3,
+                QStringList(), customs, "C:/Cybertron/unicron.dll", "Decepticon Elimination Services", "Transformation interface"));
+}
+
 void ServiceDatabaseUnitTest::searchByCustomProperty()
 {
     QServiceFilter filter;
@@ -612,6 +695,8 @@ void ServiceDatabaseUnitTest::searchByCustomProperty()
     QVERIFY(compareDescriptor(interfaces[0], "com.cybertron.transform", "Autobot", 1, 9,
                 capabilities, customs, "C:/Ark/matrix.dll", "Autobot Protection Services", "Transformation interface"));
     customs.clear();
+    capabilities.clear();
+    capabilities << "hunt";
     customs["weapon"]= "";
     QVERIFY(compareDescriptor(interfaces[1], "com.cybertron.transform", "Decepticon", 1, 1,
                 capabilities, customs, "C:/Cybertron/unicron.dll", "Decepticon Elimination Services", "Transformation interface"));

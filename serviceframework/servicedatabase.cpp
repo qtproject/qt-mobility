@@ -779,7 +779,7 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
     QList<QVariant> bindValues;
 
     if (filter.serviceName().isEmpty() && filter.interfaceName().isEmpty()
-                && filter.customKeys().size() == 0) {
+                && filter.customKeys().size() == 0 && filter.capabilities().isEmpty()) {
         //do nothing, (don't add any extra constraints to the query
     } else {
 
@@ -805,9 +805,6 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
                 }
             }
         }
-        if (filter.customKeys().size() >0) {
-            //TODO
-        }
     }
 
     if (!executeQuery(&query, selectComponent + fromComponent + whereComponent, bindValues)) {
@@ -824,8 +821,11 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
     QStringList capabilities;
     QString serviceID;
     QString interfaceID;
+    const QSet<QString> filterCaps = filter.capabilities().toSet();
+    QSet<QString> difference;
 
     while(query.next()){
+        difference.clear();
         interface.d->customProperties.clear();
         interface.d->properties.clear();
         interface.d->interfaceName =query.value(EBindIndex).toString();
@@ -854,8 +854,13 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
             return interfaces;
         }
 
+        const QSet<QString> ifaceCaps = interface.d->properties.value(QServiceInterfaceDescriptor::Capabilities).toStringList().toSet();
+        difference = ((filter.capabilityMatchRule() == QServiceFilter::MatchAll) ? (filterCaps-ifaceCaps) : (ifaceCaps-filterCaps));
+        if (!difference.isEmpty())
+            continue;
+
         //only return those interfaces that comply with set custom filters
-        if (filter.customKeys().size()>0) {
+        if (filter.customKeys().size() > 0) {
             QSet<QString> keyDiff = filter.customKeys().toSet();
             keyDiff.subtract(interface.d->customProperties.uniqueKeys().toSet());
             if (keyDiff.isEmpty()) { //target descriptor has same custom keys as filter

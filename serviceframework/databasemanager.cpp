@@ -570,9 +570,12 @@ QServiceInterfaceDescriptor DatabaseManager::interfaceDefault(const QString &int
     The last error is set when this function is called.
 */
 bool DatabaseManager::setInterfaceDefault(const QString &serviceName, const
-        QString &interfaceName, DbScope scope) {
-    QList<QServiceInterfaceDescriptor> descriptors; QServiceFilter filter;
-    filter.setServiceName(serviceName); filter.setInterface(interfaceName);
+        QString &interfaceName, DbScope scope) 
+{
+    QList<QServiceInterfaceDescriptor> descriptors;
+    QServiceFilter filter;
+    filter.setServiceName(serviceName);
+    filter.setInterface(interfaceName);
 
     descriptors = getInterfaces(filter, scope);
     if (m_lastError.code() != DBError::NoError)

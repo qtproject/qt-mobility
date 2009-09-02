@@ -51,8 +51,8 @@ public:
     int minorVersion;
     QServiceFilter::VersionMatchRule matchingRule;
     QHash<QString,QString> customProperties;
-    friend class QServiceFilter;
     QStringList capabilities;
+    QServiceFilter::CapabilityMatchRule capMatchingRule;
 };
 
 
@@ -81,6 +81,26 @@ public:
 */
 
 /*!
+    \enum QServiceFilter::CapabilityMatchRule
+
+    This enum describes the capability matching rule.
+
+    \value MatchAll         The filter matches any services that requires all of the given 
+                            capabilities. This implies that the returned service
+                            may require more capabilities than the specified ones. If this
+                            rule is provided alongside an empty capability search list the filter will
+                            match all available services regardless of their respective capabilities.
+                            Such a search is equivalent to a wildcard match. This
+                            is the default matching rules.
+    \value MatchLoadable    The filter matches any service that could be loaded if
+                            a client has all of the given capabilities. This includes services
+                            with no capabilities. If this rule
+                            is provided alongside an empty capability search list the returned 
+                            services do not require any capabilities and thus can be accessed
+                            by any client.
+*/
+
+/*!
     Creates a new filter object that matches all service implementations.
 */
 QServiceFilter::QServiceFilter()
@@ -89,6 +109,7 @@ QServiceFilter::QServiceFilter()
     d->majorVersion = -1;
     d->minorVersion = -1;
     d->matchingRule = QServiceFilter::MinimumVersionMatch;
+    d->capMatchingRule = QServiceFilter::MatchAll;
 }
 
 /*!
@@ -111,6 +132,7 @@ QServiceFilter::QServiceFilter(const QString& interfaceName, const QString& vers
     d->majorVersion = -1;
     d->minorVersion = -1;
     d->matchingRule = QServiceFilter::MinimumVersionMatch;
+    d->capMatchingRule = QServiceFilter::MatchAll;
     setInterface(interfaceName, version, rule);
 }
 
@@ -135,6 +157,7 @@ QServiceFilter& QServiceFilter::operator=(const QServiceFilter& other)
     d->matchingRule = other.d->matchingRule;
     d->customProperties = other.d->customProperties;
     d->capabilities = other.d->capabilities;
+    d->capMatchingRule = other.d->capMatchingRule;
 
     return *this;
 }
@@ -315,25 +338,40 @@ QList<QString> QServiceFilter::customKeys() const
 }
 
 /*!
-    Returns the list of \a capabilities which are used to constrain
-    searches for services. An empty list is considered a wild card
-    and matches any service.
+    Sets the list of \a capabilities which are used to constrain
+    searches for services. The capabilities are matched according
+    to the given \a rule.
     
     \sa capabilities(), QAbstractSecuritySession
 */
-void QServiceFilter::setCapabilities(const QStringList& capabilities)
+void QServiceFilter::setCapabilities(QServiceFilter::CapabilityMatchRule rule, const QStringList& capabilities )
 {
+    d->capMatchingRule = rule;
     d->capabilities = capabilities;
 }
 
 /*!
     Returns the list of capabilities which are used to limit services searches.
 
-    \sa setCapabilities(), QAbstractSecuritySession
+    The filter matches any services that requires the given or less
+    capabilities and thus enabling clients to query for services
+    for which they have the required capabilties.
+
+    \sa setCapabilities(), capabilityMatchRule(), QAbstractSecuritySession
 */
 QStringList QServiceFilter::capabilities() const
 {
     return d->capabilities;
+}
+
+/*!
+    Returns the capability matching rule for this filter.
+
+    \sa setCapabilities(), capabilities()
+*/
+QServiceFilter::CapabilityMatchRule QServiceFilter::capabilityMatchRule() const
+{
+    return d->capMatchingRule;
 }
 
 #ifndef QT_NO_DATASTREAM
@@ -349,13 +387,15 @@ QDataStream &operator<<(QDataStream &out, const QServiceFilter &sf)
 {
     const qint32 mj = sf.d->majorVersion;
     const qint32 mn = sf.d->minorVersion;
-    const qint32 rule = (qint32) sf.d->matchingRule;
+    const qint8 versionrule = (qint32) sf.d->matchingRule;
+    const qint8 caprule = (qint8) sf.d->capMatchingRule;
     out << sf.d->interface;
     out << sf.d->service;
     out << mj;
     out << mn;
-    out << rule;
+    out << versionrule;
     out << sf.d->customProperties;
+    out << caprule;
     out << sf.d->capabilities;
     return out;
 }
@@ -369,19 +409,22 @@ QDataStream &operator<<(QDataStream &out, const QServiceFilter &sf)
 */
 QDataStream &operator>>(QDataStream &in, QServiceFilter &sf)
 {
-    qint32 mj, mn, rule;
+    qint32 mj, mn;
+    qint8 versionrule, caprule;
 
     in >> sf.d->interface;
     in >> sf.d->service;
     in >> mj;
     in >> mn;
-    in >> rule;
+    in >> versionrule;
     in >> sf.d->customProperties;
+    in >> caprule;
     in >> sf.d->capabilities;
 
     sf.d->majorVersion = mj;
     sf.d->minorVersion = mn;
-    sf.d->matchingRule = (QServiceFilter::VersionMatchRule) rule;
+    sf.d->matchingRule = (QServiceFilter::VersionMatchRule) versionrule;
+    sf.d->capMatchingRule = (QServiceFilter::CapabilityMatchRule) caprule;
 
     return in;
 }

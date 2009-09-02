@@ -6,13 +6,13 @@
     <interface>
         <name>com.cybertron.transform</name> 
         <version>2.0</version>
-        <capabilities></capabilities>
+        <capabilities>hunt,spy,kill</capabilities>
         <description>Transformation interface</description>
     </interface>
     <interface>
         <name>com.cybertron.transform</name> 
         <version>1.1</version>
-        <capabilities></capabilities>
+        <capabilities>hunt</capabilities>
         <description>Transformation interface</description>
         <customproperty key="weapon"></customproperty>
     </interface>
@@ -25,7 +25,7 @@
     <interface>
         <name>com.cybertron.transform</name> 
         <version>2.5</version>
-        <capabilities></capabilities>
+        <capabilities>hunt,spy</capabilities>
         <description>Transformation interface</description>
     </interface>  
 </service>
