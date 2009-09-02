@@ -739,7 +739,7 @@ int QSystemDisplayInfoPrivate::displayBrightness(int screen)
                 foreach(QString lapDev, list) {
                     QHalDeviceInterface ifaceDevice(lapDev);
                     QHalDeviceLaptopPanelInterface lapIface(lapDev);
-                    float numLevels = ifaceDevice.getPropertyInt("laptop_panel.num_levels");
+                    float numLevels = ifaceDevice.getPropertyInt("laptop_panel.num_levels") - 1;
                     float curLevel = lapIface.getBrightness();
                     return curLevel / numLevels * 100;
                 }
