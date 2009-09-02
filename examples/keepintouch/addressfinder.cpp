@@ -63,6 +63,7 @@ AddressFinder::AddressFinder(QWidget *parent, Qt::WindowFlags flags)
     includePeriod->addItem(tr("6 Months"));
     includePeriod->addItem(tr("3 Months"));
     includePeriod->addItem(tr("Month"));
+    includePeriod->addItem(tr("Week"));
 
     includePeriodChanged(0);
 
@@ -142,6 +143,7 @@ void AddressFinder::includePeriodChanged(int selected)
         case 2: excludePeriod->insertItem(0, "3 Months");
         case 3: excludePeriod->insertItem(0, "Month");
         case 4: excludePeriod->insertItem(0, "Week");
+        case 5: excludePeriod->insertItem(0, "Second");
         default: break;
     }
 
@@ -164,6 +166,7 @@ void AddressFinder::searchMessages()
     addressList->clear();
     messageList->clear();
     excludedAddresses.clear();
+    includedAddresses.clear();
     addressMessages.clear();
 
     QDateTime now(QDateTime::currentDateTime());
@@ -175,23 +178,25 @@ void AddressFinder::searchMessages()
         case 2: minimumDate = minimumDate.addMonths(-6); break;
         case 3: minimumDate = minimumDate.addMonths(-3); break;
         case 4: minimumDate = minimumDate.addMonths(-1); break;
+        case 5: minimumDate = minimumDate.addDays(-7); break;
         default: break;
     }
 
     QDateTime maximumDate(now);
     switch (excludePeriod->currentIndex()) {
-        case 0: maximumDate = maximumDate.addDays(-7); break;
-        case 1: maximumDate = maximumDate.addMonths(-1); break;
-        case 2: maximumDate = maximumDate.addMonths(-3); break;
-        case 3: maximumDate = maximumDate.addMonths(-6); break;
-        case 4: maximumDate = maximumDate.addMonths(-9); break;
+        case 0: maximumDate = maximumDate.addSecs(-1); break;
+        case 1: maximumDate = maximumDate.addDays(-7); break;
+        case 2: maximumDate = maximumDate.addMonths(-1); break;
+        case 3: maximumDate = maximumDate.addMonths(-3); break;
+        case 4: maximumDate = maximumDate.addMonths(-6); break;
+        case 5: maximumDate = maximumDate.addMonths(-9); break;
         default: break;
     }
 
     QMessageFilterKey includeFilter(QMessageFilterKey::timeStamp(minimumDate, QMessageDataComparator::GreaterThanEqual));
     QMessageFilterKey excludeFilter(QMessageFilterKey::timeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual));
     QMessageFilterKey outgoingFilter(QMessageFilterKey::status(QMessage::Incoming, QMessageDataComparator::Excludes));
-
+    
     // Search for messages containing addresses to exclude
     service.queryMessages(outgoingFilter & excludeFilter);
 
@@ -236,7 +241,9 @@ void AddressFinder::continueSearch()
         const QMessage message(id);
 
         // All recipient addresses are to be excluded
-        foreach (const QMessageAddress &address, message.to()) {
+        foreach (const QMessageAddress &address, message.to() + message.cc() + message.bcc()) {
+            if (!excludedAddresses.contains(address.recipient()))
+                qDebug() << "Exclude" << address.recipient();
             excludedAddresses.insert(address.recipient());
         }
     } else if (!inclusionMessages.isEmpty()) {
@@ -246,10 +253,14 @@ void AddressFinder::continueSearch()
         // Determine the properties of the message
         QString details(QString("[%1] %2").arg(message.date().toString("d MMM")).arg(message.subject()));
 
-        foreach (const QMessageAddress &address, message.to()) {
+        foreach (const QMessageAddress &address, message.to() + message.cc() + message.bcc()) {
             QString recipient(address.recipient());
+            if (!includedAddresses.contains(recipient))
+                qDebug() << "Include" << recipient;
+            includedAddresses.insert(recipient);
             if (!excludedAddresses.contains(recipient)) {
                 // Link this message to this address
+                qDebug() << "Exclude" << recipient;
                 QStringList &messages = addressMessages[recipient];
                 if (messages.isEmpty()) {
                     addressList->addItem(recipient);
