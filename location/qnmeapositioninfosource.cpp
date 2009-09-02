@@ -322,6 +322,12 @@ void QNmeaPositionInfoSourcePrivate::requestUpdate(int msec)
 {
     if (m_requestTimer && m_requestTimer->isActive())
         return;
+
+    if (msec <= 0 || msec < m_source->minimumUpdateInterval()) {
+        emit m_source->requestTimeout();
+        return;
+    }
+
     if (!m_requestTimer) {
         m_requestTimer = new QTimer(this);
         connect(m_requestTimer, SIGNAL(timeout()), SLOT(updateRequestTimeout()));
@@ -497,7 +503,8 @@ QIODevice *QNmeaPositionInfoSource::device() const
 */
 void QNmeaPositionInfoSource::setUpdateInterval(int msec)
 {
-    QGeoPositionInfoSource::setUpdateInterval(msec);
+    int interval = qMax(msec, minimumUpdateInterval()); // use min as default
+    QGeoPositionInfoSource::setUpdateInterval(interval);
     if (d->m_invokedStart) {
         d->stopUpdates();
         d->startUpdates();
@@ -550,6 +557,6 @@ QGeoPositionInfoSource::PositioningMethods QNmeaPositionInfoSource::supportedPos
 */
 int QNmeaPositionInfoSource::minimumUpdateInterval() const
 {
-    return 0;
+    return 100;
 }
 
