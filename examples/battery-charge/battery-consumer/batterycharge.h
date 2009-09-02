@@ -39,6 +39,7 @@
 
 class QValueSpaceItem;
 
+//! [0]
 class BatteryCharge : public QObject
 {
     Q_OBJECT
@@ -73,5 +74,6 @@ private:
 };
 
 QML_DECLARE_TYPE(BatteryCharge);
+//! [0]
 
 #endif // BATTERYCHARGE_H

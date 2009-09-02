@@ -35,10 +35,10 @@
     \example battery-charge
     \title Accessing Publish and Subscribe from QML
 
-    This examples shows how to access published context values from within QML.
-
-    The example consists of two programs.  The first, battery-provier, is a standard Qt GUI
-    application that emulates a battery.  It publishes the keys
+    This examples shows how to access published context values from within QML.  The example
+    consists of two programs.  The first, battery-provider, is a standard Qt GUI application that
+    is used to emulate a battery for the sole purpose of demonstrating the second program.  It
+    publishes the keys
 
     \code
         /power/battery/charge
@@ -49,8 +49,79 @@
 
     \image battery-provider.png
 
-    The second program, battery-consumer, is implemented in QML with some C++ code implement a
+    The second program, battery-consumer, is implemented in QML with some C++ code to implement a
     battery class and make it to QML.
 
+    The user interface of the battery consumer program is described in QML.  It has the following
+    features: A rectangular area representing the percent charge of the battery.  It indicates a
+    low battery state by changing the color to red, it is green otherwise.  An animation is shown
+    to indicate that the battery is being recharged.
+
     \image battery-consumer.png
+
+    \section2 Battery Consumer
+
+    The first step is to create a \c BatteryCharge class that can be instantiated in QML.
+
+    The \c BatteryCharge class provides three properties.  The \c path property for setting the
+    Value Space path of the battery schema to connect to.  The \c charge property for reading the
+    percent charge of the battery and the \c charging property for reading the charging state of
+    the battery.
+
+    The final step in the header file is to declare the \c BatteryCharge class as a QML type.
+
+    \snippet battery-charge/battery-consumer/batterycharge.h 0
+
+    In the implementation we define the QML \c BatteryCharge type within the \c Example namespace.
+
+    \snippet battery-charge/battery-consumer/batterycharge.cpp 4
+
+    In the implementation of the setter function for the \c path property we delete any previously
+    allocated QValueSpaceItem and create a new one with the new path.
+
+    \snippet battery-charge/battery-consumer/batterycharge.cpp 0
+
+    The implementation of the \c path property getter function returns the path of the underlying
+    QValueSpaceItem.
+
+    \snippet battery-charge/battery-consumer/batterycharge.cpp 1
+
+    The implementation of the getter functions for the \c charge and \c charging properties we
+    return the cached value of the \i charge and \i charging attributes respectively:
+
+    \snippet battery-charge/battery-consumer/batterycharge.cpp 2
+
+    Finally in response to the \c {contentsChanged()} signal we check which values in the battery
+    schema have changed and emit the \c {chargeChanged()} and \c {chargingChanged()} signals.
+
+    \snippet battery-charge/battery-consumer/batterycharge.cpp 3
+
+    \section3 QML
+
+    The first thing we need to do in the QML source is import the \c BatteryCharge type from the
+    \c Example namespace.
+
+    \snippet battery-charge/battery-consumer/battery-meter.qml 4
+
+    The \c BatteryCharge class is instantiated in QML and the path to the battery schema set.
+
+    \snippet battery-charge/battery-consumer/battery-meter.qml 0
+
+    The default state of the rectangle used to visualize the battery charge uses the \i charge
+    property of our BatteryCharge class in the expression for its height.
+
+    \snippet battery-charge/battery-consumer/battery-meter.qml 1
+
+    When the battery charge changes the height of the rectangle will automatically change.
+
+    Next we define two additional states.  The \i low state is entered when the battery charge
+    drops below 25% and the battery is not being recharged.  When in this state the color is set to
+    red.
+
+    \snippet battery-charge/battery-consumer/battery-meter.qml 2
+
+    The \i charging state is entered when the battery is being recharged.  When in this state a
+    particle effect animation is enabled.
+
+    \snippet battery-charge/battery-consumer/battery-meter.qml 3
 */

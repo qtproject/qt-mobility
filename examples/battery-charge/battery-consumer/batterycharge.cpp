@@ -35,7 +35,9 @@
 
 #include <qvaluespaceitem.h>
 
+//! [4]
 QML_DEFINE_TYPE(Example, 1, 0, 0, BatteryCharge, BatteryCharge);
+//! [4]
 
 BatteryCharge::BatteryCharge(QObject *parent)
 :   QObject(parent), m_item(0), m_charging(false), m_charge(0)
@@ -46,28 +48,35 @@ BatteryCharge::~BatteryCharge()
 {
 }
 
+//! [1]
 QString BatteryCharge::path() const
 {
     return m_item ? m_item->path() : QString();
 }
+//! [1]
 
+//! [0]
 void BatteryCharge::setPath(const QString &path)
 {
     delete m_item;
     m_item = new QValueSpaceItem(path);
     connect(m_item, SIGNAL(contentsChanged()), this, SLOT(contentsChanged()));
 }
+//! [0]
 
+//! [2]
 int BatteryCharge::charge() const
 {
-    return m_item ? m_item->value("charge", 0).toInt() : 0;
+    return m_charge;
 }
 
 bool BatteryCharge::charging() const
 {
-    return m_item ? m_item->value("charging", false).toBool() : false;
+    return m_charging;
 }
+//! [2]
 
+//! [3]
 void BatteryCharge::contentsChanged()
 {
     int charge = m_item->value("charge", 0).toInt();
@@ -82,3 +91,4 @@ void BatteryCharge::contentsChanged()
         emit chargingChanged();
     }
 }
+//! [3]
