@@ -62,27 +62,115 @@ void QAudioFormat::setSampleSize(int sampleSize)
 
 #endif
 
+/*!
+    \class QAudioEncodeControl
+    \ingroup multimedia
 
+    \preliminary
+    \brief The abstract class for controling audio encoding parameters, this is provided
+    by a QAbstractMediaService object, and is used by QMediaRecorder.
+
+    \sa QAbstractMediaService, QMediaRecorder
+*/
+
+
+/*!
+  Create a new audio encode control object with the given \a parent.
+*/
 QAudioEncodeControl::QAudioEncodeControl(QObject *parent)
     :QAbstractMediaControl(parent)
 {
 }
 
+/*!
+  Destroys the audio encode control.
+*/
 QAudioEncodeControl::~QAudioEncodeControl()
 {
 }
 
+
+
+/*!
+  \fn QAudioEncodeControl::format() const
+
+  Returns the audio format being used.
+*/
+
+/*!
+  \fn QAudioEncodeControl::isFormatSupported(const QAudioFormat &format) const
+
+  Returns true if the given \a format is supported.
+*/
+
+/*!
+  \fn QAudioEncodeControl::setFormat(const QAudioFormat &format)
+
+  Set the audio format. If format is null, the media engine will
+  choose some resonable default one.
+*/
+
+/*!
+  \fn QAudioEncodeControl::supportedAudioCodecs() const
+
+  Returns the list of supported audio codec names.
+*/
+
+/*!
+  \fn QAudioEncodeControl::audioCodec() const
+
+  Returns the current audio codec name.
+*/
+
+/*!
+  \fn QAudioEncodeControl::setAudioCodec(const QString &codecName)
+
+  Sets the audio codec to \a codecName.
+*/
+
+/*!
+  \fn QAudioEncodeControl::codecDescription(const QString &codec) const
+
+  Returns description of audio \a codec.
+*/
+
+/*!
+  \fn QAudioEncodeControl::bitrate() const
+
+  Returns the bitrate of compressed audio stream.
+*/
+
+/*!
+  \fn QAudioEncodeControl::setBitrate(int)
+
+  Sets the
+*/
+
+/*!
+  \fn QAudioEncodeControl::quality() const
+*/
+
+/*!
+  \fn QAudioEncodeControl::setQuality(qreal)
+*/
+
+/*!
+*/
 QStringList QAudioEncodeControl::supportedEncodingOptions() const
 {
     return QStringList();
 }
 
+/*!
+*/
 QVariant QAudioEncodeControl::encodingOption(const QString &name) const
 {
     Q_UNUSED(name);
     return QVariant();
 }
 
+/*!
+*/
 void QAudioEncodeControl::setEncodingOption(const QString &name, const QVariant &value)
 {
     Q_UNUSED(name);

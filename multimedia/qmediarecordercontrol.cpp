@@ -37,6 +37,13 @@
 
 /*!
     \class QMediaRecorderControl
+    \ingroup multimedia
+
+    \preliminary
+    \brief
+
+    \sa QMediaRecorder
+
 */
 
 /*!

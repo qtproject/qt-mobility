@@ -636,7 +636,17 @@ void QMediaRecorder::setVideoBitrate(int bitrate)
   \property QMediaRecorder::videoQuality
   \brief Video quality value.
 
-  It has the same meaning and range as audioQuality property.
+  Quality of encoded video stream.
+
+  The quality value is normalized in range from 0 to 100,
+  with 0 means the lowest quality the audio codec supports,
+  100 - the best quality the codec supports.
+
+  The default quality value is 50 and usually means
+  some reasonable quality settings.
+
+  Depending on codec, the quality property may affect
+  different parameters, like bitrate or presets.
 */
 qreal QMediaRecorder::videoQuality() const
 {
