@@ -1305,9 +1305,23 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
                 }
             }
         }
+#else
+        QFile statefile("/proc/acpi/battery/BAT0/state");
+        if (!statefile.open(QIODevice::ReadOnly)) {
+            //  qWarning() << "Could not open /proc/acpi/battery/BAT0/state";
+        } else {
+            QTextStream batstate(&statefile);
+            QString line = batstate.readLine();
+            while (!line.isNull()) {
+                if(line.contains("charging state")) {
+                    if(line.split(" ").at(1).trimmed() == "discharging") {
+                        return QSystemDeviceInfo::BatteryPower;
+                    }
+                }
+            }
+        }
 #endif
-
-        return QSystemDeviceInfo::UnknownPower;
+        return QSystemDeviceInfo::WallPower;
  }
 
 
