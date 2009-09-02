@@ -300,9 +300,9 @@ void QMessage::setCustomField(const QString &name, const QString &value)
     Q_UNUSED(value);
 }
 
-QList<QString> QMessage::customFields() const
+QStringList QMessage::customFields() const
 {
-    return QList<QString>(); // stub
+    return QStringList(); // stub
 }
 #endif
 

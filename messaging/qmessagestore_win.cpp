@@ -653,7 +653,21 @@ bool QMessageStore::addMessage(QMessage *m)
                                         qWarning() << "Unable to allocate address list for message.";
                                     }
                                 }
-                                
+
+                                // Store all the custom field data in a single block
+                                QStringList customFieldData;
+                                foreach (const QString &key, m->customFields()) {
+                                    customFieldData.append(key + "\n" + m->customField(key));
+                                }
+                                if (!customFieldData.isEmpty()) {
+                                    ULONG tag = WinHelpers::createNamedProperty(message, "customFieldData");
+                                    if (tag) {
+                                        WinHelpers::setNamedProperty(message, tag, customFieldData.join("\n\n"));
+                                    } else {
+                                        qWarning() << "Unable to store custom field data for message.";
+                                    }
+                                }
+
                                 if (!m->contentIds().isEmpty()) {
                                     // This is a multipart message
                                     // TODO: multipart addition
@@ -736,85 +750,7 @@ QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
     if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
         return result;
 
-    // Get the store key, TODO move QMessageIdPrivate definition into qmessage_p.h and use it
-    MapiRecordKey storeRecordKey(QMessageFolderIdPrivate::storeRecordKey(id));
-    QMessageAccountId accountId(QMessageAccountIdPrivate::from(storeRecordKey));
-    MapiStorePtr mapiStore(mapiSession->findStore(&d_ptr->p_ptr->lastError, accountId));
-    if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
-        return result;
-
-    // Find the root folder for this store
-    MapiFolderPtr storeRoot(mapiStore->rootFolder(&d_ptr->p_ptr->lastError));
-    if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
-        return result;
-
-    MapiEntryId entryId(QMessageFolderIdPrivate::entryId(id));
-    MapiFolderPtr folder = mapiStore->openFolder(&d_ptr->p_ptr->lastError, entryId);
-    if (folder && (d_ptr->p_ptr->lastError == QMessageStore::NoError)) {
-        const int nCols(3);
-        enum { displayNameColumn = 0, recordKeyColumn, parentEntryIdColumn };
-        SizedSPropTagArray(nCols, columns) = {nCols, {PR_DISPLAY_NAME, PR_RECORD_KEY, PR_PARENT_ENTRYID}};
-        SPropValue *properties(0);
-        ULONG count;
-
-        if (folder->folder()->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &properties) == S_OK) {
-            LPSPropValue recordKeyProp(&properties[recordKeyColumn]);
-            MapiRecordKey folderKey(reinterpret_cast<const char*>(recordKeyProp->Value.bin.lpb), recordKeyProp->Value.bin.cb);
-
-            LPSPropValue entryIdProp(&properties[parentEntryIdColumn]);
-            MapiEntryId parentEntryId(entryIdProp->Value.bin.lpb, entryIdProp->Value.bin.cb);
-
-            QString displayName(QStringFromLpctstr(properties[displayNameColumn].Value.LPSZ));
-            QMessageFolderId folderId(QMessageFolderIdPrivate::from(folderKey, storeRecordKey, entryId));
-            QMessageAccountId accountId(QMessageAccountIdPrivate::from(storeRecordKey));
-
-            MAPIFreeBuffer(properties);
-
-            QStringList path;
-            path.append(displayName);
-
-            QMessageFolderId parentId;
-            MapiEntryId ancestorEntryId(parentEntryId);
-            MapiFolderPtr ancestorFolder;
-
-            // Iterate through ancestors towards the root
-            while ((ancestorFolder = mapiStore->openFolder(&d_ptr->p_ptr->lastError, ancestorEntryId)) &&
-                   (ancestorFolder && (d_ptr->p_ptr->lastError == QMessageStore::NoError))) {
-                SPropValue *ancestorProperties(0);
-                if (ancestorFolder->folder()->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &ancestorProperties) == S_OK) {
-                    LPSPropValue ancestorRecordKeyProp(&ancestorProperties[recordKeyColumn]);
-                    MapiRecordKey ancestorRecordKey(reinterpret_cast<const char*>(ancestorRecordKeyProp->Value.bin.lpb), ancestorRecordKeyProp->Value.bin.cb);
-
-                    if (ancestorEntryId == parentEntryId) { 
-                        // This ancestor is the parent of the folder being retrieved, create a QMessageFolderId for the parent
-                        parentId = QMessageFolderIdPrivate::from(ancestorRecordKey, storeRecordKey, parentEntryId);
-                    }
-
-                    LPSPropValue entryIdProp(&ancestorProperties[parentEntryIdColumn]);                    
-                    ancestorEntryId = MapiEntryId(entryIdProp->Value.bin.lpb, entryIdProp->Value.bin.cb);
-
-                    QString ancestorName(QStringFromLpctstr(ancestorProperties[displayNameColumn].Value.LPSZ));
-
-                    MAPIFreeBuffer(ancestorProperties);
-
-                    if (ancestorRecordKey == storeRoot->recordKey()) {
-                        // Reached the root and have a complete path for the folder being retrieved
-                        return QMessageFolderPrivate::from(folderId, accountId, parentId, displayName, path.join("/"));
-                    }
-
-                    // Prepare to consider next ancestor
-                    if (!ancestorName.isEmpty())
-                        path.prepend(ancestorName);
-                } else {
-                    break;
-                }
-            }
-        }
-    }
-
-    // Failed to quickly retrieve the folder, fallback to an exhaustive search of all folders
-    result = mapiStore->folderFromId(&d_ptr->p_ptr->lastError, id);
-    return result;
+    return mapiSession->folder(&d_ptr->p_ptr->lastError, id);
 }
 #endif
 

@@ -550,9 +550,9 @@ void QMessage::setCustomField(const QString &name, const QString &value)
     }
 }
 
-QList<QString> QMessage::customFields() const
+QStringList QMessage::customFields() const
 {
-    QList<QString> result;
+    QStringList result;
 
     foreach (const QString &key, d_ptr->_message.customFields().keys()) {
         if (!key.startsWith("QMessage::")) {

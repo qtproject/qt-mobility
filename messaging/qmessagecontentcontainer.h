@@ -78,7 +78,7 @@ public:
     virtual bool contains(const QMessageContentContainerId &id) const;
 
     virtual QString headerField(const QByteArray &name) const;
-    virtual QList<QString> headerFieldValues(const QByteArray &name) const;
+    virtual QStringList headerFieldValues(const QByteArray &name) const;
     virtual QList<QByteArray> headerFields() const;
 
     static void setPreferredCharsets(const QList<QByteArray> &charsetNames);

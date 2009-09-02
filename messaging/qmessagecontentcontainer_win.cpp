@@ -362,9 +362,9 @@ QString QMessageContentContainer::headerField(const QByteArray &name) const
     return QString();
 }
 
-QList<QString> QMessageContentContainer::headerFieldValues(const QByteArray &name) const
+QStringList QMessageContentContainer::headerFieldValues(const QByteArray &name) const
 {
-    QList<QString> values;
+    QStringList values;
 
     QMultiMap<QByteArray, QString>::const_iterator it = d_ptr->_header.find(name);
     while ((it != d_ptr->_header.end()) && (it.key() == name)) {

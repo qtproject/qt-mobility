@@ -214,10 +214,10 @@ QString QMessageContentContainer::headerField(const QByteArray &name) const
     return QString(); // stub
 }
 
-QList<QString> QMessageContentContainer::headerFieldValues(const QByteArray &name) const
+QStringList QMessageContentContainer::headerFieldValues(const QByteArray &name) const
 {
     Q_UNUSED(name)
-    return QList<QString>(); // stub
+    return QStringList(); // stub
 }
 
 QList<QByteArray> QMessageContentContainer::headerFields() const

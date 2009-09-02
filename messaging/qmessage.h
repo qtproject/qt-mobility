@@ -154,7 +154,7 @@ public:
 
     virtual QString customField(const QString &name) const;
     virtual void setCustomField(const QString &name, const QString &value);
-    virtual QList<QString> customFields() const;
+    virtual QStringList customFields() const;
 #endif
 
     virtual bool dataModified() const;

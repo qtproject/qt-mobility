@@ -665,24 +665,24 @@ void tst_QMessage::testDestinationPort()
 void tst_QMessage::testCustomField()
 {
     QMessage msg;
-    QCOMPARE(msg.customFields(), QList<QString>());
+    QCOMPARE(msg.customFields(), QStringList());
     QCOMPARE(msg.customField("testing"), QString());
 
     msg.setCustomField("testing", "1-2-3");
-    QCOMPARE(msg.customFields(), ( QSet<QString>() << "testing" ).toList());
+    QCOMPARE(msg.customFields(), QStringList(( QSet<QString>() << "testing" ).toList()));
     QCOMPARE(msg.customField("testing"), QString("1-2-3"));
 
     msg.setCustomField("check", "one, two");
-    QCOMPARE(msg.customFields(), ( QSet<QString>() << "testing" << "check" ).toList());
+    QCOMPARE(msg.customFields(), QStringList(( QSet<QString>() << "testing" << "check" ).toList()));
     QCOMPARE(msg.customField("check"), QString("one, two"));
 
     // TODO: Is this what we want?
     msg.setCustomField("testing", "");
-    QCOMPARE(msg.customFields(), ( QSet<QString>() << "testing" << "check" ).toList());
+    QCOMPARE(msg.customFields(), QStringList(( QSet<QString>() << "testing" << "check" ).toList()));
     QCOMPARE(msg.customField("testing"), QString());
 
     msg.setCustomField("testing", QString());
-    QCOMPARE(msg.customFields(), ( QSet<QString>() << "check" ).toList());
+    QCOMPARE(msg.customFields(), QStringList(( QSet<QString>() << "check" ).toList()));
     QCOMPARE(msg.customField("testing"), QString());
 }
 

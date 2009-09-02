@@ -64,12 +64,19 @@ typedef QSharedPointer<MapiSession> MapiSessionPtr;
 
 namespace WinHelpers {
 
+QString QStringFromLpctstr(LPCTSTR lpszValue);
+void LptstrFromQString(const QString &value, LPTSTR *lpsz);
+
 typedef QPair<QMessageId, ULONG> AttachmentLocator;
 QMessageContentContainer fromLocator(const WinHelpers::AttachmentLocator &l);
 
-}
+ULONG createNamedProperty(IMAPIProp *object, const QString &name);
+ULONG getNamedPropertyTag(IMAPIProp *object, const QString &name);
 
-QString QStringFromLpctstr(LPCTSTR lpszValue);
+bool setNamedProperty(IMAPIProp *object, ULONG tag, const QString &value);
+QString getNamedProperty(IMAPIProp *object, ULONG tag);
+
+}
 
 class MapiFolder {
 public:
@@ -178,6 +185,8 @@ public:
     MapiStorePtr findStore(QMessageStore::ErrorCode *lastError, const QMessageAccountId &id = QMessageAccountId()) const;
     MapiStorePtr defaultStore(QMessageStore::ErrorCode *lastError) const { return findStore(lastError); }
     QList<MapiStorePtr> allStores(QMessageStore::ErrorCode *lastError) const;
+
+    QMessageFolder folder(QMessageStore::ErrorCode *lastError, const QMessageFolderId& id) const;
 
     QMessage message(QMessageStore::ErrorCode *lastError, const QMessageId& id) const;
     QByteArray attachmentData(QMessageStore::ErrorCode *lastError, const QMessageId& id, ULONG number) const;

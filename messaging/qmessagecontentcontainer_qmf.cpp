@@ -549,7 +549,7 @@ QString QMessageContentContainer::headerField(const QByteArray &name) const
     return d_ptr->_container->headerFieldText(name);
 }
 
-QList<QString> QMessageContentContainer::headerFieldValues(const QByteArray &name) const
+QStringList QMessageContentContainer::headerFieldValues(const QByteArray &name) const
 {
     return d_ptr->_container->headerFieldsText(name);
 }

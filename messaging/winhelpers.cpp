@@ -49,14 +49,21 @@
 // TODO Consider wrapping LPMAPITABLE and LPSRowSet
 // TODO proper iterators for folders (for sub folders, messages, their entry ids and their record ids)
 
+namespace {
+
+GUID GuidPublicStrings = { 0x00020329, 0x0000, 0x0000, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46 };
+
+}
+
+namespace WinHelpers {
+
 // Note: UNICODE is always defined
 QString QStringFromLpctstr(LPCTSTR lpszValue)
 {
-    if (::IsBadStringPtr(lpszValue, (UINT_PTR)-1)) // Don't crash when MAPI returns a bad string (and it does).
-        return QString::null;
-    if (lpszValue)
-        return QString::fromUtf16(reinterpret_cast<const ushort*>(lpszValue));
-    return QString::null;
+    if (!lpszValue || ::IsBadStringPtr(lpszValue, (UINT_PTR)-1)) // Don't crash when MAPI returns a bad string (and it does).
+        return QString();
+
+    return QString::fromUtf16(reinterpret_cast<const quint16*>(lpszValue));
 }
 
 void LptstrFromQString(const QString &src, LPTSTR* dst)
@@ -72,6 +79,111 @@ void LptstrFromQString(const QString &src, LPTSTR* dst)
     }
     *oit = TCHAR('\0');
 }
+
+ULONG createNamedProperty(IMAPIProp *object, const QString &name)
+{
+    ULONG result = 0;
+
+    if (!name.isEmpty()) {
+        LPTSTR nameBuffer(0);
+        LptstrFromQString(name, &nameBuffer);
+
+        MAPINAMEID propName = { 0 };
+        propName.lpguid = &GuidPublicStrings;
+        propName.ulKind = MNID_STRING;
+        propName.Kind.lpwstrName = nameBuffer;
+
+        LPMAPINAMEID propNames = &propName;
+
+        SPropTagArray *props;
+        HRESULT rv = object->GetIDsFromNames(1, &propNames, MAPI_CREATE, &props);
+        if (HR_SUCCEEDED(rv)) {
+            result = props->aulPropTag[0] | PT_UNICODE;
+
+            MAPIFreeBuffer(props);
+        } else {
+            qWarning() << "createNamedProperty: GetIDsFromNames failed";
+        }
+
+        delete [] nameBuffer;
+    }
+
+    return result;
+}
+
+ULONG getNamedPropertyTag(IMAPIProp *object, const QString &name)
+{
+    ULONG result = 0;
+
+    if (!name.isEmpty()) {
+        LPTSTR nameBuffer(0);
+        LptstrFromQString(name, &nameBuffer);
+
+        MAPINAMEID propName = { 0 };
+        propName.lpguid = &GuidPublicStrings;
+        propName.ulKind = MNID_STRING;
+        propName.Kind.lpwstrName = nameBuffer;
+
+        LPMAPINAMEID propNames = &propName;
+
+        SPropTagArray *props;
+        HRESULT rv = object->GetIDsFromNames(1, &propNames, 0, &props);
+        if (HR_SUCCEEDED(rv)) {
+            if (props->aulPropTag[0] != PT_ERROR) {
+                result = props->aulPropTag[0] | PT_UNICODE;
+            }
+
+            MAPIFreeBuffer(props);
+        } else {
+            qWarning() << "getNamedPropertyTag: GetIDsFromNames failed";
+        }
+
+        delete [] nameBuffer;
+    }
+
+    return result;
+}
+
+bool setNamedProperty(IMAPIProp *object, ULONG tag, const QString &value)
+{
+    if (object && tag && !value.isEmpty()) {
+        SPropValue prop = { 0 };
+        prop.ulPropTag = tag;
+        prop.Value.LPSZ = reinterpret_cast<LPTSTR>(const_cast<quint16*>(value.utf16()));
+
+        HRESULT rv = object->SetProps(1, &prop, 0);
+        if (HR_SUCCEEDED(rv)) {
+            return true;
+        } else {
+            qWarning() << "setNamedProperty: SetProps failed";
+        }
+    }
+
+    return false;
+}
+
+QString getNamedProperty(IMAPIProp *object, ULONG tag)
+{
+    QString result;
+
+    if (object && tag) {
+        SPropValue *prop(0);
+        HRESULT rv = HrGetOneProp(object, tag, &prop);
+        if (HR_SUCCEEDED(rv)) {
+            result = QStringFromLpctstr(prop->Value.LPSZ);
+
+            MAPIFreeBuffer(prop);
+        } else if (rv != MAPI_E_NOT_FOUND) {
+            qWarning() << "getNamedProperty: HrGetOneProp failed";
+        }
+    }
+
+    return result;
+}
+
+}
+
+using namespace WinHelpers;
 
 MapiFolder::MapiFolder()
     :_valid(false),
@@ -1003,6 +1115,84 @@ QByteArray contentTypeFromExtension(const QString &extension)
 
 }
 
+QMessageFolder MapiSession::folder(QMessageStore::ErrorCode *lastError, const QMessageFolderId& id) const
+{
+    QMessageFolder result;
+
+    MapiRecordKey storeRecordKey(QMessageFolderIdPrivate::storeRecordKey(id));
+    MapiStorePtr mapiStore(findStore(lastError, QMessageAccountIdPrivate::from(storeRecordKey)));
+    if (*lastError != QMessageStore::NoError)
+        return result;
+
+    // Find the root folder for this store
+    MapiFolderPtr storeRoot(mapiStore->rootFolder(lastError));
+    if (*lastError != QMessageStore::NoError)
+        return result;
+
+    MapiEntryId entryId(QMessageFolderIdPrivate::entryId(id));
+    MapiFolderPtr folder = mapiStore->openFolder(lastError, entryId);
+    if (folder && (*lastError == QMessageStore::NoError)) {
+        SizedSPropTagArray(3, columns) = {3, {PR_DISPLAY_NAME, PR_RECORD_KEY, PR_PARENT_ENTRYID}};
+        SPropValue *properties(0);
+        ULONG count;
+        HRESULT rv = folder->folder()->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &properties);
+        if (HR_SUCCEEDED(rv)) {
+            QString displayName(QStringFromLpctstr(properties[0].Value.LPSZ));
+            MapiRecordKey folderKey(reinterpret_cast<const char*>(properties[1].Value.bin.lpb), properties[1].Value.bin.cb);
+            MapiEntryId parentEntryId(properties[2].Value.bin.lpb, properties[2].Value.bin.cb);
+
+            MAPIFreeBuffer(properties);
+
+            QMessageFolderId folderId(QMessageFolderIdPrivate::from(folderKey, storeRecordKey, entryId));
+
+            QStringList path;
+            path.append(displayName);
+
+            QMessageFolderId parentId;
+            MapiEntryId ancestorEntryId(parentEntryId);
+            MapiFolderPtr ancestorFolder;
+
+            // Iterate through ancestors towards the root
+            while ((ancestorFolder = mapiStore->openFolder(lastError, ancestorEntryId)) &&
+                   (ancestorFolder && (*lastError == QMessageStore::NoError))) {
+                SPropValue *ancestorProperties(0);
+                if (ancestorFolder->folder()->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &ancestorProperties) == S_OK) {
+                    SPropValue &ancestorRecordKeyProp(ancestorProperties[1]);
+                    MapiRecordKey ancestorRecordKey(reinterpret_cast<const char*>(ancestorRecordKeyProp.Value.bin.lpb), ancestorRecordKeyProp.Value.bin.cb);
+
+                    if (ancestorEntryId == parentEntryId) {
+                        // This ancestor is the parent of the folder being retrieved, create a QMessageFolderId for the parent
+                        parentId = QMessageFolderIdPrivate::from(ancestorRecordKey, storeRecordKey, parentEntryId);
+                    }
+
+                    SPropValue &entryIdProp(ancestorProperties[2]);
+                    ancestorEntryId = MapiEntryId(entryIdProp.Value.bin.lpb, entryIdProp.Value.bin.cb);
+
+                    QString ancestorName(QStringFromLpctstr(ancestorProperties[0].Value.LPSZ));
+
+                    MAPIFreeBuffer(ancestorProperties);
+
+                    if (ancestorRecordKey == storeRoot->recordKey()) {
+                        // Reached the root and have a complete path for the folder being retrieved
+                        QMessageAccountId accountId(QMessageAccountIdPrivate::from(storeRecordKey));
+                        return QMessageFolderPrivate::from(folderId, accountId, parentId, displayName, path.join("/"));
+                    }
+
+                    // Prepare to consider next ancestor
+                    if (!ancestorName.isEmpty())
+                        path.prepend(ancestorName);
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+
+    // Failed to quickly retrieve the folder, fallback to an exhaustive search of all folders
+    result = mapiStore->folderFromId(lastError, id);
+    return result;
+}
+
 QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessageId& id) const
 {
     QMessage result;
@@ -1171,6 +1361,18 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
     if (*lastError != QMessageStore::NoError) {
         message->Release();
         return result;
+    }
+
+    // See if this message has any custom field data
+    ULONG tag = getNamedPropertyTag(message, "customFieldData");
+    if (tag) {
+        QString customFieldData = getNamedProperty(message, tag);
+        foreach (const QString &field, customFieldData.split("\n\n")) {
+            int index = field.indexOf("\n");
+            if (index) {
+                result.setCustomField(field.left(index), field.mid(index + 1));
+            }
+        }
     }
 
     // See if this message has HTML body (encoded in RTF)
