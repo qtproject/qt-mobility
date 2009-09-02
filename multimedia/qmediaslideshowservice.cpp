@@ -40,7 +40,7 @@
 #include "qmediasource.h"
 #include "qmediaresource.h"
 #include "qvideooutputcontrol.h"
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
 #include "qvideorenderercontrol.h"
 #endif
 
@@ -51,7 +51,7 @@
 #include <QtNetwork/qnetworkreply.h>
 #include <QtNetwork/qnetworkrequest.h>
 
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
 #include <QtMultimedia/qabstractvideosurface.h>
 #include <QtMultimedia/qvideosurfaceformat.h>
 
@@ -134,7 +134,7 @@ public:
     QMediaSlideShowServicePrivate()
         : slideControl(0)
         , outputControl(0)
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
         , rendererControl(0)
 #endif
         , network(0)
@@ -143,24 +143,24 @@ public:
 
     bool load(QIODevice *device);
     void clear();
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
     void _q_surfaceChanged(QAbstractVideoSurface *surface);
 #endif
     QMediaSlideShowControl *slideControl;
     QMediaSlideShowOutputControl *outputControl;
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
     QMediaSlideShowRenderer *rendererControl;
 #endif
     QNetworkAccessManager *network;
 
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
     QAbstractVideoSurface *surface;
 #endif
 };
 
 bool QMediaSlideShowServicePrivate::load(QIODevice *device)
 {
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
     if (!surface)
         return false;
 
@@ -213,13 +213,13 @@ bool QMediaSlideShowServicePrivate::load(QIODevice *device)
 
 void QMediaSlideShowServicePrivate::clear()
 {
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
     if (surface)
         surface->stop();
 #endif
 }
 
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
 void QMediaSlideShowServicePrivate::_q_surfaceChanged(QAbstractVideoSurface *surface)
 {
     this->surface = surface;
@@ -241,7 +241,7 @@ QMediaSlideShowService::QMediaSlideShowService(QObject *parent)
     d->slideControl = new QMediaSlideShowControl(this);
     d->outputControl = new QMediaSlideShowOutputControl;
 
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
     d->rendererControl = new QMediaSlideShowRenderer;
 
     connect(d->rendererControl, SIGNAL(surfaceChanged(QAbstractVideoSurface*)),
@@ -254,7 +254,7 @@ QMediaSlideShowService::QMediaSlideShowService(QObject *parent)
 QMediaSlideShowService::~QMediaSlideShowService()
 {
     Q_D(QMediaSlideShowService);
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
     delete d->rendererControl;
 #endif
     delete d->outputControl;
@@ -271,7 +271,7 @@ QAbstractMediaControl *QMediaSlideShowService::control(const char *name) const
         return d->slideControl;
     } else if (qstrcmp(name, QVideoOutputControl_iid) == 0) {
         return d->outputControl;
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
     } else if (qstrcmp(name, QVideoRendererControl_iid) == 0) {
         return d->rendererControl;
 #endif

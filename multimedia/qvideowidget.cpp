@@ -40,7 +40,7 @@
 #include "qvideowindowcontrol.h"
 #include "qvideowidgetcontrol.h"
 
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
 #include "qpaintervideosurface_p.h"
 #include "qvideorenderercontrol.h"
 #include "qvideosurfaceformat.h"
@@ -135,7 +135,7 @@ QWidget *QFullScreenVideoWidget::widget()
     return this;
 }
 
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
 
 QVideoRendererWidget::QVideoRendererWidget(QVideoRendererControl *control, QWidget *parent)
     : QFullScreenVideoWidget(parent)
@@ -303,7 +303,7 @@ public:
         , outputControl(0)
         , widgetBackend(0)
         , windowBackend(0)
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
         , rendererBackend(0)
 #endif
         , currentBackend(0)
@@ -323,7 +323,7 @@ public:
     QVideoOutputControl *outputControl;
     QVideoWidgetControlBackend *widgetBackend;
     QVideoWindowWidget *windowBackend;
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
     QVideoRendererWidget *rendererBackend;
 #endif
     QVideoWidgetBackendInterface *currentBackend;
@@ -372,7 +372,7 @@ void QVideoWidgetPrivate::_q_serviceDestroyed()
     delete windowBackend;
     windowBackend = 0;
 
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
     delete rendererBackend;
     rendererBackend = 0;
 #endif
@@ -532,7 +532,7 @@ QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
 
             d->currentBackend = d->windowBackend;
         }
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
         QVideoRendererControl *rendererControl = qobject_cast<QVideoRendererControl *>(
                 d->service->control(QVideoRendererControl_iid));
 
@@ -582,7 +582,7 @@ QVideoWidget::~QVideoWidget()
             delete d_ptr->widgetBackend;
         }
         delete d_ptr->windowBackend;
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
         delete d_ptr->rendererBackend;
 #endif
     }
@@ -748,7 +748,7 @@ void QVideoWidget::setVisible(bool visible)
                 && (window() == 0 || !window()->testAttribute(Qt::WA_DontShowOnScreen))) {
             d->setCurrentBackend(d->windowBackend);
             d->outputControl->setOutput(QVideoOutputControl::WindowOutput);
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
         } else if (d->rendererBackend != 0) {
             d->setCurrentBackend(d->rendererBackend);
             d->outputControl->setOutput(QVideoOutputControl::RendererOutput);

@@ -74,7 +74,7 @@ private:
     QAudioDeviceControl *m_audioInputDevice;
 
     QGstreamerVideoOutputControl *m_videoOutput;
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
     QGstreamerVideoRenderer *m_videoRenderer;
     QGstreamerElementFactory *m_videoRendererFactory;
     QGstreamerVideoOverlay *m_videoWindow;

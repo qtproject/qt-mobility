@@ -57,7 +57,7 @@ public:
 
 private:
     Q_DECLARE_PRIVATE(QMediaSlideShowService)
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
     Q_PRIVATE_SLOT(d_func(), void _q_surfaceChanged(QAbstractVideoSurface *surface));
 #endif
     friend class QMediaSlideShowControl;
