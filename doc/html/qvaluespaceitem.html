@@ -2,7 +2,7 @@
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- ../../context/qvaluespace.cpp -->
+<!-- ../../context/qvaluespaceitem.cpp -->
 <head>
   <title>QValueSpaceItem Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
@@ -30,7 +30,7 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#QValueSpaceItem-7">QValueSpaceItem</a></b> ( const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#QValueSpaceItem-8">QValueSpaceItem</a></b> ( const char * <i>path</i>, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#dtor.QValueSpaceItem">~QValueSpaceItem</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#itemName">itemName</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#path">path</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#remove">remove</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#remove-2">remove</a></b> ( const QByteArray &amp; <i>subPath</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#remove-3">remove</a></b> ( const char * <i>subPath</i> )</td></tr>
@@ -67,43 +67,43 @@
     /Device/Buttons/3/Usable = true</pre>
 <p>Any application in Qt can read values from the Value Space, or be notified asynchronously when they change using the QValueSpaceItem class.</p>
 <p>Items in the Value Space can be thought of as representing &quot;objects&quot; adhering to a well known schema. This is a conceptual differentiation, not a physical one, as internally the Value Space is treated as one large tree. In the sample above, the <tt>/Device/Buttons</tt> schema can be defined as containing a value representing the number of mappable buttons on a device, and a sub-item for each. Likewise, the sub-item object schema contains two attributes - <tt>Name</tt> and <tt>Usable</tt>.</p>
-<p>Applications may use the <a href="qvaluespaceobject.html">QValueSpaceObject</a> class to create a schema object within the Value Space. Objects remain in the Value Space as long as the <a href="qvaluespaceobject.html">QValueSpaceObject</a> instance exists - that is, they are not persistant. If the object is destroyed, or the application containing it exits (or crashes) the items are removed.</p>
-<p>Change notification is modelled in a similar way. Applications subscribe to notifications at a particular object (ie. item) in the tree. If anything in that object (ie. under that item) changes, the application is notified. This allows, for example, subscription to just the <tt>/Device/Buttons</tt> item to receive notification when anything &quot;button&quot; related changes.</p>
+<p>Applications may use the <a href="qvaluespaceobject.html">QValueSpaceObject</a> class to create a schema object within the Value Space. Objects remain in the Value Space as long as the <a href="qvaluespaceobject.html">QValueSpaceObject</a> instance exists - that is, they are not persistent. If the object is destroyed, or the application containing it exits (or crashes) the items are removed.</p>
+<p>Change notification is modeled in a similar way. Applications subscribe to notifications at a particular object (i.e&#x2e; item) in the tree. If anything in that object (i.e&#x2e; under that item) changes, the application is notified. This allows, for example, subscription to just the <tt>/Device/Buttons</tt> item to receive notification when anything &quot;button&quot; related changes.</p>
 <p>For example,</p>
 <pre>    QValueSpaceItem *buttons = new QValueSpaceItem(&quot;/Device/Buttons&quot;);
     qWarning() &lt;&lt; &quot;There are&quot; &lt;&lt; buttons-&gt;value().toUInt() &lt;&lt; &quot;buttons&quot;;
     QObject::connect(buttons, SIGNAL(contentsChanged()),
-                     this, SLOT(buttonInfoChanged()));</pre>
+                   this, SLOT(buttonInfoChanged()));</pre>
 <p>will invoke the <tt>buttonInfoChanged()</tt> slot whenever any item under <tt>/Device/Buttons</tt> changes. This includes the value of <tt>/Device/Buttons</tt> itself, a change of a sub-object such as <tt>/Device/Buttons/2/Name</tt> or the creation (or removal) of a new sub-object, such as <tt>/Device/Buttons/4</tt>.</p>
 <p><i>Note:</i> The QValueSpaceItem class is not thread safe and may only be used from an application's main thread.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QValueSpaceItem"></a>QValueSpaceItem::QValueSpaceItem ( const QValueSpaceItem &amp; <i>base</i>, const QByteArray &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
-<p>Construct a new <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to the sub-<i>path</i> of <i>base</i>.</p>
+<p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to the sub-<i>path</i> of <i>base</i>.</p>
 <h3 class="fn"><a name="QValueSpaceItem-2"></a>QValueSpaceItem::QValueSpaceItem ( const QValueSpaceItem &amp; <i>other</i>, QObject * <i>parent</i> = 0 )</h3>
-<p>Construct a new <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to the same path as <i>other</i>.</p>
+<p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to the same path as <i>other</i>.</p>
 <h3 class="fn"><a name="QValueSpaceItem-3"></a>QValueSpaceItem::QValueSpaceItem ( const QByteArray &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
-<p>Construct a new <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to <i>path</i>.</p>
+<p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to <i>path</i>.</p>
 <h3 class="fn"><a name="QValueSpaceItem-4"></a>QValueSpaceItem::QValueSpaceItem ( QObject * <i>parent</i> = 0 )</h3>
-<p>Construct a new <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to the root path .</p>
+<p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to the root path.</p>
 <h3 class="fn"><a name="QValueSpaceItem-5"></a>QValueSpaceItem::QValueSpaceItem ( const QValueSpaceItem &amp; <i>base</i>, const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>This is an overloaded function.</p>
-<p>Construct a new <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified parent that refers to the sub-<i>path</i> of <i>base</i>. This constructor is equivalent to <tt>QValueSpaceItem(base, path.toUtf8())</tt>.</p>
+<p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified parent that refers to the sub-<i>path</i> of <i>base</i>. This constructor is equivalent to <tt>QValueSpaceItem(base, path.toUtf8())</tt>.</p>
 <h3 class="fn"><a name="QValueSpaceItem-6"></a>QValueSpaceItem::QValueSpaceItem ( const QValueSpaceItem &amp; <i>base</i>, const char * <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>This is an overloaded function.</p>
-<p>Construct a new <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to the sub-<i>path</i> of <i>base</i>. This constructor is equivalent to <tt>QValueSpaceItem(base, QByteArray(path))</tt>.</p>
+<p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to the sub-<i>path</i> of <i>base</i>. This constructor is equivalent to <tt>QValueSpaceItem(base, QByteArray(path))</tt>.</p>
 <h3 class="fn"><a name="QValueSpaceItem-7"></a>QValueSpaceItem::QValueSpaceItem ( const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>This is an overloaded function.</p>
-<p>Construct a new <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to <i>path</i>. This constructor is equivalent to <tt>QValueSpaceItem(path.toUtf8())</tt>.</p>
+<p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to <i>path</i>. This constructor is equivalent to <tt>QValueSpaceItem(path.toUtf8())</tt>.</p>
 <h3 class="fn"><a name="QValueSpaceItem-8"></a>QValueSpaceItem::QValueSpaceItem ( const char * <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>This is an overloaded function.</p>
-<p>Construct a new <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to <i>path</i>. This constructor is equivalent to <tt>QValueSpaceItem(QByteArray(path))</tt>.</p>
+<p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to <i>path</i>. This constructor is equivalent to <tt>QValueSpaceItem(QByteArray(path))</tt>.</p>
 <h3 class="fn"><a name="dtor.QValueSpaceItem"></a>QValueSpaceItem::~QValueSpaceItem ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the <a href="qvaluespaceitem.html">QValueSpaceItem</a></p>
 <h3 class="fn"><a name="contentsChanged"></a>void QValueSpaceItem::contentsChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Emitted whenever the value of this item, or any sub-items changes.</p>
-<h3 class="fn"><a name="itemName"></a>QString QValueSpaceItem::itemName () const</h3>
-<p>Returns the item name of this <a href="qvaluespaceitem.html">QValueSpaceItem</a>.</p>
+<p>Emitted whenever the value of this item, or any of its sub-items change.</p>
+<h3 class="fn"><a name="path"></a>QString QValueSpaceItem::path () const</h3>
+<p>Returns the path that this <a href="qvaluespaceitem.html">QValueSpaceItem</a> refers to.</p>
 <h3 class="fn"><a name="remove"></a>bool QValueSpaceItem::remove ()</h3>
 <p>Request that the item be removed. The provider of the item determines whether the request is honored or ignored.</p>
 <p><i>Note:</i> This call asynchronously <i>asks</i> the current provider of the object to change the value. To explicitly make a change use <a href="qvaluespaceobject.html">QValueSpaceObject</a>.</p>
@@ -158,15 +158,16 @@
     /Device/Buttons</pre>
 <p><tt>QValueSpaceItem(&quot;/Settings&quot;).subPaths()</tt> will return a list containing <tt>{ Nokia, Qt }</tt> in no particular order.</p>
 <h3 class="fn"><a name="sync"></a>bool QValueSpaceItem::sync ()</h3>
-<p>Commit all changes made by calls to <a href="qvaluespaceitem.html#setValue">setValue</a>() or <a href="qvaluespaceitem.html#remove">remove</a>(). The return value is reserved for future use.</p>
+<p>Commit all change requests made by calls to <a href="qvaluespaceitem.html#setValue">setValue</a>() or <a href="qvaluespaceitem.html#remove">remove</a>().</p>
+<p>Returns true if there are no pending change requests to send or the requests were successfully sent to all provides; otherwise returns false.</p>
 <h3 class="fn"><a name="value"></a>QVariant QValueSpaceItem::value ( const QByteArray &amp; <i>subPath</i> = QByteArray(), const QVariant &amp; <i>def</i> = QVariant() ) const</h3>
-<p>Returns the value of sub-item <i>subPath</i> of this item, or the value of this item if <i>subPath</i> is empty. The following code shows how the item and <i>subPath</i> relate.</p>
+<p>Returns the value of sub-item <i>subPath</i> of this item, or the value of this item if <i>subPath</i> is empty. If the item does not exists, <i>def</i> is returned.</p>
+<p>The following code shows how the item and <i>subPath</i> relate.</p>
 <pre>    QValueSpaceItem base(&quot;/Settings&quot;);
     QValueSpaceItem equiv(&quot;/Settings/Nokia/General/Mappings);
 
 <span class="comment">    // Is true</span>
     equiv.value() == base.value(&quot;Nokia/General/Mapping&quot;);</pre>
-<p>If the item does not exist, <i>def</i> is returned.</p>
 <p>See also <a href="qvaluespaceitem.html#setValue">setValue</a>().</p>
 <h3 class="fn"><a name="value-2"></a>QVariant QValueSpaceItem::value ( const QString &amp; <i>subPath</i>, const QVariant &amp; <i>def</i> = QVariant() ) const</h3>
 <p>This is an overloaded function.</p>

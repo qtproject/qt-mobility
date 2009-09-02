@@ -21,8 +21,8 @@
 <h2>Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QUuid&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespace.html#availableLayers">availableLayers</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespace.html#initValuespace">initValuespace</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespace.html#initValuespaceManager">initValuespaceManager</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespace.html#initValueSpaceManager">initValueSpaceManager</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespace.html#installLayer">installLayer</a></b> ( QAbstractValueSpaceLayer * <i>layer</i> )</td></tr>
 </table>
 <hr />
 <a name="macros"></a>
@@ -35,15 +35,16 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QValueSpace namespace provides methods that are useful to Value Space layer implementors.</p>
-<p>Value Space layers that are available at link time can be automatically installed using <a href="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER">QVALUESPACE_AUTO_INSTALL_LAYER</a>() macro. The method <tt>QAbstractValueSpaceLayer * name::instance()</tt> must exist and return a pointer to the layer to install. The <a href="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER">QVALUESPACE_AUTO_INSTALL_LAYER</a>() macro will only invoke this method <i>after</i> <a href="http://qt.nokia.com/doc/4.5/porting4.html">QApplication</a> has been constructed, making it safe to use any Qt class in your layer's constructor.</p>
+<p>Value Space layers that are available at link time can be automatically installed using <a href="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER">QVALUESPACE_AUTO_INSTALL_LAYER</a>() macro. Value Space layers that are only available at run-time can be installed using <a href="qvaluespace.html#installLayer">installLayer</a>().</p>
 <hr />
 <h2>Function Documentation</h2>
 <h3 class="fn"><a name="availableLayers"></a>QList&lt;QUuid&gt; QValueSpace::availableLayers ()</h3>
-<p>Returns a List of QUuids of the available layers.</p>
-<h3 class="fn"><a name="initValuespace"></a>void QValueSpace::initValuespace ()</h3>
-<p>Initialize the value space. This method only needs to be called by layer implementers to force initialization of the value space.</p>
-<h3 class="fn"><a name="initValuespaceManager"></a>void QValueSpace::initValuespaceManager ()</h3>
-<p>Initialize the value space. This method only needs to be called by the value space manager process, and should be called before any process in the system uses a value space class.</p>
+<p>Returns a list of QUuids of all of the available layers.</p>
+<h3 class="fn"><a name="initValueSpaceManager"></a>void QValueSpace::initValueSpaceManager ()</h3>
+<p>Initialize the value space manager as the server. This method only needs to be called by the process acting as the server and should be called before any process in the system uses a value space class.</p>
+<h3 class="fn"><a name="installLayer"></a>void QValueSpace::installLayer ( <a href="qabstractvaluespacelayer.html">QAbstractValueSpaceLayer</a> * <i>layer</i> )</h3>
+<p>Used by value space layer implementations to install themselves into the system. <i>layer</i> should be a pointer to the layer to install.</p>
+<p>See also <a href="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER">QVALUESPACE_AUTO_INSTALL_LAYER</a>().</p>
 <hr />
 <h2>Macro Documentation</h2>
 <h3 class="fn"><a name="QVALUESPACE_REGISTRY_LAYER"></a>QVALUESPACE_REGISTRY_LAYER</h3>
