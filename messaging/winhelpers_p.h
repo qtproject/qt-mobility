@@ -64,12 +64,19 @@ typedef QSharedPointer<MapiSession> MapiSessionPtr;
 
 namespace WinHelpers {
 
+QString QStringFromLpctstr(LPCTSTR lpszValue);
+void LptstrFromQString(const QString &value, LPTSTR *lpsz);
+
 typedef QPair<QMessageId, ULONG> AttachmentLocator;
 QMessageContentContainer fromLocator(const WinHelpers::AttachmentLocator &l);
 
-}
+ULONG createNamedProperty(IMAPIProp *object, const QString &name);
+ULONG getNamedPropertyTag(IMAPIProp *object, const QString &name);
 
-QString QStringFromLpctstr(LPCTSTR lpszValue);
+bool setNamedProperty(IMAPIProp *object, ULONG tag, const QString &value);
+QString getNamedProperty(IMAPIProp *object, ULONG tag);
+
+}
 
 class MapiFolder {
 public:

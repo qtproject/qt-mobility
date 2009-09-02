@@ -319,7 +319,9 @@ ULONG getNamedPropertyTag(IMAPIProp *object, const QString &name)
         SPropTagArray *props;
         HRESULT rv = object->GetIDsFromNames(1, &propNames, 0, &props);
         if (HR_SUCCEEDED(rv)) {
-            result = props->aulPropTag[0] | PT_UNICODE;
+            if (props->aulPropTag[0] != PT_ERROR) {
+                result = props->aulPropTag[0] | PT_UNICODE;
+            }
 
             MAPIFreeBuffer(props);
         } else {
@@ -387,7 +389,6 @@ IProviderAdmin *serviceProvider(const MAPIUID &svcUid, LPSERVICEADMIN svcAdmin)
 MAPIUID findProviderUid(const QByteArray &name, IProviderAdmin *providerAdmin)
 {
     MAPIUID result = { 0 };
-
     IMAPITable *providerTable(0);
     HRESULT rv = providerAdmin->GetProviderTable(0, &providerTable);
     if (HR_SUCCEEDED(rv)) {
@@ -893,7 +894,8 @@ QMessageFolderId addFolder(const Parameters &params)
     QByteArray accountName(params["parentAccountName"].toAscii());
 
     if (folderName.isEmpty()) {
-        folderName = folderPath;
+        int index = folderPath.lastIndexOf('/');
+        folderName = folderPath.mid(index + 1);
     }
 
     if (!folderName.isEmpty() && !folderPath.isEmpty() && !accountName.isEmpty()) {
@@ -1076,14 +1078,12 @@ QMessageId addMessage(const Parameters &params)
                 }
                 message.setStatus(flags);
 
-                /*
                 Parameters::const_iterator it = params.begin(), end = params.end();
                 for ( ; it != end; ++it) {
                     if (it.key().startsWith("custom-")) {
                         message.setCustomField(it.key().mid(7), it.value());
                     }
                 }
-                */
 
                 if (!QMessageStore::instance()->addMessage(&message)) {
                     qWarning() << "Unable to addMessage:" << to << from << date << subject;

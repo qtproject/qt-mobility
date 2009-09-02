@@ -49,14 +49,21 @@
 // TODO Consider wrapping LPMAPITABLE and LPSRowSet
 // TODO proper iterators for folders (for sub folders, messages, their entry ids and their record ids)
 
+namespace {
+
+GUID GuidPublicStrings = { 0x00020329, 0x0000, 0x0000, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46 };
+
+}
+
+namespace WinHelpers {
+
 // Note: UNICODE is always defined
 QString QStringFromLpctstr(LPCTSTR lpszValue)
 {
-    if (::IsBadStringPtr(lpszValue, (UINT_PTR)-1)) // Don't crash when MAPI returns a bad string (and it does).
-        return QString::null;
-    if (lpszValue)
-        return QString::fromUtf16(reinterpret_cast<const ushort*>(lpszValue));
-    return QString::null;
+    if (!lpszValue || ::IsBadStringPtr(lpszValue, (UINT_PTR)-1)) // Don't crash when MAPI returns a bad string (and it does).
+        return QString();
+
+    return QString::fromUtf16(reinterpret_cast<const quint16*>(lpszValue));
 }
 
 void LptstrFromQString(const QString &src, LPTSTR* dst)
@@ -72,6 +79,111 @@ void LptstrFromQString(const QString &src, LPTSTR* dst)
     }
     *oit = TCHAR('\0');
 }
+
+ULONG createNamedProperty(IMAPIProp *object, const QString &name)
+{
+    ULONG result = 0;
+
+    if (!name.isEmpty()) {
+        LPTSTR nameBuffer(0);
+        LptstrFromQString(name, &nameBuffer);
+
+        MAPINAMEID propName = { 0 };
+        propName.lpguid = &GuidPublicStrings;
+        propName.ulKind = MNID_STRING;
+        propName.Kind.lpwstrName = nameBuffer;
+
+        LPMAPINAMEID propNames = &propName;
+
+        SPropTagArray *props;
+        HRESULT rv = object->GetIDsFromNames(1, &propNames, MAPI_CREATE, &props);
+        if (HR_SUCCEEDED(rv)) {
+            result = props->aulPropTag[0] | PT_UNICODE;
+
+            MAPIFreeBuffer(props);
+        } else {
+            qWarning() << "createNamedProperty: GetIDsFromNames failed";
+        }
+
+        delete [] nameBuffer;
+    }
+
+    return result;
+}
+
+ULONG getNamedPropertyTag(IMAPIProp *object, const QString &name)
+{
+    ULONG result = 0;
+
+    if (!name.isEmpty()) {
+        LPTSTR nameBuffer(0);
+        LptstrFromQString(name, &nameBuffer);
+
+        MAPINAMEID propName = { 0 };
+        propName.lpguid = &GuidPublicStrings;
+        propName.ulKind = MNID_STRING;
+        propName.Kind.lpwstrName = nameBuffer;
+
+        LPMAPINAMEID propNames = &propName;
+
+        SPropTagArray *props;
+        HRESULT rv = object->GetIDsFromNames(1, &propNames, 0, &props);
+        if (HR_SUCCEEDED(rv)) {
+            if (props->aulPropTag[0] != PT_ERROR) {
+                result = props->aulPropTag[0] | PT_UNICODE;
+            }
+
+            MAPIFreeBuffer(props);
+        } else {
+            qWarning() << "getNamedPropertyTag: GetIDsFromNames failed";
+        }
+
+        delete [] nameBuffer;
+    }
+
+    return result;
+}
+
+bool setNamedProperty(IMAPIProp *object, ULONG tag, const QString &value)
+{
+    if (object && tag && !value.isEmpty()) {
+        SPropValue prop = { 0 };
+        prop.ulPropTag = tag;
+        prop.Value.LPSZ = reinterpret_cast<LPTSTR>(const_cast<quint16*>(value.utf16()));
+
+        HRESULT rv = object->SetProps(1, &prop, 0);
+        if (HR_SUCCEEDED(rv)) {
+            return true;
+        } else {
+            qWarning() << "setNamedProperty: SetProps failed";
+        }
+    }
+
+    return false;
+}
+
+QString getNamedProperty(IMAPIProp *object, ULONG tag)
+{
+    QString result;
+
+    if (object && tag) {
+        SPropValue *prop(0);
+        HRESULT rv = HrGetOneProp(object, tag, &prop);
+        if (HR_SUCCEEDED(rv)) {
+            result = QStringFromLpctstr(prop->Value.LPSZ);
+
+            MAPIFreeBuffer(prop);
+        } else if (rv != MAPI_E_NOT_FOUND) {
+            qWarning() << "getNamedProperty: HrGetOneProp failed";
+        }
+    }
+
+    return result;
+}
+
+}
+
+using namespace WinHelpers;
 
 MapiFolder::MapiFolder()
     :_valid(false),
@@ -1249,6 +1361,18 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
     if (*lastError != QMessageStore::NoError) {
         message->Release();
         return result;
+    }
+
+    // See if this message has any custom field data
+    ULONG tag = getNamedPropertyTag(message, "customFieldData");
+    if (tag) {
+        QString customFieldData = getNamedProperty(message, tag);
+        foreach (const QString &field, customFieldData.split("\n\n")) {
+            int index = field.indexOf("\n");
+            if (index) {
+                result.setCustomField(field.left(index), field.mid(index + 1));
+            }
+        }
     }
 
     // See if this message has HTML body (encoded in RTF)

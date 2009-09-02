@@ -653,7 +653,21 @@ bool QMessageStore::addMessage(QMessage *m)
                                         qWarning() << "Unable to allocate address list for message.";
                                     }
                                 }
-                                
+
+                                // Store all the custom field data in a single block
+                                QStringList customFieldData;
+                                foreach (const QString &key, m->customFields()) {
+                                    customFieldData.append(key + "\n" + m->customField(key));
+                                }
+                                if (!customFieldData.isEmpty()) {
+                                    ULONG tag = WinHelpers::createNamedProperty(message, "customFieldData");
+                                    if (tag) {
+                                        WinHelpers::setNamedProperty(message, tag, customFieldData.join("\n\n"));
+                                    } else {
+                                        qWarning() << "Unable to store custom field data for message.";
+                                    }
+                                }
+
                                 if (!m->contentIds().isEmpty()) {
                                     // This is a multipart message
                                     // TODO: multipart addition

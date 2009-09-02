@@ -198,7 +198,25 @@ void tst_QMessageStore::testFolder()
 
     if (!parentFolderPath.isEmpty()) {
         QMessageFolderFilterKey key(QMessageFolderFilterKey::path(parentFolderPath) & QMessageFolderFilterKey::parentAccountId(testAccountId));
-        QMessageFolderId parentFolderId(QMessageStore::instance()->queryFolders(key).first());
+        QMessageFolderIdList list(QMessageStore::instance()->queryFolders(key));
+#if defined(Q_OS_WIN) && !defined(FOLDER_FILTERING_IMPLEMENTED)
+{
+    // Key filtering is not implemented yet
+    QMessageFolderIdList::iterator it = list.begin(), end = list.end();
+    while (it != end) {
+        QMessageFolder fldr(*it);
+        if ((fldr.parentAccountId() == testAccountId) && (fldr.path() == parentFolderPath)) {
+            list.clear();
+            list.append(fldr.id());
+            break;
+        }
+        if (++it == end) {
+            list.clear();
+        }
+    }
+}
+#endif
+        QMessageFolderId parentFolderId(list.first());
         QCOMPARE(folder.parentFolderId(), parentFolderId);
     }
 
@@ -208,6 +226,9 @@ void tst_QMessageStore::testFolder()
 
 #endif
 
+typedef QMap<QString, QString> CustomFieldMap;
+Q_DECLARE_METATYPE(CustomFieldMap)
+
 void tst_QMessageStore::testMessage_data()
 {
     QTest::addColumn<QString>("to");
@@ -215,13 +236,19 @@ void tst_QMessageStore::testMessage_data()
     QTest::addColumn<QString>("date");
     QTest::addColumn<QString>("subject");
     QTest::addColumn<QString>("text");
+    QTest::addColumn<CustomFieldMap>("custom");
 
-    QTest::newRow("1") 
+    CustomFieldMap customData;
+    customData.insert("cake", "chocolate");
+    customData.insert("muffin", "blueberry");
+
+    QTest::newRow("1")
         << "alice@example.com"
         << "bob@example.com"
         << "1999-12-31T23:59:59Z"
         << "Last message..."
-        << "...before Y2K";
+        << "...before Y2K"
+        << customData;
 }
 
 void tst_QMessageStore::testMessage()
@@ -268,7 +295,7 @@ void tst_QMessageStore::testMessage()
     QMessageFolderIdList::iterator it = folderIds.begin(), end = folderIds.end();
     while (it != end) {
         QMessageFolder fldr(*it);
-        if ((fldr.parentAccountId() == accountIds.first()) && (fldr.displayName() == "Inbox")) {
+        if ((fldr.parentAccountId() == testAccountId) && (fldr.displayName() == "Inbox")) {
             folderIds.clear();
             folderIds.append(fldr.id());
             break;
@@ -298,6 +325,7 @@ void tst_QMessageStore::testMessage()
     QFETCH(QString, date);
     QFETCH(QString, subject);
     QFETCH(QString, text);
+    QFETCH(CustomFieldMap, custom);
 
     Support::Parameters p;
     p.insert("to", to);
@@ -306,9 +334,15 @@ void tst_QMessageStore::testMessage()
     p.insert("subject", subject);
     p.insert("text", text);
     p.insert("parentAccountName", testAccountName);
- 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
     p.insert("parentFolderPath", testFolder.path());
+#endif
+
+#ifdef QMESSAGING_OPTIONAL
+    CustomFieldMap::const_iterator it = custom.begin(), end = custom.end();
+    for ( ; it != end; ++it) {
+        p.insert("custom-" + it.key(), it.value());
+    }
 #endif
 
     QMessageId messageId(Support::addMessage(p));
@@ -339,6 +373,13 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(body.contentCharset().toLower(), QByteArray("utf-8"));
     QCOMPARE(body.contentAvailable(), true);
     QCOMPARE(body.decodedTextContent(), text);
+#endif
+
+#ifdef QMESSAGING_OPTIONAL
+    QCOMPARE(message.customFields().toSet(), custom.keys().toSet());
+    foreach (const QString &key, custom.keys()) {
+        QCOMPARE(message.customField(key), custom[key]);
+    }
 #endif
 
     QMessageIdList messageIds(QMessageStore::instance()->queryMessages());
