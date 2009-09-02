@@ -42,8 +42,12 @@
 #include "qgstreamermetadataprovider.h"
 #include "qgstreamervideooutputcontrol.h"
 
+#ifndef QT_NO_VIDEOSURFACE
 #include "qgstreamervideooverlay.h"
 #include "qgstreamervideorenderer.h"
+#endif
+
+#include "qgstreamervideowidget.h"
 
 #include "qmediaplaylistnavigator.h"
 #include "qmediaplaylist.h"
@@ -60,10 +64,15 @@ QGstreamerPlayerService::QGstreamerPlayerService(QObject *parent)
 #ifndef QT_NO_VIDEOSURFACE
     m_videoRenderer = new QGstreamerVideoRenderer(this);
     m_videoWindow = new QGstreamerVideoOverlay(this);
-    m_videoOutput->setAvailableOutputs(QList<QVideoOutputControl::Output>()
-            << QVideoOutputControl::RendererOutput
-            << QVideoOutputControl::WindowOutput);
 #endif
+    m_videoWidget = new QGstreamerVideoWidgetControl(this);
+
+    m_videoOutput->setAvailableOutputs(QList<QVideoOutputControl::Output>()
+#ifndef QT_NO_VIDEOSURFACE
+            << QVideoOutputControl::RendererOutput
+            << QVideoOutputControl::WindowOutput
+#endif
+            << QVideoOutputControl::WidgetOutput);
 }
 
 QGstreamerPlayerService::~QGstreamerPlayerService()
@@ -81,6 +90,9 @@ QAbstractMediaControl *QGstreamerPlayerService::control(const char *name) const
     if (qstrcmp(name, QVideoOutputControl_iid) == 0)
         return m_videoOutput;
 
+    if (qstrcmp(name, QVideoWidgetControl_iid) == 0)
+        return m_videoWidget;
+
 #ifndef QT_NO_VIDEOSURFACE
     if (qstrcmp(name, QVideoRendererControl_iid) == 0)
         return m_videoRenderer;
@@ -94,23 +106,24 @@ QAbstractMediaControl *QGstreamerPlayerService::control(const char *name) const
 
 void QGstreamerPlayerService::videoOutputChanged(QVideoOutputControl::Output output)
 {
-#ifdef QT_NO_VIDEOSURFACE
-    Q_UNUSED(output);
-#else
     switch (output) {
     case QVideoOutputControl::NoOutput:
         m_control->setVideoOutput(0);
         break;
+#ifndef QT_NO_VIDEOSURFACE
     case QVideoOutputControl::RendererOutput:
         m_control->setVideoOutput(m_videoRenderer);
         break;
     case QVideoOutputControl::WindowOutput:
         m_control->setVideoOutput(m_videoWindow);
         break;
+#endif
+    case QVideoOutputControl::WidgetOutput:
+        m_control->setVideoOutput(m_videoWidget);
+        break;
     default:
         qWarning("Invalid video output selection");
         break;
     }
-#endif
 }
 

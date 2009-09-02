@@ -73,13 +73,12 @@ public:
     AspectRatio aspectRatio() const;
     QSize customPixelAspectRatio() const;
 
-
     int brightness() const;
     int contrast() const;
     int hue() const;
     int saturation() const;
 
-    QSize sizeHint() const;
+    bool eventFilter(QObject *object, QEvent *event);
 
 public Q_SLOTS:
     void setVisible(bool visible);
@@ -100,22 +99,24 @@ Q_SIGNALS:
     void hueChanged(int hue);
     void saturationChanged(int saturation);
 
-protected:
-    void showEvent(QShowEvent *event);
-    void hideEvent(QHideEvent *event);
-    void moveEvent(QMoveEvent *event);
-    void resizeEvent(QResizeEvent *event);
-    void paintEvent(QPaintEvent *event);
+protected:;
     void keyPressEvent(QKeyEvent *event);
-    bool eventFilter(QObject*, QEvent*);
 
 protected:
     QVideoWidgetPrivate *d_ptr;
 
 private:
     Q_DECLARE_PRIVATE(QVideoWidget)
-    Q_PRIVATE_SLOT(d_func(), void _q_overlayFullscreenChanged(bool));
-    Q_PRIVATE_SLOT(d_func(), void _q_dimensionsChanged());
+    Q_PRIVATE_SLOT(d_func(), void _q_serviceDestroyed())
+    Q_PRIVATE_SLOT(d_func(), void _q_dimensionsChanged())
+    Q_PRIVATE_SLOT(d_func(), void _q_brightnessChanged(int))
+    Q_PRIVATE_SLOT(d_func(), void _q_contrastChanged(int))
+    Q_PRIVATE_SLOT(d_func(), void _q_hueChanged(int))
+    Q_PRIVATE_SLOT(d_func(), void _q_saturationChanged(int))
+    Q_PRIVATE_SLOT(d_func(), void _q_fullScreenChanged(bool))
+    Q_PRIVATE_SLOT(d_func(), void _q_displayModeChanged(QVideoWidget::DisplayMode))
+    Q_PRIVATE_SLOT(d_func(), void _q_aspectRatioModeChanged(QVideoWidget::AspectRatio))
+    Q_PRIVATE_SLOT(d_func(), void _q_customAspectRatioChanged(const QSize &))
 };
 
 #endif

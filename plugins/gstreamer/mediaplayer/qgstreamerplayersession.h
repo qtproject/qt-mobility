@@ -45,19 +45,7 @@
 class QGstreamerBusHelper;
 class QGstreamerMessage;
 
-class QGstreamerVideoRendererInterface
-{
-public:
-    virtual ~QGstreamerVideoRendererInterface();
-    virtual GstElement *videoSink() = 0;
-    virtual void precessNewStream() {}
-};
-
-#define QGstreamerVideoRendererInterface_iid "com.nokia.Qt.QGstreamerVideoRendererInterface/1.0"
-
-Q_DECLARE_INTERFACE(QGstreamerVideoRendererInterface, QGstreamerVideoRendererInterface_iid)
-
-
+class QGstreamerVideoRendererInterface;
 
 class QGstreamerPlayerSession : public QObject
 {

@@ -1,10 +1,43 @@
+/****************************************************************************
+**
+** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+**
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file. Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain
+** additional rights. These rights are described in the Nokia Qt LGPL
+** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
+** package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at http://qt.nokia.com/contact.
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
 #include "qgstreamercaptureservice.h"
 #include "qgstreamercapturesession.h"
 #include "qgstreamerrecordercontrol.h"
 #include "qgstreamermediaformatcontrol.h"
 #include "qgstreameraudioencode.h"
 #include "qgstreamervideoencode.h"
-#include "qgstreamervideorenderer.h"
 #include "qgstreamerbushelper.h"
 #include "qgstreamercameracontrol.h"
 #include "qgstreamercapturemetadatacontrol.h"
@@ -12,11 +45,13 @@
 #include "qgstreamervideooutputcontrol.h"
 #include "qgstreameraudioinputdevicecontrol.h"
 
+#ifndef QT_NO_VIDEOSURFACE
 #include "qgstreamervideooverlay.h"
 #include "qgstreamervideorenderer.h"
+#endif
 
+#include "qgstreamervideowidget.h"
 
-#ifndef QT_NO_VIDEOSURFACE
 
 class QGstreamerVideoRendererWrapper : public QGstreamerElementFactory
 {
@@ -74,7 +109,6 @@ private:
     GstElement *m_colorspace;
 };
 
-#endif
 
 QGstreamerCaptureService::QGstreamerCaptureService(const char *interface, QObject *parent)
     :QAbstractMediaService(parent)
@@ -104,11 +138,17 @@ QGstreamerCaptureService::QGstreamerCaptureService(const char *interface, QObjec
     m_videoRendererFactory = new QGstreamerVideoRendererWrapper(m_videoRenderer);
     m_videoWindow = new QGstreamerVideoOverlay(this);
     m_videoWindowFactory = new QGstreamerVideoRendererWrapper(m_videoWindow);
+#endif
+
+    m_videoWidgetControl = new QGstreamerVideoWidgetControl(this);
+    m_videoWidgetFactory = new QGstreamerVideoRendererWrapper(m_videoWidgetControl);
 
     m_videoOutput->setAvailableOutputs(QList<QVideoOutputControl::Output>()
+#ifndef QT_NO_VIDEOSURFACE
             << QVideoOutputControl::RendererOutput
-            << QVideoOutputControl::WindowOutput);
+            << QVideoOutputControl::WindowOutput
 #endif
+            << QVideoOutputControl::WidgetOutput);
 
     m_audioInputDevice = new QGstreamerAudioInputDeviceControl(this);
     connect(m_audioInputDevice, SIGNAL(selectedDeviceChanged(QString)), m_captureSession, SLOT(setCaptureDevice(QString)));
@@ -134,6 +174,9 @@ QAbstractMediaControl *QGstreamerCaptureService::control(const char *name) const
     if (qstrcmp(name, QVideoWindowControl_iid) == 0)
         return m_videoWindow;
 #endif
+
+    if (qstrcmp(name, QVideoWidgetControl_iid) == 0)
+        return m_videoWidgetControl;
 
     if (qstrcmp(name,QAudioDeviceControl_iid) == 0)
         return m_audioInputDevice;
@@ -161,24 +204,24 @@ QAbstractMediaControl *QGstreamerCaptureService::control(const char *name) const
 
 void QGstreamerCaptureService::videoOutputChanged(QVideoOutputControl::Output output)
 {
-#ifdef QT_NO_VIDEOSURFACE
-    Q_UNUSED(output);
-#else
     switch (output) {
     case QVideoOutputControl::NoOutput:
         m_captureSession->setVideoPreview(0);
         break;
+#ifndef QT_NO_VIDEOSURFACE
     case QVideoOutputControl::RendererOutput:
         m_captureSession->setVideoPreview(m_videoRendererFactory);
         break;
     case QVideoOutputControl::WindowOutput:
         m_captureSession->setVideoPreview(m_videoWindowFactory);
         break;
+#endif
+    case QVideoOutputControl::WidgetOutput:
+        m_captureSession->setVideoPreview(m_videoWidgetFactory);
     default:
         qWarning("Invalid video output selection");
         m_captureSession->setVideoPreview(0);
         break;
     }
-#endif
 }
 

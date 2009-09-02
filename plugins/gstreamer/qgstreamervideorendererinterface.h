@@ -32,37 +32,23 @@
 **
 ****************************************************************************/
 
-#ifndef QGSTVIDEOBUFFER_H
-#define QGSTVIDEOBUFFER_H
-
-#ifndef QT_NO_VIDEOSURFACE
-
-#include <QtMultimedia/QAbstractVideoBuffer>
+#ifndef QGSTREAMERVIDEOOUTPUTCONTROL_H
+#define QGSTREAMERVIDEOOUTPUTCONTROL_H
 
 #include <gst/gst.h>
 
-QT_BEGIN_NAMESPACE
+#include <QtCore/qobject.h>
 
-class QGstVideoBuffer : public QAbstractVideoBuffer
+class QGstreamerVideoRendererInterface
 {
 public:
-    QGstVideoBuffer(GstBuffer *buffer, int bytesPerLine);
-    ~QGstVideoBuffer();
-
-    MapMode mapMode() const;
-
-    uchar *map(MapMode mode, int *numBytes, int *bytesPerLine);
-    void unmap();
-
-private:
-    GstBuffer *m_buffer;
-    int m_bytesPerLine;
-    MapMode m_mode;
+    virtual ~QGstreamerVideoRendererInterface();
+    virtual GstElement *videoSink() = 0;
+    virtual void precessNewStream() {}
 };
 
+#define QGstreamerVideoRendererInterface_iid "com.nokia.Qt.QGstreamerVideoRendererInterface/1.0"
 
-QT_END_NAMESPACE
-
-#endif
+Q_DECLARE_INTERFACE(QGstreamerVideoRendererInterface, QGstreamerVideoRendererInterface_iid)
 
 #endif

@@ -32,7 +32,8 @@ HEADERS += \
     qgstreamermessage.h \
     qgstreamerbushelper.h \
     qgstreamervideooutputcontrol.h \
-    qgstreamervideorenderer.h \
+    qgstreamervideorendererinterface.h \
+    qgstreamervideowidget.h \
     qgstreamerserviceplugin.h \
     qgstreameraudioinputdevicecontrol.h
 
@@ -40,7 +41,8 @@ SOURCES += \
     qgstreamermessage.cpp \
     qgstreamerbushelper.cpp \
     qgstreamervideooutputcontrol.cpp \
-    qgstreamervideorenderer.cpp \
+    qgstreamervideorendererinterface.cpp \
+    qgstreamervideowidget.cpp \
     qgstreamerserviceplugin.cpp \
     qgstreameraudioinputdevicecontrol.cpp
 
@@ -49,12 +51,14 @@ videosurface {
 
     SOURCES += \
         qgstreamervideooverlay.cpp \
+        qgstreamervideorenderer.cpp \
         qgstvideobuffer.cpp \
         qvideosurfacegstsink.cpp \
         qx11videosurface.cpp
 
     HEADERS += \
         qgstreamervideooverlay.h \
+        qgstreamervideorenderer.h \
         qgstvideobuffer.h \
         qvideosurfacegstsink.h \
         qx11videosurface.h

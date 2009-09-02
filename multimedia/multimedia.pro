@@ -47,6 +47,7 @@ HEADERS = \
     qradioplayercontrol.h \
     qvideooutputcontrol.h \
     qvideowidget.h \
+    qvideowidget_p.h \
     qvideowindowcontrol.h \
     qvideowidgetcontrol.h \
     qaudioencodecontrol.h \

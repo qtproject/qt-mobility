@@ -35,11 +35,9 @@
 #include "qgstreamerplayersession.h"
 #include "qgstreamerbushelper.h"
 
-#include <QDebug>
+#include "qgstreamervideorendererinterface.h"
 
-QGstreamerVideoRendererInterface::~QGstreamerVideoRendererInterface()
-{
-}
+#include <QDebug>
 
 QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
     :QObject(parent),

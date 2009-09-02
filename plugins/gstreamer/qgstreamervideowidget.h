@@ -32,37 +32,60 @@
 **
 ****************************************************************************/
 
-#ifndef QGSTVIDEOBUFFER_H
-#define QGSTVIDEOBUFFER_H
+#ifndef QGSTREAMERVIDEOWIDGET_H
+#define QGSTREAMERVIDEOWIDGET_H
 
-#ifndef QT_NO_VIDEOSURFACE
+#include "qvideowidgetcontrol.h"
 
-#include <QtMultimedia/QAbstractVideoBuffer>
+#include "qgstreamervideorendererinterface.h"
 
-#include <gst/gst.h>
-
-QT_BEGIN_NAMESPACE
-
-class QGstVideoBuffer : public QAbstractVideoBuffer
+class QGstreamerVideoWidgetControl
+        : public QVideoWidgetControl
+        , public QGstreamerVideoRendererInterface
 {
+    Q_OBJECT
+    Q_INTERFACES(QGstreamerVideoRendererInterface)
 public:
-    QGstVideoBuffer(GstBuffer *buffer, int bytesPerLine);
-    ~QGstVideoBuffer();
+    QGstreamerVideoWidgetControl(QObject *parent = 0);
+    virtual ~QGstreamerVideoWidgetControl();
 
-    MapMode mapMode() const;
+    GstElement *videoSink();
+    void precessNewStream() { setOverlay(); }
 
-    uchar *map(MapMode mode, int *numBytes, int *bytesPerLine);
-    void unmap();
+    QWidget *videoWidget();
+
+    QVideoWidget::AspectRatio aspectRatio() const;
+    QSize customAspectRatio() const;
+
+    void setAspectRatio(QVideoWidget::AspectRatio ratio);
+    void setCustomAspectRatio(const QSize &customRatio);
+
+    bool isFullscreen() const;
+    void setFullscreen(bool fullscreen);
+
+    int brightness() const;
+    void setBrightness(int brightness);
+
+    int contrast() const;
+    void setContrast(int contrast);
+
+    int hue() const;
+    void setHue(int hue);
+
+    int saturation() const;
+    void setSaturation(int saturation);
+
+    void setOverlay();
+
+    bool eventFilter(QObject *object, QEvent *event);
 
 private:
-    GstBuffer *m_buffer;
-    int m_bytesPerLine;
-    MapMode m_mode;
+    void windowExposed();
+
+    GstElement *m_videoSink;
+    QWidget *m_widget;
+    QVideoWidget::AspectRatio m_aspectRatioMode;
+    QSize m_customAspectRatio;
 };
 
-
-QT_END_NAMESPACE
-
-#endif
-
-#endif
+#endif // QGSTREAMERVIDEOWIDGET_H
