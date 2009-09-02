@@ -51,8 +51,6 @@
 #include <qevent.h>
 #include <qdialog.h>
 
-#include <private/qwidget_p.h>
-
 class QVideoWidgetPrivate
 {
     Q_DECLARE_PUBLIC(QVideoWidget)

@@ -78,6 +78,7 @@ Q_SIGNALS:
     void itemsChanged(int start, int end);
 
 protected:
+    QMediaPlaylistProviderPrivate *d_ptr;
     QMediaPlaylistProvider(QMediaPlaylistProviderPrivate &dd, QObject *parent);
 
 private:

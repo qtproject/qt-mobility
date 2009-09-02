@@ -49,7 +49,7 @@
   Create a new playlist provider object with the given \a parent.
 */
 QMediaPlaylistProvider::QMediaPlaylistProvider(QObject *parent)
-    :QObject(*new QMediaPlaylistProviderPrivate, parent)
+    :QObject(parent), d_ptr(new QMediaPlaylistProviderPrivate)
 {
 }
 
@@ -57,7 +57,7 @@ QMediaPlaylistProvider::QMediaPlaylistProvider(QObject *parent)
   \internal
 */
 QMediaPlaylistProvider::QMediaPlaylistProvider(QMediaPlaylistProviderPrivate &dd, QObject *parent)
-    :QObject(dd,parent)
+    :QObject(parent), d_ptr(&dd)
 {
 }
 

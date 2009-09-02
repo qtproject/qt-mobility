@@ -36,7 +36,6 @@
 #include "qmediaplaylistprovider.h"
 #include "qmediaplaylist.h"
 
-#include <QtCore/private/qobject_p.h>
 #include <QtCore/qdebug.h>
 
 class QMediaPlaylistNullProvider : public QMediaPlaylistProvider

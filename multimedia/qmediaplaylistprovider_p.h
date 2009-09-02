@@ -48,9 +48,7 @@
 
 #include "qmediaplaylist.h"
 
-#include <QtCore/private/qobject_p.h>
-
-class QMediaPlaylistProviderPrivate : public QObjectPrivate
+class QMediaPlaylistProviderPrivate
 {
 public:
     QMediaPlaylistProviderPrivate()
