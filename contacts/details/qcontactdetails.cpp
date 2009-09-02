@@ -259,7 +259,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::FieldNumber, "PhoneNumber");
  * \variable QContactPhoneNumber::FieldSubType
  * The constant key for which the subtypes value is stored in details of the QContactPhoneNumber type
  */
-Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::FieldSubType, "SubType");
+Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::FieldSubTypes, "SubTypes");
 
 /*!
  * \variable QContactEmailAddress::FieldEmailAddress
@@ -367,7 +367,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldCountry, "Country");
  * \variable QContactAddress::FieldSubType
  * The constant key for which the subtypes value is stored in details of the QContactAddress type
  */
-Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldSubType, "SubType");
+Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldSubTypes, "SubTypes");
 
 /*!
  * \variable QContactUrl::FieldUrl
@@ -820,8 +820,8 @@ QString QContactAddress::displayLabel() const
  */
 
 /*!
- * \fn QContactAnniversary::setSubTypes(const QStringList& subTypes)
- * Sets the subtypes which this detail implements to be those contained in the list of given \a subTypes
+ * \fn QContactAnniversary::setSubType(const QString& subType)
+ * Sets the subtype which this detail implements to be the given \a subType
  */
 
 /*!
@@ -840,8 +840,8 @@ QString QContactAddress::displayLabel() const
  */
 
 /*!
- * \fn QContactAvatar::setSubTypes(const QStringList& subTypes)
- * Sets the subtypes which this detail implements to be those contained in the list of given \a subTypes
+ * \fn QContactAvatar::setSubType(const QString& subType)
+ * Sets the subtype which this detail implements to be the given \a subType
  */
 
 /*!
@@ -917,6 +917,11 @@ QString QContactAddress::displayLabel() const
  */
 
 /*!
+ * \fn QContactAddress::setSubTypes(const QString& subType)
+ * Sets the subtypes which this detail implements to be just the given \a subType
+ */
+
+/*!
  * \fn QContactAddress::subTypes() const
  * Returns the list of subtypes that this detail implements
  */
@@ -932,8 +937,8 @@ QString QContactAddress::displayLabel() const
  */
 
 /*!
- * \fn QContactUrl::setSubTypes(const QStringList& subTypes)
- * Sets the subtypes which this detail implements to be those contained in the list of given \a subTypes
+ * \fn QContactUrl::setSubType(const QString& subType)
+ * Sets the subtype which this detail implements to be the given \a subType
  */
 
 /*!
@@ -954,6 +959,11 @@ QString QContactAddress::displayLabel() const
 /*!
  * \fn QContactPhoneNumber::setSubTypes(const QStringList& subTypes)
  * Sets the subtypes which this detail implements to be those contained in the list of given \a subTypes
+ */
+
+/*!
+ * \fn QContactPhoneNumber::setSubTypes(const QString& subType)
+ * Sets the subtypes which this detail implements to be just the given \a subType
  */
 
 /*!

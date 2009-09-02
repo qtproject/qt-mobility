@@ -75,8 +75,8 @@ public:
     void setEvent(const QString& event) {setValue(FieldEvent, event);}
     QString event() const {return value(FieldEvent);}
 
-    void setSubTypes(const QStringList& subTypes) {setValue(FieldSubType, subTypes);}
-    QStringList subTypes() const {return value<QStringList>(FieldSubType);}
+    void setSubType(const QString& subType) {setValue(FieldSubType, subType);}
+    QString subType() const {return value(FieldSubType);}
 };
 
 #endif

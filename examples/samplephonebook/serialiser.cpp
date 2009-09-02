@@ -360,7 +360,7 @@ QContact Serialiser::convertVcard(const QStringList& vcardLines)
                 if (!contexts.isEmpty())
                     det.setContexts(contexts);
                 if (defId == QContactPhoneNumber::DefinitionName) {
-                    det.setValue(QContactPhoneNumber::FieldSubType, parseAttributes(line));
+                    det.setValue(QContactPhoneNumber::FieldSubTypes, parseAttributes(line));
                     det.setValue(QContactPhoneNumber::FieldNumber, parseValue(line));
                     vcardDetails.insert("TEL", det);
                 } else if (defId == QContactEmailAddress::DefinitionName) {
@@ -378,7 +378,7 @@ QContact Serialiser::convertVcard(const QStringList& vcardLines)
                     det.setValue(QContactGuid::FieldGuid, parseValue(line));
                     vcardDetails.insert("UID", det);
                 } else if (defId == QContactAddress::DefinitionName) {
-                    det.setValue(QContactAddress::FieldSubType, parseAttributes(line));
+                    det.setValue(QContactAddress::FieldSubTypes, parseAttributes(line));
                     QStringList fieldValues = parseValue(line).split(";");
                     // ignore values 0 and 1 (extended and postal address) in this implementation
                     det.setValue(QContactAddress::FieldStreet, fieldValues.value(2));
@@ -723,7 +723,7 @@ QStringList Serialiser::convertContact(const QContact& contact)
             // any number of address fields are allowed.
             entry = "ADR;TYPE=";
             QString typestr = "";
-            QStringList subTypes = det.value<QStringList>(QContactAddress::FieldSubType);
+            QStringList subTypes = det.value<QStringList>(QContactAddress::FieldSubTypes);
             QStringList contexts = det.contexts();
             if (contexts.contains(QContactDetail::ContextHome)) typestr += "home,";
             if (contexts.contains(QContactDetail::ContextWork)) typestr += "work,";
@@ -759,7 +759,7 @@ QStringList Serialiser::convertContact(const QContact& contact)
             // any number of telephone fields are allowed.
             entry = "TEL;TYPE=";
             QString typeStr = "";
-            QStringList subTypes = det.value<QStringList>(QContactAddress::FieldSubType);
+            QStringList subTypes = det.value<QStringList>(QContactPhoneNumber::FieldSubTypes);
             QStringList contexts = det.contexts();
             if (subTypes.contains(QContactPhoneNumber::SubTypeMobile)) typeStr += "cell,";
             if (subTypes.contains(QContactPhoneNumber::SubTypeFacsimile)) typeStr += "fax,";

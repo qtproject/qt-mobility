@@ -690,7 +690,7 @@ void tst_QContactManager::add()
 
     QContactPhoneNumber ph;
     ph.setNumber("1234567");
-    ph.setContexts(QStringList("Home"));
+    ph.setContexts("Home");
     ph.setSubTypes(QStringList("Mobile"));
 
     alice.saveDetail(&ph);
@@ -852,6 +852,15 @@ void tst_QContactManager::update()
             return; // pass
         }
     }
+
+    // now test context/subtype specific cases.
+    ph.setContexts(QStringList() << "Work" << "x-nokia-mobility-contacts-test-invalidcontext");
+    ph.setSubTypes("Mobile");
+    alice.saveDetail(&ph);
+    QVERIFY(!cm->saveContact(&alice)); // validation should fail due to invalid context
+    ph.setContexts(QStringList()); // empty list
+    QVERIFY(cm->saveContact(&alice));
+    QVERIFY(cm->contact(alice.id()) == alice);
 
     delete cm;
 

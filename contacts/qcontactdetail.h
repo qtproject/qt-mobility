@@ -97,29 +97,15 @@ public:
         setValue(FieldContext, contexts);
     }
 
+    void setContexts(const QString& context)
+    {
+        setValue(FieldContext, QStringList(context));
+    }
+
     QStringList contexts() const
     {
         return value<QStringList>(FieldContext);
     }
-
-    void removeContext(const QString& context)
-    {
-        QStringList currContexts = contexts();
-        if (!currContexts.contains(context))
-            return;
-        currContexts.removeAll(context);
-        setContexts(currContexts);
-    }
-
-    void addContext(const QString& context)
-    {
-        QStringList currContexts = contexts();
-        if (currContexts.contains(context))
-            return;
-        currContexts.append(context);
-        setContexts(currContexts);
-    }
-
 
 protected:
     QContactDetail(const QContactDetail& other, const QString& expectedDefinitionId);

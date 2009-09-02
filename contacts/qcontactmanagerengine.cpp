@@ -419,7 +419,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     f.allowableValues = QVariantList();
     d.setName(QContactPhoneNumber::DefinitionName);
     fields.insert(QContactPhoneNumber::FieldNumber, f);
-    f.dataType = QVariant::StringList;
+    f.dataType = QVariant::StringList; // can implement multiple subtypes
     subTypes.clear();
     subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeBulletinBoardSystem));
     subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeCar));
@@ -432,7 +432,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeVideo));
     subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeVoice));
     f.allowableValues = subTypes;
-    fields.insert(QContactPhoneNumber::FieldSubType, f);
+    fields.insert(QContactPhoneNumber::FieldSubTypes, f);
     f.dataType = QVariant::StringList;
     f.allowableValues = contexts;
     fields.insert(QContactDetail::FieldContext, f);
@@ -453,7 +453,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
     fields.insert(QContactAnniversary::FieldEvent, f);
-    f.dataType = QVariant::StringList;
+    f.dataType = QVariant::String; // only allowed to be a single subtype.
     subTypes.clear();
     subTypes << QString(QLatin1String(QContactAnniversary::SubTypeEmployment));
     subTypes << QString(QLatin1String(QContactAnniversary::SubTypeEngagement));
@@ -504,7 +504,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     f.allowableValues = QVariantList();
     d.setName(QContactUrl::DefinitionName);
     fields.insert(QContactUrl::FieldUrl, f);
-    f.dataType = QVariant::StringList;
+    f.dataType = QVariant::String; // only allowed to be a single subtype
     subTypes.clear();
     subTypes << QString(QLatin1String(QContactUrl::SubTypeFavourite));
     subTypes << QString(QLatin1String(QContactUrl::SubTypeHomePage));
@@ -614,7 +614,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     f.allowableValues = QVariantList();
     d.setName(QContactAvatar::DefinitionName);
     fields.insert(QContactAvatar::FieldAvatar, f);
-    f.dataType = QVariant::StringList;
+    f.dataType = QVariant::String; // only allowed to be a single subtype
     subTypes.clear();
     subTypes << QString(QLatin1String(QContactAvatar::SubTypeImage));
     subTypes << QString(QLatin1String(QContactAvatar::SubTypeTexturedMesh));
@@ -664,14 +664,14 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.insert(QContactAddress::FieldPostcode, f);
     fields.insert(QContactAddress::FieldCountry, f);
     fields.insert(QContactAddress::FieldDisplayLabel, f);
-    f.dataType = QVariant::StringList;
+    f.dataType = QVariant::StringList; // can implement multiple subtypes
     subTypes.clear();
     subTypes << QString(QLatin1String(QContactAddress::SubTypeDomestic));
     subTypes << QString(QLatin1String(QContactAddress::SubTypeInternational));
     subTypes << QString(QLatin1String(QContactAddress::SubTypeParcel));
     subTypes << QString(QLatin1String(QContactAddress::SubTypePostal));
     f.allowableValues = subTypes;
-    fields.insert(QContactAddress::FieldSubType, f);
+    fields.insert(QContactAddress::FieldSubTypes, f);
     f.dataType = QVariant::StringList;
     f.allowableValues = contexts;
     fields.insert(QContactDetail::FieldContext, f);

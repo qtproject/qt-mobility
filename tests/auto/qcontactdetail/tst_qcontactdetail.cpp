@@ -169,7 +169,7 @@ void tst_QContactDetail::classHierarchy()
 
     /* Check contexts are considered for equality */
     p2 = p1;
-    p2.addContext(QContactDetail::ContextHome);
+    p2.setContexts(QContactDetail::ContextHome);
     QVERIFY(p1 != p2);
     p2.removeValue(QContactDetail::FieldContext); // note, context is a value.
     QVERIFY(p1 == p2);
@@ -446,38 +446,21 @@ void tst_QContactDetail::contexts()
     QContactDetail d;
     QVERIFY(d.contexts().count() == 0);
 
-    // test add context
-    d.addContext(QContactDetail::ContextWork);
-    QVERIFY(d.contexts().count() == 1);
-    d.addContext(QContactDetail::ContextOther);
-    QVERIFY(d.contexts().count() == 2);
-    QVERIFY(d.contexts().contains(QContactDetail::ContextWork));
-    QVERIFY(d.contexts().contains(QContactDetail::ContextOther));
-    QVERIFY(!d.contexts().contains(QContactDetail::ContextHome));
-
-    // test removing nonexistent context - no effect.
-    d.removeContext(QContactDetail::ContextHome);
-    QVERIFY(d.contexts().count() == 2);
-    QVERIFY(d.contexts().contains(QContactDetail::ContextWork));
-    QVERIFY(d.contexts().contains(QContactDetail::ContextOther));
-    QVERIFY(!d.contexts().contains(QContactDetail::ContextHome));
-
-    // test removing existing context
-    d.removeContext(QContactDetail::ContextWork);
-    QVERIFY(d.contexts().count() == 1);
-    QVERIFY(!d.contexts().contains(QContactDetail::ContextWork));
-    QVERIFY(d.contexts().contains(QContactDetail::ContextOther));
-    QVERIFY(!d.contexts().contains(QContactDetail::ContextHome));
-
     // test set contexts
-    QStringList contexts;
-    contexts.append(QContactDetail::ContextHome);
-    contexts.append(QContactDetail::ContextWork);
-    contexts.append("CustomContext");
-    d.setContexts(contexts);
-    QVERIFY(d.contexts().count() == 3);
+    d.setContexts(QContactDetail::ContextWork);
+    QVERIFY(d.contexts().count() == 1);
     QVERIFY(d.contexts().contains(QContactDetail::ContextWork));
     QVERIFY(!d.contexts().contains(QContactDetail::ContextOther));
+    QVERIFY(!d.contexts().contains(QContactDetail::ContextHome));
+
+    QStringList contexts;
+    contexts.append(QContactDetail::ContextHome);
+    contexts.append(QContactDetail::ContextOther);
+    contexts.append("CustomContext"); // note: won't (necessarily) validate but will work in QCD.
+    d.setContexts(contexts);
+    QVERIFY(d.contexts().count() == 3);
+    QVERIFY(!d.contexts().contains(QContactDetail::ContextWork));
+    QVERIFY(d.contexts().contains(QContactDetail::ContextOther));
     QVERIFY(d.contexts().contains(QContactDetail::ContextHome));
     QVERIFY(d.contexts().contains("CustomContext"));
     QCOMPARE(d.contexts(), contexts);

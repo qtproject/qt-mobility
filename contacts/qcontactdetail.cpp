@@ -314,12 +314,23 @@ QVariantMap QContactDetail::values() const
  *
  * This is a convenience function that sets the \c Context field of this detail to the given \a contexts.
  *
- * Not all details have meaningful values for the \c Context field - refer to either the
- * schema or specific classes like \l QContactPhoneNumber for more information.
- *
  * It is equivalent to the following code:
  * \code
  * setValue(QContactDetail::FieldContext, contexts);
+ * \endcode
+ *
+ * \sa setValue()
+ */
+
+/*!
+ * \fn void QContactDetail::setContexts(const QString& contexts)
+ *
+ * This is a convenience function that sets the \c Context field of this detail to the given \a context.
+ * It is useful if the detail is only valid in a single context.
+ *
+ * It is equivalent to the following code:
+ * \code
+ * setValue(FieldContext, QStringList(context));
  * \endcode
  *
  * \sa setValue()
@@ -338,40 +349,3 @@ QVariantMap QContactDetail::values() const
  * \sa value()
  */
 
-/*!
- * \fn void QContactDetail::removeContext(const QString& context)
- *
- * This is a convenience function that removes the given \a context from the list of contexts for
- * which this detail is valid.  If the given \a context is not a part of the list, this function has
- * no effect.
- *
- * It is equivalent to the following code:
- * \code
- * QStringList contexts = contexts();
- * if (!contexts.contains(context))
- *     return;
- * contexts.removeAll(context);
- * setContexts(contexts);
- * \endcode
- *
- * \sa setContexts()
- */
-
-/*!
- * \fn void QContactDetail::addContext(const QString& context)
- *
- * This is a convenience function that adds the given \a context to the list of contexts for which
- * this detail is valid.  If the given \a context is already part of the list, this function has
- * no effect.
- *
- * It is equivalent to the following code:
- * \code
- * QStringList contexts = contexts();
- * if (contexts.contains(context))
- *     return;
- * contexts.append(context);
- * setContexts(contexts);
- * \endcode
- *
- * \sa setContexts()
- */

@@ -53,7 +53,7 @@ public:
     const char* FieldRegion;
     const char* FieldPostcode;
     const char* FieldCountry;
-    const char* FieldSubType;
+    const char* FieldSubTypes;
     const char* SubTypeParcel;
     const char* SubTypePostal;
     const char* SubTypeDomestic;
@@ -66,7 +66,7 @@ public:
     Q_DECLARE_LATIN1_LITERAL(FieldRegion, "Region");
     Q_DECLARE_LATIN1_LITERAL(FieldPostcode, "Postcode");
     Q_DECLARE_LATIN1_LITERAL(FieldCountry, "Country");
-    Q_DECLARE_LATIN1_LITERAL(FieldSubType, "SubType");
+    Q_DECLARE_LATIN1_LITERAL(FieldSubTypes, "SubTypes");
     Q_DECLARE_LATIN1_LITERAL(SubTypeParcel, "Parcel");
     Q_DECLARE_LATIN1_LITERAL(SubTypePostal, "Postal");
     Q_DECLARE_LATIN1_LITERAL(SubTypeDomestic, "Domestic");
@@ -86,8 +86,9 @@ public:
     void setCountry(const QString& country) {setValue(FieldCountry, country);}
     QString country() const {return value(FieldCountry);}
 
-    void setSubTypes(const QStringList& subTypes) {setValue(FieldSubType, subTypes);}
-    QStringList subTypes() const {return value<QStringList>(FieldSubType);}
+    void setSubTypes(const QStringList& subTypes) {setValue(FieldSubTypes, subTypes);}
+    void setSubTypes(const QString& subType) {setValue(FieldSubTypes, QStringList(subType));}
+    QStringList subTypes() const {return value<QStringList>(FieldSubTypes);}
 };
 
 #endif

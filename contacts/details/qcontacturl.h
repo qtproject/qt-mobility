@@ -63,8 +63,8 @@ public:
     void setUrl(const QString& url) {setValue(FieldUrl, url);}
     QString url() const {return value(FieldUrl);}
 
-    void setSubTypes(const QStringList& subTypes) {setValue(FieldSubType, subTypes);}
-    QStringList subTypes() const {return value<QStringList>(FieldSubType);}
+    void setSubType(const QString& subType) {setValue(FieldSubType, subType);}
+    QString subType() const {return value(FieldSubType);}
 };
 
 #endif

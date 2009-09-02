@@ -63,7 +63,7 @@ public:
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPhoneNumber, "PhoneNumber")
     Q_DECLARE_LATIN1_LITERAL(FieldNumber, "PhoneNumber");
-    Q_DECLARE_LATIN1_LITERAL(FieldSubType, "SubType");
+    Q_DECLARE_LATIN1_LITERAL(FieldSubTypes, "SubTypes");
     Q_DECLARE_LATIN1_LITERAL(SubTypeLandline, "Landline");
     Q_DECLARE_LATIN1_LITERAL(SubTypeMobile, "Mobile");
     Q_DECLARE_LATIN1_LITERAL(SubTypeFacsimile, "Facsimile");
@@ -79,8 +79,9 @@ public:
     void setNumber(const QString& number) {setValue(FieldNumber, number);}
     QString number() const {return value(FieldNumber);}
 
-    void setSubTypes(const QStringList& subTypes) {setValue(FieldSubType, subTypes);}
-    QStringList subTypes() const {return value<QStringList>(FieldSubType);}
+    void setSubTypes(const QStringList& subTypes) {setValue(FieldSubTypes, subTypes);}
+    void setSubTypes(const QString& subType) {setValue(FieldSubTypes, QStringList(subType));}
+    QStringList subTypes() const {return value<QStringList>(FieldSubTypes);}
 };
 //! [0]
 
