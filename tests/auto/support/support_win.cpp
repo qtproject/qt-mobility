@@ -69,6 +69,30 @@ void doInit()
     }
 }
 
+IProfAdmin *openProfileAdmin()
+{
+    IProfAdmin *profAdmin(0);
+
+    HRESULT rv = MAPIAdminProfiles(0, &profAdmin);
+    if (HR_FAILED(rv)) {
+        qWarning() << "openProfileAdmin: MAPIAdminProfiles failed";
+    }
+
+    return profAdmin;
+}
+
+IMsgServiceAdmin *openServiceAdmin(const QByteArray &profileName, IProfAdmin *profAdmin)
+{
+    IMsgServiceAdmin *svcAdmin(0);
+
+    HRESULT rv = profAdmin->AdminServices(reinterpret_cast<LPTSTR>(const_cast<char*>(profileName.data())), 0, 0, 0, &svcAdmin);
+    if (HR_FAILED(rv)) {
+        qWarning() << "openServiceAdmin: AdminServices failed";
+    }
+
+    return svcAdmin;
+}
+
 typedef QPair<QByteArray, bool> ProfileDetail;
 
 QList<ProfileDetail> profileDetails(LPPROFADMIN profAdmin)
@@ -101,6 +125,24 @@ QList<ProfileDetail> profileDetails(LPPROFADMIN profAdmin)
     }
 
     return result;
+}
+
+QByteArray findDefaultProfileName(IProfAdmin *profAdmin)
+{
+    QByteArray defaultProfileName;
+
+    foreach (const ProfileDetail &profile, profileDetails(profAdmin)) {
+        if (profile.second) {
+            defaultProfileName = profile.first;
+            break;
+        }
+    }
+
+    if (defaultProfileName.isEmpty()) {
+        qWarning() << "findDefaultProfileName: no default profile!";
+    }
+
+    return defaultProfileName;
 }
 
 QByteArray binaryResult(const SPropValue &prop)
@@ -146,7 +188,7 @@ QList<ServiceDetail> serviceDetails(LPSERVICEADMIN svcAdmin)
     return result;
 }
 
-typedef QPair<QByteArray, QByteArray> StoreDetail;
+typedef QPair<QByteArray, QPair<QByteArray, QByteArray> > StoreDetail;
 
 QList<StoreDetail> storeDetails(LPMAPISESSION session)
 {
@@ -156,14 +198,16 @@ QList<StoreDetail> storeDetails(LPMAPISESSION session)
     HRESULT rv = session->GetMsgStoresTable(0, &storesTable);
     if (HR_SUCCEEDED(rv)) {
         LPSRowSet rows(0);
-        SizedSPropTagArray(2, cols) = {2, {PR_DISPLAY_NAME_A, PR_RECORD_KEY}};
+        SizedSPropTagArray(3, cols) = {3, {PR_DISPLAY_NAME_A, PR_RECORD_KEY, PR_ENTRYID}};
         rv = HrQueryAllRows(storesTable, reinterpret_cast<LPSPropTagArray>(&cols), 0, 0, 0, &rows);
         if (HR_SUCCEEDED(rv)) {
             for (uint n = 0; n < rows->cRows; ++n) {
-                if (rows->aRow[n].lpProps[0].ulPropTag == PR_DISPLAY_NAME_A) {
-                    QByteArray storeName(rows->aRow[n].lpProps[0].Value.lpszA);
-                    QByteArray recordKey(binaryResult(rows->aRow[n].lpProps[1]));
-                    result.append(qMakePair(storeName, recordKey));
+                SPropValue *props(rows->aRow[n].lpProps);
+                if (props[0].ulPropTag == PR_DISPLAY_NAME_A) {
+                    QByteArray storeName(props[0].Value.lpszA);
+                    QByteArray recordKey(binaryResult(props[1]));
+                    QByteArray entryId(binaryResult(props[2]));
+                    result.append(qMakePair(storeName, qMakePair(recordKey, entryId)));
                 }
             }
 
@@ -243,7 +287,7 @@ ULONG createNamedProperty(IMAPIProp *object, const QString &name)
         SPropTagArray *props;
         HRESULT rv = object->GetIDsFromNames(1, &propNames, MAPI_CREATE, &props);
         if (HR_SUCCEEDED(rv)) {
-            result = PROP_TAG( PT_UNICODE, props->aulPropTag[0] );
+            result = props->aulPropTag[0] | PT_UNICODE;
 
             MAPIFreeBuffer(props);
         } else {
@@ -275,7 +319,7 @@ ULONG getNamedPropertyTag(IMAPIProp *object, const QString &name)
         SPropTagArray *props;
         HRESULT rv = object->GetIDsFromNames(1, &propNames, 0, &props);
         if (HR_SUCCEEDED(rv)) {
-            result = PROP_TAG( PT_UNICODE, props->aulPropTag[0] );
+            result = props->aulPropTag[0] | PT_UNICODE;
 
             MAPIFreeBuffer(props);
         } else {
@@ -292,7 +336,7 @@ bool setNamedProperty(IMAPIProp *object, ULONG tag, const QString &value)
 {
     if (object && tag && !value.isEmpty()) {
         SPropValue prop = { 0 };
-        prop.ulPropTag = PROP_TAG( PT_UNICODE, tag );
+        prop.ulPropTag = tag;
         prop.Value.LPSZ = reinterpret_cast<LPTSTR>(const_cast<quint16*>(value.utf16()));
 
         HRESULT rv = object->SetProps(1, &prop, 0);
@@ -312,7 +356,7 @@ QString getNamedProperty(IMAPIProp *object, ULONG tag)
 
     if (object && tag) {
         SPropValue *prop(0);
-        HRESULT rv = HrGetOneProp(object, PROP_TAG( PT_UNICODE, tag ), &prop);
+        HRESULT rv = HrGetOneProp(object, tag, &prop);
         if (HR_SUCCEEDED(rv)) {
             result = QString::fromUtf16(reinterpret_cast<quint16*>(prop->Value.LPSZ));
 
@@ -325,12 +369,12 @@ QString getNamedProperty(IMAPIProp *object, ULONG tag)
     return result;
 }
 
-IProviderAdmin *serviceProvider(MAPIUID &svcUid, LPSERVICEADMIN svcAdmin)
+IProviderAdmin *serviceProvider(const MAPIUID &svcUid, LPSERVICEADMIN svcAdmin)
 {
     IProviderAdmin *provider(0);
 
     if (svcAdmin) {
-        HRESULT rv = svcAdmin->AdminProviders(&svcUid, 0, &provider);
+        HRESULT rv = svcAdmin->AdminProviders(const_cast<MAPIUID*>(&svcUid), 0, &provider);
         if (HR_FAILED(rv)) {
             provider = 0;
             qWarning() << "serviceProvider: AdminProviders failed";
@@ -375,14 +419,14 @@ MAPIUID findProviderUid(const QByteArray &name, IProviderAdmin *providerAdmin)
     return result;
 }
 
-IProfSect *openProfileSection(MAPIUID &providerUid, IProviderAdmin *providerAdmin)
+IProfSect *openProfileSection(const MAPIUID &providerUid, IProviderAdmin *providerAdmin)
 {
     IProfSect *profileSection(0);
 
     // Bypass the MAPI_E_NO_ACCESS_ERROR, as described at http://support.microsoft.com/kb/822977
     const ULONG MAPI_FORCE_ACCESS = 0x00080000;
 
-    HRESULT rv = providerAdmin->OpenProfileSection(&providerUid, 0, MAPI_FORCE_ACCESS, &profileSection);
+    HRESULT rv = providerAdmin->OpenProfileSection(const_cast<MAPIUID*>(&providerUid), 0, MAPI_FORCE_ACCESS, &profileSection);
     if (HR_FAILED(rv)) {
         qWarning() << "openProfileSection: OpenProfileSection failed";
         profileSection = 0;
@@ -395,10 +439,10 @@ template<typename T>
 bool isEmpty(const T &v)
 {
     const char empty[sizeof(T)] = { 0 };
-    return memcmp(empty, &v, sizeof(T));
+    return (memcmp(empty, &v, sizeof(T)) == 0);
 }
 
-bool deleteExistingService(MAPIUID &svcUid, LPSERVICEADMIN svcAdmin)
+bool deleteExistingService(const MAPIUID &svcUid, LPSERVICEADMIN svcAdmin)
 {
     if (svcAdmin) {
         QByteArray storePath;
@@ -429,7 +473,7 @@ bool deleteExistingService(MAPIUID &svcUid, LPSERVICEADMIN svcAdmin)
 
         if (!storePath.isEmpty()) {
             // Delete the existing service
-            HRESULT rv = svcAdmin->DeleteMsgService(&svcUid);
+            HRESULT rv = svcAdmin->DeleteMsgService(const_cast<MAPIUID*>(&svcUid));
             if (HR_SUCCEEDED(rv)) {
                 // Delete the storage file
                 if (QFile::exists(storePath)) {
@@ -468,9 +512,9 @@ QByteArray defaultProfile()
     return result;
 }
 
-LPMAPISESSION profileSession(const QByteArray &profileName)
+IMAPISession *profileSession(const QByteArray &profileName)
 {
-    LPMAPISESSION session(0);
+    IMAPISession *session(0);
 
     if (!profileName.isEmpty()) {
         // Open a session on the profile
@@ -485,8 +529,22 @@ LPMAPISESSION profileSession(const QByteArray &profileName)
     return session;
 }
 
+IMsgStore *openStore(const QByteArray &entryId, IMAPISession* session)
+{
+    IMsgStore *store(0);
 
-IMsgStore *openStore(const QByteArray &storeName, IMAPISession* session)
+    if (session && !entryId.isEmpty()) {
+        HRESULT rv = session->OpenMsgStore(0, entryId.length(), reinterpret_cast<LPENTRYID>(const_cast<char*>(entryId.data())), 0, MDB_NO_MAIL | MDB_WRITE, reinterpret_cast<LPMDB*>(&store));
+        if (HR_FAILED(rv)) {
+            store = 0;
+            qWarning() << "openStore: OpenMsgStore failed";
+        }
+    }
+
+    return store;
+}
+
+IMsgStore *openStoreByName(const QByteArray &storeName, IMAPISession* session)
 {
     IMsgStore *store(0);
 
@@ -513,20 +571,16 @@ IMsgStore *openStore(const QByteArray &storeName, IMAPISession* session)
 
                 FreeProws(rows);
             } else {
-                qWarning() << "openStore: HrQueryAllRows failed";
+                qWarning() << "openStoreByName: HrQueryAllRows failed";
             }
 
             storesTable->Release();
         } else {
-            qWarning() << "openStore: GetMsgStoresTable failed";
+            qWarning() << "openStoreByName: GetMsgStoresTable failed";
         }
 
         if (!entryId.isEmpty()) {
-            rv = session->OpenMsgStore(0, entryId.length(), reinterpret_cast<LPENTRYID>(entryId.data()), 0, MDB_NO_MAIL | MDB_WRITE, reinterpret_cast<LPMDB*>(&store));
-            if (HR_FAILED(rv)) {
-                store = 0;
-                qWarning() << "openStore: OpenMsgStore failed";
-            }
+            store = openStore(entryId, session);
         }
     }
 
@@ -676,6 +730,51 @@ void clearMessageStore()
 {
     // Ensure the store is instantiated
     doInit();
+
+    // Remove any existing stores that we added previously
+    IProfAdmin *profAdmin = openProfileAdmin();
+    if (profAdmin) {
+        QByteArray defaultProfileName = findDefaultProfileName(profAdmin);
+        if (!defaultProfileName.isEmpty()) {
+            IMAPISession *session = profileSession(defaultProfileName);
+            if (session) {
+                IMsgServiceAdmin *svcAdmin = openServiceAdmin(defaultProfileName, profAdmin);
+                if (svcAdmin) {
+                    char *providerName = "MSUPST MS";
+                    QList<MAPIUID> obsoleteUids;
+
+                    foreach (const ServiceDetail &svc, serviceDetails(svcAdmin)) {
+                        // Find all services that have our provider
+                        if (svc.first.first.toLower() == QByteArray(providerName).toLower()) {
+                            IMsgStore *store = openStoreByName(svc.first.second, session);
+                            if (store) {
+                                // Did we create this store
+                                ULONG tag = getNamedPropertyTag(store, "origin");
+                                if (tag) {
+                                    if (getNamedProperty(store, tag) == "QMF") {
+                                        // This is an existing service we need to remove
+                                        obsoleteUids.append(svc.second);
+                                    }
+                                }
+
+                                store->Release();
+                            }
+                        }
+                    }
+
+                    foreach (const MAPIUID &uid, obsoleteUids) {
+                        deleteExistingService(uid, svcAdmin);
+                    }
+
+                    svcAdmin->Release();
+                }
+
+                session->Release();
+            }
+        }
+
+        profAdmin->Release();
+    }
 }
 
 QMessageAccountId addAccount(const Parameters &params)
@@ -692,131 +791,89 @@ QMessageAccountId addAccount(const Parameters &params)
         QByteArray name(accountName.toAscii());
 
         // See if a profile exists with the given name
-        LPPROFADMIN profAdmin(0);
-        HRESULT rv = MAPIAdminProfiles(0, &profAdmin);
-        if (HR_SUCCEEDED(rv)) {
-            // Find the default profile
-            QByteArray defaultProfileName;
-            foreach (const ProfileDetail &profile, profileDetails(profAdmin)) {
-                if (profile.second) {
-                    defaultProfileName = profile.first;
-                    break;
-                }
-            }
-
+        IProfAdmin *profAdmin = openProfileAdmin();
+        if (profAdmin) {
+            QByteArray defaultProfileName = findDefaultProfileName(profAdmin);
             if (!defaultProfileName.isEmpty()) {
-                // Open a session on the profile
-                LPMAPISESSION session(0);
-                rv = MAPILogonEx(0, reinterpret_cast<LPTSTR>(defaultProfileName.data()), 0, MAPI_EXTENDED | MAPI_NEW_SESSION | MAPI_NO_MAIL, &session);
-                if (HR_SUCCEEDED(rv)) {
-                    LPSERVICEADMIN svcAdmin(0);
-                    rv = profAdmin->AdminServices(reinterpret_cast<LPTSTR>(defaultProfileName.data()), 0, 0, 0, &svcAdmin);
-                    if (HR_SUCCEEDED(rv)) {
+                IMAPISession *session = profileSession(defaultProfileName);
+                if (session) {
+                    IMsgServiceAdmin *svcAdmin = openServiceAdmin(defaultProfileName, profAdmin);
+                    if (svcAdmin) {
                         char *providerName = "MSUPST MS";
-                        bool serviceExists(false);
-                        MAPIUID svcUid = { 0 };
                         QList<QByteArray> existingServices;
 
                         foreach (const ServiceDetail &svc, serviceDetails(svcAdmin)) {
                             // Find all services that have our provider
                             if (svc.first.first.toLower() == QByteArray(providerName).toLower()) {
-                                if (svc.first.second.toLower() == name.toLower()) {
-                                    // This is existing service we need to remove
-                                    svcUid = svc.second;
-                                    serviceExists = true;
-                                } else {
-                                    existingServices.append(QByteArray(reinterpret_cast<const char*>(&svc.second), sizeof(MAPIUID)));
-                                }
+                                existingServices.append(QByteArray(reinterpret_cast<const char*>(&svc.second), sizeof(MAPIUID)));
                             }
                         }
 
-                        if (serviceExists) {
-                            if (deleteExistingService(svcUid, svcAdmin)) {
-                                serviceExists = false;
-                            }
-                        }
+                        // Create a message service for this profile using the standard provider
+                        HRESULT rv = svcAdmin->CreateMsgService(reinterpret_cast<LPTSTR>(providerName), 0, 0, 0);
+                        if (HR_SUCCEEDED(rv)) {
+                            // Find which of the now-extant services was not in the previous set
+                            foreach (const ServiceDetail &svc, serviceDetails(svcAdmin)) {
+                                QByteArray uidData(reinterpret_cast<const char*>(&svc.second), sizeof(MAPIUID));
+                                if ((svc.first.first.toLower() == QByteArray(providerName).toLower()) &&
+                                    !existingServices.contains(uidData)) {
+                                    // Create a .PST message store for this service
+                                    QByteArray path(QString("%1.pst").arg(name.constData()).toAscii());
 
-                        if (!serviceExists) {
-                            // Create a message service for this profile using the standard provider
-                            rv = svcAdmin->CreateMsgService(reinterpret_cast<LPTSTR>(providerName), 0, 0, 0);
-                            if (HR_SUCCEEDED(rv)) {
-                                // Find which of the now-extant services was not in the previous set
-                                foreach (const ServiceDetail &svc, serviceDetails(svcAdmin)) {
-                                    QByteArray uidData(reinterpret_cast<const char*>(&svc.second), sizeof(MAPIUID));
-                                    if ((svc.first.first.toLower() == QByteArray(providerName).toLower()) &&
-                                        !existingServices.contains(uidData)) {
-                                        // Create a .PST message store for this service
-                                        QByteArray path(QString("%1.pst").arg(name.constData()).toAscii());
+                                    SPropValue props[3] = { 0 };
+                                    props[0].ulPropTag = PR_DISPLAY_NAME_A;
+                                    props[0].Value.lpszA = name.data();
+                                    props[1].ulPropTag = PR_PST_PATH_A;
+                                    props[1].Value.lpszA = path.data();
+                                    props[2].ulPropTag = PR_PST_CONFIG_FLAGS;
+                                    props[2].Value.l = PST_CONFIG_UNICODE;
 
-                                        SPropValue props[3] = { 0 };
-                                        props[0].ulPropTag = PR_DISPLAY_NAME_A;
-                                        props[0].Value.lpszA = name.data();
-                                        props[1].ulPropTag = PR_PST_PATH_A;
-                                        props[1].Value.lpszA = path.data();
-                                        props[2].ulPropTag = PR_PST_CONFIG_FLAGS;
-                                        props[2].Value.l = PST_CONFIG_UNICODE;
+                                    MAPIUID svcUid = svc.second;
+                                    rv = svcAdmin->ConfigureMsgService(&svcUid, 0, 0, 3, props);
+                                    if (HR_SUCCEEDED(rv)) {
+                                        foreach (const StoreDetail &store, storeDetails(session)) {
+                                            if (store.first.toLower() == name.toLower()) {
+                                                result = accountIdFromRecordKey(store.second.first);
 
-                                        svcUid = svc.second;
-                                        rv = svcAdmin->ConfigureMsgService(&svcUid, 0, 0, 3, props);
-                                        if (HR_SUCCEEDED(rv)) {
-                                            serviceExists = true;
-
-                                            // Try to set the address for this service, as a property of the profile section
-
-                                            // Find the Provider for this service
-                                            IProviderAdmin *provider = serviceProvider(svcUid, svcAdmin);
-                                            if (provider) {
-                                                MAPIUID providerUid = findProviderUid("MSUPST MS", provider);
-                                                if (!isEmpty(providerUid)) {
-                                                    IProfSect *profileSection = openProfileSection(providerUid, provider);
-                                                    if (profileSection) {
-                                                        ULONG tag = createNamedProperty(profileSection, "fromAddress");
-                                                        if (tag) {
-                                                            setNamedProperty(profileSection, tag, fromAddress);
-                                                        }
-
-                                                        profileSection->Release();
+                                                IMsgStore *newStore = openStore(store.second.second, session);
+                                                if (newStore) {
+                                                    // Add an origin tag to this store
+                                                    ULONG originTag = createNamedProperty(newStore, "origin");
+                                                    if (originTag) {
+                                                        setNamedProperty(newStore, originTag, "QMF");
                                                     }
+
+                                                    if (!fromAddress.isEmpty()) {
+                                                        // Try to set the address for this service, as a property of the store
+                                                        ULONG addressTag = createNamedProperty(newStore, "fromAddress");
+                                                        if (addressTag) {
+                                                            setNamedProperty(newStore, addressTag, fromAddress);
+                                                        }
+                                                    }
+
+                                                    newStore->Release();
                                                 }
-
-                                                provider->Release();
+                                                break;
                                             }
-                                        } else {
-                                            qWarning() << "ConfigureMsgService failed";
                                         }
-                                        break;
+                                    } else {
+                                        qWarning() << "ConfigureMsgService failed";
                                     }
-                                }
-                            } else {
-                                qWarning() << "CreateMsgService failed";
-                            }
-                        }
-
-                        if (serviceExists) {
-                            foreach (const StoreDetail &store, storeDetails(session)) {
-                                if (store.first.toLower() == name.toLower()) {
-                                    result = accountIdFromRecordKey(store.second);
                                     break;
                                 }
                             }
+                        } else {
+                            qWarning() << "CreateMsgService failed";
                         }
 
                         svcAdmin->Release();
-                    } else {
-                        qWarning() << "AdminServices failed";
                     }
 
                     session->Release();
-                } else {
-                    qWarning() << "MAPILogonEx failed";
                 }
-            } else {
-                qWarning() << "No default profile found!";
             }
 
             profAdmin->Release();
-        } else {
-            qWarning() << "MAPIAdminProfiles failed";
         }
     }
 
@@ -830,17 +887,21 @@ QMessageFolderId addFolder(const Parameters &params)
 
     doInit();
 
-    QString folderName(params["displayName"]);
     QString folderPath(params["path"]);
+    QString folderName(params["displayName"]);
     QString parentPath(params["parentFolderPath"]);
     QByteArray accountName(params["parentAccountName"].toAscii());
 
+    if (folderName.isEmpty()) {
+        folderName = folderPath;
+    }
+
     if (!folderName.isEmpty() && !folderPath.isEmpty() && !accountName.isEmpty()) {
         // Open a session on the default profile
-        LPMAPISESSION session(profileSession(defaultProfile()));
+        IMAPISession *session(profileSession(defaultProfile()));
         if (session) {
             // Open the store for modification
-            IMsgStore *store = openStore(accountName, session);
+            IMsgStore *store = openStoreByName(accountName, session);
             if (store) {
                 // Open the root folder for modification
                 IMAPIFolder *folder = openFolder(rootFolderEntryId(store), store);

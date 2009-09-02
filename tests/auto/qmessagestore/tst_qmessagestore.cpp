@@ -137,10 +137,10 @@ void tst_QMessageStore::testFolder_data()
     QTest::addColumn<QString>("parentFolderPath");
     QTest::addColumn<QString>("displayNameResult");
 
-    QTest::newRow("Inbox") << "INBOX" << "Inbox" << "" << "Inbox";
+    QTest::newRow("Inbox") << "Inbox" << "Inbox" << "" << "Inbox";
     QTest::newRow("Drafts") << "Drafts" << "" << "" << "Drafts";
-    QTest::newRow("Archived") << "INBOX/archived" << "Archived" << "INBOX" << "Archived";
-    QTest::newRow("Backup") << "INBOX/archived/backup" << "" << "INBOX/archived" << "INBOX/archived/backup";
+    QTest::newRow("Archived") << "Inbox/Archived" << "Archived" << "Inbox" << "Archived";
+    QTest::newRow("Backup") << "Inbox/Archived/Backup" << "" << "Inbox/Archived" << "Inbox/Archived/Backup";
 }
 
 void tst_QMessageStore::testFolder()
@@ -149,9 +149,27 @@ void tst_QMessageStore::testFolder()
     static const QString testAccountName("testAccount");
     QMessageAccountId testAccountId;
     QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilterKey::name(testAccountName)));
+#if defined(Q_OS_WIN) && !defined(ACCOUNT_FILTERING_IMPLEMENTED)
+{
+    // Key filtering is not implemented yet
+    QMessageAccountIdList::iterator it = accountIds.begin(), end = accountIds.end();
+    while (it != end) {
+        QMessageAccount acct(*it);
+        if (acct.name() == testAccountName) {
+            accountIds.clear();
+            accountIds.append(acct.id());
+            break;
+        }
+        if (++it == end) {
+            accountIds.clear();
+        }
+    }
+}
+#endif
     if (accountIds.isEmpty()) {
         Support::Parameters p;
         p.insert("name", testAccountName);
+        p.insert("fromAddress", "someone@example.com");
         testAccountId = Support::addAccount(p);
     } else {
         testAccountId = accountIds.first();
