@@ -113,13 +113,10 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setContexts" fullname="QContactDetail::setContexts" href="qcontactdetail.html#setContexts" location="qcontactdetail.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setContexts(const QStringList &amp; contexts)">
                 <parameter left="const QStringList &amp;" right="" name="contexts" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setContexts" fullname="QContactDetail::setContexts" href="qcontactdetail.html#setContexts-2" location="qcontactdetail.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="void" signature="setContexts(const QString &amp; context)">
+                <parameter left="const QString &amp;" right="" name="context" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="contexts" fullname="QContactDetail::contexts" href="qcontactdetail.html#contexts" location="qcontactdetail.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="contexts() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="removeContext" fullname="QContactDetail::removeContext" href="qcontactdetail.html#removeContext" location="qcontactdetail.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="removeContext(const QString &amp; context)">
-                <parameter left="const QString &amp;" right="" name="context" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="addContext" fullname="QContactDetail::addContext" href="qcontactdetail.html#addContext" location="qcontactdetail.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="addContext(const QString &amp; context)">
-                <parameter left="const QString &amp;" right="" name="context" default=""/>
-            </function>
             <function access="protected" threadsafety="unspecified" status="commendable" name="QContactDetail" fullname="QContactDetail::QContactDetail" href="qcontactdetail.html#QContactDetail-4" location="qcontactdetail.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="4" type="" signature="QContactDetail(const QContactDetail &amp; other, const QString &amp; expectedDefinitionId)">
                 <parameter left="const QContactDetail &amp;" right="" name="other" default=""/>
                 <parameter left="const QString &amp;" right="" name="expectedDefinitionId" default=""/>
@@ -288,7 +285,7 @@
             <variable access="public" threadsafety="unspecified" status="commendable" name="FieldRegion" fullname="QContactAddress::FieldRegion" href="qcontactaddress.html#FieldRegion-var" location="qcontactaddress.h" type="const char *" static="false"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="FieldPostcode" fullname="QContactAddress::FieldPostcode" href="qcontactaddress.html#FieldPostcode-var" location="qcontactaddress.h" type="const char *" static="false"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="FieldCountry" fullname="QContactAddress::FieldCountry" href="qcontactaddress.html#FieldCountry-var" location="qcontactaddress.h" type="const char *" static="false"/>
-            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldSubType" fullname="QContactAddress::FieldSubType" href="qcontactaddress.html#FieldSubType-var" location="qcontactaddress.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldSubTypes" fullname="QContactAddress::FieldSubTypes" href="qcontactaddress.html#FieldSubTypes-var" location="qcontactaddress.h" type="const char *" static="false"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypeParcel" fullname="QContactAddress::SubTypeParcel" href="qcontactaddress.html#SubTypeParcel-var" location="qcontactaddress.h" type="const char *" static="false"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypePostal" fullname="QContactAddress::SubTypePostal" href="qcontactaddress.html#SubTypePostal-var" location="qcontactaddress.h" type="const char *" static="false"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypeDomestic" fullname="QContactAddress::SubTypeDomestic" href="qcontactaddress.html#SubTypeDomestic-var" location="qcontactaddress.h" type="const char *" static="false"/>
@@ -320,6 +317,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setSubTypes" fullname="QContactAddress::setSubTypes" href="qcontactaddress.html#setSubTypes" location="qcontactaddress.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSubTypes(const QStringList &amp; subTypes)">
                 <parameter left="const QStringList &amp;" right="" name="subTypes" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setSubTypes" fullname="QContactAddress::setSubTypes" href="qcontactaddress.html#setSubTypes-2" location="qcontactaddress.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="void" signature="setSubTypes(const QString &amp; subType)">
+                <parameter left="const QString &amp;" right="" name="subType" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="subTypes" fullname="QContactAddress::subTypes" href="qcontactaddress.html#subTypes" location="qcontactaddress.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="subTypes() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactAvatar" href="qcontactavatar.html" location="qcontactavatar.h" bases="QContactDetail" module="">
@@ -333,10 +333,10 @@
                 <parameter left="const QString &amp;" right="" name="avatar" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="avatar" fullname="QContactAvatar::avatar" href="qcontactavatar.html#avatar" location="qcontactavatar.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="avatar() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setSubTypes" fullname="QContactAvatar::setSubTypes" href="qcontactavatar.html#setSubTypes" location="qcontactavatar.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSubTypes(const QStringList &amp; subTypes)">
-                <parameter left="const QStringList &amp;" right="" name="subTypes" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setSubType" fullname="QContactAvatar::setSubType" href="qcontactavatar.html#setSubType" location="qcontactavatar.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSubType(const QString &amp; subType)">
+                <parameter left="const QString &amp;" right="" name="subType" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="subTypes" fullname="QContactAvatar::subTypes" href="qcontactavatar.html#subTypes" location="qcontactavatar.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="subTypes() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="subType" fullname="QContactAvatar::subType" href="qcontactavatar.html#subType" location="qcontactavatar.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="subType() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactManagerInfo" href="qcontactmanagerinfo.html" location="qcontactmanagerinfo.h" bases="" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="ManagerFeature" fullname="QContactManagerInfo::ManagerFeature" href="qcontactmanagerinfo.html#ManagerFeature-enum" location="qcontactmanagerinfo.h">
@@ -394,10 +394,10 @@
                 <parameter left="const QString &amp;" right="" name="url" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="url" fullname="QContactUrl::url" href="qcontacturl.html#url" location="qcontacturl.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="url() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setSubTypes" fullname="QContactUrl::setSubTypes" href="qcontacturl.html#setSubTypes" location="qcontacturl.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSubTypes(const QStringList &amp; subTypes)">
-                <parameter left="const QStringList &amp;" right="" name="subTypes" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setSubType" fullname="QContactUrl::setSubType" href="qcontacturl.html#setSubType" location="qcontacturl.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSubType(const QString &amp; subType)">
+                <parameter left="const QString &amp;" right="" name="subType" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="subTypes" fullname="QContactUrl::subTypes" href="qcontacturl.html#subTypes" location="qcontacturl.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="subTypes() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="subType" fullname="QContactUrl::subType" href="qcontacturl.html#subType" location="qcontacturl.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="subType() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactTimestamp" href="qcontacttimestamp.html" location="qcontacttimestamp.h" bases="QContactDetail" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactTimestamp::DefinitionName" href="qcontacttimestamp.html#DefinitionName-var" location="qcontacttimestamp.h" type="const char *" static="false"/>
@@ -517,10 +517,10 @@
                 <parameter left="const QString &amp;" right="" name="event" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="event" fullname="QContactAnniversary::event" href="qcontactanniversary.html#event" location="qcontactanniversary.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="event() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setSubTypes" fullname="QContactAnniversary::setSubTypes" href="qcontactanniversary.html#setSubTypes" location="qcontactanniversary.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSubTypes(const QStringList &amp; subTypes)">
-                <parameter left="const QStringList &amp;" right="" name="subTypes" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setSubType" fullname="QContactAnniversary::setSubType" href="qcontactanniversary.html#setSubType" location="qcontactanniversary.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSubType(const QString &amp; subType)">
+                <parameter left="const QString &amp;" right="" name="subType" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="subTypes" fullname="QContactAnniversary::subTypes" href="qcontactanniversary.html#subTypes" location="qcontactanniversary.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="subTypes() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="subType" fullname="QContactAnniversary::subType" href="qcontactanniversary.html#subType" location="qcontactanniversary.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="subType() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactGuid" href="qcontactguid.html" location="qcontactguid.h" bases="QContactDetail" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactGuid::DefinitionName" href="qcontactguid.html#DefinitionName-var" location="qcontactguid.h" type="const char *" static="false"/>
@@ -913,6 +913,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="number" fullname="QContactPhoneNumber::number" href="qcontactphonenumber.html#number" location="qcontactphonenumber.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="number() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setSubTypes" fullname="QContactPhoneNumber::setSubTypes" href="qcontactphonenumber.html#setSubTypes" location="qcontactphonenumber.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSubTypes(const QStringList &amp; subTypes)">
                 <parameter left="const QStringList &amp;" right="" name="subTypes" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setSubTypes" fullname="QContactPhoneNumber::setSubTypes" href="qcontactphonenumber.html#setSubTypes-2" location="qcontactphonenumber.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="void" signature="setSubTypes(const QString &amp; subType)">
+                <parameter left="const QString &amp;" right="" name="subType" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="subTypes" fullname="QContactPhoneNumber::subTypes" href="qcontactphonenumber.html#subTypes" location="qcontactphonenumber.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="subTypes() const"/>
         </class>

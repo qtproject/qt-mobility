@@ -32,15 +32,14 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#QContactDetail-2">QContactDetail</a></b> ( const QString &amp; <i>thisDefinitionId</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#QContactDetail-3">QContactDetail</a></b> ( const QContactDetail &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#dtor.QContactDetail">~QContactDetail</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#addContext">addContext</a></b> ( const QString &amp; <i>context</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#contexts">contexts</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#definitionName">definitionName</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QContactDetail::Error </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#error">error</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#hasValue">hasValue</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#isEmpty">isEmpty</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#removeContext">removeContext</a></b> ( const QString &amp; <i>context</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#removeValue">removeValue</a></b> ( const QString &amp; <i>key</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#setContexts">setContexts</a></b> ( const QStringList &amp; <i>contexts</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#setContexts-2">setContexts</a></b> ( const QString &amp; <i>context</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#setValue">setValue</a></b> ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">T </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#value">value</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#value-2">value</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
@@ -121,15 +120,6 @@
 <p>Constructs a detail that is a copy of <i>other</i> if <i>other</i> is of the expected definition identified by <i>expectedDefinitionId</i>, else constructs a new, empty detail of the definition identified by the <i>expectedDefinitionId</i></p>
 <h3 class="fn"><a name="dtor.QContactDetail"></a>QContactDetail::~QContactDetail ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Frees the memory used by this detail</p>
-<h3 class="fn"><a name="addContext"></a>void QContactDetail::addContext ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>context</i> )</h3>
-<p>This is a convenience function that adds the given <i>context</i> to the list of contexts for which this detail is valid. If the given <i>context</i> is already part of the list, this function has no effect.</p>
-<p>It is equivalent to the following code:</p>
-<pre>    QStringList contexts = contexts();
-    if (contexts.contains(context))
-        return;
-    contexts.append(context);
-    setContexts(contexts);</pre>
-<p>See also <a href="qcontactdetail.html#setContexts">setContexts</a>().</p>
 <h3 class="fn"><a name="assign"></a>QContactDetail &amp; QContactDetail::assign ( const QContactDetail &amp; <i>other</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>expectedDefinitionId</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
 <p>Assigns this detail to <i>other</i> if the definition of <i>other</i> is that identified by the given <i>expectedDefinitionId</i>, else assigns this detail to be a new, empty detail of the definition identified by the given <i>expectedDefinitionId</i></p>
 <h3 class="fn"><a name="contexts"></a><a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> QContactDetail::contexts () const</h3>
@@ -145,23 +135,18 @@
 <p>Returns true if this detail has a field with the given <i>key</i>, or false otherwise.</p>
 <h3 class="fn"><a name="isEmpty"></a>bool QContactDetail::isEmpty () const</h3>
 <p>Returns true if no values are contained in this detail. Note that context is stored as a value; hence, if a context is set, this function will return false.</p>
-<h3 class="fn"><a name="removeContext"></a>void QContactDetail::removeContext ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>context</i> )</h3>
-<p>This is a convenience function that removes the given <i>context</i> from the list of contexts for which this detail is valid. If the given <i>context</i> is not a part of the list, this function has no effect.</p>
-<p>It is equivalent to the following code:</p>
-<pre>    QStringList contexts = contexts();
-    if (!contexts.contains(context))
-        return;
-    contexts.removeAll(context);
-    setContexts(contexts);</pre>
-<p>See also <a href="qcontactdetail.html#setContexts">setContexts</a>().</p>
 <h3 class="fn"><a name="removeValue"></a>bool QContactDetail::removeValue ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>key</i> )</h3>
 <p>Removes the value stored in this detail for the given <i>key</i>. Returns true if a value was stored for the given <i>key</i> and the operation succeeded, and false otherwise</p>
 <h3 class="fn"><a name="setContexts"></a>void QContactDetail::setContexts ( const <a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> &amp; <i>contexts</i> )</h3>
 <p>This is a convenience function that sets the <tt>Context</tt> field of this detail to the given <i>contexts</i>.</p>
-<p>Not all details have meaningful values for the <tt>Context</tt> field - refer to either the schema or specific classes like <a href="qcontactphonenumber.html">QContactPhoneNumber</a> for more information.</p>
 <p>It is equivalent to the following code:</p>
 <pre>    setValue(QContactDetail::FieldContext, contexts);</pre>
 <p>See also <a href="qcontactdetail.html#contexts">contexts</a>() and <a href="qcontactdetail.html#setValue">setValue</a>().</p>
+<h3 class="fn"><a name="setContexts-2"></a>void QContactDetail::setContexts ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>context</i> )</h3>
+<p>This is a convenience function that sets the <tt>Context</tt> field of this detail to the given <i>context</i>. It is useful if the detail is only valid in a single context.</p>
+<p>It is equivalent to the following code:</p>
+<pre>    setValue(FieldContext, QStringList(context));</pre>
+<p>See also <a href="qcontactdetail.html#setValue">setValue</a>().</p>
 <h3 class="fn"><a name="setValue"></a>bool QContactDetail::setValue ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>key</i>, const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
 <p>Inserts <i>value</i> into the detail for the given <i>key</i> if <i>value</i> is valid. If <i>value</i> is invalid, removes the field with the given <i>key</i> from the detail. Returns true if the operation succeeded</p>
 <p>See also <a href="qcontactdetail.html#value">value</a>().</p>
@@ -207,7 +192,7 @@
     #else
         Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPhoneNumber, &quot;PhoneNumber&quot;)
         Q_DECLARE_LATIN1_LITERAL(FieldNumber, &quot;PhoneNumber&quot;);
-        Q_DECLARE_LATIN1_LITERAL(FieldSubType, &quot;SubType&quot;);
+        Q_DECLARE_LATIN1_LITERAL(FieldSubTypes, &quot;SubTypes&quot;);
         Q_DECLARE_LATIN1_LITERAL(SubTypeLandline, &quot;Landline&quot;);
         Q_DECLARE_LATIN1_LITERAL(SubTypeMobile, &quot;Mobile&quot;);
         Q_DECLARE_LATIN1_LITERAL(SubTypeFacsimile, &quot;Facsimile&quot;);
@@ -223,8 +208,9 @@
         void setNumber(const QString&amp; number) {setValue(FieldNumber, number);}
         QString number() const {return value(FieldNumber);}
 
-        void setSubTypes(const QStringList&amp; subTypes) {setValue(FieldSubType, subTypes);}
-        QStringList subTypes() const {return value&lt;QStringList&gt;(FieldSubType);}
+        void setSubTypes(const QStringList&amp; subTypes) {setValue(FieldSubTypes, subTypes);}
+        void setSubTypes(const QString&amp; subType) {setValue(FieldSubTypes, QStringList(subType));}
+        QStringList subTypes() const {return value&lt;QStringList&gt;(FieldSubTypes);}
     };</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

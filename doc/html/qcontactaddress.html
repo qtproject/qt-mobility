@@ -34,11 +34,12 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#setRegion">setRegion</a></b> ( const QString &amp; <i>region</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#setStreet">setStreet</a></b> ( const QString &amp; <i>street</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#setSubTypes">setSubTypes</a></b> ( const QStringList &amp; <i>subTypes</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#setSubTypes-2">setSubTypes</a></b> ( const QString &amp; <i>subType</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#street">street</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#subTypes">subTypes</a></b> () const</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>17 public functions inherited from <a href="qcontactdetail.html#public-functions">QContactDetail</a></li>
+<li><div bar="2" class="fn"></div>16 public functions inherited from <a href="qcontactdetail.html#public-functions">QContactDetail</a></li>
 </ul>
 <hr />
 <a name="public-variables"></a>
@@ -51,7 +52,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#FieldPostcode-var">FieldPostcode</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#FieldRegion-var">FieldRegion</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#FieldStreet-var">FieldStreet</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#FieldSubType-var">FieldSubType</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#FieldSubTypes-var">FieldSubTypes</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#SubTypeDomestic-var">SubTypeDomestic</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#SubTypeInternational-var">SubTypeInternational</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#SubTypeParcel-var">SubTypeParcel</a></b></td></tr>
@@ -103,6 +104,8 @@
 <h3 class="fn"><a name="setSubTypes"></a>void QContactAddress::setSubTypes ( const <a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> &amp; <i>subTypes</i> )</h3>
 <p>Sets the subtypes which this detail implements to be those contained in the list of given <i>subTypes</i></p>
 <p>See also <a href="qcontactaddress.html#subTypes">subTypes</a>().</p>
+<h3 class="fn"><a name="setSubTypes-2"></a>void QContactAddress::setSubTypes ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>subType</i> )</h3>
+<p>Sets the subtypes which this detail implements to be just the given <i>subType</i></p>
 <h3 class="fn"><a name="street"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactAddress::street () const</h3>
 <p>Returns the street segment of the address stored in this detail</p>
 <p>See also <a href="qcontactaddress.html#setStreet">setStreet</a>().</p>
@@ -125,7 +128,7 @@
 <p>The constant key for which the region value is stored in details of the <a href="qcontactaddress.html">QContactAddress</a> type</p>
 <h3 class="fn"><a name="FieldStreet-var"></a>const char * QContactAddress::FieldStreet</h3>
 <p>The constant key for which the street value is stored in details of the <a href="qcontactaddress.html">QContactAddress</a> type</p>
-<h3 class="fn"><a name="FieldSubType-var"></a>const char * QContactAddress::FieldSubType</h3>
+<h3 class="fn"><a name="FieldSubTypes-var"></a>const char * QContactAddress::FieldSubTypes</h3>
 <p>The constant key for which the subtypes value is stored in details of the <a href="qcontactaddress.html">QContactAddress</a> type</p>
 <h3 class="fn"><a name="SubTypeDomestic-var"></a>const char * QContactAddress::SubTypeDomestic</h3>
 <p>The constant attribute value which describes the address as being a domestic address</p>

@@ -28,11 +28,11 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactanniversary.html#setCalendarId">setCalendarId</a></b> ( const QString &amp; <i>calendarId</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactanniversary.html#setEvent">setEvent</a></b> ( const QString &amp; <i>event</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactanniversary.html#setOriginalDate">setOriginalDate</a></b> ( const QDate &amp; <i>date</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactanniversary.html#setSubTypes">setSubTypes</a></b> ( const QStringList &amp; <i>subTypes</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qcontactanniversary.html#subTypes">subTypes</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactanniversary.html#setSubType">setSubType</a></b> ( const QString &amp; <i>subType</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactanniversary.html#subType">subType</a></b> () const</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>17 public functions inherited from <a href="qcontactdetail.html#public-functions">QContactDetail</a></li>
+<li><div bar="2" class="fn"></div>16 public functions inherited from <a href="qcontactdetail.html#public-functions">QContactDetail</a></li>
 </ul>
 <hr />
 <a name="public-variables"></a>
@@ -77,12 +77,12 @@
 <h3 class="fn"><a name="setOriginalDate"></a>void QContactAnniversary::setOriginalDate ( const <a href="http://qt.nokia.com/doc/4.5/qdate.html">QDate</a> &amp; <i>date</i> )</h3>
 <p>Sets the original date of occurrance of the event stored in this detail to <i>date</i></p>
 <p>See also <a href="qcontactanniversary.html#originalDate">originalDate</a>().</p>
-<h3 class="fn"><a name="setSubTypes"></a>void QContactAnniversary::setSubTypes ( const <a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> &amp; <i>subTypes</i> )</h3>
-<p>Sets the subtypes which this detail implements to be those contained in the list of given <i>subTypes</i></p>
-<p>See also <a href="qcontactanniversary.html#subTypes">subTypes</a>().</p>
-<h3 class="fn"><a name="subTypes"></a><a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> QContactAnniversary::subTypes () const</h3>
-<p>Returns the list of subtypes that this detail implements</p>
-<p>See also <a href="qcontactanniversary.html#setSubTypes">setSubTypes</a>().</p>
+<h3 class="fn"><a name="setSubType"></a>void QContactAnniversary::setSubType ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>subType</i> )</h3>
+<p>Sets the subtype which this detail implements to be the given <i>subType</i></p>
+<p>See also <a href="qcontactanniversary.html#subType">subType</a>().</p>
+<h3 class="fn"><a name="subType"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactAnniversary::subType () const</h3>
+<p>Returns the subtype that this detail implements, if defined</p>
+<p>See also <a href="qcontactanniversary.html#setSubType">setSubType</a>().</p>
 <hr />
 <h2>Member Variable Documentation</h2>
 <h3 class="fn"><a name="DefinitionName-var"></a>const char * QContactAnniversary::DefinitionName</h3>
