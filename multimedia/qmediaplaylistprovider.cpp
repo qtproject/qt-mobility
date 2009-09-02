@@ -35,6 +35,8 @@
 #include "qmediaplaylistprovider.h"
 #include "qmediaplaylistprovider_p.h"
 
+#include <QtCore/qurl.h>
+
 /*!
     \class QMediaPlaylistProvider
     \ingroup multimedia

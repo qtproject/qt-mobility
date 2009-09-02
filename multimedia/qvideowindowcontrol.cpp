@@ -34,30 +34,6 @@
 
 #include "qvideowindowcontrol.h"
 
-#include "qabstractmediacontrol_p.h"
-
-class QVideoWindowControlPrivate : public QAbstractMediaControlPrivate
-{
-public:
-    QVideoWindowControlPrivate()
-        : winId(0)
-        , brightness(0)
-        , contrast(0)
-        , hue(0)
-        , saturation(0)
-        , fullscreen(false)
-    {
-    }
-
-    QRect displayRect;
-    WId winId;
-    int brightness;
-    int contrast;
-    int hue;
-    int saturation;
-    bool fullscreen;
-};
-
 /*!
     \class QVideoWindowControl
     \preliminary
@@ -68,7 +44,7 @@ public:
     Constructs a new video window control with the given \a parent.
 */
 QVideoWindowControl::QVideoWindowControl(QObject *parent)
-    : QAbstractMediaControl(*new QVideoWindowControlPrivate, parent)
+    : QAbstractMediaControl(parent)
 {
 }
 
@@ -80,57 +56,40 @@ QVideoWindowControl::~QVideoWindowControl()
 }
 
 /*!
+    \fn QVideoWindowControl::winId() const
+
     Returns the ID of the window a video overlay end point renders to.
 */
-WId QVideoWindowControl::winId() const
-{
-    return d_func()->winId;
-}
 
 /*!
+    \fn QVideoWindowControl::setWinId(WId id)
+
     Sets the \a id of the window a video overlay end point renders to.
 */
-void QVideoWindowControl::setWinId(WId id)
-{
-    d_func()->winId = id;
-}
 
 /*!
+    \fn QVideoWindowControl::displayRect() const
     Returns the sub-rect of a window where video is displayed.
 */
-QRect QVideoWindowControl::displayRect() const
-{
-    return d_func()->displayRect;
-}
 
 /*!
+    \fn QVideoWindowControl::setDisplayRect(const QRect &rect)
     Sets the sub-\a rect of a window where video is displayed.
 */
-void QVideoWindowControl::setDisplayRect(const QRect &rect)
-{
-    d_func()->displayRect = rect;
-}
 
 /*!
+    \fn QVideoWindowControl::isFullscreen() const
+
     Identifies if a video overlay is a fullscreen overlay.
 
     Returns true if the video overlay is fullscreen, and false otherwise.
 */
-bool QVideoWindowControl::isFullscreen() const
-{
-    return d_func()->fullscreen;
-}
 
 /*!
+    \fn QVideoWindowControl::setFullscreen(bool fullscreen)
+
     Sets whether a video overlay is a \a fullscreen overlay.
 */
-void QVideoWindowControl::setFullscreen(bool fullscreen)
-{
-    Q_D(QVideoWindowControl);
-
-    if (fullscreen != d->fullscreen)
-        emit fullscreenChanged(d->fullscreen = fullscreen);
-}
 
 /*!
     \fn QVideoWindowControl::fullscreenChanged(bool fullscreen)
@@ -139,11 +98,10 @@ void QVideoWindowControl::setFullscreen(bool fullscreen)
 */
 
 /*!
+    \fn QVideoWindowControl::repaint()
+
     Repaints the last frame.
 */
-void QVideoWindowControl::repaint()
-{
-}
 
 /*!
     \fn QVideoWindowControl::nativeSize() const
@@ -159,27 +117,20 @@ void QVideoWindowControl::repaint()
 */
 
 /*!
+    \fn QVideoWindowControl::brightness() const
+
     Returns the brightness adjustment applied to a video overlay.
 
     Valid brightness values range between -100 and 100, the default is 0.
 */
-int QVideoWindowControl::brightness() const
-{
-    return d_func()->brightness;
-}
 
 /*!
+    \fn QVideoWindowControl::setBrightness(int brightness)
+
     Sets a \a brightness adjustment for a video overlay.
 
     Valid brightness values range between -100 and 100, the default is 0.
 */
-void QVideoWindowControl::setBrightness(int brightness)
-{
-    Q_D(QVideoWindowControl);
-
-    if (d->brightness != brightness)
-        emit brightnessChanged(d->brightness = brightness);
-}
 
 /*!
     \fn QVideoWindowControl::brightnessChanged(int brightness)
@@ -188,27 +139,20 @@ void QVideoWindowControl::setBrightness(int brightness)
 */
 
 /*!
+    \fn QVideoWindowControl::contrast() const
+
     Returns the contrast adjustment applied to a video overlay.
 
     Valid contrast values range between -100 and 100, the default is 0.
 */
-int QVideoWindowControl::contrast() const
-{
-    return d_func()->contrast;
-}
 
 /*!
+    \fn QVideoWindowControl::setContrast(int contrast)
+
     Sets the contrast adjustment for a video overlay.
 
     Valid contrast values range between -100 and 100, the default is 0.
 */
-void QVideoWindowControl::setContrast(int contrast)
-{
-    Q_D(QVideoWindowControl);
-
-    if (d->contrast != contrast)
-        emit contrastChanged(d->contrast = contrast);
-}
 
 /*!
     \fn QVideoWindowControl::contrastChanged(int contrast)
@@ -217,27 +161,20 @@ void QVideoWindowControl::setContrast(int contrast)
 */
 
 /*!
+    \fn QVideoWindowControl::hue() const
+
     Returns the hue adjustment applied to a video overlay.
 
     Value hue values range between -100 and 100, the default is 0.
 */
-int QVideoWindowControl::hue() const
-{
-    return d_func()->hue;
-}
 
 /*!
+    \fn QVideoWindowControl::setHue(int hue)
+
     Sets a \a hue adjustment for a video overlay.
 
     Valid hue values range between -100 and 100, the default is 0.
 */
-void QVideoWindowControl::setHue(int hue)
-{
-    Q_D(QVideoWindowControl);
-
-    if (d->hue != hue)
-        emit hueChanged(d->hue = hue);
-}
 
 /*!
     \fn QVideoWindowControl::hueChanged(int hue)
@@ -246,27 +183,19 @@ void QVideoWindowControl::setHue(int hue)
 */
 
 /*!
+    \fn QVideoWindowControl::saturation() const
+
     Returns the saturation adjustment applied to a video overlay.
 
     Value saturation values range between -100 and 100, the default is 0.
 */
-int QVideoWindowControl::saturation() const
-{
-    return d_func()->saturation;
-}
 
 /*!
+    \fn QVideoWindowControl::setSaturation(int saturation)
     Sets a \a saturation adjustment for a video overlay.
 
     Valid saturation values range between -100 and 100, the default is 0.
 */
-void QVideoWindowControl::setSaturation(int saturation)
-{
-    Q_D(QVideoWindowControl);
-
-    if (d->saturation != saturation)
-        emit saturationChanged(d->saturation = saturation);
-}
 
 /*!
     \fn QVideoWindowControl::saturationChanged(int saturation)
