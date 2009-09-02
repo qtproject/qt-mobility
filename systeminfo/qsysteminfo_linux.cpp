@@ -1290,7 +1290,7 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
                 qWarning() <<"battery"<< dev;
                 QHalDeviceInterface ifaceDevice(dev);
                 if (ifaceDevice.isValid()) {
-                    if(ifaceDevice.getPropertyBool("battery.rechargable.is_discharging") ){
+                    if(ifaceDevice.getPropertyBool("battery.rechargeable.is_discharging") ){
                         return QSystemDeviceInfo::BatteryPower;
                     } else {
                         return QSystemDeviceInfo::WallPower;
