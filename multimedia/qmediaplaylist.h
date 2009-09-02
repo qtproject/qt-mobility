@@ -83,9 +83,9 @@ public:
     bool removeItems(int start, int end);
     bool clear();
 
-    bool load(const QString &location, const char *format = 0);
+    bool load(const QUrl &location, const char *format = 0);
     bool load(QIODevice * device, const char *format = 0);
-    bool save(const QString &location, const char *format = 0);
+    bool save(const QUrl &location, const char *format = 0);
     bool save(QIODevice * device, const char *format);
 
 public Q_SLOTS:

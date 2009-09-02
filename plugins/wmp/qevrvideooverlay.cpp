@@ -42,6 +42,8 @@ QEvrVideoOverlay::QEvrVideoOverlay(HINSTANCE evrHwnd)
     , ptrMFCreateVideoPresenter(0)
     , m_presenter(0)
     , m_displayControl(0)
+    , m_winId(0)
+    , m_fullscreen(0)
 {
     ptrMFCreateVideoPresenter = reinterpret_cast<PtrMFCreateVideoPresenter>(
             GetProcAddress(m_evrHwnd, "MFCreateVideoPresenter"));
@@ -52,19 +54,29 @@ QEvrVideoOverlay::~QEvrVideoOverlay()
     FreeLibrary(m_evrHwnd);
 }
 
+WId QEvrVideoOverlay::winId() const
+{
+    return m_winId;
+}
+
 void QEvrVideoOverlay::setWinId(WId id)
 {
     if (m_displayControl) {
         m_displayControl->SetVideoWindow(id);
 
-        QRect rect = displayRect();
+        QRect rect = m_displayRect;
 
         RECT displayRect = { rect.left(), rect.top(), rect.right(), rect.bottom() };
 
         m_displayControl->SetVideoPosition(0, &displayRect);
     }
 
-    QVideoWindowControl::setWinId(id);
+    m_winId = 0;
+}
+
+QRect QEvrVideoOverlay::displayRect() const
+{
+    return m_displayRect;
 }
 
 void QEvrVideoOverlay::setDisplayRect(const QRect &rect)
@@ -75,13 +87,18 @@ void QEvrVideoOverlay::setDisplayRect(const QRect &rect)
         m_displayControl->SetVideoPosition(0, &displayRect);
     }
 
-    QVideoWindowControl::setDisplayRect(rect);
+    m_displayRect = rect;
+}
+
+bool QEvrVideoOverlay::isFullscreen() const
+{
+    return m_fullscreen;
 }
 
 void QEvrVideoOverlay::setFullscreen(bool fullscreen)
 {
     if (m_displayControl && m_displayControl->SetFullscreen(fullscreen) == S_OK)
-        QVideoWindowControl::setFullscreen(fullscreen);
+        emit fullscreenChanged(m_fullscreen = fullscreen);
 }
 
 QSize QEvrVideoOverlay::nativeSize() const
@@ -93,6 +110,46 @@ QSize QEvrVideoOverlay::nativeSize() const
     } else {
         return QSize();
     }
+}
+
+void QEvrVideoOverlay::repaint()
+{
+}
+
+int QEvrVideoOverlay::brightness() const
+{
+    return 0;
+}
+
+void QEvrVideoOverlay::setBrightness(int)
+{
+}
+
+int QEvrVideoOverlay::contrast() const
+{
+    return 0;
+}
+
+void QEvrVideoOverlay::setContrast(int)
+{
+}
+
+int QEvrVideoOverlay::hue() const
+{
+    return 0;
+}
+
+void QEvrVideoOverlay::setHue(int)
+{
+}
+
+int QEvrVideoOverlay::saturation() const
+{
+    return 0;
+}
+
+void QEvrVideoOverlay::setSaturation(int)
+{
 }
 
 void QEvrVideoOverlay::setDisplayControl(IMFVideoDisplayControl *control)

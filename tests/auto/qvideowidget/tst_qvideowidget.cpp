@@ -60,10 +60,50 @@ private:
 class QtTestWindowControl : public QVideoWindowControl
 {
 public:
+    QtTestWindowControl()
+        : m_winId(0)
+        , m_brightness(0)
+        , m_contrast(0)
+        , m_saturation(0)
+        , m_fullscreen(0)
+    {
+    }
+
+    WId winId() const { return m_winId; }
+    void setWinId(WId id) { m_winId = id; }
+
+    QRect displayRect() const { return m_displayRect; }
+    void setDisplayRect(const QRect &rect) { m_displayRect = rect; }
+
+    bool isFullscreen() const { return m_fullscreen; }
+    void setFullscreen(bool fullscreen) { emit fullscreenChanged(m_fullscreen = fullscreen); }
+
+    void repaint() {}
+
     QSize nativeSize() const { return m_nativeSize; }
     void setNativeSize(const QSize &size) { m_nativeSize = size; emit nativeSizeChanged(); }
+
+    int brightness() const { return m_brightness; }
+    void setBrightness(int brightness) { emit brightnessChanged(m_brightness = brightness); }
+
+    int contrast() const { return m_contrast; }
+    void setContrast(int contrast) { emit contrastChanged(m_contrast = contrast); }
+
+    int hue() const { return m_hue; }
+    void setHue(int hue) { emit hueChanged(m_hue = hue); }
+
+    int saturation() const { return m_saturation; }
+    void setSaturation(int saturation) { emit saturationChanged(m_saturation = saturation); }
+
 private:
+    WId m_winId;
+    int m_brightness;
+    int m_contrast;
+    int m_hue;
+    int m_saturation;
+    QRect m_displayRect;
     QSize m_nativeSize;
+    bool m_fullscreen;
 };
 
 class QtTestVideoService : public QAbstractMediaService

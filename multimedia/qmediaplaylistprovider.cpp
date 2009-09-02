@@ -35,36 +35,52 @@
 #include "qmediaplaylistprovider.h"
 #include "qmediaplaylistprovider_p.h"
 
+#include <QtCore/qurl.h>
+
 /*!
     \class QMediaPlaylistProvider
     \ingroup multimedia
 
     \preliminary
-    \brief
+    \brief The QMediaPlaylistProvider class provides access to a list of media sources.
 
     \sa
 */
 
+/*!
+  Create a new playlist provider object with the given \a parent.
+*/
 QMediaPlaylistProvider::QMediaPlaylistProvider(QObject *parent)
-    :QObject(*new QMediaPlaylistProviderPrivate, parent)
+    :QObject(parent), d_ptr(new QMediaPlaylistProviderPrivate)
 {
 }
 
+/*!
+  \internal
+*/
 QMediaPlaylistProvider::QMediaPlaylistProvider(QMediaPlaylistProviderPrivate &dd, QObject *parent)
-    :QObject(dd,parent)
+    :QObject(parent), d_ptr(&dd)
 {
 }
 
+/*!
+  Destroys the playlist provider.
+*/
 QMediaPlaylistProvider::~QMediaPlaylistProvider()
 {
 }
 
 /*!
     \fn QMediaPlaylistProvider::size() const;
+
+    Returns the size of playlist.
 */
 
 /*!
-    \fn QMediaPlaylistProvider::operator [](int pos) const;
+    \fn QMediaPlaylistProvider::media(int index) const;
+
+    Returns a media object at playlist position \a index,
+    or invalid media object if index is out of playlist range.
 */
 
 
@@ -79,7 +95,7 @@ QMediaPlaylistProvider::~QMediaPlaylistProvider()
 
   Returns true if playlist was loaded succesfully, otherwise returns false.
 */
-bool QMediaPlaylistProvider::load(const QString &location, const char *format)
+bool QMediaPlaylistProvider::load(const QUrl &location, const char *format)
 {
     Q_UNUSED(location);
     Q_UNUSED(format);
@@ -107,7 +123,7 @@ bool QMediaPlaylistProvider::load(QIODevice * device, const char *format)
 
   Returns true if playlist was saved succesfully, otherwise returns false.
   */
-bool QMediaPlaylistProvider::save(const QString &location, const char *format)
+bool QMediaPlaylistProvider::save(const QUrl &location, const char *format)
 {
     Q_UNUSED(location);
     Q_UNUSED(format);
@@ -146,7 +162,7 @@ bool QMediaPlaylistProvider::appendItem(const QMediaSource &source)
 }
 
 /*!
-  Insert a \a sources to the playlist at position \a pos.
+  Insert a \a source to the playlist at position \a pos.
 
   Returns true if the operation is successfull, other wise return false.
 */
@@ -187,7 +203,7 @@ bool QMediaPlaylistProvider::removeItems(int start, int end)
   Remove all the items from the playlist.
 
   Returns true if the operation is successfull, other wise return false.
-  */
+*/
 bool QMediaPlaylistProvider::clear()
 {
     return removeItems(0, size()-1);
@@ -199,3 +215,38 @@ bool QMediaPlaylistProvider::clear()
 void QMediaPlaylistProvider::shuffle()
 {
 }
+
+/*!
+  \fn void QMediaPlaylistProvider::itemsAboutToBeInserted(int start, int end);
+
+  This signal is emitted just before items are inserted into the playlist.
+  The new items will be positioned between \a start and \a end inclusive.
+*/
+
+/*!
+  \fn void QMediaPlaylistProvider::itemsInserted(int start, int end);
+
+  This signal is emitted after items are inserted into the playlist.
+  The new items are positioned between \a start and \a end inclusive.
+*/
+
+/*!
+  \fn void QMediaPlaylistProvider::itemsAboutToBeRemoved(int start, int end);
+
+  This signal is emitted just before items between \a start and \a end inclusive
+  are removed from the playlist.
+*/
+
+/*!
+  \fn void QMediaPlaylistProvider::itemsRemoved(int start, int end);
+
+  This signal is emitted after items between \a start and \a end inclusive
+  are removed from the playlist.
+*/
+
+/*!
+  \fn void QMediaPlaylistProvider::itemsChanged(int start, int end);
+
+  This signal is emitted when playlist items
+  between \a start and \a end inclusive are changed.
+*/

@@ -48,11 +48,30 @@ public:
     QEvrVideoOverlay(HINSTANCE evrHwnd);
     ~QEvrVideoOverlay();
 
+    WId winId() const;
     void setWinId(WId id);
+
+    QRect displayRect() const;
     void setDisplayRect(const QRect &rect);
+
+    bool isFullscreen() const;
     void setFullscreen(bool fullscreen);
 
     QSize nativeSize() const;
+
+    void repaint();
+
+    int brightness() const;
+    void setBrightness(int brightness);
+
+    int contrast() const;
+    void setContrast(int contrast);
+
+    int hue() const;
+    void setHue(int hue);
+
+    int saturation() const;
+    void setSaturation(int saturation);
 
     void setDisplayControl(IMFVideoDisplayControl *control);
 
@@ -75,6 +94,9 @@ private:
     IMFVideoPresenter *m_presenter;
     IMFVideoDisplayControl *m_displayControl;
     QSize m_sizeHint;
+    QRect m_displayRect;
+    WId m_winId;
+    bool m_fullscreen;
 };
 
 #endif

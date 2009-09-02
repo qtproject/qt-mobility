@@ -53,17 +53,29 @@ public:
     QGstreamerVideoOverlay(QObject *parent = 0);
     ~QGstreamerVideoOverlay();
 
+    WId winId() const;
     void setWinId(WId id);
 
+    QRect displayRect() const;
     void setDisplayRect(const QRect &rect);
 
+    bool isFullscreen() const;
     void setFullscreen(bool fullscreen);
 
     QSize nativeSize() const;
 
+    void repaint();
+
+    int brightness() const;
     void setBrightness(int brightness);
+
+    int contrast() const;
     void setContrast(int contrast);
+
+    int hue() const;
     void setHue(int hue);
+
+    int saturation() const;
     void setSaturation(int saturation);
 
     QAbstractVideoSurface *surface() const;
@@ -76,6 +88,7 @@ private slots:
 private:
     QX11VideoSurface *m_surface;
     GstElement *m_videoSink;
+    bool m_fullscreen;
 };
 
 #endif

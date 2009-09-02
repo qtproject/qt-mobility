@@ -43,6 +43,7 @@ QGstreamerVideoOverlay::QGstreamerVideoOverlay(QObject *parent)
     : QVideoWindowControl(parent)
     , m_surface(new QX11VideoSurface)
     , m_videoSink(reinterpret_cast<GstElement*>(QVideoSurfaceGstSink::createSink(m_surface)))
+    , m_fullscreen(false)
 {
     if (m_videoSink) {
         gst_object_ref(GST_OBJECT(m_videoSink)); //Take ownership
@@ -61,51 +62,86 @@ QGstreamerVideoOverlay::~QGstreamerVideoOverlay()
     delete m_surface;
 }
 
+WId QGstreamerVideoOverlay::winId() const
+{
+    return m_surface->winId();
+}
+
 void QGstreamerVideoOverlay::setWinId(WId id)
 {
     m_surface->setWinId(id);
+}
 
-    QVideoWindowControl::setWinId(id);
+QRect QGstreamerVideoOverlay::displayRect() const
+{
+    return m_surface->displayRect();
 }
 
 void QGstreamerVideoOverlay::setDisplayRect(const QRect &rect)
 {
     m_surface->setDisplayRect(rect);
+}
 
-    QVideoWindowControl::setDisplayRect(rect);
+void QGstreamerVideoOverlay::repaint()
+{
+}
+
+int QGstreamerVideoOverlay::brightness() const
+{
+    return m_surface->brightness();
 }
 
 void QGstreamerVideoOverlay::setBrightness(int brightness)
 {
     m_surface->setBrightness(brightness);
 
-    QVideoWindowControl::setBrightness(brightness);
+    emit brightnessChanged(m_surface->brightness());
+}
+
+int QGstreamerVideoOverlay::contrast() const
+{
+    return m_surface->contrast();
 }
 
 void QGstreamerVideoOverlay::setContrast(int contrast)
 {
     m_surface->setContrast(contrast);
 
-    QVideoWindowControl::setContrast(contrast);
+    emit contrastChanged(m_surface->contrast());
+}
+
+int QGstreamerVideoOverlay::hue() const
+{
+    return m_surface->hue();
 }
 
 void QGstreamerVideoOverlay::setHue(int hue)
 {
     m_surface->setHue(hue);
 
-    QVideoWindowControl::setHue(hue);
+    emit hueChanged(m_surface->hue());
+}
+
+int QGstreamerVideoOverlay::saturation() const
+{
+    return m_surface->saturation();
 }
 
 void QGstreamerVideoOverlay::setSaturation(int saturation)
 {
     m_surface->setSaturation(saturation);
 
-    QVideoWindowControl::setSaturation(saturation);
+    emit saturationChanged(m_surface->saturation());
+}
+
+bool QGstreamerVideoOverlay::isFullscreen() const
+{
+    return m_fullscreen;
 }
 
 void QGstreamerVideoOverlay::setFullscreen(bool fullscreen)
 {
-    QVideoWindowControl::setFullscreen(fullscreen);
+    emit fullscreenChanged(m_fullscreen = fullscreen);
 }
 
 QSize QGstreamerVideoOverlay::nativeSize() const

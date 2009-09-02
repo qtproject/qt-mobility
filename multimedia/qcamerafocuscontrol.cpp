@@ -40,9 +40,9 @@
     \ingroup multimedia
 
     \preliminary
-    \brief
+    \brief Media control for focusing related camera parameters.
 
-    \sa
+    \sa QCamera
 */
 
 /*!

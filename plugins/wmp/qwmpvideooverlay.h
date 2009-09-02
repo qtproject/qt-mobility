@@ -53,12 +53,32 @@ public:
     ~QWmpVideoOverlay();
 
     void setEnabled(bool enabled);
+
+    WId winId() const;
     void setWinId(WId id);
+
+    QRect displayRect() const;
     void setDisplayRect(const QRect &rect);
+
+    bool isFullscreen() const;
     void setFullscreen(bool fullscreen);
+
+    void repaint();
 
     QSize nativeSize() const;
     void setNativeSize(const QSize &size);
+
+    int brightness() const;
+    void setBrightness(int brightness);
+
+    int contrast() const;
+    void setContrast(int contrast);
+
+    int hue() const;
+    void setHue(int hue);
+
+    int saturation() const;
+    void setSaturation(int saturation);
 
     // IUnknown
     HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **object);
@@ -105,7 +125,10 @@ private:
     QWmpPlayerService *m_service;
     IOleObject *m_object;
     IOleInPlaceObject *m_inPlaceObject;
+    WId m_winId;
     QSize m_sizeHint;
+    QRect m_displayRect;
+    bool m_fullscreen;
     bool m_enabled;
 };
 

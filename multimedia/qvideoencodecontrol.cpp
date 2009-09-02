@@ -36,39 +36,180 @@
 #include <QtCore/qstringlist.h>
 #include <QtCore/qvariant.h>
 
-
+/*!
+  Create a new video encode control object with the given \a parent.
+*/
 QVideoEncodeControl::QVideoEncodeControl(QObject *parent)
     :QAbstractMediaControl(parent)
 {
 }
 
+/*!
+  Destroys the video encode control.
+*/
 QVideoEncodeControl::~QVideoEncodeControl()
 {
 }
 
 
+/*!
+  \fn QVideoEncodeControl::resolution() const
+
+  Returns the resolution of encoded video stream.
+*/
+
+/*!
+  \fn QVideoEncodeControl::minimumResolution() const
+
+  Returns the smallest resolution, video encoder supports.
+
+  \sa resolution
+*/
+
+/*!
+  \fn QVideoEncodeControl::maximumResolution() const
+
+  Returns the largest resolution, video encoder supports.
+
+  \sa resolution
+*/
+
+/*!
+  \fn QVideoEncodeControl::setResolution(const QSize &size)
+
+  Set the video \a resolution.
+  If an empty size is passed,
+  the media service should choose the default or content
+  related resolution value.
+*/
+
+/*!
+  \fn QVideoEncodeControl::frameRate() const
+  Returns frame rate of video stream.
+*/
+
+/*!
+  \fn QVideoEncodeControl::minimumFrameRate() const
+
+  Returns the smallest frame rate, video encoder supports.
+
+  \sa frameRate
+*/
+
+/*!
+  \fn QVideoEncodeControl::maximumFrameRate() const
+
+  Returns the largest frame rate, video encoder supports.
+
+  \sa frameRate
+*/
+
+/*!
+  \fn QVideoEncodeControl::setFrameRate(const QMediaRecorder::FrameRate &rate)
+
+  Sets the video frame \a rate.
+  If passed frame rate equals to -1/-1, the default value should be used.
+*/
+
+/*!
+  \fn QVideoEncodeControl::supportedVideoCodecs() const
+
+  Returns the list of supported video codec names.
+*/
+
+/*!
+  \fn QVideoEncodeControl::videoCodec() const
+
+  Returns the currently used video codec name.
+*/
+
+/*!
+  \fn QVideoEncodeControl::setVideoCodec(const QString &codecName)
+
+  Use the video codec with name equals to \a codecName.
+
+*/
+
+/*!
+  \fn QVideoEncodeControl::videoCodecDescription(const QString &codec) const
+
+  Returns description of video \a codec.
+*/
+
+/*!
+  \fn QVideoEncodeControl::bitrate() const
+
+  Returns bitrate of encoded video stream.
+*/
+
+/*!
+  \fn QVideoEncodeControl::setBitrate(int value)
+
+  Set the bitrate of encoded video stream to \a value.
+*/
+
+/*!
+  \fn QVideoEncodeControl::quality() const
+
+  Video quality value.
+
+  \sa QMediaRecorder::videoQuality
+*/
+
+/*!
+  \fn QVideoEncodeControl::setQuality(qreal value)
+
+  Sets the video quality to \a value.
+
+  \sa quality(), QMediaRecorder::videoQuality
+*/
+
+
+/*!
+  Returns the list of supported video encoding options.
+
+  The list and meaninng of options is codec and system depended.
+*/
 QStringList QVideoEncodeControl::supportedEncodingOptions() const
 {
     return QStringList();
 }
 
-QVariant QVideoEncodeControl::encodingOption(const QString &name) const
+/*!
+  Returns value of encoder \a option.
+*/
+QVariant QVideoEncodeControl::encodingOption(const QString &option) const
 {
-    Q_UNUSED(name);
+    Q_UNUSED(option);
     return QVariant();
 }
 
-void QVideoEncodeControl::setEncodingOption(const QString &name, const QVariant &value)
+/*!
+  Set the codec specific \a option to \a value.
+*/
+void QVideoEncodeControl::setEncodingOption(const QString &option, const QVariant &value)
 {
-    Q_UNUSED(name);
+    Q_UNUSED(option);
     Q_UNUSED(value);
 }
 
+/*!
+  Returns the list of resolutions if the video encoder supports only the limited set
+  of video frame sizes, otherwise returns an empty list.
+
+  \sa resolution(), minimumResolution(), maximumResolution()
+*/
 QList<QSize> QVideoEncodeControl::supportedResolutions() const
 {
     return QList<QSize>();
 }
 
+/*!
+  Returns the list of frame rates if the video encoder supports only the limited set
+  of video frame rates, otherwise returns an empty list.
+
+  \sa frameRate
+*/
 QList<QMediaRecorder::FrameRate> QVideoEncodeControl::supportedFrameRates() const
 {
     return QList< QMediaRecorder::FrameRate >();

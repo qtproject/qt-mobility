@@ -44,6 +44,7 @@
 #include "qmediasource.h"
 
 class QString;
+class QUrl;
 class QByteArray;
 class QIODevice;
 class QStringList;
@@ -70,12 +71,12 @@ public:
 struct Q_MEDIA_EXPORT QMediaPlaylistIOInterface : public QFactoryInterface
 {
     virtual bool canRead(QIODevice *device, const QByteArray &format = QByteArray() ) const = 0;
-    virtual bool canRead(const QString& location, const QByteArray &format = QByteArray()) const = 0;
+    virtual bool canRead(const QUrl& location, const QByteArray &format = QByteArray()) const = 0;
 
     virtual bool canWrite(QIODevice *device, const QByteArray &format) const = 0;
 
     virtual QMediaPlaylistReader *createReader(QIODevice *device, const QByteArray &format = QByteArray()) = 0;
-    virtual QMediaPlaylistReader *createReader(const QString& location, const QByteArray &format = QByteArray()) = 0;
+    virtual QMediaPlaylistReader *createReader(const QUrl& location, const QByteArray &format = QByteArray()) = 0;
 
     virtual QMediaPlaylistWritter *createWritter(QIODevice *device, const QByteArray &format) = 0;
 };
@@ -92,14 +93,14 @@ public:
     virtual ~QMediaPlaylistIOPlugin();
 
     virtual bool canRead(QIODevice *device, const QByteArray &format = QByteArray() ) const = 0;
-    virtual bool canRead(const QString& location, const QByteArray &format = QByteArray()) const = 0;
+    virtual bool canRead(const QUrl& location, const QByteArray &format = QByteArray()) const = 0;
 
     virtual bool canWrite(QIODevice *device, const QByteArray &format) const = 0;
 
     virtual QStringList keys() const = 0;
 
     virtual QMediaPlaylistReader *createReader(QIODevice *device, const QByteArray &format = QByteArray()) = 0;
-    virtual QMediaPlaylistReader *createReader(const QString& location, const QByteArray &format = QByteArray()) = 0;
+    virtual QMediaPlaylistReader *createReader(const QUrl& location, const QByteArray &format = QByteArray()) = 0;
 
     virtual QMediaPlaylistWritter *createWritter(QIODevice *device, const QByteArray &format) = 0;
 };

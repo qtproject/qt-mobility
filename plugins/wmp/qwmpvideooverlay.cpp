@@ -69,6 +69,11 @@ void QWmpVideoOverlay::setEnabled(bool enabled)
     }
 }
 
+WId QWmpVideoOverlay::winId() const
+{
+    return m_winId;
+}
+
 void QWmpVideoOverlay::setWinId(WId id)
 {
     if (m_inPlaceObject && m_enabled) {
@@ -81,7 +86,7 @@ void QWmpVideoOverlay::setWinId(WId id)
     if (!id)
         m_enabled = false;
 
-    QVideoWindowControl::setWinId(id);
+    m_winId = id;
 }
 
 extern HDC Q_GUI_EXPORT qt_win_display_dc();
@@ -89,6 +94,11 @@ extern HDC Q_GUI_EXPORT qt_win_display_dc();
 #define HIMETRIC_PER_INCH   2540
 #define MAP_PIX_TO_LOGHIM(x,ppli)   ((HIMETRIC_PER_INCH*(x) + ((ppli)>>1)) / (ppli))
 #define MAP_LOGHIM_TO_PIX(x,ppli)   (((ppli)*(x) + HIMETRIC_PER_INCH/2) / HIMETRIC_PER_INCH)
+
+QRect QWmpVideoOverlay::displayRect() const
+{
+    return m_displayRect;
+}
 
 void QWmpVideoOverlay::setDisplayRect(const QRect &rect)
 {
@@ -105,11 +115,17 @@ void QWmpVideoOverlay::setDisplayRect(const QRect &rect)
         m_inPlaceObject->SetObjectRects(&rcPos, &rcPos);
     }
 
-    QVideoWindowControl::setDisplayRect(rect);
+    m_displayRect = rect;
+}
+
+bool QWmpVideoOverlay::isFullscreen() const
+{
+    return m_fullscreen;
 }
 
 void QWmpVideoOverlay::setFullscreen(bool fullscreen)
 {
+    emit fullscreenChanged(m_fullscreen = fullscreen);
 }
 
 QSize QWmpVideoOverlay::nativeSize() const
@@ -124,6 +140,46 @@ void QWmpVideoOverlay::setNativeSize(const QSize &size)
 
         emit nativeSizeChanged();
     }
+}
+
+void QWmpVideoOverlay::repaint()
+{
+}
+
+int QWmpVideoOverlay::brightness() const
+{
+    return 0;
+}
+
+void QWmpVideoOverlay::setBrightness(int)
+{
+}
+
+int QWmpVideoOverlay::contrast() const
+{
+    return 0;
+}
+
+void QWmpVideoOverlay::setContrast(int)
+{
+}
+
+int QWmpVideoOverlay::hue() const
+{
+    return 0;
+}
+
+void QWmpVideoOverlay::setHue(int)
+{
+}
+
+int QWmpVideoOverlay::saturation() const
+{
+    return 0;
+}
+
+void QWmpVideoOverlay::setSaturation(int)
+{
 }
 
 // IUnknown

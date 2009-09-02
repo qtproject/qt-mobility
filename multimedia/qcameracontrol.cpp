@@ -40,9 +40,10 @@
     \ingroup multimedia
 
     \preliminary
-    \brief
+    \brief The abstract class for controling still or video cameras, this is provided
+    by a QAbstractMediaService object, and is used by QCamera.
 
-    \sa
+    \sa QAbstractMediaService, QCamera
 */
 
 /*!
@@ -63,9 +64,28 @@ QCameraControl::~QCameraControl()
 }
 
 /*!
+    \fn QCameraControl::start()
+    Start the camera service.
+*/
+
+/*!
+    \fn QCameraControl::stop()
+
+    Stop the camera service.
+*/
+
+/*!
+    \fn QCameraControl::state() const
+
+    Returns the state of the camera service.
+
+    \sa QCamera::state
+*/
+
+/*!
     \fn QCameraControl::setDevice(const QString& device)
 
-    Set the camera device to \a device.
+    Set the camera device being used to \a device.
 */
 
 

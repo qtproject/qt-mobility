@@ -39,40 +39,37 @@
 
 #include <QtGui/qwidget.h>
 
-class QVideoWindowControlPrivate;
-
 class Q_MEDIA_EXPORT QVideoWindowControl : public QAbstractMediaControl
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(QVideoWindowControl)
 public:
     QVideoWindowControl(QObject *parent = 0);
     ~QVideoWindowControl();
 
-    WId winId() const;
-    virtual void setWinId(WId id);
+    virtual WId winId() const = 0;
+    virtual void setWinId(WId id) = 0;
 
-    QRect displayRect() const;
-    virtual void setDisplayRect(const QRect &rect);
+    virtual QRect displayRect() const = 0;
+    virtual void setDisplayRect(const QRect &rect) = 0;
 
-    bool isFullscreen() const;
-    virtual void setFullscreen(bool fullscreen);
+    virtual bool isFullscreen() const = 0;
+    virtual void setFullscreen(bool fullscreen) = 0;
 
-    virtual void repaint();
+    virtual void repaint() = 0;
 
     virtual QSize nativeSize() const = 0;
 
-    int brightness() const;
-    virtual void setBrightness(int brightness);
+    virtual int brightness() const = 0;
+    virtual void setBrightness(int brightness) = 0;
 
-    int contrast() const;
-    virtual void setContrast(int contrast);
+    virtual int contrast() const = 0;
+    virtual void setContrast(int contrast) = 0;
 
-    int hue() const;
-    virtual void setHue(int hue);
+    virtual int hue() const = 0;
+    virtual void setHue(int hue) = 0;
 
-    int saturation() const;
-    virtual void setSaturation(int saturation);
+    virtual int saturation() const = 0;
+    virtual void setSaturation(int saturation) = 0;
 
 Q_SIGNALS:
     void fullscreenChanged(bool fullscreen);

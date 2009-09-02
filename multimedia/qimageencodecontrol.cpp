@@ -35,18 +35,101 @@
 #include "qimageencodecontrol.h"
 #include <QtCore/qstringlist.h>
 
-
+/*!
+  Create a new image encode control object with the given \a parent
+*/
 QImageEncodeControl::QImageEncodeControl(QObject *parent)
     :QAbstractMediaControl(parent)
 {
 }
 
+/*!
+  Destroys the image encode control.
+*/
 QImageEncodeControl::~QImageEncodeControl()
 {
 }
 
+/*!
+  Returns the list of resolutions if the image encoder supports only the limited set
+  of image sizes, otherwise returns an empty list.
+
+  \sa resolution(), minimumResolution(), maximumResolution()
+
+*/
 QList<QSize> QImageEncodeControl::supportedResolutions() const
 {
     return QList<QSize>();
 }
 
+
+/*!
+  \fn QImageEncodeControl::resolution() const
+
+   Returns the resolution of encoded image.
+*/
+
+/*!
+  \fn QImageEncodeControl::minimumResolution() const
+
+  Returns the smallest supported resolution.
+
+  \sa resolution
+*/
+
+/*!
+  \fn QImageEncodeControl::maximumResolution() const
+
+  Returns the largest supported resolution.
+
+  \sa resolution
+*/
+
+/*!
+  \fn QImageEncodeControl::setResolution(const QSize &)
+
+  Set the image \a resolution.
+  If an empty size is passed,
+  the media service should choose the default or content
+  related resolution value.
+*/
+
+/*!
+  \fn QImageEncodeControl::supportedImageCodecs() const
+
+  Returns the list of supported image codec names.
+*/
+
+/*!
+  \fn QImageEncodeControl::imageCodec() const
+
+  Returns the currently used image codec name.
+*/
+
+/*!
+  \fn QImageEncodeControl::setImageCodec(const QString &codecName)
+
+  Use the image codec with name equals to \a codecName.
+
+*/
+
+/*!
+  \fn QImageEncodeControl::imageCodecDescription(const QString &codecName) const
+
+  Returns description of image \a codec.
+*/
+
+/*!
+  \fn QImageEncodeControl::quality() const
+
+  Image quality value, in 0..100 range.
+*/
+
+/*!
+  \fn QImageEncodeControl::setQuality(qreal)
+
+  Sets the image quality to \a value.
+  Value has the same meaning as QAudioEncodeControl::quality.
+
+  \sa quality() QAudioEncodeControl::quality
+*/

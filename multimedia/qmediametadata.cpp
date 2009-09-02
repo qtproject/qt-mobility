@@ -32,7 +32,6 @@
 **
 ****************************************************************************/
 
-#include <QtCore/private/qobject_p.h>
 #include <QtCore/QDebug>
 
 #include "qmediametadata.h"
