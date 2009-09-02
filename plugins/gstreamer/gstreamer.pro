@@ -46,7 +46,7 @@ SOURCES += \
     qgstreamerserviceplugin.cpp \
     qgstreameraudioinputdevicecontrol.cpp
 
-videosurface {
+contains(QT_CONFIG, multimedia) {
     QT += multimedia
 
     SOURCES += \

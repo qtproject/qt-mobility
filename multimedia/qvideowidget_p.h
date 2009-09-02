@@ -102,7 +102,7 @@ private:
     QVideoWidget::DisplayMode m_displayMode;
 };
 
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
 class QPainterVideoSurface;
 class QVideoRendererControl;
 

@@ -34,7 +34,7 @@
 
 #include "qgstvideobuffer.h"
 
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
 
 QGstVideoBuffer::QGstVideoBuffer(GstBuffer *buffer, int bytesPerLine)
     : QAbstractVideoBuffer(NoHandle)

@@ -152,7 +152,7 @@ void tst_QVideoWidget::nullObject()
 {
     QVideoWidget widget(0);
 
-    QCOMPARE(widget.sizeHint(), QSize());
+    QVERIFY(widget.sizeHint().isEmpty());
 
     widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
     QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
@@ -176,7 +176,7 @@ void tst_QVideoWidget::nullService()
 
     QVideoWidget widget(&object);
 
-    QCOMPARE(widget.sizeHint(), QSize());
+    QVERIFY(widget.sizeHint().isEmpty());
 
     widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
     QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
@@ -200,7 +200,7 @@ void tst_QVideoWidget::nullOutputControl()
 
     QVideoWidget widget(&object);
 
-    QCOMPARE(widget.sizeHint(), QSize());
+    QVERIFY(widget.sizeHint().isEmpty());
 
     widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
     QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
@@ -224,7 +224,7 @@ void tst_QVideoWidget::nullWindowControl()
 
     QVideoWidget widget(&object);
 
-    QCOMPARE(widget.sizeHint(), QSize());
+    QVERIFY(widget.sizeHint().isEmpty());
 
     widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
     QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
@@ -248,7 +248,6 @@ void tst_QVideoWidget::show()
     QVideoWidget widget(&object);
 
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
-    QVERIFY(object.testService->windowControl->winId() == 0);
 
     widget.show();
 
@@ -267,7 +266,7 @@ void tst_QVideoWidget::sizeHint()
     QtTestVideoObject object;
     QVideoWidget widget(&object);
 
-    QCOMPARE(widget.sizeHint(), QSize());
+    QVERIFY(widget.sizeHint().isEmpty());
 
     object.testService->windowControl->setNativeSize(size);
 

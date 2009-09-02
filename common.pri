@@ -65,13 +65,9 @@ symbian {
 unix: example|testcase: QMAKE_RPATHDIR += $$OUTPUT_DIR/build/$$SUBDIRPART/bin
 
 contains(QT_CONFIG, multimedia) {
-    for(p, QMAKE_INCDIR_QT) {
-        exists("$${p}/QtMultimedia/qabstractvideosurface.h"): CONFIG *= videosurface
-    }
-
     DEFINES += AUDIOSERVICES
 }
 
-!contains(CONFIG, videosurface): DEFINES += QT_NO_VIDEOSURFACE
+!contains(QT_CONFIG, multimedia): DEFINES *= QT_NO_MULTIMEDIA
 
 plugin: !isEmpty(PLUGIN_SUBDIR): DESTDIR = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/$$PLUGIN_SUBDIR

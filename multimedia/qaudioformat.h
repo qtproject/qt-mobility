@@ -32,33 +32,52 @@
 **
 ****************************************************************************/
 
-#include "qaudioencodecontrol.h"
-#include <QtCore/qstringlist.h>
+#ifndef QAUDIOFORMAT_H
+#define QAUDIOFORMAT_H
 
+#include <QtCore/qobject.h>
+#include <QtCore/qglobal.h>
+#include <QtCore/qshareddata.h>
 
-QAudioEncodeControl::QAudioEncodeControl(QObject *parent)
-    :QAbstractMediaControl(parent)
+#include "qmultimediaglobal.h"
+
+class QAudioFormatPrivate;
+class Q_MEDIA_EXPORT QAudioFormat
 {
-}
+public:
+    enum SampleType { Unknown, SignedInt, UnSignedInt, Float };
+    enum Endian { BigEndian = QSysInfo::BigEndian, LittleEndian = QSysInfo::LittleEndian };
 
-QAudioEncodeControl::~QAudioEncodeControl()
-{
-}
+    QAudioFormat();
+    QAudioFormat(const QAudioFormat &other);
+    ~QAudioFormat();
 
-QStringList QAudioEncodeControl::supportedEncodingOptions() const
-{
-    return QStringList();
-}
+    QAudioFormat& operator=(const QAudioFormat &other);
+    bool operator==(const QAudioFormat &other) const;
+    bool operator!=(const QAudioFormat &other) const;
 
-QVariant QAudioEncodeControl::encodingOption(const QString &name) const
-{
-    Q_UNUSED(name);
-    return QVariant();
-}
+    bool isNull() const;
 
-void QAudioEncodeControl::setEncodingOption(const QString &name, const QVariant &value)
-{
-    Q_UNUSED(name);
-    Q_UNUSED(value);
-}
+    void setFrequency(int frequency);
+    int frequency() const;
 
+    void setChannels(int channels);
+    int channels() const;
+
+    void setSampleSize(int sampleSize);
+    int sampleSize() const;
+
+    void setCodec(QString codec);
+    QString codec() const;
+
+    void setByteOrder(QAudioFormat::Endian byteOrder);
+    QAudioFormat::Endian byteOrder() const;
+
+    void setSampleType(QAudioFormat::SampleType sampleType);
+    QAudioFormat::SampleType sampleType() const;
+
+private:
+    QSharedDataPointer<QAudioFormatPrivate> d;
+};
+
+#endif  // QAUDIOFORMAT_H

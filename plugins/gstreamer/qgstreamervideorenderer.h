@@ -35,7 +35,7 @@
 #ifndef QGSTREAMERVIDEORENDERER_H
 #define QGSTREAMERVIDEORENDERER_H
 
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
 
 #include "qvideorenderercontrol.h"
 #include "qvideosurfacegstsink.h"

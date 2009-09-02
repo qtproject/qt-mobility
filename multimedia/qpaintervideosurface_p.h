@@ -46,7 +46,7 @@
 // We mean it.
 //
 
-#ifndef QT_NO_VIDEOSURFACE
+#ifndef QT_NO_MULTIMEDIA
 
 #include <QtCore/qsize.h>
 #include <QtGui/qimage.h>
