@@ -352,7 +352,7 @@ void QMessage::setCustomField(const QString &name, const QString &value)
     d_ptr->_customFields[name] = value;
 }
 
-QList<QString> QMessage::customFields() const
+QStringList QMessage::customFields() const
 {
     return d_ptr->_customFields.keys();
 }
