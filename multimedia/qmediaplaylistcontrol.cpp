@@ -48,12 +48,116 @@
     \sa QAbstractMediaService, QMediaPlayer
 */
 
-QMediaPlaylistControl::~QMediaPlaylistControl()
-{
-}
-
+/*!
+  Create a new playlist control object with the given \a parent.
+*/
 QMediaPlaylistControl::QMediaPlaylistControl(QObject *parent):
     QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
 {
 }
 
+/*!
+  Destroys the playlist control.
+*/
+QMediaPlaylistControl::~QMediaPlaylistControl()
+{
+}
+
+
+/*!
+  \fn QMediaPlaylistControl::playlistProvider() const
+
+  Returns the playlist used by this media player.
+*/
+
+/*!
+  \fn QMediaPlaylistControl::setPlaylistProvider(QMediaPlaylistProvider *playlist)
+
+  Set the playlist of this media player to \a mediaPlaylist.
+
+  In many cases it is possible just to use the playlist
+  constructed by player, but sometimes replacing the whole
+  playlist allows to avoid copyting of all the items bettween playlists.
+
+  Returns true if player can use this passed playlist; otherwise returns false.
+
+*/
+
+/*!
+  \fn QMediaPlaylistControl::currentPosition() const
+
+  Returns position of the current media source in the playlist.
+*/
+
+/*!
+  \fn QMediaPlaylistControl::setCurrentPosition(int position)
+
+  Jump to the item at the given \a position.
+*/
+
+/*!
+  \fn QMediaPlaylistControl::nextPosition(int steps) const
+
+  Returns the position of item, which were current after calling advance()
+  \a step times.
+
+  Returned value depends on the size of playlist, current position
+  and playback mode.
+
+  \sa previousPosition QMediaPlaylist::playbackMode
+*/
+
+/*!
+  \fn QMediaPlaylistControl::previousPosition(int steps) const
+
+  Returns the position of item, which were current after calling back()
+  \a step times.
+
+  \sa nextPosition QMediaPlaylist::playbackMode
+*/
+
+/*!
+  \fn QMediaPlaylistControl::advance()
+
+  Moves to the next item in playlist.
+*/
+
+/*!
+  \fn QMediaPlaylistControl::back()
+
+  Returns to the previous item in playlist.
+*/
+
+/*!
+  \fn QMediaPlaylistControl::playbackMode() const
+
+  Returns the playlist navigation mode.
+
+  \sa QMediaPlaylist::PlaybackMode
+*/
+
+/*!
+  \fn QMediaPlaylistControl::setPlaybackMode(QMediaPlaylist::PlaybackMode mode)
+
+  Sets the playback \a mode.
+
+  \sa QMediaPlaylist::PlaybackMode
+*/
+
+/*!
+  \fn QMediaPlaylistControl::playlistProviderChanged()
+
+  Signal emited when the playlist provider is changed.
+*/
+
+/*!
+  \fn QMediaPlaylistControl::playlistPositionChanged(int position)
+
+  Signal emited when the playlist position is changed.
+*/
+
+/*!
+  \fn QMediaPlaylistControl::playbackModeChanged(QMediaPlaylist::PlaybackMode mode)
+
+  Signal emited when the playback \a mode is changed.
+*/

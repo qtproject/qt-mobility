@@ -117,18 +117,28 @@ QAudioEncodeControl::~QAudioEncodeControl()
 /*!
   \fn QAudioEncodeControl::setBitrate(int)
 
-  Sets the
+  Sets the bitrate of encoded audio stream to \a value.
 */
 
 /*!
   \fn QAudioEncodeControl::quality() const
+
+  Returns the normalized audio quality parameter.
+
+  \sa QAudioEncodeControl::quality
 */
 
 /*!
-  \fn QAudioEncodeControl::setQuality(qreal)
+  \fn QAudioEncodeControl::setQuality(qreal value)
+
+  Set the quality of audio stream to \a value in range [0..100].
+
+  \sa QAudioEncodeControl::quality
 */
 
+
 /*!
+  Returns the list of codec specific audio encoding options.
 */
 QStringList QAudioEncodeControl::supportedEncodingOptions() const
 {
@@ -136,18 +146,20 @@ QStringList QAudioEncodeControl::supportedEncodingOptions() const
 }
 
 /*!
+   Returns value of audio encoding \a option.
 */
-QVariant QAudioEncodeControl::encodingOption(const QString &name) const
+QVariant QAudioEncodeControl::encodingOption(const QString &option) const
 {
-    Q_UNUSED(name);
+    Q_UNUSED(option);
     return QVariant();
 }
 
 /*!
+  Set the codec specific \a option to \a value.
 */
-void QAudioEncodeControl::setEncodingOption(const QString &name, const QVariant &value)
+void QAudioEncodeControl::setEncodingOption(const QString &option, const QVariant &value)
 {
-    Q_UNUSED(name);
+    Q_UNUSED(option);
     Q_UNUSED(value);
 }
 
