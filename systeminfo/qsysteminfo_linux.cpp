@@ -1203,56 +1203,58 @@ int QSystemDeviceInfoPrivate::batteryLevel() const
             foreach(QString dev, list) {
                 QHalDeviceInterface ifaceDevice(dev);
                 if (ifaceDevice.isValid()) {
-                    if(!ifaceDevice.getPropertyBool("battery.present") ){
+                    if(!ifaceDevice.getPropertyBool("battery.present")) {
                         return QSystemDeviceInfo::NoBatteryLevel;
                     } else {
-                        levelWhenFull = ifaceDevice.getPropertyInt("battery.charge_level.last_full");
-                        level = ifaceDevice.getPropertyInt("battery.charge_level.current");
+                        level = ifaceDevice.getPropertyInt("battery.charge_level.percentage");
+                        return level;
                     }
                 }
             }
         }
 #endif
-    }
-    QFile infofile("/proc/acpi/battery/BAT0/info");
-    if (!infofile.open(QIODevice::ReadOnly)) {
-     //   qWarning() << "Could not open /proc/acpi/battery/BAT0/info";
-        return QSystemDeviceInfo::NoBatteryLevel;
     } else {
-        QTextStream batinfo(&infofile);
-        QString line = batinfo.readLine();
-        while (!line.isNull()) {
-            if(line.contains("design capacity")) {
-                levelWhenFull = line.split(" ").at(1).trimmed().toFloat();
-                infofile.close();
-                break;
+        QFile infofile("/proc/acpi/battery/BAT0/info");
+        if (!infofile.open(QIODevice::ReadOnly)) {
+            //   qWarning() << "Could not open /proc/acpi/battery/BAT0/info";
+            return QSystemDeviceInfo::NoBatteryLevel;
+        } else {
+            QTextStream batinfo(&infofile);
+            QString line = batinfo.readLine();
+            while (!line.isNull()) {
+                if(line.contains("design capacity")) {
+                    levelWhenFull = line.split(" ").at(1).trimmed().toFloat();
+                    qWarning() << levelWhenFull;
+                    infofile.close();
+                    break;
+                }
+                line = batinfo.readLine();
             }
-            line = batinfo.readLine();
+            infofile.close();
         }
-        infofile.close();
-    }
 
-    QFile statefile("/proc/acpi/battery/BAT0/state");
-    if (!statefile.open(QIODevice::ReadOnly)) {
-   //     qWarning() << "Could not open /proc/acpi/battery/BAT0/state";
-        return QSystemDeviceInfo::NoBatteryLevel;
-    } else {
-        QTextStream batstate(&statefile);
-        QString line = batstate.readLine();
-        while (!line.isNull()) {
-            if(line.contains("remaining capacity")) {
-                level = line.split(" ").at(1).trimmed().toFloat();
-                statefile.close();
-                break;
+        QFile statefile("/proc/acpi/battery/BAT0/state");
+        if (!statefile.open(QIODevice::ReadOnly)) {
+            //     qWarning() << "Could not open /proc/acpi/battery/BAT0/state";
+            return QSystemDeviceInfo::NoBatteryLevel;
+        } else {
+            QTextStream batstate(&statefile);
+            QString line = batstate.readLine();
+            while (!line.isNull()) {
+                if(line.contains("remaining capacity")) {
+                    level = line.split(" ").at(1).trimmed().toFloat();
+                    qWarning() << level;
+                    statefile.close();
+                    break;
+                }
+                line = batstate.readLine();
             }
-            line = batstate.readLine();
+        }
+        if(level != 0 && levelWhenFull != 0) {
+            level = level / levelWhenFull * 100;
+            return level;
         }
     }
-    if(level != 0 && levelWhenFull != 0) {
-        level = level / levelWhenFull * 100;
-        return level;
-    }
-
     return 0;
 }
 
