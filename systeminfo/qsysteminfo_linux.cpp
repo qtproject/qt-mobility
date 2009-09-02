@@ -1203,8 +1203,11 @@ int QSystemDeviceInfoPrivate::batteryLevel() const
             foreach(QString dev, list) {
                 QHalDeviceInterface ifaceDevice(dev);
                 if (ifaceDevice.isValid()) {
-                    if(!ifaceDevice.getPropertyBool("battery.present")) {
-                        return QSystemDeviceInfo::NoBatteryLevel;
+                    if(!ifaceDevice.getPropertyBool("battery.present")
+                        || ifaceDevice.getPropertyString("battery.type") != "pda"
+                             || ifaceDevice.getPropertyString("battery.type") != "primary") {
+                        qWarning() << "returning 0 as this is not primary or pda battery";
+                        return 0;
                     } else {
                         level = ifaceDevice.getPropertyInt("battery.charge_level.percentage");
                         return level;
