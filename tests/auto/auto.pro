@@ -9,3 +9,8 @@ SUBDIRS = qgeocoordinate \
           qnmeapositioninfosource \
           qnmeapositioninfosource_realtime \
           qnmeapositioninfosource_sim 
+
+symbian {          
+    SUBDIRS += qgeopositioninfosource_s60 
+}
+

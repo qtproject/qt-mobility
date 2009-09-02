@@ -6,11 +6,9 @@ include (../../../common.pri)
 INCLUDEPATH += ../../../location
 
 # Input 
-HEADERS += ../qlocationtestutils_p.h \
-           ../testqgeopositioninfosource_p.h
+HEADERS += ../qlocationtestutils_p.h
 SOURCES += ../qlocationtestutils.cpp \
-           ../testqgeopositioninfosource.cpp \
-           tst_qgeopositioninfosource.cpp
+           tst_qgeopositioninfosource_s60.cpp
 
 LIBS += -lQtLocation
 

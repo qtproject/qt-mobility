@@ -30,20 +30,77 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "../testqgeopositioninfosource_p.h"
+#ifndef TESTQGEOPOSITIONINFOSOURCE_P_H
+#define TESTQGEOPOSITIONINFOSOURCE_P_H
 
-#include <qgeopositioninfosource.h>
+#include <QTest>
+#include <QObject>
 
-class tst_QGeoPositionInfoSource : public TestQGeoPositionInfoSource
+class QGeoPositionInfoSource;
+
+class TestQGeoPositionInfoSource : public QObject
 {
     Q_OBJECT
+
 protected:
-    QGeoPositionInfoSource *createTestSource()
-    {
-        return QGeoPositionInfoSource::createSource();
-    }
+    virtual QGeoPositionInfoSource *createTestSource() = 0;
+
+    // MUST be called by subclasses if they override respective test slots
+    void base_initTestCase();
+    void base_init();
+    void base_cleanup();
+    void base_cleanupTestCase();
+
+private:
+    QGeoPositionInfoSource *m_source;
+
+private slots:
+    void initTestCase();
+    void init();
+    void cleanup();
+    void cleanupTestCase();
+
+    void constructor_withParent();
+
+    void constructor_noParent();
+
+    void updateInterval();
+
+    void setPreferredPositioningMethods();
+    void setPreferredPositioningMethods_data();
+
+    void preferredPositioningMethods();
+
+    void createSource();
+
+    void setUpdateInterval();
+    void setUpdateInterval_data();
+
+    void lastKnownPosition();
+
+    void minimumUpdateInterval();
+
+    void startUpdates_testIntervals();
+
+    void startUpdates_testDefaultInterval();
+
+    void startUpdates_testZeroInterval();
+
+    void stopUpdates();
+
+    void stopUpdates_withoutStart();
+
+    void requestUpdate();
+    void requestUpdate_data();
+
+    void requestUpdate_validTimeout();
+
+    void requestUpdate_timeoutLessThanMinimumInterval();
+
+    void requestUpdate_repeatedCalls();
+
+    void requestUpdate_withUpdateInterval();
 };
 
 
-QTEST_MAIN(tst_QGeoPositionInfoSource)
-#include "tst_qgeopositioninfosource.moc"
+#endif
