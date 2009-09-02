@@ -79,7 +79,7 @@ QMediaPlaylistProvider::~QMediaPlaylistProvider()
 
   Returns true if playlist was loaded succesfully, otherwise returns false.
 */
-bool QMediaPlaylistProvider::load(const QString &location, const char *format)
+bool QMediaPlaylistProvider::load(const QUrl &location, const char *format)
 {
     Q_UNUSED(location);
     Q_UNUSED(format);
@@ -107,7 +107,7 @@ bool QMediaPlaylistProvider::load(QIODevice * device, const char *format)
 
   Returns true if playlist was saved succesfully, otherwise returns false.
   */
-bool QMediaPlaylistProvider::save(const QString &location, const char *format)
+bool QMediaPlaylistProvider::save(const QUrl &location, const char *format)
 {
     Q_UNUSED(location);
     Q_UNUSED(format);

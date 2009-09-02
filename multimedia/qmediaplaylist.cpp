@@ -43,6 +43,7 @@
 
 #include <QtCore/qlist.h>
 #include <QtCore/qfile.h>
+#include <QtCore/qurl.h>
 
 #include <qmediapluginloader_p.h>
 
@@ -303,7 +304,7 @@ bool QMediaPlaylistPrivate::writeItems(QMediaPlaylistWritter *writter)
 
   Returns true if playlist was loaded succesfully, otherwise returns false.
 */
-bool QMediaPlaylist::load(const QString &location, const char *format)
+bool QMediaPlaylist::load(const QUrl &location, const char *format)
 {
     Q_D(QMediaPlaylist);
     if (d->playlist()->load(location,format))
@@ -363,13 +364,13 @@ bool QMediaPlaylist::load(QIODevice * device, const char *format)
 
   Returns true if playlist was saved succesfully, otherwise returns false.
   */
-bool QMediaPlaylist::save(const QString &location, const char *format)
+bool QMediaPlaylist::save(const QUrl &location, const char *format)
 {
     Q_D(QMediaPlaylist);
     if (d->playlist()->save(location,format))
         return true;
 
-    QFile file(location);
+    QFile file(location.toLocalFile());
 
     if (file.open(QIODevice::WriteOnly | QIODevice::Truncate))
         return save(&file, format);
