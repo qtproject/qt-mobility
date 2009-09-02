@@ -46,7 +46,7 @@ QGstreamerVideoWidgetControl::QGstreamerVideoWidgetControl(QObject *parent)
     : QVideoWidgetControl(parent)
     , m_videoSink(0)
     , m_widget(new QWidget)
-{   
+{
     m_widget->installEventFilter(this);
 
     m_videoSink = gst_element_factory_make ("xvimagesink", NULL);
@@ -169,7 +169,7 @@ int QGstreamerVideoWidgetControl::brightness() const
 
     g_object_get(G_OBJECT(m_videoSink), "brightness", &brightness, NULL);
 
-    return brightness * 10;
+    return brightness / 10;
 }
 
 void QGstreamerVideoWidgetControl::setBrightness(int brightness)
@@ -185,7 +185,7 @@ int QGstreamerVideoWidgetControl::contrast() const
 
     g_object_get(G_OBJECT(m_videoSink), "contrast", &contrast, NULL);
 
-    return contrast * 10;
+    return contrast / 10;
 }
 
 void QGstreamerVideoWidgetControl::setContrast(int contrast)
@@ -201,7 +201,7 @@ int QGstreamerVideoWidgetControl::hue() const
 
     g_object_get(G_OBJECT(m_videoSink), "hue", &hue, NULL);
 
-    return hue * 10;
+    return hue / 10;
 }
 
 void QGstreamerVideoWidgetControl::setHue(int hue)
@@ -217,7 +217,7 @@ int QGstreamerVideoWidgetControl::saturation() const
 
     g_object_get(G_OBJECT(m_videoSink), "saturation", &saturation, NULL);
 
-    return saturation * 10;
+    return saturation / 10;
 }
 
 void QGstreamerVideoWidgetControl::setSaturation(int saturation)
