@@ -51,8 +51,6 @@ class QMediaPlaylistNavigator;
 class QGstreamerPlayerControl : public QMediaPlayerControl
 {
     Q_OBJECT
-    Q_PROPERTY(qint64 position READ position WRITE setPosition NOTIFY positionChanged)
-
 public:
     QGstreamerPlayerControl(QGstreamerPlayerSession *session, QObject *parent = 0);
     ~QGstreamerPlayerControl();
@@ -88,9 +86,6 @@ public Q_SLOTS:
 
     void setVolume(int volume);
     void setMuted(bool muted);
-
-signals:
-    void positionChanged(qint64 position);
 
 private:
     QGstreamerPlayerSession *m_session;
