@@ -42,8 +42,8 @@
 #include <QtGui>
 #include <QDesktopWidget>
 #include <QDebug>
-
-#include <QLibraryInfo>
+#include <QTimer>
+#include <QDir>
 
 #if !defined(QT_NO_DBUS)
 #include <qhalservice_p.h>
@@ -57,11 +57,6 @@
 #include <QDBusObjectPath>
 #include <QDBusPendingCall>
 #endif
-
-#include <QLocale>
-#include <QTimer>
-#include <QDir>
-#include <QTextStream>
 
 #include <locale.h>
 #include <sys/types.h>
