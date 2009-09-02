@@ -93,6 +93,7 @@ private:
     QContactManager* prepareModel(const QString& uri);
 
     Qt::HANDLE m_mainThreadId;
+    Qt::HANDLE m_progressSlotThreadId;
 };
 
 tst_QContactAsync::tst_QContactAsync()
@@ -1678,15 +1679,30 @@ void tst_QContactAsync::threadDelivery()
     QFETCH(QString, uri);
     QContactManager *cm = prepareModel(uri);
     m_mainThreadId = cm->thread()->currentThreadId();
+    m_progressSlotThreadId = m_mainThreadId;
 
     // now perform a fetch request and check that the progress is delivered to the correct thread.
     QContactFetchRequest *req = new QContactFetchRequest;
     req->setManager(cm);
     connect(req, SIGNAL(progress(QContactFetchRequest*,bool)), this, SLOT(progressReceived(QContactFetchRequest*, bool)));
     req->start();
+
+    int totalWaitTime = 0;
     while (req->status() != QContactAbstractRequest::Finished) {
-        QTest::qWait(200); // spin until done
+        // ensure that the progress signal was delivered to the main thread.
+        QCOMPARE(m_mainThreadId, m_progressSlotThreadId);
+
+        QTest::qWait(5); // spin until done
+        totalWaitTime += 5;
+
+        // break after 30 seconds.
+        if (totalWaitTime > 30000) {
+            break;
+        }
     }
+
+    // ensure that the progress signal was delivered to the main thread.
+    QCOMPARE(m_mainThreadId, m_progressSlotThreadId);
     delete req;
     delete cm;
 }
@@ -1694,8 +1710,7 @@ void tst_QContactAsync::threadDelivery()
 void tst_QContactAsync::progressReceived(QContactFetchRequest* request, bool appendOnly)
 {
     Q_UNUSED(appendOnly);
-    // ensure that the progress signal is being delivered to the main thread.
-    QCOMPARE(m_mainThreadId, request->thread()->currentThreadId());
+    m_progressSlotThreadId = request->thread()->currentThreadId();
 }
 
 void tst_QContactAsync::addManagers()
