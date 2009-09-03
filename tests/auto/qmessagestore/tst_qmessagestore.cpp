@@ -367,13 +367,14 @@ void tst_QMessageStore::testMessage()
     //QVERIFY(body.containerId().isValid());
 
     QCOMPARE(body.contentType().toLower(), QByteArray("text"));
-#if !defined(Q_OS_WIN)
-    // Not currently working for complicated reasons...
     QCOMPARE(body.contentSubType().toLower(), QByteArray("plain"));
+#if defined(Q_OS_WIN)
+    QCOMPARE(body.contentCharset().toLower(), QByteArray("utf-16"));
+#else
     QCOMPARE(body.contentCharset().toLower(), QByteArray("utf-8"));
+#endif
     QCOMPARE(body.contentAvailable(), true);
     QCOMPARE(body.decodedTextContent(), text);
-#endif
 
 #ifdef QMESSAGING_OPTIONAL
     QCOMPARE(message.customFields().toSet(), custom.keys().toSet());
@@ -385,16 +386,15 @@ void tst_QMessageStore::testMessage()
     QMessageIdList messageIds(QMessageStore::instance()->queryMessages());
     QVERIFY(messageIds.contains(messageId));
 
+#ifdef QMESSAGING_OPTIONAL
     QString replacementText("This is replacement text.");
 
-#ifdef QMESSAGING_OPTIONAL
     QMessageContentContainer replacement;
     replacement.setContentType("text");
     replacement.setContentSubType("fancy");
     replacement.setContentCharset("UTF-8");
     replacement.setContent(QByteArray(replacementText.toAscii()));
     message.replaceContent(bodyId, replacement);
-#endif
     body = message.container(bodyId);
 
     QCOMPARE(body.contentType().toLower(), QByteArray("text"));
@@ -402,5 +402,6 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(body.contentCharset().toLower(), QByteArray("utf-8"));
     QCOMPARE(body.contentAvailable(), true);
     QCOMPARE(body.decodedTextContent(), replacementText);
+#endif
 }
 

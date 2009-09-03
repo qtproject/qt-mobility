@@ -40,6 +40,24 @@
 #include <MAPIUtil.h>
 #include <qmessagestore.h>
 
+// As per http://support.microsoft.com/kb/816477
+#ifndef PR_MSG_EDITOR_FORMAT
+#define PR_MSG_EDITOR_FORMAT PROP_TAG( PT_LONG, 0x5909 )
+#define EDITOR_FORMAT_DONTKNOW ((ULONG)0)
+#define EDITOR_FORMAT_PLAINTEXT ((ULONG)1)
+#define EDITOR_FORMAT_HTML ((ULONG)2)
+#define EDITOR_FORMAT_RTF ((ULONG)3)
+#endif
+
+#ifndef PR_ATTACH_CONTENT_ID
+// This is not available in my SDK version...
+#define PR_ATTACH_CONTENT_ID PROP_TAG( PT_UNICODE, 0x3712 )
+#endif
+
+#ifndef PR_BODY_HTML
+#define PR_BODY_HTML PROP_TAG( PT_TSTRING, 0x1013 )
+#endif
+
 typedef QByteArray MapiRecordKey;
 
 class MapiEntryId : public QByteArray

@@ -521,6 +521,30 @@ void destroyAddressList(ADRLIST *list, QList<LPTSTR> &addresses)
     MAPIFreeBuffer(list);
 }
 
+bool setMapiProperty(IMAPIProp *object, ULONG tag, const QString &value)
+{
+    SPropValue prop = { 0 };
+    prop.ulPropTag = tag;
+    prop.Value.LPSZ = reinterpret_cast<LPWSTR>(const_cast<quint16*>(value.utf16()));
+    return HR_SUCCEEDED(HrSetOneProp(object, &prop));
+}
+
+bool setMapiProperty(IMAPIProp *object, ULONG tag, LONG value)
+{
+    SPropValue prop = { 0 };
+    prop.ulPropTag = tag;
+    prop.Value.l = value;
+    return HR_SUCCEEDED(HrSetOneProp(object, &prop));
+}
+
+bool setMapiProperty(IMAPIProp *object, ULONG tag, FILETIME value)
+{
+    SPropValue prop = { 0 };
+    prop.ulPropTag = tag;
+    prop.Value.ft = value;
+    return HR_SUCCEEDED(HrSetOneProp(object, &prop));
+}
+
 }
 
 bool QMessageStore::addMessage(QMessage *m)
@@ -551,67 +575,39 @@ bool QMessageStore::addMessage(QMessage *m)
                                 MAPIFreeBuffer(properties);
 
                                 // Set the message's properties
-                                {
-                                    QString subject(m->subject());
-                                    SPropValue prop = { 0 };
-                                    prop.ulPropTag = PR_SUBJECT;
-                                    prop.Value.LPSZ = reinterpret_cast<LPWSTR>(const_cast<quint16*>(subject.utf16()));
-                                    rv = HrSetOneProp(message, &prop);
-                                    if (HR_FAILED(rv)) {
-                                        qWarning() << "Unable to set subject in message.";
-                                    }
+                                if (!setMapiProperty(message, PR_SUBJECT, m->subject())) {
+                                    qWarning() << "Unable to set subject in message.";
                                 }
 
-                                {
-                                    SPropValue prop = { 0 };
-                                    prop.ulPropTag = PR_MESSAGE_FLAGS;
-                                    prop.Value.l = (MSGFLAG_UNSENT | MSGFLAG_UNMODIFIED | MSGFLAG_FROMME);
-                                    if (m->status() & QMessage::HasAttachments) {
-                                        prop.Value.l |= MSGFLAG_HASATTACH;
-                                    }
-                                    rv = HrSetOneProp(message, &prop);
-                                    if (HR_FAILED(rv)) {
-                                        qWarning() << "Unable to set flags in message.";
-                                    }
+                                LONG flags = (MSGFLAG_UNSENT | MSGFLAG_UNMODIFIED | MSGFLAG_FROMME);
+                                if (m->status() & QMessage::HasAttachments) {
+                                    flags |= MSGFLAG_HASATTACH;
+                                }
+                                if (!setMapiProperty(message, PR_MESSAGE_FLAGS, flags)) {
+                                    qWarning() << "Unable to set flags in message.";
                                 }
 
-                                {
-                                    QString emailAddress = m->from().recipient();
-                                    SPropValue prop = { 0 };
-                                    prop.ulPropTag = PR_SENDER_EMAIL_ADDRESS;
-                                    prop.Value.LPSZ = reinterpret_cast<LPWSTR>(const_cast<quint16*>(emailAddress.utf16()));
-                                    rv = HrSetOneProp(message, &prop);
-                                    if (HR_FAILED(rv)) {
-                                        qWarning() << "Unable to set sender address in message.";
-                                    }
+                                QString emailAddress = m->from().recipient();
+                                if (!setMapiProperty(message, PR_SENDER_EMAIL_ADDRESS, emailAddress)) {
+                                    qWarning() << "Unable to set sender address in message.";
                                 }
 
-                                {
-                                    QStringList headers;
-                                    foreach (const QByteArray &name, m->headerFields()) {
-                                        foreach (const QString &value, m->headerFieldValues(name)) {
-                                            // TODO: Do we need soft line-breaks?
-                                            headers.append(QString("%1: %2").arg(QString(name)).arg(value));
-                                        }
+                                QStringList headers;
+                                foreach (const QByteArray &name, m->headerFields()) {
+                                    foreach (const QString &value, m->headerFieldValues(name)) {
+                                        // TODO: Do we need soft line-breaks?
+                                        headers.append(QString("%1: %2").arg(QString(name)).arg(value));
                                     }
+                                }
+                                if (!headers.isEmpty()) {
                                     QString transportHeaders = headers.join("\r\n").append("\r\n\r\n");
-                                    SPropValue prop = { 0 };
-                                    prop.ulPropTag = PR_TRANSPORT_MESSAGE_HEADERS;
-                                    prop.Value.LPSZ = reinterpret_cast<LPWSTR>(const_cast<quint16*>(transportHeaders.utf16()));
-                                    rv = HrSetOneProp(message, &prop);
-                                    if (HR_FAILED(rv)) {
+                                    if (!setMapiProperty(message, PR_TRANSPORT_MESSAGE_HEADERS, transportHeaders)) {
                                         qWarning() << "Unable to set transport headers in message.";
                                     }
                                 }
 
-                                {
-                                    SPropValue prop = { 0 };
-                                    prop.ulPropTag = PR_CLIENT_SUBMIT_TIME;
-                                    prop.Value.ft = toFileTime(m->date());
-                                    rv = HrSetOneProp(message, &prop);
-                                    if (HR_FAILED(rv)) {
-                                        qWarning() << "Unable to set submit time in message.";
-                                    }
+                                if (!setMapiProperty(message, PR_CLIENT_SUBMIT_TIME, toFileTime(m->date()))) {
+                                    qWarning() << "Unable to set submit time in message.";
                                 }
 
                                 uint recipientCount(m->to().count() + m->cc().count() + m->bcc().count());
@@ -678,12 +674,14 @@ bool QMessageStore::addMessage(QMessage *m)
                                     if ((subType == "rtf") || (subType == "html")) {
                                         // TODO: non-plain storage
                                     } else {
+                                        // Mark this message as plain text
+                                        LONG textFormat(EDITOR_FORMAT_PLAINTEXT);
+                                        if (!setMapiProperty(message, PR_MSG_EDITOR_FORMAT, textFormat)) {
+                                            qWarning() << "Unable to set message editor format in message.";
+                                        }
+
                                         QString body(m->decodedTextContent());
-                                        SPropValue prop = { 0 };
-                                        prop.ulPropTag = PR_BODY;
-                                        prop.Value.LPSZ = reinterpret_cast<LPWSTR>(const_cast<quint16*>(body.utf16()));
-                                        rv = HrSetOneProp(message, &prop);
-                                        if (HR_FAILED(rv)) {
+                                        if (!setMapiProperty(message, PR_BODY, body)) {
                                             qWarning() << "Unable to set body in message.";
                                         }
                                     }

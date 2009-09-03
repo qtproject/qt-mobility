@@ -39,7 +39,10 @@
 #include "qmessageaccount_p.h"
 #include "qmessagesortkey_p.h"
 #include "qmessagefilterkey_p.h"
-#include <qdebug.h>
+
+#include <QDebug>
+#include <QTextCodec>
+
 #include <shlwapi.h>
 #include <shlguid.h>
 
@@ -288,6 +291,7 @@ MapiFolderPtr MapiFolder::nextSubFolder(QMessageStore::ErrorCode *lastError, con
                 if (isNewsGroup || isNewsGroupAnchor) {
                     // Doesn't contain messages...
                 }  else {
+                    // TODO: Filter out folders where PR_CONTAINER_CLASS != IPF.Note
                     result = store.openFolder(lastError, entryId);
                     break;
                 }
@@ -1049,19 +1053,17 @@ QMessageAddress createAddress(const QString &name, const QString &address)
 QByteArray readStream(QMessageStore::ErrorCode *lastError, IStream *is)
 {
     QByteArray result;
+
     STATSTG stg = { 0 };
     HRESULT rv = is->Stat(&stg, STATFLAG_NONAME);
     if (HR_SUCCEEDED(rv)) {
-        char *data = new char[stg.cbSize.LowPart];
+        ULONG sz = stg.cbSize.LowPart;
+        result.resize(sz);
         ULONG bytes = 0;
-        rv = is->Read(data, stg.cbSize.LowPart, &bytes);
-        if (HR_SUCCEEDED(rv)) {
-            result = QByteArray(data, bytes);
-        } else {
+        rv = is->Read(result.data(), sz, &bytes);
+        if (HR_FAILED(rv)) {
             *lastError = QMessageStore::ContentInaccessible;
         }
-
-        delete [] data;
     } else {
         *lastError = QMessageStore::ContentInaccessible;
     }
@@ -1108,6 +1110,27 @@ QByteArray contentTypeFromExtension(const QString &extension)
             delete [] ext;
             associations->Release();
         }
+    }
+
+    return result;
+}
+
+QString decodeContent(const QByteArray &data, const QByteArray &charset, int length = -1)
+{
+    QString result;
+
+    QTextCodec *codec = QTextCodec::codecForName(charset);
+    if (codec) {
+        if (length == -1) {
+            // Convert the entirety
+            result = codec->toUnicode(data);
+        } else {
+            // Convert only the first length bytes
+            QTextCodec::ConverterState state;
+            result = codec->toUnicode(data, length, &state);
+        }
+    } else {
+        qWarning() << "No codec for charset:" << charset;
     }
 
     return result;
@@ -1212,9 +1235,12 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
     QByteArray messageBody;
     QByteArray bodySubType;
     bool hasAttachments = false;
+    bool rtfInSync = false;
+    LONG contentFormat = EDITOR_FORMAT_DONTKNOW;
 
-    SizedSPropTagArray(10, msgCols) = {10, { PR_RECORD_KEY, 
+    SizedSPropTagArray(13, msgCols) = {13, { PR_RECORD_KEY,
                                              PR_MESSAGE_FLAGS, 
+                                             PR_MSG_STATUS,
                                              PR_SENDER_NAME, 
                                              PR_SENDER_EMAIL_ADDRESS, 
                                              PR_CLIENT_SUBMIT_TIME, 
@@ -1222,6 +1248,8 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
                                              PR_TRANSPORT_MESSAGE_HEADERS, 
                                              PR_HASATTACH,
                                              PR_SUBJECT,
+                                             PR_MSG_EDITOR_FORMAT,
+                                             PR_RTF_IN_SYNC,
 #ifdef _WIN32_WCE
                                              PR_CONTENT_LENGTH
 #else
@@ -1237,47 +1265,61 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
         QMessage::StatusFlags flags(0);
 
         for (ULONG n = 0; n < count; ++n) {
-            switch (properties[n].ulPropTag) {
+            SPropValue &prop(properties[n]);
+
+            switch (prop.ulPropTag) {
             case PR_MESSAGE_FLAGS:
-                if (properties[n].Value.ul & MSGFLAG_READ) {
+                if (prop.Value.ul & MSGFLAG_READ) {
                     flags |= QMessage::Read;
                 }
-                result.setStatus(flags);
+                break;
+            case PR_MSG_STATUS:
+                if (prop.Value.l & (MSGSTATUS_DELMARKED | MSGSTATUS_REMOTE_DELETE)) {
+                    flags |= QMessage::Removed;
+                }
                 break;
             case PR_SENDER_NAME:
-                senderName = QStringFromLpctstr(properties[n].Value.LPSZ);
+                senderName = QStringFromLpctstr(prop.Value.LPSZ);
                 break;
             case PR_SENDER_EMAIL_ADDRESS:
-                senderAddress = QStringFromLpctstr(properties[n].Value.LPSZ);
+                senderAddress = QStringFromLpctstr(prop.Value.LPSZ);
                 break;
             case PR_CLIENT_SUBMIT_TIME:
-                result.setDate(fromFileTime(properties[n].Value.ft));
+                result.setDate(fromFileTime(prop.Value.ft));
                 break;
             case PR_MESSAGE_DELIVERY_TIME:
-                result.setReceivedDate(fromFileTime(properties[n].Value.ft));
+                result.setReceivedDate(fromFileTime(prop.Value.ft));
                 break;
             case PR_TRANSPORT_MESSAGE_HEADERS:
-                foreach (const StringPair &pair, decomposeHeaders(QStringFromLpctstr(properties[n].Value.LPSZ))) {
+                foreach (const StringPair &pair, decomposeHeaders(QStringFromLpctstr(prop.Value.LPSZ))) {
                     result.appendHeaderField(pair.first.toAscii(), pair.second);
                 }
                 break;
             case PR_SUBJECT:
-                result.setSubject(QStringFromLpctstr(properties[n].Value.LPSZ));
+                result.setSubject(QStringFromLpctstr(prop.Value.LPSZ));
                 break;
             case PR_HASATTACH:
-                hasAttachments = (properties[n].Value.b != FALSE);
+                hasAttachments = (prop.Value.b != FALSE);
+                break;
+            case PR_MSG_EDITOR_FORMAT:
+                contentFormat = prop.Value.l;
+                break;
+            case PR_RTF_IN_SYNC:
+                rtfInSync = (prop.Value.b != FALSE);;
                 break;
 #ifdef _WIN32_WCE
             case PR_CONTENT_LENGTH:
 #else
             case PR_MESSAGE_SIZE:
 #endif
-                QMessagePrivate::setSize(result, properties[n].Value.ul);
+                QMessagePrivate::setSize(result, prop.Value.ul);
                 break;
             default:
                 break;
             }
         }
+
+        result.setStatus(flags);
 
         if (!senderName.isEmpty() || !senderAddress.isEmpty()) {
             result.setFrom(createAddress(senderName, senderAddress));
@@ -1375,31 +1417,110 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
         }
     }
 
-    // See if this message has HTML body (encoded in RTF)
     IStream *is(0);
-    rv = message->OpenProperty(PR_RTF_COMPRESSED, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
-    if (HR_SUCCEEDED(rv)) {
-        IStream *decompressor(0);
-        if (WrapCompressedRTFStream(is, 0, &decompressor) == S_OK) {
-            ULONG bytes = 0;
-            char buffer[BUFSIZ] = { 0 };
-            do {
-                decompressor->Read(buffer, BUFSIZ, &bytes);
-                messageBody.append(buffer, bytes);
-            } while (bytes == BUFSIZ);
 
-            decompressor->Release();
-
-            // The RTF may contain HTML - parse that here?
-            bodySubType = "rtf";
-        } else {
-            *lastError = QMessageStore::ContentInaccessible;
-        }
-    } else {
-        // Fall back to a text body
+    if (contentFormat == EDITOR_FORMAT_PLAINTEXT) {
         rv = message->OpenProperty(PR_BODY, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
         if (HR_SUCCEEDED(rv)) {
             messageBody = readStream(lastError, is);
+            bodySubType = "plain";
+        }
+    } else if (contentFormat == EDITOR_FORMAT_HTML) {
+        // See if there is a body HTML property
+        rv = message->OpenProperty(PR_BODY_HTML, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
+        if (HR_SUCCEEDED(rv)) {
+            messageBody = readStream(lastError, is);
+            bodySubType = "html";
+        }
+    }
+
+    if (bodySubType.isEmpty()) {
+        if (!rtfInSync) {
+            // See if we need to sync the RTF
+            SPropValue *prop;
+            rv = HrGetOneProp(mapiStore->store(), PR_STORE_SUPPORT_MASK, &prop);
+            if (HR_SUCCEEDED(rv)) {
+                if ((prop->Value.ul & STORE_RTF_OK) == 0) {
+                    BOOL updated(FALSE);
+                    rv = RTFSync(message, RTF_SYNC_BODY_CHANGED, &updated);
+                    if (HR_SUCCEEDED(rv)) {
+                        if (updated) {
+                            if (HR_FAILED(message->SaveChanges(0))) {
+                                qWarning() << "Unable to save changes after synchronizing RTF.";
+                            }
+                        }
+                    } else {
+                        qWarning() << "Unable to synchronize RTF.";
+                    }
+                }
+
+                MAPIFreeBuffer(prop);
+            } else {
+                qWarning() << "Unable to query store support mask.";
+            }
+        }
+
+        // Either the body is in RTF, or we need to read the RTF to know that it is text...
+        rv = message->OpenProperty(PR_RTF_COMPRESSED, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
+        if (HR_SUCCEEDED(rv)) {
+            IStream *decompressor(0);
+            if (WrapCompressedRTFStream(is, 0, &decompressor) == S_OK) {
+                ULONG bytes = 0;
+                char buffer[BUFSIZ] = { 0 };
+                do {
+                    decompressor->Read(buffer, BUFSIZ, &bytes);
+                    messageBody.append(buffer, bytes);
+                } while (bytes == BUFSIZ);
+
+                decompressor->Release();
+
+                if (contentFormat == EDITOR_FORMAT_DONTKNOW) {
+                    // Inspect the message content to see if we can tell what is in it
+                    QString initialText = decodeContent(messageBody, "utf-16", 256);
+                    if (!initialText.isEmpty()) {
+                        if (initialText.indexOf("\\fromtext") != -1) {
+                            // This message originally contained text
+                            contentFormat = EDITOR_FORMAT_PLAINTEXT;
+
+                            // See if we can get the plain text version instead
+                            IStream *ts(0);
+                            rv = message->OpenProperty(PR_BODY, &IID_IStream, STGM_READ, 0, (IUnknown**)&ts);
+                            if (HR_SUCCEEDED(rv)) {
+                                messageBody = readStream(lastError, ts);
+                                bodySubType = "plain";
+
+                                ts->Release();
+                            } else {
+                                qWarning() << "Unable to prefer plain text body.";
+                            }
+                        } else if (initialText.indexOf("\\fromhtml1") != -1) {
+                            // This message originally contained text
+                            contentFormat = EDITOR_FORMAT_HTML;
+                        }
+                    }
+                }
+
+                if (bodySubType.isEmpty()) {
+                    if (contentFormat == EDITOR_FORMAT_PLAINTEXT) {
+                        // Attempt to extract the plain text from the RTF
+                        qDebug() << "extracting plain text";
+                    } else if (contentFormat == EDITOR_FORMAT_HTML) {
+                        // Attempt to extract the HTML from the RTF
+                        qDebug() << "extracting html";
+                    }
+                }
+
+                if (bodySubType.isEmpty()) {
+                    // I guess we must have RTF
+                    bodySubType = "rtf";
+                }
+            } else {
+                *lastError = QMessageStore::ContentInaccessible;
+                qWarning() << "Unable to decompress RTF";
+                bodySubType = "plain";
+            }
+        } else {
+            qWarning() << "Unable to open message body as compressed RTF";
             bodySubType = "plain";
         }
     }
@@ -1412,21 +1533,18 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
         return result;
     }
 
-#ifndef PR_ATTACH_CONTENT_ID
-// This is not available in my SDK version...
-#define PR_ATTACH_CONTENT_ID PROP_TAG( PT_UNICODE, 0x3712 )
-#endif
-
     if (!hasAttachments) {
         // Make the body the entire content of the message
         result.setContentType("text");
         result.setContentSubType(bodySubType);
+        result.setContentCharset(QByteArray("utf-16"));
         result.setContent(messageBody);
     } else {
         // Add the message body data as the first part
         QMessageContentContainer bodyPart;
         bodyPart.setContentType("text");
         bodyPart.setContentSubType(bodySubType);
+        bodyPart.setContentCharset(QByteArray("utf-16"));
         bodyPart.setContent(messageBody);
 
         result.setContentType("multipart");
