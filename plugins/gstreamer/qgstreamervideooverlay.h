@@ -64,6 +64,12 @@ public:
 
     QSize nativeSize() const;
 
+    QVideoWidget::AspectRatio aspectRatio() const;
+    void setAspectRatio(QVideoWidget::AspectRatio ratio);
+
+    QSize customAspectRatio() const;
+    void setCustomAspectRatio(const QSize &customRatio);
+
     void repaint();
 
     int brightness() const;
@@ -86,8 +92,13 @@ private slots:
     void surfaceFormatChanged();
 
 private:
+    void setScaledDisplayRect();
+
     QX11VideoSurface *m_surface;
     GstElement *m_videoSink;
+    QVideoWidget::AspectRatio m_aspectRatioMode;
+    QRect m_displayRect;
+    QSize m_aspectRatio;
     bool m_fullscreen;
 };
 

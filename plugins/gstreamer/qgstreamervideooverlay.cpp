@@ -43,6 +43,7 @@ QGstreamerVideoOverlay::QGstreamerVideoOverlay(QObject *parent)
     : QVideoWindowControl(parent)
     , m_surface(new QX11VideoSurface)
     , m_videoSink(reinterpret_cast<GstElement*>(QVideoSurfaceGstSink::createSink(m_surface)))
+    , m_aspectRatioMode(QVideoWidget::AspectRatioAuto)
     , m_fullscreen(false)
 {
     if (m_videoSink) {
@@ -74,12 +75,38 @@ void QGstreamerVideoOverlay::setWinId(WId id)
 
 QRect QGstreamerVideoOverlay::displayRect() const
 {
-    return m_surface->displayRect();
+    return m_displayRect;
 }
 
 void QGstreamerVideoOverlay::setDisplayRect(const QRect &rect)
 {
-    m_surface->setDisplayRect(rect);
+    m_displayRect = rect;
+
+    setScaledDisplayRect();
+}
+
+QVideoWidget::AspectRatio QGstreamerVideoOverlay::aspectRatio() const
+{
+    return m_aspectRatioMode;
+}
+
+void QGstreamerVideoOverlay::setAspectRatio(QVideoWidget::AspectRatio ratio)
+{
+    m_aspectRatioMode = ratio;
+
+    setScaledDisplayRect();
+}
+
+QSize QGstreamerVideoOverlay::customAspectRatio() const
+{
+    return m_aspectRatio;
+}
+
+void QGstreamerVideoOverlay::setCustomAspectRatio(const QSize &customRatio)
+{
+    m_aspectRatio = customRatio;
+
+    setScaledDisplayRect();
 }
 
 void QGstreamerVideoOverlay::repaint()
@@ -161,10 +188,40 @@ GstElement *QGstreamerVideoOverlay::videoSink()
 
 void QGstreamerVideoOverlay::surfaceFormatChanged()
 {
-    QVideoWindowControl::setBrightness(m_surface->brightness());
-    QVideoWindowControl::setContrast(m_surface->contrast());
-    QVideoWindowControl::setHue(m_surface->hue());
-    QVideoWindowControl::setSaturation(m_surface->saturation());
+    setScaledDisplayRect();
 
     emit nativeSizeChanged();
+}
+
+void QGstreamerVideoOverlay::setScaledDisplayRect()
+{
+    switch (m_aspectRatioMode) {
+    case QVideoWidget::AspectRatioAuto:
+        {
+            QSize size = m_surface->surfaceFormat().viewport().size();
+
+            size.scale(m_displayRect.size(), Qt::KeepAspectRatio);
+
+            QRect rect(QPoint(0, 0), size);
+            rect.moveCenter(m_displayRect.center());
+
+            m_surface->setDisplayRect(rect);
+        }
+        break;
+    case QVideoWidget::AspectRatioWidget:
+        m_surface->setDisplayRect(m_displayRect);
+        break;
+    case QVideoWidget::AspectRatioCustom:
+        {
+            QSize size = m_aspectRatio;
+
+            size.scale(m_surface->surfaceFormat().viewport().size(), Qt::KeepAspectRatio);
+
+            QRect rect(QPoint(0, 0), size);
+            rect.moveCenter(m_displayRect.center());
+
+            m_surface->setDisplayRect(rect);
+        }
+        break;
+    };
 }

@@ -40,6 +40,7 @@ QWmpVideoOverlay::QWmpVideoOverlay(IOleObject *object, QWmpPlayerService *servic
     : m_service(service)
     , m_object(object)
     , m_inPlaceObject(0)
+    , m_aspectRatioMode(QVideoWidget::AspectRatioAuto)
     , m_enabled(false)
 {
     HRESULT hr;
@@ -140,6 +141,25 @@ void QWmpVideoOverlay::setNativeSize(const QSize &size)
 
         emit nativeSizeChanged();
     }
+}
+
+QVideoWidget::AspectRatio QWmpVideoOverlay::aspectRatio() const
+{
+    return m_aspectRatioMode;
+}
+
+void QWmpVideoOverlay::setAspectRatio(QVideoWidget::AspectRatio ratio)
+{
+    m_aspectRatioMode = ratio;
+}
+
+QSize QWmpVideoOverlay::customAspectRatio() const
+{
+    return QSize();
+}
+
+void QWmpVideoOverlay::setCustomAspectRatio(const QSize &)
+{
 }
 
 void QWmpVideoOverlay::repaint()

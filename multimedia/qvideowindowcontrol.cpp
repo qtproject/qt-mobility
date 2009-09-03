@@ -117,6 +117,30 @@ QVideoWindowControl::~QVideoWindowControl()
 */
 
 /*!
+    \fn QVideoWindowControl::aspectRatio() const
+
+    Returns the aspect ratio policy for scaling the video.
+*/
+
+/*!
+    \fn QVideoWindowControl::setAspectRatio(QVideoWidget::AspectRatio ratio)
+
+    Sets the aspect \a ratio policy for scaling the video.
+*/
+
+/*!
+    \fn QVideoWindowControl::customAspectRatio() const
+
+    Returns the a custom aspect ratio used to scale the video.
+*/
+
+/*!
+    \fn QVideoWindowControl::setCustomAspectRatio(const QSize &ratio)
+
+    Sets a custom aspect \a ratio used to scale the video.
+*/
+
+/*!
     \fn QVideoWindowControl::brightness() const
 
     Returns the brightness adjustment applied to a video overlay.

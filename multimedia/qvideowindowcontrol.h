@@ -36,6 +36,7 @@
 #define QVIDEOWINDOWCONTROL_H
 
 #include "qabstractmediacontrol.h"
+#include "qvideowidget.h"
 
 #include <QtGui/qwidget.h>
 
@@ -58,6 +59,12 @@ public:
     virtual void repaint() = 0;
 
     virtual QSize nativeSize() const = 0;
+
+    virtual QVideoWidget::AspectRatio aspectRatio() const = 0;
+    virtual void setAspectRatio(QVideoWidget::AspectRatio ratio) = 0;
+
+    virtual QSize customAspectRatio() const = 0;
+    virtual void setCustomAspectRatio(const QSize &customRatio) = 0;
 
     virtual int brightness() const = 0;
     virtual void setBrightness(int brightness) = 0;
