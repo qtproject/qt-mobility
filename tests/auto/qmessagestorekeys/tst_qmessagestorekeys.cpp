@@ -826,7 +826,7 @@ void tst_QMessageStoreKeys::testFolderFilterKey_data()
         << QMessageFolderIdList();
 
     QTest::newRow("path inclusion 1")
-        << QMessageFolderFilterKey::path("oot", QMessageDataComparator::Includes) 
+        << QMessageFolderFilterKey::path("ess", QMessageDataComparator::Includes) 
         << ( QMessageFolderIdList() << folderIds[0] )
         << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] ) + standardFolderIds;
 
@@ -851,7 +851,7 @@ void tst_QMessageStoreKeys::testFolderFilterKey_data()
         << QMessageFolderIdList();
 
     QTest::newRow("path exclusion 1")
-        << QMessageFolderFilterKey::path("oot", QMessageDataComparator::Excludes) 
+        << QMessageFolderFilterKey::path("ess", QMessageDataComparator::Excludes) 
         << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] ) + standardFolderIds
         << ( QMessageFolderIdList() << folderIds[0] );
 
