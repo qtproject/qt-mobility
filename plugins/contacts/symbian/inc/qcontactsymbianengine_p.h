@@ -42,7 +42,9 @@
 #include <cntitem.h>
 
 #include "qtcontactsglobal.h"
-#include "qcontactfieldmap.h"
+
+
+#include "transformcontact.h"
 
 //remember to remove this in the code and just return a normal list
 //typedef QList<QUniqueId> QUniqueIdIterator;
@@ -136,8 +138,8 @@ private:
 	
 	
 private:
-	QContactFieldMap m_fieldMap;
 	CContactDatabase* m_contactDatabase;
+	TransformContact* m_transformContact;
 };
 
 #endif

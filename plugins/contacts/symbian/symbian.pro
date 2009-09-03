@@ -30,11 +30,14 @@ symbian: {
   		inc/qcontactsymbianbackend.h \
       inc/qcontactsymbianengine_p.h \
       inc/qcontactfieldmap.h \
-      inc/qfieldmapping.h
+      inc/qfieldmapping.h \
+      inc/transformcontact.h
+      
   SOURCES += \
   		src/qcontactsymbianbackend.cpp \
   		src/qcontactsymbianengine_p.cpp \
-      src/qcontactfieldmap.cpp
+      src/qcontactfieldmap.cpp \
+      src/transformcontact.cpp
       
   LIBS += \
   				-lcntmodel \
