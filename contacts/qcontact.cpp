@@ -102,6 +102,20 @@ bool QContact::isEmpty() const
     return label.label().isEmpty();
 }
 
+/*!
+ * Removes all details of the contact.
+ * This function does not modify the id or group membership of the contact.
+ * Calling isEmpty() after calling this function will return true.
+ */
+void QContact::clearDetails()
+{
+    QContactDisplayLabel dl = displayLabel();
+    dl.setLabel(QString());
+    dl.setSynthesised(true);
+    d->m_details.clear();
+    d->m_details.insert(0, dl);
+}
+
 /*! Replace the contents of this QContact with \a other */
 QContact& QContact::operator=(const QContact& other)
 {

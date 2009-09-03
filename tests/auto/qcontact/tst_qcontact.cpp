@@ -311,6 +311,20 @@ void tst_QContact::details()
     c.saveDetail(&four);
     QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 2);
     QVERIFY(!four.values().isEmpty()); // an empty qstring is not invalid; make sure it exists in the detail.
+
+    // ensure that clearing a contact's details works correctly
+    c.setDisplayLabel("test");
+    QVERIFY(!c.displayLabel().isSynthesised());
+    QCOMPARE(c.displayLabel().label(), QString("test"));
+    QVERIFY(c.details().size() > 0);
+    QVERIFY(!c.isEmpty());
+    QUniqueId oldId = c.id();
+    c.clearDetails();
+    QVERIFY(c.details().size() == 1); // always has a display label.
+    QCOMPARE(c.displayLabel().label(), QString());
+    QVERIFY(c.displayLabel().isSynthesised());
+    QVERIFY(c.isEmpty());
+    QCOMPARE(c.id(), oldId); // id shouldn't change.
 }
 
 void tst_QContact::actions()

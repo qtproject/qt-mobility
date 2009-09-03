@@ -94,6 +94,7 @@ public:
 
     /* Is this an empty contact? */
     bool isEmpty() const;
+    void clearDetails();
 
     /* Access details of particular type or which support a particular action */
     QContactDetail detail(const QString& definitionId) const;
