@@ -1233,17 +1233,8 @@ bool QSystemScreenSaverPrivate::setScreenSaverEnabled(bool state)
 {
     if(screenSaverSecure)
         return false;
-    QString save =  "0";
-    QSettings screenSettings(settingsPath, QSettings::NativeFormat);
-    if(state ) {
-        save =  "1";
-        screenSettings.setValue("SCRNSAVE.EXE",  screenPath);
-    } else {
-        screenSettings.remove("SCRNSAVE.EXE");
-    }
 
-    screenSettings.setValue("ScreenSaveActive", save);
-    return screenSettings.value("ScreenSaveActive").toString() == save;
+    return SystemParametersInfo(SPI_SETSCREENSAVEACTIVE,state,0,SPIF_SENDWININICHANGE);
 }
 
 bool QSystemScreenSaverPrivate::setScreenBlankingEnabled(bool state)
