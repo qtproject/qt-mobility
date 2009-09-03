@@ -65,9 +65,9 @@ symbian {
 unix: example|testcase: QMAKE_RPATHDIR += $$OUTPUT_DIR/build/$$SUBDIRPART/bin
 
 contains(QT_CONFIG, multimedia) {
-    DEFINES += AUDIOSERVICES
+    QT += multimedia
+} else {
+    DEFINES *= QT_NO_MULTIMEDIA
 }
-
-!contains(QT_CONFIG, multimedia): DEFINES *= QT_NO_MULTIMEDIA
 
 plugin: !isEmpty(PLUGIN_SUBDIR): DESTDIR = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/$$PLUGIN_SUBDIR

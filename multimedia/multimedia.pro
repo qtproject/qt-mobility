@@ -108,8 +108,6 @@ SOURCES = qabstractmediacontrol.cpp \
     qmediapluginloader.cpp
 
 contains(QT_CONFIG, multimedia) {
-    QT += multimedia
-
     HEADERS += \
         qpaintervideosurface_p.h \
         qvideorenderercontrol.h
@@ -117,8 +115,7 @@ contains(QT_CONFIG, multimedia) {
     SOURCES += \
         qpaintervideosurface.cpp \
         qvideorenderercontrol.cpp
-}
-else {
+} else {
     HEADERS += qaudioformat.h
     SOURCES += qaudioformat.cpp
 }

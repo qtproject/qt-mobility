@@ -5,8 +5,6 @@ INCLUDEPATH += $$PWD/../../multimedia
 
 include(../../common.pri)
 
-contains(QT_CONFIG, multimedia) QT += multimedia
-
 LIBS += -lQtMedia
 
 HEADERS = cameracapture.h
