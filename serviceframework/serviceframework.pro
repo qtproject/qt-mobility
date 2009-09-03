@@ -40,6 +40,6 @@ SOURCES +=  servicemetadata.cpp \
 
 
 headers.files = $$PUBLIC_HEADERS
-headers.path = $$OUTPUT_DIR/include
+headers.path = $$QT_MOBILITY_INCLUDE
 INSTALLS+=headers
 #build_pass:ALL_DEPS += install_headers

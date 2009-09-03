@@ -1,0 +1,5 @@
+INCLUDEPATH += $${MOBILITY_INCLUDE}
+
+contains(MOBILITY, bearer) {
+    qtAddLibrary(QtBearer)
+}

@@ -1,0 +1,121 @@
+#!/bin/sh
+# the name of this script
+relconf=`basename $0`
+# the directory of this script is the "source tree"
+relpath=`dirname $0`
+relpath=`(cd "$relpath"; /bin/pwd)`
+QT_MOBILITY_PREFIX=$relpath/build
+QT_MOBILITY_INCLUDE=
+QT_MOBILITY_LIB=
+QT_MOBILITY_BIN=
+BUILD_UNITTESTS=
+BUILD_EXAMPLES=
+RELEASEMODE=
+
+usage() 
+{
+    echo "Usage: configure [-prefix <dir>] [headerdir <dir>] [libdir <dir>]"
+    echo "                 [-bindir <dir>] [-tests] [-examples]"
+    echo
+    echo "Options:"
+    echo
+    echo "-prefix <dir> ..... This will install everything relative to <dir>"
+    echo "                    (default prefix: $relpath/install)"
+    echo "-headerdir <dir> .. Header files will be installed to <dir>"
+    echo "                    (default prefix: PREFIX/include)"
+    echo "-libdir <dir> ..... Libraries will be installed to <dir>"
+    echo "                    (default PREFIX/lib)"
+    echo "-bindir <dir> ..... Executables will be installed to <dir>"
+    echo "                    (default PREFIX/bin)"
+    echo "-debug ............ Build with debugging symbols"
+    echo "-release .......... Build without debugging symbols"
+    echo "-tests ............ Build unit tests (not build by default)"
+    echo "-examples ......... Build example applications"
+
+    
+    rm config.in
+    exit    
+}
+
+echo "CONFIG += silent"  > config.in
+
+while [ "$#" -gt 0 ]; do
+    case "$1" in 
+        -h|-help|--help)
+            usage
+            ;;
+        -includedir)
+            QT_MOBILITY_INCLUDE="$2"
+            shift
+            ;;
+        -libdir)
+            QT_MOBILITY_LIB="$2"
+            shift
+            ;;
+        --prefix|-prefix)
+            QT_MOBILITY_PREFIX="$2"
+            shift
+            ;;
+        -bindir)
+            QT_MOBILITY_BIN="$2"
+            shift
+            ;;
+        -tests)
+            BUILD_UNITTESTS="yes"
+            ;;
+        -examples)
+            BUILD_EXAMPLES="yes"
+            ;;
+        -debug)
+            RELEASEMODE=debug
+            ;;
+        -release)
+            RELEASEMODE=debug
+            ;;
+        *)  usage
+
+            ;;
+    esac
+    shift
+done
+
+if [ -z "$RELEASEMODE" ]; then
+    RELEASEMODE="debug"
+fi
+echo "CONFIG += $RELEASEMODE" >> config.in
+
+
+echo "QT_MOBILITY_PREFIX = $QT_MOBILITY_PREFIX" >> config.in
+echo "target.path = $QT_MOBILITY_PREFIX" >> config.in
+
+if [ -z "$QT_MOBILITY_INCLUDE" ]; then
+    QT_MOBILITY_INCLUDE="$QT_MOBILITY_PREFIX/include"
+fi
+echo "QT_MOBILITY_INCLUDE = $QT_MOBILITY_INCLUDE" >> config.in
+
+if [ -z "$QT_MOBILITY_LIB" ]; then
+    QT_MOBILITY_LIB="$QT_MOBILITY_PREFIX/lib"
+fi
+echo "QT_MOBILITY_LIB = $QT_MOBILITY_LIB" >> config.in
+
+if [ -z "$QT_MOBILITY_BIN" ]; then
+    QT_MOBILITY_BIN="$QT_MOBILITY_PREFIX/bin"
+fi
+echo "QT_MOBILITY_BIN = $QT_MOBILITY_BIN" >> config.in
+
+if [ -z "$BUILD_UNITTESTS" ]; then
+    echo "build_unit_tests = no" >> config.in
+else
+    echo "build_unit_tests = yes" >> config.in
+fi
+
+if [ -z "$BUILD_EXAMPLES" ]; then
+    echo "build_examples = no" >> config.in
+else
+    echo "build_examples = yes" >> config.in
+fi
+
+mv config.in config.pri
+
+echo "Running qmake..."
+qmake -recursive 

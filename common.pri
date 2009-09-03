@@ -4,7 +4,8 @@
 #
 ######################################################################
 
-CONFIG += debug_and_release build_all
+#CONFIG += debug_and_release build_all
+include(config.pri)
 
 # On win32 and mac, debug and release libraries are named differently.
 # We must follow the debug and release settings Qt was compiled with:
@@ -17,20 +18,26 @@ win32|mac {
     }
 }
 
-CONFIG(debug, debug|release) {
-    SUBDIRPART = Debug
-} else {
-    SUBDIRPART = Release
-}
+SUBDIRPART = .objects
+#CONFIG(debug, debug|release) {
+#    SUBDIRPART = Debug
+#} else {
+#    SUBDIRPART = Release
+#}
 
 # Figure out the root of where stuff should go (this could be done via configure)
 OUTPUT_DIR = $$PWD
+isEmpty(target.path) {
+    INSTALL_DIR = $$PWD
+} else {
+    INSTALL_DIR = $${QT_MOBILITY_PREFIX}
+}
 SOURCE_DIR = $$PWD
 
 #test whether we have a unit test
 !testcase {
     OBJECTS_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET
-    DESTDIR = $$OUTPUT_DIR/build/$$SUBDIRPART/bin
+    DESTDIR = $$INSTALL_DIR/bin
     MOC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/moc
     RCC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/rcc
     UI_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/ui
@@ -39,11 +46,11 @@ SOURCE_DIR = $$PWD
     CONFIG += console
     CONFIG -= app_bundle
     OBJECTS_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET
-    DESTDIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin
+    DESTDIR = $$INSTALL_DIR/tests/bin
     MOC_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/moc
     RCC_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/rcc
     UI_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/ui
-    LIBS += -L$$OUTPUT_DIR/build/$$SUBDIRPART/bin  #link against library that we test
+    LIBS += -L$$INSTALL_DIR/bin  #link against library that we test
     symbian {
         #The default include path doesn't include MOC_DIR on symbian
         INCLUDEPATH += $$MOC_DIR
@@ -51,7 +58,7 @@ SOURCE_DIR = $$PWD
 }
 
 wince* {
-    BEARERLIB.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/bearer.dll
+    BEARERLIB.sources = $$INSTALL_DIR/bin/bearer.dll
     BEARERLIB.path = .
     DEPLOYMENT += BEARERLIB
 }

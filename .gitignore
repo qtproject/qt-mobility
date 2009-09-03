@@ -17,6 +17,8 @@ moc_*.cpp
 *.ib_pdb_index
 build
 include/*
+config.pri
+mobility.prf
 
 #Symbian specific
 *.mmp

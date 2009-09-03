@@ -102,5 +102,5 @@ symbian: {
 include (../common.pri)
 
 headers.files = $$PUBLIC_HEADERS
-headers.path = $$OUTPUT_DIR/include
+headers.path = $$QT_MOBILITY_INCLUDE
 INSTALLS+=headers
