@@ -715,7 +715,7 @@ QMediaSlideShow::MediaStatus QMediaSlideShowControl::mediaStatus() const
 }
 
 /*!
-    \fn mediaStatusChanged(QMediaSlideShow::MediaStatus status);
+    \fn QMediaSlideShowControl::mediaStatusChanged(QMediaSlideShow::MediaStatus status);
 */
 
 /*!
@@ -764,7 +764,7 @@ QMediaResource QMediaSlideShowControl::currentMedia() const
 }
 
 /*!
-    \fn currentMediaChanged(const QMediaResource &media)
+    \fn QMediaSlideShowControl::currentMediaChanged(const QMediaResource &media)
 */
 
 #include "moc_qmediaslideshowservice_p.cpp"
