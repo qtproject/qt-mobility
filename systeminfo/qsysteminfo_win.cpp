@@ -1239,20 +1239,21 @@ bool QSystemScreenSaverPrivate::setScreenSaverEnabled(bool state)
 
 bool QSystemScreenSaverPrivate::setScreenBlankingEnabled(bool state)
 {
+    qWarning() << Q_FUNC_INFO;
+
     if(screenSaverSecure)
         return false;
     QSettings screenSettings(settingsPath, QSettings::NativeFormat);
     QString winDir;
-    WMIHelper *wHelper;
-    wHelper = new WMIHelper();
-    wHelper->setWmiNamespace("root/cimv2");
-    wHelper->setClassName("Win32_OperatingSystem");
-    wHelper->setClassProperty(QStringList() << "SystemDirectory");
-    QVariant v = wHelper->getWMIData();
+
+    TCHAR systemPath[MAX_PATH];
+
+    GetSystemDirectory(systemPath, MAX_PATH);
+
+    winDir = QString::fromUtf16(systemPath);
+
     if(settingsPath.contains("Policies")) {
         winDir = "";
-    } else {
-        winDir = v.toString();
     }
 
     if(state) {
