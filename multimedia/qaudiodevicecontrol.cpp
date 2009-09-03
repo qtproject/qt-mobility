@@ -103,11 +103,23 @@ QAudioDeviceControl::~QAudioDeviceControl()
 */
 
 /*!
-    \property QAudioDeviceControl::selectedDevice
+    \fn QAudioDeviceControl::selectedDevice() const
 
-    The index of the selected audio device.
+    Returns the index of the selected audio device.
 */
 
+/*!
+    \fn QAudioDeviceControl::setSelectedDevice(int index)
+
+    Selects the audio device at \a index.
+*/
+
+
+/*!
+    \fn QAudioDeviceControl::selectedDeviceChanged(int index)
+
+    Signals that the \a index of the selected device has changed.
+*/
 
 /*!
     \fn QAudioDeviceControl::devicesChanged()

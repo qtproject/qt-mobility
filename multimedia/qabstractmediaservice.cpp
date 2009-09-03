@@ -42,6 +42,22 @@
 
 /*!
     \class QAbstractMediaService
+    \brief The QAbstractMediaService class provides a common base class for media service
+    implementations.
+    \preliminary
+*/
+
+/*!
+    \enum QAbstractMediaService::MediaEndpoint
+
+    Enumerates the possible end points a media service may have.
+
+    \value VideoInput A video input end point.
+    \value VideoOutput A video output end point.
+    \value AudioInput An audio input end point.
+    \value AudioOutput An audio output end point.
+    \value StreamInput A data stream input end point
+    \value StreamOutput A data stream output end point.
 */
 
 /*!
@@ -65,6 +81,10 @@ QAbstractMediaService::QAbstractMediaService(QAbstractMediaServicePrivate &dd, Q
 {
     d_ptr->q_ptr = this;
 }
+
+/*!
+    Destroys a media service.
+*/
 
 QAbstractMediaService::~QAbstractMediaService()
 {
@@ -98,28 +118,40 @@ bool QAbstractMediaService::isEndpointSupported(QAbstractMediaService::MediaEndp
     return false;
 }
 
+/*!
+    Sets the data input \a stream of a media service.
+*/
 void QAbstractMediaService::setInputStream(QIODevice* stream)
 {
     d_ptr->inputStream = stream;
 }
 
+/*!
+    Returns the data input stream a media service.
+*/
 QIODevice* QAbstractMediaService::inputStream() const
 {
     return d_ptr->inputStream;
 }
 
+/*!
+    Sets the data output \a stream of a media service.
+*/
 void QAbstractMediaService::setOutputStream(QIODevice* stream)
 {
     d_ptr->outputStream = stream;
 }
 
+/*!
+    Returns the data output stream of a media service.
+*/
 QIODevice* QAbstractMediaService::outputStream() const
 {
     return d_ptr->outputStream;
 }
 
 /*!
-    Returns the currently active endpoint id for \endpointType.
+    Returns the currently active endpoint id for \a endpointType.
 */
 
 QString QAbstractMediaService::activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType)
@@ -259,4 +291,18 @@ QList<QString> QAbstractMediaService::supportedEndpoints(QAbstractMediaService::
     return list;
 }
 
+/*!
+    \fn QAbstractMediaService::control(const char *interface) const
 
+    Returns a pointer to the media control implementing \a interface.
+
+    If the service does not implement the control a null pointer is returned instead.
+*/
+
+/*!
+    \fn QAbstractMediaService::control() const
+
+    Returns a pointer to the media control of type T implemented by a media service.
+
+    If the service does not implment the control a null pointer is returned instead.
+*/
