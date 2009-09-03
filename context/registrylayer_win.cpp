@@ -89,9 +89,10 @@ public:
     void sync();
 
     /* Private implementation functions */
-    void emitHandleChanged(HKEY key);
-
     static RegistryLayer *instance();
+
+public slots:
+    void emitHandleChanged(void *hkey);
 
 private:
     struct RegistryHandle {
@@ -139,7 +140,8 @@ QVALUESPACE_AUTO_INSTALL_LAYER(RegistryLayer);
 
 void CALLBACK qRegistryLayerCallback(PVOID lpParameter, BOOLEAN)
 {
-    registryLayer()->emitHandleChanged(reinterpret_cast<HKEY>(lpParameter));
+    QMetaObject::invokeMethod(registryLayer(), "emitHandleChanged", Qt::QueuedConnection,
+                              Q_ARG(void *, lpParameter));
 }
 
 static QString qConvertPath(const QByteArray &path)
@@ -761,8 +763,10 @@ void RegistryLayer::sync()
     }
 }
 
-void RegistryLayer::emitHandleChanged(HKEY key)
+void RegistryLayer::emitHandleChanged(void *k)
 {
+    HKEY key = reinterpret_cast<HKEY>(k);
+
     QList<RegistryHandle *> changedHandles = hKeys.keys(key);
     if (changedHandles.isEmpty()) {
         QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
