@@ -742,9 +742,9 @@ void tst_QValueSpaceItem::ipcTests()
     QSKIP("Qt was compiled with QT_NO_PROCESS", SkipAll);
 #else
     QValueSpaceItem item ("/usr/lackey/subdir/value");
-    ChangeListener* listener = new ChangeListener();
-    QSignalSpy spy(listener, SIGNAL(baseChanged()));
-    connect(&item, SIGNAL(contentsChanged()),listener, SIGNAL(baseChanged()));
+    ChangeListener listener;
+    QSignalSpy spy(&listener, SIGNAL(baseChanged()));
+    connect(&item, SIGNAL(contentsChanged()), &listener, SIGNAL(baseChanged()));
 
     QProcess process;
     process.setProcessChannelMode(QProcess::ForwardedChannels);
