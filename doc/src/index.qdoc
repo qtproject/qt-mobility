@@ -44,9 +44,9 @@
     \group messaging
     \title Qt Mobility Messaging API
 
-    The Messaging API enables access to messaging services to send 
-    messages and retrieve message data is provided, as well as messaging 
-    services to compose, reply to, forward and show messages using a 
+    The Messaging API enables access to messaging services to send
+    messages and retrieve message data is provided, as well as messaging
+    services to compose, reply to, forward and show messages using a
     native application.
 
 */
@@ -60,9 +60,9 @@
 messages using a native application.
 
 
-The Messaging API enables access to messaging services to send 
-messages and retrieve message data is provided, as well as messaging 
-services to compose, reply to, forward and show messages using a 
+The Messaging API enables access to messaging services to send
+messages and retrieve message data is provided, as well as messaging
+services to compose, reply to, forward and show messages using a
 native application.
 
 
@@ -71,23 +71,23 @@ native application.
 
 \section1 Overview
 
-The messaging library provides a set of APIs for accessing messaging data. 
-Interfaces are provided to retrieve and query messages, folders and 
-accounts, also interfaces to create, modify, and store messages are 
-provided. A unified interface for manipulation and storage of SMS, MMS, 
-Email and XMPP messages is provided. Handling of internet media (MIME) 
+The messaging library provides a set of APIs for accessing messaging data.
+Interfaces are provided to retrieve and query messages, folders and
+accounts, also interfaces to create, modify, and store messages are
+provided. A unified interface for manipulation and storage of SMS, MMS,
+Email and XMPP messages is provided. Handling of internet media (MIME)
 messages that have only been partially retrieved is supported.
 
-An API to access messaging services to send messages and retrieve message 
-data is provided, as well as messaging services to compose, reply to, 
+An API to access messaging services to send messages and retrieve message
+data is provided, as well as messaging services to compose, reply to,
 forward and show messages using a native application.
 
-Notifications of addition, removal and updating of stored messages can be 
+Notifications of addition, removal and updating of stored messages can be
 enabled.
 
-The library provides unified access to the messaging data on a device 
-including concurrent access to messaging data by multiple applications, 
-and independence from the mechanism used to store the messaging data on 
+The library provides unified access to the messaging data on a device
+including concurrent access to messaging data by multiple applications,
+and independence from the mechanism used to store the messaging data on
 the device.
 
 This library requires Qt 4.5 to be installed.
@@ -102,11 +102,11 @@ To build the library, run qmake and make.
 
 \section1 Composition and Manipulation of Messages
 
-The library provides a number of classes to assist with the composition 
-and manipulation of message data. Messages of all supported types are 
-represented uniformly, although not all transport mechanisms are able to 
-deliver more complex message formulations. Messages can be composed of 
-multiple parts and constructed hierarchically. Composition of multipart 
+The library provides a number of classes to assist with the composition
+and manipulation of message data. Messages of all supported types are
+represented uniformly, although not all transport mechanisms are able to
+deliver more complex message formulations. Messages can be composed of
+multiple parts and constructed hierarchically. Composition of multipart
 messages from individual part objects is supported.
 
 Classes to assist with composition and manipulation of messages:
@@ -121,7 +121,7 @@ Classes to assist with composition and manipulation of messages:
 
 \section1 Message Accounts
 
-The library provides classes for accessing information about messaging 
+The library provides classes for accessing information about messaging
 accounts both outgoing and incoming.
 
 Classes relating to messaging accounts:
@@ -136,19 +136,19 @@ Classes relating to messaging accounts:
 
 \section1 Sorting and Filtering Functionality
 
-The library provides a number of sort and filter functions to aid in 
-selecting a useful view of data. This reduces the burden on the client 
-of the library for managing the messaging data, as well as allowing 
+The library provides a number of sort and filter functions to aid in
+selecting a useful view of data. This reduces the burden on the client
+of the library for managing the messaging data, as well as allowing
 better use of the underlying storage mechanism.
 
-Sorting is accomplished by providing a sorting key, specifying the sort 
+Sorting is accomplished by providing a sorting key, specifying the sort
 order, and the message property upon which to sort.
 
-Filtering is accomplished by providing a filtering condition, specifying a 
-value, the property to match, and the desired relation between the value 
+Filtering is accomplished by providing a filtering condition, specifying a
+value, the property to match, and the desired relation between the value
 and the property.
 
-Filters can be combined using boolean operators to produce filters of 
+Filters can be combined using boolean operators to produce filters of
 arbitrary complexity.
 
 Classes to assist with sorting and filtering messages:
@@ -170,25 +170,25 @@ An example of the use of SortKey functions can be found in the Send Message
 example.
 
 \code
-    QMessageIdList ids = QMessageStore::instance()->queryMessages(QMessageFilterKey(), 
+    QMessageIdList ids = QMessageStore::instance()->queryMessages(QMessageFilterKey(),
         QMessageSortKey::receptionTimeStamp(Qt::DescendingOrder), 100, 0);
 \endcode
 
 
 \section2   Using the Filter Functions
 
-The following code is taken from the Keeping In Touch example, it 
+The following code is taken from the Keeping In Touch example, it
 demonstrates the use of filters to achieve desired effects. You can
-also see how the filters once constructed can be operated on by typical 
-boolean operators, in the same way you would manipulate bit settings in C. 
+also see how the filters once constructed can be operated on by typical
+boolean operators, in the same way you would manipulate bit settings in C.
 In this way we can build more complex conditions.
 
 \code
-    QMessageFilterKey includeFilter(QMessageFilterKey::timeStamp(minimumDate, 
+    QMessageFilterKey includeFilter(QMessageFilterKey::timeStamp(minimumDate,
             QMessageDataComparator::GreaterThanEqual));
-    QMessageFilterKey excludeFilter(QMessageFilterKey::timeStamp(maximumDate, 
+    QMessageFilterKey excludeFilter(QMessageFilterKey::timeStamp(maximumDate,
             QMessageDataComparator::GreaterThanEqual));
-    QMessageFilterKey outgoingFilter(QMessageFilterKey::status(QMessage::Incoming, 
+    QMessageFilterKey outgoingFilter(QMessageFilterKey::status(QMessage::Incoming,
             QMessageDataComparator::Excludes));
 
     // Search for messages containing addresses to exclude
@@ -202,21 +202,21 @@ In this way we can build more complex conditions.
 
 \section1 Messaging Services
 
-The library provides the QMessageServiceAction class, which provides an 
-interface to communicate with the system's native messaging services, 
-including sending messages, retrieving message data, and composing or 
+The library provides the QMessageServiceAction class, which provides an
+interface to communicate with the system's native messaging services,
+including sending messages, retrieving message data, and composing or
 showing a message using a native application.
 
 Service actions communciate their operational status by emitting signals.
 
 \section1 Concurrent Access to Messaging Data
 
-The library provides a level of concurrent access to messaging data by 
+The library provides a level of concurrent access to messaging data by
 multiple clients.
 
-The concurrent access does guarantee that data won't be corrupted by 
-concurrent access, however it does not give any guarantees as to 
-performance of messaging data access if accessed concurrently by 
+The concurrent access does guarantee that data won't be corrupted by
+concurrent access, however it does not give any guarantees as to
+performance of messaging data access if accessed concurrently by
 multiple clients.
 
 \section1 Abstraction of Messaging Data Storage Mechanism
