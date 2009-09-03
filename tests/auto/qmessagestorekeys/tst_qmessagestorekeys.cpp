@@ -614,9 +614,11 @@ void tst_QMessageStoreKeys::testAccountFilterKey()
     QFETCH(QMessageAccountIdList, ids);
     QFETCH(QMessageAccountIdList, negatedIds);
 
-    // Order is irrelevant for filtering
-    QCOMPARE(QMessageStore::instance()->queryAccounts(key).toSet(), ids.toSet());
-    QCOMPARE(QMessageStore::instance()->queryAccounts(~key).toSet(), negatedIds.toSet());
+    if (key.isSupported()) {
+        // Order is irrelevant for filtering
+        QCOMPARE(QMessageStore::instance()->queryAccounts(key).toSet(), ids.toSet());
+        QCOMPARE(QMessageStore::instance()->queryAccounts(~key).toSet(), negatedIds.toSet());
+    }
 }
 
 void tst_QMessageStoreKeys::testAccountSortKey_data()
@@ -1220,9 +1222,11 @@ void tst_QMessageStoreKeys::testFolderFilterKey()
     QFETCH(QMessageFolderIdList, ids);
     QFETCH(QMessageFolderIdList, negatedIds);
 
-    // Order is irrelevant for filtering
-    QCOMPARE(QMessageStore::instance()->queryFolders(key).toSet(), ids.toSet());
-    QCOMPARE(QMessageStore::instance()->queryFolders(~key).toSet(), negatedIds.toSet());
+    if (key.isSupported()) {
+        // Order is irrelevant for filtering
+        QCOMPARE(QMessageStore::instance()->queryFolders(key).toSet(), ids.toSet());
+        QCOMPARE(QMessageStore::instance()->queryFolders(~key).toSet(), negatedIds.toSet());
+    }
 }
 
 void tst_QMessageStoreKeys::testFolderSortKey_data()
@@ -2345,9 +2349,11 @@ void tst_QMessageStoreKeys::testMessageFilterKey()
     QFETCH(QMessageIdList, ids);
     QFETCH(QMessageIdList, negatedIds);
 
-    // Order is irrelevant for filtering
-    QCOMPARE(QMessageStore::instance()->queryMessages(key).toSet(), ids.toSet());
-    QCOMPARE(QMessageStore::instance()->queryMessages(~key).toSet(), negatedIds.toSet());
+    if (key.isSupported()) {
+        // Order is irrelevant for filtering
+        QCOMPARE(QMessageStore::instance()->queryMessages(key).toSet(), ids.toSet());
+        QCOMPARE(QMessageStore::instance()->queryMessages(~key).toSet(), negatedIds.toSet());
+    }
 }
 
 void tst_QMessageStoreKeys::testMessageSortKey_data()
