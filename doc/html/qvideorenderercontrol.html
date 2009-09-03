@@ -19,35 +19,25 @@
 <ul>
 <li><a href="qvideorenderercontrol-members.html">List of all members, including inherited members</a></li>
 </ul>
-<hr />
-<a name="properties"></a>
-<h2>Properties</h2>
-<ul>
-<li><div class="fn"><b><a href="qvideorenderercontrol.html#surface-prop">surface</a></b> : QAbstractVideoSurface *</div></li>
-</ul>
-<ul>
-<li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
-</ul>
-<hr />
 <a name="public-functions"></a>
-<h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvideorenderercontrol.html#QVideoRendererControl">QVideoRendererControl</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvideorenderercontrol.html#dtor.QVideoRendererControl">~QVideoRendererControl</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qvideorenderercontrol.html#surface-prop">setSurface</a></b> ( QAbstractVideoSurface * <i>surface</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QAbstractVideoSurface * </td><td class="memItemRight" valign="bottom"><b><a href="qvideorenderercontrol.html#surface-prop">surface</a></b> () const</td></tr>
-</table>
+<h3>Public Functions</h3>
 <ul>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
+<li><div class="fn"></div><b><a href="qvideorenderercontrol.html#QVideoRendererControl">QVideoRendererControl</a></b> ( QObject * <i>parent</i> = 0 )</li>
+<li><div class="fn"></div><b><a href="qvideorenderercontrol.html#dtor.QVideoRendererControl">~QVideoRendererControl</a></b> ()</li>
+<li><div class="fn"></div>virtual void <b><a href="qvideorenderercontrol.html#setSurface">setSurface</a></b> ( QAbstractVideoSurface * <i>surface</i> ) = 0</li>
+<li><div class="fn"></div>virtual QAbstractVideoSurface * <b><a href="qvideorenderercontrol.html#surface">surface</a></b> () const = 0</li>
 </ul>
-<hr />
+<ul>
+<li><div class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
+</ul>
 <a name="macros"></a>
-<h2>Macros</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvideorenderercontrol.html#QVideoRendererControl_iid">QVideoRendererControl_iid</a></b></td></tr>
-</table>
+<h3>Macros</h3>
+<ul>
+<li><div class="fn"></div><b><a href="qvideorenderercontrol.html#QVideoRendererControl_iid">QVideoRendererControl_iid</a></b></li>
+</ul>
 <h3>Additional Inherited Members</h3>
 <ul>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-slots">QObject</a></li>
 <li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
 <li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-variables">QObject</a></li>
@@ -62,25 +52,21 @@
 <p>The interface name of QVideoRendererControl is <tt>com.nokia.Qt.QVideoRendererControl/1.0</tt> as defined in <a href="qvideorenderercontrol.html#QVideoRendererControl_iid">QVideoRendererControl_iid</a>.</p>
 <p>See also <a href="qabstractmediaservice.html#control">QAbstractMediaService::control</a>() and <a href="qabstractmediaservice.html#setActiveEndpoint">QAbstractMediaService::setActiveEndpoint</a>().</p>
 <hr />
-<h2>Property Documentation</h2>
-<h3 class="fn"><a name="surface-prop"></a>surface : QAbstractVideoSurface *</h3>
-<p>The surface a video producer renders to.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QAbstractVideoSurface * </td><td class="memItemRight" valign="bottom"><b>surface</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setSurface</b> ( QAbstractVideoSurface * <i>surface</i> )</td></tr>
-</table>
-<hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QVideoRendererControl"></a>QVideoRendererControl::QVideoRendererControl ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>Constructs a new video renderer media end point with the given <i>parent</i>.</p>
 <h3 class="fn"><a name="dtor.QVideoRendererControl"></a>QVideoRendererControl::~QVideoRendererControl ()</h3>
 <p>Destroys a video renderer media end point.</p>
+<h3 class="fn"><a name="setSurface"></a>void QVideoRendererControl::setSurface ( QAbstractVideoSurface * <i>surface</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Sets the <i>surface</i> a video producer renders to.</p>
+<p>See also <a href="qvideorenderercontrol.html#surface">surface</a>().</p>
+<h3 class="fn"><a name="surface"></a>QAbstractVideoSurface * QVideoRendererControl::surface () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>See also <a href="qvideorenderercontrol.html#setSurface">setSurface</a>().</p>
 <hr />
 <h2>Macro Documentation</h2>
 <h3 class="fn"><a name="QVideoRendererControl_iid"></a>QVideoRendererControl_iid</h3>
 <p><tt>com.nokia.Qt.QVideoRendererControl/1.0</tt></p>
-<p>Defines the interface name of <a href="qvideorenderercontrol.html">QVideoRendererControl</a>.</p>
+<p>Defines the interface name of the <a href="qvideorenderercontrol.html">QVideoRendererControl</a> class.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

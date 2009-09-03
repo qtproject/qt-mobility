@@ -18,92 +18,82 @@
 <ul>
 <li><a href="qradioplayer-members.html">List of all members, including inherited members</a></li>
 </ul>
-<hr />
 <a name="public-types"></a>
-<h2>Public Types</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#Band-enum">Band</a></b> { AM, FM, SW, LW }</td></tr>
-</table>
-<hr />
+<h3>Public Types</h3>
+<ul>
+<li><div class="fn"></div>enum <b><a href="qradioplayer.html#Band-enum">Band</a></b> { AM, FM, SW, LW }</li>
+</ul>
 <a name="properties"></a>
-<h2>Properties</h2>
-<p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
+<h3>Properties</h3>
+<p><table width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td width="45%" valign="top"><ul>
-<li><div class="fn"><b><a href="qradioplayer.html#band-prop">band</a></b> : Band</div></li>
-<li><div class="fn"><b><a href="qradioplayer.html#duration-prop">duration</a></b> : const qint64</div></li>
-<li><div class="fn"><b><a href="qradioplayer.html#frequency-prop">frequency</a></b> : int</div></li>
-<li><div class="fn"><b><a href="qradioplayer.html#muted-prop">muted</a></b> : bool</div></li>
+<li><div class="fn"></div><b><a href="qradioplayer.html#band-prop">band</a></b> : Band</li>
+<li><div class="fn"></div><b><a href="qradioplayer.html#duration-prop">duration</a></b> : const qint64</li>
+<li><div class="fn"></div><b><a href="qradioplayer.html#frequency-prop">frequency</a></b> : int</li>
+<li><div class="fn"></div><b><a href="qradioplayer.html#muted-prop">muted</a></b> : bool</li>
 </ul></td><td valign="top"><ul>
-<li><div class="fn"><b><a href="qradioplayer.html#searching-prop">searching</a></b> : const bool</div></li>
-<li><div class="fn"><b><a href="qradioplayer.html#signalStrength-prop">signalStrength</a></b> : const int</div></li>
-<li><div class="fn"><b><a href="qradioplayer.html#stereo-prop">stereo</a></b> : bool</div></li>
-<li><div class="fn"><b><a href="qradioplayer.html#volume-prop">volume</a></b> : int</div></li>
+<li><div class="fn"></div><b><a href="qradioplayer.html#searching-prop">searching</a></b> : const bool</li>
+<li><div class="fn"></div><b><a href="qradioplayer.html#signalStrength-prop">signalStrength</a></b> : const int</li>
+<li><div class="fn"></div><b><a href="qradioplayer.html#stereo-prop">stereo</a></b> : bool</li>
+<li><div class="fn"></div><b><a href="qradioplayer.html#volume-prop">volume</a></b> : int</li>
 </ul>
 </td></tr>
 </table></p>
 <ul>
-<li><div bar="2" class="fn"></div>1 property inherited from <a href="qabstractmediaobject.html#properties">QAbstractMediaObject</a></li>
-<li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 property inherited from <a href="qabstractmediaobject.html#properties">QAbstractMediaObject</a></li>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
 </ul>
-<hr />
 <a name="public-functions"></a>
-<h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#QRadioPlayer">QRadioPlayer</a></b> ( QObject * <i>parent</i> = 0, QRadioService * <i>service</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#dtor.QRadioPlayer">~QRadioPlayer</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">Band </td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#band-prop">band</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">qint64 </td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#duration-prop">duration</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#frequency-prop">frequency</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#muted-prop">isMuted</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#searching-prop">isSearching</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#stereo-prop">isStereo</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#isSupportedBand">isSupportedBand</a></b> ( Band <i>b</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#signalStrength-prop">signalStrength</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#volume-prop">volume</a></b> () const</td></tr>
-</table>
-<hr />
-<a name="reimplemented-public-functions"></a>
-<h2>Reimplemented Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#isValid">isValid</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QAbstractMediaService * </td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#service">service</a></b> () const</td></tr>
-</table>
+<h3>Public Functions</h3>
 <ul>
-<li><div bar="2" class="fn"></div>4 public functions inherited from <a href="qabstractmediaobject.html#public-functions">QAbstractMediaObject</a></li>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
+<li><div class="fn"></div><b><a href="qradioplayer.html#QRadioPlayer">QRadioPlayer</a></b> ( QObject * <i>parent</i> = 0, QRadioService * <i>service</i> = 0 )</li>
+<li><div class="fn"></div><b><a href="qradioplayer.html#dtor.QRadioPlayer">~QRadioPlayer</a></b> ()</li>
+<li><div class="fn"></div>Band <b><a href="qradioplayer.html#band-prop">band</a></b> () const</li>
+<li><div class="fn"></div>qint64 <b><a href="qradioplayer.html#duration-prop">duration</a></b> () const</li>
+<li><div class="fn"></div>int <b><a href="qradioplayer.html#frequency-prop">frequency</a></b> () const</li>
+<li><div class="fn"></div>bool <b><a href="qradioplayer.html#muted-prop">isMuted</a></b> () const</li>
+<li><div class="fn"></div>bool <b><a href="qradioplayer.html#searching-prop">isSearching</a></b> () const</li>
+<li><div class="fn"></div>bool <b><a href="qradioplayer.html#stereo-prop">isStereo</a></b> () const</li>
+<li><div class="fn"></div>bool <b><a href="qradioplayer.html#isSupportedBand">isSupportedBand</a></b> ( Band <i>b</i> ) const</li>
+<li><div class="fn"></div>virtual bool <b><a href="qradioplayer.html#isValid">isValid</a></b> () const</li>
+<li><div class="fn"></div>virtual QAbstractMediaService * <b><a href="qradioplayer.html#service">service</a></b> () const</li>
+<li><div class="fn"></div>int <b><a href="qradioplayer.html#signalStrength-prop">signalStrength</a></b> () const</li>
+<li><div class="fn"></div>int <b><a href="qradioplayer.html#volume-prop">volume</a></b> () const</li>
 </ul>
-<hr />
+<ul>
+<li><div class="fn"></div>4 public functions inherited from <a href="qabstractmediaobject.html#public-functions">QAbstractMediaObject</a></li>
+<li><div class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
+</ul>
 <a name="public-slots"></a>
-<h2>Public Slots</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#cancelSearch">cancelSearch</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#searchBackward">searchBackward</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#searchForward">searchForward</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#band-prop">setBand</a></b> ( Band <i>band</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#frequency-prop">setFrequency</a></b> ( int <i>frequency</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#muted-prop">setMuted</a></b> ( bool <i>muted</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#stereo-prop">setStereo</a></b> ( bool <i>stereo</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#volume-prop">setVolume</a></b> ( int <i>volume</i> )</td></tr>
-</table>
+<h3>Public Slots</h3>
 <ul>
-<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#cancelSearch">cancelSearch</a></b> ()</li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#searchBackward">searchBackward</a></b> ()</li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#searchForward">searchForward</a></b> ()</li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#band-prop">setBand</a></b> ( Band <i>band</i> )</li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#frequency-prop">setFrequency</a></b> ( int <i>frequency</i> )</li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#muted-prop">setMuted</a></b> ( bool <i>muted</i> )</li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#stereo-prop">setStereo</a></b> ( bool <i>stereo</i> )</li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#volume-prop">setVolume</a></b> ( int <i>volume</i> )</li>
 </ul>
-<hr />
-<a name="signals"></a>
-<h2>Signals</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#bandChanged">bandChanged</a></b> ( QRadioPlayer::Band <i>band</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#durationChanged">durationChanged</a></b> ( qint64 <i>duration</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#frequencyChanged">frequencyChanged</a></b> ( int <i>frequency</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#mutingChanged">mutingChanged</a></b> ( bool <i>muted</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#searchingStatusChanged">searchingStatusChanged</a></b> ( bool <i>searching</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#signalStrengthChanged">signalStrengthChanged</a></b> ( int <i>signalStrength</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#stereoStatusChanged">stereoStatusChanged</a></b> ( bool <i>stereo</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradioplayer.html#volumeChanged">volumeChanged</a></b> ( int <i>volume</i> )</td></tr>
-</table>
 <ul>
-<li><div bar="2" class="fn"></div>1 signal inherited from <a href="qabstractmediaobject.html#signals">QAbstractMediaObject</a></li>
-<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-slots">QObject</a></li>
+</ul>
+<a name="signals"></a>
+<h3>Signals</h3>
+<ul>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#bandChanged">bandChanged</a></b> ( QRadioPlayer::Band <i>band</i> )</li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#durationChanged">durationChanged</a></b> ( qint64 <i>duration</i> )</li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#frequencyChanged">frequencyChanged</a></b> ( int <i>frequency</i> )</li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#mutingChanged">mutingChanged</a></b> ( bool <i>muted</i> )</li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#searchingStatusChanged">searchingStatusChanged</a></b> ( bool <i>searching</i> )</li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#signalStrengthChanged">signalStrengthChanged</a></b> ( int <i>signalStrength</i> )</li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#stereoStatusChanged">stereoStatusChanged</a></b> ( bool <i>stereo</i> )</li>
+<li><div class="fn"></div>void <b><a href="qradioplayer.html#volumeChanged">volumeChanged</a></b> ( int <i>volume</i> )</li>
+</ul>
+<ul>
+<li><div class="fn"></div>1 signal inherited from <a href="qabstractmediaobject.html#signals">QAbstractMediaObject</a></li>
+<li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
@@ -129,7 +119,7 @@
 <hr />
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="Band-enum"></a>enum QRadioPlayer::Band</h3>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QRadioPlayer::AM</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">520 to 1610 kHz, 9 or 10kHz channel spacing, extended 1610 to 1710 kHz</td></tr>
 <tr><td valign="top"><tt>QRadioPlayer::FM</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">87.5 to 108.0 MHz, except Japan 76-90 MHz</td></tr>
@@ -140,58 +130,58 @@
 <h2>Property Documentation</h2>
 <h3 class="fn"><a name="band-prop"></a>band : <a href="qradioplayer.html#Band-enum">Band</a></h3>
 <p>This property holds the current frequency range being used.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">Band </td><td class="memItemRight" valign="bottom"><b>band</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setBand</b> ( Band <i>band</i> )</td></tr>
-</table>
+<p>Access functions:</p>
+<ul>
+<li><div class="fn"></div><b>Band band () const</b></li>
+<li><div class="fn"></div><b>void setBand ( Band <i>band</i> )</b></li>
+</ul>
 <p>See also <a href="qradioplayer.html#Band-enum">QRadioPlayer::Band</a>.</p>
 <h3 class="fn"><a name="duration-prop"></a>duration : const <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qint64-typedef">qint64</a></h3>
 <p>This property holds the duration at current frequency in milliseconds.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">qint64 </td><td class="memItemRight" valign="bottom"><b>duration</b> () const</td></tr>
-</table>
+<p>Access functions:</p>
+<ul>
+<li><div class="fn"></div><b>qint64 duration () const</b></li>
+</ul>
 <h3 class="fn"><a name="frequency-prop"></a>frequency : int</h3>
 <p>This property holds the current frequency being used in Hertz.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>frequency</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setFrequency</b> ( int <i>frequency</i> )</td></tr>
-</table>
+<p>Access functions:</p>
+<ul>
+<li><div class="fn"></div><b>int frequency () const</b></li>
+<li><div class="fn"></div><b>void setFrequency ( int <i>frequency</i> )</b></li>
+</ul>
 <h3 class="fn"><a name="muted-prop"></a>muted : bool</h3>
 <p>This property holds returns true if muted.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isMuted</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setMuted</b> ( bool <i>muted</i> )</td></tr>
-</table>
+<p>Access functions:</p>
+<ul>
+<li><div class="fn"></div><b>bool isMuted () const</b></li>
+<li><div class="fn"></div><b>void setMuted ( bool <i>muted</i> )</b></li>
+</ul>
 <h3 class="fn"><a name="searching-prop"></a>searching : const bool</h3>
 <p>This property holds returns true if currently scanning.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isSearching</b> () const</td></tr>
-</table>
+<p>Access functions:</p>
+<ul>
+<li><div class="fn"></div><b>bool isSearching () const</b></li>
+</ul>
 <h3 class="fn"><a name="signalStrength-prop"></a>signalStrength : const int</h3>
 <p>This property holds the strength of the current radio signal as a percentage.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>signalStrength</b> () const</td></tr>
-</table>
+<p>Access functions:</p>
+<ul>
+<li><div class="fn"></div><b>int signalStrength () const</b></li>
+</ul>
 <h3 class="fn"><a name="stereo-prop"></a>stereo : bool</h3>
 <p>This property holds in Stereo mode.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isStereo</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setStereo</b> ( bool <i>stereo</i> )</td></tr>
-</table>
+<p>Access functions:</p>
+<ul>
+<li><div class="fn"></div><b>bool isStereo () const</b></li>
+<li><div class="fn"></div><b>void setStereo ( bool <i>stereo</i> )</b></li>
+</ul>
 <h3 class="fn"><a name="volume-prop"></a>volume : int</h3>
 <p>This property holds the current volume as a percentage.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>volume</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setVolume</b> ( int <i>volume</i> )</td></tr>
-</table>
+<p>Access functions:</p>
+<ul>
+<li><div class="fn"></div><b>int volume () const</b></li>
+<li><div class="fn"></div><b>void setVolume ( int <i>volume</i> )</b></li>
+</ul>
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QRadioPlayer"></a>QRadioPlayer::QRadioPlayer ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0, QRadioService * <i>service</i> = 0 )</h3>
@@ -210,8 +200,8 @@
 <h3 class="fn"><a name="isSupportedBand"></a>bool QRadioPlayer::isSupportedBand ( <a href="qradioplayer.html#Band-enum">Band</a> <i>b</i> ) const</h3>
 <p>Returns true if <i>b</i> is an available band.</p>
 <h3 class="fn"><a name="isValid"></a>bool QRadioPlayer::isValid () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Reimplemented from <a href="qabstractmediaobject.html#isValid">QAbstractMediaObject::isValid</a>().</p>
 <p>Returns true if an available device.</p>
+<p>Reimplemented from <a href="qabstractmediaobject.html#isValid">QAbstractMediaObject</a>.</p>
 <h3 class="fn"><a name="mutingChanged"></a>void QRadioPlayer::mutingChanged ( bool <i>muted</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal the change in mute condition to <i>muted</i>.</p>
 <h3 class="fn"><a name="searchBackward"></a>void QRadioPlayer::searchBackward ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
@@ -221,8 +211,8 @@
 <h3 class="fn"><a name="searchingStatusChanged"></a>void QRadioPlayer::searchingStatusChanged ( bool <i>searching</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal the change in scanning mode to <i>searching</i>.</p>
 <h3 class="fn"><a name="service"></a><a href="qabstractmediaservice.html">QAbstractMediaService</a> * QRadioPlayer::service () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Reimplemented from <a href="qabstractmediaobject.html#service">QAbstractMediaObject::service</a>().</p>
 <p>Returns pointer to service class.</p>
+<p>Reimplemented from <a href="qabstractmediaobject.html#service">QAbstractMediaObject</a>.</p>
 <h3 class="fn"><a name="signalStrengthChanged"></a>void QRadioPlayer::signalStrengthChanged ( int <i>signalStrength</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal emitted when signal strength changes to new value <i>signalStrength</i>.</p>
 <h3 class="fn"><a name="stereoStatusChanged"></a>void QRadioPlayer::stereoStatusChanged ( bool <i>stereo</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>

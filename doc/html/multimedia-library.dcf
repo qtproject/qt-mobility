@@ -44,6 +44,56 @@
         <keyword ref="qaudiodevicecontrol.html#QAudioDeviceControl_iid">QAudioDeviceControl_iid</keyword>
         <section ref="qaudiodevicecontrol-members.html" title="List of all members"/>
     </section>
+    <section ref="qaudioencodecontrol.html" title="QAudioEncodeControl Class Reference">
+        <keyword ref="qaudioencodecontrol.html">QAudioEncodeControl</keyword>
+        <keyword ref="qaudioencodecontrol.html#audioBitrateChanged">audioBitrateChanged</keyword>
+        <keyword ref="qaudioencodecontrol.html#audioCodec">audioCodec</keyword>
+        <keyword ref="qaudioencodecontrol.html#audioCodecChanged">audioCodecChanged</keyword>
+        <keyword ref="qaudioencodecontrol.html#audioFormatChanged">audioFormatChanged</keyword>
+        <keyword ref="qaudioencodecontrol.html#audioQualityChanged">audioQualityChanged</keyword>
+        <keyword ref="qaudioencodecontrol.html#bitrate">bitrate</keyword>
+        <keyword ref="qaudioencodecontrol.html#codecDescription">codecDescription</keyword>
+        <keyword ref="qaudioencodecontrol.html#encodingOption">encodingOption</keyword>
+        <keyword ref="qaudioencodecontrol.html#format">format</keyword>
+        <keyword ref="qaudioencodecontrol.html#isFormatSupported">isFormatSupported</keyword>
+        <keyword ref="qaudioencodecontrol.html#quality">quality</keyword>
+        <keyword ref="qaudioencodecontrol.html#setAudioCodec">setAudioCodec</keyword>
+        <keyword ref="qaudioencodecontrol.html#setBitrate">setBitrate</keyword>
+        <keyword ref="qaudioencodecontrol.html#setEncodingOption">setEncodingOption</keyword>
+        <keyword ref="qaudioencodecontrol.html#setFormat">setFormat</keyword>
+        <keyword ref="qaudioencodecontrol.html#setQuality">setQuality</keyword>
+        <keyword ref="qaudioencodecontrol.html#supportedAudioCodecs">supportedAudioCodecs</keyword>
+        <keyword ref="qaudioencodecontrol.html#supportedEncodingOptions">supportedEncodingOptions</keyword>
+        <section ref="qaudioencodecontrol-members.html" title="List of all members"/>
+    </section>
+    <section ref="qaudioformat.html" title="QAudioFormat Class Reference">
+        <keyword ref="qaudioformat.html">QAudioFormat</keyword>
+        <keyword ref="qaudioformat.html#Endian-enum">Endian</keyword>
+        <keyword ref="qaudioformat.html#Endian-enum">QAudioFormat::LittleEndian</keyword>
+        <keyword ref="qaudioformat.html#Endian-enum">QAudioFormat::BigEndian</keyword>
+        <keyword ref="qaudioformat.html#SampleType-enum">SampleType</keyword>
+        <keyword ref="qaudioformat.html#SampleType-enum">QAudioFormat::Unknown</keyword>
+        <keyword ref="qaudioformat.html#SampleType-enum">QAudioFormat::Float</keyword>
+        <keyword ref="qaudioformat.html#SampleType-enum">QAudioFormat::SignedInt</keyword>
+        <keyword ref="qaudioformat.html#SampleType-enum">QAudioFormat::UnSignedInt</keyword>
+        <keyword ref="qaudioformat.html#byteOrder">byteOrder</keyword>
+        <keyword ref="qaudioformat.html#channels">channels</keyword>
+        <keyword ref="qaudioformat.html#codec">codec</keyword>
+        <keyword ref="qaudioformat.html#frequency">frequency</keyword>
+        <keyword ref="qaudioformat.html#isNull">isNull</keyword>
+        <keyword ref="qaudioformat.html#sampleSize">sampleSize</keyword>
+        <keyword ref="qaudioformat.html#sampleType">sampleType</keyword>
+        <keyword ref="qaudioformat.html#setByteOrder">setByteOrder</keyword>
+        <keyword ref="qaudioformat.html#setChannels">setChannels</keyword>
+        <keyword ref="qaudioformat.html#setCodec">setCodec</keyword>
+        <keyword ref="qaudioformat.html#setFrequency">setFrequency</keyword>
+        <keyword ref="qaudioformat.html#setSampleSize">setSampleSize</keyword>
+        <keyword ref="qaudioformat.html#setSampleType">setSampleType</keyword>
+        <keyword ref="qaudioformat.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qaudioformat.html#operator-eq">operator=</keyword>
+        <keyword ref="qaudioformat.html#operator-eq-eq">operator==</keyword>
+        <section ref="qaudioformat-members.html" title="List of all members"/>
+    </section>
     <section ref="qaudioinputdevicecontrol.html" title="QAudioInputDeviceControl Class Reference">
         <keyword ref="qaudioinputdevicecontrol.html">QAudioInputDeviceControl</keyword>
         <keyword ref="qaudioinputdevicecontrol.html#defaultDevice">defaultDevice</keyword>
@@ -334,8 +384,8 @@
         <keyword ref="qmediaplayer.html#duration-prop">duration</keyword>
         <keyword ref="qmediaplayer.html#error-prop">error</keyword>
         <keyword ref="qmediaplayer.html#error-prop">errorString</keyword>
-        <keyword ref="qmediaplayer.html#mediaSource-prop">mediaSource</keyword>
-        <keyword ref="qmediaplayer.html#mediaSource-prop">currentMediaSource</keyword>
+        <keyword ref="qmediaplayer.html#media-prop">media</keyword>
+        <keyword ref="qmediaplayer.html#media-prop">setMedia</keyword>
         <keyword ref="qmediaplayer.html#mediaStatus-prop">mediaStatus</keyword>
         <keyword ref="qmediaplayer.html#muted-prop">muted</keyword>
         <keyword ref="qmediaplayer.html#muted-prop">isMuted</keyword>
@@ -352,11 +402,9 @@
         <keyword ref="qmediaplayer.html#volume-prop">volume</keyword>
         <keyword ref="qmediaplayer.html#volume-prop">setVolume</keyword>
         <keyword ref="qmediaplayer.html#bufferStatusChanged">bufferStatusChanged</keyword>
-        <keyword ref="qmediaplayer.html#currentMediaSourceChanged">currentMediaSourceChanged</keyword>
         <keyword ref="qmediaplayer.html#durationChanged">durationChanged</keyword>
         <keyword ref="qmediaplayer.html#error">error</keyword>
-        <keyword ref="qmediaplayer.html#errorStringChanged">errorStringChanged</keyword>
-        <keyword ref="qmediaplayer.html#isValid">isValid</keyword>
+        <keyword ref="qmediaplayer.html#mediaChanged">mediaChanged</keyword>
         <keyword ref="qmediaplayer.html#mediaStatusChanged">mediaStatusChanged</keyword>
         <keyword ref="qmediaplayer.html#mutingChanged">mutingChanged</keyword>
         <keyword ref="qmediaplayer.html#pause">pause</keyword>
@@ -375,7 +423,6 @@
         <keyword ref="qmediaplayercontrol.html">QMediaPlayerControl</keyword>
         <keyword ref="qmediaplayercontrol.html#bufferStatus">bufferStatus</keyword>
         <keyword ref="qmediaplayercontrol.html#bufferStatusChanged">bufferStatusChanged</keyword>
-        <keyword ref="qmediaplayercontrol.html#currentSource">currentSource</keyword>
         <keyword ref="qmediaplayercontrol.html#currentSourceChanged">currentSourceChanged</keyword>
         <keyword ref="qmediaplayercontrol.html#duration">duration</keyword>
         <keyword ref="qmediaplayercontrol.html#durationChanged">durationChanged</keyword>
@@ -383,6 +430,7 @@
         <keyword ref="qmediaplayercontrol.html#isMuted">isMuted</keyword>
         <keyword ref="qmediaplayercontrol.html#isSeekable">isSeekable</keyword>
         <keyword ref="qmediaplayercontrol.html#isVideoAvailable">isVideoAvailable</keyword>
+        <keyword ref="qmediaplayercontrol.html#media">media</keyword>
         <keyword ref="qmediaplayercontrol.html#mediaStatus">mediaStatus</keyword>
         <keyword ref="qmediaplayercontrol.html#mediaStatusChanged">mediaStatusChanged</keyword>
         <keyword ref="qmediaplayercontrol.html#mutingChanged">mutingChanged</keyword>
@@ -392,7 +440,7 @@
         <keyword ref="qmediaplayercontrol.html#position">position</keyword>
         <keyword ref="qmediaplayercontrol.html#positionChanged">positionChanged</keyword>
         <keyword ref="qmediaplayercontrol.html#seekableChanged">seekableChanged</keyword>
-        <keyword ref="qmediaplayercontrol.html#setCurrentSource">setCurrentSource</keyword>
+        <keyword ref="qmediaplayercontrol.html#setMedia">setMedia</keyword>
         <keyword ref="qmediaplayercontrol.html#setMuted">setMuted</keyword>
         <keyword ref="qmediaplayercontrol.html#setPlaybackRate">setPlaybackRate</keyword>
         <keyword ref="qmediaplayercontrol.html#setPosition">setPosition</keyword>
@@ -630,17 +678,14 @@
         <keyword ref="qmediaslideshow.html#timeout-prop">setTimeout</keyword>
         <keyword ref="qmediaslideshow.html#currentIndexChanged">currentIndexChanged</keyword>
         <keyword ref="qmediaslideshow.html#currentMediaChanged">currentMediaChanged</keyword>
-        <keyword ref="qmediaslideshow.html#isValid">isValid</keyword>
         <keyword ref="qmediaslideshow.html#mediaChanged">mediaChanged</keyword>
         <keyword ref="qmediaslideshow.html#mediaStatusChanged">mediaStatusChanged</keyword>
         <keyword ref="qmediaslideshow.html#next">next</keyword>
         <keyword ref="qmediaslideshow.html#pause">pause</keyword>
         <keyword ref="qmediaslideshow.html#play">play</keyword>
         <keyword ref="qmediaslideshow.html#previous">previous</keyword>
-        <keyword ref="qmediaslideshow.html#service">service</keyword>
         <keyword ref="qmediaslideshow.html#stateChanged">stateChanged</keyword>
         <keyword ref="qmediaslideshow.html#stop">stop</keyword>
-        <keyword ref="qmediaslideshow.html#timerEvent">timerEvent</keyword>
         <section ref="qmediaslideshow-members.html" title="List of all members"/>
     </section>
     <section ref="qmediasource.html" title="QMediaSource Class Reference">
@@ -751,8 +796,8 @@
     </section>
     <section ref="qvideorenderercontrol.html" title="QVideoRendererControl Class Reference">
         <keyword ref="qvideorenderercontrol.html">QVideoRendererControl</keyword>
-        <keyword ref="qvideorenderercontrol.html#surface-prop">surface</keyword>
-        <keyword ref="qvideorenderercontrol.html#surface-prop">setSurface</keyword>
+        <keyword ref="qvideorenderercontrol.html#setSurface">setSurface</keyword>
+        <keyword ref="qvideorenderercontrol.html#surface">surface</keyword>
         <keyword ref="qvideorenderercontrol.html#QVideoRendererControl_iid">QVideoRendererControl_iid</keyword>
         <section ref="qvideorenderercontrol-members.html" title="List of all members"/>
     </section>
@@ -780,16 +825,10 @@
         <keyword ref="qvideowidget.html#customPixelAspectRatioChanged">customPixelAspectRatioChanged</keyword>
         <keyword ref="qvideowidget.html#displayModeChanged">displayModeChanged</keyword>
         <keyword ref="qvideowidget.html#eventFilter">eventFilter</keyword>
-        <keyword ref="qvideowidget.html#hideEvent">hideEvent</keyword>
         <keyword ref="qvideowidget.html#hueChanged">hueChanged</keyword>
         <keyword ref="qvideowidget.html#keyPressEvent">keyPressEvent</keyword>
-        <keyword ref="qvideowidget.html#moveEvent">moveEvent</keyword>
-        <keyword ref="qvideowidget.html#paintEvent">paintEvent</keyword>
-        <keyword ref="qvideowidget.html#resizeEvent">resizeEvent</keyword>
         <keyword ref="qvideowidget.html#saturationChanged">saturationChanged</keyword>
         <keyword ref="qvideowidget.html#setVisible">setVisible</keyword>
-        <keyword ref="qvideowidget.html#showEvent">showEvent</keyword>
-        <keyword ref="qvideowidget.html#sizeHint">sizeHint</keyword>
         <section ref="qvideowidget-members.html" title="List of all members"/>
     </section>
     <section ref="qvideowidgetcontrol.html" title="QVideoWidgetControl Class Reference">
