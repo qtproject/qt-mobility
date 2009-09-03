@@ -476,28 +476,78 @@
       <attribute name="title">
        <string>Display</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_4">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_14">
-         <property name="text">
-          <string>brightness</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="brightnessLineEdit"/>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_15">
-         <property name="text">
-          <string>color depth</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="colorDepthLineEdit"/>
-       </item>
-      </layout>
+      <widget class="QLabel" name="label_14">
+       <property name="geometry">
+        <rect>
+         <x>14</x>
+         <y>30</y>
+         <width>67</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>brightness</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="brightnessLineEdit">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>30</y>
+         <width>114</width>
+         <height>25</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_15">
+       <property name="geometry">
+        <rect>
+         <x>14</x>
+         <y>60</y>
+         <width>72</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>color depth</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="colorDepthLineEdit">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>60</y>
+         <width>114</width>
+         <height>25</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_29">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>120</y>
+         <width>71</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Resolution</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="resolutionLabel">
+       <property name="geometry">
+        <rect>
+         <x>110</x>
+         <y>120</y>
+         <width>181</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
      </widget>
      <widget class="QWidget" name="sysmemorytab">
       <attribute name="title">
@@ -890,54 +940,22 @@
       <attribute name="title">
        <string>Screen Saver</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_7">
-       <item row="0" column="0">
-        <widget class="QPushButton" name="saverEnabledPushButton">
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="0" column="0" colspan="3">
+        <widget class="QCheckBox" name="saverEnabledCheckBox">
          <property name="text">
-          <string>Set saver enabled</string>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
+          <string>Screen Saver Enabled</string>
          </property>
         </widget>
-       </item>
-       <item row="0" column="2">
-        <spacer name="horizontalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>422</width>
-           <height>26</height>
-          </size>
-         </property>
-        </spacer>
        </item>
        <item row="1" column="0" colspan="2">
-        <widget class="QPushButton" name="blankingEnabledPushButton">
+        <widget class="QCheckBox" name="screenBlankingCheckBox">
          <property name="text">
-          <string>Set blanking enabled</string>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
+          <string>ScreenBlanking Enabled</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="2">
-        <spacer name="horizontalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>422</width>
-           <height>26</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="2" column="0" colspan="3">
+       <item row="2" column="0">
         <widget class="QCheckBox" name="screenLockCheckBox">
          <property name="text">
           <string>screen lock on?</string>

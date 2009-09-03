@@ -1,6 +1,8 @@
 #include "dialog.h"
 #include "ui_dialog.h"
 #include <QDebug>
+#include <QDesktopWidget>
+
 #include <qsysteminfo.h>
 
 
@@ -10,11 +12,11 @@ Dialog::Dialog(QWidget *parent) :
 {
     ui->setupUi(this);
     setupGeneral();
-    setupDevice();
-    setupDisplay();
-    setupMemory();
-    setupNetwork();
-    setupSaver();
+//    setupDevice();
+//    setupDisplay();
+//    setupMemory();
+//    setupNetwork();
+//    setupSaver();
 
     connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(tabChanged(int)));
    connect(ui->versionComboBox,SIGNAL(activated(int)), this,SLOT(getVersion(int)));
@@ -123,6 +125,8 @@ void Dialog::setupDisplay()
     QSystemDisplayInfo di;
     ui->brightnessLineEdit->setText(QString::number(di.displayBrightness(0)));
     ui->colorDepthLineEdit->setText(QString::number(di.colorDepth((0))));
+    QDesktopWidget wid;
+    ui->resolutionLabel->setText(QString::number(wid.width())+"x"+QString::number(wid.height()));
 
 }
 
@@ -348,29 +352,32 @@ void Dialog::getFeature(int index)
 
 void Dialog::setupSaver()
 {
-    saver = new QSystemScreenSaver();
+    saver = new QSystemScreenSaver(this);
     bool saverEnabled = saver->screenSaverEnabled();
     bool blankingEnabled = saver->screenBlankingEnabled();
 
-    ui->saverEnabledPushButton->setChecked(saverEnabled);
-    ui->blankingEnabledPushButton->setChecked(blankingEnabled);
     ui->screenLockCheckBox->setChecked(saver->isScreenLockOn());
 
-    connect( ui->saverEnabledPushButton, SIGNAL(clicked(bool)),
+    connect( ui->saverEnabledCheckBox, SIGNAL(clicked(bool)),
              this,SLOT(setSaverEnabled(bool)));
-    connect( ui->blankingEnabledPushButton, SIGNAL(clicked(bool)),
+    connect( ui->saverEnabledCheckBox, SIGNAL(clicked(bool)),
              this,SLOT(setBlankingEnabled(bool)));
+
+    ui->saverEnabledCheckBox->setChecked(saverEnabled);
+
 }
 
 
 void Dialog::setSaverEnabled(bool b)
 {
-    if(!saver->setScreenSaverEnabled(b))
-        ui->saverEnabledPushButton->setChecked(!b);
+    if(saver->setScreenSaverEnabled(b)) {
+    }
+
 }
 
 void Dialog::setBlankingEnabled(bool b)
 {
-    if(!saver->setScreenBlankingEnabled(b))
-        ui->blankingEnabledPushButton->setChecked(!b);
+    QString text;
+    if(saver->setScreenBlankingEnabled(b)) {   
+    }
 }
