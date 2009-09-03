@@ -99,7 +99,7 @@ QWmpPlayerService::QWmpPlayerService(EmbedMode mode, QObject *parent)
 #else
             {
 #endif
-                m_oleVideoOverlay = new QWmpVideoOverlay(m_oleObject, this);
+                m_oleVideoOverlay = new QWmpVideoOverlay(m_player, m_oleObject, this);
                 m_player->put_uiMode(QAutoBStr(L"none"));
             }
         }

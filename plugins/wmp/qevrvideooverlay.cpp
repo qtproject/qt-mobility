@@ -72,7 +72,7 @@ void QEvrVideoOverlay::setWinId(WId id)
         m_displayControl->SetVideoPosition(0, &displayRect);
     }
 
-    m_winId = 0;
+    m_winId = id;
 }
 
 QRect QEvrVideoOverlay::displayRect() const
@@ -120,7 +120,22 @@ QVideoWidget::AspectRatio QEvrVideoOverlay::aspectRatio() const
 
 void QEvrVideoOverlay::setAspectRatio(QVideoWidget::AspectRatio ratio)
 {
-    m_aspectRatioMode = ratio;
+	switch (ratio) {
+	case QVideoWidget::AspectRatioAuto:
+		if (m_displayControl)
+			m_displayControl->SetAspectRatioMode(MFVideoARMode_PreservePicture);
+
+		m_aspectRatioMode = ratio;
+		break;
+	case QVideoWidget::AspectRatioWidget:
+		if (m_displayControl)
+			m_displayControl->SetAspectRatioMode(MFVideoARMode_None);
+
+		m_aspectRatioMode = ratio;
+		break;
+	default:
+		break;
+	}
 }
 
 QSize QEvrVideoOverlay::customAspectRatio() const
@@ -186,6 +201,8 @@ void QEvrVideoOverlay::setDisplayControl(IMFVideoDisplayControl *control)
         m_displayControl->AddRef();
         m_displayControl->SetVideoWindow(winId());
         m_displayControl->SetVideoPosition(0, &displayRect);
+
+		//setAspectRatio(m_aspectRatioMode);
     }
 }
 

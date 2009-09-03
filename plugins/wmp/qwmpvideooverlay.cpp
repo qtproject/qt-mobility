@@ -36,8 +36,9 @@
 
 #include "qwmpglobal.h"
 
-QWmpVideoOverlay::QWmpVideoOverlay(IOleObject *object, QWmpPlayerService *service)
+QWmpVideoOverlay::QWmpVideoOverlay(IWMPPlayer4 *player, IOleObject *object, QWmpPlayerService *service)
     : m_service(service)
+	, m_player(player)
     , m_object(object)
     , m_inPlaceObject(0)
     , m_aspectRatioMode(QVideoWidget::AspectRatioAuto)
@@ -126,6 +127,8 @@ bool QWmpVideoOverlay::isFullscreen() const
 
 void QWmpVideoOverlay::setFullscreen(bool fullscreen)
 {
+	m_player->put_fullScreen(fullscreen);
+
     emit fullscreenChanged(m_fullscreen = fullscreen);
 }
 
@@ -150,7 +153,20 @@ QVideoWidget::AspectRatio QWmpVideoOverlay::aspectRatio() const
 
 void QWmpVideoOverlay::setAspectRatio(QVideoWidget::AspectRatio ratio)
 {
-    m_aspectRatioMode = ratio;
+	switch (ratio) {
+	case QVideoWidget::AspectRatioAuto:
+		m_player->put_stretchToFit(FALSE);
+
+		m_aspectRatioMode = ratio;
+		break;
+	case QVideoWidget::AspectRatioWidget:
+		m_player->put_stretchToFit(TRUE);
+
+		m_aspectRatioMode = ratio;
+		break;
+	default:
+		break;
+	}
 }
 
 QSize QWmpVideoOverlay::customAspectRatio() const

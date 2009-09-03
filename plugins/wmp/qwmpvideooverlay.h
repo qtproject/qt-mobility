@@ -49,7 +49,7 @@ class QWmpVideoOverlay
 {
     Q_OBJECT
 public:
-    QWmpVideoOverlay(IOleObject *object, QWmpPlayerService *service);
+    QWmpVideoOverlay(IWMPPlayer4 *player, IOleObject *object, QWmpPlayerService *service);
     ~QWmpVideoOverlay();
 
     void setEnabled(bool enabled);
@@ -129,6 +129,7 @@ public:
 
 private:
     QWmpPlayerService *m_service;
+	IWMPPlayer4 *m_player;
     IOleObject *m_object;
     IOleInPlaceObject *m_inPlaceObject;
     WId m_winId;
