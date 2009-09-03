@@ -19,83 +19,91 @@
 <ul>
 <li><a href="qmessage-members.html">List of all members, including inherited members</a></li>
 </ul>
+<hr />
 <a name="public-types"></a>
-<h3>Public Types</h3>
-<ul>
-<li><div class="fn"></div>enum <b><a href="qmessage.html#Priority-enum">Priority</a></b> { High, Normal, Low }</li>
-<li><div class="fn"></div>enum <b><a href="qmessage.html#StandardFolder-enum">StandardFolder</a></b> { InboxFolder, DraftsFolder, OutboxFolder, SentFolder, TrashFolder }</li>
-<li><div class="fn"></div>enum <b><a href="qmessage.html#Status-enum">Status</a></b> { Read, HasAttachments, Incoming, Removed }</li>
-<li><div class="fn"></div>flags <b><a href="qmessage.html#Status-enum">StatusFlags</a></b></li>
-<li><div class="fn"></div>enum <b><a href="qmessage.html#Type-enum">Type</a></b> { Mms, Sms, Email, Xmpp, None, AnyType }</li>
-<li><div class="fn"></div>flags <b><a href="qmessage.html#Type-enum">TypeFlags</a></b></li>
-</ul>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#Priority-enum">Priority</a></b> { High, Normal, Low }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#StandardFolder-enum">StandardFolder</a></b> { InboxFolder, DraftsFolder, OutboxFolder, SentFolder, TrashFolder }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#Status-enum">Status</a></b> { Read, HasAttachments, Incoming, Removed }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#Status-enum">StatusFlags</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#Type-enum">Type</a></b> { Mms, Sms, Email, Xmpp, None, AnyType }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#Type-enum">TypeFlags</a></b></td></tr>
+</table>
+<hr />
 <a name="public-functions"></a>
-<h3>Public Functions</h3>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#QMessage">QMessage</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#QMessage-2">QMessage</a></b> ( const QMessageId &amp; <i>id</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#QMessage-3">QMessage</a></b> ( const QMessage &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#dtor.QMessage">~QMessage</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#appendAttachments">appendAttachments</a></b> ( const QStringList &amp; <i>fileNames</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QMessageContentContainerIdList </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#attachments">attachments</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QMessageAddressList </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#bcc">bcc</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QMessageContentContainerId </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#body">body</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QMessageAddressList </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#cc">cc</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#clearAttachments">clearAttachments</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QString </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#customField">customField</a></b> ( const QString &amp; <i>name</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QString&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#customFields">customFields</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#dataModified">dataModified</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QDateTime </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#date">date</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual uint </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#destinationPort">destinationPort</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QMessage </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#forward">forward</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QMessageAddress </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#from">from</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QMessageId </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#id">id</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual uint </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#originatorPort">originatorPort</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QMessageAccountId </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#parentAccountId">parentAccountId</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QMessageFolderId </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#parentFolderId">parentFolderId</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual Priority </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#priority">priority</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QDateTime </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#receivedDate">receivedDate</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QMessage </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#replyTo">replyTo</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QMessage </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#replyToAll">replyToAll</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#setBcc">setBcc</a></b> ( const QMessageAddressList &amp; <i>bccList</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#setBody">setBody</a></b> ( const QString &amp; <i>body</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#setBodyFromFile">setBodyFromFile</a></b> ( const QString &amp; <i>fileName</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#setCc">setCc</a></b> ( const QMessageAddressList &amp; <i>ccList</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#setCustomField">setCustomField</a></b> ( const QString &amp; <i>name</i>, const QString &amp; <i>value</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#setDate">setDate</a></b> ( const QDateTime &amp; <i>d</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#setDestinationPort">setDestinationPort</a></b> ( uint <i>port</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#setFrom">setFrom</a></b> ( const QMessageAddress &amp; <i>address</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#setOriginatorPort">setOriginatorPort</a></b> ( uint <i>port</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#setParentAccountId">setParentAccountId</a></b> ( const QMessageAccountId &amp; <i>accountId</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#setPriority">setPriority</a></b> ( Priority <i>newPriority</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#setReceivedDate">setReceivedDate</a></b> ( const QDateTime &amp; <i>d</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#setStandardFolder">setStandardFolder</a></b> ( StandardFolder <i>sf</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#setStatus">setStatus</a></b> ( StatusFlags <i>newStatus</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#setSubject">setSubject</a></b> ( const QString &amp; <i>s</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#setTo">setTo</a></b> ( const QMessageAddressList &amp; <i>toList</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#setTo-2">setTo</a></b> ( const QMessageAddress &amp; <i>address</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#setType">setType</a></b> ( Type <i>t</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual StandardFolder </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#standardFolder">standardFolder</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual StatusFlags </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#status">status</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QString </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#subject">subject</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QMessageAddressList </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#to">to</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QByteArray </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#toTransmissionFormat">toTransmissionFormat</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#toTransmissionFormat-2">toTransmissionFormat</a></b> ( QDataStream &amp; <i>out</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual Type </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#type">type</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const QMessage &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#operator-eq">operator=</a></b> ( const QMessage &amp; <i>other</i> )</td></tr>
+</table>
+<hr />
+<a name="reimplemented-public-functions"></a>
+<h2>Reimplemented Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual uint </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#size">size</a></b> () const</td></tr>
+</table>
 <ul>
-<li><div class="fn"></div><b><a href="qmessage.html#QMessage">QMessage</a></b> ()</li>
-<li><div class="fn"></div><b><a href="qmessage.html#QMessage-2">QMessage</a></b> ( const QMessageId &amp; <i>id</i> )</li>
-<li><div class="fn"></div><b><a href="qmessage.html#QMessage-3">QMessage</a></b> ( const QMessage &amp; <i>other</i> )</li>
-<li><div class="fn"></div>virtual <b><a href="qmessage.html#dtor.QMessage">~QMessage</a></b> ()</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#appendAttachments">appendAttachments</a></b> ( const QStringList &amp; <i>fileNames</i> )</li>
-<li><div class="fn"></div>virtual QMessageContentContainerIdList <b><a href="qmessage.html#attachments">attachments</a></b> () const</li>
-<li><div class="fn"></div>virtual QMessageAddressList <b><a href="qmessage.html#bcc">bcc</a></b> () const</li>
-<li><div class="fn"></div>virtual QMessageContentContainerId <b><a href="qmessage.html#body">body</a></b> () const</li>
-<li><div class="fn"></div>virtual QMessageAddressList <b><a href="qmessage.html#cc">cc</a></b> () const</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#clearAttachments">clearAttachments</a></b> ()</li>
-<li><div class="fn"></div>virtual QString <b><a href="qmessage.html#customField">customField</a></b> ( const QString &amp; <i>name</i> ) const</li>
-<li><div class="fn"></div>virtual QList&lt;QString&gt; <b><a href="qmessage.html#customFields">customFields</a></b> () const</li>
-<li><div class="fn"></div>virtual bool <b><a href="qmessage.html#dataModified">dataModified</a></b> () const</li>
-<li><div class="fn"></div>virtual QDateTime <b><a href="qmessage.html#date">date</a></b> () const</li>
-<li><div class="fn"></div>virtual uint <b><a href="qmessage.html#destinationPort">destinationPort</a></b> ()</li>
-<li><div class="fn"></div>virtual QMessage <b><a href="qmessage.html#forward">forward</a></b> () const</li>
-<li><div class="fn"></div>virtual QMessageAddress <b><a href="qmessage.html#from">from</a></b> () const</li>
-<li><div class="fn"></div>virtual QMessageId <b><a href="qmessage.html#id">id</a></b> () const</li>
-<li><div class="fn"></div>virtual uint <b><a href="qmessage.html#originatorPort">originatorPort</a></b> ()</li>
-<li><div class="fn"></div>virtual QMessageAccountId <b><a href="qmessage.html#parentAccountId">parentAccountId</a></b> () const</li>
-<li><div class="fn"></div>virtual QMessageFolderId <b><a href="qmessage.html#parentFolderId">parentFolderId</a></b> () const</li>
-<li><div class="fn"></div>virtual Priority <b><a href="qmessage.html#priority">priority</a></b> () const</li>
-<li><div class="fn"></div>virtual QDateTime <b><a href="qmessage.html#receivedDate">receivedDate</a></b> () const</li>
-<li><div class="fn"></div>virtual QMessage <b><a href="qmessage.html#replyTo">replyTo</a></b> () const</li>
-<li><div class="fn"></div>virtual QMessage <b><a href="qmessage.html#replyToAll">replyToAll</a></b> () const</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setBcc">setBcc</a></b> ( const QMessageAddressList &amp; <i>bccList</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setBody">setBody</a></b> ( const QString &amp; <i>body</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setBodyFromFile">setBodyFromFile</a></b> ( const QString &amp; <i>fileName</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setCc">setCc</a></b> ( const QMessageAddressList &amp; <i>ccList</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setCustomField">setCustomField</a></b> ( const QString &amp; <i>name</i>, const QString &amp; <i>value</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setDate">setDate</a></b> ( const QDateTime &amp; <i>d</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setDestinationPort">setDestinationPort</a></b> ( uint <i>port</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setFrom">setFrom</a></b> ( const QMessageAddress &amp; <i>address</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setOriginatorPort">setOriginatorPort</a></b> ( uint <i>port</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setParentAccountId">setParentAccountId</a></b> ( const QMessageAccountId &amp; <i>accountId</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setPriority">setPriority</a></b> ( Priority <i>newPriority</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setReceivedDate">setReceivedDate</a></b> ( const QDateTime &amp; <i>d</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setStandardFolder">setStandardFolder</a></b> ( StandardFolder <i>sf</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setStatus">setStatus</a></b> ( StatusFlags <i>newStatus</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setSubject">setSubject</a></b> ( const QString &amp; <i>s</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setTo">setTo</a></b> ( const QMessageAddressList &amp; <i>toList</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setTo-2">setTo</a></b> ( const QMessageAddress &amp; <i>address</i> )</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#setType">setType</a></b> ( Type <i>t</i> )</li>
-<li><div class="fn"></div>virtual uint <b><a href="qmessage.html#size">size</a></b> () const</li>
-<li><div class="fn"></div>virtual StandardFolder <b><a href="qmessage.html#standardFolder">standardFolder</a></b> () const</li>
-<li><div class="fn"></div>virtual StatusFlags <b><a href="qmessage.html#status">status</a></b> () const</li>
-<li><div class="fn"></div>virtual QString <b><a href="qmessage.html#subject">subject</a></b> () const</li>
-<li><div class="fn"></div>virtual QMessageAddressList <b><a href="qmessage.html#to">to</a></b> () const</li>
-<li><div class="fn"></div>virtual QByteArray <b><a href="qmessage.html#toTransmissionFormat">toTransmissionFormat</a></b> () const</li>
-<li><div class="fn"></div>virtual void <b><a href="qmessage.html#toTransmissionFormat-2">toTransmissionFormat</a></b> ( QDataStream &amp; <i>out</i> ) const</li>
-<li><div class="fn"></div>virtual Type <b><a href="qmessage.html#type">type</a></b> () const</li>
-<li><div class="fn"></div>const QMessage &amp; <b><a href="qmessage.html#operator-eq">operator=</a></b> ( const QMessage &amp; <i>other</i> )</li>
+<li><div bar="2" class="fn"></div>35 public functions inherited from <a href="qmessagecontentcontainer.html#public-functions">QMessageContentContainer</a></li>
 </ul>
-<ul>
-<li><div class="fn"></div>35 public functions inherited from <a href="qmessagecontentcontainer.html#public-functions">QMessageContentContainer</a></li>
-</ul>
+<hr />
 <a name="static-public-members"></a>
-<h3>Static Public Members</h3>
+<h2>Static Public Members</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QMessage </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#fromTransmissionFormat">fromTransmissionFormat</a></b> ( Type <i>t</i>, const QByteArray &amp; <i>ba</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMessage </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#fromTransmissionFormatFile">fromTransmissionFormatFile</a></b> ( Type <i>t</i>, const QString &amp; <i>fileName</i> )</td></tr>
+</table>
 <ul>
-<li><div class="fn"></div>QMessage <b><a href="qmessage.html#fromTransmissionFormat">fromTransmissionFormat</a></b> ( Type <i>t</i>, const QByteArray &amp; <i>ba</i> )</li>
-<li><div class="fn"></div>QMessage <b><a href="qmessage.html#fromTransmissionFormatFile">fromTransmissionFormatFile</a></b> ( Type <i>t</i>, const QString &amp; <i>fileName</i> )</li>
-</ul>
-<ul>
-<li><div class="fn"></div>2 static public members inherited from <a href="qmessagecontentcontainer.html#static-public-members">QMessageContentContainer</a></li>
+<li><div bar="2" class="fn"></div>2 static public members inherited from <a href="qmessagecontentcontainer.html#static-public-members">QMessageContentContainer</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
@@ -126,7 +134,7 @@
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="Priority-enum"></a>enum QMessage::Priority</h3>
 <p>Defines the priority of a message.</p>
-<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QMessage::High</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The message is high priority.</td></tr>
 <tr><td valign="top"><tt>QMessage::Normal</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The message is normal priority.</td></tr>
@@ -134,7 +142,7 @@
 </table></p>
 <h3 class="fn"><a name="StandardFolder-enum"></a>enum QMessage::StandardFolder</h3>
 <p>Defines the standard folders.</p>
-<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QMessage::InboxFolder</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Represents the standard inbox folder.</td></tr>
 <tr><td valign="top"><tt>QMessage::DraftsFolder</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Represents the standard drafts folder.</td></tr>
@@ -144,7 +152,7 @@
 </table></p>
 <h3 class="flags"><a name="Status-enum"></a>enum QMessage::Status<br />flags QMessage::StatusFlags</h3>
 <p>This enum type is used to describe the status of a message.</p>
-<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QMessage::Read</tt></td><td align="center" valign="top"><tt>0x1</tt></td><td valign="top">This flag indicates that the content of this message has been displayed to the user.</td></tr>
 <tr><td valign="top"><tt>QMessage::HasAttachments</tt></td><td align="center" valign="top"><tt>0x2</tt></td><td valign="top">This flag indicates that the message contains at least one sub-part with 'Attachment' disposition.</td></tr>
@@ -155,7 +163,7 @@
 <p>See also <a href="qmessage.html#status">status</a>() and <a href="qmessage.html#setStatus">setStatus</a>().</p>
 <h3 class="flags"><a name="Type-enum"></a>enum QMessage::Type<br />flags QMessage::TypeFlags</h3>
 <p>This enum type is used to describe the type of a message.</p>
-<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QMessage::Mms</tt></td><td align="center" valign="top"><tt>0x1</tt></td><td valign="top">The message is an MMS, Multimedia Messaging Service object.</td></tr>
 <tr><td valign="top"><tt>QMessage::Sms</tt></td><td align="center" valign="top"><tt>0x2</tt></td><td valign="top">The message is an SMS, Short Message Service object.</td></tr>
@@ -316,8 +324,8 @@
 <p>The type of a message may be set for non-empty messages.</p>
 <p>See also <a href="qmessage.html#type">type</a>().</p>
 <h3 class="fn"><a name="size"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#uint-typedef">uint</a> QMessage::size () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Reimplemented from <a href="qmessagecontentcontainer.html#size">QMessageContentContainer::size</a>().</p>
 <p>Returns the complete size of the message as indicated on the originating server.</p>
-<p>Reimplemented from <a href="qmessagecontentcontainer.html#size">QMessageContentContainer</a>.</p>
 <p>See also <a href="qmessagefilterkey.html#size">QMessageFilterKey::size</a>().</p>
 <h3 class="fn"><a name="standardFolder"></a><a href="qmessage.html#StandardFolder-enum">StandardFolder</a> QMessage::standardFolder () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the standard folder of the message.</p>

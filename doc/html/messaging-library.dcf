@@ -376,6 +376,9 @@
     <section ref="index.html" title="Messaging Library Developer Resources">
         <keyword ref="index.html">Messaging Library Developer Resources</keyword>
     </section>
+    <section ref="messaging.html" title="Qt Mobility Messaging API">
+        <keyword ref="messaging.html">Qt Mobility Messaging API</keyword>
+    </section>
 </section>
 <section ref="examples.html" title="Tutorial &amp; Examples"/>
 </DCF>
