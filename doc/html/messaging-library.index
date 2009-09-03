@@ -952,6 +952,7 @@
                 <parameter left="QMessageDataComparator::InclusionComparator" right="" name="cmp" default="QMessageDataComparator::Includes"/>
             </function>
         </class>
+        <page access="public" status="commendable" name="messaging" href="messaging.html" subtype="group" title="Qt Mobility Messaging API" fulltitle="Qt Mobility Messaging API" subtitle="" location="index.qdoc"/>
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Messaging Library Developer Resources" fulltitle="Messaging Library Developer Resources" subtitle="" location="index.qdoc">
             <contents name="overview" title="Overview" level="1"/>
             <contents name="reference-documentation" title="Reference documentation" level="1"/>
@@ -959,6 +960,8 @@
             <contents name="composition-and-manipulation-of-messages" title="Composition and Manipulation of Messages" level="1"/>
             <contents name="message-accounts" title="Message Accounts" level="1"/>
             <contents name="sorting-and-filtering-functionality" title="Sorting and Filtering Functionality" level="1"/>
+            <contents name="using-the-sortkey-functions" title="Using the SortKey Functions" level="2"/>
+            <contents name="using-the-filter-functions" title="Using the Filter Functions" level="2"/>
             <contents name="messaging-services" title="Messaging Services" level="1"/>
             <contents name="concurrent-access-to-messaging-data" title="Concurrent Access to Messaging Data" level="1"/>
             <contents name="abstraction-of-messaging-data-storage-mechanism" title="Abstraction of Messaging Data Storage Mechanism" level="1"/>
