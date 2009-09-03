@@ -205,7 +205,7 @@ QString QMediaResource::videoCodec() const
 }
 
 /*!
-    Sets the video codec of media resource.
+    Sets the video \a codec of media resource.
 */
 void QMediaResource::setVideoCodec(const QString &codec)
 {
