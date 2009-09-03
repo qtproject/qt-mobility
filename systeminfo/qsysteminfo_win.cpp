@@ -624,10 +624,15 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
 
     while (!interfaceList.isEmpty()) {
         QNetworkInterface netInterface = interfaceList.takeFirst();
-qWarning() << netInterface.hardwareAddress()
-        << netInterface.flags();
-        if (!netInterface.isValid() || (netInterface.flags() & QNetworkInterface::IsLoopBack))
+qWarning()
+        << netInterface.humanReadableName()
+        << netInterface.hardwareAddress()
+        << netInterface.flags()
+        << "mode" << mode;
+if (!netInterface.isValid() || (netInterface.flags() & QNetworkInterface::IsLoopBack)) {
+    qWarning() << "continue";
             continue;
+        }
 
         unsigned long oid;
         DWORD bytesWritten;
@@ -639,17 +644,18 @@ qWarning() << netInterface.hardwareAddress()
                                    FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
         if (handle == INVALID_HANDLE_VALUE) {
             qWarning() << "Invalid handle";
-            return QNetworkInterface();
+            continue/*return QNetworkInterface()*/;
         }
 
         oid = OID_GEN_MEDIA_SUPPORTED;
-        bytesWritten = 0;
+        bytesWritten;
         bool result = DeviceIoControl(handle, IOCTL_NDIS_QUERY_GLOBAL_STATS, &oid, sizeof(oid),
                                       &medium, sizeof(medium), &bytesWritten, 0);
         if (!result) {
             CloseHandle(handle);
             qWarning() << "DeviceIo result is false";
-            return QNetworkInterface();
+//            return QNetworkInterface();
+            continue;
         }
 
         oid = OID_GEN_PHYSICAL_MEDIUM;
@@ -658,11 +664,14 @@ qWarning() << netInterface.hardwareAddress()
                                  &physicalMedium, sizeof(physicalMedium), &bytesWritten, 0);
         if (!result) {
             CloseHandle(handle);
-
-            if (medium == NdisMedium802_3 && mode == QSystemNetworkInfo::EthernetMode)
+            qWarning() << "no result";
+            if (medium == NdisMedium802_3 && mode == QSystemNetworkInfo::EthernetMode) {
+                qWarning() << "ethernet mode";
                 return netInterface;
-//            else
+            } else {
+continue;
 //                return QNetworkInterface();
+            }
         }
 
         CloseHandle(handle);
@@ -671,6 +680,7 @@ qWarning() << netInterface.hardwareAddress()
             switch (physicalMedium) {
             case NdisPhysicalMediumWirelessLan:
                 {
+                    qWarning() << "wifi!";
                     if(mode == QSystemNetworkInfo::WlanMode) {
                         return netInterface;
                     }
@@ -686,6 +696,7 @@ qWarning() << netInterface.hardwareAddress()
                 break;
             case NdisPhysicalMediumWiMax:
                 {
+                    qWarning() << "wimax!";
                     if(mode == QSystemNetworkInfo::WimaxMode) {
                         return netInterface;
                     }
@@ -718,33 +729,44 @@ int QSystemDisplayInfoPrivate::displayBrightness(int screen)
     wHelper->setClassProperty(QStringList() << "CurrentBrightness");
 
     QVariant v = wHelper->getWMIData();
+
     return v.toUInt();
 //#else
 //    //    Q_UNUSED(screen);
-//    qint32 brightness = 0;
-//    HANDLE display = CreateFile(L"\\\\.\\LCD",FILE_ANY_ACCESS,0,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,0);
+   // qint32 brightness = 0;
+   // QString brightness;
+
+//    HANDLE display = CreateFile(L"\\\\.\\LCD",GENERIC_READ,FILE_SHARE_READ | FILE_SHARE_WRITE
+//                                ,NULL,OPEN_EXISTING,0,NULL);
 //    if(display != INVALID_HANDLE_VALUE) {
 //        DISPLAY_BRIGHTNESS brightnessBuffer;
-//        memset( &brightnessBuffer, 0, sizeof(brightnessBuffer));
 //        DWORD bytesReturned = 0;
-//        if(DeviceIoControl(display,IOCTL_VIDEO_QUERY_DISPLAY_BRIGHTNESS,
-//                           NULL,0,&brightnessBuffer,256,&bytesReturned,NULL)) {
-//            if(bytesReturned > 0) {
-//                brightness = brightnessBuffer.ucACBrightness;
-//                qWarning()
-//                        << brightnessBuffer.ucDisplayPolicy
-//                        << brightnessBuffer.ucDCBrightness
-//                        << brightnessBuffer.ucACBrightness
-//                        << static_cast<int>(brightnessBuffer.ucACBrightness);
-//            } else {
-//                qWarning() << "bytes not returned" << bytesReturned << GetLastError();
-//            }
-//        }
 //
+//        if(DeviceIoControl(display,IOCTL_VIDEO_QUERY_DISPLAY_BRIGHTNESS,
+//                           NULL,0,&brightnessBuffer,sizeof(brightnessBuffer),
+//                           &bytesReturned,NULL)) {
+//            QString brightness;//((QChar *)brightnessBuffer.ucACBrightness);
+//
+//            char *uc = (char *)brightnessBuffer.ucACBrightness;
+////            brightness = uc;
+////            for(uint i = 0; sizeof(brightnessBuffer.ucACBrightness); i++) {
+////                brightness += QChar(brightnessBuffer.ucACBrightness);
+////            }
+//
+//            qWarning()
+//                    << sizeof(brightnessBuffer.ucACBrightness)
+//                    << QChar(brightnessBuffer.ucACBrightness)
+//                 //   << brightness
+//                    << brightnessBuffer.ucDisplayPolicy
+//                    << brightnessBuffer.ucDCBrightness
+//                    << brightnessBuffer.ucACBrightness;
+//
+//        }
 //        CloseHandle(display);
 //    } else {
 //        qWarning() << "invalid handle";
 //    }
+  //  UCHAR
 //#endif
 
     // Get the number of physical monitors.
@@ -784,7 +806,6 @@ int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 //                qWarning() << "XXXXXXXXXXXXXXXX NO brightness";
 //
 //            }
-// GetMonitorBrightness
 //
 //            // Close the monitor handles.
 //            bSuccess = DestroyPhysicalMonitors(
@@ -796,12 +817,8 @@ int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 //        } else {
 //            qWarning() << "XXXXXXXXXXXXXX" << GetLastError();
 //        }
-
-//    } else {
-//        qWarning() << "not successful" << GetLastError();
+//
 //    }
-
-    //GetMonitorBrightness
     //////////////////////////////////
 
     return -1;
@@ -1020,30 +1037,36 @@ QString QSystemDeviceInfoPrivate::model()
     WMIHelper *wHelper;
     wHelper = new WMIHelper();
     wHelper->setWmiNamespace("root/cimv2");
-    wHelper->setClassName("Win32_Processor");
-    wHelper->setClassProperty(QStringList() << "Architecture");
+//    wHelper->setClassName("Win32_Processor");
+//    wHelper->setClassProperty(QStringList() << "Architecture");
+//    QVariant v = wHelper->getWMIData();
+//    QString model;
+//    switch(v.toUInt()) {
+//    case 0:
+//        model = "x86 ";
+//        break;
+//    case 1:
+//        model = "MIPS ";
+//        break;
+//    case 2:
+//        model = "Alpha ";
+//        break;
+//    case 3:
+//        model = "PowerPC ";
+//        break;
+//    case 6:
+//        model = "Intel Itanium ";
+//        break;
+//    case 9:
+//        model = "x64 ";
+//        break;
+//    }
+
+
+    wHelper->setClassName("Win32_ComputerSystem");
+    wHelper->setClassProperty(QStringList() << "Model");
     QVariant v = wHelper->getWMIData();
-    QString model;
-    switch(v.toUInt()) {
-    case 0:
-        model = "x86 ";
-        break;
-    case 1:
-        model = "MIPS ";
-        break;
-    case 2:
-        model = "Alpha ";
-        break;
-    case 3:
-        model = "PowerPC ";
-        break;
-    case 6:
-        model = "Intel Itanium ";
-        break;
-    case 9:
-        model = "x64 ";
-        break;
-    }
+    QString model = v.toString();
 
     wHelper->setClassName("Win32_ComputerSystem");
     wHelper->setClassProperty(QStringList() << "PCSystemType");
@@ -1094,14 +1117,14 @@ QString QSystemDeviceInfoPrivate::productName()
 
     if(name.isEmpty()) {
         wHelper->setClassName("Win32_ComputerSystem");
-        wHelper->setClassProperty(QStringList() << "PCSystemType");        
+        wHelper->setClassProperty(QStringList() << "PCSystemType");
         v = wHelper->getWMIData();
         name = v.toString();
         if(name.isEmpty()) {
             name = "Unspecified product";
         }
     }
-    
+
     return name;
 }
 
@@ -1117,7 +1140,8 @@ bool QSystemDeviceInfoPrivate::isBatteryCharging()
 #else
         SYSTEM_POWER_STATUS status;
     if(GetSystemPowerStatus( &status) ) {
-        if(status.ACLineStatus == 1) {
+        if(status.ACLineStatus == 1
+           && status.BatteryFlag & 8) {
             isCharging = true;
         }
     }
