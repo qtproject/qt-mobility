@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 
-#include "addresshelper.h"
+//#include "addresshelper.h"
 #include <qpair.h>
 
 struct CharacterProcessor

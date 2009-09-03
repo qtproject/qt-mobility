@@ -32,7 +32,9 @@
 ****************************************************************************/
 
 #include "addressfinder.h"
-#include "addresshelper.h"
+//#include "addresshelper.h"
+extern bool qContainsGroupSpecifier(const QString &input);
+extern void qParseMailbox(QString &input, QString &name, QString &address, QString &suffix);
 
 #include <QComboBox>
 #include <QDateTime>
