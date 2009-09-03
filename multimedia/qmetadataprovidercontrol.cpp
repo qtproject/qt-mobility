@@ -71,21 +71,27 @@ QMetadataProviderControl::~QMetadataProviderControl()
 */
 
 /*!
-    \fn QMetadataProviderControl::metadata(const QString &key) const
-
-    Returns the metadata for the given \a key.
-*/
-
-/*!
     \fn void QMetadataProviderControl::setMetadata(QMediaMetadata::Key key, const QVariant &value)
 
     Change the value of the metadata element with the given \a key to \a value.
 */
 
 /*!
-    \fn QMetadataProviderControl::setMetadata(const QString &key, const QVariant &value)
+    \fn QMetadataProviderControl::extendedMetadata(const QString &key) const
 
-    Change the value of the metadata element with the given \a key to \a value.
+    Returns the metadata for an abitrary string \a key.
+
+    The valid selection of keys for extended meta-data is determined by the provider and the meaning
+    and type may differ between providers.
+*/
+
+/*!
+    \fn QMetadataProviderControl::setExtendedMetadata(const QString &key, const QVariant &value)
+
+    Change the value of the metadata element with an abitrary string \a key to \a value.
+
+    The valid selection of keys for extended meta-data is determined by the provider and the meaning
+    and type may differ between providers.
 */
 
 /*!
@@ -95,7 +101,7 @@ QMetadataProviderControl::~QMetadataProviderControl()
 */
 
 /*!
-    \fn void QMediaMetadata::metadataAvailablilityChanged(bool available)
+    \fn void QMetadataProviderControl::metadataAvailabilityChanged(bool available)
 
     Signal the availability of metadata has changed, \a available will
     be true if the multimedia object has metadata.

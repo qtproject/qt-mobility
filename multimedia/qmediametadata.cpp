@@ -249,7 +249,7 @@ void QMediaMetadata::setExtendedMetadata(const QString &key, const QVariant &val
 */
 
 /*!
-    \fn void QMediaMetadata::metadataAvailablilityChanged(bool available)
+    \fn void QMediaMetadata::metadataAvailabilityChanged(bool available)
 
     Signal the availability of metadata has changed, \a available will
     be true if the multimedia object has metadata.
