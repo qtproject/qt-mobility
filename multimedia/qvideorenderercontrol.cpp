@@ -74,7 +74,7 @@ QVideoRendererControl::~QVideoRendererControl()
 }
 
 /*!
-    \fn QVideoRendererControl::surface()
+    \fn QVideoRendererControl::surface() const
 
     Returns the surface a video producer renders to.
 */

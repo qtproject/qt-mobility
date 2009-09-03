@@ -73,6 +73,29 @@ QVideoWidgetControl::~QVideoWidgetControl()
     Signals that the \a fullscreen state of a video widget has changed.
 */
 
+/*!
+    \fn QVideoWidgetControl::aspectRatio() const
+
+    Returns the aspect ratio policy for scaling the video.
+*/
+
+/*!
+    \fn QVideoWidgetControl::setAspectRatio(QVideoWidget::AspectRatio ratio)
+
+    Sets the aspect \a ratio policy for scaling the video.
+*/
+
+/*!
+    \fn QVideoWidgetControl::customAspectRatio() const
+
+    Returns the a custom aspect ratio used to scale the video.
+*/
+
+/*!
+    \fn QVideoWidgetControl::setCustomAspectRatio(const QSize &ratio)
+
+    Sets a custom aspect \a ratio used to scale the video.
+*/
 
 /*!
   \fn int QVideoWidgetControl::brightness() const

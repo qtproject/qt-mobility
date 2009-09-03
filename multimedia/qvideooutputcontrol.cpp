@@ -62,7 +62,7 @@ QVideoOutputControl::~QVideoOutputControl()
 }
 
 /*!
-    QList<QVideoOutputControl::Output> QVideoOutputControl::availableOutputs() const
+    \fn QList<QVideoOutputControl::Output> QVideoOutputControl::availableOutputs() const
 
     Returns a list of available video output targets.
 */

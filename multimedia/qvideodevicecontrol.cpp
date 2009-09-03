@@ -103,7 +103,7 @@ QVideoDeviceControl::~QVideoDeviceControl()
 */
 
 /*!
-    \property QVideoDeviceControl::selectedDevice
+    \fn QVideoDeviceControl::selectedDevice() const
 
     The index of the selected device.
 */

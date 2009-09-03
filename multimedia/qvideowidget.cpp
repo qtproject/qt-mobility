@@ -453,6 +453,25 @@ void QVideoWidgetPrivate::_q_customAspectRatioChanged(const QSize &ratio)
 */
 
 /*!
+    \enum QVideoWidget::DisplayMode
+
+    Specifies whether video is displayed full screen, or is confined to a window.
+
+    \value WindowedDisplay Video is displayed within a window.
+    \value FullscreenDisplay Video is displayed full screen.
+*/
+
+/*!
+    \enum QVideoWidget::AspectRatio
+
+    Specfies how video is scaled with respect to its aspect ratio.
+
+    \value AspectRatioAuto The aspect ratio is repected, and the video is letter-boxed.
+    \value AspectRatioWidget The aspect ratio is ignored and the video stretched to fit the widget.
+    \value AspectRatioCustom The video is stretched to a specified aspect ratio and letter-boxed.
+*/
+
+/*!
     Constructs a new widget with the given \a parent which displays video produced by a media
     \a object.
 */
@@ -596,23 +615,12 @@ QVideoWidget::~QVideoWidget()
 }
 
 /*!
-    \property QVideoWidget::displayMode
-    \brief whether video display is confined to a window or is fullscreen.
+    \property QVideoWidget::aspectRatio
+    \brief whether the aspect ratio of the video is respected.
 */
-
-QVideoWidget::DisplayMode QVideoWidget::displayMode() const
-{
-    return d_func()->displayMode;
-}
-
 QVideoWidget::AspectRatio QVideoWidget::aspectRatio() const
 {
     return d_func()->aspectRatio;
-}
-
-QSize QVideoWidget::customPixelAspectRatio() const
-{
-    return d_func()->customPixelAspectRatio;
 }
 
 void QVideoWidget::setAspectRatio(QVideoWidget::AspectRatio ratio)
@@ -623,12 +631,46 @@ void QVideoWidget::setAspectRatio(QVideoWidget::AspectRatio ratio)
         d->currentBackend->setAspectRatio(ratio);
 }
 
+/*!
+    \fn QVideoWidget::aspectRatioChanged(QVideoWidget::AspectRatio ratio)
+
+    Signals that the aspect \a ratio scaling mode of a video widget has changed.
+*/
+
+/*!
+    \property QVideoWidget::customPixelAspectRatio
+    \brief an overriding pixel aspect ratio.
+
+    This aspect ratio is only used if the aspectRatio() mode is AspectRatioCustom.
+*/
+
+QSize QVideoWidget::customPixelAspectRatio() const
+{
+    return d_func()->customPixelAspectRatio;
+}
+
 void QVideoWidget::setCustomPixelAspectRatio(const QSize &customRatio)
 {
     Q_D(QVideoWidget);
 
     if (d->currentBackend)
         d->currentBackend->setCustomPixelAspectRatio(customRatio);
+}
+
+/*!
+    \fn QVideoWidget::customPixelAspectRatioChanged(const QSize &ratio)
+
+    Signals that the override pixel aspect \a ratio of a video widget has changed.
+*/
+
+/*!
+    \property QVideoWidget::displayMode
+    \brief whether video display is confined to a window or is fullscreen.
+*/
+
+QVideoWidget::DisplayMode QVideoWidget::displayMode() const
+{
+    return d_func()->displayMode;
 }
 
 void QVideoWidget::setDisplayMode(DisplayMode mode)
@@ -741,6 +783,10 @@ void QVideoWidget::setSaturation(int saturation)
         d->currentBackend->setSaturation(qBound(-100, saturation, 100));
 }
 
+/*!
+    \reimp
+*/
+
 void QVideoWidget::setVisible(bool visible)
 {
     Q_D(QVideoWidget);
@@ -770,6 +816,10 @@ void QVideoWidget::setVisible(bool visible)
     QWidget::setVisible(visible);
 }
 
+/*!
+    \reimp
+*/
+
 bool QVideoWidget::eventFilter(QObject *, QEvent *e)
 {
     switch (e->type()) {
@@ -785,6 +835,9 @@ bool QVideoWidget::eventFilter(QObject *, QEvent *e)
     }
 }
 
+/*!
+    \reimp
+*/
 void QVideoWidget::keyPressEvent(QKeyEvent *event)
 {
     Q_D(QVideoWidget);
