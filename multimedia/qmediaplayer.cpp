@@ -187,108 +187,51 @@ bool QMediaPlayer::isValid() const
     return d_func()->service;
 }
 
-
 QMediaSource QMediaPlayer::media() const
 {
     return d_func()->control->media();
 }
-
-/*!
-    \property QMediaPlayer::state
-    \brief the media player's playback state.
-
-    By default this property is QMediaPlayer::Stopped
-
-    \sa mediaStatus(), play(), pause(), stop()
-*/
-
-/*!
-    \fn void QMediaPlayer::stateChanged(State state)
-
-    Signal the \a state of the Player object has changed.
-*/
 
 QMediaPlayer::State QMediaPlayer::state() const
 {
     return QMediaPlayer::State(d_func()->control->state());
 }
 
-/*!
-    \property QMediaPlayer::mediaStatus
-    \brief the status of the current media stream.
-
-    The stream status describes how the playback of the current stream is progressing.
-
-    By default this property is QMediaPlayer::NoMedia
-
-    \sa state
-*/
-
-/*!
-    \fn QMediaPlayer::mediaStatusChanged(QMediaPlayer::MediaStatus status)
-
-    Signals that the \a status of the current media has changed.
-
-    \sa mediaStatus()
-*/
-
 QMediaPlayer::MediaStatus QMediaPlayer::mediaStatus() const
 {
     return QMediaPlayer::MediaStatus(d_func()->control->mediaStatus());
 }
 
-
-/*!
-  Returns duration of currently played source in miliseconds.
-*/
 qint64 QMediaPlayer::duration() const
 {
     return d_func()->control->duration();
 }
 
-/*!
-  Returns position in miliseconds the current source plays at.
-*/
 qint64 QMediaPlayer::position() const
 {
     return d_func()->control->position();
 }
 
-/*!
-  Returns playback volume, in range 0..100.
-*/
 int QMediaPlayer::volume() const
 {
     return d_func()->control->volume();
 }
 
-/*!
-  Returns true is audio is muted; otherwise returns false.
-*/
 bool QMediaPlayer::isMuted() const
 {
     return d_func()->control->isMuted();
 }
 
-/*!
-  Returns how much the buffer is filled in percent.
-*/
 int QMediaPlayer::bufferStatus() const
 {
     return d_func()->control->bufferStatus();
 }
 
-/*!
-  Returns true if the current media contains video data; otherwise, returns false.
-*/
 bool QMediaPlayer::isVideoAvailable() const
 {
     return d_func()->control->isVideoAvailable();
 }
 
-/*!
-  Returns true if playback position can be changed by setPosition(); otherwise, returns false.
-*/
 bool QMediaPlayer::isSeekable() const
 {
     return d_func()->control->isSeekable();
@@ -299,38 +242,10 @@ float QMediaPlayer::playbackRate() const
     return d_func()->control->playbackRate();
 }
 
-/*!
-    Returns the last error condition.
-
-    \sa errorString()
-*/
 QMediaPlayer::Error QMediaPlayer::error() const
 {
     return d_func()->error;
 }
-
-/*!
-    \fn QMediaPlayer::error(QMediaPlayer::Error error)
-
-    Signals that an \a error condition has occured.
-
-    \sa errorString()
-*/
-
-/*!
-    \property QMediaPlayer::error
-    \brief a string describing the last error condition.
-
-    \sa error()
-*/
-
-/*!
-    \fn QMediaPlayer::errorStringChanged(const QString &string)
-
-    Signals that the \a string describing the last error condition has changed.
-
-    \sa errorString()
-*/
 
 QString QMediaPlayer::errorString() const
 {
@@ -350,6 +265,7 @@ QAbstractMediaService* QMediaPlayer::service() const
 /*!
     Start or resume playing the current source.
 */
+
 void QMediaPlayer::play()
 {
     Q_D(QMediaPlayer);
@@ -364,6 +280,7 @@ void QMediaPlayer::play()
 /*!
     Pause playing the current source.
 */
+
 void QMediaPlayer::pause()
 {
     d_func()->control->pause();
@@ -372,15 +289,12 @@ void QMediaPlayer::pause()
 /*!
     Stop playing, and reset the play position to the beginning.
 */
+
 void QMediaPlayer::stop()
 {
     d_func()->control->stop();
 }
 
-/*!
-    Set the current play position to \a position, relative to the beginning.
-    This method is not guaranteed to be synchronous.
-*/
 void QMediaPlayer::setPosition(qint64 position)
 {
     if (!isSeekable())
@@ -389,10 +303,6 @@ void QMediaPlayer::setPosition(qint64 position)
     d_func()->control->setPosition(qMax(qint64(0), qMin(duration(), position)));
 }
 
-/*!
-    Set the current volume [ 0 - 100 ] to  \a volume.
-    This method is not guaranteed to be synchronous.
-*/
 void QMediaPlayer::setVolume(int v)
 {
     int clamped = qMax(0, qMin(100, v));
@@ -402,11 +312,6 @@ void QMediaPlayer::setVolume(int v)
     d_func()->control->setVolume(clamped);
 }
 
-/*!
-    Set the mute state of the playback folume to \a muted. True to mute the
-    playback volume, false to unmute.  This method is not guaranteed to be
-    synchronous.
-*/
 void QMediaPlayer::setMuted(bool muted)
 {
     if (muted == isMuted())
@@ -426,6 +331,7 @@ void QMediaPlayer::setMedia(const QMediaSource &media)
 }
 
 
+// Enums
 /*!
     \enum QMediaPlayer::State
 
@@ -471,21 +377,87 @@ void QMediaPlayer::setMedia(const QMediaSource &media)
     \value AccessDeniedError There are not the appropriate permissions to play a media resource
 */
 
+// Signals
 /*!
-    \property QMediaPlayer::mediaPlaylist
-    \brief The QMediaPlaylist being used for playback.
+    \fn QMediaPlayer::error(QMediaPlayer::Error error)
+
+    Signals that an \a error condition has occurred.
+
+    \sa errorString()
 */
 
 /*!
-    \property QMediaPlayer::mediaSource
-    \brief The resource of the active media.
+    \fn void QMediaPlayer::stateChanged(State state)
 
-    \sa playlistPosition()
+    Signal the \a state of the Player object has changed.
 */
 
 /*!
-    \property QMediaPlayer::playlistPosition
-    \brief The position of the current playing item in the playlist.
+    \fn QMediaPlayer::mediaStatusChanged(QMediaPlayer::MediaStatus status)
+
+    Signals that the \a status of the current media has changed.
+
+    \sa mediaStatus()
+*/
+
+/*!
+    \fn void QMediaPlayer::mediaChanged(const QMediaSource &media);
+
+    Signals that the current playing content will be obtained from \a media.
+
+    \sa media()
+*/
+
+/*!
+    \fn void QMediaPlayer::playbackRateChanged(float rate);
+
+    Signals the playbackRate has changed to \a rate.
+*/
+
+/*!
+    \fn void QMediaPlayer::seekableChanged(bool seekable);
+
+    Signals the \a seekable status of the player object has changed.
+*/
+
+// Properties
+/*!
+    \property QMediaPlayer::state
+    \brief the media player's playback state.
+
+    By default this property is QMediaPlayer::Stopped
+
+    \sa mediaStatus(), play(), pause(), stop()
+*/
+
+/*!
+    \property QMediaPlayer::error
+    \brief a string describing the last error condition.
+
+    \sa error()
+*/
+
+/*!
+    \property QMediaPlayer::media
+    \brief The media currently being by the player object.
+
+    The player object will use the QMediaSource for selection of the content to
+    be played.
+
+    By default this property has a null QMediaSource.
+
+    \sa QMediaSource
+*/
+
+/*!
+    \property QMediaPlayer::mediaStatus
+    \brief the status of the current media stream.
+
+    The stream status describes how the playback of the current stream is progressing.
+
+    By default this property is QMediaPlayer::NoMedia
+
+    \sa state
 */
 
 /*!
@@ -507,11 +479,6 @@ void QMediaPlayer::setMedia(const QMediaSource &media)
 /*!
     \property QMediaPlayer::muted
     \brief true if the playback volume is muted; otherwise false.
-*/
-
-/*!
-    \property QMediaPlayer::buffering
-    \brief true if the source is being buffered; otherwise false.
 */
 
 /*!
@@ -545,23 +512,6 @@ void QMediaPlayer::setMedia(const QMediaSource &media)
 
     Signal the position of the content has changed to \a position, expressed in
     milliseconds approximately every 1000milliseconds.
-*/
-
-/*!
-    \fn void QMediaPlayer::playlistPositionChanged(int playlistPosition)
-
-    Signal the current playing item as being changes to the item at index \a
-    playlistPosition, in the players QMediaPlaylist.
-
-    \sa playlistPosition(), setPlaylistPosition()
-*/
-
-/*!
-    \fn void QMediaPlayer::currentMediaSource(const QMediaSource &source)
-
-    Signals that the current media \a source has changed.
-
-    \sa playlistPositionChanged()
 */
 
 /*!

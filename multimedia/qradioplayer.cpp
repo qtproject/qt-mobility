@@ -44,8 +44,6 @@
     \class QRadioPlayer
     \brief The QRadioPlayer class provides an interface to the systems radio device.
 
-    \ingroup multimedia
-
     You can control the systems radio device using this interface, for example:
 
     \code
