@@ -385,18 +385,25 @@ QServiceFilter::CapabilityMatchRule QServiceFilter::capabilityMatchRule() const
 
 QDataStream &operator<<(QDataStream &out, const QServiceFilter &sf)
 {
+    const quint32 magicNumber = 0x78AFAFA;
     const qint32 mj = sf.d->majorVersion;
     const qint32 mn = sf.d->minorVersion;
     const qint8 versionrule = (qint32) sf.d->matchingRule;
     const qint8 caprule = (qint8) sf.d->capMatchingRule;
-    out << sf.d->interface;
-    out << sf.d->service;
-    out << mj;
-    out << mn;
-    out << versionrule;
-    out << sf.d->customProperties;
-    out << caprule;
-    out << sf.d->capabilities;
+    const quint16 majorVersion = 1;
+    const quint16 minorVersion = 0;
+
+    out << magicNumber
+        << majorVersion
+        << minorVersion
+        << sf.d->interface
+        << sf.d->service
+        << mj
+        << mn
+        << versionrule
+        << sf.d->customProperties
+        << caprule
+        << sf.d->capabilities;
     return out;
 }
 
@@ -409,17 +416,36 @@ QDataStream &operator<<(QDataStream &out, const QServiceFilter &sf)
 */
 QDataStream &operator>>(QDataStream &in, QServiceFilter &sf)
 {
+    const quint32 magicNumber = 0x78AFAFA;
     qint32 mj, mn;
     qint8 versionrule, caprule;
 
-    in >> sf.d->interface;
-    in >> sf.d->service;
-    in >> mj;
-    in >> mn;
-    in >> versionrule;
-    in >> sf.d->customProperties;
-    in >> caprule;
-    in >> sf.d->capabilities;
+    quint32 storedMagicNumber;
+    in >> storedMagicNumber;
+    if (storedMagicNumber != magicNumber) {
+        qWarning() << "Datastream doesn't provide searialized QServiceFilter";
+        return in;
+    }
+
+    const quint16 currentMajorVersion = 1;
+    quint16 majorVersion = 0;
+    quint16 minorVersion = 0;
+
+    in >> majorVersion >> minorVersion;
+    if (majorVersion != currentMajorVersion) {
+        qWarning() << "Unknown serialization format for QServiceFilter.";
+        return in;
+    }
+    //Allow all minor versions.
+
+    in  >> sf.d->interface
+        >> sf.d->service
+        >> mj
+        >> mn
+        >> versionrule
+        >> sf.d->customProperties
+        >> caprule
+        >> sf.d->capabilities;
 
     sf.d->majorVersion = mj;
     sf.d->minorVersion = mn;
