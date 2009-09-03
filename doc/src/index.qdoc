@@ -41,11 +41,26 @@
 
 
 /*!
+    \group messaging
+    \title Qt Mobility Messaging API
+
+    The Messaging API enables access to messaging services to send 
+    messages and retrieve message data is provided, as well as messaging 
+    services to compose, reply to, forward and show messages using a 
+    native application.
+
+*/
+
+/*!
 \page index.html
 
 \title Messaging Library Developer Resources
 
-\brief The Messaging API enables access to messaging services to send 
+\brief The Messaging API allows the creation, sending and retrieval of
+messages using a native application.
+
+
+The Messaging API enables access to messaging services to send 
 messages and retrieve message data is provided, as well as messaging 
 services to compose, reply to, forward and show messages using a 
 native application.
@@ -83,26 +98,7 @@ To build the library, run qmake and make.
 
 \section2 Main classes
 
-\list
-    \o \l{QMessage}
-    \o \l{QMessageAccount}
-    \o \l{QMessageAccountId}
-    \o \l{QMessageAccountFilterKey}
-    \o \l{QMessageAccountSortKey}
-    \o \l{QMessageAddress}
-    \o \l{QMessageContentContainer}
-    \o \l{QMessageContentContainerId}
-    \o \l{QMessageDataComparator}
-    \o \l{QMessageFilterKey}
-    \o \l{QMessageFolder}
-    \o \l{QMessageFolderId}
-    \o \l{QMessageFolderFilterKey}
-    \o \l{QMessageFolderSortKey}
-    \o \l{QMessageId}
-    \o \l{QMessageServiceAction}
-    \o \l{QMessageSortKey}
-    \o \l{QMessageStore}
-\endlist
+\annotatedlist messaging
 
 \section1 Composition and Manipulation of Messages
 
@@ -167,6 +163,42 @@ Classes to assist with sorting and filtering messages:
 \row \o QMessageAccountFilterKey \o Defines the parameters used for querying a subset of all available accounts from the messaging store.
 \row \o QMessageAccountSortKey \o Defines the parameters used for sorting accounts queried from the messaging store.
 \endtable
+
+\section2   Using the SortKey Functions
+
+An example of the use of SortKey functions can be found in the Send Message
+example.
+
+\code
+    QMessageIdList ids = QMessageStore::instance()->queryMessages(QMessageFilterKey(), 
+        QMessageSortKey::receptionTimeStamp(Qt::DescendingOrder), 100, 0);
+\endcode
+
+
+\section2   Using the Filter Functions
+
+The following code is taken from the Keeping In Touch example, it 
+demonstrates the use of filters to achieve desired effects. You can
+also see how the filters once constructed can be operated on by typical 
+boolean operators, in the same way you would manipulate bit settings in C. 
+In this way we can build more complex conditions.
+
+\code
+    QMessageFilterKey includeFilter(QMessageFilterKey::timeStamp(minimumDate, 
+            QMessageDataComparator::GreaterThanEqual));
+    QMessageFilterKey excludeFilter(QMessageFilterKey::timeStamp(maximumDate, 
+            QMessageDataComparator::GreaterThanEqual));
+    QMessageFilterKey outgoingFilter(QMessageFilterKey::status(QMessage::Incoming, 
+            QMessageDataComparator::Excludes));
+
+    // Search for messages containing addresses to exclude
+    service.queryMessages(outgoingFilter & excludeFilter);
+
+    // Create the filter needed to locate messages to search for addresses
+    inclusionFilter = (outgoingFilter & includeFilter & ~excludeFilter);
+\endcode
+
+
 
 \section1 Messaging Services
 
