@@ -778,8 +778,7 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
     QString whereComponent = "WHERE Service.ID = Interface.ServiceID ";
     QList<QVariant> bindValues;
 
-    if (filter.serviceName().isEmpty() && filter.interfaceName().isEmpty()
-                && filter.customKeys().size() == 0 && filter.capabilities().isEmpty()) {
+    if (filter.serviceName().isEmpty() && filter.interfaceName().isEmpty()) {
         //do nothing, (don't add any extra constraints to the query
     } else {
 

@@ -580,6 +580,11 @@ void ServiceDatabaseUnitTest::searchByCapability()
     QCOMPARE(interfaces.count(),1);
     QVERIFY(compareDescriptor(interfaces[0], "com.cybertron.transform", "Decepticon", 5, 3,
                 QStringList(), customs, "C:/Cybertron/unicron.dll", "Decepticon Elimination Services", "Transformation interface"));
+
+    QServiceFilter emptyFilter;
+    emptyFilter.setCapabilities(QServiceFilter::MatchLoadable);
+    interfaces = database.getInterfaces(emptyFilter);
+    QCOMPARE(interfaces.count(), 14); //show all services which don't require any caps
 }
 
 void ServiceDatabaseUnitTest::searchByCustomProperty()
