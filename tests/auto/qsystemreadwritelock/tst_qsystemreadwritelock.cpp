@@ -337,7 +337,8 @@ private slots:
 void tst_QSystemReadWriteLock::constructDestruct()
 {
     {
-        QSystemReadWriteLock("Viper");
+        QSystemReadWriteLock rwlock("Viper");
+        QCOMPARE(rwlock.key(), QLatin1String("Viper"));
     }
 }
 
