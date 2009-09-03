@@ -176,21 +176,21 @@ void tst_QMessageStoreKeys::initTestCase()
 
     QList<Support::Parameters> folderParams;
     folderParams << Params()("parentAccountName", "Alter Ego")
-                            ("path", "[Root]")
+                            ("path", "My messages")
                             ("displayName", "My messages")
                             ("parentFolderPath", "")
                  << Params()("parentAccountName", "Work")
-                            ("path", "/Inbox")
+                            ("path", "Inbox")
                             ("displayName", "Inbox")
                             ("parentFolderPath", "")
                  << Params()("parentAccountName", "Work")
-                            ("path", "/Inbox/X-Announce")
+                            ("path", "Inbox/X-Announce")
                             ("displayName", "X-Announce")
-                            ("parentFolderPath", "/Inbox")
+                            ("parentFolderPath", "Inbox")
                  << Params()("parentAccountName", "Work")
-                            ("path", "/Inbox/X-Announce/X-Archived")
+                            ("path", "Inbox/X-Announce/X-Archived")
                             ("displayName", "X-Archived")
-                            ("parentFolderPath", "/Inbox/X-Announce");
+                            ("parentFolderPath", "Inbox/X-Announce");
 
     foreach (const Support::Parameters &params, folderParams) {
         folderIds.append(Support::addFolder(params));
@@ -200,7 +200,7 @@ void tst_QMessageStoreKeys::initTestCase()
 
     QList<Support::Parameters> messageParams;
     messageParams << Params()("parentAccountName", "Alter Ego")
-                             ("parentFolderPath", "[Root]")
+                             ("parentFolderPath", "My messages")
                              ("type", "sms")
                              ("to", "SuperMegaLightningBabe")
                              ("from", "Frozone")
@@ -212,7 +212,7 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("status-read", "true")
                              ("custom-flagged", "true")
                   << Params()("parentAccountName", "Work")
-                             ("parentFolderPath", "/Inbox")
+                             ("parentFolderPath", "Inbox")
                              ("type", "email")
                              ("to", "Important.Person@example.com")
                              ("from", "Esteemed.Colleague@example.com")
@@ -225,7 +225,7 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("custom-spam", "filter:no")
                              ("custom-flagged", "true")
                   << Params()("parentAccountName", "Work")
-                             ("parentFolderPath", "/Inbox")
+                             ("parentFolderPath", "Inbox")
                              ("type", "email")
                              ("to", "Important.Person@example.com,Minion@example.com")
                              ("from", "Big.Boss@example.com")
@@ -237,7 +237,7 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("status-hasAttachments", "true")
                              ("custom-spam", "filter:no")
                   << Params()("parentAccountName", "Work")
-                             ("parentFolderPath", "/Inbox/X-Announce")
+                             ("parentFolderPath", "Inbox/X-Announce")
                              ("type", "email")
                              ("to", "announce@example.com,maintenance-log@example.com")
                              ("from", "sysadmin@example.com")
@@ -249,7 +249,7 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("status-read", "true")
                              ("custom-spam", "filter:maybe")
                   << Params()("parentAccountName", "Work")
-                             ("parentFolderPath", "/Inbox/X-Announce/X-Archived")
+                             ("parentFolderPath", "Inbox/X-Announce/X-Archived")
                              ("type", "email")
                              ("to", "announce@example.com")
                              ("from", "Big.Boss@example.com")
@@ -726,17 +726,17 @@ void tst_QMessageStoreKeys::testFolderFilterKey_data()
         << QMessageFolderIdList();
 
     QTest::newRow("id filter inclusion 1")
-        << QMessageFolderFilterKey::id(QMessageFolderFilterKey::path("[Root]", QMessageDataComparator::Equal), QMessageDataComparator::Includes) 
+        << QMessageFolderFilterKey::id(QMessageFolderFilterKey::path("My messages", QMessageDataComparator::Equal), QMessageDataComparator::Includes)
         << ( QMessageFolderIdList() << folderIds[0] )
         << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] ) + standardFolderIds;
 
     QTest::newRow("id filter inclusion 2")
-        << QMessageFolderFilterKey::id(QMessageFolderFilterKey::path("/Inbox/X-Announce", QMessageDataComparator::Equal), QMessageDataComparator::Includes) 
+        << QMessageFolderFilterKey::id(QMessageFolderFilterKey::path("Inbox/X-Announce", QMessageDataComparator::Equal), QMessageDataComparator::Includes)
         << ( QMessageFolderIdList() << folderIds[2] )
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[3] ) + standardFolderIds;
 
     QTest::newRow("id filter inclusion 3")
-        << QMessageFolderFilterKey::id(QMessageFolderFilterKey::path("Inbox/X-Ann", QMessageDataComparator::Includes), QMessageDataComparator::Includes) 
+        << QMessageFolderFilterKey::id(QMessageFolderFilterKey::path("box/X-Ann", QMessageDataComparator::Includes), QMessageDataComparator::Includes)
         << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds;
 
@@ -751,17 +751,17 @@ void tst_QMessageStoreKeys::testFolderFilterKey_data()
         << folderIds + standardFolderIds;
 
     QTest::newRow("id filter exclusion 1")
-        << QMessageFolderFilterKey::id(QMessageFolderFilterKey::path("[Root]", QMessageDataComparator::Equal), QMessageDataComparator::Excludes) 
+        << QMessageFolderFilterKey::id(QMessageFolderFilterKey::path("My messages", QMessageDataComparator::Equal), QMessageDataComparator::Excludes)
         << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] ) + standardFolderIds
         << ( QMessageFolderIdList() << folderIds[0] );
 
     QTest::newRow("id filter exclusion 2")
-        << QMessageFolderFilterKey::id(QMessageFolderFilterKey::path("/Inbox/X-Announce", QMessageDataComparator::Equal), QMessageDataComparator::Excludes) 
+        << QMessageFolderFilterKey::id(QMessageFolderFilterKey::path("Inbox/X-Announce", QMessageDataComparator::Equal), QMessageDataComparator::Excludes)
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[3] ) + standardFolderIds
         << ( QMessageFolderIdList() << folderIds[2] );
 
     QTest::newRow("id filter exclusion 3")
-        << QMessageFolderFilterKey::id(QMessageFolderFilterKey::path("Inbox/X-Ann", QMessageDataComparator::Includes), QMessageDataComparator::Excludes) 
+        << QMessageFolderFilterKey::id(QMessageFolderFilterKey::path("box/X-Ann", QMessageDataComparator::Includes), QMessageDataComparator::Excludes)
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds
         << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] );
 
@@ -776,12 +776,12 @@ void tst_QMessageStoreKeys::testFolderFilterKey_data()
         << QMessageFolderIdList();
 
     QTest::newRow("path equality 1")
-        << QMessageFolderFilterKey::path("[Root]", QMessageDataComparator::Equal) 
+        << QMessageFolderFilterKey::path("My messages", QMessageDataComparator::Equal)
         << ( QMessageFolderIdList() << folderIds[0] )
         << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] ) + standardFolderIds;
 
     QTest::newRow("path equality 2")
-        << QMessageFolderFilterKey::path("/Inbox/X-Announce", QMessageDataComparator::Equal) 
+        << QMessageFolderFilterKey::path("Inbox/X-Announce", QMessageDataComparator::Equal)
         << ( QMessageFolderIdList() << folderIds[2] )
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[3] ) + standardFolderIds;
 
@@ -801,12 +801,12 @@ void tst_QMessageStoreKeys::testFolderFilterKey_data()
         << folderIds + standardFolderIds;
 
     QTest::newRow("path inequality 1")
-        << QMessageFolderFilterKey::path("[Root]", QMessageDataComparator::NotEqual) 
+        << QMessageFolderFilterKey::path("My messages", QMessageDataComparator::NotEqual)
         << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] ) + standardFolderIds
         << ( QMessageFolderIdList() << folderIds[0] );
 
     QTest::newRow("path inequality 2")
-        << QMessageFolderFilterKey::path("/Inbox/X-Announce", QMessageDataComparator::NotEqual) 
+        << QMessageFolderFilterKey::path("Inbox/X-Announce", QMessageDataComparator::NotEqual)
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[3] ) + standardFolderIds
         << ( QMessageFolderIdList() << folderIds[2] );
 
@@ -831,7 +831,7 @@ void tst_QMessageStoreKeys::testFolderFilterKey_data()
         << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] ) + standardFolderIds;
 
     QTest::newRow("path inclusion 2")
-        << QMessageFolderFilterKey::path("Inbox/X-Ann", QMessageDataComparator::Includes) 
+        << QMessageFolderFilterKey::path("box/X-Ann", QMessageDataComparator::Includes)
         << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds;
 
@@ -856,7 +856,7 @@ void tst_QMessageStoreKeys::testFolderFilterKey_data()
         << ( QMessageFolderIdList() << folderIds[0] );
 
     QTest::newRow("path exclusion 2")
-        << QMessageFolderFilterKey::path("Inbox/X-Ann", QMessageDataComparator::Excludes) 
+        << QMessageFolderFilterKey::path("box/X-Ann", QMessageDataComparator::Excludes)
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds
         << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] );
 
@@ -1086,17 +1086,17 @@ void tst_QMessageStoreKeys::testFolderFilterKey_data()
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds;
 
     QTest::newRow("parentFolderId filter inclusion 1")
-        << QMessageFolderFilterKey::parentFolderId(QMessageFolderFilterKey::path("/Inbox/X-Announce", QMessageDataComparator::Equal), QMessageDataComparator::Includes) 
+        << QMessageFolderFilterKey::parentFolderId(QMessageFolderFilterKey::path("Inbox/X-Announce", QMessageDataComparator::Equal), QMessageDataComparator::Includes)
         << ( QMessageFolderIdList() << folderIds[3] )
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[2] ) + standardFolderIds;
 
     QTest::newRow("parentFolderId filter inclusion 2")
-        << QMessageFolderFilterKey::parentFolderId(QMessageFolderFilterKey::path("/Inbox", QMessageDataComparator::Equal), QMessageDataComparator::Includes) 
+        << QMessageFolderFilterKey::parentFolderId(QMessageFolderFilterKey::path("Inbox", QMessageDataComparator::Equal), QMessageDataComparator::Includes)
         << ( QMessageFolderIdList() << folderIds[2] )
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[3] ) + standardFolderIds;
 
     QTest::newRow("parentFolderId filter inclusion 3")
-        << QMessageFolderFilterKey::parentFolderId(QMessageFolderFilterKey::path("/Inbox", QMessageDataComparator::Includes), QMessageDataComparator::Includes) 
+        << QMessageFolderFilterKey::parentFolderId(QMessageFolderFilterKey::path("Inbox", QMessageDataComparator::Includes), QMessageDataComparator::Includes)
         << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds;
 
@@ -1111,17 +1111,17 @@ void tst_QMessageStoreKeys::testFolderFilterKey_data()
         << folderIds + standardFolderIds;
 
     QTest::newRow("parentFolderId filter exclusion 1")
-        << QMessageFolderFilterKey::parentFolderId(QMessageFolderFilterKey::path("/Inbox/X-Announce", QMessageDataComparator::Equal), QMessageDataComparator::Excludes) 
+        << QMessageFolderFilterKey::parentFolderId(QMessageFolderFilterKey::path("Inbox/X-Announce", QMessageDataComparator::Equal), QMessageDataComparator::Excludes)
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[2] ) + standardFolderIds
         << ( QMessageFolderIdList() << folderIds[3] );
 
     QTest::newRow("parentFolderId filter exclusion 2")
-        << QMessageFolderFilterKey::parentFolderId(QMessageFolderFilterKey::path("/Inbox", QMessageDataComparator::Equal), QMessageDataComparator::Excludes) 
+        << QMessageFolderFilterKey::parentFolderId(QMessageFolderFilterKey::path("Inbox", QMessageDataComparator::Equal), QMessageDataComparator::Excludes)
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[3] ) + standardFolderIds
         << ( QMessageFolderIdList() << folderIds[2] );
 
     QTest::newRow("parentFolderId filter exclusion 3")
-        << QMessageFolderFilterKey::parentFolderId(QMessageFolderFilterKey::path("/Inbox", QMessageDataComparator::Includes), QMessageDataComparator::Excludes) 
+        << QMessageFolderFilterKey::parentFolderId(QMessageFolderFilterKey::path("Inbox", QMessageDataComparator::Includes), QMessageDataComparator::Excludes)
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds
         << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] );
 
@@ -1166,17 +1166,17 @@ void tst_QMessageStoreKeys::testFolderFilterKey_data()
         << QMessageFolderIdList();
 
     QTest::newRow("ancestorFolderIds filter inclusion 1")
-        << QMessageFolderFilterKey::ancestorFolderIds(QMessageFolderFilterKey::path("/Inbox/X-Announce", QMessageDataComparator::Equal), QMessageDataComparator::Includes) 
+        << QMessageFolderFilterKey::ancestorFolderIds(QMessageFolderFilterKey::path("Inbox/X-Announce", QMessageDataComparator::Equal), QMessageDataComparator::Includes)
         << ( QMessageFolderIdList() << folderIds[3] )
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[2] ) + standardFolderIds;
 
     QTest::newRow("ancestorFolderIds filter inclusion 2")
-        << QMessageFolderFilterKey::ancestorFolderIds(QMessageFolderFilterKey::path("/Inbox", QMessageDataComparator::Equal), QMessageDataComparator::Includes) 
+        << QMessageFolderFilterKey::ancestorFolderIds(QMessageFolderFilterKey::path("Inbox", QMessageDataComparator::Equal), QMessageDataComparator::Includes)
         << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds;
 
     QTest::newRow("ancestorFolderIds filter inclusion 3")
-        << QMessageFolderFilterKey::ancestorFolderIds(QMessageFolderFilterKey::path("/Inbox", QMessageDataComparator::Includes), QMessageDataComparator::Includes) 
+        << QMessageFolderFilterKey::ancestorFolderIds(QMessageFolderFilterKey::path("Inbox", QMessageDataComparator::Includes), QMessageDataComparator::Includes)
         << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds;
 
@@ -1191,17 +1191,17 @@ void tst_QMessageStoreKeys::testFolderFilterKey_data()
         << folderIds + standardFolderIds;
 
     QTest::newRow("ancestorFolderIds filter exclusion 1")
-        << QMessageFolderFilterKey::ancestorFolderIds(QMessageFolderFilterKey::path("/Inbox/X-Announce", QMessageDataComparator::Equal), QMessageDataComparator::Excludes) 
+        << QMessageFolderFilterKey::ancestorFolderIds(QMessageFolderFilterKey::path("Inbox/X-Announce", QMessageDataComparator::Equal), QMessageDataComparator::Excludes)
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[2] ) + standardFolderIds
         << ( QMessageFolderIdList() << folderIds[3] );
 
     QTest::newRow("ancestorFolderIds filter exclusion 2")
-        << QMessageFolderFilterKey::ancestorFolderIds(QMessageFolderFilterKey::path("/Inbox", QMessageDataComparator::Equal), QMessageDataComparator::Excludes) 
+        << QMessageFolderFilterKey::ancestorFolderIds(QMessageFolderFilterKey::path("Inbox", QMessageDataComparator::Equal), QMessageDataComparator::Excludes)
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds
         << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] );
 
     QTest::newRow("ancestorFolderIds filter exclusion 3")
-        << QMessageFolderFilterKey::ancestorFolderIds(QMessageFolderFilterKey::path("/Inbox", QMessageDataComparator::Includes), QMessageDataComparator::Excludes) 
+        << QMessageFolderFilterKey::ancestorFolderIds(QMessageFolderFilterKey::path("Inbox", QMessageDataComparator::Includes), QMessageDataComparator::Excludes)
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] ) + standardFolderIds
         << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] );
 
@@ -2213,17 +2213,17 @@ void tst_QMessageStoreKeys::testMessageFilterKey_data()
         << QMessageIdList();
 
     QTest::newRow("parentFolderId filter inclusion 1")
-        << QMessageFilterKey::parentFolderId(QMessageFolderFilterKey::path("[Root]", QMessageDataComparator::Equal), QMessageDataComparator::Includes) 
+        << QMessageFilterKey::parentFolderId(QMessageFolderFilterKey::path("My messages", QMessageDataComparator::Equal), QMessageDataComparator::Includes)
         << ( QMessageIdList() << messageIds[0] )
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] );
 
     QTest::newRow("parentFolderId filter inclusion 2")
-        << QMessageFilterKey::parentFolderId(QMessageFolderFilterKey::path("/Inbox", QMessageDataComparator::Equal), QMessageDataComparator::Includes) 
+        << QMessageFilterKey::parentFolderId(QMessageFolderFilterKey::path("Inbox", QMessageDataComparator::Equal), QMessageDataComparator::Includes)
         << ( QMessageIdList() << messageIds[1] << messageIds[2] )
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] );
 
     QTest::newRow("parentFolderId filter inclusion 3")
-        << QMessageFilterKey::parentFolderId(QMessageFolderFilterKey::path("/Inbox", QMessageDataComparator::Includes), QMessageDataComparator::Includes) 
+        << QMessageFilterKey::parentFolderId(QMessageFolderFilterKey::path("Inbox", QMessageDataComparator::Includes), QMessageDataComparator::Includes)
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] );
 
@@ -2238,17 +2238,17 @@ void tst_QMessageStoreKeys::testMessageFilterKey_data()
         << messageIds;
 
     QTest::newRow("parentFolderId filter exclusion 1")
-        << QMessageFilterKey::parentFolderId(QMessageFolderFilterKey::path("[Root]", QMessageDataComparator::Equal), QMessageDataComparator::Excludes) 
+        << QMessageFilterKey::parentFolderId(QMessageFolderFilterKey::path("My messages", QMessageDataComparator::Equal), QMessageDataComparator::Excludes)
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] );
 
     QTest::newRow("parentFolderId filter exclusion 2")
-        << QMessageFilterKey::parentFolderId(QMessageFolderFilterKey::path("/Inbox", QMessageDataComparator::Equal), QMessageDataComparator::Excludes) 
+        << QMessageFilterKey::parentFolderId(QMessageFolderFilterKey::path("Inbox", QMessageDataComparator::Equal), QMessageDataComparator::Excludes)
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[1] << messageIds[2] );
 
     QTest::newRow("parentFolderId filter exclusion 3")
-        << QMessageFilterKey::parentFolderId(QMessageFolderFilterKey::path("/Inbox", QMessageDataComparator::Includes), QMessageDataComparator::Excludes) 
+        << QMessageFilterKey::parentFolderId(QMessageFolderFilterKey::path("Inbox", QMessageDataComparator::Includes), QMessageDataComparator::Excludes)
         << ( QMessageIdList() << messageIds[0] )
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] );
 
@@ -2302,7 +2302,7 @@ void tst_QMessageStoreKeys::testMessageFilterKey_data()
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] );
 
     QTest::newRow("ancestorFolderIds filter inclusion 3")
-        << QMessageFilterKey::ancestorFolderIds(QMessageFolderFilterKey::path("/Inbox", QMessageDataComparator::Includes), QMessageDataComparator::Includes) 
+        << QMessageFilterKey::ancestorFolderIds(QMessageFolderFilterKey::path("Inbox", QMessageDataComparator::Includes), QMessageDataComparator::Includes)
         << ( QMessageIdList() << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] );
 
@@ -2327,7 +2327,7 @@ void tst_QMessageStoreKeys::testMessageFilterKey_data()
         << ( QMessageIdList() << messageIds[4] );
 
     QTest::newRow("ancestorFolderIds filter exclusion 3")
-        << QMessageFilterKey::ancestorFolderIds(QMessageFolderFilterKey::path("/Inbox", QMessageDataComparator::Includes), QMessageDataComparator::Excludes) 
+        << QMessageFilterKey::ancestorFolderIds(QMessageFolderFilterKey::path("Inbox", QMessageDataComparator::Includes), QMessageDataComparator::Excludes)
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] )
         << ( QMessageIdList() << messageIds[3] << messageIds[4] );
 
