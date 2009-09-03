@@ -19,6 +19,12 @@
     <section ref="qabstractmediaservice.html" title="QAbstractMediaService Class Reference">
         <keyword ref="qabstractmediaservice.html">QAbstractMediaService</keyword>
         <keyword ref="qabstractmediaservice.html#MediaEndpoint-enum">MediaEndpoint</keyword>
+        <keyword ref="qabstractmediaservice.html#MediaEndpoint-enum">QAbstractMediaService::AudioOutput</keyword>
+        <keyword ref="qabstractmediaservice.html#MediaEndpoint-enum">QAbstractMediaService::StreamOutput</keyword>
+        <keyword ref="qabstractmediaservice.html#MediaEndpoint-enum">QAbstractMediaService::VideoInput</keyword>
+        <keyword ref="qabstractmediaservice.html#MediaEndpoint-enum">QAbstractMediaService::StreamInput</keyword>
+        <keyword ref="qabstractmediaservice.html#MediaEndpoint-enum">QAbstractMediaService::VideoOutput</keyword>
+        <keyword ref="qabstractmediaservice.html#MediaEndpoint-enum">QAbstractMediaService::AudioInput</keyword>
         <keyword ref="qabstractmediaservice.html#activeEndpoint">activeEndpoint</keyword>
         <keyword ref="qabstractmediaservice.html#control">control</keyword>
         <keyword ref="qabstractmediaservice.html#inputStream">inputStream</keyword>
@@ -404,6 +410,7 @@
         <keyword ref="qmediaplayer.html#bufferStatusChanged">bufferStatusChanged</keyword>
         <keyword ref="qmediaplayer.html#durationChanged">durationChanged</keyword>
         <keyword ref="qmediaplayer.html#error">error</keyword>
+        <keyword ref="qmediaplayer.html#isValid">isValid</keyword>
         <keyword ref="qmediaplayer.html#mediaChanged">mediaChanged</keyword>
         <keyword ref="qmediaplayer.html#mediaStatusChanged">mediaStatusChanged</keyword>
         <keyword ref="qmediaplayer.html#mutingChanged">mutingChanged</keyword>
@@ -678,14 +685,17 @@
         <keyword ref="qmediaslideshow.html#timeout-prop">setTimeout</keyword>
         <keyword ref="qmediaslideshow.html#currentIndexChanged">currentIndexChanged</keyword>
         <keyword ref="qmediaslideshow.html#currentMediaChanged">currentMediaChanged</keyword>
+        <keyword ref="qmediaslideshow.html#isValid">isValid</keyword>
         <keyword ref="qmediaslideshow.html#mediaChanged">mediaChanged</keyword>
         <keyword ref="qmediaslideshow.html#mediaStatusChanged">mediaStatusChanged</keyword>
         <keyword ref="qmediaslideshow.html#next">next</keyword>
         <keyword ref="qmediaslideshow.html#pause">pause</keyword>
         <keyword ref="qmediaslideshow.html#play">play</keyword>
         <keyword ref="qmediaslideshow.html#previous">previous</keyword>
+        <keyword ref="qmediaslideshow.html#service">service</keyword>
         <keyword ref="qmediaslideshow.html#stateChanged">stateChanged</keyword>
         <keyword ref="qmediaslideshow.html#stop">stop</keyword>
+        <keyword ref="qmediaslideshow.html#timerEvent">timerEvent</keyword>
         <section ref="qmediaslideshow-members.html" title="List of all members"/>
     </section>
     <section ref="qmediasource.html" title="QMediaSource Class Reference">
@@ -804,7 +814,12 @@
     <section ref="qvideowidget.html" title="QVideoWidget Class Reference">
         <keyword ref="qvideowidget.html">QVideoWidget</keyword>
         <keyword ref="qvideowidget.html#AspectRatio-enum">AspectRatio</keyword>
+        <keyword ref="qvideowidget.html#AspectRatio-enum">QVideoWidget::AspectRatioAuto</keyword>
+        <keyword ref="qvideowidget.html#AspectRatio-enum">QVideoWidget::AspectRatioCustom</keyword>
+        <keyword ref="qvideowidget.html#AspectRatio-enum">QVideoWidget::AspectRatioWidget</keyword>
         <keyword ref="qvideowidget.html#DisplayMode-enum">DisplayMode</keyword>
+        <keyword ref="qvideowidget.html#DisplayMode-enum">QVideoWidget::FullscreenDisplay</keyword>
+        <keyword ref="qvideowidget.html#DisplayMode-enum">QVideoWidget::WindowedDisplay</keyword>
         <keyword ref="qvideowidget.html#aspectRatio-prop">aspectRatio</keyword>
         <keyword ref="qvideowidget.html#aspectRatio-prop">setAspectRatio</keyword>
         <keyword ref="qvideowidget.html#brightness-prop">brightness</keyword>
@@ -857,10 +872,12 @@
     </section>
     <section ref="qvideowindowcontrol.html" title="QVideoWindowControl Class Reference">
         <keyword ref="qvideowindowcontrol.html">QVideoWindowControl</keyword>
+        <keyword ref="qvideowindowcontrol.html#aspectRatio">aspectRatio</keyword>
         <keyword ref="qvideowindowcontrol.html#brightness">brightness</keyword>
         <keyword ref="qvideowindowcontrol.html#brightnessChanged">brightnessChanged</keyword>
         <keyword ref="qvideowindowcontrol.html#contrast">contrast</keyword>
         <keyword ref="qvideowindowcontrol.html#contrastChanged">contrastChanged</keyword>
+        <keyword ref="qvideowindowcontrol.html#customAspectRatio">customAspectRatio</keyword>
         <keyword ref="qvideowindowcontrol.html#displayRect">displayRect</keyword>
         <keyword ref="qvideowindowcontrol.html#fullscreenChanged">fullscreenChanged</keyword>
         <keyword ref="qvideowindowcontrol.html#hue">hue</keyword>
@@ -871,8 +888,10 @@
         <keyword ref="qvideowindowcontrol.html#repaint">repaint</keyword>
         <keyword ref="qvideowindowcontrol.html#saturation">saturation</keyword>
         <keyword ref="qvideowindowcontrol.html#saturationChanged">saturationChanged</keyword>
+        <keyword ref="qvideowindowcontrol.html#setAspectRatio">setAspectRatio</keyword>
         <keyword ref="qvideowindowcontrol.html#setBrightness">setBrightness</keyword>
         <keyword ref="qvideowindowcontrol.html#setContrast">setContrast</keyword>
+        <keyword ref="qvideowindowcontrol.html#setCustomAspectRatio">setCustomAspectRatio</keyword>
         <keyword ref="qvideowindowcontrol.html#setDisplayRect">setDisplayRect</keyword>
         <keyword ref="qvideowindowcontrol.html#setFullscreen">setFullscreen</keyword>
         <keyword ref="qvideowindowcontrol.html#setHue">setHue</keyword>

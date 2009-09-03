@@ -42,6 +42,8 @@
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QMediaSlideShow" fullname="QMediaSlideShow::~QMediaSlideShow" href="qmediaslideshow.html#dtor.QMediaSlideShow" location="qmediaslideshow.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMediaSlideShow()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="service" fullname="QMediaSlideShow::service" href="qmediaslideshow.html#service" location="qmediaslideshow.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QAbstractMediaService *" signature="service() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QMediaSlideShow::isValid" href="qmediaslideshow.html#isValid" location="qmediaslideshow.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="state" fullname="QMediaSlideShow::state" href="qmediaslideshow.html#state-prop" location="qmediaslideshow.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="state" type="State" signature="state() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="mediaStatus" fullname="QMediaSlideShow::mediaStatus" href="qmediaslideshow.html#mediaStatus-prop" location="qmediaslideshow.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="mediaStatus" type="MediaStatus" signature="mediaStatus() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="media" fullname="QMediaSlideShow::media" href="qmediaslideshow.html#media-prop" location="qmediaslideshow.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="media" type="QMediaSource" signature="media() const"/>
@@ -77,6 +79,9 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="currentIndexChanged" fullname="QMediaSlideShow::currentIndexChanged" href="qmediaslideshow.html#currentIndexChanged" location="qmediaslideshow.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="currentIndexChanged(int index)">
                 <parameter left="int" right="" name="index" default=""/>
+            </function>
+            <function access="protected" threadsafety="unspecified" status="commendable" name="timerEvent" fullname="QMediaSlideShow::timerEvent" href="qmediaslideshow.html#timerEvent" location="qmediaslideshow.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="timerEvent(QTimerEvent * event)">
+                <parameter left="QTimerEvent *" right="" name="event" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QVideoDeviceControl" href="qvideodevicecontrol.html" location="qvideodevicecontrol.h" bases="QAbstractMediaControl" module="">
@@ -216,11 +221,11 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="contrast" fullname="QVideoWidget::contrast" href="qvideowidget.html#contrast-prop" location="qvideowidget.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="contrast" type="int" signature="contrast() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="hue" fullname="QVideoWidget::hue" href="qvideowidget.html#hue-prop" location="qvideowidget.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="hue" type="int" signature="hue() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="saturation" fullname="QVideoWidget::saturation" href="qvideowidget.html#saturation-prop" location="qvideowidget.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="saturation" type="int" signature="saturation() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="eventFilter" fullname="QVideoWidget::eventFilter" href="qvideowidget.html#eventFilter" location="qvideowidget.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="eventFilter(QObject * object, QEvent * event)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="eventFilter" fullname="QVideoWidget::eventFilter" href="qvideowidget.html#eventFilter" location="qvideowidget.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="eventFilter(QObject * object, QEvent * e)">
                 <parameter left="QObject *" right="" name="object" default=""/>
-                <parameter left="QEvent *" right="" name="event" default=""/>
+                <parameter left="QEvent *" right="" name="e" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setVisible" fullname="QVideoWidget::setVisible" href="qvideowidget.html#setVisible" location="qvideowidget.cpp" virtual="impure" meta="slot" const="false" static="false" overload="false" type="void" signature="setVisible(bool visible)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="setVisible" fullname="QVideoWidget::setVisible" href="qvideowidget.html#setVisible" location="qvideowidget.h" virtual="impure" meta="slot" const="false" static="false" overload="false" type="void" signature="setVisible(bool visible)">
                 <parameter left="bool" right="" name="visible" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setDisplayMode" fullname="QVideoWidget::setDisplayMode" href="qvideowidget.html#displayMode-prop" location="qvideowidget.cpp" virtual="non" meta="slot" const="false" static="false" overload="false" associated-property="displayMode" type="void" signature="setDisplayMode(DisplayMode mode)">
@@ -247,11 +252,11 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="displayModeChanged" fullname="QVideoWidget::displayModeChanged" href="qvideowidget.html#displayModeChanged" location="qvideowidget.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="displayModeChanged(QVideoWidget::DisplayMode mode)">
                 <parameter left="QVideoWidget::DisplayMode" right="" name="mode" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="aspectRatioChanged" fullname="QVideoWidget::aspectRatioChanged" href="qvideowidget.html#aspectRatioChanged" location="qvideowidget.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="aspectRatioChanged(QVideoWidget::AspectRatio )">
-                <parameter left="QVideoWidget::AspectRatio" right="" name="" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="aspectRatioChanged" fullname="QVideoWidget::aspectRatioChanged" href="qvideowidget.html#aspectRatioChanged" location="qvideowidget.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="aspectRatioChanged(QVideoWidget::AspectRatio ratio)">
+                <parameter left="QVideoWidget::AspectRatio" right="" name="ratio" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="customPixelAspectRatioChanged" fullname="QVideoWidget::customPixelAspectRatioChanged" href="qvideowidget.html#customPixelAspectRatioChanged" location="qvideowidget.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="customPixelAspectRatioChanged(const QSize &amp; )">
-                <parameter left="const QSize &amp;" right="" name="" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="customPixelAspectRatioChanged" fullname="QVideoWidget::customPixelAspectRatioChanged" href="qvideowidget.html#customPixelAspectRatioChanged" location="qvideowidget.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="customPixelAspectRatioChanged(const QSize &amp; ratio)">
+                <parameter left="const QSize &amp;" right="" name="ratio" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="brightnessChanged" fullname="QVideoWidget::brightnessChanged" href="qvideowidget.html#brightnessChanged" location="qvideowidget.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="brightnessChanged(int brightness)">
                 <parameter left="int" right="" name="brightness" default=""/>
@@ -265,7 +270,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="saturationChanged" fullname="QVideoWidget::saturationChanged" href="qvideowidget.html#saturationChanged" location="qvideowidget.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="saturationChanged(int saturation)">
                 <parameter left="int" right="" name="saturation" default=""/>
             </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="keyPressEvent" fullname="QVideoWidget::keyPressEvent" href="qvideowidget.html#keyPressEvent" location="qvideowidget.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="keyPressEvent(QKeyEvent * event)">
+            <function access="protected" threadsafety="unspecified" status="commendable" name="keyPressEvent" fullname="QVideoWidget::keyPressEvent" href="qvideowidget.html#keyPressEvent" location="qvideowidget.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="keyPressEvent(QKeyEvent * event)">
                 <parameter left="QKeyEvent *" right="" name="event" default=""/>
             </function>
             <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QVideoWidget::d_ptr" href="qvideowidget.html#d_ptr-var" location="qvideowidget.h" type="QVideoWidgetPrivate *" static="false"/>
@@ -747,6 +752,14 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="repaint" fullname="QVideoWindowControl::repaint" href="qvideowindowcontrol.html#repaint" location="qvideowindowcontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="repaint()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="nativeSize" fullname="QVideoWindowControl::nativeSize" href="qvideowindowcontrol.html#nativeSize" location="qvideowindowcontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QSize" signature="nativeSize() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="aspectRatio" fullname="QVideoWindowControl::aspectRatio" href="qvideowindowcontrol.html#aspectRatio" location="qvideowindowcontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QVideoWidget::AspectRatio" signature="aspectRatio() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setAspectRatio" fullname="QVideoWindowControl::setAspectRatio" href="qvideowindowcontrol.html#setAspectRatio" location="qvideowindowcontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setAspectRatio(QVideoWidget::AspectRatio ratio)">
+                <parameter left="QVideoWidget::AspectRatio" right="" name="ratio" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="customAspectRatio" fullname="QVideoWindowControl::customAspectRatio" href="qvideowindowcontrol.html#customAspectRatio" location="qvideowindowcontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QSize" signature="customAspectRatio() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setCustomAspectRatio" fullname="QVideoWindowControl::setCustomAspectRatio" href="qvideowindowcontrol.html#setCustomAspectRatio" location="qvideowindowcontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setCustomAspectRatio(const QSize &amp; ratio)">
+                <parameter left="const QSize &amp;" right="" name="ratio" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="brightness" fullname="QVideoWindowControl::brightness" href="qvideowindowcontrol.html#brightness" location="qvideowindowcontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="brightness() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setBrightness" fullname="QVideoWindowControl::setBrightness" href="qvideowindowcontrol.html#setBrightness" location="qvideowindowcontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setBrightness(int brightness)">
                 <parameter left="int" right="" name="brightness" default=""/>
@@ -781,7 +794,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="nativeSizeChanged" fullname="QVideoWindowControl::nativeSizeChanged" href="qvideowindowcontrol.html#nativeSizeChanged" location="qvideowindowcontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="nativeSizeChanged()"/>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMediaPlayerControl" href="qmediaplayercontrol.html" location="qmediaplayercontrol.h" bases="QAbstractMediaControl" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QMediaPlayerControl" fullname="QMediaPlayerControl::~QMediaPlayerControl" href="qmediaplayercontrol.html#dtor.QMediaPlayerControl" location="qmediaplayercontrol.cpp" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMediaPlayerControl()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QMediaPlayerControl" fullname="QMediaPlayerControl::~QMediaPlayerControl" href="qmediaplayercontrol.html#dtor.QMediaPlayerControl" location="qmediaplayercontrol.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMediaPlayerControl()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="state" fullname="QMediaPlayerControl::state" href="qmediaplayercontrol.html#state" location="qmediaplayercontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QMediaPlayer::State" signature="state() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="mediaStatus" fullname="QMediaPlayerControl::mediaStatus" href="qmediaplayercontrol.html#mediaStatus" location="qmediaplayercontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QMediaPlayer::MediaStatus" signature="mediaStatus() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="duration" fullname="QMediaPlayerControl::duration" href="qmediaplayercontrol.html#duration" location="qmediaplayercontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="qint64" signature="duration() const"/>
@@ -794,8 +807,8 @@
                 <parameter left="int" right="" name="volume" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="isMuted" fullname="QMediaPlayerControl::isMuted" href="qmediaplayercontrol.html#isMuted" location="qmediaplayercontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isMuted() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setMuted" fullname="QMediaPlayerControl::setMuted" href="qmediaplayercontrol.html#setMuted" location="qmediaplayercontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setMuted(bool muted)">
-                <parameter left="bool" right="" name="muted" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setMuted" fullname="QMediaPlayerControl::setMuted" href="qmediaplayercontrol.html#setMuted" location="qmediaplayercontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setMuted(bool mute)">
+                <parameter left="bool" right="" name="mute" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="bufferStatus" fullname="QMediaPlayerControl::bufferStatus" href="qmediaplayercontrol.html#bufferStatus" location="qmediaplayercontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="bufferStatus() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="isVideoAvailable" fullname="QMediaPlayerControl::isVideoAvailable" href="qmediaplayercontrol.html#isVideoAvailable" location="qmediaplayercontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isVideoAvailable() const"/>
@@ -820,8 +833,8 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="positionChanged" fullname="QMediaPlayerControl::positionChanged" href="qmediaplayercontrol.html#positionChanged" location="qmediaplayercontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="positionChanged(qint64 position)">
                 <parameter left="qint64" right="" name="position" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="stateChanged" fullname="QMediaPlayerControl::stateChanged" href="qmediaplayercontrol.html#stateChanged" location="qmediaplayercontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="stateChanged(QMediaPlayer::State newState)">
-                <parameter left="QMediaPlayer::State" right="" name="newState" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="stateChanged" fullname="QMediaPlayerControl::stateChanged" href="qmediaplayercontrol.html#stateChanged" location="qmediaplayercontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="stateChanged(QMediaPlayer::State state)">
+                <parameter left="QMediaPlayer::State" right="" name="state" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="mediaStatusChanged" fullname="QMediaPlayerControl::mediaStatusChanged" href="qmediaplayercontrol.html#mediaStatusChanged" location="qmediaplayercontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="mediaStatusChanged(QMediaPlayer::MediaStatus status)">
                 <parameter left="QMediaPlayer::MediaStatus" right="" name="status" default=""/>
@@ -829,23 +842,23 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="volumeChanged" fullname="QMediaPlayerControl::volumeChanged" href="qmediaplayercontrol.html#volumeChanged" location="qmediaplayercontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="volumeChanged(int volume)">
                 <parameter left="int" right="" name="volume" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="mutingChanged" fullname="QMediaPlayerControl::mutingChanged" href="qmediaplayercontrol.html#mutingChanged" location="qmediaplayercontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="mutingChanged(bool muted)">
-                <parameter left="bool" right="" name="muted" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="mutingChanged" fullname="QMediaPlayerControl::mutingChanged" href="qmediaplayercontrol.html#mutingChanged" location="qmediaplayercontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="mutingChanged(bool mute)">
+                <parameter left="bool" right="" name="mute" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="videoAvailabilityChanged" fullname="QMediaPlayerControl::videoAvailabilityChanged" href="qmediaplayercontrol.html#videoAvailabilityChanged" location="qmediaplayercontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="videoAvailabilityChanged(bool videoAvailable)">
-                <parameter left="bool" right="" name="videoAvailable" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="videoAvailabilityChanged" fullname="QMediaPlayerControl::videoAvailabilityChanged" href="qmediaplayercontrol.html#videoAvailabilityChanged" location="qmediaplayercontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="videoAvailabilityChanged(bool video)">
+                <parameter left="bool" right="" name="video" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="bufferStatusChanged" fullname="QMediaPlayerControl::bufferStatusChanged" href="qmediaplayercontrol.html#bufferStatusChanged" location="qmediaplayercontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="bufferStatusChanged(int percentFilled)">
-                <parameter left="int" right="" name="percentFilled" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="bufferStatusChanged" fullname="QMediaPlayerControl::bufferStatusChanged" href="qmediaplayercontrol.html#bufferStatusChanged" location="qmediaplayercontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="bufferStatusChanged(int progress)">
+                <parameter left="int" right="" name="progress" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="seekableChanged" fullname="QMediaPlayerControl::seekableChanged" href="qmediaplayercontrol.html#seekableChanged" location="qmediaplayercontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="seekableChanged(bool )">
-                <parameter left="bool" right="" name="" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="seekableChanged" fullname="QMediaPlayerControl::seekableChanged" href="qmediaplayercontrol.html#seekableChanged" location="qmediaplayercontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="seekableChanged(bool seekable)">
+                <parameter left="bool" right="" name="seekable" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QMediaPlayerControl::error" href="qmediaplayercontrol.html#error" location="qmediaplayercontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="error(int error, const QString &amp; errorString)">
                 <parameter left="int" right="" name="error" default=""/>
                 <parameter left="const QString &amp;" right="" name="errorString" default=""/>
             </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="QMediaPlayerControl" fullname="QMediaPlayerControl::QMediaPlayerControl" href="qmediaplayercontrol.html#QMediaPlayerControl" location="qmediaplayercontrol.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMediaPlayerControl(QObject * parent)">
+            <function access="protected" threadsafety="unspecified" status="commendable" name="QMediaPlayerControl" fullname="QMediaPlayerControl::QMediaPlayerControl" href="qmediaplayercontrol.html#QMediaPlayerControl" location="qmediaplayercontrol.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMediaPlayerControl(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default=""/>
             </function>
         </class>
@@ -885,8 +898,8 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setAspectRatio" fullname="QVideoWidgetControl::setAspectRatio" href="qvideowidgetcontrol.html#setAspectRatio" location="qvideowidgetcontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setAspectRatio(QVideoWidget::AspectRatio ratio)">
                 <parameter left="QVideoWidget::AspectRatio" right="" name="ratio" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setCustomAspectRatio" fullname="QVideoWidgetControl::setCustomAspectRatio" href="qvideowidgetcontrol.html#setCustomAspectRatio" location="qvideowidgetcontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setCustomAspectRatio(const QSize &amp; customRatio)">
-                <parameter left="const QSize &amp;" right="" name="customRatio" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setCustomAspectRatio" fullname="QVideoWidgetControl::setCustomAspectRatio" href="qvideowidgetcontrol.html#setCustomAspectRatio" location="qvideowidgetcontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setCustomAspectRatio(const QSize &amp; ratio)">
+                <parameter left="const QSize &amp;" right="" name="ratio" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="isFullscreen" fullname="QVideoWidgetControl::isFullscreen" href="qvideowidgetcontrol.html#isFullscreen" location="qvideowidgetcontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isFullscreen() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setFullscreen" fullname="QVideoWidgetControl::setFullscreen" href="qvideowidgetcontrol.html#setFullscreen" location="qvideowidgetcontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setFullscreen(bool fullscreen)">
@@ -1279,6 +1292,7 @@
                 <parameter left="QMediaPlayerService *" right="" name="service" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QMediaPlayer" fullname="QMediaPlayer::~QMediaPlayer" href="qmediaplayer.html#dtor.QMediaPlayer" location="qmediaplayer.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMediaPlayer()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QMediaPlayer::isValid" href="qmediaplayer.html#isValid" location="qmediaplayer.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="media" fullname="QMediaPlayer::media" href="qmediaplayer.html#media-prop" location="qmediaplayer.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="media" type="QMediaSource" signature="media() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="state" fullname="QMediaPlayer::state" href="qmediaplayer.html#state-prop" location="qmediaplayer.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="state" type="State" signature="state() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="mediaStatus" fullname="QMediaPlayer::mediaStatus" href="qmediaplayer.html#mediaStatus-prop" location="qmediaplayer.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="mediaStatus" type="MediaStatus" signature="mediaStatus() const"/>
@@ -1529,7 +1543,7 @@
                 <parameter left="QAbstractVideoSurface *" right="" name="surface" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QAbstractMediaService" href="qabstractmediaservice.html" location="qabstractmediaservice.h" bases="QObject" module="">
+        <class access="public" threadsafety="unspecified" status="preliminary" name="QAbstractMediaService" href="qabstractmediaservice.html" location="qabstractmediaservice.h" bases="QObject" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="MediaEndpoint" fullname="QAbstractMediaService::MediaEndpoint" href="qabstractmediaservice.html#MediaEndpoint-enum" location="qabstractmediaservice.h">
                 <value name="VideoInput" value="0"/>
                 <value name="VideoOutput" value="1"/>
@@ -1541,14 +1555,14 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="isEndpointSupported" fullname="QAbstractMediaService::isEndpointSupported" href="qabstractmediaservice.html#isEndpointSupported" location="qabstractmediaservice.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType)">
                 <parameter left="QAbstractMediaService::MediaEndpoint" right="" name="endpointType" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setInputStream" fullname="QAbstractMediaService::setInputStream" href="qabstractmediaservice.html#setInputStream" location="qabstractmediaservice.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setInputStream(QIODevice * stream)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="setInputStream" fullname="QAbstractMediaService::setInputStream" href="qabstractmediaservice.html#setInputStream" location="qabstractmediaservice.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setInputStream(QIODevice * stream)">
                 <parameter left="QIODevice *" right="" name="stream" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="inputStream" fullname="QAbstractMediaService::inputStream" href="qabstractmediaservice.html#inputStream" location="qabstractmediaservice.cpp" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QIODevice *" signature="inputStream() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setOutputStream" fullname="QAbstractMediaService::setOutputStream" href="qabstractmediaservice.html#setOutputStream" location="qabstractmediaservice.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setOutputStream(QIODevice * stream)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="inputStream" fullname="QAbstractMediaService::inputStream" href="qabstractmediaservice.html#inputStream" location="qabstractmediaservice.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QIODevice *" signature="inputStream() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setOutputStream" fullname="QAbstractMediaService::setOutputStream" href="qabstractmediaservice.html#setOutputStream" location="qabstractmediaservice.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setOutputStream(QIODevice * stream)">
                 <parameter left="QIODevice *" right="" name="stream" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="outputStream" fullname="QAbstractMediaService::outputStream" href="qabstractmediaservice.html#outputStream" location="qabstractmediaservice.cpp" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QIODevice *" signature="outputStream() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="outputStream" fullname="QAbstractMediaService::outputStream" href="qabstractmediaservice.html#outputStream" location="qabstractmediaservice.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QIODevice *" signature="outputStream() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="activeEndpoint" fullname="QAbstractMediaService::activeEndpoint" href="qabstractmediaservice.html#activeEndpoint" location="qabstractmediaservice.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="QString" signature="activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType)">
                 <parameter left="QAbstractMediaService::MediaEndpoint" right="" name="endpointType" default=""/>
             </function>
@@ -1559,14 +1573,14 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="supportedEndpoints" fullname="QAbstractMediaService::supportedEndpoints" href="qabstractmediaservice.html#supportedEndpoints" location="qabstractmediaservice.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QList&lt;QString&gt;" signature="supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const">
                 <parameter left="QAbstractMediaService::MediaEndpoint" right="" name="endpointType" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="control" fullname="QAbstractMediaService::control" href="qabstractmediaservice.html#control" location="qabstractmediaservice.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QAbstractMediaControl *" signature="control(const char * name) const">
-                <parameter left="const char *" right="" name="name" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="control" fullname="QAbstractMediaService::control" href="qabstractmediaservice.html#control" location="qabstractmediaservice.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QAbstractMediaControl *" signature="control(const char * interface) const">
+                <parameter left="const char *" right="" name="interface" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="control" fullname="QAbstractMediaService::control" href="qabstractmediaservice.html#control-2" location="qabstractmediaservice.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="2" type="T" signature="control() const"/>
             <function access="protected" threadsafety="unspecified" status="commendable" name="QAbstractMediaService" fullname="QAbstractMediaService::QAbstractMediaService" href="qabstractmediaservice.html#QAbstractMediaService" location="qabstractmediaservice.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QAbstractMediaService(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default=""/>
             </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="~QAbstractMediaService" fullname="QAbstractMediaService::~QAbstractMediaService" href="qabstractmediaservice.html#dtor.QAbstractMediaService" location="qabstractmediaservice.cpp" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QAbstractMediaService()"/>
+            <function access="protected" threadsafety="unspecified" status="commendable" name="~QAbstractMediaService" fullname="QAbstractMediaService::~QAbstractMediaService" href="qabstractmediaservice.html#dtor.QAbstractMediaService" location="qabstractmediaservice.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QAbstractMediaService()"/>
             <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QAbstractMediaService::d_ptr" href="qabstractmediaservice.html#d_ptr-var" location="qabstractmediaservice.h" type="QAbstractMediaServicePrivate *" static="false"/>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMediaPlaylist" href="qmediaplaylist.html" location="qmediaplaylist.h" bases="QObject" module="">

@@ -19,63 +19,67 @@
 <ul>
 <li><a href="qcameraexposurecontrol-members.html">List of all members, including inherited members</a></li>
 </ul>
+<hr />
 <a name="public-functions"></a>
-<h3>Public Functions</h3>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#dtor.QCameraExposureControl">~QCameraExposureControl</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#aperture">aperture</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#exposureCompensation">exposureCompensation</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QCamera::ExposureMode </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#exposureMode">exposureMode</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QCamera::FlashMode </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#flashMode">flashMode</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#isExposureLocked">isExposureLocked</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#isFlashReady">isFlashReady</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#isoSensitivity">isoSensitivity</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QCamera::MeteringMode </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#meteringMode">meteringMode</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#setAutoAperture">setAutoAperture</a></b> () = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#setAutoIsoSensitivity">setAutoIsoSensitivity</a></b> () = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#setAutoShutterSpeed">setAutoShutterSpeed</a></b> () = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#setExposureCompensation">setExposureCompensation</a></b> ( qreal <i>ev</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#setExposureMode">setExposureMode</a></b> ( QCamera::ExposureMode <i>mode</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#setFlashMode">setFlashMode</a></b> ( QCamera::FlashMode <i>mode</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#setManualAperture">setManualAperture</a></b> ( qreal <i>aperture</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#setManualIsoSensitivity">setManualIsoSensitivity</a></b> ( int <i>iso</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#setManualShutterSpeed">setManualShutterSpeed</a></b> ( qreal <i>seconds</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#setMeteringMode">setMeteringMode</a></b> ( QCamera::MeteringMode <i>mode</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#shutterSpeed">shutterSpeed</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QPair&lt;qreal, qreal&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#supportedApertureRange">supportedApertureRange</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QCamera::ExposureModes </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#supportedExposureModes">supportedExposureModes</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QCamera::FlashModes </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#supportedFlashModes">supportedFlashModes</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QPair&lt;int, int&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#supportedIsoSensitivityRange">supportedIsoSensitivityRange</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QCamera::MeteringModes </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#supportedMeteringModes">supportedMeteringModes</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QPair&lt;qreal, qreal&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#supportedShutterSpeedRange">supportedShutterSpeedRange</a></b> () const = 0</td></tr>
+</table>
 <ul>
-<li><div class="fn"></div><b><a href="qcameraexposurecontrol.html#dtor.QCameraExposureControl">~QCameraExposureControl</a></b> ()</li>
-<li><div class="fn"></div>virtual qreal <b><a href="qcameraexposurecontrol.html#aperture">aperture</a></b> () const = 0</li>
-<li><div class="fn"></div>virtual qreal <b><a href="qcameraexposurecontrol.html#exposureCompensation">exposureCompensation</a></b> () const = 0</li>
-<li><div class="fn"></div>virtual QCamera::ExposureMode <b><a href="qcameraexposurecontrol.html#exposureMode">exposureMode</a></b> () const = 0</li>
-<li><div class="fn"></div>virtual QCamera::FlashMode <b><a href="qcameraexposurecontrol.html#flashMode">flashMode</a></b> () const = 0</li>
-<li><div class="fn"></div>virtual bool <b><a href="qcameraexposurecontrol.html#isExposureLocked">isExposureLocked</a></b> () const = 0</li>
-<li><div class="fn"></div>virtual bool <b><a href="qcameraexposurecontrol.html#isFlashReady">isFlashReady</a></b> () const = 0</li>
-<li><div class="fn"></div>virtual int <b><a href="qcameraexposurecontrol.html#isoSensitivity">isoSensitivity</a></b> () const = 0</li>
-<li><div class="fn"></div>virtual QCamera::MeteringMode <b><a href="qcameraexposurecontrol.html#meteringMode">meteringMode</a></b> () const = 0</li>
-<li><div class="fn"></div>virtual void <b><a href="qcameraexposurecontrol.html#setAutoAperture">setAutoAperture</a></b> () = 0</li>
-<li><div class="fn"></div>virtual void <b><a href="qcameraexposurecontrol.html#setAutoIsoSensitivity">setAutoIsoSensitivity</a></b> () = 0</li>
-<li><div class="fn"></div>virtual void <b><a href="qcameraexposurecontrol.html#setAutoShutterSpeed">setAutoShutterSpeed</a></b> () = 0</li>
-<li><div class="fn"></div>virtual void <b><a href="qcameraexposurecontrol.html#setExposureCompensation">setExposureCompensation</a></b> ( qreal <i>ev</i> ) = 0</li>
-<li><div class="fn"></div>virtual void <b><a href="qcameraexposurecontrol.html#setExposureMode">setExposureMode</a></b> ( QCamera::ExposureMode <i>mode</i> ) = 0</li>
-<li><div class="fn"></div>virtual void <b><a href="qcameraexposurecontrol.html#setFlashMode">setFlashMode</a></b> ( QCamera::FlashMode <i>mode</i> ) = 0</li>
-<li><div class="fn"></div>virtual void <b><a href="qcameraexposurecontrol.html#setManualAperture">setManualAperture</a></b> ( qreal <i>aperture</i> ) = 0</li>
-<li><div class="fn"></div>virtual void <b><a href="qcameraexposurecontrol.html#setManualIsoSensitivity">setManualIsoSensitivity</a></b> ( int <i>iso</i> ) = 0</li>
-<li><div class="fn"></div>virtual void <b><a href="qcameraexposurecontrol.html#setManualShutterSpeed">setManualShutterSpeed</a></b> ( qreal <i>seconds</i> ) = 0</li>
-<li><div class="fn"></div>virtual void <b><a href="qcameraexposurecontrol.html#setMeteringMode">setMeteringMode</a></b> ( QCamera::MeteringMode <i>mode</i> ) = 0</li>
-<li><div class="fn"></div>virtual qreal <b><a href="qcameraexposurecontrol.html#shutterSpeed">shutterSpeed</a></b> () const = 0</li>
-<li><div class="fn"></div>virtual QPair&lt;qreal, qreal&gt; <b><a href="qcameraexposurecontrol.html#supportedApertureRange">supportedApertureRange</a></b> () const = 0</li>
-<li><div class="fn"></div>virtual QCamera::ExposureModes <b><a href="qcameraexposurecontrol.html#supportedExposureModes">supportedExposureModes</a></b> () const = 0</li>
-<li><div class="fn"></div>virtual QCamera::FlashModes <b><a href="qcameraexposurecontrol.html#supportedFlashModes">supportedFlashModes</a></b> () const = 0</li>
-<li><div class="fn"></div>virtual QPair&lt;int, int&gt; <b><a href="qcameraexposurecontrol.html#supportedIsoSensitivityRange">supportedIsoSensitivityRange</a></b> () const = 0</li>
-<li><div class="fn"></div>virtual QCamera::MeteringModes <b><a href="qcameraexposurecontrol.html#supportedMeteringModes">supportedMeteringModes</a></b> () const = 0</li>
-<li><div class="fn"></div>virtual QPair&lt;qreal, qreal&gt; <b><a href="qcameraexposurecontrol.html#supportedShutterSpeedRange">supportedShutterSpeedRange</a></b> () const = 0</li>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
 </ul>
-<ul>
-<li><div class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
-</ul>
+<hr />
 <a name="public-slots"></a>
-<h3>Public Slots</h3>
+<h2>Public Slots</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#lockExposure">lockExposure</a></b> () = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#unlockExposure">unlockExposure</a></b> () = 0</td></tr>
+</table>
 <ul>
-<li><div class="fn"></div>virtual void <b><a href="qcameraexposurecontrol.html#lockExposure">lockExposure</a></b> () = 0</li>
-<li><div class="fn"></div>virtual void <b><a href="qcameraexposurecontrol.html#unlockExposure">unlockExposure</a></b> () = 0</li>
+<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-slots">QObject</a></li>
 </ul>
-<ul>
-<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-slots">QObject</a></li>
-</ul>
+<hr />
 <a name="signals"></a>
-<h3>Signals</h3>
+<h2>Signals</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#exposureLocked">exposureLocked</a></b> ()</td></tr>
+</table>
 <ul>
-<li><div class="fn"></div>void <b><a href="qcameraexposurecontrol.html#exposureLocked">exposureLocked</a></b> ()</li>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
 </ul>
-<ul>
-<li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
-</ul>
+<hr />
 <a name="protected-functions"></a>
-<h3>Protected Functions</h3>
+<h2>Protected Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#QCameraExposureControl">QCameraExposureControl</a></b> ( QObject * <i>parent</i> )</td></tr>
+</table>
 <ul>
-<li><div class="fn"></div><b><a href="qcameraexposurecontrol.html#QCameraExposureControl">QCameraExposureControl</a></b> ( QObject * <i>parent</i> )</li>
-</ul>
-<ul>
-<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-functions">QObject</a></li>
+<li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-functions">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>

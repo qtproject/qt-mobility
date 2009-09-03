@@ -19,75 +19,97 @@
 <ul>
 <li><a href="qmediaslideshow-members.html">List of all members, including inherited members</a></li>
 </ul>
+<hr />
 <a name="public-types"></a>
-<h3>Public Types</h3>
-<ul>
-<li><div class="fn"></div>enum <b><a href="qmediaslideshow.html#MediaStatus-enum">MediaStatus</a></b> { NoMedia, LoadingMedia, LoadedMedia, InvalidMedia }</li>
-<li><div class="fn"></div>enum <b><a href="qmediaslideshow.html#State-enum">State</a></b> { StoppedState, PlayingState, PausedState }</li>
-</ul>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#MediaStatus-enum">MediaStatus</a></b> { NoMedia, LoadingMedia, LoadedMedia, InvalidMedia }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#State-enum">State</a></b> { StoppedState, PlayingState, PausedState }</td></tr>
+</table>
+<hr />
 <a name="properties"></a>
-<h3>Properties</h3>
-<p><table width="100%" border="0" cellpadding="0" cellspacing="0">
+<h2>Properties</h2>
+<p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td width="45%" valign="top"><ul>
-<li><div class="fn"></div><b><a href="qmediaslideshow.html#currentIndex-prop">currentIndex</a></b> : int</li>
-<li><div class="fn"></div><b><a href="qmediaslideshow.html#currentMedia-prop">currentMedia</a></b> : const QMediaResource</li>
-<li><div class="fn"></div><b><a href="qmediaslideshow.html#media-prop">media</a></b> : QMediaSource</li>
-<li><div class="fn"></div><b><a href="qmediaslideshow.html#mediaStatus-prop">mediaStatus</a></b> : const MediaStatus</li>
+<li><div class="fn"><b><a href="qmediaslideshow.html#currentIndex-prop">currentIndex</a></b> : int</div></li>
+<li><div class="fn"><b><a href="qmediaslideshow.html#currentMedia-prop">currentMedia</a></b> : const QMediaResource</div></li>
+<li><div class="fn"><b><a href="qmediaslideshow.html#media-prop">media</a></b> : QMediaSource</div></li>
+<li><div class="fn"><b><a href="qmediaslideshow.html#mediaStatus-prop">mediaStatus</a></b> : const MediaStatus</div></li>
 </ul></td><td valign="top"><ul>
-<li><div class="fn"></div><b><a href="qmediaslideshow.html#playlist-prop">playlist</a></b> : QMediaPlaylistProvider * const</li>
-<li><div class="fn"></div><b><a href="qmediaslideshow.html#state-prop">state</a></b> : const State</li>
-<li><div class="fn"></div><b><a href="qmediaslideshow.html#timeout-prop">timeout</a></b> : int</li>
+<li><div class="fn"><b><a href="qmediaslideshow.html#playlist-prop">playlist</a></b> : QMediaPlaylistProvider * const</div></li>
+<li><div class="fn"><b><a href="qmediaslideshow.html#state-prop">state</a></b> : const State</div></li>
+<li><div class="fn"><b><a href="qmediaslideshow.html#timeout-prop">timeout</a></b> : int</div></li>
 </ul>
 </td></tr>
 </table></p>
 <ul>
-<li><div class="fn"></div>1 property inherited from <a href="qabstractmediaobject.html#properties">QAbstractMediaObject</a></li>
-<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
+<li><div bar="2" class="fn"></div>1 property inherited from <a href="qabstractmediaobject.html#properties">QAbstractMediaObject</a></li>
+<li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
 </ul>
+<hr />
 <a name="public-functions"></a>
-<h3>Public Functions</h3>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#QMediaSlideShow">QMediaSlideShow</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#dtor.QMediaSlideShow">~QMediaSlideShow</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#currentIndex-prop">currentIndex</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMediaResource </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#currentMedia-prop">currentMedia</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMediaSource </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#media-prop">media</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">MediaStatus </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#mediaStatus-prop">mediaStatus</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMediaPlaylistProvider * </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#playlist-prop">playlist</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#media-prop">setMedia</a></b> ( const QMediaSource &amp; <i>media</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">State </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#state-prop">state</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#timeout-prop">timeout</a></b> () const</td></tr>
+</table>
+<hr />
+<a name="reimplemented-public-functions"></a>
+<h2>Reimplemented Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#isValid">isValid</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QAbstractMediaService * </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#service">service</a></b> () const</td></tr>
+</table>
 <ul>
-<li><div class="fn"></div><b><a href="qmediaslideshow.html#QMediaSlideShow">QMediaSlideShow</a></b> ( QObject * <i>parent</i> = 0 )</li>
-<li><div class="fn"></div><b><a href="qmediaslideshow.html#dtor.QMediaSlideShow">~QMediaSlideShow</a></b> ()</li>
-<li><div class="fn"></div>int <b><a href="qmediaslideshow.html#currentIndex-prop">currentIndex</a></b> () const</li>
-<li><div class="fn"></div>QMediaResource <b><a href="qmediaslideshow.html#currentMedia-prop">currentMedia</a></b> () const</li>
-<li><div class="fn"></div>QMediaSource <b><a href="qmediaslideshow.html#media-prop">media</a></b> () const</li>
-<li><div class="fn"></div>MediaStatus <b><a href="qmediaslideshow.html#mediaStatus-prop">mediaStatus</a></b> () const</li>
-<li><div class="fn"></div>QMediaPlaylistProvider * <b><a href="qmediaslideshow.html#playlist-prop">playlist</a></b> () const</li>
-<li><div class="fn"></div>void <b><a href="qmediaslideshow.html#media-prop">setMedia</a></b> ( const QMediaSource &amp; <i>media</i> )</li>
-<li><div class="fn"></div>State <b><a href="qmediaslideshow.html#state-prop">state</a></b> () const</li>
-<li><div class="fn"></div>int <b><a href="qmediaslideshow.html#timeout-prop">timeout</a></b> () const</li>
+<li><div bar="2" class="fn"></div>4 public functions inherited from <a href="qabstractmediaobject.html#public-functions">QAbstractMediaObject</a></li>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
 </ul>
-<ul>
-<li><div class="fn"></div>4 public functions inherited from <a href="qabstractmediaobject.html#public-functions">QAbstractMediaObject</a></li>
-<li><div class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
-</ul>
+<hr />
 <a name="public-slots"></a>
-<h3>Public Slots</h3>
+<h2>Public Slots</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#next">next</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#pause">pause</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#play">play</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#previous">previous</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#currentIndex-prop">setCurrentIndex</a></b> ( int <i>index</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#timeout-prop">setTimeout</a></b> ( int <i>timeout</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#stop">stop</a></b> ()</td></tr>
+</table>
 <ul>
-<li><div class="fn"></div>void <b><a href="qmediaslideshow.html#next">next</a></b> ()</li>
-<li><div class="fn"></div>void <b><a href="qmediaslideshow.html#pause">pause</a></b> ()</li>
-<li><div class="fn"></div>void <b><a href="qmediaslideshow.html#play">play</a></b> ()</li>
-<li><div class="fn"></div>void <b><a href="qmediaslideshow.html#previous">previous</a></b> ()</li>
-<li><div class="fn"></div>void <b><a href="qmediaslideshow.html#currentIndex-prop">setCurrentIndex</a></b> ( int <i>index</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmediaslideshow.html#timeout-prop">setTimeout</a></b> ( int <i>timeout</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmediaslideshow.html#stop">stop</a></b> ()</li>
+<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-slots">QObject</a></li>
 </ul>
-<ul>
-<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-slots">QObject</a></li>
-</ul>
+<hr />
 <a name="signals"></a>
-<h3>Signals</h3>
+<h2>Signals</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#currentIndexChanged">currentIndexChanged</a></b> ( int <i>index</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#currentMediaChanged">currentMediaChanged</a></b> ( const QMediaResource &amp; <i>media</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#mediaChanged">mediaChanged</a></b> ( const QMediaSource &amp; <i>media</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#mediaStatusChanged">mediaStatusChanged</a></b> ( QMediaSlideShow::MediaStatus <i>status</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#stateChanged">stateChanged</a></b> ( QMediaSlideShow::State <i>state</i> )</td></tr>
+</table>
 <ul>
-<li><div class="fn"></div>void <b><a href="qmediaslideshow.html#currentIndexChanged">currentIndexChanged</a></b> ( int <i>index</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmediaslideshow.html#currentMediaChanged">currentMediaChanged</a></b> ( const QMediaResource &amp; <i>media</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmediaslideshow.html#mediaChanged">mediaChanged</a></b> ( const QMediaSource &amp; <i>media</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmediaslideshow.html#mediaStatusChanged">mediaStatusChanged</a></b> ( QMediaSlideShow::MediaStatus <i>status</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmediaslideshow.html#stateChanged">stateChanged</a></b> ( QMediaSlideShow::State <i>state</i> )</li>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="qabstractmediaobject.html#signals">QAbstractMediaObject</a></li>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
 </ul>
+<hr />
+<a name="reimplemented-protected-functions"></a>
+<h2>Reimplemented Protected Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#timerEvent">timerEvent</a></b> ( QTimerEvent * <i>event</i> )</td></tr>
+</table>
 <ul>
-<li><div class="fn"></div>1 signal inherited from <a href="qabstractmediaobject.html#signals">QAbstractMediaObject</a></li>
-<li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
+<li><div bar="2" class="fn"></div>2 protected functions inherited from <a href="qabstractmediaobject.html#protected-functions">QAbstractMediaObject</a></li>
+<li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-functions">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
@@ -105,7 +127,7 @@
 <hr />
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="MediaStatus-enum"></a>enum QMediaSlideShow::MediaStatus</h3>
-<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QMediaSlideShow::NoMedia</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">There is no current media.</td></tr>
 <tr><td valign="top"><tt>QMediaSlideShow::LoadingMedia</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The slide show is loading the current media.</td></tr>
@@ -113,7 +135,7 @@
 <tr><td valign="top"><tt>QMediaSlideShow::InvalidMedia</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The current media cannot be loaded.</td></tr>
 </table></p>
 <h3 class="fn"><a name="State-enum"></a>enum QMediaSlideShow::State</h3>
-<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QMediaSlideShow::StoppedState</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The slide show is not progressing, and has been reset.</td></tr>
 <tr><td valign="top"><tt>QMediaSlideShow::PlayingState</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The slide show is progressing.</td></tr>
@@ -123,51 +145,71 @@
 <h2>Property Documentation</h2>
 <h3 class="fn"><a name="currentIndex-prop"></a>currentIndex : int</h3>
 <p>This property holds the index in the playlist of the current media.</p>
-<p>Access functions:</p>
-<ul>
-<li><div class="fn"></div><b>int currentIndex () const</b></li>
-<li><div class="fn"></div><b>void setCurrentIndex ( int <i>index</i> )</b></li>
-</ul>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>currentIndex</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setCurrentIndex</b> ( int <i>index</i> )</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#currentIndexChanged">currentIndexChanged</a></b> ( int <i>index</i> )</td></tr>
+</table>
 <h3 class="fn"><a name="currentMedia-prop"></a>currentMedia : const <a href="qmediaresource.html">QMediaResource</a></h3>
 <p>This property holds the actual media resource the slide show is currently displaying.</p>
-<p>Access functions:</p>
-<ul>
-<li><div class="fn"></div><b>QMediaResource currentMedia () const</b></li>
-</ul>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QMediaResource </td><td class="memItemRight" valign="bottom"><b>currentMedia</b> () const</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#currentMediaChanged">currentMediaChanged</a></b> ( const QMediaResource &amp; <i>media</i> )</td></tr>
+</table>
 <h3 class="fn"><a name="media-prop"></a>media : <a href="qmediasource.html">QMediaSource</a></h3>
 <p>This property holds the media a slide show is presenting.</p>
 <p>This is the media used to initially populate the playlist, and may not be representive of the currently displayed media.</p>
-<p>Access functions:</p>
-<ul>
-<li><div class="fn"></div><b>QMediaSource media () const</b></li>
-<li><div class="fn"></div><b>void setMedia ( const QMediaSource &amp; <i>media</i> )</b></li>
-</ul>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QMediaSource </td><td class="memItemRight" valign="bottom"><b>media</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setMedia</b> ( const QMediaSource &amp; <i>media</i> )</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#mediaChanged">mediaChanged</a></b> ( const QMediaSource &amp; <i>media</i> )</td></tr>
+</table>
 <p>See also <a href="qmediaslideshow.html#currentMedia-prop">currentMedia</a>.</p>
 <h3 class="fn"><a name="mediaStatus-prop"></a>mediaStatus : const <a href="qmediaslideshow.html#MediaStatus-enum">MediaStatus</a></h3>
 <p>This property holds the status of the current media.</p>
-<p>Access functions:</p>
-<ul>
-<li><div class="fn"></div><b>MediaStatus mediaStatus () const</b></li>
-</ul>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">MediaStatus </td><td class="memItemRight" valign="bottom"><b>mediaStatus</b> () const</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#mediaStatusChanged">mediaStatusChanged</a></b> ( QMediaSlideShow::MediaStatus <i>status</i> )</td></tr>
+</table>
 <h3 class="fn"><a name="playlist-prop"></a>playlist : <a href="qmediaplaylistprovider.html">QMediaPlaylistProvider</a> * const</h3>
 <p>This property holds a playlist containing the media displayed in a slide show.</p>
-<p>Access functions:</p>
-<ul>
-<li><div class="fn"></div><b>QMediaPlaylistProvider * playlist () const</b></li>
-</ul>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QMediaPlaylistProvider * </td><td class="memItemRight" valign="bottom"><b>playlist</b> () const</td></tr>
+</table>
 <h3 class="fn"><a name="state-prop"></a>state : const <a href="qmediaslideshow.html#State-enum">State</a></h3>
 <p>This property holds the playback state of a slide show.</p>
-<p>Access functions:</p>
-<ul>
-<li><div class="fn"></div><b>State state () const</b></li>
-</ul>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">State </td><td class="memItemRight" valign="bottom"><b>state</b> () const</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaslideshow.html#stateChanged">stateChanged</a></b> ( QMediaSlideShow::State <i>state</i> )</td></tr>
+</table>
 <h3 class="fn"><a name="timeout-prop"></a>timeout : int</h3>
 <p>This property holds the amount of time an image is displayed for before moving to the next image.</p>
-<p>Access functions:</p>
-<ul>
-<li><div class="fn"></div><b>int timeout () const</b></li>
-<li><div class="fn"></div><b>void setTimeout ( int <i>timeout</i> )</b></li>
-</ul>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>timeout</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setTimeout</b> ( int <i>timeout</i> )</td></tr>
+</table>
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QMediaSlideShow"></a>QMediaSlideShow::QMediaSlideShow ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
@@ -178,6 +220,8 @@
 <p>Signals that the <i>index</i> in the playlist of the current media has changed.</p>
 <h3 class="fn"><a name="currentMediaChanged"></a>void QMediaSlideShow::currentMediaChanged ( const <a href="qmediaresource.html">QMediaResource</a> &amp; <i>media</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the <i>media</i> resource a slide show is presenting has changed.</p>
+<h3 class="fn"><a name="isValid"></a>bool QMediaSlideShow::isValid () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Reimplemented from <a href="qabstractmediaobject.html#isValid">QAbstractMediaObject::isValid</a>().</p>
 <h3 class="fn"><a name="mediaChanged"></a>void QMediaSlideShow::mediaChanged ( const <a href="qmediasource.html">QMediaSource</a> &amp; <i>media</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the <i>media</i> a slide show is presenting.</p>
 <h3 class="fn"><a name="mediaStatusChanged"></a>void QMediaSlideShow::mediaStatusChanged ( <a href="qmediaslideshow.html#MediaStatus-enum">QMediaSlideShow::MediaStatus</a> <i>status</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
@@ -194,11 +238,15 @@
 <h3 class="fn"><a name="previous"></a>void QMediaSlideShow::previous ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Moves the sldie show to the previous image.</p>
 <p>If there is no current index this will display the last item in the playlist.</p>
+<h3 class="fn"><a name="service"></a><a href="qabstractmediaservice.html">QAbstractMediaService</a> * QMediaSlideShow::service () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Reimplemented from <a href="qabstractmediaobject.html#service">QAbstractMediaObject::service</a>().</p>
 <h3 class="fn"><a name="stateChanged"></a>void QMediaSlideShow::stateChanged ( <a href="qmediaslideshow.html#State-enum">QMediaSlideShow::State</a> <i>state</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the playback <i>state</i> of a slide show has changed.</p>
 <h3 class="fn"><a name="stop"></a>void QMediaSlideShow::stop ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Stops a slide show.</p>
 <p>This will reset the current index and media to null states.</p>
+<h3 class="fn"><a name="timerEvent"></a>void QMediaSlideShow::timerEvent ( <a href="http://qt.nokia.com/doc/4.5/qtimerevent.html">QTimerEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.5/qobject.html#timerEvent">QObject::timerEvent</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
