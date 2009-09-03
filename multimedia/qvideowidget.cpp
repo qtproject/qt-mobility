@@ -244,12 +244,16 @@ void QVideoWindowWidget::setDisplayMode(QVideoWidget::DisplayMode mode)
 
 void QVideoWindowWidget::setAspectRatio(QVideoWidget::AspectRatio ratio)
 {
-    emit aspectRatioModeChanged(m_aspectRatioMode = ratio);
+    m_windowControl->setAspectRatio(ratio);
+
+    emit aspectRatioModeChanged(m_windowControl->aspectRatio());
 }
 
 void QVideoWindowWidget::setCustomPixelAspectRatio(const QSize &customRatio)
 {
-    emit customAspectRatioChanged(m_pixelAspectRatio = customRatio);
+    m_windowControl->setCustomAspectRatio(customRatio);
+
+    emit customAspectRatioChanged(m_windowControl->customAspectRatio());
 }
 
 QSize QVideoWindowWidget::sizeHint() const
@@ -475,6 +479,8 @@ QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
 
     QVideoWidgetControl *widgetControl = qobject_cast<QVideoWidgetControl *>(
             d->service->control(QVideoWidgetControl_iid));
+
+    widgetControl = 0;
 
     if (widgetControl != 0) {
         d->widgetBackend = new QVideoWidgetControlBackend(widgetControl);

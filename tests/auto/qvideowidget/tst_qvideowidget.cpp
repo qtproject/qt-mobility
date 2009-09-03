@@ -65,6 +65,7 @@ public:
         , m_brightness(0)
         , m_contrast(0)
         , m_saturation(0)
+        , m_aspectRatioMode(QVideoWidget::AspectRatioAuto)
         , m_fullscreen(0)
     {
     }
@@ -82,6 +83,12 @@ public:
 
     QSize nativeSize() const { return m_nativeSize; }
     void setNativeSize(const QSize &size) { m_nativeSize = size; emit nativeSizeChanged(); }
+
+    QVideoWidget::AspectRatio aspectRatio() const { return m_aspectRatioMode; }
+    void setAspectRatio(QVideoWidget::AspectRatio ratio) { m_aspectRatioMode = ratio; }
+
+    QSize customAspectRatio() const { return m_customRatio; }
+    void setCustomAspectRatio(const QSize &customRatio) { m_customRatio = customRatio; }
 
     int brightness() const { return m_brightness; }
     void setBrightness(int brightness) { emit brightnessChanged(m_brightness = brightness); }
@@ -101,8 +108,10 @@ private:
     int m_contrast;
     int m_hue;
     int m_saturation;
+    QVideoWidget::AspectRatio m_aspectRatioMode;
     QRect m_displayRect;
     QSize m_nativeSize;
+    QSize m_customRatio;
     bool m_fullscreen;
 };
 

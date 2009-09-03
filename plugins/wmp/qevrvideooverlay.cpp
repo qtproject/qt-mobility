@@ -42,6 +42,7 @@ QEvrVideoOverlay::QEvrVideoOverlay(HINSTANCE evrHwnd)
     , ptrMFCreateVideoPresenter(0)
     , m_presenter(0)
     , m_displayControl(0)
+    , m_aspectRatioMode(QVideoWidget::AspectRatioAuto)
     , m_winId(0)
     , m_fullscreen(0)
 {
@@ -110,6 +111,25 @@ QSize QEvrVideoOverlay::nativeSize() const
     } else {
         return QSize();
     }
+}
+
+QVideoWidget::AspectRatio QEvrVideoOverlay::aspectRatio() const
+{
+    return m_aspectRatioMode;
+}
+
+void QEvrVideoOverlay::setAspectRatio(QVideoWidget::AspectRatio ratio)
+{
+    m_aspectRatioMode = ratio;
+}
+
+QSize QEvrVideoOverlay::customAspectRatio() const
+{
+    return QSize();
+}
+
+void QEvrVideoOverlay::setCustomAspectRatio(const QSize &)
+{
 }
 
 void QEvrVideoOverlay::repaint()
