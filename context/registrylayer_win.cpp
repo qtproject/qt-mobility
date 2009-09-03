@@ -423,11 +423,16 @@ void RegistryLayer::setProperty(Handle handle, Properties properties)
                 }
                 removeHandle(Handle(rh));
 
+                // root path doesn't exists
+                if (path.length() == 1)
+                    return;
+
                 int index = path.lastIndexOf('/');
-                path.truncate(index);
+                if (index == 0)
+                    path.truncate(1);
+                else
+                    path.truncate(index);
             }
-            if (path.isEmpty())
-                return;
         }
 
         HKEY key = hKeys.value(rh);
@@ -482,6 +487,12 @@ void RegistryLayer::removeHandle(Handle handle)
 
     if (--rh->refCount)
         return;
+
+    QList<RegistryHandle *> proxies = notifyProxies.keys(rh);
+    while (!proxies.isEmpty()) {
+        notifyProxies.remove(proxies.first(), rh);
+        removeHandle(Handle(proxies.takeFirst()));
+    }
 
     handles.remove(rh->path);
 
