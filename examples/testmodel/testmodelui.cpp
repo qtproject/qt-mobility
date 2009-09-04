@@ -131,6 +131,9 @@ TestModelUi::TestModelUi()
 
 TestModelUi::~TestModelUi()
 {
+    delete fetchRequest;
+    delete filterRequest;
+
     delete leftButton;
     delete rightButton;
     delete list;
