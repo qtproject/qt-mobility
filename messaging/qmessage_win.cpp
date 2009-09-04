@@ -349,7 +349,11 @@ QString QMessage::customField(const QString &name) const
 void QMessage::setCustomField(const QString &name, const QString &value)
 {
     d_ptr->_modified = true;
-    d_ptr->_customFields[name] = value;
+    if (value.isNull()) {
+        d_ptr->_customFields.remove(name);
+    } else {
+        d_ptr->_customFields[name] = value;
+    }
 }
 
 QStringList QMessage::customFields() const
