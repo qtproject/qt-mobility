@@ -114,7 +114,8 @@ void DatabaseManagerUnitTest::registerService()
     foreach (const QString &serviceFile, userServiceFiles) {
         parser.setDevice(new QFile(m_testdir.absoluteFilePath(serviceFile)));
         QVERIFY(parser.extractMetadata());
-        QVERIFY(m_dbm->registerService(parser, DatabaseManager::UserScope));
+        ServiceMetaDataResults results = parser.parseResults();
+        QVERIFY(m_dbm->registerService(results, DatabaseManager::UserScope));
     }
 
     QStringList systemServiceFiles;
@@ -125,7 +126,8 @@ void DatabaseManagerUnitTest::registerService()
     foreach (const QString &serviceFile, systemServiceFiles) {
         parser.setDevice(new QFile(m_testdir.absoluteFilePath(serviceFile)));
         QVERIFY(parser.extractMetadata());
-        QVERIFY(m_dbm->registerService(parser, DatabaseManager::SystemScope));
+        ServiceMetaDataResults results = parser.parseResults();
+        QVERIFY(m_dbm->registerService(results, DatabaseManager::SystemScope));
     }
 }
 
@@ -393,7 +395,8 @@ void DatabaseManagerUnitTest::unregisterService()
     ServiceMetaData parser("");
     parser.setDevice(new QFile(m_testdir.absoluteFilePath("ServiceDharma_Swan.xml")));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(m_dbm->registerService(parser, DatabaseManager::UserScope));
+    ServiceMetaDataResults results = parser.parseResults();
+    QVERIFY(m_dbm->registerService(results, DatabaseManager::UserScope));
 
     //try to remove a service from the system database that also exist in the user database
     filter.setServiceName("dharmainitiative");
@@ -502,6 +505,7 @@ bool DatabaseManagerUnitTest::compareDescriptor(QServiceInterfaceDescriptor inte
 #ifdef Q_OS_UNIX
 void DatabaseManagerUnitTest::permissions()
 {
+    ServiceMetaDataResults results;
     //try create a user scope database with no permissions
     //to create the directory needed for the user db
     QString userDir =  QSfwTestUtil::userDirectory();
@@ -519,7 +523,8 @@ void DatabaseManagerUnitTest::permissions()
     parser.setDevice(new QFile(m_testdir.absoluteFilePath("ServiceAcme.xml")));
     QVERIFY(parser.extractMetadata());
     m_dbm = new DatabaseManager;
-    QVERIFY(!m_dbm->registerService(parser, DatabaseManager::UserScope));
+    results = parser.parseResults();
+    QVERIFY(!m_dbm->registerService(results, DatabaseManager::UserScope));
     QCOMPARE(m_dbm->lastError().code(), DBError::CannotOpenServiceDb);
 
     //try to create a system scope database with no permission to
@@ -528,7 +533,7 @@ void DatabaseManagerUnitTest::permissions()
     modifyPermissionSet(systemPermsSet, ~QFile::ExeOwner);
     QVERIFY(QFile::setPermissions(systemDir, systemPermsSet));
 
-    QVERIFY(!m_dbm->registerService(parser, DatabaseManager::SystemScope));
+    QVERIFY(!m_dbm->registerService(results, DatabaseManager::SystemScope));
     QCOMPARE(m_dbm->lastError().code(), DBError::CannotOpenServiceDb);
 
     //restore directory permissions
@@ -543,13 +548,13 @@ void DatabaseManagerUnitTest::permissions()
     userPermsSet = QFile::permissions(userDir + "/Nokia/");
     modifyPermissionSet(userPermsSet, ~QFile::WriteOwner);
     QVERIFY(QFile::setPermissions(userDir + "/Nokia/", userPermsSet));
-    QVERIFY(!m_dbm->registerService(parser, DatabaseManager::UserScope));
+    QVERIFY(!m_dbm->registerService(results, DatabaseManager::UserScope));
     QCOMPARE(m_dbm->lastError().code(), DBError::CannotOpenServiceDb);
 
     //restore user directory permissions and create and populate a user database
     modifyPermissionSet(userPermsSet, QFile::WriteOwner);
     QVERIFY(QFile::setPermissions(userDir + "/Nokia", userPermsSet));
-    QVERIFY(m_dbm->registerService(parser, DatabaseManager::UserScope));
+    QVERIFY(m_dbm->registerService(results, DatabaseManager::UserScope));
     QString userDbFilePath = m_dbm->m_userDb->databasePath();
 
     //try to access database without read permissions
@@ -587,7 +592,7 @@ void DatabaseManagerUnitTest::permissions()
 
     //recreate a valid user database
     userDbFile.remove();
-    QVERIFY(m_dbm->registerService(parser, DatabaseManager::UserScope));
+    QVERIFY(m_dbm->registerService(results, DatabaseManager::UserScope));
     filter.setServiceName("");
     filter.setInterface("");
     descriptors = m_dbm->getInterfaces(filter, DatabaseManager::UserScope);
@@ -601,7 +606,8 @@ void DatabaseManagerUnitTest::permissions()
     m_dbm = new DatabaseManager;
     parser.setDevice(new QFile(m_testdir.absoluteFilePath("ServiceLuthorCorp.xml")));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(!m_dbm->registerService(parser, DatabaseManager::UserScope));
+    results = parser.parseResults();
+    QVERIFY(!m_dbm->registerService(results, DatabaseManager::UserScope));
     QCOMPARE(m_dbm->lastError().code(), DBError::NoWritePermissions);
     descriptors = m_dbm->getInterfaces(filter, DatabaseManager::UserScope);
     QCOMPARE(descriptors.count(), 5);
@@ -633,7 +639,8 @@ void DatabaseManagerUnitTest::onlyUserDbAvailable()
     foreach (const QString &serviceFile, userServiceFiles) {
         parser.setDevice(new QFile(m_testdir.absoluteFilePath(serviceFile)));
         QVERIFY(parser.extractMetadata());
-        QVERIFY(m_dbm->registerService(parser, DatabaseManager::UserScope));
+        ServiceMetaDataResults results = parser.parseResults();
+        QVERIFY(m_dbm->registerService(results, DatabaseManager::UserScope));
         QCOMPARE(m_dbm->lastError().code(), DBError::NoError);
     }
 
@@ -641,7 +648,8 @@ void DatabaseManagerUnitTest::onlyUserDbAvailable()
     QVERIFY(!m_dbm->m_systemDb->isOpen());
 
     parser.setDevice(new QFile(m_testdir.absoluteFilePath("ServiceOmni.xml")));
-    QVERIFY(!m_dbm->registerService(parser, DatabaseManager::SystemScope));
+    ServiceMetaDataResults results = parser.parseResults();
+    QVERIFY(!m_dbm->registerService(results, DatabaseManager::SystemScope));
     QCOMPARE(m_dbm->lastError().code(), DBError::CannotOpenServiceDb);
     
     QServiceFilter filter;
@@ -753,7 +761,8 @@ void DatabaseManagerUnitTest::defaultServiceCornerCases()
     foreach (const QString &serviceFile, userServiceFiles) {
         parser.setDevice(new QFile(m_testdir.absoluteFilePath(serviceFile)));
         QVERIFY(parser.extractMetadata());
-        QVERIFY(m_dbm->registerService(parser, DatabaseManager::UserScope));
+        ServiceMetaDataResults results = parser.parseResults();
+        QVERIFY(m_dbm->registerService(results, DatabaseManager::UserScope));
     }
 
     QStringList systemServiceFiles;
@@ -764,7 +773,8 @@ void DatabaseManagerUnitTest::defaultServiceCornerCases()
     foreach (const QString &serviceFile, systemServiceFiles) {
         parser.setDevice(new QFile(m_testdir.absoluteFilePath(serviceFile)));
         QVERIFY(parser.extractMetadata());
-        QVERIFY(m_dbm->registerService(parser, DatabaseManager::SystemScope));
+        ServiceMetaDataResults results = parser.parseResults();
+        QVERIFY(m_dbm->registerService(results, DatabaseManager::SystemScope));
     }
 
     // == set a system service interface implementation as a default at user scope then
@@ -854,7 +864,8 @@ void DatabaseManagerUnitTest::defaultServiceCornerCases()
     foreach (const QString &serviceFile, userServiceFiles) {
         parser.setDevice(new QFile(m_testdir.absoluteFilePath(serviceFile)));
         QVERIFY(parser.extractMetadata());
-        QVERIFY(m_dbm->registerService(parser, DatabaseManager::UserScope));
+        ServiceMetaDataResults results = parser.parseResults();
+        QVERIFY(m_dbm->registerService(results, DatabaseManager::UserScope));
     }
     systemServiceFiles.clear();
     systemServiceFiles << "ServiceOmni.xml" << "ServiceWayneEnt.xml"
@@ -864,7 +875,8 @@ void DatabaseManagerUnitTest::defaultServiceCornerCases()
     foreach (const QString &serviceFile, systemServiceFiles) {
         parser.setDevice(new QFile(m_testdir.absoluteFilePath(serviceFile)));
         QVERIFY(parser.extractMetadata());
-        QVERIFY(m_dbm->registerService(parser, DatabaseManager::SystemScope));
+        ServiceMetaDataResults results = parser.parseResults();
+        QVERIFY(m_dbm->registerService(results, DatabaseManager::SystemScope));
     }
 
     //== Set a couple of external defaults in the user scope database,
@@ -996,7 +1008,8 @@ void DatabaseManagerUnitTest::nonWritableSystemDb()
     foreach (const QString &serviceFile, userServiceFiles) {
         parser.setDevice(new QFile(m_testdir.absoluteFilePath(serviceFile)));
         QVERIFY(parser.extractMetadata());
-        QVERIFY(m_dbm->registerService(parser, DatabaseManager::UserScope));
+        ServiceMetaDataResults results = parser.parseResults();
+        QVERIFY(m_dbm->registerService(results, DatabaseManager::UserScope));
     }
 
     QStringList systemServiceFiles;
@@ -1006,7 +1019,8 @@ void DatabaseManagerUnitTest::nonWritableSystemDb()
     foreach (const QString &serviceFile, systemServiceFiles) {
         parser.setDevice(new QFile(m_testdir.absoluteFilePath(serviceFile)));
         QVERIFY(parser.extractMetadata());
-        QVERIFY(m_dbm->registerService(parser, DatabaseManager::SystemScope));
+        ServiceMetaDataResults results = parser.parseResults();
+        QVERIFY(m_dbm->registerService(results, DatabaseManager::SystemScope));
     }
 
     //make system database non-writable
@@ -1020,12 +1034,14 @@ void DatabaseManagerUnitTest::nonWritableSystemDb()
     m_dbm = new DatabaseManager;
     parser.setDevice(new QFile(m_testdir.absoluteFilePath("ServiceDharma_Swan.xml")));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(m_dbm->registerService(parser, DatabaseManager::UserScope));
+    ServiceMetaDataResults results = parser.parseResults();
+    QVERIFY(m_dbm->registerService(results, DatabaseManager::UserScope));
     QCOMPARE(m_dbm->lastError().code(), DBError::NoError);
 
     parser.setDevice(new QFile(m_testdir.absoluteFilePath("ServiceAutobot.xml")));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(!m_dbm->registerService(parser, DatabaseManager::SystemScope));
+    results = parser.parseResults();
+    QVERIFY(!m_dbm->registerService(results, DatabaseManager::SystemScope));
     QCOMPARE(m_dbm->lastError().code(), DBError::NoWritePermissions);
 
     //== test getInterfaces() ==
@@ -1193,7 +1209,8 @@ void DatabaseManagerUnitTest::CWRTXmlCompatability()
     foreach (const QString &serviceFile, userServiceFiles) {
         parser.setDevice(new QFile(m_testdir.absoluteFilePath(serviceFile)));
         QVERIFY(parser.extractMetadata());
-        QVERIFY(m_dbm->registerService(parser, DatabaseManager::UserScope));
+        ServiceMetaDataResults results = parser.parseResults();
+        QVERIFY(m_dbm->registerService(results, DatabaseManager::UserScope));
     }
 
     QString test("Test");
@@ -1212,10 +1229,11 @@ void DatabaseManagerUnitTest::CWRTXmlCompatability()
         if (serviceFile == "ServiceTest3.xml") {
             QVERIFY(!parser.extractMetadata());//versions less than 1.0 are not allowed
             continue;
-        }
-        else
+        } else {
             QVERIFY(parser.extractMetadata());
-        QVERIFY(m_dbm->registerService(parser, DatabaseManager::SystemScope));
+        }
+        ServiceMetaDataResults results = parser.parseResults();
+        QVERIFY(m_dbm->registerService(results, DatabaseManager::SystemScope));
     }
 
     QServiceFilter filter;

@@ -52,7 +52,7 @@ class Q_SFW_EXPORT DatabaseManager : public QObject
         DatabaseManager(void);
         virtual ~DatabaseManager();
 
-        bool registerService(ServiceMetaData &service, DbScope scope);
+        bool registerService(ServiceMetaDataResults &service, DbScope scope);
         bool unregisterService(const QString &serviceName, DbScope scope);
 
         QList<QServiceInterfaceDescriptor> getInterfaces(const QServiceFilter &filter, DbScope scope);

@@ -35,31 +35,34 @@
 
 #include <QtCore/qglobal.h>
 
-#if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)
-#  if defined(QT_NODLL)
-#    undef QT_MAKEDLL
-#    undef QT_DLL
-#  elif defined(QT_MAKEDLL)
-#    if defined(QT_DLL)
+#if defined(SYMBIAN_DATABASEMANAGER_SERVER)
+#  define Q_SFW_EXPORT
+#else
+#  if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)
+#    if defined(QT_NODLL)
+#      undef QT_MAKEDLL
 #      undef QT_DLL
-#    endif
-#    if defined(QT_BUILD_SFW_LIB)
-#      define Q_SFW_EXPORT Q_DECL_EXPORT
-#    else
+#    elif defined(QT_MAKEDLL)
+#      if defined(QT_DLL)
+#        undef QT_DLL
+#      endif
+#      if defined(QT_BUILD_SFW_LIB)
+#        define Q_SFW_EXPORT Q_DECL_EXPORT
+#      else
+#        define Q_SFW_EXPORT Q_DECL_IMPORT
+#      endif
+#    elif defined(QT_DLL) /* use a Qt DLL library */
 #      define Q_SFW_EXPORT Q_DECL_IMPORT
 #    endif
-#  elif defined(QT_DLL) /* use a Qt DLL library */
-#    define Q_SFW_EXPORT Q_DECL_IMPORT
-#  endif
-#else
-#endif
-
-#if !defined(Q_SFW_EXPORT)
-#  if defined(QT_SHARED)
-#    define Q_SFW_EXPORT Q_DECL_EXPORT
 #  else
-#    define Q_SFW_EXPORT
+#  endif
+
+#  if !defined(Q_SFW_EXPORT)
+#    if defined(QT_SHARED)
+#      define Q_SFW_EXPORT Q_DECL_EXPORT
+#    else
+#      define Q_SFW_EXPORT
+#    endif
 #  endif
 #endif
-
 #endif // QSERVICEFRAMEWORKGLOBAL_H
