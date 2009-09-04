@@ -6,9 +6,7 @@ SUBDIRS = qgeocoordinate \
           qgeopositioninfosource \
           qgeoareamonitor \
           qlocationutils \
-          qnmeapositioninfosource \
-          qnmeapositioninfosource_realtime \
-          qnmeapositioninfosource_sim 
+          qnmeapositioninfosource 
 
 symbian {          
     SUBDIRS += qgeopositioninfosource_s60 
