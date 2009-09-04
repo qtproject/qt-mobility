@@ -20,6 +20,9 @@ win32|mac {
 # Make sure this goes everywhere we need it
 symbian: load(data_caging_paths)
 
+# For symbian, we are not attempting to freeze APIs yet.
+symbian:MMP_RULES += "EXPORTUNFROZEN"
+
 CONFIG(debug, debug|release) {
     SUBDIRPART = Debug
 } else {
