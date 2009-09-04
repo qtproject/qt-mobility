@@ -730,6 +730,7 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 
 int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 {
+    Q_UNUSED(screen);
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
         QHalInterface iface;
@@ -1206,8 +1207,8 @@ int QSystemDeviceInfoPrivate::batteryLevel() const
                     qWarning() << ifaceDevice.getPropertyString("battery.type")
                             << ifaceDevice.getPropertyInt("battery.charge_level.percentage");
                     if(!ifaceDevice.getPropertyBool("battery.present")
-                        && ifaceDevice.getPropertyString("battery.type") != "pda"
-                             || ifaceDevice.getPropertyString("battery.type") != "primary") {
+                        && (ifaceDevice.getPropertyString("battery.type") != "pda"
+                             || ifaceDevice.getPropertyString("battery.type") != "primary")) {
                         qWarning() << "XXXXXXXXXXXXX";
                         return 0;
                     } else {
@@ -1330,32 +1331,70 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
         : QObject(parent)
 {
-
+    kdeIsRunning = false;
+    gnomeIsRunning = false;
+    whichWMRunning();
 }
 
 bool QSystemScreenSaverPrivate::setScreenSaverEnabled(bool state)
 {
-    Q_UNUSED(state);
-    QDesktopWidget wid;
-#ifdef Q_WS_X11
-    qWarning() << wid.screenGeometry(0) << wid.window()->isActiveWindow();
-    Display *dip = QX11Info::display();
-    //   XActivateScreenSaver(dip);
-    qWarning() << wid.screenGeometry(0) << wid.window()->isActiveWindow();
-    int timeout;
-    int interval;
-    int preferBlank;
-    int allowExp;
-    XGetScreenSaver(dip, &timeout, &interval, &preferBlank, &allowExp);
-    qWarning() << "XScreensaver" << timeout << interval << preferBlank << allowExp;
+    // gui/kernel/qx11info_x11.h
+    // gui/util/qsystemtrayicon_x11.cpp
+
+#if !defined(QT_NO_DBUS)
+    pid_t pid = getppid();
+    QDBusConnection dbusConnection = QDBusConnection::sessionBus();
+
+    QStringList ifaceList;
+    ifaceList <<  "org.freedesktop.ScreenSaver"; //kde
+    ifaceList << "org.gnome.ScreenSaver"; //gnome, xfce4
+    QDBusInterface *connectionInterface;
+    foreach(QString iface, ifaceList) {
+        connectionInterface = new QDBusInterface(iface.toLatin1(),
+                                                 "/ScreenSaver",
+                                                 iface.toLatin1(),
+                                                 dbusConnection);
+        if(connectionInterface->isValid() ) {
+            if (state){
+                qWarning() << "unInhibit"<< currentPid;
+                connectionInterface->call("UnInhibit",currentPid);
+                    currentPid = 0;
+                    return true;;
+
+            } else {
+                QDBusReply<uint> reply =  connectionInterface->call("Inhibit",
+                                                                   QString::number((int)pid),
+                                                                   "QSystemScreenSaver");
+                if(reply.isValid()) {
+                    currentPid = reply.value();
+                    qWarning() << "Inhibit" << currentPid;
+                    return reply.isValid();
+                } else {
+                    qWarning() << reply.error();
+                }
+            }
+        }
+    }
+#else
+
 #endif
-    /* ~/.kde4/share/config/kscreensaverrc
-    [ScreenSaver]
-    Enabled=
-    Lock=
-    Saver=kblank.desktop
-*/
-    //    wid.x11Info();
+
+
+
+
+//#ifdef Q_WS_X11
+//            QDesktopWidget wid;
+////    qWarning() << wid.screenGeometry(0) << wid.window()->isActiveWindow();
+////    Display *dip = QX11Info::display();
+////    //   XActivateScreenSaver(dip);
+////    qWarning() << wid.screenGeometry(0) << wid.window()->isActiveWindow();
+////    int timeout;
+////    int interval;
+////    int preferBlank;
+////    int allowExp;
+////    XGetScreenSaver(dip, &timeout, &interval, &preferBlank, &allowExp);
+////    qWarning() << "XScreensaver" << timeout << interval << preferBlank << allowExp;
+//#endif
     return false;
 }
 
@@ -1367,18 +1406,71 @@ bool QSystemScreenSaverPrivate::setScreenBlankingEnabled(bool state)
 
 bool QSystemScreenSaverPrivate::screenSaverEnabled()
 {
+    if(kdeIsRunning) {
+        QSettings kdeScreenSaveConfig(QDir::homePath()+"/.kde/share/config/kscreensaverrc", QSettings::IniFormat);
+        kdeScreenSaveConfig.beginGroup("ScreenSaver");
+        if(kdeScreenSaveConfig.status() == QSettings::NoError) {
+            if(kdeScreenSaveConfig.value("Enabled").toBool() == false) {
+            } else {
+                return true;
+            }
+        }
+    }
+
     return false;
 }
 
 bool QSystemScreenSaverPrivate::screenBlankingEnabled()
 {
+    bool saverEnabled = false;
+    if(kdeIsRunning) {
+        QSettings kdeScreenSaveConfig(QDir::homePath()+"/.kde/share/config/kscreensaverrc", QSettings::IniFormat);
+        kdeScreenSaveConfig.beginGroup("ScreenSaver");
+        if(kdeScreenSaveConfig.status() == QSettings::NoError) {
+            if(screenSaverEnabled() && kdeScreenSaveConfig.value("Saver").toString().contains("kblank")) {
+                return true;
+            }
+        }
+    }
     return false;
 }
 
 bool QSystemScreenSaverPrivate::isScreenLockOn()
 {
+    if(kdeIsRunning) {
+        QSettings kdeScreenSaveConfig(QDir::homePath()+"/.kde/share/config/kscreensaverrc", QSettings::IniFormat);
+        kdeScreenSaveConfig.beginGroup("ScreenSaver");
+        if(kdeScreenSaveConfig.status() == QSettings::NoError) {
+            return kdeScreenSaveConfig.value("Lock").toBool();
+        }
+    }
     return false;
 }
+
+void QSystemScreenSaverPrivate::whichWMRunning()
+{
+#if !defined(QT_NO_DBUS)
+    QDBusConnection dbusConnection = QDBusConnection::sessionBus();
+    QDBusInterface *connectionInterface;
+    connectionInterface = new QDBusInterface("org.kde.kwin",
+                                             "/KWin",
+                                             "org.kde.KWin.currentDesktop",
+                                             dbusConnection);
+    if(connectionInterface->isValid()) {
+        kdeIsRunning = true;
+        return;
+    }
+    connectionInterface = new QDBusInterface("org.gnome.SessionManager",
+                                             "/org/gnome/SessionManager",
+                                             "org.gnome.SessionManager.SessionRunning",
+                                             dbusConnection);
+    if(connectionInterface->isValid()) {
+       gnomeIsRunning = true;
+       return;
+    }
+#endif
+}
+
 
 
 QT_END_NAMESPACE

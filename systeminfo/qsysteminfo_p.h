@@ -201,6 +201,12 @@ private:
     QString screenPath;
     QString settingsPath;
     bool screenSaverSecure;
+#ifdef Q_OS_LINUX
+    uint currentPid;
+    bool kdeIsRunning;
+    bool gnomeIsRunning;
+    void whichWMRunning();
+#endif
 };
 
 QT_END_NAMESPACE
