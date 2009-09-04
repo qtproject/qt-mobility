@@ -13,6 +13,6 @@ SOURCES += tst_qgeocoordinate.cpp \
 LIBS += -lQtLocation
 
 symbian {
-    INCLUDEPATH += /epoc32/include/osextensions
+    INCLUDEPATH += $${EPOCROOT}/epoc32/include/osextensions
     TARGET.CAPABILITY = ALL -TCB
 }
