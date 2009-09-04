@@ -29,11 +29,11 @@ CONFIG(debug, debug|release) {
 # Which backend we're building
 ## memory / invalid / symbian / windows / vcard / kabc etc.
 CONTACTS_BACKENDS = memory invalid
-wince*: CONTACTS_BACKENDS += wince
-symbian: CONTACTS_BACKENDS += symbian
-
-symbian:CONTACTS_BACKENDS += symbians60
 wince*:CONTACTS_BACKENDS += wince
+
+### Hmm, which one is relevant here...
+# symbian:CONTACTS_BACKENDS += symbian
+# symbian:CONTACTS_BACKENDS += symbians60
 
 # Figure out the root of where stuff should go (this could be done via configure)
 OUTPUT_DIR = $$PWD
