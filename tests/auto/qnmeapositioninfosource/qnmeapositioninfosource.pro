@@ -7,9 +7,11 @@ include (../../../common.pri)
 INCLUDEPATH += ../../../location
 
 HEADERS += ../qnmeapositioninfosourceproxyfactory.h \
+           ../qgeopositioninfosourcesubclasstest_p.h \
            ../qlocationtestutils_p.h
 
 SOURCES += ../qnmeapositioninfosourceproxyfactory.cpp \
+           ../qgeopositioninfosourcesubclasstest.cpp \
            ../qlocationtestutils.cpp \
            tst_qnmeapositioninfosource.cpp
 

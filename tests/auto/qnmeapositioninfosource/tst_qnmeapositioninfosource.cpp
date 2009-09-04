@@ -31,6 +31,7 @@
 **
 ****************************************************************************/
 #include "../qnmeapositioninfosourceproxyfactory.h"
+#include "../qgeopositioninfosourcesubclasstest_p.h"
 #include "../qlocationtestutils_p.h"
 
 #include <qnmeapositioninfosource.h>
@@ -59,17 +60,16 @@ public:
         RequestUpdatesMethod
     };
 
+    tst_QNmeaPositionInfoSource(QNmeaPositionInfoSource::UpdateMode mode, QObject *parent = 0);
+
 private slots:
     void initTestCase();
 
     void constructor();
-    void constructor_data();
 
     void supportedPositioningMethods();
-    void supportedPositioningMethods_data();
 
     void minimumUpdateInterval();
-    void minimumUpdateInterval_data();
 
     void testWithBufferedData();
     void testWithBufferedData_data();
@@ -84,66 +84,42 @@ private slots:
     void testWithBadNmea_data();
 
 private:
-    QHash<QNmeaPositionInfoSource::UpdateMode, QString> m_modes;
+    QNmeaPositionInfoSource::UpdateMode m_mode;
 };
 
 Q_DECLARE_METATYPE(tst_QNmeaPositionInfoSource::UpdateTriggerMethod)
 
 
+tst_QNmeaPositionInfoSource::tst_QNmeaPositionInfoSource(QNmeaPositionInfoSource::UpdateMode mode, QObject *parent)
+    : QObject(parent),
+      m_mode(mode)
+{
+}
+
 void tst_QNmeaPositionInfoSource::initTestCase()
 {
     qRegisterMetaType<QGeoPositionInfo>();
     qRegisterMetaType<QNmeaPositionInfoSource::UpdateMode>();
-
-    m_modes[QNmeaPositionInfoSource::RealTimeMode] = "[RealTime]";
-    m_modes[QNmeaPositionInfoSource::SimulationMode] = "[Simulation]";
 }
 
 void tst_QNmeaPositionInfoSource::constructor()
 {
-    QFETCH(QNmeaPositionInfoSource::UpdateMode, mode);
-
     QObject o;
-    QNmeaPositionInfoSource source(mode, &o);
-    QCOMPARE(source.updateMode(), mode);
+    QNmeaPositionInfoSource source(m_mode, &o);
+    QCOMPARE(source.updateMode(), m_mode);
     QCOMPARE(source.parent(), &o);
-}
-
-void tst_QNmeaPositionInfoSource::constructor_data()
-{
-    QTest::addColumn<QNmeaPositionInfoSource::UpdateMode>("mode");
-    foreach (QNmeaPositionInfoSource::UpdateMode mode, m_modes.keys())
-        QTest::newRow(qPrintable(m_modes[mode])) << mode;
 }
 
 void tst_QNmeaPositionInfoSource::supportedPositioningMethods()
 {
-    QFETCH(QNmeaPositionInfoSource::UpdateMode, mode);
-
-    QNmeaPositionInfoSource source(mode);
+    QNmeaPositionInfoSource source(m_mode);
     QCOMPARE(source.supportedPositioningMethods(), QNmeaPositionInfoSource::SatellitePositioningMethods);
-}
-
-void tst_QNmeaPositionInfoSource::supportedPositioningMethods_data()
-{
-    QTest::addColumn<QNmeaPositionInfoSource::UpdateMode>("mode");
-    foreach (QNmeaPositionInfoSource::UpdateMode mode, m_modes.keys())
-        QTest::newRow(qPrintable(m_modes[mode])) << mode;
 }
 
 void tst_QNmeaPositionInfoSource::minimumUpdateInterval()
 {
-    QFETCH(QNmeaPositionInfoSource::UpdateMode, mode);
-
-    QNmeaPositionInfoSource source(mode);
+    QNmeaPositionInfoSource source(m_mode);
     QCOMPARE(source.minimumUpdateInterval(), 100);
-}
-
-void tst_QNmeaPositionInfoSource::minimumUpdateInterval_data()
-{
-    QTest::addColumn<QNmeaPositionInfoSource::UpdateMode>("mode");
-    foreach (QNmeaPositionInfoSource::UpdateMode mode, m_modes.keys())
-        QTest::newRow(qPrintable(m_modes[mode])) << mode;
 }
 
 void tst_QNmeaPositionInfoSource::testWithBufferedData()
@@ -153,7 +129,6 @@ void tst_QNmeaPositionInfoSource::testWithBufferedData()
     // In RealTimeMode, all existing data in the QIODevice is ignored -
     // only new data will be read.
 
-    QFETCH(QNmeaPositionInfoSource::UpdateMode, mode);
     QFETCH(QList<QDateTime>, dateTimes);
     QFETCH(UpdateTriggerMethod, trigger);
 
@@ -163,7 +138,7 @@ void tst_QNmeaPositionInfoSource::testWithBufferedData()
     QBuffer buffer;
     buffer.setData(bytes);
 
-    QNmeaPositionInfoSource source(mode);
+    QNmeaPositionInfoSource source(m_mode);
     QSignalSpy spy(&source, SIGNAL(positionUpdated(QGeoPositionInfo)));
     source.setDevice(&buffer);
 
@@ -172,7 +147,7 @@ void tst_QNmeaPositionInfoSource::testWithBufferedData()
     else if (trigger == RequestUpdatesMethod)
         source.requestUpdate();
 
-    if (mode == QNmeaPositionInfoSource::RealTimeMode) {
+    if (m_mode == QNmeaPositionInfoSource::RealTimeMode) {
         QTest::qWait(300);
         QCOMPARE(spy.count(), 0);
     } else {
@@ -189,24 +164,19 @@ void tst_QNmeaPositionInfoSource::testWithBufferedData()
 
 void tst_QNmeaPositionInfoSource::testWithBufferedData_data()
 {
-    QTest::addColumn<QNmeaPositionInfoSource::UpdateMode>("mode");
     QTest::addColumn<QList<QDateTime> >("dateTimes");
     QTest::addColumn<UpdateTriggerMethod>("trigger");
 
-    foreach (QNmeaPositionInfoSource::UpdateMode mode, m_modes.keys()) {
-        QString m = m_modes[mode] + ' ';
+    QList<QDateTime> dateTimes;
+    dateTimes << QDateTime::currentDateTime().toUTC();
 
-        QList<QDateTime> dateTimes;
-        dateTimes << QDateTime::currentDateTime().toUTC();
+    QTest::newRow("startUpdates(), 1 update in buffer") << dateTimes << StartUpdatesMethod;
+    QTest::newRow("requestUpdate(), 1 update in buffer") << dateTimes << RequestUpdatesMethod;
 
-        QTest::newRow(qPrintable(m + "startUpdates(), 1 update in buffer")) << mode << dateTimes << StartUpdatesMethod;
-        QTest::newRow(qPrintable(m + "requestUpdate(), 1 update in buffer")) << mode << dateTimes << RequestUpdatesMethod;
-
-        for (int i=1; i<3; i++)
-            dateTimes << dateTimes[0].addDays(i);
-        QTest::newRow(qPrintable(m + "startUpdates(), multiple updates in buffer")) << mode << dateTimes << StartUpdatesMethod;
-        QTest::newRow(qPrintable(m + "requestUpdate(), multiple updates in buffer")) << mode << dateTimes << RequestUpdatesMethod;
-    }
+    for (int i=1; i<3; i++)
+        dateTimes << dateTimes[0].addDays(i);
+    QTest::newRow("startUpdates(), multiple updates in buffer") << dateTimes << StartUpdatesMethod;
+    QTest::newRow("requestUpdate(), multiple updates in buffer") << dateTimes << RequestUpdatesMethod;
 }
 
 void tst_QNmeaPositionInfoSource::startUpdates_waitForValidDateTime()
@@ -216,11 +186,10 @@ void tst_QNmeaPositionInfoSource::startUpdates_waitForValidDateTime()
     // should be ignored, and any sentences received after this that do
     // not have a date should use the known date.
 
-    QFETCH(QNmeaPositionInfoSource::UpdateMode, mode);
     QFETCH(QByteArray, bytes);
     QFETCH(QList<QDateTime>, dateTimes);
 
-    QNmeaPositionInfoSourceProxyFactory factory(mode);
+    QNmeaPositionInfoSourceProxyFactory factory(m_mode);
     QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy());
 
     QSignalSpy spy(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
@@ -235,52 +204,46 @@ void tst_QNmeaPositionInfoSource::startUpdates_waitForValidDateTime()
 
 void tst_QNmeaPositionInfoSource::startUpdates_waitForValidDateTime_data()
 {
-    QTest::addColumn<QNmeaPositionInfoSource::UpdateMode>("mode");
     QTest::addColumn<QByteArray>("bytes");
     QTest::addColumn<QList<QDateTime> >("dateTimes");
 
-    foreach (QNmeaPositionInfoSource::UpdateMode mode, m_modes.keys()) {
-        QString m = m_modes[mode] + ' ';
+    QDateTime dt = QDateTime::currentDateTime().toUTC();
+    QByteArray bytes;
 
-        QDateTime dt = QDateTime::currentDateTime().toUTC();
-        QByteArray bytes;
+    // should only receive RMC sentence and the GGA sentence *after* it
+    bytes += QLocationTestUtils::createGgaSentence(dt.addSecs(1).time()).toLatin1();
+    bytes += QLocationTestUtils::createRmcSentence(dt.addSecs(2)).toLatin1();
+    bytes += QLocationTestUtils::createGgaSentence(dt.addSecs(3).time()).toLatin1();
+    QTest::newRow("Feed GGA,RMC,GGA; expect RMC, second GGA only")
+            << bytes << (QList<QDateTime>() << dt.addSecs(2) << dt.addSecs(3));
 
-        // should only receive RMC sentence and the GGA sentence *after* it
-        bytes += QLocationTestUtils::createGgaSentence(dt.addSecs(1).time()).toLatin1();
-        bytes += QLocationTestUtils::createRmcSentence(dt.addSecs(2)).toLatin1();
-        bytes += QLocationTestUtils::createGgaSentence(dt.addSecs(3).time()).toLatin1();
-        QTest::newRow(qPrintable(m + "Feed GGA,RMC,GGA; expect RMC, second GGA only"))
-                << mode << bytes << (QList<QDateTime>() << dt.addSecs(2) << dt.addSecs(3));
+    // should not receive ZDA (has no coordinates) but should get the GGA
+    // sentence after it since it got the date/time from ZDA
+    bytes.clear();
+    bytes += QLocationTestUtils::createGgaSentence(dt.addSecs(1).time()).toLatin1();
+    bytes += QLocationTestUtils::createZdaSentence(dt.addSecs(2)).toLatin1();
+    bytes += QLocationTestUtils::createGgaSentence(dt.addSecs(3).time()).toLatin1();
+    QTest::newRow("Feed GGA,ZDA,GGA; expect second GGA only")
+            << bytes << (QList<QDateTime>() << dt.addSecs(3));
 
-        // should not receive ZDA (has no coordinates) but should get the GGA
-        // sentence after it since it got the date/time from ZDA
+    if (m_mode == QNmeaPositionInfoSource::SimulationMode) {
+        // In sim m_mode, should ignore sentence with a date/time before the known date/time
+        // (in real time m_mode, everything is passed on regardless)
         bytes.clear();
-        bytes += QLocationTestUtils::createGgaSentence(dt.addSecs(1).time()).toLatin1();
-        bytes += QLocationTestUtils::createZdaSentence(dt.addSecs(2)).toLatin1();
-        bytes += QLocationTestUtils::createGgaSentence(dt.addSecs(3).time()).toLatin1();
-        QTest::newRow(qPrintable(m + "Feed GGA,ZDA,GGA; expect second GGA only"))
-                << mode << bytes << (QList<QDateTime>() << dt.addSecs(3));
-
-        if (mode == QNmeaPositionInfoSource::SimulationMode) {
-            // In sim mode, should ignore sentence with a date/time before the known date/time
-            // (in real time mode, everything is passed on regardless)
-            bytes.clear();
-            bytes += QLocationTestUtils::createRmcSentence(dt.addSecs(1)).toLatin1();
-            bytes += QLocationTestUtils::createRmcSentence(dt.addSecs(-2)).toLatin1();
-            bytes += QLocationTestUtils::createRmcSentence(dt.addSecs(2)).toLatin1();
-            QTest::newRow(qPrintable(m + "Feed good RMC, RMC with bad date/time, good RMC; expect first and third RMC only"))
-                    << mode << bytes << (QList<QDateTime>() << dt.addSecs(1) << dt.addSecs(2));
-        }
+        bytes += QLocationTestUtils::createRmcSentence(dt.addSecs(1)).toLatin1();
+        bytes += QLocationTestUtils::createRmcSentence(dt.addSecs(-2)).toLatin1();
+        bytes += QLocationTestUtils::createRmcSentence(dt.addSecs(2)).toLatin1();
+        QTest::newRow("Feed good RMC, RMC with bad date/time, good RMC; expect first and third RMC only")
+                << bytes << (QList<QDateTime>() << dt.addSecs(1) << dt.addSecs(2));
     }
 }
 
 void tst_QNmeaPositionInfoSource::requestUpdate_waitForValidDateTime()
 {
-    QFETCH(QNmeaPositionInfoSource::UpdateMode, mode);
     QFETCH(QByteArray, bytes);
     QFETCH(QList<QDateTime>, dateTimes);
 
-    QNmeaPositionInfoSourceProxyFactory factory(mode);
+    QNmeaPositionInfoSourceProxyFactory factory(m_mode);
     QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy());
 
     QSignalSpy spy(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
@@ -298,12 +261,11 @@ void tst_QNmeaPositionInfoSource::requestUpdate_waitForValidDateTime_data()
 
 void tst_QNmeaPositionInfoSource::testWithBadNmea()
 {
-    QFETCH(QNmeaPositionInfoSource::UpdateMode, mode);
     QFETCH(QByteArray, bytes);
     QFETCH(QList<QDateTime>, dateTimes);
     QFETCH(UpdateTriggerMethod, trigger);
 
-    QNmeaPositionInfoSourceProxyFactory factory(mode);
+    QNmeaPositionInfoSourceProxyFactory factory(m_mode);
     QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy());
 
     QSignalSpy spy(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
@@ -320,30 +282,96 @@ void tst_QNmeaPositionInfoSource::testWithBadNmea()
 
 void tst_QNmeaPositionInfoSource::testWithBadNmea_data()
 {
-    QTest::addColumn<QNmeaPositionInfoSource::UpdateMode>("mode");
     QTest::addColumn<QByteArray>("bytes");
     QTest::addColumn<QList<QDateTime> >("dateTimes");
     QTest::addColumn<UpdateTriggerMethod>("trigger");
 
-    foreach (QNmeaPositionInfoSource::UpdateMode mode, m_modes.keys()) {
-        QString m = m_modes[mode] + ' ';
+    QDateTime firstDateTime = QDateTime::currentDateTime().toUTC();
+    QByteArray bad = QLocationTestUtils::createRmcSentence(firstDateTime.addSecs(1)).toLatin1();
+    bad = bad.mid(bad.length()/2);
+    QDateTime lastDateTime = firstDateTime.addSecs(2);
 
-        QDateTime firstDateTime = QDateTime::currentDateTime().toUTC();
-        QByteArray bad = QLocationTestUtils::createRmcSentence(firstDateTime.addSecs(1)).toLatin1();
-        bad = bad.mid(bad.length()/2);
-        QDateTime lastDateTime = firstDateTime.addSecs(2);
-
-        QByteArray bytes;
-        bytes += QLocationTestUtils::createRmcSentence(firstDateTime).toLatin1();
-        bytes += bad;
-        bytes += QLocationTestUtils::createRmcSentence(lastDateTime).toLatin1();
-        QTest::newRow(qPrintable(m + "requestUpdate(), bad second sentence")) << mode << bytes
-                << (QList<QDateTime>() << firstDateTime) << RequestUpdatesMethod;
-        QTest::newRow(qPrintable(m + "startUpdates(), bad second sentence")) << mode << bytes
-                << (QList<QDateTime>() << firstDateTime << lastDateTime) << StartUpdatesMethod;
-    }
+    QByteArray bytes;
+    bytes += QLocationTestUtils::createRmcSentence(firstDateTime).toLatin1();
+    bytes += bad;
+    bytes += QLocationTestUtils::createRmcSentence(lastDateTime).toLatin1();
+    QTest::newRow("requestUpdate(), bad second sentence") << bytes
+            << (QList<QDateTime>() << firstDateTime) << RequestUpdatesMethod;
+    QTest::newRow("startUpdates(), bad second sentence") << bytes
+            << (QList<QDateTime>() << firstDateTime << lastDateTime) << StartUpdatesMethod;
 }
 
-QTEST_MAIN(tst_QNmeaPositionInfoSource)
+//QTEST_MAIN(tst_QNmeaPositionInfoSource)
+
+class tst_QNmeaPositionInfoSource_RealTime : public tst_QNmeaPositionInfoSource
+{
+    Q_OBJECT
+public:
+    tst_QNmeaPositionInfoSource_RealTime()
+        : tst_QNmeaPositionInfoSource(QNmeaPositionInfoSource::RealTimeMode) {}
+};
+
+class tst_QNmeaPositionInfoSource_Simulation : public tst_QNmeaPositionInfoSource
+{
+    Q_OBJECT
+public:
+    tst_QNmeaPositionInfoSource_Simulation()
+        : tst_QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode) {}
+};
+
+class tst_QNmeaPositionInfoSource_RealTimeUpdates : public QGeoPositionInfoSourceSubclassTest
+{
+    Q_OBJECT
+public:
+    tst_QNmeaPositionInfoSource_RealTimeUpdates(QObject *parent = 0)
+        : QGeoPositionInfoSourceSubclassTest(new QNmeaPositionInfoSourceProxyFactory(QNmeaPositionInfoSource::RealTimeMode), parent)
+    {
+    }
+
+    ~tst_QNmeaPositionInfoSource_RealTimeUpdates()
+    {
+        delete factory();
+    }
+};
+
+class tst_QNmeaPositionInfoSource_SimulationUpdates : public QGeoPositionInfoSourceSubclassTest
+{
+    Q_OBJECT
+public:
+    tst_QNmeaPositionInfoSource_SimulationUpdates(QObject *parent = 0)
+        : QGeoPositionInfoSourceSubclassTest(new QNmeaPositionInfoSourceProxyFactory(QNmeaPositionInfoSource::SimulationMode), parent)
+    {
+    }
+
+    ~tst_QNmeaPositionInfoSource_SimulationUpdates()
+    {
+        delete factory();
+    }
+};
+
+int main(int argc, char *argv[])
+{
+    QCoreApplication app(argc, argv);
+    int r;
+    bool fail = false;
+
+    tst_QNmeaPositionInfoSource_RealTime common_realTime;
+    r = QTest::qExec(&common_realTime);
+    if (r < 0) fail = true;
+
+    tst_QNmeaPositionInfoSource_Simulation common_sim;
+    r = QTest::qExec(&common_sim);
+    if (r < 0) fail = true;
+
+    tst_QNmeaPositionInfoSource_RealTimeUpdates updates_realTime;
+    r = QTest::qExec(&updates_realTime);
+    if (r < 0) fail = true;
+
+    tst_QNmeaPositionInfoSource_SimulationUpdates updates_sim;
+    r = QTest::qExec(&updates_sim);
+    if (r < 0) fail = true;
+
+    return fail ? -1 : 0;
+}
 
 #include "tst_qnmeapositioninfosource.moc"
