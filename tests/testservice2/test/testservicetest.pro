@@ -21,5 +21,5 @@ symbian {
     TARGET.VID = VID_DEFAULT
     TARGET.CAPABILITY = ALL -TCB
     LIBS            += -lefsrv -lPlatformEnv
-    INCLUDEPATH     += /epoc32/include/osextensions
+    INCLUDEPATH     += ${EPOCROOT}/epoc32/include/osextensions
 }
