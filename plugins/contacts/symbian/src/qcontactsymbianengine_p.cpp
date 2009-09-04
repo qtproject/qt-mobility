@@ -41,16 +41,8 @@
 
 QContactSymbianEngineData::QContactSymbianEngineData()
 {
-	// TODO: this is not a definitive version
-	TRAPD(err, m_contactDatabase = CContactDatabase::OpenL()); // use CContactDatabase::OpenL()
-	if (err != KErrNone) {
-		// TODO: establish how errors will be handled
-	}
-	
-	TRAPD(obsErr, m_contactDatabase->AddObserverL(*this));
-	if (err != KErrNone) {
-		// TODO: Handle this error
-	}
+    QT_TRANSLATE_SYMBIAN_LEAVE_TO_EXCEPTION(m_contactDatabase = CContactDatabase::OpenL());
+    QT_TRANSLATE_SYMBIAN_LEAVE_TO_EXCEPTION(m_contactDatabase->AddObserverL(*this));
 	
 	m_transformContact = new TransformContact;
 }
