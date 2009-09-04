@@ -160,11 +160,6 @@ void tst_QMessageStoreKeys::initTestCase()
 {
     Support::clearMessageStore();
 
-Support::Parameters p;
-p.insert("name", "blah");
-p.insert("fromAddress", "blah");
-Support::addAccount(p);
-
     existingAccountIds = QMessageStore::instance()->queryAccounts().toSet();
 
     QList<Support::Parameters> accountParams;
