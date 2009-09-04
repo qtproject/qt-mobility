@@ -503,7 +503,9 @@ QIODevice *QNmeaPositionInfoSource::device() const
 */
 void QNmeaPositionInfoSource::setUpdateInterval(int msec)
 {
-    int interval = qMax(msec, minimumUpdateInterval()); // use min as default
+    int interval = msec;
+    if (interval != 0)
+        interval = qMax(msec, minimumUpdateInterval());
     QGeoPositionInfoSource::setUpdateInterval(interval);
     if (d->m_invokedStart) {
         d->stopUpdates();
