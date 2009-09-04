@@ -95,11 +95,7 @@ FilterDialog::~FilterDialog()
 
 QContactFilter FilterDialog::filter() const
 {
-    QContactIntersectionFilter retn = total;
-    total = QContactIntersectionFilter(); // clear the filter.
-    expressionSoFar = "";
-    noFiltersYet = true;
-    return retn;
+    return total;
 }
 
 int FilterDialog::status() const
@@ -114,7 +110,6 @@ void FilterDialog::cancelClicked()
 {
     total = QContactIntersectionFilter();
     noFiltersYet = true;
-    expressionSoFar = "";
     state = -1;
     hide();
     emit hidden();
@@ -225,7 +220,7 @@ void FilterDialog::addClicked()
     expressionSoFar += exprName + " " + exprMatch + " " + value->text();
     expression->setText(expressionSoFar);
 
-    // now reset the UI elements.
+    // now reset the other UI elements.
     value->setText("");
     field->setCurrentIndex(0);
     match->setCurrentIndex(0);
@@ -241,7 +236,17 @@ void FilterDialog::doneClicked()
 
 void FilterDialog::showDialog()
 {
+    total = QContactIntersectionFilter();
+    noFiltersYet = true;
     state = 0;
     expressionSoFar = "";
+
+    // now reset the UI elements.
+    value->setText("");
+    field->setCurrentIndex(0);
+    match->setCurrentIndex(0);
+    join->setCurrentIndex(0);
+    expression->setText("");
+
     show();
 }
