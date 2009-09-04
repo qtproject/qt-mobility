@@ -213,6 +213,7 @@ void TestModelUi::dataAvailable(QContactFetchRequest* request, bool appendOnly)
     if (requestData.isEmpty() || requestData.at(0).isEmpty()) {
         text += "Unknown Contact";
         talkingToDetails = text;
+        textEdit->setText(talkingToFirstLine + " " + talkingToNumber + "\n\n" + talkingToDetails);
         return;
     }
 
