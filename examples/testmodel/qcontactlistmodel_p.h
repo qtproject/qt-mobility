@@ -68,8 +68,7 @@ public:
             m_currentRow(-1),
             m_relevantDefinitionName(QString(QLatin1String(QContactPhoneNumber::DefinitionName))),
             m_relevantFieldName(QString(QLatin1String(QContactPhoneNumber::FieldNumber))),
-            m_idRequest(0),
-            debug_count(0)
+            m_idRequest(0)
     {
     }
 
@@ -87,8 +86,7 @@ public:
             m_requestCentreRows(other.m_requestCentreRows),
             m_relevantDefinitionName(other.m_relevantDefinitionName),
             m_relevantFieldName(other.m_relevantFieldName),
-            m_idRequest(other.m_idRequest),
-            debug_count(other.debug_count)
+            m_idRequest(other.m_idRequest)
     {
     }
 
@@ -124,8 +122,6 @@ public:
     QString m_relevantFieldName;
 
     QContactIdFetchRequest* m_idRequest;
-
-    mutable int debug_count;
 };
 
 #endif

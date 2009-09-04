@@ -1,3 +1,36 @@
+/****************************************************************************
+**
+** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain
+** additional rights. These rights are described in the Nokia Qt LGPL
+** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
+** package.
+**
+** If you have questions regarding the use of this file, please
+** contact Nokia at http://qt.nokia.com/contact.
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
 #include "qcontactlistmodel.h"
 #include "qcontactlistmodel_p.h"
 
@@ -69,7 +102,6 @@ void QContactListModel::setManager(QContactManager* manager)
         QContactAbstractRequest* current = requests.at(i);
         if (current->manager() == d->m_manager) {
             current->cancel();
-d->debug_count -= 1;
             delete current;
         } else {
             updatedRequestCentreRows.insert(current, d->m_requestCentreRows.value(current));
@@ -286,7 +318,6 @@ QVariant QContactListModel::data(const QModelIndex& index, int role) const
                 if (cancelRequest) {
                     current->cancel();
                     d->m_requestCentreRows.remove(current);
-d->debug_count -= 1;
                     delete current;
                 }
 
@@ -326,7 +357,6 @@ d->debug_count -= 1;
         // now fire off an asynchronous request to update our cache
         QContactFetchRequest* req = new QContactFetchRequest;
         d->m_requestCentreRows.insert(req, d->m_lastCacheCentreRow);
-d->debug_count += 1;
         QContactIdListFilter idFil;
         QList<QUniqueId> newCacheIds;
         for (int i = 0; i < newCacheRows.size(); i++) {
@@ -511,7 +541,6 @@ void QContactListModel::contactFetchRequestProgress(QContactFetchRequest* reques
     // first, check to make sure that the request is still valid.
     if (d->m_manager != request->manager() || request->status() == QContactAbstractRequest::Cancelled) {
         d->m_requestCentreRows.remove(request);
-d->debug_count -= 1;
         delete request;
         return; // ignore these results.
     }
@@ -533,7 +562,6 @@ d->debug_count -= 1;
     // check to see if the request status is "finished" - clean up.
     if (request->status() == QContactAbstractRequest::Finished) {
         d->m_requestCentreRows.remove(request);
-d->debug_count -= 1;
         delete request;
     }
 
