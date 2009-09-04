@@ -2,8 +2,9 @@
 #define DBERROR_H
 
 #include <QString>
+#include "qserviceglobal.h"
 
-class DBError
+class Q_SFW_EXPORT DBError
 {
     public:
         enum ErrorCode {
