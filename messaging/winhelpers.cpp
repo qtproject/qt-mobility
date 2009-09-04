@@ -1234,13 +1234,16 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
 
     QByteArray messageBody;
     QByteArray bodySubType;
+
+    QString messageClass;
     bool hasAttachments = false;
     bool rtfInSync = false;
     LONG contentFormat = EDITOR_FORMAT_DONTKNOW;
 
-    SizedSPropTagArray(13, msgCols) = {13, { PR_RECORD_KEY,
+    SizedSPropTagArray(14, msgCols) = {14, { PR_RECORD_KEY,
                                              PR_MESSAGE_FLAGS, 
                                              PR_MSG_STATUS,
+                                             PR_MESSAGE_CLASS,
                                              PR_SENDER_NAME, 
                                              PR_SENDER_EMAIL_ADDRESS, 
                                              PR_CLIENT_SUBMIT_TIME, 
@@ -1277,6 +1280,9 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
                 if (prop.Value.l & (MSGSTATUS_DELMARKED | MSGSTATUS_REMOTE_DELETE)) {
                     flags |= QMessage::Removed;
                 }
+                break;
+            case PR_MESSAGE_CLASS:
+                messageClass = QStringFromLpctstr(prop.Value.LPSZ);
                 break;
             case PR_SENDER_NAME:
                 senderName = QStringFromLpctstr(prop.Value.LPSZ);
@@ -1503,10 +1509,10 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
                 if (bodySubType.isEmpty()) {
                     if (contentFormat == EDITOR_FORMAT_PLAINTEXT) {
                         // Attempt to extract the plain text from the RTF
-                        qDebug() << "extracting plain text";
+                        //qDebug() << "extracting plain text";
                     } else if (contentFormat == EDITOR_FORMAT_HTML) {
                         // Attempt to extract the HTML from the RTF
-                        qDebug() << "extracting html";
+                        //qDebug() << "extracting html";
                     }
                 }
 
@@ -1520,7 +1526,7 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
                 bodySubType = "plain";
             }
         } else {
-            qWarning() << "Unable to open message body as compressed RTF";
+            qWarning() << "Unable to open message body as compressed RTF - message class:" << messageClass;
             bodySubType = "plain";
         }
     }
