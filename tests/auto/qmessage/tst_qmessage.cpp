@@ -56,11 +56,17 @@ private slots:
     void cleanup();
     void cleanupTestCase();
 
+#if !defined(Q_OS_WIN)
+    // Transmission format not handled yet
     void testFromTransmissionFormat_data();
     void testFromTransmissionFormat();
+#endif
 
     void testToTransmissionFormat_simple();
+#if !defined(Q_OS_WIN)
+    // No support for nested multipart on windows
     void testToTransmissionFormat_multipart();
+#endif
 
     void testType();
     void testParentAccountId();
@@ -136,6 +142,7 @@ void tst_QMessage::cleanupTestCase()
 {
 }
 
+#if !defined(Q_OS_WIN)
 void tst_QMessage::testFromTransmissionFormat_data()
 {
     QTest::addColumn<QString>("fileName");
@@ -235,6 +242,7 @@ void tst_QMessage::testFromTransmissionFormat()
         QCOMPARE(body.decodedTextContent(), text);
     }
 }
+#endif
 
 void tst_QMessage::testToTransmissionFormat_simple()
 {
@@ -265,7 +273,10 @@ void tst_QMessage::testToTransmissionFormat_simple()
     m1.setContentCharset(contentCharset);
     m1.setContent(contentText);
 #endif
+
+#if !defined(Q_OS_WIN)
     QByteArray serialized(m1.toTransmissionFormat());
+#endif
 
     QCOMPARE(m1.from().recipient(), from);
     QCOMPARE(m1.to().first().recipient(), to);
@@ -279,6 +290,7 @@ void tst_QMessage::testToTransmissionFormat_simple()
     QCOMPARE(m1.contentCharset().toLower(), contentCharset.toLower());
     QCOMPARE(m1.decodedTextContent(), contentText);
 
+#if !defined(Q_OS_WIN)
     QMessage m2(QMessage::fromTransmissionFormat(QMessage::Email, serialized));
 
     QCOMPARE(m2.from().recipient(), from);
@@ -291,8 +303,10 @@ void tst_QMessage::testToTransmissionFormat_simple()
     QCOMPARE(m2.contentSubType().toLower(), contentSubType.toLower());
     QCOMPARE(m2.contentCharset().toLower(), contentCharset.toLower());
     QCOMPARE(m2.decodedTextContent(), contentText);
+#endif
 }
 
+#if !defined(Q_OS_WIN)
 void tst_QMessage::testToTransmissionFormat_multipart()
 {
     const QString from("Alice <alice@example.com>");
@@ -459,6 +473,7 @@ void tst_QMessage::testToTransmissionFormat_multipart()
     QCOMPARE(p8.contentIds().count(), 0);
     QCOMPARE(p8.decodedContent(), p4ContentData);
 }
+#endif
 
 void tst_QMessage::testType()
 {
