@@ -11,7 +11,7 @@ Item {
    width: 50
    height: 50
 
-   Rect {
+   Rectangle {
        id: buttonRect
        anchors.fill: parent
        radius: 5
@@ -21,21 +21,21 @@ Item {
        Text {
            id: InnerText
            text: DialButton.text
-           font.size: 20
+           font.pointSize: 20
            anchors.centerIn: parent
        }
    }
    states: [
        State {
            name: "Hovering"
-           SetProperties {
+           PropertyChanges {
                target: buttonRect
                color: hoverColor
            }
        },
        State {
            name: "Pressed"
-           SetProperties {
+           PropertyChanges {
                target: buttonRect
                color: pressColor
            }
@@ -43,11 +43,11 @@ Item {
    ]
    transitions: [
        Transition {
-           fromState: ""; toState: "Hovering"
+           from: ""; to: "Hovering"
            ColorAnimation { duration: 100 }
        },
        Transition {
-           fromState: "*"; toState: "Pressed"
+           from: "*"; to: "Pressed"
            ColorAnimation { duration: 10 }
        }
    ]

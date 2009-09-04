@@ -1,14 +1,15 @@
 import Qt 4.6
-Rect {
+
+Rectangle {
     id: Page
     width: 500
     height: 250
     color: "sienna"
 
-    Rect {
+    Rectangle {
         id: ServiceSelectionBox
         property variant service: 0
-        height: contents.height + 10; width: contents.width
+        height: childrenRect.height + 10; width: childrenRect.width
         anchors.top: parent.top; anchors.left: parent.left; anchors.right: screen.left
         anchors.topMargin: 5; anchors.leftMargin: 5; anchors.rightMargin: 5
         radius: 5; color: "steelblue"
@@ -24,14 +25,14 @@ Rect {
             anchors.top: parent.top; anchors.left: parent.left
             anchors.topMargin: 5; anchors.leftMargin: 5
         }
-        Rect {
+        Rectangle {
             border.color: "black"; border.width: 3
-            width: contents.width; height: contents.height
+            width: childrenRect.width; height: childrenRect.height
             anchors.top: label1.bottom; anchors.left: parent.left;
             anchors.topMargin: 5; anchors.leftMargin: 5; anchors.rightMargin: 5
             Component {
                 id: Delegate
-                Rect {
+                Rectangle {
                     id: Root
                     MouseRegion {
                         anchors.fill: parent
@@ -54,7 +55,7 @@ Rect {
             }
             Component {
                 id: Highlight
-                Rect {
+                Rectangle {
                     color : "lightsteelblue"
                     width: parent.width
                     border.color: "black"; border.width: 2
