@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 #include "qnmeapositioninfosourceproxyfactory.h"
-#include "qlocationtestutils_p.h"
+#include "../qlocationtestutils_p.h"
 
 #include <QIODevice>
 #include <QTcpServer>
@@ -76,7 +76,7 @@ QNmeaPositionInfoSourceProxyFactory::QNmeaPositionInfoSourceProxyFactory(QNmeaPo
     Q_ASSERT(b);
 }
 
-QGeoPositionInfoSourceProxy *QNmeaPositionInfoSourceProxyFactory::createProxy()
+QNmeaPositionInfoSourceProxy *QNmeaPositionInfoSourceProxyFactory::createProxy()
 {
     QTcpSocket *client = new QTcpSocket;
     client->connectToHost(m_server->serverAddress(), m_server->serverPort());

@@ -30,8 +30,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "../qnmeapositioninfosourceproxyfactory.h"
-#include "../qgeopositioninfosourcesubclasstest_p.h"
+#include "qnmeapositioninfosourceproxyfactory.h"
 #include "../qlocationtestutils_p.h"
 
 #include <qnmeapositioninfosource.h>
@@ -62,6 +61,19 @@ public:
 
     tst_QNmeaPositionInfoSource(QNmeaPositionInfoSource::UpdateMode mode, QObject *parent = 0);
 
+private:
+    QList<QDateTime> createDateTimes(int count) const
+    {
+        QList<QDateTime> dateTimes;
+        QDateTime dt = QDateTime::currentDateTime().toUTC();
+        int interval = 100;
+        for (int i=0; i<count; i++) {
+            dateTimes << dt.addMSecs(interval);
+            interval += 100;
+        }
+        return dateTimes;
+    }
+
 private slots:
     void initTestCase();
 
@@ -71,14 +83,26 @@ private slots:
 
     void minimumUpdateInterval();
 
-    void testWithBufferedData();
-    void testWithBufferedData_data();
+    void setUpdateInterval_delayedUpdate();
+
+    void lastKnownPosition();
+
+    void beginWithBufferedData();
+    void beginWithBufferedData_data();
+
+    void startUpdates();
+    void startUpdates_data();
+
+    void startUpdates_expectLatestUpdateOnly();
 
     void startUpdates_waitForValidDateTime();
     void startUpdates_waitForValidDateTime_data();
 
     void requestUpdate_waitForValidDateTime();
     void requestUpdate_waitForValidDateTime_data();
+
+    void requestUpdate();
+    void requestUpdate_after_start();
 
     void testWithBadNmea();
     void testWithBadNmea_data();
@@ -122,7 +146,64 @@ void tst_QNmeaPositionInfoSource::minimumUpdateInterval()
     QCOMPARE(source.minimumUpdateInterval(), 100);
 }
 
-void tst_QNmeaPositionInfoSource::testWithBufferedData()
+void tst_QNmeaPositionInfoSource::setUpdateInterval_delayedUpdate()
+{
+    // If an update interval is set, and an update is not available at a
+    // particular interval, the source should emit the next update as soon
+    // as it becomes available
+
+    QNmeaPositionInfoSourceProxyFactory factory(m_mode);
+    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy());
+
+    QSignalSpy spyUpdate(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
+    proxy->source()->setUpdateInterval(500);
+    proxy->source()->startUpdates();
+
+    QTest::qWait(600);
+    QDateTime now = QDateTime::currentDateTime();
+    proxy->feedUpdate(now);
+    QTRY_COMPARE(spyUpdate.count(), 1);
+
+    // should have gotten the update immediately, and not have needed to
+    // wait until the next interval
+    QVERIFY(now.time().msecsTo(QDateTime::currentDateTime().time()) < 200);
+}
+
+void tst_QNmeaPositionInfoSource::lastKnownPosition()
+{
+    QNmeaPositionInfoSourceProxyFactory factory(m_mode);
+    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy());
+
+    QCOMPARE(proxy->source()->lastKnownPosition(), QGeoPositionInfo());
+
+    // source may need requestUpdate() or startUpdates() to be called to
+    // trigger reading of data channel
+    QSignalSpy spyTimeout(proxy->source(), SIGNAL(requestTimeout()));
+    proxy->source()->requestUpdate(proxy->source()->minimumUpdateInterval());
+    QTRY_COMPARE(spyTimeout.count(), 1);
+
+    // If an update is received and startUpdates() or requestUpdate() hasn't
+    // been called, it should still be available through lastKnownPosition()
+    QDateTime dt = QDateTime::currentDateTime().toUTC();
+    proxy->feedUpdate(dt);
+    QTRY_COMPARE(proxy->source()->lastKnownPosition().dateTime(), dt);
+
+    QList<QDateTime> dateTimes = createDateTimes(5);
+    for (int i=0; i<dateTimes.count(); i++) {
+        proxy->source()->requestUpdate();
+        proxy->feedUpdate(dateTimes[i]);
+        QTRY_COMPARE(proxy->source()->lastKnownPosition().dateTime(), dateTimes[i]);
+    }
+
+    proxy->source()->startUpdates();
+    dateTimes = createDateTimes(5);
+    for (int i=0; i<dateTimes.count(); i++) {
+        proxy->feedUpdate(dateTimes[i]);
+        QTRY_COMPARE(proxy->source()->lastKnownPosition().dateTime(), dateTimes[i]);
+    }
+}
+
+void tst_QNmeaPositionInfoSource::beginWithBufferedData()
 {
     // In SimulationMode, data stored in the QIODevice is read when
     // startUpdates() or requestUpdate() is called.
@@ -162,7 +243,7 @@ void tst_QNmeaPositionInfoSource::testWithBufferedData()
     }
 }
 
-void tst_QNmeaPositionInfoSource::testWithBufferedData_data()
+void tst_QNmeaPositionInfoSource::beginWithBufferedData_data()
 {
     QTest::addColumn<QList<QDateTime> >("dateTimes");
     QTest::addColumn<UpdateTriggerMethod>("trigger");
@@ -177,6 +258,50 @@ void tst_QNmeaPositionInfoSource::testWithBufferedData_data()
         dateTimes << dateTimes[0].addDays(i);
     QTest::newRow("startUpdates(), multiple updates in buffer") << dateTimes << StartUpdatesMethod;
     QTest::newRow("requestUpdate(), multiple updates in buffer") << dateTimes << RequestUpdatesMethod;
+}
+
+void tst_QNmeaPositionInfoSource::startUpdates()
+{
+    QFETCH(QList<QDateTime>, dateTimes);
+
+    QNmeaPositionInfoSourceProxyFactory factory(m_mode);
+    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy());
+
+    QSignalSpy spyUpdate(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
+    proxy->source()->startUpdates();
+
+    for (int i=0; i<dateTimes.count(); i++)
+        proxy->feedUpdate(dateTimes[i]);
+    QTRY_COMPARE(spyUpdate.count(), dateTimes.count());
+}
+
+void tst_QNmeaPositionInfoSource::startUpdates_data()
+{
+    QTest::addColumn<QList<QDateTime> >("dateTimes");
+
+    QTest::newRow("1 update") << createDateTimes(1);
+    QTest::newRow("2 updates") << createDateTimes(2);
+    QTest::newRow("10 updates") << createDateTimes(10);
+}
+
+void tst_QNmeaPositionInfoSource::startUpdates_expectLatestUpdateOnly()
+{
+    // If startUpdates() is called and an interval has been set, if multiple'
+    // updates are in the buffer, only the latest update should be emitted
+
+    QNmeaPositionInfoSourceProxyFactory factory(m_mode);
+    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy());
+
+    QSignalSpy spyUpdate(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
+    proxy->source()->setUpdateInterval(500);
+    proxy->source()->startUpdates();
+
+    QList<QDateTime> dateTimes = createDateTimes(3);
+    for (int i=0; i<dateTimes.count(); i++)
+        proxy->feedUpdate(dateTimes[i]);
+
+    QTRY_COMPARE(spyUpdate.count(), 1);
+    QCOMPARE(spyUpdate[0][0].value<QGeoPositionInfo>().dateTime(), dateTimes.last());
 }
 
 void tst_QNmeaPositionInfoSource::startUpdates_waitForValidDateTime()
@@ -259,6 +384,75 @@ void tst_QNmeaPositionInfoSource::requestUpdate_waitForValidDateTime_data()
     startUpdates_waitForValidDateTime_data();
 }
 
+void tst_QNmeaPositionInfoSource::requestUpdate()
+{
+    QNmeaPositionInfoSourceProxyFactory factory(m_mode);
+    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy());
+
+    QSignalSpy spyUpdate(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
+    QSignalSpy spyTimeout(proxy->source(), SIGNAL(requestTimeout()));
+    QDateTime dt;
+
+    proxy->source()->requestUpdate(100);
+    QTRY_COMPARE(spyTimeout.count(), 1);
+    spyTimeout.clear();
+
+    dt = QDateTime::currentDateTime().toUTC();
+    proxy->feedUpdate(dt);
+    proxy->source()->requestUpdate();
+    QTRY_COMPARE(spyUpdate.count(), 1);
+    QCOMPARE(spyUpdate[0][0].value<QGeoPositionInfo>().dateTime(), dt);
+    QCOMPARE(spyTimeout.count(), 0);
+    spyUpdate.clear();
+
+    // delay the update and expect it to be emitted after 300ms
+    dt = QDateTime::currentDateTime().toUTC();
+    proxy->source()->requestUpdate(1000);
+    QTest::qWait(300);
+    proxy->feedUpdate(dt);
+    QTRY_COMPARE(spyUpdate.count(), 1);
+    QCOMPARE(spyUpdate[0][0].value<QGeoPositionInfo>().dateTime(), dt);
+    QCOMPARE(spyTimeout.count(), 0);
+    spyUpdate.clear();
+
+    // delay the update and expect requestTimeout() to be emitted
+    dt = QDateTime::currentDateTime().toUTC();
+    proxy->source()->requestUpdate(500);
+    QTest::qWait(1000);
+    proxy->feedUpdate(dt);
+    QCOMPARE(spyTimeout.count(), 1);
+    QCOMPARE(spyUpdate.count(), 0);
+    spyUpdate.clear();
+}
+
+void tst_QNmeaPositionInfoSource::requestUpdate_after_start()
+{
+    QNmeaPositionInfoSourceProxyFactory factory(m_mode);
+    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy());
+
+    QSignalSpy spyUpdate(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
+    QSignalSpy spyTimeout(proxy->source(), SIGNAL(requestTimeout()));
+
+    // Start updates with 500ms interval and requestUpdate() with 100ms
+    // timeout. Feed an update, and it should be emitted immediately due to
+    // the requestUpdate(). The update should not be emitted again after that
+    // (i.e. the startUpdates() interval should not cause it to be re-emitted).
+
+    QDateTime dt = QDateTime::currentDateTime().toUTC();
+    proxy->source()->setUpdateInterval(500);
+    proxy->source()->startUpdates();
+    proxy->source()->requestUpdate(100);
+    proxy->feedUpdate(dt);
+    QTRY_COMPARE(spyUpdate.count(), 1);
+    QCOMPARE(spyUpdate[0][0].value<QGeoPositionInfo>().dateTime(), dt);
+    QCOMPARE(spyTimeout.count(), 0);
+    spyUpdate.clear();
+
+    // Update has been emitted for requestUpdate(), shouldn't be emitted for startUpdates()
+    QTest::qWait(1000);
+    QCOMPARE(spyUpdate.count(), 0);
+}
+
 void tst_QNmeaPositionInfoSource::testWithBadNmea()
 {
     QFETCH(QByteArray, bytes);
@@ -301,7 +495,6 @@ void tst_QNmeaPositionInfoSource::testWithBadNmea_data()
             << (QList<QDateTime>() << firstDateTime << lastDateTime) << StartUpdatesMethod;
 }
 
-//QTEST_MAIN(tst_QNmeaPositionInfoSource)
 
 class tst_QNmeaPositionInfoSource_RealTime : public tst_QNmeaPositionInfoSource
 {
@@ -319,35 +512,6 @@ public:
         : tst_QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode) {}
 };
 
-class tst_QNmeaPositionInfoSource_RealTimeUpdates : public QGeoPositionInfoSourceSubclassTest
-{
-    Q_OBJECT
-public:
-    tst_QNmeaPositionInfoSource_RealTimeUpdates(QObject *parent = 0)
-        : QGeoPositionInfoSourceSubclassTest(new QNmeaPositionInfoSourceProxyFactory(QNmeaPositionInfoSource::RealTimeMode), parent)
-    {
-    }
-
-    ~tst_QNmeaPositionInfoSource_RealTimeUpdates()
-    {
-        delete factory();
-    }
-};
-
-class tst_QNmeaPositionInfoSource_SimulationUpdates : public QGeoPositionInfoSourceSubclassTest
-{
-    Q_OBJECT
-public:
-    tst_QNmeaPositionInfoSource_SimulationUpdates(QObject *parent = 0)
-        : QGeoPositionInfoSourceSubclassTest(new QNmeaPositionInfoSourceProxyFactory(QNmeaPositionInfoSource::SimulationMode), parent)
-    {
-    }
-
-    ~tst_QNmeaPositionInfoSource_SimulationUpdates()
-    {
-        delete factory();
-    }
-};
 
 int main(int argc, char *argv[])
 {
@@ -361,14 +525,6 @@ int main(int argc, char *argv[])
 
     tst_QNmeaPositionInfoSource_Simulation common_sim;
     r = QTest::qExec(&common_sim);
-    if (r < 0) fail = true;
-
-    tst_QNmeaPositionInfoSource_RealTimeUpdates updates_realTime;
-    r = QTest::qExec(&updates_realTime);
-    if (r < 0) fail = true;
-
-    tst_QNmeaPositionInfoSource_SimulationUpdates updates_sim;
-    r = QTest::qExec(&updates_sim);
     if (r < 0) fail = true;
 
     return fail ? -1 : 0;

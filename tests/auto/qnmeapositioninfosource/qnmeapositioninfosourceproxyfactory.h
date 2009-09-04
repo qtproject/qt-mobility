@@ -35,14 +35,13 @@
 
 #include <QObject>
 
-#include "qgeopositioninfosourcesubclasstest_p.h"
 #include <qnmeapositioninfosource.h>
 
 class QTcpServer;
 class QNmeaPositionInfoSource;
 class QIODevice;
 
-class QNmeaPositionInfoSourceProxy : public QGeoPositionInfoSourceProxy
+class QNmeaPositionInfoSourceProxy : public QObject
 {
 public:
     QNmeaPositionInfoSourceProxy(QNmeaPositionInfoSource *source, QIODevice *outDevice);
@@ -54,18 +53,20 @@ public:
 
     void feedBytes(const QByteArray &bytes);
 
+    int updateIntervalErrorMargin() const { return 50; }
+
 private:
     QNmeaPositionInfoSource *m_source;
     QIODevice *m_outDevice;
 };
 
-class QNmeaPositionInfoSourceProxyFactory : public QObject, public QGeoPositionInfoSourceProxyFactory
+class QNmeaPositionInfoSourceProxyFactory : public QObject
 {
     Q_OBJECT
 public:
     QNmeaPositionInfoSourceProxyFactory(QNmeaPositionInfoSource::UpdateMode mode);
 
-    QGeoPositionInfoSourceProxy *createProxy();
+    QNmeaPositionInfoSourceProxy *createProxy();
 
 private:
     QTcpServer *m_server;
