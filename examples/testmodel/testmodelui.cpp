@@ -68,9 +68,15 @@ TestModelUi::TestModelUi()
     nbrMissedCalls = 0;
     talkingToNumber = "";
 
+    dialog = new FilterDialog;
+    connect(dialog, SIGNAL(hidden()), this, SLOT(filterFound()));
+
     fetchRequest = new QContactFetchRequest;
     fetchRequest->setManager(manager);
     connect(fetchRequest, SIGNAL(progress(QContactFetchRequest*,bool)), this, SLOT(dataAvailable(QContactFetchRequest*,bool)));
+    filterRequest = new QContactFetchRequest;
+    filterRequest->setManager(manager);
+    connect(filterRequest, SIGNAL(progress(QContactFetchRequest*,bool)), this, SLOT(filterResults(QContactFetchRequest*,bool)));
 
     incomingCallTimer = new QTimer;
     incomingCallTimer->setInterval(15000); // 15 seconds between incoming calls.
@@ -99,9 +105,11 @@ TestModelUi::TestModelUi()
     missedCallsNbr->setText(QString::number(nbrMissedCalls));
 
     leftButton = new QPushButton(tr("Dial"));
+    middleButton = new QPushButton(tr("Find"));
     rightButton = new QPushButton(tr("Quit"));
 
     connect(leftButton, SIGNAL(clicked()), this, SLOT(dial()));
+    connect(middleButton, SIGNAL(clicked()), this, SLOT(findContact()));
     connect(rightButton, SIGNAL(clicked()), this, SLOT(close()));
 
     QHBoxLayout *missedLayout = new QHBoxLayout;
@@ -110,6 +118,7 @@ TestModelUi::TestModelUi()
 
     QHBoxLayout *btnLayout = new QHBoxLayout;
     btnLayout->addWidget(leftButton);
+    btnLayout->addWidget(middleButton);
     btnLayout->addWidget(rightButton);
 
     QVBoxLayout *listLayout = new QVBoxLayout;
@@ -127,6 +136,7 @@ TestModelUi::~TestModelUi()
     delete list;
     delete textEdit;
     delete viewArea;
+    delete dialog;
     delete manager;
 }
 
@@ -226,6 +236,74 @@ void TestModelUi::dataAvailable(QContactFetchRequest* request, bool appendOnly)
     textEdit->setText(talkingToFirstLine + " " + talkingToName + "\n\n" + talkingToDetails);
 }
 
+void TestModelUi::filterResults(QContactFetchRequest* request, bool appendOnly)
+{
+    Q_UNUSED(appendOnly);
+    QList<QContact> results = request->contacts();
+    QString text = "Matching Contacts:\n";
+    for (int i = 0; i < results.size(); i++) {
+        text += "\n" + results.at(i).displayLabel().label();
+    }
+    textEdit->setText(text);
+
+    if (request->status() == QContactAbstractRequest::Finished) {
+        if (results.isEmpty())
+            textEdit->setText("Matching Contacts:\n\nNo Matches Found!");
+        rightButton->setText(tr("Done"));
+        middleButton->setEnabled(true);
+    }
+}
+
+void TestModelUi::filterFound()
+{
+    QContactFilter fil = dialog->filter();
+    if (dialog->status() > 0) {
+        textEdit->setText("Finding Contacts...\n\n");
+        filterRequest->cancel();
+        filterRequest->setFilter(fil);
+        filterRequest->start();
+    } else {
+        finishedFindContact();
+    }
+}
+
+void TestModelUi::showFilterDialog()
+{
+    middleButton->setEnabled(false);
+    textEdit->setText("Selecting search criteria...");
+    rightButton->setText(tr("Cancel"));
+    dialog->showDialog();
+}
+
+void TestModelUi::findContact()
+{
+    // complex filtering.
+    incomingCallTimer->stop();
+    dialTimer->stop();
+    answerTimer->stop();
+
+    textEdit->setText("Please select a search criteria (click search)");
+    middleButton->disconnect();
+    rightButton->disconnect();
+    leftButton->setEnabled(false);
+    middleButton->setEnabled(true);
+    rightButton->setEnabled(true);
+    middleButton->setText(tr("Search"));
+    rightButton->setText(tr("Cancel"));
+    connect(middleButton, SIGNAL(clicked()), this, SLOT(showFilterDialog()));
+    connect(rightButton, SIGNAL(clicked()), this, SLOT(finishedFindContact()));
+    viewArea->setCurrentIndex(1);
+}
+
+void TestModelUi::finishedFindContact()
+{
+    // only allow them to finish if they close the find contact dialog.
+    if (dialog->status() == 0)
+        return;
+
+    hangup();
+}
+
 void TestModelUi::dial()
 {
     // get current index id from view
@@ -253,6 +331,7 @@ void TestModelUi::dial()
     rightButton->setText(tr("Cancel"));
     connect(rightButton, SIGNAL(clicked()), this, SLOT(hangup()));
     leftButton->setEnabled(false);
+    middleButton->setEnabled(false);
     viewArea->setCurrentIndex(1);
     dialTimer->start();
 }
@@ -293,6 +372,7 @@ void TestModelUi::incoming()
     connect(leftButton, SIGNAL(clicked()), this, SLOT(talking()));
     connect(rightButton, SIGNAL(clicked()), this, SLOT(hangup()));
     leftButton->setEnabled(true);
+    middleButton->setEnabled(false);
     viewArea->setCurrentIndex(1);
 
     answerTimer->start();
@@ -318,6 +398,7 @@ void TestModelUi::talking()
     rightButton->setText(tr("Hang Up"));
     connect(rightButton, SIGNAL(clicked()), this, SLOT(hangup()));
     leftButton->setEnabled(false);
+    middleButton->setEnabled(false);
 }
 
 void TestModelUi::hangup()
@@ -336,12 +417,16 @@ void TestModelUi::hangup()
     talkingToFirstLine = "";
     textEdit->setText("");
     leftButton->disconnect();
+    middleButton->disconnect();
     rightButton->disconnect();
     leftButton->setText(tr("Dial"));
+    middleButton->setText(tr("Find"));
     rightButton->setText(tr("Quit"));
     connect(leftButton, SIGNAL(clicked()), this, SLOT(dial()));
+    connect(middleButton, SIGNAL(clicked()), this, SLOT(findContact()));
     connect(rightButton, SIGNAL(clicked()), this, SLOT(close()));
     leftButton->setEnabled(true);
+    middleButton->setEnabled(true);
     viewArea->setCurrentIndex(0);
     incomingCallTimer->start(); // restart the incoming call timer.
 }
@@ -352,25 +437,7 @@ void TestModelUi::missedCall()
     // change current widget to list
     // change buttons to <dial> <exit>
     // ...
-    incomingCallTimer->stop();
-    dialTimer->stop();
-    answerTimer->stop();
-    currentState = TestModelUi::WaitingState;
-
-    talkingToName = "";
-    talkingToNumber = "";
-    talkingToDetails = "";
-    talkingToFirstLine = "";
-    textEdit->setText("");
     nbrMissedCalls += 1;
     missedCallsNbr->setText(QString::number(nbrMissedCalls));
-    leftButton->disconnect();
-    rightButton->disconnect();
-    leftButton->setText(tr("Dial"));
-    rightButton->setText(tr("Quit"));
-    connect(leftButton, SIGNAL(clicked()), this, SLOT(dial()));
-    connect(rightButton, SIGNAL(clicked()), this, SLOT(close()));
-    leftButton->setEnabled(true);
-    viewArea->setCurrentIndex(0);
-    incomingCallTimer->start(); // restart the incoming call timer.
+    hangup();
 }

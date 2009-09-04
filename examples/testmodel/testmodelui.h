@@ -31,8 +31,8 @@
 **
 ****************************************************************************/
 
-#ifndef TESTMODELUI
-#define TESTMODELUI
+#ifndef TESTMODELUI_H
+#define TESTMODELUI_H
 
 //
 //  W A R N I N G
@@ -50,6 +50,7 @@
 
 #include "qtcontactsglobal.h"  // for QUniqueId...
 #include "qcontactlistmodel.h"
+#include "filterdialog.h"
 
 class QStackedWidget;
 class QTextEdit;
@@ -85,7 +86,12 @@ public:
 public slots:
     void populateContacts();
     void dataAvailable(QContactFetchRequest* request, bool appendOnly);
+    void filterResults(QContactFetchRequest* request, bool appendOnly);
+    void filterFound();
 
+    void findContact();
+    void showFilterDialog();
+    void finishedFindContact();
     void dial();
     void incoming();
     void talking();
@@ -94,10 +100,12 @@ public slots:
 
 private:
     QContactManager *manager;
+    FilterDialog *dialog;
     TestModelView *list;
     QTextEdit *textEdit;
     QStackedWidget *viewArea;
     QPushButton *leftButton;
+    QPushButton *middleButton;
     QPushButton *rightButton;
 
     QTimer *incomingCallTimer; // we generate incoming calls from this
@@ -116,6 +124,7 @@ private:
     CallState currentState;
 
     QContactFetchRequest* fetchRequest;
+    QContactFetchRequest* filterRequest;
     QString talkingToName;
     QString talkingToNumber;
     QString talkingToDetails;
