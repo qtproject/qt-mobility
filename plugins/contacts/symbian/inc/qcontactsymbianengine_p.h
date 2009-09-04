@@ -61,8 +61,8 @@ public:
 
 public:
     /* Access */
-    QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
-    QList<QUniqueId> contacts() const;
+    QContact contact(const QUniqueId& contactId, QContactManager::Error& qtError) const;
+    QList<QUniqueId> contacts(QContactManager::Error& qtError) const;
     int count() const;
     
     /* "My card" */
@@ -72,10 +72,10 @@ public:
     void clearPersonalContactId();
 
     /* Add/Update/Remove */ 
-    bool addContact(QContact& contact, int &id);
-    bool updateContact(QContact& contact);
-    bool removeContact(const QUniqueId &id);
-    bool removeContacts(const QList<QUniqueId> &);
+    bool addContact(QContact& contact, int &id, QContactManager::Error& qtError);
+    bool updateContact(QContact& contact, QContactManager::Error& qtError);
+    bool removeContact(const QUniqueId &id, QContactManager::Error& qtError);
+    bool removeContacts(const QList<QUniqueId> &, QContactManager::Error& qtError);
     
     //function to find contacts, based on the communication method
     //communication type - call (number, voip fields), digits to match
@@ -84,11 +84,10 @@ public:
     QList<QUniqueId> matchCommunicationAddress( const QString &communicationType, const QString &communicationAddress );
 
     /* Groups functionality */
-	//Leaving functions for groups functionality
-	QList<QUniqueId> groups() const;
-	QContactGroup group(const QUniqueId& groupId) const;
-	bool saveGroup(QContactGroup& group, QContactManager::Error& error);
-	bool removeGroup(const QUniqueId& groupId);
+	QList<QUniqueId> groups(QContactManager::Error& qtError) const;
+	QContactGroup group(const QUniqueId& groupId, QContactManager::Error& qtError) const;
+	bool saveGroup(QContactGroup& group, QContactManager::Error& qtError);
+	bool removeGroup(const QUniqueId& groupId, QContactManager::Error& qtError);
 	QUniqueId simPhonebookGroupId() const;
     
 public:
@@ -110,8 +109,7 @@ private:
 	CContactItem *transformContact(QContact &contact) const;
 	
 	// Utility function to convert symbian error to QContactManager error
-	// returns true if no error otherwise false
-	bool transformError(TInt symbianError, QContactManager::Error& qtError) const;
+	void transformError(TInt symbianError, QContactManager::Error& qtError) const;
 		
 	// Leaving functions implementing CNTMODEL interaction.
 	QContact contactL(const QUniqueId &id) const;
@@ -128,8 +126,8 @@ private:
 	//Leaving functions for groups functionality
 	QList<QUniqueId> groupsL() const;
 	QContactGroup groupL(const QUniqueId& groupId) const;
-	bool saveGroupL(QContactGroup& group);
-	bool removeGroupL(const QUniqueId& groupId);
+	void saveGroupL(QContactGroup& group);
+	void removeGroupL(const QUniqueId& groupId);
 	QUniqueId simPhonebookGroupIdL() const;
 
 	//utility functions

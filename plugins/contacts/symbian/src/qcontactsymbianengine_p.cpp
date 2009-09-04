@@ -70,40 +70,16 @@ QContactSymbianEngineData::~QContactSymbianEngineData()
  * Internal implementation to read a conact, called by 
  * QContactManager::contact().
  * 
+ * \param contactId The Id of the contact to be retrieved.
+ * \param qtError Qt error code.
  * \return A QContact for the requested QUniquId value or 0 if the read
  *  operation was unsuccessful (e.g. contact not found).
  */
-/*QContact QContactSymbianEngineData::contact(const QUniqueId &contactId) const
-{
-	// TODO: Error handling is very primitive. Returning 0 on all failures for now.
-	
-	QContact contact;
-	TRAP_IGNORE(contact = contactL(contactId));
-	
-	// TODO: This should never be heap allocated to start with.
-	return contact;
-}*/
-
-
-
-/*!
- * Read a contact from the contact database.
- * 
- * Internal implementation to read a conact, called by 
- * QContactManager::contact().
- * 
- * \return A QContact for the requested QUniquId value or 0 if the read
- *  operation was unsuccessful (e.g. contact not found).
- */
-QContact QContactSymbianEngineData::contact(const QUniqueId& contactId, QContactManager::Error& error) const
+QContact QContactSymbianEngineData::contact(const QUniqueId& contactId, QContactManager::Error& qtError) const
 {
 	QContact contact;
-	//TRAP_IGNORE(contact = contactL(contactId));
-	TRAPD(errorId, contact = contactL(contactId));
-	
-	transformError(errorId, error);
-	
-	// TODO: This should never be heap allocated to start with.
+	TRAPD(err, contact = contactL(contactId));
+	transformError(err, qtError);
 	return contact;
 }
 
@@ -139,18 +115,20 @@ int QContactSymbianEngineData::count() const
  * It works by retrieving a list of contact IDs changed since
  * epoch, as this API does not exist "properly" in CNTMODEL.
  * 
+ * \param qtError Qt error code.
  * \return List of all IDs for contact entries in the database,
  *  or an empty list if there was a problem or the database is
  *  empty.
  */
-QList<QUniqueId> QContactSymbianEngineData::contacts() const
+QList<QUniqueId> QContactSymbianEngineData::contacts(QContactManager::Error& qtError) const
 {
 	// Create an empty list
 	QList<QUniqueId> ids;
 	
 	// Attempt to read from database, leaving the list empty if
 	// there was a problem
-	TRAP_IGNORE(ids = contactsL());
+	TRAPD(err, ids = contactsL());
+	transformError(err, qtError);
 
 	return ids;
 }
@@ -161,27 +139,30 @@ QList<QUniqueId> QContactSymbianEngineData::contacts() const
  * Add the specified contact item to the persistent contacts store.
  * 
  * \param contact The QContact to be saved.
+ * \param id The Id of new contact
+ * \param qtError Qt error code.
  * \return Error status
  */
-bool QContactSymbianEngineData::addContact(QContact& contact, int &id)
+bool QContactSymbianEngineData::addContact(QContact& contact, int &id, QContactManager::Error& qtError)
 {
 	// Attempt to persist contact, trapping errors
-	TRAPD(errCode, id = addContactL(contact));
-	
-	// TODO - no proper error mechanism implemented yet
-	return (errCode == KErrNone);
+	TRAPD(err, id = addContactL(contact));
+	transformError(err, qtError);
+	return (err==KErrNone);
 }
 
 /*!
  * Update an existing contact entry in the database.
  * 
  * \param contact The contact to update in the database.
+ * \param qtError Qt error code. 
  * \return Error status.
  */
-bool QContactSymbianEngineData::updateContact(QContact& contact)
+bool QContactSymbianEngineData::updateContact(QContact& contact, QContactManager::Error& qtError)
 {
     TRAPD(err, updateContactL(contact));
-    return (err == KErrNone);
+    transformError(err, qtError);
+    return (err==KErrNone);
 }
 
 
@@ -194,12 +175,14 @@ bool QContactSymbianEngineData::updateContact(QContact& contact)
  * final transaction of 27. 
  * 
  * \param contact The QContact to be removed.
- * \return An error code if there was a problem.
+ * \param qtError Qt error code. 
+ * \return Error status.
  */
-bool QContactSymbianEngineData::removeContact(const QUniqueId &id)
+bool QContactSymbianEngineData::removeContact(const QUniqueId &id, QContactManager::Error& qtError)
 {
-	TRAP_IGNORE(removeContactL(id));
-	return true; // TODO: error codes???
+	TRAPD(err, removeContactL(id));
+    transformError(err, qtError);
+	return (err==KErrNone);
 }
 
 
@@ -207,12 +190,14 @@ bool QContactSymbianEngineData::removeContact(const QUniqueId &id)
  * Remove the contact objects specified in ids from the database.
  *   
  * \param ids A list contact ids to be removed.
- * \return An error code if there was a problem.
+ * \param qtError Qt error code. 
+ * \return Error status.
  */
-bool QContactSymbianEngineData::removeContacts(const QList<QUniqueId> &ids)
+bool QContactSymbianEngineData::removeContacts(const QList<QUniqueId> &ids, QContactManager::Error& qtError)
 {
-	TRAP_IGNORE(removeContactsL(ids));
-	return true; // TODO: error codes???
+	TRAPD(err, removeContactsL(ids));
+    transformError(err, qtError);
+    return (err==KErrNone);
 }
 
 
@@ -243,11 +228,14 @@ QList<QUniqueId> QContactSymbianEngineData::matchCommunicationAddress(const QStr
 /*!
  * Return a list of group UIDs.
  *  
+ * \param qtError Qt error code. 
+ * \return List of group IDs.
  */
-QList<QUniqueId> QContactSymbianEngineData::groups() const
+QList<QUniqueId> QContactSymbianEngineData::groups(QContactManager::Error& qtError) const
 {
 	QList<QUniqueId> list;
-	TRAP_IGNORE(list = groupsL());
+	TRAPD(err, list = groupsL());
+	transformError(err, qtError);
 	return list;
 }
 
@@ -255,12 +243,14 @@ QList<QUniqueId> QContactSymbianEngineData::groups() const
  * Retrieve a contact group object corresponding to the supplied UID.
  *  
  * \param groupId The id of the contact to be retrieved.
+ * \param qtError Qt error code. 
  * \return The contact group object.
  */
-QContactGroup QContactSymbianEngineData::group(const QUniqueId& groupId) const
+QContactGroup QContactSymbianEngineData::group(const QUniqueId& groupId, QContactManager::Error& qtError) const
 {
 	QContactGroup qGroup;
-	TRAP_IGNORE(qGroup = groupL(groupId));
+	TRAPD(err, qGroup = groupL(groupId));
+    transformError(err, qtError);
 	return qGroup;
 }
 
@@ -268,24 +258,28 @@ QContactGroup QContactSymbianEngineData::group(const QUniqueId& groupId) const
  * Save the supplied contact group to the database.
  * 
  * \param group The contact group object to be saved.
+ * \param qtError Qt error code. 
  * \return a bool indicating whether the operation was successful.
  */
-bool QContactSymbianEngineData::saveGroup(QContactGroup& group, QContactManager::Error& error)
+bool QContactSymbianEngineData::saveGroup(QContactGroup& group, QContactManager::Error& qtError)
 {
 	TRAPD(err, saveGroupL(group));
-	return transformError(err, error);
+	transformError(err, qtError);
+	return (err==KErrNone); 
 }
 
 /*!
  * Remove the contact group corresponding to the supplied UID from the database.
  * 
  * \param groupId The id of contact group to be removed.
+ * \param qtError Qt error code. 
  * \return a bool indicating whether the operation was successful.
  */
-bool QContactSymbianEngineData::removeGroup(const QUniqueId& groupId)
+bool QContactSymbianEngineData::removeGroup(const QUniqueId& groupId, QContactManager::Error& qtError)
 {
 	TRAPD(err, removeGroupL(groupId));
-	return err == KErrNone;
+	transformError(err, qtError);
+	return (err == KErrNone);
 }
 
 /*!
@@ -338,41 +332,59 @@ void QContactSymbianEngineData::HandleDatabaseEventL(TContactDbObserverEvent aEv
 
 /*! Transform a Symbian contact error id to QContactManager::Error. 
  *
- * \param contact A reference to a Symbian contact to be converted.
- * \return A Qt contact with the same fields and content as the CContactItem.
+ * \param symbianError Symbian error.
+ * \param QtError Qt error.
 */
-bool QContactSymbianEngineData::transformError(TInt symbianError, QContactManager::Error& qtError) const
+void QContactSymbianEngineData::transformError(TInt symbianError, QContactManager::Error& qtError) const
 {
-	
-	/*
-	NoError = 0,
-    DoesNotExistError,
-    AlreadyExistsError,
-    InvalidDetailError,
-    LockedError,
-    DetailAccessError,
-    PermissionsError,
-    OutOfMemoryError,
-    NotSupportedError,
-    BadArgumentError,
-    UnspecifiedError
-    */
-	bool noError(true);
-	
 	switch(symbianError)
 	{
-		case 0: 
+		case KErrNone:
 		{
 			qtError = QContactManager::NoError;
+			break;
 		}
+		case KErrNotFound:
+	    {
+	        qtError = QContactManager::DoesNotExistError;
+	        break;
+	    }
+        case KErrAlreadyExists:
+        {
+            qtError = QContactManager::AlreadyExistsError;
+            break;
+        }
+        case KErrLocked:
+        {
+            qtError = QContactManager::LockedError;
+            break;
+        }
+        case KErrAccessDenied:
+        {
+            qtError = QContactManager::PermissionsError;
+            break;
+        }
+        case KErrNoMemory:
+        {
+            qtError = QContactManager::OutOfMemoryError;
+            break;
+        }
+        case KErrNotSupported:
+        {
+            qtError = QContactManager::NotSupportedError;
+            break;
+        }
+        case KErrArgument:
+        {
+            qtError = QContactManager::BadArgumentError;
+            break;
+        }        
 		default:
 		{
 			qtError = QContactManager::UnspecifiedError;
-			noError = false;
+			break;
 		}
 	}
-	
-	return noError;
 }
 
 /*! Transform a Symbian contact to a QContact. Note that the contact ID
@@ -440,15 +452,17 @@ QList<QUniqueId> QContactSymbianEngineData::contactsL() const
 	CleanupStack::PopAndDestroy(ids);
 	
 	//remove the groups from the list
-	QList<QUniqueId> groupIds = groups();
+	QContactManager::Error err = QContactManager::NoError;
+	QList<QUniqueId> groupIds = groups(err);
 	int indexOf(0);
 	
-	for(int i = (groupIds.count() - 1); i >= 0; i-- )
-	{
-        indexOf = qIds.lastIndexOf( groupIds.at(i));
+	if (err==QContactManager::NoError) {
+        for(int i = (groupIds.count() - 1); i >= 0; i-- ) {
+            indexOf = qIds.lastIndexOf( groupIds.at(i));
         
-        if(indexOf != -1){
-            qIds.removeAt(indexOf);
+            if(indexOf != -1){
+                qIds.removeAt(indexOf);
+            }
         }
 	}
 	
@@ -620,9 +634,8 @@ QContactGroup QContactSymbianEngineData::groupL(const QUniqueId& groupId) const
 /*!
  * Private leaving implementation for saveGroup
  */
-bool QContactSymbianEngineData::saveGroupL(QContactGroup& group)
+void QContactSymbianEngineData::saveGroupL(QContactGroup& group)
 {
-	//TODO: sort out error handling. set m_error when there is an enum available. 
 	// following line works at time of writing as QUniqueIdIterator is a typedef of QList<QUniqueId>
 	QSet<QUniqueId> newMembers = QSet<QUniqueId>::fromList(group.members());
 	QSet<QUniqueId> membersToAdd;
@@ -635,9 +648,7 @@ bool QContactSymbianEngineData::saveGroupL(QContactGroup& group)
 		if (!cGroup)
 		{
 			// if the group has an id but is not in the database something is wrong
-			// TODO don't have access to set the group's error 
-			//group.d->m_error = UnspecifiedError; // use proper error when provided
-			return false;
+			User::Leave(KErrNotFound);
 		}
 		CleanupStack::PushL(cGroup);
 		
@@ -697,13 +708,12 @@ bool QContactSymbianEngineData::saveGroupL(QContactGroup& group)
 	{
 		m_contactDatabase->AddContactToGroupL(TContactItemId(id), TContactItemId(group.id()));
 	}
-	return true;
 }
 
 /*!
  * Private leaving implementation for removeGroup
  */
-bool QContactSymbianEngineData::removeGroupL(const QUniqueId& groupId)
+void QContactSymbianEngineData::removeGroupL(const QUniqueId& groupId)
 {
 	// try to fetch a contact item of that id and check it's a group object
 	if (!isGroup(groupId))
@@ -711,7 +721,6 @@ bool QContactSymbianEngineData::removeGroupL(const QUniqueId& groupId)
 		User::Leave(KErrNotFound); // no group of this id found
 	}
 	m_contactDatabase->DeleteContactL(TContactItemId(groupId));
-	return true;
 }
 
 /*!
