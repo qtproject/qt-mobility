@@ -237,7 +237,7 @@ void QGeoPositionInfoSourceSubclassTest::lastKnownPosition()
     // source may need requestUpdate() or startUpdates() to be called to
     // trigger reading of data channel
     QSignalSpy spyTimeout(m_source, SIGNAL(requestTimeout()));
-    m_source->requestUpdate(0);
+    m_source->requestUpdate(m_source->minimumUpdateInterval());
     QTRY_COMPARE(spyTimeout.count(), 1);
 
     // If an update is received and startUpdates() or requestUpdate() hasn't
