@@ -360,7 +360,7 @@ void Dialog::setupSaver()
 
     connect( ui->saverEnabledCheckBox, SIGNAL(clicked(bool)),
              this,SLOT(setSaverEnabled(bool)));
-    connect( ui->saverEnabledCheckBox, SIGNAL(clicked(bool)),
+    connect( ui->screenBlankingCheckBox, SIGNAL(clicked(bool)),
              this,SLOT(setBlankingEnabled(bool)));
 
     ui->saverEnabledCheckBox->setChecked(saverEnabled);
@@ -371,13 +371,11 @@ void Dialog::setupSaver()
 void Dialog::setSaverEnabled(bool b)
 {
     if(saver->setScreenSaverEnabled(b)) {
-    }
-
+    }    
 }
 
 void Dialog::setBlankingEnabled(bool b)
 {
-    QString text;
     if(saver->setScreenBlankingEnabled(b)) {   
     }
 }

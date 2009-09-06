@@ -1340,7 +1340,6 @@ bool QSystemScreenSaverPrivate::setScreenSaverEnabled(bool state)
 {
     // gui/kernel/qx11info_x11.h
     // gui/util/qsystemtrayicon_x11.cpp
-
 #if !defined(QT_NO_DBUS)
     pid_t pid = getppid();
     QDBusConnection dbusConnection = QDBusConnection::sessionBus();
@@ -1400,14 +1399,42 @@ bool QSystemScreenSaverPrivate::setScreenSaverEnabled(bool state)
 
 bool QSystemScreenSaverPrivate::setScreenBlankingEnabled(bool state)
 {
-    Q_UNUSED(state);
+    if(kdeIsRunning) {
+        QString kdeSSConfig;
+        if(QDir( QDir::homePath()+"/.kde4/").exists()) {
+            kdeSSConfig = QDir::homePath()+"/.kde4/share/config/kscreensaverrc";
+        } else if(QDir(QDir::homePath()+"/.kde/").exists()) {
+            kdeSSConfig = QDir::homePath()+"/.kde/share/config/kscreensaverrc";
+        }
+
+        QSettings kdeScreenSaveConfig(kdeSSConfig, QSettings::IniFormat);
+        kdeScreenSaveConfig.beginGroup("ScreenSaver");
+        if(kdeScreenSaveConfig.status() == QSettings::NoError) {
+            if(state) {
+                screenPath = kdeScreenSaveConfig.value("Saver").toString();
+                kdeScreenSaveConfig.setValue("Saver","kblank.desktop");
+                return true;
+            } else {
+                kdeScreenSaveConfig.setValue("Saver", screenPath);
+                screenPath = "";
+                return true;
+            }
+        }
+    }
+
     return false;
 }
 
 bool QSystemScreenSaverPrivate::screenSaverEnabled()
 {
     if(kdeIsRunning) {
-        QSettings kdeScreenSaveConfig(QDir::homePath()+"/.kde/share/config/kscreensaverrc", QSettings::IniFormat);
+        QString kdeSSConfig;
+        if(QDir( QDir::homePath()+"/.kde4/").exists()) {
+            kdeSSConfig = QDir::homePath()+"/.kde4/share/config/kscreensaverrc";
+        } else if(QDir(QDir::homePath()+"/.kde/").exists()) {
+            kdeSSConfig = QDir::homePath()+"/.kde/share/config/kscreensaverrc";
+        }
+        QSettings kdeScreenSaveConfig(kdeSSConfig, QSettings::IniFormat);
         kdeScreenSaveConfig.beginGroup("ScreenSaver");
         if(kdeScreenSaveConfig.status() == QSettings::NoError) {
             if(kdeScreenSaveConfig.value("Enabled").toBool() == false) {
@@ -1416,7 +1443,6 @@ bool QSystemScreenSaverPrivate::screenSaverEnabled()
             }
         }
     }
-
     return false;
 }
 
@@ -1424,7 +1450,14 @@ bool QSystemScreenSaverPrivate::screenBlankingEnabled()
 {
     bool saverEnabled = false;
     if(kdeIsRunning) {
-        QSettings kdeScreenSaveConfig(QDir::homePath()+"/.kde/share/config/kscreensaverrc", QSettings::IniFormat);
+        QString kdeSSConfig;
+        if(QDir( QDir::homePath()+"/.kde4/").exists()) {
+            kdeSSConfig = QDir::homePath()+"/.kde4/share/config/kscreensaverrc";
+        } else if(QDir(QDir::homePath()+"/.kde/").exists()) {
+            kdeSSConfig = QDir::homePath()+"/.kde/share/config/kscreensaverrc";
+        }
+
+        QSettings kdeScreenSaveConfig(kdeSSConfig, QSettings::IniFormat);
         kdeScreenSaveConfig.beginGroup("ScreenSaver");
         if(kdeScreenSaveConfig.status() == QSettings::NoError) {
             if(screenSaverEnabled() && kdeScreenSaveConfig.value("Saver").toString().contains("kblank")) {
@@ -1432,13 +1465,20 @@ bool QSystemScreenSaverPrivate::screenBlankingEnabled()
             }
         }
     }
+
     return false;
 }
 
 bool QSystemScreenSaverPrivate::isScreenLockOn()
 {
     if(kdeIsRunning) {
-        QSettings kdeScreenSaveConfig(QDir::homePath()+"/.kde/share/config/kscreensaverrc", QSettings::IniFormat);
+        QString kdeSSConfig;
+        if(QDir( QDir::homePath()+"/.kde4/").exists()) {
+            kdeSSConfig = QDir::homePath()+"/.kde4/share/config/kscreensaverrc";
+        } else if(QDir(QDir::homePath()+"/.kde/").exists()) {
+            kdeSSConfig = QDir::homePath()+"/.kde/share/config/kscreensaverrc";
+        }
+        QSettings kdeScreenSaveConfig(kdeSSConfig, QSettings::IniFormat);
         kdeScreenSaveConfig.beginGroup("ScreenSaver");
         if(kdeScreenSaveConfig.status() == QSettings::NoError) {
             return kdeScreenSaveConfig.value("Lock").toBool();
@@ -1454,7 +1494,7 @@ void QSystemScreenSaverPrivate::whichWMRunning()
     QDBusInterface *connectionInterface;
     connectionInterface = new QDBusInterface("org.kde.kwin",
                                              "/KWin",
-                                             "org.kde.KWin.currentDesktop",
+                                             "org.kde.KWin",
                                              dbusConnection);
     if(connectionInterface->isValid()) {
         kdeIsRunning = true;
@@ -1462,7 +1502,7 @@ void QSystemScreenSaverPrivate::whichWMRunning()
     }
     connectionInterface = new QDBusInterface("org.gnome.SessionManager",
                                              "/org/gnome/SessionManager",
-                                             "org.gnome.SessionManager.SessionRunning",
+                                             "org.gnome.SessionManager",
                                              dbusConnection);
     if(connectionInterface->isValid()) {
        gnomeIsRunning = true;
