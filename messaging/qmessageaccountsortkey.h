@@ -44,13 +44,14 @@ public:
     QMessageAccountSortKey();
     QMessageAccountSortKey(const QMessageAccountSortKey &other);
     virtual ~QMessageAccountSortKey();
+
     bool isEmpty() const;
     bool isSupported() const;
 
     bool operator==(const QMessageAccountSortKey &other) const;
     const QMessageAccountSortKey& operator=(const QMessageAccountSortKey &other);
 
-    static QMessageAccountSortKey name(Qt::SortOrder order = Qt::AscendingOrder);
+    static QMessageAccountSortKey byName(Qt::SortOrder order = Qt::AscendingOrder);
 
 private:
     QMessageAccountSortKeyPrivate *d_ptr;

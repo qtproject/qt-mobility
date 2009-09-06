@@ -48,12 +48,13 @@ class Q_MESSAGING_EXPORT QMessageFilterKey
     Q_DECLARE_PRIVATE(QMessageFilterKey)
 
 public:
-    void setOptions(QMessageDataComparator::Options options);
-    QMessageDataComparator::Options options() const;
-
     QMessageFilterKey();
     QMessageFilterKey(const QMessageFilterKey &other);
     virtual ~QMessageFilterKey();
+
+    void setOptions(QMessageDataComparator::Options options);
+    QMessageDataComparator::Options options() const;
+
     bool isEmpty() const;
     bool isSupported() const;
 
@@ -66,46 +67,48 @@ public:
     bool operator==(const QMessageFilterKey &other) const;
     const QMessageFilterKey& operator=(const QMessageFilterKey &other);
 
-    static QMessageFilterKey id(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
-    static QMessageFilterKey id(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
-    static QMessageFilterKey id(const QMessageFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+    static QMessageFilterKey byId(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
+    static QMessageFilterKey byId(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+    static QMessageFilterKey byId(const QMessageFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
-    static QMessageFilterKey type(QMessage::Type type, QMessageDataComparator::EqualityComparator cmp);
-    static QMessageFilterKey type(QMessage::TypeFlags type, QMessageDataComparator::InclusionComparator cmp);
+    static QMessageFilterKey byType(QMessage::Type type, QMessageDataComparator::EqualityComparator cmp);
+    static QMessageFilterKey byType(QMessage::TypeFlags type, QMessageDataComparator::InclusionComparator cmp);
 
-    static QMessageFilterKey sender(const QString &value, QMessageDataComparator::EqualityComparator cmp);
-    static QMessageFilterKey sender(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+    static QMessageFilterKey bySender(const QString &value, QMessageDataComparator::EqualityComparator cmp);
+    static QMessageFilterKey bySender(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
-    static QMessageFilterKey recipients(const QString &value, QMessageDataComparator::EqualityComparator cmp);
-    static QMessageFilterKey recipients(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+    static QMessageFilterKey byRecipients(const QString &value, QMessageDataComparator::EqualityComparator cmp);
+    static QMessageFilterKey byRecipients(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
-    static QMessageFilterKey subject(const QString &value, QMessageDataComparator::EqualityComparator cmp);
-    static QMessageFilterKey subject(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+    static QMessageFilterKey bySubject(const QString &value, QMessageDataComparator::EqualityComparator cmp);
+    static QMessageFilterKey bySubject(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
-    static QMessageFilterKey timeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
-    static QMessageFilterKey timeStamp(const QDateTime &value, QMessageDataComparator::RelationComparator cmp);
+    static QMessageFilterKey byTimeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
+    static QMessageFilterKey byTimeStamp(const QDateTime &value, QMessageDataComparator::RelationComparator cmp);
 
-    static QMessageFilterKey receptionTimeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
-    static QMessageFilterKey receptionTimeStamp(const QDateTime &value, QMessageDataComparator::RelationComparator cmp);
+    static QMessageFilterKey byReceptionTimeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
+    static QMessageFilterKey byReceptionTimeStamp(const QDateTime &value, QMessageDataComparator::RelationComparator cmp);
 
-    static QMessageFilterKey status(QMessage::Status value, QMessageDataComparator::EqualityComparator cmp);
-    static QMessageFilterKey status(QMessage::StatusFlags mask, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+    static QMessageFilterKey byStatus(QMessage::Status value, QMessageDataComparator::EqualityComparator cmp);
+    static QMessageFilterKey byStatus(QMessage::StatusFlags mask, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
-    static QMessageFilterKey priority(QMessage::Priority priority, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
+    static QMessageFilterKey byPriority(QMessage::Priority priority, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
 
-    static QMessageFilterKey size(int value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
-    static QMessageFilterKey size(int value, QMessageDataComparator::RelationComparator cmp);
+    static QMessageFilterKey bySize(int value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
+    static QMessageFilterKey bySize(int value, QMessageDataComparator::RelationComparator cmp);
 
-    static QMessageFilterKey customField(const QString &name, const QString &value, QMessageDataComparator::EqualityComparator cmp);
-    static QMessageFilterKey customField(const QString &name, const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+    static QMessageFilterKey byCustomField(const QString &name, const QString &value, QMessageDataComparator::EqualityComparator cmp);
+    static QMessageFilterKey byCustomField(const QString &name, const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
-    static QMessageFilterKey parentAccountId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
-    static QMessageFilterKey parentAccountId(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+    static QMessageFilterKey byParentAccountId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
+    static QMessageFilterKey byParentAccountId(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+
 #ifdef QMESSAGING_OPTIONAL_FOLDER
-    static QMessageFilterKey parentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
-    static QMessageFilterKey parentFolderId(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
-    static QMessageFilterKey ancestorFolderIds(const QMessageFolderId &id, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
-    static QMessageFilterKey ancestorFolderIds(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+    static QMessageFilterKey byParentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
+    static QMessageFilterKey byParentFolderId(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+
+    static QMessageFilterKey byAncestorFolderIds(const QMessageFolderId &id, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+    static QMessageFilterKey byAncestorFolderIds(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 #endif
 
 private:

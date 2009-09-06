@@ -120,7 +120,7 @@
 */
     
 /*!
-    \fn QMessageFolderSortKey::displayName(Qt::SortOrder order)
+    \fn QMessageFolderSortKey::byDisplayName(Qt::SortOrder order)
   
     Returns a key that sorts folders by display name, according to \a order.
 
@@ -128,7 +128,7 @@
 */
 
 /*!
-    \fn QMessageFolderSortKey::path(Qt::SortOrder order)
+    \fn QMessageFolderSortKey::byPath(Qt::SortOrder order)
   
     Returns a key that sorts messages by path according to \a order.
 

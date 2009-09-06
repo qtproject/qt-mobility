@@ -53,30 +53,12 @@
 
     To create a query for all messages sent from "joe@user.com" with subject "meeting":
     \code
-    QMessageFilterKey subjectKey(QMessageFilterKey::subject("meeting"));
-    QMessageFilterKey senderKey(QMessageFilterKey::sender("joe@user.com"));
+    QMessageFilterKey subjectKey(QMessageFilterKey::bySubject("meeting"));
+    QMessageFilterKey senderKey(QMessageFilterKey::bySender("joe@user.com"));
     QMessageIdList results = QMessageStore::instance()->queryMessages(subjectKey & senderKey);
     \endcode
 
     \sa QMessageStore, QMessage
-*/
-
-/*!
-    \fn QMessageFilterKey::setOptions(QMessageDataComparator::Options options)
-  
-    Set the options for the search key to \a options.
-
-    \sa options()
-*/
-
-/*!
-    \fn QMessageFilterKey::options() const
-  
-    Return the options for the search key.
-    
-    Default is no options set.
-
-    \sa setOptions()
 */
 
 /*!
@@ -101,6 +83,24 @@
     \fn QMessageFilterKey::~QMessageFilterKey()
     
     Destroys the key.
+*/
+
+/*!
+    \fn QMessageFilterKey::setOptions(QMessageDataComparator::Options options)
+  
+    Set the options for the search key to \a options.
+
+    \sa options()
+*/
+
+/*!
+    \fn QMessageFilterKey::options() const
+  
+    Return the options for the search key.
+    
+    Default is no options set.
+
+    \sa setOptions()
 */
 
 /*!
@@ -173,7 +173,7 @@
 */
 
 /*!
-    \fn QMessageFilterKey::id(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp)
+    \fn QMessageFilterKey::byId(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a key matching messages whose identifier matches \a id, according to \a cmp.
 
@@ -181,7 +181,7 @@
 */
 
 /*!
-    \fn QMessageFilterKey::id(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp)
+    \fn QMessageFilterKey::byId(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp)
   
     Returns a key matching messages whose identifier is a member of \a ids, according to \a cmp.
 
@@ -189,7 +189,7 @@
 */
 
 /*!
-    \fn QMessageFilterKey::id(const QMessageFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+    \fn QMessageFilterKey::byId(const QMessageFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
   
     Returns a key matching messages whose identifier is a member of the set yielded by \a key, according to \a cmp.
 
@@ -197,7 +197,7 @@
 */
 
 /*!
-    \fn QMessageFilterKey::type(QMessage::Type type, QMessageDataComparator::EqualityComparator cmp)
+    \fn QMessageFilterKey::byType(QMessage::Type type, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a key matching messages whose type matches \a type, according to \a cmp.
 
@@ -205,7 +205,7 @@
 */
 
 /*!
-    \fn QMessageFilterKey::type(QMessage::TypeFlags type, QMessageDataComparator::InclusionComparator cmp)
+    \fn QMessageFilterKey::byType(QMessage::TypeFlags type, QMessageDataComparator::InclusionComparator cmp)
   
     Returns a key matching accounts whose type is a bitwise match to \a type, according to \a cmp.
 
@@ -213,7 +213,7 @@
 */
 
 /*!
-    \fn QMessageFilterKey::sender(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+    \fn QMessageFilterKey::bySender(const QString &value, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a key matching messages whose sender matches \a value, according to \a cmp.
 
@@ -221,7 +221,7 @@
 */
 
 /*!
-    \fn QMessageFilterKey::sender(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+    \fn QMessageFilterKey::bySender(const QString &value, QMessageDataComparator::InclusionComparator cmp)
   
     Returns a key matching messages whose sender matches the substring \a value, according to \a cmp.
 
@@ -229,7 +229,7 @@
 */
 
 /*!
-    \fn QMessageFilterKey::recipients(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+    \fn QMessageFilterKey::byRecipients(const QString &value, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a key matching messages whose recipients include \a value, according to \a cmp.
 
@@ -237,7 +237,7 @@
 */
 
 /*!
-    \fn QMessageFilterKey::recipients(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+    \fn QMessageFilterKey::byRecipients(const QString &value, QMessageDataComparator::InclusionComparator cmp)
   
     Returns a key matching messages whose recipients include the substring \a value, 
     according to \a cmp.
@@ -246,7 +246,7 @@
 */
 
 /*!
-    \fn QMessageFilterKey::subject(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+    \fn QMessageFilterKey::bySubject(const QString &value, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a key matching messages whose subject matches \a value, according 
     to \a cmp.
@@ -255,7 +255,7 @@
 */
 
 /*!
-    \fn QMessageFilterKey::subject(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+    \fn QMessageFilterKey::bySubject(const QString &value, QMessageDataComparator::InclusionComparator cmp)
   
     Returns a key matching messages whose subject matches the 
     substring \a value, according to \a cmp.
@@ -264,7 +264,7 @@
 */
 
 /*!
-    \fn QMessageFilterKey::timeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp)
+    \fn QMessageFilterKey::byTimeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a key matching messages whose timestamp matches \a value, according to \a cmp.
 
@@ -272,7 +272,7 @@
 */
 
 /*!
-    \fn QMessageFilterKey::timeStamp(const QDateTime &value, QMessageDataComparator::RelationComparator cmp)
+    \fn QMessageFilterKey::byTimeStamp(const QDateTime &value, QMessageDataComparator::RelationComparator cmp)
   
     Returns a key matching messages whose timestamp has the relation to \a value that is specified by \a cmp.
 
@@ -280,7 +280,7 @@
 */
 
 /*!
-    \fn QMessageFilterKey::receptionTimeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp)
+    \fn QMessageFilterKey::byReceptionTimeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a key matching messages whose reception timestamp matches \a value, according to \a cmp.
 
@@ -288,7 +288,7 @@
 */
 
 /*!
-    \fn QMessageFilterKey::receptionTimeStamp(const QDateTime &value, QMessageDataComparator::RelationComparator cmp)
+    \fn QMessageFilterKey::byReceptionTimeStamp(const QDateTime &value, QMessageDataComparator::RelationComparator cmp)
   
     Returns a key matching messages whose reception timestamp has the relation to \a value that is specified by \a cmp.
 
@@ -296,7 +296,7 @@
 */
 
 /*!
-    \fn QMessageFilterKey::status(QMessage::Status value, QMessageDataComparator::EqualityComparator cmp)
+    \fn QMessageFilterKey::byStatus(QMessage::Status value, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a key matching messages whose status matches \a value, according to \a cmp.
 
@@ -304,7 +304,7 @@
 */
 
 /*!
-    \fn QMessageFilterKey::status(QMessage::StatusFlags mask, QMessageDataComparator::InclusionComparator cmp)
+    \fn QMessageFilterKey::byStatus(QMessage::StatusFlags mask, QMessageDataComparator::InclusionComparator cmp)
   
     Returns a key matching messages whose status is a bitwise match to \a mask, according to \a cmp.
 
@@ -312,7 +312,7 @@
 */
 
 /*!
-    \fn QMessageFilterKey::priority(QMessage::Priority value, QMessageDataComparator::EqualityComparator cmp)
+    \fn QMessageFilterKey::byPriority(QMessage::Priority value, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a key matching messages whose priority matches \a value, according to \a cmp.
 
@@ -320,7 +320,7 @@
 */
 
 /*!
-    \fn QMessageFilterKey::size(int value, QMessageDataComparator::EqualityComparator cmp)
+    \fn QMessageFilterKey::bySize(int value, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a key matching messages whose size matches \a value, according to \a cmp.
 
@@ -328,7 +328,7 @@
 */
 
 /*!
-    \fn QMessageFilterKey::size(int value, QMessageDataComparator::RelationComparator cmp)
+    \fn QMessageFilterKey::bySize(int value, QMessageDataComparator::RelationComparator cmp)
   
     Returns a key matching messages whose size matches \a value, according to \a cmp.
 
@@ -336,7 +336,7 @@
 */
 
 /*!
-    \fn QMessageFilterKey::customField(const QString &name, const QString &value, QMessageDataComparator::EqualityComparator cmp)
+    \fn QMessageFilterKey::byCustomField(const QString &name, const QString &value, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a key matching messages having a custom field with the name \a name, whose 
     value matches \a value, according to \a cmp.
@@ -345,7 +345,7 @@
 */
 
 /*!
-    \fn QMessageFilterKey::customField(const QString &name, const QString &value, QMessageDataComparator::InclusionComparator cmp)
+    \fn QMessageFilterKey::byCustomField(const QString &name, const QString &value, QMessageDataComparator::InclusionComparator cmp)
   
     Returns a key matching messages having a custom field with the name \a name, whose value 
     matches the substring \a value, according to \a cmp.
@@ -354,7 +354,7 @@
 */
 
 /*!
-    \fn QMessageFilterKey::parentAccountId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
+    \fn QMessageFilterKey::byParentAccountId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a key matching messages whose parent account's identifier matches \a id, according to 
     \a cmp.
@@ -363,7 +363,7 @@
 */
 
 /*!
-    \fn QMessageFilterKey::parentAccountId(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+    \fn QMessageFilterKey::byParentAccountId(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
   
     Returns a key matching messages whose parent account's identifier is a member of the set 
     yielded by \a key, according to \a cmp.
@@ -373,7 +373,7 @@
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 /*!
-    \fn QMessageFilterKey::parentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
+    \fn QMessageFilterKey::byParentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a key matching messages whose parent folder's identifier matches \a id, according to 
     \a cmp.
@@ -382,7 +382,7 @@
 */
 
 /*!
-    \fn QMessageFilterKey::parentFolderId(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+    \fn QMessageFilterKey::byParentFolderId(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
   
     Returns a key matching messages whose parent folder's identifier is a member of the set 
     yielded by \a key, according to \a cmp.
@@ -391,7 +391,7 @@
 */
 
 /*!
-    \fn QMessageFilterKey::ancestorFolderIds(const QMessageFolderId &id, QMessageDataComparator::InclusionComparator cmp)
+    \fn QMessageFilterKey::byAncestorFolderIds(const QMessageFolderId &id, QMessageDataComparator::InclusionComparator cmp)
   
     Returns a key matching messages whose ancestor folders' identifiers contain \a id, according 
     to \a cmp.
@@ -400,7 +400,7 @@
 */
 
 /*!
-    \fn QMessageFilterKey::ancestorFolderIds(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+    \fn QMessageFilterKey::byAncestorFolderIds(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
   
     Returns a key matching messages whose ancestor folders' identifiers contain a member of the 
     set yielded by \a key, according to \a cmp.

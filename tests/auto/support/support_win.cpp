@@ -969,7 +969,7 @@ QMessageId addMessage(const Parameters &params)
     if (!to.isEmpty() && !from.isEmpty() && !date.isEmpty() && !subject.isEmpty() &&
         !parentAccountName.isEmpty() && !parentFolderPath.isEmpty()) {
         // Find the named account
-        QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilterKey::name(parentAccountName)));
+        QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilterKey::byName(parentAccountName)));
 #if defined(Q_OS_WIN) && !defined(ACCOUNT_FILTERING_IMPLEMENTED)
 {
     // Keys aren't implemented yet...
@@ -989,7 +989,7 @@ QMessageId addMessage(const Parameters &params)
 #endif
         if (accountIds.count() == 1) {
             // Find the specified folder
-            QMessageFolderFilterKey key(QMessageFolderFilterKey::path(parentFolderPath) & QMessageFolderFilterKey::parentAccountId(accountIds.first()));
+            QMessageFolderFilterKey key(QMessageFolderFilterKey::byPath(parentFolderPath) & QMessageFolderFilterKey::byParentAccountId(accountIds.first()));
             QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders(key));
 #if defined(Q_OS_WIN) && !defined(FOLDER_FILTERING_IMPLEMENTED)
 {

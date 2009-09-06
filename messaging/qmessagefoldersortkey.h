@@ -45,6 +45,7 @@ public:
     QMessageFolderSortKey();
     QMessageFolderSortKey(const QMessageFolderSortKey &other);
     virtual ~QMessageFolderSortKey();
+
     bool isEmpty() const;
     bool isSupported() const;
 
@@ -54,8 +55,8 @@ public:
     bool operator==(const QMessageFolderSortKey &other) const;
     const QMessageFolderSortKey& operator=(const QMessageFolderSortKey &other);
 
-    static QMessageFolderSortKey displayName(Qt::SortOrder order = Qt::AscendingOrder);
-    static QMessageFolderSortKey path(Qt::SortOrder order = Qt::AscendingOrder);
+    static QMessageFolderSortKey byDisplayName(Qt::SortOrder order = Qt::AscendingOrder);
+    static QMessageFolderSortKey byPath(Qt::SortOrder order = Qt::AscendingOrder);
 
 private:
     QMessageFolderSortKeyPrivate *d_ptr;

@@ -242,34 +242,34 @@ const QMessageSortKey& QMessageSortKey::operator=(const QMessageSortKey& other)
     return *this;
 }
 
-QMessageSortKey QMessageSortKey::type(Qt::SortOrder order)
+QMessageSortKey QMessageSortKey::byType(Qt::SortOrder order)
 {
     QMessageSortKey result(QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Type, order)); // stub
     result.d_ptr->_valid = false; // Not yet implemented
     return result;
 }
 
-QMessageSortKey QMessageSortKey::sender(Qt::SortOrder order)
+QMessageSortKey QMessageSortKey::bySender(Qt::SortOrder order)
 {
     // Partially implemented, can sort by sender name only not sender email address
     // TODO: Update doc to reflect this
     return QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Sender, order);
 }
 
-QMessageSortKey QMessageSortKey::recipients(Qt::SortOrder order)
+QMessageSortKey QMessageSortKey::byRecipients(Qt::SortOrder order)
 {
     QMessageSortKey result(QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Recipients, order));
     result.d_ptr->_valid = false; // Not supported
     return result;
 }
 
-QMessageSortKey QMessageSortKey::subject(Qt::SortOrder order)
+QMessageSortKey QMessageSortKey::bySubject(Qt::SortOrder order)
 {
     QMessageSortKey result(QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Subject, order));
     return result;
 }
 
-QMessageSortKey QMessageSortKey::timeStamp(Qt::SortOrder order)
+QMessageSortKey QMessageSortKey::byTimeStamp(Qt::SortOrder order)
 {
     QMessageSortKey result(QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::TimeStamp, order));
 #ifdef _WIN32_WCE
@@ -278,12 +278,12 @@ QMessageSortKey QMessageSortKey::timeStamp(Qt::SortOrder order)
     return result;
 }
 
-QMessageSortKey QMessageSortKey::receptionTimeStamp(Qt::SortOrder order)
+QMessageSortKey QMessageSortKey::byReceptionTimeStamp(Qt::SortOrder order)
 {
     return QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::ReceptionTimeStamp, order);
 }
 
-QMessageSortKey QMessageSortKey::status(QMessage::Status flag, Qt::SortOrder order)
+QMessageSortKey QMessageSortKey::byStatus(QMessage::Status flag, Qt::SortOrder order)
 {
     QMessageSortKey result;
     switch (flag) {
@@ -300,14 +300,14 @@ QMessageSortKey QMessageSortKey::status(QMessage::Status flag, Qt::SortOrder ord
     return result;
 }
 
-QMessageSortKey QMessageSortKey::priority(Qt::SortOrder order)
+QMessageSortKey QMessageSortKey::byPriority(Qt::SortOrder order)
 {
     QMessageSortKey result(QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Priority, order));
     result.d_ptr->_valid = false; // Not yet implemented
     return result;
 }
 
-QMessageSortKey QMessageSortKey::size(Qt::SortOrder order)
+QMessageSortKey QMessageSortKey::bySize(Qt::SortOrder order)
 {
     return QMessageSortKeyPrivate::from(QMessageSortKeyPrivate::Size, order);
 }

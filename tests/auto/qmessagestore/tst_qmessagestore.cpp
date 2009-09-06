@@ -148,7 +148,7 @@ void tst_QMessageStore::testFolder()
     // Ensure we have an account to link these folders to
     static const QString testAccountName("testAccount");
     QMessageAccountId testAccountId;
-    QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilterKey::name(testAccountName)));
+    QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilterKey::byName(testAccountName)));
 #if defined(Q_OS_WIN) && !defined(ACCOUNT_FILTERING_IMPLEMENTED)
 {
     // Key filtering is not implemented yet
@@ -197,7 +197,7 @@ void tst_QMessageStore::testFolder()
     QCOMPARE(folder.parentAccountId(), testAccountId);
 
     if (!parentFolderPath.isEmpty()) {
-        QMessageFolderFilterKey key(QMessageFolderFilterKey::path(parentFolderPath) & QMessageFolderFilterKey::parentAccountId(testAccountId));
+        QMessageFolderFilterKey key(QMessageFolderFilterKey::byPath(parentFolderPath) & QMessageFolderFilterKey::byParentAccountId(testAccountId));
         QMessageFolderIdList list(QMessageStore::instance()->queryFolders(key));
 #if defined(Q_OS_WIN) && !defined(FOLDER_FILTERING_IMPLEMENTED)
 {
@@ -257,7 +257,7 @@ void tst_QMessageStore::testMessage()
     static const QString testAccountName("testAccount");
 
     QMessageAccountId testAccountId;
-    QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilterKey::name(testAccountName)));
+    QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilterKey::byName(testAccountName)));
 #if defined(Q_OS_WIN) && !defined(ACCOUNT_FILTERING_IMPLEMENTED)
 {
     // Key filtering is not implemented yet
@@ -287,7 +287,7 @@ void tst_QMessageStore::testMessage()
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolderId testFolderId;
-    QMessageFolderFilterKey key(QMessageFolderFilterKey::displayName("Inbox") & QMessageFolderFilterKey::parentAccountId(testAccountId));
+    QMessageFolderFilterKey key(QMessageFolderFilterKey::byDisplayName("Inbox") & QMessageFolderFilterKey::byParentAccountId(testAccountId));
     QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders(key));
 #if defined(Q_OS_WIN) && !defined(FOLDER_FILTERING_IMPLEMENTED)
 {

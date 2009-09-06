@@ -124,14 +124,14 @@ const QMessageFolderSortKey& QMessageFolderSortKey::operator=(const QMessageFold
     return *this;
 }
 
-QMessageFolderSortKey QMessageFolderSortKey::displayName(Qt::SortOrder order)
+QMessageFolderSortKey QMessageFolderSortKey::byDisplayName(Qt::SortOrder order)
 {
     QMessageFolderSortKey key;
     key.d_ptr->_key = QMailFolderSortKey::displayName(order);
     return key;
 }
 
-QMessageFolderSortKey QMessageFolderSortKey::path(Qt::SortOrder order)
+QMessageFolderSortKey QMessageFolderSortKey::byPath(Qt::SortOrder order)
 {
     QMessageFolderSortKey key;
     key.d_ptr->_key = QMailFolderSortKey::path(order);

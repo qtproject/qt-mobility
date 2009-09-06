@@ -470,16 +470,6 @@ void QMessageFilterKeyPrivate::filterTable(QMessageStore::ErrorCode *lastError, 
         *lastError = QMessageStore::ConstraintFailure;
 }
 
-void QMessageFilterKey::setOptions(QMessageDataComparator::Options options)
-{
-    d_ptr->_options = options;
-}
-
-QMessageDataComparator::Options QMessageFilterKey::options() const
-{
-    return d_ptr->_options;
-}
-
 QMessageFilterKeyPrivate::QMessageFilterKeyPrivate(QMessageFilterKey *messageFilterKey)
     :q_ptr(messageFilterKey),
      _field(None),
@@ -517,6 +507,16 @@ QMessageFilterKey::~QMessageFilterKey()
 {
     delete d_ptr;
     d_ptr = 0;
+}
+
+void QMessageFilterKey::setOptions(QMessageDataComparator::Options options)
+{
+    d_ptr->_options = options;
+}
+
+QMessageDataComparator::Options QMessageFilterKey::options() const
+{
+    return d_ptr->_options;
 }
 
 bool QMessageFilterKey::isEmpty() const
@@ -662,7 +662,7 @@ const QMessageFilterKey& QMessageFilterKey::operator=(const QMessageFilterKey& o
     return *this;
 }
 
-QMessageFilterKey QMessageFilterKey::id(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp)
+QMessageFilterKey QMessageFilterKey::byId(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp)
 {
     // Not implemented
     QMessageFilterKey result(QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Id, QVariant(id.toString()), cmp)); // stub
@@ -670,7 +670,7 @@ QMessageFilterKey QMessageFilterKey::id(const QMessageId &id, QMessageDataCompar
     return result;
 }
 
-QMessageFilterKey QMessageFilterKey::id(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp)
+QMessageFilterKey QMessageFilterKey::byId(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp)
 {
     // Not implemented
     QStringList idList;
@@ -681,7 +681,7 @@ QMessageFilterKey QMessageFilterKey::id(const QMessageIdList &ids, QMessageDataC
     return result;
 }
 
-QMessageFilterKey QMessageFilterKey::id(const QMessageFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+QMessageFilterKey QMessageFilterKey::byId(const QMessageFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
 {
     // Not implemented
     Q_UNUSED(key)
@@ -691,7 +691,7 @@ QMessageFilterKey QMessageFilterKey::id(const QMessageFilterKey &key, QMessageDa
     return result;
 }
 
-QMessageFilterKey QMessageFilterKey::type(QMessage::Type type, QMessageDataComparator::EqualityComparator cmp)
+QMessageFilterKey QMessageFilterKey::byType(QMessage::Type type, QMessageDataComparator::EqualityComparator cmp)
 {
     // Not implemented
     QMessageFilterKey result(QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Type, QVariant(type), cmp)); // stub
@@ -699,7 +699,7 @@ QMessageFilterKey QMessageFilterKey::type(QMessage::Type type, QMessageDataCompa
     return result;
 }
 
-QMessageFilterKey QMessageFilterKey::type(QMessage::TypeFlags type, QMessageDataComparator::InclusionComparator cmp)
+QMessageFilterKey QMessageFilterKey::byType(QMessage::TypeFlags type, QMessageDataComparator::InclusionComparator cmp)
 {
     // Not implemented
     QMessageFilterKey result(QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Type, QVariant(type), cmp)); // stub
@@ -707,7 +707,7 @@ QMessageFilterKey QMessageFilterKey::type(QMessage::TypeFlags type, QMessageData
     return result;
 }
 
-QMessageFilterKey QMessageFilterKey::sender(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+QMessageFilterKey QMessageFilterKey::bySender(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
     Q_UNUSED(value)
     Q_UNUSED(cmp)
@@ -716,7 +716,7 @@ QMessageFilterKey QMessageFilterKey::sender(const QString &value, QMessageDataCo
     return result;
 }
 
-QMessageFilterKey QMessageFilterKey::sender(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+QMessageFilterKey QMessageFilterKey::bySender(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
     // Partially implemented, search email address but not name
     if (value.isEmpty()) {
@@ -727,7 +727,7 @@ QMessageFilterKey QMessageFilterKey::sender(const QString &value, QMessageDataCo
     return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Sender, QVariant(value), cmp);
 }
 
-QMessageFilterKey QMessageFilterKey::recipients(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+QMessageFilterKey QMessageFilterKey::byRecipients(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
     // Not implemented
     QMessageFilterKey result(QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Recipients, QVariant(value), cmp));
@@ -735,7 +735,7 @@ QMessageFilterKey QMessageFilterKey::recipients(const QString &value, QMessageDa
     return result;
 }
 
-QMessageFilterKey QMessageFilterKey::recipients(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+QMessageFilterKey QMessageFilterKey::byRecipients(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
     if (value.isEmpty()) {
         if (cmp == QMessageDataComparator::Includes)
@@ -745,13 +745,13 @@ QMessageFilterKey QMessageFilterKey::recipients(const QString &value, QMessageDa
     return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Recipients, QVariant(value), cmp);
 }
 
-QMessageFilterKey QMessageFilterKey::subject(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+QMessageFilterKey QMessageFilterKey::bySubject(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
     // TODO: Test this filter
     return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Subject, QVariant(value), cmp);
 }
 
-QMessageFilterKey QMessageFilterKey::subject(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+QMessageFilterKey QMessageFilterKey::bySubject(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
     if (value.isEmpty()) {
         if (cmp == QMessageDataComparator::Includes)
@@ -761,27 +761,27 @@ QMessageFilterKey QMessageFilterKey::subject(const QString &value, QMessageDataC
     return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Subject, QVariant(value), cmp);
 }
 
-QMessageFilterKey QMessageFilterKey::timeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp)
+QMessageFilterKey QMessageFilterKey::byTimeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp)
 {
     return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::TimeStamp, QVariant(value), cmp);
 }
 
-QMessageFilterKey QMessageFilterKey::timeStamp(const QDateTime &value, QMessageDataComparator::RelationComparator cmp)
+QMessageFilterKey QMessageFilterKey::byTimeStamp(const QDateTime &value, QMessageDataComparator::RelationComparator cmp)
 {
     return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::TimeStamp, QVariant(value), cmp);
 }
 
-QMessageFilterKey QMessageFilterKey::receptionTimeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp)
+QMessageFilterKey QMessageFilterKey::byReceptionTimeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp)
 {
     return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::ReceptionTimeStamp, QVariant(value), cmp);
 }
 
-QMessageFilterKey QMessageFilterKey::receptionTimeStamp(const QDateTime &value, QMessageDataComparator::RelationComparator cmp)
+QMessageFilterKey QMessageFilterKey::byReceptionTimeStamp(const QDateTime &value, QMessageDataComparator::RelationComparator cmp)
 {
     return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::ReceptionTimeStamp, QVariant(value), cmp);
 }
 
-QMessageFilterKey QMessageFilterKey::status(QMessage::Status value, QMessageDataComparator::EqualityComparator cmp)
+QMessageFilterKey QMessageFilterKey::byStatus(QMessage::Status value, QMessageDataComparator::EqualityComparator cmp)
 {
     QMessageDataComparator::InclusionComparator comparator(QMessageDataComparator::Excludes);
     if (cmp == QMessageDataComparator::Equal)
@@ -789,7 +789,7 @@ QMessageFilterKey QMessageFilterKey::status(QMessage::Status value, QMessageData
     return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Status, QVariant(value), comparator);
 }
 
-QMessageFilterKey QMessageFilterKey::status(QMessage::StatusFlags mask, QMessageDataComparator::InclusionComparator cmp)
+QMessageFilterKey QMessageFilterKey::byStatus(QMessage::StatusFlags mask, QMessageDataComparator::InclusionComparator cmp)
 {
     QMessageFilterKey result;
     QMessageDataComparator::EqualityComparator comparator(QMessageDataComparator::NotEqual);
@@ -808,23 +808,23 @@ QMessageFilterKey QMessageFilterKey::status(QMessage::StatusFlags mask, QMessage
     return result;
 }
 
-QMessageFilterKey QMessageFilterKey::priority(QMessage::Priority value, QMessageDataComparator::EqualityComparator cmp)
+QMessageFilterKey QMessageFilterKey::byPriority(QMessage::Priority value, QMessageDataComparator::EqualityComparator cmp)
 {
     return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Priority, QVariant(value), cmp);
 }
 
-QMessageFilterKey QMessageFilterKey::size(int value, QMessageDataComparator::EqualityComparator cmp)
+QMessageFilterKey QMessageFilterKey::bySize(int value, QMessageDataComparator::EqualityComparator cmp)
 {
     // TODO: Test this filer
     return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Size, QVariant(value), cmp);
 }
 
-QMessageFilterKey QMessageFilterKey::size(int value, QMessageDataComparator::RelationComparator cmp)
+QMessageFilterKey QMessageFilterKey::bySize(int value, QMessageDataComparator::RelationComparator cmp)
 {
     return QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::Size, QVariant(value), cmp);
 }
 
-QMessageFilterKey QMessageFilterKey::customField(const QString &name, const QString &value, QMessageDataComparator::EqualityComparator cmp)
+QMessageFilterKey QMessageFilterKey::byCustomField(const QString &name, const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
     QStringList nameValue;
     nameValue << name;
@@ -835,7 +835,7 @@ QMessageFilterKey QMessageFilterKey::customField(const QString &name, const QStr
     return result;
 }
 
-QMessageFilterKey QMessageFilterKey::customField(const QString &name, const QString &value, QMessageDataComparator::InclusionComparator cmp)
+QMessageFilterKey QMessageFilterKey::byCustomField(const QString &name, const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
     QStringList nameValue;
     nameValue << name;
@@ -846,7 +846,7 @@ QMessageFilterKey QMessageFilterKey::customField(const QString &name, const QStr
     return result;
 }
 
-QMessageFilterKey QMessageFilterKey::parentAccountId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
+QMessageFilterKey QMessageFilterKey::byParentAccountId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
 {
     // Not implemented
     QMessageFilterKey result(QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::ParentAccountId, QVariant(id.toString()), cmp));
@@ -855,7 +855,7 @@ QMessageFilterKey QMessageFilterKey::parentAccountId(const QMessageAccountId &id
     return result;
 }
 
-QMessageFilterKey QMessageFilterKey::parentAccountId(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+QMessageFilterKey QMessageFilterKey::byParentAccountId(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
 {
     // Not implemented
     Q_UNUSED(key)
@@ -867,7 +867,7 @@ QMessageFilterKey QMessageFilterKey::parentAccountId(const QMessageAccountFilter
 }
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
-QMessageFilterKey QMessageFilterKey::parentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
+QMessageFilterKey QMessageFilterKey::byParentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
 {
     // Not implemented
     QMessageFilterKey result(QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::ParentFolderId, QVariant(id.toString()), cmp)); // stub
@@ -876,7 +876,7 @@ QMessageFilterKey QMessageFilterKey::parentFolderId(const QMessageFolderId &id, 
     return result;
 }
 
-QMessageFilterKey QMessageFilterKey::parentFolderId(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+QMessageFilterKey QMessageFilterKey::byParentFolderId(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
 {
     // Not implemented
     Q_UNUSED(key)
@@ -887,7 +887,7 @@ QMessageFilterKey QMessageFilterKey::parentFolderId(const QMessageFolderFilterKe
     return result;
 }
 
-QMessageFilterKey QMessageFilterKey::ancestorFolderIds(const QMessageFolderId &id, QMessageDataComparator::InclusionComparator cmp)
+QMessageFilterKey QMessageFilterKey::byAncestorFolderIds(const QMessageFolderId &id, QMessageDataComparator::InclusionComparator cmp)
 {
     // Not implemented
     QMessageFilterKey result(QMessageFilterKeyPrivate::from(QMessageFilterKeyPrivate::AncestorFolderIds, QVariant(id.toString()), cmp));
@@ -896,7 +896,7 @@ QMessageFilterKey QMessageFilterKey::ancestorFolderIds(const QMessageFolderId &i
     return result;
 }
 
-QMessageFilterKey QMessageFilterKey::ancestorFolderIds(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+QMessageFilterKey QMessageFilterKey::byAncestorFolderIds(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
 {
     // Not implemented
     Q_UNUSED(key)

@@ -43,12 +43,13 @@ class Q_MESSAGING_EXPORT QMessageAccountFilterKey
     Q_DECLARE_PRIVATE(QMessageAccountFilterKey)
 
 public:
-    void setOptions(QMessageDataComparator::Options options);
-    QMessageDataComparator::Options options() const;
-
     QMessageAccountFilterKey();
     QMessageAccountFilterKey(const QMessageAccountFilterKey &other);
     virtual ~QMessageAccountFilterKey();
+
+    void setOptions(QMessageDataComparator::Options options);
+    QMessageDataComparator::Options options() const;
+
     bool isEmpty() const;
     bool isSupported() const;
 
@@ -61,15 +62,15 @@ public:
     bool operator==(const QMessageAccountFilterKey &other) const;
     const QMessageAccountFilterKey& operator=(const QMessageAccountFilterKey &other);
 
-    static QMessageAccountFilterKey id(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
-    static QMessageAccountFilterKey id(const QMessageAccountIdList &ids, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
-    static QMessageAccountFilterKey id(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+    static QMessageAccountFilterKey byId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
+    static QMessageAccountFilterKey byId(const QMessageAccountIdList &ids, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+    static QMessageAccountFilterKey byId(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
-    static QMessageAccountFilterKey fromAddress(const QString &value, QMessageDataComparator::EqualityComparator cmp);
-    static QMessageAccountFilterKey fromAddress(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+    static QMessageAccountFilterKey byFromAddress(const QString &value, QMessageDataComparator::EqualityComparator cmp);
+    static QMessageAccountFilterKey byFromAddress(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
-    static QMessageAccountFilterKey name(const QString &value, QMessageDataComparator::EqualityComparator cmp);
-    static QMessageAccountFilterKey name(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+    static QMessageAccountFilterKey byName(const QString &value, QMessageDataComparator::EqualityComparator cmp);
+    static QMessageAccountFilterKey byName(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
 private:
     QMessageAccountFilterKeyPrivate *d_ptr;

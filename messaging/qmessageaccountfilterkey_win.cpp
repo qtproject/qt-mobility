@@ -34,16 +34,6 @@
 #include "qmessageaccountfilterkey_p.h"
 
 
-void QMessageAccountFilterKey::setOptions(QMessageDataComparator::Options options)
-{
-    Q_UNUSED(options)
-}
-
-QMessageDataComparator::Options QMessageAccountFilterKey::options() const
-{
-    return 0;
-}
-
 QMessageAccountFilterKey::QMessageAccountFilterKey()
 {
 }
@@ -55,6 +45,16 @@ QMessageAccountFilterKey::QMessageAccountFilterKey(const QMessageAccountFilterKe
 
 QMessageAccountFilterKey::~QMessageAccountFilterKey()
 {
+}
+
+void QMessageAccountFilterKey::setOptions(QMessageDataComparator::Options options)
+{
+    Q_UNUSED(options)
+}
+
+QMessageDataComparator::Options QMessageAccountFilterKey::options() const
+{
+    return 0;
 }
 
 bool QMessageAccountFilterKey::isEmpty() const
@@ -108,49 +108,49 @@ const QMessageAccountFilterKey& QMessageAccountFilterKey::operator=(const QMessa
     return *this; // stub
 }
 
-QMessageAccountFilterKey QMessageAccountFilterKey::id(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
+QMessageAccountFilterKey QMessageAccountFilterKey::byId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
 {
     Q_UNUSED(id)
     Q_UNUSED(cmp)
     return QMessageAccountFilterKey(); // stub
 }
 
-QMessageAccountFilterKey QMessageAccountFilterKey::id(const QMessageAccountIdList &ids, QMessageDataComparator::InclusionComparator cmp)
+QMessageAccountFilterKey QMessageAccountFilterKey::byId(const QMessageAccountIdList &ids, QMessageDataComparator::InclusionComparator cmp)
 {
     Q_UNUSED(ids)
     Q_UNUSED(cmp)
     return QMessageAccountFilterKey(); // stub
 }
 
-QMessageAccountFilterKey QMessageAccountFilterKey::id(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+QMessageAccountFilterKey QMessageAccountFilterKey::byId(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
 {
     Q_UNUSED(key)
     Q_UNUSED(cmp)
     return QMessageAccountFilterKey(); // stub
 }
 
-QMessageAccountFilterKey QMessageAccountFilterKey::fromAddress(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+QMessageAccountFilterKey QMessageAccountFilterKey::byFromAddress(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
     Q_UNUSED(value)
     Q_UNUSED(cmp)
     return QMessageAccountFilterKey(); // stub
 }
 
-QMessageAccountFilterKey QMessageAccountFilterKey::fromAddress(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+QMessageAccountFilterKey QMessageAccountFilterKey::byFromAddress(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
     Q_UNUSED(value)
     Q_UNUSED(cmp)
     return QMessageAccountFilterKey(); // stub
 }
 
-QMessageAccountFilterKey QMessageAccountFilterKey::name(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+QMessageAccountFilterKey QMessageAccountFilterKey::byName(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
     Q_UNUSED(value)
     Q_UNUSED(cmp)
     return QMessageAccountFilterKey(); // stub
 }
 
-QMessageAccountFilterKey QMessageAccountFilterKey::name(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+QMessageAccountFilterKey QMessageAccountFilterKey::byName(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
     Q_UNUSED(value)
     Q_UNUSED(cmp)

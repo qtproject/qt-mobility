@@ -48,7 +48,7 @@
     For example:
     To create a query for all messages sorted by their timestamp in decending order:
     \code
-    QMessageSortKey sortKey(QMessageSortKey::timeStamp(Qt::DescendingOrder));
+    QMessageSortKey sortKey(QMessageSortKey::byTimeStamp(Qt::DescendingOrder));
     QMessageIdList results = QMessageStore::instance()->queryMessages(QMessageFilterKey(), sortKey);
     \endcode
     
@@ -126,7 +126,7 @@
 */
     
 /*!
-    \fn QMessageSortKey::type(Qt::SortOrder order)
+    \fn QMessageSortKey::byType(Qt::SortOrder order)
   
     Returns a key that sorts messages by their message type, according to \a order.
 
@@ -134,7 +134,7 @@
 */
 
 /*!
-    \fn QMessageSortKey::sender(Qt::SortOrder order)
+    \fn QMessageSortKey::bySender(Qt::SortOrder order)
   
     Returns a key that sorts messages by the address from which they were sent, according to \a order.
 
@@ -142,7 +142,7 @@
 */
 
 /*!
-    \fn QMessageSortKey::recipients(Qt::SortOrder order)
+    \fn QMessageSortKey::byRecipients(Qt::SortOrder order)
   
     Returns a key that sorts messages by the addresses to which they were sent, according to \a order.
 
@@ -150,7 +150,7 @@
 */
 
 /*!
-    \fn QMessageSortKey::subject(Qt::SortOrder order)
+    \fn QMessageSortKey::bySubject(Qt::SortOrder order)
   
     Returns a key that sorts messages by their subject, according to \a order.
 
@@ -158,7 +158,7 @@
 */
 
 /*!
-    \fn QMessageSortKey::timeStamp(Qt::SortOrder order)
+    \fn QMessageSortKey::byTimeStamp(Qt::SortOrder order)
   
     Returns a key that sorts messages by their origination timestamp, according to \a order.
 
@@ -166,7 +166,7 @@
 */
 
 /*!
-    \fn QMessageSortKey::receptionTimeStamp(Qt::SortOrder order)
+    \fn QMessageSortKey::byReceptionTimeStamp(Qt::SortOrder order)
   
     Returns a key that sorts messages by their reception timestamp, according to \a order.
 
@@ -174,7 +174,7 @@
 */
 
 /*!
-    \fn QMessageSortKey::status(QMessage::Status flag, Qt::SortOrder order)
+    \fn QMessageSortKey::byStatus(QMessage::Status flag, Qt::SortOrder order)
   
     Returns a key that sorts messages by their status value \a flag, according to \a order.
 
@@ -182,7 +182,7 @@
 */
 
 /*!
-    \fn QMessageSortKey::priority(Qt::SortOrder order)
+    \fn QMessageSortKey::byPriority(Qt::SortOrder order)
   
     Returns a key that sorts messages by their priority, according to \a order.
 
@@ -190,7 +190,7 @@
 */
 
 /*!
-    \fn QMessageSortKey::size(Qt::SortOrder order)
+    \fn QMessageSortKey::bySize(Qt::SortOrder order)
   
     Returns a key that sorts messages by their size, according to \a order.
 

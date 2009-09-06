@@ -101,7 +101,7 @@
 */
     
 /*!
-    \fn QMessageAccountSortKey::name(Qt::SortOrder order)
+    \fn QMessageAccountSortKey::byName(Qt::SortOrder order)
   
     Returns a key that sorts accounts by name, according to \a order.
 

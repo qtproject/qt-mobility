@@ -75,16 +75,6 @@ QMailAccountKey convert(const QMessageAccountFilterKey &key)
 
 }
 
-void QMessageAccountFilterKey::setOptions(QMessageDataComparator::Options options)
-{
-    d_ptr->_options |= options;
-}
-
-QMessageDataComparator::Options QMessageAccountFilterKey::options() const
-{
-    return d_ptr->_options;
-}
-
 QMessageAccountFilterKey::QMessageAccountFilterKey()
     : d_ptr(new QMessageAccountFilterKeyPrivate)
 {
@@ -100,6 +90,16 @@ QMessageAccountFilterKey::~QMessageAccountFilterKey()
 {
     delete d_ptr;
     d_ptr = 0;
+}
+
+void QMessageAccountFilterKey::setOptions(QMessageDataComparator::Options options)
+{
+    d_ptr->_options |= options;
+}
+
+QMessageDataComparator::Options QMessageAccountFilterKey::options() const
+{
+    return d_ptr->_options;
 }
 
 bool QMessageAccountFilterKey::isEmpty() const
@@ -159,49 +159,49 @@ const QMessageAccountFilterKey& QMessageAccountFilterKey::operator=(const QMessa
     return *this;
 }
 
-QMessageAccountFilterKey QMessageAccountFilterKey::id(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
+QMessageAccountFilterKey QMessageAccountFilterKey::byId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
 {
     QMessageAccountFilterKey result;
     result.d_ptr->_key = QMailAccountKey::id(convert(id), convert(cmp));
     return result;
 }
 
-QMessageAccountFilterKey QMessageAccountFilterKey::id(const QMessageAccountIdList &ids, QMessageDataComparator::InclusionComparator cmp)
+QMessageAccountFilterKey QMessageAccountFilterKey::byId(const QMessageAccountIdList &ids, QMessageDataComparator::InclusionComparator cmp)
 {
     QMessageAccountFilterKey result;
     result.d_ptr->_key = QMailAccountKey::id(convert(ids), convert(cmp));
     return result;
 }
 
-QMessageAccountFilterKey QMessageAccountFilterKey::id(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+QMessageAccountFilterKey QMessageAccountFilterKey::byId(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
 {
     QMessageAccountFilterKey result;
     result.d_ptr->_key = QMailAccountKey::id(convert(key), convert(cmp));
     return result;
 }
 
-QMessageAccountFilterKey QMessageAccountFilterKey::fromAddress(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+QMessageAccountFilterKey QMessageAccountFilterKey::byFromAddress(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
     QMessageAccountFilterKey result;
     result.d_ptr->_key = QMailAccountKey::fromAddress(value, convert(cmp));
     return result;
 }
 
-QMessageAccountFilterKey QMessageAccountFilterKey::fromAddress(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+QMessageAccountFilterKey QMessageAccountFilterKey::byFromAddress(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
     QMessageAccountFilterKey result;
     result.d_ptr->_key = QMailAccountKey::fromAddress(value, convert(cmp));
     return result;
 }
 
-QMessageAccountFilterKey QMessageAccountFilterKey::name(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+QMessageAccountFilterKey QMessageAccountFilterKey::byName(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
     QMessageAccountFilterKey result;
     result.d_ptr->_key = QMailAccountKey::name(value, convert(cmp));
     return result;
 }
 
-QMessageAccountFilterKey QMessageAccountFilterKey::name(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+QMessageAccountFilterKey QMessageAccountFilterKey::byName(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
     QMessageAccountFilterKey result;
     result.d_ptr->_key = QMailAccountKey::name(value, convert(cmp));

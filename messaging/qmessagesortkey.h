@@ -45,6 +45,7 @@ public:
     QMessageSortKey();
     QMessageSortKey(const QMessageSortKey &other);
     virtual ~QMessageSortKey();
+
     bool isEmpty() const;
     bool isSupported() const;
 
@@ -54,16 +55,15 @@ public:
     bool operator==(const QMessageSortKey &other) const;
     const QMessageSortKey& operator=(const QMessageSortKey &other);
 
-    static QMessageSortKey type(Qt::SortOrder order = Qt::AscendingOrder);
-    static QMessageSortKey sender(Qt::SortOrder order = Qt::AscendingOrder);
-    static QMessageSortKey recipients(Qt::SortOrder order = Qt::AscendingOrder);
-    static QMessageSortKey subject(Qt::SortOrder order = Qt::AscendingOrder);
-    static QMessageSortKey timeStamp(Qt::SortOrder order = Qt::AscendingOrder);
-    static QMessageSortKey receptionTimeStamp(Qt::SortOrder order = Qt::AscendingOrder);
-    static QMessageSortKey status(QMessage::Status flag, Qt::SortOrder order = Qt::AscendingOrder);
-    static QMessageSortKey priority(Qt::SortOrder order = Qt::AscendingOrder);
-
-    static QMessageSortKey size(Qt::SortOrder order = Qt::AscendingOrder);
+    static QMessageSortKey byType(Qt::SortOrder order = Qt::AscendingOrder);
+    static QMessageSortKey bySender(Qt::SortOrder order = Qt::AscendingOrder);
+    static QMessageSortKey byRecipients(Qt::SortOrder order = Qt::AscendingOrder);
+    static QMessageSortKey bySubject(Qt::SortOrder order = Qt::AscendingOrder);
+    static QMessageSortKey byTimeStamp(Qt::SortOrder order = Qt::AscendingOrder);
+    static QMessageSortKey byReceptionTimeStamp(Qt::SortOrder order = Qt::AscendingOrder);
+    static QMessageSortKey byStatus(QMessage::Status flag, Qt::SortOrder order = Qt::AscendingOrder);
+    static QMessageSortKey byPriority(Qt::SortOrder order = Qt::AscendingOrder);
+    static QMessageSortKey bySize(Qt::SortOrder order = Qt::AscendingOrder);
 
 private:
     QMessageSortKeyPrivate *d_ptr;

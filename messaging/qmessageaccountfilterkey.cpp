@@ -53,24 +53,6 @@
 */
 
 /*!
-    \fn QMessageAccountFilterKey::setOptions(QMessageDataComparator::Options options)
-  
-    Set the options for the search key to \a options.
-
-    \sa options()
-*/
-
-/*!
-    \fn QMessageDataComparator::Options QMessageAccountFilterKey::options() const
-  
-    Return the options for the search key.
-    
-    Default is no options set.
-
-    \sa setOptions()
-*/
-
-/*!
     \fn QMessageAccountFilterKey::QMessageAccountFilterKey()
   
     Creates a QMessageAccountFilterKey without specifying matching parameters.
@@ -92,6 +74,24 @@
     \fn QMessageAccountFilterKey::~QMessageAccountFilterKey()
     
     Destroys the key.
+*/
+
+/*!
+    \fn QMessageAccountFilterKey::setOptions(QMessageDataComparator::Options options)
+  
+    Set the options for the search key to \a options.
+
+    \sa options()
+*/
+
+/*!
+    \fn QMessageDataComparator::Options QMessageAccountFilterKey::options() const
+  
+    Return the options for the search key.
+    
+    Default is no options set.
+
+    \sa setOptions()
 */
 
 /*!
@@ -164,7 +164,7 @@
 */
 
 /*!
-    \fn QMessageAccountFilterKey::id(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
+    \fn QMessageAccountFilterKey::byId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a key matching accounts whose identifier matches \a id, according to \a cmp.
 
@@ -172,7 +172,7 @@
 */
 
 /*!
-    \fn QMessageAccountFilterKey::id(const QMessageAccountIdList &ids, QMessageDataComparator::InclusionComparator cmp)
+    \fn QMessageAccountFilterKey::byId(const QMessageAccountIdList &ids, QMessageDataComparator::InclusionComparator cmp)
   
     Returns a key matching accounts whose identifier is a member of \a ids, according to \a cmp.
 
@@ -180,7 +180,7 @@
 */
 
 /*!
-    \fn QMessageAccountFilterKey::id(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+    \fn QMessageAccountFilterKey::byId(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
   
     Returns a key matching accounts whose identifier is a member of the set yielded by \a key, according to \a cmp.
 
@@ -188,7 +188,7 @@
 */
 
 /*!
-    \fn QMessageAccountFilterKey::fromAddress(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+    \fn QMessageAccountFilterKey::byFromAddress(const QString &value, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a key matching accounts whose from address matches \a value, according to \a cmp.
 
@@ -196,7 +196,7 @@
 */
 
 /*!
-    \fn QMessageAccountFilterKey::fromAddress(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+    \fn QMessageAccountFilterKey::byFromAddress(const QString &value, QMessageDataComparator::InclusionComparator cmp)
   
     Returns a key matching accounts whose from address matches the substring \a value, according to \a cmp.
 
@@ -204,7 +204,7 @@
 */
 
 /*!
-    \fn QMessageAccountFilterKey::name(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+    \fn QMessageAccountFilterKey::byName(const QString &value, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a key matching accounts whose name matches \a value, according to \a cmp.
 
@@ -212,7 +212,7 @@
 */
 
 /*!
-    \fn QMessageAccountFilterKey::name(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+    \fn QMessageAccountFilterKey::byName(const QString &value, QMessageDataComparator::InclusionComparator cmp)
   
     Returns a key matching accounts whose name matches the substring \a value, according to \a cmp.
 

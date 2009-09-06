@@ -223,10 +223,10 @@ void AddressFinder::searchMessages()
         default: break;
     }
 
-    QMessageFilterKey includeFilter(QMessageFilterKey::timeStamp(minimumDate, QMessageDataComparator::GreaterThanEqual));
-    QMessageFilterKey excludeFilter(QMessageFilterKey::timeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual));
+    QMessageFilterKey includeFilter(QMessageFilterKey::byTimeStamp(minimumDate, QMessageDataComparator::GreaterThanEqual));
+    QMessageFilterKey excludeFilter(QMessageFilterKey::byTimeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual));
     // Would be faster and more accurate to just examine the sent folder, outgoingFilter also includes drafts.
-    QMessageFilterKey outgoingFilter(QMessageFilterKey::status(QMessage::Incoming, QMessageDataComparator::Excludes));
+    QMessageFilterKey outgoingFilter(QMessageFilterKey::byStatus(QMessage::Incoming, QMessageDataComparator::Excludes));
     
     // Search for messages containing addresses to exclude
     service.queryMessages(outgoingFilter & excludeFilter);

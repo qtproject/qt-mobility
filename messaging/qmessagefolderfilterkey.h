@@ -47,12 +47,13 @@ class Q_MESSAGING_EXPORT QMessageFolderFilterKey
     Q_DECLARE_PRIVATE(QMessageFolderFilterKey)
 
 public:
-    void setOptions(QMessageDataComparator::Options options);
-    QMessageDataComparator::Options options() const;
-
     QMessageFolderFilterKey();
     QMessageFolderFilterKey(const QMessageFolderFilterKey &other);
     virtual ~QMessageFolderFilterKey();
+
+    void setOptions(QMessageDataComparator::Options options);
+    QMessageDataComparator::Options options() const;
+
     bool isEmpty() const;
     bool isSupported() const;
 
@@ -65,23 +66,24 @@ public:
     bool operator==(const QMessageFolderFilterKey &other) const;
     const QMessageFolderFilterKey& operator=(const QMessageFolderFilterKey &other);
 
-    static QMessageFolderFilterKey id(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
-    static QMessageFolderFilterKey id(const QMessageFolderIdList &ids, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
-    static QMessageFolderFilterKey id(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+    static QMessageFolderFilterKey byId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
+    static QMessageFolderFilterKey byId(const QMessageFolderIdList &ids, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+    static QMessageFolderFilterKey byId(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
-    static QMessageFolderFilterKey displayName(const QString &value, QMessageDataComparator::EqualityComparator cmp);
-    static QMessageFolderFilterKey displayName(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+    static QMessageFolderFilterKey byDisplayName(const QString &value, QMessageDataComparator::EqualityComparator cmp);
+    static QMessageFolderFilterKey byDisplayName(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
-    static QMessageFolderFilterKey path(const QString &value, QMessageDataComparator::EqualityComparator cmp);
-    static QMessageFolderFilterKey path(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+    static QMessageFolderFilterKey byPath(const QString &value, QMessageDataComparator::EqualityComparator cmp);
+    static QMessageFolderFilterKey byPath(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
-    static QMessageFolderFilterKey parentAccountId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
-    static QMessageFolderFilterKey parentAccountId(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+    static QMessageFolderFilterKey byParentAccountId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
+    static QMessageFolderFilterKey byParentAccountId(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
-    static QMessageFolderFilterKey parentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
-    static QMessageFolderFilterKey parentFolderId(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
-    static QMessageFolderFilterKey ancestorFolderIds(const QMessageFolderId &id, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
-    static QMessageFolderFilterKey ancestorFolderIds(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+    static QMessageFolderFilterKey byParentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
+    static QMessageFolderFilterKey byParentFolderId(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+
+    static QMessageFolderFilterKey byAncestorFolderIds(const QMessageFolderId &id, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+    static QMessageFolderFilterKey byAncestorFolderIds(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
 private:
     QMessageFolderFilterKeyPrivate *d_ptr;

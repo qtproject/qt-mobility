@@ -38,25 +38,20 @@
 
 int main(int argc, char *argv[])
 {
-    bool success(true);
     QApplication app(argc, argv);
-    QMessageIdList ids = QMessageStore::instance()->queryMessages(QMessageFilterKey(), QMessageSortKey::receptionTimeStamp(Qt::DescendingOrder), 100, 0);
-    if (QMessageStore::instance()->lastError() != QMessageStore::NoError)
-        success = false;
-    QStringList summaries;
+
+    QMessageIdList ids = QMessageStore::instance()->queryMessages(QMessageFilterKey(), QMessageSortKey::byReceptionTimeStamp(Qt::DescendingOrder), 100, 0);
     foreach (QMessageId id, ids) {
         QMessage message(QMessageStore::instance()->message(id));
-        if (QMessageStore::instance()->lastError() != QMessageStore::NoError)
-            success = false;
-        summaries.append(message.subject().leftJustified(32, ' ' , true) 
-	            + "  "
-		    + message.from().recipient().leftJustified(21, ' ', true) 
-                    + "  " 
-//            + message.receivedDate().toString("dd.MM.yyyy hh:mm:ss").left(19));
-                    + QString::number(message.size()).left(19));
+        if (QMessageStore::instance()->lastError() == QMessageStore::NoError) {
+            qDebug() << QString(message.subject().leftJustified(32, ' ' , true) 
+                                + "  "
+                                + message.from().recipient().leftJustified(21, ' ', true) 
+                                + "  " 
+                                + QString::number(message.size()).left(19));
+        }
     }
-    foreach (QString summary, summaries)
-        qDebug() << summary;
+
     return 0;
 }
 

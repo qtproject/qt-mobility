@@ -69,7 +69,7 @@ const QMessageAccountSortKey& QMessageAccountSortKey::operator=(const QMessageAc
     return *this; // stub
 }
 
-QMessageAccountSortKey QMessageAccountSortKey::name(Qt::SortOrder order)
+QMessageAccountSortKey QMessageAccountSortKey::byName(Qt::SortOrder order)
 {
     Q_UNUSED(order)
     return QMessageAccountSortKey(); // stub

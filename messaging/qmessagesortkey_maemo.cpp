@@ -80,56 +80,56 @@ const QMessageSortKey& QMessageSortKey::operator=(const QMessageSortKey& other)
     return *this; // stub
 }
 
-QMessageSortKey QMessageSortKey::type(Qt::SortOrder order)
+QMessageSortKey QMessageSortKey::byType(Qt::SortOrder order)
 {
     Q_UNUSED(order)
     return QMessageSortKey(); // stub
 }
 
-QMessageSortKey QMessageSortKey::sender(Qt::SortOrder order)
+QMessageSortKey QMessageSortKey::bySender(Qt::SortOrder order)
 {
     Q_UNUSED(order)
     return QMessageSortKey(); // stub
 }
 
-QMessageSortKey QMessageSortKey::recipients(Qt::SortOrder order)
+QMessageSortKey QMessageSortKey::byRecipients(Qt::SortOrder order)
 {
     Q_UNUSED(order)
     return QMessageSortKey(); // stub
 }
 
-QMessageSortKey QMessageSortKey::subject(Qt::SortOrder order)
+QMessageSortKey QMessageSortKey::bySubject(Qt::SortOrder order)
 {
     Q_UNUSED(order)
     return QMessageSortKey(); // stub
 }
 
-QMessageSortKey QMessageSortKey::timeStamp(Qt::SortOrder order)
+QMessageSortKey QMessageSortKey::byTimeStamp(Qt::SortOrder order)
 {
     Q_UNUSED(order)
     return QMessageSortKey(); // stub
 }
 
-QMessageSortKey QMessageSortKey::receptionTimeStamp(Qt::SortOrder order)
+QMessageSortKey QMessageSortKey::byReceptionTimeStamp(Qt::SortOrder order)
 {
     Q_UNUSED(order)
     return QMessageSortKey(); // stub
 }
 
-QMessageSortKey QMessageSortKey::status(QMessage::Status flag, Qt::SortOrder order)
+QMessageSortKey QMessageSortKey::byStatus(QMessage::Status flag, Qt::SortOrder order)
 {
     Q_UNUSED(flag)
     Q_UNUSED(order)
     return QMessageSortKey(); // stub
 }
 
-QMessageSortKey QMessageSortKey::priority(Qt::SortOrder order)
+QMessageSortKey QMessageSortKey::byPriority(Qt::SortOrder order)
 {
     Q_UNUSED(order)
     return QMessageSortKey(); // stub
 }
 
-QMessageSortKey QMessageSortKey::size(Qt::SortOrder order)
+QMessageSortKey QMessageSortKey::bySize(Qt::SortOrder order)
 {
     Q_UNUSED(order)
     return QMessageSortKey(); // stub

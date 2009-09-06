@@ -54,24 +54,6 @@
 */
 
 /*!
-    \fn QMessageFolderFilterKey::setOptions(QMessageDataComparator::Options options)
-  
-    Set the options for the search key to \a options.
-
-    \sa options()
-*/
-
-/*!
-    \fn QMessageDataComparator::Options QMessageFolderFilterKey::options() const
-  
-    Return the options for the search key.
-    
-    Default is no options set.
-
-    \sa setOptions()
-*/
-
-/*!
     \fn QMessageFolderFilterKey::QMessageFolderFilterKey()
   
     Creates a QMessageFolderFilterKey without specifying matching parameters.
@@ -93,6 +75,24 @@
     \fn QMessageFolderFilterKey::~QMessageFolderFilterKey()
     
     Destroys the key.
+*/
+
+/*!
+    \fn QMessageFolderFilterKey::setOptions(QMessageDataComparator::Options options)
+  
+    Set the options for the search key to \a options.
+
+    \sa options()
+*/
+
+/*!
+    \fn QMessageDataComparator::Options QMessageFolderFilterKey::options() const
+  
+    Return the options for the search key.
+    
+    Default is no options set.
+
+    \sa setOptions()
 */
 
 /*!
@@ -165,7 +165,7 @@
 */
 
 /*!
-    \fn QMessageFolderFilterKey::id(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
+    \fn QMessageFolderFilterKey::byId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a key matching folders whose identifier matches \a id, according to \a cmp.
 
@@ -173,7 +173,7 @@
 */
 
 /*!
-    \fn QMessageFolderFilterKey::id(const QMessageFolderIdList &ids, QMessageDataComparator::InclusionComparator cmp)
+    \fn QMessageFolderFilterKey::byId(const QMessageFolderIdList &ids, QMessageDataComparator::InclusionComparator cmp)
   
     Returns a key matching folders whose identifier is a member of \a ids, according to \a cmp.
 
@@ -181,7 +181,7 @@
 */
 
 /*!
-    \fn QMessageFolderFilterKey::id(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+    \fn QMessageFolderFilterKey::byId(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
   
     Returns a key matching folders whose identifier is a member of the set yielded by \a key, according to \a cmp.
 
@@ -189,7 +189,7 @@
 */
 
 /*!
-    \fn QMessageFolderFilterKey::displayName(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+    \fn QMessageFolderFilterKey::byDisplayName(const QString &value, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a key matching folders whose display name matches \a value, according to \a cmp.
 
@@ -197,7 +197,7 @@
 */
 
 /*!
-    \fn QMessageFolderFilterKey::displayName(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+    \fn QMessageFolderFilterKey::byDisplayName(const QString &value, QMessageDataComparator::InclusionComparator cmp)
   
     Returns a key matching folders whose display name matches the substring \a value, according to \a cmp.
 
@@ -205,7 +205,7 @@
 */
 
 /*!
-    \fn QMessageFolderFilterKey::path(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+    \fn QMessageFolderFilterKey::byPath(const QString &value, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a key matching folders whose path matches \a value, according to \a cmp.
 
@@ -213,7 +213,7 @@
 */
 
 /*!
-    \fn QMessageFolderFilterKey::path(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+    \fn QMessageFolderFilterKey::byPath(const QString &value, QMessageDataComparator::InclusionComparator cmp)
   
     Returns a key matching folders whose path matches the substring \a value, according to \a cmp.
 
@@ -221,7 +221,7 @@
 */
 
 /*!
-    \fn QMessageFolderFilterKey::parentAccountId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
+    \fn QMessageFolderFilterKey::byParentAccountId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a key matching folders whose parent account identifier matches \a id, according to \a cmp.
 
@@ -229,7 +229,7 @@
 */
 
 /*!
-    \fn QMessageFolderFilterKey::parentAccountId(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+    \fn QMessageFolderFilterKey::byParentAccountId(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
   
     Returns a key matching folders whose parent account identifier is a member of the set yielded by \a key, according to \a cmp.
 
@@ -237,7 +237,7 @@
 */
 
 /*!
-    \fn QMessageFolderFilterKey::parentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
+    \fn QMessageFolderFilterKey::byParentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a key matching folders whose parent folder identifier matches \a id, according to \a cmp.
 
@@ -245,7 +245,7 @@
 */
 
 /*!
-    \fn QMessageFolderFilterKey::parentFolderId(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+    \fn QMessageFolderFilterKey::byParentFolderId(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
   
     Returns a key matching folders whose parent folder identifier is a member of the set yielded by \a key, according to \a cmp.
 
@@ -253,7 +253,7 @@
 */
 
 /*!
-    \fn QMessageFolderFilterKey::ancestorFolderIds(const QMessageFolderId &id, QMessageDataComparator::InclusionComparator cmp)
+    \fn QMessageFolderFilterKey::byAncestorFolderIds(const QMessageFolderId &id, QMessageDataComparator::InclusionComparator cmp)
   
     Returns a key matching folders whose ancestor folders' identifiers contain \a id, according to \a cmp.
 
@@ -261,7 +261,7 @@
 */
 
 /*!
-    \fn QMessageFolderFilterKey::ancestorFolderIds(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+    \fn QMessageFolderFilterKey::byAncestorFolderIds(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
   
     Returns a key matching folders whose ancestor folders' identifiers contain a member of the set yielded by \a key, according to \a cmp.
 

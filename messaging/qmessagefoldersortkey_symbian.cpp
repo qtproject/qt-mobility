@@ -82,13 +82,13 @@ const QMessageFolderSortKey& QMessageFolderSortKey::operator=(const QMessageFold
     return *this; // stub
 }
 
-QMessageFolderSortKey QMessageFolderSortKey::displayName(Qt::SortOrder order)
+QMessageFolderSortKey QMessageFolderSortKey::byDisplayName(Qt::SortOrder order)
 {
     Q_UNUSED(order)
     return QMessageFolderSortKey(); // stub
 }
 
-QMessageFolderSortKey QMessageFolderSortKey::path(Qt::SortOrder order)
+QMessageFolderSortKey QMessageFolderSortKey::byPath(Qt::SortOrder order)
 {
     Q_UNUSED(order)
     return QMessageFolderSortKey(); // stub

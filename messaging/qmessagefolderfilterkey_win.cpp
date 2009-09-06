@@ -34,16 +34,6 @@
 #include "qmessagefolderfilterkey.h"
 #include "qmessagefolderfilterkey_p.h"
 
-void QMessageFolderFilterKey::setOptions(QMessageDataComparator::Options options)
-{
-    Q_UNUSED(options)
-}
-
-QMessageDataComparator::Options QMessageFolderFilterKey::options() const
-{
-    return 0;
-}
-
 QMessageFolderFilterKey::QMessageFolderFilterKey()
 {
 }
@@ -55,6 +45,16 @@ QMessageFolderFilterKey::QMessageFolderFilterKey(const QMessageFolderFilterKey &
 
 QMessageFolderFilterKey::~QMessageFolderFilterKey()
 {
+}
+
+void QMessageFolderFilterKey::setOptions(QMessageDataComparator::Options options)
+{
+    Q_UNUSED(options)
+}
+
+QMessageDataComparator::Options QMessageFolderFilterKey::options() const
+{
+    return 0;
 }
 
 bool QMessageFolderFilterKey::isEmpty() const
@@ -108,91 +108,91 @@ const QMessageFolderFilterKey& QMessageFolderFilterKey::operator=(const QMessage
     return *this; // stub
 }
 
-QMessageFolderFilterKey QMessageFolderFilterKey::id(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
+QMessageFolderFilterKey QMessageFolderFilterKey::byId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
 {
     Q_UNUSED(id)
     Q_UNUSED(cmp)
     return QMessageFolderFilterKey(); // stub
 }
 
-QMessageFolderFilterKey QMessageFolderFilterKey::id(const QMessageFolderIdList &ids, QMessageDataComparator::InclusionComparator cmp)
+QMessageFolderFilterKey QMessageFolderFilterKey::byId(const QMessageFolderIdList &ids, QMessageDataComparator::InclusionComparator cmp)
 {
     Q_UNUSED(ids)
     Q_UNUSED(cmp)
     return QMessageFolderFilterKey(); // stub
 }
 
-QMessageFolderFilterKey QMessageFolderFilterKey::id(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+QMessageFolderFilterKey QMessageFolderFilterKey::byId(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
 {
     Q_UNUSED(key)
     Q_UNUSED(cmp)
     return QMessageFolderFilterKey(); // stub
 }
 
-QMessageFolderFilterKey QMessageFolderFilterKey::displayName(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+QMessageFolderFilterKey QMessageFolderFilterKey::byDisplayName(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
     Q_UNUSED(value)
     Q_UNUSED(cmp)
     return QMessageFolderFilterKey(); // stub
 }
 
-QMessageFolderFilterKey QMessageFolderFilterKey::displayName(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+QMessageFolderFilterKey QMessageFolderFilterKey::byDisplayName(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
     Q_UNUSED(value)
     Q_UNUSED(cmp)
     return QMessageFolderFilterKey(); // stub
 }
 
-QMessageFolderFilterKey QMessageFolderFilterKey::path(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+QMessageFolderFilterKey QMessageFolderFilterKey::byPath(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
     Q_UNUSED(value)
     Q_UNUSED(cmp)
     return QMessageFolderFilterKey(); // stub
 }
 
-QMessageFolderFilterKey QMessageFolderFilterKey::path(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+QMessageFolderFilterKey QMessageFolderFilterKey::byPath(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
     Q_UNUSED(value)
     Q_UNUSED(cmp)
     return QMessageFolderFilterKey(); // stub
 }
 
-QMessageFolderFilterKey QMessageFolderFilterKey::parentAccountId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
+QMessageFolderFilterKey QMessageFolderFilterKey::byParentAccountId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
 {
     Q_UNUSED(id)
     Q_UNUSED(cmp)
     return QMessageFolderFilterKey(); // stub
 }
 
-QMessageFolderFilterKey QMessageFolderFilterKey::parentAccountId(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+QMessageFolderFilterKey QMessageFolderFilterKey::byParentAccountId(const QMessageAccountFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
 {
     Q_UNUSED(key)
     Q_UNUSED(cmp)
     return QMessageFolderFilterKey(); // stub
 }
 
-QMessageFolderFilterKey QMessageFolderFilterKey::parentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
+QMessageFolderFilterKey QMessageFolderFilterKey::byParentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
 {
     Q_UNUSED(id)
     Q_UNUSED(cmp)
     return QMessageFolderFilterKey(); // stub
 }
 
-QMessageFolderFilterKey QMessageFolderFilterKey::parentFolderId(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+QMessageFolderFilterKey QMessageFolderFilterKey::byParentFolderId(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
 {
     Q_UNUSED(key)
     Q_UNUSED(cmp)
     return QMessageFolderFilterKey(); // stub
 }
 
-QMessageFolderFilterKey QMessageFolderFilterKey::ancestorFolderIds(const QMessageFolderId &id, QMessageDataComparator::InclusionComparator cmp)
+QMessageFolderFilterKey QMessageFolderFilterKey::byAncestorFolderIds(const QMessageFolderId &id, QMessageDataComparator::InclusionComparator cmp)
 {
     Q_UNUSED(id)
     Q_UNUSED(cmp)
     return QMessageFolderFilterKey(); // stub
 }
 
-QMessageFolderFilterKey QMessageFolderFilterKey::ancestorFolderIds(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
+QMessageFolderFilterKey QMessageFolderFilterKey::byAncestorFolderIds(const QMessageFolderFilterKey &key, QMessageDataComparator::InclusionComparator cmp)
 {
     Q_UNUSED(key)
     Q_UNUSED(cmp)

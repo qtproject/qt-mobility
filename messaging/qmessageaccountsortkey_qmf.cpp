@@ -110,7 +110,7 @@ const QMessageAccountSortKey& QMessageAccountSortKey::operator=(const QMessageAc
     return *this;
 }
 
-QMessageAccountSortKey QMessageAccountSortKey::name(Qt::SortOrder order)
+QMessageAccountSortKey QMessageAccountSortKey::byName(Qt::SortOrder order)
 {
     QMessageAccountSortKey key;
     key.d_ptr->_key = QMailAccountSortKey::name(order);
