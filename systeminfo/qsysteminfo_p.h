@@ -61,6 +61,8 @@ QT_BEGIN_NAMESPACE
 
 class QStringList;
 class QSystemNetworkInfo;
+class QTimer;
+
 class QSystemInfoPrivate : public QObject
 {
     Q_OBJECT
@@ -88,11 +90,11 @@ private:
 #endif
     bool hasSysFeature(const QString &featureStr);
 #if defined(Q_OS_LINUX)
-    void startLangaugePolling();
-   QFileSystemWatcher *watcher;
+    QTimer *langTimer;
+    QString langCached;
 #endif
 private Q_SLOTS:
-    void languageFileChanged(const QString &path);
+    void startLangaugePolling();
 
 };
 
