@@ -83,6 +83,13 @@ public:
         TrashFolder
     };
 
+    enum ResponseType
+    {
+        ReplyToSender = 1,
+        ReplyToAll,
+        Forward
+    };
+
     QMessage();
     QMessage(const QMessageId &id);
     QMessage(const QMessage &other);
@@ -163,9 +170,7 @@ public:
 
     bool isModified() const;
 
-    QMessage replyTo() const;
-    QMessage replyToAll() const;
-    QMessage forward() const;
+    QMessage createResponseMessage(ResponseType type) const;
 
 // TODO: Why is there no setParentFolderId()?
 //private:
@@ -173,6 +178,7 @@ public:
 
     QMessagePrivate *d_ptr;
 };
+
 Q_DECLARE_OPERATORS_FOR_FLAGS(QMessage::TypeFlags)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QMessage::StatusFlags)
 #endif

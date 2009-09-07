@@ -377,17 +377,8 @@ bool QMessage::isModified() const
     return d_ptr->_modified;
 }
 
-QMessage QMessage::replyTo() const
+QMessage QMessage::createResponseMessage(ResponseType type) const
 {
     return QMessage(); // stub
 }
 
-QMessage QMessage::replyToAll() const
-{
-    return QMessage(); // stub
-}
-
-QMessage QMessage::forward() const
-{
-    return QMessage(); // stub
-}

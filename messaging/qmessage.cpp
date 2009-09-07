@@ -104,11 +104,11 @@
 
     This enum type is used to describe the type of a message.
     
+    \value NoType   The message type is not defined.
     \value Mms      The message is an MMS, Multimedia Messaging Service object.
     \value Sms      The message is an SMS, Short Message Service object.
     \value Email    The message is an Email, Internet Message Format object.
     \value Xmpp     The message is an XMPP, Extensible Messaging and Presence Protocol object.
-    \value NoType   The message type is not defined.
     \value AnyType  Bitflag value that matches any message type defined.
     
     \sa type(), setType()
@@ -147,6 +147,16 @@
     \value OutboxFolder  Represents the standard outbox folder.
     \value SentFolder    Represents the standard sent folder.
     \value TrashFolder   Represents the standard trash folder.
+*/
+
+/*!
+    \enum QMessage::ResponseType
+
+    Defines the type of a response to an existing message.
+
+    \value ReplyToSender    A response to the sender of the existing message.
+    \value ReplyToAll       A response to the sender of the existing message, and any other recipients of that message.
+    \value Forward          A response created to copy the content of the existing message to a new recipient.
 */
 
 /*!
@@ -596,7 +606,6 @@
     \sa customField(), setCustomField()
 */
 
-
 /*!
     \fn QMessage::isModified() const
     
@@ -605,25 +614,10 @@
 */
 
 /*!
-    \fn QMessage::replyTo() const
+    \fn QMessage::createResponseMessage(ResponseType type) const
 
-    Creates a reply to sender response to the message
+    Creates a new message as a response to this message, with properties predetermined according to \a type.
   
     \sa QMessageServiceAction::compose()
 */
 
-/*!
-    \fn QMessage::replyToAll() const
-    
-    Creates a reply to all response to the message
-  
-    \sa QMessageServiceAction::compose()
-*/
-
-/*!
-    \fn QMessage::forward() const
-
-    Creates a copy the message in a format suitable for forwarding.
-  
-    \sa QMessageServiceAction::compose()
-*/

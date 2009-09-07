@@ -574,124 +574,115 @@ bool QMessage::isModified() const
     return d_ptr->_message.dataModified();
 }
 
-QMessage QMessage::replyTo() const
-{
-    QMessage reply;
-
-    QMailAddress to(d_ptr->_message.replyTo());
-    if (to.address().isEmpty()) {
-        to = d_ptr->_message.from();
-    }
-    reply.setTo(convert(to));
-
-    QString subject(d_ptr->_message.subject());
-    reply.setSubject("Re:" + subject);
-
-    QString messageId(d_ptr->_message.headerFieldText("Message-Id"));
-    QString references(d_ptr->_message.headerFieldText("References"));
-
-    if (!messageId.isEmpty()) {
-        if (!references.isEmpty()) {
-            references.append(' ');
-        }
-        references.append(messageId);
-
-        reply.setHeaderField("In-Reply-To", messageId);
-    }
-    if (!references.isEmpty()) {
-        reply.setHeaderField("References", references);
-    }
-
-    QString existingText;
-    QMessageContentContainerIdList attachmentIds;
-
-    if (d_ptr->_message.contentType().type().toLower() == "text") {
-        existingText = d_ptr->_message.body().data();
-    } else {
-        // Is there any text in this message?
-        QMessageContentContainerId textId(body());
-        if (textId.isValid()) {
-            QMessageContentContainer textPart(container(textId));
-            existingText = textPart.decodedTextContent();
-        }
-
-        // Find the remaining parts of the message
-        attachmentIds = attachments();
-    }
-
-    if (!existingText.isEmpty()) {
-        existingText = existingText.replace("\n", "\n> ");
-
-        QString prefix(qApp->translate("QMessage", "On %1 you wrote:\n"));
-        prefix = prefix.arg(d_ptr->_message.date().toLocalTime().toString());
-        reply.setBody(prefix + existingText);
-    }
-    foreach (const QMessageContentContainerId &attachmentId, attachmentIds) {
-        QMessageContentContainer attachment = container(attachmentId);
-        reply.appendContent(attachment);
-    }
-
-    return reply;
-}
-
-QMessage QMessage::replyToAll() const
-{
-    QMessage reply(replyTo());
-
-    QList<QMessageAddress> cc;
-    foreach (const QMailAddress &address, d_ptr->_message.to() + d_ptr->_message.cc()) {
-        cc.append(convert(address));
-    }
-
-    reply.setCc(cc);
-    return reply;
-}
-
-QMessage QMessage::forward() const
+QMessage QMessage::createResponseMessage(ResponseType type) const
 {
     QMessage response;
 
-    QString subject(d_ptr->_message.subject());
-    response.setSubject("Fwd:" + subject);
+    if (type == Forward) {
+        QString subject(d_ptr->_message.subject());
+        response.setSubject("Fwd:" + subject);
 
-    QMessageContentContainerIdList attachmentIds;
+        QMessageContentContainerIdList attachmentIds;
 
-    if (d_ptr->_message.contentType().type().toLower() == "text") {
-        // Forward the text content inline
-        QString existingText = d_ptr->_message.body().data();
+        if (d_ptr->_message.contentType().type().toLower() == "text") {
+            // Forward the text content inline
+            QString existingText = d_ptr->_message.body().data();
 
-        QString prefix("\r\n----- Forwarded Message -----\r\n\r\n");
-        prefix.append(QString("%1: %2\r\n").arg(qApp->translate("QMessage", "Subject")).arg(subject));
-        prefix.append(QString("%1: %2\r\n").arg(qApp->translate("QMessage", "Date")).arg(date().toString()));
-        prefix.append(QString("%1: %2\r\n").arg(qApp->translate("QMessage", "From")).arg(d_ptr->_message.from().toString()));
+            QString prefix("\r\n----- Forwarded Message -----\r\n\r\n");
+            prefix.append(QString("%1: %2\r\n").arg(qApp->translate("QMessage", "Subject")).arg(subject));
+            prefix.append(QString("%1: %2\r\n").arg(qApp->translate("QMessage", "Date")).arg(date().toString()));
+            prefix.append(QString("%1: %2\r\n").arg(qApp->translate("QMessage", "From")).arg(d_ptr->_message.from().toString()));
 
-        QStringList addresses;
-        foreach (const QMailAddress &address, d_ptr->_message.to()) {
-            addresses.append(address.toString());
+            QStringList addresses;
+            foreach (const QMailAddress &address, d_ptr->_message.to()) {
+                addresses.append(address.toString());
+            }
+
+            prefix.append(QString("%1: %2\r\n").arg(qApp->translate("QMessage", "To")).arg(addresses.join(",")));
+
+            QString postfix("\r\n\r\n-----------------------------\r\n");
+
+            response.setBody(prefix + existingText + postfix);
+        } else {
+            response.setContentType("multipart");
+            response.setContentSubType("mixed");
+
+            // Add an empty text body to be composed into
+            QMessageContentContainer textPart;
+            textPart.setContentType("text");
+            textPart.setContentSubType("plain");
+            textPart.setContent(QString());
+            response.appendContent(textPart);
+
+            // Include the entirety of this message as a nested part
+            QMessageContentContainer messagePart;
+            messagePart.setContentType("message");
+            messagePart.setContentSubType("rfc822");
+            messagePart.setContent(toTransmissionFormat());
+            response.appendContent(messagePart);
+        }
+    } else {
+        QMailAddress to(d_ptr->_message.replyTo());
+        if (to.address().isEmpty()) {
+            to = d_ptr->_message.from();
+        }
+        response.setTo(convert(to));
+
+        if (type == ReplyToAll) {
+            QList<QMessageAddress> cc;
+            foreach (const QMailAddress &address, d_ptr->_message.to() + d_ptr->_message.cc()) {
+                cc.append(convert(address));
+            }
+
+            response.setCc(cc);
         }
 
-        prefix.append(QString("%1: %2\r\n").arg(qApp->translate("QMessage", "To")).arg(addresses.join(",")));
+        QString subject(d_ptr->_message.subject());
+        response.setSubject("Re:" + subject);
 
-        QString postfix("\r\n\r\n-----------------------------\r\n");
+        QString messageId(d_ptr->_message.headerFieldText("Message-Id"));
+        QString references(d_ptr->_message.headerFieldText("References"));
 
-        response.setBody(prefix + existingText + postfix);
-    } else {
-        response.setContentType("multipart");
-        response.setContentSubType("mixed");
+        if (!messageId.isEmpty()) {
+            if (!references.isEmpty()) {
+                references.append(' ');
+            }
+            references.append(messageId);
 
-        // Add an empty text body to be composed into
-        QMessageContentContainer textPart;
-        textPart.setContentType("text");
-        textPart.setContentSubType("plain");
-        textPart.setContent(QString());
-        response.appendContent(textPart);
+            response.setHeaderField("In-Reply-To", messageId);
+        }
+        if (!references.isEmpty()) {
+            response.setHeaderField("References", references);
+        }
 
-        // Include the entirety of this message as a nested part
-        QMessageContentContainer messagePart;
-        messagePart.setContentType("message");
-        messagePart.setContentSubType("rfc822");
-        messagePart.setContent(toTransmissionFormat());
-        response.appendContent(messagePart);
+        QString existingText;
+        QMessageContentContainerIdList attachmentIds;
+
+        if (d_ptr->_message.contentType().type().toLower() == "text") {
+            existingText = d_ptr->_message.body().data();
+        } else {
+            // Is there any text in this message?
+            QMessageContentContainerId textId(body());
+            if (textId.isValid()) {
+                QMessageContentContainer textPart(container(textId));
+                existingText = textPart.decodedTextContent();
+            }
+
+            // Find the remaining parts of the message
+            attachmentIds = attachments();
+        }
+
+        if (!existingText.isEmpty()) {
+            existingText = existingText.replace("\n", "\n> ");
+
+            QString prefix(qApp->translate("QMessage", "On %1 you wrote:\n"));
+            prefix = prefix.arg(d_ptr->_message.date().toLocalTime().toString());
+            response.setBody(prefix + existingText);
+        }
+        foreach (const QMessageContentContainerId &attachmentId, attachmentIds) {
+            QMessageContentContainer attachment = container(attachmentId);
+            response.appendContent(attachment);
+        }
     }
 
     return response;
