@@ -796,13 +796,13 @@ QMessageFilterKey QMessageFilterKey::byStatus(QMessage::StatusFlags mask, QMessa
     if (cmp == QMessageDataComparator::Includes)
         comparator = QMessageDataComparator::Equal;
     if (mask & QMessage::Incoming)
-        result &= QMessageFilterKey::status(QMessage::Incoming, comparator);
+        result &= QMessageFilterKey::byStatus(QMessage::Incoming, comparator);
     if (mask & QMessage::Read)
-        result &= QMessageFilterKey::status(QMessage::Read, comparator);
+        result &= QMessageFilterKey::byStatus(QMessage::Read, comparator);
     if (mask & QMessage::Removed)
-        result &= QMessageFilterKey::status(QMessage::Removed, comparator);
+        result &= QMessageFilterKey::byStatus(QMessage::Removed, comparator);
     if (mask & QMessage::HasAttachments)
-        result &= QMessageFilterKey::status(QMessage::HasAttachments, comparator);
+        result &= QMessageFilterKey::byStatus(QMessage::HasAttachments, comparator);
     if (result.isEmpty()) // Be consistent with QMF, but seems wrong. TODO verify correctness
         return ~result;
     return result;
