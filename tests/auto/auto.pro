@@ -9,5 +9,6 @@ SUBDIRS = \
         qmediaresource \
         qmediasource \
         qvideowidget \
-        qmediaplayer
+        qmediaplayer \
+        qradioplayer
 
