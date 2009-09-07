@@ -5,10 +5,10 @@ Item {
     signal hangup
     property string dialString
 
-    width: contents.width
-    height: contents.height
+    width: childrenRect.width
+    height: childrenRect.height
 
-    Rect {
+    Rectangle {
         id: dialStringLabel
         height: 20; width: dialGrid.width
         color: "white"; radius: 5
@@ -18,13 +18,14 @@ Item {
         anchors.left: parent.left
         Text { text: DialScreen.dialString; anchors.centerIn: parent; }
     }
-    GridLayout {
+    Grid {
         id: dialGrid
         anchors.top: dialStringLabel.bottom
         anchors.left: parent.left
         anchors.topMargin: 5
         columns: 3
         spacing: 5
+        width: childrenRect.width; height: childrenRect.height
         DialButton { buttonText: "1"; onClicked: { DialScreen.dialString += "1";} }
         DialButton { buttonText: "2"; onClicked: { DialScreen.dialString += "2";} }
         DialButton { buttonText: "3"; onClicked: { DialScreen.dialString += "3";} }
