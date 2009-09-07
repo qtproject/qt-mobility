@@ -274,7 +274,7 @@
   
     Returns the current state of the action.
 
-    \sa activityChanged()
+    \sa stateChanged()
 */
 
 /*!
