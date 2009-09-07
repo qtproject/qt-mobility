@@ -3471,7 +3471,7 @@ bool SharedMemoryLayer::removeValue(QValueSpaceObject *creator, Handle handle,
 
     NodeOwner owner;
     owner.data1 = 0;
-    owner.data2 = reinterpret_cast<unsigned int>(creator);
+    owner.data2 = reinterpret_cast<quintptr>(creator);
 
     QByteArray fullPath(readHandle->path);
     if (!fullPath.endsWith('/'))
@@ -3495,7 +3495,7 @@ bool SharedMemoryLayer::removeSubTree(QValueSpaceObject *creator, Handle handle)
 
     NodeOwner owner;
     owner.data1 = 0;
-    owner.data2 = reinterpret_cast<unsigned int>(creator);
+    owner.data2 = reinterpret_cast<quintptr>(creator);
 
     return remItems(owner, readHandle->path);
 }
