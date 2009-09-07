@@ -258,15 +258,15 @@ QT_BEGIN_NAMESPACE
   */
 
 /*!
-  \fn void QSystemNetworkInfo::networkStatusChanged(QSystemNetworkInfo::NetworkStatus status)
+  \fn void QSystemNetworkInfo::networkStatusChanged(QSystemNetworkInfo::NetworkMode mode, QSystemNetworkInfo::NetworkStatus status)
 
-  This signal is emitted whenever the network status changes, specified by \a status.
+  This signal is emitted whenever the network status of \a mode changes, specified by \a status.
   */
 
 /*!
-  \fn void QSystemNetworkInfo::networkSignalStrengthChanged(int strength)
+  \fn void QSystemNetworkInfo::networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode,int strength)
 
-  This signal is emitted whenever the network signal strength changes, specified by \a strength.
+  This signal is emitted whenever the network \a mode signal strength changes, specified by \a strength.
   */
 
 /*!
@@ -282,9 +282,9 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-  \fn void QSystemNetworkInfo::networkNameChanged(const QString & netName)
+  \fn void QSystemNetworkInfo::networkNameChanged(QSystemNetworkInfo::NetworkMode mode,const QString & netName)
 
-  This signal is emitted whenever the network name changes, specified by \a netName.
+  This signal is emitted whenever the network \a mode name changes, specified by \a netName.
 
 */
 

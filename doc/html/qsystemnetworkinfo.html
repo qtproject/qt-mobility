@@ -46,9 +46,9 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#currentMobileCountryCodeChanged">currentMobileCountryCodeChanged</a></b> ( const QString &amp; <i>mcc</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#currentMobileNetworkCodeChanged">currentMobileNetworkCodeChanged</a></b> ( const QString &amp; <i>mnc</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#networkModeChanged">networkModeChanged</a></b> ( QSystemNetworkInfo::NetworkMode <i>mode</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#networkNameChanged">networkNameChanged</a></b> ( const QString &amp; <i>netName</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#networkSignalStrengthChanged">networkSignalStrengthChanged</a></b> ( int <i>strength</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#networkStatusChanged">networkStatusChanged</a></b> ( QSystemNetworkInfo::NetworkStatus <i>status</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#networkNameChanged">networkNameChanged</a></b> ( QSystemNetworkInfo::NetworkMode <i>mode</i>, const QString &amp; <i>netName</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#networkSignalStrengthChanged">networkSignalStrengthChanged</a></b> ( QSystemNetworkInfo::NetworkMode <i>mode</i>, int <i>strength</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#networkStatusChanged">networkStatusChanged</a></b> ( QSystemNetworkInfo::NetworkMode <i>mode</i>, QSystemNetworkInfo::NetworkStatus <i>status</i> )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
@@ -141,17 +141,17 @@
 <p>This signal is emitted whenever the network mode changes, specified by <i>mode</i>.</p>
 <h3 class="fn"><a name="networkName"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QSystemNetworkInfo::networkName ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the name of the operator. For wlan this returns the network's current SSID. In the case of none such as a desktop, &quot;No Operator&quot;.</p>
-<h3 class="fn"><a name="networkNameChanged"></a>void QSystemNetworkInfo::networkNameChanged ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>netName</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>This signal is emitted whenever the network name changes, specified by <i>netName</i>.</p>
+<h3 class="fn"><a name="networkNameChanged"></a>void QSystemNetworkInfo::networkNameChanged ( <a href="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::NetworkMode</a> <i>mode</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>netName</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted whenever the network <i>mode</i> name changes, specified by <i>netName</i>.</p>
 <h3 class="fn"><a name="networkSignalStrength"></a>int QSystemNetworkInfo::networkSignalStrength ( <a href="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::NetworkMode</a> <i>mode</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the strength of the network signal, per network <i>mode</i> , 0 - 100 linear scaling, or -1 in the case of unknown network mode or error.</p>
 <p>In the case of QSystemNetworkInfo::EthMode, it will either be 100 for carrier active, or 0 for when there is no carrier or cable connected.</p>
-<h3 class="fn"><a name="networkSignalStrengthChanged"></a>void QSystemNetworkInfo::networkSignalStrengthChanged ( int <i>strength</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>This signal is emitted whenever the network signal strength changes, specified by <i>strength</i>.</p>
+<h3 class="fn"><a name="networkSignalStrengthChanged"></a>void QSystemNetworkInfo::networkSignalStrengthChanged ( <a href="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::NetworkMode</a> <i>mode</i>, int <i>strength</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted whenever the network <i>mode</i> signal strength changes, specified by <i>strength</i>.</p>
 <h3 class="fn"><a name="networkStatus"></a><a href="qsystemnetworkinfo.html#NetworkStatus-enum">QSystemNetworkInfo::NetworkStatus</a> QSystemNetworkInfo::networkStatus ( <a href="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::NetworkMode</a> <i>mode</i> )</h3>
 <p>Returns the status of the network <i>mode</i>.</p>
-<h3 class="fn"><a name="networkStatusChanged"></a>void QSystemNetworkInfo::networkStatusChanged ( <a href="qsystemnetworkinfo.html#NetworkStatus-enum">QSystemNetworkInfo::NetworkStatus</a> <i>status</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>This signal is emitted whenever the network status changes, specified by <i>status</i>.</p>
+<h3 class="fn"><a name="networkStatusChanged"></a>void QSystemNetworkInfo::networkStatusChanged ( <a href="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::NetworkMode</a> <i>mode</i>, <a href="qsystemnetworkinfo.html#NetworkStatus-enum">QSystemNetworkInfo::NetworkStatus</a> <i>status</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted whenever the network status of <i>mode</i> changes, specified by <i>status</i>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

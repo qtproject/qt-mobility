@@ -121,8 +121,6 @@ void QSystemInfoPrivate::startLangaugePolling()
     QTimer::singleShot(1000, this, SLOT(startLangaugePolling()));
 }
 
-
-
 // 2 letter ISO 639-1
 QString QSystemInfoPrivate::currentLanguage() const
 {
