@@ -230,10 +230,13 @@ void tst_QRadioPlayer::init()
     mock = new MockProvider(this);
     object = new MockObject(this, mock);
     radio = new QRadioPlayer(0,object->service());
+    QVERIFY(radio->service() != 0);
+    QVERIFY(radio->isValid());
 }
 
 void tst_QRadioPlayer::cleanup()
 {
+    delete radio;
 }
 
 void tst_QRadioPlayer::testBand()
