@@ -47,7 +47,7 @@ class MockProvider : public QMediaRecorderControl
 public:
     MockProvider(QObject *parent):
         QMediaRecorderControl(parent),
-    m_state((int)QMediaRecorder::StoppedState),
+    m_state(QMediaRecorder::StoppedState),
     m_position(0) {}
 
     QUrl sink() const
@@ -61,12 +61,12 @@ public:
         return true;
     }
 
-    int state() const
+    QMediaRecorder::State state() const
     {
         return m_state;
     }
 
-    qint64 position() const
+    qint64 duration() const
     {
         return m_position;
     }
@@ -76,26 +76,26 @@ public slots:
     {
         m_state = QMediaRecorder::RecordingState;
         m_position=1;
-        emit stateChanged((int)m_state);
-        emit positionChanged(m_position);
+        emit stateChanged(m_state);
+        emit durationChanged(m_position);
     }
 
     void pause()
     {
         m_state = QMediaRecorder::PausedState;
-        emit stateChanged((int)m_state);
+        emit stateChanged(m_state);
     }
 
     void stop()
     {
         m_position=0;
         m_state = QMediaRecorder::StoppedState;
-        emit stateChanged((int)m_state);
+        emit stateChanged(m_state);
     }
 
 public:
-    QUrl m_sink;
-    int        m_state;
+    QUrl       m_sink;
+    QMediaRecorder::State m_state;
     qint64     m_position;
 };
 
@@ -161,31 +161,36 @@ void tst_QMediaRecorder::init()
     mock = new MockProvider(this);
     object = new MockObject(this, mock);
     capture = new QMediaRecorder(object);
+    QVERIFY(capture->isValid());
 }
 
 void tst_QMediaRecorder::cleanup()
 {
+    delete capture;
 }
 
 void tst_QMediaRecorder::testSink()
 {
     capture->setSink(QUrl("test.tmp"));
     QUrl s = capture->sink();
-    QCOMPARE(s.dataLocation().toString(), QString("test.tmp"));
+    QCOMPARE(s.toString(), QString("test.tmp"));
 }
 
 void tst_QMediaRecorder::testRecord()
 {
-    /*
-    QSignalSpy stateSignal(capture, SIGNAL(stateChanged(int)));
-    QSignalSpy progressSignal(capture, SIGNAL(positionChanged(qint64)));
+    QSignalSpy stateSignal(capture,SIGNAL(stateChanged(QMediaRecorder::State)));
+    QSignalSpy progressSignal(capture, SIGNAL(durationChanged(qint64)));
     capture->record();
 
     QTestEventLoop::instance().enterLoop(1);
-    QVERIFY(stateSignal.count() >= 1);
-    QVERIFY(progressSignal.count() >= 1);
+    QVERIFY(stateSignal.count() == 1);
+    QVERIFY(progressSignal.count() == 1);
+    capture->pause();
+    QTestEventLoop::instance().enterLoop(1);
+    QVERIFY(stateSignal.count() == 2);
     capture->stop();
-    */
+    QTestEventLoop::instance().enterLoop(1);
+    QVERIFY(stateSignal.count() == 3);
 }
 
 QTEST_MAIN(tst_QMediaRecorder)
