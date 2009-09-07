@@ -32,9 +32,12 @@
 ****************************************************************************/
 
 #include "qtcontacts.h"
+#include "requestexample.h"
 
 #include <QDebug>
-#include <QApplication>
+#include <QCoreApplication>
+#include <QObject>
+#include <QTimer>
 
 static void addContact(QContactManager*);
 static void callContact(QContactManager*);
@@ -48,8 +51,13 @@ static void loadManagerWithParameters();
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
+    QCoreApplication app(argc, argv);
 
+    // manager configuration examples
+    loadManager();
+    loadManagerWithParameters();
+
+    // synchronous API examples
     QContactManager* cm = new QContactManager();
     addContact(cm);
     callContact(cm);
@@ -59,10 +67,13 @@ int main(int argc, char *argv[])
     viewDetails(cm);
     addPlugin(cm);
     editView(cm);
-    delete cm;
 
-    loadManager();
-    loadManagerWithParameters();
+    // asynchronous API example
+    RequestExample re;
+    re.setManager(cm);
+    QTimer::singleShot(10, &re, SLOT(performRequest()));
+    app.exec();
+    delete cm;
 
     return 0;
 }
@@ -237,6 +248,47 @@ void editView(QContactManager* cm)
     viewDetails(cm);
 }
 //! [Modifying an existing contact]
+
+//! [Asynchronous contact request]
+void RequestExample::performRequest()
+{
+    // retrieve any contact whose first name is "Alice"
+    QContactDetailFilter dfil;
+    dfil.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
+    dfil.setValue("Alice");
+    dfil.setMatchFlags(Qt::MatchExactly);
+
+    m_fetchRequest->setFilter(dfil);
+    connect(m_fetchRequest, SIGNAL(progress(QContactFetchRequest*,bool)), this, SLOT(printContacts(QContactFetchRequest*,bool)));
+    if (!m_fetchRequest->start()) {
+        qDebug() << "Unable to request contacts!";
+        QCoreApplication::exit(0);
+    } else {
+        qDebug() << "Requested contacts; awaiting results...";
+    }
+}
+
+void RequestExample::printContacts(QContactFetchRequest* request, bool appendOnly)
+{
+    QList<QContact> results = request->contacts();
+    if (appendOnly) {
+        // we know that the results are still in the same order; just display the new results.
+        for (m_previousLastIndex += 1; m_previousLastIndex < results.size(); m_previousLastIndex++) {
+            qDebug() << "Found another Alice:" << results.at(m_previousLastIndex).displayLabel().label();
+        }
+    } else {
+        // the order of results has changed; display them all.
+        for (m_previousLastIndex = 0; m_previousLastIndex < results.size(); m_previousLastIndex++) {
+            qDebug() << "Found another Alice:" << results.at(m_previousLastIndex).displayLabel().label();
+        }
+    }
+
+    // once we've finished retrieving results, stop processing events.
+    if (request->status() == QContactAbstractRequest::Finished || request->status() == QContactAbstractRequest::Cancelled) {
+        QCoreApplication::exit(0);
+    }
+}
+//! [Asynchronous contact request]
 
 //! [Loading a specific manager backend]
 void loadManager()

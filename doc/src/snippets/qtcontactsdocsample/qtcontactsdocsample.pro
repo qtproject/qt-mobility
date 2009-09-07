@@ -12,3 +12,4 @@ INCLUDEPATH += .
 LIBS += -lQtContacts
 
 SOURCES += qtcontactsdocsample.cpp
+HEADERS += requestexample.h
