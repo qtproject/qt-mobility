@@ -33,7 +33,6 @@
 ****************************************************************************/
 
 #include "audiocapturesession.h"
-#include "qmediastreams.h"
 #include "qmediarecorder.h"
 
 #include <QDebug>

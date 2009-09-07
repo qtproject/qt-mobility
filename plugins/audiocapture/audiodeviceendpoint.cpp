@@ -32,6 +32,7 @@
 **
 ****************************************************************************/
 
+#include "audiocapturesession.h"
 #include "audiodeviceendpoint.h"
 
 #include <QtGui/QIcon>
@@ -41,8 +42,10 @@
 
 
 AudioDeviceEndpoint::AudioDeviceEndpoint(QObject *parent)
-    :QAudioDeviceEndpoint(parent)
+    :QAudioDeviceControl(parent)
 {
+    m_session = qobject_cast<AudioCaptureSession*>(parent);
+
     update();
 }
 
@@ -50,58 +53,25 @@ AudioDeviceEndpoint::~AudioDeviceEndpoint()
 {
 }
 
-void AudioDeviceEndpoint::setDirectionFilter(QAudioDeviceEndpoint::DeviceDirection direction)
-{
-    if (direction != directionFilter()) {
-        QAudioDeviceEndpoint::setDirectionFilter(direction);
-        update();
-    }
-}
-
-void AudioDeviceEndpoint::setRoleFilter(QAudioDeviceEndpoint::Roles roles)
-{
-    if (roles != roleFilter()) {
-        QAudioDeviceEndpoint::setRoleFilter(roles);
-        update();
-    }
-}
-
-void AudioDeviceEndpoint::setFormFactorFilter(QAudioDeviceEndpoint::FormFactors forms)
-{
-    if (forms != formFactorFilter()) {
-        QAudioDeviceEndpoint::setFormFactorFilter(forms);
-        update();
-    }
-}
-
 int AudioDeviceEndpoint::deviceCount() const
 {
     return m_names.count();
 }
 
-int AudioDeviceEndpoint::direction(int index) const
-{
-    return m_directions[index];
-}
-
-QAudioDeviceEndpoint::Roles AudioDeviceEndpoint::roles(int index) const
-{
-    return m_roles[index];
-}
-
-QAudioDeviceEndpoint::FormFactor AudioDeviceEndpoint::formFactor(int index) const
-{
-    return m_formFactors[index];
-}
-
 QString AudioDeviceEndpoint::name(int index) const
 {
-    return m_names[index];
+    if(index < m_names.count())
+        return m_names[index];
+
+    return QString();
 }
 
 QString AudioDeviceEndpoint::description(int index) const
 {
-    return m_descriptions[index];
+    if(index < m_names.count())
+        return m_descriptions[index];
+
+    return QString();
 }
 
 QIcon AudioDeviceEndpoint::icon(int index) const
@@ -110,44 +80,46 @@ QIcon AudioDeviceEndpoint::icon(int index) const
     return QIcon();
 }
 
-int AudioDeviceEndpoint::defaultInputDevice(QAudioDeviceEndpoint::Role role) const
+int AudioDeviceEndpoint::defaultDevice() const
 {
-    Q_UNUSED(role);
+    QAudioDeviceId idx = QAudioDeviceInfo::defaultInputDevice();
+    QList<QAudioDeviceId> devices;
+    devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
+    QString devName = QAudioDeviceInfo(idx).deviceName();
+    for(int i=0;i<m_names.count();i++) {
+        if(qstrcmp(devName.toLocal8Bit().constData(),
+                    m_names.at(i).toLocal8Bit().constData()) == 0)
+            return i;
+    }
     return 0;
 }
 
-int AudioDeviceEndpoint::defaultOutputDevice(QAudioDeviceEndpoint::Role role) const
+int AudioDeviceEndpoint::selectedDevice() const
 {
-    Q_UNUSED(role);
+    for(int i=0;i<m_names.count();i++) {
+        if(qstrcmp(m_device.toLocal8Bit().constData(),
+                    m_names[i].toLocal8Bit().constData()) == 0)
+            return i;
+    }
     return 0;
+}
+
+void AudioDeviceEndpoint::setSelectedDevice(int index)
+{
+    if(index < m_names.count())
+        m_session->setCaptureDevice(m_names[index]);
 }
 
 void AudioDeviceEndpoint::update()
 {
     m_names.clear();
     m_descriptions.clear();
-    m_directions.clear();
-    m_roles.clear();
-    m_formFactors.clear();
 
     QList<QAudioDeviceId> devices;
-    if(directionFilter() == InputDevice) {
-        devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
-        for(int i = 0; i < devices.size(); ++i) {
-            m_names.append(QAudioDeviceInfo(devices.at(i)).deviceName());
-            m_descriptions.append(QAudioDeviceInfo(devices.at(i)).deviceName());
-            m_directions.append(InputDevice);
-            m_roles.append(AllRoles);
-            m_formFactors.append(UnknownFormFactor);
-        }
-    } else {
-        devices = QAudioDeviceInfo::deviceList(QAudio::AudioOutput);
-        for(int i = 0; i < devices.size(); ++i) {
-            m_names.append(QAudioDeviceInfo(devices.at(i)).deviceName());
-            m_descriptions.append(QAudioDeviceInfo(devices.at(i)).deviceName());
-            m_directions.append(OutputDevice);
-            m_roles.append(AllRoles);
-            m_formFactors.append(UnknownFormFactor);
-        }
+    devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
+    for(int i = 0; i < devices.size(); ++i) {
+        m_names.append(QAudioDeviceInfo(devices.at(i)).deviceName());
+        m_descriptions.append(QAudioDeviceInfo(devices.at(i)).deviceName());
     }
+    m_device = QAudioDeviceInfo(QAudioDeviceInfo::defaultInputDevice()).deviceName();
 }

@@ -32,44 +32,40 @@
 **
 ****************************************************************************/
 
-#ifndef AUDIODEVICEENDPOINT_H
-#define AUDIODEVICEENDPOINT_H
+#ifndef AUDIODEVICECONTROL_H
+#define AUDIODEVICECONTROL_H
 
-#include "qaudiodeviceendpoint.h"
+#include "qaudiodevicecontrol.h"
 #include <QStringList>
 
-class AudioDeviceEndpoint : public QAudioDeviceEndpoint
+class AudioCaptureSession;
+
+class AudioDeviceEndpoint : public QAudioDeviceControl
 {
 Q_OBJECT
 public:
     AudioDeviceEndpoint(QObject *parent);
     virtual ~AudioDeviceEndpoint();
 
-    void setDirectionFilter(DeviceDirection direction);
-    void setRoleFilter(Roles roles);
-    void setFormFactorFilter(FormFactors forms);
-
     int deviceCount() const;
-
-    int direction(int index) const;
-    Roles roles(int index) const;
-    FormFactor formFactor(int index) const;
 
     QString name(int index) const;
     QString description(int index) const;
     QIcon icon(int index) const;
 
-    int defaultInputDevice(Role role) const;
-    int defaultOutputDevice(Role role) const;
+    int defaultDevice() const;
+    int selectedDevice() const;
+
+public Q_SLOTS:
+    void setSelectedDevice(int index);
 
 private:
     void update();
 
+    QString     m_device;
     QStringList m_names;
     QStringList m_descriptions;
-    QList<int> m_directions;
-    QList<Roles> m_roles;
-    QList<FormFactor> m_formFactors;
+    AudioCaptureSession* m_session;
 };
 
-#endif // AUDIODEVICEENDPOINT_H
+#endif // AUDIODEVICECONTROL_H
