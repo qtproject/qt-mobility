@@ -396,6 +396,11 @@ void QMessage::setStatus(QMessage::StatusFlags newStatus)
     d_ptr->_message.setStatus(convert(newStatus));
 }
 
+void QMessage::setStatus(QMessage::Status flag, bool set)
+{
+    d_ptr->_message.setStatus(convert(flag), set);
+}
+
 QMessage::Priority QMessage::priority() const
 {
     quint64 status(d_ptr->_message.status());

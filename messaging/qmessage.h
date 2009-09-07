@@ -135,6 +135,7 @@ public:
 
     StatusFlags status() const;
     void setStatus(StatusFlags newStatus);
+    void setStatus(Status flag, bool set = true);
 
     Priority priority() const;
     void setPriority(Priority newPriority);

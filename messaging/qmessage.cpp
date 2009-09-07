@@ -429,6 +429,14 @@
 */
 
 /*!
+    \fn QMessage::setStatus(QMessage::Status flag, bool set)
+    
+    Sets the status flag \a flag for the message to have the value \a set.
+
+    \sa status()
+*/
+
+/*!
     \fn QMessage::priority() const
     
     Returns the priority of the message.

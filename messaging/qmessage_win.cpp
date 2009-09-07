@@ -262,6 +262,16 @@ void QMessage::setStatus(QMessage::StatusFlags newStatus)
     d_ptr->_status = newStatus;
 }
 
+void QMessage::setStatus(QMessage::Status flag, bool set)
+{
+    d_ptr->_modified = true;
+    if (set) {
+        d_ptr->_status |= flag;
+    } else {
+        d_ptr->_status &= ~flag;
+    }
+}
+
 QMessage::Priority QMessage::priority() const
 {
     return d_ptr->_priority;

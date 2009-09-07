@@ -208,6 +208,12 @@ void QMessage::setStatus(QMessage::StatusFlags newStatus)
     Q_UNUSED(newStatus)
 }
 
+void QMessage::setStatus(QMessage::Status flag, bool set)
+{
+    Q_UNUSED(flag)
+    Q_UNUSED(set)
+}
+
 QMessage::Priority QMessage::priority() const
 {
     return QMessage::NormalPriority; // stub
