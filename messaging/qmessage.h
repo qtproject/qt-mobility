@@ -69,9 +69,9 @@ public:
 
     enum Priority
     {
-        High = 1,
-        Normal,
-        Low
+        HighPriority = 1,
+        NormalPriority,
+        LowPriority
     };
 
     enum StandardFolder

@@ -1050,9 +1050,9 @@ QMessageId addMessage(const Parameters &params)
 
                 if (!priority.isEmpty()) {
                     if (priority.toLower() == "high") {
-                        message.setPriority(QMessage::High);
+                        message.setPriority(QMessage::HighPriority);
                     } else if (priority.toLower() == "low") {
-                        message.setPriority(QMessage::Low);
+                        message.setPriority(QMessage::LowPriority);
                     }
                 }
 

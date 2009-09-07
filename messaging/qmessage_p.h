@@ -45,7 +45,7 @@ public:
          _size(0),
          _type(QMessage::None),
          _status(0),
-         _priority(QMessage::Normal),
+         _priority(QMessage::NormalPriority),
 #ifdef QMESSAGING_OPTIONAL
          _originatorPort(0),
          _destinationPort(0),

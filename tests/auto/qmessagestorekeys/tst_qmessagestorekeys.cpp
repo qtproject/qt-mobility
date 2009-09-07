@@ -1932,32 +1932,32 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << messageIds;
 
     QTest::newRow("priority equality 1")
-        << QMessageFilter::byPriority(QMessage::High, QMessageDataComparator::Equal) 
+        << QMessageFilter::byPriority(QMessage::HighPriority, QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[1] << messageIds[2] )
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] );
 
     QTest::newRow("priority equality 2")
-        << QMessageFilter::byPriority(QMessage::Low, QMessageDataComparator::Equal) 
+        << QMessageFilter::byPriority(QMessage::LowPriority, QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] );
 
     QTest::newRow("priority equality 3")
-        << QMessageFilter::byPriority(QMessage::Normal, QMessageDataComparator::Equal) 
+        << QMessageFilter::byPriority(QMessage::NormalPriority, QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[0] << messageIds[3] )
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[4] );
 
     QTest::newRow("priority inequality 1")
-        << QMessageFilter::byPriority(QMessage::High, QMessageDataComparator::NotEqual) 
+        << QMessageFilter::byPriority(QMessage::HighPriority, QMessageDataComparator::NotEqual) 
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[1] << messageIds[2] );
 
     QTest::newRow("priority inequality 2")
-        << QMessageFilter::byPriority(QMessage::Low, QMessageDataComparator::NotEqual) 
+        << QMessageFilter::byPriority(QMessage::LowPriority, QMessageDataComparator::NotEqual) 
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
         << ( QMessageIdList() << messageIds[4] );
 
     QTest::newRow("priority inequality 3")
-        << QMessageFilter::byPriority(QMessage::Normal, QMessageDataComparator::NotEqual) 
+        << QMessageFilter::byPriority(QMessage::NormalPriority, QMessageDataComparator::NotEqual) 
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] << messageIds[3] );
 

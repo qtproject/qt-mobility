@@ -181,10 +181,10 @@ QMessageOrdering QMessageOrdering::byPriority(Qt::SortOrder order)
     QMessageOrdering key;
 
     if (order == Qt::DescendingOrder) {
-        // Sort High descending, then Low ascending
+        // Sort HighPriority descending, then LowPriority ascending
         key.d_ptr->_key = QMailMessageSortKey::status(highPriorityMask()) & QMailMessageSortKey::status(lowPriorityMask(), Qt::AscendingOrder);
     } else {
-        // Sort Low descending, then High ascending
+        // Sort LowPriority descending, then HighPriority ascending
         key.d_ptr->_key = QMailMessageSortKey::status(lowPriorityMask()) & QMailMessageSortKey::status(highPriorityMask(), Qt::AscendingOrder);
     }
 

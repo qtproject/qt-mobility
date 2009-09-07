@@ -210,7 +210,7 @@ void QMessage::setStatus(QMessage::StatusFlags newStatus)
 
 QMessage::Priority QMessage::priority() const
 {
-    return QMessage::Normal; // stub
+    return QMessage::NormalPriority; // stub
 }
 
 void QMessage::setPriority(Priority newPriority)

@@ -132,9 +132,9 @@
 
     Defines the priority of a message.
 
-    \value High    The message is high priority.
-    \value Normal  The message is normal priority.
-    \value Low     The message is low priority.
+    \value HighPriority    The message is high priority.
+    \value NormalPriority  The message is normal priority.
+    \value LowPriority     The message is low priority.
 */
 
 /*!
@@ -433,7 +433,7 @@
     
     Returns the priority of the message.
 
-    The default is Normal.
+    The default is NormalPriority.
 
     \sa setPriority(), QMessageFilter::byPriority()
 */

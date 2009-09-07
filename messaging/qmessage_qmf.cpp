@@ -401,12 +401,12 @@ QMessage::Priority QMessage::priority() const
     quint64 status(d_ptr->_message.status());
 
     if (status & highPriorityMask()) {
-        return QMessage::High;
+        return QMessage::HighPriority;
     } else if (status & lowPriorityMask()) {
-        return QMessage::Low;
+        return QMessage::LowPriority;
     }
 
-    return QMessage::Normal;
+    return QMessage::NormalPriority;
 }
 
 void QMessage::setPriority(Priority newPriority)
@@ -414,10 +414,10 @@ void QMessage::setPriority(Priority newPriority)
     quint64 setMask(0);
     quint64 unsetMask(0);
 
-    if (newPriority == QMessage::High) {
+    if (newPriority == QMessage::HighPriority) {
         setMask = highPriorityMask();
         unsetMask = lowPriorityMask();
-    } else if (newPriority == QMessage::Low) {
+    } else if (newPriority == QMessage::LowPriority) {
         unsetMask = highPriorityMask();
         setMask = lowPriorityMask();
     } else {

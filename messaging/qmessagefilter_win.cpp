@@ -265,13 +265,13 @@ MapiRestriction::MapiRestriction(const QMessageFilter &filter)
             _keyProp.ulPropTag = PR_IMPORTANCE;
             QMessage::Priority priority(static_cast<QMessage::Priority>(d_ptr->_value.toInt()));
             switch (priority) { // TODO: Double check that priority filtering is working
-            case QMessage::High:
+            case QMessage::HighPriority:
                 _keyProp.Value.ul = PRIO_URGENT;
                 break;
-            case QMessage::Normal:
+            case QMessage::NormalPriority:
                 _keyProp.Value.ul = PRIO_NORMAL;
                 break;
-            case QMessage::Low:
+            case QMessage::LowPriority:
                 _keyProp.Value.ul = PRIO_NONURGENT;
                 break;
             default:

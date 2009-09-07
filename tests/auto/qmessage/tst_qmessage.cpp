@@ -643,13 +643,13 @@ void tst_QMessage::testStatus()
 void tst_QMessage::testPriority()
 {
     QMessage msg;
-    QCOMPARE(msg.priority(), QMessage::Normal);
+    QCOMPARE(msg.priority(), QMessage::NormalPriority);
 
-    msg.setPriority(QMessage::High);
-    QCOMPARE(msg.priority(), QMessage::High);
+    msg.setPriority(QMessage::HighPriority);
+    QCOMPARE(msg.priority(), QMessage::HighPriority);
 
-    msg.setPriority(QMessage::Low);
-    QCOMPARE(msg.priority(), QMessage::Low);
+    msg.setPriority(QMessage::LowPriority);
+    QCOMPARE(msg.priority(), QMessage::LowPriority);
 }
 
 #ifdef QMESSAGING_OPTIONAL

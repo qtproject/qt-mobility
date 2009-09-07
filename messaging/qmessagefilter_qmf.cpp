@@ -316,15 +316,15 @@ QMessageFilter QMessageFilter::byPriority(QMessage::Priority value, QMessageData
 
     switch (value)
     {
-    case QMessage::High: 
+    case QMessage::HighPriority: 
         result.d_ptr->_key = QMailMessageKey::status(highPriorityMask(), (cmp == QMessageDataComparator::Equal ? QMailDataComparator::Includes : QMailDataComparator::Excludes)); 
         break;
 
-    case QMessage::Low: 
+    case QMessage::LowPriority: 
         result.d_ptr->_key = QMailMessageKey::status(lowPriorityMask(), (cmp == QMessageDataComparator::Equal ? QMailDataComparator::Includes : QMailDataComparator::Excludes)); 
         break;
 
-    case QMessage::Normal:
+    case QMessage::NormalPriority:
         result.d_ptr->_key = QMailMessageKey::status(lowPriorityMask() | highPriorityMask(), (cmp == QMessageDataComparator::Equal ? QMailDataComparator::Excludes : QMailDataComparator::Includes)); 
         break;
     }
