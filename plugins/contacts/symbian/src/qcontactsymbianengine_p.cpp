@@ -37,6 +37,7 @@
 #include <cntfldst.h>
 
 #include <qtcontacts.h>
+#include <QSet>
 
 
 QContactSymbianEngineData::QContactSymbianEngineData() :

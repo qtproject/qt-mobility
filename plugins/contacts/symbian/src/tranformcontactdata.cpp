@@ -31,53 +31,22 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTFIELDMAP_H
-#define QCONTACTFIELDMAP_H
+#include "transformcontactdata.h"
 
-#include <QtCore>
-#include <QSharedData>
-#include <QMap>
-#include <QPair>
-
-/*!
- * Data class for shared data pointer.
- * 
- * Used by QContactFieldMap to prevent data duplication.
- */
-class QContactFieldMapData : public QSharedData
+QList<CContactItemField *> TransformContactData::transformDetail(const QContactDetail &detail)
 {
-public:
-	// Maps used for String/UID lookup
-	QMap<QString, int> mStringIdMap;
-	QMap<int, QString> mIntIdMap;
-};
+	QList<CContactItemField *> fieldList;
 
-/*!
- * QContactFieldMap
- * 
- * This class is used to quickly look up Symbian field UIDs that
- * correspond to a given Qt contact detail and field description.
- */
-class QContactFieldMap
-{
-public:
-	QContactFieldMap();
-		
-	// Lookup functions
-	TUid symbianOsUid(const QString &detailType, const QString &field) const;
-	QPair<QString, QString> qtDetailFieldPair(TUid uid) const;
-
-private:
-    int intIdentifier(const QString &fieldStringIdentifier) const;
-    QString stringIdentifier(int fieldUid) const;
-    QString dotJoin(const QString &detail, const QString &field) const;
-
-    // Setup field translation
-    void initializeMaps();
+	TRAPD(error, fieldList = transformDetailL(detail));
 	
-	// Shared data between instances.
-	QSharedDataPointer<QContactFieldMapData> d;
-};
+	return fieldList;
+}
 
-#endif // QCONTACTFIELDMAP_H
-
+QContactDetail *TransformContactData::transformItemField(const CContactItemField& field, const QContact &contact)
+{
+	QContactDetail *detail(0);
+	
+	TRAPD(error, detail = transformItemFieldL(field, contact));
+	
+	return detail;
+}

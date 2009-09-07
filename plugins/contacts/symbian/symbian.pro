@@ -29,15 +29,18 @@ symbian: {
   		$$PUBLIC_HEADERS \
   		inc/qcontactsymbianbackend.h \
       inc/qcontactsymbianengine_p.h \
-      inc/qcontactfieldmap.h \
-      inc/qfieldmapping.h \
-      inc/transformcontact.h
+      inc/transformcontact.h \
+      inc/transformcontactdata.h \
+      inc/transformname.h \
+      inc/transformphonenumber.h
       
   SOURCES += \
   		src/qcontactsymbianbackend.cpp \
   		src/qcontactsymbianengine_p.cpp \
-      src/qcontactfieldmap.cpp \
-      src/transformcontact.cpp
+      src/transformcontact.cpp \
+      src/tranformcontactdata.cpp \
+      src/transformname.cpp \
+      src/transformphonenumber.cpp
       
   LIBS += \
   				-lcntmodel \

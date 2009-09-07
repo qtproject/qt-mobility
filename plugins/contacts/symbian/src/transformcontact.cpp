@@ -32,97 +32,63 @@
 ****************************************************************************/
 
 #include "transformcontact.h"
-#include <cntfldst.h>
+
+#include "transformphonenumber.h"
+#include "transformname.h"
 
 #include <qtcontacts.h>
-
+#include <cntfldst.h>
 #include <cntdb.h>
 #include <cntdbobs.h>
 #include <cntitem.h>
 
+#include <QDebug>
+
 TransformContact::TransformContact()
 {
-	// TODO Auto-generated constructor stub
-
+	initializeTransformContactData();
 }
 
 TransformContact::~TransformContact()
 {
-	// TODO Auto-generated destructor stub
 }
 
-void TransformContact::initializeContactMapping()
+void TransformContact::initializeTransformContactData()
 {
+	m_transformContactData.insert(Name, new TransformName);
+	m_transformContactData.insert(PhoneNumber, new TransformPhoneNumber);
+	//m_transformContactData.insert(Address, )
+	
 }
+
 
 QContact TransformContact::transformContact(CContactItem &contact) const
 {
-	// TODO: Error Handling
-	    // TODO: Undecided implementation for: labels, context, attributes
-
 		// Create a new QContact
 		QContact newQtContact;
 		newQtContact.setId(contact.Id());
-		
-		// We need to keep a map of the details so that we append fields
-		// rather than adding a new detail for each field instance
-		QMap<QString, QContactDetail> details;
 		
 		// Iterate through the CContactItemFieldSet, creating
 		// new fields for the QContact
 		CContactItemFieldSet& fields(contact.CardFields());
 		
 		const int numFields(fields.Count());
-		for(int i(0); i < numFields; ++i) {
-			CContactItemField& currentField(fields[i]);
+		
+		for(int i(0); i < numFields; ++i) 
+		{
+			QContactDetail *detail = transformItemField( fields[i], newQtContact );
 			
-			// TODO: Support all instances of this type (hardcoded 0 must go)
-			// Check that the identifier was valid, if not, skip this field.
-			QPair<QString, QString> detailField = m_fieldMap.qtDetailFieldPair(currentField.ContentType().FieldType(0));
-			if (detailField.first.isEmpty()) {
-	            // Skipping fields for which there is no mapping provided
-				continue;
+			if(detail)
+			{
+				newQtContact.saveDetail(detail);	
 			}
-			
-			// Check that this is a text field.
-			// TODO: Remove this check when other field types are supported.
-			if (currentField.StorageType() != KStorageTypeText) {
-				// Skipping non-text fields until they are supported.
-				continue;
-			}
-			
-			// Retrieve and set the contact text
-			CContactTextField* storage = currentField.TextStorage();
-			QString fieldText = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
-		
-	        if (details.contains(detailField.first)) {
-	            // This detail already exists, so just add this field to it
-	            details[detailField.first].setValue(detailField.second, fieldText);
-	            } else {
-	            // We need to create a new detail object for this field
-	            QContactDetail newDetail(detailField.first);
-	            newDetail.setValue(detailField.second, fieldText);
-	            details.insertMulti(detailField.first, newDetail);
-	        }
 		}
-		
-		// Add all of the converted details to the new Qt Contact
-		QList<QContactDetail> detailValues = details.values();
-		const int detailCount = detailValues.count();
-		for (int i(0); i < detailCount; ++i) {
-	        // TODO: Update this code when the method for adding
-	        // multiple details of the same type is established.
-	        newQtContact.saveDetail(&detailValues[i]);
-		}
-		
+
 		return newQtContact;
 }
 
 CContactItem *TransformContact::transformContact(QContact &contact) const
 {
-	// TODO: Error Handling (see uses of new)
-	// TODO: Undecided implementation: labels, context, attributes.
-	
 	// Create a new contact card.
 	CContactCard* symContact = CContactCard::NewLC();
 	
@@ -134,45 +100,63 @@ CContactItem *TransformContact::transformContact(QContact &contact) const
 	
 	// Iterate through the contact details in the QContact
 	const int detailCount(detailList.count());
-	for(int i(0); i < detailCount; ++i) {
-        // Now iterate through values in this detail
-        QVariantMap fields = detailList[i].values();
-        QList<QString> fieldKeys = fields.keys();
-        QString detailType = detailList[i].definitionName(); //detailList[i].type();
-        
-        
-        const int fieldCount(fieldKeys.count());
-        for (int j(0); j < fieldCount; ++j) {
-            
-            // Look up the TUid identifier
-            TUid fieldType(m_fieldMap.symbianOsUid(detailType, fieldKeys[j]));
-            
-            // Check that the field identifier was valid
-            if (fieldType.iUid == 0) {
-                continue;
-            }
-            
-            // TODO: Add support for other field types
-            // Make sure the value of this field is a text value
-            QVariant fieldValue = fields[fieldKeys[j]];
-            if (! fieldValue.canConvert(QVariant::String)) {
-                continue;
-            }
-            
-            // Create a text field for the Symbian Contact item
-            CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, fieldType);
-            TPtrC fieldText(reinterpret_cast<const TUint16*>(fieldValue.toString().utf16()));
-            newField->TextStorage()->SetTextL(fieldText);
-            
-            // Add field to contact item
-            symContact->AddFieldL(*newField);
-            CleanupStack::Pop(newField);
-        }
+	
+	for(int i(0); i < detailCount; ++i) 
+	{
+		QList<CContactItemField *> fieldList = transformDetail( detailList.at(i) );
+		int fieldCount = fieldList.count();
+		
+		for (int i = 0; i < fieldCount; i++)
+        {
+			//transform ownership of field
+			symContact->AddFieldL(*fieldList.at(i));
+		}
 	}
 	
 	CleanupStack::Pop(symContact);
 	return symContact;
-
 }
+
+QList<CContactItemField *> TransformContact::transformDetail(const QContactDetail &detail) const
+{
+	QList<CContactItemField *> itemFieldList;
+	
+	if (detail.definitionName() == QContactName::DefinitionName )
+	{
+		itemFieldList = m_transformContactData.value(Name)->transformDetail(detail);
+	}
+	else if (detail.definitionName() == QContactPhoneNumber::DefinitionName )
+	{
+		itemFieldList = m_transformContactData.value(PhoneNumber)->transformDetail(detail);
+	}
+	
+	return itemFieldList;
+}
+
+QContactDetail *TransformContact::transformItemField(const CContactItemField& field, const QContact &contact) const
+{
+	QContactDetail *detail(0);
+	
+	TUint32 fieldType(field.ContentType().FieldType(0).iUid);
+	
+	if (fieldType == KUidContactFieldGivenName.iUid ||
+		fieldType == KUidContactFieldFamilyName.iUid)
+	{
+		detail = m_transformContactData.value(Name)->transformItemField(field, contact);
+	}
+	
+	else if (fieldType == KUidContactFieldPhoneNumber.iUid ||
+		     fieldType == KUidContactFieldFax.iUid )
+	{
+		detail = m_transformContactData.value(PhoneNumber)->transformItemField(field, contact);
+	}
+	
+	//else if (fieldType == ...) 
+	return detail;
+}
+	
+
+
+
 
 

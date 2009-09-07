@@ -30,10 +30,10 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef TRANSFORMCONTACTDATA_H_
+#define TRANSFORMCONTACTDATA_H_
 
-#ifndef TRANSFORMCONCTACT_H_
-#define TRANSFORMCONCTACT_H_
-
+#include <QObject>
 #include <qtcontacts.h>
 
 #include <cntfldst.h>
@@ -41,31 +41,17 @@
 #include <cntdef.h>
 #include <cntitem.h>
 
-class TransformContactData;
-class TransformContact
+class TransformContactData : public QObject
 {
+	 Q_OBJECT
+	 
 public:
-	TransformContact();
-	virtual ~TransformContact();
+	QList<CContactItemField *> transformDetail(const QContactDetail &detail);
+	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact);
 
-public:
-	QContact transformContact(CContactItem &contact) const;
-	CContactItem *transformContact(QContact &contact) const;
-
-private:
-	enum ContactData
-	{
-		Name = 0,
-		PhoneNumber,
-		Address
-	};
-	
-	void initializeTransformContactData();
-	QList<CContactItemField *> transformDetail(const QContactDetail &detail) const;
-	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact) const;
-	
-private:
-	QMap<ContactData, TransformContactData*> m_transformContactData;
+protected:	
+	virtual QList<CContactItemField *> transformDetailL(const QContactDetail &detail) = 0;
+	virtual QContactDetail* transformItemFieldL(const CContactItemField& field, const QContact &contact) = 0;
 };
 
-#endif /* TRANSFORMCONCTACT_H_ */
+#endif
