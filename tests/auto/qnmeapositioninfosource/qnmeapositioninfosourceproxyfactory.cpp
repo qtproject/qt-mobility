@@ -46,9 +46,7 @@ QNmeaPositionInfoSourceProxy::QNmeaPositionInfoSourceProxy(QNmeaPositionInfoSour
 
 QNmeaPositionInfoSourceProxy::~QNmeaPositionInfoSourceProxy()
 {
-    m_source->device()->close();
     m_outDevice->close();
-    delete m_source;
     delete m_outDevice;
 }
 
@@ -68,26 +66,27 @@ void QNmeaPositionInfoSourceProxy::feedBytes(const QByteArray &bytes)
 }
 
 
-QNmeaPositionInfoSourceProxyFactory::QNmeaPositionInfoSourceProxyFactory(QNmeaPositionInfoSource::UpdateMode mode)
-    : m_server(new QTcpServer(this)),
-        m_mode(mode)
+QNmeaPositionInfoSourceProxyFactory::QNmeaPositionInfoSourceProxyFactory()
+    : m_server(new QTcpServer(this))
 {
     bool b = m_server->listen(QHostAddress::LocalHost);
     Q_ASSERT(b);
 }
 
-QNmeaPositionInfoSourceProxy *QNmeaPositionInfoSourceProxyFactory::createProxy()
+QNmeaPositionInfoSourceProxy *QNmeaPositionInfoSourceProxyFactory::createProxy(QNmeaPositionInfoSource *source)
 {
     QTcpSocket *client = new QTcpSocket;
     client->connectToHost(m_server->serverAddress(), m_server->serverPort());
-    qDebug() << "listening on" << m_server->serverAddress() << m_server->serverPort();
+    //qDebug() << "listening on" << m_server->serverAddress() << m_server->serverPort();
     bool b = m_server->waitForNewConnection(5000);
     Q_ASSERT(b);
     b = client->waitForConnected();
     Q_ASSERT(b);
 
-    QNmeaPositionInfoSource *source = new QNmeaPositionInfoSource(m_mode);
+    //QNmeaPositionInfoSource *source = new QNmeaPositionInfoSource(m_mode);
     source->setDevice(m_server->nextPendingConnection());
     Q_ASSERT(source->device() != 0);
-    return new QNmeaPositionInfoSourceProxy(source, client);
+    QNmeaPositionInfoSourceProxy *proxy = new QNmeaPositionInfoSourceProxy(source, client);
+    proxy->setParent(source);
+    return proxy;
 }

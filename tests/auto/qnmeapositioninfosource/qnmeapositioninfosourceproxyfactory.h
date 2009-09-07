@@ -43,6 +43,7 @@ class QIODevice;
 
 class QNmeaPositionInfoSourceProxy : public QObject
 {
+    Q_OBJECT
 public:
     QNmeaPositionInfoSourceProxy(QNmeaPositionInfoSource *source, QIODevice *outDevice);
     ~QNmeaPositionInfoSourceProxy();
@@ -64,13 +65,13 @@ class QNmeaPositionInfoSourceProxyFactory : public QObject
 {
     Q_OBJECT
 public:
-    QNmeaPositionInfoSourceProxyFactory(QNmeaPositionInfoSource::UpdateMode mode);
+    QNmeaPositionInfoSourceProxyFactory();
 
-    QNmeaPositionInfoSourceProxy *createProxy();
+    // proxy is created as child of source
+    QNmeaPositionInfoSourceProxy *createProxy(QNmeaPositionInfoSource *source);
 
 private:
     QTcpServer *m_server;
-    QNmeaPositionInfoSource::UpdateMode m_mode;
 };
 
 #endif
