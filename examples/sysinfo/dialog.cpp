@@ -364,6 +364,7 @@ void Dialog::setupSaver()
              this,SLOT(setBlankingEnabled(bool)));
 
     ui->saverEnabledCheckBox->setChecked(saverEnabled);
+    ui->screenBlankingCheckBox->setChecked(blankingEnabled);
 
 }
 
