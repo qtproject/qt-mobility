@@ -444,7 +444,7 @@ private slots:
     {
         QFETCH(QGeoCoordinate, c1);
         QFETCH(QGeoCoordinate, c2);
-        QFETCH(double, distance);
+        QFETCH(qreal, distance);
 
         QVERIFY(qFuzzyCompare(c1.distanceTo(c2), distance));
     }
@@ -453,7 +453,7 @@ private slots:
     {
         QTest::addColumn<QGeoCoordinate>("c1");
         QTest::addColumn<QGeoCoordinate>("c2");
-        QTest::addColumn<double>("distance");
+        QTest::addColumn<qreal>("distance");
 
         QTest::newRow("invalid coord 1")
                 << QGeoCoordinate() << BRISBANE << 0.0;
@@ -471,7 +471,7 @@ private slots:
     {
         QFETCH(QGeoCoordinate, c1);
         QFETCH(QGeoCoordinate, c2);
-        QFETCH(double, azimuth);
+        QFETCH(qreal, azimuth);
 
         QVERIFY(qFuzzyCompare(c1.azimuthTo(c2), azimuth));
     }
@@ -480,7 +480,7 @@ private slots:
     {
         QTest::addColumn<QGeoCoordinate>("c1");
         QTest::addColumn<QGeoCoordinate>("c2");
-        QTest::addColumn<double>("azimuth");
+        QTest::addColumn<qreal>("azimuth");
 
         QTest::newRow("invalid coord 1")
                 << QGeoCoordinate() << BRISBANE << 0.0;
