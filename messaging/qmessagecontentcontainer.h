@@ -81,7 +81,7 @@ public:
     QMessageContentContainer find(const QMessageContentContainerId &id) const;
     bool contains(const QMessageContentContainerId &id) const;
 
-    QString headerField(const QByteArray &name) const;
+    QString headerFieldValue(const QByteArray &name) const;
     QStringList headerFieldValues(const QByteArray &name) const;
     QList<QByteArray> headerFields() const;
 

@@ -87,7 +87,7 @@
     ASCII strings, while values are charset encoded unicode strings. A header field may be 
     appended using appendHeaderField(), an existing header field may be 
     replaced using setHeaderField(). A list of header fields is returned by headerFields(). The 
-    unicode string value of a header field is returned by headerField().
+    unicode string value of a header field is returned by headerFieldValue().
 
     If the container has been modified since it was last constructed containerDataModified() 
     returns true.
@@ -379,7 +379,7 @@
     preferredCharsets() that can encode \a value if any; otherwise \a value will be encoded using 
     "UTF-8".
 
-    \sa setHeaderField(), headerField(), headerFields()
+    \sa setHeaderField(), headerFieldValue(), headerFields()
 */
 
 /*!
@@ -398,11 +398,11 @@
     the 'Content-Disposition' header field. These header fields should not be modified using
     the setHeaderField() function and doing so may result in undefined behavior.
 
-    \sa appendHeaderField(), headerField(), headerFields()
+    \sa appendHeaderField(), headerFieldValue(), headerFields()
 */
 
 /*!
-    \fn QMessageContentContainer::headerField(const QByteArray &name) const
+    \fn QMessageContentContainer::headerFieldValue(const QByteArray &name) const
     
     Returns the value of the first header field of the container with the name \a name, if any;
     otherwise returns a null string.
@@ -416,7 +416,7 @@
     Returns a list of values of header fields with the name \a name, if any;
     otherwise returns an empty list.
 
-    \sa appendHeaderField(), setHeaderField(), headerField(), headerFields()
+    \sa appendHeaderField(), setHeaderField(), headerFieldValue(), headerFields()
 */
 
 /*!
@@ -424,7 +424,7 @@
     
     Returns a list of names of header fields of the container.
 
-    \sa appendHeaderField(), setHeaderField(), headerField()
+    \sa appendHeaderField(), setHeaderField(), headerFieldValue()
 */
 
 /*!
@@ -434,7 +434,7 @@
     header fields for the container. Any existing header field with the same name is not 
     modified.
 
-    \sa setHeaderField(), headerField(), headerFields()
+    \sa setHeaderField(), headerFieldValue(), headerFields()
 */
 
 /*!
@@ -443,7 +443,7 @@
     Sets the value of the first header field of the container with name \a name to \a value if it 
     already exists; otherwise appends a header with the supplied name and value.
 
-    \sa appendHeaderField(), headerField(), headerFields()
+    \sa appendHeaderField(), headerFieldValue(), headerFields()
 */
 
 /*!

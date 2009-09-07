@@ -349,7 +349,7 @@ void QMessageContentContainer::setHeaderField(const QByteArray &name, const QStr
 }
 #endif
 
-QString QMessageContentContainer::headerField(const QByteArray &name) const
+QString QMessageContentContainer::headerFieldValue(const QByteArray &name) const
 {
     QMultiMap<QByteArray, QString>::const_iterator it = d_ptr->_header.find(name);
     if (it != d_ptr->_header.end()) {

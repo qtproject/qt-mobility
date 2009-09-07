@@ -510,7 +510,7 @@ void QMessageContentContainer::setHeaderField(const QByteArray &name, const QStr
 }
 #endif
 
-QString QMessageContentContainer::headerField(const QByteArray &name) const
+QString QMessageContentContainer::headerFieldValue(const QByteArray &name) const
 {
     return d_ptr->_container->headerFieldText(name);
 }

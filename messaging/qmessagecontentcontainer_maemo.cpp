@@ -208,7 +208,7 @@ void QMessageContentContainer::setHeaderField(const QByteArray &name, const QStr
 }
 #endif
 
-QString QMessageContentContainer::headerField(const QByteArray &name) const
+QString QMessageContentContainer::headerFieldValue(const QByteArray &name) const
 {
     Q_UNUSED(name)
     return QString(); // stub
