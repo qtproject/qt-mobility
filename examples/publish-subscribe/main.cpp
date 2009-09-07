@@ -72,10 +72,12 @@ int main(int argc, char *argv[])
         consumer->show();
     }
 
-    app.exec();
+    int result = app.exec();
 
     if (provider)
         delete provider;
     if (consumer)
         delete consumer;
+
+    return result;
 }

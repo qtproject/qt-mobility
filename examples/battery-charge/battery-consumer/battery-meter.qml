@@ -1,5 +1,7 @@
 import Qt 4.6
+//! [4]
 import Example 1.0
+//! [4]
 
 Rectangle {
     color: "white"
@@ -21,6 +23,7 @@ Rectangle {
     }
 
     Rectangle {
+        //! [1]
         id: visualCharge
         x: 12
         y: 22 + 196 - height
@@ -28,6 +31,7 @@ Rectangle {
         height: 196 * battery.charge / 100
         clip: true
         color: "green"
+        //! [1]
 
         Particles {
             id: Bubbles
@@ -45,6 +49,7 @@ Rectangle {
         }
 
         states: [
+        //! [3]
         State {
             name: "charging"
             when: battery.charging
@@ -53,6 +58,8 @@ Rectangle {
                 emitting: true
             }
         },
+        //! [3]
+        //! [2]
         State {
             name: "low"
             when: battery.charge < 25 && !battery.charging
@@ -61,6 +68,7 @@ Rectangle {
                 color: "red"
             }
         }
+        //! [2]
         ]
 
         transitions: [
@@ -75,8 +83,10 @@ Rectangle {
         ]
     }
 
+    //! [0]
     BatteryCharge {
         id: battery
         path: "/power/battery"
     }
+    //! [0]
 }

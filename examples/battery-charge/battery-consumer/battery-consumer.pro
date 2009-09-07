@@ -2,6 +2,7 @@ TEMPLATE = app
 TARGET = battery-consumer
 QT += declarative
 INCLUDEPATH += ../../../context
+DEPENDPATH += ../../../context
 include(../../../common.pri)
 LIBS += -lQtContextFramework
 SOURCES = main.cpp \

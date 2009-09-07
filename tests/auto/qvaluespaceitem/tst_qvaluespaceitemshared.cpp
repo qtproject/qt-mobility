@@ -169,7 +169,7 @@ void tst_QValueSpaceItem::testConstructor_data()
     QTest::addColumn< QVariant >("testItem");
     QTest::addColumn< QVariant >("value");
     QTest::addColumn< QList<QString> >("subPaths");
-    QTest::addColumn< QString >("itemName");
+    QTest::addColumn< QString >("path");
     QTest::addColumn< QString >("relItemPath");
     QTest::addColumn< int >("expectedValue");
 
@@ -557,7 +557,7 @@ void tst_QValueSpaceItem::testConstructor()
     QFETCH(QVariant, testItem);
     QFETCH(QVariant, value);
     QFETCH(QList<QString>, subPaths);
-    QFETCH(QString, itemName);
+    QFETCH(QString, path);
     QFETCH(QString, relItemPath);
     QFETCH(int, expectedValue);
 
@@ -566,7 +566,7 @@ void tst_QValueSpaceItem::testConstructor()
     QCOMPARE(item->parent(), this);
     QCOMPARE(item->value(), value);
     QCOMPARE(item->subPaths().toSet(), subPaths.toSet());
-    QCOMPARE(item->itemName(), itemName);
+    QCOMPARE(item->path(), path);
     QCOMPARE(item->value(relItemPath, 100).toInt(), expectedValue);
 }
 
@@ -742,9 +742,9 @@ void tst_QValueSpaceItem::ipcTests()
     QSKIP("Qt was compiled with QT_NO_PROCESS", SkipAll);
 #else
     QValueSpaceItem item ("/usr/lackey/subdir/value");
-    ChangeListener* listener = new ChangeListener();
-    QSignalSpy spy(listener, SIGNAL(baseChanged()));
-    connect(&item, SIGNAL(contentsChanged()),listener, SIGNAL(baseChanged()));
+    ChangeListener listener;
+    QSignalSpy spy(&listener, SIGNAL(baseChanged()));
+    connect(&item, SIGNAL(contentsChanged()), &listener, SIGNAL(baseChanged()));
 
     QProcess process;
     process.setProcessChannelMode(QProcess::ForwardedChannels);
@@ -997,20 +997,23 @@ void tst_QValueSpaceItem::ipcRemoveKey()
 #if defined(QT_NO_PROCESS)
     QSKIP("Qt was compiled with QT_NO_PROCESS", SkipAll);
 #else
-    QProcess process;
-    process.setProcessChannelMode(QProcess::ForwardedChannels);
-    process.start("vsiTestLackey", QStringList() << "-ipcRemoveKey");
-    QVERIFY(process.waitForStarted());
-
     QValueSpaceItem item("/ipcRemoveKey");
-
-    // Wait for lackey to set "value" to 100.
-    QTRY_COMPARE(item.value("value", 5).toInt(), 100);
 
     ChangeListener listener;
     QSignalSpy changeSpy(&listener, SIGNAL(baseChanged()));
 
     QObject::connect(&item, SIGNAL(contentsChanged()), &listener, SIGNAL(baseChanged()));
+
+    QProcess process;
+    process.setProcessChannelMode(QProcess::ForwardedChannels);
+    process.start("vsiTestLackey", QStringList() << "-ipcRemoveKey");
+    QVERIFY(process.waitForStarted());
+
+    // Wait for lackey to create "value".
+    QTRY_COMPARE(changeSpy.count(), 1);
+    QCOMPARE(item.value("value", 5).toInt(), 100);
+
+    changeSpy.clear();
 
     // Wait for lackey to delete key "/ipcRemoveKey".
     QTRY_COMPARE(changeSpy.count(), 1);

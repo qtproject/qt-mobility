@@ -44,80 +44,78 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-  \class QValueSpaceObject
+    \class QValueSpaceObject
 
-  \brief The QValueSpaceObject class allows applications to add entries to the
-         Value Space.
+    \brief The QValueSpaceObject class allows applications to add entries to the Value Space.
 
-  For an overview of the Qt Value Space, please see the QValueSpaceItem
-  documentation.
+    For an overview of the Qt Value Space, please see the QValueSpaceItem documentation.
 
-  The QValueSpaceObject class allows applications to write entries into the
-  Value Space that are automatically removed when the QValueSpaceObject is
-  destroyed, or the application exits either cleanly or abnormally.  All
-  applications in the system will have access to the data set through
-  QValueSpaceObject and, if desired, can be notified when the data changes.
+    The QValueSpaceObject class allows applications to write entries into the
+    Value Space that are automatically removed when the QValueSpaceObject is
+    destroyed, or the application exits either cleanly or abnormally.  All
+    applications in the system will have access to the data set through
+    QValueSpaceObject and, if desired, can be notified when the data changes.
 
-  Although, logically, the Value Space is a simple collection of
-  hierarchical paths, these paths can conceptually be visualized as a set of
-  objects with attributes.  For example, rather than viewing the following list
-  as 12 distinct Value Space paths:
+    Although, logically, the Value Space is a simple collection of
+    hierarchical paths, these paths can conceptually be visualized as a set of
+    objects with attributes.  For example, rather than viewing the following list
+    as 12 distinct Value Space paths:
 
-  \code
-  /Device/Network/Interfaces/eth0/Name
-  /Device/Network/Interfaces/eth0/Type
-  /Device/Network/Interfaces/eth0/Status
-  /Device/Network/Interfaces/eth0/BytesSent
-  /Device/Network/Interfaces/eth0/BytesReceived
-  /Device/Network/Interfaces/eth0/Time
-  /Device/Network/Interfaces/ppp0/Name
-  /Device/Network/Interfaces/ppp0/Type
-  /Device/Network/Interfaces/ppp0/Status
-  /Device/Network/Interfaces/ppp0/BytesSent
-  /Device/Network/Interfaces/ppp0/BytesReceived
-  /Device/Network/Interfaces/ppp0/Time
-  \endcode
+    \code
+    /Device/Network/Interfaces/eth0/Name
+    /Device/Network/Interfaces/eth0/Type
+    /Device/Network/Interfaces/eth0/Status
+    /Device/Network/Interfaces/eth0/BytesSent
+    /Device/Network/Interfaces/eth0/BytesReceived
+    /Device/Network/Interfaces/eth0/Time
+    /Device/Network/Interfaces/ppp0/Name
+    /Device/Network/Interfaces/ppp0/Type
+    /Device/Network/Interfaces/ppp0/Status
+    /Device/Network/Interfaces/ppp0/BytesSent
+    /Device/Network/Interfaces/ppp0/BytesReceived
+    /Device/Network/Interfaces/ppp0/Time
+    \endcode
 
-  it can be thought of as describing two Value Space objects,
-  \c { { /Device/Network/Interfaces /eth0, /Device/Network/Interfaces/ppp0 } },
-  each with the six attributes \c { {Name, Type, Status, BytesSent,
-  BytesReceived, Time} }.  The QValueSpaceObject class encapsulates this
-  abstraction.
+    it can be thought of as describing two Value Space objects,
+    \c { { /Device/Network/Interfaces/eth0, /Device/Network/Interfaces/ppp0 } },
+    each with the six attributes \c { {Name, Type, Status, BytesSent,
+    BytesReceived, Time} }.  The QValueSpaceObject class encapsulates this
+    abstraction.
 
-  In the case of two or more applications creating an application object with
-  overlapping attributes, only the first is visible to observers in the system.
-  The other attributes are not discarded, but are buffered until the first
-  releases its hold on the attribute, either by manually removing it, destroying
-  the QValueSpaceObject or by terminating.  For example:
+    In the case of two or more applications creating an application object with
+    overlapping attributes, only the first is visible to observers in the system.
+    The other attributes are not discarded, but are buffered until the first
+    releases its hold on the attribute, either by manually removing it, destroying
+    the QValueSpaceObject or by terminating.  For example:
 
-  \code
-  QValueSpaceObject * object1 = new QValueSpaceObject("/Device");
-  object1->setAttribute("Buttons", 2);
+    \code
+    QValueSpaceObject *object1 = new QValueSpaceObject("/Device");
+    object1->setAttribute("Buttons", 2);
 
-  // QValueSpaceItem("/Device/Buttons") == QVariant(2)
+    // QValueSpaceItem("/Device/Buttons").value() == QVariant(2)
 
-  QValueSpaceObject * object2 = new QValueSpaceObject("/Device");
-  object2->setAttribute("Buttons", 3);
+    QValueSpaceObject *object2 = new QValueSpaceObject("/Device");
+    object2->setAttribute("Buttons", 3);
 
-  // QValueSpaceItem("/Device/Buttons") == QVariant(2)
+    // QValueSpaceItem("/Device/Buttons").value() == QVariant(2)
 
-  object2->removeAttribute("Buttons");
-  // QValueSpaceItem("/Device/Buttons") == QVariant(3)
-  \endcode
+    object2->removeAttribute("Buttons");
+    // QValueSpaceItem("/Device/Buttons").value() == QVariant(3)
+    \endcode
 
-  For performance reasons the setting of and removing of attributes is buffered
-  internally by the QValueSpaceObject and applied as a batch sometime later.
-  Normally this occurs the next time the application enters the Qt event loop,
-  but this behaviour should not be relied apon.  If an application must
-  synchronize application objects with others, the QValueSpaceObject::sync()
-  method can be used to force the application of changes.  This call is
-  generally unnecessary, and should be used sparingly to prevent unnecessary
-  load on the system.
+    For performance reasons the setting of and removing of attributes is buffered
+    internally by the QValueSpaceObject and applied as a batch sometime later.
+    Normally this occurs the next time the application enters the Qt event loop,
+    but this behavior should not be relied upon.  If an application must
+    synchronize application objects with others, the QValueSpaceObject::sync()
+    method can be used to force the application of changes.  This call is
+    generally unnecessary, and should be used sparingly to prevent unnecessary
+    load on the system.
 
-  \i {Note:} The QValueSpaceObject class is not thread safe and may only be used from
-  an application's main thread.
+    \i {Note:} The QValueSpaceObject class is not thread safe and may only be used from
+    an application's main thread.
 
-  \sa QValueSpaceItem
+    \sa QValueSpaceItem
 */
 
 /*!
@@ -188,8 +186,12 @@ QValueSpaceObjectPrivate::QValueSpaceObjectPrivate(const QUuid &uuid, const QByt
 /*!
     \overload
 
-    Construct a Value Space object on the specified \a layer, rooted at \a objectPath with the
-    specified \a parent.  This constructor is equivalent to
+    Constructs a QValueSpaceObject which accesses the specified \a layer and is rooted at
+    \a objectPath.  The object's parent is set to \a parent.
+
+    If \a layer is null then the layer is automatically chosen based on \a objectPath.
+
+    Calling this constructor is equivalent to calling
     \c {QValueSpaceObject(QByteArray(objectPath), layer, parent)}.
 */
 QValueSpaceObject::QValueSpaceObject(const char *objectPath, const QUuid &layer, QObject *parent)
@@ -202,8 +204,12 @@ QValueSpaceObject::QValueSpaceObject(const char *objectPath, const QUuid &layer,
 /*!
     \overload
 
-    Construct a Value Space object on the specified \a layer, rooted at \a objectPath with the
-    specified \a parent.  This constructor is equivalent to
+    Constructs a QValueSpaceObject which accesses the specified \a layer and is rooted at
+    \a objectPath.  The object's parent is set to \a parent.
+
+    If \a layer is null then the layer is automatically chosen based on \a objectPath.
+
+    Calling this constructor is equivalent to calling
     \c {QValueSpaceObject(objectPath.toUtf8(), parent)}.
 */
 QValueSpaceObject::QValueSpaceObject(const QString &objectPath, const QUuid &layer, QObject *parent)
@@ -214,8 +220,8 @@ QValueSpaceObject::QValueSpaceObject(const QString &objectPath, const QUuid &lay
 }
 
 /*!
-    Construct a Value Space object on the specified \a layer, rooted at \a objectPath with the
-    specified \a parent.
+    Constructs a QValueSpaceObject which accesses the specified \a layer and is rooted at
+    \a objectPath.  The object's parent is set to \a parent.
 
     If \a layer is null then the layer is automatically chosen based on \a objectPath.
 */
@@ -227,7 +233,7 @@ QValueSpaceObject::QValueSpaceObject(const QByteArray &objectPath, const QUuid &
 }
 
 /*!
-    Destroys the Value Space object.  This will remove the object and all its attributes from the
+    Destroys the QValueSpaceObject.  This will remove the object and all its attributes from the
     Value Space.
 */
 QValueSpaceObject::~QValueSpaceObject()
@@ -247,17 +253,17 @@ QValueSpaceObject::~QValueSpaceObject()
 }
 
 /*!
-    Returns the full path to this object as passed to the QValueSpaceObject constructor.
+    Returns the path that this QValueSpaceObject refers to.
 */
-QString QValueSpaceObject::objectPath() const
+QString QValueSpaceObject::path() const
 {
     VS_CALL_ASSERT;
     return QString::fromUtf8(d->path);
 }
 
 /*!
-    Returns true if this object is valid.  An object is valid if its associated
-    QAbstractValueSpaceLayer is available.
+    Returns true if this object is valid; otherwise returns false.  An object is valid if its
+    associated QAbstractValueSpaceLayer is available.
 */
 bool QValueSpaceObject::isValid() const
 {
@@ -295,7 +301,8 @@ void QValueSpaceObject::sync()
 /*!
     \overload
 
-    This is a convenience overload and is equivalent to \c {setAttribute(QByteArray(attribute), data)}.
+    This is a convenience overload and is equivalent to
+    \c {setAttribute(QByteArray(attribute), data)}.
 */
 void QValueSpaceObject::setAttribute(const char *attribute, const QVariant &data)
 {
@@ -306,7 +313,8 @@ void QValueSpaceObject::setAttribute(const char *attribute, const QVariant &data
 /*!
     \overload
 
-    This is a convenience overload and is equivalent to \c {setAttribute(attribute.toUtf8(), data)}.
+    This is a convenience overload and is equivalent to
+    \c {setAttribute(attribute.toUtf8(), data)}.
 */
 void QValueSpaceObject::setAttribute(const QString &attribute, const QVariant &data)
 {
@@ -342,7 +350,8 @@ void QValueSpaceObject::setAttribute(const QByteArray &attribute, const QVariant
 /*!
     \overload
 
-    This is a convenience overload and is equivalent to \c {removeAttribute(QByteArray(attribute))}.
+    This is a convenience overload and is equivalent to
+    \c {removeAttribute(QByteArray(attribute))}.
 */
 void QValueSpaceObject::removeAttribute(const char *attribute)
 {
@@ -390,7 +399,7 @@ void QValueSpaceObject::removeAttribute(const QByteArray &attribute)
 }
 
 /*!
-    Registers this QValueSpaceObject for notifications when request to set or remove value space
+    Registers this QValueSpaceObject for notifications when requests to set or remove value space
     items under objectPath() are received by the underlying QAbstractValueSpaceLayer.
 
     Generally you do not need to call this function as it is automatically called when

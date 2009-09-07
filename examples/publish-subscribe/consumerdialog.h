@@ -53,9 +53,11 @@ public:
 protected:
     void changeEvent(QEvent *e);
 
+//! [0]
 private slots:
     void createNewItem();
     void itemChanged();
+//! [0]
 
 private:
     Ui::ConsumerDialog *ui;

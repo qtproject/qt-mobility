@@ -1,5 +1,6 @@
 TARGET = tst_qvaluespaceitem
 INCLUDEPATH += ../../../../context
+DEPENDPATH += ../../../../context
 
 CONFIG+=testcase
 

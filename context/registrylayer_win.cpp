@@ -59,7 +59,6 @@ public:
     QString name();
 
     bool startup(Type t);
-    void shutdown();
 
     QUuid id();
     unsigned int order();
@@ -90,9 +89,10 @@ public:
     void sync();
 
     /* Private implementation functions */
-    void emitHandleChanged(HKEY key);
-
     static RegistryLayer *instance();
+
+public slots:
+    void emitHandleChanged(void *hkey);
 
 private:
     struct RegistryHandle {
@@ -140,7 +140,8 @@ QVALUESPACE_AUTO_INSTALL_LAYER(RegistryLayer);
 
 void CALLBACK qRegistryLayerCallback(PVOID lpParameter, BOOLEAN)
 {
-    registryLayer()->emitHandleChanged(reinterpret_cast<HKEY>(lpParameter));
+    QMetaObject::invokeMethod(registryLayer(), "emitHandleChanged", Qt::QueuedConnection,
+                              Q_ARG(void *, lpParameter));
 }
 
 static QString qConvertPath(const QByteArray &path)
@@ -187,10 +188,6 @@ QString RegistryLayer::name()
 bool RegistryLayer::startup(Type)
 {
     return true;
-}
-
-void RegistryLayer::shutdown()
-{
 }
 
 QUuid RegistryLayer::id()
@@ -428,11 +425,16 @@ void RegistryLayer::setProperty(Handle handle, Properties properties)
                 }
                 removeHandle(Handle(rh));
 
+                // root path doesn't exists
+                if (path.length() == 1)
+                    return;
+
                 int index = path.lastIndexOf('/');
-                path.truncate(index);
+                if (index == 0)
+                    path.truncate(1);
+                else
+                    path.truncate(index);
             }
-            if (path.isEmpty())
-                return;
         }
 
         HKEY key = hKeys.value(rh);
@@ -487,6 +489,12 @@ void RegistryLayer::removeHandle(Handle handle)
 
     if (--rh->refCount)
         return;
+
+    QList<RegistryHandle *> proxies = notifyProxies.keys(rh);
+    while (!proxies.isEmpty()) {
+        notifyProxies.remove(proxies.first(), rh);
+        removeHandle(Handle(proxies.takeFirst()));
+    }
 
     handles.remove(rh->path);
 
@@ -755,8 +763,10 @@ void RegistryLayer::sync()
     }
 }
 
-void RegistryLayer::emitHandleChanged(HKEY key)
+void RegistryLayer::emitHandleChanged(void *k)
 {
+    HKEY key = reinterpret_cast<HKEY>(k);
+
     QList<RegistryHandle *> changedHandles = hKeys.keys(key);
     if (changedHandles.isEmpty()) {
         QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);

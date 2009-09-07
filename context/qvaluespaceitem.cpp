@@ -77,13 +77,13 @@ QT_BEGIN_NAMESPACE
 
     Applications may use the QValueSpaceObject class to create a schema object
     within the Value Space.  Objects remain in the Value Space as long as the
-    QValueSpaceObject instance exists - that is, they are not persistant.  If
+    QValueSpaceObject instance exists - that is, they are not persistent.  If
     the object is destroyed, or the application containing it exits (or crashes)
     the items are removed.
 
-    Change notification is modelled in a similar way.  Applications subscribe to
-    notifications at a particular object (ie. item) in the tree.  If anything in
-    that object (ie. under that item) changes, the application is notified.  This
+    Change notification is modeled in a similar way.  Applications subscribe to
+    notifications at a particular object (i.e. item) in the tree.  If anything in
+    that object (i.e. under that item) changes, the application is notified.  This
     allows, for example, subscription to just the \c {/Device/Buttons} item to
     receive notification when anything "button" related changes.
 
@@ -107,7 +107,8 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \fn QValueSpaceItem::contentsChanged()
-    Emitted whenever the value of this item, or any sub-items changes.
+
+    Emitted whenever the value of this item, or any of its sub-items change.
 */
 
 class QValueSpaceItemPrivateProxy : public QObject
@@ -282,7 +283,7 @@ struct QValueSpaceItemPrivateWrite : public QValueSpaceItemPrivate
                             QCoreApplication::instance()->thread() == QThread::currentThread());
 
 /*!
-    Construct a new QValueSpaceItem with the specified \a parent that refers to the same path as
+    Constructs a QValueSpaceItem with the specified \a parent that refers to the same path as
     \a other.
 */
 QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &other, QObject* parent)
@@ -299,7 +300,7 @@ QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &other, QObject* parent)
 }
 
 /*!
-    Construct a new QValueSpaceItem with the specified \a parent that refers to the root path .
+    Constructs a QValueSpaceItem with the specified \a parent that refers to the root path.
 */
 QValueSpaceItem::QValueSpaceItem(QObject *parent)
 :   QObject(parent), d(0)
@@ -312,7 +313,7 @@ QValueSpaceItem::QValueSpaceItem(QObject *parent)
 /*!
     \overload
 
-    Construct a new QValueSpaceItem with the specified parent that refers to the sub-\a path of
+    Constructs a QValueSpaceItem with the specified parent that refers to the sub-\a path of
     \a base.  This constructor is equivalent to \c {QValueSpaceItem(base, path.toUtf8())}.
 */
 QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &base, const QString &path, QObject* parent)
@@ -342,7 +343,7 @@ QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &base, const QString &pat
 /*!
     \overload
 
-    Construct a new QValueSpaceItem with the specified \a parent that refers to the sub-\a path of
+    Constructs a QValueSpaceItem with the specified \a parent that refers to the sub-\a path of
     \a base.  This constructor is equivalent to \c {QValueSpaceItem(base, QByteArray(path))}.
 */
 QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &base, const char *path, QObject* parent)
@@ -370,7 +371,7 @@ QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &base, const char *path, 
 }
 
 /*!
-    Construct a new QValueSpaceItem with the specified \a parent that refers to the sub-\a path of
+    Constructs a QValueSpaceItem with the specified \a parent that refers to the sub-\a path of
     \a base.
 */
 QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &base,
@@ -444,7 +445,7 @@ QValueSpaceItem &QValueSpaceItem::operator=(const QValueSpaceItem& other)
 /*!
     \overload
 
-    Construct a new QValueSpaceItem with the specified \a parent that refers to \a path.  This
+    Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.  This
     constructor is equivalent to \c {QValueSpaceItem(path.toUtf8())}.
 */
 QValueSpaceItem::QValueSpaceItem(const QString &path, QObject* parent)
@@ -458,7 +459,7 @@ QValueSpaceItem::QValueSpaceItem(const QString &path, QObject* parent)
 /*!
     \overload
 
-    Construct a new QValueSpaceItem with the specified \a parent that refers to \a path.  This
+    Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.  This
     constructor is equivalent to \c {QValueSpaceItem(QByteArray(path))}.
 */
 QValueSpaceItem::QValueSpaceItem(const char *path, QObject* parent)
@@ -469,7 +470,7 @@ QValueSpaceItem::QValueSpaceItem(const char *path, QObject* parent)
     static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
 }
 /*!
-    Construct a new QValueSpaceItem with the specified \a parent that refers to \a path.
+    Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.
 */
 QValueSpaceItem::QValueSpaceItem(const QByteArray &path, QObject* parent)
 : QObject(parent), d(0)
@@ -493,9 +494,9 @@ QValueSpaceItem::~QValueSpaceItem()
 }
 
 /*!
-    Returns the item name of this QValueSpaceItem.
+    Returns the path that this QValueSpaceItem refers to.
 */
-QString QValueSpaceItem::itemName() const
+QString QValueSpaceItem::path() const
 {
     VS_CALL_ASSERT;
     QVALUESPACEITEM_D(d);
@@ -711,8 +712,10 @@ bool QValueSpaceItem::setValue(const QString & subPath,
 }
 
 /*!
-    Commit all changes made by calls to setValue() or remove().  The return value
-    is reserved for future use.
+    Commit all change requests made by calls to setValue() or remove().
+
+    Returns true if there are no pending change requests to send or the requests were successfully
+    sent to all provides; otherwise returns false.
 */
 bool QValueSpaceItem::sync()
 {
@@ -799,19 +802,17 @@ QVariant QValueSpaceItem::value(const char * subPath, const QVariant &def) const
 
 /*!
     Returns the value of sub-item \a subPath of this item, or the value of this
-    item if \a subPath is empty.  The following code shows how the item and
-    \a subPath relate.
+    item if \a subPath is empty.  If the item does not exists, \a def is returned.
+
+    The following code shows how the item and \a subPath relate.
 
     \code
-
     QValueSpaceItem base("/Settings");
     QValueSpaceItem equiv("/Settings/Nokia/General/Mappings);
 
     // Is true
     equiv.value() == base.value("Nokia/General/Mapping");
     \endcode
-
-    If the item does not exist, \a def is returned.
 */
 QVariant QValueSpaceItem::value(const QByteArray & subPath, const QVariant &def) const
 {
@@ -835,7 +836,11 @@ QVariant QValueSpaceItem::value(const QByteArray & subPath, const QVariant &def)
     return def;
 }
 
-/*! \internal */
+/*!
+    \internal
+
+    Registers for change notifications in response to connection to the contentsChanged() signal.
+*/
 void QValueSpaceItem::connectNotify(const char *signal)
 {
     VS_CALL_ASSERT;
@@ -847,7 +852,12 @@ void QValueSpaceItem::connectNotify(const char *signal)
     }
 }
 
-/*! \internal */
+/*!
+    \internal
+
+    Unregisters for change notifications in response to disconnection from the contentsChanged()
+    signal.
+*/
 void QValueSpaceItem::disconnectNotify(const char *signal)
 {
     VS_CALL_ASSERT;

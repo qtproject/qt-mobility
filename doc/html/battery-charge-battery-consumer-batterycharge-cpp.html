@@ -48,7 +48,7 @@
 
     #include &quot;batterycharge.h&quot;
 
-    #include &lt;qvaluespace.h&gt;
+    #include &lt;qvaluespaceitem.h&gt;
 
     QML_DEFINE_TYPE(Example, 1, 0, 0, BatteryCharge, BatteryCharge);
 
@@ -63,7 +63,7 @@
 
     QString BatteryCharge::path() const
     {
-        return m_item ? m_item-&gt;itemName() : QString();
+        return m_item ? m_item-&gt;path() : QString();
     }
 
     void BatteryCharge::setPath(const QString &amp;path)
@@ -75,12 +75,12 @@
 
     int BatteryCharge::charge() const
     {
-        return m_item ? m_item-&gt;value(&quot;charge&quot;, 0).toInt() : 0;
+        return m_charge;
     }
 
     bool BatteryCharge::charging() const
     {
-        return m_item ? m_item-&gt;value(&quot;charging&quot;, false).toBool() : false;
+        return m_charging;
     }
 
     void BatteryCharge::contentsChanged()

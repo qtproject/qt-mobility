@@ -56,7 +56,8 @@ public:
     explicit QValueSpaceObject(const QByteArray &objectPath, const QUuid &layer = QUuid(), QObject *parent = 0);
     ~QValueSpaceObject();
 
-    QString objectPath() const;
+    QString path() const;
+
     bool isValid() const;
 
     bool supportsRequests() const;

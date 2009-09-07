@@ -52,30 +52,14 @@
 
 QT_BEGIN_NAMESPACE
 
-void QAbstractValueSpaceLayer::emitItemRemove(QValueSpaceObject *object, const QByteArray &path)
-{
-   emit object->itemRemove(path);
-}
-
-void QAbstractValueSpaceLayer::emitItemSetValue(QValueSpaceObject *object, const QByteArray &path, const QVariant &data)
-{
-   emit object->itemSetValue(path, data);
-}
-
-void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const QByteArray &path, bool interested)
-{
-    emit object->itemNotify(path, interested);
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-// Layer plug-in interface documentation
-///////////////////////////////////////////////////////////////////////////////
-
 /*!
     \class QAbstractValueSpaceLayer
     \brief The QAbstractValueSpaceLayer class provides support for adding new logical data layers
-    to the Qt Value Space.
+           to the Qt Value Space.
+
+    To create a new layer in the Value Space subclass this class and reimplement all of the virtual
+    functions.  The new layer is installed by either calling QValueSpace::installLayer() or by
+    adding the QVALUESPACE_AUTO_INSTALL_LAYER() macro in your implementation file.
 */
 
 /*!
@@ -86,6 +70,12 @@ void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const Q
     This macro installs new value space layer. \a className is the name of the class implementing
     the new layer.
 
+    The method \c {className *className::instance()} must exist and return a pointer to an instance
+    of the layer to install.  This method will only be invoked \i {after} QApplication has been
+    constructed, making it safe to use any Qt class in your layer's constructor.
+
+    This macro can only be used once for any given class and it should be used where the
+    implementation is written rather than in a header file.
 */
 
 /*!
@@ -95,7 +85,7 @@ void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const Q
     value space layers.  Handles are only ever created by QAbstractValueSpaceLayer::item() and are
     always released by calls to QAbstractValueSpaceLayer::removeHandle().  The special value,
     \c {InvalidHandle} is reserved to represent an invalid handle.
- */
+*/
 
 /*!
     \enum QAbstractValueSpaceLayer::Type
@@ -107,7 +97,7 @@ void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const Q
 
     \value Server The layer is being initialized in the "server" context.
     \value Client The layer is being initialized in the "client" context.
- */
+*/
 
 /*!
     \enum QAbstractValueSpaceLayer::Properties
@@ -139,16 +129,9 @@ void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const Q
 */
 
 /*!
-    \fn void QAbstractValueSpaceLayer::shutdown()
-
-    Called by the Value Space system to uninitialize each layer.  The shutdown call can be used to
-    release any resources in use by the layer.
-*/
-
-/*!
     \fn QUuid QAbstractValueSpaceLayer::id()
 
-    Return a globally unique id for the layer.  This id is used to break ordering ties.
+    Returns a globally unique identifier for the layer.  This id is used to break ordering ties.
 */
 
 /*!
@@ -163,7 +146,7 @@ void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const Q
     \fn Handle QAbstractValueSpaceLayer::item(Handle parent, const QByteArray &subPath)
 
     Returns a new opaque handle for the requested \a subPath of \a parent.  If \a parent is an
-    InvalidHandle, \a subPath is an absolute path.
+    InvalidHandle, \a subPath is interpreted as an absolute path.
 
     The caller should call removeHandle() to free resources used by the handle when it is no longer
     required.
@@ -318,22 +301,33 @@ void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const Q
 */
 
 /*!
-    \fn void QAbstractValueSpaceLayer::emitItemRemove(QValueSpaceObject *object, const QByteArray &path)
-
     Emits the QValueSpaceObject::itemRemove() signal on \a object with \a path.
 */
+void QAbstractValueSpaceLayer::emitItemRemove(QValueSpaceObject *object, const QByteArray &path)
+{
+    emit object->itemRemove(path);
+}
 
 /*!
-    \fn void QAbstractValueSpaceLayer::emitItemSetValue(QValueSpaceObject *object, const QByteArray &path, const QVariant &data)
-
     Emits the QValueSpaceObject::itemSetValue() signal on \a object with \a path and \a data.
 */
+void QAbstractValueSpaceLayer::emitItemSetValue(QValueSpaceObject *object,
+                                                const QByteArray &path,
+                                                const QVariant &data)
+{
+    emit object->itemSetValue(path, data);
+}
 
 /*!
-    \fn void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const QByteArray &path, bool interested)
-
     Emits the QValueSpaceObject::itemNotify() signal on \a object with \a path and \a interested.
 */
+
+void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object,
+                                              const QByteArray &path,
+                                              bool interested)
+{
+    emit object->itemNotify(path, interested);
+}
 
 /*!
     \fn void QAbstractValueSpaceLayer::handleChanged(quintptr handle)
@@ -341,54 +335,59 @@ void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const Q
     Emitted whenever the \a handle's value, or any sub value, changes.
 */
 
-///////////////////////////////////////////////////////////////////////////////
-// define QValueSpace
-///////////////////////////////////////////////////////////////////////////////
-/*!
-  \namespace QValueSpace
-
-  \brief The QValueSpace namespace provides methods that are useful to Value
-  Space layer implementors.
-
-  Value Space layers that are available at link time can be automatically
-  installed using QVALUESPACE_AUTO_INSTALL_LAYER() macro.  The method
-  \c {QAbstractValueSpaceLayer * name::instance()} must exist and return a pointer to
-  the layer to install.  The QVALUESPACE_AUTO_INSTALL_LAYER() macro
-  will only invoke this method \i {after} QApplication has been constructed,
-  making it safe to use any Qt class in your layer's constructor.
- */
 
 /*!
-  \typedef QValueSpace::LayerCreateFunc
-  \internal
-  */
-/*!
-  \class QValueSpace::AutoInstall
+    \namespace QValueSpace
 
-  \internal
-  */
+    \brief The QValueSpace namespace provides methods that are useful to Value Space layer
+           implementors.
+
+    Value Space layers that are available at link time can be automatically installed using
+    QVALUESPACE_AUTO_INSTALL_LAYER() macro.  Value Space layers that are only available at run-time
+    can be installed using installLayer().
+*/
+
 /*!
-  Initialize the value space.  This method only needs to be called by the value
-  space manager process, and should be called before any process in the system
-  uses a value space class.
- */
+    \typedef QValueSpace::LayerCreateFunc
+    \internal
+
+    Support type used by the QVALUESPACE_AUTO_INSTALL_LAYER() macro.
+*/
+
+/*!
+    \class QValueSpace::AutoInstall
+    \internal
+
+    Support class used by the QVALUESPACE_AUTO_INSTALL_LAYER() macro.
+*/
+
+/*!
+    Initialize the value space manager as the server.  This method only needs to be called by the
+    process acting as the server and should be called before any process in the system uses a value
+    space class.
+*/
 void QValueSpace::initValueSpaceManager()
 {
     QValueSpaceManager::instance()->initServer();
 }
 
 /*!
-  Used by value space layer implementations to install themselves into the
-  system.  \a layer should be a pointer to the layer to install.
-  */
-void QValueSpace::installLayer(QAbstractValueSpaceLayer * layer)
+    Used by value space layer implementations to install themselves into the system.  \a layer
+    should be a pointer to the layer to install.
+
+    \sa QVALUESPACE_AUTO_INSTALL_LAYER()
+*/
+void QValueSpace::installLayer(QAbstractValueSpaceLayer *layer)
 {
     QValueSpaceManager::instance()->install(layer);
 }
 
 /*!
-  \internal
-  */
+    \internal
+
+    Called by the QVALUESPACE_AUTO_INSTALL_LAYER() macro to install the layer at static
+    initialization time.
+*/
 void QValueSpace::installLayer(LayerCreateFunc func)
 {
     QValueSpaceManager::instance()->install(func);
@@ -424,7 +423,7 @@ void QValueSpace::installLayer(LayerCreateFunc func)
 */
 
 /*!
-    Returns a List of QUuids of the available layers.
+    Returns a list of QUuids of all of the available layers.
 */
 QList<QUuid> QValueSpace::availableLayers()
 {
@@ -438,6 +437,11 @@ QList<QUuid> QValueSpace::availableLayers()
     return uuids;
 }
 
+/*!
+    \internal
+
+    Returns \a path with all duplicate '/' characters removed.
+*/
 QByteArray qCanonicalPath(const QByteArray &path)
 {
     QByteArray result;

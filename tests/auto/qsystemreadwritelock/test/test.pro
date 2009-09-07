@@ -1,5 +1,6 @@
 TARGET = tst_qsystemreadwritelock
 INCLUDEPATH += ../../../../context
+DEPENDPATH += ../../../../context
 
 CONFIG+=testcase
 

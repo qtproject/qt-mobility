@@ -129,6 +129,7 @@ struct QMallocPtr
 
 /*!
   \class QMallocPool
+  \internal
 
   \brief The QMallocPool class allows management of allocations within a
   designated memory region.
@@ -148,8 +149,7 @@ struct QMallocPtr
   projects, including several versions of Linux libc.
 
   QMallocPool is not thread safe.
-
- */
+*/
 
 /*!
   \enum QMallocPool::PoolType
@@ -254,7 +254,7 @@ void *QMallocPool::malloc(size_t size)
 /*!
   Frees the memory space pointed to by \a ptr, which must  have  been returned
   by a previous call to malloc(), calloc() or realloc().  Otherwise, or  if
-  \c {free(ptr)}  has  already  been  called  before,  undefined behaviour
+  \c {free(ptr)}  has  already  been  called  before,  undefined behavior
   occurs.  If \a ptr is 0, no operation is performed.
  */
 void QMallocPool::free(void *ptr)
