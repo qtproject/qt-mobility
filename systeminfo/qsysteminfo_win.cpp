@@ -592,12 +592,7 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
     return "No Network";
 }
 
-QString QSystemNetworkInfoPrivate::operatorName()
-{
-    return "No Operator";
-}
-
-QString QSystemNetworkInfoPrivate::wlanSsid()
+QString QSystemNetworkInfoPrivate::networkName()
 {
     QString essid;
     PWLAN_CONNECTION_ATTRIBUTES   connAtts = getWifiConnectionAttributes();

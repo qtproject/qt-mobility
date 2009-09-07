@@ -35,10 +35,23 @@
 <tr><td class="memItemLeft" align="right" valign="top">QNetworkInterface </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#interfaceForMode">interfaceForMode</a></b> ( QSystemNetworkInfo::NetworkMode <i>mode</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#macAddress">macAddress</a></b> ( QSystemNetworkInfo::NetworkMode <i>mode</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QSystemNetworkInfo::NetworkStatus </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#networkStatus">networkStatus</a></b> ( QSystemNetworkInfo::NetworkMode <i>mode</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#wlanSsid">wlanSsid</a></b> ()</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
+</ul>
+<hr />
+<a name="signals"></a>
+<h2>Signals</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#currentMobileCountryCodeChanged">currentMobileCountryCodeChanged</a></b> ( const QString &amp; <i>mcc</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#currentMobileNetworkCodeChanged">currentMobileNetworkCodeChanged</a></b> ( const QString &amp; <i>mnc</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#networkModeChanged">networkModeChanged</a></b> ( QSystemNetworkInfo::NetworkMode <i>mode</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#networkNameChanged">networkNameChanged</a></b> ( const QString &amp; <i>netName</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#networkSignalStrengthChanged">networkSignalStrengthChanged</a></b> ( int <i>strength</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#networkStatusChanged">networkStatusChanged</a></b> ( QSystemNetworkInfo::NetworkStatus <i>status</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
 </ul>
 <hr />
 <a name="static-public-members"></a>
@@ -50,8 +63,8 @@
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#homeMobileCountryCode">homeMobileCountryCode</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#homeMobileNetworkCode">homeMobileNetworkCode</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#locationAreaCode">locationAreaCode</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#networkName">networkName</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#networkSignalStrength">networkSignalStrength</a></b> ( QSystemNetworkInfo::NetworkMode <i>mode</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#operatorName">operatorName</a></b> ()</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#static-public-members">QObject</a></li>
@@ -60,7 +73,6 @@
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
 <li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-variables">QObject</a></li>
@@ -109,8 +121,12 @@
 <p>Returns the Cell ID of the connected tower or based station.</p>
 <h3 class="fn"><a name="currentMobileCountryCode"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QSystemNetworkInfo::currentMobileCountryCode ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the current Mobile Country Code. In the case of none such as a Desktop, &quot;No Mobile Network.&quot; /</p>
+<h3 class="fn"><a name="currentMobileCountryCodeChanged"></a>void QSystemNetworkInfo::currentMobileCountryCodeChanged ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>mcc</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted whenever the Mobile Country Code changes, specified by <i>mcc</i>.</p>
 <h3 class="fn"><a name="currentMobileNetworkCode"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QSystemNetworkInfo::currentMobileNetworkCode ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the current Mobile Network Code. In the case of none such as a Desktop, &quot;No Mobile Network.&quot;</p>
+<h3 class="fn"><a name="currentMobileNetworkCodeChanged"></a>void QSystemNetworkInfo::currentMobileNetworkCodeChanged ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>mnc</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted whenever the network Mobile Network Code changes, specified by <i>mnc</i>.</p>
 <h3 class="fn"><a name="homeMobileCountryCode"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QSystemNetworkInfo::homeMobileCountryCode ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the home Mobile Network Code. In the case of none such as a Desktop, &quot;No Mobile Network.&quot;</p>
 <h3 class="fn"><a name="homeMobileNetworkCode"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QSystemNetworkInfo::homeMobileNetworkCode ()&nbsp;&nbsp;<tt> [static]</tt></h3>
@@ -121,15 +137,21 @@
 <p>Returns the Location Area Code. In the case of none such as a Desktop, &quot;No Mobile Network.&quot;</p>
 <h3 class="fn"><a name="macAddress"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QSystemNetworkInfo::macAddress ( <a href="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::NetworkMode</a> <i>mode</i> )</h3>
 <p>Returns the MAC address for the interface servicing the network <i>mode</i>.</p>
+<h3 class="fn"><a name="networkModeChanged"></a>void QSystemNetworkInfo::networkModeChanged ( <a href="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::NetworkMode</a> <i>mode</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted whenever the network mode changes, specified by <i>mode</i>.</p>
+<h3 class="fn"><a name="networkName"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QSystemNetworkInfo::networkName ()&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Returns the name of the operator. For wlan this returns the network's current SSID. In the case of none such as a desktop, &quot;No Operator&quot;.</p>
+<h3 class="fn"><a name="networkNameChanged"></a>void QSystemNetworkInfo::networkNameChanged ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>netName</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted whenever the network name changes, specified by <i>netName</i>.</p>
 <h3 class="fn"><a name="networkSignalStrength"></a>int QSystemNetworkInfo::networkSignalStrength ( <a href="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::NetworkMode</a> <i>mode</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the strength of the network signal, per network <i>mode</i> , 0 - 100 linear scaling, or -1 in the case of unknown network mode or error.</p>
 <p>In the case of QSystemNetworkInfo::EthMode, it will either be 100 for carrier active, or 0 for when there is no carrier or cable connected.</p>
+<h3 class="fn"><a name="networkSignalStrengthChanged"></a>void QSystemNetworkInfo::networkSignalStrengthChanged ( int <i>strength</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted whenever the network signal strength changes, specified by <i>strength</i>.</p>
 <h3 class="fn"><a name="networkStatus"></a><a href="qsystemnetworkinfo.html#NetworkStatus-enum">QSystemNetworkInfo::NetworkStatus</a> QSystemNetworkInfo::networkStatus ( <a href="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::NetworkMode</a> <i>mode</i> )</h3>
 <p>Returns the status of the network <i>mode</i>.</p>
-<h3 class="fn"><a name="operatorName"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QSystemNetworkInfo::operatorName ()&nbsp;&nbsp;<tt> [static]</tt></h3>
-<p>Returns the name of the operator. In the case of none such as a desktop, &quot;No Operator&quot;.</p>
-<h3 class="fn"><a name="wlanSsid"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QSystemNetworkInfo::wlanSsid ()</h3>
-<p>Returns the wlan network's current SSID, if available.</p>
+<h3 class="fn"><a name="networkStatusChanged"></a>void QSystemNetworkInfo::networkStatusChanged ( <a href="qsystemnetworkinfo.html#NetworkStatus-enum">QSystemNetworkInfo::NetworkStatus</a> <i>status</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted whenever the network status changes, specified by <i>status</i>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

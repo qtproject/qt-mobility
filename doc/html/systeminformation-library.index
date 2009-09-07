@@ -44,6 +44,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="hasFeatureSupported" fullname="QSystemInfo::hasFeatureSupported" href="qsysteminfo.html#hasFeatureSupported" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="hasFeatureSupported(QSystemInfo::Feature feature)">
                 <parameter left="QSystemInfo::Feature" right="" name="feature" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="currentLanguageChanged" fullname="QSystemInfo::currentLanguageChanged" href="qsysteminfo.html#currentLanguageChanged" location="qsysteminfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="currentLanguageChanged(const QString &amp; lang)">
+                <parameter left="const QString &amp;" right="" name="lang" default=""/>
+            </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QSystemNetworkInfo" href="qsystemnetworkinfo.html" location="qsysteminfo.h" bases="QObject" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QSystemNetworkInfo" fullname="QSystemNetworkInfo::QSystemNetworkInfo" href="qsystemnetworkinfo.html#QSystemNetworkInfo" location="qsysteminfo.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSystemNetworkInfo(QObject * parent)">
@@ -78,7 +81,6 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="networkSignalStrength" fullname="QSystemNetworkInfo::networkSignalStrength" href="qsystemnetworkinfo.html#networkSignalStrength" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="int" signature="networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)">
                 <parameter left="QSystemNetworkInfo::NetworkMode" right="" name="mode" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="wlanSsid" fullname="QSystemNetworkInfo::wlanSsid" href="qsystemnetworkinfo.html#wlanSsid" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QString" signature="wlanSsid()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="macAddress" fullname="QSystemNetworkInfo::macAddress" href="qsystemnetworkinfo.html#macAddress" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QString" signature="macAddress(QSystemNetworkInfo::NetworkMode mode)">
                 <parameter left="QSystemNetworkInfo::NetworkMode" right="" name="mode" default=""/>
             </function>
@@ -88,8 +90,26 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="currentMobileNetworkCode" fullname="QSystemNetworkInfo::currentMobileNetworkCode" href="qsystemnetworkinfo.html#currentMobileNetworkCode" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QString" signature="currentMobileNetworkCode()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="homeMobileCountryCode" fullname="QSystemNetworkInfo::homeMobileCountryCode" href="qsystemnetworkinfo.html#homeMobileCountryCode" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QString" signature="homeMobileCountryCode()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="homeMobileNetworkCode" fullname="QSystemNetworkInfo::homeMobileNetworkCode" href="qsystemnetworkinfo.html#homeMobileNetworkCode" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QString" signature="homeMobileNetworkCode()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="operatorName" fullname="QSystemNetworkInfo::operatorName" href="qsystemnetworkinfo.html#operatorName" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QString" signature="operatorName()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="networkName" fullname="QSystemNetworkInfo::networkName" href="qsystemnetworkinfo.html#networkName" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QString" signature="networkName()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="interfaceForMode" fullname="QSystemNetworkInfo::interfaceForMode" href="qsystemnetworkinfo.html#interfaceForMode" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QNetworkInterface" signature="interfaceForMode(QSystemNetworkInfo::NetworkMode mode)">
+                <parameter left="QSystemNetworkInfo::NetworkMode" right="" name="mode" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="networkStatusChanged" fullname="QSystemNetworkInfo::networkStatusChanged" href="qsystemnetworkinfo.html#networkStatusChanged" location="qsysteminfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="networkStatusChanged(QSystemNetworkInfo::NetworkStatus status)">
+                <parameter left="QSystemNetworkInfo::NetworkStatus" right="" name="status" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="networkSignalStrengthChanged" fullname="QSystemNetworkInfo::networkSignalStrengthChanged" href="qsystemnetworkinfo.html#networkSignalStrengthChanged" location="qsysteminfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="networkSignalStrengthChanged(int strength)">
+                <parameter left="int" right="" name="strength" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="currentMobileCountryCodeChanged" fullname="QSystemNetworkInfo::currentMobileCountryCodeChanged" href="qsystemnetworkinfo.html#currentMobileCountryCodeChanged" location="qsysteminfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="currentMobileCountryCodeChanged(const QString &amp; mcc)">
+                <parameter left="const QString &amp;" right="" name="mcc" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="currentMobileNetworkCodeChanged" fullname="QSystemNetworkInfo::currentMobileNetworkCodeChanged" href="qsystemnetworkinfo.html#currentMobileNetworkCodeChanged" location="qsysteminfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="currentMobileNetworkCodeChanged(const QString &amp; mnc)">
+                <parameter left="const QString &amp;" right="" name="mnc" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="networkNameChanged" fullname="QSystemNetworkInfo::networkNameChanged" href="qsystemnetworkinfo.html#networkNameChanged" location="qsysteminfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="networkNameChanged(const QString &amp; netName)">
+                <parameter left="const QString &amp;" right="" name="netName" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="networkModeChanged" fullname="QSystemNetworkInfo::networkModeChanged" href="qsystemnetworkinfo.html#networkModeChanged" location="qsysteminfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="networkModeChanged(QSystemNetworkInfo::NetworkMode mode)">
                 <parameter left="QSystemNetworkInfo::NetworkMode" right="" name="mode" default=""/>
             </function>
         </class>
@@ -194,6 +214,12 @@
                 <parameter left="QSystemDeviceInfo::BatteryLevel" right="" name="level" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="powerStateChanged" fullname="QSystemDeviceInfo::powerStateChanged" href="qsystemdeviceinfo.html#powerStateChanged" location="qsysteminfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="powerStateChanged(QSystemDeviceInfo::PowerState state)">
+                <parameter left="QSystemDeviceInfo::PowerState" right="" name="state" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="currentProfileChanged" fullname="QSystemDeviceInfo::currentProfileChanged" href="qsystemdeviceinfo.html#currentProfileChanged" location="qsysteminfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="currentProfileChanged(QSystemDeviceInfo::Profile profile)">
+                <parameter left="QSystemDeviceInfo::Profile" right="" name="profile" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="currentPowerStateChanged" fullname="QSystemDeviceInfo::currentPowerStateChanged" href="qsystemdeviceinfo.html#currentPowerStateChanged" location="qsysteminfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="currentPowerStateChanged(QSystemDeviceInfo::PowerState state)">
                 <parameter left="QSystemDeviceInfo::PowerState" right="" name="state" default=""/>
             </function>
         </class>

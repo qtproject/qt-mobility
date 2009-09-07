@@ -70,11 +70,13 @@
 <p>Returns true if the screensaver is enabled, otherwise false.</p>
 <p>See also <a href="qsystemscreensaver.html#setScreenSaverEnabled">setScreenSaverEnabled</a>().</p>
 <h3 class="fn"><a name="setScreenBlankingEnabled"></a>bool QSystemScreenSaver::setScreenBlankingEnabled ( bool <i>b</i> )</h3>
-<p>Temporarily sets the screen blanking on to <i>b</i> Will be reverted upon destruction of the <a href="qsystemscreensaver.html">QSystemScreenSaver</a> object. Returns true on success, otherwise false.</p>
+<p>Temporarily enables the screen blanking on if <i>b</i> is true, otherwise inhibits it.</p>
+<p>Will be reverted upon destruction of the <a href="qsystemscreensaver.html">QSystemScreenSaver</a> object. Returns true on success, otherwise false.</p>
 <p>On platforms that support it, if screensaver is secure by policy, the policy will be honored and this will fail.</p>
 <p>See also <a href="qsystemscreensaver.html#screenBlankingEnabled">screenBlankingEnabled</a>().</p>
 <h3 class="fn"><a name="setScreenSaverEnabled"></a>bool QSystemScreenSaver::setScreenSaverEnabled ( bool <i>b</i> )</h3>
-<p>Temporarily sets the screensaver on to <i>b</i>. Will be reverted upon destruction of the <a href="qsystemscreensaver.html">QSystemScreenSaver</a> object. Returns true on success, otherwise false.</p>
+<p>Temporarily enables the screensaver if <i>b</i> is true, otherwise inhibits it.</p>
+<p>Will be reverted upon destruction of the <a href="qsystemscreensaver.html">QSystemScreenSaver</a> object. Returns true on success, otherwise false.</p>
 <p>On platforms that support it, if screensaver is secure by policy, the policy will be honored and this will fail.</p>
 <p>See also <a href="qsystemscreensaver.html#screenSaverEnabled">screenSaverEnabled</a>().</p>
 <p /><address><hr /><div align="center">

@@ -41,6 +41,8 @@
         <keyword ref="qsystemdeviceinfo.html#simStatus-prop">simStatus</keyword>
         <keyword ref="qsystemdeviceinfo.html#batteryLevel">batteryLevel</keyword>
         <keyword ref="qsystemdeviceinfo.html#batteryLevelChanged">batteryLevelChanged</keyword>
+        <keyword ref="qsystemdeviceinfo.html#currentPowerStateChanged">currentPowerStateChanged</keyword>
+        <keyword ref="qsystemdeviceinfo.html#currentProfileChanged">currentProfileChanged</keyword>
         <keyword ref="qsystemdeviceinfo.html#imei">imei</keyword>
         <keyword ref="qsystemdeviceinfo.html#imsi">imsi</keyword>
         <keyword ref="qsystemdeviceinfo.html#inputMethodType">inputMethodType</keyword>
@@ -88,6 +90,7 @@
         <keyword ref="qsysteminfo.html#availableLanguages">availableLanguages</keyword>
         <keyword ref="qsysteminfo.html#currentCountryCode">currentCountryCode</keyword>
         <keyword ref="qsysteminfo.html#currentLanguage">currentLanguage</keyword>
+        <keyword ref="qsysteminfo.html#currentLanguageChanged">currentLanguageChanged</keyword>
         <keyword ref="qsysteminfo.html#hasFeatureSupported">hasFeatureSupported</keyword>
         <keyword ref="qsysteminfo.html#version">version</keyword>
         <section ref="qsysteminfo-members.html" title="List of all members"/>
@@ -130,16 +133,21 @@
         <keyword ref="qsystemnetworkinfo.html#NetworkStatus-enum">QSystemNetworkInfo::EmergencyOnly</keyword>
         <keyword ref="qsystemnetworkinfo.html#cellId">cellId</keyword>
         <keyword ref="qsystemnetworkinfo.html#currentMobileCountryCode">currentMobileCountryCode</keyword>
+        <keyword ref="qsystemnetworkinfo.html#currentMobileCountryCodeChanged">currentMobileCountryCodeChanged</keyword>
         <keyword ref="qsystemnetworkinfo.html#currentMobileNetworkCode">currentMobileNetworkCode</keyword>
+        <keyword ref="qsystemnetworkinfo.html#currentMobileNetworkCodeChanged">currentMobileNetworkCodeChanged</keyword>
         <keyword ref="qsystemnetworkinfo.html#homeMobileCountryCode">homeMobileCountryCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#homeMobileNetworkCode">homeMobileNetworkCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#interfaceForMode">interfaceForMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#locationAreaCode">locationAreaCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#macAddress">macAddress</keyword>
+        <keyword ref="qsystemnetworkinfo.html#networkModeChanged">networkModeChanged</keyword>
+        <keyword ref="qsystemnetworkinfo.html#networkName">networkName</keyword>
+        <keyword ref="qsystemnetworkinfo.html#networkNameChanged">networkNameChanged</keyword>
         <keyword ref="qsystemnetworkinfo.html#networkSignalStrength">networkSignalStrength</keyword>
+        <keyword ref="qsystemnetworkinfo.html#networkSignalStrengthChanged">networkSignalStrengthChanged</keyword>
         <keyword ref="qsystemnetworkinfo.html#networkStatus">networkStatus</keyword>
-        <keyword ref="qsystemnetworkinfo.html#operatorName">operatorName</keyword>
-        <keyword ref="qsystemnetworkinfo.html#wlanSsid">wlanSsid</keyword>
+        <keyword ref="qsystemnetworkinfo.html#networkStatusChanged">networkStatusChanged</keyword>
         <section ref="qsystemnetworkinfo-members.html" title="List of all members"/>
     </section>
     <section ref="qsystemscreensaver.html" title="QSystemScreenSaver Class Reference">

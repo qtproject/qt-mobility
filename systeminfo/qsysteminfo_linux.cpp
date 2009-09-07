@@ -579,12 +579,7 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
     return "No Mobile Network";
 }
 
-QString QSystemNetworkInfoPrivate::operatorName()
-{
-    return "No Operator";
-}
-
-QString QSystemNetworkInfoPrivate::wlanSsid()
+QString QSystemNetworkInfoPrivate::networkName()
 {
     QString essid;
     if(networkStatus(QSystemNetworkInfo::WlanMode) != QSystemNetworkInfo::Connected) {
@@ -1416,7 +1411,10 @@ bool QSystemScreenSaverPrivate::setScreenBlankingEnabled(bool state)
                 return true;
             }
         }
+    } else if(gnomeIsRunning) {
+
     }
+
 
 #ifdef Q_WS_X11
     int timeout;
@@ -1454,6 +1452,8 @@ bool QSystemScreenSaverPrivate::screenSaverEnabled()
                 return true;
             }
         }
+    } else if(gnomeIsRunning) {
+
     }
 
 #ifdef Q_WS_X11
@@ -1489,6 +1489,8 @@ bool QSystemScreenSaverPrivate::screenBlankingEnabled()
                 return true;
             }
         }
+    } else if(gnomeIsRunning) {
+
     }
 
 #ifdef Q_WS_X11
@@ -1519,6 +1521,8 @@ bool QSystemScreenSaverPrivate::isScreenLockOn()
         if(kdeScreenSaveConfig.status() == QSettings::NoError) {
             return kdeScreenSaveConfig.value("Lock").toBool();
         }
+    } else if(gnomeIsRunning) {
+
     }
 
    return false;

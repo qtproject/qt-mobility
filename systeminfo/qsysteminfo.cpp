@@ -172,6 +172,20 @@ QT_BEGIN_NAMESPACE
   This signal is emitted when the power state has changed, such as when a phone gets plugged qint32o the wall.
   \a state is the new power state.
  */
+
+/*!
+  \fn  void QSystemDeviceInfo::currentProfileChanged(QSystemDeviceInfo::Profile profile)
+
+  This signal is emitted whenever the network profile changes, specified by \a profile.
+*/
+
+/*!
+  \fn  void QSystemDeviceInfo::currentPowerStateChanged(QSystemDeviceInfo::PowerState state)
+
+  This signal is emitted whenever the power state changes, specified by \a state.
+
+*/
+
 /*!
     \enum QSystemDeviceInfo::BatteryLevel
     This enum describes the level of the main battery.
@@ -236,6 +250,49 @@ QT_BEGIN_NAMESPACE
 
   */
 
+/*!
+  \fn void QSystemInfo::currentLanguageChanged(const QString &lang)
+
+  This signal is emitted whenever the current language changes, specified by \a lang,
+  which is in 2 letter, ISO 639-1 specification form.
+  */
+
+/*!
+  \fn void QSystemNetworkInfo::networkStatusChanged(QSystemNetworkInfo::NetworkStatus status)
+
+  This signal is emitted whenever the network status changes, specified by \a status.
+  */
+
+/*!
+  \fn void QSystemNetworkInfo::networkSignalStrengthChanged(int strength)
+
+  This signal is emitted whenever the network signal strength changes, specified by \a strength.
+  */
+
+/*!
+  \fn void QSystemNetworkInfo::currentMobileCountryCodeChanged(const QString &mcc)
+
+  This signal is emitted whenever the Mobile Country Code changes, specified by \a mcc.
+*/
+
+/*!
+  \fn void QSystemNetworkInfo::currentMobileNetworkCodeChanged(const QString &mnc)
+
+  This signal is emitted whenever the network Mobile Network Code changes, specified by \a mnc.
+*/
+
+/*!
+  \fn void QSystemNetworkInfo::networkNameChanged(const QString & netName)
+
+  This signal is emitted whenever the network name changes, specified by \a netName.
+
+*/
+
+/*!
+  \fn void QSystemNetworkInfo::networkModeChanged(QSystemNetworkInfo::NetworkMode mode)
+
+  This signal is emitted whenever the network mode changes, specified by \a mode.
+*/
 
 
  /*!
@@ -396,20 +453,13 @@ QString QSystemNetworkInfo::homeMobileNetworkCode()
 }
 
 /*!
-  Returns the name of the operator. In the case of none such as a desktop, "No Operator".
+  Returns the name of the operator.  For wlan this returns the network's current SSID.
+In the case of none such as a desktop, "No Operator".
 */
-QString QSystemNetworkInfo::operatorName()
+QString QSystemNetworkInfo::networkName()
 {
     QSystemNetworkInfoPrivate dnp;
-    return dnp.operatorName();
-}
-
-/*!
-  Returns the wlan network's current SSID, if available.
-  */
-QString QSystemNetworkInfo::wlanSsid()
-{
-    return d->wlanSsid();
+    return dnp.networkName();
 }
 
 /*!

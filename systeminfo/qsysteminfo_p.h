@@ -105,8 +105,7 @@ public:
     QString homeMobileCountryCode();
     QString homeMobileNetworkCode();
 
-    QString operatorName();
-    QString wlanSsid();
+    QString networkName();
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);

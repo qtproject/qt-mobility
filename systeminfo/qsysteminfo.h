@@ -66,7 +66,7 @@ public:
 // general
 
      //TODO: to Qt QLocale
-    static QString currentLanguage(); // 2 letter ISO 639-1
+    static QString currentLanguage(); // 2 letter ISO 639-1 //signal
     //TODO: to Qt QLocale
     static QStringList availableLanguages(); // 2 letter ISO 639-1
     //TODO: to Qt QLocale
@@ -115,6 +115,9 @@ public:
 
     bool hasFeatureSupported(QSystemInfo::Feature feature);
 
+Q_SIGNALS:
+    void currentLanguageChanged(const QString &);
+
 private:
     QSystemInfoPrivate *d;
 };
@@ -155,21 +158,28 @@ public:
     };
     Q_DECLARE_FLAGS(NetworkModes, NetworkMode)
 
-    QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
-    static int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
-    QString wlanSsid();
+    QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode); //signal
+    static int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode); //signal
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
     static int cellId();
     static int locationAreaCode();
 
-    static QString currentMobileCountryCode();
-    static QString currentMobileNetworkCode();
+    static QString currentMobileCountryCode(); //signal
+    static QString currentMobileNetworkCode(); //signal
     static QString homeMobileCountryCode();
     static QString homeMobileNetworkCode();
-    static QString operatorName();
+    static QString networkName(); //signal
     /*static*/ QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
+// networkmode change //signal
 
+Q_SIGNALS:
+   void networkStatusChanged(QSystemNetworkInfo::NetworkStatus);
+   void networkSignalStrengthChanged(int);
+   void currentMobileCountryCodeChanged(const QString &);
+   void currentMobileNetworkCodeChanged(const QString &);
+   void networkNameChanged(const QString &);
+   void networkModeChanged(QSystemNetworkInfo::NetworkMode);
 
 private:
     QSystemNetworkInfoPrivate *d;
@@ -219,6 +229,7 @@ public:
     QSystemMemoryInfo::VolumeType volumeType(const QString &driveVolume); //returns enum
 
     //bool isDiskSpaceCritical(const QString &driveVolume);
+Q_SIGNALS:
 
 private:
     QSystemMemoryInfoPrivate *d;
@@ -276,8 +287,8 @@ public:
     static QString productName(); //internal name
 
 // ????
-    int batteryLevel() const;
-    bool isBatteryCharging();
+    int batteryLevel() const; //signal
+    bool isBatteryCharging(); //signal
 
     enum Profile {
         UnknownProfile = 0,
@@ -300,12 +311,14 @@ public:
 
     bool isDeviceLocked();
     QSystemDeviceInfo::SimStatus simStatus();
-    QSystemDeviceInfo::Profile currentProfile();
-    QSystemDeviceInfo::PowerState currentPowerState();
+    QSystemDeviceInfo::Profile currentProfile(); //signal
+    QSystemDeviceInfo::PowerState currentPowerState(); //signal
 
 Q_SIGNALS:
     void batteryLevelChanged(QSystemDeviceInfo::BatteryLevel);
     void powerStateChanged(QSystemDeviceInfo::PowerState);
+    void currentProfileChanged(QSystemDeviceInfo::Profile);
+    void currentPowerStateChanged(QSystemDeviceInfo::PowerState);
 
 private:
     QSystemDeviceInfoPrivate *d;
