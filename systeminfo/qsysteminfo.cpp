@@ -294,6 +294,11 @@ QT_BEGIN_NAMESPACE
   This signal is emitted whenever the network mode changes, specified by \a mode.
 */
 
+/*!
+  \fn void QSystemDeviceInfo::bluetoothStateChanged(bool on)
+
+  This signal is emitted whenever bluetooth state changes, specified by \a on.
+*/
 
  /*!
    Constructs a QSystemInfo object with the given \a parent.

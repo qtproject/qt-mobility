@@ -319,6 +319,7 @@ Q_SIGNALS:
     void powerStateChanged(QSystemDeviceInfo::PowerState);
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void currentPowerStateChanged(QSystemDeviceInfo::PowerState);
+    void bluetoothStateChanged(bool);
 
 private:
     QSystemDeviceInfoPrivate *d;

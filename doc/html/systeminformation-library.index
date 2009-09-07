@@ -222,6 +222,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="currentPowerStateChanged" fullname="QSystemDeviceInfo::currentPowerStateChanged" href="qsystemdeviceinfo.html#currentPowerStateChanged" location="qsysteminfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="currentPowerStateChanged(QSystemDeviceInfo::PowerState state)">
                 <parameter left="QSystemDeviceInfo::PowerState" right="" name="state" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="bluetoothStateChanged" fullname="QSystemDeviceInfo::bluetoothStateChanged" href="qsystemdeviceinfo.html#bluetoothStateChanged" location="qsysteminfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="bluetoothStateChanged(bool on)">
+                <parameter left="bool" right="" name="on" default=""/>
+            </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QSystemScreenSaver" href="qsystemscreensaver.html" location="qsysteminfo.h" bases="QObject" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QSystemScreenSaver" fullname="QSystemScreenSaver::QSystemScreenSaver" href="qsystemscreensaver.html#QSystemScreenSaver" location="qsysteminfo.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSystemScreenSaver(QObject * parent)">
