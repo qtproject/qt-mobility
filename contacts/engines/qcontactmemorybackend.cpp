@@ -222,6 +222,12 @@ bool QContactMemoryEngine::saveContact(QContact* contact, QSet<QUniqueId>& conta
 
         contactsChanged << contact->id();
     } else {
+        // id does not exist; if not zero, fail.
+        if (contact->id() != 0) {
+            error = QContactManager::DoesNotExistError;
+            return false;
+        }
+
         /* New contact */
         QContactTimestamp ts = contact->detail(QContactTimestamp::DefinitionName);
         ts.setLastModified(QDateTime::currentDateTime());

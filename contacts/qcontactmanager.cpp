@@ -266,14 +266,21 @@ QContact QContactManager::contact(const QUniqueId& contactId) const
 }
 
 /*!
- * Add the given \a contact to the database if it is a new contact,
- * or updates the existing contact. Returns false on failure, or true on
- * success.  If successful and the contact was a new contact, its UID will
- * be set to a new, valid id.
+ * Add the given \a contact to the database if \a contact has an
+ * id of zero, or update the existing contact in the database if \a contact
+ * has a non-zero id and currently exists in the database, or fails
+ * if the \a contact has a non-zero id which does not exist in the database.
+ * Returns false on failure, or true on
+ * success.  On successful save of a contact with an id of zero, its
+ * id will be set to a new, valid id.
  *
  * If the \a contact contains one or more details whose definitions have
- * not yet been saved with the manager, the operation will fail and the
- * manager will return \c QContactManager::UnsupportedError.
+ * not yet been saved with the manager, the operation will fail and calling
+ * error() will return \c QContactManager::UnsupportedError.
+ *
+ * If the id of the \a contact is non-zero but does not exist in the
+ * manager, the operation will fail and calling error() will return
+ * \c QContactManager::DoesNotExistError.
  */
 bool QContactManager::saveContact(QContact* contact)
 {

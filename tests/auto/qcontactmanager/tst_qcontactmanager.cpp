@@ -711,6 +711,17 @@ void tst_QContactManager::add()
         dumpContactDifferences(added, alice);
     }
 
+    // now try adding a contact that does not exist in the database with non-zero id
+    QContact nonexistent;
+    nonexistent.setDisplayLabel("nonexistent contact");
+    QVERIFY(cm->saveContact(&nonexistent));       // should work
+    QVERIFY(cm->removeContact(nonexistent.id())); // now nonexistent has an id which does not exist
+    QVERIFY(!cm->saveContact(&nonexistent));      // hence, should fail
+    QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
+    nonexistent.setId(QUniqueId(0));
+    QVERIFY(cm->saveContact(&nonexistent));       // after setting id to zero, should save
+    QVERIFY(cm->removeContact(nonexistent.id()));
+
     // now try adding a "megacontact"
     // - get list of all definitions supported by the manager
     // - add one detail of each definition to a contact
@@ -1826,8 +1837,7 @@ void tst_QContactManager::signalEmission()
     nc3.setFirst("Garry");
     c2.saveDetail(&nc2);
     c3.saveDetail(&nc3);
-    QVERIFY(m1->saveContact(&c));
-    addSigCount += 1;
+    QVERIFY(!m1->saveContact(&c)); // saving contact with nonexistent id fails
     QVERIFY(m1->saveContact(&c2));
     addSigCount += 1;
     QVERIFY(m1->saveContact(&c3));
@@ -1857,14 +1867,17 @@ void tst_QContactManager::signalEmission()
     remSigCount += 1;
     QCOMPARE(spyCR.count(), remSigCount);
 
-    m1->removeContact(c.id());
+    QVERIFY(!m1->removeContact(c.id())); // not saved.
 
     /* Now test the batch equivalents */
     spyCA.clear();
     spyCM.clear();
     spyCR.clear();
 
-    /* Batch adds */
+    /* Batch adds - set ids to zero so add succeeds. */
+    c.setId(0);
+    c2.setId(0);
+    c3.setId(0);
     batchAdd << c << c2 << c3;
     m1->saveContacts(&batchAdd);
 
@@ -1924,6 +1937,7 @@ void tst_QContactManager::signalEmission()
         QContactName ncs = c.detail(QContactName::DefinitionName);
         ncs.setSuffix("Test");
         c.saveDetail(&ncs);
+        c.setId(0); // reset id so save can succeed.
         m2->saveContact(&c);
         ncs.setPrefix("Test2");
         c.saveDetail(&ncs);
@@ -1954,6 +1968,8 @@ void tst_QContactManager::signalEmission()
         spyGR.clear();
 
         // Make sure we have two contacts to test with
+        c.setId(0);
+        c2.setId(0);
         batchAdd.clear();
         batchAdd << c << c2;
         QVERIFY(adder->saveContacts(&batchAdd).count() == 2);
