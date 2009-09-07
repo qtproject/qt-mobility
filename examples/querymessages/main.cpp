@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    QMessageIdList ids = QMessageStore::instance()->queryMessages(QMessageFilterKey(), QMessageSortKey::byReceptionTimeStamp(Qt::DescendingOrder), 100, 0);
+    QMessageIdList ids = QMessageStore::instance()->queryMessages(QMessageFilter(), QMessageOrdering::byReceptionTimeStamp(Qt::DescendingOrder), 100, 0);
     foreach (QMessageId id, ids) {
         QMessage message(QMessageStore::instance()->message(id));
         if (QMessageStore::instance()->lastError() == QMessageStore::NoError) {

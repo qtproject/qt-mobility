@@ -28,18 +28,18 @@ HEADERS += qmessageglobal.h \
            qmessagefolder.h \
            qmessageaccount_p.h \
            qmessageaccount.h \
-           qmessageaccountfilterkey.h \
-           qmessageaccountfilterkey_p.h \
-           qmessageaccountsortkey.h \
-           qmessageaccountsortkey_p.h \
-           qmessagefolderfilterkey.h \
-           qmessagefolderfilterkey_p.h \
-           qmessagefoldersortkey.h \
-           qmessagefoldersortkey_p.h \
-           qmessagefilterkey.h \
-           qmessagefilterkey_p.h \
-           qmessagesortkey.h \
-           qmessagesortkey_p.h \
+           qmessageaccountfilter.h \
+           qmessageaccountfilter_p.h \
+           qmessageaccountordering.h \
+           qmessageaccountordering_p.h \
+           qmessagefolderfilter.h \
+           qmessagefolderfilter_p.h \
+           qmessagefolderordering.h \
+           qmessagefolderordering_p.h \
+           qmessagefilter.h \
+           qmessagefilter_p.h \
+           qmessageordering.h \
+           qmessageordering_p.h \
            qmessagestore.h \
            qmessagestore_p.h \
            qmessageserviceaction.h \
@@ -54,12 +54,12 @@ SOURCES += qmessageid.cpp \
            qmessage.cpp \
            qmessagefolder.cpp \
            qmessageaccount.cpp \
-           qmessageaccountfilterkey.cpp \
-           qmessageaccountsortkey.cpp \
-           qmessagefolderfilterkey.cpp \
-           qmessagefoldersortkey.cpp \
-           qmessagefilterkey.cpp \
-           qmessagesortkey.cpp \
+           qmessageaccountfilter.cpp \
+           qmessageaccountordering.cpp \
+           qmessagefolderfilter.cpp \
+           qmessagefolderordering.cpp \
+           qmessagefilter.cpp \
+           qmessageordering.cpp \
            qmessagestore.cpp \
            qmessageserviceaction.cpp
 
@@ -74,12 +74,12 @@ SOURCES += qmessageid_maemo.cpp \
            qmessage_maemo.cpp \
            qmessagefolder_maemo.cpp \
            qmessageaccount_maemo.cpp \
-           qmessageaccountfilterkey_maemo.cpp \
-           qmessageaccountsortkey_maemo.cpp \
-           qmessagefolderfilterkey_maemo.cpp \
-           qmessagefoldersortkey_maemo.cpp \
-           qmessagefilterkey_maemo.cpp \
-           qmessagesortkey_maemo.cpp \
+           qmessageaccountfilter_maemo.cpp \
+           qmessageaccountordering_maemo.cpp \
+           qmessagefolderfilter_maemo.cpp \
+           qmessagefolderordering_maemo.cpp \
+           qmessagefilter_maemo.cpp \
+           qmessageordering_maemo.cpp \
            qmessagestore_maemo.cpp \
            qmessageserviceaction_maemo.cpp 
 }
@@ -92,12 +92,12 @@ SOURCES += qmessageid_symbian.cpp \
            qmessage_symbian.cpp \
            qmessagefolder_symbian.cpp \
            qmessageaccount_symbian.cpp \
-           qmessageaccountfilterkey_symbian.cpp \
-           qmessageaccountsortkey_symbian.cpp \
-           qmessagefolderfilterkey_symbian.cpp \
-           qmessagefoldersortkey_symbian.cpp \
-           qmessagefilterkey_symbian.cpp \
-           qmessagesortkey_symbian.cpp \
+           qmessageaccountfilter_symbian.cpp \
+           qmessageaccountordering_symbian.cpp \
+           qmessagefolderfilter_symbian.cpp \
+           qmessagefolderordering_symbian.cpp \
+           qmessagefilter_symbian.cpp \
+           qmessageordering_symbian.cpp \
            qmessagestore_symbian.cpp \
            qmessageserviceaction_symbian.cpp 
 }
@@ -115,12 +115,12 @@ SOURCES += winhelpers.cpp \
            qmessage_win.cpp \
            qmessagefolder_win.cpp \
            qmessageaccount_win.cpp \
-           qmessageaccountfilterkey_win.cpp \
-           qmessageaccountsortkey_win.cpp \
-           qmessagefolderfilterkey_win.cpp \
-           qmessagefoldersortkey_win.cpp \
-           qmessagefilterkey_win.cpp \
-           qmessagesortkey_win.cpp \
+           qmessageaccountfilter_win.cpp \
+           qmessageaccountordering_win.cpp \
+           qmessagefolderfilter_win.cpp \
+           qmessagefolderordering_win.cpp \
+           qmessagefilter_win.cpp \
+           qmessageordering_win.cpp \
            qmessagestore_win.cpp \
            qmessageserviceaction_win.cpp 
 
@@ -143,12 +143,12 @@ SOURCES += qmessageid_qmf.cpp \
            qmessage_qmf.cpp \
            qmessagefolder_qmf.cpp \
            qmessageaccount_qmf.cpp \
-           qmessageaccountfilterkey_qmf.cpp \
-           qmessageaccountsortkey_qmf.cpp \
-           qmessagefolderfilterkey_qmf.cpp \
-           qmessagefoldersortkey_qmf.cpp \
-           qmessagefilterkey_qmf.cpp \
-           qmessagesortkey_qmf.cpp \
+           qmessageaccountfilter_qmf.cpp \
+           qmessageaccountordering_qmf.cpp \
+           qmessagefolderfilter_qmf.cpp \
+           qmessagefolderordering_qmf.cpp \
+           qmessagefilter_qmf.cpp \
+           qmessageordering_qmf.cpp \
            qmessagestore_qmf.cpp \
            qmessageserviceaction_qmf.cpp \
            qmfhelpers.cpp

@@ -70,10 +70,10 @@ QMessageFolderId QMessagePrivate::standardFolderId(QMessage::StandardFolder fold
                          (folder == QMessage::TrashFolder ? "Trash" : ""))))));
 
         // Find the ID for this standard folder
-        QMessageFolderFilterKey pathKey(QMessageFolderFilterKey::byPath(path));
-        QMessageFolderFilterKey accountKey(QMessageFolderFilterKey::byParentAccountId(QMessageAccountId()));
+        QMessageFolderFilter pathFilter(QMessageFolderFilter::byPath(path));
+        QMessageFolderFilter accountFilter(QMessageFolderFilter::byParentAccountId(QMessageAccountId()));
 
-        QMessageFolderId folderId(QMessageStore::instance()->queryFolders(pathKey & accountKey, QMessageFolderSortKey()).first());
+        QMessageFolderId folderId(QMessageStore::instance()->queryFolders(pathFilter & accountFilter).first());
         it = standardFolderMap()->insert(folder, folderId);
     }
 

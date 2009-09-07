@@ -46,9 +46,9 @@
 #include <qmailserviceaction.h>
 #include <qmailstore.h>
 
-class QMessageAccountFilterKey;
-class QMessageFolderFilterKey;
-class QMessageFilterKey;
+class QMessageAccountFilter;
+class QMessageFolderFilter;
+class QMessageFilter;
 
 class QMailAccountKey;
 class QMailFolderKey;
@@ -116,23 +116,23 @@ QMailDataComparator::InclusionComparator convert(QMessageDataComparator::Inclusi
 QMessageDataComparator::RelationComparator convert(QMailDataComparator::RelationComparator cmp);
 QMailDataComparator::RelationComparator convert(QMessageDataComparator::RelationComparator cmp);
 
-QMessageAccountFilterKey convert(const QMailAccountKey &key);
-QMailAccountKey convert(const QMessageAccountFilterKey &key);
+QMessageAccountFilter convert(const QMailAccountKey &key);
+QMailAccountKey convert(const QMessageAccountFilter &filter);
 
-QMessageFolderFilterKey convert(const QMailFolderKey &key);
-QMailFolderKey convert(const QMessageFolderFilterKey &key);
+QMessageFolderFilter convert(const QMailFolderKey &key);
+QMailFolderKey convert(const QMessageFolderFilter &filter);
 
-QMessageFilterKey convert(const QMailMessageKey &key);
-QMailMessageKey convert(const QMessageFilterKey &key);
+QMessageFilter convert(const QMailMessageKey &key);
+QMailMessageKey convert(const QMessageFilter &filter);
 
-QMessageAccountSortKey convert(const QMailAccountSortKey &key);
-QMailAccountSortKey convert(const QMessageAccountSortKey &key);
+QMessageAccountOrdering convert(const QMailAccountSortKey &key);
+QMailAccountSortKey convert(const QMessageAccountOrdering &ordering);
 
-QMessageFolderSortKey convert(const QMailFolderSortKey &key);
-QMailFolderSortKey convert(const QMessageFolderSortKey &key);
+QMessageFolderOrdering convert(const QMailFolderSortKey &key);
+QMailFolderSortKey convert(const QMessageFolderOrdering &ordering);
 
-QMessageSortKey convert(const QMailMessageSortKey &key);
-QMailMessageSortKey convert(const QMessageSortKey &key);
+QMessageOrdering convert(const QMailMessageSortKey &key);
+QMailMessageSortKey convert(const QMessageOrdering &ordering);
 
 QMessageAccount convert(const QMailAccount &account);
 QMailAccount convert(const QMessageAccount &account);

@@ -37,8 +37,8 @@
 #include "qmessage_p.h"
 #include "qmessagefolder_p.h"
 #include "qmessageaccount_p.h"
-#include "qmessagesortkey_p.h"
-#include "qmessagefilterkey_p.h"
+#include "qmessageordering_p.h"
+#include "qmessagefilter_p.h"
 
 #include <QDebug>
 #include <QTextCodec>
@@ -310,10 +310,10 @@ MapiFolderPtr MapiFolder::nextSubFolder(QMessageStore::ErrorCode *lastError, con
 }
 
 
-QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
+QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
 {
-    Q_UNUSED(key)
-    Q_UNUSED(sortKey)
+    Q_UNUSED(filter)
+    Q_UNUSED(ordering)
     Q_UNUSED(offset)
 
     if (!_valid || !_folder) {
@@ -338,11 +338,11 @@ QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, co
         return QMessageIdList();
     }
 
-    QMessageSortKeyPrivate::sortTable(lastError, sortKey, messagesTable);
+    QMessageOrderingPrivate::sortTable(lastError, ordering, messagesTable);
     if (*lastError != QMessageStore::NoError)
         return QMessageIdList();
 
-    QMessageFilterKeyPrivate::filterTable(lastError, key, messagesTable);
+    QMessageFilterPrivate::filterTable(lastError, filter, messagesTable);
     if (*lastError != QMessageStore::NoError)
         return QMessageIdList();
 

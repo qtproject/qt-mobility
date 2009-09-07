@@ -47,7 +47,7 @@
     
     QMessageStore also provides queryMessages() and countMessages() functions for querying 
     and counting of QMessage, QMessageFolder and QMessageAccount objects by using the
-    QMessageFilterKey, QMessageFolderFilterKey, QMessageAccountFilterKey classes 
+    QMessageFilter, QMessageFolderFilter, QMessageAccountFilter classes 
     respectively.
     
     If a QMessageStore operation fails, the lastError() function will return an error code
@@ -66,7 +66,7 @@
     Messaging store manipulations involving messages are reported via the messagesAdded(), 
     messagesUpdated() and messagesRemoved() signals.
 
-    \sa QMessage, QMessageId, QMessageContentContainerId, QMessageFilterKey, QMessageSortKey
+    \sa QMessage, QMessageId, QMessageContentContainerId, QMessageFilter, QMessageOrdering
 */
 
 /*!
@@ -134,15 +134,15 @@
 */
 
 /*!
-    \fn QMessageStore::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
+    \fn QMessageStore::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
     
     WARNING: This function will be removed and replaced by QMessageServiceAction::queryMessages().
 
-    Returns the \l{QMessageId}s of messages in the messaging store. If \a key is not empty 
-    only messages matching the parameters set by \a key will be returned, otherwise 
+    Returns the \l{QMessageId}s of messages in the messaging store. If \a filter is not empty 
+    only messages matching the parameters set by \a filter will be returned, otherwise 
     identifiers for all messages will be returned.
-    If \a sortKey is not empty, then the identifiers will be sorted by the parameters 
-    set by \a sortKey.
+    If \a ordering is not empty, then the identifiers will be sorted by the parameters 
+    set by \a ordering.
     If \a limit is not zero, then \a limit places an upper bound on the number of 
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
@@ -151,16 +151,16 @@
 */
 
 /*!
-    \fn QMessageStore::queryMessages(const QString &body, const QMessageFilterKey &key, const QMessageSortKey &sortKey, QMessageDataComparator::Options options, uint limit, uint offset) const
+    \fn QMessageStore::queryMessages(const QString &body, const QMessageFilter &filter, const QMessageOrdering &ordering, QMessageDataComparator::Options options, uint limit, uint offset) const
     
     WARNING: This function will be removed and replaced by QMessageServiceAction::queryMessages().
 
-    Returns the \l{QMessageId}s of messages in the messaging store. If \a key is not empty 
-    only messages matching the parameters set by \a key and with a body containing the 
+    Returns the \l{QMessageId}s of messages in the messaging store. If \a filter is not empty 
+    only messages matching the parameters set by \a filter and with a body containing the 
     string \a body will be returned, otherwise identifiers for all messages with 
     a body containing \a body will be returned.
-    If \a sortKey is not empty, then the identifiers will be sorted by the parameters 
-    set by \a sortKey.
+    If \a ordering is not empty, then the identifiers will be sorted by the parameters 
+    set by \a ordering.
     If \a limit is not zero, then \a limit places an upper bound on the number of 
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
@@ -170,13 +170,13 @@
 */
 
 /*!
-    \fn QMessageStore::queryFolders(const QMessageFolderFilterKey &key, const QMessageFolderSortKey &sortKey, uint limit, uint offset) const
+    \fn QMessageStore::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderOrdering &ordering, uint limit, uint offset) const
     
-    Returns the \l{QMessageFolderId}s of folders in the messaging store. If \a key 
-    is not empty only folders matching the parameters set by \a key will be returned,
+    Returns the \l{QMessageFolderId}s of folders in the messaging store. If \a filter 
+    is not empty only folders matching the parameters set by \a filter will be returned,
     otherwise identifiers for all folders will be returned.
-    If \a sortKey is not empty, then the identifiers will be sorted by the parameters 
-    set by \a sortKey.
+    If \a ordering is not empty, then the identifiers will be sorted by the parameters 
+    set by \a ordering.
     If \a limit is not zero, then \a limit places an upper bound on the number of 
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
@@ -185,13 +185,13 @@
 */
 
 /*!
-    \fn QMessageStore::queryAccounts(const QMessageAccountFilterKey &key, const QMessageAccountSortKey &sortKey, uint limit, uint offset) const
+    \fn QMessageStore::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountOrdering &ordering, uint limit, uint offset) const
     
-    Returns the \l{QMessageAccountId}s of messages in the messaging store. If \a key 
-    is not empty only accounts matching the parameters set by \a key will be returned, 
+    Returns the \l{QMessageAccountId}s of accounts in the messaging store. If \a filter 
+    is not empty only accounts matching the parameters set by \a filter will be returned, 
     otherwise identifiers for all accounts will be returned.
-    If \a sortKey is not empty, then the identifiers will be sorted by the parameters 
-    set by \a sortKey.
+    If \a ordering is not empty, then the identifiers will be sorted by the parameters 
+    set by \a ordering.
     If \a limit is not zero, then \a limit places an upper bound on the number of 
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
@@ -200,33 +200,33 @@
 */
 
 /*!
-    \fn QMessageStore::countMessages(const QMessageFilterKey& key) const
+    \fn QMessageStore::countMessages(const QMessageFilter& filter) const
     
     WARNING: This function will be removed and replaced by QMessageServiceAction::queryMessages().
 
     Returns the number of messages which match the 
-    filtering criteria defined in QMessageFilterKey \a key. If 
-    key is empty a count of all messages is returned.
+    filtering criteria defined in QMessageFilter \a filter. If 
+    filter is empty a count of all messages is returned.
     
     \sa lastError(), queryMessages()
 */
 
 /*!
-    \fn QMessageStore::countFolders(const QMessageFolderFilterKey& key) const
+    \fn QMessageStore::countFolders(const QMessageFolderFilter& filter) const
     
     Returns the number of messages which match the 
-    filtering criteria defined in QMessageFolderFilterKey \a key. If 
-    key is empty a count of all messages is returned.
+    filtering criteria defined in QMessageFolderFilter \a filter. If 
+    filter is empty a count of all messages is returned.
     
     \sa lastError(), queryMessages()
 */
 
 /*!
-    \fn QMessageStore::countAccounts(const QMessageAccountFilterKey& key) const
+    \fn QMessageStore::countAccounts(const QMessageAccountFilter& filter) const
     
     Returns the number of messages which match the 
-    filtering criteria defined in QMessageAccountFilterKey \a key. If 
-    key is empty a count of all messages is returned.
+    filtering criteria defined in QMessageAccountFilter \a filter. If 
+    filter is empty a count of all messages is returned.
     
     \sa lastError(), queryMessages()
 */
@@ -248,9 +248,9 @@
 */
 
 /*!
-    \fn QMessageStore::removeMessages(const QMessageFilterKey& key, QMessageStore::RemovalOption option)
+    \fn QMessageStore::removeMessages(const QMessageFilter& filter, QMessageStore::RemovalOption option)
     
-    Removes all messages identified by the key \a key from the messaging store.
+    Removes all messages identified by the filter \a filter from the messaging store.
     If \a option is QMessageStore::RemoveOnOriginatingServer then when synchronization is performed the 
     messages should be removed from both the local message store and the originating server if any.
 
@@ -267,7 +267,7 @@
     \code
     bool removeMessages(const QMessageIdList& ids)
     {
-        QMessageFilterKey idsFilter(ids);
+        QMessageFilter idsFilter(ids);
         return QMessageStore::instance()->removeMessages(idsFilter);
     }
     \endcode
@@ -353,10 +353,10 @@
 */
 
 /*!
-    \fn QMessageStore::startNotifications(const QMessageFilterKey &key)
+    \fn QMessageStore::startNotifications(const QMessageFilter &filter)
     
     Starts emission of messagesAdded(), messagesRemoved() and messagesUpdated() signals
-    for messages that match \a key.
+    for messages that match \a filter.
     
     \sa messagesAdded(), messagesRemoved(), messagesUpdated(), stopNotifications()
 */

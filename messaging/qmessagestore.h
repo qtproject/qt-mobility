@@ -34,10 +34,10 @@
 #define QMESSAGESTORE_H
 #include <QObject>
 #include <qmessageglobal.h>
-#include <qmessagefilterkey.h>
-#include <qmessagesortkey.h>
-#include <qmessagefoldersortkey.h>
-#include <qmessageaccountsortkey.h>
+#include <qmessagefilter.h>
+#include <qmessageordering.h>
+#include <qmessagefolderordering.h>
+#include <qmessageaccountordering.h>
 #include <qmessage.h>
 #include <qmessagefolder.h>
 #include <qmessageaccount.h>
@@ -69,22 +69,22 @@ public:
 
     QMessageStore::ErrorCode lastError() const;
 
-    QMessageIdList queryMessages(const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), uint limit = 0, uint offset = 0) const;
-    QMessageIdList queryMessages(const QString &body, const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), QMessageDataComparator::Options options = 0, uint limit = 0, uint offset = 0) const;
+    QMessageIdList queryMessages(const QMessageFilter &filter = QMessageFilter(), const QMessageOrdering &ordering = QMessageOrdering(), uint limit = 0, uint offset = 0) const;
+    QMessageIdList queryMessages(const QString &body, const QMessageFilter &filter = QMessageFilter(), const QMessageOrdering &ordering = QMessageOrdering(), QMessageDataComparator::Options options = 0, uint limit = 0, uint offset = 0) const;
 #ifdef QMESSAGING_OPTIONAL_FOLDER
-    QMessageFolderIdList queryFolders(const QMessageFolderFilterKey &key = QMessageFolderFilterKey(), const QMessageFolderSortKey &sortKey = QMessageFolderSortKey(), uint limit = 0, uint offset = 0) const;
+    QMessageFolderIdList queryFolders(const QMessageFolderFilter &filter = QMessageFolderFilter(), const QMessageFolderOrdering &ordering = QMessageFolderOrdering(), uint limit = 0, uint offset = 0) const;
 #endif
-    QMessageAccountIdList queryAccounts(const QMessageAccountFilterKey &key = QMessageAccountFilterKey(), const QMessageAccountSortKey &sortKey = QMessageAccountSortKey(), uint limit = 0, uint offset = 0) const;
-    int countMessages(const QMessageFilterKey &key = QMessageFilterKey()) const;
+    QMessageAccountIdList queryAccounts(const QMessageAccountFilter &filter = QMessageAccountFilter(), const QMessageAccountOrdering &ordering = QMessageAccountOrdering(), uint limit = 0, uint offset = 0) const;
+    int countMessages(const QMessageFilter &filter = QMessageFilter()) const;
 #ifdef QMESSAGING_OPTIONAL_FOLDER
-    int countFolders(const QMessageFolderFilterKey &key = QMessageFolderFilterKey()) const;
+    int countFolders(const QMessageFolderFilter &filter = QMessageFolderFilter()) const;
 #endif
-    int countAccounts(const QMessageAccountFilterKey &key = QMessageAccountFilterKey()) const;
+    int countAccounts(const QMessageAccountFilter &filter = QMessageAccountFilter()) const;
 
     bool addMessage(QMessage *m);
     bool updateMessage(QMessage *m);
     bool removeMessage(const QMessageId &id, RemovalOption option = RemoveOnOriginatingServer);
-    bool removeMessages(const QMessageFilterKey &key, RemovalOption option = RemoveOnOriginatingServer);
+    bool removeMessages(const QMessageFilter &filter, RemovalOption option = RemoveOnOriginatingServer);
 
     QMessage message(const QMessageId &id) const;
 #ifdef QMESSAGING_OPTIONAL_FOLDER
@@ -100,7 +100,7 @@ signals:
     void messagesUpdated(const QMessageIdList &ids);
 
 public slots:
-    void startNotifications(const QMessageFilterKey &key);
+    void startNotifications(const QMessageFilter &filter);
     void stopNotifications();
 
 private:

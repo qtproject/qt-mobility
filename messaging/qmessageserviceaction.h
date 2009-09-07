@@ -55,10 +55,10 @@ public:
     QMessageServiceAction(QObject *parent = 0);
     ~QMessageServiceAction();
 
-    bool queryMessages(const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), uint limit = 0, uint offset = 0) const;
-    bool queryMessages(const QString &body, QMessageDataComparator::Options options, const QMessageFilterKey &key = QMessageFilterKey(), const QMessageSortKey &sortKey = QMessageSortKey(), uint limit = 0, uint offset = 0) const;
-    bool countMessages(const QMessageFilterKey &key = QMessageFilterKey(), uint limit = 0) const;
-    bool countMessages(const QString &body, QMessageDataComparator::Options options, const QMessageFilterKey &key = QMessageFilterKey(), uint limit = 0) const;
+    bool queryMessages(const QMessageFilter &filter = QMessageFilter(), const QMessageOrdering &ordering = QMessageOrdering(), uint limit = 0, uint offset = 0) const;
+    bool queryMessages(const QString &body, QMessageDataComparator::Options options, const QMessageFilter &filter = QMessageFilter(), const QMessageOrdering &ordering = QMessageOrdering(), uint limit = 0, uint offset = 0) const;
+    bool countMessages(const QMessageFilter &filter = QMessageFilter(), uint limit = 0) const;
+    bool countMessages(const QString &body, QMessageDataComparator::Options options, const QMessageFilter &filter = QMessageFilter(), uint limit = 0) const;
 
     bool send(QMessage &message);
     bool compose(const QMessage &message);

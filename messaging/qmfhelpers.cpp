@@ -483,33 +483,33 @@ QMailDataComparator::RelationComparator convert(QMessageDataComparator::Relation
 }
 
 /* in qmessageaccountfilterkey_qmf.cpp
-QMessageAccountFilterKey convert(const QMailAccountKey &key);
-QMailAccountKey convert(const QMessageAccountFilterKey &key);
+QMessageAccountFilter convert(const QMailAccountKey &key);
+QMailAccountKey convert(const QMessageAccountFilter &filter);
 */
 
 /* in qmessagefolderfilterkey_qmf.cpp
-QMessageFolderFilterKey convert(const QMailFolderKey &key);
-QMailFolderKey convert(const QMessageFolderFilterKey &key);
+QMessageFolderFilter convert(const QMailFolderKey &key);
+QMailFolderKey convert(const QMessageFolderFilter &filter);
 */
 
 /* in qmessagefilterkey_qmf.cpp
-QMessageFilterKey convert(const QMailMessageKey &key);
-QMailMessageKey convert(const QMessageFilterKey &key);
+QMessageFilter convert(const QMailMessageKey &key);
+QMailMessageKey convert(const QMessageFilter &filter);
 */
 
 /* in qmessageaccountsortkey_qmf.cpp
-QMessageAccountSortKey convert(const QMailAccountSortKey &key);
-QMailAccountSortKey convert(const QMessageAccountSortKey &key);
+QMessageAccountOrdering convert(const QMailAccountSortKey &key);
+QMailAccountSortKey convert(const QMessageAccountOrdering &ordering);
 */
 
 /* in qmessagefoldersortkey_qmf.cpp
-QMessageFolderSortKey convert(const QMailFolderSortKey &key);
-QMailFolderSortKey convert(const QMessageFolderSortKey &key);
+QMessageFolderOrdering convert(const QMailFolderSortKey &key);
+QMailFolderSortKey convert(const QMessageFolderOrdering &ordering);
 */
 
 /* in qmessagesortkey_qmf.cpp
-QMessageSortKey convert(const QMailMessageSortKey &key);
-QMailMessageSortKey convert(const QMessageSortKey &key);
+QMessageOrdering convert(const QMailMessageSortKey &key);
+QMailMessageSortKey convert(const QMessageOrdering &ordering);
 */
 
 /* in qmessageaccount_qmf.cpp

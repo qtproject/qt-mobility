@@ -230,7 +230,7 @@
   
     Returns the identifier of the message.
 
-    \sa QMessageFilterKey::byId()
+    \sa QMessageFilter::byId()
 */
     
 /*!
@@ -238,7 +238,7 @@
     
     Returns the Type of the message.
     
-    \sa setType(), QMessageFilterKey::byType()
+    \sa setType(), QMessageFilter::byType()
 */
     
 /*!
@@ -295,7 +295,7 @@
   
     Returns the originating address of the message.
 
-    \sa setFrom(), QMessageFilterKey::bySender()
+    \sa setFrom(), QMessageFilter::bySender()
 */
 
 /*!
@@ -311,7 +311,7 @@
   
     Returns the subject of the message, if present; otherwise returns a null string.
 
-    \sa setSubject(), QMessageFilterKey::bySubject()
+    \sa setSubject(), QMessageFilter::bySubject()
 */
 
 /*!
@@ -328,7 +328,7 @@
     Returns the timestamp contained in the origination date header field of the message, if present; 
     otherwise returns a null timestamp.
     
-    \sa setDate(), QMessageFilterKey::byTimeStamp()
+    \sa setDate(), QMessageFilter::byTimeStamp()
 */
 
 /*!
@@ -345,7 +345,7 @@
     Returns the timestamp placed in the message during reception by the device, if present;
     otherwise returns a null timestamp.
     
-    \sa setReceivedDate(), QMessageFilterKey::byReceptionTimeStamp()
+    \sa setReceivedDate(), QMessageFilter::byReceptionTimeStamp()
 */
 
 /*!
@@ -361,7 +361,7 @@
   
     Returns the list of primary recipients for the message.
 
-    \sa setTo(), QMessageFilterKey::byRecipients()
+    \sa setTo(), QMessageFilter::byRecipients()
 */
 
 /*! 
@@ -385,7 +385,7 @@
   
     Returns the list of all the cc (carbon copy) recipients specified for the message.
 
-    \sa to(), bcc(), setCc(), QMessageFilterKey::byRecipients()
+    \sa to(), bcc(), setCc(), QMessageFilter::byRecipients()
 */  
 
 /*!
@@ -417,7 +417,7 @@
     
     Returns the status flags value for the message.
 
-    \sa setStatus(), QMessageFilterKey::byStatus()
+    \sa setStatus(), QMessageFilter::byStatus()
 */
 
 /*!
@@ -435,7 +435,7 @@
 
     The default is Normal.
 
-    \sa setPriority(), QMessageFilterKey::byPriority()
+    \sa setPriority(), QMessageFilter::byPriority()
 */
 
 /*!
@@ -451,7 +451,7 @@
     
     Returns the complete size of the message as indicated on the originating server.
     
-    \sa QMessageFilterKey::bySize()
+    \sa QMessageFilter::bySize()
 */
 
 /*!

@@ -148,10 +148,10 @@ void tst_QMessageStore::testFolder()
     // Ensure we have an account to link these folders to
     static const QString testAccountName("testAccount");
     QMessageAccountId testAccountId;
-    QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilterKey::byName(testAccountName)));
+    QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilter::byName(testAccountName)));
 #if defined(Q_OS_WIN) && !defined(ACCOUNT_FILTERING_IMPLEMENTED)
 {
-    // Key filtering is not implemented yet
+    // Filtering is not implemented yet
     QMessageAccountIdList::iterator it = accountIds.begin(), end = accountIds.end();
     while (it != end) {
         QMessageAccount acct(*it);
@@ -197,11 +197,11 @@ void tst_QMessageStore::testFolder()
     QCOMPARE(folder.parentAccountId(), testAccountId);
 
     if (!parentFolderPath.isEmpty()) {
-        QMessageFolderFilterKey key(QMessageFolderFilterKey::byPath(parentFolderPath) & QMessageFolderFilterKey::byParentAccountId(testAccountId));
-        QMessageFolderIdList list(QMessageStore::instance()->queryFolders(key));
+        QMessageFolderFilter filter(QMessageFolderFilter::byPath(parentFolderPath) & QMessageFolderFilter::byParentAccountId(testAccountId));
+        QMessageFolderIdList list(QMessageStore::instance()->queryFolders(filter));
 #if defined(Q_OS_WIN) && !defined(FOLDER_FILTERING_IMPLEMENTED)
 {
-    // Key filtering is not implemented yet
+    // Filtering is not implemented yet
     QMessageFolderIdList::iterator it = list.begin(), end = list.end();
     while (it != end) {
         QMessageFolder fldr(*it);
@@ -257,10 +257,10 @@ void tst_QMessageStore::testMessage()
     static const QString testAccountName("testAccount");
 
     QMessageAccountId testAccountId;
-    QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilterKey::byName(testAccountName)));
+    QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilter::byName(testAccountName)));
 #if defined(Q_OS_WIN) && !defined(ACCOUNT_FILTERING_IMPLEMENTED)
 {
-    // Key filtering is not implemented yet
+    // Filtering is not implemented yet
     QMessageAccountIdList::iterator it = accountIds.begin(), end = accountIds.end();
     while (it != end) {
         QMessageAccount acct(*it);
@@ -287,11 +287,11 @@ void tst_QMessageStore::testMessage()
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolderId testFolderId;
-    QMessageFolderFilterKey key(QMessageFolderFilterKey::byDisplayName("Inbox") & QMessageFolderFilterKey::byParentAccountId(testAccountId));
-    QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders(key));
+    QMessageFolderFilter filter(QMessageFolderFilter::byDisplayName("Inbox") & QMessageFolderFilter::byParentAccountId(testAccountId));
+    QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders(filter));
 #if defined(Q_OS_WIN) && !defined(FOLDER_FILTERING_IMPLEMENTED)
 {
-    // Key filtering is not implemented yet
+    // Filtering is not implemented yet
     QMessageFolderIdList::iterator it = folderIds.begin(), end = folderIds.end();
     while (it != end) {
         QMessageFolder fldr(*it);

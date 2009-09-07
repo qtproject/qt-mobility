@@ -37,7 +37,7 @@
 #include "qmessageaccountid_p.h"
 #include "qmessagefolder_p.h"
 #include "qmessageaccount_p.h"
-#include "qmessagesortkey_p.h"
+#include "qmessageordering_p.h"
 #include "winhelpers_p.h"
 
 #include <qdebug.h>
@@ -60,22 +60,22 @@ typedef QSharedPointer<FolderHeapNode> FolderHeapNodePtr;
 
 class FolderHeap {
 public:
-    FolderHeap(QMessageStore::ErrorCode *lastError, MapiSessionPtr mapiSession, const QList<FolderHeapNodePtr> &protoHeap, const QMessageFilterKey &filterKey, const QMessageSortKey &sortKey);
+    FolderHeap(QMessageStore::ErrorCode *lastError, MapiSessionPtr mapiSession, const QList<FolderHeapNodePtr> &protoHeap, const QMessageFilter &filter, const QMessageOrdering &ordering);
     QMessage takeFront(QMessageStore::ErrorCode *lastError);
     bool isEmpty() const { return _heap.count() == 0; }
 
 private:
     void sink(int i);
-    QMessageFilterKey _filterKey;
-    QMessageSortKey _sortKey;
+    QMessageFilter _filter;
+    QMessageOrdering _ordering;
     QList<FolderHeapNodePtr> _heap;
     MapiSessionPtr _mapiSession;
 };
 
-FolderHeap::FolderHeap(QMessageStore::ErrorCode *lastError, MapiSessionPtr mapiSession, const QList<FolderHeapNodePtr> &protoHeap, const QMessageFilterKey &filterKey, const QMessageSortKey &sortKey)
+FolderHeap::FolderHeap(QMessageStore::ErrorCode *lastError, MapiSessionPtr mapiSession, const QList<FolderHeapNodePtr> &protoHeap, const QMessageFilter &filter, const QMessageOrdering &ordering)
 {
-    _filterKey = filterKey;
-    _sortKey = sortKey;
+    _filter = filter;
+    _ordering = ordering;
     _mapiSession = mapiSession;
 
     foreach (const FolderHeapNodePtr &folder, protoHeap) {
@@ -89,7 +89,7 @@ FolderHeap::FolderHeap(QMessageStore::ErrorCode *lastError, MapiSessionPtr mapiS
         node->offset = 0;
 
         // TODO: Would be more efficient to use a LPMAPITABLE directly instead of calling MapiFolder queryMessages and message functions.
-        QMessageIdList messageIdList(node->folder->queryMessages(&ignoredError, filterKey, sortKey, 1));
+        QMessageIdList messageIdList(node->folder->queryMessages(&ignoredError, filter, ordering, 1));
         if (ignoredError == QMessageStore::NoError) {
             if (!messageIdList.isEmpty()) {
                 node->front = _mapiSession->message(&ignoredError, messageIdList.front());
@@ -121,7 +121,7 @@ QMessage FolderHeap::takeFront(QMessageStore::ErrorCode *lastError)
 
     ++node->offset;
     // TODO: Would be more efficient to use a LPMAPITABLE directly instead of calling MapiFolder queryMessages and message functions.
-    QMessageIdList messageIdList(node->folder->queryMessages(lastError, _filterKey, _sortKey, 1, node->offset));
+    QMessageIdList messageIdList(node->folder->queryMessages(lastError, _filter, _ordering, 1, node->offset));
     if (*lastError != QMessageStore::NoError)
         return result;
 
@@ -149,9 +149,9 @@ void FolderHeap::sink(int i)
         int right(left + 1);
         int minimum(left);
         if ((right < _heap.count())
-            && (QMessageSortKeyPrivate::compare(_sortKey, _heap[right]->front, _heap[left]->front)))
+            && (QMessageOrdering::compare(_ordering, _heap[right]->front, _heap[left]->front)))
             minimum = right;
-        if (QMessageSortKeyPrivate::compare(_sortKey, _heap[i]->front, _heap[minimum]->front))
+        if (QMessageOrdering::compare(_ordering, _heap[i]->front, _heap[minimum]->front))
             return;
         FolderHeapNodePtr temp(_heap[minimum]);
         _heap[minimum] = _heap[i];
@@ -241,7 +241,7 @@ QMessageStore::ErrorCode QMessageStore::lastError() const
     return d_ptr->p_ptr->lastError;
 }
 
-QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
+QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
 {
     QMessageIdList result;
     d_ptr->p_ptr->lastError = QMessageStore::NoError;
@@ -295,7 +295,7 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
         }
     }
 
-    FolderHeap folderHeap(&d_ptr->p_ptr->lastError, mapiSession, folderNodes, key, sortKey);
+    FolderHeap folderHeap(&d_ptr->p_ptr->lastError, mapiSession, folderNodes, filter, ordering);
     if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
         return result;
 
@@ -322,10 +322,10 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const 
     }
 }
 
-QMessageIdList QMessageStore::queryMessages(const QString &body, const QMessageFilterKey &key, const QMessageSortKey &sortKey,  QMessageDataComparator::Options options, uint limit, uint offset) const
+QMessageIdList QMessageStore::queryMessages(const QString &body, const QMessageFilter &filter, const QMessageOrdering &ordering,  QMessageDataComparator::Options options, uint limit, uint offset) const
 {
-    Q_UNUSED(key)
-    Q_UNUSED(sortKey)
+    Q_UNUSED(filter)
+    Q_UNUSED(ordering)
     Q_UNUSED(body)
     Q_UNUSED(options)
     Q_UNUSED(limit)
@@ -340,10 +340,10 @@ QMessageIdList QMessageStore::queryMessages(const QString &body, const QMessageF
 }
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
-QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilterKey &key, const QMessageFolderSortKey &sortKey, uint limit, uint offset) const
+QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderOrdering &ordering, uint limit, uint offset) const
 {
-    Q_UNUSED(key)
-    Q_UNUSED(sortKey)
+    Q_UNUSED(filter)
+    Q_UNUSED(ordering)
     QMessageFolderIdList result;
     d_ptr->p_ptr->lastError = QMessageStore::NoError;
 
@@ -363,10 +363,10 @@ QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilterKey &
 }
 #endif
 
-QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilterKey &key, const QMessageAccountSortKey &sortKey, uint limit, uint offset) const
+QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountOrdering &ordering, uint limit, uint offset) const
 {
-    Q_UNUSED(key)
-    Q_UNUSED(sortKey)
+    Q_UNUSED(filter)
+    Q_UNUSED(ordering)
     Q_UNUSED(limit)
     Q_UNUSED(offset)
     QMessageAccountIdList result;
@@ -387,21 +387,21 @@ QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilterKe
     }
 }
 
-int QMessageStore::countMessages(const QMessageFilterKey& key) const
+int QMessageStore::countMessages(const QMessageFilter& filter) const
 {
-    return queryMessages(key).count();
+    return queryMessages(filter).count();
 }
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
-int QMessageStore::countFolders(const QMessageFolderFilterKey& key) const
+int QMessageStore::countFolders(const QMessageFolderFilter& filter) const
 {
-    return queryFolders(key).count();
+    return queryFolders(filter).count();
 }
 #endif
 
-int QMessageStore::countAccounts(const QMessageAccountFilterKey& key) const
+int QMessageStore::countAccounts(const QMessageAccountFilter& filter) const
 {
-    return queryAccounts(key).count();
+    return queryAccounts(filter).count();
 }
 
 bool QMessageStore::removeMessage(const QMessageId& id, RemovalOption option)
@@ -411,9 +411,9 @@ bool QMessageStore::removeMessage(const QMessageId& id, RemovalOption option)
     return false; // stub
 }
 
-bool QMessageStore::removeMessages(const QMessageFilterKey& key, QMessageStore::RemovalOption option)
+bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageStore::RemovalOption option)
 {
-    Q_UNUSED(key)
+    Q_UNUSED(filter)
     Q_UNUSED(option)
     return true; // stub
 }
@@ -769,9 +769,9 @@ QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
     return result;
 }
 
-void QMessageStore::startNotifications(const QMessageFilterKey &key)
+void QMessageStore::startNotifications(const QMessageFilter &filter)
 {
-    Q_UNUSED(key)    
+    Q_UNUSED(filter)    
 }
 
 void QMessageStore::stopNotifications()

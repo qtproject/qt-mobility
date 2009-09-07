@@ -223,10 +223,10 @@ void AddressFinder::searchMessages()
         default: break;
     }
 
-    QMessageFilterKey includeFilter(QMessageFilterKey::byTimeStamp(minimumDate, QMessageDataComparator::GreaterThanEqual));
-    QMessageFilterKey excludeFilter(QMessageFilterKey::byTimeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual));
+    QMessageFilter includeFilter(QMessageFilter::byTimeStamp(minimumDate, QMessageDataComparator::GreaterThanEqual));
+    QMessageFilter excludeFilter(QMessageFilter::byTimeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual));
     // Would be faster and more accurate to just examine the sent folder, outgoingFilter also includes drafts.
-    QMessageFilterKey outgoingFilter(QMessageFilterKey::byStatus(QMessage::Incoming, QMessageDataComparator::Excludes));
+    QMessageFilter outgoingFilter(QMessageFilter::byStatus(QMessage::Incoming, QMessageDataComparator::Excludes));
     
     // Search for messages containing addresses to exclude
     service.queryMessages(outgoingFilter & excludeFilter);
@@ -241,7 +241,7 @@ void AddressFinder::activityChanged(QMessageServiceAction::Activity a)
         if (!inclusionFilter.isEmpty()) {
             // Now find the included messages
             service.queryMessages(inclusionFilter);
-            inclusionFilter = QMessageFilterKey();
+            inclusionFilter = QMessageFilter();
         } else {
             // We have found the message sets to process
             if (!inclusionMessages.isEmpty()) {

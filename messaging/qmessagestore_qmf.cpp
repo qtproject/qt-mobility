@@ -113,21 +113,21 @@ QMessageStore::ErrorCode QMessageStore::lastError() const
     return convert(d_ptr->_store->lastError());
 }
 
-QMessageIdList QMessageStore::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
+QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
 {
-    if (key.options() != 0) {
+    if (filter.options() != 0) {
         d_ptr->_error = QMessageStore::NotYetImplemented;
         return QMessageIdList();
     }
     
     d_ptr->_error = QMessageStore::NoError;
-    return convert(d_ptr->_store->queryMessages(convert(key), convert(sortKey), limit, offset));
+    return convert(d_ptr->_store->queryMessages(convert(filter), convert(ordering), limit, offset));
 }
 
-QMessageIdList QMessageStore::queryMessages(const QString &body, const QMessageFilterKey &key, const QMessageSortKey &sortKey, QMessageDataComparator::Options options, uint limit, uint offset) const
+QMessageIdList QMessageStore::queryMessages(const QString &body, const QMessageFilter &filter, const QMessageOrdering &ordering, QMessageDataComparator::Options options, uint limit, uint offset) const
 {
-    Q_UNUSED(key)
-    Q_UNUSED(sortKey)
+    Q_UNUSED(filter)
+    Q_UNUSED(ordering)
     Q_UNUSED(body)
     Q_UNUSED(options)
     Q_UNUSED(limit)
@@ -136,62 +136,62 @@ QMessageIdList QMessageStore::queryMessages(const QString &body, const QMessageF
 }
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
-QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilterKey &key, const QMessageFolderSortKey &sortKey, uint limit, uint offset) const
+QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderOrdering &ordering, uint limit, uint offset) const
 {
-    if (key.options() != 0) {
+    if (filter.options() != 0) {
         d_ptr->_error = QMessageStore::NotYetImplemented;
         return QMessageFolderIdList();
     }
     
     d_ptr->_error = QMessageStore::NoError;
-    return convert(d_ptr->_store->queryFolders(convert(key), convert(sortKey), limit, offset));
+    return convert(d_ptr->_store->queryFolders(convert(filter), convert(ordering), limit, offset));
 }
 #endif
 
-QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilterKey &key, const QMessageAccountSortKey &sortKey, uint limit, uint offset) const
+QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountOrdering &ordering, uint limit, uint offset) const
 {
-    if (key.options() != 0) {
+    if (filter.options() != 0) {
         d_ptr->_error = QMessageStore::NotYetImplemented;
         return QMessageAccountIdList();
     }
     
     d_ptr->_error = QMessageStore::NoError;
-    return convert(d_ptr->_store->queryAccounts(convert(key), convert(sortKey), limit, offset));
+    return convert(d_ptr->_store->queryAccounts(convert(filter), convert(ordering), limit, offset));
 }
 
-int QMessageStore::countMessages(const QMessageFilterKey& key) const
+int QMessageStore::countMessages(const QMessageFilter& filter) const
 {
-    if (key.options() != 0) {
+    if (filter.options() != 0) {
         d_ptr->_error = QMessageStore::NotYetImplemented;
         return 0;
     }
     
     d_ptr->_error = QMessageStore::NoError;
-    return d_ptr->_store->countMessages(convert(key));
+    return d_ptr->_store->countMessages(convert(filter));
 }
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
-int QMessageStore::countFolders(const QMessageFolderFilterKey& key) const
+int QMessageStore::countFolders(const QMessageFolderFilter& filter) const
 {
-    if (key.options() != 0) {
+    if (filter.options() != 0) {
         d_ptr->_error = QMessageStore::NotYetImplemented;
         return 0;
     }
     
     d_ptr->_error = QMessageStore::NoError;
-    return d_ptr->_store->countFolders(convert(key));
+    return d_ptr->_store->countFolders(convert(filter));
 }
 #endif
 
-int QMessageStore::countAccounts(const QMessageAccountFilterKey& key) const
+int QMessageStore::countAccounts(const QMessageAccountFilter& filter) const
 {
-    if (key.options() != 0) {
+    if (filter.options() != 0) {
         d_ptr->_error = QMessageStore::NotYetImplemented;
         return 0;
     }
     
     d_ptr->_error = QMessageStore::NoError;
-    return d_ptr->_store->countAccounts(convert(key));
+    return d_ptr->_store->countAccounts(convert(filter));
 }
 
 bool QMessageStore::removeMessage(const QMessageId& id, QMessageStore::RemovalOption option)
@@ -200,10 +200,10 @@ bool QMessageStore::removeMessage(const QMessageId& id, QMessageStore::RemovalOp
     return d_ptr->_store->removeMessage(convert(id), convert(option));
 }
 
-bool QMessageStore::removeMessages(const QMessageFilterKey& key, QMessageStore::RemovalOption option)
+bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageStore::RemovalOption option)
 {
     d_ptr->_error = QMessageStore::NoError;
-    return d_ptr->_store->removeMessages(convert(key), convert(option));
+    return d_ptr->_store->removeMessages(convert(filter), convert(option));
 }
 
 bool QMessageStore::addMessage(QMessage *m)
@@ -271,15 +271,15 @@ QMessageStore* QMessageStore::instance()
     return store;
 }
     
-void QMessageStore::startNotifications(const QMessageFilterKey &key)
+void QMessageStore::startNotifications(const QMessageFilter &filter)
 {
-    if (key.options() != 0) {
+    if (filter.options() != 0) {
         d_ptr->_error = QMessageStore::NotYetImplemented;
         return;
     }
     
     // TODO: implement notifications
-    Q_UNUSED(key)    
+    Q_UNUSED(filter)    
 }
 
 void QMessageStore::stopNotifications()

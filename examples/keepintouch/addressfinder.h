@@ -71,7 +71,7 @@ private:
 
     QMessageServiceAction service;
 
-    QMessageFilterKey inclusionFilter;
+    QMessageFilter inclusionFilter;
 
     QMessageIdList inclusionMessages;
     QMessageIdList exclusionMessages;

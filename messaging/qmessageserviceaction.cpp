@@ -93,13 +93,13 @@
 */
 
 /*!
-    \fn QMessageServiceAction::queryMessages(const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
+    \fn QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
     
     Emits via messagesFound() signals \l{QMessageId}s of messages in the messaging 
-    store. If \a key is not empty only identifiers for messages matching the parameters 
-    set by \a key will be emitted, otherwise identifiers for all messages will be emitted.
-    If \a sortKey is not empty, then the identifiers will be sorted by the parameters 
-    set by \a sortKey.
+    store. If \a filter is not empty only identifiers for messages matching the parameters 
+    set by \a filter will be emitted, otherwise identifiers for all messages will be emitted.
+    If \a ordering is not empty, then the identifiers will be sorted by the parameters 
+    set by \a ordering.
     If \a limit is not zero, then \a limit places an upper bound on the number of 
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
@@ -111,19 +111,19 @@
     
     Returns true if the action can be initiated; otherwise returns false.
     
-    \sa  QMessage, QMessageFilterKey, QMessageSortKey, messagesFound(), progressChanged(), countMessages()
+    \sa  QMessage, QMessageFilter, QMessageOrdering, messagesFound(), progressChanged(), countMessages()
 */
 
 /*!
-    \fn QMessageServiceAction::queryMessages(const QString &body, QMessageDataComparator::Options options, const QMessageFilterKey &key, const QMessageSortKey &sortKey, uint limit, uint offset) const
+    \fn QMessageServiceAction::queryMessages(const QString &body, QMessageDataComparator::Options options, const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
     
     Emits via the messagesFound() signal \l{QMessageId}s of messages in the messaging 
-    store. If \a key is not empty only identifiers for messages matching the parameters 
-    set by \a key and with a body containing the string \a body will be emitted, 
+    store. If \a filter is not empty only identifiers for messages matching the parameters 
+    set by \a filter and with a body containing the string \a body will be emitted, 
     otherwise identifiers for all messages with a body containing \a body using 
     search options \a options will be emitted.
-    If \a sortKey is not empty, then the identifiers will be sorted by the parameters 
-    set by \a sortKey.
+    If \a ordering is not empty, then the identifiers will be sorted by the parameters 
+    set by \a ordering.
     If \a limit is not zero, then \a limit places an upper bound on the number of 
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
@@ -135,14 +135,14 @@
 
     Returns true if the action can be initiated; otherwise returns false.
     
-    \sa  QMessage, QMessageFilterKey, QMessageSortKey, messagesFound(), progressChanged(), countMessages()
+    \sa  QMessage, QMessageFilter, QMessageOrdering, messagesFound(), progressChanged(), countMessages()
 */
 
 /*!
-    \fn QMessageServiceAction::countMessages(const QMessageFilterKey &key, uint limit) const
+    \fn QMessageServiceAction::countMessages(const QMessageFilter &filter, uint limit) const
     
     Emits via a messagesCounted() signal the number messages in the messaging 
-    store matching \a key.
+    store matching \a filter.
     
     Unless \a limit is lower and not zero, in which case a count of \a limit will be emitted
     via the messagesCounted() signal.
@@ -154,14 +154,14 @@
     
     Returns true if the action can be initiated; otherwise returns false.
     
-    \sa  QMessage, QMessageFilterKey, messagesCounted(), progressChanged(), queryMessages()
+    \sa  QMessage, QMessageFilter, messagesCounted(), progressChanged(), queryMessages()
 */
 
 /*!
-    \fn QMessageServiceAction::countMessages(const QString &body, QMessageDataComparator::Options options, const QMessageFilterKey &key, uint limit) const
+    \fn QMessageServiceAction::countMessages(const QString &body, QMessageDataComparator::Options options, const QMessageFilter &filter, uint limit) const
     
     Emits via a messagesCounted() signal the number messages in the messaging 
-    store matching \a key and with a body containing the string \a body using 
+    store matching \a filter and with a body containing the string \a body using 
     searching options \a options.
     
     Unless \a limit is lower and not zero, in which case a count of \a limit will be emitted
@@ -174,7 +174,7 @@
     
     Returns true if the action can be initiated; otherwise returns false.
     
-    \sa  QMessage, QMessageFilterKey, messagesCounted(), progressChanged(), queryMessages()
+    \sa  QMessage, QMessageFilter, messagesCounted(), progressChanged(), queryMessages()
 */
 
 /*!
