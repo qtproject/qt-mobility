@@ -34,22 +34,20 @@
 #include <QDebug>
 
 #include "audiocaptureservice.h"
-#include "qaudiodeviceendpoint.h"
 #include "audiodeviceendpoint.h"
 #include "audiocapturesession.h"
 #include "audioencodecontrol.h"
 #include "audiomediacontrol.h"
 #include "audioformatcontrol.h"
-#include "audioinputdevicecontrol.h"
 
 AudioCaptureService::AudioCaptureService(QObject *parent)
-    :QAbstractMediaService(parent)
+    :QMediaRecorderService(parent)
 {
     m_session = new AudioCaptureSession(this);
     m_encode  = new AudioEncodeControl(m_session);
     m_media   = new AudioMediaControl(m_session);
     m_format  = new AudioFormatControl(m_session);
-    m_audio   = new AudioInputDeviceControl(m_session);
+    m_audio   = new AudioDeviceEndpoint(m_session);
 }
 
 AudioCaptureService::~AudioCaptureService()
