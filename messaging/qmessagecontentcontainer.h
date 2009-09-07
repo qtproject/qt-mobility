@@ -32,12 +32,14 @@
 ****************************************************************************/
 #ifndef QMESSAGECONTENTCONTAINER_H
 #define QMESSAGECONTENTCONTAINER_H
-#include <QString>
-#include <QList>
-#include <QDataStream>
 #include <qmessageglobal.h>
 #include <qmessagecontentcontainerid.h>
 #include <qmessageid.h>
+
+#include <QDataStream>
+#include <QList>
+#include <QString>
+#include <QTextStream>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
@@ -68,9 +70,10 @@ public:
     bool isContentAvailable() const;
     uint size() const;
 
-    QString decodedTextContent() const;
-    QByteArray decodedContent() const;
-    QString decodedContentFileName() const;
+    QString textContent() const;
+    QByteArray content() const;
+
+    void writeTextContentTo(QTextStream &out) const;
     void writeContentTo(QDataStream &out) const;
 
     QMessageContentContainerIdList contentIds() const;

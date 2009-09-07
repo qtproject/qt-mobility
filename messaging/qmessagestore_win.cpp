@@ -680,7 +680,7 @@ bool QMessageStore::addMessage(QMessage *m)
                                             qWarning() << "Unable to set message editor format in message.";
                                         }
 
-                                        QString body(m->decodedTextContent());
+                                        QString body(m->textContent());
                                         if (!setMapiProperty(message, PR_BODY, body)) {
                                             qWarning() << "Unable to set body in message.";
                                         }

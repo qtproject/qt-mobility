@@ -688,7 +688,7 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
             QMessageContentContainerId textId(body());
             if (textId.isValid()) {
                 QMessageContentContainer textPart(container(textId));
-                existingText = textPart.decodedTextContent();
+                existingText = textPart.textContent();
             }
 
             // Find the remaining parts of the message

@@ -183,7 +183,7 @@ uint QMessageContentContainer::size() const
     return d_ptr->_size;
 }
 
-QString QMessageContentContainer::decodedTextContent() const
+QString QMessageContentContainer::textContent() const
 {
     if (d_ptr->_textContent.isEmpty() && d_ptr->_attachmentNumber != 0) {
         d_ptr->_textContent = attachmentTextContent(d_ptr->_containingMessageId, d_ptr->_attachmentNumber, d_ptr->_charset);
@@ -200,7 +200,7 @@ QString QMessageContentContainer::decodedTextContent() const
     }
 }
 
-QByteArray QMessageContentContainer::decodedContent() const
+QByteArray QMessageContentContainer::content() const
 {
     if (d_ptr->_content.isEmpty() && d_ptr->_attachmentNumber != 0) {
         d_ptr->_content = attachmentContent(d_ptr->_containingMessageId, d_ptr->_attachmentNumber);
@@ -209,18 +209,15 @@ QByteArray QMessageContentContainer::decodedContent() const
     return d_ptr->_content;
 }
 
-QString QMessageContentContainer::decodedContentFileName() const
+void QMessageContentContainer::writeTextContentTo(QTextStream& out) const
 {
-    return QString();
+    out << textContent();
 }
 
 void QMessageContentContainer::writeContentTo(QDataStream& out) const
 {
-    if (d_ptr->_content.isEmpty() && d_ptr->_attachmentNumber != 0) {
-        d_ptr->_content = attachmentContent(d_ptr->_containingMessageId, d_ptr->_attachmentNumber);
-    }
-
-    out.writeRawData(d_ptr->_content.constData(), d_ptr->_content.length());
+    QByteArray data(content());
+    out.writeRawData(data.constData(), data.length());
 }
 
 #ifdef QMESSAGING_OPTIONAL

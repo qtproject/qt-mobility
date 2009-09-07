@@ -50,10 +50,10 @@
     identifier using the container() function of the parent QMessage, or constructed piece by 
     piece using setContentType(), setContent(), setHeaderField() and related functions.
     
-    For textual content using a recognized charset encoding decodedTextContent() will 
+    For textual content using a recognized charset encoding textContent() will 
     return the content as a unicode string.
     
-    For non multipart content decodedContent() will return the content after decoding any 
+    For non-multipart content content() will return the content after decoding any 
     transfer encoding used to represent binary data using 7-bit ASCII characters, such as 
     quoted-printable and base64.
     
@@ -70,8 +70,7 @@
     given by indicativeSize(). If the content is entirely available on the device 
     isContentAvailable() will return true.
 
-    decodedContentFileName() will return the name of a local file containing the content, when 
-    available. Non multipart content can be serialized to a QDataStream using 
+    Non multipart content can be serialized to a QDataStream using 
     writeContentTo(), and set using setContent() or setContentFromFile().
   
     A part of content can be appended to the existing content of a container using 
@@ -233,14 +232,14 @@
 */
 
 /*!
-    \fn QMessageContentContainer::decodedTextContent() const
+    \fn QMessageContentContainer::textContent() const
     
-    For textual content encoded with a recognized charset decodedTextContent() will return 
-    the content as a unicode string; otherwise a null string is returned.
+    For textual content encoded with a recognized charset, returns the content as a unicode string; 
+    otherwise a null string is returned.
 */
 
 /*!
-    \fn QMessageContentContainer::decodedContent() const
+    \fn QMessageContentContainer::content() const
     
     Return the content after decoding any transfer encoding used to represent binary data 
     using 7-bit ASCII characters, such as quoted-printable and base64.
@@ -248,22 +247,21 @@
     For textual content any text charset encoding such as Shift-JIS, ISO 2022-JP, KOI8-R, 
     Windows-1251 etc will not be decoded.
 
-    \sa decodedTextContent()
+    \sa textContent()
 */
 
 /*!
-    \fn QMessageContentContainer::decodedContentFileName() const
+    \fn QMessageContentContainer::writeTextContentTo(QTextStream& out) const
     
-    Returns the name of a local file containing the content, when available.
+    For a non-multipart container, writes the content as returned by textContent() 
+    to the stream \a out; otherwise does nothing.
 */
 
 /*!
     \fn QMessageContentContainer::writeContentTo(QDataStream& out) const
     
-    For a non multipart container writes the content as would be returned by decodedContent() 
-    into the stream \a out; otherwise for a multipart container does nothing.
-
-    \sa readContentFrom()
+    For a non-multipart container, writes the content as returned by content() 
+    to the stream \a out; otherwise does nothing.
 */
 
 /*!

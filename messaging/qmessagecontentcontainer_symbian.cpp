@@ -119,19 +119,19 @@ uint QMessageContentContainer::size() const
     return 0;
 }
 
-QString QMessageContentContainer::decodedTextContent() const
+QString QMessageContentContainer::textContent() const
 {
-    return QString::null;
+    return QString();
 }
 
-QByteArray QMessageContentContainer::decodedContent() const
+QByteArray QMessageContentContainer::content() const
 {
     return QByteArray(); // stub
 }
 
-QString QMessageContentContainer::decodedContentFileName() const
+void QMessageContentContainer::writeTextContentTo(QTextStream& out) const
 {
-    return QString(); // stub
+    Q_UNUSED(out)
 }
 
 void QMessageContentContainer::writeContentTo(QDataStream& out) const

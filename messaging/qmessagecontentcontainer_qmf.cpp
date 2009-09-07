@@ -312,22 +312,24 @@ uint QMessageContentContainer::size() const
     return accumulator._size;
 }
 
-QString QMessageContentContainer::decodedTextContent() const
+QString QMessageContentContainer::textContent() const
 {
     applyPendingChanges();
     return d_ptr->_container->body().data();
 }
 
-QByteArray QMessageContentContainer::decodedContent() const
+QByteArray QMessageContentContainer::content() const
 {
     applyPendingChanges();
     return d_ptr->_container->body().data(QMailMessageBody::Decoded);
 }
 
-QString QMessageContentContainer::decodedContentFileName() const
+void QMessageContentContainer::writeTextContentTo(QTextStream& out) const
 {
-    // TODO: not supported?
-    return QString();
+    applyPendingChanges();
+    if (d_ptr->_container->hasBody()) {
+        d_ptr->_container->body().toStream(out);
+    }
 }
 
 void QMessageContentContainer::writeContentTo(QDataStream& out) const
@@ -432,7 +434,7 @@ void QMessageContentContainer::replaceContent(const QMessageContentContainerId &
             ct.setSubType(content.contentSubType());
             ct.setCharset(content.contentCharset());
 
-            convert(d_ptr->_message)->setBody(QMailMessageBody::fromData(content.decodedContent(), ct, QMailMessageBody::Base64, QMailMessageBody::RequiresEncoding));
+            convert(d_ptr->_message)->setBody(QMailMessageBody::fromData(content.content(), ct, QMailMessageBody::Base64, QMailMessageBody::RequiresEncoding));
             d_ptr->_container = convert(d_ptr->_message);
         }
     }
