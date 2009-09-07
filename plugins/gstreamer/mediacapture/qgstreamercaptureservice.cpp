@@ -111,7 +111,7 @@ private:
 
 
 QGstreamerCaptureService::QGstreamerCaptureService(const char *interface, QObject *parent)
-    :QAbstractMediaService(parent)
+    :QCameraService(parent)
 {
     static bool initialized = false;
     if (!initialized) {
