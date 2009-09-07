@@ -81,7 +81,7 @@
         <span class="comment">/* Add a phone number */</span>
         QContactPhoneNumber number;
         number.setContexts(&quot;Home&quot;);
-        number.setSubTypes(QStringList(&quot;Mobile&quot;));
+        number.setSubTypes(&quot;Mobile&quot;);
         number.setNumber(&quot;12345678&quot;);
         alice.saveDetail(&amp;number);
         alice.setPreferredDetail(&quot;DialAction&quot;, number);
@@ -89,7 +89,7 @@
         <span class="comment">/* Add a second phone number */</span>
         QContactPhoneNumber number2;
         number2.setContexts(&quot;Work&quot;);
-        number2.setSubTypes(QStringList(&quot;Landline&quot;));
+        number2.setSubTypes(&quot;Landline&quot;);
         number2.setNumber(&quot;555-4444&quot;);
         alice.saveDetail(&amp;number2);
 
