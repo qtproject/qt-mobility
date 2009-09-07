@@ -108,8 +108,10 @@ private:
         QList<QGeoPositionInfo::Property> properties = tst_qgeopositioninfo_getProperties();
         QList<qreal> values = tst_qgeopositioninfo_qrealTestValues();
         for (int i=0; i<properties.count(); i++) {
-            QTest::newRow(qPrintable(QString("Property %1 = %2").arg(properties[i]).arg(values[i])))
-                    << infoWithProperty(properties[i], values[i]);
+            for (int j=0; j<values.count(); j++) {
+                QTest::newRow(qPrintable(QString("Property %1 = %2").arg(properties[i]).arg(values[j])))
+                        << infoWithProperty(properties[i], values[j]);
+            }
         }
     }
 
