@@ -1061,11 +1061,6 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="action" fullname="QContactAction::action" href="qcontactaction.html#action" location="qcontactaction.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QContactAction *" signature="action(const QContactActionDescriptor &amp; descriptor)">
                 <parameter left="const QContactActionDescriptor &amp;" right="" name="descriptor" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="actions" fullname="QContactAction::actions" href="qcontactaction.html#actions" location="qcontactaction.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QList&lt;QContactAction *&gt;" signature="actions(const QString &amp; actionName, const QString &amp; vendorName, int implementationVersion)">
-                <parameter left="const QString &amp;" right="" name="actionName" default="QString()"/>
-                <parameter left="const QString &amp;" right="" name="vendorName" default="QString()"/>
-                <parameter left="int" right="" name="implementationVersion" default="-1"/>
-            </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactRemoveRequest" href="qcontactremoverequest.html" location="qcontactremoverequest.h" bases="QContactAbstractRequest" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactRemoveRequest" fullname="QContactRemoveRequest::QContactRemoveRequest" href="qcontactremoverequest.html#QContactRemoveRequest" location="qcontactremoverequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactRemoveRequest()"/>
