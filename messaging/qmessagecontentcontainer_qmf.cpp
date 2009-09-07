@@ -111,50 +111,14 @@ public:
 
 namespace {
 
-QList<QByteArray> charsets;
-
-void setPreferredCharsets(const QList<QByteArray> &charsetNames)
+QByteArray charsetFor(const QString &text)
 {
-    charsets = charsetNames;
-}
-
-QList<QByteArray>& preferredCharsets()
-{
-    return charsets;
-}
-
-QByteArray charsetFor(const QString &s)
-{
-    QList<QTextCodec*> codecs;
-    foreach (const QByteArray &name, charsets) {
-        if (QTextCodec* codec = QTextCodec::codecForName(name)) {
-            codecs.append(codec);
-        }
+    QByteArray charset(QMessage::preferredCharsetFor(text));
+    if (charset.isEmpty()) {
+        charset = "UTF-8";
     }
 
-    if (!codecs.isEmpty()) {
-        // See if any of these codecs can encode the data
-        QString::const_iterator sit = s.begin(), end = s.end();
-        for ( ; sit != end; ++sit) {
-            QList<QTextCodec*>::iterator cit = codecs.begin();
-            if (!(*cit)->canEncode(*sit)) {
-                // This codec is not acceptable
-                cit = codecs.erase(cit);
-                if (codecs.isEmpty()) {
-                    break;
-                }
-            } else {
-                ++cit;
-            }
-        }
-
-        if (!codecs.isEmpty()) {
-            // Return the first remaining codec
-            return codecs.first()->name();
-        }
-    }
-
-    return QByteArray("UTF-8");
+    return charset;
 }
 
 struct PartLocator
@@ -575,16 +539,6 @@ void QMessageContentContainer::setHeaderField(const QByteArray &name, const QByt
     d_ptr->_container->setHeaderField(name, value);
 }
 #endif
-
-void QMessageContentContainer::setPreferredCharsets(const QList<QByteArray> &charsetNames)
-{
-    ::setPreferredCharsets(charsetNames);
-}
-
-QList<QByteArray> QMessageContentContainer::preferredCharsets()
-{
-    return ::preferredCharsets();
-}
 
 #ifdef QMESSAGING_OPTIONAL
 bool QMessageContentContainer::containerDataModified() const

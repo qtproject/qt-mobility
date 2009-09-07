@@ -33,6 +33,14 @@
 #include "qmessage.h"
 #include "qmessage_p.h"
 
+#include <QTextCodec>
+
+namespace {
+
+QList<QByteArray> charsets;
+
+}
+
 /*!
     \class QMessage
 
@@ -325,9 +333,9 @@
 */
 
 /*!
-    \fn QMessage::setSubject(const QString &s)
+    \fn QMessage::setSubject(const QString &text)
     
-    Sets the subject of the message to \a s.
+    Sets the subject of the message to \a text.
     
     \sa subject()
 */
@@ -614,4 +622,71 @@
   
     \sa QMessageServiceAction::compose()
 */
+
+/*!
+    \fn QMessage::setPreferredCharsets(const QList<QByteArray> &charsetNames)
+    
+    Sets the ordered-by-preference list of names of charsets to use when encoding 
+    unicode QString data to a serialized form.
+
+    \sa preferredCharsets(), preferredCharsetFor(), toTransmissionFormat()
+*/
+void QMessage::setPreferredCharsets(const QList<QByteArray> &charsetNames)
+{
+    charsets = charsetNames;
+}
+
+/*!
+    \fn QMessage::preferredCharsets()
+    
+    Returns an ordered-by-preference list of charset names to use when encoding 
+    unicode QString data to a serialized form.
+
+    \sa setPreferredCharsets(), preferredCharsetFor(), toTransmissionFormat()
+*/
+QList<QByteArray> QMessage::preferredCharsets()
+{
+    return charsets;
+}
+
+/*!
+    Returns the first charset from the preferred list that is capable of encoding
+    the content of \a text.
+
+    \sa preferredCharsets(), toTransmissionFormat()
+*/
+QByteArray QMessage::preferredCharsetFor(const QString &text)
+{
+    QList<QTextCodec*> codecs;
+    foreach (const QByteArray &name, charsets) {
+        if (QTextCodec* codec = QTextCodec::codecForName(name)) {
+            codecs.append(codec);
+        }
+    }
+
+    if (!codecs.isEmpty()) {
+        // See if any of these codecs can encode the data
+        QString::const_iterator sit = text.begin(), end = text.end();
+        for ( ; sit != end; ++sit) {
+            QList<QTextCodec*>::iterator cit = codecs.begin();
+            if (!(*cit)->canEncode(*sit)) {
+                // This codec is not acceptable
+                cit = codecs.erase(cit);
+                if (codecs.isEmpty()) {
+                    break;
+                }
+            } else {
+                ++cit;
+            }
+        }
+
+        if (!codecs.isEmpty()) {
+            // Return the first remaining codec
+            return codecs.first()->name();
+        }
+    }
+
+    return QByteArray();
+}
+
 

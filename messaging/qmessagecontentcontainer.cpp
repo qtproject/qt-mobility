@@ -90,11 +90,6 @@
     replaced using setHeaderField(). A list of header fields is returned by headerFields(). The 
     unicode string value of a header field is returned by headerField().
 
-    A list of charset names is returned by preferredCharsets(). When encoding unicode QString text 
-    using setContent(), appendHeaderField() or setHeaderField() the first charset in the list 
-    returned by preferredCharsets() that is capable of encoding  all characters in the given 
-    unicode QString text will be used, or if none is capable UTF-8 will be used.
-    
     If the container has been modified since it was last constructed containerDataModified() 
     returns true.
 
@@ -242,8 +237,6 @@
     
     For textual content encoded with a recognized charset decodedTextContent() will return 
     the content as a unicode string; otherwise a null string is returned.
-    
-    \sa preferredCharsets()
 */
 
 /*!
@@ -293,7 +286,7 @@
 
     Does not modify the content subtype, the subtype should be set separately.
 
-    \sa preferredCharsets(), setContentSubType()
+    \sa setContentSubType()
 */
 
 /*!
@@ -407,7 +400,7 @@
     the 'Content-Disposition' header field. These header fields should not be modified using
     the setHeaderField() function and doing so may result in undefined behavior.
 
-    \sa appendHeaderField(), headerField(), headerFields(), preferredCharsets()
+    \sa appendHeaderField(), headerField(), headerFields()
 */
 
 /*!
@@ -416,7 +409,7 @@
     Returns the value of the first header field of the container with the name \a name, if any;
     otherwise returns a null string.
 
-    \sa headerFieldValues(), appendHeaderField(), setHeaderField(), headerFields(), preferredCharsets()
+    \sa headerFieldValues(), appendHeaderField(), setHeaderField(), headerFields()
 */
 
 /*!
@@ -425,7 +418,7 @@
     Returns a list of values of header fields with the name \a name, if any;
     otherwise returns an empty list.
 
-    \sa appendHeaderField(), setHeaderField(), headerField(), headerFields(), preferredCharsets()
+    \sa appendHeaderField(), setHeaderField(), headerField(), headerFields()
 */
 
 /*!
@@ -433,7 +426,7 @@
     
     Returns a list of names of header fields of the container.
 
-    \sa appendHeaderField(), setHeaderField(), headerField(), preferredCharsets()
+    \sa appendHeaderField(), setHeaderField(), headerField()
 */
 
 /*!
@@ -443,7 +436,7 @@
     header fields for the container. Any existing header field with the same name is not 
     modified.
 
-    \sa setHeaderField(), headerField(), headerFields(), preferredCharsets()
+    \sa setHeaderField(), headerField(), headerFields()
 */
 
 /*!
@@ -452,25 +445,7 @@
     Sets the value of the first header field of the container with name \a name to \a value if it 
     already exists; otherwise appends a header with the supplied name and value.
 
-    \sa appendHeaderField(), headerField(), headerFields(), preferredCharsets()
-*/
-
-/*!
-    \fn QMessageContentContainer::setPreferredCharsets(const QList<QByteArray> &charsetNames)
-    
-    Sets the ordered by preference list of names of charsets to use when encoding unicode QString 
-    text with setContent(), appendHeaderField() or setHeaderField() to \a charsetNames.
-
-    \sa preferredCharsets()
-*/
-
-/*!
-    \fn QMessageContentContainer::preferredCharsets()
-    
-    Returns an ordered by preference list of charset names to use when encoding unicode QString 
-    text with setContent(), appendHeaderField() or setHeaderField().
-
-    \sa setPreferredCharsets()
+    \sa appendHeaderField(), headerField(), headerFields()
 */
 
 /*!

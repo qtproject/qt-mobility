@@ -82,9 +82,6 @@ public:
     QStringList headerFieldValues(const QByteArray &name) const;
     QList<QByteArray> headerFields() const;
 
-    static void setPreferredCharsets(const QList<QByteArray> &charsetNames);
-    static QList<QByteArray> preferredCharsets();
-
 #ifdef Q_OS_WIN
     static QMessageContentContainer from(const QMessageId &id, ULONG number);
 #endif

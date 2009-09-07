@@ -176,6 +176,11 @@ public:
 
     QMessage createResponseMessage(ResponseType type) const;
 
+    static void setPreferredCharsets(const QList<QByteArray> &charsetNames);
+    static QList<QByteArray> preferredCharsets();
+
+    static QByteArray preferredCharsetFor(const QString &text);
+
 // TODO: Why is there no setParentFolderId()?
 //private:
     friend class QMessageStore;

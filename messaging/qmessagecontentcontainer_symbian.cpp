@@ -239,16 +239,6 @@ void QMessageContentContainer::setHeaderField(const QByteArray &name, const QByt
 }
 #endif
 
-void QMessageContentContainer::setPreferredCharsets(const QList<QByteArray> &charsetNames)
-{
-    Q_UNUSED(charsetNames);
-}
-
-QList<QByteArray> QMessageContentContainer::preferredCharsets()
-{
-    return QList<QByteArray>(); // stub;
-}
-
 #ifdef QMESSAGING_OPTIONAL
 bool QMessageContentContainer::containerDataModified() const
 {
