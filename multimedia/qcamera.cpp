@@ -95,9 +95,9 @@ QCamera::QCamera(QObject *parent, QAbstractMediaService *service):
     d->service = service == 0 ? createCameraService() : service;
     Q_ASSERT(d->service != 0);
 
-    d->control = qobject_cast<QCameraControl *>(service->control(QCameraControl_iid));
-    d->exposureControl = qobject_cast<QCameraExposureControl *>(service->control(QCameraExposureControl_iid));
-    d->focusControl = qobject_cast<QCameraFocusControl *>(service->control(QCameraFocusControl_iid));
+    d->control = qobject_cast<QCameraControl *>(d->service->control(QCameraControl_iid));
+    d->exposureControl = qobject_cast<QCameraExposureControl *>(d->service->control(QCameraExposureControl_iid));
+    d->focusControl = qobject_cast<QCameraFocusControl *>(d->service->control(QCameraFocusControl_iid));
 
     connect(d->control, SIGNAL(stateChanged(QCamera::State)), this, SIGNAL(stateChanged(QCamera::State)));
 
