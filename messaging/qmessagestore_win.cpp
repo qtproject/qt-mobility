@@ -149,9 +149,9 @@ void FolderHeap::sink(int i)
         int right(left + 1);
         int minimum(left);
         if ((right < _heap.count())
-            && (QMessageOrdering::compare(_ordering, _heap[right]->front, _heap[left]->front)))
+            && (QMessageOrderingPrivate::compare(_ordering, _heap[right]->front, _heap[left]->front)))
             minimum = right;
-        if (QMessageOrdering::compare(_ordering, _heap[i]->front, _heap[minimum]->front))
+        if (QMessageOrderingPrivate::compare(_ordering, _heap[i]->front, _heap[minimum]->front))
             return;
         FolderHeapNodePtr temp(_heap[minimum]);
         _heap[minimum] = _heap[i];
