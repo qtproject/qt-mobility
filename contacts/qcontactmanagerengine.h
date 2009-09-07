@@ -119,7 +119,6 @@ public:
     static QMap<QString, QContactDetailDefinition> schemaDefinitions();
 
 signals:
-    void dataChanged(QContactManager::SignalGranularity granularity);
     void contactsAdded(const QList<QUniqueId>& contactIds);
     void contactsChanged(const QList<QUniqueId>& contactIds);
     void contactsRemoved(const QList<QUniqueId>& contactIds);
