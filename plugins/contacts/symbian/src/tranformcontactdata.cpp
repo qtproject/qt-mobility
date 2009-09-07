@@ -68,7 +68,7 @@ void TransformContactData::setContextsL(const QContactDetail &detail, CContactIt
 {
 	QStringList contexts = detail.contexts();
 	
-	for (int i = 0; contexts.count(); i++)
+	for (int i = 0; i < contexts.count(); i++)
 	{
 		if (contexts.at(i) == QContactDetail::ContextHome )
 		{
