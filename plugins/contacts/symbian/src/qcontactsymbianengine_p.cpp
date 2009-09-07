@@ -75,7 +75,7 @@ QContactSymbianEngineData::~QContactSymbianEngineData()
 QContact QContactSymbianEngineData::contact(const QUniqueId& contactId, QContactManager::Error& qtError) const
 {
 	QContact contact;
-	TRAPD(err, contact = contactL(contactId));
+	TRAPD(err, QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE(contact = contactL(contactId)));
 	transformError(err, qtError);
 	return contact;
 }
@@ -94,6 +94,7 @@ int QContactSymbianEngineData::count() const
 {
 	// Call leaving implementation and trap the error code
 	int count(0);
+	// countL() can't throw c++ exception
 	TRAPD(err, count = countL());
 	
 	// If there was a problem, return the negative value as the
@@ -124,7 +125,7 @@ QList<QUniqueId> QContactSymbianEngineData::contacts(QContactManager::Error& qtE
 	
 	// Attempt to read from database, leaving the list empty if
 	// there was a problem
-	TRAPD(err, ids = contactsL());
+	TRAPD(err, QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE(ids = contactsL()));
 	transformError(err, qtError);
 
 	return ids;
@@ -143,7 +144,7 @@ QList<QUniqueId> QContactSymbianEngineData::contacts(QContactManager::Error& qtE
 bool QContactSymbianEngineData::addContact(QContact& contact, int &id, QContactManager::Error& qtError)
 {
 	// Attempt to persist contact, trapping errors
-	TRAPD(err, id = addContactL(contact));
+	TRAPD(err, QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE(id = addContactL(contact)));
 	transformError(err, qtError);
 	return (err==KErrNone);
 }
@@ -157,7 +158,7 @@ bool QContactSymbianEngineData::addContact(QContact& contact, int &id, QContactM
  */
 bool QContactSymbianEngineData::updateContact(QContact& contact, QContactManager::Error& qtError)
 {
-    TRAPD(err, updateContactL(contact));
+    TRAPD(err, QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE(updateContactL(contact)));
     transformError(err, qtError);
     return (err==KErrNone);
 }
@@ -177,6 +178,7 @@ bool QContactSymbianEngineData::updateContact(QContact& contact, QContactManager
  */
 bool QContactSymbianEngineData::removeContact(const QUniqueId &id, QContactManager::Error& qtError)
 {
+    // removeContactL() can't throw c++ exception
 	TRAPD(err, removeContactL(id));
     transformError(err, qtError);
 	return (err==KErrNone);
@@ -192,6 +194,7 @@ bool QContactSymbianEngineData::removeContact(const QUniqueId &id, QContactManag
  */
 bool QContactSymbianEngineData::removeContacts(const QList<QUniqueId> &ids, QContactManager::Error& qtError)
 {
+    // removeContactsL() can't throw c++ exception
 	TRAPD(err, removeContactsL(ids));
     transformError(err, qtError);
     return (err==KErrNone);
@@ -215,7 +218,7 @@ QList<QUniqueId> QContactSymbianEngineData::matchCommunicationAddress(const QStr
 	QList<QUniqueId> matches;
 	
 	// Attempt to match address, list will remain empty if there's an error
-	TRAP_IGNORE(matches = matchCommunicationAddressL(communicationType, communicationAddress));
+	TRAP_IGNORE(QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE(matches = matchCommunicationAddressL(communicationType, communicationAddress)));
 	
 	return matches;
 }
@@ -231,7 +234,7 @@ QList<QUniqueId> QContactSymbianEngineData::matchCommunicationAddress(const QStr
 QList<QUniqueId> QContactSymbianEngineData::groups(QContactManager::Error& qtError) const
 {
 	QList<QUniqueId> list;
-	TRAPD(err, list = groupsL());
+	TRAPD(err, QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE(list = groupsL()));
 	transformError(err, qtError);
 	return list;
 }
@@ -246,7 +249,7 @@ QList<QUniqueId> QContactSymbianEngineData::groups(QContactManager::Error& qtErr
 QContactGroup QContactSymbianEngineData::group(const QUniqueId& groupId, QContactManager::Error& qtError) const
 {
 	QContactGroup qGroup;
-	TRAPD(err, qGroup = groupL(groupId));
+	TRAPD(err, QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE(qGroup = groupL(groupId)));
     transformError(err, qtError);
 	return qGroup;
 }
@@ -260,7 +263,7 @@ QContactGroup QContactSymbianEngineData::group(const QUniqueId& groupId, QContac
  */
 bool QContactSymbianEngineData::saveGroup(QContactGroup& group, QContactManager::Error& qtError)
 {
-	TRAPD(err, saveGroupL(group));
+	TRAPD(err, QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE(saveGroupL(group)));
 	transformError(err, qtError);
 	return (err==KErrNone); 
 }
@@ -274,6 +277,7 @@ bool QContactSymbianEngineData::saveGroup(QContactGroup& group, QContactManager:
  */
 bool QContactSymbianEngineData::removeGroup(const QUniqueId& groupId, QContactManager::Error& qtError)
 {
+    // removeGroupL() can't throw c++ exception
 	TRAPD(err, removeGroupL(groupId));
 	transformError(err, qtError);
 	return (err == KErrNone);
@@ -287,6 +291,7 @@ bool QContactSymbianEngineData::removeGroup(const QUniqueId& groupId, QContactMa
 QUniqueId QContactSymbianEngineData::simPhonebookGroupId() const
 {
 	QUniqueId val = 0;
+	// simPhonebookGroupIdL() can't throw c++ exception
 	TRAP_IGNORE(val = simPhonebookGroupIdL());
 	return val;
 }
