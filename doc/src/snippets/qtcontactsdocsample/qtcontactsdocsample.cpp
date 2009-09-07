@@ -96,7 +96,7 @@ void addContact(QContactManager* cm)
     /* Add a phone number */
     QContactPhoneNumber number;
     number.setContexts("Home");
-    number.setSubTypes(QStringList("Mobile"));
+    number.setSubTypes("Mobile");
     number.setNumber("12345678");
     alice.saveDetail(&number);
     alice.setPreferredDetail("DialAction", number);
@@ -104,7 +104,7 @@ void addContact(QContactManager* cm)
     /* Add a second phone number */
     QContactPhoneNumber number2;
     number2.setContexts("Work");
-    number2.setSubTypes(QStringList("Landline"));
+    number2.setSubTypes("Landline");
     number2.setNumber("555-4444");
     alice.saveDetail(&number2);
 
