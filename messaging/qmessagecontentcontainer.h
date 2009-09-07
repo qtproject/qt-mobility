@@ -65,7 +65,7 @@ public:
     QByteArray contentCharset() const;
     QByteArray contentFileName() const;
 
-    bool contentAvailable() const;
+    bool isContentAvailable() const;
     uint size() const;
 
     QString decodedTextContent() const;

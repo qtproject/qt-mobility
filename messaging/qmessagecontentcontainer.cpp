@@ -67,8 +67,8 @@
     insensitive).
     
     An indication of the size of the container and its contents on the originating server is 
-    given by indicativeSize(). If the content is completely available on the device 
-    contentAvailable() will return true.
+    given by indicativeSize(). If the content is entirely available on the device 
+    isContentAvailable() will return true.
 
     decodedContentFileName() will return the name of a local file containing the content, when 
     available. Non multipart content can be serialized to a QDataStream using 
@@ -224,7 +224,7 @@
 */
 
 /*!
-    \fn QMessageContentContainer::contentAvailable() const
+    \fn QMessageContentContainer::isContentAvailable() const
     
     Returns true if the entirety of the content contained is available on the device; 
     otherwise returns false.

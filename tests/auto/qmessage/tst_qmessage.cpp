@@ -238,7 +238,7 @@ void tst_QMessage::testFromTransmissionFormat()
         QCOMPARE(body.contentType().toLower(), type);
         QCOMPARE(body.contentSubType().toLower(), subtype);
         QCOMPARE(body.contentCharset().toLower(), charset);
-        QCOMPARE(body.contentAvailable(), true);
+        QCOMPARE(body.isContentAvailable(), true);
         QCOMPARE(body.decodedTextContent(), text);
     }
 }
@@ -387,7 +387,7 @@ void tst_QMessage::testToTransmissionFormat_multipart()
 
     QCOMPARE(m1.contentType().toLower(), contentType.toLower());
     QCOMPARE(m1.contentSubType().toLower(), contentSubType.toLower());
-    QCOMPARE(m1.contentAvailable(), true);
+    QCOMPARE(m1.isContentAvailable(), true);
     QCOMPARE(m1.contentIds().count(), 2);
 
     QMessageContentContainerIdList ids(m1.contentIds());
@@ -397,7 +397,7 @@ void tst_QMessage::testToTransmissionFormat_multipart()
     QCOMPARE(p1.contentType().toLower(), p1ContentType.toLower());
     QCOMPARE(p1.contentSubType().toLower(), p1ContentSubType.toLower());
     QCOMPARE(p1.contentCharset().toLower(), p1ContentCharset.toLower());
-    QCOMPARE(p1.contentAvailable(), true);
+    QCOMPARE(p1.isContentAvailable(), true);
     QCOMPARE(p1.contentIds().count(), 0);
     QCOMPARE(p1.decodedTextContent(), p1ContentText);
 
@@ -405,7 +405,7 @@ void tst_QMessage::testToTransmissionFormat_multipart()
 
     QCOMPARE(p2.contentType().toLower(), p2ContentType.toLower());
     QCOMPARE(p2.contentSubType().toLower(), p2ContentSubType.toLower());
-    QCOMPARE(p2.contentAvailable(), true);
+    QCOMPARE(p2.isContentAvailable(), true);
     QCOMPARE(p2.contentIds().count(), 2);
 
     ids = p2.contentIds();
@@ -414,7 +414,7 @@ void tst_QMessage::testToTransmissionFormat_multipart()
 
     QCOMPARE(p3.contentType().toLower(), p3ContentType.toLower());
     QCOMPARE(p3.contentSubType().toLower(), p3ContentSubType.toLower());
-    QCOMPARE(p3.contentAvailable(), true);
+    QCOMPARE(p3.isContentAvailable(), true);
     QCOMPARE(p3.contentIds().count(), 0);
     QCOMPARE(p3.decodedContent(), p3ContentData);
 
@@ -422,7 +422,7 @@ void tst_QMessage::testToTransmissionFormat_multipart()
 
     QCOMPARE(p4.contentType().toLower(), p4ContentType.toLower());
     QCOMPARE(p4.contentSubType().toLower(), p4ContentSubType.toLower());
-    QCOMPARE(p4.contentAvailable(), true);
+    QCOMPARE(p4.isContentAvailable(), true);
     QCOMPARE(p4.contentIds().count(), 0);
     QCOMPARE(p4.decodedContent(), p4ContentData);
 
@@ -434,7 +434,7 @@ void tst_QMessage::testToTransmissionFormat_multipart()
 
     QCOMPARE(m2.contentType().toLower(), contentType.toLower());
     QCOMPARE(m2.contentSubType().toLower(), contentSubType.toLower());
-    QCOMPARE(m2.contentAvailable(), true);
+    QCOMPARE(m2.isContentAvailable(), true);
     QCOMPARE(m2.contentIds().count(), 2);
 
     ids = m2.contentIds();
@@ -444,7 +444,7 @@ void tst_QMessage::testToTransmissionFormat_multipart()
     QCOMPARE(p5.contentType().toLower(), p1ContentType.toLower());
     QCOMPARE(p5.contentSubType().toLower(), p1ContentSubType.toLower());
     QCOMPARE(p5.contentCharset().toLower(), p1ContentCharset.toLower());
-    QCOMPARE(p5.contentAvailable(), true);
+    QCOMPARE(p5.isContentAvailable(), true);
     QCOMPARE(p5.contentIds().count(), 0);
     QCOMPARE(p5.decodedTextContent(), p1ContentText);
 
@@ -452,7 +452,7 @@ void tst_QMessage::testToTransmissionFormat_multipart()
 
     QCOMPARE(p6.contentType().toLower(), p2ContentType.toLower());
     QCOMPARE(p6.contentSubType().toLower(), p2ContentSubType.toLower());
-    QCOMPARE(p6.contentAvailable(), true);
+    QCOMPARE(p6.isContentAvailable(), true);
     QCOMPARE(p6.contentIds().count(), 2);
 
     ids = p6.contentIds();
@@ -461,7 +461,7 @@ void tst_QMessage::testToTransmissionFormat_multipart()
 
     QCOMPARE(p7.contentType().toLower(), p3ContentType.toLower());
     QCOMPARE(p7.contentSubType().toLower(), p3ContentSubType.toLower());
-    QCOMPARE(p7.contentAvailable(), true);
+    QCOMPARE(p7.isContentAvailable(), true);
     QCOMPARE(p7.contentIds().count(), 0);
     QCOMPARE(p7.decodedContent(), p3ContentData);
 
@@ -469,7 +469,7 @@ void tst_QMessage::testToTransmissionFormat_multipart()
 
     QCOMPARE(p8.contentType().toLower(), p4ContentType.toLower());
     QCOMPARE(p8.contentSubType().toLower(), p4ContentSubType.toLower());
-    QCOMPARE(p8.contentAvailable(), true);
+    QCOMPARE(p8.isContentAvailable(), true);
     QCOMPARE(p8.contentIds().count(), 0);
     QCOMPARE(p8.decodedContent(), p4ContentData);
 }

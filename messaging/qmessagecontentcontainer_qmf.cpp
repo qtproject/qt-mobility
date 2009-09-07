@@ -330,7 +330,7 @@ QByteArray QMessageContentContainer::contentFileName() const
     return d_ptr->_container->contentType().name();
 }
 
-bool QMessageContentContainer::contentAvailable() const
+bool QMessageContentContainer::isContentAvailable() const
 {
     if (!d_ptr->_content.isEmpty()) {
         return true;

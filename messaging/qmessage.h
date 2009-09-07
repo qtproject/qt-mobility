@@ -161,7 +161,7 @@ public:
     QStringList customFields() const;
 #endif
 
-    bool dataModified() const;
+    bool isModified() const;
 
     QMessage replyTo() const;
     QMessage replyToAll() const;

@@ -109,7 +109,7 @@ QByteArray QMessageContentContainer::contentFileName() const
     return QByteArray(); // stub
 }
 
-bool QMessageContentContainer::contentAvailable() const
+bool QMessageContentContainer::isContentAvailable() const
 {
     return false;
 }

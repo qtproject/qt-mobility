@@ -173,7 +173,7 @@ QByteArray QMessageContentContainer::contentFileName() const
     return d_ptr->_name;
 }
 
-bool QMessageContentContainer::contentAvailable() const
+bool QMessageContentContainer::isContentAvailable() const
 {
     return d_ptr->_available;
 }

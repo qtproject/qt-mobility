@@ -373,7 +373,7 @@ void tst_QMessageStore::testMessage()
 #else
     QCOMPARE(body.contentCharset().toLower(), QByteArray("utf-8"));
 #endif
-    QCOMPARE(body.contentAvailable(), true);
+    QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.decodedTextContent(), text);
 
 #ifdef QMESSAGING_OPTIONAL
@@ -400,7 +400,7 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(body.contentType().toLower(), QByteArray("text"));
     QCOMPARE(body.contentSubType().toLower(), QByteArray("fancy"));
     QCOMPARE(body.contentCharset().toLower(), QByteArray("utf-8"));
-    QCOMPARE(body.contentAvailable(), true);
+    QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.decodedTextContent(), replacementText);
 #endif
 }

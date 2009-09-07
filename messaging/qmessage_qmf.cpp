@@ -569,7 +569,7 @@ QStringList QMessage::customFields() const
 }
 #endif
 
-bool QMessage::dataModified() const
+bool QMessage::isModified() const
 {
     return d_ptr->_message.dataModified();
 }

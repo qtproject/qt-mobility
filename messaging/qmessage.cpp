@@ -53,7 +53,7 @@
     A message may be serialized to a QDataStream, or returned as a QByteArray using 
     toTransmissionFormat().
     
-    If a message has been modified since it was last constructed dataModified() returns true.
+    If a message has been modified since it was last constructed isModified() returns true.
 
     A list of attachments identifiers will be returned by attachments() and an identifier for the 
     message body will be returned by body(). Attachments can be appended to the content of the 
@@ -598,7 +598,7 @@
 
 
 /*!
-    \fn QMessage::dataModified() const
+    \fn QMessage::isModified() const
     
     Returns true if the message has been modified since it was constructed; 
     otherwise returns false.

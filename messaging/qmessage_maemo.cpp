@@ -312,7 +312,7 @@ QStringList QMessage::customFields() const
 }
 #endif
 
-bool QMessage::dataModified() const
+bool QMessage::isModified() const
 {
     return false; // stub
 }
