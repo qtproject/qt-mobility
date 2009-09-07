@@ -1533,7 +1533,7 @@ void QSystemScreenSaverPrivate::whichWMRunning()
                                              "/KWin",
                                              "org.kde.KWin",
                                              dbusConnection);
-    if(!connectionInterface->isValid()) {
+    if(connectionInterface->isValid()) {
         kdeIsRunning = true;
         return;
     }
