@@ -306,6 +306,8 @@ QT_BEGIN_NAMESPACE
 QSystemInfo::QSystemInfo(QObject *parent)
 {
     d = new QSystemInfoPrivate(parent);
+    connect(d,SIGNAL(currentLanguageChanged(QString)),
+            this,SIGNAL(currentLanguageChanged(QString)));
 }
 
 /*!
@@ -373,6 +375,18 @@ bool QSystemInfo::hasFeatureSupported(QSystemInfo::Feature feature)
 QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
 {
     d = new QSystemNetworkInfoPrivate(parent);
+    connect(d,SIGNAL(currentMobileCountryCodeChanged(QString)),
+            this,SIGNAL(currentMobileCountryCodeChanged(QString)));
+    connect(d,SIGNAL(currentMobileNetworkCodeChanged(QString)),
+            this,SIGNAL(currentMobileNetworkCodeChanged(QString)));
+    connect(d,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),
+            this,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)));
+    connect(d,SIGNAL(networkNameChanged(QString)),
+            this,SIGNAL(networkNameChanged(QString)));
+    connect(d,SIGNAL(networkSignalStrengthChanged(int)),
+            this,SIGNAL(networkSignalStrengthChanged(int)));
+    connect(d,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkStatus)),
+            this,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkStatus)));
 }
 
 /*!
@@ -579,6 +593,16 @@ QSystemMemoryInfo::VolumeType QSystemMemoryInfo::volumeType(const QString &drive
 QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
 {
     d = new QSystemDeviceInfoPrivate(parent);
+    connect(d,SIGNAL(batteryLevelChanged(QSystemDeviceInfo::BatteryLevel)),
+            this,SIGNAL(batteryLevelChanged(QSystemDeviceInfo::BatteryLevel)));
+    connect(d,SIGNAL(bluetoothStateChanged(bool)),
+            this,SIGNAL(bluetoothStateChanged(bool)));
+    connect(d,SIGNAL(currentPowerStateChanged(QSystemDeviceInfo::PowerState)),
+            this,SIGNAL(currentPowerStateChanged(QSystemDeviceInfo::PowerState)));
+    connect(d,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
+            this,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)));
+    connect(d,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
+            this,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)));
 }
 
 /*!

@@ -67,10 +67,10 @@ void Dialog::tabChanged(int index)
 
 void Dialog::setupGeneral()
 {
-    QSystemInfo si;
-    ui->curLanguageLineEdit->setText( si.currentLanguage());
-    ui->languagesComboBox->insertItems(0,si.availableLanguages());
-    ui->countryCodeLabel->setText(si.currentCountryCode());
+    systemInfo = new QSystemInfo(this);
+    ui->curLanguageLineEdit->setText( systemInfo->currentLanguage());
+    ui->languagesComboBox->insertItems(0,systemInfo->availableLanguages());
+    ui->countryCodeLabel->setText(systemInfo->currentCountryCode());
 }
 
 void Dialog::setupDevice()
@@ -176,7 +176,7 @@ void Dialog::setupNetwork()
 
     ui->homeMMCLabel->setText(ni.homeMobileCountryCode());
     ui->homeMNCLabel->setText(ni.homeMobileNetworkCode());
-    ui->operatorNameLabel->setText(ni.operatorName());
+    ui->operatorNameLabel->setText(ni.networkName());
 }
 void Dialog::netStatusComboActivated(int index)
 {
@@ -222,11 +222,6 @@ void Dialog::netStatusComboActivated(int index)
         strength = 0;
     ui->signalLevelProgressBar->setValue(strength);
 
-    if((QSystemNetworkInfo::NetworkMode)reIndex == QSystemNetworkInfo::WlanMode) {
-        ui->ssidLabel->setText(ni.wlanSsid());
-    } else {
-        ui->ssidLabel->setText("");
-    }
     ui->InterfaceLabel->setText(ni.interfaceForMode((QSystemNetworkInfo::NetworkMode)reIndex).humanReadableName());
 }
 

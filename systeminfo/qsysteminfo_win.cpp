@@ -147,7 +147,10 @@ QString QSystemInfoPrivate::currentLanguage() const
     if(lang.isEmpty() || lang == "C") {
         lang = "en";
     }
-    return lang;}
+    return lang;
+}
+//WM_SETTINGSCHANGE
+
 
 // 2 letter ISO 639-1
 QStringList QSystemInfoPrivate::availableLanguages() const

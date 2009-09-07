@@ -57,8 +57,7 @@ private slots:
     void tst_homeMobileCountryCode();
     void tst_homeMobileNetworkCode();
 
-    void tst_operatorName();
-    void tst_wlanSsid();
+    void tst_networkName();
 
     void tst_macAddress_data();
     void tst_macAddress();
@@ -165,22 +164,13 @@ void  tst_QSystemNetworkInfo::tst_homeMobileNetworkCode()
     QVERIFY(!ni.homeMobileNetworkCode().isEmpty());
 }
 
-void  tst_QSystemNetworkInfo::tst_operatorName()
+void  tst_QSystemNetworkInfo::tst_networkName()
 {
     QSystemNetworkInfo ni;
-    QVERIFY(!ni.operatorName().isEmpty());
+    QVERIFY(!ni.networkName().isEmpty());
 
 }
 
-void tst_QSystemNetworkInfo::tst_wlanSsid()
-{
-    QSystemNetworkInfo ni;
-    if (ni.networkStatus(QSystemNetworkInfo::WlanMode) == QSystemNetworkInfo::Connected) {
-       QVERIFY(!ni.wlanSsid().isEmpty());
-    } else {
-       QVERIFY(ni.wlanSsid().isEmpty());
-    }
-}
 
 void tst_QSystemNetworkInfo::tst_macAddress_data()
 {

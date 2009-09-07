@@ -3,6 +3,7 @@
 
 #include <QDialog>
 class QSystemScreenSaver;
+class QSystemInfo;
 
 namespace Ui {
     class Dialog;
@@ -27,6 +28,7 @@ private:
     void setupSaver();
 
     QSystemScreenSaver *saver;
+    QSystemInfo *systemInfo;
 
 private slots:
     void tabChanged(int index);

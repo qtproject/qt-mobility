@@ -52,6 +52,7 @@
 
 #include "qsysteminfo.h"
 #include <qsysinfoglobal.h>
+#include <QFileSystemWatcher>
 //#define _WINSOCKAPI_
 
 QT_BEGIN_HEADER
@@ -77,12 +78,22 @@ public:
     QString currentCountryCode() const; //2 letter ISO 3166-1
 //features
     bool hasFeatureSupported(QSystemInfo::Feature feature);
+Q_SIGNALS:
+    void currentLanguageChanged(const QString &);
+
 private:
 #if !defined(QT_NO_DBUS)
     bool hasHalDeviceFeature(const QString &param);
     bool hasHalUsbFeature(qint32 usbClass);
 #endif
     bool hasSysFeature(const QString &featureStr);
+#if defined(Q_OS_LINUX)
+    void startLangaugePolling();
+   QFileSystemWatcher *watcher;
+#endif
+private Q_SLOTS:
+    void languageFileChanged(const QString &path);
+
 };
 
 class QSystemNetworkInfoPrivate : public QObject
@@ -109,6 +120,15 @@ public:
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
+
+Q_SIGNALS:
+   void networkStatusChanged(QSystemNetworkInfo::NetworkStatus);
+   void networkSignalStrengthChanged(int);
+   void currentMobileCountryCodeChanged(const QString &);
+   void currentMobileNetworkCodeChanged(const QString &);
+   void networkNameChanged(const QString &);
+   void networkModeChanged(QSystemNetworkInfo::NetworkMode);
+
 };
 
 class QSystemDisplayInfoPrivate : public QObject
@@ -176,6 +196,12 @@ public:
 
     QSystemDeviceInfo::PowerState currentPowerState();
 
+Q_SIGNALS:
+    void batteryLevelChanged(QSystemDeviceInfo::BatteryLevel);
+    void powerStateChanged(QSystemDeviceInfo::PowerState);
+    void currentProfileChanged(QSystemDeviceInfo::Profile);
+    void currentPowerStateChanged(QSystemDeviceInfo::PowerState);
+    void bluetoothStateChanged(bool);
 
 private:
 

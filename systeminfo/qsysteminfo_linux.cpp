@@ -44,6 +44,7 @@
 #include <QDebug>
 #include <QTimer>
 #include <QDir>
+#include <QFileSystemWatcher>
 
 #if !defined(QT_NO_DBUS)
 #include <qhalservice_p.h>
@@ -98,12 +99,60 @@ QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
  : QObject(parent)
 {
     halIsAvailable = halAvailable();
+    startLangaugePolling();
 }
 
 QSystemInfoPrivate::~QSystemInfoPrivate()
 {
+qWarning() << Q_FUNC_INFO;
+}
+
+void QSystemInfoPrivate::startLangaugePolling()
+{ //evil
+    qWarning() << Q_FUNC_INFO;
+    QString watcherFile;
+    watcherFile = "/etc/sysconfig/language";
+    if(!QFileInfo(watcherFile).exists()) {
+        watcherFile = "/etc/default/locale";
+        if(!QFileInfo(watcherFile).exists()) {
+            return;
+        }
+    }
+    watcher = new QFileSystemWatcher(this);
+    watcher->addPath(watcherFile);
+    connect(watcher,SIGNAL(fileChanged(QString)),
+            this,SLOT(languageFileChanged(QString)));
+}
+
+void QSystemInfoPrivate::languageFileChanged(const QString &path)
+{
+    qWarning() << path;
+    if(path.contains("sysconfig")) {
+        QFile f(path);
+        if(!f.open(QIODevice::ReadOnly)) {
+            qWarning() << "did not open it";
+        }
+        QTextStream langFile(&f);
+        QString line;
+        do {
+            line = langFile.readLine();
+            if(line.contains("RC_LANG")) {
+                QString newLang = line.section("=", 1, 1);
+                newLang.remove("\"");
+                if(newLang.left(2) != currentLanguage()) {
+                    emit currentLanguageChanged(newLang.left(2));
+                    qWarning() << "new lang" << newLang.left(2);
+                }
+            }
+                break;
+        } while (!line.isNull());
+
+    } else if(path.contains("default")) {
+
+    }
 
 }
+
 
 // 2 letter ISO 639-1
 QString QSystemInfoPrivate::currentLanguage() const
@@ -112,6 +161,7 @@ QString QSystemInfoPrivate::currentLanguage() const
     if(lang.isEmpty() || lang == "C") {
         lang = "en";
     }
+    qWarning() << Q_FUNC_INFO << lang;
     return lang;
 }
 
@@ -437,6 +487,7 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
+    qWarning() << Q_FUNC_INFO;
 }
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
