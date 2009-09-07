@@ -315,7 +315,7 @@ void QMessage::setBody(const QString &bodyText, const QByteArray &mimeType)
 
 void QMessage::setBody(QTextStream &in, const QByteArray &mimeType)
 {
-    seBody(in.readAll(), mimeType);
+    setBody(in.readAll(), mimeType);
 }
 
 QMessageContentContainerIdList QMessage::attachments() const
