@@ -516,15 +516,15 @@ static void processQPhones(const QList<QContactPhoneNumber>& nums, CEPROPID meta
 
         // Now see if we still have a slot
         if (id == PIMPR_INVALID_ID) {
-            qDebug() << "Didn't match source detail:" << number.attributes();
+            qDebug() << "Didn't match source detail:" << number.contexts() << number.subTypes();
         } else {
             if (!availableIds.contains(id)) {
-                qDebug() << "Too many phone numbers, store this some other way:" << number.attributes();
+                qDebug() << "Too many phone numbers, store this some other way:" << number.contexts() << number.subTypes();
             } else {
                 // Set the meta information
-                if (number.contexts().contains(QContactDetail::ContextHome)
+                if (number.contexts().contains(QContactDetail::ContextHome))
                     meta[availableIds.indexOf(id)] = 'H';
-                else if (number.contexts().contains(QContactDetail::ContextWork)
+                else if (number.contexts().contains(QContactDetail::ContextWork))
                     meta[availableIds.indexOf(id)] = 'W';
 
                 props.append(convertToCEPropVal(id, number.number()));
@@ -546,9 +546,9 @@ static void processQEmails(const QList<QContactEmailAddress>& emails, CEPROPID m
     foreach(const QContactEmailAddress& email, emails) {
         CEPROPID id = availableIds.takeFirst();
         if (id != 0) {
-            if (email.contexts().contains(QContactDetail::ContextHome)
+            if (email.contexts().contains(QContactDetail::ContextHome))
                 meta += "H";
-            else if (email.contexts().contains(QContactDetail::ContextWork)
+            else if (email.contexts().contains(QContactDetail::ContextWork))
                 meta += "W";
             else
                 meta += " ";
