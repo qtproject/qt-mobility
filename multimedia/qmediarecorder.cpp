@@ -90,7 +90,7 @@ public:
     QMediaRecorderPrivate();
     void initControls();
 
-    QMediaRecorderService *service;
+    QAbstractMediaService *service;
     QMediaRecorderControl *control;
     QMediaFormatControl *formatControl;
     QAudioEncodeControl *audioControl;
@@ -202,7 +202,7 @@ QMediaRecorder::QMediaRecorder(QAbstractMediaObject *mediaObject):
 {
     Q_D(QMediaRecorder);
 
-    d->service = qobject_cast<QMediaRecorderService*>(mediaObject->service());
+    d->service = mediaObject->service();
     Q_ASSERT(d->service != 0);
 
     d->initControls();
