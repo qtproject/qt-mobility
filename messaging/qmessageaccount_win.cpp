@@ -90,7 +90,7 @@ QMessageAddress QMessageAccount::fromAddress() const
     return d_ptr->_address;
 }
 
-QMessage::TypeFlags QMessageAccount::types() const
+QMessage::TypeFlags QMessageAccount::messageTypes() const
 {
     return d_ptr->_types;
 }

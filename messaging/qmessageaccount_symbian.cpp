@@ -71,7 +71,7 @@ QMessageAddress QMessageAccount::fromAddress() const
     return QMessageAddress(); // stub
 }
 
-QMessage::TypeFlags QMessageAccount::types() const
+QMessage::TypeFlags QMessageAccount::messageTypes() const
 {
     return QMessage::NoType; // stub
 }

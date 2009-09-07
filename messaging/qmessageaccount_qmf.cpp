@@ -119,7 +119,7 @@ QMessageAddress QMessageAccount::fromAddress() const
     return convert(d_ptr->_account.fromAddress());
 }
 
-QMessage::TypeFlags QMessageAccount::types() const
+QMessage::TypeFlags QMessageAccount::messageTypes() const
 {
     return convert(d_ptr->_account.messageType());
 }

@@ -46,13 +46,14 @@ public:
     QMessageAccount();
     QMessageAccount(const QMessageAccountId &id);
     QMessageAccount(const QMessageAccount &other);
-    const QMessageAccount& operator=(const QMessageAccount &other);
     virtual ~QMessageAccount();
+
+    const QMessageAccount& operator=(const QMessageAccount &other);
 
     QMessageAccountId id() const;
     QString name() const;
     QMessageAddress fromAddress() const;
-    QMessage::TypeFlags types() const;
+    QMessage::TypeFlags messageTypes() const;
     QString signature() const;
 
     static QMessageAccountId defaultAccount(QMessage::Type type);
