@@ -455,25 +455,48 @@ QMessageContentContainerId QMessage::body() const
     return convert(locator._location);
 }
 
-
-void QMessage::setBody(const QString &body)
+void QMessage::setBody(const QString &bodyText, const QByteArray &mimeType)
 {
-    if (d_ptr->_message.multipartType() != QMailMessage::MultipartNone) {
-        d_ptr->_message.clearParts();
+    QByteArray mainType("text");
+    QByteArray subType("plain");
+    QByteArray charset("UTF-8");
+    // TODO:
+    //QByteArray charset(charsetFor(bodyText));
+
+    int index = mimeType.indexOf("/");
+    if (index != -1) {
+        mainType = mimeType.left(index).trimmed();
+        subType = mimeType.mid(index + 1).trimmed();
     }
 
-    QMailMessageContentType ct("text/plain; charset=UTF-8");
-    d_ptr->_message.setBody(QMailMessageBody::fromData(body, ct, QMailMessageBody::Base64));
+    if (d_ptr->_message.multipartType() == QMailMessage::MultipartNone) {
+        // Replace the body with this data
+        QMailMessageContentType ct;
+        ct.setType(mainType);
+        ct.setSubType(subType);
+        ct.setCharset(charset);
+        d_ptr->_message.setBody(QMailMessageBody::fromData(bodyText, ct, QMailMessageBody::Base64));
+    } else {
+        QMessageContentContainer bodyPart;
+        bodyPart.setContentType(mainType);
+        bodyPart.setContentSubType(subType);
+        bodyPart.setContentCharset(charset);
+        bodyPart.setContent(bodyText);
+
+        // Replace any existing body with this part
+        QMessageContentContainerId bodyId(body());
+        if (bodyId.isValid()) {
+            replaceContent(bodyId, bodyPart);
+        } else {
+            prependContent(bodyPart);
+        }
+    }
 }
 
-void QMessage::setBodyFromFile(const QString &fileName)
+void QMessage::setBody(QTextStream &in, const QByteArray &mimeType)
 {
-    if (d_ptr->_message.multipartType() != QMailMessage::MultipartNone) {
-        d_ptr->_message.clearParts();
-    }
-
-    QMailMessageContentType ct("text/plain; charset=UTF-8");
-    d_ptr->_message.setBody(QMailMessageBody::fromFile(fileName, ct, QMailMessageBody::Base64, QMailMessageBody::RequiresEncoding));
+    // TODO: use QMailMessage stream variants
+    setBody(in.readAll(), mimeType);
 }
 
 QMessageContentContainerIdList QMessage::attachments() const

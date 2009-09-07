@@ -238,18 +238,16 @@ QMessageContentContainerId QMessage::body() const
     return QMessageContentContainerId(); // stub
 }
 
-void QMessage::setBody(const QString &body)
+void QMessage::setBody(const QString &body, const QByteArray &mimeType)
 {
-    // Implementation note, this should be platform independent. Will require a member variable 
-    // for the body id, maybe should add protected setBodyId() and bodyId() methods to the API.
     Q_UNUSED(body)
+    Q_UNUSED(mimeType)
 }
 
-void QMessage::setBodyFromFile(const QString &fileName)
+void QMessage::setBody(QTextStream &in, const QByteArray &mimeType)
 {
-    // Implementation note, this should be platform independent. Will require a member variable 
-    // for the body id. Will need to use prepend for multipart messages.
-    Q_UNUSED(fileName)
+    Q_UNUSED(in)
+    Q_UNUSED(mimeType)
 }
 
 QMessageContentContainerIdList QMessage::attachments() const

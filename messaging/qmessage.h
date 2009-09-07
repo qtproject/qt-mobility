@@ -32,13 +32,15 @@
 ****************************************************************************/
 #ifndef QMESSAGE_H
 #define QMESSAGE_H
-#include <QStringList>
-#include <QDateTime>
 #include <qmessageglobal.h>
 #include <qmessageaccountid.h>
 #include <qmessagefolderid.h>
 #include <qmessagecontentcontainer.h>
 #include <qmessageaddress.h>
+
+#include <QDateTime>
+#include <QStringList>
+#include <QTextStream>
 
 class QMessagePrivate;
 
@@ -150,10 +152,12 @@ public:
     uint size() const;
 
     QMessageContentContainerId body() const;
-    void setBody(const QString &body);
-    void setBodyFromFile(const QString &fileName);
+
+    void setBody(const QString &body, const QByteArray &mimeType = QByteArray());
+    void setBody(QTextStream &in, const QByteArray &mimeType = QByteArray());
 
     QMessageContentContainerIdList attachments() const;
+
     void appendAttachments(const QStringList &fileNames);
     void clearAttachments();
 

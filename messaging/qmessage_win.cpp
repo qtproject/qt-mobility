@@ -293,14 +293,29 @@ QMessageContentContainerId QMessage::body() const
     return QMessageContentContainerId(QString::number(0));
 }
 
-void QMessage::setBody(const QString &body)
+void QMessage::setBody(const QString &bodyText, const QByteArray &mimeType)
 {
-    setContent(body);
+    QByteArray mainType("text");
+    QByteArray subType("plain");
+    QByteArray charset("UTF-8");
+    // TODO:
+    //QByteArray charset(charsetFor(bodyText));
+
+    int index = mimeType.indexOf("/");
+    if (index != -1) {
+        mainType = mimeType.left(index).trimmed();
+        subType = mimeType.mid(index + 1).trimmed();
+    }
+
+    setContentType(mainType);
+    setContentSubType(subType);
+    setContentCharset(charset);
+    setContent(bodyText);
 }
 
-void QMessage::setBodyFromFile(const QString &fileName)
+void QMessage::setBody(QTextStream &in, const QByteArray &mimeType)
 {
-    setContentFileName(fileName.toAscii());
+    seBody(in.readAll(), mimeType);
 }
 
 QMessageContentContainerIdList QMessage::attachments() const

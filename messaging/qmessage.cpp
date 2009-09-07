@@ -482,33 +482,27 @@
 */
 
 /*!
-    \fn QMessage::setBody(const QString &body)
+    \fn QMessage::setBody(const QString &body, const QByteArray &mimeType)
   
     Sets the body text of the message to be the string \a body.
     
-    The internet media (MIME) content type of the body will be "text", the subtype will be 
-    "plain", the charset will be determined by preferredCharsets(),
+    The internet media (MIME) content type of the body is set to \a mimeType, if provided.
+    If the \a mimetype is not specified, the content type will default to "text/plain", and
+    the encoding charset will be as determined by preferredCharsets().
     
-    If the internet media (MIME) content type of the message is not multipart then the content of 
-    the message will be set to \a body; otherwise a body part will be created if one does not 
-    exist, and the body will be the first part of the message.
-    
-    \sa body(), setBodyFromFile(), preferredCharsets()
+    \sa body(), preferredCharsets()
 */
 
 /*!
-    \fn QMessage::setBodyFromFile(const QString &fileName)
+    \fn QMessage::setBody(QTextStream &in, const QByteArray &mimeType)
   
-    Sets the body text of the message to be the contents of the file \a fileName.
+    Sets the body text of the message to be the text read from the stream \a in.
     
-    The internet media (MIME) content type of the body will be "text", the subtype will be 
-    "plain", the charset will be determined by preferredCharsets(),
+    The internet media (MIME) content type of the body is set to \a mimeType, if provided.
+    If the \a mimetype is not specified, the content type will default to "text/plain", and
+    the encoding charset will be as determined by preferredCharsets().
     
-    If the internet media (MIME) content type of the message is not multipart then the content of 
-    the message will be set to the contents of the file \a fileName; otherwise the body will be the 
-    first part of the message.
-        
-    \sa body(), setBody(), preferredCharsets()
+    \sa body(), setBodyFromFile(), preferredCharsets()
 */
 
 /*!
