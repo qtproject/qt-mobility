@@ -52,7 +52,7 @@ class QGstreamerVideoWidgetControl;
 class QGstreamerElementFactory;
 class QGstreamerCaptureMetadataControl;
 
-class QGstreamerCaptureService : public QAbstractMediaService
+class QGstreamerCaptureService : public QCameraService
 {
 Q_OBJECT
 public:

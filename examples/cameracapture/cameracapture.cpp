@@ -65,7 +65,7 @@ CameraCapture::CameraCapture(QWidget *parent) :
     camera = new QCamera;
 
     if(camera->isValid())
-        mediaRecorder = new QMediaRecorder(camera->service());
+        mediaRecorder = new QMediaRecorder(camera);
     else
         mediaRecorder = new QMediaRecorder();
 
