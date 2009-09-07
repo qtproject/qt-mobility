@@ -4,9 +4,13 @@
     <section ref="qmessage.html" title="QMessage Class Reference">
         <keyword ref="qmessage.html">QMessage</keyword>
         <keyword ref="qmessage.html#Priority-enum">Priority</keyword>
-        <keyword ref="qmessage.html#Priority-enum">QMessage::High</keyword>
-        <keyword ref="qmessage.html#Priority-enum">QMessage::Normal</keyword>
-        <keyword ref="qmessage.html#Priority-enum">QMessage::Low</keyword>
+        <keyword ref="qmessage.html#Priority-enum">QMessage::HighPriority</keyword>
+        <keyword ref="qmessage.html#Priority-enum">QMessage::LowPriority</keyword>
+        <keyword ref="qmessage.html#Priority-enum">QMessage::NormalPriority</keyword>
+        <keyword ref="qmessage.html#ResponseType-enum">ResponseType</keyword>
+        <keyword ref="qmessage.html#ResponseType-enum">QMessage::ReplyToSender</keyword>
+        <keyword ref="qmessage.html#ResponseType-enum">QMessage::ReplyToAll</keyword>
+        <keyword ref="qmessage.html#ResponseType-enum">QMessage::Forward</keyword>
         <keyword ref="qmessage.html#StandardFolder-enum">StandardFolder</keyword>
         <keyword ref="qmessage.html#StandardFolder-enum">QMessage::DraftsFolder</keyword>
         <keyword ref="qmessage.html#StandardFolder-enum">QMessage::OutboxFolder</keyword>
@@ -23,7 +27,7 @@
         <keyword ref="qmessage.html#Type-enum">TypeFlags</keyword>
         <keyword ref="qmessage.html#Type-enum">QMessage::Sms</keyword>
         <keyword ref="qmessage.html#Type-enum">QMessage::Xmpp</keyword>
-        <keyword ref="qmessage.html#Type-enum">QMessage::None</keyword>
+        <keyword ref="qmessage.html#Type-enum">QMessage::NoType</keyword>
         <keyword ref="qmessage.html#Type-enum">QMessage::Email</keyword>
         <keyword ref="qmessage.html#Type-enum">QMessage::AnyType</keyword>
         <keyword ref="qmessage.html#Type-enum">QMessage::Mms</keyword>
@@ -33,26 +37,25 @@
         <keyword ref="qmessage.html#body">body</keyword>
         <keyword ref="qmessage.html#cc">cc</keyword>
         <keyword ref="qmessage.html#clearAttachments">clearAttachments</keyword>
+        <keyword ref="qmessage.html#createResponseMessage">createResponseMessage</keyword>
         <keyword ref="qmessage.html#customField">customField</keyword>
         <keyword ref="qmessage.html#customFields">customFields</keyword>
-        <keyword ref="qmessage.html#dataModified">dataModified</keyword>
         <keyword ref="qmessage.html#date">date</keyword>
         <keyword ref="qmessage.html#destinationPort">destinationPort</keyword>
-        <keyword ref="qmessage.html#forward">forward</keyword>
         <keyword ref="qmessage.html#from">from</keyword>
         <keyword ref="qmessage.html#fromTransmissionFormat">fromTransmissionFormat</keyword>
         <keyword ref="qmessage.html#fromTransmissionFormatFile">fromTransmissionFormatFile</keyword>
         <keyword ref="qmessage.html#id">id</keyword>
+        <keyword ref="qmessage.html#isModified">isModified</keyword>
         <keyword ref="qmessage.html#originatorPort">originatorPort</keyword>
         <keyword ref="qmessage.html#parentAccountId">parentAccountId</keyword>
         <keyword ref="qmessage.html#parentFolderId">parentFolderId</keyword>
+        <keyword ref="qmessage.html#preferredCharsetFor">preferredCharsetFor</keyword>
+        <keyword ref="qmessage.html#preferredCharsets">preferredCharsets</keyword>
         <keyword ref="qmessage.html#priority">priority</keyword>
         <keyword ref="qmessage.html#receivedDate">receivedDate</keyword>
-        <keyword ref="qmessage.html#replyTo">replyTo</keyword>
-        <keyword ref="qmessage.html#replyToAll">replyToAll</keyword>
         <keyword ref="qmessage.html#setBcc">setBcc</keyword>
         <keyword ref="qmessage.html#setBody">setBody</keyword>
-        <keyword ref="qmessage.html#setBodyFromFile">setBodyFromFile</keyword>
         <keyword ref="qmessage.html#setCc">setCc</keyword>
         <keyword ref="qmessage.html#setCustomField">setCustomField</keyword>
         <keyword ref="qmessage.html#setDate">setDate</keyword>
@@ -60,6 +63,7 @@
         <keyword ref="qmessage.html#setFrom">setFrom</keyword>
         <keyword ref="qmessage.html#setOriginatorPort">setOriginatorPort</keyword>
         <keyword ref="qmessage.html#setParentAccountId">setParentAccountId</keyword>
+        <keyword ref="qmessage.html#setPreferredCharsets">setPreferredCharsets</keyword>
         <keyword ref="qmessage.html#setPriority">setPriority</keyword>
         <keyword ref="qmessage.html#setReceivedDate">setReceivedDate</keyword>
         <keyword ref="qmessage.html#setStandardFolder">setStandardFolder</keyword>
@@ -80,31 +84,28 @@
     <section ref="qmessageaccount.html" title="QMessageAccount Class Reference">
         <keyword ref="qmessageaccount.html">QMessageAccount</keyword>
         <keyword ref="qmessageaccount.html#defaultAccount">defaultAccount</keyword>
-        <keyword ref="qmessageaccount.html#fromAddress">fromAddress</keyword>
         <keyword ref="qmessageaccount.html#id">id</keyword>
+        <keyword ref="qmessageaccount.html#messageTypes">messageTypes</keyword>
         <keyword ref="qmessageaccount.html#name">name</keyword>
-        <keyword ref="qmessageaccount.html#signature">signature</keyword>
-        <keyword ref="qmessageaccount.html#types">types</keyword>
         <keyword ref="qmessageaccount.html#operator-eq">operator=</keyword>
         <section ref="qmessageaccount-members.html" title="List of all members"/>
     </section>
-    <section ref="qmessageaccountfilterkey.html" title="QMessageAccountFilterKey Class Reference">
-        <keyword ref="qmessageaccountfilterkey.html">QMessageAccountFilterKey</keyword>
-        <keyword ref="qmessageaccountfilterkey.html#fromAddress">fromAddress</keyword>
-        <keyword ref="qmessageaccountfilterkey.html#id">id</keyword>
-        <keyword ref="qmessageaccountfilterkey.html#isEmpty">isEmpty</keyword>
-        <keyword ref="qmessageaccountfilterkey.html#isSupported">isSupported</keyword>
-        <keyword ref="qmessageaccountfilterkey.html#name">name</keyword>
-        <keyword ref="qmessageaccountfilterkey.html#options">options</keyword>
-        <keyword ref="qmessageaccountfilterkey.html#setOptions">setOptions</keyword>
-        <keyword ref="qmessageaccountfilterkey.html#operator-and">operator&amp;</keyword>
-        <keyword ref="qmessageaccountfilterkey.html#operator-and-eq">operator&amp;=</keyword>
-        <keyword ref="qmessageaccountfilterkey.html#operator-eq">operator=</keyword>
-        <keyword ref="qmessageaccountfilterkey.html#operator-eq-eq">operator==</keyword>
-        <keyword ref="qmessageaccountfilterkey.html#operator-7c">operator|</keyword>
-        <keyword ref="qmessageaccountfilterkey.html#operator-7c-eq">operator|=</keyword>
-        <keyword ref="qmessageaccountfilterkey.html#operator-7e">operator~</keyword>
-        <section ref="qmessageaccountfilterkey-members.html" title="List of all members"/>
+    <section ref="qmessageaccountfilter.html" title="QMessageAccountFilter Class Reference">
+        <keyword ref="qmessageaccountfilter.html">QMessageAccountFilter</keyword>
+        <keyword ref="qmessageaccountfilter.html#byId">byId</keyword>
+        <keyword ref="qmessageaccountfilter.html#byName">byName</keyword>
+        <keyword ref="qmessageaccountfilter.html#isEmpty">isEmpty</keyword>
+        <keyword ref="qmessageaccountfilter.html#isSupported">isSupported</keyword>
+        <keyword ref="qmessageaccountfilter.html#options">options</keyword>
+        <keyword ref="qmessageaccountfilter.html#setOptions">setOptions</keyword>
+        <keyword ref="qmessageaccountfilter.html#operator-and">operator&amp;</keyword>
+        <keyword ref="qmessageaccountfilter.html#operator-and-eq">operator&amp;=</keyword>
+        <keyword ref="qmessageaccountfilter.html#operator-eq">operator=</keyword>
+        <keyword ref="qmessageaccountfilter.html#operator-eq-eq">operator==</keyword>
+        <keyword ref="qmessageaccountfilter.html#operator-7c">operator|</keyword>
+        <keyword ref="qmessageaccountfilter.html#operator-7c-eq">operator|=</keyword>
+        <keyword ref="qmessageaccountfilter.html#operator-7e">operator~</keyword>
+        <section ref="qmessageaccountfilter-members.html" title="List of all members"/>
     </section>
     <section ref="qmessageaccountid.html" title="QMessageAccountId Class Reference">
         <keyword ref="qmessageaccountid.html">QMessageAccountId</keyword>
@@ -114,14 +115,14 @@
         <keyword ref="qmessageaccountid.html#operator-eq-eq">operator==</keyword>
         <section ref="qmessageaccountid-members.html" title="List of all members"/>
     </section>
-    <section ref="qmessageaccountsortkey.html" title="QMessageAccountSortKey Class Reference">
-        <keyword ref="qmessageaccountsortkey.html">QMessageAccountSortKey</keyword>
-        <keyword ref="qmessageaccountsortkey.html#isEmpty">isEmpty</keyword>
-        <keyword ref="qmessageaccountsortkey.html#isSupported">isSupported</keyword>
-        <keyword ref="qmessageaccountsortkey.html#name">name</keyword>
-        <keyword ref="qmessageaccountsortkey.html#operator-eq">operator=</keyword>
-        <keyword ref="qmessageaccountsortkey.html#operator-eq-eq">operator==</keyword>
-        <section ref="qmessageaccountsortkey-members.html" title="List of all members"/>
+    <section ref="qmessageaccountordering.html" title="QMessageAccountOrdering Class Reference">
+        <keyword ref="qmessageaccountordering.html">QMessageAccountOrdering</keyword>
+        <keyword ref="qmessageaccountordering.html#byName">byName</keyword>
+        <keyword ref="qmessageaccountordering.html#isEmpty">isEmpty</keyword>
+        <keyword ref="qmessageaccountordering.html#isSupported">isSupported</keyword>
+        <keyword ref="qmessageaccountordering.html#operator-eq">operator=</keyword>
+        <keyword ref="qmessageaccountordering.html#operator-eq-eq">operator==</keyword>
+        <section ref="qmessageaccountordering-members.html" title="List of all members"/>
     </section>
     <section ref="qmessageaddress.html" title="QMessageAddress Class Reference">
         <keyword ref="qmessageaddress.html">QMessageAddress</keyword>
@@ -143,24 +144,21 @@
         <keyword ref="qmessagecontentcontainer.html#appendContent">appendContent</keyword>
         <keyword ref="qmessagecontentcontainer.html#appendHeaderField">appendHeaderField</keyword>
         <keyword ref="qmessagecontentcontainer.html#clearContents">clearContents</keyword>
-        <keyword ref="qmessagecontentcontainer.html#container">container</keyword>
         <keyword ref="qmessagecontentcontainer.html#containerDataModified">containerDataModified</keyword>
         <keyword ref="qmessagecontentcontainer.html#containerId">containerId</keyword>
         <keyword ref="qmessagecontentcontainer.html#contains">contains</keyword>
-        <keyword ref="qmessagecontentcontainer.html#contentAvailable">contentAvailable</keyword>
+        <keyword ref="qmessagecontentcontainer.html#content">content</keyword>
         <keyword ref="qmessagecontentcontainer.html#contentCharset">contentCharset</keyword>
         <keyword ref="qmessagecontentcontainer.html#contentFileName">contentFileName</keyword>
         <keyword ref="qmessagecontentcontainer.html#contentIds">contentIds</keyword>
         <keyword ref="qmessagecontentcontainer.html#contentSubType">contentSubType</keyword>
         <keyword ref="qmessagecontentcontainer.html#contentType">contentType</keyword>
-        <keyword ref="qmessagecontentcontainer.html#decodedContent">decodedContent</keyword>
-        <keyword ref="qmessagecontentcontainer.html#decodedContentFileName">decodedContentFileName</keyword>
-        <keyword ref="qmessagecontentcontainer.html#decodedTextContent">decodedTextContent</keyword>
-        <keyword ref="qmessagecontentcontainer.html#headerField">headerField</keyword>
+        <keyword ref="qmessagecontentcontainer.html#find">find</keyword>
+        <keyword ref="qmessagecontentcontainer.html#headerFieldValue">headerFieldValue</keyword>
         <keyword ref="qmessagecontentcontainer.html#headerFieldValues">headerFieldValues</keyword>
         <keyword ref="qmessagecontentcontainer.html#headerFields">headerFields</keyword>
+        <keyword ref="qmessagecontentcontainer.html#isContentAvailable">isContentAvailable</keyword>
         <keyword ref="qmessagecontentcontainer.html#messageId">messageId</keyword>
-        <keyword ref="qmessagecontentcontainer.html#preferredCharsets">preferredCharsets</keyword>
         <keyword ref="qmessagecontentcontainer.html#prependContent">prependContent</keyword>
         <keyword ref="qmessagecontentcontainer.html#readContentFrom">readContentFrom</keyword>
         <keyword ref="qmessagecontentcontainer.html#removeContent">removeContent</keyword>
@@ -172,9 +170,10 @@
         <keyword ref="qmessagecontentcontainer.html#setContentSubType">setContentSubType</keyword>
         <keyword ref="qmessagecontentcontainer.html#setContentType">setContentType</keyword>
         <keyword ref="qmessagecontentcontainer.html#setHeaderField">setHeaderField</keyword>
-        <keyword ref="qmessagecontentcontainer.html#setPreferredCharsets">setPreferredCharsets</keyword>
         <keyword ref="qmessagecontentcontainer.html#size">size</keyword>
+        <keyword ref="qmessagecontentcontainer.html#textContent">textContent</keyword>
         <keyword ref="qmessagecontentcontainer.html#writeContentTo">writeContentTo</keyword>
+        <keyword ref="qmessagecontentcontainer.html#writeTextContentTo">writeTextContentTo</keyword>
         <keyword ref="qmessagecontentcontainer.html#operator-eq">operator=</keyword>
         <section ref="qmessagecontentcontainer-members.html" title="List of all members"/>
     </section>
@@ -204,34 +203,34 @@
         <keyword ref="qmessagedatacomparator.html#RelationComparator-enum">QMessageDataComparator::LessThan</keyword>
         <keyword ref="qmessagedatacomparator.html#RelationComparator-enum">QMessageDataComparator::GreaterThanEqual</keyword>
     </section>
-    <section ref="qmessagefilterkey.html" title="QMessageFilterKey Class Reference">
-        <keyword ref="qmessagefilterkey.html">QMessageFilterKey</keyword>
-        <keyword ref="qmessagefilterkey.html#ancestorFolderIds">ancestorFolderIds</keyword>
-        <keyword ref="qmessagefilterkey.html#customField">customField</keyword>
-        <keyword ref="qmessagefilterkey.html#id">id</keyword>
-        <keyword ref="qmessagefilterkey.html#isEmpty">isEmpty</keyword>
-        <keyword ref="qmessagefilterkey.html#isSupported">isSupported</keyword>
-        <keyword ref="qmessagefilterkey.html#options">options</keyword>
-        <keyword ref="qmessagefilterkey.html#parentAccountId">parentAccountId</keyword>
-        <keyword ref="qmessagefilterkey.html#parentFolderId">parentFolderId</keyword>
-        <keyword ref="qmessagefilterkey.html#priority">priority</keyword>
-        <keyword ref="qmessagefilterkey.html#receptionTimeStamp">receptionTimeStamp</keyword>
-        <keyword ref="qmessagefilterkey.html#recipients">recipients</keyword>
-        <keyword ref="qmessagefilterkey.html#sender">sender</keyword>
-        <keyword ref="qmessagefilterkey.html#setOptions">setOptions</keyword>
-        <keyword ref="qmessagefilterkey.html#size">size</keyword>
-        <keyword ref="qmessagefilterkey.html#status">status</keyword>
-        <keyword ref="qmessagefilterkey.html#subject">subject</keyword>
-        <keyword ref="qmessagefilterkey.html#timeStamp">timeStamp</keyword>
-        <keyword ref="qmessagefilterkey.html#type">type</keyword>
-        <keyword ref="qmessagefilterkey.html#operator-and">operator&amp;</keyword>
-        <keyword ref="qmessagefilterkey.html#operator-and-eq">operator&amp;=</keyword>
-        <keyword ref="qmessagefilterkey.html#operator-eq">operator=</keyword>
-        <keyword ref="qmessagefilterkey.html#operator-eq-eq">operator==</keyword>
-        <keyword ref="qmessagefilterkey.html#operator-7c">operator|</keyword>
-        <keyword ref="qmessagefilterkey.html#operator-7c-eq">operator|=</keyword>
-        <keyword ref="qmessagefilterkey.html#operator-7e">operator~</keyword>
-        <section ref="qmessagefilterkey-members.html" title="List of all members"/>
+    <section ref="qmessagefilter.html" title="QMessageFilter Class Reference">
+        <keyword ref="qmessagefilter.html">QMessageFilter</keyword>
+        <keyword ref="qmessagefilter.html#byAncestorFolderIds">byAncestorFolderIds</keyword>
+        <keyword ref="qmessagefilter.html#byCustomField">byCustomField</keyword>
+        <keyword ref="qmessagefilter.html#byId">byId</keyword>
+        <keyword ref="qmessagefilter.html#byParentAccountId">byParentAccountId</keyword>
+        <keyword ref="qmessagefilter.html#byParentFolderId">byParentFolderId</keyword>
+        <keyword ref="qmessagefilter.html#byPriority">byPriority</keyword>
+        <keyword ref="qmessagefilter.html#byReceptionTimeStamp">byReceptionTimeStamp</keyword>
+        <keyword ref="qmessagefilter.html#byRecipients">byRecipients</keyword>
+        <keyword ref="qmessagefilter.html#bySender">bySender</keyword>
+        <keyword ref="qmessagefilter.html#bySize">bySize</keyword>
+        <keyword ref="qmessagefilter.html#byStatus">byStatus</keyword>
+        <keyword ref="qmessagefilter.html#bySubject">bySubject</keyword>
+        <keyword ref="qmessagefilter.html#byTimeStamp">byTimeStamp</keyword>
+        <keyword ref="qmessagefilter.html#byType">byType</keyword>
+        <keyword ref="qmessagefilter.html#isEmpty">isEmpty</keyword>
+        <keyword ref="qmessagefilter.html#isSupported">isSupported</keyword>
+        <keyword ref="qmessagefilter.html#options">options</keyword>
+        <keyword ref="qmessagefilter.html#setOptions">setOptions</keyword>
+        <keyword ref="qmessagefilter.html#operator-and">operator&amp;</keyword>
+        <keyword ref="qmessagefilter.html#operator-and-eq">operator&amp;=</keyword>
+        <keyword ref="qmessagefilter.html#operator-eq">operator=</keyword>
+        <keyword ref="qmessagefilter.html#operator-eq-eq">operator==</keyword>
+        <keyword ref="qmessagefilter.html#operator-7c">operator|</keyword>
+        <keyword ref="qmessagefilter.html#operator-7c-eq">operator|=</keyword>
+        <keyword ref="qmessagefilter.html#operator-7e">operator~</keyword>
+        <section ref="qmessagefilter-members.html" title="List of all members"/>
     </section>
     <section ref="qmessagefolder.html" title="QMessageFolder Class Reference">
         <keyword ref="qmessagefolder.html">QMessageFolder</keyword>
@@ -243,26 +242,26 @@
         <keyword ref="qmessagefolder.html#operator-eq">operator=</keyword>
         <section ref="qmessagefolder-members.html" title="List of all members"/>
     </section>
-    <section ref="qmessagefolderfilterkey.html" title="QMessageFolderFilterKey Class Reference">
-        <keyword ref="qmessagefolderfilterkey.html">QMessageFolderFilterKey</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#ancestorFolderIds">ancestorFolderIds</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#displayName">displayName</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#id">id</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#isEmpty">isEmpty</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#isSupported">isSupported</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#options">options</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#parentAccountId">parentAccountId</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#parentFolderId">parentFolderId</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#path">path</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#setOptions">setOptions</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#operator-and">operator&amp;</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#operator-and-eq">operator&amp;=</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#operator-eq">operator=</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#operator-eq-eq">operator==</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#operator-7c">operator|</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#operator-7c-eq">operator|=</keyword>
-        <keyword ref="qmessagefolderfilterkey.html#operator-7e">operator~</keyword>
-        <section ref="qmessagefolderfilterkey-members.html" title="List of all members"/>
+    <section ref="qmessagefolderfilter.html" title="QMessageFolderFilter Class Reference">
+        <keyword ref="qmessagefolderfilter.html">QMessageFolderFilter</keyword>
+        <keyword ref="qmessagefolderfilter.html#byAncestorFolderIds">byAncestorFolderIds</keyword>
+        <keyword ref="qmessagefolderfilter.html#byDisplayName">byDisplayName</keyword>
+        <keyword ref="qmessagefolderfilter.html#byId">byId</keyword>
+        <keyword ref="qmessagefolderfilter.html#byParentAccountId">byParentAccountId</keyword>
+        <keyword ref="qmessagefolderfilter.html#byParentFolderId">byParentFolderId</keyword>
+        <keyword ref="qmessagefolderfilter.html#byPath">byPath</keyword>
+        <keyword ref="qmessagefolderfilter.html#isEmpty">isEmpty</keyword>
+        <keyword ref="qmessagefolderfilter.html#isSupported">isSupported</keyword>
+        <keyword ref="qmessagefolderfilter.html#options">options</keyword>
+        <keyword ref="qmessagefolderfilter.html#setOptions">setOptions</keyword>
+        <keyword ref="qmessagefolderfilter.html#operator-and">operator&amp;</keyword>
+        <keyword ref="qmessagefolderfilter.html#operator-and-eq">operator&amp;=</keyword>
+        <keyword ref="qmessagefolderfilter.html#operator-eq">operator=</keyword>
+        <keyword ref="qmessagefolderfilter.html#operator-eq-eq">operator==</keyword>
+        <keyword ref="qmessagefolderfilter.html#operator-7c">operator|</keyword>
+        <keyword ref="qmessagefolderfilter.html#operator-7c-eq">operator|=</keyword>
+        <keyword ref="qmessagefolderfilter.html#operator-7e">operator~</keyword>
+        <section ref="qmessagefolderfilter-members.html" title="List of all members"/>
     </section>
     <section ref="qmessagefolderid.html" title="QMessageFolderId Class Reference">
         <keyword ref="qmessagefolderid.html">QMessageFolderId</keyword>
@@ -272,17 +271,17 @@
         <keyword ref="qmessagefolderid.html#operator-eq-eq">operator==</keyword>
         <section ref="qmessagefolderid-members.html" title="List of all members"/>
     </section>
-    <section ref="qmessagefoldersortkey.html" title="QMessageFolderSortKey Class Reference">
-        <keyword ref="qmessagefoldersortkey.html">QMessageFolderSortKey</keyword>
-        <keyword ref="qmessagefoldersortkey.html#displayName">displayName</keyword>
-        <keyword ref="qmessagefoldersortkey.html#isEmpty">isEmpty</keyword>
-        <keyword ref="qmessagefoldersortkey.html#isSupported">isSupported</keyword>
-        <keyword ref="qmessagefoldersortkey.html#path">path</keyword>
-        <keyword ref="qmessagefoldersortkey.html#operator-2b">operator+</keyword>
-        <keyword ref="qmessagefoldersortkey.html#operator-2b-eq">operator+=</keyword>
-        <keyword ref="qmessagefoldersortkey.html#operator-eq">operator=</keyword>
-        <keyword ref="qmessagefoldersortkey.html#operator-eq-eq">operator==</keyword>
-        <section ref="qmessagefoldersortkey-members.html" title="List of all members"/>
+    <section ref="qmessagefolderordering.html" title="QMessageFolderOrdering Class Reference">
+        <keyword ref="qmessagefolderordering.html">QMessageFolderOrdering</keyword>
+        <keyword ref="qmessagefolderordering.html#byDisplayName">byDisplayName</keyword>
+        <keyword ref="qmessagefolderordering.html#byPath">byPath</keyword>
+        <keyword ref="qmessagefolderordering.html#isEmpty">isEmpty</keyword>
+        <keyword ref="qmessagefolderordering.html#isSupported">isSupported</keyword>
+        <keyword ref="qmessagefolderordering.html#operator-2b">operator+</keyword>
+        <keyword ref="qmessagefolderordering.html#operator-2b-eq">operator+=</keyword>
+        <keyword ref="qmessagefolderordering.html#operator-eq">operator=</keyword>
+        <keyword ref="qmessagefolderordering.html#operator-eq-eq">operator==</keyword>
+        <section ref="qmessagefolderordering-members.html" title="List of all members"/>
     </section>
     <section ref="qmessageid.html" title="QMessageId Class Reference">
         <keyword ref="qmessageid.html">QMessageId</keyword>
@@ -292,15 +291,32 @@
         <keyword ref="qmessageid.html#operator-eq-eq">operator==</keyword>
         <section ref="qmessageid-members.html" title="List of all members"/>
     </section>
+    <section ref="qmessageordering.html" title="QMessageOrdering Class Reference">
+        <keyword ref="qmessageordering.html">QMessageOrdering</keyword>
+        <keyword ref="qmessageordering.html#byPriority">byPriority</keyword>
+        <keyword ref="qmessageordering.html#byReceptionTimeStamp">byReceptionTimeStamp</keyword>
+        <keyword ref="qmessageordering.html#byRecipients">byRecipients</keyword>
+        <keyword ref="qmessageordering.html#bySender">bySender</keyword>
+        <keyword ref="qmessageordering.html#bySize">bySize</keyword>
+        <keyword ref="qmessageordering.html#byStatus">byStatus</keyword>
+        <keyword ref="qmessageordering.html#bySubject">bySubject</keyword>
+        <keyword ref="qmessageordering.html#byTimeStamp">byTimeStamp</keyword>
+        <keyword ref="qmessageordering.html#byType">byType</keyword>
+        <keyword ref="qmessageordering.html#isEmpty">isEmpty</keyword>
+        <keyword ref="qmessageordering.html#isSupported">isSupported</keyword>
+        <keyword ref="qmessageordering.html#operator-2b">operator+</keyword>
+        <keyword ref="qmessageordering.html#operator-2b-eq">operator+=</keyword>
+        <keyword ref="qmessageordering.html#operator-eq">operator=</keyword>
+        <keyword ref="qmessageordering.html#operator-eq-eq">operator==</keyword>
+        <section ref="qmessageordering-members.html" title="List of all members"/>
+    </section>
     <section ref="qmessageserviceaction.html" title="QMessageServiceAction Class Reference">
         <keyword ref="qmessageserviceaction.html">QMessageServiceAction</keyword>
-        <keyword ref="qmessageserviceaction.html#Activity-enum">Activity</keyword>
-        <keyword ref="qmessageserviceaction.html#Activity-enum">QMessageServiceAction::InProgress</keyword>
-        <keyword ref="qmessageserviceaction.html#Activity-enum">QMessageServiceAction::Failed</keyword>
-        <keyword ref="qmessageserviceaction.html#Activity-enum">QMessageServiceAction::Pending</keyword>
-        <keyword ref="qmessageserviceaction.html#Activity-enum">QMessageServiceAction::Successful</keyword>
-        <keyword ref="qmessageserviceaction.html#activity">activity</keyword>
-        <keyword ref="qmessageserviceaction.html#activityChanged">activityChanged</keyword>
+        <keyword ref="qmessageserviceaction.html#State-enum">State</keyword>
+        <keyword ref="qmessageserviceaction.html#State-enum">QMessageServiceAction::InProgress</keyword>
+        <keyword ref="qmessageserviceaction.html#State-enum">QMessageServiceAction::Failed</keyword>
+        <keyword ref="qmessageserviceaction.html#State-enum">QMessageServiceAction::Pending</keyword>
+        <keyword ref="qmessageserviceaction.html#State-enum">QMessageServiceAction::Successful</keyword>
         <keyword ref="qmessageserviceaction.html#cancelOperation">cancelOperation</keyword>
         <keyword ref="qmessageserviceaction.html#compose">compose</keyword>
         <keyword ref="qmessageserviceaction.html#countMessages">countMessages</keyword>
@@ -315,26 +331,9 @@
         <keyword ref="qmessageserviceaction.html#retrieveHeader">retrieveHeader</keyword>
         <keyword ref="qmessageserviceaction.html#send">send</keyword>
         <keyword ref="qmessageserviceaction.html#show">show</keyword>
+        <keyword ref="qmessageserviceaction.html#state">state</keyword>
+        <keyword ref="qmessageserviceaction.html#stateChanged">stateChanged</keyword>
         <section ref="qmessageserviceaction-members.html" title="List of all members"/>
-    </section>
-    <section ref="qmessagesortkey.html" title="QMessageSortKey Class Reference">
-        <keyword ref="qmessagesortkey.html">QMessageSortKey</keyword>
-        <keyword ref="qmessagesortkey.html#isEmpty">isEmpty</keyword>
-        <keyword ref="qmessagesortkey.html#isSupported">isSupported</keyword>
-        <keyword ref="qmessagesortkey.html#priority">priority</keyword>
-        <keyword ref="qmessagesortkey.html#receptionTimeStamp">receptionTimeStamp</keyword>
-        <keyword ref="qmessagesortkey.html#recipients">recipients</keyword>
-        <keyword ref="qmessagesortkey.html#sender">sender</keyword>
-        <keyword ref="qmessagesortkey.html#size">size</keyword>
-        <keyword ref="qmessagesortkey.html#status">status</keyword>
-        <keyword ref="qmessagesortkey.html#subject">subject</keyword>
-        <keyword ref="qmessagesortkey.html#timeStamp">timeStamp</keyword>
-        <keyword ref="qmessagesortkey.html#type">type</keyword>
-        <keyword ref="qmessagesortkey.html#operator-2b">operator+</keyword>
-        <keyword ref="qmessagesortkey.html#operator-2b-eq">operator+=</keyword>
-        <keyword ref="qmessagesortkey.html#operator-eq">operator=</keyword>
-        <keyword ref="qmessagesortkey.html#operator-eq-eq">operator==</keyword>
-        <section ref="qmessagesortkey-members.html" title="List of all members"/>
     </section>
     <section ref="qmessagestore.html" title="QMessageStore Class Reference">
         <keyword ref="qmessagestore.html">QMessageStore</keyword>
