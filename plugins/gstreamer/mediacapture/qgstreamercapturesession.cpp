@@ -55,6 +55,7 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
      m_state(StoppedState),
      m_pipelineMode(EmptyPipeline),
      m_captureMode(captureMode),
+     m_previewEnabled(false),
      m_audioInputFactory(0),
      m_audioPreviewFactory(0),
      m_videoInputFactory(0),

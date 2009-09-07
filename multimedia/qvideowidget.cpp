@@ -424,7 +424,7 @@ void QVideoWidgetPrivate::_q_fullScreenChanged(bool fullscreen)
 }
 
 void QVideoWidgetPrivate::_q_displayModeChanged(QVideoWidget::DisplayMode mode)
-{       
+{
     if (mode != displayMode) {
         if (mode == QVideoWidget::WindowedDisplay) {
             layout->activate();
@@ -499,7 +499,7 @@ QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
     QVideoWidgetControl *widgetControl = qobject_cast<QVideoWidgetControl *>(
             d->service->control(QVideoWidgetControl_iid));
 
-    widgetControl = 0;
+    //widgetControl = 0;
 
     if (widgetControl != 0) {
         d->widgetBackend = new QVideoWidgetControlBackend(widgetControl);
@@ -805,7 +805,7 @@ void QVideoWidget::setVisible(bool visible)
             d->setCurrentBackend(d->rendererBackend);
             d->outputControl->setOutput(QVideoOutputControl::RendererOutput);
 #endif
-        } else {    
+        } else {
             d->outputControl->setOutput(QVideoOutputControl::NoOutput);
             visible = false;
         }

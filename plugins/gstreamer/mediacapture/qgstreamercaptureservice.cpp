@@ -218,6 +218,7 @@ void QGstreamerCaptureService::videoOutputChanged(QVideoOutputControl::Output ou
 #endif
     case QVideoOutputControl::WidgetOutput:
         m_captureSession->setVideoPreview(m_videoWidgetFactory);
+        break;
     default:
         qWarning("Invalid video output selection");
         m_captureSession->setVideoPreview(0);
