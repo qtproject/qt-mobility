@@ -45,11 +45,13 @@ public:
     QMessageAccountOrdering(const QMessageAccountOrdering &other);
     virtual ~QMessageAccountOrdering();
 
+    QMessageAccountOrdering& operator=(const QMessageAccountOrdering &other);
+
     bool isEmpty() const;
     bool isSupported() const;
 
     bool operator==(const QMessageAccountOrdering &other) const;
-    const QMessageAccountOrdering& operator=(const QMessageAccountOrdering &other);
+    bool operator!=(const QMessageAccountOrdering &other) const;
 
     static QMessageAccountOrdering byName(Qt::SortOrder order = Qt::AscendingOrder);
 

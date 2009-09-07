@@ -57,7 +57,7 @@ public:
     QMessageContentContainer(const QMessageContentContainer &other);
     virtual ~QMessageContentContainer();
 
-    const QMessageContentContainer& operator=(const QMessageContentContainer &other);
+    QMessageContentContainer& operator=(const QMessageContentContainer &other);
 
     QMessageContentContainerId containerId() const;
     QMessageId messageId() const;

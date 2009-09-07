@@ -46,6 +46,12 @@ QMessageOrdering::~QMessageOrdering()
 {
 }
 
+QMessageOrdering& QMessageOrdering::operator=(const QMessageOrdering& other)
+{
+    Q_UNUSED(other)
+    return *this; // stub
+}
+
 bool QMessageOrdering::isEmpty() const
 {
     return false; // stub
@@ -72,12 +78,6 @@ bool QMessageOrdering::operator==(const QMessageOrdering& other) const
 {
     Q_UNUSED(other)
     return false; // stub
-}
-
-const QMessageOrdering& QMessageOrdering::operator=(const QMessageOrdering& other)
-{
-    Q_UNUSED(other)
-    return *this; // stub
 }
 
 QMessageOrdering QMessageOrdering::byType(Qt::SortOrder order)

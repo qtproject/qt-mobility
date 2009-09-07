@@ -95,6 +95,15 @@ QMessageFolderFilter::~QMessageFolderFilter()
     d_ptr = 0;
 }
 
+QMessageFolderFilter& QMessageFolderFilter::operator=(const QMessageFolderFilter& other)
+{
+    if (&other != this) {
+        d_ptr->_key = other.d_ptr->_key;
+    }
+
+    return *this;
+}
+
 void QMessageFolderFilter::setOptions(QMessageDataComparator::Options options)
 {
     d_ptr->_options |= options;
@@ -151,15 +160,6 @@ const QMessageFolderFilter& QMessageFolderFilter::operator|=(const QMessageFolde
 bool QMessageFolderFilter::operator==(const QMessageFolderFilter& other) const
 {
     return (d_ptr->_key == other.d_ptr->_key);
-}
-
-const QMessageFolderFilter& QMessageFolderFilter::operator=(const QMessageFolderFilter& other)
-{
-    if (&other != this) {
-        d_ptr->_key = other.d_ptr->_key;
-    }
-
-    return *this;
 }
 
 QMessageFolderFilter QMessageFolderFilter::byId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)

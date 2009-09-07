@@ -47,6 +47,12 @@ QMessageAccountFilter::~QMessageAccountFilter()
 {
 }
 
+QMessageAccountFilter& QMessageAccountFilter::operator=(const QMessageAccountFilter& other)
+{
+    Q_UNUSED(other)
+    return *this; // stub
+}
+
 void QMessageAccountFilter::setOptions(QMessageDataComparator::Options options)
 {
     Q_UNUSED(options)
@@ -100,12 +106,6 @@ bool QMessageAccountFilter::operator==(const QMessageAccountFilter& other) const
 {
     Q_UNUSED(other)
     return false; // stub
-}
-
-const QMessageAccountFilter& QMessageAccountFilter::operator=(const QMessageAccountFilter& other)
-{
-    Q_UNUSED(other)
-    return *this; // stub
 }
 
 QMessageAccountFilter QMessageAccountFilter::byId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)

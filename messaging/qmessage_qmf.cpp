@@ -218,7 +218,7 @@ QMessage::QMessage(const QMessage &other)
     setDerivedMessage(this);
 }
 
-const QMessage& QMessage::operator=(const QMessage& other)
+QMessage& QMessage::operator=(const QMessage& other)
 {
     if (&other != this) {
         QMessageContentContainer::operator=(other);

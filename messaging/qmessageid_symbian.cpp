@@ -50,16 +50,16 @@ QMessageId::~QMessageId()
 {
 }
 
-bool QMessageId::operator==(const QMessageId& other) const
-{
-    Q_UNUSED(other)
-    return false; // stub
-}
-
 QMessageId& QMessageId::operator=(const QMessageId& other)
 {
     Q_UNUSED(other)
     return *this; // stub
+}
+
+bool QMessageId::operator==(const QMessageId& other) const
+{
+    Q_UNUSED(other)
+    return false; // stub
 }
 
 QString QMessageId::toString() const

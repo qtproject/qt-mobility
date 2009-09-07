@@ -108,6 +108,15 @@ QMessageFilter::~QMessageFilter()
     d_ptr = 0;
 }
 
+QMessageFilter& QMessageFilter::operator=(const QMessageFilter& other)
+{
+    if (&other != this) {
+        d_ptr->_key = other.d_ptr->_key;
+    }
+
+    return *this;
+}
+
 void QMessageFilter::setOptions(QMessageDataComparator::Options options)
 {
     d_ptr->_options |= options;
@@ -164,15 +173,6 @@ const QMessageFilter& QMessageFilter::operator|=(const QMessageFilter& other)
 bool QMessageFilter::operator==(const QMessageFilter& other) const
 {
     return (d_ptr->_key == other.d_ptr->_key);
-}
-
-const QMessageFilter& QMessageFilter::operator=(const QMessageFilter& other)
-{
-    if (&other != this) {
-        d_ptr->_key = other.d_ptr->_key;
-    }
-
-    return *this;
 }
 
 QMessageFilter QMessageFilter::byId(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp)

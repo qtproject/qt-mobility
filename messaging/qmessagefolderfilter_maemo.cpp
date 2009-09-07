@@ -47,6 +47,12 @@ QMessageFolderFilter::~QMessageFolderFilter()
 {
 }
 
+QMessageFolderFilter& QMessageFolderFilter::operator=(const QMessageFolderFilter& other)
+{
+    Q_UNUSED(other)
+    return *this; // stub
+}
+
 void QMessageFolderFilter::setOptions(QMessageDataComparator::Options options)
 {
     Q_UNUSED(options)
@@ -100,12 +106,6 @@ bool QMessageFolderFilter::operator==(const QMessageFolderFilter& other) const
 {
     Q_UNUSED(other)
     return false; // stub
-}
-
-const QMessageFolderFilter& QMessageFolderFilter::operator=(const QMessageFolderFilter& other)
-{
-    Q_UNUSED(other)
-    return *this; // stub
 }
 
 QMessageFolderFilter QMessageFolderFilter::byId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)

@@ -87,6 +87,15 @@ QMessageFolderOrdering::~QMessageFolderOrdering()
     d_ptr = 0;
 }
 
+QMessageFolderOrdering& QMessageFolderOrdering::operator=(const QMessageFolderOrdering& other)
+{
+    if (&other != this) {
+        d_ptr->_key = other.d_ptr->_key;
+    }
+
+    return *this;
+}
+
 bool QMessageFolderOrdering::isEmpty() const
 {
     return d_ptr->_key.isEmpty();
@@ -113,15 +122,6 @@ QMessageFolderOrdering& QMessageFolderOrdering::operator+=(const QMessageFolderO
 bool QMessageFolderOrdering::operator==(const QMessageFolderOrdering& other) const
 {
     return (d_ptr->_key == other.d_ptr->_key);
-}
-
-const QMessageFolderOrdering& QMessageFolderOrdering::operator=(const QMessageFolderOrdering& other)
-{
-    if (&other != this) {
-        d_ptr->_key = other.d_ptr->_key;
-    }
-
-    return *this;
 }
 
 QMessageFolderOrdering QMessageFolderOrdering::byDisplayName(Qt::SortOrder order)

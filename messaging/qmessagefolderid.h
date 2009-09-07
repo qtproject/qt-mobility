@@ -50,6 +50,7 @@ public:
     ~QMessageFolderId();
 
     QMessageFolderId& operator=(const QMessageFolderId &other);
+
     bool operator==(const QMessageFolderId &other) const;
     bool operator!=(const QMessageFolderId &other) const;
 

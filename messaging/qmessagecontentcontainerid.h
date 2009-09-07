@@ -48,8 +48,10 @@ public:
     QMessageContentContainerId(const QString &id);
     ~QMessageContentContainerId();
 
-    bool operator==(const QMessageContentContainerId &other) const;
     QMessageContentContainerId& operator=(const QMessageContentContainerId &other);
+
+    bool operator==(const QMessageContentContainerId &other) const;
+    bool operator!=(const QMessageContentContainerId &other) const;
 
     QString toString() const;
     bool isValid() const;

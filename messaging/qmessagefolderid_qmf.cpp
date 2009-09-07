@@ -68,15 +68,6 @@ QMessageFolderId::~QMessageFolderId()
     delete d_ptr;
 }
 
-bool QMessageFolderId::operator==(const QMessageFolderId& other) const
-{
-    if (isValid()) {
-        return (other.isValid() ? (d_ptr->_id == other.d_ptr->_id) : false);
-    } else {
-        return !other.isValid();
-    }
-}
-
 QMessageFolderId& QMessageFolderId::operator=(const QMessageFolderId& other)
 {
     if (&other != this) {
@@ -91,6 +82,15 @@ QMessageFolderId& QMessageFolderId::operator=(const QMessageFolderId& other)
     }
 
     return *this;
+}
+
+bool QMessageFolderId::operator==(const QMessageFolderId& other) const
+{
+    if (isValid()) {
+        return (other.isValid() ? (d_ptr->_id == other.d_ptr->_id) : false);
+    } else {
+        return !other.isValid();
+    }
 }
 
 QString QMessageFolderId::toString() const

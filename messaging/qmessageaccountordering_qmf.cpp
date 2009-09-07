@@ -101,7 +101,7 @@ bool QMessageAccountOrdering::operator==(const QMessageAccountOrdering& other) c
     return d_ptr->_key == other.d_ptr->_key;
 }
 
-const QMessageAccountOrdering& QMessageAccountOrdering::operator=(const QMessageAccountOrdering& other)
+QMessageAccountOrdering& QMessageAccountOrdering::operator=(const QMessageAccountOrdering& other)
 {
     if (&other != this) {
         d_ptr->_key = other.d_ptr->_key;

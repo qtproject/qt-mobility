@@ -185,14 +185,11 @@ QList<QByteArray> charsets;
     \fn QMessage::QMessage(const QMessage &other)
 
     Constructs a copy of \a other.
-    
-    \sa operator=()
 */
 
 /*!
+    \internal
     \fn QMessage::operator=(const QMessage& other)
-  
-    Assign the value of the QMessage \a other to this.
 */
 
 /*!

@@ -92,6 +92,15 @@ QMessageAccountFilter::~QMessageAccountFilter()
     d_ptr = 0;
 }
 
+QMessageAccountFilter& QMessageAccountFilter::operator=(const QMessageAccountFilter& other)
+{
+    if (&other != this) {
+        d_ptr->_key = other.d_ptr->_key;
+    }
+
+    return *this;
+}
+
 void QMessageAccountFilter::setOptions(QMessageDataComparator::Options options)
 {
     d_ptr->_options |= options;
@@ -148,15 +157,6 @@ const QMessageAccountFilter& QMessageAccountFilter::operator|=(const QMessageAcc
 bool QMessageAccountFilter::operator==(const QMessageAccountFilter& other) const
 {
     return (d_ptr->_key == other.d_ptr->_key);
-}
-
-const QMessageAccountFilter& QMessageAccountFilter::operator=(const QMessageAccountFilter& other)
-{
-    if (&other != this) {
-        d_ptr->_key = other.d_ptr->_key;
-    }
-
-    return *this;
 }
 
 QMessageAccountFilter QMessageAccountFilter::byId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)

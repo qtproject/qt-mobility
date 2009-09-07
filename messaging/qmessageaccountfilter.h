@@ -47,6 +47,8 @@ public:
     QMessageAccountFilter(const QMessageAccountFilter &other);
     virtual ~QMessageAccountFilter();
 
+    QMessageAccountFilter& operator=(const QMessageAccountFilter &other);
+
     void setOptions(QMessageDataComparator::Options options);
     QMessageDataComparator::Options options() const;
 
@@ -60,7 +62,7 @@ public:
     const QMessageAccountFilter& operator|=(const QMessageAccountFilter &other);
 
     bool operator==(const QMessageAccountFilter &other) const;
-    const QMessageAccountFilter& operator=(const QMessageAccountFilter &other);
+    bool operator!=(const QMessageAccountFilter &other) const;
 
     static QMessageAccountFilter byId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
     static QMessageAccountFilter byId(const QMessageAccountIdList &ids, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);

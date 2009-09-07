@@ -90,6 +90,15 @@ QMessageOrdering::~QMessageOrdering()
     d_ptr = 0;
 }
 
+QMessageOrdering& QMessageOrdering::operator=(const QMessageOrdering& other)
+{
+    if (&other != this) {
+        d_ptr->_key = other.d_ptr->_key;
+    }
+
+    return *this;
+}
+
 bool QMessageOrdering::isEmpty() const
 {
     return d_ptr->_key.isEmpty();
@@ -116,15 +125,6 @@ QMessageOrdering& QMessageOrdering::operator+=(const QMessageOrdering& other)
 bool QMessageOrdering::operator==(const QMessageOrdering& other) const
 {
     return (d_ptr->_key == other.d_ptr->_key);
-}
-
-const QMessageOrdering& QMessageOrdering::operator=(const QMessageOrdering& other)
-{
-    if (&other != this) {
-        d_ptr->_key = other.d_ptr->_key;
-    }
-
-    return *this;
 }
 
 QMessageOrdering QMessageOrdering::byType(Qt::SortOrder order)

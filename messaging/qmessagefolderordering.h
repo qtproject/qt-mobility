@@ -46,6 +46,8 @@ public:
     QMessageFolderOrdering(const QMessageFolderOrdering &other);
     virtual ~QMessageFolderOrdering();
 
+    QMessageFolderOrdering& operator=(const QMessageFolderOrdering &other);
+
     bool isEmpty() const;
     bool isSupported() const;
 
@@ -53,7 +55,7 @@ public:
     QMessageFolderOrdering& operator+=(const QMessageFolderOrdering &other);
 
     bool operator==(const QMessageFolderOrdering &other) const;
-    const QMessageFolderOrdering& operator=(const QMessageFolderOrdering &other);
+    bool operator!=(const QMessageFolderOrdering &other) const;
 
     static QMessageFolderOrdering byDisplayName(Qt::SortOrder order = Qt::AscendingOrder);
     static QMessageFolderOrdering byPath(Qt::SortOrder order = Qt::AscendingOrder);

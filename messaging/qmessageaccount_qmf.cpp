@@ -90,7 +90,7 @@ QMessageAccount::QMessageAccount(const QMessageAccount &other)
     this->operator=(other);
 }
 
-const QMessageAccount& QMessageAccount::operator=(const QMessageAccount& other)
+QMessageAccount& QMessageAccount::operator=(const QMessageAccount& other)
 {
     if (&other != this) {
         d_ptr->_account = other.d_ptr->_account;

@@ -48,6 +48,12 @@ QMessageFolderOrdering::~QMessageFolderOrdering()
 {
 }
 
+QMessageFolderOrdering& QMessageFolderOrdering::operator=(const QMessageFolderOrdering& other)
+{
+    Q_UNUSED(other)
+    return *this; // stub
+}
+
 bool QMessageFolderOrdering::isEmpty() const
 {
     return false; // stub
@@ -74,12 +80,6 @@ bool QMessageFolderOrdering::operator==(const QMessageFolderOrdering& other) con
 {
     Q_UNUSED(other)
     return false; // stub
-}
-
-const QMessageFolderOrdering& QMessageFolderOrdering::operator=(const QMessageFolderOrdering& other)
-{
-    Q_UNUSED(other)
-    return *this; // stub
 }
 
 QMessageFolderOrdering QMessageFolderOrdering::byDisplayName(Qt::SortOrder order)

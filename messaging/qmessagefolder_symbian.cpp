@@ -47,7 +47,7 @@ QMessageFolder::QMessageFolder(const QMessageFolder &other)
     Q_UNUSED(other)
 }
 
-const QMessageFolder& QMessageFolder::operator=(const QMessageFolder& other)
+QMessageFolder& QMessageFolder::operator=(const QMessageFolder& other)
 {
     Q_UNUSED(other)
     return *this; // stub

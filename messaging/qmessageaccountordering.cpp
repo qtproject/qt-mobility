@@ -65,8 +65,6 @@
     \fn QMessageAccountOrdering::QMessageAccountOrdering(const QMessageAccountOrdering &other)
   
     Constructs a copy of \a other.
-    
-    \sa operator=()
 */
 
 /*!
@@ -75,6 +73,11 @@
     Destroys the ordering.
 */
 
+/*!
+    \internal
+    \fn QMessageAccountOrdering::operator=(const QMessageAccountOrdering& other)
+*/
+    
 /*!
     \fn QMessageAccountOrdering::isEmpty() const
   
@@ -88,18 +91,18 @@
 */
 
 /*!
+    \internal
     \fn QMessageAccountOrdering::operator==(const QMessageAccountOrdering& other) const
-  
-    Returns \c true if the value of this ordering is the same as the ordering \a other. Returns 
-    \c false otherwise.
 */
 
 /*!
-    \fn QMessageAccountOrdering::operator=(const QMessageAccountOrdering& other)
-  
-    Assign the value of the QMessageAccountOrdering \a other to this.
+    \internal
 */
-    
+bool QMessageAccountOrdering::operator!=(const QMessageAccountOrdering& other) const
+{
+    return !operator==(other);
+}
+
 /*!
     \fn QMessageAccountOrdering::byName(Qt::SortOrder order)
   

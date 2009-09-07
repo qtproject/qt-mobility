@@ -63,7 +63,7 @@ bool QMessageAccountOrdering::operator==(const QMessageAccountOrdering& other) c
     return false; // stub
 }
 
-const QMessageAccountOrdering& QMessageAccountOrdering::operator=(const QMessageAccountOrdering& other)
+QMessageAccountOrdering& QMessageAccountOrdering::operator=(const QMessageAccountOrdering& other)
 {
     Q_UNUSED(other)
     return *this; // stub

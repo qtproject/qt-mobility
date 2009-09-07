@@ -47,7 +47,7 @@ QMessage::QMessage(const QMessage &other)
     Q_UNUSED(other)
 }
 
-const QMessage& QMessage::operator=(const QMessage& other)
+QMessage& QMessage::operator=(const QMessage& other)
 {
     Q_UNUSED(other)
     return *this; // stub

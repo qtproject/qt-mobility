@@ -75,14 +75,17 @@
     \fn QMessageFilter::QMessageFilter(const QMessageFilter &other)
   
     Constructs a copy of \a other.
-    
-    \sa operator=()
 */
 
 /*!
     \fn QMessageFilter::~QMessageFilter()
     
     Destroys the filter.
+*/
+
+/*!
+    \internal
+    \fn QMessageFilter& QMessageFilter::operator=(const QMessageFilter& other)
 */
 
 /*!
@@ -160,17 +163,17 @@
 */
 
 /*!
+    \internal
     \fn QMessageFilter::operator==(const QMessageFilter& other) const
-  
-    Returns \c true if the value of this filter is the same as the filter \a other. Returns 
-    \c false otherwise.
 */
 
 /*!
-    \fn QMessageFilter& QMessageFilter::operator=(const QMessageFilter& other)
-  
-    Assign the value of the QMessageFilter \a other to this.
+    \internal
 */
+bool QMessageFilter::operator!=(const QMessageFilter& other) const
+{
+    return !operator==(other);
+}
 
 /*!
     \fn QMessageFilter::byId(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp)

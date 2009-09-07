@@ -63,7 +63,7 @@ QMessageFolder::QMessageFolder(const QMessageFolder &other)
     this->operator=(other);
 }
 
-const QMessageFolder& QMessageFolder::operator=(const QMessageFolder& other)
+QMessageFolder& QMessageFolder::operator=(const QMessageFolder& other)
 {
     if (&other != this)
         *d_ptr = *other.d_ptr;

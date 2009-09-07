@@ -100,7 +100,7 @@ QMessageContentContainer::QMessageContentContainer(const QMessageContentContaine
     this->operator=(other);
 }
 
-const QMessageContentContainer& QMessageContentContainer::operator=(const QMessageContentContainer& other)
+QMessageContentContainer& QMessageContentContainer::operator=(const QMessageContentContainer& other)
 {
     if (&other != this) {
         *d_ptr = *other.d_ptr;

@@ -194,7 +194,7 @@ QMessageContentContainer::QMessageContentContainer(const QMessageContentContaine
     this->operator=(other);
 }
 
-const QMessageContentContainer& QMessageContentContainer::operator=(const QMessageContentContainer& other)
+QMessageContentContainer& QMessageContentContainer::operator=(const QMessageContentContainer& other)
 {
     if (&other != this) {
         if (other.d_ptr->_container == &other.d_ptr->_part) {

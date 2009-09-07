@@ -51,16 +51,16 @@ QMessageFolderId::~QMessageFolderId()
 {
 }
 
-bool QMessageFolderId::operator==(const QMessageFolderId& other) const
-{
-    Q_UNUSED(other)
-    return false; // stub
-}
-
 QMessageFolderId& QMessageFolderId::operator=(const QMessageFolderId& other)
 {
     Q_UNUSED(other)
     return *this; // stub
+}
+
+bool QMessageFolderId::operator==(const QMessageFolderId& other) const
+{
+    Q_UNUSED(other)
+    return false; // stub
 }
 
 QString QMessageFolderId::toString() const

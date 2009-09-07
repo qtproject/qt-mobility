@@ -61,7 +61,7 @@ QMessageAccount::QMessageAccount(const QMessageAccount &other)
     this->operator=(other);
 }
 
-const QMessageAccount& QMessageAccount::operator=(const QMessageAccount& other)
+QMessageAccount& QMessageAccount::operator=(const QMessageAccount& other)
 {
     if (&other != this)
         *d_ptr = *other.d_ptr;

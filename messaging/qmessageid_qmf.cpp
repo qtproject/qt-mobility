@@ -67,15 +67,6 @@ QMessageId::~QMessageId()
     delete d_ptr;
 }
 
-bool QMessageId::operator==(const QMessageId& other) const
-{
-    if (isValid()) {
-        return (other.isValid() ? (d_ptr->_id == other.d_ptr->_id) : false);
-    } else {
-        return !other.isValid();
-    }
-}
-
 QMessageId& QMessageId::operator=(const QMessageId& other)
 {
     if (&other != this) {
@@ -91,6 +82,15 @@ QMessageId& QMessageId::operator=(const QMessageId& other)
     }
 
     return *this;
+}
+
+bool QMessageId::operator==(const QMessageId& other) const
+{
+    if (isValid()) {
+        return (other.isValid() ? (d_ptr->_id == other.d_ptr->_id) : false);
+    } else {
+        return !other.isValid();
+    }
 }
 
 QString QMessageId::toString() const

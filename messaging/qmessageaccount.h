@@ -48,7 +48,7 @@ public:
     QMessageAccount(const QMessageAccount &other);
     virtual ~QMessageAccount();
 
-    const QMessageAccount& operator=(const QMessageAccount &other);
+    QMessageAccount& operator=(const QMessageAccount &other);
 
     QMessageAccountId id() const;
     QString name() const;

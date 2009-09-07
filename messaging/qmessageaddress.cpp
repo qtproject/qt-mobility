@@ -78,8 +78,6 @@ QMessageAddress::QMessageAddress(const QString &recipient, Type type)
 
 /*!
     Constructs a copy of \a other.
-    
-    \sa operator=()
 */
 QMessageAddress::QMessageAddress(const QMessageAddress &other)
     : d_ptr(new QMessageAddressPrivate(this))
@@ -87,10 +85,8 @@ QMessageAddress::QMessageAddress(const QMessageAddress &other)
     this->operator=(other);
 }
 
-/*!
-    Assign the value of the QMessageAddress \a other to this.
-*/
-const QMessageAddress& QMessageAddress::operator=(const QMessageAddress& other)
+/*! \internal */
+QMessageAddress& QMessageAddress::operator=(const QMessageAddress& other)
 {
     if (&other != this) {
         d_ptr->recipient = other.d_ptr->recipient;
@@ -109,9 +105,7 @@ QMessageAddress::~QMessageAddress()
     d_ptr = 0;
 }
 
-/*!
-    Returns true if the message address is equal to that contained by \a other.
-*/
+/*! \internal */
 bool QMessageAddress::operator==(const QMessageAddress& other) const
 {
     return ((d_ptr->type == other.d_ptr->type) && (d_ptr->recipient == other.d_ptr->recipient));

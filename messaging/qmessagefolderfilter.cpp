@@ -67,14 +67,17 @@
     \fn QMessageFolderFilter::QMessageFolderFilter(const QMessageFolderFilter &other)
   
     Constructs a copy of \a other.
-    
-    \sa operator=()
 */
 
 /*!
     \fn QMessageFolderFilter::~QMessageFolderFilter()
     
     Destroys the filter.
+*/
+
+/*!
+    \internal
+    \fn QMessageFolderFilter::operator=(const QMessageFolderFilter& other)
 */
 
 /*!
@@ -152,17 +155,17 @@
 */
 
 /*!
+    \internal
     \fn QMessageFolderFilter::operator==(const QMessageFolderFilter& other) const
-  
-    Returns \c true if the value of this filter is the same as the filter \a other. Returns 
-    \c false otherwise.
 */
 
 /*!
-    \fn QMessageFolderFilter::operator=(const QMessageFolderFilter& other)
-  
-    Assign the value of the QMessageFolderFilter \a other to this.
+    \internal
 */
+bool QMessageFolderFilter::operator!=(const QMessageFolderFilter& other) const
+{
+    return !operator==(other);
+}
 
 /*!
     \fn QMessageFolderFilter::byId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)

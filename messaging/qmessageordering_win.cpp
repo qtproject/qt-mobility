@@ -194,6 +194,16 @@ QMessageOrdering::QMessageOrdering(const QMessageOrdering &other)
     this->operator=(other);
 }
 
+QMessageOrdering& QMessageOrdering::operator=(const QMessageOrdering& other)
+{
+    if (&other != this) {
+        d_ptr->_fieldOrderList = other.d_ptr->_fieldOrderList;
+        d_ptr->_valid = other.d_ptr->_valid;
+    }
+
+    return *this;
+}
+
 bool QMessageOrdering::isEmpty() const
 {
     return d_ptr->_fieldOrderList.isEmpty();
@@ -230,16 +240,6 @@ QMessageOrdering& QMessageOrdering::operator+=(const QMessageOrdering& other)
 bool QMessageOrdering::operator==(const QMessageOrdering& other) const
 {
     return (d_ptr->_fieldOrderList == other.d_ptr->_fieldOrderList);
-}
-
-const QMessageOrdering& QMessageOrdering::operator=(const QMessageOrdering& other)
-{
-    if (&other != this) {
-        d_ptr->_fieldOrderList = other.d_ptr->_fieldOrderList;
-        d_ptr->_valid = other.d_ptr->_valid;
-    }
-
-    return *this;
 }
 
 QMessageOrdering QMessageOrdering::byType(Qt::SortOrder order)

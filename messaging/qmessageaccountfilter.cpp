@@ -66,14 +66,17 @@
     \fn QMessageAccountFilter::QMessageAccountFilter(const QMessageAccountFilter &other)
   
     Constructs a copy of \a other.
-    
-    \sa operator=()
 */
 
 /*!
     \fn QMessageAccountFilter::~QMessageAccountFilter()
     
     Destroys the filter.
+*/
+
+/*!
+    \internal
+    \fn QMessageAccountFilter::operator=(const QMessageAccountFilter& other)
 */
 
 /*!
@@ -150,18 +153,18 @@
     to this filter.
 */
 
-/*!
+/*! 
+    \internal
     \fn QMessageAccountFilter::operator==(const QMessageAccountFilter& other) const
-  
-    Returns \c true if the value of this filter is the same as the filter \a other. Returns 
-    \c false otherwise.
 */
 
-/*!
-    \fn QMessageAccountFilter::operator=(const QMessageAccountFilter& other)
-  
-    Assign the value of the QMessageAccountFilter \a other to this.
+/*! 
+    \internal
 */
+bool QMessageAccountFilter::operator!=(const QMessageAccountFilter& other) const
+{
+    return !operator==(other);
+}
 
 /*!
     \fn QMessageAccountFilter::byId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)

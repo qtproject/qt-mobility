@@ -509,6 +509,30 @@ QMessageFilter::~QMessageFilter()
     d_ptr = 0;
 }
 
+QMessageFilter& QMessageFilter::operator=(const QMessageFilter& other)
+{
+    if (&other == this)
+        return *this;
+    delete d_ptr->_left;
+    d_ptr->_left = 0;
+    delete d_ptr->_right;
+    d_ptr->_right = 0;
+    d_ptr->_options = other.d_ptr->_options;
+    d_ptr->_field = other.d_ptr->_field;
+    d_ptr->_value = other.d_ptr->_value;
+    d_ptr->_comparatorType = other.d_ptr->_comparatorType;
+    d_ptr->_comparatorValue = other.d_ptr->_comparatorValue;
+    d_ptr->_operator = other.d_ptr->_operator;
+    d_ptr->_buffer = 0; // Delay construction of buffer until it is used
+    d_ptr->_valid = other.d_ptr->_valid;
+
+    if (other.d_ptr->_left)
+        d_ptr->_left = new QMessageFilter(*other.d_ptr->_left);
+    if (other.d_ptr->_right)
+        d_ptr->_right = new QMessageFilter(*other.d_ptr->_right);
+    return *this;
+}
+
 void QMessageFilter::setOptions(QMessageDataComparator::Options options)
 {
     d_ptr->_options = options;
@@ -636,30 +660,6 @@ bool QMessageFilter::operator==(const QMessageFilter& other) const
     // TODO: For a system of determining equality of boolean algebra expressions see:
     // TODO:  Completely distributed normal form http://wikpedia.org/wiki/Boolean_algebra(logic)
     return false;
-}
-
-const QMessageFilter& QMessageFilter::operator=(const QMessageFilter& other)
-{
-    if (&other == this)
-        return *this;
-    delete d_ptr->_left;
-    d_ptr->_left = 0;
-    delete d_ptr->_right;
-    d_ptr->_right = 0;
-    d_ptr->_options = other.d_ptr->_options;
-    d_ptr->_field = other.d_ptr->_field;
-    d_ptr->_value = other.d_ptr->_value;
-    d_ptr->_comparatorType = other.d_ptr->_comparatorType;
-    d_ptr->_comparatorValue = other.d_ptr->_comparatorValue;
-    d_ptr->_operator = other.d_ptr->_operator;
-    d_ptr->_buffer = 0; // Delay construction of buffer until it is used
-    d_ptr->_valid = other.d_ptr->_valid;
-
-    if (other.d_ptr->_left)
-        d_ptr->_left = new QMessageFilter(*other.d_ptr->_left);
-    if (other.d_ptr->_right)
-        d_ptr->_right = new QMessageFilter(*other.d_ptr->_right);
-    return *this;
 }
 
 QMessageFilter QMessageFilter::byId(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp)

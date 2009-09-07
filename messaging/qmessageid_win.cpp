@@ -102,22 +102,6 @@ QMessageId::~QMessageId()
     delete d_ptr;
 }
 
-bool QMessageId::operator==(const QMessageId& other) const
-{
-    if (isValid()) {
-        if (other.isValid()) {
-            bool result(true);
-            result &= (d_ptr->_messageRecordKey == other.d_ptr->_messageRecordKey);
-            result &= (d_ptr->_folderRecordKey == other.d_ptr->_folderRecordKey);
-            result &= (d_ptr->_storeRecordKey == other.d_ptr->_storeRecordKey);
-            return result;
-        }
-        return false;
-    } else {
-        return !other.isValid();
-    }
-}
-
 QMessageId& QMessageId::operator=(const QMessageId& other)
 {
     if (&other != this) {
@@ -136,6 +120,22 @@ QMessageId& QMessageId::operator=(const QMessageId& other)
     }
 
     return *this;
+}
+
+bool QMessageId::operator==(const QMessageId& other) const
+{
+    if (isValid()) {
+        if (other.isValid()) {
+            bool result(true);
+            result &= (d_ptr->_messageRecordKey == other.d_ptr->_messageRecordKey);
+            result &= (d_ptr->_folderRecordKey == other.d_ptr->_folderRecordKey);
+            result &= (d_ptr->_storeRecordKey == other.d_ptr->_storeRecordKey);
+            return result;
+        }
+        return false;
+    } else {
+        return !other.isValid();
+    }
 }
 
 QString QMessageId::toString() const

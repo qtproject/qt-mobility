@@ -46,6 +46,8 @@ public:
     QMessageOrdering(const QMessageOrdering &other);
     virtual ~QMessageOrdering();
 
+    QMessageOrdering& operator=(const QMessageOrdering &other);
+
     bool isEmpty() const;
     bool isSupported() const;
 
@@ -53,7 +55,7 @@ public:
     QMessageOrdering& operator+=(const QMessageOrdering &other);
 
     bool operator==(const QMessageOrdering &other) const;
-    const QMessageOrdering& operator=(const QMessageOrdering &other);
+    bool operator!=(const QMessageOrdering &other) const;
 
     static QMessageOrdering byType(Qt::SortOrder order = Qt::AscendingOrder);
     static QMessageOrdering bySender(Qt::SortOrder order = Qt::AscendingOrder);

@@ -53,7 +53,8 @@ public:
     QMessageAddress();
     QMessageAddress(const QString &recipient, Type type);
     QMessageAddress(const QMessageAddress &other);
-    const QMessageAddress& operator=(const QMessageAddress &other);
+
+    QMessageAddress& operator=(const QMessageAddress &other);
 
     bool operator==(const QMessageAddress &other) const;
     bool operator!=(const QMessageAddress &other) const;

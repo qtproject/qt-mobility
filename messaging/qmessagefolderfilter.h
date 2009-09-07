@@ -51,6 +51,8 @@ public:
     QMessageFolderFilter(const QMessageFolderFilter &other);
     virtual ~QMessageFolderFilter();
 
+    QMessageFolderFilter& operator=(const QMessageFolderFilter &other);
+
     void setOptions(QMessageDataComparator::Options options);
     QMessageDataComparator::Options options() const;
 
@@ -64,7 +66,7 @@ public:
     const QMessageFolderFilter& operator|=(const QMessageFolderFilter &other);
 
     bool operator==(const QMessageFolderFilter &other) const;
-    const QMessageFolderFilter& operator=(const QMessageFolderFilter &other);
+    bool operator!=(const QMessageFolderFilter &other) const;
 
     static QMessageFolderFilter byId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
     static QMessageFolderFilter byId(const QMessageFolderIdList &ids, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);

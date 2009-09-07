@@ -97,7 +97,7 @@ public:
     QMessage(const QMessage &other);
     virtual ~QMessage();
 
-    const QMessage& operator=(const QMessage &other);
+    QMessage& operator=(const QMessage &other);
 
     static QMessage fromTransmissionFormat(Type t, const QByteArray &ba);
     static QMessage fromTransmissionFormatFile(Type t, const QString &fileName);

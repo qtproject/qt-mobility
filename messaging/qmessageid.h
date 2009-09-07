@@ -49,6 +49,7 @@ public:
     ~QMessageId();
 
     QMessageId& operator=(const QMessageId &other);
+
     bool operator==(const QMessageId &other) const;
     bool operator!=(const QMessageId &other) const;
 

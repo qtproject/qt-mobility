@@ -89,17 +89,22 @@
 */
 
 /*!
-    \fn bool QMessageContentContainerId::operator==(const QMessageContentContainerId &other) const
-
-    Returns true if this identifier and the \a other identifier are identical;
-    otherwise returns false.
+    \internal
+    \fn QMessageContentContainerId& QMessageContentContainerId::operator=(const QMessageContentContainerId &other)
 */
 
 /*!
-    \fn QMessageContentContainerId& QMessageContentContainerId::operator=(const QMessageContentContainerId &other)
-
-    Assigns \a other to this identifier and returns a reference to this identifier.
+    \internal
+    \fn bool QMessageContentContainerId::operator==(const QMessageContentContainerId &other) const
 */
+
+/*!
+    \internal
+*/
+bool QMessageContentContainerId::operator!=(const QMessageContentContainerId &other) const
+{
+    return !operator==(other);
+}
 
 /*!
     \fn bool QMessageContentContainerId::toString() const
