@@ -73,7 +73,7 @@ QMessageAddress QMessageAccount::fromAddress() const
 
 QMessage::TypeFlags QMessageAccount::types() const
 {
-    return QMessage::None; // stub
+    return QMessage::NoType; // stub
 }
 
 QString QMessageAccount::signature() const

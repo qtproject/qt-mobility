@@ -196,7 +196,7 @@ QMailMessage::MessageType convert(QMessage::Type t)
 
 QMessage::Type convert(QMailMessage::MessageType t)
 {
-    QMessage::Type result(QMessage::None);
+    QMessage::Type result(QMessage::NoType);
 
     // This could be a single value or a mask
     if (t & QMailMessage::Mms) {

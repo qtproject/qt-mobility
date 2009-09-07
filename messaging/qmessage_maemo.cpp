@@ -88,7 +88,7 @@ QMessageId QMessage::id() const
 
 QMessage::Type QMessage::type() const
 {
-    return None; // stub
+    return NoType; // stub
 }
 
 void QMessage::setType(Type t)
@@ -200,7 +200,7 @@ void QMessage::setBcc(const QMessageAddressList& bccList)
 
 QMessage::StatusFlags QMessage::status() const
 {
-    return StatusFlags(None); // stub
+    return StatusFlags(0); // stub
 }
 
 void QMessage::setStatus(QMessage::StatusFlags newStatus)

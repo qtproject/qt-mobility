@@ -478,7 +478,7 @@ void tst_QMessage::testToTransmissionFormat_multipart()
 void tst_QMessage::testType()
 {
     QMessage msg;
-    QCOMPARE(msg.type(), QMessage::None);
+    QCOMPARE(msg.type(), QMessage::NoType);
 
     msg.setType(QMessage::Email);
     QCOMPARE(msg.type(), QMessage::Email);

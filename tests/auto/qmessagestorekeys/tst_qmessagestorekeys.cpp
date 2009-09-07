@@ -1380,7 +1380,7 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[0] );
 
     QTest::newRow("type equality invalid")
-        << QMessageFilter::byType(QMessage::None, QMessageDataComparator::Equal) 
+        << QMessageFilter::byType(QMessage::NoType, QMessageDataComparator::Equal) 
         << QMessageIdList()
         << messageIds;
 
@@ -1395,7 +1395,7 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] );
 
     QTest::newRow("type inequality invalid")
-        << QMessageFilter::byType(QMessage::None, QMessageDataComparator::NotEqual) 
+        << QMessageFilter::byType(QMessage::NoType, QMessageDataComparator::NotEqual) 
         << messageIds
         << QMessageIdList();
 
@@ -1415,7 +1415,7 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << QMessageIdList();
 
     QTest::newRow("type mask inclusion empty")
-        << QMessageFilter::byType(QMessage::None, QMessageDataComparator::Includes) 
+        << QMessageFilter::byType(QMessage::NoType, QMessageDataComparator::Includes) 
         << QMessageIdList()
         << messageIds;
 
@@ -1435,7 +1435,7 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << messageIds;
 
     QTest::newRow("type mask exclusion empty")
-        << QMessageFilter::byType(QMessage::None, QMessageDataComparator::Excludes) 
+        << QMessageFilter::byType(QMessage::NoType, QMessageDataComparator::Excludes) 
         << messageIds
         << QMessageIdList();
 

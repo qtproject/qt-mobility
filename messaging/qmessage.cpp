@@ -108,7 +108,7 @@
     \value Sms      The message is an SMS, Short Message Service object.
     \value Email    The message is an Email, Internet Message Format object.
     \value Xmpp     The message is an XMPP, Extensible Messaging and Presence Protocol object.
-    \value None     The message type is not defined.
+    \value NoType   The message type is not defined.
     \value AnyType  Bitflag value that matches any message type defined.
     
     \sa type(), setType()

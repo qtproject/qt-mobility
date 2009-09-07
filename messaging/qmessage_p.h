@@ -43,7 +43,7 @@ public:
     QMessagePrivate(QMessage *message)
         :q_ptr(message),
          _size(0),
-         _type(QMessage::None),
+         _type(QMessage::NoType),
          _status(0),
          _priority(QMessage::NormalPriority),
 #ifdef QMESSAGING_OPTIONAL
