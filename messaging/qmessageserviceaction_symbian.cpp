@@ -119,7 +119,7 @@ bool QMessageServiceAction::exportUpdates(const QMessageAccountId &id)
     return false; // stub
 }
 
-QMessageServiceAction::Activity QMessageServiceAction::activity() const
+QMessageServiceAction::State QMessageServiceAction::state() const
 {
     return Pending; // stub
 }

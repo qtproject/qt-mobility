@@ -61,7 +61,7 @@ public slots:
     void reportMatchingIds();
 
 signals:
-    void activityChanged(QMessageServiceAction::Activity);
+    void stateChanged(QMessageServiceAction::State);
     void messagesFound(const QMessageIdList&);
     void progressChanged(uint, uint);
 };
@@ -69,7 +69,7 @@ signals:
 void QMessageServiceActionPrivate::completed()
 {
     _active = false;
-    emit activityChanged(QMessageServiceAction::Successful);
+    emit stateChanged(QMessageServiceAction::Successful);
 }
 
 void QMessageServiceActionPrivate::reportMatchingIds()
@@ -115,8 +115,8 @@ QMessageServiceAction::QMessageServiceAction(QObject *parent)
     d_ptr(new QMessageServiceActionPrivate(this))
 {
     d_ptr->init();
-    connect(d_ptr, SIGNAL(activityChanged(QMessageServiceAction::Activity)),
-        this, SIGNAL(activityChanged(QMessageServiceAction::Activity)));
+    connect(d_ptr, SIGNAL(stateChanged(QMessageServiceAction::State)),
+        this, SIGNAL(stateChanged(QMessageServiceAction::State)));
     connect(d_ptr, SIGNAL(messagesFound(const QMessageIdList&)),
         this, SIGNAL(messagesFound(const QMessageIdList&)));
     connect(d_ptr, SIGNAL(progressChanged(uint, uint)),
@@ -273,7 +273,7 @@ bool QMessageServiceAction::exportUpdates(const QMessageAccountId &id)
     return false; // stub
 }
 
-QMessageServiceAction::Activity QMessageServiceAction::activity() const
+QMessageServiceAction::State QMessageServiceAction::state() const
 {
     return Pending; // stub
 }

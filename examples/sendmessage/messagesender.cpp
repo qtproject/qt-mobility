@@ -115,7 +115,7 @@ MessageSender::MessageSender(QWidget *parent, Qt::WindowFlags flags)
     mainLayout->addWidget(sendButton, 0);
     mainLayout->setAlignment(sendButton, Qt::AlignRight);
 
-    connect(&service, SIGNAL(activityChanged(QMessageServiceAction::Activity)), this, SLOT(activityChanged(QMessageServiceAction::Activity)));
+    connect(&service, SIGNAL(stateChanged(QMessageServiceAction::State)), this, SLOT(stateChanged(QMessageServiceAction::State)));
 }
 
 MessageSender::~MessageSender()
@@ -197,12 +197,12 @@ void MessageSender::send()
     }
 }
 
-void MessageSender::activityChanged(QMessageServiceAction::Activity a)
+void MessageSender::stateChanged(QMessageServiceAction::State s)
 {
-    if (a == QMessageServiceAction::Successful) {
+    if (s == QMessageServiceAction::Successful) {
         QMessageBox::information(0, "Success", "Message sent successfully");
         sendButton->setEnabled(true);
-    } else if (a == QMessageServiceAction::Failed) {
+    } else if (s == QMessageServiceAction::Failed) {
         QMessageBox::warning(0, "Failed", "Unable to send message");
 
         if (!QMessageStore::instance()->removeMessage(sendId)) {

@@ -98,8 +98,8 @@ QMessageStore::ErrorCode convert(QMailStore::ErrorCode v);
 QMailStore::MessageRemovalOption convert(QMessageStore::RemovalOption v);
 QMessageStore::RemovalOption convert(QMailStore::MessageRemovalOption v);
 
-QMailServiceAction::Activity convert(QMessageServiceAction::Activity v);
-QMessageServiceAction::Activity convert(QMailServiceAction::Activity v);
+QMailServiceAction::Activity convert(QMessageServiceAction::State v);
+QMessageServiceAction::State convert(QMailServiceAction::Activity v);
 
 QMessageAddress convert(const QMailAddress &address);
 QMailAddress convert(const QMessageAddress &address);

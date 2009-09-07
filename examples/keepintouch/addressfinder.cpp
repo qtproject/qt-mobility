@@ -149,7 +149,7 @@ AddressFinder::AddressFinder(QWidget *parent, Qt::WindowFlags flags)
     mainLayout->addLayout(inputLayout);
     mainLayout->addLayout(outputLayout);
 
-    connect(&service, SIGNAL(activityChanged(QMessageServiceAction::Activity)), this, SLOT(activityChanged(QMessageServiceAction::Activity)));
+    connect(&service, SIGNAL(stateChanged(QMessageServiceAction::State)), this, SLOT(stateChanged(QMessageServiceAction::State)));
     connect(&service, SIGNAL(messagesFound(QMessageIdList)), this, SLOT(messagesFound(QMessageIdList)));
 }
 
@@ -233,9 +233,9 @@ void AddressFinder::searchMessages()
     inclusionFilter = (outgoingFilter & includeFilter & ~excludeFilter);
 }
 
-void AddressFinder::activityChanged(QMessageServiceAction::Activity a)
+void AddressFinder::stateChanged(QMessageServiceAction::State s)
 {
-    if (a == QMessageServiceAction::Successful) {
+    if (s == QMessageServiceAction::Successful) {
         if (!inclusionFilter.isEmpty()) {
             // Now find the included messages
             service.queryMessages(inclusionFilter);
@@ -248,7 +248,7 @@ void AddressFinder::activityChanged(QMessageServiceAction::Activity a)
                 searchButton->setEnabled(true);
             }
         }
-    } else if (a == QMessageServiceAction::Failed) {
+    } else if (s == QMessageServiceAction::Failed) {
         qWarning() << "Search failed!";
         searchButton->setEnabled(true);
     }
