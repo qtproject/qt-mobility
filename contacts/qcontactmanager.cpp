@@ -52,14 +52,6 @@
  */
 
 /*!
- * \fn QContactManager::dataChanged(SignalDuplication signalDuplication)
- * This signal is emitted when the manager detects that data in its store has changed.
- * If the manager is able to detect changes with finer granularity, it may also emit
- * contactsAdded(), contactsChanged(), contactsRemoved(), groupsAdded(), groupsChanged(),
- * or groupsRemoved(); if it does so, \a signal Duplication will be QContactManager::SignalOnce.
- */
-
-/*!
  * \fn QContactManager::contactsAdded(const QList<QUniqueId>& contactIds)
  * This signal is emitted at some point once the contacts identified by \a contactIds have been added to a datastore managed by this manager
  */

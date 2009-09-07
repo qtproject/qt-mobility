@@ -86,12 +86,6 @@
  */
 
 /*!
- * \fn QContactManagerEngine::dataChanged
- *
- *
- */
-
-/*!
  * \fn QContactManagerEngine::contactsAdded(const QList<QUniqueId>& contactIds);
  *
  * This signal is emitted some time after a set of contacts has been added to
