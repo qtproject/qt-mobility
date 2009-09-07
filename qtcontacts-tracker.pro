@@ -22,15 +22,7 @@ SOURCES += qcontacttrackerbackend.cpp \
 # QT += contacts
 INCLUDEPATH += /usr/include/qt4/QtContacts
 
-target.path = /usr/lib/qt4/plugins/qtcontacts-tracker
+target.path = /usr/lib/qt4/plugins/contacts
 INSTALLS += target
-pluginlink.path = /usr/lib/qt4/plugins/
-pluginlink.uninstall = rm \
-    -f \
-    /usr/lib/qt4/plugins/libqtcontacts_tracker.so
-pluginlink.commands = ln \
-    -sf \
-    qtcontacts-tracker/libqtcontacts_tracker.so \
-    "\$(INSTALL_ROOT)/usr/lib/qt4/plugins/libqtcontacts_tracker.so"
-INSTALLS += pluginlink
+
 
