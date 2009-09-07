@@ -426,7 +426,11 @@ QList<QContactDetail> QContact::detailsWithAction(const QString& actionName) con
     // ascertain which details are supported by any implementation of the given action
     QContactData::setError(d, QContact::NoError);
     QList<QContactDetail> retn;
-    QList<QContactAction*> implementations = QContactManagerData::actions(actionName);
+    QList<QContactActionDescriptor> descriptors = QContactManagerData::actionDescriptors(actionName);
+    QList<QContactAction*> implementations;
+    for (int i = 0; i < descriptors.size(); i++)
+        implementations.append(QContactManagerData::action(descriptors.at(i)));
+
     for (int i = 0; i < d->m_details.size(); i++) {
         QContactDetail detail = d->m_details.at(i);
         for (int j = 0; j < implementations.size(); j++) {
@@ -437,6 +441,9 @@ QList<QContactDetail> QContact::detailsWithAction(const QString& actionName) con
             }
         }
     }
+
+    for (int i = 0; i < implementations.size(); i++)
+        delete implementations.at(i);
 
     if (retn.isEmpty())
         QContactData::setError(d, QContact::DetailDoesNotExistError);
@@ -450,12 +457,19 @@ QStringList QContact::availableActions() const
     // check every action implementation to see if it supports me.
     QContactData::setError(d, QContact::NoError);
     QSet<QString> validActions;
-    QList<QContactAction*> implementations = QContactManagerData::actions();
+    QList<QContactActionDescriptor> descriptors = QContactManagerData::actionDescriptors();
+    QList<QContactAction*> implementations;
+    for (int i = 0; i < descriptors.size(); i++)
+        implementations.append(QContactManagerData::action(descriptors.at(i)));
+
     for (int i = 0; i < implementations.size(); i++) {
         QContactAction* aptr = implementations.at(i);
         if (QContactManagerEngine::testFilter(aptr->contactFilter(), *this))
             validActions.insert(aptr->actionDescriptor().actionName());
     }
+
+    for (int i = 0; i < implementations.size(); i++)
+        delete implementations.at(i);
 
     return validActions.toList();
 }

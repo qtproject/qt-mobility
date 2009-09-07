@@ -280,19 +280,19 @@ QList<QContactActionDescriptor> QContactManagerData::actionDescriptors(const QSt
     return descriptors;
 }
 
-QList<QContactAction*> QContactManagerData::actions(const QString& actionName, const QString& vendorName, int implementationVersion)
-{
-    QList<QContactAction*> retn;
-    QList<QContactActionDescriptor> descriptors = actionDescriptors(actionName, vendorName, implementationVersion);
-
-    /* Now loop over the valid descriptors */
-    for (int j=0; j < descriptors.size(); j++) {
-        const QContactActionDescriptor& descriptor = descriptors.at(j);
-        retn += m_descriptormap.value(descriptor)->instance(descriptor);
-    }
-
-    return retn;
-}
+//QList<QContactAction*> QContactManagerData::actions(const QString& actionName, const QString& vendorName, int implementationVersion)
+//{
+//    QList<QContactAction*> retn;
+//    QList<QContactActionDescriptor> descriptors = actionDescriptors(actionName, vendorName, implementationVersion);
+//
+//    /* Now loop over the valid descriptors */
+//    for (int j=0; j < descriptors.size(); j++) {
+//        const QContactActionDescriptor& descriptor = descriptors.at(j);
+//        retn += m_descriptormap.value(descriptor)->instance(descriptor);
+//    }
+//
+//    return retn;
+//}
 
 QContactAction* QContactManagerData::action(const QContactActionDescriptor& actionDescriptor)
 {

@@ -49,14 +49,11 @@
 #define makename(x) makestr(x)
 
 QContactSendEmailActionFactory::QContactSendEmailActionFactory()
-        : m_instance(new QContactSendEmailAction)
 {
 }
 
 QContactSendEmailActionFactory::~QContactSendEmailActionFactory()
 {
-    if (m_instance)
-        delete m_instance;
 }
 
 QString QContactSendEmailActionFactory::name() const
@@ -74,7 +71,7 @@ QContactAction* QContactSendEmailActionFactory::instance(const QContactActionDes
 {
     if (descriptor.actionName() != QString("SendEmail") || descriptor.vendorName() != QString("Test") || descriptor.implementationVersion() != 1)
         return 0;
-    return m_instance;
+    return new QContactSendEmailAction;
 }
 
 QVariantMap QContactSendEmailActionFactory::actionMetadata(const QContactActionDescriptor& descriptor) const

@@ -70,7 +70,7 @@ public:
     static QContactAction* action(const QContactActionDescriptor& descriptor);
 
     /* return a list of points to action implementations which match the given criteria */
-    static QList<QContactAction*> actions(const QString& actionName = QString(), const QString& vendorName = QString(), int implementationVersion = -1);
+    //static QList<QContactAction*> actions(const QString& actionName = QString(), const QString& vendorName = QString(), int implementationVersion = -1);
 };
 
 #endif

@@ -147,7 +147,7 @@ QList<QContactActionDescriptor> QContactAction::actionDescriptors(const QString&
 
 /*!
  * Returns a pointer to a new instance of the action implementation identified by the given \a descriptor.
- * The caller does not take ownership of the action implementation; the lifetime is managed by its factory.
+ * The caller takes ownership of the action implementation and must delete it to avoid leaking memory.
  */
 QContactAction* QContactAction::action(const QContactActionDescriptor& descriptor)
 {
@@ -155,15 +155,15 @@ QContactAction* QContactAction::action(const QContactActionDescriptor& descripto
     return QContactManagerData::action(descriptor);
 }
 
-/*!
- * Returns a list of pointers to instances of the action implementations of the given \a actionName which are provided by the
- * given \a vendorName and are of the given \a implementationVersion.  If \a actionName is empty, a list of pointers to
- * implementations of all actions are returned; if \a vendorName is empty, pointers to implementations provided by any vendor and
- * of any implementation version are returned; if \a implementationVersion is empty, pointers to any implementations provided by the
- * given \a vendorName of the given \a actionName are returned.
- */
-QList<QContactAction*> QContactAction::actions(const QString& actionName, const QString& vendorName, int implementationVersion)
-{
-    QContactManagerData::loadFactories();
-    return QContactManagerData::actions(actionName, vendorName, implementationVersion);
-}
+///*!
+// * Returns a list of pointers to instances of the action implementations of the given \a actionName which are provided by the
+// * given \a vendorName and are of the given \a implementationVersion.  If \a actionName is empty, a list of pointers to
+// * implementations of all actions are returned; if \a vendorName is empty, pointers to implementations provided by any vendor and
+// * of any implementation version are returned; if \a implementationVersion is empty, pointers to any implementations provided by the
+// * given \a vendorName of the given \a actionName are returned.
+// */
+//QList<QContactAction*> QContactAction::actions(const QString& actionName, const QString& vendorName, int implementationVersion)
+//{
+//    QContactManagerData::loadFactories();
+//    return QContactManagerData::actions(actionName, vendorName, implementationVersion);
+//}

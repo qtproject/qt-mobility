@@ -81,7 +81,7 @@ public:
     void createEngine(const QString& managerName, const QMap<QString, QString>& parameters);
     static QContactManagerEngine* engine(const QContactManager* manager);
     static QList<QContactActionDescriptor> actionDescriptors(const QString& actionName = QString(), const QString& vendorName = QString(), int implementationVersion = -1);
-    static QList<QContactAction*> actions(const QString& actionName = QString(), const QString& vendorName = QString(), int implementationVersion = -1);
+    //static QList<QContactAction*> actions(const QString& actionName = QString(), const QString& vendorName = QString(), int implementationVersion = -1);
     static QContactAction* action(const QContactActionDescriptor& actionDescriptor);
 
     QContactManagerEngine* m_engine;

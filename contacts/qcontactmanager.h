@@ -123,7 +123,15 @@ public:
     /* return a list of available backends for which a QContactManager can be constructed. */
     static QStringList availableManagers();
 
+
+    // single signal?
+    enum SignalGranularity {
+        GranularityDataChangedOnly = 0,
+        Granularity
+    };
+
 signals:
+    void dataChanged(SignalGranularity granularity);
     void contactsAdded(const QList<QUniqueId>& contactIds);
     void contactsChanged(const QList<QUniqueId>& contactIds);
     void contactsRemoved(const QList<QUniqueId>& contactIds);

@@ -85,6 +85,11 @@
  * count in this case.
  */
 
+/*!
+ * \fn QContactManagerEngine::dataChanged
+ *
+ *
+ */
 
 /*!
  * \fn QContactManagerEngine::contactsAdded(const QList<QUniqueId>& contactIds);
@@ -1463,21 +1468,18 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
             {
                 // Find any matching actions, and do a union filter on their filter objects
                 QContactActionFilter af(filter);
-                //QContactActionDescriptor ad;
-                //ad.setActionName(af.actionName());
-                //ad.setVendorName(af.vendorName());
-                //ad.setImplementationVersion(af.implementationVersion());
-                QList<QContactAction*> actions = QContactAction::actions(af.actionName(), af.vendorName(), af.implementationVersion());
+                QList<QContactActionDescriptor> descriptors = QContactAction::actionDescriptors(af.actionName(), af.vendorName(), af.implementationVersion());
 
                 // There's a small wrinkle if there's a value specified in the action filter
                 // we have to adjust any contained QContactDetailFilters to have that value
                 // or test if a QContactDetailRangeFilter contains this value already
-                for (int j = 0; j < actions.count(); j++) {
-                    QContactAction* action = actions.at(j);
+                for (int j = 0; j < descriptors.count(); j++) {
+                    QContactAction* action = QContactAction::action(descriptors.at(j));
 
                     // Action filters are not allowed to return action filters, at all
                     // it's too annoying to check for recursion
                     QContactFilter d = action->contactFilter(af.value());
+                    delete action; // clean up.
                     if (!validateActionFilter(d))
                         return false;
 

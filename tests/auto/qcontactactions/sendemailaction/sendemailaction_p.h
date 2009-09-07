@@ -81,9 +81,6 @@ public:
     QList<QContactActionDescriptor> actionDescriptors() const;
     QContactAction* instance(const QContactActionDescriptor& descriptor) const;
     QVariantMap actionMetadata(const QContactActionDescriptor& descriptor) const;
-
-private:
-    QContactSendEmailAction* m_instance;
 };
 
 #endif
