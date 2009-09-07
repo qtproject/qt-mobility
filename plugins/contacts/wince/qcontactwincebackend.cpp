@@ -208,7 +208,7 @@ static void processFileAs(const QVariantList& values, QContact& ret)
 static void processAddress(const QString& context, const QVariantList& values, QContact& ret)
 {
     QContactAddress address;
-    address.setContextAttribute(context);
+    address.setContexts(context);
     setIfNotEmpty(address, QContactAddress::FieldDisplayLabel, values[0].toString());
     setIfNotEmpty(address, QContactAddress::FieldStreet, values[1].toString());
     setIfNotEmpty(address, QContactAddress::FieldPostcode, values[2].toString());
@@ -221,17 +221,17 @@ static void processAddress(const QString& context, const QVariantList& values, Q
 
 static void processHomeAddress(const QVariantList& values, QContact& ret)
 {
-    processAddress(QContactDetail::AttributeContextHome, values, ret);
+    processAddress(QContactDetail::ContextHome, values, ret);
 }
 
 static void processWorkAddress(const QVariantList& values, QContact& ret)
 {
-    processAddress(QContactDetail::AttributeContextWork, values, ret);
+    processAddress(QContactDetail::ContextWork, values, ret);
 }
 
 static void processOtherAddress(const QVariantList& values, QContact& ret)
 {
-    processAddress(QContactDetail::AttributeContextOther, values, ret);
+    processAddress(QContactDetail::ContextOther, values, ret);
 }
 
 static void processEmails(const QVariantList& values, QContact& ret)
@@ -250,9 +250,9 @@ static void processEmails(const QVariantList& values, QContact& ret)
             e.setValue(QContactEmailAddress::FieldEmailAddress, v);
             QChar m = meta.at(j - 1);
             if (m == 'H')
-                e.setContextAttribute(QContactDetail::AttributeContextHome);
+                e.setContexts(QContactDetail::ContextHome);
             else if (m == 'W')
-                e.setContextAttribute(QContactDetail::AttributeContextWork);
+                e.setContexts(QContactDetail::ContextWork);
             ret.saveDetail(&e);
         }
     }
@@ -289,30 +289,30 @@ static void processPhones(const QVariantList& values, QContact& ret)
                     m = meta.at(i);
                     if (m ==  ' ')
                         m = 'W';
-                    number.setSubTypeAttribute(QContactPhoneNumber::AttributeSubTypeVoice);
+                    number.setSubTypes(QContactPhoneNumber::SubTypeVoice);
                     break;
                 case 2: // Car
                     m = meta.at(i);
-                    number.setSubTypeAttribute(QContactPhoneNumber::AttributeSubTypeCar);
+                    number.setSubTypes(QContactPhoneNumber::SubTypeCar);
                     break;
                 case 3: // Mobile
                     m = meta.at(i);
-                    number.setSubTypeAttribute(QContactPhoneNumber::AttributeSubTypeMobile);
+                    number.setSubTypes(QContactPhoneNumber::SubTypeMobile);
                     break;
                 case 4: // Home phones
                 case 5:
                     m = meta.at(i);
                     if (m ==  ' ')
                         m = 'H';
-                    number.setSubTypeAttribute(QContactPhoneNumber::AttributeSubTypeVoice);
+                    number.setSubTypes(QContactPhoneNumber::SubTypeVoice);
                     break;
                 case 6: // Pager
                     m = meta.at(i);
-                    number.setSubTypeAttribute(QContactPhoneNumber::AttributeSubTypePager);
+                    number.setSubTypes(QContactPhoneNumber::SubTypePager);
                     break;
                 case 7: // Radio telephone (??)
                     m = meta.at(i);
-                    number.setSubTypeAttribute(QContactPhoneNumber::AttributeSubTypeMobile);
+                    number.setSubTypes(QContactPhoneNumber::SubTypeMobile);
                     break;
                 case 8: // SIM entry
                     break;
@@ -320,20 +320,20 @@ static void processPhones(const QVariantList& values, QContact& ret)
                     m = meta.at(i);
                     if (m ==  ' ')
                         m = 'H';
-                    number.setSubTypeAttribute(QContactPhoneNumber::AttributeSubTypeFacsimile);
+                    number.setSubTypes(QContactPhoneNumber::SubTypeFacsimile);
                     break;
                 case 10: // Business fax
                     m = meta.at(i);
                     if (m ==  ' ')
                         m = 'W';
-                    number.setSubTypeAttribute(QContactPhoneNumber::AttributeSubTypeFacsimile);
+                    number.setSubTypes(QContactPhoneNumber::SubTypeFacsimile);
                     break;
             }
 
             if (m == 'H')
-                number.setContextAttribute(QContactDetail::AttributeContextHome);
+                number.setContexts(QContactDetail::ContextHome);
             else if (m == 'W')
-                number.setContextAttribute(QContactDetail::AttributeContextWork);
+                number.setContexts(QContactDetail::ContextWork);
 
             ret.saveDetail(&number);
         }
@@ -476,23 +476,23 @@ static void processQPhones(const QList<QContactPhoneNumber>& nums, CEPROPID meta
         CEPROPID id = PIMPR_INVALID_ID;
 
         // Map from our attributes to ids
-        if (number.subTypeAttribute() == QContactPhoneNumber::AttributeSubTypeCar)
+        if (number.subTypes().contains(QContactPhoneNumber::SubTypeCar))
             id = PIMPR_CAR_TELEPHONE_NUMBER;
-        else if (number.subTypeAttribute() == QContactPhoneNumber::AttributeSubTypeMobile)
+        else if (number.subTypes().contains(QContactPhoneNumber::SubTypeMobile))
             id = PIMPR_MOBILE_TELEPHONE_NUMBER;
-        else if (number.subTypeAttribute() == QContactPhoneNumber::AttributeSubTypeFacsimile) {
-            if (number.contextAttribute() == QContactDetail::AttributeContextHome)
+        else if (number.subTypes().contains(QContactPhoneNumber::SubTypeFacsimile)) {
+            if (number.contexts().contains(QContactDetail::ContextHome))
                 id = PIMPR_HOME_FAX_NUMBER;
-            else if (number.contextAttribute() == QContactDetail::AttributeContextWork)
+            else if (number.contexts().contains(QContactDetail::ContextWork))
                 id = PIMPR_BUSINESS_FAX_NUMBER;
-        } else if (number.subTypeAttribute() == QContactPhoneNumber::AttributeSubTypeVoice) {
-            if (number.contextAttribute() == QContactDetail::AttributeContextHome)
+        } else if (number.subTypes().contains(QContactPhoneNumber::SubTypeVoice)) {
+            if (number.contexts().contains(QContactDetail::ContextHome))
                 id = availableIds.contains(PIMPR_HOME_TELEPHONE_NUMBER) ? PIMPR_HOME_TELEPHONE_NUMBER : PIMPR_HOME2_TELEPHONE_NUMBER;
-            else if (number.contextAttribute() == QContactDetail::AttributeContextWork)
+            else if (number.contexts().contains(QContactDetail::ContextWork))
                 id = availableIds.contains(PIMPR_BUSINESS_TELEPHONE_NUMBER) ? PIMPR_BUSINESS_TELEPHONE_NUMBER : PIMPR_BUSINESS2_TELEPHONE_NUMBER;
-        } else if (number.subTypeAttribute() == QContactPhoneNumber::AttributeSubTypePager) 
+        } else if (number.subTypes().contains(QContactPhoneNumber::SubTypePager))
             id = PIMPR_PAGER_NUMBER;
-        else if (number.subTypeAttribute().isEmpty()) {
+        else if (number.subTypes().isEmpty()) {
             // We do this anonymous number at the end, if we haven't already deferred it
             if (j < numbers.count()) {
                 deferred.append(numbers.takeAt(j));
@@ -522,9 +522,9 @@ static void processQPhones(const QList<QContactPhoneNumber>& nums, CEPROPID meta
                 qDebug() << "Too many phone numbers, store this some other way:" << number.attributes();
             } else {
                 // Set the meta information
-                if (number.contextAttribute() == QContactDetail::AttributeContextHome)
+                if (number.contexts().contains(QContactDetail::ContextHome)
                     meta[availableIds.indexOf(id)] = 'H';
-                else if (number.contextAttribute() == QContactDetail::AttributeContextWork)
+                else if (number.contexts().contains(QContactDetail::ContextWork)
                     meta[availableIds.indexOf(id)] = 'W';
 
                 props.append(convertToCEPropVal(id, number.number()));
@@ -546,9 +546,9 @@ static void processQEmails(const QList<QContactEmailAddress>& emails, CEPROPID m
     foreach(const QContactEmailAddress& email, emails) {
         CEPROPID id = availableIds.takeFirst();
         if (id != 0) {
-            if (email.contextAttribute() == QContactDetail::AttributeContextHome)
+            if (email.contexts().contains(QContactDetail::ContextHome)
                 meta += "H";
-            else if (email.contextAttribute() == QContactDetail::AttributeContextWork)
+            else if (email.contexts().contains(QContactDetail::ContextWork)
                 meta += "W";
             else
                 meta += " ";
