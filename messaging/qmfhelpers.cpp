@@ -268,7 +268,7 @@ QMessageStore::RemovalOption convert(QMailStore::MessageRemovalOption v)
     return QMessageStore::RemoveLocalCopyOnly;
 }
 
-QMailServiceAction::Activity convert(QMessageServiceAction::Activity v)
+QMailServiceAction::Activity convert(QMessageServiceAction::State v)
 {
     switch (v) {
     case QMessageServiceAction::Pending: return QMailServiceAction::Pending;
@@ -281,7 +281,7 @@ QMailServiceAction::Activity convert(QMessageServiceAction::Activity v)
     return QMailServiceAction::Pending;
 }
 
-QMessageServiceAction::Activity convert(QMailServiceAction::Activity v)
+QMessageServiceAction::State convert(QMailServiceAction::Activity v)
 {
     switch (v) {
     case QMailServiceAction::Pending: return QMessageServiceAction::Pending;

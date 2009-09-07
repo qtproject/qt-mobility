@@ -85,7 +85,7 @@ public:
     QMailMessageIdList _transmitIds;
     
 signals:
-    void activityChanged(QMessageServiceAction::Activity);
+    void stateChanged(QMessageServiceAction::State);
     void progressChanged(uint, uint);
     void messagesFound(const QMessageIdList&);
 
@@ -109,10 +109,10 @@ QMessageServiceActionPrivate::QMessageServiceActionPrivate()
       _limit(0),
       _offset(0)
 {
-    connect(&_transmit, SIGNAL(activityChanged(QMailServiceAction::Activity)), this, SLOT(transmitActivityChanged(QMailServiceAction::Activity)));
+    connect(&_transmit, SIGNAL(activityChanged(QMailServiceAction::State)), this, SLOT(transmitActivityChanged(QMailServiceAction::State)));
     connect(&_transmit, SIGNAL(statusChanged(QMailServiceAction::Status)), this, SLOT(statusChanged(QMailServiceAction::Status)));
 
-    connect(&_retrieval, SIGNAL(activityChanged(QMailServiceAction::Activity)), this, SLOT(retrievalActivityChanged(QMailServiceAction::Activity)));
+    connect(&_retrieval, SIGNAL(activityChanged(QMailServiceAction::State)), this, SLOT(retrievalActivityChanged(QMailServiceAction::State)));
     connect(&_retrieval, SIGNAL(statusChanged(QMailServiceAction::Status)), this, SLOT(statusChanged(QMailServiceAction::Status)));
 }
 
@@ -137,7 +137,7 @@ void QMessageServiceActionPrivate::transmitActivityChanged(QMailServiceAction::A
         _transmitIds.clear();
     }
 
-    emit activityChanged(convert(a));
+    emit stateChanged(convert(a));
 }
 
 void QMessageServiceActionPrivate::statusChanged(const QMailServiceAction::Status &s)
@@ -160,12 +160,12 @@ void QMessageServiceActionPrivate::statusChanged(const QMailServiceAction::Statu
 
 void QMessageServiceActionPrivate::retrievalActivityChanged(QMailServiceAction::Activity a)
 {
-    emit activityChanged(convert(a));
+    emit stateChanged(convert(a));
 }
 
 void QMessageServiceActionPrivate::completed()
 {
-    emit activityChanged(convert(QMailServiceAction::Successful));
+    emit stateChanged(convert(QMailServiceAction::Successful));
 }
 
 bool QMessageServiceActionPrivate::messageMatch(const QMailMessageId &messageId)
@@ -245,8 +245,8 @@ QMessageServiceAction::QMessageServiceAction(QObject *parent)
     : QObject(parent),
       d_ptr(new QMessageServiceActionPrivate)
 {
-    connect(d_ptr, SIGNAL(activityChanged(QMessageServiceAction::Activity)), 
-            this, SIGNAL(activityChanged(QMessageServiceAction::Activity)));
+    connect(d_ptr, SIGNAL(stateChanged(QMessageServiceAction::State)), 
+            this, SIGNAL(stateChanged(QMessageServiceAction::State)));
     connect(d_ptr, SIGNAL(messagesFound(QMessageIdList)), 
             this, SIGNAL(messagesFound(QMessageIdList)));
     connect(d_ptr, SIGNAL(progressChanged(uint, uint)), 
@@ -516,7 +516,7 @@ bool QMessageServiceAction::exportUpdates(const QMessageAccountId &id)
     return true;
 }
 
-QMessageServiceAction::Activity QMessageServiceAction::activity() const
+QMessageServiceAction::State QMessageServiceAction::state() const
 {
     if (d_ptr->_active) {
         return convert(d_ptr->_active->activity());

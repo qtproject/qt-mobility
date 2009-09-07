@@ -52,7 +52,7 @@ public:
     ~MessageSender();
 
 private slots:
-    void activityChanged(QMessageServiceAction::Activity a);
+    void stateChanged(QMessageServiceAction::State s);
     void removeAttachment();
     void addAttachment();
     void attachmentSelected(int);

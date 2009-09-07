@@ -68,9 +68,9 @@
 */
 
 /*!
-    \enum QMessageServiceAction::Activity
+    \enum QMessageServiceAction::State
 
-    This enum type is used to describe the activity state of the requested action.
+    This enum type is used to describe the state of the requested action.
 
     \value Pending          The action has not yet begun execution.
     \value InProgress       The action is currently executing.
@@ -270,9 +270,9 @@
 */
     
 /*!
-    \fn QMessageServiceAction::activity() const
+    \fn QMessageServiceAction::state() const
   
-    Returns the current activity state of the action.
+    Returns the current state of the action.
 
     \sa activityChanged()
 */
@@ -284,12 +284,11 @@
 */
 
 /*!
-    \fn QMessageServiceAction::activityChanged(QMessageServiceAction::Activity a)
+    \fn QMessageServiceAction::stateChanged(QMessageServiceAction::State newState)
 
-    This signal is emitted when the activity status of the action changes,
-    with the new state described by \a a.
+    This signal is emitted when the state of the action changes, with the new state described by \a newState.
 
-    \sa activity()
+    \sa state()
 */
 
 /*!

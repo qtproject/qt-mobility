@@ -45,7 +45,7 @@ class Q_MESSAGING_EXPORT QMessageServiceAction : public QObject
     Q_DECLARE_PRIVATE(QMessageAddress)
 
 public:
-    enum Activity {
+    enum State {
         Pending = 0,
         InProgress,
         Successful,
@@ -67,14 +67,15 @@ public:
     bool retrieve(const QMessageContentContainerId &id);
     bool show(const QMessageId &id);
     bool exportUpdates(const QMessageAccountId &id);
-    Activity activity() const;
+
+    State state() const;
     QMessageStore::ErrorCode lastError() const;
 
 public slots:
     void cancelOperation();
 
 signals:
-    void activityChanged(QMessageServiceAction::Activity a);
+    void stateChanged(QMessageServiceAction::State a);
     void messagesFound(const QMessageIdList &ids);
     void messagesCounted(int count);
     void progressChanged(uint value, uint total);

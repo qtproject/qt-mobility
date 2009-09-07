@@ -57,7 +57,7 @@ private slots:
     void includePeriodChanged(int);
     void addressSelected(const QString&);
     void searchMessages();
-    void activityChanged(QMessageServiceAction::Activity a);
+    void stateChanged(QMessageServiceAction::State a);
     void messagesFound(const QMessageIdList &ids);
     void continueSearch();
 
