@@ -1,14 +1,12 @@
 # config.pri specifies the configure options
 !include(config.pri) {
-    unix:error("Please run configure script");
-    #wait until we have a script for windows
-    #error("Please run configure script");
+    error("Please run configure script");
 }
 
 #generate prf file for Qt integration
 
 unix:system((echo MOBILITY_PREFIX=$${QT_MOBILITY_PREFIX}; echo MOBILITY_INCLUDE=$${QT_MOBILITY_INCLUDE}; cat features/mobility.prf.template) > features/mobility.prf)
-win32: message("Win 32 todo")
+win32:system((echo MOBILITY_PREFIX=$${QT_MOBILITY_PREFIX} & echo MOBILITY_INCLUDE=$${QT_MOBILITY_INCLUDE} & type features\mobility.prf.template) > features\mobility.prf)
 
 # install feature file
 feature.path = $$[QT_INSTALL_DATA]/mkspecs/features
