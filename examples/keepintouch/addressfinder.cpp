@@ -32,9 +32,7 @@
 ****************************************************************************/
 
 #include "addressfinder.h"
-//#include "addresshelper.h"
-extern bool qContainsGroupSpecifier(const QString &input);
-extern void qParseMailbox(QString &input, QString &name, QString &address, QString &suffix);
+#include "addresshelper.h"
 
 #include <QComboBox>
 #include <QDateTime>
@@ -285,7 +283,7 @@ void AddressFinder::continueSearch()
         const QMessage message(id);
 
         // Determine the properties of the message
-        QString details(QString("[%1] %2").arg(message.date().toString("d MMM")).arg(message.subject()));
+        QString details(QString("[%1] %2").arg(message.date().toString("MMM d")).arg(message.subject()));
 
         foreach (const QMessageAddress &address, message.to() + message.cc() + message.bcc()) {
             QString recipient(address.recipient());
