@@ -94,7 +94,9 @@ private:
     QString langCached;
 #endif
 private Q_SLOTS:
+#if defined(Q_OS_LINUX)
     void startLangaugePolling();
+#endif
 
 };
 
