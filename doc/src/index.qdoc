@@ -56,15 +56,13 @@
 
 \title Messaging Library Developer Resources
 
-\brief The Messaging API allows the creation, sending and retrieval of
-messages using a native application.
+\brief The Messaging API enables access to messaging services.
 
-
-The Messaging API enables access to messaging services to send
-messages and retrieve message data, as well as messaging
-services to compose, reply to, forward and show messages using a
-native application.
-
+The Messaging API enables access to messaging services to 
+search and sort messages, send messages, retrieve message 
+data, and launch the preferred messaging client on the system 
+to either display an existing message, compose a new message, 
+or respond to an existing message. 
 
 \tableofcontents
 
@@ -92,6 +90,14 @@ the device.
 
 This library requires Qt 4.5 to be installed.
 
+On Microsoft Windows, MAPI header files are required to be installed,
+we recommend installing Visual Studio Express for this purpose.
+
+On Linux QMF is required to be installed and the QMF_INCLUDEDIR and 
+QMF_LIBDIR environment variables set to the 
+messagingframework/src/libraries/qtopiamail 
+and build/messagingframework/image/lib directories respectively.
+
 To build the library, run qmake and make.
 
 \section1 Reference documentation
@@ -104,10 +110,7 @@ To build the library, run qmake and make.
 
 The library provides a number of classes to assist with the composition
 and manipulation of message data. Messages of all supported types are
-represented uniformly, although not all transport mechanisms are able to
-deliver more complex message formulations. Messages can be composed of
-multiple parts and constructed hierarchically. Composition of multipart
-messages from individual part objects is supported.
+represented uniformly. Messages can be composed of multiple parts.
 
 Classes to assist with composition and manipulation of messages:
 
@@ -141,8 +144,8 @@ selecting a useful view of data. This reduces the burden on the client
 of the library for managing the messaging data, as well as allowing
 better use of the underlying storage mechanism.
 
-Sorting is accomplished by providing a sorting key, specifying the sort
-order, and the message property upon which to sort.
+Sorting is accomplished by providing a ordering object, specifying the sort
+order, and the message property upon which to order.
 
 Filtering is accomplished by providing a filtering condition, specifying a
 value, the property to match, and the desired relation between the value
@@ -156,22 +159,22 @@ Classes to assist with sorting and filtering messages:
 \table
 \header \o Class \o Description
 \row \o QMessageStore \o Represents the main interface for storage and retrieval of messages, folders and accounts from the messaging store.
-\row \o QMessageFilterKey \o Defines the parameters used for querying a subset of all available messages from the messaging store.
-\row \o QMessageSortKey \o Defines the parameters used for sorting messages queried from the messaging store.
-\row \o QMessageFolderFilterKey \o Defines the parameters used for querying a subset of all available message folders from the messaging store.
-\row \o QMessageFolderSortKey \o Defines the parameters used for sorting message folders queried from the messaging store.
-\row \o QMessageAccountFilterKey \o Defines the parameters used for querying a subset of all available accounts from the messaging store.
-\row \o QMessageAccountSortKey \o Defines the parameters used for sorting accounts queried from the messaging store.
+\row \o QMessageFilter \o Defines the parameters used for querying a subset of all available messages from the messaging store.
+\row \o QMessageOrdering \o Defines the parameters used for ordering messages queried from the messaging store.
+\row \o QMessageFolderFilter \o Defines the parameters used for querying a subset of all available message folders from the messaging store.
+\row \o QMessageFolderOrdering \o Defines the parameters used for ordering message folders queried from the messaging store.
+\row \o QMessageAccountFilter \o Defines the parameters used for querying a subset of all available accounts from the messaging store.
+\row \o QMessageAccountOrdering \o Defines the parameters used for ordering accounts queried from the messaging store.
 \endtable
 
-\section2   Using the SortKey Functions
+\section2   Using the Ordering Functions
 
-An example of the use of SortKey functions can be found in the Send Message
+An example of the use of Ordering functions can be found in the Send Message
 example.
 
 \code
-    QMessageIdList ids = QMessageStore::instance()->queryMessages(QMessageFilterKey(),
-        QMessageSortKey::receptionTimeStamp(Qt::DescendingOrder), 100, 0);
+    QMessageIdList ids = QMessageStore::instance()->queryMessages(QMessageFilter(),
+        QMessageOrdering::byReceptionTimeStamp(Qt::DescendingOrder), 100, 0);
 \endcode
 
 
@@ -184,11 +187,11 @@ boolean operators, in the same way you would manipulate bit settings in C.
 In this way we can build more complex conditions.
 
 \code
-    QMessageFilterKey includeFilter(QMessageFilterKey::timeStamp(minimumDate,
+    QMessageFilter includeFilter(QMessageFilter::byTimeStamp(minimumDate,
             QMessageDataComparator::GreaterThanEqual));
-    QMessageFilterKey excludeFilter(QMessageFilterKey::timeStamp(maximumDate,
+    QMessageFilter excludeFilter(QMessageFilter::byTimeStamp(maximumDate,
             QMessageDataComparator::GreaterThanEqual));
-    QMessageFilterKey outgoingFilter(QMessageFilterKey::status(QMessage::Incoming,
+    QMessageFilter outgoingFilter(QMessageFilter::byStatus(QMessage::Incoming,
             QMessageDataComparator::Excludes));
 
     // Search for messages containing addresses to exclude
