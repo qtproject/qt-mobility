@@ -81,6 +81,9 @@ QList<CContactItemField *> TransformPhoneNumber::transformDetailL(const QContact
 		newField->AddFieldTypeL(KUidContactFieldVCardMapPAGER);
 	}
 	
+	//contexts
+	setContextsL(phoneNumber, *newField);
+	
 	CleanupStack::Pop(newField);
 	
 	fieldList.append(newField);
@@ -119,6 +122,12 @@ QContactDetail *TransformPhoneNumber::transformItemFieldL(const CContactItemFiel
 		{
 			phoneNumber->setSubTypes(QContactPhoneNumber::SubTypePager);
 		}
+		
+		else
+		{
+			setContexts(field.ContentType().FieldType(i), *phoneNumber);
+		}
+			
 	}
 	
 	return phoneNumber;

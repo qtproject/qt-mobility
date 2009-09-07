@@ -59,8 +59,6 @@ void TransformContact::initializeTransformContactData()
 	m_transformContactData.insert(Name, new TransformName);
 	m_transformContactData.insert(PhoneNumber, new TransformPhoneNumber);
 	m_transformContactData.insert(EmailAddress, new TransformEmail);
-	//m_transformContactData.insert(Address, )
-	
 }
 
 
@@ -145,6 +143,9 @@ QList<CContactItemField *> TransformContact::transformDetail(const QContactDetai
 
 QContactDetail *TransformContact::transformItemField(const CContactItemField& field, const QContact &contact) const
 {
+	//TODO: add a method to return the UIDs from the details and add them to a multimap
+	//m_transformContactData.value(multimap.key(fieldType))->transformItemField(field, contact);
+	
 	QContactDetail *detail(0);
 	
 	TUint32 fieldType(field.ContentType().FieldType(0).iUid);

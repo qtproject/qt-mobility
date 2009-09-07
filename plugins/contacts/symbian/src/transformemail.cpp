@@ -46,6 +46,9 @@ QList<CContactItemField *> TransformEmail::transformDetailL(const QContactDetail
 	newField->AddFieldTypeL(KUidContactFieldVCardMapEMAILINTERNET);
 	CleanupStack::Pop(newField);
 	
+	//contexts
+	setContextsL(email, *newField);
+	
 	fieldList.append(newField);
 	
 	return fieldList;
@@ -61,6 +64,11 @@ QContactDetail *TransformEmail::transformItemFieldL(const CContactItemField& fie
 	QString emailAddress = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
 	
 	email->setEmailAddress(emailAddress);
+	
+	for (int i = 0; i < field.ContentType().FieldTypeCount(); i++)
+	{
+		setContexts(field.ContentType().FieldType(i), *email);
+	}
 	
 	return email;
 }

@@ -50,3 +50,34 @@ QContactDetail *TransformContactData::transformItemField(const CContactItemField
 	
 	return detail;
 }
+
+void TransformContactData::setContexts(const TUid &fieldType, QContactDetail &detail)
+{
+	if (fieldType == KUidContactFieldVCardMapHOME)
+	{
+		detail.setContexts(QContactDetail::ContextHome);
+	}
+	
+	else if (fieldType == KUidContactFieldVCardMapWORK)
+	{
+		detail.setContexts(QContactDetail::ContextWork);
+	}
+}
+
+void TransformContactData::setContextsL(const QContactDetail &detail, CContactItemField &field)
+{
+	QStringList contexts = detail.contexts();
+	
+	for (int i = 0; contexts.count(); i++)
+	{
+		if (contexts.at(i) == QContactDetail::ContextHome )
+		{
+			field.AddFieldTypeL(KUidContactFieldVCardMapHOME);
+		}
+		
+		else if (contexts.at(i) == QContactDetail::ContextWork )
+		{
+			field.AddFieldTypeL(KUidContactFieldVCardMapWORK);
+		}
+	}
+}
