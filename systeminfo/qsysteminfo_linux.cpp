@@ -116,6 +116,7 @@ void QSystemInfoPrivate::startLangaugePolling()
     checkLang = checkLang.left(2);
     if(checkLang != langCached) {
         emit currentLanguageChanged(checkLang);
+        langCached = checkLang;
     }
     langTimer = new QTimer(this);
     QTimer::singleShot(1000, this, SLOT(startLangaugePolling()));
