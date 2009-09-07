@@ -495,7 +495,7 @@ QList<QByteArray> charsets;
     Sets the body text of the message to be the string \a body.
     
     The internet media (MIME) content type of the body is set to \a mimeType, if provided.
-    If the \a mimetype is not specified, the content type will default to "text/plain", and
+    If the \a mimeType is not specified, the content type will default to "text/plain", and
     the encoding charset will be as determined by preferredCharsets().
     
     \sa body(), preferredCharsets()
@@ -507,10 +507,10 @@ QList<QByteArray> charsets;
     Sets the body text of the message to be the text read from the stream \a in.
     
     The internet media (MIME) content type of the body is set to \a mimeType, if provided.
-    If the \a mimetype is not specified, the content type will default to "text/plain", and
+    If the \a mimeType is not specified, the content type will default to "text/plain", and
     the encoding charset will be as determined by preferredCharsets().
     
-    \sa body(), setBodyFromFile(), preferredCharsets()
+    \sa body(), preferredCharsets()
 */
 
 /*!
@@ -627,9 +627,9 @@ QList<QByteArray> charsets;
     \fn QMessage::setPreferredCharsets(const QList<QByteArray> &charsetNames)
     
     Sets the ordered-by-preference list of names of charsets to use when encoding 
-    unicode QString data to a serialized form.
+    unicode QString data to a serialized form to \a charsetNames.
 
-    \sa preferredCharsets(), preferredCharsetFor(), toTransmissionFormat()
+    \sa preferredCharsets(), preferredCharsetFor(), toTransmissionFormat(), setBody()
 */
 void QMessage::setPreferredCharsets(const QList<QByteArray> &charsetNames)
 {
@@ -642,7 +642,7 @@ void QMessage::setPreferredCharsets(const QList<QByteArray> &charsetNames)
     Returns an ordered-by-preference list of charset names to use when encoding 
     unicode QString data to a serialized form.
 
-    \sa setPreferredCharsets(), preferredCharsetFor(), toTransmissionFormat()
+    \sa setPreferredCharsets(), preferredCharsetFor(), toTransmissionFormat(), setBody()
 */
 QList<QByteArray> QMessage::preferredCharsets()
 {
@@ -653,7 +653,7 @@ QList<QByteArray> QMessage::preferredCharsets()
     Returns the first charset from the preferred list that is capable of encoding
     the content of \a text.
 
-    \sa preferredCharsets(), toTransmissionFormat()
+    \sa preferredCharsets(), toTransmissionFormat(), setBody()
 */
 QByteArray QMessage::preferredCharsetFor(const QString &text)
 {
