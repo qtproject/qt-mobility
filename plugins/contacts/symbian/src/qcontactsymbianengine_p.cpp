@@ -39,7 +39,9 @@
 #include <qtcontacts.h>
 
 
-QContactSymbianEngineData::QContactSymbianEngineData()
+QContactSymbianEngineData::QContactSymbianEngineData() :
+    m_contactDatabase(0),
+    m_transformContact(0)
 {
     QT_TRANSLATE_SYMBIAN_LEAVE_TO_EXCEPTION(m_contactDatabase = CContactDatabase::OpenL());
     QT_TRANSLATE_SYMBIAN_LEAVE_TO_EXCEPTION(m_contactDatabase->AddObserverL(*this));
@@ -49,7 +51,9 @@ QContactSymbianEngineData::QContactSymbianEngineData()
 
 QContactSymbianEngineData::~QContactSymbianEngineData()
 {
-	m_contactDatabase->RemoveObserver(*this);
+	if (m_contactDatabase != 0) {
+	    m_contactDatabase->RemoveObserver(*this);
+	}
 	delete m_contactDatabase;
 	delete m_transformContact;
 }
