@@ -30,42 +30,37 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include "transformemail.h"
 
-#ifndef TRANSFORMCONCTACT_H_
-#define TRANSFORMCONCTACT_H_
-
-#include <qtcontacts.h>
-
-#include <cntfldst.h>
-#include <cntdb.h>
-#include <cntdef.h>
-#include <cntitem.h>
-
-class TransformContactData;
-class TransformContact
+QList<CContactItemField *> TransformEmail::transformDetailL(const QContactDetail &detail)
 {
-public:
-	TransformContact();
-	virtual ~TransformContact();
-
-public:
-	QContact transformContact(CContactItem &contact) const;
-	CContactItem *transformContact(QContact &contact) const;
-
-private:
-	enum ContactData
-	{
-		Name = 0,
-		PhoneNumber,
-		EmailAddress
-	};
+	QList<CContactItemField *> fieldList; 
 	
-	void initializeTransformContactData();
-	QList<CContactItemField *> transformDetail(const QContactDetail &detail) const;
-	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact) const;
+	//cast to phonenumber
+	const QContactEmailAddress &email(static_cast<const QContactEmailAddress&>(detail));
 	
-private:
-	QMap<ContactData, TransformContactData*> m_transformContactData;
-};
+	//create new field
+	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldEMail);
+	TPtrC fieldText(reinterpret_cast<const TUint16*>(email.emailAddress().utf16()));
+	newField->TextStorage()->SetTextL(fieldText);
+	newField->AddFieldTypeL(KUidContactFieldVCardMapEMAILINTERNET);
+	CleanupStack::Pop(newField);
+	
+	fieldList.append(newField);
+	
+	return fieldList;
+}
 
-#endif /* TRANSFORMCONCTACT_H_ */
+QContactDetail *TransformEmail::transformItemFieldL(const CContactItemField& field, const QContact &contact)
+{
+	Q_UNUSED(contact);
+	
+	QContactEmailAddress *email = new QContactEmailAddress();
+	
+	CContactTextField* storage = field.TextStorage();
+	QString emailAddress = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
+	
+	email->setEmailAddress(emailAddress);
+	
+	return email;
+}

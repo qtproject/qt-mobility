@@ -33,8 +33,9 @@
 
 #include "transformcontact.h"
 
-#include "transformphonenumber.h"
 #include "transformname.h"
+#include "transformphonenumber.h"
+#include "transformemail.h"
 
 #include <qtcontacts.h>
 #include <cntfldst.h>
@@ -57,6 +58,7 @@ void TransformContact::initializeTransformContactData()
 {
 	m_transformContactData.insert(Name, new TransformName);
 	m_transformContactData.insert(PhoneNumber, new TransformPhoneNumber);
+	m_transformContactData.insert(EmailAddress, new TransformEmail);
 	//m_transformContactData.insert(Address, )
 	
 }
@@ -121,15 +123,23 @@ QList<CContactItemField *> TransformContact::transformDetail(const QContactDetai
 {
 	QList<CContactItemField *> itemFieldList;
 	
-	if (detail.definitionName() == QContactName::DefinitionName )
+	//Name
+	if (detail.definitionName() == QContactName::DefinitionName)
 	{
 		itemFieldList = m_transformContactData.value(Name)->transformDetail(detail);
 	}
-	else if (detail.definitionName() == QContactPhoneNumber::DefinitionName )
+	
+	//Phonenumber
+	else if (detail.definitionName() == QContactPhoneNumber::DefinitionName)
 	{
 		itemFieldList = m_transformContactData.value(PhoneNumber)->transformDetail(detail);
 	}
 	
+	//Email Adress
+	else if (detail.definitionName() == QContactEmailAddress::DefinitionName)
+	{
+		itemFieldList = m_transformContactData.value(EmailAddress)->transformDetail(detail);
+	}
 	return itemFieldList;
 }
 
@@ -139,19 +149,26 @@ QContactDetail *TransformContact::transformItemField(const CContactItemField& fi
 	
 	TUint32 fieldType(field.ContentType().FieldType(0).iUid);
 	
+	//Name
 	if (fieldType == KUidContactFieldGivenName.iUid ||
 		fieldType == KUidContactFieldFamilyName.iUid)
 	{
 		detail = m_transformContactData.value(Name)->transformItemField(field, contact);
 	}
 	
+	//Phonenumber
 	else if (fieldType == KUidContactFieldPhoneNumber.iUid ||
 		     fieldType == KUidContactFieldFax.iUid )
 	{
 		detail = m_transformContactData.value(PhoneNumber)->transformItemField(field, contact);
 	}
 	
-	//else if (fieldType == ...) 
+	//Email address
+	else if (fieldType == KUidContactFieldEMail.iUid)
+	{
+		detail = m_transformContactData.value(EmailAddress)->transformItemField(field, contact);
+	}
+	
 	return detail;
 }
 	
