@@ -317,7 +317,7 @@ QMessageContentContainerIdList QMessageContentContainer::contentIds() const
     return ids;
 }
 
-QMessageContentContainer QMessageContentContainer::container(const QMessageContentContainerId &id) const
+QMessageContentContainer QMessageContentContainer::find(const QMessageContentContainerId &id) const
 {
     if (d_ptr->isMessage()) {
         if (const QMessageContentContainer *container = d_ptr->attachment(id)) {

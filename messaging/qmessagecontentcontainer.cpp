@@ -47,7 +47,7 @@
     but can not contain both media and multiple parts directly.
     
     Container objects can be constructed via their QMessageContentContainerId 
-    identifier using the container() function of the parent QMessage, or constructed piece by 
+    identifier using the find() function of the parent QMessage, or constructed piece by 
     piece using setContentType(), setContent(), setHeaderField() and related functions.
     
     For textual content using a recognized charset encoding textContent() will 
@@ -70,7 +70,7 @@
     given by indicativeSize(). If the content is entirely available on the device 
     isContentAvailable() will return true.
 
-    Non multipart content can be serialized to a QDataStream using 
+    Non-multipart content can be serialized to a QDataStream using 
     writeContentTo(), and set using setContent() or setContentFromFile().
   
     A part of content can be appended to the existing content of a container using 
@@ -325,12 +325,12 @@
     
     Appends \a content to the end of the list of content contained.
 
-    For a non multipart container, before a part is appended the content type of the 
+    For a non-multipart container, before a part is appended the content type of the 
     container is set to "multipart" and the contents of the container cleared with clearContents().
 
     Returns an identifier for the appended content.
 
-    \sa container(), clearContents(), replaceContent(), contentIds()
+    \sa find(), clearContents(), replaceContent(), contentIds()
 */
 
 /*!
@@ -339,7 +339,7 @@
     If the container contains content with the identifier \a id, either directly or recursively 
     then replaces that content with \a content; otherwise does nothing.
 
-    \sa container(), clearContents(), appendContent(), contentIds()
+    \sa find(), clearContents(), appendContent(), contentIds()
 */
 
 /*!
@@ -348,14 +348,14 @@
     For a multipart container returns a list of identifiers for all content directly contained by 
     the container; otherwise returns an empty list.
 
-    \sa container(), clearContents(), appendContent(), replaceContent()
+    \sa find(), clearContents(), appendContent(), replaceContent()
 */
 
 /*!
-    \fn QMessageContentContainer::container(const QMessageContentContainerId &id) const
+    \fn QMessageContentContainer::find(const QMessageContentContainerId &id) const
     
     If the container contains another container with identifier \a id either directly or 
-    recursively then returns the value of that other container; otherwise returns an 
+    recursively, then returns the value of that other container; otherwise returns an 
     empty container constructed with the default constructor.
 
     \sa contains(), contentIds(), clearContents(), appendContent(), replaceContent()
@@ -458,7 +458,7 @@
     
     Prepend \a content to the start of the list of content contained.
 
-    For a non multipart container, before a part is prepended the content type of the 
+    For a non-multipart container, before a part is prepended the content type of the 
     container is set to "multipart" and the contents of the container cleared with clearContents().
 
     Returns an identifier for the prepended content.
@@ -470,6 +470,6 @@
     If the container contains content with the identifier \a id, either directly or recursively 
     then removes that content element.
 
-    \sa container(), clearContents(), contentIds()
+    \sa find(), clearContents(), contentIds()
 */
 

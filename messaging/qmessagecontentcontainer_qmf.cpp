@@ -452,7 +452,7 @@ QMessageContentContainerIdList QMessageContentContainer::contentIds() const
     return ids;
 }
 
-QMessageContentContainer QMessageContentContainer::container(const QMessageContentContainerId &id) const
+QMessageContentContainer QMessageContentContainer::find(const QMessageContentContainerId &id) const
 {
     QMessageContentContainer container;
 

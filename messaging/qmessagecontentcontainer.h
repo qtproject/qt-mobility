@@ -78,7 +78,7 @@ public:
 
     QMessageContentContainerIdList contentIds() const;
 
-    QMessageContentContainer container(const QMessageContentContainerId &id) const;
+    QMessageContentContainer find(const QMessageContentContainerId &id) const;
     bool contains(const QMessageContentContainerId &id) const;
 
     QString headerField(const QByteArray &name) const;

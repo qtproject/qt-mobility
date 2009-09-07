@@ -362,7 +362,7 @@ void tst_QMessageStore::testMessage()
     QMessageContentContainerId bodyId(message.body());
     QVERIFY(bodyId.isValid());
 
-    QMessageContentContainer body(message.container(bodyId));
+    QMessageContentContainer body(message.find(bodyId));
     // Note: this is not true, which is somewhat counter-intuitive:
     //QVERIFY(body.containerId().isValid());
 
@@ -395,7 +395,7 @@ void tst_QMessageStore::testMessage()
     replacement.setContentCharset("UTF-8");
     replacement.setContent(QByteArray(replacementText.toAscii()));
     message.replaceContent(bodyId, replacement);
-    body = message.container(bodyId);
+    body = message.find(bodyId);
 
     QCOMPARE(body.contentType().toLower(), QByteArray("text"));
     QCOMPARE(body.contentSubType().toLower(), QByteArray("fancy"));

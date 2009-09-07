@@ -182,7 +182,7 @@ QMessageContentContainerIdList QMessageContentContainer::contentIds() const
     return QMessageContentContainerIdList(); // stub
 }
 
-QMessageContentContainer QMessageContentContainer::container(const QMessageContentContainerId &id) const
+QMessageContentContainer QMessageContentContainer::find(const QMessageContentContainerId &id) const
 {
     Q_UNUSED(id)
     return QMessageContentContainer(); // stub

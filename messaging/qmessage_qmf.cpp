@@ -687,7 +687,7 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
             // Is there any text in this message?
             QMessageContentContainerId textId(body());
             if (textId.isValid()) {
-                QMessageContentContainer textPart(container(textId));
+                QMessageContentContainer textPart(find(textId));
                 existingText = textPart.textContent();
             }
 
@@ -703,7 +703,7 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
             response.setBody(prefix + existingText);
         }
         foreach (const QMessageContentContainerId &attachmentId, attachmentIds) {
-            QMessageContentContainer attachment = container(attachmentId);
+            QMessageContentContainer attachment(find(attachmentId));
             response.appendContent(attachment);
         }
     }
