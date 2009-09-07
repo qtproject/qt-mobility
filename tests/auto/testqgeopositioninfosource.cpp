@@ -36,6 +36,7 @@
 #include <QMetaType>
 #include <QSignalSpy>
 #include <QDebug>
+#include <QTimer>
 
 #include <qgeopositioninfosource.h>
 #include <qgeopositioninfo.h>
@@ -54,10 +55,12 @@ Q_DECLARE_METATYPE(QGeoPositionInfo)
 // returned by QGeoPositionInfoSource::createSource() on a system
 // that has no default source
 #define CHECK_SOURCE_VALID { \
-    if (QGeoPositionInfoSource::createSource() == 0) \
-        QSKIP("No default position source on this system", SkipAll); \
-    else \
-        QFAIL("createTestSource() must return a valid source!"); \
+    if (!m_source) { \
+        if (QGeoPositionInfoSource::createSource() == 0) \
+            QSKIP("No default position source on this system", SkipAll); \
+        else \
+            QFAIL("createTestSource() must return a valid source!"); \
+    } \
 }
 
 class MyPositionSource : public QGeoPositionInfoSource
@@ -227,7 +230,20 @@ void TestQGeoPositionInfoSource::lastKnownPosition()
     int time_out = 20000;
     m_source->setUpdateInterval(time_out);
     m_source->startUpdates();
-    QTRY_COMPARE_WITH_TIMEOUT(spy.count(),1,30000);
+    //QTRY_COMPARE_WITH_TIMEOUT(spy.count(),1,30000);
+
+    // Use QEventLoop instead of qWait() to ensure we stop as soon as a
+    // position is emitted (otherwise the lastKnownPosition() may have
+    // changed by the time it is checked)
+    QEventLoop loop;
+    QTimer timer;
+    timer.setInterval(30000);
+    connect(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)),
+            &loop, SLOT(quit()));
+    connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
+    timer.start();
+    loop.exec();
+    QCOMPARE(spy.count(), 1);
 
     QList<QVariant> list = spy.takeFirst();
     QGeoPositionInfo info;
@@ -285,7 +301,7 @@ void TestQGeoPositionInfoSource::startUpdates_testDefaultInterval()
     QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     m_source->startUpdates();
     for (int i=0; i<3; i++) {
-        QTRY_COMPARE_WITH_TIMEOUT(spy.count(), 1, 3000);
+        QTRY_VERIFY_WITH_TIMEOUT(spy.count() > 0, 3000);
         spy.clear();
     }
     m_source->stopUpdates();
@@ -300,7 +316,7 @@ void TestQGeoPositionInfoSource::startUpdates_testZeroInterval()
     m_source->setUpdateInterval(0);
     m_source->startUpdates();
     for (int i=0; i<3; i++) {
-        QTRY_COMPARE_WITH_TIMEOUT(spy.count(), 1, 3000);
+        QTRY_VERIFY_WITH_TIMEOUT(spy.count() > 0, 3000);
         spy.clear();
     }
     m_source->stopUpdates();
@@ -411,6 +427,5 @@ void TestQGeoPositionInfoSource::requestUpdate_withUpdateInterval()
     QTRY_COMPARE_WITH_TIMEOUT(spy.count(), 2, 27000);
     m_source->stopUpdates();
 }
-
 
 #include "testqgeopositioninfosource.moc"
