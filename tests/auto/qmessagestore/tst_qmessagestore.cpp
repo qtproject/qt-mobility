@@ -118,11 +118,6 @@ void tst_QMessageStore::testAccount()
     QMessageAccount account(accountId);
     QCOMPARE(account.id(), accountId);
     QCOMPARE(account.name(), name);
-#if !defined(Q_OS_WIN)
-    // Not currently supported on windows...
-    QCOMPARE(account.fromAddress().recipient(), fromAddress);
-    QCOMPARE(account.fromAddress().type(), QMessageAddress::Email);
-#endif
 
     QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts());
     QVERIFY(accountIds.contains(accountId));

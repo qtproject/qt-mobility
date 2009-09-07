@@ -188,22 +188,6 @@
 */
 
 /*!
-    \fn QMessageAccountFilter::byFromAddress(const QString &value, QMessageDataComparator::EqualityComparator cmp)
-  
-    Returns a filter matching accounts whose from address matches \a value, according to \a cmp.
-
-    \sa QMessageAccount::fromAddress()
-*/
-
-/*!
-    \fn QMessageAccountFilter::byFromAddress(const QString &value, QMessageDataComparator::InclusionComparator cmp)
-  
-    Returns a filter matching accounts whose from address matches the substring \a value, according to \a cmp.
-
-    \sa QMessageAccount::fromAddress()
-*/
-
-/*!
     \fn QMessageAccountFilter::byName(const QString &value, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a filter matching accounts whose name matches \a value, according to \a cmp.

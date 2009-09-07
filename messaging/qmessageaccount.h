@@ -52,9 +52,7 @@ public:
 
     QMessageAccountId id() const;
     QString name() const;
-    QMessageAddress fromAddress() const;
     QMessage::TypeFlags messageTypes() const;
-    QString signature() const;
 
     static QMessageAccountId defaultAccount(QMessage::Type type);
 

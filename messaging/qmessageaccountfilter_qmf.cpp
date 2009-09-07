@@ -180,20 +180,6 @@ QMessageAccountFilter QMessageAccountFilter::byId(const QMessageAccountFilter &k
     return result;
 }
 
-QMessageAccountFilter QMessageAccountFilter::byFromAddress(const QString &value, QMessageDataComparator::EqualityComparator cmp)
-{
-    QMessageAccountFilter result;
-    result.d_ptr->_key = QMailAccountKey::fromAddress(value, convert(cmp));
-    return result;
-}
-
-QMessageAccountFilter QMessageAccountFilter::byFromAddress(const QString &value, QMessageDataComparator::InclusionComparator cmp)
-{
-    QMessageAccountFilter result;
-    result.d_ptr->_key = QMailAccountKey::fromAddress(value, convert(cmp));
-    return result;
-}
-
 QMessageAccountFilter QMessageAccountFilter::byName(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
     QMessageAccountFilter result;

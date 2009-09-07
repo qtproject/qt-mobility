@@ -114,19 +114,9 @@ QString QMessageAccount::name() const
     return d_ptr->_account.name();
 }
 
-QMessageAddress QMessageAccount::fromAddress() const
-{
-    return convert(d_ptr->_account.fromAddress());
-}
-
 QMessage::TypeFlags QMessageAccount::messageTypes() const
 {
     return convert(d_ptr->_account.messageType());
-}
-
-QString QMessageAccount::signature() const
-{
-    return d_ptr->_account.signature();
 }
 
 QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)

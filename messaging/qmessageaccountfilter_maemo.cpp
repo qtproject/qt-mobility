@@ -129,20 +129,6 @@ QMessageAccountFilter QMessageAccountFilter::byId(const QMessageAccountFilter &f
     return QMessageAccountFilter(); // stub
 }
 
-QMessageAccountFilter QMessageAccountFilter::byFromAddress(const QString &value, QMessageDataComparator::EqualityComparator cmp)
-{
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageAccountFilter(); // stub
-}
-
-QMessageAccountFilter QMessageAccountFilter::byFromAddress(const QString &value, QMessageDataComparator::InclusionComparator cmp)
-{
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageAccountFilter(); // stub
-}
-
 QMessageAccountFilter QMessageAccountFilter::byName(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
     Q_UNUSED(value)

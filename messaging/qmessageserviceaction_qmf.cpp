@@ -357,12 +357,6 @@ bool QMessageServiceAction::send(QMessage &message)
             d_ptr->_error = QMessageStore::InvalidId;
             qWarning() << "Invalid message account ID";
             return false;
-        } else {
-            // Set the from address if it isn't already set
-            if (message.from().recipient().isEmpty()) {
-                QMessageAccount account(message.parentAccountId());
-                message.setFrom(account.fromAddress());
-            }
         }
     }
 

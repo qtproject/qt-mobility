@@ -66,19 +66,9 @@ QString QMessageAccount::name() const
     return QString(); // stub
 }
 
-QMessageAddress QMessageAccount::fromAddress() const
-{
-    return QMessageAddress(); // stub
-}
-
 QMessage::TypeFlags QMessageAccount::messageTypes() const
 {
     return QMessage::NoType; // stub
-}
-
-QString QMessageAccount::signature() const
-{
-    return QString(); // stub
 }
 
 QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)

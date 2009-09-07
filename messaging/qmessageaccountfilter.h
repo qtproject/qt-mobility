@@ -66,9 +66,6 @@ public:
     static QMessageAccountFilter byId(const QMessageAccountIdList &ids, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
     static QMessageAccountFilter byId(const QMessageAccountFilter &filter, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
-    static QMessageAccountFilter byFromAddress(const QString &value, QMessageDataComparator::EqualityComparator cmp);
-    static QMessageAccountFilter byFromAddress(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
-
     static QMessageAccountFilter byName(const QString &value, QMessageDataComparator::EqualityComparator cmp);
     static QMessageAccountFilter byName(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 

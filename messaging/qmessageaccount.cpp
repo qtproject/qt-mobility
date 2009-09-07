@@ -102,22 +102,9 @@
 */
 
 /*!
-    \fn QMessageAccount::fromAddress() const
-    
-    Returns the address from which the account's outgoing messages should be reported as originating.
-*/
-
-/*!
     \fn QMessageAccount::messageTypes() const
     
     Returns the types of messages this account deals with.
-*/
-
-/*!
-    \fn QMessageAccount::signature() const
-    
-    Return the signature for the account if one exists and is enabled; otherwise returns an empty 
-    string.
 */
 
 /*!
