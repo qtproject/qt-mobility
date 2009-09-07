@@ -808,6 +808,7 @@
                 <parameter left="const QString &amp;" right="" name="label" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="isEmpty" fullname="QContact::isEmpty" href="qcontact.html#isEmpty" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isEmpty() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="clearDetails" fullname="QContact::clearDetails" href="qcontact.html#clearDetails" location="qcontact.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="clearDetails()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="detail" fullname="QContact::detail" href="qcontact.html#detail" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QContactDetail" signature="detail(const QString &amp; definitionName) const">
                 <parameter left="const QString &amp;" right="" name="definitionName" default=""/>
             </function>
@@ -1541,14 +1542,19 @@
             <contents name="introduction" title="Introduction" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
             <contents name="using-the-api" title="Using the API" level="1"/>
-            <contents name="saving-a-new-contact-to-the-default-manager" title="Saving a new contact to the default manager" level="2"/>
-            <contents name="filtering-by-detail-definition-and-value" title="Filtering by detail definition and value" level="2"/>
-            <contents name="viewing-a-specific-detail-of-a-contact" title="Viewing a specific detail of a contact" level="2"/>
-            <contents name="viewing-all-of-the-details-of-a-contact" title="Viewing all of the details of a contact" level="2"/>
-            <contents name="installing-a-plugin-that-modifies-the-definition-of-one-type-of-detail" title="Installing a plugin that modifies the definition of one type of detail" level="2"/>
-            <contents name="modifying-an-existing-contact-and-saving-the-modifications" title="Modifying an existing contact and saving the modifications" level="2"/>
-            <contents name="loading-the-manager-for-a-specific-backend" title="Loading the manager for a specific backend" level="2"/>
-            <contents name="loading-a-manager-with-specific-parameters" title="Loading a manager with specific parameters" level="2"/>
+            <contents name="synchronous-api-usage" title="Synchronous API Usage" level="2"/>
+            <contents name="saving-a-new-contact-to-the-default-manager" title="Saving a new contact to the default manager" level="3"/>
+            <contents name="filtering-by-detail-definition-and-value" title="Filtering by detail definition and value" level="3"/>
+            <contents name="viewing-a-specific-detail-of-a-contact" title="Viewing a specific detail of a contact" level="3"/>
+            <contents name="viewing-all-of-the-details-of-a-contact" title="Viewing all of the details of a contact" level="3"/>
+            <contents name="installing-a-plugin-that-modifies-the-definition-of-one-type-of-detail" title="Installing a plugin that modifies the definition of one type of detail" level="3"/>
+            <contents name="modifying-an-existing-contact-and-saving-the-modifications" title="Modifying an existing contact and saving the modifications" level="3"/>
+            <contents name="asynchronous-api-usage" title="Asynchronous API Usage" level="2"/>
+            <contents name="requesting-contacts" title="Requesting Contacts" level="3"/>
+            <contents name="other-asynchronous-operations" title="Other Asynchronous Operations" level="3"/>
+            <contents name="manager-settings-and-configuration" title="Manager Settings And Configuration" level="2"/>
+            <contents name="loading-the-manager-for-a-specific-backend" title="Loading the manager for a specific backend" level="3"/>
+            <contents name="loading-a-manager-with-specific-parameters" title="Loading a manager with specific parameters" level="3"/>
             <contents name="building-and-compiling" title="Building and compiling" level="1"/>
             <contents name="reference-documentation" title="Reference documentation" level="1"/>
             <contents name="main-classes" title="Main classes" level="2"/>

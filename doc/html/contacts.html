@@ -17,14 +17,22 @@
 <ul><li><a href="#introduction">Introduction</a></li>
 <li><a href="#overview">Overview</a></li>
 <li><a href="#using-the-api">Using the API</a></li>
+<ul><li><a href="#synchronous-api-usage">Synchronous API Usage</a></li>
 <ul><li><a href="#saving-a-new-contact-to-the-default-manager">Saving a new contact to the default manager</a></li>
 <li><a href="#filtering-by-detail-definition-and-value">Filtering by detail definition and value</a></li>
 <li><a href="#viewing-a-specific-detail-of-a-contact">Viewing a specific detail of a contact</a></li>
 <li><a href="#viewing-all-of-the-details-of-a-contact">Viewing all of the details of a contact</a></li>
 <li><a href="#installing-a-plugin-that-modifies-the-definition-of-one-type-of-detail">Installing a plugin that modifies the definition of one type of detail</a></li>
 <li><a href="#modifying-an-existing-contact-and-saving-the-modifications">Modifying an existing contact and saving the modifications</a></li>
-<li><a href="#loading-the-manager-for-a-specific-backend">Loading the manager for a specific backend</a></li>
+</ul>
+<li><a href="#asynchronous-api-usage">Asynchronous API Usage</a></li>
+<ul><li><a href="#requesting-contacts">Requesting Contacts</a></li>
+<li><a href="#other-asynchronous-operations">Other Asynchronous Operations</a></li>
+</ul>
+<li><a href="#manager-settings-and-configuration">Manager Settings And Configuration</a></li>
+<ul><li><a href="#loading-the-manager-for-a-specific-backend">Loading the manager for a specific backend</a></li>
 <li><a href="#loading-a-manager-with-specific-parameters">Loading a manager with specific parameters</a></li>
+</ul>
 </ul>
 <li><a href="#building-and-compiling">Building and compiling</a></li>
 <li><a href="#reference-documentation">Reference documentation</a></li>
@@ -50,8 +58,11 @@
 <a name="using-the-api"></a>
 <h2>Using the API</h2>
 <p>This section provides some examples of common usage of the API.</p>
+<a name="synchronous-api-usage"></a>
+<h3>Synchronous API Usage</h3>
+<p>The synchronous API provides the simplest way to access or modify the contact information managed by a particular backend. It has the disadvantage that calls block until completion and is therefore most suitable only for applications which interact with local, high-speed datastores.</p>
 <a name="saving-a-new-contact-to-the-default-manager"></a>
-<h3>Saving a new contact to the default manager</h3>
+<h4>Saving a new contact to the default manager</h4>
 <p>The client creates a new contact, adds a name and a phone number, and saves it to the default store of the default manager. We assume the existence of a specialised leaf-class that allows simple access to details of the definition identified by the &quot;PhoneNumber&quot; identifier, and another that allows simple access to details of the definition identified by the &quot;Name&quot; identifier. These specialised leaf classes may be written by anyone, and simply wrap the functionality provided by <a href="qcontactdetail.html">QContactDetail</a> in order to allow simpler access to fields supported by a particular definition.</p>
 <pre>    void addContact(QContactManager* cm)
     {
@@ -86,7 +97,7 @@
         cm-&gt;saveContact(&amp;alice);
     }</pre>
 <a name="filtering-by-detail-definition-and-value"></a>
-<h3>Filtering by detail definition and value</h3>
+<h4>Filtering by detail definition and value</h4>
 <p>The client utilises a default manager and asks for any contacts with a particular phone number. The example assumes that the default manager supports the provided <a href="qcontactphonenumber.html">QContactPhoneNumber</a> detail leaf class (which implements the default definition for phone number details).</p>
 <pre>    void matchCall(QContactManager* cm, const QString&amp; incomingCallNbr)
     {
@@ -109,7 +120,7 @@
         }
     }</pre>
 <a name="viewing-a-specific-detail-of-a-contact"></a>
-<h3>Viewing a specific detail of a contact</h3>
+<h4>Viewing a specific detail of a contact</h4>
 <p>The client retrieves the phone numbers of a contact, and displays the first one</p>
 <pre>    void viewSpecificDetail(QContactManager* cm)
     {
@@ -122,7 +133,7 @@
                  &lt;&lt; &quot;is&quot; &lt;&lt; a.details(&quot;PhoneNumber&quot;).first().value(&quot;PhoneNumber&quot;);
     }</pre>
 <a name="viewing-all-of-the-details-of-a-contact"></a>
-<h3>Viewing all of the details of a contact</h3>
+<h4>Viewing all of the details of a contact</h4>
 <p>The client retrieves all of the details of a contact, and displays them</p>
 <pre>    void viewDetails(QContactManager* cm)
     {
@@ -147,7 +158,7 @@
         }
     }</pre>
 <a name="installing-a-plugin-that-modifies-the-definition-of-one-type-of-detail"></a>
-<h3>Installing a plugin that modifies the definition of one type of detail</h3>
+<h4>Installing a plugin that modifies the definition of one type of detail</h4>
 <p>The client installs a plugin, which requires a new field to be added to details of the &quot;EmailAddress&quot; definition. It loads the definition from the default manager, modifies it (by adding the new field - a label field), and saves it back.</p>
 <pre>    void addPlugin(QContactManager* cm)
     {
@@ -171,7 +182,7 @@
             qDebug() &lt;&lt; &quot;This backend could not support our modifications!&quot;;
     }</pre>
 <a name="modifying-an-existing-contact-and-saving-the-modifications"></a>
-<h3>Modifying an existing contact and saving the modifications</h3>
+<h4>Modifying an existing contact and saving the modifications</h4>
 <p>The client retrieves a contact, modifies one of its details, adds a new detail, and then saves the contact back to the manager. Note that it uses the newly added field of the email address definition!</p>
 <pre>    void editView(QContactManager* cm)
     {
@@ -202,8 +213,59 @@
         cm-&gt;saveContact(&amp;a);
         viewDetails(cm);
     }</pre>
+<a name="asynchronous-api-usage"></a>
+<h3>Asynchronous API Usage</h3>
+<p>The asynchronous API provides a flexible and powerful method of accessing and modifying the contact information managed by a particular backend in an asynchronous manner. Use of the asynchronous API is slightly more complex than use of the synchronous API, but offers the programmer greater flexibility when requesting information from remote or slow, local datastores.</p>
+<a name="requesting-contacts"></a>
+<h4>Requesting Contacts</h4>
+<p>The client sets up a request for contacts matching a specific criteria from a particular manager. Results from the request will be displayed to the user as they are received.</p>
+<pre>    void RequestExample::performRequest()
+    {
+        <span class="comment">// retrieve any contact whose first name is &quot;Alice&quot;</span>
+        QContactDetailFilter dfil;
+        dfil.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
+        dfil.setValue(&quot;Alice&quot;);
+        dfil.setMatchFlags(Qt::MatchExactly);
+
+        m_fetchRequest-&gt;setFilter(dfil);
+        connect(m_fetchRequest, SIGNAL(progress(QContactFetchRequest*,bool)), this, SLOT(printContacts(QContactFetchRequest*,bool)));
+        if (!m_fetchRequest-&gt;start()) {
+            qDebug() &lt;&lt; &quot;Unable to request contacts!&quot;;
+            QCoreApplication::exit(0);
+        } else {
+            qDebug() &lt;&lt; &quot;Requested contacts; awaiting results...&quot;;
+        }
+    }
+
+    void RequestExample::printContacts(QContactFetchRequest* request, bool appendOnly)
+    {
+        QList&lt;QContact&gt; results = request-&gt;contacts();
+        if (appendOnly) {
+            <span class="comment">// we know that the results are still in the same order; just display the new results.</span>
+            for (m_previousLastIndex += 1; m_previousLastIndex &lt; results.size(); m_previousLastIndex++) {
+                qDebug() &lt;&lt; &quot;Found another Alice:&quot; &lt;&lt; results.at(m_previousLastIndex).displayLabel().label();
+            }
+        } else {
+            <span class="comment">// the order of results has changed; display them all.</span>
+            for (m_previousLastIndex = 0; m_previousLastIndex &lt; results.size(); m_previousLastIndex++) {
+                qDebug() &lt;&lt; &quot;Found another Alice:&quot; &lt;&lt; results.at(m_previousLastIndex).displayLabel().label();
+            }
+        }
+
+        <span class="comment">// once we've finished retrieving results, stop processing events.</span>
+        if (request-&gt;status() == QContactAbstractRequest::Finished || request-&gt;status() == QContactAbstractRequest::Cancelled) {
+            QCoreApplication::exit(0);
+        }
+    }</pre>
+<a name="other-asynchronous-operations"></a>
+<h4>Other Asynchronous Operations</h4>
+<p>All other asynchronous operations are performed in a similar manner to the previous example. A request of the desired type (which is derived from <a href="qcontactabstractrequest.html">QContactAbstractRequest</a>) is created, certain criteria are set which determine the result of the request, and the progress signal of the request is connected to a slot which deals with the result. The request can then be started.</p>
+<p>Any operation that may be performed using the synchronous API may also be performed using the asynchronous API. It is recommended for most applications that the asynchronous API be used where possible.</p>
+<a name="manager-settings-and-configuration"></a>
+<h3>Manager Settings And Configuration</h3>
+<p>Users of the contacts API can define which backend they wish to access if a manager for that backend is available. The list of available managers can be queried programmatically at run-time, and the capabilities of different managers can be ascertained by inspecting a <a href="qcontactmanagerinfo.html">QContactManagerInfo</a> instance returned by a manager. Furthermore, some managers can be constructed with parameters which affect the operation of the backend.</p>
 <a name="loading-the-manager-for-a-specific-backend"></a>
-<h3>Loading the manager for a specific backend</h3>
+<h4>Loading the manager for a specific backend</h4>
 <p>In this example, the client loads a manager for a specific backend. While this could be found and retrieved using a more advanced plugin framework (such as the Qt Service Framework), this code assumes that the client has prior knowledge of the backend in question.</p>
 <pre>    void loadManager()
     {
@@ -222,7 +284,7 @@
         delete cm;
     }</pre>
 <a name="loading-a-manager-with-specific-parameters"></a>
-<h3>Loading a manager with specific parameters</h3>
+<h4>Loading a manager with specific parameters</h4>
 <p>The client loads a manager with specific parameters defined. The parameters which are available are backend specific, and so the client had to know that the &quot;Settings&quot; parameter was valid for the particular backend, and what argument it took. In this example, the client tells the backend to load detail definitions saved in a particular settings file.</p>
 <pre>    void loadManagerWithParameters()
     {

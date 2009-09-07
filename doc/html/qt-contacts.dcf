@@ -18,6 +18,7 @@
         <keyword ref="qcontact.html#Error-enum">QContact::PermissionsError</keyword>
         <keyword ref="qcontact.html#Error-enum">QContact::DetailAlreadyExistsError</keyword>
         <keyword ref="qcontact.html#availableActions">availableActions</keyword>
+        <keyword ref="qcontact.html#clearDetails">clearDetails</keyword>
         <keyword ref="qcontact.html#detail">detail</keyword>
         <keyword ref="qcontact.html#detailWithAction">detailWithAction</keyword>
         <keyword ref="qcontact.html#details">details</keyword>

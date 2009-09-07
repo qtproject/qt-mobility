@@ -31,6 +31,7 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#QContact-2">QContact</a></b> ( const QContact &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#dtor.QContact">~QContact</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#availableActions">availableActions</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#clearDetails">clearDetails</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QContactDetail </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#detail">detail</a></b> ( const QString &amp; <i>definitionName</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">T </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#detail-2">detail</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QContactDetail </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#detailWithAction">detailWithAction</a></b> ( const QString &amp; <i>actionName</i> ) const</td></tr>
@@ -86,6 +87,8 @@
 <p>Frees the memory used by this <a href="qcontact.html">QContact</a></p>
 <h3 class="fn"><a name="availableActions"></a><a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> QContact::availableActions () const</h3>
 <p>Return a list of actions available to be performed on this contact</p>
+<h3 class="fn"><a name="clearDetails"></a>void QContact::clearDetails ()</h3>
+<p>Removes all details of the contact. This function does not modify the id or group membership of the contact. Calling <a href="qcontact.html#isEmpty">isEmpty</a>() after calling this function will return true.</p>
 <h3 class="fn"><a name="detail"></a><a href="qcontactdetail.html">QContactDetail</a> QContact::detail ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>definitionName</i> ) const</h3>
 <p>Returns the first detail stored in the contact which is of the given <i>definitionName</i></p>
 <h3 class="fn"><a name="detail-2"></a>T QContact::detail () const</h3>
