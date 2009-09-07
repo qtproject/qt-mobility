@@ -85,83 +85,86 @@ public:
 
     QMessage();
     QMessage(const QMessageId &id);
+    QMessage(const QMessage &other);
     virtual ~QMessage();
 
-    QMessage(const QMessage &other);
     const QMessage& operator=(const QMessage &other);
 
     static QMessage fromTransmissionFormat(Type t, const QByteArray &ba);
     static QMessage fromTransmissionFormatFile(Type t, const QString &fileName);
 
-    virtual QByteArray toTransmissionFormat() const;
-    virtual void toTransmissionFormat(QDataStream &out) const;
+    QByteArray toTransmissionFormat() const;
+    void toTransmissionFormat(QDataStream &out) const;
 
-    virtual QMessageId id() const;
+    QMessageId id() const;
 
-    virtual Type type() const;
-    virtual void setType(Type t);
+    Type type() const;
+    void setType(Type t);
 
-    virtual QMessageAccountId parentAccountId() const;
-    virtual void setParentAccountId(const QMessageAccountId &accountId);
+    QMessageAccountId parentAccountId() const;
+    void setParentAccountId(const QMessageAccountId &accountId);
+
 #ifdef QMESSAGING_OPTIONAL_FOLDER
-    virtual QMessageFolderId parentFolderId() const;
+    QMessageFolderId parentFolderId() const;
 #endif
 
-    virtual StandardFolder standardFolder() const;
-    virtual void setStandardFolder(StandardFolder sf);
+    StandardFolder standardFolder() const;
+    void setStandardFolder(StandardFolder sf);
 
-    virtual QMessageAddress from() const;
-    virtual void setFrom(const QMessageAddress &address);
+    QMessageAddress from() const;
+    void setFrom(const QMessageAddress &address);
 
-    virtual QString subject() const;
-    virtual void setSubject(const QString &s);
+    QString subject() const;
+    void setSubject(const QString &s);
 
-    virtual QDateTime date() const;
-    virtual void setDate(const QDateTime &d);
+    QDateTime date() const;
+    void setDate(const QDateTime &d);
 
-    virtual QDateTime receivedDate() const;
-    virtual void setReceivedDate(const QDateTime &d);
+    QDateTime receivedDate() const;
+    void setReceivedDate(const QDateTime &d);
 
-    virtual QMessageAddressList to() const;
-    virtual void setTo(const QMessageAddressList &toList);
-    virtual void setTo(const QMessageAddress &address);
-    virtual QMessageAddressList cc() const;
-    virtual void setCc(const QMessageAddressList &ccList);
-    virtual QMessageAddressList bcc() const;
-    virtual void setBcc(const QMessageAddressList &bccList);
+    QMessageAddressList to() const;
+    void setTo(const QMessageAddressList &toList);
+    void setTo(const QMessageAddress &address);
 
-    virtual StatusFlags status() const;
-    virtual void setStatus(StatusFlags newStatus);
+    QMessageAddressList cc() const;
+    void setCc(const QMessageAddressList &ccList);
 
-    virtual Priority priority() const;
-    virtual void setPriority(Priority newPriority);
+    QMessageAddressList bcc() const;
+    void setBcc(const QMessageAddressList &bccList);
 
-    virtual uint size() const;
+    StatusFlags status() const;
+    void setStatus(StatusFlags newStatus);
 
-    virtual QMessageContentContainerId body() const;
-    virtual void setBody(const QString &body);
-    virtual void setBodyFromFile(const QString &fileName);
+    Priority priority() const;
+    void setPriority(Priority newPriority);
 
-    virtual QMessageContentContainerIdList attachments() const;
-    virtual void appendAttachments(const QStringList &fileNames);
-    virtual void clearAttachments();
+    uint size() const;
+
+    QMessageContentContainerId body() const;
+    void setBody(const QString &body);
+    void setBodyFromFile(const QString &fileName);
+
+    QMessageContentContainerIdList attachments() const;
+    void appendAttachments(const QStringList &fileNames);
+    void clearAttachments();
 
 #ifdef QMESSAGING_OPTIONAL
-    virtual void setOriginatorPort(uint port);
-    virtual uint originatorPort();
-    virtual void setDestinationPort(uint port);
-    virtual uint destinationPort();
+    void setOriginatorPort(uint port);
+    uint originatorPort();
+    void setDestinationPort(uint port);
+    uint destinationPort();
 
-    virtual QString customField(const QString &name) const;
-    virtual void setCustomField(const QString &name, const QString &value);
-    virtual QStringList customFields() const;
+    QString customField(const QString &name) const;
+    void setCustomField(const QString &name, const QString &value);
+    QStringList customFields() const;
 #endif
 
-    virtual bool dataModified() const;
+    bool dataModified() const;
 
-    virtual QMessage replyTo() const;
-    virtual QMessage replyToAll() const;
-    virtual QMessage forward() const;
+    QMessage replyTo() const;
+    QMessage replyToAll() const;
+    QMessage forward() const;
 
 // TODO: Why is there no setParentFolderId()?
 //private:
