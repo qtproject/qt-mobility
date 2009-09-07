@@ -45,37 +45,37 @@ QList<CContactItemField *> TransformPhoneNumber::transformDetailL(const QContact
 	newField->TextStorage()->SetTextL(fieldText);
 
 	//get the subType
-	QString subType = phoneNumber.subTypeAttribute();
+	QStringList subTypes = phoneNumber.subTypes();
 	
 	//no subtype
-	if(subType.isEmpty())
+	if(!subTypes.count())
 	{
 		newField->AddFieldTypeL(KUidContactFieldPhoneNumber);
 	}
 	
 	//landline
-	else if (subType == QContactPhoneNumber::AttributeSubTypeLandline)
+	else if (subTypes.contains(QContactPhoneNumber::SubTypeLandline))
 	{
 		newField->AddFieldTypeL(KUidContactFieldPhoneNumber);
 		newField->AddFieldTypeL(KUidContactFieldVCardMapTEL);
 	}
 	
 	//mobile
-	else if	(subType == QContactPhoneNumber::AttributeSubTypeMobile)
+	else if	(subTypes.contains(QContactPhoneNumber::SubTypeMobile))
 	{
 		newField->AddFieldTypeL(KUidContactFieldPhoneNumber);
 		newField->AddFieldTypeL(KUidContactFieldVCardMapCELL);
 	}
 	
 	//fax
-	else if	(subType == QContactPhoneNumber::AttributeSubTypeFacsimile)
+	else if	(subTypes.contains(QContactPhoneNumber::SubTypeFacsimile))
 	{
 		newField->AddFieldTypeL(KUidContactFieldFax);
 		newField->AddFieldTypeL(KUidContactFieldVCardMapTEL);
 	}
 	
 	//pager
-	else if (subType == QContactPhoneNumber::AttributeSubTypePager)
+	else if (subTypes.contains(QContactPhoneNumber::SubTypePager))
 	{
 		newField->AddFieldTypeL(KUidContactFieldPhoneNumber);
 		newField->AddFieldTypeL(KUidContactFieldVCardMapPAGER);
@@ -104,20 +104,20 @@ QContactDetail *TransformPhoneNumber::transformItemFieldL(const CContactItemFiel
 	{
 		if (field.ContentType().FieldType(i) == KUidContactFieldVCardMapTEL)
 		{
-			phoneNumber->setSubTypeAttribute(QContactPhoneNumber::AttributeSubTypeLandline);
+			phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeLandline);
 		}
 		
 		else if (field.ContentType().FieldType(i) == KUidContactFieldVCardMapCELL)
 		{
-			phoneNumber->setSubTypeAttribute(QContactPhoneNumber::AttributeSubTypeMobile);
+			phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeMobile);
 		}
 		else if (field.ContentType().FieldType(i) == KUidContactFieldFax)
 		{
-			phoneNumber->setSubTypeAttribute(QContactPhoneNumber::AttributeSubTypeFacsimile);
+			phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeFacsimile);
 		}
 		else if (field.ContentType().FieldType(i) == KUidContactFieldVCardMapPAGER)
 		{
-			phoneNumber->setSubTypeAttribute(QContactPhoneNumber::AttributeSubTypePager);
+			phoneNumber->setSubTypes(QContactPhoneNumber::SubTypePager);
 		}
 	}
 	
