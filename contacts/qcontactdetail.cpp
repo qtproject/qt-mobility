@@ -151,7 +151,6 @@ QContactDetail::QContactDetail(const QString& thisDefinitionId)
 QContactDetail::QContactDetail(const QContactDetail& other)
     : d(other.d)
 {
-    QContactDetailPrivate::setError(d, QContactDetail::NoError);
 }
 
 /*! Constructs a detail that is a copy of \a other if \a other is of the expected definition identified by \a expectedDefinitionId, else constructs a new, empty detail of the definition identified by the \a expectedDefinitionId */
@@ -159,21 +158,17 @@ QContactDetail::QContactDetail(const QContactDetail& other, const QString& expec
 {
     if (other.definitionName() == expectedDefinitionId) {
         d = other.d;
-        QContactDetailPrivate::setError(d, QContactDetail::NoError);
     } else {
         d = new QContactDetailPrivate;
         d->m_definitionName = expectedDefinitionId;
-        d->m_error = QContactDetail::IncompatibleAssignmentError;
     }
 }
 
 /*! Assigns this detail to \a other */
 QContactDetail& QContactDetail::operator=(const QContactDetail& other)
 {
-    if (this != &other) {
+    if (this != &other)
         d = other.d;
-        QContactDetailPrivate::setError(d, QContactDetail::NoError);
-    }
     return *this;
 }
 
@@ -183,11 +178,9 @@ QContactDetail& QContactDetail::assign(const QContactDetail& other, const QStrin
     if (this != &other) {
         if (other.definitionName() == expectedDefinitionId) {
             d = other.d;
-            QContactDetailPrivate::setError(d, QContactDetail::NoError);
         } else {
             d = new QContactDetailPrivate;
             d->m_definitionName = expectedDefinitionId;
-            d->m_error = QContactDetail::IncompatibleAssignmentError;
         }
     }
     return *this;
@@ -196,23 +189,6 @@ QContactDetail& QContactDetail::assign(const QContactDetail& other, const QStrin
 /*! Frees the memory used by this detail */
 QContactDetail::~QContactDetail()
 {
-}
-
-/*!
- * \enum QContactDetail::Error
- *
- * This enum specifies an error that occurred during the most recent operation:
- *
- * \value NoError The most recent operation was successful
- * \value MissingValueError The most recent operation failed because the value the caller wished to retrieve was missing
- * \value IncompatibleAssignmentError The most recent operation failed because the detail is of a different definition than the one you are attempting to assign it to
- * \value OutOfMemoryError The most recent operation failed due to running out of memory
- */
-
-/*! Returns the error code of the error resulting from the most recent state-modifying operation */
-QContactDetail::Error QContactDetail::error() const
-{
-    return d.constData()->m_error;
 }
 
 /*! Returns the (unique) name of the definition which defines the semantics and structure of this detail */
@@ -244,25 +220,17 @@ bool QContactDetail::isEmpty() const
 /*! Returns the value stored in this detail for the given \a key as a QString, or an empty QString if no value for the given \a key exists */
 QString QContactDetail::value(const QString& key) const
 {
-    if (d.constData()->m_values.contains(key)) {
-        QContactDetailPrivate::setError(d, QContactDetail::NoError);
+    if (d.constData()->m_values.contains(key))
         return d.constData()->m_values.value(key).toString();
-    } else {
-        QContactDetailPrivate::setError(d, QContactDetail::MissingValueError);
-        return QString();
-    }
+    return QString();
 }
 
 /*! Returns the value stored in this detail for the given \a key as a QVariant, or an invalid QVariant if no value for the given \a key exists */
 QVariant QContactDetail::variantValue(const QString& key) const
 {
-    if (d.constData()->m_values.contains(key)) {
-        QContactDetailPrivate::setError(d, QContactDetail::NoError);
+    if (d.constData()->m_values.contains(key))
         return d.constData()->m_values.value(key);
-    } else {
-        QContactDetailPrivate::setError(d, QContactDetail::MissingValueError);
-        return QVariant();
-    }
+    return QVariant(); // returns an invalid qvariant
 }
 
 /*!
@@ -270,20 +238,17 @@ QVariant QContactDetail::variantValue(const QString& key) const
  */
 bool QContactDetail::hasValue(const QString& key) const
 {
-    if (d.constData()->m_values.contains(key)) {
-        QContactDetailPrivate::setError(d, QContactDetail::NoError);
+    if (d.constData()->m_values.contains(key))
         return true;
-    } else {
-        QContactDetailPrivate::setError(d, QContactDetail::MissingValueError);
-        return false;
-    }
+    return false;
 }
 
 /*! Inserts \a value into the detail for the given \a key if \a value is valid.  If \a value is invalid,
-    removes the field with the given \a key from the detail.  Returns true if the operation succeeded */
+    removes the field with the given \a key from the detail.  Returns true if the given \a value was set
+    for the \a key (if the \a value was valid), or if the given \a key was removed from detail (if the
+    \a value was invalid), and returns false if the key was unable to be removed (and the \a value was invalid) */
 bool QContactDetail::setValue(const QString& key, const QVariant& value)
 {
-    QContactDetailPrivate::setError(d, QContactDetail::NoError);
     if (!value.isValid())
         return removeValue(key);
 
@@ -294,13 +259,9 @@ bool QContactDetail::setValue(const QString& key, const QVariant& value)
 /*! Removes the value stored in this detail for the given \a key.  Returns true if a value was stored for the given \a key and the operation succeeded, and false otherwise */
 bool QContactDetail::removeValue(const QString& key)
 {
-    if(d->m_values.remove(key)) {
-        QContactDetailPrivate::setError(d, QContactDetail::NoError);
+    if(d->m_values.remove(key))
         return true;
-    } else {
-        QContactDetailPrivate::setError(d, QContactDetail::MissingValueError);
-        return false;
-    }
+    return false;
 }
 
 /*! Returns the values stored in this detail */

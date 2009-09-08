@@ -111,9 +111,6 @@ void tst_QContactDetail::classHierarchy()
     QVERIFY(f1 != f2);
     QVERIFY(p1 != f2);
 
-    QCOMPARE(f1.error(), QContactDetail::NoError);
-
-
     p1 = p1; // assign leaf class to itself
     QVERIFY(p1 == p1);
     QVERIFY(f1 == p1);
@@ -129,8 +126,6 @@ void tst_QContactDetail::classHierarchy()
     QVERIFY(f1 == m1);
     QVERIFY(f1 != f2);
     QVERIFY(f2 == p1);
-
-    QCOMPARE(f2.error(), QContactDetail::NoError);
 
     QContactPhoneNumber p2(f2); // p2 = f2 = phonenumber
     QVERIFY(p1 == p2);
@@ -152,7 +147,6 @@ void tst_QContactDetail::classHierarchy()
     /* Bad assignment */
     p2 = m1; // assign a name to a phone number
     QVERIFY(p2 != m1);
-    QCOMPARE(p2.error(), QContactDetail::IncompatibleAssignmentError);
     QVERIFY(p2.definitionName() == QContactPhoneNumber::DefinitionName); // should still be a phone number though
     QVERIFY(p2.isEmpty());
 
@@ -163,7 +157,6 @@ void tst_QContactDetail::classHierarchy()
     /* another bad assignment */
     m2 = p2; // phone number to a name
     QVERIFY(m2 != m1);
-    QCOMPARE(m2.error(), QContactDetail::IncompatibleAssignmentError);
     QVERIFY(m2.definitionName() == QContactName::DefinitionName);
     QVERIFY(m2.isEmpty());
 
@@ -177,13 +170,11 @@ void tst_QContactDetail::classHierarchy()
     /* Copy ctor from valid type */
     QContactDetail f3(p2);
     QVERIFY(f3 == p2);
-    QCOMPARE(f3.error(), QContactDetail::NoError);
     QVERIFY(f3.definitionName() == QContactPhoneNumber::DefinitionName);
 
     /* Copy ctor from invalid type */
     QContactPhoneNumber p3(m1);
     QVERIFY(p3 != m1);
-    QCOMPARE(p3.error(), QContactDetail::IncompatibleAssignmentError);
     QVERIFY(p3.definitionName() == QContactPhoneNumber::DefinitionName);
     QVERIFY(p3.isEmpty());
 
@@ -191,200 +182,8 @@ void tst_QContactDetail::classHierarchy()
     f3 = m1;
     QContactPhoneNumber p4(f3);
     QVERIFY(p4 != f3);
-    QCOMPARE(p4.error(), QContactDetail::IncompatibleAssignmentError);
     QVERIFY(p4.definitionName() == QContactPhoneNumber::DefinitionName);
     QVERIFY(p4.isEmpty());
-
-    // Make sure errors don't move from object to object
-
-    /* Get some objects with no errors */
-    QContactDetail goodbase("something different");
-    QCOMPARE(goodbase.error(), QContactDetail::NoError);
-
-    QContactPhoneNumber goodleaf;
-    QCOMPARE(goodleaf.error(), QContactDetail::NoError);
-
-    QContactDetail goodleafbase(goodleaf);
-    QCOMPARE(goodleaf.error(), QContactDetail::NoError);
-    QCOMPARE(goodleafbase.error(), QContactDetail::NoError);
-    QVERIFY(goodleaf == goodleafbase);
-
-    QContactName goodleaf2;
-    QCOMPARE(goodleaf2.error(), QContactDetail::NoError);
-
-    /* Get a base class with an error */
-    QContactDetail errorbase(goodbase);
-    QCOMPARE(errorbase.value("nonexistent"), QString());
-    QCOMPARE(errorbase.error(), QContactDetail::MissingValueError);
-
-    /* and a leaf class with an error */
-    QContactPhoneNumber errorleaf;
-    QCOMPARE(errorleaf.value("nonexistent"), QString());
-    QCOMPARE(errorleaf.error(), QContactDetail::MissingValueError);
-
-    QContactName errorleaf2;
-    QCOMPARE(errorleaf2.value("nonexistent"), QString());
-    QCOMPARE(errorleaf2.error(), QContactDetail::MissingValueError);
-
-    /* and a leaf class as a base with an error */
-    QContactDetail errorleafbase(errorleaf);
-    QCOMPARE(errorleafbase.value("nonexistent"), QString());
-    QCOMPARE(errorleafbase.error(), QContactDetail::MissingValueError);
-
-    /* Make sure nothing changed */
-    QCOMPARE(errorbase.error(), QContactDetail::MissingValueError);
-    QCOMPARE(errorleaf.error(), QContactDetail::MissingValueError);
-    QCOMPARE(errorleaf2.error(), QContactDetail::MissingValueError);
-    QCOMPARE(errorleafbase.error(), QContactDetail::MissingValueError);
-
-    QCOMPARE(goodbase.error(), QContactDetail::NoError);
-    QCOMPARE(goodleaf.error(), QContactDetail::NoError);
-    QCOMPARE(goodleaf2.error(), QContactDetail::NoError);
-    QCOMPARE(goodleafbase.error(), QContactDetail::NoError);
-
-    /* === Base and Base of same type === */
-    /* Base copy ctor with no error */
-    QContactDetail gb(goodbase);
-    QCOMPARE(gb.error(), QContactDetail::NoError);
-    QCOMPARE(goodbase.error(), QContactDetail::NoError);
-
-    /* Base op = with no error */
-    QContactDetail gb2;
-    gb2 = goodbase;
-    QCOMPARE(gb2.error(), QContactDetail::NoError);
-
-    /* base copy ctor with error */
-    QContactDetail eb(errorbase);
-    QCOMPARE(eb.error(), QContactDetail::NoError);
-
-    /* base op = with error */
-    QContactDetail eb2;
-    eb2 = errorbase;
-    QCOMPARE(eb2.error(), QContactDetail::NoError);
-
-    /* === Base and base of another type (operator =) === */
-
-    /* You can assign base contact details, but not leaf classes... */
-    QContactDetail gbb(goodbase);
-    gbb = goodleafbase;
-    QCOMPARE(gbb.error(), QContactDetail::NoError);
-
-    gbb = errorleafbase;
-    QCOMPARE(gbb.error(), QContactDetail::NoError);
-
-    /* === Base and  Leaf === */
-    /* base copy ctor of leaf with no error */
-    QContactDetail gb3(goodleaf);
-    QCOMPARE(gb3.error(), QContactDetail::NoError);
-
-    /* base op = of leaf with no error */
-    QContactDetail gb4;
-    gb4 = goodleaf;
-    QCOMPARE(gb4.error(), QContactDetail::NoError);
-
-    /* base copy ctor of leaf with error */
-    QContactDetail eb3(errorleaf);
-    QCOMPARE(eb3.error(), QContactDetail::NoError);
-
-    /* base op = of leaf with error */
-    QContactDetail eb4;
-    eb4 = errorleaf;
-    QCOMPARE(eb4.error(), QContactDetail::NoError);
-
-    /* === Base of leaf type and leaf (operator =) === */
-    QContactDetail leafbase(goodleafbase);
-    leafbase = goodleaf;
-    QCOMPARE(leafbase.error(), QContactDetail::NoError);
-
-    leafbase = errorleaf;
-    QCOMPARE(leafbase.error(), QContactDetail::NoError);
-
-    /* === Leaf and base === */
-    /* copy ctor, no error */
-    QContactPhoneNumber gl(goodbase);
-    QCOMPARE(gl.error(), QContactDetail::IncompatibleAssignmentError);
-
-    QContactPhoneNumber gl2;
-    gl2 = goodbase;
-    QCOMPARE(gl2.error(), QContactDetail::IncompatibleAssignmentError);
-
-    QContactPhoneNumber el(errorbase);
-    QCOMPARE(el.error(), QContactDetail::IncompatibleAssignmentError);
-
-    QContactPhoneNumber el2;
-    el2 = errorbase;
-    QCOMPARE(el2.error(), QContactDetail::IncompatibleAssignmentError);
-
-    /* === Leaf and base of leaf with same type === */
-    QContactPhoneNumber gbl(goodleafbase);
-    QCOMPARE(gbl.error(), QContactDetail::NoError);
-
-    QContactPhoneNumber gbl2;
-    gbl2 = goodleafbase;
-    QCOMPARE(gbl2.error(), QContactDetail::NoError);
-
-    QContactPhoneNumber ebl(errorleafbase);
-    QCOMPARE(ebl.error(), QContactDetail::NoError);
-
-    QContactPhoneNumber ebl2;
-    ebl2 = errorleafbase;
-    QCOMPARE(ebl2.error(), QContactDetail::NoError);
-
-    /* === Leaf and Leaf === */
-    QContactPhoneNumber gl3(goodleaf);
-    QCOMPARE(gl3.error(), QContactDetail::NoError);
-
-    QContactPhoneNumber gl4;
-    gl4 = goodleaf;
-    QCOMPARE(gl4.error(), QContactDetail::NoError);
-
-    QContactPhoneNumber el3(errorleaf);
-    QCOMPARE(el3.error(), QContactDetail::NoError);
-
-    QContactPhoneNumber el4;
-    el4 = errorleaf;
-    QCOMPARE(el4.error(), QContactDetail::NoError);
-
-    /* === Leaf and wrong leaf === */
-    QContactPhoneNumber gl5(goodleaf2);
-    QCOMPARE(gl5.error(), QContactDetail::IncompatibleAssignmentError);
-
-    QContactPhoneNumber gl6;
-    gl6 = goodleaf2;
-    QCOMPARE(gl6.error(), QContactDetail::IncompatibleAssignmentError);
-
-    QContactPhoneNumber el5(errorleaf2);
-    QCOMPARE(el5.error(), QContactDetail::IncompatibleAssignmentError);
-
-    QContactPhoneNumber el6;
-    el6 = errorleaf2;
-    QCOMPARE(el6.error(), QContactDetail::IncompatibleAssignmentError);
-
-    /* === Leaf and wrong base leaf === */
-    QContactName gbl5(goodleafbase);
-    QCOMPARE(gbl5.error(), QContactDetail::IncompatibleAssignmentError);
-
-    QContactName gbl6;
-    gbl6 = goodleafbase;
-    QCOMPARE(gbl6.error(), QContactDetail::IncompatibleAssignmentError);
-
-    QContactName ebl5(errorleafbase);
-    QCOMPARE(ebl5.error(), QContactDetail::IncompatibleAssignmentError);
-
-    QContactName ebl6;
-    ebl6 = errorleafbase;
-    QCOMPARE(ebl6.error(), QContactDetail::IncompatibleAssignmentError);
-
-    /* Make sure nothing changed again */
-    QCOMPARE(errorbase.error(), QContactDetail::MissingValueError);
-    QCOMPARE(errorleaf.error(), QContactDetail::MissingValueError);
-    QCOMPARE(errorleaf2.error(), QContactDetail::MissingValueError);
-    QCOMPARE(errorleafbase.error(), QContactDetail::MissingValueError);
-
-    QCOMPARE(goodbase.error(), QContactDetail::NoError);
-    QCOMPARE(goodleaf.error(), QContactDetail::NoError);
-    QCOMPARE(goodleaf2.error(), QContactDetail::NoError);
-    QCOMPARE(goodleafbase.error(), QContactDetail::NoError);
 
     /* Try a reference */
     QContactDetail& ref = p1;
@@ -500,9 +299,7 @@ void tst_QContactDetail::values()
     QVERIFY(p.hasValue("stringdate"));
     QVERIFY(p.hasValue("stringdatetime"));
     QVERIFY(p.hasValue("stringint"));
-    QCOMPARE(p.error(), QContactDetail::NoError);
     QVERIFY(!p.hasValue("non existent field"));
-    QCOMPARE(p.error(), QContactDetail::MissingValueError);
 
     /* String accessors */
     QCOMPARE(p.value("string"), QString("This is a string"));
@@ -700,15 +497,11 @@ void tst_QContactDetail::values()
 
     /* Check accessing a missing value */
     QCOMPARE(p.value("nonexistent"), QString());
-    QCOMPARE(p.error(), QContactDetail::MissingValueError);
     QVERIFY(p.setValue("nonexistent", "changed my mind"));
-    QCOMPARE(p.error(), QContactDetail::NoError);
     QCOMPARE(p.value("nonexistent"), QString("changed my mind"));
-    QCOMPARE(p.error(), QContactDetail::NoError);
 
     /* Check removing a missing value */
     QVERIFY(!p.removeValue("does not exist"));
-    QCOMPARE(p.error(), QContactDetail::MissingValueError);
 }
 
 

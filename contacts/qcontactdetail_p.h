@@ -56,14 +56,12 @@ class QContactDetailPrivate : public QSharedData
 {
 public:
     QContactDetailPrivate()
-        :   m_error(QContactDetail::NoError),
-            m_id(0)
+        : m_id(0)
     {
     }
 
     QContactDetailPrivate(const QContactDetailPrivate& other)
         : QSharedData(other),
-        m_error(QContactDetail::NoError),
         m_id(other.m_id),
         m_definitionName(other.m_definitionName),
         m_values(other.m_values)
@@ -72,17 +70,6 @@ public:
 
     ~QContactDetailPrivate() {}
 
-    /* Helper function to set error and detach when necessary */
-    static void setError(const QSharedDataPointer<QContactDetailPrivate>& d, QContactDetail::Error error)
-    {
-        if (d.constData()->m_error != error) {
-            QSharedDataPointer<QContactDetailPrivate>* ncd = const_cast<QSharedDataPointer<QContactDetailPrivate>*>(&d);
-            ncd->detach();
-            ncd->data()->m_error = error;
-        }
-    }
-
-    QContactDetail::Error m_error;
     quint32 m_id; // internal, unique id.
     QString m_definitionName;
     QVariantMap m_values; // the value(s) stored in this field.
