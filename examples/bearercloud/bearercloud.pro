@@ -13,7 +13,7 @@ QT = core gui network svg
 
 INCLUDEPATH += ../../bearer
 
-include(../../common.pri)
+include(../examples.pri)
 
 LIBS += -lQtBearer
 

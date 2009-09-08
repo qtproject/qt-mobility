@@ -4,7 +4,7 @@ relconf=`basename $0`
 # the directory of this script is the "source tree"
 relpath=`dirname $0`
 relpath=`(cd "$relpath"; /bin/pwd)`
-QT_MOBILITY_PREFIX=$relpath/build
+QT_MOBILITY_PREFIX=$relpath/install
 QT_MOBILITY_INCLUDE=
 QT_MOBILITY_LIB=
 QT_MOBILITY_BIN=
@@ -87,7 +87,6 @@ echo "CONFIG += $RELEASEMODE" >> config.in
 
 
 echo "QT_MOBILITY_PREFIX = $QT_MOBILITY_PREFIX" >> config.in
-echo "target.path = $QT_MOBILITY_PREFIX" >> config.in
 
 if [ -z "$QT_MOBILITY_INCLUDE" ]; then
     QT_MOBILITY_INCLUDE="$QT_MOBILITY_PREFIX/include"

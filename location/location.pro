@@ -43,10 +43,6 @@ SOURCES +=  qlocationutils.cpp \
             qgeoareamonitor.cpp \
             qnmeapositioninfosource.cpp
 
-headers.files = $$PUBLIC_HEADERS
-headers.path = $$QT_MOBILITY_INCLUDE
-INSTALLS+=headers
-
 symbian {
     TARGET.CAPABILITY = ALL -TCB
     INCLUDEPATH += \epoc32\include\osextensions
@@ -58,3 +54,4 @@ symbian {
     DEPLOYMENT += exportheaders
 }
 
+include(../features/deploy.pri)

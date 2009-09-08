@@ -100,7 +100,5 @@ symbian: {
 }
 
 include (../common.pri)
+include (../features/deploy.pri)
 
-headers.files = $$PUBLIC_HEADERS
-headers.path = $$QT_MOBILITY_INCLUDE
-INSTALLS+=headers

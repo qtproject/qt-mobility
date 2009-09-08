@@ -14,7 +14,7 @@ QT = core gui network
 
 INCLUDEPATH += ../../bearer
 
-include(../../common.pri)
+include(../examples.pri)
 
 LIBS += -lQtBearer
 win32:!wince*:LIBS += -lWs2_32

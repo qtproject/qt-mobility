@@ -8,7 +8,7 @@ SOURCES += bluetoothtransferplugin.cpp \
 TARGET = serviceframework_bluetoothtransferplugin
 DESTDIR = .
 
-include(../../common.pri)
+include(../examples.pri)
 LIBS += -lQtServiceFramework
 
 symbian {

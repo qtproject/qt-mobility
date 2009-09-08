@@ -13,5 +13,5 @@ SOURCES = main.cpp \
 FORMS = providerdialog.ui \
         consumerdialog.ui
 
-include(../../common.pri)
+include(../examples.pri)
 LIBS += -lQtContextFramework

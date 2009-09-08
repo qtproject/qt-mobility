@@ -10,7 +10,7 @@ SOURCES += filemanagerplugin.cpp \
 TARGET = serviceframework_filemanagerplugin
 DESTDIR = .
 
-include(../../common.pri)
+include(../examples.pri)
 LIBS += -lQtServiceFramework
 
 symbian {

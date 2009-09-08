@@ -1,0 +1,11 @@
+include(../config.pri)
+!contains(build_examples, yes):error(Please use the -examples configure switch to enable building of examples)
+
+OUTPUT_DIR = $$PWD/..
+SUBDIRPART = objects
+DESTDIR=$$OUTPUT_DIR/bin/examples
+MOC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/moc
+RCC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/rcc
+UI_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/ui
+OBJECTS_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET
+LIBS+= -L$$OUTPUT_DIR/lib

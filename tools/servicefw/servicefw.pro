@@ -8,3 +8,5 @@ SOURCES=servicefw.cpp
 
 include(../../common.pri)
 LIBS += -lQtServiceFramework
+
+include(../../features/deploy.pri)

@@ -2,7 +2,7 @@ TEMPLATE = app
 TARGET = servicebrowser
 INCLUDEPATH += ../../serviceframework
 
-include(../../common.pri)
+include(../examples.pri)
 
 QT += gui
 

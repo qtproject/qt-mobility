@@ -19,3 +19,5 @@ SOURCES = servicexmlgen.cpp \
 
 include(../../common.pri)
 LIBS += -lQtServiceFramework
+
+include(../../features/deploy.pri)

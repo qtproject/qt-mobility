@@ -14,3 +14,5 @@ SOURCES=\
 
 include(../../common.pri)
 LIBS += -lQtContextFramework
+
+include(../../features/deploy.pri)

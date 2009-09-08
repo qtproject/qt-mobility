@@ -9,9 +9,10 @@ SOURCES = logfilepositionsource.cpp \
 
 CONFIG += console
 
-include(../../common.pri)
+include(../examples.pri)
 LIBS += -lQtLocation
 
 logfile.path = $$DESTDIR
 logfile.files = simplelog.txt
 INSTALLS += logfile
+build_pass:ALL_DEPS+=install_logfile

@@ -39,7 +39,4 @@ SOURCES +=  servicemetadata.cpp \
             qservicefilter.cpp
 
 
-headers.files = $$PUBLIC_HEADERS
-headers.path = $$QT_MOBILITY_INCLUDE
-INSTALLS+=headers
-#build_pass:ALL_DEPS += install_headers
+include(../features/deploy.pri)
