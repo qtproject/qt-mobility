@@ -367,15 +367,10 @@ void tst_QMessageStore::testMessage()
     QMessageIdList messageIds(QMessageStore::instance()->queryMessages());
     QVERIFY(messageIds.contains(messageId));
 
-#ifdef QMESSAGING_OPTIONAL
+    // Update the message to contain new text
     QString replacementText("This is replacement text.");
 
-    QMessageContentContainer replacement;
-    replacement.setContentType("text");
-    replacement.setContentSubType("fancy");
-    replacement.setContentCharset("UTF-8");
-    replacement.setContent(QByteArray(replacementText.toAscii()));
-    message.replaceContent(bodyId, replacement);
+    message.setBody(replacementText, "text/fancy");
     body = message.find(bodyId);
 
     QCOMPARE(body.contentType().toLower(), QByteArray("text"));
@@ -383,6 +378,5 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(body.contentCharset().toLower(), QByteArray("utf-8"));
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), replacementText);
-#endif
 }
 

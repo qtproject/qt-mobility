@@ -127,6 +127,8 @@ SOURCES += winhelpers.cpp \
 LIBS += mapi32.lib shlwapi.lib
 }
 } else {
+DEFINES += USE_QMF_IMPLEMENTATION
+
 # QMF headers must be located at $QMF_INCLUDEDIR
 INCLUDEPATH += $$(QMF_INCLUDEDIR) $$(QMF_INCLUDEDIR)/support
 

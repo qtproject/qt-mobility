@@ -63,8 +63,7 @@ private slots:
 #endif
 
     void testToTransmissionFormat_simple();
-#if !defined(Q_OS_WIN)
-    // No support for nested multipart on windows
+#if 0
     void testToTransmissionFormat_multipart();
 #endif
 
@@ -261,12 +260,8 @@ void tst_QMessage::testToTransmissionFormat_simple()
     m1.setSubject(subject);
     m1.setDate(date);
 
-#ifdef QMESSAGING_OPTIONAL
-    m1.setContentType(contentType);
-    m1.setContentSubType(contentSubType);
-    m1.setContentCharset(contentCharset);
-    m1.setContent(contentText);
-#endif
+    QByteArray mimeType(contentType + "/" + contentSubType + "; charset=" + contentCharset);
+    m1.setBody(contentText, mimeType);
 
 #if !defined(Q_OS_WIN)
     QByteArray serialized(m1.toTransmissionFormat());
@@ -300,7 +295,9 @@ void tst_QMessage::testToTransmissionFormat_simple()
 #endif
 }
 
-#if !defined(Q_OS_WIN)
+#if 0
+// This test can't be formulated with the current interface.
+// It should be replaced with a test that creates a multipart message by append attachments from files
 void tst_QMessage::testToTransmissionFormat_multipart()
 {
     const QString from("Alice <alice@example.com>");
@@ -333,7 +330,6 @@ void tst_QMessage::testToTransmissionFormat_multipart()
     m1.setTo(QMessageAddressList() << QMessageAddress(to, QMessageAddress::Email));
     m1.setSubject(subject);
 
-#ifdef QMESSAGING_OPTIONAL
     m1.setContentType(contentType);
     m1.setContentSubType(contentSubType);
 
@@ -371,7 +367,6 @@ void tst_QMessage::testToTransmissionFormat_multipart()
 
         m1.appendContent(p2);
     }
-#endif
 
     QByteArray serialized(m1.toTransmissionFormat());
 

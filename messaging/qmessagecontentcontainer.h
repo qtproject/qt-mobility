@@ -85,31 +85,6 @@ public:
     QStringList headerFieldValues(const QByteArray &name) const;
     QList<QByteArray> headerFields() const;
 
-#ifdef QMESSAGING_OPTIONAL
-    void setContentType(const QByteArray &data);
-    void setContentSubType(const QByteArray &data);
-    void setContentCharset(const QByteArray &data);
-    void setContentFileName(const QByteArray &data);
-    void setContent(const QString &text);
-    void setContent(const QByteArray &data);
-    void setContentFromFile(const QString &fileName);
-    void readContentFrom(QDataStream &in);
-    QMessageContentContainerId appendContent(const QMessageContentContainer &content);
-    void replaceContent(const QMessageContentContainerId &id, const QMessageContentContainer &content);
-    void clearContents();
-    void appendHeaderField(const QByteArray &name, const QString &value);
-    void setHeaderField(const QByteArray &name, const QString &value);
-    void appendHeaderField(const QByteArray &name, const QByteArray &value);
-    void setHeaderField(const QByteArray &name, const QByteArray &value);
-    bool containerDataModified() const;
-
-protected:
-    QMessageContentContainerId prependContent(const QMessageContentContainer &content);
-#endif
-
-protected:
-    void removeContent(const QMessageContentContainerId &id);
-
 private:
     friend class QMessage;
     friend class QMessagePrivate;

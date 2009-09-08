@@ -33,9 +33,109 @@
 #include "qmessagecontentcontainer.h"
 #include "qmessage.h"
 
+#ifdef USE_QMF_IMPLEMENTATION
+#include "qmfhelpers_p.h"
+#endif
+
 #include <QList>
 #include <QMultiMap>
 
+#ifdef USE_QMF_IMPLEMENTATION
+class QMessageContentContainerPrivate
+{
+public:
+    mutable QMessage *_message;
+    mutable QMailMessagePart _part;
+    mutable QMailMessagePartContainer *_container;
+
+    QByteArray _type;
+    QByteArray _subType;
+    QByteArray _charset;
+    QByteArray _name;
+    QByteArray _content;
+    QString _textContent;
+    QString _filename;
+
+    QMessageContentContainerPrivate() 
+        : _message(0),
+          _container(&_part)
+    {
+    }
+
+    void setDerivedMessage(QMessage *derived)
+    {
+        _message = derived;
+        _part = QMailMessagePart();
+        _container = QmfHelpers::convert(_message);
+    }
+
+    void clearContents()
+    {
+        _type = QByteArray("text");
+        _subType = QByteArray("plain");
+        _charset = QByteArray();
+        _name = QByteArray();
+        _content = QByteArray();
+        _textContent = QString();
+        _filename = QString();
+    }
+
+    void setContentType(const QByteArray &type, const QByteArray &subType, const QByteArray &charset)
+    {
+        clearContents();
+
+        _type = type;
+        _subType = subType;
+        _charset = charset;
+    }
+
+    void setContent(const QString &content, const QByteArray &type, const QByteArray &subType, const QByteArray &charset)
+    {
+        setContentType(type, subType, charset);
+
+        _textContent = content;
+    }
+
+    /*
+    void setHeaderField(const QByteArray &name, const QByteArray &value)
+    {
+        _container->setHeaderField(name, value);
+    }
+    */
+
+    QMailMessageContentType contentType() const 
+    {
+        QMailMessageContentType ct;
+        ct.setType(_type);
+        ct.setSubType(_subType);
+
+        if (!_name.isEmpty()) {
+            ct.setName(_name);
+        }
+        if (!_charset.isEmpty()) {
+            ct.setCharset(_charset);
+        }
+
+        return ct;
+    }
+    
+    void applyPendingChanges() const
+    {
+        if (!_content.isEmpty()) {
+            _container->setBody(QMailMessageBody::fromData(_content, contentType(), QMailMessageBody::Base64, QMailMessageBody::RequiresEncoding));
+        } else if (!_textContent.isEmpty()) {
+            _container->setBody(QMailMessageBody::fromData(_textContent, contentType(), QMailMessageBody::Base64));
+        } else if (!_filename.isEmpty()) {
+            _container->setBody(QMailMessageBody::fromFile(_filename, contentType(), QMailMessageBody::Base64, QMailMessageBody::RequiresEncoding));
+        } else {
+            if (contentType().type() == "multipart") {
+                _container->setMultipartType(QMailMessagePartContainer::multipartTypeForName(_subType));
+            }
+        }
+    }
+};
+
+#else
 class QMessageContentContainerPrivate
 {
     Q_DECLARE_PUBLIC(QMessageContentContainer)
@@ -179,3 +279,4 @@ public:
         return 0;
     }
 };
+#endif
