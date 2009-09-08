@@ -137,13 +137,46 @@ QWidget *QFullScreenVideoWidget::widget()
 
 #ifndef QT_NO_MULTIMEDIA
 
+#ifndef QT_NO_OPENGL
+
+QGLWidgetVideoSurface::QGLWidgetVideoSurface(QGLWidget *widget, QObject *parent)
+    : QPainterVideoSurface(widget->context(), parent)
+    , m_widget(widget)
+{
+}
+
+void QGLWidgetVideoSurface::makeCurrent()
+{
+    m_widget->makeCurrent();
+}
+
+void QGLWidgetVideoSurface::doneCurrent()
+{
+    m_widget->doneCurrent();
+}
+
+#endif
+
 QVideoRendererWidget::QVideoRendererWidget(QVideoRendererControl *control, QWidget *parent)
-    : QFullScreenVideoWidget(parent)
+#ifndef QT_NO_OPENGL
+    : QGLWidget(parent)
+#else
+    : QWidget(parent)
+#endif
     , m_rendererControl(control)
+#ifndef QT_NO_OPENGL
+    , m_surface(new QGLWidgetVideoSurface(this))
+#else
     , m_surface(new QPainterVideoSurface)
+#endif
+    , m_displayMode(QVideoWidget::WindowedDisplay)
 {
     connect(m_surface, SIGNAL(frameChanged()), SLOT(update()));
     connect(m_surface, SIGNAL(surfaceFormatChanged(QVideoSurfaceFormat)), SLOT(dimensionsChanged()));
+
+    QPalette palette;
+    palette.setColor(QPalette::Background, Qt::black);
+    setPalette(palette);
 
     m_rendererControl->setSurface(m_surface);
 }
@@ -153,6 +186,34 @@ QVideoRendererWidget::~QVideoRendererWidget()
     m_rendererControl->setSurface(0);
 
     delete m_surface;
+}
+
+void QVideoRendererWidget::setBrightness(int brightness)
+{
+    m_surface->setBrightness(brightness);
+
+    emit brightnessChanged(brightness);
+}
+
+void QVideoRendererWidget::setContrast(int contrast)
+{
+    m_surface->setContrast(contrast);
+
+    emit contrastChanged(contrast);
+}
+
+void QVideoRendererWidget::setHue(int hue)
+{
+    m_surface->setHue(hue);
+
+    emit hueChanged(hue);
+}
+
+void QVideoRendererWidget::setSaturation(int saturation)
+{
+    m_surface->setSaturation(saturation);
+
+    emit saturationChanged(saturation);
 }
 
 void QVideoRendererWidget::setAspectRatio(QVideoWidget::AspectRatio mode)
@@ -180,14 +241,13 @@ QSize QVideoRendererWidget::sizeHint() const
 
 void QVideoRendererWidget::paintEvent(QPaintEvent *event)
 {
+    QPainter painter(this);
     if (m_surface->isStarted()) {
-        QPainter painter(this);
-
         m_surface->paint(&painter, displayRect());
 
         m_surface->setReady(true);
     } else {
-        QWidget::paintEvent(event);
+        painter.fillRect(event->rect(), palette().background());
     }
 }
 
@@ -201,6 +261,36 @@ QRect QVideoRendererWidget::displayRect() const
     QRect displayRect = rect();
 
     return displayRect;
+}
+
+
+QVideoWidget::DisplayMode QVideoRendererWidget::displayMode() const
+{
+    return m_displayMode;
+}
+
+void QVideoRendererWidget::setDisplayMode(QVideoWidget::DisplayMode mode)
+{
+     if (mode == QVideoWidget::FullscreenDisplay) {
+        setWindowFlags(windowFlags() | Qt::Window | Qt::WindowStaysOnTopHint);
+        setWindowState(windowState() | Qt::WindowFullScreen);
+
+        show();
+
+        emit displayModeChanged(m_displayMode = mode);
+    } else {
+        setWindowFlags(windowFlags() & ~(Qt::Window | Qt::WindowStaysOnTopHint));
+        setWindowState(windowState() & ~Qt::WindowFullScreen);
+
+        show();
+
+        emit displayModeChanged(m_displayMode = mode);
+    }
+}
+
+QWidget *QVideoRendererWidget::widget()
+{
+    return this;
 }
 
 #endif
@@ -499,8 +589,6 @@ QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
     QVideoWidgetControl *widgetControl = qobject_cast<QVideoWidgetControl *>(
             d->service->control(QVideoWidgetControl_iid));
 
-    //widgetControl = 0;
-
     if (widgetControl != 0) {
         d->widgetBackend = new QVideoWidgetControlBackend(widgetControl);
 
@@ -593,7 +681,6 @@ QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
 */
 QVideoWidget::~QVideoWidget()
 {
-
     if (d_ptr->service) {
         if (d_ptr->outputControl)
             d_ptr->outputControl->setOutput(QVideoOutputControl::NoOutput);

@@ -7,6 +7,8 @@ include (../common.pri)
 
 QT += network
 
+contains(QT_CONFIG, opengl): QT += opengl
+
 !static:DEFINES += QT_MAKEDLL
 DEFINES += QT_BUILD_MEDIA_LIB
 

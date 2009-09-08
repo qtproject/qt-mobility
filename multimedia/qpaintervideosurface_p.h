@@ -50,16 +50,22 @@
 
 #include <QtCore/qsize.h>
 #include <QtGui/qimage.h>
+#include <QtGui/qmatrix4x4.h>
+#include <QtGui/qpaintengine.h>
 #include <QtMultimedia/qabstractvideosurface.h>
 #include <QtMultimedia/qvideoframe.h>
 
 #include <qmultimediaglobal.h>
 
+#ifndef QT_NO_OPENGL
+# include <QtOpenGL/qgl.h>
+#endif
+
 class Q_MEDIA_EXPORT QPainterVideoSurface : public QAbstractVideoSurface
 {
     Q_OBJECT
 public:
-    QPainterVideoSurface(QObject *parent = 0);
+    explicit QPainterVideoSurface(QObject *parent = 0);
     ~QPainterVideoSurface();
 
     QList<QVideoFrame::PixelFormat> supportedPixelFormats(
@@ -72,6 +78,18 @@ public:
 
     bool present(const QVideoFrame &frame);
 
+    int brightness() const;
+    void setBrightness(int brightness);
+
+    int contrast() const;
+    void setContrast(int contrast);
+
+    int hue() const;
+    void setHue(int hue);
+
+    int saturation() const;
+    void setSaturation(int saturation);
+
     bool isReady() const;
     void setReady(bool ready);
 
@@ -81,11 +99,66 @@ Q_SIGNALS:
     void frameChanged();
 
 private:
+#ifndef QT_NO_OPENGL
+protected:
+    explicit QPainterVideoSurface(const QGLContext *context, QObject *parent = 0);
+
+    virtual void makeCurrent();
+    virtual void doneCurrent();
+
+private:
+    void initRgbTextureInfo(GLenum internalFormat, GLuint format, const QSize &size);
+    void initYuv420PTextureInfo(const QSize &size);
+    void initYv12TextureInfo(const QSize &size);
+
+    void updateColorMatrix();
+
+    typedef void (APIENTRY *_glProgramStringARB) (GLenum, GLenum, GLsizei, const GLvoid *);
+    typedef void (APIENTRY *_glBindProgramARB) (GLenum, GLuint);
+    typedef void (APIENTRY *_glDeleteProgramsARB) (GLsizei, const GLuint *);
+    typedef void (APIENTRY *_glGenProgramsARB) (GLsizei, GLuint *);
+    typedef void (APIENTRY *_glProgramLocalParameter4fARB) (
+            GLenum, GLuint, GLfloat, GLfloat, GLfloat, GLfloat);
+    typedef void (APIENTRY *_glActiveTexture) (GLenum);
+
+    _glProgramStringARB glProgramStringARB;
+    _glBindProgramARB glBindProgramARB;
+    _glDeleteProgramsARB glDeleteProgramsARB;
+    _glGenProgramsARB glGenProgramsARB;
+    _glProgramLocalParameter4fARB glProgramLocalParameter4fARB;
+    _glActiveTexture glActiveTexture;
+
+    enum ShaderSupport
+    {
+        ShadersUnsupported,
+        ShadersSupported
+    };
+
+    ShaderSupport m_shaderSupport;
+
+    GLenum m_textureFormat;
+    GLuint m_textureInternalFormat;
+    int m_textureCount;
+    GLuint m_textureIds[3];
+    int m_textureWidths[3];
+    int m_textureHeights[3];
+    int m_textureOffsets[3];
+    GLuint m_shaderId;
+#endif
+
+    int m_brightness;
+    int m_contrast;
+    int m_hue;
+    int m_saturation;
+
     QVideoFrame m_frame;
+    QAbstractVideoBuffer::HandleType m_handleType;
     QVideoFrame::PixelFormat m_pixelFormat;
     QImage::Format m_imageFormat;
     QSize m_imageSize;
     QRect m_sourceRect;
+    QMatrix4x4 m_colorMatrix;
+    bool m_colorMatrixDirty;
     bool m_ready;
 };
 

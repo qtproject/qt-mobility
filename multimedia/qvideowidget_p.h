@@ -37,6 +37,14 @@
 
 #include "qvideowidget.h"
 
+#ifndef QT_NO_OPENGL
+#include <QGLWidget>
+#endif
+
+#ifndef QT_NO_MULTIMEDIA
+#include "qpaintervideosurface_p.h"
+#endif
+
 class QVideoWidgetBackendInterface
 {
 public:
@@ -103,23 +111,51 @@ private:
 };
 
 #ifndef QT_NO_MULTIMEDIA
-class QPainterVideoSurface;
+
 class QVideoRendererControl;
 
-class QVideoRendererWidget : public QFullScreenVideoWidget
+#ifndef QT_NO_OPENGL
+class QGLWidgetVideoSurface : public QPainterVideoSurface
+{
+    Q_OBJECT
+public:
+    explicit QGLWidgetVideoSurface(QGLWidget *widget, QObject *parent = 0);
+
+protected:
+    void makeCurrent();
+    void doneCurrent();
+
+private:
+    QGLWidget *m_widget;
+};
+
+#endif
+
+class QVideoRendererWidget
+#ifndef QT_NO_OPENGL
+    : public QGLWidget
+#else
+    : public QWidget
+#endif
+    , public QVideoWidgetBackendInterface
 {
     Q_OBJECT
 public:
     QVideoRendererWidget(QVideoRendererControl *control, QWidget *parent = 0);
     ~QVideoRendererWidget();
 
-    void setBrightness(int brightness) { emit brightnessChanged(brightness); }
-    void setContrast(int contrast) { emit contrastChanged(contrast); }
-    void setHue(int hue) { emit hueChanged(hue); }
-    void setSaturation(int saturation) { emit saturationChanged(saturation); }
+    void setBrightness(int brightness);
+    void setContrast(int contrast);
+    void setHue(int hue);
+    void setSaturation(int saturation);
+
+    QVideoWidget::DisplayMode displayMode() const;
+    void setDisplayMode(QVideoWidget::DisplayMode mode);
 
     void setAspectRatio(QVideoWidget::AspectRatio ratio);
     virtual void setCustomPixelAspectRatio(const QSize &customRatio);
+
+    QWidget *widget();
 
     QSize sizeHint() const;
 
@@ -128,6 +164,7 @@ Q_SIGNALS:
     void contrastChanged(int contrast);
     void hueChanged(int hue);
     void saturationChanged(int saturation);
+    void displayModeChanged(QVideoWidget::DisplayMode mode);
     void aspectRatioModeChanged(QVideoWidget::AspectRatio mode);
     void customAspectRatioChanged(const QSize &ratio);
 
