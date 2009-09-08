@@ -410,43 +410,20 @@ void QContactSymbianEngineData::transformError(TInt symbianError, QContactManage
 	}
 }
 
-/*! Transform a Symbian contact to a QContact. Note that the contact ID
- * is not restored by this function, it simply converts the field types
- * and appends them to the new QContact.
- *
- * \param contact A reference to a Symbian contact to be converted.
- * \return A Qt contact with the same fields and content as the CContactItem.
-*/
-QContact QContactSymbianEngineData::transformContact(CContactItem &contact) const
-{
-	return m_transformContact->transformContact(contact);
-}
-
-/*! Transform a QContact into a Symbian CContactItem. This will set the contact item's
- *  local UID from the value of contact.id() as well as converting all
- *  supported fields to the CContactItem format.
- *
- * \param contact A reference to a QContact to be converted.
- * \return A pointer to a heap allocated CContactItem, ownership transferred.
-*/
-CContactItem *QContactSymbianEngineData::transformContactL(QContact &contact) const
-{
-	return m_transformContact->transformContactL(contact);
-}
-
-
 /*!
  * Private leaving implementation for contact()
  */
 QContact QContactSymbianEngineData::contactL(const QUniqueId &contactId) const
 {
+    ASSERT(m_transformContact);
+    ASSERT(m_contactDatabase);
 	// Read the contact from the CContactDatabase
 	TContactItemId id(contactId);
 	CContactItem* symContact = m_contactDatabase->ReadContactL(id);
 	CleanupStack::PushL(symContact);
 	
 	// Convert to a QContact
-	QContact contact = transformContact(*symContact);
+	QContact contact = m_transformContact->transformContact(*symContact);
 	
 	CleanupStack::PopAndDestroy(symContact);
 	return contact;
@@ -512,11 +489,16 @@ int QContactSymbianEngineData::countL() const
  */
 int QContactSymbianEngineData::addContactL(QContact &contact)
 {
-	// convert to CContactItem
-	CContactItem* contactItem = transformContactL(contact);
+    ASSERT(m_transformContact);
+    ASSERT(m_contactDatabase);
+
+    // Create a new contact card.
+    CContactCard* contactItem = CContactCard::NewLC();
+
+    // convert QContact to CContactItem
+    m_transformContact->transformContactL(contact, *contactItem);
 
 	// Add to the database
-	CleanupStack::PushL(contactItem);
 	int id = m_contactDatabase->AddNewContactL(*contactItem);
 	CleanupStack::PopAndDestroy(contactItem);
 	
@@ -531,20 +513,22 @@ int QContactSymbianEngineData::addContactL(QContact &contact)
  */
 void QContactSymbianEngineData::updateContactL(QContact &contact)
 {
-    // Convert to CContactItem
-    CContactItem* contactItem = transformContactL(contact);
-    CleanupStack::PushL(contactItem);
+    ASSERT(m_transformContact);
+    ASSERT(m_contactDatabase);
 
     // Need to open the contact for write, leaving this item
     // on the cleanup stack to unlock the item in the event of a leave.
-    CContactItem* tmpCntItem = m_contactDatabase->OpenContactLX(contactItem->Id());
-    CleanupStack::PushL(tmpCntItem);
-    
+    CContactItem* contactItem = m_contactDatabase->OpenContactLX(contact.id());
+    CleanupStack::PushL(contactItem);
+
+    // Copy the data from QContact to CContactItem
+    m_transformContact->transformContactL(contact, *contactItem);
+
     // Write the entry using the converted  contact
     m_contactDatabase->CommitContactL(*contactItem);
-    
-    // Destroy the temp entry and the cleanup item to unlock the contact.
-    CleanupStack::PopAndDestroy(3); // tmpContactItem, lock object, contactItem
+
+    CleanupStack::PopAndDestroy(contactItem);
+    CleanupStack::PopAndDestroy(1); // commit lock
 }
 
 /*!

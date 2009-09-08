@@ -90,15 +90,17 @@ QContact TransformContact::transformContact(CContactItem &contact) const
 		return newQtContact;
 }
 
-CContactItem *TransformContact::transformContactL(QContact &contact) const
+/*! Transform a QContact into a Symbian CContactItem.
+ *  This will convert all supported fields to the CContactItem format.
+ *
+ * \param contact A reference to a QContact to be converted.
+ * \param contactItem A reference to the CContactItem to add the fields to.
+*/
+void TransformContact::transformContactL(
+        QContact &contact,
+        CContactItem &contactItem) const
 {
-    // Create a new contact card.
-    CContactCard* symContact = CContactCard::NewLC();
-
-    // Set the contact id.
-    symContact->SetId(contact.id());
-
-    // Copy all fields to the Symbian contact.
+	// Copy all fields to the Symbian contact.
 	QList<QContactDetail> detailList(contact.details());
 	
 	// Iterate through the contact details in the QContact
@@ -106,18 +108,15 @@ CContactItem *TransformContact::transformContactL(QContact &contact) const
 	
 	for(int i(0); i < detailCount; ++i) 
 	{
-		QList<CContactItemField *> fieldList = transformDetailL(detailList.at(i));
+		QList<CContactItemField *> fieldList = transformDetail( detailList.at(i) );
 		int fieldCount = fieldList.count();
 		
 		for (int i = 0; i < fieldCount; i++)
         {
 			//transform ownership of field
-			symContact->AddFieldL(*fieldList.at(i));
+		    contactItem.AddFieldL(*fieldList.at(i));
 		}
 	}
-	
-	CleanupStack::Pop(symContact);
-	return symContact;
 }
 
 QList<CContactItemField *> TransformContact::transformDetailL(const QContactDetail &detail) const

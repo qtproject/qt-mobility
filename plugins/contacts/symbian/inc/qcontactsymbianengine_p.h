@@ -106,10 +106,6 @@ signals:
 
 private:
 	// Utility functions to convert to and from CContactItem
-	QContact transformContact(CContactItem &contact) const;
-	CContactItem *transformContactL(QContact &contact) const;
-	
-	// Utility function to convert symbian error to QContactManager error
 	void transformError(TInt symbianError, QContactManager::Error& qtError) const;
 		
 	// Leaving functions implementing CNTMODEL interaction.
