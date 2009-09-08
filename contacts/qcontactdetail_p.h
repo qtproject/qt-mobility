@@ -56,7 +56,8 @@ class QContactDetailPrivate : public QSharedData
 {
 public:
     QContactDetailPrivate()
-        : m_id(0)
+        : QSharedData(),
+        m_id(0)
     {
     }
 

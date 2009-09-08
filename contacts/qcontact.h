@@ -65,32 +65,18 @@ public:
     bool operator==(const QContact &other) const;
     bool operator!=(const QContact &other) const {return !(other == *this);}
 
-    /* XXX Actual values not final yet */
-    enum Error {
-        NoError = 0,
-        OutOfMemoryError,
-        DetailDoesNotExistError,
-        DetailAlreadyExistsError,
-        BadArgumentError,
-        PermissionsError,
-        UnspecifiedError
-    };
-
-    /* Retrieve the error code for the most recent operation */
-    Error error() const;
-
     /* Local ID */
     QUniqueId id() const;
-    bool setId(const QUniqueId& id);
+    void setId(const QUniqueId& id);
 
     /* Group IDs */
     QList<QUniqueId> groups() const;
-    bool setGroups(const QList<QUniqueId> & groupIds);
+    void setGroups(const QList<QUniqueId> & groupIds);
 
     /* The (possibly synthesised) display label of the contact */
     QContactDisplayLabel displayLabel() const;
-    bool setDisplayLabel(const QContactDisplayLabel& label);
-    bool setDisplayLabel(const QString& label);
+    void setDisplayLabel(const QContactDisplayLabel& label);
+    void setDisplayLabel(const QString& label);
 
     /* Is this an empty contact? */
     bool isEmpty() const;

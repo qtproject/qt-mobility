@@ -145,7 +145,6 @@ QContact::~QContact()
 /*! Returns the QUniqueId that identifies this contact */
 QUniqueId QContact::id() const
 {
-    QContactData::setError(d, QContact::NoError);
     return d->m_id;
 }
 
@@ -160,7 +159,6 @@ QUniqueId QContact::id() const
  */
 QList<QUniqueId> QContact::groups() const
 {
-    QContactData::setError(d, QContact::NoError);
     return d->m_groups;
 }
 
@@ -175,11 +173,9 @@ QList<QUniqueId> QContact::groups() const
  *
  * \sa QContactGroup
  */
-bool QContact::setGroups(const QList<QUniqueId>& groups)
+void QContact::setGroups(const QList<QUniqueId>& groups)
 {
-    QContactData::setError(d, QContact::NoError);
     d->m_groups = groups;
-    return true;
 }
 
 /*!
@@ -192,7 +188,6 @@ bool QContact::setGroups(const QList<QUniqueId>& groups)
  */
 QContactDisplayLabel QContact::displayLabel() const
 {
-    QContactData::setError(d, QContact::NoError);
     return d->m_details.at(0);
 }
 
@@ -201,14 +196,10 @@ QContactDisplayLabel QContact::displayLabel() const
  *
  * The corresponding "synthesised" flag in this contact will be
  * cleared.
- *
- * Returns true on success, false otherwise.
  */
-bool QContact::setDisplayLabel(const QContactDisplayLabel& label)
+void QContact::setDisplayLabel(const QContactDisplayLabel& label)
 {
-    QContactData::setError(d, QContact::NoError);
     d->m_details[0] = label;
-    return true;
 }
 
 /*!
@@ -216,16 +207,12 @@ bool QContact::setDisplayLabel(const QContactDisplayLabel& label)
  *
  * The corresponding "synthesised" flag in this contact will be
  * cleared.
- *
- * Returns true on success, false otherwise.
  */
-bool QContact::setDisplayLabel(const QString& label)
+void QContact::setDisplayLabel(const QString& label)
 {
-    QContactData::setError(d, QContact::NoError);
     QContactDisplayLabel dl = d->m_details[0];
     dl.setLabel(label);
     d->m_details[0] = dl;
-    return true;
 }
 
 /*!
@@ -241,11 +228,9 @@ bool QContact::setDisplayLabel(const QString& label)
  * Returns true if the \a id was set successfully, otherwise
  * returns false.
  */
-bool QContact::setId(const QUniqueId& id)
+void QContact::setId(const QUniqueId& id)
 {
     d->m_id = id;
-    d->m_error = QContact::NoError;
-    return true;
 }
 
 /*! Returns the first detail stored in the contact which is of the given \a definitionName */
@@ -255,12 +240,10 @@ QContactDetail QContact::detail(const QString& definitionName) const
     for (int i = 0; i < d->m_details.size(); i++) {
         const QContactDetail& existing = d->m_details.at(i);
         if (definitionName.isEmpty() || definitionName == existing.definitionName()) {
-            QContactData::setError(d, QContact::NoError);
             return existing;
         }
     }
 
-    QContactData::setError(d, QContact::DetailDoesNotExistError);
     return QContactDetail();
 }
 
@@ -278,20 +261,11 @@ QList<QContactDetail> QContact::details(const QString& definitionName) const
             const QContactDetail& existing = d->m_details.at(i);
             if (definitionName == existing.definitionName()) {
                 sublist.append(existing);
-                QContactData::setError(d, QContact::NoError);
             }
         }
     }
 
-    if(sublist.count() == 0)
-        QContactData::setError(d, QContact::DetailDoesNotExistError);
     return sublist;
-}
-
-/*! Returns the code of the error of the most recent operation */
-QContact::Error QContact::error() const
-{
-    return d->m_error;
 }
 
 /*!
@@ -308,16 +282,13 @@ QContact::Error QContact::error() const
  */
 bool QContact::saveDetail(QContactDetail* detail)
 {
-    if (!detail) {
-        QContactData::setError(d, QContact::BadArgumentError);
+    if (!detail)
         return false;
-    }
 
     /* Handle display labels specially */
     if (detail->definitionName() == QContactDisplayLabel::DefinitionName) {
         d->m_details[0] = *detail;
         detail->d->m_id = 1;
-        QContactData::setError(d, QContact::NoError);
         return true;
     }
 
@@ -328,13 +299,11 @@ bool QContact::saveDetail(QContactDetail* detail)
         if (detail->d->m_definitionName == curr.d->m_definitionName && detail->d->m_id == curr.d->m_id) {
             // Found the old version.  Replace it with this one.
             d->m_details[i] = *detail;
-            QContactData::setError(d, QContact::NoError);
             return true;
         }
     }
 
     // this is a new detail!  add it to the contact.
-    QContactData::setError(d, QContact::NoError);
     detail->d->m_id = ++d->m_nextDetailId;
     d->m_details.append(*detail);
     return true;
@@ -354,19 +323,14 @@ bool QContact::saveDetail(QContactDetail* detail)
  */
 bool QContact::removeDetail(QContactDetail* detail)
 {
-    if (!detail) {
-        QContactData::setError(d, QContact::BadArgumentError);
+    if (!detail)
         return false;
-    }
 
-    if (!d->m_details.contains(*detail)) {
-        QContactData::setError(d, QContact::DetailDoesNotExistError);
+    if (!d->m_details.contains(*detail))
         return false;
-    }
 
     // Check if this a display label
     if (detail->d->m_definitionName == QContactDisplayLabel::DefinitionName) {
-        QContactData::setError(d, QContact::NoError);
         QContactDisplayLabel l = d->m_details[0];
         l.setLabel(QString());
         d->m_details[0] = l;
@@ -385,7 +349,6 @@ bool QContact::removeDetail(QContactDetail* detail)
     // then remove the detail.
     d->m_details.removeOne(*detail);
     detail->d->m_id = 0;
-    QContactData::setError(d, QContact::NoError);
     return true;
 }
 
@@ -400,16 +363,12 @@ bool QContact::operator==(const QContact& other) const
 /*! Retrieve the first detail for which the given \a actionName is available */
 QContactDetail QContact::detailWithAction(const QString& actionName) const
 {
-    if (actionName.isEmpty()) {
-        QContactData::setError(d, QContact::BadArgumentError);
+    if (actionName.isEmpty())
         return QContactDetail();
-    }
 
     QList<QContactDetail> dets = detailsWithAction(actionName);
-    if (dets.isEmpty()) {
-        QContactData::setError(d, QContact::DetailDoesNotExistError);
+    if (dets.isEmpty())
         return QContactDetail();
-    }
 
     QContactDetail retn = dets.first();
     return retn;
@@ -418,13 +377,10 @@ QContactDetail QContact::detailWithAction(const QString& actionName) const
 /*! Retrieve any details for which the given \a actionName is available */
 QList<QContactDetail> QContact::detailsWithAction(const QString& actionName) const
 {
-    if (actionName.isEmpty()) {
-        QContactData::setError(d, QContact::BadArgumentError);
+    if (actionName.isEmpty())
         return QList<QContactDetail>();
-    }
 
     // ascertain which details are supported by any implementation of the given action
-    QContactData::setError(d, QContact::NoError);
     QList<QContactDetail> retn;
     QList<QContactActionDescriptor> descriptors = QContactManagerData::actionDescriptors(actionName);
     QList<QContactAction*> implementations;
@@ -445,9 +401,6 @@ QList<QContactDetail> QContact::detailsWithAction(const QString& actionName) con
     for (int i = 0; i < implementations.size(); i++)
         delete implementations.at(i);
 
-    if (retn.isEmpty())
-        QContactData::setError(d, QContact::DetailDoesNotExistError);
-
     return retn;
 }
 
@@ -455,7 +408,6 @@ QList<QContactDetail> QContact::detailsWithAction(const QString& actionName) con
 QStringList QContact::availableActions() const
 {
     // check every action implementation to see if it supports me.
-    QContactData::setError(d, QContact::NoError);
     QSet<QString> validActions;
     QList<QContactActionDescriptor> descriptors = QContactManagerData::actionDescriptors();
     QList<QContactAction*> implementations;
@@ -478,35 +430,26 @@ QStringList QContact::availableActions() const
 bool QContact::setPreferredDetail(const QString& actionName, const QContactDetail& preferredDetail)
 {
     // if the given action name is empty, bad argument.
-    if (actionName.isEmpty()) {
-        QContactData::setError(d, QContact::BadArgumentError);
+    if (actionName.isEmpty())
         return false;
-    }
 
     // check to see whether the the given preferredDetail is saved in this contact
-    if (!d->m_details.contains(preferredDetail)) {
-        QContactData::setError(d, QContact::DetailDoesNotExistError);
+    if (!d->m_details.contains(preferredDetail))
         return false;
-    }
 
     // otherwise, save the preference.
     d->m_preferences.insert(actionName, preferredDetail.d->m_id);
-    QContactData::setError(d, QContact::NoError);
     return true;
 }
 
 /*! Returns true if the given \a detail is a preferred detail for the given \a actionName, or for any action if the \a actionName is empty */
 bool QContact::isPreferredDetail(const QString& actionName, const QContactDetail& detail) const
 {
-    if (!d->m_details.contains(detail)) {
-        QContactData::setError(d, QContact::DetailDoesNotExistError);
+    if (!d->m_details.contains(detail))
         return false;
-    }
 
-    QContactData::setError(d, QContact::NoError);
-    if (actionName.isEmpty()) {
+    if (actionName.isEmpty())
          return d->m_preferences.values().contains(detail.d->m_id);
-    }
 
     QMap<QString, quint32>::const_iterator it = d->m_preferences.find(actionName);
     if (it != d->m_preferences.end() && it.value() == detail.d->m_id)
@@ -519,24 +462,18 @@ bool QContact::isPreferredDetail(const QString& actionName, const QContactDetail
 QContactDetail QContact::preferredDetail(const QString& actionName) const
 {
     // if the given action name is empty, bad argument.
-    if (actionName.isEmpty()) {
-        QContactData::setError(d, QContact::BadArgumentError);
+    if (actionName.isEmpty())
         return QContactDetail();
-    }
 
-    if (!d->m_preferences.contains(actionName)) {
-        QContactData::setError(d, QContact::DetailDoesNotExistError);
+    if (!d->m_preferences.contains(actionName))
         return QContactDetail();
-    }
 
-    QContactData::setError(d, QContact::UnspecifiedError);
     QContactDetail retn;
     quint32 detId = d->m_preferences.value(actionName);
     for (int i = 0; i < d->m_details.size(); i++) {
         QContactDetail det = d->m_details.at(i);
         if (det.d->m_id == detId) {
             // found it.
-            QContactData::setError(d, QContact::NoError);
             retn = det;
             break;
         }
