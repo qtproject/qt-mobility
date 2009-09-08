@@ -8,212 +8,31 @@
 
 \section1 Introduction
 
-The \l{Qt Contacts Developer Resources}{Qt Contacts API} makes use of string constants,
-enumerated types and key-value pairs.  In order to develop a backend engine which
+The \l{Qt Contacts Developer Resources}{Qt Contacts API} makes use of detail leaf classes
+which provide certain well-known functionality.  In order to develop a backend engine which
 can service clients or provide synchronisation to other backends, the schema must be
 known.
 
 \section1 Schema Definition
 
-The schema consists of several parts.
+Different backends have different capabilities.  Some backends may not be able to implement
+certain definitions in the default schema (for example, some backends might not have support for
+storing location information), while other backends may not be able to implement some aspects
+of a particular definition in the default schema (for example, a logo field for organisation
+details).
 
-1) The "immutable" section of the schema, which consists of:
-\list
-    \o \l{QContactManagerInfo} features
-    \o \l{QContactDetail} access constraints
-    \o \l{QContactDetail} attribute keys
-    \o \l{QContactDetail} context-attribute values
-    \o \l{QContactManager} error codes
-    \o \l{QContact} error codes
-    \o \l{QContactGroup} error codes
-\endlist
-These parts of the schema are hard coded into the API, and cannot change.
+In order to be useful for clients, however, all backends should attempt to support the default
+schema.  Furthermore, no backend should support a schema definition of a modified form where
+those modifications change the semantics of the data.  A client should be able to request details
+of the QContactPhoneNumber type (that is, details whose definition name is "PhoneNumber") with
+reasonable certainty that the data returned is a phone number.
 
-2) The "default" section of the schema, which consists of those sections of the schema
-which pertain unto the provided leaf-class \l{QContactDetail}s (and the provided
-\l{QContactDetailDefinition}s to which they conform).
-This includes informations such as:
-\list
-    \o The uniqueness (per contact) of any such details
-    \o The access constraints which apply to any such details
-    \o The subtype-attribute values defined for such details
-    \o \l{QContactDetailDefinition} identifiers
-    \o \l{QContactDetailDefinition::Field} keys
-    \o \l{QContactDetailDefinition::Field} value data types
-    \o \l{QContactDetailDefinition::Field} allowable values
-\endlist
+By implementing the default schema, the backend developer ensures that client code written against
+the default schema will work without source modification against their backend.
 
-These "default" schema entries may or may not be supported by any particular backend.
-Indeed, most backend implementations will use the default schema as a base, and then
-modify it (for example, by restricting certain definitions to be unique per contact)
-or extend it (for example, by creating new "standard" definitions and \l{QContactDetail}
-leaf-classes) to provide clients with the best user-experience on the target platform.
+\section1 Default Schema
 
-\section2 Immutable Schema
-
-\section3 QContactManagerInfo features
-\table
-\header
-    \o QContactManagerInfo::ManagerFeature
-    \o Description
-\row
-    \o QContactManagerInfo::Groups
-    \o This backend supports all QContactGroup related operations, and emits the appropriate signals
-\row
-    \o QContactManagerInfo::Locking
-    \o This backend supports database locking and unlocking operations
-\row
-    \o QContactManagerInfo::Batch
-    \o This backend supports batch contact saving and loading, and emits the appropriate signals
-\row
-    \o QContactManagerInfo::ReadOnlyDetails
-    \o This backend supports read-only contact details, and performs validation on such details on save
-\row
-    \o QContactManagerInfo::CreateOnlyDetails
-    \o This backend supports create-only contact details, and performs validation on such details on save
-\row
-    \o QContactManagerInfo::MutableDefinitions
-    \o This backend supports saving, updating or removing detail definitions.  Some built in definitions may still be immutable.
-\row
-    \o QContactManagerInfo::NativeFiltering
-    \o This backend supports native filtering of some form
-\row
-    \o QContactManagerInfo::NativeSorting
-    \o This backend supports native sorting of some form
-\row
-    \o QContactManagerInfo::ActionPreferences
-    \o This backend supports saving preferred details per action per contact
-\row
-    \o QContactManagerInfo::Asynchronous
-    \o This backend supports the asynchronous API
-\row
-    \o QContactManagerInfo::Synchronous
-    \o This backend supports the synchronous API
-\endtable
-Note that if a backend completely supports the feature set identified by the QContactManagerInfo::ManagerFeature,
-it should include the feature in its list of supported features, but if a backend
-does not completely support the feature set identified by the QContactManagerInfo::ManagerFeature then it must not
-include the feature in its list of supported features.
-
-\section3 Access constraints
-\table
-\header
-    \o Access Constraint
-    \o Description
-\row
-    \o Any
-    \o Details of this definition may be written or read at any time
-\row
-    \o CreateOnly
-    \o Details of this definition may be read at any time, and can only be written when the detail is first saved to a contact
-\row
-    \o ReadOnly
-    \o Details of this definition may be read at any time, but cannot be written or created
-\endtable
-
-\section3 QContactManager error codes
-\table
-\header
-    \o QContactManager::Error Code
-    \o Description
-\row
-    \o NoError
-    \o No error occurred during the most recent operation
-\row
-    \o DoesNotExistError
-    \o The most recent operation failed because the requested contact, group or definition does not exist
-\row
-    \o AlreadyExistsError
-    \o The most recent operation failed because the specified contact, group or definition already exists
-\row
-    \o InvalidDetailError
-    \o The most recent operation failed because one or more details in the contact did not conform to its definition
-\row
-    \o LockedError
-    \o The most recent operation failed because the database was locked
-\row
-    \o LimitReachedError
-    \o The most recent operation failed because no more objects of this type may be saved in the database
-\row
-    \o SizeExceededError
-    \o The most recent operation failed because the specified object exceeds the maximum allowable size for objects of that type
-\row
-    \o PermissionsError
-    \o The most recent operation failed because you do not have permission to perform that operation
-\row
-    \o OutOfMemoryError
-    \o The most recent operation failed because the process is out of memory
-\row
-    \o NotSupportedError
-    \o The most recent operation failed because the operation is not supported
-\row
-    \o BadArgumentError
-    \o The most recent operation failed because the given argument was invalid
-\row
-    \o UnspecifiedError
-    \o The most recent operation failed for an unknown reason
-\endtable
-
-\section3 QContact error codes
-\table
-\header
-    \o QContact::Error Code
-    \o Description
-\row
-    \o NoError
-    \o No error occurred during the most recent operation
-\row
-    \o OutOfMemoryError
-    \o The most recent operation failed because the process is out of memory
-\row
-    \o DetailDoesNotExistError
-    \o The most recent operation failed because the requested detail does not exist
-\row
-    \o DetailAlreadyExistsError
-    \o The most recent operation failed because the specified detail already exists
-\row
-    \o DetaiLimitReachedError
-    \o The most recent operation failed because no more details may be saved in the contact
-\row
-    \o DetailOfThisTypeLimitReachedError
-    \o The most recent operation failed because no more details of this definition may be saved in the contact
-\row
-    \o PermissionsError
-    \o The most recent operation failed because you do not have permission to perform that operation
-\row
-    \o UnspecifiedError
-    \o The most recent operation failed for an unknown reason
-\endtable
-
-\section3 QContactGroup error codes
-\table
-\header
-    \o QContactGroup::Error Code
-    \o Description
-\row
-    \o NoError
-    \o No error occurred during the most recent operation
-\row
-    \o OutOfMemoryError
-    \o The most recent operation failed because the process is out of memory
-\row
-    \o ContactNotInGroupError
-    \o The most recent operation failed because the requested contact is not a member of this group
-\row
-    \o ContactAlreadyInGroupError
-    \o The most recent operation failed because the specified contact is already a member of this group
-\row
-    \o PermissionsError
-    \o The most recent operation failed because you do not have permission to perform that operation
-\row
-    \o UnspecifiedError
-    \o The most recent operation failed for an unknown reason
-\endtable
-
-
-\section2 Default Schema
-
-\section3 Leaf Classes
+\section2 Leaf Classes
 \table
 \header
     \o Leaf Class
@@ -350,7 +169,7 @@ include the feature in its list of supported features.
     \o Any
 \endtable
 
-\section3 Field Schema
+\section2 Field Schema
 \table
 \header
     \o Detail
@@ -511,26 +330,6 @@ include the feature in its list of supported features.
             \o The last-known status message of the contact sent from the online account communication endpoint
        \endlist
 \row
-    relationshipTypes << QString(QLatin1String("Is"));
-    relationshipTypes << QString(QLatin1String("Was"));
-    relationshipTypes << QString(QLatin1String("Father"));
-    relationshipTypes << QString(QLatin1String("Mother"));
-    relationshipTypes << QString(QLatin1String("Child"));
-    relationshipTypes << QString(QLatin1String("Son"));
-    relationshipTypes << QString(QLatin1String("Daughter"));
-    relationshipTypes << QString(QLatin1String("Sibling"));
-    relationshipTypes << QString(QLatin1String("Brother"));
-    relationshipTypes << QString(QLatin1String("Sister"));
-    relationshipTypes << QString(QLatin1String("Cousin"));
-    relationshipTypes << QString(QLatin1String("Friend"));
-    relationshipTypes << QString(QLatin1String("Spouse"));
-    relationshipTypes << QString(QLatin1String("Fiancee"));
-    relationshipTypes << QString(QLatin1String("Husband"));
-    relationshipTypes << QString(QLatin1String("Wife"));
-    relationshipTypes << QString(QLatin1String("Employer"));
-    relationshipTypes << QString(QLatin1String("Employee"));
-    relationshipTypes << QString(QLatin1String("Other"));
-    relationshipTypes << QString(QLatin1String("Unknown"));
     \o QContactRelationship
     \o \list \o RelationshipType \o ContactLabel \o ContactUid \o ContactManagerUri \endlist
     \o \list \o String \o String \o String \o String \endlist
