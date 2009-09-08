@@ -159,7 +159,10 @@ QContactDetail *TransformContact::transformItemField(const CContactItemField& fi
 	TUint32 fieldType(field.ContentType().FieldType(0).iUid);
 	
 	//Name
-	if (fieldType == KUidContactFieldGivenName.iUid ||
+	if (fieldType == KUidContactFieldPrefixName.iUid     ||
+		fieldType == KUidContactFieldGivenName.iUid      ||
+		fieldType == KUidContactFieldAdditionalName.iUid ||
+		fieldType == KUidContactFieldFamilyName.iUid     ||
 		fieldType == KUidContactFieldFamilyName.iUid)
 	{
 		detail = m_transformContactData.value(Name)->transformItemField(field, contact);
