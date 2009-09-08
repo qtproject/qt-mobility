@@ -668,9 +668,21 @@ void tst_QServiceManager::findInterfaces_scope()
     QServiceManager &mgrAdd = scope_add == QServiceManager::UserScope ? mgrUser : mgrSystem;
     QServiceManager &mgrFind = scope_find == QServiceManager::UserScope ? mgrUser : mgrSystem;
 
+    QList<QServiceInterfaceDescriptor> result = mgrFind.findInterfaces(QString());
+    QVERIFY(result.isEmpty());
+
     QVERIFY2(mgrAdd.addService(&buffer), PRINT_ERR(mgrAdd));
-    QList<QServiceInterfaceDescriptor> result = mgrFind.findInterfaces("SomeTestService");
+    result = mgrFind.findInterfaces("SomeTestService");
     QCOMPARE(!result.isEmpty(), expectFound);
+
+    result = mgrFind.findInterfaces(QString());
+    if (expectFound)
+        QVERIFY(result.count() == 1);
+    else
+        QVERIFY(result.isEmpty());
+
+    result = mgrFind.findInterfaces("NonExistingService");
+    QVERIFY(result.isEmpty());
 }
 
 void tst_QServiceManager::findInterfaces_scope_data()
