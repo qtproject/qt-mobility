@@ -54,27 +54,17 @@ public:
     bool operator==(const QContactGroup& other) const;
     bool operator!=(const QContactGroup& other) const {return !operator==(other);}
 
-    enum Error {
-        NoError = 0,
-        OutOfMemoryError,
-        ContactNotInGroupError,
-        ContactAlreadyInGroupError,
-        PermissionsError,
-        UnspecifiedError
-    };
-
-    Error error() const;
     QUniqueId id() const;
-    bool setId(const QUniqueId& id);
+    void setId(const QUniqueId& id);
 
     bool isEmpty() const;
 
     QString name() const;
-    bool setName(const QString& groupName);
+    void setName(const QString& groupName);
 
     bool addMember(const QUniqueId& contactId);
     bool removeMember(const QUniqueId& contactId);
-    bool setMembers(const QList<QUniqueId>& members);
+    void setMembers(const QList<QUniqueId>& members);
     QList<QUniqueId> members() const;
     bool hasMember(const QUniqueId& contactId) const;
 

@@ -58,14 +58,12 @@ class QContactGroupData : public QSharedData
 public:
     QContactGroupData()
         : QSharedData(),
-        m_error(QContactGroup::NoError),
         m_id(0)
     {
     }
 
     QContactGroupData(const QContactGroupData& other)
         : QSharedData(other),
-            m_error(other.m_error),
             m_id(other.m_id),
             m_members(other.m_members),
             m_name(other.m_name)
@@ -74,7 +72,6 @@ public:
 
     ~QContactGroupData() {}
 
-    mutable QContactGroup::Error m_error;
     QUniqueId m_id;
     QList<QUniqueId> m_members;
     QString m_name;
