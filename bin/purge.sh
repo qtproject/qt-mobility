@@ -1,6 +1,6 @@
 #!/bin/bash
 
 make clean
-rm config.pri
+rm -f config.pri
 find . -name "Makefile*" |xargs rm
-rm -rf build include install bin/examples
+rm -rf build include install bin/examples lib

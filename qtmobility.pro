@@ -5,7 +5,17 @@
 
 #generate prf file for Qt integration
 
-unix:system((echo MOBILITY_PREFIX=$${QT_MOBILITY_PREFIX}; echo MOBILITY_INCLUDE=$${QT_MOBILITY_INCLUDE}; cat features/mobility.prf.template) > features/mobility.prf)
+PRF_OUTPUT=features/mobility.prf
+
+unix {
+    system(echo MOBILITY_PREFIX=$${QT_MOBILITY_PREFIX} > $$PRF_OUTPUT)
+    system(echo MOBILITY_INCLUDE=$${QT_MOBILITY_INCLUDE} >> $$PRF_OUTPUT)
+    system(echo MOBILITY_LIB=$${QT_MOBILITY_LIB} >> $$PRF_OUTPUT)
+    system(cat features/mobility.prf.template >> $$PRF_OUTPUT)
+}
+
+win32 {
+}
 win32:system((echo MOBILITY_PREFIX=$${QT_MOBILITY_PREFIX} & echo MOBILITY_INCLUDE=$${QT_MOBILITY_INCLUDE} & type features\mobility.prf.template) > features\mobility.prf)
 
 # install feature file

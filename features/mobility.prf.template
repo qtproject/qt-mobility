@@ -1,5 +1,18 @@
 INCLUDEPATH += $${MOBILITY_INCLUDE}
+LIBS+= -L$${MOBILITY_LIB}
 
 contains(MOBILITY, bearer) {
     qtAddLibrary(QtBearer)
+}
+
+contains(MOBILITY, publishsubscribe) {
+    qtAddLibrary(QtContextFramework)
+}
+
+contains(MOBILITY, location) {
+    qtAddLibrary(QtLocation)
+}
+
+contains(MOBILITY, serviceframework) {
+    qtAddLibrary(QtServiceFramework)
 }

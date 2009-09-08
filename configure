@@ -15,7 +15,8 @@ RELEASEMODE=
 usage() 
 {
     echo "Usage: configure [-prefix <dir>] [headerdir <dir>] [libdir <dir>]"
-    echo "                 [-bindir <dir>] [-tests] [-examples]"
+    echo "                 [-bindir <dir>] [-tests] [-examples] [debug]"
+    echo "                 [-release]"
     echo
     echo "Options:"
     echo
