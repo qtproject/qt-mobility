@@ -89,21 +89,22 @@ QContact TransformContact::transformContact(CContactItem &contact) const
 
 CContactItem *TransformContact::transformContactL(QContact &contact) const
 {
-	// Create a new contact card.
-	CContactCard* symContact = CContactCard::NewLC();
-	
-	// Set the contact id.
-	symContact->SetId(contact.id());
-	
 	// Copy all fields to the Symbian contact.
 	QList<QContactDetail> detailList(contact.details());
+	
+    // Create a new contact card.
+    CContactCard* symContact = CContactCard::NewLC();
+    
+    // Set the contact id.
+	symContact->SetId(contact.id());
 	
 	// Iterate through the contact details in the QContact
 	const int detailCount(detailList.count());
 	
 	for(int i(0); i < detailCount; ++i) 
 	{
-		QList<CContactItemField *> fieldList = transformDetailL( detailList.at(i) );
+		QList<CContactItemField *> fieldList;
+		QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE(fieldList = transformDetailL(detailList.at(i)));
 		int fieldCount = fieldList.count();
 		
 		for (int i = 0; i < fieldCount; i++)

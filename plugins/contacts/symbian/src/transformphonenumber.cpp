@@ -39,14 +39,14 @@ QList<CContactItemField *> TransformPhoneNumber::transformDetailL(const QContact
 	//cast to phonenumber
 	const QContactPhoneNumber &phoneNumber(static_cast<const QContactPhoneNumber&>(detail));
 	
-	//create new field
-	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText);
-	TPtrC fieldText(reinterpret_cast<const TUint16*>(phoneNumber.number().utf16()));
-	newField->TextStorage()->SetTextL(fieldText);
-
 	//get the subType
 	QStringList subTypes = phoneNumber.subTypes();
 	
+	//create new field
+	TPtrC fieldText(reinterpret_cast<const TUint16*>(phoneNumber.number().utf16()));
+	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText);
+	newField->TextStorage()->SetTextL(fieldText);
+
 	//no subtype
 	if(!subTypes.count())
 	{
@@ -84,9 +84,8 @@ QList<CContactItemField *> TransformPhoneNumber::transformDetailL(const QContact
 	//contexts
 	setContextsL(phoneNumber, *newField);
 	
+	QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE(fieldList.append(newField));
 	CleanupStack::Pop(newField);
-	
-	fieldList.append(newField);
 	
 	return fieldList;
 }

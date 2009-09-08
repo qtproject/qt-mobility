@@ -40,17 +40,17 @@ QList<CContactItemField *> TransformEmail::transformDetailL(const QContactDetail
 	const QContactEmailAddress &email(static_cast<const QContactEmailAddress&>(detail));
 	
 	//create new field
-	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldEMail);
 	TPtrC fieldText(reinterpret_cast<const TUint16*>(email.emailAddress().utf16()));
-	newField->TextStorage()->SetTextL(fieldText);
+	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldEMail);
+ 	newField->TextStorage()->SetTextL(fieldText);
 	newField->AddFieldTypeL(KUidContactFieldVCardMapEMAILINTERNET);
-	CleanupStack::Pop(newField);
-	
+
 	//contexts
 	setContextsL(email, *newField);
 	
-	fieldList.append(newField);
-	
+	QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE(fieldList.append(newField));
+	CleanupStack::Pop(newField);
+		
 	return fieldList;
 }
 
