@@ -16,119 +16,23 @@
 </h1>
 <ul><li><a href="#introduction">Introduction</a></li>
 <li><a href="#schema-definition">Schema Definition</a></li>
-<ul><li><a href="#immutable-schema">Immutable Schema</a></li>
-<ul><li><a href="#qcontactmanagerinfo-features">QContactManagerInfo features</a></li>
-<li><a href="#access-constraints">Access constraints</a></li>
-<li><a href="#qcontactmanager-error-codes">QContactManager error codes</a></li>
-<li><a href="#qcontact-error-codes">QContact error codes</a></li>
-<li><a href="#qcontactgroup-error-codes">QContactGroup error codes</a></li>
-</ul>
 <li><a href="#default-schema">Default Schema</a></li>
 <ul><li><a href="#leaf-classes">Leaf Classes</a></li>
 <li><a href="#field-schema">Field Schema</a></li>
 </ul>
 </ul>
-</ul>
 <a name="introduction"></a>
 <h2>Introduction</h2>
-<p>The <a href="contacts.html">Qt Contacts API</a> makes use of string constants, enumerated types and key-value pairs. In order to develop a backend engine which can service clients or provide synchronisation to other backends, the schema must be known.</p>
+<p>The <a href="contacts.html">Qt Contacts API</a> makes use of detail leaf classes which provide certain well-known functionality. In order to develop a backend engine which can service clients or provide synchronisation to other backends, the schema must be known.</p>
 <a name="schema-definition"></a>
 <h2>Schema Definition</h2>
-<p>The schema consists of several parts.</p>
-<p>1) The &quot;immutable&quot; section of the schema, which consists of:</p>
-<ul>
-<li><a href="qcontactmanagerinfo.html">QContactManagerInfo</a> features</li>
-<li><a href="qcontactdetail.html">QContactDetail</a> access constraints</li>
-<li><a href="qcontactdetail.html">QContactDetail</a> attribute keys</li>
-<li><a href="qcontactdetail.html">QContactDetail</a> context-attribute values</li>
-<li><a href="qcontactmanager.html">QContactManager</a> error codes</li>
-<li><a href="qcontact.html">QContact</a> error codes</li>
-<li><a href="qcontactgroup.html">QContactGroup</a> error codes</li>
-</ul>
-<p>These parts of the schema are hard coded into the API, and cannot change.</p>
-<p>2) The &quot;default&quot; section of the schema, which consists of those sections of the schema which pertain unto the provided leaf-class <a href="qcontactdetail.html">QContactDetail</a>s (and the provided <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a>s to which they conform). This includes informations such as:</p>
-<ul>
-<li>The uniqueness (per contact) of any such details</li>
-<li>The access constraints which apply to any such details</li>
-<li>The subtype-attribute values defined for such details</li>
-<li><a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> identifiers</li>
-<li><a href="qcontactdetaildefinition-field.html">QContactDetailDefinition::Field</a> keys</li>
-<li><a href="qcontactdetaildefinition-field.html">QContactDetailDefinition::Field</a> value data types</li>
-<li><a href="qcontactdetaildefinition-field.html">QContactDetailDefinition::Field</a> allowable values</li>
-</ul>
-<p>These &quot;default&quot; schema entries may or may not be supported by any particular backend. Indeed, most backend implementations will use the default schema as a base, and then modify it (for example, by restricting certain definitions to be unique per contact) or extend it (for example, by creating new &quot;standard&quot; definitions and <a href="qcontactdetail.html">QContactDetail</a> leaf-classes) to provide clients with the best user-experience on the target platform.</p>
-<a name="immutable-schema"></a>
-<h3>Immutable Schema</h3>
-<a name="qcontactmanagerinfo-features"></a>
-<h4>QContactManagerInfo features</h4>
-<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
-<thead><tr valign="top" class="qt-style"><th><a href="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ManagerFeature</a></th><th>Description</th></tr></thead>
-<tr valign="top" class="odd"><td><a href="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Groups</a></td><td>This backend supports all <a href="qcontactgroup.html">QContactGroup</a> related operations, and emits the appropriate signals</td></tr>
-<tr valign="top" class="even"><td><a href="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Locking</a></td><td>This backend supports database locking and unlocking operations</td></tr>
-<tr valign="top" class="odd"><td><a href="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Batch</a></td><td>This backend supports batch contact saving and loading, and emits the appropriate signals</td></tr>
-<tr valign="top" class="even"><td><a href="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ReadOnlyDetails</a></td><td>This backend supports read-only contact details, and performs validation on such details on save</td></tr>
-<tr valign="top" class="odd"><td><a href="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::CreateOnlyDetails</a></td><td>This backend supports create-only contact details, and performs validation on such details on save</td></tr>
-<tr valign="top" class="even"><td><a href="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::MutableDefinitions</a></td><td>This backend supports saving, updating or removing detail definitions. Some built in definitions may still be immutable.</td></tr>
-<tr valign="top" class="odd"><td><a href="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::NativeFiltering</a></td><td>This backend supports native filtering of some form</td></tr>
-<tr valign="top" class="even"><td><a href="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::NativeSorting</a></td><td>This backend supports native sorting of some form</td></tr>
-<tr valign="top" class="odd"><td><a href="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ActionPreferences</a></td><td>This backend supports saving preferred details per action per contact</td></tr>
-<tr valign="top" class="even"><td><a href="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Asynchronous</a></td><td>This backend supports the asynchronous API</td></tr>
-<tr valign="top" class="odd"><td><a href="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Synchronous</a></td><td>This backend supports the synchronous API</td></tr>
-</table></p>
-<p>Note that if a backend completely supports the feature set identified by the <a href="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ManagerFeature</a>, it should include the feature in its list of supported features, but if a backend does not completely support the feature set identified by the <a href="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ManagerFeature</a> then it must not include the feature in its list of supported features.</p>
-<a name="access-constraints"></a>
-<h4>Access constraints</h4>
-<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
-<thead><tr valign="top" class="qt-style"><th>Access Constraint</th><th>Description</th></tr></thead>
-<tr valign="top" class="odd"><td>Any</td><td>Details of this definition may be written or read at any time</td></tr>
-<tr valign="top" class="even"><td>CreateOnly</td><td>Details of this definition may be read at any time, and can only be written when the detail is first saved to a contact</td></tr>
-<tr valign="top" class="odd"><td>ReadOnly</td><td>Details of this definition may be read at any time, but cannot be written or created</td></tr>
-</table></p>
-<a name="qcontactmanager-error-codes"></a>
-<h4>QContactManager error codes</h4>
-<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
-<thead><tr valign="top" class="qt-style"><th><a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> Code</th><th>Description</th></tr></thead>
-<tr valign="top" class="odd"><td>NoError</td><td>No error occurred during the most recent operation</td></tr>
-<tr valign="top" class="even"><td>DoesNotExistError</td><td>The most recent operation failed because the requested contact, group or definition does not exist</td></tr>
-<tr valign="top" class="odd"><td>AlreadyExistsError</td><td>The most recent operation failed because the specified contact, group or definition already exists</td></tr>
-<tr valign="top" class="even"><td>InvalidDetailError</td><td>The most recent operation failed because one or more details in the contact did not conform to its definition</td></tr>
-<tr valign="top" class="odd"><td>LockedError</td><td>The most recent operation failed because the database was locked</td></tr>
-<tr valign="top" class="even"><td>LimitReachedError</td><td>The most recent operation failed because no more objects of this type may be saved in the database</td></tr>
-<tr valign="top" class="odd"><td>SizeExceededError</td><td>The most recent operation failed because the specified object exceeds the maximum allowable size for objects of that type</td></tr>
-<tr valign="top" class="even"><td>PermissionsError</td><td>The most recent operation failed because you do not have permission to perform that operation</td></tr>
-<tr valign="top" class="odd"><td>OutOfMemoryError</td><td>The most recent operation failed because the process is out of memory</td></tr>
-<tr valign="top" class="even"><td>NotSupportedError</td><td>The most recent operation failed because the operation is not supported</td></tr>
-<tr valign="top" class="odd"><td>BadArgumentError</td><td>The most recent operation failed because the given argument was invalid</td></tr>
-<tr valign="top" class="even"><td>UnspecifiedError</td><td>The most recent operation failed for an unknown reason</td></tr>
-</table></p>
-<a name="qcontact-error-codes"></a>
-<h4>QContact error codes</h4>
-<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
-<thead><tr valign="top" class="qt-style"><th><a href="qcontact.html#Error-enum">QContact::Error</a> Code</th><th>Description</th></tr></thead>
-<tr valign="top" class="odd"><td>NoError</td><td>No error occurred during the most recent operation</td></tr>
-<tr valign="top" class="even"><td>OutOfMemoryError</td><td>The most recent operation failed because the process is out of memory</td></tr>
-<tr valign="top" class="odd"><td>DetailDoesNotExistError</td><td>The most recent operation failed because the requested detail does not exist</td></tr>
-<tr valign="top" class="even"><td>DetailAlreadyExistsError</td><td>The most recent operation failed because the specified detail already exists</td></tr>
-<tr valign="top" class="odd"><td>DetaiLimitReachedError</td><td>The most recent operation failed because no more details may be saved in the contact</td></tr>
-<tr valign="top" class="even"><td>DetailOfThisTypeLimitReachedError</td><td>The most recent operation failed because no more details of this definition may be saved in the contact</td></tr>
-<tr valign="top" class="odd"><td>PermissionsError</td><td>The most recent operation failed because you do not have permission to perform that operation</td></tr>
-<tr valign="top" class="even"><td>UnspecifiedError</td><td>The most recent operation failed for an unknown reason</td></tr>
-</table></p>
-<a name="qcontactgroup-error-codes"></a>
-<h4>QContactGroup error codes</h4>
-<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
-<thead><tr valign="top" class="qt-style"><th><a href="qcontactgroup.html#Error-enum">QContactGroup::Error</a> Code</th><th>Description</th></tr></thead>
-<tr valign="top" class="odd"><td>NoError</td><td>No error occurred during the most recent operation</td></tr>
-<tr valign="top" class="even"><td>OutOfMemoryError</td><td>The most recent operation failed because the process is out of memory</td></tr>
-<tr valign="top" class="odd"><td>ContactNotInGroupError</td><td>The most recent operation failed because the requested contact is not a member of this group</td></tr>
-<tr valign="top" class="even"><td>ContactAlreadyInGroupError</td><td>The most recent operation failed because the specified contact is already a member of this group</td></tr>
-<tr valign="top" class="odd"><td>PermissionsError</td><td>The most recent operation failed because you do not have permission to perform that operation</td></tr>
-<tr valign="top" class="even"><td>UnspecifiedError</td><td>The most recent operation failed for an unknown reason</td></tr>
-</table></p>
+<p>Different backends have different capabilities. Some backends may not be able to implement certain definitions in the default schema (for example, some backends might not have support for storing location information), while other backends may not be able to implement some aspects of a particular definition in the default schema (for example, a logo field for organisation details).</p>
+<p>In order to be useful for clients, however, all backends should attempt to support the default schema. Furthermore, no backend should support a schema definition of a modified form where those modifications change the semantics of the data. A client should be able to request details of the <a href="qcontactphonenumber.html">QContactPhoneNumber</a> type (that is, details whose definition name is &quot;PhoneNumber&quot;) with reasonable certainty that the data returned is a phone number.</p>
+<p>By implementing the default schema, the backend developer ensures that client code written against the default schema will work without source modification against their backend.</p>
 <a name="default-schema"></a>
-<h3>Default Schema</h3>
+<h2>Default Schema</h2>
 <a name="leaf-classes"></a>
-<h4>Leaf Classes</h4>
+<h3>Leaf Classes</h3>
 <p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
 <thead><tr valign="top" class="qt-style"><th>Leaf Class</th><th>Definition Identifier</th><th>Definition Identifier Value</th><th>Description</th><th>Uniqueness Constraint</th><th>Access Constraint</th></tr></thead>
 <tr valign="top" class="odd"><td><a href="qcontactaddress.html">QContactAddress</a></td><td>QContactAddress::DefinitionId</td><td>&quot;StreetAddress&quot;</td><td>Details of this definition contain an address of a particular contact</td><td>No</td><td>Any</td></tr>
@@ -151,7 +55,7 @@
 <tr valign="top" class="even"><td><a href="qcontacturl.html">QContactUrl</a></td><td>QContactUrl::DefinitionId</td><td>&quot;Url&quot;</td><td>Details of this definition contain a universal resource location related to the contact</td><td>No</td><td>Any</td></tr>
 </table></p>
 <a name="field-schema"></a>
-<h4>Field Schema</h4>
+<h3>Field Schema</h3>
 <p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
 <thead><tr valign="top" class="qt-style"><th>Detail</th><th>Field Keys</th><th>Field Value Data Types</th><th>Allowable Values</th><th>Field Description</th></tr></thead>
 <tr valign="top" class="odd"><td><a href="qcontactaddress.html">QContactAddress</a></td><td><ul>
@@ -427,8 +331,7 @@
 <li>The last-known status message of the contact sent from the online account communication endpoint</li>
 </ul>
 </td></tr>
-<tr valign="top" class="odd"><p>relationshipTypes &lt;&lt; <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>(<a href="http://qt.nokia.com/doc/4.5/qlatin1string.html">QLatin1String</a>(&quot;Is&quot;)); relationshipTypes &lt;&lt; <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>(<a href="http://qt.nokia.com/doc/4.5/qlatin1string.html">QLatin1String</a>(&quot;Was&quot;)); relationshipTypes &lt;&lt; <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>(<a href="http://qt.nokia.com/doc/4.5/qlatin1string.html">QLatin1String</a>(&quot;Father&quot;)); relationshipTypes &lt;&lt; <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>(<a href="http://qt.nokia.com/doc/4.5/qlatin1string.html">QLatin1String</a>(&quot;Mother&quot;)); relationshipTypes &lt;&lt; <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>(<a href="http://qt.nokia.com/doc/4.5/qlatin1string.html">QLatin1String</a>(&quot;Child&quot;)); relationshipTypes &lt;&lt; <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>(<a href="http://qt.nokia.com/doc/4.5/qlatin1string.html">QLatin1String</a>(&quot;Son&quot;)); relationshipTypes &lt;&lt; <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>(<a href="http://qt.nokia.com/doc/4.5/qlatin1string.html">QLatin1String</a>(&quot;Daughter&quot;)); relationshipTypes &lt;&lt; <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>(<a href="http://qt.nokia.com/doc/4.5/qlatin1string.html">QLatin1String</a>(&quot;Sibling&quot;)); relationshipTypes &lt;&lt; <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>(<a href="http://qt.nokia.com/doc/4.5/qlatin1string.html">QLatin1String</a>(&quot;Brother&quot;)); relationshipTypes &lt;&lt; <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>(<a href="http://qt.nokia.com/doc/4.5/qlatin1string.html">QLatin1String</a>(&quot;Sister&quot;)); relationshipTypes &lt;&lt; <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>(<a href="http://qt.nokia.com/doc/4.5/qlatin1string.html">QLatin1String</a>(&quot;Cousin&quot;)); relationshipTypes &lt;&lt; <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>(<a href="http://qt.nokia.com/doc/4.5/qlatin1string.html">QLatin1String</a>(&quot;Friend&quot;)); relationshipTypes &lt;&lt; <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>(<a href="http://qt.nokia.com/doc/4.5/qlatin1string.html">QLatin1String</a>(&quot;Spouse&quot;)); relationshipTypes &lt;&lt; <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>(<a href="http://qt.nokia.com/doc/4.5/qlatin1string.html">QLatin1String</a>(&quot;Fiancee&quot;)); relationshipTypes &lt;&lt; <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>(<a href="http://qt.nokia.com/doc/4.5/qlatin1string.html">QLatin1String</a>(&quot;Husband&quot;)); relationshipTypes &lt;&lt; <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>(<a href="http://qt.nokia.com/doc/4.5/qlatin1string.html">QLatin1String</a>(&quot;Wife&quot;)); relationshipTypes &lt;&lt; <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>(<a href="http://qt.nokia.com/doc/4.5/qlatin1string.html">QLatin1String</a>(&quot;Employer&quot;)); relationshipTypes &lt;&lt; <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>(<a href="http://qt.nokia.com/doc/4.5/qlatin1string.html">QLatin1String</a>(&quot;Employee&quot;)); relationshipTypes &lt;&lt; <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>(<a href="http://qt.nokia.com/doc/4.5/qlatin1string.html">QLatin1String</a>(&quot;Other&quot;)); relationshipTypes &lt;&lt; <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>(<a href="http://qt.nokia.com/doc/4.5/qlatin1string.html">QLatin1String</a>(&quot;Unknown&quot;));</p>
-<td><a href="qcontactrelationship.html">QContactRelationship</a></td><td><ul>
+<tr valign="top" class="odd"><td><a href="qcontactrelationship.html">QContactRelationship</a></td><td><ul>
 <li>RelationshipType</li>
 <li>ContactLabel</li>
 <li>ContactUid</li>

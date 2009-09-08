@@ -1518,15 +1518,9 @@
         <page access="public" status="commendable" name="contactsschema.html" href="contactsschema.html" subtype="page" title="Qt Contacts Schema" fulltitle="Qt Contacts Schema" subtitle="" location="contactsschema.qdoc">
             <contents name="introduction" title="Introduction" level="1"/>
             <contents name="schema-definition" title="Schema Definition" level="1"/>
-            <contents name="immutable-schema" title="Immutable Schema" level="2"/>
-            <contents name="qcontactmanagerinfo-features" title="QContactManagerInfo features" level="3"/>
-            <contents name="access-constraints" title="Access constraints" level="3"/>
-            <contents name="qcontactmanager-error-codes" title="QContactManager error codes" level="3"/>
-            <contents name="qcontact-error-codes" title="QContact error codes" level="3"/>
-            <contents name="qcontactgroup-error-codes" title="QContactGroup error codes" level="3"/>
-            <contents name="default-schema" title="Default Schema" level="2"/>
-            <contents name="leaf-classes" title="Leaf Classes" level="3"/>
-            <contents name="field-schema" title="Field Schema" level="3"/>
+            <contents name="default-schema" title="Default Schema" level="1"/>
+            <contents name="leaf-classes" title="Leaf Classes" level="2"/>
+            <contents name="field-schema" title="Field Schema" level="2"/>
         </page>
         <page access="public" status="commendable" name="samplephonebook" href="samplephonebook.html" subtype="example" title="Sample Phonebook Example" fulltitle="Sample Phonebook Example" subtitle="" location="samplephonebook.qdoc">
             <contents name="phone-book" title="Phone Book" level="1"/>
