@@ -40,13 +40,16 @@
 
 using namespace QmfHelpers;
 
-class QMessageStorePrivate
+class QMessageStorePrivate : public QObject
 {
+    Q_OBJECT
+
 public:
-    QMessageStorePrivate() : _store(QMailStore::instance()), _error(QMessageStore::NoError) {}
+    QMessageStorePrivate() : QObject(), _store(QMailStore::instance()), _error(QMessageStore::NoError), _notify(true) {}
 
     QMailStore *_store;
     QMessageStore::ErrorCode _error;
+    bool _notify;
 
     static QMailStore *convert(QMessageStore *store);
 
@@ -54,6 +57,16 @@ public:
 
     static void registerMessageStatus(QMailStore *store, const QString &field);
     static void createNonexistentFolder(QMailStore *store, const QString &path, quint64 status);
+    
+public slots:
+    void messagesAdded(const QMailMessageIdList &ids);
+    void messagesRemoved(const QMailMessageIdList &ids);
+    void messagesUpdated(const QMailMessageIdList &ids);
+
+signals:
+    void messagesAdded(const QMessageIdList &ids);
+    void messagesRemoved(const QMessageIdList &ids);
+    void messagesUpdated(const QMessageIdList &ids);
 };
 
 Q_SCOPED_STATIC_DEFINE(QMessageStore,QMessageStorePrivate,storeInstance);
@@ -84,6 +97,27 @@ void QMessageStorePrivate::createNonexistentFolder(QMailStore *store, const QStr
     }
 }
 
+void QMessageStorePrivate::messagesAdded(const QMailMessageIdList &ids)
+{
+    if (_notify) {
+        emit messagesAdded(QmfHelpers::convert(ids));
+    }
+}
+
+void QMessageStorePrivate::messagesRemoved(const QMailMessageIdList &ids)
+{
+    if (_notify) {
+        emit messagesRemoved(QmfHelpers::convert(ids));
+    }
+}
+
+void QMessageStorePrivate::messagesUpdated(const QMailMessageIdList &ids)
+{
+    if (_notify) {
+        emit messagesUpdated(QmfHelpers::convert(ids));
+    }
+}
+
 namespace QmfHelpers {
 
 QMailStore *convert(QMessageStore *store)
@@ -97,6 +131,9 @@ QMessageStore::QMessageStore(QObject *parent)
     : QObject(parent),
       d_ptr(new QMessageStorePrivate)
 {
+    connect(d_ptr, SIGNAL(messagesAdded(QMessageIdList)), this, SIGNAL(messagesAdded(QMessageIdList)));
+    connect(d_ptr, SIGNAL(messagesRemoved(QMessageIdList)), this, SIGNAL(messagesRemoved(QMessageIdList)));
+    connect(d_ptr, SIGNAL(messagesUpdated(QMessageIdList)), this, SIGNAL(messagesUpdated(QMessageIdList)));
 }
 
 QMessageStore::~QMessageStore()
@@ -253,6 +290,12 @@ QMessageStore* QMessageStore::instance()
 
         QMailStore *mailStore(convert(store));
 
+        // Connect the store's signals
+        QMessageStorePrivate *storeImpl(store->d_ptr);
+        connect(mailStore, SIGNAL(messagesAdded(QMailMessageIdList)), storeImpl, SLOT(messagesAdded(QMailMessageIdList)));
+        connect(mailStore, SIGNAL(messagesRemoved(QMailMessageIdList)), storeImpl, SLOT(messagesRemoved(QMailMessageIdList)));
+        connect(mailStore, SIGNAL(messagesUpdated(QMailMessageIdList)), storeImpl, SLOT(messagesUpdated(QMailMessageIdList)));
+
         // Perform any initialisation tasks
         QMessageStorePrivate::registerMessageStatus(mailStore, "QMessage::HighPriority");
         QMessageStorePrivate::registerMessageStatus(mailStore, "QMessage::LowPriority");
@@ -273,11 +316,13 @@ QMessageStore* QMessageStore::instance()
     
 bool QMessageStore::isNotificationEnabled() const
 {
-    return false; // stub
+    return d_ptr->_notify;
 }
 
 void QMessageStore::setNotificationEnabled(bool enabled)
 {
-    Q_UNUSED(enabled)
+    d_ptr->_notify = enabled;
 }
+
+#include "qmessagestore_qmf.moc"
 
