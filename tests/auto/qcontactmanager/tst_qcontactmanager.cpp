@@ -175,8 +175,6 @@ void tst_QContactManager::dumpContactDifferences(const QContact& ca, const QCont
         if (d.definitionName() != QContactDisplayLabel::DefinitionName)
             qDebug() << "B contact had extra detail:" << d.definitionName() << d.values();
     }
-
-    QCOMPARE(b, a);
 }
 
 bool tst_QContactManager::isSuperset(const QContact& ca, const QContact& cb)
@@ -708,6 +706,7 @@ void tst_QContactManager::add()
     if (!isSuperset(added, alice)) {
         dumpContacts(cm);
         dumpContactDifferences(added, alice);
+        QCOMPARE(added, alice);
     }
 
     // now try adding a contact that does not exist in the database with non-zero id
@@ -791,7 +790,10 @@ void tst_QContactManager::add()
     megacontact.setDisplayLabel(testLabel);
     QVERIFY(cm->saveContact(&megacontact)); // must be able to save since built from definitions.
     QContact retrievedMegacontact = cm->contact(megacontact.id());
-    QCOMPARE(retrievedMegacontact, megacontact); // should be the same.
+    if (retrievedMegacontact != megacontact) {
+        dumpContactDifferences(megacontact, retrievedMegacontact);
+        QCOMPARE(megacontact, retrievedMegacontact);
+    }
 
     // now a contact with many details of a particular definition
     // this will fail on some backends; how do we query for this capability?
@@ -808,7 +810,10 @@ void tst_QContactManager::add()
     QVERIFY(veryContactable.details(QContactPhoneNumber::DefinitionName).size() == 50);
     QVERIFY(cm->saveContact(&veryContactable));
     QContact retrievedContactable = cm->contact(veryContactable.id());
-    QCOMPARE(retrievedContactable, veryContactable);
+    if (retrievedContactable != veryContactable) {
+        dumpContactDifferences(veryContactable, retrievedContactable);
+        QCOMPARE(veryContactable, retrievedContactable);
+    }
 
     delete cm;
 }
