@@ -4,6 +4,7 @@
 #include <QDialog>
 class QSystemScreenSaver;
 class QSystemInfo;
+#include <qsysteminfo.h>
 
 namespace Ui {
     class Dialog;
@@ -29,6 +30,7 @@ private:
 
     QSystemScreenSaver *saver;
     QSystemInfo *systemInfo;
+    QSystemDeviceInfo *di;
 
 private slots:
     void tabChanged(int index);
@@ -37,6 +39,8 @@ private slots:
     void setSaverEnabled(bool b);
     void setBlankingEnabled(bool b);
     void netStatusComboActivated(int);
+    void updateBatteryStatus(int);
+    void updatePowerState(QSystemDeviceInfo::PowerState);
 };
 
 #endif // DIALOG_H

@@ -75,28 +75,35 @@ void Dialog::setupGeneral()
 
 void Dialog::setupDevice()
 {
-    QSystemDeviceInfo di;
-    ui->batteryLevelBar->setValue(di.batteryLevel());
-    ui->batteryChargingCheckBox->setChecked(di.isBatteryCharging());
+    di = new QSystemDeviceInfo(this);
+    ui->batteryLevelBar->setValue(di->batteryLevel());
 
-    ui->ImeiLabel->setText(di.imei());
-    ui->imsiLabel->setText(di.imsi());
-    ui->manufacturerLabel->setText(di.manufacturer());
-    ui->modelLabel->setText(di.model());
-    ui->productLabel->setText(di.productName());
+    connect(di,SIGNAL(batteryLevelChanged(int)),
+            this,SLOT(updateBatteryStatus(int)));
 
-    ui->deviceLockCheckBox->setChecked(di.isDeviceLocked());
+    connect(di,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
+            this,SLOT(updatePowerState(QSystemDeviceInfo::PowerState)));
 
-    if(di.currentPowerState() == QSystemDeviceInfo::BatteryPower) {
+    ui->batteryChargingCheckBox->setChecked(di->isBatteryCharging());
+
+    ui->ImeiLabel->setText(di->imei());
+    ui->imsiLabel->setText(di->imsi());
+    ui->manufacturerLabel->setText(di->manufacturer());
+    ui->modelLabel->setText(di->model());
+    ui->productLabel->setText(di->productName());
+
+    ui->deviceLockCheckBox->setChecked(di->isDeviceLocked());
+
+    if(di->currentPowerState() == QSystemDeviceInfo::BatteryPower) {
         ui->radioButton_2->setChecked(true);
     } else
-        if(di.currentPowerState() == QSystemDeviceInfo::WallPower) {
+        if(di->currentPowerState() == QSystemDeviceInfo::WallPower) {
         ui->radioButton_3->setChecked(true);
     } else {
         ui->radioButton->setChecked(true);
     }
 
-    QSystemDeviceInfo::InputMethodFlags methods = di.inputMethodType();
+    QSystemDeviceInfo::InputMethodFlags methods = di->inputMethodType();
     QStringList inputs;
     if((methods & QSystemDeviceInfo::Keys)){
         inputs << "Keys";
@@ -374,4 +381,28 @@ void Dialog::setBlankingEnabled(bool b)
 {
     if(saver->setScreenBlankingEnabled(b)) {   
     }
+}
+
+void Dialog::updateBatteryStatus(int level)
+{
+    qWarning() << level;
+    ui->batteryLevelBar->setValue(level);
+}
+
+void Dialog::updatePowerState(QSystemDeviceInfo::PowerState newState)
+{
+
+    switch (newState) {
+    case QSystemDeviceInfo::BatteryPower:
+        {
+            ui->radioButton_2->setChecked(true);
+        }
+        break;
+    case QSystemDeviceInfo::WallPower:
+        {
+            ui->radioButton_3->setChecked(true);
+        }
+        break;
+    };
+    ui->batteryChargingCheckBox->setChecked(di->isBatteryCharging());
 }

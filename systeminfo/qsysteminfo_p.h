@@ -93,10 +93,10 @@ private:
     QTimer *langTimer;
     QString langCached;
 #endif
+//#if defined(Q_OS_LINUX)
 private Q_SLOTS:
-#if defined(Q_OS_LINUX)
     void startLangaugePolling();
-#endif
+//#endif
 
 };
 
@@ -205,7 +205,6 @@ Q_SIGNALS:
     void batteryLevelChanged(int);
     void powerStateChanged(QSystemDeviceInfo::PowerState);
     void currentProfileChanged(QSystemDeviceInfo::Profile);
-    void currentPowerStateChanged(QSystemDeviceInfo::PowerState);
     void bluetoothStateChanged(bool);
 
 private:
@@ -213,7 +212,7 @@ private:
     QHalDeviceInterface *halIfaceDevice;
 
 private Q_SLOTS:
-    void halChangedBatteryLevel(  int, QVariantList);
+    void halChanged(int,QVariantList);
 
 };
 
@@ -223,7 +222,6 @@ class QSystemScreenSaverPrivate : public QObject
     Q_OBJECT
 
 public:
-
     QSystemScreenSaverPrivate(QObject *parent = 0);
 
     bool screenSaverEnabled();

@@ -179,12 +179,6 @@ QT_BEGIN_NAMESPACE
   This signal is emitted whenever the network profile changes, specified by \a profile.
 */
 
-/*!
-  \fn  void QSystemDeviceInfo::currentPowerStateChanged(QSystemDeviceInfo::PowerState state)
-
-  This signal is emitted whenever the power state changes, specified by \a state.
-
-*/
 
 /*!
     \enum QSystemDeviceInfo::BatteryLevel
@@ -592,22 +586,21 @@ QSystemMemoryInfo::VolumeType QSystemMemoryInfo::volumeType(const QString &drive
  */
 QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
 {
-    qWarning() << __FUNCTION__;
-    
+
     d = new QSystemDeviceInfoPrivate(parent);
-    connect(d,SIGNAL(batteryLevelChanged(QSystemDeviceInfo::BatteryLevel)),
-            this,SIGNAL(batteryLevelChanged(QSystemDeviceInfo::BatteryLevel)));
+    connect(d,SIGNAL(batteryLevelChanged(int)),
+            this,SIGNAL(batteryLevelChanged(int)));
+
     connect(d,SIGNAL(bluetoothStateChanged(bool)),
             this,SIGNAL(bluetoothStateChanged(bool)));
-    connect(d,SIGNAL(currentPowerStateChanged(QSystemDeviceInfo::PowerState)),
-            this,SIGNAL(currentPowerStateChanged(QSystemDeviceInfo::PowerState)));
+
     connect(d,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
             this,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)));
+
     connect(d,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
             this,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)));
     
     d->setConnection();
-    
 }
 
 /*!

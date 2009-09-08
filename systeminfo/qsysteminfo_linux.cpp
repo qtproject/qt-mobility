@@ -941,8 +941,6 @@ void QSystemMemoryInfoPrivate::mountEntries()
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
         : QObject(parent)
 {
- //   qWarning() << Q_FUNC_INFO;
-
     halIsAvailable = halAvailable();
 }
 
@@ -950,46 +948,64 @@ void QSystemDeviceInfoPrivate::setConnection()
 {
     if(halIsAvailable) {
         QHalInterface iface;
+
         QStringList list = iface.findDeviceByCapability("battery");
         if(!list.isEmpty()) {
             foreach(QString dev, list) {
-                //         qWarning() << "device is" << dev;
-                //            if(!halIfaceDevice) {
                 halIfaceDevice = new QHalDeviceInterface(dev);
                 if (halIfaceDevice->isValid()) {
                     QString batType = halIfaceDevice->getPropertyString("battery.type");
-                    qWarning() << "device is" << dev << batType;
                     if(batType == "primary" || batType == "pda") {
-                        if(!halIfaceDevice->setConnections() ) {
-                            qWarning() << "Connections XXXXXXXXXXXXXXXXXXXXXXXXX";
+                        if(halIfaceDevice->setConnections() ) {
+                            if(!connect(halIfaceDevice,SIGNAL(propertyModified( int, QVariantList)),
+                                        this,SLOT(halChanged(int,QVariantList)))) {
+                                qWarning() << "connection malfunction";
+                            }
                         }
-                        if(!connect(halIfaceDevice,SIGNAL(propertyModified( int, QVariantList)),
-                                    this,SLOT(halChangedBatteryLevel(  int, QVariantList)))) {
-                            qWarning() << "connection malfunction";
-                        }
-                            break;
+                        break;
                     }
                 }
             }
         }
+
+        list = iface.findDeviceByCapability("ac_adapter");
+        if(!list.isEmpty()) {
+            foreach(QString dev, list) {
+                halIfaceDevice = new QHalDeviceInterface(dev);
+                if (halIfaceDevice->isValid()) {
+                    if(halIfaceDevice->setConnections() ) {
+                        if(!connect(halIfaceDevice,SIGNAL(propertyModified( int, QVariantList)),
+                                    this,SLOT(halChanged(int,QVariantList)))) {
+                            qWarning() << "connection malfunction";
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
     }
 }
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
-    qWarning() << __FUNCTION__;
 }
 
-void QSystemDeviceInfoPrivate::halChangedBatteryLevel(  int, QVariantList map)
+void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
 {
-    qWarning() <<__FUNCTION__ << map.count() ;
     for(int i=0; i < map.count(); i++) {
+//        qWarning() << map.at(i).toString();
         if(map.at(i).toString() == "battery.charge_level.percentage") {
-            qWarning() <<     map.at(i).toString()  <<"!!!!!!!!!!!!!!!!!";
-            emit batteryLevelChanged(batteryLevel());
+            int level = batteryLevel();
+            emit batteryLevelChanged(level);
        }
-    }
+        if(map.at(i).toString() == "ac_adapter.present") {
+            QSystemDeviceInfo::PowerState state = currentPowerState();
+            emit powerStateChanged(state);
+        }
+    } //end map
 }
+
 
 QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 {
@@ -1339,35 +1355,35 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
  QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
  {
 #if !defined(QT_NO_DBUS)
-     qWarning() << Q_FUNC_INFO;
         QHalInterface iface;
         QStringList list = iface.findDeviceByCapability("ac_adapter");
         if(!list.isEmpty()) {
             foreach(QString dev, list) {
-                qWarning() <<"AC" << dev;
                 QHalDeviceInterface ifaceDevice(dev);
                 if (ifaceDevice.isValid()) {
                     if(ifaceDevice.getPropertyBool("ac_adapter.present")) {
                         return QSystemDeviceInfo::WallPower;
+                    } else {
+                        return QSystemDeviceInfo::BatteryPower;
                     }
                 }
             }
         }
 
-        list = iface.findDeviceByCapability("battery");
-        if(!list.isEmpty()) {
-            foreach(QString dev, list) {
-                qWarning() <<"battery"<< dev;
-                QHalDeviceInterface ifaceDevice(dev);
-                if (ifaceDevice.isValid()) {
-                    if(ifaceDevice.getPropertyBool("battery.rechargeable.is_discharging") ){
-                        return QSystemDeviceInfo::BatteryPower;
-                    } else {
-                        return QSystemDeviceInfo::WallPower;
-                    }
-                }
-            }
-        }
+//        list = iface.findDeviceByCapability("battery");
+//        if(!list.isEmpty()) {
+//            foreach(QString dev, list) {
+//                qWarning() <<"battery"<< dev;
+//                QHalDeviceInterface ifaceDevice(dev);
+//                if (ifaceDevice.isValid()) {
+//                    if(ifaceDevice.getPropertyBool("battery.rechargeable.is_discharging") ){
+//                        return QSystemDeviceInfo::BatteryPower;
+//                    } else {
+//                        return QSystemDeviceInfo::WallPower;
+//                    }
+//                }
+//            }
+//        }
 #else
         QFile statefile("/proc/acpi/battery/BAT0/state");
         if (!statefile.open(QIODevice::ReadOnly)) {

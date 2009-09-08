@@ -42,7 +42,6 @@
         <keyword ref="qsystemdeviceinfo.html#batteryLevel">batteryLevel</keyword>
         <keyword ref="qsystemdeviceinfo.html#batteryLevelChanged">batteryLevelChanged</keyword>
         <keyword ref="qsystemdeviceinfo.html#bluetoothStateChanged">bluetoothStateChanged</keyword>
-        <keyword ref="qsystemdeviceinfo.html#currentPowerStateChanged">currentPowerStateChanged</keyword>
         <keyword ref="qsystemdeviceinfo.html#currentProfileChanged">currentProfileChanged</keyword>
         <keyword ref="qsystemdeviceinfo.html#imei">imei</keyword>
         <keyword ref="qsystemdeviceinfo.html#imsi">imsi</keyword>

@@ -153,14 +153,9 @@ bool QHalDeviceInterface::isValid()
 
 bool QHalDeviceInterface::setConnections()
 {
-    qWarning() << __FUNCTION__ << isValid()
-               << HAL_DBUS_SERVICE
-               << d->path
-               <<HAL_DEVICE_INTERFACE;
     if(!isValid() )
         return false;
     bool allOk = false;
-    qWarning() << "ok go ahead and try" << d->path;
 
     if (dbusConnection.connect(HAL_DBUS_SERVICE,
                                d->path,

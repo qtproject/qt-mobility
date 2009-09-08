@@ -222,9 +222,6 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="currentProfileChanged" fullname="QSystemDeviceInfo::currentProfileChanged" href="qsystemdeviceinfo.html#currentProfileChanged" location="qsysteminfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="currentProfileChanged(QSystemDeviceInfo::Profile profile)">
                 <parameter left="QSystemDeviceInfo::Profile" right="" name="profile" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="currentPowerStateChanged" fullname="QSystemDeviceInfo::currentPowerStateChanged" href="qsystemdeviceinfo.html#currentPowerStateChanged" location="qsysteminfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="currentPowerStateChanged(QSystemDeviceInfo::PowerState state)">
-                <parameter left="QSystemDeviceInfo::PowerState" right="" name="state" default=""/>
-            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="bluetoothStateChanged" fullname="QSystemDeviceInfo::bluetoothStateChanged" href="qsystemdeviceinfo.html#bluetoothStateChanged" location="qsysteminfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="bluetoothStateChanged(bool on)">
                 <parameter left="bool" right="" name="on" default=""/>
             </function>
