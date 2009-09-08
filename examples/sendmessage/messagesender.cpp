@@ -168,26 +168,16 @@ void MessageSender::send()
     message.setTo(QMessageAddress(to, QMessageAddress::Email));
     message.setSubject(subject);
 
-#ifdef QMESSAGING_OPTIONAL
+    message.setBody(text);
+
     if (attachmentsList->count()) {
-        QMessageContentContainer textPart;
-        textPart.setContentType("text");
-        textPart.setContentSubType("plain");
-        textPart.setContentCharset("UTF-8");
-        textPart.setContent(text);
-
-        message.appendContent(textPart);
-
         QStringList paths;
         for (int i = 0; i < attachmentsList->count(); ++i) {
             paths.append(attachmentsList->item(i)->text());
         }
 
         message.appendAttachments(paths);
-    } else {
-        message.setContent(text);
     }
-#endif
 
     if (service.send(message)) {
         sendButton->setEnabled(false);
