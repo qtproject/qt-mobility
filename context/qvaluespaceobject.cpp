@@ -142,7 +142,10 @@ QT_BEGIN_NAMESPACE
 class QValueSpaceObjectPrivate
 {
 public:
-    QValueSpaceObjectPrivate(const QUuid &uuid, const QByteArray &objectPath);
+    QValueSpaceObjectPrivate(const QByteArray &objectPath,
+                             QAbstractValueSpaceLayer::LayerOptions filter =
+                                 QAbstractValueSpaceLayer::UnspecifiedLayer);
+    QValueSpaceObjectPrivate(const QByteArray &objectPath, const QUuid &uuid);
 
     QByteArray path;
 
@@ -153,18 +156,19 @@ public:
     bool hasWatch;
 };
 
-QValueSpaceObjectPrivate::QValueSpaceObjectPrivate(const QUuid &uuid, const QByteArray &objectPath)
-:   layer(0), handle(QAbstractValueSpaceLayer::InvalidHandle),
-    hasSet(false), hasWatch(false)
+QValueSpaceObjectPrivate::QValueSpaceObjectPrivate(const QByteArray &objectPath,
+                                                   QAbstractValueSpaceLayer::LayerOptions filter)
+:   layer(0), handle(QAbstractValueSpaceLayer::InvalidHandle), hasSet(false), hasWatch(false)
 {
     path = qCanonicalPath(objectPath);
 
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
 
-    if (uuid.isNull()) {
-        for (int ii = 0; ii < layers.count(); ++ii) {
+    for (int ii = 0; ii < layers.count(); ++ii) {
+        if (filter == QAbstractValueSpaceLayer::UnspecifiedLayer ||
+            layers.at(ii)->layerOptions() & filter) {
             QAbstractValueSpaceLayer::Handle h =
-                layers.at(ii)->item(QAbstractValueSpaceLayer::InvalidHandle, path);
+                    layers.at(ii)->item(QAbstractValueSpaceLayer::InvalidHandle, path);
 
             if (h != QAbstractValueSpaceLayer::InvalidHandle) {
                 layer = layers.at(ii);
@@ -172,30 +176,31 @@ QValueSpaceObjectPrivate::QValueSpaceObjectPrivate(const QUuid &uuid, const QByt
                 break;
             }
         }
-    } else {
-        for (int ii = 0; ii < layers.count(); ++ii) {
-            if (layers.at(ii)->id() == uuid) {
-                layer = layers.at(ii);
-                handle = layer->item(QAbstractValueSpaceLayer::InvalidHandle, path);
-                break;
-            }
+    }
+}
+
+QValueSpaceObjectPrivate::QValueSpaceObjectPrivate(const QByteArray &objectPath, const QUuid &uuid)
+:   layer(0), handle(QAbstractValueSpaceLayer::InvalidHandle), hasSet(false), hasWatch(false)
+{
+    path = qCanonicalPath(objectPath);
+
+    QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
+
+    for (int ii = 0; ii < layers.count(); ++ii) {
+        if (layers.at(ii)->id() == uuid) {
+            layer = layers.at(ii);
+            handle = layer->item(QAbstractValueSpaceLayer::InvalidHandle, path);
+            break;
         }
     }
 }
 
 /*!
-    \overload
-
-    Constructs a QValueSpaceObject which accesses the specified \a layer and is rooted at
-    \a objectPath.  The object's parent is set to \a parent.
-
-    If \a layer is null then the layer is automatically chosen based on \a objectPath.
-
-    Calling this constructor is equivalent to calling
-    \c {QValueSpaceObject(QByteArray(objectPath), layer, parent)}.
+    Constructs a QValueSpaceObject with the specified \a parent that publishes values under
+    \a path.
 */
-QValueSpaceObject::QValueSpaceObject(const char *objectPath, const QUuid &layer, QObject *parent)
-:   QObject(parent), d(new QValueSpaceObjectPrivate(layer, objectPath))
+QValueSpaceObject::QValueSpaceObject(const QByteArray &path, QObject *parent)
+:   QObject(parent), d(new QValueSpaceObjectPrivate(path))
 {
     VS_CALL_ASSERT;
     QValueSpaceManager::instance()->init();
@@ -204,29 +209,146 @@ QValueSpaceObject::QValueSpaceObject(const char *objectPath, const QUuid &layer,
 /*!
     \overload
 
-    Constructs a QValueSpaceObject which accesses the specified \a layer and is rooted at
-    \a objectPath.  The object's parent is set to \a parent.
-
-    If \a layer is null then the layer is automatically chosen based on \a objectPath.
-
-    Calling this constructor is equivalent to calling
-    \c {QValueSpaceObject(objectPath.toUtf8(), parent)}.
+    Constructs a QValueSpaceObject with the specified \a parent that publishes values under
+    \a path.  This constructor is equivalent to calling
+    \c {QValueSpaceItem(path.toUtf8(), parent)}.
 */
-QValueSpaceObject::QValueSpaceObject(const QString &objectPath, const QUuid &layer, QObject *parent)
-:   QObject(parent), d(new QValueSpaceObjectPrivate(layer, objectPath.toUtf8()))
+QValueSpaceObject::QValueSpaceObject(const QString &path, QObject *parent)
+:   QObject(parent), d(new QValueSpaceObjectPrivate(path.toUtf8()))
 {
     VS_CALL_ASSERT;
     QValueSpaceManager::instance()->init();
 }
 
 /*!
-    Constructs a QValueSpaceObject which accesses the specified \a layer and is rooted at
-    \a objectPath.  The object's parent is set to \a parent.
+    \overload
 
-    If \a layer is null then the layer is automatically chosen based on \a objectPath.
+    Constructs a QValueSpaceObject with the specified \a parent that publishes values under
+    \a path.  This constructor is equivalent to calling
+    \c {QValueSpaceItem(QByteArray(path), parent)}.
 */
-QValueSpaceObject::QValueSpaceObject(const QByteArray &objectPath, const QUuid &layer, QObject *parent)
-:   QObject(parent), d(new QValueSpaceObjectPrivate(layer, objectPath))
+QValueSpaceObject::QValueSpaceObject(const char *path, QObject *parent)
+:   QObject(parent), d(new QValueSpaceObjectPrivate(QByteArray(path)))
+{
+    VS_CALL_ASSERT;
+    QValueSpaceManager::instance()->init();
+}
+
+/*!
+    Constructs a QValueSpaceObject with the specified \a parent that publishes values under
+    \a path.  The \a filter parameter is used to limit which layers this QValueSpaceObject will
+    access.
+
+    If a layer matching \a filter is not found an invalid QValueSpaceObject will be constructed.
+
+    \sa isValid()
+*/
+QValueSpaceObject::QValueSpaceObject(const QByteArray &path,
+                                     QAbstractValueSpaceLayer::LayerOptions filter,
+                                     QObject *parent)
+:   QObject(parent), d(new QValueSpaceObjectPrivate(path, filter))
+{
+    VS_CALL_ASSERT;
+    QValueSpaceManager::instance()->init();
+}
+
+/*!
+    Constructs a QValueSpaceObject with the specified \a parent that publishes values under
+    \a path.  The \a filter parameter is used to limit which layers this QValueSpaceObject will
+    access.  This constructor is equivalent to calling
+    \c {QValueSpaceObject(path.toUtf8(), filter, parent)}.
+
+    If a layer matching \a filter is not found an invalid QValueSpaceObject will be constructed.
+
+    \sa isValid()
+*/
+QValueSpaceObject::QValueSpaceObject(const QString &path,
+                                     QAbstractValueSpaceLayer::LayerOptions filter,
+                                     QObject *parent)
+:   QObject(parent), d(new QValueSpaceObjectPrivate(path.toUtf8(), filter))
+{
+    VS_CALL_ASSERT;
+    QValueSpaceManager::instance()->init();
+}
+
+/*!
+    Constructs a QValueSpaceObject with the specified \a parent that publishes values under
+    \a path.  The \a filter parameter is used to limit which layers this QValueSpaceObject will
+    access.  This constructor is equivalent to calling
+    \c {QValueSpaceObject(QByteArray(path), filter, parent)}.
+
+    If a layer matching \a filter is not found an invalid QValueSpaceObject will be constructed.
+
+    \sa isValid()
+*/
+QValueSpaceObject::QValueSpaceObject(const char *path,
+                                     QAbstractValueSpaceLayer::LayerOptions filter,
+                                     QObject *parent)
+:   QObject(parent), d(new QValueSpaceObjectPrivate(path, filter))
+{
+    VS_CALL_ASSERT;
+    QValueSpaceManager::instance()->init();
+}
+
+/*!
+    Constructs a QValueSpaceObject with the specified \a parent that publishes values under
+    \a path.  Only the layer identified by \a uuid will be accessed by this object.
+
+    Use of this constructor is not platform agnostic.  If possible use one of the constructors that
+    take a QAbstractValueSpaceLayer::LayerOptions parameter instead.
+
+    If a layer with a matching \a uuid is not found an invalid QValueSpaceObject will be
+    constructed.
+
+    \sa isValid()
+*/
+QValueSpaceObject::QValueSpaceObject(const QByteArray &path, const QUuid &uuid, QObject *parent)
+:   QObject(parent), d(new QValueSpaceObjectPrivate(path, uuid))
+{
+    VS_CALL_ASSERT;
+    QValueSpaceManager::instance()->init();
+}
+
+/*!
+    \overload
+
+    Constructs a QValueSpaceObject with the specified \a parent that publishes values under
+    \a path.  Only the layer identified by \a uuid will be accessed by this object.  This
+    constructor is equivalent to calling \c {QValueSpaceObject(path.toUtf8(), uuid, parent)}.
+
+    Use of this constructor is not platform agnostic.  If possible use one of the constructors that
+    take a QAbstractValueSpaceLayer::LayerOptions parameter instead.
+
+    If a layer with a matching \a uuid is not found an invalid QValueSpaceObject will be
+    constructed.
+
+    \sa isValid()
+*/
+
+QValueSpaceObject::QValueSpaceObject(const QString &path, const QUuid &uuid, QObject *parent)
+:   QObject(parent), d(new QValueSpaceObjectPrivate(path.toUtf8(), uuid))
+{
+    VS_CALL_ASSERT;
+    QValueSpaceManager::instance()->init();
+}
+
+/*!
+    \overload
+
+    Constructs a QValueSpaceObject with the specified \a parent that publishes values under
+    \a path.  Only the layer identified by \a uuid will be accessed by this object.  This
+    constructor is equivalent to calling \c {QValueSpaceObject(QByteArray(path), uuid, parent)}.
+
+    Use of this constructor is not platform agnostic.  If possible use one of the constructors that
+    take a QAbstractValueSpaceLayer::LayerOptions parameter instead.
+
+    If a layer with a matching \a uuid is not found an invalid QValueSpaceObject will be
+    constructed.
+
+    \sa isValid()
+*/
+QValueSpaceObject::QValueSpaceObject(const char *path, const QUuid &uuid, QObject *parent)
+:   QObject(parent), d(new QValueSpaceObjectPrivate(path, uuid))
 {
     VS_CALL_ASSERT;
     QValueSpaceManager::instance()->init();
@@ -243,7 +365,7 @@ QValueSpaceObject::~QValueSpaceObject()
     if (!d->layer)
         return;
 
-    if (d->hasSet)
+    if (d->hasSet && !(d->layer->layerOptions() & QAbstractValueSpaceLayer::PermanentLayer))
         d->layer->removeSubTree(this, d->handle);
 
     if (d->hasWatch)
@@ -340,8 +462,10 @@ void QValueSpaceObject::setAttribute(const QByteArray &attribute, const QVariant
 {
     VS_CALL_ASSERT;
 
-    if (!isValid())
+    if (!isValid()) {
+        qWarning("setAttribute called on invalid QValueSpaceObject.");
         return;
+    }
 
     d->hasSet = true;
     d->layer->setValue(this, d->handle, qCanonicalPath(attribute), data);
@@ -392,8 +516,10 @@ void QValueSpaceObject::removeAttribute(const QByteArray &attribute)
 {
     VS_CALL_ASSERT;
 
-    if (!isValid())
+    if (!isValid()) {
+        qWarning("removeAttribute called on invalid QValueSpaceObject.");
         return;
+    }
 
     d->layer->removeValue(this, d->handle, qCanonicalPath(attribute));
 }
@@ -414,7 +540,7 @@ void QValueSpaceObject::connectNotify(const char *member)
 {
     VS_CALL_ASSERT;
 
-    if (!d->hasWatch && (*member - '0') == QSIGNAL_CODE) {
+    if (!d->hasWatch && d->layer && (*member - '0') == QSIGNAL_CODE) {
         d->layer->addWatch(this, d->handle);
         d->hasWatch = true;
     }

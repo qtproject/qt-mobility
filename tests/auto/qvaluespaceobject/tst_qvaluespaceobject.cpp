@@ -79,6 +79,9 @@ private slots:
     void testSignals_data();
     void testSignals();
 
+    void valuePermanence_data();
+    void valuePermanence();
+
 private:
     int variantMetaTypeId;
 };
@@ -99,23 +102,24 @@ void tst_QValueSpaceObject::cleanupTestCase()
 {
 }
 
-#define ADD(layer, path, canonical, id, valid) do {\
+#define ADD(layer, id, path, canonical, valid) do {\
     const QString layerName(layer ? layer->name() : 0); \
     QTest::newRow((layerName + ' ' + path + " const char *").toLocal8Bit().constData()) \
-        << layer << CharStar << path << canonical << id << valid; \
+        << layer << id << CharStar << path << canonical << valid; \
     QTest::newRow((layerName + ' ' + path + " const QString &").toLocal8Bit().constData()) \
-        << layer << String << path << canonical << id << valid; \
+        << layer << id << String << path << canonical << valid; \
     QTest::newRow((layerName + ' ' + path + " const QByteArray &").toLocal8Bit().constData()) \
-        << layer << ByteArray << path << canonical << id << valid; \
+        << layer << id << ByteArray << path << canonical << valid; \
 } while (false)
 
 void tst_QValueSpaceObject::testConstructor_data()
 {
     QTest::addColumn<QAbstractValueSpaceLayer *>("layer");
+    QTest::addColumn<QUuid>("uuid");
+
     QTest::addColumn<Type>("type");
     QTest::addColumn<QString>("path");
     QTest::addColumn<QString>("canonical");
-    QTest::addColumn<QUuid>("uuid");
     QTest::addColumn<bool>("valid");
 
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
@@ -124,29 +128,29 @@ void tst_QValueSpaceObject::testConstructor_data()
     for (int i = 0; i < layers.count(); ++i) {
         QAbstractValueSpaceLayer *layer = layers.at(i);
 
-        ADD(layer, QString(""), QString("/"), layer->id(), true);
-        ADD(layer, QString("/"), QString("/"), layer->id(), true);
-        ADD(layer, QString("//"), QString("/"), layer->id(), true);
-        ADD(layer, QString("/testConstructor"), QString("/testConstructor"), layer->id(), true);
-        ADD(layer, QString("/testConstructor/"), QString("/testConstructor"), layer->id(), true);
-        ADD(layer, QString("testConstructor"), QString("/testConstructor"), layer->id(), true);
-        ADD(layer, QString("/testConstructor/subpath"), QString("/testConstructor/subpath"), layer->id(), true);
+        ADD(layer, layer->id(), QString(""), QString("/"), true);
+        ADD(layer, layer->id(), QString("/"), QString("/"), true);
+        ADD(layer, layer->id(), QString("//"), QString("/"), true);
+        ADD(layer, layer->id(), QString("/testConstructor"), QString("/testConstructor"), true);
+        ADD(layer, layer->id(), QString("/testConstructor/"), QString("/testConstructor"), true);
+        ADD(layer, layer->id(), QString("testConstructor"), QString("/testConstructor"), true);
+        ADD(layer, layer->id(), QString("/testConstructor/subpath"),\
+                                QString("/testConstructor/subpath"), true);
     }
 
-    // auto selection
-    ADD(reinterpret_cast<QAbstractValueSpaceLayer *>(0), QString(), QString("/"), QUuid(), !layers.isEmpty());
-
     // unknown uuid
-    ADD(reinterpret_cast<QAbstractValueSpaceLayer *>(0), QString(), QString("/"), QUuid("{9fa51477-7730-48e0-aee1-3eeb5f0c0c5b}"), false);
+    ADD(reinterpret_cast<QAbstractValueSpaceLayer *>(0),
+        QUuid("{9fa51477-7730-48e0-aee1-3eeb5f0c0c5b}"), QString(), QString("/"), false);
 }
 
 void tst_QValueSpaceObject::testConstructor()
 {
     QFETCH(QAbstractValueSpaceLayer *, layer);
+    QFETCH(QUuid, uuid);
+
     QFETCH(Type, type);
     QFETCH(QString, path);
     QFETCH(QString, canonical);
-    QFETCH(QUuid, uuid);
     QFETCH(bool, valid);
 
     QValueSpaceObject *object;
@@ -230,28 +234,47 @@ void tst_QValueSpaceObject::testConstructor()
 
 void tst_QValueSpaceObject::testSignals_data()
 {
+    QTest::addColumn<QAbstractValueSpaceLayer *>("layer");
+
     QTest::addColumn<QString>("objectPath");
     QTest::addColumn<QByteArray>("objectAttribute");
     QTest::addColumn<QString>("itemPath");
     QTest::addColumn<QString>("itemAttribute");
 
-    QTest::newRow("root") << QString("/") << QByteArray() << QString("/") << QString();
-    QTest::newRow("") << QString("/testSignals") << QByteArray("/value") << QString("/testSignals") << QString("value");
+    QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
+
+    for (int i = 0; i < layers.count(); ++i) {
+        QAbstractValueSpaceLayer *layer = layers.at(i);
+
+        QTest::newRow("root")
+            << layer
+            << QString("/")
+            << QByteArray()
+            << QString("/")
+            << QString();
+
+        QTest::newRow("")
+            << layer
+            << QString("/testSignals")
+            << QByteArray("/value")
+            << QString("/testSignals")
+            << QString("value");
+    }
 }
 
 void tst_QValueSpaceObject::testSignals()
 {
+    QFETCH(QAbstractValueSpaceLayer *, layer);
+
     QFETCH(QString, objectPath);
     QFETCH(QByteArray, objectAttribute);
     QFETCH(QString, itemPath);
     QFETCH(QString, itemAttribute);
 
-    QValueSpaceObject *object = new QValueSpaceObject(objectPath);
-
-    if (!object->supportsRequests()) {
-        delete object;
+    if (!layer->supportsRequests())
         QSKIP("Underlying layer does not support requests.", SkipAll);
-    }
+
+    QValueSpaceObject *object = new QValueSpaceObject(objectPath, layer->id());
 
     ChangeListener listener;
     connect(object, SIGNAL(itemSetValue(QByteArray,QVariant)),
@@ -265,7 +288,7 @@ void tst_QValueSpaceObject::testSignals()
     QSignalSpy removeSpy(&listener, SIGNAL(itemRemove(QByteArray)));
     QSignalSpy itemNotifySpy(&listener, SIGNAL(itemNotify(QByteArray,bool)));
 
-    QValueSpaceItem *item = new QValueSpaceItem(itemPath);
+    QValueSpaceItem *item = new QValueSpaceItem(itemPath, layer->id());
 
     QTRY_COMPARE(itemNotifySpy.count(), 1);
     QVERIFY(setValueSpy.isEmpty());
@@ -321,6 +344,51 @@ void tst_QValueSpaceObject::testSignals()
     QCOMPARE(arguments.at(1).type(), QVariant::Bool);
     QVERIFY(!arguments.at(1).toBool());
 }
+
+void tst_QValueSpaceObject::valuePermanence_data()
+{
+    QTest::addColumn<QAbstractValueSpaceLayer *>("layer");
+
+    QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
+
+    // add all known layers
+    for (int i = 0; i < layers.count(); ++i) {
+        QAbstractValueSpaceLayer *layer = layers.at(i);
+
+        QTest::newRow(layer->name().toLocal8Bit().constData()) << layer;
+    }
+}
+
+void tst_QValueSpaceObject::valuePermanence()
+{
+    QFETCH(QAbstractValueSpaceLayer *, layer);
+
+    QValueSpaceObject *object = new QValueSpaceObject("/valuePermanence", layer->id());
+
+    object->setAttribute("value", 10);
+
+    QValueSpaceItem item("/valuePermanence");
+    QCOMPARE(item.value("value", 0).toInt(), 10);
+
+    delete object;
+
+    if (layer->layerOptions() & QAbstractValueSpaceLayer::PermanentLayer) {
+        // Permanent layer, check that value is still available after object is deleted.
+        QCOMPARE(item.value("value", 0).toInt(), 10);
+
+        object = new QValueSpaceObject("/valuePermanence", layer->id());
+
+        object->removeAttribute("value");
+
+        QCOMPARE(item.value("value", 0).toInt(), 0);
+
+        delete object;
+    } else {
+        // Non-permanent layer, check that value is not available after object is deleted.
+        QCOMPARE(item.value("value", 0).toInt(), 0);
+    }
+}
+
 
 QTEST_MAIN(tst_QValueSpaceObject)
 #include "tst_qvaluespaceobject.moc"

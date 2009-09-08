@@ -195,7 +195,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn bool QAbstractValueSpaceLayer::supportsRequests()
+    \fn bool QAbstractValueSpaceLayer::supportsRequests() const
 
     Returns true if the layer supports sending requests via the requestSetValue() and
     requestRemoveValue() functions; otherwise returns false.
@@ -408,18 +408,18 @@ void QValueSpace::installLayer(LayerCreateFunc func)
 */
 
 /*!
-    \macro QVALUESPACE_REGISTRY_LAYER
+    \macro QVALUESPACE_VOLATILEREGISTRY_LAYER
     \relates QValueSpace
 
-    The UUID of the Registry Layer as a QUuid.  The actual UUID value is
+    The UUID of the Volatile Registry Layer as a QUuid.  The actual UUID value is
     {8ceb5811-4968-470f-8fc2-264767e0bbd9}.
 
     This value can be passed to the constructor of QValueSpaceObject to force the constructed value
-    space object to publish its values in the Registry Layer.
+    space object to publish its values in the Volatile Registry Layer.
 
-    You can test if the Registry Layer is available by checking if the list returned by
-    QValueSpace::availableLayers() contains this value.  The Registry Layer is only available on
-    Windows platforms.
+    You can test if the Volatile Registry Layer is available by checking if the list returned by
+    QValueSpace::availableLayers() contains this value.  The Volatile Registry Layer is only
+    available on Windows platforms.
 */
 
 /*!

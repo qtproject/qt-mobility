@@ -71,8 +71,10 @@ public:
     bool value(Handle handle, const QByteArray &subPath, QVariant *data);
     QSet<QByteArray> children(Handle handle);
 
+    LayerOptions layerOptions() const;
+
     /* QValueSpaceItem functions */
-    bool supportsRequests() { return false; }
+    bool supportsRequests() const { return false; }
     bool requestSetValue(Handle handle, const QVariant &data);
     bool requestSetValue(Handle handle, const QByteArray &path, const QVariant &data);
     bool requestRemoveValue(Handle handle, const QByteArray &path);
@@ -332,7 +334,7 @@ QSet<QByteArray> RegistryLayer::children(Handle handle)
         return foundChildren;
 
     openRegistryKey(rh);
-    if (!hKeys.contains(rh))
+    if (rh->valueHandle || !hKeys.contains(rh))
         return foundChildren;
 
     HKEY key = hKeys.value(rh);
@@ -364,6 +366,11 @@ QSet<QByteArray> RegistryLayer::children(Handle handle)
     } while (result == ERROR_SUCCESS);
 
     return foundChildren;
+}
+
+QAbstractValueSpaceLayer::LayerOptions RegistryLayer::layerOptions() const
+{
+    return NonPermanentLayer | WriteableLayer;
 }
 
 QAbstractValueSpaceLayer::Handle RegistryLayer::item(Handle parent, const QByteArray &path)

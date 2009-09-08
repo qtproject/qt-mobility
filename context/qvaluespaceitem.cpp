@@ -38,6 +38,7 @@
 #include <QSet>
 #include <QCoreApplication>
 #include <QThread>
+#include <QUuid>
 
 QT_BEGIN_NAMESPACE
 
@@ -147,7 +148,9 @@ struct QValueSpaceItemPrivate
 
 struct QValueSpaceItemPrivateData : public QValueSpaceItemPrivate
 {
-    QValueSpaceItemPrivateData(const QByteArray &_path)
+    QValueSpaceItemPrivateData(const QByteArray &_path,
+                               QAbstractValueSpaceLayer::LayerOptions filter =
+                                   QAbstractValueSpaceLayer::UnspecifiedLayer)
         : QValueSpaceItemPrivate(Data), refCount(0), connections(0)
     {
         path = qCanonicalPath(_path);
@@ -159,8 +162,58 @@ struct QValueSpaceItemPrivateData : public QValueSpaceItemPrivate
         const QList<QAbstractValueSpaceLayer *> & readerList = man->getLayers();
 
         for (int ii = 0; ii < readerList.count(); ++ii) {
-            QAbstractValueSpaceLayer * read = readerList.at(ii);
-            if (!read) continue;
+            QAbstractValueSpaceLayer *read = readerList.at(ii);
+            if (filter != QAbstractValueSpaceLayer::UnspecifiedLayer &&
+                !(read->layerOptions() & filter)) {
+                continue;
+            }
+
+            QAbstractValueSpaceLayer::Handle handle =
+                read->item(QAbstractValueSpaceLayer::InvalidHandle, path);
+            if (QAbstractValueSpaceLayer::InvalidHandle != handle) {
+                readers.append(qMakePair(read, handle));
+
+                if (read->supportsRequests())
+                    read->notifyInterest(handle, true);
+            }
+        }
+    }
+
+    QValueSpaceItemPrivateData(const QByteArray &_path, const QUuid &uuid)
+        : QValueSpaceItemPrivate(Data), refCount(0), connections(0)
+    {
+        path = qCanonicalPath(_path);
+
+        QValueSpaceManager *man = QValueSpaceManager::instance();
+        if (!man)
+            return;
+
+        const QList<QAbstractValueSpaceLayer *> & readerList = man->getLayers();
+
+        for (int ii = 0; ii < readerList.count(); ++ii) {
+            QAbstractValueSpaceLayer *read = readerList.at(ii);
+            if (read->id() != uuid)
+                continue;
+
+            QAbstractValueSpaceLayer::Handle handle =
+                read->item(QAbstractValueSpaceLayer::InvalidHandle, path);
+            if (QAbstractValueSpaceLayer::InvalidHandle != handle) {
+                readers.append(qMakePair(read, handle));
+
+                if (read->supportsRequests())
+                    read->notifyInterest(handle, true);
+            }
+        }
+    }
+
+    QValueSpaceItemPrivateData(const QByteArray &_path,
+                               const QList<QAbstractValueSpaceLayer *> &readerList)
+        : QValueSpaceItemPrivate(Data), refCount(0), connections(0)
+    {
+        path = qCanonicalPath(_path);
+
+        for (int ii = 0; ii < readerList.count(); ++ii) {
+            QAbstractValueSpaceLayer *read = readerList.at(ii);
 
             QAbstractValueSpaceLayer::Handle handle =
                 read->item(QAbstractValueSpaceLayer::InvalidHandle, path);
@@ -247,6 +300,16 @@ struct QValueSpaceItemPrivateData : public QValueSpaceItemPrivate
             delete this;
     }
 
+    QList<QAbstractValueSpaceLayer *> layers() const
+    {
+        QList<QAbstractValueSpaceLayer *> layers;
+
+        for (int i = 0; i < readers.count(); ++i)
+            layers.append(readers.at(i).first);
+
+        return layers;
+    }
+
     unsigned int refCount;
     QByteArray path;
     QList<QPair<QAbstractValueSpaceLayer *, QAbstractValueSpaceLayer::Handle> > readers;
@@ -283,15 +346,199 @@ struct QValueSpaceItemPrivateWrite : public QValueSpaceItemPrivate
                             QCoreApplication::instance()->thread() == QThread::currentThread());
 
 /*!
+    Constructs a QValueSpaceItem with the specified \a parent that refers to the root path.
+*/
+QValueSpaceItem::QValueSpaceItem(QObject *parent)
+:   QObject(parent)
+{
+    VS_CALL_ASSERT;
+
+    d = new QValueSpaceItemPrivateData("/");
+    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
+}
+
+/*!
+    Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.
+*/
+QValueSpaceItem::QValueSpaceItem(const QByteArray &path, QObject *parent)
+:   QObject(parent)
+{
+    VS_CALL_ASSERT;
+
+    d = new QValueSpaceItemPrivateData(path);
+    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
+}
+
+/*!
+    \overload
+
+    Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.  This
+    constructor is equivalent to calling \c {QValueSpaceItem(path.toUtf8(), parent)}.
+*/
+QValueSpaceItem::QValueSpaceItem(const QString &path, QObject *parent)
+:   QObject(parent)
+{
+    VS_CALL_ASSERT;
+
+    d = new QValueSpaceItemPrivateData(path.toUtf8());
+    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
+}
+
+/*!
+    \overload
+
+    Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.  This
+    constructor is equivalent to calling \c {QValueSpaceItem(QByteArray(path), parent)}.
+*/
+QValueSpaceItem::QValueSpaceItem(const char *path, QObject *parent)
+:   QObject(parent)
+{
+    VS_CALL_ASSERT;
+
+    d = new QValueSpaceItemPrivateData(QByteArray(path));
+    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
+}
+
+/*!
+    Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.  The
+    \a filter parameter is used to limit which layers this QValueSpaceItem will access.
+
+    If a layer matching \a filter is not found an invalid QValueSpaceItem will be constructed.
+
+    \sa isValid()
+*/
+QValueSpaceItem::QValueSpaceItem(const QByteArray &path,
+                                 QAbstractValueSpaceLayer::LayerOptions filter,
+                                 QObject *parent)
+:   QObject(parent)
+{
+    VS_CALL_ASSERT;
+
+    d = new QValueSpaceItemPrivateData(path, filter);
+    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
+}
+
+/*!
+    \overload
+
+    Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.  The
+    \a filter parameter is used to limit which layers this QValueSpaceItem will access.  This
+    constructor is equivalent to calling \c {QValueSpaceItem(path.toUtf8(), filter, parent)}.
+
+    If a layer matching \a filter is not found an invalid QValueSpaceItem will be constructed.
+
+    \sa isValid()
+*/
+QValueSpaceItem::QValueSpaceItem(const QString &path,
+                                 QAbstractValueSpaceLayer::LayerOptions filter,
+                                 QObject *parent)
+:   QObject(parent)
+{
+    VS_CALL_ASSERT;
+
+    d = new QValueSpaceItemPrivateData(path.toUtf8(), filter);
+    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
+}
+
+/*!
+    \overload
+
+    Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.  The
+    \a filter parameter is used to limit which layers this QValueSpaceItem will access.  This
+    constructor is equivalent to calling \c {QValueSpaceItem(QByteArray(path), filter, parent)}.
+
+    If a layer matching \a filter is not found an invalid QValueSpaceItem will be constructed.
+
+    \sa isValid()
+*/
+QValueSpaceItem::QValueSpaceItem(const char *path,
+                                 QAbstractValueSpaceLayer::LayerOptions filter,
+                                 QObject *parent)
+:   QObject(parent)
+{
+    VS_CALL_ASSERT;
+
+    d = new QValueSpaceItemPrivateData(QByteArray(path), filter);
+    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
+}
+
+/*!
+    Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.  This
+    QValueSpaceItem will only use the layer identified by \a uuid.
+
+    Use of this constructor is not platform agnostic.  If possible use one of the constructors that
+    take a QAbstractValueSpaceLayer::LayerOptions parameter instead.
+
+    If a layer with a matching \a uuid is not found an invalid QValueSpaceItem will be constructed.
+
+    \sa QAbstractValueSpaceLayer::id(), QValueSpace, isValid
+*/
+QValueSpaceItem::QValueSpaceItem(const QByteArray &path, const QUuid &uuid, QObject *parent)
+:   QObject(parent)
+{
+    VS_CALL_ASSERT;
+
+    d = new QValueSpaceItemPrivateData(path, uuid);
+    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
+}
+
+/*!
+    \overload
+
+    Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.  This
+    QValueSpaceItem will only use the layer identified by \a uuid.  This constructor is equivalent
+    to calling \c {QValueSpaceItem(path.toUtf8(), uuid, parent)}.
+
+    Use of this constructor is not platform agnostic.  If possible use one of the constructors that
+    take a QAbstractValueSpaceLayer::LayerOptions parameter instead.
+
+    If a layer with a matching \a uuid is not found an invalid QValueSpaceItem will be constructed.
+
+    \sa QAbstractValueSpaceLayer::id(), QValueSpace, isValid()
+*/
+QValueSpaceItem::QValueSpaceItem(const QString &path, const QUuid &uuid, QObject *parent)
+:   QObject(parent)
+{
+    VS_CALL_ASSERT;
+
+    d = new QValueSpaceItemPrivateData(path.toUtf8(), uuid);
+    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
+}
+
+/*!
+    \overload
+
+    Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.  This
+    QValueSpaceItem will only use the layer identified by \a uuid.  This constructor is equivalent
+    to calling \c {QValueSpaceItem(QByteArray(path), uuid, parent)}.
+
+    Use of this constructor is not platform agnostic.  If possible use one of the constructors that
+    take a QAbstractValueSpaceLayer::LayerOptions parameter instead.
+
+    If a layer with a matching \a uuid is not found an invalid QValueSpaceItem will be constructed.
+
+    \sa QAbstractValueSpaceLayer::id(), QValueSpace, isValid()
+*/
+QValueSpaceItem::QValueSpaceItem(const char *path, const QUuid &uuid, QObject *parent)
+:   QObject(parent)
+{
+    VS_CALL_ASSERT;
+
+    d = new QValueSpaceItemPrivateData(QByteArray(path), uuid);
+    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
+}
+
+/*!
     Constructs a QValueSpaceItem with the specified \a parent that refers to the same path as
     \a other.
 */
 QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &other, QObject* parent)
-: QObject(parent), d(other.d)
+:   QObject(parent)
 {
     VS_CALL_ASSERT;
+
     QVALUESPACEITEM_D(other.d);
-    if (QValueSpaceItemPrivate::Data == other.d->type)
+    if (other.d->type == QValueSpaceItemPrivate::Data)
         d = md;
     else
         d = new QValueSpaceItemPrivateWrite(*static_cast<QValueSpaceItemPrivateWrite *>(other.d));
@@ -300,104 +547,74 @@ QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &other, QObject* parent)
 }
 
 /*!
-    Constructs a QValueSpaceItem with the specified \a parent that refers to the root path.
+    Constructs a QValueSpaceItem with the specified \a parent that refers to the sub-\a path of
+    \a base.
 */
-QValueSpaceItem::QValueSpaceItem(QObject *parent)
-:   QObject(parent), d(0)
+QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &base,
+                                 const QByteArray &path,
+                                 QObject *parent)
+:   QObject(parent)
 {
     VS_CALL_ASSERT;
-    d = new QValueSpaceItemPrivateData("/");
+
+    QVALUESPACEITEM_D(base.d);
+
+    if (path.isEmpty() || path == "/")
+        d = md;
+    else if (md->path == "/")
+        d = new QValueSpaceItemPrivateData(path, md->layers());
+    else
+        d = new QValueSpaceItemPrivateData(md->path + '/' + path, md->layers());
+
     static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
 }
 
 /*!
     \overload
 
-    Constructs a QValueSpaceItem with the specified parent that refers to the sub-\a path of
-    \a base.  This constructor is equivalent to \c {QValueSpaceItem(base, path.toUtf8())}.
+    Constructs a QValueSpaceItem with the specified \a parent that refers to the sub-\a path of
+    \a base.  This constructor is equivalent to calling
+    \c {QValueSpaceItem(base, path.toUtf8(), parent)}.
 */
-QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &base, const QString &path, QObject* parent)
-:   QObject(parent), d(0)
+QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &base, const QString &path, QObject *parent)
+:   QObject(parent)
 {
     VS_CALL_ASSERT;
+
     QVALUESPACEITEM_D(base.d);
 
-    if (path == QLatin1String("/")) {
-        if (QValueSpaceItemPrivate::Data == base.d->type) {
-            d = md;
-        } else {
-            d = new QValueSpaceItemPrivateWrite(
-                *static_cast<QValueSpaceItemPrivateWrite *>(base.d));
-        }
-        md->AddRef();
-    } else {
-        if ("/" == md->path)
-            d = new QValueSpaceItemPrivateData(md->path + path.toUtf8());
-        else
-            d = new QValueSpaceItemPrivateData(md->path + "/" + path.toUtf8());
+    if (path.isEmpty() || path == QLatin1String("/"))
+        d = md;
+    else if (md->path == "/")
+        d = new QValueSpaceItemPrivateData(path.toUtf8(), md->layers());
+    else
+        d = new QValueSpaceItemPrivateData(md->path + '/' + path.toUtf8(), md->layers());
 
-        static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
-    }
+    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
 }
 
 /*!
     \overload
 
     Constructs a QValueSpaceItem with the specified \a parent that refers to the sub-\a path of
-    \a base.  This constructor is equivalent to \c {QValueSpaceItem(base, QByteArray(path))}.
+    \a base.  This constructor is equivalent to calling
+    \c {QValueSpaceItem(base, QByteArray(path), parent)}.
 */
 QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &base, const char *path, QObject* parent)
-:   QObject(parent), d(0)
+:   QObject(parent)
 {
     VS_CALL_ASSERT;
+
     QVALUESPACEITEM_D(base.d);
 
-    if (1 == strlen(path) && '/' == *path) {
-        if (QValueSpaceItemPrivate::Data == base.d->type) {
-            d = md;
-        } else {
-            d = new QValueSpaceItemPrivateWrite(
-                *static_cast<QValueSpaceItemPrivateWrite *>(base.d));
-        }
-        md->AddRef();
-    } else {
-        if ("/" == md->path)
-            d = new QValueSpaceItemPrivateData(md->path + QByteArray(path));
-        else
-            d = new QValueSpaceItemPrivateData(md->path + "/" + QByteArray(path));
+    if (qstrlen(path) == 0 || qstrcmp(path, "/") == 0)
+        d = md;
+    else if (md->path == "/")
+        d = new QValueSpaceItemPrivateData(QByteArray(path), md->layers());
+    else
+        d = new QValueSpaceItemPrivateData(md->path + '/' + QByteArray(path), md->layers());
 
-        static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
-    }
-}
-
-/*!
-    Constructs a QValueSpaceItem with the specified \a parent that refers to the sub-\a path of
-    \a base.
-*/
-QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &base,
-                                 const QByteArray &path,
-                                 QObject* parent)
-: QObject( parent ), d(0)
-{
-    VS_CALL_ASSERT;
-    QVALUESPACEITEM_D(base.d);
-
-    if (path == "/") {
-        if (QValueSpaceItemPrivate::Data == base.d->type) {
-            d = md;
-        } else {
-            d = new QValueSpaceItemPrivateWrite(
-                *static_cast<QValueSpaceItemPrivateWrite *>(base.d));
-        }
-        md->AddRef();
-    } else {
-        if ("/" == md->path)
-            d = new QValueSpaceItemPrivateData(md->path + path);
-        else
-            d = new QValueSpaceItemPrivateData(md->path + "/" + path);
-
-        static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
-    }
+    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
 }
 
 /*!
@@ -443,44 +660,6 @@ QValueSpaceItem &QValueSpaceItem::operator=(const QValueSpaceItem& other)
 }
 
 /*!
-    \overload
-
-    Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.  This
-    constructor is equivalent to \c {QValueSpaceItem(path.toUtf8())}.
-*/
-QValueSpaceItem::QValueSpaceItem(const QString &path, QObject* parent)
-: QObject( parent ), d(0)
-{
-    VS_CALL_ASSERT;
-    d = new QValueSpaceItemPrivateData(path.toUtf8());
-    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
-}
-
-/*!
-    \overload
-
-    Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.  This
-    constructor is equivalent to \c {QValueSpaceItem(QByteArray(path))}.
-*/
-QValueSpaceItem::QValueSpaceItem(const char *path, QObject* parent)
-: QObject( parent ), d(0)
-{
-    VS_CALL_ASSERT;
-    d = new QValueSpaceItemPrivateData(path);
-    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
-}
-/*!
-    Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.
-*/
-QValueSpaceItem::QValueSpaceItem(const QByteArray &path, QObject* parent)
-: QObject(parent), d(0)
-{
-    VS_CALL_ASSERT;
-    d = new QValueSpaceItemPrivateData(path);
-    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
-}
-
-/*!
     Destroys the QValueSpaceItem
 */
 QValueSpaceItem::~QValueSpaceItem()
@@ -502,6 +681,19 @@ QString QValueSpaceItem::path() const
     QVALUESPACEITEM_D(d);
 
     return QString::fromUtf8(md->path.constData(), md->path.length());
+}
+
+/*!
+    Returns true if this object is valid; otherwise returns false.  An object is valid if there is
+    atleast one layer available.  An invalid object is constructed if the filtering parameters
+    passed to the QValueSpaceItem constructor eliminate all available layers.
+*/
+bool QValueSpaceItem::isValid() const
+{
+    VS_CALL_ASSERT;
+    QVALUESPACEITEM_D(d);
+
+    return !md->readers.isEmpty();
 }
 
 /*!
@@ -545,7 +737,7 @@ bool QValueSpaceItem::remove(const QByteArray &subPath)
 
         QValueSpaceItemPrivateData *md = static_cast<QValueSpaceItemPrivateData *>(d);
         for (int ii = md->readers.count(); ii > 0 && !supportsRequests; --ii)
-            supportsRequests |=  md->readers[ii - 1].first->supportsRequests();
+            supportsRequests |= md->readers[ii - 1].first->supportsRequests();
 
         if (!supportsRequests)
             return false;
@@ -647,7 +839,7 @@ bool QValueSpaceItem::setValue(const QByteArray &subPath,
 
         QValueSpaceItemPrivateData *md = static_cast<QValueSpaceItemPrivateData *>(d);
         for (int ii = md->readers.count(); ii > 0 && !supportsRequests; --ii)
-            supportsRequests |=  md->readers[ii - 1].first->supportsRequests();
+            supportsRequests |= md->readers[ii - 1].first->supportsRequests();
 
         if (!supportsRequests)
             return false;

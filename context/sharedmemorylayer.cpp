@@ -1674,8 +1674,10 @@ public:
     bool value(Handle, const QByteArray &, QVariant *);
     QSet<QByteArray> children(Handle);
 
+    LayerOptions layerOptions() const;
+
     /* QValueSpaceItem functions */
-    bool supportsRequests() { return true; }
+    bool supportsRequests() const { return true; }
     bool requestSetValue(Handle handle, const QVariant &data);
     bool requestSetValue(Handle handle, const QByteArray &path, const QVariant &data);
     bool requestRemoveValue(Handle handle, const QByteArray &path);
@@ -2493,6 +2495,11 @@ QSet<QByteArray> SharedMemoryLayer::children(Handle handle)
 
     lock->unlock();
     return rv;
+}
+
+QAbstractValueSpaceLayer::LayerOptions SharedMemoryLayer::layerOptions() const
+{
+    return NonPermanentLayer | WriteableLayer;
 }
 
 SharedMemoryLayer::Handle SharedMemoryLayer::item(Handle parent,

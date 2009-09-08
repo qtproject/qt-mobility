@@ -32,8 +32,10 @@
 ****************************************************************************/
 
 #include <QObject>
+#include <QMap>
 
 class QValueSpaceObject;
+class QAbstractValueSpaceLayer;
 
 class tst_QValueSpaceItem : public QObject
 {
@@ -44,26 +46,42 @@ private slots:
     void cleanupTestCase();
     void init();
 
-    void testConstructor();
     void testConstructor_data();
+    void testConstructor();
+    void testAssignmentOperator_data();
     void testAssignmentOperator();
+
     void contentsChanged_data();
     void contentsChanged();
     void dataVersatility_data();
     void dataVersatility();
+
+    void value_data();
     void value();
+
+    void ipcTests_data();
     void ipcTests();
+
+    void setValue_data();
     void setValue();
+    void copySetValue_data();
     void copySetValue();
+    void ipcSetValue_data();
     void ipcSetValue();
+
+    void removeValue_data();
     void removeValue();
+    void ipcRemoveKey_data();
     void ipcRemoveKey();
+
     void interestNotification_data();
     void interestNotification();
+    void ipcInterestNotification_data();
     void ipcInterestNotification();
+
     void clientServer();
 
 private:
-    QValueSpaceObject *root;
-    QValueSpaceObject *busy;
+    QMap<QAbstractValueSpaceLayer *, QValueSpaceObject *> roots;
+    QMap<QAbstractValueSpaceLayer*, QValueSpaceObject *> busys;
 };
