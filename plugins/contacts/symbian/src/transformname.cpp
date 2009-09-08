@@ -41,6 +41,13 @@ QList<CContactItemField *> TransformName::transformDetailL(const QContactDetail 
 	//cast to name
 	const QContactName &name(static_cast<const QContactName&>(detail));
 	
+	//Prefix
+	CContactItemField* prefix = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldPrefixName);
+	TPtrC fieldTextPrefix(reinterpret_cast<const TUint16*>(name.prefix().utf16()));
+	prefix->TextStorage()->SetTextL(fieldTextPrefix);
+	CleanupStack::Pop(prefix);
+	fieldList.append(prefix);
+		
 	//First Name
 	CContactItemField* firstName = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldGivenName);
 	TPtrC fieldTextFirstName(reinterpret_cast<const TUint16*>(name.first().utf16()));
@@ -48,20 +55,33 @@ QList<CContactItemField *> TransformName::transformDetailL(const QContactDetail 
 	CleanupStack::Pop(firstName);
 	fieldList.append(firstName);
 	
+	//Middle Name
+	CContactItemField* middleName = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldAdditionalName);
+	TPtrC fieldTextMiddleName(reinterpret_cast<const TUint16*>(name.middle().utf16()));
+	middleName->TextStorage()->SetTextL(fieldTextMiddleName);
+	CleanupStack::Pop(middleName);
+	fieldList.append(middleName);
+	
 	//Last Name
 	CContactItemField* lastName = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldFamilyName);
 	TPtrC fieldTextLastName(reinterpret_cast<const TUint16*>(name.last().utf16()));
 	lastName->TextStorage()->SetTextL(fieldTextLastName);
 	CleanupStack::Pop(lastName);
 	fieldList.append(lastName);
-
+	
+	//Suffix
+	CContactItemField* suffix = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldSuffixName);
+	TPtrC fieldTextSuffix(reinterpret_cast<const TUint16*>(name.suffix().utf16()));
+	suffix->TextStorage()->SetTextL(fieldTextSuffix);
+	CleanupStack::Pop(suffix);
+	fieldList.append(suffix);
+	
 	return fieldList;
 }	
 
 
 QContactDetail *TransformName::transformItemFieldL(const CContactItemField& field, const QContact &contact)
 {
-	
 	QContactName *name = new QContactName(contact.detail<QContactName>());
 	
 	CContactTextField* storage = field.TextStorage();
@@ -69,14 +89,34 @@ QContactDetail *TransformName::transformItemFieldL(const CContactItemField& fiel
 	
 	for (int i = 0; i < field.ContentType().FieldTypeCount(); i++)
 	{
-		if (field.ContentType().FieldType(i) == KUidContactFieldGivenName)
+		//Prefix
+		if (field.ContentType().FieldType(i) == KUidContactFieldPrefixName)
+		{
+			name->setPrefix(nameValue);
+		}
+		
+		//First name
+		else if (field.ContentType().FieldType(i) == KUidContactFieldGivenName)
 		{
 			name->setFirst(nameValue);
 		}
 		
+		//Middle name
+		else if (field.ContentType().FieldType(i) == KUidContactFieldAdditionalName)
+		{
+			name->setMiddle(nameValue);
+		}
+		
+		//Last name
 		else if (field.ContentType().FieldType(i) == KUidContactFieldFamilyName)
 		{
 			name->setLast(nameValue);
+		}
+		
+		//Suffix
+		else if (field.ContentType().FieldType(i) == KUidContactFieldSuffixName)
+		{
+			name->setSuffix(nameValue);
 		}
 	}
 	
