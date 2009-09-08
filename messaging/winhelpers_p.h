@@ -32,6 +32,7 @@
 ****************************************************************************/
 #ifndef QMESSAGEWINHELPERPRIVATE_H
 #define QMESSAGEWINHELPERPRIVATE_H
+
 #include <QHash>
 #include <QPair>
 #include <QSharedPointer>
@@ -39,6 +40,7 @@
 #include <QByteArray>
 #include <MAPIUtil.h>
 #include <qmessagestore.h>
+#include <QVector>
 
 // As per http://support.microsoft.com/kb/816477
 #ifndef PR_MSG_EDITOR_FORMAT
@@ -58,7 +60,7 @@
 #define PR_BODY_HTML PROP_TAG( PT_TSTRING, 0x1013 )
 #endif
 
-typedef QByteArray MapiRecordKey;
+#define mapiRelease(a) if(a){a->Release();a=0;}
 
 class MapiEntryId : public QByteArray
 {
@@ -72,6 +74,8 @@ public:
     :
     QByteArray(reinterpret_cast<const char*>(mapiEntryId),entryIdLength){}
 };
+
+typedef MapiEntryId MapiRecordKey;
 
 class MapiFolder;
 class MapiStore;
@@ -94,13 +98,21 @@ ULONG getNamedPropertyTag(IMAPIProp *object, const QString &name);
 bool setNamedProperty(IMAPIProp *object, ULONG tag, const QString &value);
 QString getNamedProperty(IMAPIProp *object, ULONG tag);
 
+
+class Lptstr : public QVector<TCHAR>
+{
+        public:
+            Lptstr(int length) : QVector(length){}
+            operator TCHAR* (){ return QVector::data(); }
+};
+
+Lptstr LptstrFromQString(const QString &src);
+
 }
 
 class MapiFolder {
+
 public:
-
-    enum CommonFolder { Drafts, Tasks, Notes, Journal, Contacts, Appointments };
-
     static MapiFolderPtr createFolder(QMessageStore::ErrorCode *lastError, const MapiStorePtr &store, IMAPIFolder *folder, const MapiRecordKey &recordKey, const QString &name, const MapiEntryId &entryId, bool hasSubFolders, uint messageCount);
 
     ~MapiFolder();
@@ -113,7 +125,7 @@ public:
 #endif
 
     bool isValid() const { return _valid; }
-    LPMAPIFOLDER folder() const { return _folder; }
+    IMAPIFolder* folder() const { return _folder; }
     MapiRecordKey recordKey() const { return _key; }
     MapiRecordKey storeKey() const;
     QString name() const { return _name; }
@@ -121,10 +133,9 @@ public:
     bool hasSubFolders() const { return _hasSubFolders; }
     uint messageCount() const { return _messageCount; }
 
-    MapiFolderPtr subFolder(QMessageStore::ErrorCode *lastError, CommonFolder commonFolder, const MapiStore &store);
-
     LPMAPITABLE subFolders(QMessageStore::ErrorCode *lastError) { if (!_init) findSubFolders(lastError); return _subFolders; }
     IMessage *createMessage(QMessageStore::ErrorCode* lastError);
+    IMessage *createMessage(const QMessage& source, const MapiSessionPtr session, QMessageStore::ErrorCode* lastError, bool deleteAfterSend = false);
 
     IMessage *openMessage(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId);
 
@@ -138,7 +149,7 @@ private:
 
     MapiStorePtr _store;
     bool _valid;
-    LPMAPIFOLDER _folder;
+    IMAPIFolder* _folder;
     MapiRecordKey _key;
     QString _name;
     LPMAPITABLE _subFolders;
@@ -151,13 +162,12 @@ private:
 
 class MapiStore {
 public:
-    static MapiStorePtr createStore(QMessageStore::ErrorCode *lastError, const MapiSessionPtr &session, LPMDB store, const MapiRecordKey &key, const MapiEntryId &entryId, const QString &name);
+    static MapiStorePtr createStore(QMessageStore::ErrorCode *lastError, const MapiSessionPtr &session, LPMDB store, const MapiRecordKey &key, const MapiEntryId &entryId, const QString &name, bool cachedMode);
 
     ~MapiStore();
 
-    MapiFolderPtr rootFolder(QMessageStore::ErrorCode *lastError);
-    MapiFolderPtr receiveFolder(QMessageStore::ErrorCode *lastError);
     MapiFolderPtr findFolder(QMessageStore::ErrorCode *lastError, const MapiRecordKey &key);
+    MapiFolderPtr findFolder(QMessageStore::ErrorCode *lastError, QMessage::StandardFolder sf);
 #ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolderIdList folderIds(QMessageStore::ErrorCode *lastError);
     QMessageFolder folderFromId(QMessageStore::ErrorCode *lastError, const QMessageFolderId &folderId);
@@ -167,10 +177,13 @@ public:
     QMessageAccountId id() const;
     MapiEntryId entryId() const { return _entryId; }
     QString name() const { return _name; }
-    LPMDB store() const { return _store; }
+    IMsgStore* store() const { return _store; }
     MapiRecordKey recordKey() const { return _key; }
     QMessage::TypeFlags types() const;
     QMessageAddress address() const;
+
+    MapiFolderPtr rootFolder(QMessageStore::ErrorCode *lastError);
+    MapiFolderPtr receiveFolder(QMessageStore::ErrorCode *lastError);
 
     IMessage *openMessage(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId);
 
@@ -178,9 +191,10 @@ public:
 
 private:
     MapiStore();
-    MapiStore(const MapiSessionPtr &session, LPMDB store, const MapiRecordKey &key, const MapiEntryId &entryId, const QString &name);
+    MapiStore(const MapiSessionPtr &session, LPMDB store, const MapiRecordKey &key, const MapiEntryId &entryId, const QString &name, bool cachedMode);
 
     IMAPIFolder *openMapiFolder(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId) const;
+
 
     MapiSessionPtr _session;
     bool _valid;
@@ -188,6 +202,7 @@ private:
     MapiRecordKey _key;
     MapiEntryId _entryId;
     QString _name;
+    bool _cachedMode;
 
     static QHash<MapiEntryId, QWeakPointer<MapiFolder> > _folderMap;
 };
@@ -200,26 +215,31 @@ public:
 
     bool isValid() const { return _valid; }
 
-    MapiStorePtr findStore(QMessageStore::ErrorCode *lastError, const QMessageAccountId &id = QMessageAccountId()) const;
-    MapiStorePtr defaultStore(QMessageStore::ErrorCode *lastError) const { return findStore(lastError); }
-    QList<MapiStorePtr> allStores(QMessageStore::ErrorCode *lastError) const;
+    MapiStorePtr findStore(QMessageStore::ErrorCode *lastError, const QMessageAccountId &id = QMessageAccountId(), bool cachedMode = true) const;
+    MapiStorePtr defaultStore(QMessageStore::ErrorCode *lastError, bool cachedMode = true) const { return findStore(lastError,QMessageAccountId(),cachedMode); }
+    QList<MapiStorePtr> allStores(QMessageStore::ErrorCode *lastError, bool cachedMode = true) const;
+    MapiStorePtr openStore(QMessageStore::ErrorCode *lastError, const MapiEntryId& id, bool cachedMode = true) const;
 
     QMessageFolder folder(QMessageStore::ErrorCode *lastError, const QMessageFolderId& id) const;
-
     QMessage message(QMessageStore::ErrorCode *lastError, const QMessageId& id) const;
+
     QByteArray attachmentData(QMessageStore::ErrorCode *lastError, const QMessageId& id, ULONG number) const;
     bool showForm(LPMESSAGE message, LPMAPIFOLDER folder, LPMDB store);
 
-    MapiStorePtr openStore(QMessageStore::ErrorCode *lastError, const MapiEntryId& id) const;
-
     IMAPISession* session() const { return _mapiSession; }
+
+    bool flushQueues();
 
 private:
     MapiSession();
     MapiSession(QMessageStore::ErrorCode *lastError, bool mapiInitialized);
 
-    IMsgStore *openMapiStore(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId) const;
+    IMsgStore *openMapiStore(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId, bool cachedMode = true) const;
 
+    void addRecipients(LPMESSAGE message, const QMessageAddressList& addressList, unsigned long mapiAddressType);
+    void addAttachment(LPMESSAGE message, const QMessageContentContainer& attachmentContainer);
+
+private:
     bool _valid;
     IMAPISession* _mapiSession;
 

@@ -34,6 +34,7 @@
 #include <QByteArray>
 #include <QDataStream>
 #include <MAPIUtil.h>
+#include <QDebug>
 
 QMessageId QMessageIdPrivate::from(const MapiRecordKey &messageKey, const MapiRecordKey &folderKey, const MapiRecordKey &storeKey, const MapiEntryId &entryId)
 {
@@ -44,6 +45,7 @@ QMessageId QMessageIdPrivate::from(const MapiRecordKey &messageKey, const MapiRe
     result.d_ptr->_folderRecordKey = folderKey;
     result.d_ptr->_storeRecordKey = storeKey;
     result.d_ptr->_entryId = entryId;
+
     return result;
 }
 

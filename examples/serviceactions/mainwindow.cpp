@@ -41,6 +41,12 @@
 #include <QPointer>
 #include <QPushButton>
 #include <QDebug>
+#include <QLineEdit>
+#include <QTextEdit>
+#include "attachmentlistwidget.h"
+#include <QFileDialog>
+#include <QTimer>
+#include <QMessageBox>
 
 typedef QPointer<QMessageServiceAction> QMessageServiceActionPtr;
 
@@ -56,32 +62,144 @@ public:
 
 private slots:
     void composeButtonClicked();
+    void sendButtonClicked();
+    void addAttachmentButtonClicked();
+    void updateAccountsCombo();
+
+private:
+    void setupUi();
+    QMessage constructQMessage() const;
 
 private:
     QMessageServiceAction* m_service;
+    QComboBox* m_accountsCombo;
+    QMessageAccountIdList m_availableAccounts;
+    QLineEdit* m_toEdit;
+    QLineEdit* m_subjectEdit;
+    QTextEdit* m_bodyEdit;
     QPushButton* m_composeButton;
+    QPushButton* m_sendButton;
+    AttachmentListWidget* m_attachmentList;
+    QPushButton* m_addAttachmentButton;
 };
 
 ComposeSendWidget::ComposeSendWidget(QMessageServiceAction* service, QWidget* parent)
 :
 QWidget(parent),
-m_service(service)
+m_service(service),
+m_accountsCombo(0),
+m_toEdit(0),
+m_subjectEdit(0),
+m_bodyEdit(0),
+m_composeButton(0),
+m_sendButton(0),
+m_attachmentList(0),
+m_addAttachmentButton(0)
+{
+    setupUi();
+    QTimer::singleShot(0,this,SLOT(updateAccountsCombo()));
+}
+
+void ComposeSendWidget::composeButtonClicked()
+{
+    m_service->compose(constructQMessage());
+}
+
+void ComposeSendWidget::sendButtonClicked()
+{
+    QMessage outgoing = constructQMessage();
+    m_service->send(outgoing);
+}
+
+void ComposeSendWidget::addAttachmentButtonClicked()
+{
+    QStringList filenames = QFileDialog::getOpenFileNames(this,tr("Select attachments"));
+    m_attachmentList->addAttachments(filenames);
+}
+
+void ComposeSendWidget::updateAccountsCombo()
+{
+    m_accountsCombo->clear();
+
+    m_availableAccounts = QMessageStore::instance()->queryAccounts();
+    for(int i = 0; i < m_availableAccounts.count(); ++i)
+        m_accountsCombo->addItem(QString("%1 - %2").arg(i+1).arg(QMessageAccount(m_availableAccounts[i]).name()));
+}
+
+void ComposeSendWidget::setupUi()
 {
     QVBoxLayout* layout = new QVBoxLayout(this);
 
-    QLabel* infoLabel = new QLabel("Click to compose a message using the platform messaging client",this);
-    infoLabel->setAlignment(Qt::AlignCenter);
-    layout->addWidget(infoLabel);
+    QWidget* composeWidget = new QWidget(this);
+    layout->addWidget(composeWidget);
+
+    QGridLayout* gl = new QGridLayout(composeWidget);
+    gl->setContentsMargins(0,0,0,0);
+
+    QLabel* accountLabel = new QLabel("Account:",composeWidget);
+    gl->addWidget(accountLabel,0,0);
+
+    m_accountsCombo = new QComboBox(composeWidget);
+    gl->addWidget(m_accountsCombo,0,1);
+
+    QLabel* toLabel = new QLabel("To:",composeWidget);
+    gl->addWidget(toLabel,1,0);
+
+    m_toEdit = new QLineEdit(composeWidget);
+    gl->addWidget(m_toEdit,1,1);
+
+    QLabel* subjectLabel = new QLabel("Subject:",composeWidget);
+    gl->addWidget(subjectLabel,2,0);
+
+    m_subjectEdit = new QLineEdit(composeWidget);
+    gl->addWidget(m_subjectEdit,2,1);
+
+    m_bodyEdit = new QTextEdit(composeWidget);
+    gl->addWidget(m_bodyEdit,3,0,1,2);
+
+    m_attachmentList = new AttachmentListWidget(composeWidget);
+    gl->addWidget(m_attachmentList,4,0,1,2);
+    m_attachmentList->hide();
+
+    m_addAttachmentButton = new QPushButton("Add attachment...",this);
+    connect(m_addAttachmentButton,SIGNAL(clicked(bool)),this,SLOT(addAttachmentButtonClicked()));
+    layout->addWidget(m_addAttachmentButton);
+
+    m_sendButton = new QPushButton("Send",this);
+    connect(m_sendButton,SIGNAL(clicked(bool)),this,SLOT(sendButtonClicked()));
+    layout->addWidget(m_sendButton);
 
     m_composeButton = new QPushButton("Compose",this);
     connect(m_composeButton,SIGNAL(clicked(bool)),this,SLOT(composeButtonClicked()));
     layout->addWidget(m_composeButton);
 }
 
-void ComposeSendWidget::composeButtonClicked()
+QMessage ComposeSendWidget::constructQMessage() const
 {
-    qWarning() << "COMPOSE BUTTON CLICKED";
-    m_service->compose(QMessage());
+    QMessage message;
+
+    if(m_availableAccounts.isEmpty())
+    {
+        QMessageBox::critical(0,"No Accounts","Cannot send a message without any avaialble accounts");
+        return message;
+    }
+
+    QMessageAccountId selectedAccountId = m_availableAccounts.at(m_accountsCombo->currentIndex());
+
+
+    foreach(QString s, m_toEdit->text().split(QRegExp("\\s")))
+    {
+        QMessageAddressList toList;
+        toList.append(QMessageAddress(s,QMessageAddress::Email));
+        message.setTo(toList);
+    }
+
+    message.setParentAccountId(selectedAccountId);
+    message.setSubject(m_subjectEdit->text());
+    message.setBody(m_bodyEdit->toPlainText());
+    message.appendAttachments(m_attachmentList->attachments());
+
+    return message;
 }
 
 class RetrieveWidget : public QWidget

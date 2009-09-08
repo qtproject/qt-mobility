@@ -46,7 +46,7 @@ public:
         :q_ptr(id)
     {
     }
-    
+
     QMessageId *q_ptr;
 #if defined(Q_OS_WIN)
     MapiRecordKey _messageRecordKey;

@@ -33,8 +33,8 @@
 #include "qmessagecontentcontainer.h"
 #include "qmessagecontentcontainer_p.h"
 #include "winhelpers_p.h"
-
 #include <QTextCodec>
+#include <QDebug>
 
 namespace WinHelpers {
 
@@ -97,7 +97,7 @@ QMessageContentContainer::QMessageContentContainer()
 QMessageContentContainer::QMessageContentContainer(const QMessageContentContainer &other)
     : d_ptr(new QMessageContentContainerPrivate(this))
 {
-    this->operator=(other);
+     this->operator=(other);
 }
 
 QMessageContentContainer& QMessageContentContainer::operator=(const QMessageContentContainer& other)
@@ -186,7 +186,7 @@ uint QMessageContentContainer::size() const
 QString QMessageContentContainer::textContent() const
 {
     if (d_ptr->_textContent.isEmpty() && d_ptr->_attachmentNumber != 0) {
-        d_ptr->_textContent = attachmentTextContent(d_ptr->_containingMessageId, d_ptr->_attachmentNumber, d_ptr->_charset);
+        const_cast<QString&>(d_ptr->_textContent) = attachmentTextContent(d_ptr->_containingMessageId, d_ptr->_attachmentNumber, d_ptr->_charset);
     }
     if (!d_ptr->_textContent.isEmpty()) {
         return d_ptr->_textContent;
@@ -203,7 +203,7 @@ QString QMessageContentContainer::textContent() const
 QByteArray QMessageContentContainer::content() const
 {
     if (d_ptr->_content.isEmpty() && d_ptr->_attachmentNumber != 0) {
-        d_ptr->_content = attachmentContent(d_ptr->_containingMessageId, d_ptr->_attachmentNumber);
+        const_cast<QByteArray&>(d_ptr->_content) = attachmentContent(d_ptr->_containingMessageId, d_ptr->_attachmentNumber);
     }
 
     return d_ptr->_content;
@@ -283,10 +283,13 @@ void QMessageContentContainer::readContentFrom(QDataStream &in)
 QMessageContentContainerId QMessageContentContainer::appendContent(const QMessageContentContainer & content)
 {
     if (d_ptr->isMessage()) {
-        d_ptr->_attachments->append(content);
 
-        QMessageContentContainer &container(d_ptr->_attachments->last());
-        container.d_ptr->_id = QMessageContentContainerId(QString::number(d_ptr->_attachments->count()));
+        QMessageContentContainer container(content);
+
+        container.d_ptr->_id = QMessageContentContainerId(QString::number(d_ptr->_attachments.count()+1));
+
+        d_ptr->_attachments.append(container);
+
         return container.d_ptr->_id;
     }
 
@@ -309,7 +312,7 @@ QMessageContentContainerIdList QMessageContentContainer::contentIds() const
     QMessageContentContainerIdList ids;
 
     if (d_ptr->isMessage()) {
-        foreach (const QMessageContentContainer &container, *d_ptr->_attachments) {
+        foreach (const QMessageContentContainer &container, d_ptr->_attachments) {
             ids.append(container.containerId());
         }
     }
@@ -326,6 +329,7 @@ QMessageContentContainer QMessageContentContainer::find(const QMessageContentCon
     }
 
     return QMessageContentContainer();
+
 }
 
 bool QMessageContentContainer::contains(const QMessageContentContainerId &id) const
@@ -398,11 +402,11 @@ bool QMessageContentContainer::containerDataModified() const
 QMessageContentContainerId QMessageContentContainer::prependContent(const QMessageContentContainer & content)
 {
     if (d_ptr->isMessage()) {
-        d_ptr->_attachments->prepend(content);
+        d_ptr->_attachments.prepend(content);
 
         int n = 1;
-        foreach (const QMessageContentContainer &container, *d_ptr->_attachments) {
-            container.d_ptr->_id = QMessageContentContainerId(QString::number(n));
+        foreach (const QMessageContentContainer &container, d_ptr->_attachments) {
+            const_cast<QMessageContentContainerId&>(container.d_ptr->_id) = QMessageContentContainerId(QString::number(n));
         }
 
         return QMessageContentContainerId(QString::number(1));
@@ -424,13 +428,13 @@ void QMessageContentContainer::applyPendingChanges() const
 void QMessageContentContainer::removeContent(const QMessageContentContainerId &id)
 {
     if (d_ptr->isMessage()) {
-        for (int i = 0; i < d_ptr->_attachments->count(); ++i) {
-            if (d_ptr->_attachments->at(i).containerId() == id) {
-                d_ptr->_attachments->removeAt(i);
+        for (int i = 0; i < d_ptr->_attachments.count(); ++i) {
+            if (d_ptr->_attachments.at(i).containerId() == id) {
+                d_ptr->_attachments.removeAt(i);
 
                 // Adjust the identifiers for any trailing attachments
-                for (int j = i; j < d_ptr->_attachments->count(); ++j) {
-                    d_ptr->_attachments->at(j).d_ptr->_id = QMessageContentContainerId(QString::number(j + 1));
+                for (int j = i; j < d_ptr->_attachments.count(); ++j) {
+                    const_cast<QMessageContentContainerId&>(d_ptr->_attachments.at(j).d_ptr->_id) = QMessageContentContainerId(QString::number(j + 1));
                 }
                 return;
             }

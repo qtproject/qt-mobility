@@ -35,6 +35,9 @@
 #include "qmessageid_p.h"
 #include "qmessageaccountid_p.h"
 #include "qmessagestore.h"
+#include <QDebug>
+#include "qmessagecontentcontainer_p.h"
+#include "qmessagefolderid_p.h"
 
 QMessage QMessagePrivate::from(const QMessageId &id)
 {
@@ -59,9 +62,18 @@ void QMessagePrivate::setSize(const QMessage &message, uint size)
     message.d_ptr->_size = size;
 }
 
+#ifdef QMESSAGING_OPTIONAL
+void QMessagePrivate::setStandardFolder(const QMessage& message, QMessage::StandardFolder sf)
+{
+    message.d_ptr->_standardFolder = sf;
+    message.d_ptr->_modified = true;
+}
+#endif
 
 QMessage::QMessage()
-    :d_ptr(new QMessagePrivate(this))
+    :
+    QMessageContentContainer(),
+    d_ptr(new QMessagePrivate(this))
 {
     d_ptr->_modified = false;
     d_ptr->_size = 0;
@@ -69,15 +81,17 @@ QMessage::QMessage()
 }
 
 QMessage::QMessage(const QMessageId& id)
-    :d_ptr(new QMessagePrivate(this))
+    :
+    QMessageContentContainer(),
+    d_ptr(new QMessagePrivate(this))
 {
     *this = QMessageStore::instance()->message(id);
     setDerivedMessage(this);
 }
 
-QMessage::QMessage(const QMessage &other)
-    :QMessageContentContainer(),
-     d_ptr(new QMessagePrivate(this))
+    QMessage::QMessage(const QMessage &other)
+:QMessageContentContainer(other),
+    d_ptr(new QMessagePrivate(this))
 {
     this->operator=(other);
     setDerivedMessage(this);
@@ -145,7 +159,7 @@ QMessageAccountId QMessage::parentAccountId() const
     return d_ptr->_parentAccountId;
 }
 
-void QMessage::setParentAccountId(const QMessageAccountId &accountId) 
+void QMessage::setParentAccountId(const QMessageAccountId &accountId)
 {
     d_ptr->_modified = true;
     d_ptr->_parentAccountId = accountId;
@@ -160,12 +174,12 @@ QMessageFolderId QMessage::parentFolderId() const
 
 QMessage::StandardFolder QMessage::standardFolder() const
 {
-    return QMessage::InboxFolder; // stub
+    return d_ptr->_standardFolder;
 }
 
 void QMessage::setStandardFolder(StandardFolder sf)
 {
-    Q_UNUSED(sf) // stub
+    Q_UNUSED(sf); //TODO enable
 }
 
 QMessageAddress QMessage::from() const
@@ -325,13 +339,18 @@ QMessageContentContainerIdList QMessage::attachments() const
 
 void QMessage::appendAttachments(const QStringList &fileNames)
 {
-    d_ptr->_modified = true;
-
     foreach (const QString &filename, fileNames) {
-        QMessageContentContainer content;
-        content.setContentFileName(filename.toAscii());
-        appendContent(content);
+        QMessageContentContainer container;
+        QMessageContentContainerPrivate* container_p = container.d_ptr;
+
+        if(container_p->createAttachment(filename))
+        {
+            QMessageContentContainerPrivate* thisContainer_p = reinterpret_cast<QMessageContentContainer*>(this)->d_ptr;
+            thisContainer_p->appendContent(container);
+        }
     }
+
+    d_ptr->_modified = true;
 }
 
 void QMessage::clearAttachments()
@@ -350,6 +369,7 @@ bool QMessage::isModified() const
 
 QMessage QMessage::createResponseMessage(ResponseType type) const
 {
+    Q_UNUSED(type)
     return QMessage(); // stub
 }
 

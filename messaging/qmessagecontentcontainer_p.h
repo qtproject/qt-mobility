@@ -30,11 +30,15 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include "qmessagecontentcontainer.h"
 #include "qmessage.h"
-
+#include <QSharedData>
 #include <QList>
 #include <QMultiMap>
+#include <QDebug>
+#include <QFile>
+#include <QFileInfo>
 
 class QMessageContentContainerPrivate
 {
@@ -42,39 +46,62 @@ class QMessageContentContainerPrivate
 
 public:
     QMessageContentContainerPrivate(QMessageContentContainer *contentContainer)
-        : q_ptr(contentContainer),
-          _message(0),
+        :
+        q_ptr(contentContainer),
+         _message(0),
 #ifdef Q_OS_WIN
-          _attachmentNumber(0),
+         _attachmentNumber(0),
 #endif
-	  _available(false),
-	  _size(0),
-          _attachments(0)
+         _available(false),
+         _size(0)
     {
     }
 
-    ~QMessageContentContainerPrivate()
+    QMessageContentContainerPrivate(const QMessageContentContainerPrivate& other)
+        :
+        q_ptr(other.q_ptr),
+        _message(other._message),
+#ifdef Q_OS_WIN
+        _attachmentNumber(other._attachmentNumber),
+        _containingMessageId(other._containingMessageId),
+#endif
+        _attachments(other._attachments),
+        _available(other._available),
+        _size(other._size),
+        _type(other._type),
+        _subType(other._subType),
+        _charset(other._charset),
+        _name(other._name),
+        _content(other._content),
+        _textContent(other._textContent),
+        _filename(other._filename),
+        _messageId(other._messageId),
+        _id(other._id),
+        _header(other._header)
     {
-        delete _attachments;
-        _attachments = 0;
     }
 
     QMessageContentContainerPrivate &operator=(const QMessageContentContainerPrivate &other)
     {
-        if (&other != this) {
-            _type = other._type;
-            _subType = other._subType;
-            _charset = other._charset;
-            _name = other._name;
-            _content = other._content;
-            _textContent = other._textContent;
-            _filename = other._filename;
-            _messageId = other._messageId;
-            _id = other._id;
-            _available = other._available;
-            _size = other._size;
-            _header = other._header;
-        }
+        q_ptr = other.q_ptr;
+        _message = other._message;
+#ifdef Q_OS_WIN
+        _attachmentNumber = other._attachmentNumber;
+        _containingMessageId = other._containingMessageId;
+#endif
+        _available = other._available;
+        _size = other._size;
+        _attachments = other._attachments;
+        _type = other._type;
+        _subType = other._subType;
+        _charset = other._charset;
+        _name = other._name;
+        _content = other._content;
+        _textContent = other._textContent;
+        _filename = other._filename;
+        _messageId = other._messageId;
+        _id = other._id;
+        _header = other._header;
 
         return *this;
     }
@@ -109,8 +136,8 @@ public:
     QMessageContentContainerId _id;
     bool _available;
     uint _size;
-    QList<QMessageContentContainer> *_attachments;
-    QMultiMap<QByteArray, QString> _header;
+    QList<QMessageContentContainer> _attachments;
+    QMultiMap<QByteArray, QString>  _header;
 
     bool isMessage() const
     {
@@ -120,9 +147,6 @@ public:
     void setDerivedMessage(QMessage *derived)
     {
         _message = derived;
-        if (_message) {
-            _attachments = new QList<QMessageContentContainer>;
-        }
     }
 
     void clearContents()
@@ -138,11 +162,8 @@ public:
         _id = QMessageContentContainerId();
         _available = false;
         _size = 0;
-	_header.clear();
-
-        if (_attachments) {
-            _attachments->clear();
-        }
+        _header.clear();
+        _attachments.clear();
     }
 
     QMessageContentContainer *attachment(const QMessageContentContainerId &id)
@@ -151,7 +172,7 @@ public:
             if (id == _message->body()) {
                 return _message;
             } else {
-                foreach (const QMessageContentContainer &container, *_attachments) {
+                foreach (const QMessageContentContainer &container, _attachments) {
                     if (container.containerId() == id) {
                         return const_cast<QMessageContentContainer*>(&container);
                     }
@@ -168,7 +189,7 @@ public:
             if (id == _message->body()) {
                 return _message;
             } else {
-                foreach (const QMessageContentContainer &container, *_attachments) {
+                foreach (const QMessageContentContainer &container, _attachments) {
                     if (container.containerId() == id) {
                         return &container;
                     }
@@ -178,4 +199,52 @@ public:
 
         return 0;
     }
+
+    bool createAttachment(const QString& attachmentPath)
+    {
+        //set the attachment data
+
+        if(!QFile::exists(attachmentPath))
+        {
+            qWarning() << "Could not create attachment. File " << attachmentPath << " does not exist";
+            return false;
+        }
+
+        QFile attachmentFile(attachmentPath);
+        if(!attachmentFile.open(QIODevice::ReadOnly))
+        {
+            qWarning() << "Could not open attachment " << attachmentPath;
+            return false;
+        }
+
+        _content = attachmentFile.readAll();
+        _available = true;
+
+        attachmentFile.close();
+
+        //set the contentFileName
+
+        _name = QFileInfo(attachmentPath).fileName().toLatin1();
+
+        //set the mime-type
+
+        _type = "application";
+        _subType = "octet-stream";
+
+        return true;
+    }
+
+    void appendContent(QMessageContentContainer& container)
+    {
+#ifdef OS_WIN
+        if (!isMessage())
+        {
+            qWarning() << "Unable to add child QMessageContentContainer. MAPI only supports single level nesting of containers.";
+            return;
+        }
+#endif
+        container.d_ptr->_id = QMessageContentContainerId(QString::number(_attachments.count()+1));
+        _attachments.append(container);
+    }
+
 };

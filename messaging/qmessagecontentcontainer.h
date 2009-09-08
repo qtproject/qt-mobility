@@ -117,6 +117,6 @@ private:
     void setDerivedMessage(QMessage *derived);
     void applyPendingChanges() const;
 
-    QMessageContentContainerPrivate *d_ptr;
+    QMessageContentContainerPrivate* d_ptr;
 };
 #endif

@@ -16,9 +16,11 @@ LIBS += -L $$(QMF_LIBDIR) -lqtopiamail
 }
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    attachmentlistwidget.h
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    attachmentlistwidget.cpp
 
