@@ -123,15 +123,17 @@ QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)
 {
     if (QMailStore *store = QMailStore::instance()) {
         QMailAccountKey typeKey(QMailAccountKey::messageType(convert(type)));
-        QMailAccountKey preferredKey(QMailAccountKey::status(QMailAccount::PreferredSender));
+        QMailAccountKey enabledKey(QMailAccountKey::status(QMailAccount::Enabled));
 
         // See if there is a preferred sender
-        foreach (const QMailAccountId &id, store->queryAccounts(typeKey & preferredKey)) {
+        QMailAccountKey preferredKey(QMailAccountKey::status(QMailAccount::PreferredSender));
+        foreach (const QMailAccountId &id, store->queryAccounts(typeKey & enabledKey & preferredKey)) {
             return convert(id);
         }
 
-        // See if there are any accounts for this type
-        foreach (const QMailAccountId &id, store->queryAccounts(typeKey)) {
+        // See if there are any sending accounts for this type
+        QMailAccountKey capableKey(QMailAccountKey::status(QMailAccount::CanTransmit));
+        foreach (const QMailAccountId &id, store->queryAccounts(typeKey & enabledKey & capableKey)) {
             return convert(id);
         }
     }
