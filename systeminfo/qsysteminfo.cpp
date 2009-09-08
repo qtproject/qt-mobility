@@ -160,7 +160,7 @@ QT_BEGIN_NAMESPACE
 
   */
 /*!
-  \fn void QSystemDeviceInfo::batteryLevelChanged(QSystemDeviceInfo::BatteryLevel level)
+  \fn void QSystemDeviceInfo::batteryLevelChanged(int level)
 
   This signal is emitted when battery level has changed.
   \a level is the new level.
@@ -592,6 +592,8 @@ QSystemMemoryInfo::VolumeType QSystemMemoryInfo::volumeType(const QString &drive
  */
 QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
 {
+    qWarning() << __FUNCTION__;
+    
     d = new QSystemDeviceInfoPrivate(parent);
     connect(d,SIGNAL(batteryLevelChanged(QSystemDeviceInfo::BatteryLevel)),
             this,SIGNAL(batteryLevelChanged(QSystemDeviceInfo::BatteryLevel)));
@@ -603,6 +605,9 @@ QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
             this,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)));
     connect(d,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
             this,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)));
+    
+    d->setConnection();
+    
 }
 
 /*!
@@ -612,6 +617,7 @@ QSystemDeviceInfo::~QSystemDeviceInfo()
 {
     delete d;
 }
+
 
 /*!
     Returns the QSystemDeviceInfo::InputMethodFlags InputMethodType that the system uses.

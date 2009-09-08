@@ -51,7 +51,7 @@
 #include <QDBusInterface>
 #include <QDBusMessage>
 #include <QDBusReply>
-
+#include <QVariantList>
 
 #include <QDBusPendingCallWatcher>
 
@@ -70,6 +70,16 @@
 
 #define HAL_DEVICES_LAPTOPPANEL_INTERFACE "org.freedesktop.Hal.Device.LaptopPanel"
 
+ typedef struct halProp {
+    QString propertyName;
+    bool added;
+    bool removed;
+} HalProperty;
+
+typedef QList<HalProperty> QHalPropertyList;
+
+Q_DECLARE_METATYPE(QHalPropertyList)
+
 class QHalInterfacePrivate;
 class QHalInterface : public QObject
 {
@@ -84,8 +94,6 @@ public:
     QDBusInterface *connectionInterface() const;
     QStringList findDeviceByCapability(const QString &cap);
     QStringList getAllDevices();
-
-Q_SIGNALS:
 
 private Q_SLOTS:
 private:
@@ -109,6 +117,10 @@ public:
     qint32 getPropertyInt(const QString &prop);
 
     bool queryCapability(const QString &cap);
+    bool setConnections();
+
+Q_SIGNALS:
+    void propertyModified( int,  QVariantList);
 
 private:
         QHalDeviceInterfacePrivate *d;

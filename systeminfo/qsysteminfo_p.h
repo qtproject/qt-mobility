@@ -52,8 +52,7 @@
 
 #include "qsysteminfo.h"
 #include <qsysinfoglobal.h>
-#include <QFileSystemWatcher>
-//#define _WINSOCKAPI_
+#include <qhalservice_p.h>
 
 QT_BEGIN_HEADER
 
@@ -87,6 +86,7 @@ private:
 #if !defined(QT_NO_DBUS)
     bool hasHalDeviceFeature(const QString &param);
     bool hasHalUsbFeature(qint32 usbClass);
+    QHalInterface halIface;
 #endif
     bool hasSysFeature(const QString &featureStr);
 #if defined(Q_OS_LINUX)
@@ -199,15 +199,21 @@ public:
     bool isBatteryCharging();
 
     QSystemDeviceInfo::PowerState currentPowerState();
+    void setConnection();
 
 Q_SIGNALS:
-    void batteryLevelChanged(QSystemDeviceInfo::BatteryLevel);
+    void batteryLevelChanged(int);
     void powerStateChanged(QSystemDeviceInfo::PowerState);
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void currentPowerStateChanged(QSystemDeviceInfo::PowerState);
     void bluetoothStateChanged(bool);
 
 private:
+    QHalInterface *halIface;
+    QHalDeviceInterface *halIfaceDevice;
+
+private Q_SLOTS:
+    void halChangedBatteryLevel(  int, QVariantList);
 
 };
 

@@ -44,7 +44,7 @@
 
 #include "qhalservice_p.h"
 
-static QDBusConnection dbusConnection = QDBusConnection::systemBus();
+ static QDBusConnection dbusConnection = QDBusConnection::systemBus();
 
 class QHalInterfacePrivate
 {
@@ -122,7 +122,9 @@ public:
 
 QHalDeviceInterface::QHalDeviceInterface(const QString &devicePathName, QObject *parent )
         : QObject(parent)
-{
+{/*
+ qDBusRegisterMetaType<QHalPropertyList>();*/
+
     d = new QHalDeviceInterfacePrivate();
     d->path = devicePathName;
     d->connectionInterface = new QDBusInterface(HAL_DBUS_SERVICE,
@@ -147,6 +149,27 @@ QHalDeviceInterface::~QHalDeviceInterface()
 bool QHalDeviceInterface::isValid()
 {
     return d->valid;
+}
+
+bool QHalDeviceInterface::setConnections()
+{
+    qWarning() << __FUNCTION__ << isValid()
+               << HAL_DBUS_SERVICE
+               << d->path
+               <<HAL_DEVICE_INTERFACE;
+    if(!isValid() )
+        return false;
+    bool allOk = false;
+    qWarning() << "ok go ahead and try" << d->path;
+
+    if (dbusConnection.connect(HAL_DBUS_SERVICE,
+                               d->path,
+                               HAL_DEVICE_INTERFACE,
+                               "PropertyModified",
+                               this,SIGNAL(propertyModified( int, QVariantList)))) {
+        allOk = true;
+    }
+    return allOk;
 }
 
 bool QHalDeviceInterface::getPropertyBool(const QString &prop)

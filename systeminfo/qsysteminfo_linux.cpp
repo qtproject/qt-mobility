@@ -941,11 +941,54 @@ void QSystemMemoryInfoPrivate::mountEntries()
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
         : QObject(parent)
 {
+ //   qWarning() << Q_FUNC_INFO;
+
     halIsAvailable = halAvailable();
+}
+
+void QSystemDeviceInfoPrivate::setConnection()
+{
+    if(halIsAvailable) {
+        QHalInterface iface;
+        QStringList list = iface.findDeviceByCapability("battery");
+        if(!list.isEmpty()) {
+            foreach(QString dev, list) {
+                //         qWarning() << "device is" << dev;
+                //            if(!halIfaceDevice) {
+                halIfaceDevice = new QHalDeviceInterface(dev);
+                if (halIfaceDevice->isValid()) {
+                    QString batType = halIfaceDevice->getPropertyString("battery.type");
+                    qWarning() << "device is" << dev << batType;
+                    if(batType == "primary" || batType == "pda") {
+                        if(!halIfaceDevice->setConnections() ) {
+                            qWarning() << "Connections XXXXXXXXXXXXXXXXXXXXXXXXX";
+                        }
+                        if(!connect(halIfaceDevice,SIGNAL(propertyModified( int, QVariantList)),
+                                    this,SLOT(halChangedBatteryLevel(  int, QVariantList)))) {
+                            qWarning() << "connection malfunction";
+                        }
+                            break;
+                    }
+                }
+            }
+        }
+    }
 }
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
+    qWarning() << __FUNCTION__;
+}
+
+void QSystemDeviceInfoPrivate::halChangedBatteryLevel(  int, QVariantList map)
+{
+    qWarning() <<__FUNCTION__ << map.count() ;
+    for(int i=0; i < map.count(); i++) {
+        if(map.at(i).toString() == "battery.charge_level.percentage") {
+            qWarning() <<     map.at(i).toString()  <<"!!!!!!!!!!!!!!!!!";
+            emit batteryLevelChanged(batteryLevel());
+       }
+    }
 }
 
 QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
@@ -1222,8 +1265,8 @@ int QSystemDeviceInfoPrivate::batteryLevel() const
             foreach(QString dev, list) {
                 QHalDeviceInterface ifaceDevice(dev);
                 if (ifaceDevice.isValid()) {
-                    qWarning() << ifaceDevice.getPropertyString("battery.type")
-                            << ifaceDevice.getPropertyInt("battery.charge_level.percentage");
+//                    qWarning() << ifaceDevice.getPropertyString("battery.type")
+//                            << ifaceDevice.getPropertyInt("battery.charge_level.percentage");
                     if(!ifaceDevice.getPropertyBool("battery.present")
                         && (ifaceDevice.getPropertyString("battery.type") != "pda"
                              || ifaceDevice.getPropertyString("battery.type") != "primary")) {
@@ -1289,6 +1332,7 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
 {
+    qWarning() << __FUNCTION__;
     return false;
 }
 

@@ -315,7 +315,7 @@ public:
     QSystemDeviceInfo::PowerState currentPowerState(); //signal
 
 Q_SIGNALS:
-    void batteryLevelChanged(QSystemDeviceInfo::BatteryLevel);
+    void batteryLevelChanged(int);
     void powerStateChanged(QSystemDeviceInfo::PowerState);
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void currentPowerStateChanged(QSystemDeviceInfo::PowerState);
