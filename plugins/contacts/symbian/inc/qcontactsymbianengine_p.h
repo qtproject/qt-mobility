@@ -134,6 +134,9 @@ private:
 	
 private:
 	CContactDatabase* m_contactDatabase;
+#ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__  
+	CContactChangeNotifier* m_contactChangeNotifier;
+#endif	
 	TransformContact* m_transformContact;
 };
 

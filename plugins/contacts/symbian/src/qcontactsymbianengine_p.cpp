@@ -45,16 +45,29 @@ QContactSymbianEngineData::QContactSymbianEngineData() :
     m_transformContact(0)
 {
     QT_TRANSLATE_SYMBIAN_LEAVE_TO_EXCEPTION(m_contactDatabase = CContactDatabase::OpenL());
+    
+    // In pre 10.1 platforms the AddObserverL & RemoveObserver functions are not
+    // exported so we need to use CContactChangeNotifier.
+    // TODO: Is it ok to use __SYMBIAN_CNTMODEL_USE_SQLITE__ flag for this?
+#ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__ 
+    QT_TRANSLATE_SYMBIAN_LEAVE_TO_EXCEPTION(m_contactChangeNotifier = 
+		CContactChangeNotifier::NewL(*m_contactDatabase, this));
+#else
     QT_TRANSLATE_SYMBIAN_LEAVE_TO_EXCEPTION(m_contactDatabase->AddObserverL(*this));
+#endif
 	
 	m_transformContact = new TransformContact;
 }
 
 QContactSymbianEngineData::~QContactSymbianEngineData()
 {
+#ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
+	delete m_contactChangeNotifier;
+#else
 	if (m_contactDatabase != 0) {
 	    m_contactDatabase->RemoveObserver(*this);
 	}
+#endif
 	delete m_contactDatabase;
 	delete m_transformContact;
 }
