@@ -39,6 +39,68 @@
 #include <qabstractmediaservice.h>
 #include <qmediarecordercontrol.h>
 #include <qmediarecorder.h>
+#include <qaudiodevicecontrol.h>
+
+class MockAudioDeviceProvider : public QAudioDeviceControl
+{
+    Q_OBJECT
+public:
+    MockAudioDeviceProvider(QObject *parent):
+        QAudioDeviceControl(parent)
+    {
+        m_names << "device1" << "device2" << "device3";
+        m_descriptions << "dev1 comment" << "dev2 comment" << "dev3 comment";
+        m_index = 0;
+        emit devicesChanged();
+    }
+    ~MockAudioDeviceProvider() {};
+
+    int deviceCount() const
+    {
+        return m_names.count();
+    }
+
+    QString name(int index) const
+    {
+        return m_names[index];
+    }
+
+    QString description(int index) const
+    {
+        return m_descriptions[index];
+    }
+
+    QIcon icon(int index) const
+    {
+        Q_UNUSED(index)
+
+        return QIcon();
+    }
+
+    int defaultDevice() const
+    {
+        return 1;
+    }
+
+    int selectedDevice() const
+    {
+        return m_index;
+    }
+
+public Q_SLOTS:
+    void setSelectedDevice(int index)
+    {
+        m_index = index;
+        emit selectedDeviceChanged(m_index);
+        emit selectedDeviceChanged(m_names[m_index]);
+        emit devicesChanged();
+    }
+
+private:
+    int m_index;
+    QStringList m_names;
+    QStringList m_descriptions;
+};
 
 class MockProvider : public QMediaRecorderControl
 {
@@ -105,14 +167,23 @@ class MockService : public QAbstractMediaService
 public:
     MockService(QObject *parent, QAbstractMediaControl *control):
         QAbstractMediaService(parent),
-        mockControl(control) {}
-
-    QAbstractMediaControl* control(const char *) const
+        mockControl(control)
     {
-        return mockControl;
+        mockAudioDeviceControl = new MockAudioDeviceProvider(parent);
+    }
+
+    QAbstractMediaControl* control(const char * name) const
+    {
+        if(qstrcmp(name,QAudioDeviceControl_iid) == 0)
+            return mockAudioDeviceControl;
+        if(qstrcmp(name,QMediaRecorderControl_iid) == 0)
+            return mockControl;
+
+        return 0;
     }
 
     QAbstractMediaControl   *mockControl;
+    QAudioDeviceControl     *mockAudioDeviceControl;
 };
 
 class MockObject : public QAbstractMediaObject
@@ -149,8 +220,10 @@ public slots:
 private slots:
     void testSink();
     void testRecord();
+    void testAudioDeviceControl();
 
 private:
+    QAudioDeviceControl* audio;
     MockObject      *object;
     MockProvider    *mock;
     QMediaRecorder  *capture;
@@ -162,6 +235,7 @@ void tst_QMediaRecorder::init()
     object = new MockObject(this, mock);
     capture = new QMediaRecorder(object);
     QVERIFY(capture->isValid());
+    audio = qobject_cast<QAudioDeviceControl*>(capture->service()->control(QAudioDeviceControl_iid));
 }
 
 void tst_QMediaRecorder::cleanup()
@@ -191,6 +265,19 @@ void tst_QMediaRecorder::testRecord()
     capture->stop();
     QTestEventLoop::instance().enterLoop(1);
     QVERIFY(stateSignal.count() == 3);
+}
+
+void tst_QMediaRecorder::testAudioDeviceControl()
+{
+    QSignalSpy readSignal(audio,SIGNAL(selectedDeviceChanged(int)));
+    QVERIFY(audio->deviceCount() == 3);
+    QVERIFY(audio->defaultDevice() == 1);
+    audio->setSelectedDevice(1);
+    QTestEventLoop::instance().enterLoop(1);
+    QVERIFY(audio->selectedDevice() == 1);
+    QVERIFY(readSignal.count() == 1);
+    QVERIFY(audio->name(1) == QString("device2"));
+    QVERIFY(audio->description(1) == "dev2 comment");
 }
 
 QTEST_MAIN(tst_QMediaRecorder)
