@@ -80,8 +80,8 @@ wince* {
     CONTACTS_DEPLOYMENT.path = /Windows
 
     # Plugins
-    CONTACTS_PLUGINS_DEPLOYMENT.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/plugins/*.dll
-    CONTACTS_PLUGINS_DEPLOYMENT.path = /resource/qt/plugins/contacts
+    CONTACTS_PLUGINS_DEPLOYMENT.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/plugins/contacts/*.dll
+    CONTACTS_PLUGINS_DEPLOYMENT.path = plugins/contacts
 
     DEPLOYMENT += CONTACTS_DEPLOYMENT CONTACTS_PLUGINS_DEPLOYMENT
 }
