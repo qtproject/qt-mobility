@@ -93,6 +93,8 @@ public:
 #endif
     QMessageAccount account(const QMessageAccountId &id) const;
 
+    bool isNotificationEnabled() const;
+
     static QMessageStore* instance();
     
 signals:
@@ -101,8 +103,7 @@ signals:
     void messagesUpdated(const QMessageIdList &ids);
 
 public slots:
-    void startNotifications(const QMessageFilter &filter);
-    void stopNotifications();
+    void setNotificationEnabled(bool enable);
 
 private:
     friend class QGlobalStaticDeleter<QMessageStore>;

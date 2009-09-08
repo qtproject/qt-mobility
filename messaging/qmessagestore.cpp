@@ -353,18 +353,19 @@
 */
 
 /*!
-    \fn QMessageStore::startNotifications(const QMessageFilter &filter)
+    \fn QMessageStore::isNotificationEnabled() const
     
-    Starts emission of messagesAdded(), messagesRemoved() and messagesUpdated() signals
-    for messages that match \a filter.
+    Returns true if the emission of messaging store notification signals is enabled.
     
-    \sa messagesAdded(), messagesRemoved(), messagesUpdated(), stopNotifications()
+    \sa setNotificationEnabled()
 */
 
 /*!
-    \fn QMessageStore::stopNotifications()
+    \fn QMessageStore::setNotificationEnabled(bool enabled)
     
-    Stops emission of messagesAdded(), messagesRemoved() and messagesUpdated() signals.
+    Set the emission of messaging store notification signals to be \a enabled. 
+    When enabled, the messagesAdded(), messagesRemoved() and messagesUpdated() 
+    signals are emitted as those events occur.
     
-    \sa messagesAdded(), messagesRemoved(), messagesUpdated(), startNotifications()
+    \sa isNotificationEnabled(), messagesAdded(), messagesRemoved(), messagesUpdated()
 */

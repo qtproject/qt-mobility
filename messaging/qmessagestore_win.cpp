@@ -769,11 +769,13 @@ QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
     return result;
 }
 
-void QMessageStore::startNotifications(const QMessageFilter &filter)
+bool QMessageStore::isNotificationEnabled() const
 {
-    Q_UNUSED(filter)    
+    return false; // stub
 }
 
-void QMessageStore::stopNotifications()
+void QMessageStore::setNotificationEnabled(bool enabled)
 {
+    Q_UNUSED(enabled)
 }
+

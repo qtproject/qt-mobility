@@ -271,19 +271,13 @@ QMessageStore* QMessageStore::instance()
     return store;
 }
     
-void QMessageStore::startNotifications(const QMessageFilter &filter)
+bool QMessageStore::isNotificationEnabled() const
 {
-    if (filter.options() != 0) {
-        d_ptr->_error = QMessageStore::NotYetImplemented;
-        return;
-    }
-    
-    // TODO: implement notifications
-    Q_UNUSED(filter)    
+    return false; // stub
 }
 
-void QMessageStore::stopNotifications()
+void QMessageStore::setNotificationEnabled(bool enabled)
 {
-    // TODO: implement notifications
+    Q_UNUSED(enabled)
 }
 
