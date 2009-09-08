@@ -84,7 +84,7 @@ QList<CContactItemField *> TransformPhoneNumber::transformDetailL(const QContact
 	//contexts
 	setContextsL(phoneNumber, *newField);
 	
-	QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE(fieldList.append(newField));
+	fieldList.append(newField);
 	CleanupStack::Pop(newField);
 	
 	return fieldList;

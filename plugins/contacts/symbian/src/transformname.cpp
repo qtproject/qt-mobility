@@ -45,14 +45,14 @@ QList<CContactItemField *> TransformName::transformDetailL(const QContactDetail 
 	TPtrC fieldTextPrefix(reinterpret_cast<const TUint16*>(name.prefix().utf16()));
 	CContactItemField* prefix = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldPrefixName);
 	prefix->TextStorage()->SetTextL(fieldTextPrefix);
-	QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE(fieldList.append(prefix));
+	fieldList.append(prefix);
 	CleanupStack::Pop(prefix);
 	
 	//First Name
 	TPtrC fieldTextFirstName(reinterpret_cast<const TUint16*>(name.first().utf16()));
 	CContactItemField* firstName = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldGivenName);
 	firstName->TextStorage()->SetTextL(fieldTextFirstName);
-	QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE(fieldList.append(firstName));
+	fieldList.append(firstName);
 	CleanupStack::Pop(firstName);
 
 	//Middle Name
@@ -66,14 +66,14 @@ QList<CContactItemField *> TransformName::transformDetailL(const QContactDetail 
 	TPtrC fieldTextLastName(reinterpret_cast<const TUint16*>(name.last().utf16()));
 	CContactItemField* lastName = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldFamilyName);
 	lastName->TextStorage()->SetTextL(fieldTextLastName);
-	QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE(fieldList.append(lastName));
+	fieldList.append(lastName);
 	CleanupStack::Pop(lastName);
 	
 	//Suffix
 	TPtrC fieldTextSuffix(reinterpret_cast<const TUint16*>(name.suffix().utf16()));
 	CContactItemField* suffix = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldSuffixName);
 	suffix->TextStorage()->SetTextL(fieldTextSuffix);
-	QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE(fieldList.append(suffix));
+	fieldList.append(suffix);
 	CleanupStack::Pop(suffix);
 	
 	return fieldList;

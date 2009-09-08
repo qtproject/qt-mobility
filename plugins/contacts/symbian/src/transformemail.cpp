@@ -48,7 +48,7 @@ QList<CContactItemField *> TransformEmail::transformDetailL(const QContactDetail
 	//contexts
 	setContextsL(email, *newField);
 	
-	QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE(fieldList.append(newField));
+	fieldList.append(newField);
 	CleanupStack::Pop(newField);
 		
 	return fieldList;
