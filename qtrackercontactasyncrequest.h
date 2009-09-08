@@ -49,7 +49,6 @@ protected:
     int queryPhoneNumbersNodesReady; // remove after figuring out how to check if data in LiveNodes is updated
     QList<SopranoLive::LiveNodes> queryIMAccountNodes; // 2 - one for affiliations and another one for PersonContact
     int queryIMAccountNodesReady; // remove after figuring out how to check if data in LiveNodes is updated
-
 };
 
 #endif /* QTRACKERCONTACTASYNCREQUEST_H_ */

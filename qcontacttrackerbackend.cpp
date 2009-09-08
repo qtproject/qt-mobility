@@ -241,13 +241,19 @@ void createTagIfItDoesntExistAlready(const QString &tag)
     {
         checked = true;
         RDFVariable rdfTag = RDFVariable::fromType<nao::Tag>();
-        RDFVariable labelVar = rdfTag.property<nao::prefLabel>();
+        RDFVariable labelVar = rdfTag.optional().property<nao::prefLabel>();
         labelVar = LiteralValue(tag);
-        QList<LiveNode> tags = ::tracker()->modelVariable(labelVar);
-        if( tags.isEmpty() )
-        {
-            Live<nao::Tag>(::tracker()->createLiveNode())->setPrefLabel(tag);
-        }
+        RDFFilter doesntExist = labelVar.not_().isBound();// do not create if it already exist
+
+        RDFUpdate up;
+
+        QUrl newTag = ::tracker()->createLiveNode().uri();
+        rdfTag = newTag;
+        QList<RDFVariableStatement> insertions;
+        insertions << RDFVariableStatement(rdfTag, rdf::type::iri(), nao::Tag::iri())
+        << RDFVariableStatement(newTag, nao::prefLabel::iri(), labelVar);
+        up.addInsertion(insertions); // this way we apply filter doesntExist to both insertions
+        ::tracker()->executeQuery(up);
     }
 }
 
@@ -306,8 +312,10 @@ void appendPhoneNumbersUpdate(RDFUpdate &up, RDFVariable &var, const QList<QCont
     up.addDeletion(phones, rdf::type::iri(), types);
     foreach(const QContactDetail& det, details)
     {
-        QString type = det.attribute(QContactPhoneNumber::AttributeSubType);
         QUrl newPhone = ::tracker()->createLiveNode().uri();
+        up.addInsertion(varForInsert, nco::hasPhoneNumber::iri(), newPhone);
+        QString type = det.attribute(QContactPhoneNumber::AttributeSubType);
+
         if( QContactPhoneNumber::AttributeSubTypeMobile == type)
             up.addInsertion(newPhone, rdf::type::iri(), nco::CellPhoneNumber::iri());
         else if( QContactPhoneNumber::AttributeSubTypeCar == type)
@@ -326,7 +334,7 @@ void appendPhoneNumbersUpdate(RDFUpdate &up, RDFVariable &var, const QList<QCont
             up.addInsertion(newPhone, rdf::type::iri(), nco::VoicePhoneNumber::iri());
 
         up.addInsertion(newPhone, nco::phoneNumber::iri(), LiteralValue(det.value(QContactPhoneNumber::FieldNumber)));
-        up.addInsertion(RDFVariableStatement(varForInsert, nco::hasPhoneNumber::iri(), newPhone));
+
     }
 }
 
@@ -352,19 +360,57 @@ void appendEmailsUpdate(RDFUpdate &up, RDFVariable &var, const QList<QContactDet
     }
 }
 
+/*!
+ * write all phone numbers on one query to tracker
+ * TODO this is temporary code for creating new, saving contacts need to handle only what was
+ * changed.
+ */
+void appendAddressUpdate(RDFUpdate &up, RDFVariable &var, const QList<QContactDetail> &details )
+{
+
+    RDFVariable varForInsert = var.deepCopy();
+    RDFVariable addresses = var.property<nco::hasPostalAddress>();
+    RDFVariable types = addresses.property<rdf::type>();
+    up.addDeletion(RDFVariableStatement(var, nco::hasPostalAddress::iri(), addresses));
+    up.addDeletion(addresses, rdf::type::iri(), types);
+    foreach(const QContactDetail& det, details)
+    {
+        QUrl newPostalAddress = ::tracker()->createLiveNode().uri();
+        // TODO     nco:DomesticDeliveryAddress, nco:InternationalDeliveryAddress, nco:ParcelDeliveryAddress
+        up.addInsertion(newPostalAddress, rdf::type::iri(), nco::PostalAddress::iri());
+        if( det.hasValue(QContactAddress::FieldStreet))
+            up.addInsertion(newPostalAddress, nco::streetAddress::iri(), LiteralValue(det.value(QContactAddress::FieldStreet)));
+        if( det.hasValue(QContactAddress::FieldLocality))
+            up.addInsertion(newPostalAddress, nco::locality::iri(), LiteralValue(det.value(QContactAddress::FieldLocality)));
+        if( det.hasValue(QContactAddress::FieldCountry))
+            up.addInsertion(newPostalAddress, nco::country::iri(), LiteralValue(det.value(QContactAddress::FieldCountry)));
+        if( det.hasValue(QContactAddress::FieldPostcode))
+            up.addInsertion(newPostalAddress, nco::postalcode::iri(), LiteralValue(det.value(QContactAddress::FieldPostcode)));
+        if( det.hasValue(QContactAddress::FieldRegion))
+            up.addInsertion(newPostalAddress, nco::region::iri(), LiteralValue(det.value(QContactAddress::FieldRegion)));
+
+        up.addInsertion(RDFVariableStatement(varForInsert, nco::hasPostalAddress::iri(), newPostalAddress));
+    }
+}
 
 // create nco::Affiliation if there is not one already in tracker
 void createAffiliationIfItDoesntExist(QUniqueId contactId)
 {
     RDFVariable contact = RDFVariable::fromType<nco::PersonContact>();
     contact.property<nco::contactUID> () = LiteralValue(QString::number(contactId));
-    RDFVariable affiliation =
-            contact.optional().property<nco::hasAffiliation> ();
-    RDFFilter doesntExist = affiliation.not_().isBound();// do not create if it already exist
+    RDFVariable contact1 = contact.deepCopy();
     RDFUpdate up;
+
+    // here we will specify to add new node for affiliation if it doesnt exist already
+    RDFVariable affiliation = contact.optional().property<nco::hasAffiliation> ();
+    RDFFilter doesntExist = affiliation.not_().isBound();// do not create if it already exist
     QUrl newAffiliation = ::tracker()->createLiveNode().uri();
-    up.addInsertion(contact, nco::hasAffiliation::iri(), newAffiliation); // add Affiliation node to nco::PersonContact
-    up.addInsertion(affiliation, rdf::type::iri(), nco::Affiliation::iri()); // create node
+    QList<RDFVariableStatement> insertions;
+    insertions << RDFVariableStatement(contact, nco::hasAffiliation::iri(), newAffiliation)
+    << RDFVariableStatement(newAffiliation, rdf::type::iri(), nco::Affiliation::iri());
+
+    // this means that filter applies to both insertions
+    up.addInsertion(insertions);
 
     ::tracker()->executeQuery(up);
 }
@@ -387,7 +433,7 @@ bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
         return false;
     }
 
-    RDFTransactionPtr transaction = RDFTransactionPtr();// still segfaults with 1.6.0.1 ::tracker()->initiateTransaction();
+    RDFTransactionPtr transaction = RDFTransactionPtr();// doesnt work with 1.6.0.2 ::tracker()->initiateTransaction();
 
     RDFServicePtr service;
     if(transaction)
@@ -436,30 +482,17 @@ bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
             ncoContact->setNameGiven(detail.value(QContactName::FieldFirst));
             ncoContact->setNameAdditional(detail.value(QContactName::FieldMiddle));
             ncoContact->setNameFamily(detail.value(QContactName::FieldLast));
-        /* Save address data */
-        } else if(definition == QContactAddress::DefinitionName) {
-            // OrganizationContact or PersonalContact depending on the context
-            Live<nco::Role> contact = d->contactByContext(detail, ncoContact);
-            Live<nco::PostalAddress> ncoPostalAddress = contact->getHasPostalAddress();
-
-            // Found the correct address resource. Now update the data.
-            ncoPostalAddress->setStreetAddress(detail.value(QContactAddress::FieldStreet));
-            ncoPostalAddress->setLocality(detail.value(QContactAddress::FieldLocality));
-            ncoPostalAddress->setPostalcode(detail.value(QContactAddress::FieldPostcode));
-            ncoPostalAddress->setRegion(detail.value(QContactAddress::FieldRegion));
-            ncoPostalAddress->setCountry(detail.value(QContactAddress::FieldCountry));
-
-        }
+        } 
         else{
 
             // all the rest might need to save to PersonContact and to Affiliation contact
             RDFVariable rdfPerson = RDFVariable::fromType<nco::PersonContact>();
             rdfPerson.property<nco::contactUID>() = LiteralValue(QString::number(contact->id()));
 
-            RDFVariable rdfPerson1 = RDFVariable::fromType<nco::PersonContact>();
-            rdfPerson1.property<nco::contactUID>() = LiteralValue(QString::number(contact->id()));
-            RDFVariable rdfAffiliation = RDFVariable::fromType<nco::Affiliation>();
+            RDFVariable rdfAffiliation;
+            RDFVariable rdfPerson1;
             rdfPerson1.property<nco::hasAffiliation>() = rdfAffiliation;
+            rdfPerson1.property<nco::contactUID>() = LiteralValue(QString::number(contact->id()));
             RDFUpdate updateQuery;
 
             QList<QContactDetail> toAffiliation;
@@ -484,6 +517,13 @@ bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
                     appendEmailsUpdate(updateQuery, rdfPerson, toPerson);
                 if( !toAffiliation.isEmpty())
                     appendEmailsUpdate(updateQuery, rdfAffiliation, toAffiliation);
+                service->executeQuery(updateQuery);
+            }
+            else if(definition == QContactAddress::DefinitionName) {
+                if (!toPerson.isEmpty())
+                    appendAddressUpdate(updateQuery, rdfPerson, toPerson);
+                if( !toAffiliation.isEmpty())
+                    appendAddressUpdate(updateQuery, rdfAffiliation, toAffiliation);
                 service->executeQuery(updateQuery);
             }
             else
