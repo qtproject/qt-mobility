@@ -109,10 +109,10 @@ QMessageServiceActionPrivate::QMessageServiceActionPrivate()
       _limit(0),
       _offset(0)
 {
-    connect(&_transmit, SIGNAL(activityChanged(QMailServiceAction::State)), this, SLOT(transmitActivityChanged(QMailServiceAction::State)));
+    connect(&_transmit, SIGNAL(activityChanged(QMailServiceAction::Activity)), this, SLOT(transmitActivityChanged(QMailServiceAction::Activity)));
     connect(&_transmit, SIGNAL(statusChanged(QMailServiceAction::Status)), this, SLOT(statusChanged(QMailServiceAction::Status)));
 
-    connect(&_retrieval, SIGNAL(activityChanged(QMailServiceAction::State)), this, SLOT(retrievalActivityChanged(QMailServiceAction::State)));
+    connect(&_retrieval, SIGNAL(activityChanged(QMailServiceAction::Activity)), this, SLOT(retrievalActivityChanged(QMailServiceAction::Activity)));
     connect(&_retrieval, SIGNAL(statusChanged(QMailServiceAction::Status)), this, SLOT(statusChanged(QMailServiceAction::Status)));
 }
 
@@ -371,6 +371,12 @@ bool QMessageServiceAction::send(QMessage &message)
     message.setStandardFolder(QMessage::OutboxFolder);
 
     QMailMessage *msg(convert(&message));
+
+    // Ensure that the from address is added
+    if (msg->from().isNull()) {
+        QMailAccount account(msg->parentAccountId());
+        msg->setFrom(account.fromAddress());
+    }
 
     // Mark this message as outgoing
     msg->setStatus(QMailMessage::Outbox, true);
