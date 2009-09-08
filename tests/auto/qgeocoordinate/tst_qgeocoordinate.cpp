@@ -460,11 +460,11 @@ private slots:
         QTest::newRow("invalid coord 2")
                 << BRISBANE << QGeoCoordinate() << qreal(0.0);
         QTest::newRow("brisbane -> melbourne")
-                << BRISBANE << MELBOURNE << qreal(1374820.162);
+                << BRISBANE << MELBOURNE << qreal(1374820.1618767744);
         QTest::newRow("london -> new york")
-                << LONDON << NEW_YORK << qreal(5570538.499);
+                << LONDON << NEW_YORK << qreal(5570538.4987236429);
         QTest::newRow("north pole -> south pole")
-                << NORTH_POLE << SOUTH_POLE << qreal(20015109.42);
+                << NORTH_POLE << SOUTH_POLE << qreal(20015109.4154876769);
     }
 
     void azimuthTo()
@@ -487,9 +487,9 @@ private slots:
         QTest::newRow("invalid coord 2")
                 << BRISBANE << QGeoCoordinate() << qreal(0.0);
         QTest::newRow("brisbane -> melbourne")
-                << BRISBANE << MELBOURNE << qreal(211.1717);
+                << BRISBANE << MELBOURNE << qreal(211.1717286649);
         QTest::newRow("london -> new york")
-                << LONDON << NEW_YORK << qreal(288.3389);
+                << LONDON << NEW_YORK << qreal(288.3388804508);
         QTest::newRow("north pole -> south pole")
                 << NORTH_POLE << SOUTH_POLE << qreal(180.0);
     }
