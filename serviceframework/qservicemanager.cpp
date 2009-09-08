@@ -309,7 +309,8 @@ QServiceManager::Scope QServiceManager::scope() const
 
 /*!
     Returns a list of the services that provide the interface specified by
-    \a interfaceName.
+    \a interfaceName. If \a interfaceName is empty, this function returns
+    a list of all available services in this manager's scope.
 */
 QStringList QServiceManager::findServices(const QString& interfaceName) const
 {
@@ -338,7 +339,8 @@ QList<QServiceInterfaceDescriptor> QServiceManager::findInterfaces(const QServic
 
 /*!
     Returns a list of the interfaces provided by the service named
-    \a serviceName.
+    \a serviceName. If \a serviceName is empty, this function returns
+    a list of all available interfaces in this manager's scope.
 */
 QList<QServiceInterfaceDescriptor> QServiceManager::findInterfaces(const QString& serviceName) const
 {
