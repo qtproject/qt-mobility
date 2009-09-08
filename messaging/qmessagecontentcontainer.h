@@ -85,10 +85,6 @@ public:
     QStringList headerFieldValues(const QByteArray &name) const;
     QList<QByteArray> headerFields() const;
 
-#ifdef Q_OS_WIN
-    static QMessageContentContainer from(const QMessageId &id, ULONG number);
-#endif
-
 #ifdef QMESSAGING_OPTIONAL
     void setContentType(const QByteArray &data);
     void setContentSubType(const QByteArray &data);

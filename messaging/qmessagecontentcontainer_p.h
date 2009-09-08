@@ -79,6 +79,17 @@ public:
         return *this;
     }
 
+#ifdef Q_OS_WIN
+    static QMessageContentContainer from(const QMessageId &id, ULONG number)
+    {
+        QMessageContentContainer result;
+        result.d_ptr->_containingMessageId = id;
+        result.d_ptr->_attachmentNumber = number;
+        result.d_ptr->_available = true;
+        return result;
+    }
+#endif
+
     QMessageContentContainer *q_ptr;
     QMessage *_message;
 

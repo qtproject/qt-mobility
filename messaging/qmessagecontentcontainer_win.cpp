@@ -40,7 +40,7 @@ namespace WinHelpers {
 
 QMessageContentContainer fromLocator(const WinHelpers::AttachmentLocator &loc)
 {
-    return QMessageContentContainer::from(loc.first, loc.second);
+    return QMessageContentContainerPrivate::from(loc.first, loc.second);
 }
 
 }
@@ -436,14 +436,5 @@ void QMessageContentContainer::removeContent(const QMessageContentContainerId &i
             }
         }
     }
-}
-
-QMessageContentContainer QMessageContentContainer::from(const QMessageId &id, ULONG number)
-{
-    QMessageContentContainer result;
-    result.d_ptr->_containingMessageId = id;
-    result.d_ptr->_attachmentNumber = number;
-    result.d_ptr->_available = true;
-    return result;
 }
 
