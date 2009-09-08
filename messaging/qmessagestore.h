@@ -70,11 +70,12 @@ public:
     QMessageStore::ErrorCode lastError() const;
 
     QMessageIdList queryMessages(const QMessageFilter &filter = QMessageFilter(), const QMessageOrdering &ordering = QMessageOrdering(), uint limit = 0, uint offset = 0) const;
-    QMessageIdList queryMessages(const QString &body, const QMessageFilter &filter = QMessageFilter(), const QMessageOrdering &ordering = QMessageOrdering(), QMessageDataComparator::Options options = 0, uint limit = 0, uint offset = 0) const;
+    QMessageIdList queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options = 0, const QMessageOrdering &ordering = QMessageOrdering(), uint limit = 0, uint offset = 0) const;
 #ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolderIdList queryFolders(const QMessageFolderFilter &filter = QMessageFolderFilter(), const QMessageFolderOrdering &ordering = QMessageFolderOrdering(), uint limit = 0, uint offset = 0) const;
 #endif
     QMessageAccountIdList queryAccounts(const QMessageAccountFilter &filter = QMessageAccountFilter(), const QMessageAccountOrdering &ordering = QMessageAccountOrdering(), uint limit = 0, uint offset = 0) const;
+
     int countMessages(const QMessageFilter &filter = QMessageFilter()) const;
 #ifdef QMESSAGING_OPTIONAL_FOLDER
     int countFolders(const QMessageFolderFilter &filter = QMessageFolderFilter()) const;

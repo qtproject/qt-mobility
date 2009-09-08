@@ -94,7 +94,7 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
     return QMessageIdList(); // stub
 }
 
-QMessageIdList QMessageStore::queryMessages(const QString &body, const QMessageFilter &filter, const QMessageOrdering &ordering, QMessageDataComparator::Options options, uint limit, uint offset) const
+QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const
 {
     Q_UNUSED(filter)
     Q_UNUSED(ordering)
