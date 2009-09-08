@@ -129,6 +129,12 @@ QList<CContactItemField *> TransformContact::transformDetailL(const QContactDeta
 		itemFieldList = m_transformContactData.value(Name)->transformDetailL(detail);
 	}
 	
+	//Nickname
+	if (detail.definitionName() == QContactNickname::DefinitionName)
+	{
+		itemFieldList = m_transformContactData.value(Nickname)->transformDetailL(detail);
+	}
+	
 	//Phonenumber
 	else if (detail.definitionName() == QContactPhoneNumber::DefinitionName)
 	{
