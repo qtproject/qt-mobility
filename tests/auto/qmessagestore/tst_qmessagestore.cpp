@@ -333,13 +333,6 @@ void tst_QMessageStore::testMessage()
     p.insert("parentFolderPath", testFolder.path());
 #endif
 
-#ifdef QMESSAGING_OPTIONAL
-    CustomFieldMap::const_iterator it = custom.begin(), end = custom.end();
-    for ( ; it != end; ++it) {
-        p.insert("custom-" + it.key(), it.value());
-    }
-#endif
-
     QMessageId messageId(Support::addMessage(p));
     QVERIFY(messageId.isValid());
     
@@ -370,13 +363,6 @@ void tst_QMessageStore::testMessage()
 #endif
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), text);
-
-#ifdef QMESSAGING_OPTIONAL
-    QCOMPARE(message.customFields().toSet(), custom.keys().toSet());
-    foreach (const QString &key, custom.keys()) {
-        QCOMPARE(message.customField(key), custom[key]);
-    }
-#endif
 
     QMessageIdList messageIds(QMessageStore::instance()->queryMessages());
     QVERIFY(messageIds.contains(messageId));

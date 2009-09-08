@@ -46,10 +46,6 @@ public:
          _type(QMessage::NoType),
          _status(0),
          _priority(QMessage::NormalPriority),
-#ifdef QMESSAGING_OPTIONAL
-         _originatorPort(0),
-         _destinationPort(0),
-#endif
          _modified(false)
     {
     }
@@ -73,12 +69,8 @@ public:
     QString _subject;
     QDateTime _date;
     QDateTime _receivedDate;
-#ifdef QMESSAGING_OPTIONAL
-    uint _originatorPort;
-    uint _destinationPort;
-    QMap<QString, QString> _customFields;
-#endif
     bool _modified;
+
 #if defined(Q_OS_WIN)
     static QMessage from(const QMessageId &id);
     static QString senderName(const QMessage &message);

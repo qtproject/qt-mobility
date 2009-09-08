@@ -84,12 +84,6 @@ private slots:
     void testStatus();
     void testPriority();
 
-#ifdef QMESSAGING_OPTIONAL
-    void testOriginatorPort();
-    void testDestinationPort();
-    void testCustomField();
-#endif
-
 private:
     QMessageAccountId testAccountId;
 #ifdef QMESSAGING_OPTIONAL_FOLDER
@@ -651,55 +645,4 @@ void tst_QMessage::testPriority()
     msg.setPriority(QMessage::LowPriority);
     QCOMPARE(msg.priority(), QMessage::LowPriority);
 }
-
-#ifdef QMESSAGING_OPTIONAL
-void tst_QMessage::testOriginatorPort()
-{
-    QMessage msg;
-    QCOMPARE(msg.originatorPort(), 0u);
-
-    msg.setOriginatorPort(0x1111u);
-    QCOMPARE(msg.originatorPort(), 0x1111u);
-
-    msg.setOriginatorPort(0xdeadu);
-    QCOMPARE(msg.originatorPort(), 0xdeadu);
-}
-
-void tst_QMessage::testDestinationPort()
-{
-    QMessage msg;
-    QCOMPARE(msg.destinationPort(), 0u);
-
-    msg.setDestinationPort(0x1111u);
-    QCOMPARE(msg.destinationPort(), 0x1111u);
-
-    msg.setDestinationPort(0xdeadu);
-    QCOMPARE(msg.destinationPort(), 0xdeadu);
-}
-
-void tst_QMessage::testCustomField()
-{
-    QMessage msg;
-    QCOMPARE(msg.customFields(), QStringList());
-    QCOMPARE(msg.customField("testing"), QString());
-
-    msg.setCustomField("testing", "1-2-3");
-    QCOMPARE(msg.customFields(), QStringList(( QSet<QString>() << "testing" ).toList()));
-    QCOMPARE(msg.customField("testing"), QString("1-2-3"));
-
-    msg.setCustomField("check", "one, two");
-    QCOMPARE(msg.customFields(), QStringList(( QSet<QString>() << "testing" << "check" ).toList()));
-    QCOMPARE(msg.customField("check"), QString("one, two"));
-
-    // TODO: Is this what we want?
-    msg.setCustomField("testing", "");
-    QCOMPARE(msg.customFields(), QStringList(( QSet<QString>() << "testing" << "check" ).toList()));
-    QCOMPARE(msg.customField("testing"), QString());
-
-    msg.setCustomField("testing", QString());
-    QCOMPARE(msg.customFields(), QStringList(( QSet<QString>() << "check" ).toList()));
-    QCOMPARE(msg.customField("testing"), QString());
-}
-
-#endif
 

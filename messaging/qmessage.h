@@ -161,17 +161,6 @@ public:
     void appendAttachments(const QStringList &fileNames);
     void clearAttachments();
 
-#ifdef QMESSAGING_OPTIONAL
-    void setOriginatorPort(uint port);
-    uint originatorPort();
-    void setDestinationPort(uint port);
-    uint destinationPort();
-
-    QString customField(const QString &name) const;
-    void setCustomField(const QString &name, const QString &value);
-    QStringList customFields() const;
-#endif
-
     bool isModified() const;
 
     QMessage createResponseMessage(ResponseType type) const;

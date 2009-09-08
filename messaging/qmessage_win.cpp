@@ -343,50 +343,6 @@ void QMessage::clearAttachments()
     }
 }
 
-#ifdef QMESSAGING_OPTIONAL
-void QMessage::setOriginatorPort(uint port)
-{
-    d_ptr->_modified = true;
-    d_ptr->_originatorPort = port;
-}
-
-uint QMessage::originatorPort()
-{
-    return d_ptr->_originatorPort;
-}
-
-void QMessage::setDestinationPort(uint port)
-{
-    d_ptr->_modified = true;
-    d_ptr->_destinationPort = port;
-}
-
-uint QMessage::destinationPort()
-{
-    return d_ptr->_destinationPort;
-}
-
-QString QMessage::customField(const QString &name) const
-{
-    return d_ptr->_customFields[name];
-}
-
-void QMessage::setCustomField(const QString &name, const QString &value)
-{
-    d_ptr->_modified = true;
-    if (value.isNull()) {
-        d_ptr->_customFields.remove(name);
-    } else {
-        d_ptr->_customFields[name] = value;
-    }
-}
-
-QStringList QMessage::customFields() const
-{
-    return d_ptr->_customFields.keys();
-}
-#endif
-
 bool QMessage::isModified() const
 {
     return d_ptr->_modified;

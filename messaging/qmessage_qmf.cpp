@@ -543,55 +543,6 @@ void QMessage::clearAttachments()
     }
 }
 
-#ifdef QMESSAGING_OPTIONAL
-void QMessage::setOriginatorPort(uint port)
-{
-    d_ptr->_message.setCustomField("QMessage::originatorPort", QString::number(port));
-}
-
-uint QMessage::originatorPort()
-{
-    return d_ptr->_message.customField("QMessage::originatorPort").toUInt();
-}
-
-void QMessage::setDestinationPort(uint port)
-{
-    d_ptr->_message.setCustomField("QMessage::destinationPort", QString::number(port));
-}
-
-uint QMessage::destinationPort()
-{
-    return d_ptr->_message.customField("QMessage::destinationPort").toUInt();
-}
-
-QString QMessage::customField(const QString &name) const
-{
-    return d_ptr->_message.customField(name);
-}
-
-void QMessage::setCustomField(const QString &name, const QString &value)
-{
-    if (value.isNull()) {
-        d_ptr->_message.removeCustomField(name);
-    } else {
-        d_ptr->_message.setCustomField(name, value);
-    }
-}
-
-QStringList QMessage::customFields() const
-{
-    QStringList result;
-
-    foreach (const QString &key, d_ptr->_message.customFields().keys()) {
-        if (!key.startsWith("QMessage::")) {
-            result.append(key);
-        }
-    }
-
-    return result;
-}
-#endif
-
 bool QMessage::isModified() const
 {
     return d_ptr->_message.dataModified();

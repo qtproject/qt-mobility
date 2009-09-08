@@ -271,45 +271,6 @@ void QMessage::clearAttachments()
     // Implementation note, this should be platform independent.
 }
 
-#ifdef QMESSAGING_OPTIONAL
-void QMessage::setOriginatorPort(uint port)
-{
-    Q_UNUSED(port)
-}
-
-uint QMessage::originatorPort()
-{
-    return 0; // stub
-}
-
-void QMessage::setDestinationPort(uint port)
-{
-    Q_UNUSED(port)
-}
-
-uint QMessage::destinationPort()
-{
-    return 0; // stub
-}
-
-QString QMessage::customField(const QString &name) const
-{
-    Q_UNUSED(name);
-    return QString(); // stub
-}
-
-void QMessage::setCustomField(const QString &name, const QString &value)
-{
-    Q_UNUSED(name);
-    Q_UNUSED(value);
-}
-
-QStringList QMessage::customFields() const
-{
-    return QStringList(); // stub
-}
-#endif
-
 bool QMessage::isModified() const
 {
     return false; // stub
