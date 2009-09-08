@@ -33,7 +33,7 @@ goto usage
 
 :usage
 echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
-    echo                  [-bindir (dir)] [-tests] [-examples]
+    echo                  [-bindir (dir)] [-tests] [-examples] [-debug] [-release]
     echo.
     echo Options:
     echo.
@@ -104,6 +104,10 @@ echo CONFIG += %RELEASEMODE% >> %PROJECT_CONFIG%
 echo QT_MOBILITY_PREFIX = %QT_MOBILITY_PREFIX% >> %PROJECT_CONFIG%
 echo build_unit_tests = %BUILD_UNITTESTS% >> %PROJECT_CONFIG%
 echo build_examples = %BUILD_EXAMPLES% >> %PROJECT_CONFIG%
+
+echo isEmpty($$QT_MOBILITY_INCLUDE):QT_MOBILITY_INCLUDE=$$QT_MOBILITY_PREFIX/include >> %PROJECT_CONFIG%
+echo isEmpty($$QT_MOBILITY_LIB):QT_MOBILITY_LIB=$$QT_MOBILITY_PREFIX/lib >> %PROJECT_CONFIG%
+echo isEmpty($$QT_MOBILITY_BIN):QT_MOBILITY_BIN=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
 
 copy %PROJECT_CONFIG% %PROJECT_ROOT%config.pri
 del %PROJECT_CONFIG%
