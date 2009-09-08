@@ -58,7 +58,7 @@ private:
 		Name = 0,
 		Nickname,
 		PhoneNumber,
-		EmailAddress
+		EmailAddress 
 	};
 	
 	void initializeTransformContactData();

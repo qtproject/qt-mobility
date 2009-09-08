@@ -57,6 +57,7 @@ TransformContact::~TransformContact()
 
 void TransformContact::initializeTransformContactData()
 {
+	//These can be added to normal list, if we loop through it.
 	m_transformContactData.insert(Name, new TransformName);
 	m_transformContactData.insert(Nickname, new TransformNickname);
 	m_transformContactData.insert(PhoneNumber, new TransformPhoneNumber);
@@ -121,6 +122,11 @@ CContactItem *TransformContact::transformContactL(QContact &contact) const
 
 QList<CContactItemField *> TransformContact::transformDetailL(const QContactDetail &detail) const
 {
+	//TODO: add a method to return whether the class supports the detail definitionname
+	//for(m_transformContactData) 
+	//if ( m_transformContactData.at(i)->supportsDetail(detail.defintionName()) )
+	//    detail = m_transformContactData.at(i)->transformDetailL(detail);
+	
 	QList<CContactItemField *> itemFieldList;
 	
 	//Name
@@ -130,7 +136,7 @@ QList<CContactItemField *> TransformContact::transformDetailL(const QContactDeta
 	}
 	
 	//Nickname
-	if (detail.definitionName() == QContactNickname::DefinitionName)
+	else if (detail.definitionName() == QContactNickname::DefinitionName)
 	{
 		itemFieldList = m_transformContactData.value(Nickname)->transformDetailL(detail);
 	}
@@ -151,8 +157,10 @@ QList<CContactItemField *> TransformContact::transformDetailL(const QContactDeta
 
 QContactDetail *TransformContact::transformItemField(const CContactItemField& field, const QContact &contact) const
 {
-	//TODO: add a method to return the UIDs from the details and add them to a multimap
-	//m_transformContactData.value(multimap.key(fieldType))->transformItemField(field, contact);
+	//TODO: add a method to return whether the class supports the UID
+	//for(m_transformContactData) 
+	//if ( m_transformContactData.at(i)->supportsField(field) )
+	//    detail = m_transformContactData.at(i)->transformItemField(field, contact);
 	
 	QContactDetail *detail(0);
 	
@@ -163,7 +171,7 @@ QContactDetail *TransformContact::transformItemField(const CContactItemField& fi
 		fieldType == KUidContactFieldGivenName.iUid      ||
 		fieldType == KUidContactFieldAdditionalName.iUid ||
 		fieldType == KUidContactFieldFamilyName.iUid     ||
-		fieldType == KUidContactFieldFamilyName.iUid)
+		fieldType == KUidContactFieldSuffixName.iUid)
 	{
 		detail = m_transformContactData.value(Name)->transformItemField(field, contact);
 	}
