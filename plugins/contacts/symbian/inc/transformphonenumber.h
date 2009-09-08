@@ -39,7 +39,7 @@ class TransformPhoneNumber : public TransformContactData
 {
 protected:
 	QList<CContactItemField *> transformDetailL(const QContactDetail &detail);
-	QContactDetail *transformItemFieldL(const CContactItemField& field, const QContact &contact);
+	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact);
 };
 
 #endif

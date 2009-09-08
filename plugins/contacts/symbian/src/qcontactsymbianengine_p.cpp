@@ -408,9 +408,9 @@ QContact QContactSymbianEngineData::transformContact(CContactItem &contact) cons
  * \param contact A reference to a QContact to be converted.
  * \return A pointer to a heap allocated CContactItem, ownership transferred.
 */
-CContactItem *QContactSymbianEngineData::transformContact(QContact &contact) const
+CContactItem *QContactSymbianEngineData::transformContactL(QContact &contact) const
 {
-	return m_transformContact->transformContact(contact);
+	return m_transformContact->transformContactL(contact);
 }
 
 
@@ -492,7 +492,7 @@ int QContactSymbianEngineData::countL() const
 int QContactSymbianEngineData::addContactL(QContact &contact)
 {
 	// convert to CContactItem
-	CContactItem* contactItem = transformContact(contact);
+	CContactItem* contactItem = transformContactL(contact);
 
 	// Add to the database
 	CleanupStack::PushL(contactItem);
@@ -511,7 +511,7 @@ int QContactSymbianEngineData::addContactL(QContact &contact)
 void QContactSymbianEngineData::updateContactL(QContact &contact)
 {
     // Convert to CContactItem
-    CContactItem* contactItem = transformContact(contact);
+    CContactItem* contactItem = transformContactL(contact);
     CleanupStack::PushL(contactItem);
 
     // Need to open the contact for write, leaving this item

@@ -45,17 +45,13 @@ class TransformContactData : public QObject
 {
 	 Q_OBJECT
 	 
-public:
-	QList<CContactItemField *> transformDetail(const QContactDetail &detail);
-	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact);
-
 protected:
 	void setContexts(const TUid &fieldType, QContactDetail &detail);
 	void setContextsL(const QContactDetail &detail, CContactItemField &field);
 
-protected:	
+public:
 	virtual QList<CContactItemField *> transformDetailL(const QContactDetail &detail) = 0;
-	virtual QContactDetail* transformItemFieldL(const CContactItemField& field, const QContact &contact) = 0;
+	virtual QContactDetail* transformItemField(const CContactItemField& field, const QContact &contact) = 0;
 };
 
 #endif

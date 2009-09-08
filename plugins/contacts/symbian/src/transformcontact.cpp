@@ -87,7 +87,7 @@ QContact TransformContact::transformContact(CContactItem &contact) const
 		return newQtContact;
 }
 
-CContactItem *TransformContact::transformContact(QContact &contact) const
+CContactItem *TransformContact::transformContactL(QContact &contact) const
 {
 	// Create a new contact card.
 	CContactCard* symContact = CContactCard::NewLC();
@@ -103,7 +103,7 @@ CContactItem *TransformContact::transformContact(QContact &contact) const
 	
 	for(int i(0); i < detailCount; ++i) 
 	{
-		QList<CContactItemField *> fieldList = transformDetail( detailList.at(i) );
+		QList<CContactItemField *> fieldList = transformDetailL( detailList.at(i) );
 		int fieldCount = fieldList.count();
 		
 		for (int i = 0; i < fieldCount; i++)
@@ -117,26 +117,26 @@ CContactItem *TransformContact::transformContact(QContact &contact) const
 	return symContact;
 }
 
-QList<CContactItemField *> TransformContact::transformDetail(const QContactDetail &detail) const
+QList<CContactItemField *> TransformContact::transformDetailL(const QContactDetail &detail) const
 {
 	QList<CContactItemField *> itemFieldList;
 	
 	//Name
 	if (detail.definitionName() == QContactName::DefinitionName)
 	{
-		itemFieldList = m_transformContactData.value(Name)->transformDetail(detail);
+		itemFieldList = m_transformContactData.value(Name)->transformDetailL(detail);
 	}
 	
 	//Phonenumber
 	else if (detail.definitionName() == QContactPhoneNumber::DefinitionName)
 	{
-		itemFieldList = m_transformContactData.value(PhoneNumber)->transformDetail(detail);
+		itemFieldList = m_transformContactData.value(PhoneNumber)->transformDetailL(detail);
 	}
 	
 	//Email Adress
 	else if (detail.definitionName() == QContactEmailAddress::DefinitionName)
 	{
-		itemFieldList = m_transformContactData.value(EmailAddress)->transformDetail(detail);
+		itemFieldList = m_transformContactData.value(EmailAddress)->transformDetailL(detail);
 	}
 	return itemFieldList;
 }

@@ -91,7 +91,7 @@ QList<CContactItemField *> TransformPhoneNumber::transformDetailL(const QContact
 	return fieldList;
 }
 
-QContactDetail *TransformPhoneNumber::transformItemFieldL(const CContactItemField& field, const QContact &contact)
+QContactDetail *TransformPhoneNumber::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	Q_UNUSED(contact);
 	

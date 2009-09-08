@@ -50,7 +50,7 @@ public:
 
 public:
 	QContact transformContact(CContactItem &contact) const;
-	CContactItem *transformContact(QContact &contact) const;
+	CContactItem *transformContactL(QContact &contact) const;
 
 private:
 	enum ContactData
@@ -61,7 +61,7 @@ private:
 	};
 	
 	void initializeTransformContactData();
-	QList<CContactItemField *> transformDetail(const QContactDetail &detail) const;
+	QList<CContactItemField *> transformDetailL(const QContactDetail &detail) const;
 	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact) const;
 	
 private:

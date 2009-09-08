@@ -80,7 +80,7 @@ QList<CContactItemField *> TransformName::transformDetailL(const QContactDetail 
 }	
 
 
-QContactDetail *TransformName::transformItemFieldL(const CContactItemField& field, const QContact &contact)
+QContactDetail *TransformName::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	QContactName *name = new QContactName(contact.detail<QContactName>());
 	

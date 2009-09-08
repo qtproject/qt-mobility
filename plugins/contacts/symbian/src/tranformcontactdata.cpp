@@ -33,24 +33,6 @@
 
 #include "transformcontactdata.h"
 
-QList<CContactItemField *> TransformContactData::transformDetail(const QContactDetail &detail)
-{
-	QList<CContactItemField *> fieldList;
-
-	TRAPD(error, fieldList = transformDetailL(detail));
-	
-	return fieldList;
-}
-
-QContactDetail *TransformContactData::transformItemField(const CContactItemField& field, const QContact &contact)
-{
-	QContactDetail *detail(0);
-	
-	TRAPD(error, detail = transformItemFieldL(field, contact));
-	
-	return detail;
-}
-
 void TransformContactData::setContexts(const TUid &fieldType, QContactDetail &detail)
 {
 	if (fieldType == KUidContactFieldVCardMapHOME)

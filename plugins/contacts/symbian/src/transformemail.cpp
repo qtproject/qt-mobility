@@ -54,7 +54,7 @@ QList<CContactItemField *> TransformEmail::transformDetailL(const QContactDetail
 	return fieldList;
 }
 
-QContactDetail *TransformEmail::transformItemFieldL(const CContactItemField& field, const QContact &contact)
+QContactDetail *TransformEmail::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	Q_UNUSED(contact);
 	
