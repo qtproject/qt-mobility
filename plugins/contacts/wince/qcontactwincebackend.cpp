@@ -773,7 +773,7 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QSet<QUniqueId>& contac
             qDebug() << "Didn't get old contact" << HRESULT_CODE(hr);
             error = QContactManager::UnspecifiedError;
         }
-    } else {
+    } else if (contact->id() == 0) {
         // new contact!
         SimpleComPointer<IDispatch> idisp = 0;
         HRESULT hr = d->m_collection->Add(&idisp);
@@ -790,6 +790,10 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QSet<QUniqueId>& contac
             qDebug() << "Failed to create contact: "<< HRESULT_CODE(hr);
             error = QContactManager::OutOfMemoryError;
         }
+    } else {
+        // Saving a contact with a non zero id, but that doesn't exist
+        qDebug() << "Saving unknown contact id, rejecting";
+        error = QContactManager::DoesNotExistError;
     }
 
     if (icontact) {
