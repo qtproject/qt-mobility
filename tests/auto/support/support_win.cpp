@@ -1079,11 +1079,12 @@ QMessageId addMessage(const Parameters &params)
                 message.setStatus(flags);
 
                 Parameters::const_iterator it = params.begin(), end = params.end();
+                /*
                 for ( ; it != end; ++it) {
                     if (it.key().startsWith("custom-")) {
                         message.setCustomField(it.key().mid(7), it.value());
                     }
-                }
+                }*/
 
                 if (!QMessageStore::instance()->addMessage(&message)) {
                     qWarning() << "Unable to addMessage:" << to << from << date << subject;

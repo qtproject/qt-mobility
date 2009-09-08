@@ -43,6 +43,7 @@ public:
     QMessagePrivate(QMessage *message)
         :q_ptr(message),
          _size(0),
+         _standardFolder(QMessage::DraftsFolder),
          _type(QMessage::NoType),
          _status(0),
          _priority(QMessage::NormalPriority),
@@ -58,6 +59,8 @@ public:
 #ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolderId _parentFolderId;
 #endif
+    QMessage::StandardFolder _standardFolder;
+
     QMessage::Type _type;
     QMessageAddress _from;
     QString _senderName;
@@ -76,5 +79,7 @@ public:
     static QString senderName(const QMessage &message);
     static void setSenderName(const QMessage &message, const QString &senderName);
     static void setSize(const QMessage &message, uint size);
+    static void setStandardFolder(const QMessage& message, QMessage::StandardFolder sf);
+    static void setParentAccountId(const QMessage& message, const QMessageAccountId& id);
 #endif
 };

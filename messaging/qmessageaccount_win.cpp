@@ -33,6 +33,7 @@
 #include "qmessageaccount.h"
 #include "qmessageaccount_p.h"
 #include "qmessagestore.h"
+#include <QDebug>
 
 QMessageAccount QMessageAccountPrivate::from(const QMessageAccountId &id, const QString &name, const QMessageAddress &address, const QMessage::TypeFlags &types)
 {
@@ -97,5 +98,6 @@ QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)
     QMessageAccountIdList accounts(QMessageStore::instance()->queryAccounts());
     if (!accounts.isEmpty())
         return accounts.first();
+
     return QMessageAccountId(); // stub
 }

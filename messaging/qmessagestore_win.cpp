@@ -39,8 +39,9 @@
 #include "qmessageaccount_p.h"
 #include "qmessageordering_p.h"
 #include "winhelpers_p.h"
-
 #include <qdebug.h>
+
+using namespace WinHelpers;
 
 struct FolderHeapNode {
     MapiStorePtr store;
@@ -74,6 +75,8 @@ private:
 
 FolderHeap::FolderHeap(QMessageStore::ErrorCode *lastError, MapiSessionPtr mapiSession, const QList<FolderHeapNodePtr> &protoHeap, const QMessageFilter &filter, const QMessageOrdering &ordering)
 {
+    Q_UNUSED(lastError)
+
     _filter = filter;
     _ordering = ordering;
     _mapiSession = mapiSession;
@@ -418,305 +421,75 @@ bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageStore::
     return true; // stub
 }
 
-
-namespace {
-
-FILETIME toFileTime(const QDateTime &dt)
-{
-    FILETIME ft = {0};
-
-    QDate date(dt.date());
-    QTime time(dt.time());
-
-    SYSTEMTIME st = {0};
-    st.wYear = date.year();
-    st.wMonth = date.month();
-    st.wDay = date.day();
-    st.wHour = time.hour();
-    st.wMinute = time.minute();
-    st.wSecond = time.second();
-    st.wMilliseconds = time.msec();
-
-    SystemTimeToFileTime(&st, &ft);
-    return ft;
-}
-
-ADRLIST *createAddressList(int count)
-{
-    ADRLIST *list(0);
-
-    uint size = CbNewADRLIST(count);
-    MAPIAllocateBuffer(size, reinterpret_cast<LPVOID*>(&list));
-    if (list) {
-        memset(list, 0, size);
-        list->cEntries = count;
-
-        for (int i = 0; i < count; ++i) {
-            list->aEntries[i].cValues = 2;
-            MAPIAllocateBuffer(2 * sizeof(SPropValue), reinterpret_cast<LPVOID*>(&list->aEntries[i].rgPropVals));
-        }
-    }
-
-    return list;
-}
-
-void fillAddressEntry(ADRENTRY &entry, const QMessageAddress &addr, LONG type, QList<LPTSTR> &addresses)
-{
-    entry.rgPropVals[0].ulPropTag = PR_RECIPIENT_TYPE;
-    entry.rgPropVals[0].Value.l = type;
-
-    QString addressStr("[%1:%2]");
-    addressStr = addressStr.arg(addr.type() == QMessageAddress::Phone ? "SMS" : "SMTP");
-    addressStr = addressStr.arg(addr.recipient());
-
-    // TODO: Escape illegal characters, as per: http://msdn.microsoft.com/en-us/library/cc842281.aspx
-
-    uint len = addressStr.length();
-    LPTSTR address = new TCHAR[len + 1];
-    memcpy(address, addressStr.utf16(), len * sizeof(TCHAR));
-    address[len] = 0;
-
-    entry.rgPropVals[1].ulPropTag = PR_DISPLAY_NAME;
-    entry.rgPropVals[1].Value.LPSZ = address;
-
-    addresses.append(address);
-}
-
-bool resolveAddressList(ADRLIST *list, IMAPISession *session)
+bool QMessageStore::addMessage(QMessage *message)
 {
     bool result(false);
 
-    if (session) {
-        IAddrBook *book(0);
-        HRESULT rv = session->OpenAddressBook(0, 0, AB_NO_DIALOG, &book);
-        if (HR_SUCCEEDED(rv)) {
-            rv = book->ResolveName(0, MAPI_UNICODE, 0, list);
-            if (HR_SUCCEEDED(rv)) {
-                result = true;
-            } else {
-                qWarning() << "Unable to resolve addresses.";
-            }
+    if (!message || !message->id().isValid()) {
 
-            book->Release();
-        } else {
-            qWarning() << "Unable to open address book.";
-        }
-    }
+        d_ptr->p_ptr->lastError = QMessageStore::NoError;
 
-    return result;
-}
+        MapiSessionPtr session(MapiSession::createSession(&d_ptr->p_ptr->lastError, d_ptr->p_ptr->_mapiInitialized));
+        if (d_ptr->p_ptr->lastError == QMessageStore::NoError) {
 
-void destroyAddressList(ADRLIST *list, QList<LPTSTR> &addresses)
-{
-    foreach (LPTSTR address, addresses) {
-        delete [] address;
-    }
+            if (MapiStorePtr mapiStore = session->findStore(&d_ptr->p_ptr->lastError, message->parentAccountId(),false)) {
 
-    addresses.clear();
+                MapiFolderPtr mapiFolder;
 
-    for (uint i = 0; i < list->cEntries; ++i) {
-        MAPIFreeBuffer(list->aEntries[i].rgPropVals);
-    }
-    
-    MAPIFreeBuffer(list);
-}
+                // Find the parent folder for this message
 
-bool setMapiProperty(IMAPIProp *object, ULONG tag, const QString &value)
-{
-    SPropValue prop = { 0 };
-    prop.ulPropTag = tag;
-    prop.Value.LPSZ = reinterpret_cast<LPWSTR>(const_cast<quint16*>(value.utf16()));
-    return HR_SUCCEEDED(HrSetOneProp(object, &prop));
-}
+                QMessageFolder folder(message->parentFolderId());
 
-bool setMapiProperty(IMAPIProp *object, ULONG tag, LONG value)
-{
-    SPropValue prop = { 0 };
-    prop.ulPropTag = tag;
-    prop.Value.l = value;
-    return HR_SUCCEEDED(HrSetOneProp(object, &prop));
-}
+                if(folder.id().isValid())
+                    mapiFolder = mapiStore->findFolder(&d_ptr->p_ptr->lastError, QMessageFolderIdPrivate::folderRecordKey(folder.id()));
+                else
+                    mapiFolder = mapiStore->findFolder(&d_ptr->p_ptr->lastError, message->standardFolder());
 
-bool setMapiProperty(IMAPIProp *object, ULONG tag, FILETIME value)
-{
-    SPropValue prop = { 0 };
-    prop.ulPropTag = tag;
-    prop.Value.ft = value;
-    return HR_SUCCEEDED(HrSetOneProp(object, &prop));
-}
+                if( mapiFolder ) {
+                    IMessage* mapiMessage = mapiFolder->createMessage(*message,session,&d_ptr->p_ptr->lastError);
+                    if (mapiMessage && d_ptr->p_ptr->lastError == QMessageStore::NoError) {
 
-}
-
-bool QMessageStore::addMessage(QMessage *m)
-{
-    bool result(false);
-
-    if (!m || !m->id().isValid()) {
-        // Find the parent folder for this message
-        QMessageFolder folder(m->parentFolderId());
-        if (folder.id().isValid()) {
-            MapiSessionPtr session(MapiSession::createSession(&d_ptr->p_ptr->lastError, d_ptr->p_ptr->_mapiInitialized));
-            if (d_ptr->p_ptr->lastError == QMessageStore::NoError) {
-                if (MapiStorePtr store = session->findStore(&d_ptr->p_ptr->lastError, m->parentAccountId())) {
-                    if (MapiFolderPtr mapiFolder = store->findFolder(&d_ptr->p_ptr->lastError, QMessageFolderIdPrivate::folderRecordKey(folder.id()))) {
-                        LPMESSAGE message(0);
-                        HRESULT rv = mapiFolder->folder()->CreateMessage(0, 0, &message);
-                        if (HR_SUCCEEDED(rv)) {
-                            // Find the identifier of the new message
-                            SizedSPropTagArray(2, columns) = {2, {PR_RECORD_KEY, PR_ENTRYID}};
-                            SPropValue *properties(0);
-                            ULONG count;
-                            rv = message->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), 0, &count, &properties);
-                            if (HR_SUCCEEDED(rv)) {
-                                MapiRecordKey recordKey(reinterpret_cast<const char*>(properties[0].Value.bin.lpb), properties[0].Value.bin.cb);
-                                MapiEntryId entryId(properties[1].Value.bin.lpb, properties[1].Value.bin.cb);
-                                m->d_ptr->_id = QMessageIdPrivate::from(recordKey, mapiFolder->recordKey(), mapiFolder->storeKey(), entryId);
-
-                                MAPIFreeBuffer(properties);
-
-                                // Set the message's properties
-                                if (!setMapiProperty(message, PR_SUBJECT, m->subject())) {
-                                    qWarning() << "Unable to set subject in message.";
-                                }
-
-                                LONG flags = (MSGFLAG_UNSENT | MSGFLAG_UNMODIFIED | MSGFLAG_FROMME);
-                                if (m->status() & QMessage::HasAttachments) {
-                                    flags |= MSGFLAG_HASATTACH;
-                                }
-                                if (!setMapiProperty(message, PR_MESSAGE_FLAGS, flags)) {
-                                    qWarning() << "Unable to set flags in message.";
-                                }
-
-                                QString emailAddress = m->from().recipient();
-                                if (!setMapiProperty(message, PR_SENDER_EMAIL_ADDRESS, emailAddress)) {
-                                    qWarning() << "Unable to set sender address in message.";
-                                }
-
-                                QStringList headers;
-                                foreach (const QByteArray &name, m->headerFields()) {
-                                    foreach (const QString &value, m->headerFieldValues(name)) {
-                                        // TODO: Do we need soft line-breaks?
-                                        headers.append(QString("%1: %2").arg(QString(name)).arg(value));
-                                    }
-                                }
-                                if (!headers.isEmpty()) {
-                                    QString transportHeaders = headers.join("\r\n").append("\r\n\r\n");
-                                    if (!setMapiProperty(message, PR_TRANSPORT_MESSAGE_HEADERS, transportHeaders)) {
-                                        qWarning() << "Unable to set transport headers in message.";
-                                    }
-                                }
-
-                                if (!setMapiProperty(message, PR_CLIENT_SUBMIT_TIME, toFileTime(m->date()))) {
-                                    qWarning() << "Unable to set submit time in message.";
-                                }
-
-                                uint recipientCount(m->to().count() + m->cc().count() + m->bcc().count());
-                                if (recipientCount) {
-                                    ADRLIST *list = createAddressList(recipientCount);
-                                    if (list) {
-                                        int index = 0;
-                                        QList<LPTSTR> addresses;
-
-                                        foreach (const QMessageAddress &addr, m->to()) {
-                                            ADRENTRY &entry(list->aEntries[index]);
-                                            fillAddressEntry(entry, addr, MAPI_TO, addresses);
-                                            ++index;
-                                        }
-
-                                        foreach (const QMessageAddress &addr, m->cc()) {
-                                            ADRENTRY &entry(list->aEntries[index]);
-                                            fillAddressEntry(entry, addr, MAPI_CC, addresses);
-                                            ++index;
-                                        }
-
-                                        foreach (const QMessageAddress &addr, m->bcc()) {
-                                            ADRENTRY &entry(list->aEntries[index]);
-                                            fillAddressEntry(entry, addr, MAPI_BCC, addresses);
-                                            ++index;
-                                        }
-
-                                        if (resolveAddressList(list, session->session())) {
-                                            rv = message->ModifyRecipients(MODRECIP_ADD, list);
-                                            if (HR_FAILED(rv)) {
-                                                qWarning() << "Unable to store address list for message.";
-                                            }
-                                        } else {
-                                            qWarning() << "Unable to resolve address list for message.";
-                                        }
-
-                                        destroyAddressList(list, addresses);
-                                    } else {
-                                        qWarning() << "Unable to allocate address list for message.";
-                                    }
-                                }
-
-                                // Store all the custom field data in a single block
-                                QStringList customFieldData;
-                                foreach (const QString &key, m->customFields()) {
-                                    customFieldData.append(key + "\n" + m->customField(key));
-                                }
-                                if (!customFieldData.isEmpty()) {
-                                    ULONG tag = WinHelpers::createNamedProperty(message, "customFieldData");
-                                    if (tag) {
-                                        WinHelpers::setNamedProperty(message, tag, customFieldData.join("\n\n"));
-                                    } else {
-                                        qWarning() << "Unable to store custom field data for message.";
-                                    }
-                                }
-
-                                if (!m->contentIds().isEmpty()) {
-                                    // This is a multipart message
-                                    // TODO: multipart addition
-                                } else {
-                                    // This message has only a body
-                                    QByteArray subType(m->contentSubType().toLower());
-
-                                    if ((subType == "rtf") || (subType == "html")) {
-                                        // TODO: non-plain storage
-                                    } else {
-                                        // Mark this message as plain text
-                                        LONG textFormat(EDITOR_FORMAT_PLAINTEXT);
-                                        if (!setMapiProperty(message, PR_MSG_EDITOR_FORMAT, textFormat)) {
-                                            qWarning() << "Unable to set message editor format in message.";
-                                        }
-
-                                        QString body(m->textContent());
-                                        if (!setMapiProperty(message, PR_BODY, body)) {
-                                            qWarning() << "Unable to set body in message.";
-                                        }
-                                    }
-                                }
-
-                                if (HR_FAILED(message->SaveChanges(0))) {
-                                    qWarning() << "Unable to save changes on message.";
-                                }
-
-                                message->Release();
-                                return true;
-                            } else {
-                                qWarning() << "Cannot get properties for new message";
-                            }
-
-                            message->Release();
-                        } else {
-                            qWarning() << "Cannot CreateMessage";
+                        if (FAILED(mapiMessage->SaveChanges(0))) {
+                            qWarning() << "Unable to save changes on message.";
+                            mapiRelease(mapiMessage);
+                            return false;
                         }
+
+                        //set the new QMessageId
+                        //we can only be guaranteed of an entry id after IMessage->SaveChanges has been called
+
+                        SizedSPropTagArray(2, columns) = {2, {PR_RECORD_KEY, PR_ENTRYID}};
+                        SPropValue *properties(0);
+                        ULONG count;
+                        HRESULT rv = mapiMessage->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), 0, &count, &properties);
+                        if (HR_SUCCEEDED(rv)) {
+                            MapiRecordKey recordKey(properties[0].Value.bin.lpb, properties[0].Value.bin.cb);
+                            MapiEntryId entryId(properties[1].Value.bin.lpb, properties[1].Value.bin.cb);
+                            message->d_ptr->_id = QMessageIdPrivate::from(recordKey, mapiFolder->recordKey(), mapiFolder->storeKey(), entryId);
+                            MAPIFreeBuffer(properties);
+                        }
+                        else
+                            qWarning() << "Unable to set the new ID in message.";
+
+                        mapiMessage->Release();
+
+                        return true;
+
                     } else {
-                        qWarning() << "Cannot get MAPI folder from store";
+                        qWarning() << "Cannot CreateMessage";
                     }
                 } else {
-                    qWarning() << "Cannot get default store";
+                    qWarning() << "Cannot get MAPI folder from store";
                 }
             } else {
-                qWarning() << "Cannot get session";
+                qWarning() << "Cannot get default store";
             }
         } else {
-            qWarning() << "Invalid parent folder";
+            qWarning() << "Cannot get session";
         }
     } else {
         qWarning() << "Valid message ID at addition";
     }
-
     return result;
 }
 

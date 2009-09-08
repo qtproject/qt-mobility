@@ -30,6 +30,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include "qmessageserviceaction.h"
 #include <mapix.h>
 #include <objbase.h>
@@ -37,6 +38,12 @@
 #include <QDebug>
 #include <QTimer>
 #include "winhelpers_p.h"
+#include "qmessagestore.h"
+#include "qmessageid_p.h"
+#include "qmessagefolderid_p.h"
+#include "qmessageaccountid_p.h"
+#include "qmessage_p.h"
+#include "qmessagestore_p.h"
 
 using namespace WinHelpers;
 
@@ -47,14 +54,7 @@ class QMessageServiceActionPrivate : public QObject
 public:
     QMessageServiceActionPrivate(QMessageServiceAction* parent);
 
-    bool init();
-    void shutdown();
-
-public:
-    QMessageServiceAction* q_ptr;
-    bool _active;
-    QMessageStore::ErrorCode _error;
-    QMessageIdList _candidateIds;
+    bool send(const QMessage& message, bool showComposer = false);
 
 public slots:
     void completed();
@@ -64,6 +64,12 @@ signals:
     void stateChanged(QMessageServiceAction::State);
     void messagesFound(const QMessageIdList&);
     void progressChanged(uint, uint);
+
+public:
+    QMessageServiceAction* q_ptr;
+    bool _active;
+    QMessageStore::ErrorCode _error;
+    QMessageIdList _candidateIds;
 };
 
 void QMessageServiceActionPrivate::completed()
@@ -78,43 +84,105 @@ void QMessageServiceActionPrivate::reportMatchingIds()
     completed();
 }
 
-
-
-bool QMessageServiceActionPrivate::init()
-{
-#ifndef QT_NO_THREAD
-    // Note MAPIINIT is ignored on Windows Mobile but used on Outlook 2007 see
-    // msdn ms862621 vs cc842343
-    MAPIINIT_0 MAPIINIT = { 0, MAPI_MULTITHREAD_NOTIFICATIONS };
-    if (MAPIInitialize(&MAPIINIT) == S_OK)
-    {
-        return true;
-    }
-#else
-    if (MAPIInitialize(0) == S_OK)
-    {
-        return true;
-    }
-#endif
-    return false;
-}
-
-void QMessageServiceActionPrivate::shutdown()
-{
-    MAPIUninitialize();
-}
-
 QMessageServiceActionPrivate::QMessageServiceActionPrivate(QMessageServiceAction* parent)
     :q_ptr(parent),
      _active(false)
 {
 }
 
+bool QMessageServiceActionPrivate::send(const QMessage& message, bool showComposer)
+{
+    QMessage outgoing(message);
+
+    if(!outgoing.parentAccountId().isValid())
+    {
+        qWarning() << "No valid account set for message, attempting to use default for message type...";
+
+        QMessageAccountId defaultAccountId = QMessageAccount::defaultAccount(message.type());
+        if(!defaultAccountId.isValid())
+        {
+            qWarning() << "No default account available for message type.";
+            return false;
+        }
+
+        outgoing.setParentAccountId(defaultAccountId);
+    }
+
+    QMessageStore::ErrorCode lastError = QMessageStore::NoError;
+
+    MapiSessionPtr mapiSession(MapiSession::createSession(&lastError,true));
+    if (lastError != QMessageStore::NoError)
+    {
+        qWarning() << "Could not create seesion";
+        return false;
+    }
+
+    MapiStorePtr mapiStore = mapiSession->findStore(&lastError, outgoing.parentAccountId(),false);
+
+    if(mapiStore.isNull() || lastError != QMessageStore::NoError)
+    {
+        qWarning() << "Unable to get store for the account";
+        return false;
+    }
+
+    MapiFolderPtr mapiFolder;
+
+    QMessageFolder folder(outgoing.parentFolderId());
+
+    if(folder.id().isValid())
+        mapiFolder = mapiStore->findFolder(&lastError, QMessageFolderIdPrivate::folderRecordKey(folder.id()));
+    else
+        mapiFolder = mapiStore->findFolder(&lastError, outgoing.standardFolder());
+
+    //QMessagePrivate::setStandardFolder(outgoing,QMessage::DraftsFolder); //TODO default ATM
+
+    if( mapiFolder.isNull() || lastError != QMessageStore::NoError ) {
+        qWarning() << "Unable to get folder for the message";
+        return false;
+    }
+
+    IMessage* mapiMessage = mapiFolder->createMessage(outgoing,mapiSession,&lastError, true);
+
+    if(!mapiMessage || lastError != QMessageStore::NoError)
+    {
+        qWarning() << "Unable to create MAPI message from source";
+        mapiRelease(mapiMessage);
+        return false;
+    }
+
+    if(showComposer)
+    {
+        if(FAILED(mapiSession->showForm(mapiMessage,mapiFolder->folder(),mapiStore->store())))
+        {
+            qWarning() << "MAPI ShowForm failed.";
+            mapiRelease(mapiMessage);
+            return false;
+        }
+    }
+    else
+    {
+        //call submit
+
+        if(FAILED(mapiMessage->SubmitMessage(0)))
+        {
+            qWarning() << "MAPI SubmitMessage failed.";
+            mapiRelease(mapiMessage);
+            return false;
+        }
+    }
+
+    if(!mapiSession->flushQueues())
+        qWarning() << "MAPI flush queues failed.";
+
+    mapiRelease(mapiMessage);
+
+    return true;
+}
+
 QMessageServiceAction::QMessageServiceAction(QObject *parent)
     : QObject(parent),
     d_ptr(new QMessageServiceActionPrivate(this))
 {
-    d_ptr->init();
     connect(d_ptr, SIGNAL(stateChanged(QMessageServiceAction::State)),
         this, SIGNAL(stateChanged(QMessageServiceAction::State)));
     connect(d_ptr, SIGNAL(messagesFound(const QMessageIdList&)),
@@ -125,7 +193,6 @@ QMessageServiceAction::QMessageServiceAction(QObject *parent)
 
 QMessageServiceAction::~QMessageServiceAction()
 {
-    d_ptr->shutdown();
     delete d_ptr;
     d_ptr = 0;
 }
@@ -176,71 +243,12 @@ bool QMessageServiceAction::countMessages(const QMessageFilter &filter, const QS
 
 bool QMessageServiceAction::send(QMessage &message)
 {
-    Q_UNUSED(message)
-    return false; // stub
+    return d_ptr->send(message);
 }
 
 bool QMessageServiceAction::compose(const QMessage &message)
 {
-    Q_UNUSED(message)
-
-    //login to a MAPI session
-
-    QMessageStore::ErrorCode lastError = QMessageStore::NoError;
-    MapiSessionPtr mapiSession(MapiSession::createSession(&lastError, false));
-    if(lastError != QMessageStore::NoError)
-    {
-        qWarning() << "Unable to open session with default profile";
-        return false;
-    }
-
-    //open default store
-
-    MapiStorePtr mapiStore = mapiSession->defaultStore(&lastError);
-
-    if(lastError != QMessageStore::NoError)
-    {
-        qWarning() << "Unable to access default store";
-        return false;
-    }
-
-    //get the default inbox folder
-
-    MapiFolderPtr inboxFolder = mapiStore->receiveFolder(&lastError);
-
-    if(lastError != QMessageStore::NoError)
-    {
-        qWarning() << "Unable to load default receive folder";
-        return false;
-    }
-
-    //get the drafts folder
-
-    MapiFolderPtr draftsFolder = inboxFolder->subFolder(&lastError, MapiFolder::Drafts, *mapiStore);
-
-    if(lastError != QMessageStore::NoError)
-    {
-        qWarning() << "Unable to load a drafts folder";
-        return false;
-    }
-
-    //create blank message in drafts
-
-    LPMESSAGE draftMessage = draftsFolder->createMessage(&lastError);
-
-    if(lastError != QMessageStore::NoError)
-    {
-        qWarning() << "Unable to create blank message in outbox";
-        return false;
-    }
-
-    //show draft message
-
-    mapiSession->showForm(draftMessage,draftsFolder->folder(),mapiStore->store());
-
-   if(draftMessage) draftMessage->Release(); draftMessage = 0;
-
-   return true;
+    return d_ptr->send(message,true);
 }
 
 bool QMessageServiceAction::retrieveHeader(const QMessageId& id)
@@ -284,7 +292,7 @@ void QMessageServiceAction::cancelOperation()
 
 QMessageStore::ErrorCode QMessageServiceAction::lastError() const
 {
-    return QMessageStore::NoError;
+    return d_ptr->_error;
 }
 
 #include "qmessageserviceaction_win.moc"
