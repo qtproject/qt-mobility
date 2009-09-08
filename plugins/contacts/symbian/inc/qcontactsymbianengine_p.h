@@ -96,8 +96,8 @@ public:
 	void HandleDatabaseEventL(TContactDbObserverEvent aEvent);
     
 signals:
-		// Database change notifications
-		void contactAdded(const QUniqueId &contactId);
+    // Database change notifications
+    void contactAdded(const QUniqueId &contactId);
     void contactRemoved(const QUniqueId &contactId);
     void contactChanged(const QUniqueId &contactId);
     void groupAdded(const QUniqueId &contactId);
@@ -105,7 +105,7 @@ signals:
     void groupChanged(const QUniqueId &contactId);
 
 private:
-	// Utility functions to convert to and from CContactItem
+    // Utility function to convert symbian error to QContactManager error
 	void transformError(TInt symbianError, QContactManager::Error& qtError) const;
 		
 	// Leaving functions implementing CNTMODEL interaction.
