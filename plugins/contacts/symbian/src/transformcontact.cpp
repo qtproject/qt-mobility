@@ -34,6 +34,7 @@
 #include "transformcontact.h"
 
 #include "transformname.h"
+#include "transformnickname.h"
 #include "transformphonenumber.h"
 #include "transformemail.h"
 
@@ -57,6 +58,7 @@ TransformContact::~TransformContact()
 void TransformContact::initializeTransformContactData()
 {
 	m_transformContactData.insert(Name, new TransformName);
+	m_transformContactData.insert(Nickname, new TransformNickname);
 	m_transformContactData.insert(PhoneNumber, new TransformPhoneNumber);
 	m_transformContactData.insert(EmailAddress, new TransformEmail);
 }
@@ -155,6 +157,12 @@ QContactDetail *TransformContact::transformItemField(const CContactItemField& fi
 		fieldType == KUidContactFieldFamilyName.iUid)
 	{
 		detail = m_transformContactData.value(Name)->transformItemField(field, contact);
+	}
+	
+	//Nickname
+	else if (fieldType == KUidContactFieldSecondName.iUid)
+	{
+		detail = m_transformContactData.value(Nickname)->transformItemField(field, contact);
 	}
 	
 	//Phonenumber

@@ -30,8 +30,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef TRANSFORMNAME_H_
-#define TRANSFORMNAME_H_
+#ifndef TRANSFORMNAME_H
+#define TRANSFORMNAME_H
 
 #include "transformcontactdata.h"
 

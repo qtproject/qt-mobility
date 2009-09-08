@@ -32,6 +32,7 @@ symbian: {
       inc/transformcontact.h \
       inc/transformcontactdata.h \
       inc/transformname.h \
+      inc/transformnickname.h \
       inc/transformphonenumber.h \
       inc/transformemail.h
       
@@ -41,6 +42,7 @@ symbian: {
       src/transformcontact.cpp \
       src/tranformcontactdata.cpp \
       src/transformname.cpp \
+      src/transformnickname.cpp \
       src/transformphonenumber.cpp \
       src/transformemail.cpp
       

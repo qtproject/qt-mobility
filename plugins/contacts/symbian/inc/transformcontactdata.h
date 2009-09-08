@@ -30,8 +30,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef TRANSFORMCONTACTDATA_H_
-#define TRANSFORMCONTACTDATA_H_
+#ifndef TRANSFORMCONTACTDATA_H
+#define TRANSFORMCONTACTDATA_H
 
 #include <QObject>
 #include <qtcontacts.h>

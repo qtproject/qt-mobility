@@ -31,8 +31,8 @@
 **
 ****************************************************************************/
 
-#ifndef TRANSFORMCONCTACT_H_
-#define TRANSFORMCONCTACT_H_
+#ifndef TRANSFORMCONCTACT_H
+#define TRANSFORMCONCTACT_H
 
 #include <qtcontacts.h>
 
@@ -56,6 +56,7 @@ private:
 	enum ContactData
 	{
 		Name = 0,
+		Nickname,
 		PhoneNumber,
 		EmailAddress
 	};

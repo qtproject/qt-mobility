@@ -30,12 +30,12 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef TRANSFORMPHONENUMBER_H
-#define TRANSFORMPHONENUMBER_H
+#ifndef TRANSFORMNICKNAME_H
+#define TRANSFORMNICKNAME_H
 
 #include "transformcontactdata.h"
 
-class TransformPhoneNumber : public TransformContactData
+class TransformNickname : public TransformContactData
 {
 protected:
 	QList<CContactItemField *> transformDetailL(const QContactDetail &detail);

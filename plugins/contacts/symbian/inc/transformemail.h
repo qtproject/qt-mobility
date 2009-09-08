@@ -30,8 +30,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef TRANSFORMEMAIL_H_
-#define TRANSFORMEMAIL_H_
+#ifndef TRANSFORMEMAIL_H
+#define TRANSFORMEMAIL_H
 
 #include "transformcontactdata.h"
 

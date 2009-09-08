@@ -30,16 +30,43 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef TRANSFORMPHONENUMBER_H
-#define TRANSFORMPHONENUMBER_H
+#include "transformnickname.h"
 
-#include "transformcontactdata.h"
+#include <QDebug>
 
-class TransformPhoneNumber : public TransformContactData
+QList<CContactItemField *> TransformNickname::transformDetailL(const QContactDetail &detail)
 {
-protected:
-	QList<CContactItemField *> transformDetailL(const QContactDetail &detail);
-	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact);
-};
+	QList<CContactItemField *> fieldList;
+	
+	//cast to name
+	const QContactNickname &name(static_cast<const QContactNickname &>(detail));
+	
+	//Prefix
+	TPtrC fieldTextPrefix(reinterpret_cast<const TUint16*>(name.nickname().utf16()));
+	CContactItemField* nickname = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldSecondName);
+	nickname->TextStorage()->SetTextL(fieldTextPrefix);
+	fieldList.append(nickname);
+	CleanupStack::Pop(nickname);
+	
+	return fieldList;
+}	
 
-#endif
+
+QContactDetail *TransformNickname::transformItemField(const CContactItemField& field, const QContact &contact)
+{
+	QContactNickname *name = new QContactNickname(contact.detail<QContactNickname>());
+	
+	CContactTextField* storage = field.TextStorage();
+	QString nameValue = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
+	
+	for (int i = 0; i < field.ContentType().FieldTypeCount(); i++)
+	{
+		//Prefix
+		if (field.ContentType().FieldType(i) == KUidContactFieldSecondName)
+		{
+			name->setNickname(nameValue);
+		}
+	}
+	
+	return name;
+}
