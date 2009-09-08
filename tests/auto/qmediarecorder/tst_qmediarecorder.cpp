@@ -34,12 +34,142 @@
 
 #include <QtTest/QtTest>
 #include <QDebug>
+#include <QAudioFormat>
 #include <qabstractmediaobject.h>
 #include <qabstractmediacontrol.h>
 #include <qabstractmediaservice.h>
 #include <qmediarecordercontrol.h>
 #include <qmediarecorder.h>
 #include <qaudiodevicecontrol.h>
+#include <qaudioencodecontrol.h>
+
+class MockAudioEncodeProvider : public QAudioEncodeControl
+{
+    Q_OBJECT
+public:
+    MockAudioEncodeProvider(QObject *parent):
+        QAudioEncodeControl(parent)
+    {
+        m_codecs << "audio/pcm" << "audio/mpeg";
+        m_index = 0;
+        m_encodeIdx = 0;
+        m_encodeName.append("speex");
+        m_encodeOptions.append(QStringList() << "quality" << "bitrate" << "mode" << "vbr" << "vad" << "dtx");
+        m_encodeName.append("mp3");
+        m_encodeOptions.append(QStringList() << "quality" << "bitrate" << "mode" << "vbr");
+        m_bitrate = 128;
+        m_quality = 1;
+    }
+
+    ~MockAudioEncodeProvider() {}
+
+    QAudioFormat format() const
+    {
+        return m_format;
+    }
+
+    bool isFormatSupported(const QAudioFormat &format) const
+    {
+        if((qstrcmp(format.codec().toLocal8Bit().constData(),"audio/pcm")!=0)&&
+           (qstrcmp(format.codec().toLocal8Bit().constData(),"audio/mpeg")!=0))
+            return false;
+
+        if((format.frequency() != 44100) || (format.channels() != 2) ||
+           (format.sampleSize() != 16) ||
+           (format.sampleType() != QAudioFormat::SignedInt) ||
+           (format.byteOrder() != QAudioFormat::LittleEndian))
+            return false;
+        // mock only supports PCM or MP3 f=44100,stereo, S16LE
+        return true;
+    }
+
+    bool setFormat(const QAudioFormat &format)
+    {
+        m_format = format;
+    }
+
+    QStringList supportedAudioCodecs() const
+    {
+        return m_codecs;
+    }
+
+    QString audioCodec() const
+    {
+        return m_codecs.at(m_index);
+    }
+
+    bool setAudioCodec(const QString &codecName)
+    {
+        if(qstrcmp(codecName.toLocal8Bit().constData(),"audio/pcm")==0) {
+            m_index = 0;
+            return true;
+
+        } else if(qstrcmp(codecName.toLocal8Bit().constData(),"audio/mpeg")==0){
+            m_index = 1;
+            return true;
+        }
+        return false;
+    }
+
+    QString codecDescription(const QString &codecName) const
+    {
+        if(qstrcmp(codecName.toLocal8Bit().constData(),"audio/pcm")==0)
+            return QString("Pulse Code Modulation");
+        if(qstrcmp(codecName.toLocal8Bit().constData(),"audio/mpeg")==0)
+            return QString("MP3 audio format");
+
+        return QString();
+    }
+
+    int bitrate() const
+    {
+        return m_bitrate;
+    }
+
+    void setBitrate(int bitrate)
+    {
+        m_bitrate = bitrate;
+    }
+
+    qreal quality() const
+    {
+        return m_quality;
+    }
+
+    void setQuality(qreal qual)
+    {
+        m_quality = qual;
+    }
+
+    QStringList supportedEncodingOptions() const
+    {
+        return m_encodeOptions.at(m_encodeIdx);
+    }
+
+    QVariant encodingOption(const QString &name) const
+    {
+        //TODO?
+        return QVariant();
+    }
+
+    void setEncodingOption(const QString &name, const QVariant &value)
+    {
+        //TODO?
+    }
+
+private:
+    QAudioFormat m_format;
+    QStringList  m_codecs;
+    QStringList  m_codecsDesc;
+    int          m_bitrate;
+    qreal        m_quality;
+
+    QList<QString>  m_encodeName;
+    QList<QStringList> m_encodeOptions;
+
+    int          m_index;
+    int          m_encodeIdx;
+};
 
 class MockAudioDeviceProvider : public QAudioDeviceControl
 {
@@ -170,10 +300,13 @@ public:
         mockControl(control)
     {
         mockAudioDeviceControl = new MockAudioDeviceProvider(parent);
+        mockAudioEncodeControl = new MockAudioEncodeProvider(parent);
     }
 
     QAbstractMediaControl* control(const char * name) const
     {
+        if(qstrcmp(name,QAudioEncodeControl_iid) == 0)
+            return mockAudioEncodeControl;
         if(qstrcmp(name,QAudioDeviceControl_iid) == 0)
             return mockAudioDeviceControl;
         if(qstrcmp(name,QMediaRecorderControl_iid) == 0)
@@ -184,6 +317,7 @@ public:
 
     QAbstractMediaControl   *mockControl;
     QAudioDeviceControl     *mockAudioDeviceControl;
+    QAudioEncodeControl     *mockAudioEncodeControl;
 };
 
 class MockObject : public QAbstractMediaObject
@@ -221,8 +355,10 @@ private slots:
     void testSink();
     void testRecord();
     void testAudioDeviceControl();
+    void testAudioEncodeControl();
 
 private:
+    QAudioEncodeControl* encode;
     QAudioDeviceControl* audio;
     MockObject      *object;
     MockProvider    *mock;
@@ -236,6 +372,7 @@ void tst_QMediaRecorder::init()
     capture = new QMediaRecorder(object);
     QVERIFY(capture->isValid());
     audio = qobject_cast<QAudioDeviceControl*>(capture->service()->control(QAudioDeviceControl_iid));
+    encode = qobject_cast<QAudioEncodeControl*>(capture->service()->control(QAudioEncodeControl_iid));
 }
 
 void tst_QMediaRecorder::cleanup()
@@ -278,6 +415,33 @@ void tst_QMediaRecorder::testAudioDeviceControl()
     QVERIFY(readSignal.count() == 1);
     QVERIFY(audio->name(1) == QString("device2"));
     QVERIFY(audio->description(1) == "dev2 comment");
+}
+
+void tst_QMediaRecorder::testAudioEncodeControl()
+{
+    QAudioFormat fmt;
+    fmt.setFrequency(44100);
+    fmt.setChannels(2);
+    fmt.setByteOrder(QAudioFormat::LittleEndian);
+    fmt.setSampleSize(16);
+    fmt.setSampleType(QAudioFormat::SignedInt);
+    fmt.setCodec("audio/pcm");
+    QVERIFY(encode->isFormatSupported(fmt));
+    fmt.setFrequency(8000);
+    QVERIFY(!encode->isFormatSupported(fmt));
+    fmt.setFrequency(44100);
+    encode->setFormat(fmt);
+    QStringList codecs = encode->supportedAudioCodecs();
+    QVERIFY(codecs.count() == 2);
+    QVERIFY(encode->setAudioCodec("audio/mpeg"));
+    QVERIFY(encode->audioCodec() == QString("audio/mpeg"));
+    encode->setBitrate(64);
+    QVERIFY(encode->bitrate() == 64);
+    encode->setQuality(1.0);
+    QVERIFY(encode->quality() == 1.0);
+    QStringList options = encode->supportedEncodingOptions();
+    QVERIFY(options.count() == 6);
+    encode->setEncodingOption("mp3",QStringList() << "bitrate" << "vbr");
 }
 
 QTEST_MAIN(tst_QMediaRecorder)
