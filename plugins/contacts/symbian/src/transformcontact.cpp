@@ -108,7 +108,7 @@ void TransformContact::transformContactL(
 	
 	for(int i(0); i < detailCount; ++i) 
 	{
-		QList<CContactItemField *> fieldList = transformDetail( detailList.at(i) );
+		QList<CContactItemField *> fieldList = transformDetailL( detailList.at(i) );
 		int fieldCount = fieldList.count();
 		
 		for (int i = 0; i < fieldCount; i++)
