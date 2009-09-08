@@ -446,7 +446,7 @@ private slots:
         QFETCH(QGeoCoordinate, c2);
         QFETCH(qreal, distance);
 
-        QVERIFY(qFuzzyCompare(c1.distanceTo(c2), distance));
+        QCOMPARE(QString::number(c1.distanceTo(c2)), QString::number(distance));
     }
 
     void distanceTo_data()
@@ -473,7 +473,7 @@ private slots:
         QFETCH(QGeoCoordinate, c2);
         QFETCH(qreal, azimuth);
 
-        QVERIFY(qFuzzyCompare(c1.azimuthTo(c2), azimuth));
+        QCOMPARE(QString::number(c1.azimuthTo(c2)), QString::number(azimuth));
     }
 
     void azimuthTo_data()
