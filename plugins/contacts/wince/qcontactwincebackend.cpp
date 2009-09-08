@@ -733,10 +733,10 @@ QContact QContactWinCEEngine::contact(const QUniqueId& contactId, QContactManage
                 error = QContactManager::DoesNotExistError;
             }
         } else {
-            qDebug() << "Failed to retrieve contact:" << HRESULT_CODE(hr);
             if (HRESULT_CODE(hr) == ERROR_NOT_FOUND) {
                 error = QContactManager::DoesNotExistError;
             } else {
+                qDebug() << "Failed to retrieve contact:" << HRESULT_CODE(hr);
                 error = QContactManager::UnspecifiedError;
             }
         }
@@ -755,7 +755,6 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QSet<QUniqueId>& contac
 
     // ensure that the contact's details conform to their definitions
     if (!validateContact(*contact, error)) {
-        qDebug() << "Failed to validate";
         error = QContactManager::InvalidDetailError;
         return false;
     }
@@ -769,8 +768,14 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QSet<QUniqueId>& contac
         if (SUCCEEDED(hr)) {
             wasOld = true;
         } else {
-            qDebug() << "Didn't get old contact" << HRESULT_CODE(hr);
-            error = QContactManager::UnspecifiedError;
+            if (HRESULT_CODE(hr) == ERROR_NOT_FOUND) {
+                // Well, doesn't exist any more
+                error = QContactManager::DoesNotExistError;
+                d->m_ids.removeAll(contact->id());
+            } else {
+                qDebug() << "Didn't get old contact" << HRESULT_CODE(hr);
+                error = QContactManager::UnspecifiedError;
+            }
         }
     } else if (contact->id() == 0) {
         // new contact!
@@ -791,7 +796,6 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QSet<QUniqueId>& contac
         }
     } else {
         // Saving a contact with a non zero id, but that doesn't exist
-        qDebug() << "Saving unknown contact id, rejecting";
         error = QContactManager::DoesNotExistError;
     }
 
@@ -832,20 +836,29 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QSet<QUniqueId>& contac
 bool QContactWinCEEngine::removeContact(const QUniqueId& contactId, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& , QContactManager::Error& error)
 {
     // Fetch an IItem* for this
-    SimpleComPointer<IItem> item ;
-    HRESULT hr = d->m_app->GetItemFromOidEx(contactId, 0, &item);
-    if (SUCCEEDED(hr)) {
-        hr = item->Delete();
+    if (contactId != 0) {
+        SimpleComPointer<IItem> item ;
+        HRESULT hr = d->m_app->GetItemFromOidEx(contactId, 0, &item);
         if (SUCCEEDED(hr)) {
-            contactsChanged.insert(contactId);
-            error = QContactManager::NoError;
-            d->m_ids.removeAll(contactId);
-            return true;
+            hr = item->Delete();
+            if (SUCCEEDED(hr)) {
+                contactsChanged.insert(contactId);
+                error = QContactManager::NoError;
+                d->m_ids.removeAll(contactId);
+                return true;
+            }
+            qDebug() << "Failed to delete:" << HRESULT_CODE(hr);
+            error = QContactManager::UnspecifiedError;
+        } else {
+            if (HRESULT_CODE(hr) == ERROR_NOT_FOUND) {
+                error = QContactManager::DoesNotExistError;
+            } else {
+                qDebug() << "Failed to retrieve item pointer in delete" << HRESULT_CODE(hr);
+                error = QContactManager::UnspecifiedError;
+            }
         }
-        qDebug() << "Failed to delete:" << HRESULT_CODE(hr);
-        error = QContactManager::UnspecifiedError;
     } else {
-        qDebug() << "Failed to retrieve item pointer" << HRESULT_CODE(hr);
+        // Id 0 does not exist
         error = QContactManager::DoesNotExistError;
     }
     return false;
