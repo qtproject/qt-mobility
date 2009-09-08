@@ -70,7 +70,6 @@ QContactWinCEEngine::QContactWinCEEngine(const QMap<QString, QString>& , QContac
                             CEPROPID outIds[2];
 
                             if (SUCCEEDED(d->m_app->GetIDsFromNames(2, customIds, PIM_CREATE | CEVT_LPWSTR, outIds))) {
-                                qDebug() << "registered custom meta strings:" << outIds[0] << outIds[1];
                                 d->m_phonemeta = outIds[0];
                                 d->m_emailmeta = outIds[1];
                             }
