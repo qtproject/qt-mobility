@@ -243,8 +243,15 @@ void tst_QValueSpaceObject::testSignals_data()
 
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
 
+    bool skip = true;
+
     for (int i = 0; i < layers.count(); ++i) {
         QAbstractValueSpaceLayer *layer = layers.at(i);
+
+        if (!layer->supportsRequests())
+            continue;
+
+        skip = false;
 
         QTest::newRow("root")
             << layer
@@ -260,6 +267,9 @@ void tst_QValueSpaceObject::testSignals_data()
             << QString("/testSignals")
             << QString("value");
     }
+
+    if (skip)
+        QSKIP("No applicable layers found.", SkipAll);
 }
 
 void tst_QValueSpaceObject::testSignals()
@@ -270,9 +280,6 @@ void tst_QValueSpaceObject::testSignals()
     QFETCH(QByteArray, objectAttribute);
     QFETCH(QString, itemPath);
     QFETCH(QString, itemAttribute);
-
-    if (!layer->supportsRequests())
-        QSKIP("Underlying layer does not support requests.", SkipAll);
 
     QValueSpaceObject *object = new QValueSpaceObject(objectPath, layer->id());
 

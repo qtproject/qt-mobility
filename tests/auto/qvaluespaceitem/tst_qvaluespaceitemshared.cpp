@@ -848,7 +848,7 @@ void tst_QValueSpaceItem::value()
 void tst_QValueSpaceItem::ipcTests_data()
 {
 #ifdef QT_NO_PROCESS
-    QSKIP("Qt was compiled with QT_NO_PROCESS", SkippAll);
+    QSKIP("Qt was compiled with QT_NO_PROCESS", SkipAll);
 #else
     QTest::addColumn<QAbstractValueSpaceLayer *>("layer");
 
@@ -1157,9 +1157,22 @@ void tst_QValueSpaceItem::ipcRemoveKey_data()
 #else
     QTest::addColumn<QAbstractValueSpaceLayer *>("layer");
 
+    bool skip = true;
+
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
-    for (int i = 0; i < layers.count(); ++i)
-        QTest::newRow(layers.at(i)->name().toLocal8Bit().constData()) << layers.at(i);
+    for (int i = 0; i < layers.count(); ++i) {
+        QAbstractValueSpaceLayer *layer = layers.at(i);
+
+        if (layer->layerOptions() & QAbstractValueSpaceLayer::PermanentLayer)
+            continue;
+
+        skip = false;
+
+        QTest::newRow(layer->name().toLocal8Bit().constData()) << layer;
+    }
+
+    if (skip)
+        QSKIP("No applicable layers found.", SkipAll);
 #endif
 }
 
@@ -1206,9 +1219,22 @@ void tst_QValueSpaceItem::ipcSetValue_data()
 #else
     QTest::addColumn<QAbstractValueSpaceLayer *>("layer");
 
+    bool skip = true;
+
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
-    for (int i = 0; i < layers.count(); ++i)
-        QTest::newRow(layers.at(i)->name().toLocal8Bit().constData()) << layers.at(i);
+    for (int i = 0; i < layers.count(); ++i) {
+        QAbstractValueSpaceLayer *layer = layers.at(i);
+
+        if (!layer->supportsRequests())
+            continue;
+
+        skip = false;
+
+        QTest::newRow(layer->name().toLocal8Bit().constData()) << layer;
+    }
+
+    if (skip)
+        QSKIP("No applicable layers found.", SkipAll);
 #endif
 }
 
@@ -1258,7 +1284,7 @@ void tst_QValueSpaceItem::ipcSetValue()
 
     if (process.state() == QProcess::NotRunning &&
         process.exitCode() == ERROR_SETVALUE_NOT_SUPPORTED) {
-        QSKIP("setValue not supported by underlying layer", SkipSingle);
+        QFAIL("setValue not supported by underlying layer");
     }
 
     //QTRY_COMPARE(changeSpy.count(), 3);
@@ -1323,9 +1349,16 @@ void tst_QValueSpaceItem::interestNotification_data()
     QTest::addColumn<QString>("objectPath");
     QTest::addColumn<QString>("attribute");
 
+    bool skip = true;
+
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
     for (int i = 0; i < layers.count(); ++i) {
         QAbstractValueSpaceLayer *layer = layers.at(i);
+
+        if (!layer->supportsRequests())
+            continue;
+
+        skip = false;
 
         QTest::newRow("QValueSpaceItem(char *)")
             << layer << CharStar << QString() << "/interestNotification" << "/value";
@@ -1342,14 +1375,14 @@ void tst_QValueSpaceItem::interestNotification_data()
         QTest::newRow("QValueSpaceItem(QValueSpaceItem, QByteArray)")
             << layer << ByteArray << "/interestNotification" << "subpath" << "/value";
     }
+
+    if (skip)
+        QSKIP("No applicable layers found.", SkipAll);
 }
 
 void tst_QValueSpaceItem::interestNotification()
 {
     QFETCH(QAbstractValueSpaceLayer *, layer);
-
-    if (!layer->supportsRequests())
-        QSKIP("Underlying layer does not support requests.", SkipSingle);
 
     QFETCH(Type, type);
     QFETCH(QString, basePath);
@@ -1472,9 +1505,22 @@ void tst_QValueSpaceItem::ipcInterestNotification_data()
 #else
     QTest::addColumn<QAbstractValueSpaceLayer *>("layer");
 
+    bool skip = true;
+
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
-    for (int i = 0; i < layers.count(); ++i)
+    for (int i = 0; i < layers.count(); ++i) {
+        QAbstractValueSpaceLayer *layer = layers.at(i);
+
+        if (!layer->supportsRequests())
+            continue;
+
+        skip = false;
+
         QTest::newRow(layers.at(i)->name().toLocal8Bit().constData()) << layers.at(i);
+    }
+
+    if (skip)
+        QSKIP("No applicable layers found.", SkipAll);
 #endif
 }
 
@@ -1484,9 +1530,6 @@ void tst_QValueSpaceItem::ipcInterestNotification()
     QSKIP("Qt was compiled with QT_NO_PROCESS", SkipAll);
 #else
     QFETCH(QAbstractValueSpaceLayer *, layer);
-
-    if (!layer->supportsRequests())
-        QSKIP("Underlying layer does not support requests.", SkipSingle);
 
     // Test QValueSpaceItem construction before QValueSpaceObject.
 
