@@ -283,7 +283,7 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QM
     return false;
 }
 
-bool QMessageServiceAction::queryMessages(const QString &body, QMessageDataComparator::Options options, const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
+bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const
 {
     //TODO: Support options
     Q_UNUSED(options)
@@ -332,7 +332,7 @@ bool QMessageServiceAction::countMessages(const QMessageFilter &filter, uint lim
     return false;
 }
 
-bool QMessageServiceAction::countMessages(const QString &body, QMessageDataComparator::Options options, const QMessageFilter &filter, uint limit) const
+bool QMessageServiceAction::countMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, uint limit) const
 {
     // TODO: Implement this
     Q_UNUSED(body);

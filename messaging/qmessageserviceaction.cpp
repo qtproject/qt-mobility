@@ -115,7 +115,7 @@
 */
 
 /*!
-    \fn QMessageServiceAction::queryMessages(const QString &body, QMessageDataComparator::Options options, const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
+    \fn QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const
     
     Emits via the messagesFound() signal \l{QMessageId}s of messages in the messaging 
     store. If \a filter is not empty only identifiers for messages matching the parameters 
@@ -158,7 +158,7 @@
 */
 
 /*!
-    \fn QMessageServiceAction::countMessages(const QString &body, QMessageDataComparator::Options options, const QMessageFilter &filter, uint limit) const
+    \fn QMessageServiceAction::countMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, uint limit) const
     
     Emits via a messagesCounted() signal the number messages in the messaging 
     store matching \a filter and with a body containing the string \a body using 
