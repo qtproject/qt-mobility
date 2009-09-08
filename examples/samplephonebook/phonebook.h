@@ -39,6 +39,7 @@
 
 #include <QWidget>
 #include <QMap>
+#include <QPlainTextEdit>
 
 QT_BEGIN_NAMESPACE
 class QListWidget;
@@ -48,6 +49,10 @@ class QLabel;
 class QLineEdit;
 class QTextEdit;
 QT_END_NAMESPACE
+
+class ContactDetailsForm;
+class MainDialogForm640By480;
+class MainDialogForm240By320;
 
 class PhoneBook : public QWidget
 {
@@ -62,6 +67,8 @@ public slots:
     void saveContact();
     void removeContact();
     void findContact();
+    void openContact();
+    void cancelContact();
     void next();
     void previous();
     void importFromVCard();
@@ -76,6 +83,7 @@ private slots:
 private:
     QContact buildContact() const;
     void displayContact();
+    void updateButtons();
     bool eventFilter(QObject* watched, QEvent* event);
     void populateList(const QContact& currentContact);
 
@@ -83,8 +91,10 @@ private:
 
     QPushButton *addButton;
     QPushButton *saveButton;
+    QPushButton *cancelButton;
     QPushButton *removeButton;
     QPushButton *findButton;
+    QPushButton *openButton;
     QPushButton *importButton;
     QPushButton *exportButton;
     QPushButton *quitButton;
@@ -99,15 +109,23 @@ private:
     QLineEdit *homePhoneLine;
     QLineEdit *workPhoneLine;
     QLineEdit *mobilePhoneLine;
-    QTextEdit *addressText;
+    QPlainTextEdit *addressText;
 
     FindDialog *dialog;
 
     int currentIndex;
+    int lastIndex;
+    bool addingContact;
+    bool editingContact;
     QList<QContact> contacts;
 
     QMap<QString, QContactManager*> managers;
     QContactManager *cm;
+    ContactDetailsForm *contactDetailsForm;
+    MainDialogForm640By480 *mainDialogForm640By480;
+    MainDialogForm240By320 *mainDialogForm240By320;
+    QWidget *mainForm;
+    QWidget *detailsForm;
 };
 
 #endif //PHONEBOOK_H

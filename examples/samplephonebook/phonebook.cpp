@@ -33,70 +33,80 @@
 
 #include "phonebook.h"
 #include "serialiser.h"
+#include "contactdetailsform.h"
+#include "maindialogform_640_480.h"
+#include "maindialogform_240_320.h"
+#include <QDesktopWidget>
 
 #include <QtGui>
 
 PhoneBook::PhoneBook(QWidget *parent)
-    : QWidget(parent)
+    : QWidget(parent), addingContact(false), editingContact(false)
 {
-    contactsList = new QListWidget();
-    contactsList->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding));
 
-    QLabel *nameLabel = new QLabel(tr("Name:"));
-    nameLine = new QLineEdit;
+    QVBoxLayout *layout = new QVBoxLayout;
 
-    QLabel *avatarLabel = new QLabel(tr("Avatar:"));
-    avatarButton = new QPushButton("No image selected");
-    QSizePolicy avatarPolicy;
-    avatarPolicy.setHorizontalPolicy(QSizePolicy::MinimumExpanding);
-    avatarPolicy.setVerticalPolicy(QSizePolicy::MinimumExpanding);
-    avatarButton->setSizePolicy(avatarPolicy);
+    dialog = new FindDialog;
+    QDesktopWidget screenWidget;
+    QRect screenGeometry = screenWidget.screenGeometry(this);
+
+    if (screenGeometry.width() >= 300){
+        mainDialogForm640By480 = new MainDialogForm640By480(this);
+        mainForm = mainDialogForm640By480;
+        detailsForm = mainForm;
+    }else{
+        mainDialogForm240By320 = new MainDialogForm240By320(this);
+        contactDetailsForm = new ContactDetailsForm(mainDialogForm240By320);
+        mainForm = mainDialogForm240By320;
+        detailsForm = contactDetailsForm;
+    }
+
+    layout->addWidget(mainForm);
+    setLayout(layout);
+
+    addButton = qFindChild<QPushButton*>(mainForm, "addButton");
+    openButton = qFindChild<QPushButton*>(mainForm, "openButton");
+    removeButton = qFindChild<QPushButton*>(mainForm, "deleteButton");
+    findButton = qFindChild<QPushButton*>(mainForm, "findButton");
+    importButton = qFindChild<QPushButton*>(mainForm, "importButton");
+    exportButton = qFindChild<QPushButton*>(mainForm, "exportButton");
+    avatarButton = qFindChild<QPushButton*>(mainForm, "avatarButton");
+    quitButton = qFindChild<QPushButton*>(mainForm, "quitButton");
+    if(!avatarButton)
+        avatarButton = qFindChild<QPushButton*>(detailsForm, "avatarButton");
+    saveButton = qFindChild<QPushButton*>(mainForm, "saveButton");
+    if(!saveButton)
+        saveButton = qFindChild<QPushButton*>(detailsForm, "saveButton");
+    cancelButton = qFindChild<QPushButton*>(detailsForm, "cancelButton");
+
     avatarButton->installEventFilter(this);
 
-    QLabel *emailLabel = new QLabel(tr("Email:"));
-    emailLine = new QLineEdit;
-
-    QLabel *homePhoneLabel = new QLabel(tr("Home Phone:"));
-    homePhoneLine = new QLineEdit;
-
-    QLabel *workPhoneLabel = new QLabel(tr("Work Phone:"));
-    workPhoneLine = new QLineEdit;
-
-    QLabel *mobilePhoneLabel = new QLabel(tr("Mobile Phone:"));
-    mobilePhoneLine = new QLineEdit;
-
-    QLabel *addressLabel = new QLabel(tr("Address:"));
-    addressText = new QTextEdit;
-
-    addButton = new QPushButton(tr("&Add"));
-    addButton->setEnabled(false);
-    removeButton = new QPushButton(tr("&Remove"));
     removeButton->setEnabled(false);
-    findButton = new QPushButton(tr("&Find"));
     findButton->setEnabled(false);
-    saveButton = new QPushButton(tr("&Save"));
     saveButton->setEnabled(true);
+    exportButton->setEnabled(false);
 
-    currentIndexLabel = new QLabel();
-    currentIndexLabel->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+    nameLine = qFindChild<QLineEdit*>(detailsForm, "nameEdit");
+    emailLine = qFindChild<QLineEdit*>(detailsForm, "emailEdit");
+    homePhoneLine = qFindChild<QLineEdit*>(detailsForm, "homePhoneEdit");
+    workPhoneLine = qFindChild<QLineEdit*>(detailsForm, "workPhoneEdit");
+    mobilePhoneLine = qFindChild<QLineEdit*>(detailsForm, "mobilePhoneEdit");
+    addressText = qFindChild<QPlainTextEdit*>(detailsForm, "addressEdit");
+    contactsList = qFindChild<QListWidget*>(mainForm, "contactListWidget");
+    currentIndexLabel = qFindChild<QLabel*>(mainForm, "contactStatusLabel");
+    backendCombo = qFindChild<QComboBox*>(mainForm, "contactEngineComboBox");
 
-    currentBackendLabel = new QLabel(tr("Current Backend:"));
-    backendCombo = new QComboBox();
     QStringList availableManagers = QContactManager::availableManagers();
     foreach (const QString manager, availableManagers)
         backendCombo->addItem(manager);
     connect(backendCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(backendSelected(QString)));
 
-    importButton = new QPushButton(tr("&Import"));
-    importButton->setToolTip(tr("Import contact from vCard file"));
-    exportButton = new QPushButton(tr("&Export"));
-    exportButton->setToolTip(tr("Export contact as vCard file"));
-    exportButton->setEnabled(false);
-
-    quitButton = new QPushButton(tr("&Quit"));
-
-    dialog = new FindDialog;
-
+    if(cancelButton)
+        connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelContact()));
+    if(openButton){
+        connect(openButton, SIGNAL(clicked()), this, SLOT(openContact()));
+        openButton->setEnabled(false);
+    }
     connect(avatarButton, SIGNAL(clicked()), this, SLOT(selectAvatar()));
     connect(addButton, SIGNAL(clicked()), this, SLOT(addContact()));
     connect(saveButton, SIGNAL(clicked()), this, SLOT(saveContact()));
@@ -104,54 +114,15 @@ PhoneBook::PhoneBook(QWidget *parent)
     connect(findButton, SIGNAL(clicked()), this, SLOT(findContact()));
     connect(importButton, SIGNAL(clicked()), this, SLOT(importFromVCard()));
     connect(exportButton, SIGNAL(clicked()), this, SLOT(exportAsVCard()));
-    connect(quitButton, SIGNAL(clicked()), this, SLOT(close()));
+    if(quitButton)
+        connect(quitButton, SIGNAL(clicked()), this, SLOT(close()));
     connect(contactsList, SIGNAL(currentRowChanged(int)), this, SLOT(contactSelected(int)));
-
-    QVBoxLayout *buttonLayout1 = new QVBoxLayout;
-    buttonLayout1->addStretch();
-    buttonLayout1->addWidget(addButton);
-    buttonLayout1->addWidget(saveButton);
-    buttonLayout1->addWidget(removeButton);
-    buttonLayout1->addWidget(findButton);
-    buttonLayout1->addWidget(importButton);
-    buttonLayout1->addWidget(exportButton);
-    buttonLayout1->addWidget(quitButton);
-    buttonLayout1->addStretch();
-
-    QHBoxLayout *currentIndexLayout = new QHBoxLayout;
-    currentIndexLayout->addStretch();
-    currentIndexLayout->addWidget(currentBackendLabel);
-    currentIndexLayout->addWidget(backendCombo);
-    currentIndexLayout->addWidget(currentIndexLabel);
-
-    QGridLayout *inputLayout = new QGridLayout;
-    inputLayout->addWidget(nameLabel, 0, 0, Qt::AlignRight);
-    inputLayout->addWidget(nameLine, 0, 1);
-    inputLayout->addWidget(avatarLabel, 1, 0, Qt::AlignRight);
-    inputLayout->addWidget(avatarButton, 1, 1);
-    inputLayout->addWidget(emailLabel, 2, 0, Qt::AlignRight);
-    inputLayout->addWidget(emailLine, 2, 1);
-    inputLayout->addWidget(homePhoneLabel, 3, 0,Qt::AlignRight);
-    inputLayout->addWidget(homePhoneLine, 3, 1);
-    inputLayout->addWidget(workPhoneLabel, 4, 0, Qt::AlignRight);
-    inputLayout->addWidget(workPhoneLine, 4, 1);
-    inputLayout->addWidget(mobilePhoneLabel, 5, 0, Qt::AlignRight);
-    inputLayout->addWidget(mobilePhoneLine, 5, 1);
-    inputLayout->addWidget(addressLabel, 6, 0, Qt::AlignRight);
-    inputLayout->addWidget(addressText, 6, 1);
-
-    QGridLayout *mainLayout = new QGridLayout;
-    mainLayout->addWidget(contactsList, 0, 0, 3, 1);
-    mainLayout->addLayout(inputLayout, 0, 1, 2, 2);
-    mainLayout->addLayout(buttonLayout1, 0, 3, 2, 1);
-    mainLayout->addLayout(currentIndexLayout, 2, 2);
-
-    setLayout(mainLayout);
     setWindowTitle(tr("Sample Phone Book"));
 
     // instantiate a new contact manager
     cm = 0;
     backendSelected(backendCombo->currentText());
+
 }
 
 PhoneBook::~PhoneBook()
@@ -171,10 +142,18 @@ void PhoneBook::backendChanged(const QList<QUniqueId>& changes)
     // if there are no contacts in the backend any more, we add a new, unsaved contact
     // otherwise, display the current one.  Either way, need to repopulate the list.
     populateList(cm->contact(changes.value(0))); // this may fail if the change was a removal.
-    if (contacts.isEmpty()) {
-        addContact();
-    } else {
+    if (!contacts.isEmpty()){
         displayContact();
+    } else {
+        nameLine->setText(QString());
+        emailLine->setText(QString());
+        homePhoneLine->setText(QString());
+        workPhoneLine->setText(QString());
+        mobilePhoneLine->setText(QString());
+        addressText->setPlainText(QString());
+        avatarButton->setIcon(QIcon());
+        avatarButton->setText("No image selected");
+        updateButtons();
     }
 }
 
@@ -331,12 +310,11 @@ QContact PhoneBook::buildContact() const
 
 void PhoneBook::displayContact()
 {
-    QContact c = contacts.at(currentIndex);
+    QContact c = contacts.value(currentIndex);
     c = cm->contact(c.id()); // this removes any unsaved information.
 
     // display the name
     nameLine->setText(c.displayLabel().label());
-
 
     // display the email address
     emailLine->setText(c.detail(QContactEmailAddress::DefinitionName).value(QContactEmailAddress::FieldEmailAddress));
@@ -368,7 +346,7 @@ void PhoneBook::displayContact()
         mobilePhoneLine->setText("");
 
     // display the address
-    addressText->setText((QContactAddress(c.detail(QContactAddress::DefinitionName))).displayLabel());
+    addressText->setPlainText((QContactAddress(c.detail(QContactAddress::DefinitionName))).displayLabel());
 
     // and build the avatar filename and display it if it exists.
     QString avatarFile = c.detail(QContactAvatar::DefinitionName).value(QContactAvatar::FieldAvatar);
@@ -381,22 +359,9 @@ void PhoneBook::displayContact()
         avatarButton->setIconSize(avatarButton->size());
     }
 
-    // update the UI depending on the current state.
-    QString currentState = contacts.at(currentIndex).id() == 0 ? "Unsaved" : "Saved";
-    QString currentIndexLabelString = tr("Contact %1 of %2 (%3)").arg(currentIndex+1).arg(contacts.size()).arg(currentState);
-    currentIndexLabel->setText(currentIndexLabelString);
 
-    // update the buttons
-    if (contacts.at(currentIndex).id() == 0) {
-        addButton->setEnabled(false);
-        exportButton->setEnabled(false);
-        removeButton->setEnabled(false);
-    } else {
-        addButton->setEnabled(true);
-        findButton->setEnabled(true);
-        exportButton->setEnabled(true);
-        removeButton->setEnabled(true);
-    }
+    updateButtons();
+
 }
 
 void PhoneBook::selectAvatar()
@@ -417,17 +382,29 @@ void PhoneBook::selectAvatar()
 
 void PhoneBook::addContact()
 {
+    addingContact = true;
+    lastIndex = currentIndex;
     currentIndex = contacts.size();
     contacts.append(QContact());
     displayContact();
+    if (detailsForm != mainForm){
+        detailsForm->show();
+        detailsForm->raise();
+    }
+    nameLine->setFocus();
 }
 
 void PhoneBook::saveContact()
 {
+    if (detailsForm != mainForm)
+        detailsForm->hide();
+
     QContact c = buildContact();
     c.setId(contacts.at(currentIndex).id());
     QContactAvatar av = contacts.at(currentIndex).detail(QContactAvatar::DefinitionName);
     c.saveDetail(&av);
+    addingContact = false;
+    editingContact = false;
     if (!cm->saveContact(&c)) {
         QString errorCode = "Unable to save the contact in the database; error code:" + QString::number(cm->error());
         QMessageBox::information(this, "Save Failed", errorCode);
@@ -435,8 +412,56 @@ void PhoneBook::saveContact()
     }
 }
 
+void PhoneBook::updateButtons()
+{
+    QString currentState = "Unsaved";
+    if (!contacts.count() || (contacts.at(currentIndex).id() == 0)) {
+        addButton->setEnabled(true);
+        findButton->setEnabled(false);
+        exportButton->setEnabled(false);
+        removeButton->setEnabled(false);
+        saveButton->setEnabled(addingContact || editingContact);
+        if(openButton)
+            openButton->setEnabled(false);
+        if (mainForm == detailsForm){
+            nameLine->setEnabled(addingContact);
+            emailLine->setEnabled(addingContact);
+            homePhoneLine->setEnabled(addingContact);
+            workPhoneLine->setEnabled(addingContact);
+            mobilePhoneLine->setEnabled(addingContact);
+            addressText->setEnabled(addingContact);
+            avatarButton->setEnabled(addingContact);
+        }
+    } else {
+        addButton->setEnabled(!(addingContact || editingContact));
+        findButton->setEnabled(true);
+        exportButton->setEnabled(true);
+        removeButton->setEnabled(true);
+        saveButton->setEnabled((mainForm == detailsForm) || addingContact || editingContact);
+        if(openButton)
+            openButton->setEnabled(true);
+        if (mainForm == detailsForm){
+            nameLine->setEnabled(true);
+            emailLine->setEnabled(true);
+            homePhoneLine->setEnabled(true);
+            workPhoneLine->setEnabled(true);
+            mobilePhoneLine->setEnabled(true);
+            addressText->setEnabled(true);
+            avatarButton->setEnabled(true);
+        }
+        currentState = "Saved";
+    }
+
+    // update the UI depending on the current state.
+    int contactNumber = (contacts.isEmpty() ? 0 : currentIndex + 1);
+    QString currentIndexLabelString = tr("Contact %1 of %2 (%3)").arg(contactNumber).arg(contacts.size()).arg(currentState);
+    currentIndexLabel->setText(currentIndexLabelString);
+}
+
 void PhoneBook::removeContact()
 {
+    if (currentIndex < 0)
+        return;
     QContact current = contacts.at(currentIndex);
     QContactDisplayLabel cdl = current.detail(QContactDisplayLabel::DefinitionName);
     if (cdl.isEmpty())
@@ -452,6 +477,7 @@ void PhoneBook::removeContact()
         QMessageBox::information(this, tr("Remove Successful"),
             tr("\"%1\" has been removed from your phone book.").arg(contactName));
     }
+    updateButtons();
 }
 
 void PhoneBook::next()
@@ -501,6 +527,23 @@ void PhoneBook::findContact()
             return;
         }
     }
+}
+
+void PhoneBook::openContact()
+{
+    editingContact = true;
+    displayContact();
+    detailsForm->show();
+    detailsForm->raise();
+}
+
+void PhoneBook::cancelContact()
+{
+    addingContact = false;
+    editingContact = false;
+    detailsForm->hide();
+    currentIndex = lastIndex;
+    updateButtons();
 }
 
 void PhoneBook::importFromVCard()
