@@ -50,7 +50,7 @@ public:
 
 public:
 	QContact transformContact(CContactItem &contact) const;
-	void TransformContact::transformContactL(
+	void transformContactL(
 	        QContact &contact,
 	        CContactItem &contactItem) const;
 
