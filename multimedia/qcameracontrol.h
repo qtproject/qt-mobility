@@ -40,7 +40,7 @@
 
 #include "qcamera.h"
 
-class QCameraControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QCameraControl : public QAbstractMediaControl
 {
     Q_OBJECT
 

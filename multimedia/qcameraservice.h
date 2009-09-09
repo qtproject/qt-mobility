@@ -40,7 +40,7 @@
 
 
 class QCameraServicePrivate;
-class QCameraService : public QAbstractMediaService
+class Q_MEDIA_EXPORT QCameraService : public QAbstractMediaService
 {
     Q_OBJECT
 
