@@ -942,6 +942,7 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
         : QObject(parent)
 {
     halIsAvailable = halAvailable();
+    setConnection();
 }
 
 void QSystemDeviceInfoPrivate::setConnection()

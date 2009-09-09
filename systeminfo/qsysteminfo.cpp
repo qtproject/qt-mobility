@@ -611,9 +611,7 @@ QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
 
     connect(d,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
             this,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)));
-    
-    d->setConnection();
-}
+    }
 
 /*!
   Destroys the QSystemDeviceInfo object.
