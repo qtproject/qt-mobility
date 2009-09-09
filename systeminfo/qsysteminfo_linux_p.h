@@ -53,7 +53,7 @@
 #include "qsysteminfo.h"
 #include <qsysinfoglobal.h>
 #if !defined(QT_NO_DBUS)
-#include <qhalservice_p.h>
+#include <qhalservice_linux_p.h>
 #endif
 
 QT_BEGIN_HEADER

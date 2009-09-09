@@ -42,7 +42,7 @@
 #include <QDBusPendingCallWatcher>
 #include <QDBusObjectPath>
 
-#include "qhalservice_p.h"
+#include "qhalservice_linux_p.h"
 
  static QDBusConnection dbusConnection = QDBusConnection::systemBus();
 
