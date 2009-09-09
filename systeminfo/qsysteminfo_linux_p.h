@@ -30,8 +30,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QSYSTEMINFO_P_H
-#define QSYSTEMINFO_P_H
+#ifndef QSYSTEMINFO_LINUX_P_H
+#define QSYSTEMINFO_LINUX_P_H
 
 
 //
@@ -52,7 +52,9 @@
 
 #include "qsysteminfo.h"
 #include <qsysinfoglobal.h>
+#if !defined(QT_NO_DBUS)
 #include <qhalservice_p.h>
+#endif
 
 QT_BEGIN_HEADER
 
@@ -89,14 +91,12 @@ private:
     QHalInterface halIface;
 #endif
     bool hasSysFeature(const QString &featureStr);
-#if defined(Q_OS_LINUX)
     QTimer *langTimer;
     QString langCached;
-#endif
-//#if defined(Q_OS_LINUX)
+
 private Q_SLOTS:
     void startLangaugePolling();
-//#endif
+
 
 };
 
@@ -166,10 +166,9 @@ public:
     QSystemMemoryInfo::VolumeType volumeType(const QString &driveVolume); //returns enum
 
 private:
-#if defined(Q_OS_LINUX) ||  defined(Q_OS_WIN32)
     QHash<QString, QString> mountEntriesHash;
     void mountEntries();
-#endif
+
 };
 
 class QSystemDeviceInfoPrivate : public QObject
@@ -211,12 +210,14 @@ Q_SIGNALS:
     void bluetoothStateChanged(bool);
 
 private:
+#if !defined(QT_NO_DBUS)
+
     QHalInterface *halIface;
     QHalDeviceInterface *halIfaceDevice;
 
 private Q_SLOTS:
     void halChanged(int,QVariantList);
-
+#endif
 };
 
 
@@ -237,19 +238,19 @@ private:
     QString screenPath;
     QString settingsPath;
     bool screenSaverSecure;
-#ifdef Q_OS_LINUX
+
     uint currentPid;
     bool kdeIsRunning;
     bool gnomeIsRunning;
     void whichWMRunning();
-#endif
+
 };
 
 QT_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif /*QSYSTEMSINFO_P_H*/
+#endif /*QSYSTEMSINFO_LINUX_P_H*/
 
 // End of file
 

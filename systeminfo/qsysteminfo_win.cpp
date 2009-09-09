@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 #include "qsysteminfo.h"
-#include "qsysteminfo_p.h"
+#include "qsysteminfo_win_p.h"
 #include "qwmihelper_p.h"
 #include <qt_windows.h>
 
@@ -410,10 +410,6 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     return featureSupported;
 }
 
-void QSystemInfo::startLangaugePolling()
-{
-
-}
 
 //////// QSystemNetworkInfo
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)

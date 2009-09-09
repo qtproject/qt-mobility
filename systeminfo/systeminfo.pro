@@ -6,7 +6,6 @@ INCLUDEPATH += .
 QT+= network
 # Input
 HEADERS += qsysteminfo.h \
-    qsysteminfo_p.h \
     qsysinfoglobal.h
 SOURCES += qsysteminfo.cpp
 DEFINES += QT_BUILD_SYSINFO_LIB \
@@ -14,8 +13,9 @@ DEFINES += QT_BUILD_SYSINFO_LIB \
 win32 { 
     SOURCES += qsysteminfo_win.cpp \
     qwmihelper.cpp
+    HEADERS += qsysteminfo_win_p.h \
+        qwmihelper_win_p.h
 
-    HEADERS += qwmihelper_p.h
     LIBS += Wlanapi.lib \
         Ole32.lib \
         Strmiids.lib \
@@ -43,10 +43,12 @@ unix: {
     linux-*: { 
         QT += gui
         SOURCES += qsysteminfo_linux.cpp
+        HEADERS += qsysteminfo_linux_p.h
         contains(QT_CONFIG,dbus): { 
             QT += dbus
             SOURCES += qhalservice.cpp
-            HEADERS += qhalservice_p.h
+            HEADERS += qhalservice_p.h 
+
         }
         LIBS += -lXxf86vm
     }
