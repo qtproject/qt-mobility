@@ -950,26 +950,32 @@ QMessageFolderId addFolder(const Parameters &params)
 }
 #endif
 
-QMessageId addMessage(const Parameters &params)
-{
-    QString parentAccountName(params["parentAccountName"]);
-    QString parentFolderPath(params["parentFolderPath"]);
-    QString to(params["to"]);
-    QString from(params["from"]);
-    QString date(params["date"]);
-    QString receivedDate(params["receivedDate"]);
-    QString subject(params["subject"]);
-    QString text(params["text"]);
-    QString priority(params["priority"]);
-    QString size(params["size"]);
-    QString type(params["type"]);
-    QString read(params["status-read"]);
-    QString hasAttachments(params["status-hasAttachments"]);
+}
 
-    if (!to.isEmpty() && !from.isEmpty() && !date.isEmpty() && !subject.isEmpty() &&
-        !parentAccountName.isEmpty() && !parentFolderPath.isEmpty()) {
-        // Find the named account
-        QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilter::byName(parentAccountName)));
+// The class 'MapiSession' is a friend of QMessageContentContainer - hijack it here
+class MapiSession
+{
+public:
+    static QMessageId addMessage(const Support::Parameters &params)
+    {
+        QString parentAccountName(params["parentAccountName"]);
+        QString parentFolderPath(params["parentFolderPath"]);
+        QString to(params["to"]);
+        QString from(params["from"]);
+        QString date(params["date"]);
+        QString receivedDate(params["receivedDate"]);
+        QString subject(params["subject"]);
+        QString text(params["text"]);
+        QString priority(params["priority"]);
+        QString size(params["size"]);
+        QString type(params["type"]);
+        QString read(params["status-read"]);
+        QString hasAttachments(params["status-hasAttachments"]);
+
+        if (!to.isEmpty() && !from.isEmpty() && !date.isEmpty() && !subject.isEmpty() &&
+            !parentAccountName.isEmpty() && !parentFolderPath.isEmpty()) {
+            // Find the named account
+            QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilter::byName(parentAccountName)));
 #if defined(Q_OS_WIN) && !defined(ACCOUNT_FILTERING_IMPLEMENTED)
 {
     // Not implemented yet...
@@ -987,10 +993,10 @@ QMessageId addMessage(const Parameters &params)
     }
 }
 #endif
-        if (accountIds.count() == 1) {
-            // Find the specified folder
-            QMessageFolderFilter filter(QMessageFolderFilter::byPath(parentFolderPath) & QMessageFolderFilter::byParentAccountId(accountIds.first()));
-            QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders(filter));
+            if (accountIds.count() == 1) {
+                // Find the specified folder
+                QMessageFolderFilter filter(QMessageFolderFilter::byPath(parentFolderPath) & QMessageFolderFilter::byParentAccountId(accountIds.first()));
+                QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders(filter));
 #if defined(Q_OS_WIN) && !defined(FOLDER_FILTERING_IMPLEMENTED)
 {
     // Keys aren't implemented yet...
@@ -1008,100 +1014,93 @@ QMessageId addMessage(const Parameters &params)
     }
 }
 #endif
-            if (folderIds.count() == 1) {
-                QMessage message;
+                if (folderIds.count() == 1) {
+                    QMessage message;
 
-                message.setParentAccountId(accountIds.first());
-                // TODO: is this to be added?
-                //message.setParentFolderId(folderIds.first());
-                message.d_ptr->_parentFolderId = folderIds.first();
+                    message.setParentAccountId(accountIds.first());
+                    message.d_ptr->_parentFolderId = folderIds.first();
 
-                QList<QMessageAddress> toList;
-                foreach (const QString &addr, to.split(",")) {
-                    toList.append(QMessageAddress(addr.trimmed(), QMessageAddress::Email));
-                }
-                message.setTo(toList);
-                message.setFrom(QMessageAddress(from, QMessageAddress::Email));
-                message.setSubject(subject);
-
-                QDateTime dt(QDateTime::fromString(date, Qt::ISODate));
-                dt.setTimeSpec(Qt::UTC);
-                message.setDate(dt);
-
-                if (type.isEmpty()) {
-                    message.setType(QMessage::Email);
-                } else {
-                    if (type.toLower() == "mms") {
-                        message.setType(QMessage::Mms);
-                    } else if (type.toLower() == "sms") {
-                        message.setType(QMessage::Sms);
-                    } else if (type.toLower() == "xmpp") {
-                        message.setType(QMessage::Xmpp);
-                    } else {
-                        message.setType(QMessage::Email);
+                    QList<QMessageAddress> toList;
+                    foreach (const QString &addr, to.split(",")) {
+                        toList.append(QMessageAddress(addr.trimmed(), QMessageAddress::Email));
                     }
-                }
+                    message.setTo(toList);
+                    message.setFrom(QMessageAddress(from, QMessageAddress::Email));
+                    message.setSubject(subject);
 
-                if (!receivedDate.isEmpty()) {
-                    QDateTime dt(QDateTime::fromString(receivedDate, Qt::ISODate));
+                    QDateTime dt(QDateTime::fromString(date, Qt::ISODate));
                     dt.setTimeSpec(Qt::UTC);
-                    message.setReceivedDate(dt);
-                }
+                    message.setDate(dt);
 
-                if (!priority.isEmpty()) {
-                    if (priority.toLower() == "high") {
-                        message.setPriority(QMessage::HighPriority);
-                    } else if (priority.toLower() == "low") {
-                        message.setPriority(QMessage::LowPriority);
+                    if (type.isEmpty()) {
+                        message.setType(QMessage::Email);
+                    } else {
+                        if (type.toLower() == "mms") {
+                            message.setType(QMessage::Mms);
+                        } else if (type.toLower() == "sms") {
+                            message.setType(QMessage::Sms);
+                        } else if (type.toLower() == "xmpp") {
+                            message.setType(QMessage::Xmpp);
+                        } else {
+                            message.setType(QMessage::Email);
+                        }
                     }
-                }
 
-                /*
-                if (!size.isEmpty()) {
-                    // TODO: add setSize to QMessageContentCOntainer
-                    message.setSize(size.toUInt());
-                }
-                */
-
-                if (!text.isEmpty()) {
-                    message.setContentType("text");
-                    message.setContentSubType("plain");
-                    message.setContent(text);
-                }
-
-                QMessage::StatusFlags flags(0);
-                if (read.toLower() == "true") {
-                    flags |= QMessage::Read;
-                }
-                if (hasAttachments.toLower() == "true") {
-                    flags |= QMessage::HasAttachments;
-                }
-                message.setStatus(flags);
-
-                Parameters::const_iterator it = params.begin(), end = params.end();
-                /*
-                for ( ; it != end; ++it) {
-                    if (it.key().startsWith("custom-")) {
-                        message.setCustomField(it.key().mid(7), it.value());
+                    if (!receivedDate.isEmpty()) {
+                        QDateTime dt(QDateTime::fromString(receivedDate, Qt::ISODate));
+                        dt.setTimeSpec(Qt::UTC);
+                        message.setReceivedDate(dt);
                     }
-                }*/
 
-                if (!QMessageStore::instance()->addMessage(&message)) {
-                    qWarning() << "Unable to addMessage:" << to << from << date << subject;
+                    if (!priority.isEmpty()) {
+                        if (priority.toLower() == "high") {
+                            message.setPriority(QMessage::HighPriority);
+                        } else if (priority.toLower() == "low") {
+                            message.setPriority(QMessage::LowPriority);
+                        }
+                    }
+
+                    if (!size.isEmpty()) {
+                        message.d_ptr->_size = size.toUInt();
+                    }
+
+                    if (!text.isEmpty()) {
+                        message.setBody(text, QByteArray("text/plain"));
+                    }
+
+                    QMessage::StatusFlags flags(0);
+                    if (read.toLower() == "true") {
+                        flags |= QMessage::Read;
+                    }
+                    if (hasAttachments.toLower() == "true") {
+                        flags |= QMessage::HasAttachments;
+                    }
+                    message.setStatus(flags);
+
+                    if (!QMessageStore::instance()->addMessage(&message)) {
+                        qWarning() << "Unable to addMessage:" << to << from << date << subject;
+                    } else {
+                        return message.id();
+                    }
                 } else {
-                    return message.id();
+                    qWarning() << "Unable to locate parent folder:" << parentFolderPath;
                 }
             } else {
-                qWarning() << "Unable to locate parent folder:" << parentFolderPath;
+                qWarning() << "Unable to locate parent account:" << parentAccountName;
             }
         } else {
-            qWarning() << "Unable to locate parent account:" << parentAccountName;
+            qWarning() << "Necessary information missing";
         }
-    } else {
-        qWarning() << "Necessary information missing";
-    }
 
-    return QMessageId();
+        return QMessageId();
+    }
+};
+
+namespace Support {
+
+QMessageId addMessage(const Parameters &params)
+{
+    return MapiSession::addMessage(params);
 }
 
 }

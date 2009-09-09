@@ -88,6 +88,9 @@ public:
 private:
     friend class QMessage;
     friend class QMessagePrivate;
+#ifdef Q_OS_WIN
+    friend class MapiSession;
+#endif
 
     void setDerivedMessage(QMessage *derived);
     void applyPendingChanges() const;
