@@ -132,7 +132,7 @@ public:
 
     QList<QString> deviceList();
     void setDevice(const QString& device);
-    static QString deviceDescription(const QString &device);
+    QString deviceDescription(const QString &device);
 
     bool isValid() const;
     QAbstractMediaService* service() const;
@@ -216,5 +216,11 @@ private:
     Q_DISABLE_COPY(QCamera)
     Q_DECLARE_PRIVATE(QCamera)
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::FlashModes)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::FocusModes)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::WhiteBalanceModes)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::MeteringModes)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::ExposureModes)
 
 #endif  // QCAMERA_H

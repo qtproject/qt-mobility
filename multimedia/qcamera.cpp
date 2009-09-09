@@ -291,7 +291,7 @@ QCamera::FlashModes QCamera::supportedFlashModes() const
 
 bool QCamera::isFlashReady() const
 {
-    return d_func()->exposureControl ? d_func()->exposureControl->isFlashReady() : true;
+    return d_func()->exposureControl ? d_func()->exposureControl->isFlashReady() : false;
 }
 
 /*!
