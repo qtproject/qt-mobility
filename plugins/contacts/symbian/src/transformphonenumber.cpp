@@ -131,3 +131,25 @@ QContactDetail *TransformPhoneNumber::transformItemField(const CContactItemField
 	
 	return phoneNumber;
 }
+
+bool TransformPhoneNumber::supportsField(TUint32 fieldType) const
+{
+    bool ret = false;
+    if (fieldType == KUidContactFieldPhoneNumber.iUid ||
+        fieldType == KUidContactFieldFax.iUid ||
+        fieldType == KUidContactFieldVCardMapTEL.iUid ||
+        fieldType == KUidContactFieldVCardMapCELL.iUid ||
+        fieldType == KUidContactFieldVCardMapPAGER.iUid) {
+        ret = true;
+    }
+    return ret;
+}
+
+bool TransformPhoneNumber::supportsDetail(QString detailName) const
+{
+    bool ret = false;
+    if (detailName == QContactPhoneNumber::DefinitionName) {
+        ret = true;
+    }
+    return ret;
+}

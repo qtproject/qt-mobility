@@ -122,79 +122,35 @@ CContactItem *TransformContact::transformContactL(QContact &contact) const
 
 QList<CContactItemField *> TransformContact::transformDetailL(const QContactDetail &detail) const
 {
-	//TODO: add a method to return whether the class supports the detail definitionname
-	//for(m_transformContactData) 
-	//if ( m_transformContactData.at(i)->supportsDetail(detail.defintionName()) )
-	//    detail = m_transformContactData.at(i)->transformDetailL(detail);
-	
 	QList<CContactItemField *> itemFieldList;
+	QString detailName(detail.definitionName());
 	
-	//Name
-	if (detail.definitionName() == QContactName::DefinitionName)
-	{
-		itemFieldList = m_transformContactData.value(Name)->transformDetailL(detail);
-	}
+	QMap<ContactData, TransformContactData*>::const_iterator i = m_transformContactData.constBegin();
+	while (i != m_transformContactData.constEnd()) {
+        if (i.value()->supportsDetail(detailName)) { 
+            itemFieldList = i.value()->transformDetailL(detail);
+            break;
+	    }
+        ++i;
+    }
 	
-	//Nickname
-	else if (detail.definitionName() == QContactNickname::DefinitionName)
-	{
-		itemFieldList = m_transformContactData.value(Nickname)->transformDetailL(detail);
-	}
-	
-	//Phonenumber
-	else if (detail.definitionName() == QContactPhoneNumber::DefinitionName)
-	{
-		itemFieldList = m_transformContactData.value(PhoneNumber)->transformDetailL(detail);
-	}
-	
-	//Email Adress
-	else if (detail.definitionName() == QContactEmailAddress::DefinitionName)
-	{
-		itemFieldList = m_transformContactData.value(EmailAddress)->transformDetailL(detail);
-	}
 	return itemFieldList;
 }
 
 QContactDetail *TransformContact::transformItemField(const CContactItemField& field, const QContact &contact) const
 {
-	//TODO: add a method to return whether the class supports the UID
-	//for(m_transformContactData) 
-	//if ( m_transformContactData.at(i)->supportsField(field) )
-	//    detail = m_transformContactData.at(i)->transformItemField(field, contact);
-	
 	QContactDetail *detail(0);
-	
 	TUint32 fieldType(field.ContentType().FieldType(0).iUid);
 	
-	//Name
-	if (fieldType == KUidContactFieldPrefixName.iUid     ||
-		fieldType == KUidContactFieldGivenName.iUid      ||
-		fieldType == KUidContactFieldAdditionalName.iUid ||
-		fieldType == KUidContactFieldFamilyName.iUid     ||
-		fieldType == KUidContactFieldSuffixName.iUid)
-	{
-		detail = m_transformContactData.value(Name)->transformItemField(field, contact);
-	}
-	
-	//Nickname
-	else if (fieldType == KUidContactFieldSecondName.iUid)
-	{
-		detail = m_transformContactData.value(Nickname)->transformItemField(field, contact);
-	}
-	
-	//Phonenumber
-	else if (fieldType == KUidContactFieldPhoneNumber.iUid ||
-		     fieldType == KUidContactFieldFax.iUid )
-	{
-		detail = m_transformContactData.value(PhoneNumber)->transformItemField(field, contact);
-	}
-	
-	//Email address
-	else if (fieldType == KUidContactFieldEMail.iUid)
-	{
-		detail = m_transformContactData.value(EmailAddress)->transformItemField(field, contact);
-	}
-	
+	QMap<ContactData, TransformContactData*>::const_iterator i = m_transformContactData.constBegin();
+	while (i != m_transformContactData.constEnd()) {
+        if (i.value()->supportsField(fieldType)) { 
+            detail = i.value()->transformItemField(field, contact);
+            break;
+        }
+        ++i;
+	 }
+
 	return detail;
 }
 	

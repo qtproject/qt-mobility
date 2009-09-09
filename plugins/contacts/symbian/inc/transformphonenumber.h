@@ -40,6 +40,8 @@ class TransformPhoneNumber : public TransformContactData
 protected:
 	QList<CContactItemField *> transformDetailL(const QContactDetail &detail);
 	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact);
+	bool supportsField(TUint32 fieldType) const;
+	bool supportsDetail(QString detailName) const;
 };
 
 #endif

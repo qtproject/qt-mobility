@@ -122,3 +122,25 @@ QContactDetail *TransformName::transformItemField(const CContactItemField& field
 	
 	return name;
 }
+
+bool TransformName::supportsField(TUint32 fieldType) const
+{
+    bool ret = false;
+    if (fieldType == KUidContactFieldPrefixName.iUid ||
+        fieldType == KUidContactFieldGivenName.iUid ||
+        fieldType == KUidContactFieldAdditionalName.iUid ||
+        fieldType == KUidContactFieldFamilyName.iUid ||
+        fieldType == KUidContactFieldSuffixName.iUid) {
+        ret = true;
+    }
+    return ret;
+}
+
+bool TransformName::supportsDetail(QString detailName) const
+{
+    bool ret = false;
+    if (detailName == QContactName::DefinitionName) {
+        ret = true;
+    }
+    return ret;
+}

@@ -72,3 +72,21 @@ QContactDetail *TransformEmail::transformItemField(const CContactItemField& fiel
 	
 	return email;
 }
+
+bool TransformEmail::supportsField(TUint32 fieldType) const
+{
+    bool ret = false;
+    if (fieldType == KUidContactFieldEMail.iUid) {
+        ret = true;
+    }
+    return ret;
+}
+
+bool TransformEmail::supportsDetail(QString detailName) const
+{
+    bool ret = false;
+    if (detailName == QContactEmailAddress::DefinitionName) {
+        ret = true;
+    }
+    return ret;
+}

@@ -70,3 +70,21 @@ QContactDetail *TransformNickname::transformItemField(const CContactItemField& f
 	
 	return name;
 }
+
+bool TransformNickname::supportsField(TUint32 fieldType) const
+{
+    bool ret = false;
+    if (fieldType == KUidContactFieldSecondName.iUid) {
+        ret = true;
+    }
+    return ret;
+}
+
+bool TransformNickname::supportsDetail(QString detailName) const
+{
+    bool ret = false;
+    if (detailName == QContactNickname::DefinitionName) {
+        ret = true;
+    }
+    return ret;
+}
