@@ -609,19 +609,19 @@ int main(int argc, char *argv[])
     bool fail = false;
 
     tst_QNmeaPositionInfoSource_RealTime common_realTime;
-    r = QTest::qExec(&common_realTime);
+    r = QTest::qExec(&common_realTime, argc, argv);
     if (r < 0) fail = true;
 
     tst_QNmeaPositionInfoSource_Simulation common_sim;
-    r = QTest::qExec(&common_sim);
+    r = QTest::qExec(&common_sim, argc, argv);
     if (r < 0) fail = true;
 
     tst_QNmeaPositionInfoSource_RealTime_Generic generic_realTime;
-    r = QTest::qExec(&generic_realTime);
+    r = QTest::qExec(&generic_realTime, argc, argv);
     if (r < 0) fail = true;
 
     tst_QNmeaPositionInfoSource_Simulation_Generic generic_sim;
-    r = QTest::qExec(&generic_sim);
+    r = QTest::qExec(&generic_sim, argc, argv);
     if (r < 0) fail = true;
 
     return fail ? -1 : 0;
