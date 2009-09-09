@@ -86,6 +86,8 @@ public:
     bool setFormat(const QAudioFormat &format)
     {
         m_format = format;
+
+		return true;
     }
 
     QStringList supportedAudioCodecs() const

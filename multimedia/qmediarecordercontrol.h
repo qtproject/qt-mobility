@@ -40,7 +40,7 @@
 
 class QUrl;
 
-class QMediaRecorderControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QMediaRecorderControl : public QAbstractMediaControl
 {
     Q_OBJECT
 
