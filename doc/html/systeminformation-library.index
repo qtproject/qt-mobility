@@ -163,7 +163,7 @@
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QSystemDeviceInfo" fullname="QSystemDeviceInfo::~QSystemDeviceInfo" href="qsystemdeviceinfo.html#dtor.QSystemDeviceInfo" location="qsysteminfo.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QSystemDeviceInfo()"/>
-            <enum access="public" threadsafety="unspecified" status="commendable" name="BatteryLevel" fullname="QSystemDeviceInfo::BatteryLevel" href="qsystemdeviceinfo.html#BatteryLevel-enum" location="qsysteminfo.h">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="BatteryStatus" fullname="QSystemDeviceInfo::BatteryStatus" href="qsystemdeviceinfo.html#BatteryStatus-enum" location="qsysteminfo.h">
                 <value name="NoBatteryLevel" value="0"/>
                 <value name="BatteryCritical" value="1"/>
                 <value name="BatteryVeryLow" value="2"/>
@@ -191,6 +191,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="model" fullname="QSystemDeviceInfo::model" href="qsystemdeviceinfo.html#model" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QString" signature="model()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="productName" fullname="QSystemDeviceInfo::productName" href="qsystemdeviceinfo.html#productName" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QString" signature="productName()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="batteryLevel" fullname="QSystemDeviceInfo::batteryLevel" href="qsystemdeviceinfo.html#batteryLevel" location="qsysteminfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="batteryLevel() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="batteryStatus" fullname="QSystemDeviceInfo::batteryStatus" href="qsystemdeviceinfo.html#batteryStatus" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QSystemDeviceInfo::BatteryStatus" signature="batteryStatus()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="isBatteryCharging" fullname="QSystemDeviceInfo::isBatteryCharging" href="qsystemdeviceinfo.html#isBatteryCharging" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="isBatteryCharging()"/>
             <enum access="public" threadsafety="unspecified" status="commendable" name="Profile" fullname="QSystemDeviceInfo::Profile" href="qsystemdeviceinfo.html#Profile-enum" location="qsysteminfo.h">
                 <value name="UnknownProfile" value="0"/>
@@ -215,6 +216,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="currentPowerState" fullname="QSystemDeviceInfo::currentPowerState" href="qsystemdeviceinfo.html#currentPowerState-prop" location="qsysteminfo.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="currentPowerState" type="QSystemDeviceInfo::PowerState" signature="currentPowerState()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="batteryLevelChanged" fullname="QSystemDeviceInfo::batteryLevelChanged" href="qsystemdeviceinfo.html#batteryLevelChanged" location="qsysteminfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="batteryLevelChanged(int level)">
                 <parameter left="int" right="" name="level" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="batteryStatusChanged" fullname="QSystemDeviceInfo::batteryStatusChanged" href="qsystemdeviceinfo.html#batteryStatusChanged" location="qsysteminfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="batteryStatusChanged(QSystemDeviceInfo::BatteryStatus status)">
+                <parameter left="QSystemDeviceInfo::BatteryStatus" right="" name="status" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="powerStateChanged" fullname="QSystemDeviceInfo::powerStateChanged" href="qsystemdeviceinfo.html#powerStateChanged" location="qsysteminfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="powerStateChanged(QSystemDeviceInfo::PowerState state)">
                 <parameter left="QSystemDeviceInfo::PowerState" right="" name="state" default=""/>

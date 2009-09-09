@@ -192,6 +192,7 @@ public:
     QSystemDeviceInfo::InputMethodFlags inputMethodType();
 
     int  batteryLevel() const;
+    QSystemDeviceInfo::BatteryStatus batteryStatus();
 
     QSystemDeviceInfo::SimStatus simStatus();
     bool isDeviceLocked();
@@ -203,6 +204,8 @@ public:
 
 Q_SIGNALS:
     void batteryLevelChanged(int);
+    void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus );
+
     void powerStateChanged(QSystemDeviceInfo::PowerState);
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void bluetoothStateChanged(bool);

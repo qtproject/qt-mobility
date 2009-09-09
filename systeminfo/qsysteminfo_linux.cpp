@@ -1341,6 +1341,23 @@ int QSystemDeviceInfoPrivate::batteryLevel() const
     return 0;
 }
 
+QSystemDeviceInfo::BatteryStatus QSystemDeviceInfoPrivate::batteryStatus()
+{
+    int level = batteryLevel();
+    if(level < 4) {
+        return QSystemDeviceInfo::BatteryCritical;
+    }   else if(level < 11) {
+        return QSystemDeviceInfo::BatteryVeryLow;
+    }  else if(level < 41) {
+        return QSystemDeviceInfo::BatteryLow;
+    }   else if(level > 40) {
+        return QSystemDeviceInfo::BatteryNormal;
+    }
+
+    return QSystemDeviceInfo::NoBatteryLevel;
+}
+
+
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 {
     return QSystemDeviceInfo::SimNotAvailable;

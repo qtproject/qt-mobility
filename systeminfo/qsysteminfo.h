@@ -252,7 +252,7 @@ public:
     QSystemDeviceInfo(QObject *parent = 0);
     virtual ~QSystemDeviceInfo();
 
-    enum BatteryLevel {
+    enum BatteryStatus {
         NoBatteryLevel = 0,
         BatteryCritical,
         BatteryVeryLow,
@@ -288,7 +288,9 @@ public:
 
 // ????
     int batteryLevel() const; //signal
-    bool isBatteryCharging(); //signal
+   QSystemDeviceInfo::BatteryStatus batteryStatus();
+
+   bool isBatteryCharging(); //signal
 
     enum Profile {
         UnknownProfile = 0,
@@ -316,6 +318,7 @@ public:
 
 Q_SIGNALS:
     void batteryLevelChanged(int);
+    void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus );
     void powerStateChanged(QSystemDeviceInfo::PowerState);
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void bluetoothStateChanged(bool);

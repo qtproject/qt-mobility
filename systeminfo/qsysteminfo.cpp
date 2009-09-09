@@ -167,6 +167,13 @@ QT_BEGIN_NAMESPACE
  */
 
 /*!
+  \fn void QSystemDeviceInfo::batteryStatusChanged(QSystemDeviceInfo::BatteryStatus status)
+
+  This signal is emitted when battery status has changed.
+  \a status is the new status.
+ */
+
+   /*!
   \fn void QSystemDeviceInfo::powerStateChanged(QSystemDeviceInfo::PowerState state)
 
   This signal is emitted when the power state has changed, such as when a phone gets plugged qint32o the wall.
@@ -181,8 +188,8 @@ QT_BEGIN_NAMESPACE
 
 
 /*!
-    \enum QSystemDeviceInfo::BatteryLevel
-    This enum describes the level of the main battery.
+    \enum QSystemDeviceInfo::BatteryStatus
+    This enum describes the status of the main battery.
 
     \value NoBatteryLevel          Battery level undetermined.
     \value BatteryCritical         Battery level is critical 3% or less.
@@ -673,6 +680,14 @@ QString QSystemDeviceInfo::productName()
 int QSystemDeviceInfo::batteryLevel() const
 {
     return d->batteryLevel();
+}
+
+  /*!
+    Returns the battery charge status.
+*/
+QSystemDeviceInfo::BatteryStatus QSystemDeviceInfo::batteryStatus()
+{
+    return d->batteryStatus();
 }
 
 /*!

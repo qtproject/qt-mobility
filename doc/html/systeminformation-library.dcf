@@ -3,12 +3,12 @@
 <section ref="classes.html" title="Classes">
     <section ref="qsystemdeviceinfo.html" title="QSystemDeviceInfo Class Reference">
         <keyword ref="qsystemdeviceinfo.html">QSystemDeviceInfo</keyword>
-        <keyword ref="qsystemdeviceinfo.html#BatteryLevel-enum">BatteryLevel</keyword>
-        <keyword ref="qsystemdeviceinfo.html#BatteryLevel-enum">QSystemDeviceInfo::BatteryCritical</keyword>
-        <keyword ref="qsystemdeviceinfo.html#BatteryLevel-enum">QSystemDeviceInfo::NoBatteryLevel</keyword>
-        <keyword ref="qsystemdeviceinfo.html#BatteryLevel-enum">QSystemDeviceInfo::BatteryVeryLow</keyword>
-        <keyword ref="qsystemdeviceinfo.html#BatteryLevel-enum">QSystemDeviceInfo::BatteryLow</keyword>
-        <keyword ref="qsystemdeviceinfo.html#BatteryLevel-enum">QSystemDeviceInfo::BatteryNormal</keyword>
+        <keyword ref="qsystemdeviceinfo.html#BatteryStatus-enum">BatteryStatus</keyword>
+        <keyword ref="qsystemdeviceinfo.html#BatteryStatus-enum">QSystemDeviceInfo::BatteryCritical</keyword>
+        <keyword ref="qsystemdeviceinfo.html#BatteryStatus-enum">QSystemDeviceInfo::NoBatteryLevel</keyword>
+        <keyword ref="qsystemdeviceinfo.html#BatteryStatus-enum">QSystemDeviceInfo::BatteryVeryLow</keyword>
+        <keyword ref="qsystemdeviceinfo.html#BatteryStatus-enum">QSystemDeviceInfo::BatteryLow</keyword>
+        <keyword ref="qsystemdeviceinfo.html#BatteryStatus-enum">QSystemDeviceInfo::BatteryNormal</keyword>
         <keyword ref="qsystemdeviceinfo.html#InputMethod-enum">InputMethod</keyword>
         <keyword ref="qsystemdeviceinfo.html#InputMethod-enum">InputMethodFlags</keyword>
         <keyword ref="qsystemdeviceinfo.html#InputMethod-enum">QSystemDeviceInfo::Mouse</keyword>
@@ -41,6 +41,8 @@
         <keyword ref="qsystemdeviceinfo.html#simStatus-prop">simStatus</keyword>
         <keyword ref="qsystemdeviceinfo.html#batteryLevel">batteryLevel</keyword>
         <keyword ref="qsystemdeviceinfo.html#batteryLevelChanged">batteryLevelChanged</keyword>
+        <keyword ref="qsystemdeviceinfo.html#batteryStatus">batteryStatus</keyword>
+        <keyword ref="qsystemdeviceinfo.html#batteryStatusChanged">batteryStatusChanged</keyword>
         <keyword ref="qsystemdeviceinfo.html#bluetoothStateChanged">bluetoothStateChanged</keyword>
         <keyword ref="qsystemdeviceinfo.html#currentProfileChanged">currentProfileChanged</keyword>
         <keyword ref="qsystemdeviceinfo.html#imei">imei</keyword>
