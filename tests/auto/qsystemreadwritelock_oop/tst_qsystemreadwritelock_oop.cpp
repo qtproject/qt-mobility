@@ -179,7 +179,7 @@ void tst_QSystemReadWriteLock_oop::multipleReadersLoop()
     int holdTime = 10;
     int waitTime = 0;
 
-    int numReaders = 10;
+    const int numReaders = 10;
     QProcess readers[numReaders];
     QStringList args;
     args << "ReadLockLoop"
@@ -243,11 +243,12 @@ void tst_QSystemReadWriteLock_oop::exclusiveWriteTest()
     QSystemReadWriteLock testLock("Viper", QSystemReadWriteLock::Create);
 
     int runTime=10000;
-    int numReaders = 20;
+    const int numReaders = 20;
+
     int readerHoldTime = 0;
     int readerWaitTime = 1;
 
-    int numWriters = 3;
+    const int numWriters = 3;
     int writerHoldTime = 20;
     int writerWaitTime = 150;
 

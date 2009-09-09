@@ -45,7 +45,6 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#requestSetValue-2">requestSetValue</a></b> ( Handle <i>handle</i>, const QByteArray &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#setProperty">setProperty</a></b> ( Handle <i>handle</i>, Properties <i>property</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#setValue">setValue</a></b> ( QValueSpaceObject * <i>creator</i>, Handle <i>handle</i>, const QByteArray &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> ) = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#shutdown">shutdown</a></b> () = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#startup">startup</a></b> ( Type <i>type</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#supportsRequests">supportsRequests</a></b> () = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#sync">sync</a></b> () = 0</td></tr>
@@ -77,6 +76,7 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QAbstractValueSpaceLayer class provides support for adding new logical data layers to the Qt Value Space.</p>
+<p>To create a new layer in the Value Space subclass this class and reimplement all of the virtual functions. The new layer is installed by either calling <a href="qvaluespace.html#installLayer">QValueSpace::installLayer</a>() or by adding the <a href="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER">QVALUESPACE_AUTO_INSTALL_LAYER</a>() macro in your implementation file.</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="Handle-typedef"></a>typedef QAbstractValueSpaceLayer::Handle</h3>
@@ -114,9 +114,9 @@
 <h3 class="fn"><a name="handleChanged"></a>void QAbstractValueSpaceLayer::handleChanged ( quintptr <i>handle</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Emitted whenever the <i>handle</i>'s value, or any sub value, changes.</p>
 <h3 class="fn"><a name="id"></a>QUuid QAbstractValueSpaceLayer::id ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Return a globally unique id for the layer. This id is used to break ordering ties.</p>
+<p>Returns a globally unique identifier for the layer. This id is used to break ordering ties.</p>
 <h3 class="fn"><a name="item"></a><a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> QAbstractValueSpaceLayer::item ( <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>parent</i>, const QByteArray &amp; <i>subPath</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Returns a new opaque handle for the requested <i>subPath</i> of <i>parent</i>. If <i>parent</i> is an InvalidHandle, <i>subPath</i> is an absolute path.</p>
+<p>Returns a new opaque handle for the requested <i>subPath</i> of <i>parent</i>. If <i>parent</i> is an InvalidHandle, <i>subPath</i> is interpreted as an absolute path.</p>
 <p>The caller should call <a href="qabstractvaluespacelayer.html#removeHandle">removeHandle</a>() to free resources used by the handle when it is no longer required.</p>
 <h3 class="fn"><a name="name"></a>QString QAbstractValueSpaceLayer::name ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the name of the Value Space layer. This name is only used for diagnostics purposes.</p>
@@ -153,8 +153,6 @@
 <p>Process calls to <a href="qvaluespaceobject.html#setAttribute">QValueSpaceObject::setAttribute</a>() by setting the value specified by the <i>subPath</i> under <i>handle</i> to <i>value</i>. Ownership of the value space item is assigned to <i>creator</i>.</p>
 <p>Returns true on success; otherwise returns false.</p>
 <p>See also <a href="qabstractvaluespacelayer.html#value">value</a>().</p>
-<h3 class="fn"><a name="shutdown"></a>void QAbstractValueSpaceLayer::shutdown ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Called by the Value Space system to uninitialize each layer. The shutdown call can be used to release any resources in use by the layer.</p>
 <h3 class="fn"><a name="startup"></a>bool QAbstractValueSpaceLayer::startup ( <a href="qabstractvaluespacelayer.html#Type-enum">Type</a> <i>type</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Called by the Value Space system to initialize each layer. The <i>type</i> parameter will be set accordingly, and layer implementors can use this to implement a client/server architecture if desired.</p>
 <p>Returns true upon success; otherwise returns false.</p>
@@ -174,6 +172,8 @@
 <h2>Macro Documentation</h2>
 <h3 class="fn"><a name="QVALUESPACE_AUTO_INSTALL_LAYER"></a>QVALUESPACE_AUTO_INSTALL_LAYER (  <i>className</i> )</h3>
 <p>This macro installs new value space layer. <i>className</i> is the name of the class implementing the new layer.</p>
+<p>The method <tt>className *className::instance()</tt> must exist and return a pointer to an instance of the layer to install. This method will only be invoked <i>after</i> <a href="http://qt.nokia.com/doc/4.5/porting4.html">QApplication</a> has been constructed, making it safe to use any Qt class in your layer's constructor.</p>
+<p>This macro can only be used once for any given class and it should be used where the implementation is written rather than in a header file.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

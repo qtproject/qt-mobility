@@ -26,7 +26,88 @@
 <li><a href="publish-subscribe-publish-subscribe-pro.html">publish-subscribe/publish-subscribe.pro</a></li>
 </ul>
 <p>The Publish and Subscribe example shows how to use the Context Framework API to publish and retrieve values from the platforms Publish and Subscribe system.</p>
-<p align="center"><img src="images/publish-subscribe-provider.png" /></p><p align="center"><img src="images/publish-subscribe-consumer.png" /></p><p /><address><hr /><div align="center">
+<p>This example program can act either a provider of Value Space content, a consumer of a Value Space content or both. It can also optionally act as the Value Space Manager. The behavior is selected by passing a combination of three optional command line parameters when starting the program. If no parameters are supplied the program defaults to acting as both a provider and consumer.</p>
+<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
+<thead><tr valign="top" class="qt-style"><th>Parameter</th><th>Description</th></tr></thead>
+<tr valign="top" class="odd"><td>-manager</td><td>Starts the Value Space Manager. Only one instance should be started with the this parameter.</td></tr>
+<tr valign="top" class="even"><td>-provider</td><td>Publish values in the Value Space and create a dialog to control those values directly.</td></tr>
+<tr valign="top" class="odd"><td>-consumer</td><td>Create a dialog to view Value Space items.</td></tr>
+</table></p>
+<a name="provider"></a>
+<h2>Provider</h2>
+<p>When acting as a provider of Value Space content the program creates a ProviderDialog. This dialog contains a widget for setting the base path of the <a href="qvaluespaceobject.html">QValueSpaceObject</a> and widgets for setting the value of the two fixed attributes 'intValue' and 'stringValue'.</p>
+<p align="center"><img src="images/publish-subscribe-provider.png" /></p><p>We declare three slots which we will use to respond to user input in the dialog.</p>
+<pre>    private slots:
+        void createNewObject();
+        void intValueChanged(int value);
+        void setStringValue();</pre>
+<p>And connect them to signals from the widgets in the constructor.</p>
+<pre>        connect(ui-&gt;connectButton, SIGNAL(clicked()), this, SLOT(createNewObject()));
+        connect(ui-&gt;intValue, SIGNAL(valueChanged(int)), this, SLOT(intValueChanged(int)));
+        connect(ui-&gt;setButton, SIGNAL(clicked()), this, SLOT(setStringValue()));</pre>
+<p>To publish values in the Value Space we first need to create a <a href="qvaluespaceobject.html">QValueSpaceObject</a>. We do this in the <tt>createNewObject()</tt> slot, which is also used to handle changes in the base path. After the object is constructed we publish the initial values by explicitly calling the other two slots.</p>
+<pre>    void ProviderDialog::createNewObject()
+    {
+        if (object)
+            delete object;
+
+        object = new QValueSpaceObject(ui-&gt;basePath-&gt;text());
+        intValueChanged(ui-&gt;intValue-&gt;value());
+        setStringValue();
+    }</pre>
+<p>We use <a href="qvaluespaceobject.html#setAttribute">QValueSpaceObject::setAttribute</a>() to set the values in response to dialog input.</p>
+<pre>    void ProviderDialog::intValueChanged(int value)
+    {
+        object-&gt;setAttribute(&quot;intValue&quot;, value);
+    }
+
+    void ProviderDialog::setStringValue()
+    {
+        object-&gt;setAttribute(&quot;stringValue&quot;, ui-&gt;stringValue-&gt;text());
+    }</pre>
+<p>As a final step in the constructor we explicitly call the <tt>createNewObject()</tt> slot to create an initial <a href="qvaluespaceobject.html">QValueSpaceObject</a>.</p>
+<pre>        createNewObject();</pre>
+<a name="consumer"></a>
+<h2>Consumer</h2>
+<p>When acting as a consumer of Value Space content the program creates a ConsumerDialog. This dialog contains a widget for setting the base path of the <a href="qvaluespaceitem.html">QValueSpaceItem</a> and a table for displaying all of the values directly under base path in the Value Space.</p>
+<p align="center"><img src="images/publish-subscribe-consumer.png" /></p><p>We declare two slots to propagate values from the Value Space to the dialog in response to change notifications from <a href="qvaluespaceitem.html">QValueSpaceItem</a>.</p>
+<pre>    private slots:
+        void createNewItem();
+        void itemChanged();</pre>
+<p>To read values from the Value Space we first create a <a href="qvaluespaceitem.html">QValueSpaceItem</a> and connect to the <tt>contentsChanged()</tt> signal.</p>
+<p>We explicitly call our <tt>itemChanged()</tt> slot to populate the table with the initial values.</p>
+<pre>    void ConsumerDialog::createNewItem()
+    {
+        if (item)
+            delete item;
+
+        ui-&gt;values-&gt;clearContents();
+
+        item = new QValueSpaceItem(ui-&gt;basePath-&gt;text(), this);
+
+        connect(item, SIGNAL(contentsChanged()), this, SLOT(itemChanged()));
+        itemChanged();
+    }</pre>
+<p>In response to the <tt>contentsChanged()</tt> signal we update all the values in the table.</p>
+<pre>    void ConsumerDialog::itemChanged()
+    {
+        ui-&gt;values-&gt;clearContents();
+
+        QList&lt;QString&gt; subPaths = item-&gt;subPaths();
+        ui-&gt;values-&gt;setRowCount(subPaths.count());
+
+        for (int i = 0; i &lt; subPaths.count(); ++i) {
+            QVariant v = item-&gt;value(subPaths.at(i));
+
+            QTableWidgetItem *pathItem = new QTableWidgetItem(subPaths.at(i));
+            QTableWidgetItem *valueItem = new QTableWidgetItem(v.toString());
+            QTableWidgetItem *typeItem = new QTableWidgetItem(v.typeName());
+            ui-&gt;values-&gt;setItem(i, 0, pathItem);
+            ui-&gt;values-&gt;setItem(i, 1, valueItem);
+            ui-&gt;values-&gt;setItem(i, 2, typeItem);
+        }
+    }</pre>
+<p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td align="right"><div align="right">Qt Context Framework</div></td>

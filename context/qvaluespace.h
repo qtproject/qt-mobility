@@ -61,7 +61,6 @@ public:
     enum Type { Server, Client };
 
     virtual bool startup(Type type) = 0;
-    virtual void shutdown() = 0;
 
     virtual QUuid id() = 0;
     virtual unsigned int order() = 0;
@@ -76,8 +75,23 @@ public:
     virtual bool value(Handle handle, const QByteArray &subPath, QVariant *data) = 0;
     virtual QSet<QByteArray> children(Handle handle) = 0;
 
+    enum LayerOption {
+        UnspecifiedLayer = 0x0000,
+        PermanentLayer = 0x0001,
+        NonPermanentLayer = 0x0002,
+        // UnspecifiedLayerPermanence = 0x0000,
+        // InvalidLayerPermanence = 0x0003,
+        WriteableLayer = 0x0004,
+        NonWriteableLayer = 0x0008,
+        // UnspecifiedLayerWriteability = 0x0000,
+        // InvalidLayerWriteability = 0x000C,
+    };
+    Q_DECLARE_FLAGS(LayerOptions, LayerOption);
+
+    virtual LayerOptions layerOptions() const = 0;
+
     /* QValueSpaceItem functions */
-    virtual bool supportsRequests() = 0;
+    virtual bool supportsRequests() const = 0;
     virtual bool requestSetValue(Handle handle, const QVariant &value) = 0;
     virtual bool requestSetValue(Handle handle, const QByteArray &subPath, const QVariant &value) = 0;
     virtual bool requestRemoveValue(Handle handle, const QByteArray &path = QByteArray("/")) = 0;
@@ -102,6 +116,8 @@ signals:
     void handleChanged(quintptr);
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(QAbstractValueSpaceLayer::LayerOptions);
+
 namespace QValueSpace {
     Q_CFW_EXPORT void initValueSpaceManager();
 
@@ -118,8 +134,10 @@ namespace QValueSpace {
 
 #define QVALUESPACE_SHAREDMEMORY_LAYER QUuid(0xd81199c1, 0x6f60, 0x4432, 0x93, 0x4e, \
                                              0x0c, 0xe4, 0xd3, 0x7e, 0xf2, 0x52)
-#define QVALUESPACE_REGISTRY_LAYER QUuid(0x8ceb5811, 0x4968, 0x470f, 0x8f, 0xc2, \
-                                         0x26, 0x47, 0x67, 0xe0, 0xbb, 0xd9)
+#define QVALUESPACE_VOLATILEREGISTRY_LAYER QUuid(0x8ceb5811, 0x4968, 0x470f, 0x8f, 0xc2, \
+                                                 0x26, 0x47, 0x67, 0xe0, 0xbb, 0xd9)
+#define QVALUESPACE_NONVOLATILEREGISTRY_LAYER QUuid(0x8e29561c, 0xa0f0, 0x4e89, 0xba, 0x56, \
+                                                    0x08, 0x06, 0x64, 0xab, 0xc0, 0x17)
 
 #define QVALUESPACE_AUTO_INSTALL_LAYER(name) \
     QAbstractValueSpaceLayer * _qvaluespaceauto_layercreate_ ## name() \

@@ -59,17 +59,22 @@ private slots:
 
 };
 
+class tst_QValueSpaceItemOop : public tst_QValueSpaceItem
+{
+    Q_OBJECT
+};
+
 int main(int argc, char** argv)
 {
     QCoreApplication app(argc, argv);
     QStringList args = app.arguments();
 
 #if defined(QT_NO_PROCESS)
-        tst_QValueSpaceItem test;
+        tst_QValueSpaceItemOop test;
         return QTest::qExec(&test, argc-1, argv);
 #else
     if (args.contains("-vsClientMode")) {
-        tst_QValueSpaceItem test;
+        tst_QValueSpaceItemOop test;
         return QTest::qExec(&test, argc-1, argv);
     } else {
         QValueSpace::initValueSpaceManager();
@@ -78,6 +83,7 @@ int main(int argc, char** argv)
         process.setProcessChannelMode(QProcess::ForwardedChannels);
         args.removeAt(0); //don't pass the binary name
         process.start("tst_qvaluespaceitem_oop", args << "-vsClientMode");
+
         return app.exec();
     }
 #endif

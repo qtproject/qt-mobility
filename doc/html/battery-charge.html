@@ -27,13 +27,127 @@
 <li><a href="battery-charge-battery-consumer-battery-consumer-qrc.html">battery-charge/battery-consumer/battery-consumer.qrc</a></li>
 <li><a href="battery-charge-battery-provider-battery-provider-pro.html">battery-charge/battery-provider/battery-provider.pro</a></li>
 </ul>
-<p>This examples shows how to access published context values from within QML.</p>
-<p>The example consists of two programs. The first, battery-provier, is a standard Qt GUI application that emulates a battery. It publishes the keys</p>
+<p>This examples shows how to access published context values from within QML. The example consists of two programs. The first, battery-provider, is a standard Qt GUI application that is used to emulate a battery for the sole purpose of demonstrating the second program. It publishes the keys</p>
 <pre>    /power/battery/charge
     /power/battery/charging</pre>
 <p>and provides controls for modifying their values.</p>
-<p align="center"><img src="images/battery-provider.png" /></p><p>The second program, battery-consumer, is implemented in QML with some C++ code implement a battery class and make it to QML.</p>
-<p align="center"><img src="images/battery-consumer.png" /></p><p /><address><hr /><div align="center">
+<p align="center"><img src="images/battery-provider.png" /></p><p>The second program, battery-consumer, is implemented in QML with some C++ code to implement a battery class and make it to QML.</p>
+<p>The user interface of the battery consumer program is described in QML. It has the following features: A rectangular area representing the percent charge of the battery. It indicates a low battery state by changing the color to red, it is green otherwise. An animation is shown to indicate that the battery is being recharged.</p>
+<p align="center"><img src="images/battery-consumer.png" /></p><a name="battery-consumer"></a>
+<h2>Battery Consumer</h2>
+<p>The first step is to create a <tt>BatteryCharge</tt> class that can be instantiated in QML.</p>
+<p>The <tt>BatteryCharge</tt> class provides three properties. The <tt>path</tt> property for setting the Value Space path of the battery schema to connect to. The <tt>charge</tt> property for reading the percent charge of the battery and the <tt>charging</tt> property for reading the charging state of the battery.</p>
+<p>The final step in the header file is to declare the <tt>BatteryCharge</tt> class as a QML type.</p>
+<pre>    class BatteryCharge : public QObject
+    {
+        Q_OBJECT
+
+        Q_PROPERTY(QString path READ path WRITE setPath NOTIFY pathChanged);
+        Q_PROPERTY(int charge READ charge NOTIFY chargeChanged);
+        Q_PROPERTY(bool charging READ charging NOTIFY chargingChanged);
+
+    public:
+        BatteryCharge(QObject *parent = 0);
+        ~BatteryCharge();
+
+        QString path() const;
+        void setPath(const QString &amp;path);
+
+        int charge() const;
+
+        bool charging() const;
+
+    signals:
+        void pathChanged();
+        void chargeChanged();
+        void chargingChanged();
+
+    private slots:
+        void contentsChanged();
+
+    private:
+        QValueSpaceItem *m_item;
+        bool m_charging;
+        int m_charge;
+    };
+
+    QML_DECLARE_TYPE(BatteryCharge);</pre>
+<p>In the implementation we define the QML <tt>BatteryCharge</tt> type within the <tt>Example</tt> namespace.</p>
+<pre>    QML_DEFINE_TYPE(Example, 1, 0, 0, BatteryCharge, BatteryCharge);</pre>
+<p>In the implementation of the setter function for the <tt>path</tt> property we delete any previously allocated <a href="qvaluespaceitem.html">QValueSpaceItem</a> and create a new one with the new path.</p>
+<pre>    void BatteryCharge::setPath(const QString &amp;path)
+    {
+        delete m_item;
+        m_item = new QValueSpaceItem(path);
+        connect(m_item, SIGNAL(contentsChanged()), this, SLOT(contentsChanged()));
+    }</pre>
+<p>The implementation of the <tt>path</tt> property getter function returns the path of the underlying <a href="qvaluespaceitem.html">QValueSpaceItem</a>.</p>
+<pre>    QString BatteryCharge::path() const
+    {
+        return m_item ? m_item-&gt;path() : QString();
+    }</pre>
+<p>The implementation of the getter functions for the <tt>charge</tt> and <tt>charging</tt> properties we return the cached value of the <i>charge</i> and <i>charging</i> attributes respectively:</p>
+<pre>    int BatteryCharge::charge() const
+    {
+        return m_charge;
+    }
+
+    bool BatteryCharge::charging() const
+    {
+        return m_charging;
+    }</pre>
+<p>Finally in response to the <tt>contentsChanged()</tt> signal we check which values in the battery schema have changed and emit the <tt>chargeChanged()</tt> and <tt>chargingChanged()</tt> signals.</p>
+<pre>    void BatteryCharge::contentsChanged()
+    {
+        int charge = m_item-&gt;value(&quot;charge&quot;, 0).toInt();
+        if (m_charge != charge) {
+            m_charge = charge;
+            emit chargeChanged();
+        }
+
+        bool charging = m_item-&gt;value(&quot;charging&quot;, false).toBool();
+        if (m_charging != charging) {
+            m_charging = charging;
+            emit chargingChanged();
+        }
+    }</pre>
+<a name="qml"></a>
+<h3>QML</h3>
+<p>The first thing we need to do in the QML source is import the <tt>BatteryCharge</tt> type from the <tt>Example</tt> namespace.</p>
+<pre>    import Example 1.0</pre>
+<p>The <tt>BatteryCharge</tt> class is instantiated in QML and the path to the battery schema set.</p>
+<pre>        BatteryCharge {
+            id: battery
+            path: &quot;/power/battery&quot;
+        }</pre>
+<p>The default state of the rectangle used to visualize the battery charge uses the <i>charge</i> property of our BatteryCharge class in the expression for its height.</p>
+<pre>            id: visualCharge
+            x: 12
+            y: 22 + 196 - height
+            width: 76
+            height: 196 * battery.charge / 100
+            clip: true
+            color: &quot;green&quot;</pre>
+<p>When the battery charge changes the height of the rectangle will automatically change.</p>
+<p>Next we define two additional states. The <i>low</i> state is entered when the battery charge drops below 25% and the battery is not being recharged. When in this state the color is set to red.</p>
+<pre>            State {
+                name: &quot;low&quot;
+                when: battery.charge &lt; 25 &amp;&amp; !battery.charging
+                PropertyChanges {
+                    target: visualCharge
+                    color: &quot;red&quot;
+                }
+            }</pre>
+<p>The <i>charging</i> state is entered when the battery is being recharged. When in this state a particle effect animation is enabled.</p>
+<pre>            State {
+                name: &quot;charging&quot;
+                when: battery.charging
+                PropertyChanges {
+                    target: Bubbles
+                    emitting: true
+                }
+            },</pre>
+<p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td align="right"><div align="right">Qt Context Framework</div></td>

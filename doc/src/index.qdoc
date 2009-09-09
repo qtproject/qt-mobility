@@ -4,10 +4,15 @@
 
 \title Qt Context Framework Developer Resources
 
-\tableofcontents
-
 \brief The Qt Value Space allows inter-process publication of hierarchical
 data.
+
+The Qt Context Framework allows developers to construct context sensitive trees
+of data by means of the Qt Value Space. This allows a variety of different 
+context dependent uses, for example, the data may be strings for a context 
+sensitive help system, or perhaps a context sensitive remap of buttons.
+
+\tableofcontents
 
 \section1 Qt Value Space
 
@@ -26,14 +31,18 @@ serialized version of a simple example Value Space might look like this.
 /Device/Buttons/3/Usable = true
 \endcode
 
-Programmers access the Value Space through the QValueSpaceItem class.  This
-class allows applications to read item values, navigate through and subscribe
-to change notifications for items within the space.
+Existing values within the Value Space are access through the QValueSpaceItem class.  This class
+allows applications to read item values, navigate through the Value Space, subscribe to change
+notifications for items and send requests for value changes to the value provider.
+
+New values are added to the Value Space via the QValueSpaceObject class.  This class allows
+applications to publish values, receive interest notifications and change requests from other
+applications.
 
 Nodes in the Value Space can be thought of as representing schema objects.
 Obviously this is a conceptual differentiation and not a physical one, as
 internally the Value Space is treated as one large tree.  By applying
-structured schema to the space "explorability" is increased.  For example,
+structured schema to the space "explore-ability" is increased.  For example,
 the \c {/Device/Buttons} schema can be defined as containing a value
 representing the number of mappable buttons on a device, and a sub-item for
 each adhering to the \c {MappableButton} schema.  The \c {MappableButton}
@@ -49,27 +58,29 @@ trees, or layers, which are stacked on top of each other to form the final
 unified view.  If a "higher" layer contains an item, it shadows the value of
 items in the layers below it.
 
+Consider the Value Space item \c {/Device/Buttons}.  If two layer contained this item, the value in
+the layer with the higher layer order (see \l {QAbstractValueSpaceLayer::order()}) would shadow
+that with the lower layer order.  However, if only the layer with the lower order contained this
+item, it would be visible through the QValueSpaceItem class, even if the higher order layer
+contained sub-items such as \c {/Device/Buttons/1}.  That is, layer shadowing occurs by value not
+by path.
+
 The Qt Value Space contains the following layers:
 
-\list 1
-    \i {Shared Memory Layer}
-         The Shared Memory layer allows applications to add and remove "transient" data from the
-         Value Space using shared memory as a backing store.
-    \i {Registry Layer}
-        The Registry layer allows applications to add and remove "transient" data from the
-        Value Space using the Windows registry as a backing store.
-
-\endlist
-
-Access to the available layers is through the QValueSpaceObject class.
-
-Consider the Value Space item \c {/Device/Buttons}.  If two layer contained
-this item, the value in the layer with the higher layer order (see \l {QAbstractValueSpaceLayer::order()}) 
-would shadow that with the lower layer order.  However, if
-only the  layer with the lower order contained this item, it would be visible through the
-QValueSpaceItem class, even if the higher order layer contained
-sub-items such as \c {/Device/Buttons/1}.  That is, layer shadowing occurs by
-value not by path.
+\table
+    \header
+        \o Layer
+        \o Description
+    \row
+        \o Shared Memory Layer
+        \o The Shared Memory layer provides a non-permanent Value Space backing store using shared
+           memory and local sockets.  The Shared Memory layer is only available on Unix platforms.
+    \row
+        \o Registry Layer
+        \o The Registry layer provides a non-permanent Value Space backing store using volatile
+           keys stored in the Windows' registry.  The Registry layer is only available on Windows
+           platforms.
+\endtable
 
 \section2 Architecture
 
@@ -77,18 +88,17 @@ Layers in the Qt Value Space are provided by objects implementing the
 QAbstractValueSpaceLayer interface.  The two internal layers, the Shared Memory
 layer and the Registry layer, are implemented in this fashion.  The Value Space
 supports adding new, 3rd party layers through calls to the
-QValueSpace::installLayer() method.  All layers must be installed prior to the
-first Value Space usage.  Although it is legal to have a different set of
-layers installed in each process (a process local layer, for example) this
-asymmetric model is discouraged as it might cause confusion if these two
-processes communicate.
+QValueSpace::installLayer() method and QVALUESPACE_AUTO_INSTALL_LAYER() macro.  All layers must be
+installed prior to the first Value Space usage.  Although it is legal to have a different set of
+layers installed in each process (a process local layer, for example) this asymmetric model is
+discouraged as it might cause confusion if these two processes communicate.
 
 The Qt Value Space system is divided into two parts: a single server and
 zero or more clients.  Internally the Value Space system draws no distinction
 between the two - the server is also a client, for example - but certain
 layers, in particular the Shared Memory layer, do.  The Value Space
 server \bold {must} be initialized via a call to
-QValueSpace::initValuespaceManager() prior to any use of the Value Space.
+QValueSpace::initValueSpaceManager() prior to any use of the Value Space.
 Value Space clients will automatically initialize the first time Value Space
 functionality is used.
 
@@ -128,22 +138,21 @@ This library requires Qt 4.5 to be installed.
 To build the library, run \tt qmake and \tt make.
 
 
-\section1 Reference documentation
+\section1 Example: Publish and Subscribe
 
-\section2 Main classes
+In the example \l{publish-subscribe}{Publish and Subscribe} the Qt Value Space
+is used as a method of communicating changes in one dialog (the provider) to 
+another dialog (the consumer).
 
-\list
-    \o \l{QValueSpaceItem}
-    \o \l{QValueSpaceObject}
-    \o \l{QValueSpace}
-    \o \l{QAbstractValueSpaceLayer}
-\endlist
+\section1 Example: Battery Charging - Accessing Publish and Subscribe from QML
 
-\section2 Examples
+In the example \l{battery-charge}{Accessing Publish and Subscribe from QML} the
+\l{publish-subscribe}{Publish and Subscribe} concept is now extended to make
+the provider an input of the level of charge in a battery. A slider on the 
+provider dialog represents the modifiable level of charge. The Qt Value Space 
+acts as a communications medium between the provider dialog and the consumer graphical
+battery animation. The battery is implemented in QML and C++ with Qt Value Space 
+supplying the charge level for the animation to represent.
 
-\list
-   \o \l{publish-subscribe}{Publish and Subscribe}
-   \o \l{battery-charge}{Accessing Publish and Subscribe from QML}
-\endlist
-
+\sa QValueSpaceItem, QValueSpaceObject, QValueSpace, QAbstractValueSpaceLayer
 */

@@ -35,6 +35,7 @@
 #define QVALUESPACEITEM_H
 
 #include "qcontextglobal.h"
+#include "qvaluespace.h"
 
 #include <QObject>
 #include <QVariant>
@@ -53,18 +54,36 @@ class Q_CFW_EXPORT QValueSpaceItem : public QObject
     Q_PROPERTY(bool notify READ notify WRITE setNotify);
 
 public:
-    QValueSpaceItem(const QValueSpaceItem &base, const QByteArray &path, QObject *parent = 0);
-    QValueSpaceItem(const QValueSpaceItem &base, const QString &path, QObject *parent = 0);
-    QValueSpaceItem(const QValueSpaceItem &base, const char * path, QObject *parent = 0);
-    QValueSpaceItem(const QValueSpaceItem &other, QObject *parent = 0);
+    explicit QValueSpaceItem(QObject *parent = 0);
     explicit QValueSpaceItem(const QByteArray &path, QObject *parent = 0);
     explicit QValueSpaceItem(const QString &path, QObject *parent = 0);
     explicit QValueSpaceItem(const char *path, QObject *parent = 0);
-    explicit QValueSpaceItem(QObject *parent = 0);
+
+    QValueSpaceItem(const QByteArray &path,
+                    QAbstractValueSpaceLayer::LayerOptions filter,
+                    QObject *parent = 0);
+    QValueSpaceItem(const QString &path,
+                    QAbstractValueSpaceLayer::LayerOptions filter,
+                    QObject *parent = 0);
+    QValueSpaceItem(const char *path,
+                    QAbstractValueSpaceLayer::LayerOptions filter,
+                    QObject *parent = 0);
+
+    QValueSpaceItem(const QByteArray &path, const QUuid &uuid, QObject *parent = 0);
+    QValueSpaceItem(const QString &path, const QUuid &uuid, QObject *parent = 0);
+    QValueSpaceItem(const char *path, const QUuid &uuid, QObject *parent = 0);
+
+    QValueSpaceItem(const QValueSpaceItem &other, QObject *parent = 0);
+    QValueSpaceItem(const QValueSpaceItem &base, const QByteArray &path, QObject *parent = 0);
+    QValueSpaceItem(const QValueSpaceItem &base, const QString &path, QObject *parent = 0);
+    QValueSpaceItem(const QValueSpaceItem &base, const char * path, QObject *parent = 0);
+
     virtual ~QValueSpaceItem();
 
     void setPath(const QString &path);
     QString path() const;
+
+    bool isValid() const;
 
     QList<QString> subPaths() const;
 

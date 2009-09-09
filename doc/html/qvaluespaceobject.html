@@ -26,7 +26,7 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceobject.html#QValueSpaceObject-3">QValueSpaceObject</a></b> ( const QString &amp; <i>objectPath</i>, const QUuid &amp; <i>layer</i> = QUuid(), QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceobject.html#dtor.QValueSpaceObject">~QValueSpaceObject</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceobject.html#isValid">isValid</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceobject.html#objectPath">objectPath</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceobject.html#path">path</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceobject.html#supportsRequests">supportsRequests</a></b> () const</td></tr>
 </table>
 <hr />
@@ -79,51 +79,55 @@
     /Device/Network/Interfaces/ppp0/BytesSent
     /Device/Network/Interfaces/ppp0/BytesReceived
     /Device/Network/Interfaces/ppp0/Time</pre>
-<p>it can be thought of as describing two Value Space objects, <tt>{ /Device/Network/Interfaces /eth0, /Device/Network/Interfaces/ppp0 }</tt>, each with the six attributes <tt>{Name, Type, Status, BytesSent, BytesReceived, Time}</tt>. The QValueSpaceObject class encapsulates this abstraction.</p>
+<p>it can be thought of as describing two Value Space objects, <tt>{ /Device/Network/Interfaces/eth0, /Device/Network/Interfaces/ppp0 }</tt>, each with the six attributes <tt>{Name, Type, Status, BytesSent, BytesReceived, Time}</tt>. The QValueSpaceObject class encapsulates this abstraction.</p>
 <p>In the case of two or more applications creating an application object with overlapping attributes, only the first is visible to observers in the system. The other attributes are not discarded, but are buffered until the first releases its hold on the attribute, either by manually removing it, destroying the QValueSpaceObject or by terminating. For example:</p>
-<pre>    QValueSpaceObject * object1 = new QValueSpaceObject(&quot;/Device&quot;);
+<pre>    QValueSpaceObject *object1 = new QValueSpaceObject(&quot;/Device&quot;);
     object1-&gt;setAttribute(&quot;Buttons&quot;, 2);
 
-<span class="comment">    // QValueSpaceItem(&quot;/Device/Buttons&quot;) == QVariant(2)</span>
+<span class="comment">    // QValueSpaceItem(&quot;/Device/Buttons&quot;).value() == QVariant(2)</span>
 
-    QValueSpaceObject * object2 = new QValueSpaceObject(&quot;/Device&quot;);
+    QValueSpaceObject *object2 = new QValueSpaceObject(&quot;/Device&quot;);
     object2-&gt;setAttribute(&quot;Buttons&quot;, 3);
 
-<span class="comment">    // QValueSpaceItem(&quot;/Device/Buttons&quot;) == QVariant(2)</span>
+<span class="comment">    // QValueSpaceItem(&quot;/Device/Buttons&quot;).value() == QVariant(2)</span>
 
     object2-&gt;removeAttribute(&quot;Buttons&quot;);
-<span class="comment">    // QValueSpaceItem(&quot;/Device/Buttons&quot;) == QVariant(3)</span></pre>
-<p>For performance reasons the setting of and removing of attributes is buffered internally by the QValueSpaceObject and applied as a batch sometime later. Normally this occurs the next time the application enters the Qt event loop, but this behaviour should not be relied apon. If an application must synchronize application objects with others, the <a href="qvaluespaceobject.html#sync">QValueSpaceObject::sync</a>() method can be used to force the application of changes. This call is generally unnecessary, and should be used sparingly to prevent unnecessary load on the system.</p>
+<span class="comment">    // QValueSpaceItem(&quot;/Device/Buttons&quot;).value() == QVariant(3)</span></pre>
+<p>For performance reasons the setting of and removing of attributes is buffered internally by the QValueSpaceObject and applied as a batch sometime later. Normally this occurs the next time the application enters the Qt event loop, but this behavior should not be relied upon. If an application must synchronize application objects with others, the <a href="qvaluespaceobject.html#sync">QValueSpaceObject::sync</a>() method can be used to force the application of changes. This call is generally unnecessary, and should be used sparingly to prevent unnecessary load on the system.</p>
 <p><i>Note:</i> The QValueSpaceObject class is not thread safe and may only be used from an application's main thread.</p>
 <p>See also <a href="qvaluespaceitem.html">QValueSpaceItem</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QValueSpaceObject"></a>QValueSpaceObject::QValueSpaceObject ( const QByteArray &amp; <i>objectPath</i>, const QUuid &amp; <i>layer</i> = QUuid(), QObject * <i>parent</i> = 0 )</h3>
-<p>Construct a Value Space object on the specified <i>layer</i>, rooted at <i>objectPath</i> with the specified <i>parent</i>.</p>
+<p>Constructs a <a href="qvaluespaceobject.html">QValueSpaceObject</a> which accesses the specified <i>layer</i> and is rooted at <i>objectPath</i>. The object's parent is set to <i>parent</i>.</p>
 <p>If <i>layer</i> is null then the layer is automatically chosen based on <i>objectPath</i>.</p>
 <h3 class="fn"><a name="QValueSpaceObject-2"></a>QValueSpaceObject::QValueSpaceObject ( const char * <i>objectPath</i>, const QUuid &amp; <i>layer</i> = QUuid(), QObject * <i>parent</i> = 0 )</h3>
 <p>This is an overloaded function.</p>
-<p>Construct a Value Space object on the specified <i>layer</i>, rooted at <i>objectPath</i> with the specified <i>parent</i>. This constructor is equivalent to <tt>QValueSpaceObject(QByteArray(objectPath), layer, parent)</tt>.</p>
+<p>Constructs a <a href="qvaluespaceobject.html">QValueSpaceObject</a> which accesses the specified <i>layer</i> and is rooted at <i>objectPath</i>. The object's parent is set to <i>parent</i>.</p>
+<p>If <i>layer</i> is null then the layer is automatically chosen based on <i>objectPath</i>.</p>
+<p>Calling this constructor is equivalent to calling <tt>QValueSpaceObject(QByteArray(objectPath), layer, parent)</tt>.</p>
 <h3 class="fn"><a name="QValueSpaceObject-3"></a>QValueSpaceObject::QValueSpaceObject ( const QString &amp; <i>objectPath</i>, const QUuid &amp; <i>layer</i> = QUuid(), QObject * <i>parent</i> = 0 )</h3>
 <p>This is an overloaded function.</p>
-<p>Construct a Value Space object on the specified <i>layer</i>, rooted at <i>objectPath</i> with the specified <i>parent</i>. This constructor is equivalent to <tt>QValueSpaceObject(objectPath.toUtf8(), parent)</tt>.</p>
+<p>Constructs a <a href="qvaluespaceobject.html">QValueSpaceObject</a> which accesses the specified <i>layer</i> and is rooted at <i>objectPath</i>. The object's parent is set to <i>parent</i>.</p>
+<p>If <i>layer</i> is null then the layer is automatically chosen based on <i>objectPath</i>.</p>
+<p>Calling this constructor is equivalent to calling <tt>QValueSpaceObject(objectPath.toUtf8(), parent)</tt>.</p>
 <h3 class="fn"><a name="dtor.QValueSpaceObject"></a>QValueSpaceObject::~QValueSpaceObject ()</h3>
-<p>Destroys the Value Space object. This will remove the object and all its attributes from the Value Space.</p>
+<p>Destroys the <a href="qvaluespaceobject.html">QValueSpaceObject</a>. This will remove the object and all its attributes from the Value Space.</p>
 <h3 class="fn"><a name="connectNotify"></a>void QValueSpaceObject::connectNotify ( const char * <i>member</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
-<p>Registers this <a href="qvaluespaceobject.html">QValueSpaceObject</a> for notifications when request to set or remove value space items under <a href="qvaluespaceobject.html#objectPath">objectPath</a>() are received by the underlying <a href="qabstractvaluespacelayer.html">QAbstractValueSpaceLayer</a>.</p>
+<p>Registers this <a href="qvaluespaceobject.html">QValueSpaceObject</a> for notifications when requests to set or remove value space items under objectPath() are received by the underlying <a href="qabstractvaluespacelayer.html">QAbstractValueSpaceLayer</a>.</p>
 <p>Generally you do not need to call this function as it is automatically called when connections are made to this classes signals. <i>member</i> is the signal that has been connected.</p>
 <p>If you reimplement this virtual function it is important that you call this implementation from your implementation.</p>
 <p>See also <a href="qvaluespaceobject.html#itemRemove">itemRemove</a>() and <a href="qvaluespaceobject.html#itemSetValue">itemSetValue</a>().</p>
 <h3 class="fn"><a name="isValid"></a>bool QValueSpaceObject::isValid () const</h3>
-<p>Returns true if this object is valid. An object is valid if its associated <a href="qabstractvaluespacelayer.html">QAbstractValueSpaceLayer</a> is available.</p>
+<p>Returns true if this object is valid; otherwise returns false. An object is valid if its associated <a href="qabstractvaluespacelayer.html">QAbstractValueSpaceLayer</a> is available.</p>
 <h3 class="fn"><a name="itemNotify"></a>void QValueSpaceObject::itemNotify ( const QByteArray &amp; <i>attribute</i>, bool <i>interested</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal that is emitted when interest in <i>attribute</i> changes. If <i>interested</i> is true at least on <a href="qvaluespaceitem.html">QValueSpaceItem</a> is interested in the value of <i>attribute</i>.</p>
 <h3 class="fn"><a name="itemRemove"></a>void QValueSpaceObject::itemRemove ( const QByteArray &amp; <i>attribute</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal that is emitted when a request to remove <i>attribute</i> is received.</p>
 <h3 class="fn"><a name="itemSetValue"></a>void QValueSpaceObject::itemSetValue ( const QByteArray &amp; <i>attribute</i>, const QVariant &amp; <i>value</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal that is emitted when a request to set <i>attribute</i> to <i>value</i> is received.</p>
-<h3 class="fn"><a name="objectPath"></a>QString QValueSpaceObject::objectPath () const</h3>
-<p>Returns the full path to this object as passed to the <a href="qvaluespaceobject.html">QValueSpaceObject</a> constructor.</p>
+<h3 class="fn"><a name="path"></a>QString QValueSpaceObject::path () const</h3>
+<p>Returns the path that this <a href="qvaluespaceobject.html">QValueSpaceObject</a> refers to.</p>
 <h3 class="fn"><a name="removeAttribute"></a>void QValueSpaceObject::removeAttribute ( const QByteArray &amp; <i>attribute</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Removes the object <i>attribute</i> and all sub-attributes from the system.</p>
 <p>For example:</p>

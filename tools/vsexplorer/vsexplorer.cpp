@@ -163,7 +163,7 @@ void VSExplorer::removed(const QByteArray &attribute)
     if(!isSuppress) {
         QValueSpaceObject * obj = static_cast<QValueSpaceObject *>(sender());
         fprintf(stdout, "\nRemoved: %s ... %s\n",
-                obj->objectPath().toAscii().constData(), attribute.constData());
+                obj->path().toAscii().constData(), attribute.constData());
     }
 }
 
@@ -181,7 +181,7 @@ void VSExplorer::written(const QByteArray &attribute, const QVariant &newData)
     if(!isSuppress) {
         QValueSpaceObject * obj = static_cast<QValueSpaceObject *>(sender());
         fprintf(stdout, "\nWritten: %s ... %s to '%s' (%s)\n",
-                obj->objectPath().toAscii().constData(),
+                obj->path().toAscii().constData(),
                 attribute.constData(), variantToString(newData).toAscii().constData(),
                 newData.typeName());
     }
@@ -283,7 +283,7 @@ void VSExplorer::listwatchers()
     } else {
         fprintf(stdout, "Current watchers:\n");
         foreach(QValueSpaceObject *obj, watchers)
-            fprintf(stdout, "\t%s\n", obj->objectPath().toAscii().constData());
+            fprintf(stdout, "\t%s\n", obj->path().toAscii().constData());
     }
 
     fflush(stdout);
@@ -340,7 +340,7 @@ void VSExplorer::quit()
 void VSExplorer::watch(const QByteArray &path)
 {
     foreach(QValueSpaceObject *obj, watchers) {
-        if(obj->objectPath().toUtf8() == path)
+        if (obj->path().toUtf8() == path)
             return;
     }
     QValueSpaceObject * newObject = new QValueSpaceObject(path);
@@ -354,7 +354,7 @@ void VSExplorer::watch(const QByteArray &path)
 void VSExplorer::unwatch(const QByteArray &path)
 {
     foreach(QValueSpaceObject *obj, watchers) {
-        if(obj->objectPath().toUtf8() == path) {
+        if (obj->path().toUtf8() == path) {
             watchers.remove(obj);
             delete obj;
             return;

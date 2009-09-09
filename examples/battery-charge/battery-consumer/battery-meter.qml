@@ -20,6 +20,7 @@ Rectangle {
     }
 
     Rectangle {
+        //! [1]
         id: visualCharge
         x: 12
         y: 22 + 196 - height
@@ -27,6 +28,7 @@ Rectangle {
         height: 196 * batteryCharge.value / 100
         clip: true
         color: "green"
+        //! [1]
 
         Particles {
             id: Bubbles
@@ -44,6 +46,7 @@ Rectangle {
         }
 
         states: [
+        //! [3]
         State {
             name: "charging"
             when: batteryCharging.value
@@ -52,6 +55,8 @@ Rectangle {
                 emitting: true
             }
         },
+        //! [3]
+        //! [2]
         State {
             name: "low"
             when: batteryCharge.value < 25 && !batteryCharging.value
@@ -60,6 +65,7 @@ Rectangle {
                 color: "red"
             }
         }
+        //! [2]
         ]
 
         transitions: [
@@ -74,6 +80,7 @@ Rectangle {
         ]
     }
 
+    //! [0]
     ValueSpaceItem {
         id: batteryCharge
         path: "/power/battery/charge"
@@ -84,4 +91,5 @@ Rectangle {
         path: "/power/battery/charging"
         notify: true
     }
+    //! [0]
 }

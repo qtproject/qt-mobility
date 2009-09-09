@@ -62,8 +62,10 @@ public:
     bool value(Handle handle, const QByteArray &subPath, QVariant *data);
     QSet<QByteArray> children(Handle handle);
 
+    LayerOptions layerOptions() const;
+
     /* QValueSpaceItem functions */
-    bool supportsRequests() { return true; }
+    bool supportsRequests() const { return true; }
     bool requestSetValue(Handle handle, const QVariant &value);
     bool requestSetValue(Handle handle, const QByteArray &subPath, const QVariant &value);
     bool requestRemoveValue(Handle handle, const QByteArray &path = QByteArray());
@@ -166,6 +168,11 @@ QSet<QByteArray> FakeLayer::children(Handle handle)
         m_testErrors << QLatin1String("Unknown handle");
 
     return QSet<QByteArray>();
+}
+
+QAbstractValueSpaceLayer::LayerOptions FakeLayer::layerOptions() const
+{
+    return NonPermanentLayer;
 }
 
 bool FakeLayer::requestSetValue(Handle handle, const QVariant &)
@@ -307,16 +314,14 @@ void tst_QValueSpace::availableLayers()
 {
     QList<QUuid> layers = QValueSpace::availableLayers();
 
-#ifdef Q_OS_UNIX
     QVERIFY(layers.contains(QVALUESPACE_SHAREDMEMORY_LAYER));
-#else
-    QVERIFY(!layers.contains(QVALUESPACE_SHAREDMEMORY_LAYER));
-#endif
 
 #ifdef Q_OS_WIN
-    QVERIFY(layers.contains(QVALUESPACE_REGISTRY_LAYER));
+    QVERIFY(layers.contains(QVALUESPACE_VOLATILEREGISTRY_LAYER));
+    QVERIFY(layers.contains(QVALUESPACE_NONVOLATILEREGISTRY_LAYER));
 #else
-    QVERIFY(!layers.contains(QVALUESPACE_REGISTRY_LAYER));
+    QVERIFY(!layers.contains(QVALUESPACE_VOLATILEREGISTRY_LAYER));
+    QVERIFY(!layers.contains(QVALUESPACE_NONVOLATILEREGISTRY_LAYER));
 #endif
 
     QVERIFY(layers.contains(fakeLayer->id()));

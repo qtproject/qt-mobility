@@ -337,7 +337,8 @@ private slots:
 void tst_QSystemReadWriteLock::constructDestruct()
 {
     {
-        QSystemReadWriteLock("Viper");
+        QSystemReadWriteLock rwlock("Viper");
+        QCOMPARE(rwlock.key(), QLatin1String("Viper"));
     }
 }
 
@@ -537,6 +538,10 @@ void tst_QSystemReadWriteLock::multipleWritersLoop()
         delete threads[i];
 }
 
+
+typedef ReadLockLoopThread* ReadLockLoopThreadPtr;
+typedef WriteLockLoopThread* WriteLockLoopThreadPtr;
+
 /*
     Multiple readers and writers locks and unlocks a lock.
 */
@@ -552,8 +557,9 @@ void tst_QSystemReadWriteLock::multipleReadersWritersLoop()
     int writerWait=500;
     int writerHold=50;
 
-    ReadLockLoopThread  *readers[numReaders];
-    WriteLockLoopThread *writers[numWriters];
+    ReadLockLoopThreadPtr *readers = new ReadLockLoopThreadPtr[numReaders];
+    WriteLockLoopThreadPtr *writers = new WriteLockLoopThreadPtr[numWriters];
+
     int i;
 
     for (i = 0; i < numReaders; ++i)
@@ -575,8 +581,13 @@ void tst_QSystemReadWriteLock::multipleReadersWritersLoop()
         delete readers[i];
     for (i = 0; i < numWriters; ++i)
         delete writers[i];
+    delete[] readers;
+    delete[] writers;
 }
 
+
+typedef ReadLockCountThread* ReadLockCountThreadPtr;
+typedef WriteLockCountThread* WriteLockCountThreadPtr;
 /*
    Writers increment a variable from 0 to maxval, then reset it to 0.
    Readers verify that the variable remains at 0.
@@ -593,8 +604,8 @@ void tst_QSystemReadWriteLock::countingTest()
     int writerWait=150;
     int maxval=10000;
 
-    ReadLockCountThread  *readers[numReaders];
-    WriteLockCountThread *writers[numWriters];
+    ReadLockCountThreadPtr  *readers = new ReadLockCountThreadPtr[numReaders];
+    WriteLockCountThreadPtr *writers= new WriteLockCountThreadPtr[numWriters];
     int i;
 
     for (i = 0; i < numReaders; ++i)
@@ -615,6 +626,8 @@ void tst_QSystemReadWriteLock::countingTest()
         delete readers[i];
     for (i = 0; i < numWriters; ++i)
         delete writers[i];
+    delete [] readers;
+    delete [] writers;
 }
 
 /*
@@ -686,7 +699,7 @@ void tst_QSystemReadWriteLock::writerPrecedence()
     if (print)
         qDebug() << "Main Thread: After lock for writing";
 
-    int numReaders = 5;
+    const int numReaders = 5;
     ReadLockThread *readers[numReaders];
     for (int i = 0; i < numReaders; ++i) {
         readers[i] = new ReadLockThread(print);

@@ -56,7 +56,7 @@ int main(int argc, char * argv[])
         qDebug() << qPrintable(Lackey::AfterLockForRead);
 
         testRwLock.unlock();
-        sleep(1);
+        QTest::qSleep(1000);
         qDebug() << qPrintable(Lackey::AfterUnlockForRead);
         return 0;
     } else if (args[0] == "WriteLock") {
@@ -67,7 +67,7 @@ int main(int argc, char * argv[])
         testRwLock.lockForWrite();
         qDebug() << qPrintable(Lackey::AfterLockForWrite);
         testRwLock.unlock();
-        sleep(1);
+        QTest::qSleep(1000);
         qDebug() << qPrintable(Lackey::AfterUnlockForWrite);
         return 0;
     } else if (args[0] == "ReadLockReleaseable") {
@@ -77,7 +77,7 @@ int main(int argc, char * argv[])
         QSystemReadWriteLock testRwLock("Viper");
         qDebug() << qPrintable(Lackey::BeforeLockForRead);
         testRwLock.lockForRead();
-        sleep(1);
+        QTest::qSleep(1000);
         qDebug() << qPrintable(Lackey::AfterLockForRead);
 
         QFile read;

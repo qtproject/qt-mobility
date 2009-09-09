@@ -393,7 +393,7 @@ FixedMemoryTree::FixedMemoryTree(void * mem, unsigned int size,
         /* Initialize layer version table - would be worth randomizing the
            nextFreeBlk chain to distribute entries across the 128-bit change
            notification. */
-        ::bzero(poolMem, sizeof(VersionTable));
+        ::memset(poolMem,0, sizeof(VersionTable));
         for(int ii = 0; ii < VERSION_TABLE_ENTRIES; ++ii)
             versionTable()->entries[ii].nxtFreeBlk =
                 (ii + 1) % VERSION_TABLE_ENTRIES;
@@ -408,7 +408,7 @@ FixedMemoryTree::FixedMemoryTree(void * mem, unsigned int size,
         versionTable()->nxtFreeBlk =
             versionTable()->entries[ROOT_VERSION_ENTRY].nxtFreeBlk;
         Node * root = (Node *)pool->malloc(sizeof(Node));
-        ::bzero(root, sizeof(Node));
+        ::memset(root,0, sizeof(Node));
         root->creationId = versionTable()->nextCreationId++;
         root->parent = INVALID_HANDLE;
         Q_ASSERT((char *)root > poolMem);
@@ -1563,7 +1563,7 @@ unsigned short FixedMemoryTree::newNode(const char * name, unsigned int len,
     // Allocate a new node
     Node * nodePtr = (Node *)pool->malloc(nodeSize);
     Q_ASSERT((char *)nodePtr > poolMem);
-    ::bzero(nodePtr, sizeof(Node));
+    ::memset(nodePtr,0, sizeof(Node));
     nodePtr->creationId = versionTable()->nextCreationId++;
 
     // Setup name
@@ -1607,7 +1607,7 @@ unsigned short FixedMemoryTree::newNode(const char * name, unsigned int len,
     // Allocate a new node
     Node * nodePtr = (Node *)pool->malloc(nodeSize);
     Q_ASSERT((char *)nodePtr > poolMem);
-    ::bzero(nodePtr, sizeof(Node));
+    ::memset(nodePtr, 0, sizeof(Node));
     nodePtr->creationId = versionTable()->nextCreationId++;
 
     // Setup name
@@ -1662,7 +1662,6 @@ public:
     QString name();
 
     bool startup(Type);
-    void shutdown();
 
     QUuid id();
     unsigned int order();
@@ -1675,8 +1674,10 @@ public:
     bool value(Handle, const QByteArray &, QVariant *);
     QSet<QByteArray> children(Handle);
 
+    LayerOptions layerOptions() const;
+
     /* QValueSpaceItem functions */
-    bool supportsRequests() { return true; }
+    bool supportsRequests() const { return true; }
     bool requestSetValue(Handle handle, const QVariant &data);
     bool requestSetValue(Handle handle, const QByteArray &path, const QVariant &data);
     bool requestRemoveValue(Handle handle, const QByteArray &path);
@@ -2349,10 +2350,6 @@ void SharedMemoryLayer::doClientEmit()
         removeHandle((Handle)*iter);
 }
 
-void SharedMemoryLayer::shutdown()
-{
-}
-
 QUuid SharedMemoryLayer::id()
 {
     return QUuid(0xd81199c1, 0x6f60, 0x4432, 0x93, 0x4e,
@@ -2498,6 +2495,11 @@ QSet<QByteArray> SharedMemoryLayer::children(Handle handle)
 
     lock->unlock();
     return rv;
+}
+
+QAbstractValueSpaceLayer::LayerOptions SharedMemoryLayer::layerOptions() const
+{
+    return NonPermanentLayer | WriteableLayer;
 }
 
 SharedMemoryLayer::Handle SharedMemoryLayer::item(Handle parent,
@@ -3272,7 +3274,7 @@ void SharedMemoryLayer::doClientRemove(const QByteArray &path)
 
         QValueSpaceObject * obj = *iter;
 
-        const QByteArray objectPath = obj->objectPath().toUtf8();
+        const QByteArray objectPath = obj->path().toUtf8();
 
         if (objectPath.length() < path.length()) {
             if (path.startsWith(objectPath) && path.at(objectPath.length()) == '/')
@@ -3293,7 +3295,7 @@ void SharedMemoryLayer::doClientWrite(const QByteArray &path,
             ++iter) {
         QValueSpaceObject * obj = *iter;
 
-        const QByteArray objectPath = obj->objectPath().toUtf8();
+        const QByteArray objectPath = obj->path().toUtf8();
 
         if (objectPath.length() < path.length()) {
             if (path.startsWith(objectPath) && path.at(objectPath.length()) == '/')
@@ -3313,7 +3315,7 @@ void SharedMemoryLayer::doClientNotify(QValueSpaceObject *object, const QByteArr
 
     QByteArray emitPath;
 
-    const QByteArray objectPath = object->objectPath().toUtf8();
+    const QByteArray objectPath = object->path().toUtf8();
     if (path.startsWith(objectPath)) {
         // path is under objectPath
         emitPath = path.mid(objectPath.length());
@@ -3471,7 +3473,7 @@ bool SharedMemoryLayer::removeValue(QValueSpaceObject *creator, Handle handle,
 
     NodeOwner owner;
     owner.data1 = 0;
-    owner.data2 = reinterpret_cast<unsigned int>(creator);
+    owner.data2 = reinterpret_cast<quintptr>(creator);
 
     QByteArray fullPath(readHandle->path);
     if (!fullPath.endsWith('/'))
@@ -3495,7 +3497,7 @@ bool SharedMemoryLayer::removeSubTree(QValueSpaceObject *creator, Handle handle)
 
     NodeOwner owner;
     owner.data1 = 0;
-    owner.data2 = reinterpret_cast<unsigned int>(creator);
+    owner.data2 = reinterpret_cast<quintptr>(creator);
 
     return remItems(owner, readHandle->path);
 }
