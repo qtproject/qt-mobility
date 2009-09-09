@@ -319,10 +319,8 @@ void QMessage::setBody(const QString &bodyText, const QByteArray &mimeType)
         subType = mimeType.mid(index + 1).trimmed();
     }
 
-    setContentType(mainType);
-    setContentSubType(subType);
-    setContentCharset(charset);
-    setContent(bodyText);
+    QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
+    container->setContent(bodyText, mainType, subType, charset);
 }
 
 void QMessage::setBody(QTextStream &in, const QByteArray &mimeType)
@@ -355,9 +353,8 @@ void QMessage::clearAttachments()
 {
     d_ptr->_modified = true;
 
-    foreach (const QMessageContentContainerId &id, contentIds()) {
-        removeContent(id);
-    }
+    QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
+    container->_attachments.clear();
 }
 
 bool QMessage::isModified() const

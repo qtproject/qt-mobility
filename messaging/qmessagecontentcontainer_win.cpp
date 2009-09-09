@@ -261,21 +261,3 @@ void QMessageContentContainer::setDerivedMessage(QMessage *derived)
 void QMessageContentContainer::applyPendingChanges() const
 {
 }
-
-void QMessageContentContainer::removeContent(const QMessageContentContainerId &id)
-{
-    if (d_ptr->isMessage()) {
-        for (int i = 0; i < d_ptr->_attachments.count(); ++i) {
-            if (d_ptr->_attachments.at(i).containerId() == id) {
-                d_ptr->_attachments.removeAt(i);
-
-                // Adjust the identifiers for any trailing attachments
-                for (int j = i; j < d_ptr->_attachments.count(); ++j) {
-                    const_cast<QMessageContentContainerId&>(d_ptr->_attachments.at(j).d_ptr->_id) = QMessageContentContainerId(QString::number(j + 1));
-                }
-                return;
-            }
-        }
-    }
-}
-

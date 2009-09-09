@@ -44,6 +44,7 @@
 #include "qmessagefolderid_p.h"
 #include "qmessageaccountid_p.h"
 #include "qmessage_p.h"
+#include "qmessagecontentcontainer_p.h"
 #include "qmessagefolder_p.h"
 #include "qmessageaccount_p.h"
 #include "qmessageordering_p.h"
@@ -1819,9 +1820,8 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
                 result.setReceivedDate(fromFileTime(prop.Value.ft));
                 break;
             case PR_TRANSPORT_MESSAGE_HEADERS:
-                foreach (const StringPair &pair, decomposeHeaders(QStringFromLpctstr(prop.Value.LPSZ))) {
-                    result.appendHeaderField(pair.first.toAscii(), pair.second);
-                }
+                // This message must have come from an external source
+                flags |= QMessage::Incoming;
                 break;
             case PR_SUBJECT:
                 result.setSubject(QStringFromLpctstr(prop.Value.LPSZ));
@@ -2060,23 +2060,20 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
         return result;
     }
 
+    QMessageContentContainerPrivate *messageContainer(((QMessageContentContainer *)(&result))->d_ptr);
+
     if (!hasAttachments) {
         // Make the body the entire content of the message
-        result.setContentType("text");
-        result.setContentSubType(bodySubType);
-        result.setContentCharset(QByteArray("utf-16"));
-        result.setContent(messageBody);
+        messageContainer->setContent(messageBody, QByteArray("text"), bodySubType, QByteArray("utf-16"));
     } else {
         // Add the message body data as the first part
         QMessageContentContainer bodyPart;
-        bodyPart.setContentType("text");
-        bodyPart.setContentSubType(bodySubType);
-        bodyPart.setContentCharset(QByteArray("utf-16"));
-        bodyPart.setContent(messageBody);
-
-        result.setContentType("multipart");
-        result.setContentSubType("related");
-        result.appendContent(bodyPart);
+        {
+            QMessageContentContainerPrivate *bodyContainer(((QMessageContentContainer *)(&bodyPart))->d_ptr);
+            bodyContainer->setContent(messageBody, QByteArray("text"), bodySubType, QByteArray("utf-16"));
+        }
+        messageContainer->setContentType(QByteArray("multipart"), QByteArray("related"), QByteArray());
+        messageContainer->appendContent(bodyPart);
 
         // Find any attachments for this message
         IMAPITable *attachmentsTable(0);
@@ -2130,34 +2127,35 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
 
                     WinHelpers::AttachmentLocator locator(id, number);
 
-                    QMessageContentContainer container(WinHelpers::fromLocator(locator));
-                    container.setContentFileName(filename.toAscii());
-                    // TODO: No setSize() ?
+                    QMessageContentContainer attachment(WinHelpers::fromLocator(locator));
+                    QMessageContentContainerPrivate *container(((QMessageContentContainer *)(&attachment))->d_ptr);
+
+                    container->_name = filename.toAscii();
+                    container->_size = size;
 
                     if (!extension.isEmpty()) {
                         QByteArray contentType(contentTypeFromExtension(extension));
                         if (!contentType.isEmpty()) {
                             int index = contentType.indexOf('/');
                             if (index != -1) {
-                                container.setContentType(contentType.left(index));
-                                container.setContentSubType(contentType.mid(index + 1));
+                                container->setContentType(contentType.left(index), contentType.mid(index + 1), QByteArray());
                             } else {
-                                container.setContentType(contentType);
+                                container->setContentType(contentType, QByteArray(), QByteArray());
                             }
                         }
                     }
                     if (!contentId.isEmpty()) {
-                        container.setHeaderField("Content-ID", contentId.toAscii());
+                        container->setHeaderField("Content-ID", contentId.toAscii());
                     }
                     if (renderingPosition == -1) {
                         QByteArray value("attachment");
                         if (!filename.isEmpty()) {
                             value.append("; filename=" + filename.toAscii());
                         }
-                        container.setHeaderField("Content-Disposition", value);
+                        container->setHeaderField("Content-Disposition", value);
                     }
 
-                    result.appendContent(container);
+                    messageContainer->appendContent(attachment);
                 }
 
                 FreeProws(rows);

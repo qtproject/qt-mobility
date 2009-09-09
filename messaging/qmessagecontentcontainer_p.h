@@ -267,6 +267,28 @@ public:
         _attachments.clear();
     }
 
+    void setContentType(const QByteArray &type, const QByteArray &subType, const QByteArray &charset)
+    {
+        clearContents();
+
+        _type = type;
+        _subType = subType;
+        _charset = charset;
+    }
+
+    void setContent(const QString &content, const QByteArray &type, const QByteArray &subType, const QByteArray &charset)
+    {
+        setContentType(type, subType, charset);
+
+        _textContent = content;
+    }
+
+    void setHeaderField(const QByteArray &name, const QByteArray &value)
+    {
+        _header.remove(name);
+        _header.insert(name, value);
+    }
+
     QMessageContentContainer *attachment(const QMessageContentContainerId &id)
     {
         if (isMessage()) {
