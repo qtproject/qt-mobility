@@ -948,6 +948,7 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
 void QSystemDeviceInfoPrivate::setConnection()
 {
     if(halIsAvailable) {
+#if !defined(QT_NO_DBUS)
         QHalInterface iface;
 
         QStringList list = iface.findDeviceByCapability("battery");
@@ -986,6 +987,7 @@ void QSystemDeviceInfoPrivate::setConnection()
         }
 
     }
+#endif
 }
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
