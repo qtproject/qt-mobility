@@ -52,7 +52,6 @@
 
 #include "qsysteminfo.h"
 #include <qsysinfoglobal.h>
-#include <qhalservice_p.h>
 
 QT_BEGIN_HEADER
 
