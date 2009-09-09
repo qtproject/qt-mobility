@@ -83,6 +83,7 @@ int main(int argc, char** argv)
         process.setProcessChannelMode(QProcess::ForwardedChannels);
         args.removeAt(0); //don't pass the binary name
         process.start("tst_qvaluespaceitem_oop", args << "-vsClientMode");
+
         return app.exec();
     }
 #endif

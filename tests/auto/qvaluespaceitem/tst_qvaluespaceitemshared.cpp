@@ -894,6 +894,8 @@ void tst_QValueSpaceItem::ipcTests()
     QTRY_COMPARE(spy.count(), 1);
     QCOMPARE(item.value("", 99).toInt(), 102);
     spy.clear();
+
+    QVERIFY(process.waitForFinished(10000));
 #endif
 }
 
@@ -1187,7 +1189,6 @@ void tst_QValueSpaceItem::ipcRemoveKey()
 
     ChangeListener listener;
     QSignalSpy changeSpy(&listener, SIGNAL(baseChanged()));
-
     QObject::connect(&item, SIGNAL(contentsChanged()), &listener, SIGNAL(baseChanged()));
 
     QProcess process;
@@ -1199,9 +1200,8 @@ void tst_QValueSpaceItem::ipcRemoveKey()
     QTRY_COMPARE(changeSpy.count(), 1);
     QCOMPARE(item.value("value", 5).toInt(), 100);
 
-    changeSpy.clear();
-
     // Wait for lackey to delete key "/ipcRemoveKey".
+    changeSpy.clear();
     QTRY_COMPARE(changeSpy.count(), 1);
 
     QList<QString> paths = item.subPaths();
@@ -1209,6 +1209,7 @@ void tst_QValueSpaceItem::ipcRemoveKey()
         qDebug() << item.subPaths();
     QVERIFY(item.subPaths().isEmpty());
     QCOMPARE(item.value("value", 6).toInt(), 6);
+    QVERIFY(process.waitForFinished(10000));
 #endif
 }
 
@@ -1333,6 +1334,7 @@ void tst_QValueSpaceItem::ipcSetValue()
         delete listeners.takeFirst();
     while(!objects.isEmpty())
         delete objects.takeFirst();
+    QVERIFY(process.waitForFinished(10000));
 #endif
 }
 
@@ -1443,7 +1445,7 @@ void tst_QValueSpaceItem::interestNotification()
         item = 0;
         QFAIL("Invalid type");
     }
-
+    
     if (type == Copy) {
         // Copies of QValueSpaceItem share the same interest notification.
         QTest::qWait(100);
@@ -1556,7 +1558,7 @@ void tst_QValueSpaceItem::ipcInterestNotification()
 
     // Lackey will receive itemNotify and remove attribute.
     delete item;
-
+    QTest::qWait(1000);
 
     // Test QValueSpaceItem construction after QValueSpaceObject
 

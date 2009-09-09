@@ -167,7 +167,7 @@ private slots:
 
     void itemNotify(const QByteArray &path, bool interested)
     {
-        qDebug() << Q_FUNC_INFO << path << interested;
+        //qDebug() << Q_FUNC_INFO << path << interested;
         if (interested) {
             if (path == "/value")
                 object->setAttribute(path, 5);
@@ -182,6 +182,7 @@ private slots:
             delete object;
             object = 0;
         }
+
         QTimer::singleShot(TIMEOUT, qApp, SLOT(quit()));
     }
 

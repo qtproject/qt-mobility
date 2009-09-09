@@ -393,7 +393,7 @@ FixedMemoryTree::FixedMemoryTree(void * mem, unsigned int size,
         /* Initialize layer version table - would be worth randomizing the
            nextFreeBlk chain to distribute entries across the 128-bit change
            notification. */
-        ::bzero(poolMem, sizeof(VersionTable));
+        ::memset(poolMem,0, sizeof(VersionTable));
         for(int ii = 0; ii < VERSION_TABLE_ENTRIES; ++ii)
             versionTable()->entries[ii].nxtFreeBlk =
                 (ii + 1) % VERSION_TABLE_ENTRIES;
@@ -408,7 +408,7 @@ FixedMemoryTree::FixedMemoryTree(void * mem, unsigned int size,
         versionTable()->nxtFreeBlk =
             versionTable()->entries[ROOT_VERSION_ENTRY].nxtFreeBlk;
         Node * root = (Node *)pool->malloc(sizeof(Node));
-        ::bzero(root, sizeof(Node));
+        ::memset(root,0, sizeof(Node));
         root->creationId = versionTable()->nextCreationId++;
         root->parent = INVALID_HANDLE;
         Q_ASSERT((char *)root > poolMem);
@@ -1563,7 +1563,7 @@ unsigned short FixedMemoryTree::newNode(const char * name, unsigned int len,
     // Allocate a new node
     Node * nodePtr = (Node *)pool->malloc(nodeSize);
     Q_ASSERT((char *)nodePtr > poolMem);
-    ::bzero(nodePtr, sizeof(Node));
+    ::memset(nodePtr,0, sizeof(Node));
     nodePtr->creationId = versionTable()->nextCreationId++;
 
     // Setup name
@@ -1607,7 +1607,7 @@ unsigned short FixedMemoryTree::newNode(const char * name, unsigned int len,
     // Allocate a new node
     Node * nodePtr = (Node *)pool->malloc(nodeSize);
     Q_ASSERT((char *)nodePtr > poolMem);
-    ::bzero(nodePtr, sizeof(Node));
+    ::memset(nodePtr, 0, sizeof(Node));
     nodePtr->creationId = versionTable()->nextCreationId++;
 
     // Setup name

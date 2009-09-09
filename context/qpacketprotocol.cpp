@@ -136,7 +136,7 @@ public slots:
     void bytesWritten(qint64 bytes)
     {
         Q_ASSERT(!sendingPackets.isEmpty());
-
+	
         while(bytes) {
             if(sendingPackets.at(0) > bytes) {
                 sendingPackets[0] -= bytes;
