@@ -1,5 +1,46 @@
-/*!
+/****************************************************************************
+**
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the documentation of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain
+** additional rights.  These rights are described in the Nokia Qt LGPL
+** Exception version 1.1, included in the file LGPL_EXCEPTION.txt in this
+** package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
 
+
+/*!
 \page index.html
 
 \title Qt Mobility Developer Resources
@@ -10,41 +51,57 @@
 \section1 Qt Service Framework
 \section2 Introduction
 
-The Qt Service framework provides a set of APIs that allows clients to discover and instantiate arbitrary services. 
-This is achieved by defining a unified way of finding, implementing and accessing services across multiple platforms.
-Due to the service frameworks knowledge of service interfaces, their versions and QObject-based introspection
-it may even be used to unify and access multiple platform specific service implementations via the same Qt-based 
-client application.
+The Qt Service framework provides a set of APIs that allows clients to
+discover and instantiate arbitrary services.  This is achieved by defining
+a unified way of finding, implementing and accessing services across
+multiple platforms.
+Due to the service frameworks knowledge of service interfaces, their
+versions and QObject-based introspection it may even be used to unify and
+access multiple platform specific service implementations via the same
+Qt-based client application.
 
 \section2 Overview 
 
-A service is an independent component that allows a client to perform a well-defined operation. Clients
-can find services based on their name and version as well as the interface that is implemented by the service object.
-Once the service has been identified the framework starts the service and returns a pointer
-to it. QServiceManager is the main interface through which clients can access the mentioned
-framework functionality. In addition services themselves may also act as clients to the service framework by requesting
-other services installed on the system.
+A service is an independent component that allows a client to perform a
+well-defined operation. Clients can find services based on their name and
+version as well as the interface that is implemented by the service object.
+Once the service has been identified the framework starts the service and
+returns a pointer to it. QServiceManager is the main interface through
+which clients can access the mentioned framework functionality. In
+addition services themselves may also act as clients to the service
+framework by requesting other services installed on the system.
 
-Service provider are implemented via plug-ins. QServicePluginInterface defines the main interface for each plug-in.
-In order to avoid that clients have to link against service specific libraries each service object must be derived
-from QObject. Therefore the QMetaObject system can be used to dynamically discover and invoke the service's capabilities.
-To achieve the best level of access via the Qt meta object system services should be implemented in such a way that 
-their entire functionality is accessable via the signals, slots, properties or invokable functions 
+Service provider are implemented via plug-ins. QServicePluginInterface 
+defines the main interface for each plug-in.
+In order to avoid that clients have to link against service specific
+libraries each service object must be derived from QObject. Therefore the
+QMetaObject system can be used to dynamically discover and invoke the
+service's capabilities.
+To achieve the best level of access via the Qt meta object system services
+should be implemented in such a way that their entire functionality is
+accessable via the signals, slots, properties or invokable functions
 (see Q_INVOKABLE macro for more details).
 
-Each service plug-in implements one service only but can provide multiple implementations for multiple interfaces. 
-Therefore a service (plug-in) can retain a certain level of backwards compatibility even if the main service interface breaks
-in such a way that a new interface name has to be used. Existing clients can still use the previous version of service interface
-whereas new clients can utilize the new interface. 
+Each service plug-in implements one service only but can provide multiple
+implementations for multiple interfaces. 
+Therefore a service (plug-in) can retain a certain level of backwards
+compatibility even if the main service interface breaks in such a way that
+a new interface name has to be used. Existing clients can still use the
+previous version of service interface whereas new clients can utilize the
+new interface. 
 
-Future versions of this framework may also enable access to out-of-process service provider. 
+Future versions of this framework may also enable access to out-of-process
+service provider. 
 
 \section2 Using the framework
 
-This section assumes that the user wants to access the \i FileManager service which offers an implementation for the \i com.nokia.qt.examples.FileStorage interface
-The service framework enables multiple ways of accessing those implementations. 
+This section assumes that the user wants to access the \i FileManager
+service which offers an implementation for the \i com.nokia.qt.examples.FileStorage
+interface The service framework enables multiple ways of accessing those
+implementations. 
 
-QServiceManager is the main class to lookup and instantiate services. Services can be found by constraining the search via service meta data or
+QServiceManager is the main class to lookup and instantiate services.
+Services can be found by constraining the search via service meta data or
 by using the default lookup mechanism.
 
 \section3 Verbose lookup
@@ -68,10 +125,12 @@ The client code has precise knowledge of the service and its interfaces.
 
 \section3 Default lookup
 
-The client code has knowledge of the interface and doesn't really care about the service that implements the interface. In such cases 
-the default service lookup can be utilized to create a service object instance. If the same service provides multiple versions of 
-the same interface the latest version is returned. Therefore subsequent versions of the same interface must always be binary 
-compatible to previous versions.
+The client code has knowledge of the interface and doesn't really care
+about the service that implements the interface. In such cases the default
+service lookup can be utilized to create a service object instance. If the
+same service provides multiple versions of the same interface the latest
+version is returned. Therefore subsequent versions of the same interface
+must always be binary compatible to previous versions.
 
 \code
     QServiceManager manager;
@@ -81,9 +140,13 @@ compatible to previous versions.
 
 \section3 Header lookup
 
-So far all lookup mechanism returned a QObject pointer. This pointer can be utilised by introspecting the object using 
-Qt's meta object system. Therefore the client does not have to have any knowledge of the object header or symbols. However in some use cases 
-it may be more convenient to directly interact with the service object by including the service header and/or linking against the service provider.
+So far all lookup mechanism returned a QObject pointer. This pointer can be
+utilised by introspecting the object using Qt's meta object system.
+Therefore the client does not have to have any knowledge of the object
+header or symbols. However in some use cases it may be more convenient to
+directly interact with the service object by including the service header
+and/or linking against the service provider.
+
 The subsequent code snippet demonstrates how this may look like:
 
 \code
@@ -100,34 +163,58 @@ storage = manager.getInterface<FileStorage>("com.nokia.qt.examples.FileStorage")
 
 \section2 Service scope
 
-The QServiceManager operates in either \l{QServiceManager::UserScope}{User scope} or \l{QServiceManager::SystemScope}{System scope}. By default, it operates in user scope. The choice of scope affects whether registered services are available system-wide or only to the current user, and whether service and interface lookups are limited to system-wide service or whether the current user's together with system service configurations are considered.
+The QServiceManager operates in either \l{QServiceManager::UserScope}{User scope}
+or \l{QServiceManager::SystemScope}{System scope}. By default, it operates
+in user scope. The choice of scope affects whether registered services are
+available system-wide or only to the current user, and whether service and
+interface lookups are limited to system-wide service or whether the current
+user's together with system service configurations are considered.
 
 \section3 User scope
 
-In user scope, services are registered in a storage location specific to the current user. When a default service is set for an interface using \l{QServiceManager::setInterfaceDefault()}{setInterfaceDefault()}, the referenced service can be either a user-specific or system-wide service.
+In user scope, services are registered in a storage location specific to
+the current user. When a default service is set for an interface using
+\l{QServiceManager::setInterfaceDefault()}{setInterfaceDefault()}, the
+referenced service can be either a user-specific or system-wide service.
 
-For service and interface lookups, a manager will first search the user-specific services; if the requested component is not found, the manager then searches the system-wide services, if the user has sufficient permissions to do so.
+For service and interface lookups, a manager will first search the
+user-specific services; if the requested component is not found, the
+manager then searches the system-wide services, if the user has
+sufficient permissions to do so.
 
-The \l{QServiceManager::serviceAdded()} and \l{QServiceManager::serviceRemoved()} notifications are emitted when services are added or removed from either the user-specific or system-wide services. These signals have a \c scope parameter to indicate the scope in which the service was added or removed. (Note the system-wide service notifications are only available if the user has sufficient permissions to access the system-wide service storage.)
+The \l{QServiceManager::serviceAdded()} and \l{QServiceManager::serviceRemoved()}
+notifications are emitted when services are added or removed from either
+the user-specific or system-wide services. These signals have a \c scope
+parameter to indicate the scope in which the service was added or removed.
+(Note the system-wide service notifications are only available if the user
+has sufficient permissions to access the system-wide service storage.)
 
 \section3 System scope
 
-In system scope, services are registered in a system-wide storage location. The manager does not access user-specific services for any operations. Service and interface lookups fail if the requested services are not found in the system-wide service storage. Service registration is performed in the system-wide storage.
+In system scope, services are registered in a system-wide storage location.
+The manager does not access user-specific services for any operations.
+Service and interface lookups fail if the requested services are not found
+in the system-wide service storage. Service registration is performed in
+the system-wide storage.
 
-If \l{QServiceManager::setInterfaceDefault()}{setInterfaceDefault()} is called for a user-specific service, the operation fails.
+If \l{QServiceManager::setInterfaceDefault()}{setInterfaceDefault()} is
+called for a user-specific service, the operation fails.
 
-Also, the \l{QServiceManager::serviceAdded()} and \l{QServiceManager::serviceRemoved()} notifications are only emitted for system-wide services.
+Also, the \l{QServiceManager::serviceAdded()} and \l{QServiceManager::serviceRemoved()}
+notifications are only emitted for system-wide services.
 
 
 
 \section2 Adding and removing of services
 
-New services can be installed and removed at runtime. An XML file is used to describe the service meta data and links the service code
-to its meta description.
+New services can be installed and removed at runtime. An XML file is used
+to describe the service meta data and links the service code to its meta
+description.
 
 \section3 XML format
 
-Services are installed via an XML file which describes the meta data and location of the service. The xml file can be described via the following 
+Services are installed via an XML file which describes the meta data and
+location of the service. The xml file can be described via the following 
 DTD:
 
 \code
@@ -159,10 +246,14 @@ The elements and attributes have the following meanings:
     \row
         \o "
         \o filepath
-        \o The absolute path and name of the plug-in to be loaded when this service is requested. Alternatively if the plug-in
-           name only is provided the standard library paths (see QCoreApplication::libraryPaths()) are used to find the plug-in.
-           Note that if the plugin name is given only, platform specific parts such as the suffix ".dll" and ".so" or plugin prefix "lib"
-           should be removed to enable cross platform resolution. QLibrary is used to determine the platform specific parts of the plugin.
+        \o The absolute path and name of the plug-in to be loaded when this
+           service is requested. Alternatively if the plug-in name only is
+           provided the standard library paths (see QCoreApplication::libraryPaths())
+           are used to find the plug-in.
+           Note that if the plugin name is given only, platform specific
+           parts such as the suffix ".dll" and ".so" or plugin prefix "lib"
+           should be removed to enable cross platform resolution. QLibrary
+           is used to determine the platform specific parts of the plugin.
     \row
         \o "
         \o name
@@ -174,7 +265,8 @@ The elements and attributes have the following meanings:
     \row
         \o "
         \o capabilities
-        \o This property is a list of arbitrary strings which are interpreted as permissions/capabilities. This list can be empty.
+        \o This property is a list of arbitrary strings which are
+           interpreted as permissions/capabilities. This list can be empty.
     \row
         \o "
         \o name
@@ -182,9 +274,16 @@ The elements and attributes have the following meanings:
     \row
         \o "
         \o version
-        \o This property contains the interface and implementation version. The version tag follows the \i major.minor notation. The major version indicates the interface version the minor version the implementation version.
+        \o This property contains the interface and implementation version.
+        The version tag follows the \i major.minor notation. The major 
+        version indicates the interface version the minor version the 
+        implementation version.
 
-           The version number \bold must be greater than 1.0. The version cannot be less than 1.0 because the Service Framework is dependent on the fact that services must be binary compatible between major versions, and services with versions less than 1.0 are unlikely to be binary compatible with later versions.
+           The version number \bold must be greater than 1.0. The version
+           cannot be less than 1.0 because the Service Framework is
+           dependent on the fact that services must be binary compatible
+           between major versions, and services with versions less than 1.0
+           are unlikely to be binary compatible with later versions.
     \row
         \o "
         \o description
@@ -192,7 +291,8 @@ The elements and attributes have the following meanings:
     \row
         \o "
         \o customproperty
-        \o An implementation specific key value pair which can be used for filtering or as description.
+        \o An implementation specific key value pair which can be used for
+        filtering or as description.
  
 \endtable
 
@@ -230,26 +330,36 @@ An example for a valid XML service description could be the following \i TestSer
 
 \section2 Tools for XML generation
 
-The framework includes a GUI tool under \tt tools/servicexmlgen for generating and inspecting service XML files. This makes it easy to enter service metadata and interface details and generate the appropriate XML to describe the service. It can also be used to load and inspect existing service XML files.
+The framework includes a GUI tool under \tt tools/servicexmlgen for 
+generating and inspecting service XML files. This makes it easy to enter
+service metadata and interface details and generate the appropriate XML to
+describe the service. It can also be used to load and inspect existing
+service XML files.
 
-Here is a screenshot of the application, loaded with the \i TestService XML description provided above.
+Here is a screenshot of the application, loaded with the \i TestService XML
+description provided above.
 
 \image servicexmlgen.png
 
 
 \section2 Installing the service at runtime
 
-New services can be added and removed at any time via QServiceManager::addService() and QServiceManager::removeService().
+New services can be added and removed at any time via QServiceManager::addService()
+and QServiceManager::removeService().
 
 
 \section2 Identifying services
 
-Each implementation is identified by a service name, an interface name and its version. This information is encapsulated 
-by QServiceInterfaceDescriptor which can be used to request references to service objects. 
+Each implementation is identified by a service name, an interface name and
+its version. This information is encapsulated by
+QServiceInterfaceDescriptor which can be used to request references to
+service objects. 
 
-QServiceFilter simplifies the lookup of already installed services. Developers specifies the criteria used during the meta data lookup. The subsequent example
-demonstrates the interaction between QServiceInterfaceDescriptor and QServiceFilter by creating references to all services that implement the 
-interface \i com.nokia.qt.ILocation:
+QServiceFilter simplifies the lookup of already installed services.
+  Developers specifies the criteria used during the meta data lookup.
+The subsequent example demonstrates the interaction between
+QServiceInterfaceDescriptor and QServiceFilter by creating references to
+all services that implement the interface \i com.nokia.qt.ILocation:
 
 \code
     QServiceManager mgr;
@@ -267,65 +377,105 @@ interface \i com.nokia.qt.ILocation:
 \endcode
 
 \section2 Upgrading services
-There are two ways in which to upgrade a service.  The first is an incremental approach whereby QServiceManager::addService() is used to register 
-an XML descriptor whose service name already exists but defines new interface implementations.  For example an already existing service, "ovi"
-may define version 1.0 of interface,"IDownload".  QServiceManager::addService() is then called with an XML descriptor that declares itself
-as belonging the "ovi" service, but implements version 1.1 of the interface "IDownload".  Both implementation versions will be
+There are two ways in which to upgrade a service.  The first is an
+incremental approach whereby QServiceManager::addService() is used to
+register an XML descriptor whose service name already exists but defines
+new interface implementations.  For example an already existing service,
+"ovi" may define version 1.0 of interface,"IDownload".
+QServiceManager::addService() is then called with an XML descriptor that
+declares itself as belonging the "ovi" service, but implements version 1.1
+of the interface "IDownload".  Both implementation versions will be
 available for use.
 
-The second method is a replacement approach whereby an existing service is completely removed and replaced by a new service.
-As an example the already existing "ovi" service may implement interface "IDownload" version 1.0, the new "ovi" service may 
-implement "IDownload" version 1.0 and version 1.1.  In this case the old service implementation must be first be removed using
-QServiceManager::removeService() to make way for the new service implementation.
+The second method is a replacement approach whereby an existing service is
+completely removed and replaced by a new service.
+
+As an example the already existing "ovi" service may implement interface
+"IDownload" version 1.0, the new "ovi" service may implement "IDownload"
+version 1.0 and version 1.1.  In this case the old service implementation
+must be first be removed using QServiceManager::removeService() to make
+way for the new service implementation.
 
 \section1 Bearer Management
 
-The Bearer Management API controls the system's connectivity state. This incorporates simple information such
-as whether the device is online and how many interfaces there are as well as enables the application developer
-to start, stop network interfaces and influences other connection specific details. Depending on the platform's
-capabilities it may even provide session management so that a network interface remains up for as long as
-clients have a registered interest in them while at the same time optimizes the interface's uptime. 
-This API is a key enabler for HTTP level roaming in \l {http://doc.trolltech.com/doc/qt/qnetworkmanager.html}{QNetworkAccessManager}.
+The Bearer Management API controls the system's connectivity state. This
+incorporates simple information such as whether the device is online and
+how many interfaces there are as well as enables the application developer
+to start, stop network interfaces and influences other connection specific
+details. Depending on the platform's capabilities it may even provide
+session management so that a network interface remains up for as long as
+clients have a registered interest in them while at the same time
+optimizes the interface's uptime. 
 
-This API does not provide support for management of network configurations themselves. It is up to the platform
-to provide infrastructure which enables to user to create, edit or delete network configurations. 
+This API is a key enabler for HTTP level roaming in 
+\l {http://doc.trolltech.com/doc/qt/qnetworkmanager.html}{QNetworkAccessManager}.
+
+This API does not provide support for management of network configurations
+themselves. It is up to the platform to provide infrastructure which
+enables to user to create, edit or delete network configurations. 
 
 \section2 The API in details
 
-Computer systems manage their network interfaces via a set of configurations. Each configuration describes a set of parameters
-which instruct the system how a particular network interface is started. One of the most simplistic examples might be an Ethernet
-configuration that links a network card to a DHCP server. A more complex example might be a Wireless LAN configuration which may comprise
-of hardware details such as the WLAN card address, WLAN access point details (e.g ESSID, encryption details) and user specific 
-information (for example username and password). Once the network interface was configured and started according to the configuration
-blue print, multiple applications are free to use this link layer connection/session for their own socket operations. This API carefully distinguishes
-a network session and the network connections (represented by socket sessions) which it supports.
+Computer systems manage their network interfaces via a set of configurations.
+Each configuration describes a set of parameters which instruct the system
+how a particular network interface is started. One of the most simplistic
+examples might be an Ethernet configuration that links a network card to a
+DHCP server. A more complex example might be a Wireless LAN configuration
+which may comprise of hardware details such as the WLAN card address,
+WLAN access point details (e.g ESSID, encryption details) and user specific 
+information (for example username and password). Once the network interface
+was configured and started according to the configuration blue print,
+multiple applications are free to use this link layer connection/session
+for their own socket operations. This API carefully distinguishes a
+network session and the network connections (represented by socket
+sessions) which it supports.
 
-The distinction between physical network interfaces, their mappping to multiple configurations, how such a mapping can create an active
-link layer connection and a network connection that can be created once the session has been established is important to understand 
-the various elements of this API. The Bearer Management API in conjunction with QNetworkInterface follows the same principle.
-QNetworkInterface already provides the required abstraction for physical network interface. In addition QNetworkConfiguration encapsulates
-a network configuration which can be used to create, destroy and monitor link layer connections (represented by QNetworkSession object).
+The distinction between physical network interfaces, their mappping to
+multiple configurations, how such a mapping can create an active link
+layer connection and a network connection that can be created once the
+session has been established is important to understand the various
+elements of this API. The Bearer Management API in conjunction with
+QNetworkInterface follows the same principle. QNetworkInterface already
+provides the required abstraction for physical network interface. In
+addition QNetworkConfiguration encapsulates a network configuration which
+can be used to create, destroy and monitor link layer connections
+(represented by QNetworkSession object).
 
 \section3 Service networks
 
-Some mobile platforms use the concept of grouped access points (also called SNAP or Service Network Access Point). In principle
-multiple configurations are grouped together and possibly even prioritized when compared to each other. This is useful for use cases where
-all configurations serve a similar purpose or context. A common context could be that they provide access to the public Internet
-or possibly only to the office Intranet. By providing a pool of configurations the system can make a decision based on given priorities which usually
-map to factors such as speed, availability and cost. Furthermore the system can automatically roam from one access point to the next one while
-ensuring minimal impact on the user experience.
+Some mobile platforms use the concept of grouped access points (also
+called SNAP or Service Network Access Point). In principle multiple
+configurations are grouped together and possibly even prioritized when
+compared to each other. This is useful for use cases where all
+configurations serve a similar purpose or context. A common context could
+be that they provide access to the public Internet or possibly only to the
+office Intranet. By providing a pool of configurations the system can make
+a decision based on given priorities which usually map to factors such as
+speed, availability and cost. Furthermore the system can automatically
+roam from one access point to the next one while ensuring minimal impact on
+the user experience.
 
-The \l{QNetworkConfiguration::Type} flag specifies to what category a configuration belongs. The \l{QNetworkConfiguration::InternetAccessPoint} type
-is the most common example. It represents a configuration that can be used to create a session. The above mentioned grouping behavior is provided
-by \l {QNetworkConfiguration::ServiceNetwork} configurations. Service networks are place holders until such time when the user attempts to \l {QNetworkSession::open()}{open()}
-a new session. At that point in time the system determines which of the configurations \l{QNetworkConfiguration::children()} is best to use.
-A service network can only have one level of indirection which implies children can only be of type \l {QNetworkConfiguration::InternetAccessPoint}.
+The \l{QNetworkConfiguration::Type} flag specifies to what category a
+configuration belongs. The \l{QNetworkConfiguration::InternetAccessPoint}
+type is the most common example. It represents a configuration that can be
+used to create a session. The above mentioned grouping behavior is provided
+by \l {QNetworkConfiguration::ServiceNetwork} configurations. Service
+networks are place holders until such time when the user attempts to
+\l {QNetworkSession::open()}{open()} a new session. At that point in time
+the system determines which of the configurations \l{QNetworkConfiguration::children()}
+is best to use. A service network can only have one level of indirection
+which implies children can only be of type \l {QNetworkConfiguration::InternetAccessPoint}.
 
-Most systems allow the user to define the systems default configuration. Usually the default behavior is either a service network, a particular 
-internet access point or the user instructs the platform to ask the user once an application requests the network. User interaction is generally
-implemented by some sort of system dialog which shows up at the appropriate point in time. The application does not have to handle the user input. This API provides the 
-\l QNetworkConfigurationManager::defaultConfiguration() call which serves a similar purpose. The subsequent code snippet provides a quick way how 
-an application can quickly create a new network session without having to interact with the user:
+Most systems allow the user to define the systems default configuration.
+Usually the default behavior is either a service network, a particular
+internet access point or the user instructs the platform to ask the user
+once an application requests the network. User interaction is generally
+implemented by some sort of system dialog which shows up at the appropriate
+point in time. The application does not have to handle the user input. This
+API provides the \l QNetworkConfigurationManager::defaultConfiguration()
+call which serves a similar purpose. The subsequent code snippet provides
+a quick way how an application can quickly create a new network session
+without having to interact with the user:
 
 \code
     QNetworkConfigurationManager manager;
@@ -349,38 +499,63 @@ an application can quickly create a new network session without having to intera
 
 \endcode
 
-To accommodate the "Ask user" use case the default configuration can be of type QNetworkConfiguration::UserChoice. A user choice configuration
-is resolved as part of the \l {QNetworkSession::open()} call. Note that a \l{QNetworkConfiguration::UserChoice}{UserChoice} configuration is only 
-ever returned via \l {QNetworkConfigurationManager::defaultConfiguration()} and not \l QNetworkConfigurationManager::allConfigurations().
+To accommodate the "Ask user" use case the default configuration can be of
+type QNetworkConfiguration::UserChoice. A user choice configuration is
+resolved as part of the \l {QNetworkSession::open()} call. Note that a
+\l{QNetworkConfiguration::UserChoice}{UserChoice} configuration is only 
+ever returned via \l {QNetworkConfigurationManager::defaultConfiguration()}
+and not \l QNetworkConfigurationManager::allConfigurations().
 
-On systems which do not maintain a list of \l {QNetworkConfigurationManager::defaultConfiguration()}{defaultConfiguration()}
-an invalid configuration is returned. A possible workaround could be to implement a custom dialog which is populated based on what 
+On systems which do not maintain a list of
+\l {QNetworkConfigurationManager::defaultConfiguration()}{defaultConfiguration()}
+an invalid configuration is returned. A possible workaround could be to
+implement a custom dialog which is populated based on what
 \l QNetworkConfigurationManager::allConfigurations() returns.
 
 \section3 Managing network sessions
 
-A QNetworkSession object separates a \l {QNetworkSession::state()}{state()} and an \l{QNetworkSession::isActive()}{isActive()} condition.
-The state() attribute enables developers to detect whether the system currently maintains a global network session for the given QNetworkConfiguration.
-If \l {QNetworkSession::isActive()}{isActive()} returns true the QNetworkSession instance at hand was at least one of the entities requesting the
-global network session. This distinction is required to support the notion of session registrations. For as long as there are one or more
-active QNetworkSession instances the underlying network interface is not shut down. Therefore the session \l{QNetworkSession::state()}{state()} can be used to monitor
-the state of network interfaces.
+A QNetworkSession object separates a \l {QNetworkSession::state()}{state()}
+and an \l{QNetworkSession::isActive()}{isActive()} condition. 
 
-An active session is created by calling \l {QNetworkSession::open()} and closed via \l{QNetworkSession::close()}, respectively. If the session
-is \l{QNetworkSession::Disconnected}{disconnected} at the time of the \l{QNetworkSession::open()}{open()} call the underlying interface is started;
-otherwise only the reference counter against the global session is incremeted. The opposite behavior can be observed when using \l{QNetworkSession::close()}{close()}.
-In some use cases it may be necessary to turn the interface off despite of active sessions. This can be achieved by calling \l{QNetworkSession::stop()}{stop()}.
-An example use case could be a network manager type of application allowing the user to control the overall state of the devices connectivity.
+The state() attribute enables developers to detect whether the system
+currently maintains a global network session for the given
+QNetworkConfiguration. If \l {QNetworkSession::isActive()}{isActive()}
+returns true the QNetworkSession instance at hand was at least one of the
+entities requesting the global network session. This distinction is
+required to support the notion of session registrations. For as long as
+there are one or more active QNetworkSession instances the underlying
+network interface is not shut down. Therefore the session
+\l{QNetworkSession::state()}{state()} can be used to monitor the state of
+network interfaces.
 
-Global (inter-process) session support is platform dependent and can be detected via \l {QNetworkConfigurationManager::SystemSessionSupport}. If the system does not support
-global session calling \l{QNetworkSession::close()}{close()} never stops the interface.
+An active session is created by calling \l {QNetworkSession::open()} and
+closed via \l{QNetworkSession::close()}, respectively. If the session
+is \l{QNetworkSession::Disconnected}{disconnected} at the time of the
+\l{QNetworkSession::open()}{open()} call the underlying interface is started;
+otherwise only the reference counter against the global session is
+incremeted. The opposite behavior can be observed when using
+\l{QNetworkSession::close()}{close()}.
+
+In some use cases it may be necessary to turn the interface off despite of
+active sessions. This can be achieved by calling
+\l{QNetworkSession::stop()}{stop()}. An example use case could be a
+network manager type of application allowing the user to control the
+overall state of the devices connectivity.
+
+Global (inter-process) session support is platform dependent and can be
+detected via \l {QNetworkConfigurationManager::SystemSessionSupport}.
+If the system does not support global session calling
+\l{QNetworkSession::close()}{close()} never stops the interface.
 
 \section3 Roaming
 
 \section3 Platform capabilities
 
-Some API features are not available on all platforms. The \l QNetworkConfigurationManager::CapabilityFlag should be used to detect platform features at runtime. 
-The following table lists the various platform API's being used by this API. This may assist in the process of determining the feature support:
+Some API features are not available on all platforms. The
+\l QNetworkConfigurationManager::CapabilityFlag should be used to detect
+platform features at runtime. The following table lists the various
+platform API's being used by this API. This may assist in the process of
+determining the feature support:
 
 \table
     \header
@@ -410,9 +585,12 @@ The following table lists the various platform API's being used by this API. Thi
 
 \section2 Introduction
 
-The Location API provides a library for distributing and receiving location data using arbitrary data sources.
+The Location API provides a library for distributing and receiving location
+data using arbitrary data sources.
 
-Location data involves a precisely specified position on the Earth's surface \unicode {0x2014} as provided by a latitude-longitude coordinate \unicode {0x2014} along with associated data, such as:
+Location data involves a precisely specified position on the Earth's
+surface \unicode {0x2014} as provided by a latitude-longitude coordinate
+\unicode {0x2014} along with associated data, such as:
 
     \list
     \o The date and time at which the position was reported
@@ -421,22 +599,54 @@ Location data involves a precisely specified position on the Earth's surface \un
     \o The bearing of the device in degrees, relative to true north
     \endlist
 
-This data can be extracted through a variety of methods. One of the most well known methods of positioning is GPS (Global Positioning System), a publicly available system that uses radiowave signals received from Earth-orbiting satellites to calculate the precise position and time of the receiver. Another popular method is Cell ID positioning, which uses the cell ID of the cell site that is currently serving the receiving device to calculate its approximate location. These and other positioning methods can all be used with the Location API; the only requirement for a location data source within the API is that it provides a latitude-longitude coordinate with a date/time value, with the option of providing the other attributes listed above.
+This data can be extracted through a variety of methods. One of the most
+well known methods of positioning is GPS (Global Positioning System), a
+publicly available system that uses radiowave signals received from
+Earth-orbiting satellites to calculate the precise position and time of
+the receiver. Another popular method is Cell ID positioning, which uses
+the cell ID of the cell site that is currently serving the receiving
+device to calculate its approximate location. These and other positioning
+methods can all be used with the Location API; the only requirement for a
+location data source within the API is that it provides a 
+latitude-longitude coordinate with a date/time value, with the option of
+providing the other attributes listed above.
 
 
-Location data sources are created by subclassing QGeoPositionInfoSource and providing QGeoPositionInfo objects through the QGeoPositionInfoSource::positionUpdated() signal. Clients that require location data can connect to the \l{QGeoPositionInfoSource::positionUpdated()}{positionUpdated()} signal and call \l{QGeoPositionInfoSource::startUpdates()}{startUpdates()} or \l{QGeoPositionInfoSource::requestUpdate()}{requestUpdate()} to trigger the distribution of location data.
+Location data sources are created by subclassing QGeoPositionInfoSource and
+providing QGeoPositionInfo objects through the 
+QGeoPositionInfoSource::positionUpdated() signal. Clients that require
+location data can connect to the
+\l{QGeoPositionInfoSource::positionUpdated()}{positionUpdated()} signal and
+call \l{QGeoPositionInfoSource::startUpdates()}{startUpdates()} or
+\l{QGeoPositionInfoSource::requestUpdate()}{requestUpdate()} to trigger the
+distribution of location data.
 
-A default position source may be available on some platforms. Call QGeoPositionInfoSource::createSource() to create an instance of the default position source; the method returns 0 if no default source is available for the platform.
+A default position source may be available on some platforms. Call
+QGeoPositionInfoSource::createSource() to create an instance of the default
+position source; the method returns 0 if no default source is available for
+the platform.
 
-The QGeoAreaMonitor class enables client applications to be notified when the receiving device has moved in or out of a particular area, as specified by a coordinate and radius. If the platform provides built-in support for area monitoring, QGeoAreaMonitor::createMonitor() returns an instance of the default area monitor.
+The QGeoAreaMonitor class enables client applications to be notified when
+the receiving device has moved in or out of a particular area, as specified
+by a coordinate and radius. If the platform provides built-in support for
+area monitoring, QGeoAreaMonitor::createMonitor() returns an instance of
+the default area monitor.
 
-Satellite information can also be distributed through the QSatelliteInfoSource class. Call QSatelliteInfoSource::createSource() to create an instance of the default satellite data source for the platform, if one is available. Alternatively, clients can subclass it to provide a custom satellite data source.
+Satellite information can also be distributed through the
+QSatelliteInfoSource class. Call QSatelliteInfoSource::createSource() to
+create an instance of the default satellite data source for the platform,
+if one is available. Alternatively, clients can subclass it to provide a
+custom satellite data source.
 
 \section2 Requesting location data from data sources
 
-To receive data from a source, connect to its \l{QGeoPositionInfoSource::positionUpdated()}{positionUpdated()} signal, then call either \l{QGeoPositionInfoSource::startUpdates()}{startUpdates()} or \l{QGeoPositionInfoSource::requestUpdate()}{requestUpdate()} to begin.
+To receive data from a source, connect to its
+\l{QGeoPositionInfoSource::positionUpdated()}{positionUpdated()} signal,
+then call either \l{QGeoPositionInfoSource::startUpdates()}{startUpdates()}
+or \l{QGeoPositionInfoSource::requestUpdate()}{requestUpdate()} to begin.
 
-Here is an example of a client that receives data from the default location data source, as returned by QGeoPositionInfoSource::createSource():
+Here is an example of a client that receives data from the default location
+data source, as returned by QGeoPositionInfoSource::createSource():
 
 \code
 class MyClass : public QObject
@@ -465,7 +675,13 @@ private slots:
 
 \section3 Controlling aspects of data sources
 
-The QGeoPositionInfoSource::setUpdateInterval() method can be used to control the rate at which position updates are received. For example, if the client application only requires updates once every 30 seconds, it can call \c setUpdateInterval(30000). (If no update interval is set, or setUpdateInterval() is called with a value of 0, the source uses a default interval or some other internal logic to determine when updates should be provided.)
+The QGeoPositionInfoSource::setUpdateInterval() method can be used to
+control the rate at which position updates are received. For example, if
+the client application only requires updates once every 30 seconds, it can
+call \c setUpdateInterval(30000). (If no update interval is set, or
+setUpdateInterval() is called with a value of 0, the source uses a default
+interval or some other internal logic to determine when updates should be
+provided.)
 
 QGeoPositionInfoSource::setPreferredPositioningMethods() enables client applications to request that a certain type of positioning method be used. For example, if the application prefers to use only satellite positioning, which offers fairly precise outdoor positioning but can be a heavy user of power resources, it can call this method with the QGeoPositionInfoSource::SatellitePositioningMethods value. However, this method should only be used in specialized client applications; in most cases, the default positioning methods should not be changed, as a source may internally use a variety of positioning methods that can be useful to the application.
 
@@ -626,12 +842,13 @@ lock causing any layer updates to be delayed indefinitely.
 
 Only the Value Space server ever writes to the shared memory region.  When
 clients attempt to add items to the layer, their changes are transmitted via
-a QLocalSocket (e.g. \c {/tmp/qt-N/valuespace_shmlayer} domain socket on Unix systems) to the
-server where the update is performed.  Updates are batched in-process and sent when the process
-re-enters the Qt event loop.  Transmission and synchronization of changes can
-be forced manually by the QValueSpaceObject::sync() call, although as this
-requires a round trip between the client and server, doing so frequently may
-significantly degrade performance.
+a QLocalSocket (e.g. \c {/tmp/qt-N/valuespace_shmlayer} domain socket on
+Unix systems) to the server where the update is performed.  Updates are
+batched in-process and sent when the process re-enters the Qt event loop.
+Transmission and synchronization of changes can be forced manually by the
+QValueSpaceObject::sync() call, although as this requires a round trip
+between the client and server, doing so frequently may significantly
+degrade performance.
 
 Change notifications are transmitted to clients in the form of "something has
 changed" messages.  Nodes within the shared memory region are versioned, which
@@ -644,7 +861,8 @@ This library requires Qt 4.5 to be installed.
 
 To build the library, run \tt qmake and \tt make.
 
-Linux supports a NetworkManager based backend and generic backend using QNetworkInterface only. By default the generic backend is selected. 
+Linux supports a NetworkManager based backend and generic backend using
+QNetworkInterface only. By default the generic backend is selected.
 If the NetworkManager backend is required run qmake as follows:
 
 \code
