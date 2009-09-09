@@ -999,7 +999,19 @@ void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
         if(map.at(i).toString() == "battery.charge_level.percentage") {
             int level = batteryLevel();
             emit batteryLevelChanged(level);
-       }
+            if(level < 4) {
+                emit QSystemDeviceInfo::BatteryCritical;
+            } else if(level < 11) {
+                emit QSystemDeviceInfo::BatteryVeryLow;
+            } else if(level < 41) {
+                emit QSystemDeviceInfo::BatteryLow;
+            } else if(level > 40) {
+                emit QSystemDeviceInfo::BatteryNormal;
+            }
+            else {
+                emit QSystemDeviceInfo::NoBatteryLevel;
+            }
+        }
         if(map.at(i).toString() == "ac_adapter.present") {
             QSystemDeviceInfo::PowerState state = currentPowerState();
             emit powerStateChanged(state);
