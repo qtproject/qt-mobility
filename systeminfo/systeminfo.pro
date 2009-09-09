@@ -12,7 +12,7 @@ DEFINES += QT_BUILD_SYSINFO_LIB \
     QT_MAKEDLL
 win32 { 
     SOURCES += qsysteminfo_win.cpp \
-    qwmihelper.cpp
+    qwmihelper_win.cpp
     HEADERS += qsysteminfo_win_p.h \
         qwmihelper_win_p.h
 
@@ -46,8 +46,8 @@ unix: {
         HEADERS += qsysteminfo_linux_p.h
         contains(QT_CONFIG,dbus): { 
             QT += dbus
-            SOURCES += qhalservice.cpp
-            HEADERS += qhalservice_p.h 
+            SOURCES += qhalservice_linux.cpp
+            HEADERS += qhalservice_linux_p.h
 
         }
         LIBS += -lXxf86vm
