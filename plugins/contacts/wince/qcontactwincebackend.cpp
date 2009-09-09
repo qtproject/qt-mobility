@@ -46,6 +46,10 @@
 #define INITGUID
 #include "qcontactwincebackend_p.h"
 
+
+static QVariant convertCEPropVal(const CEPROPVAL& val);
+
+
 QContactWinCEEngine::QContactWinCEEngine(const QMap<QString, QString>& , QContactManager::Error& error)
     : d(new QContactWinCEEngineData)
 {
@@ -339,6 +343,38 @@ static void processPhones(const QVariantList& values, QContact& ret)
     }
 }
 
+static void processDates(const QVariantList& values, QContact& ret)
+{
+    // We get anniversary, then birthday
+    if (!values[0].toDate().isNull()) {
+        QContactAnniversary ann;
+        ann.setOriginalDate(values[0].toDate());
+        ret.saveDetail(&ann);
+    }
+    if (!values[1].toDate().isNull()) {
+        QContactBirthday bday;
+        bday.setDate(values[1].toDate());
+        ret.saveDetail(&bday);
+    }
+}
+
+static void processFamily(const QVariantList& values, QContact& ret)
+{
+    // We get spouse then children
+    if (!values[0].toString().isEmpty()) {
+        QContactRelationship spouse;
+        spouse.setRelationshipType("Spouse"); // XXX need a constant
+        spouse.setRelatedContactLabel(values[0].toString());
+        ret.saveDetail(&spouse);
+    }
+    if (!values[1].toString().isEmpty()) {
+        QContactRelationship kids;
+        kids.setRelationshipType("Children"); // XXX need a constant
+        kids.setRelatedContactLabel(values[1].toString());
+        ret.saveDetail(&kids);
+    }
+}
+
 static void processId(const QVariantList& values, QContact& ret)
 {
     ret.setId(values.at(0).toUInt());
@@ -405,9 +441,20 @@ static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<C
         phones.func = processPhones;
         list.append(phones);
 
-        // TODO: organization, dates, avatars, notes, account id, customer id, spouse/children
-        // government id, IM addresses, .. . ..
+        // Dates
+        PoomContactElement dates;
+        dates.poom << PIMPR_ANNIVERSARY << PIMPR_BIRTHDAY;
+        dates.func = processDates;
+        list.append(dates);
 
+        // Spouse and children
+        PoomContactElement family;
+        family.poom << PIMPR_SPOUSE << PIMPR_CHILDREN;
+        family.func = processFamily;
+        list.append(family);
+
+        // TODO: organization, avatars, notes, account id, customer id
+        // government id, IM addresses, .. . ..
 
         // Now, build the hash
         foreach(const PoomContactElement& e, list) {
@@ -432,6 +479,27 @@ static CEPROPVAL convertToCEPropVal(const CEPROPID& id, const QString& value)
     return val;
 }
 
+static CEPROPVAL convertToCEPropVal(const CEPROPID& id, const QDateTime& value)
+{
+    CEPROPVAL val;
+    val.propid = id;
+    val.wFlags = 0;
+    val.wLenData = 0;
+
+    SYSTEMTIME st;
+    st.wDay = value.date().day();
+    st.wMonth = value.date().month();
+    st.wYear = value.date().year();
+    st.wHour = value.time().hour();
+    st.wMinute = value.time().minute();
+    st.wSecond = value.time().second();
+    st.wMilliseconds = value.time().msec();
+
+    SystemTimeToFileTime(&st, &val.val.filetime); // XXX check for error?
+
+    return val;
+}
+
 static void addIfNotEmpty(const CEPROPID& id, const QString& value, QVector<CEPROPVAL>& props)
 {
     if (!value.isEmpty())
@@ -452,6 +520,29 @@ static void processQLabel(const QContactDetail& detail, QVector<CEPROPVAL>& prop
     props.append(convertToCEPropVal(PIMPR_FILEAS, detail.value(QContactDisplayLabel::FieldLabel)));
 }
 
+static void processQBirthday(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+{
+    if (detail.variantValue(QContactBirthday::FieldBirthday).isValid())
+        props.append(convertToCEPropVal(PIMPR_BIRTHDAY, detail.variantValue(QContactBirthday::FieldBirthday).toDateTime()));
+}
+
+static void processQAnniversary(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+{
+    if (detail.variantValue(QContactAnniversary::FieldOriginalDate).isValid())
+        props.append(convertToCEPropVal(PIMPR_ANNIVERSARY, detail.variantValue(QContactAnniversary::FieldOriginalDate).toDateTime()));
+}
+
+static void processQNickname(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+{
+    addIfNotEmpty(PIMPR_NICKNAME, detail.value(QContactNickname::FieldNickname), props);
+}
+
+static void processQOrganisation(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+{
+    QContactOrganisation org(detail);
+
+    addIfNotEmpty(PIMPR_COMPANY_NAME, org.displayLabel(), props);
+}
 
 /* Bulk setters */
 static void processQPhones(const QList<QContactPhoneNumber>& nums, CEPROPID metaId, QVector<CEPROPVAL>& props)
@@ -560,9 +651,24 @@ static void processQEmails(const QList<QContactEmailAddress>& emails, CEPROPID m
     props.append(convertToCEPropVal(metaId, meta));
 }
 
-static void processQAddresses(const QList<QContactAddress>& address, QVector<CEPROPVAL>& props)
+static void processQAddresses(const QList<QContactAddress>& addresses, QVector<CEPROPVAL>& props)
 {
+    foreach(const QContactAddress& address, addresses) {
 
+    }
+}
+
+static void processQRelationships(const QList<QContactRelationship>& relationships, QVector<CEPROPVAL>& props)
+{
+    foreach(const QContactRelationship& rel, relationships) {
+        if (rel.relationshipType() == "Spouse") { // XXX constant
+            props.append(convertToCEPropVal(PIMPR_SPOUSE, rel.relatedContactLabel()));
+        } else if (rel.relationshipType() == "Children") { // XXX constant
+            props.append(convertToCEPropVal(PIMPR_CHILDREN, rel.relatedContactLabel()));
+        } else {
+            qDebug() << "unsupported relationship:" << rel.relationshipType();
+        }
+    }
 }
 
 static void contactQ2PTransforms(QHash<QString, processContactPoomElement>& ret)
@@ -571,39 +677,48 @@ static void contactQ2PTransforms(QHash<QString, processContactPoomElement>& ret)
     if (hash.count() == 0) {
         hash.insert(QContactName::DefinitionName, processQName);
         hash.insert(QContactDisplayLabel::DefinitionName, processQLabel);
+        hash.insert(QContactAnniversary::DefinitionName, processQAnniversary);
+        hash.insert(QContactBirthday::DefinitionName, processQBirthday);
+        hash.insert(QContactNickname::DefinitionName, processQNickname);
+        hash.insert(QContactOrganisation::DefinitionName, processQOrganisation);
     }
     ret = hash;
 }
 
 static QVariant convertCEPropVal(const CEPROPVAL& val)
 {
-    switch(TypeFromPropID(val.propid)) {
-        case CEVT_BOOL:
-            return QVariant(val.val.boolVal);
-        case CEVT_I2:
-            return QVariant(val.val.iVal);
-        case CEVT_UI2:
-            return QVariant(val.val.uiVal);
-        case CEVT_I4:
-            return QVariant(val.val.lVal);
-        case CEVT_UI4:
-        case CEVT_PIM_AUTO_I4:
-            return QVariant((quint32)val.val.ulVal);
-        case CEVT_R8:
-            return QVariant(val.val.dblVal);
-        case CEVT_FILETIME:
-        {
-            // Convert FILETIME to QDateTime
-            SYSTEMTIME st;
-            FileTimeToSystemTime(&val.val.filetime, &st);
-            return QVariant(QDateTime(QDate(st.wYear, st.wMonth, st.wDay), QTime(st.wHour, st.wMinute, st.wSecond, st.wMilliseconds)));
-        }
-        case CEVT_LPWSTR:
-            return QVariant(QString::fromWCharArray(val.val.lpwstr));
+    if (val.propid != PIMPR_INVALID_ID) {
+        switch(TypeFromPropID(val.propid)) {
+            case CEVT_BOOL:
+                return QVariant(val.val.boolVal);
+            case CEVT_I2:
+                return QVariant(val.val.iVal);
+            case CEVT_UI2:
+                return QVariant(val.val.uiVal);
+            case CEVT_I4:
+                return QVariant(val.val.lVal);
+            case CEVT_UI4:
+            case CEVT_PIM_AUTO_I4:
+                return QVariant((quint32)val.val.ulVal);
+            case CEVT_R8:
+                return QVariant(val.val.dblVal);
+            case CEVT_FILETIME:
+            {
+                // Convert FILETIME to QDateTime
+                if (val.val.filetime.dwHighDateTime != 0 || val.val.filetime.dwLowDateTime != 0) {
+                    SYSTEMTIME st;
+                    if(FileTimeToSystemTime(&val.val.filetime, &st))
+                        return QVariant(QDateTime(QDate(st.wYear, st.wMonth, st.wDay), QTime(st.wHour, st.wMinute, st.wSecond, st.wMilliseconds)));
+                }
+                break; // Fall through to return at bottom
+            }
+            case CEVT_LPWSTR:
+                return QVariant(QString::fromWCharArray(val.val.lpwstr));
 
-        case CEVT_BLOB: // Not used yet
-        case CEVT_PIM_STREAM: // Not used yet
-            break;
+            case CEVT_BLOB: // Not used yet
+            case CEVT_PIM_STREAM: // Not used yet
+                break;
+        }
     }
     return QVariant();
 }
@@ -704,6 +819,7 @@ bool QContactWinCEEngine::convertContact(const QContact& contact, IItem* item, Q
     processQPhones(contact.details<QContactPhoneNumber>(), d->m_phonemeta, props);
     processQEmails(contact.details<QContactEmailAddress>(), d->m_emailmeta, props);
     processQAddresses(contact.details<QContactAddress>(), props);
+    //processQRelationships(contact.details<QContactRelationship>(), props);
 
     // Now set it
     HRESULT hr = item->SetProps(0, props.count(), props.data());
@@ -711,6 +827,7 @@ bool QContactWinCEEngine::convertContact(const QContact& contact, IItem* item, Q
         return true;
     } else {
         qDebug() << QString("Failed to set props: %1 (%2)").arg(hr, 0, 16).arg(HRESULT_CODE(hr), 0, 16);
+        error = QContactManager::UnspecifiedError;
     }
 
     return false;
@@ -868,7 +985,14 @@ bool QContactWinCEEngine::removeContact(const QUniqueId& contactId, QSet<QUnique
 QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(QContactManager::Error& error) const
 {
     error = QContactManager::NoError;
-    return QContactManagerEngine::schemaDefinitions();
+    QMap<QString, QContactDetailDefinition> defns = QContactManagerEngine::schemaDefinitions();
+
+    // Remove the things we don't support
+    defns.remove("SyncTarget");
+    defns.remove("Presence");
+    defns.remove("Geolocation");
+
+    return defns;
 }
 
 /*! \reimp */
