@@ -693,7 +693,7 @@ void QPainterVideoSurface::updateColorMatrix()
 
     const qreal c0 = 0.5;
 
-    const float m4 = b * c0 * (c - 1.0) * (s + sr + sg + sb);
+    const float m4 = b * c0 * (1.0 - c) * (s + sr + sg + sb);
 
     m_colorMatrix(0, 0) = c * b * (sr_s + sg * h2 + sb * h1);
     m_colorMatrix(0, 1) = c * b * (sr_s * h1 + sg + sb * h2);

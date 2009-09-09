@@ -59,6 +59,10 @@
 
 #ifndef QT_NO_OPENGL
 # include <QtOpenGL/qgl.h>
+# ifndef APIENTRY
+#  define APIENTRY
+#  define QT_TMP_APIENTRY
+# endif
 #endif
 
 class Q_MEDIA_EXPORT QPainterVideoSurface : public QAbstractVideoSurface
@@ -161,6 +165,14 @@ private:
     bool m_colorMatrixDirty;
     bool m_ready;
 };
+
+
+#ifndef QT_NO_OPENGL
+# ifdef QT_TMP_APIENTRY
+#  undef APIENTRY
+#  undef QT_TMP_APIENTRY
+# endif
+#endif
 
 #endif
 
