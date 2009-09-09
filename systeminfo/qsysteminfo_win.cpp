@@ -32,7 +32,7 @@
 ****************************************************************************/
 #include "qsysteminfo.h"
 #include "qsysteminfo_win_p.h"
-#include "qwmihelper_p.h"
+#include "qwmihelper_win_p.h"
 #include <qt_windows.h>
 
 #include <QStringList>

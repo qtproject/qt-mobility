@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 
-#include "qwmihelper_p.h"
+#include "qwmihelper_win_p.h"
 #include <QDebug>
 
 #include <Objbase.h>
