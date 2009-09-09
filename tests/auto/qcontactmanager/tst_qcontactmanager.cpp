@@ -746,18 +746,7 @@ void tst_QContactManager::add()
             } else {
                 // any value of the correct type will be accepted
                 bool savedSuccessfully = false;
-                QVariant dummyValue = QVariant(42);
-                if (dummyValue.canConvert(currentField.dataType)) {
-                    savedSuccessfully = dummyValue.convert(currentField.dataType);
-                    if (savedSuccessfully) {
-                        // we have successfully created a (supposedly) valid field for this detail.
-                        det.setValue(fieldKey, dummyValue);
-                        break;
-                    }
-                }
-
-                // nope, couldn't save the integer value (42); try a string.
-                dummyValue = QVariant("test");
+                QVariant dummyValue = QVariant(fieldKey); // try to get some unique string data
                 if (dummyValue.canConvert(currentField.dataType)) {
                     savedSuccessfully = dummyValue.convert(currentField.dataType);
                     if (savedSuccessfully) {
@@ -769,6 +758,17 @@ void tst_QContactManager::add()
 
                 // nope, couldn't save the string value (test); try a date.
                 dummyValue = QVariant(QDate::currentDate());
+                if (dummyValue.canConvert(currentField.dataType)) {
+                    savedSuccessfully = dummyValue.convert(currentField.dataType);
+                    if (savedSuccessfully) {
+                        // we have successfully created a (supposedly) valid field for this detail.
+                        det.setValue(fieldKey, dummyValue);
+                        break;
+                    }
+                }
+
+                // nope, couldn't convert a string or a date - try the integer value (42)
+                dummyValue = QVariant(42);
                 if (dummyValue.canConvert(currentField.dataType)) {
                     savedSuccessfully = dummyValue.convert(currentField.dataType);
                     if (savedSuccessfully) {
