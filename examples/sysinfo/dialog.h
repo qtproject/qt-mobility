@@ -41,6 +41,7 @@ private slots:
     void netStatusComboActivated(int);
     void updateBatteryStatus(int);
     void updatePowerState(QSystemDeviceInfo::PowerState);
+    void displayBatteryStatus(QSystemDeviceInfo::BatteryStatus);
 };
 
 #endif // DIALOG_H

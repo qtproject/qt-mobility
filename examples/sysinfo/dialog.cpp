@@ -2,6 +2,7 @@
 #include "ui_dialog.h"
 #include <QDebug>
 #include <QDesktopWidget>
+#include <QMessageBox>
 
 #include <qsysteminfo.h>
 
@@ -81,8 +82,12 @@ void Dialog::setupDevice()
     connect(di,SIGNAL(batteryLevelChanged(int)),
             this,SLOT(updateBatteryStatus(int)));
 
+    connect(di,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)),
+            this,SLOT(displayBatteryStatus(QSystemDeviceInfo::BatteryStatus)));
+
     connect(di,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
             this,SLOT(updatePowerState(QSystemDeviceInfo::PowerState)));
+
 
     ui->batteryChargingCheckBox->setChecked(di->isBatteryCharging());
 
@@ -405,4 +410,39 @@ void Dialog::updatePowerState(QSystemDeviceInfo::PowerState newState)
         break;
     };
     ui->batteryChargingCheckBox->setChecked(di->isBatteryCharging());
+}
+
+void Dialog::displayBatteryStatus(QSystemDeviceInfo::BatteryStatus status)
+{
+    // this wont annoy users will it?
+    QString msg;
+    switch(status) {
+    case QSystemDeviceInfo::BatteryCritical:
+        {
+            msg = " Battery is Critical (4% or less), please save your work or plug in the charger.";
+            QMessageBox::critical(this,"QSystemInfo",msg);
+        }
+        break;
+    case QSystemDeviceInfo::BatteryVeryLow:
+        {
+            msg = "Battery is Very Low (10%), please plug in the charger soon";
+            QMessageBox::warning(this,"QSystemInfo",msg);
+        }
+        break;
+    case QSystemDeviceInfo::BatteryLow:
+        {
+            msg = "Battery is Low (40% or less)";
+            QMessageBox::information(this,"QSystemInfo",msg);
+            
+        }
+        break;
+    case QSystemDeviceInfo::BatteryNormal:
+        {
+            msg = "Battery is Normal (greater than 40%)";
+            QMessageBox::information(this,"QSystemInfo",msg);
+        }
+        break;
+    };
+
+
 }
