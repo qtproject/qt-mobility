@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 #include <qsysteminfo.h>
-#include <qsysteminfo_p.h>
+#include <qsysteminfo_linux_p.h>
 
 #include <QStringList>
 #include <QSize>

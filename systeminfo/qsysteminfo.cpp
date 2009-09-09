@@ -33,7 +33,12 @@
 
 #include "qsysteminfo.h"
 
-#include "qsysteminfo_p.h"
+#ifdef Q_OS_LINUX
+#include "qsysteminfo_linux_p.h"
+#endif
+#ifdef Q_OS_WIN
+#include "qsysteminfo_win_p.h"
+#endif
 
 #include <QStringList>
 #include <QSize>
