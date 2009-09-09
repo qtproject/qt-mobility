@@ -60,6 +60,7 @@ INCLUDEPATH += . $$SOURCE_DIR
 #For some reason the default include path doesn't include MOC_DIR on symbian
 symbian {
     INCLUDEPATH += $$MOC_DIR
+    TARGET.CAPABILITY = ALL -TCB
 }
 
 unix: example|testcase: QMAKE_RPATHDIR += $$OUTPUT_DIR/build/$$SUBDIRPART/bin
