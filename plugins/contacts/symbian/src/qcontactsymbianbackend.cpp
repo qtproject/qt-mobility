@@ -99,6 +99,12 @@ void QContactSymbianEngine::deref()
  	delete this;*/ 
 }
 
+QList<QUniqueId> QContactSymbianEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+{
+	return d->contacts(filter, sortOrders, error);
+}
+
+
 QList<QUniqueId> QContactSymbianEngine::contacts(const QList<QContactSortOrder>& /*sortOrders*/, QContactManager::Error& error) const
 {
 	return d->contacts(error);

@@ -60,6 +60,27 @@ QContactSymbianEngineData::~QContactSymbianEngineData()
 }
 
 /* Access */
+QList<QUniqueId> QContactSymbianEngineData::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) 
+{
+	QList<QUniqueId> matches;
+	
+	if (filter.type() == QContactFilter::ContactDetail)
+	{
+		const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
+		
+		if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName)
+		{
+			QString communicationAddress("CALL");
+			//QString number("132");
+			QString number((detailFilter.value()).toString());
+			
+			matches = matchCommunicationAddress(communicationAddress, number);
+		}
+	}
+	
+	return matches;
+}
+
 
 /*!
  * Read a contact from the contact database.

@@ -61,6 +61,7 @@ public:
 
 public:
     /* Access */
+	QList<QUniqueId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error);
     QContact contact(const QUniqueId& contactId, QContactManager::Error& qtError) const;
     QList<QUniqueId> contacts(QContactManager::Error& qtError) const;
     int count() const;
