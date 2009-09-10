@@ -987,10 +987,23 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(Q
     error = QContactManager::NoError;
     QMap<QString, QContactDetailDefinition> defns = QContactManagerEngine::schemaDefinitions();
 
-    // Remove the things we don't support
-    defns.remove("SyncTarget");
-    defns.remove("Presence");
-    defns.remove("Geolocation");
+    // Remove the details we don't support
+    defns.remove(QContactSyncTarget::DefinitionName);
+    defns.remove(QContactPresence::DefinitionName);
+    defns.remove(QContactGeolocation::DefinitionName);
+    defns.remove(QContactTimestamp::DefinitionName);
+    defns.remove(QContactGuid::DefinitionName);
+
+    // Remove the fields we don't support
+
+    // No linking
+    defns[QContactAnniversary::DefinitionName].fields().remove(QContactAnniversary::FieldCalendarId);
+
+    // No contexts for these details
+    defns[QContactGender::DefinitionName].fields().remove(QContactDetail::FieldContext);
+    defns[QContactName::DefinitionName].fields().remove(QContactDetail::FieldContext);
+    defns[QContactNickname::DefinitionName].fields().remove(QContactDetail::FieldContext);
+    defns[QContactOrganisation::DefinitionName].fields().remove(QContactDetail::FieldContext);
 
     return defns;
 }
