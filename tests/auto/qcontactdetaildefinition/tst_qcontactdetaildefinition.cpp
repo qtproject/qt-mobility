@@ -155,7 +155,27 @@ void tst_QContactDetailDefinition::testGetSet()
     QVERIFY(def.accessConstraint() == QContactDetailDefinition::CreateOnly);
 
     /* Type map */
+    QMap<QString, QContactDetailDefinition::Field> map;
+    QContactDetailDefinition::Field currField;
+    currField.dataType = QVariant::String;
+    map.insert("string", currField);
+    currField.dataType = QVariant::DateTime;
+    map.insert("datetime", currField);
 
+    def.setFields(map);
+    QVERIFY(def.fields() == map);
+
+    def.setFields(QMap<QString, QContactDetailDefinition::Field>());
+    QVERIFY(def.fields().isEmpty());
+
+    /* Non const accessor */
+    def.fields() = map;
+    QVERIFY(def.fields() == map);
+
+    QMap<QString, QContactDetailDefinition::Field>& rmap = def.fields();
+    def.fields().clear();
+
+    QVERIFY(rmap == def.fields());
 }
 
 void tst_QContactDetailDefinition::testEmpty()

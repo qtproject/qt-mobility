@@ -83,6 +83,7 @@ public:
     /* Mapping of field key to fields allowed in details of this definition */
     void setFields(const QMap<QString, QContactDetailDefinition::Field>& fields);
     QMap<QString, QContactDetailDefinition::Field> fields() const;
+    QMap<QString, QContactDetailDefinition::Field>& fields();
 
     enum AccessConstraint {
         Any = 0,
