@@ -186,6 +186,32 @@ QMediaSource QMediaPlaylist::currentMedia() const
     return d_func()->playlist()->media(currentPosition());
 }
 
+/*!
+  Returns the position of item, which were current after calling advance()
+  \a step times.
+
+  Returned value depends on the size of playlist, current position
+  and playback mode.
+
+  \sa previousPosition QMediaPlaylist::playbackMode
+*/
+int QMediaPlaylist::nextPosition(int steps) const
+{
+    return d_func()->control->nextPosition(steps);
+}
+
+/*!
+  Returns the position of item, which were current after calling back()
+  \a step times.
+
+  \sa nextPosition QMediaPlaylist::playbackMode
+*/
+
+int QMediaPlaylist::previousPosition(int steps) const
+{
+    return d_func()->control->previousPosition(steps);
+}
+
 
 /*!
   Returns the number of items in the playlist.

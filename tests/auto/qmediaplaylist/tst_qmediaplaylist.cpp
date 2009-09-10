@@ -61,11 +61,14 @@ void tst_QMediaPlaylist::construction()
 {
     QMediaPlaylist playlist;
     QCOMPARE(playlist.size(), 0);
+    QVERIFY(playlist.isEmpty());
 }
 
 void tst_QMediaPlaylist::append()
 {
     QMediaPlaylist playlist;
+    QVERIFY(!playlist.isReadOnly());
+
     QMediaSource source1(QUrl(QLatin1String("file:///1")));
     playlist.appendItem(source1);
     QCOMPARE(playlist.size(), 1);
@@ -90,9 +93,19 @@ void tst_QMediaPlaylist::currentItem()
     QCOMPARE(playlist.currentPosition(), -1);
     QCOMPARE(playlist.currentMedia(), QMediaSource());
 
+    QCOMPARE(playlist.nextPosition(), 0);
+    QCOMPARE(playlist.nextPosition(2), 1);
+    QCOMPARE(playlist.previousPosition(), -1);
+    QCOMPARE(playlist.previousPosition(2), -1);
+
     playlist.setCurrentPosition(0);
     QCOMPARE(playlist.currentPosition(), 0);
     QCOMPARE(playlist.currentMedia(), source1);
+
+    QCOMPARE(playlist.nextPosition(), 1);
+    QCOMPARE(playlist.nextPosition(2), -1);
+    QCOMPARE(playlist.previousPosition(), -1);
+    QCOMPARE(playlist.previousPosition(2), -1);
 
     playlist.setCurrentPosition(1);
     QCOMPARE(playlist.currentPosition(), 1);
@@ -101,6 +114,11 @@ void tst_QMediaPlaylist::currentItem()
     playlist.setCurrentPosition(2); //warning is expected
     QCOMPARE(playlist.currentPosition(), 1);
     QCOMPARE(playlist.currentMedia(), source2);
+
+    QCOMPARE(playlist.nextPosition(), -1);
+    QCOMPARE(playlist.nextPosition(2), -1);
+    QCOMPARE(playlist.previousPosition(), 0);
+    QCOMPARE(playlist.previousPosition(2), -1);
 }
 
 QTEST_MAIN(tst_QMediaPlaylist)
