@@ -4,6 +4,8 @@
     <section ref="qabstractvaluespacelayer.html" title="QAbstractValueSpaceLayer Class Reference">
         <keyword ref="qabstractvaluespacelayer.html">QAbstractValueSpaceLayer</keyword>
         <keyword ref="qabstractvaluespacelayer.html#Handle-typedef">Handle</keyword>
+        <keyword ref="qabstractvaluespacelayer.html#LayerOption-enum">LayerOption</keyword>
+        <keyword ref="qabstractvaluespacelayer.html#LayerOption-enum">LayerOptions</keyword>
         <keyword ref="qabstractvaluespacelayer.html#Properties-enum">Properties</keyword>
         <keyword ref="qabstractvaluespacelayer.html#Properties-enum">QAbstractValueSpaceLayer::Publish</keyword>
         <keyword ref="qabstractvaluespacelayer.html#Type-enum">Type</keyword>
@@ -17,6 +19,7 @@
         <keyword ref="qabstractvaluespacelayer.html#handleChanged">handleChanged</keyword>
         <keyword ref="qabstractvaluespacelayer.html#id">id</keyword>
         <keyword ref="qabstractvaluespacelayer.html#item">item</keyword>
+        <keyword ref="qabstractvaluespacelayer.html#layerOptions">layerOptions</keyword>
         <keyword ref="qabstractvaluespacelayer.html#name">name</keyword>
         <keyword ref="qabstractvaluespacelayer.html#notifyInterest">notifyInterest</keyword>
         <keyword ref="qabstractvaluespacelayer.html#order">order</keyword>
@@ -41,12 +44,14 @@
         <keyword ref="qvaluespace.html#availableLayers">availableLayers</keyword>
         <keyword ref="qvaluespace.html#initValueSpaceManager">initValueSpaceManager</keyword>
         <keyword ref="qvaluespace.html#installLayer">installLayer</keyword>
-        <keyword ref="qvaluespace.html#QVALUESPACE_REGISTRY_LAYER">QVALUESPACE_REGISTRY_LAYER</keyword>
+        <keyword ref="qvaluespace.html#QVALUESPACE_NONVOLATILEREGISTRY_LAYER">QVALUESPACE_NONVOLATILEREGISTRY_LAYER</keyword>
         <keyword ref="qvaluespace.html#QVALUESPACE_SHAREDMEMORY_LAYER">QVALUESPACE_SHAREDMEMORY_LAYER</keyword>
+        <keyword ref="qvaluespace.html#QVALUESPACE_VOLATILEREGISTRY_LAYER">QVALUESPACE_VOLATILEREGISTRY_LAYER</keyword>
     </section>
     <section ref="qvaluespaceitem.html" title="QValueSpaceItem Class Reference">
         <keyword ref="qvaluespaceitem.html">QValueSpaceItem</keyword>
         <keyword ref="qvaluespaceitem.html#contentsChanged">contentsChanged</keyword>
+        <keyword ref="qvaluespaceitem.html#isValid">isValid</keyword>
         <keyword ref="qvaluespaceitem.html#path">path</keyword>
         <keyword ref="qvaluespaceitem.html#remove">remove</keyword>
         <keyword ref="qvaluespaceitem.html#setValue">setValue</keyword>
