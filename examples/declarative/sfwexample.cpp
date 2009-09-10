@@ -33,21 +33,20 @@
 
 #include "sfwexample.h"
 
-QML_DEFINE_TYPE(0,0,0,0,Service,ServiceWrapper);
+QML_DEFINE_TYPE(0,0,0,0,Service,ServiceWrapper)
 
 ServiceWrapper::ServiceWrapper() : serviceInstance(0)
 {
 }
 
-ServiceWrapper::~ServiceWrapper() 
+ServiceWrapper::~ServiceWrapper()
 {
-    if ( serviceInstance)
-        delete serviceInstance;
+    delete serviceInstance;
 }
 
-bool ServiceWrapper::isValid() const 
-{ 
-    return m_descriptor.isValid(); 
+bool ServiceWrapper::isValid() const
+{
+    return m_descriptor.isValid();
 }
 
 QString ServiceWrapper::interfaceName() const
@@ -62,7 +61,7 @@ QString ServiceWrapper::serviceName() const
 {
     if (isValid()) {
         return m_descriptor.serviceName();
-    } else 
+    } else
         return "No Service";
 }
 
@@ -74,16 +73,16 @@ QString ServiceWrapper::version() const
         return QString("0.0");
 }
 
-QVariant ServiceWrapper::descriptor() const 
-{ 
-    return qVariantFromValue(m_descriptor); 
+QVariant ServiceWrapper::descriptor() const
+{
+    return qVariantFromValue(m_descriptor);
 }
 
-void ServiceWrapper::setNativeDescriptor(const QServiceInterfaceDescriptor& d)
+void ServiceWrapper::setNativeDescriptor(const QServiceInterfaceDescriptor &d)
 {
     if (d == m_descriptor)
         return;
-    
+
     m_descriptor = d;
     emit descriptorChanged();
     emit nameChanged();
@@ -93,7 +92,7 @@ void ServiceWrapper::setNativeDescriptor(const QServiceInterfaceDescriptor& d)
 
     serviceInstance = 0;
 }
-void ServiceWrapper::setDescriptor(QVariant& newDescriptor)
+void ServiceWrapper::setDescriptor(QVariant &newDescriptor)
 {
     QServiceInterfaceDescriptor d = newDescriptor.value<QServiceInterfaceDescriptor>();
     setNativeDescriptor(d);
@@ -101,7 +100,7 @@ void ServiceWrapper::setDescriptor(QVariant& newDescriptor)
 
 
 QObject* ServiceWrapper::serviceObject()
-{ 
+{
     //qDebug() << "called serviceObject";
     if (serviceInstance) {
         return serviceInstance;
@@ -118,15 +117,15 @@ QObject* ServiceWrapper::serviceObject()
 
 
 
-ServiceRegister::ServiceRegister() {
-    
+ServiceRegister::ServiceRegister()
+{
     serviceManager = new QServiceManager();
     registerExampleServices();
 
     ServiceWrapper *service;
     QServiceFilter filter("com.nokia.qt.examples.Dialer");
     QList<QServiceInterfaceDescriptor> allImpl = serviceManager->findInterfaces(filter);
-    for (int i = 0; i<allImpl.count(); i++) {
+    for (int i = 0; i < allImpl.count(); i++) {
         qDebug() << "Found service:" << allImpl.at(i).serviceName() << "(" << allImpl.at(i).interfaceName() << ")";
         service = new ServiceWrapper();
         service->setNativeDescriptor(allImpl.at(i));
