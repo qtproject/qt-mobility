@@ -281,6 +281,15 @@ public:
         setContentType(type, subType, charset);
 
         _textContent = content;
+        _available = true;
+    }
+
+    void setContent(const QByteArray &content, const QByteArray &type, const QByteArray &subType, const QByteArray &charset)
+    {
+        setContentType(type, subType, charset);
+
+        _content = content;
+        _available = true;
     }
 
     void setHeaderField(const QByteArray &name, const QByteArray &value)

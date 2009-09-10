@@ -309,7 +309,7 @@ void QMessage::setBody(const QString &bodyText, const QByteArray &mimeType)
 {
     QByteArray mainType("text");
     QByteArray subType("plain");
-    QByteArray charset("UTF-8");
+    QByteArray charset("utf-16");
     // TODO:
     //QByteArray charset(charsetFor(bodyText));
 

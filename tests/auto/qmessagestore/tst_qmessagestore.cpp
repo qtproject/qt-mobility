@@ -322,6 +322,12 @@ void tst_QMessageStore::testMessage()
     QFETCH(QString, text);
     QFETCH(CustomFieldMap, custom);
 
+#if defined(Q_OS_WIN)
+    QByteArray defaultCharset("utf-16");
+#else
+    QByteArray defaultCharset("utf-8");
+#endif
+
     Support::Parameters p;
     p.insert("to", to);
     p.insert("from", from);
@@ -356,11 +362,7 @@ void tst_QMessageStore::testMessage()
 
     QCOMPARE(body.contentType().toLower(), QByteArray("text"));
     QCOMPARE(body.contentSubType().toLower(), QByteArray("plain"));
-#if defined(Q_OS_WIN)
-    QCOMPARE(body.contentCharset().toLower(), QByteArray("utf-16"));
-#else
-    QCOMPARE(body.contentCharset().toLower(), QByteArray("utf-8"));
-#endif
+    QCOMPARE(body.contentCharset().toLower(), defaultCharset);
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), text);
 
@@ -375,7 +377,7 @@ void tst_QMessageStore::testMessage()
 
     QCOMPARE(body.contentType().toLower(), QByteArray("text"));
     QCOMPARE(body.contentSubType().toLower(), QByteArray("fancy"));
-    QCOMPARE(body.contentCharset().toLower(), QByteArray("utf-8"));
+    QCOMPARE(body.contentCharset().toLower(), defaultCharset);
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), replacementText);
 }
