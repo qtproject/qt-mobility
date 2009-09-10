@@ -142,10 +142,15 @@ private slots:
                 //qDebug() << "Setting 102";
                 object->setAttribute(QString("value"), 102);
                 break;
+            case 3:
+                qDebug() << "Removing";
+                object->removeAttribute("value");
+                break;
         }
-        index++;
         object->sync();
-        if (index == 3)
+
+        index++;
+        if (index == 4)
             QTimer::singleShot(TIMEOUT, qApp, SLOT(quit()));
         else
             QTimer::singleShot(TIMEOUT, this, SLOT(proceed()));

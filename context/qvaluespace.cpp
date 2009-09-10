@@ -450,6 +450,21 @@ void QValueSpace::installLayer(LayerCreateFunc func)
 */
 
 /*!
+    \macro QVALUESPACE_NONVOLATILEREGISTRY_LAYER
+    \relates QValueSpace
+
+    The UUID of the Non-Volatile Registry Layer as a QUuid.  The actual UUID value is
+    {8e29561c-a0f0-4e89-ba56-080664abc017}.
+
+    This value can be passed to the constructor of QValueSpaceObject to force the constructed value
+    space object to publish its values in the Non-Volatile Registry Layer.
+
+    You can test if the Non-Volatile Registry Layer is available by checking if the list returned
+    by QValueSpace::availableLayers() contains this value.  The Non-Volatile Registry Layer is only
+    available on Windows platforms.
+*/
+
+/*!
     Returns a list of QUuids of all of the available layers.
 */
 QList<QUuid> QValueSpace::availableLayers()

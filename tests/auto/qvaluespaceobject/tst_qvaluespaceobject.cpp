@@ -230,6 +230,15 @@ void tst_QValueSpaceObject::testConstructor()
     }
 
     delete object;
+
+    if (layer && layer->layerOptions() & QAbstractValueSpaceLayer::PermanentLayer) {
+        QValueSpaceObject root("/", uuid);
+        while (!canonical.isEmpty()) {
+            root.removeAttribute(canonical.mid(1));
+            canonical.truncate(canonical.lastIndexOf('/'));
+        }
+        root.sync();
+    }
 }
 
 void tst_QValueSpaceObject::testSignals_data()
@@ -388,6 +397,8 @@ void tst_QValueSpaceObject::valuePermanence()
         object->removeAttribute("value");
 
         QCOMPARE(item.value("value", 0).toInt(), 0);
+
+        object->removeAttribute(QByteArray());
 
         delete object;
     } else {

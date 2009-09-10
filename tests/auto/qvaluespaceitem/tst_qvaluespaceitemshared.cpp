@@ -135,7 +135,9 @@ void tst_QValueSpaceItem::cleanupTestCase()
             root->removeAttribute("/home/user/double");
             root->removeAttribute("/home/user/float");
             root->removeAttribute("/home/user/QChar");
+            root->removeAttribute("/home/user");
             root->removeAttribute("/home/usercount");
+            root->removeAttribute("/home");
         }
 
         delete root;
@@ -146,7 +148,10 @@ void tst_QValueSpaceItem::cleanupTestCase()
 
         if (layer->layerOptions() & QAbstractValueSpaceLayer::PermanentLayer) {
             busy->removeAttribute("alex/busy");
+            busy->removeAttribute("alex");
             busy->removeAttribute("lorn/busy");
+            busy->removeAttribute("lorn");
+            busy->removeAttribute(QByteArray());
         }
 
         delete busy;
@@ -721,8 +726,11 @@ void tst_QValueSpaceItem::testAssignmentOperator()
     QCOMPARE(item->value("subchange/value").toInt(), 55);
     QCOMPARE(copy->value("subchange/value").toInt(), 55);
 
-    if (layer->layerOptions() & QAbstractValueSpaceLayer::PermanentLayer)
+    if (layer->layerOptions() & QAbstractValueSpaceLayer::PermanentLayer) {
         object->removeAttribute("subchange/value");
+        object->removeAttribute("subchange");
+        object->removeAttribute(QByteArray());
+    }
 
     delete item;
     delete copy;
@@ -931,6 +939,10 @@ void tst_QValueSpaceItem::ipcTests()
     QCOMPARE(item.value("", 99).toInt(), 102);
     spy.clear();
 
+    //item was removed -> returns default
+    QTRY_COMPARE(spy.count(), 1);
+    QCOMPARE(item.value("", 99).toInt(), 99);
+
     QVERIFY(process.waitForFinished(10000));
 #endif
 }
@@ -1029,6 +1041,9 @@ void tst_QValueSpaceItem::setValue()
         QCOMPARE(item4.value(QByteArray("value"), 600).toInt(), 500);
     }
 
+    if (layer->layerOptions() & QAbstractValueSpaceLayer::PermanentLayer)
+        object->removeAttribute("value");
+
     delete listener;
     delete rel_listener;
     delete object;
@@ -1091,8 +1106,10 @@ void tst_QValueSpaceItem::copySetValue()
         QCOMPARE(copy.value("", 600).toInt(), 500);
     }
 
-    if (layer->layerOptions() & QAbstractValueSpaceLayer::PermanentLayer)
+    if (layer->layerOptions() & QAbstractValueSpaceLayer::PermanentLayer) {
         object->removeAttribute("value");
+        object->removeAttribute(QByteArray());
+    }
 
     delete object;
 }
@@ -1181,6 +1198,9 @@ void tst_QValueSpaceItem::removeValue()
         QCOMPARE(arguments.at(0).toByteArray(),QByteArray("/value"));
         QCOMPARE(item4.value(QByteArray("value"), 600).toInt(), 500);
     }
+
+    if (layer->layerOptions() & QAbstractValueSpaceLayer::PermanentLayer)
+        object->removeAttribute("value");
 
     delete listener;
     delete rel_listener;
@@ -1481,7 +1501,7 @@ void tst_QValueSpaceItem::interestNotification()
         item = 0;
         QFAIL("Invalid type");
     }
-    
+
     if (type == Copy) {
         // Copies of QValueSpaceItem share the same interest notification.
         QTest::qWait(100);
