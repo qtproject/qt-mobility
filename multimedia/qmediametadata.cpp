@@ -132,13 +132,13 @@ public:
     Construct a QMediaMetadata to read and or write Metadata from the Mulitmedia object \a mediaObject.
 */
 
-QMediaMetadata::QMediaMetadata(QAbstractMediaObject *mediaObject)
-    : QObject(mediaObject)
+QMediaMetadata::QMediaMetadata(QAbstractMediaObject *parent)
+    : QObject(parent)
     , d_ptr(new QMediaMetadataPrivate)
 {
     Q_D(QMediaMetadata);
 
-    d->service = mediaObject->service();
+    d->service = parent->service();
     d->provider = qobject_cast<QMetadataProviderControl*>(d->service->control(QMetadataProviderControl_iid));
 
     if (d->provider != 0) {

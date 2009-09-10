@@ -120,7 +120,7 @@ public:
         Subject
     };
 
-    QMediaMetadata(QAbstractMediaObject *mediaObject);
+    QMediaMetadata(QAbstractMediaObject *parent);
     ~QMediaMetadata();
 
     bool metadataAvailable() const;
