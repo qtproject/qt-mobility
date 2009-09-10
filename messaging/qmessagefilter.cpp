@@ -251,8 +251,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 /*!
     \fn QMessageFilter::bySubject(const QString &value, QMessageDataComparator::EqualityComparator cmp)
   
-    Returns a filter matching messages whose subject matches \a value, according 
-    to \a cmp.
+    Returns a filter matching messages whose subject matches \a value, according to \a cmp.
 
     \sa QMessage::subject()
 */
@@ -359,8 +358,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 /*!
     \fn QMessageFilter::byParentAccountId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
   
-    Returns a filter matching messages whose parent account's identifier matches \a id, according to 
-    \a cmp.
+    Returns a filter matching messages whose parent account's identifier matches \a id, according to \a cmp.
     
     \sa QMessage::parentAccountId()
 */
@@ -374,12 +372,19 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
     \sa QMessage::parentAccountId()
 */
 
+/*!
+    \fn QMessageFilter::byStandardFolder(QMessage::StandardFolder folder, QMessageDataComparator::EqualityComparator cmp)
+  
+    Returns a filter matching messages whose standard folder location matches \a folder, according to \a cmp.
+    
+    \sa QMessage::parentAccountId()
+*/
+
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 /*!
     \fn QMessageFilter::byParentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
   
-    Returns a filter matching messages whose parent folder's identifier matches \a id, according to 
-    \a cmp.
+    Returns a filter matching messages whose parent folder's identifier matches \a id, according to \a cmp.
     
     \sa QMessage::parentFolderId()
 */
@@ -396,8 +401,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 /*!
     \fn QMessageFilter::byAncestorFolderIds(const QMessageFolderId &id, QMessageDataComparator::InclusionComparator cmp)
   
-    Returns a filter matching messages whose ancestor folders' identifiers contain \a id, according 
-    to \a cmp.
+    Returns a filter matching messages whose ancestor folders' identifiers contain \a id, according to \a cmp.
     
     \sa QMessage::parentFolderId()
 */

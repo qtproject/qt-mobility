@@ -2105,6 +2105,27 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << messageIds
         << QMessageIdList();
 
+    /* TODO: determine the correct results...
+    QTest::newRow("standardFolder equality 1")
+        << QMessageFilter::byStandardFolder(QMessage::InboxFolder, QMessageDataComparator::Equal) 
+        << ( QMessageIdList() )
+        << ( QMessageIdList() );
+
+    QTest::newRow("standardFolder equality 2")
+        << QMessageFilter::byStandardFolder(QMessage::TrashFolder, QMessageDataComparator::Equal) 
+        << ( QMessageIdList() )
+        << ( QMessageIdList() );
+
+    QTest::newRow("standardFolder inequality 1")
+        << QMessageFilter::byStandardFolder(QMessage::InboxFolder, QMessageDataComparator::NotEqual) 
+        << ( QMessageIdList() )
+        << ( QMessageIdList() );
+
+    QTest::newRow("standardFolder inequality 2")
+        << QMessageFilter::byStandardFolder(QMessage::TrashFolder, QMessageDataComparator::NotEqual) 
+        << ( QMessageIdList() )
+        << ( QMessageIdList() );
+    */
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
     QTest::newRow("parentFolderId equality 1")

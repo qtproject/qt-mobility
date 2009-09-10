@@ -277,6 +277,13 @@ QMessageFilter QMessageFilter::byParentAccountId(const QMessageAccountFilter &fi
     return QMessageFilter(); // stub
 }
 
+QMessageFilter QMessageFilter::byStandardFolder(QMessage::StandardFolder folder, QMessageDataComparator::EqualityComparator cmp)
+{
+    Q_UNUSED(folder)
+    Q_UNUSED(cmp)
+    return QMessageFilter(); // stub
+}
+
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFilter QMessageFilter::byParentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
 {

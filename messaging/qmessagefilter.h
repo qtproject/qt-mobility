@@ -106,6 +106,8 @@ public:
     static QMessageFilter byParentAccountId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
     static QMessageFilter byParentAccountId(const QMessageAccountFilter &filter, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
+    static QMessageFilter byStandardFolder(QMessage::StandardFolder folder, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
+
 #ifdef QMESSAGING_OPTIONAL_FOLDER
     static QMessageFilter byParentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
     static QMessageFilter byParentFolderId(const QMessageFolderFilter &filter, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);

@@ -374,6 +374,36 @@ QMessageFilter QMessageFilter::byParentAccountId(const QMessageAccountFilter &fi
     return result;
 }
 
+QMessageFilter QMessageFilter::byStandardFolder(QMessage::StandardFolder folder, QMessageDataComparator::EqualityComparator cmp)
+{
+    QMessageFilter result;
+
+    switch (folder)
+    {
+    case QMessage::InboxFolder:
+        result.d_ptr->_key = QMailMessageKey::status(QMailMessage::Incoming) & ~QMailMessageKey::status(QMailMessage::Trash);
+        break;
+
+    case QMessage::OutboxFolder:
+        result.d_ptr->_key = QMailMessageKey::status(QMailMessage::Outbox);
+        break;
+
+    case QMessage::DraftsFolder:
+        result.d_ptr->_key = QMailMessageKey::status(QMailMessage::Draft);
+        break;
+
+    case QMessage::SentFolder:
+        result.d_ptr->_key = QMailMessageKey::status(QMailMessage::Sent);
+        break;
+
+    case QMessage::TrashFolder:
+        result.d_ptr->_key = QMailMessageKey::status(QMailMessage::Trash);
+        break;
+    }
+
+    return result;
+}
+
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFilter QMessageFilter::byParentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
 {
