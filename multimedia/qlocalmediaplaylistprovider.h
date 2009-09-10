@@ -51,9 +51,9 @@ public:
     virtual bool isReadOnly() const;
 
     virtual bool appendItem(const QMediaSource &source);
-    virtual bool insert(int pos, const QMediaSource &source);
-    virtual bool remove(int pos);
-    virtual bool remove(int start, int end);
+    virtual bool insertItem(int pos, const QMediaSource &source);
+    virtual bool removeItem(int pos);
+    virtual bool removeItems(int start, int end);
     virtual bool clear();
 
 public slots:

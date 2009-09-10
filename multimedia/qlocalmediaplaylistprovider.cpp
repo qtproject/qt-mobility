@@ -79,7 +79,8 @@ bool QLocalMediaPlaylistProvider::appendItem(const QMediaSource &source)
     return true;
 }
 
-bool QLocalMediaPlaylistProvider::insert(int pos, const QMediaSource &source)
+
+bool QLocalMediaPlaylistProvider::insertItem(int pos, const QMediaSource &source)
 {
     Q_D(QLocalMediaPlaylistProvider);
 
@@ -90,7 +91,7 @@ bool QLocalMediaPlaylistProvider::insert(int pos, const QMediaSource &source)
     return true;
 }
 
-bool QLocalMediaPlaylistProvider::remove(int fromPos, int toPos)
+bool QLocalMediaPlaylistProvider::removeItems(int fromPos, int toPos)
 {
     Q_D(QLocalMediaPlaylistProvider);
 
@@ -105,7 +106,7 @@ bool QLocalMediaPlaylistProvider::remove(int fromPos, int toPos)
     return true;
 }
 
-bool QLocalMediaPlaylistProvider::remove(int pos)
+bool QLocalMediaPlaylistProvider::removeItem(int pos)
 {
     Q_D(QLocalMediaPlaylistProvider);
 
