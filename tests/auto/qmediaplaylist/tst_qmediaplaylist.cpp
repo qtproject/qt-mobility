@@ -42,15 +42,32 @@ class tst_QMediaPlaylist : public QObject
 public slots:
     void init();
     void cleanup();
+    void initTestCase();
 
 private slots:
     void construction();
     void append();
+    void insert();
+    void clear();
+    void removeItems();
     void currentItem();
+    void saveAndLoad();
+
+private:
+    QMediaSource source1;
+    QMediaSource source2;
+    QMediaSource source3;
 };
 
 void tst_QMediaPlaylist::init()
 {
+}
+
+void tst_QMediaPlaylist::initTestCase()
+{
+    source1 = QMediaSource(QUrl(QLatin1String("file:///1")));
+    source2 = QMediaSource(QUrl(QLatin1String("file:///2")));
+    source3 = QMediaSource(QUrl(QLatin1String("file:///3")));
 }
 
 void tst_QMediaPlaylist::cleanup()
@@ -69,25 +86,51 @@ void tst_QMediaPlaylist::append()
     QMediaPlaylist playlist;
     QVERIFY(!playlist.isReadOnly());
 
-    QMediaSource source1(QUrl(QLatin1String("file:///1")));
     playlist.appendItem(source1);
     QCOMPARE(playlist.size(), 1);
     QCOMPARE(playlist.media(0), source1);
 
-    QMediaSource source2(QUrl(QLatin1String("file:///2")));
     playlist.appendItem(source2);
     QCOMPARE(playlist.size(), 2);
     QCOMPARE(playlist.media(1), source2);
 }
 
+void tst_QMediaPlaylist::insert()
+{
+    QMediaPlaylist playlist;
+    QVERIFY(!playlist.isReadOnly());
+
+    playlist.appendItem(source1);
+    QCOMPARE(playlist.size(), 1);
+    QCOMPARE(playlist.media(0), source1);
+
+    playlist.appendItem(source2);
+    QCOMPARE(playlist.size(), 2);
+    QCOMPARE(playlist.media(1), source2);
+
+    QSignalSpy aboutToBeInsertedSignalSpy(&playlist, SIGNAL(itemsAboutToBeInserted(int,int)));
+    QSignalSpy insertedSignalSpy(&playlist, SIGNAL(itemsInserted(int,int)));
+
+    playlist.insertItem(1, source3);
+    QCOMPARE(playlist.size(), 3);
+    QCOMPARE(playlist.media(0), source1);
+    QCOMPARE(playlist.media(1), source3);
+    QCOMPARE(playlist.media(2), source2);
+
+    QCOMPARE(aboutToBeInsertedSignalSpy.count(), 1);
+    QCOMPARE(aboutToBeInsertedSignalSpy.first()[0].toInt(), 1);
+    QCOMPARE(aboutToBeInsertedSignalSpy.first()[1].toInt(), 1);
+
+    QCOMPARE(insertedSignalSpy.count(), 1);
+    QCOMPARE(insertedSignalSpy.first()[0].toInt(), 1);
+    QCOMPARE(insertedSignalSpy.first()[1].toInt(), 1);
+}
+
+
 void tst_QMediaPlaylist::currentItem()
 {
     QMediaPlaylist playlist;
-
-    QMediaSource source1(QUrl(QLatin1String("file:///1")));
     playlist.appendItem(source1);
-
-    QMediaSource source2(QUrl(QLatin1String("file:///2")));
     playlist.appendItem(source2);
 
     QCOMPARE(playlist.currentPosition(), -1);
@@ -119,6 +162,87 @@ void tst_QMediaPlaylist::currentItem()
     QCOMPARE(playlist.nextPosition(2), -1);
     QCOMPARE(playlist.previousPosition(), 0);
     QCOMPARE(playlist.previousPosition(2), -1);
+}
+
+void tst_QMediaPlaylist::clear()
+{
+    QMediaPlaylist playlist;
+    playlist.appendItem(source1);
+    playlist.appendItem(source2);
+
+    playlist.clear();
+    QVERIFY(playlist.isEmpty());
+    QCOMPARE(playlist.size(), 0);
+}
+
+void tst_QMediaPlaylist::removeItems()
+{
+    QMediaPlaylist playlist;
+    playlist.appendItem(source1);
+    playlist.appendItem(source2);
+    playlist.appendItem(source3);
+
+    QSignalSpy aboutToBeRemovedSignalSpy(&playlist, SIGNAL(itemsAboutToBeRemoved(int,int)));
+    QSignalSpy removedSignalSpy(&playlist, SIGNAL(itemsRemoved(int,int)));
+    playlist.removeItem(1);
+    QCOMPARE(playlist.size(), 2);
+    QCOMPARE(playlist.media(1), source3);
+
+    QCOMPARE(aboutToBeRemovedSignalSpy.count(), 1);
+    QCOMPARE(aboutToBeRemovedSignalSpy.first()[0].toInt(), 1);
+    QCOMPARE(aboutToBeRemovedSignalSpy.first()[1].toInt(), 1);
+
+    QCOMPARE(removedSignalSpy.count(), 1);
+    QCOMPARE(removedSignalSpy.first()[0].toInt(), 1);
+    QCOMPARE(removedSignalSpy.first()[1].toInt(), 1);
+
+    aboutToBeRemovedSignalSpy.clear();
+    removedSignalSpy.clear();
+
+    playlist.removeItems(0,1);
+    QVERIFY(playlist.isEmpty());
+
+    QCOMPARE(aboutToBeRemovedSignalSpy.count(), 1);
+    QCOMPARE(aboutToBeRemovedSignalSpy.first()[0].toInt(), 0);
+    QCOMPARE(aboutToBeRemovedSignalSpy.first()[1].toInt(), 1);
+
+    QCOMPARE(removedSignalSpy.count(), 1);
+    QCOMPARE(removedSignalSpy.first()[0].toInt(), 0);
+    QCOMPARE(removedSignalSpy.first()[1].toInt(), 1);
+
+
+    playlist.appendItem(source1);
+    playlist.appendItem(source2);
+    playlist.appendItem(source3);
+
+    playlist.removeItems(0,1);
+    QCOMPARE(playlist.size(), 1);
+    QCOMPARE(playlist.media(0), source3);
+}
+
+void tst_QMediaPlaylist::saveAndLoad()
+{
+    /*
+    QMediaPlaylist playlist;
+    playlist.appendItem(source1);
+    playlist.appendItem(source2);
+    playlist.appendItem(source3);
+
+    QBuffer buffer;
+    buffer.open(QBuffer::ReadWrite);
+
+    bool res = playlist.save(&buffer, "m3u");
+
+    QVERIFY(res);
+    QVERIFY(buffer.pos() > 0);
+    buffer.seek(0);
+
+    QMediaPlaylist playlist2;
+    res = playlist2.load(&buffer, "m3u");
+    QVERIFY(res);
+    QCOMPARE(playlist.size(), playlist2.size());
+    QCOMPARE(playlist.media(0), playlist2.media(0));
+    */
 }
 
 QTEST_MAIN(tst_QMediaPlaylist)
