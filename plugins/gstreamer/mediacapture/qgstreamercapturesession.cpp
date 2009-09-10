@@ -398,7 +398,7 @@ void QGstreamerCaptureSession::waitForStopped()
     GstState state = GST_STATE_PLAYING;
     gst_element_get_state(m_pipeline, &state, 0, 0);
 
-    while (state!= GST_STATE_NULL) {
+    while (state != GST_STATE_NULL) {
         qApp->processEvents();
         gst_element_get_state(m_pipeline, &state, 0, 0);
     }
@@ -427,7 +427,8 @@ void QGstreamerCaptureSession::setState(QGstreamerCaptureSession::State newState
     if (newMode != m_pipelineMode) {
         gst_element_set_state(m_pipeline, GST_STATE_NULL);
 
-        //TODO: get rid of this, process async.
+        //It would be better to do this async. but
+        //gstreamer doesn't notify about pipeline went to NULL state
         waitForStopped();
         rebuildGraph(newMode);
     }

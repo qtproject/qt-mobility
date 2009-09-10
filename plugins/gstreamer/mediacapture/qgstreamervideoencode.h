@@ -35,7 +35,7 @@
 #ifndef QGSTREAMERVIDEOENCODE_H
 #define QGSTREAMERVIDEOENCODE_H
 
-#include "qvideoencodecontrol.h"
+#include "qvideoencodercontrol.h"
 class QGstreamerCaptureSession;
 
 #include <QtCore/qstringlist.h>
@@ -43,7 +43,7 @@ class QGstreamerCaptureSession;
 
 #include <gst/gst.h>
 
-class QGstreamerVideoEncode : public QVideoEncodeControl
+class QGstreamerVideoEncode : public QVideoEncoderControl
 {
     Q_OBJECT
 public:

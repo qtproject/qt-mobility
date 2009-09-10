@@ -32,14 +32,14 @@
 **
 ****************************************************************************/
 
-#include "qvideoencodecontrol.h"
+#include "qvideoencodercontrol.h"
 #include <QtCore/qstringlist.h>
 #include <QtCore/qvariant.h>
 
 /*!
   Create a new video encode control object with the given \a parent.
 */
-QVideoEncodeControl::QVideoEncodeControl(QObject *parent)
+QVideoEncoderControl::QVideoEncoderControl(QObject *parent)
     :QAbstractMediaControl(parent)
 {
 }
@@ -47,19 +47,19 @@ QVideoEncodeControl::QVideoEncodeControl(QObject *parent)
 /*!
   Destroys the video encode control.
 */
-QVideoEncodeControl::~QVideoEncodeControl()
+QVideoEncoderControl::~QVideoEncoderControl()
 {
 }
 
 
 /*!
-  \fn QVideoEncodeControl::resolution() const
+  \fn QVideoEncoderControl::resolution() const
 
   Returns the resolution of encoded video stream.
 */
 
 /*!
-  \fn QVideoEncodeControl::minimumResolution() const
+  \fn QVideoEncoderControl::minimumResolution() const
 
   Returns the smallest resolution, video encoder supports.
 
@@ -67,7 +67,7 @@ QVideoEncodeControl::~QVideoEncodeControl()
 */
 
 /*!
-  \fn QVideoEncodeControl::maximumResolution() const
+  \fn QVideoEncoderControl::maximumResolution() const
 
   Returns the largest resolution, video encoder supports.
 
@@ -75,7 +75,7 @@ QVideoEncodeControl::~QVideoEncodeControl()
 */
 
 /*!
-  \fn QVideoEncodeControl::setResolution(const QSize &size)
+  \fn QVideoEncoderControl::setResolution(const QSize &size)
 
   Set the video \a resolution.
   If an empty size is passed,
@@ -84,12 +84,12 @@ QVideoEncodeControl::~QVideoEncodeControl()
 */
 
 /*!
-  \fn QVideoEncodeControl::frameRate() const
+  \fn QVideoEncoderControl::frameRate() const
   Returns frame rate of video stream.
 */
 
 /*!
-  \fn QVideoEncodeControl::minimumFrameRate() const
+  \fn QVideoEncoderControl::minimumFrameRate() const
 
   Returns the smallest frame rate, video encoder supports.
 
@@ -97,7 +97,7 @@ QVideoEncodeControl::~QVideoEncodeControl()
 */
 
 /*!
-  \fn QVideoEncodeControl::maximumFrameRate() const
+  \fn QVideoEncoderControl::maximumFrameRate() const
 
   Returns the largest frame rate, video encoder supports.
 
@@ -105,51 +105,51 @@ QVideoEncodeControl::~QVideoEncodeControl()
 */
 
 /*!
-  \fn QVideoEncodeControl::setFrameRate(const QMediaRecorder::FrameRate &rate)
+  \fn QVideoEncoderControl::setFrameRate(const QMediaRecorder::FrameRate &rate)
 
   Sets the video frame \a rate.
   If passed frame rate equals to -1/-1, the default value should be used.
 */
 
 /*!
-  \fn QVideoEncodeControl::supportedVideoCodecs() const
+  \fn QVideoEncoderControl::supportedVideoCodecs() const
 
   Returns the list of supported video codec names.
 */
 
 /*!
-  \fn QVideoEncodeControl::videoCodec() const
+  \fn QVideoEncoderControl::videoCodec() const
 
   Returns the currently used video codec name.
 */
 
 /*!
-  \fn QVideoEncodeControl::setVideoCodec(const QString &codecName)
+  \fn QVideoEncoderControl::setVideoCodec(const QString &codecName)
 
   Use the video codec with name equals to \a codecName.
 
 */
 
 /*!
-  \fn QVideoEncodeControl::videoCodecDescription(const QString &codec) const
+  \fn QVideoEncoderControl::videoCodecDescription(const QString &codec) const
 
   Returns description of video \a codec.
 */
 
 /*!
-  \fn QVideoEncodeControl::bitrate() const
+  \fn QVideoEncoderControl::bitrate() const
 
   Returns bitrate of encoded video stream.
 */
 
 /*!
-  \fn QVideoEncodeControl::setBitrate(int value)
+  \fn QVideoEncoderControl::setBitrate(int value)
 
   Set the bitrate of encoded video stream to \a value.
 */
 
 /*!
-  \fn QVideoEncodeControl::quality() const
+  \fn QVideoEncoderControl::quality() const
 
   Video quality value.
 
@@ -157,7 +157,7 @@ QVideoEncodeControl::~QVideoEncodeControl()
 */
 
 /*!
-  \fn QVideoEncodeControl::setQuality(qreal value)
+  \fn QVideoEncoderControl::setQuality(qreal value)
 
   Sets the video quality to \a value.
 
@@ -170,7 +170,7 @@ QVideoEncodeControl::~QVideoEncodeControl()
 
   The list and meaninng of options is codec and system depended.
 */
-QStringList QVideoEncodeControl::supportedEncodingOptions() const
+QStringList QVideoEncoderControl::supportedEncodingOptions() const
 {
     return QStringList();
 }
@@ -178,7 +178,7 @@ QStringList QVideoEncodeControl::supportedEncodingOptions() const
 /*!
   Returns value of encoder \a option.
 */
-QVariant QVideoEncodeControl::encodingOption(const QString &option) const
+QVariant QVideoEncoderControl::encodingOption(const QString &option) const
 {
     Q_UNUSED(option);
     return QVariant();
@@ -187,7 +187,7 @@ QVariant QVideoEncodeControl::encodingOption(const QString &option) const
 /*!
   Set the codec specific \a option to \a value.
 */
-void QVideoEncodeControl::setEncodingOption(const QString &option, const QVariant &value)
+void QVideoEncoderControl::setEncodingOption(const QString &option, const QVariant &value)
 {
     Q_UNUSED(option);
     Q_UNUSED(value);
@@ -199,7 +199,7 @@ void QVideoEncodeControl::setEncodingOption(const QString &option, const QVarian
 
   \sa resolution(), minimumResolution(), maximumResolution()
 */
-QList<QSize> QVideoEncodeControl::supportedResolutions() const
+QList<QSize> QVideoEncoderControl::supportedResolutions() const
 {
     return QList<QSize>();
 }
@@ -210,7 +210,7 @@ QList<QSize> QVideoEncodeControl::supportedResolutions() const
 
   \sa frameRate
 */
-QList<QMediaRecorder::FrameRate> QVideoEncodeControl::supportedFrameRates() const
+QList<QMediaRecorder::FrameRate> QVideoEncoderControl::supportedFrameRates() const
 {
     return QList< QMediaRecorder::FrameRate >();
 }

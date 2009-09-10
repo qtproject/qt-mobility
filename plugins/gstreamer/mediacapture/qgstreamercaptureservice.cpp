@@ -187,7 +187,7 @@ QAbstractMediaControl *QGstreamerCaptureService::control(const char *name) const
     if (qstrcmp(name,QAudioEncodeControl_iid) == 0)
         return m_captureSession->audioEncodeControl();
 
-    if (qstrcmp(name,QVideoEncodeControl_iid) == 0)
+    if (qstrcmp(name,QVideoEncoderControl_iid) == 0)
         return m_captureSession->videoEncodeControl();
 
     if (qstrcmp(name,QMediaFormatControl_iid) == 0)

@@ -40,7 +40,7 @@
 #include <math.h>
 
 QGstreamerVideoEncode::QGstreamerVideoEncode(QObject *parent)
-    :QVideoEncodeControl(parent)
+    :QVideoEncoderControl(parent)
 {
     m_frameRate = qMakePair<int,int>(-1,1);
 
