@@ -752,7 +752,7 @@ void tst_QContactManager::add()
                     if (savedSuccessfully) {
                         // we have successfully created a (supposedly) valid field for this detail.
                         det.setValue(fieldKey, dummyValue);
-                        break;
+                        continue;
                     }
                 }
 
@@ -763,7 +763,7 @@ void tst_QContactManager::add()
                     if (savedSuccessfully) {
                         // we have successfully created a (supposedly) valid field for this detail.
                         det.setValue(fieldKey, dummyValue);
-                        break;
+                        continue;
                     }
                 }
 
@@ -774,7 +774,7 @@ void tst_QContactManager::add()
                     if (savedSuccessfully) {
                         // we have successfully created a (supposedly) valid field for this detail.
                         det.setValue(fieldKey, dummyValue);
-                        break;
+                        continue;
                     }
                 }
 
