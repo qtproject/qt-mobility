@@ -390,7 +390,6 @@ void Dialog::setBlankingEnabled(bool b)
 
 void Dialog::updateBatteryStatus(int level)
 {
-    qWarning() << level;
     ui->batteryLevelBar->setValue(level);
 }
 
@@ -416,33 +415,34 @@ void Dialog::displayBatteryStatus(QSystemDeviceInfo::BatteryStatus status)
 {
     // this wont annoy users will it?
     QString msg;
-    switch(status) {
-    case QSystemDeviceInfo::BatteryCritical:
-        {
-            msg = " Battery is Critical (4% or less), please save your work or plug in the charger.";
-            QMessageBox::critical(this,"QSystemInfo",msg);
-        }
-        break;
-    case QSystemDeviceInfo::BatteryVeryLow:
-        {
-            msg = "Battery is Very Low (10%), please plug in the charger soon";
-            QMessageBox::warning(this,"QSystemInfo",msg);
-        }
-        break;
-    case QSystemDeviceInfo::BatteryLow:
-        {
-            msg = "Battery is Low (40% or less)";
-            QMessageBox::information(this,"QSystemInfo",msg);
-            
-        }
-        break;
-    case QSystemDeviceInfo::BatteryNormal:
-        {
-            msg = "Battery is Normal (greater than 40%)";
-            QMessageBox::information(this,"QSystemInfo",msg);
-        }
-        break;
-    };
+//    if(di->isBatteryCharging()) {
+        switch(status) {
+        case QSystemDeviceInfo::BatteryCritical:
+            {
+                msg = " Battery is Critical (4% or less), please save your work or plug in the charger.";
+                QMessageBox::critical(this,"QSystemInfo",msg);
+            }
+            break;
+        case QSystemDeviceInfo::BatteryVeryLow:
+            {
+                msg = "Battery is Very Low (10%), please plug in the charger soon";
+                QMessageBox::warning(this,"QSystemInfo",msg);
+            }
+            break;
+        case QSystemDeviceInfo::BatteryLow:
+            {
+                msg = "Battery is Low (40% or less)";
+                QMessageBox::information(this,"QSystemInfo",msg);
 
+            }
+            break;
+        case QSystemDeviceInfo::BatteryNormal:
+            {
+                msg = "Battery is Normal (greater than 40%)";
+                QMessageBox::information(this,"QSystemInfo",msg);
+            }
+            break;
+        };
+  //  }
 
 }

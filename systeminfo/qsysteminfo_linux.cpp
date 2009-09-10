@@ -1002,16 +1002,16 @@ void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
             int level = batteryLevel();
             emit batteryLevelChanged(level);
             if(level < 4) {
-                emit QSystemDeviceInfo::BatteryCritical;
+                emit batteryStatusChanged(QSystemDeviceInfo::BatteryCritical);
             } else if(level < 11) {
-                emit QSystemDeviceInfo::BatteryVeryLow;
+                emit batteryStatusChanged(QSystemDeviceInfo::BatteryVeryLow);
             } else if(level < 41) {
-                emit QSystemDeviceInfo::BatteryLow;
+                emit batteryStatusChanged(QSystemDeviceInfo::BatteryLow);
             } else if(level > 40) {
-                emit QSystemDeviceInfo::BatteryNormal;
+                emit batteryStatusChanged(QSystemDeviceInfo::BatteryNormal);
             }
             else {
-                emit QSystemDeviceInfo::NoBatteryLevel;
+                emit batteryStatusChanged(QSystemDeviceInfo::NoBatteryLevel);
             }
         }
         if(map.at(i).toString() == "ac_adapter.present") {

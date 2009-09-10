@@ -603,6 +603,9 @@ QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
     connect(d,SIGNAL(batteryLevelChanged(int)),
             this,SIGNAL(batteryLevelChanged(int)));
 
+    connect(d,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)),
+            this,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)));
+
     connect(d,SIGNAL(bluetoothStateChanged(bool)),
             this,SIGNAL(bluetoothStateChanged(bool)));
 
