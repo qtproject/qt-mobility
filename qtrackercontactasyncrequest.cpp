@@ -49,6 +49,8 @@ void applyFilterToRDFVariable(RDFVariable &variable,
                 // TODO figure out how to use filter, now only exact match
                 rdfPhoneNumber.property<nco::phoneNumber>() = LiteralValue(filt.value().toString());
             }
+            else
+                qWarning()<<"QContactTrackerEngine: Unsupported QContactFilter::ContactDetail"<<filt.detailDefinitionName();
         }
     }
 }
@@ -468,21 +470,21 @@ void QTrackerContactAsyncRequest::iMAcountsReady()
 const QString rdfPhoneType2QContactSubtype(const QString rdfPhoneType)
 {
     if( rdfPhoneType.endsWith("VoicePhoneNumber") )
-        return QContactPhoneNumber::AttributeSubTypeVoice;
+        return QContactPhoneNumber::SubTypeVoice;
     else if ( rdfPhoneType.endsWith("CarPhoneNumber") )
-        return QContactPhoneNumber::AttributeSubTypeCar;
+        return QContactPhoneNumber::SubTypeCar;
     else if ( rdfPhoneType.endsWith("CellPhoneNumber") )
-        return QContactPhoneNumber::AttributeSubTypeMobile;
+        return QContactPhoneNumber::SubTypeMobile;
     else if ( rdfPhoneType.endsWith("BbsPhoneNumber") )
-        return QContactPhoneNumber::AttributeSubTypeBulletinBoardSystem;
+        return QContactPhoneNumber::SubTypeBulletinBoardSystem;
     else if ( rdfPhoneType.endsWith("FaxNumber") )
-        return QContactPhoneNumber::AttributeSubTypeFacsimile;
+        return QContactPhoneNumber::SubTypeFacsimile;
     else if ( rdfPhoneType.endsWith("ModemNumber") )
-        return QContactPhoneNumber::AttributeSubTypeModem;
+        return QContactPhoneNumber::SubTypeModem;
     else if ( rdfPhoneType.endsWith("PagerNumber") )
-        return QContactPhoneNumber::AttributeSubTypePager;
+        return QContactPhoneNumber::SubTypePager;
     else if ( rdfPhoneType.endsWith("MessagingNumber") )
-        return QContactPhoneNumber::AttributeSubTypeMessagingCapable;
+        return QContactPhoneNumber::SubTypeMessagingCapable;
     else
         qWarning()<<Q_FUNC_INFO<<"Not handled phone number type:"<<rdfPhoneType;
     return "";
@@ -512,11 +514,11 @@ void QTrackerContactAsyncRequest::processQueryPhoneNumbers(SopranoLive::LiveNode
             {
                 QContactPhoneNumber number;
                 if( officeStuff )
-                    number.setContextAttribute(QContactPhoneNumber::AttributeContextWork);
+                    number.setContexts(QContactPhoneNumber::ContextWork);
                 else
-                    number.setContextAttribute(QContactPhoneNumber::AttributeContextHome);
+                    number.setContexts(QContactPhoneNumber::ContextHome);
                 number.setNumber(queryPhoneNumbers->index(i, 1).data().toString());
-                number.setSubTypeAttribute(subtype);
+                number.setSubTypes(subtype);
                 contacts[j].saveDetail(&number);
                 break;
             }
@@ -541,7 +543,7 @@ void QTrackerContactAsyncRequest::processQueryIMAccounts(SopranoLive::LiveNodes 
                 // TODo replace when QtMobility guys implement support for IMAccount
                 QContactOnlineAccount account;
                 if( officeStuff )
-                    account.setContextAttribute(QContactOnlineAccount::AttributeContextWork);
+                    account.setContexts(QContactOnlineAccount::ContextWork);
                 account.setValue("Account", queryIMAccounts->index(i, 1).data().toString()); // IMId
                 account.setValue("AccountPath", queryIMAccounts->index(i, 5).data().toString()); // getImAccountType?
                 account.setValue("Capabilities", queryIMAccounts->index(i, 6).data().toString()); // getImAccountType?
@@ -549,7 +551,7 @@ void QTrackerContactAsyncRequest::processQueryIMAccounts(SopranoLive::LiveNodes 
                 contacts[j].saveDetail(&account);
                 QContactPresence presence;
                 if( officeStuff )
-                    presence.setContextAttribute(QContactPresence::AttributeContextWork);
+                    presence.setContexts(QContactPresence::ContextWork);
                 presence.setValue(QContactPresence::FieldNickname, queryIMAccounts->index(i, 4).data().toString()); // nick
                 presence.setValue(QContactPresence::FieldPresence, queryIMAccounts->index(i, 2).data().toString()); // imStatus
                 presence.setValue(QContactPresence::FieldStatusMessage, queryIMAccounts->index(i, 3).data().toString()); // imStatusMessage

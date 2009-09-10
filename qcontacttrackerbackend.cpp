@@ -14,7 +14,7 @@
 #include "qcontactgroup_p.h"
 #include "qcontactmanager.h"
 #include "qcontactmanager_p.h"
-
+#include "commonfilters.h"
 
 #include <QtTracker/Tracker>
 #include <QtTracker/ontologies/nco.h>
@@ -37,9 +37,9 @@ Live<nco::Role> QContactTrackerEngineData::contactByContext(const QContactDetail
 }
 
 ContactContext::Location QContactTrackerEngineData::locationContext(const QContactDetail& det) const {
-    if (det.attribute(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextHome)) {
+    if (det.contexts().contains(QContactDetail::ContextHome)) {
         return ContactContext::Home;
-    } else if(det.attribute(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextWork)) {
+    } else if(det.contexts().contains(QContactDetail::ContextWork)) {
         return ContactContext::Work;
     }
     return ContactContext::Unknown;
@@ -293,7 +293,7 @@ bool contactHasWorkRelatedDetails(const QContact &c)
 {
     foreach(const QContactDetail& det, c.details())
     {
-        if( QContactDetail::AttributeContextWork == det.attribute(QContactDetail::AttributeContext))
+        if( det.contexts().contains(QContactDetail::ContextWork))
            return true;
     }
     return false;
@@ -304,7 +304,7 @@ bool contactHasWorkRelatedDetails(const QContact &c)
  * TODO this is temporary code for creating new, saving contacts need to handle only what was
  * changed.
  */
-void appendPhoneNumbersUpdate(RDFUpdate &up, RDFVariable &var, const QList<QContactDetail> &details )
+void appendPhoneNumbersUpdate(RDFUpdate &up, RDFVariable &var, const QList<QContactPhoneNumber> &details )
 {
 
     // not perfect way, supposed to delete all and add all in one rdf update,
@@ -314,25 +314,25 @@ void appendPhoneNumbersUpdate(RDFUpdate &up, RDFVariable &var, const QList<QCont
     RDFVariable types = phones.property<rdf::type>();
     up.addDeletion(RDFVariableStatement(var, nco::hasPhoneNumber::iri(), phones));
     up.addDeletion(phones, rdf::type::iri(), types);
-    foreach(const QContactDetail& det, details)
+    foreach(const QContactPhoneNumber& det, details)
     {
         QUrl newPhone = ::tracker()->createLiveNode().uri();
         up.addInsertion(varForInsert, nco::hasPhoneNumber::iri(), newPhone);
-        QString type = det.attribute(QContactPhoneNumber::AttributeSubType);
+        //QString type = det.attribute(QContactPhoneNumber::AttributeSubType);
 
-        if( QContactPhoneNumber::AttributeSubTypeMobile == type)
+        if( det.subTypes().contains(QContactPhoneNumber::SubTypeMobile))
             up.addInsertion(newPhone, rdf::type::iri(), nco::CellPhoneNumber::iri());
-        else if( QContactPhoneNumber::AttributeSubTypeCar == type)
+        else if( det.subTypes().contains(QContactPhoneNumber::SubTypeCar))
             up.addInsertion(newPhone, rdf::type::iri(), nco::CarPhoneNumber::iri());
-        else if( QContactPhoneNumber::AttributeSubTypeBulletinBoardSystem == type)
+        else if( det.subTypes().contains(QContactPhoneNumber::SubTypeBulletinBoardSystem))
             up.addInsertion(newPhone, rdf::type::iri(), nco::BbsNumber::iri());
-        else if( QContactPhoneNumber::AttributeSubTypeFacsimile == type)
+        else if( det.subTypes().contains(QContactPhoneNumber::SubTypeFacsimile))
             up.addInsertion(newPhone, rdf::type::iri(), nco::FaxNumber::iri());
-        else if( QContactPhoneNumber::AttributeSubTypeModem == type)
+        else if( det.subTypes().contains(QContactPhoneNumber::SubTypeModem))
             up.addInsertion(newPhone, rdf::type::iri(), nco::ModemNumber::iri());
-        else if( QContactPhoneNumber::AttributeSubTypePager == type)
+        else if( det.subTypes().contains(QContactPhoneNumber::SubTypePager))
             up.addInsertion(newPhone, rdf::type::iri(), nco::PagerNumber::iri());
-        else if( QContactPhoneNumber::AttributeSubTypeMessagingCapable == type)
+        else if( det.subTypes().contains(QContactPhoneNumber::SubTypeMessagingCapable))
             up.addInsertion(newPhone, rdf::type::iri(), nco::MessagingNumber::iri());
         else
             up.addInsertion(newPhone, rdf::type::iri(), nco::VoicePhoneNumber::iri());
@@ -503,17 +503,18 @@ bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
             QList<QContactDetail> toPerson;
             foreach(const QContactDetail& det, details)
             {
-                if( QContactDetail::AttributeContextWork == det.attribute(QContactDetail::AttributeContext))
+                if( det.contexts().contains(QContactDetail::ContextWork) )
                     toAffiliation << det;
                 else
                     toPerson << det;
             }
             /* Save all phone numbers at once */
             if(definition == QContactPhoneNumber::DefinitionName) {
-                if (!toPerson.isEmpty())
-                    appendPhoneNumbersUpdate(updateQuery, rdfPerson, toPerson);
+                if (!toPerson.isEmpty()) {
+                    appendPhoneNumbersUpdate(updateQuery, rdfPerson, filterByDetailType<QContactPhoneNumber>(toPerson));
+                }
                 if( !toAffiliation.isEmpty())
-                    appendPhoneNumbersUpdate(updateQuery, rdfAffiliation, toAffiliation);
+                    appendPhoneNumbersUpdate(updateQuery, rdfAffiliation, filterByDetailType<QContactPhoneNumber>(toAffiliation));
                 service->executeQuery(updateQuery);
             }
             else if(definition == QContactEmailAddress::DefinitionName) {
@@ -533,19 +534,13 @@ bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
             else
             {
               // Work in progress. soon writing them in single rdf update too
-              foreach(const QContactDetail &det, details )
-              {
-                definition = det.definitionName();
-                if(definition == QContactAvatar::DefinitionName) {
-                    QUrl avatar = det.value(QContactAvatar::FieldAvatar);
-                    Live<nie::DataObject> fdo = service->liveNode( avatar );
-                    ncoContact->setPhoto(fdo);
-                    /* Save url */
-                } else if(definition == QContactUrl::DefinitionName) {
-                    QUrl url = det.value(QContactUrl::FieldUrl);
-                    Live<nco::Role> contact = d->contactByContext(det, ncoContact);
 
-                    if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactUrl::AttributeSubTypeHomePage)){
+              foreach(const QContactUrl& contacturl, filterByDetailType<QContactUrl>(details))
+              {
+                    QUrl url = contacturl.value(QContactUrl::FieldUrl);
+                    Live<nco::Role> contact = d->contactByContext(contacturl, ncoContact);
+
+                    if (contacturl.subType() == QContactUrl::SubTypeHomePage ){
                         Live< rdfs::Resource > liveUrl = contact->addWebsiteUrl();
                         liveUrl = url;
                         contact->setWebsiteUrl(liveUrl);
@@ -558,7 +553,16 @@ bool QContactTrackerEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
                         Live< rdfs::Resource > liveUrl = contact->addUrl();
                         liveUrl = url;
                         contact->setUrl(liveUrl);
-                    }
+                    }                  
+              }
+
+              foreach(const QContactDetail &det, details )
+              {
+                definition = det.definitionName();
+                if(definition == QContactAvatar::DefinitionName) {
+                    QUrl avatar = det.value(QContactAvatar::FieldAvatar);
+                    Live<nie::DataObject> fdo = service->liveNode( avatar );
+                    ncoContact->setPhoto(fdo);
                 }
                 else if (definition == QContactOnlineAccount::DefinitionName){
                     // TODO parse URI, once it is defined

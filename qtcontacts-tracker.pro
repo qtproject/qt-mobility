@@ -5,6 +5,8 @@
 # include version number for the plugin
 include(../../version.pri)
 
+include(../../common/commonfilters.pri)
+
 TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(qtcontacts_tracker)
