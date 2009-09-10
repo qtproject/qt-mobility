@@ -47,14 +47,14 @@ public:
     virtual ~QM3uPlaylistPlugin();
 
     virtual bool canRead(QIODevice *device, const QByteArray &format = QByteArray() ) const;
-    virtual bool canRead(const QString& location, const QByteArray &format = QByteArray()) const;
+    virtual bool canRead(const QUrl& location, const QByteArray &format = QByteArray()) const;
 
     virtual bool canWrite(QIODevice *device, const QByteArray &format) const;
 
     virtual QStringList keys() const;
 
     virtual QMediaPlaylistReader *createReader(QIODevice *device, const QByteArray &format = QByteArray());
-    virtual QMediaPlaylistReader *createReader(const QString& location, const QByteArray &format = QByteArray());
+    virtual QMediaPlaylistReader *createReader(const QUrl& location, const QByteArray &format = QByteArray());
 
     virtual QMediaPlaylistWritter *createWritter(QIODevice *device, const QByteArray &format);
 };

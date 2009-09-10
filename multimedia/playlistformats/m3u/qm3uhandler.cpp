@@ -51,10 +51,10 @@ public:
         readItem();
     }
 
-    QM3uPlaylistReader(const QString& location)
+    QM3uPlaylistReader(const QUrl& location)
         :m_ownDevice(true)
     {
-        QFile *f = new QFile(location);
+        QFile *f = new QFile(location.toLocalFile());
         if (f->open(QIODevice::ReadOnly | QIODevice::Text)) {
             m_device = f;
             m_textStream = new QTextStream(m_device);
@@ -81,24 +81,24 @@ public:
         return nextResource.isNull();
     }
 
-    virtual QMediaResourceList readItem()
+    virtual QMediaSource readItem()
     {
-        QMediaResourceList resources;
+        QMediaSource item;
         if (!nextResource.isNull())
-            resources.append(nextResource);
+        item = QMediaSource(nextResource);
 
-        nextResource = QMediaResource();
+        nextResource = QMediaSource();
 
         while (m_textStream && !m_textStream->atEnd()) {
             QString line = m_textStream->readLine();
             if (line.isEmpty() || line[0] == '#')
                 continue;
 
-            nextResource = QMediaResource(QUrl(line));
+            nextResource = QMediaSource(QUrl(line));
             break;
         }
 
-        return resources;
+        return item;
     }
 
     virtual void close()
@@ -109,7 +109,7 @@ private:
     bool m_ownDevice;
     QIODevice *m_device;
     QTextStream *m_textStream;
-    QMediaResource nextResource;
+    QMediaSource nextResource;
 };
 
 class QM3uPlaylistWritter : public QMediaPlaylistWritter
@@ -125,15 +125,10 @@ public:
         delete m_textStream;
     }
 
-    virtual bool writeItem(const QMediaResource& item)
+    virtual bool writeItem(const QMediaSource& item)
     {
-        *m_textStream << item.uri().toString() << endl;
+        *m_textStream << item.contentUri().toString() << endl;
         return true;
-    }
-
-    virtual bool writeItem(const QMediaResourceList &resources)
-    {
-        return writeItem(resources[0]);
     }
 
     virtual void close()
@@ -160,9 +155,9 @@ bool QM3uPlaylistPlugin::canRead(QIODevice *device, const QByteArray &format) co
     return device->isReadable() && (format == "m3u" || format.isEmpty());
 }
 
-bool QM3uPlaylistPlugin::canRead(const QString& location, const QByteArray &format) const
+bool QM3uPlaylistPlugin::canRead(const QUrl& location, const QByteArray &format) const
 {
-    if (!QFileInfo(location).isReadable())
+    if (!QFileInfo(location.toLocalFile()).isReadable())
         return false;
 
     if (format == "m3u")
@@ -171,7 +166,7 @@ bool QM3uPlaylistPlugin::canRead(const QString& location, const QByteArray &form
     if (!format.isEmpty())
         return false;
     else
-        return location.toLower().endsWith(QLatin1String("m3u"));
+        return location.toLocalFile().toLower().endsWith(QLatin1String("m3u"));
 }
 
 bool QM3uPlaylistPlugin::canWrite(QIODevice *device, const QByteArray &format) const
@@ -190,7 +185,7 @@ QMediaPlaylistReader *QM3uPlaylistPlugin::createReader(QIODevice *device, const 
     return new QM3uPlaylistReader(device);
 }
 
-QMediaPlaylistReader *QM3uPlaylistPlugin::createReader(const QString& location, const QByteArray &format)
+QMediaPlaylistReader *QM3uPlaylistPlugin::createReader(const QUrl& location, const QByteArray &format)
 {
     Q_UNUSED(format);
     return new QM3uPlaylistReader(location);
