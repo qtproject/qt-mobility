@@ -45,7 +45,13 @@ class MockCameraControl : public QCameraControl
 {
     Q_OBJECT
 public:
-    MockCameraControl():QCameraControl(0), m_state(QCamera::StoppedState) {}
+    MockCameraControl(QObject *parent = 0):
+            QCameraControl(parent),
+            m_state(QCamera::StoppedState)
+    {
+    }
+
+    ~MockCameraControl() {}
 
     void setDevice(const QString& device) { m_device = device; }
 
@@ -61,7 +67,8 @@ class MockCameraExposureControl : public QCameraExposureControl
 {
     Q_OBJECT
 public:
-    MockCameraExposureControl():QCameraExposureControl(0),
+    MockCameraExposureControl(QObject *parent = 0):
+        QCameraExposureControl(parent),
         m_exposureLocked(false),
         m_aperture(2.8),
         m_shutterSpeed(0.01),
@@ -72,6 +79,8 @@ public:
         m_flashMode(QCamera::FlashAuto)
     {
     }
+
+    ~MockCameraExposureControl() {}
 
     QCamera::FlashMode flashMode() const
     {
@@ -226,6 +235,105 @@ private:
     QCamera::FlashMode m_flashMode;
 };
 
+class MockCameraFocusControl : public QCameraFocusControl
+{
+    Q_OBJECT
+public:
+    MockCameraFocusControl(QObject *parent = 0):
+        QCameraFocusControl(parent),
+        m_focusLocked(false),
+        m_zoomValue(1.0),
+        m_macroFocusingEnabled(false),
+        m_focusMode(QCamera::AutoFocus)
+    {
+    }
+
+    ~MockCameraFocusControl() {}
+
+    QCamera::FocusMode focusMode() const
+    {
+        return m_focusMode;
+    }
+
+    void setFocusMode(QCamera::FocusMode mode)
+    {
+        if (supportedFocusModes() & mode)
+            m_focusMode = mode;
+    }
+
+    QCamera::FocusModes supportedFocusModes() const
+    {
+        return QCamera::AutoFocus | QCamera::ContinuousFocus;
+    }
+
+    QCamera::FocusStatus focusStatus() const
+    {
+        return QCamera::FocusReached;
+    }
+
+    bool macroFocusingEnabled() const
+    {
+        return m_macroFocusingEnabled;
+    }
+
+    bool isMacroFocusingSupported() const
+    {
+        return true;
+    }
+
+    void setMacroFocusingEnabled(bool flag)
+    {
+        if (isMacroFocusingSupported())
+            m_macroFocusingEnabled = flag;
+    }
+
+    qreal maximumOpticalZoom() const
+    {
+        return 3.0;
+    }
+
+    qreal maximumDigitalZoom() const
+    {
+        return 4.0;
+    }
+
+    qreal zoomValue() const
+    {
+        return m_zoomValue;
+    }
+
+
+    void zoomTo(qreal value)
+    {
+        m_zoomValue = value;
+    }
+
+    bool isFocusLocked() const
+    {
+        return m_focusLocked;
+    }
+
+public Q_SLOTS:
+    void lockFocus()
+    {
+        if (!m_focusLocked) {
+            m_focusLocked = true;
+            emit focusLocked();
+        }
+    }
+
+    void unlockFocus()
+    {
+        m_focusLocked = false;
+    }
+
+private:
+    bool m_focusLocked;
+    qreal m_zoomValue;
+    bool m_macroFocusingEnabled;
+    QCamera::FocusMode m_focusMode;
+};
+
 class MockSimpleCameraService : public QCameraService
 {
     Q_OBJECT
@@ -233,7 +341,11 @@ class MockSimpleCameraService : public QCameraService
 public:
     MockSimpleCameraService(): QCameraService(0)
     {
-        mockControl = new MockCameraControl;
+        mockControl = new MockCameraControl(this);
+    }
+
+    ~MockSimpleCameraService()
+    {
     }
 
     QAbstractMediaControl* control(const char *iid) const
@@ -254,8 +366,13 @@ class MockCameraService : public QCameraService
 public:
     MockCameraService(): QCameraService(0)
     {
-        mockControl = new MockCameraControl;
-        mockExposureControl = new MockCameraExposureControl;
+        mockControl = new MockCameraControl(this);
+        mockExposureControl = new MockCameraExposureControl(this);
+        mockFocusControl = new MockCameraFocusControl(this);
+    }
+
+    ~MockCameraService()
+    {
     }
 
     QAbstractMediaControl* control(const char *iid) const
@@ -266,11 +383,15 @@ public:
         if (qstrcmp(iid, QCameraExposureControl_iid) == 0)
             return mockExposureControl;
 
+        if (qstrcmp(iid, QCameraFocusControl_iid) == 0)
+            return mockFocusControl;
+
         return 0;
     }
 
     MockCameraControl *mockControl;
     MockCameraExposureControl *mockExposureControl;
+    MockCameraFocusControl *mockFocusControl;
 };
 
 
@@ -291,6 +412,7 @@ private slots:
     void testSimpleCameraFocus();
 
     void testCameraExposure();
+    void testCameraFocus();
 
 private:
     MockSimpleCameraService  *mockSimpleCameraService;
@@ -402,7 +524,8 @@ void tst_QCamera::testSimpleCameraFocus()
 
 void tst_QCamera::testCameraExposure()
 {
-    QCamera camera(0, new MockCameraService);
+    MockCameraService service;
+    QCamera camera(0, &service);
 
     QCOMPARE(camera.flashMode(), QCamera::FlashAuto);
     QCOMPARE(camera.isFlashReady(), true);
@@ -477,6 +600,41 @@ void tst_QCamera::testCameraExposure()
 
     camera.unlockExposure();
     QCOMPARE(camera.isExposureLocked(), false);
+}
+
+void tst_QCamera::testCameraFocus()
+{
+    MockCameraService service;
+    QCamera camera(0, &service);
+
+    QCOMPARE(camera.supportedFocusModes(), QCamera::AutoFocus | QCamera::ContinuousFocus);
+    QCOMPARE(camera.focusMode(), QCamera::AutoFocus);
+    camera.setFocusMode(QCamera::ManualFocus);
+    QCOMPARE(camera.focusMode(), QCamera::AutoFocus);
+    camera.setFocusMode(QCamera::ContinuousFocus);
+    QCOMPARE(camera.focusMode(), QCamera::ContinuousFocus);
+    QCOMPARE(camera.focusStatus(), QCamera::FocusReached);
+
+    QVERIFY(camera.isMacroFocusingSupported());
+    QVERIFY(!camera.macroFocusingEnabled());
+    camera.setMacroFocusingEnabled(true);
+    QVERIFY(camera.macroFocusingEnabled());
+
+    QVERIFY(camera.maximumOpticalZoom() >= 1.0);
+    QVERIFY(camera.maximumDigitalZoom() >= 1.0);
+    QCOMPARE(camera.zoomValue(), 1.0);
+    camera.zoomTo(0.5);
+    QCOMPARE(camera.zoomValue(), 1.0);
+    camera.zoomTo(2.0);
+    QCOMPARE(camera.zoomValue(), 2.0);
+    camera.zoomTo(2000000.0);
+    QVERIFY(qFuzzyCompare(camera.zoomValue(), camera.maximumOpticalZoom()*camera.maximumDigitalZoom()));
+
+    QCOMPARE(camera.isFocusLocked(), false);
+    camera.lockFocus();
+    QCOMPARE(camera.isFocusLocked(), true);
+    camera.unlockFocus();
+    QCOMPARE(camera.isFocusLocked(), false);
 }
 
 
