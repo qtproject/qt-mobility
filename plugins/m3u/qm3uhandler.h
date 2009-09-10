@@ -36,6 +36,7 @@
 #define QM3UHANDLER_H
 
 #include "qmediaplaylistioplugin.h"
+#include <QObject>
 
 QT_BEGIN_NAMESPACE
 
