@@ -112,6 +112,30 @@ QT_BEGIN_NAMESPACE
     Emitted whenever the value of this item, or any of its sub-items change.
 */
 
+/*!
+    \property QValueSpaceItem::notify
+
+    This property holds whether change notifications are enabled.
+
+    Explicitly enabling change notifications is not normally necessary as they are automatically
+    enabled when a connection is made to the contentsChanged() signals.
+*/
+
+/*!
+    \property QValueSpaceItem::path
+
+    This property holds the current path that the QValueSpaceItem refers to.
+
+    Settings this property causes the QValueSpaceItem to disconnect and reconnect to the Value
+    Space with the new path.  As a result all signal/slot connections are disconnected.
+*/
+
+/*!
+    \property QValueSpaceItem::value
+
+    This property holds the value of this item.
+*/
+
 class QValueSpaceItemPrivateProxy : public QObject
 {
     Q_OBJECT
@@ -471,7 +495,7 @@ QValueSpaceItem::QValueSpaceItem(const char *path,
 
     If a layer with a matching \a uuid is not found an invalid QValueSpaceItem will be constructed.
 
-    \sa QAbstractValueSpaceLayer::id(), QValueSpace, isValid
+    \sa QAbstractValueSpaceLayer::id(), QValueSpace, isValid()
 */
 QValueSpaceItem::QValueSpaceItem(const QByteArray &path, const QUuid &uuid, QObject *parent)
 :   QObject(parent)
@@ -699,9 +723,6 @@ void QValueSpaceItem::setPath(const QString &path)
     static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
 }
 
-/*!
-    Returns the path that this QValueSpaceItem refers to.
-*/
 QString QValueSpaceItem::path() const
 {
     VS_CALL_ASSERT;
@@ -1057,7 +1078,8 @@ QVariant QValueSpaceItem::value(const QByteArray & subPath, const QVariant &def)
 
 bool QValueSpaceItem::notify() const
 {
-    return false;
+    QVALUESPACEITEM_D(d);
+    return md->connections != 0;
 }
 
 void QValueSpaceItem::setNotify(bool notify)

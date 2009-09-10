@@ -49,8 +49,8 @@
 
     \image battery-provider.png
 
-    The second program, battery-consumer, is implemented in QML with some C++ code to implement a
-    battery class and make it to QML.
+    The second program, battery-consumer, is implemented in QML with some C++ code to display the
+    QML and make QValueSpaceItem available from within QML.
 
     The user interface of the battery consumer program is described in QML.  It has the following
     features: A rectangular area representing the percent charge of the battery.  It indicates a
@@ -61,49 +61,19 @@
 
     \section2 Battery Consumer
 
-    The first step is to create a \c BatteryCharge class that can be instantiated in QML.
+    The first step is to make QValueSpaceItem available from within QML so that our QML code can
+    access the keys published by the battery-provider.  This is achieved by using the
+    QML_DECLARE_TYPE() and QML_DEFINE_TYPE() macros.  The following code makes QValueSpaceItem
+    available from within QML as ValueSpaceItem.
 
-    The \c BatteryCharge class provides three properties.  The \c path property for setting the
-    Value Space path of the battery schema to connect to.  The \c charge property for reading the
-    percent charge of the battery and the \c charging property for reading the charging state of
-    the battery.
-
-    The final step in the header file is to declare the \c BatteryCharge class as a QML type.
-
-    \snippet battery-charge/battery-consumer/batterycharge.h 0
-
-    In the implementation we define the QML \c BatteryCharge type within the \c Example namespace.
-
-    \snippet battery-charge/battery-consumer/batterycharge.cpp 4
-
-    In the implementation of the setter function for the \c path property we delete any previously
-    allocated QValueSpaceItem and create a new one with the new path.
-
-    \snippet battery-charge/battery-consumer/batterycharge.cpp 0
-
-    The implementation of the \c path property getter function returns the path of the underlying
-    QValueSpaceItem.
-
-    \snippet battery-charge/battery-consumer/batterycharge.cpp 1
-
-    The implementation of the getter functions for the \c charge and \c charging properties we
-    return the cached value of the \i charge and \i charging attributes respectively:
-
-    \snippet battery-charge/battery-consumer/batterycharge.cpp 2
-
-    Finally in response to the \c {contentsChanged()} signal we check which values in the battery
-    schema have changed and emit the \c {chargeChanged()} and \c {chargingChanged()} signals.
-
-    \snippet battery-charge/battery-consumer/batterycharge.cpp 3
+    \snippet battery-charge/battery-consumer/main.cpp 0
 
     \section3 QML
 
-    The first thing we need to do in the QML source is import the \c BatteryCharge type from the
-    \c Example namespace.
-
-    \snippet battery-charge/battery-consumer/battery-meter.qml 4
-
-    The \c BatteryCharge class is instantiated in QML and the path to the battery schema set.
+    Two ValueSpaceItem instances are created, one for each of the battery values.  We give each
+    object a unique id so that we can reference it from elsewhere in the QML.  We set the \i path
+    properties to the Value Space path of the keys.  Finally we set the \i notify properties to
+    true to enable the emission of change notification signals.
 
     \snippet battery-charge/battery-consumer/battery-meter.qml 0
 
