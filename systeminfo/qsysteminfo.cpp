@@ -39,6 +39,9 @@
 #ifdef Q_OS_WIN
 #include "qsysteminfo_win_p.h"
 #endif
+#ifdef Q_OS_MAC
+#include "qsysteminfo_mac_p.h"
+#endif∫
 
 #include <QStringList>
 #include <QSize>

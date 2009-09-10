@@ -10,7 +10,7 @@ HEADERS += qsysteminfo.h \
 SOURCES += qsysteminfo.cpp
 DEFINES += QT_BUILD_SYSINFO_LIB \
     QT_MAKEDLL
-win32 { 
+win32 {
     SOURCES += qsysteminfo_win.cpp \
     qwmihelper_win.cpp
     HEADERS += qsysteminfo_win_p.h \
@@ -39,12 +39,12 @@ win32 {
         Ifapi.lib \
         Coredll.lib
 }
-unix: { 
-    linux-*: { 
-        QT += gui
+unix: {
+    QT += gui
+    linux-*: {
         SOURCES += qsysteminfo_linux.cpp
         HEADERS += qsysteminfo_linux_p.h
-        contains(QT_CONFIG,dbus): { 
+        contains(QT_CONFIG,dbus): {
             QT += dbus
             SOURCES += qhalservice_linux.cpp
             HEADERS += qhalservice_linux_p.h
@@ -52,7 +52,12 @@ unix: {
         }
 #        LIBS += -lXxf86vm
     }
-    macx::
+    mac: {
+        SOURCES += qsysteminfo_mac.cpp
+        HEADERS += qsysteminfo_mac_p.h
+
+}
+
     symbian::
 }
 include(../common.pri)
