@@ -50,7 +50,7 @@ unix: {
             HEADERS += qhalservice_linux_p.h
 
         }
-        LIBS += -lXxf86vm
+#        LIBS += -lXxf86vm
     }
     macx::
     symbian::

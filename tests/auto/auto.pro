@@ -3,6 +3,8 @@ SUBDIRS = qsysteminfo \
           qsystemdeviceinfo \
           qsystemdisplayinfo \
           qsystemmemoryinfo \
-          qsystemnetworkinfo
+          qsystemnetworkinfo \
+          qsystemscreensaver
+
 
 

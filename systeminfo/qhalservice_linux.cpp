@@ -280,3 +280,50 @@ void QHalDeviceLaptopPanelInterface::setBrightness(quint32 brightness)
     }
 }
 
+////////////////
+class QHalDeviceKillSwitchInterfacePrivate
+{
+public:
+    QDBusInterface *connectionInterface;
+    QString path;
+    bool valid;
+};
+
+QHalDeviceKillSwitchInterface::QHalDeviceKillSwitchInterface(const QString &devicePathName, QObject *parent )
+        : QObject(parent)
+{
+    d = new QHalDeviceKillSwitchInterfacePrivate();
+    d->path = devicePathName;
+    d->connectionInterface = new QDBusInterface(HAL_DBUS_SERVICE,
+                                                d->path,
+                                                HAL_DEVICE_KILLSWITCH_INTERFACE,
+                                                dbusConnection);
+    if (!d->connectionInterface->isValid()) {
+        d->valid = false;
+        qDebug() << "Could not find HalDeviceLaptopPanelInterface";
+        return;
+    } else {
+        d->valid = true;
+    }
+}
+
+QHalDeviceKillSwitchInterface::~QHalDeviceKillSwitchInterface()
+{
+    delete d->connectionInterface;
+    delete d;
+}
+
+bool QHalDeviceKillSwitchInterface::isValid()
+{
+    return d->valid;
+}
+
+quint32 QHalDeviceKillSwitchInterface::getPower()
+{
+    QDBusReply< qint32 > reply = d->connectionInterface->call("GetPower");
+    if ( reply.isValid() ) {
+        qDebug() << __FUNCTION__ << reply.value();
+        return reply.value();
+    }
+    return -1;
+}

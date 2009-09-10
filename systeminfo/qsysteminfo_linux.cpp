@@ -459,7 +459,6 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
-    qWarning() << Q_FUNC_INFO;
 }
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
@@ -1444,6 +1443,10 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
      kdeIsRunning = false;
      gnomeIsRunning = false;
      whichWMRunning();
+ }
+
+ QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
+ {
  }
 
  bool QSystemScreenSaverPrivate::setScreenSaverEnabled(bool state)

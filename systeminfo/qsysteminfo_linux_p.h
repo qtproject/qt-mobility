@@ -227,6 +227,7 @@ class QSystemScreenSaverPrivate : public QObject
 
 public:
     QSystemScreenSaverPrivate(QObject *parent = 0);
+    ~QSystemScreenSaverPrivate();
 
     bool screenSaverEnabled();
     bool screenBlankingEnabled();
