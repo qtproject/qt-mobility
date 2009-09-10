@@ -4,6 +4,9 @@ TARGET = tst_networkmanagertest
 
 QT = core network dbus gui
 
+#not really a test case but deployment happens same way
+CONFIG += testcase
+
 requires(contains(QT_CONFIG,dbus))
 
 INCLUDEPATH += ../../bearer

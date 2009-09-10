@@ -19,6 +19,10 @@ build
 include/*
 config.pri
 mobility.prf
+bin/servicexmlgen*
+bin/servicefw*
+bin/vsexplorer*
+bin/examples/*
 
 #Symbian specific
 *.mmp

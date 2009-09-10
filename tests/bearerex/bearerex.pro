@@ -9,6 +9,9 @@ FORMS += sessiondialog.ui \
          bearerex.ui \
          detailedinfodialog.ui
          
+#not really a test case but deployment happens same way
+CONFIG += testcase
+
 DEPENDPATH += .
 INCLUDEPATH += . \
                ../../bearer

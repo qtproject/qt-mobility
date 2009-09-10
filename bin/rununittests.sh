@@ -9,6 +9,7 @@ SAVED_PWD=$PWD;
 cd $shell_path/../build/tests/Debug/bin
 LD_LIBRARY_PATH=$shell_path/../build/Debug/bin:$LD_LIBRARY_PATH
 
+#service framework
 ./tst_qserviceinterfacedescriptor
 ./tst_servicedatabase
 ./tst_databasemanager
@@ -16,9 +17,13 @@ LD_LIBRARY_PATH=$shell_path/../build/Debug/bin:$LD_LIBRARY_PATH
 ./tst_qservicefilter
 ./tst_qservicemanager
 ./tst_qabstractsecuritysession
+
+#BearerManagement
 ./tst_qnetworkconfiguration
 ./tst_qnetworkconfigurationmanager
 ./tst_qnetworksession
+
+#Location
 ./tst_qgeocoordinate
 ./tst_qgeopositioninfo
 ./tst_qsatelliteinfo
@@ -27,13 +32,14 @@ LD_LIBRARY_PATH=$shell_path/../build/Debug/bin:$LD_LIBRARY_PATH
 ./tst_qgeoareamonitor
 ./tst_qlocationutils
 ./tst_qnmeapositioninfosource
+
+#Publish and Subscribe
 ./tst_qmallocpool
 ./tst_qpacket
 ./tst_qpacketprotocol
 ./tst_qvaluespace
 ./tst_qvaluespaceobject
 ./tst_qvaluespaceitem
-./tst_qvaluespaceitem_oop
 ./tst_qsystemreadwritelock
 ./tst_qsystemreadwritelock_oop
 
