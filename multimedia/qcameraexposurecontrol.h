@@ -86,6 +86,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void exposureLocked();
+    void flashReady(bool);
 
 protected:
     QCameraExposureControl(QObject* parent);

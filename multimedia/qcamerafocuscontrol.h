@@ -59,7 +59,7 @@ public:
     virtual qreal maximumOpticalZoom() const = 0;
     virtual qreal maximumDigitalZoom() const = 0;
     virtual qreal zoomValue() const = 0;
-    virtual void zoomTo(int value) = 0;
+    virtual void zoomTo(qreal value) = 0;
 
     virtual bool isFocusLocked() const = 0;
 
@@ -69,6 +69,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void zoomValueChanged(qreal);
+    void focusStatusChanged(QCamera::FocusStatus);
     void focusLocked();
 
 protected:

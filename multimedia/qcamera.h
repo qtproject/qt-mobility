@@ -191,7 +191,7 @@ public:
     qreal maximumOpticalZoom() const;
     qreal maximumDigitalZoom() const;
     qreal zoomValue() const;
-    void zoomTo(int value);
+    void zoomTo(qreal value);
 
     bool isExposureLocked() const;
     bool isFocusLocked() const;
@@ -205,7 +205,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void flashReady(bool);
-    void focusStatusChanged(FocusStatus);
+    void focusStatusChanged(QCamera::FocusStatus);
     void zoomValueChanged(qreal);
     void exposureLocked();
     void focusLocked();

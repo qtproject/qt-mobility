@@ -628,10 +628,10 @@ qreal QCamera::zoomValue() const
     Set the zoom to \a value.
 */
 
-void QCamera::zoomTo(int value)
+void QCamera::zoomTo(qreal value)
 {
     if (d_func()->focusControl)
-        d_func()->focusControl->zoomTo(value);
+        d_func()->focusControl->zoomTo(qBound(1.0,value,maximumOpticalZoom()*maximumDigitalZoom()));
 }
 
 /*!
