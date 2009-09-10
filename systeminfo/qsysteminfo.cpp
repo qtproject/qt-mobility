@@ -41,7 +41,7 @@
 #endif
 #ifdef Q_OS_MAC
 #include "qsysteminfo_mac_p.h"
-#endif∫
+#endif
 
 #include <QStringList>
 #include <QSize>
