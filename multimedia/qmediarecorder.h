@@ -158,19 +158,6 @@ signals:
     void stateChanged(QMediaRecorder::State state);
     void durationChanged(qint64 duration);
 
-    void formatChanged(const QString &formatMimeType);
-
-    void audioFormatChanged(const QAudioFormat &format);
-    void audioCodecChanged(const QString &codecName);
-    void audioBitrateChanged(int bitrate);
-    void audioQualityChanged(qreal quality);
-
-    void resolutionChanged(const QSize &);
-    void frameRateChanged(const QMediaRecorder::FrameRate &rate);
-    void videoCodecChanged(const QString &codecName);
-    void videoBitrateChanged(int bitrate);
-    void videoQualityChanged(qreal);
-
     void error(QMediaRecorder::Error error);
 
 private:

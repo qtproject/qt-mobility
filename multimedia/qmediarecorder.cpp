@@ -135,41 +135,6 @@ void QMediaRecorderPrivate::initControls()
         q->connect(control, SIGNAL(error(int,QString)),
                 q, SLOT(_q_error(int,QString)));
     }
-
-    if (formatControl)
-        q->connect(formatControl, SIGNAL(formatChanged(QString)), q, SIGNAL(formatChanged(QString)));
-
-    if (audioControl) {
-        q->connect(audioControl, SIGNAL(audioFormatChanged(QAudioFormat)),
-                q, SIGNAL(audioFormatChanged(QAudioFormat)));
-
-        q->connect(audioControl, SIGNAL(audioCodecChanged(QString)),
-                q, SIGNAL(audioCodecChanged(QString)));
-
-        q->connect(audioControl, SIGNAL(audioBitrateChanged(int)),
-                q, SIGNAL(audioBitrateChanged(int)));
-
-        q->connect(audioControl, SIGNAL(audioQualityChanged(qreal)),
-                q, SIGNAL(audioQualityChanged(qreal)));
-    }
-
-    if (videoControl) {
-        q->connect(videoControl, SIGNAL(resolutionChanged(QSize)),
-                q, SIGNAL(resolutionChanged(QSize)));
-
-        q->connect(videoControl, SIGNAL(frameRateChanged(QMediaRecorder::FrameRate)),
-                q, SIGNAL(frameRateChanged(QMediaRecorder::FrameRate)));
-
-        q->connect(videoControl, SIGNAL(videoCodecChanged(QString)),
-                q, SIGNAL(videoCodecChanged(QString)));
-
-        q->connect(videoControl, SIGNAL(videoBitrateChanged(int)),
-                q, SIGNAL(videoBitrateChanged(int)));
-
-        q->connect(videoControl, SIGNAL(videoQualityChanged(qreal)),
-                q, SIGNAL(videoQualityChanged(qreal)));
-
-    }
 }
 
 void QMediaRecorderPrivate::_q_stateChanged(QMediaRecorder::State ps)
