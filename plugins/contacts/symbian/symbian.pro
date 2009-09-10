@@ -40,7 +40,7 @@ symbian: {
   		src/qcontactsymbianbackend.cpp \
   		src/qcontactsymbianengine_p.cpp \
       src/transformcontact.cpp \
-      src/tranformcontactdata.cpp \
+      src/transformcontactdata.cpp \
       src/transformname.cpp \
       src/transformnickname.cpp \
       src/transformphonenumber.cpp \
