@@ -523,6 +523,8 @@ void QPainterVideoSurface::paint(QPainter *painter, const QRect &rect)
 {
 #ifndef QT_NO_OPENGL
     if (m_textureCount > 0 && m_frame.isValid()) {
+        painter->beginNativePainting();
+
         if (m_colorMatrixDirty)
             updateColorMatrix();
 
@@ -533,19 +535,12 @@ void QPainterVideoSurface::paint(QPainter *painter, const QRect &rect)
 
         const float tx_array[] =
         {   txLeft, txTop, txRight, txTop, txRight, txBottom, txLeft, txBottom };
-//        const float v_array[] =
-//        {
-//            rect.left(),  rect.top(),
-//            rect.right(), rect.top(),
-//            rect.right(), rect.bottom(),
-//            rect.left(),  rect.bottom()
-//        };
         const float v_array[] =
         {
-            -1.0,  1.0,
-             1.0,  1.0,
-             1.0, -1.0,
-            -1.0, -1.0,
+            rect.left(),      rect.top(),
+            rect.right() + 1, rect.top(),
+            rect.right() + 1, rect.bottom() + 1,
+            rect.left(),      rect.bottom() + 1
         };
 
         glEnable(GL_FRAGMENT_PROGRAM_ARB);
@@ -598,6 +593,8 @@ void QPainterVideoSurface::paint(QPainter *painter, const QRect &rect)
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
         glDisableClientState(GL_VERTEX_ARRAY);
         glDisable(GL_FRAGMENT_PROGRAM_ARB);
+
+        painter->endNativePainting();
     } else
 #endif
     if (m_frame.map(QAbstractVideoBuffer::ReadOnly)) {
