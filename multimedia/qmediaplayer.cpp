@@ -88,6 +88,7 @@ public:
     QMediaPlayerControl* control;
     QMediaPlayer::Error error;
     QString errorString;
+    bool ownService;
 
     void _q_stateChanged(QMediaPlayer::State state);
     void _q_mediaStatusChanged(QMediaPlayer::MediaStatus status);
@@ -144,27 +145,38 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayerService *service):
 {
     Q_D(QMediaPlayer);
 
-    d->service = service == 0 ? createMediaPlayerService() : service;
+    if (service) {
+        d->service = service;
+        d->ownService = false;
+    } else {
+        d->service = createMediaPlayerService();
+        d->ownService = true;
+    }
+
     Q_ASSERT(d->service != 0);
 
-    d->control = qobject_cast<QMediaPlayerControl*>(d->service->control(QMediaPlayerControl_iid));
-    connect(d->control, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(_q_stateChanged(QMediaPlayer::State)));
-    connect(d->control, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
-            SLOT(_q_mediaStatusChanged(QMediaPlayer::MediaStatus)));
-    connect(d->control, SIGNAL(error(int,QString)), SLOT(_q_error(int,QString)));
+    if (d->service) {
+        d->control = qobject_cast<QMediaPlayerControl*>(d->service->control(QMediaPlayerControl_iid));
+        connect(d->control, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(_q_stateChanged(QMediaPlayer::State)));
+        connect(d->control, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
+                SLOT(_q_mediaStatusChanged(QMediaPlayer::MediaStatus)));
+        connect(d->control, SIGNAL(error(int,QString)), SLOT(_q_error(int,QString)));
 
-    connect(d->control, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
-    connect(d->control, SIGNAL(positionChanged(qint64)), SIGNAL(positionChanged(qint64)));
-    connect(d->control, SIGNAL(videoAvailabilityChanged(bool)), SIGNAL(videoAvailabilityChanged(bool)));
-    connect(d->control, SIGNAL(volumeChanged(int)), SIGNAL(volumeChanged(int)));
-    connect(d->control, SIGNAL(mutingChanged(bool)), SIGNAL(mutingChanged(bool)));
-    connect(d->control, SIGNAL(seekableChanged(bool)), SIGNAL(seekableChanged(bool)));
+        connect(d->control, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
+        connect(d->control, SIGNAL(positionChanged(qint64)), SIGNAL(positionChanged(qint64)));
+        connect(d->control, SIGNAL(videoAvailabilityChanged(bool)), SIGNAL(videoAvailabilityChanged(bool)));
+        connect(d->control, SIGNAL(volumeChanged(int)), SIGNAL(volumeChanged(int)));
+        connect(d->control, SIGNAL(mutingChanged(bool)), SIGNAL(mutingChanged(bool)));
+        connect(d->control, SIGNAL(seekableChanged(bool)), SIGNAL(seekableChanged(bool)));
 
-    if (d->control->state() == PlayingState)
-        addPropertyWatch("position");
+        if (d->control->state() == PlayingState)
+            addPropertyWatch("position");
 
-    if (d->control->mediaStatus() == StalledMedia || d->control->mediaStatus() == BufferingMedia)
-        addPropertyWatch("bufferStatus");
+        if (d->control->mediaStatus() == StalledMedia || d->control->mediaStatus() == BufferingMedia)
+            addPropertyWatch("bufferStatus");
+    } else {
+        d->control = 0;
+    }
 }
 
 /*!
@@ -175,7 +187,8 @@ QMediaPlayer::~QMediaPlayer()
 {
     Q_D(QMediaPlayer);
 
-    delete d->service;
+    if (d->ownService)
+        delete d->service;
 }
 
 /*!
@@ -184,7 +197,7 @@ QMediaPlayer::~QMediaPlayer()
 
 bool QMediaPlayer::isValid() const
 {
-    return d_func()->service;
+    return d_func()->control;
 }
 
 QMediaSource QMediaPlayer::media() const

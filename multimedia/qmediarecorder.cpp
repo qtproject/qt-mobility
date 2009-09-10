@@ -96,6 +96,8 @@ public:
     QAudioEncodeControl *audioControl;
     QVideoEncodeControl *videoControl;
 
+    bool ownService;
+
     QMediaRecorder::Error error;
     QString errorString;
 
@@ -109,6 +111,7 @@ QMediaRecorderPrivate::QMediaRecorderPrivate():
      formatControl(0),
      audioControl(0),
      videoControl(0),
+     ownService(false),
      error(QMediaRecorder::NoError)
 {
 }
@@ -204,6 +207,7 @@ QMediaRecorder::QMediaRecorder(QAbstractMediaObject *mediaObject):
 
     d->service = mediaObject->service();
     Q_ASSERT(d->service != 0);
+    d->ownService = false;
 
     d->initControls();
 }
@@ -217,7 +221,14 @@ QMediaRecorder::QMediaRecorder(QObject *parent, QMediaRecorderService *service):
 {
     Q_D(QMediaRecorder);
 
-    d->service = service == 0 ? createMediaRecorderService() : service;
+    if (service) {
+        d->service = service;
+        d->ownService = false;
+    } else {
+        d->service = createMediaRecorderService();
+        d->ownService = true;
+    }
+
     Q_ASSERT(d->service != 0);
 
     d->initControls();
@@ -230,7 +241,10 @@ QMediaRecorder::QMediaRecorder(QObject *parent, QMediaRecorderService *service):
 
 QMediaRecorder::~QMediaRecorder()
 {
-    stop();
+    Q_D(QMediaRecorder);
+
+    if (d->ownService)
+        delete d->service;
 }
 
 /*!

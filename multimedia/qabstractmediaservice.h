@@ -56,6 +56,8 @@ public:
         StreamOutput
     };
 
+    ~QAbstractMediaService();
+
     virtual bool isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType);
 
     virtual void setInputStream(QIODevice* stream);
@@ -82,7 +84,6 @@ public:
 protected:
     QAbstractMediaService(QObject* parent);
     QAbstractMediaService(QAbstractMediaServicePrivate &dd, QObject *parent);
-    ~QAbstractMediaService();
 
     QAbstractMediaServicePrivate *d_ptr;
 

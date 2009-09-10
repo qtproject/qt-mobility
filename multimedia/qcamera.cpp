@@ -81,6 +81,7 @@ public:
     QCameraControl* control;
     QCameraExposureControl* exposureControl;
     QCameraFocusControl* focusControl;
+    bool ownService;
 };
 
 /*!
@@ -92,14 +93,27 @@ QCamera::QCamera(QObject *parent, QAbstractMediaService *service):
 {
     Q_D(QCamera);
 
-    d->service = service == 0 ? createCameraService() : service;
+    if (service) {
+        d->service = service;
+        d->ownService = false;
+    } else {
+        d->service = createCameraService();
+        d->ownService = true;
+    }
+
     Q_ASSERT(d->service != 0);
 
-    d->control = qobject_cast<QCameraControl *>(d->service->control(QCameraControl_iid));
-    d->exposureControl = qobject_cast<QCameraExposureControl *>(d->service->control(QCameraExposureControl_iid));
-    d->focusControl = qobject_cast<QCameraFocusControl *>(d->service->control(QCameraFocusControl_iid));
+    if (d->service) {
+        d->control = qobject_cast<QCameraControl *>(d->service->control(QCameraControl_iid));
+        d->exposureControl = qobject_cast<QCameraExposureControl *>(d->service->control(QCameraExposureControl_iid));
+        d->focusControl = qobject_cast<QCameraFocusControl *>(d->service->control(QCameraFocusControl_iid));
 
-    connect(d->control, SIGNAL(stateChanged(QCamera::State)), this, SIGNAL(stateChanged(QCamera::State)));
+        connect(d->control, SIGNAL(stateChanged(QCamera::State)), this, SIGNAL(stateChanged(QCamera::State)));
+    } else {
+        d->control = 0;
+        d->exposureControl = 0;
+        d->focusControl = 0;
+    }
 
     if (d->exposureControl) {
         connect(d->exposureControl, SIGNAL(flashReady(bool)), this, SIGNAL(flashReady(bool)));
@@ -120,6 +134,12 @@ QCamera::QCamera(QObject *parent, QAbstractMediaService *service):
 
 QCamera::~QCamera()
 {
+    Q_D(QCamera);
+
+    if (d->ownService) {
+        delete d->service;
+        d->service = 0;
+    }
 }
 
 /*!
