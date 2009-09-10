@@ -827,14 +827,14 @@ void tst_QValueSpaceItem::contentsChanged()
     //removing the item triggers signal
     busy->removeAttribute("alex/busy");
     busy->sync();
-    QTRY_VERIFY(spy.count() >= should_emit_signal);
+    QTRY_COMPARE(spy.count(), should_emit_signal);
     QCOMPARE(item.value(value_path,!old_value).toBool(), new_value);
 
     spy.clear();
-
     busy->setAttribute("alex/busy", new_value);
     busy->sync();
-    QTRY_VERIFY(spy.count() >= should_emit_signal);
+
+    QTRY_COMPARE(spy.count(), should_emit_signal);
     QCOMPARE(item.value(value_path,!old_value).toBool(), new_value);
 
     delete listener;
@@ -930,10 +930,6 @@ void tst_QValueSpaceItem::ipcTests()
     QTRY_COMPARE(spy.count(), 1);
     QCOMPARE(item.value("", 99).toInt(), 102);
     spy.clear();
-
-    //item was removed -> returns default
-    QTRY_COMPARE(spy.count(), 1);
-    QCOMPARE(item.value("", 99).toInt(), 99);
 
     QVERIFY(process.waitForFinished(10000));
 #endif
@@ -1032,9 +1028,6 @@ void tst_QValueSpaceItem::setValue()
         QCOMPARE(arguments.at(1).value<QVariant>().toInt(),501);
         QCOMPARE(item4.value(QByteArray("value"), 600).toInt(), 500);
     }
-
-    if (layer->layerOptions() & QAbstractValueSpaceLayer::PermanentLayer)
-        object->removeAttribute("value");
 
     delete listener;
     delete rel_listener;
@@ -1188,9 +1181,6 @@ void tst_QValueSpaceItem::removeValue()
         QCOMPARE(arguments.at(0).toByteArray(),QByteArray("/value"));
         QCOMPARE(item4.value(QByteArray("value"), 600).toInt(), 500);
     }
-
-    if (layer->layerOptions() & QAbstractValueSpaceLayer::PermanentLayer)
-        object->removeAttribute("value");
 
     delete listener;
     delete rel_listener;
@@ -1491,7 +1481,7 @@ void tst_QValueSpaceItem::interestNotification()
         item = 0;
         QFAIL("Invalid type");
     }
-
+    
     if (type == Copy) {
         // Copies of QValueSpaceItem share the same interest notification.
         QTest::qWait(100);

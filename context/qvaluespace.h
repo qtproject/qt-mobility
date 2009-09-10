@@ -136,8 +136,6 @@ namespace QValueSpace {
                                              0x0c, 0xe4, 0xd3, 0x7e, 0xf2, 0x52)
 #define QVALUESPACE_VOLATILEREGISTRY_LAYER QUuid(0x8ceb5811, 0x4968, 0x470f, 0x8f, 0xc2, \
                                                  0x26, 0x47, 0x67, 0xe0, 0xbb, 0xd9)
-#define QVALUESPACE_NONVOLATILEREGISTRY_LAYER QUuid(0x8e29561c, 0xa0f0, 0x4e89, 0xba, 0x56, \
-                                                    0x08, 0x06, 0x64, 0xab, 0xc0, 0x17)
 
 #define QVALUESPACE_AUTO_INSTALL_LAYER(name) \
     QAbstractValueSpaceLayer * _qvaluespaceauto_layercreate_ ## name() \
