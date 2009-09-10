@@ -120,7 +120,7 @@ public:
     QString homeMobileCountryCode();
     QString homeMobileNetworkCode();
 
-    QString networkName();
+    QString networkName(QSystemNetworkInfo::NetworkMode mode);
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);

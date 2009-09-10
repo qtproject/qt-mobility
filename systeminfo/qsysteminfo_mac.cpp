@@ -320,8 +320,9 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
     return "No Network";
 }
 
-QString QSystemNetworkInfoPrivate::networkName()
+QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
+    Q_UNUSED(mode);
     return "No Operator";
 }
 

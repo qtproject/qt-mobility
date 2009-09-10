@@ -612,46 +612,60 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
     return "No Mobile Network";
 }
 
-QString QSystemNetworkInfoPrivate::networkName()
+QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
-    QString essid;
-    if(networkStatus(QSystemNetworkInfo::WlanMode) != QSystemNetworkInfo::Connected) {
-        return essid;
-    }
-    QString wlanInterface;
-    QString baseSysDir = "/sys/class/net/";
-    QDir wDir(baseSysDir);
-    QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
-    foreach(QString dir, dirs) {
-        QString devFile = baseSysDir + dir;
-        QFileInfo fi(devFile + "/wireless");
-        if(fi.exists()) {
-            wlanInterface = dir;
-            qWarning() << "interface is" << wlanInterface;
+    QString netname;
+
+    switch(mode) {
+    case QSystemNetworkInfo::WlanMode:
+        {
+            if(networkStatus(mode) != QSystemNetworkInfo::Connected) {
+                return netname;
+            }
+
+            QString wlanInterface;
+            QString baseSysDir = "/sys/class/net/";
+            QDir wDir(baseSysDir);
+            QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
+            foreach(QString dir, dirs) {
+                QString devFile = baseSysDir + dir;
+                QFileInfo fi(devFile + "/wireless");
+                if(fi.exists()) {
+                    wlanInterface = dir;
+                    qWarning() << "interface is" << wlanInterface;
+                }
+            }
+            int sock = socket(PF_INET, SOCK_DGRAM, 0);
+            if (sock > 0) {
+                const char* someRandomBuffer[IW_ESSID_MAX_SIZE + 1];
+                struct iwreq wifiExchange;
+                memset(&wifiExchange, 0, sizeof(wifiExchange));
+                memset(someRandomBuffer, 0, sizeof(someRandomBuffer));
+
+                wifiExchange.u.essid.pointer = (caddr_t) someRandomBuffer;
+                wifiExchange.u.essid.length = IW_ESSID_MAX_SIZE;
+                wifiExchange.u.essid.flags = 0;
+
+                const char* interfaceName = wlanInterface.toLatin1();
+                strncpy(wifiExchange.ifr_name, interfaceName, IFNAMSIZ);
+                wifiExchange.u.essid.length = IW_ESSID_MAX_SIZE + 1;
+
+                if (ioctl(sock, SIOCGIWESSID, &wifiExchange) == 0) {
+                    const char *ssid = (const char *)wifiExchange.u.essid.pointer;
+                    netname = ssid;
+                }
+            }
+            close(sock);
         }
-    }
-    int sock = socket(PF_INET, SOCK_DGRAM, 0);
-    if (sock > 0) {
-        const char* someRandomBuffer[IW_ESSID_MAX_SIZE + 1];
-        struct iwreq wifiExchange;
-        memset(&wifiExchange, 0, sizeof(wifiExchange));
-        memset(someRandomBuffer, 0, sizeof(someRandomBuffer));
-
-        wifiExchange.u.essid.pointer = (caddr_t) someRandomBuffer;
-        wifiExchange.u.essid.length = IW_ESSID_MAX_SIZE;
-        wifiExchange.u.essid.flags = 0;
-
-        const char* interfaceName = wlanInterface.toLatin1();
-        strncpy(wifiExchange.ifr_name, interfaceName, IFNAMSIZ);
-        wifiExchange.u.essid.length = IW_ESSID_MAX_SIZE + 1;
-
-        if (ioctl(sock, SIOCGIWESSID, &wifiExchange) == 0) {
-            const char *ssid = (const char *)wifiExchange.u.essid.pointer;
-            essid = ssid;
+        break;
+    case QSystemNetworkInfo::EthernetMode:
+        {
         }
-    }
-    close(sock);
-   return essid;
+        break;
+    default:
+        break;
+    };
+    return netname;
 }
 
 QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
