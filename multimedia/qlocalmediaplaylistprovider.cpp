@@ -95,12 +95,12 @@ bool QLocalMediaPlaylistProvider::removeItems(int fromPos, int toPos)
 {
     Q_D(QLocalMediaPlaylistProvider);
 
-    Q_ASSERT(fromPos > 0);
+    Q_ASSERT(fromPos >= 0);
     Q_ASSERT(fromPos <= toPos);
     Q_ASSERT(toPos < size());
 
     emit itemsAboutToBeRemoved(fromPos, toPos);
-    d->resources.erase(d->resources.begin()+fromPos, d->resources.begin()+toPos);
+    d->resources.erase(d->resources.begin()+fromPos, d->resources.begin()+toPos+1);
     emit itemsRemoved(fromPos, toPos);
 
     return true;
