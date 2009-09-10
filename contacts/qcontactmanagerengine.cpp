@@ -594,7 +594,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     relationshipTypes << QString(QLatin1String("Unknown"));
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setName(QContactGender::DefinitionName);
+    d.setName(QContactRelationship::DefinitionName);
     fields.insert(QContactRelationship::FieldRelatedContactUid, f);
     fields.insert(QContactRelationship::FieldRelatedContactManagerUri, f);
     f.allowableValues = relationshipTypes;
