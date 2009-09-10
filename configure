@@ -86,7 +86,6 @@ if [ -z "$RELEASEMODE" ]; then
 fi
 echo "CONFIG += $RELEASEMODE" >> config.in
 
-
 echo "QT_MOBILITY_PREFIX = $QT_MOBILITY_PREFIX" >> config.in
 
 if [ -z "$QT_MOBILITY_INCLUDE" ]; then
@@ -115,6 +114,16 @@ if [ -z "$BUILD_EXAMPLES" ]; then
 else
     echo "build_examples = yes" >> config.in
 fi
+
+echo "Generating Mobility Headers..."
+#remove old headers
+rm -rf $relpath/include
+mkdir $relpath/include
+find $relpath/bearer -name "*.h" |grep -v "_p\.h" | xargs $relpath/bin/syncheaders $relpath/include
+find $relpath/location -name "*.h" |grep -v "_p\.h" | xargs $relpath/bin/syncheaders $relpath/include
+find $relpath/systeminfo -name "*.h" |grep -v "_p\.h" | xargs $relpath/bin/syncheaders $relpath/include
+find $relpath/serviceframework -name "*.h" |grep -v "_p\.h" | xargs $relpath/bin/syncheaders $relpath/include
+find $relpath/context -name "*.h" |grep -v "_p\.h" | xargs $relpath/bin/syncheaders $relpath/include
 
 mv config.in config.pri
 

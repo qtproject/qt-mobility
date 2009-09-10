@@ -23,6 +23,7 @@ bin/servicexmlgen*
 bin/servicefw*
 bin/vsexplorer*
 bin/examples/*
+install/*
 
 #Symbian specific
 *.mmp

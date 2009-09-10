@@ -30,3 +30,8 @@ SUBDIRS += serviceframework bearer location context systeminfo tools
 contains(build_unit_tests, yes):SUBDIRS+=tests
 contains(build_examples, yes):SUBDIRS+=examples
 
+# install Qt style headers
+qtmheaders.path = $${QT_MOBILITY_INCLUDE}
+qtmheaders.files = include/*
+
+unix:INSTALLS += qtmheaders
