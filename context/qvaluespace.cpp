@@ -63,6 +63,25 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
+    \enum QAbstractValueSpaceLayer::LayerOption
+
+    This enum describes the behaviour of the Value Space layer.  In addition this enum is used as
+    a filter when constructing a QValueSpaceObject or QValueSpaceItem.
+
+    \value UnspecifiedLayer     Used as a filter to specify that any layer should be used.
+    \value PermanentLayer       Indicates that the layer uses a permanent backing store.  When used
+                                as a filter only layers that use a permanent backing store will be
+                                used.
+    \value NonPermanentLayer    Indicates that the layer does not use a permanent backing store.
+                                When used as a filter only layers that do not use permanent backing
+                                stores will be used.
+    \value WriteableLayer       Indicates that the layer can update its contents.  When used as a
+                                filter only layers that are writeable will be used.
+    \value NonWriteableLayer    Indicates that the layer cannot update its contents.  When used as
+                                a filter only layers that are read-only will be used.
+*/
+
+/*!
     \macro QVALUESPACE_AUTO_INSTALL_LAYER(className)
 
     \relates QAbstractValueSpaceLayer
@@ -192,6 +211,14 @@ QT_BEGIN_NAMESPACE
 
     a request for children of "/Device/Configuration" will return
     { "Applications", "Buttons", "Name" }.
+*/
+
+/*!
+    \fn QAbstractValueSpaceLayer::LayerOptions QAbstractValueSpaceLayer::layerOptions() const
+
+    Returns the LayerOptions describing this layer.
+
+    \sa LayerOption
 */
 
 /*!
