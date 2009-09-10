@@ -25,7 +25,7 @@ INSTALLS += feature
 TEMPLATE = subdirs
 CONFIG+=ordered
 
-SUBDIRS += serviceframework bearer location context tools
+SUBDIRS += serviceframework bearer location context systeminfo tools
 
 contains(build_unit_tests, yes):SUBDIRS+=tests
 contains(build_examples, yes):SUBDIRS+=examples

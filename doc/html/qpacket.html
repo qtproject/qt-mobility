@@ -14,7 +14,8 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QPacket Class Reference</h1>
 <p>The QPacket class encapsulates an unfragmentable packet of data to be transmitted by <a href="qpacketprotocol.html">QPacketProtocol</a>. <a href="#details">More...</a></p>
-<pre>    #include &lt;QPacket&gt;</pre><ul>
+<pre>    #include &lt;QPacket&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a>.</p>
+<ul>
 <li><a href="qpacket-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
@@ -27,12 +28,15 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qpacket.html#clear">clear</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qpacket.html#isEmpty">isEmpty</a></b> () const</td></tr>
 </table>
+<ul>
+<li><div bar="2" class="fn"></div>39 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qdatastream.html#public-functions">QDataStream</a></li>
+</ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
 <p>The QPacket class encapsulates an unfragmentable packet of data to be transmitted by <a href="qpacketprotocol.html">QPacketProtocol</a>.</p>
 <p>The QPacket class works together with <a href="qpacketprotocol.html">QPacketProtocol</a> to make it simple to send arbitrary sized data &quot;packets&quot; across fragmented transports such as TCP and UDP.</p>
-<p>QPacket provides a QDataStream interface to an unfragmentable packet. Applications should construct a QPacket, propagate it with data and then transmit it over a <a href="qpacketprotocol.html">QPacketProtocol</a> instance. For example:</p>
+<p>QPacket provides a <a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> interface to an unfragmentable packet. Applications should construct a QPacket, propagate it with data and then transmit it over a <a href="qpacketprotocol.html">QPacketProtocol</a> instance. For example:</p>
 <pre>    QPacketProtocol protocol(...);
 
     QPacket myPacket;

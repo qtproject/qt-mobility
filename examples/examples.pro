@@ -22,3 +22,6 @@ SUBDIRS += publish-subscribe
 contains(QT_CONFIG, declarative) {
     SUBDIRS += battery-charge
 }
+
+#System Information
+SUBDIRS += sysinfo

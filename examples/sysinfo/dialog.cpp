@@ -1,0 +1,448 @@
+#include "dialog.h"
+#include "ui_dialog.h"
+#include <QDebug>
+#include <QDesktopWidget>
+#include <QMessageBox>
+
+#include <qsysteminfo.h>
+
+
+Dialog::Dialog(QWidget *parent) :
+    QDialog(parent),
+    ui(new Ui::Dialog)
+{
+    ui->setupUi(this);
+    setupGeneral();
+//    setupDevice();
+//    setupDisplay();
+//    setupMemory();
+//    setupNetwork();
+//    setupSaver();
+
+    connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(tabChanged(int)));
+   connect(ui->versionComboBox,SIGNAL(activated(int)), this,SLOT(getVersion(int)));
+   connect(ui->featureComboBox,SIGNAL(activated(int)), this,SLOT(getFeature(int)));
+
+}
+
+Dialog::~Dialog()
+{
+    delete ui;
+}
+
+void Dialog::changeEvent(QEvent *e)
+{
+    QDialog::changeEvent(e);
+    switch (e->type()) {
+    case QEvent::LanguageChange:
+        ui->retranslateUi(this);
+        break;
+    default:
+        break;
+    }
+}
+
+void Dialog::tabChanged(int index)
+{
+    switch(index) {
+    case 0:
+        setupGeneral();
+        break;
+    case 1:
+        setupDevice();
+        break;
+    case 2:
+        setupDisplay();
+        break;
+    case 3:
+        setupMemory();
+        break;
+    case 4:
+        setupNetwork();
+        break;
+        case 5:
+        setupSaver();
+        break;
+    };
+}
+
+void Dialog::setupGeneral()
+{
+    systemInfo = new QSystemInfo(this);
+    ui->curLanguageLineEdit->setText( systemInfo->currentLanguage());
+    ui->languagesComboBox->insertItems(0,systemInfo->availableLanguages());
+    ui->countryCodeLabel->setText(systemInfo->currentCountryCode());
+}
+
+void Dialog::setupDevice()
+{
+    di = new QSystemDeviceInfo(this);
+    ui->batteryLevelBar->setValue(di->batteryLevel());
+
+    connect(di,SIGNAL(batteryLevelChanged(int)),
+            this,SLOT(updateBatteryStatus(int)));
+
+    connect(di,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)),
+            this,SLOT(displayBatteryStatus(QSystemDeviceInfo::BatteryStatus)));
+
+    connect(di,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
+            this,SLOT(updatePowerState(QSystemDeviceInfo::PowerState)));
+
+
+    ui->batteryChargingCheckBox->setChecked(di->isBatteryCharging());
+
+    ui->ImeiLabel->setText(di->imei());
+    ui->imsiLabel->setText(di->imsi());
+    ui->manufacturerLabel->setText(di->manufacturer());
+    ui->modelLabel->setText(di->model());
+    ui->productLabel->setText(di->productName());
+
+    ui->deviceLockCheckBox->setChecked(di->isDeviceLocked());
+
+    if(di->currentPowerState() == QSystemDeviceInfo::BatteryPower) {
+        ui->radioButton_2->setChecked(true);
+    } else
+        if(di->currentPowerState() == QSystemDeviceInfo::WallPower) {
+        ui->radioButton_3->setChecked(true);
+    } else {
+        ui->radioButton->setChecked(true);
+    }
+
+    QSystemDeviceInfo::InputMethodFlags methods = di->inputMethodType();
+    QStringList inputs;
+    if((methods & QSystemDeviceInfo::Keys)){
+        inputs << "Keys";
+    }
+    if((methods & QSystemDeviceInfo::Keypad)) {
+        inputs << "Keypad";
+    }
+    if((methods & QSystemDeviceInfo::Keyboard)) {
+        inputs << "Keyboard";
+    }
+    if((methods & QSystemDeviceInfo::SingleTouch)) {
+        inputs << "Touch Screen";
+    }
+    if((methods & QSystemDeviceInfo::MultiTouch)) {
+        inputs << "Multi touch";
+    }
+    if((methods & QSystemDeviceInfo::Mouse)){
+        inputs << "Mouse";
+    }
+
+    ui->inputMethodLabel->setText(inputs.join(" "));
+}
+
+void Dialog::setupDisplay()
+{
+    QSystemDisplayInfo di;
+    ui->brightnessLineEdit->setText(QString::number(di.displayBrightness(0)));
+    ui->colorDepthLineEdit->setText(QString::number(di.colorDepth((0))));
+    QDesktopWidget wid;
+    ui->resolutionLabel->setText(QString::number(wid.width())+"x"+QString::number(wid.height()));
+
+}
+
+void Dialog::setupMemory()
+{
+    QSystemMemoryInfo mi;
+    ui->memoryTreeWidget->clear();
+
+    QStringList vols = mi.listOfVolumes();
+    foreach(QString volName, vols) {
+        QString type;
+        QSystemMemoryInfo::VolumeType volType;
+        volType = mi.volumeType(volName);
+        if(volType == QSystemMemoryInfo::Internal) {
+            type =  "Internal";
+        }
+
+        if(volType == QSystemMemoryInfo::Removable) {
+            type = "Removable";
+        }
+        if(volType == QSystemMemoryInfo::Cdrom) {
+            type =  "Cdrom";
+        }
+        if(volType == QSystemMemoryInfo::Remote) {
+            type =  "Network";
+        }
+        QStringList items;
+        items << volName;
+        items << type;
+        items << QString::number(mi.totalDiskSpace(volName));
+        items << QString::number(mi.availableDiskSpace(volName));
+        QTreeWidgetItem *item = new QTreeWidgetItem(items);
+        ui->memoryTreeWidget->addTopLevelItem(item);
+    }
+}
+
+void Dialog::setupNetwork()
+{
+    QSystemNetworkInfo ni;
+    connect(ui->netStatusComboBox,SIGNAL(activated(int)),
+            this, SLOT(netStatusComboActivated(int)));
+
+    ui->cellIdLabel->setText(QString::number(ni.cellId()));
+    ui->locationAreaCodeLabel->setText(QString::number(ni.locationAreaCode()));
+    ui->currentMMCLabel->setText(ni.currentMobileCountryCode());
+    ui->currentMNCLabel->setText(ni.currentMobileNetworkCode());
+
+    ui->homeMMCLabel->setText(ni.homeMobileCountryCode());
+    ui->homeMNCLabel->setText(ni.homeMobileNetworkCode());
+    ui->operatorNameLabel->setText(ni.networkName());
+}
+void Dialog::netStatusComboActivated(int index)
+{
+    QString status;
+    QString stat;
+    QSystemNetworkInfo ni;
+    int reIndex = index +1;
+
+    switch(ni.networkStatus((QSystemNetworkInfo::NetworkMode)reIndex)) {
+    case QSystemNetworkInfo::UndefinedStatus:
+        stat = "Undefined";
+        break;
+    case QSystemNetworkInfo::NoNetworkAvailable:
+        stat = "No Network Available";
+        break;
+    case QSystemNetworkInfo::EmergencyOnly:
+        stat = "Emergency Only";
+        break;
+    case QSystemNetworkInfo::Searching:
+        stat = "Searching";
+        break;
+    case QSystemNetworkInfo::Busy:
+        stat = "Busy";
+        break;
+    case QSystemNetworkInfo::Connected:
+        stat = "Connected";
+        break;
+    case QSystemNetworkInfo::HomeNetwork:
+        stat = "Home Network";
+        break;
+    case QSystemNetworkInfo::Denied:
+        stat = "Denied";
+        break;
+    case QSystemNetworkInfo::Roaming:
+        stat = "Roaming";
+        break;
+    };
+    ui->cellNetworkStatusLabel->setText(stat);
+    ui->macAddressLabel->setText(ni.macAddress((QSystemNetworkInfo::NetworkMode)reIndex));
+
+    int strength = ni.networkSignalStrength((QSystemNetworkInfo::NetworkMode)reIndex);
+    if(strength < 0)
+        strength = 0;
+    ui->signalLevelProgressBar->setValue(strength);
+
+    ui->InterfaceLabel->setText(ni.interfaceForMode((QSystemNetworkInfo::NetworkMode)reIndex).humanReadableName());
+}
+
+void Dialog::getVersion(int index)
+{
+    QSystemInfo::Version version;
+    switch(index) {
+    case 0:
+        version = QSystemInfo::Os;
+        break;
+    case 1:
+        version = QSystemInfo::QtCore;
+        break;
+    case 2:
+        version = QSystemInfo::WrtCore;
+        break;
+    case 3:
+        version = QSystemInfo::Webkit;
+        break;
+    case 4:
+        version = QSystemInfo::ServiceFramework;
+        break;
+    case 5:
+        version = QSystemInfo::WrtExtensions;
+        break;
+    case 6:
+        version = QSystemInfo::ServiceProvider;
+        break;
+    case 7:
+        version = QSystemInfo::NetscapePlugin;
+        break;
+    case 8:
+        version = QSystemInfo::WebApp;
+        break;
+    case 9:
+        version = QSystemInfo::Firmware;
+        break;
+    };
+
+    QSystemInfo si;
+    ui->versionLineEdit->setText(si.version(version));
+}
+
+void Dialog::getFeature(int index)
+{
+    QSystemInfo::Feature feature;
+    switch(index) {
+    case 0:
+        feature = QSystemInfo::BluetoothFeature;
+        break;
+    case 1:
+        feature = QSystemInfo::CameraFeature;
+        break;
+    case 2:
+        feature = QSystemInfo::FmradioFeature;
+        break;
+    case 3:
+        feature = QSystemInfo::IrFeature;
+        break;
+    case 4:
+        feature = QSystemInfo::LedFeature;
+        break;
+    case 5:
+        feature = QSystemInfo::MemcardFeature;
+        break;
+    case 6:
+        feature = QSystemInfo::UsbFeature;
+        break;
+    case 7:
+        feature = QSystemInfo::VibFeature;
+        break;
+    case 8:
+        feature = QSystemInfo::WlanFeature;
+        break;
+    case 9:
+        feature = QSystemInfo::SimFeature;
+        break;
+    case 10:
+        feature = QSystemInfo::LocationFeature;
+        break;
+    case 11:
+        feature = QSystemInfo::VideoOutFeature;
+        break;
+    case 12:
+        feature = QSystemInfo::HapticsFeature;
+        break;
+    };
+    QSystemInfo si;
+    ui->featuresLineEdit->setText((si.hasFeatureSupported(feature) ? "true":"false" ));
+}
+
+//void Dialog::doVolumes(int /*index*/)
+//{
+//    QSystemMemoryInfo mi;
+//    QString vol = ui->volumesComboBox->currentText();
+//    int index2 = ui->diskComboBox->currentIndex();
+//    switch(index2) {
+//    case 0:
+//        //total
+//        ui->diskSpaceLineEdit->setText( QString::number(mi.totalDiskSpace(vol)));
+//        break;
+//        case 1:
+//        //available
+//        ui->diskSpaceLineEdit->setText( QString::number(mi.availableDiskSpace(vol)));
+//        break;
+//        case 2:
+//        //type
+//        QSystemMemoryInfo::VolumeType volType;
+//        volType = mi.getVolumeType(vol);
+//        if(volType == QSystemMemoryInfo::Internal) {
+//                ui->diskSpaceLineEdit->setText( "Internal");
+//        } else
+//        if(volType == QSystemMemoryInfo::Removable) {
+//                ui->diskSpaceLineEdit->setText( "Removable");
+//        }
+//        if(volType == QSystemMemoryInfo::Cdrom) {
+//                ui->diskSpaceLineEdit->setText( "Cdrom");
+//        }
+//        break;
+//    };
+//
+//}
+
+void Dialog::setupSaver()
+{
+    saver = new QSystemScreenSaver(this);
+    bool saverEnabled = saver->screenSaverEnabled();
+    bool blankingEnabled = saver->screenBlankingEnabled();
+
+    ui->screenLockCheckBox->setChecked(saver->isScreenLockOn());
+
+    connect( ui->saverEnabledCheckBox, SIGNAL(clicked(bool)),
+             this,SLOT(setSaverEnabled(bool)));
+    connect( ui->screenBlankingCheckBox, SIGNAL(clicked(bool)),
+             this,SLOT(setBlankingEnabled(bool)));
+
+    ui->saverEnabledCheckBox->setChecked(saverEnabled);
+    ui->screenBlankingCheckBox->setChecked(blankingEnabled);
+
+}
+
+
+void Dialog::setSaverEnabled(bool b)
+{
+    if(saver->setScreenSaverEnabled(b)) {
+    }    
+}
+
+void Dialog::setBlankingEnabled(bool b)
+{
+    if(saver->setScreenBlankingEnabled(b)) {   
+    }
+}
+
+void Dialog::updateBatteryStatus(int level)
+{
+    ui->batteryLevelBar->setValue(level);
+}
+
+void Dialog::updatePowerState(QSystemDeviceInfo::PowerState newState)
+{
+
+    switch (newState) {
+    case QSystemDeviceInfo::BatteryPower:
+        {
+            ui->radioButton_2->setChecked(true);
+        }
+        break;
+    case QSystemDeviceInfo::WallPower:
+        {
+            ui->radioButton_3->setChecked(true);
+        }
+        break;
+    };
+    ui->batteryChargingCheckBox->setChecked(di->isBatteryCharging());
+}
+
+void Dialog::displayBatteryStatus(QSystemDeviceInfo::BatteryStatus status)
+{
+    // this wont annoy users will it?
+    QString msg;
+//    if(di->isBatteryCharging()) {
+        switch(status) {
+        case QSystemDeviceInfo::BatteryCritical:
+            {
+                msg = " Battery is Critical (4% or less), please save your work or plug in the charger.";
+                QMessageBox::critical(this,"QSystemInfo",msg);
+            }
+            break;
+        case QSystemDeviceInfo::BatteryVeryLow:
+            {
+                msg = "Battery is Very Low (10%), please plug in the charger soon";
+                QMessageBox::warning(this,"QSystemInfo",msg);
+            }
+            break;
+        case QSystemDeviceInfo::BatteryLow:
+            {
+                msg = "Battery is Low (40% or less)";
+                QMessageBox::information(this,"QSystemInfo",msg);
+
+            }
+            break;
+        case QSystemDeviceInfo::BatteryNormal:
+            {
+                msg = "Battery is Normal (greater than 40%)";
+                QMessageBox::information(this,"QSystemInfo",msg);
+            }
+            break;
+        };
+  //  }
+
+}

@@ -7,12 +7,14 @@ headerdirs = ../../bearer \
              ../../serviceframework \
              ../../location \
              ../../context \
+             ../../systeminfo \
              .
 
 sourcedirs = ../../bearer \
              ../../serviceframework \
              ../../location \
              ../../context \
+             ../../systeminfo \
              .
 
 exampledirs = ../../examples

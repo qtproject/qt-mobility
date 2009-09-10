@@ -14,7 +14,8 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QValueSpaceItem Class Reference</h1>
 <p>The QValueSpaceItem class allows access to Value Space items. <a href="#details">More...</a></p>
-<pre>    #include &lt;QValueSpaceItem&gt;</pre><ul>
+<pre>    #include &lt;QValueSpaceItem&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a>.</p>
+<ul>
 <li><a href="qvaluespaceitem-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
@@ -46,18 +47,33 @@
 <tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#value-3">value</a></b> ( const char * <i>subPath</i>, const QVariant &amp; <i>def</i> = QVariant() ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QValueSpaceItem &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#operator-eq">operator=</a></b> ( const QValueSpaceItem &amp; <i>other</i> )</td></tr>
 </table>
+<ul>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
+</ul>
 <hr />
 <a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#contentsChanged">contentsChanged</a></b> ()</td></tr>
 </table>
+<ul>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-variables">QObject</a></li>
+</ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
 <p>The QValueSpaceItem class allows access to Value Space items.</p>
 <p>The Value Space is an inter-application hierarchy of readable, writable and subscribable data. The QValueSpaceItem class allows applications to read and subscribe to this data.</p>
-<p>Conceptually, the Value Space is a hierarchical tree of which each item can optionally contain a QVariant value and sub-items. A serialized version of a simple example might look like this.</p>
+<p>Conceptually, the Value Space is a hierarchical tree of which each item can optionally contain a <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> value and sub-items. A serialized version of a simple example might look like this.</p>
 <pre>    /Device/Buttons = 3
     /Device/Buttons/1/Name = Context
     /Device/Buttons/1/Usable = true
@@ -78,38 +94,38 @@
 <p><i>Note:</i> The QValueSpaceItem class is not thread safe and may only be used from an application's main thread.</p>
 <hr />
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QValueSpaceItem"></a>QValueSpaceItem::QValueSpaceItem ( const QValueSpaceItem &amp; <i>base</i>, const QByteArray &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QValueSpaceItem"></a>QValueSpaceItem::QValueSpaceItem ( const QValueSpaceItem &amp; <i>base</i>, const <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> &amp; <i>path</i>, <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>Construct a new <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to the sub-<i>path</i> of <i>base</i>.</p>
-<h3 class="fn"><a name="QValueSpaceItem-2"></a>QValueSpaceItem::QValueSpaceItem ( const QValueSpaceItem &amp; <i>other</i>, QObject * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QValueSpaceItem-2"></a>QValueSpaceItem::QValueSpaceItem ( const QValueSpaceItem &amp; <i>other</i>, <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>Construct a new <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to the same path as <i>other</i>.</p>
-<h3 class="fn"><a name="QValueSpaceItem-3"></a>QValueSpaceItem::QValueSpaceItem ( const QByteArray &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QValueSpaceItem-3"></a>QValueSpaceItem::QValueSpaceItem ( const <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> &amp; <i>path</i>, <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>Construct a new <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to <i>path</i>.</p>
-<h3 class="fn"><a name="QValueSpaceItem-4"></a>QValueSpaceItem::QValueSpaceItem ( QObject * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QValueSpaceItem-4"></a>QValueSpaceItem::QValueSpaceItem ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>Construct a new <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to the root path .</p>
-<h3 class="fn"><a name="QValueSpaceItem-5"></a>QValueSpaceItem::QValueSpaceItem ( const QValueSpaceItem &amp; <i>base</i>, const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QValueSpaceItem-5"></a>QValueSpaceItem::QValueSpaceItem ( const QValueSpaceItem &amp; <i>base</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>path</i>, <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>This is an overloaded function.</p>
 <p>Construct a new <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified parent that refers to the sub-<i>path</i> of <i>base</i>. This constructor is equivalent to <tt>QValueSpaceItem(base, path.toUtf8())</tt>.</p>
-<h3 class="fn"><a name="QValueSpaceItem-6"></a>QValueSpaceItem::QValueSpaceItem ( const QValueSpaceItem &amp; <i>base</i>, const char * <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QValueSpaceItem-6"></a>QValueSpaceItem::QValueSpaceItem ( const QValueSpaceItem &amp; <i>base</i>, const char * <i>path</i>, <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>This is an overloaded function.</p>
 <p>Construct a new <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to the sub-<i>path</i> of <i>base</i>. This constructor is equivalent to <tt>QValueSpaceItem(base, QByteArray(path))</tt>.</p>
-<h3 class="fn"><a name="QValueSpaceItem-7"></a>QValueSpaceItem::QValueSpaceItem ( const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QValueSpaceItem-7"></a>QValueSpaceItem::QValueSpaceItem ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>path</i>, <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>This is an overloaded function.</p>
 <p>Construct a new <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to <i>path</i>. This constructor is equivalent to <tt>QValueSpaceItem(path.toUtf8())</tt>.</p>
-<h3 class="fn"><a name="QValueSpaceItem-8"></a>QValueSpaceItem::QValueSpaceItem ( const char * <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QValueSpaceItem-8"></a>QValueSpaceItem::QValueSpaceItem ( const char * <i>path</i>, <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>This is an overloaded function.</p>
 <p>Construct a new <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to <i>path</i>. This constructor is equivalent to <tt>QValueSpaceItem(QByteArray(path))</tt>.</p>
 <h3 class="fn"><a name="dtor.QValueSpaceItem"></a>QValueSpaceItem::~QValueSpaceItem ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the <a href="qvaluespaceitem.html">QValueSpaceItem</a></p>
 <h3 class="fn"><a name="contentsChanged"></a>void QValueSpaceItem::contentsChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Emitted whenever the value of this item, or any sub-items changes.</p>
-<h3 class="fn"><a name="itemName"></a>QString QValueSpaceItem::itemName () const</h3>
+<h3 class="fn"><a name="itemName"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QValueSpaceItem::itemName () const</h3>
 <p>Returns the item name of this <a href="qvaluespaceitem.html">QValueSpaceItem</a>.</p>
 <h3 class="fn"><a name="remove"></a>bool QValueSpaceItem::remove ()</h3>
 <p>Request that the item be removed. The provider of the item determines whether the request is honored or ignored.</p>
 <p><i>Note:</i> This call asynchronously <i>asks</i> the current provider of the object to change the value. To explicitly make a change use <a href="qvaluespaceobject.html">QValueSpaceObject</a>.</p>
 <p>Returns false if none of the available value space layers support sending requests; otherwise returns true.</p>
 <p>See also <a href="qvaluespaceobject.html#itemRemove">QValueSpaceObject::itemRemove</a>().</p>
-<h3 class="fn"><a name="remove-2"></a>bool QValueSpaceItem::remove ( const QByteArray &amp; <i>subPath</i> )</h3>
+<h3 class="fn"><a name="remove-2"></a>bool QValueSpaceItem::remove ( const <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> &amp; <i>subPath</i> )</h3>
 <p>This is an overloaded function.</p>
 <p>Request that the <i>subPath</i> of item be removed. The provider of the sub path determines whether the request is honored or ignored.</p>
 <p><i>Note:</i> This call asynchronously <i>asks</i> the current provider of the object to change the value. To explicitly make a change use <a href="qvaluespaceobject.html">QValueSpaceObject</a>.</p>
@@ -121,36 +137,36 @@
 <p><i>Note:</i> This call asynchronously <i>asks</i> the current provider of the object to change the value. To explicitly make a change use <a href="qvaluespaceobject.html">QValueSpaceObject</a>.</p>
 <p>Returns false if none of the available value space layers support sending requests; otherwise returns true.</p>
 <p>See also <a href="qvaluespaceobject.html#itemRemove">QValueSpaceObject::itemRemove</a>().</p>
-<h3 class="fn"><a name="remove-4"></a>bool QValueSpaceItem::remove ( const QString &amp; <i>subPath</i> )</h3>
+<h3 class="fn"><a name="remove-4"></a>bool QValueSpaceItem::remove ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>subPath</i> )</h3>
 <p>This is an overloaded function.</p>
 <p>Request that the <i>subPath</i> of item be removed. The provider of the sub path determines whether the request is honored or ignored.</p>
 <p><i>Note:</i> This call asynchronously <i>asks</i> the current provider of the object to change the value. To explicitly make a change use <a href="qvaluespaceobject.html">QValueSpaceObject</a>.</p>
 <p>Returns false if none of the available value space layers support sending requests; otherwise returns true.</p>
 <p>See also <a href="qvaluespaceobject.html#itemRemove">QValueSpaceObject::itemRemove</a>().</p>
-<h3 class="fn"><a name="setValue"></a>bool QValueSpaceItem::setValue ( const QVariant &amp; <i>value</i> )</h3>
+<h3 class="fn"><a name="setValue"></a>bool QValueSpaceItem::setValue ( const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
 <p>Request that the value of this item be changed to <i>value</i>. The provider of the item determines whether the request is honored or ignored.</p>
 <p><i>Note:</i> This call asynchronously <i>asks</i> the current provider of the object to change the value. To explicitly make a change use <a href="qvaluespaceobject.html">QValueSpaceObject</a>.</p>
 <p>Returns false if none of the available value space layers support sending requests; otherwise returns true.</p>
 <p>See also <a href="qvaluespaceitem.html#value">value</a>() and <a href="qvaluespaceobject.html#itemSetValue">QValueSpaceObject::itemSetValue</a>().</p>
-<h3 class="fn"><a name="setValue-2"></a>bool QValueSpaceItem::setValue ( const QByteArray &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> )</h3>
+<h3 class="fn"><a name="setValue-2"></a>bool QValueSpaceItem::setValue ( const <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> &amp; <i>subPath</i>, const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
 <p>This is an overloaded function.</p>
 <p>Request that the value of the <i>subPath</i> of this item be changed to <i>value</i>. The provider of the sub path determines whether the request is honored or ignored.</p>
 <p><i>Note:</i> This call asynchronously <i>asks</i> the current provider of the object to change the value. To explicitly make a change use <a href="qvaluespaceobject.html">QValueSpaceObject</a>.</p>
 <p>Returns false if none of the available value space layers support sending requests; otherwise returns true.</p>
 <p>See also <a href="qvaluespaceobject.html#itemSetValue">QValueSpaceObject::itemSetValue</a>().</p>
-<h3 class="fn"><a name="setValue-3"></a>bool QValueSpaceItem::setValue ( const char * <i>subPath</i>, const QVariant &amp; <i>value</i> )</h3>
+<h3 class="fn"><a name="setValue-3"></a>bool QValueSpaceItem::setValue ( const char * <i>subPath</i>, const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
 <p>This is an overloaded function.</p>
 <p>Request that the value of the <i>subPath</i> of this item be changed to <i>value</i>. The provider of the sub path determines whether the request is honored or ignored.</p>
 <p><i>Note:</i> This call asynchronously <i>asks</i> the current provider of the object to change the value. To explicitly make a change use <a href="qvaluespaceobject.html">QValueSpaceObject</a>.</p>
 <p>Returns false if none of the available value space layers support sending requests; otherwise returns true.</p>
 <p>See also <a href="qvaluespaceobject.html#itemSetValue">QValueSpaceObject::itemSetValue</a>().</p>
-<h3 class="fn"><a name="setValue-4"></a>bool QValueSpaceItem::setValue ( const QString &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> )</h3>
+<h3 class="fn"><a name="setValue-4"></a>bool QValueSpaceItem::setValue ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>subPath</i>, const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
 <p>This is an overloaded function.</p>
 <p>Request that the value of the <i>subPath</i> of this item be changed to <i>value</i>. The provider of the sub path determines whether the request is honored or ignored.</p>
 <p><i>Note:</i> This call asynchronously <i>asks</i> the current provider of the object to change the value. To explicitly make a change use <a href="qvaluespaceobject.html">QValueSpaceObject</a>.</p>
 <p>Returns false if none of the available value space layers support sending requests; otherwise returns true.</p>
 <p>See also <a href="qvaluespaceobject.html#itemSetValue">QValueSpaceObject::itemSetValue</a>().</p>
-<h3 class="fn"><a name="subPaths"></a>QList&lt;QString&gt; QValueSpaceItem::subPaths () const</h3>
+<h3 class="fn"><a name="subPaths"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>&gt; QValueSpaceItem::subPaths () const</h3>
 <p>Returns a list of sub-paths for this item. For example, given a Value Space tree containing:</p>
 <pre>    /Settings/Nokia/Device
     /Settings/Nokia/Other
@@ -159,7 +175,7 @@
 <p><tt>QValueSpaceItem(&quot;/Settings&quot;).subPaths()</tt> will return a list containing <tt>{ Nokia, Qt }</tt> in no particular order.</p>
 <h3 class="fn"><a name="sync"></a>bool QValueSpaceItem::sync ()</h3>
 <p>Commit all changes made by calls to <a href="qvaluespaceitem.html#setValue">setValue</a>() or <a href="qvaluespaceitem.html#remove">remove</a>(). The return value is reserved for future use.</p>
-<h3 class="fn"><a name="value"></a>QVariant QValueSpaceItem::value ( const QByteArray &amp; <i>subPath</i> = QByteArray(), const QVariant &amp; <i>def</i> = QVariant() ) const</h3>
+<h3 class="fn"><a name="value"></a><a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> QValueSpaceItem::value ( const <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> &amp; <i>subPath</i> = QByteArray(), const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>def</i> = QVariant() ) const</h3>
 <p>Returns the value of sub-item <i>subPath</i> of this item, or the value of this item if <i>subPath</i> is empty. The following code shows how the item and <i>subPath</i> relate.</p>
 <pre>    QValueSpaceItem base(&quot;/Settings&quot;);
     QValueSpaceItem equiv(&quot;/Settings/Nokia/General/Mappings);
@@ -168,10 +184,10 @@
     equiv.value() == base.value(&quot;Nokia/General/Mapping&quot;);</pre>
 <p>If the item does not exist, <i>def</i> is returned.</p>
 <p>See also <a href="qvaluespaceitem.html#setValue">setValue</a>().</p>
-<h3 class="fn"><a name="value-2"></a>QVariant QValueSpaceItem::value ( const QString &amp; <i>subPath</i>, const QVariant &amp; <i>def</i> = QVariant() ) const</h3>
+<h3 class="fn"><a name="value-2"></a><a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> QValueSpaceItem::value ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>subPath</i>, const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>def</i> = QVariant() ) const</h3>
 <p>This is an overloaded function.</p>
 <p>This is a convenience overload and is equivalent to <tt>value(subPath.toUtf8(), def)</tt>.</p>
-<h3 class="fn"><a name="value-3"></a>QVariant QValueSpaceItem::value ( const char * <i>subPath</i>, const QVariant &amp; <i>def</i> = QVariant() ) const</h3>
+<h3 class="fn"><a name="value-3"></a><a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> QValueSpaceItem::value ( const char * <i>subPath</i>, const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>def</i> = QVariant() ) const</h3>
 <p>This is an overloaded function.</p>
 <p>This is a convenience overload and is equivalent to <tt>value(QByteArray(subPath), def)</tt>.</p>
 <h3 class="fn"><a name="operator-eq"></a>QValueSpaceItem &amp; QValueSpaceItem::operator= ( const QValueSpaceItem &amp; <i>other</i> )</h3>

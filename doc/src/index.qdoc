@@ -408,7 +408,7 @@ clients have a registered interest in them while at the same time
 optimizes the interface's uptime. 
 
 This API is a key enabler for HTTP level roaming in 
-\l {http://doc.trolltech.com/doc/qt/qnetworkmanager.html}{QNetworkAccessManager}.
+\l {QNetworkAccessManager}{QNetworkAccessManager}.
 
 This API does not provide support for management of network configurations
 themselves. It is up to the platform to provide infrastructure which
@@ -855,6 +855,10 @@ changed" messages.  Nodes within the shared memory region are versioned, which
 allows clients to quickly determine exactly what has changed without the need
 for a bulkier change notification protocol.
 
+\section1 System Information
+
+The System Information API provides a set of APIs to discover system related information and capabilities.
+
 \section1 Building and compiling
 
 This library requires Qt 4.6 to be installed.
@@ -870,7 +874,6 @@ If the NetworkManager backend is required run qmake as follows:
 \endcode
 
 The backend selection is expected to disappear once the API is integrated into Qt. 
-
 
 \section1 Reference documentation
 
@@ -907,6 +910,15 @@ The backend selection is expected to disappear once the API is integrated into Q
         \o \l{QValueSpaceObject}
         \o \l{QValueSpace}
         \o \l{QAbstractValueSpaceLayer}
+    \endlist
+    \o System Information
+    \list
+        \o \l{QSystemDeviceInfo}
+        \o \l{QSystemDisplayInfo}
+        \o \l{QSystemInfo}
+        \o \l{QSystemMemoryInfo}
+        \o \l{QSystemNetworkInfo}
+        \o \l{QSystemScreenSaver}
     \endlist
 \endlist
 

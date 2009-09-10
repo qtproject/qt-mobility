@@ -14,7 +14,8 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QValueSpaceObject Class Reference</h1>
 <p>The QValueSpaceObject class allows applications to add entries to the Value Space. <a href="#details">More...</a></p>
-<pre>    #include &lt;QValueSpaceObject&gt;</pre><ul>
+<pre>    #include &lt;QValueSpaceObject&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a>.</p>
+<ul>
 <li><a href="qvaluespaceobject-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
@@ -29,6 +30,9 @@
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceobject.html#objectPath">objectPath</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceobject.html#supportsRequests">supportsRequests</a></b> () const</td></tr>
 </table>
+<ul>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
+</ul>
 <hr />
 <a name="public-slots"></a>
 <h2>Public Slots</h2>
@@ -40,6 +44,9 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceobject.html#setAttribute-2">setAttribute</a></b> ( const char * <i>attribute</i>, const QVariant &amp; <i>data</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceobject.html#setAttribute-3">setAttribute</a></b> ( const QString &amp; <i>attribute</i>, const QVariant &amp; <i>data</i> )</td></tr>
 </table>
+<ul>
+<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-slots">QObject</a></li>
+</ul>
 <hr />
 <a name="signals"></a>
 <h2>Signals</h2>
@@ -48,18 +55,34 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceobject.html#itemRemove">itemRemove</a></b> ( const QByteArray &amp; <i>attribute</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceobject.html#itemSetValue">itemSetValue</a></b> ( const QByteArray &amp; <i>attribute</i>, const QVariant &amp; <i>value</i> )</td></tr>
 </table>
+<ul>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
+</ul>
 <hr />
 <a name="static-public-members"></a>
 <h2>Static Public Members</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceobject.html#sync">sync</a></b> ()</td></tr>
 </table>
+<ul>
+<li><div bar="2" class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#static-public-members">QObject</a></li>
+</ul>
 <hr />
-<a name="protected-functions"></a>
-<h2>Protected Functions</h2>
+<a name="reimplemented-protected-functions"></a>
+<h2>Reimplemented Protected Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceobject.html#connectNotify">connectNotify</a></b> ( const char * <i>member</i> )</td></tr>
 </table>
+<ul>
+<li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-functions">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-variables">QObject</a></li>
+</ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
@@ -98,33 +121,34 @@
 <p>See also <a href="qvaluespaceitem.html">QValueSpaceItem</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QValueSpaceObject"></a>QValueSpaceObject::QValueSpaceObject ( const QByteArray &amp; <i>objectPath</i>, const QUuid &amp; <i>layer</i> = QUuid(), QObject * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QValueSpaceObject"></a>QValueSpaceObject::QValueSpaceObject ( const <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> &amp; <i>objectPath</i>, const <a href="http://qt.nokia.com/doc/4.5/quuid.html">QUuid</a> &amp; <i>layer</i> = QUuid(), <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>Construct a Value Space object on the specified <i>layer</i>, rooted at <i>objectPath</i> with the specified <i>parent</i>.</p>
 <p>If <i>layer</i> is null then the layer is automatically chosen based on <i>objectPath</i>.</p>
-<h3 class="fn"><a name="QValueSpaceObject-2"></a>QValueSpaceObject::QValueSpaceObject ( const char * <i>objectPath</i>, const QUuid &amp; <i>layer</i> = QUuid(), QObject * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QValueSpaceObject-2"></a>QValueSpaceObject::QValueSpaceObject ( const char * <i>objectPath</i>, const <a href="http://qt.nokia.com/doc/4.5/quuid.html">QUuid</a> &amp; <i>layer</i> = QUuid(), <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>This is an overloaded function.</p>
 <p>Construct a Value Space object on the specified <i>layer</i>, rooted at <i>objectPath</i> with the specified <i>parent</i>. This constructor is equivalent to <tt>QValueSpaceObject(QByteArray(objectPath), layer, parent)</tt>.</p>
-<h3 class="fn"><a name="QValueSpaceObject-3"></a>QValueSpaceObject::QValueSpaceObject ( const QString &amp; <i>objectPath</i>, const QUuid &amp; <i>layer</i> = QUuid(), QObject * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QValueSpaceObject-3"></a>QValueSpaceObject::QValueSpaceObject ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>objectPath</i>, const <a href="http://qt.nokia.com/doc/4.5/quuid.html">QUuid</a> &amp; <i>layer</i> = QUuid(), <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>This is an overloaded function.</p>
 <p>Construct a Value Space object on the specified <i>layer</i>, rooted at <i>objectPath</i> with the specified <i>parent</i>. This constructor is equivalent to <tt>QValueSpaceObject(objectPath.toUtf8(), parent)</tt>.</p>
 <h3 class="fn"><a name="dtor.QValueSpaceObject"></a>QValueSpaceObject::~QValueSpaceObject ()</h3>
 <p>Destroys the Value Space object. This will remove the object and all its attributes from the Value Space.</p>
 <h3 class="fn"><a name="connectNotify"></a>void QValueSpaceObject::connectNotify ( const char * <i>member</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.5/qobject.html#connectNotify">QObject::connectNotify</a>().</p>
 <p>Registers this <a href="qvaluespaceobject.html">QValueSpaceObject</a> for notifications when request to set or remove value space items under <a href="qvaluespaceobject.html#objectPath">objectPath</a>() are received by the underlying <a href="qabstractvaluespacelayer.html">QAbstractValueSpaceLayer</a>.</p>
 <p>Generally you do not need to call this function as it is automatically called when connections are made to this classes signals. <i>member</i> is the signal that has been connected.</p>
 <p>If you reimplement this virtual function it is important that you call this implementation from your implementation.</p>
 <p>See also <a href="qvaluespaceobject.html#itemRemove">itemRemove</a>() and <a href="qvaluespaceobject.html#itemSetValue">itemSetValue</a>().</p>
 <h3 class="fn"><a name="isValid"></a>bool QValueSpaceObject::isValid () const</h3>
 <p>Returns true if this object is valid. An object is valid if its associated <a href="qabstractvaluespacelayer.html">QAbstractValueSpaceLayer</a> is available.</p>
-<h3 class="fn"><a name="itemNotify"></a>void QValueSpaceObject::itemNotify ( const QByteArray &amp; <i>attribute</i>, bool <i>interested</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="itemNotify"></a>void QValueSpaceObject::itemNotify ( const <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> &amp; <i>attribute</i>, bool <i>interested</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal that is emitted when interest in <i>attribute</i> changes. If <i>interested</i> is true at least on <a href="qvaluespaceitem.html">QValueSpaceItem</a> is interested in the value of <i>attribute</i>.</p>
-<h3 class="fn"><a name="itemRemove"></a>void QValueSpaceObject::itemRemove ( const QByteArray &amp; <i>attribute</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="itemRemove"></a>void QValueSpaceObject::itemRemove ( const <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> &amp; <i>attribute</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal that is emitted when a request to remove <i>attribute</i> is received.</p>
-<h3 class="fn"><a name="itemSetValue"></a>void QValueSpaceObject::itemSetValue ( const QByteArray &amp; <i>attribute</i>, const QVariant &amp; <i>value</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="itemSetValue"></a>void QValueSpaceObject::itemSetValue ( const <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> &amp; <i>attribute</i>, const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>value</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal that is emitted when a request to set <i>attribute</i> to <i>value</i> is received.</p>
-<h3 class="fn"><a name="objectPath"></a>QString QValueSpaceObject::objectPath () const</h3>
+<h3 class="fn"><a name="objectPath"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QValueSpaceObject::objectPath () const</h3>
 <p>Returns the full path to this object as passed to the <a href="qvaluespaceobject.html">QValueSpaceObject</a> constructor.</p>
-<h3 class="fn"><a name="removeAttribute"></a>void QValueSpaceObject::removeAttribute ( const QByteArray &amp; <i>attribute</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<h3 class="fn"><a name="removeAttribute"></a>void QValueSpaceObject::removeAttribute ( const <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> &amp; <i>attribute</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Removes the object <i>attribute</i> and all sub-attributes from the system.</p>
 <p>For example:</p>
 <pre>    QValueSpaceObject object(&quot;/Device&quot;);
@@ -141,10 +165,10 @@
 <h3 class="fn"><a name="removeAttribute-2"></a>void QValueSpaceObject::removeAttribute ( const char * <i>attribute</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>This is an overloaded function.</p>
 <p>This is a convenience overload and is equivalent to <tt>removeAttribute(QByteArray(attribute))</tt>.</p>
-<h3 class="fn"><a name="removeAttribute-3"></a>void QValueSpaceObject::removeAttribute ( const QString &amp; <i>attribute</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<h3 class="fn"><a name="removeAttribute-3"></a>void QValueSpaceObject::removeAttribute ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>attribute</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>This is an overloaded function.</p>
 <p>This is a convenience overload and is equivalent to <tt>removeAttribute(attribute.toUtf8())</tt>.</p>
-<h3 class="fn"><a name="setAttribute"></a>void QValueSpaceObject::setAttribute ( const QByteArray &amp; <i>attribute</i>, const QVariant &amp; <i>data</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<h3 class="fn"><a name="setAttribute"></a>void QValueSpaceObject::setAttribute ( const <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> &amp; <i>attribute</i>, const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>data</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Set an <i>attribute</i> on the object to <i>data</i>. If attribute is empty, this call will set the object's value.</p>
 <p>For example:</p>
 <pre>    QValueSpaceObject object(&quot;/Device&quot;);
@@ -152,10 +176,10 @@
     object.sync();
 
 <span class="comment">    // QValueSpaceItem(&quot;/Device/State&quot;).value() == QVariant(&quot;Starting&quot;)</span></pre>
-<h3 class="fn"><a name="setAttribute-2"></a>void QValueSpaceObject::setAttribute ( const char * <i>attribute</i>, const QVariant &amp; <i>data</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<h3 class="fn"><a name="setAttribute-2"></a>void QValueSpaceObject::setAttribute ( const char * <i>attribute</i>, const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>data</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>This is an overloaded function.</p>
 <p>This is a convenience overload and is equivalent to <tt>setAttribute(QByteArray(attribute), data)</tt>.</p>
-<h3 class="fn"><a name="setAttribute-3"></a>void QValueSpaceObject::setAttribute ( const QString &amp; <i>attribute</i>, const QVariant &amp; <i>data</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<h3 class="fn"><a name="setAttribute-3"></a>void QValueSpaceObject::setAttribute ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>attribute</i>, const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>data</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>This is an overloaded function.</p>
 <p>This is a convenience overload and is equivalent to <tt>setAttribute(attribute.toUtf8(), data)</tt>.</p>
 <h3 class="fn"><a name="supportsRequests"></a>bool QValueSpaceObject::supportsRequests () const</h3>

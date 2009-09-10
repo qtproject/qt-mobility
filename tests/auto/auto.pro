@@ -29,3 +29,9 @@ unix:SUBDIRS += qpacket \
                 qpacketprotocol \
                 qsystemreadwritelock \
                 qsystemreadwritelock_oop
+
+SUBDIRS += qsysteminfo \                    #SystemInformation
+          qsystemdeviceinfo \
+          qsystemdisplayinfo \
+          qsystemmemoryinfo \
+          qsystemnetworkinfo
