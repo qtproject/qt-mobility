@@ -318,10 +318,8 @@ void tst_QValueSpace::availableLayers()
 
 #ifdef Q_OS_WIN
     QVERIFY(layers.contains(QVALUESPACE_VOLATILEREGISTRY_LAYER));
-    QVERIFY(layers.contains(QVALUESPACE_NONVOLATILEREGISTRY_LAYER));
 #else
     QVERIFY(!layers.contains(QVALUESPACE_VOLATILEREGISTRY_LAYER));
-    QVERIFY(!layers.contains(QVALUESPACE_NONVOLATILEREGISTRY_LAYER));
 #endif
 
     QVERIFY(layers.contains(fakeLayer->id()));
