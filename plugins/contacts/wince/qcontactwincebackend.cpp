@@ -212,12 +212,12 @@ static void processAddress(const QString& context, const QVariantList& values, Q
 {
     QContactAddress address;
     address.setContexts(context);
-    setIfNotEmpty(address, QContactAddress::FieldDisplayLabel, values[0].toString());
     setIfNotEmpty(address, QContactAddress::FieldStreet, values[1].toString());
     setIfNotEmpty(address, QContactAddress::FieldPostcode, values[2].toString());
     setIfNotEmpty(address, QContactAddress::FieldLocality, values[3].toString());
     setIfNotEmpty(address, QContactAddress::FieldRegion, values[4].toString());
     setIfNotEmpty(address, QContactAddress::FieldCountry, values[5].toString());
+    setIfNotEmpty(address, QContactAddress::FieldDisplayLabel, values[0].toString());
     if (!address.isEmpty())
         ret.saveDetail(&address);
 }
@@ -268,9 +268,11 @@ static void processPhones(const QVariantList& values, QContact& ret)
     // We use the following characters:
 
     //
-    // space = nothing
+    // space = default for type
     // H = Home context, no type modifier
     // W = Work context, no type modifier
+    // O = Other context
+    // N = No context
 
     // In general, they should only apply to PROPIDs that don't fully specify both
     // (e.g. home_fax is fully specified, mobile is not), but we occasionally run out
@@ -337,6 +339,8 @@ static void processPhones(const QVariantList& values, QContact& ret)
                 number.setContexts(QContactDetail::ContextHome);
             else if (m == 'W')
                 number.setContexts(QContactDetail::ContextWork);
+            else if (m == 'O')
+                number.setContexts(QContactDetail::ContextOther);
 
             ret.saveDetail(&number);
         }
@@ -379,6 +383,34 @@ static void processId(const QVariantList& values, QContact& ret)
 {
     ret.setId(values.at(0).toUInt());
 }
+
+static void processNickname(const QVariantList& values, QContact& ret)
+{
+    QContactNickname nick;
+    setIfNotEmpty(nick, QContactNickname::FieldNickname, values[0].toString());
+
+    if (!nick.isEmpty())
+        ret.saveDetail(&nick);
+}
+
+static void processWebpage(const QVariantList& values, QContact& ret)
+{
+    QContactUrl url;
+    setIfNotEmpty(url, QContactUrl::FieldUrl, values[0].toString());
+
+    if (!url.isEmpty())
+        ret.saveDetail(&url);
+}
+
+static void processOrganisation(const QVariantList& values, QContact& ret)
+{
+    QContactOrganisation org;
+    setIfNotEmpty(org, QContactOrganisation::FieldDisplayLabel, values[0].toString());
+
+    if (!org.isEmpty())
+        ret.saveDetail(&org);
+}
+
 
 static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<CEPROPID, PoomContactElement>& prophash, QVector<CEPROPID>& propids)
 {
@@ -453,8 +485,44 @@ static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<C
         family.func = processFamily;
         list.append(family);
 
-        // TODO: organization, avatars, notes, account id, customer id
-        // government id, IM addresses, .. . ..
+        // Nickname
+        PoomContactElement nick;
+        nick.poom << PIMPR_NICKNAME;
+        nick.func = processNickname;
+        list.append(nick);
+
+        // Webpage
+        PoomContactElement web;
+        web.poom << PIMPR_WEB_PAGE;
+        web.func = processWebpage;
+        list.append(web);
+
+        // Organisation
+        PoomContactElement org;
+        org.poom << PIMPR_COMPANY_NAME;
+        org.func = processOrganisation;
+        list.append(org);
+
+        // Unhandled:
+        //
+        //  PIMPR_ACCOUNT_NAME
+        //  PIMPR_ASSISTANT_NAME
+        //  PIMPR_ASSISTANT_TELEPHONE_NUMBER
+        //  PIMPR_COMPANY_TELEPHONE_NUMBER
+        //  PIMPR_CUSTOMERID
+        //  PIMPR_DEPARTMENT
+        //  PIMPR_DISPLAY_NAME (vs. PIMPR_FILEAS)
+        //  PIMPR_GOVERNMENTID
+        //  PIMPR_IM[123]_ADDRESS
+        //  PIMPR_JOB_TITLE
+        //  PIMPR_MANAGER
+        //  PIMPR_OFFICE_LOCATION
+        //  PIMPR_PICTURe
+        //  PIMPR_RINGTONE
+        //  PIMPR_YOMI_COMPANY
+        //  PIMPR_YOMI_FILEAS
+        //  PIMPR_YOMI_FIRSTNAME
+        //  PIMPR_YOMI_LASTNAME
 
         // Now, build the hash
         foreach(const PoomContactElement& e, list) {
@@ -544,6 +612,13 @@ static void processQOrganisation(const QContactDetail& detail, QVector<CEPROPVAL
     addIfNotEmpty(PIMPR_COMPANY_NAME, org.displayLabel(), props);
 }
 
+static void processQWebpage(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+{
+    QContactUrl url(detail);
+
+    addIfNotEmpty(PIMPR_WEB_PAGE, url.url(), props);
+}
+
 /* Bulk setters */
 static void processQPhones(const QList<QContactPhoneNumber>& nums, CEPROPID metaId, QVector<CEPROPVAL>& props)
 {
@@ -616,6 +691,10 @@ static void processQPhones(const QList<QContactPhoneNumber>& nums, CEPROPID meta
                     meta[availableIds.indexOf(id)] = 'H';
                 else if (number.contexts().contains(QContactDetail::ContextWork))
                     meta[availableIds.indexOf(id)] = 'W';
+                else if (number.contexts().contains(QContactDetail::ContextOther))
+                    meta[availableIds.indexOf(id)] = 'O';
+                else if (number.contexts().count() == 0)
+                    meta[availableIds.indexOf(id)] = 'N';
 
                 props.append(convertToCEPropVal(id, number.number()));
                 availableIds.replace(availableIds.indexOf(id), PIMPR_INVALID_ID); // not available any more
@@ -653,8 +732,91 @@ static void processQEmails(const QList<QContactEmailAddress>& emails, CEPROPID m
 
 static void processQAddresses(const QList<QContactAddress>& addresses, QVector<CEPROPVAL>& props)
 {
-    foreach(const QContactAddress& address, addresses) {
+    // We do 2 passes - first try to match addresses to contexts
+    // then use whatever's left for the rest
 
+    bool homeAvailable = true;
+    bool workAvailable = true;
+    bool otherAvailable = true;
+
+    QList<QContactAddress> deferred;
+    foreach(const QContactAddress& address, addresses) {
+        if (address.contexts().contains(QContactDetail::ContextHome)) {
+            if (homeAvailable) {
+                addIfNotEmpty(PIMPR_HOME_ADDRESS_CITY, address.locality(), props);
+                addIfNotEmpty(PIMPR_HOME_ADDRESS_COUNTRY, address.country(), props);
+                addIfNotEmpty(PIMPR_HOME_ADDRESS_POSTAL_CODE, address.postcode(), props);
+                addIfNotEmpty(PIMPR_HOME_ADDRESS_STATE, address.region(), props);
+                addIfNotEmpty(PIMPR_HOME_ADDRESS_STREET, address.street(), props);
+                addIfNotEmpty(PIMPR_HOME_ADDRESS, address.displayLabel(), props);
+                homeAvailable = false;
+            } else {
+                deferred.append(address);
+            }
+        } else if (address.contexts().contains(QContactDetail::ContextWork)) {
+            if (workAvailable) {
+                addIfNotEmpty(PIMPR_BUSINESS_ADDRESS_CITY, address.locality(), props);
+                addIfNotEmpty(PIMPR_BUSINESS_ADDRESS_COUNTRY, address.country(), props);
+                addIfNotEmpty(PIMPR_BUSINESS_ADDRESS_POSTAL_CODE, address.postcode(), props);
+                addIfNotEmpty(PIMPR_BUSINESS_ADDRESS_STATE, address.region(), props);
+                addIfNotEmpty(PIMPR_BUSINESS_ADDRESS_STREET, address.street(), props);
+                addIfNotEmpty(PIMPR_BUSINESS_ADDRESS, address.displayLabel(), props);
+                workAvailable = false;
+            } else {
+                deferred.append(address);
+            }
+        } else {
+            if (otherAvailable) {
+                addIfNotEmpty(PIMPR_OTHER_ADDRESS_CITY, address.locality(), props);
+                addIfNotEmpty(PIMPR_OTHER_ADDRESS_COUNTRY, address.country(), props);
+                addIfNotEmpty(PIMPR_OTHER_ADDRESS_POSTAL_CODE, address.postcode(), props);
+                addIfNotEmpty(PIMPR_OTHER_ADDRESS_STATE, address.region(), props);
+                addIfNotEmpty(PIMPR_OTHER_ADDRESS_STREET, address.street(), props);
+                addIfNotEmpty(PIMPR_OTHER_ADDRESS, address.displayLabel(), props);
+                otherAvailable = false;
+            } else {
+                deferred.append(address);
+            }
+        }
+    }
+
+    // Now the deferred ones
+    while(deferred.count() > 0) {
+        // If there's nothing left..
+        if (!homeAvailable && !workAvailable && !otherAvailable) {
+            qDebug() << "Too many addresses";
+            return;
+        }
+
+        QContactAddress address = deferred.takeFirst();
+
+        // Well, first choice is to use other
+        // but we really need to save the contexts XXX
+        if (otherAvailable) {
+            addIfNotEmpty(PIMPR_OTHER_ADDRESS, address.displayLabel(), props);
+            addIfNotEmpty(PIMPR_OTHER_ADDRESS_CITY, address.locality(), props);
+            addIfNotEmpty(PIMPR_OTHER_ADDRESS_COUNTRY, address.country(), props);
+            addIfNotEmpty(PIMPR_OTHER_ADDRESS_POSTAL_CODE, address.postcode(), props);
+            addIfNotEmpty(PIMPR_OTHER_ADDRESS_STATE, address.region(), props);
+            addIfNotEmpty(PIMPR_OTHER_ADDRESS_STREET, address.street(), props);
+            otherAvailable = false;
+        } else if (workAvailable) {
+            addIfNotEmpty(PIMPR_BUSINESS_ADDRESS, address.displayLabel(), props);
+            addIfNotEmpty(PIMPR_BUSINESS_ADDRESS_CITY, address.locality(), props);
+            addIfNotEmpty(PIMPR_BUSINESS_ADDRESS_COUNTRY, address.country(), props);
+            addIfNotEmpty(PIMPR_BUSINESS_ADDRESS_POSTAL_CODE, address.postcode(), props);
+            addIfNotEmpty(PIMPR_BUSINESS_ADDRESS_STATE, address.region(), props);
+            addIfNotEmpty(PIMPR_BUSINESS_ADDRESS_STREET, address.street(), props);
+            workAvailable = false;
+        } else {
+            addIfNotEmpty(PIMPR_HOME_ADDRESS, address.displayLabel(), props);
+            addIfNotEmpty(PIMPR_HOME_ADDRESS_CITY, address.locality(), props);
+            addIfNotEmpty(PIMPR_HOME_ADDRESS_COUNTRY, address.country(), props);
+            addIfNotEmpty(PIMPR_HOME_ADDRESS_POSTAL_CODE, address.postcode(), props);
+            addIfNotEmpty(PIMPR_HOME_ADDRESS_STATE, address.region(), props);
+            addIfNotEmpty(PIMPR_HOME_ADDRESS_STREET, address.street(), props);
+            homeAvailable = false;
+        }
     }
 }
 
@@ -681,6 +843,7 @@ static void contactQ2PTransforms(QHash<QString, processContactPoomElement>& ret)
         hash.insert(QContactBirthday::DefinitionName, processQBirthday);
         hash.insert(QContactNickname::DefinitionName, processQNickname);
         hash.insert(QContactOrganisation::DefinitionName, processQOrganisation);
+        hash.insert(QContactUrl::DefinitionName, processQWebpage);
     }
     ret = hash;
 }
@@ -993,17 +1156,47 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(Q
     defns.remove(QContactGeolocation::DefinitionName);
     defns.remove(QContactTimestamp::DefinitionName);
     defns.remove(QContactGuid::DefinitionName);
+    defns.remove(QContactGender::DefinitionName); // ? Surprising
+    defns.remove(QContactRelationship::DefinitionName); // XXX perhaps we should fake it
 
     // Remove the fields we don't support
 
-    // No linking
+    // Simple anniversarys
     defns[QContactAnniversary::DefinitionName].fields().remove(QContactAnniversary::FieldCalendarId);
+    defns[QContactAnniversary::DefinitionName].fields().remove(QContactAnniversary::FieldEvent);
+    defns[QContactAnniversary::DefinitionName].fields().remove(QContactAnniversary::FieldSubType);
+
+    // No logo for organisation
+    defns[QContactOrganisation::DefinitionName].fields().remove(QContactOrganisation::FieldLogo);
+
+    // Address label is read only
+    defns[QContactAddress::DefinitionName].fields().remove(QContactAddress::FieldDisplayLabel); // XXX This is a bit heavy handed
+
+    // No subtypes for these details
+    defns[QContactAddress::DefinitionName].fields().remove(QContactAddress::FieldSubTypes);
+    defns[QContactUrl::DefinitionName].fields().remove(QContactUrl::FieldSubType);
+    defns[QContactAvatar::DefinitionName].fields().remove(QContactAvatar::FieldSubType);
 
     // No contexts for these details
-    defns[QContactGender::DefinitionName].fields().remove(QContactDetail::FieldContext);
+    defns[QContactAvatar::DefinitionName].fields().remove(QContactDetail::FieldContext);
+    defns[QContactAnniversary::DefinitionName].fields().remove(QContactDetail::FieldContext);
+    defns[QContactBirthday::DefinitionName].fields().remove(QContactDetail::FieldContext);
     defns[QContactName::DefinitionName].fields().remove(QContactDetail::FieldContext);
     defns[QContactNickname::DefinitionName].fields().remove(QContactDetail::FieldContext);
     defns[QContactOrganisation::DefinitionName].fields().remove(QContactDetail::FieldContext);
+    defns[QContactUrl::DefinitionName].fields().remove(QContactDetail::FieldContext);
+
+    // Simple phone number types (non multiple)
+    // defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].dataType = QVariant::String; // XXX doesn't work
+    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues.removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeBulletinBoardSystem)));
+    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues.removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeLandline)));
+    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues.removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeMessagingCapable)));
+    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues.removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeModem)));
+    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues.removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeVideo)));
+
+    // XXX temporary definitions that we should support but don't yet.
+    defns.remove(QContactOnlineAccount::DefinitionName);
+    defns.remove(QContactAvatar::DefinitionName);
 
     return defns;
 }
