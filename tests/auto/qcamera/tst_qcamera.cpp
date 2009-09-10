@@ -433,10 +433,14 @@ void tst_QCamera::testSimpleCamera()
 {
     QCamera camera(0, mockSimpleCameraService);
 
+    QCOMPARE(camera.service(), mockSimpleCameraService);
+
     QVERIFY(camera.isValid());
     QCOMPARE(camera.state(), QCamera::StoppedState);
     camera.start();
     QCOMPARE(camera.state(), QCamera::ActiveState);
+    camera.stop();
+    QCOMPARE(camera.state(), QCamera::StoppedState);
 }
 
 void tst_QCamera::testSimpleCameraWhiteBalance()
@@ -457,6 +461,11 @@ void tst_QCamera::testSimpleCameraExposure()
 {
     QCamera camera(0, mockSimpleCameraService);
 
+    QCOMPARE(camera.supportedExposureModes(), QCamera::ExposureAuto);
+    QCOMPARE(camera.exposureMode(), QCamera::ExposureAuto);
+    camera.setExposureMode(QCamera::ExposureManual);//should be ignored
+    QCOMPARE(camera.exposureMode(), QCamera::ExposureAuto);
+
     QCOMPARE(camera.supportedFlashModes(), QCamera::FlashOff);
     QCOMPARE(camera.flashMode(), QCamera::FlashOff);
     QCOMPARE(camera.isFlashReady(), false);
@@ -476,6 +485,8 @@ void tst_QCamera::testSimpleCameraExposure()
     QCOMPARE(camera.supportedIsoSensitivityRange().first, -1);
     QCOMPARE(camera.supportedIsoSensitivityRange().second, -1);
     camera.setManualIsoSensitivity(100);
+    QCOMPARE(camera.isoSensitivity(), -1);
+    camera.setAutoIsoSensitivity();
     QCOMPARE(camera.isoSensitivity(), -1);
 
     QVERIFY(camera.aperture() < 0);
@@ -527,6 +538,11 @@ void tst_QCamera::testCameraExposure()
     MockCameraService service;
     QCamera camera(0, &service);
 
+    QVERIFY(camera.supportedExposureModes() & QCamera::ExposureAuto);
+    QCOMPARE(camera.exposureMode(), QCamera::ExposureAuto);
+    camera.setExposureMode(QCamera::ExposureManual);
+    QCOMPARE(camera.exposureMode(), QCamera::ExposureManual);
+
     QCOMPARE(camera.flashMode(), QCamera::FlashAuto);
     QCOMPARE(camera.isFlashReady(), true);
     camera.setFlashMode(QCamera::FlashOn);
@@ -557,6 +573,8 @@ void tst_QCamera::testCameraExposure()
     QCOMPARE(camera.isoSensitivity(), maxIso);
     camera.setManualIsoSensitivity(-10);
     QCOMPARE(camera.isoSensitivity(), minIso);
+    camera.setAutoIsoSensitivity();
+    QCOMPARE(camera.isoSensitivity(), 100);
 
     qreal minAperture = camera.supportedApertureRange().first;
     qreal maxAperture = camera.supportedApertureRange().second;
