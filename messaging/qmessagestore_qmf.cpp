@@ -45,11 +45,20 @@ class QMessageStorePrivate : public QObject
     Q_OBJECT
 
 public:
-    QMessageStorePrivate() : QObject(), _store(QMailStore::instance()), _error(QMessageStore::NoError), _notify(true) {}
+    QMessageStorePrivate() 
+        : QObject(), 
+          _store(QMailStore::instance()), 
+          _error(QMessageStore::NoError), 
+          _notify(true),
+          _filterId(0)
+    {
+    }
 
     QMailStore *_store;
     QMessageStore::ErrorCode _error;
     bool _notify;
+    int _filterId;
+    QMap<int, QMailMessageKey> _filters;
 
     static QMailStore *convert(QMessageStore *store);
 
@@ -64,9 +73,39 @@ public slots:
     void messagesUpdated(const QMailMessageIdList &ids);
 
 signals:
-    void messagesAdded(const QMessageIdList &ids);
-    void messagesRemoved(const QMessageIdList &ids);
-    void messagesUpdated(const QMessageIdList &ids);
+    void messageAdded(const QMessageId &id, const QSet<int> &matchingFilterIds);
+    void messageRemoved(const QMessageId &id, const QSet<int> &matchingFilterIds);
+    void messageUpdated(const QMessageId &id, const QSet<int> &matchingFilterIds);
+
+private:
+    void processFilters(const QMailMessageIdList &ids, void (QMessageStorePrivate::*signal)(const QMessageId &, const QSet<int> &))
+    {
+        QMap<QMailMessageId, QSet<int> > matches;
+
+        // Copy the filter map to protect against modification during traversal
+        QMap<int, QMailMessageKey> filters(_filters);
+        QMap<int, QMailMessageKey>::const_iterator it = filters.begin(), end = filters.end();
+        for ( ; it != end; ++it) {
+            const QMailMessageKey &key(it.value());
+
+            QSet<QMailMessageId> filteredIds;
+            if (!key.isEmpty()) {
+                // Empty key matches all messages; otherwise get the filtered set
+                filteredIds = QMailStore::instance()->queryMessages(key).toSet();
+            }
+
+            foreach (const QMailMessageId &id, ids) {
+                if (key.isEmpty() || filteredIds.contains(id)) {
+                    matches[id].insert(it.key());
+                }
+            }
+        }
+
+        QMap<QMailMessageId, QSet<int> >::const_iterator mit = matches.begin(), mend = matches.end();
+        for ( ; mit != mend; ++mit) {
+            emit (this->*signal)(QmfHelpers::convert(mit.key()), mit.value());
+        }
+    }
 };
 
 Q_SCOPED_STATIC_DEFINE(QMessageStore,QMessageStorePrivate,storeInstance);
@@ -99,23 +138,17 @@ void QMessageStorePrivate::createNonexistentFolder(QMailStore *store, const QStr
 
 void QMessageStorePrivate::messagesAdded(const QMailMessageIdList &ids)
 {
-    if (_notify) {
-        emit messagesAdded(QmfHelpers::convert(ids));
-    }
+    processFilters(ids, &QMessageStorePrivate::messageAdded);
 }
 
 void QMessageStorePrivate::messagesRemoved(const QMailMessageIdList &ids)
 {
-    if (_notify) {
-        emit messagesRemoved(QmfHelpers::convert(ids));
-    }
+    processFilters(ids, &QMessageStorePrivate::messageRemoved);
 }
 
 void QMessageStorePrivate::messagesUpdated(const QMailMessageIdList &ids)
 {
-    if (_notify) {
-        emit messagesUpdated(QmfHelpers::convert(ids));
-    }
+    processFilters(ids, &QMessageStorePrivate::messageUpdated);
 }
 
 namespace QmfHelpers {
@@ -131,9 +164,9 @@ QMessageStore::QMessageStore(QObject *parent)
     : QObject(parent),
       d_ptr(new QMessageStorePrivate)
 {
-    connect(d_ptr, SIGNAL(messagesAdded(QMessageIdList)), this, SIGNAL(messagesAdded(QMessageIdList)));
-    connect(d_ptr, SIGNAL(messagesRemoved(QMessageIdList)), this, SIGNAL(messagesRemoved(QMessageIdList)));
-    connect(d_ptr, SIGNAL(messagesUpdated(QMessageIdList)), this, SIGNAL(messagesUpdated(QMessageIdList)));
+    connect(d_ptr, SIGNAL(messageAdded(QMessageId, QSet<int>)), this, SIGNAL(messageAdded(QMessageId, QSet<int>)));
+    connect(d_ptr, SIGNAL(messageRemoved(QMessageId, QSet<int>)), this, SIGNAL(messageRemoved(QMessageId, QSet<int>)));
+    connect(d_ptr, SIGNAL(messageUpdated(QMessageId, QSet<int>)), this, SIGNAL(messageUpdated(QMessageId, QSet<int>)));
 }
 
 QMessageStore::~QMessageStore()
@@ -279,6 +312,18 @@ QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
     return convert(d_ptr->_store->account(convert(id)));
 }
 
+int QMessageStore::registerNotificationFilter(const QMessageFilter &filter)
+{
+    int filterId = ++d_ptr->_filterId;
+    d_ptr->_filters.insert(filterId, QmfHelpers::convert(filter));
+    return filterId;
+}
+
+void QMessageStore::unregisterNotificationFilter(int notificationFilterId)
+{
+    d_ptr->_filters.remove(notificationFilterId);
+}
+
 QMessageStore* QMessageStore::instance()
 {
     static bool initialised(false);
@@ -314,15 +359,5 @@ QMessageStore* QMessageStore::instance()
     return store;
 }
     
-bool QMessageStore::isNotificationEnabled() const
-{
-    return d_ptr->_notify;
-}
-
-void QMessageStore::setNotificationEnabled(bool enabled)
-{
-    d_ptr->_notify = enabled;
-}
-
 #include "qmessagestore_qmf.moc"
 

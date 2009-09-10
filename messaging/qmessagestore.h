@@ -93,17 +93,15 @@ public:
 #endif
     QMessageAccount account(const QMessageAccountId &id) const;
 
-    bool isNotificationEnabled() const;
+    int registerNotificationFilter(const QMessageFilter &filter);
+    void unregisterNotificationFilter(int token);
 
     static QMessageStore* instance();
     
 signals:
-    void messagesAdded(const QMessageIdList &ids);
-    void messagesRemoved(const QMessageIdList &ids);
-    void messagesUpdated(const QMessageIdList &ids);
-
-public slots:
-    void setNotificationEnabled(bool enable);
+    void messageAdded(const QMessageId &id, const QSet<int> &matchingFilters);
+    void messageRemoved(const QMessageId &id, const QSet<int> &matchingFilters);
+    void messageUpdated(const QMessageId &id, const QSet<int> &matchingFilters);
 
 private:
     friend class QGlobalStaticDeleter<QMessageStore>;

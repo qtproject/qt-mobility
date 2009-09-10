@@ -318,6 +318,25 @@
 */
 
 /*!
+    \fn int QMessageStore::registerNotificationFilter(const QMessageFilter &filter);
+
+    Registers a message filter that will be used to generate messageAdded(), messageRemoved()
+    and messageUpdated() signals.  Returns an identifier value that can be used to identify the 
+    reason that a signal was emitted, and to unregister the filter at a later time.
+
+    \sa unregisterNotificationFilter(), messageAdded(), messageRemoved(), messageUpdated()
+*/
+
+/*!
+    \fn void QMessageStore::unregisterNotificationFilter(int notificationFilterId);
+
+    Removes the message filter associated with \a notificationFilterId from the set used 
+    to generate message event signals.
+
+    \sa registerNotificationFilter(), messageAdded(), messageRemoved(), messageUpdated()
+*/
+
+/*!
     \fn QMessageStore::instance()
     
     Returns the single instance of the QMessageStore class.
@@ -326,46 +345,32 @@
 */
 
 /*!
-    \fn void QMessageStore::messagesAdded(const QMessageIdList& ids)
+    \fn void QMessageStore::messageAdded(const QMessageId &id, const QSet<int> &matchingFilterIds);
 
-    Signal that is emitted when the messages identified by the list \a ids are
-    added to the messaging store.
+    Signal that is emitted when the message identified by \a id is added to the message store.
+    \a matchingFilters contains a set of values identifiying registered notification filters 
+    that matched the message.
 
-    \sa messagesRemoved(), messagesUpdated(), startNotifications()
+    \sa messageRemoved(), messageUpdated(), registerNotificationFilter()
 */
 
 /*!
-    \fn void QMessageStore::messagesRemoved(const QMessageIdList& ids)
+    \fn void QMessageStore::messageRemoved(const QMessageId &id, const QSet<int> &matchingFilterIds);
 
-    Signal that is emitted when the messages in the list \a ids are
-    removed from the messaging store.
+    Signal that is emitted when the message identified by \a id is removed from the message store.
+    \a matchingFilters contains a set of values identifiying registered notification filters 
+    that matched the message.
 
-    \sa messagesAdded(), messagesUpdated(), startNotifications()
+    \sa messageAdded(), messageUpdated(), registerNotificationFilter()
 */
 
 /*!
-    \fn void QMessageStore::messagesUpdated(const QMessageIdList& ids)
+    \fn void QMessageStore::messageUpdated(const QMessageId &id, const QSet<int> &matchingFilterIds);
 
-    Signal that is emitted when the messages in the list \a ids are
-    updated within the messaging store.
+    Signal that is emitted when the message identified by \a id is updated in the message store.
+    \a matchingFilters contains a set of values identifiying registered notification filters 
+    that matched the message.
 
-    \sa messagesAdded(), messagesRemoved(), startNotifications()
+    \sa messageAdded(), messageRemoved(), registerNotificationFilter()
 */
 
-/*!
-    \fn QMessageStore::isNotificationEnabled() const
-    
-    Returns true if the emission of messaging store notification signals is enabled.
-    
-    \sa setNotificationEnabled()
-*/
-
-/*!
-    \fn QMessageStore::setNotificationEnabled(bool enabled)
-    
-    Set the emission of messaging store notification signals to be \a enabled. 
-    When enabled, the messagesAdded(), messagesRemoved() and messagesUpdated() 
-    signals are emitted as those events occur.
-    
-    \sa isNotificationEnabled(), messagesAdded(), messagesRemoved(), messagesUpdated()
-*/

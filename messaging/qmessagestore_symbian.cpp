@@ -191,13 +191,14 @@ QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
     return QMessageAccount(); // stub
 }
 
-bool QMessageStore::isNotificationEnabled() const
+int QMessageStore::registerNotificationFilter(const QMessageFilter &filter)
 {
-    return false; // stub
+    Q_UNUSED(filter)
+    return 0; // stub
 }
 
-void QMessageStore::setNotificationEnabled(bool enabled)
+void QMessageStore::unregisterNotificationFilter(int notificationFilterId)
 {
-    Q_UNUSED(enabled)
+    Q_UNUSED(notificationFilterId)
 }
 
