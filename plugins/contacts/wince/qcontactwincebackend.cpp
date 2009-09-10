@@ -46,6 +46,21 @@
 #define INITGUID
 #include "qcontactwincebackend_p.h"
 
+/*
+ * TODOS
+ *
+ * - refactor (much needed)
+ *  - single properties should have common code
+ *  - error reporting when we run out of room
+ * - use QScopedPointer
+ * - pronunciation (needs schema update)
+ * - any XXX comments
+ * - change qDebugs to qWarnings or remove, as appropriate
+ * - change factory to create the data, if any failures, return NULL manager.
+ * - store extra metadata
+ *  - Voice subtype for phone, don't always assume
+ * - Address formatting - PIMPR_HOME_ADDRESS seems to be read only
+ */
 
 static QVariant convertCEPropVal(const CEPROPVAL& val);
 
@@ -506,20 +521,25 @@ static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<C
         // Unhandled:
         //
         //  PIMPR_ACCOUNT_NAME
+        //  PIMPR_CUSTOMERID
+        //  PIMPR_GOVERNMENTID
+        //
+        //  PIMPR_MANAGER
         //  PIMPR_ASSISTANT_NAME
         //  PIMPR_ASSISTANT_TELEPHONE_NUMBER
-        //  PIMPR_COMPANY_TELEPHONE_NUMBER
-        //  PIMPR_CUSTOMERID
-        //  PIMPR_DEPARTMENT
-        //  PIMPR_DISPLAY_NAME (vs. PIMPR_FILEAS)
-        //  PIMPR_GOVERNMENTID
-        //  PIMPR_IM[123]_ADDRESS
         //  PIMPR_JOB_TITLE
-        //  PIMPR_MANAGER
+        //  PIMPR_DEPARTMENT
         //  PIMPR_OFFICE_LOCATION
-        //  PIMPR_PICTURe
-        //  PIMPR_RINGTONE
+        //  PIMPR_COMPANY_TELEPHONE_NUMBER
         //  PIMPR_YOMI_COMPANY
+        //
+        //  PIMPR_DISPLAY_NAME (vs. PIMPR_FILEAS)
+        //
+        //  PIMPR_IM[123]_ADDRESS
+        //
+        //  PIMPR_PICTURE
+        //  PIMPR_RINGTONE
+
         //  PIMPR_YOMI_FILEAS
         //  PIMPR_YOMI_FIRSTNAME
         //  PIMPR_YOMI_LASTNAME
