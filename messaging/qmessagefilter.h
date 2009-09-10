@@ -74,7 +74,7 @@ public:
     static QMessageFilter byId(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
     static QMessageFilter byId(const QMessageFilter &filter, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
-    static QMessageFilter byType(QMessage::Type type, QMessageDataComparator::EqualityComparator cmp);
+    static QMessageFilter byType(QMessage::Type type, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
     static QMessageFilter byType(QMessage::TypeFlags type, QMessageDataComparator::InclusionComparator cmp);
 
     static QMessageFilter bySender(const QString &value, QMessageDataComparator::EqualityComparator cmp);
