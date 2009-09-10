@@ -322,11 +322,25 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     case QSystemInfo::BluetoothFeature :
         {
 #if !defined(QT_NO_DBUS)
-            featureSupported = hasHalDeviceFeature("bluetooth");
-            if(featureSupported)
-                return featureSupported;
-#endif
+            QHalInterface iface;
+
+            QStringList list = iface.getAllDevices();
+            if(!list.isEmpty()) {
+                foreach(QString dev, list) {
+                  QHalDeviceInterface *halIfaceDevice = new QHalDeviceInterface(dev);
+                    if (halIfaceDevice->isValid()) {
+                        QString type = halIfaceDevice->getPropertyString("bluetooth_hci.originating_device");
+                        if(!type.isEmpty()) {
+                            qWarning() << type;
+                            return true;
+                        }
+                    }
+                }
+            }
+
+#else
             featureSupported = hasSysFeature("bluetooth");
+#endif
         }
         break;
     case QSystemInfo::CameraFeature :
@@ -996,8 +1010,8 @@ QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
 {
     for(int i=0; i < map.count(); i++) {
-//        qWarning() << map.at(i).toString();
-        if(map.at(i).toString() == "battery.charge_level.percentage") {
+//       qWarning() << __FUNCTION__ << map.at(i).toString();
+       if(map.at(i).toString() == "battery.charge_level.percentage") {
             int level = batteryLevel();
             emit batteryLevelChanged(level);
             if(level < 4) {
