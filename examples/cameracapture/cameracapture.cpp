@@ -38,8 +38,8 @@
 #include <qabstractmediaservice.h>
 #include <qmediarecorder.h>
 #include <qaudiodevicecontrol.h>
-#include <qaudioencodecontrol.h>
-#include <qvideoencodecontrol.h>
+#include <qaudioencodercontrol.h>
+#include <qvideoencodercontrol.h>
 #include <qmediaformatcontrol.h>
 #include <qcamera.h>
 #include <qvideowidget.h>

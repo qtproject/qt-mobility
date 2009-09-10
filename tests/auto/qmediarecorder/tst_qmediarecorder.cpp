@@ -41,14 +41,14 @@
 #include <qmediarecordercontrol.h>
 #include <qmediarecorder.h>
 #include <qaudiodevicecontrol.h>
-#include <qaudioencodecontrol.h>
+#include <qaudioencodercontrol.h>
 
-class MockAudioEncodeProvider : public QAudioEncodeControl
+class MockAudioEncodeProvider : public QAudioEncoderControl
 {
     Q_OBJECT
 public:
     MockAudioEncodeProvider(QObject *parent):
-        QAudioEncodeControl(parent)
+        QAudioEncoderControl(parent)
     {
         m_codecs << "audio/pcm" << "audio/mpeg";
         m_index = 0;
@@ -87,7 +87,7 @@ public:
     {
         m_format = format;
 
-		return true;
+        return true;
     }
 
     QStringList supportedAudioCodecs() const
@@ -307,7 +307,7 @@ public:
 
     QAbstractMediaControl* control(const char * name) const
     {
-        if(qstrcmp(name,QAudioEncodeControl_iid) == 0)
+        if(qstrcmp(name,QAudioEncoderControl_iid) == 0)
             return mockAudioEncodeControl;
         if(qstrcmp(name,QAudioDeviceControl_iid) == 0)
             return mockAudioDeviceControl;
@@ -319,7 +319,7 @@ public:
 
     QAbstractMediaControl   *mockControl;
     QAudioDeviceControl     *mockAudioDeviceControl;
-    QAudioEncodeControl     *mockAudioEncodeControl;
+    QAudioEncoderControl     *mockAudioEncodeControl;
 };
 
 class MockObject : public QAbstractMediaObject
@@ -360,7 +360,7 @@ private slots:
     void testAudioEncodeControl();
 
 private:
-    QAudioEncodeControl* encode;
+    QAudioEncoderControl* encode;
     QAudioDeviceControl* audio;
     MockObject      *object;
     MockProvider    *mock;
@@ -374,7 +374,7 @@ void tst_QMediaRecorder::init()
     capture = new QMediaRecorder(object);
     QVERIFY(capture->isValid());
     audio = qobject_cast<QAudioDeviceControl*>(capture->service()->control(QAudioDeviceControl_iid));
-    encode = qobject_cast<QAudioEncodeControl*>(capture->service()->control(QAudioEncodeControl_iid));
+    encode = qobject_cast<QAudioEncoderControl*>(capture->service()->control(QAudioEncoderControl_iid));
 }
 
 void tst_QMediaRecorder::cleanup()

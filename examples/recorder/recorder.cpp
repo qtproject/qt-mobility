@@ -38,7 +38,7 @@
 #include <qabstractmediaservice.h>
 #include <qmediarecorder.h>
 #include <qaudiodevicecontrol.h>
-#include <qaudioencodecontrol.h>
+#include <qaudioencodercontrol.h>
 #include <qmediaformatcontrol.h>
 
 #ifndef QT_NO_MULTIMEDIA
@@ -87,8 +87,8 @@ Recorder::Recorder(QWidget *parent) :
     //} else
     //    ui->inputDeviceBox->setEnabled(false);
 
-    encodeControl = qobject_cast<QAudioEncodeControl*>(
-            audioRecorder->service()->control(QAudioEncodeControl_iid));
+    encodeControl = qobject_cast<QAudioEncoderControl*>(
+            audioRecorder->service()->control(QAudioEncoderControl_iid));
 
     if (encodeControl) {
         foreach(const QString &codecName, encodeControl->supportedAudioCodecs()) {

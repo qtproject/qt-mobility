@@ -44,8 +44,8 @@ namespace Ui {
 class QMediaRecorder;
 class QCamera;
 class QAudioDeviceControl;
-class QAudioEncodeControl;
-class QVideoEncodeControl;
+class QAudioEncoderControl;
+class QVideoEncoderControl;
 class QMediaFormatControl;
 class QMediaMetadata;
 

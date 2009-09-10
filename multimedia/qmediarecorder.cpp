@@ -38,7 +38,7 @@
 #include "qabstractmediaobject_p.h"
 #include "qaudiorecorderservice.h"
 #include "qmediaserviceprovider.h"
-#include "qaudioencodecontrol.h"
+#include "qaudioencodercontrol.h"
 #include "qvideoencodercontrol.h"
 #include "qmediaformatcontrol.h"
 #include "qmediarecorderservice.h"
@@ -93,7 +93,7 @@ public:
     QAbstractMediaService *service;
     QMediaRecorderControl *control;
     QMediaFormatControl *formatControl;
-    QAudioEncodeControl *audioControl;
+    QAudioEncoderControl *audioControl;
     QVideoEncoderControl *videoControl;
 
     bool ownService;
@@ -125,7 +125,7 @@ void QMediaRecorderPrivate::initControls()
 
     control = qobject_cast<QMediaRecorderControl*>(service->control(QMediaRecorderControl_iid));
     formatControl = qobject_cast<QMediaFormatControl *>(service->control(QMediaFormatControl_iid));
-    audioControl = qobject_cast<QAudioEncodeControl *>(service->control(QAudioEncodeControl_iid));
+    audioControl = qobject_cast<QAudioEncoderControl *>(service->control(QAudioEncoderControl_iid));
     videoControl = qobject_cast<QVideoEncoderControl *>(service->control(QVideoEncoderControl_iid));
 
     if (control) {

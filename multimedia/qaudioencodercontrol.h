@@ -32,8 +32,8 @@
 **
 ****************************************************************************/
 
-#ifndef QAUDIOENCODECONTROL_H
-#define QAUDIOENCODECONTROL_H
+#ifndef QAUDIOENCODERCONTROL_H
+#define QAUDIOENCODERCONTROL_H
 
 #include "qabstractmediacontrol.h"
 
@@ -41,11 +41,11 @@ class QAudioFormat;
 class QStringList;
 
 
-class Q_MEDIA_EXPORT QAudioEncodeControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QAudioEncoderControl : public QAbstractMediaControl
 {
     Q_OBJECT
 public:
-    virtual ~QAudioEncodeControl();
+    virtual ~QAudioEncoderControl();
 
     virtual QAudioFormat format() const = 0;
     virtual bool isFormatSupported(const QAudioFormat &format) const = 0;
@@ -67,17 +67,12 @@ public:
     virtual QVariant encodingOption(const QString &name) const;
     virtual void setEncodingOption(const QString &name, const QVariant &value);
 
-signals:
-    void audioFormatChanged(const QAudioFormat &format);
-    void audioCodecChanged(const QString &codecName);
-    void audioBitrateChanged(int bitrate);
-    void audioQualityChanged(qreal quality);
 
 protected:
-    QAudioEncodeControl(QObject *parent);
+    QAudioEncoderControl(QObject *parent);
 };
 
-#define QAudioEncodeControl_iid "com.nokia.Qt.QAudioEncodeControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QAudioEncodeControl, QAudioEncodeControl_iid)
+#define QAudioEncoderControl_iid "com.nokia.Qt.QAudioEncoderControl/1.0"
+Q_MEDIA_DECLARE_CONTROL(QAudioEncoderControl, QAudioEncoderControl_iid)
 
 #endif // QAUDIOCAPTUREPROPERTIESCONTROL_H

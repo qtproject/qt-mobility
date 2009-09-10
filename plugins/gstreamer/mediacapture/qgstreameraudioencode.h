@@ -35,7 +35,7 @@
 #ifndef QGSTREAMERAUDIOENCODE_H
 #define QGSTREAMERAUDIOENCODE_H
 
-#include "qaudioencodecontrol.h"
+#include "qaudioencodercontrol.h"
 class QGstreamerCaptureSession;
 
 #include <QtCore/qstringlist.h>
@@ -49,7 +49,7 @@ class QGstreamerCaptureSession;
 #include <qaudioformat.h>
 #endif
 
-class QGstreamerAudioEncode : public QAudioEncodeControl
+class QGstreamerAudioEncode : public QAudioEncoderControl
 {
     Q_OBJECT
 public:

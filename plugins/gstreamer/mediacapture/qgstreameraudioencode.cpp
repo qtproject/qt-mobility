@@ -40,7 +40,7 @@
 #include <math.h>
 
 QGstreamerAudioEncode::QGstreamerAudioEncode(QObject *parent)
-    :QAudioEncodeControl(parent)
+    :QAudioEncoderControl(parent)
 {
     QList<QByteArray> codecCandidates;
     codecCandidates << "mp3" << "vorbis" << "speex" << "gsm";
