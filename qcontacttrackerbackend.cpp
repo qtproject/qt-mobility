@@ -80,6 +80,7 @@ QContactTrackerEngine::QContactTrackerEngine(const QContactTrackerEngine& other)
 
 void QContactTrackerEngine::connectToSignals()
 {
+    // TODO: Is this correct? Why "nco::Audio::iri()"?
     SopranoLive::BackEnds::Tracker::ClassUpdateSignaler *signaler =
             SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(
                     nfo::Audio::iri());
@@ -91,6 +92,9 @@ void QContactTrackerEngine::connectToSignals()
     {
         QObject::connect(signaler, SIGNAL(subjectsAdded(const QStringList &)),
                 this, SLOT(subjectsAdded(const QStringList &)));
+        // TODO: Ok to remove? How should this be changed?
+        // No such signal
+        // "SopranoLive::BackEnds::Tracker::ClassUpdateDispatcher::subjectsRemoved(const QStringList &)"
         QObject::connect(signaler,
                 SIGNAL(subjectsRemoved(const QStringList &)), this,
                 SLOT(subjectsRemoved(const QStringList &)));
