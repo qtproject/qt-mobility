@@ -1,10 +1,7 @@
-SOURCES  += tst_qsysteminfo.cpp
-HEADERS  += 
 TARGET = tst_qsysteminfo
 CONFIG+=testcase
-QT -= gui
-QT += testlib
 
+SOURCES  += tst_qsysteminfo.cpp
 QT = core network
 
 INCLUDEPATH += ../../../systeminfo

@@ -6,8 +6,15 @@ shell=`readlink -f "$0"`;
 shell_path=`dirname $shell`;
 
 SAVED_PWD=$PWD;
-cd $shell_path/../build/tests/Debug/bin
-LD_LIBRARY_PATH=$shell_path/../build/Debug/bin:$LD_LIBRARY_PATH
+if [ ! -d "$shell_path/../build/tests/bin" ]; then
+    echo -e 'Unit tests have not been built.'
+    echo -e 'Please run configure with the -tests switch.'
+    exit
+fi
+cd $shell_path/../build/tests/bin
+
+
+LD_LIBRARY_PATH=$shell_path/../lib:$LD_LIBRARY_PATH
 
 #service framework
 ./tst_qserviceinterfacedescriptor
@@ -42,6 +49,13 @@ LD_LIBRARY_PATH=$shell_path/../build/Debug/bin:$LD_LIBRARY_PATH
 ./tst_qvaluespaceitem
 ./tst_qsystemreadwritelock
 ./tst_qsystemreadwritelock_oop
+
+#QSystemInformation
+./tst_qsystemdeviceinfo
+./tst_qsystemdisplayinfo
+./tst_qsysteminfo
+./tst_qsystemmemoryinfo
+./tst_qsystemnetworkinfo
 
 cd $SAVED_PWD
 

@@ -1,9 +1,9 @@
 set SAVED_PWD="%CD%"
 set BATCH_PATH=%~dp0
 
-set PATH=%BATCH_PATH%..\build\Debug\bin;%PATH%
+set PATH=%BATCH_PATH%..\lib;%PATH%
 
-cd %BATCH_PATH%..\build\tests\Debug\bin
+cd %BATCH_PATH%..\build\tests\bin
 
 ::ServiceFramework
 tst_servicemetadata.exe
@@ -38,6 +38,13 @@ tst_qvaluespaceobject.exe
 tst_qvaluespaceitem.exe
 tst_qsystemreadwritelock.exe
 tst_qsystemreadwritelock_oop.exe
+
+::QSystemInformation
+tst_qsystemdeviceinfo.exe
+tst_qsystemdisplayinfo.exe
+tst_qsysteminfo.exe
+tst_qsystemmemoryinfo.exe
+tst_qsystemnetworkinfo.exe
 
 cd %SAVED_PWD%
 
