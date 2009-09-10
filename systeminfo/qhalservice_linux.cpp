@@ -110,6 +110,14 @@ QStringList QHalInterface::getAllDevices()
     return QStringList();
 }
 
+bool QHalInterface::deviceExists(const QString &path)
+{
+    QDBusReply< bool > reply = d->connectionInterface->call("DeviceExists", path);
+    if (!reply.isValid()) {
+        return reply.value();
+    }
+    return false;
+}
 /////////
 
 class QHalDeviceInterfacePrivate
@@ -221,6 +229,20 @@ bool QHalDeviceInterface::queryCapability(const QString &cap)
 //        qDebug() << reply.error().message();
     }
     return false;
+}
+
+
+
+bool QHalDeviceInterface::propertyExists(const QString &prop)
+{
+    QDBusReply< bool > reply = d->connectionInterface->call("PropertyExists", prop);
+    if ( reply.isValid() ) {
+        return reply.value();
+    } else {
+//        qDebug() << reply.error().message();
+    }
+    return false;
+
 }
 
 /////////

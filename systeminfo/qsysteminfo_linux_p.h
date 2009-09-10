@@ -178,7 +178,7 @@ class QSystemDeviceInfoPrivate : public QObject
 public:
 
     QSystemDeviceInfoPrivate(QObject *parent = 0);
-    virtual ~QSystemDeviceInfoPrivate();
+    ~QSystemDeviceInfoPrivate();
 
 // device
 
@@ -211,7 +211,6 @@ Q_SIGNALS:
 
 private:
 #if !defined(QT_NO_DBUS)
-
     QHalInterface *halIface;
     QHalDeviceInterface *halIfaceDevice;
 

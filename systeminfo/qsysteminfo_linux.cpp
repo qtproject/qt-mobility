@@ -327,13 +327,10 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
             QStringList list = iface.getAllDevices();
             if(!list.isEmpty()) {
                 foreach(QString dev, list) {
-                  QHalDeviceInterface *halIfaceDevice = new QHalDeviceInterface(dev);
+                    QHalDeviceInterface *halIfaceDevice = new QHalDeviceInterface(dev);
                     if (halIfaceDevice->isValid()) {
-                        QString type = halIfaceDevice->getPropertyString("bluetooth_hci.originating_device");
-                        if(!type.isEmpty()) {
-                            qWarning() << type;
-                            return true;
-                        }
+                        return halIfaceDevice->propertyExists("bluetooth_hci.originating_device");
+                        return true;
                     }
                 }
             }
@@ -998,15 +995,15 @@ void QSystemDeviceInfoPrivate::setConnection()
                 }
             }
         }
-
-    }
 #endif
+    }
 }
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
 }
 
+#if !defined(QT_NO_DBUS)
 void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
 {
     for(int i=0; i < map.count(); i++) {
@@ -1033,7 +1030,7 @@ void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
         }
     } //end map
 }
-
+#endif
 
 QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 {

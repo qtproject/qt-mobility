@@ -95,6 +95,7 @@ public:
     QDBusInterface *connectionInterface() const;
     QStringList findDeviceByCapability(const QString &cap);
     QStringList getAllDevices();
+    bool deviceExists(const QString &path);
 
 private Q_SLOTS:
 private:
@@ -119,6 +120,7 @@ public:
 
     bool queryCapability(const QString &cap);
     bool setConnections();
+    bool propertyExists(const QString &);
 
 Q_SIGNALS:
     void propertyModified( int,  QVariantList);
