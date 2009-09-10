@@ -32,13 +32,13 @@
 **
 ****************************************************************************/
 
-#include "qimageencodecontrol.h"
+#include "qimageencodercontrol.h"
 #include <QtCore/qstringlist.h>
 
 /*!
   Create a new image encode control object with the given \a parent
 */
-QImageEncodeControl::QImageEncodeControl(QObject *parent)
+QImageEncoderControl::QImageEncoderControl(QObject *parent)
     :QAbstractMediaControl(parent)
 {
 }
@@ -46,7 +46,7 @@ QImageEncodeControl::QImageEncodeControl(QObject *parent)
 /*!
   Destroys the image encode control.
 */
-QImageEncodeControl::~QImageEncodeControl()
+QImageEncoderControl::~QImageEncoderControl()
 {
 }
 
@@ -57,20 +57,20 @@ QImageEncodeControl::~QImageEncodeControl()
   \sa resolution(), minimumResolution(), maximumResolution()
 
 */
-QList<QSize> QImageEncodeControl::supportedResolutions() const
+QList<QSize> QImageEncoderControl::supportedResolutions() const
 {
     return QList<QSize>();
 }
 
 
 /*!
-  \fn QImageEncodeControl::resolution() const
+  \fn QImageEncoderControl::resolution() const
 
    Returns the resolution of encoded image.
 */
 
 /*!
-  \fn QImageEncodeControl::minimumResolution() const
+  \fn QImageEncoderControl::minimumResolution() const
 
   Returns the smallest supported resolution.
 
@@ -78,7 +78,7 @@ QList<QSize> QImageEncodeControl::supportedResolutions() const
 */
 
 /*!
-  \fn QImageEncodeControl::maximumResolution() const
+  \fn QImageEncoderControl::maximumResolution() const
 
   Returns the largest supported resolution.
 
@@ -86,7 +86,7 @@ QList<QSize> QImageEncodeControl::supportedResolutions() const
 */
 
 /*!
-  \fn QImageEncodeControl::setResolution(const QSize &)
+  \fn QImageEncoderControl::setResolution(const QSize &)
 
   Set the image \a resolution.
   If an empty size is passed,
@@ -95,41 +95,41 @@ QList<QSize> QImageEncodeControl::supportedResolutions() const
 */
 
 /*!
-  \fn QImageEncodeControl::supportedImageCodecs() const
+  \fn QImageEncoderControl::supportedImageCodecs() const
 
   Returns the list of supported image codec names.
 */
 
 /*!
-  \fn QImageEncodeControl::imageCodec() const
+  \fn QImageEncoderControl::imageCodec() const
 
   Returns the currently used image codec name.
 */
 
 /*!
-  \fn QImageEncodeControl::setImageCodec(const QString &codecName)
+  \fn QImageEncoderControl::setImageCodec(const QString &codecName)
 
   Use the image codec with name equals to \a codecName.
 
 */
 
 /*!
-  \fn QImageEncodeControl::imageCodecDescription(const QString &codecName) const
+  \fn QImageEncoderControl::imageCodecDescription(const QString &codecName) const
 
   Returns description of image \a codec.
 */
 
 /*!
-  \fn QImageEncodeControl::quality() const
+  \fn QImageEncoderControl::quality() const
 
   Image quality value, in 0..100 range.
 */
 
 /*!
-  \fn QImageEncodeControl::setQuality(qreal)
+  \fn QImageEncoderControl::setQuality(qreal)
 
   Sets the image quality to \a value.
-  Value has the same meaning as QAudioEncodeControl::quality.
+  Value has the same meaning as QAudioEncoderControl::quality.
 
-  \sa quality() QAudioEncodeControl::quality
+  \sa quality() QAudioEncoderControl::quality
 */

@@ -32,8 +32,8 @@
 **
 ****************************************************************************/
 
-#ifndef QIMAGEENCODECONTROL_H
-#define QIMAGEENCODECONTROL_H
+#ifndef QIMAGEENCODERCONTROL_H
+#define QIMAGEENCODERCONTROL_H
 
 #include "qabstractmediacontrol.h"
 
@@ -42,11 +42,11 @@
 class QByteArray;
 class QStringList;
 
-class Q_MEDIA_EXPORT QImageEncodeControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QImageEncoderControl : public QAbstractMediaControl
 {
     Q_OBJECT
 public:
-    virtual ~QImageEncodeControl();
+    virtual ~QImageEncoderControl();
 
     virtual QSize resolution() const = 0;
     virtual QSize minimumResolution() const = 0;
@@ -64,10 +64,10 @@ public:
     virtual void setQuality(qreal) = 0;
 
 protected:
-    QImageEncodeControl(QObject *parent);
+    QImageEncoderControl(QObject *parent);
 };
 
-#define QImageEncodeControl_iid "com.nokia.Qt.QImageEncodeControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QImageEncodeControl, QImageEncodeControl_iid)
+#define QImageEncoderControl_iid "com.nokia.Qt.QImageEncoderControl/1.0"
+Q_MEDIA_DECLARE_CONTROL(QImageEncoderControl, QImageEncoderControl_iid)
 
-#endif // QVIDEOCAPTUREPROPERTIESCONTROL_H
+#endif
