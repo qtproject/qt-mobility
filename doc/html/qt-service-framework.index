@@ -87,6 +87,23 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceItem" href="qvaluespaceitem.html" location="qvaluespaceitem.h" bases="" module="">
+            <property access="public" threadsafety="unspecified" status="commendable" name="path" fullname="QValueSpaceItem::path" href="qvaluespaceitem.html#path-prop" location="qvaluespaceitem.h" type="QString">
+                <getter name="path"/>
+                <setter name="setPath"/>
+            </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QValueSpaceItem::value" href="qvaluespaceitem.html#value-prop" location="qvaluespaceitem.h" type="QVariant">
+                <getter name="value"/>
+                <getter name="value"/>
+                <getter name="value"/>
+                <setter name="setValue"/>
+                <setter name="setValue"/>
+                <setter name="setValue"/>
+                <setter name="setValue"/>
+            </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="notify" fullname="QValueSpaceItem::notify" href="qvaluespaceitem.html#notify-prop" location="qvaluespaceitem.h" type="bool">
+                <getter name="notify"/>
+                <setter name="setNotify"/>
+            </property>
             <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceItem" fullname="QValueSpaceItem::QValueSpaceItem" href="qvaluespaceitem.html#QValueSpaceItem" location="qvaluespaceitem.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QValueSpaceItem(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
@@ -152,7 +169,10 @@
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QValueSpaceItem" fullname="QValueSpaceItem::~QValueSpaceItem" href="qvaluespaceitem.html#dtor.QValueSpaceItem" location="qvaluespaceitem.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QValueSpaceItem()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="path" fullname="QValueSpaceItem::path" href="qvaluespaceitem.html#path" location="qvaluespaceitem.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="path() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setPath" fullname="QValueSpaceItem::setPath" href="qvaluespaceitem.html#path-prop" location="qvaluespaceitem.h" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="path" type="void" signature="setPath(const QString &amp; path)">
+                <parameter left="const QString &amp;" right="" name="path" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="path" fullname="QValueSpaceItem::path" href="qvaluespaceitem.html#path-prop" location="qvaluespaceitem.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="path" type="QString" signature="path() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QValueSpaceItem::isValid" href="qvaluespaceitem.html#isValid" location="qvaluespaceitem.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="subPaths" fullname="QValueSpaceItem::subPaths" href="qvaluespaceitem.html#subPaths" location="qvaluespaceitem.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QString&gt;" signature="subPaths() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="remove" fullname="QValueSpaceItem::remove" href="qvaluespaceitem.html#remove" location="qvaluespaceitem.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="remove()"/>
@@ -165,37 +185,41 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="remove" fullname="QValueSpaceItem::remove" href="qvaluespaceitem.html#remove-4" location="qvaluespaceitem.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="4" type="bool" signature="remove(const QString &amp; subPath)">
                 <parameter left="const QString &amp;" right="" name="subPath" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setValue" fullname="QValueSpaceItem::setValue" href="qvaluespaceitem.html#setValue" location="qvaluespaceitem.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="setValue(const QVariant &amp; value)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="setValue" fullname="QValueSpaceItem::setValue" href="qvaluespaceitem.html#value-prop" location="qvaluespaceitem.h" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="value" type="bool" signature="setValue(const QVariant &amp; value)">
                 <parameter left="const QVariant &amp;" right="" name="value" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setValue" fullname="QValueSpaceItem::setValue" href="qvaluespaceitem.html#setValue-2" location="qvaluespaceitem.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="bool" signature="setValue(const QByteArray &amp; subPath, const QVariant &amp; value)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="setValue" fullname="QValueSpaceItem::setValue" href="qvaluespaceitem.html#value-prop" location="qvaluespaceitem.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" associated-property="value" type="bool" signature="setValue(const QByteArray &amp; subPath, const QVariant &amp; value)">
                 <parameter left="const QByteArray &amp;" right="" name="subPath" default=""/>
                 <parameter left="const QVariant &amp;" right="" name="value" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setValue" fullname="QValueSpaceItem::setValue" href="qvaluespaceitem.html#setValue-3" location="qvaluespaceitem.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="3" type="bool" signature="setValue(const char * subPath, const QVariant &amp; value)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="setValue" fullname="QValueSpaceItem::setValue" href="qvaluespaceitem.html#value-prop" location="qvaluespaceitem.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="3" associated-property="value" type="bool" signature="setValue(const char * subPath, const QVariant &amp; value)">
                 <parameter left="const char *" right="" name="subPath" default=""/>
                 <parameter left="const QVariant &amp;" right="" name="value" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setValue" fullname="QValueSpaceItem::setValue" href="qvaluespaceitem.html#setValue-4" location="qvaluespaceitem.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="4" type="bool" signature="setValue(const QString &amp; subPath, const QVariant &amp; value)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="setValue" fullname="QValueSpaceItem::setValue" href="qvaluespaceitem.html#value-prop" location="qvaluespaceitem.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="4" associated-property="value" type="bool" signature="setValue(const QString &amp; subPath, const QVariant &amp; value)">
                 <parameter left="const QString &amp;" right="" name="subPath" default=""/>
                 <parameter left="const QVariant &amp;" right="" name="value" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="sync" fullname="QValueSpaceItem::sync" href="qvaluespaceitem.html#sync" location="qvaluespaceitem.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="sync()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QValueSpaceItem::value" href="qvaluespaceitem.html#value" location="qvaluespaceitem.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="value(const QByteArray &amp; subPath, const QVariant &amp; def) const">
+            <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QValueSpaceItem::value" href="qvaluespaceitem.html#value-prop" location="qvaluespaceitem.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="value" type="QVariant" signature="value(const QByteArray &amp; subPath, const QVariant &amp; def) const">
                 <parameter left="const QByteArray &amp;" right="" name="subPath" default="QByteArray()"/>
                 <parameter left="const QVariant &amp;" right="" name="def" default="QVariant()"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QValueSpaceItem::value" href="qvaluespaceitem.html#value-3" location="qvaluespaceitem.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="3" type="QVariant" signature="value(const char * subPath, const QVariant &amp; def) const">
+            <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QValueSpaceItem::value" href="qvaluespaceitem.html#value-prop" location="qvaluespaceitem.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="3" associated-property="value" type="QVariant" signature="value(const char * subPath, const QVariant &amp; def) const">
                 <parameter left="const char *" right="" name="subPath" default=""/>
                 <parameter left="const QVariant &amp;" right="" name="def" default="QVariant()"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QValueSpaceItem::value" href="qvaluespaceitem.html#value-2" location="qvaluespaceitem.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="2" type="QVariant" signature="value(const QString &amp; subPath, const QVariant &amp; def) const">
+            <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QValueSpaceItem::value" href="qvaluespaceitem.html#value-prop" location="qvaluespaceitem.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="2" associated-property="value" type="QVariant" signature="value(const QString &amp; subPath, const QVariant &amp; def) const">
                 <parameter left="const QString &amp;" right="" name="subPath" default=""/>
                 <parameter left="const QVariant &amp;" right="" name="def" default="QVariant()"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QValueSpaceItem::operator=" href="qvaluespaceitem.html#operator=" location="qvaluespaceitem.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QValueSpaceItem &amp;" signature="operator=(const QValueSpaceItem &amp; other)">
                 <parameter left="const QValueSpaceItem &amp;" right="" name="other" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setNotify" fullname="QValueSpaceItem::setNotify" href="qvaluespaceitem.html#notify-prop" location="qvaluespaceitem.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="notify" type="void" signature="setNotify(bool notify)">
+                <parameter left="bool" right="" name="notify" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="notify" fullname="QValueSpaceItem::notify" href="qvaluespaceitem.html#notify-prop" location="qvaluespaceitem.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="notify" type="bool" signature="notify() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="contentsChanged" fullname="QValueSpaceItem::contentsChanged" href="qvaluespaceitem.html#contentsChanged" location="qvaluespaceitem.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="contentsChanged()"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QAbstractValueSpaceLayer" href="qabstractvaluespacelayer.html" location="qvaluespace.h" bases="" module="">
@@ -316,8 +340,6 @@
         <page access="public" status="commendable" name="battery-charge" href="battery-charge.html" subtype="example" title="Accessing Publish and Subscribe from QML" fulltitle="Accessing Publish and Subscribe from QML" subtitle="" location="battery-charge.qdoc">
             <contents name="battery-consumer" title="Battery Consumer" level="2"/>
             <contents name="qml" title="QML" level="3"/>
-            <page access="public" status="commendable" name="battery-charge/battery-consumer/batterycharge.cpp" href="battery-charge-battery-consumer-batterycharge-cpp.html" subtype="file" title="" fulltitle="batterycharge.cpp Example File" subtitle="battery-charge/battery-consumer/batterycharge.cpp" location=""/>
-            <page access="public" status="commendable" name="battery-charge/battery-consumer/batterycharge.h" href="battery-charge-battery-consumer-batterycharge-h.html" subtype="file" title="" fulltitle="batterycharge.h Example File" subtitle="battery-charge/battery-consumer/batterycharge.h" location=""/>
             <page access="public" status="commendable" name="battery-charge/battery-provider/batteryprovider.cpp" href="battery-charge-battery-provider-batteryprovider-cpp.html" subtype="file" title="" fulltitle="batteryprovider.cpp Example File" subtitle="battery-charge/battery-provider/batteryprovider.cpp" location=""/>
             <page access="public" status="commendable" name="battery-charge/battery-provider/batteryprovider.h" href="battery-charge-battery-provider-batteryprovider-h.html" subtype="file" title="" fulltitle="batteryprovider.h Example File" subtitle="battery-charge/battery-provider/batteryprovider.h" location=""/>
             <page access="public" status="commendable" name="battery-charge/battery-provider/batteryprovider.ui" href="battery-charge-battery-provider-batteryprovider-ui.html" subtype="file" title="" fulltitle="batteryprovider.ui Example File" subtitle="battery-charge/battery-provider/batteryprovider.ui" location=""/>
@@ -340,7 +362,6 @@
         </function>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_SHAREDMEMORY_LAYER" href="qvaluespace.html#QVALUESPACE_SHAREDMEMORY_LAYER" location="qvaluespace.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QValueSpace" type="" signature="QVALUESPACE_SHAREDMEMORY_LAYER()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_VOLATILEREGISTRY_LAYER" href="qvaluespace.html#QVALUESPACE_VOLATILEREGISTRY_LAYER" location="qvaluespace.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QValueSpace" type="" signature="QVALUESPACE_VOLATILEREGISTRY_LAYER()"/>
-        <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_NONVOLATILEREGISTRY_LAYER" href="qvaluespace.html#QVALUESPACE_NONVOLATILEREGISTRY_LAYER" location="qvaluespace.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QValueSpace" type="" signature="QVALUESPACE_NONVOLATILEREGISTRY_LAYER()"/>
         <page access="public" status="commendable" name="publish-subscribe" href="publish-subscribe.html" subtype="example" title="Publish and Subscribe Example" fulltitle="Publish and Subscribe Example" subtitle="" location="publish-subscribe.qdoc">
             <contents name="provider" title="Provider" level="2"/>
             <contents name="consumer" title="Consumer" level="2"/>

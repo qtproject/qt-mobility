@@ -6,6 +6,11 @@
         <keyword ref="qabstractvaluespacelayer.html#Handle-typedef">Handle</keyword>
         <keyword ref="qabstractvaluespacelayer.html#LayerOption-enum">LayerOption</keyword>
         <keyword ref="qabstractvaluespacelayer.html#LayerOption-enum">LayerOptions</keyword>
+        <keyword ref="qabstractvaluespacelayer.html#LayerOption-enum">QAbstractValueSpaceLayer::UnspecifiedLayer</keyword>
+        <keyword ref="qabstractvaluespacelayer.html#LayerOption-enum">QAbstractValueSpaceLayer::WriteableLayer</keyword>
+        <keyword ref="qabstractvaluespacelayer.html#LayerOption-enum">QAbstractValueSpaceLayer::PermanentLayer</keyword>
+        <keyword ref="qabstractvaluespacelayer.html#LayerOption-enum">QAbstractValueSpaceLayer::NonWriteableLayer</keyword>
+        <keyword ref="qabstractvaluespacelayer.html#LayerOption-enum">QAbstractValueSpaceLayer::NonPermanentLayer</keyword>
         <keyword ref="qabstractvaluespacelayer.html#Properties-enum">Properties</keyword>
         <keyword ref="qabstractvaluespacelayer.html#Properties-enum">QAbstractValueSpaceLayer::Publish</keyword>
         <keyword ref="qabstractvaluespacelayer.html#Type-enum">Type</keyword>
@@ -44,20 +49,22 @@
         <keyword ref="qvaluespace.html#availableLayers">availableLayers</keyword>
         <keyword ref="qvaluespace.html#initValueSpaceManager">initValueSpaceManager</keyword>
         <keyword ref="qvaluespace.html#installLayer">installLayer</keyword>
-        <keyword ref="qvaluespace.html#QVALUESPACE_NONVOLATILEREGISTRY_LAYER">QVALUESPACE_NONVOLATILEREGISTRY_LAYER</keyword>
         <keyword ref="qvaluespace.html#QVALUESPACE_SHAREDMEMORY_LAYER">QVALUESPACE_SHAREDMEMORY_LAYER</keyword>
         <keyword ref="qvaluespace.html#QVALUESPACE_VOLATILEREGISTRY_LAYER">QVALUESPACE_VOLATILEREGISTRY_LAYER</keyword>
     </section>
     <section ref="qvaluespaceitem.html" title="QValueSpaceItem Class Reference">
         <keyword ref="qvaluespaceitem.html">QValueSpaceItem</keyword>
+        <keyword ref="qvaluespaceitem.html#notify-prop">notify</keyword>
+        <keyword ref="qvaluespaceitem.html#notify-prop">setNotify</keyword>
+        <keyword ref="qvaluespaceitem.html#path-prop">path</keyword>
+        <keyword ref="qvaluespaceitem.html#path-prop">setPath</keyword>
+        <keyword ref="qvaluespaceitem.html#value-prop">value</keyword>
+        <keyword ref="qvaluespaceitem.html#value-prop">setValue</keyword>
         <keyword ref="qvaluespaceitem.html#contentsChanged">contentsChanged</keyword>
         <keyword ref="qvaluespaceitem.html#isValid">isValid</keyword>
-        <keyword ref="qvaluespaceitem.html#path">path</keyword>
         <keyword ref="qvaluespaceitem.html#remove">remove</keyword>
-        <keyword ref="qvaluespaceitem.html#setValue">setValue</keyword>
         <keyword ref="qvaluespaceitem.html#subPaths">subPaths</keyword>
         <keyword ref="qvaluespaceitem.html#sync">sync</keyword>
-        <keyword ref="qvaluespaceitem.html#value">value</keyword>
         <keyword ref="qvaluespaceitem.html#operator-eq">operator=</keyword>
         <section ref="qvaluespaceitem-members.html" title="List of all members"/>
     </section>

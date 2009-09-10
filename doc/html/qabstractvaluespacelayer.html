@@ -85,6 +85,15 @@
 <h3 class="fn"><a name="Handle-typedef"></a>typedef QAbstractValueSpaceLayer::Handle</h3>
 <p>The Handle type is an opaque, pointer sized contextual handle used to represent paths within value space layers. Handles are only ever created by <a href="qabstractvaluespacelayer.html#item">QAbstractValueSpaceLayer::item</a>() and are always released by calls to <a href="qabstractvaluespacelayer.html#removeHandle">QAbstractValueSpaceLayer::removeHandle</a>(). The special value, <tt>InvalidHandle</tt> is reserved to represent an invalid handle.</p>
 <h3 class="flags"><a name="LayerOption-enum"></a>enum QAbstractValueSpaceLayer::LayerOption<br />flags QAbstractValueSpaceLayer::LayerOptions</h3>
+<p>This enum describes the behaviour of the Value Space layer. In addition this enum is used as a filter when constructing a <a href="qvaluespaceobject.html">QValueSpaceObject</a> or <a href="qvaluespaceitem.html">QValueSpaceItem</a>.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QAbstractValueSpaceLayer::UnspecifiedLayer</tt></td><td align="center" valign="top"><tt>0x0000</tt></td><td valign="top">Used as a filter to specify that any layer should be used.</td></tr>
+<tr><td valign="top"><tt>QAbstractValueSpaceLayer::PermanentLayer</tt></td><td align="center" valign="top"><tt>0x0001</tt></td><td valign="top">Indicates that the layer uses a permanent backing store. When used as a filter only layers that use a permanent backing store will be used.</td></tr>
+<tr><td valign="top"><tt>QAbstractValueSpaceLayer::NonPermanentLayer</tt></td><td align="center" valign="top"><tt>0x0002</tt></td><td valign="top">Indicates that the layer does not use a permanent backing store. When used as a filter only layers that do not use permanent backing stores will be used.</td></tr>
+<tr><td valign="top"><tt>QAbstractValueSpaceLayer::WriteableLayer</tt></td><td align="center" valign="top"><tt>0x0004</tt></td><td valign="top">Indicates that the layer can update its contents. When used as a filter only layers that are writeable will be used.</td></tr>
+<tr><td valign="top"><tt>QAbstractValueSpaceLayer::NonWriteableLayer</tt></td><td align="center" valign="top"><tt>0x0008</tt></td><td valign="top">Indicates that the layer cannot update its contents. When used as a filter only layers that are read-only will be used.</td></tr>
+</table></p>
 <p>The LayerOptions type is a typedef for <a href="qflags.html">QFlags</a>&lt;LayerOption&gt;. It stores an OR combination of LayerOption values.</p>
 <h3 class="fn"><a name="Properties-enum"></a>enum QAbstractValueSpaceLayer::Properties</h3>
 <p>To allow for efficient layer implementations, expensive handle operations, currently only monitoring for changes, are enabled and disabled as needed on a per-handle basis. The Properties enumeration is a bitmask representing the different properties that can exist on a handle.</p>
@@ -124,6 +133,8 @@
 <p>Returns a new opaque handle for the requested <i>subPath</i> of <i>parent</i>. If <i>parent</i> is an InvalidHandle, <i>subPath</i> is interpreted as an absolute path.</p>
 <p>The caller should call <a href="qabstractvaluespacelayer.html#removeHandle">removeHandle</a>() to free resources used by the handle when it is no longer required.</p>
 <h3 class="fn"><a name="layerOptions"></a><a href="qabstractvaluespacelayer.html#LayerOption-enum">LayerOptions</a> QAbstractValueSpaceLayer::layerOptions () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns the <a href="qabstractvaluespacelayer.html#LayerOption-enum">LayerOptions</a> describing this layer.</p>
+<p>See also <a href="qabstractvaluespacelayer.html#LayerOption-enum">LayerOption</a>.</p>
 <h3 class="fn"><a name="name"></a>QString QAbstractValueSpaceLayer::name ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the name of the Value Space layer. This name is only used for diagnostics purposes.</p>
 <h3 class="fn"><a name="notifyInterest"></a>bool QAbstractValueSpaceLayer::notifyInterest ( <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i>, bool <i>interested</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
@@ -147,11 +158,11 @@
 <p>Process a client side <a href="qvaluespaceitem.html#remove">QValueSpaceItem::remove</a>() call by sending a request to the provider of the value space item identified by <i>handle</i> and <i>subPath</i> to remove the item.</p>
 <p>Returns true if the request was successfully sent; otherwise returns false.</p>
 <h3 class="fn"><a name="requestSetValue"></a>bool QAbstractValueSpaceLayer::requestSetValue ( <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i>, const QVariant &amp; <i>value</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Process a client side <a href="qvaluespaceitem.html#setValue">QValueSpaceItem::setValue</a>() call by sending a request to the provider of the value space item identified by <i>handle</i> to set it to <i>value</i>.</p>
+<p>Process a client side <a href="qvaluespaceitem.html#value-prop">QValueSpaceItem::setValue</a>() call by sending a request to the provider of the value space item identified by <i>handle</i> to set it to <i>value</i>.</p>
 <p>Returns true if the request was successfully sent; otherwise returns false.</p>
 <p>See also <a href="qabstractvaluespacelayer.html#handleChanged">handleChanged</a>().</p>
 <h3 class="fn"><a name="requestSetValue-2"></a>bool QAbstractValueSpaceLayer::requestSetValue ( <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i>, const QByteArray &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Process a client side <a href="qvaluespaceitem.html#setValue">QValueSpaceItem::setValue</a>() call by sending a request to the provider of the value space item identified by <i>handle</i> and <i>subPath</i> to set the value to <i>value</i>.</p>
+<p>Process a client side <a href="qvaluespaceitem.html#value-prop">QValueSpaceItem::setValue</a>() call by sending a request to the provider of the value space item identified by <i>handle</i> and <i>subPath</i> to set the value to <i>value</i>.</p>
 <p>Returns true if the request was successfully sent; otherwise returns false.</p>
 <h3 class="fn"><a name="setProperty"></a>void QAbstractValueSpaceLayer::setProperty ( <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i>, <a href="qabstractvaluespacelayer.html#Properties-enum">Properties</a> <i>property</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Apply the specified <i>property</i> mask to <i>handle</i>.</p>
