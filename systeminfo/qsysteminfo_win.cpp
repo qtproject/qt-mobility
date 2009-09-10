@@ -598,7 +598,7 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 
 QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
-    QString netname;
+    QString netname = "No network available";
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
         {
