@@ -16,3 +16,7 @@ contains(MOBILITY, location) {
 contains(MOBILITY, serviceframework) {
     qtAddLibrary(QtServiceFramework)
 }
+
+contains(MOBILITY, systeminfo) {
+    qtAddLibrary(QtSystemInfo)
+}

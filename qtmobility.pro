@@ -3,6 +3,14 @@
     error("Please run configure script");
 }
 
+lessThan(QT_MAJOR_VERSION, 4) {
+    error(Qt Mobility requires Qt 4.6 or higher. Qt $${QT_VERSION} was found.);
+}
+
+contains(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 6) {
+    error(Qt Mobility requires Qt 4.6 or higher. Qt $${QT_VERSION} was found.);
+}
+
 #generate prf file for Qt integration
 
 PRF_OUTPUT=features/mobility.prf

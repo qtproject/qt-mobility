@@ -149,6 +149,14 @@ else
     echo "build_examples = yes" >> config.in
 fi
 
+
+echo "Testing Qt installation..."
+if ! which qmake; then
+    echo >&2 "Cannot find 'qmake' in your PATH";
+    echo >&2 "Aborting." 
+fi
+
+
 echo "Generating Mobility Headers..."
 #remove old headers
 rm -rf $relpath/include
@@ -162,5 +170,10 @@ $relpath/bin/syncheaders $relpath/include $relpath/systeminfo
 mv config.in config.pri
 
 echo "Running qmake..."
-qmake -recursive 
-
+if qmake -recursive; then
+    echo -e "\n"
+    echo "configure has finished. You may run make or gmake to build the project now."
+else
+    echo -e "\n"
+    echo "configure failed."
+fi
