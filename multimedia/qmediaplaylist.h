@@ -53,10 +53,9 @@ class Q_MEDIA_EXPORT QMediaPlaylist : public QObject
     Q_ENUMS(PlaybackMode)
 
 public:
-
     enum PlaybackMode { CurrentItemOnce, CurrentItemInLoop, Linear, Loop, Random };
 
-    QMediaPlaylist(QAbstractMediaObject *mediaObject = 0, QObject *parent = 0);
+    QMediaPlaylist(QAbstractMediaObject *parent = 0);
     virtual ~QMediaPlaylist();
 
     QMediaPlaylistProvider* playlistProvider() const;

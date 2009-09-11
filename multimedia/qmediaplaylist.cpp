@@ -44,6 +44,8 @@
 #include <QtCore/qlist.h>
 #include <QtCore/qfile.h>
 #include <QtCore/qurl.h>
+#include <QtCore/qcoreevent.h>
+#include <QtCore/qcoreapplication.h>
 
 #include <qmediapluginloader_p.h>
 
@@ -92,7 +94,7 @@ enum QMediaPlaylist::PlaybackMode
   Create a new playlist object for playlist \a source with the given \a parent.
   If source is null, internal local memory playlist source will be created.
   */
-QMediaPlaylist::QMediaPlaylist(QAbstractMediaObject *mediaObject, QObject *parent)
+QMediaPlaylist::QMediaPlaylist(QAbstractMediaObject *parent)
     : QObject(parent)
     , d_ptr(new QMediaPlaylistPrivate)
 {
@@ -100,17 +102,11 @@ QMediaPlaylist::QMediaPlaylist(QAbstractMediaObject *mediaObject, QObject *paren
 
     d->q_ptr = this;
 
-    if (mediaObject) {
-        d->control = qobject_cast<QMediaPlaylistControl*>(mediaObject->service()->control(QMediaPlaylistControl_iid));
+    if (parent)
+        d->control = qobject_cast<QMediaPlaylistControl*>(parent->service()->control(QMediaPlaylistControl_iid));
 
-        if (!d->control) {
-            QMediaPlayerControl *playerControl = qobject_cast<QMediaPlayerControl*>(mediaObject->service()->control(QMediaPlayerControl_iid));
-            d->control = new QLocalMediaPlaylistControl(playerControl, this);
-        }
-    } else {
-        d->control = new QLocalMediaPlaylistControl(0, this);
-    }
-
+    if (!d->control)
+        d->control = new QLocalMediaPlaylistControl(this);
 
     QMediaPlaylistProvider *playlist = d->control->playlistProvider();
 
@@ -126,6 +122,11 @@ QMediaPlaylist::QMediaPlaylist(QAbstractMediaObject *mediaObject, QObject *paren
             this, SIGNAL(playlistProviderChanged()));
     connect(d->control, SIGNAL(playlistPositionChanged(int)),
             this, SIGNAL(playlistPositionChanged(int)));
+    connect(d->control, SIGNAL(currentMediaChanged(QMediaSource)),
+            this, SIGNAL(currentMediaChanged(QMediaSource)));
+
+    QChildEvent e(QEvent::ChildPolished, this);
+    QCoreApplication::sendEvent(parent, &e);
 }
 
 /*!

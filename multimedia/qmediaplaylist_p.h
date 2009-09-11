@@ -85,26 +85,26 @@ class QLocalMediaPlaylistControl : public QMediaPlaylistControl
 {
     Q_OBJECT
 public:
-    QLocalMediaPlaylistControl(QMediaPlayerControl *player, QObject *parent)
-        :QMediaPlaylistControl(parent), m_player(player)
+    QLocalMediaPlaylistControl(QObject *parent)
+        :QMediaPlaylistControl(parent)
     {
         QMediaPlaylistProvider *playlist = new QLocalMediaPlaylistProvider(this);
         m_navigator = new QMediaPlaylistNavigator(playlist,this);
         m_navigator->setPlaybackMode(QMediaPlaylist::Linear);
 
-        connect(m_navigator, SIGNAL(activated(QMediaSource)), SLOT(play(QMediaSource)));
         connect(m_navigator, SIGNAL(currentPositionChanged(int)), SIGNAL(playlistPositionChanged(int)));
-
-        if (m_player)
-            connect(m_player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
-                    this, SLOT(checkForEOS(QMediaPlayer::MediaStatus)));
-
+        connect(m_navigator, SIGNAL(activated(QMediaSource)), SIGNAL(currentMediaChanged(QMediaSource)));
     }
 
     virtual ~QLocalMediaPlaylistControl() {};
 
     QMediaPlaylistProvider* playlistProvider() const { return m_navigator->playlist(); }
-    bool setPlaylistProvider(QMediaPlaylistProvider *mediaPlaylist) { m_navigator->setPlaylist(mediaPlaylist); return true; }
+    bool setPlaylistProvider(QMediaPlaylistProvider *mediaPlaylist)
+    {
+        m_navigator->setPlaylist(mediaPlaylist);
+        emit playlistProviderChanged();
+        return true;
+    }
 
     int currentPosition() const { return m_navigator->currentPosition(); }
     void setCurrentPosition(int position) { m_navigator->jump(position); }
@@ -117,25 +117,8 @@ public:
     QMediaPlaylist::PlaybackMode playbackMode() const { return m_navigator->playbackMode(); }
     void setPlaybackMode(QMediaPlaylist::PlaybackMode mode) { m_navigator->setPlaybackMode(mode); }
 
-
-public slots:
-    void checkForEOS(QMediaPlayer::MediaStatus status)
-    {
-        if (status == QMediaPlayer::EndOfMedia)
-            m_navigator->advance();
-    }
-
-    void play(const QMediaSource& source)
-    {
-        if (m_player) {
-            m_player->setMedia(source);
-            m_player->play();
-        }
-    }
-
 private:
     QMediaPlaylistNavigator *m_navigator;
-    QMediaPlayerControl *m_player;
 };
 
 

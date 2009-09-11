@@ -154,12 +154,16 @@ Q_SIGNALS:
 
     void error(QMediaPlayer::Error error);
 
+protected:
+    void childEvent(QChildEvent *event);
+
 private:
     Q_DISABLE_COPY(QMediaPlayer)
     Q_DECLARE_PRIVATE(QMediaPlayer)
     Q_PRIVATE_SLOT(d_func(), void _q_stateChanged(QMediaPlayer::State))
     Q_PRIVATE_SLOT(d_func(), void _q_mediaStatusChanged(QMediaPlayer::MediaStatus))
     Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &))
+    Q_PRIVATE_SLOT(d_func(), void _q_updateMedia(const QMediaSource&))
 };
 
 Q_DECLARE_METATYPE(QMediaPlayer::State);

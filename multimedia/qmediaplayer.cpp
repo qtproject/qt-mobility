@@ -33,6 +33,9 @@
 ****************************************************************************/
 
 #include <QtCore/qtimer.h>
+#include <QtCore/qdebug.h>
+
+#include <QtCore/qcoreevent.h>
 
 #include "qmediaplayer.h"
 
@@ -41,6 +44,7 @@
 #include "qmediaplayercontrol.h"
 #include "qmediaserviceprovider.h"
 #include "qmediaplaylist.h"
+#include "qmediaplaylistcontrol.h"
 
 /*!
     \class QMediaPlayer
@@ -89,10 +93,14 @@ public:
     QMediaPlayer::Error error;
     QString errorString;
     bool ownService;
+    bool hasPlaylistControl;
+
+    QMediaPlaylist *playlist;
 
     void _q_stateChanged(QMediaPlayer::State state);
     void _q_mediaStatusChanged(QMediaPlayer::MediaStatus status);
     void _q_error(int error, const QString &errorString);
+    void _q_updateMedia(const QMediaSource&);
 };
 
 void QMediaPlayerPrivate::_q_stateChanged(QMediaPlayer::State ps)
@@ -116,6 +124,10 @@ void QMediaPlayerPrivate::_q_mediaStatusChanged(QMediaPlayer::MediaStatus status
     case QMediaPlayer::BufferingMedia:
         q->addPropertyWatch("bufferStatus");
         break;
+    case QMediaPlayer::EndOfMedia:
+        if (playlist)
+            playlist->advance();
+        //fall
     default:
         q->removePropertyWatch("bufferStatus");
         break;
@@ -131,6 +143,13 @@ void QMediaPlayerPrivate::_q_error(int error, const QString &errorString)
     this->errorString = errorString;
 
     emit q->error(this->error);
+}
+
+void QMediaPlayerPrivate::_q_updateMedia(const QMediaSource &media)
+{
+    Q_Q(QMediaPlayer);
+    q->setMedia(media);
+    q->play();
 }
 
 
@@ -153,6 +172,8 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayerService *service):
         d->ownService = true;
     }
 
+    d->playlist = 0;
+
     Q_ASSERT(d->service != 0);
 
     if (d->service) {
@@ -174,6 +195,8 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayerService *service):
 
         if (d->control->mediaStatus() == StalledMedia || d->control->mediaStatus() == BufferingMedia)
             addPropertyWatch("bufferStatus");
+
+        d->hasPlaylistControl = (d->service->control(QMediaPlaylistControl_iid) != 0);
     } else {
         d->control = 0;
     }
@@ -283,6 +306,14 @@ void QMediaPlayer::play()
 {
     Q_D(QMediaPlayer);
 
+    if (d->playlist &&
+        d->playlist->currentPosition() == -1 &&
+        !d->playlist->isEmpty())
+    {
+        d->playlist->setCurrentPosition(0);
+        return;
+    }
+
     // Reset error conditions
     d->error = NoError;
     d->errorString = QString();
@@ -343,6 +374,30 @@ void QMediaPlayer::setMedia(const QMediaSource &media)
     d_func()->control->setMedia(media);
 }
 
+
+void QMediaPlayer::childEvent(QChildEvent *event)
+{
+    Q_D(QMediaPlayer);
+
+    if (!d->hasPlaylistControl) {
+
+        if (event->type() ==  QEvent::ChildPolished) {
+            QMediaPlaylist *playlist = qobject_cast<QMediaPlaylist*>(event->child());
+            qDebug() << "child added" << event->child()->metaObject()->className();
+
+            if (playlist) {
+                qDebug() << "playlist attached";
+                d->playlist = playlist;
+                connect(d->playlist, SIGNAL(currentMediaChanged(QMediaSource)),
+                        this, SLOT(_q_updateMedia(QMediaSource)));
+            }
+        } else if (event->type() == QEvent::ChildRemoved && event->child() == d->playlist) {
+            d->playlist = 0;
+        }
+    }
+
+    QObject::childEvent(event);
+}
 
 // Enums
 /*!
