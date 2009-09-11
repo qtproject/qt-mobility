@@ -131,13 +131,13 @@ copy %PROJECT_CONFIG% %PROJECT_PWD%config.pri
 del %PROJECT_CONFIG%
 
 echo "Generating Mobility Headers..."
-rd /s /q %PROJECT_PWD%/include
-mkdir %PROJECT_PWD/include
-perl -S %PROJECT_PWD%/bin/syncheaders %PROJECT_PWD%/include %PROJECT_PWD%/bearer
-perl -S %PROJECT_PWD%/bin/syncheaders %PROJECT_PWD%/include %PROJECT_PWD%/context
-perl -S %PROJECT_PWD%/bin/syncheaders %PROJECT_PWD%/include %PROJECT_PWD%/location
-perl -S %PROJECT_PWD%/bin/syncheaders %PROJECT_PWD%/include %PROJECT_PWD%/serviceframework
-perl -S %PROJECT_PWD%/bin/syncheaders %PROJECT_PWD%/include %PROJECT_PWD%/systeminfo
+rd /s /q %PROJECT_PWD%\include
+mkdir %PROJECT_PWD%\include
+perl -S %PROJECT_PWD%\bin\syncheaders %PROJECT_PWD%\include %PROJECT_PWD%\bearer
+perl -S %PROJECT_PWD%\bin\syncheaders %PROJECT_PWD%\include %PROJECT_PWD%\context
+perl -S %PROJECT_PWD%\bin\syncheaders %PROJECT_PWD%\include %PROJECT_PWD%\location
+perl -S %PROJECT_PWD%\bin\syncheaders %PROJECT_PWD%\include %PROJECT_PWD%\serviceframework
+perl -S %PROJECT_PWD%\bin\syncheaders %PROJECT_PWD%\include %PROJECT_PWD%\systeminfo
 
 echo Running qmake...
 qmake -recursive
