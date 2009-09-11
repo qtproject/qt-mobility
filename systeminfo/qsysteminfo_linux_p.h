@@ -100,6 +100,11 @@ private Q_SLOTS:
 
 };
 
+class QNetworkManagerInterface;
+class QNetworkManagerInterfaceDeviceWired;
+class QNetworkManagerInterfaceDeviceWireless;
+class QNetworkManagerInterfaceAccessPoint;
+
 class QSystemNetworkInfoPrivate : public QObject
 {
     Q_OBJECT
@@ -133,6 +138,19 @@ Q_SIGNALS:
    void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &);
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
 
+private:
+#if !defined(QT_NO_DBUS)
+    QNetworkManagerInterface *iface;
+    QNetworkManagerInterfaceDeviceWired * devWiredIface;
+    QNetworkManagerInterfaceDeviceWireless *devWirelessIface;
+    QNetworkManagerInterfaceAccessPoint *accessPointIface;
+
+    void setupNmConnections();
+private Q_SLOTS:
+    void nmPropertiesChanged( const QString &, QMap<QString,QVariant>);
+    void nmAPPropertiesChanged( const QString &, QMap<QString,QVariant>);
+    void updateDeviceInterfaceState(const QString &, quint32);
+#endif
 };
 
 class QSystemDisplayInfoPrivate : public QObject
