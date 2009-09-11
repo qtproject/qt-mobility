@@ -85,11 +85,15 @@ void QVideoWidgetControlBackend::setDisplayMode(QVideoWidget::DisplayMode mode)
 void QVideoWidgetControlBackend::setAspectRatio(QVideoWidget::AspectRatio ratio)
 {
     m_widgetControl->setAspectRatio(ratio);
+
+    emit aspectRatioModeChanged(m_widgetControl->aspectRatio());
 }
 
 void QVideoWidgetControlBackend::setCustomPixelAspectRatio(const QSize &customRatio)
 {
     m_widgetControl->setCustomAspectRatio(customRatio);
+
+    emit customAspectRatioChanged(m_widgetControl->customAspectRatio());
 }
 
 QWidget *QVideoWidgetControlBackend::widget()
@@ -236,7 +240,16 @@ void QVideoRendererWidget::setCustomPixelAspectRatio(const QSize &ratio)
 
 QSize QVideoRendererWidget::sizeHint() const
 {
-    return m_surface->surfaceFormat().sizeHint();
+    if (m_aspectRatioMode == QVideoWidget::AspectRatioCustom) {
+        QVideoSurfaceFormat format = m_surface->surfaceFormat();
+
+        QSize size = format.viewport().size();
+        size.setWidth(size.width() * m_aspectRatio.width() / m_aspectRatio.height());
+
+        return size;
+    } else {
+        return m_surface->surfaceFormat().sizeHint();
+    }
 }
 
 void QVideoRendererWidget::paintEvent(QPaintEvent *event)
@@ -260,9 +273,26 @@ QRect QVideoRendererWidget::displayRect() const
 {
     QRect displayRect = rect();
 
+    if (m_aspectRatioMode != QVideoWidget::AspectRatioWidget) {
+        QVideoSurfaceFormat format = m_surface->surfaceFormat();
+
+        QSize aspectRatio = m_aspectRatioMode == QVideoWidget::AspectRatioCustom
+                ? m_aspectRatio
+                : format.pixelAspectRatio();
+
+        QSize size = format.viewport().size();
+        size.rwidth() *= aspectRatio.width();
+        size.rheight() *= aspectRatio.height();
+        size.scale(displayRect.size(), Qt::KeepAspectRatio);
+
+        QPoint center = displayRect.center();
+
+        displayRect = QRect(QPoint(0, 0), size);
+        displayRect.moveCenter(center);
+    }
+
     return displayRect;
 }
-
 
 QVideoWidget::DisplayMode QVideoRendererWidget::displayMode() const
 {
@@ -607,13 +637,6 @@ QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
                 SLOT(_q_aspectRatioModeChanged(QVideoWidget::AspectRatio)));
         connect(d->widgetBackend, SIGNAL(customAspectRatioChanged(QSize)),
                 SLOT(_q_customAspectRatioChanged(QSize)));
-
-        d->brightness = widgetControl->brightness();
-        d->contrast = widgetControl->contrast();
-        d->hue = widgetControl->hue();
-        d->saturation = widgetControl->saturation();
-
-        d->currentBackend = d->widgetBackend;
     } else {
         QVideoWindowControl *windowControl = qobject_cast<QVideoWindowControl *>(
                 d->service->control(QVideoWindowControl_iid));
@@ -637,13 +660,6 @@ QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
                     SLOT(_q_aspectRatioModeChanged(QVideoWidget::AspectRatio)));
             connect(d->windowBackend, SIGNAL(customAspectRatioChanged(QSize)),
                     SLOT(_q_customAspectRatioChanged(QSize)));
-
-            d->brightness = windowControl->brightness();
-            d->contrast = windowControl->contrast();
-            d->hue = windowControl->hue();
-            d->saturation = windowControl->saturation();
-
-            d->currentBackend = d->windowBackend;
         }
 #ifndef QT_NO_MULTIMEDIA
         QVideoRendererControl *rendererControl = qobject_cast<QVideoRendererControl *>(
@@ -716,6 +732,8 @@ void QVideoWidget::setAspectRatio(QVideoWidget::AspectRatio ratio)
 
     if (d->currentBackend)
         d->currentBackend->setAspectRatio(ratio);
+    else
+        d->aspectRatio = ratio;
 }
 
 /*!
@@ -742,6 +760,8 @@ void QVideoWidget::setCustomPixelAspectRatio(const QSize &customRatio)
 
     if (d->currentBackend)
         d->currentBackend->setCustomPixelAspectRatio(customRatio);
+    else
+        d->customPixelAspectRatio = customRatio;
 }
 
 /*!
@@ -766,9 +786,6 @@ void QVideoWidget::setDisplayMode(DisplayMode mode)
 
     if (d->currentBackend)
         d->currentBackend->setDisplayMode(mode);
-
-    if (mode == d->displayMode)
-        return;
 }
 
 /*!
@@ -793,8 +810,12 @@ void QVideoWidget::setBrightness(int brightness)
 {
     Q_D(QVideoWidget);
 
+    int boundedBrightness = qBound(-100, brightness, 100);
+
     if (d->currentBackend)
-        d->currentBackend->setBrightness(qBound(-100, brightness, 100));
+        d->currentBackend->setBrightness(boundedBrightness);
+    else if (d->brightness != boundedBrightness)
+        emit brightnessChanged(d->brightness = boundedBrightness);
 }
 
 /*!
@@ -820,8 +841,12 @@ void QVideoWidget::setContrast(int contrast)
 {
     Q_D(QVideoWidget);
 
+    int boundedContrast = qBound(-100, contrast, 100);
+
     if (d->currentBackend)
-        d->currentBackend->setContrast(qBound(-100, contrast, 100));
+        d->currentBackend->setContrast(boundedContrast);
+    else if (d->contrast != boundedContrast)
+        emit contrastChanged(d->contrast = boundedContrast);
 }
 
 /*!
@@ -846,8 +871,12 @@ void QVideoWidget::setHue(int hue)
 {
     Q_D(QVideoWidget);
 
+    int boundedHue = qBound(-100, hue, 100);
+
     if (d->currentBackend)
-        d->currentBackend->setHue(qBound(-100, hue, 100));
+        d->currentBackend->setHue(boundedHue);
+    else if (d->hue != boundedHue)
+        emit hueChanged(d->hue = boundedHue);
 }
 
 /*!
@@ -866,8 +895,13 @@ void QVideoWidget::setSaturation(int saturation)
 {
     Q_D(QVideoWidget);
 
+    int boundedSaturation = qBound(-100, saturation, 100);
+
     if (d->currentBackend)
-        d->currentBackend->setSaturation(qBound(-100, saturation, 100));
+        d->currentBackend->setSaturation(boundedSaturation);
+    else if (d->saturation != boundedSaturation)
+        emit saturationChanged(d->saturation = boundedSaturation);
+
 }
 
 /*!
@@ -882,6 +916,7 @@ void QVideoWidget::setVisible(bool visible)
         visible = false;
     } else if (visible) {
         if (d->widgetBackend != 0) {
+            d->setCurrentBackend(d->widgetBackend);
             d->outputControl->setOutput(QVideoOutputControl::WidgetOutput);
         } else if (d->windowBackend != 0
                 && (window() == 0 || !window()->testAttribute(Qt::WA_DontShowOnScreen))) {

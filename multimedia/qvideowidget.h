@@ -78,8 +78,6 @@ public:
     int hue() const;
     int saturation() const;
 
-    QSize sizeHint() const { return QSize(640, 480); }
-
     bool eventFilter(QObject *object, QEvent *event);
 
 public Q_SLOTS:
