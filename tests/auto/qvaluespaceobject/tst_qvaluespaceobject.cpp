@@ -39,6 +39,11 @@
 #include <QDebug>
 #include <QSignalSpy>
 
+#ifdef Q_OS_WIN
+#define _WIN32_WINNT 0x0500
+#include <windows.h>
+#endif
+
 #define QTRY_COMPARE(a,e)                       \
     for (int _i = 0; _i < 5000; _i += 100) {    \
         if ((a) == (e)) break;                  \
@@ -94,6 +99,19 @@ Q_DECLARE_METATYPE(QVariant)
 void tst_QValueSpaceObject::initTestCase()
 {
     variantMetaTypeId = qRegisterMetaType<QVariant>("QVariant");
+
+#ifdef Q_OS_WIN
+    HKEY key;
+    long result = RegOpenKeyEx(HKEY_CURRENT_USER, L"Software\\Nokia",
+                               0, KEY_ALL_ACCESS, &key);
+    if (result == ERROR_SUCCESS) {
+        result = RegDeleteKey(key, L"QtMobility\\volatileContext");
+        result = RegDeleteKey(key, L"QtMobility\\nonVolatileContext");
+        result = RegDeleteKey(key, L"QtMobility");
+
+        RegCloseKey(key);
+    }
+#endif
 
     QValueSpace::initValueSpaceManager();
 }

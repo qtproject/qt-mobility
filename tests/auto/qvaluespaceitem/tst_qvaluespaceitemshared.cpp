@@ -44,6 +44,11 @@
 
 #include <QDebug>
 
+#ifdef Q_OS_WIN
+#define _WIN32_WINNT 0x0500
+#include <windows.h>
+#endif
+
 #define ERROR_SETVALUE_NOT_SUPPORTED 1
 
 #define QTRY_COMPARE(a,e)                       \
@@ -81,6 +86,19 @@ void tst_QValueSpaceItem::initTestCase()
 {
     qRegisterMetaType<QVariant>("QVariant");
 
+#ifdef Q_OS_WIN
+    HKEY key;
+    long result = RegOpenKeyEx(HKEY_CURRENT_USER, L"Software\\Nokia",
+                               0, KEY_ALL_ACCESS, &key);
+    if (result == ERROR_SUCCESS) {
+        result = RegDeleteKey(key, L"QtMobility\\volatileContext");
+        result = RegDeleteKey(key, L"QtMobility\\nonVolatileContext");
+        result = RegDeleteKey(key, L"QtMobility");
+
+        RegCloseKey(key);
+    }
+#endif
+
 #if defined(QT_START_VALUESPACE)
     QValueSpace::initValueSpaceManager();
 #endif
@@ -114,10 +132,6 @@ void tst_QValueSpaceItem::initTestCase()
 
         busys.insert(layers.at(i), busy);
     }
-}
-
-void tst_QValueSpaceItem::init()
-{
 }
 
 void tst_QValueSpaceItem::cleanupTestCase()
