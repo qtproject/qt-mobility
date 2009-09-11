@@ -273,6 +273,13 @@ RegistryLayer::RegistryLayer(const QByteArray &basePath, bool volatileKeys,
                              WAITORTIMERCALLBACK callback)
 :   m_basePath(basePath), m_volatileKeys(volatileKeys), m_callback(callback)
 {
+    // Ensure that the m_basePath key exists and is non-volatile.
+    HKEY key;
+    long result = RegCreateKeyEx(HKEY_CURRENT_USER, qConvertPath(m_basePath).utf16(),
+                                 0, 0, REG_OPTION_NON_VOLATILE,
+                                 KEY_ALL_ACCESS, 0, &key, 0);
+
+    RegCloseKey(key);
 }
 
 RegistryLayer::~RegistryLayer()
