@@ -66,6 +66,8 @@ QPhononPlayerControl::QPhononPlayerControl(Phonon::MediaObject *session, QObject
             this, SIGNAL(videoAvailabilityChanged(bool)));
     connect(m_session, SIGNAL(seekableChanged(bool)),
             this, SIGNAL(seekableChanged(bool)));
+    connect(m_session, SIGNAL(finished()),
+            this, SLOT(processEOS()));
 }
 
 QPhononPlayerControl::~QPhononPlayerControl()
@@ -224,6 +226,13 @@ void QPhononPlayerControl::updateState(Phonon::State newState, Phonon::State old
             emit stateChanged(m_state = QMediaPlayer::StoppedState);
         break;
     }
+}
+
+void QPhononPlayerControl::processEOS()
+{
+    m_mediaStatus = QMediaPlayer::EndOfMedia;
+    emit stateChanged(m_state = QMediaPlayer::StoppedState);
+    emit mediaStatusChanged(m_mediaStatus);
 }
 
 void QPhononPlayerControl::updateVolume()

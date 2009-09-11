@@ -95,6 +95,7 @@ public Q_SLOTS:
 private slots:
     void updateState(Phonon::State newState, Phonon::State oldState);
     void updateVolume();
+    void processEOS();
 
 private:
     Phonon::MediaObject *m_session;
