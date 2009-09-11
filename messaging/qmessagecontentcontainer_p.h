@@ -36,7 +36,7 @@
 
 #ifdef USE_QMF_IMPLEMENTATION
 #include "qmfhelpers_p.h"
-#else if defined(Q_OS_WIN)
+#elif defined(Q_OS_WIN)
 #include "winhelpers_p.h"
 #endif
 
