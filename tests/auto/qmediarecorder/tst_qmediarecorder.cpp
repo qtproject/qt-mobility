@@ -34,7 +34,6 @@
 
 #include <QtTest/QtTest>
 #include <QDebug>
-#include <QAudioFormat>
 #include <qabstractmediaobject.h>
 #include <qabstractmediacontrol.h>
 #include <qabstractmediaservice.h>
@@ -42,6 +41,12 @@
 #include <qmediarecorder.h>
 #include <qaudiodevicecontrol.h>
 #include <qaudioencodercontrol.h>
+
+#ifndef QT_NO_MULTIMEDIA
+#include <QtMultimedia/qaudioformat.h>
+#else
+#include <qaudioformat.h>
+#endif
 
 class MockAudioEncodeProvider : public QAudioEncoderControl
 {
@@ -150,6 +155,7 @@ public:
 
     QVariant encodingOption(const QString &name) const
     {
+        Q_UNUSED(name);
         //TODO?
         return QVariant();
     }
@@ -157,6 +163,8 @@ public:
     void setEncodingOption(const QString &name, const QVariant &value)
     {
         //TODO?
+        Q_UNUSED(name);
+        Q_UNUSED(value);
     }
 
 private:
