@@ -79,6 +79,8 @@ private:
     QMultiMap<QContactManager*, QString> detailDefinitionsAddedToManagers;
     QList<QContactManager*> managers;
 
+    QTestData& newMRow(const char *tag, QContactManager *cm);
+
 private slots:
     void rangeFiltering(); // XXX should take all managers
     void rangeFiltering_data();
@@ -133,12 +135,14 @@ tst_QContactManagerFiltering::tst_QContactManagerFiltering()
         QMap<QString, QString> params;
         QString mgrUri = QContactManager::buildUri(mgr, params);
         QContactManager* cm = QContactManager::fromUri(mgrUri);
+        cm->setObjectName(mgr);
         managers.append(cm);
 
         if (mgr == "memory") {
             params.insert("id", "tst_QContactManager");
             mgrUri = QContactManager::buildUri(mgr, params);
             cm = QContactManager::fromUri(mgrUri);
+            cm->setObjectName("memory[params]");
             managers.append(cm);
         }
     }
@@ -193,6 +197,14 @@ QString tst_QContactManagerFiltering::convertIds(QList<QUniqueId> allIds, QList<
     return ret;
 }
 
+QTestData& tst_QContactManagerFiltering::newMRow(const char *tag, QContactManager *cm)
+{
+    // allocate a tag
+    QString foo = QString("%1[%2]").arg(tag).arg(cm->objectName());
+    return QTest::newRow(foo.toAscii().constData());
+}
+
+
 void tst_QContactManagerFiltering::detailStringFiltering_data()
 {
     QTest::addColumn<QContactManager *>("cm");
@@ -210,35 +222,35 @@ void tst_QContactManagerFiltering::detailStringFiltering_data()
 
     for (int i = 0; i < managers.size(); i++) {
         QContactManager *manager = managers.at(i);
-        QTest::newRow("Name == Aaron") << manager << name << firstname << QVariant("Aaron") << 0 << "a";
-        QTest::newRow("Name == aaron") << manager << name << firstname << QVariant("aaron") << 0 << "a";
-        QTest::newRow("Name == Aaron, case sensitive") << manager << name << firstname << QVariant("Aaron") << (int)(Qt::MatchCaseSensitive) << "a";
-        QTest::newRow("Name == aaron, case sensitive") << manager << name << firstname << QVariant("aaron") << (int)(Qt::MatchCaseSensitive) << es;
+        newMRow("Name == Aaron", manager) << manager << name << firstname << QVariant("Aaron") << 0 << "a";
+        newMRow("Name == aaron", manager) << manager << name << firstname << QVariant("aaron") << 0 << "a";
+        newMRow("Name == Aaron, case sensitive", manager) << manager << name << firstname << QVariant("Aaron") << (int)(Qt::MatchCaseSensitive) << "a";
+        newMRow("Name == aaron, case sensitive", manager) << manager << name << firstname << QVariant("aaron") << (int)(Qt::MatchCaseSensitive) << es;
 
-        QTest::newRow("Name == Aaron, begins") << manager << name << firstname << QVariant("Aaron") << (int)(Qt::MatchStartsWith) << "a";
-        QTest::newRow("Name == aaron, begins") << manager << name << firstname << QVariant("aaron") << (int)(Qt::MatchStartsWith) << "a";
-        QTest::newRow("Name == Aaron, begins, case sensitive") << manager << name << firstname << QVariant("Aaron") << (int)(Qt::MatchStartsWith | Qt::MatchCaseSensitive) << "a";
-        QTest::newRow("Name == aaron, begins, case sensitive") << manager << name << firstname << QVariant("aaron") << (int)(Qt::MatchStartsWith | Qt::MatchCaseSensitive) << es;
+        newMRow("Name == Aaron, begins", manager) << manager << name << firstname << QVariant("Aaron") << (int)(Qt::MatchStartsWith) << "a";
+        newMRow("Name == aaron, begins", manager) << manager << name << firstname << QVariant("aaron") << (int)(Qt::MatchStartsWith) << "a";
+        newMRow("Name == Aaron, begins, case sensitive", manager) << manager << name << firstname << QVariant("Aaron") << (int)(Qt::MatchStartsWith | Qt::MatchCaseSensitive) << "a";
+        newMRow("Name == aaron, begins, case sensitive", manager) << manager << name << firstname << QVariant("aaron") << (int)(Qt::MatchStartsWith | Qt::MatchCaseSensitive) << es;
 
-        QTest::newRow("Name == Aar, begins") << manager << name << firstname << QVariant("Aar") << (int)(Qt::MatchStartsWith) << "a";
-        QTest::newRow("Name == aar, begins") << manager << name << firstname << QVariant("aar") << (int)(Qt::MatchStartsWith) << "a";
-        QTest::newRow("Name == Aar, begins, case sensitive") << manager << name << firstname << QVariant("Aar") << (int)(Qt::MatchStartsWith | Qt::MatchCaseSensitive) << "a";
-        QTest::newRow("Name == aar, begins, case sensitive") << manager << name << firstname << QVariant("aar") << (int)(Qt::MatchStartsWith | Qt::MatchCaseSensitive) << es;
+        newMRow("Name == Aar, begins", manager) << manager << name << firstname << QVariant("Aar") << (int)(Qt::MatchStartsWith) << "a";
+        newMRow("Name == aar, begins", manager) << manager << name << firstname << QVariant("aar") << (int)(Qt::MatchStartsWith) << "a";
+        newMRow("Name == Aar, begins, case sensitive", manager) << manager << name << firstname << QVariant("Aar") << (int)(Qt::MatchStartsWith | Qt::MatchCaseSensitive) << "a";
+        newMRow("Name == aar, begins, case sensitive", manager) << manager << name << firstname << QVariant("aar") << (int)(Qt::MatchStartsWith | Qt::MatchCaseSensitive) << es;
 
-        QTest::newRow("Name == aro, contains") << manager << name << firstname << QVariant("aro") << (int)(Qt::MatchContains) << "a";
-        QTest::newRow("Name == ARO, contains") << manager << name << firstname << QVariant("ARO") << (int)(Qt::MatchContains) << "a";
-        QTest::newRow("Name == aro, contains, case sensitive") << manager << name << firstname << QVariant("aro") << (int)(Qt::MatchContains | Qt::MatchCaseSensitive) << "a";
-        QTest::newRow("Name == ARO, contains, case sensitive") << manager << name << firstname << QVariant("ARO") << (int)(Qt::MatchContains | Qt::MatchCaseSensitive) << es;
+        newMRow("Name == aro, contains", manager) << manager << name << firstname << QVariant("aro") << (int)(Qt::MatchContains) << "a";
+        newMRow("Name == ARO, contains", manager) << manager << name << firstname << QVariant("ARO") << (int)(Qt::MatchContains) << "a";
+        newMRow("Name == aro, contains, case sensitive", manager) << manager << name << firstname << QVariant("aro") << (int)(Qt::MatchContains | Qt::MatchCaseSensitive) << "a";
+        newMRow("Name == ARO, contains, case sensitive", manager) << manager << name << firstname << QVariant("ARO") << (int)(Qt::MatchContains | Qt::MatchCaseSensitive) << es;
 
-        QTest::newRow("Name == ron, ends") << manager << name << firstname << QVariant("ron") << (int)(Qt::MatchEndsWith) << "a";
-        QTest::newRow("Name == ARON, ends") << manager << name << firstname << QVariant("ARON") << (int)(Qt::MatchEndsWith) << "a";
-        QTest::newRow("Name == aron, ends, case sensitive") << manager << name << firstname << QVariant("aron") << (int)(Qt::MatchEndsWith | Qt::MatchCaseSensitive) << "a";
-        QTest::newRow("Name == ARON, ends, case sensitive") << manager << name << firstname << QVariant("ARON") << (int)(Qt::MatchEndsWith | Qt::MatchCaseSensitive) << es;
+        newMRow("Name == ron, ends", manager) << manager << name << firstname << QVariant("ron") << (int)(Qt::MatchEndsWith) << "a";
+        newMRow("Name == ARON, ends", manager) << manager << name << firstname << QVariant("ARON") << (int)(Qt::MatchEndsWith) << "a";
+        newMRow("Name == aron, ends, case sensitive", manager) << manager << name << firstname << QVariant("aron") << (int)(Qt::MatchEndsWith | Qt::MatchCaseSensitive) << "a";
+        newMRow("Name == ARON, ends, case sensitive", manager) << manager << name << firstname << QVariant("ARON") << (int)(Qt::MatchEndsWith | Qt::MatchCaseSensitive) << es;
 
-        QTest::newRow("Name == Aaron, fixed") << manager << name << firstname << QVariant("Aaron") << (int)(Qt::MatchFixedString) << "a";
-        QTest::newRow("Name == aaron, fixed") << manager << name << firstname << QVariant("aaron") << (int)(Qt::MatchFixedString) << "a";
-        QTest::newRow("Name == Aaron, fixed, case sensitive") << manager << name << firstname << QVariant("Aaron") << (int)(Qt::MatchFixedString | Qt::MatchCaseSensitive) << "a";
-        QTest::newRow("Name == aaron, fixed, case sensitive") << manager << name << firstname << QVariant("aaron") << (int)(Qt::MatchFixedString | Qt::MatchCaseSensitive) << es;
+        newMRow("Name == Aaron, fixed", manager) << manager << name << firstname << QVariant("Aaron") << (int)(Qt::MatchFixedString) << "a";
+        newMRow("Name == aaron, fixed", manager) << manager << name << firstname << QVariant("aaron") << (int)(Qt::MatchFixedString) << "a";
+        newMRow("Name == Aaron, fixed, case sensitive", manager) << manager << name << firstname << QVariant("Aaron") << (int)(Qt::MatchFixedString | Qt::MatchCaseSensitive) << "a";
+        newMRow("Name == aaron, fixed, case sensitive", manager) << manager << name << firstname << QVariant("aaron") << (int)(Qt::MatchFixedString | Qt::MatchCaseSensitive) << es;
 
         /* Converting other types to strings */
         QPair<QString, QString> defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Integer");
@@ -298,12 +310,12 @@ void tst_QContactManagerFiltering::detailVariantFiltering_data()
         QContactManager *manager = managers.at(i);
 
         /* Nothings */
-        QTest::newRow("no name") << manager << es << es << false << ev << es;
-        QTest::newRow("no def name") << manager << es << "value" << false << ev << es;
+        newMRow("no name", manager) << manager << es << es << false << ev << es;
+        newMRow("no def name", manager) << manager << es << "value" << false << ev << es;
 
         /* Strings (name) */
-        QTest::newRow("first name presence") << manager << "Name" << QString(QLatin1String(QContactName::FieldFirst)) << false << ev << "abcdefg";
-        QTest::newRow("first name == Aaron") << manager << "Name" << QString(QLatin1String(QContactName::FieldFirst)) << true << QVariant("Aaron") << "a";
+        newMRow("first name presence", manager) << manager << "Name" << QString(QLatin1String(QContactName::FieldFirst)) << false << ev << "abcdefg";
+        newMRow("first name == Aaron", manager) << manager << "Name" << QString(QLatin1String(QContactName::FieldFirst)) << true << QVariant("Aaron") << "a";
 
         /*
          * Doubles
@@ -313,13 +325,13 @@ void tst_QContactManagerFiltering::detailVariantFiltering_data()
          */
         QPair<QString, QString> defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Double");
         if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
-            QTest::newRow("double presence") << manager << defAndFieldNames.first << es << false << ev << "bcd";
+            newMRow("double presence", manager) << manager << defAndFieldNames.first << es << false << ev << "bcd";
             QTest::newRow("double presence (inc field)") << manager << defAndFieldNames.first << defAndFieldNames.second << false << ev << "bcd";
             QTest::newRow("double presence (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << false << ev << es;
             QTest::newRow("double value (no match)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(3.5) << es;
             QTest::newRow("double value (wrong type)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(QDateTime()) << es;
             QTest::newRow("double value (wrong field, no match)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(3.5) << es;
-            QTest::newRow("double value") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(4.0) << "bc";
+            newMRow("double value", manager) << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(4.0) << "bc";
             QTest::newRow("double value (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(4.0) << es;
             QTest::newRow("double value 2") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(-128.0) << "d";
             QTest::newRow("double value 2 (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(-128.0) << es;
@@ -333,13 +345,13 @@ void tst_QContactManagerFiltering::detailVariantFiltering_data()
          */
         defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Integer");
         if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
-            QTest::newRow("integer presence") << manager << defAndFieldNames.first << es << false << ev << "abc";
+            newMRow("integer presence", manager) << manager << defAndFieldNames.first << es << false << ev << "abc";
             QTest::newRow("integer presence (inc field)") << manager << defAndFieldNames.first << defAndFieldNames.second << false << ev << "abc";
             QTest::newRow("integer presence (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << false << ev << es;
             QTest::newRow("integer value (no match)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(50) << es;
             QTest::newRow("integer value (wrong type)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(3.5) << es;
             QTest::newRow("integer value (wrong field, no match)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(50) << es;
-            QTest::newRow("integer value") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(10) << "a";
+            newMRow("integer value", manager) << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(10) << "a";
             QTest::newRow("integer value (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(10) << es;
             QTest::newRow("integer value 2") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(-20) << "c";
             QTest::newRow("integer value 2 (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(-20) << es;
@@ -355,13 +367,13 @@ void tst_QContactManagerFiltering::detailVariantFiltering_data()
 
         defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("DateTime");
         if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
-            QTest::newRow("datetime presence") << manager << defAndFieldNames.first << es << false << ev << "ac";
+            newMRow("datetime presence", manager) << manager << defAndFieldNames.first << es << false << ev << "ac";
             QTest::newRow("datetime presence (inc field)") << manager << defAndFieldNames.first << defAndFieldNames.second << false << ev << "ac";
             QTest::newRow("datetime presence (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << false << ev << es;
             QTest::newRow("datetime value (no match)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(QDateTime(QDate(2100,5,13), QTime(5,5,5))) << es;
             QTest::newRow("datetime value (wrong type)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(3.5) << es;
             QTest::newRow("datetime value (wrong field, no match)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(QDateTime(QDate(2100,5,13), QTime(5,5,5))) << es;
-            QTest::newRow("datetime value") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(adt) << "a";
+            newMRow("datetime value", manager) << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(adt) << "a";
             QTest::newRow("datetime value (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(adt) << es;
             QTest::newRow("datetime value 2") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(cdt)<< "c";
             QTest::newRow("datetime value 2 (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(cdt) << es;
@@ -379,13 +391,13 @@ void tst_QContactManagerFiltering::detailVariantFiltering_data()
 
         defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Date");
         if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
-            QTest::newRow("date presence") << manager << defAndFieldNames.first << es << false << ev << "abd";
+            newMRow("date presence", manager) << manager << defAndFieldNames.first << es << false << ev << "abd";
             QTest::newRow("date presence (inc field)") << manager << defAndFieldNames.first << defAndFieldNames.second << false << ev << "abd";
             QTest::newRow("date presence (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << false << ev << es;
             QTest::newRow("date value (no match)") << manager << defAndFieldNames.first <<defAndFieldNames.second << true << QVariant(QDate(2100,5,13)) << es;
             QTest::newRow("date value (wrong type)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(3.5) << es;
             QTest::newRow("date value (wrong field, no match)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(QDate(2100,5,13)) << es;
-            QTest::newRow("date value") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(ad) << "a";
+            newMRow("date value", manager) << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(ad) << "a";
             QTest::newRow("date value (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(ad) << es;
             QTest::newRow("date value 2") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(bd)<< "b";
             QTest::newRow("date value 2 (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(bd) << es;
@@ -403,13 +415,13 @@ void tst_QContactManagerFiltering::detailVariantFiltering_data()
 
         defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Time");
         if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
-            QTest::newRow("time presence") << manager << defAndFieldNames.first << es << false << ev << "ab";
+            newMRow("time presence", manager) << manager << defAndFieldNames.first << es << false << ev << "ab";
             QTest::newRow("time presence (inc field)") << manager << defAndFieldNames.first << defAndFieldNames.second << false << ev << "ab";
             QTest::newRow("time presence (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << false << ev << es;
             QTest::newRow("time value (no match)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(QTime(5,5,5)) << es;
             QTest::newRow("time value (wrong type)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(3.5) << es;
             QTest::newRow("time value (wrong field, no match)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(QTime(5,5,5)) << es;
-            QTest::newRow("time value") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(at) << "a";
+            newMRow("time value", manager) << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(at) << "a";
             QTest::newRow("time value (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(at) << es;
             QTest::newRow("time value 2") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(bt)<< "b";
             QTest::newRow("time value 2 (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(bt) << es;
@@ -424,11 +436,11 @@ void tst_QContactManagerFiltering::detailVariantFiltering_data()
          */
         defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Bool");
         if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
-            QTest::newRow("bool presence") << manager << defAndFieldNames.first << es << false << ev << "abc";
+            newMRow("bool presence", manager) << manager << defAndFieldNames.first << es << false << ev << "abc";
             QTest::newRow("bool presence (inc field)") << manager << defAndFieldNames.first << defAndFieldNames.second << false << ev << "abc";
             QTest::newRow("bool presence (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << false << ev << es;
             QTest::newRow("bool value (wrong type)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(4.0) << es;
-            QTest::newRow("bool value") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(true) << "a";
+            newMRow("bool value", manager) << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(true) << "a";
             QTest::newRow("bool value (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(true) << es;
             QTest::newRow("bool value 2") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(false) << "bc";
             QTest::newRow("bool value 2 (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(false) << es;
@@ -441,13 +453,13 @@ void tst_QContactManagerFiltering::detailVariantFiltering_data()
          */
         defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("LongLong");
         if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
-            QTest::newRow("longlong presence") << manager << defAndFieldNames.first << es << false << ev << "cd";
+            newMRow("longlong presence", manager) << manager << defAndFieldNames.first << es << false << ev << "cd";
             QTest::newRow("longlong presence (inc field)") << manager << defAndFieldNames.first << defAndFieldNames.second << false << ev << "cd";
             QTest::newRow("longlong presence (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << false << ev << es;
             QTest::newRow("longlong value (no match)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(50000000000LL) << es;
             QTest::newRow("longlong value (wrong type)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(3.5) << es;
             QTest::newRow("longlong value (wrong field, no match)") << manager << defAndFieldNames.first<< "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(50000000000LL) << es;
-            QTest::newRow("longlong value") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(8000000000LL) << "c";
+            newMRow("longlong value", manager) << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(8000000000LL) << "c";
             QTest::newRow("longlong value (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(8000000000LL) << es;
             QTest::newRow("longlong value 2") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(-14000000000LL) << "d";
             QTest::newRow("longlong value 2 (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(-14000000000LL) << es;
@@ -461,13 +473,13 @@ void tst_QContactManagerFiltering::detailVariantFiltering_data()
          */
         defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("ULongLong");
         if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
-            QTest::newRow("ulonglong presence") << manager << defAndFieldNames.first << es << false << ev << "abc";
+            newMRow("ulonglong presence", manager) << manager << defAndFieldNames.first << es << false << ev << "abc";
             QTest::newRow("ulonglong presence (inc field)") << manager << defAndFieldNames.first << defAndFieldNames.second << false << ev << "abc";
             QTest::newRow("ulonglong presence (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << false << ev << es;
             QTest::newRow("ulonglong value (no match)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(50000000000ULL) << es;
             QTest::newRow("ulonglong value (wrong type)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(3.5) << es;
             QTest::newRow("ulonglong value (wrong field, no match)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(50000000000ULL) << es;
-            QTest::newRow("ulonglong value") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(120000000000ULL) << "a";
+            newMRow("ulonglong value", manager) << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(120000000000ULL) << "a";
             QTest::newRow("ulonglong value (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(120000000000ULL) << es;
             QTest::newRow("ulonglong value 2") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(80000000000ULL) << "bc";
             QTest::newRow("ulonglong value 2 (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(80000000000ULL) << es;
@@ -480,13 +492,13 @@ void tst_QContactManagerFiltering::detailVariantFiltering_data()
          */
         defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("UInt");
         if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
-            QTest::newRow("unsigned integer presence") << manager << defAndFieldNames.first << es << false << ev << "bd";
+            newMRow("unsigned integer presence", manager) << manager << defAndFieldNames.first << es << false << ev << "bd";
             QTest::newRow("unsigned integer presence (inc field)") << manager << defAndFieldNames.first << defAndFieldNames.second << false << ev << "bd";
             QTest::newRow("unsigned integer presence (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << false << ev << es;
             QTest::newRow("unsigned integer value (no match)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(3500000000u) << es;
             QTest::newRow("unsigned integer value (wrong type)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(3.5) << es;
             QTest::newRow("unsigned integer value (wrong field, no match)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(3500000000u) << es;
-            QTest::newRow("unsigned integer value") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(4000000000u) << "b";
+            newMRow("unsigned integer value", manager) << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(4000000000u) << "b";
             QTest::newRow("unsigned integer value (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(4000000000u) << es;
             QTest::newRow("unsigned integer value 2") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(3000000000u) << "d";
             QTest::newRow("unsigned integer value 2 (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(3000000000u) << es;
@@ -501,13 +513,13 @@ void tst_QContactManagerFiltering::detailVariantFiltering_data()
         const QChar cchar('c');
         defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Char");
         if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
-            QTest::newRow("char presence") << manager << defAndFieldNames.first << es << false << ev << "bc";
+            newMRow("char presence", manager) << manager << defAndFieldNames.first << es << false << ev << "bc";
             QTest::newRow("char presence (inc field)") << manager << defAndFieldNames.first << defAndFieldNames.second << false << ev << "bc";
             QTest::newRow("char presence (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << false << ev << es;
             QTest::newRow("char value (no match)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(QChar('a')) << es;
             QTest::newRow("char value (wrong type)") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(3.5) << es;
             QTest::newRow("char value (wrong field, no match)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(QChar('a')) << es;
-            QTest::newRow("char value") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(bchar) << "b";
+            newMRow("char value", manager) << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(bchar) << "b";
             QTest::newRow("char value (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(bchar) << es;
             QTest::newRow("char value 2") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(cchar)<< "c";
             QTest::newRow("char value 2 (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(cchar) << es;
@@ -570,39 +582,39 @@ void tst_QContactManagerFiltering::rangeFiltering_data()
         QContactManager *manager = managers.at(i);
 
         /* First, cover the "empty defname / fieldname / ranges" cases */
-        QTest::newRow("invalid defname") << manager << es << firstname << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << es;
-        QTest::newRow("defn presence test") << manager << namedef << es << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << "abcdefg";
-        QTest::newRow("field presence test") << manager << phonedef << phonenum << QVariant() << QVariant() << false << 0 << true << 0 << "ab";
-        QTest::newRow("good def, bad field") << manager << namedef << "Bongo" << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << es;
-        QTest::newRow("bad def") << manager << "Bongo" << es << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << es;
+        newMRow("invalid defname", manager) << manager << es << firstname << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << es;
+        newMRow("defn presence test", manager) << manager << namedef << es << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << "abcdefg";
+        newMRow("field presence test", manager) << manager << phonedef << phonenum << QVariant() << QVariant() << false << 0 << true << 0 << "ab";
+        newMRow("good def, bad field", manager) << manager << namedef << "Bongo" << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << es;
+        newMRow("bad def", manager) << manager << "Bongo" << es << QVariant("A") << QVariant("Bob") << false << 0 << true << 0 << es;
 
         /* Presence for fields that aren't there */
-        QTest::newRow("defn presence test negative") << manager << "Burgers" << es << ev << ev << false << 0 << false << 0 << es;
-        QTest::newRow("field presence test negative") << manager << "Burgers" << "Beef" << ev << ev << false << 0 << false << 0 << es;
-        QTest::newRow("defn yes, field no presence test negative") << manager << namedef << "Burger" << ev << ev << false << 0 << false << 0 << es;
+        newMRow("defn presence test negative", manager) << manager << "Burgers" << es << ev << ev << false << 0 << false << 0 << es;
+        newMRow("field presence test negative", manager) << manager << "Burgers" << "Beef" << ev << ev << false << 0 << false << 0 << es;
+        newMRow("defn yes, field no presence test negative", manager) << manager << namedef << "Burger" << ev << ev << false << 0 << false << 0 << es;
 
-        QTest::newRow("no max, all results") << manager << namedef << firstname << QVariant("a") << QVariant() << false << 0 << true << 0 << "abcdefg";
-        QTest::newRow("no max, some results") << manager << namedef << firstname << QVariant("BOB") << QVariant() << false << 0 << true << 0 << "bcdefg";
-        QTest::newRow("no max, no results") << manager << namedef << firstname << QVariant("ZamBeZI") << QVariant() << false << 0 << true << 0 << es;
-        QTest::newRow("no min, all results") << manager << namedef << firstname << QVariant() << QVariant("zambezi") << false << 0 << true << 0 << "abcdefg";
-        QTest::newRow("no min, some results") << manager << namedef << firstname << QVariant() << QVariant("bOb") << false << 0 << true << 0 << "a";
-        QTest::newRow("no min, no results") << manager << namedef << firstname << QVariant() << QVariant("aardvark") << false << 0 << true << 0 << es;
+        newMRow("no max, all results", manager) << manager << namedef << firstname << QVariant("a") << QVariant() << false << 0 << true << 0 << "abcdefg";
+        newMRow("no max, some results", manager) << manager << namedef << firstname << QVariant("BOB") << QVariant() << false << 0 << true << 0 << "bcdefg";
+        newMRow("no max, no results", manager) << manager << namedef << firstname << QVariant("ZamBeZI") << QVariant() << false << 0 << true << 0 << es;
+        newMRow("no min, all results", manager) << manager << namedef << firstname << QVariant() << QVariant("zambezi") << false << 0 << true << 0 << "abcdefg";
+        newMRow("no min, some results", manager) << manager << namedef << firstname << QVariant() << QVariant("bOb") << false << 0 << true << 0 << "a";
+        newMRow("no min, no results", manager) << manager << namedef << firstname << QVariant() << QVariant("aardvark") << false << 0 << true << 0 << es;
 
         /* now case sensitive */
-        QTest::newRow("no max, cs, all results") << manager << namedef << firstname << QVariant("A") << QVariant() << false << 0 << true << csflag << "abcdefg";
-        QTest::newRow("no max, cs, some results") << manager << namedef << firstname << QVariant("Bob") << QVariant() << false << 0 << true << csflag << "bcdefg";
-        QTest::newRow("no max, cs, no results") << manager << namedef << firstname << QVariant("Zambezi") << QVariant() << false << 0 << true << csflag << es;
-        QTest::newRow("no min, cs, all results") << manager << namedef << firstname << QVariant() << QVariant("Zambezi") << false << 0 << true << csflag << "abcdefg";
-        QTest::newRow("no min, cs, some results") << manager << namedef << firstname << QVariant() << QVariant("Bob") << false << 0 << true << csflag << "a";
-        QTest::newRow("no min, cs, no results") << manager << namedef << firstname << QVariant() << QVariant("Aardvark") << false << 0 << true << csflag << es;
+        newMRow("no max, cs, all results", manager) << manager << namedef << firstname << QVariant("A") << QVariant() << false << 0 << true << csflag << "abcdefg";
+        newMRow("no max, cs, some results", manager) << manager << namedef << firstname << QVariant("Bob") << QVariant() << false << 0 << true << csflag << "bcdefg";
+        newMRow("no max, cs, no results", manager) << manager << namedef << firstname << QVariant("Zambezi") << QVariant() << false << 0 << true << csflag << es;
+        newMRow("no min, cs, all results", manager) << manager << namedef << firstname << QVariant() << QVariant("Zambezi") << false << 0 << true << csflag << "abcdefg";
+        newMRow("no min, cs, some results", manager) << manager << namedef << firstname << QVariant() << QVariant("Bob") << false << 0 << true << csflag << "a";
+        newMRow("no min, cs, no results", manager) << manager << namedef << firstname << QVariant() << QVariant("Aardvark") << false << 0 << true << csflag << es;
 
         /* due to ascii sorting, most lower case parameters give all results, which is boring */
-        QTest::newRow("no max, cs, badcase, all results") << manager << namedef << firstname << QVariant("A") << QVariant() << false << 0 << true << csflag << "abcdefg";
-        QTest::newRow("no max, cs, badcase, some results") << manager << namedef << firstname << QVariant("BOB") << QVariant() << false << 0 << true << csflag << "bcdefg";
-        QTest::newRow("no max, cs, badcase, no results") << manager << namedef << firstname << QVariant("ZAMBEZI") << QVariant() << false << 0 << true << csflag << es;
-        QTest::newRow("no min, cs, badcase, all results") << manager << namedef << firstname << QVariant() << QVariant("ZAMBEZI") << false << 0 << true << csflag << "abcdefg";
-        QTest::newRow("no min, cs, badcase, some results") << manager << namedef << firstname << QVariant() << QVariant("BOB") << false << 0 << true << csflag << "a";
-        QTest::newRow("no min, cs, badcase, no results") << manager << namedef << firstname << QVariant() << QVariant("AARDVARK") << false << 0 << true << csflag << es;
+        newMRow("no max, cs, badcase, all results", manager) << manager << namedef << firstname << QVariant("A") << QVariant() << false << 0 << true << csflag << "abcdefg";
+        newMRow("no max, cs, badcase, some results", manager) << manager << namedef << firstname << QVariant("BOB") << QVariant() << false << 0 << true << csflag << "bcdefg";
+        newMRow("no max, cs, badcase, no results", manager) << manager << namedef << firstname << QVariant("ZAMBEZI") << QVariant() << false << 0 << true << csflag << es;
+        newMRow("no min, cs, badcase, all results", manager) << manager << namedef << firstname << QVariant() << QVariant("ZAMBEZI") << false << 0 << true << csflag << "abcdefg";
+        newMRow("no min, cs, badcase, some results", manager) << manager << namedef << firstname << QVariant() << QVariant("BOB") << false << 0 << true << csflag << "a";
+        newMRow("no min, cs, badcase, no results", manager) << manager << namedef << firstname << QVariant() << QVariant("AARDVARK") << false << 0 << true << csflag << es;
 
         /* 'a' has phone number ("555-1212") */
         QTest::newRow("range1") << manager << phonedef << phonenum << QVariant("555-1200") << QVariant("555-1220") << false << 0 << false << 0 << "a";
@@ -1689,15 +1701,15 @@ void tst_QContactManagerFiltering::sorting_data()
         QPair<QString, QString> integerDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Integer");
         QPair<QString, QString> stringDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("String");
 
-        QTest::newRow("first ascending") << manager << namedef << firstname << (int)(Qt::AscendingOrder) << false << 0 << "abcdefg";
-        QTest::newRow("first descending") << manager << namedef << firstname << (int)(Qt::DescendingOrder) << false << 0 << "efgdcba";
-        QTest::newRow("last ascending") << manager << namedef << lastname << (int)(Qt::AscendingOrder) << false << 0 << "bacdefg";
-        QTest::newRow("last descending") << manager << namedef << lastname << (int)(Qt::DescendingOrder) << false << 0 << "gfedcab";
+        newMRow("first ascending", manager) << manager << namedef << firstname << (int)(Qt::AscendingOrder) << false << 0 << "abcdefg";
+        newMRow("first descending", manager) << manager << namedef << firstname << (int)(Qt::DescendingOrder) << false << 0 << "efgdcba";
+        newMRow("last ascending", manager) << manager << namedef << lastname << (int)(Qt::AscendingOrder) << false << 0 << "bacdefg";
+        newMRow("last descending", manager) << manager << namedef << lastname << (int)(Qt::DescendingOrder) << false << 0 << "gfedcab";
         if (!integerDefAndFieldNames.first.isEmpty() && !integerDefAndFieldNames.second.isEmpty()) {
-            QTest::newRow("integer ascending, blanks last") << manager << integerDefAndFieldNames.first << integerDefAndFieldNames.second << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksLast) << "cabgfed";
-            QTest::newRow("integer descending, blanks last") << manager << integerDefAndFieldNames.first << integerDefAndFieldNames.second << (int)(Qt::DescendingOrder) << true << (int)(QContactSortOrder::BlanksLast) << "bacgfed";
-            QTest::newRow("integer ascending, blanks first") << manager << integerDefAndFieldNames.first << integerDefAndFieldNames.second << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksFirst) << "defgcab";
-            QTest::newRow("integer descending, blanks first") << manager << integerDefAndFieldNames.first << integerDefAndFieldNames.second << (int)(Qt::DescendingOrder) << true << (int)(QContactSortOrder::BlanksFirst) << "defgbac";
+            newMRow("integer ascending, blanks last", manager) << manager << integerDefAndFieldNames.first << integerDefAndFieldNames.second << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksLast) << "cabgfed";
+            newMRow("integer descending, blanks last", manager) << manager << integerDefAndFieldNames.first << integerDefAndFieldNames.second << (int)(Qt::DescendingOrder) << true << (int)(QContactSortOrder::BlanksLast) << "bacgfed";
+            newMRow("integer ascending, blanks first", manager) << manager << integerDefAndFieldNames.first << integerDefAndFieldNames.second << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksFirst) << "defgcab";
+            newMRow("integer descending, blanks first", manager) << manager << integerDefAndFieldNames.first << integerDefAndFieldNames.second << (int)(Qt::DescendingOrder) << true << (int)(QContactSortOrder::BlanksFirst) << "defgbac";
         }
         if (!stringDefAndFieldNames.first.isEmpty() && !stringDefAndFieldNames.second.isEmpty()) {
             QTest::newRow("string ascending (null value), blanks first") << manager << stringDefAndFieldNames.first << stringDefAndFieldNames.second << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksFirst) << "fgeabcd";
@@ -1924,12 +1936,12 @@ void tst_QContactManagerFiltering::actionFiltering_data()
         QContactManager *manager = managers.at(i);
 
         QTest::newRow("empty (any action matches)") << manager << es << es << -1 << ev << "abcd";
-        QTest::newRow("bad actionname") << manager << "No such action" << es << -1 << ev << es;
-        QTest::newRow("bad vendor") << manager << es << "Vendor missing" << -1 << ev << es;
+        newMRow("bad actionname", manager) << manager << "No such action" << es << -1 << ev << es;
+        newMRow("bad vendor", manager) << manager << es << "Vendor missing" << -1 << ev << es;
         /* versions are ignored if vendors are not specified */
-        QTest::newRow("ignored version") << manager << es << es << 793434 << ev << "abcd";
+        newMRow("ignored version", manager) << manager << es << es << 793434 << ev << "abcd";
 
-        QTest::newRow("Number") << manager << "Number" << es << -1 << ev << "abcd";
+        newMRow("Number", manager) << manager << "Number" << es << -1 << ev << "abcd";
         QTest::newRow("Number (IntegerCo)") << manager << "Number" << "IntegerCo" << -1 << ev << "abc";
         QTest::newRow("Number (NumberCo)") << manager << "Number" << "NumberCo" << -1 << ev << "abcd";
         QTest::newRow("Number (BooleanCo)") << manager << "Number" << "BooleanCo" << -1 << ev << es;
@@ -1944,18 +1956,18 @@ void tst_QContactManagerFiltering::actionFiltering_data()
         QTest::newRow("Number (ignored version)") << manager << "Number" << es << 345345 << ev << "abcd";
 
         /* Vendor specific */
-        QTest::newRow("NumberCo") << manager << es << "NumberCo" << -1 << ev << "abcd";
+        newMRow("NumberCo", manager) << manager << es << "NumberCo" << -1 << ev << "abcd";
         QTest::newRow("NumberCo (good version)") << manager << es << "NumberCo" << 42 << ev << "abcd";
         QTest::newRow("NumberCo (bad version)") << manager << es << "NumberCo" << 41 << ev << es;
 
-        QTest::newRow("IntegerCo") << manager << es << "IntegerCo" << -1 << ev << "abc";
+        newMRow("IntegerCo", manager) << manager << es << "IntegerCo" << -1 << ev << "abc";
         QTest::newRow("IntegerCo (good version)") << manager << es << "IntegerCo" << 5 << ev << "abc";
         QTest::newRow("IntegerCo (bad version)") << manager << es << "IntegerCo" << 41 << ev << es;
 
 
         /* Boolean testing */
-        QTest::newRow("Boolean action") << manager << "Boolean" << es << -1 << ev << "a";
-        QTest::newRow("BooleanCo") << manager << es << "BooleanCo" << -1 << ev << "a";
+        newMRow("Boolean action", manager) << manager << "Boolean" << es << -1 << ev << "a";
+        newMRow("BooleanCo", manager) << manager << es << "BooleanCo" << -1 << ev << "a";
         QTest::newRow("BooleanCo (good version)") << manager << es << "BooleanCo" << 3 << ev << "a";
         QTest::newRow("BooleanCo (bad version)") << manager << es << "BooleanCo" << 3234243 << ev << es;
 
@@ -1966,8 +1978,8 @@ void tst_QContactManagerFiltering::actionFiltering_data()
         QTest::newRow("NumberCo with 4.0") << manager << es << "NumberCo" << -1 << QVariant(4.0) << "bc";
         QTest::newRow("IntegerCo with 20") << manager << es << "IntegerCo" << -1 << QVariant(20) << "b";
         QTest::newRow("IntegerCo with 4.0") << manager << es << "IntegerCo" << -1 << QVariant(4.0) << es;
-        QTest::newRow("Boolean action matching true") << manager << es << "BooleanCo" << -1 << QVariant(true) << "a";
-        QTest::newRow("Boolean action matching false") << manager << es << "BooleanCo" << -1 << QVariant(false) << es;
+        newMRow("Boolean action matching true", manager) << manager << es << "BooleanCo" << -1 << QVariant(true) << "a";
+        newMRow("Boolean action matching false", manager) << manager << es << "BooleanCo" << -1 << QVariant(false) << es;
 
         /* Recursive filtering */
         QTest::newRow("Recursive action 1") << manager << "IntersectionRecursive" << es << -1 << QVariant(false) << es;
@@ -2012,13 +2024,13 @@ void tst_QContactManagerFiltering::idListFiltering_data()
 
     for (int i = 0; i < managers.size(); i++) {
         QContactManager *manager = managers.at(i);
-        QTest::newRow("empty") << manager << es << es;
-        QTest::newRow("a") << manager << "a" << "a";
-        QTest::newRow("ab") << manager << "ab" << "ab";
-        QTest::newRow("aa") << manager << "aa" << "a";
-        QTest::newRow("ba") << manager << "ba" << "ab";
-        QTest::newRow("abcd") << manager << "abcd" << "abcd";
-        QTest::newRow("abcdefg") << manager << "abcdefg" << "abcd";
+        newMRow("empty", manager) << manager << es << es;
+        newMRow("a", manager) << manager << "a" << "a";
+        newMRow("ab", manager) << manager << "ab" << "ab";
+        newMRow("aa", manager) << manager << "aa" << "a";
+        newMRow("ba", manager) << manager << "ba" << "ab";
+        newMRow("abcd", manager) << manager << "abcd" << "abcd";
+        newMRow("abcdefg", manager) << manager << "abcdefg" << "abcd";
     }
 }
 
@@ -2150,35 +2162,35 @@ void tst_QContactManagerFiltering::changelogFiltering_data()
         QDateTime cm = c.detail<QContactTimestamp>().lastModified();
         QDateTime dm = d.detail<QContactTimestamp>().lastModified();
 
-        QTest::newRow("Added since before start") << manager << contacts << added << ac.addSecs(-1) << "abcdefg";
-        QTest::newRow("Added since first") << manager << contacts << added << ac << "abcdefg";
-        QTest::newRow("Added since second") << manager << contacts << added << bc << "bcdefg";
-        QTest::newRow("Added since third") << manager << contacts << added << cc << "cdefg";
-        QTest::newRow("Added since fourth") << manager << contacts << added << dc << "defg";
-        QTest::newRow("Added since after fourth") << manager << contacts << added << dc.addSecs(1) << "efg";
-        QTest::newRow("Added since first changed") << manager << contacts << added << am << "";
-        QTest::newRow("Added since second changed") << manager << contacts << added << bm << "";
-        QTest::newRow("Added since third changed") << manager << contacts << added << cm << "";
-        QTest::newRow("Added since fourth changed") << manager << contacts << added << cm << "";
+        newMRow("Added since before start", manager) << manager << contacts << added << ac.addSecs(-1) << "abcdefg";
+        newMRow("Added since first", manager) << manager << contacts << added << ac << "abcdefg";
+        newMRow("Added since second", manager) << manager << contacts << added << bc << "bcdefg";
+        newMRow("Added since third", manager) << manager << contacts << added << cc << "cdefg";
+        newMRow("Added since fourth", manager) << manager << contacts << added << dc << "defg";
+        newMRow("Added since after fourth", manager) << manager << contacts << added << dc.addSecs(1) << "efg";
+        newMRow("Added since first changed", manager) << manager << contacts << added << am << "";
+        newMRow("Added since second changed", manager) << manager << contacts << added << bm << "";
+        newMRow("Added since third changed", manager) << manager << contacts << added << cm << "";
+        newMRow("Added since fourth changed", manager) << manager << contacts << added << cm << "";
 
-        QTest::newRow("Changed since before start") << manager << contacts << changed << ac.addSecs(-1) << "abcdefg";
-        QTest::newRow("Changed since first") << manager << contacts << changed << ac << "abcdefg";
-        QTest::newRow("Changed since second") << manager << contacts << changed << bc << "abcdefg";
-        QTest::newRow("Changed since third") << manager << contacts << changed << cc << "abcdefg";
-        QTest::newRow("Changed since fourth") << manager << contacts << changed << dc << "abcdefg";
-        QTest::newRow("Changed since after fourth") << manager << contacts << changed << dc.addSecs(1) << "abcefg";
-        QTest::newRow("Changed since first changed") << manager << contacts << changed << am << "a";
-        QTest::newRow("Changed since second changed") << manager << contacts << changed << bm << "ab";
-        QTest::newRow("Changed since third changed") << manager << contacts << changed << cm << "abc";
-        QTest::newRow("Changed since fourth changed") << manager << contacts << changed << dm << "abcdefg";
+        newMRow("Changed since before start", manager) << manager << contacts << changed << ac.addSecs(-1) << "abcdefg";
+        newMRow("Changed since first", manager) << manager << contacts << changed << ac << "abcdefg";
+        newMRow("Changed since second", manager) << manager << contacts << changed << bc << "abcdefg";
+        newMRow("Changed since third", manager) << manager << contacts << changed << cc << "abcdefg";
+        newMRow("Changed since fourth", manager) << manager << contacts << changed << dc << "abcdefg";
+        newMRow("Changed since after fourth", manager) << manager << contacts << changed << dc.addSecs(1) << "abcefg";
+        newMRow("Changed since first changed", manager) << manager << contacts << changed << am << "a";
+        newMRow("Changed since second changed", manager) << manager << contacts << changed << bm << "ab";
+        newMRow("Changed since third changed", manager) << manager << contacts << changed << cm << "abc";
+        newMRow("Changed since fourth changed", manager) << manager << contacts << changed << dm << "abcdefg";
 
         // These are currently useless..
-        QTest::newRow("Removed since before start") << manager << contacts << removed << ac.addSecs(-1) << "";
-        QTest::newRow("Removed since first") << manager << contacts << removed << ac << "";
-        QTest::newRow("Removed since second") << manager << contacts << removed << bc << "";
-        QTest::newRow("Removed since third") << manager << contacts << removed << cc << "";
-        QTest::newRow("Removed since fourth") << manager << contacts << removed << dc << "";
-        QTest::newRow("Removed since after fourth") << manager << contacts << removed << dc.addSecs(1) << "";
+        newMRow("Removed since before start", manager) << manager << contacts << removed << ac.addSecs(-1) << "";
+        newMRow("Removed since first", manager) << manager << contacts << removed << ac << "";
+        newMRow("Removed since second", manager) << manager << contacts << removed << bc << "";
+        newMRow("Removed since third", manager) << manager << contacts << removed << cc << "";
+        newMRow("Removed since fourth", manager) << manager << contacts << removed << dc << "";
+        newMRow("Removed since after fourth", manager) << manager << contacts << removed << dc.addSecs(1) << "";
     }
 }
 
