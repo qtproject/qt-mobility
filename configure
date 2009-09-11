@@ -86,6 +86,16 @@ if [ -z "$RELEASEMODE" ]; then
 fi
 echo "CONFIG += $RELEASEMODE" >> config.in
 
+#ensure that PREFIX is absolute path
+if [ -d "$QT_MOBILITY_PREFIX" ]; then
+    QT_MOBILITY_PREFIX=`(cd "$QT_MOBILITY_PREFIX"; /bin/pwd)`
+else
+    mkdir -p "$QT_MOBILITY_PREFIX"
+    absPath=`(cd "$QT_MOBILITY_PREFIX"; /bin/pwd)`
+    rm -rf "$QT_MOBILITY_PREFIX"
+    QT_MOBILITY_PREFIX="$absPath"
+fi
+
 echo "QT_MOBILITY_PREFIX = $QT_MOBILITY_PREFIX" >> config.in
 
 if [ -z "$QT_MOBILITY_INCLUDE" ]; then
