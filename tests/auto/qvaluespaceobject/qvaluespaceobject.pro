@@ -16,3 +16,7 @@ LIBS += -lQtContextFramework
 symbian {
     TARGET.CAPABILITY = ALL -TCB
 }
+
+win32 {
+    LIBS += -ladvapi32
+}
