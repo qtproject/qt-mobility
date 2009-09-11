@@ -101,7 +101,25 @@ goto cmdline_parsing
 :startProcessing
 
 echo CONFIG += %RELEASEMODE% >> %PROJECT_CONFIG%
+
+set CURRENTDIR=%CD%
+echo %CURRENTDIR%
+if exist %QT_MOBILITY_PREFIX% goto prefixExists
+mkdir %QT_MOBILITY_PREFIX%
+cd %QT_MOBILITY_PREFIX%
+set QT_MOBILITY_PREFIX=%CD%
+cd %CURRENTDIR%
+rd /S /Q %QT_MOBILITY_PREFIX%
+goto endprefixProcessing
+
+:prefixExists
+cd %QT_MOBILITY_PREFIX%
+set QT_MOBILITY_PREFIX=%CD%
+cd %CURRENTDIR%
+
+:endprefixProcessing
 echo QT_MOBILITY_PREFIX = %QT_MOBILITY_PREFIX% >> %PROJECT_CONFIG%
+
 echo build_unit_tests = %BUILD_UNITTESTS% >> %PROJECT_CONFIG%
 echo build_examples = %BUILD_EXAMPLES% >> %PROJECT_CONFIG%
 
