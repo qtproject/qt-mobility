@@ -56,7 +56,7 @@ Q_DECLARE_METATYPE(QGeoPositionInfo)
 // that has no default source
 #define CHECK_SOURCE_VALID { \
     if (!m_source) { \
-        if (QGeoPositionInfoSource::createSource() == 0) \
+        if (m_testingDefaultSource && QGeoPositionInfoSource::createSource() == 0) \
             QSKIP("No default position source on this system", SkipAll); \
         else \
             QFAIL("createTestSource() must return a valid source!"); \
@@ -85,6 +85,30 @@ public:
 
     virtual void requestUpdate(int) {}
 };
+
+class DefaultSourceTest : public TestQGeoPositionInfoSource
+{
+    Q_OBJECT
+protected:
+    QGeoPositionInfoSource *createTestSource()
+    {
+        return QGeoPositionInfoSource::createSource();
+    }
+};
+
+
+TestQGeoPositionInfoSource::TestQGeoPositionInfoSource(QObject *parent)
+    : QObject(parent)
+{
+    m_testingDefaultSource = false;
+}
+
+TestQGeoPositionInfoSource *TestQGeoPositionInfoSource::createDefaultSourceTest()
+{
+    DefaultSourceTest *test = new DefaultSourceTest;
+    test->m_testingDefaultSource = true;
+    return test;
+}
 
 void TestQGeoPositionInfoSource::base_initTestCase()
 {

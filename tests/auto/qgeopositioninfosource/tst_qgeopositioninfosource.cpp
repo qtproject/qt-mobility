@@ -32,18 +32,9 @@
 ****************************************************************************/
 #include "../testqgeopositioninfosource_p.h"
 
-#include <qgeopositioninfosource.h>
-
-class tst_QGeoPositionInfoSource : public TestQGeoPositionInfoSource
+int main(int argc, char *argv[])
 {
-    Q_OBJECT
-protected:
-    QGeoPositionInfoSource *createTestSource()
-    {
-        return QGeoPositionInfoSource::createSource();
-    }
-};
+    TestQGeoPositionInfoSource *test = TestQGeoPositionInfoSource::createDefaultSourceTest();
+    return QTest::qExec(test, argc, argv);
+}
 
-
-QTEST_MAIN(tst_QGeoPositionInfoSource)
-#include "tst_qgeopositioninfosource.moc"

@@ -42,6 +42,11 @@ class TestQGeoPositionInfoSource : public QObject
 {
     Q_OBJECT
 
+public:
+    TestQGeoPositionInfoSource(QObject *parent = 0);
+
+    static TestQGeoPositionInfoSource *createDefaultSourceTest();
+
 protected:
     virtual QGeoPositionInfoSource *createTestSource() = 0;
 
@@ -53,6 +58,7 @@ protected:
 
 private:
     QGeoPositionInfoSource *m_source;
+    bool m_testingDefaultSource;
 
 private slots:
     void initTestCase();
