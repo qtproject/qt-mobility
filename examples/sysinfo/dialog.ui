@@ -676,41 +676,27 @@
            </widget>
           </item>
           <item row="3" column="0">
-           <widget class="QLabel" name="label_17">
-            <property name="text">
-             <string>Wlan SSID:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="2">
-           <widget class="QLabel" name="ssidLabel">
-            <property name="text">
-             <string>.</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
            <widget class="QLabel" name="label_26">
             <property name="text">
              <string>MAC address:</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="2">
+          <item row="3" column="2">
            <widget class="QLabel" name="macAddressLabel">
             <property name="text">
              <string>.</string>
             </property>
            </widget>
           </item>
-          <item row="5" column="0">
+          <item row="4" column="0">
            <widget class="QLabel" name="label_27">
             <property name="text">
              <string>Interface Name:</string>
             </property>
            </widget>
           </item>
-          <item row="5" column="2">
+          <item row="4" column="2">
            <widget class="QLabel" name="InterfaceLabel">
             <property name="text">
              <string>.</string>
@@ -725,7 +711,7 @@
          <property name="title">
           <string/>
          </property>
-         <layout class="QGridLayout" name="gridLayout_8">
+         <layout class="QGridLayout" name="gridLayout_7">
           <item row="0" column="0">
            <widget class="QLabel" name="label_7">
             <property name="text">
@@ -901,11 +887,11 @@
           <item row="4" column="0">
            <widget class="QLabel" name="label_13">
             <property name="text">
-             <string>Operator Name</string>
+             <string>Network Name</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
+          <item row="4" column="1" colspan="5">
            <widget class="QLabel" name="operatorNameLabel">
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
