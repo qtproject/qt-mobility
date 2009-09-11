@@ -120,7 +120,7 @@ public:
     QString homeMobileCountryCode();
     QString homeMobileNetworkCode();
 
-    QString networkName();
+    QString networkName(QSystemNetworkInfo::NetworkMode mode);
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
@@ -178,7 +178,7 @@ class QSystemDeviceInfoPrivate : public QObject
 public:
 
     QSystemDeviceInfoPrivate(QObject *parent = 0);
-    virtual ~QSystemDeviceInfoPrivate();
+    ~QSystemDeviceInfoPrivate();
 
 // device
 
@@ -211,7 +211,6 @@ Q_SIGNALS:
 
 private:
 #if !defined(QT_NO_DBUS)
-
     QHalInterface *halIface;
     QHalDeviceInterface *halIfaceDevice;
 
@@ -227,6 +226,7 @@ class QSystemScreenSaverPrivate : public QObject
 
 public:
     QSystemScreenSaverPrivate(QObject *parent = 0);
+    ~QSystemScreenSaverPrivate();
 
     bool screenSaverEnabled();
     bool screenBlankingEnabled();

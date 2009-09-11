@@ -56,6 +56,7 @@ LD_LIBRARY_PATH=$shell_path/../lib:$LD_LIBRARY_PATH
 ./tst_qsysteminfo
 ./tst_qsystemmemoryinfo
 ./tst_qsystemnetworkinfo
+./tst_qsystemscreensaver
 
 cd $SAVED_PWD
 

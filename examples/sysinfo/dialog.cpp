@@ -13,11 +13,7 @@ Dialog::Dialog(QWidget *parent) :
 {
     ui->setupUi(this);
     setupGeneral();
-//    setupDevice();
-//    setupDisplay();
-//    setupMemory();
-//    setupNetwork();
-//    setupSaver();
+
 
     connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(tabChanged(int)));
    connect(ui->versionComboBox,SIGNAL(activated(int)), this,SLOT(getVersion(int)));
@@ -188,7 +184,6 @@ void Dialog::setupNetwork()
 
     ui->homeMMCLabel->setText(ni.homeMobileCountryCode());
     ui->homeMNCLabel->setText(ni.homeMobileNetworkCode());
-    ui->operatorNameLabel->setText(ni.networkName());
 }
 void Dialog::netStatusComboActivated(int index)
 {
@@ -235,6 +230,8 @@ void Dialog::netStatusComboActivated(int index)
     ui->signalLevelProgressBar->setValue(strength);
 
     ui->InterfaceLabel->setText(ni.interfaceForMode((QSystemNetworkInfo::NetworkMode)reIndex).humanReadableName());
+
+    ui->operatorNameLabel->setText(ni.networkName((QSystemNetworkInfo::NetworkMode)reIndex));
 }
 
 void Dialog::getVersion(int index)

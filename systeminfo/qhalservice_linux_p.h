@@ -69,6 +69,7 @@
 #define HAL_DEVICES_PATH "/org/freedesktop/Hal/devices"
 
 #define HAL_DEVICES_LAPTOPPANEL_INTERFACE "org.freedesktop.Hal.Device.LaptopPanel"
+#define HAL_DEVICE_KILLSWITCH_INTERFACE "org.freedesktop.Hal.Device.KillSwitch"
 
  typedef struct halProp {
     QString propertyName;
@@ -94,6 +95,7 @@ public:
     QDBusInterface *connectionInterface() const;
     QStringList findDeviceByCapability(const QString &cap);
     QStringList getAllDevices();
+    bool deviceExists(const QString &path);
 
 private Q_SLOTS:
 private:
@@ -118,6 +120,7 @@ public:
 
     bool queryCapability(const QString &cap);
     bool setConnections();
+    bool propertyExists(const QString &);
 
 Q_SIGNALS:
     void propertyModified( int,  QVariantList);
@@ -144,4 +147,19 @@ private:
         QHalDeviceLaptopPanelInterfacePrivate *d;
 };
 
+class QHalDeviceKillSwitchInterfacePrivate;
+class QHalDeviceKillSwitchInterface : public QObject
+{
+    Q_OBJECT
+
+public:
+    QHalDeviceKillSwitchInterface(const QString &devicePathName, QObject *parent = 0);
+    ~QHalDeviceKillSwitchInterface();
+    bool isValid();
+public:
+    quint32 getPower(); //returns 1 if on
+
+private:
+        QHalDeviceKillSwitchInterfacePrivate *d;
+};
 #endif //

@@ -45,6 +45,7 @@ tst_qsystemdisplayinfo.exe
 tst_qsysteminfo.exe
 tst_qsystemmemoryinfo.exe
 tst_qsystemnetworkinfo.exe
+tst_qsystemscreensaver.exe
 
 cd %SAVED_PWD%
 

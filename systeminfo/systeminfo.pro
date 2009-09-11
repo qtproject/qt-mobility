@@ -39,20 +39,23 @@ win32 {
         Ifapi.lib \
         Coredll.lib
 }
-unix: { 
-    linux-*: { 
-        QT += gui
+unix: {
+    QT += gui
+    linux-*: {
         SOURCES += qsysteminfo_linux.cpp
         HEADERS += qsysteminfo_linux_p.h
-        contains(QT_CONFIG,dbus): { 
+        contains(QT_CONFIG,dbus): {
             QT += dbus
             SOURCES += qhalservice_linux.cpp
             HEADERS += qhalservice_linux_p.h
 
         }
-        LIBS += -lXxf86vm
+        #LIBS += -lXxf86vm
     }
-    macx::
+    mac: {
+        SOURCES += qsysteminfo_mac.cpp
+        HEADERS += qsysteminfo_mac_p.h
+    }
     symbian::
 }
 

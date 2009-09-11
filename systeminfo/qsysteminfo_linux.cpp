@@ -322,11 +322,22 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     case QSystemInfo::BluetoothFeature :
         {
 #if !defined(QT_NO_DBUS)
-            featureSupported = hasHalDeviceFeature("bluetooth");
-            if(featureSupported)
-                return featureSupported;
-#endif
+            QHalInterface iface;
+
+            QStringList list = iface.getAllDevices();
+            if(!list.isEmpty()) {
+                foreach(QString dev, list) {
+                    QHalDeviceInterface *halIfaceDevice = new QHalDeviceInterface(dev);
+                    if (halIfaceDevice->isValid()) {
+                        return halIfaceDevice->propertyExists("bluetooth_hci.originating_device");
+                        return true;
+                    }
+                }
+            }
+
+#else
             featureSupported = hasSysFeature("bluetooth");
+#endif
         }
         break;
     case QSystemInfo::CameraFeature :
@@ -459,7 +470,6 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
-    qWarning() << Q_FUNC_INFO;
 }
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
@@ -602,46 +612,60 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
     return "No Mobile Network";
 }
 
-QString QSystemNetworkInfoPrivate::networkName()
+QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
-    QString essid;
-    if(networkStatus(QSystemNetworkInfo::WlanMode) != QSystemNetworkInfo::Connected) {
-        return essid;
-    }
-    QString wlanInterface;
-    QString baseSysDir = "/sys/class/net/";
-    QDir wDir(baseSysDir);
-    QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
-    foreach(QString dir, dirs) {
-        QString devFile = baseSysDir + dir;
-        QFileInfo fi(devFile + "/wireless");
-        if(fi.exists()) {
-            wlanInterface = dir;
-            qWarning() << "interface is" << wlanInterface;
+    QString netname = "No network available";
+
+    switch(mode) {
+    case QSystemNetworkInfo::WlanMode:
+        {
+            if(networkStatus(mode) != QSystemNetworkInfo::Connected) {
+                return netname;
+            }
+
+            QString wlanInterface;
+            QString baseSysDir = "/sys/class/net/";
+            QDir wDir(baseSysDir);
+            QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
+            foreach(QString dir, dirs) {
+                QString devFile = baseSysDir + dir;
+                QFileInfo fi(devFile + "/wireless");
+                if(fi.exists()) {
+                    wlanInterface = dir;
+                    qWarning() << "interface is" << wlanInterface;
+                }
+            }
+            int sock = socket(PF_INET, SOCK_DGRAM, 0);
+            if (sock > 0) {
+                const char* someRandomBuffer[IW_ESSID_MAX_SIZE + 1];
+                struct iwreq wifiExchange;
+                memset(&wifiExchange, 0, sizeof(wifiExchange));
+                memset(someRandomBuffer, 0, sizeof(someRandomBuffer));
+
+                wifiExchange.u.essid.pointer = (caddr_t) someRandomBuffer;
+                wifiExchange.u.essid.length = IW_ESSID_MAX_SIZE;
+                wifiExchange.u.essid.flags = 0;
+
+                const char* interfaceName = wlanInterface.toLatin1();
+                strncpy(wifiExchange.ifr_name, interfaceName, IFNAMSIZ);
+                wifiExchange.u.essid.length = IW_ESSID_MAX_SIZE + 1;
+
+                if (ioctl(sock, SIOCGIWESSID, &wifiExchange) == 0) {
+                    const char *ssid = (const char *)wifiExchange.u.essid.pointer;
+                    netname = ssid;
+                }
+            }
+            close(sock);
         }
-    }
-    int sock = socket(PF_INET, SOCK_DGRAM, 0);
-    if (sock > 0) {
-        const char* someRandomBuffer[IW_ESSID_MAX_SIZE + 1];
-        struct iwreq wifiExchange;
-        memset(&wifiExchange, 0, sizeof(wifiExchange));
-        memset(someRandomBuffer, 0, sizeof(someRandomBuffer));
-
-        wifiExchange.u.essid.pointer = (caddr_t) someRandomBuffer;
-        wifiExchange.u.essid.length = IW_ESSID_MAX_SIZE;
-        wifiExchange.u.essid.flags = 0;
-
-        const char* interfaceName = wlanInterface.toLatin1();
-        strncpy(wifiExchange.ifr_name, interfaceName, IFNAMSIZ);
-        wifiExchange.u.essid.length = IW_ESSID_MAX_SIZE + 1;
-
-        if (ioctl(sock, SIOCGIWESSID, &wifiExchange) == 0) {
-            const char *ssid = (const char *)wifiExchange.u.essid.pointer;
-            essid = ssid;
+        break;
+    case QSystemNetworkInfo::EthernetMode:
+        {
         }
-    }
-    close(sock);
-   return essid;
+        break;
+    default:
+        break;
+    };
+    return netname;
 }
 
 QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
@@ -985,20 +1009,20 @@ void QSystemDeviceInfoPrivate::setConnection()
                 }
             }
         }
-
-    }
 #endif
+    }
 }
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
 }
 
+#if !defined(QT_NO_DBUS)
 void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
 {
     for(int i=0; i < map.count(); i++) {
-//        qWarning() << map.at(i).toString();
-        if(map.at(i).toString() == "battery.charge_level.percentage") {
+//       qWarning() << __FUNCTION__ << map.at(i).toString();
+       if(map.at(i).toString() == "battery.charge_level.percentage") {
             int level = batteryLevel();
             emit batteryLevelChanged(level);
             if(level < 4) {
@@ -1020,7 +1044,7 @@ void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
         }
     } //end map
 }
-
+#endif
 
 QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 {
@@ -1444,6 +1468,10 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
      kdeIsRunning = false;
      gnomeIsRunning = false;
      whichWMRunning();
+ }
+
+ QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
+ {
  }
 
  bool QSystemScreenSaverPrivate::setScreenSaverEnabled(bool state)

@@ -596,19 +596,31 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
     return "No Network";
 }
 
-QString QSystemNetworkInfoPrivate::networkName()
+QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
-    QString essid;
-    PWLAN_CONNECTION_ATTRIBUTES   connAtts = getWifiConnectionAttributes();
-    if(connAtts != NULL) {
-        DOT11_SSID ssid;
-        ssid = connAtts->wlanAssociationAttributes.dot11Ssid;
-        for(uint i = 0; i < ssid.uSSIDLength;i++) {
-            essid += ssid.ucSSID[i];
+    QString netname = "No network available";
+    switch(mode) {
+    case QSystemNetworkInfo::WlanMode:
+        {
+            PWLAN_CONNECTION_ATTRIBUTES   connAtts = getWifiConnectionAttributes();
+            if(connAtts != NULL) {
+                DOT11_SSID ssid;
+                ssid = connAtts->wlanAssociationAttributes.dot11Ssid;
+                for(uint i = 0; i < ssid.uSSIDLength;i++) {
+                    netname += ssid.ucSSID[i];
+                }
+            }
+            WlanFreeMemory(connAtts);
         }
-    }
-    WlanFreeMemory(connAtts);
-    return essid;
+        break;
+    case QSystemNetworkInfo::EthernetMode:
+        {
+        }
+        break;
+    default:
+        break;
+    };
+    return netname;
 }
 
 QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)

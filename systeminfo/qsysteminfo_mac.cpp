@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 #include "qsysteminfo.h"
-#include "qsysteminfo_p.h"
+#include "qsysteminfo_mac_p.h"
 
 #include <QStringList>
 #include <QSize>
@@ -252,6 +252,8 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         break;
     case QSystemNetworkInfo::WimaxMode:
         break;
+        default:
+        break;
     };
     return QSystemNetworkInfo::NoNetworkAvailable;
 }
@@ -279,6 +281,8 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
     case QSystemNetworkInfo::BluetoothMode:
         break;
         case QSystemNetworkInfo::WimaxMode:
+        break;
+        default:
         break;
     };
     return -1;
@@ -316,16 +320,10 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
     return "No Network";
 }
 
-QString QSystemNetworkInfoPrivate::operatorName()
+QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
+    Q_UNUSED(mode);
     return "No Operator";
-}
-
-QString QSystemNetworkInfoPrivate::wlanSsid()
-{
-    QString essid;
-
-    return essid;
 }
 
 QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
@@ -335,7 +333,7 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
 
 QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
-
+    Q_UNUSED(mode);
     return QNetworkInterface();
 }
 
@@ -351,12 +349,15 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 
 int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 {
+    Q_UNUSED(screen);
     return -1;
 }
 
 int QSystemDisplayInfoPrivate::colorDepth(int screen)
 {
-   int bpp;
+    Q_UNUSED(screen);
+
+   int bpp=0;
     return bpp;
 }
 
@@ -373,17 +374,24 @@ QSystemMemoryInfoPrivate::~QSystemMemoryInfoPrivate()
 
 qint64 QSystemMemoryInfoPrivate::availableDiskSpace(const QString &driveVolume)
 {
-    qint64 totalFreeBytes;
+        Q_UNUSED(driveVolume);
+
+    qint64 totalFreeBytes=0;
+    return  totalFreeBytes;
 }
 
 qint64 QSystemMemoryInfoPrivate::totalDiskSpace(const QString &driveVolume)
 {
-    qint64 totalBytes;
+        Q_UNUSED(driveVolume);
+
+    qint64 totalBytes=0;
     return totalBytes;
 }
 
 QSystemMemoryInfo::VolumeType QSystemMemoryInfoPrivate::volumeType(const QString &driveVolume)
 {
+        Q_UNUSED(driveVolume);
+
     return QSystemMemoryInfo::NoVolume;
 }
 
@@ -417,7 +425,7 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
 
 QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 {
-return QSystemDeviceInfo::UnknownPower;
+    return QSystemDeviceInfo::UnknownPower;
 }
 
 QString QSystemDeviceInfoPrivate::imei()
@@ -432,28 +440,32 @@ QString QSystemDeviceInfoPrivate::imsi()
 
 QString QSystemDeviceInfoPrivate::manufacturer()
 {
-    return manu;
+    return QString();
 }
 
 QString QSystemDeviceInfoPrivate::model()
 {
-    return model;
+    return  QString();
 }
 
 QString QSystemDeviceInfoPrivate::productName()
 {
-
-    return name;
+    return  QString();
 }
 
 bool QSystemDeviceInfoPrivate::isBatteryCharging()
 {
-    return isCharging;
+    return  false;
 }
 
 int QSystemDeviceInfoPrivate::batteryLevel() const
 {
     return 0;
+}
+
+QSystemDeviceInfo::BatteryStatus QSystemDeviceInfoPrivate::batteryStatus()
+{
+    return QSystemDeviceInfo::NoBatteryLevel;
 }
 
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
@@ -473,19 +485,26 @@ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
 {
 }
 
+QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
+{
+}
 
 bool QSystemScreenSaverPrivate::setScreenSaverEnabled(bool state)
 {
+        Q_UNUSED(state);
+
+    return false;
 }
 
 bool QSystemScreenSaverPrivate::setScreenBlankingEnabled(bool state)
 {
+        Q_UNUSED(state);
+
     return false;
 }
 
 bool QSystemScreenSaverPrivate::screenSaverEnabled()
 {
-
     return false;
 }
 
@@ -496,9 +515,7 @@ bool QSystemScreenSaverPrivate::screenBlankingEnabled()
 
 bool QSystemScreenSaverPrivate::isScreenLockOn()
 {
-
     return false;
 }
-
 
 QT_END_NAMESPACE

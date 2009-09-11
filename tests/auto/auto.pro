@@ -34,4 +34,5 @@ SUBDIRS += qsysteminfo \                    #SystemInformation
           qsystemdeviceinfo \
           qsystemdisplayinfo \
           qsystemmemoryinfo \
-          qsystemnetworkinfo
+          qsystemnetworkinfo \
+          qsystemscreensaver

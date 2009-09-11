@@ -167,8 +167,18 @@ void  tst_QSystemNetworkInfo::tst_homeMobileNetworkCode()
 void  tst_QSystemNetworkInfo::tst_networkName()
 {
     QSystemNetworkInfo ni;
-    QVERIFY(!ni.networkName().isEmpty());
+    QList<QSystemNetworkInfo::NetworkMode> modeList;
+    modeList << QSystemNetworkInfo::GsmMode;
+    modeList << QSystemNetworkInfo::CdmaMode;
+    modeList << QSystemNetworkInfo::WcdmaMode;
+    modeList << QSystemNetworkInfo::WlanMode;
+    modeList << QSystemNetworkInfo::EthernetMode;
+    modeList << QSystemNetworkInfo::BluetoothMode;
+    modeList << QSystemNetworkInfo::WimaxMode;
 
+    foreach(QSystemNetworkInfo::NetworkMode mode, modeList) {
+        QVERIFY(!ni.networkName(mode).isEmpty());
+    }
 }
 
 

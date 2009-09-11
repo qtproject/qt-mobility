@@ -39,6 +39,9 @@
 #ifdef Q_OS_WIN
 #include "qsysteminfo_win_p.h"
 #endif
+#ifdef Q_OS_MAC
+#include "qsysteminfo_mac_p.h"
+#endif
 
 #include <QStringList>
 #include <QSize>
@@ -383,16 +386,21 @@ QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
     d = new QSystemNetworkInfoPrivate(parent);
     connect(d,SIGNAL(currentMobileCountryCodeChanged(QString)),
             this,SIGNAL(currentMobileCountryCodeChanged(QString)));
+
     connect(d,SIGNAL(currentMobileNetworkCodeChanged(QString)),
             this,SIGNAL(currentMobileNetworkCodeChanged(QString)));
+
     connect(d,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),
             this,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)));
-    connect(d,SIGNAL(networkNameChanged(QString)),
-            this,SIGNAL(networkNameChanged(QString)));
-    connect(d,SIGNAL(networkSignalStrengthChanged(int)),
-            this,SIGNAL(networkSignalStrengthChanged(int)));
-    connect(d,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkStatus)),
-            this,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkStatus)));
+
+    connect(d,SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)),
+            this,SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)));
+
+    connect(d,SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)),
+            this,SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)));
+
+    connect(d,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),
+            this,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)));
 }
 
 /*!
@@ -478,13 +486,13 @@ QString QSystemNetworkInfo::homeMobileNetworkCode()
 }
 
 /*!
-  Returns the name of the operator.  For wlan this returns the network's current SSID.
-In the case of none such as a desktop, "No Operator".
+  Returns the name of the operator for the network \a mode.  For wlan this returns the network's current SSID.
+In the case of no network such as a desktop, "No Operator".
 */
-QString QSystemNetworkInfo::networkName()
+QString QSystemNetworkInfo::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
     QSystemNetworkInfoPrivate dnp;
-    return dnp.networkName();
+    return dnp.networkName(mode);
 }
 
 /*!
