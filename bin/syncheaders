@@ -7,13 +7,6 @@ use File::Basename;
 use File::stat;
 use File::Path;
 
-my $deps_file;
-if ( @ARGV && $ARGV[0] eq "-write-deps" ) {
-    shift(@ARGV);
-    $deps_file = shift(@ARGV) or usage();
-}
-my %deps;
-
 my $allow_non_exported = 1;
 if ( @ARGV && $ARGV[0] eq "-needs-export" ) {
     shift(@ARGV);
@@ -23,64 +16,55 @@ if ( @ARGV && $ARGV[0] eq "-needs-export" ) {
 my $outdir = shift(@ARGV) or usage();
 mkpath($outdir);
 
-while ( @ARGV ) {
-    my $infile = shift(@ARGV);
-    processFile($infile);
-}
-
-if ( $deps_file ) {
-    if ( -f $deps_file ) {
-        unlink $deps_file;
-    }
-    if ( keys %deps ) {
-        open OUT, ">$deps_file" or die "Can't write $deps_file";
-        for ( keys %deps ) {
-            print OUT "$_: ".join(" ", @{$deps{$_}})."\n";
-        }
-        close OUT;
-    }
-}
+my $indir = shift(@ARGV) or usage();
+processFile($indir);
 
 exit 0;
 
 sub usage
 {
-    print "Usage:  syncqtopia [-write-deps file.d] [-needs-export] outdir input1 [... inputn]\n";
+    print "Usage:  syncheaders [-needs-export] outdir indir\n";
+    print "        Processes all public header files <indir>\n";
     exit 2;
 }
 
 sub processFile
 {
-    my ( $filename ) = @_;
+    my ( $read_dir ) = @_;
+    my @allFiles;
+    my $filename;
 
-    open INPUT, $filename or die "Can't read $filename";
+    opendir( THISDIR, $read_dir) or die "Can't read $read_dir";
+    #process all header files
+    @allFiles = grep /\.h/,  readdir THISDIR;
+    #don't include private headers
+    @allFiles = grep !/_p\.h/, @allFiles;
 
-    my $src_s = stat($filename);
-    my $now = $src_s->mtime;
+    for $filename (@allFiles) {
+        open INPUT, "$indir/$filename" or die "Can't read $filename";
 
-    while (<INPUT>) {
-        if ( /^\s*class\s+.*_EXPORT\s+([^\s:]+)/ ||
-             ($allow_non_exported && /^\s*class\s+([^\s:<]+)/ && index($_, ";") == -1) ||
-             /syncqtopia\s+header\s+([^\s:]+)/ )
-        {
-            # Skip preprocessor-related items
-            next if ( $1 =~ /#/ );
+        my $src_s = stat("$indir/$filename");
+        my $now = $src_s->mtime;
 
-            my $outfile = "$outdir/$1";
+        while (<INPUT>) {
+            if ( /^\s*class\s+.*_EXPORT\s+([^\s:]+)/ ||
+                 ($allow_non_exported && /^\s*class\s+([^\s:<]+)/ && index($_, ";") == -1) ||
+                 /syncqtopia\s+header\s+([^\s:]+)/ )
+            {
+                # Skip preprocessor-related items
+                next if ( $1 =~ /#/ );
 
-            print "Create header $outfile\n";
+                my $outfile = "$outdir/$1";
 
-            #system("install", "-m", "0644", $filename, $outfile);
-            open OUT, ">$outfile" or die "Can't write $outfile";
-            print OUT "#include \"".basename($filename)."\"\n";
-            close OUT;
+                print "Create header $outfile\n";
 
-            if ( !exists($deps{$filename}) ) {
-                $deps{$filename} = [];
+                #system("install", "-m", "0644", $filename, $outfile);
+                open OUT, ">$outfile" or die "Can't write $outfile";
+                print OUT "#include \"".basename($filename)."\"\n";
+                close OUT;
             }
-            push(@{$deps{$filename}}, $outfile);
         }
+        close INPUT;
     }
-    close INPUT;
 }
 

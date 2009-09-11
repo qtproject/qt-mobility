@@ -153,11 +153,11 @@ echo "Generating Mobility Headers..."
 #remove old headers
 rm -rf $relpath/include
 mkdir $relpath/include
-find $relpath/bearer -name "*.h" |grep -v "_p\.h" | xargs $relpath/bin/syncheaders $relpath/include
-find $relpath/location -name "*.h" |grep -v "_p\.h" | xargs $relpath/bin/syncheaders $relpath/include
-find $relpath/systeminfo -name "*.h" |grep -v "_p\.h" | xargs $relpath/bin/syncheaders $relpath/include
-find $relpath/serviceframework -name "*.h" |grep -v "_p\.h" | xargs $relpath/bin/syncheaders $relpath/include
-find $relpath/context -name "*.h" |grep -v "_p\.h" | xargs $relpath/bin/syncheaders $relpath/include
+$relpath/bin/syncheaders $relpath/include $relpath/bearer
+$relpath/bin/syncheaders $relpath/include $relpath/context
+$relpath/bin/syncheaders $relpath/include $relpath/location
+$relpath/bin/syncheaders $relpath/include $relpath/serviceframework
+$relpath/bin/syncheaders $relpath/include $relpath/systeminfo
 
 mv config.in config.pri
 
