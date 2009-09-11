@@ -86,7 +86,7 @@ if [ -z "$RELEASEMODE" ]; then
 fi
 echo "CONFIG += $RELEASEMODE" >> config.in
 
-#ensure that PREFIX is absolute path
+#process PREFIX
 if [ -d "$QT_MOBILITY_PREFIX" ]; then
     QT_MOBILITY_PREFIX=`(cd "$QT_MOBILITY_PREFIX"; /bin/pwd)`
 else
@@ -95,21 +95,45 @@ else
     rm -rf "$QT_MOBILITY_PREFIX"
     QT_MOBILITY_PREFIX="$absPath"
 fi
-
 echo "QT_MOBILITY_PREFIX = $QT_MOBILITY_PREFIX" >> config.in
 
+#process include path
 if [ -z "$QT_MOBILITY_INCLUDE" ]; then
     QT_MOBILITY_INCLUDE="$QT_MOBILITY_PREFIX/include"
+elif [ -d "$QT_MOBILITY_INCLUDE" ]; then
+    QT_MOBILITY_INCLUDE=`(cd "$QT_MOBILITY_INCLUDE"; /bin/pwd)`
+else
+    mkdir -p "$QT_MOBILITY_INCLUDE"
+    absPath=`(cd "$QT_MOBILITY_INCLUDE"; /bin/pwd)`
+    rm -rf "$QT_MOBILITY_INCLUDE"
+    QT_MOBILITY_INCLUDE="$absPath"
 fi
 echo "QT_MOBILITY_INCLUDE = $QT_MOBILITY_INCLUDE" >> config.in
 
+
+#process library path
 if [ -z "$QT_MOBILITY_LIB" ]; then
     QT_MOBILITY_LIB="$QT_MOBILITY_PREFIX/lib"
+elif [ -d "$QT_MOBILITY_LIB" ]; then
+    QT_MOBILITY_LIB=`(cd "$QT_MOBILITY_LIB"; /bin/pwd)`
+else
+    mkdir -p "$QT_MOBILITY_LIB"
+    absPath=`(cd "$QT_MOBILITY_LIB"; /bin/pwd)`
+    rm -rf "$QT_MOBILITY_LIB"
+    QT_MOBILITY_LIB="$absPath"
 fi
 echo "QT_MOBILITY_LIB = $QT_MOBILITY_LIB" >> config.in
 
+#process binary path
 if [ -z "$QT_MOBILITY_BIN" ]; then
     QT_MOBILITY_BIN="$QT_MOBILITY_PREFIX/bin"
+elif [ -d "$QT_MOBILITY_BIN" ]; then
+    QT_MOBILITY_BIN=`(cd "$QT_MOBILITY_BIN"; /bin/pwd)`
+else
+    mkdir -p "$QT_MOBILITY_BIN"
+    absPath=`(cd "$QT_MOBILITY_BIN"; /bin/pwd)`
+    rm -rf "$QT_MOBILITY_BIN"
+    QT_MOBILITY_BIN="$absPath"
 fi
 echo "QT_MOBILITY_BIN = $QT_MOBILITY_BIN" >> config.in
 
@@ -139,3 +163,4 @@ mv config.in config.pri
 
 echo "Running qmake..."
 qmake -recursive 
+
