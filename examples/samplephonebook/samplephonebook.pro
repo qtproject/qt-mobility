@@ -30,3 +30,12 @@ HEADERS   = contactdetailsform.h \
 FORMS += contactdetails_240_320.ui \
          maindialog_240_320.ui \
          maindialog_640_480.ui 
+
+symbian: {
+    TARGET.CAPABILITY = ReadUserData \
+                        WriteUserData \
+                        ReadDeviceData \
+                        WriteDeviceData \
+                        AllFiles \
+                        SwEvent
+}
