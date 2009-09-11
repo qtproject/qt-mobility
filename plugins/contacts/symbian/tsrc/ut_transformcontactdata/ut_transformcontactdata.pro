@@ -21,10 +21,10 @@ symbian:
 	# Input
 	HEADERS +=  ut_transformcontactdata.h \
 				../../inc/transformcontactdata.h \
-				../../src/transformmail.h \
-				../../src/transformname.h \
-				../../src/transformnickname.h \
-				../../src/transformphonenumber.h \
+				../../inc/transformemail.h \
+				../../inc/transformname.h \
+				../../inc/transformnickname.h \
+				../../inc/transformphonenumber.h \
       
 	
 	SOURCES += ut_transformcontactdata.cpp \ 
