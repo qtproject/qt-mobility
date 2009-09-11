@@ -73,6 +73,7 @@ public:
     QDateTime _date;
     QDateTime _receivedDate;
     bool _modified;
+    QMessageContentContainerId _bodyId;
 
 #if defined(Q_OS_WIN)
     static QMessage from(const QMessageId &id);

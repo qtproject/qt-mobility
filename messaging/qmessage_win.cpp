@@ -302,7 +302,7 @@ uint QMessage::size() const
 
 QMessageContentContainerId QMessage::body() const
 {
-    return QMessageContentContainerId(QString::number(0));
+    return d_ptr->_bodyId;
 }
 
 void QMessage::setBody(const QString &bodyText, const QByteArray &mimeType)
@@ -316,11 +316,38 @@ void QMessage::setBody(const QString &bodyText, const QByteArray &mimeType)
     int index = mimeType.indexOf("/");
     if (index != -1) {
         mainType = mimeType.left(index).trimmed();
+
         subType = mimeType.mid(index + 1).trimmed();
+        index = subType.indexOf(";");
+        if (index != -1) {
+            subType = subType.left(index).trimmed();
+        }
     }
 
     QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
-    container->setContent(bodyText, mainType, subType, charset);
+
+    QMessageContentContainerId existingBodyId(body());
+    if (existingBodyId.isValid()) {
+        if (existingBodyId == QMessageContentContainerPrivate::bodyContentId()) {
+            // The body content is in the message itself
+            container->setContent(bodyText, mainType, subType, charset);
+        } else {
+            // The body content is in the first attachment
+            QMessageContentContainerPrivate *attachmentContainer(container->attachment(existingBodyId)->d_ptr);
+            attachmentContainer->setContent(bodyText, mainType, subType, charset);
+        }
+    } else {
+        if (container->_attachments.isEmpty()) {
+            // Put the content directly into the message
+            container->setContent(bodyText, mainType, subType, charset);
+            d_ptr->_bodyId = QMessageContentContainerPrivate::bodyContentId();
+        } else {
+            // Add the body as the first attachment
+            QMessageContentContainer newBody;
+            newBody.d_ptr->setContent(bodyText, mainType, subType, charset);
+            d_ptr->_bodyId = container->prependContent(newBody);
+        }
+    }
 }
 
 void QMessage::setBody(QTextStream &in, const QByteArray &mimeType)
@@ -335,18 +362,34 @@ QMessageContentContainerIdList QMessage::attachments() const
 
 void QMessage::appendAttachments(const QStringList &fileNames)
 {
-    foreach (const QString &filename, fileNames) {
-        QMessageContentContainer container;
-        QMessageContentContainerPrivate* container_p = container.d_ptr;
+    if (!fileNames.isEmpty()) {
+        d_ptr->_modified = true;
 
-        if(container_p->createAttachment(filename))
-        {
-            QMessageContentContainerPrivate* thisContainer_p = reinterpret_cast<QMessageContentContainer*>(this)->d_ptr;
-            thisContainer_p->appendContent(container);
+        QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
+
+        if (container->_attachments.isEmpty()) {
+            QMessageContentContainerId existingBodyId(body());
+            if (existingBodyId == QMessageContentContainerPrivate::bodyContentId()) {
+                // The body content is in the message itself - move it to become the first attachment
+                QMessageContentContainer newBody(*this);
+
+                container->setContentType("multipart", "mixed", "");
+                d_ptr->_bodyId = container->prependContent(newBody);
+            } else {
+                // This message is now multipart
+                container->setContentType("multipart", "mixed", "");
+            }
+
+            container->_available = true;
+        }
+
+        foreach (const QString &filename, fileNames) {
+            QMessageContentContainer attachment;
+            if (attachment.d_ptr->createAttachment(filename)) {
+                container->appendContent(attachment);
+            }
         }
     }
-
-    d_ptr->_modified = true;
 }
 
 void QMessage::clearAttachments()
@@ -367,4 +410,3 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
     Q_UNUSED(type)
     return QMessage(); // stub
 }
-

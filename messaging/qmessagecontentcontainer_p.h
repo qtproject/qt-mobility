@@ -36,6 +36,8 @@
 
 #ifdef USE_QMF_IMPLEMENTATION
 #include "qmfhelpers_p.h"
+#else if defined(Q_OS_WIN)
+#include "winhelpers_p.h"
 #endif
 
 #include <QSharedData>
@@ -301,7 +303,7 @@ public:
     QMessageContentContainer *attachment(const QMessageContentContainerId &id)
     {
         if (isMessage()) {
-            if (id == _message->body()) {
+            if (id == bodyContentId()) {
                 return _message;
             } else {
                 foreach (const QMessageContentContainer &container, _attachments) {
@@ -318,7 +320,7 @@ public:
     const QMessageContentContainer *attachment(const QMessageContentContainerId &id) const
     {
         if (isMessage()) {
-            if (id == _message->body()) {
+            if (id == bodyContentId()) {
                 return _message;
             } else {
                 foreach (const QMessageContentContainer &container, _attachments) {
@@ -336,15 +338,13 @@ public:
     {
         //set the attachment data
 
-        if(!QFile::exists(attachmentPath))
-        {
+        if (!QFile::exists(attachmentPath)) {
             qWarning() << "Could not create attachment. File " << attachmentPath << " does not exist";
             return false;
         }
 
         QFile attachmentFile(attachmentPath);
-        if(!attachmentFile.open(QIODevice::ReadOnly))
-        {
+        if (!attachmentFile.open(QIODevice::ReadOnly)) {
             qWarning() << "Could not open attachment " << attachmentPath;
             return false;
         }
@@ -356,28 +356,55 @@ public:
 
         //set the contentFileName
 
-        _name = QFileInfo(attachmentPath).fileName().toLatin1();
+        QFileInfo fi(attachmentPath);
+        _name = fi.fileName().toLatin1();
 
         //set the mime-type
 
-        _type = "application";
-        _subType = "octet-stream";
+        QByteArray mimeType;
+
+        QString extension(fi.suffix());
+        mimeType = WinHelpers::contentTypeFromExtension(extension);
+        int index = mimeType.indexOf("/");
+        if (index != -1) {
+            _type = mimeType.left(index).trimmed();
+            _subType = mimeType.mid(index + 1).trimmed();
+        }
 
         return true;
     }
 
-    void appendContent(QMessageContentContainer& container)
+    QMessageContentContainerId appendContent(QMessageContentContainer& container)
     {
 #ifdef OS_WIN
-        if (!isMessage())
-        {
+        if (!isMessage()) {
             qWarning() << "Unable to add child QMessageContentContainer. MAPI only supports single level nesting of containers.";
             return;
         }
 #endif
         container.d_ptr->_id = QMessageContentContainerId(QString::number(_attachments.count()+1));
         _attachments.append(container);
+        return container.d_ptr->_id;
     }
 
+    QMessageContentContainerId prependContent(QMessageContentContainer& container)
+    {
+#ifdef OS_WIN
+        if (!isMessage()) {
+            qWarning() << "Unable to add child QMessageContentContainer. MAPI only supports single level nesting of containers.";
+            return;
+        }
+#endif
+        _attachments.prepend(container);
+        for (int i = 0; i < _attachments.count(); ++i) {
+            _attachments[i].d_ptr->_id = QMessageContentContainerId(QString::number(i+1));
+        }
+        return _attachments[0].d_ptr->_id;
+    }
+
+    static QMessageContentContainerId bodyContentId()
+    {
+        return QMessageContentContainerId(QString::number(0));
+    }
 };
 #endif

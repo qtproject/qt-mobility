@@ -71,6 +71,7 @@ GUID GuidPublicStrings = { 0x00020329, 0x0000, 0x0000, 0xC0, 0x00, 0x00, 0x00, 0
 
 }
 
+// TODO: Move many un-exported functions from this namespace to the anonymous namespace
 namespace WinHelpers {
 
     // Note: UNICODE is always defined
@@ -186,6 +187,47 @@ namespace WinHelpers {
                 MAPIFreeBuffer(prop);
             } else if (rv != MAPI_E_NOT_FOUND) {
                 qWarning() << "getNamedProperty: HrGetOneProp failed";
+            }
+        }
+
+        return result;
+    }
+
+    QByteArray contentTypeFromExtension(const QString &extension)
+    {
+        QByteArray result("application/octet-stream");
+
+        if (!extension.isEmpty()) {
+            IQueryAssociations *associations(0);
+            HRESULT rv = AssocCreate(CLSID_QueryAssociations, IID_PPV_ARGS(&associations));
+            if (HR_SUCCEEDED(rv)) {
+                // Create the extension string to search for
+                QString dotExtension(extension);
+                if (!dotExtension.startsWith('.')) {
+                    dotExtension.prepend('.');
+                }
+
+                Lptstr ext = LptstrFromQString(dotExtension);
+
+                rv = associations->Init(0, ext, 0, 0);
+                if (HR_SUCCEEDED(rv)) {
+                    // Find the length of the content-type string
+                    DWORD length = 0;
+                    rv = associations->GetString(0, ASSOCSTR_CONTENTTYPE, 0, 0, &length);
+                    if ((rv == S_FALSE) && length) {
+                        // Retrieve the string
+                        wchar_t *buffer = new wchar_t[length + 1];
+                        buffer[length] = '\0';
+                        rv = associations->GetString(0, ASSOCSTR_CONTENTTYPE, 0, buffer, &length);
+                        if (rv == S_OK) {
+                            QString output(QString::fromUtf16(reinterpret_cast<quint16*>(buffer)));
+                            result = output.toLatin1();
+                        }
+
+                        delete [] buffer;
+                    }
+                }
+                mapiRelease(associations);
             }
         }
 
@@ -1591,47 +1633,6 @@ QByteArray readStream(QMessageStore::ErrorCode *lastError, IStream *is)
     return result;
 }
 
-QByteArray contentTypeFromExtension(const QString &extension)
-{
-    QByteArray result("application/octet-stream");
-
-    if (!extension.isEmpty()) {
-        IQueryAssociations *associations(0);
-        HRESULT rv = AssocCreate(CLSID_QueryAssociations, IID_PPV_ARGS(&associations));
-        if (HR_SUCCEEDED(rv)) {
-            // Create the extension string to search for
-            QString dotExtension(extension);
-            if (!dotExtension.startsWith('.')) {
-                dotExtension.prepend('.');
-            }
-
-            Lptstr ext = LptstrFromQString(dotExtension);
-
-            rv = associations->Init(0, ext, 0, 0);
-            if (HR_SUCCEEDED(rv)) {
-                // Find the length of the content-type string
-                DWORD length = 0;
-                rv = associations->GetString(0, ASSOCSTR_CONTENTTYPE, 0, 0, &length);
-                if ((rv == S_FALSE) && length) {
-                    // Retrieve the string
-                    wchar_t *buffer = new wchar_t[length + 1];
-                    buffer[length] = '\0';
-                    rv = associations->GetString(0, ASSOCSTR_CONTENTTYPE, 0, buffer, &length);
-                    if (rv == S_OK) {
-                        QString output(QString::fromUtf16(reinterpret_cast<quint16*>(buffer)));
-                        result = output.toLatin1();
-                    }
-
-                    delete [] buffer;
-                }
-            }
-            mapiRelease(associations);
-        }
-    }
-
-    return result;
-}
-
 QString decodeContent(const QByteArray &data, const QByteArray &charset, int length = -1)
 {
     QString result;
@@ -2034,6 +2035,7 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
                         //qDebug() << "extracting plain text";
                     } else if (contentFormat == EDITOR_FORMAT_HTML) {
                         // Attempt to extract the HTML from the RTF
+                        // as per CMapiEx, http://www.codeproject.com/KB/IP/CMapiEx.aspx
                         //qDebug() << "extracting html";
                     }
                 }

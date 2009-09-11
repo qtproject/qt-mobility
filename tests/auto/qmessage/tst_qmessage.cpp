@@ -245,7 +245,11 @@ void tst_QMessage::testToTransmissionFormat_simple()
     const QString subject("This is a simple message");
     const QByteArray contentType("text");
     const QByteArray contentSubType("plain");
+#ifdef Q_OS_WIN
+    const QByteArray contentCharset("UTF-16");
+#else
     const QByteArray contentCharset("UTF-8");
+#endif
     const QString contentText(QString("This is the happy face:").append(QChar(0x263a)));
 
     QMessage m1;
@@ -303,7 +307,11 @@ void tst_QMessage::testToTransmissionFormat_multipart()
 
     const QByteArray p1ContentType("text");
     const QByteArray p1ContentSubType("plain");
+#ifdef Q_OS_WIN
+    const QByteArray p1ContentCharset("UTF-16");
+#else
     const QByteArray p1ContentCharset("UTF-8");
+#endif
     const QString p1ContentText(QString("This is the happy face:").append(QChar(0x263a)));
 
     const QByteArray p2FileName("1.txt");
@@ -339,7 +347,11 @@ Do you like this message?\r\n\
 
     const QByteArray p4FileName("pointless.sh");
     const QByteArray p4ContentType("application");
+#ifdef Q_OS_WIN
+    const QByteArray p4ContentSubType("octet-stream");
+#else
     const QByteArray p4ContentSubType("x-sh");
+#endif
     const QByteArray p4ContentCharset("");
     const QByteArray p4ContentData("\
 #!/bin/sh\n\
@@ -431,6 +443,7 @@ exit 0\n");
         QCOMPARE(p5.content(), p5ContentData);
     }
 
+#if !defined(Q_OS_WIN)
     QMessage m2(QMessage::fromTransmissionFormat(QMessage::Email, serialized));
 
     {
@@ -494,6 +507,7 @@ exit 0\n");
         QCOMPARE(p5.contentIds().count(), 0);
         QCOMPARE(p5.content(), p5ContentData);
     }
+#endif
 }
 
 void tst_QMessage::testType()

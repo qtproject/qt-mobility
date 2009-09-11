@@ -98,6 +98,7 @@ ULONG getNamedPropertyTag(IMAPIProp *object, const QString &name);
 bool setNamedProperty(IMAPIProp *object, ULONG tag, const QString &value);
 QString getNamedProperty(IMAPIProp *object, ULONG tag);
 
+QByteArray contentTypeFromExtension(const QString &extension);
 
 class Lptstr : public QVector<TCHAR>
 {
