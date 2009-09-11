@@ -595,10 +595,14 @@ protected:
         QNmeaPositionInfoSource *source = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode);
         QFile *file = new QFile(QApplication::applicationDirPath()
                 + QDir::separator() + "tst_qnmeapositioninfosource_nmealog.txt", source);
-        if (!file->exists())
+        if (!file->exists()) {
             qWarning() << "Cannot find" << file->fileName();
-        if (!file->open(QIODevice::ReadOnly))
+            return 0;
+        }
+        if (!file->open(QIODevice::ReadOnly)) {
             qWarning() << "Cannot open" << file->fileName();
+            return 0;
+        }
         source->setDevice(file);
         return source;
     }
