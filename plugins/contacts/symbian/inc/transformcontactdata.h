@@ -44,8 +44,12 @@
 class TransformContactData : public QObject
 {
 	 Q_OBJECT
-	 
+
+#ifdef PBK_UNIT_TEST
+public:
+#else
 protected:
+#endif
 	void setContexts(const TUid &fieldType, QContactDetail &detail);
 	void setContextsL(const QContactDetail &detail, CContactItemField &field);
 

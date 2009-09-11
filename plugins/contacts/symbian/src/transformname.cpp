@@ -59,7 +59,7 @@ QList<CContactItemField *> TransformName::transformDetailL(const QContactDetail 
 	TPtrC fieldTextMiddleName(reinterpret_cast<const TUint16*>(name.middle().utf16()));
 	CContactItemField* middleName = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldAdditionalName);
 	middleName->TextStorage()->SetTextL(fieldTextMiddleName);
-	QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE(fieldList.append(middleName));
+	fieldList.append(middleName);
 	CleanupStack::Pop(middleName);
 	
 	//Last Name
