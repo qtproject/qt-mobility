@@ -125,8 +125,8 @@ QMediaPlaylist::QMediaPlaylist(QAbstractMediaObject *parent)
     connect(d->control, SIGNAL(currentMediaChanged(QMediaSource)),
             this, SIGNAL(currentMediaChanged(QMediaSource)));
 
-    QChildEvent e(QEvent::ChildPolished, this);
-    QCoreApplication::sendEvent(parent, &e);
+    if (parent)
+        parent->bind(this);
 }
 
 /*!

@@ -374,30 +374,22 @@ void QMediaPlayer::setMedia(const QMediaSource &media)
     d_func()->control->setMedia(media);
 }
 
-
-void QMediaPlayer::childEvent(QChildEvent *event)
+void QMediaPlayer::bind(QObject *obj)
 {
     Q_D(QMediaPlayer);
 
     if (!d->hasPlaylistControl) {
+        QMediaPlaylist *playlist = qobject_cast<QMediaPlaylist*>(obj);
 
-        if (event->type() ==  QEvent::ChildPolished) {
-            QMediaPlaylist *playlist = qobject_cast<QMediaPlaylist*>(event->child());
-            qDebug() << "child added" << event->child()->metaObject()->className();
-
-            if (playlist) {
-                qDebug() << "playlist attached";
-                d->playlist = playlist;
-                connect(d->playlist, SIGNAL(currentMediaChanged(QMediaSource)),
-                        this, SLOT(_q_updateMedia(QMediaSource)));
-            }
-        } else if (event->type() == QEvent::ChildRemoved && event->child() == d->playlist) {
-            d->playlist = 0;
+        if (playlist) {
+            qDebug() << "playlist attached";
+            d->playlist = playlist;
+            connect(d->playlist, SIGNAL(currentMediaChanged(QMediaSource)),
+                    this, SLOT(_q_updateMedia(QMediaSource)));
         }
     }
-
-    QObject::childEvent(event);
 }
+
 
 // Enums
 /*!

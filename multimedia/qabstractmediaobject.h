@@ -58,6 +58,8 @@ public:
     int notifyInterval() const;
     void setNotifyInterval(int milliSeconds);
 
+    virtual void bind(QObject*);
+
 Q_SIGNALS:
     void notifyIntervalChanged(int milliSeconds);
 

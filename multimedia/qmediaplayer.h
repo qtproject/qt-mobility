@@ -155,7 +155,7 @@ Q_SIGNALS:
     void error(QMediaPlayer::Error error);
 
 protected:
-    void childEvent(QChildEvent *event);
+    void bind(QObject*);
 
 private:
     Q_DISABLE_COPY(QMediaPlayer)

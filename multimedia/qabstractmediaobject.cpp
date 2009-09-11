@@ -112,6 +112,13 @@ void QAbstractMediaObject::setNotifyInterval(int milliSeconds)
 }
 
 /*!
+  \internal
+*/
+void QAbstractMediaObject::bind(QObject*)
+{
+}
+
+/*!
     Construct a QAbstractMediaObject with \a parent. This class is meant as a
     base class for Multimedia objects so this constructor is protected.
 */
