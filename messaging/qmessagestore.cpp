@@ -78,6 +78,12 @@
     \value RemoveOnOriginatingServer  Remove the message both from the local store and from the originating server if any.
 */
 
+/*!
+    \typedef QMessageStore::NotificationFilterId
+
+    This type contains a value identifying a registered message filter.
+*/
+
 /*
     TODO capabilities AtomicBooleanSearch AtomicSlices Sms Mms Email Xmpp Presence AtomicExtendedSearching AtomicBodySearching
       ExtendedServices AtomicCustomSearching CaseInsensitiveSearching FullWordSearching
@@ -318,7 +324,7 @@
 */
 
 /*!
-    \fn int QMessageStore::registerNotificationFilter(const QMessageFilter &filter);
+    \fn NotificationFilterId QMessageStore::registerNotificationFilter(const QMessageFilter &filter);
 
     Registers a message filter that will be used to generate messageAdded(), messageRemoved()
     and messageUpdated() signals.  Returns an identifier value that can be used to identify the 
@@ -328,7 +334,7 @@
 */
 
 /*!
-    \fn void QMessageStore::unregisterNotificationFilter(int notificationFilterId);
+    \fn void QMessageStore::unregisterNotificationFilter(NotificationFilterId notificationFilterId);
 
     Removes the message filter associated with \a notificationFilterId from the set used 
     to generate message event signals.
@@ -345,7 +351,7 @@
 */
 
 /*!
-    \fn void QMessageStore::messageAdded(const QMessageId &id, const QSet<int> &matchingFilterIds);
+    \fn void QMessageStore::messageAdded(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &matchingFilterIds);
 
     Signal that is emitted when the message identified by \a id is added to the message store.
     \a matchingFilters contains a set of values identifiying registered notification filters 
@@ -355,7 +361,7 @@
 */
 
 /*!
-    \fn void QMessageStore::messageRemoved(const QMessageId &id, const QSet<int> &matchingFilterIds);
+    \fn void QMessageStore::messageRemoved(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &matchingFilterIds);
 
     Signal that is emitted when the message identified by \a id is removed from the message store.
     \a matchingFilters contains a set of values identifiying registered notification filters 
@@ -365,7 +371,7 @@
 */
 
 /*!
-    \fn void QMessageStore::messageUpdated(const QMessageId &id, const QSet<int> &matchingFilterIds);
+    \fn void QMessageStore::messageUpdated(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &matchingFilterIds);
 
     Signal that is emitted when the message identified by \a id is updated in the message store.
     \a matchingFilters contains a set of values identifiying registered notification filters 
