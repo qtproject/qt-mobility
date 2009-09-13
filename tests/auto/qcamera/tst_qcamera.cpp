@@ -177,7 +177,7 @@ public:
     }
     void setManualAperture(qreal aperture)
     {
-        m_aperture = qBound(2.8, aperture, 16.0);
+        m_aperture = qBound<qreal>(2.8, aperture, 16.0);
     }
 
     void setAutoAperture()
@@ -196,7 +196,7 @@ public:
     }
     void setManualShutterSpeed(qreal shutterSpeed)
     {
-        m_shutterSpeed = qBound(0.001, shutterSpeed, 30.0);
+        m_shutterSpeed = qBound<qreal>(0.001, shutterSpeed, 30.0);
     }
 
     void setAutoShutterSpeed()
