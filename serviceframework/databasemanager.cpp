@@ -287,7 +287,7 @@ void DatabaseManager::initDbPath(DbScope scope)
     QDir dir = fi.dir();
     QString qtVersion(qVersion());
     qtVersion = qtVersion.left(qtVersion.size() -2); //strip off patch version
-    QString dbName = QString("QtServiceFW_") + qtVersion + dbIdentifier + QLatin1String(".db");
+    QString dbName = QString("QtServiceFramework_") + qtVersion + dbIdentifier + QLatin1String(".db");
     db->setDatabasePath(dir.path() + QDir::separator() + dbName);
 }
 
