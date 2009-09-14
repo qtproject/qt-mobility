@@ -1224,13 +1224,12 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(Q
 /*! \reimp */
 bool QContactWinCEEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const
 {
-    switch (feature) {
-        case QContactManagerInfo::ReadOnlyDetails:
-        case QContactManagerInfo::Synchronous:
-            return true;
-        default:
-            return false;
-    }
+    // The Windows CE backend is an "isolated" backend
+    if (feature == QContactManagerInfo::Anonymous)
+        return true;
+
+    // Windows CE backend does not support Mutable Definitions, Groups or Action Preferences
+    return false;
 }
 
 /* Synthesise the display label of a contact */
