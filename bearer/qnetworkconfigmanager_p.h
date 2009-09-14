@@ -49,6 +49,7 @@
 #include <qnetworkconfiguration_p.h>
 
 #include <QHash>
+#include <QStringList>
 
 QT_BEGIN_NAMESPACE
 
@@ -60,7 +61,6 @@ class QNativeWifiEngine;
 class QNmWifiEngine;
 #endif
 
-#include <QStringList>
 
 class QNetworkConfigurationManagerPrivate : public QObject
 {
