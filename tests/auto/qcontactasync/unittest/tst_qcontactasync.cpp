@@ -188,7 +188,7 @@ void tst_QContactAsync::contactFetch()
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
     QContactFetchRequest cfr;
-    QVERIFY(cfr.type() == QContactAbstractRequest::ContactFetch);
+    QVERIFY(cfr.type() == QContactAbstractRequest::ContactFetchRequest);
 
     // initial state - not started, no manager.
     QVERIFY(!cfr.isActive());
@@ -362,7 +362,7 @@ void tst_QContactAsync::contactIdFetch()
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
     QContactIdFetchRequest cfr;
-    QVERIFY(cfr.type() == QContactAbstractRequest::ContactIdFetch);
+    QVERIFY(cfr.type() == QContactAbstractRequest::ContactIdFetchRequest);
 
     // initial state - not started, no manager.
     QVERIFY(!cfr.isActive());
@@ -493,7 +493,7 @@ void tst_QContactAsync::contactRemove()
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
     QContactRemoveRequest crr;
-    QVERIFY(crr.type() == QContactAbstractRequest::ContactRemove);
+    QVERIFY(crr.type() == QContactAbstractRequest::ContactRemoveRequest);
 
     // initial state - not started, no manager.
     QVERIFY(!crr.isActive());
@@ -605,7 +605,7 @@ void tst_QContactAsync::contactSave()
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
     QContactSaveRequest csr;
-    QVERIFY(csr.type() == QContactAbstractRequest::ContactSave);
+    QVERIFY(csr.type() == QContactAbstractRequest::ContactSaveRequest);
 
     // initial state - not started, no manager.
     QVERIFY(!csr.isActive());
@@ -747,7 +747,7 @@ void tst_QContactAsync::groupFetch()
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
     QContactGroupFetchRequest gfr;
-    QVERIFY(gfr.type() == QContactAbstractRequest::GroupFetch);
+    QVERIFY(gfr.type() == QContactAbstractRequest::GroupFetchRequest);
 
     // initial state - not started, no manager.
     QVERIFY(!gfr.isActive());
@@ -856,7 +856,7 @@ void tst_QContactAsync::groupRemove()
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
     QContactGroupRemoveRequest grr;
-    QVERIFY(grr.type() == QContactAbstractRequest::GroupRemove);
+    QVERIFY(grr.type() == QContactAbstractRequest::GroupRemoveRequest);
 
     // initial state - not started, no manager.
     QVERIFY(!grr.isActive());
@@ -1002,7 +1002,7 @@ void tst_QContactAsync::groupSave()
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
     QContactGroupSaveRequest gsr;
-    QVERIFY(gsr.type() == QContactAbstractRequest::GroupSave);
+    QVERIFY(gsr.type() == QContactAbstractRequest::GroupSaveRequest);
 
     // initial state - not started, no manager.
     QVERIFY(!gsr.isActive());
@@ -1140,7 +1140,7 @@ void tst_QContactAsync::definitionFetch()
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
     QContactDetailDefinitionFetchRequest dfr;
-    QVERIFY(dfr.type() == QContactAbstractRequest::DetailDefinitionFetch);
+    QVERIFY(dfr.type() == QContactAbstractRequest::DetailDefinitionFetchRequest);
 
     // initial state - not started, no manager.
     QVERIFY(!dfr.isActive());
@@ -1243,7 +1243,7 @@ void tst_QContactAsync::definitionRemove()
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
     QContactDetailDefinitionRemoveRequest drr;
-    QVERIFY(drr.type() == QContactAbstractRequest::DetailDefinitionRemove);
+    QVERIFY(drr.type() == QContactAbstractRequest::DetailDefinitionRemoveRequest);
 
     // initial state - not started, no manager.
     QVERIFY(!drr.isActive());
@@ -1389,7 +1389,7 @@ void tst_QContactAsync::definitionSave()
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
     QContactDetailDefinitionSaveRequest dsr;
-    QVERIFY(dsr.type() == QContactAbstractRequest::DetailDefinitionSave);
+    QVERIFY(dsr.type() == QContactAbstractRequest::DetailDefinitionSaveRequest);
 
     // initial state - not started, no manager.
     QVERIFY(!dsr.isActive());

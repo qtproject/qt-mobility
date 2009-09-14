@@ -1683,70 +1683,70 @@ void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
     req->d_ptr->m_status = status;
 
     switch (req->type()) {
-        case QContactAbstractRequest::ContactFetch:
+        case QContactAbstractRequest::ContactFetchRequest:
         {
             QContactFetchRequest* r = static_cast<QContactFetchRequest*>(req);
             emit r->progress(r, appendOnly);
         }
         break;
 
-        case QContactAbstractRequest::ContactIdFetch:
+        case QContactAbstractRequest::ContactIdFetchRequest:
         {
             QContactIdFetchRequest* r = static_cast<QContactIdFetchRequest*>(req);
             emit r->progress(r, appendOnly);
         }
         break;
 
-        case QContactAbstractRequest::ContactSave:
+        case QContactAbstractRequest::ContactSaveRequest:
         {
             QContactSaveRequest* r = static_cast<QContactSaveRequest*>(req);
             emit r->progress(r);
         }
         break;
 
-        case QContactAbstractRequest::ContactRemove:
+        case QContactAbstractRequest::ContactRemoveRequest:
         {
             QContactRemoveRequest* r = static_cast<QContactRemoveRequest*>(req);
             emit r->progress(r);
         }
         break;
 
-        case QContactAbstractRequest::GroupFetch:
+        case QContactAbstractRequest::GroupFetchRequest:
         {
             QContactGroupFetchRequest* r = static_cast<QContactGroupFetchRequest*>(req);
             emit r->progress(r, appendOnly);
         }
         break;
 
-        case QContactAbstractRequest::GroupSave:
+        case QContactAbstractRequest::GroupSaveRequest:
         {
             QContactGroupSaveRequest* r = static_cast<QContactGroupSaveRequest*>(req);
             emit r->progress(r);
         }
         break;
 
-        case QContactAbstractRequest::GroupRemove:
+        case QContactAbstractRequest::GroupRemoveRequest:
         {
             QContactGroupRemoveRequest* r = static_cast<QContactGroupRemoveRequest*>(req);
             emit r->progress(r);
         }
         break;
 
-        case QContactAbstractRequest::DetailDefinitionFetch:
+        case QContactAbstractRequest::DetailDefinitionFetchRequest:
         {
             QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(req);
             emit r->progress(r, appendOnly);
         }
         break;
 
-        case QContactAbstractRequest::DetailDefinitionSave:
+        case QContactAbstractRequest::DetailDefinitionSaveRequest:
         {
             QContactDetailDefinitionSaveRequest* r = static_cast<QContactDetailDefinitionSaveRequest*>(req);
             emit r->progress(r);
         }
         break;
 
-        case QContactAbstractRequest::DetailDefinitionRemove:
+        case QContactAbstractRequest::DetailDefinitionRemoveRequest:
         {
             QContactDetailDefinitionRemoveRequest* r = static_cast<QContactDetailDefinitionRemoveRequest*>(req);
             emit r->progress(r);
@@ -1763,7 +1763,7 @@ void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QUniqueId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    if (req->type() == QContactAbstractRequest::ContactIdFetch) {
+    if (req->type() == QContactAbstractRequest::ContactIdFetchRequest) {
         req->d_ptr->m_error = error;
         req->d_ptr->m_errors = errors;
         req->d_ptr->m_status = status;
@@ -1780,7 +1780,7 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContact>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
     switch (req->type()) {
-        case QContactAbstractRequest::ContactFetch:
+        case QContactAbstractRequest::ContactFetchRequest:
         {
             req->d_ptr->m_error = error;
             req->d_ptr->m_errors = errors;
@@ -1792,7 +1792,7 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
         }
         break;
 
-        case QContactAbstractRequest::ContactSave:
+        case QContactAbstractRequest::ContactSaveRequest:
         {
             req->d_ptr->m_error = error;
             req->d_ptr->m_errors = errors;
@@ -1818,7 +1818,7 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactGroup>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
     switch (req->type()) {
-        case QContactAbstractRequest::GroupFetch:
+        case QContactAbstractRequest::GroupFetchRequest:
         {
             req->d_ptr->m_error = error;
             req->d_ptr->m_errors = errors;
@@ -1830,7 +1830,7 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
         }
         break;
 
-        case QContactAbstractRequest::GroupSave:
+        case QContactAbstractRequest::GroupSaveRequest:
         {
             req->d_ptr->m_error = error;
             req->d_ptr->m_errors = errors;
@@ -1855,7 +1855,7 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
 {
-    if (req->type() == QContactAbstractRequest::DetailDefinitionSave) {
+    if (req->type() == QContactAbstractRequest::DetailDefinitionSaveRequest) {
         req->d_ptr->m_error = error;
         req->d_ptr->m_errors = errors;
         req->d_ptr->m_status = status;
@@ -1871,7 +1871,7 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    if (req->type() == QContactAbstractRequest::DetailDefinitionFetch) {
+    if (req->type() == QContactAbstractRequest::DetailDefinitionFetchRequest) {
         req->d_ptr->m_error = error;
         req->d_ptr->m_errors = errors;
         req->d_ptr->m_status = status;

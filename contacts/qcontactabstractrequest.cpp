@@ -45,19 +45,19 @@
  */
 
 /*!
- * \enum QContactAbstractRequest::Type
+ * \enum QContactAbstractRequest::RequestType
  * Enumerates the various possible types of asynchronous requests
- * \value Invalid An invalid request
- * \value ContactFetch A request to fetch a list of contacts
- * \value ContactIdFetch A request to fetch a list of contact ids
- * \value ContactRemove A request to remove a list of contacts
- * \value ContactSave A request to save a list of contacts
- * \value DetailDefinitionFetch A request to fetch a collection of detail definitions
- * \value DetailDefinitionRemove A request to remove a list of detail definitions
- * \value DetailDefinitionSave A request to save a list of detail definitions
- * \value GroupFetch A request to fetch a list of groups
- * \value GroupRemove A request to remove a list of groups
- * \value GroupSave A request to save a list of groups
+ * \value InvalidRequest An invalid request
+ * \value ContactFetchRequest A request to fetch a list of contacts
+ * \value ContactIdFetchRequest A request to fetch a list of contact ids
+ * \value ContactRemoveRequest A request to remove a list of contacts
+ * \value ContactSaveRequest A request to save a list of contacts
+ * \value DetailDefinitionFetchRequest A request to fetch a collection of detail definitions
+ * \value DetailDefinitionRemoveRequest A request to remove a list of detail definitions
+ * \value DetailDefinitionSaveRequest A request to save a list of detail definitions
+ * \value GroupFetchRequest A request to fetch a list of groups
+ * \value GroupRemoveRequest A request to remove a list of groups
+ * \value GroupSaveRequest A request to save a list of groups
  */
 
 /*!
@@ -131,7 +131,7 @@ QList<QContactManager::Error> QContactAbstractRequest::errors() const
 /*!
  * Returns the type of this asynchronous request
  */
-QContactAbstractRequest::Type QContactAbstractRequest::type() const
+QContactAbstractRequest::RequestType QContactAbstractRequest::type() const
 {
     return d_ptr->type();
 }

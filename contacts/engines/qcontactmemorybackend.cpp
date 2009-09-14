@@ -495,7 +495,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
     // Now perform the active request and emit required signals.
     Q_ASSERT(currentRequest->status() == QContactAbstractRequest::Active);
     switch (currentRequest->type()) {
-        case QContactAbstractRequest::ContactFetch:
+        case QContactAbstractRequest::ContactFetchRequest:
         {
             QContactFetchRequest* r = static_cast<QContactFetchRequest*>(currentRequest);
             QContactFilter filter = r->filter();
@@ -537,7 +537,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
         }
         break;
 
-        case QContactAbstractRequest::ContactIdFetch:
+        case QContactAbstractRequest::ContactIdFetchRequest:
         {
             QContactIdFetchRequest* r = static_cast<QContactIdFetchRequest*>(currentRequest);
             QContactFilter filter = r->filter();
@@ -550,7 +550,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
         }
         break;
 
-        case QContactAbstractRequest::ContactSave:
+        case QContactAbstractRequest::ContactSaveRequest:
         {
             QContactSaveRequest* r = static_cast<QContactSaveRequest*>(currentRequest);
             QList<QContact> contacts = r->contacts();
@@ -569,7 +569,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
         }
         break;
 
-        case QContactAbstractRequest::ContactRemove:
+        case QContactAbstractRequest::ContactRemoveRequest:
         {
             // this implementation provides scant information to the user
             // the operation either succeeds (all contacts matching the filter were removed)
@@ -596,7 +596,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
         }
         break;
 
-        case QContactAbstractRequest::GroupFetch:
+        case QContactAbstractRequest::GroupFetchRequest:
         {
             QContactGroupFetchRequest* r = static_cast<QContactGroupFetchRequest*>(currentRequest);
             QContactManager::Error operationError = QContactManager::NoError;
@@ -623,7 +623,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
         }
         break;
 
-        case QContactAbstractRequest::GroupSave:
+        case QContactAbstractRequest::GroupSaveRequest:
         {
             QContactGroupSaveRequest* r = static_cast<QContactGroupSaveRequest*>(currentRequest);
             QContactManager::Error operationError = QContactManager::NoError;
@@ -646,7 +646,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
         }
         break;
 
-        case QContactAbstractRequest::GroupRemove:
+        case QContactAbstractRequest::GroupRemoveRequest:
         {
             QContactGroupRemoveRequest* r = static_cast<QContactGroupRemoveRequest*>(currentRequest);
             QList<QUniqueId> ids = r->ids();
@@ -668,7 +668,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
         }
         break;
 
-        case QContactAbstractRequest::DetailDefinitionFetch:
+        case QContactAbstractRequest::DetailDefinitionFetchRequest:
         {
             QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(currentRequest);
             QContactManager::Error operationError = QContactManager::NoError;
@@ -693,7 +693,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
         }
         break;
 
-        case QContactAbstractRequest::DetailDefinitionSave:
+        case QContactAbstractRequest::DetailDefinitionSaveRequest:
         {
             QContactDetailDefinitionSaveRequest* r = static_cast<QContactDetailDefinitionSaveRequest*>(currentRequest);
             QContactManager::Error operationError = QContactManager::NoError;
@@ -717,7 +717,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
         }
         break;
 
-        case QContactAbstractRequest::DetailDefinitionRemove:
+        case QContactAbstractRequest::DetailDefinitionRemoveRequest:
         {
             QContactDetailDefinitionRemoveRequest* r = static_cast<QContactDetailDefinitionRemoveRequest*>(currentRequest);
             QStringList names = r->names();

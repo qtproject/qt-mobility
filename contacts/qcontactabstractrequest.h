@@ -61,21 +61,21 @@ public:
     QList<QContactManager::Error> errors() const;
     QContactManager::Error error() const;
 
-    enum Type {
-        Invalid = 0,
-        ContactFetch,
-        ContactIdFetch,
-        ContactRemove,
-        ContactSave,
-        DetailDefinitionFetch,
-        DetailDefinitionRemove,
-        DetailDefinitionSave,
-        GroupFetch,
-        GroupRemove,
-        GroupSave
+    enum RequestType {
+        InvalidRequest = 0,
+        ContactFetchRequest,
+        ContactIdFetchRequest,
+        ContactRemoveRequest,
+        ContactSaveRequest,
+        DetailDefinitionFetchRequest,
+        DetailDefinitionRemoveRequest,
+        DetailDefinitionSaveRequest,
+        GroupFetchRequest,
+        GroupRemoveRequest,
+        GroupSaveRequest
     };
 
-    Type type() const;
+    RequestType type() const;
 
     /* Which manager we want to perform the asynchronous request */
     QContactManager* manager() const;

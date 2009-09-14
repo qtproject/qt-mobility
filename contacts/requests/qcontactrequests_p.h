@@ -67,9 +67,9 @@ public:
     {
     }
 
-    QContactAbstractRequest::Type type() const
+    QContactAbstractRequest::RequestType type() const
     {
-        return QContactAbstractRequest::ContactSave;
+        return QContactAbstractRequest::ContactSaveRequest;
     }
 
     QList<QContact> m_contacts;
@@ -87,9 +87,9 @@ public:
     {
     }
 
-    QContactAbstractRequest::Type type() const
+    QContactAbstractRequest::RequestType type() const
     {
-        return QContactAbstractRequest::ContactFetch;
+        return QContactAbstractRequest::ContactFetchRequest;
     }
 
     QContactFilter m_filter;
@@ -111,9 +111,9 @@ public:
     {
     }
 
-    QContactAbstractRequest::Type type() const
+    QContactAbstractRequest::RequestType type() const
     {
-        return QContactAbstractRequest::ContactRemove;
+        return QContactAbstractRequest::ContactRemoveRequest;
     }
 
     QContactFilter m_filter;
@@ -131,9 +131,9 @@ public:
     {
     }
 
-    QContactAbstractRequest::Type type() const
+    QContactAbstractRequest::RequestType type() const
     {
-        return QContactAbstractRequest::ContactIdFetch;
+        return QContactAbstractRequest::ContactIdFetchRequest;
     }
 
     QContactFilter m_filter;
@@ -154,9 +154,9 @@ public:
     {
     }
 
-    QContactAbstractRequest::Type type() const
+    QContactAbstractRequest::RequestType type() const
     {
-        return QContactAbstractRequest::GroupFetch;
+        return QContactAbstractRequest::GroupFetchRequest;
     }
 
     QList<QUniqueId> m_ids;
@@ -175,9 +175,9 @@ public:
     {
     }
 
-    QContactAbstractRequest::Type type() const
+    QContactAbstractRequest::RequestType type() const
     {
-        return QContactAbstractRequest::GroupSave;
+        return QContactAbstractRequest::GroupSaveRequest;
     }
 
     QList<QContactGroup> m_groups;
@@ -196,9 +196,9 @@ public:
     {
     }
 
-    QContactAbstractRequest::Type type() const
+    QContactAbstractRequest::RequestType type() const
     {
-        return QContactAbstractRequest::GroupRemove;
+        return QContactAbstractRequest::GroupRemoveRequest;
     }
 
     QList<QUniqueId> m_ids;
@@ -216,9 +216,9 @@ public:
     {
     }
 
-    QContactAbstractRequest::Type type() const
+    QContactAbstractRequest::RequestType type() const
     {
-        return QContactAbstractRequest::DetailDefinitionFetch;
+        return QContactAbstractRequest::DetailDefinitionFetchRequest;
     }
 
     QStringList m_names;
@@ -237,9 +237,9 @@ public:
     {
     }
 
-    QContactAbstractRequest::Type type() const
+    QContactAbstractRequest::RequestType type() const
     {
-        return QContactAbstractRequest::DetailDefinitionSave;
+        return QContactAbstractRequest::DetailDefinitionSaveRequest;
     }
 
     QList<QContactDetailDefinition> m_definitions;
@@ -257,9 +257,9 @@ public:
     {
     }
 
-    QContactAbstractRequest::Type type() const
+    QContactAbstractRequest::RequestType type() const
     {
-        return QContactAbstractRequest::DetailDefinitionRemove;
+        return QContactAbstractRequest::DetailDefinitionRemoveRequest;
     }
 
     QStringList m_names;
