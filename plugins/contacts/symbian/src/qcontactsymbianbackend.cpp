@@ -194,9 +194,6 @@ QMap<QString, QContactDetailDefinition> QContactSymbianEngine::detailDefinitions
 bool QContactSymbianEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const
 {
     switch (feature) {
-        case QContactManagerInfo::ReadOnlyDetails:
-        case QContactManagerInfo::Synchronous:
-            return true;
         default:
             return false;
     }
