@@ -50,34 +50,70 @@ void TestTransformContactData::cleanupTestCase()
 
 void TestTransformContactData::executeTransformEmail()
 {
+    validateTransformEmail(_L("dummyemail"), QString("dummyemail"));
+    validateTransformEmail(_L(""), QString(""));
+}
+
+void TestTransformContactData::executeTransformName()
+{
+    validateTransformName(_L("dummyprefix"), QString("dummyprefix"),
+                          _L("dummyfirst"), QString("dummyfirst"),
+                          _L("dummymiddle"), QString("dummymiddle"),
+                          _L("dummylast"), QString("dummylast"),
+                          _L("dummysuffix"), QString("dummysuffix"));
+    validateTransformName(_L(""), QString(""),
+                          _L(""), QString(""),
+                          _L(""), QString(""),
+                          _L(""), QString(""),
+                          _L(""), QString(""));
+}
+
+void TestTransformContactData::executeTransformNickname()
+{
+    validateTransformNickname(_L("dummynickname"), QString("dummynickname"));
+    validateTransformNickname(_L(""), QString(""));
+}
+
+void TestTransformContactData::executeTransformPhonenumber()
+{
+    validateTransformPhonenumber(_L("dummyphonenumber"), QString("dummyphonenumber"));
+    validateTransformPhonenumber(_L(""), QString(""));
+}
+
+void TestTransformContactData::validateTransformEmail(TPtrC16 field, QString detail)
+{
     TransformContactData* transformEmail = new TransformEmail();
     QVERIFY(transformEmail != 0);
     QVERIFY(transformEmail->supportsField(KUidContactFieldEMail.iUid));
     QVERIFY(transformEmail->supportsDetail(QContactEmailAddress::DefinitionName));
     
     validateContexts(transformEmail);
-
+    
     QContactEmailAddress email;
-    email.setEmailAddress("dummyemail");
+    email.setEmailAddress(detail);
     QList<CContactItemField *> fields = transformEmail->transformDetailL(email);
     QVERIFY(fields.count() == 1);
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldEMail));
-    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(_L("dummyemail")), 0);
+    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
     
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldEMail);
-    newField->TextStorage()->SetTextL(_L("dummyemail"));
+    newField->TextStorage()->SetTextL(field);
     QContact contact;
     QContactDetail* contactDetail = transformEmail->transformItemField(*newField, contact);
     const QContactEmailAddress* emailAddress(static_cast<const QContactEmailAddress*>(contactDetail));
-    QCOMPARE(emailAddress->emailAddress(), QString("dummyemail"));
+    QCOMPARE(emailAddress->emailAddress(), detail);
         
     delete contactDetail;
     delete newField;
     delete transformEmail;
 }
 
-void TestTransformContactData::executeTransformName()
+void TestTransformContactData::validateTransformName(TPtrC16 prefixField, QString prefixDetail,
+                           TPtrC16 firstnameField, QString firstnameDetail,
+                           TPtrC16 middlenameField, QString middlenameDetail,
+                           TPtrC16 lastnameField, QString lastnameDetail,
+                           TPtrC16 suffixField, QString suffixDetail)
 {
     TransformContactData* transformName = new TransformName();
     QVERIFY(transformName != 0);
@@ -91,75 +127,75 @@ void TestTransformContactData::executeTransformName()
     validateContexts(transformName);
     
     QContactName name;
-    name.setPrefix("dummyprefix");
-    name.setFirst("dummyfirst");
-    name.setLast("dummylast");
-    name.setMiddle("dummymiddle");
-    name.setSuffix("dummysuffix");
+    name.setPrefix(prefixDetail);
+    name.setFirst(firstnameDetail);
+    name.setLast(lastnameDetail);
+    name.setMiddle(middlenameDetail);
+    name.setSuffix(suffixDetail);
     QList<CContactItemField *> fields = transformName->transformDetailL(name);
     QVERIFY(fields.count() == 5);
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldPrefixName));
-    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(_L("dummyprefix")), 0);
+    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(prefixField), 0);
     QVERIFY(fields.at(1)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(1)->ContentType().ContainsFieldType(KUidContactFieldGivenName));
-    QCOMPARE(fields.at(1)->TextStorage()->Text().CompareF(_L("dummyfirst")), 0);
+    QCOMPARE(fields.at(1)->TextStorage()->Text().CompareF(firstnameField), 0);
     QVERIFY(fields.at(2)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(2)->ContentType().ContainsFieldType(KUidContactFieldAdditionalName));
-    QCOMPARE(fields.at(2)->TextStorage()->Text().CompareF(_L("dummymiddle")), 0);
+    QCOMPARE(fields.at(2)->TextStorage()->Text().CompareF(middlenameField), 0);
     QVERIFY(fields.at(3)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(3)->ContentType().ContainsFieldType(KUidContactFieldFamilyName));
-    QCOMPARE(fields.at(3)->TextStorage()->Text().CompareF(_L("dummylast")), 0);
+    QCOMPARE(fields.at(3)->TextStorage()->Text().CompareF(lastnameField), 0);
     QVERIFY(fields.at(4)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(4)->ContentType().ContainsFieldType(KUidContactFieldSuffixName));
-    QCOMPARE(fields.at(4)->TextStorage()->Text().CompareF(_L("dummysuffix")), 0);
-
+    QCOMPARE(fields.at(4)->TextStorage()->Text().CompareF(suffixField), 0);
+    
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPrefixName);
-    newField->TextStorage()->SetTextL(_L("dummyprefix"));
+    newField->TextStorage()->SetTextL(prefixField);
     QContact contact;
     QContactDetail* contactDetail = transformName->transformItemField(*newField, contact);
     const QContactName* nameInfo1(static_cast<const QContactName*>(contactDetail));
-    QCOMPARE(nameInfo1->prefix(), QString("dummyprefix"));
+    QCOMPARE(nameInfo1->prefix(), prefixDetail);
     delete contactDetail;
     contactDetail = 0;
     delete newField;
     newField = 0;
     
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldGivenName);
-    newField->TextStorage()->SetTextL(_L("dummyfirst"));
+    newField->TextStorage()->SetTextL(firstnameField);
     contactDetail = transformName->transformItemField(*newField, contact);
     const QContactName* nameInfo2(static_cast<const QContactName*>(contactDetail));
-    QCOMPARE(nameInfo2->first(), QString("dummyfirst"));
+    QCOMPARE(nameInfo2->first(), firstnameDetail);
     delete contactDetail;
     contactDetail = 0;
     delete newField;
     newField = 0;
-
+    
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldAdditionalName);
-    newField->TextStorage()->SetTextL(_L("dummymiddle"));
+    newField->TextStorage()->SetTextL(middlenameField);
     contactDetail = transformName->transformItemField(*newField, contact);
     const QContactName* nameInfo3(static_cast<const QContactName*>(contactDetail));
-    QCOMPARE(nameInfo3->middle(), QString("dummymiddle"));
+    QCOMPARE(nameInfo3->middle(), middlenameDetail);
     delete contactDetail;
     contactDetail = 0;
     delete newField;
     newField = 0;
     
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldFamilyName);
-    newField->TextStorage()->SetTextL(_L("dummylast"));
+    newField->TextStorage()->SetTextL(lastnameField);
     contactDetail = transformName->transformItemField(*newField, contact);
     const QContactName* nameInfo4(static_cast<const QContactName*>(contactDetail));
-    QCOMPARE(nameInfo4->last(), QString("dummylast"));
+    QCOMPARE(nameInfo4->last(), lastnameDetail);
     delete contactDetail;
     contactDetail = 0;
     delete newField;
     newField = 0;
     
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldSuffixName);
-    newField->TextStorage()->SetTextL(_L("dummysuffix"));
+    newField->TextStorage()->SetTextL(suffixField);
     contactDetail = transformName->transformItemField(*newField, contact);
     const QContactName* nameInfo5(static_cast<const QContactName*>(contactDetail));
-    QCOMPARE(nameInfo5->suffix(), QString("dummysuffix"));
+    QCOMPARE(nameInfo5->suffix(), suffixDetail);
     delete contactDetail;
     contactDetail = 0;
     delete newField;
@@ -168,7 +204,7 @@ void TestTransformContactData::executeTransformName()
     delete transformName;
 }
 
-void TestTransformContactData::executeTransformNickname()
+void TestTransformContactData::validateTransformNickname(TPtrC16 field, QString detail)
 {
     TransformContactData* transformNickname = new TransformNickname();
     QVERIFY(transformNickname != 0);
@@ -178,26 +214,26 @@ void TestTransformContactData::executeTransformNickname()
     validateContexts(transformNickname);
     
     QContactNickname nickname;
-    nickname.setNickname("dummynickname");
+    nickname.setNickname(detail);
     QList<CContactItemField *> fields = transformNickname->transformDetailL(nickname);
     QVERIFY(fields.count() == 1);
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldSecondName));
-    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(_L("dummynickname")), 0);
+    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
     
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldSecondName);
-    newField->TextStorage()->SetTextL(_L("dummynickname"));
+    newField->TextStorage()->SetTextL(field);
     QContact contact;
     QContactDetail* contactDetail = transformNickname->transformItemField(*newField, contact);
     const QContactNickname* nicknameInfo(static_cast<const QContactNickname*>(contactDetail));
-    QCOMPARE(nicknameInfo->nickname(), QString("dummynickname"));
+    QCOMPARE(nicknameInfo->nickname(), detail);
         
     delete contactDetail;
     delete newField;
     delete transformNickname;
 }
 
-void TestTransformContactData::executeTransformPhonenumber()
+void TestTransformContactData::validateTransformPhonenumber(TPtrC16 field, QString detail)
 {
     TransformContactData* transformPhoneNumber = new TransformPhoneNumber();
     QVERIFY(transformPhoneNumber != 0);
@@ -211,23 +247,23 @@ void TestTransformContactData::executeTransformPhonenumber()
     validateContexts(transformPhoneNumber);
     
     QContactPhoneNumber phoneNumber;
-    phoneNumber.setNumber("dummyphonenumber");
+    phoneNumber.setNumber(detail);
     QList<CContactItemField *> fields = transformPhoneNumber->transformDetailL(phoneNumber);
     QVERIFY(fields.count() == 1);
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldPhoneNumber));
-    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(_L("dummyphonenumber")), 0);
+    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
     
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPhoneNumber);
-    newField->TextStorage()->SetTextL(_L("dummyphonenumber"));
+    newField->TextStorage()->SetTextL(field);
     QContact contact;
     QContactDetail* contactDetail = transformPhoneNumber->transformItemField(*newField, contact);
     const QContactPhoneNumber* phoneNumberInfo(static_cast<const QContactPhoneNumber*>(contactDetail));
-    QCOMPARE(phoneNumberInfo->number(), QString("dummyphonenumber"));
+    QCOMPARE(phoneNumberInfo->number(), detail);
         
     delete contactDetail;
     delete newField;
-    delete transformPhoneNumber;
+    delete transformPhoneNumber; 
 }
 
 void TestTransformContactData::validateContexts(TransformContactData* transformContactData) const

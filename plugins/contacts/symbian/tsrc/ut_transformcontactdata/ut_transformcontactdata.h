@@ -51,5 +51,13 @@ private slots:
 	void executeTransformPhonenumber();
 	
 private:
+    void validateTransformEmail(TPtrC16 field, QString detail);
+    void validateTransformName(TPtrC16 prefixField, QString prefixDetail,
+                               TPtrC16 firstnameField, QString firstnameDetail,
+                               TPtrC16 middlenameField, QString middlenameDetail,
+                               TPtrC16 lastnameField, QString lastnameDetail,
+                               TPtrC16 suffixField, QString suffixDetail);
+    void validateTransformNickname(TPtrC16 field, QString detail);
+    void validateTransformPhonenumber(TPtrC16 field, QString detail);
     void validateContexts(TransformContactData* transformContactData) const; 
 };
