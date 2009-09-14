@@ -105,7 +105,7 @@ QContactFilter::~QContactFilter()
 QContactFilter::FilterType QContactFilter::type() const
 {
     if (!d_ptr)
-        return QContactFilter::Default;
+        return QContactFilter::DefaultFilter;
     return d_ptr->type();
 }
 
@@ -158,14 +158,14 @@ const QContactFilter operator&&(const QContactFilter& left, const QContactFilter
 /*! Unions the \a left and \a right filters */
 const QContactFilter operator||(const QContactFilter& left, const QContactFilter& right)
 {
-    if (left.type() == QContactFilter::Union) {
+    if (left.type() == QContactFilter::UnionFilter) {
         QContactUnionFilter bf(left);
         /* we can just add the right to this one */
         bf.append(right);
         return bf;
     }
 
-    if (right.type() == QContactFilter::Union) {
+    if (right.type() == QContactFilter::UnionFilter) {
         QContactUnionFilter bf(right);
         /* we can prepend the left to this one */
         bf.prepend(left);

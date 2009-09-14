@@ -190,7 +190,7 @@ QList<QUniqueId> QContactManagerEngine::contacts(const QContactFilter& filter, c
     if (error != QContactManager::NoError)
         return ret;
 
-    if (filter.type() == QContactFilter::Default)
+    if (filter.type() == QContactFilter::DefaultFilter)
         return all;
 
     for (int j = 0; j < all.count(); j++) {
@@ -1249,13 +1249,13 @@ int QContactManagerEngine::compareVariant(const QVariant& first, const QVariant&
 bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QContact &contact)
 {
     switch(filter.type()) {
-        case QContactFilter::Invalid:
+        case QContactFilter::InvalidFilter:
             return false;
 
-        case QContactFilter::Default:
+        case QContactFilter::DefaultFilter:
             return true;
 
-        case QContactFilter::IdList:
+        case QContactFilter::IdListFilter:
             {
                 const QContactIdListFilter idf(filter);
                 if (idf.ids().contains(contact.id()))
@@ -1264,7 +1264,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
             // Fall through to end
             break;
 
-        case QContactFilter::ContactDetail:
+        case QContactFilter::ContactDetailFilter:
             {
                 const QContactDetailFilter cdf(filter);
                 if (cdf.detailDefinitionName().isEmpty())
@@ -1334,7 +1334,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
             }
             break;
 
-        case QContactFilter::ContactDetailRange:
+        case QContactFilter::ContactDetailRangeFilter:
             {
                 const QContactDetailRangeFilter cdf(filter);
                 if (cdf.detailDefinitionName().isEmpty())
@@ -1425,7 +1425,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
             }
             break;
 
-        case QContactFilter::GroupMembership:
+        case QContactFilter::GroupMembershipFilter:
             {
                 // check the specified group for membership.
                 const QContactGroupMembershipFilter cgf(filter);
@@ -1437,7 +1437,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
             }
             break;
 
-        case QContactFilter::ChangeLog:
+        case QContactFilter::ChangeLogFilter:
             {
                 QContactChangeLogFilter ccf(filter);
 
@@ -1458,7 +1458,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
             }
             break;
 
-        case QContactFilter::Action:
+        case QContactFilter::ActionFilter:
             {
                 // Find any matching actions, and do a union filter on their filter objects
                 QContactActionFilter af(filter);
@@ -1485,7 +1485,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
             }
             break;
 
-        case QContactFilter::Intersection:
+        case QContactFilter::IntersectionFilter:
             {
                 /* XXX In theory we could reorder the terms to put the native tests first */
                 const QContactIntersectionFilter bf(filter);
@@ -1502,7 +1502,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
             }
             break;
 
-        case QContactFilter::Union:
+        case QContactFilter::UnionFilter:
             {
                 /* XXX In theory we could reorder the terms to put the native tests first */
                 const QContactUnionFilter bf(filter);
@@ -1539,11 +1539,11 @@ bool QContactManagerEngine::validateActionFilter(const QContactFilter& filter)
 
     while(toVerify.count() > 0) {
         QContactFilter f = toVerify.takeFirst();
-        if (f.type() == QContactFilter::Action)
+        if (f.type() == QContactFilter::ActionFilter)
             return false;
-        if (f.type() == QContactFilter::Intersection)
+        if (f.type() == QContactFilter::IntersectionFilter)
             toVerify.append(QContactIntersectionFilter(f).filters());
-        if (f.type() == QContactFilter::Union)
+        if (f.type() == QContactFilter::UnionFilter)
             toVerify.append(QContactUnionFilter(f).filters());
     }
 

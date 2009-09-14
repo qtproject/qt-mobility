@@ -58,16 +58,16 @@ public:
     QContactFilter& operator=(const QContactFilter& other);
 
     enum FilterType {
-        Invalid,
-        ContactDetail,
-        ContactDetailRange,
-        ChangeLog,
-        Action,
-        GroupMembership,
-        Intersection,
-        Union,
-        Default,
-        IdList
+        InvalidFilter,
+        ContactDetailFilter,
+        ContactDetailRangeFilter,
+        ChangeLogFilter,
+        ActionFilter,
+        GroupMembershipFilter,
+        IntersectionFilter,
+        UnionFilter,
+        IdListFilter,
+        DefaultFilter
     };
 
     FilterType type() const;

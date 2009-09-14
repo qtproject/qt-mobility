@@ -92,15 +92,15 @@ void tst_QContactFilter::classHierarchy()
 {
     /* Test "casting" up and down the hierarchy */
     QContactDetailRangeFilter drf;
-    QVERIFY(drf.type() == QContactFilter::ContactDetailRange);
+    QVERIFY(drf.type() == QContactFilter::ContactDetailRangeFilter);
     drf.setDetailDefinitionName("Frog", "Croak");
     drf.setRange(1, 20);
 
     QContactFilter f = drf;
-    QVERIFY(f.type() == QContactFilter::ContactDetailRange);
+    QVERIFY(f.type() == QContactFilter::ContactDetailRangeFilter);
 
     QContactDetailRangeFilter drf2 = f;
-    QVERIFY(drf2.type() == QContactFilter::ContactDetailRange);
+    QVERIFY(drf2.type() == QContactFilter::ContactDetailRangeFilter);
     QVERIFY(drf2.detailDefinitionName() == "Frog");
     QVERIFY(drf2.detailFieldName() == "Croak");
     QVERIFY(drf2.maxValue() == 20);
@@ -110,7 +110,7 @@ void tst_QContactFilter::classHierarchy()
     {
         QContactFilter f2 = drf2;
     }
-    QVERIFY(drf2.type() == QContactFilter::ContactDetailRange);
+    QVERIFY(drf2.type() == QContactFilter::ContactDetailRangeFilter);
     QVERIFY(drf2.detailDefinitionName() == "Frog");
     QVERIFY(drf2.detailFieldName() == "Croak");
     QVERIFY(drf2.maxValue() == 20);
@@ -122,7 +122,7 @@ void tst_QContactFilter::classHierarchy()
         QVERIFY(rf2.detailDefinitionName() == "Toad");
         QVERIFY(drf2.detailDefinitionName() == "Frog");
     }
-    QVERIFY(drf2.type() == QContactFilter::ContactDetailRange);
+    QVERIFY(drf2.type() == QContactFilter::ContactDetailRangeFilter);
     QVERIFY(drf2.detailDefinitionName() == "Frog");
     QVERIFY(drf2.detailFieldName() == "Croak");
     QVERIFY(drf2.maxValue() == 20);
@@ -131,28 +131,28 @@ void tst_QContactFilter::classHierarchy()
     /* Try creating a default filter and making sure we don't break */
     QContactFilter deff, deff2;
 
-    QVERIFY(deff.type() == QContactFilter::Default);
+    QVERIFY(deff.type() == QContactFilter::DefaultFilter);
     QVERIFY(deff == deff);
     QVERIFY(deff == deff2);
     QVERIFY(deff != drf2);
     QVERIFY(drf2 != deff);
 
     QContactFilter fdeff = deff;
-    QVERIFY(fdeff.type() == QContactFilter::Default);
+    QVERIFY(fdeff.type() == QContactFilter::DefaultFilter);
     QVERIFY(fdeff == deff);
     QVERIFY(fdeff == deff2);
 
     /* Now some "invalid" filters */
     QContactInvalidFilter iff, iff2;
 
-    QVERIFY(iff.type() == QContactFilter::Invalid);
+    QVERIFY(iff.type() == QContactFilter::InvalidFilter);
     QVERIFY(iff == iff);
     QVERIFY(iff == iff2);
     QVERIFY(iff != drf2);
     QVERIFY(drf2 != iff);
 
     QContactFilter fiff = iff;
-    QVERIFY(fiff.type() == QContactFilter::Invalid);
+    QVERIFY(fiff.type() == QContactFilter::InvalidFilter);
     QVERIFY(fiff == iff);
     QVERIFY(fiff == iff2);
 
@@ -180,7 +180,7 @@ void tst_QContactFilter::intersectionFilter()
     QVERIFY(bf == f);
 
     QContactFilter f2 = bf && df3;
-    QVERIFY(f2.type() == QContactFilter::Intersection);
+    QVERIFY(f2.type() == QContactFilter::IntersectionFilter);
     QContactIntersectionFilter bf2 = f2;
     QVERIFY(bf2 == f2);
     QCOMPARE(bf2.filters().count(), 2);
@@ -188,7 +188,7 @@ void tst_QContactFilter::intersectionFilter()
     QVERIFY(bf2.filters().at(1) == df3);
 
     f2 = df3 && bf;
-    QVERIFY(f2.type() == QContactFilter::Intersection);
+    QVERIFY(f2.type() == QContactFilter::IntersectionFilter);
     bf2 = f2;
     QVERIFY(bf2 == f2);
     QCOMPARE(bf2.filters().count(), 2);
@@ -199,7 +199,7 @@ void tst_QContactFilter::intersectionFilter()
     QList<QContactFilter> filterList = bf2.filters();
 
     f2 = df && df2 && df3;
-    QVERIFY(f2.type() == QContactFilter::Intersection);
+    QVERIFY(f2.type() == QContactFilter::IntersectionFilter);
     bf2 = f2;
     QVERIFY(bf2 == f2);
     QCOMPARE(bf2.filters().count(), 2);
@@ -267,7 +267,7 @@ void tst_QContactFilter::unionFilter()
     QVERIFY(bf == f);
 
     QContactFilter f2 = bf || df3;
-    QVERIFY(f2.type() == QContactFilter::Union);
+    QVERIFY(f2.type() == QContactFilter::UnionFilter);
     QContactUnionFilter bf2 = f2;
     QVERIFY(bf2 == f2);
     QCOMPARE(bf2.filters().count(), 3);
@@ -276,7 +276,7 @@ void tst_QContactFilter::unionFilter()
     QVERIFY(bf2.filters().at(2) == df3);
 
     f2 = df3 || bf;
-    QVERIFY(f2.type() == QContactFilter::Union);
+    QVERIFY(f2.type() == QContactFilter::UnionFilter);
     bf2 = f2;
     QVERIFY(bf2 == f2);
     QCOMPARE(bf2.filters().count(), 3);
@@ -288,7 +288,7 @@ void tst_QContactFilter::unionFilter()
     QList<QContactFilter> filterList = bf2.filters();
 
     f2 = df || df2 || df3;
-    QVERIFY(f2.type() == QContactFilter::Union);
+    QVERIFY(f2.type() == QContactFilter::UnionFilter);
     bf2 = f2;
     QVERIFY(bf2 == f2);
     QCOMPARE(bf2.filters().count(), 3);
@@ -345,7 +345,7 @@ void tst_QContactFilter::actionFilter()
     QContactActionFilter af;
 
     /* Test initial conditions */
-    QVERIFY(af.type() == QContactFilter::Action);
+    QVERIFY(af.type() == QContactFilter::ActionFilter);
     QVERIFY(af.actionName().isEmpty());
     QVERIFY(af.value().isNull());
     QVERIFY(af.vendorName().isEmpty());
@@ -417,16 +417,16 @@ void tst_QContactFilter::changeLogFilter()
     QContactChangeLogFilter cfchanged(QContactChangeLogFilter::EventChanged);
     QContactChangeLogFilter cfremoved(QContactChangeLogFilter::EventRemoved);
 
-    QVERIFY(cf.type() == QContactFilter::ChangeLog);
+    QVERIFY(cf.type() == QContactFilter::ChangeLogFilter);
     QVERIFY(cf.eventType() == QContactChangeLogFilter::EventAdded);
 
-    QVERIFY(cfadded.type() == QContactFilter::ChangeLog);
+    QVERIFY(cfadded.type() == QContactFilter::ChangeLogFilter);
     QVERIFY(cfadded.eventType() == QContactChangeLogFilter::EventAdded);
 
-    QVERIFY(cfchanged.type() == QContactFilter::ChangeLog);
+    QVERIFY(cfchanged.type() == QContactFilter::ChangeLogFilter);
     QVERIFY(cfchanged.eventType() == QContactChangeLogFilter::EventChanged);
 
-    QVERIFY(cfremoved.type() == QContactFilter::ChangeLog);
+    QVERIFY(cfremoved.type() == QContactFilter::ChangeLogFilter);
     QVERIFY(cfremoved.eventType() == QContactChangeLogFilter::EventRemoved);
 
 
@@ -460,7 +460,7 @@ void tst_QContactFilter::detailFilter()
 {
     QContactDetailFilter df;
 
-    QVERIFY(df.type() == QContactFilter::ContactDetail);
+    QVERIFY(df.type() == QContactFilter::ContactDetailFilter);
 
     QVERIFY(df.detailDefinitionName().isEmpty());
     QVERIFY(df.detailFieldName().isEmpty());
@@ -504,7 +504,7 @@ void tst_QContactFilter::detailRangeFilter()
 {
     QContactDetailRangeFilter rf;
 
-    QVERIFY(rf.type() == QContactFilter::ContactDetailRange);
+    QVERIFY(rf.type() == QContactFilter::ContactDetailRangeFilter);
 
     QVERIFY(rf.detailDefinitionName().isEmpty());
     QVERIFY(rf.detailFieldName().isEmpty());
@@ -594,7 +594,7 @@ void tst_QContactFilter::groupMembershipFilter()
 {
     QContactGroupMembershipFilter gf;
 
-    QVERIFY(gf.type() == QContactFilter::GroupMembership);
+    QVERIFY(gf.type() == QContactFilter::GroupMembershipFilter);
 
     QVERIFY(gf.groupId() == 0);
 
@@ -784,10 +784,10 @@ void tst_QContactFilter::sortObject()
 void tst_QContactFilter::boringFilters()
 {
     QContactFilter all;
-    QVERIFY(all.type() == QContactFilter::Default);
+    QVERIFY(all.type() == QContactFilter::DefaultFilter);
 
     QContactInvalidFilter invalid;
-    QVERIFY(invalid.type() == QContactFilter::Invalid);
+    QVERIFY(invalid.type() == QContactFilter::InvalidFilter);
 
     QVERIFY(all != invalid);
     QVERIFY(!(all == invalid));
@@ -823,7 +823,7 @@ void tst_QContactFilter::idListFilter()
 {
     QContactIdListFilter idf;
 
-    QVERIFY(idf.type() == QContactFilter::IdList);
+    QVERIFY(idf.type() == QContactFilter::IdListFilter);
 
     QVERIFY(idf.ids().count() == 0);
 

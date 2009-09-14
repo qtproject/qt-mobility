@@ -62,7 +62,7 @@ public:
 
     QContactFilter::FilterType type() const
     {
-        return QContactFilter::Invalid;
+        return QContactFilter::InvalidFilter;
     }
 
     QList<QContactFilter> m_filters;
