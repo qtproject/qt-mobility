@@ -2,7 +2,7 @@ Source: libbearer
 Priority: optional
 Maintainer: Jukka Rissanen <jukka.rissanen@nokia.com>
 Build-Depends: debhelper (>= 7.0.17), qt4-dev-tools (>= 4.5),
- libqt4-dev (>= 4.5), libdui-dev (>= 0.8), icd2-dev, icd2-osso-ic-dev,
+ libqt4-dev (>= 4.5), icd2-dev, icd2-osso-ic-dev,
  libconninet0-dev (>= 0.15), libicd-network-wlan-dev, osso-wlan-dev
 Standards-Version: 3.7.2
 Section: net
