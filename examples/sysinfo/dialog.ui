@@ -221,7 +221,7 @@
        <string>Device</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_6">
-       <item row="0" column="0">
+       <item row="0" column="0" colspan="2">
         <widget class="QProgressBar" name="batteryLevelBar">
          <property name="maximum">
           <number>100</number>
@@ -231,58 +231,55 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="3" rowspan="4" colspan="2">
+       <item row="0" column="2" rowspan="4" colspan="2">
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
           <string>Power state</string>
          </property>
-         <widget class="QRadioButton" name="radioButton_3">
-          <property name="geometry">
-           <rect>
-            <x>50</x>
-            <y>100</y>
-            <width>101</width>
-            <height>24</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Wall Power</string>
-          </property>
-         </widget>
-         <widget class="QRadioButton" name="radioButton">
-          <property name="geometry">
-           <rect>
-            <x>50</x>
-            <y>20</y>
-            <width>151</width>
-            <height>24</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Unknown Power</string>
-          </property>
-         </widget>
-         <widget class="QRadioButton" name="radioButton_2">
-          <property name="geometry">
-           <rect>
-            <x>50</x>
-            <y>60</y>
-            <width>121</width>
-            <height>24</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Battery Power</string>
-          </property>
-         </widget>
+         <layout class="QGridLayout" name="gridLayout_8">
+          <item row="0" column="0">
+           <widget class="QRadioButton" name="radioButton">
+            <property name="text">
+             <string>Unknown Power</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QRadioButton" name="radioButton_2">
+            <property name="text">
+             <string>Battery Power</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QRadioButton" name="radioButton_3">
+            <property name="text">
+             <string>Wall Power</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QRadioButton" name="radioButton_4">
+            <property name="text">
+             <string>Wall Power charging Battery</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="QCheckBox" name="batteryChargingCheckBox">
-         <property name="text">
-          <string>Battery Charging</string>
+       <item row="1" column="0" colspan="2">
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
          </property>
-        </widget>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>298</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="label_18">
@@ -319,7 +316,7 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="1" colspan="2">
+       <item row="4" column="1">
         <widget class="QLabel" name="manufacturerLabel">
          <property name="text">
           <string>TextLabel</string>
@@ -333,7 +330,7 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="1" colspan="2">
+       <item row="5" column="1">
         <widget class="QLabel" name="modelLabel">
          <property name="text">
           <string>TextLabel</string>
@@ -347,7 +344,7 @@
          </property>
         </widget>
        </item>
-       <item row="6" column="1" colspan="2">
+       <item row="6" column="1">
         <widget class="QLabel" name="productLabel">
          <property name="text">
           <string>TextLabel</string>
@@ -368,7 +365,7 @@
          </property>
         </widget>
        </item>
-       <item row="8" column="1" colspan="3">
+       <item row="8" column="1" colspan="2">
         <widget class="QComboBox" name="simComboBox">
          <item>
           <property name="text">
@@ -392,7 +389,7 @@
          </item>
         </widget>
        </item>
-       <item row="8" column="4">
+       <item row="8" column="3">
         <spacer name="horizontalSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -412,7 +409,7 @@
          </property>
         </widget>
        </item>
-       <item row="9" column="1" colspan="3">
+       <item row="9" column="1" colspan="2">
         <widget class="QComboBox" name="profileComboBox">
          <item>
           <property name="text">
