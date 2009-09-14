@@ -2162,7 +2162,7 @@ void SharedMemoryLayer::readyRead()
                 break;
             case SHMLAYER_NOTIFY:
                 {
-                    unsigned int owner;
+                    unsigned long owner;
                     QByteArray path;
                     bool interested;
                     pack >> owner >> path >> interested;
