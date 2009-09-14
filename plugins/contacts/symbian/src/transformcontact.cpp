@@ -100,6 +100,9 @@ void TransformContact::transformContactL(
         QContact &contact,
         CContactItem &contactItem) const
 {
+	//Create a new fieldSet
+	CContactItemFieldSet *fieldSet = CContactItemFieldSet::NewLC();
+	
 	// Copy all fields to the Symbian contact.
 	QList<QContactDetail> detailList(contact.details());
 	
@@ -113,10 +116,13 @@ void TransformContact::transformContactL(
 		
 		for (int i = 0; i < fieldCount; i++)
         {
-			//transform ownership of field
-		    contactItem.AddFieldL(*fieldList.at(i));
+			//Add field to fieldSet
+			fieldSet->AddL(*fieldList.at(i));
 		}
 	}
+	
+	contactItem.UpdateFieldSet(fieldSet);
+	CleanupStack::Pop(fieldSet);
 }
 
 QList<CContactItemField *> TransformContact::transformDetailL(const QContactDetail &detail) const
