@@ -26,5 +26,3 @@ INCLUDEPATH += /usr/include/qt4/QtContacts
 
 target.path = /usr/lib/qt4/plugins/contacts
 INSTALLS += target
-
-
