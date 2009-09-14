@@ -48,22 +48,14 @@ class QTCONTACTS_EXPORT QContactManagerInfo
 {
 public:
     enum ManagerFeature {
-        Synchronous = 0,
-        Asynchronous,
-        Groups,
-        Locking,
-        Batch,
+        Groups = 0,
         ActionPreferences,
-        ReadOnlyDetails,
-        CreateOnlyDetails,
         MutableDefinitions,
-        NativeFiltering,
-        NativeSorting,
-        ExternalNotifications
+        Anonymous
     };
 
     bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;
-    virtual bool filterSupported(const QContactFilter& filter) const;
+    bool filterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
 
 private:
