@@ -9,6 +9,7 @@ Rectangle {
     Rectangle {
         id: ServiceSelectionBox
         property variant service: 0
+
         height: childrenRect.height + 10; width: childrenRect.width
         anchors.top: parent.top; anchors.left: parent.left; anchors.right: screen.left
         anchors.topMargin: 5; anchors.leftMargin: 5; anchors.rightMargin: 5
@@ -77,7 +78,6 @@ Rectangle {
                 highlight: Highlight
                 currentIndex: 0
                 clip: true
-
             }
         }
     }

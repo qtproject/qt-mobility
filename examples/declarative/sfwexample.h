@@ -37,7 +37,7 @@
 #include <qml.h>
 
 
-Q_DECLARE_METATYPE(QServiceInterfaceDescriptor);
+Q_DECLARE_METATYPE(QServiceInterfaceDescriptor)
 
 
 class ServiceWrapper : public QObject {
@@ -76,7 +76,7 @@ private:
     QObject* serviceInstance;
 };
 
-QML_DECLARE_TYPE(ServiceWrapper);
+QML_DECLARE_TYPE(ServiceWrapper)
 
 class ServiceRegister : public QObject{
     Q_OBJECT

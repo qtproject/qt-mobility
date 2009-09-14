@@ -41,7 +41,6 @@
 
 QObject* LandlineDialerPlugin::createInstance(const QServiceInterfaceDescriptor& descriptor, QServiceContext* context, QAbstractSecuritySession* session)
 {
-    Q_UNUSED(descriptor);
     Q_UNUSED(context);
     Q_UNUSED(session);
     if (descriptor.majorVersion() == 1)

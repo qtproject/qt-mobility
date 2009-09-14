@@ -190,22 +190,22 @@ private slots:
 
 /*!
     \class QServiceManager
-    \brief The QServiceManager class enables the loading of service plugins 
+    \brief The QServiceManager class enables the loading of service plugins
     and the (de)registration of services.
 
-    A service is a stand-alone component that can be used by multiple clients. 
-    Each service implementation must derive from QObject. Clients request a 
+    A service is a stand-alone component that can be used by multiple clients.
+    Each service implementation must derive from QObject. Clients request a
     reference to a service via \l loadInterface() or \l getInterface().
 
-    Services are separate deliveries in the form of plug-ins. New services can be (de)registered 
-    at any time via \l addService() and \l removeService() respectively. Such an event is 
+    Services are separate deliveries in the form of plug-ins. New services can be (de)registered
+    at any time via \l addService() and \l removeService() respectively. Such an event is
     published via the \l serviceAdded() and \l serviceRemoved() signal.
     Each service plug-in must implement QServicePluginInterface.
 
-    Each plug-in may support multiple interfaces and may even provide multiple implementations 
-    for the same interface. Individual implementations are identified via 
+    Each plug-in may support multiple interfaces and may even provide multiple implementations
+    for the same interface. Individual implementations are identified via
     QServiceInterfaceDescriptor. For a more detailed explanation of services and how they relate to
-    interface and their implementations please see QServiceInterfaceDescriptor.  
+    interface and their implementations please see QServiceInterfaceDescriptor.
  
     \sa QServicePluginInterface, QServiceContext, QAbstractSecuritySession
 */
@@ -259,7 +259,7 @@ private slots:
 /*!
     \fn void QServiceManager::serviceRemoved(const QString& serviceName, QServiceManager::Scope scope)
 
-    This signal is emited whenever a service with the given 
+    This signal is emited whenever a service with the given
     \a serviceName has been deregistered with the service manager.
     \a scope indicates where the service was added.
 
@@ -353,13 +353,13 @@ QList<QServiceInterfaceDescriptor> QServiceManager::findInterfaces(const QString
 /*!
     Loads and returns the interface specified by \a interfaceName, as
     provided by the default service for this interface, using the given
-    \a context and \a session. \a context and \a session object are owned 
+    \a context and \a session. \a context and \a session object are owned
     by the caller of this function.
 
     The caller takes ownership of the returned pointer.
-    
+
     This function returns a null pointer if the requested service cannot be found.
-    
+
     The security session object is not mandatory. If the session pointer is null,
     the service manager will not perform any checks. Therefore it is assumed that
     the service manager client is trusted as it controls whether service capabilities
@@ -372,13 +372,13 @@ QObject* QServiceManager::loadInterface(const QString& interfaceName, QServiceCo
 
 /*!
     Loads and returns the interface specified by \a descriptor using the
-    given \a context and \a session. \a context and \a session object are owned 
+    given \a context and \a session. \a context and \a session object are owned
     by the caller of this function.
 
     The caller takes ownership of the returned pointer.
 
     This function returns a null pointer if the requested service cannot be found.
-    
+
     The security session object is not mandatory. If the session pointer is null,
     the service manager will not perform any checks. Therefore it is assumed that
     the service manager client is trusted as it controls whether service capabilities
@@ -407,7 +407,7 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
 
     QPluginLoader *loader = new QPluginLoader(serviceFilePath);
     //pluginIFace is same for all service instances of the same plugin
-    //calling loader->unload deletes pluginIFace automatically if now other 
+    //calling loader->unload deletes pluginIFace automatically if now other
     //service instance is around
     QServicePluginInterface *pluginIFace = qobject_cast<QServicePluginInterface *>(loader->instance());
     if (pluginIFace) {
@@ -431,13 +431,13 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
 
     Loads the service object implementing \a interfaceName,
     as provided by the default service for this interface, using the given
-    \a context and \a session. \a context and \a session object are owned 
+    \a context and \a session. \a context and \a session object are owned
     by the caller of this function. The template class must be derived from QObject.
 
     If \a interfaceName is not a known interface the returned pointer will be null.
 
     The caller takes ownership of the returned pointer.
-    
+
     The security session object is not mandatory. If the session pointer is null,
     the service manager will not perform any checks. Therefore it is assumed that
     the service manager client is trusted as it controls whether service capabilities
@@ -449,14 +449,13 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     \fn T* QServiceManager::getInterface(const QServiceInterfaceDescriptor& serviceDescriptor, QServiceContext* context, QAbstractSecuritySession* session)
 
     Loads the service object identified by \a serviceDescriptor
-    using the given \a context and \a session. \a context and \a session object are owned 
+    using the given \a context and \a session. \a context and \a session object are owned
     by the caller of this function. The template class must be derived from QObject.
-
 
     If the \a serviceDescriptor is not valid the returned pointer will be null.
 
     The caller takes ownership of the returned pointer.
-    
+
     The security session object is not mandatory. If the session pointer is null,
     the service manager will not perform any checks. Therefore it is assumed that
     the service manager client is trusted as it controls whether service capabilities
@@ -502,8 +501,8 @@ bool QServiceManager::addService(const QString& xmlFilePath)
     with the same plugin file path.  A service plugin also cannot be added if
     the service is already registered and implements any of the same interface
     versions that the new plugin implements.
-    
-    Services are always added based on the \l scope() of the current 
+
+    Services are always added based on the \l scope() of the current
     service manager instance.
 
     \sa removeService(), setInterfaceDefault()
@@ -547,13 +546,13 @@ bool QServiceManager::addService(QIODevice *device)
 
     If a default service implementation is removed and there are other implementations
     for the same interface, the service manager chooses the implementation with the
-    highest version number as the new default.  If there is more than one serivce 
-    with the same version number, the service manager makes a random choice with 
-    regards to the new default implementation. If this is 
+    highest version number as the new default.  If there is more than one serivce
+    with the same version number, the service manager makes a random choice with
+    regards to the new default implementation. If this is
     not the desired behaviour the default selection should be updated
     via setInterfaceDefault().
 
-    Services are always removed based on the \l scope() of the current 
+    Services are always removed based on the \l scope() of the current
     service manager instance.
 
     \sa addService()
