@@ -233,7 +233,6 @@ void QNetworkSessionPrivate::stop()
 void QNetworkSessionPrivate::migrate()
 {
     qWarning("This platform does not support roaming (%s).", __FUNCTION__);
-    //qFatal("Function not implemented at %s.", __FUNCTION__);
 }
 
 void QNetworkSessionPrivate::accept()
