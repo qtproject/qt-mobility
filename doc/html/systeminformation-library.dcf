@@ -19,6 +19,7 @@
         <keyword ref="qsystemdeviceinfo.html#InputMethod-enum">QSystemDeviceInfo::SingleTouch</keyword>
         <keyword ref="qsystemdeviceinfo.html#PowerState-enum">PowerState</keyword>
         <keyword ref="qsystemdeviceinfo.html#PowerState-enum">QSystemDeviceInfo::UnknownPower</keyword>
+        <keyword ref="qsystemdeviceinfo.html#PowerState-enum">QSystemDeviceInfo::WallPowerCharging</keyword>
         <keyword ref="qsystemdeviceinfo.html#PowerState-enum">QSystemDeviceInfo::WallPower</keyword>
         <keyword ref="qsystemdeviceinfo.html#PowerState-enum">QSystemDeviceInfo::BatteryPower</keyword>
         <keyword ref="qsystemdeviceinfo.html#Profile-enum">Profile</keyword>
@@ -48,7 +49,6 @@
         <keyword ref="qsystemdeviceinfo.html#imei">imei</keyword>
         <keyword ref="qsystemdeviceinfo.html#imsi">imsi</keyword>
         <keyword ref="qsystemdeviceinfo.html#inputMethodType">inputMethodType</keyword>
-        <keyword ref="qsystemdeviceinfo.html#isBatteryCharging">isBatteryCharging</keyword>
         <keyword ref="qsystemdeviceinfo.html#isDeviceLocked">isDeviceLocked</keyword>
         <keyword ref="qsystemdeviceinfo.html#manufacturer">manufacturer</keyword>
         <keyword ref="qsystemdeviceinfo.html#model">model</keyword>

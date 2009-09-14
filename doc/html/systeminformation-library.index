@@ -176,6 +176,7 @@
                 <value name="UnknownPower" value="0"/>
                 <value name="BatteryPower" value="1"/>
                 <value name="WallPower" value="2"/>
+                <value name="WallPowerCharging" value="3"/>
             </enum>
             <enum access="public" threadsafety="unspecified" status="commendable" name="InputMethod" fullname="QSystemDeviceInfo::InputMethod" href="qsystemdeviceinfo.html#InputMethod-enum" location="qsysteminfo.h" typedef="QSystemDeviceInfo::InputMethodFlags">
                 <value name="Keys" value="0x0000001"/>
@@ -194,7 +195,6 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="productName" fullname="QSystemDeviceInfo::productName" href="qsystemdeviceinfo.html#productName" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QString" signature="productName()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="batteryLevel" fullname="QSystemDeviceInfo::batteryLevel" href="qsystemdeviceinfo.html#batteryLevel" location="qsysteminfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="batteryLevel() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="batteryStatus" fullname="QSystemDeviceInfo::batteryStatus" href="qsystemdeviceinfo.html#batteryStatus" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QSystemDeviceInfo::BatteryStatus" signature="batteryStatus()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isBatteryCharging" fullname="QSystemDeviceInfo::isBatteryCharging" href="qsystemdeviceinfo.html#isBatteryCharging" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="isBatteryCharging()"/>
             <enum access="public" threadsafety="unspecified" status="commendable" name="Profile" fullname="QSystemDeviceInfo::Profile" href="qsystemdeviceinfo.html#Profile-enum" location="qsysteminfo.h">
                 <value name="UnknownProfile" value="0"/>
                 <value name="SilentProfile" value="1"/>

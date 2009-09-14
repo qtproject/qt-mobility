@@ -453,11 +453,6 @@ QString QSystemDeviceInfoPrivate::productName()
     return  QString();
 }
 
-bool QSystemDeviceInfoPrivate::isBatteryCharging()
-{
-    return  false;
-}
-
 int QSystemDeviceInfoPrivate::batteryLevel() const
 {
     return 0;

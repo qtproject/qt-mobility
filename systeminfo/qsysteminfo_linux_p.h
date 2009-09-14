@@ -214,7 +214,6 @@ public:
     QSystemDeviceInfo::SimStatus simStatus();
     bool isDeviceLocked();
     QSystemDeviceInfo::Profile currentProfile();
-    bool isBatteryCharging();
 
     QSystemDeviceInfo::PowerState currentPowerState();
     void setConnection();

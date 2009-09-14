@@ -56,8 +56,6 @@ private slots:
     void tst_model();
     void tst_productName();
 
-    void tst_isBatteryCharging();
-
     void tst_batteryLevel();
     void tst_batteryStatus();
 
@@ -135,20 +133,12 @@ void tst_QSystemDeviceInfo::tst_productName()
 
 }
 
-void tst_QSystemDeviceInfo::tst_isBatteryCharging()
-{
-    QSystemDeviceInfo di;
-    QVERIFY(di.isBatteryCharging() == true
-            || di.isBatteryCharging() == false);
-
-}
-
 void tst_QSystemDeviceInfo::tst_batteryLevel()
 {
     QSystemDeviceInfo di;
     QVERIFY(di.batteryLevel() > -1);
 
-    if(di.isBatteryCharging()) {
+    if(di.currentPowerState() == QSystemDeviceInfo::WallPowerChargingBattery) {
         QSignalSpy batSpy(&di, SIGNAL(batteryLevelChanged(int)));
         QVERIFY(!batSpy.isEmpty());
         int level = batSpy.first().at(0).toInt();
@@ -170,7 +160,7 @@ void tst_QSystemDeviceInfo::tst_batteryStatus()
         QVERIFY(di.batteryStatus() == QSystemDeviceInfo::BatteryNormal);
     }
 
-    if(di.isBatteryCharging()) {
+    if(di.currentPowerState() == QSystemDeviceInfo::WallPowerChargingBattery) {
         QSignalSpy batSpy(&di, SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)));
         QVERIFY(!batSpy.isEmpty());
         QSystemDeviceInfo::BatteryStatus status = qvariant_cast<QSystemDeviceInfo::BatteryStatus>(batSpy.first().at(0));
@@ -217,7 +207,8 @@ void tst_QSystemDeviceInfo::tst_currentPowerState()
     QSystemDeviceInfo::PowerState state = di.currentPowerState();
     QVERIFY( state == QSystemDeviceInfo::UnknownPower
              || state == QSystemDeviceInfo::BatteryPower
-             || state == QSystemDeviceInfo::WallPower);
+             || state == QSystemDeviceInfo::WallPower
+             || state == QSystemDeviceInfo::WallPowerChargingBattery);
 }
 
 

@@ -1451,43 +1451,6 @@ QString QSystemDeviceInfoPrivate::productName()
     return QString();
 }
 
-bool QSystemDeviceInfoPrivate::isBatteryCharging()
-{
-    bool isCharging = false;
-    if(halIsAvailable) {
-#if !defined(QT_NO_DBUS)
-        QHalInterface iface;
-        QStringList list = iface.findDeviceByCapability("battery");
-        if(!list.isEmpty()) {
-            foreach(QString dev, list) {
-                QHalDeviceInterface ifaceDevice(dev);
-                if (iface.isValid()) {
-                    isCharging = ifaceDevice.getPropertyBool("battery.rechargeable.is_charging");
-                }
-            }
-        }
-#endif
-    }
-    QFile statefile("/proc/acpi/battery/BAT0/state");
-    if (!statefile.open(QIODevice::ReadOnly)) {
-      //  qWarning() << "Could not open /proc/acpi/battery/BAT0/state";
-    } else {
-        QTextStream batstate(&statefile);
-        QString line = batstate.readLine();
-        while (!line.isNull()) {
-            if(line.contains("charging state")) {
-                if(line.split(" ").at(1).trimmed() == "charging") {
-                    isCharging = true;
-                    break;
-                }
-            }
-            line = batstate.readLine();
-        }
-        statefile.close();
-    }
-    return isCharging;
-}
-
 int QSystemDeviceInfoPrivate::batteryLevel() const
 {
     float levelWhenFull = 0.0;
@@ -1592,7 +1555,19 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
  {
 #if !defined(QT_NO_DBUS)
         QHalInterface iface;
-        QStringList list = iface.findDeviceByCapability("ac_adapter");
+        QStringList list = iface.findDeviceByCapability("battery");
+        if(!list.isEmpty()) {
+            foreach(QString dev, list) {
+                QHalDeviceInterface ifaceDevice(dev);
+                if (iface.isValid()) {
+                    if (ifaceDevice.getPropertyBool("battery.rechargeable.is_charging")) {
+                        return QSystemDeviceInfo::WallPowerChargingBattery;
+                    }
+                }
+            }
+        }
+
+        list = iface.findDeviceByCapability("ac_adapter");
         if(!list.isEmpty()) {
             foreach(QString dev, list) {
                 QHalDeviceInterface ifaceDevice(dev);
@@ -1606,20 +1581,6 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
             }
         }
 
-//        list = iface.findDeviceByCapability("battery");
-//        if(!list.isEmpty()) {
-//            foreach(QString dev, list) {
-//                qWarning() <<"battery"<< dev;
-//                QHalDeviceInterface ifaceDevice(dev);
-//                if (ifaceDevice.isValid()) {
-//                    if(ifaceDevice.getPropertyBool("battery.rechargeable.is_discharging") ){
-//                        return QSystemDeviceInfo::BatteryPower;
-//                    } else {
-//                        return QSystemDeviceInfo::WallPower;
-//                    }
-//                }
-//            }
-//        }
 #else
         QFile statefile("/proc/acpi/battery/BAT0/state");
         if (!statefile.open(QIODevice::ReadOnly)) {
@@ -1631,6 +1592,9 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
                 if(line.contains("charging state")) {
                     if(line.split(" ").at(1).trimmed() == "discharging") {
                         return QSystemDeviceInfo::BatteryPower;
+                    }
+                    if(line.split(" ").at(1).trimmed() == "charging") {
+                        return QSystemDeviceInfo::WallPowerCharging;
                     }
                 }
             }

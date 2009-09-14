@@ -264,7 +264,8 @@ public:
     enum PowerState {
         UnknownPower = 0,
         BatteryPower,
-        WallPower
+        WallPower,
+        WallPowerChargingBattery
     };
 
 
@@ -289,8 +290,6 @@ public:
 // ????
     int batteryLevel() const; //signal
    QSystemDeviceInfo::BatteryStatus batteryStatus();
-
-   bool isBatteryCharging(); //signal
 
     enum Profile {
         UnknownProfile = 0,

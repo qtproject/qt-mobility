@@ -213,6 +213,7 @@ QT_BEGIN_NAMESPACE
     \value UnknownPower            Power error.
     \value BatteryPower            On battery power.
     \value WallPower               On wall power.
+    \value WallPowerCharging       On wall power and charging main battery.
 
   */
 /*!
@@ -705,14 +706,6 @@ QSystemDeviceInfo::BatteryStatus QSystemDeviceInfo::batteryStatus()
 }
 
 /*!
-    Returns true if the battery is charging, otherwise false.
-*/
-bool QSystemDeviceInfo::isBatteryCharging()
-{
-    return d->isBatteryCharging();
-}
-
-/*!
   \property QSystemDeviceInfo::simStatus
   \brief the status of the sim card.
   Returns the QSystemDeviceInfo::simStatus status of SIM card.
@@ -747,7 +740,7 @@ QSystemDeviceInfo::Profile QSystemDeviceInfo::currentProfile()
 */
 QSystemDeviceInfo::PowerState QSystemDeviceInfo::currentPowerState()
 {
-return d->currentPowerState();
+    return d->currentPowerState();
 }
 
 

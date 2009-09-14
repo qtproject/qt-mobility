@@ -85,7 +85,9 @@ void Dialog::setupDevice()
             this,SLOT(updatePowerState(QSystemDeviceInfo::PowerState)));
 
 
-    ui->batteryChargingCheckBox->setChecked(di->isBatteryCharging());
+    if(di->currentPowerState() == QSystemDeviceInfo::WallPowerChargingBattery) {
+        ui->batteryChargingCheckBox->setChecked(true);
+    }
 
     ui->ImeiLabel->setText(di->imei());
     ui->imsiLabel->setText(di->imsi());
@@ -384,8 +386,10 @@ void Dialog::updatePowerState(QSystemDeviceInfo::PowerState newState)
             ui->radioButton_3->setChecked(true);
         }
         break;
+    case QSystemDeviceInfo::WallPowerChargingBattery:
+        ui->batteryChargingCheckBox->setChecked(true);
+        break;
     };
-    ui->batteryChargingCheckBox->setChecked(di->isBatteryCharging());
 }
 
 void Dialog::displayBatteryStatus(QSystemDeviceInfo::BatteryStatus status)
