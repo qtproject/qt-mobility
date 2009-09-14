@@ -73,7 +73,7 @@ public:
         return true;
     }
 
-    Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactGroupMembershipFilter, QContactFilter::GroupMembership)
+    Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactGroupMembershipFilter, QContactFilter::GroupMembershipFilter)
 
     QUniqueId m_id;
 };

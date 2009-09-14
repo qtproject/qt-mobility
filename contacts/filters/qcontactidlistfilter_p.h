@@ -73,7 +73,7 @@ public:
         return true;
     }
 
-    Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactIdListFilter, QContactFilter::IdList)
+    Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactIdListFilter, QContactFilter::IdListFilter)
 
     QList<QUniqueId> m_ids;
 };

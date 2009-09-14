@@ -71,17 +71,10 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QContactDetail::operator=" href="qcontactdetail.html#operator=" location="qcontactdetail.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QContactDetail &amp;" signature="operator=(const QContactDetail &amp; other)">
                 <parameter left="const QContactDetail &amp;" right="" name="other" default=""/>
             </function>
-            <enum access="public" threadsafety="unspecified" status="commendable" name="Error" fullname="QContactDetail::Error" href="qcontactdetail.html#Error-enum" location="qcontactdetail.h">
-                <value name="NoError" value="0"/>
-                <value name="MissingValueError" value="1"/>
-                <value name="IncompatibleAssignmentError" value="2"/>
-                <value name="OutOfMemoryError" value="3"/>
-            </enum>
             <variable access="public" threadsafety="unspecified" status="commendable" name="FieldContext" fullname="QContactDetail::FieldContext" href="qcontactdetail.html#FieldContext-var" location="qcontactdetail.h" type="const char *" static="false"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="ContextHome" fullname="QContactDetail::ContextHome" href="qcontactdetail.html#ContextHome-var" location="qcontactdetail.h" type="const char *" static="false"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="ContextWork" fullname="QContactDetail::ContextWork" href="qcontactdetail.html#ContextWork-var" location="qcontactdetail.h" type="const char *" static="false"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="ContextOther" fullname="QContactDetail::ContextOther" href="qcontactdetail.html#ContextOther-var" location="qcontactdetail.h" type="const char *" static="false"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QContactDetail::error" href="qcontactdetail.html#error" location="qcontactdetail.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QContactDetail::Error" signature="error() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="operator==" fullname="QContactDetail::operator==" href="qcontactdetail.html#operator==" location="qcontactdetail.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator==(const QContactDetail &amp; other) const">
                 <parameter left="const QContactDetail &amp;" right="" name="other" default=""/>
             </function>
@@ -484,8 +477,9 @@
                 <parameter left="const QMap&lt;QString, QContactDetailDefinition::Field&gt; &amp;" right="" name="fields" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="fields" fullname="QContactDetailDefinition::fields" href="qcontactdetaildefinition.html#fields" location="qcontactdetaildefinition.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMap&lt;QString, QContactDetailDefinition::Field&gt;" signature="fields() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="fields" fullname="QContactDetailDefinition::fields" href="qcontactdetaildefinition.html#fields-2" location="qcontactdetaildefinition.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="QMap&lt;QString, QContactDetailDefinition::Field&gt; &amp;" signature="fields()"/>
             <enum access="public" threadsafety="unspecified" status="commendable" name="AccessConstraint" fullname="QContactDetailDefinition::AccessConstraint" href="qcontactdetaildefinition.html#AccessConstraint-enum" location="qcontactdetaildefinition.h">
-                <value name="Any" value="0"/>
+                <value name="NoConstraint" value="0"/>
                 <value name="ReadOnly" value="1"/>
                 <value name="CreateOnly" value="2"/>
             </enum>
@@ -786,29 +780,19 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="operator!=" fullname="QContact::operator!=" href="qcontact.html#operator!=" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator!=(const QContact &amp; other) const">
                 <parameter left="const QContact &amp;" right="" name="other" default=""/>
             </function>
-            <enum access="public" threadsafety="unspecified" status="commendable" name="Error" fullname="QContact::Error" href="qcontact.html#Error-enum" location="qcontact.h">
-                <value name="NoError" value="0"/>
-                <value name="OutOfMemoryError" value="1"/>
-                <value name="DetailDoesNotExistError" value="2"/>
-                <value name="DetailAlreadyExistsError" value="3"/>
-                <value name="BadArgumentError" value="4"/>
-                <value name="PermissionsError" value="5"/>
-                <value name="UnspecifiedError" value="6"/>
-            </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QContact::error" href="qcontact.html#error" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="Error" signature="error() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="id" fullname="QContact::id" href="qcontact.html#id" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QUniqueId" signature="id() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setId" fullname="QContact::setId" href="qcontact.html#setId" location="qcontact.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="setId(const QUniqueId &amp; id)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="setId" fullname="QContact::setId" href="qcontact.html#setId" location="qcontact.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setId(const QUniqueId &amp; id)">
                 <parameter left="const QUniqueId &amp;" right="" name="id" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="groups" fullname="QContact::groups" href="qcontact.html#groups" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QUniqueId&gt;" signature="groups() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setGroups" fullname="QContact::setGroups" href="qcontact.html#setGroups" location="qcontact.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="setGroups(const QList&lt;QUniqueId&gt; &amp; groups)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="setGroups" fullname="QContact::setGroups" href="qcontact.html#setGroups" location="qcontact.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setGroups(const QList&lt;QUniqueId&gt; &amp; groups)">
                 <parameter left="const QList&lt;QUniqueId&gt; &amp;" right="" name="groups" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="displayLabel" fullname="QContact::displayLabel" href="qcontact.html#displayLabel" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QContactDisplayLabel" signature="displayLabel() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setDisplayLabel" fullname="QContact::setDisplayLabel" href="qcontact.html#setDisplayLabel" location="qcontact.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="setDisplayLabel(const QContactDisplayLabel &amp; label)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="setDisplayLabel" fullname="QContact::setDisplayLabel" href="qcontact.html#setDisplayLabel" location="qcontact.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDisplayLabel(const QContactDisplayLabel &amp; label)">
                 <parameter left="const QContactDisplayLabel &amp;" right="" name="label" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setDisplayLabel" fullname="QContact::setDisplayLabel" href="qcontact.html#setDisplayLabel-2" location="qcontact.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="bool" signature="setDisplayLabel(const QString &amp; label)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="setDisplayLabel" fullname="QContact::setDisplayLabel" href="qcontact.html#setDisplayLabel-2" location="qcontact.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="void" signature="setDisplayLabel(const QString &amp; label)">
                 <parameter left="const QString &amp;" right="" name="label" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="isEmpty" fullname="QContact::isEmpty" href="qcontact.html#isEmpty" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isEmpty() const"/>
@@ -861,22 +845,13 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="operator!=" fullname="QContactGroup::operator!=" href="qcontactgroup.html#operator!=" location="qcontactgroup.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator!=(const QContactGroup &amp; other) const">
                 <parameter left="const QContactGroup &amp;" right="" name="other" default=""/>
             </function>
-            <enum access="public" threadsafety="unspecified" status="commendable" name="Error" fullname="QContactGroup::Error" href="qcontactgroup.html#Error-enum" location="qcontactgroup.h">
-                <value name="NoError" value="0"/>
-                <value name="OutOfMemoryError" value="1"/>
-                <value name="ContactNotInGroupError" value="2"/>
-                <value name="ContactAlreadyInGroupError" value="3"/>
-                <value name="PermissionsError" value="4"/>
-                <value name="UnspecifiedError" value="5"/>
-            </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QContactGroup::error" href="qcontactgroup.html#error" location="qcontactgroup.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="Error" signature="error() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="id" fullname="QContactGroup::id" href="qcontactgroup.html#id" location="qcontactgroup.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QUniqueId" signature="id() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setId" fullname="QContactGroup::setId" href="qcontactgroup.html#setId" location="qcontactgroup.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="setId(const QUniqueId &amp; id)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="setId" fullname="QContactGroup::setId" href="qcontactgroup.html#setId" location="qcontactgroup.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setId(const QUniqueId &amp; id)">
                 <parameter left="const QUniqueId &amp;" right="" name="id" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="isEmpty" fullname="QContactGroup::isEmpty" href="qcontactgroup.html#isEmpty" location="qcontactgroup.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isEmpty() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="name" fullname="QContactGroup::name" href="qcontactgroup.html#name" location="qcontactgroup.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="name() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setName" fullname="QContactGroup::setName" href="qcontactgroup.html#setName" location="qcontactgroup.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="setName(const QString &amp; groupName)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="setName" fullname="QContactGroup::setName" href="qcontactgroup.html#setName" location="qcontactgroup.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setName(const QString &amp; groupName)">
                 <parameter left="const QString &amp;" right="" name="groupName" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="addMember" fullname="QContactGroup::addMember" href="qcontactgroup.html#addMember" location="qcontactgroup.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="addMember(const QUniqueId &amp; contactId)">
@@ -885,7 +860,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="removeMember" fullname="QContactGroup::removeMember" href="qcontactgroup.html#removeMember" location="qcontactgroup.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="removeMember(const QUniqueId &amp; contactId)">
                 <parameter left="const QUniqueId &amp;" right="" name="contactId" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setMembers" fullname="QContactGroup::setMembers" href="qcontactgroup.html#setMembers" location="qcontactgroup.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="setMembers(const QList&lt;QUniqueId&gt; &amp; members)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="setMembers" fullname="QContactGroup::setMembers" href="qcontactgroup.html#setMembers" location="qcontactgroup.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setMembers(const QList&lt;QUniqueId&gt; &amp; members)">
                 <parameter left="const QList&lt;QUniqueId&gt; &amp;" right="" name="members" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="members" fullname="QContactGroup::members" href="qcontactgroup.html#members" location="qcontactgroup.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QUniqueId&gt;" signature="members() const"/>
@@ -1074,25 +1049,25 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactChangeLogFilter" href="qcontactchangelogfilter.html" location="qcontactchangelogfilter.h" bases="QContactFilter" module="">
-            <enum access="public" threadsafety="unspecified" status="commendable" name="ChangeType" fullname="QContactChangeLogFilter::ChangeType" href="qcontactchangelogfilter.html#ChangeType-enum" location="qcontactchangelogfilter.h">
-                <value name="Added" value="0"/>
-                <value name="Changed" value="1"/>
-                <value name="Removed" value="2"/>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="EventType" fullname="QContactChangeLogFilter::EventType" href="qcontactchangelogfilter.html#EventType-enum" location="qcontactchangelogfilter.h">
+                <value name="EventAdded" value="0"/>
+                <value name="EventChanged" value="1"/>
+                <value name="EventRemoved" value="2"/>
             </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QContactChangeLogFilter" fullname="QContactChangeLogFilter::QContactChangeLogFilter" href="qcontactchangelogfilter.html#QContactChangeLogFilter" location="qcontactchangelogfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactChangeLogFilter(ChangeType type)">
-                <parameter left="ChangeType" right="" name="type" default="Added"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactChangeLogFilter" fullname="QContactChangeLogFilter::QContactChangeLogFilter" href="qcontactchangelogfilter.html#QContactChangeLogFilter" location="qcontactchangelogfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactChangeLogFilter(EventType type)">
+                <parameter left="EventType" right="" name="type" default="EventAdded"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactChangeLogFilter" fullname="QContactChangeLogFilter::QContactChangeLogFilter" href="qcontactchangelogfilter.html#QContactChangeLogFilter-2" location="qcontactchangelogfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QContactChangeLogFilter(const QContactFilter &amp; other)">
                 <parameter left="const QContactFilter &amp;" right="" name="other" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setChangeType" fullname="QContactChangeLogFilter::setChangeType" href="qcontactchangelogfilter.html#setChangeType" location="qcontactchangelogfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setChangeType(ChangeType type)">
-                <parameter left="ChangeType" right="" name="type" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setEventType" fullname="QContactChangeLogFilter::setEventType" href="qcontactchangelogfilter.html#setEventType" location="qcontactchangelogfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setEventType(EventType type)">
+                <parameter left="EventType" right="" name="type" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setSince" fullname="QContactChangeLogFilter::setSince" href="qcontactchangelogfilter.html#setSince" location="qcontactchangelogfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSince(const QDateTime &amp; since)">
                 <parameter left="const QDateTime &amp;" right="" name="since" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="since" fullname="QContactChangeLogFilter::since" href="qcontactchangelogfilter.html#since" location="qcontactchangelogfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QDateTime" signature="since() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="changeType" fullname="QContactChangeLogFilter::changeType" href="qcontactchangelogfilter.html#changeType" location="qcontactchangelogfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="ChangeType" signature="changeType() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="eventType" fullname="QContactChangeLogFilter::eventType" href="qcontactchangelogfilter.html#eventType" location="qcontactchangelogfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="EventType" signature="eventType() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactGroupRemoveRequest" href="qcontactgroupremoverequest.html" location="qcontactgroupremoverequest.h" bases="QContactAbstractRequest" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactGroupRemoveRequest" fullname="QContactGroupRemoveRequest::QContactGroupRemoveRequest" href="qcontactgroupremoverequest.html#QContactGroupRemoveRequest" location="qcontactgroupremoverequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactGroupRemoveRequest()"/>
@@ -1115,16 +1090,16 @@
                 <parameter left="const QContactFilter &amp;" right="" name="other" default=""/>
             </function>
             <enum access="public" threadsafety="unspecified" status="commendable" name="FilterType" fullname="QContactFilter::FilterType" href="qcontactfilter.html#FilterType-enum" location="qcontactfilter.h">
-                <value name="Invalid" value="0"/>
-                <value name="ContactDetail" value="1"/>
-                <value name="ContactDetailRange" value="2"/>
-                <value name="ChangeLog" value="3"/>
-                <value name="Action" value="4"/>
-                <value name="GroupMembership" value="5"/>
-                <value name="Intersection" value="6"/>
-                <value name="Union" value="7"/>
-                <value name="Default" value="8"/>
-                <value name="IdList" value="9"/>
+                <value name="InvalidFilter" value="0"/>
+                <value name="ContactDetailFilter" value="1"/>
+                <value name="ContactDetailRangeFilter" value="2"/>
+                <value name="ChangeLogFilter" value="3"/>
+                <value name="ActionFilter" value="4"/>
+                <value name="GroupMembershipFilter" value="5"/>
+                <value name="IntersectionFilter" value="6"/>
+                <value name="UnionFilter" value="7"/>
+                <value name="IdListFilter" value="8"/>
+                <value name="DefaultFilter" value="9"/>
             </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QContactFilter::type" href="qcontactfilter.html#type" location="qcontactfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="FilterType" signature="type() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="operator==" fullname="QContactFilter::operator==" href="qcontactfilter.html#operator==" location="qcontactfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator==(const QContactFilter &amp; other) const">
@@ -1528,8 +1503,17 @@
             <contents name="use-case" title="Use Case" level="2"/>
             <contents name="interface" title="Interface" level="2"/>
             <contents name="known-issues" title="Known Issues" level="2"/>
+            <page access="public" status="commendable" name="samplephonebook/contactdetails_240_320.ui" href="samplephonebook-contactdetails-240-320-ui.html" subtype="file" title="" fulltitle="contactdetails_240_320.ui Example File" subtitle="samplephonebook/contactdetails_240_320.ui" location=""/>
+            <page access="public" status="commendable" name="samplephonebook/contactdetailsform.cpp" href="samplephonebook-contactdetailsform-cpp.html" subtype="file" title="" fulltitle="contactdetailsform.cpp Example File" subtitle="samplephonebook/contactdetailsform.cpp" location=""/>
+            <page access="public" status="commendable" name="samplephonebook/contactdetailsform.h" href="samplephonebook-contactdetailsform-h.html" subtype="file" title="" fulltitle="contactdetailsform.h Example File" subtitle="samplephonebook/contactdetailsform.h" location=""/>
             <page access="public" status="commendable" name="samplephonebook/finddialog.cpp" href="samplephonebook-finddialog-cpp.html" subtype="file" title="" fulltitle="finddialog.cpp Example File" subtitle="samplephonebook/finddialog.cpp" location=""/>
             <page access="public" status="commendable" name="samplephonebook/finddialog.h" href="samplephonebook-finddialog-h.html" subtype="file" title="" fulltitle="finddialog.h Example File" subtitle="samplephonebook/finddialog.h" location=""/>
+            <page access="public" status="commendable" name="samplephonebook/maindialog_240_320.ui" href="samplephonebook-maindialog-240-320-ui.html" subtype="file" title="" fulltitle="maindialog_240_320.ui Example File" subtitle="samplephonebook/maindialog_240_320.ui" location=""/>
+            <page access="public" status="commendable" name="samplephonebook/maindialog_640_480.ui" href="samplephonebook-maindialog-640-480-ui.html" subtype="file" title="" fulltitle="maindialog_640_480.ui Example File" subtitle="samplephonebook/maindialog_640_480.ui" location=""/>
+            <page access="public" status="commendable" name="samplephonebook/maindialogform_240_320.cpp" href="samplephonebook-maindialogform-240-320-cpp.html" subtype="file" title="" fulltitle="maindialogform_240_320.cpp Example File" subtitle="samplephonebook/maindialogform_240_320.cpp" location=""/>
+            <page access="public" status="commendable" name="samplephonebook/maindialogform_240_320.h" href="samplephonebook-maindialogform-240-320-h.html" subtype="file" title="" fulltitle="maindialogform_240_320.h Example File" subtitle="samplephonebook/maindialogform_240_320.h" location=""/>
+            <page access="public" status="commendable" name="samplephonebook/maindialogform_640_480.cpp" href="samplephonebook-maindialogform-640-480-cpp.html" subtype="file" title="" fulltitle="maindialogform_640_480.cpp Example File" subtitle="samplephonebook/maindialogform_640_480.cpp" location=""/>
+            <page access="public" status="commendable" name="samplephonebook/maindialogform_640_480.h" href="samplephonebook-maindialogform-640-480-h.html" subtype="file" title="" fulltitle="maindialogform_640_480.h Example File" subtitle="samplephonebook/maindialogform_640_480.h" location=""/>
             <page access="public" status="commendable" name="samplephonebook/phonebook.cpp" href="samplephonebook-phonebook-cpp.html" subtype="file" title="" fulltitle="phonebook.cpp Example File" subtitle="samplephonebook/phonebook.cpp" location=""/>
             <page access="public" status="commendable" name="samplephonebook/phonebook.h" href="samplephonebook-phonebook-h.html" subtype="file" title="" fulltitle="phonebook.h Example File" subtitle="samplephonebook/phonebook.h" location=""/>
             <page access="public" status="commendable" name="samplephonebook/serialiser.cpp" href="samplephonebook-serialiser-cpp.html" subtype="file" title="" fulltitle="serialiser.cpp Example File" subtitle="samplephonebook/serialiser.cpp" location=""/>

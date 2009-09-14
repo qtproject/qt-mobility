@@ -1233,16 +1233,8 @@ void tst_QContactManager::invalidManager()
     QContactManagerInfo* info = manager.information();
     QVERIFY(info->supportedDataTypes().count() == 0);
     QVERIFY(!info->hasFeature(QContactManagerInfo::Groups));
-    QVERIFY(!info->hasFeature(QContactManagerInfo::Locking));
-    QVERIFY(!info->hasFeature(QContactManagerInfo::Batch));
     QVERIFY(!info->hasFeature(QContactManagerInfo::ActionPreferences));
-    QVERIFY(!info->hasFeature(QContactManagerInfo::ReadOnlyDetails));
-    QVERIFY(!info->hasFeature(QContactManagerInfo::CreateOnlyDetails));
     QVERIFY(!info->hasFeature(QContactManagerInfo::MutableDefinitions));
-    QVERIFY(!info->hasFeature(QContactManagerInfo::NativeFiltering));
-    QVERIFY(!info->hasFeature(QContactManagerInfo::NativeSorting));
-    QVERIFY(!info->hasFeature(QContactManagerInfo::Synchronous));
-    QVERIFY(!info->hasFeature(QContactManagerInfo::Asynchronous));
 
     /* See if we get the same pointer */
     QVERIFY(info == manager.information());
@@ -1263,17 +1255,9 @@ void tst_QContactManager::memoryManager()
     QContactManagerInfo* info = m1.information();
 
     QVERIFY(info->hasFeature(QContactManagerInfo::Groups));
-    QVERIFY(info->hasFeature(QContactManagerInfo::Batch));
     QVERIFY(info->hasFeature(QContactManagerInfo::ActionPreferences));
-    QVERIFY(info->hasFeature(QContactManagerInfo::ReadOnlyDetails));
-    QVERIFY(info->hasFeature(QContactManagerInfo::CreateOnlyDetails));
     QVERIFY(info->hasFeature(QContactManagerInfo::MutableDefinitions));
-    QVERIFY(info->hasFeature(QContactManagerInfo::Synchronous));
-
-    QVERIFY(!info->hasFeature(QContactManagerInfo::Locking));
-    QVERIFY(!info->hasFeature(QContactManagerInfo::NativeFiltering));
-    QVERIFY(!info->hasFeature(QContactManagerInfo::NativeSorting));
-    QVERIFY(!info->hasFeature(QContactManagerInfo::Asynchronous));
+    QVERIFY(info->hasFeature(QContactManagerInfo::Anonymous));
 
     /* See if we get the same pointer */
     QVERIFY(info == m1.information());
@@ -1800,8 +1784,8 @@ void tst_QContactManager::signalEmission()
     QContactManager* m1 = QContactManager::fromUri(uri);
     QContactManager* m2 = QContactManager::fromUri(uri);
 
-    QVERIFY(m1->information()->hasFeature(QContactManagerInfo::ExternalNotifications) ==
-        m2->information()->hasFeature(QContactManagerInfo::ExternalNotifications));
+    QVERIFY(m1->information()->hasFeature(QContactManagerInfo::Anonymous) ==
+        m2->information()->hasFeature(QContactManagerInfo::Anonymous));
 
     qRegisterMetaType<QUniqueId>("QUniqueId");
     qRegisterMetaType<QList<QUniqueId> >("QList<QUniqueId>");
@@ -1956,7 +1940,7 @@ void tst_QContactManager::signalEmission()
     QVERIFY(sigids.contains(c3.id()));
 
     /* Now some cross manager testing */
-    if (m1->information()->hasFeature(QContactManagerInfo::ExternalNotifications)) {
+    if (!m1->information()->hasFeature(QContactManagerInfo::Anonymous)) {
         // verify that signals are emitted for modifications made to other managers (same id).
         QContactName ncs = c.detail(QContactName::DefinitionName);
         ncs.setSuffix("Test");
@@ -1978,7 +1962,7 @@ void tst_QContactManager::signalEmission()
         g1.setName("XXXXXX Group");
 
         /* For cross notification testing, add everything to m2 and watch on m1 */
-        QContactManager *adder = m2->information()->hasFeature(QContactManagerInfo::ExternalNotifications) ? m2 : m1;
+        QContactManager *adder = m2->information()->hasFeature(QContactManagerInfo::Anonymous) ? m1 : m2;
 
         adder->removeContact(c.id());
         adder->removeContact(c2.id());
@@ -2358,7 +2342,7 @@ void tst_QContactManager::displayName()
     QVERIFY(d.displayLabel().isSynthesised() == true);
 
     /* Set something else */
-    QVERIFY(d.setDisplayLabel("The grand old duchess"));
+    d.setDisplayLabel("The grand old duchess");
     QVERIFY(d.displayLabel().label() == "The grand old duchess");
     QVERIFY(d.displayLabel().isSynthesised() == false);
 

@@ -44,11 +44,11 @@
  */
 
 /*!
- * \enum QContactChangeLogFilter::ChangeType
+ * \enum QContactChangeLogFilter::EventType
  * Enumerates the type of changes which a changelog filter can match against
- * \value Added
- * \value Changed
- * \value Removed
+ * \value EventAdded
+ * \value EventChanged
+ * \value EventRemoved
  */
 
 Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactChangeLogFilter);
@@ -61,19 +61,19 @@ Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactChangeLogFilter);
 /*!
  * Constructs a new changelog filter which matches changes of the specified \a type
  */
-QContactChangeLogFilter::QContactChangeLogFilter(ChangeType type)
+QContactChangeLogFilter::QContactChangeLogFilter(EventType type)
     : QContactFilter(new QContactChangeLogFilterPrivate(type))
 {
 }
 
 /*!
  * Sets the type of change that this filter will match against to \a type
- * \sa changeType()
+ * \sa eventType()
  */
-void QContactChangeLogFilter::setChangeType(ChangeType type)
+void QContactChangeLogFilter::setEventType(EventType type)
 {
     Q_D(QContactChangeLogFilter);
-    d->m_changeType = type;
+    d->m_eventType = type;
 }
 
 /*!
@@ -98,10 +98,10 @@ QDateTime QContactChangeLogFilter::since() const
 
 /*!
  * Returns the type of change that this filter will match against
- * \sa setChangeType()
+ * \sa setEventType()
  */
-QContactChangeLogFilter::ChangeType QContactChangeLogFilter::changeType() const
+QContactChangeLogFilter::EventType QContactChangeLogFilter::eventType() const
 {
     Q_D(const QContactChangeLogFilter);
-    return d->m_changeType;
+    return d->m_eventType;
 }

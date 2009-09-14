@@ -8,3 +8,10 @@ include(../../../common.pri)
 SOURCES  += tst_qcontactgroup.cpp
 LIBS += -lQtContacts
 
+symbian: {
+    TARGET.CAPABILITY = ReadUserData \
+                        WriteUserData \
+                        ReadDeviceData \
+                        WriteDeviceData \
+                        AllFiles \
+}

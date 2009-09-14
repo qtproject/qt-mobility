@@ -31,4 +31,10 @@ symbian|wince* {
 
 # all else, we need to copy and install the DLLs to the right place (in a subdir for this test)
 
-
+symbian: {
+    TARGET.CAPABILITY = ReadUserData \
+                        WriteUserData \
+                        ReadDeviceData \
+                        WriteDeviceData \
+                        AllFiles \
+}

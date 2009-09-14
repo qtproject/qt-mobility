@@ -74,7 +74,7 @@ public:
         return true;
     }
 
-    Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactIntersectionFilter, QContactFilter::Intersection)
+    Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactIntersectionFilter, QContactFilter::IntersectionFilter)
 
     QList<QContactFilter> m_filters;
 };

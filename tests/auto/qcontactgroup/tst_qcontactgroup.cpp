@@ -133,25 +133,21 @@ void tst_QContactGroup::members()
         currentCount += 1;
         QCOMPARE(g.hasMember(QUniqueId(i)), true);
         QCOMPARE(g.members().count(), currentCount);
-        QCOMPARE(g.error(), QContactGroup::NoError);
     }
 
     while (currentCount > 0) {
         QVERIFY(g.removeMember(QUniqueId(currentCount)));
         currentCount -= 1;
         QCOMPARE(g.members().count(), currentCount);
-        QCOMPARE(g.error(), QContactGroup::NoError);
     }
 
     // test that adding the same contact twice fails properly
     QVERIFY(g.addMember(QUniqueId(1)));
-    QVERIFY(!g.addMember(QUniqueId(1)));
-    QCOMPARE(g.error(), QContactGroup::ContactAlreadyInGroupError);
+    QVERIFY(!g.addMember(QUniqueId(1))); // already in group.
     QCOMPARE(g.members().count(), 1);
 
     // test removing a non-existent contact fails properly
-    QVERIFY(!g.removeMember(QUniqueId(2)));
-    QCOMPARE(g.error(), QContactGroup::ContactNotInGroupError);
+    QVERIFY(!g.removeMember(QUniqueId(2))); // not in group
     QCOMPARE(g.members().count(), 1);
 
     // clear the list
@@ -160,7 +156,6 @@ void tst_QContactGroup::members()
     while (currentCount > 0) {
         QVERIFY(g.removeMember(members.at(0)));
         currentCount -= 1;
-        QCOMPARE(g.error(), QContactGroup::NoError);
     }
     QCOMPARE(g.members(), QList<QUniqueId>());
 
@@ -168,7 +163,7 @@ void tst_QContactGroup::members()
     members.append(QUniqueId(3));
     members.append(QUniqueId(8));
     members.append(QUniqueId(33));
-    QVERIFY(g.setMembers(members));
+    g.setMembers(members);
     QCOMPARE(g.members(), members);
 }
 

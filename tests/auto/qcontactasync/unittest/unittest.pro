@@ -21,3 +21,11 @@ wince* {
 QCONTACTASYNC_PLUGINS_DEPLOY.path = ./plugins/contacts
 
 DEPLOYMENT += QCONTACTASYNC_PLUGINS_DEPLOY
+
+symbian: {
+    TARGET.CAPABILITY = ReadUserData \
+                        WriteUserData \
+                        ReadDeviceData \
+                        WriteDeviceData \
+                        AllFiles \
+}

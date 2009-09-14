@@ -50,16 +50,16 @@
 /*!
  * \enum QContactFilter::FilterType
  * Describes the type of the filter
- * \value Invalid An invalid filter which matches nothing
- * \value ContactDetail A filter which matches contacts containing one or more details of a particular definition with a particular value
- * \value ContactDetailRange A filter which matches contacts containing one or more details of a particular definition whose values are within a particular range
- * \value ChangeLog A filter which matches contacts whose timestamps have been updated since some particular date and time
- * \value Action A filter which matches contacts for which a particular action is available, or which contain a detail with a particular value for which a particular action is available
- * \value GroupMembership A filter which matches contacts which are members of a particular group
- * \value Intersection A filter which matches all contacts that are matched by all filters it includes
- * \value Union A filter which matches any contact that is matched by any of the filters it includes
- * \value IdList A filter which matches any contact whose id is contained in a particular list of contact ids
- * \value Default A filter which matches everything
+ * \value InvalidFilter An invalid filter which matches nothing
+ * \value ContactDetailFilter A filter which matches contacts containing one or more details of a particular definition with a particular value
+ * \value ContactDetailRangeFilter A filter which matches contacts containing one or more details of a particular definition whose values are within a particular range
+ * \value ChangeLogFilter A filter which matches contacts whose timestamps have been updated since some particular date and time
+ * \value ActionFilter A filter which matches contacts for which a particular action is available, or which contain a detail with a particular value for which a particular action is available
+ * \value GroupMembershipFilter A filter which matches contacts which are members of a particular group
+ * \value IntersectionFilter A filter which matches all contacts that are matched by all filters it includes
+ * \value UnionFilter A filter which matches any contact that is matched by any of the filters it includes
+ * \value IdListFilter A filter which matches any contact whose id is contained in a particular list of contact ids
+ * \value DefaultFilter A filter which matches everything
  */
 
 /*!
@@ -105,7 +105,7 @@ QContactFilter::~QContactFilter()
 QContactFilter::FilterType QContactFilter::type() const
 {
     if (!d_ptr)
-        return QContactFilter::Default;
+        return QContactFilter::DefaultFilter;
     return d_ptr->type();
 }
 
@@ -158,14 +158,14 @@ const QContactFilter operator&&(const QContactFilter& left, const QContactFilter
 /*! Unions the \a left and \a right filters */
 const QContactFilter operator||(const QContactFilter& left, const QContactFilter& right)
 {
-    if (left.type() == QContactFilter::Union) {
+    if (left.type() == QContactFilter::UnionFilter) {
         QContactUnionFilter bf(left);
         /* we can just add the right to this one */
         bf.append(right);
         return bf;
     }
 
-    if (right.type() == QContactFilter::Union) {
+    if (right.type() == QContactFilter::UnionFilter) {
         QContactUnionFilter bf(right);
         /* we can prepend the left to this one */
         bf.prepend(left);

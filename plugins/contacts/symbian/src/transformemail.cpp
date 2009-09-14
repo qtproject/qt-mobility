@@ -36,7 +36,7 @@ QList<CContactItemField *> TransformEmail::transformDetailL(const QContactDetail
 {
 	QList<CContactItemField *> fieldList; 
 	
-	//cast to phonenumber
+	//cast to email
 	const QContactEmailAddress &email(static_cast<const QContactEmailAddress&>(detail));
 	
 	//create new field

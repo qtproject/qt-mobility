@@ -127,7 +127,6 @@ void tst_QContactDetails::address()
     QCOMPARE(c.details(QContactAddress::DefinitionName).count(), 1);
     QVERIFY(c.removeDetail(&a2));
     QVERIFY(!c.removeDetail(&a2)); // cannot remove twice
-    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
     QCOMPARE(c.details(QContactAddress::DefinitionName).count(), 0);
 
     // test displayName permutations
@@ -250,7 +249,6 @@ void tst_QContactDetails::anniversary()
     QVERIFY(c.removeDetail(&a2));
     QCOMPARE(c.details(QContactAnniversary::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&a2) == false);
-    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
     QCOMPARE(c.details(QContactAnniversary::DefinitionName).count(), 0);
 }
 
@@ -284,7 +282,6 @@ void tst_QContactDetails::avatar()
     QVERIFY(c.removeDetail(&a2));
     QCOMPARE(c.details(QContactAvatar::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&a2) == false);
-    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
     QCOMPARE(c.details(QContactAvatar::DefinitionName).count(), 0);
 }
 
@@ -319,7 +316,6 @@ void tst_QContactDetails::birthday()
     QVERIFY(c.removeDetail(&b2));
     QCOMPARE(c.details(QContactBirthday::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&b2) == false);
-    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
     QCOMPARE(c.details(QContactBirthday::DefinitionName).count(), 0);
 }
 
@@ -344,13 +340,11 @@ void tst_QContactDetails::displayLabel()
     QCOMPARE(c.details(QContactDisplayLabel::DefinitionName).value(0).value(QContactDisplayLabel::FieldLabel), QString("label two"));
 
     // test property remove
-    QVERIFY(c.removeDetail(&d1));
-    QVERIFY(c.error() == QContact::NoError); // should successfully _clear_ (but not remove) the label
+    QVERIFY(c.removeDetail(&d1)); // should successfully _clear_ (but not remove) the label
     QCOMPARE(c.displayLabel().label(), QString());
     QCOMPARE(c.details(QContactDisplayLabel::DefinitionName).count(), 1); // cannot remove display label
     d2.setLabel("second label");
     QVERIFY(c.saveDetail(&d2));    // should successfully _replace_ the label
-    QVERIFY(c.error() == QContact::NoError); // should successfully _clear_ (but not remove) the label
     QCOMPARE(c.displayLabel().label(), QString("second label"));
     QCOMPARE(c.details(QContactDisplayLabel::DefinitionName).count(), 1);
 }
@@ -385,7 +379,6 @@ void tst_QContactDetails::emailAddress()
     QVERIFY(c.removeDetail(&e2));
     QCOMPARE(c.details(QContactEmailAddress::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&e2) == false);
-    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
     QCOMPARE(c.details(QContactEmailAddress::DefinitionName).count(), 0);
 }
 
@@ -419,7 +412,6 @@ void tst_QContactDetails::gender()
     QVERIFY(c.removeDetail(&g2));
     QCOMPARE(c.details(QContactGender::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&g2) == false);
-    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
     QCOMPARE(c.details(QContactGender::DefinitionName).count(), 0);
 }
 
@@ -473,7 +465,6 @@ void tst_QContactDetails::geolocation()
     QVERIFY(c.removeDetail(&g2));
     QCOMPARE(c.details(QContactGeolocation::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&g2) == false);
-    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
     QCOMPARE(c.details(QContactGeolocation::DefinitionName).count(), 0);
 }
 
@@ -507,7 +498,6 @@ void tst_QContactDetails::guid()
     QVERIFY(c.removeDetail(&g2));
     QCOMPARE(c.details(QContactGuid::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&g2) == false);
-    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
     QCOMPARE(c.details(QContactGuid::DefinitionName).count(), 0);
 }
 
@@ -551,7 +541,6 @@ void tst_QContactDetails::name()
     QVERIFY(c.removeDetail(&n2)); // remove it
     QCOMPARE(c.details(QContactName::DefinitionName).count(), 0);
     QVERIFY(!c.removeDetail(&n2));// remove now fails
-    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
     QVERIFY(c.saveDetail(&n1));   // save the original name
     QCOMPARE(c.details(QContactName::DefinitionName).count(), 1);
 }
@@ -586,7 +575,6 @@ void tst_QContactDetails::nickname()
     QVERIFY(c.removeDetail(&n2));
     QCOMPARE(c.details(QContactNickname::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&n2) == false);
-    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
     QCOMPARE(c.details(QContactNickname::DefinitionName).count(), 0);
 }
 
@@ -620,7 +608,6 @@ void tst_QContactDetails::onlineAccount()
     QVERIFY(c.removeDetail(&o2));
     QCOMPARE(c.details(QContactOnlineAccount::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&o2) == false);
-    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
     QCOMPARE(c.details(QContactOnlineAccount::DefinitionName).count(), 0);
 }
 
@@ -652,7 +639,6 @@ void tst_QContactDetails::organisation()
     QVERIFY(c.removeDetail(&o2));
     QCOMPARE(c.details(QContactOrganisation::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&o2) == false);
-    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
     QCOMPARE(c.details(QContactOrganisation::DefinitionName).count(), 0);
 }
 
@@ -686,7 +672,6 @@ void tst_QContactDetails::phoneNumber()
     QVERIFY(c.removeDetail(&p2));
     QCOMPARE(c.details(QContactPhoneNumber::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&p2) == false);
-    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
     QCOMPARE(c.details(QContactPhoneNumber::DefinitionName).count(), 0);
 }
 
@@ -732,7 +717,6 @@ void tst_QContactDetails::presence()
     QVERIFY(c.removeDetail(&p2));
     QCOMPARE(c.details(QContactPresence::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&p2) == false);
-    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
     QCOMPARE(c.details(QContactPresence::DefinitionName).count(), 0);
 }
 
@@ -764,7 +748,6 @@ void tst_QContactDetails::relationship()
     QVERIFY(c.removeDetail(&r2));
     QCOMPARE(c.details(QContactRelationship::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&r2) == false);
-    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
     QCOMPARE(c.details(QContactRelationship::DefinitionName).count(), 0);
 }
 
@@ -798,7 +781,6 @@ void tst_QContactDetails::syncTarget()
     QVERIFY(c.removeDetail(&s2));
     QCOMPARE(c.details(QContactSyncTarget::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&s2) == false);
-    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
     QCOMPARE(c.details(QContactSyncTarget::DefinitionName).count(), 0);
 }
 
@@ -836,7 +818,6 @@ void tst_QContactDetails::timestamp()
     QVERIFY(c.removeDetail(&t2));
     QCOMPARE(c.details(QContactTimestamp::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&t2) == false);
-    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
     QCOMPARE(c.details(QContactTimestamp::DefinitionName).count(), 0);
 }
 
@@ -870,7 +851,6 @@ void tst_QContactDetails::url()
     QVERIFY(c.removeDetail(&u2));
     QCOMPARE(c.details(QContactUrl::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&u2) == false);
-    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
     QCOMPARE(c.details(QContactUrl::DefinitionName).count(), 0);
 }
 
@@ -901,7 +881,6 @@ void tst_QContactDetails::custom()
     QVERIFY(c.removeDetail(&c2));
     QCOMPARE(c.details("mycustom").count(), 0);
     QVERIFY(c.removeDetail(&c2) == false);
-    QVERIFY(c.error() == QContact::DetailDoesNotExistError);
     QCOMPARE(c.details("mycustom").count(), 0);
 }
 

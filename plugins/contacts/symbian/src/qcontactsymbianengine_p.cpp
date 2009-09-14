@@ -77,7 +77,7 @@ QList<QUniqueId> QContactSymbianEngineData::contacts(const QContactFilter& filte
 {
 	QList<QUniqueId> matches;
 	
-	if (filter.type() == QContactFilter::ContactDetail)
+	if (filter.type() == QContactFilter::ContactDetailFilter)
 	{
 		const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
 		

@@ -40,20 +40,20 @@ class QContactChangeLogFilterPrivate;
 class QTCONTACTS_EXPORT QContactChangeLogFilter: public QContactFilter
 {
 public:
-    enum ChangeType {
-        Added,
-        Changed,
-        Removed
+    enum EventType {
+        EventAdded,
+        EventChanged,
+        EventRemoved
     };
 
-    explicit QContactChangeLogFilter(ChangeType type = Added);
+    explicit QContactChangeLogFilter(EventType type = EventAdded);
     QContactChangeLogFilter(const QContactFilter& other);
 
-    void setChangeType(ChangeType type);
+    void setEventType(EventType type);
     void setSince(const QDateTime& since);
 
     QDateTime since() const;
-    ChangeType changeType() const;
+    EventType eventType() const;
 
 private:
     Q_DECLARE_CONTACTFILTER_PRIVATE(QContactChangeLogFilter)

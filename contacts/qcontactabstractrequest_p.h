@@ -65,9 +65,9 @@ public:
     {
     }
 
-    virtual QContactAbstractRequest::Type type() const
+    virtual QContactAbstractRequest::RequestType type() const
     {
-        return QContactAbstractRequest::Invalid;
+        return QContactAbstractRequest::InvalidRequest;
     }
 
     QContactManager::Error m_error;
