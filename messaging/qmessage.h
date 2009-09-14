@@ -170,9 +170,9 @@ public:
 
     static QByteArray preferredCharsetFor(const QString &text);
 
-// TODO: Why is there no setParentFolderId()?
-//private:
+private:
     friend class QMessageStore;
+    friend class MapiSession;
 
     QMessagePrivate *d_ptr;
 };
