@@ -994,43 +994,21 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
 QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 {
 #ifdef Q_OS_WINCE
-    SYSTEM_POWER_STATUS_EX statusEx;
-    GetSystemPowerStatusEx(&statusEx, true);
+    SYSTEM_POWER_STATUS_EX status;
+    GetSystemPowerStatusEx(&status, true);
 
-    if(statusEx.ACLineStatus  == AC_LINE_ONLINE);
-        return QSystemDeviceInfo::WallPower;
-    if(statusEx.ACLineStatus  == AC_LINE_OFFLINE);
-        return QSystemDeviceInfo::BatteryPower;
-    if(statusEx.BatteryFlag & BATTERY_FLAG_CHARGING)
-        return QSystemDeviceInfo::WallPowerCharging;
 #else
-    WMIHelper *wHelper;
-    wHelper = new WMIHelper();
-    wHelper->setWmiNamespace("root/cimv2");
-    wHelper->setClassName("Win32_Battery");
-    wHelper->setClassProperty(QStringList() << "BatteryStatus");
-    QVariant v = wHelper->getWMIData();
-    quint32 batteryStatus = v.toUInt();
-    switch(batteryStatus) {
-    case 1:
-        return QSystemDeviceInfo::BatteryPower;
-    break;
-    case 2:
-        return QSystemDeviceInfo::WallPower;
-    break;
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-    case 8:
-    case 9:
-        return QSystemDeviceInfo::WallPowerChargingBattery;
-    break;
-    default:
-    break;
-    };
+    SYSTEM_POWER_STATUS status;
+    GetSystemPowerStatus(&status);
 #endif
+
+    if(status.BatteryFlag & BATTERY_FLAG_CHARGING)
+        return QSystemDeviceInfo::WallPowerChargingBattery;
+    if(status.ACLineStatus  == AC_LINE_ONLINE)
+        return QSystemDeviceInfo::WallPower;
+    if(status.ACLineStatus  == AC_LINE_OFFLINE)
+        return QSystemDeviceInfo::BatteryPower;
+
     return QSystemDeviceInfo::UnknownPower;
 }
 
