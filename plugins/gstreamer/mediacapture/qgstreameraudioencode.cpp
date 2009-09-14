@@ -40,7 +40,10 @@
 #include <math.h>
 
 QGstreamerAudioEncode::QGstreamerAudioEncode(QObject *parent)
-    :QAudioEncoderControl(parent)
+    :QAudioEncoderControl(parent),
+    m_frequency(-1),
+    m_channels(-1),
+    m_sampleSize(-1)
 {
     QList<QByteArray> codecCandidates;
     codecCandidates << "audio/mpeg" << "audio/vorbis" << "audio/speex" << "audio/GSM";
@@ -77,23 +80,6 @@ QGstreamerAudioEncode::~QGstreamerAudioEncode()
 {
 }
 
-QAudioFormat QGstreamerAudioEncode::format() const
-{
-    return m_audioFormat;
-}
-
-bool QGstreamerAudioEncode::isFormatSupported(const QAudioFormat &format) const
-{
-    Q_UNUSED(format);
-    return true;
-}
-
-bool QGstreamerAudioEncode::setFormat(const QAudioFormat &format)
-{
-    m_audioFormat = format;
-    return true;
-}
-
 QStringList QGstreamerAudioEncode::supportedAudioCodecs() const
 {
     return m_codecs;
@@ -112,6 +98,12 @@ QString QGstreamerAudioEncode::audioCodec() const
 bool QGstreamerAudioEncode::setAudioCodec(const QString &codecName)
 {
     m_codec = codecName;
+
+    //speex is optimised for a limited set of frequencies
+    if (codecName == QLatin1String("audio/speex") && m_frequency == -1) {
+        m_frequency = 32000;
+    }
+
     return true;
 }
 
@@ -150,6 +142,35 @@ void QGstreamerAudioEncode::setEncodingOption(const QString &name, const QVarian
     m_options.insert(name,value);
 }
 
+QList<int> QGstreamerAudioEncode::supportedFrequencies() const
+{
+    //TODO check element caps to find actual values
+
+    return QList<int>();
+}
+
+QPair<int,int> QGstreamerAudioEncode::supportedFrequencyRange() const
+{
+    //TODO check element caps to find actual values
+
+    return qMakePair<int,int>(8000, 48000);
+}
+
+QList<int> QGstreamerAudioEncode::supportedChannelCounts() const
+{
+    //TODO check element caps to find actual values
+
+    return QList<int>() << 1 << 2;
+}
+
+QList<int> QGstreamerAudioEncode::supportedSampleSizes() const
+{
+    //TODO check element caps to find actual values
+
+    return QList<int>() << 16;
+}
+
+
 GstElement *QGstreamerAudioEncode::createEncoder()
 {
     GstBin * encoderBin = GST_BIN(gst_bin_new("audio-encoder-bin"));
@@ -173,18 +194,18 @@ GstElement *QGstreamerAudioEncode::createEncoder()
     gst_element_add_pad(GST_ELEMENT(encoderBin), gst_ghost_pad_new("src", pad));
     gst_object_unref(GST_OBJECT(pad));
 
-    if (!m_audioFormat.isNull()) {
+    if (m_frequency > 0 || m_channels > 0 || m_sampleSize > 0) {
         GstCaps *caps = gst_caps_new_empty();
         GstStructure *structure = gst_structure_new("audio/x-raw-int", NULL);
 
-        if ( m_audioFormat.frequency() > 0 )
-            gst_structure_set(structure, "rate", G_TYPE_INT, m_audioFormat.frequency(), NULL );
+        if ( m_frequency > 0 )
+            gst_structure_set(structure, "rate", G_TYPE_INT, m_frequency, NULL );
 
-        if ( m_audioFormat.channels() > 0 )
-            gst_structure_set(structure, "channels", G_TYPE_INT, m_audioFormat.channels(), NULL );
+        if ( m_channels > 0 )
+            gst_structure_set(structure, "channels", G_TYPE_INT, m_channels, NULL );
 
-        if ( m_audioFormat.sampleSize() > 0 )
-            gst_structure_set(structure, "width", G_TYPE_INT, m_audioFormat.sampleSize(), NULL );
+        if ( m_sampleSize > 0 )
+            gst_structure_set(structure, "width", G_TYPE_INT, m_sampleSize, NULL );
 
 
         gst_caps_append_structure(caps,structure);

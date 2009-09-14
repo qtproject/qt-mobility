@@ -136,6 +136,68 @@ QAudioEncoderControl::~QAudioEncoderControl()
   \sa QAudioEncoderControl::quality
 */
 
+/*!
+  \fn QAudioEncoderControl::frequency() const
+
+  Returns the frequency of audio stream.
+
+  \sa setFrequency()
+*/
+
+/*!
+  \fn QAudioEncoderControl::setFrequency(int frequency)
+
+  Sets the \a frequency of audio stream.
+
+  Frequency value of -1 means the encoder will choose the
+  suitable frequency depending on source and codec capabilities.
+*/
+
+/*!
+  \fn QAudioEncoderControl::supportedFrequencies() const
+
+  Returns the list of supported audio frequencies, if known.
+*/
+
+/*!
+  \fn QAudioEncoderControl::channels() const
+
+  Returns the number of audio channels or -1 if not specified.
+*/
+
+
+/*!
+  \fn QAudioEncoderControl::setChannels(int channels)
+
+  Sets the number of audio \a channels.
+*/
+
+/*!
+  \fn QAudioEncoderControl::supportedChannelCounts() const
+
+  Returns the list of supported audio channels counts, if known.
+*/
+
+/*!
+  \fn QAudioEncoderControl::sampleSize() const
+
+  Returns the sample size of uncompressed audio stream,
+  or -1 if not specified.
+*/
+
+/*!
+  \fn QAudioEncoderControl::setSampleSize(int sampleSize)
+
+  Sets the sample size of uncompressed audio stream.
+*/
+
+/*!
+  \fn QAudioEncoderControl::supportedSampleSizes() const
+
+  Returns the list of supported audio sample sizes, if known.
+*/
+
+
 
 /*!
   Returns the list of codec specific audio encoding options.

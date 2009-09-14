@@ -36,6 +36,8 @@
 #define QAUDIOENCODERCONTROL_H
 
 #include "qabstractmediacontrol.h"
+#include <QtCore/qlist.h>
+#include <QtCore/qpair.h>
 
 class QAudioFormat;
 class QStringList;
@@ -46,10 +48,6 @@ class Q_MEDIA_EXPORT QAudioEncoderControl : public QAbstractMediaControl
     Q_OBJECT
 public:
     virtual ~QAudioEncoderControl();
-
-    virtual QAudioFormat format() const = 0;
-    virtual bool isFormatSupported(const QAudioFormat &format) const = 0;
-    virtual bool setFormat(const QAudioFormat &format) = 0;
 
     virtual QStringList supportedAudioCodecs() const = 0;
     virtual QString audioCodec() const = 0;
@@ -67,6 +65,18 @@ public:
     virtual QVariant encodingOption(const QString &name) const;
     virtual void setEncodingOption(const QString &name, const QVariant &value);
 
+    virtual int frequency() const = 0;
+    virtual void setFrequency(int frequency) = 0;
+    virtual QList<int> supportedFrequencies() const = 0;
+    virtual QPair<int,int> supportedFrequencyRange() const = 0;
+
+    virtual int channels() const = 0;
+    virtual void setChannels(int channels) = 0;
+    virtual QList<int> supportedChannelCounts() const = 0;
+
+    virtual int sampleSize() const = 0;
+    virtual void setSampleSize(int sampleSize) = 0;
+    virtual QList<int> supportedSampleSizes() const = 0;
 
 protected:
     QAudioEncoderControl(QObject *parent);

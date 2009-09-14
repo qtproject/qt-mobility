@@ -56,10 +56,6 @@ public:
     QGstreamerAudioEncode(QObject *parent);
     virtual ~QGstreamerAudioEncode();
 
-    QAudioFormat format() const;
-    bool isFormatSupported(const QAudioFormat &format) const;
-    bool setFormat(const QAudioFormat &format);
-
     QStringList supportedAudioCodecs() const;
     QString codecDescription(const QString &codecName) const;
     bool setAudioCodec(const QString &codecName);
@@ -75,6 +71,19 @@ public:
     QVariant encodingOption(const QString &name) const;
     void setEncodingOption(const QString &name, const QVariant &value);
 
+    int frequency() const { return m_frequency; }
+    void setFrequency(int frequency) { m_frequency = frequency; }
+    QList<int> supportedFrequencies() const;
+    QPair<int,int> supportedFrequencyRange() const;
+
+    int channels() const { return m_channels; }
+    void setChannels(int channels) { m_channels = channels; }
+    QList<int> supportedChannelCounts() const;
+
+    int sampleSize() const { return m_sampleSize; }
+    void setSampleSize(int sampleSize) { m_sampleSize = sampleSize; }
+    QList<int> supportedSampleSizes() const;
+
     GstElement *createEncoder();
 
 private:
@@ -83,9 +92,12 @@ private:
     QMap<QString,QString> m_codecDescriptions;
     QMap<QString,QStringList> m_codecOptions;
 
-    QAudioFormat m_audioFormat;
     QMap<QString, QVariant> m_options;
     QString m_codec;
+
+    int m_frequency;
+    int m_channels;
+    int m_sampleSize;
 };
 
 #endif

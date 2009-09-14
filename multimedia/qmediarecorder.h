@@ -50,9 +50,10 @@ class QMediaRecorderPrivate;
 class Q_MEDIA_EXPORT QMediaRecorder : public QAbstractMediaObject
 {
     Q_OBJECT
+    Q_ENUMS(State)
+    Q_ENUMS(Error)
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(QString format READ format WRITE setFormat NOTIFY formatChanged)
-    Q_PROPERTY(QAudioFormat audioFormat READ audioFormat WRITE setAudioFormat NOTIFY audioFormatChanged)
     Q_PROPERTY(QString audioCodec READ audioCodec WRITE setAudioCodec NOTIFY audioCodecChanged)
     Q_PROPERTY(int audioBitrate READ audioBitrate WRITE setAudioBitrate NOTIFY audioBitrateChanged)
     Q_PROPERTY(qreal audioQuality READ audioQuality WRITE setAudioQuality NOTIFY audioQualityChanged)
@@ -101,8 +102,6 @@ public:
     QString formatDescription(const QString &formatMimeType) const;
     QString format() const;
 
-    QAudioFormat audioFormat() const;
-    bool isAudioFormatSupported(const QAudioFormat &format) const;
 
     QStringList supportedAudioCodecs() const;
     QString audioCodecDescription(const QString &codecName) const;
@@ -143,7 +142,6 @@ public slots:
 
     void setFormat(const QString &formatMimeType);
 
-    bool setAudioFormat(const QAudioFormat &format);
     bool setAudioCodec(const QString &codecName);
     void setAudioBitrate(int bitrate);
     void setAudioQuality(qreal quality);

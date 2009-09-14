@@ -327,33 +327,6 @@ void QMediaRecorder::setFormat(const QString &formatMimeType)
 }
 
 /*!
-  \property QMediaRecorder::audioFormat
-  \brief Audio format.
-*/
-
-
-QAudioFormat QMediaRecorder::audioFormat() const
-{
-    return d_func()->audioControl ?
-           d_func()->audioControl->format() :  QAudioFormat();
-}
-
-/*!
-  Returns true if audio \a format is supported.
-*/
-bool QMediaRecorder::isAudioFormatSupported(const QAudioFormat &format) const
-{
-    return d_func()->audioControl ?
-           d_func()->audioControl->isFormatSupported(format) : false;
-}
-
-bool QMediaRecorder::setAudioFormat(const QAudioFormat &format)
-{
-    return d_func()->audioControl ?
-           d_func()->audioControl->setFormat(format) : false;
-}
-
-/*!
   Returns the list of supported audio codecs.
 */
 QStringList QMediaRecorder::supportedAudioCodecs() const

@@ -153,18 +153,8 @@ void CameraCapture::setCameraDevice(int idx)
 
 void CameraCapture::setAudioCodec(int idx)
 {
-
     QString codecName = mediaRecorder->supportedAudioCodecs()[idx];
     mediaRecorder->setAudioCodec(codecName);
-
-    QAudioFormat audioFormat;
-    //speex works better with 32kHz sample rate
-    if (codecName == QLatin1String("speexenc")) {
-        audioFormat.setFrequency(32000);
-    }
-
-    mediaRecorder->setAudioFormat(audioFormat);
-
 }
 
 void CameraCapture::setVideoCodec(int idx)

@@ -159,15 +159,6 @@ void Recorder::setAudioCodec(int idx)
     if (encodeControl) {
         QString codecName = encodeControl->supportedAudioCodecs()[idx];
         encodeControl->setAudioCodec(codecName);
-
-        QAudioFormat audioFormat;
-        //speex works better with 32kHz sample rate
-        if (codecName == QLatin1String("speexenc")) {
-            audioFormat.setFrequency(32000);
-        }
-
-        encodeControl->setFormat(audioFormat);
-
     }
 }
 
