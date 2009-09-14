@@ -21,10 +21,7 @@ symbian {
         TARGET.CAPABILITY = ALL -TCB
 }
 
-DEFINES += \'_STR(X)=\\$${LITERAL_HASH}X\'
-DEFINES += \'STR(X)=_STR(X)\'
-DEFINES += \'_LOGDIR=$$DESTDIR\'
-DEFINES += \'LOGDIR=STR(_LOGDIR)\'
+DEFINES += LOGDIR=\\\"$$DESTDIR\\\"
 
 
 logfile.path = $$DESTDIR
