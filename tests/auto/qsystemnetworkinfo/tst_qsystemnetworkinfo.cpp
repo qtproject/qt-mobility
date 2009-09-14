@@ -61,6 +61,8 @@ private slots:
 
     void tst_macAddress_data();
     void tst_macAddress();
+
+    void tst_interfaceForMode();
 };
 //signal todo:
 //    void networkStatusChanged(QSystemNetworkInfo::NetworkMode netmode, QSystemNetworkInfo::CellNetworkStatus netStatus);
@@ -196,6 +198,24 @@ void tst_QSystemNetworkInfo::tst_macAddress()
       QVERIFY(mac.length() == 17);
       QVERIFY(mac.contains(":"));
    }
+}
+
+void tst_QSystemNetworkInfo::tst_interfaceForMode()
+{
+    QSystemNetworkInfo ni;
+    QList<QSystemNetworkInfo::NetworkMode> modeList;
+    modeList << QSystemNetworkInfo::GsmMode;
+    modeList << QSystemNetworkInfo::CdmaMode;
+    modeList << QSystemNetworkInfo::WcdmaMode;
+    modeList << QSystemNetworkInfo::WlanMode;
+    modeList << QSystemNetworkInfo::EthernetMode;
+    modeList << QSystemNetworkInfo::BluetoothMode;
+    modeList << QSystemNetworkInfo::WimaxMode;
+
+    foreach(QSystemNetworkInfo::NetworkMode mode, modeList) {
+        QVERIFY(!ni.interfaceForMode(mode).name().isEmpty());
+    }
+
 }
 
 QTEST_MAIN(tst_QSystemNetworkInfo)
