@@ -36,7 +36,8 @@
 
 #include "qabstractmediaobject_p.h"
 
-
+#include "qabstractmediaservice.h"
+#include "qmetadataprovidercontrol.h"
 
 void QAbstractMediaObjectPrivate::_q_notify()
 {
@@ -71,6 +72,79 @@ void QAbstractMediaObjectPrivate::_q_notify()
     \sa QAbstractMediaService, QAbstractMediaControl
 */
 
+/*!
+    \enum QAbstractMediaObject::MetaData
+
+    Common attributes
+    \value Title The title of the media.  QString.
+    \value SubTitle The sub-title of the media. QString.
+    \value Author The authors of the media. QStringList.
+    \value Comment A user comment about the media. QString.
+    \value Description A description of the media.  QString
+    \value Category The category of the media.  QStringList.
+    \value Genre The genre of the media.  QStringList.
+    \value Year The year of release of the media.  int.
+    \value Date The date of the media. QDate.
+    \value UserRating A user rating of the media. int [0..100].
+    \value Keywords A list of keywords describing the media.  QStringList.
+    \value Language
+
+    \value Publisher The publisher of the media.  QString.
+    \value Copyright The media's copyright notice.  QString.
+    \value ParentalRating  The parental rating of the media.  QString.
+    \value RatingOrganisation The organisation responsible for the parental rating of the media.
+    QString.
+
+    Media attributes
+    \value Size The size in bytes of the media. qint64
+    \value MediaType The type of the media (audio, video, etc).  QString.
+    \value Duration The duration in millseconds of the media.  qint64.
+
+    Audio attributes
+    \value AudioBitrate The bit rate of the media's audio stream in bits per second.  int.
+    \value AudioCodec The codec of the media's audio stream.  QString.
+    \value AverageLevel The average volume level of the media.  int.
+    \value Channels The number of channels in the media's audio stream. int.
+    \value PeakValue The peak volume of the media's audio stream. int
+    \value Frequency The frequency of the media's audio stream. int
+
+    Music attributes
+    \value AlbumTitle The title of the album the media belongs to.  QString.
+    \value AlbumArtist The principal artist of the album the media belongs to.  QString.
+    \value ContributingArtist The artists contributing to the media.  QStringList.
+    \value Composer The composer of the media.  QStringList.
+    \value Conductor The conductor of the media. QString.
+    \value Lyrics The lyrics to the media. QString.
+    \value Mood The mood of the media.  QString.
+    \value TrackNumber The track number of the media.  int.
+    \value TrackCount The number of tracks on the album containing the media.  int.
+
+    \value CoverArtUriSmall The URI of a small cover art image. QUrl.
+    \value CoverArtUriLarge The URI of a large cover art image. QUrl.
+
+    Image and video attributes
+    \value Resolution The dimensions of an image or video.  QSize.
+    \value PixelAspectRatio The pixel aspect ratio of an image or video.  QSize.
+
+    Video attributes
+    \value FrameRate The frame rate of the media's video stream.  QPair<int, int>.
+    \value VideoBitRate The bit rate of the media's video stream in bits per second.  int.
+    \value VideoCodec The codec of the media's video stream.  QString.
+
+    \value PosterUri The URI of a poster image.  QUrl.
+
+    Movie attributes
+    \value ChapterNumber The chapter number of the media.  int.
+    \value Director The director of the media.  QString.
+    \value LeadPerformer The lead performer in the media.  QStringList.
+    \value Writer The writer of the media.  QStringList.
+
+    Photo attributes
+    \value CameraManufacturer The manufacturer of the camera used to capture the media.  QString.
+    \value CameraModel The model of the camera used to capture the media.  QString.
+    \value Event The event during which the media was captured.  QString.
+    \value Subject The subject of the media.  QString.
+*/
 
 /*!
     Destroys the QAbstractMediaObject object.
@@ -94,6 +168,41 @@ QAbstractMediaObject::~QAbstractMediaObject()
     false otherwise.
 */
 
+/*!
+*/
+void QAbstractMediaObject::registerService(QAbstractMediaService *service)
+{
+    Q_D(QAbstractMediaObject);
+
+    d->service = service;
+
+    if (d->metaDataControl) {
+        disconnect(d->metaDataControl, SIGNAL(metaDataChanged()), this, SIGNAL(metaDataChanged()));
+        disconnect(
+                d->metaDataControl, SIGNAL(metaDataAvailableChanged(bool)),
+                this, SIGNAL(metaDataAvailableChanged(bool)));
+        disconnect(
+                d->metaDataControl, SIGNAL(writableChanged(bool)),
+                this, SIGNAL(metaDataWritableChanged(bool)));
+    }
+
+    if (service) {
+        d->metaDataControl = qobject_cast<QMetaDataProviderControl *>(
+                service->control(QMetaDataProviderControl_iid));
+
+        if (d->metaDataControl) {
+            connect(d->metaDataControl, SIGNAL(metaDataChanged()), this, SIGNAL(metaDataChanged()));
+            connect(d->metaDataControl,
+                    SIGNAL(metaDataAvailableChanged(bool)),
+                    SIGNAL(metaDataAvailableChanged(bool)));
+            connect(d->metaDataControl,
+                    SIGNAL(writableChanged(bool)),
+                    SIGNAL(metaDataWritableChanged(bool)));
+        }
+    } else {
+        d->metaDataControl = 0;
+    }
+}
 
 int QAbstractMediaObject::notifyInterval() const
 {
@@ -202,5 +311,103 @@ void QAbstractMediaObject::removePropertyWatch(QByteArray const &name)
 
     Signal a change in the notify interval period to \a milliSeconds.
 */
+
+/*!
+    Identifies if access to a media object's meta-data is available.
+
+    Returns true if the meta-data is available and false otherwise.
+*/
+bool QAbstractMediaObject::isMetaDataAvailable() const
+{
+    Q_D(const QAbstractMediaObject);
+
+    return d->metaDataControl
+            ? d->metaDataControl->isMetaDataAvailable()
+            : false;
+}
+
+/*!
+    \fn QAbstractMediaObject::metaDataAvailableChanged(bool available)
+
+    Signals that the \a available state of a media object's meta-data has changed.
+*/
+
+/*!
+    Identifies if a media object's meta-data is writable.
+
+    Returns true if the meta-data can be edited and false otherwise.
+*/
+bool QAbstractMediaObject::isMetaDataWritable() const
+{
+    Q_D(const QAbstractMediaObject);
+
+    return d->metaDataControl
+            ? d->metaDataControl->isWritable()
+            : false;
+}
+
+/*!
+    \fn QAbstractMediaObject::metaDataWritableChanged(bool writable)
+
+    Signals that the \a writable state of a media object's meta-data has changed.
+*/
+
+/*!
+    Returns the value associated with a meta-data \a key.
+*/
+QVariant QAbstractMediaObject::metaData(MetaData key) const
+{
+    Q_D(const QAbstractMediaObject);
+
+    return d->metaDataControl
+            ? d->metaDataControl->metaData(key)
+            : QVariant();
+}
+
+/*!
+    Sets a \a value for a meta-data \a key.
+*/
+void QAbstractMediaObject::setMetaData(MetaData key, const QVariant &value)
+{
+    Q_D(QAbstractMediaObject);
+
+    if (d->metaDataControl)
+        d->metaDataControl->setMetaData(key, value);
+}
+
+/*!
+    \fn QAbstractMediaObject::metaDataChanged()
+
+    Signals that a media object's meta-data has changed.
+*/
+
+/*!
+    Returns the value associated with a meta-data \a key.
+
+    The naming and type of extended meta-data is not standardized, so the values and meaning
+    of keys may vary between backends.
+*/
+QVariant QAbstractMediaObject::extendedMetaData(const QString &key) const
+{
+    Q_D(const QAbstractMediaObject);
+
+    return d->metaDataControl
+            ? d->metaDataControl->extendedMetaData(key)
+            : QVariant();
+}
+
+/*!
+    Sets a \a value for a meta-data \a key.
+
+    The naming and type of extended meta-data is not standardized, so the values and meaning
+    of keys may vary between backends.
+*/
+void QAbstractMediaObject::setExtendedMetaData(const QString &key, const QVariant &value)
+{
+    Q_D(QAbstractMediaObject);
+
+    if (d->metaDataControl)
+        d->metaDataControl->setExtendedMetaData(key, value);
+}
 
 #include "moc_qabstractmediaobject.cpp"

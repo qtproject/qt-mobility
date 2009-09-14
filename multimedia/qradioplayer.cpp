@@ -128,7 +128,10 @@ QRadioPlayer::QRadioPlayer(QObject *parent, QRadioService* service):
         connect(d->control, SIGNAL(volumeChanged(int)), SIGNAL(volumeChanged(int)));
         connect(d->control, SIGNAL(mutingChanged(bool)), SIGNAL(mutingChanged(bool)));
 
+        registerService(d->service);
+
         addPropertyWatch("duration");
+
     } else {
         d->control = 0;
     }
@@ -141,6 +144,8 @@ QRadioPlayer::QRadioPlayer(QObject *parent, QRadioService* service):
 QRadioPlayer::~QRadioPlayer()
 {
     Q_D(QRadioPlayer);
+
+    registerService(0);
 
     if (d->ownService)
         delete d->service;

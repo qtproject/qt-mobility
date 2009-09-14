@@ -38,9 +38,6 @@
 #include <QtCore/qurl.h>
 
 #include <qmediaplaylist.h>
-#include <qmediametadata.h>
-
-
 
 PlaylistModel::PlaylistModel(QObject *parent)
     : QAbstractItemModel(parent)

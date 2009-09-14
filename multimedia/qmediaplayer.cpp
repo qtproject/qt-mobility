@@ -197,6 +197,8 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayerService *service):
             addPropertyWatch("bufferStatus");
 
         d->hasPlaylistControl = (d->service->control(QMediaPlaylistControl_iid) != 0);
+
+        registerService(d->service);
     } else {
         d->control = 0;
     }
@@ -209,6 +211,8 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayerService *service):
 QMediaPlayer::~QMediaPlayer()
 {
     Q_D(QMediaPlayer);
+
+    registerService(0);
 
     if (d->ownService)
         delete d->service;

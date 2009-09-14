@@ -296,8 +296,8 @@ void QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
                 ok &= gst_element_link(m_videoSrc, m_encodeBin);
             }
 
-            if (!m_metadata.isEmpty())
-                setMetadata(m_metadata);
+            if (!m_metaData.isEmpty())
+                setMetaData(m_metaData);
 
             break;
         case PreviewAndRecordingPipeline:
@@ -330,8 +330,8 @@ void QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
                 ok &= gst_element_link(m_videoTee, m_encodeBin);
             }
 
-            if (!m_metadata.isEmpty())
-                setMetadata(m_metadata);
+            if (!m_metaData.isEmpty())
+                setMetaData(m_metaData);
 
 
             break;
@@ -476,10 +476,10 @@ void QGstreamerCaptureSession::enablePreview(bool enabled)
     }
 }
 
-void QGstreamerCaptureSession::setMetadata(const QMap<QByteArray, QVariant> &data)
+void QGstreamerCaptureSession::setMetaData(const QMap<QByteArray, QVariant> &data)
 {
-    //qDebug() << "QGstreamerCaptureSession::setMetadata" << data;
-    m_metadata = data;
+    //qDebug() << "QGstreamerCaptureSession::setMetaData" << data;
+    m_metaData = data;
 
     if (m_encodeBin) {
         GstIterator *elements = gst_bin_iterate_all_by_interface(GST_BIN(m_encodeBin), GST_TYPE_TAG_SETTER);
@@ -578,8 +578,8 @@ void QGstreamerCaptureSession::busMessage(const QGstreamerMessage &message)
                             emit stateChanged(m_state = PausedState);
                         dumpGraph("paused");
 
-                        if (m_pipelineMode == RecordingPipeline && !m_metadata.isEmpty())
-                            setMetadata(m_metadata);
+                        if (m_pipelineMode == RecordingPipeline && !m_metaData.isEmpty())
+                            setMetaData(m_metaData);
                         break;
                     case GST_STATE_PLAYING:
                         {

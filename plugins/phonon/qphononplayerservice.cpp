@@ -51,7 +51,7 @@ QPhononPlayerService::QPhononPlayerService(QObject *parent)
     m_mediaObject = new Phonon::MediaObject(this);
     m_videoWidget = new Phonon::VideoWidget();
     m_control = new QPhononPlayerControl(m_mediaObject, this);
-    m_metadata = new QPhononMetadataProvider(m_mediaObject, this);
+    m_metaData = new QPhononMetaDataProvider(m_mediaObject, this);
 
     Phonon::createPath(m_mediaObject, m_videoWidget);
     m_videoWidgetControl = new QPhononVideoWidget(m_videoWidget, this);
@@ -67,8 +67,8 @@ QAbstractMediaControl *QPhononPlayerService::control(const char *name) const
     if (qstrcmp(name, QMediaPlayerControl_iid) == 0)
         return m_control;
 
-    if (qstrcmp(name, QMetadataProviderControl_iid) == 0)
-        return m_metadata;
+    if (qstrcmp(name, QMetaDataProviderControl_iid) == 0)
+        return m_metaData;
 
     if (qstrcmp(name, QVideoWidgetControl_iid) == 0)
         return m_videoWidgetControl;
