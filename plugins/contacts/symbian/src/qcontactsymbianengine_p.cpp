@@ -477,7 +477,14 @@ QContact QContactSymbianEngineData::contactL(const QUniqueId &contactId) const
 {
     ASSERT(m_transformContact);
     ASSERT(m_contactDatabase);
-	// Read the contact from the CContactDatabase
+
+    // A contact with a zero id is not expected to exist.
+    // Symbian contact database uses id 0 internally as the id of the
+    // system template.
+    if(contactId == 0)
+        User::Leave(KErrNotFound);
+
+    // Read the contact from the CContactDatabase
 	TContactItemId id(contactId);
 	CContactItem* symContact = m_contactDatabase->ReadContactL(id);
 	CleanupStack::PushL(symContact);
@@ -621,6 +628,13 @@ QList<QUniqueId> QContactSymbianEngineData::matchCommunicationAddressL( const QS
 int QContactSymbianEngineData::removeContactL(QUniqueId id)
 {
 	ASSERT(m_contactDatabase);
+
+    // A contact with a zero id is not expected to exist.
+    // Symbian contact database uses id 0 internally as the id of the
+    // system template.
+	if(id == 0)
+	    User::Leave(KErrNotFound);
+
 	//TODO: in future QUniqueId will be a class so this will need to be changed.
 	TContactItemId cId = static_cast<TContactItemId>(id);
 	m_contactDatabase->DeleteContactL(cId);

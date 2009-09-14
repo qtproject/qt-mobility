@@ -130,6 +130,8 @@ bool QContactSymbianEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
         int newContactId = 0;
         ret = d->addContact(*contact, newContactId, error);
         if (ret) {
+            ASSERT(newContactId);
+            contact->setId(newContactId);
             contactsAdded.insert(newContactId);
         }
 	}
@@ -194,6 +196,11 @@ QMap<QString, QContactDetailDefinition> QContactSymbianEngine::detailDefinitions
 bool QContactSymbianEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const
 {
     switch (feature) {
+        /* TODO: case QContactManagerInfo::Groups to be implemented.
+           How about the others? like:
+           QContactManagerInfo::ActionPreferences,
+           QContactManagerInfo::MutableDefinitions,
+           QContactManagerInfo::Anonymous? */
         default:
             return false;
     }
