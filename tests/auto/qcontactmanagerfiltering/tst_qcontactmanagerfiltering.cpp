@@ -2135,13 +2135,13 @@ void tst_QContactManagerFiltering::changelogFiltering_data()
 {
     QTest::addColumn<QContactManager *>("cm");
     QTest::addColumn<QList<QUniqueId> >("contacts");
-    QTest::addColumn<int>("changeType");
+    QTest::addColumn<int>("eventType");
     QTest::addColumn<QDateTime>("since");
     QTest::addColumn<QString>("expected");
 
-    int added = (int)QContactChangeLogFilter::Added;
-    int changed = (int)QContactChangeLogFilter::Changed;
-    int removed = (int)QContactChangeLogFilter::Removed;
+    int added = (int)QContactChangeLogFilter::EventAdded;
+    int changed = (int)QContactChangeLogFilter::EventChanged;
+    int removed = (int)QContactChangeLogFilter::EventRemoved;
 
     for (int i = 0; i < managers.size(); i++) {
         QContactManager *manager = managers.at(i);
@@ -2196,7 +2196,7 @@ void tst_QContactManagerFiltering::changelogFiltering_data()
 
 void tst_QContactManagerFiltering::changelogFiltering()
 {
-    QFETCH(int, changeType);
+    QFETCH(int, eventType);
     QFETCH(QDateTime, since);
     QFETCH(QString, expected);
     QFETCH(QContactManager*, cm);
@@ -2204,7 +2204,7 @@ void tst_QContactManagerFiltering::changelogFiltering()
 
     QList<QUniqueId> ids;
 
-    QContactChangeLogFilter clf((QContactChangeLogFilter::ChangeType)changeType);
+    QContactChangeLogFilter clf((QContactChangeLogFilter::EventType)eventType);
     clf.setSince(since);
 
     ids = cm->contacts(clf);

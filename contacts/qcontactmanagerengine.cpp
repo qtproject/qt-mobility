@@ -1448,9 +1448,9 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                 if (ts.isEmpty())
                     break;
 
-                if (ccf.changeType() == QContactChangeLogFilter::Added)
+                if (ccf.eventType() == QContactChangeLogFilter::EventAdded)
                     return ccf.since() <= ts.created();
-                if (ccf.changeType() == QContactChangeLogFilter::Changed)
+                if (ccf.eventType() == QContactChangeLogFilter::EventChanged)
                     return ccf.since() <= ts.lastModified();
 
                 // You can't emulate a removed..

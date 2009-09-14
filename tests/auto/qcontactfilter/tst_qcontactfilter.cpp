@@ -413,26 +413,26 @@ void tst_QContactFilter::actionFilter()
 void tst_QContactFilter::changeLogFilter()
 {
     QContactChangeLogFilter cf;
-    QContactChangeLogFilter cfadded(QContactChangeLogFilter::Added);
-    QContactChangeLogFilter cfchanged(QContactChangeLogFilter::Changed);
-    QContactChangeLogFilter cfremoved(QContactChangeLogFilter::Removed);
+    QContactChangeLogFilter cfadded(QContactChangeLogFilter::EventAdded);
+    QContactChangeLogFilter cfchanged(QContactChangeLogFilter::EventChanged);
+    QContactChangeLogFilter cfremoved(QContactChangeLogFilter::EventRemoved);
 
     QVERIFY(cf.type() == QContactFilter::ChangeLog);
-    QVERIFY(cf.changeType() == QContactChangeLogFilter::Added);
+    QVERIFY(cf.eventType() == QContactChangeLogFilter::EventAdded);
 
     QVERIFY(cfadded.type() == QContactFilter::ChangeLog);
-    QVERIFY(cfadded.changeType() == QContactChangeLogFilter::Added);
+    QVERIFY(cfadded.eventType() == QContactChangeLogFilter::EventAdded);
 
     QVERIFY(cfchanged.type() == QContactFilter::ChangeLog);
-    QVERIFY(cfchanged.changeType() == QContactChangeLogFilter::Changed);
+    QVERIFY(cfchanged.eventType() == QContactChangeLogFilter::EventChanged);
 
     QVERIFY(cfremoved.type() == QContactFilter::ChangeLog);
-    QVERIFY(cfremoved.changeType() == QContactChangeLogFilter::Removed);
+    QVERIFY(cfremoved.eventType() == QContactChangeLogFilter::EventRemoved);
 
 
     /* Just to break the naming scheme */
-    cfchanged.setChangeType(QContactChangeLogFilter::Added);
-    QVERIFY(cfchanged.changeType() == QContactChangeLogFilter::Added);
+    cfchanged.setEventType(QContactChangeLogFilter::EventAdded);
+    QVERIFY(cfchanged.eventType() == QContactChangeLogFilter::EventAdded);
 
     QVERIFY(cf.since() == QDateTime());
 

@@ -53,16 +53,16 @@
 class QContactChangeLogFilterPrivate : public QContactFilterPrivate
 {
 public:
-    QContactChangeLogFilterPrivate(QContactChangeLogFilter::ChangeType type = QContactChangeLogFilter::Added)
+    QContactChangeLogFilterPrivate(QContactChangeLogFilter::EventType type = QContactChangeLogFilter::EventAdded)
         : QContactFilterPrivate()
-        , m_changeType(type)
+        , m_eventType(type)
     {
 
     }
 
     QContactChangeLogFilterPrivate(const QContactChangeLogFilterPrivate& other)
         : QContactFilterPrivate(other)
-        , m_changeType(other.m_changeType)
+        , m_eventType(other.m_eventType)
         , m_since(other.m_since)
     {
 
@@ -71,7 +71,7 @@ public:
     virtual bool compare(const QContactFilterPrivate* other) const
     {
         const QContactChangeLogFilterPrivate *od = static_cast<const QContactChangeLogFilterPrivate*>(other);
-        if (m_changeType != od->m_changeType)
+        if (m_eventType != od->m_eventType)
             return false;
         if (m_since != od->m_since)
             return false;
@@ -80,7 +80,7 @@ public:
 
     Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactChangeLogFilter, QContactFilter::ChangeLog)
 
-    QContactChangeLogFilter::ChangeType m_changeType;
+    QContactChangeLogFilter::EventType m_eventType;
     QDateTime m_since;
 };
 
