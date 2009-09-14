@@ -56,10 +56,10 @@
 #include <qnetworkconfiguration_p.h>
 
 #include <QHash>
+#include <QStringList>
 
 QT_BEGIN_NAMESPACE
 
-#include <QStringList>
 
 class QNetworkConfigurationManagerPrivate : public QObject
 {
@@ -113,8 +113,6 @@ Q_SIGNALS:
     void configurationChanged(const QNetworkConfiguration& config);
     void onlineStateChanged(bool isOnline);
 };
-
-
 
 QT_END_NAMESPACE
 
