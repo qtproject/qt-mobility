@@ -21,6 +21,12 @@ symbian {
         TARGET.CAPABILITY = ALL -TCB
 }
 
+DEFINES += \'_STR(X)=\\$${LITERAL_HASH}X\'
+DEFINES += \'STR(X)=_STR(X)\'
+DEFINES += \'_LOGDIR=$$DESTDIR\'
+DEFINES += \'LOGDIR=STR(_LOGDIR)\'
+
+
 logfile.path = $$DESTDIR
 logfile.files = tst_qnmeapositioninfosource_nmealog.txt
 logfile.CONFIG = no_link no_dependencies explicit_dependencies no_build combine ignore_no_exist no_clean

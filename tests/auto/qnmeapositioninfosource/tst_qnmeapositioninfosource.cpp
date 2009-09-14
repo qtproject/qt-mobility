@@ -593,8 +593,8 @@ protected:
     QGeoPositionInfoSource *createTestSource()
     {
         QNmeaPositionInfoSource *source = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode);
-        QFile *file = new QFile(QApplication::applicationDirPath()
-                + QDir::separator() + "tst_qnmeapositioninfosource_nmealog.txt", source);
+        QString fileName = QLatin1String(LOGDIR) + QDir::separator() + "tst_qnmeapositioninfosource_nmealog.txt";
+        QFile *file = new QFile(fileName, source);
         if (!file->exists()) {
             qWarning() << "Cannot find" << file->fileName();
             return 0;
