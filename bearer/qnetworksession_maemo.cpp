@@ -467,9 +467,8 @@ void QNetworkSessionPrivate::close()
 {
     // this one simulates the application disconnect (same as libconic i.e., the connection is not really closed)
     Maemo::Icd icd;
-    QString id = publicConfig.identifier();
-    qDebug() << "disconnecting from" << id;
-    icd.disconnect(id);
+    qDebug() << "closing session" << publicConfig.identifier();
+    icd.disconnect(ICD_CONNECTION_FLAG_APPLICATION_EVENT);
     startTime = QDateTime();
     updateState(QNetworkSession::Disconnected);
     emit q->sessionClosed();
@@ -481,7 +480,7 @@ void QNetworkSessionPrivate::stop()
     // this one simulates the UI originated disconnect (the connection is closed for real)
     Maemo::Icd icd;
     qDebug() << "stopping session" << publicConfig.identifier();
-    icd.disconnect(ICD_CONNECTION_FLAG_APPLICATION_EVENT);
+    icd.disconnect(ICD_CONNECTION_FLAG_UI_EVENT);
     startTime = QDateTime();
     updateState(QNetworkSession::Disconnected);
     emit q->sessionClosed();
