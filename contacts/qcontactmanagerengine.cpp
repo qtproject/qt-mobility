@@ -380,7 +380,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(true);
-    d.setAccessConstraint(QContactDetailDefinition::Any);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // email address
@@ -394,7 +394,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::Any);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // organisation
@@ -409,7 +409,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::Any);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // phone number
@@ -437,7 +437,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::Any);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // anniversary
@@ -466,7 +466,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::Any);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // birthday
@@ -480,7 +480,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(true);
-    d.setAccessConstraint(QContactDetailDefinition::Any);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // nickname
@@ -494,7 +494,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::Any);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // url
@@ -515,7 +515,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::Any);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // gender
@@ -529,7 +529,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::Any);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // online account
@@ -542,7 +542,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::Any);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // presence
@@ -604,7 +604,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::Any);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // avatar
@@ -625,7 +625,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::Any);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // geolocation
@@ -649,7 +649,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::Any);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // street address
@@ -676,7 +676,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::Any);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // name
@@ -694,7 +694,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::Any);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     return retn;

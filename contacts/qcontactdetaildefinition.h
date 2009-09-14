@@ -86,7 +86,7 @@ public:
     QMap<QString, QContactDetailDefinition::Field>& fields();
 
     enum AccessConstraint {
-        Any = 0,
+        NoConstraint = 0,
         ReadOnly,
         CreateOnly
     };

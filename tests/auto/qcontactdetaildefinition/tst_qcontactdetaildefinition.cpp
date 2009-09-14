@@ -80,7 +80,7 @@ void tst_QContactDetailDefinition::testCtor()
     /* Check the ctor sets sane things */
     QVERIFY(def.isEmpty());
     QVERIFY(def.name().isEmpty());
-    QVERIFY(def.accessConstraint() == QContactDetailDefinition::Any);
+    QVERIFY(def.accessConstraint() == QContactDetailDefinition::NoConstraint);
     QVERIFY(def.fields().isEmpty());
     QVERIFY(def.isUnique() == false);
 
@@ -145,8 +145,8 @@ void tst_QContactDetailDefinition::testGetSet()
     QVERIFY(def.isUnique() == false);
 
     /* Access constraints */
-    def.setAccessConstraint(QContactDetailDefinition::Any);
-    QVERIFY(def.accessConstraint() == QContactDetailDefinition::Any);
+    def.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+    QVERIFY(def.accessConstraint() == QContactDetailDefinition::NoConstraint);
 
     def.setAccessConstraint(QContactDetailDefinition::ReadOnly);
     QVERIFY(def.accessConstraint() == QContactDetailDefinition::ReadOnly);

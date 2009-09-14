@@ -57,7 +57,7 @@ class QContactDetailDefinitionData : public QSharedData
 {
 public:
     QContactDetailDefinitionData()
-        : m_constraint(QContactDetailDefinition::Any),
+        : m_constraint(QContactDetailDefinition::NoConstraint),
           m_unique(false)
     {
     }

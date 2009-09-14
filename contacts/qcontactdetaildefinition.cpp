@@ -54,7 +54,7 @@
  *
  * This enum defines the access constraints which may be set on all details of this definition in the store for which the definition is valid.
  *
- * \value Any Details of definitions with this access constraint set have no special access semantics associated with them.  Users can read, write, and otherwise modify such details in any manner.
+ * \value NoConstraint Details of definitions with this access constraint set have no special access semantics associated with them.  Users can read, write, and otherwise modify such details in any manner.
  * \value ReadOnly Details of definitions with this access constraint set are dynamically modified by the backend.  Users cannot write values to details of definitions with this access constraint set.
  * \value CreateOnly Details of definitions with this access constraint set are static once created.  Their value cannot be changed dynamically, nor can they be written or read by users.
  */
