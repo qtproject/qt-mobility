@@ -232,22 +232,23 @@ void QNetworkSessionPrivate::stop()
 
 void QNetworkSessionPrivate::migrate()
 {
-    qFatal("Function not implemented at %s.", __FUNCTION__);
+    qWarning("This platform does not support roaming (%s).", __FUNCTION__);
+    //qFatal("Function not implemented at %s.", __FUNCTION__);
 }
 
 void QNetworkSessionPrivate::accept()
 {
-    qFatal("Function not implemented at %s.", __FUNCTION__);
+    qWarning("This platform does not support roaming (%s).", __FUNCTION__);
 }
 
 void QNetworkSessionPrivate::ignore()
 {
-    qFatal("Function not implemented at %s.", __FUNCTION__);
+    qWarning("This platform does not support roaming (%s).", __FUNCTION__);
 }
 
 void QNetworkSessionPrivate::reject()
 {
-    qFatal("Function not implemented at %s.", __FUNCTION__);
+    qWarning("This platform does not support roaming (%s).", __FUNCTION__);
 }
 
 QNetworkInterface QNetworkSessionPrivate::currentInterface() const
