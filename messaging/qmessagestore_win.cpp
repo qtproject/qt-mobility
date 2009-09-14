@@ -542,13 +542,13 @@ QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
     return result;
 }
 
-int QMessageStore::registerNotificationFilter(const QMessageFilter &filter)
+QMessageStore::NotificationFilterId QMessageStore::registerNotificationFilter(const QMessageFilter &filter)
 {
     Q_UNUSED(filter)
     return 0; // stub
 }
 
-void QMessageStore::unregisterNotificationFilter(int notificationFilterId)
+void QMessageStore::unregisterNotificationFilter(NotificationFilterId notificationFilterId)
 {
     Q_UNUSED(notificationFilterId)
 }

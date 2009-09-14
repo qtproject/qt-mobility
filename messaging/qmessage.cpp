@@ -64,7 +64,7 @@ QList<QByteArray> charsets;
     If a message has been modified since it was last constructed isModified() returns true.
 
     A list of attachments identifiers will be returned by attachments() and an identifier for the 
-    message body will be returned by body(). Attachments can be appended to the content of the 
+    message body will be returned by bodyId(). Attachments can be appended to the content of the 
     message using appendAttachments(), the body of the message can be set with setBody() or
     setBodyFromFile().
     
@@ -478,7 +478,7 @@ QList<QByteArray> charsets;
 */
 
 /*!
-    \fn QMessage::body() const
+    \fn QMessage::bodyId() const
   
     Returns the identifier for the body content contained by the Message if a body exists; 
     otherwise returns an invalid identifier.
@@ -495,7 +495,7 @@ QList<QByteArray> charsets;
     If the \a mimeType is not specified, the content type will default to "text/plain", and
     the encoding charset will be as determined by preferredCharsets().
     
-    \sa body(), preferredCharsets()
+    \sa bodyId(), preferredCharsets()
 */
 
 /*!
@@ -507,7 +507,7 @@ QList<QByteArray> charsets;
     If the \a mimeType is not specified, the content type will default to "text/plain", and
     the encoding charset will be as determined by preferredCharsets().
     
-    \sa body(), preferredCharsets()
+    \sa bodyId(), preferredCharsets()
 */
 
 /*!

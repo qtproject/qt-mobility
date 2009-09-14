@@ -151,7 +151,7 @@ public:
 
     uint size() const;
 
-    QMessageContentContainerId body() const;
+    QMessageContentContainerId bodyId() const;
 
     void setBody(const QString &body, const QByteArray &mimeType = QByteArray());
     void setBody(QTextStream &in, const QByteArray &mimeType = QByteArray());

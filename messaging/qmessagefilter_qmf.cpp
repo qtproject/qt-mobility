@@ -378,26 +378,31 @@ QMessageFilter QMessageFilter::byStandardFolder(QMessage::StandardFolder folder,
 {
     QMessageFilter result;
 
+    QMailDataComparator::InclusionComparator comparator(cmp == QMessageDataComparator::Equal ? QMailDataComparator::Includes : QMailDataComparator::Excludes); 
+
     switch (folder)
     {
     case QMessage::InboxFolder:
-        result.d_ptr->_key = QMailMessageKey::status(QMailMessage::Incoming) & ~QMailMessageKey::status(QMailMessage::Trash);
+        result.d_ptr->_key = QMailMessageKey::status(QMailMessage::Incoming, comparator);
+
+        // Exclude any trash messages
+        result.d_ptr->_key &= ~QMailMessageKey::status(QMailMessage::Trash, comparator);
         break;
 
     case QMessage::OutboxFolder:
-        result.d_ptr->_key = QMailMessageKey::status(QMailMessage::Outbox);
+        result.d_ptr->_key = QMailMessageKey::status(QMailMessage::Outbox, comparator);
         break;
 
     case QMessage::DraftsFolder:
-        result.d_ptr->_key = QMailMessageKey::status(QMailMessage::Draft);
+        result.d_ptr->_key = QMailMessageKey::status(QMailMessage::Draft, comparator);
         break;
 
     case QMessage::SentFolder:
-        result.d_ptr->_key = QMailMessageKey::status(QMailMessage::Sent);
+        result.d_ptr->_key = QMailMessageKey::status(QMailMessage::Sent, comparator);
         break;
 
     case QMessage::TrashFolder:
-        result.d_ptr->_key = QMailMessageKey::status(QMailMessage::Trash);
+        result.d_ptr->_key = QMailMessageKey::status(QMailMessage::Trash, comparator);
         break;
     }
 

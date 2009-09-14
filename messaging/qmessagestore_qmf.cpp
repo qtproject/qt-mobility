@@ -57,8 +57,8 @@ public:
     QMailStore *_store;
     QMessageStore::ErrorCode _error;
     bool _notify;
-    int _filterId;
-    QMap<int, QMailMessageKey> _filters;
+    QMessageStore::NotificationFilterId _filterId;
+    QMap<QMessageStore::NotificationFilterId, QMailMessageKey> _filters;
 
     static QMailStore *convert(QMessageStore *store);
 
@@ -73,18 +73,18 @@ public slots:
     void messagesUpdated(const QMailMessageIdList &ids);
 
 signals:
-    void messageAdded(const QMessageId &id, const QSet<int> &matchingFilterIds);
-    void messageRemoved(const QMessageId &id, const QSet<int> &matchingFilterIds);
-    void messageUpdated(const QMessageId &id, const QSet<int> &matchingFilterIds);
+    void messageAdded(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &matchingFilterIds);
+    void messageRemoved(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &matchingFilterIds);
+    void messageUpdated(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &matchingFilterIds);
 
 private:
-    void processFilters(const QMailMessageIdList &ids, void (QMessageStorePrivate::*signal)(const QMessageId &, const QSet<int> &))
+    void processFilters(const QMailMessageIdList &ids, void (QMessageStorePrivate::*signal)(const QMessageId &, const QSet<QMessageStore::NotificationFilterId> &))
     {
-        QMap<QMailMessageId, QSet<int> > matches;
+        QMap<QMailMessageId, QSet<QMessageStore::NotificationFilterId> > matches;
 
         // Copy the filter map to protect against modification during traversal
-        QMap<int, QMailMessageKey> filters(_filters);
-        QMap<int, QMailMessageKey>::const_iterator it = filters.begin(), end = filters.end();
+        QMap<QMessageStore::NotificationFilterId, QMailMessageKey> filters(_filters);
+        QMap<QMessageStore::NotificationFilterId, QMailMessageKey>::const_iterator it = filters.begin(), end = filters.end();
         for ( ; it != end; ++it) {
             const QMailMessageKey &key(it.value());
 
@@ -101,7 +101,7 @@ private:
             }
         }
 
-        QMap<QMailMessageId, QSet<int> >::const_iterator mit = matches.begin(), mend = matches.end();
+        QMap<QMailMessageId, QSet<QMessageStore::NotificationFilterId> >::const_iterator mit = matches.begin(), mend = matches.end();
         for ( ; mit != mend; ++mit) {
             emit (this->*signal)(QmfHelpers::convert(mit.key()), mit.value());
         }
@@ -164,9 +164,9 @@ QMessageStore::QMessageStore(QObject *parent)
     : QObject(parent),
       d_ptr(new QMessageStorePrivate)
 {
-    connect(d_ptr, SIGNAL(messageAdded(QMessageId, QSet<int>)), this, SIGNAL(messageAdded(QMessageId, QSet<int>)));
-    connect(d_ptr, SIGNAL(messageRemoved(QMessageId, QSet<int>)), this, SIGNAL(messageRemoved(QMessageId, QSet<int>)));
-    connect(d_ptr, SIGNAL(messageUpdated(QMessageId, QSet<int>)), this, SIGNAL(messageUpdated(QMessageId, QSet<int>)));
+    connect(d_ptr, SIGNAL(messageAdded(QMessageId, QSet<QMessageStore::NotificationFilterId>)), this, SIGNAL(messageAdded(QMessageId, QSet<QMessageStore::NotificationFilterId>)));
+    connect(d_ptr, SIGNAL(messageRemoved(QMessageId, QSet<QMessageStore::NotificationFilterId>)), this, SIGNAL(messageRemoved(QMessageId, QSet<QMessageStore::NotificationFilterId>)));
+    connect(d_ptr, SIGNAL(messageUpdated(QMessageId, QSet<QMessageStore::NotificationFilterId>)), this, SIGNAL(messageUpdated(QMessageId, QSet<QMessageStore::NotificationFilterId>)));
 }
 
 QMessageStore::~QMessageStore()
@@ -312,14 +312,14 @@ QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
     return convert(d_ptr->_store->account(convert(id)));
 }
 
-int QMessageStore::registerNotificationFilter(const QMessageFilter &filter)
+QMessageStore::NotificationFilterId QMessageStore::registerNotificationFilter(const QMessageFilter &filter)
 {
-    int filterId = ++d_ptr->_filterId;
+    QMessageStore::NotificationFilterId filterId = ++d_ptr->_filterId;
     d_ptr->_filters.insert(filterId, QmfHelpers::convert(filter));
     return filterId;
 }
 
-void QMessageStore::unregisterNotificationFilter(int notificationFilterId)
+void QMessageStore::unregisterNotificationFilter(NotificationFilterId notificationFilterId)
 {
     d_ptr->_filters.remove(notificationFilterId);
 }

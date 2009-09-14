@@ -353,7 +353,7 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(message.date(), QDateTime::fromString(date, Qt::ISODate));
     QCOMPARE(message.subject(), subject);
 
-    QMessageContentContainerId bodyId(message.body());
+    QMessageContentContainerId bodyId(message.bodyId());
     QVERIFY(bodyId.isValid());
 
     QMessageContentContainer body(message.find(bodyId));

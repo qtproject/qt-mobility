@@ -443,7 +443,7 @@ uint QMessage::size() const
     return 0; // stub
 }
 
-QMessageContentContainerId QMessage::body() const
+QMessageContentContainerId QMessage::bodyId() const
 {
     if (d_ptr->_message.hasBody()) {
         return QmfHelpers::bodyId(d_ptr->_message.id());
@@ -555,7 +555,7 @@ void QMessage::appendAttachments(const QStringList &fileNames)
 
 void QMessage::clearAttachments()
 {
-    QMessageContentContainerId textId(body());
+    QMessageContentContainerId textId(bodyId());
 
     for (uint i = d_ptr->_message.partCount(); i > 0; --i) {
         QMailMessagePart &part = d_ptr->_message.partAt(i - 1);
@@ -667,7 +667,7 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
                 existingText = d_ptr->_message.body().data();
             } else {
                 // Is there any text in this message?
-                QMessageContentContainerId textId(body());
+                QMessageContentContainerId textId(bodyId());
                 if (textId.isValid()) {
                     QMessageContentContainer textPart(find(textId));
                     existingText = textPart.textContent();

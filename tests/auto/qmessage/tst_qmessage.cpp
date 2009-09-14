@@ -222,7 +222,7 @@ void tst_QMessage::testFromTransmissionFormat()
     QCOMPARE(message.contentCharset().toLower(), charset);
 
     if (!text.isEmpty()) {
-        QMessageContentContainerId bodyId(message.body());
+        QMessageContentContainerId bodyId(message.bodyId());
         QVERIFY(bodyId.isValid());
 
         QMessageContentContainer body(message.find(bodyId));
@@ -392,7 +392,7 @@ exit 0\n");
         QCOMPARE(m1.isContentAvailable(), true);
         QCOMPARE(m1.contentIds().count(), 5);
 
-        QMessageContentContainerId bodyId(m1.body());
+        QMessageContentContainerId bodyId(m1.bodyId());
         QMessageContentContainerIdList ids(m1.contentIds());
 
         QCOMPARE(bodyId, ids.first());
@@ -456,7 +456,7 @@ exit 0\n");
         QCOMPARE(m2.isContentAvailable(), true);
         QCOMPARE(m2.contentIds().count(), 5);
 
-        QMessageContentContainerId bodyId(m2.body());
+        QMessageContentContainerId bodyId(m2.bodyId());
         QMessageContentContainerIdList ids(m2.contentIds());
 
         QCOMPARE(bodyId, ids.first());

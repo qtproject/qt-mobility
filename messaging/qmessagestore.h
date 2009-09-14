@@ -67,6 +67,8 @@ public:
         WorkingMemoryOverflow
     };
 
+    typedef int NotificationFilterId;
+
     QMessageStore::ErrorCode lastError() const;
 
     QMessageIdList queryMessages(const QMessageFilter &filter = QMessageFilter(), const QMessageOrdering &ordering = QMessageOrdering(), uint limit = 0, uint offset = 0) const;
@@ -93,15 +95,15 @@ public:
 #endif
     QMessageAccount account(const QMessageAccountId &id) const;
 
-    int registerNotificationFilter(const QMessageFilter &filter);
-    void unregisterNotificationFilter(int token);
+    NotificationFilterId registerNotificationFilter(const QMessageFilter &filter);
+    void unregisterNotificationFilter(NotificationFilterId filterId);
 
     static QMessageStore* instance();
     
 signals:
-    void messageAdded(const QMessageId &id, const QSet<int> &matchingFilters);
-    void messageRemoved(const QMessageId &id, const QSet<int> &matchingFilters);
-    void messageUpdated(const QMessageId &id, const QSet<int> &matchingFilters);
+    void messageAdded(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &matchingFilterIds);
+    void messageRemoved(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &matchingFilterIds);
+    void messageUpdated(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &matchingFilterIds);
 
 private:
     friend class QGlobalStaticDeleter<QMessageStore>;

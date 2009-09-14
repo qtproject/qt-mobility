@@ -229,7 +229,7 @@ uint QMessage::size() const
     return 0; // stub
 }
 
-QMessageContentContainerId QMessage::body() const
+QMessageContentContainerId QMessage::bodyId() const
 {
     // TODO: Example body finding algorithm.
     // If the content type of the message is text, then that is the body
@@ -254,7 +254,7 @@ QMessageContentContainerIdList QMessage::attachments() const
 {
     //    TODO: Example attachment list generation algorithm, message parts are the main issue, maybe 
     //    have to recurse into them, somewhat ambiguous.
-    //    Don't recurse, just ignore any body part, see body() for body finding algorithm.
+    //    Don't recurse, just ignore any body part, see bodyId() for body finding algorithm.
     
     // Implementation note, this should be platform independent.
     return QMessageContentContainerIdList(); // stub
