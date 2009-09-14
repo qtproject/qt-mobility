@@ -52,9 +52,12 @@ public:
 
     virtual QString formatDescription(const QString &formatMimeType) const { return m_formatDescriptions.value(formatMimeType); }
 
+    QByteArray formatElementName() const { return m_elementNames.value(format()); }
+
 private:
     QString m_format;
     QStringList m_supportedFormats;
+    QMap<QString,QByteArray> m_elementNames;
     QMap<QString, QString> m_formatDescriptions;
 };
 

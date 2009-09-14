@@ -45,21 +45,21 @@ QGstreamerVideoEncode::QGstreamerVideoEncode(QObject *parent)
     m_frameRate = qMakePair<int,int>(-1,1);
 
     QList<QByteArray> codecCandidates;
-    codecCandidates << "h264" << "xvid" << "mpeg4" << "mpeg1" << "mpeg2" << "theora";
+    codecCandidates << "video/h264" << "video/xvid" << "video/mpeg4" << "video/mpeg1" << "video/mpeg2" << "video/theora";
 
-    m_elementNames["h264"] = "x264enc";
-    m_elementNames["xvid"] = "xvidenc";
-    m_elementNames["mpeg4"] = "ffenc_mpeg4";
-    m_elementNames["mpeg1"] = "ffenc_mpeg1video";
-    m_elementNames["mpeg2"] = "ffenc_mpeg2video";
-    m_elementNames["theora"] = "theoraenc";
+    m_elementNames["video/h264"] = "x264enc";
+    m_elementNames["video/xvid"] = "xvidenc";
+    m_elementNames["video/mpeg4"] = "ffenc_mpeg4";
+    m_elementNames["video/mpeg1"] = "ffenc_mpeg1video";
+    m_elementNames["video/mpeg2"] = "ffenc_mpeg2video";
+    m_elementNames["video/theora"] = "theoraenc";
 
-    m_codecOptions["h264"] = QStringList() << "quality" << "bitrate" << "quantizer";
-    m_codecOptions["xvid"] = QStringList() << "quality" << "bitrate" << "quantizer" << "profile";
-    m_codecOptions["mpeg4"] = QStringList() << "quality" << "bitrate" << "quantizer";
-    m_codecOptions["mpeg1"] = QStringList() << "quality" << "bitrate" << "quantizer";
-    m_codecOptions["mpeg2"] = QStringList() << "quality" << "bitrate" << "quantizer";
-    m_codecOptions["theora"] = QStringList() << "quality" << "bitrate";
+    m_codecOptions["video/h264"] = QStringList() << "quality" << "bitrate" << "quantizer";
+    m_codecOptions["video/xvid"] = QStringList() << "quality" << "bitrate" << "quantizer" << "profile";
+    m_codecOptions["video/mpeg4"] = QStringList() << "quality" << "bitrate" << "quantizer";
+    m_codecOptions["video/mpeg1"] = QStringList() << "quality" << "bitrate" << "quantizer";
+    m_codecOptions["video/mpeg2"] = QStringList() << "quality" << "bitrate" << "quantizer";
+    m_codecOptions["video/theora"] = QStringList() << "quality" << "bitrate";
 
     foreach( const QByteArray& codecName, codecCandidates ) {
         QByteArray elementName = m_elementNames[codecName];
@@ -246,22 +246,22 @@ GstElement *QGstreamerVideoEncode::createEncoder()
             if (option == QLatin1String("quality")) {
                 double qualityValue = value.toDouble();
 
-                if (m_codec == QLatin1String("h264")) {
+                if (m_codec == QLatin1String("video/h264")) {
                     //qant(0) = 50, quant(50) = 21, quant(100) = 1
                     int quant = qRound(50-49*(pow(qualityValue/100.0, 0.7567288)));
                     g_object_set(G_OBJECT(encoderElement), "quantizer", quant, NULL);
-                } else if (m_codec == QLatin1String("xvid")) {
+                } else if (m_codec == QLatin1String("video/xvid")) {
                     //quant from 2 to 32, default 4
 
                     int quant = qRound(31-29*(pow(qualityValue/100.0, 0.1)));
                     g_object_set(G_OBJECT(encoderElement), "quantizer", quant, NULL);
-                } else if (m_codec == QLatin1String("mpeg4") ||
-                           m_codec == QLatin1String("mpeg1") ||
-                           m_codec == QLatin1String("mpeg2") ) {
+                } else if (m_codec == QLatin1String("video/mpeg4") ||
+                           m_codec == QLatin1String("video/mpeg1") ||
+                           m_codec == QLatin1String("video/mpeg2") ) {
                     //quant from 1 to 30, default ~3
                     double quant = 30.0-29*(pow(qualityValue/100.0, 0.15));
                     g_object_set(G_OBJECT(encoderElement), "quantizer", quant, NULL);
-                } else if (m_codec == QLatin1String("theora")) {
+                } else if (m_codec == QLatin1String("video/theora")) {
                     //quality from 0 to 63, default 16
                     int quality = 63*(pow(qualityValue/100.0, 1.977));
                     g_object_set(G_OBJECT(encoderElement), "quality", quality, NULL);

@@ -43,18 +43,18 @@ QGstreamerAudioEncode::QGstreamerAudioEncode(QObject *parent)
     :QAudioEncoderControl(parent)
 {
     QList<QByteArray> codecCandidates;
-    codecCandidates << "mp3" << "vorbis" << "speex" << "gsm";
+    codecCandidates << "audio/mpeg" << "audio/vorbis" << "audio/speex" << "audio/GSM";
 
-    m_elementNames["mp3"] = "lame";
-    m_elementNames["vorbis"] = "vorbisenc";
-    m_elementNames["speex"] = "speexenc";
-    m_elementNames["gsm"] = "gsmenc";
+    m_elementNames["audio/mpeg"] = "lame";
+    m_elementNames["audio/vorbis"] = "vorbisenc";
+    m_elementNames["audio/speex"] = "speexenc";
+    m_elementNames["audio/GSM"] = "gsmenc";
 
 
-    m_codecOptions["vorbis"] = QStringList() << "quality" << "bitrate" << "min-bitrate" << "max-bitrate";
-    m_codecOptions["mp3"] = QStringList() << "quality" << "bitrate" << "mode" << "vbr";
-    m_codecOptions["speex"] = QStringList() << "quality" << "bitrate" << "mode" << "vbr" << "vad" << "dtx";
-    m_codecOptions["gsm"] = QStringList();
+    m_codecOptions["audio/vorbis"] = QStringList() << "quality" << "bitrate" << "min-bitrate" << "max-bitrate";
+    m_codecOptions["audio/mpeg"] = QStringList() << "quality" << "bitrate" << "mode" << "vbr";
+    m_codecOptions["audio/speex"] = QStringList() << "quality" << "bitrate" << "mode" << "vbr" << "vad" << "dtx";
+    m_codecOptions["audio/GSM"] = QStringList();
 
     foreach( const QByteArray& codecName, codecCandidates ) {
         QByteArray elementName = m_elementNames[codecName];
@@ -204,9 +204,9 @@ GstElement *QGstreamerAudioEncode::createEncoder()
             if (option == QLatin1String("quality")) {
                 double qualityValue = value.toDouble();
 
-                if (m_codec == QLatin1String("vorbis")) {
+                if (m_codec == QLatin1String("audio/vorbis")) {
                     g_object_set(G_OBJECT(encoderElement), "quality", qualityValue/10.0, NULL);
-                } else if (m_codec == QLatin1String("mp3")) {
+                } else if (m_codec == QLatin1String("audio/mpeg")) {
                     int preset = 1006; // Medium
                     if (qualityValue > 40)
                         preset = 1001; // Standard
@@ -215,7 +215,7 @@ GstElement *QGstreamerAudioEncode::createEncoder()
                     if (qualityValue > 80 )
                         preset = 1003; // Insane
                     g_object_set(G_OBJECT(encoderElement), "preset", preset, NULL);
-                } else if (m_codec == QLatin1String("speex")) {
+                } else if (m_codec == QLatin1String("audio/speex")) {
                     //0-10 range with default 8
                     double q = 10.0*pow(qualityValue/100.0, 0.32);
                     g_object_set(G_OBJECT(encoderElement), "quality", q, NULL);

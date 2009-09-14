@@ -39,13 +39,32 @@ QGstreamerMediaFormatControl::QGstreamerMediaFormatControl(QObject *parent)
     :QMediaFormatControl(parent)
 {
     QList<QByteArray> formatCandidates;
-    formatCandidates << "matroskamux" << "oggmux" << "qtmux" << "mp4mux" << "avimux" << "gppmux";
-    formatCandidates << "flvmux" << "wavenc" << "ffmux_amr" << "ffmux_asf" << "ffmux_dv" << "ffmux_gif";
-    formatCandidates << "ffmux_mov" << "ffmux_mp4" << "ffmux_mpeg" << "ffmux_vob" << "ffmux_mpegts" << "ffmux_3g2" << "ffmux_3gp";
+    formatCandidates << "matroska" << "ogg" << "quicktime" << "mp4" << "avi" << "3gpp";
+    formatCandidates << "flv" << "wav" << "amr" << "asf" << "dv" << "gif";
+    formatCandidates << "mpeg" << "vob" << "mpegts" << "3g2" << "3gp";
+
+    m_elementNames["matroska"] = "matroskamux";
+    m_elementNames["ogg"] = "oggmux";
+    m_elementNames["quicktime"] = "qtmux";
+    m_elementNames["mp4"] = "mp4mux";
+    m_elementNames["avi"] = "avimux";
+    m_elementNames["3gpp"] = "gppmux";
+    m_elementNames["flv"] = "flvmux";
+    m_elementNames["wav"] = "wavenc";
+    m_elementNames["amr"] = "ffmux_amr";
+    m_elementNames["asf"] = "ffmux_asf";
+    m_elementNames["dv"] = "ffmux_dv";
+    m_elementNames["gif"] = "ffmux_gif";
+    m_elementNames["mpeg"] = "ffmux_mpeg";
+    m_elementNames["vob"] = "ffmux_vob";
+    m_elementNames["mpegts"] = "ffmux_mpegts";
+    m_elementNames["3g2"] = "ffmux_3g2";
+    m_elementNames["3gp"] = "ffmux_3gp";
 
 
     foreach( const QByteArray& formatName, formatCandidates ) {
-        GstElementFactory *factory = gst_element_factory_find(formatName.constData());
+        QByteArray elementName = m_elementNames[formatName];
+        GstElementFactory *factory = gst_element_factory_find(elementName.constData());
         if (factory) {
             m_supportedFormats.append(formatName);
             const gchar *descr = gst_element_factory_get_description(factory);
@@ -58,4 +77,5 @@ QGstreamerMediaFormatControl::QGstreamerMediaFormatControl(QObject *parent)
     if (!m_supportedFormats.isEmpty())
         setFormat(m_supportedFormats[0]);
 }
+
 

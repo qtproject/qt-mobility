@@ -94,7 +94,7 @@ GstElement *QGstreamerCaptureSession::buildEncodeBin()
 {
     GstElement *encodeBin = gst_bin_new("encode-bin");
 
-    GstElement *muxer = gst_element_factory_make( m_mediaFormatControl->format().toAscii(), "muxer");
+    GstElement *muxer = gst_element_factory_make( m_mediaFormatControl->formatElementName().constData(), "muxer");
     GstElement *fileSink = gst_element_factory_make("filesink", "filesink");
 
     g_object_set(G_OBJECT(fileSink), "location", m_sink.toString().toLocal8Bit().constData(), NULL);
