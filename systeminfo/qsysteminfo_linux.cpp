@@ -1163,7 +1163,7 @@ void QSystemDeviceInfoPrivate::setConnection()
                     QString batType = halIfaceDevice->getPropertyString("battery.type");
                     if(batType == "primary" || batType == "pda") {
                         if(halIfaceDevice->setConnections() ) {
-                            if(!connect(halIfaceDevice,SIGNAL(propertyModified( int, QVariantList)),
+                            if(!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
                                         this,SLOT(halChanged(int,QVariantList)))) {
                                 qWarning() << "connection malfunction";
                             }
@@ -1180,7 +1180,7 @@ void QSystemDeviceInfoPrivate::setConnection()
                 halIfaceDevice = new QHalDeviceInterface(dev);
                 if (halIfaceDevice->isValid()) {
                     if(halIfaceDevice->setConnections() ) {
-                        if(!connect(halIfaceDevice,SIGNAL(propertyModified( int, QVariantList)),
+                        if(!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
                                     this,SLOT(halChanged(int,QVariantList)))) {
                             qWarning() << "connection malfunction";
                         }
@@ -1189,6 +1189,23 @@ void QSystemDeviceInfoPrivate::setConnection()
                 }
             }
         }
+
+        list = iface.findDeviceByCapability("battery");
+        if(!list.isEmpty()) {
+            foreach(QString dev, list) {
+                halIfaceDevice = new QHalDeviceInterface(dev);
+                if (halIfaceDevice->isValid()) {
+                    if(halIfaceDevice->setConnections()) {
+                        if(!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
+                                    this,SLOT(halChanged(int,QVariantList)))) {
+                            qWarning() << "connection malfunction";
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
 #endif
     }
 }
@@ -1218,11 +1235,11 @@ void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
                 emit batteryStatusChanged(QSystemDeviceInfo::NoBatteryLevel);
             }
         }
-        if(map.at(i).toString() == "ac_adapter.present") {
+        if((map.at(i).toString() == "ac_adapter.present")
+        || (map.at(i).toString() == "battery.rechargeable.is_charging")) {
             QSystemDeviceInfo::PowerState state = currentPowerState();
             emit powerStateChanged(state);
-        }
-    } //end map
+       }} //end map
 }
 #endif
 
