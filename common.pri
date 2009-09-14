@@ -49,6 +49,8 @@ SOURCE_DIR = $$PWD
         #The default include path doesn't include MOC_DIR on symbian
         INCLUDEPATH += $$MOC_DIR
     }
+    # special rules for maemo
+    maemo:include(tests/maemo-tests.pri)
 }
 
 wince* {

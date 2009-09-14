@@ -18,3 +18,6 @@ include(../../common.pri)
 LIBS += -lQtBearer
 
 CONFIG += console
+
+include(../examples.pri)
+

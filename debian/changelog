@@ -1,0 +1,98 @@
+libbearer (0.15) unstable; urgency=low
+
+  * Adding stress test by creating large number of IAPs in various test cases.
+
+ -- Jukka Rissanen <jukka.rissanen@nokia.com>  Tue, 28 Jul 2009 09:33:37 +0300
+
+libbearer (0.14) unstable; urgency=low
+
+  * Enabled statistics in session class.
+
+ -- Jukka Rissanen <jukka.rissanen@nokia.com>  Tue, 28 Jul 2009 08:59:51 +0300
+
+libbearer (0.13) unstable; urgency=low
+
+  * Using IAPConf class instead of DuiGConfItem and/or DuiValueSpace (which is
+    deprecated) in order to hide gconf details.
+  * Statistics support added to QNetworkSession class
+  * QNetworkConfigurationManager::updateConfigurations() internal logic fixed
+
+ -- Jukka Rissanen <jukka.rissanen@nokia.com>  Fri,  3 Jul 2009 11:40:40 +0300
+
+libbearer (0.12) unstable; urgency=low
+
+  * Merging with the latest upstream version.
+
+ -- Jukka Rissanen <jukka.rissanen@nokia.com>  Tue, 30 Jun 2009 14:38:30 +0300
+
+libbearer (0.11) unstable; urgency=low
+
+  * Session was cleared and old session pointer was still being used
+    which caused segfault.
+
+ -- Jukka Rissanen <jukka.rissanen@nokia.com>  Thu, 25 Jun 2009 11:38:50 +0300
+
+libbearer (0.10) unstable; urgency=low
+
+  * Network connection fixes.
+
+ -- Jukka Rissanen <jukka.rissanen@nokia.com>  Wed, 17 Jun 2009 12:41:45 +0300
+
+libbearer (0.9) unstable; urgency=low
+
+  * Update identifier (network id) of current configuration when we
+    receive connected signal from icd. Needed if user connected using
+    default configuration.
+  * Ask current connection state from Icd in updateConfiguration
+
+ -- Jukka Rissanen <jukka.rissanen@nokia.com>  Thu, 11 Jun 2009 12:37:26 +0300
+
+libbearer (0.8) unstable; urgency=low
+
+  * Fixed the icd2 connection request for default configuration.
+
+ -- Jukka Rissanen <jukka.rissanen@nokia.com>  Wed, 10 Jun 2009 15:05:31 +0300
+
+libbearer (0.7) unstable; urgency=low
+
+  * Listen to Icd state changed signals and change the API state accordingly.
+
+ -- Jukka Rissanen <jukka.rissanen@nokia.com>  Tue,  2 Jun 2009 14:40:05 +0300
+
+libbearer (0.6) unstable; urgency=low
+
+  * All the unit tests pass in maemo.
+  * Examples package contains demo applications.
+
+ -- Jukka Rissanen <jukka.rissanen@nokia.com>  Thu, 28 May 2009 11:20:07 +0300
+
+libbearer (0.5) unstable; urgency=low
+
+  * Added missing support functions so that compilation can succeed.
+
+ -- Jukka Rissanen <jukka.rissanen@nokia.com>  Fri, 22 May 2009 16:11:16 +0300
+
+libbearer (0.4) unstable; urgency=low
+
+  * DuiConfValue dependency added
+  * Moved icd support stuff to libconninet package
+
+ -- Jukka Rissanen <jukka.rissanen@nokia.com>  Wed, 13 May 2009 10:23:34 +0300
+
+libbearer (0.3) unstable; urgency=low
+
+  * Unit test package is created.
+
+ -- Jukka Rissanen <jukka.rissanen@nokia.com>  Wed,  6 May 2009 18:07:57 +0300
+
+libbearer (0.2) unstable; urgency=low
+
+  * Basic implementation
+
+ -- Jukka Rissanen <jukka.rissanen@nokia.com>  Wed, 15 Apr 2009 13:51:04 +0300
+
+libbearer (0.1) unstable; urgency=low
+
+  * Initial test release.
+
+ -- Patrik Flykt <Patrik.Flykt@nokia.com>  Tue, 24 Feb 2009 13:44:23 +0200

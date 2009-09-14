@@ -1,16 +1,16 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtCore module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
 ** This file contains pre-release code and may not be distributed.
 ** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
+** contained in the either Technology Preview License Agreement or the
+** Beta Release License Agreement.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,8 +25,16 @@
 ** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
 ** package.
 **
-** If you have questions regarding the use of this file, please
-** contact Nokia at http://qt.nokia.com/contact.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3.0 as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU General Public License version 3.0 requirements will be
+** met: http://www.gnu.org/copyleft/gpl.html.
+**
+** If you are unsure which license is appropriate for your use, please
+** contact the sales department at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -37,26 +45,21 @@
 //  W A R N I N G
 //  -------------
 //
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
+// This file is not part of the Qt API.  It exists for the convenience
+// of the QLibrary class.  This header file may change from
+// version to version without notice, or even be removed.
 //
 // We mean it.
 //
 
 #include "qnetworkconfigmanager_p.h"
 #include "qnetworksession.h"
-#ifdef BEARER_ENGINE
-#include "qnetworksessionengine_p.h"
-#endif
 
 #include <qnetworksession.h>
 #include <QNetworkInterface>
 #include <QDateTime>
 
-#ifdef BEARER_ENGINE
-class QNetworkSessionEngine;
-#endif
+QT_BEGIN_NAMESPACE
 
 class QNetworkSessionPrivate : public QObject
 {
@@ -69,9 +72,7 @@ public:
 
     ~QNetworkSessionPrivate()
     {
-#ifdef MAEMO
 	    cleanupSession();
-#endif
     }
 
     //called by QNetworkSession constructor and ensures
@@ -108,12 +109,7 @@ Q_SIGNALS:
     void quitPendingWaitsForOpened();
 
 private Q_SLOTS:
-#ifdef BEARER_ENGINE
-    void networkConfigurationsChanged();
-    void configurationChanged(const QNetworkConfiguration &config);
-    void forcedSessionClose(const QNetworkConfiguration &config);
-    void connectionError(const QString &id, QNetworkSessionEngine::ConnectionError error);
-#endif
+
 
 private:
     QNetworkConfigurationManager manager;
@@ -137,20 +133,19 @@ private:
     QNetworkSession::State state;
     bool isActive;
 
-#ifdef BEARER_ENGINE
-    bool opened;
-
-    QNetworkSessionEngine *engine;
-#endif
     QNetworkSession::SessionError lastError;
 
     QNetworkSession* q;
     friend class QNetworkSession;
 
-#if defined(BEARER_ENGINE) && defined(BACKEND_NM)
     QDateTime startTime;
-    void setActiveTimeStamp();
-#endif
+    QString currentBearerName;
+    QString currentNetworkInterface;
+    friend class IcdListener;
+    void updateState(QNetworkSession::State);
+    QString updateIdentifier(QString &newId);
+    quint64 getStatistics(bool sent) const;
+    void cleanupSession(void);
 };
 
 QT_END_NAMESPACE
