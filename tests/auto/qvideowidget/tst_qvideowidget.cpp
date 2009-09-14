@@ -1319,48 +1319,84 @@ void tst_QVideoWidget::rendererPresent_data()
     QTest::addColumn<QVideoFrame::PixelFormat>("pixelFormatA");
     QTest::addColumn<QSize>("frameSizeA");
     QTest::addColumn<const uchar *>("frameDataA");
-    QTest::addColumn<uint>("bytesA");
+    QTest::addColumn<int>("bytesA");
     QTest::addColumn<int>("bytesPerLineA");
     QTest::addColumn<QVideoFrame::PixelFormat>("pixelFormatB");
     QTest::addColumn<QSize>("frameSizeB");
     QTest::addColumn<const uchar *>("frameDataB");
-    QTest::addColumn<uint>("bytesB");
+    QTest::addColumn<int>("bytesB");
     QTest::addColumn<int>("bytesPerLineB");
+
+    QTest::newRow("rgb32 -> argb32")
+            << QVideoFrame::Format_RGB32
+            << QSize(2, 2)
+            << static_cast<const uchar *>(rgb32ImageData)
+            << int(sizeof(rgb32ImageData))
+            << 8
+            << QVideoFrame::Format_ARGB32
+            << QSize(2, 2)
+            << static_cast<const uchar *>(argb32ImageData)
+            << int(sizeof(argb32ImageData))
+            << 8;
+
+    QTest::newRow("rgb32 -> rgb24")
+            << QVideoFrame::Format_RGB32
+            << QSize(2, 2)
+            << static_cast<const uchar *>(rgb32ImageData)
+            << int(sizeof(rgb32ImageData))
+            << 8
+            << QVideoFrame::Format_RGB24
+            << QSize(2, 2)
+            << static_cast<const uchar *>(rgb24ImageData)
+            << int(sizeof(rgb24ImageData))
+            << 8;
+
+    QTest::newRow("rgb32 -> rgb565")
+            << QVideoFrame::Format_RGB32
+            << QSize(2, 2)
+            << static_cast<const uchar *>(rgb32ImageData)
+            << int(sizeof(rgb32ImageData))
+            << 8
+            << QVideoFrame::Format_RGB565
+            << QSize(2, 2)
+            << static_cast<const uchar *>(rgb565ImageData)
+            << int(sizeof(rgb565ImageData))
+            << 4;
 
     QTest::newRow("rgb32 -> yuv420p")
             << QVideoFrame::Format_RGB32
             << QSize(2, 2)
             << static_cast<const uchar *>(rgb32ImageData)
-            << sizeof(rgb32ImageData)
+            << int(sizeof(rgb32ImageData))
             << 8
             << QVideoFrame::Format_YUV420P
             << QSize(8, 8)
             << static_cast<const uchar *>(yuvPlanarImageData)
-            << sizeof(yuvPlanarImageData)
+            << int(sizeof(yuvPlanarImageData))
             << 8;
 
     QTest::newRow("yv12 -> rgb24")
             << QVideoFrame::Format_YV12
             << QSize(8, 8)
             << static_cast<const uchar *>(yuvPlanarImageData)
-            << sizeof(yuvPlanarImageData)
+            << int(sizeof(yuvPlanarImageData))
             << 8
             << QVideoFrame::Format_RGB24
             << QSize(2, 2)
             << static_cast<const uchar *>(rgb24ImageData)
-            << sizeof(rgb24ImageData)
+            << int(sizeof(rgb24ImageData))
             << 8;
 
     QTest::newRow("rgb24 -> rgb565")
             << QVideoFrame::Format_RGB24
             << QSize(2, 2)
             << static_cast<const uchar *>(rgb24ImageData)
-            << sizeof(rgb24ImageData)
+            << int(sizeof(rgb24ImageData))
             << 8
             << QVideoFrame::Format_RGB565
             << QSize(2, 2)
             << static_cast<const uchar *>(rgb565ImageData)
-            << sizeof(rgb565ImageData)
+            << int(sizeof(rgb565ImageData))
             << 4;
 }
 
@@ -1369,12 +1405,12 @@ void tst_QVideoWidget::rendererPresent()
     QFETCH(QVideoFrame::PixelFormat, pixelFormatA);
     QFETCH(QSize, frameSizeA);
     QFETCH(const uchar *, frameDataA);
-    QFETCH(uint, bytesA);
+    QFETCH(int, bytesA);
     QFETCH(int, bytesPerLineA);
     QFETCH(QVideoFrame::PixelFormat, pixelFormatB);
     QFETCH(QSize, frameSizeB);
     QFETCH(const uchar *, frameDataB);
-    QFETCH(uint, bytesB);
+    QFETCH(int, bytesB);
     QFETCH(int, bytesPerLineB);
 
     QtTestVideoObject object(0, 0, new QtTestRendererControl);

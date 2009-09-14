@@ -139,6 +139,8 @@ QPainterVideoSurface::QPainterVideoSurface(const QGLContext *context, QObject *p
     , m_ready(false)
 {
     if (context) {
+        const_cast<QGLContext *>(context)->makeCurrent();
+
         glProgramStringARB = reinterpret_cast<_glProgramStringARB>(
                 context->getProcAddress(QLatin1String("glProgramStringARB")));
         glBindProgramARB = reinterpret_cast<_glBindProgramARB>(
@@ -160,6 +162,7 @@ QPainterVideoSurface::QPainterVideoSurface(const QGLContext *context, QObject *p
                 && glActiveTexture) {
             m_shaderSupport = ShadersSupported;
         }
+        const_cast<QGLContext *>(context)->doneCurrent();
     }
 }
 #endif
