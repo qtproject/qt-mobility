@@ -371,7 +371,7 @@ namespace WinHelpers {
         IAttach* pAttachment=NULL;
         ULONG ulAttachmentNum=0;
 
-        Lptstr contentFileNameLptstr(LptstrFromQString(attachmentContainer.contentFileName()));
+        Lptstr suggestedFileNameLptstr(LptstrFromQString(attachmentContainer.suggestedFileName()));
 
         QDataStream attachmentStream(attachmentContainer.content());
 
@@ -390,9 +390,9 @@ namespace WinHelpers {
         prop[1].Value.l=-1;
 
         prop[2].ulPropTag=PR_ATTACH_LONG_FILENAME;
-        prop[2].Value.LPSZ=contentFileNameLptstr;
+        prop[2].Value.LPSZ=suggestedFileNameLptstr;
         prop[3].ulPropTag=PR_ATTACH_FILENAME;
-        prop[3].Value.LPSZ=contentFileNameLptstr;
+        prop[3].Value.LPSZ=suggestedFileNameLptstr;
         prop[4].ulPropTag=0x7FFF000B;
         prop[4].Value.b=TRUE;
 
@@ -877,7 +877,7 @@ IMessage* MapiFolder::createMessage(const QMessage& source, const MapiSessionPtr
             {
                 QMessageContentContainer c = source.find(containerId);
 
-                bool isAttachment = (!c.contentFileName().isEmpty()) && c.isContentAvailable();
+                bool isAttachment = (!c.suggestedFileName().isEmpty()) && c.isContentAvailable();
                 if(isAttachment)
                     addAttachment(mapiMessage,c);
             }

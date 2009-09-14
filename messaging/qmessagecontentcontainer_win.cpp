@@ -139,7 +139,7 @@ QByteArray QMessageContentContainer::contentCharset() const
     return d_ptr->_charset;
 }
 
-QByteArray QMessageContentContainer::contentFileName() const
+QByteArray QMessageContentContainer::suggestedFileName() const
 {
     return d_ptr->_name;
 }

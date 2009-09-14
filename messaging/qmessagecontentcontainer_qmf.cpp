@@ -185,7 +185,7 @@ QByteArray QMessageContentContainer::contentCharset() const
     return d_ptr->_container->contentType().charset();
 }
 
-QByteArray QMessageContentContainer::contentFileName() const
+QByteArray QMessageContentContainer::suggestedFileName() const
 {
     if (!d_ptr->_name.isEmpty()) {
         return d_ptr->_name;

@@ -57,12 +57,12 @@
     transfer encoding used to represent binary data using 7-bit ASCII characters, such as 
     quoted-printable and base64.
     
-    contentFileName() will return the suggested filename for an attachment, when 
+    suggestedFileName() will return the suggested filename for an attachment, when 
     defined.
 
     The internet media (MIME) type of the container is returned by contentType(),
     the content subtype is returned by contentSubType(), the content type charset parameter 
-    is returned by contentCharset(), and the content suggested filename by contentFileName(). The 
+    is returned by contentCharset(), and the content suggested filename by suggestedFileName(). The 
     type of a container that contains multiple parts of content must be "multipart" (case 
     insensitive).
     
@@ -140,7 +140,7 @@
     The content subtype, content charset and suggested content file name of the container 
     will be set to the default values for type \a data.
 
-    \sa clearContents(), contentType(), contentSubType(), contentCharset(), contentFileName(), setHeaderField()
+    \sa clearContents(), contentType(), contentSubType(), contentCharset(), suggestedFileName(), setHeaderField()
 */
 
 /*!
@@ -200,11 +200,11 @@
     
     Sets the suggested filename of the content to \a data.
 
-    \sa contentFileName()
+    \sa suggestedFileName()
 */
 
 /*!
-    \fn QMessageContentContainer::contentFileName() const
+    \fn QMessageContentContainer::suggestedFileName() const
     
     Returns the suggested filename of the attachment, when defined;
     otherwise an empty array is returned.

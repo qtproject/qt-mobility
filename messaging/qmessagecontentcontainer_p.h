@@ -354,7 +354,7 @@ public:
 
         attachmentFile.close();
 
-        //set the contentFileName
+        //set the suggested file name for the attachment
 
         QFileInfo fi(attachmentPath);
         _name = fi.fileName().toLatin1();

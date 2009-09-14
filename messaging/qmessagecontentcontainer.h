@@ -65,7 +65,8 @@ public:
     QByteArray contentType() const;
     QByteArray contentSubType() const;
     QByteArray contentCharset() const;
-    QByteArray contentFileName() const;
+
+    QByteArray suggestedFileName() const;
 
     bool isContentAvailable() const;
     uint size() const;

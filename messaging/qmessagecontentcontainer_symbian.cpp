@@ -76,7 +76,7 @@ QByteArray QMessageContentContainer::contentCharset() const
     return QByteArray(); // stub
 }
 
-QByteArray QMessageContentContainer::contentFileName() const
+QByteArray QMessageContentContainer::suggestedFileName() const
 {
     return QByteArray(); // stub
 }
