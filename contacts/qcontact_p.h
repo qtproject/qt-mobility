@@ -58,7 +58,6 @@ class QContactData : public QSharedData
 public:
     QContactData()
         : QSharedData(),
-        m_error(QContact::NoError),
         m_id(0),
         m_nextDetailId(1)
     {
@@ -66,7 +65,6 @@ public:
 
     QContactData(const QContactData& other)
         : QSharedData(other),
-        m_error(other.m_error),
         m_id(other.m_id),
         m_details(other.m_details),
         m_preferences(other.m_preferences),
@@ -77,17 +75,6 @@ public:
 
     ~QContactData() {}
 
-    /* Helper function to set error and detach when necessary */
-    static void setError(const QSharedDataPointer<QContactData>& d, QContact::Error error)
-    {
-        if (d.constData()->m_error != error) {
-            QSharedDataPointer<QContactData>* ncd = const_cast<QSharedDataPointer<QContactData>*>(&d);
-            ncd->detach();
-            ncd->data()->m_error = error;
-        }
-    }
-
-    QContact::Error m_error;
     QUniqueId m_id;
     QList<QContactDetail> m_details;
     QMap<QString, quint32> m_preferences;

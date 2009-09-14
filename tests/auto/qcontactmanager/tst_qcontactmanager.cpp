@@ -2358,7 +2358,7 @@ void tst_QContactManager::displayName()
     QVERIFY(d.displayLabel().isSynthesised() == true);
 
     /* Set something else */
-    QVERIFY(d.setDisplayLabel("The grand old duchess"));
+    d.setDisplayLabel("The grand old duchess");
     QVERIFY(d.displayLabel().label() == "The grand old duchess");
     QVERIFY(d.displayLabel().isSynthesised() == false);
 

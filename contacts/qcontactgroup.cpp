@@ -99,91 +99,56 @@ bool QContactGroup::isEmpty() const
 /*! Return the id of this QContactGroup */
 QUniqueId QContactGroup::id() const
 {
-    d->m_error = QContactGroup::NoError;
     return d->m_id;
 }
 
 /*! Set the id of this QContactGroup to \a id.  Returns true if the id was set successfully, otherwise returns false */
-bool QContactGroup::setId(const QUniqueId& id)
+void QContactGroup::setId(const QUniqueId& id)
 {
-    d->m_error = QContactGroup::NoError;
     d->m_id = id;
-    return true;
-}
-
-/*!
- * \enum QContactGroup::Error
- *
- * This enum specifies an error that occurred during the most recent operation:
- *
- * \value NoError The most recent operation was successful
- * \value OutOfMemoryError The most recent operation failed due to running out of memory
- * \value ContactNotInGroupError The most recent operation failed because the requested contact is not a member of the group
- * \value ContactAlreadyInGroupError The most recent operation failed because the specified contact is already a member of the group
- * \value PermissionsError The most recent operation failed because the caller does not have permission to perform the operation
- * \value UnspecifiedError The most recent operation failed for an undocumented reason
- */
-
-/*! Return the error code of the most recent operation */
-QContactGroup::Error QContactGroup::error() const
-{
-    return d->m_error;
 }
 
 /*! Return the name of the group */
 QString QContactGroup::name() const
 {
-    d->m_error = QContactGroup::NoError;
     return d->m_name;
 }
 
 /*! Set the name of the group to the given \a groupName.  Returns true if the name was set successfully, otherwise returns false */
-bool QContactGroup::setName(const QString& groupName)
+void QContactGroup::setName(const QString& groupName)
 {
-    d->m_error = QContactGroup::NoError;
     d->m_name = groupName;
-    return true;
 }
 
 /*! Add the contact identified by \a contactId to this QContactGroup.  Returns true if the contact was successfully added to the group, and false if the group already contains the contact, or the operation failed. */
 bool QContactGroup::addMember(const QUniqueId& contactId)
 {
-    d->m_error = QContactGroup::ContactAlreadyInGroupError;
     if (d->m_members.contains(contactId))
         return false;
 
     d->m_members.append(contactId);
-    d->m_error = QContactGroup::NoError;
     return true;
 }
 
 /*! Remove the contact identified by \a contactId from this QContactGroup.  Returns true if the contact was successfully removed from the group, and false if the group did not contain the contact, or the operation failed. */
 bool QContactGroup::removeMember(const QUniqueId& contactId)
 {
-    d->m_error = QContactGroup::ContactNotInGroupError;
     if (!d->m_members.contains(contactId))
         return false;
 
     d->m_members.removeOne(contactId);
-    d->m_error = QContactGroup::NoError;
     return true;
 }
 
 /*! Returns true if the contact identified by \a contactId is a member of the group */
 bool QContactGroup::hasMember(const QUniqueId& contactId) const
 {
-    d->m_error = QContactGroup::ContactNotInGroupError;
-    if (!d->m_members.contains(contactId))
-        return false;
-
-    d->m_error = QContactGroup::NoError;
-    return true;
+    return d->m_members.contains(contactId);
 }
 
 /*! Returns an iterator over the contactIds of the entire membership of the group */
 QList<QUniqueId> QContactGroup::members() const
 {
-    d->m_error = QContactGroup::NoError;
     return d->m_members;
 }
 
@@ -193,11 +158,9 @@ QList<QUniqueId> QContactGroup::members() const
  * Returns true if the member list is set successfully, otherwise returns false.
  * \sa members(), addMember(), hasMember()
  */
-bool QContactGroup::setMembers(const QList<QUniqueId>& members)
+void QContactGroup::setMembers(const QList<QUniqueId>& members)
 {
-    d->m_error = QContactGroup::NoError;
     d->m_members = members;
-    return true;
 }
 
 

@@ -51,13 +51,6 @@ public:
     QContactDetail(const QContactDetail& other);
     QContactDetail& operator=(const QContactDetail& other);
 
-    /* The values of the Error enum are still to be decided! */
-    enum Error {
-        NoError = 0,
-        MissingValueError,
-        IncompatibleAssignmentError,
-        OutOfMemoryError,
-    };
 
     // Predefined attribute names and values
 #ifdef Q_QDOC
@@ -71,8 +64,6 @@ public:
     Q_DECLARE_LATIN1_LITERAL(ContextWork, "Work");
     Q_DECLARE_LATIN1_LITERAL(ContextOther, "Other");
 #endif
-
-    QContactDetail::Error error() const;
 
     bool operator==(const QContactDetail& other) const;
     bool operator!=(const QContactDetail& other) const {return !(other == *this);}
