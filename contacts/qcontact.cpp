@@ -128,20 +128,6 @@ QContact::~QContact()
 {
 }
 
-/*!
- * \enum QContact::Error
- *
- * This enum specifies an error that occurred during the most recent operation:
- *
- * \value NoError The most recent operation was successful
- * \value OutOfMemoryError The most recent operation failed due to running out of memory
- * \value DetailDoesNotExistError The most recent operation failed because the requested detail does not exist
- * \value DetailAlreadyExistsError The most recent operation failed because the specified detail already exists
- * \value BadArgumentError The most recent operation failed because a bad argument was supplied
- * \value PermissionsError The most recent operation failed because the caller does not have permission to perform the operation
- * \value UnspecifiedError The most recent operation failed for an undocumented reason
- */
-
 /*! Returns the QUniqueId that identifies this contact */
 QUniqueId QContact::id() const
 {

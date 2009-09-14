@@ -68,7 +68,7 @@ QContactChangeLogFilter::QContactChangeLogFilter(EventType type)
 
 /*!
  * Sets the type of change that this filter will match against to \a type
- * \sa changeType()
+ * \sa eventType()
  */
 void QContactChangeLogFilter::setEventType(EventType type)
 {
@@ -98,7 +98,7 @@ QDateTime QContactChangeLogFilter::since() const
 
 /*!
  * Returns the type of change that this filter will match against
- * \sa setChangeType()
+ * \sa setEventType()
  */
 QContactChangeLogFilter::EventType QContactChangeLogFilter::eventType() const
 {
