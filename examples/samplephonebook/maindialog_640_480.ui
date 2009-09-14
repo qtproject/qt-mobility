@@ -130,11 +130,18 @@
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>50</height>
+           <height>30</height>
           </size>
          </property>
          <property name="text">
-          <string>No image selected</string>
+          <string>Select</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="avatarLabel">
+         <property name="text">
+          <string/>
          </property>
         </widget>
        </item>
@@ -193,6 +200,24 @@
        </item>
        <item>
         <widget class="QLineEdit" name="mobilePhoneEdit"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_9">
+       <item>
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>Groups:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="groupsButton">
+         <property name="text">
+          <string>Group Details</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>

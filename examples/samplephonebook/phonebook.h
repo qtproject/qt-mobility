@@ -69,6 +69,7 @@ public slots:
     void findContact();
     void openContact();
     void cancelContact();
+    void editGroupDetails();
     void next();
     void previous();
     void importFromVCard();
@@ -98,8 +99,10 @@ private:
     QPushButton *importButton;
     QPushButton *exportButton;
     QPushButton *quitButton;
+    QPushButton *groupsButton;
     QLabel *currentIndexLabel;
     QLabel *currentBackendLabel;
+    QLabel *avatarPixmapLabel;
 
     QComboBox *backendCombo;
 
@@ -117,7 +120,9 @@ private:
     int lastIndex;
     bool addingContact;
     bool editingContact;
+	bool smallScreenSize;
     QList<QContact> contacts;
+    QList<QUniqueId> contactGroups;
 
     QMap<QString, QContactManager*> managers;
     QContactManager *cm;

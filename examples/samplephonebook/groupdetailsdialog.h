@@ -31,11 +31,45 @@
 **
 ****************************************************************************/
 
-#include "ui_maindialog_240_320.h"
+#ifndef GROUPDETAILSDIALOG_H
+#define GROUPDETAILSDIALOG_H
 
-class MainDialogForm240By320 : public QWidget, Ui::MainDialog240By320
+#include <QDialog>
+#include "qcontact.h"
+
+class QPushButton;
+class QListWidget;
+class QListWidgetItem;
+class QLineEdit;
+class QContactManager;
+
+class GroupDetailsDialog : public QDialog
 {
+    Q_OBJECT
+
 public:
-       MainDialogForm240By320(QWidget *parent);
-       ~MainDialogForm240By320();
+    GroupDetailsDialog(QContactManager *contactManager, const QContact &contact);
+    QList<QUniqueId> groups();
+
+private:
+    void repopulateGroupList();
+
+public slots:
+    void show();
+    void groupItemChanged(QListWidgetItem * item);
+
+private slots:
+    void okButtonClicked();
+    void cancelButtonClicked();
+
+private:
+    QListWidget *listWidget;
+    QLineEdit *contactNameEdit;
+    QPushButton *cancelButton;
+    QPushButton *okButton;
+    QContactManager *cm;
+    QContact localContact;
 };
+
+#endif // GROUPDETAILSDIALOG_H
+

@@ -35,11 +35,15 @@
 #define FINDDIALOG_H
 
 #include <QDialog>
+#include "qcontactfilter.h"
 
 QT_BEGIN_NAMESPACE
 class QLineEdit;
 class QPushButton;
+class QLabel;
 QT_END_NAMESPACE
+
+class FilterDialog;
 
 class FindDialog : public QDialog
 {
@@ -47,15 +51,24 @@ class FindDialog : public QDialog
 
 public:
     FindDialog(QWidget *parent = 0);
-    QString getFindText();
+    QString getFindText() const;
+    QContactFilter getFindFilter() const;
+    bool isSimpleFilterEnabled() const;
+	void showEvent(QShowEvent *event);
 
 public slots:
     void findClicked();
+    void filterClicked();
+    void filterHidden();
 
 private:
     QPushButton *findButton;
+    QPushButton *filterButton;
+    FilterDialog *filterDialog;
     QLineEdit *lineEdit;
+    QLabel *findLabel;
     QString findText;
+    bool simpleFilter;
 };
 
 #endif
