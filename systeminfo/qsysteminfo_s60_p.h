@@ -47,8 +47,6 @@
 
 
 #include <QObject>
-#include <QSize>
-#include <QHash>
 
 #include "qsysinfoglobal.h"
 #include "qsysteminfo.h"
@@ -62,6 +60,9 @@
 #include <mproengprofile.h>
 #include <MProEngProfileName.h>
 
+#include <cenrepnotifyhandler.h>
+#include <ProfileEngineSDKCRKeys.h> 
+
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
@@ -73,6 +74,9 @@ class QSystemInfo;
 
 class CDeviceInfo;
 class CBatteryMonitor;
+class CBluetoothMonitor;
+class CProfileMonitor;
+class MCenRepNotifyHandlerCallback;
 
 //////// Observer for monitoring battery level, battery state and power state.
 class MBatteryObserver
@@ -210,6 +214,8 @@ public:
     QSystemDeviceInfo::Profile currentProfile();
     
     QSystemDeviceInfo::PowerState currentPowerState();
+    
+    void ProfileChangedL(TUint aLevel, CTelephony::TBatteryStatus aState);
 
 private: // From MBatteryObserver
     void BatteryMonitorChangedL(TUint aLevel, CTelephony::TBatteryStatus aState);
@@ -222,9 +228,15 @@ Q_SIGNALS:
     void powerStateChanged(QSystemDeviceInfo::PowerState);
 
 private:
+    friend class CBluetoothMonitor;
+    friend class CProfileMonitor;
+    
     CDeviceInfo* iDeviceInfo;
-    MProEngEngine* iProfileEngine;
     CBatteryMonitor* iBatteryMonitor;
+    CBluetoothMonitor* iBluetoothMonitor;
+    CProfileMonitor* iProfileMonitor;
+    MProEngEngine* iProfileEngine;
+    
     mutable int iError;
 };
 
@@ -323,6 +335,54 @@ private:
     CTelephony* iTelephony;
     CTelephony::TBatteryInfoV1Pckg iBatteryInfoV1Pckg;
     CTelephony::TBatteryInfoV1 iBatteryInfoV1;
+};
+
+//////// For monitoring bluetooth state
+class CBluetoothMonitor : public MCenRepNotifyHandlerCallback
+{
+
+public:
+    static CBluetoothMonitor* NewL(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate);
+    static CBluetoothMonitor* NewLC(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate);
+    void ConstructL();
+    virtual ~CBluetoothMonitor();
+
+private:
+        CBluetoothMonitor(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate);
+
+private: // From MCenRepNotifyHandlerCallback
+    void HandleNotifyInt(TUint32 aId, TInt aNewValue);
+
+private:
+    CCenRepNotifyHandler* iNotifyHandler;
+    CRepository* iSession;
+    QSystemDeviceInfoPrivate& iSystemDeviceInfoPrivate;
+};
+
+//////// For monitoring current profile
+class CProfileMonitor : public MCenRepNotifyHandlerCallback
+{
+
+public:
+    static CProfileMonitor* NewL(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate);
+    static CProfileMonitor* NewLC(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate);
+    void ConstructL();
+    virtual ~CProfileMonitor();
+
+private:
+        CProfileMonitor(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate);
+
+private: // From MCenRepNotifyHandlerCallback
+    void HandleNotifyInt(TUint32 aId, TInt aNewValue);
+
+private:
+    CCenRepNotifyHandler* iNotifyHandler;
+    CRepository* iSession;
+    QSystemDeviceInfoPrivate& iSystemDeviceInfoPrivate;
+    CProfileMonitor* iProfileMonitor;
+    MProEngEngine* iProfileEngine;
+    
+    mutable int iError;
 };
 
 QT_END_NAMESPACE

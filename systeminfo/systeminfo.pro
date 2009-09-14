@@ -87,7 +87,9 @@ unix: {
             -letel3rdparty \
             -lsysutil \
             -lefsrv \
-            -lfeatdiscovery
+            -lfeatdiscovery \
+            -lcentralrepository \
+            -lcenrepnotifhandler
         TARGET.CAPABILITY = All -TCB -AllFiles -DRM
         TARGET.EPOCALLOWDLLDATA = 1
     }

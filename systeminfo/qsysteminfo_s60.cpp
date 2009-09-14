@@ -42,6 +42,10 @@
 #include <FeatDiscovery.h>
 #include <e32property.h>
 
+#include <centralrepository.h>  
+#include <CenRepNotifyHandler.h>
+#include <btserversdkcrkeys.h>
+
 //////// QSystemInfo
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
  : QObject(parent)
@@ -156,11 +160,6 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
     return QNetworkInterface();
 }
 
-void QSystemNetworkInfoPrivate::SignalStatusL(TInt32 aStrength, TInt8 /*aBars*/)
-{
-    emit networkSignalStrengthChanged(QSystemNetworkInfo::GsmMode, aStrength);
-}
-
 //////// QSystemDisplayInfo
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
         : QObject(parent)
@@ -218,15 +217,23 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
 {
     TRAP(iError,
         iDeviceInfo = CDeviceInfo::NewL();
-    )
-    
+    )    
     TRAP(iError,
         iProfileEngine = ProEngFactory::NewEngineL();
-    )
-    
+    )    
     TRAP(iError,
         if (!iBatteryMonitor) {
             iBatteryMonitor = CBatteryMonitor::NewL(*this);
+        }
+    )
+    TRAP(iError,
+        if (!iBluetoothMonitor) {
+            iBluetoothMonitor = CBluetoothMonitor::NewL(*this);
+        }
+    )
+    TRAP(iError,
+        if (!iProfileMonitor) {
+            iProfileMonitor = CProfileMonitor::NewL(*this);
         }
     )
 }
@@ -259,7 +266,6 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
     QSystemDeviceInfo::InputMethodFlags methods;
     return methods;
 }
-
 
 QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 {
@@ -464,6 +470,8 @@ QSystemDeviceInfo::PowerState CDeviceInfo::currentPowerState()
         return QSystemDeviceInfo::BatteryPower;
     } else if (iBatteryInfoV1.iStatus == CTelephony::EBatteryConnectedButExternallyPowered) {
         return QSystemDeviceInfo::WallPower;
+    } else {
+        return QSystemDeviceInfo::UnknownPower;
     }
 }
 
@@ -593,6 +601,107 @@ void CBatteryMonitor::RunL()
 void CBatteryMonitor::DoCancel()
 {
     iTelephony->CancelAsync(CTelephony::EBatteryInfoChangeCancel);
+}
+
+//////// For monitoring bluetooth state
+CBluetoothMonitor::CBluetoothMonitor(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate)
+    : iSystemDeviceInfoPrivate(aSystemDeviceInfoPrivate)
+{
+}
+
+CBluetoothMonitor::~CBluetoothMonitor()
+{
+    delete iNotifyHandler;
+    delete iSession;
+}
+
+CBluetoothMonitor* CBluetoothMonitor::NewL(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate)
+{
+    CBluetoothMonitor* self = CBluetoothMonitor::NewLC(aSystemDeviceInfoPrivate);
+    CleanupStack::Pop(self);
+    return self;
+}
+ 
+CBluetoothMonitor* CBluetoothMonitor::NewLC(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate)
+{
+    CBluetoothMonitor* self = new (ELeave) CBluetoothMonitor(aSystemDeviceInfoPrivate);
+    CleanupStack::PushL(self);
+    self->ConstructL();
+    return self;
+}
+ 
+void CBluetoothMonitor::ConstructL()
+{
+    iSession = CRepository::NewL(KCRUidBluetoothPowerState);
+    iNotifyHandler = CCenRepNotifyHandler::NewL(*this, *iSession,
+        CCenRepNotifyHandler::EIntKey, KBTPowerState);
+    iNotifyHandler->StartListeningL();
+}
+
+
+void CBluetoothMonitor::HandleNotifyInt(TUint32 aId, TInt aNewValue)
+{
+    if (aId == KBTPowerState  && aNewValue & 0x00000001) {
+        emit iSystemDeviceInfoPrivate.bluetoothStateChanged(true);
+    } else {
+        emit iSystemDeviceInfoPrivate.bluetoothStateChanged(false);
+    }
+}
+
+//////// For monitoring current profile
+CProfileMonitor::CProfileMonitor(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate)
+    : iSystemDeviceInfoPrivate(aSystemDeviceInfoPrivate)
+{
+}
+
+CProfileMonitor::~CProfileMonitor()
+{
+    if(iProfileEngine) {
+        iProfileEngine->Release();
+    }
+    delete iNotifyHandler;
+    delete iSession;
+}
+
+CProfileMonitor* CProfileMonitor::NewL(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate)
+{
+    CProfileMonitor* self = CProfileMonitor::NewLC(aSystemDeviceInfoPrivate);
+    CleanupStack::Pop(self);
+    return self;
+}
+ 
+CProfileMonitor* CProfileMonitor::NewLC(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate)
+{
+    CProfileMonitor* self = new (ELeave) CProfileMonitor(aSystemDeviceInfoPrivate);
+    CleanupStack::PushL(self);
+    self->ConstructL();
+    return self;
+}
+ 
+void CProfileMonitor::ConstructL()
+{
+    iProfileEngine = ProEngFactory::NewEngineL();
+    iSession = CRepository::NewL(KCRUidProfileEngine);
+    iNotifyHandler = CCenRepNotifyHandler::NewL(*this, *iSession,
+        CCenRepNotifyHandler::EIntKey, KProEngActiveProfile);
+    iNotifyHandler->StartListeningL();
+}
+
+
+void CProfileMonitor::HandleNotifyInt(TUint32 aId, TInt aNewValue)
+{
+    QSystemDeviceInfo::Profile currentProfile = QSystemDeviceInfo::UnknownProfile;
+    if(iProfileEngine) {
+        MProEngProfile* activeProfile = NULL;
+        TRAP(iError, activeProfile = iProfileEngine->ActiveProfileL();)
+        
+        if (iError == KErrNone) {
+            currentProfile = static_cast<QSystemDeviceInfo::Profile>
+                (activeProfile->ProfileName().Id());
+            activeProfile->Release();
+        }
+    }
+    emit iSystemDeviceInfoPrivate.currentProfileChanged(currentProfile);
 }
 
 QT_END_NAMESPACE
