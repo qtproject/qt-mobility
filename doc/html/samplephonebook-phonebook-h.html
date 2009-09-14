@@ -54,6 +54,7 @@
 
     #include &lt;QWidget&gt;
     #include &lt;QMap&gt;
+    #include &lt;QPlainTextEdit&gt;
 
     class QListWidget;
     class QPushButton;
@@ -61,6 +62,10 @@
     class QLabel;
     class QLineEdit;
     class QTextEdit;
+
+    class ContactDetailsForm;
+    class MainDialogForm640By480;
+    class MainDialogForm240By320;
 
     class PhoneBook : public QWidget
     {
@@ -75,6 +80,8 @@
         void saveContact();
         void removeContact();
         void findContact();
+        void openContact();
+        void cancelContact();
         void next();
         void previous();
         void importFromVCard();
@@ -89,6 +96,7 @@
     private:
         QContact buildContact() const;
         void displayContact();
+        void updateButtons();
         bool eventFilter(QObject* watched, QEvent* event);
         void populateList(const QContact&amp; currentContact);
 
@@ -96,8 +104,10 @@
 
         QPushButton *addButton;
         QPushButton *saveButton;
+        QPushButton *cancelButton;
         QPushButton *removeButton;
         QPushButton *findButton;
+        QPushButton *openButton;
         QPushButton *importButton;
         QPushButton *exportButton;
         QPushButton *quitButton;
@@ -112,15 +122,23 @@
         QLineEdit *homePhoneLine;
         QLineEdit *workPhoneLine;
         QLineEdit *mobilePhoneLine;
-        QTextEdit *addressText;
+        QPlainTextEdit *addressText;
 
         FindDialog *dialog;
 
         int currentIndex;
+        int lastIndex;
+        bool addingContact;
+        bool editingContact;
         QList&lt;QContact&gt; contacts;
 
         QMap&lt;QString, QContactManager*&gt; managers;
         QContactManager *cm;
+        ContactDetailsForm *contactDetailsForm;
+        MainDialogForm640By480 *mainDialogForm640By480;
+        MainDialogForm240By320 *mainDialogForm240By320;
+        QWidget *mainForm;
+        QWidget *detailsForm;
     };
 
     #endif <span class="comment">//PHONEBOOK_H</span></pre>

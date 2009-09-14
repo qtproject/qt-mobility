@@ -21,7 +21,7 @@
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">class </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition-field.html">Field</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition.html#AccessConstraint-enum">AccessConstraint</a></b> { Any, ReadOnly, CreateOnly }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition.html#AccessConstraint-enum">AccessConstraint</a></b> { NoConstraint, ReadOnly, CreateOnly }</td></tr>
 </table>
 <hr />
 <a name="public-functions"></a>
@@ -32,6 +32,7 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition.html#dtor.QContactDetailDefinition">~QContactDetailDefinition</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">AccessConstraint </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition.html#accessConstraint">accessConstraint</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMap&lt;QString, QContactDetailDefinition::Field&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition.html#fields">fields</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMap&lt;QString, QContactDetailDefinition::Field&gt; &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition.html#fields-2">fields</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition.html#isEmpty">isEmpty</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition.html#isUnique">isUnique</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition.html#name">name</a></b> () const</td></tr>
@@ -53,7 +54,7 @@
 <p>This enum defines the access constraints which may be set on all details of this definition in the store for which the definition is valid.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QContactDetailDefinition::Any</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Details of definitions with this access constraint set have no special access semantics associated with them. Users can read, write, and otherwise modify such details in any manner.</td></tr>
+<tr><td valign="top"><tt>QContactDetailDefinition::NoConstraint</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Details of definitions with this access constraint set have no special access semantics associated with them. Users can read, write, and otherwise modify such details in any manner.</td></tr>
 <tr><td valign="top"><tt>QContactDetailDefinition::ReadOnly</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Details of definitions with this access constraint set are dynamically modified by the backend. Users cannot write values to details of definitions with this access constraint set.</td></tr>
 <tr><td valign="top"><tt>QContactDetailDefinition::CreateOnly</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Details of definitions with this access constraint set are static once created. Their value cannot be changed dynamically, nor can they be written or read by users.</td></tr>
 </table></p>
@@ -71,6 +72,9 @@
 <h3 class="fn"><a name="fields"></a><a href="http://qt.nokia.com/doc/4.5/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>, <a href="qcontactdetaildefinition-field.html">QContactDetailDefinition::Field</a>&gt; QContactDetailDefinition::fields () const</h3>
 <p>Returns the map of keys to fields which are present in details of this definition</p>
 <p>See also <a href="qcontactdetaildefinition.html#setFields">setFields</a>().</p>
+<h3 class="fn"><a name="fields-2"></a><a href="http://qt.nokia.com/doc/4.5/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>, <a href="qcontactdetaildefinition-field.html">QContactDetailDefinition::Field</a>&gt; &amp; QContactDetailDefinition::fields ()</h3>
+<p>Returns a reference to the map of keys to fields which are present in details of this definition.</p>
+<p>You can make changes to the returned map.</p>
 <h3 class="fn"><a name="isEmpty"></a>bool QContactDetailDefinition::isEmpty () const</h3>
 <p>Returns true if the id and fields of this definition are empty</p>
 <h3 class="fn"><a name="isUnique"></a>bool QContactDetailDefinition::isUnique () const</h3>

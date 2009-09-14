@@ -9,14 +9,6 @@
     </section>
     <section ref="qcontact.html" title="QContact Class Reference">
         <keyword ref="qcontact.html">QContact</keyword>
-        <keyword ref="qcontact.html#Error-enum">Error</keyword>
-        <keyword ref="qcontact.html#Error-enum">QContact::DetailDoesNotExistError</keyword>
-        <keyword ref="qcontact.html#Error-enum">QContact::UnspecifiedError</keyword>
-        <keyword ref="qcontact.html#Error-enum">QContact::NoError</keyword>
-        <keyword ref="qcontact.html#Error-enum">QContact::OutOfMemoryError</keyword>
-        <keyword ref="qcontact.html#Error-enum">QContact::BadArgumentError</keyword>
-        <keyword ref="qcontact.html#Error-enum">QContact::PermissionsError</keyword>
-        <keyword ref="qcontact.html#Error-enum">QContact::DetailAlreadyExistsError</keyword>
         <keyword ref="qcontact.html#availableActions">availableActions</keyword>
         <keyword ref="qcontact.html#clearDetails">clearDetails</keyword>
         <keyword ref="qcontact.html#detail">detail</keyword>
@@ -24,7 +16,6 @@
         <keyword ref="qcontact.html#details">details</keyword>
         <keyword ref="qcontact.html#detailsWithAction">detailsWithAction</keyword>
         <keyword ref="qcontact.html#displayLabel">displayLabel</keyword>
-        <keyword ref="qcontact.html#error">error</keyword>
         <keyword ref="qcontact.html#groups">groups</keyword>
         <keyword ref="qcontact.html#id">id</keyword>
         <keyword ref="qcontact.html#isEmpty">isEmpty</keyword>
@@ -197,27 +188,21 @@
     </section>
     <section ref="qcontactchangelogfilter.html" title="QContactChangeLogFilter Class Reference">
         <keyword ref="qcontactchangelogfilter.html">QContactChangeLogFilter</keyword>
-        <keyword ref="qcontactchangelogfilter.html#ChangeType-enum">ChangeType</keyword>
-        <keyword ref="qcontactchangelogfilter.html#ChangeType-enum">QContactChangeLogFilter::Removed</keyword>
-        <keyword ref="qcontactchangelogfilter.html#ChangeType-enum">QContactChangeLogFilter::Added</keyword>
-        <keyword ref="qcontactchangelogfilter.html#ChangeType-enum">QContactChangeLogFilter::Changed</keyword>
-        <keyword ref="qcontactchangelogfilter.html#changeType">changeType</keyword>
-        <keyword ref="qcontactchangelogfilter.html#setChangeType">setChangeType</keyword>
+        <keyword ref="qcontactchangelogfilter.html#EventType-enum">EventType</keyword>
+        <keyword ref="qcontactchangelogfilter.html#EventType-enum">QContactChangeLogFilter::EventAdded</keyword>
+        <keyword ref="qcontactchangelogfilter.html#EventType-enum">QContactChangeLogFilter::EventChanged</keyword>
+        <keyword ref="qcontactchangelogfilter.html#EventType-enum">QContactChangeLogFilter::EventRemoved</keyword>
+        <keyword ref="qcontactchangelogfilter.html#eventType">eventType</keyword>
+        <keyword ref="qcontactchangelogfilter.html#setEventType">setEventType</keyword>
         <keyword ref="qcontactchangelogfilter.html#setSince">setSince</keyword>
         <keyword ref="qcontactchangelogfilter.html#since">since</keyword>
         <section ref="qcontactchangelogfilter-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactdetail.html" title="QContactDetail Class Reference">
         <keyword ref="qcontactdetail.html">QContactDetail</keyword>
-        <keyword ref="qcontactdetail.html#Error-enum">Error</keyword>
-        <keyword ref="qcontactdetail.html#Error-enum">QContactDetail::NoError</keyword>
-        <keyword ref="qcontactdetail.html#Error-enum">QContactDetail::MissingValueError</keyword>
-        <keyword ref="qcontactdetail.html#Error-enum">QContactDetail::OutOfMemoryError</keyword>
-        <keyword ref="qcontactdetail.html#Error-enum">QContactDetail::IncompatibleAssignmentError</keyword>
         <keyword ref="qcontactdetail.html#assign">assign</keyword>
         <keyword ref="qcontactdetail.html#contexts">contexts</keyword>
         <keyword ref="qcontactdetail.html#definitionName">definitionName</keyword>
-        <keyword ref="qcontactdetail.html#error">error</keyword>
         <keyword ref="qcontactdetail.html#hasValue">hasValue</keyword>
         <keyword ref="qcontactdetail.html#isEmpty">isEmpty</keyword>
         <keyword ref="qcontactdetail.html#removeValue">removeValue</keyword>
@@ -235,8 +220,8 @@
     <section ref="qcontactdetaildefinition.html" title="QContactDetailDefinition Class Reference">
         <keyword ref="qcontactdetaildefinition.html">QContactDetailDefinition</keyword>
         <keyword ref="qcontactdetaildefinition.html#AccessConstraint-enum">AccessConstraint</keyword>
+        <keyword ref="qcontactdetaildefinition.html#AccessConstraint-enum">QContactDetailDefinition::NoConstraint</keyword>
         <keyword ref="qcontactdetaildefinition.html#AccessConstraint-enum">QContactDetailDefinition::CreateOnly</keyword>
-        <keyword ref="qcontactdetaildefinition.html#AccessConstraint-enum">QContactDetailDefinition::Any</keyword>
         <keyword ref="qcontactdetaildefinition.html#AccessConstraint-enum">QContactDetailDefinition::ReadOnly</keyword>
         <keyword ref="qcontactdetaildefinition.html#accessConstraint">accessConstraint</keyword>
         <keyword ref="qcontactdetaildefinition.html#fields">fields</keyword>
@@ -338,16 +323,16 @@
     <section ref="qcontactfilter.html" title="QContactFilter Class Reference">
         <keyword ref="qcontactfilter.html">QContactFilter</keyword>
         <keyword ref="qcontactfilter.html#FilterType-enum">FilterType</keyword>
-        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::Invalid</keyword>
-        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::GroupMembership</keyword>
-        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::Action</keyword>
-        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::IdList</keyword>
-        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::Default</keyword>
-        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::ContactDetail</keyword>
-        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::ContactDetailRange</keyword>
-        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::Intersection</keyword>
-        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::Union</keyword>
-        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::ChangeLog</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::InvalidFilter</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::UnionFilter</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::DefaultFilter</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::GroupMembershipFilter</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::ChangeLogFilter</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::ActionFilter</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::IdListFilter</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::IntersectionFilter</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::ContactDetailFilter</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::ContactDetailRangeFilter</keyword>
         <keyword ref="qcontactfilter.html#type">type</keyword>
         <keyword ref="qcontactfilter.html#operator-not-eq">operator!=</keyword>
         <keyword ref="qcontactfilter.html#operator-eq">operator=</keyword>
@@ -396,15 +381,7 @@
     </section>
     <section ref="qcontactgroup.html" title="QContactGroup Class Reference">
         <keyword ref="qcontactgroup.html">QContactGroup</keyword>
-        <keyword ref="qcontactgroup.html#Error-enum">Error</keyword>
-        <keyword ref="qcontactgroup.html#Error-enum">QContactGroup::ContactAlreadyInGroupError</keyword>
-        <keyword ref="qcontactgroup.html#Error-enum">QContactGroup::UnspecifiedError</keyword>
-        <keyword ref="qcontactgroup.html#Error-enum">QContactGroup::NoError</keyword>
-        <keyword ref="qcontactgroup.html#Error-enum">QContactGroup::OutOfMemoryError</keyword>
-        <keyword ref="qcontactgroup.html#Error-enum">QContactGroup::PermissionsError</keyword>
-        <keyword ref="qcontactgroup.html#Error-enum">QContactGroup::ContactNotInGroupError</keyword>
         <keyword ref="qcontactgroup.html#addMember">addMember</keyword>
-        <keyword ref="qcontactgroup.html#error">error</keyword>
         <keyword ref="qcontactgroup.html#hasMember">hasMember</keyword>
         <keyword ref="qcontactgroup.html#id">id</keyword>
         <keyword ref="qcontactgroup.html#isEmpty">isEmpty</keyword>

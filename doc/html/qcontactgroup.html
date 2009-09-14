@@ -17,12 +17,6 @@
 <li><a href="qcontactgroup-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
-<a name="public-types"></a>
-<h2>Public Types</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgroup.html#Error-enum">Error</a></b> { NoError, OutOfMemoryError, ContactNotInGroupError, ContactAlreadyInGroupError, PermissionsError, UnspecifiedError }</td></tr>
-</table>
-<hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -30,16 +24,15 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactgroup.html#QContactGroup-2">QContactGroup</a></b> ( const QContactGroup &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgroup.html#dtor.QContactGroup">~QContactGroup</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgroup.html#addMember">addMember</a></b> ( const QUniqueId &amp; <i>contactId</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">Error </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgroup.html#error">error</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgroup.html#hasMember">hasMember</a></b> ( const QUniqueId &amp; <i>contactId</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QUniqueId </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgroup.html#id">id</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgroup.html#isEmpty">isEmpty</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QUniqueId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgroup.html#members">members</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgroup.html#name">name</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgroup.html#removeMember">removeMember</a></b> ( const QUniqueId &amp; <i>contactId</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgroup.html#setId">setId</a></b> ( const QUniqueId &amp; <i>id</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgroup.html#setMembers">setMembers</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>members</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgroup.html#setName">setName</a></b> ( const QString &amp; <i>groupName</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgroup.html#setId">setId</a></b> ( const QUniqueId &amp; <i>id</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgroup.html#setMembers">setMembers</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>members</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgroup.html#setName">setName</a></b> ( const QString &amp; <i>groupName</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgroup.html#operator-not-eq">operator!=</a></b> ( const QContactGroup &amp; <i>other</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QContactGroup &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgroup.html#operator-eq">operator=</a></b> ( const QContactGroup &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgroup.html#operator-eq-eq">operator==</a></b> ( const QContactGroup &amp; <i>other</i> ) const</td></tr>
@@ -48,19 +41,6 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QContactGroup class provides a collection of contacts that share some commonality. A QContactGroup has a name and consists of a list of ids of contacts who are a member of the group.</p>
-<hr />
-<h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="Error-enum"></a>enum QContactGroup::Error</h3>
-<p>This enum specifies an error that occurred during the most recent operation:</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QContactGroup::NoError</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The most recent operation was successful</td></tr>
-<tr><td valign="top"><tt>QContactGroup::OutOfMemoryError</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The most recent operation failed due to running out of memory</td></tr>
-<tr><td valign="top"><tt>QContactGroup::ContactNotInGroupError</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The most recent operation failed because the requested contact is not a member of the group</td></tr>
-<tr><td valign="top"><tt>QContactGroup::ContactAlreadyInGroupError</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The most recent operation failed because the specified contact is already a member of the group</td></tr>
-<tr><td valign="top"><tt>QContactGroup::PermissionsError</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The most recent operation failed because the caller does not have permission to perform the operation</td></tr>
-<tr><td valign="top"><tt>QContactGroup::UnspecifiedError</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">The most recent operation failed for an undocumented reason</td></tr>
-</table></p>
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QContactGroup"></a>QContactGroup::QContactGroup ()</h3>
@@ -71,8 +51,6 @@
 <p>Free any memory used by this <a href="qcontactgroup.html">QContactGroup</a></p>
 <h3 class="fn"><a name="addMember"></a>bool QContactGroup::addMember ( const QUniqueId &amp; <i>contactId</i> )</h3>
 <p>Add the contact identified by <i>contactId</i> to this <a href="qcontactgroup.html">QContactGroup</a>. Returns true if the contact was successfully added to the group, and false if the group already contains the contact, or the operation failed.</p>
-<h3 class="fn"><a name="error"></a><a href="qcontactgroup.html#Error-enum">Error</a> QContactGroup::error () const</h3>
-<p>Return the error code of the most recent operation</p>
 <h3 class="fn"><a name="hasMember"></a>bool QContactGroup::hasMember ( const QUniqueId &amp; <i>contactId</i> ) const</h3>
 <p>Returns true if the contact identified by <i>contactId</i> is a member of the group</p>
 <h3 class="fn"><a name="id"></a>QUniqueId QContactGroup::id () const</h3>
@@ -88,13 +66,13 @@
 <p>See also <a href="qcontactgroup.html#setName">setName</a>().</p>
 <h3 class="fn"><a name="removeMember"></a>bool QContactGroup::removeMember ( const QUniqueId &amp; <i>contactId</i> )</h3>
 <p>Remove the contact identified by <i>contactId</i> from this <a href="qcontactgroup.html">QContactGroup</a>. Returns true if the contact was successfully removed from the group, and false if the group did not contain the contact, or the operation failed.</p>
-<h3 class="fn"><a name="setId"></a>bool QContactGroup::setId ( const QUniqueId &amp; <i>id</i> )</h3>
+<h3 class="fn"><a name="setId"></a>void QContactGroup::setId ( const QUniqueId &amp; <i>id</i> )</h3>
 <p>Set the id of this <a href="qcontactgroup.html">QContactGroup</a> to <i>id</i>. Returns true if the id was set successfully, otherwise returns false</p>
 <p>See also <a href="qcontactgroup.html#id">id</a>().</p>
-<h3 class="fn"><a name="setMembers"></a>bool QContactGroup::setMembers ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QUniqueId&gt; &amp; <i>members</i> )</h3>
+<h3 class="fn"><a name="setMembers"></a>void QContactGroup::setMembers ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QUniqueId&gt; &amp; <i>members</i> )</h3>
 <p>Sets the list of ids of contacts which are members of this group to <i>members</i>. If the order of contact ids in the group is important, this function should be used instead of <a href="qcontactgroup.html#addMember">addMember</a>(). Returns true if the member list is set successfully, otherwise returns false.</p>
 <p>See also <a href="qcontactgroup.html#members">members</a>(), <a href="qcontactgroup.html#addMember">addMember</a>(), and <a href="qcontactgroup.html#hasMember">hasMember</a>().</p>
-<h3 class="fn"><a name="setName"></a>bool QContactGroup::setName ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>groupName</i> )</h3>
+<h3 class="fn"><a name="setName"></a>void QContactGroup::setName ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>groupName</i> )</h3>
 <p>Set the name of the group to the given <i>groupName</i>. Returns true if the name was set successfully, otherwise returns false</p>
 <p>See also <a href="qcontactgroup.html#name">name</a>().</p>
 <h3 class="fn"><a name="operator-not-eq"></a>bool QContactGroup::operator!= ( const QContactGroup &amp; <i>other</i> ) const</h3>

@@ -22,7 +22,7 @@
 <a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactfilter.html#FilterType-enum">FilterType</a></b> { Invalid, ContactDetail, ContactDetailRange, ChangeLog, ..., Default }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactfilter.html#FilterType-enum">FilterType</a></b> { InvalidFilter, ContactDetailFilter, ContactDetailRangeFilter, ChangeLogFilter, ..., DefaultFilter }</td></tr>
 </table>
 <hr />
 <a name="public-functions"></a>
@@ -53,16 +53,16 @@
 <p>Describes the type of the filter</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QContactFilter::Invalid</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">An invalid filter which matches nothing</td></tr>
-<tr><td valign="top"><tt>QContactFilter::ContactDetail</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">A filter which matches contacts containing one or more details of a particular definition with a particular value</td></tr>
-<tr><td valign="top"><tt>QContactFilter::ContactDetailRange</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">A filter which matches contacts containing one or more details of a particular definition whose values are within a particular range</td></tr>
-<tr><td valign="top"><tt>QContactFilter::ChangeLog</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">A filter which matches contacts whose timestamps have been updated since some particular date and time</td></tr>
-<tr><td valign="top"><tt>QContactFilter::Action</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">A filter which matches contacts for which a particular action is available, or which contain a detail with a particular value for which a particular action is available</td></tr>
-<tr><td valign="top"><tt>QContactFilter::GroupMembership</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">A filter which matches contacts which are members of a particular group</td></tr>
-<tr><td valign="top"><tt>QContactFilter::Intersection</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">A filter which matches all contacts that are matched by all filters it includes</td></tr>
-<tr><td valign="top"><tt>QContactFilter::Union</tt></td><td align="center" valign="top"><tt>7</tt></td><td valign="top">A filter which matches any contact that is matched by any of the filters it includes</td></tr>
-<tr><td valign="top"><tt>QContactFilter::IdList</tt></td><td align="center" valign="top"><tt>9</tt></td><td valign="top">A filter which matches any contact whose id is contained in a particular list of contact ids</td></tr>
-<tr><td valign="top"><tt>QContactFilter::Default</tt></td><td align="center" valign="top"><tt>8</tt></td><td valign="top">A filter which matches everything</td></tr>
+<tr><td valign="top"><tt>QContactFilter::InvalidFilter</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">An invalid filter which matches nothing</td></tr>
+<tr><td valign="top"><tt>QContactFilter::ContactDetailFilter</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">A filter which matches contacts containing one or more details of a particular definition with a particular value</td></tr>
+<tr><td valign="top"><tt>QContactFilter::ContactDetailRangeFilter</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">A filter which matches contacts containing one or more details of a particular definition whose values are within a particular range</td></tr>
+<tr><td valign="top"><tt>QContactFilter::ChangeLogFilter</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">A filter which matches contacts whose timestamps have been updated since some particular date and time</td></tr>
+<tr><td valign="top"><tt>QContactFilter::ActionFilter</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">A filter which matches contacts for which a particular action is available, or which contain a detail with a particular value for which a particular action is available</td></tr>
+<tr><td valign="top"><tt>QContactFilter::GroupMembershipFilter</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">A filter which matches contacts which are members of a particular group</td></tr>
+<tr><td valign="top"><tt>QContactFilter::IntersectionFilter</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">A filter which matches all contacts that are matched by all filters it includes</td></tr>
+<tr><td valign="top"><tt>QContactFilter::UnionFilter</tt></td><td align="center" valign="top"><tt>7</tt></td><td valign="top">A filter which matches any contact that is matched by any of the filters it includes</td></tr>
+<tr><td valign="top"><tt>QContactFilter::IdListFilter</tt></td><td align="center" valign="top"><tt>8</tt></td><td valign="top">A filter which matches any contact whose id is contained in a particular list of contact ids</td></tr>
+<tr><td valign="top"><tt>QContactFilter::DefaultFilter</tt></td><td align="center" valign="top"><tt>9</tt></td><td valign="top">A filter which matches everything</td></tr>
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>
