@@ -160,7 +160,7 @@ void PhoneBook::backendChanged(const QList<QUniqueId>& changes)
         workPhoneLine->setText(QString());
         mobilePhoneLine->setText(QString());
         addressText->setPlainText(QString());
-        avatarPixmapLabel->setPixmap(QPixmap());
+        avatarPixmapLabel->clear();
         updateButtons();
     }
 }
@@ -363,7 +363,7 @@ void PhoneBook::displayContact()
     // and build the avatar filename and display it if it exists.
     QString avatarFile = c.detail(QContactAvatar::DefinitionName).value(QContactAvatar::FieldAvatar);
     if (avatarFile.isNull() || avatarFile.isEmpty()) {
-        avatarPixmapLabel->setPixmap(QPixmap());
+        avatarPixmapLabel->clear();
     } else {
         QPixmap avatarPix(avatarFile);
 		avatarPixmapLabel->setPixmap(avatarPix.scaled(avatarPixmapLabel->size()));

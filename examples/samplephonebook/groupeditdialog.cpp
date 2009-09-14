@@ -107,9 +107,9 @@ void GroupEditDialog::addButtonClicked()
 {
     if (!groupNameEdit->text().isEmpty()){
         QContactGroup grp;
-        bool result = grp.setName(groupNameEdit->text());
-        if (result)
-            result = cm->saveGroup(&grp);
+        bool result;
+        grp.setName(groupNameEdit->text());
+        result = cm->saveGroup(&grp);
 
         if (!result){
             QMessageBox::information(this, tr("Group Add"),
@@ -139,7 +139,7 @@ void GroupEditDialog::saveButtonClicked()
         QContactGroup grp = cm->group(grpID);
         bool result = false;
         if (!grp.isEmpty()){
-            result = grp.setName(groupNameEdit->text());
+            grp.setName(groupNameEdit->text());
             if (result)
                 result = cm->saveGroup(&grp);
         }
@@ -192,7 +192,7 @@ void GroupEditDialog::groupItemActivated(QListWidgetItem * item)
         groupNameEdit->clear();
 }
 
-void GroupEditDialog::groupItemChanged ( QListWidgetItem * current, QListWidgetItem * previous )
+void GroupEditDialog::groupItemChanged ( QListWidgetItem * current, QListWidgetItem * /*previous*/ )
 {
     groupItemActivated(current);
 }
