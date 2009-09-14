@@ -137,12 +137,12 @@ public:
     QList<QVariant::Type> supportedDataTypes() const;
 
 private slots:
-    void modelUpdated();
+/*    void modelUpdated();
     void rowsUpdated(int row, int count, QModelIndex const &parent);
     void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
     void rowsInserted(const QModelIndex &parent, int first, int last);
     void rowsRemoved(const QModelIndex &parent, int first, int last);
-
+*/
     void subjectsAdded(const QStringList &subjects);
     void subjectsRemoved(const QStringList &subjects);
     void subjectsChanged(const QStringList &subjects);
