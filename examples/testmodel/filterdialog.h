@@ -63,7 +63,7 @@ class FilterDialog : public QWidget
     Q_OBJECT
 
 public:
-    FilterDialog();
+    FilterDialog(QWidget *parent = 0);
     ~FilterDialog();
 
     QContactFilter filter() const;
@@ -81,7 +81,6 @@ private slots:
     void doneClicked();
 
 private:
-    QLabel *title;
     QLineEdit *value;
     QComboBox *field;
     QComboBox *match;

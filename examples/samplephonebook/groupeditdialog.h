@@ -31,11 +31,47 @@
 **
 ****************************************************************************/
 
-#include "ui_maindialog_240_320.h"
+#ifndef GROUPEDITDIALOG_H
+#define GROUPEDITDIALOG_H
 
-class MainDialogForm240By320 : public QWidget, Ui::MainDialog240By320
+#include <QDialog>
+
+class QPushButton;
+class QListWidget;
+class QListWidgetItem;
+class QLineEdit;
+class QContactManager;
+
+class GroupEditDialog : public QDialog
 {
+    Q_OBJECT
+
 public:
-       MainDialogForm240By320(QWidget *parent);
-       ~MainDialogForm240By320();
+    GroupEditDialog(QContactManager *contactManager);
+
+private:
+    void repopulateGroupList();
+
+public slots:
+    void show();
+
+private slots:
+    void addButtonClicked();
+    void saveButtonClicked();
+    void deleteButtonClicked();
+    void doneButtonClicked();
+    void groupItemActivated(QListWidgetItem * item);
+    void groupItemChanged ( QListWidgetItem * current, QListWidgetItem * previous );
+
+private:
+    QListWidget *listWidget;
+    QLineEdit *groupNameEdit;
+    QPushButton *addButton;
+    QPushButton *saveButton;
+    QPushButton *deleteButton;
+    QPushButton *doneButton;
+    QContactManager *cm;
 };
+
+#endif // GROUPEDITDIALOG_H
+

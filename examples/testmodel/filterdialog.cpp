@@ -36,24 +36,30 @@
 #include "qtcontacts.h"
 #include <QtGui>
 
-FilterDialog::FilterDialog()
+FilterDialog::FilterDialog(QWidget* parent)
+        : QWidget(parent)
 {
+	vertLayout = new QVBoxLayout;
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+	setMinimumSize(320,320);
+
     state = -1; // not yet opened.
     noFiltersYet = true;
     expressionSoFar = "";
 
-    title = new QLabel(tr("Contact Search"));
+    setWindowTitle(tr("Contact Search"));
     value = new QLineEdit;
     field = new QComboBox;
     match = new QComboBox;
     join = new QComboBox;
-    expression = new QLabel;
-
+    expression = new QLabel(tr("Cumulative Expression:"));
+    expression->setWordWrap(true);
+  
     cancel = new QPushButton(tr("Cancel"));
     add = new QPushButton(tr("Add Filter"));
     done = new QPushButton(tr("Done"));
 
-    connect(cancel, SIGNAL(clicked()), this, SLOT(cancelClicked()));
+	connect(cancel, SIGNAL(clicked()), this, SLOT(cancelClicked()));
     connect(add, SIGNAL(clicked()), this, SLOT(addClicked()));
     connect(done, SIGNAL(clicked()), this, SLOT(doneClicked()));
 
@@ -74,17 +80,15 @@ FilterDialog::FilterDialog()
     formLayout->addRow("In Field:", field);
     formLayout->addRow("With Criteria:", match);
     formLayout->addRow("Join Method:", join);
-    formLayout->addRow("Cumulative Expression:", expression);
 
     btnLayout = new QHBoxLayout;
     btnLayout->addWidget(cancel);
     btnLayout->addWidget(add);
     btnLayout->addWidget(done);
-
-    vertLayout = new QVBoxLayout;
-    vertLayout->addWidget(title);
-    vertLayout->addLayout(formLayout);
-    vertLayout->addLayout(btnLayout);
+	
+	vertLayout->addLayout(formLayout);
+	vertLayout->addWidget(expression);
+	formLayout->addRow(btnLayout);
 
     setLayout(vertLayout);
 }
@@ -217,8 +221,8 @@ void FilterDialog::addClicked()
     // set the expression so far
     if (!expressionSoFar.isEmpty())
         expressionSoFar += " " + exprJoin + " ";
-    expressionSoFar += exprName + " " + exprMatch + " " + value->text();
-    expression->setText(expressionSoFar);
+    expressionSoFar += exprName + " " + exprMatch + " \"" + value->text() + "\"";
+    expression->setText(tr("Cumulative Expression:") + expressionSoFar);
 
     // now reset the other UI elements.
     value->setText("");
@@ -246,7 +250,6 @@ void FilterDialog::showDialog()
     field->setCurrentIndex(0);
     match->setCurrentIndex(0);
     join->setCurrentIndex(0);
-    expression->setText("");
-
-    show();
+    expression->setText(tr("Cumulative Expression:"));
+	show();
 }

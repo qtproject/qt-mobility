@@ -32,26 +32,45 @@
 ****************************************************************************/
 
 #include "finddialog.h"
+#include "filterdialog.h"
 #include <QtGui>
 
 FindDialog::FindDialog(QWidget *parent)
-    : QDialog(parent)
+    : QDialog(parent), simpleFilter(true)
 {
-    QLabel *findLabel = new QLabel(tr("Enter the name of a contact:"));
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    filterDialog = new FilterDialog(this);
+
+    findLabel = new QLabel(tr("Contact name:"));
     lineEdit = new QLineEdit;
 
     findButton = new QPushButton(tr("&Find"));
     findText = "";
 
-    QHBoxLayout *layout = new QHBoxLayout;
-    layout->addWidget(findLabel);
-    layout->addWidget(lineEdit);
-    layout->addWidget(findButton);
+    filterButton = new QPushButton(tr("Show Filter Details"));
+
+    QHBoxLayout *simpleFindLayout = new QHBoxLayout;
+    simpleFindLayout->addWidget(findLabel);
+    simpleFindLayout->addWidget(lineEdit);
+    simpleFindLayout->addStretch(1);
+    simpleFindLayout->addWidget(findButton);
+    simpleFindLayout->addStretch(1);
+
+
+    QHBoxLayout *simpleFilterLayout = new QHBoxLayout;
+    simpleFilterLayout->addStretch(1);
+    simpleFilterLayout->addWidget(filterButton);
+    simpleFilterLayout->addStretch(1);
+    layout->addLayout(simpleFindLayout);
+    layout->addLayout(simpleFilterLayout);
+    layout->addWidget(filterDialog);
 
     setLayout(layout);
     setWindowTitle(tr("Find a Contact"));
     connect(findButton, SIGNAL(clicked()), this, SLOT(findClicked()));
     connect(findButton, SIGNAL(clicked()), this, SLOT(accept()));
+    connect(filterButton, SIGNAL(clicked()), this, SLOT(filterClicked()));
+    connect(filterDialog, SIGNAL(hidden()), this, SLOT(filterHidden()));
 
     lineEdit->setFocus();
 }
@@ -71,7 +90,49 @@ void FindDialog::findClicked()
     }
 }
 
-QString FindDialog::getFindText()
+void FindDialog::filterClicked()
+{
+    simpleFilter = false;
+    lineEdit->hide();
+    findButton->hide();
+    findLabel->hide();
+    filterButton->hide();
+	filterDialog->showDialog();
+}
+
+void FindDialog::showEvent(QShowEvent *event)
+{
+	QDialog::showEvent(event);
+    simpleFilter = true;
+    filterButton->show();
+    filterDialog->hide();
+    lineEdit->show();
+    findButton->show();
+    findLabel->show();
+    lineEdit->setFocus();
+}
+
+void FindDialog::filterHidden()
+{
+    // was the dialog accepted?
+    if (filterDialog->status() == 1) {
+        accept();
+    }else{
+        reject();
+    }
+}
+
+bool FindDialog::isSimpleFilterEnabled() const
+{
+    return simpleFilter;
+}
+
+QString FindDialog::getFindText() const
 {
     return findText;
+}
+
+QContactFilter FindDialog::getFindFilter() const
+{
+    return filterDialog->filter();
 }
