@@ -102,6 +102,25 @@ QT_BEGIN_NAMESPACE
     itself, a change of a sub-object such as \c {/Device/Buttons/2/Name} or the
     creation (or removal) of a new sub-object, such as \c {/Device/Buttons/4}.
 
+    When a QValueSpaceItem is constructed it will access zero, one or many
+    \l {QAbstractValueSpaceLayer}{layers}, depending on the constructor and filter parameters used
+    to construct it.  Calls to value() will return the value that is stored in the layer with the
+    highest \l {QAbstractValueSpaceLayer::order()}{order} of all the accessible layers that contain
+    the specified key.  Calls to setValue() and remove() will send requests to all accessible
+    layers.
+
+    For example,
+
+    \code
+    QValueSpaceItem *buttons = new QValueSpaceItem("/Device/Buttons",
+                                                   QAbstractValueSpaceLayer::NonPermanentLayer);
+    qWarning() << "There are" << buttons->value().toUInt() << "buttons";
+    \endcode
+
+    will print out the number of buttons defined in all non-permanent layers.  If the same button
+    is defined in multiple non-permanent layers only the values from the layer with the highest
+    \l {QAbstractValueSpaceLayer::order()}{order} will be visible.
+
     \i {Note:} The QValueSpaceItem class is not thread safe and may only be used from
     an application's main thread.
 */
@@ -371,6 +390,9 @@ struct QValueSpaceItemPrivateWrite : public QValueSpaceItemPrivate
 
 /*!
     Constructs a QValueSpaceItem with the specified \a parent that refers to the root path.
+
+    The constructed Value Space item will access all available
+    \l {QAbstractValueSpaceLayer}{layers}.
 */
 QValueSpaceItem::QValueSpaceItem(QObject *parent)
 :   QObject(parent)
@@ -383,6 +405,9 @@ QValueSpaceItem::QValueSpaceItem(QObject *parent)
 
 /*!
     Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.
+
+    The constructed Value Space item will access all available
+    \l {QAbstractValueSpaceLayer}{layers}.
 */
 QValueSpaceItem::QValueSpaceItem(const QByteArray &path, QObject *parent)
 :   QObject(parent)
@@ -398,6 +423,9 @@ QValueSpaceItem::QValueSpaceItem(const QByteArray &path, QObject *parent)
 
     Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.  This
     constructor is equivalent to calling \c {QValueSpaceItem(path.toUtf8(), parent)}.
+
+    The constructed Value Space item will access all available
+    \l {QAbstractValueSpaceLayer}{layers}.
 */
 QValueSpaceItem::QValueSpaceItem(const QString &path, QObject *parent)
 :   QObject(parent)
@@ -413,6 +441,9 @@ QValueSpaceItem::QValueSpaceItem(const QString &path, QObject *parent)
 
     Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.  This
     constructor is equivalent to calling \c {QValueSpaceItem(QByteArray(path), parent)}.
+
+    The constructed Value Space item will access all available
+    \l {QAbstractValueSpaceLayer}{layers}.
 */
 QValueSpaceItem::QValueSpaceItem(const char *path, QObject *parent)
 :   QObject(parent)
@@ -555,6 +586,9 @@ QValueSpaceItem::QValueSpaceItem(const char *path, const QUuid &uuid, QObject *p
 /*!
     Constructs a QValueSpaceItem with the specified \a parent that refers to the same path as
     \a other.
+
+    The constructed Value Space item will access the same \l {QAbstractValueSpaceLayer}{layers} as
+    \a other.
 */
 QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &other, QObject* parent)
 :   QObject(parent)
@@ -572,6 +606,9 @@ QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &other, QObject* parent)
 
 /*!
     Constructs a QValueSpaceItem with the specified \a parent that refers to the sub-\a path of
+    \a base.
+
+    The constructed Value Space item will access the same \l {QAbstractValueSpaceLayer}{layers} as
     \a base.
 */
 QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &base,
@@ -599,6 +636,9 @@ QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &base,
     Constructs a QValueSpaceItem with the specified \a parent that refers to the sub-\a path of
     \a base.  This constructor is equivalent to calling
     \c {QValueSpaceItem(base, path.toUtf8(), parent)}.
+
+    The constructed Value Space item will access the same \l {QAbstractValueSpaceLayer}{layers} as
+    \a base.
 */
 QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &base, const QString &path, QObject *parent)
 :   QObject(parent)
@@ -623,6 +663,9 @@ QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &base, const QString &pat
     Constructs a QValueSpaceItem with the specified \a parent that refers to the sub-\a path of
     \a base.  This constructor is equivalent to calling
     \c {QValueSpaceItem(base, QByteArray(path), parent)}.
+
+    The constructed Value Space item will access the same \l {QAbstractValueSpaceLayer}{layers} as
+    \a base.
 */
 QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &base, const char *path, QObject* parent)
 :   QObject(parent)

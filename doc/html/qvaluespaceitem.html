@@ -93,6 +93,12 @@
     QObject::connect(buttons, SIGNAL(contentsChanged()),
                    this, SLOT(buttonInfoChanged()));</pre>
 <p>will invoke the <tt>buttonInfoChanged()</tt> slot whenever any item under <tt>/Device/Buttons</tt> changes. This includes the value of <tt>/Device/Buttons</tt> itself, a change of a sub-object such as <tt>/Device/Buttons/2/Name</tt> or the creation (or removal) of a new sub-object, such as <tt>/Device/Buttons/4</tt>.</p>
+<p>When a QValueSpaceItem is constructed it will access zero, one or many <a href="qabstractvaluespacelayer.html">layers</a>, depending on the constructor and filter parameters used to construct it. Calls to <a href="qvaluespaceitem.html#value-prop">value</a>() will return the value that is stored in the layer with the highest <a href="qabstractvaluespacelayer.html#order">order</a> of all the accessible layers that contain the specified key. Calls to <a href="qvaluespaceitem.html#value-prop">setValue</a>() and <a href="qvaluespaceitem.html#remove">remove</a>() will send requests to all accessible layers.</p>
+<p>For example,</p>
+<pre>    QValueSpaceItem *buttons = new QValueSpaceItem(&quot;/Device/Buttons&quot;,
+                                                   QAbstractValueSpaceLayer::NonPermanentLayer);
+    qWarning() &lt;&lt; &quot;There are&quot; &lt;&lt; buttons-&gt;value().toUInt() &lt;&lt; &quot;buttons&quot;;</pre>
+<p>will print out the number of buttons defined in all non-permanent layers. If the same button is defined in multiple non-permanent layers only the values from the layer with the highest <a href="qabstractvaluespacelayer.html#order">order</a> will be visible.</p>
 <p><i>Note:</i> The QValueSpaceItem class is not thread safe and may only be used from an application's main thread.</p>
 <hr />
 <h2>Property Documentation</h2>
@@ -132,8 +138,10 @@
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QValueSpaceItem"></a>QValueSpaceItem::QValueSpaceItem ( QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to the root path.</p>
+<p>The constructed Value Space item will access all available <a href="qabstractvaluespacelayer.html">layers</a>.</p>
 <h3 class="fn"><a name="QValueSpaceItem-2"></a>QValueSpaceItem::QValueSpaceItem ( const QByteArray &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to <i>path</i>.</p>
+<p>The constructed Value Space item will access all available <a href="qabstractvaluespacelayer.html">layers</a>.</p>
 <h3 class="fn"><a name="QValueSpaceItem-3"></a>QValueSpaceItem::QValueSpaceItem ( const QByteArray &amp; <i>path</i>, <a href="qabstractvaluespacelayer.html#LayerOption-enum">QAbstractValueSpaceLayer::LayerOptions</a> <i>filter</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to <i>path</i>. The <i>filter</i> parameter is used to limit which layers this <a href="qvaluespaceitem.html">QValueSpaceItem</a> will access.</p>
 <p>If a layer matching <i>filter</i> is not found an invalid <a href="qvaluespaceitem.html">QValueSpaceItem</a> will be constructed.</p>
@@ -145,14 +153,18 @@
 <p>See also <a href="qabstractvaluespacelayer.html#id">QAbstractValueSpaceLayer::id</a>(), <a href="qvaluespace.html">QValueSpace</a>, and <a href="qvaluespaceitem.html#isValid">isValid</a>().</p>
 <h3 class="fn"><a name="QValueSpaceItem-5"></a>QValueSpaceItem::QValueSpaceItem ( const QValueSpaceItem &amp; <i>other</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to the same path as <i>other</i>.</p>
+<p>The constructed Value Space item will access the same <a href="qabstractvaluespacelayer.html">layers</a> as <i>other</i>.</p>
 <h3 class="fn"><a name="QValueSpaceItem-6"></a>QValueSpaceItem::QValueSpaceItem ( const QValueSpaceItem &amp; <i>base</i>, const QByteArray &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to the sub-<i>path</i> of <i>base</i>.</p>
+<p>The constructed Value Space item will access the same <a href="qabstractvaluespacelayer.html">layers</a> as <i>base</i>.</p>
 <h3 class="fn"><a name="QValueSpaceItem-7"></a>QValueSpaceItem::QValueSpaceItem ( const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>This is an overloaded function.</p>
 <p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to <i>path</i>. This constructor is equivalent to calling <tt>QValueSpaceItem(path.toUtf8(), parent)</tt>.</p>
+<p>The constructed Value Space item will access all available <a href="qabstractvaluespacelayer.html">layers</a>.</p>
 <h3 class="fn"><a name="QValueSpaceItem-8"></a>QValueSpaceItem::QValueSpaceItem ( const char * <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>This is an overloaded function.</p>
 <p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to <i>path</i>. This constructor is equivalent to calling <tt>QValueSpaceItem(QByteArray(path), parent)</tt>.</p>
+<p>The constructed Value Space item will access all available <a href="qabstractvaluespacelayer.html">layers</a>.</p>
 <h3 class="fn"><a name="QValueSpaceItem-9"></a>QValueSpaceItem::QValueSpaceItem ( const QString &amp; <i>path</i>, <a href="qabstractvaluespacelayer.html#LayerOption-enum">QAbstractValueSpaceLayer::LayerOptions</a> <i>filter</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>This is an overloaded function.</p>
 <p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to <i>path</i>. The <i>filter</i> parameter is used to limit which layers this <a href="qvaluespaceitem.html">QValueSpaceItem</a> will access. This constructor is equivalent to calling <tt>QValueSpaceItem(path.toUtf8(), filter, parent)</tt>.</p>
@@ -178,9 +190,11 @@
 <h3 class="fn"><a name="QValueSpaceItem-13"></a>QValueSpaceItem::QValueSpaceItem ( const QValueSpaceItem &amp; <i>base</i>, const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>This is an overloaded function.</p>
 <p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to the sub-<i>path</i> of <i>base</i>. This constructor is equivalent to calling <tt>QValueSpaceItem(base, path.toUtf8(), parent)</tt>.</p>
+<p>The constructed Value Space item will access the same <a href="qabstractvaluespacelayer.html">layers</a> as <i>base</i>.</p>
 <h3 class="fn"><a name="QValueSpaceItem-14"></a>QValueSpaceItem::QValueSpaceItem ( const QValueSpaceItem &amp; <i>base</i>, const char * <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>This is an overloaded function.</p>
 <p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to the sub-<i>path</i> of <i>base</i>. This constructor is equivalent to calling <tt>QValueSpaceItem(base, QByteArray(path), parent)</tt>.</p>
+<p>The constructed Value Space item will access the same <a href="qabstractvaluespacelayer.html">layers</a> as <i>base</i>.</p>
 <h3 class="fn"><a name="dtor.QValueSpaceItem"></a>QValueSpaceItem::~QValueSpaceItem ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the <a href="qvaluespaceitem.html">QValueSpaceItem</a></p>
 <h3 class="fn"><a name="contentsChanged"></a>void QValueSpaceItem::contentsChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>

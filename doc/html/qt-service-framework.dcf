@@ -49,6 +49,7 @@
         <keyword ref="qvaluespace.html#availableLayers">availableLayers</keyword>
         <keyword ref="qvaluespace.html#initValueSpaceManager">initValueSpaceManager</keyword>
         <keyword ref="qvaluespace.html#installLayer">installLayer</keyword>
+        <keyword ref="qvaluespace.html#QVALUESPACE_NONVOLATILEREGISTRY_LAYER">QVALUESPACE_NONVOLATILEREGISTRY_LAYER</keyword>
         <keyword ref="qvaluespace.html#QVALUESPACE_SHAREDMEMORY_LAYER">QVALUESPACE_SHAREDMEMORY_LAYER</keyword>
         <keyword ref="qvaluespace.html#QVALUESPACE_VOLATILEREGISTRY_LAYER">QVALUESPACE_VOLATILEREGISTRY_LAYER</keyword>
     </section>

@@ -198,6 +198,11 @@ QValueSpaceObjectPrivate::QValueSpaceObjectPrivate(const QByteArray &objectPath,
 /*!
     Constructs a QValueSpaceObject with the specified \a parent that publishes values under
     \a path.
+
+    The constructed Value Space object will access the \l {QAbstractValueSpaceLayer}{layer} with
+    the highest \l {QAbstractValueSpaceLayer::order()}{order} for which \a path is a valid path.
+    If no suitable \l {QAbstractValueSpaceLayer}{layer} is found an invalid QValueSpaceObject is
+    constructed.
 */
 QValueSpaceObject::QValueSpaceObject(const QByteArray &path, QObject *parent)
 :   QObject(parent), d(new QValueSpaceObjectPrivate(path))
@@ -236,10 +241,13 @@ QValueSpaceObject::QValueSpaceObject(const char *path, QObject *parent)
 
 /*!
     Constructs a QValueSpaceObject with the specified \a parent that publishes values under
-    \a path.  The \a filter parameter is used to limit which layers this QValueSpaceObject will
+    \a path.  The \a filter parameter is used to limit which layer this QValueSpaceObject will
     access.
 
-    If a layer matching \a filter is not found an invalid QValueSpaceObject will be constructed.
+    The constructed Value Space object will access the \l {QAbstractValueSpaceLayer}{layer} with
+    the highest \l {QAbstractValueSpaceLayer::order()}{order} that matches \a filter and for which
+    \a path is a valid path.  If no suitable \l {QAbstractValueSpaceLayer}{layer} is found an
+    invalid QValueSpaceObject is constructed.
 
     \sa isValid()
 */
@@ -253,12 +261,17 @@ QValueSpaceObject::QValueSpaceObject(const QByteArray &path,
 }
 
 /*!
+    \overload
+
     Constructs a QValueSpaceObject with the specified \a parent that publishes values under
-    \a path.  The \a filter parameter is used to limit which layers this QValueSpaceObject will
+    \a path.  The \a filter parameter is used to limit which layer this QValueSpaceObject will
     access.  This constructor is equivalent to calling
     \c {QValueSpaceObject(path.toUtf8(), filter, parent)}.
 
-    If a layer matching \a filter is not found an invalid QValueSpaceObject will be constructed.
+    The constructed Value Space object will access the \l {QAbstractValueSpaceLayer}{layer} with
+    the highest \l {QAbstractValueSpaceLayer::order()}{order} that matches \a filter and for which
+    \a path is a valid path.  If no suitable \l {QAbstractValueSpaceLayer}{layer} is found an
+    invalid QValueSpaceObject is constructed.
 
     \sa isValid()
 */
@@ -272,12 +285,17 @@ QValueSpaceObject::QValueSpaceObject(const QString &path,
 }
 
 /*!
+    \overload
+
     Constructs a QValueSpaceObject with the specified \a parent that publishes values under
-    \a path.  The \a filter parameter is used to limit which layers this QValueSpaceObject will
+    \a path.  The \a filter parameter is used to limit which layer this QValueSpaceObject will
     access.  This constructor is equivalent to calling
     \c {QValueSpaceObject(QByteArray(path), filter, parent)}.
 
-    If a layer matching \a filter is not found an invalid QValueSpaceObject will be constructed.
+    The constructed Value Space object will access the \l {QAbstractValueSpaceLayer}{layer} with
+    the highest \l {QAbstractValueSpaceLayer::order()}{order} that matches \a filter and for which
+    \a path is a valid path.  If no suitable \l {QAbstractValueSpaceLayer}{layer} is found an
+    invalid QValueSpaceObject is constructed.
 
     \sa isValid()
 */
