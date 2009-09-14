@@ -966,6 +966,7 @@ public:
         QString receivedDate(params["receivedDate"]);
         QString subject(params["subject"]);
         QString text(params["text"]);
+        QString mimeType(params["mimeType"]);
         QString priority(params["priority"]);
         QString size(params["size"]);
         QString type(params["type"]);
@@ -1065,7 +1066,7 @@ public:
                     }
 
                     if (!text.isEmpty()) {
-                        message.setBody(text, QByteArray("text/plain"));
+                        message.setBody(text, mimeType.toAscii());
                     }
 
                     QMessage::StatusFlags flags(0);

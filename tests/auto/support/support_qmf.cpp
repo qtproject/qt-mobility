@@ -138,6 +138,7 @@ QMessageId addMessage(const Parameters &params)
     QString receivedDate(params["receivedDate"]);
     QString subject(params["subject"]);
     QString text(params["text"]);
+    QString mimeType(params["mimeType"]);
     QString priority(params["priority"]);
     QString size(params["size"]);
     QString type(params["type"]);
@@ -199,7 +200,8 @@ QMessageId addMessage(const Parameters &params)
                 }
 
                 if (!text.isEmpty()) {
-                    QMailMessageContentType ct("text/plain; charset=UTF-8");
+                    QMailMessageContentType ct(mimeType);
+                    ct.setCharset("UTF-8");
                     message.setBody(QMailMessageBody::fromData(text, ct, QMailMessageBody::Base64));
                     message.setStatus(QMailMessage::ContentAvailable, true);
                 }

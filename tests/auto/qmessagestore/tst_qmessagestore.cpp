@@ -231,6 +231,8 @@ void tst_QMessageStore::testMessage_data()
     QTest::addColumn<QString>("date");
     QTest::addColumn<QString>("subject");
     QTest::addColumn<QString>("text");
+    QTest::addColumn<QByteArray>("type");
+    QTest::addColumn<QByteArray>("subType");
     QTest::addColumn<CustomFieldMap>("custom");
 
     CustomFieldMap customData;
@@ -243,6 +245,18 @@ void tst_QMessageStore::testMessage_data()
         << "1999-12-31T23:59:59Z"
         << "Last message..."
         << "...before Y2K"
+        << QByteArray("text")
+        << QByteArray("plain")
+        << customData;
+
+    QTest::newRow("2")
+        << "alice@example.com"
+        << "bob@example.com"
+        << "1999-12-31T23:59:59Z"
+        << "Last HTML message..."
+        << "<html><p>...before <b>Y2K</b></p></html>"
+        << QByteArray("text")
+        << QByteArray("html")
         << customData;
 }
 
@@ -320,6 +334,8 @@ void tst_QMessageStore::testMessage()
     QFETCH(QString, date);
     QFETCH(QString, subject);
     QFETCH(QString, text);
+    QFETCH(QByteArray, type);
+    QFETCH(QByteArray, subType);
     QFETCH(CustomFieldMap, custom);
 
 #if defined(Q_OS_WIN)
@@ -333,6 +349,7 @@ void tst_QMessageStore::testMessage()
     p.insert("from", from);
     p.insert("date", date);
     p.insert("subject", subject);
+    p.insert("mimeType", type + '/' + subType);
     p.insert("text", text);
     p.insert("parentAccountName", testAccountName);
 #ifdef QMESSAGING_OPTIONAL_FOLDER
@@ -360,8 +377,8 @@ void tst_QMessageStore::testMessage()
     // Note: this is not true, which is somewhat counter-intuitive:
     //QVERIFY(body.containerId().isValid());
 
-    QCOMPARE(body.contentType().toLower(), QByteArray("text"));
-    QCOMPARE(body.contentSubType().toLower(), QByteArray("plain"));
+    QCOMPARE(body.contentType().toLower(), type);
+    QCOMPARE(body.contentSubType().toLower(), subType);
     QCOMPARE(body.contentCharset().toLower(), defaultCharset);
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), text);

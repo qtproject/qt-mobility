@@ -885,9 +885,50 @@ IMessage* MapiFolder::createMessage(const QMessage& source, const MapiSessionPtr
         } else {
             // This message has only a body
             QByteArray subType(source.contentSubType().toLower());
+            QString body(source.textContent());
 
             if ((subType == "rtf") || (subType == "html")) {
-                // TODO: non-plain storage
+                LONG textFormat(EDITOR_FORMAT_RTF);
+                if (subType == "html") {
+                    // Encode the HTML within RTF
+                    TCHAR codePage[6] = _T("1252");
+                    GetLocaleInfo(LOCALE_SYSTEM_DEFAULT, LOCALE_IDEFAULTANSICODEPAGE, codePage, sizeof(codePage));
+
+                    QString format("{\\rtf1\\ansi\\ansicpg%1\\fromhtml1 {\\*\\htmltag1 %2}}");
+                    body = format.arg(QString::fromUtf16(reinterpret_cast<const quint16*>(codePage))).arg(body);
+                    textFormat = EDITOR_FORMAT_HTML;
+                }
+
+                // Mark this message as formatted
+                if (!setMapiProperty(mapiMessage, PR_MSG_EDITOR_FORMAT, textFormat)) {
+                    qWarning() << "Unable to set message editor format in message.";
+                }
+
+                IStream *os(0);
+                rv = mapiMessage->OpenProperty(PR_RTF_COMPRESSED, &IID_IStream, STGM_CREATE | STGM_WRITE, MAPI_CREATE | MAPI_MODIFY, reinterpret_cast<LPUNKNOWN*>(&os));
+                if (HR_SUCCEEDED(rv)) {
+                    IStream *compressor(0);
+                    rv = WrapCompressedRTFStream(os, MAPI_MODIFY, &compressor);
+                    if (HR_SUCCEEDED(rv)) {
+                        compressor->Write(body.utf16(), body.length() * sizeof(TCHAR), 0);
+                        rv = compressor->Commit(STGC_DEFAULT);
+                        if (HR_SUCCEEDED(rv)) {
+                            if (HR_FAILED(os->Commit(STGC_DEFAULT))) {
+                                qWarning() << "Unable to commit write to compressed RTF stream.";
+                            }
+                        } else {
+                            qWarning() << "Unable to commit write to RTF compressor stream.";
+                        }
+
+                        compressor->Release();
+                    } else {
+                        qWarning() << "Unable to open RTF compressor stream for write.";
+                    }
+
+                    os->Release();
+                } else {
+                    qWarning() << "Unable to open compressed RTF stream for write.";
+                }
             } else {
                 // Mark this message as plain text
                 LONG textFormat(EDITOR_FORMAT_PLAINTEXT);
@@ -895,7 +936,6 @@ IMessage* MapiFolder::createMessage(const QMessage& source, const MapiSessionPtr
                     qWarning() << "Unable to set message editor format in message.";
                 }
 
-                QString body(source.textContent());
                 if (!setMapiProperty(mapiMessage, PR_BODY, body)) {
                     qWarning() << "Unable to set body in message.";
                 }
@@ -944,7 +984,7 @@ MapiStore::~MapiStore()
     mapiRelease(_store);
     _store = 0;
     _valid = false;
-};
+}
 
 MapiFolderPtr MapiStore::findFolder(QMessageStore::ErrorCode *lastError, const MapiRecordKey &key)
 {
@@ -1676,7 +1716,7 @@ QByteArray extractPlainText(const QString &rtf)
         const QChar ignore[] = { openingBrace, closingBrace, QChar('\r'), QChar('\n') };
 
         QString::const_iterator rit = rtf.constBegin() + index, rend = rtf.constEnd();
-        while ((rit != rend) && (*rit == zero)) {
+        while ((rit != rend) && (*rit != zero)) {
             if (*rit == ignore[0] || *rit == ignore[1] || *rit == ignore[2] || *rit == ignore[3]) {
                 ++rit;
             } else {
@@ -1772,7 +1812,7 @@ QString extractHtml(const QString &rtf)
         int tagIgnored = -1;
 
         QString::const_iterator rit = rtf.constBegin() + index, rend = rtf.constEnd();
-        while ((rit != rend) && (*rit == zero)) {
+        while ((rit != rend) && (*rit != zero)) {
             if (*rit == ignore[0] || *rit == ignore[1] || *rit == ignore[2] || *rit == ignore[3]) {
                 ++rit;
             } else {
