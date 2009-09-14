@@ -78,6 +78,7 @@ static const char *qt_argbShaderProgram =
     "DP4 result.color.x, argb.zyxw, matrix[0];\n"
     "DP4 result.color.y, argb.zyxw, matrix[1];\n"
     "DP4 result.color.z, argb.zyxw, matrix[2];\n"
+    "TEX result.color.w, fragment.texcoord[0], texture, 2D;\n"
     "END";
 
 // Paints an RGB(A) frame.
@@ -103,9 +104,9 @@ static const char *qt_yuvPlanarShaderProgram =
     "TEX yuv.y, fragment.texcoord[0], texture[1], 2D;\n"
     "TEX yuv.z, fragment.texcoord[0], texture[2], 2D;\n"
     "MOV yuv.w, matrix[3].w;\n"
-    "DP3 result.color.x, yuv, matrix[0];\n"
-    "DP3 result.color.y, yuv, matrix[1];\n"
-    "DP3 result.color.z, yuv, matrix[2];\n"
+    "DP4 result.color.x, yuv, matrix[0];\n"
+    "DP4 result.color.y, yuv, matrix[1];\n"
+    "DP4 result.color.z, yuv, matrix[2];\n"
     "END";
 
 /*!
@@ -197,9 +198,8 @@ QList<QVideoFrame::PixelFormat> QPainterVideoSurface::supportedPixelFormats(
                 << QVideoFrame::Format_RGB555;
 #ifndef QT_NO_OPENGL
         if (m_shaderSupport == ShadersSupported) {
-// Exclude the YUV formats temporarily as they're a bit dis-colored.
-//            formats << QVideoFrame::Format_YV12
-//                    << QVideoFrame::Format_YUV420P;
+            formats << QVideoFrame::Format_YV12
+                    << QVideoFrame::Format_YUV420P;
         }
     } else if (handleType == QAbstractVideoBuffer::GLTextureHandle
             && m_shaderSupport == ShadersSupported) {
@@ -688,8 +688,8 @@ void QPainterVideoSurface::updateColorMatrix()
     const qreal cosH = qCos(M_PI * h);
     const qreal sinH = qSin(M_PI * h);
 
-    const qreal h1 = (1.0 - cosH + sinH);
-    const qreal h2 = (1.0 - cosH - sinH);
+    const qreal h1 = 1.0 - cosH + sinH;
+    const qreal h2 = 1.0 - cosH - sinH;
 
     const qreal sr = (1.0 - s) * 0.3086;
     const qreal sg = (1.0 - s) * 0.6094;
@@ -699,9 +699,7 @@ void QPainterVideoSurface::updateColorMatrix()
     const qreal sg_s = sg + s;
     const qreal sb_s = sr + s;
 
-    const qreal c0 = 0.5;
-
-    const float m4 = (s + sr + sg + sb) * (c0 * (1.0 - c) + b);
+    const float m4 = (s + sr + sg + sb) * (0.5 - 0.5 * c + b);
 
     m_colorMatrix(0, 0) = c * (sr_s + sg * h2 + sb * h1);
     m_colorMatrix(0, 1) = c * (sr_s * h1 + sg + sb * h2);
@@ -727,10 +725,10 @@ void QPainterVideoSurface::updateColorMatrix()
     case QVideoFrame::Format_YUV420P:
     case QVideoFrame::Format_YV12:
         m_colorMatrix = m_colorMatrix * QMatrix4x4(
-                1.0,  0.000,  1.140, 0.0,
-                1.0, -0.394, -0.581, 0.0,
-                1.0,  2.028,  0.000, 0.0,
-                0.0,  0.000,  0.000, 1.0);
+                1.0,  0.000,  1.140, -0.5700,
+                1.0, -0.394, -0.581,  0.4875,
+                1.0,  2.028,  0.000, -1.0140,
+                0.0,  0.000,  0.000,  1.0000);
         break;
     default:
         break;
