@@ -771,15 +771,11 @@ bool QContactMemoryEngine::hasFeature(QContactManagerInfo::ManagerFeature featur
 {
     switch (feature) {
         case QContactManagerInfo::Groups:
-        case QContactManagerInfo::Batch:
         case QContactManagerInfo::ActionPreferences:
-        case QContactManagerInfo::ReadOnlyDetails:
-        case QContactManagerInfo::CreateOnlyDetails:
         case QContactManagerInfo::MutableDefinitions:
-        case QContactManagerInfo::Synchronous:
             return true;
-        case QContactManagerInfo::ExternalNotifications:
-            return !d->m_anonymous;
+        case QContactManagerInfo::Anonymous:
+            return d->m_anonymous;
 
         default:
             return false;
