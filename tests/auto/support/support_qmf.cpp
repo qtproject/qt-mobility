@@ -200,7 +200,7 @@ QMessageId addMessage(const Parameters &params)
                 }
 
                 if (!text.isEmpty()) {
-                    QMailMessageContentType ct(mimeType);
+                    QMailMessageContentType ct(mimeType.toAscii());
                     ct.setCharset("UTF-8");
                     message.setBody(QMailMessageBody::fromData(text, ct, QMailMessageBody::Base64));
                     message.setStatus(QMailMessage::ContentAvailable, true);
