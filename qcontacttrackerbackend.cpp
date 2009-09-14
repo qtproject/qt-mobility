@@ -133,9 +133,9 @@ QList<QUniqueId> QContactTrackerEngine::contacts(const QContactFilter& filter, c
     
     // TODO Implement sorting
     QList<QUniqueId> ids;
+    RDFVariable rdfContact = RDFVariable::fromType<nco::PersonContact>();
     if (filter.type() == QContactFilter::ChangeLog) {
         const QContactChangeLogFilter& clFilter = static_cast<const QContactChangeLogFilter&>(filter);
-        RDFVariable rdfContact = RDFVariable::fromType<nco::PersonContact>();
         // Removed since
         if (clFilter.changeType() == QContactChangeLogFilter::Removed) {
             error = QContactManager::NotSupportedError;
@@ -151,19 +151,19 @@ QList<QUniqueId> QContactTrackerEngine::contacts(const QContactFilter& filter, c
             rdfContact.property<nao::hasTag>().property<nao::prefLabel>() = LiteralValue("addressbook");
             rdfContact.property<nie::contentLastModified>() >= LiteralValue(clFilter.since().toString(Qt::ISODate));
         }
-
-        RDFSelect query;
-        query.addColumn("contact_uri", rdfContact);
-        query.addColumn("contactId", rdfContact.property<nco::contactUID>());
-        foreach (QContactSortOrder sort, sortOrders) {
-            query.orderBy(contactDetail2Rdf(rdfContact, sort.detailDefinitionName(), sort.detailFieldName()),
-                                            sort.direction() == Qt::AscendingOrder);
-        }
-        LiveNodes ncoContacts = ::tracker()->modelQuery(query);
-        for (int i = 0; i < ncoContacts->rowCount(); i++) {
-            ids.append(ncoContacts->index(i, 1).data().toUInt());
-        }
     }
+    RDFSelect query;
+    query.addColumn("contact_uri", rdfContact);
+    query.addColumn("contactId", rdfContact.property<nco::contactUID>());
+    foreach (QContactSortOrder sort, sortOrders) {
+        query.orderBy(contactDetail2Rdf(rdfContact, sort.detailDefinitionName(), sort.detailFieldName()),
+                      sort.direction() == Qt::AscendingOrder);
+    }
+    LiveNodes ncoContacts = ::tracker()->modelQuery(query);
+    for (int i = 0; i < ncoContacts->rowCount(); i++) {
+        ids.append(ncoContacts->index(i, 1).data().toUInt());
+    }
+
     error = QContactManager::NoError;
     return ids;
 }
