@@ -57,9 +57,11 @@
 // Paints an RGB32 frame
 static const char *qt_xrgbShaderProgram =
     "!!ARBfp1.0\n"
-    "PARAM matrix[3] = { program.local[0..2] };\n"
+    "PARAM matrix[4] = { program.local[0..2],"
+    "{ 0.0, 0.0, 0.0, 1.0 } };\n"
     "TEMP xrgb;\n"
     "TEX xrgb.xyz, fragment.texcoord[0], texture[0], 2D;\n"
+    "MOV xrgb.w, matrix[3].w;\n"
     "DP4 result.color.x, xrgb.zyxw, matrix[0];\n"
     "DP4 result.color.y, xrgb.zyxw, matrix[1];\n"
     "DP4 result.color.z, xrgb.zyxw, matrix[2];\n"
@@ -68,9 +70,11 @@ static const char *qt_xrgbShaderProgram =
 // Paints an ARGB frame.
 static const char *qt_argbShaderProgram =
     "!!ARBfp1.0\n"
-    "PARAM matrix[3] = { program.local[0..2] };\n"
+    "PARAM matrix[4] = { program.local[0..2],"
+    "{ 0.0, 0.0, 0.0, 1.0 } };\n"
     "TEMP argb;\n"
     "TEX argb, fragment.texcoord[0], texture[0], 2D;\n"
+    "MOV argb.w, matrix[3].w;\n"
     "DP4 result.color.x, argb.zyxw, matrix[0];\n"
     "DP4 result.color.y, argb.zyxw, matrix[1];\n"
     "DP4 result.color.z, argb.zyxw, matrix[2];\n"
@@ -79,9 +83,11 @@ static const char *qt_argbShaderProgram =
 // Paints an RGB(A) frame.
 static const char *qt_rgbShaderProgram =
     "!!ARBfp1.0\n"
-    "PARAM matrix[3] = { program.local[0..2] };\n"
+    "PARAM matrix[4] = { program.local[0..2],"
+    "{ 0.0, 0.0, 0.0, 1.0 } };\n"
     "TEMP rgb;\n"
     "TEX rgb, fragment.texcoord[0], texture[0], 2D;\n"
+    "MOV rgb.w, matrix[3].w;\n"
     "DP4 result.color.x, rgb, matrix[0];\n"
     "DP4 result.color.y, rgb, matrix[1];\n"
     "DP4 result.color.z, rgb, matrix[2];\n"
@@ -90,11 +96,13 @@ static const char *qt_rgbShaderProgram =
 // Paints a YUV420P or YV12 frame.
 static const char *qt_yuvPlanarShaderProgram =
     "!!ARBfp1.0\n"
-    "PARAM matrix[3] = { program.local[0..2] };\n"
+    "PARAM matrix[4] = { program.local[0..2],"
+    "{ 0.0, 0.0, 0.0, 1.0 } };\n"
     "TEMP yuv;\n"
     "TEX yuv.x, fragment.texcoord[0], texture[0], 2D;\n"
     "TEX yuv.y, fragment.texcoord[0], texture[1], 2D;\n"
     "TEX yuv.z, fragment.texcoord[0], texture[2], 2D;\n"
+    "MOV yuv.w, matrix[3].w;\n"
     "DP3 result.color.x, yuv, matrix[0];\n"
     "DP3 result.color.y, yuv, matrix[1];\n"
     "DP3 result.color.z, yuv, matrix[2];\n"
@@ -672,9 +680,9 @@ void QPainterVideoSurface::initYv12TextureInfo(const QSize &size)
 
 void QPainterVideoSurface::updateColorMatrix()
 {
-    const qreal b = m_brightness / 100.0 + 1.0;
+    const qreal b = m_brightness / 100.0;
     const qreal c = m_contrast / 100.0 + 1.0;
-    const qreal h = m_hue / 100.0;
+    const qreal h = m_hue / 200.0;
     const qreal s = m_saturation / 100.0 + 1.0;
 
     const qreal cosH = qCos(M_PI * h);
@@ -693,21 +701,21 @@ void QPainterVideoSurface::updateColorMatrix()
 
     const qreal c0 = 0.5;
 
-    const float m4 = b * c0 * (1.0 - c) * (s + sr + sg + sb);
+    const float m4 = (s + sr + sg + sb) * (c0 * (1.0 - c) + b);
 
-    m_colorMatrix(0, 0) = c * b * (sr_s + sg * h2 + sb * h1);
-    m_colorMatrix(0, 1) = c * b * (sr_s * h1 + sg + sb * h2);
-    m_colorMatrix(0, 2) = c * b * (sr_s * h2 + sg * h1 + sb);
+    m_colorMatrix(0, 0) = c * (sr_s + sg * h2 + sb * h1);
+    m_colorMatrix(0, 1) = c * (sr_s * h1 + sg + sb * h2);
+    m_colorMatrix(0, 2) = c * (sr_s * h2 + sg * h1 + sb);
     m_colorMatrix(0, 3) = m4;
 
-    m_colorMatrix(1, 0) = c * b * (sr + sg_s * h2 + sb * h1);
-    m_colorMatrix(1, 1) = c * b * (sr * h1 + sg_s + sb * h2);
-    m_colorMatrix(1, 2) = c * b * (sr * h2 + sg_s * h1 + sb);
-    m_colorMatrix(0, 3) = m4;
+    m_colorMatrix(1, 0) = c * (sr + sg_s * h2 + sb * h1);
+    m_colorMatrix(1, 1) = c * (sr * h1 + sg_s + sb * h2);
+    m_colorMatrix(1, 2) = c * (sr * h2 + sg_s * h1 + sb);
+    m_colorMatrix(1, 3) = m4;
 
-    m_colorMatrix(2, 0) = c * b * (sr + sg * h2 + sb_s * h1);
-    m_colorMatrix(2, 1) = c * b * (sr * h1 + sg + sb_s * h2);
-    m_colorMatrix(2, 2) = c * b * (sr * h2 + sg * h1 + sb_s);
+    m_colorMatrix(2, 0) = c * (sr + sg * h2 + sb_s * h1);
+    m_colorMatrix(2, 1) = c * (sr * h1 + sg + sb_s * h2);
+    m_colorMatrix(2, 2) = c * (sr * h2 + sg * h1 + sb_s);
     m_colorMatrix(2, 3) = m4;
 
     m_colorMatrix(3, 0) = 0.0;
