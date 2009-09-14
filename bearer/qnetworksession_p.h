@@ -54,6 +54,7 @@
 #include <QNetworkInterface>
 #include <QDateTime>
 
+QT_BEGIN_NAMESPACE
 #ifdef BEARER_ENGINE
 class QNetworkSessionEngine;
 #endif
