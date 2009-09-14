@@ -1,3 +1,9 @@
+libbearer (0.16) unstable; urgency=low
+
+  * Upstream update
+
+ -- Jukka Rissanen <jukka.rissanen@nokia.com>  Thu, 10 Sep 2009 12:23:44 +0300
+
 libbearer (0.15) unstable; urgency=low
 
   * Adding stress test by creating large number of IAPs in various test cases.
