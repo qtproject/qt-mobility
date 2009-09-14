@@ -1,8 +1,10 @@
 TEMPLATE = subdirs
 
+SUBDIRS =
+
 contains(QT_CONFIG, phonon): SUBDIRS += phonon
 
-win32 {
+win32:!wince* {
     TMP_INCLUDE = $$quote($$(INCLUDE))
     TMP_SEARCHPATHS = $$split(TMP_INCLUDE, ";") $$QMAKE_INCDIR
     for(p, TMP_SEARCHPATHS): exists($${p}/wmp.h): SUBDIRS *= wmp
