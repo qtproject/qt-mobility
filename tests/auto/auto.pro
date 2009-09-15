@@ -1,5 +1,5 @@
 TEMPLATE = subdirs
-SUBDIRS += servicemetadata \
+SUBDIRS += databasemanager \
            servicedatabase \
            servicemetadata \
            qserviceinterfacedescriptor \

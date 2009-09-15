@@ -1,6 +1,7 @@
 TARGET=tst_servicedatabase
 QT = core sql
 INCLUDEPATH += ../../../serviceframework
+DEPENDPATH += ../../../serviceframework
 
 wince*|symbian*: {
     addFiles.sources = testdata/*
@@ -24,6 +25,8 @@ SOURCES += tst_servicedatabase.cpp
 LIBS += -lQtServiceFramework
 
 symbian {
+    SOURCES += servicedatabase.cpp
+    HEADERS += servicedatabase_p.h
     TARGET.CAPABILITY = ALL -TCB
 }
 

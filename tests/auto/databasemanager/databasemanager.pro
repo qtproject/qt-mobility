@@ -7,6 +7,7 @@ symbian {
     DEPENDPATH += ../../../serviceframework \
                   ../../../serviceframework/symbian
 }
+
 wince*|symbian*: {
     addFiles.sources = testdata/*
     addFiles.path = testdata
@@ -39,10 +40,12 @@ symbian {
        "$${LITERAL_HASH}endif"
                
     MMP_RULES += libBlock
+    TARGET.CAPABILITY = ALL -TCB
+    LIBS += -lefsrv
 
 } else {
-    HEADERS += ../qsfwtestutil.h
-    SOURCES += ../qsfwtestutil.cpp \
+	HEADERS += ../qsfwtestutil.h
+	SOURCES += ../qsfwtestutil.cpp \
                tst_databasemanager.cpp
 }
 

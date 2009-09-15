@@ -1,6 +1,7 @@
 TEMPLATE = app
 TARGET = SFWDatabaseManagerServer
 QT = core sql
+TARGET.UID3 = 0xE3b48c24
 
 DEFINES += SYMBIAN_DATABASEMANAGER_SERVER
 DEFINES += DATABASEMANAGERSERVER_NO_LIBRARY
@@ -44,3 +45,5 @@ SOURCES +=  servicemetadata.cpp \
 
             #qservicemanager.cpp \
             #qservicecontext.cpp \
+            
+TARGET.CAPABILITY = ALL -TCB
