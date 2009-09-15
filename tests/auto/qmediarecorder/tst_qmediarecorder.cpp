@@ -41,12 +41,56 @@
 #include <qmediarecorder.h>
 #include <qaudiodevicecontrol.h>
 #include <qaudioencodercontrol.h>
+#include <qmediaformatcontrol.h>
 
 #ifndef QT_NO_MULTIMEDIA
 #include <QtMultimedia/qaudioformat.h>
 #else
 #include <qaudioformat.h>
 #endif
+
+class MockMediaFormatControl : public QMediaFormatControl
+{
+    Q_OBJECT
+public:
+    MockMediaFormatControl(QObject *parent):
+        QMediaFormatControl(parent)
+    {
+        m_supportedFormats.append("wav");
+        m_supportedFormats.append("mp3");
+
+        m_descriptions.insert("wav", "WAV format");
+        m_descriptions.insert("mp3", "MP3 format");
+    }
+
+    virtual ~MockMediaFormatControl() {};
+
+    QStringList supportedFormats() const
+    {
+        return m_supportedFormats;
+    }
+
+    QString format() const
+    {
+        return m_format;
+    }
+
+    void setFormat(const QString &formatMimeType)
+    {
+        if (m_supportedFormats.contains(formatMimeType))
+            m_format = formatMimeType;
+    }
+
+    QString formatDescription(const QString &formatMimeType) const
+    {
+        return m_descriptions.value(formatMimeType);
+    }
+
+private:
+    QStringList m_supportedFormats;
+    QMap<QString, QString> m_descriptions;
+    QString m_format;
+};
 
 class MockAudioEncodeProvider : public QAudioEncoderControl
 {
@@ -303,6 +347,7 @@ public:
     {
         mockAudioDeviceControl = new MockAudioDeviceProvider(parent);
         mockAudioEncodeControl = new MockAudioEncodeProvider(parent);
+        mockFormatControl = new MockMediaFormatControl(parent);
     }
 
     QAbstractMediaControl* control(const char * name) const
@@ -313,13 +358,17 @@ public:
             return mockAudioDeviceControl;
         if(qstrcmp(name,QMediaRecorderControl_iid) == 0)
             return mockControl;
+        if(qstrcmp(name,QMediaFormatControl_iid) == 0)
+            return mockFormatControl;
+
 
         return 0;
     }
 
     QAbstractMediaControl   *mockControl;
     QAudioDeviceControl     *mockAudioDeviceControl;
-    QAudioEncoderControl     *mockAudioEncodeControl;
+    QAudioEncoderControl    *mockAudioEncodeControl;
+    QMediaFormatControl     *mockFormatControl;
 };
 
 class MockObject : public QAbstractMediaObject
@@ -358,6 +407,7 @@ private slots:
     void testRecord();
     void testAudioDeviceControl();
     void testAudioEncodeControl();
+    void testMediaFormatsControl();
 
 private:
     QAudioEncoderControl* encode;
@@ -369,6 +419,8 @@ private:
 
 void tst_QMediaRecorder::init()
 {
+    qRegisterMetaType<QMediaRecorder::State>("QMediaRecorder::State");
+
     mock = new MockProvider(this);
     object = new MockObject(this, mock);
     capture = new QMediaRecorder(object);
@@ -421,18 +473,6 @@ void tst_QMediaRecorder::testAudioDeviceControl()
 
 void tst_QMediaRecorder::testAudioEncodeControl()
 {
-    /*QAudioFormat fmt;
-    fmt.setFrequency(44100);
-    fmt.setChannels(2);
-    fmt.setByteOrder(QAudioFormat::LittleEndian);
-    fmt.setSampleSize(16);
-    fmt.setSampleType(QAudioFormat::SignedInt);
-    fmt.setCodec("audio/pcm");
-    QVERIFY(encode->isFormatSupported(fmt));
-    fmt.setFrequency(8000);
-    QVERIFY(!encode->isFormatSupported(fmt));
-    fmt.setFrequency(44100);
-    encode->setFormat(fmt);*/
     QStringList codecs = encode->supportedAudioCodecs();
     QVERIFY(codecs.count() == 2);
     QVERIFY(encode->setAudioCodec("audio/mpeg"));
@@ -444,6 +484,21 @@ void tst_QMediaRecorder::testAudioEncodeControl()
     QStringList options = encode->supportedEncodingOptions();
     QVERIFY(options.count() == 6);
     encode->setEncodingOption("mp3",QStringList() << "bitrate" << "vbr");
+}
+
+void tst_QMediaRecorder::testMediaFormatsControl()
+{
+    QCOMPARE(capture->supportedFormats(), QStringList() << "wav" << "mp3");
+    capture->setFormat("wav");
+    QCOMPARE(capture->format(), QString("wav"));
+    capture->setFormat("mp3");
+    QCOMPARE(capture->format(), QString("mp3"));
+    capture->setFormat("ogg");
+    QCOMPARE(capture->format(), QString("mp3"));
+
+    QCOMPARE(capture->formatDescription("wav"), QString("WAV format"));
+    QCOMPARE(capture->formatDescription("mp3"), QString("MP3 format"));
+    QCOMPARE(capture->formatDescription("ogg"), QString());
 }
 
 QTEST_MAIN(tst_QMediaRecorder)
