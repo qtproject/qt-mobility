@@ -187,10 +187,12 @@ QByteArray QMessageContentContainer::contentCharset() const
 
 QByteArray QMessageContentContainer::suggestedFileName() const
 {
-    if (!d_ptr->_name.isEmpty()) {
-        return d_ptr->_name;
+    if (d_ptr->_container == &d_ptr->_part) {
+        // Return the display name for the part
+        return d_ptr->_part.displayName().toAscii();
     }
-    return d_ptr->_container->contentType().name();
+
+    return QByteArray();
 }
 
 bool QMessageContentContainer::isContentAvailable() const
