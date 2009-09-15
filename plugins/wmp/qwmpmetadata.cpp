@@ -385,11 +385,11 @@ QVariant QWmpMetaData::convertVariant(const VARIANT &variant)
         return QString::fromWCharArray(variant.bstrVal, ::SysStringLen(variant.bstrVal));
     case VT_DISPATCH:
         {
-            IWMPMetaDataPicture *picture = 0;
-            IWMPMetaDataText *text = 0;
+            IWMPMetadataPicture *picture = 0;
+            IWMPMetadataText *text = 0;
 
             if (variant.pdispVal->QueryInterface(
-                    __uuidof(IWMPMetaDataPicture), reinterpret_cast<void **>(&picture)) == S_OK) {
+                    __uuidof(IWMPMetadataPicture), reinterpret_cast<void **>(&picture)) == S_OK) {
                 QUrl uri;
                 BSTR string;
                 if (picture->get_URL(&string) == S_OK) {
@@ -400,7 +400,7 @@ QVariant QWmpMetaData::convertVariant(const VARIANT &variant)
                 picture->Release();
                 return qVariantFromValue(uri);
             } else if (variant.pdispVal->QueryInterface(
-                    __uuidof(IWMPMetaDataText), reinterpret_cast<void **>(&text)) == S_OK) {
+                    __uuidof(IWMPMetadataText), reinterpret_cast<void **>(&text)) == S_OK) {
                 QString description;
                 BSTR string;
                 if (text->get_description(&string) == S_OK) {
