@@ -112,6 +112,8 @@ QCamera::QCamera(QObject *parent, QAbstractMediaService *service):
         d->imageControl = qobject_cast<QImageProcessingControl *>(d->service->control(QImageProcessingControl_iid));
 
         connect(d->control, SIGNAL(stateChanged(QCamera::State)), this, SIGNAL(stateChanged(QCamera::State)));
+
+        registerService(d->service);
     } else {
         d->control = 0;
         d->exposureControl = 0;
@@ -139,6 +141,8 @@ QCamera::QCamera(QObject *parent, QAbstractMediaService *service):
 QCamera::~QCamera()
 {
     Q_D(QCamera);
+
+    registerService(0);
 
     if (d->ownService) {
         delete d->service;

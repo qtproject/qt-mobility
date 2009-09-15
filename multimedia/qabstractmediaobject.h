@@ -36,9 +36,9 @@
 #define QABSTRACTMEDIAOBJECT_H
 
 #include <QtCore/qobject.h>
+#include <QtCore/qstringlist.h>
 
 #include "qmultimediaglobal.h"
-
 
 class QAbstractMediaService;
 
@@ -47,8 +47,80 @@ class Q_MEDIA_EXPORT QAbstractMediaObject : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(int notifyInterval READ notifyInterval WRITE setNotifyInterval NOTIFY notifyIntervalChanged)
-
+    Q_PROPERTY(bool metaDataAvailable READ isMetaDataAvailable NOTIFY metaDataAvailableChanged)
+    Q_PROPERTY(bool metaDataWritable READ isMetaDataWritable NOTIFY metaDataWritableChanged)
 public:
+    enum MetaData
+    {
+        // Common
+        Title,
+        SubTitle,
+        Author,
+        Comment,
+        Description,
+        Category,
+        Genre,
+        Year,
+        Date,
+        UserRating,
+        Keywords,
+        Language,
+        Publisher,
+        Copyright,
+        ParentalRating,
+        RatingOrganisation,
+
+        // Media
+        Size,
+        MediaType,
+        Duration,
+
+        // Audio
+        AudioBitrate,
+        AudioCodec,
+        AverageLevel,
+        Channels,
+        PeakValue,
+        Frequency,
+
+        // Music
+        AlbumTitle,
+        AlbumArtist,
+        ContributingArtist,
+        Composer,
+        Conductor,
+        Lyrics,
+        Mood,
+        TrackNumber,
+        TrackCount,
+
+        CoverArtUriSmall,
+        CoverArtUriLarge,
+
+        // Image/Video
+        Resolution,
+        PixelAspectRatio,
+
+        // Video
+        FrameRate,
+        VideoBitRate,
+        VideoCodec,
+
+        PosterUri,
+
+        // Movie
+        ChapterNumber,
+        Director,
+        LeadPerformer,
+        Writer,
+
+        // Photos
+        CameraManufacturer,
+        CameraModel,
+        Event,
+        Subject
+    };
+
     ~QAbstractMediaObject();
 
     virtual QAbstractMediaService* service() const = 0;
@@ -60,8 +132,21 @@ public:
 
     virtual void bind(QObject*);
 
+    bool isMetaDataAvailable() const;
+    bool isMetaDataWritable() const;
+
+    QVariant metaData(MetaData key) const;
+    void setMetaData(MetaData key, const QVariant &value);
+
+    QVariant extendedMetaData(const QString &key) const;
+    void setExtendedMetaData(const QString &key, const QVariant &value);
+
 Q_SIGNALS:
     void notifyIntervalChanged(int milliSeconds);
+
+    void metaDataAvailableChanged(bool available);
+    void metaDataWritableChanged(bool writable);
+    void metaDataChanged();
 
 protected:
     QAbstractMediaObject(QObject *parent = 0);
@@ -69,6 +154,8 @@ protected:
 
     void addPropertyWatch(QByteArray const &name);
     void removePropertyWatch(QByteArray const &name);
+
+    void registerService(QAbstractMediaService *service);
 
     QAbstractMediaObjectPrivate *d_ptr;
 

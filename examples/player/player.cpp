@@ -39,7 +39,6 @@
 
 #include <qabstractmediaservice.h>
 #include <qmediaplaylist.h>
-#include <qmediametadata.h>
 
 #include <QtGui>
 
@@ -51,13 +50,12 @@ Player::Player(QWidget *parent)
     , colorDialog(0)
 {
     player = new QMediaPlayer;
-    metaData = new QMediaMetadata(player);
     playlist = new QMediaPlaylist(player);
 
     connect(player, SIGNAL(durationChanged(qint64)), SLOT(durationChanged(qint64)));
     connect(player, SIGNAL(positionChanged(qint64)), SLOT(positionChanged(qint64)));
+    connect(player, SIGNAL(metaDataChanged()), SLOT(metaDataChanged()));
     connect(playlist, SIGNAL(playlistPositionChanged(int)), SLOT(playlistPositionChanged(int)));
-    connect(metaData, SIGNAL(metadataChanged()), SLOT(metadataChanged()));
     connect(player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
             this, SLOT(statusChanged(QMediaPlayer::MediaStatus)));
     connect(player, SIGNAL(bufferStatusChanged(int)), this, SLOT(bufferingProgress(int)));
@@ -144,7 +142,7 @@ Player::Player(QWidget *parent)
 
     setLayout(layout);
 
-    metadataChanged();
+    metaDataChanged();
 }
 
 Player::~Player()
@@ -175,16 +173,16 @@ void Player::positionChanged(qint64 progress)
     slider->setValue(progress / 1000);
 }
 
-void Player::metadataChanged()
+void Player::metaDataChanged()
 {
-    qDebug() << "update metadata" << metaData->metadata(QMediaMetadata::Title).toString();
-    if (metaData->metadataAvailable()) {
+    qDebug() << "update metadata" << player->metaData(QAbstractMediaObject::Title).toString();
+    if (player->isMetaDataAvailable()) {
         setTrackInfo(QString("%1 - %2")
-                .arg(metaData->metadata(QMediaMetadata::AlbumArtist).toString())
-                .arg(metaData->metadata(QMediaMetadata::Title).toString()));
+                .arg(player->metaData(QAbstractMediaObject::AlbumArtist).toString())
+                .arg(player->metaData(QAbstractMediaObject::Title).toString()));
 
         if (coverLabel) {
-            QUrl uri = metaData->metadata(QMediaMetadata::CoverArtUriLarge).value<QUrl>();
+            QUrl uri = player->metaData(QAbstractMediaObject::CoverArtUriLarge).value<QUrl>();
 
             coverLabel->setPixmap(!uri.isEmpty()
                     ? QPixmap(uri.toString())

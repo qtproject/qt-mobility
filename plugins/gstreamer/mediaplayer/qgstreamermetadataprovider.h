@@ -39,22 +39,21 @@
 
 class QGstreamerPlayerSession;
 
-class QGstreamerMetadataProvider : public QMetadataProviderControl
+class QGstreamerMetaDataProvider : public QMetaDataProviderControl
 {
     Q_OBJECT
 public:
-    QGstreamerMetadataProvider( QGstreamerPlayerSession *session, QObject *parent );
-    virtual ~QGstreamerMetadataProvider();
+    QGstreamerMetaDataProvider( QGstreamerPlayerSession *session, QObject *parent );
+    virtual ~QGstreamerMetaDataProvider();
 
-    bool metadataAvailable() const;
-    bool isReadOnly() const;
-    void setReadOnly(bool readonly);
+    bool isMetaDataAvailable() const;
+    bool isWritable() const;
 
-    QVariant metadata(QMediaMetadata::Key key) const;
-    void setMetadata(QMediaMetadata::Key key, const QVariant &value);
+    QVariant metaData(QAbstractMediaObject::MetaData key) const;
+    void setMetaData(QAbstractMediaObject::MetaData key, const QVariant &value);
 
-    QVariant extendedMetadata(const QString &key) const ;
-    void setExtendedMetadata(const QString &key, const QVariant &value);
+    QVariant extendedMetaData(const QString &key) const ;
+    void setExtendedMetaData(const QString &key, const QVariant &value);
 
 private slots:
     void updateTags();

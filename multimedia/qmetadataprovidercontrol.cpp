@@ -37,89 +37,93 @@
 
 
 /*!
-    \class QMetadataProviderControl
+    \class QMetaDataProviderControl
     \ingroup multimedia
 
     \preliminary
-    \brief Implement this class to provide metadata information about your Multimedia object.
+    \brief Implement this class to provide meta-data information about your Multimedia object.
 */
 
 /*!
-    Destroy the metadata object.
+    Destroy the meta-data object.
 */
 
-QMetadataProviderControl::~QMetadataProviderControl()
+QMetaDataProviderControl::~QMetaDataProviderControl()
 {
 }
 
 /*!
-    \fn bool QMetadataProviderControl::metadataAvailable() const
+    \fn bool QMetaDataProviderControl::isMetaDataAvailable() const
 
-    Returns true if metadata can be be provided by the service.
+    Identifies if meta-data is available from a media service.
+
+    Returns true if the meta-data is available and false otherwise.
 */
 
 /*!
-    \fn bool QMetadataProviderControl::isReadOnly() const
+    \fn bool QMetaDataProviderControl::isWritable() const
 
-    Returns true if metadata elements can not be added or changed for the service.
+    Identifies if a media service's meta-data can be edited.
+
+    Returns true if the meta-data is writable and false otherwise.
 */
 
 /*!
-    \fn QVariant QMetadataProviderControl::metadata(QMediaMetadata::Key key) const
+    \fn QVariant QMetaDataProviderControl::metaData(QAbstractMediaObject::MetaData key) const
 
-    Returns the metadata for the given \a key.
+    Returns the meta-data for the given \a key.
 */
 
 /*!
-    \fn void QMetadataProviderControl::setMetadata(QMediaMetadata::Key key, const QVariant &value)
+    \fn void QMetaDataProviderControl::setMetaData(QAbstractMediaObject::MetaData key, const QVariant &value)
 
-    Change the value of the metadata element with the given \a key to \a value.
+    Sets the \a value of the meta-data element with the given \a key.
 */
 
 /*!
-    \fn QMetadataProviderControl::extendedMetadata(const QString &key) const
+    \fn QMetaDataProviderControl::extendedMetaData(const QString &key) const
 
-    Returns the metadata for an abitrary string \a key.
+    Returns the metaData for an abitrary string \a key.
 
     The valid selection of keys for extended meta-data is determined by the provider and the meaning
     and type may differ between providers.
 */
 
 /*!
-    \fn QMetadataProviderControl::setExtendedMetadata(const QString &key, const QVariant &value)
+    \fn QMetaDataProviderControl::setExtendedMetaData(const QString &key, const QVariant &value)
 
-    Change the value of the metadata element with an abitrary string \a key to \a value.
+    Change the value of the meta-data element with an abitrary string \a key to \a value.
 
     The valid selection of keys for extended meta-data is determined by the provider and the meaning
     and type may differ between providers.
 */
 
 /*!
-    \fn void QMetadataProviderControl::metadataChanged()
+    \fn void QMetaDataProviderControl::metaDataChanged()
 
-    Signal the changes of metadata.
+    Signal the changes of meta-data.
 */
 
 /*!
-    \fn void QMetadataProviderControl::metadataAvailabilityChanged(bool available)
+    \fn void QMetaDataProviderControl::metaDataAvailabileChanged(bool available)
 
-    Signal the availability of metadata has changed, \a available will
-    be true if the multimedia object has metadata.
+    Signal the availability of meta-data has changed, \a available will
+    be true if the multimedia object has meta-data.
 */
 
 /*!
-    \fn void QMetadataProviderControl::readOnlyChanged(bool readOnly)
+    \fn void QMetaDataProviderControl::writableChanged(bool writable)
 
-    Signal a change in the read only status of meta data, \a readOnly will be
-    true if metadata elements can not be added or adjusted.
+    Signal a change in the writable status of meta-data, \a writable will be
+    true if meta-data elements can be added or adjusted.
 */
 
 /*!
-    Construct a QMetadataProviderControl with \a parent. This class is meant as s base class
-    for service specific metadata providers so this constructor is protected.
+    Construct a QMetaDataProviderControl with \a parent. This class is meant as s base class
+    for service specific metaData providers so this constructor is protected.
 */
 
-QMetadataProviderControl::QMetadataProviderControl(QObject *parent):
+QMetaDataProviderControl::QMetaDataProviderControl(QObject *parent):
     QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
 {
 }

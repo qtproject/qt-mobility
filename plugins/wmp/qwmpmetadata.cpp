@@ -48,81 +48,81 @@
 #include <QtCore/qvariant.h>
 
 
-struct QWmpMetadataKeyLookup
+struct QWmpMetaDataKeyLookup
 {
-    QMediaMetadata::Key key;
+    QAbstractMediaObject::MetaData key;
     const wchar_t *token;
 };
 
-static const QWmpMetadataKeyLookup qt_wmpMetadataKeys[] =
+static const QWmpMetaDataKeyLookup qt_wmpMetaDataKeys[] =
 {
-    { QMediaMetadata::Title, L"Title" },
-    { QMediaMetadata::SubTitle, L"WM/SubTitle" },
-    { QMediaMetadata::Author, L"Author" },
-    { QMediaMetadata::Comment, L"Comment" },
-    { QMediaMetadata::Description, L"Description" },
-    { QMediaMetadata::Category, L"WM/Category" },
-    { QMediaMetadata::Genre, L"WM/Genre" },
-    //{ QMediaMetadata::Date, 0 },
-    { QMediaMetadata::Year, L"WM/Year" },
-    { QMediaMetadata::UserRating, L"UserRating" },
-    //{ QMediaMetadata::Keywords, 0 },
-    { QMediaMetadata::Language, L"Language" },
-    { QMediaMetadata::Publisher, L"WM/Publisher" },
-    { QMediaMetadata::Copyright, L"Copyright" },
-    { QMediaMetadata::ParentalRating, L"ParentalRating" },
-    { QMediaMetadata::RatingOrganisation, L"RatingOrganisation" },
+    { QAbstractMediaObject::Title, L"Title" },
+    { QAbstractMediaObject::SubTitle, L"WM/SubTitle" },
+    { QAbstractMediaObject::Author, L"Author" },
+    { QAbstractMediaObject::Comment, L"Comment" },
+    { QAbstractMediaObject::Description, L"Description" },
+    { QAbstractMediaObject::Category, L"WM/Category" },
+    { QAbstractMediaObject::Genre, L"WM/Genre" },
+    //{ QAbstractMediaObject::Date, 0 },
+    { QAbstractMediaObject::Year, L"WM/Year" },
+    { QAbstractMediaObject::UserRating, L"UserRating" },
+    //{ QAbstractMediaObject::MetaDatawords, 0 },
+    { QAbstractMediaObject::Language, L"Language" },
+    { QAbstractMediaObject::Publisher, L"WM/Publisher" },
+    { QAbstractMediaObject::Copyright, L"Copyright" },
+    { QAbstractMediaObject::ParentalRating, L"ParentalRating" },
+    { QAbstractMediaObject::RatingOrganisation, L"RatingOrganisation" },
 
     // Media
-    { QMediaMetadata::Size, L"FileSize" },
-    { QMediaMetadata::MediaType, L"MediaType" },
-    { QMediaMetadata::Duration, L"Duration" },
+    { QAbstractMediaObject::Size, L"FileSize" },
+    { QAbstractMediaObject::MediaType, L"MediaType" },
+    { QAbstractMediaObject::Duration, L"Duration" },
 
     // Audio
-    { QMediaMetadata::AudioBitrate, L"AudioBitrate" },
-    { QMediaMetadata::AudioCodec, L"AudioCodec" },
-    { QMediaMetadata::Channels, L"Channels" },
-    { QMediaMetadata::Frequency, L"Frequency" },
+    { QAbstractMediaObject::AudioBitrate, L"AudioBitrate" },
+    { QAbstractMediaObject::AudioCodec, L"AudioCodec" },
+    { QAbstractMediaObject::Channels, L"Channels" },
+    { QAbstractMediaObject::Frequency, L"Frequency" },
 
     // Music
-    { QMediaMetadata::AlbumTitle, L"WM/AlbumTitle" },
-    { QMediaMetadata::AlbumArtist, L"WM/AlbumArtist" },
-    { QMediaMetadata::ContributingArtist, L"Author" },
-    { QMediaMetadata::Composer, L"WM/Composer" },
-    { QMediaMetadata::Conductor, L"WM/Conductor" },
-    { QMediaMetadata::Lyrics, L"WM/Lyrics" },
-    { QMediaMetadata::Mood, L"WM/Mood" },
-    { QMediaMetadata::TrackNumber, L"WM/TrackNumber" },
-    //{ QMediaMetadata::TrackCount, 0 },
-    //{ QMediaMetadata::CoverArtUriSmall, 0 },
-    //{ QMediaMetadata::CoverArtUriLarge, 0 },
+    { QAbstractMediaObject::AlbumTitle, L"WM/AlbumTitle" },
+    { QAbstractMediaObject::AlbumArtist, L"WM/AlbumArtist" },
+    { QAbstractMediaObject::ContributingArtist, L"Author" },
+    { QAbstractMediaObject::Composer, L"WM/Composer" },
+    { QAbstractMediaObject::Conductor, L"WM/Conductor" },
+    { QAbstractMediaObject::Lyrics, L"WM/Lyrics" },
+    { QAbstractMediaObject::Mood, L"WM/Mood" },
+    { QAbstractMediaObject::TrackNumber, L"WM/TrackNumber" },
+    //{ QAbstractMediaObject::TrackCount, 0 },
+    //{ QAbstractMediaObject::CoverArtUriSmall, 0 },
+    //{ QAbstractMediaObject::CoverArtUriLarge, 0 },
 
     // Image/Video
-    //{ QMediaMetadata::Resolution, 0 },
-    //{ QMediaMetadata::PixelAspectRatio, 0 },
+    //{ QAbstractMediaObject::Resolution, 0 },
+    //{ QAbstractMediaObject::PixelAspectRatio, 0 },
 
     // Video
-    //{ QMediaMetadata::FrameRate, 0 },
-    { QMediaMetadata::VideoBitRate, L"VideoBitRate" },
-    { QMediaMetadata::VideoCodec, L"VideoCodec" },
+    //{ QAbstractMediaObject::FrameRate, 0 },
+    { QAbstractMediaObject::VideoBitRate, L"VideoBitRate" },
+    { QAbstractMediaObject::VideoCodec, L"VideoCodec" },
 
-    //{ QMediaMetadata::PosterUri, 0 },
+    //{ QAbstractMediaObject::PosterUri, 0 },
 
     // Movie
-    { QMediaMetadata::ChapterNumber, L"ChapterNumber" },
-    { QMediaMetadata::Director, L"WM/Director" },
-    { QMediaMetadata::LeadPerformer, L"LeadPerformer" },
-    { QMediaMetadata::Writer, L"WM/Writer" },
+    { QAbstractMediaObject::ChapterNumber, L"ChapterNumber" },
+    { QAbstractMediaObject::Director, L"WM/Director" },
+    { QAbstractMediaObject::LeadPerformer, L"LeadPerformer" },
+    { QAbstractMediaObject::Writer, L"WM/Writer" },
 
     // Photos
-    { QMediaMetadata::CameraManufacturer, L"CameraManufacturer" },
-    { QMediaMetadata::CameraModel, L"CameraModel" },
-    { QMediaMetadata::Event, L"Event" },
-    { QMediaMetadata::Subject, L"Subject" }
+    { QAbstractMediaObject::CameraManufacturer, L"CameraManufacturer" },
+    { QAbstractMediaObject::CameraModel, L"CameraModel" },
+    { QAbstractMediaObject::Event, L"Event" },
+    { QAbstractMediaObject::Subject, L"Subject" }
 };
 
 QWmpMetaData::QWmpMetaData(IWMPCore3 *player, QWmpEvents *events, QObject *parent)
-    : QMetadataProviderControl(parent)
+    : QMetaDataProviderControl(parent)
     , m_media(0)
 {
     player->get_currentMedia(&m_media);
@@ -138,22 +138,22 @@ QWmpMetaData::~QWmpMetaData()
         m_media->Release();
 }
 
-bool QWmpMetaData::metadataAvailable() const
+bool QWmpMetaData::isMetaDataAvailable() const
 {
     return m_media != 0;
 }
 
-bool QWmpMetaData::isReadOnly() const
+bool QWmpMetaData::isWritable() const
 {
-    return false;
+    return m_media != 0;
 }
 
-QVariant QWmpMetaData::metadata(QMediaMetadata::Key key) const
+QVariant QWmpMetaData::metaData(QAbstractMediaObject::MetaData key) const
 {
-    static const int  count = sizeof(qt_wmpMetadataKeys) / sizeof(QWmpMetadataKeyLookup);
+    static const int  count = sizeof(qt_wmpMetaDataKeys) / sizeof(QWmpMetaDataKeyLookup);
 
     switch (key) {
-    case QMediaMetadata::Date:
+    case QAbstractMediaObject::Date:
         {
             QVariant day = value(m_media, QAutoBStr(L"ReleaseDateDay"));
             QVariant month = value(m_media, QAutoBStr(L"ReleaseDateMonth"));
@@ -163,11 +163,11 @@ QVariant QWmpMetaData::metadata(QMediaMetadata::Key key) const
                 return QDate(year.toInt(), month.toInt(), day.toInt());
         }
         break;
-    case QMediaMetadata::CoverArtUriSmall:
+    case QAbstractMediaObject::CoverArtUriSmall:
         return albumArtUri(m_media, "_Small.jpg");
-    case QMediaMetadata::CoverArtUriLarge:
+    case QAbstractMediaObject::CoverArtUriLarge:
         return albumArtUri(m_media, "_Large.jpg");
-    case QMediaMetadata::Resolution:
+    case QAbstractMediaObject::Resolution:
         {
             QVariant width = value(m_media, QAutoBStr(L"WM/VideoWidth"));
             QVariant height = value(m_media, QAutoBStr(L"WM/VideoHeight"));
@@ -176,7 +176,7 @@ QVariant QWmpMetaData::metadata(QMediaMetadata::Key key) const
                 return QSize(width.toInt(), height.toInt());
         }
         break;
-    case QMediaMetadata::PixelAspectRatio:
+    case QAbstractMediaObject::PixelAspectRatio:
         {
             QVariant x = value(m_media, QAutoBStr(L"PixelAspectRatioX"));
             QVariant y = value(m_media, QAutoBStr(L"PixelAspectRatioY"));
@@ -185,36 +185,36 @@ QVariant QWmpMetaData::metadata(QMediaMetadata::Key key) const
                 return QSize(x.toInt(), y.toInt());
         }
         break;
-    case QMediaMetadata::FrameRate:
+    case QAbstractMediaObject::FrameRate:
         break;
     default:
         for (int i = 0; i < count; ++i) {
-            if (qt_wmpMetadataKeys[i].key == key)
-                return value(m_media, QAutoBStr(qt_wmpMetadataKeys[i].token));
+            if (qt_wmpMetaDataKeys[i].key == key)
+                return value(m_media, QAutoBStr(qt_wmpMetaDataKeys[i].token));
         }
         break;
     }
     return QVariant();
 }
 
-void QWmpMetaData::setMetadata(QMediaMetadata::Key key, const QVariant &value)
+void QWmpMetaData::setMetaData(QAbstractMediaObject::MetaData key, const QVariant &value)
 {
-    static const int  count = sizeof(qt_wmpMetadataKeys) / sizeof(QWmpMetadataKeyLookup);
+    static const int  count = sizeof(qt_wmpMetaDataKeys) / sizeof(QWmpMetaDataKeyLookup);
 
     for (int i = 0; i < count; ++i) {
-        if (qt_wmpMetadataKeys[i].key == key) {
-            setValue(m_media, QAutoBStr(qt_wmpMetadataKeys[i].token), value);
+        if (qt_wmpMetaDataKeys[i].key == key) {
+            setValue(m_media, QAutoBStr(qt_wmpMetaDataKeys[i].token), value);
             return;
         }
     }
 }
 
-QVariant QWmpMetaData::extendedMetadata(const QString &key) const
+QVariant QWmpMetaData::extendedMetaData(const QString &key) const
 {
     return value(m_media, QAutoBStr(key));
 }
 
-void QWmpMetaData::setExtendedMetadata(const QString &key, const QVariant &value)
+void QWmpMetaData::setExtendedMetaData(const QString &key, const QVariant &value)
 {
     setValue(m_media, QAutoBStr(key), value);
 }
@@ -229,14 +229,14 @@ void QWmpMetaData::currentItemChangeEvent(IDispatch *dispatch)
 
     if (media) {
         if (m_media)
-            emit metadataChanged();
+            emit metaDataChanged();
         else
-            emit metadataAvailabilityChanged(false);
+            emit metaDataAvailableChanged(false);
 
         media->Release();
     } else {
         if (m_media)
-            emit metadataAvailabilityChanged(false);
+            emit metaDataAvailableChanged(false);
     }
 }
 
@@ -247,7 +247,7 @@ void QWmpMetaData::mediaChangeEvent(IDispatch *dispatch)
             __uuidof(IWMPMedia), reinterpret_cast<void **>(&media)) == S_OK) {
         VARIANT_BOOL isEqual = VARIANT_FALSE;
         if (media->get_isIdentical(m_media, &isEqual) == S_OK && isEqual)
-            emit metadataChanged();
+            emit metaDataChanged();
         media->Release();
     }
 }

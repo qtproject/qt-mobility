@@ -50,7 +50,7 @@ class QGstreamerVideoRenderer;
 class QGstreamerVideoOverlay;
 class QGstreamerVideoWidgetControl;
 class QGstreamerElementFactory;
-class QGstreamerCaptureMetadataControl;
+class QGstreamerCaptureMetaDataControl;
 
 class QGstreamerCaptureService : public QCameraService
 {
@@ -69,7 +69,7 @@ private:
 
     QGstreamerCaptureSession *m_captureSession;
     QGstreamerCameraControl *m_cameraControl;
-    QGstreamerCaptureMetadataControl *m_metadataControl;
+    QGstreamerCaptureMetaDataControl *m_metaDataControl;
 
     QAudioDeviceControl *m_audioInputDevice;
 

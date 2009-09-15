@@ -175,6 +175,8 @@ QMediaRecorder::QMediaRecorder(QAbstractMediaObject *mediaObject):
     d->ownService = false;
 
     d->initControls();
+
+    registerService(d->service);
 }
 
 /*!
@@ -197,6 +199,8 @@ QMediaRecorder::QMediaRecorder(QObject *parent, QMediaRecorderService *service):
     Q_ASSERT(d->service != 0);
 
     d->initControls();
+
+    registerService(service);
 }
 
 
@@ -207,6 +211,8 @@ QMediaRecorder::QMediaRecorder(QObject *parent, QMediaRecorderService *service):
 QMediaRecorder::~QMediaRecorder()
 {
     Q_D(QMediaRecorder);
+
+    registerService(0);
 
     if (d->ownService)
         delete d->service;

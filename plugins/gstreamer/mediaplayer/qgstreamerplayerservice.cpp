@@ -57,7 +57,7 @@ QGstreamerPlayerService::QGstreamerPlayerService(QObject *parent)
 {
     m_session = new QGstreamerPlayerSession(this);
     m_control = new QGstreamerPlayerControl(m_session, this);
-    m_metadata = new QGstreamerMetadataProvider(m_session, this);
+    m_metaData = new QGstreamerMetaDataProvider(m_session, this);
     m_videoOutput = new QGstreamerVideoOutputControl(this);
     connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
             this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
@@ -84,8 +84,8 @@ QAbstractMediaControl *QGstreamerPlayerService::control(const char *name) const
     if (qstrcmp(name,QMediaPlayerControl_iid) == 0)
         return m_control;
 
-    if (qstrcmp(name,QMetadataProviderControl_iid) == 0)
-        return m_metadata;
+    if (qstrcmp(name,QMetaDataProviderControl_iid) == 0)
+        return m_metaData;
 
     if (qstrcmp(name, QVideoOutputControl_iid) == 0)
         return m_videoOutput;

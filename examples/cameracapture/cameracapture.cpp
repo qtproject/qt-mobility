@@ -43,7 +43,6 @@
 #include <qmediaformatcontrol.h>
 #include <qcamera.h>
 #include <qvideowidget.h>
-#include <qmediametadata.h>
 
 #ifndef QT_NO_MULTIMEDIA
 #include <QtMultimedia/qaudioformat.h>
@@ -123,8 +122,7 @@ CameraCapture::CameraCapture(QWidget *parent) :
             ui->containerFormatBox->setCurrentIndex(ui->containerFormatBox->count()-1);
     }
 
-    metadata = new QMediaMetadata(camera);
-    metadata->setMetadata(QMediaMetadata::Title, QVariant(QLatin1String("Test Title")));
+    camera->setMetaData(QAbstractMediaObject::Title, QVariant(QLatin1String("Test Title")));
 
     QWidget *videoWidget = new QVideoWidget(mediaRecorder);
     videoWidget->resize(640,480);

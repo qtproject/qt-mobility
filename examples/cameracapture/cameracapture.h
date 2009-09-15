@@ -47,7 +47,6 @@ class QAudioDeviceControl;
 class QAudioEncoderControl;
 class QVideoEncoderControl;
 class QMediaFormatControl;
-class QMediaMetadata;
 
 class CameraCapture : public QMainWindow
 {
@@ -81,7 +80,6 @@ private:
 
     QMediaRecorder* mediaRecorder;
     QCamera *camera;
-    QMediaMetadata *metadata;
     QAudioDeviceControl *audioDevice;
 };
 

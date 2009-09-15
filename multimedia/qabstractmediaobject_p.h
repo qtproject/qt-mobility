@@ -52,15 +52,22 @@
 
 #include "qabstractmediaobject.h"
 
+class QMetaDataProviderControl;
+
 class QAbstractMediaObjectPrivate
 {
     Q_DECLARE_PUBLIC(QAbstractMediaObject)
 
 public:
-    QAbstractMediaObjectPrivate() {}
+    QAbstractMediaObjectPrivate()
+        : metaDataControl(0)
+        , notifyTimer(0)
+    {}
 
     void _q_notify();
 
+    QAbstractMediaService *service;
+    QMetaDataProviderControl *metaDataControl;
     QTimer* notifyTimer;
     QList<QByteArray>   notifyProperties;
 

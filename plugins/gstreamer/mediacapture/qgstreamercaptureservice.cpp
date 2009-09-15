@@ -153,9 +153,9 @@ QGstreamerCaptureService::QGstreamerCaptureService(const char *interface, QObjec
     m_audioInputDevice = new QGstreamerAudioInputDeviceControl(this);
     connect(m_audioInputDevice, SIGNAL(selectedDeviceChanged(QString)), m_captureSession, SLOT(setCaptureDevice(QString)));
 
-    m_metadataControl = new QGstreamerCaptureMetadataControl(this);
-    connect(m_metadataControl, SIGNAL(metadataChanged(QMap<QByteArray,QVariant>)),
-            m_captureSession, SLOT(setMetadata(QMap<QByteArray,QVariant>)));
+    m_metaDataControl = new QGstreamerCaptureMetaDataControl(this);
+    connect(m_metaDataControl, SIGNAL(metadataChanged(QMap<QByteArray,QVariant>)),
+            m_captureSession, SLOT(setMetaData(QMap<QByteArray,QVariant>)));
 }
 
 QGstreamerCaptureService::~QGstreamerCaptureService()
@@ -196,8 +196,8 @@ QAbstractMediaControl *QGstreamerCaptureService::control(const char *name) const
     if (qstrcmp(name,QCameraControl_iid) == 0)
         return m_cameraControl;
 
-    if (qstrcmp(name,QMetadataProviderControl_iid) == 0)
-        return m_metadataControl;
+    if (qstrcmp(name,QMetaDataProviderControl_iid) == 0)
+        return m_metaDataControl;
 
     return 0;
 }
