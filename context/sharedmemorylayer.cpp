@@ -320,7 +320,9 @@ public:
 
     inline void * fromPtr(unsigned int ptr);
 
+#ifdef QVALUESPACE_UPDATE_STATS
     inline QMallocPool *mallocPool() const { return pool; }
+#endif
 
     typedef void (*NodeChangeFunction)(unsigned short node, void *ctxt);
     void setNodeChangeFunction(NodeChangeFunction, void *);
