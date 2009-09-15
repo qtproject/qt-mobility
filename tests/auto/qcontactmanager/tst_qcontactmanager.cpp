@@ -86,6 +86,7 @@ private slots:
     void signalEmission();
     void detailDefinitions();
     void displayName();
+    void actionPreferences();
 
     /* Tests that take no data */
     void contactValidation();
@@ -106,6 +107,7 @@ private slots:
     void signalEmission_data() {addManagers();}
     void detailDefinitions_data() {addManagers();}
     void displayName_data() {addManagers();}
+    void actionPreferences_data() {addManagers();}
 };
 
 tst_QContactManager::tst_QContactManager()
@@ -2365,6 +2367,46 @@ void tst_QContactManager::displayName()
     /* And delete the contact */
     QVERIFY(cm->removeContact(d.id()));
 
+    delete cm;
+}
+
+void tst_QContactManager::actionPreferences()
+{
+    QFETCH(QString, uri);
+    QContactManager* cm = QContactManager::fromUri(uri);
+
+    // early out if the manager doesn't support action preference saving.
+    if (!cm->information()->hasFeature(QContactManagerInfo::ActionPreferences)) {
+        delete cm;
+        QSKIP("Manager does not support action preferences", SkipSingle);
+        return;
+    }
+
+    // create a sample contact
+    QContactAvatar a;
+    a.setAvatar("test.png");
+    QContactPhoneNumber p;
+    p.setNumber("12345");
+    QContactUrl u;
+    u.setUrl("http://test.nokia.com");
+
+    QContact c;
+    c.setDisplayLabel("Test Contact");
+    c.saveDetail(&a);
+    c.saveDetail(&p);
+    c.saveDetail(&u);
+
+    // set a preference for dialing the saved phonenumber.
+    c.setPreferredDetail("Dial", p);
+
+    QVERIFY(cm->saveContact(&c));          // save the contact
+    QContact loaded = cm->contact(c.id()); // reload the contact
+
+    // test that the preference was saved correctly.
+    QContactDetail pref = loaded.preferredDetail("Dial");
+    QVERIFY(pref == p);
+
+    cm->removeContact(c.id());
     delete cm;
 }
 
