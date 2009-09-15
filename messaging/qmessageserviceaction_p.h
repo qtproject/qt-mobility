@@ -30,17 +30,35 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include "qmessageserviceaction.h"
 
-class QMessageServiceActionPrivate
+class QMessageServiceActionPrivate : public QObject
 {
+    Q_OBJECT
+
     Q_DECLARE_PUBLIC(QMessageServiceAction)
 
 public:
-    QMessageServiceActionPrivate(QMessageServiceAction *serviceAction)
-        :q_ptr(serviceAction)
-    {
-    }
+    QMessageServiceActionPrivate(QMessageServiceAction* parent);
 
-    QMessageServiceAction *q_ptr;
+    bool send(const QMessage& message, bool showComposer = false);
+    bool show(const QMessageId& id);
+
+public slots:
+    void completed();
+    void reportMatchingIds();
+
+signals:
+    void stateChanged(QMessageServiceAction::State);
+    void messagesFound(const QMessageIdList&);
+    void progressChanged(uint, uint);
+
+public:
+    QMessageServiceAction* q_ptr;
+    bool _active;
+    QMessageStore::ErrorCode _lastError;
+    QMessageIdList _candidateIds;
+    QMessageServiceAction::State _state;
 };
+

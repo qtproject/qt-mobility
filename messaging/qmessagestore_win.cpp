@@ -427,12 +427,16 @@ bool QMessageStore::addMessage(QMessage *message)
 
     if (!message || !message->id().isValid()) {
 
-        d_ptr->p_ptr->lastError = QMessageStore::NoError;
+        QMessageStore::ErrorCode* lError = &d_ptr->p_ptr->lastError;
 
-        MapiSessionPtr session(MapiSession::createSession(&d_ptr->p_ptr->lastError, d_ptr->p_ptr->_mapiInitialized));
-        if (d_ptr->p_ptr->lastError == QMessageStore::NoError) {
+        *lError = QMessageStore::NoError;
 
-            if (MapiStorePtr mapiStore = session->findStore(&d_ptr->p_ptr->lastError, message->parentAccountId(),false)) {
+        MapiSessionPtr session(MapiSession::createSession(lError, d_ptr->p_ptr->_mapiInitialized));
+        if (*lError == QMessageStore::NoError) {
+
+            MapiStorePtr mapiStore = session->findStore(lError,message->parentAccountId(),false);
+
+            if (*lError == QMessageStore::NoError && !mapiStore.isNull()) {
 
                 MapiFolderPtr mapiFolder;
 
@@ -440,14 +444,16 @@ bool QMessageStore::addMessage(QMessage *message)
 
                 QMessageFolder folder(message->parentFolderId());
 
-                if(folder.id().isValid())
-                    mapiFolder = mapiStore->findFolder(&d_ptr->p_ptr->lastError, QMessageFolderIdPrivate::folderRecordKey(folder.id()));
-                else
-                    mapiFolder = mapiStore->findFolder(&d_ptr->p_ptr->lastError, message->standardFolder());
+                *lError = QMessageStore::NoError;
 
-                if( mapiFolder ) {
-                    IMessage* mapiMessage = mapiFolder->createMessage(*message,session,&d_ptr->p_ptr->lastError);
-                    if (mapiMessage && d_ptr->p_ptr->lastError == QMessageStore::NoError) {
+                if(folder.id().isValid())
+                    mapiFolder = mapiStore->findFolder(lError, QMessageFolderIdPrivate::folderRecordKey(folder.id()));
+                else
+                    mapiFolder = mapiStore->findFolder(lError, message->standardFolder());
+
+                if(*lError == QMessageStore::NoError && !mapiFolder.isNull()) {
+                    IMessage* mapiMessage = mapiFolder->createMessage(*message,session,lError);
+                    if (*lError == QMessageStore::NoError && mapiMessage) {
 
                         if (FAILED(mapiMessage->SaveChanges(0))) {
                             qWarning() << "Unable to save changes on message.";
@@ -462,18 +468,21 @@ bool QMessageStore::addMessage(QMessage *message)
                         SPropValue *properties(0);
                         ULONG count;
                         HRESULT rv = mapiMessage->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), 0, &count, &properties);
-                        if (HR_SUCCEEDED(rv)) {
+                        if (HR_SUCCEEDED(rv) && (properties[0].ulPropTag == PR_RECORD_KEY) && (properties[1].ulPropTag == PR_ENTRYID)) {
                             MapiRecordKey recordKey(properties[0].Value.bin.lpb, properties[0].Value.bin.cb);
                             MapiEntryId entryId(properties[1].Value.bin.lpb, properties[1].Value.bin.cb);
                             message->d_ptr->_id = QMessageIdPrivate::from(recordKey, mapiFolder->recordKey(), mapiFolder->storeKey(), entryId);
                             MAPIFreeBuffer(properties);
                         }
                         else
+                        {
                             qWarning() << "Unable to set the new ID in message.";
+                            result = false;
+                        }
 
                         mapiMessage->Release();
 
-                        return true;
+                        result = true;
 
                     } else {
                         qWarning() << "Cannot CreateMessage";
