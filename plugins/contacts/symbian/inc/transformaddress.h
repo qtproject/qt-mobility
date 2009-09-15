@@ -30,33 +30,18 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef TRANSFORMADDRESS_H
+#define TRANSFORMADDRESS_H
 
 #include "transformcontactdata.h"
 
-void TransformContactData::setContexts(const TUid &fieldType, QContactDetail &detail)
+class TransformAddress : public TransformContactData
 {
-	if (fieldType == KUidContactFieldVCardMapHOME)
-	{
-		detail.setContexts(QContactDetail::ContextHome);
-	}
-	
-	else if (fieldType == KUidContactFieldVCardMapWORK)
-	{
-		detail.setContexts(QContactDetail::ContextWork);
-	}
-}
+protected:
+	QList<CContactItemField *> transformDetailL(const QContactDetail &detail);
+	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact);
+	bool supportsField(TUint32 fieldType) const;
+	bool supportsDetail(QString detailName) const;
+};
 
-void TransformContactData::setContextsL(const QContactDetail &detail, CContactItemField &field)
-{
-	QStringList contexts = detail.contexts();
-	
-	//only first context in the array is taken into account
-	if (contexts.count() > 0) {
-        if (contexts.at(0) == QContactDetail::ContextHome ) {
-            field.AddFieldTypeL(KUidContactFieldVCardMapHOME);
-        }
-        else if (contexts.at(0) == QContactDetail::ContextWork ) {
-            field.AddFieldTypeL(KUidContactFieldVCardMapWORK);
-        }
-	}
-}
+#endif

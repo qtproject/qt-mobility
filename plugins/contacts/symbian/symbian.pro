@@ -34,7 +34,8 @@ symbian: {
       inc/transformname.h \
       inc/transformnickname.h \
       inc/transformphonenumber.h \
-      inc/transformemail.h
+      inc/transformemail.h \
+      inc/transformaddress.h
       
   SOURCES += \
   		src/qcontactsymbianbackend.cpp \
@@ -44,7 +45,8 @@ symbian: {
       src/transformname.cpp \
       src/transformnickname.cpp \
       src/transformphonenumber.cpp \
-      src/transformemail.cpp
+      src/transformemail.cpp \
+      src/transformaddress.cpp
       
   LIBS += \
   				-lcntmodel \
