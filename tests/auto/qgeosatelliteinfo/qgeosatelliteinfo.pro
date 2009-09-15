@@ -6,7 +6,7 @@ include (../../../common.pri)
 INCLUDEPATH += ../../../location
 
 # Input 
-SOURCES += tst_qsatelliteinfo.cpp
+SOURCES += tst_qgeosatelliteinfo.cpp
 
 LIBS += -lQtLocation
 

@@ -62,7 +62,7 @@ private slots:
         // TC_ID_3_x_2 : In settings make one satellite and no non
         // satellite based positioning methods available. And call this
         // API, check return value it should be SatellitePositioningMethods
-        QGeoPositionInfoSource* src = QGeoPositionInfoSource::createSource();
+        QGeoPositionInfoSource* src = QGeoPositionInfoSource::createSource(0);
         QVERIFY(src != NULL);
         QCOMPARE(src->supportedPositioningMethods(),
                  QGeoPositionInfoSource::SatellitePositioningMethods);
@@ -71,7 +71,7 @@ private slots:
 
     void  lastKnownPosition()
     {
-        QGeoPositionInfoSource *source = QGeoPositionInfoSource::createSource();
+        QGeoPositionInfoSource *source = QGeoPositionInfoSource::createSource(0);
         QSignalSpy spy(source,SIGNAL(positionUpdated(const QGeoPositionInfo&)));
 
         source->setUpdateInterval(MAX_WAITING_TIME/2);
@@ -114,7 +114,7 @@ private slots:
     {
         //TC_ID_3_x_3 : In settings make no satellite and one non satellite based positioning methods 
         //available. And call this API, check return value it should be NonSatellitePositioningMethods
-        QGeoPositionInfoSource* src = QGeoPositionInfoSource::createSource();
+        QGeoPositionInfoSource* src = QGeoPositionInfoSource::createSource(0);
         QVERIFY(src != NULL);
         QCOMPARE(src->supportedPositioningMethods(),
                  QGeoPositionInfoSource::NonSatellitePositioningMethods);
@@ -123,7 +123,7 @@ private slots:
 
     void  lastKnownPosition3()
     {
-        QGeoPositionInfoSource *source = QGeoPositionInfoSource::createSource();
+        QGeoPositionInfoSource *source = QGeoPositionInfoSource::createSource(0);
         QSignalSpy spy(source,SIGNAL(positionUpdated(const QGeoPositionInfo&)));
 
         source->setPreferredPositioningMethods(QGeoPositionInfoSource::NonSatellitePositioningMethods);

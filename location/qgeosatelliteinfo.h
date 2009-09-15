@@ -30,19 +30,19 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QSATELLITEINFO_H
-#define QSATELLITEINFO_H
+#ifndef QGEOSATELLITEINFO_H
+#define QGEOSATELLITEINFO_H
 
 #include "qlocationglobal.h"
 
 class QDebug;
-class QSatelliteInfoPrivate;
+class QGeoSatelliteInfoPrivate;
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATION_EXPORT QSatelliteInfo
+class Q_LOCATION_EXPORT QGeoSatelliteInfo
 {
 public:
     enum Property {
@@ -50,14 +50,14 @@ public:
         Azimuth
     };
 
-    QSatelliteInfo();
-    QSatelliteInfo(const QSatelliteInfo &other);
-    ~QSatelliteInfo();
+    QGeoSatelliteInfo();
+    QGeoSatelliteInfo(const QGeoSatelliteInfo &other);
+    ~QGeoSatelliteInfo();
 
-    QSatelliteInfo &operator=(const QSatelliteInfo &other);
+    QGeoSatelliteInfo &operator=(const QGeoSatelliteInfo &other);
 
-    bool operator==(const QSatelliteInfo &other) const;
-    inline bool operator!=(const QSatelliteInfo &other) const { return !operator==(other); }
+    bool operator==(const QGeoSatelliteInfo &other) const;
+    inline bool operator!=(const QGeoSatelliteInfo &other) const { return !operator==(other); }
 
     void setPrnNumber(int prn);
     int prnNumber() const;
@@ -73,13 +73,13 @@ public:
 
 private:
 #ifndef QT_NO_DEBUG_STREAM
-    friend Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QSatelliteInfo &info);
+    friend Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info);
 #endif
-    QSatelliteInfoPrivate *d;
+    QGeoSatelliteInfoPrivate *d;
 };
 
 #ifndef QT_NO_DEBUG_STREAM
-Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QSatelliteInfo &info);
+Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info);
 #endif
 
 QT_END_NAMESPACE

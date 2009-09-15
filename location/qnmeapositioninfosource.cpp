@@ -534,7 +534,7 @@ void QNmeaPositionInfoSource::stopUpdates()
 */
 void QNmeaPositionInfoSource::requestUpdate(int msec)
 {
-    d->requestUpdate(msec);
+    d->requestUpdate(msec == 0 ? 60000 * 5 : msec);
 }
 
 /*!

@@ -30,43 +30,43 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QSATELLITEINFOSOURCE_H
-#define QSATELLITEINFOSOURCE_H
+#ifndef QGEOSATELLITEINFOSOURCE_H
+#define QGEOSATELLITEINFOSOURCE_H
 
 #include "qlocationglobal.h"
-#include "qsatelliteinfo.h"
+#include "qgeosatelliteinfo.h"
 
 #include <QObject>
 #include <QList>
 
-class QSatelliteInfoSourcePrivate;
+class QGeoSatelliteInfoSourcePrivate;
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATION_EXPORT QSatelliteInfoSource : public QObject
+class Q_LOCATION_EXPORT QGeoSatelliteInfoSource : public QObject
 {
     Q_OBJECT
 public:
-    explicit QSatelliteInfoSource(QObject *parent = 0);
+    explicit QGeoSatelliteInfoSource(QObject *parent);
 
-    static QSatelliteInfoSource *createSource(QObject *parent = 0);
+    static QGeoSatelliteInfoSource *createSource(QObject *parent);
 
-public slots:
+public Q_SLOTS:
     virtual void startUpdates() = 0;
     virtual void stopUpdates() = 0;
 
-    virtual void requestUpdate(int timeout = 5000) = 0;
+    virtual void requestUpdate(int timeout = 0) = 0;
 
-signals:
-    void satellitesInViewUpdated(const QList<QSatelliteInfo> &satellites);
-    void satellitesInUseUpdated(const QList<QSatelliteInfo> &satellites);
+Q_SIGNALS:
+    void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
+    void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
     void requestTimeout();
 
 private:
-    Q_DISABLE_COPY(QSatelliteInfoSource)
-    QSatelliteInfoSourcePrivate *d;
+    Q_DISABLE_COPY(QGeoSatelliteInfoSource)
+    QGeoSatelliteInfoSourcePrivate *d;
 };
 
 QT_END_NAMESPACE

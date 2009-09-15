@@ -225,15 +225,15 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createSource(QObject *parent)
 */
 
 /*!
-    \fn virtual void QGeoPositionInfoSource::requestUpdate(int timeout = 5000);
+    \fn virtual void QGeoPositionInfoSource::requestUpdate(int timeout = 0);
 
     Attempts to get the current position and emit positionUpdated() with
-    this information. This is useful if you do not need the regular updates
-    provided by startUpdates().
-
-    If the current position cannot be found within the given \a timeout
+    this information. If the current position cannot be found within the given \a timeout
     (in milliseconds) or if \a timeout is less than the value returned by
     minimumUpdateInterval(), requestTimeout() is emitted.
+
+    If the timeout is zero, the timeout defaults to a reasonable timeout
+    period as appropriate for the source.
 
     This does nothing if another update request is in progress. However
     it can be called even if startUpdates() has already been called and

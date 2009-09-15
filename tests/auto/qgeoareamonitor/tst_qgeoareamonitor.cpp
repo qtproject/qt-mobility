@@ -35,7 +35,7 @@
 #include <QTest>
 #include <QMetaType>
 
-#include <limits.h>
+#include <float.h>
 
 Q_DECLARE_METATYPE(QGeoCoordinate)
 
@@ -43,7 +43,7 @@ class MyPositionAreaMonitor : public QGeoAreaMonitor
 {
     Q_OBJECT
 public:
-    ~MyPositionAreaMonitor() {}
+    MyPositionAreaMonitor(QObject *parent = 0) : QGeoAreaMonitor(parent) {}
 };
 
 class tst_QGeoAreaMonitor : public QObject
@@ -51,47 +51,65 @@ class tst_QGeoAreaMonitor : public QObject
     Q_OBJECT
 
 private slots:
-    void setMonitoredArea()
+    void setCenter()
     {
         QFETCH(QGeoCoordinate, coord);
-        QFETCH(int, radius);
 
         MyPositionAreaMonitor mon;
-        mon.setMonitoredArea(coord, radius);
-        QCOMPARE(mon.coordinate(), coord);
+        mon.setCenter(coord);
+        QCOMPARE(mon.center(), coord);
+    }
+
+    void setCenter_data()
+    {
+        QTest::addColumn<QGeoCoordinate>("coord");
+        QTest::newRow("invalid coord") << QGeoCoordinate();
+        QTest::newRow("invalid coord 2") << QGeoCoordinate(-200, 200);
+        QTest::newRow("2d coord") << QGeoCoordinate(1, 1);
+        QTest::newRow("3d coord") << QGeoCoordinate(1, 1, 1);
+    }
+
+    void center()
+    {
+        MyPositionAreaMonitor mon;
+        QCOMPARE(mon.center(), QGeoCoordinate());
+    }
+
+    void setRadius()
+    {
+        QFETCH(qreal, radius);
+
+        MyPositionAreaMonitor mon;
+        mon.setRadius(radius);
         QCOMPARE(mon.radius(), radius);
     }
 
-    void setMonitoredArea_data()
+    void setRadius_data()
     {
-        QTest::addColumn<QGeoCoordinate>("coord");
-        QTest::addColumn<int>("radius");
+        QTest::addColumn<qreal>("radius");
 
-        QList<int> radii = QList<int>() << INT_MIN << -1 << 0 << 1 << INT_MAX;
-        for (int i=0; i<radii.count(); i++) {
-            QTest::newRow(qPrintable(QString("null coord, radius %1").arg(radii[i])))
-                    << QGeoCoordinate() << radii[i];
-        }
+        if (qreal(DBL_MIN) == DBL_MIN)
+            QTest::newRow("double min") << qreal(DBL_MIN);
 
-        QTest::newRow("valid coord, 0 radius") << QGeoCoordinate(1, 1, 1) << 0;
-        QTest::newRow("invalid coord, 0 radius") << QGeoCoordinate(-200, 1, 1) << 0;
-    }
+        QTest::newRow("float min") << qreal(FLT_MIN);
+        QTest::newRow("-1") << qreal(-1);
+        QTest::newRow("0") << qreal(0);
+        QTest::newRow("1") << qreal(0);
+        QTest::newRow("float max") << qreal(FLT_MAX);
 
-    void coordinate()
-    {
-        MyPositionAreaMonitor mon;
-        QCOMPARE(mon.coordinate(), QGeoCoordinate());
+        if (qreal(DBL_MAX) == DBL_MAX)
+            QTest::newRow("double max") << qreal(DBL_MAX);
     }
 
     void radius()
     {
         MyPositionAreaMonitor mon;
-        QCOMPARE(mon.radius(), 0);
+        QCOMPARE(mon.radius(), qreal(0.0));
     }
 
     void createMonitor()
     {
-        QVERIFY(QGeoAreaMonitor::createMonitor() == 0);
+        QVERIFY(QGeoAreaMonitor::createMonitor(0) == 0);
     }
 };
 

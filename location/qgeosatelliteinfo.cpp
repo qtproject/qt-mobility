@@ -30,13 +30,13 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qsatelliteinfo.h"
+#include "qgeosatelliteinfo.h"
 
 #include <QHash>
 #include <QDebug>
 
 
-class QSatelliteInfoPrivate
+class QGeoSatelliteInfoPrivate
 {
 public:
     int prn;
@@ -46,14 +46,14 @@ public:
 
 
 /*!
-    \class QSatelliteInfo
-    \brief The QSatelliteInfo class contains basic information about a satellite.
+    \class QGeoSatelliteInfo
+    \brief The QGeoSatelliteInfo class contains basic information about a satellite.
 
-    \sa QSatelliteInfoSource
+    \sa QGeoSatelliteInfoSource
 */
 
 /*!
-    \enum QSatelliteInfo::Property
+    \enum QGeoSatelliteInfo::Property
     Defines the properties for the satellite information.
 
     \value Elevation The elevation of the satellite, in degrees.
@@ -64,8 +64,8 @@ public:
 /*!
     Creates a satellite information object.
 */
-QSatelliteInfo::QSatelliteInfo()
-    : d(new QSatelliteInfoPrivate)
+QGeoSatelliteInfo::QGeoSatelliteInfo()
+    : d(new QGeoSatelliteInfoPrivate)
 {
     d->prn = -1;
     d->signal = -1;
@@ -75,8 +75,8 @@ QSatelliteInfo::QSatelliteInfo()
     Creates a satellite information object with the values of \a other.
 */
 
-QSatelliteInfo::QSatelliteInfo(const QSatelliteInfo &other)
-    : d(new QSatelliteInfoPrivate)
+QGeoSatelliteInfo::QGeoSatelliteInfo(const QGeoSatelliteInfo &other)
+    : d(new QGeoSatelliteInfoPrivate)
 {
     operator=(other);
 }
@@ -84,7 +84,7 @@ QSatelliteInfo::QSatelliteInfo(const QSatelliteInfo &other)
 /*!
     Destroys a satellite information object.
 */
-QSatelliteInfo::~QSatelliteInfo()
+QGeoSatelliteInfo::~QGeoSatelliteInfo()
 {
     delete d;
 }
@@ -92,7 +92,7 @@ QSatelliteInfo::~QSatelliteInfo()
 /*!
     Assigns the values from \a other to this object.
 */
-QSatelliteInfo &QSatelliteInfo::operator=(const QSatelliteInfo &other)
+QGeoSatelliteInfo &QGeoSatelliteInfo::operator=(const QGeoSatelliteInfo &other)
 {
     if (this == &other)
         return *this;
@@ -107,7 +107,7 @@ QSatelliteInfo &QSatelliteInfo::operator=(const QSatelliteInfo &other)
     Returns true if all the information for this satellite
     are the same as those of \a other.
 */
-bool QSatelliteInfo::operator==(const QSatelliteInfo &other) const
+bool QGeoSatelliteInfo::operator==(const QGeoSatelliteInfo &other) const
 {
     return d->prn == other.d->prn
             && d->signal == other.d->signal
@@ -115,7 +115,7 @@ bool QSatelliteInfo::operator==(const QSatelliteInfo &other) const
 }
 
 /*!
-    \fn bool QSatelliteInfo::operator!=(const QSatelliteInfo &other) const;
+    \fn bool QGeoSatelliteInfo::operator!=(const QGeoSatelliteInfo &other) const;
 
     Returns true if any of the information for this satellite
     are not the same as those of \a other.
@@ -126,7 +126,7 @@ bool QSatelliteInfo::operator==(const QSatelliteInfo &other) const
 
     The PRN number can be used to identify a satellite.
 */
-void QSatelliteInfo::setPrnNumber(int prn)
+void QGeoSatelliteInfo::setPrnNumber(int prn)
 {
     d->prn = prn;
 }
@@ -135,7 +135,7 @@ void QSatelliteInfo::setPrnNumber(int prn)
     Returns the PRN (Pseudo-random noise) number, or -1 if the value has not been set.
 */
 
-int QSatelliteInfo::prnNumber() const
+int QGeoSatelliteInfo::prnNumber() const
 {
     return d->prn;
 }
@@ -143,7 +143,7 @@ int QSatelliteInfo::prnNumber() const
 /*!
     Sets the signal strength to \a signalStrength, in decibels.
 */
-void QSatelliteInfo::setSignalStrength(int signalStrength)
+void QGeoSatelliteInfo::setSignalStrength(int signalStrength)
 {
     d->signal = signalStrength;
 }
@@ -151,7 +151,7 @@ void QSatelliteInfo::setSignalStrength(int signalStrength)
 /*!
     Returns the signal strength, or -1 if the value has not been set.
 */
-int QSatelliteInfo::signalStrength() const
+int QGeoSatelliteInfo::signalStrength() const
 {
     return d->signal;
 }
@@ -159,7 +159,7 @@ int QSatelliteInfo::signalStrength() const
 /*!
     Sets the value for \a property to \a value.
 */
-void QSatelliteInfo::setProperty(Property property, qreal value)
+void QGeoSatelliteInfo::setProperty(Property property, qreal value)
 {
     d->doubleProps[int(property)] = value;
 }
@@ -171,7 +171,7 @@ void QSatelliteInfo::setProperty(Property property, qreal value)
 
     \sa hasProperty(), setProperty()
 */
-qreal QSatelliteInfo::property(Property property) const
+qreal QGeoSatelliteInfo::property(Property property) const
 {
     if (d->doubleProps.contains(int(property)))
         return d->doubleProps[int(property)];
@@ -181,7 +181,7 @@ qreal QSatelliteInfo::property(Property property) const
 /*!
     Removes the specified \a property and its value.
 */
-void QSatelliteInfo::removeProperty(Property property)
+void QGeoSatelliteInfo::removeProperty(Property property)
 {
     d->doubleProps.remove(int(property));
 }
@@ -189,15 +189,15 @@ void QSatelliteInfo::removeProperty(Property property)
 /*!
     Returns true if the specified \a property is present in this update.
 */
-bool QSatelliteInfo::hasProperty(Property property) const
+bool QGeoSatelliteInfo::hasProperty(Property property) const
 {
     return d->doubleProps.contains(int(property));
 }
 
 #ifndef QT_NO_DEBUG_STREAM
-QDebug operator<<(QDebug dbg, const QSatelliteInfo &info)
+QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info)
 {
-    dbg.nospace() << "QSatelliteInfo(PRN=" << info.d->prn;
+    dbg.nospace() << "QGeoSatelliteInfo(PRN=" << info.d->prn;
     dbg.nospace() << ", signal-strength=";
     dbg.nospace() << info.d->signal;
 
@@ -205,10 +205,10 @@ QDebug operator<<(QDebug dbg, const QSatelliteInfo &info)
     for (int i=0; i<props.count(); i++) {
         dbg.nospace() << ", ";
         switch (props[i]) {
-            case QSatelliteInfo::Elevation:
+            case QGeoSatelliteInfo::Elevation:
                 dbg.nospace() << "Elevation=";
                 break;
-            case QSatelliteInfo::Azimuth:
+            case QGeoSatelliteInfo::Azimuth:
                 dbg.nospace() << "Azimuth=";
                 break;
         }

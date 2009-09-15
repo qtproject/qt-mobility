@@ -30,16 +30,16 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qsatelliteinfosource.h"
+#include "qgeosatelliteinfosource.h"
 
 
 /*!
-    \class QSatelliteInfoSource
-    \brief The QSatelliteInfoSource class is an abstract base class for the distribution of satellite information updates.
+    \class QGeoSatelliteInfoSource
+    \brief The QGeoSatelliteInfoSource class is an abstract base class for the distribution of satellite information updates.
 
-    The static function QSatelliteInfoSource::createSource() creates a default
+    The static function QGeoSatelliteInfoSource::createSource() creates a default
     satellite data source that is appropriate for the platform, if one is 
-    available. Otherwise, QSatelliteInfoSource can be subclassed to create an 
+    available. Otherwise, QGeoSatelliteInfoSource can be subclassed to create an 
     appropriate custom source of satellite data.
 
     Call startUpdates() and stopUpdates() to start and stop regular updates,
@@ -51,7 +51,7 @@
 /*!
     Creates a source with the specified \a parent.
 */
-QSatelliteInfoSource::QSatelliteInfoSource(QObject *parent)
+QGeoSatelliteInfoSource::QGeoSatelliteInfoSource(QObject *parent)
     : QObject(parent)
 {
 }
@@ -62,13 +62,13 @@ QSatelliteInfoSource::QSatelliteInfoSource(QObject *parent)
 
     Returns 0 if the system has no default source.
 */
-QSatelliteInfoSource *QSatelliteInfoSource::createSource(QObject * /*parent*/)
+QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createSource(QObject * /*parent*/)
 {
     return 0;
 }
 
 /*!
-    \fn void QSatelliteInfoSource::satellitesInViewUpdated(const QList<QSatelliteInfo> &satellites);
+    \fn void QGeoSatelliteInfoSource::satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
 
     If startUpdates() or requestUpdate() is called, this signal is emitted
     when an update is available on the satellites that are
@@ -78,7 +78,7 @@ QSatelliteInfoSource *QSatelliteInfoSource::createSource(QObject * /*parent*/)
 */
 
 /*!
-    \fn void QSatelliteInfoSource::satellitesInUseUpdated(const QList<QSatelliteInfo> &satellites);
+    \fn void QGeoSatelliteInfoSource::satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
 
     If startUpdates() or requestUpdate() is called, this signal is emitted
     when an update is available on the number of satellites that are
@@ -91,7 +91,7 @@ QSatelliteInfoSource *QSatelliteInfoSource::createSource(QObject * /*parent*/)
 */
 
 /*!
-    \fn virtual void QSatelliteInfoSource::startUpdates() = 0;
+    \fn virtual void QGeoSatelliteInfoSource::startUpdates() = 0;
 
     Starts emitting updates at regular intervals. The updates will be 
     provided whenever new satellite information becomes available.
@@ -100,20 +100,22 @@ QSatelliteInfoSource *QSatelliteInfoSource::createSource(QObject * /*parent*/)
 */
 
 /*!
-    \fn virtual void QSatelliteInfoSource::stopUpdates() = 0;
+    \fn virtual void QGeoSatelliteInfoSource::stopUpdates() = 0;
 
     Stops emitting updates at regular intervals.
 */
 
 /*!
-    \fn virtual void QSatelliteInfoSource::requestUpdate(int timeout = 5000);
+    \fn virtual void QGeoSatelliteInfoSource::requestUpdate(int timeout = 0);
 
     Attempts to get the current satellite information and emit
     satellitesInViewUpdated() and satellitesInUseUpdated() with this
-    information. This is useful if you do not need the regular updates
-    provided by startUpdates(). If the current position cannot be found
+    information. If the current position cannot be found
     within the given \a timeout (in milliseconds), requestTimeout() is
     emitted.
+
+    If the timeout is zero, the timeout defaults to a reasonable timeout
+    period as appropriate for the source.
 
     This does nothing if another update request is in progress. However
     it can be called even if startUpdates() has already been called and
@@ -121,7 +123,7 @@ QSatelliteInfoSource *QSatelliteInfoSource::createSource(QObject * /*parent*/)
 */
 
 /*!
-    \fn void QSatelliteInfoSource::requestTimeout();
+    \fn void QGeoSatelliteInfoSource::requestTimeout();
 
     Emitted if requestUpdate() was called and the current satellite
     information could not be retrieved within the specified timeout.

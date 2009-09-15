@@ -30,7 +30,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qsatelliteinfo.h>
+#include <qgeosatelliteinfo.h>
 
 #include <QMetaType>
 #include <QObject>
@@ -40,16 +40,16 @@
 #include <float.h>
 #include <limits.h>
 
-Q_DECLARE_METATYPE(QSatelliteInfo)
-Q_DECLARE_METATYPE(QSatelliteInfo::Property)
+Q_DECLARE_METATYPE(QGeoSatelliteInfo)
+Q_DECLARE_METATYPE(QGeoSatelliteInfo::Property)
 
-QByteArray tst_qsatelliteinfo_debug;
+QByteArray tst_qgeosatelliteinfo_debug;
 
-void tst_qsatelliteinfo_messageHandler(QtMsgType type, const char *msg)
+void tst_qgeosatelliteinfo_messageHandler(QtMsgType type, const char *msg)
 {
     switch(type) {
         case QtDebugMsg :
-            tst_qsatelliteinfo_debug = QByteArray(msg);
+            tst_qgeosatelliteinfo_debug = QByteArray(msg);
             break;
         default:
             break;
@@ -57,7 +57,7 @@ void tst_qsatelliteinfo_messageHandler(QtMsgType type, const char *msg)
 }
 
 
-QList<qreal> tst_qsatelliteinfo_qrealTestValues()
+QList<qreal> tst_qgeosatelliteinfo_qrealTestValues()
 {
     QList<qreal> values;
     if (qreal(DBL_MIN) == DBL_MIN)
@@ -72,53 +72,53 @@ QList<qreal> tst_qsatelliteinfo_qrealTestValues()
     return values;
 }
 
-QList<int> tst_qsatelliteinfo_intTestValues()
+QList<int> tst_qgeosatelliteinfo_intTestValues()
 {
     QList<int> values;
     values << INT_MIN << -100 << 0 << 100 << INT_MAX;
     return values;
 }
 
-QList<QSatelliteInfo::Property> tst_qsatelliteinfo_getProperties()
+QList<QGeoSatelliteInfo::Property> tst_qgeosatelliteinfo_getProperties()
 {
-    QList<QSatelliteInfo::Property> properties;
-    properties << QSatelliteInfo::Elevation
-            << QSatelliteInfo::Azimuth;
+    QList<QGeoSatelliteInfo::Property> properties;
+    properties << QGeoSatelliteInfo::Elevation
+            << QGeoSatelliteInfo::Azimuth;
     return properties;
 }
 
 
-class tst_QSatelliteInfo : public QObject
+class tst_QGeoSatelliteInfo : public QObject
 {
     Q_OBJECT
 
 private:
-    QSatelliteInfo updateWithProperty(QSatelliteInfo::Property property, qreal value)
+    QGeoSatelliteInfo updateWithProperty(QGeoSatelliteInfo::Property property, qreal value)
     {
-        QSatelliteInfo info;
+        QGeoSatelliteInfo info;
         info.setProperty(property, value);
         return info;
     }
 
     void addTestData_update()
     {
-        QTest::addColumn<QSatelliteInfo>("info");
+        QTest::addColumn<QGeoSatelliteInfo>("info");
 
-        QList<int> intValues = tst_qsatelliteinfo_intTestValues();
+        QList<int> intValues = tst_qgeosatelliteinfo_intTestValues();
         for (int i=0; i<intValues.count(); i++) {
-            QSatelliteInfo info;
+            QGeoSatelliteInfo info;
             info.setPrnNumber(intValues[i]);
             QTest::newRow("prn") << info;
         }
 
         for (int i=0; i<intValues.count(); i++) {
-            QSatelliteInfo info;
+            QGeoSatelliteInfo info;
             info.setSignalStrength(intValues[i]);
             QTest::newRow("signal strength") << info;
         }
 
-        QList<QSatelliteInfo::Property> properties = tst_qsatelliteinfo_getProperties();
-        QList<qreal> qrealValues = tst_qsatelliteinfo_qrealTestValues();
+        QList<QGeoSatelliteInfo::Property> properties = tst_qgeosatelliteinfo_getProperties();
+        QList<qreal> qrealValues = tst_qgeosatelliteinfo_qrealTestValues();
         for (int i=0; i<properties.count(); i++) {
             QTest::newRow(qPrintable(QString("Property %1 = %2").arg(properties[i]).arg(qrealValues[i])))
                     << updateWithProperty(properties[i], qrealValues[i]);
@@ -128,19 +128,19 @@ private:
 private slots:
     void constructor()
     {
-        QSatelliteInfo info;
+        QGeoSatelliteInfo info;
         QCOMPARE(info.prnNumber(), -1);
         QCOMPARE(info.signalStrength(), -1);
-        QList<QSatelliteInfo::Property> properties = tst_qsatelliteinfo_getProperties();
+        QList<QGeoSatelliteInfo::Property> properties = tst_qgeosatelliteinfo_getProperties();
         for (int i=0; i<properties.count(); i++)
             QCOMPARE(info.property(properties[i]), qreal(-1.0));
     }
 
     void constructor_copy()
     {
-        QFETCH(QSatelliteInfo, info);
+        QFETCH(QGeoSatelliteInfo, info);
 
-        QCOMPARE(QSatelliteInfo(info), info);
+        QCOMPARE(QGeoSatelliteInfo(info), info);
     }
 
     void constructor_copy_data()
@@ -150,14 +150,14 @@ private slots:
 
     void operator_comparison()
     {
-        QFETCH(QSatelliteInfo, info);
+        QFETCH(QGeoSatelliteInfo, info);
 
         QVERIFY(info == info);
         QCOMPARE(info != info, false);
-        QCOMPARE(info == QSatelliteInfo(), false);
-        QCOMPARE(info != QSatelliteInfo(), true);
+        QCOMPARE(info == QGeoSatelliteInfo(), false);
+        QCOMPARE(info != QGeoSatelliteInfo(), true);
 
-        QVERIFY(QSatelliteInfo() == QSatelliteInfo());
+        QVERIFY(QGeoSatelliteInfo() == QGeoSatelliteInfo());
     }
 
     void operator_comparison_data()
@@ -167,9 +167,9 @@ private slots:
 
     void operator_assign()
     {
-        QFETCH(QSatelliteInfo, info);
+        QFETCH(QGeoSatelliteInfo, info);
 
-        QSatelliteInfo info2 = info;
+        QGeoSatelliteInfo info2 = info;
         QCOMPARE(info2, info);
     }
 
@@ -182,7 +182,7 @@ private slots:
     {
         QFETCH(int, prn);
 
-        QSatelliteInfo info;
+        QGeoSatelliteInfo info;
         QCOMPARE(info.prnNumber(), -1);
 
         info.setPrnNumber(prn);
@@ -193,7 +193,7 @@ private slots:
     {
         QTest::addColumn<int>("prn");
 
-        QList<int> intValues = tst_qsatelliteinfo_intTestValues();
+        QList<int> intValues = tst_qgeosatelliteinfo_intTestValues();
         for (int i=0; i<intValues.count(); i++)
             QTest::newRow(qPrintable(QString("%1").arg(intValues[i]))) << intValues[i];
     }
@@ -202,7 +202,7 @@ private slots:
     {
         QFETCH(int, signal);
 
-        QSatelliteInfo info;
+        QGeoSatelliteInfo info;
         QCOMPARE(info.signalStrength(), -1);
 
         info.setSignalStrength(signal);
@@ -213,17 +213,17 @@ private slots:
     {
         QTest::addColumn<int>("signal");
 
-        QList<int> intValues = tst_qsatelliteinfo_intTestValues();
+        QList<int> intValues = tst_qgeosatelliteinfo_intTestValues();
         for (int i=0; i<intValues.count(); i++)
             QTest::newRow(qPrintable(QString("%1").arg(intValues[i]))) << intValues[i];
     }
 
     void property()
     {
-        QFETCH(QSatelliteInfo::Property, property);
+        QFETCH(QGeoSatelliteInfo::Property, property);
         QFETCH(qreal, value);
 
-        QSatelliteInfo u;
+        QGeoSatelliteInfo u;
         QCOMPARE(u.property(property), qreal(-1.0));
 
         u.setProperty(property, value);
@@ -235,12 +235,12 @@ private slots:
 
     void property_data()
     {
-        QTest::addColumn<QSatelliteInfo::Property>("property");
+        QTest::addColumn<QGeoSatelliteInfo::Property>("property");
         QTest::addColumn<qreal>("value");
 
-        QList<QSatelliteInfo::Property> props;
-        props << QSatelliteInfo::Elevation
-              << QSatelliteInfo::Azimuth;
+        QList<QGeoSatelliteInfo::Property> props;
+        props << QGeoSatelliteInfo::Elevation
+              << QGeoSatelliteInfo::Azimuth;
         for (int i=0; i<props.count(); i++) {
             QTest::newRow(QTest::toString("property " + props[i])) << props[i] << qreal(-1.0);
             QTest::newRow(QTest::toString("property " + props[i])) << props[i] << qreal(0.0);
@@ -250,10 +250,10 @@ private slots:
 
     void hasProperty()
     {
-        QFETCH(QSatelliteInfo::Property, property);
+        QFETCH(QGeoSatelliteInfo::Property, property);
         QFETCH(qreal, value);
 
-        QSatelliteInfo u;
+        QGeoSatelliteInfo u;
         QVERIFY(!u.hasProperty(property));
 
         u.setProperty(property, value);
@@ -270,10 +270,10 @@ private slots:
 
     void removeProperty()
     {
-        QFETCH(QSatelliteInfo::Property, property);
+        QFETCH(QGeoSatelliteInfo::Property, property);
         QFETCH(qreal, value);
 
-        QSatelliteInfo u;
+        QGeoSatelliteInfo u;
         QVERIFY(!u.hasProperty(property));
 
         u.setProperty(property, value);
@@ -293,47 +293,47 @@ private slots:
 
     void debug()
     {
-        QFETCH(QSatelliteInfo, info);
+        QFETCH(QGeoSatelliteInfo, info);
         QFETCH(QByteArray, debugString);
 
-        qInstallMsgHandler(tst_qsatelliteinfo_messageHandler);
+        qInstallMsgHandler(tst_qgeosatelliteinfo_messageHandler);
         qDebug() << info;
         qInstallMsgHandler(0);
-        QCOMPARE(QString(tst_qsatelliteinfo_debug), QString(debugString));
+        QCOMPARE(QString(tst_qgeosatelliteinfo_debug), QString(debugString));
     }
 
     void debug_data()
     {
-        QTest::addColumn<QSatelliteInfo>("info");
+        QTest::addColumn<QGeoSatelliteInfo>("info");
         QTest::addColumn<QByteArray>("debugString");
 
-        QSatelliteInfo info;
+        QGeoSatelliteInfo info;
 
         QTest::newRow("uninitialized") << info
-                << QByteArray("QSatelliteInfo(PRN=-1, signal-strength=-1)");
+                << QByteArray("QGeoSatelliteInfo(PRN=-1, signal-strength=-1)");
 
-        info = QSatelliteInfo();
+        info = QGeoSatelliteInfo();
         info.setPrnNumber(1);
         QTest::newRow("with PRN") << info
-                << QByteArray("QSatelliteInfo(PRN=1, signal-strength=-1)");
+                << QByteArray("QGeoSatelliteInfo(PRN=1, signal-strength=-1)");
 
-        info = QSatelliteInfo();
+        info = QGeoSatelliteInfo();
         info.setSignalStrength(1);
         QTest::newRow("with PRN") << info
-                << QByteArray("QSatelliteInfo(PRN=-1, signal-strength=1)");
+                << QByteArray("QGeoSatelliteInfo(PRN=-1, signal-strength=1)");
 
-        info = QSatelliteInfo();
-        info.setProperty(QSatelliteInfo::Elevation, 1.1);
+        info = QGeoSatelliteInfo();
+        info.setProperty(QGeoSatelliteInfo::Elevation, 1.1);
         QTest::newRow("with Elevation") << info
-                << QByteArray("QSatelliteInfo(PRN=-1, signal-strength=-1, Elevation=1.1)");
+                << QByteArray("QGeoSatelliteInfo(PRN=-1, signal-strength=-1, Elevation=1.1)");
 
-        info = QSatelliteInfo();
-        info.setProperty(QSatelliteInfo::Azimuth, 1.1);
+        info = QGeoSatelliteInfo();
+        info.setProperty(QGeoSatelliteInfo::Azimuth, 1.1);
         QTest::newRow("with Azimuth") << info
-                << QByteArray("QSatelliteInfo(PRN=-1, signal-strength=-1, Azimuth=1.1)");
+                << QByteArray("QGeoSatelliteInfo(PRN=-1, signal-strength=-1, Azimuth=1.1)");
     }
 };
 
 
-QTEST_MAIN(tst_QSatelliteInfo)
-#include "tst_qsatelliteinfo.moc"
+QTEST_MAIN(tst_QGeoSatelliteInfo)
+#include "tst_qgeosatelliteinfo.moc"

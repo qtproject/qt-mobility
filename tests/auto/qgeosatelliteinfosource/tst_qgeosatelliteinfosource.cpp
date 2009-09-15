@@ -30,20 +30,20 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qsatelliteinfosource.h>
+#include <qgeosatelliteinfosource.h>
 #include <QTest>
 
-class tst_QSatelliteInfoSource : public QObject
+class tst_QGeoSatelliteInfoSource : public QObject
 {
     Q_OBJECT
 
 private slots:
     void createSource()
     {
-        QVERIFY(QSatelliteInfoSource::createSource() == 0);
+        QVERIFY(QGeoSatelliteInfoSource::createSource(0) == 0);
     }
 };
 
 
-QTEST_MAIN(tst_QSatelliteInfoSource)
-#include "tst_qsatelliteinfosource.moc"
+QTEST_MAIN(tst_QGeoSatelliteInfoSource)
+#include "tst_qgeosatelliteinfosource.moc"

@@ -48,6 +48,9 @@ QT_BEGIN_NAMESPACE
 class Q_LOCATION_EXPORT QGeoPositionInfoSource : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval)
+    Q_PROPERTY(int minimumUpdateInterval READ minimumUpdateInterval)
+
 public:
     enum PositioningMethod {
         SatellitePositioningMethods = 0x000000ff,
@@ -56,7 +59,7 @@ public:
     };
     Q_DECLARE_FLAGS(PositioningMethods, PositioningMethod)
 
-    explicit QGeoPositionInfoSource(QObject *parent = 0);
+    explicit QGeoPositionInfoSource(QObject *parent);
     virtual ~QGeoPositionInfoSource();
 
     virtual void setUpdateInterval(int msec);
@@ -70,15 +73,15 @@ public:
     virtual PositioningMethods supportedPositioningMethods() const = 0;
     virtual int minimumUpdateInterval() const = 0;
 
-    static QGeoPositionInfoSource *createSource(QObject *parent = 0);
+    static QGeoPositionInfoSource *createSource(QObject *parent);
 
-public slots:
+public Q_SLOTS:
     virtual void startUpdates() = 0;
     virtual void stopUpdates() = 0;
 
-    virtual void requestUpdate(int timeout = 5000) = 0;
+    virtual void requestUpdate(int timeout = 0) = 0;
 
-signals:
+Q_SIGNALS:
     void positionUpdated(const QGeoPositionInfo &update);
     void requestTimeout();
 

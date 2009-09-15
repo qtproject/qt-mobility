@@ -48,17 +48,22 @@ QT_BEGIN_NAMESPACE
 class Q_LOCATION_EXPORT QGeoAreaMonitor : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter)
+    Q_PROPERTY(qreal radius READ radius WRITE setRadius)
+
 public:
-    explicit QGeoAreaMonitor(QObject *parent = 0);
+    explicit QGeoAreaMonitor(QObject *parent);
     virtual ~QGeoAreaMonitor() = 0;
 
-    virtual void setMonitoredArea(const QGeoCoordinate &coordinate, int radius);
-    QGeoCoordinate coordinate() const;
-    int radius() const;
+    virtual void setCenter(const QGeoCoordinate &coordinate);
+    QGeoCoordinate center() const;
 
-    static QGeoAreaMonitor *createMonitor(QObject *parent = 0);
+    virtual void setRadius(qreal radius);
+    qreal radius() const;
 
-signals:
+    static QGeoAreaMonitor *createMonitor(QObject *parent);
+
+Q_SIGNALS:
     void areaEntered(const QGeoPositionInfo &update);
     void areaExited(const QGeoPositionInfo &update);
 

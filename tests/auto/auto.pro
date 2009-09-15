@@ -1,8 +1,8 @@
 TEMPLATE = subdirs
 SUBDIRS = qgeocoordinate \
           qgeopositioninfo \
-          qsatelliteinfo \
-          qsatelliteinfosource \
+          qgeosatelliteinfo \
+          qgeosatelliteinfosource \
           qgeopositioninfosource \
           qgeoareamonitor \
           qlocationutils \

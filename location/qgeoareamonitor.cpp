@@ -52,10 +52,11 @@
                         this, SLOT(areaExited(QGeoPositionInfo)));
 
                 QGeoCoordinate bigBenLocation(51.50104, -0.124632);
-                monitor->setMonitoredArea(bigBenLocation, 100);
+                monitor->setCenter(bigBenLocation);
+                monitor->setRadius(100);
             }
 
-        public slots:
+        public Q_SLOTS:
             void areaEntered(const QGeoPositionInfo &update)
             {
                 qDebug() << "Now within 100 meters, current position is" << update.coordinate();
@@ -73,7 +74,7 @@ class QGeoAreaMonitorPrivate
 {
 public:
     QGeoCoordinate coord;
-    int radius;
+    qreal radius;
 };
 
 
@@ -84,7 +85,7 @@ QGeoAreaMonitor::QGeoAreaMonitor(QObject *parent)
     : QObject(parent),
       d(new QGeoAreaMonitorPrivate)
 {
-    d->radius = 0;
+    d->radius = qreal(0.0);
 }
 
 /*!
@@ -95,37 +96,49 @@ QGeoAreaMonitor::~QGeoAreaMonitor()
 }
 
 /*!
-    Sets the area to be monitored to the area specified by \a coordinate
-    with a radius of \a radius.
+    Sets the center of the area to be monitored to \a coordinate.
 
-    If the current position is within the specified area, areaEntered()
-    is emitted immediately.
+    If the radius has been set and the current position is within the
+    area marked by \a coordinate with the specified radius(),
+    areaEntered() is emitted immediately.
 
-    Note: Subclass implementations of this method should call the base
-    implementation to ensure coordinate() and radius() return the correct
-    values.
+    Subclass implementations must call the base implementation so that
+    center() returns the correct value.
 */
-
-void QGeoAreaMonitor::setMonitoredArea(const QGeoCoordinate &coordinate, int radius)
+void QGeoAreaMonitor::setCenter(const QGeoCoordinate &coordinate)
 {
     d->coord = coordinate;
+}
+
+/*!
+    Sets the radius of the area to be monitored to \a radius.
+
+    If the center coordinate has been set and the current position is within
+    the area marked by coordinate() with the specified \a radius,
+    areaEntered() is emitted immediately.
+
+    Subclass implementations must call the base implementation so that
+    radius() returns the correct value.
+*/
+void QGeoAreaMonitor::setRadius(qreal radius)
+{
     d->radius = radius;
 }
 
 /*!
-    Returns the coordinate set with setMonitoredArea(), or an invalid
-    coordinate if no area has been set.
+    Returns the coordinate set with setCenter(), or an invalid
+    coordinate if the center coordinate has not been set.
 */
-QGeoCoordinate QGeoAreaMonitor::coordinate() const
+QGeoCoordinate QGeoAreaMonitor::center() const
 {
     return d->coord;
 }
 
 /*!
-    Returns the radius set with setMonitoredArea(), or 0 if no area
-    has been set.
+    Returns the radius set with setRadius(), or 0
+    if the radius has not been set.
 */
-int QGeoAreaMonitor::radius() const
+qreal QGeoAreaMonitor::radius() const
 {
     return d->radius;
 }
