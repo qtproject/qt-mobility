@@ -37,7 +37,9 @@
     \brief The QGeoAreaMonitor class enables the detection of proximity changes for a specified set of coordinates.
 
     A QGeoAreaMonitor emits signals when the current position is in
-    range, or has moved out of range, of a specified area.
+    range, or has moved out of range, of a specified circular area.
+    The area is specified by a coordinate (the center point) and a
+    radius (in meters).
 
     For example:
 
@@ -120,7 +122,7 @@ QGeoCoordinate QGeoAreaMonitor::center() const
 
 /*!
     \property QGeoAreaMonitor::radius
-    \brief This property holds the radius of the area to be monitored.
+    \brief This property holds the radius of the area to be monitored, in meters.
 
     When this property is set, if the center coordinate has already been set and
     the current position is within the monitored area, areaEntered()

@@ -72,7 +72,7 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QGeoAreaMonitor class enables the detection of proximity changes for a specified set of coordinates.</p>
-<p>A QGeoAreaMonitor emits signals when the current position is in range, or has moved out of range, of a specified area.</p>
+<p>A QGeoAreaMonitor emits signals when the current position is in range, or has moved out of range, of a specified circular area. The area is specified by a coordinate (the center point) and a radius (in meters).</p>
 <p>For example:</p>
 <pre>    public:
         MyClass::MyClass()
@@ -111,7 +111,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setCenter</b> ( const QGeoCoordinate &amp; <i>coordinate</i> )</td></tr>
 </table>
 <h3 class="fn"><a name="radius-prop"></a>radius : <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a></h3>
-<p>This property holds this property holds the radius of the area to be monitored.</p>
+<p>This property holds this property holds the radius of the area to be monitored, in meters.</p>
 <p>When this property is set, if the center coordinate has already been set and the current position is within the monitored area, <a href="qgeoareamonitor.html#areaEntered">areaEntered</a>() is emitted immediately.</p>
 <p>By default, this property is 0.</p>
 <p>Note: Subclass implementations must call the base implementation of setRadius() so that radius() returns the correct value.</p>
