@@ -19,6 +19,8 @@ symbian|win32 {
 LIBS += -L $$(QMF_LIBDIR) -lqtopiamail
 }
 
+DEFINES += SRCDIR=\\\"$$_PRO_FILE_PWD_\\\"
+
 SOURCES += \
     tst_qmessagestore.cpp
 

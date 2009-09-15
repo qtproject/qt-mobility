@@ -36,7 +36,10 @@
 
 #include <qmailaccount.h>
 #include <qmailaddress.h>
+#include <qmailnamespace.h>
 #include <qmailstore.h>
+
+#include <QFileInfo>
 
 // This function is private except to tst_QMailStore:
 class tst_QMailStore 
@@ -139,6 +142,7 @@ QMessageId addMessage(const Parameters &params)
     QString subject(params["subject"]);
     QString text(params["text"]);
     QString mimeType(params["mimeType"]);
+    QString attachments(params["attachments"]);
     QString priority(params["priority"]);
     QString size(params["size"]);
     QString type(params["type"]);
@@ -202,8 +206,18 @@ QMessageId addMessage(const Parameters &params)
                 if (!text.isEmpty()) {
                     QMailMessageContentType ct(mimeType.toAscii());
                     ct.setCharset("UTF-8");
-                    message.setBody(QMailMessageBody::fromData(text, ct, QMailMessageBody::Base64));
-                    message.setStatus(QMailMessage::ContentAvailable, true);
+
+                    if (!attachments.isEmpty()) {
+                        // Add the body as the first of multiple parts
+                        message.setMultipartType(QMailMessage::MultipartMixed);
+
+                        QMailMessageContentDisposition cd(QMailMessageContentDisposition::Inline);
+                        QMailMessagePart textPart(QMailMessagePart::fromData(text, cd, ct, QMailMessageBody::Base64));
+                        message.appendPart(textPart);
+                    } else {
+                        message.setBody(QMailMessageBody::fromData(text, ct, QMailMessageBody::Base64));
+                        message.setStatus(QMailMessage::ContentAvailable, true);
+                    }
                 }
 
                 if (read.toLower() == "true") {
@@ -212,6 +226,22 @@ QMessageId addMessage(const Parameters &params)
 
                 if (hasAttachments.toLower() == "true") {
                     message.setStatus(QMailMessage::HasAttachments, true);
+                }
+
+                if (!attachments.isEmpty()) {
+                    foreach (const QString &fileName, attachments.split("\n")) {
+                        QString mimeType(QMail::mimeTypeFromFileName(fileName));
+                        if (!mimeType.isEmpty()) {
+                            QFileInfo fi(fileName);
+
+                            QMailMessageContentDisposition cd(QMailMessageContentDisposition::Attachment);
+                            cd.setFilename(fi.fileName().toAscii());
+
+                            QMailMessageContentType ct(mimeType.toAscii());
+                            QMailMessagePart part(QMailMessagePart::fromFile(fileName, cd, ct, QMailMessageBody::Base64, QMailMessageBody::RequiresEncoding));
+                            message.appendPart(part);
+                        }
+                    }
                 }
 
                 Parameters::const_iterator it = params.begin(), end = params.end();

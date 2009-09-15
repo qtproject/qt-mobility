@@ -221,6 +221,8 @@ void tst_QMessageStore::testFolder()
 
 #endif
 
+Q_DECLARE_METATYPE(QList<QByteArray>)
+
 typedef QMap<QString, QString> CustomFieldMap;
 Q_DECLARE_METATYPE(CustomFieldMap)
 
@@ -233,6 +235,9 @@ void tst_QMessageStore::testMessage_data()
     QTest::addColumn<QString>("text");
     QTest::addColumn<QByteArray>("type");
     QTest::addColumn<QByteArray>("subType");
+    QTest::addColumn<QStringList>("attachments");
+    QTest::addColumn<QList<QByteArray> >("attachmentType");
+    QTest::addColumn<QList<QByteArray> >("attachmentSubType");
     QTest::addColumn<CustomFieldMap>("custom");
 
     CustomFieldMap customData;
@@ -247,6 +252,9 @@ void tst_QMessageStore::testMessage_data()
         << "...before Y2K"
         << QByteArray("text")
         << QByteArray("plain")
+        << QStringList()
+        << QList<QByteArray>()
+        << QList<QByteArray>()
         << customData;
 
     QTest::newRow("2")
@@ -257,6 +265,35 @@ void tst_QMessageStore::testMessage_data()
         << "<html><p>...before <b>Y2K</b></p></html>"
         << QByteArray("text")
         << QByteArray("html")
+        << QStringList()
+        << QList<QByteArray>()
+        << QList<QByteArray>()
+        << customData;
+
+    QTest::newRow("3")
+        << "alice@example.com"
+        << "bob@example.com"
+        << "1999-12-31T23:59:59Z"
+        << "Last message..."
+        << "...before Y2K"
+        << QByteArray("text")
+        << QByteArray("plain")
+        << ( QStringList() << "1.txt" )
+        << ( QList<QByteArray>() << "text" )
+        << ( QList<QByteArray>() << "plain" )
+        << customData;
+
+    QTest::newRow("4")
+        << "alice@example.com"
+        << "bob@example.com"
+        << "1999-12-31T23:59:59Z"
+        << "Last HTML message..."
+        << "<html><p>...before <b>Y2K</b></p></html>"
+        << QByteArray("text")
+        << QByteArray("html")
+        << ( QStringList() << "1.txt" << "qtlogo.png" )
+        << ( QList<QByteArray>() << "text" << "image" )
+        << ( QList<QByteArray>() << "plain" << "png" )
         << customData;
 }
 
@@ -336,6 +373,9 @@ void tst_QMessageStore::testMessage()
     QFETCH(QString, text);
     QFETCH(QByteArray, type);
     QFETCH(QByteArray, subType);
+    QFETCH(QStringList, attachments);
+    QFETCH(QList<QByteArray>, attachmentType);
+    QFETCH(QList<QByteArray>, attachmentSubType);
     QFETCH(CustomFieldMap, custom);
 
 #if defined(Q_OS_WIN)
@@ -355,6 +395,14 @@ void tst_QMessageStore::testMessage()
 #ifdef QMESSAGING_OPTIONAL_FOLDER
     p.insert("parentFolderPath", testFolder.path());
 #endif
+    if (!attachments.isEmpty()) {
+        QStringList attachmentPaths;
+        foreach (const QString &fileName, attachments) {
+            attachmentPaths.append(SRCDIR "/testdata/" + fileName);
+        }
+        p.insert("attachments", attachmentPaths.join("\n"));
+        p.insert("status-hasAttachments", "true");
+    }
 
     QMessageId messageId(Support::addMessage(p));
     QVERIFY(messageId.isValid());
@@ -377,11 +425,21 @@ void tst_QMessageStore::testMessage()
     // Note: this is not true, which is somewhat counter-intuitive:
     //QVERIFY(body.containerId().isValid());
 
-    QCOMPARE(body.contentType().toLower(), type);
-    QCOMPARE(body.contentSubType().toLower(), subType);
-    QCOMPARE(body.contentCharset().toLower(), defaultCharset);
+    QCOMPARE(body.contentType().toLower(), type.toLower());
+    QCOMPARE(body.contentSubType().toLower(), subType.toLower());
+    QCOMPARE(body.contentCharset().toLower(), defaultCharset.toLower());
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), text);
+
+    QMessageContentContainerIdList attachmentIds(message.attachments());
+    QCOMPARE(attachmentIds.count(), attachments.count());
+
+    for (int i = 0; i < attachments.count(); ++i) {
+        QMessageContentContainer attachment(message.find(attachmentIds[i]));
+        QCOMPARE(attachment.contentType().toLower(), attachmentType[i].toLower());
+        QCOMPARE(attachment.contentSubType().toLower(), attachmentSubType[i].toLower());
+        QCOMPARE(attachment.suggestedFileName(), attachments[i].toAscii());
+    }
 
     QMessageIdList messageIds(QMessageStore::instance()->queryMessages());
     QVERIFY(messageIds.contains(messageId));
