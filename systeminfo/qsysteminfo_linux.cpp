@@ -1611,7 +1611,7 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
                         return QSystemDeviceInfo::BatteryPower;
                     }
                     if(line.split(" ").at(1).trimmed() == "charging") {
-                        return QSystemDeviceInfo::WallPowerCharging;
+                        return QSystemDeviceInfo::WallPowerChargingBattery;
                     }
                 }
             }
