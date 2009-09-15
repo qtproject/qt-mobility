@@ -69,7 +69,6 @@
     \endcode
 */
 
-
 class QGeoAreaMonitorPrivate
 {
 public:
@@ -95,49 +94,48 @@ QGeoAreaMonitor::~QGeoAreaMonitor()
 {
 }
 
+
 /*!
-    Sets the center of the area to be monitored to \a coordinate.
+    \property QGeoAreaMonitor::center
+    \brief This property holds the center of the area to be monitored.
 
-    If the radius has been set and the current position is within the
-    area marked by \a coordinate with the specified radius(),
-    areaEntered() is emitted immediately.
+    When this property is set, if the radius has already been set and
+    the current position is within the monitored area, areaEntered()
+    is emitted immediately.
 
-    Subclass implementations must call the base implementation so that
-    center() returns the correct value.
+    By default, this property contains an invalid coordinate.
+
+    Note: Subclass implementations must call the base implementation of
+    setCenter() so that center() returns the correct value.
 */
 void QGeoAreaMonitor::setCenter(const QGeoCoordinate &coordinate)
 {
     d->coord = coordinate;
 }
 
-/*!
-    Sets the radius of the area to be monitored to \a radius.
-
-    If the center coordinate has been set and the current position is within
-    the area marked by coordinate() with the specified \a radius,
-    areaEntered() is emitted immediately.
-
-    Subclass implementations must call the base implementation so that
-    radius() returns the correct value.
-*/
-void QGeoAreaMonitor::setRadius(qreal radius)
-{
-    d->radius = radius;
-}
-
-/*!
-    Returns the coordinate set with setCenter(), or an invalid
-    coordinate if the center coordinate has not been set.
-*/
 QGeoCoordinate QGeoAreaMonitor::center() const
 {
     return d->coord;
 }
 
 /*!
-    Returns the radius set with setRadius(), or 0
-    if the radius has not been set.
+    \property QGeoAreaMonitor::radius
+    \brief This property holds the radius of the area to be monitored.
+
+    When this property is set, if the center coordinate has already been set and
+    the current position is within the monitored area, areaEntered()
+    is emitted immediately.
+
+    By default, this property is 0.
+
+    Note: Subclass implementations must call the base implementation of
+    setRadius() so that radius() returns the correct value.
 */
+void QGeoAreaMonitor::setRadius(qreal radius)
+{
+    d->radius = radius;
+}
+
 qreal QGeoAreaMonitor::radius() const
 {
     return d->radius;

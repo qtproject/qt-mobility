@@ -3,12 +3,13 @@
 <section ref="classes.html" title="Classes">
     <section ref="qgeoareamonitor.html" title="QGeoAreaMonitor Class Reference">
         <keyword ref="qgeoareamonitor.html">QGeoAreaMonitor</keyword>
+        <keyword ref="qgeoareamonitor.html#center-prop">center</keyword>
+        <keyword ref="qgeoareamonitor.html#center-prop">setCenter</keyword>
+        <keyword ref="qgeoareamonitor.html#radius-prop">radius</keyword>
+        <keyword ref="qgeoareamonitor.html#radius-prop">setRadius</keyword>
         <keyword ref="qgeoareamonitor.html#areaEntered">areaEntered</keyword>
         <keyword ref="qgeoareamonitor.html#areaExited">areaExited</keyword>
-        <keyword ref="qgeoareamonitor.html#coordinate">coordinate</keyword>
         <keyword ref="qgeoareamonitor.html#createMonitor">createMonitor</keyword>
-        <keyword ref="qgeoareamonitor.html#radius">radius</keyword>
-        <keyword ref="qgeoareamonitor.html#setMonitoredArea">setMonitoredArea</keyword>
         <section ref="qgeoareamonitor-members.html" title="List of all members"/>
     </section>
     <section ref="qgeocoordinate.html" title="QGeoCoordinate Class Reference">
@@ -70,20 +71,49 @@
         <keyword ref="qgeopositioninfosource.html#PositioningMethod-enum">QGeoPositionInfoSource::SatellitePositioningMethods</keyword>
         <keyword ref="qgeopositioninfosource.html#PositioningMethod-enum">QGeoPositionInfoSource::AllPositioningMethods</keyword>
         <keyword ref="qgeopositioninfosource.html#PositioningMethod-enum">QGeoPositionInfoSource::NonSatellitePositioningMethods</keyword>
+        <keyword ref="qgeopositioninfosource.html#minimumUpdateInterval-prop">minimumUpdateInterval</keyword>
+        <keyword ref="qgeopositioninfosource.html#updateInterval-prop">updateInterval</keyword>
+        <keyword ref="qgeopositioninfosource.html#updateInterval-prop">setUpdateInterval</keyword>
         <keyword ref="qgeopositioninfosource.html#createSource">createSource</keyword>
         <keyword ref="qgeopositioninfosource.html#lastKnownPosition">lastKnownPosition</keyword>
-        <keyword ref="qgeopositioninfosource.html#minimumUpdateInterval">minimumUpdateInterval</keyword>
         <keyword ref="qgeopositioninfosource.html#positionUpdated">positionUpdated</keyword>
         <keyword ref="qgeopositioninfosource.html#preferredPositioningMethods">preferredPositioningMethods</keyword>
         <keyword ref="qgeopositioninfosource.html#requestTimeout">requestTimeout</keyword>
         <keyword ref="qgeopositioninfosource.html#requestUpdate">requestUpdate</keyword>
         <keyword ref="qgeopositioninfosource.html#setPreferredPositioningMethods">setPreferredPositioningMethods</keyword>
-        <keyword ref="qgeopositioninfosource.html#setUpdateInterval">setUpdateInterval</keyword>
         <keyword ref="qgeopositioninfosource.html#startUpdates">startUpdates</keyword>
         <keyword ref="qgeopositioninfosource.html#stopUpdates">stopUpdates</keyword>
         <keyword ref="qgeopositioninfosource.html#supportedPositioningMethods">supportedPositioningMethods</keyword>
-        <keyword ref="qgeopositioninfosource.html#updateInterval">updateInterval</keyword>
         <section ref="qgeopositioninfosource-members.html" title="List of all members"/>
+    </section>
+    <section ref="qgeosatelliteinfo.html" title="QGeoSatelliteInfo Class Reference">
+        <keyword ref="qgeosatelliteinfo.html">QGeoSatelliteInfo</keyword>
+        <keyword ref="qgeosatelliteinfo.html#Property-enum">Property</keyword>
+        <keyword ref="qgeosatelliteinfo.html#Property-enum">QGeoSatelliteInfo::Azimuth</keyword>
+        <keyword ref="qgeosatelliteinfo.html#Property-enum">QGeoSatelliteInfo::Elevation</keyword>
+        <keyword ref="qgeosatelliteinfo.html#hasProperty">hasProperty</keyword>
+        <keyword ref="qgeosatelliteinfo.html#prnNumber">prnNumber</keyword>
+        <keyword ref="qgeosatelliteinfo.html#property">property</keyword>
+        <keyword ref="qgeosatelliteinfo.html#removeProperty">removeProperty</keyword>
+        <keyword ref="qgeosatelliteinfo.html#setPrnNumber">setPrnNumber</keyword>
+        <keyword ref="qgeosatelliteinfo.html#setProperty">setProperty</keyword>
+        <keyword ref="qgeosatelliteinfo.html#setSignalStrength">setSignalStrength</keyword>
+        <keyword ref="qgeosatelliteinfo.html#signalStrength">signalStrength</keyword>
+        <keyword ref="qgeosatelliteinfo.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qgeosatelliteinfo.html#operator-eq">operator=</keyword>
+        <keyword ref="qgeosatelliteinfo.html#operator-eq-eq">operator==</keyword>
+        <section ref="qgeosatelliteinfo-members.html" title="List of all members"/>
+    </section>
+    <section ref="qgeosatelliteinfosource.html" title="QGeoSatelliteInfoSource Class Reference">
+        <keyword ref="qgeosatelliteinfosource.html">QGeoSatelliteInfoSource</keyword>
+        <keyword ref="qgeosatelliteinfosource.html#createSource">createSource</keyword>
+        <keyword ref="qgeosatelliteinfosource.html#requestTimeout">requestTimeout</keyword>
+        <keyword ref="qgeosatelliteinfosource.html#requestUpdate">requestUpdate</keyword>
+        <keyword ref="qgeosatelliteinfosource.html#satellitesInUseUpdated">satellitesInUseUpdated</keyword>
+        <keyword ref="qgeosatelliteinfosource.html#satellitesInViewUpdated">satellitesInViewUpdated</keyword>
+        <keyword ref="qgeosatelliteinfosource.html#startUpdates">startUpdates</keyword>
+        <keyword ref="qgeosatelliteinfosource.html#stopUpdates">stopUpdates</keyword>
+        <section ref="qgeosatelliteinfosource-members.html" title="List of all members"/>
     </section>
     <section ref="qnmeapositioninfosource.html" title="QNmeaPositionInfoSource Class Reference">
         <keyword ref="qnmeapositioninfosource.html">QNmeaPositionInfoSource</keyword>
@@ -101,35 +131,6 @@
         <keyword ref="qnmeapositioninfosource.html#supportedPositioningMethods">supportedPositioningMethods</keyword>
         <keyword ref="qnmeapositioninfosource.html#updateMode">updateMode</keyword>
         <section ref="qnmeapositioninfosource-members.html" title="List of all members"/>
-    </section>
-    <section ref="qsatelliteinfo.html" title="QSatelliteInfo Class Reference">
-        <keyword ref="qsatelliteinfo.html">QSatelliteInfo</keyword>
-        <keyword ref="qsatelliteinfo.html#Property-enum">Property</keyword>
-        <keyword ref="qsatelliteinfo.html#Property-enum">QSatelliteInfo::Azimuth</keyword>
-        <keyword ref="qsatelliteinfo.html#Property-enum">QSatelliteInfo::Elevation</keyword>
-        <keyword ref="qsatelliteinfo.html#hasProperty">hasProperty</keyword>
-        <keyword ref="qsatelliteinfo.html#prnNumber">prnNumber</keyword>
-        <keyword ref="qsatelliteinfo.html#property">property</keyword>
-        <keyword ref="qsatelliteinfo.html#removeProperty">removeProperty</keyword>
-        <keyword ref="qsatelliteinfo.html#setPrnNumber">setPrnNumber</keyword>
-        <keyword ref="qsatelliteinfo.html#setProperty">setProperty</keyword>
-        <keyword ref="qsatelliteinfo.html#setSignalStrength">setSignalStrength</keyword>
-        <keyword ref="qsatelliteinfo.html#signalStrength">signalStrength</keyword>
-        <keyword ref="qsatelliteinfo.html#operator-not-eq">operator!=</keyword>
-        <keyword ref="qsatelliteinfo.html#operator-eq">operator=</keyword>
-        <keyword ref="qsatelliteinfo.html#operator-eq-eq">operator==</keyword>
-        <section ref="qsatelliteinfo-members.html" title="List of all members"/>
-    </section>
-    <section ref="qsatelliteinfosource.html" title="QSatelliteInfoSource Class Reference">
-        <keyword ref="qsatelliteinfosource.html">QSatelliteInfoSource</keyword>
-        <keyword ref="qsatelliteinfosource.html#createSource">createSource</keyword>
-        <keyword ref="qsatelliteinfosource.html#requestTimeout">requestTimeout</keyword>
-        <keyword ref="qsatelliteinfosource.html#requestUpdate">requestUpdate</keyword>
-        <keyword ref="qsatelliteinfosource.html#satellitesInUseUpdated">satellitesInUseUpdated</keyword>
-        <keyword ref="qsatelliteinfosource.html#satellitesInViewUpdated">satellitesInViewUpdated</keyword>
-        <keyword ref="qsatelliteinfosource.html#startUpdates">startUpdates</keyword>
-        <keyword ref="qsatelliteinfosource.html#stopUpdates">stopUpdates</keyword>
-        <section ref="qsatelliteinfosource-members.html" title="List of all members"/>
     </section>
 </section>
 <section ref="overviews.html" title="Overviews">

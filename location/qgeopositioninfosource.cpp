@@ -107,32 +107,27 @@ QGeoPositionInfoSource::~QGeoPositionInfoSource()
 }
 
 /*!
-    Sets the source to emit updates every \a msec milliseconds.
-    If \a msec is 0, the source will provide updates using a default interval
-    or some internal logic that determines when an update should be provided.
+    \property QGeoPositionInfoSource::updateInterval
+    \brief This property holds the requested interval in milliseconds between each update.
 
-    If \a msec is not 0 and is less than the value returned by
-    minimumUpdateInterval(), the interval will be set to the minimum interval.
+    If the update interval is not set (or is set to 0) the
+    source will provide updates as often as necessary.
 
-    Note that implementations may not provide updates at the exact
-    interval specified. For example, a given millisecond interval value may be
-    rounded to the nearest second if the implementation does not support
-    intervals specified to millisecond precision.
+    If the update interval is set, the source will provide updates at an
+    interval as close to the requested interval as possible. If the requested
+    interval is less than the minimumUpdateInterval(),
+    the minimum interval is used instead.
 
-    \bold {Note:} When reimplementing this method, subclasses must call the
-    base method implementation to ensure updateInterval() returns the correct
-    value.
+    The default value for this property is 0.
+
+    Note: Subclass implementations must call the base implementation of
+    setUpdateInterval() so that updateInterval() returns the correct value.
 */
 void QGeoPositionInfoSource::setUpdateInterval(int msec)
 {
     d->interval = msec;
 }
 
-/*!
-    Returns the interval value set by setUpdateInterval().
-
-    Returns 0 if no interval has been set.
-*/
 int QGeoPositionInfoSource::updateInterval() const
 {
     return d->interval;
@@ -198,11 +193,10 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createSource(QObject *parent)
     \sa setPreferredPositioningMethods()
 */
 
-/*!
-    \fn virtual int QGeoPositionInfoSource::minimumUpdateInterval() const = 0;
 
-    Returns the minimum time (in milliseconds) required to retrieve a
-    position update.
+/*!
+    \property QGeoPositionInfoSource::minimumUpdateInterval
+    \brief This property holds the minimum time (in milliseconds) required to retrieve a position update.
 
     This is the minimum value accepted by setUpdateInterval() and 
     requestUpdate().

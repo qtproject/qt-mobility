@@ -46,13 +46,13 @@
 <li><a href="qgeopositioninfo.html">QGeoPositionInfo</a></li>
 <li><a href="qgeopositioninfosource.html">QGeoPositionInfoSource</a></li>
 <li><a href="qgeoareamonitor.html">QGeoAreaMonitor</a></li>
-<li><a href="qsatelliteinfo.html">QSatelliteInfo</a></li>
-<li><a href="qsatelliteinfosource.html">QSatelliteInfoSource</a></li>
+<li><a href="qgeosatelliteinfo.html">QGeoSatelliteInfo</a></li>
+<li><a href="qgeosatelliteinfosource.html">QGeoSatelliteInfoSource</a></li>
 </ul>
 <p>Location data sources are created by subclassing <a href="qgeopositioninfosource.html">QGeoPositionInfoSource</a> and providing <a href="qgeopositioninfo.html">QGeoPositionInfo</a> objects through the <a href="qgeopositioninfosource.html#positionUpdated">QGeoPositionInfoSource::positionUpdated</a>() signal. Clients that require location data can connect to the <a href="qgeopositioninfosource.html#positionUpdated">positionUpdated()</a> signal and call <a href="qgeopositioninfosource.html#startUpdates">startUpdates()</a> or <a href="qgeopositioninfosource.html#requestUpdate">requestUpdate()</a> to trigger the distribution of location data.</p>
 <p>A default position source may be available on some platforms. Call <a href="qgeopositioninfosource.html#createSource">QGeoPositionInfoSource::createSource</a>() to create an instance of the default position source; the method returns 0 if no default source is available for the platform.</p>
 <p>The <a href="qgeoareamonitor.html">QGeoAreaMonitor</a> class enables client applications to be notified when the receiving device has moved in or out of a particular area, as specified by a coordinate and radius. If the platform provides built-in support for area monitoring, <a href="qgeoareamonitor.html#createMonitor">QGeoAreaMonitor::createMonitor</a>() returns an instance of the default area monitor.</p>
-<p>Satellite information can also be distributed through the <a href="qsatelliteinfosource.html">QSatelliteInfoSource</a> class. Call <a href="qsatelliteinfosource.html#createSource">QSatelliteInfoSource::createSource</a>() to create an instance of the default satellite data source for the platform, if one is available. Alternatively, clients can subclass it to provide a custom satellite data source.</p>
+<p>Satellite information can also be distributed through the <a href="qgeosatelliteinfosource.html">QGeoSatelliteInfoSource</a> class. Call <a href="qgeosatelliteinfosource.html#createSource">QGeoSatelliteInfoSource::createSource</a>() to create an instance of the default satellite data source for the platform, if one is available. Alternatively, clients can subclass it to provide a custom satellite data source.</p>
 <a name="requesting-location-data-from-data-sources"></a>
 <h3>Requesting location data from data sources</h3>
 <p>To receive data from a source, connect to its <a href="qgeopositioninfosource.html#positionUpdated">positionUpdated()</a> signal, then call either <a href="qgeopositioninfosource.html#startUpdates">startUpdates()</a> or <a href="qgeopositioninfosource.html#requestUpdate">requestUpdate()</a> to begin.</p>
@@ -80,7 +80,7 @@
     };</pre>
 <a name="controlling-aspects-of-data-sources"></a>
 <h4>Controlling aspects of data sources</h4>
-<p>The <a href="qgeopositioninfosource.html#setUpdateInterval">QGeoPositionInfoSource::setUpdateInterval</a>() method can be used to control the rate at which position updates are received. For example, if the client application only requires updates once every 30 seconds, it can call <tt>setUpdateInterval(30000)</tt>. (If no update interval is set, or setUpdateInterval() is called with a value of 0, the source uses a default interval or some other internal logic to determine when updates should be provided.)</p>
+<p>The <a href="qgeopositioninfosource.html#updateInterval-prop">QGeoPositionInfoSource::setUpdateInterval</a>() method can be used to control the rate at which position updates are received. For example, if the client application only requires updates once every 30 seconds, it can call <tt>setUpdateInterval(30000)</tt>. (If no update interval is set, or setUpdateInterval() is called with a value of 0, the source uses a default interval or some other internal logic to determine when updates should be provided.)</p>
 <p><a href="qgeopositioninfosource.html#setPreferredPositioningMethods">QGeoPositionInfoSource::setPreferredPositioningMethods</a>() enables client applications to request that a certain type of positioning method be used. For example, if the application prefers to use only satellite positioning, which offers fairly precise outdoor positioning but can be a heavy user of power resources, it can call this method with the <a href="qgeopositioninfosource.html#PositioningMethod-enum">QGeoPositionInfoSource::SatellitePositioningMethods</a> value. However, this method should only be used in specialized client applications; in most cases, the default positioning methods should not be changed, as a source may internally use a variety of positioning methods that can be useful to the application.</p>
 <a name="reading-nmea-data"></a>
 <h4>Reading NMEA data</h4>

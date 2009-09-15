@@ -102,8 +102,8 @@ The main API classes are:
     \o \l{QGeoPositionInfo}
     \o \l{QGeoPositionInfoSource}
     \o \l{QGeoAreaMonitor}
-    \o \l{QSatelliteInfo}
-    \o \l{QSatelliteInfoSource}
+    \o \l{QGeoSatelliteInfo}
+    \o \l{QGeoSatelliteInfoSource}
 \endlist
 
 Location data sources are created by subclassing QGeoPositionInfoSource and 
@@ -126,7 +126,7 @@ area monitoring, QGeoAreaMonitor::createMonitor() returns an instance of
 the default area monitor.
 
 Satellite information can also be distributed through the 
-QSatelliteInfoSource class. Call QSatelliteInfoSource::createSource() to 
+QGeoSatelliteInfoSource class. Call QGeoSatelliteInfoSource::createSource() to 
 create an instance of the default satellite data source for the platform, 
 if one is available. Alternatively, clients can subclass it to provide a 
 custom satellite data source.
