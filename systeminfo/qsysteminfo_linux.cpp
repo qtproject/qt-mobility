@@ -901,9 +901,6 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
 
 QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
-    QList<QNetworkInterface> interfaceList;
-    interfaceList = QNetworkInterface::allInterfaces();
-
     QString result;
     QString baseSysDir = "/sys/class/net/";
     QDir eDir(baseSysDir);
