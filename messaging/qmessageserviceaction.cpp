@@ -31,7 +31,6 @@
 **
 ****************************************************************************/
 #include "qmessageserviceaction.h"
-#include "qmessageserviceaction_p.h"
 
 /*!
     \class QMessageServiceAction

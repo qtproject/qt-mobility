@@ -102,7 +102,7 @@ void MessageIdsLoader::run()
 {
     m_messages.clear();
 
-    QMessageIdList lastTenMessages = QMessageStore::instance()->queryMessages(QMessageFilter(),QMessageOrdering::byReceptionTimeStamp(Qt::AscendingOrder),10,0);
+    QMessageIdList lastTenMessages = QMessageStore::instance()->queryMessages(QMessageFilter(),QMessageOrdering::byReceptionTimeStamp(Qt::DescendingOrder),10,0);
 
     foreach(const QMessageId& id, lastTenMessages)
     {
@@ -440,8 +440,9 @@ void ShowWidget::updateMessageListFinished()
 
     MessageIdSubjectList lastTenMessages = m_messageIdsLoader.ids();
 
-    foreach(const IdSubjectPair& result, lastTenMessages)
+    for(int index = lastTenMessages.count()-1; index >= 0; index--)
     {
+        IdSubjectPair result(lastTenMessages[index]);
         QListWidgetItem* newItem = new QListWidgetItem(result.second);
         newItem->setData(MessageIdRole,result.first.toString());
         m_messageListWidget->addItem(newItem);

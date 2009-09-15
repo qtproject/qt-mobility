@@ -31,7 +31,6 @@
 **
 ****************************************************************************/
 #include "qmessageserviceaction.h"
-#include "qmessageserviceaction_p.h"
 #include <mapix.h>
 #include <objbase.h>
 #include <mapiutil.h>
@@ -48,6 +47,36 @@
 //TODO make all functions non-blocking and asynchronous
 
 using namespace WinHelpers;
+
+class QMessageServiceActionPrivate : public QObject
+{
+    Q_OBJECT
+
+    Q_DECLARE_PUBLIC(QMessageServiceAction)
+
+public:
+    QMessageServiceActionPrivate(QMessageServiceAction* parent);
+
+    bool send(const QMessage& message, bool showComposer = false);
+    bool show(const QMessageId& id);
+
+public slots:
+    void completed();
+    void reportMatchingIds();
+
+signals:
+    void stateChanged(QMessageServiceAction::State);
+    void messagesFound(const QMessageIdList&);
+    void progressChanged(uint, uint);
+
+public:
+    QMessageServiceAction* q_ptr;
+    bool _active;
+    QMessageStore::ErrorCode _lastError;
+    QMessageIdList _candidateIds;
+    QMessageServiceAction::State _state;
+};
+
 
 void QMessageServiceActionPrivate::completed()
 {
@@ -384,3 +413,4 @@ QMessageStore::ErrorCode QMessageServiceAction::lastError() const
     return d_ptr->_lastError;
 }
 
+#include <qmessageserviceaction_win.moc>
