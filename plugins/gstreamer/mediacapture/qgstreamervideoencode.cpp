@@ -184,12 +184,12 @@ void QGstreamerVideoEncode::setBitrate(int value)
     setEncodingOption(QLatin1String("bitrate"), QVariant(value));
 }
 
-qreal QGstreamerVideoEncode::quality() const
+int QGstreamerVideoEncode::quality() const
 {
-    return m_options.value(QLatin1String("quality"), QVariant(50.0)).toDouble();
+    return m_options.value(QLatin1String("quality"), QVariant(50)).toInt();
 }
 
-void QGstreamerVideoEncode::setQuality(qreal value)
+void QGstreamerVideoEncode::setQuality(int value)
 {
     setEncodingOption(QLatin1String("quality"), QVariant(value));
 }
@@ -244,20 +244,25 @@ GstElement *QGstreamerVideoEncode::createEncoder()
             QVariant value = it.value();
 
             if (option == QLatin1String("quality")) {
-                double qualityValue = value.toDouble();
+                int qualityValue = value.toInt();
 
                 if (m_codec == QLatin1String("video/h264")) {
-                    //qant(0) = 50, quant(50) = 21, quant(100) = 1
-                    int quant = qRound(50-49*(pow(qualityValue/100.0, 0.7567288)));
+                    //constant quantizer mode
+                    g_object_set(G_OBJECT(encoderElement), "pass", 4, NULL);
+                    //quant(0) = 50, quant(50) = 21, quant(100) = 10
+                    int quant = qRound(50-40*(pow(qualityValue/100.0, 0.46)));
                     g_object_set(G_OBJECT(encoderElement), "quantizer", quant, NULL);
                 } else if (m_codec == QLatin1String("video/xvid")) {
+                    //constant quantizer mode
+                    g_object_set(G_OBJECT(encoderElement), "pass", 3, NULL);
                     //quant from 2 to 32, default 4
-
                     int quant = qRound(31-29*(pow(qualityValue/100.0, 0.1)));
                     g_object_set(G_OBJECT(encoderElement), "quantizer", quant, NULL);
                 } else if (m_codec == QLatin1String("video/mpeg4") ||
                            m_codec == QLatin1String("video/mpeg1") ||
                            m_codec == QLatin1String("video/mpeg2") ) {
+                    //constant quantizer mode
+                    g_object_set(G_OBJECT(encoderElement), "pass", 2, NULL);
                     //quant from 1 to 30, default ~3
                     double quant = 30.0-29*(pow(qualityValue/100.0, 0.15));
                     g_object_set(G_OBJECT(encoderElement), "quantizer", quant, NULL);

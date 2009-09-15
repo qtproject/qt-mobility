@@ -392,13 +392,13 @@ void QMediaRecorder::setAudioBitrate(int bitrate)
   Depending on codec, the quality property may affect
   different parameters, like bitrate or presets.
 */
-qreal QMediaRecorder::audioQuality() const
+int QMediaRecorder::audioQuality() const
 {
     return d_func()->audioControl ?
-           d_func()->audioControl->quality() : -1.0;
+           d_func()->audioControl->quality() : -1;
 }
 
-void QMediaRecorder::setAudioQuality(qreal quality)
+void QMediaRecorder::setAudioQuality(int quality)
 {
     if (d_func()->audioControl)
         d_func()->audioControl->setQuality(quality);
@@ -603,13 +603,13 @@ void QMediaRecorder::setVideoBitrate(int bitrate)
   Depending on codec, the quality property may affect
   different parameters, like bitrate or presets.
 */
-qreal QMediaRecorder::videoQuality() const
+int QMediaRecorder::videoQuality() const
 {
     return d_func()->videoControl ?
-           d_func()->videoControl->quality() : -1.0;
+           d_func()->videoControl->quality() : -1;
 }
 
-void QMediaRecorder::setVideoQuality(qreal quality)
+void QMediaRecorder::setVideoQuality(int quality)
 {
     if (d_func()->videoControl)
         d_func()->videoControl->setQuality(quality);
@@ -745,7 +745,7 @@ void QMediaRecorder::stop()
 */
 
 /*!
-    \fn audioQualityChanged(qreal quality);
+    \fn audioQualityChanged(int quality);
 
     Signal emitted when audio \a quality changed.
 */
@@ -775,7 +775,7 @@ void QMediaRecorder::stop()
 */
 
 /*!
-    \fn videoQualityChanged(qreal quality);
+    \fn videoQualityChanged(int quality);
 
     Signal emitted when video \a quality value is changed.
 */

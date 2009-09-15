@@ -107,7 +107,7 @@ public:
         m_encodeName.append("mp3");
         m_encodeOptions.append(QStringList() << "quality" << "bitrate" << "mode" << "vbr");
         m_bitrate = 128;
-        m_quality = 1;
+        m_quality = 50;
         m_frequency = -1;
         m_sampleSize = -1;
         m_channels = -1;
@@ -171,12 +171,12 @@ public:
         m_bitrate = bitrate;
     }
 
-    qreal quality() const
+    int quality() const
     {
         return m_quality;
     }
 
-    void setQuality(qreal qual)
+    void setQuality(int qual)
     {
         m_quality = qual;
     }
@@ -208,7 +208,7 @@ private:
     QStringList  m_codecs;
     QStringList  m_codecsDesc;
     int          m_bitrate;
-    qreal        m_quality;
+    int        m_quality;
 
     QList<QString>  m_encodeName;
     QList<QStringList> m_encodeOptions;
@@ -477,12 +477,13 @@ void tst_QMediaRecorder::testAudioEncodeControl()
     QVERIFY(codecs.count() == 2);
     QVERIFY(encode->setAudioCodec("audio/mpeg"));
     QVERIFY(encode->audioCodec() == QString("audio/mpeg"));
+    QCOMPARE(encode->quality(), 50);
+    encode->setQuality(1);
+    QCOMPARE(encode->quality(), 1);
     encode->setBitrate(64);
     QVERIFY(encode->bitrate() == 64);
-    encode->setQuality(1.0);
-    QVERIFY(encode->quality() == 1.0);
     QStringList options = encode->supportedEncodingOptions();
-    QVERIFY(options.count() == 6);
+    QCOMPARE(options.count(), 6);
     encode->setEncodingOption("mp3",QStringList() << "bitrate" << "vbr");
 }
 

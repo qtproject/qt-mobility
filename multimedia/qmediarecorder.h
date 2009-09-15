@@ -108,7 +108,7 @@ public:
     QString audioCodec() const;
 
     int audioBitrate() const;
-    qreal audioQuality() const;
+    int audioQuality() const;
 
     QStringList supportedAudioEncodingOptions() const;
     QVariant audioEncodingOption(const QString &name) const;
@@ -129,7 +129,7 @@ public:
     QString videoCodec() const;
 
     int videoBitrate() const;
-    qreal videoQuality() const;
+    int videoQuality() const;
 
     QStringList supportedVideoEncodingOptions() const;
     QVariant videoEncodingOption(const QString &name) const;
@@ -144,13 +144,13 @@ public slots:
 
     bool setAudioCodec(const QString &codecName);
     void setAudioBitrate(int bitrate);
-    void setAudioQuality(qreal quality);
+    void setAudioQuality(int quality);
 
     void setResolution(const QSize &);
     void setFrameRate(const QMediaRecorder::FrameRate &rate);
     bool setVideoCodec(const QString &codecName);
     void setVideoBitrate(int bitrate);
-    void setVideoQuality(qreal);
+    void setVideoQuality(int quality);
 
 signals:
     void stateChanged(QMediaRecorder::State state);

@@ -117,12 +117,12 @@ void QGstreamerAudioEncode::setBitrate(int value)
     setEncodingOption(QLatin1String("bitrate"), QVariant(value));
 }
 
-qreal QGstreamerAudioEncode::quality() const
+int QGstreamerAudioEncode::quality() const
 {
-    return m_options.value(QLatin1String("quality"), QVariant(50.0)).toDouble();
+    return m_options.value(QLatin1String("quality"), QVariant(50)).toInt();
 }
 
-void QGstreamerAudioEncode::setQuality(qreal value)
+void QGstreamerAudioEncode::setQuality(int value)
 {
     setEncodingOption(QLatin1String("quality"), QVariant(value));
 }
@@ -223,7 +223,7 @@ GstElement *QGstreamerAudioEncode::createEncoder()
             QVariant value = it.value();
 
             if (option == QLatin1String("quality")) {
-                double qualityValue = value.toDouble();
+                int qualityValue = value.toInt();
 
                 if (m_codec == QLatin1String("audio/vorbis")) {
                     g_object_set(G_OBJECT(encoderElement), "quality", qualityValue/10.0, NULL);

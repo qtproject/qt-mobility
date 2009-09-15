@@ -72,8 +72,8 @@ public:
     int bitrate() const;
     void setBitrate(int);
 
-    qreal quality() const;
-    void setQuality(qreal);
+    int quality() const;
+    void setQuality(int);
 
     QStringList supportedEncodingOptions() const;
     QVariant encodingOption(const QString &name) const;
