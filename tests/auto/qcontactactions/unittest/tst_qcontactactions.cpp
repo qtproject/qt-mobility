@@ -383,7 +383,18 @@ void tst_QContactActions::testDescriptor()
 
     QVERIFY(sendEmailDescriptor2 == sendEmailDescriptor);
 
+    // ensure that the caller takes ownership of the action; ie, not singleton etc.
+    QContactAction *sendEmailAction2 = QContactAction::action(sendEmailAction->actionDescriptor());
+    QContactAction *sendEmailAction3 = QContactAction::action(sendEmailAction->actionDescriptor());
+    QVERIFY(sendEmailAction != sendEmailAction2);
+    QVERIFY(sendEmailAction != sendEmailAction3);
+    QVERIFY(sendEmailAction2 != sendEmailAction3);
+
+    delete sendEmailAction2;
     delete sendEmailAction;
+
+    QVERIFY(sendEmailAction3->actionDescriptor() == sendEmailDescriptor);
+    delete sendEmailAction3;
 }
 
 QTEST_MAIN(tst_QContactActions)
