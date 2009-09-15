@@ -107,7 +107,7 @@ public:
     QValueSpaceItem &operator=(const QValueSpaceItem &other);
 
     void setNotify(bool notify);
-    bool notify() const;
+    bool notify();
 
 signals:
     void contentsChanged();

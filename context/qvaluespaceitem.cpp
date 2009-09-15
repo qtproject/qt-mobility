@@ -1119,10 +1119,20 @@ QVariant QValueSpaceItem::value(const QByteArray & subPath, const QVariant &def)
     return def;
 }
 
-bool QValueSpaceItem::notify() const
+bool QValueSpaceItem::notify()
 {
     QVALUESPACEITEM_D(d);
-    return md->connections != 0;
+
+    if (!md->connections)
+        return false;
+
+    QHash<QValueSpaceItem *, int>::ConstIterator iter =
+        md->connections->connections.constFind(this);
+
+    if (iter == md->connections->connections.end())
+        return false;
+
+    return *iter > 0;
 }
 
 void QValueSpaceItem::setNotify(bool notify)

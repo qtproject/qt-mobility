@@ -755,6 +755,7 @@ void tst_QValueSpaceItem::contentsChanged_data()
 {
     QTest::addColumn<QAbstractValueSpaceLayer *>("layer");
 
+    QTest::addColumn<bool>("implicit");
     QTest::addColumn< QString >("item_path");
     QTest::addColumn< QString >("value_path");
     QTest::addColumn< int >("should_emit_signal");
@@ -765,48 +766,108 @@ void tst_QValueSpaceItem::contentsChanged_data()
     for (int i = 0; i < layers.count(); ++i) {
         QAbstractValueSpaceLayer *layer = layers.at(i);
 
-        QTest::newRow(layer->name().append(':').append("(empty)").toLocal8Bit().constData())
+        QTest::newRow(layer->name().append(": implicit (empty)").toLocal8Bit().constData())
             << layer
+            << true
             << ""
             << "usr/alex/busy"
             << 1
             << false
             << true;
 
-        QTest::newRow(layer->name().append(':').append("/").toLocal8Bit().constData())
+        QTest::newRow(layer->name().append(": explicit (empty)").toLocal8Bit().constData())
             << layer
+            << false
+            << ""
+            << "usr/alex/busy"
+            << 1
+            << false
+            << true;
+
+        QTest::newRow(layer->name().append(": implicit /").toLocal8Bit().constData())
+            << layer
+            << true
             << "/"
             << "usr/alex/busy"
             << 1
             << false
             << true;
 
-        QTest::newRow(layer->name().append(':').append("/usr").toLocal8Bit().constData())
+        QTest::newRow(layer->name().append(": explicit /").toLocal8Bit().constData())
             << layer
+            << false
+            << "/"
+            << "usr/alex/busy"
+            << 1
+            << false
+            << true;
+
+        QTest::newRow(layer->name().append(": implicit /usr").toLocal8Bit().constData())
+            << layer
+            << true
             << "/usr"
             << "alex/busy"
             << 1
             << false
             << true;
 
-        QTest::newRow(layer->name().append(':').append("/usr/alex").toLocal8Bit().constData())
+        QTest::newRow(layer->name().append(": explicit /usr").toLocal8Bit().constData())
             << layer
+            << false
+            << "/usr"
+            << "alex/busy"
+            << 1
+            << false
+            << true;
+
+        QTest::newRow(layer->name().append(": implicit /usr/alex").toLocal8Bit().constData())
+            << layer
+            << true
             << "/usr/alex"
             << "busy"
             << 1
             << false
             << true;
 
-        QTest::newRow(layer->name().append(':').append("/usr/alex/busy").toLocal8Bit().constData())
+        QTest::newRow(layer->name().append(": explicit /usr/alex").toLocal8Bit().constData())
             << layer
+            << false
+            << "/usr/alex"
+            << "busy"
+            << 1
+            << false
+            << true;
+
+        QTest::newRow(layer->name().append(": implicit /usr/alex/busy").toLocal8Bit().constData())
+            << layer
+            << true
             << "/usr/alex/busy"
             << ""
             << 1
             << false
             << true;
 
-        QTest::newRow(layer->name().append(':').append("/usr/lorn").toLocal8Bit().constData())
+        QTest::newRow(layer->name().append(": explicit /usr/alex/busy").toLocal8Bit().constData())
             << layer
+            << false
+            << "/usr/alex/busy"
+            << ""
+            << 1
+            << false
+            << true;
+
+        QTest::newRow(layer->name().append(": implicit /usr/lorn").toLocal8Bit().constData())
+            << layer
+            << true
+            << "/usr/lorn"
+            << "busy"
+            << 0
+            << false
+            << false;
+
+        QTest::newRow(layer->name().append(": explicit /usr/lorn").toLocal8Bit().constData())
+            << layer
+            << false
             << "/usr/lorn"
             << "busy"
             << 0
@@ -819,6 +880,7 @@ void tst_QValueSpaceItem::contentsChanged()
 {
     QFETCH(QAbstractValueSpaceLayer *, layer);
 
+    QFETCH(bool, implicit);
     QFETCH(QString, item_path);
     QFETCH(QString, value_path);
     QFETCH(int, should_emit_signal);
@@ -833,32 +895,55 @@ void tst_QValueSpaceItem::contentsChanged()
     QValueSpaceItem item(item_path, layer->id());
     QCOMPARE(item.value(value_path,!old_value).toBool(), old_value);
 
-    ChangeListener* listener = new ChangeListener();
-    QSignalSpy spy(listener, SIGNAL(baseChanged()));
-    connect(&item, SIGNAL(contentsChanged()),listener, SIGNAL(baseChanged()));
-    QCOMPARE(spy.count(), 0);
+    ChangeListener* listener = 0;
+    QSignalSpy *spy;
+    if (implicit) {
+        listener = new ChangeListener;
+        spy = new QSignalSpy(listener, SIGNAL(baseChanged()));
+        connect(&item, SIGNAL(contentsChanged()), listener, SIGNAL(baseChanged()));
+    } else {
+        spy = new QSignalSpy(&item, SIGNAL(contentsChanged()));
+        item.setNotify(true);
+    }
+
+    QVERIFY(item.notify());
+
+    QCOMPARE(spy->count(), 0);
 
     busy->setAttribute("alex/busy", new_value);
     busy->sync();
 
-    QTRY_COMPARE(spy.count(), should_emit_signal);
+    QTRY_COMPARE(spy->count(), should_emit_signal);
     QCOMPARE(item.value(value_path,!old_value).toBool(), new_value);
 
-    spy.clear();
+    spy->clear();
 
     //removing the item triggers signal
     busy->removeAttribute("alex/busy");
     busy->sync();
-    QTRY_COMPARE(spy.count(), should_emit_signal);
+    QTRY_COMPARE(spy->count(), should_emit_signal);
     QCOMPARE(item.value(value_path,!old_value).toBool(), new_value);
 
-    spy.clear();
+    spy->clear();
     busy->setAttribute("alex/busy", new_value);
     busy->sync();
 
-    QTRY_COMPARE(spy.count(), should_emit_signal);
+    QTRY_COMPARE(spy->count(), should_emit_signal);
     QCOMPARE(item.value(value_path,!old_value).toBool(), new_value);
 
+    if (!implicit) {
+        item.setNotify(false);
+        QVERIFY(!item.notify());
+
+        spy->clear();
+        busy->setAttribute("alex/busy", old_value);
+        busy->sync();
+
+        QTRY_COMPARE(item.value(value_path, new_value).toBool(), old_value);
+        QVERIFY(spy->isEmpty());
+    }
+
+    delete spy;
     delete listener;
 }
 
