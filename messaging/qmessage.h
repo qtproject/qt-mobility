@@ -156,7 +156,7 @@ public:
     void setBody(const QString &body, const QByteArray &mimeType = QByteArray());
     void setBody(QTextStream &in, const QByteArray &mimeType = QByteArray());
 
-    QMessageContentContainerIdList attachments() const;
+    QMessageContentContainerIdList attachmentIds() const;
 
     void appendAttachments(const QStringList &fileNames);
     void clearAttachments();

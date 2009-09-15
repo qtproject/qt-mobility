@@ -355,7 +355,7 @@ void QMessage::setBody(QTextStream &in, const QByteArray &mimeType)
     setBody(in.readAll(), mimeType);
 }
 
-QMessageContentContainerIdList QMessage::attachments() const
+QMessageContentContainerIdList QMessage::attachmentIds() const
 {
     return contentIds();
 }

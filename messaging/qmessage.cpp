@@ -63,7 +63,7 @@ QList<QByteArray> charsets;
     
     If a message has been modified since it was last constructed isModified() returns true.
 
-    A list of attachments identifiers will be returned by attachments() and an identifier for the 
+    A list of attachments identifiers will be returned by attachmentIds() and an identifier for the 
     message body will be returned by bodyId(). Attachments can be appended to the content of the 
     message using appendAttachments(), the body of the message can be set with setBody() or
     setBodyFromFile().
@@ -511,9 +511,9 @@ QList<QByteArray> charsets;
 */
 
 /*!
-    \fn QMessage::attachments() const
+    \fn QMessage::attachmentIds() const
   
-    Returns a list of attachments for the message.
+    Returns a list of attachment identifiers for the message.
 
     The body of the message will not be included in the list.
     
@@ -527,7 +527,7 @@ QList<QByteArray> charsets;
     attachments for the message. The internet media (MIME) type of the attachments will be 
     determined by examining the files or file names.
 
-    \sa attachments(), clearAttachments()
+    \sa attachmentIds(), clearAttachments()
 */
 
 /*!
@@ -535,7 +535,7 @@ QList<QByteArray> charsets;
   
     Clears the list of attachments for the message, leaving only the message body, if any.
 
-    \sa attachments(), appendAttachments()
+    \sa attachmentIds(), appendAttachments()
 */  
 
 /*!

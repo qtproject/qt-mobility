@@ -431,7 +431,7 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), text);
 
-    QMessageContentContainerIdList attachmentIds(message.attachments());
+    QMessageContentContainerIdList attachmentIds(message.attachmentIds());
     QCOMPARE(attachmentIds.count(), attachments.count());
 
     for (int i = 0; i < attachments.count(); ++i) {

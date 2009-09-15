@@ -250,7 +250,7 @@ void QMessage::setBody(QTextStream &in, const QByteArray &mimeType)
     Q_UNUSED(mimeType)
 }
 
-QMessageContentContainerIdList QMessage::attachments() const
+QMessageContentContainerIdList QMessage::attachmentIds() const
 {
     //    TODO: Example attachment list generation algorithm, message parts are the main issue, maybe 
     //    have to recurse into them, somewhat ambiguous.

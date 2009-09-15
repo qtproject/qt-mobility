@@ -508,7 +508,7 @@ void QMessage::setBody(QTextStream &in, const QByteArray &mimeType)
     setBody(in.readAll(), mimeType);
 }
 
-QMessageContentContainerIdList QMessage::attachments() const
+QMessageContentContainerIdList QMessage::attachmentIds() const
 {
     // Return any non-multipart parts excluding the first text part
     AttachmentLocator locator;
@@ -583,7 +583,7 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
         QString subject(d_ptr->_message.subject());
         response.setSubject("Fwd:" + subject);
 
-        QMessageContentContainerIdList attachmentIds;
+        //QMessageContentContainerIdList attachmentIds;
 
         if (d_ptr->_message.contentType().type().toLower() == "text") {
             // Forward the text content inline
@@ -661,7 +661,7 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
             }
 
             QString existingText;
-            QMessageContentContainerIdList attachmentIds;
+            QMessageContentContainerIdList attachments;
 
             if (d_ptr->_message.contentType().type().toLower() == "text") {
                 existingText = d_ptr->_message.body().data();
@@ -674,7 +674,7 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
                 }
 
                 // Find the remaining parts of the message
-                attachmentIds = attachments();
+                attachments = attachmentIds();
             }
 
             if (!existingText.isEmpty()) {
@@ -685,7 +685,7 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
                 response.setBody(prefix + existingText);
             }
 
-            foreach (const QMessageContentContainerId &attachmentId, attachmentIds) {
+            foreach (const QMessageContentContainerId &attachmentId, attachments) {
                 QMessageContentContainer attachment(find(attachmentId));
                 msg->appendPart(attachment.d_ptr->_part);
             }
