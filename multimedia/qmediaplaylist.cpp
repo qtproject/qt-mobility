@@ -70,6 +70,8 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
 /*!
 enum QMediaPlaylist::PlaybackMode
 
+The QMediaPlaylist::PlaybackMode describes the order items in playlist are played.
+
 \item
     CurrentItemOnce The current item is played only once.
 
@@ -86,7 +88,6 @@ enum QMediaPlaylist::PlaybackMode
 \item Random
     Play items in random order.
 */
-
 
 
 
@@ -158,6 +159,14 @@ bool QMediaPlaylist::setPlaylistProvider(QMediaPlaylistProvider *playlist)
 {
     return d_func()->control->setPlaylistProvider(playlist);
 }
+
+/*!
+  \property QMediaPlaylist::playbackMode
+
+  This property defines the order, items in playlist are played.
+
+  \sa QMediaPlaylist::PlaybackMode
+*/
 
 QMediaPlaylist::PlaybackMode QMediaPlaylist::playbackMode() const
 {
