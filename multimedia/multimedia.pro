@@ -58,6 +58,7 @@ HEADERS = \
     qcameracontrol.h \
     qcameraexposurecontrol.h \
     qcamerafocuscontrol.h \
+    qimageprocessingcontrol.h \
     qcameraservice.h \
     qmediaformatcontrol.h \
     qmediaplaylistcontrol.h \
@@ -102,6 +103,7 @@ SOURCES = qabstractmediacontrol.cpp \
     qcameracontrol.cpp \
     qcameraexposurecontrol.cpp \
     qcamerafocuscontrol.cpp \
+    qimageprocessingcontrol.cpp \
     qcameraservice.cpp \
     qmediaformatcontrol.cpp \
     qmediaplaylistcontrol.cpp \

@@ -42,6 +42,7 @@
 #include "qcamerafocuscontrol.h"
 #include "qcameraservice.h"
 #include "qmediarecordercontrol.h"
+#include "qimageprocessingcontrol.h"
 
 /*!
     \class QCamera
@@ -77,10 +78,11 @@ QCameraService* createCameraService()
 class QCameraPrivate : public QAbstractMediaObjectPrivate
 {
 public:
-    QAbstractMediaService* service;
-    QCameraControl* control;
-    QCameraExposureControl* exposureControl;
-    QCameraFocusControl* focusControl;
+    QAbstractMediaService *service;
+    QCameraControl *control;
+    QCameraExposureControl *exposureControl;
+    QCameraFocusControl *focusControl;
+    QImageProcessingControl *imageControl;
     bool ownService;
 };
 
@@ -107,12 +109,14 @@ QCamera::QCamera(QObject *parent, QAbstractMediaService *service):
         d->control = qobject_cast<QCameraControl *>(d->service->control(QCameraControl_iid));
         d->exposureControl = qobject_cast<QCameraExposureControl *>(d->service->control(QCameraExposureControl_iid));
         d->focusControl = qobject_cast<QCameraFocusControl *>(d->service->control(QCameraFocusControl_iid));
+        d->imageControl = qobject_cast<QImageProcessingControl *>(d->service->control(QImageProcessingControl_iid));
 
         connect(d->control, SIGNAL(stateChanged(QCamera::State)), this, SIGNAL(stateChanged(QCamera::State)));
     } else {
         d->control = 0;
         d->exposureControl = 0;
         d->focusControl = 0;
+        d->imageControl = 0;
     }
 
     if (d->exposureControl) {
@@ -460,7 +464,7 @@ QCamera::MeteringModes QCamera::supportedMeteringModes() const
 
 QCamera::WhiteBalanceMode QCamera::whiteBalanceMode() const
 {
-    return d_func()->control ? d_func()->control->whiteBalanceMode() : QCamera::WhiteBalanceAuto;
+    return d_func()->imageControl ? d_func()->imageControl->whiteBalanceMode() : QCamera::WhiteBalanceAuto;
 }
 
 /*!
@@ -469,8 +473,8 @@ QCamera::WhiteBalanceMode QCamera::whiteBalanceMode() const
 
 void QCamera::setWhiteBalanceMode(QCamera::WhiteBalanceMode mode)
 {
-    if (d_func()->control)
-        d_func()->control->setWhiteBalanceMode(mode);
+    if (d_func()->imageControl)
+        d_func()->imageControl->setWhiteBalanceMode(mode);
 }
 
 /*!
@@ -479,7 +483,7 @@ void QCamera::setWhiteBalanceMode(QCamera::WhiteBalanceMode mode)
 
 QCamera::WhiteBalanceModes QCamera::supportedWhiteBalanceModes() const
 {
-    return d_func()->control ? d_func()->control->supportedWhiteBalanceModes() : QCamera::WhiteBalanceAuto;
+    return d_func()->imageControl ? d_func()->imageControl->supportedWhiteBalanceModes() : QCamera::WhiteBalanceAuto;
 }
 
 /*!
@@ -490,7 +494,7 @@ QCamera::WhiteBalanceModes QCamera::supportedWhiteBalanceModes() const
 
 int QCamera::manualWhiteBalance() const
 {
-    return d_func()->control ? d_func()->control->manualWhiteBalance() : -1;
+    return d_func()->imageControl ? d_func()->imageControl->manualWhiteBalance() : -1;
 }
 
 /*!
@@ -499,8 +503,8 @@ int QCamera::manualWhiteBalance() const
 
 void QCamera::setManualWhiteBalance(int colorTemperature)
 {
-    if (d_func()->control)
-        d_func()->control->setManualWhiteBalance(colorTemperature);
+    if (d_func()->imageControl)
+        d_func()->imageControl->setManualWhiteBalance(colorTemperature);
 }
 
 /*!

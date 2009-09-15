@@ -32,36 +32,46 @@
 **
 ****************************************************************************/
 
-#ifndef QCAMERACONTROL_H
-#define QCAMERACONTROL_H
+#ifndef QIMAGEPROCESSINGCONTROL_H
+#define QIMAGEPROCESSINGCONTROL_H
 
 #include "qabstractmediacontrol.h"
 #include "qabstractmediaobject.h"
 
 #include "qcamera.h"
 
-class Q_MEDIA_EXPORT QCameraControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QImageProcessingControl : public QAbstractMediaControl
 {
     Q_OBJECT
-
 public:
-    ~QCameraControl();
+    ~QImageProcessingControl();
 
-    virtual void start() = 0;
-    virtual void stop() = 0;
-    virtual QCamera::State state() const = 0;
+    virtual QCamera::WhiteBalanceMode whiteBalanceMode() const = 0;
+    virtual void setWhiteBalanceMode(QCamera::WhiteBalanceMode mode) = 0;
+    virtual QCamera::WhiteBalanceModes supportedWhiteBalanceModes() const = 0;
+    virtual int manualWhiteBalance() const = 0;
+    virtual void setManualWhiteBalance(int colorTemperature) = 0;
 
-    virtual void setDevice(const QString &device) = 0;
+    virtual qreal contrast() const = 0;
+    virtual void setContrast(qreal value) const = 0;
 
-Q_SIGNALS:
-    void stateChanged(QCamera::State);
+    virtual qreal saturation() const = 0;
+    virtual void setSaturation(qreal value) = 0;
+
+    virtual bool isSharpeningSupported() const = 0;
+    virtual qreal sharpeningLevel() const = 0;
+    virtual void setSharpeningLevel(qreal value) = 0;
+
+    virtual bool isDenoisingSupported() const = 0;
+    virtual qreal denoisingLevel() const = 0;
+    virtual void setDenoisingLevel(qreal value) = 0;
 
 protected:
-    QCameraControl(QObject* parent);
+    QImageProcessingControl(QObject* parent);
 };
 
-#define QCameraControl_iid "com.nokia.Qt.QCameraControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QCameraControl, QCameraControl_iid)
+#define QImageProcessingControl_iid "com.nokia.Qt.QImageProcessingControl/1.0"
+Q_MEDIA_DECLARE_CONTROL(QImageProcessingControl, QImageProcessingControl_iid)
 
-#endif  // QCAMERACONTROL_H
+#endif
 

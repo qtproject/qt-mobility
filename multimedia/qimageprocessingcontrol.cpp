@@ -32,36 +32,60 @@
 **
 ****************************************************************************/
 
-#ifndef QCAMERACONTROL_H
-#define QCAMERACONTROL_H
+#include "qimageprocessingcontrol.h"
+#include  "qabstractmediacontrol_p.h"
 
-#include "qabstractmediacontrol.h"
-#include "qabstractmediaobject.h"
+/*!
+    \class QImageProcessingControl
+    \ingroup multimedia
 
-#include "qcamera.h"
+    \preliminary
+    \brief The abstract class for controling image processing parameters,
+    like white balance, contrast, saturation, sharpening and denoising.
+    
+    \sa QAbstractMediaService, QCamera
+*/
 
-class Q_MEDIA_EXPORT QCameraControl : public QAbstractMediaControl
+/*!
+    Constructs an image processing control object with \a parent.
+*/
+
+QImageProcessingControl::QImageProcessingControl(QObject *parent):
+    QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
 {
-    Q_OBJECT
+}
 
-public:
-    ~QCameraControl();
+/*!
+    Destruct the image processing control object.
+*/
 
-    virtual void start() = 0;
-    virtual void stop() = 0;
-    virtual QCamera::State state() const = 0;
+QImageProcessingControl::~QImageProcessingControl()
+{
+}
 
-    virtual void setDevice(const QString &device) = 0;
 
-Q_SIGNALS:
-    void stateChanged(QCamera::State);
+/*!
+    \fn QImageProcessingControl::whiteBalanceMode() const
+    Return the white balance mode being used.
+*/
 
-protected:
-    QCameraControl(QObject* parent);
-};
+/*!
+    \fn QImageProcessingControl::setWhiteBalanceMode(QCamera::WhiteBalanceMode mode)
+    Set the white balance mode to \a mode
+*/
 
-#define QCameraControl_iid "com.nokia.Qt.QCameraControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QCameraControl, QCameraControl_iid)
+/*!
+    \fn QImageProcessingControl::supportedWhiteBalanceModes() const
+    Return the list of supported white balance modes.
+*/
 
-#endif  // QCAMERACONTROL_H
+/*!
+    \fn QImageProcessingControl::manualWhiteBalance() const
+    Return the manual white balance, in K.
+*/
+
+/*!
+    \fn QImageProcessingControl::setManualWhiteBalance(int colorTemperature)
+    Set the white balance to \a colorTemperature
+*/
 

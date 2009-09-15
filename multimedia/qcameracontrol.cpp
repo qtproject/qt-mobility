@@ -90,52 +90,6 @@ QCameraControl::~QCameraControl()
 
 
 /*!
-    Return the white balance mode being used.
-*/
-
-QCamera::WhiteBalanceMode QCameraControl::whiteBalanceMode() const
-{
-    return QCamera::WhiteBalanceAuto;
-}
-
-/*!
-    Set the white balance mode to \a mode
-*/
-
-void QCameraControl::setWhiteBalanceMode(QCamera::WhiteBalanceMode mode)
-{
-    Q_UNUSED(mode);
-}
-
-/*!
-    Return the white balance modes available.
-*/
-
-QCamera::WhiteBalanceModes QCameraControl::supportedWhiteBalanceModes() const
-{
-    return QCamera::WhiteBalanceAuto;
-}
-
-/*!
-    Return the white balance.
-*/
-
-int QCameraControl::manualWhiteBalance() const
-{
-    return -1;
-}
-
-/*!
-    Set the white balance to \a colorTemperature
-*/
-
-void QCameraControl::setManualWhiteBalance(int colorTemperature)
-{
-    Q_UNUSED(colorTemperature);
-}
-
-
-/*!
     \fn void QCameraControl::stateChanged(QCamera::State state)
 
     Signal emitted when \a state changes state.
