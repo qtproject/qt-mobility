@@ -21,10 +21,11 @@ symbian {
         TARGET.CAPABILITY = ALL -TCB
 }
 
-DEFINES += LOGDIR=\\\"$$DESTDIR\\\"
-
-
-logfile.path = $$DESTDIR
+symbian {
+    logfile.path = ./tst_qnmeapositioninfosource_nmealog.txt
+} else {
+    logfile.path = $$DESTDIR
+}
 logfile.files = tst_qnmeapositioninfosource_nmealog.txt
 logfile.CONFIG = no_link no_dependencies explicit_dependencies no_build combine ignore_no_exist no_clean
 INSTALLS += logfile
