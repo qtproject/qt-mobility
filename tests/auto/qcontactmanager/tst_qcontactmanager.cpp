@@ -2385,26 +2385,32 @@ void tst_QContactManager::actionPreferences()
     // create a sample contact
     QContactAvatar a;
     a.setAvatar("test.png");
-    QContactPhoneNumber p;
-    p.setNumber("12345");
+    QContactPhoneNumber p1;
+    p1.setNumber("12345");
+    QContactPhoneNumber p2;
+    p2.setNumber("34567");
+    QContactPhoneNumber p3;
+    p3.setNumber("56789");
     QContactUrl u;
     u.setUrl("http://test.nokia.com");
 
     QContact c;
     c.setDisplayLabel("Test Contact");
     c.saveDetail(&a);
-    c.saveDetail(&p);
+    c.saveDetail(&p1);
+    c.saveDetail(&p2);
+    c.saveDetail(&p3);
     c.saveDetail(&u);
 
-    // set a preference for dialing the saved phonenumber.
-    c.setPreferredDetail("Dial", p);
+    // set a preference for dialing a particular saved phonenumber.
+    c.setPreferredDetail("Dial", p2);
 
     QVERIFY(cm->saveContact(&c));          // save the contact
     QContact loaded = cm->contact(c.id()); // reload the contact
 
     // test that the preference was saved correctly.
     QContactDetail pref = loaded.preferredDetail("Dial");
-    QVERIFY(pref == p);
+    QVERIFY(pref == p2);
 
     cm->removeContact(c.id());
     delete cm;
