@@ -114,18 +114,10 @@ QContact QContactSymbianEngine::contact(const QUniqueId& contactId, QContactMana
 {
     QContact contact = d->contact(contactId, error);
 
-    // Synthesize display label in case it is empty (this is always the case,
-    // because the label it is not saved to the contact database and thus not
-    // modifiable by a client).
-    QContactDisplayLabel label = contact.displayLabel();
-    if( error == QContactManager::NoError && label.label().isEmpty()){
-        QString labelString = synthesiseDisplayLabel(contact, error);
-        if(error == QContactManager::NoError) {
-            label.setLabel(labelString);
-            label.setSynthesised(true);
-            contact.setDisplayLabel(label);
-        }
-    }
+    // Synthesize display label (the label it is not saved to the contact
+    // database and thus not modifiable by a client).
+    if(error == QContactManager::NoError)
+        updateDisplayLabel(contact);
 
     return contact;
 }
@@ -139,6 +131,7 @@ bool QContactSymbianEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
 		if (ret) {
             //TODO: check what to do with groupsChanged
 		    contactsChanged.insert(contact->id());
+	        updateDisplayLabel(*contact);
 		}
 	}
 	else { //create new contact
@@ -148,12 +141,24 @@ bool QContactSymbianEngine::saveContact(QContact* contact, QSet<QUniqueId>& cont
             ASSERT(newContactId);
             contact->setId(newContactId);
             contactsAdded.insert(newContactId);
+            updateDisplayLabel(*contact);
         }
 	}
-	
+
 	return ret;
 }
 
+void QContactSymbianEngine::updateDisplayLabel(QContact& contact) const
+{
+    QContactManager::Error error(QContactManager::NoError);
+    QContactDisplayLabel label = contact.displayLabel();
+    QString labelString = synthesiseDisplayLabel(contact, error);
+    if(error == QContactManager::NoError) {
+        label.setLabel(labelString);
+        label.setSynthesised(true);
+        contact.setDisplayLabel(label);
+    }
+}
 
 bool QContactSymbianEngine::removeContact(const QUniqueId& contactId, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& /*groupsChanged*/, QContactManager::Error& error)
 {

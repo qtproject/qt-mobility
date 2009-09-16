@@ -104,7 +104,8 @@ private slots:
 	void eventGroupChanged(const QUniqueId &groupId);
     
 private:
-   QContactSymbianEngineData *d;
+    void updateDisplayLabel(QContact& contact) const;
+    QContactSymbianEngineData *d;
 };
 
 class Q_DECL_EXPORT QContactSymbianFactory : public QObject, public QContactManagerEngineFactory
