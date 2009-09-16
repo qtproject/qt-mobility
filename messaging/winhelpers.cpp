@@ -59,12 +59,6 @@
 #include <mapitags.h>
 
 
-// TODO Retrieve message count, and hasSubfolders flag for message folders.
-// TODO determine if it is neccessary to use MAPI_MODIFY when opening folder in order to modify a message in a folder?
-// TODO review error handling make sure lastError is being updated appropriately
-// TODO Consider wrapping LPMAPITABLE and LPSRowSet
-// TODO proper iterators for folders (for sub folders, messages, their entry ids and their record ids)
-
 namespace {
 
 GUID GuidPublicStrings = { 0x00020329, 0x0000, 0x0000, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46 };
