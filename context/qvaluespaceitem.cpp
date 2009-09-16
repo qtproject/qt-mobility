@@ -202,6 +202,13 @@ struct QValueSpaceItemPrivateData : public QValueSpaceItemPrivate
         if (!man)
             return;
 
+        if ((filter & QAbstractValueSpaceLayer::PermanentLayer &&
+             filter & QAbstractValueSpaceLayer::NonPermanentLayer) ||
+            (filter & QAbstractValueSpaceLayer::WriteableLayer &&
+             filter & QAbstractValueSpaceLayer::NonWriteableLayer)) {
+            return;
+        }
+
         const QList<QAbstractValueSpaceLayer *> & readerList = man->getLayers();
 
         for (int ii = 0; ii < readerList.count(); ++ii) {

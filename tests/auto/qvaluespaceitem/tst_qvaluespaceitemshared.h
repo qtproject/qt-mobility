@@ -41,12 +41,17 @@ class tst_QValueSpaceItem : public QObject
 {
     Q_OBJECT
 
+public:
+    enum Type { Copy, CharStar, String, ByteArray };
+
 private slots:
     void initTestCase();
     void cleanupTestCase();
 
     void testConstructor_data();
     void testConstructor();
+    void testFilterConstructor_data();
+    void testFilterConstructor();
     void testAssignmentOperator_data();
     void testAssignmentOperator();
 
