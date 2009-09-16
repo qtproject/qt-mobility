@@ -73,19 +73,9 @@ class QTimer;
 class QSystemInfo;
 
 class CDeviceInfo;
-class CBatteryMonitor;
 class CBluetoothMonitor;
 class CProfileMonitor;
 class MCenRepNotifyHandlerCallback;
-
-//////// Observer for monitoring battery level, battery state and power state.
-class MBatteryObserver
-{
-
-public:
-     virtual void BatteryMonitorChangedL(TUint aLevel,
-         CTelephony::TBatteryStatus aState) = 0;
-};
 
 //////// QSystemInfo
 class QSystemInfoPrivate : public QObject
@@ -186,7 +176,7 @@ public:
 };
 
 //////// QSystemDeviceInfo
-class QSystemDeviceInfoPrivate : public QObject, public MBatteryObserver
+class QSystemDeviceInfoPrivate : public QObject
 {
     Q_OBJECT
 
@@ -196,11 +186,11 @@ public:
     virtual ~QSystemDeviceInfoPrivate();
 
     // device
-    QString imei() const;
-    QString imsi() const;
-    QString manufacturer() const;
-    QString model() const;
-    QString productName() const;
+    static QString imei();
+    static QString imsi();
+    static QString manufacturer();
+    static QString model();
+    static QString productName();
     
     bool isBatteryCharging();
     int batteryLevel() const;
@@ -217,9 +207,6 @@ public:
     
     void ProfileChangedL(TUint aLevel, CTelephony::TBatteryStatus aState);
 
-private: // From MBatteryObserver
-    void BatteryMonitorChangedL(TUint aLevel, CTelephony::TBatteryStatus aState);
-
 Q_SIGNALS:
     void batteryLevelChanged(int);
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus);
@@ -232,7 +219,6 @@ private:
     friend class CProfileMonitor;
     
     CDeviceInfo* iDeviceInfo;
-    CBatteryMonitor* iBatteryMonitor;
     CBluetoothMonitor* iBluetoothMonitor;
     CProfileMonitor* iProfileMonitor;
     MProEngEngine* iProfileEngine;
@@ -313,28 +299,6 @@ private:
     CTelephony::TIndicatorV1 iIndicatorV1;
     
     CActiveSchedulerWait *iWait;
-};
-
-//////// For monitoring battery level
-class CBatteryMonitor : public CActive
-{
-
-public:
-    CBatteryMonitor(MBatteryObserver& aObserver);
-    static CBatteryMonitor* NewL(MBatteryObserver& aObserver);
-    static CBatteryMonitor* NewLC(MBatteryObserver& aObserver);
-    void ConstructL();
-    ~CBatteryMonitor();
-
-private:
-    void RunL();
-    void DoCancel();
-
-private:
-    MBatteryObserver& iObserver;
-    CTelephony* iTelephony;
-    CTelephony::TBatteryInfoV1Pckg iBatteryInfoV1Pckg;
-    CTelephony::TBatteryInfoV1 iBatteryInfoV1;
 };
 
 //////// For monitoring bluetooth state

@@ -220,11 +220,6 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
     )    
     TRAP(iError,
         iProfileEngine = ProEngFactory::NewEngineL();
-    )    
-    TRAP(iError,
-        if (!iBatteryMonitor) {
-            iBatteryMonitor = CBatteryMonitor::NewL(*this);
-        }
     )
     TRAP(iError,
         if (!iBluetoothMonitor) {
@@ -272,37 +267,53 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
     return iDeviceInfo->currentPowerState();
 }
 
-QString QSystemDeviceInfoPrivate::imei() const
+QString QSystemDeviceInfoPrivate::imei()
 {
-    if (iDeviceInfo->imei().length() > 0) {
-        return iDeviceInfo->imei();
+    CDeviceInfo* deviceInfo = NULL;
+    TRAPD(error,
+        deviceInfo = CDeviceInfo::NewL();
+    )
+    if (deviceInfo->imei().length() > 0) {
+        return deviceInfo->imei();
     }
     else {
         return QString();
     }
 }
 
-QString QSystemDeviceInfoPrivate::imsi() const
+QString QSystemDeviceInfoPrivate::imsi()
 {
-    if (iDeviceInfo->imei().length() > 0) {
-        return iDeviceInfo->imei();
+    CDeviceInfo* deviceInfo = NULL;
+    TRAPD(error,
+        deviceInfo = CDeviceInfo::NewL();
+    )
+    if (deviceInfo->imei().length() > 0) {
+        return deviceInfo->imei();
     }
     else {
         return QString();
     }
 }
 
-QString QSystemDeviceInfoPrivate::manufacturer() const
+QString QSystemDeviceInfoPrivate::manufacturer()
 {
-    return iDeviceInfo->manufacturer();
+    CDeviceInfo* deviceInfo = NULL;
+    TRAPD(error,
+        deviceInfo = CDeviceInfo::NewL();
+    )
+    return deviceInfo->manufacturer();
 }
 
-QString QSystemDeviceInfoPrivate::model() const
+QString QSystemDeviceInfoPrivate::model()
 {
-    return iDeviceInfo->model();
+    CDeviceInfo* deviceInfo = NULL;
+    TRAPD(error,
+        deviceInfo = CDeviceInfo::NewL();
+    )
+    return deviceInfo->model();
 }
 
-QString QSystemDeviceInfoPrivate::productName() const
+QString QSystemDeviceInfoPrivate::productName()
 {
     QString productname;
     TBuf<KSysUtilVersionTextLength> versionBuf;
@@ -336,31 +347,6 @@ QSystemDeviceInfo::BatteryStatus QSystemDeviceInfoPrivate::batteryStatus()
     }
 
     return QSystemDeviceInfo::NoBatteryLevel;
-}
-
-void QSystemDeviceInfoPrivate::BatteryMonitorChangedL(TUint aLevel, CTelephony::TBatteryStatus aState)
-{
-    emit batteryLevelChanged(aLevel);
-    
-    if(aLevel == 3) {
-        emit batteryStatusChanged(QSystemDeviceInfo::BatteryCritical);
-    } else if(aLevel == 10) {
-        emit batteryStatusChanged(QSystemDeviceInfo::BatteryVeryLow);
-    } else if(aLevel == 40) {
-        emit batteryStatusChanged(QSystemDeviceInfo::BatteryLow);
-    } else if(aLevel > 40) {
-        if (batteryStatus() != QSystemDeviceInfo::BatteryNormal) {
-            emit batteryStatusChanged(QSystemDeviceInfo::BatteryNormal);
-        }
-    }
-    
-    if (aState == CTelephony::EPowerStatusUnknown) {
-        emit powerStateChanged(QSystemDeviceInfo::UnknownPower);
-    } else if (aState == CTelephony::EPoweredByBattery) {
-        emit powerStateChanged(QSystemDeviceInfo::BatteryPower);
-    } else if (aState == CTelephony::EBatteryConnectedButExternallyPowered) {
-        emit powerStateChanged(QSystemDeviceInfo::WallPower);
-    }
 }
 
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
@@ -554,53 +540,6 @@ TUint CDeviceInfo::batteryLevel()
         iWait->Start();
     }
     return iBatteryInfoV1.iChargeLevel;
-}
-
-//////// For monitoring battery level
-CBatteryMonitor::CBatteryMonitor(MBatteryObserver& aObserver)
-    : CActive(EPriorityStandard), iObserver(aObserver), iBatteryInfoV1Pckg(iBatteryInfoV1)
-{
-    CActiveScheduler::Add(this);
-}
-
-CBatteryMonitor::~CBatteryMonitor()
-{
-    Cancel();
-    delete iTelephony;
-}
-
-CBatteryMonitor* CBatteryMonitor::NewL(MBatteryObserver& aObserver)
-{
-    CBatteryMonitor* self = CBatteryMonitor::NewLC(aObserver);
-    CleanupStack::Pop(self);
-    return self;
-}
- 
-CBatteryMonitor* CBatteryMonitor::NewLC(MBatteryObserver& aObserver)
-{
-    CBatteryMonitor* self = new (ELeave) CBatteryMonitor(aObserver);
-    CleanupStack::PushL(self);
-    self->ConstructL();
-    return self;
-}
- 
-void CBatteryMonitor::ConstructL()
-{
-    iTelephony = CTelephony::NewL();
-    iTelephony->GetBatteryInfo(iStatus, iBatteryInfoV1Pckg);
-    SetActive();
-}
- 
-void CBatteryMonitor::RunL()
-{
-    iObserver.BatteryMonitorChangedL(iBatteryInfoV1.iChargeLevel, iBatteryInfoV1.iStatus);
-    iTelephony->NotifyChange(iStatus, CTelephony::EBatteryInfoChange, iBatteryInfoV1Pckg);
-    SetActive();
-}
- 
-void CBatteryMonitor::DoCancel()
-{
-    iTelephony->CancelAsync(CTelephony::EBatteryInfoChangeCancel);
 }
 
 //////// For monitoring bluetooth state
