@@ -109,7 +109,12 @@ public:
     QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
     
-    bool saveContact(QContact* contact, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error);
+    bool saveContact(QContact* contact,
+                     QSet<QUniqueId>& contactsAdded,
+                     QSet<QUniqueId>& contactsChanged,
+                     QSet<QUniqueId>& groupsChanged,
+                     QContactManager::Error& error);
+
     QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error);
     
     bool removeContact(const QUniqueId& contactId, QSet<QUniqueId>& contactsRemoved, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error);
@@ -149,6 +154,10 @@ private slots:
 
 
 private:
+    void saveContactDetails( RDFServicePtr service,
+                             Live<nco::PersonContact>& ncoContact,
+                             QContact* contact,
+                             QContactManager::Error& error );
     //called from both constructors, connecting to all contact NodeList changes signals
     void connectToSignals();
     RDFVariable contactDetail2Rdf(const RDFVariable& rdfContact, const QString& definitionName, const QString& fieldName) const;

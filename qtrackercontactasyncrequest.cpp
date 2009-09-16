@@ -180,9 +180,11 @@ QTrackerContactAsyncRequest::QTrackerContactAsyncRequest(
             applyFilterToRDFVariable(RDFContact1, r->filter());
             RDFSelect quer;
             RDFVariable lastname = RDFContact1.optional().property<nco::nameFamily>();
+            RDFVariable middlename = RDFContact1.optional().property<nco::nameAdditional>();
             RDFVariable firstname = RDFContact1.optional().property<nco::nameGiven>();
             quer.addColumn("contactId",  RDFContact1.property<nco::contactUID>());
             quer.addColumn("firstname",  firstname);
+            quer.addColumn("middlename",  middlename);
             quer.addColumn("secondname", lastname);
             quer.addColumn("photo",      RDFContact1.optional().property<nco::photo>());
 
@@ -268,7 +270,12 @@ void QTrackerContactAsyncRequest::modelUpdated()
     // for now this only serves get all contacts
     for(int i = 0; i < query->rowCount(); i++)
     {
-        result.append(query->index(i, 1).data().toUInt());
+        bool ok;
+        QUniqueId id = query->index(i, 1).data().toUInt(&ok);
+        if (ok) {
+            // Append only, if we have a valid contact id
+            result.append(id);
+        }
     }
 
     if (engine)
@@ -319,8 +326,12 @@ void QTrackerContactAsyncRequest::contactsReady()
                 << query->index(i, column + 10).data().toString();
 */
         contact.setId(query->index(i, column++).data().toUInt());
-
-        quint32 contactid = query->index(i, 0).data().toUInt();
+        bool ok;
+        QUniqueId contactid = query->index(i, 0).data().toUInt(&ok);
+        if (!ok) {
+            // Got an invalid contact id, skip the whole result
+            continue;
+        }
         QHash<quint32, int>::const_iterator it = resultLookup.find(contactid);
         int index = -1;
         if (resultLookup.end() != it)
@@ -340,6 +351,7 @@ void QTrackerContactAsyncRequest::contactsReady()
         // are not already in QContact
         QContactName name = contact.detail(QContactName::DefinitionName);
         name.setFirst(query->index(i, column++).data().toString());
+        name.setMiddle(query->index(i, column++).data().toString());
         name.setLast(query->index(i, column++).data().toString());
         contact.saveDetail(&name);
 
