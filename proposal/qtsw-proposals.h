@@ -30,10 +30,11 @@ public:
 
     /* The status of Autonomous is where an action which doesn't send any progress signals */
     enum Status {
-        Inactive = 0,   // operation not yet started
-        Active,         // operation started, not yet finished
-        Finished,       // operation successfully completed
-        Autonomous      // operation started, no further information available - name under discussion.
+        Inactive = 0,      // operation not yet started
+        Autonomous,        // operation started, no further information available - name under discussion.
+        Active,            // operation started, not yet finished
+        Finished,          // operation successfully completed
+        FinishedWithError  // operation finished, but error occurred
     };
 
 signals:
