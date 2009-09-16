@@ -42,7 +42,7 @@ class QMessageServiceActionPrivate;
 class Q_MESSAGING_EXPORT QMessageServiceAction : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(QMessageAddress)
+    Q_DECLARE_PRIVATE(QMessageServiceAction)
 
 public:
     enum State {

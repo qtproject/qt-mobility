@@ -35,16 +35,21 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <qmessageserviceaction.h>
 
 class QComboBox;
 class QListView;
-class QMessageServiceAction;
 class QTabWidget;
 
 class MainWindow : public QMainWindow
 {
+    Q_OBJECT
+
 public:
     MainWindow(QWidget* parent = 0, Qt::WindowFlags f = 0);
+
+private slots:
+    void serviceStateChanged(QMessageServiceAction::State state);
 
 private:
     QTabWidget* m_tabWidget;

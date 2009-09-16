@@ -73,6 +73,10 @@ public:
     MapiEntryId(LPBYTE mapiEntryId, ULONG entryIdLength)
     :
     QByteArray(reinterpret_cast<const char*>(mapiEntryId),entryIdLength){}
+
+    MapiEntryId(const QByteArray& source)
+    :
+    QByteArray(source){}
 };
 
 typedef MapiEntryId MapiRecordKey;
@@ -199,7 +203,7 @@ private:
 
     MapiSessionPtr _session;
     bool _valid;
-    LPMDB _store;
+    IMsgStore* _store;
     MapiRecordKey _key;
     MapiEntryId _entryId;
     QString _name;
@@ -225,7 +229,7 @@ public:
     QMessage message(QMessageStore::ErrorCode *lastError, const QMessageId& id) const;
 
     QByteArray attachmentData(QMessageStore::ErrorCode *lastError, const QMessageId& id, ULONG number) const;
-    bool showForm(LPMESSAGE message, LPMAPIFOLDER folder, LPMDB store);
+    bool showForm(IMessage* message, IMAPIFolder* folder, IMsgStore* store);
 
     IMAPISession* session() const { return _mapiSession; }
 

@@ -716,6 +716,7 @@ IMessage *MapiFolder::openMessage(QMessageStore::ErrorCode *lastError, const Map
     HRESULT rv = _folder->OpenEntry(entryId.count(), entryIdPtr, 0, MAPI_BEST_ACCESS, &objectType, reinterpret_cast<LPUNKNOWN*>(&message));
     if (rv != S_OK) {
         *lastError = QMessageStore::InvalidId;
+        qDebug() << "Invalid message entryId:" << entryId.toBase64();
     }
 
     return message;
@@ -741,9 +742,10 @@ static unsigned long commonFolderMap(QMessage::StandardFolder folder)
     if(!init)
     {
         propertyMap.insert(QMessage::DraftsFolder,PROP_TAG(PT_BINARY,PR_IPM_DRAFTS_ENTRYID));
-        propertyMap.insert(QMessage::TrashFolder,PROP_TAG(PT_BINARY,PR_IPM_WASTEBASKET_ENTRYID));
-        propertyMap.insert(QMessage::OutboxFolder,PROP_TAG(PT_BINARY,PR_IPM_OUTBOX_ENTRYID));
-        propertyMap.insert(QMessage::SentFolder,PROP_TAG(PT_BINARY,PR_IPM_SENTMAIL_ENTRYID));
+        propertyMap.insert(QMessage::TrashFolder,PROP_TAG(PT_BINARY,0x35E3));
+        propertyMap.insert(QMessage::OutboxFolder,PROP_TAG(PT_BINARY,0x35E2));
+        propertyMap.insert(QMessage::SentFolder,PROP_TAG(PT_BINARY,0x35E4));
+
         init = true;
     }
 
@@ -774,6 +776,7 @@ IMessage* MapiFolder::createMessage(const QMessage& source, const MapiSessionPtr
         }
 
         LONG flags = (MSGFLAG_UNSENT | MSGFLAG_UNMODIFIED | MSGFLAG_FROMME);
+
         if (source.status() & QMessage::HasAttachments) {
             flags |= MSGFLAG_HASATTACH;
         }
@@ -1041,17 +1044,22 @@ MapiFolderPtr MapiStore::findFolder(QMessageStore::ErrorCode *lastError, QMessag
     MAPIFreeBuffer(props);
 
     if(!commonFolderSupported)
+    {
+        qWarning() << "Common folder unsupported on this MAPI store";
         return result;
+    }
 
     MapiFolderPtr baseFolder = receiveFolder(lastError); //start with inbox
 
     switch(sf)
     {
         case QMessage::InboxFolder:
+        {
             result = baseFolder;
-        break;
+            return result;
+        } break;
 
-        default:
+        case QMessage::DraftsFolder:
         {
             if(*lastError != QMessageStore::NoError || baseFolder.isNull())
             {
@@ -1072,18 +1080,34 @@ MapiFolderPtr MapiStore::findFolder(QMessageStore::ErrorCode *lastError, QMessag
 
             if(FAILED(baseFolder->folder()->GetProps((LPSPropTagArray) gTags, 0, &cValues, &props)))
             {
-                qWarning() << "Failed to get common folder";
+                qWarning() << "Failed to get common folder from root folder";
                 *lastError = QMessageStore::ContentInaccessible;
                 return result;
             }
 
-            MapiEntryId entryId(props[0].Value.bin.lpb, props[0].Value.bin.cb);
-            MAPIFreeBuffer(props);
-            return openFolder(lastError, entryId);
+        } break;
+
+        case QMessage::TrashFolder:
+        case QMessage::SentFolder:
+        case QMessage::OutboxFolder:
+        {
+            props= 0;
+            cValues=0;
+            ULONG gTags[]={1,commonFolderMap(sf)};
+
+            if(FAILED(_store->GetProps((LPSPropTagArray) gTags, 0, &cValues, &props)) || props[0].ulPropTag != gTags[1])
+            {
+                qWarning() << "Failed to get common folder from store";
+                *lastError = QMessageStore::ContentInaccessible;
+                return result;
+            }
         }
         break;
     }
 
+    MapiEntryId entryId(props[0].Value.bin.lpb, props[0].Value.bin.cb);
+    MAPIFreeBuffer(props);
+    result = openFolder(lastError, entryId);
     return result;
 }
 
@@ -1248,6 +1272,8 @@ MapiFolderPtr MapiStore::receiveFolder(QMessageStore::ErrorCode *lastError)
     }
 
     MapiEntryId entryId(entryIdPtr, entryIdSize);
+
+
     MAPIFreeBuffer(entryIdPtr);
 
     return openFolder(lastError, entryId);
@@ -1336,7 +1362,6 @@ MapiSession::MapiSession(QMessageStore::ErrorCode *lastError, bool mapiInitializ
 {
     if (!_valid) {
         *lastError = QMessageStore::ContentInaccessible;
-        qWarning() << "MAPI NOT INIT!!!!!!!";
         return;
     }
 
@@ -2505,16 +2530,17 @@ bool MapiSession::showForm(IMessage* message, IMAPIFolder* folder, LPMDB store)
 #endif
             HRESULT hr=_mapiSession->ShowForm(NULL, store, folder, NULL,messageToken, NULL, 0,messageStatus, messageFlags & MAPI_NEW_MESSAGE, messageAccess, szMessageClass);
             MAPIFreeBuffer(pProp);
-            if(hr!=S_OK)
-            {
-                qWarning() << "Show form failed";
-                return false;
-            }
-            else if(hr==MAPI_E_USER_CANCEL)
+            if(hr==MAPI_E_USER_CANCEL)
             {
                 qWarning() << "Show form cancelled";
                 return false;
             }
+            else if(hr!=S_OK)
+            {
+                qWarning() << "Show form failed";
+                return false;
+            }
+ 
         }
         else
         {

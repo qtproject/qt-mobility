@@ -30,7 +30,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #include "qmessageserviceaction.h"
 #include <mapix.h>
 #include <objbase.h>
@@ -45,16 +44,21 @@
 #include "qmessage_p.h"
 #include "qmessagestore_p.h"
 
+//TODO make all functions non-blocking and asynchronous
+
 using namespace WinHelpers;
 
 class QMessageServiceActionPrivate : public QObject
 {
     Q_OBJECT
 
+    Q_DECLARE_PUBLIC(QMessageServiceAction)
+
 public:
     QMessageServiceActionPrivate(QMessageServiceAction* parent);
 
     bool send(const QMessage& message, bool showComposer = false);
+    bool show(const QMessageId& id);
 
 public slots:
     void completed();
@@ -68,9 +72,11 @@ signals:
 public:
     QMessageServiceAction* q_ptr;
     bool _active;
-    QMessageStore::ErrorCode _error;
+    QMessageStore::ErrorCode _lastError;
     QMessageIdList _candidateIds;
+    QMessageServiceAction::State _state;
 };
+
 
 void QMessageServiceActionPrivate::completed()
 {
@@ -86,7 +92,8 @@ void QMessageServiceActionPrivate::reportMatchingIds()
 
 QMessageServiceActionPrivate::QMessageServiceActionPrivate(QMessageServiceAction* parent)
     :q_ptr(parent),
-     _active(false)
+     _active(false),
+     _state(QMessageServiceAction::Pending)
 {
 }
 
@@ -101,6 +108,7 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
         QMessageAccountId defaultAccountId = QMessageAccount::defaultAccount(message.type());
         if(!defaultAccountId.isValid())
         {
+            _lastError = QMessageStore::ConstraintFailure;
             qWarning() << "No default account available for message type.";
             return false;
         }
@@ -108,18 +116,17 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
         outgoing.setParentAccountId(defaultAccountId);
     }
 
-    QMessageStore::ErrorCode lastError = QMessageStore::NoError;
+    MapiSessionPtr mapiSession(MapiSession::createSession(&_lastError,true));
 
-    MapiSessionPtr mapiSession(MapiSession::createSession(&lastError,true));
-    if (lastError != QMessageStore::NoError)
+    if (_lastError != QMessageStore::NoError)
     {
         qWarning() << "Could not create seesion";
         return false;
     }
 
-    MapiStorePtr mapiStore = mapiSession->findStore(&lastError, outgoing.parentAccountId(),false);
+    MapiStorePtr mapiStore = mapiSession->findStore(&_lastError, outgoing.parentAccountId(),false);
 
-    if(mapiStore.isNull() || lastError != QMessageStore::NoError)
+    if(mapiStore.isNull() || _lastError != QMessageStore::NoError)
     {
         qWarning() << "Unable to get store for the account";
         return false;
@@ -130,20 +137,20 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
     QMessageFolder folder(outgoing.parentFolderId());
 
     if(folder.id().isValid())
-        mapiFolder = mapiStore->findFolder(&lastError, QMessageFolderIdPrivate::folderRecordKey(folder.id()));
+        mapiFolder = mapiStore->findFolder(&_lastError, QMessageFolderIdPrivate::folderRecordKey(folder.id()));
     else
-        mapiFolder = mapiStore->findFolder(&lastError, outgoing.standardFolder());
+        mapiFolder = mapiStore->findFolder(&_lastError, outgoing.standardFolder());
 
     //QMessagePrivate::setStandardFolder(outgoing,QMessage::DraftsFolder); //TODO default ATM
 
-    if( mapiFolder.isNull() || lastError != QMessageStore::NoError ) {
+    if( mapiFolder.isNull() || _lastError != QMessageStore::NoError ) {
         qWarning() << "Unable to get folder for the message";
         return false;
     }
 
-    IMessage* mapiMessage = mapiFolder->createMessage(outgoing,mapiSession,&lastError, true);
+    IMessage* mapiMessage = mapiFolder->createMessage(outgoing,mapiSession,&_lastError, true);
 
-    if(!mapiMessage || lastError != QMessageStore::NoError)
+    if(!mapiMessage || _lastError != QMessageStore::NoError)
     {
         qWarning() << "Unable to create MAPI message from source";
         mapiRelease(mapiMessage);
@@ -155,17 +162,17 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
         if(FAILED(mapiSession->showForm(mapiMessage,mapiFolder->folder(),mapiStore->store())))
         {
             qWarning() << "MAPI ShowForm failed.";
+            _lastError = QMessageStore::FrameworkFault;
             mapiRelease(mapiMessage);
             return false;
         }
     }
     else
     {
-        //call submit
-
         if(FAILED(mapiMessage->SubmitMessage(0)))
         {
             qWarning() << "MAPI SubmitMessage failed.";
+            _lastError = QMessageStore::FrameworkFault;
             mapiRelease(mapiMessage);
             return false;
         }
@@ -173,6 +180,67 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
 
     if(!mapiSession->flushQueues())
         qWarning() << "MAPI flush queues failed.";
+
+    mapiRelease(mapiMessage);
+
+    return true;
+}
+
+bool QMessageServiceActionPrivate::show(const QMessageId& messageId)
+{
+    if(!messageId.isValid())
+    {
+        _lastError = QMessageStore::InvalidId;
+        qWarning() << "Invalid message id";
+        return false;
+    }
+
+    MapiSessionPtr mapiSession(MapiSession::createSession(&_lastError,true));
+    if (_lastError != QMessageStore::NoError)
+    {
+        qWarning() << "Could not create seesion";
+        return false;
+    }
+
+    //messageId -> IMapiStore
+    //messageId -> IMapiFolder
+    //messageId -> IMessage
+
+    MapiEntryId entryId = QMessageIdPrivate::entryId(messageId);
+    MapiRecordKey folderRecordKey = QMessageIdPrivate::folderRecordKey(messageId);
+    MapiRecordKey storeRecordKey = QMessageIdPrivate::storeRecordKey(messageId);
+
+    MapiStorePtr mapiStore = mapiSession->findStore(&_lastError,QMessageAccountIdPrivate::from(storeRecordKey));
+
+    if(mapiStore.isNull() || _lastError != QMessageStore::NoError)
+    {
+        qWarning() << "Unable to get store for the message";
+        return false;
+    }
+
+    MapiFolderPtr mapiFolder = mapiStore->openFolder(&_lastError,folderRecordKey);
+
+    if( mapiFolder.isNull() || _lastError != QMessageStore::NoError ) {
+        qWarning() << "Unable to get folder for the message";
+        return false;
+    }
+
+    IMessage* mapiMessage = mapiFolder->openMessage(&_lastError,entryId);
+
+    if(!mapiMessage || _lastError != QMessageStore::NoError)
+    {
+        qWarning() << "Unable to create MAPI message from source";
+        mapiRelease(mapiMessage);
+        return false;
+    }
+
+    if(FAILED(mapiSession->showForm(mapiMessage,mapiFolder->folder(),mapiStore->store())))
+    {
+        qWarning() << "MAPI ShowForm failed.";
+        _lastError = QMessageStore::FrameworkFault;
+        mapiRelease(mapiMessage);
+        return false;
+    }
 
     mapiRelease(mapiMessage);
 
@@ -205,9 +273,9 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QM
     }
     d_ptr->_active = true;
     d_ptr->_candidateIds = QMessageStore::instance()->queryMessages(filter, ordering, limit, offset);
-    d_ptr->_error = QMessageStore::instance()->lastError();
+    d_ptr->_lastError = QMessageStore::instance()->lastError();
 
-    if (d_ptr->_error == QMessageStore::NoError) {
+    if (d_ptr->_lastError == QMessageStore::NoError) {
         QTimer::singleShot(0, d_ptr, SLOT(reportMatchingIds()));
         return true;
     }
@@ -243,12 +311,47 @@ bool QMessageServiceAction::countMessages(const QMessageFilter &filter, const QS
 
 bool QMessageServiceAction::send(QMessage &message)
 {
-    return d_ptr->send(message);
+    if(d_ptr->_active) {
+        qWarning() << "Action is currently busy";
+        return false;
+    }
+
+    d_ptr->_state = QMessageServiceAction::InProgress;
+    emit stateChanged(d_ptr->_state);
+    d_ptr->_active = true;
+
+    d_ptr->_lastError = QMessageStore::NoError;
+
+    bool result = d_ptr->send(message);
+
+    d_ptr->_state = result ? QMessageServiceAction::Successful : QMessageServiceAction::Failed;
+    emit stateChanged(d_ptr->_state);
+
+    d_ptr->_active = false;
+
+    return result;
 }
 
 bool QMessageServiceAction::compose(const QMessage &message)
 {
-    return d_ptr->send(message,true);
+    if(d_ptr->_active) {
+        qWarning() << "Action is currently busy";
+        return false;
+    }
+
+    d_ptr->_state = QMessageServiceAction::InProgress;
+    emit stateChanged(d_ptr->_state);
+    d_ptr->_active = true;
+
+    d_ptr->_lastError = QMessageStore::NoError;
+
+    bool result = d_ptr->send(message,true);
+
+    d_ptr->_state = result ? QMessageServiceAction::Successful : QMessageServiceAction::Failed;
+    emit stateChanged(d_ptr->_state);
+    d_ptr->_active = false;
+
+    return result;
 }
 
 bool QMessageServiceAction::retrieveHeader(const QMessageId& id)
@@ -271,8 +374,23 @@ bool QMessageServiceAction::retrieve(const QMessageContentContainerId& id)
 
 bool QMessageServiceAction::show(const QMessageId& id)
 {
-    Q_UNUSED(id)
-    return false; // stub
+    if(d_ptr->_active) {
+        qWarning() << "Action is currently busy";
+        return false;
+    }
+
+    d_ptr->_state = InProgress;
+    emit stateChanged(d_ptr->_state);
+    d_ptr->_lastError = QMessageStore::NoError;
+    d_ptr->_active = true;
+
+    bool result = d_ptr->show(id);
+
+    d_ptr->_state = result ? QMessageServiceAction::Successful : QMessageServiceAction::Failed;
+    emit stateChanged(d_ptr->_state);
+    d_ptr->_active = false;
+
+    return result;
 }
 
 bool QMessageServiceAction::exportUpdates(const QMessageAccountId &id)
@@ -283,7 +401,7 @@ bool QMessageServiceAction::exportUpdates(const QMessageAccountId &id)
 
 QMessageServiceAction::State QMessageServiceAction::state() const
 {
-    return Pending; // stub
+    return d_ptr->_state;
 }
 
 void QMessageServiceAction::cancelOperation()
@@ -292,7 +410,7 @@ void QMessageServiceAction::cancelOperation()
 
 QMessageStore::ErrorCode QMessageServiceAction::lastError() const
 {
-    return d_ptr->_error;
+    return d_ptr->_lastError;
 }
 
-#include "qmessageserviceaction_win.moc"
+#include <qmessageserviceaction_win.moc>

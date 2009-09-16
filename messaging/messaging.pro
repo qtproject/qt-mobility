@@ -42,8 +42,7 @@ HEADERS += qmessageglobal.h \
            qmessageordering_p.h \
            qmessagestore.h \
            qmessagestore_p.h \
-           qmessageserviceaction.h \
-           qmessageserviceaction_p.h
+           qmessageserviceaction.h
 
 SOURCES += qmessageid.cpp \
            qmessagecontentcontainerid.cpp \
