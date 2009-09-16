@@ -55,13 +55,13 @@ QList<CContactItemField *> TransformAddress::transformDetailL(const QContactDeta
     fieldList.append(postCode);
     CleanupStack::Pop(postCode);
     
-    //display label(street)
-    TPtrC fieldTextDisplayLabel(reinterpret_cast<const TUint16*>(address.displayLabel().utf16()));
-    CContactItemField* displayLabel = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldAddress);
-    displayLabel->TextStorage()->SetTextL(fieldTextDisplayLabel);
-    setContextsL(address, *displayLabel);
-    fieldList.append(displayLabel);
-    CleanupStack::Pop(displayLabel);
+    //street
+    TPtrC fieldTextStreet(reinterpret_cast<const TUint16*>(address.street().utf16()));
+    CContactItemField* street = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldAddress);
+    street->TextStorage()->SetTextL(fieldTextStreet);
+    setContextsL(address, *street);
+    fieldList.append(street);
+    CleanupStack::Pop(street);
         
     //locality(city)
     TPtrC fieldTextLocality(reinterpret_cast<const TUint16*>(address.locality().utf16()));
@@ -101,9 +101,9 @@ QContactDetail *TransformAddress::transformItemField(const CContactItemField& fi
             address->setPostcode(addressValue);
         }
         
-        //display label (street)
+        //street
         else if (field.ContentType().FieldType(i) == KUidContactFieldAddress) {
-            address->setDisplayLabel(addressValue);
+            address->setStreet(addressValue);
         }
         
         //locality (city)
@@ -114,6 +114,9 @@ QContactDetail *TransformAddress::transformItemField(const CContactItemField& fi
         //region
         else if (field.ContentType().FieldType(i) == KUidContactFieldRegion) {
             address->setRegion(addressValue);
+        }
+        else {
+            setContexts(field.ContentType().FieldType(i), *address);
         }
     }
     
