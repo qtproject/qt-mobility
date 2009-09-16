@@ -513,6 +513,9 @@ QDebug operator<<(QDebug dbg, const QGeoCoordinate &coord)
 
 #ifndef QT_NO_DATASTREAM
 /*!
+    \fn QDataStream &operator<<(QDataStream &stream, const QGeoCoordinate &coordinate)
+    \relates QGeoCoordinate
+
     Writes the given \a coordinate to the specified \a stream.
 
     \sa {Format of the QDataStream Operators}
@@ -529,6 +532,9 @@ QDataStream &operator<<(QDataStream &stream, const QGeoCoordinate &coordinate)
 
 #ifndef QT_NO_DATASTREAM
 /*!
+    \fn QDataStream &operator>>(QDataStream &stream, QGeoCoordinate &coordinate)
+    \relates QGeoCoordinate
+
     Reads a coordinate from the specified \a stream into the given
     \a coordinate.
 

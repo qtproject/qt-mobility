@@ -272,21 +272,40 @@ QDebug operator<<(QDebug dbg, const QGeoPositionInfo &update)
 #endif
 
 #ifndef QT_NO_DATASTREAM
-QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &update)
+/*!
+    \fn QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &info)
+    \relates QGeoPositionInfo
+
+    Writes the given \a info to the specified \a stream.
+
+    \sa {Format of the QDataStream Operators}
+*/
+
+QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &info)
 {
-    stream << update.d->dateTime;
-    stream << update.d->coord;
-    stream << update.d->doubleProps;
+    stream << info.d->dateTime;
+    stream << info.d->coord;
+    stream << info.d->doubleProps;
     return stream;
 }
 #endif
 
 #ifndef QT_NO_DATASTREAM
-QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &update)
+/*!
+    \fn QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &info)
+    \relates QGeoPositionInfo
+
+    Reads a coordinate from the specified \a stream into the given
+    \a info.
+
+    \sa {Format of the QDataStream Operators}
+*/
+
+QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &info)
 {
-    stream >> update.d->dateTime;
-    stream >> update.d->coord;
-    stream >> update.d->doubleProps;
+    stream >> info.d->dateTime;
+    stream >> info.d->coord;
+    stream >> info.d->doubleProps;
     return stream;
 }
 #endif
