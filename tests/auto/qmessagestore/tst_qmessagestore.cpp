@@ -135,7 +135,7 @@ void tst_QMessageStore::testFolder_data()
     QTest::newRow("Inbox") << "Inbox" << "Inbox" << "" << "Inbox";
     QTest::newRow("Drafts") << "Drafts" << "" << "" << "Drafts";
     QTest::newRow("Archived") << "Inbox/Archived" << "Archived" << "Inbox" << "Archived";
-    QTest::newRow("Backup") << "Inbox/Archived/Backup" << "" << "Inbox/Archived" << "Inbox/Archived/Backup";
+    QTest::newRow("Backup") << "Inbox/Archived/Backup" << "Backup" << "Inbox/Archived" << "Backup";
 }
 
 void tst_QMessageStore::testFolder()
@@ -232,9 +232,11 @@ void tst_QMessageStore::testMessage_data()
     QTest::addColumn<QString>("from");
     QTest::addColumn<QString>("date");
     QTest::addColumn<QString>("subject");
+    QTest::addColumn<QByteArray>("messageType");
+    QTest::addColumn<QByteArray>("messageSubType");
     QTest::addColumn<QString>("text");
-    QTest::addColumn<QByteArray>("type");
-    QTest::addColumn<QByteArray>("subType");
+    QTest::addColumn<QByteArray>("bodyType");
+    QTest::addColumn<QByteArray>("bodySubType");
     QTest::addColumn<QStringList>("attachments");
     QTest::addColumn<QList<QByteArray> >("attachmentType");
     QTest::addColumn<QList<QByteArray> >("attachmentSubType");
@@ -249,6 +251,8 @@ void tst_QMessageStore::testMessage_data()
         << "bob@example.com"
         << "1999-12-31T23:59:59Z"
         << "Last message..."
+        << QByteArray("text")
+        << QByteArray("plain")
         << "...before Y2K"
         << QByteArray("text")
         << QByteArray("plain")
@@ -262,6 +266,8 @@ void tst_QMessageStore::testMessage_data()
         << "bob@example.com"
         << "1999-12-31T23:59:59Z"
         << "Last HTML message..."
+        << QByteArray("text")
+        << QByteArray("html")
         << "<html><p>...before <b>Y2K</b></p></html>"
         << QByteArray("text")
         << QByteArray("html")
@@ -275,6 +281,8 @@ void tst_QMessageStore::testMessage_data()
         << "bob@example.com"
         << "1999-12-31T23:59:59Z"
         << "Last message..."
+        << QByteArray("multipart")
+        << QByteArray("mixed")
         << "...before Y2K"
         << QByteArray("text")
         << QByteArray("plain")
@@ -288,6 +296,8 @@ void tst_QMessageStore::testMessage_data()
         << "bob@example.com"
         << "1999-12-31T23:59:59Z"
         << "Last HTML message..."
+        << QByteArray("multipart")
+        << QByteArray("mixed")
         << "<html><p>...before <b>Y2K</b></p></html>"
         << QByteArray("text")
         << QByteArray("html")
@@ -370,9 +380,11 @@ void tst_QMessageStore::testMessage()
     QFETCH(QString, from);
     QFETCH(QString, date);
     QFETCH(QString, subject);
+    QFETCH(QByteArray, messageType);
+    QFETCH(QByteArray, messageSubType);
     QFETCH(QString, text);
-    QFETCH(QByteArray, type);
-    QFETCH(QByteArray, subType);
+    QFETCH(QByteArray, bodyType);
+    QFETCH(QByteArray, bodySubType);
     QFETCH(QStringList, attachments);
     QFETCH(QList<QByteArray>, attachmentType);
     QFETCH(QList<QByteArray>, attachmentSubType);
@@ -389,7 +401,7 @@ void tst_QMessageStore::testMessage()
     p.insert("from", from);
     p.insert("date", date);
     p.insert("subject", subject);
-    p.insert("mimeType", type + '/' + subType);
+    p.insert("mimeType", bodyType + '/' + bodySubType);
     p.insert("text", text);
     p.insert("parentAccountName", testAccountName);
 #ifdef QMESSAGING_OPTIONAL_FOLDER
@@ -418,6 +430,9 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(message.date(), QDateTime::fromString(date, Qt::ISODate));
     QCOMPARE(message.subject(), subject);
 
+    QCOMPARE(message.contentType().toLower(), messageType.toLower());
+    QCOMPARE(message.contentSubType().toLower(), messageSubType.toLower());
+
     QMessageContentContainerId bodyId(message.bodyId());
     QVERIFY(bodyId.isValid());
 
@@ -425,8 +440,8 @@ void tst_QMessageStore::testMessage()
     // Note: this is not true, which is somewhat counter-intuitive:
     //QVERIFY(body.containerId().isValid());
 
-    QCOMPARE(body.contentType().toLower(), type.toLower());
-    QCOMPARE(body.contentSubType().toLower(), subType.toLower());
+    QCOMPARE(body.contentType().toLower(), bodyType.toLower());
+    QCOMPARE(body.contentSubType().toLower(), bodySubType.toLower());
     QCOMPARE(body.contentCharset().toLower(), defaultCharset.toLower());
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), text);
