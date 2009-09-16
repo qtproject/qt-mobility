@@ -19,4 +19,5 @@ symbian {
     addFiles.sources = ../../testservice2/xml/testserviceplugin.xml
     addFiles.path = xmldata
     DEPLOYMENT += addFiles
+    LIBS += -lefsrv
 }

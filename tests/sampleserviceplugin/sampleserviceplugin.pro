@@ -16,9 +16,7 @@ symbian {
     pluginDep.sources = tst_sfw_sampleserviceplugin.dll
     pluginDep.path = $$QT_PLUGINS_BASE_DIR    
 
-    addFiles.sources = xml/sampleservice.xml
-    addFiles.path = xmldata
-    DEPLOYMENT += addFiles pluginDep
+    DEPLOYMENT += pluginDep
     
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL -TCB
