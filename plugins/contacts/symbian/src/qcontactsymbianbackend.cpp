@@ -112,7 +112,22 @@ QList<QUniqueId> QContactSymbianEngine::contacts(const QList<QContactSortOrder>&
 
 QContact QContactSymbianEngine::contact(const QUniqueId& contactId, QContactManager::Error& error) const
 {
-	return d->contact(contactId, error);
+    QContact contact = d->contact(contactId, error);
+
+    // Synthesize display label in case it is empty (this is always the case,
+    // because the label it is not saved to the contact database and thus not
+    // modifiable by a client).
+    QContactDisplayLabel label = contact.displayLabel();
+    if( error == QContactManager::NoError && label.label().isEmpty()){
+        QString labelString = synthesiseDisplayLabel(contact, error);
+        if(error == QContactManager::NoError) {
+            label.setLabel(labelString);
+            label.setSynthesised(true);
+            contact.setDisplayLabel(label);
+        }
+    }
+
+    return contact;
 }
 
 bool QContactSymbianEngine::saveContact(QContact* contact, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& /*groupsChanged*/, QContactManager::Error& error)
