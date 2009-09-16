@@ -162,6 +162,13 @@ QValueSpaceObjectPrivate::QValueSpaceObjectPrivate(const QByteArray &objectPath,
 {
     path = qCanonicalPath(objectPath);
 
+    if ((filter & QAbstractValueSpaceLayer::PermanentLayer &&
+         filter & QAbstractValueSpaceLayer::NonPermanentLayer) ||
+        (filter & QAbstractValueSpaceLayer::WriteableLayer &&
+         filter & QAbstractValueSpaceLayer::NonWriteableLayer)) {
+        return;
+    }
+
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
 
     for (int ii = 0; ii < layers.count(); ++ii) {

@@ -80,6 +80,9 @@ private slots:
 
     void testConstructor_data();
     void testConstructor();
+    void testFilterConstructor_data();
+    void testFilterConstructor();
+    void testBaseConstructor();
 
     void testSignals_data();
     void testSignals();
@@ -95,6 +98,7 @@ Q_DECLARE_METATYPE(tst_QValueSpaceObject::Type)
 Q_DECLARE_METATYPE(QAbstractValueSpaceLayer *)
 Q_DECLARE_METATYPE(QUuid)
 Q_DECLARE_METATYPE(QVariant)
+Q_DECLARE_METATYPE(QAbstractValueSpaceLayer::LayerOptions);
 
 void tst_QValueSpaceObject::initTestCase()
 {
@@ -160,6 +164,8 @@ void tst_QValueSpaceObject::testConstructor_data()
     ADD(reinterpret_cast<QAbstractValueSpaceLayer *>(0),
         QUuid("{9fa51477-7730-48e0-aee1-3eeb5f0c0c5b}"), QString(), QString("/"), false);
 }
+
+#undef ADD
 
 void tst_QValueSpaceObject::testConstructor()
 {
@@ -256,6 +262,79 @@ void tst_QValueSpaceObject::testConstructor()
             canonical.truncate(canonical.lastIndexOf('/'));
         }
         root.sync();
+    }
+}
+
+#define ADD(opt, valid) do {\
+    QTest::newRow(QString::number(opt).append(" const char *").toLocal8Bit().constData()) \
+        << (QAbstractValueSpaceLayer::UnspecifiedLayer | opt) << CharStar << valid; \
+    QTest::newRow(QString::number(opt).append(" const QString &").toLocal8Bit().constData()) \
+        << (QAbstractValueSpaceLayer::UnspecifiedLayer | opt) << String << valid; \
+    QTest::newRow(QString::number(opt).append(" const QByteArray &").toLocal8Bit().constData()) \
+        << (QAbstractValueSpaceLayer::UnspecifiedLayer | opt) << ByteArray << valid; \
+} while (false)
+
+void tst_QValueSpaceObject::testFilterConstructor_data()
+{
+    QTest::addColumn<QAbstractValueSpaceLayer::LayerOptions>("options");
+    QTest::addColumn<Type>("type");
+    QTest::addColumn<bool>("valid");
+
+    QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
+
+    for (int i = 0; i < layers.count(); ++i) {
+        QAbstractValueSpaceLayer *layer = layers.at(i);
+
+        ADD(layer->layerOptions(), true);
+    }
+
+    ADD(QAbstractValueSpaceLayer::PermanentLayer | QAbstractValueSpaceLayer::NonPermanentLayer,
+        false);
+    ADD(QAbstractValueSpaceLayer::WriteableLayer | QAbstractValueSpaceLayer::NonWriteableLayer,
+        false);
+}
+
+void tst_QValueSpaceObject::testFilterConstructor()
+{
+    QFETCH(QAbstractValueSpaceLayer::LayerOptions, options);
+    QFETCH(Type, type);
+    QFETCH(bool, valid);
+
+    QValueSpaceObject *object;
+
+    switch (type) {
+    case CharStar:
+        object = new QValueSpaceObject("/", options);
+        break;
+    case String:
+        object = new QValueSpaceObject(QString("/"), options);
+        break;
+    case ByteArray:
+        object = new QValueSpaceObject(QByteArray("/"), options);
+        break;
+    default:
+        QFAIL("Invalid type");
+        return;
+    };
+
+    QCOMPARE(object->isValid(), valid);
+}
+
+void tst_QValueSpaceObject::testBaseConstructor()
+{
+    {
+        QValueSpaceObject object("/");
+        QVERIFY(object.isValid());
+    }
+
+    {
+        QValueSpaceObject object(QString("/"));
+        QVERIFY(object.isValid());
+    }
+
+    {
+        QValueSpaceObject object(QByteArray("/"));
+        QVERIFY(object.isValid());
     }
 }
 
