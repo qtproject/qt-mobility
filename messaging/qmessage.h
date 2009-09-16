@@ -118,7 +118,6 @@ public:
 #endif
 
     StandardFolder standardFolder() const;
-    void setStandardFolder(StandardFolder sf);
 
     QMessageAddress from() const;
     void setFrom(const QMessageAddress &address);

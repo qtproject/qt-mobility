@@ -67,10 +67,6 @@ private slots:
 
     void testType();
     void testParentAccountId();
-#ifdef QMESSAGING_OPTIONAL_FOLDER
-    void testParentFolderId();
-    void testStandardFolder();
-#endif
     void testFrom();
     void testSubject();
     void testDate();
@@ -530,29 +526,7 @@ void tst_QMessage::testParentAccountId()
     msg.setParentAccountId(testAccountId);
     QCOMPARE(msg.parentAccountId(), testAccountId);
 }
-#ifdef QMESSAGING_OPTIONAL_FOLDER
-void tst_QMessage::testParentFolderId()
-{
-    QMessage msg;
-    QCOMPARE(msg.parentFolderId(), QMessageFolderId());
 
-    // We can't set the parent folder directly, but we can verify that it has been modified
-    msg.setStandardFolder(QMessage::TrashFolder);
-    QVERIFY(msg.parentFolderId() != QMessageFolderId());
-}
-
-void tst_QMessage::testStandardFolder()
-{
-    QMessage msg;
-    QCOMPARE(msg.standardFolder(), QMessage::InboxFolder);
-
-    msg.setStandardFolder(QMessage::SentFolder);
-    QCOMPARE(msg.standardFolder(), QMessage::SentFolder);
-
-    msg.setStandardFolder(QMessage::TrashFolder);
-    QCOMPARE(msg.standardFolder(), QMessage::TrashFolder);
-}
-#endif
 void tst_QMessage::testFrom()
 {
     QMessage msg;

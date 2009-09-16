@@ -118,11 +118,6 @@ QMessage::StandardFolder QMessage::standardFolder() const
     return QMessage::InboxFolder; // stub
 }
 
-void QMessage::setStandardFolder(StandardFolder sf)
-{
-    Q_UNUSED(sf)
-}
-
 QMessageAddress QMessage::from() const
 {
     return QMessageAddress(); // stub
