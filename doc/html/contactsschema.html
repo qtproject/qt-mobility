@@ -60,6 +60,7 @@
 <thead><tr valign="top" class="qt-style"><th>Detail</th><th>Field Keys</th><th>Field Value Data Types</th><th>Allowable Values</th><th>Field Description</th></tr></thead>
 <tr valign="top" class="odd"><td><a href="qcontactaddress.html">QContactAddress</a></td><td><ul>
 <li>DisplayLabel</li>
+<li>PostOfficeBox</li>
 <li>Street</li>
 <li>Locality</li>
 <li>Region</li>
@@ -73,8 +74,10 @@
 <li>String</li>
 <li>String</li>
 <li>String</li>
+<li>String</li>
 </ul>
 </td><td><ul>
+<li>Any</li>
 <li>Any</li>
 <li>Any</li>
 <li>Any</li>
@@ -84,6 +87,7 @@
 </ul>
 </td><td><ul>
 <li>The formatted address</li>
+<li>The post office box segment of the address.</li>
 <li>The street segment of the address (i.e&#x2e;, street and number)</li>
 <li>The locality segment of the address (i.e&#x2e;, city/suburb)</li>
 <li>The region segment of the address (i.e&#x2e;, state)</li>
@@ -279,18 +283,30 @@
 <tr valign="top" class="even"><td><a href="qcontactorganisation.html">QContactOrganisation</a></td><td><ul>
 <li>DisplayLabel</li>
 <li>Logo</li>
+<li>Department</li>
+<li>Location</li>
+<li>Title</li>
 </ul>
 </td><td><ul>
 <li>String</li>
 <li>String</li>
+<li>String</li>
+<li>String</li>
+<li>String</li>
 </ul>
 </td><td><ul>
+<li>Any</li>
+<li>Any</li>
+<li>Any</li>
 <li>Any</li>
 <li>Any</li>
 </ul>
 </td><td><ul>
 <li>The display label of an organisation associated with the contact</li>
-<li>The location of a logo of an organisation associated with the contact</li>
+<li>The file location of a logo of an organisation associated with the contact</li>
+<li>The department of the organisation associated with the contact</li>
+<li>The physical location (e.g&#x2e; city or suburb) of the part of the organisation associated with the contact</li>
+<li>The title the contact has within the organisation (e.g&#x2e; job position, role etc)</li>
 </ul>
 </td></tr>
 <tr valign="top" class="odd"><td><a href="qcontactphonenumber.html">QContactPhoneNumber</a></td><td><ul>

@@ -82,6 +82,7 @@
         void findContact();
         void openContact();
         void cancelContact();
+        void editGroupDetails();
         void next();
         void previous();
         void importFromVCard();
@@ -111,8 +112,10 @@
         QPushButton *importButton;
         QPushButton *exportButton;
         QPushButton *quitButton;
+        QPushButton *groupsButton;
         QLabel *currentIndexLabel;
         QLabel *currentBackendLabel;
+        QLabel *avatarPixmapLabel;
 
         QComboBox *backendCombo;
 
@@ -130,7 +133,9 @@
         int lastIndex;
         bool addingContact;
         bool editingContact;
+            bool smallScreenSize;
         QList&lt;QContact&gt; contacts;
+        QList&lt;QUniqueId&gt; contactGroups;
 
         QMap&lt;QString, QContactManager*&gt; managers;
         QContactManager *cm;

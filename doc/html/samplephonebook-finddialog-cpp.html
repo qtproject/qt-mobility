@@ -47,26 +47,44 @@
     ****************************************************************************/</span>
 
     #include &quot;finddialog.h&quot;
+    #include &quot;filterdialog.h&quot;
     #include &lt;QtGui&gt;
 
     FindDialog::FindDialog(QWidget *parent)
-        : QDialog(parent)
+        : QDialog(parent), simpleFilter(true)
     {
-        QLabel *findLabel = new QLabel(tr(&quot;Enter the name of a contact:&quot;));
+        QVBoxLayout *layout = new QVBoxLayout(this);
+        filterDialog = new FilterDialog(this);
+
+        findLabel = new QLabel(tr(&quot;Contact name:&quot;));
         lineEdit = new QLineEdit;
 
         findButton = new QPushButton(tr(&quot;&amp;Find&quot;));
         findText = &quot;&quot;;
 
-        QHBoxLayout *layout = new QHBoxLayout;
-        layout-&gt;addWidget(findLabel);
-        layout-&gt;addWidget(lineEdit);
-        layout-&gt;addWidget(findButton);
+        filterButton = new QPushButton(tr(&quot;Show Filter Details&quot;));
+
+        QHBoxLayout *simpleFindLayout = new QHBoxLayout;
+        simpleFindLayout-&gt;addWidget(findLabel);
+        simpleFindLayout-&gt;addWidget(lineEdit);
+        simpleFindLayout-&gt;addStretch(1);
+        simpleFindLayout-&gt;addWidget(findButton);
+        simpleFindLayout-&gt;addStretch(1);
+
+        QHBoxLayout *simpleFilterLayout = new QHBoxLayout;
+        simpleFilterLayout-&gt;addStretch(1);
+        simpleFilterLayout-&gt;addWidget(filterButton);
+        simpleFilterLayout-&gt;addStretch(1);
+        layout-&gt;addLayout(simpleFindLayout);
+        layout-&gt;addLayout(simpleFilterLayout);
+        layout-&gt;addWidget(filterDialog);
 
         setLayout(layout);
         setWindowTitle(tr(&quot;Find a Contact&quot;));
         connect(findButton, SIGNAL(clicked()), this, SLOT(findClicked()));
         connect(findButton, SIGNAL(clicked()), this, SLOT(accept()));
+        connect(filterButton, SIGNAL(clicked()), this, SLOT(filterClicked()));
+        connect(filterDialog, SIGNAL(hidden()), this, SLOT(filterHidden()));
 
         lineEdit-&gt;setFocus();
     }
@@ -86,9 +104,51 @@
         }
     }
 
-    QString FindDialog::getFindText()
+    void FindDialog::filterClicked()
+    {
+        simpleFilter = false;
+        lineEdit-&gt;hide();
+        findButton-&gt;hide();
+        findLabel-&gt;hide();
+        filterButton-&gt;hide();
+            filterDialog-&gt;showDialog();
+    }
+
+    void FindDialog::showEvent(QShowEvent *event)
+    {
+            QDialog::showEvent(event);
+        simpleFilter = true;
+        filterButton-&gt;show();
+        filterDialog-&gt;hide();
+        lineEdit-&gt;show();
+        findButton-&gt;show();
+        findLabel-&gt;show();
+        lineEdit-&gt;setFocus();
+    }
+
+    void FindDialog::filterHidden()
+    {
+        <span class="comment">// was the dialog accepted?</span>
+        if (filterDialog-&gt;status() == 1) {
+            accept();
+        }else{
+            reject();
+        }
+    }
+
+    bool FindDialog::isSimpleFilterEnabled() const
+    {
+        return simpleFilter;
+    }
+
+    QString FindDialog::getFindText() const
     {
         return findText;
+    }
+
+    QContactFilter FindDialog::getFindFilter() const
+    {
+        return filterDialog-&gt;filter();
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

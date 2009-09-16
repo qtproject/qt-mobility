@@ -34,24 +34,24 @@
     </section>
     <section ref="qcontactabstractrequest.html" title="QContactAbstractRequest Class Reference">
         <keyword ref="qcontactabstractrequest.html">QContactAbstractRequest</keyword>
+        <keyword ref="qcontactabstractrequest.html#RequestType-enum">RequestType</keyword>
+        <keyword ref="qcontactabstractrequest.html#RequestType-enum">QContactAbstractRequest::GroupFetchRequest</keyword>
+        <keyword ref="qcontactabstractrequest.html#RequestType-enum">QContactAbstractRequest::GroupSaveRequest</keyword>
+        <keyword ref="qcontactabstractrequest.html#RequestType-enum">QContactAbstractRequest::ContactIdFetchRequest</keyword>
+        <keyword ref="qcontactabstractrequest.html#RequestType-enum">QContactAbstractRequest::DetailDefinitionSaveRequest</keyword>
+        <keyword ref="qcontactabstractrequest.html#RequestType-enum">QContactAbstractRequest::DetailDefinitionRemoveRequest</keyword>
+        <keyword ref="qcontactabstractrequest.html#RequestType-enum">QContactAbstractRequest::ContactRemoveRequest</keyword>
+        <keyword ref="qcontactabstractrequest.html#RequestType-enum">QContactAbstractRequest::InvalidRequest</keyword>
+        <keyword ref="qcontactabstractrequest.html#RequestType-enum">QContactAbstractRequest::GroupRemoveRequest</keyword>
+        <keyword ref="qcontactabstractrequest.html#RequestType-enum">QContactAbstractRequest::ContactSaveRequest</keyword>
+        <keyword ref="qcontactabstractrequest.html#RequestType-enum">QContactAbstractRequest::DetailDefinitionFetchRequest</keyword>
+        <keyword ref="qcontactabstractrequest.html#RequestType-enum">QContactAbstractRequest::ContactFetchRequest</keyword>
         <keyword ref="qcontactabstractrequest.html#Status-enum">Status</keyword>
         <keyword ref="qcontactabstractrequest.html#Status-enum">QContactAbstractRequest::Cancelling</keyword>
         <keyword ref="qcontactabstractrequest.html#Status-enum">QContactAbstractRequest::Active</keyword>
         <keyword ref="qcontactabstractrequest.html#Status-enum">QContactAbstractRequest::Cancelled</keyword>
         <keyword ref="qcontactabstractrequest.html#Status-enum">QContactAbstractRequest::Finished</keyword>
         <keyword ref="qcontactabstractrequest.html#Status-enum">QContactAbstractRequest::Inactive</keyword>
-        <keyword ref="qcontactabstractrequest.html#Type-enum">Type</keyword>
-        <keyword ref="qcontactabstractrequest.html#Type-enum">QContactAbstractRequest::Invalid</keyword>
-        <keyword ref="qcontactabstractrequest.html#Type-enum">QContactAbstractRequest::DetailDefinitionFetch</keyword>
-        <keyword ref="qcontactabstractrequest.html#Type-enum">QContactAbstractRequest::GroupFetch</keyword>
-        <keyword ref="qcontactabstractrequest.html#Type-enum">QContactAbstractRequest::GroupRemove</keyword>
-        <keyword ref="qcontactabstractrequest.html#Type-enum">QContactAbstractRequest::ContactRemove</keyword>
-        <keyword ref="qcontactabstractrequest.html#Type-enum">QContactAbstractRequest::ContactIdFetch</keyword>
-        <keyword ref="qcontactabstractrequest.html#Type-enum">QContactAbstractRequest::DetailDefinitionSave</keyword>
-        <keyword ref="qcontactabstractrequest.html#Type-enum">QContactAbstractRequest::ContactSave</keyword>
-        <keyword ref="qcontactabstractrequest.html#Type-enum">QContactAbstractRequest::GroupSave</keyword>
-        <keyword ref="qcontactabstractrequest.html#Type-enum">QContactAbstractRequest::DetailDefinitionRemove</keyword>
-        <keyword ref="qcontactabstractrequest.html#Type-enum">QContactAbstractRequest::ContactFetch</keyword>
         <keyword ref="qcontactabstractrequest.html#cancel">cancel</keyword>
         <keyword ref="qcontactabstractrequest.html#error">error</keyword>
         <keyword ref="qcontactabstractrequest.html#errors">errors</keyword>
@@ -117,11 +117,13 @@
         <keyword ref="qcontactaddress.html#country">country</keyword>
         <keyword ref="qcontactaddress.html#displayLabel">displayLabel</keyword>
         <keyword ref="qcontactaddress.html#locality">locality</keyword>
+        <keyword ref="qcontactaddress.html#postOfficeBox">postOfficeBox</keyword>
         <keyword ref="qcontactaddress.html#postcode">postcode</keyword>
         <keyword ref="qcontactaddress.html#region">region</keyword>
         <keyword ref="qcontactaddress.html#setCountry">setCountry</keyword>
         <keyword ref="qcontactaddress.html#setDisplayLabel">setDisplayLabel</keyword>
         <keyword ref="qcontactaddress.html#setLocality">setLocality</keyword>
+        <keyword ref="qcontactaddress.html#setPostOfficeBox">setPostOfficeBox</keyword>
         <keyword ref="qcontactaddress.html#setPostcode">setPostcode</keyword>
         <keyword ref="qcontactaddress.html#setRegion">setRegion</keyword>
         <keyword ref="qcontactaddress.html#setStreet">setStreet</keyword>
@@ -132,6 +134,7 @@
         <keyword ref="qcontactaddress.html#FieldCountry-var">FieldCountry</keyword>
         <keyword ref="qcontactaddress.html#FieldDisplayLabel-var">FieldDisplayLabel</keyword>
         <keyword ref="qcontactaddress.html#FieldLocality-var">FieldLocality</keyword>
+        <keyword ref="qcontactaddress.html#FieldPostOfficeBox-var">FieldPostOfficeBox</keyword>
         <keyword ref="qcontactaddress.html#FieldPostcode-var">FieldPostcode</keyword>
         <keyword ref="qcontactaddress.html#FieldRegion-var">FieldRegion</keyword>
         <keyword ref="qcontactaddress.html#FieldStreet-var">FieldStreet</keyword>
@@ -569,18 +572,10 @@
     <section ref="qcontactmanagerinfo.html" title="QContactManagerInfo Class Reference">
         <keyword ref="qcontactmanagerinfo.html">QContactManagerInfo</keyword>
         <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">ManagerFeature</keyword>
-        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Asynchronous</keyword>
         <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Groups</keyword>
         <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ActionPreferences</keyword>
-        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::CreateOnlyDetails</keyword>
-        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Batch</keyword>
-        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::NativeFiltering</keyword>
-        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ExternalNotifications</keyword>
-        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::NativeSorting</keyword>
+        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Anonymous</keyword>
         <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::MutableDefinitions</keyword>
-        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ReadOnlyDetails</keyword>
-        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Synchronous</keyword>
-        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Locking</keyword>
         <keyword ref="qcontactmanagerinfo.html#filterSupported">filterSupported</keyword>
         <keyword ref="qcontactmanagerinfo.html#hasFeature">hasFeature</keyword>
         <keyword ref="qcontactmanagerinfo.html#supportedDataTypes">supportedDataTypes</keyword>
@@ -650,13 +645,22 @@
     </section>
     <section ref="qcontactorganisation.html" title="QContactOrganisation Class Reference">
         <keyword ref="qcontactorganisation.html">QContactOrganisation</keyword>
+        <keyword ref="qcontactorganisation.html#department">department</keyword>
         <keyword ref="qcontactorganisation.html#displayLabel">displayLabel</keyword>
+        <keyword ref="qcontactorganisation.html#location">location</keyword>
         <keyword ref="qcontactorganisation.html#logo">logo</keyword>
+        <keyword ref="qcontactorganisation.html#setDepartment">setDepartment</keyword>
         <keyword ref="qcontactorganisation.html#setDisplayLabel">setDisplayLabel</keyword>
+        <keyword ref="qcontactorganisation.html#setLocation">setLocation</keyword>
         <keyword ref="qcontactorganisation.html#setLogo">setLogo</keyword>
+        <keyword ref="qcontactorganisation.html#setTitle">setTitle</keyword>
+        <keyword ref="qcontactorganisation.html#title">title</keyword>
         <keyword ref="qcontactorganisation.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactorganisation.html#FieldDepartment-var">FieldDepartment</keyword>
         <keyword ref="qcontactorganisation.html#FieldDisplayLabel-var">FieldDisplayLabel</keyword>
+        <keyword ref="qcontactorganisation.html#FieldLocation-var">FieldLocation</keyword>
         <keyword ref="qcontactorganisation.html#FieldLogo-var">FieldLogo</keyword>
+        <keyword ref="qcontactorganisation.html#FieldTitle-var">FieldTitle</keyword>
         <section ref="qcontactorganisation-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactphonenumber.html" title="QContactPhoneNumber Class Reference">
