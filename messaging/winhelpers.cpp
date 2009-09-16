@@ -286,6 +286,17 @@ namespace WinHelpers {
         return HR_SUCCEEDED(HrSetOneProp(object, &prop));
     }
 
+    bool setMapiProperty(IMAPIProp *object, ULONG tag, MapiEntryId value)
+    {
+        SBinary s;
+        s.cb = value.count();
+        s.lpb = reinterpret_cast<LPBYTE>(value.data());
+        SPropValue prop = { 0 };
+        prop.ulPropTag = tag;
+        prop.Value.bin = s;
+        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
+    }
+
     ADRLIST *createAddressList(int count)
     {
         ADRLIST *list(0);
@@ -764,7 +775,7 @@ IMessage *MapiFolder::createMessage(QMessageStore::ErrorCode* lastError)
     return message;
 }
 
-IMessage* MapiFolder::createMessage(const QMessage& source, const MapiSessionPtr session, QMessageStore::ErrorCode* lastError, bool deleteAfterSend)
+IMessage* MapiFolder::createMessage(const QMessage& source, const MapiSessionPtr session, QMessageStore::ErrorCode* lastError, PostSendAction postSendAction)
 {
     IMessage* mapiMessage(0);
     HRESULT rv = _folder->CreateMessage(0, 0, &mapiMessage);
@@ -807,10 +818,24 @@ IMessage* MapiFolder::createMessage(const QMessage& source, const MapiSessionPtr
             qWarning() << "Unable to set submit time in message.";
         }
 
-        if(deleteAfterSend)
+        if(postSendAction == DeleteAfterSend )
         {
             if (!setMapiProperty(mapiMessage, PR_DELETE_AFTER_SUBMIT, true)) {
                 qWarning() << "Unable to set delete after send flag.";
+            }
+        }
+        else if(postSendAction == MoveAfterSend )
+        {
+            //move the message to the sent folder after a submission
+
+            MapiFolderPtr sentFolder = _store->findFolder(lastError,QMessage::SentFolder);
+
+            if(sentFolder.isNull() || *lastError != QMessageStore::NoError)
+                qWarning() << "Unable to find the sent folder while constructing message";
+            else {
+                if (!setMapiProperty(mapiMessage, PR_SENTMAIL_ENTRYID, sentFolder->entryId())) {
+                    qWarning() << "Unbale to set sent folder entry id on message";
+                }
             }
         }
 

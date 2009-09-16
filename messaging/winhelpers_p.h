@@ -118,6 +118,9 @@ Lptstr LptstrFromQString(const QString &src);
 class MapiFolder {
 
 public:
+    enum PostSendAction { DeleteAfterSend, MoveAfterSend };
+
+public:
     static MapiFolderPtr createFolder(QMessageStore::ErrorCode *lastError, const MapiStorePtr &store, IMAPIFolder *folder, const MapiRecordKey &recordKey, const QString &name, const MapiEntryId &entryId, bool hasSubFolders, uint messageCount);
 
     ~MapiFolder();
@@ -140,7 +143,7 @@ public:
 
     LPMAPITABLE subFolders(QMessageStore::ErrorCode *lastError) { if (!_init) findSubFolders(lastError); return _subFolders; }
     IMessage *createMessage(QMessageStore::ErrorCode* lastError);
-    IMessage *createMessage(const QMessage& source, const MapiSessionPtr session, QMessageStore::ErrorCode* lastError, bool deleteAfterSend = false);
+    IMessage *createMessage(const QMessage& source, const MapiSessionPtr session, QMessageStore::ErrorCode* lastError, PostSendAction postSendAction = MoveAfterSend );
 
     IMessage *openMessage(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId);
 

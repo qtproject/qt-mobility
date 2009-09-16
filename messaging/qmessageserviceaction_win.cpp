@@ -136,19 +136,20 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
 
     QMessageFolder folder(outgoing.parentFolderId());
 
+    //QMessagePrivate::setStandardFolder(outgoing,QMessage::OutboxFolder);
+
     if(folder.id().isValid())
         mapiFolder = mapiStore->findFolder(&_lastError, QMessageFolderIdPrivate::folderRecordKey(folder.id()));
     else
         mapiFolder = mapiStore->findFolder(&_lastError, outgoing.standardFolder());
 
-    //QMessagePrivate::setStandardFolder(outgoing,QMessage::DraftsFolder); //TODO default ATM
 
     if( mapiFolder.isNull() || _lastError != QMessageStore::NoError ) {
         qWarning() << "Unable to get folder for the message";
         return false;
     }
 
-    IMessage* mapiMessage = mapiFolder->createMessage(outgoing,mapiSession,&_lastError, true);
+    IMessage* mapiMessage = mapiFolder->createMessage(outgoing,mapiSession,&_lastError);
 
     if(!mapiMessage || _lastError != QMessageStore::NoError)
     {
