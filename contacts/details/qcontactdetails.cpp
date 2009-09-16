@@ -364,6 +364,12 @@ Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldPostcode, "Postcode");
 Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldCountry, "Country");
 
 /*!
+ * \variable QContactAddress::FieldPostOfficeBox
+ * The constant key for which the post office box value is stored in details of the QContactAddress type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldPostOfficeBox, "PostOfficeBox");
+
+/*!
  * \variable QContactAddress::FieldSubTypes
  * The constant key for which the subtypes value is stored in details of the QContactAddress type
  */

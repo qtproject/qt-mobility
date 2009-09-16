@@ -55,18 +55,10 @@
 /*!
  * \enum QContactManagerInfo::ManagerFeature
  * This enum describes the possible features that a particular manager may support
- * \value Synchronous The manager supports the synchronous API
- * \value Asynchronous The manager supports the asynchronous API
  * \value Groups The manager supports all QContactGroup related operations, and emits the appropriate signals
- * \value Locking The manager supports database locking and unlocking operations
- * \value Batch The manager supports batch contact saving, and emits the appropriate signals
  * \value ActionPreferences The manager supports saving preferred details per action per contact
- * \value ReadOnlyDetails The manager supports the creation of details which are then read-only, and performs validation on such details on save
- * \value CreateOnlyDetails The manager supports the creation of details which are create-only, and performs validation on such details on save
- * \value MutableDefinitions The manager suppotrs saving, updating or removing detail definitions.  Some built-in definitions may still be immutable
- * \value NativeFiltering The manager supports native filtering of some description
- * \value NativeSorting The manager supports native sorting of some description
- * \value ExternalNotifications The manager is able to notify clients of changes made to the database via native API or another QContactManager
+ * \value MutableDefinitions The manager supports saving, updating or removing detail definitions.  Some built-in definitions may still be immutable
+ * \value Anonymous The manager is isolated from other managers
  */
 
 /*! Frees the memory used by this instance */
