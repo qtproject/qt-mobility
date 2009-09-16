@@ -135,7 +135,7 @@ void tst_QMessageStore::testFolder_data()
     QTest::newRow("Inbox") << "Inbox" << "Inbox" << "" << "Inbox";
     QTest::newRow("Drafts") << "Drafts" << "" << "" << "Drafts";
     QTest::newRow("Archived") << "Inbox/Archived" << "Archived" << "Inbox" << "Archived";
-    QTest::newRow("Backup") << "Inbox/Archived/Backup" << "" << "Inbox/Archived" << "Inbox/Archived/Backup";
+    QTest::newRow("Backup") << "Inbox/Archived/Backup" << "" << "Inbox/Archived" << "Backup";
 }
 
 void tst_QMessageStore::testFolder()
