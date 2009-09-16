@@ -36,6 +36,7 @@
 #include "transformname.h"
 #include "transformnickname.h"
 #include "transformphonenumber.h"
+#include "transformaddress.h"
 
 #include <QtTest/QtTest>
 
@@ -78,6 +79,20 @@ void TestTransformContactData::executeTransformPhonenumber()
 {
     validateTransformPhonenumber(_L("dummyphonenumber"), QString("dummyphonenumber"));
     validateTransformPhonenumber(_L(""), QString(""));
+}
+
+void TestTransformContactData::executeTransformAddress()
+{
+    validateTransformAddress(_L("dummycountry"), QString("dummycountry"),
+                             _L("dummypostcode"), QString("dummypostcode"),
+                             _L("dummystreet"), QString("dummystreet"),
+                             _L("dummylocality"), QString("dummylocality"),
+                             _L("dummyregion"), QString("dummyregion"));
+    validateTransformAddress(_L(""), QString(""),
+                             _L(""), QString(""),
+                             _L(""), QString(""),
+                             _L(""), QString(""),
+                             _L(""), QString(""));
 }
 
 void TestTransformContactData::validateTransformEmail(TPtrC16 field, QString detail)
@@ -266,6 +281,101 @@ void TestTransformContactData::validateTransformPhonenumber(TPtrC16 field, QStri
     delete transformPhoneNumber; 
 }
 
+void TestTransformContactData::validateTransformAddress(TPtrC16 countryField, QString countryDetail,
+                              TPtrC16 postcodeField, QString postcodeDetail,
+                              TPtrC16 streetField, QString streetDetail,
+                              TPtrC16 localityField, QString localityDetail,
+                              TPtrC16 regionField, QString regionDetail)
+{
+    TransformContactData* transformAddress = new TransformAddress();
+    QVERIFY(transformAddress != 0);
+    QVERIFY(transformAddress->supportsField(KUidContactFieldCountry.iUid));
+    QVERIFY(transformAddress->supportsField(KUidContactFieldPostcode.iUid));
+    QVERIFY(transformAddress->supportsField(KUidContactFieldAddress.iUid));
+    QVERIFY(transformAddress->supportsField(KUidContactFieldLocality.iUid));
+    QVERIFY(transformAddress->supportsField(KUidContactFieldRegion.iUid));
+    QVERIFY(transformAddress->supportsDetail(QContactAddress::DefinitionName));
+    
+    validateContexts(transformAddress);
+    
+    QContactAddress address;
+    address.setCountry(countryDetail);
+    address.setPostcode(postcodeDetail);
+    address.setStreet(streetDetail);
+    address.setLocality(localityDetail);
+    address.setRegion(regionDetail);
+    QList<CContactItemField *> fields = transformAddress->transformDetailL(address);
+    QVERIFY(fields.count() == 5);
+    QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldCountry));
+    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(countryField), 0);
+    QVERIFY(fields.at(1)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(1)->ContentType().ContainsFieldType(KUidContactFieldPostcode));
+    QCOMPARE(fields.at(1)->TextStorage()->Text().CompareF(postcodeField), 0);
+    QVERIFY(fields.at(2)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(2)->ContentType().ContainsFieldType(KUidContactFieldAddress));
+    QCOMPARE(fields.at(2)->TextStorage()->Text().CompareF(streetField), 0);
+    QVERIFY(fields.at(3)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(3)->ContentType().ContainsFieldType(KUidContactFieldLocality));
+    QCOMPARE(fields.at(3)->TextStorage()->Text().CompareF(localityField), 0);
+    QVERIFY(fields.at(4)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(4)->ContentType().ContainsFieldType(KUidContactFieldRegion));
+    QCOMPARE(fields.at(4)->TextStorage()->Text().CompareF(regionField), 0);
+    
+    CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldCountry);
+    newField->TextStorage()->SetTextL(countryField);
+    QContact contact;
+    QContactDetail* contactDetail = transformAddress->transformItemField(*newField, contact);
+    const QContactAddress* addressInfo1(static_cast<const QContactAddress*>(contactDetail));
+    QCOMPARE(addressInfo1->country(), countryDetail);
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+    
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPostcode);
+    newField->TextStorage()->SetTextL(postcodeField);
+    contactDetail = transformAddress->transformItemField(*newField, contact);
+    const QContactAddress* addressInfo2(static_cast<const QContactAddress*>(contactDetail));
+    QCOMPARE(addressInfo2->postcode(), postcodeDetail);
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+    
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldAddress);
+    newField->TextStorage()->SetTextL(streetField);
+    contactDetail = transformAddress->transformItemField(*newField, contact);
+    const QContactAddress* addressInfo3(static_cast<const QContactAddress*>(contactDetail));
+    QCOMPARE(addressInfo3->street(), streetDetail);
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+    
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldLocality);
+    newField->TextStorage()->SetTextL(localityField);
+    contactDetail = transformAddress->transformItemField(*newField, contact);
+    const QContactAddress* addressInfo4(static_cast<const QContactAddress*>(contactDetail));
+    QCOMPARE(addressInfo4->locality(), localityDetail);
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+    
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldRegion);
+    newField->TextStorage()->SetTextL(regionField);
+    contactDetail = transformAddress->transformItemField(*newField, contact);
+    const QContactAddress* addressInfo5(static_cast<const QContactAddress*>(contactDetail));
+    QCOMPARE(addressInfo5->region(), regionDetail);
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+    
+    delete transformAddress;
+}
+
 void TestTransformContactData::validateContexts(TransformContactData* transformContactData) const
 {
     QContactDetail detail1;
@@ -273,10 +383,22 @@ void TestTransformContactData::validateContexts(TransformContactData* transformC
     QVERIFY(detail1.contexts().count() == 1);
     QVERIFY(detail1.contexts().at(0) == QContactDetail::ContextHome);
     
+    CContactItemField* itemField = CContactItemField::NewL(KStorageTypeText);
+    transformContactData->setContextsL(detail1, *itemField);
+    QVERIFY(itemField->ContentType().ContainsFieldType(KUidContactFieldVCardMapHOME));
+    delete itemField;
+    itemField = 0;
+    
     QContactDetail detail2;
     transformContactData->setContexts(KUidContactFieldVCardMapWORK, detail2);
     QVERIFY(detail2.contexts().count() == 1);
     QVERIFY(detail2.contexts().at(0) == QContactDetail::ContextWork);
+    
+    itemField = CContactItemField::NewL(KStorageTypeText);
+    transformContactData->setContextsL(detail2, *itemField);
+    QVERIFY(itemField->ContentType().ContainsFieldType(KUidContactFieldVCardMapWORK));
+    delete itemField;
+    itemField = 0;
 }
 
 QTEST_MAIN(TestTransformContactData);

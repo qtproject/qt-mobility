@@ -49,6 +49,7 @@ private slots:
 	void executeTransformName();
 	void executeTransformNickname();
 	void executeTransformPhonenumber();
+	void executeTransformAddress();
 	
 private:
     void validateTransformEmail(TPtrC16 field, QString detail);
@@ -59,5 +60,10 @@ private:
                                TPtrC16 suffixField, QString suffixDetail);
     void validateTransformNickname(TPtrC16 field, QString detail);
     void validateTransformPhonenumber(TPtrC16 field, QString detail);
+    void validateTransformAddress(TPtrC16 countryField, QString countryDetail,
+                                  TPtrC16 postcodeField, QString postcodeDetail,
+                                  TPtrC16 streetField, QString streetDetail,
+                                  TPtrC16 localityField, QString localityDetail,
+                                  TPtrC16 regionField, QString regionDetail);
     void validateContexts(TransformContactData* transformContactData) const; 
 };
