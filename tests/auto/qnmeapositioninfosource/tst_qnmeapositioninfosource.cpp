@@ -585,6 +585,34 @@ private:
 
 //---------------------------------------------------
 
+
+class UnlimitedNmeaStream : public QIODevice
+{
+    Q_OBJECT
+
+public:
+    UnlimitedNmeaStream(QObject *parent) : QIODevice(parent) {}
+
+protected:
+    qint64 readData(char *data, qint64 maxSize)
+    {
+        QByteArray bytes = QLocationTestUtils::createRmcSentence(QDateTime::currentDateTime()).toLatin1();
+        qint64 sz = qMin(qint64(bytes.size()), maxSize);
+        memcpy(data, bytes.constData(), sz);
+        return sz;
+    }
+
+    qint64 writeData(const char *, qint64)
+    {
+        return -1;
+    }
+
+    qint64 bytesAvailable() const
+    {
+        return 1024 + QIODevice::bytesAvailable();
+    }
+};
+
 class tst_QNmeaPositionInfoSource_Simulation_Generic : public TestQGeoPositionInfoSource
 {
     Q_OBJECT
@@ -593,21 +621,11 @@ protected:
     QGeoPositionInfoSource *createTestSource()
     {
         QNmeaPositionInfoSource *source = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode);
-        QString fileName = QCoreApplication::applicationDirPath() + QDir::separator() + "tst_qnmeapositioninfosource_nmealog.txt";
-        QFile *file = new QFile(fileName, source);
-        if (!file->exists()) {
-            qWarning() << "Cannot find" << file->fileName();
-            return 0;
-        }
-        if (!file->open(QIODevice::ReadOnly)) {
-            qWarning() << "Cannot open" << file->fileName();
-            return 0;
-        }
-        source->setDevice(file);
+        source->setDevice(new UnlimitedNmeaStream(source));
         return source;
     }
-};
 
+};
 
 
 int main(int argc, char *argv[])
