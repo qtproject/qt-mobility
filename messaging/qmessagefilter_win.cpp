@@ -34,6 +34,7 @@
 #include "qmessagefilter_p.h"
 #include "qvariant.h"
 #include "winhelpers_p.h"
+#include "qmessagefolderid_p.h"
 
 // Not sure if this will work on WinCE
 #ifndef PR_SMTP_ADDRESS
@@ -59,6 +60,79 @@ void QStringToWCharArray(const QString &str, wchar_t **buffer)
     *buffer = new wchar_t[str.length() +1];
     memcpy(*buffer, str.utf16(), str.length() * sizeof(wchar_t));
     (*buffer)[str.length()] = 0;
+}
+
+
+MapiFolderIterator::MapiFolderIterator()
+    :_store(0)
+{
+}
+
+MapiFolderIterator::MapiFolderIterator(MapiStorePtr store, MapiFolderPtr root)
+    :_store(store)
+{
+    _folders.append(root);
+}
+
+MapiFolderIterator::MapiFolderIterator(MapiStorePtr store, QMessageFolderIdList ids)
+    :_store(store), 
+     _ids(ids)
+{
+}
+
+MapiFolderPtr MapiFolderIterator::next()
+{
+    while (_store && _store->isValid() && !_folders.isEmpty()) {
+        if (!_folders.back()->isValid()) {
+            _folders.pop_back();
+            continue;
+        }
+
+        QMessageStore::ErrorCode ignored(QMessageStore::NoError);
+        MapiFolderPtr folder(_folders.back()->nextSubFolder(&ignored, *_store));
+        if ((!folder || !folder->isValid()) && (ignored == QMessageStore::NoError)) {
+            _folders.pop_back(); // No more subfolders
+            continue;
+        }
+        if (ignored != QMessageStore::NoError) {
+            continue; // Bad subfolder, skip it
+        }
+        if (folder && folder->isValid()) {
+            _folders.append(folder);
+            return folder;
+        }
+        _folders.pop_back();
+        continue;
+    }
+
+    while (_store && _store->isValid() && !_ids.isEmpty()) {
+        QMessageFolderId id(_ids.takeFirst());
+        QMessageStore::ErrorCode error(QMessageStore::NoError);
+        MapiFolderPtr folderPtr(_store->findFolder(&error, QMessageFolderIdPrivate::folderRecordKey(id)));
+        if (error != QMessageStore::NoError)
+            continue;
+
+        return folderPtr;
+    }
+
+    return MapiFolderPtr();
+}
+
+MapiStoreIterator::MapiStoreIterator()
+{
+}
+
+MapiStoreIterator::MapiStoreIterator(QList<MapiStorePtr> stores)
+    :_stores(stores)
+{
+}
+
+MapiStorePtr MapiStoreIterator::next()
+{
+    if (!_stores.isEmpty())
+        return _stores.takeFirst();
+
+    return MapiStorePtr();
 }
 
 QMessageFilter QMessageFilterPrivate::from(QMessageFilterPrivate::Field field, const QVariant &value, QMessageDataComparator::EqualityComparator cmp)
@@ -94,6 +168,18 @@ QMessageFilter QMessageFilterPrivate::from(QMessageFilterPrivate::Field field, c
 QMessageFilterPrivate* QMessageFilterPrivate::implementation(const QMessageFilter &filter)
 {
     return filter.d_ptr;
+}
+
+MapiFolderIterator QMessageFilterPrivate::folderIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, MapiStorePtr store)
+{
+    Q_UNUSED(filter)
+    return MapiFolderIterator(store, store->rootFolder(lastError));
+}
+
+MapiStoreIterator QMessageFilterPrivate::storeIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, MapiSessionPtr session)
+{
+    Q_UNUSED(filter)
+    return MapiStoreIterator(session->allStores(lastError));
 }
 
 class MapiRestriction {

@@ -38,12 +38,14 @@
 #include "qmessagefolder_p.h"
 #include "qmessageaccount_p.h"
 #include "qmessageordering_p.h"
+#include "qmessagefilter_p.h"
 #include "winhelpers_p.h"
 #include <qdebug.h>
 
 using namespace WinHelpers;
 
 struct FolderHeapNode {
+    QMessageFilter filter;
     MapiStorePtr store;
     MapiFolderPtr folder;
     MapiRecordKey key;
@@ -61,7 +63,7 @@ typedef QSharedPointer<FolderHeapNode> FolderHeapNodePtr;
 
 class FolderHeap {
 public:
-    FolderHeap(QMessageStore::ErrorCode *lastError, MapiSessionPtr mapiSession, const QList<FolderHeapNodePtr> &protoHeap, const QMessageFilter &filter, const QMessageOrdering &ordering);
+    FolderHeap(QMessageStore::ErrorCode *lastError, MapiSessionPtr mapiSession, const QList<FolderHeapNodePtr> &protoHeap, const QMessageOrdering &ordering);
     QMessage takeFront(QMessageStore::ErrorCode *lastError);
     bool isEmpty() const { return _heap.count() == 0; }
 
@@ -73,11 +75,10 @@ private:
     MapiSessionPtr _mapiSession;
 };
 
-FolderHeap::FolderHeap(QMessageStore::ErrorCode *lastError, MapiSessionPtr mapiSession, const QList<FolderHeapNodePtr> &protoHeap, const QMessageFilter &filter, const QMessageOrdering &ordering)
+FolderHeap::FolderHeap(QMessageStore::ErrorCode *lastError, MapiSessionPtr mapiSession, const QList<FolderHeapNodePtr> &protoHeap, const QMessageOrdering &ordering)
 {
     Q_UNUSED(lastError)
 
-    _filter = filter;
     _ordering = ordering;
     _mapiSession = mapiSession;
 
@@ -92,7 +93,7 @@ FolderHeap::FolderHeap(QMessageStore::ErrorCode *lastError, MapiSessionPtr mapiS
         node->offset = 0;
 
         // TODO: Would be more efficient to use a LPMAPITABLE directly instead of calling MapiFolder queryMessages and message functions.
-        QMessageIdList messageIdList(node->folder->queryMessages(&ignoredError, filter, ordering, 1));
+        QMessageIdList messageIdList(node->folder->queryMessages(&ignoredError, node->filter, ordering, 1));
         if (ignoredError == QMessageStore::NoError) {
             if (!messageIdList.isEmpty()) {
                 node->front = _mapiSession->message(&ignoredError, messageIdList.front());
@@ -124,7 +125,7 @@ QMessage FolderHeap::takeFront(QMessageStore::ErrorCode *lastError)
 
     ++node->offset;
     // TODO: Would be more efficient to use a LPMAPITABLE directly instead of calling MapiFolder queryMessages and message functions.
-    QMessageIdList messageIdList(node->folder->queryMessages(lastError, _filter, _ordering, 1, node->offset));
+    QMessageIdList messageIdList(node->folder->queryMessages(lastError, node->filter, _ordering, 1, node->offset));
     if (*lastError != QMessageStore::NoError)
         return result;
 
@@ -255,50 +256,26 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
 
     QList<FolderHeapNodePtr> folderNodes;
 
-    foreach (const MapiStorePtr &store, mapiSession->allStores(&d_ptr->p_ptr->lastError)) {
-        QList<MapiFolderPtr> folders; // depth first search;
-        folders.append(store->rootFolder(&d_ptr->p_ptr->lastError));
-        if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
-            return result;
-
-        while (!folders.isEmpty()) {
-            if (!folders.back()->isValid()) {
-                folders.pop_back();
-                continue;
-            }
-
-            QMessageStore::ErrorCode ignored(QMessageStore::NoError);
-            MapiFolderPtr folder(folders.back()->nextSubFolder(&ignored, *store));
-            if ((!folder || !folder->isValid()) && (ignored == QMessageStore::NoError)) {
-                folders.pop_back(); // No more subfolders
-                continue;
-            }
-            if (ignored != QMessageStore::NoError) {
-                continue; // Bad subfolder, skip it
-            }
-
-            if (folder && folder->isValid()) {
-                FolderHeapNodePtr node(new FolderHeapNode);
-                node->store = store;
-                node->folder = folder;
-                node->key = folder->recordKey();
-                node->parentStoreKey = folder->storeKey();
-                node->parentStoreEntryId = store->entryId();
-                node->name = folder->name();
-                node->entryId = folder->entryId();
-                node->hasSubFolders = folder->hasSubFolders();
-                node->messageCount = folder->messageCount();
-                folderNodes.append(node);
-                folders.append(folder);
-                if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
-                    return result;
-            } else {
-                folders.pop_back();
-            }
+    MapiStoreIterator storeIt(QMessageFilterPrivate::storeIterator(filter, &d_ptr->p_ptr->lastError, mapiSession));
+    for (MapiStorePtr store(storeIt.next()); store && store->isValid(); store = storeIt.next()) {
+        MapiFolderIterator folderIt(QMessageFilterPrivate::folderIterator(filter, &d_ptr->p_ptr->lastError, store));
+        for (MapiFolderPtr folder(folderIt.next()); folder && folder->isValid(); folder = folderIt.next()) {
+            FolderHeapNodePtr node(new FolderHeapNode);
+            node->filter = filter;
+            node->store = store;
+            node->folder = folder;
+            node->key = folder->recordKey();
+            node->parentStoreKey = folder->storeKey();
+            node->parentStoreEntryId = store->entryId();
+            node->name = folder->name();
+            node->entryId = folder->entryId();
+            node->hasSubFolders = folder->hasSubFolders();
+            node->messageCount = folder->messageCount();
+            folderNodes.append(node);
         }
     }
 
-    FolderHeap folderHeap(&d_ptr->p_ptr->lastError, mapiSession, folderNodes, filter, ordering);
+    FolderHeap folderHeap(&d_ptr->p_ptr->lastError, mapiSession, folderNodes, ordering);
     if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
         return result;
 

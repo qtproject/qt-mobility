@@ -37,6 +37,31 @@
 #include <qvariant.h>
 #endif
 
+#if defined(Q_OS_WIN)
+class MapiFolderIterator {
+public:
+    MapiFolderIterator();
+    MapiFolderIterator(MapiStorePtr store, MapiFolderPtr root);
+    MapiFolderIterator(MapiStorePtr store, QMessageFolderIdList ids);
+    MapiFolderPtr next();
+private:
+    QList<MapiFolderPtr> _folders; 
+#ifdef QMESSAGING_OPTIONAL_FOLDER
+    MapiStorePtr _store;
+    QMessageFolderIdList _ids;
+#endif
+};
+
+class MapiStoreIterator {
+public:
+    MapiStoreIterator();
+    MapiStoreIterator(QList<MapiStorePtr> stores);
+    MapiStorePtr next();
+private:
+    QList<MapiStorePtr> _stores; 
+};
+#endif
+
 class QMessageFilterPrivate
 {
     Q_DECLARE_PUBLIC(QMessageFilter)
@@ -67,5 +92,7 @@ public:
     static QMessageFilter from(QMessageFilterPrivate::Field field, const QVariant &value, QMessageDataComparator::RelationComparator cmp);
     static QMessageFilter from(QMessageFilterPrivate::Field field, const QVariant &value, QMessageDataComparator::InclusionComparator cmp);
     static QMessageFilterPrivate* implementation(const QMessageFilter &filter);
+    static MapiFolderIterator folderIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, MapiStorePtr store);
+    static MapiStoreIterator storeIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, MapiSessionPtr session);
 #endif
 };
