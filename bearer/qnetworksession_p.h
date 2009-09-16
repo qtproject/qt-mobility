@@ -70,9 +70,6 @@ public:
 
     ~QNetworkSessionPrivate()
     {
-#ifdef MAEMO
-	    cleanupSession();
-#endif
     }
 
     //called by QNetworkSession constructor and ensures
