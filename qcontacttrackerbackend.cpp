@@ -92,11 +92,8 @@ void QContactTrackerEngine::connectToSignals()
     {
         QObject::connect(signaler, SIGNAL(subjectsAdded(const QStringList &)),
                 this, SLOT(subjectsAdded(const QStringList &)));
-        // TODO: Ok to remove? How should this be changed?
-        // No such signal
-        // "SopranoLive::BackEnds::Tracker::ClassUpdateDispatcher::subjectsRemoved(const QStringList &)"
         QObject::connect(signaler,
-                SIGNAL(subjectsRemoved(const QStringList &)), this,
+                SIGNAL(baseRemoveSubjectsd(const QStringList &)), this,
                 SLOT(subjectsRemoved(const QStringList &)));
         QObject::connect(signaler,
                 SIGNAL(subjectsChanged(const QStringList &)), this,
