@@ -95,9 +95,6 @@ void QGstreamerPlayerSession::load(const QUrl &url)
         emit tagsChanged();
 
         g_object_set(G_OBJECT(m_playbin), "uri", m_url.toString().toLocal8Bit().constData(), NULL);
-
-        if (m_renderer)
-            m_renderer->precessNewStream();
     }
 }
 
@@ -312,6 +309,13 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
             qDebug() << m_tags;
 
             emit tagsChanged();
+        }
+
+        if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_ELEMENT &&
+            gst_structure_has_name(gm->structure, "prepare-xwindow-id"))
+        {
+            if (m_renderer)
+                m_renderer->precessNewStream();
         }
 
         if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_playbin)) {
