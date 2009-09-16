@@ -47,7 +47,7 @@
         public:
             MyClass::MyClass()
             {
-                QGeoAreaMonitor *monitor = QGeoAreaMonitor::createMonitor();
+                QGeoAreaMonitor *monitor = QGeoAreaMonitor::createDefaultMonitor();
                 connect(monitor, SIGNAL(areaEntered(QGeoPositionInfo)),
                         this, SLOT(areaEntered(QGeoPositionInfo)));
                 connect(monitor, SIGNAL(areaExited(QGeoPositionInfo)),
@@ -149,7 +149,7 @@ qreal QGeoAreaMonitor::radius() const
 
     Returns 0 if the system has no support for position monitoring.
 */
-QGeoAreaMonitor *QGeoAreaMonitor::createMonitor(QObject * /*parent*/)
+QGeoAreaMonitor *QGeoAreaMonitor::createDefaultMonitor(QObject * /*parent*/)
 {
     return 0;
 }

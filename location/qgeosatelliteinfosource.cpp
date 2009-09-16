@@ -37,7 +37,7 @@
     \class QGeoSatelliteInfoSource
     \brief The QGeoSatelliteInfoSource class is an abstract base class for the distribution of satellite information updates.
 
-    The static function QGeoSatelliteInfoSource::createSource() creates a default
+    The static function QGeoSatelliteInfoSource::createDefaultSource() creates a default
     satellite data source that is appropriate for the platform, if one is 
     available. Otherwise, QGeoSatelliteInfoSource can be subclassed to create an 
     appropriate custom source of satellite data.
@@ -62,7 +62,7 @@ QGeoSatelliteInfoSource::QGeoSatelliteInfoSource(QObject *parent)
 
     Returns 0 if the system has no default source.
 */
-QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createSource(QObject * /*parent*/)
+QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject * /*parent*/)
 {
     return 0;
 }

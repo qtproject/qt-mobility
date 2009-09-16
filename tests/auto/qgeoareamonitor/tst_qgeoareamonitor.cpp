@@ -107,9 +107,9 @@ private slots:
         QCOMPARE(mon.radius(), qreal(0.0));
     }
 
-    void createMonitor()
+    void createDefaultMonitor()
     {
-        QVERIFY(QGeoAreaMonitor::createMonitor(0) == 0);
+        QVERIFY(QGeoAreaMonitor::createDefaultMonitor(0) == 0);
     }
 };
 

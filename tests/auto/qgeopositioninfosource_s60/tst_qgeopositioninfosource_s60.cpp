@@ -62,7 +62,7 @@ private slots:
         // TC_ID_3_x_2 : In settings make one satellite and no non
         // satellite based positioning methods available. And call this
         // API, check return value it should be SatellitePositioningMethods
-        QGeoPositionInfoSource* src = QGeoPositionInfoSource::createSource(0);
+        QGeoPositionInfoSource* src = QGeoPositionInfoSource::createDefaultSource(0);
         QVERIFY(src != NULL);
         QCOMPARE(src->supportedPositioningMethods(),
                  QGeoPositionInfoSource::SatellitePositioningMethods);
@@ -71,7 +71,7 @@ private slots:
 
     void  lastKnownPosition()
     {
-        QGeoPositionInfoSource *source = QGeoPositionInfoSource::createSource(0);
+        QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource(0);
         QSignalSpy spy(source,SIGNAL(positionUpdated(const QGeoPositionInfo&)));
 
         source->setUpdateInterval(MAX_WAITING_TIME/2);
@@ -114,7 +114,7 @@ private slots:
     {
         //TC_ID_3_x_3 : In settings make no satellite and one non satellite based positioning methods 
         //available. And call this API, check return value it should be NonSatellitePositioningMethods
-        QGeoPositionInfoSource* src = QGeoPositionInfoSource::createSource(0);
+        QGeoPositionInfoSource* src = QGeoPositionInfoSource::createDefaultSource(0);
         QVERIFY(src != NULL);
         QCOMPARE(src->supportedPositioningMethods(),
                  QGeoPositionInfoSource::NonSatellitePositioningMethods);
@@ -123,7 +123,7 @@ private slots:
 
     void  lastKnownPosition3()
     {
-        QGeoPositionInfoSource *source = QGeoPositionInfoSource::createSource(0);
+        QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource(0);
         QSignalSpy spy(source,SIGNAL(positionUpdated(const QGeoPositionInfo&)));
 
         source->setPreferredPositioningMethods(QGeoPositionInfoSource::NonSatellitePositioningMethods);
@@ -159,12 +159,12 @@ class tst_QGeoPositionInfoSource_None : public QObject
     Q_OBJECT
 
 private slots:
-    void createSource()
+    void createDefaultSource()
     {
         //TC_ID_3_x_2 : Create a position source with the given parent system has no default position source
         QLocationTestUtils::uheap_mark();
         QObject *parent = new QObject;
-        QGeoPositionInfoSource* src = QGeoPositionInfoSource::createSource(parent);
+        QGeoPositionInfoSource* src = QGeoPositionInfoSource::createDefaultSource(parent);
         QVERIFY(src == NULL);
         delete parent;
         QLocationTestUtils::uheap_mark_end();

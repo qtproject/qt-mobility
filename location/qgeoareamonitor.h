@@ -61,7 +61,7 @@ public:
     virtual void setRadius(qreal radius);
     qreal radius() const;
 
-    static QGeoAreaMonitor *createMonitor(QObject *parent);
+    static QGeoAreaMonitor *createDefaultMonitor(QObject *parent);
 
 Q_SIGNALS:
     void areaEntered(const QGeoPositionInfo &update);

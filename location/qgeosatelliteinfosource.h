@@ -51,7 +51,7 @@ class Q_LOCATION_EXPORT QGeoSatelliteInfoSource : public QObject
 public:
     explicit QGeoSatelliteInfoSource(QObject *parent);
 
-    static QGeoSatelliteInfoSource *createSource(QObject *parent);
+    static QGeoSatelliteInfoSource *createDefaultSource(QObject *parent);
 
 public Q_SLOTS:
     virtual void startUpdates() = 0;

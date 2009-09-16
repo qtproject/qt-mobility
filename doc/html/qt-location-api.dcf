@@ -9,7 +9,7 @@
         <keyword ref="qgeoareamonitor.html#radius-prop">setRadius</keyword>
         <keyword ref="qgeoareamonitor.html#areaEntered">areaEntered</keyword>
         <keyword ref="qgeoareamonitor.html#areaExited">areaExited</keyword>
-        <keyword ref="qgeoareamonitor.html#createMonitor">createMonitor</keyword>
+        <keyword ref="qgeoareamonitor.html#createDefaultMonitor">createDefaultMonitor</keyword>
         <section ref="qgeoareamonitor-members.html" title="List of all members"/>
     </section>
     <section ref="qgeocoordinate.html" title="QGeoCoordinate Class Reference">
@@ -74,7 +74,7 @@
         <keyword ref="qgeopositioninfosource.html#minimumUpdateInterval-prop">minimumUpdateInterval</keyword>
         <keyword ref="qgeopositioninfosource.html#updateInterval-prop">updateInterval</keyword>
         <keyword ref="qgeopositioninfosource.html#updateInterval-prop">setUpdateInterval</keyword>
-        <keyword ref="qgeopositioninfosource.html#createSource">createSource</keyword>
+        <keyword ref="qgeopositioninfosource.html#createDefaultSource">createDefaultSource</keyword>
         <keyword ref="qgeopositioninfosource.html#lastKnownPosition">lastKnownPosition</keyword>
         <keyword ref="qgeopositioninfosource.html#positionUpdated">positionUpdated</keyword>
         <keyword ref="qgeopositioninfosource.html#preferredPositioningMethods">preferredPositioningMethods</keyword>
@@ -106,7 +106,7 @@
     </section>
     <section ref="qgeosatelliteinfosource.html" title="QGeoSatelliteInfoSource Class Reference">
         <keyword ref="qgeosatelliteinfosource.html">QGeoSatelliteInfoSource</keyword>
-        <keyword ref="qgeosatelliteinfosource.html#createSource">createSource</keyword>
+        <keyword ref="qgeosatelliteinfosource.html#createDefaultSource">createDefaultSource</keyword>
         <keyword ref="qgeosatelliteinfosource.html#requestTimeout">requestTimeout</keyword>
         <keyword ref="qgeosatelliteinfosource.html#requestUpdate">requestUpdate</keyword>
         <keyword ref="qgeosatelliteinfosource.html#satellitesInUseUpdated">satellitesInUseUpdated</keyword>

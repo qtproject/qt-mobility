@@ -40,7 +40,7 @@
     \class QGeoPositionInfoSource
     \brief The QGeoPositionInfoSource class is an abstract base class for the distribution of positional updates.
 
-    The static function QGeoPositionInfoSource::createSource() creates a default
+    The static function QGeoPositionInfoSource::createDefaultSource() creates a default
     position source that is appropriate for the platform, if one is available.
     Otherwise, QGeoPositionInfoSource can be subclassed to create an appropriate
     custom source of position data.
@@ -58,7 +58,7 @@
 
     \code
         // Emit updates every 10 seconds if available
-        QGeoPositionInfoSource *source = QGeoPositionInfoSource::createSource();
+        QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource();
         source->setUpdateInterval(10000);
     \endcode
 
@@ -164,7 +164,7 @@ QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSource::preferredPosi
     Returns 0 if the system has no default position source.
 */
 
-QGeoPositionInfoSource *QGeoPositionInfoSource::createSource(QObject *parent)
+QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *parent)
 {
 #if defined(Q_OS_SYMBIAN)
     return CQGeoPositionInfoSourceS60::NewL(parent);

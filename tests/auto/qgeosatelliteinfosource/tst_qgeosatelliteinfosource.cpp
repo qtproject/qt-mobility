@@ -38,9 +38,9 @@ class tst_QGeoSatelliteInfoSource : public QObject
     Q_OBJECT
 
 private slots:
-    void createSource()
+    void createDefaultSource()
     {
-        QVERIFY(QGeoSatelliteInfoSource::createSource(0) == 0);
+        QVERIFY(QGeoSatelliteInfoSource::createDefaultSource(0) == 0);
     }
 };
 

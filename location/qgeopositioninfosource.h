@@ -73,7 +73,7 @@ public:
     virtual PositioningMethods supportedPositioningMethods() const = 0;
     virtual int minimumUpdateInterval() const = 0;
 
-    static QGeoPositionInfoSource *createSource(QObject *parent);
+    static QGeoPositionInfoSource *createDefaultSource(QObject *parent);
 
 public Q_SLOTS:
     virtual void startUpdates() = 0;

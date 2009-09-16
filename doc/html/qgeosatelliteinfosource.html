@@ -53,7 +53,7 @@
 <a name="static-public-members"></a>
 <h2>Static Public Members</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QGeoSatelliteInfoSource * </td><td class="memItemRight" valign="bottom"><b><a href="qgeosatelliteinfosource.html#createSource">createSource</a></b> ( QObject * <i>parent</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoSatelliteInfoSource * </td><td class="memItemRight" valign="bottom"><b><a href="qgeosatelliteinfosource.html#createDefaultSource">createDefaultSource</a></b> ( QObject * <i>parent</i> )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#static-public-members">QObject</a></li>
@@ -69,13 +69,13 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QGeoSatelliteInfoSource class is an abstract base class for the distribution of satellite information updates.</p>
-<p>The static function <a href="qgeosatelliteinfosource.html#createSource">QGeoSatelliteInfoSource::createSource</a>() creates a default satellite data source that is appropriate for the platform, if one is available. Otherwise, QGeoSatelliteInfoSource can be subclassed to create an appropriate custom source of satellite data.</p>
+<p>The static function <a href="qgeosatelliteinfosource.html#createDefaultSource">QGeoSatelliteInfoSource::createDefaultSource</a>() creates a default satellite data source that is appropriate for the platform, if one is available. Otherwise, QGeoSatelliteInfoSource can be subclassed to create an appropriate custom source of satellite data.</p>
 <p>Call <a href="qgeosatelliteinfosource.html#startUpdates">startUpdates</a>() and <a href="qgeosatelliteinfosource.html#stopUpdates">stopUpdates</a>() to start and stop regular updates, or <a href="qgeosatelliteinfosource.html#requestUpdate">requestUpdate</a>() to request a single update. When an update is available, <a href="qgeosatelliteinfosource.html#satellitesInViewUpdated">satellitesInViewUpdated</a>() and/or <a href="qgeosatelliteinfosource.html#satellitesInUseUpdated">satellitesInUseUpdated</a>() will be emitted.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QGeoSatelliteInfoSource"></a>QGeoSatelliteInfoSource::QGeoSatelliteInfoSource ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> )</h3>
 <p>Creates a source with the specified <i>parent</i>.</p>
-<h3 class="fn"><a name="createSource"></a>QGeoSatelliteInfoSource * QGeoSatelliteInfoSource::createSource ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="createDefaultSource"></a>QGeoSatelliteInfoSource * QGeoSatelliteInfoSource::createDefaultSource ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Creates and returns a source with the specified <i>parent</i> that reads from the system's default source of satellite update information.</p>
 <p>Returns 0 if the system has no default source.</p>
 <h3 class="fn"><a name="requestTimeout"></a>void QGeoSatelliteInfoSource::requestTimeout ()&nbsp;&nbsp;<tt> [signal]</tt></h3>

@@ -77,7 +77,7 @@ private slots:
 
     void preferredPositioningMethods();
 
-    void createSource();
+    void createDefaultSource();
 
     void setUpdateInterval();
     void setUpdateInterval_data();

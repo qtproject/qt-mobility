@@ -52,11 +52,11 @@ Q_DECLARE_METATYPE(QGeoPositionInfo)
 #define MAX_WAITING_TIME 50000
 
 // Must provide a valid source, unless testing the source
-// returned by QGeoPositionInfoSource::createSource() on a system
+// returned by QGeoPositionInfoSource::createDefaultSource() on a system
 // that has no default source
 #define CHECK_SOURCE_VALID { \
     if (!m_source) { \
-        if (m_testingDefaultSource && QGeoPositionInfoSource::createSource(0) == 0) \
+        if (m_testingDefaultSource && QGeoPositionInfoSource::createDefaultSource(0) == 0) \
             QSKIP("No default position source on this system", SkipAll); \
         else \
             QFAIL("createTestSource() must return a valid source!"); \
@@ -92,7 +92,7 @@ class DefaultSourceTest : public TestQGeoPositionInfoSource
 protected:
     QGeoPositionInfoSource *createTestSource()
     {
-        return QGeoPositionInfoSource::createSource(0);
+        return QGeoPositionInfoSource::createDefaultSource(0);
     }
 };
 
@@ -202,12 +202,12 @@ void TestQGeoPositionInfoSource::preferredPositioningMethods()
 }
 
 //TC_ID_3_x_1 : Create a position source with the given parent that reads from the system's default sources of location data
-void TestQGeoPositionInfoSource::createSource()
+void TestQGeoPositionInfoSource::createDefaultSource()
 {
     QLocationTestUtils::uheap_mark();
     QObject *parent = new QObject;
 
-    QGeoPositionInfoSource *source = QGeoPositionInfoSource::createSource(parent);
+    QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource(parent);
 #if defined(Q_OS_SYMBIAN)
     QVERIFY(source != 0);
 #else

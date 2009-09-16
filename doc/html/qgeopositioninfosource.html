@@ -78,7 +78,7 @@
 <a name="static-public-members"></a>
 <h2>Static Public Members</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QGeoPositionInfoSource * </td><td class="memItemRight" valign="bottom"><b><a href="qgeopositioninfosource.html#createSource">createSource</a></b> ( QObject * <i>parent</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoPositionInfoSource * </td><td class="memItemRight" valign="bottom"><b><a href="qgeopositioninfosource.html#createDefaultSource">createDefaultSource</a></b> ( QObject * <i>parent</i> )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#static-public-members">QObject</a></li>
@@ -93,11 +93,11 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QGeoPositionInfoSource class is an abstract base class for the distribution of positional updates.</p>
-<p>The static function <a href="qgeopositioninfosource.html#createSource">QGeoPositionInfoSource::createSource</a>() creates a default position source that is appropriate for the platform, if one is available. Otherwise, QGeoPositionInfoSource can be subclassed to create an appropriate custom source of position data.</p>
+<p>The static function <a href="qgeopositioninfosource.html#createDefaultSource">QGeoPositionInfoSource::createDefaultSource</a>() creates a default position source that is appropriate for the platform, if one is available. Otherwise, QGeoPositionInfoSource can be subclassed to create an appropriate custom source of position data.</p>
 <p>Users of a QGeoPositionInfoSource subclass can request the current position using <a href="qgeopositioninfosource.html#requestUpdate">requestUpdate</a>(), or start and stop regular position updates using <a href="qgeopositioninfosource.html#startUpdates">startUpdates</a>() and <a href="qgeopositioninfosource.html#stopUpdates">stopUpdates</a>(). When an update is available, positionUpdate() is emitted. The last known position can be accessed with lastUpdate().</p>
 <p>If regular position updates are required, <a href="qgeopositioninfosource.html#updateInterval-prop">setUpdateInterval</a>() can be used to specify how often these updates should be emitted. (If no interval is specified, updates are simply provided whenever they are available.) For example:</p>
 <pre><span class="comment">    // Emit updates every 10 seconds if available</span>
-    QGeoPositionInfoSource *source = QGeoPositionInfoSource::createSource();
+    QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource();
     source-&gt;setUpdateInterval(10000);</pre>
 <p>To remove an update interval that was previously set, call <a href="qgeopositioninfosource.html#updateInterval-prop">setUpdateInterval</a>() with a value of 0.</p>
 <p>Note that the position source may have a minimum value requirement for update intervals, as returned by minimumIntervalForType().</p>
@@ -138,7 +138,7 @@
 <p>Creates a position source with the specified <i>parent</i>.</p>
 <h3 class="fn"><a name="dtor.QGeoPositionInfoSource"></a>QGeoPositionInfoSource::~QGeoPositionInfoSource ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the position source.</p>
-<h3 class="fn"><a name="createSource"></a>QGeoPositionInfoSource * QGeoPositionInfoSource::createSource ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="createDefaultSource"></a>QGeoPositionInfoSource * QGeoPositionInfoSource::createDefaultSource ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Creates and returns a position source with the given <i>parent</i> that reads from the system's default sources of location data.</p>
 <p>Returns 0 if the system has no default position source.</p>
 <h3 class="fn"><a name="lastKnownPosition"></a><a href="qgeopositioninfo.html">QGeoPositionInfo</a> QGeoPositionInfoSource::lastKnownPosition ( bool <i>fromSatellitePositioningMethodsOnly</i> = false ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
