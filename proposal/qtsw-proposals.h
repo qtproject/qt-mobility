@@ -9,10 +9,10 @@
  * way which provides clients with progress / status updates.
  *
  * It is similar to the way in which QContactAbstractRequest
- * works.  QContactAction::performAction(..) now starts the
- * asynchronous action.  Prior to calling performAction(),
+ * works.  QContactAction::invokeAction(..) now starts the
+ * asynchronous action.  Prior to calling invokeAction(),
  * the action will be in the Inactive state.  After calling
- * performAction(), the action will either be Active,
+ * invokeAction(), the action will either be Active,
  * Finished or Autonomous (which is the same as Finished for
  * most intents and purposes; see inline comments).
  */
@@ -26,9 +26,9 @@ public:
     // .. all the other stuff needed for QContactAction...
 
     /* Initiate the asynchronous action on the given contact (and optionally detail) */
-    virtual void performAction(const QContact& contact, const QContactDetail& detail = QContactDetail()) = 0;
+    virtual void invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail()) = 0;
 
-    /* The status of Autonomous is where an action which doesn't send any progress signals */
+    /* The possible states of an action */
     enum Status {
         Inactive = 0,      // operation not yet started
         Autonomous,        // operation started, no further information available - name under discussion.
@@ -37,6 +37,9 @@ public:
         FinishedWithError  // operation finished, but error occurred
     };
 
+    /* Returns the most recently received result, or an invalid QVariantMap if no results received */
+    virtual QVariantMap result() = 0;
+
 signals:
-    void progress(QContactAction::Status status, const QVariant& result);
+    void progress(QContactAction::Status status, const QVariantMap& result);
 };
