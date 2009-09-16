@@ -368,70 +368,70 @@ namespace WinHelpers {
 
     void addAttachment(IMessage* message, const QMessageContentContainer& attachmentContainer)
     {
-        IAttach* pAttachment=NULL;
-        ULONG ulAttachmentNum=0;
+        IAttach *attachment(0);
+        ULONG attachmentNumber(0);
 
-        Lptstr suggestedFileNameLptstr(LptstrFromQString(attachmentContainer.suggestedFileName()));
+        if (HR_SUCCEEDED(message->CreateAttach(NULL, 0, &attachmentNumber, &attachment))) {
+            QString fileName(attachmentContainer.suggestedFileName());
+            QString extension;
+            int index = fileName.lastIndexOf(".");
+            if (index != -1) {
+                extension = fileName.mid(index);
+            }
 
-        QDataStream attachmentStream(attachmentContainer.content());
+            Lptstr suggestedFileNameLptstr(LptstrFromQString(fileName));
+            Lptstr extensionLptstr(LptstrFromQString(extension));
 
-        if(FAILED(message->CreateAttach(NULL, 0, &ulAttachmentNum, &pAttachment)))
-        {
+            const int nProperties = 5;
+            SPropValue prop[nProperties] = { 0 };
+
+            prop[0].ulPropTag = PR_ATTACH_METHOD;
+            prop[0].Value.ul = ATTACH_BY_VALUE;
+            prop[1].ulPropTag = PR_RENDERING_POSITION;
+            prop[1].Value.l = -1;
+            prop[2].ulPropTag = PR_ATTACH_LONG_FILENAME;
+            prop[2].Value.LPSZ = suggestedFileNameLptstr;
+            prop[3].ulPropTag = PR_ATTACH_FILENAME;
+            prop[3].Value.LPSZ = suggestedFileNameLptstr;
+            prop[4].ulPropTag = PR_ATTACH_EXTENSION;
+            prop[4].Value.LPSZ = extensionLptstr;
+
+            if (HR_SUCCEEDED(attachment->SetProps(nProperties, prop, NULL))) {
+                IStream *os(0);
+                if (HR_SUCCEEDED(attachment->OpenProperty(PR_ATTACH_DATA_BIN, &IID_IStream, 0, MAPI_MODIFY | MAPI_CREATE, (LPUNKNOWN*)&os))) {
+                    const int BUF_SIZE=4096;
+                    char pData[BUF_SIZE];
+                    ULONG ulSize=0,ulRead,ulWritten;
+
+                    QDataStream attachmentStream(attachmentContainer.content());
+
+                    ulRead=attachmentStream.readRawData(static_cast<char*>(pData), BUF_SIZE);
+                    while (ulRead) {
+                        os->Write(pData,ulRead, &ulWritten);
+
+                        ulSize += ulRead;
+                        ulRead = attachmentStream.readRawData(static_cast<char*>(pData), BUF_SIZE);
+                    }
+
+                    os->Commit(STGC_DEFAULT);
+
+                    mapiRelease(os);
+
+                    prop[0].ulPropTag=PR_ATTACH_SIZE;
+                    prop[0].Value.ul=ulSize;
+                    attachment->SetProps(1, prop, NULL);
+                    attachment->SaveChanges(KEEP_OPEN_READONLY);
+                } else {
+                    qWarning() << "Could not open MAPI attachment data stream";
+                }
+            } else {
+                qWarning() << "Could not set MAPI attachment properties";
+            }
+
+            mapiRelease(attachment);
+        } else {
             qWarning() << "Could not create MAPI attachment";
-            goto Quit;
         }
-
-        const int nProperties=5;
-        SPropValue prop[nProperties];
-        memset(prop, 0,sizeof(SPropValue)*nProperties);
-        prop[0].ulPropTag=PR_ATTACH_METHOD;
-        prop[0].Value.ul=ATTACH_BY_VALUE;
-        prop[1].ulPropTag=PR_RENDERING_POSITION;
-        prop[1].Value.l=-1;
-
-        prop[2].ulPropTag=PR_ATTACH_LONG_FILENAME;
-        prop[2].Value.LPSZ=suggestedFileNameLptstr;
-        prop[3].ulPropTag=PR_ATTACH_FILENAME;
-        prop[3].Value.LPSZ=suggestedFileNameLptstr;
-        prop[4].ulPropTag=0x7FFF000B;
-        prop[4].Value.b=TRUE;
-
-        if(FAILED(pAttachment->SetProps(nProperties, prop, NULL)))
-        {
-            qWarning() << "Could not get MAPI attachment properties";
-            goto Quit;
-        }
-
-        LPSTREAM pStream=NULL;
-        if(FAILED(pAttachment->OpenProperty(PR_ATTACH_DATA_BIN, &IID_IStream, 0, MAPI_MODIFY | MAPI_CREATE, (LPUNKNOWN*)&pStream)))
-        {
-            qWarning() << "Could not open MAPI attachment data stream";
-            goto Quit;
-        }
-
-        const int BUF_SIZE=4096;
-        char pData[BUF_SIZE];
-        ULONG ulSize=0,ulRead,ulWritten;
-
-        ulRead=attachmentStream.readRawData(static_cast<char*>(pData), BUF_SIZE);
-
-        while(ulRead)
-        {
-            pStream->Write(pData,ulRead, &ulWritten);
-            ulSize+=ulRead;
-            ulRead=attachmentStream.readRawData(static_cast<char*>(pData), BUF_SIZE);
-        }
-
-        pStream->Commit(STGC_DEFAULT);
-        mapiRelease(pStream);
-
-        prop[0].ulPropTag=PR_ATTACH_SIZE;
-        prop[0].Value.ul=ulSize;
-        pAttachment->SetProps(1, prop, NULL);
-        pAttachment->SaveChanges(KEEP_OPEN_READONLY);
-
-Quit:
-        mapiRelease(pAttachment);
     }
 
 }
@@ -867,25 +867,11 @@ IMessage* MapiFolder::createMessage(const QMessage& source, const MapiSessionPtr
         }
         */
 
-        if (!source.contentIds().isEmpty()) {
-
-            // This is a multipart message
-            //TODO detect the body container and set it
-            //add attachments
-
-            foreach(const QMessageContentContainerId& containerId, source.contentIds())
-            {
-                QMessageContentContainer c = source.find(containerId);
-
-                bool isAttachment = (!c.suggestedFileName().isEmpty()) && c.isContentAvailable();
-                if(isAttachment)
-                    addAttachment(mapiMessage,c);
-            }
-
-        } else {
-            // This message has only a body
-            QByteArray subType(source.contentSubType().toLower());
-            QString body(source.textContent());
+        QMessageContentContainerId bodyId(source.bodyId());
+        if (bodyId.isValid()) {
+            QMessageContentContainer bodyContent(source.find(bodyId));
+            QByteArray subType(bodyContent.contentSubType().toLower());
+            QString body(bodyContent.textContent());
 
             if ((subType == "rtf") || (subType == "html")) {
                 LONG textFormat(EDITOR_FORMAT_RTF);
@@ -939,6 +925,15 @@ IMessage* MapiFolder::createMessage(const QMessage& source, const MapiSessionPtr
                 if (!setMapiProperty(mapiMessage, PR_BODY, body)) {
                     qWarning() << "Unable to set body in message.";
                 }
+            }
+        }
+
+        // Add any attachments
+        foreach (const QMessageContentContainerId &attachmentId, source.attachmentIds()) {
+            QMessageContentContainer attachment(source.find(attachmentId));
+            bool isAttachment = (!attachment.suggestedFileName().isEmpty() && attachment.isContentAvailable());
+            if (isAttachment) {
+                addAttachment(mapiMessage, attachment);
             }
         }
     }
@@ -2339,7 +2334,8 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
             QMessageContentContainerPrivate *bodyContainer(((QMessageContentContainer *)(&bodyPart))->d_ptr);
             bodyContainer->setContent(messageBody, QByteArray("text"), bodySubType, QByteArray("utf-16"));
         }
-        messageContainer->setContentType(QByteArray("multipart"), QByteArray("related"), QByteArray());
+
+        messageContainer->setContentType(QByteArray("multipart"), QByteArray("mixed"), QByteArray());
         result.d_ptr->_bodyId = messageContainer->appendContent(bodyPart);
 
         // Find any attachments for this message
@@ -2397,9 +2393,6 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
                     QMessageContentContainer attachment(WinHelpers::fromLocator(locator));
                     QMessageContentContainerPrivate *container(((QMessageContentContainer *)(&attachment))->d_ptr);
 
-                    container->_name = filename.toAscii();
-                    container->_size = size;
-
                     if (!extension.isEmpty()) {
                         QByteArray contentType(contentTypeFromExtension(extension));
                         if (!contentType.isEmpty()) {
@@ -2421,6 +2414,9 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
                         }
                         container->setHeaderField("Content-Disposition", value);
                     }
+
+                    container->_name = filename.toAscii();
+                    container->_size = size;
 
                     messageContainer->appendContent(attachment);
                 }

@@ -103,13 +103,6 @@ public:
         _textContent = content;
     }
 
-    /*
-    void setHeaderField(const QByteArray &name, const QByteArray &value)
-    {
-        _container->setHeaderField(name, value);
-    }
-    */
-
     QMailMessageContentType contentType() const 
     {
         QMailMessageContentType ct;
@@ -261,8 +254,6 @@ public:
         _content = QByteArray();
         _textContent = QString();
         _filename = QString();
-        _messageId = QMessageId();
-        _id = QMessageContentContainerId();
         _available = false;
         _size = 0;
         _header.clear();

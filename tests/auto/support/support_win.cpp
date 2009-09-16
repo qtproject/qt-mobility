@@ -967,6 +967,7 @@ public:
         QString subject(params["subject"]);
         QString text(params["text"]);
         QString mimeType(params["mimeType"]);
+        QString attachments(params["attachments"]);
         QString priority(params["priority"]);
         QString size(params["size"]);
         QString type(params["type"]);
@@ -1067,6 +1068,10 @@ public:
 
                     if (!text.isEmpty()) {
                         message.setBody(text, mimeType.toAscii());
+                    }
+
+                    if (!attachments.isEmpty()) {
+                        message.appendAttachments(attachments.split("\n"));
                     }
 
                     QMessage::StatusFlags flags(0);
