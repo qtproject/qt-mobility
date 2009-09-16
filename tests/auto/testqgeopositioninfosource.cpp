@@ -389,7 +389,6 @@ void TestQGeoPositionInfoSource::requestUpdate()
 void TestQGeoPositionInfoSource::requestUpdate_data()
 {
     QTest::addColumn<int>("timeout");
-    QTest::newRow("zero") << 0;                     //TC_ID_3_x_6
     QTest::newRow("less than zero") << -1;          //TC_ID_3_x_7
 }
 
