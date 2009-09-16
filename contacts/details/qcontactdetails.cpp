@@ -95,7 +95,7 @@
 
 /*!
  * \class QContactOrganisation
- * \brief Details about the organisation of which the contact is either a part of, or stands for
+ * \brief Details about an organisation that the contact is either a part of, or stands for
  */
 
 /*!
@@ -491,6 +491,24 @@ Q_DEFINE_LATIN1_LITERAL(QContactOrganisation::FieldDisplayLabel, "DisplayLabel")
 Q_DEFINE_LATIN1_LITERAL(QContactOrganisation::FieldLogo, "Logo");
 
 /*!
+ * \variable QContactOrganisation::FieldDepartment
+ * The constant key for which the organisation's department value is stored in details of the QContactOrganisation type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOrganisation::FieldDepartment, "Department");
+
+/*!
+ * \variable QContactOrganisation::FieldLocation
+ * The constant key for which the organisation's location (or the location of the contact's part of the organisation) value is stored in details of the QContactOrganisation type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOrganisation::FieldLocation, "Location");
+
+/*!
+ * \variable QContactOrganisation::FieldTitle
+ * The constant key for which the contact's title within the organisation is stored in details of the QContactOrganisation type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOrganisation::FieldTitle, "Title");
+
+/*!
  * \variable QContactPresence::FieldAccountUri
  * The constant key for which the remote account uri value is stored in details of the QContactPresence type
  */
@@ -859,6 +877,16 @@ QString QContactAddress::displayLabel() const
 /*!
  * \fn QContactAddress::setDisplayLabel(const QString& displayLabel)
  * Sets the display label of the address stored in this detail to \a displayLabel
+ */
+
+/*!
+ * \fn QContactAddress::postOfficeBox() const
+ * Returns the post office box segment of the address stored in this detail
+ */
+
+/*!
+ * \fn QContactAddress::setPostOfficeBox(const QString& postOfficeBox)
+ * Sets the post office box segment of the address stored in this detail to \a postOfficeBox
  */
 
 /*!
@@ -1260,6 +1288,39 @@ QString QContactAddress::displayLabel() const
 /*!
  * \fn QContactOrganisation::logo() const
  * Returns the logo of the organisation stored in this detail
+ */
+
+
+/*!
+ * \fn QContactOrganisation::setDepartment(const QString& department)
+ * Sets the contact's department of the organisation stored in this detail to \a department
+ */
+
+/*!
+ * \fn QContactOrganisation::department() const
+ * Returns the contact's department stored in this detail
+ */
+
+
+/*!
+ * \fn QContactOrganisation::setLocation(const QString& location)
+ * Sets the location (e.g. city or suburb) of the organisation stored in this detail to \a location
+ */
+
+/*!
+ * \fn QContactOrganisation::location() const
+ * Returns the location of the organisation stored in this detail
+ */
+
+
+/*!
+ * \fn QContactOrganisation::setTitle(const QString& title)
+ * Sets the contact's title within the organisation stored in this detail to \a title
+ */
+
+/*!
+ * \fn QContactOrganisation::title() const
+ * Returns the contact's title within the organisation stored in this detail
  */
 
 /*!

@@ -404,6 +404,9 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     d.setName(QContactOrganisation::DefinitionName);
     fields.insert(QContactOrganisation::FieldLogo, f);
     fields.insert(QContactOrganisation::FieldDisplayLabel, f);
+    fields.insert(QContactOrganisation::FieldLocation, f);
+    fields.insert(QContactOrganisation::FieldDepartment, f);
+    fields.insert(QContactOrganisation::FieldTitle, f);
     f.dataType = QVariant::StringList;
     f.allowableValues = contexts;
     fields.insert(QContactDetail::FieldContext, f);
@@ -657,6 +660,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
     d.setName(QContactAddress::DefinitionName);
+    fields.insert(QContactAddress::FieldPostOfficeBox, f);
     fields.insert(QContactAddress::FieldStreet, f);
     fields.insert(QContactAddress::FieldLocality, f);
     fields.insert(QContactAddress::FieldRegion, f);

@@ -181,6 +181,7 @@ the default schema will work without source modification against their backend.
     \o QContactAddress
     \o \list
             \o DisplayLabel
+            \o PostOfficeBox
             \o Street
             \o Locality
             \o Region
@@ -194,8 +195,10 @@ the default schema will work without source modification against their backend.
             \o String
             \o String
             \o String
+            \o String
        \endlist
     \o \list
+            \o Any
             \o Any
             \o Any
             \o Any
@@ -205,6 +208,7 @@ the default schema will work without source modification against their backend.
        \endlist
     \o \list
             \o The formatted address
+            \o The post office box segment of the address.
             \o The street segment of the address (i.e., street and number)
             \o The locality segment of the address (i.e., city/suburb)
             \o The region segment of the address (i.e., state)
@@ -305,12 +309,15 @@ the default schema will work without source modification against their backend.
     \o \list \o The URI of an online account communication endpoint associated with the contact \endlist
 \row
     \o QContactOrganisation
-    \o \list \o DisplayLabel \o Logo \endlist
-    \o \list \o String \o String \endlist
-    \o \list \o Any \o Any \endlist
+    \o \list \o DisplayLabel \o Logo \o Department \o Location \o Title \endlist
+    \o \list \o String \o String \o String \o String \o String \endlist
+    \o \list \o Any \o Any \o Any \o Any \o Any \endlist
     \o \list
             \o The display label of an organisation associated with the contact
-            \o The location of a logo of an organisation associated with the contact
+            \o The file location of a logo of an organisation associated with the contact
+            \o The department of the organisation associated with the contact
+            \o The physical location (e.g. city or suburb) of the part of the organisation associated with the contact
+            \o The title the contact has within the organisation (e.g. job position, role etc)
        \endlist
 \row
     \o QContactPhoneNumber

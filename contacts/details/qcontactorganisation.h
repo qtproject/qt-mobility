@@ -48,16 +48,28 @@ public:
     const char* DefinitionName;
     const char* FieldDisplayLabel;
     const char* FieldLogo;
+    const char* FieldDepartment;
+    const char* FieldLocation;
+    const char* FieldTitle;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOrganisation, "Organisation")
     Q_DECLARE_LATIN1_LITERAL(FieldDisplayLabel, "DisplayLabel");
     Q_DECLARE_LATIN1_LITERAL(FieldLogo, "Logo");
+    Q_DECLARE_LATIN1_LITERAL(FieldDepartment, "Department");
+    Q_DECLARE_LATIN1_LITERAL(FieldLocation, "Location");
+    Q_DECLARE_LATIN1_LITERAL(FieldTitle, "Title");
 #endif
 
     void setDisplayLabel(const QString& displayLabel) {setValue(FieldDisplayLabel, displayLabel);}
     QString displayLabel() const {return value(FieldDisplayLabel);}
     void setLogo(const QString& logo) {setValue(FieldLogo, logo);}
     QString logo() const {return value(FieldLogo);}
+    void setDepartment(const QString& department) {setValue(FieldDepartment, department);}
+    QString department() const {return value(FieldDepartment);}
+    void setLocation(const QString& location) {setValue(FieldLocation, location);}
+    QString location() const {return value(FieldLocation);}
+    void setTitle(const QString& title) {setValue(FieldTitle, title);}
+    QString title() const {return value(FieldTitle);}
 };
 
 #endif
