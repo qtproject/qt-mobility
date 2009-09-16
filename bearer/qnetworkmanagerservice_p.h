@@ -26,7 +26,7 @@
 ** package.
 **
 ** If you have questions regarding the use of this file, please
-** contact Nokia at http://www.qtsoftware.com/contact.
+** contact Nokia at http://qt.nokia.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -57,6 +57,8 @@
 
 #include <QDBusPendingCallWatcher>
 #include <qnmdbushelper_p.h>
+
+QT_BEGIN_NAMESPACE
 
 typedef QMap< QString, QMap<QString,QVariant> > QNmSettingsMap;
 Q_DECLARE_METATYPE(QNmSettingsMap)
@@ -381,5 +383,7 @@ public:
 	QNetworkManagerIp4ConfigPrivate *d;    
 };
 ////
+
+QT_END_NAMESPACE
 
 #endif //QNETWORKMANAGERSERVICE_H

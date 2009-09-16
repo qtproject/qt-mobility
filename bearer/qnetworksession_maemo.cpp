@@ -41,7 +41,7 @@
 
 #include <QHash>
 
-#include "qnetworksession_p.h"
+#include "qnetworksession_maemo_p.h"
 #include <dbus/dbus.h>
 #include <dbus/dbus-glib-lowlevel.h>
 

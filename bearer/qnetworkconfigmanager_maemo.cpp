@@ -41,7 +41,7 @@
 
 #include <string.h>
 
-#include "qnetworkconfigmanager_p.h"
+#include "qnetworkconfigmanager_maemo_p.h"
 
 #include <QDebug>
 #include <QtDBus>

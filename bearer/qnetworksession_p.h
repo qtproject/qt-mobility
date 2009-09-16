@@ -26,7 +26,7 @@
 ** package.
 **
 ** If you have questions regarding the use of this file, please
-** contact Nokia at http://www.qtsoftware.com/contact.
+** contact Nokia at http://qt.nokia.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -54,6 +54,7 @@
 #include <QNetworkInterface>
 #include <QDateTime>
 
+QT_BEGIN_NAMESPACE
 #ifdef BEARER_ENGINE
 class QNetworkSessionEngine;
 #endif
@@ -150,17 +151,6 @@ private:
 #if defined(BEARER_ENGINE) && defined(BACKEND_NM)
     QDateTime startTime;
     void setActiveTimeStamp();
-#endif
-
-#ifdef MAEMO
-    QDateTime startTime;
-    QString currentBearerName;
-    QString currentNetworkInterface;
-    friend class IcdListener;
-    void updateState(QNetworkSession::State);
-    QString updateIdentifier(QString &newId);
-    quint64 getStatistics(bool sent) const;
-    void cleanupSession(void);
 #endif
 };
 

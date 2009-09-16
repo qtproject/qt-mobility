@@ -11,5 +11,5 @@ include(../../../common.pri)
 LIBS += -lQtBearer
 
 symbian {
-    TARGET.CAPABILITY = All -TCB -DRM
+    TARGET.CAPABILITY = NetworkServices NetworkControl ReadUserData
 }

@@ -26,7 +26,7 @@
 ** package.
 **
 ** If you have questions regarding the use of this file, please
-** contact Nokia at http://www.qtsoftware.com/contact.
+** contact Nokia at http://qt.nokia.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -44,6 +44,7 @@
 #include "xqlistwidget.h"
 
 class QHttp;
+class SessionTab;
 
 class BearerEx : public QMainWindow, public Ui::BearerExMainWindow
 {
@@ -59,7 +60,7 @@ private Q_SLOTS:
     void on_updateListButton_clicked();
     void on_showDetailsButton_clicked();
     void on_createSessionButton_clicked();
-    void on_monitorConfigurationsButton_clicked();
+    void on_clearEventListButton_clicked();
 
     void configurationsUpdateCompleted();
     void configurationAdded(const QNetworkConfiguration& config);
@@ -70,7 +71,6 @@ private Q_SLOTS:
 private:
     QNetworkConfigurationManager m_NetworkConfigurationManager;
     QAction* m_openAction;
-    bool m_monitor;
 };
 
 class DetailedInfoDialog : public QDialog, public Ui::DetailedInfoDialog
@@ -82,13 +82,16 @@ public:
 };
 
 
-class SessionDialog : public QDialog, public Ui::SessionDialog
+class SessionTab : public QWidget, public Ui::SessionTab
 {
     Q_OBJECT
 
 public:
-    SessionDialog(QNetworkConfiguration* apNetworkConfiguration = 0, QNetworkConfigurationManager* configManager = 0, QWidget* parent = 0);
-    ~SessionDialog();
+    SessionTab(QNetworkConfiguration* apNetworkConfiguration = 0, QNetworkConfigurationManager* configManager = 0,
+               QListWidget* eventListWidget = 0,  int index = 0, BearerEx* parent = 0);
+    ~SessionTab();
+    
+    QString stateString(QNetworkSession::State state);    
 
 private Q_SLOTS:
     void on_createQHttpButton_clicked();
@@ -103,6 +106,7 @@ private Q_SLOTS:
     void newConfigurationActivated();
     void preferredConfigurationChanged(const QNetworkConfiguration& config, bool isSeamless);
     void stateChanged(QNetworkSession::State state);
+    void newState(QNetworkSession::State state);
     void sessionOpened();
     void sessionClosed();
     void error(QNetworkSession::SessionError error);
@@ -111,7 +115,9 @@ private: //data
     QHttp* m_http;
     QNetworkSession* m_NetworkSession;
     QNetworkConfigurationManager* m_ConfigManager;
+    QListWidget* m_eventListWidget;
     QNetworkConfiguration m_config;
+    int m_index;
     bool m_httpRequestOngoing;
     bool m_alrEnabled;
 };

@@ -26,7 +26,7 @@
 ** package.
 **
 ** If you have questions regarding the use of this file, please
-** contact Nokia at http://www.qtsoftware.com/contact.
+** contact Nokia at http://qt.nokia.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -232,22 +232,22 @@ void QNetworkSessionPrivate::stop()
 
 void QNetworkSessionPrivate::migrate()
 {
-    qFatal("Function not implemented at %s.", __FUNCTION__);
+    qWarning("This platform does not support roaming (%s).", __FUNCTION__);
 }
 
 void QNetworkSessionPrivate::accept()
 {
-    qFatal("Function not implemented at %s.", __FUNCTION__);
+    qWarning("This platform does not support roaming (%s).", __FUNCTION__);
 }
 
 void QNetworkSessionPrivate::ignore()
 {
-    qFatal("Function not implemented at %s.", __FUNCTION__);
+    qWarning("This platform does not support roaming (%s).", __FUNCTION__);
 }
 
 void QNetworkSessionPrivate::reject()
 {
-    qFatal("Function not implemented at %s.", __FUNCTION__);
+    qWarning("This platform does not support roaming (%s).", __FUNCTION__);
 }
 
 QNetworkInterface QNetworkSessionPrivate::currentInterface() const
@@ -303,7 +303,7 @@ QString QNetworkSessionPrivate::errorString() const
     case QNetworkSession::InvalidConfigurationError:
         return tr("The specified configuration cannot be used.");
     case QNetworkSession::RoamingError:
-        return tr("You went on a walkabout and got lost.");
+        return tr("Roaming was aborted or is not possible.");
 
     }
 

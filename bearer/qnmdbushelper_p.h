@@ -26,7 +26,7 @@
 ** package.
 **
 ** If you have questions regarding the use of this file, please
-** contact Nokia at http://www.qtsoftware.com/contact.
+** contact Nokia at http://qt.nokia.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -51,8 +51,9 @@
 #include <QMap>
 #endif
 
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+QT_BEGIN_NAMESPACE
 
+#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
 
 class QNmDBusHelper: public QObject, protected QDBusContext
  {
@@ -74,5 +75,7 @@ Q_SIGNALS:
     void pathForSettingsRemoved(const QString &);
 };
 #endif
+
+QT_END_NAMESPACE
 
 #endif// QNMDBUSHELPERPRIVATE_H

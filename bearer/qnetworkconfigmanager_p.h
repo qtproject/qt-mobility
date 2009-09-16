@@ -26,7 +26,7 @@
 ** package.
 **
 ** If you have questions regarding the use of this file, please
-** contact Nokia at http://www.qtsoftware.com/contact.
+** contact Nokia at http://qt.nokia.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -49,6 +49,7 @@
 #include <qnetworkconfiguration_p.h>
 
 #include <QHash>
+#include <QStringList>
 
 QT_BEGIN_NAMESPACE
 
@@ -60,7 +61,6 @@ class QNativeWifiEngine;
 class QNmWifiEngine;
 #endif
 
-#include <QStringList>
 
 class QNetworkConfigurationManagerPrivate : public QObject
 {

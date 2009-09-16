@@ -108,6 +108,32 @@ global session calling \l{QNetworkSession::close()}{close()} never stops the int
 
 \section2 Platform capabilities
 
+Some API features are not available on all platforms. The \l QNetworkConfigurationManager::CapabilityFlag should be used to detect platform features at runtime. 
+The following table lists the various platform API's being used by this API. This may assist in the process of determining the feature support:
+
+\table
+    \header
+    \o Platform
+    \o Backend capabilities
+    \row
+        \o Linux\unicode{0xAE}
+        \o Linux uses the \l {http://projects.gnome.org/NetworkManager}{NetworkManager API} which supports interface notifications and starting and stopping of network interfaces.
+    \row
+        \o Windows\unicode{0xAE} XP
+        \o This platform supports interface notifications without active polling.
+    \row
+        \o Windows XP SP2+Hotfixes, Windows XP SP3, Windows Vista, Windows 7
+        \o In addition to standard Windows XP wifi access point monitoring has been improved which includes the ability to start and stop wifi interfaces. This requires Windows to manage the wifi interfaces.
+    \row
+        \o Symbian\unicode{0xAE}  Platform & S60 3.1
+        \o Symbian support is based on Symbian platforms RConnection. In addition to interface notifications, starting and stopping of network it provides system wide session support and direct connection routing.
+    \row
+        \o Symbian Platform & S60 3.2+
+        \o This platform enjoys the most comprehensive feature set. In addition to the features support by the S60 3.1 Network roaming is supported.
+    \row
+        \o All other platforms (*nix, Mac OS\unicode{0xAE}, Windows Mobile)
+        \o This backend is the fallback for all platforms supports network interface notifications via active polling only.
+\endtable
 
 \section1 Building and compiling
 
