@@ -357,7 +357,16 @@ void QMessage::setBody(QTextStream &in, const QByteArray &mimeType)
 
 QMessageContentContainerIdList QMessage::attachmentIds() const
 {
-    return contentIds();
+    QMessageContentContainerIdList result;
+
+    QMessageContentContainerId bodyId(bodyId());
+    foreach (const QMessageContentContainerId &contentId, contentIds()) {
+        if (contentId != bodyId) {
+            result.append(contentId);
+        }
+    }
+
+    return result;
 }
 
 void QMessage::appendAttachments(const QStringList &fileNames)
