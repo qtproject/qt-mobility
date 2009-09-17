@@ -73,8 +73,32 @@
 
 #endif
 
-#include <sys/socket.h>
-#include <iwlib.h>
+//we cannot include iwlib.h as the platform may not have it installed
+//there we have to go via the kernel's wireless.h
+//#include <iwlib.h>
+//must be defined to be able to include kernel includes
+#ifndef __user
+#define __user
+#endif
+
+#include <linux/types.h>    /* required for wireless.h */
+#include <sys/socket.h>     /* required for wireless.h */
+#include <net/if.h>         /* required for wireless.h */
+
+/* A lot of wireless.h have kernel includes which should be protected by
+   #ifdef __KERNEL__. They course include errors due to redefinitions of types.
+   This prevents those kernel headers being included by Qtopia.
+   */
+#ifndef _LINUX_IF_H
+#define _LINUX_IF_H
+#endif
+#ifndef _LINUX_SOCKET_H
+#define _LINUX_SOCKET_H
+#endif
+#include <linux/wireless.h>
+#include <sys/ioctl.h>
+
+
 
 QT_BEGIN_NAMESPACE
 
@@ -520,7 +544,7 @@ void QSystemNetworkInfoPrivate::setupNmConnections()
 
 }
 
-void QSystemNetworkInfoPrivate::updateDeviceInterfaceState(const QString &path, quint32 nmState)
+void QSystemNetworkInfoPrivate::updateDeviceInterfaceState(const QString &/*path*/, quint32 /*nmState*/)
 {
  //   qWarning() << __FUNCTION__ << path << nmState;
 }
@@ -632,7 +656,7 @@ void QSystemNetworkInfoPrivate::nmPropertiesChanged( const QString & path, QMap<
     }
 }
 
-void QSystemNetworkInfoPrivate::nmAPPropertiesChanged( const QString & path, QMap<QString,QVariant> map)
+void QSystemNetworkInfoPrivate::nmAPPropertiesChanged( const QString & /*path*/, QMap<QString,QVariant> map)
 {
    QMapIterator<QString, QVariant> i(map);
    while (i.hasNext()) {
@@ -1777,7 +1801,7 @@ bool QSystemScreenSaverPrivate::screenSaverEnabled()
 
 bool QSystemScreenSaverPrivate::screenBlankingEnabled()
 {
-    bool saverEnabled = false;
+    //bool saverEnabled = false;
     if(kdeIsRunning) {
         QString kdeSSConfig;
         if(QDir( QDir::homePath()+"/.kde4/").exists()) {
