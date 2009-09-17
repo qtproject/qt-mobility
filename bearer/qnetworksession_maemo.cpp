@@ -48,6 +48,12 @@
 #include <maemo_icd.h>
 #include <iapconf.h>
 
+#include <sys/types.h>
+#include <ifaddrs.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
 QT_BEGIN_NAMESPACE
 
 static QHash<QString, QVariant> properties;
@@ -288,9 +294,10 @@ void QNetworkSessionPrivate::updateState(QNetworkSession::State newState)
     if( newState != state) {
         state = newState;
 
-	if (state == QNetworkSession::Disconnected)
+	if (state == QNetworkSession::Disconnected) {
 	    isActive = false;
-	else if (state == QNetworkSession::Connected)
+	    currentNetworkInterface = QString();
+	} else if (state == QNetworkSession::Connected)
 	    isActive = true;
 
 	if (publicConfig.d &&
@@ -381,6 +388,51 @@ void QNetworkSessionPrivate::syncStateWithInterface()
 }
 
 
+static QString get_network_interface()
+{
+    Maemo::Icd icd;
+    QList<Maemo::IcdAddressInfoResult> addr_results;
+    uint ret;
+    QString iface;
+
+    ret = icd.addrinfo(addr_results);
+    if (ret == 0) {
+	/* No results */
+	qDebug() << "Cannot get addrinfo from icd, are you connected?";
+	return iface;
+    }
+
+    const char *address = addr_results.first().ip_info.first().address.toAscii().constData();
+    struct in_addr addr;
+    if (inet_aton(address, &addr) == 0) {
+	qDebug() << "address" << address << "invalid";
+	return iface;
+    }
+
+    struct ifaddrs *ifaddr, *ifa;
+    int family;
+
+    if (getifaddrs(&ifaddr) == -1) {
+	qDebug() << "getifaddrs() failed";
+	return iface;
+    }
+
+    for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+	family = ifa->ifa_addr->sa_family;
+	if (family != AF_INET) {
+	    continue; /* Currently only IPv4 is supported by icd dbus interface */
+	}
+	if (((struct sockaddr_in *)ifa->ifa_addr)->sin_addr.s_addr == addr.s_addr) {
+	    iface = QString(ifa->ifa_name);
+	    break;
+	}
+    }
+
+    freeifaddrs(ifaddr);
+    return iface;
+}
+
+
 void QNetworkSessionPrivate::open()
 {
     icd_connection_flags flags = ICD_CONNECTION_FLAG_USER_EVENT;
@@ -398,11 +450,21 @@ void QNetworkSessionPrivate::open()
     updateState(QNetworkSession::Connecting);
 
     Maemo::IcdConnectResult connect_result;
-    Maemo::Icd icd(ICD_LONG_CONNECT_TIMEOUT);
+    Maemo::Icd *icd;
+
+    /* Note that this needs to be allocated from heap and then
+     * destroyed before call to get_network_interface()
+     * because of the limitation of Maemo::Icd class (only one
+     * instance at a time is supported).
+     * XXX: FIXME
+     */
+    icd = new Maemo::Icd(ICD_LONG_CONNECT_TIMEOUT);
+    if (!icd)
+	return;
 
     if (iap == OSSO_IAP_ANY) {
 	qDebug() << "connecting to default IAP" << iap;
-	st = icd.connect(flags, connect_result);
+	st = icd->connect(flags, connect_result);
     } else {
 	QList<Maemo::ConnectParams> params;
 	Maemo::ConnectParams param;
@@ -411,7 +473,7 @@ void QNetworkSessionPrivate::open()
 	param.connect.network_id = QByteArray(iap.toLatin1());
 	params.append(param);
 	qDebug() << "connecting to" << param.connect.network_id.data() << "type" << param.connect.network_type;
-	st = icd.connect(flags, params, connect_result);
+	st = icd->connect(flags, params, connect_result);
     }
 
     if (st) {
@@ -421,7 +483,7 @@ void QNetworkSessionPrivate::open()
 	if (connected_iap.isEmpty()) {
 	    qDebug() << "connect to"<< iap << "failed, result is empty";
 	    emit q->error(QNetworkSession::InvalidConfigurationError);
-	    return;
+	    goto out;
 	}
 
 	// TODO: the returned IAP id is not the ssid and it cannot be found when doing updateConfigurations(), fix me
@@ -451,7 +513,16 @@ void QNetworkSessionPrivate::open()
 	startTime = QDateTime::currentDateTime();
 	updateState(QNetworkSession::Connected);
 
-	qDebug() << "connected to" << result << publicConfig.d->name;
+	/* This delete needs to be done before call
+	 * to get_network_interface(), as only one Icd() call may be pending
+	 * at a time. This should be fixed!
+	 * XXX: FIXME
+	 */
+	delete icd;
+	icd = 0;
+	currentNetworkInterface = get_network_interface();
+
+	qDebug() << "connected to" << result << publicConfig.d->name << "at" << currentNetworkInterface;
 
 	activeConfig = publicConfig;
 	emit q->sessionOpened();
@@ -460,6 +531,9 @@ void QNetworkSessionPrivate::open()
 	qDebug() << "connect to"<< iap << "failed";
 	emit q->error(QNetworkSession::UnknownSessionError);
     }
+
+ out:
+    delete icd;
 }
 
 
@@ -513,7 +587,6 @@ void QNetworkSessionPrivate::reject()
 
 QNetworkInterface QNetworkSessionPrivate::currentInterface() const
 {
-    //TODO: set the currentNetworkInterface so some sane value somewhere
     return QNetworkInterface::interfaceFromName(currentNetworkInterface);
 }
 

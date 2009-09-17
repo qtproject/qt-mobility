@@ -1,3 +1,9 @@
+libbearer (0.17) unstable; urgency=low
+
+  * Interface name is resolved after network is connected.
+
+ -- Jukka Rissanen <jukka.rissanen@nokia.com>  Wed, 16 Sep 2009 16:47:56 +0300
+
 libbearer (0.16) unstable; urgency=low
 
   * Upstream update
