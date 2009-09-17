@@ -46,6 +46,7 @@
 #include <QtCore/qdebug.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qstringlist.h>
+#include <QtCore/qmetaobject.h>
 
 #ifndef QT_NO_MULTIMEDIA
 #include <QtMultimedia/QAudioFormat>
@@ -98,6 +99,7 @@ public:
 
     bool ownService;
 
+    QMediaRecorder::State state;
     QMediaRecorder::Error error;
     QString errorString;
 
@@ -112,6 +114,7 @@ QMediaRecorderPrivate::QMediaRecorderPrivate():
      audioControl(0),
      videoControl(0),
      ownService(false),
+     state(QMediaRecorder::StoppedState),
      error(QMediaRecorder::NoError)
 {
 }
@@ -137,6 +140,9 @@ void QMediaRecorderPrivate::initControls()
     }
 }
 
+#define ENUM_NAME(c,e,v) (c::staticMetaObject.enumerator(c::staticMetaObject.indexOfEnumerator(e)).valueToKey((v)))
+
+
 void QMediaRecorderPrivate::_q_stateChanged(QMediaRecorder::State ps)
 {
     Q_Q(QMediaRecorder);
@@ -146,7 +152,12 @@ void QMediaRecorderPrivate::_q_stateChanged(QMediaRecorder::State ps)
     else
         q->removePropertyWatch("duration");
 
-    emit q->stateChanged(ps);
+    qDebug() << "Recorder state changed:" << ENUM_NAME(QMediaRecorder,"State",ps);
+    if (state != ps) {
+        emit q->stateChanged(ps);
+    }
+
+    state = ps;
 }
 
 
