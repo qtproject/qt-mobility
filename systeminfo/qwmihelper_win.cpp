@@ -31,6 +31,7 @@
 **
 ****************************************************************************/
 
+#ifdef Q_CC_MSVC
 #include "qwmihelper_win_p.h"
 #include <QDebug>
 
@@ -208,3 +209,4 @@ void WMIHelper::setConditional(const QString &conditional)
    m_conditional = conditional;
 }
 
+#endif
