@@ -71,7 +71,8 @@ public:
     void setPlaybackRate(float rate) { _playbackRate = rate; }
 
     QMediaSource media() const { return _media; }
-    void setMedia(const QMediaSource &source) { _media = source; }
+    void setMedia(const QMediaSource &source, QIODevice *stream) { Q_UNUSED(stream); _media = source; }
+    QIODevice *mediaStream() const { return 0; }
 
     void play() { if (_isValid && !_media.isNull() && _state != QMediaPlayer::PlayingState) emit stateChanged(_state = QMediaPlayer::PlayingState); }
     void pause() { if (_isValid && !_media.isNull() && _state != QMediaPlayer::PausedState && _state != QMediaPlayer::StoppedState) emit stateChanged(_state = QMediaPlayer::PausedState); }

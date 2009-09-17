@@ -32,11 +32,11 @@
 **
 ****************************************************************************/
 
-#include "qabstractmediaservice.h"
-#include "qabstractmediaservice_p.h"
+#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qabstractmediaservice_p.h>
 
-#include "qaudiodevicecontrol.h"
-#include "qvideodevicecontrol.h"
+#include <multimedia/qaudiodevicecontrol.h>
+#include <multimedia/qvideodevicecontrol.h>
 
 #include <QtCore/qtimer.h>
 

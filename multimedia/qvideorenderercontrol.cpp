@@ -32,9 +32,9 @@
 **
 ****************************************************************************/
 
-#include "qvideorenderercontrol.h"
+#include <multimedia/qvideorenderercontrol.h>
 
-#include "qabstractmediacontrol_p.h"
+#include <multimedia/qabstractmediacontrol_p.h>
 
 /*!
     \class QVideoRendererControl

@@ -35,8 +35,8 @@
 #ifndef QMEDIAPLAYERSERVICE_H
 #define QMEDIAPLAYERSERVICE_H
 
-#include "qabstractmediaservice.h"
-#include "qmediaplayercontrol.h"
+#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qmediaplayercontrol.h>
 
 
 class QMediaPlayerServicePrivate;

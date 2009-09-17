@@ -32,25 +32,26 @@
 **
 ****************************************************************************/
 
-#include "qmediarecorder.h"
+#include <multimedia/qmediarecorder.h>
 
-#include "qmediarecordercontrol.h"
-#include "qabstractmediaobject_p.h"
-#include "qaudiorecorderservice.h"
-#include "qmediaserviceprovider.h"
-#include "qaudioencodercontrol.h"
-#include "qvideoencodercontrol.h"
-#include "qmediaformatcontrol.h"
-#include "qmediarecorderservice.h"
+#include <multimedia/qmediarecordercontrol.h>
+#include <multimedia/qabstractmediaobject_p.h>
+#include <multimedia/qaudiorecorderservice.h>
+#include <multimedia/qmediaserviceprovider.h>
+#include <multimedia/qaudioencodercontrol.h>
+#include <multimedia/qvideoencodercontrol.h>
+#include <multimedia/qmediaformatcontrol.h>
+#include <multimedia/qmediarecorderservice.h>
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qstringlist.h>
+#include <QtCore/qmetaobject.h>
 
 #ifndef QT_NO_MULTIMEDIA
 #include <QtMultimedia/QAudioFormat>
 #else
-#include "qaudioformat.h"
+#include <multimedia/qaudioformat.h>
 #endif
 
 /*!
@@ -98,6 +99,7 @@ public:
 
     bool ownService;
 
+    QMediaRecorder::State state;
     QMediaRecorder::Error error;
     QString errorString;
 
@@ -112,6 +114,7 @@ QMediaRecorderPrivate::QMediaRecorderPrivate():
      audioControl(0),
      videoControl(0),
      ownService(false),
+     state(QMediaRecorder::StoppedState),
      error(QMediaRecorder::NoError)
 {
 }
@@ -137,6 +140,9 @@ void QMediaRecorderPrivate::initControls()
     }
 }
 
+#define ENUM_NAME(c,e,v) (c::staticMetaObject.enumerator(c::staticMetaObject.indexOfEnumerator(e)).valueToKey((v)))
+
+
 void QMediaRecorderPrivate::_q_stateChanged(QMediaRecorder::State ps)
 {
     Q_Q(QMediaRecorder);
@@ -146,7 +152,12 @@ void QMediaRecorderPrivate::_q_stateChanged(QMediaRecorder::State ps)
     else
         q->removePropertyWatch("duration");
 
-    emit q->stateChanged(ps);
+    qDebug() << "Recorder state changed:" << ENUM_NAME(QMediaRecorder,"State",ps);
+    if (state != ps) {
+        emit q->stateChanged(ps);
+    }
+
+    state = ps;
 }
 
 

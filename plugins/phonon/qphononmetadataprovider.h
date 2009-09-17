@@ -35,7 +35,7 @@
 #ifndef QGSTREAMERMETADATAPROVIDER_H
 #define QGSTREAMERMETADATAPROVIDER_H
 
-#include "qmetadataprovidercontrol.h"
+#include <multimedia/qmetadataprovidercontrol.h>
 
 #include <Phonon/MediaObject>
 

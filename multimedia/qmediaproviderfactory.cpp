@@ -34,12 +34,12 @@
 
 #include <QtCore/qdebug.h>
 
-#include "qmediaproviderfactory_p.h"
-#include "qmediaserviceproviderplugin.h"
+#include <multimedia/qmediaproviderfactory_p.h>
+#include <multimedia/qmediaserviceproviderplugin.h>
 
-#include "qmediaserviceprovider.h"
+#include <multimedia/qmediaserviceprovider.h>
 
-#include <qmediapluginloader_p.h>
+#include <multimedia/qmediapluginloader_p.h>
 
 Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, loader,
         (QMediaServiceProviderFactoryInterface_iid, QLatin1String("/mediaservice"), Qt::CaseInsensitive))

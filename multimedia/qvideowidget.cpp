@@ -32,17 +32,17 @@
 **
 ****************************************************************************/
 
-#include "qvideowidget_p.h"
+#include <multimedia/qvideowidget_p.h>
 
-#include "qabstractmediaobject.h"
-#include "qabstractmediaservice.h"
-#include "qvideooutputcontrol.h"
-#include "qvideowindowcontrol.h"
-#include "qvideowidgetcontrol.h"
+#include <multimedia/qabstractmediaobject.h>
+#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qvideooutputcontrol.h>
+#include <multimedia/qvideowindowcontrol.h>
+#include <multimedia/qvideowidgetcontrol.h>
 
 #ifndef QT_NO_MULTIMEDIA
-#include "qpaintervideosurface_p.h"
-#include "qvideorenderercontrol.h"
+#include <multimedia/qpaintervideosurface_p.h>
+#include <multimedia/qvideorenderercontrol.h>
 #include "qvideosurfaceformat.h"
 #include <qpainter.h>
 #endif

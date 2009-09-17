@@ -35,8 +35,8 @@
 #ifndef QCAMERASERVICE_H
 #define QCAMERASERVICE_H
 
-#include "qabstractmediaservice.h"
-#include "qcameracontrol.h"
+#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qcameracontrol.h>
 
 
 class QCameraServicePrivate;

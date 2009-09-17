@@ -37,14 +37,14 @@
 
 #include <QtCore/qcoreevent.h>
 
-#include "qmediaplayer.h"
+#include <multimedia/qmediaplayer.h>
 
-#include "qabstractmediaobject_p.h"
-#include "qmediaplayerservice.h"
-#include "qmediaplayercontrol.h"
-#include "qmediaserviceprovider.h"
-#include "qmediaplaylist.h"
-#include "qmediaplaylistcontrol.h"
+#include <multimedia/qabstractmediaobject_p.h>
+#include <multimedia/qmediaplayerservice.h>
+#include <multimedia/qmediaplayercontrol.h>
+#include <multimedia/qmediaserviceprovider.h>
+#include <multimedia/qmediaplaylist.h>
+#include <multimedia/qmediaplaylistcontrol.h>
 
 /*!
     \class QMediaPlayer
@@ -232,6 +232,18 @@ QMediaSource QMediaPlayer::media() const
     return d_func()->control->media();
 }
 
+/*!
+    Returns the stream source of media data.
+
+    This is only valid if a stream was passed to setMedia().
+
+    \sa setMedia()
+*/
+const QIODevice *QMediaPlayer::mediaStream() const
+{
+    return d_func()->control->mediaStream();
+}
+
 QMediaPlayer::State QMediaPlayer::state() const
 {
     return QMediaPlayer::State(d_func()->control->state());
@@ -373,9 +385,16 @@ void QMediaPlayer::setPlaybackRate(float rate)
     d_func()->control->setPlaybackRate(rate);
 }
 
-void QMediaPlayer::setMedia(const QMediaSource &media)
+/*!
+    Sets the current \a media source.
+
+    If a \a stream is supplied; media data will be read from it instead of resolving the media
+    source.  In this case the media source may still be used to resolve additional information
+    about the media such as mime type.
+*/
+void QMediaPlayer::setMedia(const QMediaSource &media, QIODevice *stream)
 {
-    d_func()->control->setMedia(media);
+    d_func()->control->setMedia(media, stream);
 }
 
 void QMediaPlayer::bind(QObject *obj)

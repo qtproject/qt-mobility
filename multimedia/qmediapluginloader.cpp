@@ -37,9 +37,9 @@
 #include <QtCore/qdir.h>
 #include <QtCore/qdebug.h>
 
-#include "qmediaserviceproviderplugin.h"
+#include <multimedia/qmediaserviceproviderplugin.h>
 
-#include "qmediapluginloader_p.h"
+#include <multimedia/qmediapluginloader_p.h>
 
 
 QMediaPluginLoader::QMediaPluginLoader(const char *iid, const QString &location, Qt::CaseSensitivity):
@@ -57,6 +57,11 @@ QStringList QMediaPluginLoader::keys() const
 QObject* QMediaPluginLoader::instance(QString const &key)
 {
     return m_instances[key];
+}
+
+QList<QObject*> QMediaPluginLoader::instances(QString const &key)
+{
+    return m_instances.values(key);
 }
 
 void QMediaPluginLoader::load()
@@ -81,7 +86,7 @@ void QMediaPluginLoader::load()
                 QFactoryInterface* p = qobject_cast<QFactoryInterface*>(o);
                 if (p != 0) {
                     foreach (QString const &key, p->keys())
-                        m_instances.insert(key, o);
+                        m_instances.insertMulti(key, o);
                 }
 
                 continue;

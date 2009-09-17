@@ -301,12 +301,12 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
     } else {
         //tag message comes from elements inside playbin, not from playbin itself
         if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_TAG) {
-            qDebug() << "tag message";
+            //qDebug() << "tag message";
             GstTagList *tag_list;
             gst_message_parse_tag(gm, &tag_list);
             gst_tag_list_foreach(tag_list, addTagToMap, &m_tags);
 
-            qDebug() << m_tags;
+            //qDebug() << m_tags;
 
             emit tagsChanged();
         }

@@ -36,8 +36,8 @@
 #ifndef QMEDIAPLAYLISTCONTROL_H
 #define QMEDIAPLAYLISTCONTROL_H
 
-#include "qabstractmediacontrol.h"
-#include "qmediaplaylistnavigator.h"
+#include <multimedia/qabstractmediacontrol.h>
+#include <multimedia/qmediaplaylistnavigator.h>
 class QMediaPlaylistProvider;
 
 class Q_MEDIA_EXPORT QMediaPlaylistControl : public QAbstractMediaControl

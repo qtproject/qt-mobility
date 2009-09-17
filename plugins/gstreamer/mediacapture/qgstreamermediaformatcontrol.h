@@ -36,7 +36,7 @@
 #ifndef QGSTREAMERMEDIAFORMATCONTROL_H
 #define QGSTREAMERMEDIAFORMATCONTROL_H
 
-#include "qmediaformatcontrol.h"
+#include <multimedia/qmediaformatcontrol.h>
 #include <QtCore/qstringlist.h>
 
 class QGstreamerMediaFormatControl : public QMediaFormatControl

@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include "qmediarecorderservice.h"
+#include <multimedia/qmediarecorderservice.h>
 
 
 QMediaRecorderService::~QMediaRecorderService()

@@ -32,18 +32,61 @@
 **
 ****************************************************************************/
 
+#include "streamplayer.h"
 
-#ifndef QGSTREAMERSERVICEPLUGIN_H
-#define QGSTREAMERSERVICEPLUGIN_H
+#include <multimedia/qmediaplayer.h>
 
-#include <multimedia/qmediaserviceproviderplugin.h>
+#include <QtGui>
 
-class QPhononServicePlugin : public QMediaServiceProviderPlugin
+StreamPlayer::StreamPlayer(QWidget *parent)
+    : QWidget(parent)
+    , player(0)
+    , progress(0)
 {
-    Q_OBJECT
-public:
-    QStringList keys() const;
-    QMediaServiceProvider* create(QString const& key);
-};
+    player = new QMediaPlayer;
+    connect(player, SIGNAL(metaDataChanged()), this, SLOT(metaDataChanged()));
+    connect(player, SIGNAL(durationChanged(qint64)), this, SLOT(durationChanged(qint64)));
+    connect(player, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
 
-#endif // QGSTREAMERSERVICEPLUGIN_H
+    progress = new QProgressBar;
+    progress->setRange(0, 0);
+
+    QBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(progress);
+
+    setLayout(layout);
+}
+
+StreamPlayer::~StreamPlayer()
+{
+    delete player;
+}
+
+void StreamPlayer::setFileName(const QString &fileName)
+{
+    file.setFileName(fileName);
+
+    if (file.open(QIODevice::ReadOnly)) {
+        player->setMedia(QMediaSource(), &file);
+    }
+}
+
+void StreamPlayer::play()
+{
+    player->play();
+}
+
+void StreamPlayer::durationChanged(qint64 duration)
+{
+    progress->setMaximum(duration / 1000);
+}
+
+void StreamPlayer::positionChanged(qint64 position)
+{
+    progress->setValue(position / 1000);
+}
+
+void StreamPlayer::metaDataChanged()
+{
+    setWindowTitle(player->metaData(QAbstractMediaObject::Title).toString());
+}

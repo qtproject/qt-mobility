@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include "qaudiorecorderservice.h"
+#include <multimedia/qaudiorecorderservice.h>
 
 QAudioRecorderService::QAudioRecorderService(QObject *parent)
     : QAbstractMediaService(parent)

@@ -35,9 +35,9 @@
 #ifndef QRADIOPLAYERCONTROL_H
 #define QRADIOPLAYERCONTROL_H
 
-#include "qabstractmediacontrol.h"
+#include <multimedia/qabstractmediacontrol.h>
 
-#include "qradioplayer.h"
+#include <multimedia/qradioplayer.h>
 
 class Q_MEDIA_EXPORT QRadioPlayerControl : public QAbstractMediaControl
 {

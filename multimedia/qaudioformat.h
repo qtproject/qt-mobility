@@ -39,7 +39,7 @@
 #include <QtCore/qglobal.h>
 #include <QtCore/qshareddata.h>
 
-#include "qmultimediaglobal.h"
+#include <multimedia/qmultimediaglobal.h>
 
 class QAudioFormatPrivate;
 class Q_MEDIA_EXPORT QAudioFormat

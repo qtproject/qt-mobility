@@ -32,18 +32,35 @@
 **
 ****************************************************************************/
 
+#ifndef STREAMPLAYER_H
+#define STREAMPLAYER_H
 
-#ifndef QGSTREAMERSERVICEPLUGIN_H
-#define QGSTREAMERSERVICEPLUGIN_H
+#include <QtCore/qfile.h>
+#include <QtGui/qwidget.h>
 
-#include <multimedia/qmediaserviceproviderplugin.h>
+class QMediaPlayer;
+class QProgressBar;
 
-class QPhononServicePlugin : public QMediaServiceProviderPlugin
+class StreamPlayer : public QWidget
 {
     Q_OBJECT
 public:
-    QStringList keys() const;
-    QMediaServiceProvider* create(QString const& key);
+    StreamPlayer(QWidget *parent = 0);
+    ~StreamPlayer();
+
+    void setFileName(const QString &fileName);
+
+    void play();
+
+private slots:
+    void durationChanged(qint64 duration);
+    void positionChanged(qint64 position);
+    void metaDataChanged();
+
+private:
+    QMediaPlayer *player;
+    QProgressBar *progress;
+    QFile file;
 };
 
-#endif // QGSTREAMERSERVICEPLUGIN_H
+#endif

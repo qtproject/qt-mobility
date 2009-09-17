@@ -35,7 +35,7 @@
 #ifndef QGSTREAMERCAPTUREMETADATACONTROL_H
 #define QGSTREAMERCAPTUREMETADATACONTROL_H
 
-#include <qmetadataprovidercontrol.h>
+#include <multimedia/qmetadataprovidercontrol.h>
 
 class QGstreamerCaptureMetaDataControl : public QMetaDataProviderControl
 {

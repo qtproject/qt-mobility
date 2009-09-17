@@ -50,7 +50,7 @@
 #include <QtCore/qlist.h>
 #include <QtCore/qtimer.h>
 
-#include "qabstractmediaobject.h"
+#include <multimedia/qabstractmediaobject.h>
 
 class QMetaDataProviderControl;
 

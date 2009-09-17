@@ -50,6 +50,7 @@ public:
 
     QStringList keys() const;
     QObject* instance(QString const &key);
+    QList<QObject*> instances(QString const &key);
 
 private:
     void load();

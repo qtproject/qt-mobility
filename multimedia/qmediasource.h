@@ -38,9 +38,9 @@
 #include <QtCore/qmetatype.h>
 #include <QtCore/qshareddata.h>
 
-#include <qmediaresource.h>
+#include <multimedia/qmediaresource.h>
 
-#include "qmultimediaglobal.h"
+#include <multimedia/qmultimediaglobal.h>
 
 
 class QMediaSourcePrivate;

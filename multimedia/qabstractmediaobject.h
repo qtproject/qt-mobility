@@ -38,7 +38,7 @@
 #include <QtCore/qobject.h>
 #include <QtCore/qstringlist.h>
 
-#include "qmultimediaglobal.h"
+#include <multimedia/qmultimediaglobal.h>
 
 class QAbstractMediaService;
 

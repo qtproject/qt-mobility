@@ -37,7 +37,7 @@
 
 #ifndef QT_NO_MULTIMEDIA
 
-#include "qabstractmediacontrol.h"
+#include <multimedia/qabstractmediacontrol.h>
 
 class QAbstractVideoSurface;
 

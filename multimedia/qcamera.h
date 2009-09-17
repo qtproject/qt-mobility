@@ -39,11 +39,11 @@
 #include <QtCore/qpair.h>
 #include <QtCore/qsize.h>
 
-#include "qabstractmediacontrol.h"
-#include "qabstractmediaobject.h"
-#include "qabstractmediaservice.h"
+#include <multimedia/qabstractmediacontrol.h>
+#include <multimedia/qabstractmediaobject.h>
+#include <multimedia/qabstractmediaservice.h>
 
-#include "qmediaserviceprovider.h"
+#include <multimedia/qmediaserviceprovider.h>
 
 class QCameraService;
 class QCameraControl;

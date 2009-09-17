@@ -32,18 +32,24 @@
 **
 ****************************************************************************/
 
+#include "streamplayer.h"
 
-#ifndef QGSTREAMERSERVICEPLUGIN_H
-#define QGSTREAMERSERVICEPLUGIN_H
+#include <QtGui>
 
-#include <multimedia/qmediaserviceproviderplugin.h>
-
-class QPhononServicePlugin : public QMediaServiceProviderPlugin
+int main(int argc, char *argv[])
 {
-    Q_OBJECT
-public:
-    QStringList keys() const;
-    QMediaServiceProvider* create(QString const& key);
-};
+    QApplication app(argc, argv);
 
-#endif // QGSTREAMERSERVICEPLUGIN_H
+    QString fileName = QFileDialog::getOpenFileName();
+
+    if (!fileName.isEmpty()) {
+        StreamPlayer player;
+        player.setFileName(fileName);
+        player.play();
+        player.show();
+
+        return app.exec();
+    } else {
+        return 0;
+    }
+}
