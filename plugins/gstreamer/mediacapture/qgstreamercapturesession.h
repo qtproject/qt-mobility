@@ -115,7 +115,7 @@ private:
     GstElement *buildVideoPreview();
 
     void waitForStopped();
-    void rebuildGraph(QGstreamerCaptureSession::PipelineMode newMode);
+    bool rebuildGraph(QGstreamerCaptureSession::PipelineMode newMode);
 
     QUrl m_sink;
     QString m_captureDevice;

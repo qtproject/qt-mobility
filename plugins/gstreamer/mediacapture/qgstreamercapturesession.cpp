@@ -94,15 +94,19 @@ QGstreamerCaptureSession::~QGstreamerCaptureSession()
 
 GstElement *QGstreamerCaptureSession::buildEncodeBin()
 {
+    bool ok = true;
+
     GstElement *encodeBin = gst_bin_new("encode-bin");
 
     GstElement *muxer = gst_element_factory_make( m_mediaFormatControl->formatElementName().constData(), "muxer");
     GstElement *fileSink = gst_element_factory_make("filesink", "filesink");
 
+    ok &= muxer != 0;
+
     g_object_set(G_OBJECT(fileSink), "location", m_sink.toString().toLocal8Bit().constData(), NULL);
 
     gst_bin_add_many(GST_BIN(encodeBin), muxer, fileSink,  NULL);
-    gst_element_link(muxer, fileSink);
+    ok &= gst_element_link(muxer, fileSink);
 
     if (m_captureMode & Audio) {
         GstElement *audioConvert = gst_element_factory_make("audioconvert", "audioconvert");
@@ -110,9 +114,11 @@ GstElement *QGstreamerCaptureSession::buildEncodeBin()
         GstElement *volume = gst_element_factory_make("volume", "volume");
         GstElement *audioEncoder = m_audioEncodeControl->createEncoder();
 
+        ok &= audioEncoder != 0;
+
         gst_bin_add_many(GST_BIN(encodeBin), audioConvert, audioQueue, volume, audioEncoder,  NULL);
 
-        gst_element_link_many(audioConvert, audioQueue, volume, audioEncoder, muxer, NULL);
+        ok &= gst_element_link_many(audioConvert, audioQueue, volume, audioEncoder, muxer, NULL);
         //g_object_set(G_OBJECT(volume), "volume", 10.0, NULL);
 
         // add ghostpads
@@ -129,14 +135,21 @@ GstElement *QGstreamerCaptureSession::buildEncodeBin()
 
         GstElement *videoEncoder = m_videoEncodeControl->createEncoder();
 
+        ok &= videoEncoder != 0;
+
         gst_bin_add_many(GST_BIN(encodeBin), videoQueue, colorspace, videoscale, videoEncoder, NULL);
-        gst_element_link_many(videoQueue, colorspace, videoscale, videoEncoder, muxer, NULL);
+        ok &= gst_element_link_many(videoQueue, colorspace, videoscale, videoEncoder, muxer, NULL);
 
         // add ghostpads
         GstPad *pad = gst_element_get_static_pad(videoQueue, "sink");
         Q_ASSERT(pad);
         gst_element_add_pad(GST_ELEMENT(encodeBin), gst_ghost_pad_new("videosink", pad));
         gst_object_unref(GST_OBJECT(pad));
+    }
+
+    if (!ok) {
+        gst_object_unref(encodeBin);
+        encodeBin = 0;
     }
 
     return encodeBin;
@@ -247,7 +260,7 @@ GstElement *QGstreamerCaptureSession::buildVideoPreview()
 
 #define REMOVE_ELEMENT(element) { if (element) {gst_bin_remove(GST_BIN(m_pipeline), element); element = 0;} }
 
-void QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMode newMode)
+bool QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMode newMode)
 {
     REMOVE_ELEMENT(m_audioSrc);
     REMOVE_ELEMENT(m_audioPreview);
@@ -268,6 +281,10 @@ void QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
             if (m_captureMode & Audio) {
                 m_audioSrc = buildAudioSrc();
                 m_audioPreview = buildAudioPreview();
+
+                ok &= m_audioSrc != 0;
+                ok &= m_audioPreview != 0;
+
                 if (m_audioSrc && m_audioPreview) {
                     gst_bin_add_many(GST_BIN(m_pipeline), m_audioSrc, m_audioPreview, NULL);
                     ok &= gst_element_link(m_audioSrc, m_audioPreview);
@@ -276,6 +293,10 @@ void QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
             if (m_captureMode & Video) {
                 m_videoSrc = buildVideoSrc();
                 m_videoPreview = buildVideoPreview();
+
+                ok &= m_videoSrc != 0;
+                ok &= m_videoPreview != 0;
+
                 if (m_videoSrc && m_videoPreview) {
                     gst_bin_add_many(GST_BIN(m_pipeline), m_videoSrc, m_videoPreview, NULL);
                     ok &= gst_element_link(m_videoSrc, m_videoPreview);
@@ -288,12 +309,16 @@ void QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
 
             if (m_captureMode & Audio) {
                 m_audioSrc = buildAudioSrc();
+                ok &= m_audioSrc != 0;
+
                 gst_bin_add(GST_BIN(m_pipeline), m_audioSrc);
                 ok &= gst_element_link(m_audioSrc, m_encodeBin);
             }
 
             if (m_captureMode & Video) {
                 m_videoSrc = buildVideoSrc();
+                ok &= m_videoSrc != 0;
+
                 gst_bin_add(GST_BIN(m_pipeline), m_videoSrc);
                 ok &= gst_element_link(m_videoSrc, m_encodeBin);
             }
@@ -305,6 +330,8 @@ void QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
         case PreviewAndRecordingPipeline:
             m_encodeBin = buildEncodeBin();
             gst_bin_add(GST_BIN(m_pipeline), m_encodeBin);
+
+            ok &= m_encodeBin != 0;
 
             if (m_captureMode & Audio) {
                 m_audioSrc = buildAudioSrc();
@@ -349,7 +376,23 @@ void QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
         _gst_debug_bin_to_dot_file(GST_BIN(m_encodeBin), GST_DEBUG_GRAPH_SHOW_ALL, fileName.toAscii());
     }
 
-    m_pipelineMode = newMode;
+    if (ok) {
+        m_pipelineMode = newMode;
+    } else {
+        m_pipelineMode = EmptyPipeline;
+
+        REMOVE_ELEMENT(m_audioSrc);
+        REMOVE_ELEMENT(m_audioPreview);
+        REMOVE_ELEMENT(m_audioPreviewQueue);
+        REMOVE_ELEMENT(m_audioTee);
+        REMOVE_ELEMENT(m_videoSrc);
+        REMOVE_ELEMENT(m_videoPreview);
+        REMOVE_ELEMENT(m_videoPreviewQueue);
+        REMOVE_ELEMENT(m_videoTee);
+        REMOVE_ELEMENT(m_encodeBin);
+    }
+
+    return ok;
 }
 
 void QGstreamerCaptureSession::dumpGraph(const QString &fileName)
@@ -434,7 +477,13 @@ void QGstreamerCaptureSession::setState(QGstreamerCaptureSession::State newState
         //It would be better to do this async. but
         //gstreamer doesn't notify about pipeline went to NULL state
         waitForStopped();
-        rebuildGraph(newMode);
+        if (!rebuildGraph(newMode)) {
+            m_pendingState = StoppedState;
+            m_state = StoppedState;
+            emit stateChanged(StoppedState);
+
+            return;
+        }
     }
 
     switch (newState) {
