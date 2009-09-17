@@ -76,6 +76,8 @@ symbian {
     DEPLOYMENT += exportheaders
 
     # This is for new exporting system coming in garden
-    for(header, headers.sources):BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$headers.path/$$basename(header)"
+    for(header, exportheaders.sources) {
+        BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
+    }
 }
 
