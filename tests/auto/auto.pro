@@ -1,5 +1,7 @@
 TEMPLATE = subdirs
-SUBDIRS += servicemetadata \
+#unit tests don't work on symbian yet. enable later
+!symbian {
+    SUBDIRS += servicemetadata \
            servicedatabase \
            databasemanager \
            qserviceinterfacedescriptor \
@@ -7,3 +9,4 @@ SUBDIRS += servicemetadata \
            qservicemanager \
            qabstractsecuritysession \
            qservicecontext
+}
