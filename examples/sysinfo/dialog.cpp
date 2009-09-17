@@ -85,7 +85,6 @@ void Dialog::setupDevice()
             this,SLOT(updatePowerState(QSystemDeviceInfo::PowerState)));
 
 
-    ui->batteryChargingCheckBox->setChecked(di->isBatteryCharging());
 
     ui->ImeiLabel->setText(di->imei());
     ui->imsiLabel->setText(di->imsi());
@@ -97,9 +96,10 @@ void Dialog::setupDevice()
 
     if(di->currentPowerState() == QSystemDeviceInfo::BatteryPower) {
         ui->radioButton_2->setChecked(true);
-    } else
-        if(di->currentPowerState() == QSystemDeviceInfo::WallPower) {
+    } else  if(di->currentPowerState() == QSystemDeviceInfo::WallPower) {
         ui->radioButton_3->setChecked(true);
+    } else if(di->currentPowerState() == QSystemDeviceInfo::WallPowerChargingBattery) {
+        ui->radioButton_4->setChecked(true);
     } else {
         ui->radioButton->setChecked(true);
     }
@@ -173,65 +173,45 @@ void Dialog::setupMemory()
 
 void Dialog::setupNetwork()
 {
-    QSystemNetworkInfo ni;
+    ni = new QSystemNetworkInfo(this);
+
     connect(ui->netStatusComboBox,SIGNAL(activated(int)),
             this, SLOT(netStatusComboActivated(int)));
 
-    ui->cellIdLabel->setText(QString::number(ni.cellId()));
-    ui->locationAreaCodeLabel->setText(QString::number(ni.locationAreaCode()));
-    ui->currentMMCLabel->setText(ni.currentMobileCountryCode());
-    ui->currentMNCLabel->setText(ni.currentMobileNetworkCode());
+    connect(ni,SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int)),
+            this,SLOT(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)));
 
-    ui->homeMMCLabel->setText(ni.homeMobileCountryCode());
-    ui->homeMNCLabel->setText(ni.homeMobileNetworkCode());
+    connect(ni,SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)),
+            this,SLOT(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)));
+
+    connect(ni,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),
+            this,SLOT(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)));
+
+    ui->cellIdLabel->setText(QString::number(ni->cellId()));
+    ui->locationAreaCodeLabel->setText(QString::number(ni->locationAreaCode()));
+    ui->currentMMCLabel->setText(ni->currentMobileCountryCode());
+    ui->currentMNCLabel->setText(ni->currentMobileNetworkCode());
+
+    ui->homeMMCLabel->setText(ni->homeMobileCountryCode());
+    ui->homeMNCLabel->setText(ni->homeMobileNetworkCode());
 }
 void Dialog::netStatusComboActivated(int index)
 {
     QString status;
-    QString stat;
-    QSystemNetworkInfo ni;
     int reIndex = index +1;
 
-    switch(ni.networkStatus((QSystemNetworkInfo::NetworkMode)reIndex)) {
-    case QSystemNetworkInfo::UndefinedStatus:
-        stat = "Undefined";
-        break;
-    case QSystemNetworkInfo::NoNetworkAvailable:
-        stat = "No Network Available";
-        break;
-    case QSystemNetworkInfo::EmergencyOnly:
-        stat = "Emergency Only";
-        break;
-    case QSystemNetworkInfo::Searching:
-        stat = "Searching";
-        break;
-    case QSystemNetworkInfo::Busy:
-        stat = "Busy";
-        break;
-    case QSystemNetworkInfo::Connected:
-        stat = "Connected";
-        break;
-    case QSystemNetworkInfo::HomeNetwork:
-        stat = "Home Network";
-        break;
-    case QSystemNetworkInfo::Denied:
-        stat = "Denied";
-        break;
-    case QSystemNetworkInfo::Roaming:
-        stat = "Roaming";
-        break;
-    };
-    ui->cellNetworkStatusLabel->setText(stat);
-    ui->macAddressLabel->setText(ni.macAddress((QSystemNetworkInfo::NetworkMode)reIndex));
+    displayNetworkStatus(ni->networkStatus((QSystemNetworkInfo::NetworkMode)reIndex));
 
-    int strength = ni.networkSignalStrength((QSystemNetworkInfo::NetworkMode)reIndex);
+    ui->macAddressLabel->setText(ni->macAddress((QSystemNetworkInfo::NetworkMode)reIndex));
+
+    int strength = ni->networkSignalStrength((QSystemNetworkInfo::NetworkMode)reIndex);
     if(strength < 0)
         strength = 0;
     ui->signalLevelProgressBar->setValue(strength);
 
-    ui->InterfaceLabel->setText(ni.interfaceForMode((QSystemNetworkInfo::NetworkMode)reIndex).humanReadableName());
+    ui->InterfaceLabel->setText(ni->interfaceForMode((QSystemNetworkInfo::NetworkMode)reIndex).humanReadableName());
 
-    ui->operatorNameLabel->setText(ni.networkName((QSystemNetworkInfo::NetworkMode)reIndex));
+    ui->operatorNameLabel->setText(ni->networkName((QSystemNetworkInfo::NetworkMode)reIndex));
 }
 
 void Dialog::getVersion(int index)
@@ -404,8 +384,10 @@ void Dialog::updatePowerState(QSystemDeviceInfo::PowerState newState)
             ui->radioButton_3->setChecked(true);
         }
         break;
+    case QSystemDeviceInfo::WallPowerChargingBattery:
+        ui->radioButton_4->setChecked(true);
+        break;
     };
-    ui->batteryChargingCheckBox->setChecked(di->isBatteryCharging());
 }
 
 void Dialog::displayBatteryStatus(QSystemDeviceInfo::BatteryStatus status)
@@ -443,3 +425,84 @@ void Dialog::displayBatteryStatus(QSystemDeviceInfo::BatteryStatus status)
   //  }
 
 }
+
+void Dialog::networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode , int strength)
+{
+    if(mode == QSystemNetworkInfo::WlanMode) {
+        if(ui->netStatusComboBox->currentText() == "Wlan") {
+            ui->signalLevelProgressBar->setValue(strength);
+        }
+    }
+
+    if(mode == QSystemNetworkInfo::EthernetMode) {
+        if(ui->netStatusComboBox->currentText() == "Ethernet") {
+            ui->signalLevelProgressBar->setValue(strength);
+        }
+    }
+}
+
+void Dialog::networkNameChanged(QSystemNetworkInfo::NetworkMode mode,const QString &text)
+{
+    if(mode == QSystemNetworkInfo::WlanMode) {
+        if(ui->netStatusComboBox->currentText() == "Wlan") {
+            ui->operatorNameLabel->setText(text);
+        }
+    }
+
+    if(mode == QSystemNetworkInfo::EthernetMode) {
+        if(ui->netStatusComboBox->currentText() == "Ethernet") {
+            ui->operatorNameLabel->setText(text);
+        }
+    }
+}
+
+void Dialog::networkStatusChanged(QSystemNetworkInfo::NetworkMode mode , QSystemNetworkInfo::NetworkStatus status)
+{
+    if(mode == QSystemNetworkInfo::WlanMode) {
+        if(ui->netStatusComboBox->currentText() == "Wlan") {
+           displayNetworkStatus(status);
+        }
+    }
+
+    if(mode == QSystemNetworkInfo::EthernetMode) {
+        if(ui->netStatusComboBox->currentText() == "Ethernet") {
+           displayNetworkStatus(status);
+        }
+    }
+}
+
+void Dialog::displayNetworkStatus(QSystemNetworkInfo::NetworkStatus status)
+{
+    QString stat;
+    switch(status) {
+    case QSystemNetworkInfo::UndefinedStatus:
+        stat = "Undefined";
+        break;
+    case QSystemNetworkInfo::NoNetworkAvailable:
+        stat = "No Network Available";
+        break;
+    case QSystemNetworkInfo::EmergencyOnly:
+        stat = "Emergency Only";
+        break;
+    case QSystemNetworkInfo::Searching:
+        stat = "Searching or Connecting";
+        break;
+    case QSystemNetworkInfo::Busy:
+        stat = "Busy";
+        break;
+    case QSystemNetworkInfo::Connected:
+        stat = "Connected";
+        break;
+    case QSystemNetworkInfo::HomeNetwork:
+        stat = "Home Network";
+        break;
+    case QSystemNetworkInfo::Denied:
+        stat = "Denied";
+        break;
+    case QSystemNetworkInfo::Roaming:
+        stat = "Roaming";
+        break;
+    };
+    ui->cellNetworkStatusLabel->setText(stat);
+}
+

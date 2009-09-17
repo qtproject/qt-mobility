@@ -46,8 +46,8 @@ unix: {
         HEADERS += qsysteminfo_linux_p.h
         contains(QT_CONFIG,dbus): {
             QT += dbus
-            SOURCES += qhalservice_linux.cpp
-            HEADERS += qhalservice_linux_p.h
+            SOURCES += qhalservice_linux.cpp qnetworkmanagerservice_linux.cpp
+            HEADERS += qhalservice_linux_p.h qnetworkmanagerservice_linux_p.h
 
         }
         #LIBS += -lXxf86vm

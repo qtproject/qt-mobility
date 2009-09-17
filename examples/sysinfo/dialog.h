@@ -31,6 +31,7 @@ private:
     QSystemScreenSaver *saver;
     QSystemInfo *systemInfo;
     QSystemDeviceInfo *di;
+    QSystemNetworkInfo *ni;
 
 private slots:
     void tabChanged(int index);
@@ -42,6 +43,12 @@ private slots:
     void updateBatteryStatus(int);
     void updatePowerState(QSystemDeviceInfo::PowerState);
     void displayBatteryStatus(QSystemDeviceInfo::BatteryStatus);
+
+     void displayNetworkStatus(QSystemNetworkInfo::NetworkStatus);
+     void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
+     void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int);
+     void networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &);
+
 };
 
 #endif // DIALOG_H

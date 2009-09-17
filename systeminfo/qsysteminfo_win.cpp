@@ -994,26 +994,22 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
 QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 {
 #ifdef Q_OS_WINCE
-    SYSTEM_POWER_STATUS_EX statusEx;
-    GetSystemPowerStatusEx(&statusEx, true);
-    if(statusEx.ACLineStatus  == AC_LINE_ONLINE;
-        return QSystemDeviceInfo::WallPower;
-    if(statusEx.BatteryFlag & BATTERY_FLAG_CHARGING)
-        return QSystemDeviceInfo::BatteryPower;
+    SYSTEM_POWER_STATUS_EX status;
+    GetSystemPowerStatusEx(&status, true);
+
 #else
-    WMIHelper *wHelper;
-    wHelper = new WMIHelper();
-    wHelper->setWmiNamespace("root/cimv2");
-    wHelper->setClassName("Win32_Battery");
-    wHelper->setClassProperty(QStringList() << "BatteryStatus");
-    QVariant v = wHelper->getWMIData();
-    if(v.toUInt() == 1) {
-        return QSystemDeviceInfo::BatteryPower;
-    } else {
-        return QSystemDeviceInfo::WallPower;
-    }
+    SYSTEM_POWER_STATUS status;
+    GetSystemPowerStatus(&status);
 #endif
-return QSystemDeviceInfo::UnknownPower;
+
+    if(status.BatteryFlag & BATTERY_FLAG_CHARGING)
+        return QSystemDeviceInfo::WallPowerChargingBattery;
+    if(status.ACLineStatus  == AC_LINE_ONLINE)
+        return QSystemDeviceInfo::WallPower;
+    if(status.ACLineStatus  == AC_LINE_OFFLINE)
+        return QSystemDeviceInfo::BatteryPower;
+
+    return QSystemDeviceInfo::UnknownPower;
 }
 
 QString QSystemDeviceInfoPrivate::imei()
@@ -1137,27 +1133,6 @@ QString QSystemDeviceInfoPrivate::productName()
     }
 
     return name;
-}
-
-bool QSystemDeviceInfoPrivate::isBatteryCharging()
-{
-    bool isCharging = false;
-#ifdef Q_OS_WINCE
-    SYSTEM_POWER_STATUS_EX statusEx;
-    if(GetSystemPowerStatusEx(&statusEx, true)) {
-    if(statusEx.BatteryFlag & BATTERY_FLAG_CHARGING)
-        isCharging = true;
-}
-#else
-        SYSTEM_POWER_STATUS status;
-    if(GetSystemPowerStatus( &status) ) {
-        if(status.ACLineStatus == 1
-           && status.BatteryFlag & 8) {
-            isCharging = true;
-        }
-    }
-#endif
-    return isCharging;
 }
 
 int QSystemDeviceInfoPrivate::batteryLevel() const

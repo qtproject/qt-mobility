@@ -48,6 +48,7 @@
 
 #if !defined(QT_NO_DBUS)
 #include <qhalservice_linux_p.h>
+#include "qnetworkmanagerservice_linux_p.h"
 #include <QtDBus>
 #include <QDBusConnection>
 #include <QDBusError>
@@ -72,8 +73,32 @@
 
 #endif
 
-#include <sys/socket.h>
-#include <iwlib.h>
+//we cannot include iwlib.h as the platform may not have it installed
+//there we have to go via the kernel's wireless.h
+//#include <iwlib.h>
+//must be defined to be able to include kernel includes
+#ifndef __user
+#define __user
+#endif
+
+#include <linux/types.h>    /* required for wireless.h */
+#include <sys/socket.h>     /* required for wireless.h */
+#include <net/if.h>         /* required for wireless.h */
+
+/* A lot of wireless.h have kernel includes which should be protected by
+   #ifdef __KERNEL__. They course include errors due to redefinitions of types.
+   This prevents those kernel headers being included by Qtopia.
+   */
+#ifndef _LINUX_IF_H
+#define _LINUX_IF_H
+#endif
+#ifndef _LINUX_SOCKET_H
+#define _LINUX_SOCKET_H
+#endif
+#include <linux/wireless.h>
+#include <sys/ioctl.h>
+
+
 
 QT_BEGIN_NAMESPACE
 
@@ -466,11 +491,186 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
         : QObject(parent)
 {
+#if !defined(QT_NO_DBUS)
+    setupNmConnections();
+#endif
 }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
 }
+
+#if !defined(QT_NO_DBUS)
+void QSystemNetworkInfoPrivate::setupNmConnections()
+{
+    iface = new QNetworkManagerInterface();
+    QList<QDBusObjectPath> list = iface->getDevices();
+    foreach(QDBusObjectPath path, list) {
+        QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(path.path());
+
+//        devIface->setConnections();
+//        connect(devIface,SIGNAL(stateChanged(const QString &, quint32)),
+//                this, SLOT(updateDeviceInterfaceState(const QString&, quint32)));
+
+        switch(devIface->deviceType()) {
+        case DEVICE_TYPE_802_3_ETHERNET:
+            {
+                devWiredIface = new QNetworkManagerInterfaceDeviceWired(devIface->connectionInterface()->path());
+                devWiredIface->setConnections();
+                connect(devWiredIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
+                        this,SLOT(nmPropertiesChanged( const QString &, QMap<QString,QVariant>)));
+            }
+            break;
+        case DEVICE_TYPE_802_11_WIRELESS:
+            {
+                devWirelessIface = new QNetworkManagerInterfaceDeviceWireless(devIface->connectionInterface()->path());
+                devWirelessIface->setConnections();
+
+                connect(devWirelessIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
+                        this,SLOT(nmPropertiesChanged( const QString &, QMap<QString,QVariant>)));
+
+                if(devWirelessIface->activeAccessPoint().path().length() > 2) {
+                    accessPointIface = new QNetworkManagerInterfaceAccessPoint(devWirelessIface->activeAccessPoint().path());
+                    accessPointIface->setConnections();
+                    connect(accessPointIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
+                            this,SLOT(nmAPPropertiesChanged( const QString &, QMap<QString,QVariant>)));
+                }
+            }
+            break;
+        default:
+            break;
+        };
+    } //end getDevices
+
+}
+
+void QSystemNetworkInfoPrivate::updateDeviceInterfaceState(const QString &/*path*/, quint32 /*nmState*/)
+{
+ //   qWarning() << __FUNCTION__ << path << nmState;
+}
+
+void QSystemNetworkInfoPrivate::nmPropertiesChanged( const QString & path, QMap<QString,QVariant> map)
+{
+    QMapIterator<QString, QVariant> i(map);
+    while (i.hasNext()) {
+        i.next();
+    //    qWarning() << Q_FUNC_INFO << path <<  i.key() << i.value().toUInt();
+        if( i.key() == "State") {
+            QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(path);
+            quint32 nmState = i.value().toUInt();
+            switch(devIface->deviceType()) {
+            case DEVICE_TYPE_802_3_ETHERNET:
+                {
+                    if(nmState == NM_DEVICE_STATE_ACTIVATED) {
+                        QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(path);
+                        QDBusObjectPath ip4Path = devIface->ip4config();
+
+                        QNetworkManagerIp4Config *ip4ConfigInterface;
+                        ip4ConfigInterface = new QNetworkManagerIp4Config(path,this);
+                        QStringList domains = ip4ConfigInterface->domains();
+                        if(!domains.isEmpty()) {
+                            emit networkNameChanged(QSystemNetworkInfo::EthernetMode, domains.at(0));
+                        } else {
+                            QNetworkManagerInterfaceDeviceWired *wiredInterface;
+                            wiredInterface = new QNetworkManagerInterfaceDeviceWired(path);
+                            emit networkNameChanged(QSystemNetworkInfo::EthernetMode, wiredInterface->hwAddress());
+                        }
+
+                        emit networkStatusChanged(QSystemNetworkInfo::EthernetMode, QSystemNetworkInfo::Connected);
+                    }
+                    if(nmState == NM_DEVICE_STATE_DISCONNECTED) {
+                        emit networkNameChanged(QSystemNetworkInfo::EthernetMode, "No network");
+                        emit networkStatusChanged(QSystemNetworkInfo::EthernetMode, QSystemNetworkInfo::NoNetworkAvailable);
+                    }
+                    if(nmState == NM_DEVICE_STATE_PREPARE
+                       || nmState == NM_DEVICE_STATE_CONFIG
+                       || nmState == NM_DEVICE_STATE_NEED_AUTH
+                      /* || nmState == NM_DEVICE_IP_CONFIG*/) {
+                        emit networkNameChanged(QSystemNetworkInfo::EthernetMode, "No network");
+                        emit networkStatusChanged(QSystemNetworkInfo::EthernetMode, QSystemNetworkInfo::Searching);
+                    }
+
+                }
+                break;
+            case DEVICE_TYPE_802_11_WIRELESS:
+                {
+                    if(nmState == NM_DEVICE_STATE_ACTIVATED) {
+                        QNetworkManagerInterfaceDeviceWireless *devWirelessIfaceL;
+                        devWirelessIfaceL = new QNetworkManagerInterfaceDeviceWireless(path);
+                        if(devWirelessIfaceL->activeAccessPoint().path().length() > 2) {
+                            QNetworkManagerInterfaceAccessPoint *accessPointIfaceL;
+                            accessPointIfaceL = new QNetworkManagerInterfaceAccessPoint(devWirelessIfaceL->activeAccessPoint().path());
+                            QString ssid =  accessPointIfaceL->ssid();
+
+                            if(ssid.isEmpty()) {
+                                ssid = "Hidden Network";
+                            }
+                            emit networkSignalStrengthChanged(QSystemNetworkInfo::WlanMode, accessPointIfaceL->strength());
+                            emit networkStatusChanged(QSystemNetworkInfo::WlanMode, QSystemNetworkInfo::Connected);
+                            emit networkNameChanged(QSystemNetworkInfo::WlanMode,ssid);
+                        }
+                    }
+                    if(nmState == NM_DEVICE_STATE_DISCONNECTED
+                       || nmState == NM_DEVICE_STATE_UNAVAILABLE
+                       || nmState == NM_DEVICE_STATE_FAILED) {
+                        emit networkStatusChanged(QSystemNetworkInfo::WlanMode, QSystemNetworkInfo::NoNetworkAvailable);
+                        emit networkNameChanged(QSystemNetworkInfo::WlanMode, "No network");
+                    }
+                    if(nmState == NM_DEVICE_STATE_PREPARE
+                       || nmState == NM_DEVICE_STATE_CONFIG
+                       || nmState == NM_DEVICE_STATE_NEED_AUTH
+                       /*|| nmState == NM_DEVICE_IP_CONFIG*/) {
+                        emit networkNameChanged(QSystemNetworkInfo::WlanMode, "No network");
+                        emit networkStatusChanged(QSystemNetworkInfo::WlanMode, QSystemNetworkInfo::Searching);
+                    }
+                }
+                break;
+            default:
+                break;
+            };
+
+        }
+        if( i.key() == "ActiveAccessPoint") {
+            accessPointIface = new QNetworkManagerInterfaceAccessPoint(path);
+            accessPointIface->setConnections();
+            if(!connect(accessPointIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
+                        this,SLOT(nmAPPropertiesChanged( const QString &, QMap<QString,QVariant>)))) {
+                qWarning() << "connect is false";
+            }
+
+            QString ssid = accessPointIface->ssid();
+            emit networkNameChanged(QSystemNetworkInfo::WlanMode, ssid);
+
+        }
+        if( i.key() == "Carrier") {
+            int strength = 0;
+            switch(i.value().toUInt()) {
+            case 0:
+                break;
+            case 1:
+                strength = 100;
+                break;
+            };
+            emit networkSignalStrengthChanged(QSystemNetworkInfo::EthernetMode, strength);
+        }
+    }
+}
+
+void QSystemNetworkInfoPrivate::nmAPPropertiesChanged( const QString & /*path*/, QMap<QString,QVariant> map)
+{
+   QMapIterator<QString, QVariant> i(map);
+   while (i.hasNext()) {
+       i.next();
+//       qWarning() << Q_FUNC_INFO << path <<  i.key() << i.value().toUInt();
+//       if( i.key() == "State") { //only applies to device interfaces
+       //       }
+       if( i.key() == "Strength") {
+           emit networkSignalStrengthChanged(QSystemNetworkInfo::WlanMode,  i.value().toUInt());
+       }
+   }
+}
+
+#endif
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
@@ -614,12 +814,14 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 
 QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
+    qWarning() << Q_FUNC_INFO << mode;
     QString netname = "No network available";
 
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
         {
             if(networkStatus(mode) != QSystemNetworkInfo::Connected) {
+                qWarning() << "not connected";
                 return netname;
             }
 
@@ -654,6 +856,8 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
                     const char *ssid = (const char *)wifiExchange.u.essid.pointer;
                     netname = ssid;
                 }
+            } else {
+                qWarning() << "no socket";
             }
             close(sock);
         }
@@ -983,7 +1187,7 @@ void QSystemDeviceInfoPrivate::setConnection()
                     QString batType = halIfaceDevice->getPropertyString("battery.type");
                     if(batType == "primary" || batType == "pda") {
                         if(halIfaceDevice->setConnections() ) {
-                            if(!connect(halIfaceDevice,SIGNAL(propertyModified( int, QVariantList)),
+                            if(!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
                                         this,SLOT(halChanged(int,QVariantList)))) {
                                 qWarning() << "connection malfunction";
                             }
@@ -1000,7 +1204,7 @@ void QSystemDeviceInfoPrivate::setConnection()
                 halIfaceDevice = new QHalDeviceInterface(dev);
                 if (halIfaceDevice->isValid()) {
                     if(halIfaceDevice->setConnections() ) {
-                        if(!connect(halIfaceDevice,SIGNAL(propertyModified( int, QVariantList)),
+                        if(!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
                                     this,SLOT(halChanged(int,QVariantList)))) {
                             qWarning() << "connection malfunction";
                         }
@@ -1009,6 +1213,23 @@ void QSystemDeviceInfoPrivate::setConnection()
                 }
             }
         }
+
+        list = iface.findDeviceByCapability("battery");
+        if(!list.isEmpty()) {
+            foreach(QString dev, list) {
+                halIfaceDevice = new QHalDeviceInterface(dev);
+                if (halIfaceDevice->isValid()) {
+                    if(halIfaceDevice->setConnections()) {
+                        if(!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
+                                    this,SLOT(halChanged(int,QVariantList)))) {
+                            qWarning() << "connection malfunction";
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
 #endif
     }
 }
@@ -1038,11 +1259,11 @@ void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
                 emit batteryStatusChanged(QSystemDeviceInfo::NoBatteryLevel);
             }
         }
-        if(map.at(i).toString() == "ac_adapter.present") {
+        if((map.at(i).toString() == "ac_adapter.present")
+        || (map.at(i).toString() == "battery.rechargeable.is_charging")) {
             QSystemDeviceInfo::PowerState state = currentPowerState();
             emit powerStateChanged(state);
-        }
-    } //end map
+       }} //end map
 }
 #endif
 
@@ -1271,43 +1492,6 @@ QString QSystemDeviceInfoPrivate::productName()
     return QString();
 }
 
-bool QSystemDeviceInfoPrivate::isBatteryCharging()
-{
-    bool isCharging = false;
-    if(halIsAvailable) {
-#if !defined(QT_NO_DBUS)
-        QHalInterface iface;
-        QStringList list = iface.findDeviceByCapability("battery");
-        if(!list.isEmpty()) {
-            foreach(QString dev, list) {
-                QHalDeviceInterface ifaceDevice(dev);
-                if (iface.isValid()) {
-                    isCharging = ifaceDevice.getPropertyBool("battery.rechargeable.is_charging");
-                }
-            }
-        }
-#endif
-    }
-    QFile statefile("/proc/acpi/battery/BAT0/state");
-    if (!statefile.open(QIODevice::ReadOnly)) {
-      //  qWarning() << "Could not open /proc/acpi/battery/BAT0/state";
-    } else {
-        QTextStream batstate(&statefile);
-        QString line = batstate.readLine();
-        while (!line.isNull()) {
-            if(line.contains("charging state")) {
-                if(line.split(" ").at(1).trimmed() == "charging") {
-                    isCharging = true;
-                    break;
-                }
-            }
-            line = batstate.readLine();
-        }
-        statefile.close();
-    }
-    return isCharging;
-}
-
 int QSystemDeviceInfoPrivate::batteryLevel() const
 {
     float levelWhenFull = 0.0;
@@ -1412,7 +1596,19 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
  {
 #if !defined(QT_NO_DBUS)
         QHalInterface iface;
-        QStringList list = iface.findDeviceByCapability("ac_adapter");
+        QStringList list = iface.findDeviceByCapability("battery");
+        if(!list.isEmpty()) {
+            foreach(QString dev, list) {
+                QHalDeviceInterface ifaceDevice(dev);
+                if (iface.isValid()) {
+                    if (ifaceDevice.getPropertyBool("battery.rechargeable.is_charging")) {
+                        return QSystemDeviceInfo::WallPowerChargingBattery;
+                    }
+                }
+            }
+        }
+
+        list = iface.findDeviceByCapability("ac_adapter");
         if(!list.isEmpty()) {
             foreach(QString dev, list) {
                 QHalDeviceInterface ifaceDevice(dev);
@@ -1426,20 +1622,6 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
             }
         }
 
-//        list = iface.findDeviceByCapability("battery");
-//        if(!list.isEmpty()) {
-//            foreach(QString dev, list) {
-//                qWarning() <<"battery"<< dev;
-//                QHalDeviceInterface ifaceDevice(dev);
-//                if (ifaceDevice.isValid()) {
-//                    if(ifaceDevice.getPropertyBool("battery.rechargeable.is_discharging") ){
-//                        return QSystemDeviceInfo::BatteryPower;
-//                    } else {
-//                        return QSystemDeviceInfo::WallPower;
-//                    }
-//                }
-//            }
-//        }
 #else
         QFile statefile("/proc/acpi/battery/BAT0/state");
         if (!statefile.open(QIODevice::ReadOnly)) {
@@ -1451,6 +1633,9 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
                 if(line.contains("charging state")) {
                     if(line.split(" ").at(1).trimmed() == "discharging") {
                         return QSystemDeviceInfo::BatteryPower;
+                    }
+                    if(line.split(" ").at(1).trimmed() == "charging") {
+                        return QSystemDeviceInfo::WallPowerChargingBattery;
                     }
                 }
             }
@@ -1616,7 +1801,7 @@ bool QSystemScreenSaverPrivate::screenSaverEnabled()
 
 bool QSystemScreenSaverPrivate::screenBlankingEnabled()
 {
-    bool saverEnabled = false;
+    //bool saverEnabled = false;
     if(kdeIsRunning) {
         QString kdeSSConfig;
         if(QDir( QDir::homePath()+"/.kde4/").exists()) {

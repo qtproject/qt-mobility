@@ -25,7 +25,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#BatteryStatus-enum">BatteryStatus</a></b> { NoBatteryLevel, BatteryCritical, BatteryVeryLow, BatteryLow, BatteryNormal }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#InputMethod-enum">InputMethod</a></b> { Keys, Keypad, Keyboard, SingleTouch, MultiTouch, Mouse }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#InputMethod-enum">InputMethodFlags</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#PowerState-enum">PowerState</a></b> { UnknownPower, BatteryPower, WallPower }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#PowerState-enum">PowerState</a></b> { UnknownPower, BatteryPower, WallPower, WallPowerCharging }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#Profile-enum">Profile</a></b> { UnknownProfile, SilentProfile, NormalProfile, LoudProfile, ..., CustomProfile }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#SimStatus-enum">SimStatus</a></b> { SimNotAvailable, SingleAvailable, DualAvailable, Locked }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#SimStatus-enum">SimStatusFlags</a></b></td></tr>
@@ -52,7 +52,6 @@
 <tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::PowerState </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#currentPowerState-prop">currentPowerState</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::Profile </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#currentProfile-prop">currentProfile</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::InputMethodFlags </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#inputMethodType">inputMethodType</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#isBatteryCharging">isBatteryCharging</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#isDeviceLocked">isDeviceLocked</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::SimStatus </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#simStatus-prop">simStatus</a></b> ()</td></tr>
 </table>
@@ -127,6 +126,7 @@
 <tr><td valign="top"><tt>QSystemDeviceInfo::UnknownPower</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Power error.</td></tr>
 <tr><td valign="top"><tt>QSystemDeviceInfo::BatteryPower</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">On battery power.</td></tr>
 <tr><td valign="top"><tt>QSystemDeviceInfo::WallPower</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">On wall power.</td></tr>
+<tr><td valign="top"><tt>QSystemDeviceInfo::WallPowerCharging</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">On wall power and charging main battery.</td></tr>
 </table></p>
 <h3 class="fn"><a name="Profile-enum"></a>enum QSystemDeviceInfo::Profile</h3>
 <p>This enum describes the current operating profile of the device or computer.</p>
@@ -196,8 +196,6 @@
 <p>Returns the International Mobile Subscriber Identity (IMSI), or a null <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> in the case of none.</p>
 <h3 class="fn"><a name="inputMethodType"></a><a href="qsystemdeviceinfo.html#InputMethod-enum">QSystemDeviceInfo::InputMethodFlags</a> QSystemDeviceInfo::inputMethodType ()</h3>
 <p>Returns the <a href="qsystemdeviceinfo.html#InputMethod-enum">QSystemDeviceInfo::InputMethodFlags</a> InputMethodType that the system uses.</p>
-<h3 class="fn"><a name="isBatteryCharging"></a>bool QSystemDeviceInfo::isBatteryCharging ()</h3>
-<p>Returns true if the battery is charging, otherwise false.</p>
 <h3 class="fn"><a name="isDeviceLocked"></a>bool QSystemDeviceInfo::isDeviceLocked ()</h3>
 <p>Returns true if the device is locked, otherwise false.</p>
 <h3 class="fn"><a name="manufacturer"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QSystemDeviceInfo::manufacturer ()&nbsp;&nbsp;<tt> [static]</tt></h3>
