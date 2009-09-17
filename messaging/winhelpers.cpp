@@ -483,6 +483,9 @@ MapiFolder::MapiFolder()
 #ifndef PR_IS_NEWSGROUP_ANCHOR
 #define PR_IS_NEWSGROUP_ANCHOR PROP_TAG( PT_BOOLEAN, 0x6696 )
 #endif
+#ifndef PR_EXTENDED_FOLDER_FLAGS
+#define PR_EXTENDED_FOLDER_FLAGS PROP_TAG( PT_BINARY, 0x36DA )
+#endif
 
 void MapiFolder::findSubFolders(QMessageStore::ErrorCode *lastError)
 {
@@ -500,7 +503,7 @@ void MapiFolder::findSubFolders(QMessageStore::ErrorCode *lastError)
         return;
     }
 
-    SizedSPropTagArray(3, columns) = {3, {PR_ENTRYID, PR_IS_NEWSGROUP, PR_IS_NEWSGROUP_ANCHOR}};
+    SizedSPropTagArray(4, columns) = {4, {PR_ENTRYID, PR_IS_NEWSGROUP, PR_IS_NEWSGROUP_ANCHOR, PR_EXTENDED_FOLDER_FLAGS}};
     if (subFolders->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0) == S_OK)
         _subFolders = subFolders;
 }
@@ -565,11 +568,20 @@ MapiFolderPtr MapiFolder::nextSubFolder(QMessageStore::ErrorCode *lastError, con
                 MapiEntryId entryId(row->lpProps[0].Value.bin.lpb, row->lpProps[0].Value.bin.cb);
                 bool isNewsGroup = (row->lpProps[1].ulPropTag == PR_IS_NEWSGROUP && row->lpProps[1].Value.b);
                 bool isNewsGroupAnchor = (row->lpProps[2].ulPropTag == PR_IS_NEWSGROUP_ANCHOR && row->lpProps[2].Value.b);
-
+                bool special = false;
+#ifndef _WIN32_WCE // Skip slow folders, necessary evil
+                if (row->lpProps[3].ulPropTag == PR_EXTENDED_FOLDER_FLAGS) {
+                    QByteArray extendedFlags(reinterpret_cast<const char*>(row->lpProps[3].Value.bin.lpb), row->lpProps[3].Value.bin.cb);
+                    if (extendedFlags[2] & 8) // Synchronization issues, skip like Outlook
+                        special = true;
+                } else {
+                    special = true;
+                }
+#endif
                 FreeProws(rows);
 
-                if (isNewsGroup || isNewsGroupAnchor) {
-                    // Doesn't contain messages...
+                if (isNewsGroup || isNewsGroupAnchor || special) {
+                    // Doesn't contain messages that should be searched...
                 }  else {
                     // TODO: Filter out folders where PR_CONTAINER_CLASS != IPF.Note
                     result = store.openFolder(lastError, entryId);
