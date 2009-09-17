@@ -1701,6 +1701,7 @@ public:
 private slots:
     void disconnected();
     void readyRead();
+    void closeConnections();
 
 protected:
     virtual void timerEvent(QTimerEvent *);
@@ -1850,6 +1851,8 @@ SharedMemoryLayer::SharedMemoryLayer()
   m_statInuseBytes(0), m_statKeepCost(0), shm(0), subShm(0)
 {
     sserver = new ALServerImpl( this );
+
+    connect(qApp, SIGNAL(destroyed()), this, SLOT(closeConnections()));
 }
 
 SharedMemoryLayer::~SharedMemoryLayer()
@@ -2298,6 +2301,15 @@ void SharedMemoryLayer::readyRead()
 
         if(changed)
             doServerTransmit();
+    }
+}
+
+void SharedMemoryLayer::closeConnections()
+{
+    QMutableSetIterator<QPacketProtocol *> i(connections);
+    while (i.hasNext()) {
+        delete i.next();
+        i.remove();
     }
 }
 
