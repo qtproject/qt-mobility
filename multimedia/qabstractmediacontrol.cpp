@@ -35,8 +35,8 @@
 #include <QtCore/qmetaobject.h>
 #include <QtCore/qtimer.h>
 
-#include "qabstractmediacontrol.h"
-#include "qabstractmediacontrol_p.h"
+#include <multimedia/qabstractmediacontrol.h>
+#include <multimedia/qabstractmediacontrol_p.h>
 
 
 

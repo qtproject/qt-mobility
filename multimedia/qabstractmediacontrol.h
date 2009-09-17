@@ -39,7 +39,7 @@
 #include <QtCore/qstring.h>
 #include <QtCore/qvariant.h>
 
-#include "qmultimediaglobal.h"
+#include <multimedia/qmultimediaglobal.h>
 
 class QAbstractMediaControlPrivate;
 

@@ -35,7 +35,7 @@
 #ifndef QVIDEODEVICECONTROL_H
 #define QVIDEODEVICECONTROL_H
 
-#include <qabstractmediacontrol.h>
+#include <multimedia/qabstractmediacontrol.h>
 
 class Q_MEDIA_EXPORT QVideoDeviceControl : public QAbstractMediaControl
 {

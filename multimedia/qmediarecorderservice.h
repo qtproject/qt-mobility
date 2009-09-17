@@ -35,8 +35,8 @@
 #ifndef QMEDIARECORDERSERVICE_H
 #define QMEDIARECORDERSERVICE_H
 
-#include "qabstractmediaservice.h"
-#include "qmediaplayercontrol.h"
+#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qmediaplayercontrol.h>
 
 
 class QMediaRecorderServicePrivate;

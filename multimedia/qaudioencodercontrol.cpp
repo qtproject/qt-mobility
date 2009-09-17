@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include "qaudioencodercontrol.h"
+#include <multimedia/qaudioencodercontrol.h>
 #include <QtCore/qstringlist.h>
 
 

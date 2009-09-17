@@ -35,7 +35,7 @@
 #ifndef QRADIOSERVICE_H
 #define QRADIOSERVICE_H
 
-#include "qabstractmediaservice.h"
+#include <multimedia/qabstractmediaservice.h>
 
 class Q_MEDIA_EXPORT QRadioService : public QAbstractMediaService
 {

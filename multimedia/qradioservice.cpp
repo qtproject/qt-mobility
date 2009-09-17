@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include "qradioservice.h"
+#include <multimedia/qradioservice.h>
 
 
 QRadioService::QRadioService(QObject* parent):

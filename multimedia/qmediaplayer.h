@@ -35,10 +35,10 @@
 #ifndef QMEDIAPLAYER_H
 #define QMEDIAPLAYER_H
 
-#include "qabstractmediaobject.h"
+#include <multimedia/qabstractmediaobject.h>
 
-#include "qmediaserviceprovider.h"
-#include "qmediasource.h"
+#include <multimedia/qmediaserviceprovider.h>
+#include <multimedia/qmediasource.h>
 
 
 class QMediaPlayerService;

@@ -35,8 +35,8 @@
 #ifndef QMEDIAPLAYLIST_H
 #define QMEDIAPLAYLIST_H
 
-#include <qmediasource.h>
-#include <qabstractmediaobject.h>
+#include <multimedia/qmediasource.h>
+#include <multimedia/qabstractmediaobject.h>
 
 #include <QtCore/qobject.h>
 

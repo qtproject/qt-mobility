@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include "qvideoencodercontrol.h"
+#include <multimedia/qvideoencodercontrol.h>
 #include <QtCore/qstringlist.h>
 #include <QtCore/qvariant.h>
 

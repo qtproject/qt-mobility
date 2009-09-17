@@ -35,7 +35,7 @@
 #ifndef QIMAGEENCODERCONTROL_H
 #define QIMAGEENCODERCONTROL_H
 
-#include "qabstractmediacontrol.h"
+#include <multimedia/qabstractmediacontrol.h>
 
 #include <QtCore/qsize.h>
 

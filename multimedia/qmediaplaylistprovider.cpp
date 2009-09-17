@@ -32,8 +32,8 @@
 **
 ****************************************************************************/
 
-#include "qmediaplaylistprovider.h"
-#include "qmediaplaylistprovider_p.h"
+#include <multimedia/qmediaplaylistprovider.h>
+#include <multimedia/qmediaplaylistprovider_p.h>
 
 #include <QtCore/qurl.h>
 
