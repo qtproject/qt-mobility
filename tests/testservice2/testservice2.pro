@@ -8,7 +8,7 @@ TARGET        = tst_sfw_testservice2plugin
 DESTDIR = .
 CONFIG += testcase
 
-TARGET.UID3 = 0xEe4deaaa
+include(../../common.pri)
 
 symbian {
     load(data_caging_paths)

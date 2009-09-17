@@ -25,6 +25,12 @@ SOURCES += tst_servicedatabase.cpp
 LIBS += -lQtServiceFramework
 
 symbian {
+    libBlock = \
+        "$${LITERAL_HASH}ifdef WINSCW" \
+        "LIBRARY SFWDatabaseManagerServer.lib" \
+        "$${LITERAL_HASH}endif"
+
+    MMP_RULES += libBlock
     SOURCES += servicedatabase.cpp
     HEADERS += servicedatabase_p.h
     TARGET.CAPABILITY = ALL -TCB
