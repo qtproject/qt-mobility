@@ -1,3 +1,10 @@
+libbearer (0.19) unstable; urgency=low
+
+  * Fixing memory leak in
+    QNetworkConfigurationManagerPrivate::defaultConfiguration()
+
+ -- Jukka Rissanen <jukka.rissanen@nokia.com>  Thu, 17 Sep 2009 16:53:04 +0300
+
 libbearer (0.18) unstable; urgency=low
 
   * QNetworkSession::open() is made asynchronous.

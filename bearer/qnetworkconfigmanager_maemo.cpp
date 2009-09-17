@@ -280,9 +280,9 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 QNetworkConfiguration QNetworkConfigurationManagerPrivate::defaultConfiguration()
 {
     /* Here we just create a [ANY] request to icd and let the icd decide which
-     * AP to connect.
+     * IAP to connect.
      */
-    QNetworkConfigurationPrivate *d = new QNetworkConfigurationPrivate; // TODO: where is this freed?
+    QNetworkConfigurationPrivate *d = new QNetworkConfigurationPrivate;
     if (d) {
 	d->name = OSSO_IAP_ANY;
 	d->id = OSSO_IAP_ANY;
@@ -293,7 +293,8 @@ QNetworkConfiguration QNetworkConfigurationManagerPrivate::defaultConfiguration(
     }
 
     QNetworkConfiguration item;
-    item.d = d;
+    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(d);
+    item.d = ptr;
     return item;
 }
 
