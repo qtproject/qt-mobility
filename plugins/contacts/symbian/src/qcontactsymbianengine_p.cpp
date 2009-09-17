@@ -39,21 +39,25 @@
 #include <qtcontacts.h>
 #include <QSet>
 
+/* ... The macros changed names */
+#if QT_VERSION < QT_VERSION_CHECK(4, 6, 0)
+#define QT_TRAP_THROWING QT_TRANSLATE_SYMBIAN_LEAVE_TO_EXCEPTION
+#define QT_TRYCATCH_LEAVING QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE
+#endif
 
 QContactSymbianEngineData::QContactSymbianEngineData() :
     m_contactDatabase(0),
     m_transformContact(0)
 {
-    QT_TRANSLATE_SYMBIAN_LEAVE_TO_EXCEPTION(m_contactDatabase = CContactDatabase::OpenL());
+    QT_TRAP_THROWING(m_contactDatabase = CContactDatabase::OpenL());
     
     // In pre 10.1 platforms the AddObserverL & RemoveObserver functions are not
     // exported so we need to use CContactChangeNotifier.
     // TODO: Is it ok to use __SYMBIAN_CNTMODEL_USE_SQLITE__ flag for this?
 #ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__ 
-    QT_TRANSLATE_SYMBIAN_LEAVE_TO_EXCEPTION(m_contactChangeNotifier = 
-		CContactChangeNotifier::NewL(*m_contactDatabase, this));
+    QT_TRAP_THROWING(m_contactChangeNotifier = CContactChangeNotifier::NewL(*m_contactDatabase, this));
 #else
-    QT_TRANSLATE_SYMBIAN_LEAVE_TO_EXCEPTION(m_contactDatabase->AddObserverL(*this));
+    QT_TRAP_THROWING(m_contactDatabase->AddObserverL(*this));
 #endif
 	
 	m_transformContact = new TransformContact;
@@ -111,11 +115,7 @@ QContact QContactSymbianEngineData::contact(const QUniqueId& contactId, QContact
 	QContact contact;
 	int err(0);
 	
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
 	TRAP(err, QT_TRYCATCH_LEAVING(contact = contactL(contactId)));
-#else
-	TRAP(err, QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE(contact = contactL(contactId)));
-#endif
 	
 	transformError(err, qtError);
 	return contact;
@@ -167,11 +167,7 @@ QList<QUniqueId> QContactSymbianEngineData::contacts(QContactManager::Error& qtE
 	// Attempt to read from database, leaving the list empty if
 	// there was a problem
 	int err(0);
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     TRAP(err, QT_TRYCATCH_LEAVING(ids = contactsL()));
-#else
-    TRAP(err, QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE(ids = contactsL()));
-#endif
 	
 	transformError(err, qtError);
 
@@ -192,11 +188,7 @@ bool QContactSymbianEngineData::addContact(QContact& contact, int &id, QContactM
 {
 	// Attempt to persist contact, trapping errors
     int err(0);
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     TRAP(err, QT_TRYCATCH_LEAVING(id = addContactL(contact)));
-#else
-    TRAP(err, QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE(id = addContactL(contact)));
-#endif
     
 	transformError(err, qtError);
 	return (err==KErrNone);
@@ -212,11 +204,7 @@ bool QContactSymbianEngineData::addContact(QContact& contact, int &id, QContactM
 bool QContactSymbianEngineData::updateContact(QContact& contact, QContactManager::Error& qtError)
 {
     int err(0);
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     TRAP(err, QT_TRYCATCH_LEAVING(updateContactL(contact)));
-#else
-    TRAP(err, QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE(updateContactL(contact)));
-#endif
     
     transformError(err, qtError);
     return (err==KErrNone);
@@ -277,11 +265,7 @@ QList<QUniqueId> QContactSymbianEngineData::matchCommunicationAddress(const QStr
 	QList<QUniqueId> matches;
 	
 	// Attempt to match address, list will remain empty if there's an error
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     TRAP_IGNORE(QT_TRYCATCH_LEAVING(matches = matchCommunicationAddressL(communicationType, communicationAddress)));
-#else
-    TRAP_IGNORE(QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE(matches = matchCommunicationAddressL(communicationType, communicationAddress)));
-#endif
 	
 	return matches;
 }
@@ -298,11 +282,7 @@ QList<QUniqueId> QContactSymbianEngineData::groups(QContactManager::Error& qtErr
 {
 	QList<QUniqueId> list;
 	int err(0);
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     TRAP(err, QT_TRYCATCH_LEAVING(list = groupsL()));
-#else
-    TRAP(err, QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE(list = groupsL()));
-#endif
 	
 	transformError(err, qtError);
 	return list;
@@ -319,11 +299,7 @@ QContactGroup QContactSymbianEngineData::group(const QUniqueId& groupId, QContac
 {
 	QContactGroup qGroup;
 	int err(0);
-	#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
-	    TRAP(err, QT_TRYCATCH_LEAVING(qGroup = groupL(groupId)));
-	#else
-	    TRAP(err, QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE(qGroup = groupL(groupId)));
-	#endif
+    TRAP(err, QT_TRYCATCH_LEAVING(qGroup = groupL(groupId)));
 	    
     transformError(err, qtError);
 	return qGroup;
@@ -339,11 +315,7 @@ QContactGroup QContactSymbianEngineData::group(const QUniqueId& groupId, QContac
 bool QContactSymbianEngineData::saveGroup(QContactGroup& group, QContactManager::Error& qtError)
 {
     int err(0);
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     TRAP(err, QT_TRYCATCH_LEAVING(saveGroupL(group)));
-#else
-    TRAP(err, QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE(saveGroupL(group)));
-#endif
 	
 	transformError(err, qtError);
 	return (err==KErrNone); 
