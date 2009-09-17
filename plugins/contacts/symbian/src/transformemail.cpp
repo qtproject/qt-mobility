@@ -43,7 +43,7 @@ QList<CContactItemField *> TransformEmail::transformDetailL(const QContactDetail
 	TPtrC fieldText(reinterpret_cast<const TUint16*>(email.emailAddress().utf16()));
 	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldEMail);
  	newField->TextStorage()->SetTextL(fieldText);
-	newField->AddFieldTypeL(KUidContactFieldVCardMapEMAILINTERNET);
+	newField->SetMapping(KUidContactFieldVCardMapEMAILINTERNET);
 
 	//contexts
 	setContextsL(email, *newField);

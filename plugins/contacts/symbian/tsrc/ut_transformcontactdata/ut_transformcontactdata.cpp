@@ -256,19 +256,56 @@ void TestTransformContactData::validateTransformPhonenumber(TPtrC16 field, QStri
     QVERIFY(transformPhoneNumber != 0);
     QVERIFY(transformPhoneNumber->supportsField(KUidContactFieldPhoneNumber.iUid));
     QVERIFY(transformPhoneNumber->supportsField(KUidContactFieldFax.iUid));
-    QVERIFY(transformPhoneNumber->supportsField(KUidContactFieldVCardMapTEL.iUid));
-    QVERIFY(transformPhoneNumber->supportsField(KUidContactFieldVCardMapCELL.iUid));
-    QVERIFY(transformPhoneNumber->supportsField(KUidContactFieldVCardMapPAGER.iUid));
     QVERIFY(transformPhoneNumber->supportsDetail(QContactPhoneNumber::DefinitionName));
     
     validateContexts(transformPhoneNumber);
     
-    QContactPhoneNumber phoneNumber;
-    phoneNumber.setNumber(detail);
-    QList<CContactItemField *> fields = transformPhoneNumber->transformDetailL(phoneNumber);
+    QContactPhoneNumber phoneNumber1;
+    phoneNumber1.setNumber(detail);
+    QList<CContactItemField *> fields = transformPhoneNumber->transformDetailL(phoneNumber1);
     QVERIFY(fields.count() == 1);
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldPhoneNumber));
+    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
+    
+    QContactPhoneNumber phoneNumber2;
+    phoneNumber2.setNumber(detail);
+    phoneNumber2.setSubTypes(QContactPhoneNumber::SubTypeLandline);
+    fields = transformPhoneNumber->transformDetailL(phoneNumber2);
+    QVERIFY(fields.count() == 1);
+    QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldPhoneNumber));
+    QVERIFY(fields.at(0)->ContentType().Mapping() == KUidContactFieldVCardMapTEL);
+    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
+    
+    QContactPhoneNumber phoneNumber3;
+    phoneNumber3.setNumber(detail);
+    phoneNumber3.setSubTypes(QContactPhoneNumber::SubTypeMobile);
+    fields = transformPhoneNumber->transformDetailL(phoneNumber3);
+    QVERIFY(fields.count() == 1);
+    QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldPhoneNumber));
+    QVERIFY(fields.at(0)->ContentType().Mapping() == KUidContactFieldVCardMapCELL);
+    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
+    
+    QContactPhoneNumber phoneNumber4;
+    phoneNumber4.setNumber(detail);
+    phoneNumber4.setSubTypes(QContactPhoneNumber::SubTypeFacsimile);
+    fields = transformPhoneNumber->transformDetailL(phoneNumber4);
+    QVERIFY(fields.count() == 1);
+    QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldFax));
+    QVERIFY(fields.at(0)->ContentType().Mapping() == KUidContactFieldVCardMapTEL);
+    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
+    
+    QContactPhoneNumber phoneNumber5;
+    phoneNumber5.setNumber(detail);
+    phoneNumber5.setSubTypes(QContactPhoneNumber::SubTypePager);
+    fields = transformPhoneNumber->transformDetailL(phoneNumber5);
+    QVERIFY(fields.count() == 1);
+    QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldPhoneNumber));
+    QVERIFY(fields.at(0)->ContentType().Mapping() == KUidContactFieldVCardMapPAGER);
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
     
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPhoneNumber);
@@ -277,9 +314,60 @@ void TestTransformContactData::validateTransformPhonenumber(TPtrC16 field, QStri
     QContactDetail* contactDetail = transformPhoneNumber->transformItemField(*newField, contact);
     const QContactPhoneNumber* phoneNumberInfo(static_cast<const QContactPhoneNumber*>(contactDetail));
     QCOMPARE(phoneNumberInfo->number(), detail);
-        
+    QVERIFY(phoneNumberInfo->subTypes().contains(QContactPhoneNumber::SubTypeLandline));
     delete contactDetail;
+    contactDetail = 0;
     delete newField;
+    newField = 0;
+   
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPhoneNumber);
+    newField->TextStorage()->SetTextL(field);
+    newField->SetMapping(KUidContactFieldVCardMapTEL);
+    contactDetail = transformPhoneNumber->transformItemField(*newField, contact);
+    const QContactPhoneNumber* phoneNumberInfo1(static_cast<const QContactPhoneNumber*>(contactDetail));
+    QCOMPARE(phoneNumberInfo1->number(), detail);
+    QVERIFY(phoneNumberInfo1->subTypes().contains(QContactPhoneNumber::SubTypeLandline));
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+    
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPhoneNumber);
+    newField->TextStorage()->SetTextL(field);
+    newField->SetMapping(KUidContactFieldVCardMapCELL);
+    contactDetail = transformPhoneNumber->transformItemField(*newField, contact);
+    const QContactPhoneNumber* phoneNumberInfo2(static_cast<const QContactPhoneNumber*>(contactDetail));
+    QCOMPARE(phoneNumberInfo2->number(), detail);
+    QVERIFY(phoneNumberInfo2->subTypes().contains(QContactPhoneNumber::SubTypeMobile));
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+    
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPhoneNumber);
+    newField->TextStorage()->SetTextL(field);
+    newField->SetMapping(KUidContactFieldVCardMapPAGER);
+    contactDetail = transformPhoneNumber->transformItemField(*newField, contact);
+    const QContactPhoneNumber* phoneNumberInfo3(static_cast<const QContactPhoneNumber*>(contactDetail));
+    QCOMPARE(phoneNumberInfo3->number(), detail);
+    QVERIFY(phoneNumberInfo3->subTypes().contains(QContactPhoneNumber::SubTypePager));
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+    
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldFax);
+    newField->TextStorage()->SetTextL(field);
+    newField->SetMapping(KUidContactFieldVCardMapTEL);
+    contactDetail = transformPhoneNumber->transformItemField(*newField, contact);
+    const QContactPhoneNumber* phoneNumberInfo4(static_cast<const QContactPhoneNumber*>(contactDetail));
+    QCOMPARE(phoneNumberInfo4->number(), detail);
+    QVERIFY(phoneNumberInfo4->subTypes().contains(QContactPhoneNumber::SubTypeFacsimile));
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+    
     delete transformPhoneNumber; 
 }
 
