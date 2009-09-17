@@ -79,6 +79,14 @@ QList<CContactItemField *> TransformAddress::transformDetailL(const QContactDeta
     fieldList.append(region);
     CleanupStack::Pop(region);
     
+    //post office box
+    TPtrC fieldTextPostOfficeBox(reinterpret_cast<const TUint16*>(address.postOfficeBox().utf16()));
+    CContactItemField* postOfficeBox = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldPostOffice);
+    postOfficeBox->TextStorage()->SetTextL(fieldTextPostOfficeBox);
+    setContextsL(address, *postOfficeBox);
+    fieldList.append(postOfficeBox);
+    CleanupStack::Pop(postOfficeBox);
+    
     return fieldList;
 }
 
@@ -115,6 +123,11 @@ QContactDetail *TransformAddress::transformItemField(const CContactItemField& fi
         else if (field.ContentType().FieldType(i) == KUidContactFieldRegion) {
             address->setRegion(addressValue);
         }
+        
+        //post office box
+        else if (field.ContentType().FieldType(i) == KUidContactFieldPostOffice) {
+            address->setPostOfficeBox(addressValue);
+        }
         else {
             setContexts(field.ContentType().FieldType(i), *address);
         }
@@ -130,7 +143,8 @@ bool TransformAddress::supportsField(TUint32 fieldType) const
         fieldType == KUidContactFieldPostcode.iUid ||
         fieldType == KUidContactFieldAddress.iUid ||
         fieldType == KUidContactFieldLocality.iUid ||
-        fieldType == KUidContactFieldRegion.iUid) {
+        fieldType == KUidContactFieldRegion.iUid ||
+        fieldType == KUidContactFieldPostOffice.iUid) {
         ret = true;
     }
     return ret;

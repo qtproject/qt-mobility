@@ -64,6 +64,7 @@ private:
                                   TPtrC16 postcodeField, QString postcodeDetail,
                                   TPtrC16 streetField, QString streetDetail,
                                   TPtrC16 localityField, QString localityDetail,
-                                  TPtrC16 regionField, QString regionDetail);
+                                  TPtrC16 regionField, QString regionDetail,
+                                  TPtrC16 postOfficeBoxField, QString postOfficeBoxDetail);
     void validateContexts(TransformContactData* transformContactData) const; 
 };

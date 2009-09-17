@@ -87,8 +87,10 @@ void TestTransformContactData::executeTransformAddress()
                              _L("dummypostcode"), QString("dummypostcode"),
                              _L("dummystreet"), QString("dummystreet"),
                              _L("dummylocality"), QString("dummylocality"),
-                             _L("dummyregion"), QString("dummyregion"));
+                             _L("dummyregion"), QString("dummyregion"),
+                             _L("dummypostofficebox"), QString("dummypostofficebox"));
     validateTransformAddress(_L(""), QString(""),
+                             _L(""), QString(""),
                              _L(""), QString(""),
                              _L(""), QString(""),
                              _L(""), QString(""),
@@ -285,7 +287,8 @@ void TestTransformContactData::validateTransformAddress(TPtrC16 countryField, QS
                               TPtrC16 postcodeField, QString postcodeDetail,
                               TPtrC16 streetField, QString streetDetail,
                               TPtrC16 localityField, QString localityDetail,
-                              TPtrC16 regionField, QString regionDetail)
+                              TPtrC16 regionField, QString regionDetail,
+                              TPtrC16 postOfficeBoxField, QString postOfficeBoxDetail)
 {
     TransformContactData* transformAddress = new TransformAddress();
     QVERIFY(transformAddress != 0);
@@ -294,6 +297,7 @@ void TestTransformContactData::validateTransformAddress(TPtrC16 countryField, QS
     QVERIFY(transformAddress->supportsField(KUidContactFieldAddress.iUid));
     QVERIFY(transformAddress->supportsField(KUidContactFieldLocality.iUid));
     QVERIFY(transformAddress->supportsField(KUidContactFieldRegion.iUid));
+    QVERIFY(transformAddress->supportsField(KUidContactFieldPostOffice.iUid));
     QVERIFY(transformAddress->supportsDetail(QContactAddress::DefinitionName));
     
     validateContexts(transformAddress);
@@ -304,8 +308,9 @@ void TestTransformContactData::validateTransformAddress(TPtrC16 countryField, QS
     address.setStreet(streetDetail);
     address.setLocality(localityDetail);
     address.setRegion(regionDetail);
+    address.setPostOfficeBox(postOfficeBoxDetail);
     QList<CContactItemField *> fields = transformAddress->transformDetailL(address);
-    QVERIFY(fields.count() == 5);
+    QVERIFY(fields.count() == 6);
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldCountry));
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(countryField), 0);
@@ -321,6 +326,9 @@ void TestTransformContactData::validateTransformAddress(TPtrC16 countryField, QS
     QVERIFY(fields.at(4)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(4)->ContentType().ContainsFieldType(KUidContactFieldRegion));
     QCOMPARE(fields.at(4)->TextStorage()->Text().CompareF(regionField), 0);
+    QVERIFY(fields.at(5)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(5)->ContentType().ContainsFieldType(KUidContactFieldPostOffice));
+    QCOMPARE(fields.at(5)->TextStorage()->Text().CompareF(postOfficeBoxField), 0);
     
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldCountry);
     newField->TextStorage()->SetTextL(countryField);
@@ -368,6 +376,16 @@ void TestTransformContactData::validateTransformAddress(TPtrC16 countryField, QS
     contactDetail = transformAddress->transformItemField(*newField, contact);
     const QContactAddress* addressInfo5(static_cast<const QContactAddress*>(contactDetail));
     QCOMPARE(addressInfo5->region(), regionDetail);
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPostOffice);
+    newField->TextStorage()->SetTextL(postOfficeBoxField);
+    contactDetail = transformAddress->transformItemField(*newField, contact);
+    const QContactAddress* addressInfo6(static_cast<const QContactAddress*>(contactDetail));
+    QCOMPARE(addressInfo6->postOfficeBox(), postOfficeBoxDetail);
     delete contactDetail;
     contactDetail = 0;
     delete newField;
