@@ -45,7 +45,7 @@
 // We mean it.
 //
 
-#ifdef Q_CC_MSVC
+#ifndef Q_CC_MINGW
 #include <QObject>
 #include <QVariant>
 #include <QString>

@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 
-#ifdef Q_CC_MSVC
+#ifndef Q_CC_MINGW
 #include "qwmihelper_win_p.h"
 #include <QDebug>
 
