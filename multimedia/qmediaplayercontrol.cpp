@@ -236,9 +236,19 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 */
 
 /*!
-    \fn QMediaPlayerControl::setMedia(const QMediaSource &media)
+    \fn QMediaPlayerControl::mediaStream() const
 
-    Sets the current \a media source.
+    Returns the current media stream. This is only a valid if a stream was passed to setMedia().
+
+    \sa setMedia()
+*/
+
+/*!
+    \fn QMediaPlayerControl::setMedia(const QMediaSource &media, QIODevice *stream)
+
+    Sets the current \a media source.  If a \a stream is supplied; data will be read from that
+    instead of attempting to resolve the media source.  The media source may still be used to
+    supply media information such as mime type.
 */
 
 /*!

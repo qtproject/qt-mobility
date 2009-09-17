@@ -153,7 +153,12 @@ QMediaSource QGstreamerPlayerControl::media() const
     return m_currentResource;
 }
 
-void QGstreamerPlayerControl::setMedia(const QMediaSource &source)
+const QIODevice *QGstreamerPlayerControl::mediaStream() const
+{
+    return 0;
+}
+
+void QGstreamerPlayerControl::setMedia(const QMediaSource &source, QIODevice *)
 {
     m_currentResource = source;
 
@@ -177,4 +182,3 @@ bool QGstreamerPlayerControl::isVideoAvailable() const
 {
     return m_session->isVideoAvailable();
 }
-

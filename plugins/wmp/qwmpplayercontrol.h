@@ -85,7 +85,8 @@ public:
     void stop();
 
     QMediaSource media() const;
-    void setMedia(const QMediaSource &source);
+    const QIODevice *mediaStream() const;
+    void setMedia(const QMediaSource &source, QIODevice *stream);
 
     QUrl url() const;
     void setUrl(const QUrl &url);

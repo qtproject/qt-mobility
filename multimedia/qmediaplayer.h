@@ -100,6 +100,7 @@ public:
     bool isValid() const;
 
     QMediaSource media() const;
+    const QIODevice *mediaStream() const;
 
     State state() const;
     MediaStatus mediaStatus() const;
@@ -132,7 +133,7 @@ public Q_SLOTS:
 
     void setPlaybackRate(float rate);
 
-    void setMedia(const QMediaSource &media);
+    void setMedia(const QMediaSource &media, QIODevice *stream = 0);
 
 Q_SIGNALS:
     void mediaChanged(const QMediaSource &media);

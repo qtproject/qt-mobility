@@ -32,66 +32,61 @@
 **
 ****************************************************************************/
 
-#ifndef QWMPPLAYERCONTROL_H
-#define QWMPPLAYERCONTROL_H
+#include "streamplayer.h"
 
-#include <QtCore/qobject.h>
+#include <multimedia/qmediaplayer.h>
 
-#include "qmediaplayercontrol.h"
-#include "qmediaplayer.h"
+#include <QtGui>
 
-
-class QMediaPlaylist;
-
-class QGstreamerPlayerSession;
-class QGstreamerPlayerService;
-class QMediaPlaylistNavigator;
-
-
-class QGstreamerPlayerControl : public QMediaPlayerControl
+StreamPlayer::StreamPlayer(QWidget *parent)
+    : QWidget(parent)
+    , player(0)
+    , progress(0)
 {
-    Q_OBJECT
+    player = new QMediaPlayer;
+    connect(player, SIGNAL(metaDataChanged()), this, SLOT(metaDataChanged()));
+    connect(player, SIGNAL(durationChanged(qint64)), this, SLOT(durationChanged(qint64)));
+    connect(player, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
 
-public:
-    QGstreamerPlayerControl(QGstreamerPlayerSession *session, QObject *parent = 0);
-    ~QGstreamerPlayerControl();
+    progress = new QProgressBar;
+    progress->setRange(0, 0);
 
-    QMediaPlayer::State state() const;
-    QMediaPlayer::MediaStatus mediaStatus() const;
+    QBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(progress);
 
-    qint64 position() const;
-    qint64 duration() const;
+    setLayout(layout);
+}
 
-    int bufferStatus() const;
+StreamPlayer::~StreamPlayer()
+{
+    delete player;
+}
 
-    int volume() const;
-    bool isMuted() const;
+void StreamPlayer::setFileName(const QString &fileName)
+{
+    file.setFileName(fileName);
 
-    bool isVideoAvailable() const;
-    void setVideoOutput(QObject *output);
+    if (file.open(QIODevice::ReadOnly)) {
+        player->setMedia(QMediaSource(), &file);
+    }
+}
 
-    bool isSeekable() const;
+void StreamPlayer::play()
+{
+    player->play();
+}
 
-    float playbackRate() const;
-    void setPlaybackRate(float rate);
+void StreamPlayer::durationChanged(qint64 duration)
+{
+    progress->setMaximum(duration / 1000);
+}
 
-    QMediaSource media() const;
-    const QIODevice *mediaStream() const;
-    void setMedia(const QMediaSource&, QIODevice *);
+void StreamPlayer::positionChanged(qint64 position)
+{
+    progress->setValue(position / 1000);
+}
 
-public Q_SLOTS:
-    void setPosition(qint64 pos);
-
-    void play();
-    void pause();
-    void stop();
-
-    void setVolume(int volume);
-    void setMuted(bool muted);
-
-private:
-    QGstreamerPlayerSession *m_session;
-    QMediaSource m_currentResource;
-};
-
-#endif
+void StreamPlayer::metaDataChanged()
+{
+    setWindowTitle(player->metaData(QAbstractMediaObject::Title).toString());
+}

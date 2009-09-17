@@ -32,79 +32,35 @@
 **
 ****************************************************************************/
 
-#ifndef QWMPPLAYERCONTROL_H
-#define QWMPPLAYERCONTROL_H
+#ifndef STREAMPLAYER_H
+#define STREAMPLAYER_H
 
-#include <QtCore/qobject.h>
+#include <QtCore/qfile.h>
+#include <QtGui/qwidget.h>
 
-#include <Phonon/MediaObject>
-#include <Phonon/AudioOutput>
+class QMediaPlayer;
+class QProgressBar;
 
-#include "qmediaplayercontrol.h"
-#include "qmediaplayer.h"
-
-
-class QMediaPlaylist;
-
-class QPhononPlayerSession;
-class QPhononPlayerService;
-class QMediaPlaylistNavigator;
-
-
-class QPhononPlayerControl : public QMediaPlayerControl
+class StreamPlayer : public QWidget
 {
     Q_OBJECT
-
 public:
-    QPhononPlayerControl(Phonon::MediaObject *session, QObject *parent = 0);
-    ~QPhononPlayerControl();
+    StreamPlayer(QWidget *parent = 0);
+    ~StreamPlayer();
 
-    QMediaPlayer::State state() const;
-    QMediaPlayer::MediaStatus mediaStatus() const;
-
-    QMediaSource media() const;
-    const QIODevice *mediaStream() const;
-    void setMedia(const QMediaSource &resources, QIODevice *stream);
-
-    qint64 position() const;
-    qint64 duration() const;
-
-    int bufferStatus() const;
-
-    int volume() const;
-    bool isMuted() const;
-
-    int playlistPosition() const;
-
-    bool isVideoAvailable() const;
-
-    bool isSeekable() const;
-
-    float playbackRate() const;
-    void setPlaybackRate(float rate);
-
-public Q_SLOTS:
-    void setPosition(qint64 pos);
+    void setFileName(const QString &fileName);
 
     void play();
-    void pause();
-    void stop();
-
-    void setVolume(int volume);
-    void setMuted(bool muted);
 
 private slots:
-    void updateState(Phonon::State newState, Phonon::State oldState);
-    void updateVolume();
-    void processEOS();
+    void durationChanged(qint64 duration);
+    void positionChanged(qint64 position);
+    void metaDataChanged();
 
 private:
-    Phonon::MediaObject *m_session;
-    Phonon::AudioOutput *m_audioOutput;
-    QMediaPlayer::State m_state;
-    QMediaPlayer::MediaStatus m_mediaStatus;
-    QIODevice *m_mediaStream;
-    QMediaSource m_resources;
+    QMediaPlayer *player;
+    QProgressBar *progress;
+    QFile file;
 };
 
 #endif

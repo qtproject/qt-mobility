@@ -32,66 +32,24 @@
 **
 ****************************************************************************/
 
-#ifndef QWMPPLAYERCONTROL_H
-#define QWMPPLAYERCONTROL_H
+#include "streamplayer.h"
 
-#include <QtCore/qobject.h>
+#include <QtGui>
 
-#include "qmediaplayercontrol.h"
-#include "qmediaplayer.h"
-
-
-class QMediaPlaylist;
-
-class QGstreamerPlayerSession;
-class QGstreamerPlayerService;
-class QMediaPlaylistNavigator;
-
-
-class QGstreamerPlayerControl : public QMediaPlayerControl
+int main(int argc, char *argv[])
 {
-    Q_OBJECT
+    QApplication app(argc, argv);
 
-public:
-    QGstreamerPlayerControl(QGstreamerPlayerSession *session, QObject *parent = 0);
-    ~QGstreamerPlayerControl();
+    QString fileName = QFileDialog::getOpenFileName();
 
-    QMediaPlayer::State state() const;
-    QMediaPlayer::MediaStatus mediaStatus() const;
+    if (!fileName.isEmpty()) {
+        StreamPlayer player;
+        player.setFileName(fileName);
+        player.play();
+        player.show();
 
-    qint64 position() const;
-    qint64 duration() const;
-
-    int bufferStatus() const;
-
-    int volume() const;
-    bool isMuted() const;
-
-    bool isVideoAvailable() const;
-    void setVideoOutput(QObject *output);
-
-    bool isSeekable() const;
-
-    float playbackRate() const;
-    void setPlaybackRate(float rate);
-
-    QMediaSource media() const;
-    const QIODevice *mediaStream() const;
-    void setMedia(const QMediaSource&, QIODevice *);
-
-public Q_SLOTS:
-    void setPosition(qint64 pos);
-
-    void play();
-    void pause();
-    void stop();
-
-    void setVolume(int volume);
-    void setMuted(bool muted);
-
-private:
-    QGstreamerPlayerSession *m_session;
-    QMediaSource m_currentResource;
-};
-
-#endif
+        return app.exec();
+    } else {
+        return 0;
+    }
+}
