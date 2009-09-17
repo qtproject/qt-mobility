@@ -65,7 +65,7 @@ bool QMessageFolderOrdering::isEmpty() const
 
 bool QMessageFolderOrdering::isSupported() const
 {
-    return true; // stub
+    return false; // stub
 }
 
 QMessageFolderOrdering QMessageFolderOrdering::operator+(const QMessageFolderOrdering& other) const

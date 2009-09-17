@@ -54,7 +54,7 @@ bool QMessageAccountOrdering::isEmpty() const
 
 bool QMessageAccountOrdering::isSupported() const
 {
-    return true; // stub
+    return false; // stub
 }
 
 bool QMessageAccountOrdering::operator==(const QMessageAccountOrdering& other) const
