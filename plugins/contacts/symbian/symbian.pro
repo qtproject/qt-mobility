@@ -11,6 +11,8 @@ TARGET = $$qtLibraryTarget(mobapicontactspluginsymbian)
 include(../../../common.pri)
 
 symbian: { 
+	load(data_caging_paths)
+
 	TARGET.CAPABILITY = CAP_GENERAL_DLL
 	TARGET.EPOCALLOWDLLDATA = 1
   TARGET.UID3 = 0xE5E2F4B4
@@ -18,7 +20,7 @@ symbian: {
   INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
   
   INCLUDEPATH += inc
-	#INCLUDEPATH += ../
+	INCLUDEPATH += rss
 	INCLUDEPATH += $$SOURCE_DIR/contacts 
 	INCLUDEPATH += $$SOURCE_DIR/contacts/details 
 	INCLUDEPATH += $$SOURCE_DIR/contacts/filters 
@@ -52,11 +54,17 @@ symbian: {
   				-lcntmodel \
   				-lQtContacts 
 
-target.path = /sys/bin
-INSTALLS += target
+	target.path = /sys/bin
+	INSTALLS += target
 
-symbianplugin.sources = $${TARGET}.dll
-symbianplugin.path = /resource/qt/plugins/contacts
-DEPLOYMENT += symbianplugin
 
+  cntmodelResourceFile = \
+      "START RESOURCE ../rss/cntmodel.rss" \
+      "TARGETPATH CONTACTS_RESOURCE_DIR" \
+      "END"
+  MMP_RULES += cntmodelResourceFile   
+  
+	symbianplugin.sources = $${TARGET}.dll
+	symbianplugin.path = /resource/qt/plugins/contacts
+	DEPLOYMENT += symbianplugin
 }

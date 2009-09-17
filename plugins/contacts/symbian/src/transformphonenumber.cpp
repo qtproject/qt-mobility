@@ -104,7 +104,7 @@ QContactDetail *TransformPhoneNumber::transformItemField(const CContactItemField
 	
 	for (int i = 0; i < field.ContentType().FieldTypeCount(); i++)
 	{
-		if (field.ContentType().FieldType(i) == KUidContactFieldVCardMapTEL)
+		if (field.ContentType().FieldType(i) == KUidContactFieldPhoneNumber)
 		{
 			phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeLandline);
 		}
