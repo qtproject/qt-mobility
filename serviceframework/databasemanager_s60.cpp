@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 
-#include "databasemanager_s60.h"
+#include "databasemanager_s60_p.h"
 #include "clientservercommon.h"
 #include <qserviceinterfacedescriptor_p.h>
 #include <qserviceinterfacedescriptor.h>

@@ -32,7 +32,7 @@ SOURCES +=  servicemetadata.cpp \
 symbian {
     INCLUDEPATH +=  ./symbian
     
-    PRIVATE_HEADERS +=  databasemanager_s60.h
+    PRIVATE_HEADERS +=  databasemanager_s60_p.h
 
     SOURCES +=  databasemanager_s60.cpp
 

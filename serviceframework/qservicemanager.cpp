@@ -35,7 +35,7 @@
 #include "qserviceplugininterface.h"
 #include "qabstractsecuritysession.h"
 #ifdef Q_OS_SYMBIAN
-    #include "databasemanager_s60.h"
+    #include "databasemanager_s60_p.h"
 #else
     #include "databasemanager_p.h"
 #endif
