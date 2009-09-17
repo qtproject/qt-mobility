@@ -52,6 +52,10 @@ public:
 
     static QString userDirectory();
     static QString systemDirectory();
+
+#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
+    static void removeDatabases();
+#endif
 };
 
 #endif

@@ -39,7 +39,6 @@
 #include "../qsfwtestutil.h"
 #include "servicemetadata_p.h"
 #include "databasemanager_s60.h"
-#include <f32file.h>
 
 class DatabaseManagerUnitTest: public QObject
 {
@@ -71,11 +70,8 @@ private:
                QString serviceDescription="",
                QString interfaceDescription="");
 
-        void clean();
         void modifyPermissionSet(QFile::Permissions &permsSet,
                                             int perm);
-        void killServer();
-        void removeDatabases();
         
 private:
         DatabaseManager *m_dbm;
@@ -84,7 +80,9 @@ private:
 
 void DatabaseManagerUnitTest::initTestCase()
 {
-    removeDatabases();
+#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
+    QSfwTestUtil::removeDatabases();
+#endif
     m_dbm = new DatabaseManager;
 }
 
@@ -404,7 +402,9 @@ void DatabaseManagerUnitTest::unregisterService()
     QVERIFY(!m_dbm->unregisterService("; drop table Interface;", DatabaseManager::UserScope));
     QCOMPARE(m_dbm->lastError().code(), DBError::NotFound);
 
-    clean();
+#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
+    QSfwTestUtil::removeDatabases();
+#endif
 }
 
 bool DatabaseManagerUnitTest::compareDescriptor(QServiceInterfaceDescriptor interface,
@@ -594,42 +594,10 @@ void DatabaseManagerUnitTest::modifyPermissionSet(QFile::Permissions &permsSet,
 
 void DatabaseManagerUnitTest::cleanupTestCase()
 {
-    clean();
+#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
+    QSfwTestUtil::removeDatabases();
+#endif
 }
-void DatabaseManagerUnitTest::killServer()
-{
-    TFindServer findServer(_L("SFWDatabaseManagerServer"));
-    TFullName name;
-    if (findServer.Next(name) != KErrNone)
-    {
-        qDebug() << "Server found";
-        TRequestStatus status;
-        RProcess dbServer;
-        int err = dbServer.Open(_L("SFWDatabaseManagerServer"));
-        qDebug() << "Open: " << err; 
-        dbServer.Kill(KErrNone);
-        dbServer.Close();
-    }    
-}
-
-void DatabaseManagerUnitTest::removeDatabases()
-{
-    RFs fs;
-    fs.Connect();
-    CleanupClosePushL(fs);
-    CFileMan* fileMan=CFileMan::NewL(fs);
-    CleanupStack::PushL(fileMan);
-    fileMan->RmDir(_L("c:\\private\\E3b48c24\\Nokia\\"));
-    fileMan->RmDir(_L("c:\\data\\.config\\Nokia\\"));
-    CleanupStack::PopAndDestroy(2, &fs);    
-}
-
-void DatabaseManagerUnitTest::clean()
-{   
-    killServer();
-    removeDatabases();
-}
-
 
 QTEST_MAIN(DatabaseManagerUnitTest)
 

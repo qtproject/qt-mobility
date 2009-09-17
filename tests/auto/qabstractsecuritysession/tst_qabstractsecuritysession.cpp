@@ -36,9 +36,6 @@
 #include <QtCore>
 #include <qservicemanager.h>
 #include <qabstractsecuritysession.h>
-#if defined(Q_OS_SYMBIAN)
-#include <f32file.h>
-#endif
 
 class TestSession : public QAbstractSecuritySession
 {
@@ -77,11 +74,6 @@ private slots:
     void cleanup();
     void testSecSessionHandling();
     
-#if defined(Q_OS_SYMBIAN)
-private:
-    void removeDatabases();
-    void killServer();
-#endif
 private:
    QString path; 
 };
@@ -95,9 +87,8 @@ void tst_QAbstractSecuritySession::initTestCase()
 
     QSfwTestUtil::removeTempUserDb();
     QSfwTestUtil::removeTempSystemDb();
-#if defined(Q_OS_SYMBIAN)
-    //killServer();
-    removeDatabases();
+#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
+    QSfwTestUtil::removeDatabases();
 #endif
 }
 
@@ -112,15 +103,10 @@ void tst_QAbstractSecuritySession::cleanup()
 
 void tst_QAbstractSecuritySession::testSecSessionHandling()
 {
-    //QFile file(QDir::toNativeSeparators(path+"testserviceplugin.xml"));
-    QFile file("C:\\private\\eb30cafd\\xmldata\\testserviceplugin.xml"); 
-    QVERIFY(file.exists());
-    qDebug() << QDir::toNativeSeparators(path+"testserviceplugin.xml");
+    QFile file(QDir::toNativeSeparators(path+"testserviceplugin.xml"));
     QServiceManager mgr;
     QVERIFY(mgr.findServices().isEmpty());
-    //QVERIFY(mgr.addService(&file));
-    mgr.addService(&file);
-    qDebug() << mgr.error();
+    QVERIFY(mgr.addService(&file));
     QVERIFY(mgr.findServices() == (QStringList()<< "TestService"));
 
     QServiceFilter simpleFilter;
@@ -204,39 +190,10 @@ void tst_QAbstractSecuritySession::cleanupTestCase()
 {
     QSfwTestUtil::removeTempUserDb();
     QSfwTestUtil::removeTempSystemDb();
-    killServer();
-    removeDatabases();
-}
-
-#if defined(Q_OS_SYMBIAN)
-void tst_QAbstractSecuritySession::killServer()
-{
-    TFindServer findServer(_L("SFWDatabaseManagerServer"));
-    TFullName name;
-    if (findServer.Next(name) != KErrNone)
-    {
-        qDebug() << "Server found";
-        TRequestStatus status;
-        RProcess dbServer;
-        int err = dbServer.Open(_L("SFWDatabaseManagerServer"));
-        qDebug() << "Open: " << err; 
-        dbServer.Kill(KErrNone);
-        dbServer.Close();
-    }    
-}
-
-void tst_QAbstractSecuritySession::removeDatabases()
-{
-    RFs fs;
-    fs.Connect();
-    CleanupClosePushL(fs);
-    CFileMan* fileMan=CFileMan::NewL(fs);
-    CleanupStack::PushL(fileMan);
-    fileMan->RmDir(_L("c:\\private\\E3b48c24\\Nokia\\"));
-    fileMan->RmDir(_L("c:\\data\\.config\\Nokia\\"));
-    CleanupStack::PopAndDestroy(2, &fs);    
-}
+#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
+    QSfwTestUtil::removeDatabases();
 #endif
+}
 
 QTEST_MAIN(tst_QAbstractSecuritySession)
 #include "tst_qabstractsecuritysession.moc"

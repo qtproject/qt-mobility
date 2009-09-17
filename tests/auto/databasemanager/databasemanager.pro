@@ -28,11 +28,13 @@ symbian {
     SOURCES += tst_databasemanager_s60.cpp \
                     servicemetadata.cpp \
                     databasemanager_s60.cpp \
-                    dberror.cpp
+                    dberror.cpp \
+                    ../qsfwtestutil.cpp
 
     HEADERS += databasemanager_s60.h \
                databasemanager_s60.h \
-               dberror.h
+               dberror.h \
+               ../qsfwtestutil.h
                
    libBlock = \
        "$${LITERAL_HASH}ifdef WINSCW" \
