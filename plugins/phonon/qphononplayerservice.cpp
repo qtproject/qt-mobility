@@ -42,8 +42,8 @@
 
 #include "qphononvideowidget.h"
 
-#include "qmediaplaylistnavigator.h"
-#include "qmediaplaylist.h"
+#include <multimedia/qmediaplaylistnavigator.h>
+#include <multimedia/qmediaplaylist.h>
 
 QPhononPlayerService::QPhononPlayerService(QObject *parent)
     : QMediaPlayerService(parent)

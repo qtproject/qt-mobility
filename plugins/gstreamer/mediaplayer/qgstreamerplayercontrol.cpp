@@ -35,7 +35,7 @@
 #include "qgstreamerplayercontrol.h"
 #include "qgstreamerplayersession.h"
 
-#include "qmediaplaylistnavigator.h"
+#include <multimedia/qmediaplaylistnavigator.h>
 
 #include <QtCore/qurl.h>
 #include <QtCore/qdebug.h>

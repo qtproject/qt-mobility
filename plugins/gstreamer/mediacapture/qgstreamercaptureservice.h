@@ -35,8 +35,8 @@
 #ifndef QGSTREAMERCAPTURESERVICE_H
 #define QGSTREAMERCAPTURESERVICE_H
 
-#include "qaudiorecorderservice.h"
-#include "qcameraservice.h"
+#include <multimedia/qaudiorecorderservice.h>
+#include <multimedia/qcameraservice.h>
 #include "qgstreamervideooutputcontrol.h"
 
 #include <gst/gst.h>

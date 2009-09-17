@@ -35,7 +35,7 @@
 #ifndef QGSTREAMERVIDEOOUTPUTCONTROL_H
 #define QGSTREAMERVIDEOOUTPUTCONTROL_H
 
-#include "qvideooutputcontrol.h"
+#include <multimedia/qvideooutputcontrol.h>
 
 #include <gst/gst.h>
 

@@ -40,8 +40,8 @@
 #include <Phonon/MediaObject>
 #include <Phonon/AudioOutput>
 
-#include "qmediaplayercontrol.h"
-#include "qmediaplayer.h"
+#include <multimedia/qmediaplayercontrol.h>
+#include <multimedia/qmediaplayer.h>
 
 
 class QMediaPlaylist;

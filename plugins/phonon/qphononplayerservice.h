@@ -40,7 +40,7 @@
 #include <Phonon/MediaObject>
 #include <Phonon/VideoWidget>
 
-#include "qmediaplayerservice.h"
+#include <multimedia/qmediaplayerservice.h>
 #include "qphononvideowidget.h"
 
 

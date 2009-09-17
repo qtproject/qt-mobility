@@ -35,8 +35,8 @@
 #ifndef QGSTREAMERVIDEOWIDGET_H
 #define QGSTREAMERVIDEOWIDGET_H
 
-#include "qvideowidgetcontrol.h"
-#include "qvideooutputcontrol.h"
+#include <multimedia/qvideowidgetcontrol.h>
+#include <multimedia/qvideooutputcontrol.h>
 
 #include <Phonon/VideoWidget>
 

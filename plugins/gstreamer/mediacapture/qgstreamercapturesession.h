@@ -35,8 +35,8 @@
 #ifndef QGSTREAMERCAPTURESESSION_H
 #define QGSTREAMERCAPTURESESSION_H
 
-#include "qmediarecordercontrol.h"
-#include "qmediarecorder.h"
+#include <multimedia/qmediarecordercontrol.h>
+#include <multimedia/qmediarecorder.h>
 
 #include <QtCore/qurl.h>
 
