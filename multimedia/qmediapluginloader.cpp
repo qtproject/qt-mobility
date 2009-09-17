@@ -58,6 +58,11 @@ QObject* QMediaPluginLoader::instance(QString const &key)
     return m_instances[key];
 }
 
+QList<QObject*> QMediaPluginLoader::instances(QString const &key)
+{
+    return m_instances.values(key);
+}
+
 void QMediaPluginLoader::load()
 {
     if (!m_instances.isEmpty())
@@ -80,7 +85,7 @@ void QMediaPluginLoader::load()
                 QFactoryInterface* p = qobject_cast<QFactoryInterface*>(o);
                 if (p != 0) {
                     foreach (QString const &key, p->keys())
-                        m_instances.insert(key, o);
+                        m_instances.insertMulti(key, o);
                 }
 
                 continue;
