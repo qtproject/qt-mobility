@@ -435,6 +435,11 @@ static QString get_network_interface()
 
 void QNetworkSessionPrivate::open()
 {
+    QTimer::singleShot(0, this, SLOT(do_open()));
+}
+
+void QNetworkSessionPrivate::do_open()
+{
     icd_connection_flags flags = ICD_CONNECTION_FLAG_USER_EVENT;
     bool st;
     QString result;

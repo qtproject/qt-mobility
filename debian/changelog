@@ -1,3 +1,9 @@
+libbearer (0.18) unstable; urgency=low
+
+  * QNetworkSession::open() is made asynchronous.
+
+ -- Jukka Rissanen <jukka.rissanen@nokia.com>  Thu, 17 Sep 2009 16:26:43 +0300
+
 libbearer (0.17) unstable; urgency=low
 
   * Interface name is resolved after network is connected.

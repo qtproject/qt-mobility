@@ -109,7 +109,7 @@ Q_SIGNALS:
     void quitPendingWaitsForOpened();
 
 private Q_SLOTS:
-
+    void do_open();
 
 private:
     QNetworkConfigurationManager manager;
