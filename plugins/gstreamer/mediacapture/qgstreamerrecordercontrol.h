@@ -65,6 +65,7 @@ private slots:
 
 private:
     QGstreamerCaptureSession *m_session;
+    QMediaRecorder::State m_state;
 };
 
 #endif // QGSTREAMERCAPTURECORNTROL_H

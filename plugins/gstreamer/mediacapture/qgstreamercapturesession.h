@@ -60,6 +60,8 @@ class QGstreamerCaptureSession : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
+    Q_ENUMS(State)
+    Q_ENUMS(CaptureMode)
 public:
     enum CaptureMode { Audio = 1, Video = 2, AudioAndVideo = Audio | Video };
     enum State { StoppedState, PreviewState, PausedState, RecordingState };
@@ -118,6 +120,7 @@ private:
     QUrl m_sink;
     QString m_captureDevice;
     State m_state;
+    State m_pendingState;
     PipelineMode m_pipelineMode;
     QGstreamerCaptureSession::CaptureMode m_captureMode;
     bool m_previewEnabled;

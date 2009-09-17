@@ -36,7 +36,7 @@
 #include <QtCore/QDebug>
 
 QGstreamerRecorderControl::QGstreamerRecorderControl(QGstreamerCaptureSession *session)
-    :QMediaRecorderControl(session), m_session(session)
+    :QMediaRecorderControl(session), m_session(session), m_state(QMediaRecorder::StoppedState)
 {
     connect(m_session, SIGNAL(stateChanged(QGstreamerCaptureSession::State)), SLOT(updateState()));
     connect(m_session, SIGNAL(error(int,QString)), SIGNAL(error(int,QString)));
@@ -77,7 +77,11 @@ QMediaRecorder::State QGstreamerRecorderControl::state() const
 
 void QGstreamerRecorderControl::updateState()
 {
-    emit stateChanged(state());
+    QMediaRecorder::State newState = state();
+    if (m_state != newState) {
+        m_state = newState;
+        emit stateChanged(m_state);
+    }
 }
 
 qint64 QGstreamerRecorderControl::duration() const

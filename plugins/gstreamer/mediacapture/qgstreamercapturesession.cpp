@@ -46,6 +46,7 @@
 #include <QUrl>
 #include <QSet>
 #include <QCoreApplication>
+#include <QtCore/qmetaobject.h>
 
 #define gstRef(element) { gst_object_ref(GST_OBJECT(element)); gst_object_sink(GST_OBJECT(element)); }
 #define gstUnref(element) { if (element) { gst_object_unref(GST_OBJECT(element)); element = 0; } }
@@ -53,6 +54,7 @@
 QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::CaptureMode captureMode, QObject *parent)
     :QObject(parent),
      m_state(StoppedState),
+     m_pendingState(StoppedState),
      m_pipelineMode(EmptyPipeline),
      m_captureMode(captureMode),
      m_previewEnabled(false),
@@ -406,8 +408,10 @@ void QGstreamerCaptureSession::waitForStopped()
 
 void QGstreamerCaptureSession::setState(QGstreamerCaptureSession::State newState)
 {
-    if (newState == m_state)
+    if (newState == m_pendingState)
         return;
+
+    m_pendingState = newState;
 
     PipelineMode newMode = EmptyPipeline;
 
@@ -444,7 +448,12 @@ void QGstreamerCaptureSession::setState(QGstreamerCaptureSession::State newState
         case StoppedState:
             gst_element_set_state(m_pipeline, GST_STATE_NULL);
     }
-    m_state = newState;
+
+    //we have to do it here, since gstreamer will not emit bus messages any more
+    if (newState == StoppedState) {
+        m_state = StoppedState;
+        emit stateChanged(StoppedState);
+    }
 }
 
 
@@ -550,7 +559,7 @@ void QGstreamerCaptureSession::busMessage(const QGstreamerMessage &message)
                 m_videoPreviewFactory->prepareWinId();
         }
 
-        if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_encodeBin)) {
+        if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_pipeline)) {
             switch (GST_MESSAGE_TYPE(gm))  {
             case GST_MESSAGE_DURATION:
                 break;
@@ -564,17 +573,32 @@ void QGstreamerCaptureSession::busMessage(const QGstreamerMessage &message)
 
                     gst_message_parse_state_changed(gm, &oldState, &newState, &pending);
 
+                    QStringList states;
+                    states << "GST_STATE_VOID_PENDING" <<  "GST_STATE_NULL" << "GST_STATE_READY" << "GST_STATE_PAUSED" << "GST_STATE_PLAYING";
+
+                    /*
+                    qDebug() << QString("state changed: old: %1  new: %2  pending: %3") \
+                            .arg(states[oldState]) \
+                           .arg(states[newState]) \
+                            .arg(states[pending]);
+
+                    #define ENUM_NAME(c,e,v) (c::staticMetaObject.enumerator(c::staticMetaObject.indexOfEnumerator(e)).valueToKey((v)))
+
+                    qDebug() << "Current session state:" << ENUM_NAME(QGstreamerCaptureSession,"State",m_state);
+                    qDebug() << "Pending session state:" << ENUM_NAME(QGstreamerCaptureSession,"State",m_pendingState);
+                    */
+
                     switch (newState) {
                     case GST_STATE_VOID_PENDING:
                     case GST_STATE_NULL:
                     case GST_STATE_READY:
-                        if (m_state != StoppedState) {
+                        if (m_state != StoppedState && m_pendingState == StoppedState) {
                             emit stateChanged(m_state = StoppedState);
                             dumpGraph("stopped");
                         }
                         break;
                     case GST_STATE_PAUSED:
-                        if (m_state != PausedState)
+                        if (m_state != PausedState && m_pendingState == PausedState)
                             emit stateChanged(m_state = PausedState);
                         dumpGraph("paused");
 
@@ -583,10 +607,12 @@ void QGstreamerCaptureSession::busMessage(const QGstreamerMessage &message)
                         break;
                     case GST_STATE_PLAYING:
                         {
-                            State newState = m_pipelineMode == PreviewPipeline ? PreviewState : RecordingState;
-
-                            if (m_state != newState)
-                                emit stateChanged(m_state = newState);
+                            if ((m_pendingState == PreviewState || m_pendingState == RecordingState) &&
+                                m_state != m_pendingState)
+                            {
+                                m_state = m_pendingState;
+                                emit stateChanged(m_state);
+                            }
 
                             if (m_pipelineMode == PreviewPipeline)
                                 dumpGraph("preview");
@@ -600,6 +626,7 @@ void QGstreamerCaptureSession::busMessage(const QGstreamerMessage &message)
             default:
                 break;
             }
+            //qDebug() << "New session state:" << ENUM_NAME(QGstreamerCaptureSession,"State",m_state);
         }
     }
 }
