@@ -95,16 +95,16 @@ void addContact(QContactManager* cm)
 
     /* Add a phone number */
     QContactPhoneNumber number;
-    number.setContexts("Home");
-    number.setSubTypes("Mobile");
+    number.setContexts(QContactDetail::ContextHome);
+    number.setSubTypes(QContactPhoneNumber::SubTypeMobile);
     number.setNumber("12345678");
     alice.saveDetail(&number);
     alice.setPreferredDetail("DialAction", number);
 
     /* Add a second phone number */
     QContactPhoneNumber number2;
-    number2.setContexts("Work");
-    number2.setSubTypes("Landline");
+    number2.setContexts(QContactDetail::ContextWork);
+    number2.setSubTypes(QContactPhoneNumber::SubTypeLandline);
     number2.setNumber("555-4444");
     alice.saveDetail(&number2);
 
@@ -120,7 +120,7 @@ void callContact(QContactManager* cm)
     QContact a = cm->contact(contactIds.first());
 
     /* Get this contact's first phone number */
-    QContactPhoneNumber phn = a.detail("PhoneNumber");
+    QContactPhoneNumber phn = a.detail<QContactPhoneNumber>();
     if (!phn.isEmpty()) {
         // First, we need some way of retrieving the QObject which provides the action.
         // This may be through the (previously announced) Qt Service Framework:
@@ -136,7 +136,7 @@ void callContact(QContactManager* cm)
 void matchCall(QContactManager* cm, const QString& incomingCallNbr)
 {
     QContactDetailFilter phoneFilter;
-    phoneFilter.setDetailDefinitionName("PhoneNumber", "PhoneNumber");
+    phoneFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
     phoneFilter.setValue(incomingCallNbr);
     phoneFilter.setMatchFlags(Qt::MatchExactly);
 
@@ -164,7 +164,7 @@ void viewSpecificDetail(QContactManager* cm)
     if (cdl.isEmpty())
         cdl.setLabel(cm->synthesiseDisplayLabel(a));
     qDebug() << "The first phone number of" << cdl.label()
-             << "is" << a.details("PhoneNumber").first().value("PhoneNumber");
+             << "is" << a.detail(QContactPhoneNumber::DefinitionName).value(QContactPhoneNumber::FieldNumber);
 }
 //! [Viewing a specific detail of a contact]
 
@@ -228,14 +228,14 @@ void editView(QContactManager* cm)
     qDebug() << "Modifying the details of" << cdl.label();
 
     /* Change the first phone number */
-    QList<QContactDetail> numbers = a.details("PhoneNumber");
+    QList<QContactDetail> numbers = a.details(QContactPhoneNumber::DefinitionName);
     QContactPhoneNumber phone = numbers.value(0);
     phone.setNumber("123-4445");
 
     /* Add an email address */
     QContactEmailAddress email;
     email.setEmailAddress("alice.jones@example");
-    email.setContexts("Work");
+    email.setContexts(QContactDetail::ContextHome);
     email.setValue("Label", "Alice's Work Email Address");
 
     /* Save the updated details to the contact. */
