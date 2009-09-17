@@ -61,6 +61,7 @@ struct FolderHeapNode {
 
 typedef QSharedPointer<FolderHeapNode> FolderHeapNodePtr;
 
+// FolderHeap is a binary heap used to merge sort messages from different folders and stores
 class FolderHeap {
 public:
     FolderHeap(QMessageStore::ErrorCode *lastError, MapiSessionPtr mapiSession, const QList<FolderHeapNodePtr> &protoHeap, const QMessageOrdering &ordering);
@@ -68,7 +69,7 @@ public:
     bool isEmpty() const { return _heap.count() == 0; }
 
 private:
-    void sink(int i);
+    void sink(int i); // Also known as sift-down
     QMessageFilter _filter;
     QMessageOrdering _ordering;
     QList<FolderHeapNodePtr> _heap;
