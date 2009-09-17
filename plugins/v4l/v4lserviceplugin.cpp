@@ -36,7 +36,7 @@
 #include <QtCore/qdebug.h>
 
 #include "v4lserviceplugin.h"
-#include "v4lcameraservice.h"
+//#include "v4lcameraservice.h"
 #include "v4lradioservice.h"
 
 #include <qradioplayercontrol.h>
@@ -53,8 +53,8 @@ public:
         if (qstrcmp(interface,QRadioService_iid) == 0)
             return new V4LRadioService;
 
-        if (qstrcmp(interface,QCameraService_iid) == 0)
-            return new V4LCameraService;
+        //if (qstrcmp(interface,QCameraService_iid) == 0)
+        //    return new V4LCameraService;
 
         return 0;
     }
@@ -64,13 +64,14 @@ QStringList V4LServicePlugin::keys() const
 {
     QStringList list;
     list << QLatin1String("radio");
-    list << QLatin1String("camera");
+    //list << QLatin1String("camera");
     return list;
 }
 
 QMediaServiceProvider* V4LServicePlugin::create(QString const& key)
 {
-    if (key == QLatin1String("radio") || key == QLatin1String("camera"))
+    //if (key == QLatin1String("radio") || key == QLatin1String("camera"))
+    if (key == QLatin1String("radio"))
         return new V4LProvider;
 
     qDebug() << "unsupported key:" << key;

@@ -38,12 +38,11 @@
 #include <QDebug>
 #include <QUrl>
 
-#include <QtMultimedia/qaudiodeviceid.h>
 #include <QtMultimedia/qaudiodeviceinfo.h>
 
 AudioCaptureSession::AudioCaptureSession(QObject *parent)
 {
-    m_deviceInfo = new QAudioDeviceInfo(QAudioDeviceInfo::defaultInputDevice(),this);
+    m_deviceInfo = new QAudioDeviceInfo(QAudioDeviceInfo::defaultInputDevice());
     m_audioInput = 0;
     m_position = 0;
     m_state = QMediaRecorder::StoppedState;
@@ -61,6 +60,11 @@ AudioCaptureSession::~AudioCaptureSession()
 
     if(m_audioInput)
         delete m_audioInput;
+}
+
+QAudioDeviceInfo* AudioCaptureSession::deviceInfo() const
+{
+    return m_deviceInfo;
 }
 
 QAudioFormat AudioCaptureSession::format() const
@@ -83,10 +87,10 @@ bool AudioCaptureSession::setFormat(const QAudioFormat &format)
             m_format = format;
             if(m_audioInput) delete m_audioInput;
             m_audioInput = 0;
-            QList<QAudioDeviceId> devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
+            QList<QAudioDeviceInfo> devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
             for(int i=0;i<devices.size();i++) {
                 if(qstrcmp(m_deviceInfo->deviceName().toLocal8Bit().constData(),
-                            QAudioDeviceInfo(devices.at(i)).deviceName().toLocal8Bit().constData()) == 0) {
+                            devices.at(i).deviceName().toLocal8Bit().constData()) == 0) {
                     m_audioInput = new QAudioInput(devices.at(i),m_format);
                     connect(m_audioInput,SIGNAL(stateChanged(QAudio::State)),this,SLOT(stateChanged(QAudio::State)));
                     connect(m_audioInput,SIGNAL(notify()),this,SLOT(notify()));
@@ -265,17 +269,17 @@ void AudioCaptureSession::setCaptureDevice(const QString &deviceName)
 
     m_deviceInfo = 0;
 
-    QList<QAudioDeviceId> devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
+    QList<QAudioDeviceInfo> devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
     for(int i = 0; i < devices.size(); i++) {
         if(qstrcmp(m_captureDevice.toLocal8Bit().constData(),
-                    QAudioDeviceInfo(devices.at(i)).deviceName().toLocal8Bit().constData())==0){
+                    devices.at(i).deviceName().toLocal8Bit().constData())==0){
             //TODO: this doesn't work? isFormatSupported fails? investigate
             //m_deviceInfo = new QAudioDeviceInfo(devices.at(i),this);
-            m_deviceInfo = new QAudioDeviceInfo(QAudioDeviceInfo::defaultInputDevice(),this);
+            m_deviceInfo = new QAudioDeviceInfo(QAudioDeviceInfo::defaultInputDevice());
             return;
         }
     }
-    m_deviceInfo = new QAudioDeviceInfo(QAudioDeviceInfo::defaultInputDevice(),this);
+    m_deviceInfo = new QAudioDeviceInfo(QAudioDeviceInfo::defaultInputDevice());
 }
 
 

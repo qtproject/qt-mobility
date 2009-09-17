@@ -85,8 +85,9 @@ QString V4LRadioService::activeEndpoint(QAbstractMediaService::MediaEndpoint end
     return QByteArray();
 }
 
-void V4LRadioService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint)
+bool V4LRadioService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint)
 {
+    return true;
 }
 
 QList<QString> V4LRadioService::supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const

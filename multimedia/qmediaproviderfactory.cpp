@@ -47,6 +47,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, loader,
 
 QMediaServiceProvider* QMediaProviderFactory::defaultServiceProvider(QString const &key)
 {
+    qWarning()<<key;
     QMediaServiceProviderPlugin *plugin = qobject_cast<QMediaServiceProviderPlugin*>(loader()->instance(key));
 
     if (plugin != 0)

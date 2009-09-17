@@ -48,6 +48,7 @@ class AudioCaptureProvider : public QMediaServiceProvider
 public:
     QObject* createObject(const char *interface) const
     {
+        qWarning()<<interface;
         if (QLatin1String(interface) == QLatin1String(QAudioRecorderService_iid))
             return new AudioCaptureService;
 
@@ -57,6 +58,7 @@ public:
 
 QStringList AudioCaptureServicePlugin::keys() const
 {
+    qWarning()<<__PRETTY_FUNCTION__;
     return QStringList() << "mediarecorder";
 }
 

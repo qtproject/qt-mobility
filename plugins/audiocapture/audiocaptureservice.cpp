@@ -64,7 +64,7 @@ QAbstractMediaControl *AudioCaptureService::control(const char *name) const
     if (qstrcmp(name,QMediaRecorderControl_iid) == 0)
         return m_media;
 
-    if (qstrcmp(name,QAudioEncodeControl_iid) == 0)
+    if (qstrcmp(name,QAudioEncoderControl_iid) == 0)
         return m_encode;
 
     if (qstrcmp(name,QAudioDeviceControl_iid) == 0)

@@ -35,6 +35,7 @@
 #include <QtCore/qcoreapplication.h>
 #include <QtCore/qpluginloader.h>
 #include <QtCore/qdir.h>
+#include <QtCore/qdebug.h>
 
 #include "qmediaserviceproviderplugin.h"
 
@@ -84,6 +85,9 @@ void QMediaPluginLoader::load()
                 }
 
                 continue;
+            } else {
+                qWarning()<<"FAILED trying to load plugin: "<<pluginLib;
+                qWarning()<<loader.errorString();
             }
 
             delete o;
