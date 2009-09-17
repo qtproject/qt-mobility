@@ -34,7 +34,7 @@
 #ifndef QSERVICEFILTER_H
 #define QSERVICEFILTER_H
 
-#include <QString>
+#include <QStringList>
 
 #include "qserviceglobal.h"
 
@@ -50,6 +50,11 @@ public:
     enum VersionMatchRule {
         ExactVersionMatch = 0,
         MinimumVersionMatch
+    };
+
+    enum CapabilityMatchRule {
+        MatchAll = 0,
+        MatchLoadable
     };
 
     QServiceFilter();
@@ -77,6 +82,10 @@ public:
     void setCustomProperty(const QString& key, const QString& value);
     void removeCustomProperty(const QString &key);
     void clearCustomProperties();
+
+    void setCapabilities(QServiceFilter::CapabilityMatchRule, const QStringList& capabilities = QStringList() );
+    QStringList capabilities() const;
+    CapabilityMatchRule capabilityMatchRule() const;
 
 private:
     QServiceFilterPrivate *d;

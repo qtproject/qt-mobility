@@ -287,7 +287,7 @@ void DatabaseManager::initDbPath(DbScope scope)
     QDir dir = fi.dir();
     QString qtVersion(qVersion());
     qtVersion = qtVersion.left(qtVersion.size() -2); //strip off patch version
-    QString dbName = QString("QtServiceFW_") + qtVersion + dbIdentifier + QLatin1String(".db");
+    QString dbName = QString("QtServiceFramework_") + qtVersion + dbIdentifier + QLatin1String(".db");
     db->setDatabasePath(dir.path() + QDir::separator() + dbName);
 }
 
@@ -298,13 +298,13 @@ void DatabaseManager::initDbPath(DbScope scope)
     Returns true if the operation succeeded and false otherwise.
     The last error is set when this function is called.
 */
-bool DatabaseManager::registerService(ServiceMetaData &service, DbScope scope)
+bool DatabaseManager::registerService(ServiceMetaDataResults &service, DbScope scope)
 {
     if (scope == DatabaseManager::SystemScope) {
         if(!openDb(DatabaseManager::SystemScope)) {
             return false;
         }  else {
-            if (!m_systemDb->registerService(service.parseResults())) {
+            if (!m_systemDb->registerService(service)) {
                 m_lastError = m_systemDb->lastError();
                 return false;
             } else { //must be successful registration
@@ -316,7 +316,7 @@ bool DatabaseManager::registerService(ServiceMetaData &service, DbScope scope)
         if (!openDb(DatabaseManager::UserScope)) {
             return false;
         } else {
-            if (!m_userDb->registerService(service.parseResults())) {
+            if (!m_userDb->registerService(service)) {
                 m_lastError = m_userDb->lastError();
                 return false;
             } else { //must be successful registration
@@ -570,9 +570,12 @@ QServiceInterfaceDescriptor DatabaseManager::interfaceDefault(const QString &int
     The last error is set when this function is called.
 */
 bool DatabaseManager::setInterfaceDefault(const QString &serviceName, const
-        QString &interfaceName, DbScope scope) {
-    QList<QServiceInterfaceDescriptor> descriptors; QServiceFilter filter;
-    filter.setServiceName(serviceName); filter.setInterface(interfaceName);
+        QString &interfaceName, DbScope scope) 
+{
+    QList<QServiceInterfaceDescriptor> descriptors;
+    QServiceFilter filter;
+    filter.setServiceName(serviceName);
+    filter.setInterface(interfaceName);
 
     descriptors = getInterfaces(filter, scope);
     if (m_lastError.code() != DBError::NoError)

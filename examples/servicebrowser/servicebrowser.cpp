@@ -217,7 +217,9 @@ void ServiceBrowser::initWidgets()
     attributesListWidget = new QListWidget;
     attributesListWidget->addItem(tr("(Select an interface implementation)"));
 
+#ifndef Q_OS_SYMBIAN
     interfacesListWidget->setMinimumWidth(450);
+#endif
 
     connect(servicesListWidget, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
             this, SLOT(reloadInterfaceImplementationsList()));
@@ -259,9 +261,28 @@ void ServiceBrowser::initWidgets()
     attributesLayout->addWidget(defaultImplRadioButton);
     attributesGroup->setLayout(attributesLayout);
 
+#ifndef Q_OS_SYMBIAN
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(servicesGroup, 0, 0);
     layout->addWidget(attributesGroup, 0, 1, 2, 1);
     layout->addWidget(interfacesGroup, 1, 0);
+#else
+    QVBoxLayout *layout = new QVBoxLayout;    
+    QStackedLayout *stackedLayout = new QStackedLayout;
+    stackedLayout->addWidget(servicesGroup);
+    stackedLayout->addWidget(interfacesGroup);
+    stackedLayout->addWidget(attributesGroup);
+    
+    QComboBox *pageComboBox = new QComboBox;
+    pageComboBox->addItem(tr("Services"));
+    pageComboBox->addItem(tr("Interfaces"));
+    pageComboBox->addItem(tr("Attributes"));
+    connect(pageComboBox, SIGNAL(activated(int)),
+            stackedLayout, SLOT(setCurrentIndex(int)));
+    
+    layout->addWidget(pageComboBox);
+    layout->addLayout(stackedLayout);
+#endif
+
     setLayout(layout);
 }

@@ -69,6 +69,7 @@ class tst_QAbstractSecuritySession: public QObject
 private slots:
     void initTestCase();
     void cleanupTestCase();
+    void cleanup();
     void testSecSessionHandling();
 private:
    QString path; 
@@ -83,6 +84,15 @@ void tst_QAbstractSecuritySession::initTestCase()
 
     QSfwTestUtil::removeTempUserDb();
     QSfwTestUtil::removeTempSystemDb();
+}
+
+void tst_QAbstractSecuritySession::cleanup()
+{
+    //use QEventLopp::DeferredDeletion
+    //QServiceManager::loadInterface makes use of deleteLater() when
+    //cleaning up service objects and their respective QPluginLoader
+    //we want to force the testcase to run the cleanup code
+    QCoreApplication::processEvents(QEventLoop::AllEvents|QEventLoop::DeferredDeletion);
 }
 
 void tst_QAbstractSecuritySession::testSecSessionHandling()
@@ -140,6 +150,7 @@ void tst_QAbstractSecuritySession::testSecSessionHandling()
     secSession->setClientCaps(QStringList() << "simple");
     o = mgr.loadInterface(simpleDesc, 0, secSession );
     QVERIFY(o);
+    delete o;
     o = mgr.loadInterface(complexDesc, 0, secSession);
     QVERIFY(!o);
     
@@ -147,15 +158,19 @@ void tst_QAbstractSecuritySession::testSecSessionHandling()
     secSession->setClientCaps(QStringList() << "simple" << "complex");
     o = mgr.loadInterface(simpleDesc, 0, secSession );
     QVERIFY(o);
+    delete o;
     o = mgr.loadInterface(complexDesc, 0, secSession);
     QVERIFY(o);
+    delete o;
     
     //client has simple, complex and advanced permission
     secSession->setClientCaps(QStringList() << "simple" << "complex" << "advanced");
     o = mgr.loadInterface(simpleDesc, 0, secSession );
     QVERIFY(o);
+    delete o;
     o = mgr.loadInterface(complexDesc, 0, secSession);
     QVERIFY(o);
+    delete o;
 
     //client has unknown capability
     secSession->setClientCaps(QStringList() << "unknown");
@@ -163,7 +178,8 @@ void tst_QAbstractSecuritySession::testSecSessionHandling()
     QVERIFY(!o);
     o = mgr.loadInterface(complexDesc, 0, secSession);
     QVERIFY(!o);
-    
+
+    delete secSession;
 }
 
 void tst_QAbstractSecuritySession::cleanupTestCase()

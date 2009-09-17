@@ -34,12 +34,18 @@
 #include "qservicemanager.h"
 #include "qserviceplugininterface.h"
 #include "qabstractsecuritysession.h"
-#include "databasemanager_p.h"
+#ifdef Q_OS_SYMBIAN
+    #include "databasemanager_s60.h"
+#else
+    #include "databasemanager_p.h"
+#endif
 
 #include <QObject>
 #include <QPluginLoader>
 #include <QFile>
 //#include <QDebug>
+#include <QCoreApplication>
+#include <QDir>
 
 QT_BEGIN_NAMESPACE
 
@@ -52,9 +58,27 @@ static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
     // try to find plug-in via QLibrary
     const QStringList paths = QCoreApplication::libraryPaths();
     for (int i=0; i<paths.count(); i++) {
-        QLibrary lib(paths[i] + QDir::separator() + libNameOrPath);
+        QString libPath = QDir::toNativeSeparators(paths[i]) + QDir::separator() + libNameOrPath;
+        
+#ifdef Q_OS_SYMBIAN
+        QFileInfo fi(libPath);
+        if (fi.suffix() == QLatin1String("dll"))
+            libPath = fi.completeBaseName() + QLatin1String(".qtplugin");
+        else
+            libPath += QLatin1String(".qtplugin");
+#endif       
+        
+        QLibrary lib(libPath);  
         if (lib.load()) {
             lib.unload();
+#ifdef Q_OS_SYMBIAN
+         QFileInfo fi2(libPath);
+         QString fileName = lib.fileName();
+         fileName.chop(4); // .dll is removed
+         libPath = QDir::toNativeSeparators(fi2.absolutePath()) + QDir::separator() + fileName + QLatin1String(".qtplugin");
+         qDebug() << libPath;
+         return libPath;  
+#endif
             return lib.fileName();
         }
     }
@@ -285,7 +309,8 @@ QServiceManager::Scope QServiceManager::scope() const
 
 /*!
     Returns a list of the services that provide the interface specified by
-    \a interfaceName.
+    \a interfaceName. If \a interfaceName is empty, this function returns
+    a list of all available services in this manager's scope.
 */
 QStringList QServiceManager::findServices(const QString& interfaceName) const
 {
@@ -314,7 +339,8 @@ QList<QServiceInterfaceDescriptor> QServiceManager::findInterfaces(const QServic
 
 /*!
     Returns a list of the interfaces provided by the service named
-    \a serviceName.
+    \a serviceName. If \a serviceName is empty, this function returns
+    a list of all available interfaces in this manager's scope.
 */
 QList<QServiceInterfaceDescriptor> QServiceManager::findInterfaces(const QString& serviceName) const
 {
@@ -426,7 +452,6 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     using the given \a context and \a session. \a context and \a session object are owned
     by the caller of this function. The template class must be derived from QObject.
 
-
     If the \a serviceDescriptor is not valid the returned pointer will be null.
 
     The caller takes ownership of the returned pointer.
@@ -494,7 +519,8 @@ bool QServiceManager::addService(QIODevice *device)
 
     DatabaseManager::DbScope scope = d->scope == UserScope ?
             DatabaseManager::UserOnlyScope : DatabaseManager::SystemScope;
-    bool result = d->dbManager->registerService(parser, scope);
+    ServiceMetaDataResults results = parser.parseResults();
+    bool result = d->dbManager->registerService(results, scope);
     if (result) {
         QPluginLoader *loader = new QPluginLoader(qservicemanager_resolveLibraryPath(data.location));
         QServicePluginInterface *pluginIFace = qobject_cast<QServicePluginInterface *>(loader->instance());

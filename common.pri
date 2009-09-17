@@ -6,7 +6,8 @@
 
 include(config.pri)
 
-SUBDIRPART = objects
+# For symbian, we are not attempting to freeze APIs yet.
+symbian:MMP_RULES += "EXPORTUNFROZEN"
 
 # Figure out the root of where stuff should go (this could be done via configure)
 OUTPUT_DIR = $$PWD

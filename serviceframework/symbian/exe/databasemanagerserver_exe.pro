@@ -1,0 +1,46 @@
+TEMPLATE = app
+TARGET = SFWDatabaseManagerServer
+QT = core sql
+
+DEFINES += SYMBIAN_DATABASEMANAGER_SERVER
+DEFINES += DATABASEMANAGERSERVER_NO_LIBRARY
+
+SOURCES += databasemanagerservermain.cpp
+
+include(../../../common.pri)
+
+
+DEPENDPATH += ../ ../..
+
+HEADERS +=  servicemetadata_p.h \
+            servicedatabase_p.h \
+            databasemanager_p.h \
+            qserviceplugininterface.h \
+            qabstractsecuritysession.h \
+            qserviceinterfacedescriptor.h \
+            qserviceinterfacedescriptor_p.h \
+            qservicefilter.h \
+            dberror.h \
+            databasemanagerserver.h \
+            databasemanagersession.h \
+            databasemanagersignalhandler.h
+
+            #qserviceglobal.h \
+            #qservicemanager.h \
+            #qservicecontext.h \
+
+
+SOURCES +=  servicemetadata.cpp \
+            servicedatabase.cpp \
+            databasemanager.cpp \
+            qserviceplugininterface.cpp \
+            qabstractsecuritysession.cpp \
+            qserviceinterfacedescriptor.cpp \
+            qservicefilter.cpp \
+            dberror.cpp \
+            databasemanagerserver.cpp \
+            databasemanagersession.cpp \
+            databasemanagersignalhandler.cpp
+
+            #qservicemanager.cpp \
+            #qservicecontext.cpp \

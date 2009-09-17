@@ -33,7 +33,11 @@ INSTALLS += feature
 TEMPLATE = subdirs
 CONFIG+=ordered
 
-SUBDIRS += serviceframework bearer location context systeminfo tools
+SUBDIRS += serviceframework
+symbian:SUBDIRS += serviceframework/symbian/dll/databasemanagerserver_dll.pro \
+                   serviceframework/symbian/exe/databasemanagerserver_exe.pro
+
+SUBDIRS += bearer location context systeminfo tools
 
 contains(build_unit_tests, yes):SUBDIRS+=tests
 contains(build_examples, yes):SUBDIRS+=examples

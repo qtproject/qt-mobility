@@ -283,7 +283,11 @@ QDataStream &operator>>(QDataStream &in, QServiceInterfaceDescriptor::PropertyKe
 
 QDataStream &operator<<(QDataStream &out, const QServiceInterfaceDescriptor &dc)
 {
+    const quint32 magicNumber = 0x77AFAFA;
+    const quint16 majorVersion = 1;
+    const quint16 minorVersion = 0;
     const qint8 valid = dc.isValid();
+    out << magicNumber << majorVersion << minorVersion;
     out << valid;
     if (valid) {
        out << dc.d->serviceName; 
@@ -306,6 +310,25 @@ QDataStream &operator<<(QDataStream &out, const QServiceInterfaceDescriptor &dc)
 */
 QDataStream &operator>>(QDataStream &in, QServiceInterfaceDescriptor &dc)
 {
+    const quint32 magicNumber = 0x77AFAFA;
+    quint32 storedMagicNumber;
+    in >> storedMagicNumber;
+    if (storedMagicNumber != magicNumber) {
+        qWarning() << "Datastream doesn't provide searialized QServiceInterfaceDescriptor";
+        return in;
+    }
+    
+    const quint16 currentMajorVersion = 1;
+    quint16 majorVersion = 0;
+    quint16 minorVersion = 0;
+
+    in >> majorVersion >> minorVersion;
+    if (majorVersion != currentMajorVersion) {
+        qWarning() << "Unknown serialization format for QServiceInterfaceDescriptor.";
+        return in;
+    }
+    //Allow all minor versions.
+
     qint8 valid;
     in >> valid;
     if (valid) {

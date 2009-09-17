@@ -14,6 +14,12 @@ include(../examples.pri)
 LIBS += -lQtServiceFramework
 
 symbian {
+    load(data_caging_paths)
+    pluginDep.sources = serviceframework_filemanagerplugin.dll
+    pluginDep.path = $$QT_PLUGINS_BASE_DIR    
+    DEPLOYMENT += pluginDep
+
+    TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL -TCB
 }
 

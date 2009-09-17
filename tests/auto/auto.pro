@@ -1,13 +1,16 @@
 TEMPLATE = subdirs
-SUBDIRS += servicemetadata \                #service framework
+#sfw unit tests dont work yet on Symbian. enable later
+!symbian {
+    SUBDIRS += servicemetadata \            #service framework
            servicedatabase \
            databasemanager \
            qserviceinterfacedescriptor \
            qservicefilter \
            qservicemanager \
            qabstractsecuritysession \
-           qservicecontext \
-           qnetworkconfigmanager \          #Bearer management
+           qservicecontext 
+}
+SUBDIRS += qnetworkconfigmanager \          #Bearer management
            qnetworkconfiguration \
            qnetworksession \
            tst_qgeocoordinate \             #Location

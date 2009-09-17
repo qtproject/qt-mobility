@@ -39,6 +39,7 @@
 #include <qserviceinterfacedescriptor.h>
 #include <qserviceinterfacedescriptor_p.h>
 #include <QUuid>
+#include "dberror.h"
 
 //database name
 #define RESOLVERDATABASE "services.db"
@@ -75,44 +76,6 @@ enum TBindIndexes
         EBindIndex7
     };
 
-DBError::DBError()
-{
-    setError(NoError);
-}
-
-void DBError::setError(ErrorCode error, const QString &text)
-{
-    m_error = error;
-    switch (error) {
-        case (NoError):
-            m_text = "No error";
-            break;
-        case(DatabaseNotOpen):
-            m_text = "Database not open";
-            break;
-        case(InvalidDatabaseConnection):
-            m_text = "Invalid database connection";
-            break;
-        case(ExternalIfaceIDFound):
-            m_text = "External InterfaceID found";
-            break;
-        case(SqlError):
-        case(NotFound):
-        case(LocationAlreadyRegistered):
-        case(IfaceImplAlreadyRegistered):
-        case(CannotCreateDbDir):
-        case(InvalidDescriptorScope):
-        case(IfaceIDNotExternal):
-        case(InvalidDatabaseFile):
-        case(NoWritePermissions):
-        case(CannotOpenServiceDb):
-            m_text = text;
-            break;
-        default:
-            m_text= "Unknown error";
-            m_error = UnknownError;
-    }
-}
 
 /*
    \class ServiceDatabase
@@ -778,8 +741,7 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
     QString whereComponent = "WHERE Service.ID = Interface.ServiceID ";
     QList<QVariant> bindValues;
 
-    if (filter.serviceName().isEmpty() && filter.interfaceName().isEmpty()
-                && filter.customKeys().size() == 0) {
+    if (filter.serviceName().isEmpty() && filter.interfaceName().isEmpty()) {
         //do nothing, (don't add any extra constraints to the query
     } else {
 
@@ -805,9 +767,6 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
                 }
             }
         }
-        if (filter.customKeys().size() >0) {
-            //TODO
-        }
     }
 
     if (!executeQuery(&query, selectComponent + fromComponent + whereComponent, bindValues)) {
@@ -824,8 +783,11 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
     QStringList capabilities;
     QString serviceID;
     QString interfaceID;
+    const QSet<QString> filterCaps = filter.capabilities().toSet();
+    QSet<QString> difference;
 
     while(query.next()){
+        difference.clear();
         interface.d->customProperties.clear();
         interface.d->properties.clear();
         interface.d->interfaceName =query.value(EBindIndex).toString();
@@ -854,8 +816,13 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
             return interfaces;
         }
 
+        const QSet<QString> ifaceCaps = interface.d->properties.value(QServiceInterfaceDescriptor::Capabilities).toStringList().toSet();
+        difference = ((filter.capabilityMatchRule() == QServiceFilter::MatchAll) ? (filterCaps-ifaceCaps) : (ifaceCaps-filterCaps));
+        if (!difference.isEmpty())
+            continue;
+
         //only return those interfaces that comply with set custom filters
-        if (filter.customKeys().size()>0) {
+        if (filter.customKeys().size() > 0) {
             QSet<QString> keyDiff = filter.customKeys().toSet();
             keyDiff.subtract(interface.d->customProperties.uniqueKeys().toSet());
             if (keyDiff.isEmpty()) { //target descriptor has same custom keys as filter

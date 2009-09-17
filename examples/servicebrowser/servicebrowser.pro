@@ -14,5 +14,10 @@ SOURCES += servicebrowser.cpp \
 LIBS += -lQtServiceFramework
 
 symbian {
+    addFiles.sources = ../filemanagerplugin/filemanagerservice.xml
+    addFiles.sources += ../bluetoothtransferplugin/bluetoothtransferservice.xml
+    addFiles.path = xmldata
+    DEPLOYMENT += addFiles
+
     TARGET.CAPABILITY = ALL -TCB
 }
