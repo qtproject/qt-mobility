@@ -141,8 +141,7 @@ void GroupEditDialog::saveButtonClicked()
         bool result = false;
         if (!grp.isEmpty()){
             grp.setName(groupNameEdit->text());
-            if (result)
-                result = cm->saveGroup(&grp);
+	    result = cm->saveGroup(&grp);
         }
         if (!result){
             QMessageBox::information(this, tr("Save Group"),
