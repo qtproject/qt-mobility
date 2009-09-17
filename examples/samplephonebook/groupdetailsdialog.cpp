@@ -37,10 +37,11 @@
 #include "qcontact.h"
 #include "qcontactmanager.h"
 
-GroupDetailsDialog::GroupDetailsDialog(QContactManager *contactManager, const QContact &contact)
-        : cm(contactManager)
+GroupDetailsDialog::GroupDetailsDialog(QWidget *parent, QContactManager *contactManager, const QContact &contact)
+        : QDialog(parent), cm(contactManager)
 {
     Q_ASSERT(contactManager);
+    setWindowTitle(tr("Group Details"));
 
     localContact.setGroups(contact.groups());
 

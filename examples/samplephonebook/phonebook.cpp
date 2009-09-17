@@ -43,13 +43,11 @@
 #include <QtGui>
 
 PhoneBook::PhoneBook(QWidget *parent)
-    : QWidget(parent), addingContact(false), editingContact(false)
+    : QWidget(parent), addingContact(false), dialog(0), editingContact(false)
 {
 
     QVBoxLayout *layout = new QVBoxLayout;
 
-    dialog = new FindDialog;
-	dialog->hide();
     QDesktopWidget screenWidget;
 
     if (QApplication::desktop()->width() > 480){
@@ -127,6 +125,10 @@ PhoneBook::PhoneBook(QWidget *parent)
         connect(quitButton, SIGNAL(clicked()), this, SLOT(close()));
     connect(groupsButton, SIGNAL(clicked()), this, SLOT(editGroupDetails()));
     connect(contactsList, SIGNAL(currentRowChanged(int)), this, SLOT(contactSelected(int)));
+    if (smallScreenSize){
+	connect(detailsForm, SIGNAL(accepted()), this, SLOT(saveContact()));
+	connect(detailsForm, SIGNAL(rejected()), this, SLOT(cancelContact()));
+    }
     setWindowTitle(tr("Sample Phone Book"));
     // instantiate a new contact manager
     cm = 0;
@@ -375,7 +377,13 @@ void PhoneBook::displayContact()
 
 void PhoneBook::selectAvatar()
 {
-    QString selected = QFileDialog::getOpenFileName(this, "Select avatar image file", ".", tr("Images (*.png *.xpm *.jpg *.bmp *.gif)") );
+    //determine the list of file formats to pass to QFileDialog::getOpenFileName()
+    QString supportedImageFormats;
+    for (int formatIndex = 0; formatIndex < QImageReader::supportedImageFormats().count(); formatIndex++) {
+	supportedImageFormats += QLatin1String(" *.") + QImageReader::supportedImageFormats()[formatIndex];
+    }
+
+	QString selected = QFileDialog::getOpenFileName(detailsForm, "Select avatar image file", ".", tr("Images (%1)").arg(supportedImageFormats));
     if (!selected.isNull()) {
         QContact curr = contacts.at(currentIndex);
         QContactAvatar av = curr.detail(QContactAvatar::DefinitionName);
@@ -383,8 +391,14 @@ void PhoneBook::selectAvatar()
         curr.saveDetail(&av);
         contacts.replace(currentIndex, curr);
 
-        QPixmap avatarPix(selected);
-        avatarPixmapLabel->setPixmap(avatarPix.scaled(avatarPixmapLabel->size()));
+	QPixmap avatarPix;
+	if (avatarPix.load(selected)){
+	    avatarPixmapLabel->setPixmap(avatarPix.scaled(avatarPixmapLabel->size()));
+	}else{
+	    qWarning() << "Unable to load avatar" << selected;
+	    qWarning() << "Supported image formats are " << supportedImageFormats << " ;"  <<  QImageReader::supportedImageFormats();
+	    avatarPixmapLabel->clear();
+	}
     }
 }
 
@@ -393,7 +407,7 @@ void PhoneBook::addContact()
     if (addingContact)
         saveContact();
 
-    QMessageBox msgBox(QMessageBox::Question, tr("Add Contact or Group"), tr("Add Contact or Group"));
+    QMessageBox msgBox(QMessageBox::Question, tr("Add Contact or Group"), tr("Add Contact or Group"), QMessageBox::NoButton, this);
     QAbstractButton *addContactButton = msgBox.addButton(tr("Add Contact"), QMessageBox::YesRole);
     (void*)msgBox.addButton(tr("Add Group"), QMessageBox::NoRole);
     (void)msgBox.exec();
@@ -403,33 +417,38 @@ void PhoneBook::addContact()
         currentIndex = contacts.size();
         contacts.append(QContact());
         displayContact();
-        if (smallScreenSize){
-            detailsForm->showMaximized();
-            detailsForm->raise();
-        }
         nameLine->setFocus();
+        if (smallScreenSize){
+	    contactDetailsForm->showMaximized();
+	    if (contactDetailsForm->exec() == QDialog::Accepted)
+		saveContact();
+        }
     }else{
-        // Groups will be modified in QContactManager by dialog
-        GroupEditDialog grpDialog(cm);
-		if (smallScreenSize)
-			grpDialog.showMaximized();
-		else
-			grpDialog.show();
-        (void)grpDialog.exec();
+	// Groups will be modified in QContactManager by dialog
+	GroupEditDialog grpDialog(this, cm);
+	if (smallScreenSize)
+	     grpDialog.showMaximized();		    
+	(void)grpDialog.exec();
     }
 }
 
 void PhoneBook::saveContact()
 {
-    if (smallScreenSize)
-        detailsForm->hide();
+    if (smallScreenSize && !(addingContact || editingContact))
+	return;
+
+    addingContact = false;
+    editingContact = false;
+    if (smallScreenSize){
+	contactDetailsForm->accept();
+	showMaximized();
+    }
 
     QContact c = buildContact();
     c.setId(contacts.at(currentIndex).id());
     QContactAvatar av = contacts.at(currentIndex).detail(QContactAvatar::DefinitionName);
     c.saveDetail(&av);
-    addingContact = false;
-    editingContact = false;
+
     if (!cm->saveContact(&c)) {
         QString errorCode = "Unable to save the contact in the database; error code:" + QString::number(cm->error());
         QMessageBox::information(this, "Save Failed", errorCode);
@@ -528,17 +547,13 @@ void PhoneBook::previous()
 
 void PhoneBook::findContact()
 {
-#ifndef Q_OS_WINCE
-	if (smallScreenSize)
-        dialog->showMaximized();
-	else
-#else
-		// work around a widget layout issue
-	    dialog->show();
-#endif
+    
+    dialog = new FindDialog(this);
 
+    if (smallScreenSize)
+	dialog->showMaximized();
 
-    if (dialog->exec() == 1) {
+    if (dialog->exec() == QDialog::Accepted) {
         bool found = false;
         if (dialog->isSimpleFilterEnabled()){
             QString contactName = dialog->getFindText();
@@ -558,7 +573,6 @@ void PhoneBook::findContact()
             if (!found) {
                 QMessageBox::information(this, tr("Contact Not Found"),
                         tr("Sorry, \"%1\" is not in your address book.").arg(contactName));
-                return;
             }
         }else{
             QList<QUniqueId> matchedContacts = cm->contacts(dialog->getFindFilter());
@@ -578,27 +592,36 @@ void PhoneBook::findContact()
             }
         }
     }
+    delete dialog;
+    dialog = 0;
+    if (smallScreenSize)
+	showMaximized();
 }
 
 void PhoneBook::openContact()
 {
     editingContact = true;
     displayContact();
-	if (smallScreenSize){
-	   showNormal(); 	 
-	   detailsForm->showMaximized();
-	}else{
-	   detailsForm->show();
+    if (smallScreenSize){
+        nameLine->setFocus();
+	if (contactDetailsForm->exec() == QDialog::Accepted)
+	    saveContact();
+    }else{
+	detailsForm->show();
     } 
 }
 
 void PhoneBook::cancelContact()
 {
+    if (smallScreenSize && !(addingContact || editingContact))
+	return;
+
     addingContact = false;
     editingContact = false;
-    detailsForm->hide();
-    if (smallScreenSize)
-	   showMaximized();
+    if (smallScreenSize){
+	contactDetailsForm->reject();
+	showMaximized();
+    }
     currentIndex = lastIndex;
     updateButtons();
 }
@@ -682,11 +705,10 @@ void PhoneBook::exportAsVCard()
 void PhoneBook::editGroupDetails()
 {
     QContact c = buildContact();
-    GroupDetailsDialog dlg(cm, c);
-	if (smallScreenSize)
-		dlg.showMaximized();
-	else
-        dlg.show();
+    GroupDetailsDialog dlg(detailsForm, cm, c);
+    if (smallScreenSize)
+	dlg.showMaximized();
+
     if (dlg.exec() == QDialog::Accepted)
         contactGroups = dlg.groups();
 }

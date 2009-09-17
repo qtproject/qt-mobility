@@ -47,7 +47,7 @@ class GroupEditDialog : public QDialog
     Q_OBJECT
 
 public:
-    GroupEditDialog(QContactManager *contactManager);
+    GroupEditDialog(QWidget *parent, QContactManager *contactManager);
 
 private:
     void repopulateGroupList();

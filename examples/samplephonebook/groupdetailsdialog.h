@@ -48,7 +48,7 @@ class GroupDetailsDialog : public QDialog
     Q_OBJECT
 
 public:
-    GroupDetailsDialog(QContactManager *contactManager, const QContact &contact);
+    GroupDetailsDialog(QWidget *parent, QContactManager *contactManager, const QContact &contact);
     QList<QUniqueId> groups();
 
 private:

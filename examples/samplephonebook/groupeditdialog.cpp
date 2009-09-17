@@ -37,10 +37,11 @@
 #include "qcontact.h"
 #include "qcontactmanager.h"
 
-GroupEditDialog::GroupEditDialog(QContactManager *contactManager)
-        : cm(contactManager)
+GroupEditDialog::GroupEditDialog(QWidget *parent, QContactManager *contactManager)
+        : QDialog(parent), cm(contactManager)
 {
     Q_ASSERT(contactManager);
+    setWindowTitle(tr("Groups Edit"));
 
     QFormLayout *layout = new QFormLayout;
 
