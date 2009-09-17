@@ -45,6 +45,7 @@
 // We mean it.
 //
 
+#ifdef Q_CC_MSVC
 #include <QObject>
 #include <QVariant>
 #include <QString>
@@ -74,5 +75,5 @@ private:
    QVariant  msVariantToQVariant(VARIANT msVariant, CIMTYPE variantType);
 
 };
-
+#endif
 #endif // WMIHELPER_H

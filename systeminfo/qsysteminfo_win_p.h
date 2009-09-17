@@ -49,9 +49,20 @@
 #include <QObject>
 #include <QSize>
 #include <QHash>
+#include <QThread>
+#include <QMutex>
 
 #include "qsysteminfo.h"
 #include <qsysinfoglobal.h>
+
+#include <winsock2.h>
+#include <mswsock.h>
+#include <ddk/ntddndis.h>
+#ifdef Q_CC_MSVC
+#include <Wlanapi.h>
+#endif
+#include <QBasicTimer>
+
 
 QT_BEGIN_HEADER
 
@@ -84,7 +95,9 @@ Q_SIGNALS:
 private:
 
     bool hasSysFeature(const QString &featureStr);
-
+    QString currentLanguageStr;
+private Q_SLOTS:
+     void currentLanguageTimeout();
 
 };
 
@@ -113,6 +126,14 @@ public:
 
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
 
+
+   void emitNetworkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
+   void emitNetworkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int);
+
+   static QSystemNetworkInfoPrivate *instance();
+protected:
+   void timerEvent(QTimerEvent *event);
+
 Q_SIGNALS:
    void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
    void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int);
@@ -120,6 +141,17 @@ Q_SIGNALS:
    void currentMobileNetworkCodeChanged(const QString &);
    void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &);
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
+private Q_SLOTS:
+   void nlaNetworkChanged();
+   void networkStrengthTimeout();
+   void networkStatusTimeout();
+private:
+    quint32 wifiStrength;
+    quint32 ethStrength;
+
+   QBasicTimer netStrengthTimer;
+
+   QBasicTimer netStatusTimer;
 
 };
 
@@ -220,6 +252,8 @@ private:
     bool screenSaverSecure;
 
 };
+
+
 
 QT_END_NAMESPACE
 
