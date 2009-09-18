@@ -101,25 +101,24 @@ void tst_QContactDetails::address()
     QVERIFY(a2.isEmpty());
 
     // test property set
-    QCOMPARE(a1.displayLabel(), QString());
+    QCOMPARE(a1.street(), QString());
     a1.setStreet("68 Imaginary Avenue");
     a1.setCountry("Australia");
-    QCOMPARE(a1.displayLabel(), QString("68 Imaginary Avenue\nAustralia"));
     QCOMPARE(a1.street(), QString("68 Imaginary Avenue"));
-    a1.setDisplayLabel("1234");
-    QCOMPARE(a1.displayLabel(), QString("1234"));
+    a1.setStreet("1234");
+    QCOMPARE(a1.street(), QString("1234"));
 
     // test property add
     QVERIFY(c.saveDetail(&a1));
-    QCOMPARE(c.details(QContactDisplayLabel::DefinitionName).count(), 1);
-    QCOMPARE(QContactAddress(c.details(QContactAddress::DefinitionName).value(0)).displayLabel(), a1.displayLabel());
+    QCOMPARE(c.details(QContactAddress::DefinitionName).count(), 1);
+    QCOMPARE(QContactAddress(c.details(QContactAddress::DefinitionName).value(0)).street(), a1.street());
     a2.setStreet("Test");
     QVERIFY(c.saveDetail(&a2));
     QCOMPARE(c.details(QContactAddress::DefinitionName).count(), 2);
 
     // test property update
     a1.setValue("label","label1");
-    a1.setDisplayLabel("12345");
+    a1.setStreet("12345");
     QVERIFY(c.saveDetail(&a1));
 
     // test property remove
@@ -131,85 +130,31 @@ void tst_QContactDetails::address()
 
     // test displayName permutations
     QContactAddress a3;
-    QCOMPARE(a3.displayLabel(), QString());
 
     // set street
     a3.setStreet("Test");
-    QCOMPARE(a3.displayLabel(), QString("Test"));
     QCOMPARE(a3.street(), QString("Test"));
     a3.setStreet("");
-    QCOMPARE(a3.displayLabel(), QString());
 
     // set locality
     a3.setLocality("Test");
-    QCOMPARE(a3.displayLabel(), QString("Test"));
     QCOMPARE(a3.locality(), QString("Test"));
     a3.setLocality("");
-    QCOMPARE(a3.displayLabel(), QString());
 
     // set region
     a3.setRegion("Test");
-    QCOMPARE(a3.displayLabel(), QString("Test"));
     QCOMPARE(a3.region(), QString("Test"));
     a3.setRegion("");
-    QCOMPARE(a3.displayLabel(), QString());
 
     // set postcode
     a3.setPostcode("Test");
-    QCOMPARE(a3.displayLabel(), QString("Test"));
     QCOMPARE(a3.postcode(), QString("Test"));
     a3.setPostcode("");
-    QCOMPARE(a3.displayLabel(), QString());
 
     // set country
     a3.setCountry("Test");
-    QCOMPARE(a3.displayLabel(), QString("Test"));
     QCOMPARE(a3.country(), QString("Test"));
     a3.setCountry("");
-    QCOMPARE(a3.displayLabel(), QString());
-
-    // street + locality
-    a3.setStreet("Test");
-    a3.setLocality("Test");
-    QCOMPARE(a3.displayLabel(), QString("Test\nTest"));
-    a3.setStreet("");
-
-    // locality + region
-    a3.setRegion("Test");
-    QCOMPARE(a3.displayLabel(), QString("Test\nTest"));
-    a3.setLocality("");
-
-    // region + country
-    a3.setCountry("Test");
-    QCOMPARE(a3.displayLabel(), QString("Test\nTest"));
-    a3.setRegion("");
-    a3.setCountry("");
-
-    // street + country
-    a3.setStreet("Test");
-    a3.setCountry("Test");
-    QCOMPARE(a3.displayLabel(), QString("Test\nTest"));
-
-    // street + locality + country
-    a3.setStreet("Test1");
-    a3.setLocality("Test2");
-    a3.setCountry("Test3");
-    QCOMPARE(a3.displayLabel(), QString("Test1\nTest2\nTest3"));
-
-    // street + locality + region + country
-    a3.setStreet("Test1");
-    a3.setLocality("Test2");
-    a3.setRegion("Test3");
-    a3.setCountry("Test4");
-    QCOMPARE(a3.displayLabel(), QString("Test1\nTest2\nTest3\nTest4"));
-
-    // street + locality + region + postcode + country
-    a3.setStreet("Test1");
-    a3.setLocality("Test2");
-    a3.setRegion("Test3");
-    a3.setPostcode("Test4");
-    a3.setCountry("Test5");
-    QCOMPARE(a3.displayLabel(), QString("Test1\nTest2\nTest3, Test4\nTest5"));
 }
 
 void tst_QContactDetails::anniversary()

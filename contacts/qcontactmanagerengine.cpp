@@ -666,7 +666,6 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.insert(QContactAddress::FieldRegion, f);
     fields.insert(QContactAddress::FieldPostcode, f);
     fields.insert(QContactAddress::FieldCountry, f);
-    fields.insert(QContactAddress::FieldDisplayLabel, f);
     f.dataType = QVariant::StringList; // can implement multiple subtypes
     subTypes.clear();
     subTypes << QString(QLatin1String(QContactAddress::SubTypeDomestic));

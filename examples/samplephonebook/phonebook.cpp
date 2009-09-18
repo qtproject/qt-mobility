@@ -309,10 +309,11 @@ QContact PhoneBook::buildContact() const
     mobilePhone.setSubTypes(QStringList(QContactPhoneNumber::SubTypeMobile));
     c.saveDetail(&mobilePhone);
 
+    // note that we abuse the "street" field in this example.
     QContactAddress address;
-    address.setDisplayLabel(addressText->toPlainText());
+    address.setStreet(addressText->toPlainText());
     address.setSubTypes(QStringList() << QContactAddress::SubTypeDomestic << QContactAddress::SubTypeParcel << QContactAddress::SubTypePostal);
-    if (!address.displayLabel().isEmpty())
+    if (!address.street().isEmpty())
         c.saveDetail(&address);
 
     c.setGroups(contactGroups);
@@ -359,8 +360,8 @@ void PhoneBook::displayContact()
     if (!foundMobilePhone)
         mobilePhoneLine->setText("");
 
-    // display the address
-    addressText->setPlainText((QContactAddress(c.detail(QContactAddress::DefinitionName))).displayLabel());
+    // display the address - again, we abuse the street() field.
+    addressText->setPlainText((QContactAddress(c.detail(QContactAddress::DefinitionName))).street());
 
     // and build the avatar filename and display it if it exists.
     QString avatarFile = c.detail(QContactAvatar::DefinitionName).value(QContactAvatar::FieldAvatar);

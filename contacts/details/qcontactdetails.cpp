@@ -328,12 +328,6 @@ Q_DEFINE_LATIN1_LITERAL(QContactName::FieldSuffix, "Suffix");
 Q_DEFINE_LATIN1_LITERAL(QContactNickname::FieldNickname, "Nickname");
 
 /*!
- * \variable QContactAddress::FieldDisplayLabel
- * The constant key for which the display label value is stored in details of the QContactAddress type
- */
-Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldDisplayLabel, "DisplayLabel");
-
-/*!
  * \variable QContactAddress::FieldStreet
  * The constant key for which the street value is stored in details of the QContactAddress type
  */
@@ -737,61 +731,6 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeEmployment, "Employment");
  */
 Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
 
-
-
-/* Functions that are platform specific or don't operate on strings */
-
-QString QContactAddress::displayLabel() const
-{
-    QString dl = value(QContactAddress::FieldDisplayLabel);
-    if (!dl.isNull())
-        return dl;
-
-    QString st = street();
-    QString lc = locality();
-    QString rg = region();
-    QString pc = postcode();
-    QString cn = country();
-    QString result;
-
-    if (!st.trimmed().isEmpty()) {
-       result.append(st);
-       result.append(QLatin1Char('\n'));
-    }
-
-    if (!lc.trimmed().isEmpty()) {
-       result.append(lc);
-       result.append(QLatin1Char('\n'));
-    }
-
-    bool skipPostcode = false;
-    if (!rg.trimmed().isEmpty()) {
-        skipPostcode = true;
-        if (!pc.trimmed().isEmpty()) {
-            result.append(rg);
-            result.append(QLatin1String(", "));
-            result.append(pc);
-            result.append(QLatin1Char('\n'));
-        } else {
-            result.append(rg);
-            result.append(QLatin1Char('\n'));
-        }
-    }
-
-    if (!skipPostcode && !pc.trimmed().isEmpty()) {
-        result.append(pc);
-        result.append(QLatin1Char('\n'));
-    }
-
-    if (!cn.trimmed().isEmpty()) {
-        result += cn;
-    }
-
-    if (result.endsWith(QLatin1Char('\n')))
-        result.chop(1);
-
-    return result;
-}
 
 /*!
  * \fn QContactSyncTarget::syncTarget() const
