@@ -61,7 +61,7 @@ Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactChangeLogFilter);
 /*!
  * Constructs a new changelog filter which matches changes of the specified \a type
  */
-QContactChangeLogFilter::QContactChangeLogFilter(EventType type)
+QContactChangeLogFilter::QContactChangeLogFilter(QContactChangeLogFilter::EventType type)
     : QContactFilter(new QContactChangeLogFilterPrivate(type))
 {
 }
@@ -70,7 +70,7 @@ QContactChangeLogFilter::QContactChangeLogFilter(EventType type)
  * Sets the type of change that this filter will match against to \a type
  * \sa eventType()
  */
-void QContactChangeLogFilter::setEventType(EventType type)
+void QContactChangeLogFilter::setEventType(QContactChangeLogFilter::EventType type)
 {
     Q_D(QContactChangeLogFilter);
     d->m_eventType = type;
