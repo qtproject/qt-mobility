@@ -1,6 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the documentation of the Qt Toolkit.
@@ -11,7 +12,7 @@
 ** You may use this file in accordance with the terms and conditions
 ** contained in the Technology Preview License Agreement accompanying
 ** this package.
-**
+**qt42-whitepaper-a4-print
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
@@ -20,10 +21,9 @@
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights.  These rights are described in the Nokia Qt LGPL
-** Exception version 1.1, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
 ** Nokia at qt-info@nokia.com.
@@ -39,908 +39,139 @@
 **
 ****************************************************************************/
 
-
 /*!
-\page index.html
-
-\title Qt Mobility Developer Resources
-
-\tableofcontents
-
-
-\section1 Qt Service Framework
-\section2 Introduction
-
-The Qt Service framework provides a set of APIs that allows clients to
-discover and instantiate arbitrary services.  This is achieved by defining
-a unified way of finding, implementing and accessing services across
-multiple platforms.
-Due to the service frameworks knowledge of service interfaces, their
-versions and QObject-based introspection it may even be used to unify and
-access multiple platform specific service implementations via the same
-Qt-based client application.
-
-\section2 Overview 
-
-A service is an independent component that allows a client to perform a
-well-defined operation. Clients can find services based on their name and
-version as well as the interface that is implemented by the service object.
-Once the service has been identified the framework starts the service and
-returns a pointer to it. QServiceManager is the main interface through
-which clients can access the mentioned framework functionality. In
-addition services themselves may also act as clients to the service
-framework by requesting other services installed on the system.
-
-Service provider are implemented via plug-ins. QServicePluginInterface 
-defines the main interface for each plug-in.
-In order to avoid that clients have to link against service specific
-libraries each service object must be derived from QObject. Therefore the
-QMetaObject system can be used to dynamically discover and invoke the
-service's capabilities.
-To achieve the best level of access via the Qt meta object system services
-should be implemented in such a way that their entire functionality is
-accessable via the signals, slots, properties or invokable functions
-(see Q_INVOKABLE macro for more details).
-
-Each service plug-in implements one service only but can provide multiple
-implementations for multiple interfaces. 
-Therefore a service (plug-in) can retain a certain level of backwards
-compatibility even if the main service interface breaks in such a way that
-a new interface name has to be used. Existing clients can still use the
-previous version of service interface whereas new clients can utilize the
-new interface. 
-
-Future versions of this framework may also enable access to out-of-process
-service provider. 
-
-\section2 Using the framework
-
-This section assumes that the user wants to access the \i FileManager
-service which offers an implementation for the \i com.nokia.qt.examples.FileStorage
-interface The service framework enables multiple ways of accessing those
-implementations. 
-
-QServiceManager is the main class to lookup and instantiate services.
-Services can be found by constraining the search via service meta data or
-by using the default lookup mechanism.
-
-\section3 Verbose lookup
-
-The client code has precise knowledge of the service and its interfaces. 
-
-\code
-    QServiceManager manager;
-    QServiceFilter filter("com.nokia.qt.examples.FileStorage");
-    filter.setServiceName("FileManager");
-
-    // find services complying with filter
-    QList<QServiceInterfaceDescriptor> foundServices
-    foundServices = manager.findInterfaces(filter);
-    Q_ASSERT(foundServices.count());
-
-    // instantiate the FileStorage object
-    QObject *fileStorage;
-    fileStorage = manager.loadInterface(foundServices.at(0));
-\endcode
-
-\section3 Default lookup
-
-The client code has knowledge of the interface and doesn't really care
-about the service that implements the interface. In such cases the default
-service lookup can be utilized to create a service object instance. If the
-same service provides multiple versions of the same interface the latest
-version is returned. Therefore subsequent versions of the same interface
-must always be binary compatible to previous versions.
-
-\code
-    QServiceManager manager;
-    QObject *storage;
-    storage = manager.loadInterface("com.nokia.qt.examples.FileStorage");
-\endcode
-
-\section3 Header lookup
-
-So far all lookup mechanism returned a QObject pointer. This pointer can be
-utilised by introspecting the object using Qt's meta object system.
-Therefore the client does not have to have any knowledge of the object
-header or symbols. However in some use cases it may be more convenient to
-directly interact with the service object by including the service header
-and/or linking against the service provider.
-
-The subsequent code snippet demonstrates how this may look like:
-
-\code
-#include <filestorage.h>
-...
-QServiceManager manager;
-FileStorage *storage = 0;
-...
-manager.setInterfaceDefault("FileManager", "com.nokia.qt.examples.FileStorage");
-storage = manager.getInterface<FileStorage>("com.nokia.qt.examples.FileStorage");
-
-\endcode
-
-
-\section2 Service scope
-
-The QServiceManager operates in either \l{QServiceManager::UserScope}{User scope}
-or \l{QServiceManager::SystemScope}{System scope}. By default, it operates
-in user scope. The choice of scope affects whether registered services are
-available system-wide or only to the current user, and whether service and
-interface lookups are limited to system-wide service or whether the current
-user's together with system service configurations are considered.
-
-\section3 User scope
-
-In user scope, services are registered in a storage location specific to
-the current user. When a default service is set for an interface using
-\l{QServiceManager::setInterfaceDefault()}{setInterfaceDefault()}, the
-referenced service can be either a user-specific or system-wide service.
-
-For service and interface lookups, a manager will first search the
-user-specific services; if the requested component is not found, the
-manager then searches the system-wide services, if the user has
-sufficient permissions to do so.
-
-The \l{QServiceManager::serviceAdded()} and \l{QServiceManager::serviceRemoved()}
-notifications are emitted when services are added or removed from either
-the user-specific or system-wide services. These signals have a \c scope
-parameter to indicate the scope in which the service was added or removed.
-(Note the system-wide service notifications are only available if the user
-has sufficient permissions to access the system-wide service storage.)
-
-\section3 System scope
-
-In system scope, services are registered in a system-wide storage location.
-The manager does not access user-specific services for any operations.
-Service and interface lookups fail if the requested services are not found
-in the system-wide service storage. Service registration is performed in
-the system-wide storage.
-
-If \l{QServiceManager::setInterfaceDefault()}{setInterfaceDefault()} is
-called for a user-specific service, the operation fails.
-
-Also, the \l{QServiceManager::serviceAdded()} and \l{QServiceManager::serviceRemoved()}
-notifications are only emitted for system-wide services.
-
-
-
-\section2 Adding and removing of services
-
-New services can be installed and removed at runtime. An XML file is used
-to describe the service meta data and links the service code to its meta
-description.
-
-\section3 XML format
-
-Services are installed via an XML file which describes the meta data and
-location of the service. The xml file can be described via the following 
-DTD:
-
-\code
-    <!ELEMENT service ( name, filepath, description?, interface+ ) >
-    <!ELEMENT description ( #CDATA ) >
-    <!ELEMENT filepath ( #PCDATA ) >
-    <!ELEMENT interface ( name, version, description?, capabilities?, customproperty* ) >
-    <!ELEMENT capabilities ( #PCDATA ) >
-    <!ELEMENT name ( #PCDATA ) >
-    <!ELEMENT version ( #PCDATA ) >
-    <!ELEMENT customproperty ( #CDATA ) >
-    <!ATTLIST customproperty key NMTOKEN #REQUIRED >
-
-\endcode
-
-The elements and attributes have the following meanings:
-
-\table
-    \header
-        \o Element \o SubElement \o Description
-   \row
-        \o service
-        \o 
-        \o The \i service tag can contain an arbitrary number of \i interface tags and one description tag.
-    \row
-        \o "
-        \o description
-        \o A user readable description of the purpose of the service.
-    \row
-        \o "
-        \o filepath
-        \o The absolute path and name of the plug-in to be loaded when this
-           service is requested. Alternatively if the plug-in name only is
-           provided the standard library paths (see QCoreApplication::libraryPaths())
-           are used to find the plug-in.
-           Note that if the plugin name is given only, platform specific
-           parts such as the suffix ".dll" and ".so" or plugin prefix "lib"
-           should be removed to enable cross platform resolution. QLibrary
-           is used to determine the platform specific parts of the plugin.
-    \row
-        \o "
-        \o name
-        \o The name of the service.
-    \row
-        \o interface
-        \o
-        \o The \i interface describes the properties of the interface.
-    \row
-        \o "
-        \o capabilities
-        \o This property is a list of arbitrary strings which are
-           interpreted as permissions/capabilities. This list can be empty.
-    \row
-        \o "
-        \o name
-        \o The name of the interface using the Java class name notation. (e.g. com.nokia.qt.TestService)
-    \row
-        \o "
-        \o version
-        \o This property contains the interface and implementation version.
-        The version tag follows the \i major.minor notation. The major 
-        version indicates the interface version the minor version the 
-        implementation version.
-
-           The version number \bold must be greater than 1.0. The version
-           cannot be less than 1.0 because the Service Framework is
-           dependent on the fact that services must be binary compatible
-           between major versions, and services with versions less than 1.0
-           are unlikely to be binary compatible with later versions.
-    \row
-        \o "
-        \o description
-        \o A user readable description of the purpose of the interface.
-    \row
-        \o "
-        \o customproperty
-        \o An implementation specific key value pair which can be used for
-        filtering or as description.
- 
-\endtable
-
-
-An example for a valid XML service description could be the following \i TestService:
-
-\code
-    <?xml version="1.0" encoding="utf-8" ?>
-    <service>
-        <name>TestService</name>
-        <filepath>testserviceplugin</filepath>
-        <description>Test service description</description>
-        <interface>
-            <name>com.nokia.qt.ILocation</name>
-            <version>1.4</version>
-            <capabilities></capabilities>
-            <description>Interface that provides location support</description>
-        </interface>
-        <interface>
-            <name>com.nokia.qt.ILocation</name>
-            <version>1.5</version>
-            <capabilities></capabilities>
-            <description>Interface that provides location support</description>
-        </interface>
-        <interface>
-            <name>com.nokia.qt.ISysInfo</name>
-            <capabilities>ReadUserData</capabilities>
-            <version>2.3</version>
-            <description>Interface that provides system information support</description>
-            <customproperty key="key1">value1</customproperty>
-            <customproperty key="key2">value2</customproperty>
-        </interface>  
-    </service>
-\endcode
-
-\section2 Tools for XML generation
-
-The framework includes a GUI tool under \tt tools/servicexmlgen for 
-generating and inspecting service XML files. This makes it easy to enter
-service metadata and interface details and generate the appropriate XML to
-describe the service. It can also be used to load and inspect existing
-service XML files.
-
-Here is a screenshot of the application, loaded with the \i TestService XML
-description provided above.
-
-\image servicexmlgen.png
-
-
-\section2 Installing the service at runtime
-
-New services can be added and removed at any time via QServiceManager::addService()
-and QServiceManager::removeService().
-
-
-\section2 Identifying services
-
-Each implementation is identified by a service name, an interface name and
-its version. This information is encapsulated by
-QServiceInterfaceDescriptor which can be used to request references to
-service objects. 
-
-QServiceFilter simplifies the lookup of already installed services.
-  Developers specifies the criteria used during the meta data lookup.
-The subsequent example demonstrates the interaction between
-QServiceInterfaceDescriptor and QServiceFilter by creating references to
-all services that implement the interface \i com.nokia.qt.ILocation:
-
-\code
-    QServiceManager mgr;
-    QServiceFilter filter;
-    filter.setInterfaceName("com.nokia.qt.ILocation");
-    QList<QServiceInterfaceDescriptor> list = mgr.findInterfaces(filter);
-    for(int i = 0; i < list.size(); i++) {
-        QObject *serviceObject;
-        serviceObject = mgr.loadInterface(list[i]);
-
-        // returned object owned by client
-        if (serviceObject)
-            serviceObject->setParent(this);
-    }
-\endcode
-
-\section2 Upgrading services
-There are two ways in which to upgrade a service.  The first is an
-incremental approach whereby QServiceManager::addService() is used to
-register an XML descriptor whose service name already exists but defines
-new interface implementations.  For example an already existing service,
-"ovi" may define version 1.0 of interface,"IDownload".
-QServiceManager::addService() is then called with an XML descriptor that
-declares itself as belonging the "ovi" service, but implements version 1.1
-of the interface "IDownload".  Both implementation versions will be
-available for use.
-
-The second method is a replacement approach whereby an existing service is
-completely removed and replaced by a new service.
-
-As an example the already existing "ovi" service may implement interface
-"IDownload" version 1.0, the new "ovi" service may implement "IDownload"
-version 1.0 and version 1.1.  In this case the old service implementation
-must be first be removed using QServiceManager::removeService() to make
-way for the new service implementation.
-
-\section1 Bearer Management
-
-The Bearer Management API controls the system's connectivity state. This
-incorporates simple information such as whether the device is online and
-how many interfaces there are as well as enables the application developer
-to start, stop network interfaces and influences other connection specific
-details. Depending on the platform's capabilities it may even provide
-session management so that a network interface remains up for as long as
-clients have a registered interest in them while at the same time
-optimizes the interface's uptime. 
-
-This API is a key enabler for HTTP level roaming in 
-\l {QNetworkAccessManager}{QNetworkAccessManager}.
-
-This API does not provide support for management of network configurations
-themselves. It is up to the platform to provide infrastructure which
-enables to user to create, edit or delete network configurations. 
-
-\section2 The API in details
-
-Computer systems manage their network interfaces via a set of configurations.
-Each configuration describes a set of parameters which instruct the system
-how a particular network interface is started. One of the most simplistic
-examples might be an Ethernet configuration that links a network card to a
-DHCP server. A more complex example might be a Wireless LAN configuration
-which may comprise of hardware details such as the WLAN card address,
-WLAN access point details (e.g ESSID, encryption details) and user specific 
-information (for example username and password). Once the network interface
-was configured and started according to the configuration blue print,
-multiple applications are free to use this link layer connection/session
-for their own socket operations. This API carefully distinguishes a
-network session and the network connections (represented by socket
-sessions) which it supports.
-
-The distinction between physical network interfaces, their mappping to
-multiple configurations, how such a mapping can create an active link
-layer connection and a network connection that can be created once the
-session has been established is important to understand the various
-elements of this API. The Bearer Management API in conjunction with
-QNetworkInterface follows the same principle. QNetworkInterface already
-provides the required abstraction for physical network interface. In
-addition QNetworkConfiguration encapsulates a network configuration which
-can be used to create, destroy and monitor link layer connections
-(represented by QNetworkSession object).
-
-\section3 Service networks
-
-Some mobile platforms use the concept of grouped access points (also
-called SNAP or Service Network Access Point). In principle multiple
-configurations are grouped together and possibly even prioritized when
-compared to each other. This is useful for use cases where all
-configurations serve a similar purpose or context. A common context could
-be that they provide access to the public Internet or possibly only to the
-office Intranet. By providing a pool of configurations the system can make
-a decision based on given priorities which usually map to factors such as
-speed, availability and cost. Furthermore the system can automatically
-roam from one access point to the next one while ensuring minimal impact on
-the user experience.
-
-The \l{QNetworkConfiguration::Type} flag specifies to what category a
-configuration belongs. The \l{QNetworkConfiguration::InternetAccessPoint}
-type is the most common example. It represents a configuration that can be
-used to create a session. The above mentioned grouping behavior is provided
-by \l {QNetworkConfiguration::ServiceNetwork} configurations. Service
-networks are place holders until such time when the user attempts to
-\l {QNetworkSession::open()}{open()} a new session. At that point in time
-the system determines which of the configurations \l{QNetworkConfiguration::children()}
-is best to use. A service network can only have one level of indirection
-which implies children can only be of type \l {QNetworkConfiguration::InternetAccessPoint}.
-
-Most systems allow the user to define the systems default configuration.
-Usually the default behavior is either a service network, a particular
-internet access point or the user instructs the platform to ask the user
-once an application requests the network. User interaction is generally
-implemented by some sort of system dialog which shows up at the appropriate
-point in time. The application does not have to handle the user input. This
-API provides the \l QNetworkConfigurationManager::defaultConfiguration()
-call which serves a similar purpose. The subsequent code snippet provides
-a quick way how an application can quickly create a new network session
-without having to interact with the user:
-
-\code
-    QNetworkConfigurationManager manager;
-    const bool canStartIAP = (manager.capabilities() & QNetworkConfigurationManager::BearerManagement);
-    QNetworkConfiguration cfg = manager.defaultConfiguration();
-    if (!cfg.isValid() || !canStartIAP)
-        return;
-    switch(cfg.type()) {
-        case QNetworkConfiguration::InternetAccessPoint:
-            // no user interaction -> system starts IAP immediately
-            break;
-        case QNetworkConfiguration::ServiceNetwork:
-            // no user interaction -> system determines best IAP in group and starts it
-            break;
-        case QNetworkConfiguration::UserChoice:
-            // IAP resolved by asking user as part of QNetworkSession::open()
-            break;
-    }
-    QNetworkSession* session = new QNetworkSession(cfg);
-    session->open();
-
-\endcode
-
-To accommodate the "Ask user" use case the default configuration can be of
-type QNetworkConfiguration::UserChoice. A user choice configuration is
-resolved as part of the \l {QNetworkSession::open()} call. Note that a
-\l{QNetworkConfiguration::UserChoice}{UserChoice} configuration is only 
-ever returned via \l {QNetworkConfigurationManager::defaultConfiguration()}
-and not \l QNetworkConfigurationManager::allConfigurations().
-
-On systems which do not maintain a list of
-\l {QNetworkConfigurationManager::defaultConfiguration()}{defaultConfiguration()}
-an invalid configuration is returned. A possible workaround could be to
-implement a custom dialog which is populated based on what
-\l QNetworkConfigurationManager::allConfigurations() returns.
-
-\section3 Managing network sessions
-
-A QNetworkSession object separates a \l {QNetworkSession::state()}{state()}
-and an \l{QNetworkSession::isActive()}{isActive()} condition. 
-
-The state() attribute enables developers to detect whether the system
-currently maintains a global network session for the given
-QNetworkConfiguration. If \l {QNetworkSession::isActive()}{isActive()}
-returns true the QNetworkSession instance at hand was at least one of the
-entities requesting the global network session. This distinction is
-required to support the notion of session registrations. For as long as
-there are one or more active QNetworkSession instances the underlying
-network interface is not shut down. Therefore the session
-\l{QNetworkSession::state()}{state()} can be used to monitor the state of
-network interfaces.
-
-An active session is created by calling \l {QNetworkSession::open()} and
-closed via \l{QNetworkSession::close()}, respectively. If the session
-is \l{QNetworkSession::Disconnected}{disconnected} at the time of the
-\l{QNetworkSession::open()}{open()} call the underlying interface is started;
-otherwise only the reference counter against the global session is
-incremeted. The opposite behavior can be observed when using
-\l{QNetworkSession::close()}{close()}.
-
-In some use cases it may be necessary to turn the interface off despite of
-active sessions. This can be achieved by calling
-\l{QNetworkSession::stop()}{stop()}. An example use case could be a
-network manager type of application allowing the user to control the
-overall state of the devices connectivity.
-
-Global (inter-process) session support is platform dependent and can be
-detected via \l {QNetworkConfigurationManager::SystemSessionSupport}.
-If the system does not support global session calling
-\l{QNetworkSession::close()}{close()} never stops the interface.
-
-\section3 Roaming
-
-\section3 Platform capabilities
-
-Some API features are not available on all platforms. The
-\l QNetworkConfigurationManager::CapabilityFlag should be used to detect
-platform features at runtime. The following table lists the various
-platform API's being used by this API. This may assist in the process of
-determining the feature support:
-
-\table
-    \header
-    \o Platform
-    \o Backend capabilities
-    \row
-        \o Linux\unicode{0xAE}
-        \o Linux uses the \l {http://projects.gnome.org/NetworkManager}{NetworkManager API} which supports interface notifications and starting and stopping of network interfaces.
-    \row
-        \o Windows\unicode{0xAE} XP
-        \o This platform supports interface notifications without active polling.
-    \row
-        \o Windows XP SP2+Hotfixes, Windows XP SP3, Windows Vista, Windows 7
-        \o In addition to standard Windows XP wifi access point monitoring has been improved which includes the ability to start and stop wifi interfaces. This requires Windows to manage the wifi interfaces.
-    \row
-        \o Symbian\unicode{0xAE}  Platform & S60 3.1
-        \o Symbian support is based on Symbian platforms RConnection. In addition to interface notifications, starting and stopping of network it provides system wide session support and direct connection routing.
-    \row
-        \o Symbian Platform & S60 3.2+
-        \o This platform enjoys the most comprehensive feature set. In addition to the features support by the S60 3.1 Network roaming is supported.
-    \row
-        \o All other platforms (*nix, Mac OS\unicode{0xAE}, Windows Mobile)
-        \o This backend is the fallback for all platforms supports network interface notifications via active polling only.
-\endtable
-
-\section1 Location
-
-\section2 Introduction
-
-The Location API provides a library for distributing and receiving location
-data using arbitrary data sources.
-
-Location data involves a precisely specified position on the Earth's
-surface \unicode {0x2014} as provided by a latitude-longitude coordinate
-\unicode {0x2014} along with associated data, such as:
-
-    \list
-    \o The date and time at which the position was reported
-    \o The velocity of the device that reported the position
-    \o The altitude of the reported position (height above sea level)
-    \o The bearing of the device in degrees, relative to true north
-    \endlist
-
-This data can be extracted through a variety of methods. One of the most
-well known methods of positioning is GPS (Global Positioning System), a
-publicly available system that uses radiowave signals received from
-Earth-orbiting satellites to calculate the precise position and time of
-the receiver. Another popular method is Cell ID positioning, which uses
-the cell ID of the cell site that is currently serving the receiving
-device to calculate its approximate location. These and other positioning
-methods can all be used with the Location API; the only requirement for a
-location data source within the API is that it provides a 
-latitude-longitude coordinate with a date/time value, with the option of
-providing the other attributes listed above.
-
-
-Location data sources are created by subclassing QGeoPositionInfoSource and
-providing QGeoPositionInfo objects through the 
-QGeoPositionInfoSource::positionUpdated() signal. Clients that require
-location data can connect to the
-\l{QGeoPositionInfoSource::positionUpdated()}{positionUpdated()} signal and
-call \l{QGeoPositionInfoSource::startUpdates()}{startUpdates()} or
-\l{QGeoPositionInfoSource::requestUpdate()}{requestUpdate()} to trigger the
-distribution of location data.
-
-A default position source may be available on some platforms. Call
-QGeoPositionInfoSource::createSource() to create an instance of the default
-position source; the method returns 0 if no default source is available for
-the platform.
-
-The QGeoAreaMonitor class enables client applications to be notified when
-the receiving device has moved in or out of a particular area, as specified
-by a coordinate and radius. If the platform provides built-in support for
-area monitoring, QGeoAreaMonitor::createMonitor() returns an instance of
-the default area monitor.
-
-Satellite information can also be distributed through the
-QSatelliteInfoSource class. Call QSatelliteInfoSource::createSource() to
-create an instance of the default satellite data source for the platform,
-if one is available. Alternatively, clients can subclass it to provide a
-custom satellite data source.
-
-\section2 Requesting location data from data sources
-
-To receive data from a source, connect to its
-\l{QGeoPositionInfoSource::positionUpdated()}{positionUpdated()} signal,
-then call either \l{QGeoPositionInfoSource::startUpdates()}{startUpdates()}
-or \l{QGeoPositionInfoSource::requestUpdate()}{requestUpdate()} to begin.
-
-Here is an example of a client that receives data from the default location
-data source, as returned by QGeoPositionInfoSource::createSource():
-
-\code
-class MyClass : public QObject
-{
-    Q_OBJECT
-public:
-    MyClass(QObject *parent = 0)
-        : QObject(parent)
-    {
-        QGeoPositionInfoSource *source = QGeoPositionInfoSource::createSource();
-        if (source) {
-            connect(source, SIGNAL(positionUpdated(QGeoPositionInfo)),
-                    this, SLOT(positionUpdated(QGeoPositionInfo)));
-            source->startUpdates();
-        }
-    }
-
-private slots:
-    void positionUpdated(const QGeoPositionInfo &info)
-    {
-        qDebug() << "Position updated:" << info;
-    }
-};
-
-\endcode
-
-\section3 Controlling aspects of data sources
-
-The QGeoPositionInfoSource::setUpdateInterval() method can be used to
-control the rate at which position updates are received. For example, if
-the client application only requires updates once every 30 seconds, it can
-call \c setUpdateInterval(30000). (If no update interval is set, or
-setUpdateInterval() is called with a value of 0, the source uses a default
-interval or some other internal logic to determine when updates should be
-provided.)
-
-QGeoPositionInfoSource::setPreferredPositioningMethods() enables client applications to request that a certain type of positioning method be used. For example, if the application prefers to use only satellite positioning, which offers fairly precise outdoor positioning but can be a heavy user of power resources, it can call this method with the QGeoPositionInfoSource::SatellitePositioningMethods value. However, this method should only be used in specialized client applications; in most cases, the default positioning methods should not be changed, as a source may internally use a variety of positioning methods that can be useful to the application.
-
-\section3 Reading NMEA data
-
-\l {http://en.wikipedia.org/wiki/NMEA_0183}{NMEA} is a common text-based protocol for specifying navigational data. For convenience, the QNmeaPositionInfoSource is provided to enable client applications to read and distribute NMEA data in either real-time mode (for example, when streaming from a GPS device) or simulation mode (for example, when reading from a NMEA log file). In simulation mode, the source will emit updates according to the time stamp of each NMEA sentence to produce a "replay" of the recorded data.
-
-
-\section2 Creating a custom location data source
-
-Generally, the capabilities provided by the default position source as returned by QGeoPositionInfoSource::createSource(), along with the QNmeaPositionInfoSource class, are sufficient for retrieving location data. However, in some cases developers may wish to write their own custom location data sources.
-
-The \c LogFilePositionSource class in \c examples/logfilepositionsource shows how to subclass QGeoPositionInfoSource to create a custom location data source.
-
-This example class reads location data from a text file, \i log.txt. The file specifies location data using a simple text format: it contains one location update per line, where each line contains a date/time, a latitude and a longitude, separated by spaces. The date/time is in ISO 8601 format and the latitude and longitude are in degrees decimal format. Here is an excerpt from \i log.txt:
-
-    \code
-    2009-08-24T22:25:01 -27.576082 153.092415
-    2009-08-24T22:25:02 -27.576223 153.092530
-    2009-08-24T22:25:03 -27.576364 153.092648
-    \endcode
-
-The class reads this data and distributes it via the \l{QGeoPositionInfoSource::positionUpdated()}{positionUpdated()} signal.
-
-Here is the definition of the \c LogFilePositionSource class:
-
-    \quotefromfile logfilepositionsource/logfilepositionsource.h
-    \skipto class LogFilePositionSource
-    \printuntil };
-
-The main methods overrided by the subclass are:
-
-    \list
-    \o \l{QGeoPositionInfoSource::startUpdates()}{startUpdates()}: called by client applications to start regular position updates
-    \o \l{QGeoPositionInfoSource::stopUpdates()}{stopUpdates()}: called by client applications to stop regular position updates
-    \o \l{QGeoPositionInfoSource::requestUpdate()}{requestUpdate()}: called by client applications to request a single update, with a specified timeout
-    \endlist
-
-When a position update is available, the subclass emits the \l{QGeoPositionInfoSource::positionUpdated()}{positionUpdated()} signal.
-
-Here are the key methods in the class implementation:
-
-    \quotefromfile logfilepositionsource/logfilepositionsource.cpp
-    \skipto LogFilePositionSource::LogFilePositionSource
-    \printuntil /^\}/
-    \skipto LogFilePositionSource::startUpdates
-    \printuntil /^\}/
-    \skipto LogFilePositionSource::stopUpdates
-    \printuntil /^\}/
-    \skipto LogFilePositionSource::requestUpdate
-    \printuntil /^\}/
-    \printuntil LogFilePositionSource::readNextPosition
-    \printuntil /^\}/
-
-
-The example includes a \c ClientApplication class that requests updates from the \c LogFilePositionSource class. Run the exaple to see the data that is received by \c ClientApplication.
-
-Before running the example, make sure you have done both \tt make and \tt {make install}.
-
-
-\section1 Value Space (Publish and Subscribe)
-
-The Qt Value Space unifies various sources of hierarchical data into a
-single consistent model.  Conceptually the Value Space is a hierarchical tree
-of which each node or leaf can optionally contain a QVariant value.  A
-serialized version of a simple example Value Space might look like this.
-
-\code
-/Device/Buttons = 3
-/Device/Buttons/1/Name = Context
-/Device/Buttons/1/Usable = true
-/Device/Buttons/2/Name = Select
-/Device/Buttons/2/Usable = false
-/Device/Buttons/3/Name = Back
-/Device/Buttons/3/Usable = true
-\endcode
-
-Programmers access the Value Space through the QValueSpaceItem class.  This
-class allows applications to read item values, navigate through and subscribe
-to change notifications for items within the space.
-
-Nodes in the Value Space can be thought of as representing schema objects.
-Obviously this is a conceptual differentiation and not a physical one, as
-internally the Value Space is treated as one large tree.  By applying
-structured schema to the space "explorability" is increased.  For example,
-the \c {/Device/Buttons} schema can be defined as containing a value
-representing the number of mappable buttons on a device, and a sub-item for
-each adhering to the \c {MappableButton} schema.  The \c {MappableButton}
-schema itself may be defined as containing two attributes \c {Name} and
-\c {Usable}.  Change notification is modeled in this fashion also.  Where the
-\c {/Device/Buttons/1/Name} item is to change, the \c {/Device/Buttons/1} item
-would be marked as changed, and so on up the tree.  This allows, for example,
-subscription to just \c {/Device/Buttons} to be notified when anything
-"button" related changes.
-
-Internally, the Value Space consists of an arbitrary number of data source
-trees, or layers, which are stacked on top of each other to form the final
-unified view.  If a "higher" layer contains an item, it shadows the value of
-items in the layers below it.
-
-The Qt Value Space contains the following layers:
-
-\list 1
-    \i {Shared Memory Layer}
-         The Shared Memory layer allows applications to add and remove "transient" data from the
-         Value Space using shared memory as a backing store.
-    \i {Registry Layer}
-        The Registry layer allows applications to add and remove "transient" data from the
-        Value Space using the Windows registry as a backing store.
-
-\endlist
-
-Access to the available layers is through the QValueSpaceObject class.
-
-Consider the Value Space item \c {/Device/Buttons}.  If two layer contained
-this item, the value in the layer with the higher layer order (see \l {QAbstractValueSpaceLayer::order()}) 
-would shadow that with the lower layer order.  However, if
-only the  layer with the lower order contained this item, it would be visible through the
-QValueSpaceItem class, even if the higher order layer contained
-sub-items such as \c {/Device/Buttons/1}.  That is, layer shadowing occurs by
-value not by path.
-
-\section2 Architecture
-
-Layers in the Qt Value Space are provided by objects implementing the
-QAbstractValueSpaceLayer interface.  The two internal layers, the Shared Memory
-layer and the Registry layer, are implemented in this fashion.  The Value Space
-supports adding new, 3rd party layers through calls to the
-QValueSpace::installLayer() method.  All layers must be installed prior to the
-first Value Space usage.  Although it is legal to have a different set of
-layers installed in each process (a process local layer, for example) this
-asymmetric model is discouraged as it might cause confusion if these two
-processes communicate.
-
-The Qt Value Space system is divided into two parts: a single server and
-zero or more clients.  Internally the Value Space system draws no distinction
-between the two - the server is also a client, for example - but certain
-layers, in particular the Shared Memory layer, do.  The Value Space
-server \bold {must} be initialized via a call to
-QValueSpace::initValuespaceManager() prior to any use of the Value Space.
-Value Space clients will automatically initialize the first time Value Space
-functionality is used.
-
-\section3 Shared Memory Layer
-
-The external use of the Shared Memory layer is described in
-QValueSpaceObject.  The Shared Memory layer stores all values in a
-10MB block of shared memory which is reserved when the Value Space
-initializes.  As the layer creates this region at startup, it is assumed that
-the operating system lazily commits memory.  If this assumption is invalid,
-the Shared Memory layer will unnecessarily consume 10MB of memory.
-
-Value Space clients read from the Shared Memory layer's shared memory
-region directly.  A kernel lock is acquired for each read to prevent
-corruption.  While the layer supports concurrent readers, it is possible that
-a faulty or malicious application could acquire and refuse to release this
-lock causing any layer updates to be delayed indefinitely.
-
-Only the Value Space server ever writes to the shared memory region.  When
-clients attempt to add items to the layer, their changes are transmitted via
-a QLocalSocket (e.g. \c {/tmp/qt-N/valuespace_shmlayer} domain socket on
-Unix systems) to the server where the update is performed.  Updates are
-batched in-process and sent when the process re-enters the Qt event loop.
-Transmission and synchronization of changes can be forced manually by the
-QValueSpaceObject::sync() call, although as this requires a round trip
-between the client and server, doing so frequently may significantly
-degrade performance.
-
-Change notifications are transmitted to clients in the form of "something has
-changed" messages.  Nodes within the shared memory region are versioned, which
-allows clients to quickly determine exactly what has changed without the need
-for a bulkier change notification protocol.
-
-\section1 System Information
-
-The System Information API provides a set of APIs to discover system related information and capabilities.
-
-\section1 Building and compiling
-
-This library requires Qt 4.6 to be installed.
-
-To build the library, run \tt qmake and \tt make.
-
-Linux supports a NetworkManager based backend and generic backend using
-QNetworkInterface only. By default the generic backend is selected.
-If the NetworkManager backend is required run qmake as follows:
-
-\code
-    qmake BACKEND=NetworkManager
-\endcode
-
-The backend selection is expected to disappear once the API is integrated into Qt. 
-
-\section1 Reference documentation
-
-\section2 Main classes
-
-\list
-    \o Service Framework
-    \list
-        \o \l{QServiceContext}
-        \o \l{QServiceFilter}
-        \o \l{QServiceInterfaceDescriptor}
-        \o \l{QServiceManager}
-        \o \l{QServicePluginInterface}
-        \o \l{QAbstractSecuritySession}
-    \endlist
-    \o Bearer management
-    \list
-        \o \l{QNetworkConfiguration}
-        \o \l{QNetworkConfigurationManager}
-        \o \l{QNetworkSession}
-    \endlist
-    \o Location
-    \list
-        \o \l{QGeoCoordinate}
-        \o \l{QGeoPositionInfo}
-        \o \l{QGeoPositionInfoSource}
-        \o \l{QGeoAreaMonitor}
-        \o \l{QSatelliteInfo}
-        \o \l{QSatelliteInfoSource}
-    \endlist
-    \o Publish and Subscribe
-    \list
-        \o \l{QValueSpaceItem}
-        \o \l{QValueSpaceObject}
-        \o \l{QValueSpace}
-        \o \l{QAbstractValueSpaceLayer}
-    \endlist
-    \o System Information
-    \list
-        \o \l{QSystemDeviceInfo}
-        \o \l{QSystemDisplayInfo}
-        \o \l{QSystemInfo}
-        \o \l{QSystemMemoryInfo}
-        \o \l{QSystemNetworkInfo}
-        \o \l{QSystemScreenSaver}
-    \endlist
-\endlist
-
-\section2 Examples
-
-\list
-    \o Service Framework
-    \list
-        \o \l{File Manager Plugin Example}
-        \o \l{Bluetooth Transfer Plugin Example}
-        \o \l{Service Browser Example}
-    \endlist
-    \o Bearer Management
-    \list
-        \o \l{bearercloud}{Bearer Cloud}
-        \o \l{bearermonitor}{Bearer Monitor}
-    \endlist
-    \o Publish and Subscribe
-    \list
-        \o \l{publish-subscribe}{Publish and Subscribe}
-        \o \l{battery-charge}{Accessing Publish and Subscribe from QML}
-    \endlist
-\endlist
+    \group mobility
+    \title Qt Mobility APIs
+
+    The Qt Mobility is a set of APIs which have the goal of supplying features
+    for various mobile devices.
 
 */
+
+/*!
+    \page index.html
+    \startpage index.html  Qt Reference Documentation
+
+    \title Qt Mobility Overview
+
+    \brief An overview of the Qt Mobility APIs.
+
+    The Qt Mobility is a set of APIs which have the goal of supplying features
+    for various mobile devices.
+
+    \tableofcontents
+
+    \section1 Mobility Component APIs
+
+    \annotatedlist  mobility
+
+    \section1 Overview
+    
+    These APIs give the developer a wide range of desirable functions for a
+    mobile platform. A mobile device using the Qt Mobility API should be able
+    to
+        \list
+        \o Locate services on-board or remotely. Find an optimal
+    connection to the network for the particular service.
+        \o Services built on top of this would include Internet applications
+    such as email and web browsing.
+        \o Multimedia features enable image and video capture with audio ,
+    audio recording, and the playing of music or video clips.
+        \o Location will make the device aware of its geographical location
+    to support GIS applications.
+        \o Context layer will enable a flexible behavior for changed
+    circumstances.
+        \endlist
+
+    \section1 Bearer Management
+
+    Although not a network manager, this component manages the connectivity
+    state to the network. So it does not manage network configurations, which
+    are the role of the platform provider, but it does allow the user to start
+    or stop network interfaces. Some higher level management of the connection
+    session may also be possible as well depending on the platform.
+
+    Some platforms can have a set of grouped access points perhaps based on a
+    common purpose. Bearer Management allows comparison and prioritization
+    of the access and use of these points. 
+
+    The aim of Bearer Management is to reduce the need for the developer to be
+    concerned about trying to locate the best connection from a list of
+    possible IP bearers and 3G connections. The user can select the best or
+    it can be selected transparently so that WLAN roaming can occur
+    seemlessly.
+
+    Some examples of the Bearer Management functionality,
+        \list
+        \o On demand use of the appropriate Access Point. When a user starts
+    to use a browser, the appropriate access point is selected from those
+    available and a connection is transparently made.
+        \o Always-on applications such as email or IM roam automatically
+    between cellular packet data and WLAN networks. The application developer
+    is in control and for example the application can gracefully close TCP
+    connections over the old bearer after setting up new TCP connections
+    over the new bearer.
+        \o Application developer can create a settings user interface, where
+    the user can select a certain connection to be used with the application
+        \o A connection manager application can be implemented with Qt. This
+    application enumerates available connections, shows counters, and allows
+    the user to connect or disconnect
+        \endlist
+
+    \section1 Contacts
+
+    The structure and retrieval of contact data from local or remote backends.
+    It includes the ability to create, edit, list, delete and lookup contact
+    information whether it is stored locally or remotely.
+
+    \section1 Context (Publish and Subscribe)
+
+    Enables context sensitive access to information. Data is organized as a tree, with
+    data being able to 'shadow' other data with the 'same key', a string
+    specifying the leaf or node. The context is an example of a context ontology,
+    a defined set of relationships. As the context changes the values of the
+    objects change but the relationships remain the same. It is intended to
+    be an enabling technology, the basis of a range future applications.
+
+    For example, this will make personalization easier as different people
+    would represent a different context. Or behavior of the device that
+    changes depending on physical location or device status.
+
+    \section1 Location
+
+    The C++ API is one layer of this feature. This API encapsulates basic
+    geographical information obtained from satellite or other sources about
+    the user, including latitude and longitude, bearing, speed and altitude.
+    It will enable a range of geographical applications, for example, maps.
+
+    \section1 Messaging
+
+    A common interface for handling SMS, MMS, XMPP, Email and partial MIME.
+    Sending, notification and retrieval of messages as well as the ability to
+    use a native app to create, edit, reply-to, send and display messages.
+    Supports the sending of messages with attachments, and in situations of
+    low battery to leave attachments on the server unless opened.
+
+    \section1 Multimedia
+
+    An API to record and play audio and video of various formats. The playing
+    and managing of a FM radio. This includes the typical functionality you
+    would find on a music player, combined with FM radio, and camera for still
+    and video recording.
+
+    \section1 Service Framework
+
+    A platform independent method of finding Services. A 'service' is an
+    independent component that allows a client to perform a well-defined 
+    operation.
+
+    The services are implemented as plugins installed on the device and can
+    look for supporting external services running on a central server. E.g.
+    weather, local tourist attractions etc. Also default applications can use
+    the layer to locate servers. Since this is a level of abstraction then the
+    app does not need to be concerned with the underlying protocol, where the
+    servers are, the hardware peculiarities with networking and other low
+    level details.
+
+*/
+

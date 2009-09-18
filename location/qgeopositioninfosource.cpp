@@ -39,6 +39,7 @@
 /*!
     \class QGeoPositionInfoSource
     \brief The QGeoPositionInfoSource class is an abstract base class for the distribution of positional updates.
+    \ingroup location
 
     The static function QGeoPositionInfoSource::createSource() creates a default
     position source that is appropriate for the platform, if one is available.

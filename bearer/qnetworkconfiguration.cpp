@@ -46,6 +46,7 @@ QT_BEGIN_NAMESPACE
     \brief The QNetworkConfiguration class provides an abstraction of one or more access point configurations.
 
     \inmodule QtNetwork
+    \ingroup bearer
 
     QNetworkConfiguration encapsulates a single access point or service network.
     In most cases a single access point configuration can be mapped to one network

@@ -49,6 +49,7 @@ Q_GLOBAL_STATIC(QNetworkConfigurationManagerPrivate, connManager);
     by the system.
 
     \inmodule QtNetwork
+    \ingroup bearer
 
     QNetworkConfigurationManager provides access to the network configurations known to the system and
     enables applications to detect the system capabilities (with regards to network sessions) at runtime.

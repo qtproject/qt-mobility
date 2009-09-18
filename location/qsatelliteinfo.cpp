@@ -48,6 +48,7 @@ public:
 /*!
     \class QSatelliteInfo
     \brief The QSatelliteInfo class contains basic information about a satellite.
+    \ingroup location
 
     \sa QSatelliteInfoSource
 */

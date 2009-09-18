@@ -36,6 +36,7 @@
 /*!
     \class QSatelliteInfoSource
     \brief The QSatelliteInfoSource class is an abstract base class for the distribution of satellite information updates.
+    \ingroup location
 
     The static function QSatelliteInfoSource::createSource() creates a default
     satellite data source that is appropriate for the platform, if one is 
