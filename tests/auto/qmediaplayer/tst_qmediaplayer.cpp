@@ -34,9 +34,9 @@
 
 #include <QtTest/QtTest>
 #include <QDebug>
-#include <qmediaplayercontrol.h>
-#include <qmediaplayerservice.h>
-#include <qmediaplayer.h>
+#include <multimedia/qmediaplayercontrol.h>
+#include <multimedia/qmediaplayerservice.h>
+#include <multimedia/qmediaplayer.h>
 
 
 class MockPlayerControl : public QMediaPlayerControl

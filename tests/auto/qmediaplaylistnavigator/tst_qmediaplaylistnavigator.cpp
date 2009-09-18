@@ -34,8 +34,8 @@
 
 #include <QtTest/QtTest>
 #include <QDebug>
-#include "qlocalmediaplaylistprovider.h"
-#include "qmediaplaylistnavigator.h"
+#include "multimedia/qlocalmediaplaylistprovider.h"
+#include "multimedia/qmediaplaylistnavigator.h"
 
 class tst_QMediaPlaylistNavigator : public QObject
 {
