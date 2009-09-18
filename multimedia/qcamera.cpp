@@ -256,8 +256,10 @@ void QCamera::setDevice(const QString& device)
 
 QString QCamera::deviceDescription(const QString &device) const
 {
-    Q_UNUSED(device);
-    return device;
+    if (d_func()->service)
+        return d_func()->service->endpointDescription(QAbstractMediaService::VideoInput, device);
+    else
+        return device;
 }
 
 QCamera::State QCamera::state() const
