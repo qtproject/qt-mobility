@@ -1069,12 +1069,9 @@ qint64 QSystemMemoryInfoPrivate::availableDiskSpace(const QString &driveVolume)
     qint64 totalBytes;
     qint64 totalFreeBytes;
 
-#ifndef Q_CC_MINGW
-    bool ok = GetDiskFreeSpaceEx(driveVolume.utf16(),(PULARGE_INTEGER)&freeBytes, (PULARGE_INTEGER)&totalBytes, (PULARGE_INTEGER)&totalFreeBytes);
-//    qWarning() << ok << freeBytes << totalBytes << totalFreeBytes;
+    bool ok = GetDiskFreeSpaceEx((WCHAR *)driveVolume.utf16(),(PULARGE_INTEGER)&freeBytes, (PULARGE_INTEGER)&totalBytes, (PULARGE_INTEGER)&totalFreeBytes);
     if(!ok)
         totalFreeBytes = 0;
-#endif
     return totalFreeBytes;
 }
 
@@ -1084,19 +1081,15 @@ qint64 QSystemMemoryInfoPrivate::totalDiskSpace(const QString &driveVolume)
     qint64 totalBytes;
     qint64 totalFreeBytes;
 
-#ifndef Q_CC_MINGW
-    bool ok = GetDiskFreeSpaceEx(driveVolume.utf16(),(PULARGE_INTEGER)&freeBytes, (PULARGE_INTEGER)&totalBytes, (PULARGE_INTEGER)&totalFreeBytes);
-//    qWarning() << ok << freeBytes << totalBytes << totalFreeBytes;
+    bool ok = GetDiskFreeSpaceEx((WCHAR *)driveVolume.utf16(),(PULARGE_INTEGER)&freeBytes, (PULARGE_INTEGER)&totalBytes, (PULARGE_INTEGER)&totalFreeBytes);
     if(!ok)
         totalBytes = 0;
-#endif
     return totalBytes;
 }
 
 QSystemMemoryInfo::VolumeType QSystemMemoryInfoPrivate::volumeType(const QString &driveVolume)
 {
-#ifndef Q_CC_MINGW
-    uint result =   GetDriveType(driveVolume.utf16());
+    uint result =  GetDriveType((WCHAR *)driveVolume.utf16());
     switch(result) {
     case 0:
     case 1: //unknown
@@ -1117,25 +1110,24 @@ QSystemMemoryInfo::VolumeType QSystemMemoryInfoPrivate::volumeType(const QString
     case 6: //ramdisk
         break;
     };
-#endif
     return QSystemMemoryInfo::NoVolume;
 }
 
 QStringList QSystemMemoryInfoPrivate::listOfVolumes()
 {
     QStringList drivesList;
-
-#ifndef Q_CC_MINGW
-    WMIHelper *wHelper;
-    wHelper = new WMIHelper(this);
-    wHelper->setWmiNamespace("root/cimv2");
-    wHelper->setClassName("Win32_LogicalDisk");
-    wHelper->setClassProperty(QStringList() << "Name");
-    QVariant v = wHelper->getWMIData();
-    foreach(QVariant adapter,  wHelper->wmiVariantList) {
-        drivesList << adapter.toString();
+    quint32 driveLetter = (quint32) GetLogicalDrives();
+    char volumeName[] = "A:/";
+    while (driveLetter) {
+        if (driveLetter & 1) {
+            QString letter = volumeName;
+            letter.chop(1);
+            drivesList.append(letter);
+        }
+        volumeName[0]++;
+        driveLetter = driveLetter >> 1;
     }
-#endif
+
     return drivesList;
 }
 
