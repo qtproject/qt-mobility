@@ -2071,15 +2071,13 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
 {
     QMessage result = QMessagePrivate::from(id);
 
-    //TEMP:
-    if (updateMessageProperties(lastError, &result)) {
-        if (updateMessageRecipients(lastError, &result)) {
-            if (updateMessageBody(lastError, &result)) {
-                updateMessageAttachments(lastError, &result);
-            }
-        }
-    }
-    // END TEMP
+    // How do we find what type of message this is?
+    result.setType(QMessage::Email);
+
+    result.d_ptr->_elementsPresent.properties = 0;
+    result.d_ptr->_elementsPresent.recipients = 0;
+    result.d_ptr->_elementsPresent.body = 0;
+    result.d_ptr->_elementsPresent.attachments = 0;
 
     return result;
 }

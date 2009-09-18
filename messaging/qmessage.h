@@ -171,6 +171,8 @@ public:
 
 private:
     friend class QMessageStore;
+    friend class QMessageContentContainer;
+    friend class QMessageContentContainerPrivate;
     friend class MapiSession;
 
     QMessagePrivate *d_ptr;

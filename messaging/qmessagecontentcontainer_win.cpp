@@ -126,36 +126,64 @@ QMessageId QMessageContentContainer::messageId() const
 
 QByteArray QMessageContentContainer::contentType() const
 {
+    if (d_ptr->isMessage()) {
+        d_ptr->_message->d_ptr->ensureBodyPresent(d_ptr->_message);
+    }
+
     return d_ptr->_type;
 }
 
 QByteArray QMessageContentContainer::contentSubType() const
 {
+    if (d_ptr->isMessage()) {
+        d_ptr->_message->d_ptr->ensureBodyPresent(d_ptr->_message);
+    }
+
     return d_ptr->_subType;
 }
 
 QByteArray QMessageContentContainer::contentCharset() const
 {
+    if (d_ptr->isMessage()) {
+        d_ptr->_message->d_ptr->ensureBodyPresent(d_ptr->_message);
+    }
+
     return d_ptr->_charset;
 }
 
 QByteArray QMessageContentContainer::suggestedFileName() const
 {
+    if (d_ptr->isMessage()) {
+        d_ptr->_message->d_ptr->ensureBodyPresent(d_ptr->_message);
+    }
+
     return d_ptr->_name;
 }
 
 bool QMessageContentContainer::isContentAvailable() const
 {
+    if (d_ptr->isMessage()) {
+        d_ptr->_message->d_ptr->ensureBodyPresent(d_ptr->_message);
+    }
+
     return d_ptr->_available;
 }
 
 uint QMessageContentContainer::size() const
 {
+    if (d_ptr->isMessage()) {
+        d_ptr->_message->d_ptr->ensurePropertiesPresent(d_ptr->_message);
+    }
+
     return d_ptr->_size;
 }
 
 QString QMessageContentContainer::textContent() const
 {
+    if (d_ptr->isMessage()) {
+        d_ptr->_message->d_ptr->ensureBodyPresent(d_ptr->_message);
+    }
+
     if (d_ptr->_textContent.isEmpty() && d_ptr->_attachmentNumber != 0) {
         const_cast<QString&>(d_ptr->_textContent) = attachmentTextContent(d_ptr->_containingMessageId, d_ptr->_attachmentNumber, d_ptr->_charset);
     }
@@ -173,6 +201,10 @@ QString QMessageContentContainer::textContent() const
 
 QByteArray QMessageContentContainer::content() const
 {
+    if (d_ptr->isMessage()) {
+        d_ptr->_message->d_ptr->ensureBodyPresent(d_ptr->_message);
+    }
+
     if (d_ptr->_content.isEmpty() && d_ptr->_attachmentNumber != 0) {
         const_cast<QByteArray&>(d_ptr->_content) = attachmentContent(d_ptr->_containingMessageId, d_ptr->_attachmentNumber);
     }
@@ -227,6 +259,10 @@ bool QMessageContentContainer::contains(const QMessageContentContainerId &id) co
 
 QString QMessageContentContainer::headerFieldValue(const QByteArray &name) const
 {
+    if (d_ptr->isMessage()) {
+        d_ptr->_message->d_ptr->ensurePropertiesPresent(d_ptr->_message);
+    }
+
     QMultiMap<QByteArray, QString>::const_iterator it = d_ptr->_header.find(name);
     if (it != d_ptr->_header.end()) {
         return it.value();
@@ -239,6 +275,10 @@ QStringList QMessageContentContainer::headerFieldValues(const QByteArray &name) 
 {
     QStringList values;
 
+    if (d_ptr->isMessage()) {
+        d_ptr->_message->d_ptr->ensurePropertiesPresent(d_ptr->_message);
+    }
+
     QMultiMap<QByteArray, QString>::const_iterator it = d_ptr->_header.find(name);
     while ((it != d_ptr->_header.end()) && (it.key() == name)) {
         values.append(it.value());
@@ -250,6 +290,10 @@ QStringList QMessageContentContainer::headerFieldValues(const QByteArray &name) 
 
 QList<QByteArray> QMessageContentContainer::headerFields() const
 {
+    if (d_ptr->isMessage()) {
+        d_ptr->_message->d_ptr->ensurePropertiesPresent(d_ptr->_message);
+    }
+
     return d_ptr->_header.keys();
 }
 

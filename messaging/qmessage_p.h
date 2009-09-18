@@ -30,6 +30,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QMESSAGE_P_H
+#define QMESSAGE_P_H
+
 #include "qmessage.h"
 #include "qmessageaddress.h"
 #include <QMap>
@@ -75,10 +78,10 @@ public:
          _modified(false)
     {
 #if defined(Q_OS_WIN)
-         _elementsPresent.properties = 0;
-         _elementsPresent.recipients = 0;
-         _elementsPresent.body = 0;
-         _elementsPresent.attachments = 0;
+        _elementsPresent.properties = 1;
+        _elementsPresent.recipients = 1;
+        _elementsPresent.body = 1;
+        _elementsPresent.attachments = 1;
 #endif
     }
 
@@ -123,9 +126,17 @@ public:
     static void setSenderName(const QMessage &message, const QString &senderName);
     static void setSize(const QMessage &message, uint size);
     static void setParentAccountId(const QMessage& message, const QMessageAccountId& id);
+
+#if defined(Q_OS_WIN)
+    void ensurePropertiesPresent(QMessage *msg) const;
+    void ensureRecipientsPresent(QMessage *msg) const;
+    void ensureBodyPresent(QMessage *msg) const;
+    void ensureAttachmentsPresent(QMessage *msg) const;
+#endif
 #endif
 
 public:
     static void setStandardFolder(QMessage& message, QMessage::StandardFolder sf);
 };
 
+#endif

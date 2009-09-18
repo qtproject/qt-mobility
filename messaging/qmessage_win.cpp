@@ -35,9 +35,10 @@
 #include "qmessageid_p.h"
 #include "qmessageaccountid_p.h"
 #include "qmessagestore.h"
-#include <QDebug>
 #include "qmessagecontentcontainer_p.h"
 #include "qmessagefolderid_p.h"
+#include "winhelpers_p.h"
+#include <QDebug>
 
 QMessage QMessagePrivate::from(const QMessageId &id)
 {
@@ -68,6 +69,47 @@ void QMessagePrivate::setStandardFolder(QMessage& message, QMessage::StandardFol
     message.d_ptr->_modified = true;
 }
 
+void QMessagePrivate::ensurePropertiesPresent(QMessage *msg) const
+{
+    if (!_elementsPresent.properties && _id.isValid()) {
+        QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
+        if (MapiSessionPtr session = MapiSession::createSession(&ignoredError, true)) {
+            session->updateMessageProperties(&ignoredError, msg);
+        }
+    }
+}
+
+void QMessagePrivate::ensureRecipientsPresent(QMessage *msg) const
+{
+    if (!_elementsPresent.recipients && _id.isValid()) {
+        QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
+        if (MapiSessionPtr session = MapiSession::createSession(&ignoredError, true)) {
+            session->updateMessageRecipients(&ignoredError, msg);
+        }
+    }
+}
+
+void QMessagePrivate::ensureBodyPresent(QMessage *msg) const
+{
+    if (!_elementsPresent.body && _id.isValid()) {
+        QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
+        if (MapiSessionPtr session = MapiSession::createSession(&ignoredError, true)) {
+            session->updateMessageBody(&ignoredError, msg);
+        }
+    }
+}
+
+void QMessagePrivate::ensureAttachmentsPresent(QMessage *msg) const
+{
+    if (!_elementsPresent.attachments && _id.isValid()) {
+        QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
+        if (MapiSessionPtr session = MapiSession::createSession(&ignoredError, true)) {
+            session->updateMessageAttachments(&ignoredError, msg);
+        }
+    }
+}
+
+
 QMessage::QMessage()
     :
     QMessageContentContainer(),
@@ -87,8 +129,9 @@ QMessage::QMessage(const QMessageId& id)
     setDerivedMessage(this);
 }
 
-    QMessage::QMessage(const QMessage &other)
-:QMessageContentContainer(other),
+QMessage::QMessage(const QMessage &other)
+    :
+    QMessageContentContainer(other),
     d_ptr(new QMessagePrivate(this))
 {
     this->operator=(other);
@@ -172,11 +215,13 @@ QMessageFolderId QMessage::parentFolderId() const
 
 QMessage::StandardFolder QMessage::standardFolder() const
 {
+    d_ptr->ensurePropertiesPresent(const_cast<QMessage*>(this));
     return d_ptr->_standardFolder;
 }
 
 QMessageAddress QMessage::from() const
 {
+    d_ptr->ensurePropertiesPresent(const_cast<QMessage*>(this));
     return d_ptr->_from;
 }
 
@@ -188,6 +233,7 @@ void QMessage::setFrom(const QMessageAddress &address)
 
 QString QMessage::subject() const
 {
+    d_ptr->ensurePropertiesPresent(const_cast<QMessage*>(this));
     return d_ptr->_subject;
 }
 
@@ -199,6 +245,7 @@ void QMessage::setSubject(const QString &s)
 
 QDateTime QMessage::date() const
 {
+    d_ptr->ensurePropertiesPresent(const_cast<QMessage*>(this));
     return d_ptr->_date;
 }
 
@@ -210,6 +257,7 @@ void QMessage::setDate(const QDateTime &d)
 
 QDateTime QMessage::receivedDate() const
 {
+    d_ptr->ensurePropertiesPresent(const_cast<QMessage*>(this));
     return d_ptr->_receivedDate;
 }
 
@@ -221,6 +269,7 @@ void QMessage::setReceivedDate(const QDateTime &d)
 
 QMessageAddressList QMessage::to() const
 {
+    d_ptr->ensureRecipientsPresent(const_cast<QMessage*>(this));
     return d_ptr->_to;
 }
 
@@ -238,6 +287,7 @@ void QMessage::setTo(const QMessageAddress& address)
 
 QMessageAddressList QMessage::cc() const
 {
+    d_ptr->ensureRecipientsPresent(const_cast<QMessage*>(this));
     return d_ptr->_cc;
 }
 
@@ -249,6 +299,7 @@ void QMessage::setCc(const QMessageAddressList& ccList)
 
 QMessageAddressList QMessage::bcc() const
 {
+    d_ptr->ensureRecipientsPresent(const_cast<QMessage*>(this));
     return d_ptr->_bcc;
 }
 
@@ -260,6 +311,7 @@ void QMessage::setBcc(const QMessageAddressList& bccList)
 
 QMessage::StatusFlags QMessage::status() const
 {
+    d_ptr->ensurePropertiesPresent(const_cast<QMessage*>(this));
     return d_ptr->_status;
 }
 
@@ -281,6 +333,7 @@ void QMessage::setStatus(QMessage::Status flag, bool set)
 
 QMessage::Priority QMessage::priority() const
 {
+    d_ptr->ensurePropertiesPresent(const_cast<QMessage*>(this));
     return d_ptr->_priority;
 }
 
@@ -292,11 +345,13 @@ void QMessage::setPriority(Priority newPriority)
 
 uint QMessage::size() const
 {
+    d_ptr->ensurePropertiesPresent(const_cast<QMessage*>(this));
     return d_ptr->_size;
 }
 
 QMessageContentContainerId QMessage::bodyId() const
 {
+    d_ptr->ensureBodyPresent(const_cast<QMessage*>(this));
     return d_ptr->_bodyId;
 }
 
@@ -352,6 +407,8 @@ void QMessage::setBody(QTextStream &in, const QByteArray &mimeType)
 
 QMessageContentContainerIdList QMessage::attachmentIds() const
 {
+    d_ptr->ensureAttachmentsPresent(const_cast<QMessage*>(this));
+
     QMessageContentContainerIdList result;
 
     QMessageContentContainerId bodyId(bodyId());

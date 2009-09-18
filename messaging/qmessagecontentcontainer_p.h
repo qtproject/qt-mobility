@@ -30,6 +30,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QMESSAGECONTENTCONTAINER_P_H
+#define QMESSAGECONTENTCONTAINER_P_H
 
 #include "qmessagecontentcontainer.h"
 #include "qmessage.h"
@@ -37,6 +39,7 @@
 #ifdef USE_QMF_IMPLEMENTATION
 #include "qmfhelpers_p.h"
 #elif defined(Q_OS_WIN)
+#include "qmessage_p.h"
 #include "winhelpers_p.h"
 #endif
 
@@ -294,6 +297,8 @@ public:
     QMessageContentContainer *attachment(const QMessageContentContainerId &id)
     {
         if (isMessage()) {
+            _message->d_ptr->ensureAttachmentsPresent(_message);
+
             if (id == bodyContentId()) {
                 return _message;
             } else {
@@ -311,6 +316,8 @@ public:
     const QMessageContentContainer *attachment(const QMessageContentContainerId &id) const
     {
         if (isMessage()) {
+            _message->d_ptr->ensureAttachmentsPresent(_message);
+
             if (id == bodyContentId()) {
                 return _message;
             } else {
@@ -398,4 +405,6 @@ public:
         return QMessageContentContainerId(QString::number(0));
     }
 };
+#endif
+
 #endif
