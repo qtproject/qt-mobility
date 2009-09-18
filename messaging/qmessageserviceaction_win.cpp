@@ -132,23 +132,21 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
         return false;
     }
 
-    MapiFolderPtr mapiFolder;
+    //try first to create message in outbox for store, failing that attempt draft
 
-    QMessageFolder folder(outgoing.parentFolderId());
-
-    if(folder.id().isValid())
-        mapiFolder = mapiStore->findFolder(&_lastError, QMessageFolderIdPrivate::folderRecordKey(folder.id()));
-    else
-        mapiFolder = mapiStore->findFolder(&_lastError, outgoing.standardFolder());
-
-    //QMessagePrivate::setStandardFolder(outgoing,QMessage::DraftsFolder); //TODO default ATM
+    MapiFolderPtr mapiFolder = mapiStore->findFolder(&_lastError,QMessage::OutboxFolder);
 
     if( mapiFolder.isNull() || _lastError != QMessageStore::NoError ) {
-        qWarning() << "Unable to get folder for the message";
-        return false;
+        qWarning() << "Unable to get outbox folder for outgoing store, trying drafts...";
+        mapiFolder = mapiStore->findFolder(&_lastError,QMessage::DraftsFolder);
+        if(mapiFolder.isNull() || _lastError != QMessageStore::NoError)
+        {
+            qWarning() << "Unable to get drafts folder for outgoing store";
+            return false;
+        }
     }
 
-    IMessage* mapiMessage = mapiFolder->createMessage(outgoing,mapiSession,&_lastError, true);
+    IMessage* mapiMessage = mapiFolder->createMessage(outgoing,mapiSession,&_lastError);
 
     if(!mapiMessage || _lastError != QMessageStore::NoError)
     {

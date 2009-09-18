@@ -62,7 +62,7 @@ void QMessagePrivate::setSize(const QMessage &message, uint size)
     message.d_ptr->_size = size;
 }
 
-void QMessagePrivate::setStandardFolder(const QMessage& message, QMessage::StandardFolder sf)
+void QMessagePrivate::setStandardFolder(QMessage& message, QMessage::StandardFolder sf)
 {
     message.d_ptr->_standardFolder = sf;
     message.d_ptr->_modified = true;
@@ -173,11 +173,6 @@ QMessageFolderId QMessage::parentFolderId() const
 QMessage::StandardFolder QMessage::standardFolder() const
 {
     return d_ptr->_standardFolder;
-}
-
-void QMessage::setStandardFolder(StandardFolder sf)
-{
-    Q_UNUSED(sf); //TODO enable
 }
 
 QMessageAddress QMessage::from() const

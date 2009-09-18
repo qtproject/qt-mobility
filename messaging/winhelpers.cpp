@@ -59,12 +59,6 @@
 #include <mapitags.h>
 
 
-// TODO Retrieve message count, and hasSubfolders flag for message folders.
-// TODO determine if it is neccessary to use MAPI_MODIFY when opening folder in order to modify a message in a folder?
-// TODO review error handling make sure lastError is being updated appropriately
-// TODO Consider wrapping LPMAPITABLE and LPSRowSet
-// TODO proper iterators for folders (for sub folders, messages, their entry ids and their record ids)
-
 namespace {
 
 GUID GuidPublicStrings = { 0x00020329, 0x0000, 0x0000, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46 };
@@ -286,6 +280,17 @@ namespace WinHelpers {
         return HR_SUCCEEDED(HrSetOneProp(object, &prop));
     }
 
+    bool setMapiProperty(IMAPIProp *object, ULONG tag, MapiEntryId value)
+    {
+        SBinary s;
+        s.cb = value.count();
+        s.lpb = reinterpret_cast<LPBYTE>(value.data());
+        SPropValue prop = { 0 };
+        prop.ulPropTag = tag;
+        prop.Value.bin = s;
+        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
+    }
+
     ADRLIST *createAddressList(int count)
     {
         ADRLIST *list(0);
@@ -478,6 +483,9 @@ MapiFolder::MapiFolder()
 #ifndef PR_IS_NEWSGROUP_ANCHOR
 #define PR_IS_NEWSGROUP_ANCHOR PROP_TAG( PT_BOOLEAN, 0x6696 )
 #endif
+#ifndef PR_EXTENDED_FOLDER_FLAGS
+#define PR_EXTENDED_FOLDER_FLAGS PROP_TAG( PT_BINARY, 0x36DA )
+#endif
 
 void MapiFolder::findSubFolders(QMessageStore::ErrorCode *lastError)
 {
@@ -495,7 +503,7 @@ void MapiFolder::findSubFolders(QMessageStore::ErrorCode *lastError)
         return;
     }
 
-    SizedSPropTagArray(3, columns) = {3, {PR_ENTRYID, PR_IS_NEWSGROUP, PR_IS_NEWSGROUP_ANCHOR}};
+    SizedSPropTagArray(4, columns) = {4, {PR_ENTRYID, PR_IS_NEWSGROUP, PR_IS_NEWSGROUP_ANCHOR, PR_EXTENDED_FOLDER_FLAGS}};
     if (subFolders->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0) == S_OK)
         _subFolders = subFolders;
 }
@@ -557,11 +565,20 @@ MapiFolderPtr MapiFolder::nextSubFolder(QMessageStore::ErrorCode *lastError, con
                 MapiEntryId entryId(row->lpProps[0].Value.bin.lpb, row->lpProps[0].Value.bin.cb);
                 bool isNewsGroup = (row->lpProps[1].ulPropTag == PR_IS_NEWSGROUP && row->lpProps[1].Value.b);
                 bool isNewsGroupAnchor = (row->lpProps[2].ulPropTag == PR_IS_NEWSGROUP_ANCHOR && row->lpProps[2].Value.b);
-
+                bool special = false;
+#ifndef _WIN32_WCE // Skip slow folders, necessary evil
+                if (row->lpProps[3].ulPropTag == PR_EXTENDED_FOLDER_FLAGS) {
+                    QByteArray extendedFlags(reinterpret_cast<const char*>(row->lpProps[3].Value.bin.lpb), row->lpProps[3].Value.bin.cb);
+                    if (extendedFlags[2] & 8) // Synchronization issues, skip like Outlook
+                        special = true;
+                } else {
+                    special = true;
+                }
+#endif
                 FreeProws(rows);
 
-                if (isNewsGroup || isNewsGroupAnchor) {
-                    // Doesn't contain messages...
+                if (isNewsGroup || isNewsGroupAnchor || special) {
+                    // Doesn't contain messages that should be searched...
                 }  else {
                     // TODO: Filter out folders where PR_CONTAINER_CLASS != IPF.Note
                     result = store.openFolder(lastError, entryId);
@@ -761,7 +778,7 @@ IMessage *MapiFolder::createMessage(QMessageStore::ErrorCode* lastError)
     return message;
 }
 
-IMessage* MapiFolder::createMessage(const QMessage& source, const MapiSessionPtr session, QMessageStore::ErrorCode* lastError, bool deleteAfterSend)
+IMessage* MapiFolder::createMessage(const QMessage& source, const MapiSessionPtr session, QMessageStore::ErrorCode* lastError, PostSendAction postSendAction)
 {
     IMessage* mapiMessage(0);
     HRESULT rv = _folder->CreateMessage(0, 0, &mapiMessage);
@@ -804,10 +821,24 @@ IMessage* MapiFolder::createMessage(const QMessage& source, const MapiSessionPtr
             qWarning() << "Unable to set submit time in message.";
         }
 
-        if(deleteAfterSend)
+        if(postSendAction == DeleteAfterSend )
         {
             if (!setMapiProperty(mapiMessage, PR_DELETE_AFTER_SUBMIT, true)) {
                 qWarning() << "Unable to set delete after send flag.";
+            }
+        }
+        else if(postSendAction == MoveAfterSend )
+        {
+            //move the message to the sent folder after a submission
+
+            MapiFolderPtr sentFolder = _store->findFolder(lastError,QMessage::SentFolder);
+
+            if(sentFolder.isNull() || *lastError != QMessageStore::NoError)
+                qWarning() << "Unable to find the sent folder while constructing message";
+            else {
+                if (!setMapiProperty(mapiMessage, PR_SENTMAIL_ENTRYID, sentFolder->entryId())) {
+                    qWarning() << "Unbale to set sent folder entry id on message";
+                }
             }
         }
 

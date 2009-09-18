@@ -70,7 +70,7 @@ bool QMessageAccountFilter::isEmpty() const
 
 bool QMessageAccountFilter::isSupported() const
 {
-    return true; // TODO: Implement
+    return false; // TODO: Implement
 }
 
 QMessageAccountFilter QMessageAccountFilter::operator~() const

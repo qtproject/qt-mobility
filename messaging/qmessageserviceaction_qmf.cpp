@@ -36,6 +36,7 @@
 #include <qmailserviceaction.h>
 
 #include <QTimer>
+#include <qmessage_p.h>
 
 namespace {
 
@@ -125,7 +126,7 @@ void QMessageServiceActionPrivate::transmitActivityChanged(QMailServiceAction::A
             foreach (const QMailMessageId &id, QMailStore::instance()->queryMessages(filter & QMailMessageKey::status(QMailMessage::Sent))) {
                 QMessage message(convert(id));
 
-                message.setStandardFolder(QMessage::SentFolder);
+                QMessagePrivate::setStandardFolder(message,QMessage::SentFolder);
                 if (!QMessageStore::instance()->updateMessage(&message)) {
                     qWarning() << "Unable to mark message as sent!";
                 }
@@ -368,7 +369,7 @@ bool QMessageServiceAction::send(QMessage &message)
     QMessageFolderId existingFolderId(message.parentFolderId());
 
     // Move the message to the Outbox folder
-    message.setStandardFolder(QMessage::OutboxFolder);
+    QMessagePrivate::setStandardFolder(message,QMessage::OutboxFolder);
 
     QMailMessage *msg(convert(&message));
 

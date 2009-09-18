@@ -32,14 +32,22 @@
 ****************************************************************************/
 #include "qmessage.h"
 #include "qmessageaddress.h"
-
 #include <QMap>
+
+#ifdef USE_QMF_IMPLEMENTATION
+#include "qmfhelpers_p.h"
+#endif
+
 
 class QMessagePrivate
 {
+
+#ifdef Q_OS_WIN
+
     Q_DECLARE_PUBLIC(QMessage)
 
 public:
+
     QMessagePrivate(QMessage *message)
         :q_ptr(message),
 #if defined(Q_OS_WIN)
@@ -48,7 +56,7 @@ public:
          _contentFormat(0),
 #endif
          _size(0),
-         _standardFolder(QMessage::DraftsFolder),
+         _standardFolder(QMessage::InboxFolder),
          _type(QMessage::NoType),
          _status(0),
          _priority(QMessage::NormalPriority),
@@ -79,9 +87,9 @@ public:
     QMessageId _id;
     uint _size;
     QMessageAccountId _parentAccountId;
-#ifdef QMESSAGING_OPTIONAL_FOLDER
+ #ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolderId _parentFolderId;
-#endif
+ #endif
     QMessage::StandardFolder _standardFolder;
 
     QMessage::Type _type;
@@ -98,12 +106,31 @@ public:
     bool _modified;
     QMessageContentContainerId _bodyId;
 
-#if defined(Q_OS_WIN)
     static QMessage from(const QMessageId &id);
     static QString senderName(const QMessage &message);
     static void setSenderName(const QMessage &message, const QString &senderName);
     static void setSize(const QMessage &message, uint size);
-    static void setStandardFolder(const QMessage& message, QMessage::StandardFolder sf);
     static void setParentAccountId(const QMessage& message, const QMessageAccountId& id);
+
 #endif
+
+public:
+    static void setStandardFolder(QMessage& message, QMessage::StandardFolder sf);
+
+#ifdef USE_QMF_IMPLEMENTATION
+    QMailMessage _message;
+
+    typedef QMap<QMessage::StandardFolder, QMessageFolderId> StandardFolderMap;
+    Q_SCOPED_STATIC_DECLARE(StandardFolderMap,standardFolderMap);
+
+    static QMessageFolderId standardFolderId(QMessage::StandardFolder folder);
+    static QMessage::StandardFolder standardFolder(QMessageFolderId folderId);
+
+    static QMessage convert(const QMailMessage &message);
+    static QMailMessage convert(const QMessage &message);
+    static QMailMessage *convert(QMessage *message);
+    static const QMailMessage *convert(const QMessage *message);
+#endif
+
 };
+

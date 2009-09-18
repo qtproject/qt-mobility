@@ -33,6 +33,7 @@
 #include "qmessage.h"
 #include "qmessagecontentcontainer_p.h"
 #include "qmfhelpers_p.h"
+#include "qmessage_p.h"
 
 #include <qmailnamespace.h>
 
@@ -40,23 +41,6 @@
 #include <QFileInfo>
 
 using namespace QmfHelpers;
-
-class QMessagePrivate
-{
-public:
-    QMailMessage _message;
-
-    typedef QMap<QMessage::StandardFolder, QMessageFolderId> StandardFolderMap;
-    Q_SCOPED_STATIC_DECLARE(StandardFolderMap,standardFolderMap);
-
-    static QMessageFolderId standardFolderId(QMessage::StandardFolder folder);
-    static QMessage::StandardFolder standardFolder(QMessageFolderId folderId);
-
-    static QMessage convert(const QMailMessage &message);
-    static QMailMessage convert(const QMessage &message);
-    static QMailMessage *convert(QMessage *message);
-    static const QMailMessage *convert(const QMessage *message);
-};
 
 Q_SCOPED_STATIC_DEFINE(QMessagePrivate::StandardFolderMap,QMessagePrivate,standardFolderMap);
 
@@ -116,6 +100,12 @@ const QMailMessage *QMessagePrivate::convert(const QMessage *message)
 {
     message->applyPendingChanges();
     return &message->d_ptr->_message;
+}
+
+void QMessagePrivate::setStandardFolder(QMessage& message, QMessage::StandardFolder sf)
+{
+    QMessageFolderId folderId(standardFolderId(sf));
+    message.d_ptr->_message.setParentFolderId(QmfHelpers::convert(folderId));
 }
 
 namespace QmfHelpers {
@@ -304,12 +294,6 @@ QMessageFolderId QMessage::parentFolderId() const
 QMessage::StandardFolder QMessage::standardFolder() const
 {
     return QMessagePrivate::standardFolder(convert(d_ptr->_message.parentFolderId()));
-}
-
-void QMessage::setStandardFolder(StandardFolder sf)
-{
-    QMessageFolderId folderId(QMessagePrivate::standardFolderId(sf));
-    d_ptr->_message.setParentFolderId(convert(folderId));
 }
 
 QMessageAddress QMessage::from() const

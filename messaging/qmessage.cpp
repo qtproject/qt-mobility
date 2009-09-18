@@ -300,12 +300,6 @@ QList<QByteArray> charsets;
 */
     
 /*!
-    \fn QMessage::setStandardFolder(StandardFolder sf)
-  
-    Sets the standard folder of the message to \a sf.
-*/
-    
-/*!
     \fn QMessage::from() const
   
     Returns the originating address of the message.
