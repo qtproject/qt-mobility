@@ -37,6 +37,7 @@
 #include "transformnickname.h"
 #include "transformphonenumber.h"
 #include "transformemail.h"
+#include "transformaddress.h"
 
 #include <qtcontacts.h>
 #include <cntfldst.h>
@@ -62,10 +63,11 @@ void TransformContact::initializeTransformContactData()
 	m_transformContactData.insert(Nickname, new TransformNickname);
 	m_transformContactData.insert(PhoneNumber, new TransformPhoneNumber);
 	m_transformContactData.insert(EmailAddress, new TransformEmail);
+	m_transformContactData.insert(Address, new TransformAddress);
 }
 
 
-QContact TransformContact::transformContact(CContactItem &contact) const
+QContact TransformContact::transformContactL(CContactItem &contact, CContactDatabase &contactDatabase) const
 {
 		// Create a new QContact
 		QContact newQtContact;
@@ -85,6 +87,16 @@ QContact TransformContact::transformContact(CContactItem &contact) const
 			{
 				newQtContact.saveDetail(detail);	
 			}
+		}
+
+		// Add contact's UID
+		QString guid = QString::fromUtf16(contact.UidStringL(contactDatabase.MachineId()).Ptr(),
+		        contact.UidStringL(contactDatabase.MachineId()).Length());
+		if (guid.length() > 0)
+		{
+            QContactGuid *guidDetail = new QContactGuid();
+		    guidDetail->setGuid(guid);
+            newQtContact.saveDetail(guidDetail);
 		}
 
 		return newQtContact;
@@ -118,6 +130,17 @@ void TransformContact::transformContactL(
         {
 			//Add field to fieldSet
 			fieldSet->AddL(*fieldList.at(i));
+		}
+		
+		// Add contact's UID
+		if (detailList.at(i).definitionName() == QContactGuid::DefinitionName)
+		{
+            const QContactGuid &guid(static_cast<const QContactGuid&>(detailList.at(i)));
+            TPtrC guidString(reinterpret_cast<const TUint16*>(guid.guid().utf16()));
+            if (guidString.Length() > 0 )
+            {
+                contactItem.SetUidStringL(guidString);
+            }
 		}
 	}
 	
