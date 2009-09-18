@@ -41,9 +41,21 @@
 
 class QMessagePrivate
 {
+#ifdef USE_QMF_IMPLEMENTATION
+public:
+    QMailMessage _message;
 
-#ifdef Q_OS_WIN
+    typedef QMap<QMessage::StandardFolder, QMessageFolderId> StandardFolderMap;
+    Q_SCOPED_STATIC_DECLARE(StandardFolderMap,standardFolderMap);
 
+    static QMessageFolderId standardFolderId(QMessage::StandardFolder folder);
+    static QMessage::StandardFolder standardFolder(QMessageFolderId folderId);
+
+    static QMessage convert(const QMailMessage &message);
+    static QMailMessage convert(const QMessage &message);
+    static QMailMessage *convert(QMessage *message);
+    static const QMailMessage *convert(const QMessage *message);
+#else
     Q_DECLARE_PUBLIC(QMessage)
 
 public:
@@ -111,26 +123,9 @@ public:
     static void setSenderName(const QMessage &message, const QString &senderName);
     static void setSize(const QMessage &message, uint size);
     static void setParentAccountId(const QMessage& message, const QMessageAccountId& id);
-
 #endif
 
 public:
     static void setStandardFolder(QMessage& message, QMessage::StandardFolder sf);
-
-#ifdef USE_QMF_IMPLEMENTATION
-    QMailMessage _message;
-
-    typedef QMap<QMessage::StandardFolder, QMessageFolderId> StandardFolderMap;
-    Q_SCOPED_STATIC_DECLARE(StandardFolderMap,standardFolderMap);
-
-    static QMessageFolderId standardFolderId(QMessage::StandardFolder folder);
-    static QMessage::StandardFolder standardFolder(QMessageFolderId folderId);
-
-    static QMessage convert(const QMailMessage &message);
-    static QMailMessage convert(const QMessage &message);
-    static QMailMessage *convert(QMessage *message);
-    static const QMailMessage *convert(const QMessage *message);
-#endif
-
 };
 
