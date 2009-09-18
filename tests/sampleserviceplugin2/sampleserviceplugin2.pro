@@ -11,6 +11,18 @@ CONFIG += testcase
 include(../../common.pri)
 LIBS += -lQtServiceFramework
 
+symbian {
+    load(data_caging_paths)
+    pluginDep.sources = tst_sfw_sampleserviceplugin2.dll
+    pluginDep.path = $$QT_PLUGINS_BASE_DIR    
+    
+    addFiles.sources = xml/sampleservice2.xml
+    addFiles.path = xmldata
+    DEPLOYMENT += addFiles pluginDep
+
+    TARGET.EPOCALLOWDLLDATA = 1
+    TARGET.CAPABILITY = ALL -TCB
+}
 
 xml.path = $$DESTDIR/xmldata
 xml.files = xml/sampleservice2.xml

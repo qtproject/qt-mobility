@@ -8,6 +8,19 @@ TARGET        = tst_sfw_testservice2plugin
 DESTDIR = .
 CONFIG += testcase
 
+symbian {
+    load(data_caging_paths)
+    pluginDep.sources = tst_sfw_testservice2plugin.dll
+    pluginDep.path = $$QT_PLUGINS_BASE_DIR    
+
+    addFiles.sources = xml/testserviceplugin.xml
+    addFiles.path = xmldata
+    DEPLOYMENT += addFiles pluginDep
+    
+    TARGET.EPOCALLOWDLLDATA = 1
+    TARGET.CAPABILITY = ALL -TCB
+}
+
 include(../../common.pri)
 LIBS += -lQtServiceFramework
 
