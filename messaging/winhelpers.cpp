@@ -503,7 +503,7 @@ void MapiFolder::findSubFolders(QMessageStore::ErrorCode *lastError)
         return;
     }
 
-    SizedSPropTagArray(4, columns) = {4, {PR_ENTRYID, PR_IS_NEWSGROUP, PR_IS_NEWSGROUP_ANCHOR, PR_EXTENDED_FOLDER_FLAGS}};
+    SizedSPropTagArray(5, columns) = {5, {PR_ENTRYID, PR_IS_NEWSGROUP, PR_IS_NEWSGROUP_ANCHOR, PR_EXTENDED_FOLDER_FLAGS, PR_FOLDER_TYPE}};
     if (subFolders->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0) == S_OK)
         _subFolders = subFolders;
 }
@@ -561,23 +561,30 @@ MapiFolderPtr MapiFolder::nextSubFolder(QMessageStore::ErrorCode *lastError, con
         LPSRowSet rows(0);
         if (_subFolders->QueryRows(1, 0, &rows) == S_OK) {
             if (rows->cRows == 1) {
+                bool special = false;
                 SRow *row(&rows->aRow[0]);
                 MapiEntryId entryId(row->lpProps[0].Value.bin.lpb, row->lpProps[0].Value.bin.cb);
                 bool isNewsGroup = (row->lpProps[1].ulPropTag == PR_IS_NEWSGROUP && row->lpProps[1].Value.b);
                 bool isNewsGroupAnchor = (row->lpProps[2].ulPropTag == PR_IS_NEWSGROUP_ANCHOR && row->lpProps[2].Value.b);
-                bool special = false;
-// Skip slow folders, necessary evil
-// TODO handle special folders without the PR_EXTENDED_FOLDER_FLAGS property
-#ifndef _WIN32_WCE 
+                if (isNewsGroup || isNewsGroupAnchor)
+                    special = true;
+#ifndef _WIN32_WCE
+                // Skip slow folders, necessary evil
                 if (row->lpProps[3].ulPropTag == PR_EXTENDED_FOLDER_FLAGS) {
                     QByteArray extendedFlags(reinterpret_cast<const char*>(row->lpProps[3].Value.bin.lpb), row->lpProps[3].Value.bin.cb);
                     if (extendedFlags[2] & 8) // Synchronization issues, skip like Outlook
                         special = true;
+                } else if (row->lpProps[4].ulPropTag == PR_FOLDER_TYPE) {
+                    if (row->lpProps[4].Value.ul != FOLDER_GENERIC) {
+                        special = true;
+                    }
+                } else {
+                    special = true;
                 }
 #endif
                 FreeProws(rows);
 
-                if (isNewsGroup || isNewsGroupAnchor || special) {
+                if (special) {
                     // Doesn't contain messages that should be searched...
                 }  else {
                     // TODO: Filter out folders where PR_CONTAINER_CLASS != IPF.Note
