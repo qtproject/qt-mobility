@@ -419,6 +419,7 @@
                 <value name="UnknownPower" value="0"/>
                 <value name="BatteryPower" value="1"/>
                 <value name="WallPower" value="2"/>
+                <value name="WallPowerChargingBattery" value="3"/>
             </enum>
             <enum access="public" threadsafety="unspecified" status="commendable" name="InputMethod" fullname="QSystemDeviceInfo::InputMethod" href="qsystemdeviceinfo.html#InputMethod-enum" location="qsysteminfo.h" typedef="QSystemDeviceInfo::InputMethodFlags">
                 <value name="Keys" value="0x0000001"/>
@@ -437,7 +438,6 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="productName" fullname="QSystemDeviceInfo::productName" href="qsystemdeviceinfo.html#productName" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QString" signature="productName()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="batteryLevel" fullname="QSystemDeviceInfo::batteryLevel" href="qsystemdeviceinfo.html#batteryLevel" location="qsysteminfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="batteryLevel() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="batteryStatus" fullname="QSystemDeviceInfo::batteryStatus" href="qsystemdeviceinfo.html#batteryStatus" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QSystemDeviceInfo::BatteryStatus" signature="batteryStatus()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isBatteryCharging" fullname="QSystemDeviceInfo::isBatteryCharging" href="qsystemdeviceinfo.html#isBatteryCharging" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="isBatteryCharging()"/>
             <enum access="public" threadsafety="unspecified" status="commendable" name="Profile" fullname="QSystemDeviceInfo::Profile" href="qsystemdeviceinfo.html#Profile-enum" location="qsysteminfo.h">
                 <value name="UnknownProfile" value="0"/>
                 <value name="SilentProfile" value="1"/>
@@ -1142,6 +1142,10 @@
                 <value name="ExactVersionMatch" value="0"/>
                 <value name="MinimumVersionMatch" value="1"/>
             </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="CapabilityMatchRule" fullname="QServiceFilter::CapabilityMatchRule" href="qservicefilter.html#CapabilityMatchRule-enum" location="qservicefilter.h">
+                <value name="MatchAll" value="0"/>
+                <value name="MatchLoadable" value="1"/>
+            </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="QServiceFilter" fullname="QServiceFilter::QServiceFilter" href="qservicefilter.html#QServiceFilter" location="qservicefilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QServiceFilter()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QServiceFilter" fullname="QServiceFilter::~QServiceFilter" href="qservicefilter.html#dtor.QServiceFilter" location="qservicefilter.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QServiceFilter()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QServiceFilter" fullname="QServiceFilter::QServiceFilter" href="qservicefilter.html#QServiceFilter-2" location="qservicefilter.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QServiceFilter(const QServiceFilter &amp; other)">
@@ -1180,6 +1184,12 @@
                 <parameter left="const QString &amp;" right="" name="key" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="clearCustomProperties" fullname="QServiceFilter::clearCustomProperties" href="qservicefilter.html#clearCustomProperties" location="qservicefilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="clearCustomProperties()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setCapabilities" fullname="QServiceFilter::setCapabilities" href="qservicefilter.html#setCapabilities" location="qservicefilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCapabilities(QServiceFilter::CapabilityMatchRule rule, const QStringList &amp; capabilities)">
+                <parameter left="QServiceFilter::CapabilityMatchRule" right="" name="rule" default=""/>
+                <parameter left="const QStringList &amp;" right="" name="capabilities" default="QStringList()"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="capabilities" fullname="QServiceFilter::capabilities" href="qservicefilter.html#capabilities" location="qservicefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="capabilities() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="capabilityMatchRule" fullname="QServiceFilter::capabilityMatchRule" href="qservicefilter.html#capabilityMatchRule" location="qservicefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="CapabilityMatchRule" signature="capabilityMatchRule() const"/>
         </class>
         <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qservicefilter.html#operator&lt;&lt;-81" location="qservicefilter.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="81" relates="QServiceFilter" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; out, const QServiceFilter &amp; sf)">
             <parameter left="QDataStream &amp;" right="" name="out" default=""/>
@@ -1189,70 +1199,7 @@
             <parameter left="QDataStream &amp;" right="" name="in" default=""/>
             <parameter left="QServiceFilter &amp;" right="" name="sf" default=""/>
         </function>
-        <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_AUTO_INSTALL_LAYER" href="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER" location="registrylayer_win.cpp" virtual="non" meta="macrowithparams" const="false" static="false" overload="false" relates="QAbstractValueSpaceLayer" type="" signature="QVALUESPACE_AUTO_INSTALL_LAYER( className)">
-            <parameter left="" right="" name="className" default=""/>
-        </function>
-        <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_SHAREDMEMORY_LAYER" href="qvaluespace.html#QVALUESPACE_SHAREDMEMORY_LAYER" location="qvaluespace.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QValueSpace" type="" signature="QVALUESPACE_SHAREDMEMORY_LAYER()"/>
-        <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_REGISTRY_LAYER" href="qvaluespace.html#QVALUESPACE_REGISTRY_LAYER" location="qvaluespace.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QValueSpace" type="" signature="QVALUESPACE_REGISTRY_LAYER()"/>
-        <page access="public" status="commendable" name="bearercloud" href="bearercloud.html" subtype="example" title="Bearer Cloud Example" fulltitle="Bearer Cloud Example" subtitle="" location="bearercloud.qdoc">
-            <contents name="setting-the-scene" title="Setting the scene" level="1"/>
-            <contents name="responding-to-changes" title="Responding to changes" level="1"/>
-            <page access="public" status="commendable" name="bearercloud/bearercloud.cpp" href="bearercloud-bearercloud-cpp.html" subtype="file" title="" fulltitle="bearercloud.cpp Example File" subtitle="bearercloud/bearercloud.cpp" location=""/>
-            <page access="public" status="commendable" name="bearercloud/bearercloud.h" href="bearercloud-bearercloud-h.html" subtype="file" title="" fulltitle="bearercloud.h Example File" subtitle="bearercloud/bearercloud.h" location=""/>
-            <page access="public" status="commendable" name="bearercloud/cloud.cpp" href="bearercloud-cloud-cpp.html" subtype="file" title="" fulltitle="cloud.cpp Example File" subtitle="bearercloud/cloud.cpp" location=""/>
-            <page access="public" status="commendable" name="bearercloud/cloud.h" href="bearercloud-cloud-h.html" subtype="file" title="" fulltitle="cloud.h Example File" subtitle="bearercloud/cloud.h" location=""/>
-            <page access="public" status="commendable" name="bearercloud/lan.svg" href="bearercloud-lan-svg.html" subtype="file" title="" fulltitle="lan.svg Example File" subtitle="bearercloud/lan.svg" location=""/>
-            <page access="public" status="commendable" name="bearercloud/unknown.svg" href="bearercloud-unknown-svg.html" subtype="file" title="" fulltitle="unknown.svg Example File" subtitle="bearercloud/unknown.svg" location=""/>
-            <page access="public" status="commendable" name="bearercloud/wlan.svg" href="bearercloud-wlan-svg.html" subtype="file" title="" fulltitle="wlan.svg Example File" subtitle="bearercloud/wlan.svg" location=""/>
-            <page access="public" status="commendable" name="bearercloud/main.cpp" href="bearercloud-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="bearercloud/main.cpp" location=""/>
-            <page access="public" status="commendable" name="bearercloud/bearercloud.pro" href="bearercloud-bearercloud-pro.html" subtype="file" title="" fulltitle="bearercloud.pro Example File" subtitle="bearercloud/bearercloud.pro" location=""/>
-            <page access="public" status="commendable" name="bearercloud/icons.qrc" href="bearercloud-icons-qrc.html" subtype="file" title="" fulltitle="icons.qrc Example File" subtitle="bearercloud/icons.qrc" location=""/>
-        </page>
-        <page access="public" status="commendable" name="servicebrowser" href="servicebrowser.html" subtype="example" title="Service Browser Example" fulltitle="Service Browser Example" subtitle="" location="servicebrowser.qdoc">
-            <contents name="servicebrowser-class-definition" title="ServiceBrowser Class Definition" level="1"/>
-            <contents name="servicebrowser-class-implementation" title="ServiceBrowser Class Implementation" level="1"/>
-            <contents name="invoking-attributes-an-example" title="Invoking attributes: an example" level="2"/>
-            <page access="public" status="commendable" name="servicebrowser/servicebrowser.cpp" href="servicebrowser-servicebrowser-cpp.html" subtype="file" title="" fulltitle="servicebrowser.cpp Example File" subtitle="servicebrowser/servicebrowser.cpp" location=""/>
-            <page access="public" status="commendable" name="servicebrowser/servicebrowser.h" href="servicebrowser-servicebrowser-h.html" subtype="file" title="" fulltitle="servicebrowser.h Example File" subtitle="servicebrowser/servicebrowser.h" location=""/>
-            <page access="public" status="commendable" name="servicebrowser/main.cpp" href="servicebrowser-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="servicebrowser/main.cpp" location=""/>
-            <page access="public" status="commendable" name="servicebrowser/servicebrowser.pro" href="servicebrowser-servicebrowser-pro.html" subtype="file" title="" fulltitle="servicebrowser.pro Example File" subtitle="servicebrowser/servicebrowser.pro" location=""/>
-        </page>
-        <page access="public" status="commendable" name="publish-subscribe" href="publish-subscribe.html" subtype="example" title="Publish and Subscribe Example" fulltitle="Publish and Subscribe Example" subtitle="" location="publish-subscribe.qdoc">
-            <page access="public" status="commendable" name="publish-subscribe/consumerdialog.cpp" href="publish-subscribe-consumerdialog-cpp.html" subtype="file" title="" fulltitle="consumerdialog.cpp Example File" subtitle="publish-subscribe/consumerdialog.cpp" location=""/>
-            <page access="public" status="commendable" name="publish-subscribe/consumerdialog.h" href="publish-subscribe-consumerdialog-h.html" subtype="file" title="" fulltitle="consumerdialog.h Example File" subtitle="publish-subscribe/consumerdialog.h" location=""/>
-            <page access="public" status="commendable" name="publish-subscribe/providerdialog.cpp" href="publish-subscribe-providerdialog-cpp.html" subtype="file" title="" fulltitle="providerdialog.cpp Example File" subtitle="publish-subscribe/providerdialog.cpp" location=""/>
-            <page access="public" status="commendable" name="publish-subscribe/providerdialog.h" href="publish-subscribe-providerdialog-h.html" subtype="file" title="" fulltitle="providerdialog.h Example File" subtitle="publish-subscribe/providerdialog.h" location=""/>
-            <page access="public" status="commendable" name="publish-subscribe/main.cpp" href="publish-subscribe-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="publish-subscribe/main.cpp" location=""/>
-            <page access="public" status="commendable" name="publish-subscribe/publish-subscribe.pro" href="publish-subscribe-publish-subscribe-pro.html" subtype="file" title="" fulltitle="publish-subscribe.pro Example File" subtitle="publish-subscribe/publish-subscribe.pro" location=""/>
-        </page>
-        <page access="public" status="commendable" name="battery-charge" href="battery-charge.html" subtype="example" title="Accessing Publish and Subscribe from QML" fulltitle="Accessing Publish and Subscribe from QML" subtitle="" location="battery-charge.qdoc">
-            <page access="public" status="commendable" name="battery-charge/battery-consumer/batterycharge.cpp" href="battery-charge-battery-consumer-batterycharge-cpp.html" subtype="file" title="" fulltitle="batterycharge.cpp Example File" subtitle="battery-charge/battery-consumer/batterycharge.cpp" location=""/>
-            <page access="public" status="commendable" name="battery-charge/battery-consumer/batterycharge.h" href="battery-charge-battery-consumer-batterycharge-h.html" subtype="file" title="" fulltitle="batterycharge.h Example File" subtitle="battery-charge/battery-consumer/batterycharge.h" location=""/>
-            <page access="public" status="commendable" name="battery-charge/battery-provider/batteryprovider.cpp" href="battery-charge-battery-provider-batteryprovider-cpp.html" subtype="file" title="" fulltitle="batteryprovider.cpp Example File" subtitle="battery-charge/battery-provider/batteryprovider.cpp" location=""/>
-            <page access="public" status="commendable" name="battery-charge/battery-provider/batteryprovider.h" href="battery-charge-battery-provider-batteryprovider-h.html" subtype="file" title="" fulltitle="batteryprovider.h Example File" subtitle="battery-charge/battery-provider/batteryprovider.h" location=""/>
-            <page access="public" status="commendable" name="battery-charge/battery-consumer/main.cpp" href="battery-charge-battery-consumer-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="battery-charge/battery-consumer/main.cpp" location=""/>
-            <page access="public" status="commendable" name="battery-charge/battery-charge.pro" href="battery-charge-battery-charge-pro.html" subtype="file" title="" fulltitle="battery-charge.pro Example File" subtitle="battery-charge/battery-charge.pro" location=""/>
-            <page access="public" status="commendable" name="battery-charge/battery-consumer/battery-consumer.pro" href="battery-charge-battery-consumer-battery-consumer-pro.html" subtype="file" title="" fulltitle="battery-consumer.pro Example File" subtitle="battery-charge/battery-consumer/battery-consumer.pro" location=""/>
-            <page access="public" status="commendable" name="battery-charge/battery-consumer/battery-consumer.qrc" href="battery-charge-battery-consumer-battery-consumer-qrc.html" subtype="file" title="" fulltitle="battery-consumer.qrc Example File" subtitle="battery-charge/battery-consumer/battery-consumer.qrc" location=""/>
-            <page access="public" status="commendable" name="battery-charge/battery-provider/battery-provider.pro" href="battery-charge-battery-provider-battery-provider-pro.html" subtype="file" title="" fulltitle="battery-provider.pro Example File" subtitle="battery-charge/battery-provider/battery-provider.pro" location=""/>
-        </page>
-        <page access="public" status="commendable" name="bluetoothtransferplugin" href="bluetoothtransferplugin.html" subtype="example" title="Bluetooth Transfer Plugin Example" fulltitle="Bluetooth Transfer Plugin Example" subtitle="" location="bluetoothtransferplugin.qdoc">
-            <page access="public" status="commendable" name="bluetoothtransferplugin/bluetoothtransfer.cpp" href="bluetoothtransferplugin-bluetoothtransfer-cpp.html" subtype="file" title="" fulltitle="bluetoothtransfer.cpp Example File" subtitle="bluetoothtransferplugin/bluetoothtransfer.cpp" location=""/>
-            <page access="public" status="commendable" name="bluetoothtransferplugin/bluetoothtransfer.h" href="bluetoothtransferplugin-bluetoothtransfer-h.html" subtype="file" title="" fulltitle="bluetoothtransfer.h Example File" subtitle="bluetoothtransferplugin/bluetoothtransfer.h" location=""/>
-            <page access="public" status="commendable" name="bluetoothtransferplugin/bluetoothtransferplugin.cpp" href="bluetoothtransferplugin-bluetoothtransferplugin-cpp.html" subtype="file" title="" fulltitle="bluetoothtransferplugin.cpp Example File" subtitle="bluetoothtransferplugin/bluetoothtransferplugin.cpp" location=""/>
-            <page access="public" status="commendable" name="bluetoothtransferplugin/bluetoothtransferplugin.h" href="bluetoothtransferplugin-bluetoothtransferplugin-h.html" subtype="file" title="" fulltitle="bluetoothtransferplugin.h Example File" subtitle="bluetoothtransferplugin/bluetoothtransferplugin.h" location=""/>
-            <page access="public" status="commendable" name="bluetoothtransferplugin/bluetoothtransferplugin.pro" href="bluetoothtransferplugin-bluetoothtransferplugin-pro.html" subtype="file" title="" fulltitle="bluetoothtransferplugin.pro Example File" subtitle="bluetoothtransferplugin/bluetoothtransferplugin.pro" location=""/>
-        </page>
-        <page access="public" status="commendable" name="filemanagerplugin" href="filemanagerplugin.html" subtype="example" title="File Manager Plugin Example" fulltitle="File Manager Plugin Example" subtitle="" location="filemanagerplugin.qdoc">
-            <page access="public" status="commendable" name="filemanagerplugin/filemanagerplugin.cpp" href="filemanagerplugin-filemanagerplugin-cpp.html" subtype="file" title="" fulltitle="filemanagerplugin.cpp Example File" subtitle="filemanagerplugin/filemanagerplugin.cpp" location=""/>
-            <page access="public" status="commendable" name="filemanagerplugin/filemanagerplugin.h" href="filemanagerplugin-filemanagerplugin-h.html" subtype="file" title="" fulltitle="filemanagerplugin.h Example File" subtitle="filemanagerplugin/filemanagerplugin.h" location=""/>
-            <page access="public" status="commendable" name="filemanagerplugin/filemanagerstorage.cpp" href="filemanagerplugin-filemanagerstorage-cpp.html" subtype="file" title="" fulltitle="filemanagerstorage.cpp Example File" subtitle="filemanagerplugin/filemanagerstorage.cpp" location=""/>
-            <page access="public" status="commendable" name="filemanagerplugin/filemanagerstorage.h" href="filemanagerplugin-filemanagerstorage-h.html" subtype="file" title="" fulltitle="filemanagerstorage.h Example File" subtitle="filemanagerplugin/filemanagerstorage.h" location=""/>
-            <page access="public" status="commendable" name="filemanagerplugin/filemanagertransfer.cpp" href="filemanagerplugin-filemanagertransfer-cpp.html" subtype="file" title="" fulltitle="filemanagertransfer.cpp Example File" subtitle="filemanagerplugin/filemanagertransfer.cpp" location=""/>
-            <page access="public" status="commendable" name="filemanagerplugin/filemanagertransfer.h" href="filemanagerplugin-filemanagertransfer-h.html" subtype="file" title="" fulltitle="filemanagertransfer.h Example File" subtitle="filemanagerplugin/filemanagertransfer.h" location=""/>
-            <page access="public" status="commendable" name="filemanagerplugin/filemanagerplugin.pro" href="filemanagerplugin-filemanagerplugin-pro.html" subtype="file" title="" fulltitle="filemanagerplugin.pro Example File" subtitle="filemanagerplugin/filemanagerplugin.pro" location=""/>
-        </page>
-        <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Developer Resources" fulltitle="Qt Mobility Developer Resources" subtitle="" location="index.qdoc">
+        <page access="public" status="commendable" name="service-frameworks.html" href="service-frameworks.html" subtype="page" title="Service Frameworks" fulltitle="Service Frameworks" subtitle="" location="sf.qdoc">
             <contents name="qt-service-framework" title="Qt Service Framework" level="1"/>
             <contents name="introduction" title="Introduction" level="2"/>
             <contents name="overview" title="Overview" level="2"/>
@@ -1269,26 +1216,85 @@
             <contents name="installing-the-service-at-runtime" title="Installing the service at runtime" level="2"/>
             <contents name="identifying-services" title="Identifying services" level="2"/>
             <contents name="upgrading-services" title="Upgrading services" level="2"/>
-            <contents name="bearer-management" title="Bearer Management" level="1"/>
-            <contents name="the-api-in-details" title="The API in details" level="2"/>
+            <contents name="examples" title="Examples" level="2"/>
+        </page>
+        <page access="public" status="commendable" name="bearer" href="bearer.html" subtype="group" title="Qt Bearer Management API" fulltitle="Qt Bearer Management API" subtitle="" location="bearermanagement.qdoc"/>
+        <page access="public" status="commendable" name="bearer-management.html" href="bearer-management.html" subtype="page" title="Bearer Management" fulltitle="Bearer Management" subtitle="" location="bearermanagement.qdoc">
+            <contents name="overview" title="Overview" level="1"/>
+            <contents name="the-api-in-detail" title="The API in Detail" level="2"/>
             <contents name="service-networks" title="Service networks" level="3"/>
             <contents name="managing-network-sessions" title="Managing network sessions" level="3"/>
             <contents name="roaming" title="Roaming" level="3"/>
             <contents name="platform-capabilities" title="Platform capabilities" level="3"/>
-            <contents name="location" title="Location" level="1"/>
-            <contents name="introduction" title="Introduction" level="2"/>
-            <contents name="requesting-location-data-from-data-sources" title="Requesting location data from data sources" level="2"/>
-            <contents name="controlling-aspects-of-data-sources" title="Controlling aspects of data sources" level="3"/>
-            <contents name="reading-nmea-data" title="Reading NMEA data" level="3"/>
-            <contents name="creating-a-custom-location-data-source" title="Creating a custom location data source" level="2"/>
-            <contents name="value-space-publish-and-subscribe" title="Value Space (Publish and Subscribe)" level="1"/>
-            <contents name="architecture" title="Architecture" level="2"/>
-            <contents name="shared-memory-layer" title="Shared Memory Layer" level="3"/>
+            <contents name="examples" title="Examples" level="1"/>
+            <contents name="bearer-cloud-example" title="Bearer Cloud Example" level="2"/>
+            <contents name="bearer-monitor-example" title="Bearer Monitor Example" level="2"/>
+            <contents name="classes" title="Classes" level="1"/>
+        </page>
+        <page access="public" status="commendable" name="systeminfo.html" href="systeminfo.html" subtype="page" title="System Information" fulltitle="System Information" subtitle="" location="si.qdoc">
             <contents name="system-information" title="System Information" level="1"/>
             <contents name="building-and-compiling" title="Building and compiling" level="1"/>
             <contents name="reference-documentation" title="Reference documentation" level="1"/>
-            <contents name="main-classes" title="Main classes" level="2"/>
             <contents name="examples" title="Examples" level="2"/>
+        </page>
+        <page access="public" status="commendable" name="bluetoothtransferplugin" href="bluetoothtransferplugin.html" subtype="example" title="Bluetooth Transfer Plugin Example" fulltitle="Bluetooth Transfer Plugin Example" subtitle="" location="bluetoothtransferplugin.qdoc">
+            <page access="public" status="commendable" name="bluetoothtransferplugin/bluetoothtransfer.cpp" href="bluetoothtransferplugin-bluetoothtransfer-cpp.html" subtype="file" title="" fulltitle="bluetoothtransfer.cpp Example File" subtitle="bluetoothtransferplugin/bluetoothtransfer.cpp" location=""/>
+            <page access="public" status="commendable" name="bluetoothtransferplugin/bluetoothtransfer.h" href="bluetoothtransferplugin-bluetoothtransfer-h.html" subtype="file" title="" fulltitle="bluetoothtransfer.h Example File" subtitle="bluetoothtransferplugin/bluetoothtransfer.h" location=""/>
+            <page access="public" status="commendable" name="bluetoothtransferplugin/bluetoothtransferplugin.cpp" href="bluetoothtransferplugin-bluetoothtransferplugin-cpp.html" subtype="file" title="" fulltitle="bluetoothtransferplugin.cpp Example File" subtitle="bluetoothtransferplugin/bluetoothtransferplugin.cpp" location=""/>
+            <page access="public" status="commendable" name="bluetoothtransferplugin/bluetoothtransferplugin.h" href="bluetoothtransferplugin-bluetoothtransferplugin-h.html" subtype="file" title="" fulltitle="bluetoothtransferplugin.h Example File" subtitle="bluetoothtransferplugin/bluetoothtransferplugin.h" location=""/>
+            <page access="public" status="commendable" name="bluetoothtransferplugin/bluetoothtransferplugin.pro" href="bluetoothtransferplugin-bluetoothtransferplugin-pro.html" subtype="file" title="" fulltitle="bluetoothtransferplugin.pro Example File" subtitle="bluetoothtransferplugin/bluetoothtransferplugin.pro" location=""/>
+        </page>
+        <page access="public" status="commendable" name="mobility" href="mobility.html" subtype="group" title="Qt Mobility APIs" fulltitle="Qt Mobility APIs" subtitle="" location="index.qdoc"/>
+        <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Overview" fulltitle="Qt Mobility Overview" subtitle="" location="index.qdoc">
+            <contents name="mobility-component-apis" title="Mobility Component APIs" level="1"/>
+            <contents name="overview" title="Overview" level="1"/>
+            <contents name="bearer-management" title="Bearer Management" level="1"/>
+            <contents name="contacts" title="Contacts" level="1"/>
+            <contents name="context-publish-and-subscribe" title="Context (Publish and Subscribe)" level="1"/>
+            <contents name="location" title="Location" level="1"/>
+            <contents name="messaging" title="Messaging" level="1"/>
+            <contents name="multimedia" title="Multimedia" level="1"/>
+            <contents name="service-framework" title="Service Framework" level="1"/>
+        </page>
+        <page access="public" status="commendable" name="bearercloud" href="bearercloud.html" subtype="example" title="Bearer Cloud Example" fulltitle="Bearer Cloud Example" subtitle="" location="bearercloud.qdoc">
+            <contents name="setting-the-scene" title="Setting the scene" level="1"/>
+            <contents name="responding-to-changes" title="Responding to changes" level="1"/>
+            <page access="public" status="commendable" name="bearercloud/bearercloud.cpp" href="bearercloud-bearercloud-cpp.html" subtype="file" title="" fulltitle="bearercloud.cpp Example File" subtitle="bearercloud/bearercloud.cpp" location=""/>
+            <page access="public" status="commendable" name="bearercloud/bearercloud.h" href="bearercloud-bearercloud-h.html" subtype="file" title="" fulltitle="bearercloud.h Example File" subtitle="bearercloud/bearercloud.h" location=""/>
+            <page access="public" status="commendable" name="bearercloud/cloud.cpp" href="bearercloud-cloud-cpp.html" subtype="file" title="" fulltitle="cloud.cpp Example File" subtitle="bearercloud/cloud.cpp" location=""/>
+            <page access="public" status="commendable" name="bearercloud/cloud.h" href="bearercloud-cloud-h.html" subtype="file" title="" fulltitle="cloud.h Example File" subtitle="bearercloud/cloud.h" location=""/>
+            <page access="public" status="commendable" name="bearercloud/lan.svg" href="bearercloud-lan-svg.html" subtype="file" title="" fulltitle="lan.svg Example File" subtitle="bearercloud/lan.svg" location=""/>
+            <page access="public" status="commendable" name="bearercloud/unknown.svg" href="bearercloud-unknown-svg.html" subtype="file" title="" fulltitle="unknown.svg Example File" subtitle="bearercloud/unknown.svg" location=""/>
+            <page access="public" status="commendable" name="bearercloud/wlan.svg" href="bearercloud-wlan-svg.html" subtype="file" title="" fulltitle="wlan.svg Example File" subtitle="bearercloud/wlan.svg" location=""/>
+            <page access="public" status="commendable" name="bearercloud/main.cpp" href="bearercloud-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="bearercloud/main.cpp" location=""/>
+            <page access="public" status="commendable" name="bearercloud/bearercloud.pro" href="bearercloud-bearercloud-pro.html" subtype="file" title="" fulltitle="bearercloud.pro Example File" subtitle="bearercloud/bearercloud.pro" location=""/>
+            <page access="public" status="commendable" name="bearercloud/icons.qrc" href="bearercloud-icons-qrc.html" subtype="file" title="" fulltitle="icons.qrc Example File" subtitle="bearercloud/icons.qrc" location=""/>
+        </page>
+        <page access="public" status="commendable" name="filemanagerplugin" href="filemanagerplugin.html" subtype="example" title="File Manager Plugin Example" fulltitle="File Manager Plugin Example" subtitle="" location="filemanagerplugin.qdoc">
+            <page access="public" status="commendable" name="filemanagerplugin/filemanagerplugin.cpp" href="filemanagerplugin-filemanagerplugin-cpp.html" subtype="file" title="" fulltitle="filemanagerplugin.cpp Example File" subtitle="filemanagerplugin/filemanagerplugin.cpp" location=""/>
+            <page access="public" status="commendable" name="filemanagerplugin/filemanagerplugin.h" href="filemanagerplugin-filemanagerplugin-h.html" subtype="file" title="" fulltitle="filemanagerplugin.h Example File" subtitle="filemanagerplugin/filemanagerplugin.h" location=""/>
+            <page access="public" status="commendable" name="filemanagerplugin/filemanagerstorage.cpp" href="filemanagerplugin-filemanagerstorage-cpp.html" subtype="file" title="" fulltitle="filemanagerstorage.cpp Example File" subtitle="filemanagerplugin/filemanagerstorage.cpp" location=""/>
+            <page access="public" status="commendable" name="filemanagerplugin/filemanagerstorage.h" href="filemanagerplugin-filemanagerstorage-h.html" subtype="file" title="" fulltitle="filemanagerstorage.h Example File" subtitle="filemanagerplugin/filemanagerstorage.h" location=""/>
+            <page access="public" status="commendable" name="filemanagerplugin/filemanagertransfer.cpp" href="filemanagerplugin-filemanagertransfer-cpp.html" subtype="file" title="" fulltitle="filemanagertransfer.cpp Example File" subtitle="filemanagerplugin/filemanagertransfer.cpp" location=""/>
+            <page access="public" status="commendable" name="filemanagerplugin/filemanagertransfer.h" href="filemanagerplugin-filemanagertransfer-h.html" subtype="file" title="" fulltitle="filemanagertransfer.h Example File" subtitle="filemanagerplugin/filemanagertransfer.h" location=""/>
+            <page access="public" status="commendable" name="filemanagerplugin/filemanagerplugin.pro" href="filemanagerplugin-filemanagerplugin-pro.html" subtype="file" title="" fulltitle="filemanagerplugin.pro Example File" subtitle="filemanagerplugin/filemanagerplugin.pro" location=""/>
+        </page>
+        <page access="public" status="commendable" name="publish-subscribe" href="publish-subscribe.html" subtype="example" title="Publish and Subscribe Example" fulltitle="Publish and Subscribe Example" subtitle="" location="publish-subscribe.qdoc">
+            <page access="public" status="commendable" name="publish-subscribe/consumerdialog.cpp" href="publish-subscribe-consumerdialog-cpp.html" subtype="file" title="" fulltitle="consumerdialog.cpp Example File" subtitle="publish-subscribe/consumerdialog.cpp" location=""/>
+            <page access="public" status="commendable" name="publish-subscribe/consumerdialog.h" href="publish-subscribe-consumerdialog-h.html" subtype="file" title="" fulltitle="consumerdialog.h Example File" subtitle="publish-subscribe/consumerdialog.h" location=""/>
+            <page access="public" status="commendable" name="publish-subscribe/providerdialog.cpp" href="publish-subscribe-providerdialog-cpp.html" subtype="file" title="" fulltitle="providerdialog.cpp Example File" subtitle="publish-subscribe/providerdialog.cpp" location=""/>
+            <page access="public" status="commendable" name="publish-subscribe/providerdialog.h" href="publish-subscribe-providerdialog-h.html" subtype="file" title="" fulltitle="providerdialog.h Example File" subtitle="publish-subscribe/providerdialog.h" location=""/>
+            <page access="public" status="commendable" name="publish-subscribe/main.cpp" href="publish-subscribe-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="publish-subscribe/main.cpp" location=""/>
+            <page access="public" status="commendable" name="publish-subscribe/publish-subscribe.pro" href="publish-subscribe-publish-subscribe-pro.html" subtype="file" title="" fulltitle="publish-subscribe.pro Example File" subtitle="publish-subscribe/publish-subscribe.pro" location=""/>
+        </page>
+        <page access="public" status="commendable" name="servicebrowser" href="servicebrowser.html" subtype="example" title="Service Browser Example" fulltitle="Service Browser Example" subtitle="" location="servicebrowser.qdoc">
+            <contents name="servicebrowser-class-definition" title="ServiceBrowser Class Definition" level="1"/>
+            <contents name="servicebrowser-class-implementation" title="ServiceBrowser Class Implementation" level="1"/>
+            <contents name="invoking-attributes-an-example" title="Invoking attributes: an example" level="2"/>
+            <page access="public" status="commendable" name="servicebrowser/servicebrowser.cpp" href="servicebrowser-servicebrowser-cpp.html" subtype="file" title="" fulltitle="servicebrowser.cpp Example File" subtitle="servicebrowser/servicebrowser.cpp" location=""/>
+            <page access="public" status="commendable" name="servicebrowser/servicebrowser.h" href="servicebrowser-servicebrowser-h.html" subtype="file" title="" fulltitle="servicebrowser.h Example File" subtitle="servicebrowser/servicebrowser.h" location=""/>
+            <page access="public" status="commendable" name="servicebrowser/main.cpp" href="servicebrowser-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="servicebrowser/main.cpp" location=""/>
+            <page access="public" status="commendable" name="servicebrowser/servicebrowser.pro" href="servicebrowser-servicebrowser-pro.html" subtype="file" title="" fulltitle="servicebrowser.pro Example File" subtitle="servicebrowser/servicebrowser.pro" location=""/>
         </page>
         <page access="public" status="commendable" name="bearermonitor" href="bearermonitor.html" subtype="example" title="Bearer Monitor Example" fulltitle="Bearer Monitor Example" subtitle="" location="bearermonitor.qdoc">
             <page access="public" status="commendable" name="bearermonitor/bearerdialog.cpp" href="bearermonitor-bearerdialog-cpp.html" subtype="file" title="" fulltitle="bearerdialog.cpp Example File" subtitle="bearermonitor/bearerdialog.cpp" location=""/>
@@ -1298,5 +1304,39 @@
             <page access="public" status="commendable" name="bearermonitor/main.cpp" href="bearermonitor-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="bearermonitor/main.cpp" location=""/>
             <page access="public" status="commendable" name="bearermonitor/bearermonitor.pro" href="bearermonitor-bearermonitor-pro.html" subtype="file" title="" fulltitle="bearermonitor.pro Example File" subtitle="bearermonitor/bearermonitor.pro" location=""/>
         </page>
+        <page access="public" status="commendable" name="battery-charge" href="battery-charge.html" subtype="example" title="Accessing Publish and Subscribe from QML" fulltitle="Accessing Publish and Subscribe from QML" subtitle="" location="battery-charge.qdoc">
+            <page access="public" status="commendable" name="battery-charge/battery-consumer/batterycharge.cpp" href="battery-charge-battery-consumer-batterycharge-cpp.html" subtype="file" title="" fulltitle="batterycharge.cpp Example File" subtitle="battery-charge/battery-consumer/batterycharge.cpp" location=""/>
+            <page access="public" status="commendable" name="battery-charge/battery-consumer/batterycharge.h" href="battery-charge-battery-consumer-batterycharge-h.html" subtype="file" title="" fulltitle="batterycharge.h Example File" subtitle="battery-charge/battery-consumer/batterycharge.h" location=""/>
+            <page access="public" status="commendable" name="battery-charge/battery-provider/batteryprovider.cpp" href="battery-charge-battery-provider-batteryprovider-cpp.html" subtype="file" title="" fulltitle="batteryprovider.cpp Example File" subtitle="battery-charge/battery-provider/batteryprovider.cpp" location=""/>
+            <page access="public" status="commendable" name="battery-charge/battery-provider/batteryprovider.h" href="battery-charge-battery-provider-batteryprovider-h.html" subtype="file" title="" fulltitle="batteryprovider.h Example File" subtitle="battery-charge/battery-provider/batteryprovider.h" location=""/>
+            <page access="public" status="commendable" name="battery-charge/battery-consumer/main.cpp" href="battery-charge-battery-consumer-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="battery-charge/battery-consumer/main.cpp" location=""/>
+            <page access="public" status="commendable" name="battery-charge/battery-charge.pro" href="battery-charge-battery-charge-pro.html" subtype="file" title="" fulltitle="battery-charge.pro Example File" subtitle="battery-charge/battery-charge.pro" location=""/>
+            <page access="public" status="commendable" name="battery-charge/battery-consumer/battery-consumer.pro" href="battery-charge-battery-consumer-battery-consumer-pro.html" subtype="file" title="" fulltitle="battery-consumer.pro Example File" subtitle="battery-charge/battery-consumer/battery-consumer.pro" location=""/>
+            <page access="public" status="commendable" name="battery-charge/battery-consumer/battery-consumer.qrc" href="battery-charge-battery-consumer-battery-consumer-qrc.html" subtype="file" title="" fulltitle="battery-consumer.qrc Example File" subtitle="battery-charge/battery-consumer/battery-consumer.qrc" location=""/>
+            <page access="public" status="commendable" name="battery-charge/battery-provider/battery-provider.pro" href="battery-charge-battery-provider-battery-provider-pro.html" subtype="file" title="" fulltitle="battery-provider.pro Example File" subtitle="battery-charge/battery-provider/battery-provider.pro" location=""/>
+        </page>
+        <page access="public" status="commendable" name="location" href="location.html" subtype="group" title="Qt Mobility Location API" fulltitle="Qt Mobility Location API" subtitle="" location="location.qdoc"/>
+        <page access="public" status="commendable" name="location-overview.html" href="location-overview.html" subtype="page" title="Location" fulltitle="Location" subtitle="" location="location.qdoc">
+            <contents name="overview" title="Overview" level="1"/>
+            <contents name="requesting-location-data-from-data-sources" title="Requesting location data from data sources" level="2"/>
+            <contents name="controlling-aspects-of-data-sources" title="Controlling aspects of data sources" level="2"/>
+            <contents name="reading-nmea-data" title="Reading NMEA data" level="2"/>
+            <contents name="example-creating-a-custom-location-data-source" title="Example: Creating a custom location data source" level="1"/>
+            <contents name="classes" title="Classes" level="1"/>
+        </page>
+        <page access="public" status="commendable" name="publ-subs.html" href="publ-subs.html" subtype="page" title="Publish-Subscribe" fulltitle="Publish-Subscribe" subtitle="" location="publ-subs.qdoc">
+            <contents name="overview" title="Overview" level="1"/>
+            <contents name="architecture" title="Architecture" level="1"/>
+            <contents name="shared-memory-layer" title="Shared Memory Layer" level="1"/>
+            <contents name="examples" title="Examples" level="1"/>
+            <contents name="publish-and-subscribe" title="Publish and Subscribe" level="2"/>
+            <contents name="using-publish-and-subscribe-from-qml" title="Using Publish and Subscribe from QML" level="2"/>
+            <contents name="classes" title="Classes" level="1"/>
+        </page>
+        <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_AUTO_INSTALL_LAYER" href="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER" location="" virtual="non" meta="macrowithparams" const="false" static="false" overload="false" relates="QAbstractValueSpaceLayer" type="" signature="QVALUESPACE_AUTO_INSTALL_LAYER( className)">
+            <parameter left="" right="" name="className" default=""/>
+        </function>
+        <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_SHAREDMEMORY_LAYER" href="qvaluespace.html#QVALUESPACE_SHAREDMEMORY_LAYER" location="qvaluespace.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QValueSpace" type="" signature="QVALUESPACE_SHAREDMEMORY_LAYER()"/>
+        <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_REGISTRY_LAYER" href="qvaluespace.html#QVALUESPACE_REGISTRY_LAYER" location="qvaluespace.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QValueSpace" type="" signature="QVALUESPACE_REGISTRY_LAYER()"/>
     </namespace>
 </INDEX>

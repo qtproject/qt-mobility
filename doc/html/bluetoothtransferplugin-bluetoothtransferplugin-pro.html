@@ -24,9 +24,15 @@
     DESTDIR = .
 
     include(../examples.pri)
-    LIBS += -lQtServiceFramework
+    qtAddLibrary(QtServiceFramework)
 
     symbian {
+        load(data_caging_paths)
+        pluginDep.sources = serviceframework_bluetoothtransferplugin.dll
+        pluginDep.path = $$QT_PLUGINS_BASE_DIR
+        DEPLOYMENT += pluginDep
+
+        TARGET.EPOCALLOWDLLDATA = 1
         TARGET.CAPABILITY = ALL -TCB
     }
 
