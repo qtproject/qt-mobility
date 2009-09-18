@@ -43,7 +43,7 @@
 #include <QtGui>
 
 PhoneBook::PhoneBook(QWidget *parent)
-    : QWidget(parent), addingContact(false), dialog(0), editingContact(false)
+    : QWidget(parent), dialog(0), addingContact(false), editingContact(false)
 {
 
     QVBoxLayout *layout = new QVBoxLayout;
