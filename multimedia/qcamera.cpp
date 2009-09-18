@@ -230,20 +230,12 @@ void QCamera::unlockFocus()
     Returns a list of camera device's available.
 */
 
-QList<QString> QCamera::deviceList()
+QStringList QCamera::devices() const
 {
-    Q_D(QCamera);
+    if(d_func()->service)
+        return d_func()->service->supportedEndpoints(QAbstractMediaService::VideoInput);
 
-    QList<QString> list;
-
-    if(d->service) {
-        QCameraService* serv = qobject_cast<QCameraService*>(d->service);
-        if (serv) {
-            list << serv->supportedEndpoints(QAbstractMediaService::VideoInput);
-        }
-    }
-
-    return list;
+    return QStringList();
 }
 
 /*!
@@ -254,18 +246,18 @@ void QCamera::setDevice(const QString& device)
 {
     Q_D(QCamera);
 
-    if(d->control)
-        d->control->setDevice(device);
+    if (d->service)
+        d->service->setActiveEndpoint(QAbstractMediaService::VideoInput, device);
 }
 
 /*!
     Returns the description of the \a device.
 */
 
-QString QCamera::deviceDescription(const QString &device)
+QString QCamera::deviceDescription(const QString &device) const
 {
     Q_UNUSED(device);
-    return QString();
+    return device;
 }
 
 QCamera::State QCamera::state() const

@@ -130,9 +130,9 @@ public:
     QCamera(QObject *parent = 0, QAbstractMediaService *service = 0);
     ~QCamera();
 
-    QList<QString> deviceList();
+    QStringList devices() const;
+    QString deviceDescription(const QString &device) const;
     void setDevice(const QString& device);
-    QString deviceDescription(const QString &device);
 
     bool isValid() const;
     QAbstractMediaService* service() const;
