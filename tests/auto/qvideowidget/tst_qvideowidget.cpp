@@ -203,6 +203,7 @@ class QtTestRendererControl;
 
 class QtTestVideoService : public QAbstractMediaService
 {
+    Q_OBJECT
 public:
     QtTestVideoService(
             QtTestOutputControl *output,
@@ -251,13 +252,15 @@ public:
 
 class QtTestVideoObject : public QAbstractMediaObject
 {
+    Q_OBJECT
 public:
     QtTestVideoObject(
             QtTestWindowControl *window,
             QtTestWidgetControl *widget,
-            QtTestRendererControl *renderer)
-        : testService(new QtTestVideoService(new QtTestOutputControl, window, widget, renderer))
+            QtTestRendererControl *renderer):
+        QAbstractMediaObject(0, new QtTestVideoService(new QtTestOutputControl, window, widget, renderer))
     {
+        testService = qobject_cast<QtTestVideoService*>(service());
         QList<QVideoOutputControl::Output> outputs;
 
         if (window)
@@ -270,19 +273,17 @@ public:
         testService->outputControl->setAvailableOutputs(outputs);
     }
 
-    QtTestVideoObject(QtTestVideoService *service)
-        : testService(service)
+    QtTestVideoObject(QtTestVideoService *service):
+        QAbstractMediaObject(0, service),
+        testService(service)
     {
     }
 
     ~QtTestVideoObject()
     {
-        delete testService;
     }
 
     bool isValid() const { return true; }
-
-    QAbstractMediaService *service() const { return testService; }
 
     QtTestVideoService *testService;
 };

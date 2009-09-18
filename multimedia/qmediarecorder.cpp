@@ -36,12 +36,11 @@
 
 #include "qmediarecordercontrol.h"
 #include "qabstractmediaobject_p.h"
-#include "qaudiorecorderservice.h"
 #include "qmediaserviceprovider.h"
+#include "qabstractmediaservice.h"
 #include "qaudioencodercontrol.h"
 #include "qvideoencodercontrol.h"
 #include "qmediaformatcontrol.h"
-#include "qmediarecorderservice.h"
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qurl.h>
@@ -62,25 +61,6 @@
 
     \sa
 */
-
-QMediaRecorderService *createMediaRecorderService()
-{
-    QMediaServiceProvider *provider = defaultServiceProvider("mediarecorder");
-
-    QObject *object = provider ? provider->createObject(QAudioRecorderService_iid) : 0;
-
-    if (object != 0) {
-        QMediaRecorderService *service = qobject_cast<QMediaRecorderService*>(object);
-
-        if (service != 0)
-            return service;
-
-        delete object;
-    }
-
-    return 0;
-}
-
 
 class QMediaRecorderPrivate : public QAbstractMediaObjectPrivate
 {
@@ -166,33 +146,19 @@ void QMediaRecorderPrivate::_q_error(int error, const QString &errorString)
 */
 
 QMediaRecorder::QMediaRecorder(QAbstractMediaObject *mediaObject):
-    QAbstractMediaObject(*new QMediaRecorderPrivate, mediaObject)
+    QAbstractMediaObject(*new QMediaRecorderPrivate, mediaObject, mediaObject->service())
 {
     Q_D(QMediaRecorder);
 
-    d->service = mediaObject->service();
     Q_ASSERT(d->service != 0);
-    d->ownService = false;
 
     d->initControls();
 }
 
-/*!
-    Construct a media recorder object with \a service and \a parent.
-*/
-
-QMediaRecorder::QMediaRecorder(QObject *parent, QMediaRecorderService *service):
-    QAbstractMediaObject(*new QMediaRecorderPrivate, parent)
+QMediaRecorder::QMediaRecorder(QObject *parent, QMediaServiceProvider *provider):
+    QAbstractMediaObject(*new QMediaRecorderPrivate, parent, provider->createService("mediarecorder"))
 {
     Q_D(QMediaRecorder);
-
-    if (service) {
-        d->service = service;
-        d->ownService = false;
-    } else {
-        d->service = createMediaRecorderService();
-        d->ownService = true;
-    }
 
     Q_ASSERT(d->service != 0);
 

@@ -19,24 +19,20 @@ HEADERS = \
     qabstractmediaobject_p.h \
     qabstractmediaservice.h \
     qabstractmediaservice_p.h  \
-    qaudiorecorderservice.h \
     qlocalmediaplaylistprovider.h \
     qmediametadata.h \
     qmetadataprovidercontrol.h \
     qmediaplayer.h \
     qmediaplayercontrol.h \
-    qmediaplayerservice.h \
     qmediaplaylist.h \
     qmediaplaylist_p.h \
     qmediaplaylistnavigator.h \
     qmediaplaylistprovider.h \
     qmediaplaylistprovider_p.h \
     qmediaplaylistioplugin.h \
-    qmediaproviderfactory_p.h \
     qmediasource.h \
     qmediaresource.h \
     qmediarecorder.h \
-    qmediarecorderservice.h \
     qmediarecordercontrol.h \
     qmediaserviceprovider.h \
     qmediaserviceproviderplugin.h \
@@ -44,7 +40,6 @@ HEADERS = \
     qmediaslideshowservice_p.h \
     qmultimediaglobal.h \
     qradioplayer.h \
-    qradioservice.h \
     qradioplayercontrol.h \
     qvideooutputcontrol.h \
     qvideowidget.h \
@@ -59,7 +54,6 @@ HEADERS = \
     qcameraexposurecontrol.h \
     qcamerafocuscontrol.h \
     qimageprocessingcontrol.h \
-    qcameraservice.h \
     qmediaformatcontrol.h \
     qmediaplaylistcontrol.h \
     qaudiodevicecontrol.h \
@@ -69,20 +63,16 @@ HEADERS = \
 SOURCES = qabstractmediacontrol.cpp \
     qabstractmediaobject.cpp \
     qabstractmediaservice.cpp \
-    qaudiorecorderservice.cpp \
     qlocalmediaplaylistprovider.cpp \
     qmediametadata.cpp \
     qmetadataprovidercontrol.cpp \
     qmediaplayer.cpp \
     qmediaplayercontrol.cpp \
-    qmediaplayerservice.cpp \
     qmediaplaylist.cpp \
     qmediaplaylistioplugin.cpp \
     qmediaplaylistnavigator.cpp \
     qmediaplaylistprovider.cpp \
-    qmediaproviderfactory.cpp \
     qmediarecorder.cpp \
-    qmediarecorderservice.cpp \
     qmediarecordercontrol.cpp \
     qmediasource.cpp \
     qmediaresource.cpp \
@@ -90,7 +80,6 @@ SOURCES = qabstractmediacontrol.cpp \
     qmediaslideshow.cpp \
     qmediaslideshowservice.cpp \
     qradioplayer.cpp \
-    qradioservice.cpp \
     qradioplayercontrol.cpp \
     qvideooutputcontrol.cpp \
     qvideowidget.cpp \
@@ -104,7 +93,6 @@ SOURCES = qabstractmediacontrol.cpp \
     qcameraexposurecontrol.cpp \
     qcamerafocuscontrol.cpp \
     qimageprocessingcontrol.cpp \
-    qcameraservice.cpp \
     qmediaformatcontrol.cpp \
     qmediaplaylistcontrol.cpp \
     qaudiodevicecontrol.cpp \

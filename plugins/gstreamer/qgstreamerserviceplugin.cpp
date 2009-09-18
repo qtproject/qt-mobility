@@ -47,27 +47,6 @@
 #include <qmediaserviceprovider.h>
 
 
-class QGstreamerProvider : public QMediaServiceProvider
-{
-    Q_OBJECT
-public:
-    QObject* createObject(const char *interface) const
-    {
-#ifdef QMEDIA_GSTREAMER_PLAYER
-        if (QLatin1String(interface) == QLatin1String(QMediaPlayerService_iid))
-            return new QGstreamerPlayerService;
-#endif
-#ifdef QMEDIA_GSTREAMER_CAPTURE
-        if (QLatin1String(interface) == QLatin1String(QAudioRecorderService_iid))
-            return new QGstreamerCaptureService(interface);
-
-        if (QLatin1String(interface) == QLatin1String(QCameraService_iid))
-            return new QGstreamerCaptureService(interface);
-#endif
-        return 0;
-    }
-};
-
 QStringList QGstreamerServicePlugin::keys() const
 {
     return QStringList()
@@ -82,25 +61,23 @@ QStringList QGstreamerServicePlugin::keys() const
             ;
 }
 
-QMediaServiceProvider* QGstreamerServicePlugin::create(QString const& key)
+QAbstractMediaService* QGstreamerServicePlugin::create(QString const& key)
 {
-    if (false
 #ifdef QMEDIA_GSTREAMER_PLAYER
-            || key == QLatin1String("mediaplayer")
-            || key == QLatin1String("gstreamermediaplayer")
+    if (key == QLatin1String("mediaplayer"))
+        return new QGstreamerPlayerService;
 #endif
 #ifdef QMEDIA_GSTREAMER_CAPTURE
-            || key == QLatin1String("audiorecorder")
-            || key == QLatin1String("camera")
+//    if (key == QLatin1String("mediarecorder"))
+//        return new QGstreamerCaptureService(interface);
+
+//    if (key == QLatin1String("camera"))
+//        return new QGstreamerCaptureService(interface);
 #endif
-            )
-        return new QGstreamerProvider;
 
     qDebug() << "unsupported key:" << key;
     return 0;
 }
-
-#include "qgstreamerserviceplugin.moc"
 
 Q_EXPORT_PLUGIN2(gstengine, QGstreamerServicePlugin);
 

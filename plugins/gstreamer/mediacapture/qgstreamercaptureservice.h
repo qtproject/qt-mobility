@@ -35,8 +35,7 @@
 #ifndef QGSTREAMERCAPTURESERVICE_H
 #define QGSTREAMERCAPTURESERVICE_H
 
-#include "qaudiorecorderservice.h"
-#include "qcameraservice.h"
+#include <qabstractmediaservice.h>
 #include "qgstreamervideooutputcontrol.h"
 
 #include <gst/gst.h>
@@ -52,7 +51,7 @@ class QGstreamerVideoWidgetControl;
 class QGstreamerElementFactory;
 class QGstreamerCaptureMetadataControl;
 
-class QGstreamerCaptureService : public QCameraService
+class QGstreamerCaptureService : public QAbstractMediaService
 {
 Q_OBJECT
 public:

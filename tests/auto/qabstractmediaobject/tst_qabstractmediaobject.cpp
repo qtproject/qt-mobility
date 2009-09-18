@@ -60,9 +60,8 @@ class QtTestMediaObject : public QAbstractMediaObject
     Q_PROPERTY(int b READ b WRITE setB NOTIFY bChanged)
     Q_PROPERTY(int c READ c WRITE setC NOTIFY cChanged)
 public:
-    QtTestMediaObject() : m_a(0), m_b(0), m_c(0) {}
+    QtTestMediaObject(): QAbstractMediaObject(0, 0), m_a(0), m_b(0), m_c(0) {}
 
-    QAbstractMediaService* service() const { return 0; }
     bool isValid() const { return true; }
 
     using QAbstractMediaObject::addPropertyWatch;

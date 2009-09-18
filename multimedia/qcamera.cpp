@@ -40,7 +40,6 @@
 #include "qcameracontrol.h"
 #include "qcameraexposurecontrol.h"
 #include "qcamerafocuscontrol.h"
-#include "qcameraservice.h"
 #include "qmediarecordercontrol.h"
 #include "qimageprocessingcontrol.h"
 
@@ -54,26 +53,6 @@
     \sa
 */
 
-/*!
-    \a internal
-*/
-
-QCameraService* createCameraService()
-{
-    QMediaServiceProvider *provider = defaultServiceProvider("camera");
-    QObject *object = provider ? provider->createObject(QCameraService_iid) : 0;
-
-    if (object != 0) {
-        QCameraService *service = qobject_cast<QCameraService*>(object);
-
-        if (service)
-            return service;
-
-        delete object;
-    }
-
-    return 0;
-}
 
 class QCameraPrivate : public QAbstractMediaObjectPrivate
 {
@@ -83,25 +62,16 @@ public:
     QCameraExposureControl *exposureControl;
     QCameraFocusControl *focusControl;
     QImageProcessingControl *imageControl;
-    bool ownService;
 };
 
 /*!
     Construct a QCamera from \a service with \a parent.
 */
 
-QCamera::QCamera(QObject *parent, QAbstractMediaService *service):
-    QAbstractMediaObject(*new QCameraPrivate, parent)
+QCamera::QCamera(QObject *parent, QMediaServiceProvider *provider):
+    QAbstractMediaObject(*new QCameraPrivate, parent, provider->createService("camea"))
 {
     Q_D(QCamera);
-
-    if (service) {
-        d->service = service;
-        d->ownService = false;
-    } else {
-        d->service = createCameraService();
-        d->ownService = true;
-    }
 
     Q_ASSERT(d->service != 0);
 
@@ -138,12 +108,6 @@ QCamera::QCamera(QObject *parent, QAbstractMediaService *service):
 
 QCamera::~QCamera()
 {
-    Q_D(QCamera);
-
-    if (d->ownService) {
-        delete d->service;
-        d->service = 0;
-    }
 }
 
 /*!
@@ -232,12 +196,8 @@ QList<QString> QCamera::deviceList()
 
     QList<QString> list;
 
-    if(d->service) {
-        QCameraService* serv = qobject_cast<QCameraService*>(d->service);
-        if (serv) {
-            list << serv->supportedEndpoints(QAbstractMediaService::VideoInput);
-        }
-    }
+    if (isValid())
+        list << d->service->supportedEndpoints(QAbstractMediaService::VideoInput);
 
     return list;
 }
@@ -674,15 +634,6 @@ bool QCamera::isExposureLocked() const
 bool QCamera::isFocusLocked() const
 {
     return d_func()->focusControl ? d_func()->focusControl->isFocusLocked() : true;
-}
-
-/*!
-    Returns the session object being controlled by this recorder.
-*/
-
-QAbstractMediaService *QCamera::service() const
-{
-    return d_func()->service;
 }
 
 

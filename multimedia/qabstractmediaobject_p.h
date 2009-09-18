@@ -64,6 +64,7 @@ public:
     QTimer* notifyTimer;
     QList<QByteArray>   notifyProperties;
 
+    QAbstractMediaService *service;
     QAbstractMediaObject *q_ptr;
 };
 

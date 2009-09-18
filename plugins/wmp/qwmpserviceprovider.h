@@ -38,20 +38,13 @@
 #include "qmediaserviceprovider.h"
 #include "qmediaserviceproviderplugin.h"
 
-class QWmpServiceProvider : public QMediaServiceProvider
-{
-    Q_OBJECT
-public:
-    QObject* createObject(const char *iid) const;
-};
-
 
 class QWmpServiceProviderPlugin : public QMediaServiceProviderPlugin
 {
     Q_OBJECT
 public:
     QStringList keys() const;
-    QMediaServiceProvider *create(const QString &key);
+    QAbstractMediaService *create(const QString &key);
 };
 
 #endif

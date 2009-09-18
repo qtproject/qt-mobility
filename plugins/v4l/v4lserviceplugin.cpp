@@ -44,40 +44,22 @@
 #include <qmediaserviceprovider.h>
 
 
-class V4LProvider : public QMediaServiceProvider
-{
-    Q_OBJECT
-public:
-    QObject* createObject(const char *interface) const
-    {
-        if (qstrcmp(interface,QRadioService_iid) == 0)
-            return new V4LRadioService;
-
-        if (qstrcmp(interface,QCameraService_iid) == 0)
-            return new V4LCameraService;
-
-        return 0;
-    }
-};
-
 QStringList V4LServicePlugin::keys() const
 {
-    QStringList list;
-    list << QLatin1String("radio");
-    list << QLatin1String("camera");
-    return list;
+    return QStringList() << QLatin1String("radio") << QLatin1String("camera");
 }
 
-QMediaServiceProvider* V4LServicePlugin::create(QString const& key)
+QAbstractMediaService* V4LServicePlugin::create(QString const& key)
 {
-    if (key == QLatin1String("radio") || key == QLatin1String("camera"))
-        return new V4LProvider;
+    if (key == "radio")
+        return new V4LRadioService;
+
+    if (key == "camera")
+        return new V4LCameraService;
 
     qDebug() << "unsupported key:" << key;
     return 0;
 }
-
-#include "v4lserviceplugin.moc"
 
 Q_EXPORT_PLUGIN2(v4lengine, V4LServicePlugin);
 

@@ -110,8 +110,8 @@ private:
 };
 
 
-QGstreamerCaptureService::QGstreamerCaptureService(const char *interface, QObject *parent)
-    :QCameraService(parent)
+QGstreamerCaptureService::QGstreamerCaptureService(const char *interface, QObject *parent):
+    QAbstractMediaService(parent)
 {
     static bool initialized = false;
     if (!initialized) {
@@ -119,16 +119,16 @@ QGstreamerCaptureService::QGstreamerCaptureService(const char *interface, QObjec
         gst_init(NULL, NULL);
     }
 
-    if (QLatin1String(interface) == QLatin1String(QAudioRecorderService_iid)) {
-        m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::Audio, this);
-        m_cameraControl = 0;
-    }
+//    if (QLatin1String(interface) == QLatin1String(QAudioRecorderService_iid)) {
+//        m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::Audio, this);
+//        m_cameraControl = 0;
+//    }
 
-    if (QLatin1String(interface) == QLatin1String(QCameraService_iid)) {
+ //   if (QLatin1String(interface) == QLatin1String(QCameraService_iid)) {
         m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::AudioAndVideo, this);
         m_cameraControl = new QGstreamerCameraControl(m_captureSession);
         m_captureSession->setVideoInput(m_cameraControl);
-    }
+ //   }
 
     m_videoOutput = new QGstreamerVideoOutputControl(this);
     connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),

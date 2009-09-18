@@ -38,13 +38,16 @@
 #include <QtCore/qobject.h>
 #include <multimedia/qmultimediaglobal.h>
 
+class QAbstractMediaService;
+
 class Q_MEDIA_EXPORT QMediaServiceProvider : public QObject
 {
     Q_OBJECT
-public:
-    virtual QObject* createObject(const char *iid) const = 0;
-};
 
-extern Q_MEDIA_EXPORT QMediaServiceProvider *defaultServiceProvider(const char *type);
+public:
+    virtual QAbstractMediaService* createService(const QByteArray &type, const QList<QByteArray> &optional = QList<QByteArray>()) const = 0;
+
+    static QMediaServiceProvider* defaultServiceProvider();
+};
 
 #endif  // QMEDIASERVICEPROVIDER_H

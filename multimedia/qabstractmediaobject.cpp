@@ -87,12 +87,22 @@ QAbstractMediaObject::~QAbstractMediaObject()
     Returns the media service that provide the functionality for the Multimedia object.
 */
 
+QAbstractMediaService* QAbstractMediaObject::service() const
+{
+    return d_func()->service;
+}
+
 /*!
     \fn bool QAbstractMediaObject::isValid() const
 
     Returns true if the concrete media object is capable of normal operation;
     false otherwise.
 */
+
+bool QAbstractMediaObject::isValid() const
+{
+    return d_func()->service != 0;
+}
 
 
 int QAbstractMediaObject::notifyInterval() const
@@ -123,9 +133,9 @@ void QAbstractMediaObject::bind(QObject*)
     base class for Multimedia objects so this constructor is protected.
 */
 
-QAbstractMediaObject::QAbstractMediaObject(QObject *parent)
-    : QObject(parent)
-    , d_ptr(new QAbstractMediaObjectPrivate)
+QAbstractMediaObject::QAbstractMediaObject(QObject *parent, QAbstractMediaService *service):
+    QObject(parent),
+    d_ptr(new QAbstractMediaObjectPrivate)
 
 {
     Q_D(QAbstractMediaObject);
@@ -135,15 +145,18 @@ QAbstractMediaObject::QAbstractMediaObject(QObject *parent)
     d->notifyTimer = new QTimer(this);
     d->notifyTimer->setInterval(1000);
     connect(d->notifyTimer, SIGNAL(timeout()), SLOT(_q_notify()));
+
+    d->service = service;
 }
 
 /*!
     \internal
 */
 
-QAbstractMediaObject::QAbstractMediaObject(QAbstractMediaObjectPrivate &dd, QObject *parent)
-    : QObject(parent)
-    , d_ptr(&dd)
+QAbstractMediaObject::QAbstractMediaObject(QAbstractMediaObjectPrivate &dd, QObject *parent,
+                                            QAbstractMediaService *service):
+    QObject(parent),
+    d_ptr(&dd)
 {
     Q_D(QAbstractMediaObject);
     d->q_ptr = this;
@@ -151,6 +164,8 @@ QAbstractMediaObject::QAbstractMediaObject(QAbstractMediaObjectPrivate &dd, QObj
     d->notifyTimer = new QTimer(this);
     d->notifyTimer->setInterval(1000);
     connect(d->notifyTimer, SIGNAL(timeout()), SLOT(_q_notify()));
+
+    d->service = service;
 }
 
 /*!

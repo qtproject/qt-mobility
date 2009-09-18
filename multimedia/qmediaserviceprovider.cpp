@@ -32,11 +32,37 @@
 **
 ****************************************************************************/
 
-#include "qmediaserviceprovider.h"
-#include "qmediaproviderfactory_p.h"
+#include <QtCore/qdebug.h>
 
-QMediaServiceProvider *defaultServiceProvider(const char *type)
+#include "qmediaserviceprovider.h"
+#include "qmediaserviceproviderplugin.h"
+#include "qmediapluginloader_p.h"
+
+Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, loader,
+        (QMediaServiceProviderFactoryInterface_iid, QLatin1String("/mediaservice"), Qt::CaseInsensitive))
+
+
+class QPluginServiceProvider : public QMediaServiceProvider
 {
-    return QMediaProviderFactory::defaultServiceProvider(QLatin1String(type));
+public:
+    QAbstractMediaService* createService(const QByteArray &type, const QList<QByteArray> &optional) const
+    {
+        QString key(type);
+        QMediaServiceProviderPlugin *plugin =
+            qobject_cast<QMediaServiceProviderPlugin*>(loader()->instance(key));
+
+        if (plugin != 0)
+            return plugin->create(key);
+
+        qWarning() << "defaultServiceProvider::createService(): no plugin found for -" << key;
+        return 0;
+    }
+};
+Q_GLOBAL_STATIC(QPluginServiceProvider, pluginProvider);
+
+
+QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()
+{
+    return pluginProvider();
 }
 

@@ -127,7 +127,7 @@ public:
 
     Q_PROPERTY(QCamera::State state READ state NOTIFY stateChanged)
 
-    QCamera(QObject *parent = 0, QAbstractMediaService *service = 0);
+    QCamera(QObject *parent = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
     ~QCamera();
 
     QList<QString> deviceList();
@@ -135,7 +135,6 @@ public:
     QString deviceDescription(const QString &device);
 
     bool isValid() const;
-    QAbstractMediaService* service() const;
 
     void start();
     void stop();

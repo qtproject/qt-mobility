@@ -38,8 +38,7 @@
 #include <QtCore/qobject.h>
 #include <QtCore/qiodevice.h>
 
-#include "qmediaplayerservice.h"
-
+#include <qabstractmediaservice.h>
 #include "qgstreamervideooutputcontrol.h"
 
 class QMediaMetaData;
@@ -58,7 +57,7 @@ class QGstreamerVideoWidgetControl;
 
 class QMediaPlaylistNavigator;
 
-class QGstreamerPlayerService : public QMediaPlayerService
+class QGstreamerPlayerService : public QAbstractMediaService
 {
     Q_OBJECT
 public:

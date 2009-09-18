@@ -213,14 +213,13 @@ void QMediaSlideShowPrivate::_q_getFinished()
     Constructs a new slide show with the given \a parent.
 */
 QMediaSlideShow::QMediaSlideShow(QObject *parent)
-    : QAbstractMediaObject(*new QMediaSlideShowPrivate, parent)
+    : QAbstractMediaObject(*new QMediaSlideShowPrivate, parent, new QMediaSlideShowService)
 {
     Q_D(QMediaSlideShow);
 
     d->network = new QNetworkAccessManager(this);
     d->playlist = new QLocalMediaPlaylistProvider;
 
-    d->service = new QMediaSlideShowService;
     d->service->setNetworkManager(d->network);
 
     d->slideControl = qobject_cast<QMediaSlideShowControl*>(d->service->control(QMediaSlideShowControl_iid));

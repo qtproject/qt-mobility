@@ -41,7 +41,6 @@
 #include "qmediasource.h"
 
 
-class QMediaPlayerService;
 class QMediaPlaylist;
 
 
@@ -94,7 +93,7 @@ public:
         AccessDeniedError
     };
 
-    QMediaPlayer(QObject *parent = 0, QMediaPlayerService *service = 0);
+    QMediaPlayer(QObject *parent = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
     ~QMediaPlayer();
 
     bool isValid() const;
@@ -118,8 +117,6 @@ public:
 
     Error error() const;
     QString errorString() const;
-
-    QAbstractMediaService* service() const;
 
 public Q_SLOTS:
     void play();

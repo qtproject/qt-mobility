@@ -36,9 +36,8 @@
 
 #include "qabstractmediaobject_p.h"
 #include "qradioplayercontrol.h"
-#include "qradioservice.h"
 
-#include <QDebug>
+
 
 /*!
     \class QRadioPlayer
@@ -64,32 +63,12 @@
 
 */
 
-/*!
-    \a internal
-*/
-
-QRadioService* createRadioService()
-{
-    QMediaServiceProvider *provider = defaultServiceProvider("radio");
-    QObject *object = provider ? provider->createObject(QRadioService_iid) : 0;
-
-    if (object != 0) {
-        QRadioService *service = qobject_cast<QRadioService*>(object);
-
-        if (service != 0)
-            return service;
-
-        delete object;
-    }
-
-    return 0;
-}
-
 
 class QRadioPlayerPrivate : public QAbstractMediaObjectPrivate
 {
 public:
-    QRadioService*  service;
+    QRadioPlayerPrivate():service(0), control(0) {}
+    QAbstractMediaService*  service;
     QRadioPlayerControl* control;
     bool ownService;
 };
@@ -97,40 +76,32 @@ public:
 
 
 /*!
-    Contruct a QRadioPlayer object with \a service and \a parent.
+    Construct a QRadioPlayer object with \a service and \a parent.
 
     If the service is not specified the system default will be used.
 */
 
-QRadioPlayer::QRadioPlayer(QObject *parent, QRadioService* service):
-    QAbstractMediaObject(*new QRadioPlayerPrivate, parent)
+QRadioPlayer::QRadioPlayer(QObject *parent, QMediaServiceProvider* provider):
+    QAbstractMediaObject(*new QRadioPlayerPrivate, parent, provider->createService("radio"))
 {
     Q_D(QRadioPlayer);
 
-    if (service) {
-        d->service = service;
-        d->ownService = false;
-    } else {
-        d->service = createRadioService();
-        d->ownService = true;
-    }
-
     Q_ASSERT(d->service != 0);
 
-    if (d->service) {
+    if (d->service != 0) {
         d->control = qobject_cast<QRadioPlayerControl*>(d->service->control(QRadioPlayerControl_iid));
-        connect(d->control, SIGNAL(bandChanged(QRadioPlayer::Band)), SIGNAL(bandChanged(QRadioPlayer::Band)));
-        connect(d->control, SIGNAL(frequencyChanged(int)), SIGNAL(frequencyChanged(int)));
-        connect(d->control, SIGNAL(stereoStatusChanged(bool)), SIGNAL(stereoStatusChanged(bool)));
-        connect(d->control, SIGNAL(searchingStatusChanged(bool)), SIGNAL(searchingStatusChanged(bool)));
-        connect(d->control, SIGNAL(signalStrengthChanged(int)), SIGNAL(signalStrengthChanged(int)));
-        connect(d->control, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
-        connect(d->control, SIGNAL(volumeChanged(int)), SIGNAL(volumeChanged(int)));
-        connect(d->control, SIGNAL(mutingChanged(bool)), SIGNAL(mutingChanged(bool)));
+        if (d->control != 0) {
+            connect(d->control, SIGNAL(bandChanged(QRadioPlayer::Band)), SIGNAL(bandChanged(QRadioPlayer::Band)));
+            connect(d->control, SIGNAL(frequencyChanged(int)), SIGNAL(frequencyChanged(int)));
+            connect(d->control, SIGNAL(stereoStatusChanged(bool)), SIGNAL(stereoStatusChanged(bool)));
+            connect(d->control, SIGNAL(searchingStatusChanged(bool)), SIGNAL(searchingStatusChanged(bool)));
+            connect(d->control, SIGNAL(signalStrengthChanged(int)), SIGNAL(signalStrengthChanged(int)));
+            connect(d->control, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
+            connect(d->control, SIGNAL(volumeChanged(int)), SIGNAL(volumeChanged(int)));
+            connect(d->control, SIGNAL(mutingChanged(bool)), SIGNAL(mutingChanged(bool)));
 
-        addPropertyWatch("duration");
-    } else {
-        d->control = 0;
+            addPropertyWatch("duration");
+        }
     }
 }
 
@@ -140,10 +111,6 @@ QRadioPlayer::QRadioPlayer(QObject *parent, QRadioService* service):
 
 QRadioPlayer::~QRadioPlayer()
 {
-    Q_D(QRadioPlayer);
-
-    if (d->ownService)
-        delete d->service;
 }
 
 /*!
@@ -256,15 +223,6 @@ bool QRadioPlayer::isMuted() const
 }
 
 /*!
-    Returns pointer to service class.
-*/
-
-QAbstractMediaService* QRadioPlayer::service() const
-{
-    return d_func()->service;
-}
-
-/*!
     Sets the band being used to \a band.
 */
 
@@ -316,7 +274,7 @@ void QRadioPlayer::setMuted(bool muted)
 
 bool QRadioPlayer::isValid() const
 {
-    return d_func()->control != NULL;
+    return QAbstractMediaObject::isValid() && d_func()->control != 0;
 }
 
 /*!

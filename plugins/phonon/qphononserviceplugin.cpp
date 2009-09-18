@@ -41,34 +41,19 @@
 #include <qmediaserviceprovider.h>
 
 
-class QPhononProvider : public QMediaServiceProvider
-{
-    Q_OBJECT
-public:
-    QObject* createObject(const char *interface) const
-    {
-        if (QLatin1String(interface) == QLatin1String(QMediaPlayerService_iid))
-            return new QPhononPlayerService;
-
-        return 0;
-    }
-};
-
 QStringList QPhononServicePlugin::keys() const
 {
     return QStringList() << "mediaplayer";
 }
 
-QMediaServiceProvider* QPhononServicePlugin::create(QString const& key)
+QAbstractMediaService* QPhononServicePlugin::create(QString const& key)
 {
-    if (key == "mediaplayer")
-        return new QPhononProvider;
+    if (key == QLatin1String("mediaplayer"))
+        return new QPhononPlayerService;
 
     qDebug() << "unsupported key:" << key;
     return 0;
 }
-
-#include "qphononserviceplugin.moc"
 
 Q_EXPORT_PLUGIN2(phonon_serviceplugin, QPhononServicePlugin);
 
