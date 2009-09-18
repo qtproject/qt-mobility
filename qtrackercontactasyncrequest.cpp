@@ -49,6 +49,14 @@ void applyFilterToRDFVariable(RDFVariable &variable,
                 // TODO figure out how to use filter, now only exact match
                 rdfPhoneNumber.property<nco::phoneNumber>() = LiteralValue(filt.value().toString());
             }
+            else if( QContactEmailAddress::DefinitionName == filt.detailDefinitionName()
+                    && QContactEmailAddress::FieldEmailAddress == filt.detailFieldName() )
+            {
+                RDFVariable rdfEmailAddress;
+                rdfEmailAddress = variable.property<nco::hasEmailAddress>();
+                // TODO figure out how to use filter, now only exact match
+                rdfEmailAddress.property<nco::emailAddress>() = LiteralValue(filt.value().toString());
+            }
             else
                 qWarning()<<"QContactTrackerEngine: Unsupported QContactFilter::ContactDetail"<<filt.detailDefinitionName();
         }
@@ -82,6 +90,26 @@ RDFSelect preparePhoneNumbersQuery(RDFVariable &rdfcontact1, bool forAffiliation
     return queryidsnumbers;
 }
 
+RDFSelect prepareEmailAddressesQuery(RDFVariable &rdfcontact1, bool forAffiliations)
+{
+    RDFVariable email;
+    if( !forAffiliations )
+        email = rdfcontact1.property<nco::hasEmailAddress>();
+    else
+        email = rdfcontact1.property<nco::hasAffiliation>().property<nco::hasEmailAddress>();
+    const RDFVariable& type = email.type();
+    type.property<rdfs::subClassOf>().notEqual(nco::Resource::iri()); // sparql cannot handle exact type but returns all super types as junk rows
+    // therefore we eliminate those rows that are not of interest
+    // columns
+    RDFSelect queryidsnumbers;
+    queryidsnumbers.addColumn("contactId", rdfcontact1.property<nco::contactUID> ());
+    queryidsnumbers.addColumn("emailaddress", email.property<nco::emailAddress> ());
+    rdfcontact1.property<nco::hasEmailAddress> ().isOfType( nco::EmailAddress::iri(), true);
+    queryidsnumbers.addColumn("type", type);
+    queryidsnumbers.distinct();
+    return queryidsnumbers;
+}
+
 RDFSelect prepareIMAccountsQuery(RDFVariable &rdfcontact1, bool forAffiliations)
 {
     RDFVariable imaccount;
@@ -107,7 +135,9 @@ RDFSelect prepareIMAccountsQuery(RDFVariable &rdfcontact1, bool forAffiliations)
 
 QTrackerContactAsyncRequest::QTrackerContactAsyncRequest(
         QContactAbstractRequest* request, QContactManagerEngine* parent) :
-    QObject(parent), queryPhoneNumbersNodesReady(false)
+    QObject(parent),
+    queryPhoneNumbersNodesReady(false),
+    queryEmailAddressNodesReady(false)
 {
     req = request;
     switch (req->type())
@@ -159,6 +189,24 @@ QTrackerContactAsyncRequest::QTrackerContactAsyncRequest(
                 }
             }
 
+            if (r->definitionRestrictions().contains(QContactEmailAddress::DefinitionName))
+            {
+                queryEmailAddressNodes.clear();
+                queryEmailAddressNodesReady = 0;
+                for (int forAffiliations = 0; forAffiliations <= 1; forAffiliations++ )
+                {
+                    // prepare query to get all email addresses
+                    RDFVariable rdfcontact1 = RDFVariable::fromType<nco::PersonContact>();
+                    applyFilterToRDFVariable(rdfcontact1,r->filter());
+                    // criteria - only those with email addresses
+                    RDFSelect queryidsnumbers = prepareEmailAddressesQuery(rdfcontact1, forAffiliations);
+                    queryEmailAddressNodes<< ::tracker()->modelQuery(queryidsnumbers);
+                    // need to store LiveNodes in order to receive notification from model
+                    QObject::connect(queryEmailAddressNodes[forAffiliations].model(), SIGNAL(modelUpdated()), this,
+                            SLOT(emailAddressesReady()));
+                }
+            }
+
             if (r->definitionRestrictions().contains(QContactPresence::DefinitionName)
                     || r->definitionRestrictions().contains(QContactOnlineAccount::DefinitionName))
             {
@@ -198,10 +246,6 @@ QTrackerContactAsyncRequest::QTrackerContactAsyncRequest(
                 quer.addColumn("country", address.optional().property<nco::country>());
                 quer.addColumn("pcode", address.optional().property<nco::postalcode>());
                 quer.addColumn("reg", address.optional().property<nco::region>());
-            }
-            if (r->definitionRestrictions().contains(QContactEmailAddress::DefinitionName))
-            {
-                quer.addColumn("email", RDFContact.optional().property<nco::hasEmailAddress>().property<nco::emailAddress>());
             }
             if (r->definitionRestrictions().contains(QContactUrl::DefinitionName))
             {
@@ -312,19 +356,7 @@ void QTrackerContactAsyncRequest::contactsReady()
     {
         QContact contact; // one we will be filling with this row
         int column = 0;
-/*        qDebug() << Q_FUNC_INFO << "row"
-                << query->index(i, column).data().toString() << query->index(i,
-                column + 1).data().toString()
-                << query->index(i, column + 2).data().toString()
-                << query->index(i, column + 3).data().toString()
-                << query->index(i, column + 4).data().toString()
-                << query->index(i, column + 5).data().toString()
-                << query->index(i, column + 6).data().toString()
-                << query->index(i, column + 7).data().toString()
-                << query->index(i, column + 8).data().toString()
-                << query->index(i, column + 9).data().toString()
-                << query->index(i, column + 10).data().toString();
-*/
+
         contact.setId(query->index(i, column++).data().toUInt());
         bool ok;
         QUniqueId contactid = query->index(i, 0).data().toUInt(&ok);
@@ -381,6 +413,7 @@ void QTrackerContactAsyncRequest::contactsReady()
                     contact.saveDetail(&a);
             }
         }
+        /*
         if (request->definitionRestrictions().contains(QContactEmailAddress::DefinitionName))
         {
             // no office mails yet
@@ -393,7 +426,7 @@ void QTrackerContactAsyncRequest::contactsReady()
                     contact.saveDetail(&mail);
                 }
             }
-        }
+            }*/
         if (request->definitionRestrictions().contains(QContactUrl::DefinitionName))
         {
             QContactUrl url;
@@ -450,6 +483,13 @@ void QTrackerContactAsyncRequest::contactsReady()
         for( int cnt = 0; cnt < queryPhoneNumbersNodes.size(); cnt++)
             processQueryPhoneNumbers(queryPhoneNumbersNodes[cnt], result, cnt);
     }
+    if(request->definitionRestrictions().contains( QContactEmailAddress::DefinitionName ))
+    {
+        qDebug() << "processQueryEmailAddresses";
+        Q_ASSERT(queryEmailAddressNodes.size() == 2);
+        for( int cnt = 0; cnt < queryEmailAddressNodes.size(); cnt++)
+            processQueryEmailAddresses(queryEmailAddressNodes[cnt], result, cnt);
+    }
     if (request->definitionRestrictions().contains(QContactPresence::DefinitionName)
             || request->definitionRestrictions().contains(QContactOnlineAccount::DefinitionName))
     {
@@ -467,6 +507,11 @@ void QTrackerContactAsyncRequest::contactsReady()
 void QTrackerContactAsyncRequest::phoneNumbersReady()
 {
     queryPhoneNumbersNodesReady++;
+}
+
+void QTrackerContactAsyncRequest::emailAddressesReady()
+{
+    queryEmailAddressNodesReady++;
 }
 
 void QTrackerContactAsyncRequest::iMAcountsReady()
@@ -502,7 +547,9 @@ const QString rdfPhoneType2QContactSubtype(const QString rdfPhoneType)
     return "";
 }
 
-void QTrackerContactAsyncRequest::processQueryPhoneNumbers(SopranoLive::LiveNodes queryPhoneNumbers, QList<QContact>& contacts, bool officeStuff)
+void QTrackerContactAsyncRequest::processQueryPhoneNumbers(SopranoLive::LiveNodes queryPhoneNumbers,
+                                                           QList<QContact>& contacts,
+                                                           bool affiliationNumbers )
 {
     Q_ASSERT_X( queryPhoneNumbersNodesReady==2, Q_FUNC_INFO, "Phonenumbers query was supposed to be ready and it is not." );
     for(int i = 0; i < queryPhoneNumbers->rowCount(); i++)
@@ -525,7 +572,7 @@ void QTrackerContactAsyncRequest::processQueryPhoneNumbers(SopranoLive::LiveNode
             if( contacts[j].id() == contactid )
             {
                 QContactPhoneNumber number;
-                if( officeStuff )
+                if( affiliationNumbers )
                     number.setContexts(QContactPhoneNumber::ContextWork);
                 else
                     number.setContexts(QContactPhoneNumber::ContextHome);
@@ -538,7 +585,52 @@ void QTrackerContactAsyncRequest::processQueryPhoneNumbers(SopranoLive::LiveNode
     }
 }
 
-void QTrackerContactAsyncRequest::processQueryIMAccounts(SopranoLive::LiveNodes queryIMAccounts, QList<QContact>& contacts, bool officeStuff)
+void QTrackerContactAsyncRequest::processQueryEmailAddresses( SopranoLive::LiveNodes queryEmailAddresses,
+                                                              QList<QContact>& contacts,
+                                                              bool affiliationEmails)
+{
+    Q_ASSERT_X( queryEmailAddressNodesReady==2, Q_FUNC_INFO, "Email query was supposed to be ready and it is not." );
+    for(int i = 0; i < queryEmailAddresses->rowCount(); i++)
+    {
+        qDebug()<< Q_FUNC_INFO << i
+                << queryEmailAddresses->rowCount()
+                << queryEmailAddresses->columnCount()
+                << queryEmailAddresses->index(i, 0).data().toString()
+                << queryEmailAddresses->index(i, 1).data().toString()
+                << queryEmailAddresses->index(i, 2).data().toString();
+        // ignore if next one is the same - asked iridian about making query to ignore supertypes
+        // TODO remove after his answer
+        if( i-1 >= 0
+            && queryEmailAddresses->index(i, 0).data().toString() == queryEmailAddresses->index(i-1, 0).data().toString()
+            && queryEmailAddresses->index(i, 1).data().toString() == queryEmailAddresses->index(i-1, 1).data().toString())
+        {
+            continue; // this is for ignoring duplicates. bad approach, asked iridian about how to eliminate super types in query results
+        }
+
+        //QString subtype = rdfPhoneType2QContactSubtype(queryEmailAddresses->index(i, 2).data().toString());
+        QUniqueId contactid = queryEmailAddresses->index(i, 0).data().toUInt();
+        // TODO replace this lookup with something faster
+        for( int j = 0; j < contacts.size(); j++)
+        {
+            if( contacts[j].id() == contactid )
+            {
+                QContactEmailAddress email;
+                if( affiliationEmails )
+                    email.setContexts(QContactEmailAddress::ContextWork);
+                else
+                    email.setContexts(QContactEmailAddress::ContextHome);
+                email.setEmailAddress(queryEmailAddresses->index(i, 1).data().toString());
+                //email.setSubTypes(subtype);
+                contacts[j].saveDetail(&email);
+                break;
+            }
+        }
+    }
+}
+
+void QTrackerContactAsyncRequest::processQueryIMAccounts(SopranoLive::LiveNodes queryIMAccounts,
+                                                         QList<QContact>& contacts,
+                                                         bool affiliationAccounts )
 {
     Q_ASSERT_X( queryIMAccountNodesReady==2, Q_FUNC_INFO, "IMAccount query was supposed to be ready and it is not." );
     for(int i = 0; i < queryIMAccounts->rowCount(); i++)
@@ -554,7 +646,7 @@ void QTrackerContactAsyncRequest::processQueryIMAccounts(SopranoLive::LiveNodes 
             {
                 // TODo replace when QtMobility guys implement support for IMAccount
                 QContactOnlineAccount account;
-                if( officeStuff )
+                if( affiliationAccounts )
                     account.setContexts(QContactOnlineAccount::ContextWork);
                 account.setValue("Account", queryIMAccounts->index(i, 1).data().toString()); // IMId
                 account.setValue("AccountPath", queryIMAccounts->index(i, 5).data().toString()); // getImAccountType?
@@ -562,7 +654,7 @@ void QTrackerContactAsyncRequest::processQueryIMAccounts(SopranoLive::LiveNodes 
                 contacts[j].saveDetail(&account);
                 contacts[j].saveDetail(&account);
                 QContactPresence presence;
-                if( officeStuff )
+                if( affiliationAccounts )
                     presence.setContexts(QContactPresence::ContextWork);
                 presence.setValue(QContactPresence::FieldNickname, queryIMAccounts->index(i, 4).data().toString()); // nick
                 presence.setValue(QContactPresence::FieldPresence, queryIMAccounts->index(i, 2).data().toString()); // imStatus

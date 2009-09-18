@@ -490,6 +490,8 @@ void QContactTrackerEngine::saveContactDetails( RDFServicePtr service,
                                                 QContact* contact,
                                                 QContactManager::Error& error )
 {
+    // TODO There is no error handling nor reporting
+    error = QContactManager::NoError;
     QStringList detailDefinitionsToSave = detailsDefinitionsInContact(*contact);
 
     foreach(QString definition, detailDefinitionsToSave)
@@ -655,6 +657,7 @@ QList<QContactManager::Error> QContactTrackerEngine::saveContacts(QList<QContact
         } else {
             // No error while saving.
             errorList.append(QContactManager::NoError);
+            (*contacts)[i].setId(contact.id());
         }
         groupsChanged += changedGroup4One;
         contactsAdded += added4One;
