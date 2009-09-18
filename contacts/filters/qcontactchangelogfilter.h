@@ -36,6 +36,8 @@
 
 #include "qcontactfilter.h"
 
+#include <QDateTime>
+
 class QContactChangeLogFilterPrivate;
 class QTCONTACTS_EXPORT QContactChangeLogFilter: public QContactFilter
 {

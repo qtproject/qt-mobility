@@ -76,7 +76,7 @@ public:
     bool operator!=(const QContactFilter& other) const {return !operator==(other);}
 
 protected:
-    QContactFilter(QContactFilterPrivate* d);
+    explicit QContactFilter(QContactFilterPrivate* d);
 
 protected:
     friend class QContactFilterPrivate;
