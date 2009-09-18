@@ -225,7 +225,7 @@ QMediaSource QWmpPlayerControl::media() const
     return resources;
 }
 
-const QIODevice *mediaStream() const
+const QIODevice *QWmpPlayerControl::mediaStream() const
 {
     return 0;
 }
