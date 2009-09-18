@@ -31,8 +31,7 @@ symbian {
                     dberror.cpp \
                     ../qsfwtestutil.cpp
 
-    HEADERS += databasemanager_s60.h \
-               databasemanager_s60.h \
+    HEADERS += databasemanager_s60_p.h \
                dberror.h \
                ../qsfwtestutil.h
                

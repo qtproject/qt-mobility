@@ -38,7 +38,7 @@
 #include <qservicefilter.h>
 #include "../qsfwtestutil.h"
 #include "servicemetadata_p.h"
-#include "databasemanager_s60.h"
+#include "databasemanager_s60_p.h"
 
 class DatabaseManagerUnitTest: public QObject
 {
