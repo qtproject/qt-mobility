@@ -566,13 +566,13 @@ MapiFolderPtr MapiFolder::nextSubFolder(QMessageStore::ErrorCode *lastError, con
                 bool isNewsGroup = (row->lpProps[1].ulPropTag == PR_IS_NEWSGROUP && row->lpProps[1].Value.b);
                 bool isNewsGroupAnchor = (row->lpProps[2].ulPropTag == PR_IS_NEWSGROUP_ANCHOR && row->lpProps[2].Value.b);
                 bool special = false;
-#ifndef _WIN32_WCE // Skip slow folders, necessary evil
+// Skip slow folders, necessary evil
+// TODO handle special folders without the PR_EXTENDED_FOLDER_FLAGS property
+#ifndef _WIN32_WCE 
                 if (row->lpProps[3].ulPropTag == PR_EXTENDED_FOLDER_FLAGS) {
                     QByteArray extendedFlags(reinterpret_cast<const char*>(row->lpProps[3].Value.bin.lpb), row->lpProps[3].Value.bin.cb);
                     if (extendedFlags[2] & 8) // Synchronization issues, skip like Outlook
                         special = true;
-                } else {
-                    special = true;
                 }
 #endif
                 FreeProws(rows);
