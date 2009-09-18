@@ -207,49 +207,25 @@ bool QAbstractMediaService::setActiveEndpoint(QAbstractMediaService::MediaEndpoi
 
     switch(endpointType) {
         case QAbstractMediaService::AudioInput:
-            if(audioControl) {
-                numDevices = audioControl->deviceCount();
-                for(int i=0;i<numDevices;i++) {
-                    if(qstrcmp(endpoint.toLocal8Bit().constData(),audioControl->name(i).toLocal8Bit().constData()) == 0) {
-                        audioControl->setSelectedDevice(i);
-                        return true;
-                        break;
-                    }
-                }
-            }
-            break;
         case QAbstractMediaService::AudioOutput:
             if(audioControl) {
                 numDevices = audioControl->deviceCount();
                 for(int i=0;i<numDevices;i++) {
-                    if(qstrcmp(endpoint.toLocal8Bit().constData(),audioControl->name(i).toLocal8Bit().constData()) == 0) {
+                    if (endpoint == audioControl->name(i)) {
                         audioControl->setSelectedDevice(i);
                         return true;
-                        break;
                     }
                 }
             }
             break;
         case QAbstractMediaService::VideoInput:
-            if(videoControl) {
-                numDevices = videoControl->deviceCount();
-                for(int i=0;i<numDevices;i++) {
-                    if(qstrcmp(endpoint.toLocal8Bit().constData(),videoControl->name(i).toLocal8Bit().constData()) == 0) {
-                        videoControl->setSelectedDevice(i);
-                        return true;
-                        break;
-                    }
-                }
-            }
-            break;
         case QAbstractMediaService::VideoOutput:
             if(videoControl) {
                 numDevices = videoControl->deviceCount();
                 for(int i=0;i<numDevices;i++) {
-                    if(qstrcmp(endpoint.toLocal8Bit().constData(),videoControl->name(i).toLocal8Bit().constData()) == 0) {
+                    if (endpoint == videoControl->name(i)) {
                         videoControl->setSelectedDevice(i);
                         return true;
-                        break;
                     }
                 }
             }
