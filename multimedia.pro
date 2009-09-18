@@ -11,3 +11,7 @@ SUBDIRS = \
 plugins.depends = multimedia
 examples.depends = multimedia
 test.depends = multimedia
+
+symbian {
+ MMP_RULES += EXPORTUNFROZEN
+}

@@ -120,3 +120,12 @@ contains(QT_CONFIG, multimedia) {
     HEADERS += qaudioformat.h
     SOURCES += qaudioformat.cpp
 }
+
+symbian: {
+    qtmobilitymultimedia.sources = QtMedia.dll
+    qtmobilitymultimedia.path = "/sys/bin"    
+
+    DEPLOYMENT += qtmobilitymultimedia    
+    TARGET.EPOCALLOWDLLDATA = 1
+    TARGET.CAPABILITY = ALL -TCB
+}

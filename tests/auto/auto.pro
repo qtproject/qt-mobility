@@ -22,3 +22,10 @@ contains(QT_CONFIG, multimedia) {
             qgraphicsvideoitem \
             qpaintervideosurface
 }
+
+symbian {
+SUBDIRS -= \
+        qmediaplaylistnavigator \
+        qcamera \
+
+}

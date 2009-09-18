@@ -25,3 +25,9 @@ unix:!mac {
     contains(QT_CONFIG, phonon): SUBDIRS += phonon
     contains(QT_CONFIG, multimedia): SUBDIRS += audiocapture
 }
+
+symbian: {
+    SUBDIRS -= phonon
+    SUBDIRS -= audiocapture
+    SUBDIRS += symbian
+}
