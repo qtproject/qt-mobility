@@ -55,3 +55,8 @@ LIBS += -L$$DESTDIR
 
 DEPENDPATH += . $$SOURCE_DIR
 INCLUDEPATH += . $$SOURCE_DIR
+
+#For some reason the default include path doesn't include MOC_DIR on symbian
+symbian {
+   INCLUDEPATH += $$MOC_DIR
+}

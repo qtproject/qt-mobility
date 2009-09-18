@@ -1,10 +1,9 @@
 TEMPLATE = subdirs
 SUBDIRS += servicemetadata \
-       servicedatabase \
-       databasemanager \
-       qserviceinterfacedescriptor \
-       qservicefilter \
-       qservicemanager \
-       qabstractsecuritysession \
-       qservicecontext
-
+           servicedatabase \
+           servicemetadata \
+           qserviceinterfacedescriptor \
+           qservicefilter \
+           qservicemanager \
+           qabstractsecuritysession \
+           qservicecontext
