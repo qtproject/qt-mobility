@@ -7,7 +7,7 @@ QT = core network gui
 INCLUDEPATH += ../../../systeminfo
 
 include(../../../common.pri)
-LIBS += -lQtSystemInfo
+qtAddLibrary(QtSystemInfo)
 
 symbian {
     TARGET.CAPABILITY = All -TCB -DRM

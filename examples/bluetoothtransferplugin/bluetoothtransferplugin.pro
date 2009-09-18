@@ -9,7 +9,7 @@ TARGET = serviceframework_bluetoothtransferplugin
 DESTDIR = .
 
 include(../examples.pri)
-LIBS += -lQtServiceFramework
+qtAddLibrary(QtServiceFramework)
 
 symbian {
     load(data_caging_paths)

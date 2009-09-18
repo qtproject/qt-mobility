@@ -18,7 +18,7 @@ HEADERS += tst_qvaluespaceitemshared.h
 
 DEFINES += QT_START_VALUESPACE
 
-LIBS += -lQtContextFramework
+qtAddLibrary(QtContextFramework)
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

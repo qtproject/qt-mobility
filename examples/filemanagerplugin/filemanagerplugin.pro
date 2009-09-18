@@ -11,7 +11,7 @@ TARGET = serviceframework_filemanagerplugin
 DESTDIR = .
 
 include(../examples.pri)
-LIBS += -lQtServiceFramework
+qtAddLibrary(QtServiceFramework)
 
 symbian {
     load(data_caging_paths)

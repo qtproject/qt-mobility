@@ -7,6 +7,6 @@ INCLUDEPATH += ../../serviceframework
 SOURCES=servicefw.cpp
 
 include(../../common.pri)
-LIBS += -lQtServiceFramework
+qtAddLibrary(QtServiceFramework)
 
 include(../../features/deploy.pri)

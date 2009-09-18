@@ -13,6 +13,7 @@ SOURCES=\
     vsexplorer.cpp
 
 include(../../common.pri)
-LIBS += -lQtContextFramework
+
+qtAddLibrary(QtContextFramework)
 
 include(../../features/deploy.pri)

@@ -11,5 +11,5 @@ CONFIG+= testcase
 
 include(../../../../common.pri)
 
-LIBS += -lQtContextFramework
+qtAddLibrary(QtContextFramework)
 

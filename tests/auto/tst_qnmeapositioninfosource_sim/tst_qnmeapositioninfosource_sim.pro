@@ -16,7 +16,7 @@ SOURCES += ../qgeopositioninfosourcesubclasstest.cpp \
            ../qlocationtestutils.cpp \
            tst_qnmeapositioninfosource_sim.cpp
 
-LIBS += -lQtLocation
+qtAddLibrary(QtLocation)
 
 symbian {
         TARGET.CAPABILITY = ALL -TCB

@@ -16,7 +16,7 @@ INCLUDEPATH += ../../bearer
 
 include(../examples.pri)
 
-LIBS += -lQtBearer
+qtAddLibrary(QtBearer)
 win32:!wince*:LIBS += -lWs2_32
 wince*:LIBS += -lWs2
 

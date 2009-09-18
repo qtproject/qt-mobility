@@ -15,6 +15,6 @@ INCLUDEPATH += ../../bearer
 
 include(../examples.pri)
 
-LIBS += -lQtBearer
+qtAddLibrary(QtBearer)
 
 CONFIG += console

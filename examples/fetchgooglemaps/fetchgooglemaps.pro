@@ -8,7 +8,7 @@ SOURCES = mapwindow.cpp \
           main.cpp
 
 include(../examples.pri)
-LIBS += -lQtLocation
+qtAddLibrary(QtLocation)
 
 logfile.path = $$DESTDIR
 logfile.files = nmealog.txt

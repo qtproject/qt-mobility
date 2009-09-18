@@ -14,7 +14,7 @@ SOURCES += tst_qservicemanager.cpp \
            ../../sampleserviceplugin/sampleserviceplugin.cpp \
            ../qsfwtestutil.cpp
 
-LIBS += -lQtServiceFramework
+qtAddLibrary(QtServiceFramework)
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

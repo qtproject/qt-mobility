@@ -9,7 +9,7 @@ DESTDIR = .
 CONFIG += testcase
 
 include(../../common.pri)
-LIBS += -lQtServiceFramework
+qtAddLibrary(QtServiceFramework)
 
 xml.path = $$DESTDIR/xmldata
 xml.files = xml/testserviceplugin.xml

@@ -8,7 +8,7 @@ QT = core network
 INCLUDEPATH += ../../../bearer
 
 include(../../../common.pri)
-LIBS += -lQtBearer
+qtAddLibrary(QtBearer)
 
 symbian {
     TARGET.CAPABILITY = NetworkServices NetworkControl ReadUserData 

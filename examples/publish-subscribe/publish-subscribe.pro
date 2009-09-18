@@ -14,4 +14,4 @@ FORMS = providerdialog.ui \
         consumerdialog.ui
 
 include(../examples.pri)
-LIBS += -lQtContextFramework
+qtAddLibrary(QtContextFramework)

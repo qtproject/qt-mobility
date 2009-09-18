@@ -3,7 +3,7 @@ TARGET = battery-consumer
 QT += declarative
 INCLUDEPATH += ../../../context
 include(../../../common.pri)
-LIBS += -lQtContextFramework
+qtAddLibrary(QtContextFramework)
 SOURCES = main.cpp \
     batterycharge.cpp
 RESOURCES = battery-consumer.qrc

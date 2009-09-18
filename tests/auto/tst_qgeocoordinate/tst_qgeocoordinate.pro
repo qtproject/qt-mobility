@@ -11,7 +11,7 @@ HEADERS += ../qlocationtestutils_p.h
 SOURCES += tst_qgeocoordinate.cpp \
            ../qlocationtestutils.cpp
 
-LIBS += -lQtLocation
+qtAddLibrary(QtLocation)
 
 symbian {
     INCLUDEPATH += /epoc32/include/osextensions

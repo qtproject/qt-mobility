@@ -10,4 +10,4 @@ SOURCES = main.cpp \
 FORMS = batteryprovider.ui
 
 include(../../../common.pri)
-LIBS += -lQtContextFramework
+qtAddLibrary(QtContextFramework)

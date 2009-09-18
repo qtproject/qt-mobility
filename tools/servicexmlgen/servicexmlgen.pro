@@ -18,6 +18,6 @@ SOURCES = servicexmlgen.cpp \
           errorcollector.cpp
 
 include(../../common.pri)
-LIBS += -lQtServiceFramework
+qtAddLibrary(QtServiceFramework)
 
 include(../../features/deploy.pri)

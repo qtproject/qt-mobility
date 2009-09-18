@@ -14,7 +14,7 @@ SOURCES += ../qnmeapositioninfosourceproxyfactory.cpp \
            ../qlocationtestutils.cpp \
            tst_qnmeapositioninfosource.cpp
 
-LIBS += -lQtLocation
+qtAddLibrary(QtLocation)
 
 symbian {
         TARGET.CAPABILITY = ALL -TCB

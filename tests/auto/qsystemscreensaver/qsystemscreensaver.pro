@@ -6,7 +6,7 @@ INCLUDEPATH += ../../../systeminfo
 SOURCES  += tst_qsystemscreensaver.cpp
 
 include(../../../common.pri)
-LIBS += -lQtSystemInfo
+qtAddLibrary(QtSystemInfo)
 
 symbian {
     TARGET.CAPABILITY = All -TCB -DRM

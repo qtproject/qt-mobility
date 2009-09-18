@@ -12,7 +12,7 @@ requires(contains(QT_CONFIG,dbus))
 INCLUDEPATH += ../../bearer
 include(../../common.pri)
 
-LIBS += -L../../build/Debug/bin -lQtBearer
+qtAddLibrary(QtBearer)
 
 #MOC_DIR = .moc
 #OBJECTS_DIR = .obj

@@ -11,7 +11,7 @@ HEADERS += servicebrowser.h
 SOURCES += servicebrowser.cpp \
            main.cpp
 
-LIBS += -lQtServiceFramework
+qtAddLibrary(QtServiceFramework)
 
 symbian {
     addFiles.sources = ../filemanagerplugin/filemanagerservice.xml

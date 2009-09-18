@@ -29,6 +29,6 @@ symbian: {
     bearerex.path = /sys/bin
     DEPLOYMENT += bearerex
 
-    LIBS += -lQtBearer
+    qtAddLibrary(QtBearer)
     TARGET.CAPABILITY = NetworkServices NetworkControl ReadUserData
 }

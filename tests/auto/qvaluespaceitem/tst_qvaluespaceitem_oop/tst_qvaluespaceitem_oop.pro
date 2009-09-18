@@ -16,7 +16,7 @@ SOURCES += tst_qvaluespaceitem_oop.cpp \
            tst_qvaluespaceitemshared.cpp
 HEADERS += tst_qvaluespaceitemshared.h
 
-LIBS += -lQtContextFramework
+qtAddLibrary(QtContextFramework)
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

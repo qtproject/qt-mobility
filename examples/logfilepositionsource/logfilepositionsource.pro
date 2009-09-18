@@ -10,7 +10,7 @@ SOURCES = logfilepositionsource.cpp \
 CONFIG += console
 
 include(../examples.pri)
-LIBS += -lQtLocation
+qtAddLibrary(QtLocation)
 
 logfileexample.path = $$DESTDIR
 logfileexample.files = simplelog.txt

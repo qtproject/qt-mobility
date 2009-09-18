@@ -20,6 +20,6 @@ FORMS    += dialog.ui
 INCLUDEPATH += ../../systeminfo
 
 include(../../common.pri)
-LIBS += -lQtSystemInfo
+qtAddLibrary(QtSystemInfo)
 
 CONFIG += console

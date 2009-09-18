@@ -22,7 +22,7 @@ HEADERS += ../qsfwtestutil.h
 SOURCES += tst_databasemanager.cpp \
            ../qsfwtestutil.cpp
 
-LIBS += -lQtServiceFramework
+qtAddLibrary(QtServiceFramework)
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

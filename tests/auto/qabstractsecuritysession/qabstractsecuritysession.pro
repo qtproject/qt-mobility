@@ -11,7 +11,7 @@ HEADERS += ../qsfwtestutil.h
 SOURCES += tst_qabstractsecuritysession.cpp \
            ../qsfwtestutil.cpp
 
-LIBS += -lQtServiceFramework
+qtAddLibrary(QtServiceFramework)
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

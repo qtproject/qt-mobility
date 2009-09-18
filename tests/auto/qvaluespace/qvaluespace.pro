@@ -10,7 +10,7 @@ include(../../../common.pri)
 # Input 
 SOURCES += tst_qvaluespace.cpp
 
-LIBS += -lQtContextFramework
+qtAddLibrary(QtContextFramework)
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
