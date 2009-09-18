@@ -46,14 +46,14 @@ public:
         EventRemoved
     };
 
-    explicit QContactChangeLogFilter(EventType type = EventAdded);
+    explicit QContactChangeLogFilter(QContactChangeLogFilter::EventType type = QContactChangeLogFilter::EventAdded);
     QContactChangeLogFilter(const QContactFilter& other);
 
-    void setEventType(EventType type);
+    void setEventType(QContactChangeLogFilter::EventType type);
     void setSince(const QDateTime& since);
 
     QDateTime since() const;
-    EventType eventType() const;
+    QContactChangeLogFilter::EventType eventType() const;
 
 private:
     Q_DECLARE_CONTACTFILTER_PRIVATE(QContactChangeLogFilter)
