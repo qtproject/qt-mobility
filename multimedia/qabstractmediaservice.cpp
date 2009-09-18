@@ -243,7 +243,37 @@ bool QAbstractMediaService::setActiveEndpoint(QAbstractMediaService::MediaEndpoi
 QString QAbstractMediaService::endpointDescription(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint)
 {
     QString desc;
-    //TODO
+    switch(endpointType) {
+        case QAbstractMediaService::AudioInput:
+        case QAbstractMediaService::AudioOutput:
+            {
+                QAudioDeviceControl *audioControl = control<QAudioDeviceControl *>();
+                if(audioControl) {
+                    int numDevices = audioControl->deviceCount();
+                    for(int i=0;i<numDevices;i++) {
+                        if (endpoint == audioControl->name(i))
+                            return audioControl->description(i);
+
+                    }
+                }
+            }
+            break;
+        case QAbstractMediaService::VideoInput:
+        case QAbstractMediaService::VideoOutput:
+            {
+                QVideoDeviceControl *videoControl = control<QVideoDeviceControl *>();
+                if(videoControl) {
+                    int numDevices = videoControl->deviceCount();
+                    for(int i=0;i<numDevices;i++) {
+                        if (endpoint == videoControl->name(i))
+                            return videoControl->description(i);
+                    }
+                }
+            }
+            break;
+        default:
+            break;
+    }
     return desc;
 }
 
