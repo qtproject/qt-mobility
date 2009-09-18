@@ -42,6 +42,11 @@ class QMessagePrivate
 public:
     QMessagePrivate(QMessage *message)
         :q_ptr(message),
+#if defined(Q_OS_WIN)
+         _hasAttachments(false),
+         _rtfInSync(false),
+         _contentFormat(0),
+#endif
          _size(0),
          _standardFolder(QMessage::DraftsFolder),
          _type(QMessage::NoType),
@@ -49,9 +54,27 @@ public:
          _priority(QMessage::NormalPriority),
          _modified(false)
     {
+#if defined(Q_OS_WIN)
+         _elementsPresent.properties = 0;
+         _elementsPresent.recipients = 0;
+         _elementsPresent.body = 0;
+         _elementsPresent.attachments = 0;
+#endif
     }
 
     QMessage *q_ptr;
+
+#if defined(Q_OS_WIN)
+    struct {
+        unsigned properties : 1;
+        unsigned recipients : 1;
+        unsigned body : 1;
+        unsigned attachments : 1;
+    } _elementsPresent;
+    bool _hasAttachments;
+    bool _rtfInSync;
+    LONG _contentFormat;
+#endif
 
     QMessageId _id;
     uint _size;

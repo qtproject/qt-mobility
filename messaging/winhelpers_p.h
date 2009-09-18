@@ -228,7 +228,13 @@ public:
     QMessageFolder folder(QMessageStore::ErrorCode *lastError, const QMessageFolderId& id) const;
     QMessage message(QMessageStore::ErrorCode *lastError, const QMessageId& id) const;
 
+    bool updateMessageProperties(QMessageStore::ErrorCode *lastError, QMessage *msg) const;
+    bool updateMessageRecipients(QMessageStore::ErrorCode *lastError, QMessage *msg) const;
+    bool updateMessageBody(QMessageStore::ErrorCode *lastError, QMessage *msg) const;
+    bool updateMessageAttachments(QMessageStore::ErrorCode *lastError, QMessage *msg) const;
+
     QByteArray attachmentData(QMessageStore::ErrorCode *lastError, const QMessageId& id, ULONG number) const;
+
     bool showForm(IMessage* message, IMAPIFolder* folder, IMsgStore* store);
 
     IMAPISession* session() const { return _mapiSession; }
@@ -240,6 +246,7 @@ private:
     MapiSession(QMessageStore::ErrorCode *lastError, bool mapiInitialized);
 
     IMsgStore *openMapiStore(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId, bool cachedMode = true) const;
+    IMessage *openMapiMessage(QMessageStore::ErrorCode *lastError, const QMessageId &id) const;
 
     void addRecipients(LPMESSAGE message, const QMessageAddressList& addressList, unsigned long mapiAddressType);
     void addAttachment(LPMESSAGE message, const QMessageContentContainer& attachmentContainer);
