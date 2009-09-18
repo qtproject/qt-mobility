@@ -32,51 +32,37 @@
 **
 ****************************************************************************/
 
-#include "qgstreamercameracontrol.h"
+#ifndef QGSTREAMERVIDEOINPUTDEVICECONTROL_H
+#define QGSTREAMERVIDEOINPUTDEVICECONTROL_H
 
-#include <QtCore/qdebug.h>
+#include <multimedia/qvideodevicecontrol.h>
+#include <QtCore/qstringlist.h>
 
-QGstreamerCameraControl::QGstreamerCameraControl(QGstreamerCaptureSession *session)
-    :QCameraControl(session), m_session(session)
+class QGstreamerVideoInputDeviceControl : public QVideoDeviceControl
 {
-}
+Q_OBJECT
+public:
+    QGstreamerVideoInputDeviceControl(QObject *parent);
+    ~QGstreamerVideoInputDeviceControl();
 
-QGstreamerCameraControl::~QGstreamerCameraControl()
-{
-}
+    int deviceCount() const;
 
-GstElement *QGstreamerCameraControl::buildElement()
-{
-    //TODO: add caps filter with desired camera settings, like resolution, framerate, etc
-    GstElement *camera = gst_element_factory_make("v4l2src", "camera_source");
+    QString name(int index) const;
+    QString description(int index) const;
+    QIcon icon(int index) const;
 
-    if (camera && !m_device.isEmpty() )
-        g_object_set(G_OBJECT(camera), "device", m_device.constData(), NULL);
+    int defaultDevice() const;
+    int selectedDevice() const;
 
-    return camera;
-}
+public Q_SLOTS:
+    void setSelectedDevice(int index);
 
-void QGstreamerCameraControl::start()
-{
-    m_session->enablePreview(true);
-}
+private:
+    void update();
 
-void QGstreamerCameraControl::stop()
-{
-    m_session->enablePreview(false);
-}
+    int m_selectedDevice;
+    QStringList m_names;
+    QStringList m_descriptions;
+};
 
-void QGstreamerCameraControl::setDevice(const QString &device)
-{
-    qDebug() << "QGstreamerCameraControl::setDevice" << device;
-    m_device = device.toLocal8Bit().constData();
-}
-
-QCamera::State QGstreamerCameraControl::state() const
-{
-    if (m_session->state() == QGstreamerCaptureSession::StoppedState)
-        return QCamera::StoppedState;
-    else
-        return QCamera::ActiveState;
-}
-
+#endif // QGSTREAMERAUDIOINPUTDEVICECONTROL_H
