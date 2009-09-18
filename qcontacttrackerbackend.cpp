@@ -221,12 +221,15 @@ QContact QContactTrackerEngine::contact(const QUniqueId& contactId, QContactMana
         if(request.isFinished())
             break;
     }
-    if( request.isFinished())
+    if( !request.isFinished() || request.contacts().size() == 0) {
         error = QContactManager::UnspecifiedError;
-    // leave the code for now while not all other code is fixed
-    error = QContactManager::NoError;
-    if( request.contacts().size()>0)
+    }
+    else {
+        // leave the code for now while not all other code is fixed
+        error = QContactManager::NoError;
         return request.contacts()[0];
+    }
+
     return QContact();
 }
 
