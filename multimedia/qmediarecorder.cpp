@@ -422,33 +422,6 @@ void QMediaRecorder::setAudioQuality(int quality)
 }
 
 /*!
-  Returns the list of codec specific audio encoding options.
-*/
-QStringList QMediaRecorder::supportedAudioEncodingOptions() const
-{
-    return d_func()->audioControl ?
-           d_func()->audioControl->supportedEncodingOptions() : QStringList();
-}
-
-/*!
-  Returns value of audio encoding \a option.
-*/
-QVariant QMediaRecorder::audioEncodingOption(const QString &option) const
-{
-    return d_func()->audioControl ?
-           d_func()->audioControl->encodingOption(option) : QVariant();
-}
-
-/*!
-  Set the codec specific \a option to \a value.
-*/
-void QMediaRecorder::setAudioEncodingOption(const QString &option, const QVariant &value)
-{
-    if (d_func()->audioControl)
-        d_func()->audioControl->setEncodingOption(option, value);
-}
-
-/*!
   \property QMediaRecorder::resolution
   \brief Resolution of encoded video stream.
 
@@ -630,32 +603,6 @@ void QMediaRecorder::setVideoQuality(int quality)
 {
     if (d_func()->videoControl)
         d_func()->videoControl->setQuality(quality);
-}
-
-/*!
-  Returns the list of codec specific video encoding options.
-*/
-QStringList QMediaRecorder::supportedVideoEncodingOptions() const
-{
-    return d_func()->videoControl ?
-           d_func()->videoControl->supportedEncodingOptions() : QStringList();
-}
-/*!
-  Returns value of audio encoding \a option.
-*/
-QVariant QMediaRecorder::videoEncodingOption(const QString &option) const
-{
-    return d_func()->videoControl ?
-           d_func()->videoControl->encodingOption(option) : QVariant();
-}
-
-/*!
-  Set the codec specific \a option to \a value.
-*/
-void QMediaRecorder::setVideoEncodingOption(const QString &option, const QVariant &value)
-{
-    if (d_func()->videoControl)
-        d_func()->videoControl->setEncodingOption(option, value);
 }
 
 
