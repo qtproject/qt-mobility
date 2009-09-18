@@ -319,7 +319,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         {
 #ifndef Q_CC_MINGW
             WMIHelper *wHelper;
-            wHelper = new WMIHelper();
+            wHelper = new WMIHelper(this);
             wHelper->setWmiNamespace("root/cimv2");
             wHelper->setClassName("Win32_InfraredDevice");
             wHelper->setClassProperty(QStringList() << "ConfigManagerErrorCode");
@@ -358,7 +358,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         {
 #ifndef Q_CC_MINGW
             WMIHelper *wHelper;
-            wHelper = new WMIHelper();
+            wHelper = new WMIHelper(this);
             wHelper->setWmiNamespace("root/cimv2");
             wHelper->setClassName("Win32_USBHub");
             wHelper->setClassProperty(QStringList() << "ConfigManagerErrorCode");
@@ -420,7 +420,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 //VIDEO_MODE_INFORMATION vInfo;
 #ifndef Q_CC_MINGW
             WMIHelper *wHelper;
-            wHelper = new WMIHelper();
+            wHelper = new WMIHelper(this);
             wHelper->setWmiNamespace("root/cimv2");
             wHelper->setClassName("VideoModeDescriptor");
             wHelper->setClassProperty(QStringList() << "VideoStandardType");
@@ -620,7 +620,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         {
 #ifndef Q_CC_MINGW
             WMIHelper *wHelper;
-            wHelper = new WMIHelper();
+            wHelper = new WMIHelper(this);
             wHelper->setWmiNamespace("root/cimv2");
             wHelper->setClassName("Win32_NetworkAdapter");
             wHelper->setClassProperty(QStringList() << "NetConnectionStatus");
@@ -638,7 +638,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         {
 #ifndef Q_CC_MINGW
             WMIHelper *wHelper;
-            wHelper = new WMIHelper();
+            wHelper = new WMIHelper(this);
             wHelper->setWmiNamespace("root/cimv2");
             wHelper->setClassName("Win32_NetworkAdapter");
             wHelper->setClassProperty(QStringList() << "NetConnectionStatus");
@@ -729,7 +729,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
            qWarning() << "checking ethernet signal";
 #ifndef Q_CC_MINGW
             WMIHelper *wHelper;
-            wHelper = new WMIHelper();
+            wHelper = new WMIHelper(this);
             wHelper->setWmiNamespace("root/cimv2");
             wHelper->setClassName("Win32_NetworkAdapter");
             wHelper->setClassProperty(QStringList() << "NetConnectionStatus");
@@ -833,26 +833,12 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
 
 QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
-
-   qWarning() << __FUNCTION__;
-
-//     WMIHelper *wHelper;
-//     wHelper = new WMIHelper();
-//     wHelper->setWmiNamespace("root/cimv2");
-//     wHelper->setClassName("Win32_NetworkAdapter");
-//     wHelper->setClassProperty(QStringList() << "AdapterType" << "NetConnectionStatus");
-//     QVariant v = wHelper->getWMIData();
-//     foreach(QVariant adapter,  wHelper->wmiVariantList) {
-//        qWarning() <<"adapter type"  << adapter.;
-//     }
-
-
     QList<QNetworkInterface> interfaceList;
     interfaceList = QNetworkInterface::allInterfaces();
     qWarning() << "number of interfaces" << interfaceList.count();
 
-    while (!interfaceList.isEmpty()) {
-        QNetworkInterface netInterface = interfaceList.takeFirst();
+    for(int i = 0; i < interfaceList.count(); i++) {
+        QNetworkInterface netInterface = interfaceList.at(i);
 qWarning()
         << netInterface.name()
         << netInterface.hardwareAddress()
@@ -949,7 +935,7 @@ int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 //#if WINVER > 0x0600
 #ifndef Q_CC_MINGW
     WMIHelper *wHelper;
-    wHelper = new WMIHelper();
+    wHelper = new WMIHelper(this);
     wHelper->setWmiNamespace("root/wmi");
     wHelper->setClassName("WmiMonitorBrightness");
     wHelper->setClassProperty(QStringList() << "CurrentBrightness");
@@ -1141,7 +1127,7 @@ QStringList QSystemMemoryInfoPrivate::listOfVolumes()
 
 #ifndef Q_CC_MINGW
     WMIHelper *wHelper;
-    wHelper = new WMIHelper();
+    wHelper = new WMIHelper(this);
     wHelper->setWmiNamespace("root/cimv2");
     wHelper->setClassName("Win32_LogicalDisk");
     wHelper->setClassProperty(QStringList() << "Name");
@@ -1171,47 +1157,58 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
 {
     QSystemDeviceInfo::InputMethodFlags methods;
-#ifndef Q_CC_MINGW
-    WMIHelper *wHelper;
-    wHelper = new WMIHelper();
-    wHelper->setWmiNamespace("root/cimv2");
-    wHelper->setClassName("Win32_PointingDevice");
-    wHelper->setClassProperty(QStringList() << "PointingType");
 
-    QVariant v = wHelper->getWMIData();
-    foreach(QVariant var, wHelper->wmiVariantList) {
-        switch(var.toUInt()) {
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-        case 6:
-        case 7:
-        case 9:
-            {
-                if((methods & QSystemDeviceInfo::Mouse) != QSystemDeviceInfo::Mouse) {
-                    methods |= QSystemDeviceInfo::Mouse;
-                }
-            }
-            break;
-        case 8:
-            {
-                if((methods & QSystemDeviceInfo::SingleTouch) != QSystemDeviceInfo::SingleAvailable) {
-                    methods |= QSystemDeviceInfo::SingleTouch;
-                }
-            }
-            break;
-        };
-    }
+    int mouseResult = GetSystemMetrics(SM_CMOUSEBUTTONS);
+    if(mouseResult > 0) {
+        if((methods & QSystemDeviceInfo::Mouse) != QSystemDeviceInfo::Mouse) {
+            methods |= QSystemDeviceInfo::Mouse;
 
-    wHelper->setClassName("Win32_Keyboard");
-    wHelper->setClassProperty(QStringList() << "ConfigManagerErrorCode");
-    v = wHelper->getWMIData();
-    if(v.toUInt() == 0) {
-        methods = methods | QSystemDeviceInfo::Keyboard;
+        }
     }
-#endif
+    int tabletResult = GetSystemMetrics(SM_TABLETPC);
+    if(tabletResult > 0) {
+        if((methods & QSystemDeviceInfo::SingleTouch) != QSystemDeviceInfo::SingleTouch) {
+            methods |= QSystemDeviceInfo::SingleTouch;
+
+        }
+    }
+    int keyboardType = GetKeyboardType(0);
+    switch(keyboardType) {
+    case 1:
+    case 3:
+        {
+            if((methods & QSystemDeviceInfo::Keyboard) != QSystemDeviceInfo::Keyboard) {
+                methods |= QSystemDeviceInfo::Keyboard;
+
+            }
+        }
+        break;
+    case 2:
+    case 4:
+        {
+            if((methods & QSystemDeviceInfo::Keyboard) != QSystemDeviceInfo::Keyboard) {
+                methods |= QSystemDeviceInfo::Keyboard;
+
+            }
+            if((methods & QSystemDeviceInfo::Keypad) != QSystemDeviceInfo::Keypad) {
+                methods |= QSystemDeviceInfo::Keypad;
+
+            }
+        }
+        break;
+    case 5:
+        {
+            if((methods & QSystemDeviceInfo::Keypad) != QSystemDeviceInfo::Keypad) {
+                methods |= QSystemDeviceInfo::Keypad;
+
+            }
+        }
+        break;
+    default:
+        break;
+
+    };
+
     return methods;
 }
 
@@ -1254,7 +1251,7 @@ QString QSystemDeviceInfoPrivate::manufacturer()
    QString manu;
 #ifndef Q_CC_MINGW
     WMIHelper *wHelper;
-    wHelper = new WMIHelper();
+    wHelper = new WMIHelper;
     wHelper->setWmiNamespace("root/cimv2");
     wHelper->setClassName("Win32_ComputerSystemProduct");
     wHelper->setClassProperty(QStringList() << "Vendor");
@@ -1263,6 +1260,7 @@ QString QSystemDeviceInfoPrivate::manufacturer()
     if(manu.isEmpty()) {
         manu = "System manufacturer";
     }
+    delete wHelper;
 #endif
     return manu;
 }
@@ -1272,9 +1270,10 @@ QString QSystemDeviceInfoPrivate::model()
    QString model;
 #ifndef Q_CC_MINGW
     WMIHelper *wHelper;
-    wHelper = new WMIHelper();
+    wHelper = new WMIHelper;
     wHelper->setWmiNamespace("root/cimv2");
-//    wHelper->setClassName("Win32_Processor");
+
+    //    wHelper->setClassName("Win32_Processor");
 //    wHelper->setClassProperty(QStringList() << "Architecture");
 //    QVariant v = wHelper->getWMIData();
 //    QString model;
@@ -1338,6 +1337,7 @@ QString QSystemDeviceInfoPrivate::model()
         break;
 
     };
+    delete wHelper;
 #endif
     return model;
 }
@@ -1347,7 +1347,7 @@ QString QSystemDeviceInfoPrivate::productName()
    QString name;
 #ifndef Q_CC_MINGW
     WMIHelper *wHelper;
-    wHelper = new WMIHelper();
+    wHelper = new WMIHelper;
     wHelper->setWmiNamespace("root/cimv2");
     wHelper->setClassName("Win32_ComputerSystemProduct");
     wHelper->setClassProperty(QStringList() << "Name");
@@ -1364,6 +1364,7 @@ QString QSystemDeviceInfoPrivate::productName()
         }
     }
 
+    delete wHelper;
 #endif
     return name;
 }
