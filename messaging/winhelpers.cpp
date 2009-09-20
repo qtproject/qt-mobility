@@ -61,7 +61,568 @@
 
 namespace {
 
-GUID GuidPublicStrings = { 0x00020329, 0x0000, 0x0000, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46 };
+    GUID GuidPublicStrings = { 0x00020329, 0x0000, 0x0000, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46 };
+
+    FILETIME toFileTime(const QDateTime &dt)
+    {
+        FILETIME ft = {0};
+
+        QDate date(dt.date());
+        QTime time(dt.time());
+
+        SYSTEMTIME st = {0};
+        st.wYear = date.year();
+        st.wMonth = date.month();
+        st.wDay = date.day();
+        st.wHour = time.hour();
+        st.wMinute = time.minute();
+        st.wSecond = time.second();
+        st.wMilliseconds = time.msec();
+
+        SystemTimeToFileTime(&st, &ft);
+        return ft;
+    }
+
+    QDateTime fromFileTime(const FILETIME &ft)
+    {
+        SYSTEMTIME st = {0};
+        FileTimeToSystemTime(&ft, &st);
+        QString dateStr(QString("yyyy%1M%2d%3h%4m%5s%6z%7").arg(st.wYear).arg(st.wMonth).arg(st.wDay).arg(st.wHour).arg(st.wMinute).arg(st.wSecond).arg(st.wMilliseconds));
+        QDateTime dt(QDateTime::fromString(dateStr, "'yyyy'yyyy'M'M'd'd'h'h'm'm's's'z'z"));
+        dt.setTimeSpec(Qt::UTC);
+        return dt;
+    }
+
+    bool setMapiProperty(IMAPIProp *object, ULONG tag, const QString &value)
+    {
+        SPropValue prop = { 0 };
+        prop.ulPropTag = tag;
+        prop.Value.LPSZ = reinterpret_cast<LPWSTR>(const_cast<quint16*>(value.utf16()));
+        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
+    }
+
+    bool setMapiProperty(IMAPIProp *object, ULONG tag, LONG value)
+    {
+        SPropValue prop = { 0 };
+        prop.ulPropTag = tag;
+        prop.Value.l = value;
+        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
+    }
+
+    bool setMapiProperty(IMAPIProp *object, ULONG tag, bool value)
+    {
+        SPropValue prop = { 0 };
+        prop.ulPropTag = tag;
+        prop.Value.b = value;
+        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
+    }
+
+    bool setMapiProperty(IMAPIProp *object, ULONG tag, FILETIME value)
+    {
+        SPropValue prop = { 0 };
+        prop.ulPropTag = tag;
+        prop.Value.ft = value;
+        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
+    }
+
+    bool setMapiProperty(IMAPIProp *object, ULONG tag, MapiEntryId value)
+    {
+        SBinary s;
+        s.cb = value.count();
+        s.lpb = reinterpret_cast<LPBYTE>(value.data());
+        SPropValue prop = { 0 };
+        prop.ulPropTag = tag;
+        prop.Value.bin = s;
+        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
+    }
+
+    ADRLIST *createAddressList(int count)
+    {
+        ADRLIST *list(0);
+
+        uint size = CbNewADRLIST(count);
+        MAPIAllocateBuffer(size, reinterpret_cast<LPVOID*>(&list));
+        if (list) {
+            memset(list, 0, size);
+            list->cEntries = count;
+
+            for (int i = 0; i < count; ++i) {
+                list->aEntries[i].cValues = 2;
+                MAPIAllocateBuffer(2 * sizeof(SPropValue), reinterpret_cast<LPVOID*>(&list->aEntries[i].rgPropVals));
+            }
+        }
+
+        return list;
+    }
+
+    void fillAddressEntry(ADRENTRY &entry, const QMessageAddress &addr, LONG type, QList<LPTSTR> &addresses)
+    {
+        entry.rgPropVals[0].ulPropTag = PR_RECIPIENT_TYPE;
+        entry.rgPropVals[0].Value.l = type;
+
+        QString addressStr("[%1:%2]");
+        addressStr = addressStr.arg(addr.type() == QMessageAddress::Phone ? "SMS" : "SMTP");
+        addressStr = addressStr.arg(addr.recipient());
+
+        // TODO: Escape illegal characters, as per: http://msdn.microsoft.com/en-us/library/cc842281.aspx
+
+        uint len = addressStr.length();
+        LPTSTR address = new TCHAR[len + 1];
+        memcpy(address, addressStr.utf16(), len * sizeof(TCHAR));
+        address[len] = 0;
+
+        entry.rgPropVals[1].ulPropTag = PR_DISPLAY_NAME;
+        entry.rgPropVals[1].Value.LPSZ = address;
+
+        addresses.append(address);
+    }
+
+    bool resolveAddressList(ADRLIST *list, IMAPISession *session)
+    {
+        bool result(false);
+
+        if (session) {
+            IAddrBook *book(0);
+            HRESULT rv = session->OpenAddressBook(0, 0, AB_NO_DIALOG, &book);
+            if (HR_SUCCEEDED(rv)) {
+                rv = book->ResolveName(0, MAPI_UNICODE, 0, list);
+                if (HR_SUCCEEDED(rv)) {
+                    result = true;
+                } else {
+                    qWarning() << "Unable to resolve addresses.";
+                }
+
+                book->Release();
+            } else {
+                qWarning() << "Unable to open address book.";
+            }
+        }
+
+        return result;
+    }
+
+    void destroyAddressList(ADRLIST *list, QList<LPTSTR> &addresses)
+    {
+        foreach (LPTSTR address, addresses) {
+            delete [] address;
+        }
+
+        addresses.clear();
+
+        for (uint i = 0; i < list->cEntries; ++i) {
+            MAPIFreeBuffer(list->aEntries[i].rgPropVals);
+        }
+
+        MAPIFreeBuffer(list);
+    }
+
+    void addAttachment(IMessage* message, const QMessageContentContainer& attachmentContainer)
+    {
+        IAttach *attachment(0);
+        ULONG attachmentNumber(0);
+
+        if (HR_SUCCEEDED(message->CreateAttach(NULL, 0, &attachmentNumber, &attachment))) {
+            QString fileName(attachmentContainer.suggestedFileName());
+            QString extension;
+            int index = fileName.lastIndexOf(".");
+            if (index != -1) {
+                extension = fileName.mid(index);
+            }
+
+            WinHelpers::Lptstr suggestedFileNameLptstr(WinHelpers::LptstrFromQString(fileName));
+            WinHelpers::Lptstr extensionLptstr(WinHelpers::LptstrFromQString(extension));
+
+            const int nProperties = 5;
+            SPropValue prop[nProperties] = { 0 };
+
+            prop[0].ulPropTag = PR_ATTACH_METHOD;
+            prop[0].Value.ul = ATTACH_BY_VALUE;
+            prop[1].ulPropTag = PR_RENDERING_POSITION;
+            prop[1].Value.l = -1;
+            prop[2].ulPropTag = PR_ATTACH_LONG_FILENAME;
+            prop[2].Value.LPSZ = suggestedFileNameLptstr;
+            prop[3].ulPropTag = PR_ATTACH_FILENAME;
+            prop[3].Value.LPSZ = suggestedFileNameLptstr;
+            prop[4].ulPropTag = PR_ATTACH_EXTENSION;
+            prop[4].Value.LPSZ = extensionLptstr;
+
+            if (HR_SUCCEEDED(attachment->SetProps(nProperties, prop, NULL))) {
+                IStream *os(0);
+                if (HR_SUCCEEDED(attachment->OpenProperty(PR_ATTACH_DATA_BIN, &IID_IStream, 0, MAPI_MODIFY | MAPI_CREATE, (LPUNKNOWN*)&os))) {
+                    const int BUF_SIZE=4096;
+                    char pData[BUF_SIZE];
+                    ULONG ulSize=0,ulRead,ulWritten;
+
+                    QDataStream attachmentStream(attachmentContainer.content());
+
+                    ulRead=attachmentStream.readRawData(static_cast<char*>(pData), BUF_SIZE);
+                    while (ulRead) {
+                        os->Write(pData,ulRead, &ulWritten);
+
+                        ulSize += ulRead;
+                        ulRead = attachmentStream.readRawData(static_cast<char*>(pData), BUF_SIZE);
+                    }
+
+                    os->Commit(STGC_DEFAULT);
+
+                    mapiRelease(os);
+
+                    prop[0].ulPropTag=PR_ATTACH_SIZE;
+                    prop[0].Value.ul=ulSize;
+                    attachment->SetProps(1, prop, NULL);
+                    attachment->SaveChanges(KEEP_OPEN_READONLY);
+                } else {
+                    qWarning() << "Could not open MAPI attachment data stream";
+                }
+            } else {
+                qWarning() << "Could not set MAPI attachment properties";
+            }
+
+            mapiRelease(attachment);
+        } else {
+            qWarning() << "Could not create MAPI attachment";
+        }
+    }
+
+    template<typename T> QString getLastError(T& mapiType, HRESULT hr)
+    {
+        LPMAPIERROR err;
+
+        HRESULT thisResult = mapiType.GetLastError(hr,MAPI_UNICODE,&err);
+
+        if(thisResult != S_OK || !err)
+        {
+            qWarning() << "Could not get last MAPI error string";
+            return QString();
+        }
+
+        QString mapiErrorMsg = QStringFromLpctstr(err->lpszError);
+        QString mapiComponent = QStringFromLpctstr(err->lpszComponent);
+
+        QString result = QString("MAPI Error: %1 ; MAPI Component: %2").arg(mapiErrorMsg).arg(mapiComponent);
+
+        MAPIFreeBuffer(err);
+
+        return result;
+    }
+
+    typedef QPair<QString, QString> StringPair;
+
+    QList<StringPair> decomposeHeaders(const QString &headers)
+    {
+        QList<StringPair> result;
+
+        if (!headers.isEmpty()) {
+            int lastIndex = 0;
+            int index = -2;
+
+            do {
+                index += 2;
+                lastIndex = index;
+
+                // Find CRLF not followed by whitespace
+                QRegExp lineSeparator("\r\n(?!\\s)");
+                index = headers.indexOf(lineSeparator, lastIndex);
+
+                QString line = headers.mid(lastIndex, (index == -1 ? -1 : (index - lastIndex)));
+
+                // Split the current line
+                QRegExp headerIdentifier("\\s*(\\w+)\\s*:");
+                if (line.indexOf(headerIdentifier) == 0) {
+                    result.append(qMakePair(headerIdentifier.cap(1), line.mid(headerIdentifier.cap(0).length()).trimmed()));
+                } else {
+                    // Assume the whole line is an identifier
+                    result.append(qMakePair(line, QString()));
+                }
+            } while (index != -1);
+        }
+
+        return result;
+    }
+
+    QMessageAddress createAddress(const QString &name, const QString &address)
+    {
+        QMessageAddress result;
+
+        if (!name.isEmpty() || !address.isEmpty()) {
+            QString from;
+            if (!name.isEmpty() && !address.isEmpty()) {
+                from = name + " <" + address + ">";
+            } else {
+                from = (!name.isEmpty() ? name : address);
+            }
+
+            result = QMessageAddress(from, QMessageAddress::Email);
+        }
+
+        return result;
+    }
+
+    QByteArray readStream(QMessageStore::ErrorCode *lastError, IStream *is)
+    {
+        QByteArray result;
+
+        STATSTG stg = { 0 };
+        HRESULT rv = is->Stat(&stg, STATFLAG_NONAME);
+        if (HR_SUCCEEDED(rv)) {
+            ULONG sz = stg.cbSize.LowPart;
+            result.resize(sz);
+            ULONG bytes = 0;
+            rv = is->Read(result.data(), sz, &bytes);
+            if (HR_FAILED(rv)) {
+                *lastError = QMessageStore::ContentInaccessible;
+            }
+        } else {
+            *lastError = QMessageStore::ContentInaccessible;
+        }
+
+        return result;
+    }
+
+    QString decodeContent(const QByteArray &data, const QByteArray &charset, int length = -1)
+    {
+        QString result;
+
+        QTextCodec *codec = QTextCodec::codecForName(charset);
+        if (codec) {
+            if (length == -1) {
+                // Convert the entirety
+                result = codec->toUnicode(data);
+            } else {
+                // Convert only the first length bytes
+                QTextCodec::ConverterState state;
+                result = codec->toUnicode(data, length, &state);
+            }
+        } else {
+            qWarning() << "No codec for charset:" << charset;
+        }
+
+        return result;
+    }
+
+    QByteArray extractPlainText(const QString &rtf)
+    {
+        // Attempt to extract the HTML from the RTF
+        // as per CMapiEx, http://www.codeproject.com/KB/IP/CMapiEx.aspx
+        QByteArray text;
+
+        const QString startTag("\\fs20");
+        int index = rtf.indexOf(startTag);
+        if (index != -1) {
+            const QString par("\\par");
+            const QString tab("\\tab");
+            const QString li("\\li");
+            const QString fi("\\fi-");
+            const QString pntext("\\pntext");
+
+            const QChar zero = QChar('\0');
+            const QChar space = QChar(' ');
+            const QChar openingBrace = QChar('{');
+            const QChar closingBrace = QChar('}');
+            const QChar ignore[] = { openingBrace, closingBrace, QChar('\r'), QChar('\n') };
+
+            QString::const_iterator rit = rtf.constBegin() + index, rend = rtf.constEnd();
+            while ((rit != rend) && (*rit != zero)) {
+                if (*rit == ignore[0] || *rit == ignore[1] || *rit == ignore[2] || *rit == ignore[3]) {
+                    ++rit;
+                } else {
+                    bool skipSection(false);
+                    bool skipDigits(false);
+                    bool skipSpace(false);
+
+                    const QString remainder(QString::fromRawData(rit, (rend - rit)));
+
+                    if (remainder.startsWith(par)) {
+                        rit += par.length();
+                        text += "\r\n";
+                        skipSpace = true;
+                    } else if (remainder.startsWith(tab)) {
+                        rit += tab.length();
+                        text += "\t";
+                        skipSpace = true;
+                    } else if (remainder.startsWith(li)) {
+                        rit += li.length();
+                        skipDigits = true;
+                        skipSpace = true;
+                    } else if (remainder.startsWith(fi)) {
+                        rit += fi.length();
+                        skipDigits = true;
+                        skipSpace = true;
+                    } else if (remainder.startsWith(QString("\\'"))) {
+                        rit += 2;
+                        QString encodedChar(QString::fromRawData(rit, 2));
+                        rit += 2;
+                        text += char(encodedChar.toUInt(0, 16));
+                    } else if (remainder.startsWith(pntext)) {
+                        rit += pntext.length();
+                        skipSection = true;
+                    } else if (remainder.startsWith(QString("\\{"))) {
+                        rit += 2;
+                        text += "{";
+                    } else if (remainder.startsWith(QString("\\}"))) {
+                        rit += 2;
+                        text += "}";
+                    } else {
+                        text += char((*rit).unicode());
+                        ++rit;
+                    }
+
+                    if (skipSection) {
+                        while ((rit != rend) && (*rit != closingBrace)) {
+                            ++rit;
+                        }
+                    }
+                    if (skipDigits) {
+                        while ((rit != rend) && (*rit).isDigit()) {
+                            ++rit;
+                        }
+                    }
+                    if (skipSpace) {
+                        if ((rit != rend) && (*rit == space)) {
+                            ++rit;
+                        }
+                    }
+                }
+            }
+        }
+
+        return text;
+    }
+
+    QString extractHtml(const QString &rtf)
+    {
+        // Attempt to extract the HTML from the RTF
+        // as per CMapiEx, http://www.codeproject.com/KB/IP/CMapiEx.aspx
+        QString html;
+
+        const QString htmltag("\\*\\htmltag");
+        int index = rtf.indexOf("<html", Qt::CaseInsensitive);
+        if (index == -1) {
+            index = rtf.indexOf(htmltag, Qt::CaseInsensitive);
+        }
+        if (index != -1) {
+            const QString mhtmltag("\\*\\mhtmltag");
+            const QString par("\\par");
+            const QString tab("\\tab");
+            const QString li("\\li");
+            const QString fi("\\fi-");
+            const QString pntext("\\pntext");
+            const QString htmlrtf("\\htmlrtf");
+
+            const QChar zero = QChar('\0');
+            const QChar space = QChar(' ');
+            const QChar openingBrace = QChar('{');
+            const QChar closingBrace = QChar('}');
+            const QChar ignore[] = { openingBrace, closingBrace, QChar('\r'), QChar('\n') };
+
+            int tagIgnored = -1;
+
+            QString::const_iterator rit = rtf.constBegin() + index, rend = rtf.constEnd();
+            while ((rit != rend) && (*rit != zero)) {
+                if (*rit == ignore[0] || *rit == ignore[1] || *rit == ignore[2] || *rit == ignore[3]) {
+                    ++rit;
+                } else {
+                    bool skipSection(false);
+                    bool skipDigits(false);
+                    bool skipSpace(false);
+
+                    const QString remainder(QString::fromRawData(rit, (rend - rit)));
+
+                    if (remainder.startsWith(htmltag)) {
+                        rit += htmltag.length();
+
+                        int tagNumber = 0;
+                        while ((*rit).isDigit()) {
+                            tagNumber = (tagNumber * 10) + (*rit).digitValue();
+                            ++rit;
+                        }
+                        skipSpace = true;
+
+                        if (tagNumber == tagIgnored) {
+                            skipSection = true;
+                            tagIgnored = -1;
+                        }
+                    } else if (remainder.startsWith(mhtmltag)) {
+                        rit += mhtmltag.length();
+
+                        int tagNumber = 0;
+                        while ((*rit).isDigit()) {
+                            tagNumber = (tagNumber * 10) + (*rit).digitValue();
+                            ++rit;
+                        }
+                        skipSpace = true;
+
+                        tagIgnored = tagNumber;
+                    } else if (remainder.startsWith(par)) {
+                        rit += par.length();
+                        html += QChar('\r');
+                        html += QChar('\n');
+                        skipSpace = true;
+                    } else if (remainder.startsWith(tab)) {
+                        rit += tab.length();
+                        html += QChar('\t');
+                        skipSpace = true;
+                    } else if (remainder.startsWith(li)) {
+                        rit += li.length();
+                        skipDigits = true;
+                        skipSpace = true;
+                    } else if (remainder.startsWith(fi)) {
+                        rit += fi.length();
+                        skipDigits = true;
+                        skipSpace = true;
+                    } else if (remainder.startsWith(QString("\\'"))) {
+                        rit += 2;
+
+                        QString encodedChar(QString::fromRawData(rit, 2));
+                        rit += 2;
+                        html += QChar(encodedChar.toUInt(0, 16));
+                    } else if (remainder.startsWith(pntext)) {
+                        rit += pntext.length();
+                        skipSection = true;
+                    } else if (remainder.startsWith(htmlrtf)) {
+                        rit += htmlrtf.length();
+
+                        // Find the terminating tag
+                        const QString terminator("\\htmlrtf0");
+                        int index = remainder.indexOf(terminator, htmlrtf.length());
+                        if (index == -1) {
+                            rit = rend;
+                        } else {
+                            rit += (index + terminator.length() - htmlrtf.length());
+                            skipSpace = true;
+                        }
+                    } else if (remainder.startsWith(QString("\\{"))) {
+                        rit += 2;
+                        html += openingBrace;
+                    } else if (remainder.startsWith(QString("\\}"))) {
+                        rit += 2;
+                        html += closingBrace;
+                    } else {
+                        html += *rit;
+                        ++rit;
+                    }
+
+                    if (skipSection) {
+                        while ((rit != rend) && (*rit != closingBrace)) {
+                            ++rit;
+                        }
+                    }
+                    if (skipDigits) {
+                        while ((rit != rend) && (*rit).isDigit()) {
+                            ++rit;
+                        }
+                    }
+                    if (skipSpace) {
+                        if ((rit != rend) && (*rit == space)) {
+                            ++rit;
+                        }
+                    }
+                }
+            }
+        }
+
+        return html;
+    }
 
 }
 
@@ -228,242 +789,7 @@ namespace WinHelpers {
         return result;
     }
 
-    FILETIME toFileTime(const QDateTime &dt)
-    {
-        FILETIME ft = {0};
-
-        QDate date(dt.date());
-        QTime time(dt.time());
-
-        SYSTEMTIME st = {0};
-        st.wYear = date.year();
-        st.wMonth = date.month();
-        st.wDay = date.day();
-        st.wHour = time.hour();
-        st.wMinute = time.minute();
-        st.wSecond = time.second();
-        st.wMilliseconds = time.msec();
-
-        SystemTimeToFileTime(&st, &ft);
-        return ft;
-    }
-
-    bool setMapiProperty(IMAPIProp *object, ULONG tag, const QString &value)
-    {
-        SPropValue prop = { 0 };
-        prop.ulPropTag = tag;
-        prop.Value.LPSZ = reinterpret_cast<LPWSTR>(const_cast<quint16*>(value.utf16()));
-        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
-    }
-
-    bool setMapiProperty(IMAPIProp *object, ULONG tag, LONG value)
-    {
-        SPropValue prop = { 0 };
-        prop.ulPropTag = tag;
-        prop.Value.l = value;
-        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
-    }
-
-    bool setMapiProperty(IMAPIProp *object, ULONG tag, bool value)
-    {
-        SPropValue prop = { 0 };
-        prop.ulPropTag = tag;
-        prop.Value.b = value;
-        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
-    }
-
-    bool setMapiProperty(IMAPIProp *object, ULONG tag, FILETIME value)
-    {
-        SPropValue prop = { 0 };
-        prop.ulPropTag = tag;
-        prop.Value.ft = value;
-        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
-    }
-
-    bool setMapiProperty(IMAPIProp *object, ULONG tag, MapiEntryId value)
-    {
-        SBinary s;
-        s.cb = value.count();
-        s.lpb = reinterpret_cast<LPBYTE>(value.data());
-        SPropValue prop = { 0 };
-        prop.ulPropTag = tag;
-        prop.Value.bin = s;
-        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
-    }
-
-    ADRLIST *createAddressList(int count)
-    {
-        ADRLIST *list(0);
-
-        uint size = CbNewADRLIST(count);
-        MAPIAllocateBuffer(size, reinterpret_cast<LPVOID*>(&list));
-        if (list) {
-            memset(list, 0, size);
-            list->cEntries = count;
-
-            for (int i = 0; i < count; ++i) {
-                list->aEntries[i].cValues = 2;
-                MAPIAllocateBuffer(2 * sizeof(SPropValue), reinterpret_cast<LPVOID*>(&list->aEntries[i].rgPropVals));
-            }
-        }
-
-        return list;
-    }
-
-    void fillAddressEntry(ADRENTRY &entry, const QMessageAddress &addr, LONG type, QList<LPTSTR> &addresses)
-    {
-        entry.rgPropVals[0].ulPropTag = PR_RECIPIENT_TYPE;
-        entry.rgPropVals[0].Value.l = type;
-
-        QString addressStr("[%1:%2]");
-        addressStr = addressStr.arg(addr.type() == QMessageAddress::Phone ? "SMS" : "SMTP");
-        addressStr = addressStr.arg(addr.recipient());
-
-        // TODO: Escape illegal characters, as per: http://msdn.microsoft.com/en-us/library/cc842281.aspx
-
-        uint len = addressStr.length();
-        LPTSTR address = new TCHAR[len + 1];
-        memcpy(address, addressStr.utf16(), len * sizeof(TCHAR));
-        address[len] = 0;
-
-        entry.rgPropVals[1].ulPropTag = PR_DISPLAY_NAME;
-        entry.rgPropVals[1].Value.LPSZ = address;
-
-        addresses.append(address);
-    }
-
-    bool resolveAddressList(ADRLIST *list, IMAPISession *session)
-    {
-        bool result(false);
-
-        if (session) {
-            IAddrBook *book(0);
-            HRESULT rv = session->OpenAddressBook(0, 0, AB_NO_DIALOG, &book);
-            if (HR_SUCCEEDED(rv)) {
-                rv = book->ResolveName(0, MAPI_UNICODE, 0, list);
-                if (HR_SUCCEEDED(rv)) {
-                    result = true;
-                } else {
-                    qWarning() << "Unable to resolve addresses.";
-                }
-
-                book->Release();
-            } else {
-                qWarning() << "Unable to open address book.";
-            }
-        }
-
-        return result;
-    }
-
-    void destroyAddressList(ADRLIST *list, QList<LPTSTR> &addresses)
-    {
-        foreach (LPTSTR address, addresses) {
-            delete [] address;
-        }
-
-        addresses.clear();
-
-        for (uint i = 0; i < list->cEntries; ++i) {
-            MAPIFreeBuffer(list->aEntries[i].rgPropVals);
-        }
-
-        MAPIFreeBuffer(list);
-    }
-
-    void addAttachment(IMessage* message, const QMessageContentContainer& attachmentContainer)
-    {
-        IAttach *attachment(0);
-        ULONG attachmentNumber(0);
-
-        if (HR_SUCCEEDED(message->CreateAttach(NULL, 0, &attachmentNumber, &attachment))) {
-            QString fileName(attachmentContainer.suggestedFileName());
-            QString extension;
-            int index = fileName.lastIndexOf(".");
-            if (index != -1) {
-                extension = fileName.mid(index);
-            }
-
-            Lptstr suggestedFileNameLptstr(LptstrFromQString(fileName));
-            Lptstr extensionLptstr(LptstrFromQString(extension));
-
-            const int nProperties = 5;
-            SPropValue prop[nProperties] = { 0 };
-
-            prop[0].ulPropTag = PR_ATTACH_METHOD;
-            prop[0].Value.ul = ATTACH_BY_VALUE;
-            prop[1].ulPropTag = PR_RENDERING_POSITION;
-            prop[1].Value.l = -1;
-            prop[2].ulPropTag = PR_ATTACH_LONG_FILENAME;
-            prop[2].Value.LPSZ = suggestedFileNameLptstr;
-            prop[3].ulPropTag = PR_ATTACH_FILENAME;
-            prop[3].Value.LPSZ = suggestedFileNameLptstr;
-            prop[4].ulPropTag = PR_ATTACH_EXTENSION;
-            prop[4].Value.LPSZ = extensionLptstr;
-
-            if (HR_SUCCEEDED(attachment->SetProps(nProperties, prop, NULL))) {
-                IStream *os(0);
-                if (HR_SUCCEEDED(attachment->OpenProperty(PR_ATTACH_DATA_BIN, &IID_IStream, 0, MAPI_MODIFY | MAPI_CREATE, (LPUNKNOWN*)&os))) {
-                    const int BUF_SIZE=4096;
-                    char pData[BUF_SIZE];
-                    ULONG ulSize=0,ulRead,ulWritten;
-
-                    QDataStream attachmentStream(attachmentContainer.content());
-
-                    ulRead=attachmentStream.readRawData(static_cast<char*>(pData), BUF_SIZE);
-                    while (ulRead) {
-                        os->Write(pData,ulRead, &ulWritten);
-
-                        ulSize += ulRead;
-                        ulRead = attachmentStream.readRawData(static_cast<char*>(pData), BUF_SIZE);
-                    }
-
-                    os->Commit(STGC_DEFAULT);
-
-                    mapiRelease(os);
-
-                    prop[0].ulPropTag=PR_ATTACH_SIZE;
-                    prop[0].Value.ul=ulSize;
-                    attachment->SetProps(1, prop, NULL);
-                    attachment->SaveChanges(KEEP_OPEN_READONLY);
-                } else {
-                    qWarning() << "Could not open MAPI attachment data stream";
-                }
-            } else {
-                qWarning() << "Could not set MAPI attachment properties";
-            }
-
-            mapiRelease(attachment);
-        } else {
-            qWarning() << "Could not create MAPI attachment";
-        }
-    }
-
 }
-
-
-template<typename T> QString getLastError(T& mapiType, HRESULT hr)
-{
-    LPMAPIERROR err;
-
-    HRESULT thisResult = mapiType.GetLastError(hr,MAPI_UNICODE,&err);
-
-    if(thisResult != S_OK || !err)
-    {
-        qWarning() << "Could not get last MAPI error string";
-        return QString();
-    }
-
-    QString mapiErrorMsg = QStringFromLpctstr(err->lpszError);
-    QString mapiComponent = QStringFromLpctstr(err->lpszComponent);
-
-    QString result = QString("MAPI Error: %1 ; MAPI Component: %2").arg(mapiErrorMsg).arg(mapiComponent);
-
-    MAPIFreeBuffer(err);
-
-    return result;
-}
-
 
 using namespace WinHelpers;
 
@@ -743,25 +1069,6 @@ IMessage *MapiFolder::openMessage(QMessageStore::ErrorCode *lastError, const Map
     return message;
 }
 
-QMessage::StandardFolder MapiFolder::standardFolder() const
-{
-    QMessage::StandardFolder result = QMessage::InboxFolder;
-    QMessageStore::ErrorCode lastError = QMessageStore::NoError;
-
-    foreach(QMessage::StandardFolder sf, QList<QMessage::StandardFolder>() << QMessage::DraftsFolder
-                                                                           << QMessage::OutboxFolder
-                                                                           << QMessage::TrashFolder
-                                                                           << QMessage::SentFolder)
-    {
-        MapiFolderPtr folderPtr = _store->findFolder(&lastError,sf);
-        if(lastError == QMessageStore::NoError && !folderPtr.isNull())
-            if(folderPtr->recordKey() == recordKey())
-                return sf;
-    }
-
-    return result;
-}
-
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolderId MapiFolder::id() const
 {
@@ -863,7 +1170,7 @@ IMessage* MapiFolder::createMessage(const QMessage& source, const MapiSessionPtr
                 qWarning() << "Unable to find the sent folder while constructing message";
             else {
                 if (!setMapiProperty(mapiMessage, PR_SENTMAIL_ENTRYID, sentFolder->entryId())) {
-                    qWarning() << "Unable to set sent folder entry id on message";
+                    qWarning() << "Unbale to set sent folder entry id on message";
                 }
             }
         }
@@ -1157,8 +1464,8 @@ MapiFolderPtr MapiStore::findFolder(QMessageStore::ErrorCode *lastError, QMessag
     }
 
     MapiEntryId entryId(props[0].Value.bin.lpb, props[0].Value.bin.cb);
-    result = openFolder(lastError, entryId);
     MAPIFreeBuffer(props);
+    result = openFolder(lastError, entryId);
     return result;
 }
 
@@ -1323,8 +1630,6 @@ MapiFolderPtr MapiStore::receiveFolder(QMessageStore::ErrorCode *lastError)
     }
 
     MapiEntryId entryId(entryIdPtr, entryIdSize);
-
-
     MAPIFreeBuffer(entryIdPtr);
 
     return openFolder(lastError, entryId);
@@ -1679,334 +1984,6 @@ Quit:
 
 namespace {
 
-QDateTime fromFileTime(const FILETIME &ft)
-{
-    SYSTEMTIME st = {0};
-    FileTimeToSystemTime(&ft, &st);
-    QString dateStr(QString("yyyy%1M%2d%3h%4m%5s%6z%7").arg(st.wYear).arg(st.wMonth).arg(st.wDay).arg(st.wHour).arg(st.wMinute).arg(st.wSecond).arg(st.wMilliseconds)); 
-    QDateTime dt(QDateTime::fromString(dateStr, "'yyyy'yyyy'M'M'd'd'h'h'm'm's's'z'z"));
-    dt.setTimeSpec(Qt::UTC);
-    return dt;
-}
-
-typedef QPair<QString, QString> StringPair;
-
-QList<StringPair> decomposeHeaders(const QString &headers)
-{
-    QList<StringPair> result;
-
-    if (!headers.isEmpty()) {
-        int lastIndex = 0;
-        int index = -2;
-
-        do {
-            index += 2;
-            lastIndex = index;
-
-            // Find CRLF not followed by whitespace
-            QRegExp lineSeparator("\r\n(?!\\s)");
-            index = headers.indexOf(lineSeparator, lastIndex);
-
-            QString line = headers.mid(lastIndex, (index == -1 ? -1 : (index - lastIndex)));
-
-            // Split the current line
-            QRegExp headerIdentifier("\\s*(\\w+)\\s*:");
-            if (line.indexOf(headerIdentifier) == 0) {
-                result.append(qMakePair(headerIdentifier.cap(1), line.mid(headerIdentifier.cap(0).length()).trimmed()));
-            } else {
-                // Assume the whole line is an identifier
-                result.append(qMakePair(line, QString()));
-            }
-        } while (index != -1);
-    }
-
-    return result;
-}
-
-QMessageAddress createAddress(const QString &name, const QString &address)
-{
-    QMessageAddress result;
-
-    if (!name.isEmpty() || !address.isEmpty()) {
-        QString from;
-        if (!name.isEmpty() && !address.isEmpty()) {
-            from = name + " <" + address + ">";
-        } else {
-            from = (!name.isEmpty() ? name : address);
-        }
-
-        result = QMessageAddress(from, QMessageAddress::Email);
-    }
-
-    return result;
-}
-
-QByteArray readStream(QMessageStore::ErrorCode *lastError, IStream *is)
-{
-    QByteArray result;
-
-    STATSTG stg = { 0 };
-    HRESULT rv = is->Stat(&stg, STATFLAG_NONAME);
-    if (HR_SUCCEEDED(rv)) {
-        ULONG sz = stg.cbSize.LowPart;
-        result.resize(sz);
-        ULONG bytes = 0;
-        rv = is->Read(result.data(), sz, &bytes);
-        if (HR_FAILED(rv)) {
-            *lastError = QMessageStore::ContentInaccessible;
-        }
-    } else {
-        *lastError = QMessageStore::ContentInaccessible;
-    }
-
-    return result;
-}
-
-QString decodeContent(const QByteArray &data, const QByteArray &charset, int length = -1)
-{
-    QString result;
-
-    QTextCodec *codec = QTextCodec::codecForName(charset);
-    if (codec) {
-        if (length == -1) {
-            // Convert the entirety
-            result = codec->toUnicode(data);
-        } else {
-            // Convert only the first length bytes
-            QTextCodec::ConverterState state;
-            result = codec->toUnicode(data, length, &state);
-        }
-    } else {
-        qWarning() << "No codec for charset:" << charset;
-    }
-
-    return result;
-}
-
-QByteArray extractPlainText(const QString &rtf)
-{
-    // Attempt to extract the HTML from the RTF
-    // as per CMapiEx, http://www.codeproject.com/KB/IP/CMapiEx.aspx
-    QByteArray text;
-
-    const QString startTag("\\fs20");
-    int index = rtf.indexOf(startTag);
-    if (index != -1) {
-        const QString par("\\par");
-        const QString tab("\\tab");
-        const QString li("\\li");
-        const QString fi("\\fi-");
-        const QString pntext("\\pntext");
-
-        const QChar zero = QChar('\0');
-        const QChar space = QChar(' ');
-        const QChar openingBrace = QChar('{');
-        const QChar closingBrace = QChar('}');
-        const QChar ignore[] = { openingBrace, closingBrace, QChar('\r'), QChar('\n') };
-
-        QString::const_iterator rit = rtf.constBegin() + index, rend = rtf.constEnd();
-        while ((rit != rend) && (*rit != zero)) {
-            if (*rit == ignore[0] || *rit == ignore[1] || *rit == ignore[2] || *rit == ignore[3]) {
-                ++rit;
-            } else {
-                bool skipSection(false);
-                bool skipDigits(false);
-                bool skipSpace(false);
-
-                const QString remainder(QString::fromRawData(rit, (rend - rit)));
-
-                if (remainder.startsWith(par)) {
-                    rit += par.length();
-                    text += "\r\n";
-                    skipSpace = true;
-                } else if (remainder.startsWith(tab)) {
-                    rit += tab.length();
-                    text += "\t";
-                    skipSpace = true;
-                } else if (remainder.startsWith(li)) {
-                    rit += li.length();
-                    skipDigits = true;
-                    skipSpace = true;
-                } else if (remainder.startsWith(fi)) {
-                    rit += fi.length();
-                    skipDigits = true;
-                    skipSpace = true;
-                } else if (remainder.startsWith(QString("\\'"))) {
-                    rit += 2;
-                    QString encodedChar(QString::fromRawData(rit, 2));
-                    rit += 2;
-                    text += char(encodedChar.toUInt(0, 16));
-                } else if (remainder.startsWith(pntext)) {
-                    rit += pntext.length();
-                    skipSection = true;
-                } else if (remainder.startsWith(QString("\\{"))) {
-                    rit += 2;
-                    text += "{";
-                } else if (remainder.startsWith(QString("\\}"))) {
-                    rit += 2;
-                    text += "}";
-                } else {
-                    text += char((*rit).unicode());
-                    ++rit;
-                }
-
-                if (skipSection) {
-                    while ((rit != rend) && (*rit != closingBrace)) {
-                        ++rit;
-                    }
-                }
-                if (skipDigits) {
-                    while ((rit != rend) && (*rit).isDigit()) {
-                        ++rit;
-                    }
-                }
-                if (skipSpace) {
-                    if ((rit != rend) && (*rit == space)) {
-                        ++rit;
-                    }
-                }
-            }
-        }
-    }
-
-    return text;
-}
-
-QString extractHtml(const QString &rtf)
-{
-    // Attempt to extract the HTML from the RTF
-    // as per CMapiEx, http://www.codeproject.com/KB/IP/CMapiEx.aspx
-    QString html;
-
-    const QString htmltag("\\*\\htmltag");
-    int index = rtf.indexOf("<html", Qt::CaseInsensitive);
-    if (index == -1) {
-        index = rtf.indexOf(htmltag, Qt::CaseInsensitive);
-    }
-    if (index != -1) {
-        const QString mhtmltag("\\*\\mhtmltag");
-        const QString par("\\par");
-        const QString tab("\\tab");
-        const QString li("\\li");
-        const QString fi("\\fi-");
-        const QString pntext("\\pntext");
-        const QString htmlrtf("\\htmlrtf");
-
-        const QChar zero = QChar('\0');
-        const QChar space = QChar(' ');
-        const QChar openingBrace = QChar('{');
-        const QChar closingBrace = QChar('}');
-        const QChar ignore[] = { openingBrace, closingBrace, QChar('\r'), QChar('\n') };
-
-        int tagIgnored = -1;
-
-        QString::const_iterator rit = rtf.constBegin() + index, rend = rtf.constEnd();
-        while ((rit != rend) && (*rit != zero)) {
-            if (*rit == ignore[0] || *rit == ignore[1] || *rit == ignore[2] || *rit == ignore[3]) {
-                ++rit;
-            } else {
-                bool skipSection(false);
-                bool skipDigits(false);
-                bool skipSpace(false);
-
-                const QString remainder(QString::fromRawData(rit, (rend - rit)));
-
-                if (remainder.startsWith(htmltag)) {
-                    rit += htmltag.length();
-
-                    int tagNumber = 0;
-                    while ((*rit).isDigit()) {
-                        tagNumber = (tagNumber * 10) + (*rit).digitValue();
-                        ++rit;
-                    }
-                    skipSpace = true;
-
-                    if (tagNumber == tagIgnored) {
-                        skipSection = true;
-                        tagIgnored = -1;
-                    }
-                } else if (remainder.startsWith(mhtmltag)) {
-                    rit += mhtmltag.length();
-
-                    int tagNumber = 0;
-                    while ((*rit).isDigit()) {
-                        tagNumber = (tagNumber * 10) + (*rit).digitValue();
-                        ++rit;
-                    }
-                    skipSpace = true;
-
-                    tagIgnored = tagNumber;
-                } else if (remainder.startsWith(par)) {
-                    rit += par.length();
-                    html += QChar('\r');
-                    html += QChar('\n');
-                    skipSpace = true;
-                } else if (remainder.startsWith(tab)) {
-                    rit += tab.length();
-                    html += QChar('\t');
-                    skipSpace = true;
-                } else if (remainder.startsWith(li)) {
-                    rit += li.length();
-                    skipDigits = true;
-                    skipSpace = true;
-                } else if (remainder.startsWith(fi)) {
-                    rit += fi.length();
-                    skipDigits = true;
-                    skipSpace = true;
-                } else if (remainder.startsWith(QString("\\'"))) {
-                    rit += 2;
-
-                    QString encodedChar(QString::fromRawData(rit, 2));
-                    rit += 2;
-                    html += QChar(encodedChar.toUInt(0, 16));
-                } else if (remainder.startsWith(pntext)) {
-                    rit += pntext.length();
-                    skipSection = true;
-                } else if (remainder.startsWith(htmlrtf)) {
-                    rit += htmlrtf.length();
-
-                    // Find the terminating tag
-                    const QString terminator("\\htmlrtf0");
-                    int index = remainder.indexOf(terminator, htmlrtf.length());
-                    if (index == -1) {
-                        rit = rend;
-                    } else {
-                        rit += (index + terminator.length() - htmlrtf.length());
-                        skipSpace = true;
-                    }
-                } else if (remainder.startsWith(QString("\\{"))) {
-                    rit += 2;
-                    html += openingBrace;
-                } else if (remainder.startsWith(QString("\\}"))) {
-                    rit += 2;
-                    html += closingBrace;
-                } else {
-                    html += *rit;
-                    ++rit;
-                }
-
-                if (skipSection) {
-                    while ((rit != rend) && (*rit != closingBrace)) {
-                        ++rit;
-                    }
-                }
-                if (skipDigits) {
-                    while ((rit != rend) && (*rit).isDigit()) {
-                        ++rit;
-                    }
-                }
-                if (skipSpace) {
-                    if ((rit != rend) && (*rit == space)) {
-                        ++rit;
-                    }
-                }
-            }
-        }
-    }
-
-    return html;
-}
-
 }
 
 QMessageFolder MapiSession::folder(QMessageStore::ErrorCode *lastError, const QMessageFolderId& id) const
@@ -2230,36 +2207,10 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
             } else {
                 *lastError = QMessageStore::ContentInaccessible;
             }
+
             mapiRelease(message);
         }
     }
-
-    MapiRecordKey storeRecordKey = QMessageIdPrivate::storeRecordKey(msg->id());
-    MapiStorePtr storePtr = findStore(lastError, QMessageAccountIdPrivate::from(storeRecordKey));
-    MapiFolderPtr folderPtr;
-
-    if(*lastError == QMessageStore::NoError && !storePtr.isNull())
-    {
-        MapiRecordKey folderRecordKey = QMessageIdPrivate::folderRecordKey(msg->id());
-        folderPtr = storePtr->findFolder(lastError, folderRecordKey);
-    }
-
-#ifdef QMESSAGING_OPTIONAL_FOLDER
-
-    //set the message parent folder property
-
-    if(*lastError == QMessageStore::NoError && !folderPtr.isNull())
-        QMessagePrivate::setParentFolderId(*msg,folderPtr->id());
-    else
-        qWarning() << "Unable to set parent folder property";
-#endif
-
-    //set the message standard folder property
-
-    if(*lastError == QMessageStore::NoError && !folderPtr.isNull())
-        QMessagePrivate::setStandardFolder(*msg, folderPtr->standardFolder());
-    else
-        qWarning() << "Unable to set standard folder property";
 
     return result;
 }
@@ -2730,4 +2681,3 @@ bool MapiSession::showForm(IMessage* message, IMAPIFolder* folder, LPMDB store)
     }
     return true;
 }
-
