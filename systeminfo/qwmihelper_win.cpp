@@ -40,13 +40,16 @@
 #include <Oleauto.h>
 #include <QStringList>
 
-WMIHelper::WMIHelper()
+WMIHelper::WMIHelper(QObject * parent)
+        : QObject(parent)
 {
    m_conditional = QString();
 }
 
 WMIHelper::~WMIHelper()
 {
+    wbemServices->Release();
+    wbemLocator->Release();
     CoUninitialize();
 }
 
@@ -58,48 +61,61 @@ QVariant WMIHelper::getWMIData()
    return QVariant();
 }
 
-QVariant WMIHelper::getWMIData(const QString &wmiNamespace, const QString &className, const QStringList &classProperty)
+void WMIHelper::initializeWMI(const QString &wmiNamespace)
 {
-    IWbemLocator *wbemLocator ;
-    QVariant returnVariant;
     HRESULT hres;
-    hres = CoInitializeEx(0, COINIT_MULTITHREADED);
-    if (hres == S_FALSE) {
-        qWarning() << "Failed to initialize COM library.";
-        return returnVariant;
-    }
-
-    wbemLocator = NULL;
+    wbemLocator = 0;
 
     hres = CoCreateInstance(CLSID_WbemLocator,0,CLSCTX_INPROC_SERVER,
                             IID_IWbemLocator, (LPVOID *) &wbemLocator);
 
-    if (hres != S_OK) {
-        qWarning() << "Failed to create IWbemLocator object.";
-        return returnVariant;
+    if (hres == CO_E_NOTINITIALIZED) { // COM was not initialized
+      //  neededCoInit = true;
+        CoInitializeEx(0, COINIT_MULTITHREADED);
+        hres = CoCreateInstance(CLSID_WbemLocator,0,CLSCTX_INPROC_SERVER,
+                                IID_IWbemLocator, (LPVOID *) &wbemLocator);
     }
-    IWbemServices *wbemServices = NULL;
-    hres = wbemLocator->ConnectServer(::SysAllocString(wmiNamespace.utf16()),NULL,NULL,0,NULL,0,0,&wbemServices);
+
+    if (!SUCCEEDED(hres)) {
+        qWarning() << "Failed to create IWbemLocator object.";
+        return ;
+    }
+    wbemServices = 0;
+    hres = wbemLocator->ConnectServer(::SysAllocString(wmiNamespace.utf16()),0,0,0,0,0,0,&wbemServices);
 
     if (hres != WBEM_S_NO_ERROR){
         qWarning() << "Could not connect";
-        wbemLocator->Release();
-        return returnVariant;
+        return ;
     }
 
     /////////////////////
-    hres = CoSetProxyBlanket( wbemServices, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE, NULL,
-                              RPC_C_AUTHN_LEVEL_CALL,  RPC_C_IMP_LEVEL_IMPERSONATE, NULL, EOAC_NONE );
+    hres = CoSetProxyBlanket( wbemServices, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE, 0,
+                              RPC_C_AUTHN_LEVEL_CALL, RPC_C_IMP_LEVEL_IMPERSONATE, 0, EOAC_NONE );
 
-    if (hres != S_OK) {
+    if (SUCCEEDED(hres)) {
         qWarning() << "Could not set proxy blanket";
-        wbemServices->Release();
-        wbemLocator->Release();
-        return returnVariant;
+        return ;
     }
+
+    if(!initializedNamespaces.contains(wmiNamespace)) {
+        initializedNamespaces.insert(wmiNamespace, true);
+    } else {
+        initializedNamespaces[wmiNamespace] = true;
+    }
+}
+
+QVariant WMIHelper::getWMIData(const QString &wmiNamespace, const QString &className, const QStringList &classProperty)
+{
+    if(!initializedNamespaces.contains(wmiNamespace)) {
+        initializeWMI(wmiNamespace);
+    }
+
+    HRESULT hres;
+    QVariant returnVariant;
+
+    ////
     ////////////////////////
-    IEnumWbemClassObject* wbemEnumerator = NULL;
-    BSTR bstrWQL = ::SysAllocString(L"WQL");
+       IEnumWbemClassObject* wbemEnumerator = 0;
     if (!m_conditional.isEmpty()) {
         if (m_conditional.left(1) != " ") {
             m_conditional.prepend(" ");
@@ -107,10 +123,11 @@ QVariant WMIHelper::getWMIData(const QString &wmiNamespace, const QString &class
     }
 
     QString aString = "SELECT * FROM " + className + m_conditional;
-    BSTR bstrQuery = ::SysAllocString(aString.utf16());
+    BSTR bstrQuery;
+    bstrQuery = ::SysAllocString(aString.utf16());
 
-    hres = wbemServices->ExecQuery( bstrWQL,  bstrQuery,
-            WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY, NULL,&wbemEnumerator);
+    hres = wbemServices->ExecQuery(L"WQL", bstrQuery,
+            WBEM_FLAG_BIDIRECTIONAL | WBEM_FLAG_RETURN_IMMEDIATELY,0,&wbemEnumerator);
 
     if (hres != WBEM_S_NO_ERROR){
         qWarning() << "WMI Query failed.";
@@ -118,8 +135,12 @@ QVariant WMIHelper::getWMIData(const QString &wmiNamespace, const QString &class
         wbemEnumerator->Release();
         return returnVariant;
     }
+
+    ::SysFreeString(bstrQuery);
+//    SysFreeString(bstrWQL);
+
     ///////////////////////
-    IWbemClassObject *wbemCLassObject;
+    wbemCLassObject = 0;
     ULONG result = 0;
 
     wmiVariantList.clear();
@@ -129,22 +150,20 @@ QVariant WMIHelper::getWMIData(const QString &wmiNamespace, const QString &class
             break;
         }
 
-        foreach(QString property,  classProperty) {
-        VARIANT msVariant;
-        CIMTYPE variantType;
-        hr = wbemCLassObject->Get(property.utf16(), 0, &msVariant, &variantType, 0);
-        returnVariant = msVariantToQVariant(msVariant, variantType);
-        wmiVariantList << returnVariant;
+        foreach(QString property, classProperty) {
+            VARIANT msVariant;
+            CIMTYPE variantType;
+            hr = wbemCLassObject->Get(property.utf16(), 0, &msVariant, &variantType, 0);
+            returnVariant = msVariantToQVariant(msVariant, variantType);
+            wmiVariantList << returnVariant;
 
-        VariantClear(&msVariant);
+            VariantClear(&msVariant);
 
         }
 
         wbemCLassObject->Release();
     }
 
-    wbemServices->Release();
-    wbemLocator->Release();
     wbemEnumerator->Release();
     return returnVariant;
 }
