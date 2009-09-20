@@ -125,7 +125,9 @@ public:
     static QString senderName(const QMessage &message);
     static void setSenderName(const QMessage &message, const QString &senderName);
     static void setSize(const QMessage &message, uint size);
-    static void setParentAccountId(const QMessage& message, const QMessageAccountId& id);
+#ifdef QMESSAGING_OPTIONAL_FOLDER
+    static void setParentFolderId(QMessage& message, const QMessageFolderId& id);
+#endif
 
 #if defined(Q_OS_WIN)
     void ensurePropertiesPresent(QMessage *msg) const;

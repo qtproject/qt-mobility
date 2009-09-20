@@ -743,6 +743,25 @@ IMessage *MapiFolder::openMessage(QMessageStore::ErrorCode *lastError, const Map
     return message;
 }
 
+QMessage::StandardFolder MapiFolder::standardFolder() const
+{
+    QMessage::StandardFolder result = QMessage::InboxFolder;
+    QMessageStore::ErrorCode lastError = QMessageStore::NoError;
+
+    foreach(QMessage::StandardFolder sf, QList<QMessage::StandardFolder>() << QMessage::DraftsFolder
+                                                                           << QMessage::OutboxFolder
+                                                                           << QMessage::TrashFolder
+                                                                           << QMessage::SentFolder)
+    {
+        MapiFolderPtr folderPtr = _store->findFolder(&lastError,sf);
+        if(lastError == QMessageStore::NoError && !folderPtr.isNull())
+            if(folderPtr->recordKey() == recordKey())
+                return sf;
+    }
+
+    return result;
+}
+
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolderId MapiFolder::id() const
 {
@@ -844,7 +863,7 @@ IMessage* MapiFolder::createMessage(const QMessage& source, const MapiSessionPtr
                 qWarning() << "Unable to find the sent folder while constructing message";
             else {
                 if (!setMapiProperty(mapiMessage, PR_SENTMAIL_ENTRYID, sentFolder->entryId())) {
-                    qWarning() << "Unbale to set sent folder entry id on message";
+                    qWarning() << "Unable to set sent folder entry id on message";
                 }
             }
         }
@@ -1138,8 +1157,8 @@ MapiFolderPtr MapiStore::findFolder(QMessageStore::ErrorCode *lastError, QMessag
     }
 
     MapiEntryId entryId(props[0].Value.bin.lpb, props[0].Value.bin.cb);
-    MAPIFreeBuffer(props);
     result = openFolder(lastError, entryId);
+    MAPIFreeBuffer(props);
     return result;
 }
 
@@ -2211,10 +2230,36 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
             } else {
                 *lastError = QMessageStore::ContentInaccessible;
             }
-
             mapiRelease(message);
         }
     }
+
+    MapiRecordKey storeRecordKey = QMessageIdPrivate::storeRecordKey(msg->id());
+    MapiStorePtr storePtr = findStore(lastError, QMessageAccountIdPrivate::from(storeRecordKey));
+    MapiFolderPtr folderPtr;
+
+    if(*lastError == QMessageStore::NoError && !storePtr.isNull())
+    {
+        MapiRecordKey folderRecordKey = QMessageIdPrivate::folderRecordKey(msg->id());
+        folderPtr = storePtr->findFolder(lastError, folderRecordKey);
+    }
+
+#ifdef QMESSAGING_OPTIONAL_FOLDER
+
+    //set the message parent folder property
+
+    if(*lastError == QMessageStore::NoError && !folderPtr.isNull())
+        QMessagePrivate::setParentFolderId(*msg,folderPtr->id());
+    else
+        qWarning() << "Unable to set parent folder property";
+#endif
+
+    //set the message standard folder property
+
+    if(*lastError == QMessageStore::NoError && !folderPtr.isNull())
+        QMessagePrivate::setStandardFolder(*msg, folderPtr->standardFolder());
+    else
+        qWarning() << "Unable to set standard folder property";
 
     return result;
 }

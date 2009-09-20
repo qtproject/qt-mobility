@@ -63,11 +63,21 @@ void QMessagePrivate::setSize(const QMessage &message, uint size)
     message.d_ptr->_size = size;
 }
 
+#ifdef QMESSAGING_OPTIONAL_FOLDER
+void QMessagePrivate::setParentFolderId(QMessage& message, const QMessageFolderId& id)
+{
+    message.d_ptr->_parentFolderId = id;
+    message.d_ptr->_modified = true;
+}
+#endif
+
 void QMessagePrivate::setStandardFolder(QMessage& message, QMessage::StandardFolder sf)
 {
     message.d_ptr->_standardFolder = sf;
     message.d_ptr->_modified = true;
 }
+
+
 
 void QMessagePrivate::ensurePropertiesPresent(QMessage *msg) const
 {

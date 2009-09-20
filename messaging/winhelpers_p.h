@@ -147,6 +147,8 @@ public:
 
     IMessage *openMessage(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId);
 
+    QMessage::StandardFolder standardFolder() const;
+
 private:
     MapiFolder();
     MapiFolder(const MapiStorePtr &store, IMAPIFolder *folder, const MapiRecordKey &recordKey, const QString &name, const MapiEntryId &entryId, bool hasSubFolders, uint messageCount);
