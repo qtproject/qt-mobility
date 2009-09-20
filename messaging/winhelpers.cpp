@@ -1215,22 +1215,6 @@ IMessage* MapiFolder::createMessage(const QMessage& source, const MapiSessionPtr
             }
         }
 
-        // Store all the custom field data in a single block
-        /*
-        QStringList customFieldData;
-        foreach (const QString &key, source.customFields()) {
-            customFieldData.append(key + "\n" + source.customField(key));
-        }
-        if (!customFieldData.isEmpty()) {
-            ULONG tag = WinHelpers::createNamedProperty(mapiMessage, "customFieldData");
-            if (tag) {
-                WinHelpers::setNamedProperty(mapiMessage, tag, customFieldData.join("\n\n"));
-            } else {
-                qWarning() << "Unable to store custom field data for message.";
-            }
-        }
-        */
-
         QMessageContentContainerId bodyId(source.bodyId());
         if (bodyId.isValid()) {
             QMessageContentContainer bodyContent(source.find(bodyId));
@@ -2186,20 +2170,6 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                     msg->setFrom(createAddress(senderName, senderAddress));
                     QMessagePrivate::setSenderName(*msg, senderName);
                 }
-
-                /*
-                // See if this message has any custom field data
-                ULONG tag = getNamedPropertyTag(message, "customFieldData");
-                if (tag) {
-                    QString customFieldData = getNamedProperty(message, tag);
-                    foreach (const QString &field, customFieldData.split("\n\n")) {
-                        int index = field.indexOf("\n");
-                        if (index) {
-                            msg->setCustomField(field.left(index), field.mid(index + 1));
-                        }
-                    }
-                }
-                */
 
                 result = true;
 
