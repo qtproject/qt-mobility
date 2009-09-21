@@ -53,6 +53,9 @@
 
 #include <locale.h>
 
+#include <IOBluetoothHostController.h>
+#include <SystemConfiguration/SystemConfiguration.h>
+#include <CoreFoundation/CFArray.h>
 ////////
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
  : QObject(parent)
@@ -149,7 +152,12 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     switch (feature) {
     case QSystemInfo::BluetoothFeature :
         {
-
+            //IOBluetoothHostController
+            //addressAsString
+            IOBluetoothHostController* controller = [IOBluetoothHostController defaultController];
+            if (controller != NULL) {
+                featureSupported = true;
+            }
         }
         break;
     case QSystemInfo::CameraFeature :
@@ -237,6 +245,8 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         break;
     case QSystemNetworkInfo::WlanMode:
         {
+//SCNetworkConnectionStatus SCNetworkConnectionGetStatus (
+  //  SCNetworkConnectionRef connection );
 
         }
         break;
@@ -333,8 +343,38 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
 
 QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
-    Q_UNUSED(mode);
-    return QNetworkInterface();
+    //    qWarning() << __FUNCTION__ << mode;
+    QNetworkInterface netInterface;
+
+    CFArrayRef interfaceArray = SCNetworkInterfaceCopyAll(); //10.4
+    CFStringRef iName;
+    CFStringRef type;
+
+    for ( long i = 0; i < CFArrayGetCount(interfaceArray); i++) {
+        SCNetworkInterfaceRef thisInterface =  (SCNetworkInterfaceRef ) CFArrayGetValueAtIndex(interfaceArray, i);
+        type = SCNetworkInterfaceGetInterfaceType(thisInterface);
+        iName = SCNetworkInterfaceGetBSDName(thisInterface);
+        //        qWarning() << stringFromCFString(type) <<stringFromCFString( iName);
+        if (type != NULL) {
+            if (CFEqual(type, kSCNetworkInterfaceTypeBluetooth) && mode == QSystemNetworkInfo::BluetoothMode) {
+                netInterface = QNetworkInterface::interfaceFromName(stringFromCFString(iName));
+                break;
+            } else if (CFEqual(type, kSCNetworkInterfaceTypeEthernet) && mode == QSystemNetworkInfo::EthernetMode) {
+                netInterface = QNetworkInterface::interfaceFromName(stringFromCFString(iName));
+                break;
+            } else if (CFEqual(type, kSCNetworkInterfaceTypeIEEE80211) && mode == QSystemNetworkInfo::WlanMode) {
+                netInterface = QNetworkInterface::interfaceFromName(stringFromCFString(iName));
+                break;
+            }
+        }
+
+        //        CFStringRef macAddr;
+        //        macAddr = SCNetworkInterfaceGetHardwareAddressString(thisInterface);
+        //        if (macAddr != NULL) {
+        //        }
+    }
+    CFRelease(interfaceArray);
+    return netInterface;
 }
 
 //////// QSystemDisplayInfo

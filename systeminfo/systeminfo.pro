@@ -65,8 +65,15 @@ unix: {
 #        LIBS += -lXxf86vm
     }
     mac: {
-        SOURCES += qsysteminfo_mac.cpp
+        SOURCES += qsysteminfo_mac.mm
         HEADERS += qsysteminfo_mac_p.h
+        QMAKE_LFLAGS += -F/Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks
+        LIBS += -framework IOBluetooth -framework SystemConfiguration -framework CoreFoundation
+        INCLUDEPATH += /Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/IOBluetooth.framework/Versions/A/Headers/objc
+        TEMPLATE = lib
+        #CONFIG += lib_bundle
+       macx:debug{
+     }
 
 }
 
