@@ -40,30 +40,27 @@ QMessageOrderingPrivate::QMessageOrderingPrivate(QMessageOrdering *ordering)
 {
 }
 
-#define COMPARE(x,y) if ((x) < (y)) { \
-                        return true; \
-                    } else { \
-                        if ((x) > (y)) { \
-                            return false; \
-                        } else { \
-                            continue; \
-                        } \
-                    }
+#define COMPARE(x,y) \
+if ((x) < (y)) { \
+    return true; \
+} else if ((y) < (x)) { \
+    return false; \
+} else { \
+    continue; \
+}
 
-bool QMessageOrderingPrivate::compare(const QMessageOrdering &ordering, const QMessage &l, const QMessage &r)
+bool QMessageOrderingPrivate::lessThan(const QMessageOrdering &ordering, const QMessage &l, const QMessage &r)
 {
     QMessageOrderingPrivate *d(ordering.d_ptr);
-    if (!d)
-        return l.subject() < r.subject(); //TODO change this to sort by reception time descending
-
-    const QMessage *left;
-    const QMessage *right;
 
     QList<QPair<Field, Qt::SortOrder> >::iterator it(d->_fieldOrderList.begin());
     while (it != d->_fieldOrderList.end()) {
         Field field((*it).first);
         Qt::SortOrder order((*it).second);
         ++it;
+
+        const QMessage *left;
+        const QMessage *right;
         if (order == Qt::AscendingOrder) {
             left = &l;
             right = &r; 
@@ -83,12 +80,14 @@ bool QMessageOrderingPrivate::compare(const QMessageOrdering &ordering, const QM
         case Recipients: {
             QString leftStr;
             QString rightStr;
-            foreach (QMessageAddress a, left->to() + left->cc() + left->bcc())
+            foreach (QMessageAddress a, left->to() + left->cc() + left->bcc()) {
                 leftStr.append(a.recipient() + ";");
-            foreach (QMessageAddress a, right->to() + right->cc() + right->bcc())
+            }
+            foreach (QMessageAddress a, right->to() + right->cc() + right->bcc()) {
                 rightStr.append(a.recipient() + ";");
+            }
             COMPARE(leftStr, rightStr)
-                   }
+        }
         case Subject: COMPARE(left->subject(), right->subject())
         case TimeStamp: COMPARE(left->date(), right->date())
         case ReceptionTimeStamp: COMPARE(left->receivedDate(), right->receivedDate())

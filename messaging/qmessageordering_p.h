@@ -49,7 +49,7 @@ public:
 #if defined(Q_OS_WIN)
     enum Field { Type = 0, Sender, Recipients, Subject, TimeStamp, ReceptionTimeStamp, Read, HasAttachments, Incoming, Removed, Priority, Size };
     QList<QPair<Field, Qt::SortOrder> > _fieldOrderList;
-    static bool compare(const QMessageOrdering &ordering, const QMessage &left, const QMessage &right);
+    static bool lessThan(const QMessageOrdering &ordering, const QMessage &left, const QMessage &right);
     static void sortTable(QMessageStore::ErrorCode *lastError, const QMessageOrdering &ordering, LPMAPITABLE);
     static QMessageOrdering from(QMessageOrderingPrivate::Field field, Qt::SortOrder order);
 #endif
