@@ -345,6 +345,9 @@ private slots:
     void saturationRendererControl_data() { color_data(); }
     void saturationRendererControl();
 
+    void rendererSupportedFormat_data();
+    void rendererSupportedFormat();
+
     void rendererPresent_data();
     void rendererPresent();
 #endif
@@ -1064,7 +1067,6 @@ void tst_QVideoWidget::contrastWidgetControl()
 
 void tst_QVideoWidget::contrastRendererControl()
 {
-    QFETCH(int, controlValue);
     QFETCH(int, value);
     QFETCH(int, expectedValue);
 
@@ -1314,6 +1316,119 @@ static const uchar yuvPlanarImageData[] =
     0x00, 0x0f, 0x0f, 0x00,
 };
 
+void tst_QVideoWidget::rendererSupportedFormat_data()
+{
+    QTest::addColumn<QAbstractVideoBuffer::HandleType>("handleType");
+    QTest::addColumn<QVideoFrame::PixelFormat>("pixelFormat");
+    QTest::addColumn<QSize>("frameSize");
+    QTest::addColumn<bool>("supportedPixelFormat");
+    QTest::addColumn<bool>("supportedFormat");
+    QTest::addColumn<bool>("glOnly");
+
+    QTest::newRow("rgb32 640x480")
+            << QAbstractVideoBuffer::NoHandle
+            << QVideoFrame::Format_RGB32
+            << QSize(640, 480)
+            << true
+            << true
+            << false;
+    QTest::newRow("rgb32 -640x480")
+            << QAbstractVideoBuffer::NoHandle
+            << QVideoFrame::Format_RGB32
+            << QSize(-640, 480)
+            << true
+            << false
+            << false;
+    QTest::newRow("rgb24 1024x768")
+            << QAbstractVideoBuffer::NoHandle
+            << QVideoFrame::Format_RGB24
+            << QSize(1024, 768)
+            << true
+            << true
+            << false;
+    QTest::newRow("rgb24 -1024x-768")
+            << QAbstractVideoBuffer::NoHandle
+            << QVideoFrame::Format_RGB24
+            << QSize(-1024, -768)
+            << true
+            << false
+            << false;    
+    QTest::newRow("rgb565 0x0")
+            << QAbstractVideoBuffer::NoHandle
+            << QVideoFrame::Format_RGB24
+            << QSize(0, 0)
+            << true
+            << false
+            << false;
+    QTest::newRow("YUV420P 640x480")
+            << QAbstractVideoBuffer::NoHandle
+            << QVideoFrame::Format_YUV420P
+            << QSize(640, 480)
+            << true
+            << true
+            << true;
+    QTest::newRow("YUV420P 640x-480")
+            << QAbstractVideoBuffer::NoHandle
+            << QVideoFrame::Format_YUV420P
+            << QSize(640, -480)
+            << true
+            << false
+            << true;
+    QTest::newRow("Y8 640x480")
+            << QAbstractVideoBuffer::NoHandle
+            << QVideoFrame::Format_Y8
+            << QSize(640, 480)
+            << false
+            << false
+            << false;
+    QTest::newRow("rgb32 (OpenGL) 640x480")
+            << QAbstractVideoBuffer::GLTextureHandle
+            << QVideoFrame::Format_RGB32
+            << QSize(640, 480)
+            << true
+            << true
+            << true;
+    QTest::newRow("yuv420p (OpenGL) 640x480")
+            << QAbstractVideoBuffer::GLTextureHandle
+            << QVideoFrame::Format_YUV420P
+            << QSize(640, 480)
+            << false
+            << false
+            << false;
+}
+
+void tst_QVideoWidget::rendererSupportedFormat()
+{
+    QFETCH(QAbstractVideoBuffer::HandleType, handleType);
+    QFETCH(QVideoFrame::PixelFormat, pixelFormat);
+    QFETCH(QSize, frameSize);
+    QFETCH(bool, supportedPixelFormat);
+    QFETCH(bool, supportedFormat);
+    QFETCH(bool, glOnly);
+
+    QtTestVideoObject object(0, 0, new QtTestRendererControl);
+
+    QVideoWidget widget(&object);
+    widget.show();
+
+    QAbstractVideoSurface *surface = object.testService->rendererControl->surface();
+
+    QVERIFY(surface);
+
+    const QList<QVideoFrame::PixelFormat> pixelFormats = surface->supportedPixelFormats(handleType);
+
+    // Some formats are not supported without platform support for OpenGL shaders.
+    if (glOnly && !pixelFormats.contains(pixelFormat))
+        QSKIP("Pixel format unsupported on this platform", SkipSingle);
+
+    QCOMPARE(pixelFormats.contains(pixelFormat), QBool(supportedPixelFormat));
+
+    QVideoSurfaceFormat format(frameSize, pixelFormat, handleType);
+
+    QCOMPARE(surface->isFormatSupported(format), supportedFormat);
+    QCOMPARE(surface->start(format), supportedFormat);
+}
+
 void tst_QVideoWidget::rendererPresent_data()
 {
     QTest::addColumn<QVideoFrame::PixelFormat>("pixelFormatA");
@@ -1423,6 +1538,11 @@ void tst_QVideoWidget::rendererPresent()
 
     QAbstractVideoSurface *surface = object.testService->rendererControl->surface();
 
+    const QList<QVideoFrame::PixelFormat> pixelFormats = surface->supportedPixelFormats();
+
+    if (!pixelFormats.contains(pixelFormatA) || !pixelFormats.contains(pixelFormatB))
+        QSKIP("Pixel format unsupported on this platform", SkipSingle);
+
     QVideoSurfaceFormat formatA(frameSizeA, pixelFormatA);
 
     QVERIFY(surface->start(formatA));
@@ -1461,6 +1581,16 @@ void tst_QVideoWidget::rendererPresent()
     surface->stop();
 
     QVERIFY(!surface->isStarted());
+
+    // Try presenting a frame while stopped.
+    QVERIFY(!surface->present(frameB));
+    QCOMPARE(surface->error(), QAbstractVideoSurface::StoppedError);
+
+    // Try presenting a frame with a different format.
+    QVERIFY(surface->start(formatB));
+    QVERIFY(!surface->present(frameA));
+    QVERIFY(!surface->isStarted());
+    QCOMPARE(surface->error(), QAbstractVideoSurface::IncorrectFormatError);
 }
 
 #endif
