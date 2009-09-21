@@ -746,6 +746,9 @@ void tst_QContactAsync::groupFetch()
 {
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
+    if (!cm->information()->hasFeature(QContactManagerInfo::Groups))
+        QSKIP("This manager does not support groups", SkipSingle);
+
     QContactGroupFetchRequest gfr;
     QVERIFY(gfr.type() == QContactAbstractRequest::GroupFetchRequest);
 
@@ -855,6 +858,9 @@ void tst_QContactAsync::groupRemove()
 {
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
+    if (!cm->information()->hasFeature(QContactManagerInfo::Groups)) 
+        QSKIP("This manager does not support groups", SkipSingle);
+
     QContactGroupRemoveRequest grr;
     QVERIFY(grr.type() == QContactAbstractRequest::GroupRemoveRequest);
 
@@ -1001,6 +1007,9 @@ void tst_QContactAsync::groupSave()
 {
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
+    if (!cm->information()->hasFeature(QContactManagerInfo::Groups))
+        QSKIP("This manager does not support groups", SkipSingle);
+
     QContactGroupSaveRequest gsr;
     QVERIFY(gsr.type() == QContactAbstractRequest::GroupSaveRequest);
 
