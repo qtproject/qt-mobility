@@ -176,7 +176,19 @@ RESOURCE ARRAY r_cntui_new_field_defns
 				};
 			category=EContactCategoryHome;
 			fieldName=STRING_r_cntui_new_field_defns10;
-			flags=EContactFieldFlagDisabled;
+			},
+			FIELD // Number: car
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldPhoneNumberValue;
+			vCardMapping=KIntContactFieldVCardMapTEL;
+			extraMapping=
+			  {
+			  MAPPING { mapping=KIntContactFieldVCardMapHOME; },
+				MAPPING { mapping=KIntContactFieldVCardMapCAR; }
+				};
+			category=EContactCategoryHome;
+			fieldName=STRING_r_cntui_new_field_defns11;
 			},
       FIELD	// Email Address (Home)
 			{

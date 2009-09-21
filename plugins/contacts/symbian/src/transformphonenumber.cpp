@@ -51,6 +51,7 @@ QList<CContactItemField *> TransformPhoneNumber::transformDetailL(const QContact
 	if(!subTypes.count())
 	{
 		newField->AddFieldTypeL(KUidContactFieldPhoneNumber);
+		newField->SetMapping(KUidContactFieldVCardMapTEL);
 	}
 	
 	//landline
@@ -58,13 +59,15 @@ QList<CContactItemField *> TransformPhoneNumber::transformDetailL(const QContact
 	{
 		newField->AddFieldTypeL(KUidContactFieldPhoneNumber);
 		newField->SetMapping(KUidContactFieldVCardMapTEL);
+		newField->AddFieldTypeL(KUidContactFieldVCardMapVOICE);
 	}
 	
 	//mobile
 	else if	(subTypes.contains(QContactPhoneNumber::SubTypeMobile))
 	{
 		newField->AddFieldTypeL(KUidContactFieldPhoneNumber);
-		newField->SetMapping(KUidContactFieldVCardMapCELL);
+		newField->SetMapping(KUidContactFieldVCardMapTEL);
+		newField->AddFieldTypeL(KUidContactFieldVCardMapCELL);
 	}
 	
 	//fax
@@ -72,15 +75,33 @@ QList<CContactItemField *> TransformPhoneNumber::transformDetailL(const QContact
 	{
 		newField->AddFieldTypeL(KUidContactFieldFax);
 		newField->SetMapping(KUidContactFieldVCardMapTEL);
+		newField->AddFieldTypeL(KUidContactFieldVCardMapFAX);
 	}
 	
 	//pager
 	else if (subTypes.contains(QContactPhoneNumber::SubTypePager))
 	{
 		newField->AddFieldTypeL(KUidContactFieldPhoneNumber);
-		newField->SetMapping(KUidContactFieldVCardMapPAGER);
+		newField->SetMapping(KUidContactFieldVCardMapTEL);
+		newField->AddFieldTypeL(KUidContactFieldVCardMapPAGER);
+	}
+
+	//bbs
+	else if (subTypes.contains(QContactPhoneNumber::SubTypeBulletinBoardSystem))
+	{
+        newField->AddFieldTypeL(KUidContactFieldPhoneNumber);
+	    newField->SetMapping(KUidContactFieldVCardMapTEL);
+	    newField->AddFieldTypeL(KUidContactFieldVCardMapBBS);
 	}
 	
+	//car
+	else if (subTypes.contains(QContactPhoneNumber::SubTypeCar))
+	{
+        newField->AddFieldTypeL(KUidContactFieldPhoneNumber);
+        newField->SetMapping(KUidContactFieldVCardMapTEL);
+	    newField->AddFieldTypeL(KUidContactFieldVCardMapCAR);
+	}
+	    
 	//contexts
 	setContextsL(phoneNumber, *newField);
 	
@@ -102,23 +123,24 @@ QContactDetail *TransformPhoneNumber::transformItemField(const CContactItemField
 	phoneNumber->setNumber(number);
 
 	if (field.ContentType().ContainsFieldType(KUidContactFieldPhoneNumber)) {
-        if (field.ContentType().Mapping() == KUidContactFieldVCardMapTEL) {
+        if (field.ContentType().ContainsFieldType(KUidContactFieldVCardMapVOICE)) {
             phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeLandline);
         }
-        else if (field.ContentType().Mapping() == KUidContactFieldVCardMapCELL) {
+        else if (field.ContentType().ContainsFieldType(KUidContactFieldVCardMapCELL)) {
             phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeMobile);
         }
-        else if (field.ContentType().Mapping() == KUidContactFieldVCardMapPAGER) {
+        else if (field.ContentType().ContainsFieldType(KUidContactFieldVCardMapPAGER)) {
             phoneNumber->setSubTypes(QContactPhoneNumber::SubTypePager);
         }
-        else {
-            phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeLandline);
+        else if (field.ContentType().ContainsFieldType(KUidContactFieldVCardMapBBS)) {
+            phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeBulletinBoardSystem);
+        }
+        else if (field.ContentType().ContainsFieldType(KUidContactFieldVCardMapCAR)) {
+            phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeCar);
         }
     }
     else if (field.ContentType().ContainsFieldType(KUidContactFieldFax)) {
-        if (field.ContentType().Mapping() == KUidContactFieldVCardMapTEL) {
-            phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeFacsimile);
-        }
+        phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeFacsimile);
     }
 	
 	// set context
