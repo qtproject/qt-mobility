@@ -198,6 +198,7 @@ void QContactManagerData::loadFactories()
             QPluginLoader qpl(plugins.at(i));
             QContactManagerEngineFactory *f = qobject_cast<QContactManagerEngineFactory*>(qpl.instance());
             QContactActionFactory *g = qobject_cast<QContactActionFactory*>(qpl.instance());
+
             if (f) {
                 QString name = f->managerName();
                 qDebug() << "Dynamic: found an engine plugin" << f << "with name" << name;
@@ -228,6 +229,11 @@ void QContactManagerData::loadFactories()
                     m_actionmap.insertMulti(desc.actionName(), m_descriptors.count() - 1);
                     m_vendormap.insertMulti(desc.vendorName(), m_descriptors.count() - 1);
                 }
+            }
+
+            /* Debugging */
+            if (!f && !g) {
+                qDebug() << "Unknown plugin:" << qpl.errorString() << " [qobject:" << qpl.instance() << "]";
             }
         }
 
