@@ -22,6 +22,7 @@ mobility.prf
 bin/servicexmlgen*
 bin/servicefw*
 bin/vsexplorer*
+bin/sysinfo*
 bin/examples/*
 install/*
 
