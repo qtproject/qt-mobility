@@ -62,6 +62,7 @@
 #include "qcontactmanagerengine.h"
 #include "qcontactdetaildefinition.h"
 #include "qcontactabstractrequest.h"
+#include "qcontactchangeset.h"
 
 class QContactAbstractRequest;
 class QContactManagerInfoPrivate;
@@ -121,7 +122,9 @@ public:
     /* Contacts - Accessors and Mutators */
     QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
+    QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
     bool saveContact(QContact* contact, QContactManager::Error& error);
+    QList<QContactManager::Error> removeContacts(QList<QUniqueId>* contactIds, QContactManager::Error& error);
     bool removeContact(const QUniqueId& contactId, QContactManager::Error& error);
 
     /* Groups - Accessors and Mutators */
@@ -154,6 +157,14 @@ private slots:
     void performAsynchronousOperation();
 
 private:
+    /* Implement "signal coalescing" for batch functions via change set */
+    bool saveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error& error);
+    bool removeContact(const QUniqueId& contactId, QContactChangeSet& changeSet, QContactManager::Error& error);
+    bool saveGroup(QContactGroup* group, QContactChangeSet& changeSet, QContactManager::Error& error);
+    bool removeGroup(const QUniqueId& groupId, QContactChangeSet& changeSet, QContactManager::Error& error);
+    bool saveDetailDefinition(const QContactDetailDefinition& def, QContactChangeSet& changeSet, QContactManager::Error& error);
+    bool removeDetailDefinition(const QString& definitionId, QContactChangeSet& changeSet, QContactManager::Error& error);
+
     QContactMemoryEngineData* d;
     static QMap<QString, QContactMemoryEngine*> engines;
 };
