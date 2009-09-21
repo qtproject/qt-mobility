@@ -218,8 +218,8 @@ public:
 private:
     QSharedDataPointer<QContactWinCEEngineData> d;
 
-    QContact convertContact(IItem *contact) const;
-    bool convertContact(const QContact& contact, IItem* item, QContactManager::Error &error) const;
+    QContact convertToQContact(IItem *contact) const;
+    bool convertFromQContact(const QContact& contact, IItem* item, QContactManager::Error &error) const;
 };
 
 class Q_DECL_EXPORT ContactWinceFactory : public QObject, public QContactManagerEngineFactory

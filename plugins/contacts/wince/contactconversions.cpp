@@ -42,7 +42,7 @@
 /*!
  * Convert from the supplied CEPROPVAL \a val into a QVariant.
  */
-static QVariant convertCEPropVal(const CEPROPVAL& val)
+static QVariant CEPropValToQVariant(const CEPROPVAL& val)
 {
     if (val.propid != PIMPR_INVALID_ID) {
         switch(TypeFromPropID(val.propid)) {
@@ -780,7 +780,7 @@ static void contactQ2PTransforms(QHash<QString, processContactPoomElement>& ret)
     ret = hash;
 }
 
-QContact QContactWinCEEngine::convertContact(IItem *contact) const
+QContact QContactWinCEEngine::convertToQContact(IItem *contact) const
 {
     QContact ret;
 
@@ -809,7 +809,7 @@ QContact QContactWinCEEngine::convertContact(IItem *contact) const
         // since there should only be juicy data retrieved
         QHash<CEPROPID, QVariant> valueHash;
         for (int i=0; i < props.count(); i++) {
-            QVariant v = convertCEPropVal(propvals[i]);
+            QVariant v = CEPropValToQVariant(propvals[i]);
             if (!v.isNull()) {
                 valueHash.insert(propvals[i].propid, v);
             }
@@ -852,7 +852,7 @@ QContact QContactWinCEEngine::convertContact(IItem *contact) const
     return ret;
 }
 
-bool QContactWinCEEngine::convertContact(const QContact& contact, IItem* item, QContactManager::Error &error) const
+bool QContactWinCEEngine::convertFromQContact(const QContact& contact, IItem* item, QContactManager::Error &error) const
 {
     // We have to create a whole bunch of CEPROPVALs for each detail
     // This is slightly hampered by the limited storage slots

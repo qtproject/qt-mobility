@@ -188,7 +188,7 @@ QContact QContactWinCEEngine::contact(const QUniqueId& contactId, QContactManage
         if (SUCCEEDED(hr)) {
             if (item) {
                 error = QContactManager::NoError;
-                ret = convertContact(item);
+                ret = convertToQContact(item);
             } else {
                 error = QContactManager::DoesNotExistError;
             }
@@ -261,7 +261,7 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QSet<QUniqueId>& contac
 
     if (icontact) {
         // Convert our QContact to the Icontact (via setProps)
-        if (convertContact(*contact, icontact, error)) {
+        if (convertFromQContact(*contact, icontact, error)) {
             HRESULT hr = icontact->Save();
             if (SUCCEEDED(hr)) {
                 // yay! we also need to set the new contact id
