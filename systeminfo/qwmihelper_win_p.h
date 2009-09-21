@@ -45,7 +45,7 @@
 // We mean it.
 //
 
-#ifdef Q_CC_MSVC
+#ifndef Q_CC_MINGW
 #include <QObject>
 #include <QVariant>
 #include <QString>
@@ -56,7 +56,7 @@
 class WMIHelper : public QObject
 {
 public:
-    WMIHelper();
+    WMIHelper(QObject *parent = 0);
     ~WMIHelper();
     QVariant getWMIData();
     QVariant getWMIData(const QString &wmiNamespace,const QString &className, const QStringList &classProperties);

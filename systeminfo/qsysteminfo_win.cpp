@@ -56,7 +56,7 @@
 
 #include <locale.h>
 
-#ifdef Q_CC_MSVC
+#ifndef Q_CC_MINGW
 #include "qwmihelper_win_p.h"
 #include <Wlanapi.h>
 #include <Bthsdpdef.h>
@@ -90,7 +90,7 @@ typedef struct _DISPLAY_BRIGHTNESS {
 } DISPLAY_BRIGHTNESS, *PDISPLAY_BRIGHTNESS;
 
 
-#ifdef Q_CC_MSVC
+#ifndef Q_CC_MINGW
 static PWLAN_CONNECTION_ATTRIBUTES  getWifiConnectionAttributes()
 {
     DWORD version =  0;
@@ -269,7 +269,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     switch (feature) {
     case QSystemInfo::BluetoothFeature :
         {
-#ifdef Q_CC_MSVC
+#ifndef Q_CC_MINGW
             BLUETOOTH_FIND_RADIO_PARAMS  radioParams = { sizeof(BLUETOOTH_FIND_RADIO_PARAMS)};
             HANDLE radio;
             if(BluetoothFindFirstRadio(&radioParams, &radio) != NULL) {
@@ -290,7 +290,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::CameraFeature :
         {
-#ifdef Q_CC_MSVC
+#ifndef Q_CC_MINGW
             ICreateDevEnum *devEnum = NULL;
             IEnumMoniker *monikerEnum = NULL;
 
@@ -317,9 +317,9 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::IrFeature :
         {
-#ifdef Q_CC_MSVC
+#ifndef Q_CC_MINGW
             WMIHelper *wHelper;
-            wHelper = new WMIHelper();
+            wHelper = new WMIHelper(this);
             wHelper->setWmiNamespace("root/cimv2");
             wHelper->setClassName("Win32_InfraredDevice");
             wHelper->setClassProperty(QStringList() << "ConfigManagerErrorCode");
@@ -356,9 +356,9 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::UsbFeature :
         {
-#ifdef Q_CC_MSVC
+#ifndef Q_CC_MINGW
             WMIHelper *wHelper;
-            wHelper = new WMIHelper();
+            wHelper = new WMIHelper(this);
             wHelper->setWmiNamespace("root/cimv2");
             wHelper->setClassName("Win32_USBHub");
             wHelper->setClassProperty(QStringList() << "ConfigManagerErrorCode");
@@ -418,9 +418,9 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         {
            //IOCTL_VIDEO_QUERY_AVAIL_MODES
 //VIDEO_MODE_INFORMATION vInfo;
-#ifdef Q_CC_MSVC
+#ifndef Q_CC_MINGW
             WMIHelper *wHelper;
-            wHelper = new WMIHelper();
+            wHelper = new WMIHelper(this);
             wHelper->setWmiNamespace("root/cimv2");
             wHelper->setClassName("VideoModeDescriptor");
             wHelper->setClassProperty(QStringList() << "VideoStandardType");
@@ -442,7 +442,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 
 
 //////// QSystemNetworkInfo
-#ifdef Q_CC_MSVC
+#ifndef Q_CC_MINGW
 
 void wlanNotificationCallback(PWLAN_NOTIFICATION_DATA pNotifyData, PVOID pContext)
 {
@@ -600,7 +600,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         break;
     case QSystemNetworkInfo::WlanMode:
         {
-#ifdef Q_CC_MSVC
+#ifndef Q_CC_MINGW
             PWLAN_CONNECTION_ATTRIBUTES connAtts = getWifiConnectionAttributes();
             if(connAtts != NULL) {
                 if(connAtts->isState  == wlan_interface_state_authenticating) {
@@ -618,9 +618,9 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         break;
     case QSystemNetworkInfo::EthernetMode:
         {
-#ifdef Q_CC_MSVC
+#ifndef Q_CC_MINGW
             WMIHelper *wHelper;
-            wHelper = new WMIHelper();
+            wHelper = new WMIHelper(this);
             wHelper->setWmiNamespace("root/cimv2");
             wHelper->setClassName("Win32_NetworkAdapter");
             wHelper->setClassProperty(QStringList() << "NetConnectionStatus");
@@ -636,9 +636,9 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         break;
         case QSystemNetworkInfo::BluetoothMode:
         {
-#ifdef Q_CC_MSVC
+#ifndef Q_CC_MINGW
             WMIHelper *wHelper;
-            wHelper = new WMIHelper();
+            wHelper = new WMIHelper(this);
             wHelper->setWmiNamespace("root/cimv2");
             wHelper->setClassName("Win32_NetworkAdapter");
             wHelper->setClassProperty(QStringList() << "NetConnectionStatus");
@@ -670,7 +670,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
     case QSystemNetworkInfo::WlanMode:
         {
 
-#ifdef Q_CC_MSVC
+#ifndef Q_CC_MINGW
 
             DWORD version =  0;
             HANDLE clientHandle = NULL;
@@ -727,9 +727,9 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
     case QSystemNetworkInfo::EthernetMode:
         {
            qWarning() << "checking ethernet signal";
-#ifdef Q_CC_MSVC
+#ifndef Q_CC_MINGW
             WMIHelper *wHelper;
-            wHelper = new WMIHelper();
+            wHelper = new WMIHelper(this);
             wHelper->setWmiNamespace("root/cimv2");
             wHelper->setClassName("Win32_NetworkAdapter");
             wHelper->setClassProperty(QStringList() << "NetConnectionStatus");
@@ -803,7 +803,7 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
         {
-#ifdef Q_CC_MSVC
+#ifndef Q_CC_MINGW
             PWLAN_CONNECTION_ATTRIBUTES   connAtts = getWifiConnectionAttributes();
             if(connAtts != NULL) {
                 DOT11_SSID ssid;
@@ -833,26 +833,12 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
 
 QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
-
-   qWarning() << __FUNCTION__;
-
-//     WMIHelper *wHelper;
-//     wHelper = new WMIHelper();
-//     wHelper->setWmiNamespace("root/cimv2");
-//     wHelper->setClassName("Win32_NetworkAdapter");
-//     wHelper->setClassProperty(QStringList() << "AdapterType" << "NetConnectionStatus");
-//     QVariant v = wHelper->getWMIData();
-//     foreach(QVariant adapter,  wHelper->wmiVariantList) {
-//        qWarning() <<"adapter type"  << adapter.;
-//     }
-
-
     QList<QNetworkInterface> interfaceList;
     interfaceList = QNetworkInterface::allInterfaces();
     qWarning() << "number of interfaces" << interfaceList.count();
 
-    while (!interfaceList.isEmpty()) {
-        QNetworkInterface netInterface = interfaceList.takeFirst();
+    for(int i = 0; i < interfaceList.count(); i++) {
+        QNetworkInterface netInterface = interfaceList.at(i);
 qWarning()
         << netInterface.name()
         << netInterface.hardwareAddress()
@@ -863,7 +849,7 @@ qWarning()
             continue;
         }
 
-#ifdef Q_CC_MSVC
+#ifndef Q_CC_MINGW
         unsigned long oid;
         DWORD bytesWritten;
 
@@ -947,9 +933,9 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 {
 //#if WINVER > 0x0600
-#ifdef Q_CC_MSVC
+#ifndef Q_CC_MINGW
     WMIHelper *wHelper;
-    wHelper = new WMIHelper();
+    wHelper = new WMIHelper(this);
     wHelper->setWmiNamespace("root/wmi");
     wHelper->setClassName("WmiMonitorBrightness");
     wHelper->setClassProperty(QStringList() << "CurrentBrightness");
@@ -1083,12 +1069,9 @@ qint64 QSystemMemoryInfoPrivate::availableDiskSpace(const QString &driveVolume)
     qint64 totalBytes;
     qint64 totalFreeBytes;
 
-#ifdef Q_CC_MSVC
-    bool ok = GetDiskFreeSpaceEx(driveVolume.utf16(),(PULARGE_INTEGER)&freeBytes, (PULARGE_INTEGER)&totalBytes, (PULARGE_INTEGER)&totalFreeBytes);
-//    qWarning() << ok << freeBytes << totalBytes << totalFreeBytes;
+    bool ok = GetDiskFreeSpaceEx((WCHAR *)driveVolume.utf16(),(PULARGE_INTEGER)&freeBytes, (PULARGE_INTEGER)&totalBytes, (PULARGE_INTEGER)&totalFreeBytes);
     if(!ok)
         totalFreeBytes = 0;
-#endif
     return totalFreeBytes;
 }
 
@@ -1098,19 +1081,15 @@ qint64 QSystemMemoryInfoPrivate::totalDiskSpace(const QString &driveVolume)
     qint64 totalBytes;
     qint64 totalFreeBytes;
 
-#ifdef Q_CC_MSVC
-    bool ok = GetDiskFreeSpaceEx(driveVolume.utf16(),(PULARGE_INTEGER)&freeBytes, (PULARGE_INTEGER)&totalBytes, (PULARGE_INTEGER)&totalFreeBytes);
-//    qWarning() << ok << freeBytes << totalBytes << totalFreeBytes;
+    bool ok = GetDiskFreeSpaceEx((WCHAR *)driveVolume.utf16(),(PULARGE_INTEGER)&freeBytes, (PULARGE_INTEGER)&totalBytes, (PULARGE_INTEGER)&totalFreeBytes);
     if(!ok)
         totalBytes = 0;
-#endif
     return totalBytes;
 }
 
 QSystemMemoryInfo::VolumeType QSystemMemoryInfoPrivate::volumeType(const QString &driveVolume)
 {
-#ifdef Q_CC_MSVC
-    uint result =   GetDriveType(driveVolume.utf16());
+    uint result =  GetDriveType((WCHAR *)driveVolume.utf16());
     switch(result) {
     case 0:
     case 1: //unknown
@@ -1131,25 +1110,24 @@ QSystemMemoryInfo::VolumeType QSystemMemoryInfoPrivate::volumeType(const QString
     case 6: //ramdisk
         break;
     };
-#endif
     return QSystemMemoryInfo::NoVolume;
 }
 
 QStringList QSystemMemoryInfoPrivate::listOfVolumes()
 {
     QStringList drivesList;
-
-#ifdef Q_CC_MSVC
-    WMIHelper *wHelper;
-    wHelper = new WMIHelper();
-    wHelper->setWmiNamespace("root/cimv2");
-    wHelper->setClassName("Win32_LogicalDisk");
-    wHelper->setClassProperty(QStringList() << "Name");
-    QVariant v = wHelper->getWMIData();
-    foreach(QVariant adapter,  wHelper->wmiVariantList) {
-        drivesList << adapter.toString();
+    quint32 driveLetter = (quint32) GetLogicalDrives();
+    char volumeName[] = "A:/";
+    while (driveLetter) {
+        if (driveLetter & 1) {
+            QString letter = volumeName;
+            letter.chop(1);
+            drivesList.append(letter);
+        }
+        volumeName[0]++;
+        driveLetter = driveLetter >> 1;
     }
-#endif
+
     return drivesList;
 }
 
@@ -1171,47 +1149,58 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
 {
     QSystemDeviceInfo::InputMethodFlags methods;
-#ifdef Q_CC_MSVC
-    WMIHelper *wHelper;
-    wHelper = new WMIHelper();
-    wHelper->setWmiNamespace("root/cimv2");
-    wHelper->setClassName("Win32_PointingDevice");
-    wHelper->setClassProperty(QStringList() << "PointingType");
 
-    QVariant v = wHelper->getWMIData();
-    foreach(QVariant var, wHelper->wmiVariantList) {
-        switch(var.toUInt()) {
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-        case 6:
-        case 7:
-        case 9:
-            {
-                if((methods & QSystemDeviceInfo::Mouse) != QSystemDeviceInfo::Mouse) {
-                    methods |= QSystemDeviceInfo::Mouse;
-                }
-            }
-            break;
-        case 8:
-            {
-                if((methods & QSystemDeviceInfo::SingleTouch) != QSystemDeviceInfo::SingleAvailable) {
-                    methods |= QSystemDeviceInfo::SingleTouch;
-                }
-            }
-            break;
-        };
-    }
+    int mouseResult = GetSystemMetrics(SM_CMOUSEBUTTONS);
+    if(mouseResult > 0) {
+        if((methods & QSystemDeviceInfo::Mouse) != QSystemDeviceInfo::Mouse) {
+            methods |= QSystemDeviceInfo::Mouse;
 
-    wHelper->setClassName("Win32_Keyboard");
-    wHelper->setClassProperty(QStringList() << "ConfigManagerErrorCode");
-    v = wHelper->getWMIData();
-    if(v.toUInt() == 0) {
-        methods = methods | QSystemDeviceInfo::Keyboard;
+        }
     }
-#endif
+    int tabletResult = GetSystemMetrics(SM_TABLETPC);
+    if(tabletResult > 0) {
+        if((methods & QSystemDeviceInfo::SingleTouch) != QSystemDeviceInfo::SingleTouch) {
+            methods |= QSystemDeviceInfo::SingleTouch;
+
+        }
+    }
+    int keyboardType = GetKeyboardType(0);
+    switch(keyboardType) {
+    case 1:
+    case 3:
+        {
+            if((methods & QSystemDeviceInfo::Keyboard) != QSystemDeviceInfo::Keyboard) {
+                methods |= QSystemDeviceInfo::Keyboard;
+
+            }
+        }
+        break;
+    case 2:
+    case 4:
+        {
+            if((methods & QSystemDeviceInfo::Keyboard) != QSystemDeviceInfo::Keyboard) {
+                methods |= QSystemDeviceInfo::Keyboard;
+
+            }
+            if((methods & QSystemDeviceInfo::Keypad) != QSystemDeviceInfo::Keypad) {
+                methods |= QSystemDeviceInfo::Keypad;
+
+            }
+        }
+        break;
+    case 5:
+        {
+            if((methods & QSystemDeviceInfo::Keypad) != QSystemDeviceInfo::Keypad) {
+                methods |= QSystemDeviceInfo::Keypad;
+
+            }
+        }
+        break;
+    default:
+        break;
+
+    };
+
     return methods;
 }
 
@@ -1252,9 +1241,9 @@ QString QSystemDeviceInfoPrivate::imsi()
 QString QSystemDeviceInfoPrivate::manufacturer()
 {
    QString manu;
-#ifdef Q_CC_MSVC
+#ifndef Q_CC_MINGW
     WMIHelper *wHelper;
-    wHelper = new WMIHelper();
+    wHelper = new WMIHelper;
     wHelper->setWmiNamespace("root/cimv2");
     wHelper->setClassName("Win32_ComputerSystemProduct");
     wHelper->setClassProperty(QStringList() << "Vendor");
@@ -1263,6 +1252,7 @@ QString QSystemDeviceInfoPrivate::manufacturer()
     if(manu.isEmpty()) {
         manu = "System manufacturer";
     }
+    delete wHelper;
 #endif
     return manu;
 }
@@ -1270,11 +1260,12 @@ QString QSystemDeviceInfoPrivate::manufacturer()
 QString QSystemDeviceInfoPrivate::model()
 {
    QString model;
-#ifdef Q_CC_MSVC
+#ifndef Q_CC_MINGW
     WMIHelper *wHelper;
-    wHelper = new WMIHelper();
+    wHelper = new WMIHelper;
     wHelper->setWmiNamespace("root/cimv2");
-//    wHelper->setClassName("Win32_Processor");
+
+    //    wHelper->setClassName("Win32_Processor");
 //    wHelper->setClassProperty(QStringList() << "Architecture");
 //    QVariant v = wHelper->getWMIData();
 //    QString model;
@@ -1338,6 +1329,7 @@ QString QSystemDeviceInfoPrivate::model()
         break;
 
     };
+    delete wHelper;
 #endif
     return model;
 }
@@ -1345,9 +1337,9 @@ QString QSystemDeviceInfoPrivate::model()
 QString QSystemDeviceInfoPrivate::productName()
 {
    QString name;
-#ifdef Q_CC_MSVC
+#ifndef Q_CC_MINGW
     WMIHelper *wHelper;
-    wHelper = new WMIHelper();
+    wHelper = new WMIHelper;
     wHelper->setWmiNamespace("root/cimv2");
     wHelper->setClassName("Win32_ComputerSystemProduct");
     wHelper->setClassProperty(QStringList() << "Name");
@@ -1364,6 +1356,7 @@ QString QSystemDeviceInfoPrivate::productName()
         }
     }
 
+    delete wHelper;
 #endif
     return name;
 }
@@ -1472,7 +1465,7 @@ bool QSystemScreenSaverPrivate::setScreenBlankingEnabled(bool state)
 
     TCHAR systemPath[MAX_PATH];
 
-#ifdef Q_CC_MSVC
+#ifndef Q_CC_MINGW
     GetSystemDirectory(systemPath, MAX_PATH);
 
     winDir = QString::fromUtf16(systemPath);
