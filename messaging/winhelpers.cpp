@@ -1966,10 +1966,6 @@ Quit:
     return false;
 }
 
-namespace {
-
-}
-
 QMessageFolder MapiSession::folder(QMessageStore::ErrorCode *lastError, const QMessageFolderId& id) const
 {
     QMessageFolder result;
