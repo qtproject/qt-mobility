@@ -960,9 +960,11 @@ QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, co
         return QMessageIdList();
     }
 
-    QMessageOrderingPrivate::sortTable(lastError, ordering, messagesTable);
-    if (*lastError != QMessageStore::NoError)
-        return QMessageIdList();
+    if (!ordering.isEmpty()) {
+        QMessageOrderingPrivate::sortTable(lastError, ordering, messagesTable);
+        if (*lastError != QMessageStore::NoError)
+            return QMessageIdList();
+    }
 
     QMessageFilterPrivate::filterTable(lastError, filter, messagesTable);
     if (*lastError != QMessageStore::NoError)
@@ -2268,6 +2270,8 @@ bool MapiSession::updateMessageRecipients(QMessageStore::ErrorCode *lastError, Q
 bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessage *msg) const
 {
     bool result(false);
+
+    // TODO: Signed messages are stored with the body as an attachment; we need to implement this
 
     if (!msg->d_ptr->_elementsPresent.body) {
         if (!msg->d_ptr->_elementsPresent.properties) {

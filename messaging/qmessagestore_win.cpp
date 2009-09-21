@@ -106,8 +106,10 @@ FolderHeap::FolderHeap(QMessageStore::ErrorCode *lastError, MapiSessionPtr mapiS
         }
     }
 
-    for (int i = _heap.count()/2 - 1; i >= 0; --i)
-        sink(i);
+    if (!_ordering.isEmpty()) {
+        for (int i = _heap.count()/2 - 1; i >= 0; --i)
+            sink(i);
+    }
 }
 
 QMessage FolderHeap::takeFront(QMessageStore::ErrorCode *lastError)
@@ -142,8 +144,10 @@ QMessage FolderHeap::takeFront(QMessageStore::ErrorCode *lastError)
             return result;
     }
 
-    // Reposition this folder in the heap based on the new front message
-    sink(0);
+    if (!_ordering.isEmpty()) {
+        // Reposition this folder in the heap based on the new front message
+        sink(0);
+    }
     return result;
 }
 
