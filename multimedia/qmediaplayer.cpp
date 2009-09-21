@@ -123,16 +123,23 @@ void QMediaPlayerPrivate::_q_mediaStatusChanged(QMediaPlayer::MediaStatus status
     case QMediaPlayer::StalledMedia:
     case QMediaPlayer::BufferingMedia:
         q->addPropertyWatch("bufferStatus");
+        emit q->mediaStatusChanged(status);
         break;
     case QMediaPlayer::EndOfMedia:
-        if (playlist)
-            playlist->advance();
-        //fall
+        q->removePropertyWatch("bufferStatus");
+        if (playlist) {
+            if (playlist->nextPosition(1) != -1) {
+                playlist->advance();
+            } else
+                emit q->mediaStatusChanged(status);
+        }
+        break;
     default:
         q->removePropertyWatch("bufferStatus");
+        emit q->mediaStatusChanged(status);
         break;
     }
-    emit q->mediaStatusChanged(status);
+
 }
 
 void QMediaPlayerPrivate::_q_error(int error, const QString &errorString)
