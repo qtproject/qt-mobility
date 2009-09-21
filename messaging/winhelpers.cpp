@@ -1708,8 +1708,9 @@ MapiSession::MapiSession(QMessageStore::ErrorCode *lastError, bool mapiInitializ
     }
 
     // Attempt to start a MAPI session on the default profile
-    if (MAPILogonEx(0, (LPTSTR)0, 0, MAPI_EXTENDED | MAPI_USE_DEFAULT | MAPI_NEW_SESSION, &_mapiSession) != S_OK) {
-        qWarning() << "Failed to login to MAPI session";
+    HRESULT rv = MAPILogonEx(0, (LPTSTR)0, 0, MAPI_EXTENDED | MAPI_USE_DEFAULT | MAPI_NEW_SESSION, &_mapiSession);
+    if (HR_FAILED(rv)) {
+        qWarning() << "Failed to login to MAPI session - rv:" << hex << (ULONG)rv;
         *lastError = QMessageStore::ContentInaccessible;
         _valid = false;
         _mapiSession = 0;
@@ -1736,43 +1737,34 @@ MapiStorePtr MapiSession::findStore(QMessageStore::ErrorCode *lastError, const Q
     }
 
     IMAPITable *mapiMessageStoresTable(0);
-    const int nCols(3);
-    enum { defaultStoreColumn = 0, entryIdColumn, recordKeyColumn };
-    SizedSPropTagArray(nCols, columns) = {nCols, {PR_DEFAULT_STORE, PR_ENTRYID, PR_RECORD_KEY}};
-    LPSRowSet rows(0);
-
     if (_mapiSession->GetMsgStoresTable(0, &mapiMessageStoresTable) != S_OK) {
         *lastError = QMessageStore::ContentInaccessible;
         return result;
     }
-    if (mapiMessageStoresTable->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0) != S_OK) {
-        *lastError = QMessageStore::ContentInaccessible;
-        mapiRelease(mapiMessageStoresTable);
-        return result;
-    }
 
-    // TODO: Consider handling MAPI_E_BUSY by calling IMAPITable::WaitForCompletion
-    HRESULT res;
-    while ((res = mapiMessageStoresTable->QueryRows(1, 0, &rows)) == S_OK) {
-        if (rows->cRows != 1) {
-            FreeProws(rows);
-            break;
-        }
-        LPSPropValue recordKeyProp(&rows->aRow[0].lpProps[recordKeyColumn]);
-        MapiRecordKey storeKey(recordKeyProp->Value.bin.lpb, recordKeyProp->Value.bin.cb);
-        if ((!id.isValid() && rows->aRow[0].lpProps[defaultStoreColumn].Value.b) ||  // default store found
-            (id.isValid() && (id == QMessageAccountIdPrivate::from(storeKey)))) {    // specified store found
-            MapiEntryId entryId(rows->aRow[0].lpProps[entryIdColumn].Value.bin.lpb, rows->aRow[0].lpProps[entryIdColumn].Value.bin.cb);
-            result = openStore(lastError, entryId, cachedMode);
+    const int nCols(3);
+    enum { defaultStoreColumn = 0, entryIdColumn, recordKeyColumn };
+    SizedSPropTagArray(nCols, columns) = {nCols, {PR_DEFAULT_STORE, PR_ENTRYID, PR_RECORD_KEY}};
+    LPSRowSet rows(0);
+    HRESULT rv = HrQueryAllRows(mapiMessageStoresTable, reinterpret_cast<LPSPropTagArray>(&columns), 0, 0, 0, &rows);
+    if (HR_SUCCEEDED(rv)) {
+        for (uint n = 0; n < rows->cRows; ++n) {
+            SPropValue *props = rows->aRow[n].lpProps;
+            MapiRecordKey storeKey(props[recordKeyColumn].Value.bin.lpb, props[recordKeyColumn].Value.bin.cb);
 
-            FreeProws(rows);
-            break;
+            if ((!id.isValid() && props[defaultStoreColumn].Value.b) ||  // default store found
+                (id.isValid() && (id == QMessageAccountIdPrivate::from(storeKey)))) {    // specified store found
+                MapiEntryId entryId(props[entryIdColumn].Value.bin.lpb, props[entryIdColumn].Value.bin.cb);
+                result = openStore(lastError, entryId, cachedMode);
+                break;
+            }
         }
+
         FreeProws(rows);
-    }
-    if (res != S_OK) {
+    } else {
         *lastError = QMessageStore::ContentInaccessible;
     }
+
     mapiRelease(mapiMessageStoresTable);
     return result;
 }
@@ -1875,6 +1867,29 @@ MapiStorePtr MapiSession::openStore(QMessageStore::ErrorCode *lastError, const M
     }
 
     return result;
+}
+
+QMessageAccountId MapiSession::defaultAccountId(QMessageStore::ErrorCode *lastError, QMessage::Type type) const
+{
+#ifdef _WIN32_WCE
+    if (type == QMessage::Sms) {
+        foreach (MapiStorePtr store, allStores(lastError)) {
+            if (store->name() == "SMS") {
+                return store->id();
+            }
+        }
+    }
+
+#endif
+    if (type == QMessage::Email) {
+        // Return the account of the default store
+        MapiStorePtr store(defaultStore(lastError));
+        if (*lastError == QMessageStore::NoError) {
+            return store->id();
+        }
+    }
+
+    return QMessageAccountId();
 }
 
 IMessage *MapiSession::openMapiMessage(QMessageStore::ErrorCode *lastError, const QMessageId &id) const

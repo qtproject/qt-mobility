@@ -230,6 +230,8 @@ public:
     QList<MapiStorePtr> allStores(QMessageStore::ErrorCode *lastError, bool cachedMode = true) const;
     MapiStorePtr openStore(QMessageStore::ErrorCode *lastError, const MapiEntryId& id, bool cachedMode = true) const;
 
+    QMessageAccountId defaultAccountId(QMessageStore::ErrorCode *lastError, QMessage::Type type) const;
+
     QMessageFolder folder(QMessageStore::ErrorCode *lastError, const QMessageFolderId& id) const;
     QMessage message(QMessageStore::ErrorCode *lastError, const QMessageId& id) const;
 

@@ -33,6 +33,7 @@
 #include "qmessageaccount.h"
 #include "qmessageaccount_p.h"
 #include "qmessagestore.h"
+#include "winhelpers_p.h"
 #include <QDebug>
 
 QMessageAccount QMessageAccountPrivate::from(const QMessageAccountId &id, const QString &name, const QMessageAddress &address, const QMessage::TypeFlags &types)
@@ -93,11 +94,16 @@ QMessage::TypeFlags QMessageAccount::messageTypes() const
 
 QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)
 {
-    //TODO Implement this correctly. For MAPI desktop there is only one account so just return it
-    Q_UNUSED(type)
-    QMessageAccountIdList accounts(QMessageStore::instance()->queryAccounts());
-    if (!accounts.isEmpty())
-        return accounts.first();
+    QMessageAccountId result;
 
-    return QMessageAccountId(); // stub
+    // Temporary!
+    QMessageStore::instance();
+
+    QMessageStore::ErrorCode code(QMessageStore::NoError);
+    MapiSessionPtr mapiSession(MapiSession::createSession(&code, true));
+    if (code == QMessageStore::NoError) {
+        result = mapiSession->defaultAccountId(&code, type);
+    }
+
+    return result;
 }
