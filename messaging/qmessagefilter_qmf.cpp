@@ -224,13 +224,6 @@ QMessageFilter QMessageFilter::bySender(const QString &value, QMessageDataCompar
     return result;
 }
 
-QMessageFilter QMessageFilter::byRecipients(const QString &value, QMessageDataComparator::EqualityComparator cmp)
-{
-    QMessageFilter result;
-    result.d_ptr->_key = QMailMessageKey::recipients(value, convert(cmp));
-    return result;
-}
-
 QMessageFilter QMessageFilter::byRecipients(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
     QMessageFilter result;
@@ -343,20 +336,6 @@ QMessageFilter QMessageFilter::bySize(int value, QMessageDataComparator::Relatio
 {
     QMessageFilter result;
     result.d_ptr->_key = QMailMessageKey::size(value, convert(cmp));
-    return result;
-}
-
-QMessageFilter QMessageFilter::byCustomField(const QString &name, const QString &value, QMessageDataComparator::EqualityComparator cmp)
-{
-    QMessageFilter result;
-    result.d_ptr->_key = QMailMessageKey::customField(name, value, convert(cmp));
-    return result;
-}
-
-QMessageFilter QMessageFilter::byCustomField(const QString &name, const QString &value, QMessageDataComparator::InclusionComparator cmp)
-{
-    QMessageFilter result;
-    result.d_ptr->_key = QMailMessageKey::customField(name, value, convert(cmp));
     return result;
 }
 

@@ -813,14 +813,6 @@ QMessageFilter QMessageFilter::bySender(const QString &value, QMessageDataCompar
     return QMessageFilterPrivate::from(QMessageFilterPrivate::Sender, QVariant(value), cmp);
 }
 
-QMessageFilter QMessageFilter::byRecipients(const QString &value, QMessageDataComparator::EqualityComparator cmp)
-{
-    // Not implemented
-    QMessageFilter result(QMessageFilterPrivate::from(QMessageFilterPrivate::Recipients, QVariant(value), cmp));
-    result.d_ptr->_valid = false; // Not supported
-    return result;
-}
-
 QMessageFilter QMessageFilter::byRecipients(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
     if (value.isEmpty()) {
@@ -908,28 +900,6 @@ QMessageFilter QMessageFilter::bySize(int value, QMessageDataComparator::Equalit
 QMessageFilter QMessageFilter::bySize(int value, QMessageDataComparator::RelationComparator cmp)
 {
     return QMessageFilterPrivate::from(QMessageFilterPrivate::Size, QVariant(value), cmp);
-}
-
-QMessageFilter QMessageFilter::byCustomField(const QString &name, const QString &value, QMessageDataComparator::EqualityComparator cmp)
-{
-    QStringList nameValue;
-    nameValue << name;
-    nameValue << value;
-    QMessageFilter result(QMessageFilterPrivate::from(QMessageFilterPrivate::CustomField, QVariant(nameValue), cmp));
-    // Not natively implementable?
-    result.d_ptr->_valid = false;
-    return result;
-}
-
-QMessageFilter QMessageFilter::byCustomField(const QString &name, const QString &value, QMessageDataComparator::InclusionComparator cmp)
-{
-    QStringList nameValue;
-    nameValue << name;
-    nameValue << value;
-    QMessageFilter result(QMessageFilterPrivate::from(QMessageFilterPrivate::CustomField, QVariant(nameValue), cmp));
-    // Not natively implementable?
-    result.d_ptr->_valid = false;
-    return result;
 }
 
 QMessageFilter QMessageFilter::byParentAccountId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
