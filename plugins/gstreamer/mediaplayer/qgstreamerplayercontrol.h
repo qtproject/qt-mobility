@@ -32,21 +32,22 @@
 **
 ****************************************************************************/
 
-#ifndef QWMPPLAYERCONTROL_H
-#define QWMPPLAYERCONTROL_H
+#ifndef QGSTREAMERPLAYERCONTROL_H
+#define QGSTREAMERPLAYERCONTROL_H
 
 #include <QtCore/qobject.h>
 
 #include <multimedia/qmediaplayercontrol.h>
 #include <multimedia/qmediaplayer.h>
 
+#include <limits.h>
 
 class QMediaPlaylist;
 
 class QGstreamerPlayerSession;
 class QGstreamerPlayerService;
 class QMediaPlaylistNavigator;
-
+class QSocketNotifier;
 
 class QGstreamerPlayerControl : public QMediaPlayerControl
 {
@@ -89,9 +90,23 @@ public Q_SLOTS:
     void setVolume(int volume);
     void setMuted(bool muted);
 
+private Q_SLOTS:
+    void writeFifo();
+    void fifoReadyWrite(int socket);
+
 private:
+    bool openFifo();
+    void closeFifo();
+
     QGstreamerPlayerSession *m_session;
     QMediaSource m_currentResource;
+    QIODevice *m_stream;
+    QSocketNotifier *m_fifoNotifier;
+    int m_fifoFd[2];
+    bool m_fifoCanWrite;
+    int m_bufferSize;
+    int m_bufferOffset;
+    char m_buffer[PIPE_BUF];
 };
 
 #endif
