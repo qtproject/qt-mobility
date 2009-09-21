@@ -49,7 +49,7 @@ public:
 	virtual ~TransformContact();
 
 public:
-	QContact transformContact(CContactItem &contact) const;
+	QContact transformContactL(CContactItem &contact, CContactDatabase &contactDatabase) const;
 	void transformContactL(
 	        QContact &contact,
 	        CContactItem &contactItem) const;
@@ -60,7 +60,8 @@ private:
 		Name = 0,
 		Nickname,
 		PhoneNumber,
-		EmailAddress 
+		EmailAddress,
+		Address
 	};
 	
 	void initializeTransformContactData();

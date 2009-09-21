@@ -462,7 +462,7 @@ QContact QContactSymbianEngineData::contactL(const QUniqueId &contactId) const
 	CleanupStack::PushL(symContact);
 	
 	// Convert to a QContact
-	QContact contact = m_transformContact->transformContact(*symContact);
+	QContact contact = m_transformContact->transformContactL(*symContact, *m_contactDatabase);
 	
 	CleanupStack::PopAndDestroy(symContact);
 	return contact;

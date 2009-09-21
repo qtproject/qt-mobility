@@ -45,6 +45,7 @@ QList<CContactItemField *> TransformNickname::transformDetailL(const QContactDet
 	TPtrC fieldTextPrefix(reinterpret_cast<const TUint16*>(name.nickname().utf16()));
 	CContactItemField* nickname = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldSecondName);
 	nickname->TextStorage()->SetTextL(fieldTextPrefix);
+	nickname->SetMapping(KUidContactFieldVCardMapSECONDNAME);
 	fieldList.append(nickname);
 	CleanupStack::Pop(nickname);
 	
