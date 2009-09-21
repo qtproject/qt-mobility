@@ -20,7 +20,7 @@ HEADERS +=  servicemetadata_p.h \
             qserviceinterfacedescriptor.h \
             qserviceinterfacedescriptor_p.h \
             qservicefilter.h \
-            dberror.h \
+            dberror_p.h \
             databasemanagerserver.h \
             databasemanagersession.h \
             databasemanagersignalhandler.h

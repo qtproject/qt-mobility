@@ -1,4 +1,4 @@
-#include "dberror.h"
+#include "dberror_p.h"
 
 DBError::DBError()
 {

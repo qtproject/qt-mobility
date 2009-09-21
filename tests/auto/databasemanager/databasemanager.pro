@@ -32,7 +32,7 @@ symbian {
                     ../qsfwtestutil.cpp
 
     HEADERS += databasemanager_s60_p.h \
-               dberror.h \
+               dberror_p.h \
                ../qsfwtestutil.h
                
    libBlock = \
