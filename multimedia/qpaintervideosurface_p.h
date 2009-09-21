@@ -75,26 +75,27 @@ public:
     QList<QVideoFrame::PixelFormat> supportedPixelFormats(
             QAbstractVideoBuffer::HandleType handleType = QAbstractVideoBuffer::NoHandle) const;
 
-    bool isFormatSupported(const QVideoSurfaceFormat &format, QVideoSurfaceFormat *similar = 0);
+    bool isFormatSupported(
+            const QVideoSurfaceFormat &format, QVideoSurfaceFormat *similar = 0) const;
 
     bool start(const QVideoSurfaceFormat &format);
     void stop();
 
     bool present(const QVideoFrame &frame);
 
-    int brightness() const;
+    int brightness() const { return m_brightness; }
     void setBrightness(int brightness);
 
-    int contrast() const;
+    int contrast() const { return m_contrast; }
     void setContrast(int contrast);
 
-    int hue() const;
+    int hue() const { return m_hue; }
     void setHue(int hue);
 
-    int saturation() const;
+    int saturation() const { return m_saturation; }
     void setSaturation(int saturation);
 
-    bool isReady() const;
+    bool isReady() const { return m_ready; }
     void setReady(bool ready);
 
     void paint(QPainter *painter, const QRect &rect);

@@ -363,6 +363,19 @@ void tst_QMediaResource::equality()
     // Equal
     QCOMPARE(resource1 == resource2, true);
     QCOMPARE(resource1 != resource2, false);
+
+    resource1.setResolution(QSize());
+
+    // Not equal, differing resolution.
+    QCOMPARE(resource1 == resource2, false);
+    QCOMPARE(resource1 != resource2, true);
+
+    resource2.setResolution(-12, 45);
+
+    // Equal, invalid resolution set to null.
+    QCOMPARE(resource1 == resource2, true);
+    QCOMPARE(resource1 != resource2, false);
+
 }
 
 void tst_QMediaResource::copy()
