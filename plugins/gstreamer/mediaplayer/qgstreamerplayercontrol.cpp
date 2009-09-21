@@ -148,9 +148,11 @@ void QGstreamerPlayerControl::play()
 {
     m_session->play();
 
-    m_fifoCanWrite = true;
+    if (m_fifoFd[1] >= 0) {
+        m_fifoCanWrite = true;
 
-    writeFifo();
+        writeFifo();
+    }
 }
 
 void QGstreamerPlayerControl::pause()

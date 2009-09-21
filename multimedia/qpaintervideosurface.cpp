@@ -677,10 +677,9 @@ void QPainterVideoSurface::initYv12TextureInfo(const QSize &size)
     m_textureOffsets[2] = size.width() * size.height();
 }
 
-
 void QPainterVideoSurface::updateColorMatrix()
 {
-    const qreal b = m_brightness / 100.0;
+    const qreal b = m_brightness / 200.0;
     const qreal c = m_contrast / 100.0 + 1.0;
     const qreal h = m_hue / 200.0;
     const qreal s = m_saturation / 100.0 + 1.0;
@@ -688,8 +687,17 @@ void QPainterVideoSurface::updateColorMatrix()
     const qreal cosH = qCos(M_PI * h);
     const qreal sinH = qSin(M_PI * h);
 
-    const qreal h1 = 1.0 - cosH + sinH;
-    const qreal h2 = 1.0 - cosH - sinH;
+    const qreal h11 = -0.4728 * cosH + 0.7954 * sinH + 1.4728;
+    const qreal h21 = -0.9253 * cosH - 0.0118 * sinH + 0.9523;
+    const qreal h31 =  0.4525 * cosH + 0.8072 * sinH - 0.4524;
+
+    const qreal h12 =  1.4728 * cosH - 1.3728 * sinH - 1.4728;
+    const qreal h22 =  1.9253 * cosH + 0.5891 * sinH - 0.9253;
+    const qreal h32 = -0.4525 * cosH - 1.9619 * sinH + 0.4525;
+
+    const qreal h13 =  1.4728 * cosH - 0.2181 * sinH - 1.4728;
+    const qreal h23 =  0.9253 * cosH + 1.1665 * sinH - 0.9253;
+    const qreal h33 =  0.5475 * cosH - 1.3846 * sinH + 0.4525;
 
     const qreal sr = (1.0 - s) * 0.3086;
     const qreal sg = (1.0 - s) * 0.6094;
@@ -701,19 +709,19 @@ void QPainterVideoSurface::updateColorMatrix()
 
     const float m4 = (s + sr + sg + sb) * (0.5 - 0.5 * c + b);
 
-    m_colorMatrix(0, 0) = c * (sr_s + sg * h2 + sb * h1);
-    m_colorMatrix(0, 1) = c * (sr_s * h1 + sg + sb * h2);
-    m_colorMatrix(0, 2) = c * (sr_s * h2 + sg * h1 + sb);
+    m_colorMatrix(0, 0) = c * (sr_s * h11 + sg * h21 + sb * h31);
+    m_colorMatrix(0, 1) = c * (sr_s * h12 + sg * h22 + sb * h32);
+    m_colorMatrix(0, 2) = c * (sr_s * h13 + sg * h23 + sb * h33);
     m_colorMatrix(0, 3) = m4;
 
-    m_colorMatrix(1, 0) = c * (sr + sg_s * h2 + sb * h1);
-    m_colorMatrix(1, 1) = c * (sr * h1 + sg_s + sb * h2);
-    m_colorMatrix(1, 2) = c * (sr * h2 + sg_s * h1 + sb);
+    m_colorMatrix(1, 0) = c * (sr * h11 + sg_s * h21 + sb * h31);
+    m_colorMatrix(1, 1) = c * (sr * h12 + sg_s * h22 + sb * h32);
+    m_colorMatrix(1, 2) = c * (sr * h13 + sg_s * h23 + sb * h33);
     m_colorMatrix(1, 3) = m4;
 
-    m_colorMatrix(2, 0) = c * (sr + sg * h2 + sb_s * h1);
-    m_colorMatrix(2, 1) = c * (sr * h1 + sg + sb_s * h2);
-    m_colorMatrix(2, 2) = c * (sr * h2 + sg * h1 + sb_s);
+    m_colorMatrix(2, 0) = c * (sr * h11 + sg * h21 + sb_s * h31);
+    m_colorMatrix(2, 1) = c * (sr * h12 + sg * h22 + sb_s * h32);
+    m_colorMatrix(2, 2) = c * (sr * h13 + sg * h23 + sb_s * h33);
     m_colorMatrix(2, 3) = m4;
 
     m_colorMatrix(3, 0) = 0.0;
