@@ -42,6 +42,8 @@
 
 #include <gst/gst.h>
 
+#include "qgstreamerbushelper.h"
+
 class QGstreamerMessage;
 class QGstreamerBusHelper;
 class QGstreamerAudioEncode;
@@ -56,7 +58,7 @@ public:
     virtual void prepareWinId() {}
 };
 
-class QGstreamerCaptureSession : public QObject
+class QGstreamerCaptureSession : public QObject, public QGstreamerSyncEventFilter
 {
     Q_OBJECT
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
@@ -87,6 +89,8 @@ public:
     qint64 duration() const;
 
     bool isPreviewEnabled() const { return m_previewEnabled; }
+
+    bool processSyncMessage(const QGstreamerMessage &message);
 
 signals:
     void stateChanged(QGstreamerCaptureSession::State state);

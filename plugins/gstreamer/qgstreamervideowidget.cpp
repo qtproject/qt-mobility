@@ -34,8 +34,9 @@
 
 #include "qgstreamervideowidget.h"
 
-#include <QEvent>
-#include <QApplication>
+#include <QtCore/qcoreevent.h>
+#include <QtCore/qdebug.h>
+#include <QtGui/qapplication.h>
 
 #include <X11/Xlib.h>
 #include <gst/gst.h>
@@ -48,6 +49,7 @@ QGstreamerVideoWidgetControl::QGstreamerVideoWidgetControl(QObject *parent)
     , m_widget(new QWidget)
 {
     m_widget->installEventFilter(this);
+    m_windowId = m_widget->winId();
 
     m_videoSink = gst_element_factory_make ("xvimagesink", NULL);
     if (m_videoSink) {
@@ -67,8 +69,6 @@ QGstreamerVideoWidgetControl::QGstreamerVideoWidgetControl(QObject *parent)
 
     gst_object_ref (GST_OBJECT (m_videoSink)); //Take ownership
     gst_object_sink (GST_OBJECT (m_videoSink));
-
-    setOverlay();
 }
 
 QGstreamerVideoWidgetControl::~QGstreamerVideoWidgetControl()
@@ -87,12 +87,19 @@ GstElement *QGstreamerVideoWidgetControl::videoSink()
 bool QGstreamerVideoWidgetControl::eventFilter(QObject *object, QEvent *e)
 {
     if (object == m_widget) {
+        if (e->type() == QEvent::ParentChange || e->type() == QEvent::Show) {
+            WId newWId = m_widget->winId();
+            if (newWId != m_windowId) {
+                m_windowId = newWId;
+                setOverlay();
+            }
+        }
+
         if (e->type() == QEvent::Show) {
             // Setting these values ensures smooth resizing since it
             // will prevent the system from clearing the background
             //setAttribute(Qt::WA_NoSystemBackground, true);
             m_widget->setAttribute(Qt::WA_PaintOnScreen, true);
-            setOverlay();
         } else if (e->type() == QEvent::Resize) {
             // This is a workaround for missing background repaints
             // when reducing window size
@@ -106,13 +113,11 @@ bool QGstreamerVideoWidgetControl::eventFilter(QObject *object, QEvent *e)
 void QGstreamerVideoWidgetControl::setOverlay()
 {
     if (m_videoSink && GST_IS_X_OVERLAY(m_videoSink)) {
-        WId windowId = m_widget->winId();
         // Even if we have created a winId at this point, other X applications
         // need to be aware of it.
         QApplication::syncX();
-        gst_x_overlay_set_xwindow_id ( GST_X_OVERLAY(m_videoSink) ,  windowId );
+        gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(m_videoSink), m_windowId);
     }
-    windowExposed();
 }
 
 void QGstreamerVideoWidgetControl::windowExposed()

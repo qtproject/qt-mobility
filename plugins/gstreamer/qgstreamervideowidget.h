@@ -84,6 +84,7 @@ private:
 
     GstElement *m_videoSink;
     QWidget *m_widget;
+    WId m_windowId;
     QVideoWidget::AspectRatio m_aspectRatioMode;
     QSize m_customAspectRatio;
 };

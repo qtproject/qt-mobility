@@ -38,6 +38,7 @@
 #include <QObject>
 #include <QUrl>
 #include "qgstreamerplayercontrol.h"
+#include "qgstreamerbushelper.h"
 #include <multimedia/qmediaplayer.h>
 
 #include <gst/gst.h>
@@ -47,7 +48,7 @@ class QGstreamerMessage;
 
 class QGstreamerVideoRendererInterface;
 
-class QGstreamerPlayerSession : public QObject
+class QGstreamerPlayerSession : public QObject, public QGstreamerSyncEventFilter
 {
 Q_OBJECT
 
@@ -81,6 +82,8 @@ public:
     QMap<QByteArray ,QVariant> tags() const { return m_tags; }
     QMap<QString,QVariant> streamProperties(int streamNumber) const { return m_streamProperties[streamNumber]; }
     int streamCount() const { return m_streamProperties.count(); }
+
+    bool processSyncMessage(const QGstreamerMessage &message);
 
 public slots:
     void load(const QUrl &url);
