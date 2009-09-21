@@ -175,7 +175,7 @@ void Player::positionChanged(qint64 progress)
 
 void Player::metaDataChanged()
 {
-    qDebug() << "update metadata" << player->metaData(QAbstractMediaObject::Title).toString();
+    //qDebug() << "update metadata" << player->metaData(QAbstractMediaObject::Title).toString();
     if (player->isMetaDataAvailable()) {
         setTrackInfo(QString("%1 - %2")
                 .arg(player->metaData(QAbstractMediaObject::AlbumArtist).toString())
