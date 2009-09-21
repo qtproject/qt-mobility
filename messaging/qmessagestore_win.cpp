@@ -41,9 +41,6 @@
 #include "qmessagefilter_p.h"
 #include "winhelpers_p.h"
 #include <qdebug.h>
-#if USE_STD_HEAP
-#include <algorithm>
-#endif
 
 using namespace WinHelpers;
 
@@ -72,22 +69,7 @@ public:
     bool isEmpty() const { return _heap.count() == 0; }
 
 private:
-#if USE_STD_HEAP
-    struct NodeGreaterThan
-    {
-        const QMessageOrdering &_ordering;
-
-        NodeGreaterThan(const QMessageOrdering &ordering) : _ordering(ordering) {}
-
-        bool operator()(const FolderHeapNodePtr &lhs, const FolderHeapNodePtr &rhs)
-        {
-            // Reverse arguments to invert sense of comparison
-            return QMessageOrderingPrivate::lessThan(_ordering, rhs->front, lhs->front);
-        }
-    };
-#else
     void sink(int i); // Also known as sift-down
-#endif
 
     QMessageFilter _filter;
     QMessageOrdering _ordering;
@@ -124,13 +106,8 @@ FolderHeap::FolderHeap(QMessageStore::ErrorCode *lastError, MapiSessionPtr mapiS
         }
     }
 
-#if USE_STD_HEAP
-    NodeGreaterThan gt(_ordering);
-    std::make_heap(_heap.begin(), _heap.end(), gt);
-#else
     for (int i = _heap.count()/2 - 1; i >= 0; --i)
         sink(i);
-#endif
 }
 
 QMessage FolderHeap::takeFront(QMessageStore::ErrorCode *lastError)
@@ -166,16 +143,10 @@ QMessage FolderHeap::takeFront(QMessageStore::ErrorCode *lastError)
     }
 
     // Reposition this folder in the heap based on the new front message
-#if USE_STD_HEAP
-    NodeGreaterThan gt(_ordering);
-    std::make_heap(_heap.begin(), _heap.end(), gt);
-#else
     sink(0);
-#endif
     return result;
 }
 
-#ifndef USE_STD_HEAP
 void FolderHeap::sink(int i)
 {
     while (true) {
@@ -199,7 +170,6 @@ void FolderHeap::sink(int i)
         }
     }
 }
-#endif
 
 class QMessageStorePrivatePlatform
 {
