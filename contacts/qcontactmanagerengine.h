@@ -71,11 +71,11 @@ public:
     virtual QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     virtual QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
 
-    virtual bool saveContact(QContact* contact, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error);
-    virtual QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error);
+    virtual bool saveContact(QContact* contact, QContactManager::Error& error);
+    virtual QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
 
-    virtual bool removeContact(const QUniqueId& contactId, QSet<QUniqueId>& contactsRemoved, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error);
-    virtual QList<QContactManager::Error> removeContacts(QList<QUniqueId>* contactIds, QSet<QUniqueId>& contactsRemoved, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error);
+    virtual bool removeContact(const QUniqueId& contactId, QContactManager::Error& error);
+    virtual QList<QContactManager::Error> removeContacts(QList<QUniqueId>* contactIds, QContactManager::Error& error);
 
     /* Synthesise the display label of a contact */
     virtual QString synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
@@ -88,8 +88,8 @@ public:
     /* Groups - Accessors and Mutators */
     virtual QList<QUniqueId> groups(QContactManager::Error& error) const;
     virtual QContactGroup group(const QUniqueId& groupId, QContactManager::Error& error) const;
-    virtual bool saveGroup(QContactGroup* group, QSet<QUniqueId>& groupsAdded, QSet<QUniqueId>& groupsChanged, QSet<QUniqueId>& contactsChanged, QContactManager::Error& error);
-    virtual bool removeGroup(const QUniqueId& groupId, QSet<QUniqueId>& groupsRemoved, QSet<QUniqueId>& contactsChanged, QContactManager::Error& error);
+    virtual bool saveGroup(QContactGroup* group, QContactManager::Error& error);
+    virtual bool removeGroup(const QUniqueId& groupId, QContactManager::Error& error);
 
     /* Definitions - Accessors and Mutators */
     virtual QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
@@ -119,6 +119,7 @@ public:
     static QMap<QString, QContactDetailDefinition> schemaDefinitions();
 
 signals:
+    void dataChanged();
     void contactsAdded(const QList<QUniqueId>& contactIds);
     void contactsChanged(const QList<QUniqueId>& contactIds);
     void contactsRemoved(const QList<QUniqueId>& contactIds);
@@ -133,6 +134,10 @@ public:
     static int compareVariant(const QVariant& first, const QVariant& second, Qt::CaseSensitivity sensitivity);
     static bool testFilter(const QContactFilter& filter, const QContact& contact);
     static bool validateActionFilter(const QContactFilter& filter);
+
+private:
+    /* QContactChangeSet is a utility class used to emit the appropriate signals */
+    friend class QContactChangeSet;
 };
 
 #endif

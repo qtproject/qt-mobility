@@ -31,8 +31,6 @@
 **
 ****************************************************************************/
 
-#include <QSet>
-
 #include "qcontactmanagerengine.h"
 
 #include "qcontactdetaildefinition.h"
@@ -86,36 +84,60 @@
  */
 
 /*!
+ * \fn QContactManagerEngine::dataChanged()
+ *
+ * This signal is emitted some time after changes occur to the data managed by this
+ * engine, and the engine is unable to determine which changes occurred, or if the
+ * engine considers the changes to be radical enough to require clients to reload all data.
+ *
+ * If this signal is emitted, no other signals may be emitted for the associated changes.
+ *
+ * As it is possible that other processes (or other devices) may have caused the
+ * changes, the timing can not be determined.
+ *
+ * \sa contactsAdded(), contactsChanged(), contactsRemoved(), groupsAdded(), groupsChanged(), groupsRemoved()
+ */
+
+/*!
  * \fn QContactManagerEngine::contactsAdded(const QList<QUniqueId>& contactIds);
  *
  * This signal is emitted some time after a set of contacts has been added to
- * this engine.  As it is possible that other processes (or other devices) may
+ * this engine where the \l dataChanged() signal was not emitted for those changes.
+ * As it is possible that other processes (or other devices) may
  * have added the contacts, the timing cannot be determined.
  *
  * The list of ids added is given by \a contactIds.  There may be one or more
  * ids in the list.
+ *
+ * \sa dataChanged()
  */
 
 /*!
  * \fn QContactManagerEngine::contactsChanged(const QList<QUniqueId>& contactIds);
  *
  * This signal is emitted some time after a set of contacts has been modified in
- * this engine.  As it is possible that other processes (or other devices) may
+ * this engine where the \l dataChanged() signal was not emitted for those changes.
+ * As it is possible that other processes (or other devices) may
  * have modified the contacts, the timing cannot be determined.
  *
  * The list of ids added is given by \a contactIds.  There may be one or more
  * ids in the list.
+ *
+ * \sa dataChanged()
  */
 
 /*!
  * \fn QContactManagerEngine::contactsRemoved(const QList<QUniqueId>& contactIds);
  *
  * This signal is emitted some time after a set of contacts has been removed from
- * this engine.  As it is possible that other processes (or other devices) may
+ * this engine where the \l dataChanged() signal was not emitted for those changes.
+ * As it is possible that other processes (or other devices) may
  * have removed the contacts, the timing cannot be determined.
  *
  * The list of ids added is given by \a contactIds.  There may be one or more
  * ids in the list.
+ *
+ * \sa dataChanged()
  */
 
 
@@ -123,34 +145,44 @@
  * \fn QContactManagerEngine::groupsAdded(const QList<QUniqueId>& groupIds);
  *
  * This signal is emitted some time after a set of contact groups has been added to
- * this engine.  As it is possible that other processes (or other devices) may
+ * this engine where the \l dataChanged() signal was not emitted for those changes.
+ * As it is possible that other processes (or other devices) may
  * have added the groups, the timing cannot be determined.
  *
  * The list of ids added is given by \a groupIds.  There may be one or more
  * ids in the list.
+ *
+ * \sa dataChanged()
  */
 
 /*!
  * \fn QContactManagerEngine::groupsChanged(const QList<QUniqueId>& groupIds);
  *
  * This signal is emitted some time after a set of contact groups has been modified in
- * this engine.  As it is possible that other processes (or other devices) may
+ * this engine where the \l dataChanged() signal was not emitted for those changes.
+ * As it is possible that other processes (or other devices) may
  * have modified the groups, the timing cannot be determined.
  *
  * The list of ids added is given by \a groupIds.  There may be one or more
  * ids in the list.
+ *
+ * \sa dataChanged()
  */
 
 /*!
  * \fn QContactManagerEngine::groupsRemoved(const QList<QUniqueId>& groupIds);
  *
  * This signal is emitted some time after a set of contact groups has been removed from
- * this engine.  As it is possible that other processes (or other devices) may
+ * this engine where the \l dataChanged() signal was not emitted for those changes.
+ * As it is possible that other processes (or other devices) may
  * have removed the groups, the timing cannot be determined.
  *
  * The list of ids added is given by \a groupIds.  There may be one or more
  * ids in the list.
+ *
+ * \sa dataChanged()
  */
+
 
 /*!
  * Returns the parameters with which this engine was constructed.  Note that
@@ -725,17 +757,15 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
  * affected should be added to \a groupsChanged.
  *
  * The framework will emit the \l contactsAdded(), \l contactsChanged()
- * and \l groupsChanged() signals at some point after calling this function.
+ * and \l groupsChanged() signals at some point after calling this function,
+ * or alternatively the \l dataChanged() signal.
  *
  * Any errors encountered during this operation should be stored to
  * \a error.
  */
-bool QContactManagerEngine::saveContact(QContact* contact, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error)
+bool QContactManagerEngine::saveContact(QContact* contact, QContactManager::Error& error)
 {
     Q_UNUSED(contact);
-    Q_UNUSED(contactsAdded);
-    Q_UNUSED(contactsChanged);
-    Q_UNUSED(groupsChanged);
     error = QContactManager::NotSupportedError;
     return false;
 }
@@ -930,18 +960,15 @@ bool QContactManagerEngine::validateGroup(const QContactGroup& group, QContactMa
  * Returns true if the contact was removed successfully, otherwise
  * returns false.
  *
- * If the backend implementation wishes to have the base implementation emit any signals
- * as a result of this operation, it should add the affected id(s) to the
- * \a removedContacts or \a changedGroups sets as appropriate.
+ * The backend must emit the appropriate signals to inform clients of changes
+ * to the database resulting from this operation.
  *
  * Any errors encountered during this operation should be stored to
  * \a error.
  */
-bool QContactManagerEngine::removeContact(const QUniqueId& contactId, QSet<QUniqueId>& removedContacts, QSet<QUniqueId>& changedGroups, QContactManager::Error& error)
+bool QContactManagerEngine::removeContact(const QUniqueId& contactId, QContactManager::Error& error)
 {
     Q_UNUSED(contactId);
-    Q_UNUSED(removedContacts);
-    Q_UNUSED(changedGroups);
     error = QContactManager::NotSupportedError;
     return false;
 }
@@ -980,20 +1007,14 @@ QContactGroup QContactManagerEngine::group(const QUniqueId& groupId, QContactMan
  *
  * Returns true on success, or false on failure.
  *
- * Any groups that are added by this operation should be added to \a groupsAdded,
- * any groups that are changed by this operation should be added to \a groupsChanged, and
- * any contacts that are changed by this operation should be added to \a contactsChanged.
- *
- * The base implementation will emit the appropriate signals based on the returned ids.
+ * The backend must emit the appropriate signals to inform clients of changes
+ * to the database resulting from this operation.
  *
  * Any errors encountered during this operation should be stored to
  * \a error.
  */
-bool QContactManagerEngine::saveGroup(QContactGroup* group, QSet<QUniqueId>& groupsAdded, QSet<QUniqueId>& groupsChanged, QSet<QUniqueId>& contactsChanged, QContactManager::Error& error)
+bool QContactManagerEngine::saveGroup(QContactGroup* group, QContactManager::Error& error)
 {
-    Q_UNUSED(groupsAdded);
-    Q_UNUSED(groupsChanged);
-    Q_UNUSED(contactsChanged);
     error = QContactManager::NotSupportedError;
     if (group == 0)
         error = QContactManager::BadArgumentError;
@@ -1009,16 +1030,16 @@ bool QContactManagerEngine::saveGroup(QContactGroup* group, QSet<QUniqueId>& gro
  * Any groups that are removed by this operation should be added to \a groupsRemoved, and
  * any contacts that are changed by this operation should be added to \a contactsChanged.
  *
- * The base implementation will emit the appropriate signals based on the returned ids.
+ * The base implementation will emit the appropriate signals based on the returned ids, unless
+ * the \c dataChanged flag is set by the backend. The \c dataChanged flag should be set if the
+ * backend wishes the base implementation to emit the \l dataChanged() signal
  *
  * Any errors encountered during this operation should be stored to
  * \a error.
  */
-bool QContactManagerEngine::removeGroup(const QUniqueId& groupId, QSet<QUniqueId>& groupsRemoved, QSet<QUniqueId>& contactsChanged, QContactManager::Error& error)
+bool QContactManagerEngine::removeGroup(const QUniqueId& groupId, QContactManager::Error& error)
 {
     Q_UNUSED(groupId);
-    Q_UNUSED(groupsRemoved);
-    Q_UNUSED(contactsChanged);
     error = QContactManager::NotSupportedError;
     return false;
 }
@@ -1060,7 +1081,10 @@ QContactDetailDefinition QContactManagerEngine::detailDefinition(const QString& 
 /*!
  * Persists the given definition \a def in the database.
  *
- * Returns true if the definition was saved successfully, and otherwise returns false
+ * Returns true if the definition was saved successfully, and otherwise returns false.
+ *
+ * The backend must emit the appropriate signals to inform clients of changes
+ * to the database resulting from this operation.
  *
  * Any errors encountered during this operation should be stored to
  * \a error.
@@ -1076,6 +1100,9 @@ bool QContactManagerEngine::saveDetailDefinition(const QContactDetailDefinition&
  * Removes the definition identified by the given \a definitionName from the database.
  *
  * Returns true if the definition was removed successfully, otherwise returns false.
+ *
+ * The backend must emit the appropriate signals to inform clients of changes
+ * to the database resulting from this operation.
  *
  * Any errors encountered during this operation should be stored to
  * \a error.
@@ -1099,21 +1126,15 @@ bool QContactManagerEngine::removeDetailDefinition(const QString& definitionName
  * when saving a new contact, the id will be cleared.  If a failure occurs
  * when updating a contact that already exists, then TODO.
  *
- * The engine should add the id of any contacts that it has added
- * to \a contactsAdded, and the id of any contacts that is has changed
- * to \a contactsChanged.  If a contact has been added or removed to
- * any groups (via \l QContact::setGroups()), the id of any QContactGroup
- * affected should be added to \a groupsChanged.
- *
- * The framework will emit the \l contactsAdded(), \l contactsChanged()
- * and \l groupsChanged() signals at some point after calling this function.
+ * The backend must emit the appropriate signals to inform clients of changes
+ * to the database resulting from this operation.
  *
  * Any errors encountered during this operation should be stored to
  * \a error.
  *
  * \sa QContactManager::saveContact()
  */
-QList<QContactManager::Error> QContactManagerEngine::saveContacts(QList<QContact>* contacts, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error)
+QList<QContactManager::Error> QContactManagerEngine::saveContacts(QList<QContact>* contacts, QContactManager::Error& error)
 {
     QList<QContactManager::Error> ret;
     if (!contacts) {
@@ -1123,7 +1144,7 @@ QList<QContactManager::Error> QContactManagerEngine::saveContacts(QList<QContact
         QContactManager::Error functionError = QContactManager::NoError;
         for (int i = 0; i < contacts->count(); i++) {
             QContact current = contacts->at(i);
-            if (!saveContact(&current, contactsAdded, contactsChanged, groupsChanged, error)) {
+            if (!saveContact(&current, error)) {
                 functionError = error;
                 ret.append(functionError);
             } else {
@@ -1148,17 +1169,15 @@ QList<QContactManager::Error> QContactManagerEngine::saveContacts(QList<QContact
  * id in the list will be retained but set to zero.  The id of contacts
  * that were not successfully removed will be left alone.
  *
- * If the backend implementation wishes to have the base implementation emit
- * any signals as a result of this operation, it must add the id(s) of affected
- * groups and contacts to the \a removedContacts and \a changedGroups sets as
- * appropriate.
+ * The backend must emit the appropriate signals to inform clients of changes
+ * to the database resulting from this operation.
  *
  * Any errors encountered during this operation should be stored to
  * \a error.
  *
  * \sa QContactManager::removeContact()
  */
-QList<QContactManager::Error> QContactManagerEngine::removeContacts(QList<QUniqueId>* contactIds, QSet<QUniqueId>& removedContacts, QSet<QUniqueId>& changedGroups, QContactManager::Error& error)
+QList<QContactManager::Error> QContactManagerEngine::removeContacts(QList<QUniqueId>* contactIds, QContactManager::Error& error)
 {
     QList<QContactManager::Error> ret;
     if (!contactIds) {
@@ -1169,7 +1188,7 @@ QList<QContactManager::Error> QContactManagerEngine::removeContacts(QList<QUniqu
         QContactManager::Error functionError = QContactManager::NoError;
         for (int i = 0; i < contactIds->count(); i++) {
             QUniqueId current = contactIds->at(i);
-            if (!removeContact(current, removedContacts, changedGroups, error)) {
+            if (!removeContact(current, error)) {
                 functionError = error;
                 ret.append(functionError);
             } else {

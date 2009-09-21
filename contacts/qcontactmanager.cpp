@@ -52,34 +52,48 @@
  */
 
 /*!
+ * \fn QContactManager::dataChanged()
+ * signal is emitted by the manager if its internal state changes, and it is unable to determine the changes
+ * which occurred, or if the manager considers the changes to be radical enough to require clients to reload all data.
+ * If this signal is emitted, no other signals will be emitted for the associated changes.
+ */
+
+/*!
  * \fn QContactManager::contactsAdded(const QList<QUniqueId>& contactIds)
- * This signal is emitted at some point once the contacts identified by \a contactIds have been added to a datastore managed by this manager
+ * This signal is emitted at some point once the contacts identified by \a contactIds have been added to a datastore managed by this manager.
+ * This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
 /*!
  * \fn QContactManager::contactsChanged(const QList<QUniqueId>& contactIds)
- * This signal is emitted at some point once the contacts identified by \a contactIds have been modified in a datastore managed by this manager
+ * This signal is emitted at some point once the contacts identified by \a contactIds have been modified in a datastore managed by this manager.
+ * This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
 /*!
  * \fn QContactManager::contactsRemoved(const QList<QUniqueId>& contactIds)
- * This signal is emitted at some point once the contacts identified by \a contactIds have been removed from a datastore managed by this manager
+ * This signal is emitted at some point once the contacts identified by \a contactIds have been removed from a datastore managed by this manager.
+ * This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
 /*!
  * \fn QContactManager::groupsAdded(const QList<QUniqueId>& groupIds)
- * This signal is emitted at some point once the groups identified by \a groupIds have been added to a datastore managed by this manager
+ * This signal is emitted at some point once the groups identified by \a groupIds have been added to a datastore managed by this manager.
+ * This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
 /*!
  * \fn QContactManager::groupsChanged(const QList<QUniqueId>& groupIds)
- * This signal is emitted at some point once the groups identified by \a groupIds have been modified in a datastore managed by this manager
+ * This signal is emitted at some point once the groups identified by \a groupIds have been modified in a datastore managed by this manager.
+ * This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
 /*!
  * \fn QContactManager::groupsRemoved(const QList<QUniqueId>& groupIds)
- * This signal is emitted at some point once the groups identified by \a groupIds have been removed from a datastore managed by this manager
+ * This signal is emitted at some point once the groups identified by \a groupIds have been removed from a datastore managed by this manager.
+ * This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
+
 
 /*!
     Returns a list of available manager ids that can be used when constructing
@@ -204,6 +218,7 @@ QContactManager::QContactManager(const QString& managerName, const QMap<QString,
     d(new QContactManagerData)
 {
     d->createEngine(managerName, parameters);
+    connect(d->m_engine, SIGNAL(dataChanged()), this, SIGNAL(dataChanged()));
     connect(d->m_engine, SIGNAL(contactsAdded(QList<QUniqueId>)), this, SIGNAL(contactsAdded(QList<QUniqueId>)));
     connect(d->m_engine, SIGNAL(contactsChanged(QList<QUniqueId>)), this, SIGNAL(contactsChanged(QList<QUniqueId>)));
     connect(d->m_engine, SIGNAL(contactsRemoved(QList<QUniqueId>)), this, SIGNAL(contactsRemoved(QList<QUniqueId>)));
@@ -284,21 +299,7 @@ QContact QContactManager::contact(const QUniqueId& contactId) const
  */
 bool QContactManager::saveContact(QContact* contact)
 {
-    QSet<QUniqueId> added;
-    QSet<QUniqueId> changed;
-    QSet<QUniqueId> groups;
-
-    bool ret = d->m_engine->saveContact(contact, added, changed, groups, d->m_error);
-
-    /* Emit the signals from the engine, since it might be connected to multiple places */
-    if (!added.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "contactsAdded", Q_ARG(QList<QUniqueId>, added.toList()));
-    if (!changed.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "contactsChanged", Q_ARG(QList<QUniqueId>, changed.toList()));
-    if (!groups.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "groupsChanged", Q_ARG(QList<QUniqueId>, groups.toList()));
-
-    return ret;
+    return d->m_engine->saveContact(contact, d->m_error);
 }
 
 /*!
@@ -308,17 +309,7 @@ bool QContactManager::saveContact(QContact* contact)
  */
 bool QContactManager::removeContact(const QUniqueId& contactId)
 {
-    QSet<QUniqueId> removed;
-    QSet<QUniqueId> groups;
-
-    bool ret = d->m_engine->removeContact(contactId, removed, groups, d->m_error);
-
-    if (!removed.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "contactsRemoved", Q_ARG(QList<QUniqueId>, removed.toList()));
-    if (!groups.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "groupsChanged", Q_ARG(QList<QUniqueId>, groups.toList()));
-
-    return ret;
+    return d->m_engine->removeContact(contactId, d->m_error);
 }
 
 /*!
@@ -337,21 +328,7 @@ bool QContactManager::removeContact(const QUniqueId& contactId)
  */
 QList<QContactManager::Error> QContactManager::saveContacts(QList<QContact>* contactList)
 {
-    QSet<QUniqueId> added;
-    QSet<QUniqueId> changed;
-    QSet<QUniqueId> groups;
-
-    QList<QContactManager::Error> ret = d->m_engine->saveContacts(contactList, added, changed, groups, d->m_error);
-
-    /* Emit the signals from the engine, since it might be connected to multiple places */
-    if (!added.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "contactsAdded", Q_ARG(QList<QUniqueId>, added.toList()));
-    if (!changed.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "contactsChanged", Q_ARG(QList<QUniqueId>, changed.toList()));
-    if (!groups.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "groupsChanged", Q_ARG(QList<QUniqueId>, groups.toList()));
-
-    return ret;
+    return d->m_engine->saveContacts(contactList, d->m_error);
 }
 
 /*!
@@ -369,17 +346,7 @@ QList<QContactManager::Error> QContactManager::saveContacts(QList<QContact>* con
  */
 QList<QContactManager::Error> QContactManager::removeContacts(QList<QUniqueId>* idList)
 {
-    QSet<QUniqueId> removed;
-    QSet<QUniqueId> groups;
-
-    QList<QContactManager::Error> ret = d->m_engine->removeContacts(idList, removed, groups, d->m_error);
-
-    if (!removed.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "contactsRemoved", Q_ARG(QList<QUniqueId>, removed.toList()));
-    if (!groups.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "groupsChanged", Q_ARG(QList<QUniqueId>, groups.toList()));
-
-    return ret;
+    return d->m_engine->removeContacts(idList, d->m_error);
 }
 
 /*! Returns a display label for a \a contact which is synthesised from its details in a platform-specific manner */
@@ -410,37 +377,13 @@ QContactGroup QContactManager::group(const QUniqueId& groupId) const
  */
 bool QContactManager::saveGroup(QContactGroup* group)
 {
-    QSet<QUniqueId> added;
-    QSet<QUniqueId> changed;
-    QSet<QUniqueId> contacts;
-
-    bool ret = d->m_engine->saveGroup(group, added, changed, contacts, d->m_error);
-
-    /* Emit the signals from the engine, since it might be connected to multiple places */
-    if (!added.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "groupsAdded", Q_ARG(QList<QUniqueId>, added.toList()));
-    if (!changed.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "groupsChanged", Q_ARG(QList<QUniqueId>, changed.toList()));
-    if (!contacts.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "contactsChanged", Q_ARG(QList<QUniqueId>, contacts.toList()));
-
-    return ret;
+    return d->m_engine->saveGroup(group, d->m_error);
 }
 
 /*! Remove the group with the given id \a groupId from the database.  Returns false if no group with that id exists, or the operation otherwise failed.  Returns true if the group was successfully deleted. */
 bool QContactManager::removeGroup(const QUniqueId& groupId)
 {
-    QSet<QUniqueId> removed;
-    QSet<QUniqueId> contacts;
-
-    bool ret = d->m_engine->removeGroup(groupId, removed, contacts, d->m_error);
-
-    if (!removed.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "groupsRemoved", Q_ARG(QList<QUniqueId>, removed.toList()));
-    if (!contacts.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "contactsChanged", Q_ARG(QList<QUniqueId>, contacts.toList()));
-
-    return ret;
+    return d->m_engine->removeGroup(groupId, d->m_error);
 }
 
 /*!

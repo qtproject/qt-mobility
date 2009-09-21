@@ -121,14 +121,14 @@ public:
     /* Contacts - Accessors and Mutators */
     QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
-    bool saveContact(QContact* contact, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error);
-    bool removeContact(const QUniqueId& contactId, QSet<QUniqueId>& removedContacts, QSet<QUniqueId>& changedGroups, QContactManager::Error& error);
+    bool saveContact(QContact* contact, QContactManager::Error& error);
+    bool removeContact(const QUniqueId& contactId, QContactManager::Error& error);
 
     /* Groups - Accessors and Mutators */
     QList<QUniqueId> groups(QContactManager::Error& error) const;
     QContactGroup group(const QUniqueId& groupId, QContactManager::Error& error) const;
-    bool saveGroup(QContactGroup* group, QSet<QUniqueId>& groupsAdded, QSet<QUniqueId>& groupsChanged, QSet<QUniqueId>& contactsChanged, QContactManager::Error& error);
-    bool removeGroup(const QUniqueId& groupId, QSet<QUniqueId>& groupsRemoved, QSet<QUniqueId>& contactsChanged, QContactManager::Error& error);
+    bool saveGroup(QContactGroup* group, QContactManager::Error& error);
+    bool removeGroup(const QUniqueId& groupId, QContactManager::Error& error);
 
     /* Definitions - Accessors and Mutators */
     QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;

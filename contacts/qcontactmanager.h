@@ -124,6 +124,7 @@ public:
     static QStringList availableManagers();
 
 signals:
+    void dataChanged();
     void contactsAdded(const QList<QUniqueId>& contactIds);
     void contactsChanged(const QList<QUniqueId>& contactIds);
     void contactsRemoved(const QList<QUniqueId>& contactIds);
