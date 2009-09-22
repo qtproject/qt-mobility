@@ -5,7 +5,7 @@
 ######################################################################
 
 TEMPLATE = app
-TARGET = testmodel
+TARGET = incomingcalls
 DEPENDPATH += .
 INCLUDEPATH += .
 LIBS += -lQtContacts
