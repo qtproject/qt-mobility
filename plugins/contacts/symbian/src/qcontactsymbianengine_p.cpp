@@ -189,8 +189,10 @@ bool QContactSymbianEngineData::addContact(QContact& contact, int &id, QContactM
 	// Attempt to persist contact, trapping errors
     int err(0);
     TRAP(err, QT_TRYCATCH_LEAVING(id = addContactL(contact)));
-    
+    if(err == KErrNone)
+        m_contactsAddedEmitted.append(id);
 	transformError(err, qtError);
+
 	return (err==KErrNone);
 }
 
@@ -205,7 +207,8 @@ bool QContactSymbianEngineData::updateContact(QContact& contact, QContactManager
 {
     int err(0);
     TRAP(err, QT_TRYCATCH_LEAVING(updateContactL(contact)));
-    
+    if(err == KErrNone)
+        m_contactsChangedEmitted.append(contact.id());
     transformError(err, qtError);
     return (err==KErrNone);
 }
@@ -227,26 +230,11 @@ bool QContactSymbianEngineData::removeContact(const QUniqueId &id, QContactManag
 {
     // removeContactL() can't throw c++ exception
 	TRAPD(err, removeContactL(id));
+    if(err == KErrNone)
+        m_contactsRemovedEmitted.append(id);
     transformError(err, qtError);
 	return (err==KErrNone);
 }
-
-
-/*!
- * Remove the contact objects specified in ids from the database.
- *   
- * \param ids A list contact ids to be removed.
- * \param qtError Qt error code. 
- * \return Error status.
- */
-bool QContactSymbianEngineData::removeContacts(const QList<QUniqueId> &ids, QContactManager::Error& qtError)
-{
-    // removeContactsL() can't throw c++ exception
-	TRAPD(err, removeContactsL(ids));
-    transformError(err, qtError);
-    return (err==KErrNone);
-}
-
 
 /* match */
 
@@ -359,27 +347,47 @@ QUniqueId QContactSymbianEngineData::simPhonebookGroupId() const
 void QContactSymbianEngineData::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
 {
 	// TODO: Conversion to/from QUniqueId
-	
+
+    TContactItemId id = aEvent.iContactId;
+
 	switch (aEvent.iType)
 	{
-	case EContactDbObserverEventContactAdded:
-		emit contactAdded(aEvent.iContactId);
-		break;
-	case EContactDbObserverEventContactDeleted:
-		emit contactRemoved(aEvent.iContactId);
-		break;
+    case EContactDbObserverEventContactAdded:
+        if(m_contactsAddedEmitted.contains(id))
+            m_contactsAddedEmitted.removeOne(id);
+        else
+            emit contactAdded(id);
+        break;
+    case EContactDbObserverEventContactDeleted:
+        if(m_contactsRemovedEmitted.contains(id))
+            m_contactsRemovedEmitted.removeOne(id);
+        else
+            emit contactRemoved(id);
+        break;
 	case EContactDbObserverEventContactChanged:
-		emit contactChanged(aEvent.iContactId);
-		break;
+        if(m_contactsChangedEmitted.contains(id))
+            m_contactsChangedEmitted.removeOne(id);
+        else
+            emit contactChanged(id);
+        break;
 	case EContactDbObserverEventGroupAdded:
-		emit groupAdded(aEvent.iContactId);
+        if(m_contactsAddedEmitted.contains(id))
+            m_contactsAddedEmitted.removeOne(id);
+        else
+            emit groupAdded(id);
 		break;
 	case EContactDbObserverEventGroupDeleted:
-		emit groupRemoved(aEvent.iContactId);
-		break;
+        if(m_contactsRemovedEmitted.contains(id))
+            m_contactsRemovedEmitted.removeOne(id);
+        else
+            emit groupRemoved(id);
+        break;
 	case EContactDbObserverEventGroupChanged:
-		emit groupChanged(aEvent.iContactId);
-		break;
+        if(m_contactsChangedEmitted.contains(id))
+            m_contactsChangedEmitted.removeOne(id);
+        else
+            emit groupChanged(id);
+        break;
 	default:
 		break; // ignore other events
 	}
@@ -540,7 +548,7 @@ int QContactSymbianEngineData::addContactL(QContact &contact)
 	// Add to the database
 	int id = m_contactDatabase->AddNewContactL(*contactItem);
 	CleanupStack::PopAndDestroy(contactItem);
-	
+
 	// Return the new ID.
 	return id;
 }
@@ -612,25 +620,6 @@ int QContactSymbianEngineData::removeContactL(QUniqueId id)
 	m_contactDatabase->DeleteContactL(cId);
 	return 0;
 }
-
-/*!
- * Private leaving implementation for removeContacts
- */
-int QContactSymbianEngineData::removeContactsL(const QList<QUniqueId> &ids)
-{
-	ASSERT(m_contactDatabase);
-	const int idCount = ids.count();
-	CContactIdArray *cIds = CContactIdArray::NewLC(); 
-	for (int i = 0; i < idCount; ++i)
-	{
-		//TODO: in future QUniqueId will be a class so this will need to be changed.
-		cIds->AddL(ids[i]);
-	}
-	m_contactDatabase->DeleteContactsL(*cIds);
-	CleanupStack::PopAndDestroy(cIds);
-	return 0;
-}
-
 
 /*!
  * Private leaving implementation for groups

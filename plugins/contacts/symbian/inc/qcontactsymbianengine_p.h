@@ -49,7 +49,6 @@
 //remember to remove this in the code and just return a normal list
 //typedef QList<QUniqueId> QUniqueIdIterator;
 
-
 class QContactSymbianEngineData : public QObject,
 							   public MContactDbObserver
 {
@@ -76,7 +75,6 @@ public:
     bool addContact(QContact& contact, int &id, QContactManager::Error& qtError);
     bool updateContact(QContact& contact, QContactManager::Error& qtError);
     bool removeContact(const QUniqueId &id, QContactManager::Error& qtError);
-    bool removeContacts(const QList<QUniqueId> &, QContactManager::Error& qtError);
     
     //function to find contacts, based on the communication method
     //communication type - call (number, voip fields), digits to match
@@ -116,7 +114,6 @@ private:
 	int addContactL(QContact &contact);
 	void updateContactL(QContact &contact);
     int removeContactL(QUniqueId id);
-    int removeContactsL(const QList<QUniqueId> &ids);
 	
 	QList<QUniqueId>  matchCommunicationAddressL( const QString &communicationType, const QString &communicationAddress );
 
@@ -138,6 +135,9 @@ private:
 	CContactChangeNotifier* m_contactChangeNotifier;
 #endif	
 	TransformContact* m_transformContact;
+    QList<QUniqueId> m_contactsAddedEmitted;
+    QList<QUniqueId> m_contactsChangedEmitted;
+    QList<QUniqueId> m_contactsRemovedEmitted;
 };
 
 #endif
