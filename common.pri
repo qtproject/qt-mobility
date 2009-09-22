@@ -44,6 +44,11 @@ SOURCE_DIR = $$PWD
     RCC_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/rcc
     UI_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/ui
     LIBS += -L$$OUTPUT_DIR/build/$$SUBDIRPART/bin  #link against library that we test
+    
+    symbian {
+        #The default include path doesn't include MOC_DIR on symbian
+        INCLUDEPATH += $$MOC_DIR
+    }
 }
 
 # Add the output dirs to the link path too
