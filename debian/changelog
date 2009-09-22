@@ -1,3 +1,9 @@
+libbearer (0.20) unstable; urgency=low
+
+  * Added IAP monitoring support.
+
+ -- Jukka Rissanen <jukka.rissanen@nokia.com>  Tue, 22 Sep 2009 13:36:34 +0300
+
 libbearer (0.19) unstable; urgency=low
 
   * Fixing memory leak in

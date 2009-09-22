@@ -87,6 +87,8 @@ public:
             priv->isValid = false;
             priv->id.clear();
         }
+
+	cleanup();
     }
 
     QNetworkConfiguration defaultConfiguration();
@@ -103,9 +105,12 @@ public:
     QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > snapConfigurations;
     QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > userChoiceConfigurations;
     bool firstUpdate;
+    friend class IapMonitor;
+    void cleanup();
 
 public slots:
     void updateConfigurations();
+
 Q_SIGNALS:
     void configurationAdded(const QNetworkConfiguration& config);
     void configurationRemoved(const QNetworkConfiguration& config);

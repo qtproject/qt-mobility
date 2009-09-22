@@ -51,9 +51,123 @@
 #include <libicd-network-wlan-dev.h>
 #include <maemo_icd.h>
 #include <iapconf.h>
-
+#include <iapmonitor.h>
 
 QT_BEGIN_NAMESPACE
+
+class IapMonitor;
+static IapMonitor &iapMonitor();
+
+#define IAP "/system/osso/connectivity/IAP"
+static int iap_prefix_len;
+static void notify_iap(GConfClient *client, guint id,
+		    GConfEntry *entry, gpointer user_data);
+
+class IapMonitor
+{
+public:
+    friend void notify_iap(GConfClient *, guint,
+			GConfEntry *entry, gpointer user_data);
+
+    friend IapMonitor &iapMonitor();
+    void setup(QNetworkConfigurationManagerPrivate *d);
+    void cleanup();
+
+private:
+    bool first_call;
+    IapMonitor() : first_call(true) { }
+
+    void iapAdded(const char *key, GConfEntry *entry);
+    void iapDeleted(const char *key, GConfEntry *entry);
+
+    Maemo::IAPMonitor *iap;
+    QNetworkConfigurationManagerPrivate *d;
+    QTimer timer;
+};
+
+
+static IapMonitor &iapMonitor()
+{ 
+    static IapMonitor iap_monitor;
+    return iap_monitor;
+}
+
+
+/* Notify func that is called when IAP is added or deleted */
+static void notify_iap(GConfClient *, guint,
+		    GConfEntry *entry, gpointer user_data)
+{
+    const char *key = gconf_entry_get_key(entry);
+    if (key && g_str_has_prefix(key, IAP)) {
+	IapMonitor *ptr = (IapMonitor *)user_data;
+	if (gconf_entry_get_value(entry)) {
+	    ptr->iapAdded(key, entry);
+	} else {
+	    ptr->iapDeleted(key, entry);
+	}
+    }
+}
+
+
+void IapMonitor::setup(QNetworkConfigurationManagerPrivate *d_ptr)
+{
+    if (first_call) {
+	d = d_ptr;
+	iap_prefix_len = strlen(IAP);	
+	iap = new Maemo::IAPMonitor(notify_iap, (gpointer)this);
+	first_call = false;
+    }
+}
+
+
+void IapMonitor::cleanup()
+{
+    if (!first_call) {
+	delete iap;
+	if (timer.isActive()) {
+	    QObject::disconnect(&timer, SIGNAL(timeout()), d, SLOT(updateConfigurations()));
+	    timer.stop();
+	}
+	first_call = true;
+    }
+}
+
+
+void IapMonitor::iapAdded(const char * /*key*/, GConfEntry * /*entry*/)
+{
+    //qDebug("Notify called for added element: %s=%s", gconf_entry_get_key(entry), gconf_value_to_string(gconf_entry_get_value(entry)));
+
+    /* We cannot know when the IAP is fully added to gconf, so a timer is
+     * installed instead. When the timer expires we hope that IAP is added ok.
+     */
+    if (timer.isActive()) {
+	QObject::disconnect(&timer, SIGNAL(timeout()), d, SLOT(updateConfigurations()));
+	timer.stop();
+    }
+    timer.setSingleShot(true);
+    QObject::connect(&timer, SIGNAL(timeout()), d, SLOT(updateConfigurations()));
+    timer.start(1500);
+}
+
+
+void IapMonitor::iapDeleted(const char *key, GConfEntry * /*entry*/)
+{
+    //qDebug("Notify called for deleted element: %s", gconf_entry_get_key(entry));
+
+    /* We are only interested in IAP deletions so we skip the config entries
+     */
+    if (strstr(key + iap_prefix_len + 1, "/")) {	
+	//qDebug("Deleting IAP config %s", key+iap_prefix_len);
+	return;
+    }
+
+    //const char *iap_id = key + iap_prefix_len + 1;
+    //qDebug("IAP %s deleted", iap_id);
+
+    d->performAsyncConfigurationUpdate();
+}
+
+
 
 void QNetworkConfigurationManagerPrivate::registerPlatformCapabilities()
 {
@@ -66,7 +180,7 @@ void QNetworkConfigurationManagerPrivate::registerPlatformCapabilities()
 
 static inline QString network_attrs_to_security(uint network_attrs)
 {
-    uint cap;
+    uint cap = 0;
     nwattr2cap(network_attrs, &cap); /* from libicd-network-wlan-dev.h */
     if (cap & WLANCOND_OPEN)
 	return "NONE";
@@ -85,6 +199,7 @@ struct SSIDInfo {
     QString wlan_security;
 };
 
+
 void QNetworkConfigurationManagerPrivate::updateConfigurations()
 {
     /* Contains known network id (like ssid) from storage */
@@ -94,6 +209,9 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
     QList<Maemo::IcdScanResult> scanned;
 
     const QRegExp wlan = QRegExp("WLAN.*");
+
+    /* Turn on IAP monitoring */
+    iapMonitor().setup(this);
 
     /* We return currently configured IAPs in the first run and do the WLAN
      * scan in subsequent runs.
@@ -155,7 +273,6 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	    qDebug("IAP: %s, ssid: %s, already exists in the known list", iap_id.toAscii().data(), ssid.size() ? ssid.data() : "-");
 	}
     }
-
 
     if (!firstUpdate) {
 	QStringList scannedNetworkTypes;
@@ -302,6 +419,12 @@ QNetworkConfiguration QNetworkConfigurationManagerPrivate::defaultConfiguration(
 void QNetworkConfigurationManagerPrivate::performAsyncConfigurationUpdate()
 {
     QTimer::singleShot(0, this, SLOT(updateConfigurations()));
+}
+
+
+void QNetworkConfigurationManagerPrivate::cleanup()
+{
+    iapMonitor().cleanup();
 }
 
 QT_END_NAMESPACE

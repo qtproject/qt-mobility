@@ -75,7 +75,7 @@ symbian: {
 
 	INSTALLS += target headers documentation
 
-	PKGCONFIG += glib-2.0 dbus-glib-1 osso-ic conninet
+	PKGCONFIG += glib-2.0 dbus-glib-1 gconf-2.0 osso-ic conninet 
 	DEFINES += MAEMO
 
 	# TODO: how to remove debian build dirs

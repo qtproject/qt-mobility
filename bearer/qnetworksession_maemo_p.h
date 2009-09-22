@@ -72,7 +72,7 @@ public:
 
     ~QNetworkSessionPrivate()
     {
-	    cleanupSession();
+	cleanupSession();
     }
 
     //called by QNetworkSession constructor and ensures
