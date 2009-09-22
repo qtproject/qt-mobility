@@ -231,7 +231,7 @@ QMessageOrdering& QMessageOrdering::operator+=(const QMessageOrdering& other)
     d_ptr->_fieldOrderList += other.d_ptr->_fieldOrderList;
 #ifdef _WIN32_WCE
     // Multiple sort orders are not supported on WinCE
-    d__ptr->_valid = false;
+    d_ptr->_valid = false;
 #endif;
     return *this;
 }
@@ -272,7 +272,7 @@ QMessageOrdering QMessageOrdering::byTimeStamp(Qt::SortOrder order)
 {
     QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::TimeStamp, order));
 #ifdef _WIN32_WCE
-    result.d__ptr->_valid = false; // Not supported on WinCE
+    result.d_ptr->_valid = false; // Not supported on WinCE
 #endif
     return result;
 }

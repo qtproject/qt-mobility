@@ -41,9 +41,9 @@
 #include <QFile>
 #include <QDebug>
 
+#include <mapix.h>
 #include <Mapidefs.h>
 #include <Mapitags.h>
-#include <Mapix.h>
 #include <MAPIUtil.h>
 
 // Missing definitions
@@ -72,12 +72,12 @@ void doInit()
 IProfAdmin *openProfileAdmin()
 {
     IProfAdmin *profAdmin(0);
-
+#ifndef _WIN32_WCE
     HRESULT rv = MAPIAdminProfiles(0, &profAdmin);
     if (HR_FAILED(rv)) {
         qWarning() << "openProfileAdmin: MAPIAdminProfiles failed";
     }
-
+#endif
     return profAdmin;
 }
 
@@ -104,6 +104,7 @@ QList<ProfileDetail> profileDetails(LPPROFADMIN profAdmin)
     if (HR_SUCCEEDED(rv)) {
         LPSRowSet rows(0);
         SizedSPropTagArray(2, cols) = {2, {PR_DISPLAY_NAME_A, PR_DEFAULT_PROFILE}};
+#ifndef _WIN32_WCE
         rv = HrQueryAllRows(profileTable, reinterpret_cast<LPSPropTagArray>(&cols), NULL, NULL, 0, &rows);
         if (HR_SUCCEEDED(rv)) {
             for (uint n = 0; n < rows->cRows; ++n) {
@@ -118,7 +119,7 @@ QList<ProfileDetail> profileDetails(LPPROFADMIN profAdmin)
         } else {
             qWarning() << "profileNames: HrQueryAllRows failed";
         }
-
+#endif
         profileTable->Release();
     } else {
         qWarning() << "profileNames: GetProfileTable failed";
@@ -161,6 +162,7 @@ QList<ServiceDetail> serviceDetails(LPSERVICEADMIN svcAdmin)
     if (HR_SUCCEEDED(rv)) {
         LPSRowSet rows(0);
         SizedSPropTagArray(3, cols) = {3, {PR_SERVICE_NAME_A, PR_DISPLAY_NAME_A, PR_SERVICE_UID}};
+#ifndef _WIN32_WCE
         rv = HrQueryAllRows(svcTable, reinterpret_cast<LPSPropTagArray>(&cols), 0, 0, 0, &rows);
         if (HR_SUCCEEDED(rv)) {
             for (uint n = 0; n < rows->cRows; ++n) {
@@ -179,7 +181,7 @@ QList<ServiceDetail> serviceDetails(LPSERVICEADMIN svcAdmin)
         } else {
             qWarning() << "serviceDetails: HrQueryAllRows failed";
         }
-
+#endif
         svcTable->Release();
     } else {
         qWarning() << "serviceDetails: GetMsgServiceTable failed";
@@ -199,6 +201,7 @@ QList<StoreDetail> storeDetails(LPMAPISESSION session)
     if (HR_SUCCEEDED(rv)) {
         LPSRowSet rows(0);
         SizedSPropTagArray(3, cols) = {3, {PR_DISPLAY_NAME_A, PR_RECORD_KEY, PR_ENTRYID}};
+#ifndef _WIN32_WCE
         rv = HrQueryAllRows(storesTable, reinterpret_cast<LPSPropTagArray>(&cols), 0, 0, 0, &rows);
         if (HR_SUCCEEDED(rv)) {
             for (uint n = 0; n < rows->cRows; ++n) {
@@ -215,7 +218,7 @@ QList<StoreDetail> storeDetails(LPMAPISESSION session)
         } else {
             qWarning() << "storeDetails: HrQueryAllRows failed";
         }
-
+#endif
         storesTable->Release();
     } else {
         qWarning() << "storeDetails: GetMsgStoresTable failed";
@@ -394,6 +397,7 @@ MAPIUID findProviderUid(const QByteArray &name, IProviderAdmin *providerAdmin)
     if (HR_SUCCEEDED(rv)) {
         LPSRowSet rows(0);
         SizedSPropTagArray(2, cols) = {2, {PR_SERVICE_NAME_A, PR_PROVIDER_UID}};
+#ifndef _WIN32_WCE
         rv = HrQueryAllRows(providerTable, reinterpret_cast<LPSPropTagArray>(&cols), 0, 0, 0, &rows);
         if (HR_SUCCEEDED(rv)) {
             for (uint n = 0; n < rows->cRows; ++n) {
@@ -411,7 +415,7 @@ MAPIUID findProviderUid(const QByteArray &name, IProviderAdmin *providerAdmin)
         } else {
             qWarning() << "findProviderUid: HrQueryAllRows failed";
         }
-
+#endif
         providerTable->Release();
     } else {
         qWarning() << "findProviderUid: GetProviderTable failed";
@@ -497,6 +501,7 @@ QByteArray defaultProfile()
     QByteArray result;
 
     LPPROFADMIN profAdmin(0);
+#ifndef _WIN32_WCE
     HRESULT rv = MAPIAdminProfiles(0, &profAdmin);
     if (HR_SUCCEEDED(rv)) {
         // Find the default profile
@@ -509,7 +514,7 @@ QByteArray defaultProfile()
     } else {
         qWarning() << "defaultProfile: MAPIAdminProfiles failed";
     }
-
+#endif
     return result;
 }
 
@@ -558,6 +563,7 @@ IMsgStore *openStoreByName(const QByteArray &storeName, IMAPISession* session)
         if (HR_SUCCEEDED(rv)) {
             LPSRowSet rows(0);
             SizedSPropTagArray(2, cols) = {2, {PR_DISPLAY_NAME_A, PR_ENTRYID}};
+#ifndef _WIN32_WCE
             rv = HrQueryAllRows(storesTable, reinterpret_cast<LPSPropTagArray>(&cols), 0, 0, 0, &rows);
             if (HR_SUCCEEDED(rv)) {
                 for (uint n = 0; n < rows->cRows; ++n) {
@@ -574,7 +580,7 @@ IMsgStore *openStoreByName(const QByteArray &storeName, IMAPISession* session)
             } else {
                 qWarning() << "openStoreByName: HrQueryAllRows failed";
             }
-
+#endif
             storesTable->Release();
         } else {
             qWarning() << "openStoreByName: GetMsgStoresTable failed";
@@ -637,6 +643,7 @@ QList<QByteArray> subFolderEntryIds(IMAPIFolder *folder)
         if (HR_SUCCEEDED(rv)) {
             LPSRowSet rows(0);
             SizedSPropTagArray(2, cols) = {2, {PR_OBJECT_TYPE, PR_ENTRYID}};
+#ifndef _WIN32_WCE
             rv = HrQueryAllRows(hierarchyTable, reinterpret_cast<LPSPropTagArray>(&cols), NULL, NULL, 0, &rows);
             if (HR_SUCCEEDED(rv)) {
                 for (uint n = 0; n < rows->cRows; ++n) {
@@ -650,7 +657,7 @@ QList<QByteArray> subFolderEntryIds(IMAPIFolder *folder)
             } else {
                 qWarning() << "subFolderEntryIds: HrQueryAllRows failed";
             }
-
+#endif
             hierarchyTable->Release();
         }
     }
