@@ -293,6 +293,36 @@ public:
     QtTestVideoService *testService;
 };
 
+class QtTestVideoWidget : public QVideoWidget
+{
+public:
+    QtTestVideoWidget(QAbstractMediaObject *object)
+        : QVideoWidget(object)
+        , keyPressCount(0)
+        , keyReleaseCount(0)
+        , mousePressCount(0)
+        , mouseReleaseCount(0)
+        , mouseDoubleClickCount(0)
+        , mouseMoveCount(0)
+    {
+    }
+
+    int keyPressCount;
+    int keyReleaseCount;
+    int mousePressCount;
+    int mouseReleaseCount;
+    int mouseDoubleClickCount;
+    int mouseMoveCount;
+
+protected:
+    void keyPressEvent(QKeyEvent *e) { ++keyPressCount; e->accept(); }
+    void keyReleaseEvent(QKeyEvent *e) { ++keyReleaseCount;  e->accept(); }
+    void mousePressEvent(QMouseEvent *e) { ++mousePressCount;  e->accept(); }
+    void mouseReleaseEvent(QMouseEvent *e) { ++mouseReleaseCount;  e->accept(); }
+    void mouseDoubleClickEvent(QMouseEvent *e) { ++mouseDoubleClickCount;  e->accept(); }
+    void mouseMoveEvent(QMouseEvent *e) { ++mouseMoveCount;  e->accept(); }
+};
+
 class tst_QVideoWidget : public QObject
 {
     Q_OBJECT
@@ -306,6 +336,7 @@ private slots:
     void noOutputs();
 
     void showWindowControl();
+    void eventFilterWindowControl();
     void displayModeWindowControl();
     void aspectRatioWindowControl();
     void customPixelAspectRatioWindowControl();
@@ -321,6 +352,7 @@ private slots:
     void saturationWindowControl();
 
     void showWidgetControl();
+    void eventFilterWidgetControl();
     void displayModeWidgetControl();
     void aspectRatioWidgetControl();
     void customPixelAspectRatioWidgetControl();
@@ -337,6 +369,7 @@ private slots:
 
 #ifndef QT_NO_MULTIMEDIA
     void showRendererControl();
+    void eventFilterRendererControl();
     void displayModeRendererControl();
     void aspectRatioRendererControl();
     void customPixelAspectRatioRendererControl();
@@ -480,6 +513,9 @@ void tst_QVideoWidget::showWindowControl()
 
     QCoreApplication::processEvents();
 
+    if (!QApplication::activeWindow())
+        QSKIP("window not yet activated", SkipSingle);
+
     QVERIFY(object.testService->windowControl->repaintCount() > 0);
 
     widget.hide();
@@ -520,6 +556,214 @@ void tst_QVideoWidget::showRendererControl()
     widget.hide();
 
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
+}
+#endif
+
+void tst_QVideoWidget::eventFilterWindowControl()
+{
+    QtTestVideoObject object(new QtTestWindowControl, 0, 0);
+    object.testService->windowControl->setNativeSize(QSize(240, 180));
+
+    QtTestVideoWidget widget(&object);
+    widget.show();
+    widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
+
+    QCoreApplication::processEvents();
+
+    QWidget *activeWindow = QApplication::activeWindow();
+
+    if (!activeWindow)
+        QSKIP("No active window", SkipSingle);
+
+    {
+        QKeyEvent e(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
+        QCoreApplication::sendEvent(activeWindow, &e);
+
+        QCOMPARE(widget.keyPressCount, 1);
+    } {
+        QKeyEvent e(QEvent::KeyRelease, Qt::Key_Enter, Qt::NoModifier);
+        QCoreApplication::sendEvent(activeWindow, &e);
+
+        QCOMPARE(widget.keyReleaseCount, 1);
+    } {
+        QMouseEvent e(
+                QEvent::MouseButtonPress,
+                QPoint(0, 0),
+                Qt::LeftButton,
+                Qt::NoButton,
+                Qt::NoModifier);
+        QCoreApplication::sendEvent(activeWindow, &e);
+
+        QCOMPARE(widget.mousePressCount, 1);
+    } {
+        QMouseEvent e(
+                QEvent::MouseMove,
+                QPoint(0, 0),
+                Qt::NoButton,
+                Qt::LeftButton,
+                Qt::NoModifier);
+        QCoreApplication::sendEvent(activeWindow, &e);
+
+        QCOMPARE(widget.mouseMoveCount, 1);
+    } {
+        QMouseEvent e(
+                QEvent::MouseButtonRelease,
+                QPoint(0, 0),
+                Qt::LeftButton,
+                Qt::NoButton,
+                Qt::NoModifier);
+        QCoreApplication::sendEvent(activeWindow, &e);
+
+        QCOMPARE(widget.mouseReleaseCount, 1);
+    } {
+        QMouseEvent e(
+                QEvent::MouseButtonDblClick,
+                QPoint(0, 0),
+                Qt::LeftButton,
+                Qt::NoButton,
+                Qt::NoModifier);
+        QCoreApplication::sendEvent(activeWindow, &e);
+
+        QCOMPARE(widget.mouseDoubleClickCount, 1);
+    }
+}
+
+void tst_QVideoWidget::eventFilterWidgetControl()
+{
+    QtTestVideoObject object(0, new QtTestWidgetControl, 0);
+
+    QtTestVideoWidget widget(&object);
+    widget.show();
+    widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
+
+    QCoreApplication::processEvents();
+
+    QWidget *activeWindow = object.testService->widgetControl->videoWidget();
+
+    if (!activeWindow)
+        QSKIP("No active window", SkipSingle);
+
+    {
+        QKeyEvent e(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
+        QCoreApplication::sendEvent(activeWindow, &e);
+
+        QCOMPARE(widget.keyPressCount, 1);
+    } {
+        QKeyEvent e(QEvent::KeyRelease, Qt::Key_Enter, Qt::NoModifier);
+        QCoreApplication::sendEvent(activeWindow, &e);
+
+        QCOMPARE(widget.keyReleaseCount, 1);
+    } {
+        QMouseEvent e(
+                QEvent::MouseButtonPress,
+                QPoint(0, 0),
+                Qt::LeftButton,
+                Qt::NoButton,
+                Qt::NoModifier);
+        QCoreApplication::sendEvent(activeWindow, &e);
+
+        QCOMPARE(widget.mousePressCount, 1);
+    } {
+        QMouseEvent e(
+                QEvent::MouseMove,
+                QPoint(0, 0),
+                Qt::NoButton,
+                Qt::LeftButton,
+                Qt::NoModifier);
+        QCoreApplication::sendEvent(activeWindow, &e);
+
+        QCOMPARE(widget.mouseMoveCount, 1);
+    } {
+        QMouseEvent e(
+                QEvent::MouseButtonRelease,
+                QPoint(0, 0),
+                Qt::LeftButton,
+                Qt::NoButton,
+                Qt::NoModifier);
+        QCoreApplication::sendEvent(activeWindow, &e);
+
+        QCOMPARE(widget.mouseReleaseCount, 1);
+    } {
+        QMouseEvent e(
+                QEvent::MouseButtonDblClick,
+                QPoint(0, 0),
+                Qt::LeftButton,
+                Qt::NoButton,
+                Qt::NoModifier);
+        QCoreApplication::sendEvent(activeWindow, &e);
+
+        QCOMPARE(widget.mouseDoubleClickCount, 1);
+    }
+}
+
+#ifndef QT_NO_MULTIMEDIA
+void tst_QVideoWidget::eventFilterRendererControl()
+{
+    QtTestVideoObject object(0, 0, new QtTestRendererControl);
+
+    QtTestVideoWidget widget(&object);
+    widget.setMinimumSize(320, 240);
+    widget.show();
+    widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
+
+    QCoreApplication::processEvents();
+
+    QWidget *activeWindow = QApplication::activeWindow();
+
+    if (!activeWindow)
+        QSKIP("No active window", SkipSingle);
+
+    {
+        QKeyEvent e(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
+        QCoreApplication::sendEvent(activeWindow, &e);
+
+        QCOMPARE(widget.keyPressCount, 1);
+    } {
+        QKeyEvent e(QEvent::KeyRelease, Qt::Key_Enter, Qt::NoModifier);
+        QCoreApplication::sendEvent(activeWindow, &e);
+
+        QCOMPARE(widget.keyReleaseCount, 1);
+    } {
+        QMouseEvent e(
+                QEvent::MouseButtonPress,
+                QPoint(0, 0),
+                Qt::LeftButton,
+                Qt::NoButton,
+                Qt::NoModifier);
+        QCoreApplication::sendEvent(activeWindow, &e);
+
+        QCOMPARE(widget.mousePressCount, 1);
+    } {
+        QMouseEvent e(
+                QEvent::MouseMove,
+                QPoint(0, 0),
+                Qt::NoButton,
+                Qt::LeftButton,
+                Qt::NoModifier);
+        QCoreApplication::sendEvent(activeWindow, &e);
+
+        QCOMPARE(widget.mouseMoveCount, 1);
+    } {
+        QMouseEvent e(
+                QEvent::MouseButtonRelease,
+                QPoint(0, 0),
+                Qt::LeftButton,
+                Qt::NoButton,
+                Qt::NoModifier);
+        QCoreApplication::sendEvent(activeWindow, &e);
+
+        QCOMPARE(widget.mouseReleaseCount, 1);
+    } {
+        QMouseEvent e(
+                QEvent::MouseButtonDblClick,
+                QPoint(0, 0),
+                Qt::LeftButton,
+                Qt::NoButton,
+                Qt::NoModifier);
+        QCoreApplication::sendEvent(activeWindow, &e);
+
+        QCOMPARE(widget.mouseDoubleClickCount, 1);
+    }
 }
 #endif
 
@@ -825,7 +1069,7 @@ void tst_QVideoWidget::displayModeWindowControl()
     widget.setDisplayMode(QVideoWidget::WindowedDisplay);
 
     QCOMPARE(object.testService->windowControl->isFullscreen(), false);
-    QCOMPARE(widget.isFullScreen(), false);
+    QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
     QCOMPARE(spy.count(), 2);
     QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(1).value(0)),
              QVideoWidget::WindowedDisplay);
@@ -835,14 +1079,22 @@ void tst_QVideoWidget::displayModeWindowControl()
     QCoreApplication::processEvents();
 
     if (QWidget *keyWidget = QApplication::activeWindow()) {
-        QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
-        QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
-
+        {
+            QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
+            QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
+        }
         QCOMPARE(object.testService->windowControl->isFullscreen(), false);
         QCOMPARE(widget.isFullScreen(), false);
         QCOMPARE(spy.count(), 4);
         QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(3).value(0)),
                  QVideoWidget::WindowedDisplay);
+        {
+            QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
+            QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
+        }
+        QCOMPARE(object.testService->windowControl->isFullscreen(), false);
+        QCOMPARE(widget.isFullScreen(), false);
+        QCOMPARE(spy.count(), 4);
     } else {
         qWarning("no active window");
     }
@@ -867,21 +1119,31 @@ void tst_QVideoWidget::displayModeWidgetControl()
     widget.setDisplayMode(QVideoWidget::WindowedDisplay);
 
     QCOMPARE(object.testService->widgetControl->isFullscreen(), false);
-    QCOMPARE(widget.isFullScreen(), false);
+    QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
     QCOMPARE(spy.count(), 2);
     QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(1).value(0)),
              QVideoWidget::WindowedDisplay);
 
     widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
 
-    QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
-    QCoreApplication::sendEvent(object.testService->widgetControl->videoWidget(), &keyPressEvent);
-
+    {
+        QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
+        QCoreApplication::sendEvent(
+                object.testService->widgetControl->videoWidget(), &keyPressEvent);
+    }
     QCOMPARE(object.testService->widgetControl->isFullscreen(), false);
-    QCOMPARE(widget.isFullScreen(), false);
+    QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
     QCOMPARE(spy.count(), 4);
     QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(3).value(0)),
              QVideoWidget::WindowedDisplay);
+    {
+        QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
+        QCoreApplication::sendEvent(
+                object.testService->widgetControl->videoWidget(), &keyPressEvent);
+    }
+    QCOMPARE(object.testService->widgetControl->isFullscreen(), false);
+    QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
+    QCOMPARE(spy.count(), 4);
 }
 
 #ifndef QT_NO_MULTIMEDIA
@@ -895,6 +1157,7 @@ void tst_QVideoWidget::displayModeRendererControl()
     QSignalSpy spy(&widget, SIGNAL(displayModeChanged(QVideoWidget::DisplayMode)));
 
     widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
+    QCoreApplication::processEvents();
 
     QCOMPARE(widget.displayMode(), QVideoWidget::FullscreenDisplay);
     QCOMPARE(spy.count(), 1);
@@ -902,24 +1165,36 @@ void tst_QVideoWidget::displayModeRendererControl()
              QVideoWidget::FullscreenDisplay);
 
     widget.setDisplayMode(QVideoWidget::WindowedDisplay);
+    QCoreApplication::processEvents();
 
-    QCOMPARE(widget.isFullScreen(), false);
+    QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
     QCOMPARE(spy.count(), 2);
     QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(1).value(0)),
              QVideoWidget::WindowedDisplay);
 
     widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
-
     QCoreApplication::processEvents();
 
-    if (QWidget *keyWidget = QApplication::activeWindow()) {
-        QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
-        QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
+    QCOMPARE(widget.displayMode(), QVideoWidget::FullscreenDisplay);
+    QCOMPARE(spy.count(), 3);
+    QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(2).value(0)),
+             QVideoWidget::FullscreenDisplay);
 
-        QCOMPARE(widget.isFullScreen(), false);
+    if (QWidget *keyWidget = QApplication::activeWindow()) {
+        {
+            QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
+            QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
+        }
+        QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
         QCOMPARE(spy.count(), 4);
         QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(3).value(0)),
                  QVideoWidget::WindowedDisplay);
+        {
+            QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
+            QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
+        }
+        QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
+        QCOMPARE(spy.count(), 4);
     } else {
         qWarning("no active window");
     }

@@ -611,9 +611,9 @@ QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
             connect(d->rendererBackend, SIGNAL(hueChanged(int)), SLOT(_q_hueChanged(int)));
             connect(d->rendererBackend, SIGNAL(saturationChanged(int)),
                     SLOT(_q_saturationChanged(int)));
+
             connect(d->rendererBackend, SIGNAL(displayModeChanged(QVideoWidget::DisplayMode)),
                     SLOT(_q_displayModeChanged(QVideoWidget::DisplayMode)));
-
             connect(d->rendererBackend, SIGNAL(aspectRatioModeChanged(QVideoWidget::AspectRatio)),
                     SLOT(_q_aspectRatioModeChanged(QVideoWidget::AspectRatio)));
             connect(d->rendererBackend, SIGNAL(customAspectRatioChanged(QSize)),
@@ -897,12 +897,13 @@ void QVideoWidget::keyPressEvent(QKeyEvent *event)
 {
     Q_D(QVideoWidget);
 
+    event->ignore();
     if (event->key() == Qt::Key_Escape && d->displayMode == FullscreenDisplay) {
         setDisplayMode(WindowedDisplay);
 
         event->accept();
     } else {
-        QWidget::keyPressEvent(event);
+        event->ignore();
     }
 }
 
