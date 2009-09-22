@@ -10,24 +10,19 @@ DEFINES += AUDIOSERVICES
 
 DEPENDPATH += .
 INCLUDEPATH += . \
-    ../../multimedia \
-    ../../multimedia/endpoints
+    ../../multimedia
 
 # Input
-HEADERS += audioencodecontrol.h \
-    audiomediacontrol.h \
-    audiodeviceendpoint.h \
+HEADERS += audioencodercontrol.h \
+    audiomediarecordercontrol.h \
+    audiodevicecontrol.h \
     audiocaptureservice.h \
     audiocaptureserviceplugin.h \
-    audiocapturesession.h \
-    audioinputdevicecontrol.h \
-    audioformatcontrol.h
+    audiocapturesession.h
 
-SOURCES += audioencodecontrol.cpp \
-    audiomediacontrol.cpp \
-    audiodeviceendpoint.cpp \
+SOURCES += audioencodercontrol.cpp \
+    audiomediarecordercontrol.cpp \
+    audiodevicecontrol.cpp \
     audiocaptureservice.cpp \
     audiocaptureserviceplugin.cpp \
-    audiocapturesession.cpp \
-    audioinputdevicecontrol.cpp \
-    audioformatcontrol.cpp
+    audiocapturesession.cpp

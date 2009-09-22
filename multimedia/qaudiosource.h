@@ -32,30 +32,48 @@
 **
 ****************************************************************************/
 
+#ifndef QAUDIOSOURCE_H
+#define QAUDIOSOURCE_H
 
-#ifndef AUDIOFORMATCONTROL_H
-#define AUDIOFORMATCONTROL_H
-
-#include "qmediaformatcontrol.h"
 #include <QtCore/qstringlist.h>
+#include <QtCore/qpair.h>
+#include <QtCore/qsize.h>
 
-class AudioFormatControl : public QMediaFormatControl
+#include <QtMultimedia/qaudioformat.h>
+
+#include <multimedia/qmediarecorder.h>
+#include <multimedia/qabstractmediacontrol.h>
+#include <multimedia/qabstractmediaobject.h>
+#include <multimedia/qabstractmediaservice.h>
+
+#include <multimedia/qmediaserviceprovider.h>
+
+class QAudioSourceService;
+class QAudioSourcePrivate;
+
+class Q_MEDIA_EXPORT QAudioSource : public QAbstractMediaObject
 {
-Q_OBJECT
+    Q_OBJECT
+
+    Q_ENUMS(State)
 public:
-    AudioFormatControl(QObject *parent);
-    virtual ~AudioFormatControl() {};
+    QAudioSource(QObject *parent = 0, QAbstractMediaService *service = 0);
+    ~QAudioSource();
 
-    virtual QStringList supportedFormats() const { return m_supportedFormats; }
-    virtual QString format() const { return m_format; }
-    virtual void setFormat(const QString &formatMimeType) { m_format = formatMimeType; }
+    bool isValid() const;
+    QAbstractMediaService* service() const;
 
-    virtual QString formatDescription(const QString &formatMimeType) const { return m_formatDescriptions.value(formatMimeType); }
+    QAudioFormat format() const;
+    void setFormat(const QAudioFormat &format);
+    bool isFormatSupported(const QAudioFormat &format) const;
+
+    QStringList supportedCodecs() const;
+    QList<int> supportedFrequencies() const;
+    QList<int> supportedChannels() const;
+    QList<int> supportedSampleSizes() const;
 
 private:
-    QString m_format;
-    QStringList m_supportedFormats;
-    QMap<QString, QString> m_formatDescriptions;
+    Q_DECLARE_PRIVATE(QAudioSource)
 };
 
-#endif // AUDIOFORMATCONTROL_H
+#endif  // QAUDIOSOURCE_H

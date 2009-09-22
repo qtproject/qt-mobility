@@ -40,12 +40,12 @@
 
 class AudioCaptureSession;
 
-class AudioDeviceEndpoint : public QAudioDeviceControl
+class AudioDeviceControl : public QAudioDeviceControl
 {
 Q_OBJECT
 public:
-    AudioDeviceEndpoint(QObject *parent);
-    virtual ~AudioDeviceEndpoint();
+    AudioDeviceControl(QObject *parent);
+    virtual ~AudioDeviceControl();
 
     int deviceCount() const;
 

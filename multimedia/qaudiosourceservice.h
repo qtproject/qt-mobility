@@ -32,17 +32,24 @@
 **
 ****************************************************************************/
 
-#include "audioformatcontrol.h"
+#ifndef QAUDIOSOURCESERVICE_H
+#define QAUDIOSOURCESERVICE_H
 
-AudioFormatControl::AudioFormatControl(QObject *parent)
-    :QMediaFormatControl(parent)
+#include <multimedia/qabstractmediaservice.h>
+
+
+class QAudioSourceServicePrivate;
+class Q_MEDIA_EXPORT QAudioSourceService : public QAbstractMediaService
 {
-    m_supportedFormats.clear();
-    m_formatDescriptions.clear();
+    Q_OBJECT
 
-    m_supportedFormats.append("audio/pcm");
-    m_formatDescriptions.insert("audio/pcm","Raw audio format");
+public:
+    ~QAudioSourceService();
 
-    setFormat(m_supportedFormats[0]);
-}
+    virtual QAbstractMediaControl* control(const char *name) const = 0;
 
+protected:
+    QAudioSourceService(QObject *parent);
+};
+
+#endif  // QAUDIOSOURCESERVICE_H
