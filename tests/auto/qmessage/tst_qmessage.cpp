@@ -262,11 +262,21 @@ void tst_QMessage::testToTransmissionFormat_simple()
     m1.setSubject(subject);
     m1.setDate(date);
 
-    QByteArray mimeType(contentType + "/" + contentSubType + "; charset=" + contentCharset);
-    m1.setBody(contentText, mimeType);
+    {
+        // Set body text using stream (for coverage testing only)
+        QTextStream is(const_cast<QString*>(&contentText), QIODevice::ReadOnly);
+
+        QByteArray mimeType(contentType + "/" + contentSubType + "; charset=" + contentCharset);
+        m1.setBody(is, mimeType);
+    }
 
 #if !defined(Q_OS_WIN)
-    QByteArray serialized(m1.toTransmissionFormat());
+    QByteArray serialized;
+    {
+        // Serialize using stream (for coverage testing only)
+        QDataStream os(&serialized, QIODevice::WriteOnly);
+        m1.toTransmissionFormat(os);
+    }
 #endif
 
     QCOMPARE(m1.from().recipient(), from);
