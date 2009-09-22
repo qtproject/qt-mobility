@@ -411,21 +411,6 @@ QValueSpaceItem::QValueSpaceItem(QObject *parent)
 }
 
 /*!
-    Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.
-
-    The constructed Value Space item will access all available
-    \l {QAbstractValueSpaceLayer}{layers}.
-*/
-QValueSpaceItem::QValueSpaceItem(const QByteArray &path, QObject *parent)
-:   QObject(parent)
-{
-    VS_CALL_ASSERT;
-
-    d = new QValueSpaceItemPrivateData(path);
-    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
-}
-
-/*!
     \overload
 
     Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.  This
@@ -458,25 +443,6 @@ QValueSpaceItem::QValueSpaceItem(const char *path, QObject *parent)
     VS_CALL_ASSERT;
 
     d = new QValueSpaceItemPrivateData(QByteArray(path));
-    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
-}
-
-/*!
-    Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.  The
-    \a filter parameter is used to limit which layers this QValueSpaceItem will access.
-
-    If a layer matching \a filter is not found an invalid QValueSpaceItem will be constructed.
-
-    \sa isValid()
-*/
-QValueSpaceItem::QValueSpaceItem(const QByteArray &path,
-                                 QAbstractValueSpaceLayer::LayerOptions filter,
-                                 QObject *parent)
-:   QObject(parent)
-{
-    VS_CALL_ASSERT;
-
-    d = new QValueSpaceItemPrivateData(path, filter);
     static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
 }
 
@@ -521,26 +487,6 @@ QValueSpaceItem::QValueSpaceItem(const char *path,
     VS_CALL_ASSERT;
 
     d = new QValueSpaceItemPrivateData(QByteArray(path), filter);
-    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
-}
-
-/*!
-    Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.  This
-    QValueSpaceItem will only use the layer identified by \a uuid.
-
-    Use of this constructor is not platform agnostic.  If possible use one of the constructors that
-    take a QAbstractValueSpaceLayer::LayerOptions parameter instead.
-
-    If a layer with a matching \a uuid is not found an invalid QValueSpaceItem will be constructed.
-
-    \sa QAbstractValueSpaceLayer::id(), QValueSpace, isValid()
-*/
-QValueSpaceItem::QValueSpaceItem(const QByteArray &path, const QUuid &uuid, QObject *parent)
-:   QObject(parent)
-{
-    VS_CALL_ASSERT;
-
-    d = new QValueSpaceItemPrivateData(path, uuid);
     static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
 }
 
@@ -609,32 +555,6 @@ QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &other, QObject* parent)
         d = new QValueSpaceItemPrivateWrite(*static_cast<QValueSpaceItemPrivateWrite *>(other.d));
 
     md->AddRef();
-}
-
-/*!
-    Constructs a QValueSpaceItem with the specified \a parent that refers to the sub-\a path of
-    \a base.
-
-    The constructed Value Space item will access the same \l {QAbstractValueSpaceLayer}{layers} as
-    \a base.
-*/
-QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &base,
-                                 const QByteArray &path,
-                                 QObject *parent)
-:   QObject(parent)
-{
-    VS_CALL_ASSERT;
-
-    QVALUESPACEITEM_D(base.d);
-
-    if (path.isEmpty() || path == "/")
-        d = md;
-    else if (md->path == "/")
-        d = new QValueSpaceItemPrivateData(path, md->layers());
-    else
-        d = new QValueSpaceItemPrivateData(md->path + '/' + path, md->layers());
-
-    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
 }
 
 /*!

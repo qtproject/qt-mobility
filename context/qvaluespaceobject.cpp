@@ -203,22 +203,6 @@ QValueSpaceObjectPrivate::QValueSpaceObjectPrivate(const QByteArray &objectPath,
 }
 
 /*!
-    Constructs a QValueSpaceObject with the specified \a parent that publishes values under
-    \a path.
-
-    The constructed Value Space object will access the \l {QAbstractValueSpaceLayer}{layer} with
-    the highest \l {QAbstractValueSpaceLayer::order()}{order} for which \a path is a valid path.
-    If no suitable \l {QAbstractValueSpaceLayer}{layer} is found an invalid QValueSpaceObject is
-    constructed.
-*/
-QValueSpaceObject::QValueSpaceObject(const QByteArray &path, QObject *parent)
-:   QObject(parent), d(new QValueSpaceObjectPrivate(path))
-{
-    VS_CALL_ASSERT;
-    QValueSpaceManager::instance()->init();
-}
-
-/*!
     \overload
 
     Constructs a QValueSpaceObject with the specified \a parent that publishes values under
@@ -241,27 +225,6 @@ QValueSpaceObject::QValueSpaceObject(const QString &path, QObject *parent)
 */
 QValueSpaceObject::QValueSpaceObject(const char *path, QObject *parent)
 :   QObject(parent), d(new QValueSpaceObjectPrivate(QByteArray(path)))
-{
-    VS_CALL_ASSERT;
-    QValueSpaceManager::instance()->init();
-}
-
-/*!
-    Constructs a QValueSpaceObject with the specified \a parent that publishes values under
-    \a path.  The \a filter parameter is used to limit which layer this QValueSpaceObject will
-    access.
-
-    The constructed Value Space object will access the \l {QAbstractValueSpaceLayer}{layer} with
-    the highest \l {QAbstractValueSpaceLayer::order()}{order} that matches \a filter and for which
-    \a path is a valid path.  If no suitable \l {QAbstractValueSpaceLayer}{layer} is found an
-    invalid QValueSpaceObject is constructed.
-
-    \sa isValid()
-*/
-QValueSpaceObject::QValueSpaceObject(const QByteArray &path,
-                                     QAbstractValueSpaceLayer::LayerOptions filter,
-                                     QObject *parent)
-:   QObject(parent), d(new QValueSpaceObjectPrivate(path, filter))
 {
     VS_CALL_ASSERT;
     QValueSpaceManager::instance()->init();
@@ -310,25 +273,6 @@ QValueSpaceObject::QValueSpaceObject(const char *path,
                                      QAbstractValueSpaceLayer::LayerOptions filter,
                                      QObject *parent)
 :   QObject(parent), d(new QValueSpaceObjectPrivate(path, filter))
-{
-    VS_CALL_ASSERT;
-    QValueSpaceManager::instance()->init();
-}
-
-/*!
-    Constructs a QValueSpaceObject with the specified \a parent that publishes values under
-    \a path.  Only the layer identified by \a uuid will be accessed by this object.
-
-    Use of this constructor is not platform agnostic.  If possible use one of the constructors that
-    take a QAbstractValueSpaceLayer::LayerOptions parameter instead.
-
-    If a layer with a matching \a uuid is not found an invalid QValueSpaceObject will be
-    constructed.
-
-    \sa isValid()
-*/
-QValueSpaceObject::QValueSpaceObject(const QByteArray &path, const QUuid &uuid, QObject *parent)
-:   QObject(parent), d(new QValueSpaceObjectPrivate(path, uuid))
 {
     VS_CALL_ASSERT;
     QValueSpaceManager::instance()->init();

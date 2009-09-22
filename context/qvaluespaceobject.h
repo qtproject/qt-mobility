@@ -52,13 +52,9 @@ class Q_CFW_EXPORT QValueSpaceObject : public QObject
     Q_OBJECT
 
 public:
-    explicit QValueSpaceObject(const QByteArray &path, QObject *parent = 0);
     explicit QValueSpaceObject(const QString &path, QObject *parent = 0);
     explicit QValueSpaceObject(const char *path, QObject *parent = 0);
 
-    QValueSpaceObject(const QByteArray &path,
-                      QAbstractValueSpaceLayer::LayerOptions filter,
-                      QObject *parent = 0);
     QValueSpaceObject(const QString &path,
                       QAbstractValueSpaceLayer::LayerOptions filter,
                       QObject *parent = 0);
@@ -66,7 +62,6 @@ public:
                       QAbstractValueSpaceLayer::LayerOptions filter,
                       QObject *parent = 0);
 
-    QValueSpaceObject(const QByteArray &objectPath, const QUuid &uuid, QObject *parent = 0);
     QValueSpaceObject(const QString &objectPath, const QUuid &uuid, QObject *parent = 0);
     QValueSpaceObject(const char *objectPath, const QUuid &uuid, QObject *parent = 0);
 

@@ -42,7 +42,7 @@ class tst_QValueSpaceItem : public QObject
     Q_OBJECT
 
 public:
-    enum Type { Copy, CharStar, String, ByteArray };
+    enum Type { Copy, CharStar, String };
 
 private slots:
     void initTestCase();

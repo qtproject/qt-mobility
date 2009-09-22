@@ -74,14 +74,14 @@ public:
     void ls();
     void dump();
     void pwdCmd();
-    void ls(const QByteArray &abs, bool);
+    void ls(const QString &abs, bool);
     void subscribe();
     void unsubscribe();
     void quit();
     void suppress();
     void listwatchers();
-    void watch(const QByteArray &);
-    void unwatch(const QByteArray &);
+    void watch(const QString &);
+    void unwatch(const QString &);
     void write(const QByteArray &, const QString &);
     void remove(const QByteArray &);
     void set(const QByteArray &, const QString &);
@@ -230,7 +230,7 @@ void VSExplorer::ls()
     fflush(stdout);
 }
 
-void VSExplorer::ls(const QByteArray &abs, bool all)
+void VSExplorer::ls(const QString &abs, bool all)
 {
     QValueSpaceItem item(abs);
     lsPath(&item, 0, all);
@@ -337,7 +337,7 @@ void VSExplorer::quit()
     terminateRequested = true;
 }
 
-void VSExplorer::watch(const QByteArray &path)
+void VSExplorer::watch(const QString &path)
 {
     foreach(QValueSpaceObject *obj, watchers) {
         if (obj->path().toUtf8() == path)
@@ -351,10 +351,10 @@ void VSExplorer::watch(const QByteArray &path)
                      this, SLOT(written(QByteArray,QVariant)));
 }
 
-void VSExplorer::unwatch(const QByteArray &path)
+void VSExplorer::unwatch(const QString &path)
 {
     foreach(QValueSpaceObject *obj, watchers) {
-        if (obj->path().toUtf8() == path) {
+        if (obj->path() == path) {
             watchers.remove(obj);
             delete obj;
             return;
@@ -456,14 +456,14 @@ void VSExplorer::processLine(const QString &line)
             newPath = newPath.left(newPath.length() - 1);
         }
         if(newPath.startsWith("/")) {
-            pwd = QValueSpaceItem(newPath.toAscii());
+            pwd = QValueSpaceItem(newPath);
         } else {
             QString oldPath = pwd.path();
             if(!oldPath.endsWith("/"))
                 oldPath.append("/");
             oldPath.append(newPath);
             oldPath = QDir::cleanPath(oldPath);
-            pwd = QValueSpaceItem(oldPath.toAscii());
+            pwd = QValueSpaceItem(oldPath);
         }
     } else if(cmd == "unwatch" && 2 <= cmds.count()) {
         QStringList newCmds = cmds;
@@ -475,14 +475,14 @@ void VSExplorer::processLine(const QString &line)
             newPath = newPath.left(newPath.length() - 1);
         }
         if(newPath.startsWith("/")) {
-            finalPath = QValueSpaceItem(newPath.toAscii()).path();
+            finalPath = QValueSpaceItem(newPath).path();
         } else {
             QString oldPath = pwd.path();
             if(!oldPath.endsWith("/"))
                 oldPath.append("/");
             oldPath.append(newPath);
             oldPath = QDir::cleanPath(oldPath);
-            finalPath = QValueSpaceItem(oldPath.toAscii()).path();
+            finalPath = QValueSpaceItem(oldPath).path();
         }
         unwatch(finalPath.toUtf8());
     } else if(cmd == "watch" && 2 <= cmds.count()) {
@@ -495,14 +495,14 @@ void VSExplorer::processLine(const QString &line)
             newPath = newPath.left(newPath.length() - 1);
         }
         if(newPath.startsWith("/")) {
-            finalPath = QValueSpaceItem(newPath.toAscii()).path();
+            finalPath = QValueSpaceItem(newPath).path();
         } else {
             QString oldPath = pwd.path();
             if(!oldPath.endsWith("/"))
                 oldPath.append("/");
             oldPath.append(newPath);
             oldPath = QDir::cleanPath(oldPath);
-            finalPath = QValueSpaceItem(oldPath.toAscii()).path();
+            finalPath = QValueSpaceItem(oldPath).path();
         }
         watch(finalPath.toUtf8());
     } else if(cmd == "write" && 3 == cmds.count()) {

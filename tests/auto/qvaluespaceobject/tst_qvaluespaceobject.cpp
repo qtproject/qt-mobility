@@ -72,7 +72,7 @@ class tst_QValueSpaceObject: public QObject
     Q_OBJECT
 
 public:
-    enum Type { CharStar, String, ByteArray };
+    enum Type { CharStar, String };
 
 private slots:
     void initTestCase();
@@ -130,8 +130,6 @@ void tst_QValueSpaceObject::cleanupTestCase()
         << layer << id << CharStar << path << canonical << valid; \
     QTest::newRow((layerName + ' ' + path + " const QString &").toLocal8Bit().constData()) \
         << layer << id << String << path << canonical << valid; \
-    QTest::newRow((layerName + ' ' + path + " const QByteArray &").toLocal8Bit().constData()) \
-        << layer << id << ByteArray << path << canonical << valid; \
 } while (false)
 
 void tst_QValueSpaceObject::testConstructor_data()
@@ -186,9 +184,6 @@ void tst_QValueSpaceObject::testConstructor()
     case String:
         object = new QValueSpaceObject(path, uuid);
         break;
-    case ByteArray:
-        object = new QValueSpaceObject(path.toUtf8(), uuid);
-        break;
     default:
         QFAIL("Invalid type.");
     };
@@ -213,9 +208,6 @@ void tst_QValueSpaceObject::testConstructor()
     case String:
         object->setAttribute(QString("value"), 100);
         break;
-    case ByteArray:
-        object->setAttribute(QByteArray("value"), 100);
-        break;
     };
     object->sync();
 
@@ -236,9 +228,6 @@ void tst_QValueSpaceObject::testConstructor()
         break;
     case String:
         object->removeAttribute(QString("value"));
-        break;
-    case ByteArray:
-        object->removeAttribute(QByteArray("value"));
         break;
     };
     object->sync();
@@ -270,8 +259,6 @@ void tst_QValueSpaceObject::testConstructor()
         << (QAbstractValueSpaceLayer::UnspecifiedLayer | opt) << CharStar << valid; \
     QTest::newRow(QString::number(opt).append(" const QString &").toLocal8Bit().constData()) \
         << (QAbstractValueSpaceLayer::UnspecifiedLayer | opt) << String << valid; \
-    QTest::newRow(QString::number(opt).append(" const QByteArray &").toLocal8Bit().constData()) \
-        << (QAbstractValueSpaceLayer::UnspecifiedLayer | opt) << ByteArray << valid; \
 } while (false)
 
 void tst_QValueSpaceObject::testFilterConstructor_data()
@@ -309,9 +296,6 @@ void tst_QValueSpaceObject::testFilterConstructor()
     case String:
         object = new QValueSpaceObject(QString("/"), options);
         break;
-    case ByteArray:
-        object = new QValueSpaceObject(QByteArray("/"), options);
-        break;
     default:
         QFAIL("Invalid type");
         return;
@@ -329,11 +313,6 @@ void tst_QValueSpaceObject::testBaseConstructor()
 
     {
         QValueSpaceObject object(QString("/"));
-        QVERIFY(object.isValid());
-    }
-
-    {
-        QValueSpaceObject object(QByteArray("/"));
         QVERIFY(object.isValid());
     }
 }

@@ -293,26 +293,6 @@ void tst_QValueSpaceItem::testConstructor_data()
         << QString("home/user/int")
         << 3;
 
-    item1 = new QValueSpaceItem(QByteArray(), this);
-    qVariantSetValue(data, item1);
-    QTest::newRow("QValueSpaceItem(QByteArray(), this)") 
-        << data
-        << QVariant()
-        << rootPaths
-        << QString("/")
-        << QString("home/user/int")
-        << 3;
-
-    item1 = new QValueSpaceItem(QByteArray("/"), this);
-    qVariantSetValue(data, item1);
-    QTest::newRow("QValueSpaceItem(QByteArray(\"/\", this)") 
-        << data
-        << QVariant()
-        << rootPaths
-        << QString("/")
-        << QString("home/user/int")
-        << 3;
-
     item1 = new QValueSpaceItem("", this);
     qVariantSetValue(data, item1);
     QTest::newRow("QValueSpaceItem(\"\", this)") 
@@ -379,9 +359,9 @@ void tst_QValueSpaceItem::testConstructor_data()
         << 3;
 
     //invalid path
-    item1 = new QValueSpaceItem(QByteArray("/home/invalidPath"), this);
+    item1 = new QValueSpaceItem(QString("/home/invalidPath"), this);
     qVariantSetValue(data, item1);
-    QTest::newRow("QValueSpaceItem(QByteArray(\"/home/invalidPath\"), this)") 
+    QTest::newRow("QValueSpaceItem(QString(\"/home/invalidPath\"), this)")
         << data
         << QVariant()
         << QList<QString>()
@@ -458,16 +438,6 @@ void tst_QValueSpaceItem::testConstructor_data()
         << QString("user/int")
         << 3;
 
-    item1 = new QValueSpaceItem(*baseHome, QByteArray(), this);
-    qVariantSetValue(data, item1);
-    QTest::newRow("QValueSpaceItem(*baseHome, QByteArray(), this)")
-        << data
-        << QVariant()
-        << homePaths
-        << QString("/home")
-        << QString("user/int")
-        << 3;
-
     item1 = new QValueSpaceItem(*baseHome, "", this);
     qVariantSetValue(data, item1);
     QTest::newRow("QValueSpaceItem(*baseHome, \"\", this)")
@@ -482,16 +452,6 @@ void tst_QValueSpaceItem::testConstructor_data()
     item1 = new QValueSpaceItem(*baseRoot, QString(), this);
     qVariantSetValue(data, item1);
     QTest::newRow("QValueSpaceItem(*baseRoot, QString(), this)")
-        << data
-        << QVariant()
-        << rootPaths
-        << QString("/")
-        << QString("home/user/int")
-        << 3;
-
-    item1 = new QValueSpaceItem(*baseRoot, QByteArray(), this);
-    qVariantSetValue(data, item1);
-    QTest::newRow("QValueSpaceItem(*baseRoot, QByteArray(), this)")
         << data
         << QVariant()
         << rootPaths
@@ -520,16 +480,6 @@ void tst_QValueSpaceItem::testConstructor_data()
         << QString("user/int")
         << 3;
 
-    item1 = new QValueSpaceItem(*baseHome, QByteArray("/"), this);
-    qVariantSetValue(data, item1);
-    QTest::newRow("QValueSpaceItem(*baseHome, QByteArray(\"/\"), this)") 
-        << data
-        << QVariant()
-        << homePaths
-        << QString("/home")
-        << QString("user/int")
-        << 3;
-
     item1 = new QValueSpaceItem(*baseHome, "/", this);
     qVariantSetValue(data, item1);
     QTest::newRow("QValueSpaceItem(*baseHome, \"/\", this)")
@@ -544,16 +494,6 @@ void tst_QValueSpaceItem::testConstructor_data()
     item1 = new QValueSpaceItem(*baseRoot, QString("/"), this);
     qVariantSetValue(data, item1);
     QTest::newRow("QValueSpaceItem(*baseRoot, QString(\"/\"), this)") 
-        << data
-        << QVariant()
-        << rootPaths
-        << QString("/")
-        << QString("home/user/int")
-        << 3;
-
-    item1 = new QValueSpaceItem(*baseRoot, QByteArray("/"), this);
-    qVariantSetValue(data, item1);
-    QTest::newRow("QValueSpaceItem(*baseRoot, QByteArray(\"/\"), this)") 
         << data
         << QVariant()
         << rootPaths
@@ -582,16 +522,6 @@ void tst_QValueSpaceItem::testConstructor_data()
         << QString("int")
         << 3;
 
-    item1 = new QValueSpaceItem(*baseHome, QByteArray("user"), this);
-    qVariantSetValue(data, item1);
-    QTest::newRow("QValueSpaceItem(*baseHome, QByteArray(\"user\"), this)") 
-        << data
-        << QVariant()
-        << allPaths
-        << QString("/home/user")
-        << QString("int")
-        << 3;
-
     item1 = new QValueSpaceItem(*baseHome, "user", this);
     qVariantSetValue(data, item1);
     QTest::newRow("QValueSpaceItem(*baseHome, \"user\", this)")
@@ -606,16 +536,6 @@ void tst_QValueSpaceItem::testConstructor_data()
     item1 = new QValueSpaceItem(*baseRoot, QString("home"), this);
     qVariantSetValue(data, item1);
     QTest::newRow("QValueSpaceItem(*baseRoot, QString(\"home\"), this)") 
-        << data
-        << QVariant()
-        << homePaths
-        << QString("/home")
-        << QString("user/int")
-        << 3;
-
-    item1 = new QValueSpaceItem(*baseRoot, QByteArray("home"), this);
-    qVariantSetValue(data, item1);
-    QTest::newRow("QValueSpaceItem(*baseRoot, QByteArray(\"home\"), this)") 
         << data
         << QVariant()
         << homePaths
@@ -643,16 +563,6 @@ void tst_QValueSpaceItem::testConstructor_data()
         << QString("int")
         << 3;
 
-    item1 = new QValueSpaceItem(*baseHome, QByteArray("/user"), this);
-    qVariantSetValue(data, item1);
-    QTest::newRow("QValueSpaceItem(*baseHome, QByteArray(\"/user\"), this)")
-        << data
-        << QVariant()
-        << allPaths
-        << QString("/home/user")
-        << QString("int")
-        << 3;
-
     item1 = new QValueSpaceItem(*baseHome, "/user", this);
     qVariantSetValue(data, item1);
     QTest::newRow("QValueSpaceItem(*baseHome, \"/user\", this)")
@@ -666,16 +576,6 @@ void tst_QValueSpaceItem::testConstructor_data()
     item1 = new QValueSpaceItem(*baseRoot, QString("/home"), this);
     qVariantSetValue(data, item1);
     QTest::newRow("QValueSpaceItem(*baseRoot, QString(\"/home\"), this)") 
-        << data
-        << QVariant()
-        << homePaths
-        << QString("/home")
-        << QString("user/int")
-        << 3;
-
-    item1 = new QValueSpaceItem(*baseRoot, QByteArray("/home"), this);
-    qVariantSetValue(data, item1);
-    QTest::newRow("QValueSpaceItem(*baseRoot, QByteArray(\"/home\"), this)") 
         << data
         << QVariant()
         << homePaths
@@ -717,8 +617,6 @@ void tst_QValueSpaceItem::testConstructor()
         << (QAbstractValueSpaceLayer::UnspecifiedLayer | opt) << CharStar << invalid; \
     QTest::newRow(QString::number(opt).append(" const QString &").toLocal8Bit().constData()) \
         << (QAbstractValueSpaceLayer::UnspecifiedLayer | opt) << String << invalid; \
-    QTest::newRow(QString::number(opt).append(" const QByteArray &").toLocal8Bit().constData())\
-        << (QAbstractValueSpaceLayer::UnspecifiedLayer | opt) << ByteArray << invalid; \
 } while (false)
 
 void tst_QValueSpaceItem::testFilterConstructor_data()
@@ -760,9 +658,6 @@ void tst_QValueSpaceItem::testFilterConstructor()
         break;
     case String:
         item = new QValueSpaceItem(QString("/layer"), options);
-        break;
-    case ByteArray:
-        item = new QValueSpaceItem(QByteArray("/layer"), options);
         break;
     default:
         QFAIL("Unexpected type");
@@ -1605,16 +1500,12 @@ void tst_QValueSpaceItem::interestNotification_data()
             << layer << CharStar << QString() << "/interestNotification" << "/value";
         QTest::newRow("QValueSpaceItem(QString)")
             << layer << String << QString() << "/interestNotification" << "/value";
-        QTest::newRow("QValueSpaceItem(QByteArray)")
-            << layer << ByteArray << QString() << "/interestNotification" << "/value";
         QTest::newRow("QValueSpaceItem(QValueSpaceItem)")
             << layer << Copy << QString() << "/interestNotification" << "/value";
         QTest::newRow("QValueSpaceItem(QValueSpaceItem, char *)")
             << layer << CharStar << "/interestNotification" << "subpath" << "/value";
         QTest::newRow("QValueSpaceItem(QValueSpaceItem, QString)")
             << layer << String << "/interestNotification" << "subpath" << "/value";
-        QTest::newRow("QValueSpaceItem(QValueSpaceItem, QByteArray)")
-            << layer << ByteArray << "/interestNotification" << "subpath" << "/value";
     }
 
     if (skip)
@@ -1673,12 +1564,6 @@ void tst_QValueSpaceItem::interestNotification()
             item = new QValueSpaceItem(*baseItem, itemPath);
         else
             item = new QValueSpaceItem(itemPath, layer->id());
-        break;
-    case ByteArray:
-        if (baseItem)
-            item = new QValueSpaceItem(*baseItem, itemPath.toUtf8());
-        else
-            item = new QValueSpaceItem(itemPath.toUtf8(), layer->id());
         break;
     default:
         item = 0;
