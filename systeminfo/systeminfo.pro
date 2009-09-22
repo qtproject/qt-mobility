@@ -79,19 +79,23 @@ unix: {
 
     symbian::
     {
-        QT+= network
         INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
+
         SOURCES += qsysteminfo_s60.cpp
         HEADERS += qsysteminfo_s60_p.h
+
         LIBS += -lprofileengine \
             -letel3rdparty \
             -lsysutil \
-            -lefsrv \
-            -lfeatdiscovery \
             -lcentralrepository \
             -lcenrepnotifhandler
-        TARGET.CAPABILITY = All -TCB -AllFiles -DRM
+
+        TARGET.CAPABILITY = ALL -TCB
         TARGET.EPOCALLOWDLLDATA = 1
+
+        QtSystemInfoDeployment.sources = QtSystemInfo.dll
+        QtSystemInfoDeployment.path = /sys/bin
+        DEPLOYMENT += QtSystemInfoDeployment
     }
 }
 include(../common.pri)
