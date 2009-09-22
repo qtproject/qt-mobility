@@ -37,16 +37,14 @@
 
 #include <QtCore/qobject.h>
 
-#include "qmediarecorderservice.h"
-#include "qmediarecorder.h"
+#include "qaudiosourceservice.h"
 
 class AudioCaptureSession;
-class AudioEncodeControl;
-class AudioMediaControl;
-class AudioFormatControl;
-class AudioDeviceEndpoint;
+class AudioEncoderControl;
+class AudioMediaRecorderControl;
+class AudioDeviceControl;
 
-class AudioCaptureService : public QMediaRecorderService
+class AudioCaptureService : public QAudioSourceService
 {
     Q_OBJECT
 public:
@@ -55,11 +53,10 @@ public:
 
     QAbstractMediaControl *control(const char *name) const;
 private:
-    AudioCaptureSession *m_session;
-    AudioEncodeControl  *m_encode;
-    AudioMediaControl   *m_media;
-    AudioFormatControl  *m_format;
-    AudioDeviceEndpoint *m_audio;
+    AudioCaptureSession       *m_session;
+    AudioEncoderControl        *m_encoderControl;
+    AudioDeviceControl        *m_deviceControl;
+    AudioMediaRecorderControl *m_mediaControl;
 };
 
 #endif

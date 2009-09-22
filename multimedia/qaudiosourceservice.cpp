@@ -32,37 +32,13 @@
 **
 ****************************************************************************/
 
-#ifndef AUDIOMEDIACONTROL_H
-#define AUDIOMEDIACONTROL_H
+#include <multimedia/qaudiosourceservice.h>
 
-#include <QtCore/qobject.h>
-
-#include "qmediarecorder.h"
-#include "qmediarecordercontrol.h"
-
-class AudioCaptureSession;
-
-class AudioMediaControl : public QMediaRecorderControl
+QAudioSourceService::QAudioSourceService(QObject *parent):
+    QAbstractMediaService(parent)
 {
-    Q_OBJECT
-public:
-    AudioMediaControl(QObject *parent = 0);
-    ~AudioMediaControl();
+}
 
-    QUrl sink() const;
-    bool setSink(const QUrl &sink);
-
-    QMediaRecorder::State state() const;
-
-    qint64 duration() const;
-
-public slots:
-    void record();
-    void pause();
-    void stop();
-
-private:
-    AudioCaptureSession* m_session;
-};
-
-#endif
+QAudioSourceService::~QAudioSourceService()
+{
+}

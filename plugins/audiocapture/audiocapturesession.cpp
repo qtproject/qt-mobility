@@ -87,10 +87,13 @@ bool AudioCaptureSession::setFormat(const QAudioFormat &format)
             m_format = format;
             if(m_audioInput) delete m_audioInput;
             m_audioInput = 0;
-            QList<QAudioDeviceInfo> devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
+            //QList<QAudioDeviceInfo> devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
+            QList<QAudioDeviceId> devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
             for(int i=0;i<devices.size();i++) {
                 if(qstrcmp(m_deviceInfo->deviceName().toLocal8Bit().constData(),
-                            devices.at(i).deviceName().toLocal8Bit().constData()) == 0) {
+                            QAudioDeviceInfo(devices.at(i)).deviceName().toLocal8Bit().constData()) == 0) {
+                //if(qstrcmp(m_deviceInfo->deviceName().toLocal8Bit().constData(),
+                //            devices.at(i).deviceName().toLocal8Bit().constData()) == 0) {
                     m_audioInput = new QAudioInput(devices.at(i),m_format);
                     connect(m_audioInput,SIGNAL(stateChanged(QAudio::State)),this,SLOT(stateChanged(QAudio::State)));
                     connect(m_audioInput,SIGNAL(notify()),this,SLOT(notify()));
@@ -135,48 +138,6 @@ bool AudioCaptureSession::setAudioCodec(const QString &codecName)
 QString AudioCaptureSession::audioCodec() const
 {
     return m_format.codec();
-}
-
-int AudioCaptureSession::bitrate() const
-{
-    if(m_format.frequency() > 0 && m_format.channels() > 0 && m_format.sampleSize() > 0)
-        return m_format.frequency()*m_format.channels()*(m_format.sampleSize()/8);
-
-    return 0;
-}
-
-void AudioCaptureSession::setBitrate(int b)
-{
-    //TODO
-}
-
-qreal AudioCaptureSession::quality() const
-{
-    //TODO
-    return 0;
-}
-
-void AudioCaptureSession::setQuality(qreal q)
-{
-    //TODO
-}
-
-QStringList AudioCaptureSession::supportedEncodingOptions()
-{
-    //TODO
-    QStringList list;
-    return list;
-}
-
-QVariant AudioCaptureSession::encodingOption(const QString &name)
-{
-    //TODO
-    return QVariant();
-}
-
-void AudioCaptureSession::setEncodingOption(const QString &name, const QVariant &value)
-{
-    //TODO
 }
 
 QUrl AudioCaptureSession::sink() const
@@ -269,12 +230,13 @@ void AudioCaptureSession::setCaptureDevice(const QString &deviceName)
 
     m_deviceInfo = 0;
 
-    QList<QAudioDeviceInfo> devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
+    QList<QAudioDeviceId> devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
+    //QList<QAudioDeviceInfo> devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
     for(int i = 0; i < devices.size(); i++) {
         if(qstrcmp(m_captureDevice.toLocal8Bit().constData(),
-                    devices.at(i).deviceName().toLocal8Bit().constData())==0){
-            //TODO: this doesn't work? isFormatSupported fails? investigate
-            //m_deviceInfo = new QAudioDeviceInfo(devices.at(i),this);
+                    QAudioDeviceInfo(devices.at(i)).deviceName().toLocal8Bit().constData())==0){
+        //if(qstrcmp(m_captureDevice.toLocal8Bit().constData(),
+        //            devices.at(i).deviceName().toLocal8Bit().constData())==0){
             m_deviceInfo = new QAudioDeviceInfo(QAudioDeviceInfo::defaultInputDevice());
             return;
         }

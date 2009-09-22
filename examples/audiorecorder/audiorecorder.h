@@ -43,8 +43,7 @@
 class QComboBox;
 class QLabel;
 
-class QAudioEncoderControl;
-class QMediaFormatControl;
+class QAudioSource;
 
 class AudioRecorder : public QMainWindow
 {
@@ -62,9 +61,8 @@ private slots:
     void updateProgress(qint64 pos);
 
 private:
+    QAudioSource* audiosource;
     QMediaRecorder* capture;
-    QAudioEncoderControl      *audioEncoderControl;
-    QMediaFormatControl      *formatControl;
 
     QComboBox*     deviceBox;
     QComboBox*     paramsBox;

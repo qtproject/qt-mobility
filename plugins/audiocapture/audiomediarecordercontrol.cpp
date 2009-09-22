@@ -32,44 +32,54 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qstring.h>
+#include "audiocapturesession.h"
+#include "audiomediarecordercontrol.h"
+
 #include <QtCore/qdebug.h>
 
-#include "audiocaptureserviceplugin.h"
-#include "audiocaptureservice.h"
-
-#include <qmediaserviceprovider.h>
-#include <qaudiorecorderservice.h>
-
-
-class AudioCaptureProvider : public QMediaServiceProvider
+AudioMediaRecorderControl::AudioMediaRecorderControl(QObject *parent)
+    :QMediaRecorderControl(parent)
 {
-    Q_OBJECT
-public:
-    QObject* createObject(const char *interface) const
-    {
-        if (QLatin1String(interface) == QLatin1String(QAudioRecorderService_iid))
-            return new AudioCaptureService;
-
-        return 0;
-    }
-};
-
-QStringList AudioCaptureServicePlugin::keys() const
-{
-    return QStringList() << "audiorecorder";
+    m_session = qobject_cast<AudioCaptureSession*>(parent);
+    connect(m_session,SIGNAL(positionChanged(qint64)),this,SIGNAL(durationChanged(qint64)));
+    connect(m_session,SIGNAL(stateChanged(QMediaRecorder::State)),this,SIGNAL(stateChanged(QMediaRecorder::State)));
 }
 
-QMediaServiceProvider* AudioCaptureServicePlugin::create(QString const& key)
+AudioMediaRecorderControl::~AudioMediaRecorderControl()
 {
-    if (key == "audiorecorder")
-        return new AudioCaptureProvider;
-
-    qDebug() << "unsupported key:" << key;
-    return 0;
 }
 
-#include "audiocaptureserviceplugin.moc"
+QUrl AudioMediaRecorderControl::sink() const
+{
+    return m_session->sink();
+}
 
-Q_EXPORT_PLUGIN2(audioengine, AudioCaptureServicePlugin);
+bool AudioMediaRecorderControl::setSink(const QUrl& sink)
+{
+    return m_session->setSink(sink);
+}
 
+QMediaRecorder::State AudioMediaRecorderControl::state() const
+{
+    return (QMediaRecorder::State)m_session->state();
+}
+
+qint64 AudioMediaRecorderControl::duration() const
+{
+    return m_session->position();
+}
+
+void AudioMediaRecorderControl::record()
+{
+    m_session->record();
+}
+
+void AudioMediaRecorderControl::pause()
+{
+    m_session->stop();
+}
+
+void AudioMediaRecorderControl::stop()
+{
+    m_session->stop();
+}

@@ -1,5 +1,5 @@
-#ifndef AUDIOENCODECONTROL_H
-#define AUDIOENCODECONTROL_H
+#ifndef AUDIOENCODERCONTROL_H
+#define AUDIOENCODERCONTROL_H
 
 #include "qaudioencodercontrol.h"
 
@@ -10,12 +10,12 @@
 
 class AudioCaptureSession;
 
-class AudioEncodeControl : public QAudioEncoderControl
+class AudioEncoderControl : public QAudioEncoderControl
 {
     Q_OBJECT
 public:
-    AudioEncodeControl(QObject *parent);
-    virtual ~AudioEncodeControl();
+    AudioEncoderControl(QObject *parent);
+    virtual ~AudioEncoderControl();
 
     QStringList supportedAudioCodecs() const;
     QString audioCodec() const;

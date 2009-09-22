@@ -33,7 +33,7 @@
 ****************************************************************************/
 
 #include "audiocapturesession.h"
-#include "audiodeviceendpoint.h"
+#include "audiodevicecontrol.h"
 
 #include <QtGui/QIcon>
 #include <QtCore/QDebug>
@@ -41,7 +41,7 @@
 #include <QtMultimedia/qaudiodeviceinfo.h>
 
 
-AudioDeviceEndpoint::AudioDeviceEndpoint(QObject *parent)
+AudioDeviceControl::AudioDeviceControl(QObject *parent)
     :QAudioDeviceControl(parent)
 {
     m_session = qobject_cast<AudioCaptureSession*>(parent);
@@ -49,16 +49,16 @@ AudioDeviceEndpoint::AudioDeviceEndpoint(QObject *parent)
     update();
 }
 
-AudioDeviceEndpoint::~AudioDeviceEndpoint()
+AudioDeviceControl::~AudioDeviceControl()
 {
 }
 
-int AudioDeviceEndpoint::deviceCount() const
+int AudioDeviceControl::deviceCount() const
 {
     return m_names.count();
 }
 
-QString AudioDeviceEndpoint::name(int index) const
+QString AudioDeviceControl::name(int index) const
 {
     if(index < m_names.count())
         return m_names[index];
@@ -66,7 +66,7 @@ QString AudioDeviceEndpoint::name(int index) const
     return QString();
 }
 
-QString AudioDeviceEndpoint::description(int index) const
+QString AudioDeviceControl::description(int index) const
 {
     if(index < m_names.count())
         return m_descriptions[index];
@@ -74,18 +74,21 @@ QString AudioDeviceEndpoint::description(int index) const
     return QString();
 }
 
-QIcon AudioDeviceEndpoint::icon(int index) const
+QIcon AudioDeviceControl::icon(int index) const
 {
     Q_UNUSED(index);
     return QIcon();
 }
 
-int AudioDeviceEndpoint::defaultDevice() const
+int AudioDeviceControl::defaultDevice() const
 {
-    QAudioDeviceInfo idx = QAudioDeviceInfo::defaultInputDevice();
-    QList<QAudioDeviceInfo> devices;
+    QAudioDeviceId idx = QAudioDeviceInfo::defaultInputDevice();
+    QList<QAudioDeviceId> devices;
+    //QAudioDeviceInfo idx = QAudioDeviceInfo::defaultInputDevice();
+    //QList<QAudioDeviceInfo> devices;
     devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
     QString devName = QAudioDeviceInfo(idx).deviceName();
+    //QString devName = QAudioDeviceInfo(idx).deviceName();
     for(int i=0;i<m_names.count();i++) {
         if(qstrcmp(devName.toLocal8Bit().constData(),
                     m_names.at(i).toLocal8Bit().constData()) == 0)
@@ -94,7 +97,7 @@ int AudioDeviceEndpoint::defaultDevice() const
     return 0;
 }
 
-int AudioDeviceEndpoint::selectedDevice() const
+int AudioDeviceControl::selectedDevice() const
 {
     for(int i=0;i<m_names.count();i++) {
         if(qstrcmp(m_device.toLocal8Bit().constData(),
@@ -104,22 +107,25 @@ int AudioDeviceEndpoint::selectedDevice() const
     return 0;
 }
 
-void AudioDeviceEndpoint::setSelectedDevice(int index)
+void AudioDeviceControl::setSelectedDevice(int index)
 {
     if(index < m_names.count())
         m_session->setCaptureDevice(m_names[index]);
 }
 
-void AudioDeviceEndpoint::update()
+void AudioDeviceControl::update()
 {
     m_names.clear();
     m_descriptions.clear();
 
-    QList<QAudioDeviceInfo> devices;
+    QList<QAudioDeviceId> devices;
+    //QList<QAudioDeviceInfo> devices;
     devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
     for(int i = 0; i < devices.size(); ++i) {
-        m_names.append(devices.at(i).deviceName());
-        m_descriptions.append(devices.at(i).deviceName());
+        m_names.append(QAudioDeviceInfo(devices.at(i)).deviceName());
+        m_descriptions.append(QAudioDeviceInfo(devices.at(i)).deviceName());
+        //m_names.append(devices.at(i).deviceName());
+        //m_descriptions.append(devices.at(i).deviceName());
     }
     m_device = QAudioDeviceInfo(QAudioDeviceInfo::defaultInputDevice()).deviceName();
 }

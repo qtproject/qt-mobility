@@ -35,9 +35,7 @@
 #include <qmediarecorder.h>
 #include <qabstractmediaservice.h>
 
-#include <qaudioinputdevicecontrol.h>
-#include <qaudioencodercontrol.h>
-#include <qmediaformatcontrol.h>
+#include <qaudiosource.h>
 
 #include <QtGui>
 
@@ -47,7 +45,8 @@
 
 AudioRecorder::AudioRecorder()
 {
-    capture = new QMediaRecorder;
+    audiosource = new QAudioSource;
+    capture = new QMediaRecorder(audiosource);
 
     // set a default file
     capture->setSink(QUrl("test.raw"));
@@ -64,7 +63,7 @@ AudioRecorder::AudioRecorder()
     paramsBox = new QComboBox(this);
 
     if(capture->service()) {
-        // Audio Input
+
         QList<QString> audioInputs;
         audioInputs = capture->service()->supportedEndpoints(QAbstractMediaService::AudioInput);
         if(audioInputs.size() > 0) {
@@ -73,29 +72,12 @@ AudioRecorder::AudioRecorder()
             for(int i = 0; i < audioInputs.size(); ++i) {
                 deviceBox->addItem(audioInputs.at(i));
             }
-
         } else {
             qWarning()<<"no audio input available";
         }
-
-        // Audio Encode Control
-        audioEncoderControl = capture->service()->control<QAudioEncoderControl*>();
-        if(!audioEncoderControl)
-            qWarning()<<"no audio encode control available";
-        else {
-            qWarning()<<"FOUND audio encode control";
-            for(int i = 0; i < formats.size(); ++i) {
-                paramsBox->addItem(QString("f=%1,ch=%2").arg(formats.at(i).first).arg(formats.at(i).second));
-            }
+        for(int i = 0; i < formats.size(); ++i) {
+            paramsBox->addItem(QString("f=%1,ch=%2").arg(formats.at(i).first).arg(formats.at(i).second));
         }
-
-        // Format Media Control
-        formatControl = capture->service()->control<QMediaFormatControl*>();
-        if(!formatControl)
-            qWarning()<<"no media format control available";
-        else
-            qWarning()<<"FOUND media format control";
-
         connect(capture, SIGNAL(durationChanged(qint64)), this, SLOT(updateProgress(qint64)));
         connect(capture, SIGNAL(stateChanged(QMediaRecorder::State)), this, SLOT(stateChanged(QMediaRecorder::State)));
     }
@@ -156,23 +138,14 @@ void AudioRecorder::paramsChanged(int idx)
 
     parts = paramsBox->itemText(idx).split(",");
     if(parts.size() != 2) return;
-    QAudioFormat fmt;
-    fmt.setCodec(audioEncoderControl->audioCodec());
-    fmt.setSampleType(QAudioFormat::SignedInt);
-    fmt.setByteOrder(QAudioFormat::LittleEndian);
 
-    if(audioEncoderControl) {
-        // freq
-        values = parts.at(0).split("=");
-        audioEncoderControl->setFrequency(values.at(1).toInt());
-
-        // channels
-        values = parts.at(1).split("=");
-        audioEncoderControl->setChannels(values.at(1).toInt());
-
-        audioEncoderControl->setSampleSize(8);
-        audioEncoderControl->setAudioCodec("audio/pcm");
-    }
+    QAudioFormat fmt = audiosource->format();
+    // freq
+    values = parts.at(0).split("=");
+    fmt.setFrequency(values.at(1).toInt());
+    // channels
+    values = parts.at(1).split("=");
+    fmt.setChannels(values.at(1).toInt());
 }
 
 void AudioRecorder::togglePlay()
