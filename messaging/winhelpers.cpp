@@ -43,10 +43,6 @@
 #define PR_IPM_DRAFTS_ENTRYID ((ULONG)0x36D7) //undocumented for outlook versions < 2007
 #endif
 
-//#ifdef _WIN32_WCE
-//#define BUFSIZ 1024
-//#endif
-
 #include "winhelpers_p.h"
 #include "qmessageid_p.h"
 #include "qmessagefolderid_p.h"
