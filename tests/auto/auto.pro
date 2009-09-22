@@ -39,3 +39,15 @@ SUBDIRS += qsysteminfo \                    #SystemInformation
           qsystemmemoryinfo \
           qsystemnetworkinfo \
           qsystemscreensaver
+
+SUBDIRS +=  qcontact \                      #Contacts
+            qcontactactions \
+            qcontactasync \
+            qcontactdetail \
+            qcontactdetaildefinition \
+            qcontactdetails \
+            qcontactfilter \
+            qcontactgroup \
+            qcontactmanager \
+            qcontactmanagerplugins \
+            qcontactmanagerfiltering
