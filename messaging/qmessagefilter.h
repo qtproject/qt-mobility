@@ -80,7 +80,6 @@ public:
     static QMessageFilter bySender(const QString &value, QMessageDataComparator::EqualityComparator cmp);
     static QMessageFilter bySender(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
-    static QMessageFilter byRecipients(const QString &value, QMessageDataComparator::EqualityComparator cmp);
     static QMessageFilter byRecipients(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
     static QMessageFilter bySubject(const QString &value, QMessageDataComparator::EqualityComparator cmp);
@@ -99,9 +98,6 @@ public:
 
     static QMessageFilter bySize(int value, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
     static QMessageFilter bySize(int value, QMessageDataComparator::RelationComparator cmp);
-
-    static QMessageFilter byCustomField(const QString &name, const QString &value, QMessageDataComparator::EqualityComparator cmp);
-    static QMessageFilter byCustomField(const QString &name, const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
     static QMessageFilter byParentAccountId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
     static QMessageFilter byParentAccountId(const QMessageAccountFilter &filter, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);

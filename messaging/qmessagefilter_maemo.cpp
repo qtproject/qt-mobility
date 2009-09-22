@@ -156,13 +156,6 @@ QMessageFilter QMessageFilter::bySender(const QString &value, QMessageDataCompar
     return QMessageFilter(); // stub
 }
 
-QMessageFilter QMessageFilter::byRecipients(const QString &value, QMessageDataComparator::EqualityComparator cmp)
-{
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFilter(); // stub
-}
-
 QMessageFilter QMessageFilter::byRecipients(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
     Q_UNUSED(value)
@@ -242,22 +235,6 @@ QMessageFilter QMessageFilter::bySize(int value, QMessageDataComparator::Equalit
 
 QMessageFilter QMessageFilter::bySize(int value, QMessageDataComparator::RelationComparator cmp)
 {
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFilter(); // stub
-}
-
-QMessageFilter QMessageFilter::byCustomField(const QString &name, const QString &value, QMessageDataComparator::EqualityComparator cmp)
-{
-    Q_UNUSED(name)
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFilter(); // stub
-}
-
-QMessageFilter QMessageFilter::byCustomField(const QString &name, const QString &value, QMessageDataComparator::InclusionComparator cmp)
-{
-    Q_UNUSED(name)
     Q_UNUSED(value)
     Q_UNUSED(cmp)
     return QMessageFilter(); // stub
