@@ -110,11 +110,6 @@ QFullScreenVideoWidget::~QFullScreenVideoWidget()
 {
 }
 
-QVideoWidget::DisplayMode QFullScreenVideoWidget::displayMode() const
-{
-    return m_displayMode;
-}
-
 void QFullScreenVideoWidget::setDisplayMode(QVideoWidget::DisplayMode mode)
 {
      if (mode == QVideoWidget::FullscreenDisplay) {
@@ -294,11 +289,6 @@ QRect QVideoRendererWidget::displayRect() const
     return displayRect;
 }
 
-QVideoWidget::DisplayMode QVideoRendererWidget::displayMode() const
-{
-    return m_displayMode;
-}
-
 void QVideoRendererWidget::setDisplayMode(QVideoWidget::DisplayMode mode)
 {
      if (mode == QVideoWidget::FullscreenDisplay) {
@@ -415,63 +405,6 @@ void QVideoWindowWidget::paintEvent(QPaintEvent *event)
 
     event->accept();
 }
-
-class QVideoWidgetPrivate
-{
-    Q_DECLARE_PUBLIC(QVideoWidget)
-public:
-    QVideoWidgetPrivate()
-        : q_ptr(0)
-        , layout(0)
-        , service(0)
-        , outputControl(0)
-        , widgetBackend(0)
-        , windowBackend(0)
-#ifndef QT_NO_MULTIMEDIA
-        , rendererBackend(0)
-#endif
-        , currentBackend(0)
-        , brightness(0)
-        , contrast(0)
-        , hue(0)
-        , saturation(0)
-        , displayMode(QVideoWidget::WindowedDisplay)
-        , aspectRatio(QVideoWidget::AspectRatioAuto)
-        , customPixelAspectRatio(1, 1)
-    {
-    }
-
-    QVideoWidget *q_ptr;
-    QStackedLayout *layout;
-    QAbstractMediaService *service;
-    QVideoOutputControl *outputControl;
-    QVideoWidgetControlBackend *widgetBackend;
-    QVideoWindowWidget *windowBackend;
-#ifndef QT_NO_MULTIMEDIA
-    QVideoRendererWidget *rendererBackend;
-#endif
-    QVideoWidgetBackendInterface *currentBackend;
-    int brightness;
-    int contrast;
-    int hue;
-    int saturation;
-    QVideoWidget::DisplayMode displayMode;
-    QVideoWidget::AspectRatio aspectRatio;
-    QSize customPixelAspectRatio;
-
-    void setCurrentBackend(QVideoWidgetBackendInterface *backend);
-
-    void _q_serviceDestroyed();
-    void _q_dimensionsChanged();
-    void _q_brightnessChanged(int brightness);
-    void _q_contrastChanged(int contrast);
-    void _q_hueChanged(int hue);
-    void _q_saturationChanged(int saturation);
-    void _q_fullScreenChanged(bool fullscreen);
-    void _q_displayModeChanged(QVideoWidget::DisplayMode mode);
-    void _q_aspectRatioModeChanged(QVideoWidget::AspectRatio mode);
-    void _q_customAspectRatioChanged(const QSize &ratio);
-};
 
 void QVideoWidgetPrivate::setCurrentBackend(QVideoWidgetBackendInterface *backend)
 {
@@ -678,9 +611,9 @@ QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
             connect(d->rendererBackend, SIGNAL(hueChanged(int)), SLOT(_q_hueChanged(int)));
             connect(d->rendererBackend, SIGNAL(saturationChanged(int)),
                     SLOT(_q_saturationChanged(int)));
+
             connect(d->rendererBackend, SIGNAL(displayModeChanged(QVideoWidget::DisplayMode)),
                     SLOT(_q_displayModeChanged(QVideoWidget::DisplayMode)));
-
             connect(d->rendererBackend, SIGNAL(aspectRatioModeChanged(QVideoWidget::AspectRatio)),
                     SLOT(_q_aspectRatioModeChanged(QVideoWidget::AspectRatio)));
             connect(d->rendererBackend, SIGNAL(customAspectRatioChanged(QSize)),
@@ -964,12 +897,13 @@ void QVideoWidget::keyPressEvent(QKeyEvent *event)
 {
     Q_D(QVideoWidget);
 
+    event->ignore();
     if (event->key() == Qt::Key_Escape && d->displayMode == FullscreenDisplay) {
         setDisplayMode(WindowedDisplay);
 
         event->accept();
     } else {
-        QWidget::keyPressEvent(event);
+        event->ignore();
     }
 }
 
