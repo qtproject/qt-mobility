@@ -40,6 +40,20 @@
 #include "winhelpers_p.h"
 #include <QDebug>
 
+namespace {
+
+QByteArray charsetFor(const QString &input)
+{
+    QByteArray result(QMessage::preferredCharsetFor(input));
+    if (result.isEmpty()) {
+        result = "UTF-16";
+    }
+
+    return result;
+}
+
+}
+
 QMessage QMessagePrivate::from(const QMessageId &id)
 {
     QMessage result;
@@ -76,8 +90,6 @@ void QMessagePrivate::setStandardFolder(QMessage& message, QMessage::StandardFol
     message.d_ptr->_standardFolder = sf;
     message.d_ptr->_modified = true;
 }
-
-
 
 void QMessagePrivate::ensurePropertiesPresent(QMessage *msg) const
 {
@@ -369,9 +381,7 @@ void QMessage::setBody(const QString &bodyText, const QByteArray &mimeType)
 {
     QByteArray mainType("text");
     QByteArray subType("plain");
-    QByteArray charset("utf-16");
-    // TODO:
-    //QByteArray charset(charsetFor(bodyText));
+    QByteArray charset;
 
     int index = mimeType.indexOf("/");
     if (index != -1) {
@@ -380,8 +390,19 @@ void QMessage::setBody(const QString &bodyText, const QByteArray &mimeType)
         subType = mimeType.mid(index + 1).trimmed();
         index = subType.indexOf(";");
         if (index != -1) {
+             QString remainder = subType.mid(index + 1);
             subType = subType.left(index).trimmed();
-        }
+
+            QRegExp charsetPattern("charset=(\\S+)");
+            index = charsetPattern.indexIn(remainder);
+            if (index != -1) {
+                charset = charsetPattern.cap(1).toLatin1();
+            }
+       }
+    }
+
+    if (charset.isEmpty()) {
+        charset = charsetFor(bodyText);
     }
 
     QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
