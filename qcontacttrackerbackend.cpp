@@ -80,10 +80,9 @@ QContactTrackerEngine::QContactTrackerEngine(const QContactTrackerEngine& other)
 
 void QContactTrackerEngine::connectToSignals()
 {
-    // TODO: Is this correct? Why "nco::Audio::iri()"?
     SopranoLive::BackEnds::Tracker::ClassUpdateSignaler *signaler =
             SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(
-                    nfo::Audio::iri());
+                    nco::PersonContact::iri());
     // Note here that we are not using
     // QAbstractItemModel signals from LiveNodes::model() because
     // node list for which notification comes is fixed. Those are used for
@@ -99,7 +98,17 @@ void QContactTrackerEngine::connectToSignals()
                 SIGNAL(subjectsChanged(const QStringList &)), this,
                 SLOT(subjectsChanged(const QStringList &)));
     }
-
+    //this corresponds with telepathysupport/ TrackerSink::onSimplePresenceChanged
+       signaler = SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(
+                    nfo::IMAccount::iri());
+         connect(signaler, SIGNAL(subjectsAdded(const QStringList &)),
+                this, SLOT(subjectsAdded(const QStringList &)));
+        connect(signaler,
+                SIGNAL(baseRemoveSubjectsd(const QStringList &)), this,
+                SLOT(subjectsRemoved(const QStringList &)));
+        connect(signaler,
+                SIGNAL(subjectsChanged(const QStringList &)), this,
+                SLOT(subjectsChanged(const QStringList &)));
 }
 
 QContactTrackerEngine& QContactTrackerEngine::operator=(const QContactTrackerEngine& other)
@@ -438,6 +447,7 @@ bool QContactTrackerEngine::saveContact( QContact* contact,
 
     // Ensure that the contact data is ok. This comes from QContactModelEngine
     if(!validateContact(*contact, error)) {
+        qDebug () << "and the error is: " << error;
         error = QContactManager::InvalidDetailError;
         return false;
     }
@@ -744,7 +754,14 @@ QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions
     if (d->m_definitions.isEmpty()) {
         // none in the list?  get the schema definitions, and modify them to match our capabilities.
         d->m_definitions = QContactManagerEngine::schemaDefinitions();
-
+        {
+            qDebug() << "the definitions";
+            QList<QString> defs = d->m_definitions.keys();
+            foreach(QString def,  defs)
+            {
+                qDebug() << def;
+            }
+        }
         // modification: avatar is unique.
         QContactDetailDefinition avatarDef = d->m_definitions.value(QContactAvatar::DefinitionName);
         avatarDef.setUnique(true);
