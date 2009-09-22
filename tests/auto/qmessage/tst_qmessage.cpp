@@ -40,6 +40,12 @@
 //TESTED_CLASS=
 //TESTED_FILES=
 
+#ifdef Q_OS_WIN
+const QByteArray defaultCharset("UTF-16");
+#else
+const QByteArray defaultCharset("UTF-8");
+#endif
+
 /*
     Unit test for QMessage class.
 */
@@ -76,6 +82,8 @@ private slots:
     void testBcc();
     void testStatus();
     void testPriority();
+    void testPreferredCharsets_data();
+    void testPreferredCharsets();
 
 private:
     QMessageAccountId testAccountId;
@@ -241,11 +249,7 @@ void tst_QMessage::testToTransmissionFormat_simple()
     const QString subject("This is a simple message");
     const QByteArray contentType("text");
     const QByteArray contentSubType("plain");
-#ifdef Q_OS_WIN
-    const QByteArray contentCharset("UTF-16");
-#else
-    const QByteArray contentCharset("UTF-8");
-#endif
+    const QByteArray contentCharset(defaultCharset);
     const QString contentText(QString("This is the happy face:").append(QChar(0x263a)));
 
     QMessage m1;
@@ -303,11 +307,7 @@ void tst_QMessage::testToTransmissionFormat_multipart()
 
     const QByteArray p1ContentType("text");
     const QByteArray p1ContentSubType("plain");
-#ifdef Q_OS_WIN
-    const QByteArray p1ContentCharset("UTF-16");
-#else
-    const QByteArray p1ContentCharset("UTF-8");
-#endif
+    const QByteArray p1ContentCharset(defaultCharset);
     const QString p1ContentText(QString("This is the happy face:").append(QChar(0x263a)));
 
     const QByteArray p2FileName("1.txt");
@@ -367,7 +367,7 @@ exit 0\n");
     m1.setTo(QMessageAddressList() << QMessageAddress(to, QMessageAddress::Email));
     m1.setSubject(subject);
 
-    QByteArray mimeType(p1ContentType + "/" + p1ContentSubType + "; charset=" + p1ContentCharset);
+    QByteArray mimeType(p1ContentType + "/" + p1ContentSubType);
     m1.setBody(p1ContentText, mimeType);
 
     QStringList attachments;
@@ -659,5 +659,60 @@ void tst_QMessage::testPriority()
 
     msg.setPriority(QMessage::LowPriority);
     QCOMPARE(msg.priority(), QMessage::LowPriority);
+}
+
+void tst_QMessage::testPreferredCharsets_data()
+{
+    QTest::addColumn<QString>("text");
+    QTest::addColumn<QByteArray>("preferred");
+    QTest::addColumn<QByteArray>("encoded");
+
+    const QString asciiText("ASCII text");
+
+    QTest::newRow("ascii")
+        << asciiText
+        << QByteArray("ISO-8859-1")
+        << QByteArray("ISO-8859-1");
+
+    const QChar koreanChars[] = { 0xd55c };
+    const QString koreanText(koreanChars, 1);
+
+    QTest::newRow("euc-kr")
+        << koreanText
+        << QByteArray("EUC-KR")
+        << QByteArray("EUC-KR");
+
+    const QChar arabicChars[] = { 0x0636 };
+    const QString mixedText(koreanText + QString(arabicChars, 1));
+
+    QTest::newRow("mixed")
+        << mixedText
+        << QByteArray("")
+        << defaultCharset;
+}
+
+void tst_QMessage::testPreferredCharsets()
+{
+    QFETCH(QString, text);
+    QFETCH(QByteArray, preferred);
+    QFETCH(QByteArray, encoded);
+
+    QCOMPARE(QMessage::preferredCharsets(), QList<QByteArray>());
+
+    QList<QByteArray> preferredCharsets;
+    preferredCharsets << "ISO-8859-1" << "EUC-KR";
+
+    QMessage::setPreferredCharsets(preferredCharsets);
+    QCOMPARE(QMessage::preferredCharsets(), preferredCharsets);
+
+    QCOMPARE(QMessage::preferredCharsetFor(text).toLower(), preferred.toLower());
+
+    QMessage msg;
+    msg.setBody(text, "text/plain");
+
+    QMessageContentContainer body(msg.find(msg.bodyId()));
+    QCOMPARE(body.contentCharset().toLower(), encoded.toLower());
+
+    QMessage::setPreferredCharsets(QList<QByteArray>());
 }
 

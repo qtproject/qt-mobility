@@ -205,7 +205,12 @@ QMessageId addMessage(const Parameters &params)
 
                 if (!text.isEmpty()) {
                     QMailMessageContentType ct(mimeType.toAscii());
-                    ct.setCharset("UTF-8");
+
+                    QByteArray charset(QMessage::preferredCharsetFor(text));
+                    if (charset.isEmpty()) {
+                        charset = "UTF-8";
+                    }
+                    ct.setCharset(charset);
 
                     if (!attachments.isEmpty()) {
                         // Add the body as the first of multiple parts

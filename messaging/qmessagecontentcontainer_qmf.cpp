@@ -39,16 +39,6 @@ using namespace QmfHelpers;
 
 namespace {
 
-QByteArray charsetFor(const QString &text)
-{
-    QByteArray charset(QMessage::preferredCharsetFor(text));
-    if (charset.isEmpty()) {
-        charset = "UTF-8";
-    }
-
-    return charset;
-}
-
 struct PartLocator
 {
     const QMailMessagePart::Location &_location;
@@ -65,28 +55,6 @@ struct PartLocator
         if (part.location() == _location) {
             _part = &part;
             return false;
-        }
-
-        return true;
-    }
-};
-
-struct PartRemover
-{
-    const QMailMessagePart::Location &_location;
-
-    PartRemover(const QMailMessagePart::Location &location)
-        : _location(location)
-    {
-    }
-
-    bool operator()(QMailMessagePart &part)
-    {
-        for (uint i = 0; i < part.partCount(); ++i) {
-            if (part.partAt(i).location() == _location) {
-                part.removePartAt(i);
-                return false;
-            }
         }
 
         return true;

@@ -40,6 +40,14 @@
 //TESTED_CLASS=
 //TESTED_FILES=
 
+#if defined(Q_OS_WIN)
+const QByteArray defaultCharset("UTF-16");
+const QByteArray alternateCharset("UTF-8");
+#else
+const QByteArray defaultCharset("UTF-8");
+const QByteArray alternateCharset("UTF-16");
+#endif
+
 /*
     Unit test for QMessageStore class.
 */
@@ -390,12 +398,6 @@ void tst_QMessageStore::testMessage()
     QFETCH(QList<QByteArray>, attachmentSubType);
     QFETCH(CustomFieldMap, custom);
 
-#if defined(Q_OS_WIN)
-    QByteArray defaultCharset("utf-16");
-#else
-    QByteArray defaultCharset("utf-8");
-#endif
-
     Support::Parameters p;
     p.insert("to", to);
     p.insert("from", from);
@@ -462,12 +464,12 @@ void tst_QMessageStore::testMessage()
     // Update the message to contain new text
     QString replacementText("This is replacement text.");
 
-    message.setBody(replacementText, "text/fancy");
+    message.setBody(replacementText, "text/fancy; charset=" + alternateCharset);
     body = message.find(bodyId);
 
     QCOMPARE(body.contentType().toLower(), QByteArray("text"));
     QCOMPARE(body.contentSubType().toLower(), QByteArray("fancy"));
-    QCOMPARE(body.contentCharset().toLower(), defaultCharset);
+    QCOMPARE(body.contentCharset().toLower(), alternateCharset.toLower());
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), replacementText);
 }

@@ -39,6 +39,7 @@
 
 #include <QCoreApplication>
 #include <QFileInfo>
+#include <QRegExp>
 
 using namespace QmfHelpers;
 
@@ -185,6 +186,16 @@ struct AttachmentLocator
         return true;
     }
 };
+
+QByteArray charsetFor(const QString &input)
+{
+    QByteArray result(QMessage::preferredCharsetFor(input));
+    if (result.isEmpty()) {
+        result = "UTF-8";
+    }
+
+    return result;
+}
 
 }
 
@@ -444,9 +455,7 @@ void QMessage::setBody(const QString &bodyText, const QByteArray &mimeType)
 {
     QByteArray mainType("text");
     QByteArray subType("plain");
-    QByteArray charset("UTF-8");
-    // TODO:
-    //QByteArray charset(charsetFor(bodyText));
+    QByteArray charset;
 
     int index = mimeType.indexOf("/");
     if (index != -1) {
@@ -455,8 +464,19 @@ void QMessage::setBody(const QString &bodyText, const QByteArray &mimeType)
         subType = mimeType.mid(index + 1).trimmed();
         index = subType.indexOf(";");
         if (index != -1) {
+            QString remainder = subType.mid(index + 1);
             subType = subType.left(index).trimmed();
+
+            QRegExp charsetPattern("charset=(\\S+)");
+            index = charsetPattern.indexIn(remainder);
+            if (index != -1) {
+                charset = charsetPattern.cap(1).toLatin1();
+            }
         }
+    }
+
+    if (charset.isEmpty()) {
+        charset = charsetFor(bodyText);
     }
 
     QMailMessageContentType ct;
@@ -566,8 +586,6 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
     if (type == Forward) {
         QString subject(d_ptr->_message.subject());
         response.setSubject("Fwd:" + subject);
-
-        //QMessageContentContainerIdList attachmentIds;
 
         if (d_ptr->_message.contentType().type().toLower() == "text") {
             // Forward the text content inline
