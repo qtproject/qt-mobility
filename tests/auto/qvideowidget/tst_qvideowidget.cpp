@@ -48,6 +48,8 @@
 #include <QtMultimedia/qvideosurfaceformat.h>
 #endif
 
+#include <QtGui/qapplication.h>
+
 Q_DECLARE_METATYPE(QVideoWidget::AspectRatio)
 Q_DECLARE_METATYPE(const uchar *)
 
@@ -827,6 +829,23 @@ void tst_QVideoWidget::displayModeWindowControl()
     QCOMPARE(spy.count(), 2);
     QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(1).value(0)),
              QVideoWidget::WindowedDisplay);
+
+    widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
+
+    QCoreApplication::processEvents();
+
+    if (QWidget *keyWidget = QApplication::activeWindow()) {
+        QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
+        QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
+
+        QCOMPARE(object.testService->windowControl->isFullscreen(), false);
+        QCOMPARE(widget.isFullScreen(), false);
+        QCOMPARE(spy.count(), 4);
+        QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(3).value(0)),
+                 QVideoWidget::WindowedDisplay);
+    } else {
+        qWarning("no active window");
+    }
 }
 
 void tst_QVideoWidget::displayModeWidgetControl()
@@ -851,6 +870,17 @@ void tst_QVideoWidget::displayModeWidgetControl()
     QCOMPARE(widget.isFullScreen(), false);
     QCOMPARE(spy.count(), 2);
     QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(1).value(0)),
+             QVideoWidget::WindowedDisplay);
+
+    widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
+
+    QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
+    QCoreApplication::sendEvent(object.testService->widgetControl->videoWidget(), &keyPressEvent);
+
+    QCOMPARE(object.testService->widgetControl->isFullscreen(), false);
+    QCOMPARE(widget.isFullScreen(), false);
+    QCOMPARE(spy.count(), 4);
+    QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(3).value(0)),
              QVideoWidget::WindowedDisplay);
 }
 
@@ -877,6 +907,22 @@ void tst_QVideoWidget::displayModeRendererControl()
     QCOMPARE(spy.count(), 2);
     QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(1).value(0)),
              QVideoWidget::WindowedDisplay);
+
+    widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
+
+    QCoreApplication::processEvents();
+
+    if (QWidget *keyWidget = QApplication::activeWindow()) {
+        QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
+        QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
+
+        QCOMPARE(widget.isFullScreen(), false);
+        QCOMPARE(spy.count(), 4);
+        QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(3).value(0)),
+                 QVideoWidget::WindowedDisplay);
+    } else {
+        qWarning("no active window");
+    }
 }
 
 #endif
