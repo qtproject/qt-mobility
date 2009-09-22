@@ -560,12 +560,13 @@ void QMessage::appendAttachments(const QStringList &fileNames)
 void QMessage::clearAttachments()
 {
     QMessageContentContainerId textId(bodyId());
+    QMailMessagePart::Location textLocation(convert(textId));
 
     for (uint i = d_ptr->_message.partCount(); i > 0; --i) {
         QMailMessagePart &part = d_ptr->_message.partAt(i - 1);
-        if (!(convert(part.location()) == textId)) {
-            // See if this part contains the text part
-            PartLocator locator(convert(textId));
+        if (!(part.location() == textLocation)) {
+            // Ensure that this part does not contain the text part
+            PartLocator locator(textLocation);
             part.foreachPart<PartLocator&>(locator);
             if (locator._part == 0) {
                 d_ptr->_message.removePartAt(i - 1);

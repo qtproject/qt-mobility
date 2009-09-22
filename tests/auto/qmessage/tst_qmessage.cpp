@@ -397,6 +397,7 @@ exit 0\n");
         QCOMPARE(m1.contentSubType().toLower(), contentSubType.toLower());
         QCOMPARE(m1.isContentAvailable(), true);
         QCOMPARE(m1.contentIds().count(), 5);
+        QCOMPARE(m1.attachmentIds().count(), 4);
 
         QMessageContentContainerId bodyId(m1.bodyId());
         QMessageContentContainerIdList ids(m1.contentIds());
@@ -449,6 +450,10 @@ exit 0\n");
         QCOMPARE(p5.content(), p5ContentData);
     }
 
+    // Verify that attachments can be removed
+    m1.clearAttachments();
+    QCOMPARE(m1.attachmentIds(), QMessageContentContainerIdList());
+
 #if !defined(Q_OS_WIN)
     QMessage m2(QMessage::fromTransmissionFormat(QMessage::Email, serialized));
 
@@ -461,6 +466,7 @@ exit 0\n");
         QCOMPARE(m2.contentSubType().toLower(), contentSubType.toLower());
         QCOMPARE(m2.isContentAvailable(), true);
         QCOMPARE(m2.contentIds().count(), 5);
+        QCOMPARE(m2.attachmentIds().count(), 4);
 
         QMessageContentContainerId bodyId(m2.bodyId());
         QMessageContentContainerIdList ids(m2.contentIds());
@@ -483,8 +489,8 @@ exit 0\n");
         QCOMPARE(p2.contentCharset().toLower(), p2ContentCharset.toLower());
         QCOMPARE(p2.isContentAvailable(), true);
         QCOMPARE(p2.contentIds().count(), 0);
-        // This is currently failing...
-        //QCOMPARE(p2.textContent(), p2ContentText);
+        // This text has had the '\r' stripped out...
+        QCOMPARE(p2.textContent(), QString(p2ContentText).replace("\r\n", "\n"));
 
         QMessageContentContainer p3(m2.find(ids.at(2)));
 
