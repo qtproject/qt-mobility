@@ -390,6 +390,9 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                             if (!qFuzzyCompare(m_playbackRate, float(1.0)))
                                 setPlaybackRate(m_playbackRate);
 
+                            if (m_renderer)
+                                m_renderer->precessNewStream();
+
                         }
 
 

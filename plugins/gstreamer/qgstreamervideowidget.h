@@ -39,6 +39,8 @@
 
 #include "qgstreamervideorendererinterface.h"
 
+class QGstreamerVideoWidget;
+
 class QGstreamerVideoWidgetControl
         : public QVideoWidgetControl
         , public QGstreamerVideoRendererInterface
@@ -50,7 +52,7 @@ public:
     virtual ~QGstreamerVideoWidgetControl();
 
     GstElement *videoSink();
-    void precessNewStream() { setOverlay(); }
+    void precessNewStream();
 
     QWidget *videoWidget();
 
@@ -79,11 +81,14 @@ public:
 
     bool eventFilter(QObject *object, QEvent *event);
 
+public slots:
+    void updateNativeVideoSize();
+
 private:
     void windowExposed();
 
     GstElement *m_videoSink;
-    QWidget *m_widget;
+    QGstreamerVideoWidget *m_widget;
     WId m_windowId;
     QVideoWidget::AspectRatio m_aspectRatioMode;
     QSize m_customAspectRatio;
