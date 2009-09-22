@@ -72,6 +72,7 @@ class QtTestWindowControl : public QVideoWindowControl
 public:
     QtTestWindowControl()
         : m_winId(0)
+        , m_repaintCount(0)
         , m_brightness(0)
         , m_contrast(0)
         , m_saturation(0)
@@ -89,7 +90,9 @@ public:
     bool isFullscreen() const { return m_fullscreen; }
     void setFullscreen(bool fullscreen) { emit fullscreenChanged(m_fullscreen = fullscreen); }
 
-    void repaint() {}
+    int repaintCount() const { return m_repaintCount; }
+    void setRepaintCount(int count) { m_repaintCount = count; }
+    void repaint() { ++m_repaintCount; }
 
     QSize nativeSize() const { return m_nativeSize; }
     void setNativeSize(const QSize &size) { m_nativeSize = size; emit nativeSizeChanged(); }
@@ -114,6 +117,7 @@ public:
 
 private:
     WId m_winId;
+    int m_repaintCount;
     int m_brightness;
     int m_contrast;
     int m_hue;
@@ -461,6 +465,8 @@ void tst_QVideoWidget::noOutputs()
 void tst_QVideoWidget::showWindowControl()
 {
     QtTestVideoObject object(new QtTestWindowControl, 0, 0);
+    object.testService->windowControl->setNativeSize(QSize(240, 180));
+
     QVideoWidget widget(&object);
 
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
@@ -469,6 +475,10 @@ void tst_QVideoWidget::showWindowControl()
 
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::WindowOutput);
     QVERIFY(object.testService->windowControl->winId() != 0);
+
+    QCoreApplication::processEvents();
+
+    QVERIFY(object.testService->windowControl->repaintCount() > 0);
 
     widget.hide();
 
