@@ -35,7 +35,7 @@
 #ifndef PLAYERCONTROLS_H
 #define PLAYERCONTROLS_H
 
-#include "qmediaplayer.h"
+#include <multimedia/qmediaplayer.h>
 
 #include <QtGui/qwidget.h>
 

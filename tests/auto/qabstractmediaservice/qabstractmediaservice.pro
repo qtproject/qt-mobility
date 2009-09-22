@@ -5,7 +5,5 @@ include (../../../common.pri)
 
 SOURCES += tst_qabstractmediaservice.cpp
 
-INCLUDEPATH += ../../../multimedia
-
 LIBS += -lQtMedia
 
