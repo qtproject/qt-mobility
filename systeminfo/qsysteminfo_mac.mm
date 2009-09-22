@@ -57,6 +57,17 @@
 #include <SystemConfiguration/SystemConfiguration.h>
 #include <CoreFoundation/CFArray.h>
 ////////
+static QString stringFromCFString(CFStringRef value) {
+    QString retVal;
+    CFIndex maxLength = 2 * CFStringGetLength(value) + 1/*zero term*/; // max UTF8
+    char *cstring = new char[maxLength];
+    if (CFStringGetCString(CFStringRef(value), cstring, maxLength, kCFStringEncodingUTF8)) {
+        retVal = QString::fromUtf8(cstring);
+    }
+    delete cstring;
+    return retVal;
+}
+
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
  : QObject(parent)
 {
@@ -338,7 +349,19 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
 
 QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
 {
-    return interfaceForMode(mode).hardwareAddress();
+    QString mac;
+    if(mode == QSystemNetworkInfo::BluetoothMode) {
+        NSString *addy;
+        IOBluetoothHostController* controller = [IOBluetoothHostController defaultController];
+        if (controller != NULL) {
+            addy = [controller addressAsString];
+            mac = [addy UTF8String];
+            mac.replace("-",":");
+        }
+    } else {
+        mac = interfaceForMode(mode).hardwareAddress();
+    }
+    return mac;
 }
 
 QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
@@ -367,11 +390,6 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
                 break;
             }
         }
-
-        //        CFStringRef macAddr;
-        //        macAddr = SCNetworkInterfaceGetHardwareAddressString(thisInterface);
-        //        if (macAddr != NULL) {
-        //        }
     }
     CFRelease(interfaceArray);
     return netInterface;
