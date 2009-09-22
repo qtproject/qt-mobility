@@ -22,7 +22,13 @@ symbian|win32 {
         SOURCES += \
             support_win.cpp
 
-        LIBS += mapi32.lib
+        wince*{
+            LIBS += cemapi.lib
+        }
+        else {
+            LIBS += mapi32.lib 
+        }
+
     }
 } else {
     # QMF headers must be located at $QMF_INCLUDEDIR

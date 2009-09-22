@@ -31,13 +31,21 @@
 **
 ****************************************************************************/
 
+#ifndef _UNICODE
 #define _UNICODE
+#endif
+
 #ifndef MDB_ONLINE
 #define MDB_ONLINE ((ULONG) 0x00000100)
 #endif
+
 #ifndef PR_IPM_DRAFTS_ENTRYID
 #define PR_IPM_DRAFTS_ENTRYID ((ULONG)0x36D7) //undocumented for outlook versions < 2007
 #endif
+
+//#ifdef _WIN32_WCE
+//#define BUFSIZ 1024
+//#endif
 
 #include "winhelpers_p.h"
 #include "qmessageid_p.h"
@@ -634,7 +642,12 @@ namespace WinHelpers {
     // Note: UNICODE is always defined
     QString QStringFromLpctstr(LPCTSTR lpszValue)
     {
-        if (!lpszValue || ::IsBadStringPtr(lpszValue, (UINT_PTR)-1)) // Don't crash when MAPI returns a bad string (and it does).
+        bool isBadStringPointer = false;
+#ifndef _WIN32_WCE
+        isBadStringPointer = ::IsBadStringPtr(lpszValue, (UINT_PTR)-1); // Don't crash when MAPI returns a bad string (and it does).
+#endif
+
+        if (!lpszValue || isBadStringPointer)
             return QString();
 
         return QString::fromUtf16(reinterpret_cast<const quint16*>(lpszValue));
@@ -754,6 +767,7 @@ namespace WinHelpers {
     {
         QByteArray result("application/octet-stream");
 
+#ifndef _WIN32_WCE
         if (!extension.isEmpty()) {
             IQueryAssociations *associations(0);
             HRESULT rv = AssocCreate(CLSID_QueryAssociations, IID_PPV_ARGS(&associations));
@@ -788,6 +802,7 @@ namespace WinHelpers {
             }
         }
 
+#endif
         return result;
     }
 
@@ -1287,6 +1302,7 @@ IMessage* MapiFolder::createMessage(const QMessage& source, const MapiSessionPtr
                 rv = mapiMessage->OpenProperty(PR_RTF_COMPRESSED, &IID_IStream, STGM_CREATE | STGM_WRITE, MAPI_CREATE | MAPI_MODIFY, reinterpret_cast<LPUNKNOWN*>(&os));
                 if (HR_SUCCEEDED(rv)) {
                     IStream *compressor(0);
+#ifndef _WIN32_WCE
                     rv = WrapCompressedRTFStream(os, MAPI_MODIFY, &compressor);
                     if (HR_SUCCEEDED(rv)) {
                         compressor->Write(body.utf16(), body.length() * sizeof(TCHAR), 0);
@@ -1305,6 +1321,7 @@ IMessage* MapiFolder::createMessage(const QMessage& source, const MapiSessionPtr
                     }
 
                     os->Release();
+#endif
                 } else {
                     qWarning() << "Unable to open compressed RTF stream for write.";
                 }
@@ -1787,6 +1804,7 @@ MapiStorePtr MapiSession::findStore(QMessageStore::ErrorCode *lastError, const Q
     enum { defaultStoreColumn = 0, entryIdColumn, recordKeyColumn };
     SizedSPropTagArray(nCols, columns) = {nCols, {PR_DEFAULT_STORE, PR_ENTRYID, PR_RECORD_KEY}};
     LPSRowSet rows(0);
+#ifndef _WIN32_WCE
     HRESULT rv = HrQueryAllRows(mapiMessageStoresTable, reinterpret_cast<LPSPropTagArray>(&columns), 0, 0, 0, &rows);
     if (HR_SUCCEEDED(rv)) {
         for (uint n = 0; n < rows->cRows; ++n) {
@@ -1805,6 +1823,7 @@ MapiStorePtr MapiSession::findStore(QMessageStore::ErrorCode *lastError, const Q
     } else {
         *lastError = QMessageStore::ContentInaccessible;
     }
+#endif
 
     mapiRelease(mapiMessageStoresTable);
     return result;
@@ -1825,6 +1844,7 @@ QList<MapiStorePtr> MapiSession::allStores(QMessageStore::ErrorCode *lastError, 
     } else {
         SizedSPropTagArray(1, columns) = {1, {PR_ENTRYID}};
         LPSRowSet rows(0);
+#ifndef _WIN32_WCE
         HRESULT rv = HrQueryAllRows(mapiMessageStoresTable, reinterpret_cast<LPSPropTagArray>(&columns), 0, 0, 0, &rows);
         if (HR_SUCCEEDED(rv)) {
             for (uint n = 0; n < rows->cRows; ++n) {
@@ -1836,7 +1856,7 @@ QList<MapiStorePtr> MapiSession::allStores(QMessageStore::ErrorCode *lastError, 
         } else {
             *lastError = QMessageStore::ContentInaccessible;
         }
-
+#endif
         mapiRelease(mapiMessageStoresTable);
     }
 
@@ -1978,6 +1998,7 @@ bool MapiSession::flushQueues()
     spv.ulPropTag = PR_RESOURCE_TYPE;
     spv.Value.l   = MAPI_SPOOLER;
 
+#ifndef _WIN32_WCE
     if (FAILED(hRes = HrQueryAllRows(pTbl,
                     (LPSPropTagArray) &sptCols,
                     &sres,
@@ -1985,7 +2006,7 @@ bool MapiSession::flushQueues()
                     0,
                     &pRow)))
         goto Quit;
-
+#endif
     if (!pRow -> cRows || PR_ENTRYID != pRow -> aRow[0].lpProps[1].ulPropTag)
     {
         hRes = MAPI_E_NOT_FOUND;
@@ -2254,7 +2275,7 @@ bool MapiSession::updateMessageRecipients(QMessageStore::ErrorCode *lastError, Q
             if (HR_SUCCEEDED(rv)) {
                 SizedSPropTagArray(3, rcpCols) = {3, { PR_DISPLAY_NAME, PR_EMAIL_ADDRESS, PR_RECIPIENT_TYPE}};
                 LPSRowSet rows(0);
-
+#ifndef _WIN32_WCE
                 rv = HrQueryAllRows(recipientsTable, reinterpret_cast<LPSPropTagArray>(&rcpCols), NULL, NULL, 0, &rows);
                 if (HR_SUCCEEDED(rv)) {
                     QMessageAddressList to;
@@ -2310,7 +2331,7 @@ bool MapiSession::updateMessageRecipients(QMessageStore::ErrorCode *lastError, Q
                 } else {
                     *lastError = QMessageStore::ContentInaccessible;
                 }
-
+#endif
                 mapiRelease(recipientsTable);
             } else {
                 *lastError = QMessageStore::ContentInaccessible;
@@ -2380,6 +2401,7 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                         if (HR_SUCCEEDED(rv)) {
                             if ((prop->Value.ul & STORE_RTF_OK) == 0) {
                                 BOOL updated(FALSE);
+#ifndef _WIN32_WCE
                                 rv = RTFSync(message, RTF_SYNC_BODY_CHANGED, &updated);
                                 if (HR_SUCCEEDED(rv)) {
                                     if (updated) {
@@ -2390,6 +2412,7 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                                 } else {
                                     qWarning() << "Unable to synchronize RTF.";
                                 }
+#endif
                             }
 
                             MAPIFreeBuffer(prop);
@@ -2401,6 +2424,7 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                     // Either the body is in RTF, or we need to read the RTF to know that it is text...
                     HRESULT rv = message->OpenProperty(PR_RTF_COMPRESSED, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
                     if (HR_SUCCEEDED(rv)) {
+#ifndef _WIN32_WCE
                         IStream *decompressor(0);
                         if (WrapCompressedRTFStream(is, 0, &decompressor) == S_OK) {
                             ULONG bytes = 0;
@@ -2458,6 +2482,7 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                             qWarning() << "Unable to decompress RTF";
                             bodySubType = "plain";
                         }
+#endif
                     } else {
                         bodySubType = "unknown";
                     }
@@ -2518,6 +2543,8 @@ bool MapiSession::updateMessageAttachments(QMessageStore::ErrorCode *lastError, 
 
                 // Find any attachments for this message
                 IMAPITable *attachmentsTable(0);
+
+#ifndef _WIN32_WCE
                 HRESULT rv = message->GetAttachmentTable(0, &attachmentsTable);
                 if (HR_SUCCEEDED(rv)) {
                     // Find the properties of these attachments
@@ -2529,7 +2556,6 @@ bool MapiSession::updateMessageAttachments(QMessageStore::ErrorCode *lastError, 
                                                            PR_ATTACH_SIZE,
                                                            PR_RENDERING_POSITION }};
                     LPSRowSet rows(0);
-
                     rv = HrQueryAllRows(attachmentsTable, reinterpret_cast<LPSPropTagArray>(&attCols), NULL, NULL, 0, &rows);
                     if (HR_SUCCEEDED(rv)) {
                         for (uint n = 0; n < rows->cRows; ++n) {
@@ -2606,7 +2632,7 @@ bool MapiSession::updateMessageAttachments(QMessageStore::ErrorCode *lastError, 
                 } else {
                     *lastError = QMessageStore::ContentInaccessible;
                 }
-
+#endif
                 mapiRelease(message);
             }
         }

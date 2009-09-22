@@ -100,6 +100,7 @@ SOURCES += qmessageid_symbian.cpp \
            qmessagestore_symbian.cpp \
            qmessageserviceaction_symbian.cpp 
 }
+
 win32 {
 !static:DEFINES += QT_MAKEDLL
 
@@ -123,7 +124,13 @@ SOURCES += winhelpers.cpp \
            qmessagestore_win.cpp \
            qmessageserviceaction_win.cpp 
 
-LIBS += mapi32.lib shlwapi.lib
+wince* {
+    LIBS += cemapi.lib strmiids.lib uuid.lib
+}
+else {
+    LIBS += mapi32.lib shlwapi.lib
+}
+
 }
 } else {
 DEFINES += USE_QMF_IMPLEMENTATION
