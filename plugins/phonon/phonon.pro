@@ -11,8 +11,6 @@ include (../../common.pri)
 LIBS += -lQtMedia
 
 DEPENDPATH += .
-INCLUDEPATH += . \
-    ../../multimedia
 
 HEADERS += \
     qphononplayercontrol.h \

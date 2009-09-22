@@ -5,7 +5,6 @@ CONFIG += testcase
 SOURCES += tst_qmediaplaylist.cpp
 
 include (../../../common.pri)
-INCLUDEPATH += ../../../multimedia
 
 LIBS += -lQtMedia
 

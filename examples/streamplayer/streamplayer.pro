@@ -3,8 +3,6 @@ CONFIG += example
 
 include (../../common.pri)
 
-INCLUDEPATH += $$PWD/../../multimedia
-
 LIBS += -lQtMedia
 
 HEADERS = \

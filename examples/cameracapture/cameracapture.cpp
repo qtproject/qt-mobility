@@ -35,20 +35,14 @@
 #include "cameracapture.h"
 #include "ui_cameracapture.h"
 
-#include <qabstractmediaservice.h>
-#include <qmediarecorder.h>
-#include <qaudiodevicecontrol.h>
-#include <qaudioencodercontrol.h>
-#include <qvideoencodercontrol.h>
-#include <qmediaformatcontrol.h>
-#include <qcamera.h>
-#include <qvideowidget.h>
-
-#ifndef QT_NO_MULTIMEDIA
-#include <QtMultimedia/qaudioformat.h>
-#else
-#include <qaudioformat.h>
-#endif
+#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qmediarecorder.h>
+#include <multimedia/qaudiodevicecontrol.h>
+#include <multimedia/qaudioencodercontrol.h>
+#include <multimedia/qvideoencodercontrol.h>
+#include <multimedia/qmediaformatcontrol.h>
+#include <multimedia/qcamera.h>
+#include <multimedia/qvideowidget.h>
 
 #include <QtGui>
 
