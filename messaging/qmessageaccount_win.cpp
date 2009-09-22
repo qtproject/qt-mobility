@@ -96,11 +96,8 @@ QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)
 {
     QMessageAccountId result;
 
-    // Temporary!
-    QMessageStore::instance();
-
     QMessageStore::ErrorCode code(QMessageStore::NoError);
-    MapiSessionPtr mapiSession(MapiSession::createSession(&code, true));
+    MapiSessionPtr mapiSession(MapiSession::createSession(&code));
     if (code == QMessageStore::NoError) {
         result = mapiSession->defaultAccountId(&code, type);
     }

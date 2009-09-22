@@ -113,6 +113,26 @@ class Lptstr : public QVector<TCHAR>
 
 Lptstr LptstrFromQString(const QString &src);
 
+class MapiInitializer;
+
+typedef QSharedPointer<MapiInitializer> MapiInitializationToken;
+
+MapiInitializationToken initializeMapi();
+
+class MapiInitializer
+{
+    friend MapiInitializationToken WinHelpers::initializeMapi();
+
+private:
+    MapiInitializer();
+    MapiInitializer &operator=(const MapiInitializer &);
+
+public:
+    ~MapiInitializer();
+
+    bool _initialized;
+};
+
 }
 
 class MapiFolder {
@@ -219,11 +239,11 @@ private:
 
 class MapiSession {
 public:
-    static MapiSessionPtr createSession(QMessageStore::ErrorCode *lastError, bool mapiInitialized);
+    static MapiSessionPtr createSession(QMessageStore::ErrorCode *lastError);
 
     ~MapiSession();
 
-    bool isValid() const { return _valid; }
+    bool isValid() const { return (_mapiSession != 0); }
 
     MapiStorePtr findStore(QMessageStore::ErrorCode *lastError, const QMessageAccountId &id = QMessageAccountId(), bool cachedMode = true) const;
     MapiStorePtr defaultStore(QMessageStore::ErrorCode *lastError, bool cachedMode = true) const { return findStore(lastError,QMessageAccountId(),cachedMode); }
@@ -250,7 +270,7 @@ public:
 
 private:
     MapiSession();
-    MapiSession(QMessageStore::ErrorCode *lastError, bool mapiInitialized);
+    MapiSession(QMessageStore::ErrorCode *lastError);
 
     IMsgStore *openMapiStore(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId, bool cachedMode = true) const;
     IMessage *openMapiMessage(QMessageStore::ErrorCode *lastError, const QMessageId &id) const;
@@ -259,7 +279,7 @@ private:
     void addAttachment(LPMESSAGE message, const QMessageContentContainer& attachmentContainer);
 
 private:
-    bool _valid;
+    WinHelpers::MapiInitializationToken _token;
     IMAPISession* _mapiSession;
 
     static QWeakPointer<MapiSession> _session;

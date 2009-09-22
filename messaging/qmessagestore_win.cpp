@@ -185,34 +185,23 @@ public:
     QMessageStore *q_ptr;
     QMessageStore::ErrorCode lastError;
 
-    bool _mapiInitialized;
+    WinHelpers::MapiInitializationToken token;
 };
 
 QMessageStorePrivatePlatform::QMessageStorePrivatePlatform(QMessageStorePrivate *d, QMessageStore *q)
     :d_ptr(d), 
-     q_ptr(q)
+     q_ptr(q),
+     token(WinHelpers::initializeMapi())
 {
-    _mapiInitialized = false;
-    lastError = QMessageStore::NoError;
-#ifndef QT_NO_THREAD
-    // Note MAPIINIT is ignored on Windows Mobile but used on Outlook 2007 see
-    // msdn ms862621 vs cc842343
-    MAPIINIT_0 MAPIINIT = { 0, MAPI_MULTITHREAD_NOTIFICATIONS };
-    if (MAPIInitialize(&MAPIINIT) == S_OK)
-        _mapiInitialized = true;
-#else
-    if (MAPIInitialize(0) == S_OK)
-        _mapiInitialized = true;
-#endif
-    if (!_mapiInitialized) {
-        qWarning() << "Failed to initialize MAPI";
+    if (token->_initialized) {
+        lastError = QMessageStore::NoError;
+    } else {
         lastError = QMessageStore::ContentInaccessible;
     }
 }
 
 QMessageStorePrivatePlatform::~QMessageStorePrivatePlatform()
 {
-    MAPIUninitialize();
 }
 
 QMessageStorePrivate::QMessageStorePrivate()
@@ -261,7 +250,7 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
     QMessageIdList result;
     d_ptr->p_ptr->lastError = QMessageStore::NoError;
 
-    MapiSessionPtr mapiSession(MapiSession::createSession(&d_ptr->p_ptr->lastError, d_ptr->p_ptr->_mapiInitialized));
+    MapiSessionPtr mapiSession(MapiSession::createSession(&d_ptr->p_ptr->lastError));
     if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
         return result;
 
@@ -338,7 +327,7 @@ QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &fil
     QMessageFolderIdList result;
     d_ptr->p_ptr->lastError = QMessageStore::NoError;
 
-    MapiSessionPtr mapiSession(MapiSession::createSession(&d_ptr->p_ptr->lastError, d_ptr->p_ptr->_mapiInitialized));
+    MapiSessionPtr mapiSession(MapiSession::createSession(&d_ptr->p_ptr->lastError));
     if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
         return result;
 
@@ -363,7 +352,7 @@ QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &
     QMessageAccountIdList result;
     d_ptr->p_ptr->lastError = QMessageStore::NoError;
 
-    MapiSessionPtr mapiSession(MapiSession::createSession(&d_ptr->p_ptr->lastError, d_ptr->p_ptr->_mapiInitialized));
+    MapiSessionPtr mapiSession(MapiSession::createSession(&d_ptr->p_ptr->lastError));
     if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
         return result;
 
@@ -419,7 +408,7 @@ bool QMessageStore::addMessage(QMessage *message)
 
         *lError = QMessageStore::NoError;
 
-        MapiSessionPtr session(MapiSession::createSession(lError, d_ptr->p_ptr->_mapiInitialized));
+        MapiSessionPtr session(MapiSession::createSession(lError));
         if (*lError == QMessageStore::NoError) {
 
             MapiStorePtr mapiStore = session->findStore(lError,message->parentAccountId(),false);
@@ -501,7 +490,7 @@ QMessage QMessageStore::message(const QMessageId& id) const
     QMessage result;
     d_ptr->p_ptr->lastError = QMessageStore::NoError;
 
-    MapiSessionPtr mapiSession(MapiSession::createSession(&d_ptr->p_ptr->lastError, d_ptr->p_ptr->_mapiInitialized));
+    MapiSessionPtr mapiSession(MapiSession::createSession(&d_ptr->p_ptr->lastError));
     if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
         return result;
 
@@ -514,7 +503,7 @@ QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
     QMessageFolder result;
     d_ptr->p_ptr->lastError = QMessageStore::NoError;
 
-    MapiSessionPtr mapiSession(MapiSession::createSession(&d_ptr->p_ptr->lastError, d_ptr->p_ptr->_mapiInitialized));
+    MapiSessionPtr mapiSession(MapiSession::createSession(&d_ptr->p_ptr->lastError));
     if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
         return result;
 
@@ -527,7 +516,7 @@ QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
     QMessageAccount result;
     d_ptr->p_ptr->lastError = QMessageStore::NoError;
 
-    MapiSessionPtr mapiSession(MapiSession::createSession(&d_ptr->p_ptr->lastError, d_ptr->p_ptr->_mapiInitialized));
+    MapiSessionPtr mapiSession(MapiSession::createSession(&d_ptr->p_ptr->lastError));
     if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
         return result;
 

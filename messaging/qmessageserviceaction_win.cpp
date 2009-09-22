@@ -99,6 +99,13 @@ QMessageServiceActionPrivate::QMessageServiceActionPrivate(QMessageServiceAction
 
 bool QMessageServiceActionPrivate::send(const QMessage& message, bool showComposer)
 {
+    MapiSessionPtr mapiSession(MapiSession::createSession(&_lastError));
+    if (_lastError != QMessageStore::NoError)
+    {
+        qWarning() << "Could not create session";
+        return false;
+    }
+
     QMessage outgoing(message);
 
     if(!outgoing.parentAccountId().isValid())
@@ -114,14 +121,6 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
         }
 
         outgoing.setParentAccountId(defaultAccountId);
-    }
-
-    MapiSessionPtr mapiSession(MapiSession::createSession(&_lastError,true));
-
-    if (_lastError != QMessageStore::NoError)
-    {
-        qWarning() << "Could not create seesion";
-        return false;
     }
 
     MapiStorePtr mapiStore = mapiSession->findStore(&_lastError, outgoing.parentAccountId(),false);
@@ -193,7 +192,7 @@ bool QMessageServiceActionPrivate::show(const QMessageId& messageId)
         return false;
     }
 
-    MapiSessionPtr mapiSession(MapiSession::createSession(&_lastError,true));
+    MapiSessionPtr mapiSession(MapiSession::createSession(&_lastError));
     if (_lastError != QMessageStore::NoError)
     {
         qWarning() << "Could not create seesion";

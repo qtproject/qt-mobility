@@ -83,7 +83,7 @@ void QMessagePrivate::ensurePropertiesPresent(QMessage *msg) const
 {
     if (!_elementsPresent.properties && _id.isValid()) {
         QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
-        if (MapiSessionPtr session = MapiSession::createSession(&ignoredError, true)) {
+        if (MapiSessionPtr session = MapiSession::createSession(&ignoredError)) {
             session->updateMessageProperties(&ignoredError, msg);
         }
     }
@@ -93,7 +93,7 @@ void QMessagePrivate::ensureRecipientsPresent(QMessage *msg) const
 {
     if (!_elementsPresent.recipients && _id.isValid()) {
         QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
-        if (MapiSessionPtr session = MapiSession::createSession(&ignoredError, true)) {
+        if (MapiSessionPtr session = MapiSession::createSession(&ignoredError)) {
             session->updateMessageRecipients(&ignoredError, msg);
         }
     }
@@ -103,7 +103,7 @@ void QMessagePrivate::ensureBodyPresent(QMessage *msg) const
 {
     if (!_elementsPresent.body && _id.isValid()) {
         QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
-        if (MapiSessionPtr session = MapiSession::createSession(&ignoredError, true)) {
+        if (MapiSessionPtr session = MapiSession::createSession(&ignoredError)) {
             session->updateMessageBody(&ignoredError, msg);
         }
     }
@@ -113,7 +113,7 @@ void QMessagePrivate::ensureAttachmentsPresent(QMessage *msg) const
 {
     if (!_elementsPresent.attachments && _id.isValid()) {
         QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
-        if (MapiSessionPtr session = MapiSession::createSession(&ignoredError, true)) {
+        if (MapiSessionPtr session = MapiSession::createSession(&ignoredError)) {
             session->updateMessageAttachments(&ignoredError, msg);
         }
     }

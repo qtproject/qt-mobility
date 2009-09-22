@@ -61,6 +61,8 @@
 
 namespace {
 
+    QWeakPointer<WinHelpers::MapiInitializer> initializer;
+
     GUID GuidPublicStrings = { 0x00020329, 0x0000, 0x0000, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46 };
 
     FILETIME toFileTime(const QDateTime &dt)
@@ -784,6 +786,47 @@ namespace WinHelpers {
                 }
                 mapiRelease(associations);
             }
+        }
+
+        return result;
+    }
+
+    MapiInitializer::MapiInitializer()
+        : _initialized(false)
+    {
+#ifndef QT_NO_THREAD
+        // Note MAPIINIT is ignored on Windows Mobile but used on Outlook 2007 see msdn ms862621 vs cc842343
+        MAPIINIT_0 MAPIINIT = { 0, MAPI_MULTITHREAD_NOTIFICATIONS };
+        LPVOID arg(&MAPIINIT);
+#else
+        LPVOID arg(0);
+#endif
+        HRESULT rv = MAPIInitialize(arg);
+        if (HR_SUCCEEDED(rv)) {
+            _initialized = true;
+        } else {
+            _initialized = false;
+            qWarning() << "Unable to initialize MAPI - rv:" << hex << (ULONG)rv;
+        }
+    }
+
+    MapiInitializer::~MapiInitializer()
+    {
+        if (_initialized) {
+            MAPIUninitialize();
+            _initialized = false;
+        }
+    }
+
+    MapiInitializationToken initializeMapi()
+    {
+        MapiInitializationToken result;
+
+        if (!initializer.isNull()) {
+            result = initializer.toStrongRef();
+        } else {
+            result = MapiInitializationToken(new MapiInitializer());
+            initializer = result;
         }
 
         return result;
@@ -1676,13 +1719,13 @@ QWeakPointer<MapiSession> MapiSession::_session;
 
 QHash<MapiEntryId, QWeakPointer<MapiStore> > MapiSession::_storeMap;
 
-MapiSessionPtr MapiSession::createSession(QMessageStore::ErrorCode *lastError, bool mapiInitialized)
+MapiSessionPtr MapiSession::createSession(QMessageStore::ErrorCode *lastError)
 {
     // See if we can create a new pointer to an existing session
     MapiSessionPtr ptr(_session.toStrongRef());
     if (ptr.isNull()) {
         // We need to create a new session
-        ptr = MapiSessionPtr(new MapiSession(lastError, mapiInitialized));
+        ptr = MapiSessionPtr(new MapiSession(lastError));
         if (!ptr.isNull()) {
             // Keep a reference to the existing session
             _session = ptr;
@@ -1693,27 +1736,25 @@ MapiSessionPtr MapiSession::createSession(QMessageStore::ErrorCode *lastError, b
 }
 
 MapiSession::MapiSession()
-    :_valid(false),
+    :_token(0),
      _mapiSession(0)
 {
 }
 
-MapiSession::MapiSession(QMessageStore::ErrorCode *lastError, bool mapiInitialized)
-    :_valid(mapiInitialized),
+MapiSession::MapiSession(QMessageStore::ErrorCode *lastError)
+    :_token(WinHelpers::initializeMapi()),
      _mapiSession(0)
 {
-    if (!_valid) {
+    if (!_token->_initialized) {
         *lastError = QMessageStore::ContentInaccessible;
-        return;
-    }
-
-    // Attempt to start a MAPI session on the default profile
-    HRESULT rv = MAPILogonEx(0, (LPTSTR)0, 0, MAPI_EXTENDED | MAPI_USE_DEFAULT | MAPI_NEW_SESSION, &_mapiSession);
-    if (HR_FAILED(rv)) {
-        qWarning() << "Failed to login to MAPI session - rv:" << hex << (ULONG)rv;
-        *lastError = QMessageStore::ContentInaccessible;
-        _valid = false;
-        _mapiSession = 0;
+    } else {
+        // Attempt to start a MAPI session on the default profile
+        HRESULT rv = MAPILogonEx(0, (LPTSTR)0, 0, MAPI_EXTENDED | MAPI_USE_DEFAULT | MAPI_NEW_SESSION, &_mapiSession);
+        if (HR_FAILED(rv)) {
+            qWarning() << "Failed to login to MAPI session - rv:" << hex << (ULONG)rv;
+            *lastError = QMessageStore::ContentInaccessible;
+            _mapiSession = 0;
+        }
     }
 }
 
@@ -1723,15 +1764,15 @@ MapiSession::~MapiSession()
         _mapiSession->Logoff(0, 0, 0);
         mapiRelease(_mapiSession);
     }
+
     _mapiSession = 0;
-    _valid = false;
 }
 
 MapiStorePtr MapiSession::findStore(QMessageStore::ErrorCode *lastError, const QMessageAccountId &id, bool cachedMode) const
 {
     MapiStorePtr result(0);
-    if (!_valid || !_mapiSession) {
-        Q_ASSERT(_valid && _mapiSession);
+    if (!_mapiSession) {
+        Q_ASSERT(_mapiSession);
         *lastError = QMessageStore::FrameworkFault;
         return result;
     }
@@ -1772,8 +1813,8 @@ MapiStorePtr MapiSession::findStore(QMessageStore::ErrorCode *lastError, const Q
 QList<MapiStorePtr> MapiSession::allStores(QMessageStore::ErrorCode *lastError, bool cachedMode) const
 {
     QList<MapiStorePtr> result;
-    if (!_valid || !_mapiSession) {
-        Q_ASSERT(_valid && _mapiSession);
+    if (!_mapiSession) {
+        Q_ASSERT(_mapiSession);
         *lastError = QMessageStore::FrameworkFault;
         return result;
     }
@@ -1848,7 +1889,7 @@ MapiStorePtr MapiSession::openStore(QMessageStore::ErrorCode *lastError, const M
             QString name(QStringFromLpctstr(properties[0].Value.LPSZ));
             MapiRecordKey recordKey(properties[1].Value.bin.lpb, properties[1].Value.bin.cb);
 
-            MapiSessionPtr self(MapiSession::createSession(lastError, true));
+            MapiSessionPtr self(MapiSession::createSession(lastError));
             MapiStorePtr storePtr = MapiStore::createStore(lastError, self, store, recordKey, entryId, name, cachedMode);
             if (*lastError == QMessageStore::NoError) {
                 result = storePtr;
