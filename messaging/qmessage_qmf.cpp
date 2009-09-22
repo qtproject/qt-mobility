@@ -577,7 +577,7 @@ void QMessage::clearAttachments()
 
 bool QMessage::isModified() const
 {
-    return d_ptr->_message.dataModified();
+    return (d_ptr->_message.dataModified() || d_ptr->_message.contentModified());
 }
 
 QMessage QMessage::createResponseMessage(ResponseType type) const

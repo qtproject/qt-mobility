@@ -526,9 +526,11 @@ void tst_QMessage::testType()
 {
     QMessage msg;
     QCOMPARE(msg.type(), QMessage::NoType);
+    QCOMPARE(msg.isModified(), false);
 
     msg.setType(QMessage::Email);
     QCOMPARE(msg.type(), QMessage::Email);
+    QCOMPARE(msg.isModified(), true);
 
     msg.setType(QMessage::Mms);
     QCOMPARE(msg.type(), QMessage::Mms);
@@ -538,19 +540,23 @@ void tst_QMessage::testParentAccountId()
 {
     QMessage msg;
     QCOMPARE(msg.parentAccountId(), QMessageAccountId());
+    QCOMPARE(msg.isModified(), false);
 
     msg.setParentAccountId(testAccountId);
     QCOMPARE(msg.parentAccountId(), testAccountId);
+    QCOMPARE(msg.isModified(), true);
 }
 
 void tst_QMessage::testFrom()
 {
     QMessage msg;
     QCOMPARE(msg.from(), QMessageAddress());
+    QCOMPARE(msg.isModified(), false);
 
     QMessageAddress addr("alice@example.org", QMessageAddress::Email);
     msg.setFrom(addr);
     QCOMPARE(msg.from(), addr);
+    QCOMPARE(msg.isModified(), true);
 
     addr = QMessageAddress("bob@example.org", QMessageAddress::Xmpp);
     msg.setFrom(addr);
@@ -561,10 +567,12 @@ void tst_QMessage::testSubject()
 {
     QMessage msg;
     QCOMPARE(msg.subject(), QString());
+    QCOMPARE(msg.isModified(), false);
 
     QString subject("Short message");
     msg.setSubject(subject);
     QCOMPARE(msg.subject(), subject);
+    QCOMPARE(msg.isModified(), true);
 
     subject = QString("A slightly longer message than the predecessor message");
     msg.setSubject(subject);
@@ -575,10 +583,12 @@ void tst_QMessage::testDate()
 {
     QMessage msg;
     QCOMPARE(msg.date(), QDateTime());
+    QCOMPARE(msg.isModified(), false);
 
     QDateTime now(QDateTime::fromString(QDateTime::currentDateTime().toString(Qt::ISODate), Qt::ISODate));
     msg.setDate(now);
     QCOMPARE(msg.date(), now);
+    QCOMPARE(msg.isModified(), true);
 
     now = QDateTime::fromString("2000-01-01T00:00:01Z", Qt::ISODate);
     msg.setDate(now);
@@ -589,10 +599,12 @@ void tst_QMessage::testReceivedDate()
 {
     QMessage msg;
     QCOMPARE(msg.receivedDate(), QDateTime());
+    QCOMPARE(msg.isModified(), false);
 
     QDateTime now(QDateTime::fromString(QDateTime::currentDateTime().toString(Qt::ISODate), Qt::ISODate));
     msg.setReceivedDate(now);
     QCOMPARE(msg.receivedDate(), now);
+    QCOMPARE(msg.isModified(), true);
 
     now = QDateTime::fromString("2000-01-01T00:00:01Z", Qt::ISODate);
     msg.setReceivedDate(now);
@@ -603,6 +615,7 @@ void tst_QMessage::testTo()
 {
     QMessage msg;
     QCOMPARE(msg.to(), QMessageAddressList());
+    QCOMPARE(msg.isModified(), false);
 
     QMessageAddressList addresses;
     addresses.append(QMessageAddress("alice@example.org", QMessageAddress::Email));
@@ -610,6 +623,7 @@ void tst_QMessage::testTo()
 
     msg.setTo(addresses);
     QCOMPARE(msg.to(), addresses);
+    QCOMPARE(msg.isModified(), true);
 
     addresses = QMessageAddressList();
     addresses.append(QMessageAddress("charlie@example.org", QMessageAddress::System));
@@ -620,7 +634,9 @@ void tst_QMessage::testTo()
 void tst_QMessage::testCc()
 {
     QMessage msg;
+    QCOMPARE(msg.isModified(), false);
     QCOMPARE(msg.cc(), QMessageAddressList());
+    QCOMPARE(msg.isModified(), false);
 
     QMessageAddressList addresses;
     addresses.append(QMessageAddress("alice@example.org", QMessageAddress::Email));
@@ -628,6 +644,7 @@ void tst_QMessage::testCc()
 
     msg.setCc(addresses);
     QCOMPARE(msg.cc(), addresses);
+    QCOMPARE(msg.isModified(), true);
 
     addresses = QMessageAddressList();
     addresses.append(QMessageAddress("charlie@example.org", QMessageAddress::Phone));
@@ -639,6 +656,7 @@ void tst_QMessage::testBcc()
 {
     QMessage msg;
     QCOMPARE(msg.bcc(), QMessageAddressList());
+    QCOMPARE(msg.isModified(), false);
 
     QMessageAddressList addresses;
     addresses.append(QMessageAddress("alice@example.org", QMessageAddress::Email));
@@ -646,6 +664,7 @@ void tst_QMessage::testBcc()
 
     msg.setBcc(addresses);
     QCOMPARE(msg.bcc(), addresses);
+    QCOMPARE(msg.isModified(), true);
 
     addresses = QMessageAddressList();
     addresses.append(QMessageAddress("charlie@example.org", QMessageAddress::Xmpp));
@@ -657,9 +676,11 @@ void tst_QMessage::testStatus()
 {
     QMessage msg;
     QCOMPARE(msg.status(), static_cast<QMessage::StatusFlags>(0));
+    QCOMPARE(msg.isModified(), false);
 
     msg.setStatus(QMessage::Removed);
     QCOMPARE(msg.status(), QMessage::Removed);
+    QCOMPARE(msg.isModified(), true);
 
     msg.setStatus(QMessage::Read | QMessage::HasAttachments);
     QCOMPARE(msg.status(), QMessage::Read | QMessage::HasAttachments);
@@ -669,9 +690,11 @@ void tst_QMessage::testPriority()
 {
     QMessage msg;
     QCOMPARE(msg.priority(), QMessage::NormalPriority);
+    QCOMPARE(msg.isModified(), false);
 
     msg.setPriority(QMessage::HighPriority);
     QCOMPARE(msg.priority(), QMessage::HighPriority);
+    QCOMPARE(msg.isModified(), true);
 
     msg.setPriority(QMessage::LowPriority);
     QCOMPARE(msg.priority(), QMessage::LowPriority);
