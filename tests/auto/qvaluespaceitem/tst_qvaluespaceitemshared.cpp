@@ -80,7 +80,6 @@ Q_SIGNALS:
 Q_DECLARE_METATYPE(QValueSpaceItem*)
 Q_DECLARE_METATYPE(QAbstractValueSpaceLayer*)
 Q_DECLARE_METATYPE(QVariant)
-Q_DECLARE_METATYPE(QList<QString>)
 Q_DECLARE_METATYPE(QAbstractValueSpaceLayer::LayerOptions)
 Q_DECLARE_METATYPE(tst_QValueSpaceItem::Type)
 Q_DECLARE_METATYPE(QUuid)
@@ -257,18 +256,18 @@ void tst_QValueSpaceItem::testConstructor_data()
 {
     QTest::addColumn< QVariant >("testItem");
     QTest::addColumn< QVariant >("value");
-    QTest::addColumn< QList<QString> >("subPaths");
+    QTest::addColumn< QStringList >("subPaths");
     QTest::addColumn< QString >("path");
     QTest::addColumn< QString >("relItemPath");
     QTest::addColumn< int >("expectedValue");
 
-    QList<QString> allPaths;
+    QStringList allPaths;
     allPaths << "bool" << "int" << "QString" << "QStringList" << "qint64" << "QByteArray" << "double" << "float" << "QChar";
 
-    QList<QString> rootPaths;
+    QStringList rootPaths;
     rootPaths << "home" << "usr" << "layer";
 
-    QList<QString> homePaths;
+    QStringList homePaths;
     homePaths << "user" << "usercount";
 
     //valid items based on / path
@@ -353,7 +352,7 @@ void tst_QValueSpaceItem::testConstructor_data()
     QTest::newRow("QValueSpaceItem(\"/home/user/int\", this)")
         << data
         << QVariant(3)
-        << QList<QString>()
+        << QStringList()
         << QString("/home/user/int")
         << QString()
         << 3;
@@ -364,7 +363,7 @@ void tst_QValueSpaceItem::testConstructor_data()
     QTest::newRow("QValueSpaceItem(QString(\"/home/invalidPath\"), this)")
         << data
         << QVariant()
-        << QList<QString>()
+        << QStringList()
         << QString("/home/invalidPath")
         << QString("user/int")
         << 100; //should fails -> returns default
@@ -598,7 +597,7 @@ void tst_QValueSpaceItem::testConstructor()
 {
     QFETCH(QVariant, testItem);
     QFETCH(QVariant, value);
-    QFETCH(QList<QString>, subPaths);
+    QFETCH(QStringList, subPaths);
     QFETCH(QString, path);
     QFETCH(QString, relItemPath);
     QFETCH(int, expectedValue);
@@ -1342,7 +1341,7 @@ void tst_QValueSpaceItem::ipcRemoveKey()
     changeSpy.clear();
     QTRY_COMPARE(changeSpy.count(), 1);
 
-    QList<QString> paths = item.subPaths();
+    QStringList paths = item.subPaths();
     if (!paths.isEmpty())
         qDebug() << item.subPaths();
     QVERIFY(item.subPaths().isEmpty());

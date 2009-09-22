@@ -39,6 +39,7 @@
 
 #include <QObject>
 #include <QVariant>
+#include <QStringList>
 
 QT_BEGIN_HEADER
 
@@ -79,7 +80,7 @@ public:
 
     bool isValid() const;
 
-    QList<QString> subPaths() const;
+    QStringList subPaths() const;
 
     bool remove();
     bool remove(const QByteArray &subPath);

@@ -86,7 +86,7 @@ void ConsumerDialog::itemChanged()
 {
     ui->values->clearContents();
 
-    QList<QString> subPaths = item->subPaths();
+    QStringList subPaths = item->subPaths();
     ui->values->setRowCount(subPaths.count());
 
     for (int i = 0; i < subPaths.count(); ++i) {

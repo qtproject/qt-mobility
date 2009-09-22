@@ -80,7 +80,7 @@ public:
     void removeWatches(QValueSpaceObject *creator, Handle parent);
     void sync() { }
 
-    QList<QString> testErrors() { QList<QString> result = m_testErrors; m_testErrors.clear(); return result; }
+    QStringList testErrors();
 
 private:
     bool testPath(const QByteArray &path);
@@ -88,7 +88,7 @@ private:
     QMap<uint, QByteArray> handles;
     QMap<uint, uint> interest;
 
-    QList<QString> m_testErrors;
+    QStringList m_testErrors;
 };
 
 bool FakeLayer::testPath(const QByteArray &path)
@@ -279,6 +279,13 @@ void FakeLayer::removeWatches(QValueSpaceObject *creator, Handle parent)
         m_testErrors << QLatin1String("Unknown handle");
 }
 
+QStringList FakeLayer::testErrors()
+{
+    QStringList result = m_testErrors;
+    m_testErrors.clear();
+    return result;
+}
+
 class tst_QValueSpace: public QObject
 {
     Q_OBJECT
@@ -329,7 +336,7 @@ void tst_QValueSpace::availableLayers()
 
 #define CHECK_ERRORS(x) do { \
     x; \
-    QList<QString> testErrors = fakeLayer->testErrors(); \
+    QStringList testErrors = fakeLayer->testErrors(); \
     if (!testErrors.isEmpty()) { \
         qDebug() << testErrors; \
         QFAIL(#x); \
@@ -341,7 +348,7 @@ void tst_QValueSpace::layerInterface_data()
     QTest::addColumn<QString>("path");
     QTest::addColumn<QByteArray>("attribute");
 
-    QList<QString> paths;
+    QStringList paths;
     paths << QString() << QString("/") << QString("//")
           << QString("layerInterface") << QString("layerInterface/")
           << QString("/layerInterface") << QString("//layerInterface")

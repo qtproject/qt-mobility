@@ -240,7 +240,7 @@ void VSExplorer::ls(const QString &abs, bool all)
 
 void VSExplorer::lsPath(QValueSpaceItem * p, int indent, bool showHidden)
 {
-    QList<QString> paths = p->subPaths();
+    QStringList paths = p->subPaths();
 
     QVariant var = p->value();
     bool spaceRequired = false;
@@ -700,7 +700,7 @@ char * item_generator(const char * t, int num)
 
         QValueSpaceItem item(vsBase);
 
-        QList<QString> schildren = item.subPaths();
+        QStringList schildren = item.subPaths();
 
         foreach(QString child, schildren) {
             if(child.startsWith(textExt)) {
@@ -779,7 +779,7 @@ void usage(char * app)
 
 void dodump(QValueSpaceItem * item)
 {
-    QList<QString> children = item->subPaths();
+    QStringList children = item->subPaths();
     foreach(QString child, children) {
         if ( child.isEmpty() )
             continue;

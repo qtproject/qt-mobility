@@ -1117,7 +1117,7 @@ void QValueSpaceItem::disconnectNotify(const char *signal)
     \c { QValueSpaceItem("/Settings").subPaths() } will return a list containing
     \c { { Nokia, Qt } } in no particular order.
 */
-QList<QString> QValueSpaceItem::subPaths() const
+QStringList QValueSpaceItem::subPaths() const
 {
     VS_CALL_ASSERT;
     QVALUESPACEITEM_D(d);
@@ -1125,7 +1125,7 @@ QList<QString> QValueSpaceItem::subPaths() const
     for(int ii = 0; ii < md->readers.count(); ++ii)
         rv.unite(md->readers[ii].first->children(md->readers[ii].second));
 
-    QList<QString> rvs;
+    QStringList rvs;
     for(QSet<QByteArray>::ConstIterator iter = rv.begin();
             iter != rv.end();
             ++iter)
