@@ -83,13 +83,6 @@ QCameraControl::~QCameraControl()
 */
 
 /*!
-    \fn QCameraControl::setDevice(const QString& device)
-
-    Set the camera device being used to \a device.
-*/
-
-
-/*!
     \fn void QCameraControl::stateChanged(QCamera::State state)
 
     Signal emitted when \a state changes state.

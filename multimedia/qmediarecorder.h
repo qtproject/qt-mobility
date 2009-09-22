@@ -110,9 +110,9 @@ public:
     int audioBitrate() const;
     int audioQuality() const;
 
-    QStringList supportedAudioEncodingOptions() const;
-    QVariant audioEncodingOption(const QString &name) const;
-    void setAudioEncodingOption(const QString &name, const QVariant &value);
+    QStringList supportedVideoCodecs() const;
+    QString videoCodecDescription(const QString &codecName) const;
+    QString videoCodec() const;
 
     QSize resolution() const;
     QSize minimumResolution() const;
@@ -124,16 +124,8 @@ public:
     FrameRate maximumFrameRate();
     QList<FrameRate> supportedFrameRates() const;
 
-    QStringList supportedVideoCodecs() const;
-    QString videoCodecDescription(const QString &codecName) const;
-    QString videoCodec() const;
-
     int videoBitrate() const;
     int videoQuality() const;
-
-    QStringList supportedVideoEncodingOptions() const;
-    QVariant videoEncodingOption(const QString &name) const;
-    void setVideoEncodingOption(const QString &name, const QVariant &value);
 
 public slots:
     void record();

@@ -51,8 +51,6 @@ public:
     virtual void stop() = 0;
     virtual QCamera::State state() const = 0;
 
-    virtual void setDevice(const QString &device) = 0;
-
 Q_SIGNALS:
     void stateChanged(QCamera::State);
 

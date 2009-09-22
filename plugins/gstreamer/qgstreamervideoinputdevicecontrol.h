@@ -32,66 +32,37 @@
 **
 ****************************************************************************/
 
-#ifndef PLAYER_H
-#define PLAYER_H
+#ifndef QGSTREAMERVIDEOINPUTDEVICECONTROL_H
+#define QGSTREAMERVIDEOINPUTDEVICECONTROL_H
 
-#include <QtGui/QWidget>
+#include <multimedia/qvideodevicecontrol.h>
+#include <QtCore/qstringlist.h>
 
-#include <multimedia/qmediaplayer.h>
-#include <multimedia/qmediaplaylist.h>
-#include <multimedia/qvideowidget.h>
-
-class QLabel;
-class QMediaPlayer;
-class QModelIndex;
-class QSlider;
-class QTableView;
-class QVideoWidget;
-
-class PlaylistModel;
-
-class Player : public QWidget
+class QGstreamerVideoInputDeviceControl : public QVideoDeviceControl
 {
-    Q_OBJECT
+Q_OBJECT
 public:
-    Player(QWidget *parent = 0);
-    ~Player();
+    QGstreamerVideoInputDeviceControl(QObject *parent);
+    ~QGstreamerVideoInputDeviceControl();
 
-Q_SIGNALS:
-    void fullscreenChanged(bool fullscreen);
+    int deviceCount() const;
 
-private slots:
-    void open();
-    void durationChanged(qint64 duration);
-    void positionChanged(qint64 progress);
-    void metaDataChanged();
+    QString name(int index) const;
+    QString description(int index) const;
+    QIcon icon(int index) const;
 
-    void seek(int seconds);
-    void jump(const QModelIndex &index);
-    void playlistPositionChanged(int);
+    int defaultDevice() const;
+    int selectedDevice() const;
 
-    void statusChanged(QMediaPlayer::MediaStatus status);
-    void bufferingProgress(int progress);
-
-    void setFullscreen(bool fullscreen);
-    void displayModeChanged(QVideoWidget::DisplayMode mode);
-
-    void showColorDialog();
+public Q_SLOTS:
+    void setSelectedDevice(int index);
 
 private:
-    void setTrackInfo(const QString &info);
-    void setStatusInfo(const QString &info);
+    void update();
 
-    QMediaPlayer *player;
-    QMediaPlaylist *playlist;
-    QVideoWidget *videoWidget;
-    QLabel *coverLabel;
-    QSlider *slider;
-    PlaylistModel *playlistModel;
-    QTableView *playlistView;
-    QDialog *colorDialog;
-    QString trackInfo;
-    QString statusInfo;
+    int m_selectedDevice;
+    QStringList m_names;
+    QStringList m_descriptions;
 };
 
-#endif
+#endif // QGSTREAMERAUDIOINPUTDEVICECONTROL_H

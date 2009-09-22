@@ -1,8 +1,6 @@
 TEMPLATE = app
 CONFIG += example
 
-INCLUDEPATH += $$PWD/../../multimedia
-
 include(../../common.pri)
 
 LIBS += -lQtMedia

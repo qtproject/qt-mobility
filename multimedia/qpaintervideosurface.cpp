@@ -215,7 +215,7 @@ QList<QVideoFrame::PixelFormat> QPainterVideoSurface::supportedPixelFormats(
 /*!
 */
 bool QPainterVideoSurface::isFormatSupported(
-        const QVideoSurfaceFormat &format, QVideoSurfaceFormat *similar)
+        const QVideoSurfaceFormat &format, QVideoSurfaceFormat *similar) const
 {
     Q_UNUSED(similar);
 
@@ -229,123 +229,121 @@ bool QPainterVideoSurface::start(const QVideoSurfaceFormat &format)
 {
     m_frame = QVideoFrame();
 
-    QSize imageSize = format.frameSize();
+    const QSize imageSize = format.frameSize();
 
+    if (imageSize.isEmpty()) {
+        setError(UnsupportedFormatError);
+    } else {
 #ifndef QT_NO_OPENGL
-    if (m_shaderSupport == ShadersSupported) {
-        makeCurrent();
+        if (m_shaderSupport == ShadersSupported) {
+            makeCurrent();
 
-        if (m_textureCount > 0) {
-            if (m_handleType != QAbstractVideoBuffer::GLTextureHandle)
-                glDeleteTextures(m_textureCount, m_textureIds);
-            glDeleteProgramsARB(1, &m_shaderId);
-
-            m_textureCount = 0;
-            m_shaderId = 0;
-        }
-
-        const char *program = 0;
-
-        if (format.handleType() == QAbstractVideoBuffer::NoHandle) {
-            switch (format.pixelFormat()) {
-            case QVideoFrame::Format_RGB32:
-                qDebug("RGB32");
-                initRgbTextureInfo(GL_RGBA, GL_RGBA, imageSize);
-                program = qt_xrgbShaderProgram;
-                break;
-            case QVideoFrame::Format_ARGB32:
-                qDebug("ARGB32");
-                initRgbTextureInfo(GL_RGBA, GL_RGBA, imageSize);
-                program = qt_argbShaderProgram;
-                break;
-            case QVideoFrame::Format_RGB565:
-                qDebug("RGG565");
-                initRgbTextureInfo(GL_RGB16, GL_RGB, imageSize);
-                program = qt_rgbShaderProgram;
-                break;
-            case QVideoFrame::Format_YV12:
-                qDebug("YV12");
-                initYv12TextureInfo(imageSize);
-                program = qt_yuvPlanarShaderProgram;
-                break;
-            case QVideoFrame::Format_YUV420P:
-                qDebug("YUV420P");
-                initYuv420PTextureInfo(imageSize);
-                program = qt_yuvPlanarShaderProgram;
-                break;
-            default:
-                break;
-            }
-        } else if (format.handleType() == QAbstractVideoBuffer::GLTextureHandle) {
-            switch (format.pixelFormat()) {
-            case QVideoFrame::Format_RGB32:
-            case QVideoFrame::Format_RGB565:
-                m_textureCount = 1;
-                program = qt_rgbShaderProgram;
-                break;
-            case QVideoFrame::Format_ARGB32:
-                m_textureCount = 1;
-                program = qt_rgbShaderProgram;
-                break;
-            default:
-                break;
-            }
-        }
-
-        if (m_textureCount > 0) {
-            Q_ASSERT(program);
-
-            glGenProgramsARB(1, &m_shaderId);
-            glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, m_shaderId);
-            glProgramStringARB(
-                    GL_FRAGMENT_PROGRAM_ARB,
-                    GL_PROGRAM_FORMAT_ASCII_ARB,
-                    qstrlen(program),
-                    reinterpret_cast<const GLvoid *>(program));
-
-            if (glGetError() == GL_NO_ERROR) {
-                if (format.handleType() == QAbstractVideoBuffer::NoHandle)
-                    glGenTextures(m_textureCount, m_textureIds);
-
-                m_handleType = format.handleType();
-                m_pixelFormat = format.pixelFormat();
-                m_imageFormat = QImage::Format_Invalid;
-                m_imageSize = imageSize;
-                m_sourceRect = format.viewport();
-                m_colorMatrixDirty = true;
-                m_ready = true;
-
-                return QAbstractVideoSurface::start(format);
-            } else {
-                const GLubyte* errorString = glGetString(GL_PROGRAM_ERROR_STRING_ARB);
-
-                qWarning("Shader compile error %s", reinterpret_cast<const char *>(errorString));
+            if (m_textureCount > 0) {
+                if (m_handleType != QAbstractVideoBuffer::GLTextureHandle)
+                    glDeleteTextures(m_textureCount, m_textureIds);
                 glDeleteProgramsARB(1, &m_shaderId);
 
                 m_textureCount = 0;
                 m_shaderId = 0;
-
-                setError(ResourceError);
             }
+
+            const char *program = 0;
+
+            if (format.handleType() == QAbstractVideoBuffer::NoHandle) {
+                switch (format.pixelFormat()) {
+                case QVideoFrame::Format_RGB32:
+                    initRgbTextureInfo(GL_RGBA, GL_RGBA, imageSize);
+                    program = qt_xrgbShaderProgram;
+                    break;
+                case QVideoFrame::Format_ARGB32:
+                    initRgbTextureInfo(GL_RGBA, GL_RGBA, imageSize);
+                    program = qt_argbShaderProgram;
+                    break;
+                case QVideoFrame::Format_RGB565:
+                    initRgbTextureInfo(GL_RGB16, GL_RGB, imageSize);
+                    program = qt_rgbShaderProgram;
+                    break;
+                case QVideoFrame::Format_YV12:
+                    initYv12TextureInfo(imageSize);
+                    program = qt_yuvPlanarShaderProgram;
+                    break;
+                case QVideoFrame::Format_YUV420P:
+                    initYuv420PTextureInfo(imageSize);
+                    program = qt_yuvPlanarShaderProgram;
+                    break;
+                default:
+                    break;
+                }
+            } else if (format.handleType() == QAbstractVideoBuffer::GLTextureHandle) {
+                switch (format.pixelFormat()) {
+                case QVideoFrame::Format_RGB32:
+                case QVideoFrame::Format_RGB565:
+                    m_textureCount = 1;
+                    program = qt_rgbShaderProgram;
+                    break;
+                case QVideoFrame::Format_ARGB32:
+                    m_textureCount = 1;
+                    program = qt_rgbShaderProgram;
+                    break;
+                default:
+                    break;
+                }
+            }
+
+            if (m_textureCount > 0) {
+                Q_ASSERT(program);
+
+                glGenProgramsARB(1, &m_shaderId);
+                glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, m_shaderId);
+                glProgramStringARB(
+                        GL_FRAGMENT_PROGRAM_ARB,
+                        GL_PROGRAM_FORMAT_ASCII_ARB,
+                        qstrlen(program),
+                        reinterpret_cast<const GLvoid *>(program));
+
+                if (glGetError() == GL_NO_ERROR) {
+                    if (format.handleType() == QAbstractVideoBuffer::NoHandle)
+                        glGenTextures(m_textureCount, m_textureIds);
+
+                    m_handleType = format.handleType();
+                    m_pixelFormat = format.pixelFormat();
+                    m_imageFormat = QImage::Format_Invalid;
+                    m_imageSize = imageSize;
+                    m_sourceRect = format.viewport();
+                    m_colorMatrixDirty = true;
+                    m_ready = true;
+
+                    return QAbstractVideoSurface::start(format);
+                } else {
+                    const GLubyte* errorString = glGetString(GL_PROGRAM_ERROR_STRING_ARB);
+
+                    qWarning("Shader compile error %s", reinterpret_cast<const char *>(errorString));
+                    glDeleteProgramsARB(1, &m_shaderId);
+
+                    m_textureCount = 0;
+                    m_shaderId = 0;
+
+                    setError(ResourceError);
+                }
+            }
+            doneCurrent();
         }
-        doneCurrent();
+    #endif
+        const QImage::Format imageFormat = QVideoFrame::equivalentImageFormat(format.pixelFormat());
+
+        if (imageFormat == QImage::Format_Invalid) {
+            setError(UnsupportedFormatError);
+        } else {
+            m_handleType = format.handleType();
+            m_pixelFormat = format.pixelFormat();
+            m_imageFormat = imageFormat;
+            m_imageSize = imageSize;
+            m_sourceRect = format.viewport();
+            m_ready = true;
+
+            return QAbstractVideoSurface::start(format);
+        }
     }
-#endif
-    QImage::Format imageFormat = QVideoFrame::equivalentImageFormat(format.pixelFormat());
-
-    if (imageFormat == QImage::Format_Invalid || imageSize.isEmpty()) {
-        setError(UnsupportedFormatError);
-    } else {
-        m_handleType = format.handleType();
-        m_pixelFormat = format.pixelFormat();
-        m_imageFormat = imageFormat;
-        m_imageSize = imageSize;
-        m_sourceRect = format.viewport();
-        m_ready = true;
-
-        return QAbstractVideoSurface::start(format);
-    }
-
     if (isStarted()) {
         m_handleType = QAbstractVideoBuffer::NoHandle;
         m_pixelFormat = QVideoFrame::Format_Invalid;
@@ -451,11 +449,8 @@ bool QPainterVideoSurface::present(const QVideoFrame &frame)
 }
 
 /*!
+    \fn QPainterVideoSurface::brightness() const
 */
-int QPainterVideoSurface::brightness() const
-{
-    return m_brightness;
-}
 
 /*!
 */
@@ -467,11 +462,8 @@ void QPainterVideoSurface::setBrightness(int brightness)
 }
 
 /*!
+    \fn QPainterVideoSurface::contrast() const
 */
-int QPainterVideoSurface::contrast() const
-{
-    return m_contrast;
-}
 
 /*!
 */
@@ -483,11 +475,8 @@ void QPainterVideoSurface::setContrast(int contrast)
 }
 
 /*!
+    \fn QPainterVideoSurface::hue() const
 */
-int QPainterVideoSurface::hue() const
-{
-    return m_hue;
-}
 
 /*!
 */
@@ -499,11 +488,8 @@ void QPainterVideoSurface::setHue(int hue)
 }
 
 /*!
+    \fn QPainterVideoSurface::saturation() const
 */
-int QPainterVideoSurface::saturation() const
-{
-    return m_saturation;
-}
 
 /*!
 */
@@ -515,11 +501,8 @@ void QPainterVideoSurface::setSaturation(int saturation)
 }
 
 /*!
+    \fn QPainterVideoSurface::isReady() const
 */
-bool QPainterVideoSurface::isReady() const
-{
-    return m_ready;
-}
 
 /*!
 */
@@ -677,10 +660,9 @@ void QPainterVideoSurface::initYv12TextureInfo(const QSize &size)
     m_textureOffsets[2] = size.width() * size.height();
 }
 
-
 void QPainterVideoSurface::updateColorMatrix()
 {
-    const qreal b = m_brightness / 100.0;
+    const qreal b = m_brightness / 200.0;
     const qreal c = m_contrast / 100.0 + 1.0;
     const qreal h = m_hue / 200.0;
     const qreal s = m_saturation / 100.0 + 1.0;
@@ -688,8 +670,17 @@ void QPainterVideoSurface::updateColorMatrix()
     const qreal cosH = qCos(M_PI * h);
     const qreal sinH = qSin(M_PI * h);
 
-    const qreal h1 = 1.0 - cosH + sinH;
-    const qreal h2 = 1.0 - cosH - sinH;
+    const qreal h11 = -0.4728 * cosH + 0.7954 * sinH + 1.4728;
+    const qreal h21 = -0.9253 * cosH - 0.0118 * sinH + 0.9523;
+    const qreal h31 =  0.4525 * cosH + 0.8072 * sinH - 0.4524;
+
+    const qreal h12 =  1.4728 * cosH - 1.3728 * sinH - 1.4728;
+    const qreal h22 =  1.9253 * cosH + 0.5891 * sinH - 0.9253;
+    const qreal h32 = -0.4525 * cosH - 1.9619 * sinH + 0.4525;
+
+    const qreal h13 =  1.4728 * cosH - 0.2181 * sinH - 1.4728;
+    const qreal h23 =  0.9253 * cosH + 1.1665 * sinH - 0.9253;
+    const qreal h33 =  0.5475 * cosH - 1.3846 * sinH + 0.4525;
 
     const qreal sr = (1.0 - s) * 0.3086;
     const qreal sg = (1.0 - s) * 0.6094;
@@ -701,19 +692,19 @@ void QPainterVideoSurface::updateColorMatrix()
 
     const float m4 = (s + sr + sg + sb) * (0.5 - 0.5 * c + b);
 
-    m_colorMatrix(0, 0) = c * (sr_s + sg * h2 + sb * h1);
-    m_colorMatrix(0, 1) = c * (sr_s * h1 + sg + sb * h2);
-    m_colorMatrix(0, 2) = c * (sr_s * h2 + sg * h1 + sb);
+    m_colorMatrix(0, 0) = c * (sr_s * h11 + sg * h21 + sb * h31);
+    m_colorMatrix(0, 1) = c * (sr_s * h12 + sg * h22 + sb * h32);
+    m_colorMatrix(0, 2) = c * (sr_s * h13 + sg * h23 + sb * h33);
     m_colorMatrix(0, 3) = m4;
 
-    m_colorMatrix(1, 0) = c * (sr + sg_s * h2 + sb * h1);
-    m_colorMatrix(1, 1) = c * (sr * h1 + sg_s + sb * h2);
-    m_colorMatrix(1, 2) = c * (sr * h2 + sg_s * h1 + sb);
+    m_colorMatrix(1, 0) = c * (sr * h11 + sg_s * h21 + sb * h31);
+    m_colorMatrix(1, 1) = c * (sr * h12 + sg_s * h22 + sb * h32);
+    m_colorMatrix(1, 2) = c * (sr * h13 + sg_s * h23 + sb * h33);
     m_colorMatrix(1, 3) = m4;
 
-    m_colorMatrix(2, 0) = c * (sr + sg * h2 + sb_s * h1);
-    m_colorMatrix(2, 1) = c * (sr * h1 + sg + sb_s * h2);
-    m_colorMatrix(2, 2) = c * (sr * h2 + sg * h1 + sb_s);
+    m_colorMatrix(2, 0) = c * (sr * h11 + sg * h21 + sb_s * h31);
+    m_colorMatrix(2, 1) = c * (sr * h12 + sg * h22 + sb_s * h32);
+    m_colorMatrix(2, 2) = c * (sr * h13 + sg * h23 + sb_s * h33);
     m_colorMatrix(2, 3) = m4;
 
     m_colorMatrix(3, 0) = 0.0;

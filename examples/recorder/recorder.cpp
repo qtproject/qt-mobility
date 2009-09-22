@@ -35,17 +35,11 @@
 #include "recorder.h"
 #include "ui_recorder.h"
 
-#include <qabstractmediaservice.h>
-#include <qmediarecorder.h>
-#include <qaudiodevicecontrol.h>
-#include <qaudioencodercontrol.h>
-#include <qmediaformatcontrol.h>
-
-#ifndef QT_NO_MULTIMEDIA
-#include <QtMultimedia/qaudioformat.h>
-#else
-#include <qaudioformat.h>
-#endif
+#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qmediarecorder.h>
+#include <multimedia/qaudiodevicecontrol.h>
+#include <multimedia/qaudioencodercontrol.h>
+#include <multimedia/qmediaformatcontrol.h>
 
 #include <QtGui>
 
