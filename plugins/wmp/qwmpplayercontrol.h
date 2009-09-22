@@ -35,7 +35,7 @@
 #ifndef QWMPPLAYERCONTROL_H
 #define QWMPPLAYERCONTROL_H
 
-#include "qmediaplayercontrol.h"
+#include <multimedia/qmediaplayercontrol.h>
 
 #include <wmp.h>
 
