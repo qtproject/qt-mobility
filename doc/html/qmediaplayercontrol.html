@@ -31,11 +31,12 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#isVideoAvailable">isVideoAvailable</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QMediaSource </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#media">media</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QMediaPlayer::MediaStatus </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#mediaStatus">mediaStatus</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual const QIODevice * </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#mediaStream">mediaStream</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#pause">pause</a></b> () = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#play">play</a></b> () = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual float </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#playbackRate">playbackRate</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual qint64 </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#position">position</a></b> () const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#setMedia">setMedia</a></b> ( const QMediaSource &amp; <i>media</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#setMedia">setMedia</a></b> ( const QMediaSource &amp; <i>media</i>, QIODevice * <i>stream</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#setMuted">setMuted</a></b> ( bool <i>mute</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#setPlaybackRate">setPlaybackRate</a></b> ( float <i>rate</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#setPosition">setPosition</a></b> ( qint64 <i>position</i> ) = 0</td></tr>
@@ -124,6 +125,9 @@
 <h3 class="fn"><a name="mediaStatusChanged"></a>void QMediaPlayerControl::mediaStatusChanged ( <a href="qmediaplayer.html#MediaStatus-enum">QMediaPlayer::MediaStatus</a> <i>status</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the <i>status</i> of the current media has changed.</p>
 <p>See also <a href="qmediaplayercontrol.html#mediaStatus">mediaStatus</a>().</p>
+<h3 class="fn"><a name="mediaStream"></a>const <a href="http://qt.nokia.com/doc/4.5/qiodevice.html">QIODevice</a> * QMediaPlayerControl::mediaStream () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns the current media stream. This is only a valid if a stream was passed to <a href="qmediaplayercontrol.html#setMedia">setMedia</a>().</p>
+<p>See also <a href="qmediaplayercontrol.html#setMedia">setMedia</a>().</p>
 <h3 class="fn"><a name="mutingChanged"></a>void QMediaPlayerControl::mutingChanged ( bool <i>mute</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals a change in the <i>mute</i> status of a player control.</p>
 <p>See also <a href="qmediaplayercontrol.html#isMuted">isMuted</a>().</p>
@@ -148,8 +152,8 @@
 <h3 class="fn"><a name="seekableChanged"></a>void QMediaPlayerControl::seekableChanged ( bool <i>seekable</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the <i>seekable</i> state of a player control has changed.</p>
 <p>See also <a href="qmediaplayercontrol.html#isSeekable">isSeekable</a>().</p>
-<h3 class="fn"><a name="setMedia"></a>void QMediaPlayerControl::setMedia ( const <a href="qmediasource.html">QMediaSource</a> &amp; <i>media</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Sets the current <i>media</i> source.</p>
+<h3 class="fn"><a name="setMedia"></a>void QMediaPlayerControl::setMedia ( const <a href="qmediasource.html">QMediaSource</a> &amp; <i>media</i>, <a href="http://qt.nokia.com/doc/4.5/qiodevice.html">QIODevice</a> * <i>stream</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Sets the current <i>media</i> source. If a <i>stream</i> is supplied; data will be read from that instead of attempting to resolve the media source. The media source may still be used to supply media information such as mime type.</p>
 <p>See also <a href="qmediaplayercontrol.html#media">media</a>().</p>
 <h3 class="fn"><a name="setMuted"></a>void QMediaPlayerControl::setMuted ( bool <i>mute</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Sets the <i>mute</i> state of a player control.</p>

@@ -109,6 +109,12 @@ QAudioDeviceControl::~QAudioDeviceControl()
 */
 
 /*!
+    \fn QAudioDeviceControl::selectedDeviceChanged(const QString &deviceName)
+
+    Signals that the audio device has changed to \a deviceName.
+*/
+
+/*!
     \fn QAudioDeviceControl::setSelectedDevice(int index)
 
     Selects the audio device at \a index.

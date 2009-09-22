@@ -795,6 +795,12 @@ void QVideoWidget::setContrast(int contrast)
     Valid hue values range between -100 and 100, the default is 0.
 */
 
+/*!
+    \fn QVideoWidget::hueChanged(int hue)
+
+    Signals that a video widgets's \a hue has changed.
+*/
+
 int QVideoWidget::hue() const
 {
     return d_func()->hue;

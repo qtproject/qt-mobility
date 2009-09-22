@@ -173,7 +173,7 @@ void QMediaRecorderPrivate::_q_error(int error, const QString &errorString)
 
 
 /*!
-    Construct a media recorder object with \a mediaObject and \a parent.
+    Construct a media recorder object with \a mediaObject.
 */
 
 QMediaRecorder::QMediaRecorder(QAbstractMediaObject *mediaObject):
@@ -677,73 +677,6 @@ void QMediaRecorder::stop()
 
     Signal emitted when \a error changed.
 */
-
-/*!
-    \fn QMediaRecorder::errorStringChanged(const QString &error)
-
-    Signal emitted when \a error changed.
-*/
-
-/*!
-    \fn formatChanged(const QString &format);
-
-    Signal emitted when container \a format changed.
-*/
-
-/*!
-    \fn audioFormatChanged(const QAudioFormat &format);
-
-    Signal emitted when audio \a format changed.
-*/
-
-/*!
-    \fn audioCodecChanged(const QString &codecName);
-
-    Signal emitted when audio \a codec changed.
-*/
-
-/*!
-    \fn audioBitrateChanged(int bitrate);
-
-    Signal emitted when audio \a bitrate changed.
-*/
-
-/*!
-    \fn audioQualityChanged(int quality);
-
-    Signal emitted when audio \a quality changed.
-*/
-
-/*!
-    \fn resolutionChanged(const QSize &resolution);
-
-    Signal emitted when video \a resolution changed.
-*/
-
-/*!
-    \fn frameRateChanged(const QMediaRecorder::FrameRate &rate);
-
-    Signal emitted when frame \a rate changed.
-*/
-
-/*!
-    \fn videoCodecChanged(const QString &codec);
-
-    Signal emitted when video \a codec changed.
-*/
-
-/*!
-    \fn videoBitrateChanged(int bitrate);
-
-    Signal emitted when video \a bitrate changed.
-*/
-
-/*!
-    \fn videoQualityChanged(int quality);
-
-    Signal emitted when video \a quality value is changed.
-*/
-
 
 
 #include "moc_qmediarecorder.cpp"

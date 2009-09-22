@@ -313,6 +313,11 @@ void QAbstractMediaObject::removePropertyWatch(QByteArray const &name)
 */
 
 /*!
+    \property QAbstractMediaObject::metaDataAvailable
+    \brief Identifies if access to a media object's meta-data is available.
+*/
+
+/*!
     Identifies if access to a media object's meta-data is available.
 
     Returns true if the meta-data is available and false otherwise.
@@ -330,6 +335,11 @@ bool QAbstractMediaObject::isMetaDataAvailable() const
     \fn QAbstractMediaObject::metaDataAvailableChanged(bool available)
 
     Signals that the \a available state of a media object's meta-data has changed.
+*/
+
+/*!
+    \property QAbstractMediaObject::metaDataWritable
+    \brief Identifies if a media object's meta-data is writable.
 */
 
 /*!

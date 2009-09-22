@@ -73,7 +73,7 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
 /*!
   \fn QMediaPlaylistControl::setPlaylistProvider(QMediaPlaylistProvider *playlist)
 
-  Set the playlist of this media player to \a mediaPlaylist.
+  Set the playlist of this media player to \a playlist.
 
   In many cases it is possible just to use the playlist
   constructed by player, but sometimes replacing the whole
@@ -96,7 +96,7 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
 */
 
 /*!
-  \fn QMediaPlaylistControl::nextPosition(int steps) const
+  \fn QMediaPlaylistControl::nextPosition(int step) const
 
   Returns the position of item, which were current after calling advance()
   \a step times.
@@ -104,16 +104,16 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
   Returned value depends on the size of playlist, current position
   and playback mode.
 
-  \sa previousPosition QMediaPlaylist::playbackMode
+  \sa QMediaPlaylist::playbackMode
 */
 
 /*!
-  \fn QMediaPlaylistControl::previousPosition(int steps) const
+  \fn QMediaPlaylistControl::previousPosition(int step) const
 
   Returns the position of item, which were current after calling back()
   \a step times.
 
-  \sa nextPosition QMediaPlaylist::playbackMode
+  \sa QMediaPlaylist::playbackMode
 */
 
 /*!
@@ -153,7 +153,7 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
 /*!
   \fn QMediaPlaylistControl::playlistPositionChanged(int position)
 
-  Signal emited when the playlist position is changed.
+  Signal emited when the playlist \a position is changed.
 */
 
 /*!

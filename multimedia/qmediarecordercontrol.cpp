@@ -47,7 +47,7 @@
 */
 
 /*!
-    Construct a media recorder control.
+    Construct a media recorder control with \a parent.
 */
 
 QMediaRecorderControl::QMediaRecorderControl(QObject* parent)
@@ -79,11 +79,6 @@ QMediaRecorderControl::~QMediaRecorderControl()
     \fn int QMediaRecorderControl::state() const
 
     Return the current state.
-*/
-
-/*!
-    \property QMediaRecorderControl::duration
-    \brief Current duration in milliseconds.
 */
 
 /*!

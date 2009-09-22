@@ -131,5 +131,5 @@ QList<QSize> QImageEncoderControl::supportedResolutions() const
   Sets the image quality to \a value.
   Value has the same meaning as QAudioEncoderControl::quality.
 
-  \sa quality() QAudioEncoderControl::quality
+  \sa quality()
 */

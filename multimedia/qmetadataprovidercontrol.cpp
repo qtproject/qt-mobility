@@ -105,7 +105,7 @@ QMetaDataProviderControl::~QMetaDataProviderControl()
 */
 
 /*!
-    \fn void QMetaDataProviderControl::metaDataAvailabileChanged(bool available)
+    \fn void QMetaDataProviderControl::metaDataAvailableChanged(bool available)
 
     Signal the availability of meta-data has changed, \a available will
     be true if the multimedia object has meta-data.

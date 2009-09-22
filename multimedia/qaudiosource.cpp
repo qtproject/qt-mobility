@@ -143,6 +143,10 @@ QAbstractMediaService *QAudioSource::service() const
     return d_func()->service;
 }
 
+/*!
+    Returns the audio format.
+*/
+
 QAudioFormat QAudioSource::format() const
 {
     if(d_func()->audioEncoderControl) {
@@ -159,6 +163,10 @@ QAudioFormat QAudioSource::format() const
     return QAudioFormat();
 }
 
+/*!
+    Sets the audio format to \a format.
+*/
+
 void QAudioSource::setFormat(const QAudioFormat &format)
 {
     if(d_func()->audioEncoderControl) {
@@ -168,6 +176,10 @@ void QAudioSource::setFormat(const QAudioFormat &format)
         d_func()->audioEncoderControl->setSampleSize(format.sampleSize());
     }
 }
+
+/*!
+    Returns true if able to set the audio format to \a format.
+*/
 
 bool QAudioSource::isFormatSupported(const QAudioFormat &format) const
 {
@@ -187,6 +199,10 @@ bool QAudioSource::isFormatSupported(const QAudioFormat &format) const
     return false;
 }
 
+/*!
+    Returns a list of available codecs.
+*/
+
 QStringList QAudioSource::supportedCodecs() const
 {
     QStringList list;
@@ -195,6 +211,10 @@ QStringList QAudioSource::supportedCodecs() const
 
     return list;
 }
+
+/*!
+    Returns a list of available frequencies.
+*/
 
 QList<int> QAudioSource::supportedFrequencies() const
 {
@@ -205,6 +225,10 @@ QList<int> QAudioSource::supportedFrequencies() const
     return list;
 }
 
+/*!
+    Returns a list of available channels.
+*/
+
 QList<int> QAudioSource::supportedChannels() const
 {
     QList<int> list;
@@ -213,6 +237,10 @@ QList<int> QAudioSource::supportedChannels() const
 
     return list;
 }
+
+/*!
+    Returns a list of available sample sizes.
+*/
 
 QList<int> QAudioSource::supportedSampleSizes() const
 {

@@ -126,7 +126,7 @@ QVideoWidgetControl::~QVideoWidgetControl()
 
 /*!
   \fn void QVideoWidgetControl::setContrast(int contrast)
-    Sets the contrast adjustment for a video widget.
+    Sets the contrast adjustment for a video widget to \a contrast.
 
     Valid contrast values range between -100 and 100, the default is 0.
 */
@@ -178,4 +178,10 @@ QVideoWidgetControl::~QVideoWidgetControl()
     \fn QVideoWidgetControl::saturationChanged(int saturation)
 
     Signals that a video widget's \a saturation adjustment has changed.
+*/
+
+/*!
+    \fn QVideoWidgetControl::videoWidget()
+
+    Returns the QWidget.
 */

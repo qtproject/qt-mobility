@@ -68,31 +68,26 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
 
 
 /*!
-enum QMediaPlaylist::PlaybackMode
+    \enum QMediaPlaylist::PlaybackMode
 
-The QMediaPlaylist::PlaybackMode describes the order items in playlist are played.
+    The QMediaPlaylist::PlaybackMode describes the order items in playlist are played.
 
-\item
-    CurrentItemOnce The current item is played only once.
+    \value CurrentItemOnce    The current item is played only once.
 
-\item
-    CurrentItemInLoop The current item is played in the loop.
+    \value CurrentItemInLoop  The current item is played in the loop.
 
-\item Linear
-    Playback starts from the first to the last items and stops.
-    next item is a null item when the last one is currently playing.
+    \value Linear             Playback starts from the first to the last items and stops.
+                              next item is a null item when the last one is currently playing.
 
-\item Loop
-    Playback continues from the first item after the last one finished playing.
+    \value Loop               Playback continues from the first item after the last one finished playing.
 
-\item Random
-    Play items in random order.
+    \value Random             Play items in random order.
 */
 
 
 
 /*!
-  Create a new playlist object for playlist \a source with the given \a parent.
+  Create a new playlist object for with the given \a parent.
   If source is null, internal local memory playlist source will be created.
   */
 QMediaPlaylist::QMediaPlaylist(QAbstractMediaObject *parent)
@@ -198,12 +193,12 @@ QMediaSource QMediaPlaylist::currentMedia() const
 
 /*!
   Returns the position of item, which were current after calling advance()
-  \a step times.
+  \a steps times.
 
   Returned value depends on the size of playlist, current position
   and playback mode.
 
-  \sa previousPosition QMediaPlaylist::playbackMode
+  \sa QMediaPlaylist::playbackMode
 */
 int QMediaPlaylist::nextPosition(int steps) const
 {
@@ -212,9 +207,9 @@ int QMediaPlaylist::nextPosition(int steps) const
 
 /*!
   Returns the position of item, which were current after calling back()
-  \a step times.
+  \a steps times.
 
-  \sa nextPosition QMediaPlaylist::playbackMode
+  \sa QMediaPlaylist::playbackMode
 */
 
 int QMediaPlaylist::previousPosition(int steps) const
@@ -261,7 +256,7 @@ QMediaSource QMediaPlaylist::media(int position) const
 }
 
 /*!
-  Append the list of media \a sources to the playlist.
+  Append the list of media \a source to the playlist.
 
   Returns true if the operation is successfull, other wise return false.
   */
@@ -496,5 +491,56 @@ void QMediaPlaylist::setCurrentPosition(int playlistPosition)
     This signal is emitted after media sources have been changed in the playlist
     between \a start and \a end positions inclusive.
  */
+
+/*!
+    \fn void QMediaPlaylist::playlistProviderChanged()
+
+    Signal emitted when playlist provider has changed.
+*/
+
+/*!
+    \fn void QMediaPlaylist::playlistPositionChanged(int position)
+
+    Signal emitted when playlist position changed to \a position.
+*/
+
+/*!
+    \fn void QMediaPlaylist::playbackModeChanged(QMediaPlaylist::PlaybackMode mode)
+
+    Signal emitted when playback mode changed to \a mode.
+*/
+
+/*!
+    \fn void QMediaPlaylist::itemsAboutToBeInserted(int start, int end)
+
+    Signal emitted when item to be inserted at \a start and ending at \a end.
+*/
+
+/*!
+    \fn void QMediaPlaylist::itemsAboutToBeRemoved(int start, int end)
+
+    Signal emitted when item to de deleted ar \a start and ending at \a end.
+*/
+
+/*!
+    \fn void QMediaPlaylist::currentMediaChanged(const QMediaSource &source)
+
+    Signal emitted when current media changes to \a source.
+*/
+
+/*!
+    \property QMediaPlaylist::playlistProvider
+    \brief Current playlist provider.
+*/
+
+/*!
+    \property QMediaPlaylist::currentPosition
+    \brief Current position.
+*/
+
+/*!
+    \property QMediaPlaylist::currentMedia
+    \brief Current media source.
+*/
 
 #include "moc_qmediaplaylist.cpp"

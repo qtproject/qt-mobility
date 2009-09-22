@@ -173,7 +173,7 @@ QVideoWindowControl::~QVideoWindowControl()
 /*!
     \fn QVideoWindowControl::setContrast(int contrast)
 
-    Sets the contrast adjustment for a video overlay.
+    Sets the \a contrast adjustment for a video overlay.
 
     Valid contrast values range between -100 and 100, the default is 0.
 */

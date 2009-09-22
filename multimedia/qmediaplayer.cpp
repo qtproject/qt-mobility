@@ -301,6 +301,10 @@ float QMediaPlayer::playbackRate() const
     return d_func()->control->playbackRate();
 }
 
+/*!
+    Returns the current error state.
+*/
+
 QMediaPlayer::Error QMediaPlayer::error() const
 {
     return d_func()->error;

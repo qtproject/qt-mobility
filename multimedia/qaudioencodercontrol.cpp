@@ -63,25 +63,10 @@ QAudioEncoderControl::~QAudioEncoderControl()
 {
 }
 
-
-
 /*!
-  \fn QAudioEncoderControl::format() const
+  \fn QAudioEncoderControl::supportedFrequencyRange() const
 
-  Returns the audio format being used.
-*/
-
-/*!
-  \fn QAudioEncoderControl::isFormatSupported(const QAudioFormat &format) const
-
-  Returns true if the given \a format is supported.
-*/
-
-/*!
-  \fn QAudioEncoderControl::setFormat(const QAudioFormat &format)
-
-  Set the audio format. If format is null, the media engine will
-  choose some resonable default one.
+  Returns the minimum and maximum frequencies available.
 */
 
 /*!
@@ -99,7 +84,7 @@ QAudioEncoderControl::~QAudioEncoderControl()
 /*!
   \fn QAudioEncoderControl::setAudioCodec(const QString &codecName)
 
-  Sets the audio codec to \a codecName.
+  Returns true if able to set the audio codec to \a codecName.
 */
 
 /*!
@@ -115,7 +100,7 @@ QAudioEncoderControl::~QAudioEncoderControl()
 */
 
 /*!
-  \fn QAudioEncoderControl::setBitrate(int)
+  \fn QAudioEncoderControl::setBitrate(int value)
 
   Sets the bitrate of encoded audio stream to \a value.
 */
@@ -125,15 +110,15 @@ QAudioEncoderControl::~QAudioEncoderControl()
 
   Returns the normalized audio quality parameter.
 
-  \sa QAudioEncoderControl::quality
+  \sa setQuality()
 */
 
 /*!
-  \fn QAudioEncoderControl::setQuality(qreal value)
+  \fn QAudioEncoderControl::setQuality(int value)
 
   Set the quality of audio stream to \a value in range [0..100].
 
-  \sa QAudioEncoderControl::quality
+  \sa quality()
 */
 
 /*!
@@ -188,7 +173,7 @@ QAudioEncoderControl::~QAudioEncoderControl()
 /*!
   \fn QAudioEncoderControl::setSampleSize(int sampleSize)
 
-  Sets the sample size of uncompressed audio stream.
+  Sets the sample size of uncompressed audio stream to \a sampleSize.
 */
 
 /*!
