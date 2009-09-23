@@ -352,7 +352,7 @@ namespace {
 
         if (!name.isEmpty() || !address.isEmpty()) {
             QString from;
-            if (!name.isEmpty() && !address.isEmpty()) {
+            if (!name.isEmpty() && !address.isEmpty() && (name != address)) {
                 from = name + " <" + address + ">";
             } else {
                 from = (!name.isEmpty() ? name : address);
