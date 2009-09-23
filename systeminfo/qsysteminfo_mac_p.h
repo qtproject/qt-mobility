@@ -227,7 +227,7 @@ QT_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif /*QSYSTEMSINFO_LINUX_P_H*/
+#endif /*QSYSTEMSINFO_MAC_P_H*/
 
 // End of file
 
