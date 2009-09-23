@@ -127,6 +127,7 @@ void tst_QMessageStore::testAccount()
     QMessageAccount account(accountId);
     QCOMPARE(account.id(), accountId);
     QCOMPARE(account.name(), name);
+    QCOMPARE(account.messageTypes(), QMessage::Email);
 
     QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts());
     QVERIFY(accountIds.contains(accountId));
