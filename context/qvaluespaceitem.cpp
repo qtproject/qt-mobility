@@ -214,8 +214,7 @@ struct QValueSpaceItemPrivate
             if (QAbstractValueSpaceLayer::InvalidHandle != handle) {
                 readers.append(qMakePair(read, handle));
 
-                if (read->supportsRequests())
-                    read->notifyInterest(handle, true);
+                read->notifyInterest(handle, true);
             }
         }
     }
@@ -241,8 +240,7 @@ struct QValueSpaceItemPrivate
             if (QAbstractValueSpaceLayer::InvalidHandle != handle) {
                 readers.append(qMakePair(read, handle));
 
-                if (read->supportsRequests())
-                    read->notifyInterest(handle, true);
+                read->notifyInterest(handle, true);
             }
         }
     }
@@ -261,8 +259,7 @@ struct QValueSpaceItemPrivate
             if (QAbstractValueSpaceLayer::InvalidHandle != handle) {
                 readers.append(qMakePair(read, handle));
 
-                if (read->supportsRequests())
-                    read->notifyInterest(handle, true);
+                read->notifyInterest(handle, true);
             }
         }
     }

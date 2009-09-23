@@ -349,15 +349,6 @@ bool QValueSpaceObject::isValid() const
 }
 
 /*!
-    Returns true if this object will emit signals in response to requests or notifications from
-    QValueSpaceItems.
-*/
-bool QValueSpaceObject::supportsRequests() const
-{
-    return (d->layer && d->layer->supportsRequests());
-}
-
-/*!
     Forcibly sync all Value Space objects.
 
     For performance reasons attribute changes are batched internally by

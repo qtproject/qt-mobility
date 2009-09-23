@@ -67,9 +67,7 @@ public:
     QSet<QByteArray> children(Handle handle);
 
     /* QValueSpaceItem functions */
-    bool supportsRequests() const { return false; }
     bool notifyInterest(Handle handle, bool interested);
-    bool syncRequests();
 
     /* QValueSpaceObject functions */
     bool setValue(QValueSpaceObject *creator, Handle handle, const QVariant &data);
@@ -1147,11 +1145,6 @@ bool RegistryLayer::requestRemoveValue(Handle, const QByteArray &)
 bool RegistryLayer::notifyInterest(Handle, bool)
 {
     return false;
-}
-
-bool RegistryLayer::syncRequests()
-{
-    return true;
 }
 
 QT_END_NAMESPACE

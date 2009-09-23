@@ -77,9 +77,7 @@ public:
     virtual QValueSpace::LayerOptions layerOptions() const = 0;
 
     /* QValueSpaceItem functions */
-    virtual bool supportsRequests() const = 0;
     virtual bool notifyInterest(Handle handle, bool interested) = 0;
-    virtual bool syncRequests() = 0;
 
     /* QValueSpaceObject functions */
     virtual bool setValue(QValueSpaceObject *creator, Handle handle,

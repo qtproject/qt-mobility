@@ -1679,9 +1679,7 @@ public:
     QValueSpace::LayerOptions layerOptions() const;
 
     /* QValueSpaceItem functions */
-    bool supportsRequests() const { return true; }
     bool notifyInterest(Handle handle, bool interested);
-    bool syncRequests();
 
     /* QValueSpaceObject functions */
     bool setValue(QValueSpaceObject *creator, Handle handle, const QByteArray &, const QVariant &);
@@ -3225,11 +3223,6 @@ bool SharedMemoryLayer::notifyInterest(Handle handle, bool interested)
         doNotify(rhandle->path, 0, interested);
     }
 
-    return true;
-}
-
-bool SharedMemoryLayer::syncRequests()
-{
     return true;
 }
 

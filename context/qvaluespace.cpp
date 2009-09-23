@@ -222,13 +222,6 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn bool QAbstractValueSpaceLayer::supportsRequests() const
-
-    Returns true if the layer supports sending requests via the requestSetValue() and
-    requestRemoveValue() functions; otherwise returns false.
-*/
-
-/*!
     \fn bool QAbstractValueSpaceLayer::notifyInterest(Handle handle, bool interested)
 
     Registers or unregisters that the caller is interested in \a handle and any subpaths under it.
@@ -238,14 +231,6 @@ QT_BEGIN_NAMESPACE
     matching call with \a interested set to false.
 
     Returns true if the notification was successfully sent; otherwise returns false.
-*/
-
-/*!
-    \fn bool QAbstractValueSpaceLayer::syncRequests()
-
-    Commit any pending request made through call to requestSetValue() and requestRemoveValue().
-
-    Returns true on success; otherwise returns false.
 */
 
 /*!

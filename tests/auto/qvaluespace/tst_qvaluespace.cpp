@@ -65,9 +65,7 @@ public:
     QValueSpace::LayerOptions layerOptions() const;
 
     /* QValueSpaceItem functions */
-    bool supportsRequests() const { return true; }
     bool notifyInterest(Handle handle, bool interested);
-    bool syncRequests() { return true; }
 
     /* QValueSpaceObject functions */
     bool setValue(QValueSpaceObject *creator, Handle handle, const QByteArray &subPath, const QVariant &value);
@@ -374,7 +372,6 @@ void tst_QValueSpace::layerInterface()
     CHECK_ERRORS(object = new QValueSpaceObject(path, fakeLayer->id()));
 
     QVERIFY(object->isValid());
-    QVERIFY(object->supportsRequests());
 
     CHECK_ERRORS(object->setAttribute(attribute, 10));
     CHECK_ERRORS(object->removeAttribute(attribute));

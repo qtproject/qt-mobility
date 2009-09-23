@@ -67,8 +67,6 @@ public:
 
     bool isValid() const;
 
-    bool supportsRequests() const;
-
     static void sync();
 
 signals:

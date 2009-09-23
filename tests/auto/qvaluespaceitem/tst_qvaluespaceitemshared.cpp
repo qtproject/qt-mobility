@@ -829,25 +829,15 @@ void tst_QValueSpaceItem::interestNotification_data()
     QTest::addColumn<QString>("objectPath");
     QTest::addColumn<QString>("attribute");
 
-    bool skip = true;
-
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
     for (int i = 0; i < layers.count(); ++i) {
         QAbstractValueSpaceLayer *layer = layers.at(i);
-
-        if (!layer->supportsRequests())
-            continue;
-
-        skip = false;
 
         QTest::newRow("QValueSpaceItem(char *)")
             << layer << CharStar << "/interestNotification" << "/value";
         QTest::newRow("QValueSpaceItem(QString)")
             << layer << String << "/interestNotification" << "/value";
     }
-
-    if (skip)
-        QSKIP("No applicable layers found.", SkipAll);
 }
 
 void tst_QValueSpaceItem::interestNotification()
@@ -919,22 +909,12 @@ void tst_QValueSpaceItem::ipcInterestNotification_data()
 #else
     QTest::addColumn<QAbstractValueSpaceLayer *>("layer");
 
-    bool skip = true;
-
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
     for (int i = 0; i < layers.count(); ++i) {
         QAbstractValueSpaceLayer *layer = layers.at(i);
 
-        if (!layer->supportsRequests())
-            continue;
-
-        skip = false;
-
-        QTest::newRow(layers.at(i)->name().toLocal8Bit().constData()) << layers.at(i);
+        QTest::newRow(layer->name().toLocal8Bit().constData()) << layer;
     }
-
-    if (skip)
-        QSKIP("No applicable layers found.", SkipAll);
 #endif
 }
 
