@@ -1672,23 +1672,23 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
                                                       "/ScreenSaver",
                                                       iface.toLatin1(),
                                                       dbusConnection);
-             if(connectionInterface->isValid() ) {
-                     qWarning() << "unInhibit"<< currentPid;
-                     connectionInterface->call("UnInhibit",currentPid);
-                     currentPid = 0;
-                     return true;;
+//             if(connectionInterface->isValid() ) {
+//                     qWarning() << "unInhibit"<< currentPid;
+//                     connectionInterface->call("UnInhibit",currentPid);
+//                     currentPid = 0;
+//                     return true;;
 
 //                 } else {
-//                     QDBusReply<uint> reply =  connectionInterface->call("Inhibit",
-//                                                                         QString::number((int)pid),
-//                                                                         "QSystemScreenSaver");
-//                     if(reply.isValid()) {
-//                         currentPid = reply.value();
-//                         qWarning() << "Inhibit" << currentPid;
-//                         return reply.isValid();
-//                     } else {
-//                         qWarning() << reply.error();
-//                     }
+                     QDBusReply<uint> reply =  connectionInterface->call("Inhibit",
+                                                                         QString::number((int)pid),
+                                                                         "QSystemScreenSaver");
+                     if(reply.isValid()) {
+                         currentPid = reply.value();
+                         qWarning() << "Inhibit" << currentPid;
+                         return reply.isValid();
+                     } else {
+                         qWarning() << reply.error();
+                     }
 //                 }
              }
          }
