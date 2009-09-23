@@ -36,7 +36,6 @@
 #include <QDebug>
 #include <QAudioFormat>
 
-#include <multimedia/qaudiosourceservice.h>
 #include <multimedia/qaudiosource.h>
 #include <multimedia/qaudioencodercontrol.h>
 #include <multimedia/qmediarecordercontrol.h>
@@ -196,12 +195,12 @@ private:
 };
 
 
-class MockAudioSourceService : public QAudioSourceService
+class MockAudioSourceService : public QAbstractMediaService
 {
     Q_OBJECT
 
 public:
-    MockAudioSourceService(): QAudioSourceService(0)
+    MockAudioSourceService(): QAbstractMediaService(0)
     {
         mockAudioEncoderControl = new MockAudioEncoderControl(this);
         mockMediaRecorderControl = new MockMediaRecorderControl(this);
