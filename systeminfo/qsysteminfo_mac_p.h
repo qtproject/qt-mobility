@@ -30,8 +30,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QSYSTEMINFO_LINUX_P_H
-#define QSYSTEMINFO_LINUX_P_H
+#ifndef QSYSTEMINFO_MAC_P_H
+#define QSYSTEMINFO_MAC_P_H
 
 
 //
