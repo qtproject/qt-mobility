@@ -190,7 +190,7 @@ void QContactKabcEngine::settingsFileChanged()
         foreach (const QString& defId, defIds) {
             definitions.beginGroup(defId);
             QContactDetailDefinition dd;
-            dd.setId(defId);
+            dd.setName(defId);
             dd.setUnique(definitions.value("unique").toBool());
             dd.setAccessConstraint(((QContactDetailDefinition::AccessConstraint)definitions.value("access").toUInt()));
 
@@ -513,17 +513,17 @@ bool QContactKabcEngine::saveDetailDefinition(const QContactDetailDefinition& de
         return false;
     }
     if (!d->m_definitions.key(def, "").isEmpty())
-        removeDetailDefinition(def.id(), error);
-    d->m_definitions.insert(def.id(), def);
+        removeDetailDefinition(def.name(), error);
+    d->m_definitions.insert(def.name(), def);
 
     // we need to persist definitions.
     if (d->m_settingsWatcher)
         d->m_settingsWatcher->blockSignals(true);
     QSettings definitions(d->m_settingsFile, QSettings::IniFormat);
-    if (definitions.childGroups().contains(def.id()))
-        definitions.remove(def.id());
+    if (definitions.childGroups().contains(def.name()))
+        definitions.remove(def.name());
 
-    definitions.beginGroup(def.id());
+    definitions.beginGroup(def.name());
     definitions.setValue("unique", def.isUnique());
     definitions.setValue("access", def.accessConstraint());
     definitions.beginGroup("fields");
@@ -569,12 +569,8 @@ bool QContactKabcEngine::removeDetailDefinition(const QString& definitionId, QCo
 bool QContactKabcEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const
 {
     switch (feature) {
-        case QContactManagerInfo::Batch:
         case QContactManagerInfo::ActionPreferences:
-        case QContactManagerInfo::ReadOnlyDetails:
-        case QContactManagerInfo::CreateOnlyDetails:
         case QContactManagerInfo::MutableDefinitions:
-        case QContactManagerInfo::Synchronous:
             return true;
         default:
             return false;
@@ -657,16 +653,6 @@ QString QContactKabcEngine::convertDetail(const QContactDetail& detail, const QC
         retn += escaped(key);
         retn += "=";
         retn += escaped(vals.value(key).toString());
-        retn += ",";
-    }
-    retn.chop(1);
-    retn += ";";
-
-    QMap<QString, QString> attrs = detail.attributes();
-    foreach (const QString& key, attrs.keys()) {
-        retn += escaped(key);
-        retn += "=";
-        retn += escaped(attrs.value(key));
         retn += ",";
     }
     retn.chop(1);
@@ -827,8 +813,8 @@ QContactDetail QContactKabcEngine::convertCustomString(const QString& customStri
 
     // having parsed the definitionName, values and attributes, we build the detail.
     QContactDetail retn(definitionName);
-    retn.setValues(values);
-    retn.setAttributes(attrs);
+    foreach (const QString& fieldName, values.keys())
+        retn.setValue(fieldName, values.value(fieldName));
     return retn;
 }
 
@@ -998,32 +984,30 @@ QContact QContactKabcEngine::convertAddressee(const KABC::Addressee& a) const
         } else {
             // nope, no matching detail.  Scrape as much information as we can
             // from the KABC detail, and build and add our own.
-            QString context = "";
-            QString subtype = "";
+            QStringList contexts;
+            QStringList subtypes;
             if (kph.type() & KABC::PhoneNumber::Home)
-                context += QContactDetail::AttributeContextHome + ",";
+                contexts << QContactDetail::ContextHome;
             if (kph.type() & KABC::PhoneNumber::Work)
-                context += QContactDetail::AttributeContextWork + ",";
+                contexts << QContactDetail::ContextWork;
             if (kph.type() & KABC::PhoneNumber::Cell)
-                subtype += QContactPhoneNumber::AttributeSubTypeMobile + ",";
+                subtypes << QContactPhoneNumber::SubTypeMobile;
             if (kph.type() & KABC::PhoneNumber::Video)
-                subtype += QContactPhoneNumber::AttributeSubTypeVideo + ",";
+                subtypes << QContactPhoneNumber::SubTypeVideo;
             if (kph.type() & KABC::PhoneNumber::Car)
-                subtype += QContactPhoneNumber::AttributeSubTypeCar + ",";
+                subtypes << QContactPhoneNumber::SubTypeCar;
             if (kph.type() & KABC::PhoneNumber::Modem)
-                subtype += QContactPhoneNumber::AttributeSubTypeModem + ",";
+                subtypes << QContactPhoneNumber::SubTypeModem;
             if (kph.type() & KABC::PhoneNumber::Pager)
-                subtype += QContactPhoneNumber::AttributeSubTypePager + ",";
+                subtypes << QContactPhoneNumber::SubTypePager;
 
-            if (context.isEmpty())
-                context = QContactDetail::AttributeContextOther + ",";
-            if (subtype.isEmpty())
-                subtype = QContactPhoneNumber::AttributeSubTypeLandline + ",";
-            context.chop(1);
-            subtype.chop(1);            
+            if (contexts.isEmpty())
+                contexts << QContactDetail::ContextOther;
+            if (subtypes.isEmpty())
+                subtypes << QContactPhoneNumber::SubTypeLandline;
 
-            qph.setAttribute(QContactDetail::AttributeSubType, subtype);
-            qph.setAttribute(QContactDetail::AttributeContext, context);
+            qph.setSubTypes(subtypes);
+            qph.setContexts(contexts);
             retn.saveDetail(&qph);
         }
     }
@@ -1054,29 +1038,26 @@ QContact QContactKabcEngine::convertAddressee(const KABC::Addressee& a) const
         } else {
             // nope, no matching detail.  Scrape as much information as we can
             // from the KABC detail, and build and add our own.
-            QString context = "";
-            QString subtype = "";
+            QStringList contexts;
+            QStringList subtypes;
             if (kadr.type() & KABC::Address::Home)
-                context += QContactDetail::AttributeContextHome + ",";
+                contexts << QContactDetail::ContextHome;
             if (kadr.type() & KABC::Address::Work)
-                context += QContactDetail::AttributeContextWork + ",";
+                contexts << QContactDetail::ContextWork;
             if (kadr.type() & KABC::Address::Postal)
-                subtype += QContactAddress::AttributeSubTypePostal + ",";
+                subtypes << QContactAddress::SubTypePostal;
             if (kadr.type() & KABC::Address::Parcel)
-                subtype += QContactAddress::AttributeSubTypeParcel + ",";
+                subtypes << QContactAddress::SubTypeParcel;
             if (kadr.type() & KABC::Address::Dom)
-                subtype += QContactAddress::AttributeSubTypeDomestic + ",";
+                subtypes << QContactAddress::SubTypeDomestic;
             if (kadr.type() & KABC::Address::Intl)
-                subtype += QContactAddress::AttributeSubTypeInternational + ",";
+                subtypes << QContactAddress::SubTypeInternational;
 
-            if (context.isEmpty())
-                context = QContactDetail::AttributeContextOther + ",";
-            context.chop(1);
-            if (!subtype.isEmpty())
-                subtype.chop(1);
+            if (contexts.isEmpty())
+                contexts << QContactDetail::ContextOther;
 
-            qadr.setAttribute(QContactDetail::AttributeSubType, subtype);
-            qadr.setAttribute(QContactDetail::AttributeContext, context);
+            qadr.setSubTypes(subtypes);
+            qadr.setContexts(contexts);
 
             retn.saveDetail(&qadr);
         }
@@ -1252,17 +1233,17 @@ KABC::Addressee QContactKabcEngine::convertContact(const QContact& contact) cons
             kadr.setCountry(det.value(QContactAddress::FieldCountry));
             kadr.setLabel(det.value(QContactAddress::FieldDisplayLabel));
 
-            if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactAddress::AttributeSubTypeDomestic))
+            if (det.variantValue(QContactAddress::FieldSubTypes).toStringList().contains(QContactAddress::SubTypeDomestic))
                 typeFlags |= KABC::Address::Dom;
-            if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactAddress::AttributeSubTypeInternational))
+            if (det.variantValue(QContactAddress::FieldSubTypes).toStringList().contains(QContactAddress::SubTypeInternational))
                 typeFlags |= KABC::Address::Intl;
-            if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactAddress::AttributeSubTypePostal))
+            if (det.variantValue(QContactAddress::FieldSubTypes).toStringList().contains(QContactAddress::SubTypePostal))
                 typeFlags |= KABC::Address::Postal;
-            if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactAddress::AttributeSubTypeParcel))
+            if (det.variantValue(QContactAddress::FieldSubTypes).toStringList().contains(QContactAddress::SubTypeParcel))
                 typeFlags |= KABC::Address::Parcel;
-            if (det.attributes().value(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextHome))
+            if (det.variantValue(QContactDetail::FieldContext).toStringList().contains(QContactDetail::ContextHome))
                 typeFlags |= KABC::Address::Home;
-            if (det.attributes().value(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextWork))
+            if (det.variantValue(QContactDetail::FieldContext).toStringList().contains(QContactDetail::ContextWork))
                 typeFlags |= KABC::Address::Work;
 
             kadr.setType(typeFlags);
@@ -1274,13 +1255,13 @@ KABC::Addressee QContactKabcEngine::convertContact(const QContact& contact) cons
             KABC::PhoneNumber::Type typeFlags = 0x00;
 
             phn.setNumber(det.value(QContactPhoneNumber::FieldNumber));
-            if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactPhoneNumber::AttributeSubTypeMobile))
+            if (det.variantValue(QContactPhoneNumber::FieldSubTypes).toStringList().contains(QContactPhoneNumber::SubTypeMobile))
                 typeFlags |= KABC::PhoneNumber::Cell;
-            if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactPhoneNumber::AttributeSubTypeVideo))
+            if (det.variantValue(QContactPhoneNumber::FieldSubTypes).toStringList().contains(QContactPhoneNumber::SubTypeVideo))
                 typeFlags |= KABC::PhoneNumber::Video;
-            if (det.attributes().value(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextHome))
+            if (det.variantValue(QContactDetail::FieldContext).toStringList().contains(QContactDetail::ContextHome))
                 typeFlags |= KABC::PhoneNumber::Home;
-            if (det.attributes().value(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextWork))
+            if (det.variantValue(QContactDetail::FieldContext).toStringList().contains(QContactDetail::ContextWork))
                 typeFlags |= KABC::PhoneNumber::Work;
 
             phn.setType(typeFlags);
