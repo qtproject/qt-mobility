@@ -54,7 +54,6 @@ public:
     QAbstractMediaControl *control(const char *name) const;
 
     QNetworkAccessManager *networkManager() const;
-    void setNetworkManager(QNetworkAccessManager *manager);
 
 private:
     Q_DECLARE_PRIVATE(QMediaSlideShowService)

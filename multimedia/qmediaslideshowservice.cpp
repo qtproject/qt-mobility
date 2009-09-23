@@ -502,6 +502,8 @@ QMediaSlideShowService::QMediaSlideShowService(QObject *parent)
 #endif
     d->widget = new QMediaSlideShowWidget;
     d->widgetControl = new QMediaSlideShowWidgetControl(d->widget);
+
+    d->network = new QNetworkAccessManager(this);
 }
 
 /*!
@@ -545,13 +547,6 @@ QAbstractMediaControl *QMediaSlideShowService::control(const char *name) const
 QNetworkAccessManager *QMediaSlideShowService::networkManager() const
 {
     return d_func()->network;
-}
-
-/*!
-*/
-void QMediaSlideShowService::setNetworkManager(QNetworkAccessManager *manager)
-{
-    d_func()->network = manager;
 }
 
 class QMediaSlideShowControlPrivate : public QAbstractMediaControlPrivate

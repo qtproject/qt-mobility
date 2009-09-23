@@ -41,6 +41,8 @@
 class QAbstractButton;
 class QLabel;
 
+class QMediaPlaylist;
+
 class SlideShow : public QWidget
 {
     Q_OBJECT
@@ -58,6 +60,7 @@ private slots:
 
 private:
     QMediaSlideShow *slideShow;
+    QMediaPlaylist *playlist;
     QLabel *imageLabel;
     QAbstractButton *playButton;
     QAbstractButton *stopButton;

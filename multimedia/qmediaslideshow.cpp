@@ -37,13 +37,12 @@
 #include <multimedia/qabstractmediaobject_p.h>
 #include <multimedia/qmediaslideshowservice_p.h>
 
-#include <multimedia/qlocalmediaplaylistprovider.h>
+#include <multimedia/qmediaplaylist.h>
 #include <multimedia/qmediasource.h>
 #include <multimedia/qmediaresource.h>
 
 #include <QtCore/qcoreevent.h>
 #include <QtCore/qtextstream.h>
-#include <QtNetwork/qnetworkreply.h>
 
 class QMediaSlideShowPrivate : public QAbstractMediaObjectPrivate
 {
@@ -53,133 +52,41 @@ public:
         : service(0)
         , slideControl(0)
         , playlist(0)
-        , network(0)
-        , headReply(0)
-        , getReply(0)
         , state(QMediaSlideShow::StoppedState)
-        , currentIndex(-1)
         , timeout(3000)
     {
     }
 
-    bool isPlaylistType(const QUrl &url, const QString &mimeType) const;
-
-    void requestHeaders(const QUrl &uri);
-    void requestPlaylist(const QUrl &uri);
-    void cancelRequests();
-
-    void _q_headFinished();
-    void _q_getFinished();
+    void _q_playlistMediaChanged(const QMediaSource &source);
+    void _q_playlistDestroyed(QObject *playlist);
 
     QMediaSlideShowService *service;
     QMediaSlideShowControl *slideControl;
-    QMediaPlaylistProvider *playlist;
-    QNetworkAccessManager *network;
-    QNetworkReply *headReply;
-    QNetworkReply *getReply;
+    QMediaPlaylist *playlist;
     QMediaSlideShow::State state;
-    int currentIndex;
     int timeout;
     QBasicTimer timer;
     QMediaSource media;
 };
 
-bool QMediaSlideShowPrivate::isPlaylistType(const QUrl &url, const QString &mimeType) const
+void QMediaSlideShowPrivate::_q_playlistMediaChanged(const QMediaSource &source)
 {
-    if (!mimeType.isEmpty()) {
-        return mimeType == QLatin1String("audio/x-mpegurl")
-                || mimeType == QLatin1String("audio/mpeg-url")
-                || mimeType == QLatin1String("application/x-winamp-playlist")
-                || mimeType == QLatin1String("audio/scpls")
-                || mimeType == QLatin1String("audio/x-scpls")
-                || mimeType == QLatin1String("video/x-ms-asf")
-                || mimeType == QLatin1String("application/xsfp+xml");
-    } else if (url.scheme() == QLatin1String("file")) {
-        QString path = url.path();
+    media = source;
 
-        return path.endsWith(QLatin1String(".m3u"), Qt::CaseInsensitive)
-                || path.endsWith(QLatin1String(".pls"), Qt::CaseInsensitive)
-                || path.endsWith(QLatin1String(".asx"), Qt::CaseInsensitive);
-    } else {
-        return false;
-    }
+    slideControl->setMedia(media);
+
+    timer.start(timeout, q_func());
 }
 
-void QMediaSlideShowPrivate::requestHeaders(const QUrl &uri)
+void QMediaSlideShowPrivate::_q_playlistDestroyed(QObject *object)
 {
-    Q_ASSERT(!headReply);
+    if (object == playlist) {
+        playlist = 0;
+        timer.stop();
 
-    headReply = network->head(QNetworkRequest(uri));
-
-    QObject::connect(headReply, SIGNAL(readChannelFinished()), q_func(), SLOT(_q_headFinished()));
-}
-
-void QMediaSlideShowPrivate::requestPlaylist(const QUrl &uri)
-{
-    Q_ASSERT(!getReply);
-
-    getReply = network->get(QNetworkRequest(uri));
-
-    QObject::connect(getReply, SIGNAL(readChannelFinished()), q_func(), SLOT(_q_getFinished()));
-}
-
-void QMediaSlideShowPrivate::cancelRequests()
-{
-    if (getReply) {
-        getReply->abort();
-        getReply->deleteLater();
-        getReply = 0;
+        if (state != QMediaSlideShow::StoppedState)
+            emit q_func()->stateChanged(state = QMediaSlideShow::StoppedState);
     }
-
-    if (headReply) {
-        headReply->abort();
-        headReply->deleteLater();
-        headReply = 0;
-    }
-}
-
-void QMediaSlideShowPrivate::_q_headFinished()
-{
-    QString mimeType = headReply->header(QNetworkRequest::ContentTypeHeader).toString();
-    QUrl uri = headReply->url();
-
-    headReply->deleteLater();
-    headReply = 0;
-
-    if (!mimeType.isEmpty()) {
-        mimeType = mimeType.section(QLatin1Char(';'), 0, 0);
-
-        if (isPlaylistType(uri, mimeType)) {
-            getReply = network->get(QNetworkRequest(uri));
-
-            QObject::connect(
-                    getReply, SIGNAL(readChannelFinished()), q_func(), SLOT(_q_getFinished()));
-        } else {
-            playlist->appendItem(media);
-            currentIndex = 0;
-            slideControl->setMedia(media);
-
-            emit q_func()->currentIndexChanged(currentIndex);
-        }
-    }
-}
-
-void QMediaSlideShowPrivate::_q_getFinished()
-{
-    QTextStream stream(getReply);
-
-    while (!stream.atEnd()) {
-        QString line = stream.readLine();
-
-        if (!line.startsWith(QLatin1Char('#'))) {
-            QUrl url(line);
-            if (url.isValid())
-                playlist->appendItem(QMediaSource(url));
-        }
-    }
-
-    getReply->deleteLater();
-    getReply = 0;
 }
 
 /*!
@@ -217,13 +124,10 @@ QMediaSlideShow::QMediaSlideShow(QObject *parent)
 {
     Q_D(QMediaSlideShow);
 
-    d->network = new QNetworkAccessManager(this);
-    d->playlist = new QLocalMediaPlaylistProvider;
-
     d->service = new QMediaSlideShowService;
-    d->service->setNetworkManager(d->network);
 
-    d->slideControl = qobject_cast<QMediaSlideShowControl*>(d->service->control(QMediaSlideShowControl_iid));
+    d->slideControl = qobject_cast<QMediaSlideShowControl*>(
+            d->service->control(QMediaSlideShowControl_iid));
 }
 
 /*!
@@ -233,10 +137,7 @@ QMediaSlideShow::~QMediaSlideShow()
 {
     Q_D(QMediaSlideShow);
 
-    d->cancelRequests();
-
     delete d->service;
-    delete d->network;
 }
 
 /*!
@@ -312,32 +213,12 @@ void QMediaSlideShow::setMedia(const QMediaSource &media)
 {
     Q_D(QMediaSlideShow);
 
-    d->cancelRequests();
-
     d->media = media;
+    d->timer.stop();
 
-    d->currentIndex = -1;
-    d->playlist->clear();
+    if (d->state != QMediaSlideShow::StoppedState)
+        emit stateChanged(d->state = QMediaSlideShow::StoppedState);
 
-    if (d->media.isNull()) {
-        d->slideControl->setMedia(d->media);
-
-        emit currentIndexChanged(-1);
-    } else {
-        QUrl uri = d->media.contentUri();
-        QString mimeType = d->media.contentResource().mimeType();
-
-        if (d->isPlaylistType(uri, mimeType)) {
-            d->requestPlaylist(uri);
-        } else if (mimeType.isEmpty() && uri.scheme() != QLatin1String("file")) {
-            d->requestHeaders(uri);
-        } else {
-            d->playlist->appendItem(media);
-            d->currentIndex = 0;
-            d->slideControl->setMedia(d->media);
-        }
-    }
-    emit currentIndexChanged(d->currentIndex);
     emit mediaChanged(d->media);
 }
 
@@ -368,51 +249,6 @@ QMediaResource QMediaSlideShow::currentMedia() const
 */
 
 /*!
-    \property QMediaSlideShow::currentIndex
-    \brief the index in the playlist of the current media.
-*/
-
-int QMediaSlideShow::currentIndex() const
-{
-    return d_func()->currentIndex;
-}
-
-void QMediaSlideShow::setCurrentIndex(int index)
-{
-    Q_D(QMediaSlideShow);
-
-    if (d->playlist->size() > 0) {
-        if (index >= 0 && index < d->playlist->size()) {
-            d->currentIndex = index;
-
-            d->slideControl->setMedia(d->playlist->media(d->currentIndex));
-        } else {
-            d->currentIndex = -1;
-            d->slideControl->setMedia(QMediaSource());
-
-        }
-
-        emit currentIndexChanged(d->currentIndex);
-    }
-}
-
-/*!
-    \fn QMediaSlideShow::currentIndexChanged(int index)
-
-    Signals that the \a index in the playlist of the current media has changed.
-*/
-
-/*!
-    \property QMediaSlideShow::playlist
-    \brief a playlist containing the media displayed in a slide show.
-*/
-
-QMediaPlaylistProvider *QMediaSlideShow::playlist() const
-{
-    return d_func()->playlist;
-}
-
-/*!
     \property QMediaSlideShow::timeout
     \brief the amount of time an image is displayed for before moving to the next image.
 */
@@ -430,6 +266,27 @@ void QMediaSlideShow::setTimeout(int timeout)
 }
 
 /*!
+    \reimp
+*/
+void QMediaSlideShow::bind(QObject *object)
+{
+    Q_D(QMediaSlideShow);
+
+    if (QMediaPlaylist *playlist = qobject_cast<QMediaPlaylist *>(object)) {
+        if (d->playlist) {
+            qWarning("QMediaSlideShow::bind(): already bound to a playlist");
+        } else {
+            d->playlist = playlist;
+
+            connect(d->playlist, SIGNAL(currentMediaChanged(QMediaSource)),
+                    this, SLOT(_q_playlistMediaChanged(QMediaSource)));
+            connect(d->playlist, SIGNAL(destroyed(QObject*)),
+                    this, SLOT(_q_playlistDestroyed(QObject *)));
+        }
+    }
+}
+
+/*!
     Starts a slide show.
 
     If there is no current index set this will start at the beginning of the playlist, otherwise it
@@ -439,24 +296,16 @@ void QMediaSlideShow::play()
 {
     Q_D(QMediaSlideShow);
 
-    switch (d->state) {
-    case StoppedState:
-        if (d->currentIndex < 0 || d->currentIndex >= d->playlist->size()) {
-            d->currentIndex = 0;
-            d->slideControl->setMedia(d->playlist->media(d->currentIndex));
-        }
-        // fall through.
-    case PausedState:
-        if (d->timeout < 0) {
-            qWarning("negative slide show timeout");
-        } else if (d->playlist->size() > 0) {
+    if (d->playlist && d->playlist->size() > 0 && d->state != PlayingState) {
+        bool advance = d->state == StoppedState && d->playlist->currentPosition() < 0;
+
+        if (d->timeout >= 0)
             d->timer.start(d->timeout, this);
 
-            emit stateChanged(d->state = PlayingState);
-        }
-        break;
-    case PlayingState:
-        break;
+        emit stateChanged(d->state = PlayingState);
+
+        if (advance)
+            d->playlist->advance();
     }
 }
 
@@ -486,44 +335,20 @@ void QMediaSlideShow::stop()
     Q_D(QMediaSlideShow);
 
     switch (d->state) {
-    case QMediaSlideShow::PlayingState:
+    case PlayingState:
         d->timer.stop();
         // fall through.
-    case QMediaSlideShow::PausedState:
+    case PausedState:
         d->state = QMediaSlideShow::StoppedState;
 
-        d->currentIndex = -1;
-        d->slideControl->setMedia(QMediaSource());
+        if (d->playlist)
+            d->playlist->setCurrentPosition(-1);
 
         emit stateChanged(d->state);
         break;
-    case QMediaSlideShow::StoppedState:
+    case StoppedState:
         break;
     }
-}
-
-/*!
-    Moves the slide show to the next image.
-
-    If there is no current index this will display the first item in the playlist.
-*/
-void QMediaSlideShow::next()
-{
-    Q_D(QMediaSlideShow);
-
-    setCurrentIndex(d->currentIndex + 1);
-}
-
-/*!
-    Moves the sldie show to the previous image.
-
-    If there is no current index this will display the last item in the playlist.
-*/
-void QMediaSlideShow::previous()
-{
-    Q_D(QMediaSlideShow);
-
-    setCurrentIndex(d->currentIndex - 1);
 }
 
 /*!
@@ -534,7 +359,15 @@ void QMediaSlideShow::timerEvent(QTimerEvent *event)
     Q_D(QMediaSlideShow);
 
     if (event->timerId() == d->timer.timerId()) {
-        next();
+        Q_ASSERT(d->playlist);
+
+        d->playlist->advance();
+
+        if (d->playlist->currentPosition() < 0) {
+            d->timer.stop();
+
+            emit stateChanged(d->state = StoppedState);
+        }
     } else {
         QAbstractMediaObject::timerEvent(event);
     }

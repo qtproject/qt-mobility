@@ -38,9 +38,6 @@
 #include <multimedia/qabstractmediaobject.h>
 #include <multimedia/qmediasource.h>
 
-class QMediaPlaylistProvider;
-
-
 class QMediaSlideShowPrivate;
 
 class Q_MEDIA_EXPORT QMediaSlideShow : public QAbstractMediaObject
@@ -50,11 +47,8 @@ class Q_MEDIA_EXPORT QMediaSlideShow : public QAbstractMediaObject
     Q_PROPERTY(MediaStatus mediaStatus READ mediaStatus NOTIFY mediaStatusChanged)
     Q_PROPERTY(QMediaSource media READ media WRITE setMedia NOTIFY mediaChanged)
     Q_PROPERTY(QMediaResource currentMedia READ currentMedia NOTIFY currentMediaChanged)
-    Q_PROPERTY(int currentIndex READ currentIndex WRITE setCurrentIndex NOTIFY currentIndexChanged)
-    Q_PROPERTY(QMediaPlaylistProvider* playlist READ playlist)
     Q_PROPERTY(int timeout READ timeout WRITE setTimeout)
     Q_ENUMS(State MediaStatus)
-
 public:
     enum State
     {
@@ -82,26 +76,18 @@ public:
     MediaStatus mediaStatus() const;
 
     QMediaSource media() const;
-    void setMedia(const QMediaSource &media);
-
     QMediaResource currentMedia() const;
-
-    int currentIndex() const;
-
-    QMediaPlaylistProvider *playlist() const;
 
     int timeout() const;
 
+    void bind(QObject *);
 
 public Q_SLOTS:
+    void setMedia(const QMediaSource &media);
+
     void play();
     void pause();
     void stop();
-
-    void next();
-    void previous();
-
-    void setCurrentIndex(int index);
 
     void setTimeout(int timeout);
 
@@ -110,15 +96,14 @@ Q_SIGNALS:
     void mediaStatusChanged(QMediaSlideShow::MediaStatus status);
     void mediaChanged(const QMediaSource &media);
     void currentMediaChanged(const QMediaResource &media);
-    void currentIndexChanged(int index);
 
 protected:
     void timerEvent(QTimerEvent *event);
 
 private:
     Q_DECLARE_PRIVATE(QMediaSlideShow)
-    Q_PRIVATE_SLOT(d_func(), void _q_headFinished())
-    Q_PRIVATE_SLOT(d_func(), void _q_getFinished())
+    Q_PRIVATE_SLOT(d_func(), void _q_playlistMediaChanged(const QMediaSource &))
+    Q_PRIVATE_SLOT(d_func(), void _q_playlistDestroyed(QObject *))
 };
 
 #endif
