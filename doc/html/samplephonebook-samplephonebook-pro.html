@@ -22,12 +22,14 @@
     TEMPLATE = app
     TARGET = samplephonebook
     DEPENDPATH += .
-    INCLUDEPATH += .
-    INCLUDEPATH += ../testmodel
-    VPATH += ../testmodel
-    LIBS += -lQtContacts
+    INCLUDEPATH += . \
+                   ../incomingcalls\
+                   ../../contacts\
+                   ../../contacts/filters \
+                   ../../contacts/requests \
+                   ../../contacts/details
 
-    include(../../common.pri)
+    VPATH += ../incomingcalls
 
     # Input
     SOURCES +=  contactdetailsform.cpp \
@@ -61,10 +63,12 @@
                             WriteDeviceData \
                             AllFiles \
                             SwEvent
-    }</pre>
+    }
+    include(../examples.pri)
+    qtAddLibrary(QtContacts)</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Contacts</div></td>
+<td align="right"><div align="right">Qt Mobility API</div></td>
 </tr></table></div></address></body>
 </html>

@@ -8,6 +8,7 @@ headerdirs = ../../bearer \
              ../../location \
              ../../context \
              ../../systeminfo \
+             ../../contacts \
              .
 
 sourcedirs = ../../bearer \
@@ -15,9 +16,12 @@ sourcedirs = ../../bearer \
              ../../location \
              ../../context \
              ../../systeminfo \
+             ../../contacts \
              .
 
-exampledirs = ../../examples
+exampledirs = ../../examples \
+              ../.. \
+              .
 
 indexes                 = qt.index
 
@@ -38,8 +42,6 @@ defines                 = Q_QDOC \
                           __cplusplus
 
 examples.fileextensions = "*.cpp *.h *.svg"
-exampledirs             = ../../examples \
-                          ../..
 
 Cpp.ignoretokens        = QAXFACTORY_EXPORT \
                           QM_EXPORT_CANVAS \
