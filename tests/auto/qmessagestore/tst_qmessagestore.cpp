@@ -429,11 +429,18 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(message.id(), messageId);
     QCOMPARE(message.isModified(), false);
 
-#if !defined(Q_OS_WIN)
-    // Addresses are currently in the wrong format using MAPI
+    QMessageAddress toAddress;
+    toAddress.setRecipient(to);
+    toAddress.setType(QMessageAddress::Email);
+    QCOMPARE(message.to().first(), toAddress);
     QCOMPARE(message.to().first().recipient(), to);
+
+    QMessageAddress fromAddress;
+    fromAddress.setRecipient(from);
+    fromAddress.setType(QMessageAddress::Email);
+    QCOMPARE(message.from(), fromAddress);
     QCOMPARE(message.from().recipient(), from);
-#endif
+
     QCOMPARE(message.date(), QDateTime::fromString(date, Qt::ISODate));
     QCOMPARE(message.subject(), subject);
 
