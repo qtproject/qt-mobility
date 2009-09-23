@@ -101,6 +101,10 @@ QList<CContactItemField *> TransformPhoneNumber::transformDetailL(const QContact
         newField->SetMapping(KUidContactFieldVCardMapTEL);
 	    newField->AddFieldTypeL(KUidContactFieldVCardMapCAR);
 	}
+	else
+	{
+        User::LeaveIfError(KErrNotSupported);
+	}
 	    
 	//contexts
 	setContextsL(phoneNumber, *newField);

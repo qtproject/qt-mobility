@@ -88,17 +88,21 @@ QContact TransformContact::transformContactL(CContactItem &contact, CContactData
 				newQtContact.saveDetail(detail);	
 			}
 		}
-
+		
 		// Add contact's UID
-		QString guid = QString::fromUtf16(contact.UidStringL(contactDatabase.MachineId()).Ptr(),
-		        contact.UidStringL(contactDatabase.MachineId()).Length());
-		if (guid.length() > 0)
-		{
-            QContactGuid *guidDetail = new QContactGuid();
-		    guidDetail->setGuid(guid);
-            newQtContact.saveDetail(guidDetail);
-		}
+	    QContactDetail *detailUid = transformGuidItemFieldL(contact, contactDatabase);
+        if(detailUid)
+        {
+	        newQtContact.saveDetail(detailUid);    
+	    }
 
+        // Add contact's timestamp
+        QContactDetail *detailTimestamp = transformTimestampItemFieldL(contact, contactDatabase);
+        if(detailTimestamp)
+        {
+            newQtContact.saveDetail(detailTimestamp);    
+        }
+        
 		return newQtContact;
 }
 
@@ -135,13 +139,14 @@ void TransformContact::transformContactL(
 		// Add contact's UID
 		if (detailList.at(i).definitionName() == QContactGuid::DefinitionName)
 		{
-            const QContactGuid &guid(static_cast<const QContactGuid&>(detailList.at(i)));
-            TPtrC guidString(reinterpret_cast<const TUint16*>(guid.guid().utf16()));
-            if (guidString.Length() > 0 )
-            {
-                contactItem.SetUidStringL(guidString);
-            }
+            transformGuidDetailL(detailList.at(i), contactItem);
 		}
+		
+	    // Add contact's timestamp
+	    if (detailList.at(i).definitionName() == QContactTimestamp::DefinitionName)
+	    {
+            transformTimestampDetailL(detailList.at(i), contactItem);
+	    }
 	}
 	
 	contactItem.UpdateFieldSet(fieldSet);
@@ -182,8 +187,69 @@ QContactDetail *TransformContact::transformItemField(const CContactItemField& fi
 	return detail;
 }
 	
+QContactDetail* TransformContact::transformGuidItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const
+{
+    QContactGuid *guidDetail = 0;
+    QString guid = QString::fromUtf16(contactItem.UidStringL(contactDatabase.MachineId()).Ptr(),
+        contactItem.UidStringL(contactDatabase.MachineId()).Length());
+    if (guid.length() > 0)
+    {
+        guidDetail = new QContactGuid();
+        guidDetail->setGuid(guid);
+    }
+    return guidDetail; 
+}
 
+void TransformContact::transformGuidDetailL(const QContactDetail &guidDetail, CContactItem &contactItem) const
+{
+    const QContactGuid &guid(static_cast<const QContactGuid&>(guidDetail));
+    TPtrC guidString(reinterpret_cast<const TUint16*>(guid.guid().utf16()));
+    if (guidString.Length() > 0 )
+    {
+        contactItem.SetUidStringL(guidString);
+    }
+}
 
+QContactDetail* TransformContact::transformTimestampItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const
+{
+    QContactTimestamp *timestampDetail = 0;
+    HBufC* guidBuf = contactItem.UidStringL(contactDatabase.MachineId()).AllocLC();
+    TPtr ptr = guidBuf->Des();
+    if (ContactGuid::GetCreationDate(ptr, contactDatabase.MachineId()))
+    {
+        if (ptr.Length() > 0)
+        {
+            TLex lex(ptr);
+            TInt64 timeValue;
+            if (lex.Val(timeValue, EHex) == 0)
+            {
+                timestampDetail = new QContactTimestamp();
+                
+                //creation date
+                TTime timeCreation(timeValue);
+                TDateTime dateCreation = timeCreation.DateTime();
+                QDate qDateCreation(dateCreation.Year(), dateCreation.Month() + 1, dateCreation.Day());
+                QTime qTimeCreation(dateCreation.Hour(), dateCreation.Minute(), dateCreation.Second(), dateCreation.MicroSecond()/1000);
+                QDateTime qDateTimeCreation(qDateCreation, qTimeCreation);
+                timestampDetail->setCreated(qDateTimeCreation);
+                
+                //last modified date
+                TTime timeModified = contactItem.LastModified();
+                TDateTime dateModified = timeModified.DateTime();
+                QDate qDateModified(dateModified.Year(), dateModified.Month() + 1, dateModified.Day());
+                QTime qTimeModified(dateModified.Hour(), dateModified.Minute(), dateModified.Second(), dateModified.MicroSecond()/1000);
+                QDateTime qDateTimeModified(qDateModified, qTimeModified);
+                timestampDetail->setLastModified(qDateTimeModified);
+            }
+        }
+    }
+    CleanupStack::PopAndDestroy(guidBuf);
+    return timestampDetail;      
+}
 
-
-
+void TransformContact::transformTimestampDetailL(const QContactDetail &guidDetail, CContactItem &contactItem) const
+{
+    Q_UNUSED(guidDetail);
+    Q_UNUSED(contactItem);
+    User::LeaveIfError(KErrNotSupported);
+}
