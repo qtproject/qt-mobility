@@ -38,7 +38,7 @@ private slots:
     void getVersion(int index);
     void getFeature(int index);
     void setSaverEnabled(bool b);
-    void setBlankingEnabled(bool b);
+
     void netStatusComboActivated(int);
     void updateBatteryStatus(int);
     void updatePowerState(QSystemDeviceInfo::PowerState);

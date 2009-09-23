@@ -337,33 +337,25 @@ void Dialog::getFeature(int index)
 void Dialog::setupSaver()
 {
     saver = new QSystemScreenSaver(this);
-    bool saverEnabled = saver->screenSaverEnabled();
-    bool blankingEnabled = saver->screenBlankingEnabled();
+    bool saverEnabled = saver->screenSaverInhibited();
 
     ui->screenLockCheckBox->setChecked(saver->isScreenLockOn());
 
     connect( ui->saverEnabledCheckBox, SIGNAL(clicked(bool)),
              this,SLOT(setSaverEnabled(bool)));
-    connect( ui->screenBlankingCheckBox, SIGNAL(clicked(bool)),
-             this,SLOT(setBlankingEnabled(bool)));
 
     ui->saverEnabledCheckBox->setChecked(saverEnabled);
-    ui->screenBlankingCheckBox->setChecked(blankingEnabled);
 
 }
 
 
 void Dialog::setSaverEnabled(bool b)
 {
-    if(saver->setScreenSaverEnabled(b)) {
-    }    
-}
-
-void Dialog::setBlankingEnabled(bool b)
-{
-    if(saver->setScreenBlankingEnabled(b)) {   
+    if (b)
+    if(saver->setScreenSaverInhibit()) {
     }
 }
+
 
 void Dialog::updateBatteryStatus(int level)
 {
