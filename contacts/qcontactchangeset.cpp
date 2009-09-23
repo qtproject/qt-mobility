@@ -226,7 +226,7 @@ void QContactChangeSet::clear()
 }
 
 /*!
- * Emits the appropriate signals from the given manager given the state of the change set
+ * Emits the appropriate signals from the given \a engine given the state of the change set
  */
 void QContactChangeSet::emitSignals(QContactManagerEngine *engine)
 {

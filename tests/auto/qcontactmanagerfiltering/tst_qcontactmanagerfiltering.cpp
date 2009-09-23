@@ -2730,11 +2730,17 @@ public:
                 && !detail.variantValue(defAndFieldNamesForTypeForActions.value("Integer").second).isNull();
     }
 
-    void performAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
+    void invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
     {
         Q_UNUSED(contact);
         Q_UNUSED(detail);
         // Well, do something
+        emit progress(QContactAction::Finished, QVariantMap());
+    }
+
+    QVariantMap result() const
+    {
+        return QVariantMap();
     }
 };
 
@@ -2779,11 +2785,17 @@ public:
         return false;
     }
 
-    void performAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
+    void invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
     {
         Q_UNUSED(contact);
         Q_UNUSED(detail);
         // Well, do something
+        emit progress(QContactAction::Finished, QVariantMap());
+    }
+
+    QVariantMap result() const
+    {
+        return QVariantMap();
     }
 };
 
@@ -2817,11 +2829,17 @@ public:
                 && (detail.value<bool>(defAndFieldNamesForTypeForActions.value("Bool").second) == true);
     }
 
-    void performAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
+    void invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
     {
         Q_UNUSED(contact);
         Q_UNUSED(detail);
         // Well, do something
+        emit progress(QContactAction::Finished, QVariantMap());
+    }
+
+    QVariantMap result() const
+    {
+        return QVariantMap();
     }
 };
 
@@ -2849,9 +2867,14 @@ public:
     {
         return false;
     }
-    void performAction(const QContact&, const QContactDetail&)
+    void invokeAction(const QContact&, const QContactDetail&)
     {
+        emit progress(QContactAction::Finished, QVariantMap());
+    }
 
+    QVariantMap result() const
+    {
+        return QVariantMap();
     }
 };
 

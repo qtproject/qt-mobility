@@ -44,6 +44,7 @@
 #include "qcontactfilters.h"
 
 #include <QMessageBox>
+#include <QTimer>
 
 #define makestr(x) (#x)
 #define makename(x) makestr(x)
@@ -119,9 +120,20 @@ bool QContactSendEmailAction::supportsDetail(const QContactDetail& detail) const
     return (detail.definitionName() == QContactEmailAddress::DefinitionName);
 }
 
-void QContactSendEmailAction::performAction(const QContact& contact, const QContactDetail& detail)
+void QContactSendEmailAction::invokeAction(const QContact& contact, const QContactDetail& detail)
 {
     Q_UNUSED(contact);
     Q_UNUSED(detail);
+    QTimer::singleShot(1, this, SLOT(performAction()));
+}
+
+QVariantMap QContactSendEmailAction::result() const
+{
+    return QVariantMap();
+}
+
+void QContactSendEmailAction::performAction()
+{
     QMessageBox::information(0, "SendEmail Action", "This example action exists as an example of how the action interface may be implemented; it does not offer the advertised functionality.");
+    emit progress(QContactAction::Finished, QVariantMap());
 }

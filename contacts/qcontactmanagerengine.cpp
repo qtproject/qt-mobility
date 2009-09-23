@@ -750,15 +750,8 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
  * single contact save and batch contact save, if the saveContacts
  * function is not overridden.
  *
- * The engine should add the id of any contacts that it has added
- * to \a contactsAdded, and the id of any contacts that is has changed
- * to \a contactsChanged.  If a contact has been added or removed to
- * any groups (via \l QContact::setGroups()), the id of any QContactGroup
- * affected should be added to \a groupsChanged.
- *
- * The framework will emit the \l contactsAdded(), \l contactsChanged()
- * and \l groupsChanged() signals at some point after calling this function,
- * or alternatively the \l dataChanged() signal.
+ * The backend must emit the appropriate signals to inform clients of changes
+ * to the database resulting from this operation.
  *
  * Any errors encountered during this operation should be stored to
  * \a error.
@@ -1027,12 +1020,8 @@ bool QContactManagerEngine::saveGroup(QContactGroup* group, QContactManager::Err
  * Returns false if no group with that id exists, or the operation otherwise failed.
  * Returns true if the group was successfully deleted.
  *
- * Any groups that are removed by this operation should be added to \a groupsRemoved, and
- * any contacts that are changed by this operation should be added to \a contactsChanged.
- *
- * The base implementation will emit the appropriate signals based on the returned ids, unless
- * the \c dataChanged flag is set by the backend. The \c dataChanged flag should be set if the
- * backend wishes the base implementation to emit the \l dataChanged() signal
+ * The backend must emit the appropriate signals to inform clients of changes
+ * to the database resulting from this operation.
  *
  * Any errors encountered during this operation should be stored to
  * \a error.

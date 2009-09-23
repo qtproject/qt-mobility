@@ -813,18 +813,6 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
  */
 
 /*!
- * \fn QContactAddress::displayLabel() const
- * Returns the display (formatted) label of the address stored in this detail.
- * If no display label has been explicitly set for the detail, it is synthesised in
- * a platform specific manner
- */
-
-/*!
- * \fn QContactAddress::setDisplayLabel(const QString& displayLabel)
- * Sets the display label of the address stored in this detail to \a displayLabel
- */
-
-/*!
  * \fn QContactAddress::postOfficeBox() const
  * Returns the post office box segment of the address stored in this detail
  */
