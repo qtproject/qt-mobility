@@ -68,3 +68,5 @@ symbian: {
 	symbianplugin.path = /resource/qt/plugins/contacts
 	DEPLOYMENT += symbianplugin
 }
+target.path=$$QT_MOBILITY_PREFIX/plugins/contacts
+INSTALLS+=target

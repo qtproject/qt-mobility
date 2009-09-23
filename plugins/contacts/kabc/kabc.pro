@@ -17,3 +17,5 @@ INCLUDEPATH += $$SOURCE_DIR/contacts $$SOURCE_DIR/contacts/details $$SOURCE_DIR/
     
 LIBS += -lakonadi-kabc -lkpimutils -lakonadi-kde -lkabc
 
+target.path=$$QT_MOBILITY_PREFIX/plugins/contacts
+INSTALLS+=target
