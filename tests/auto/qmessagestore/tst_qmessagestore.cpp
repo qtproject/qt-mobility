@@ -122,6 +122,7 @@ void tst_QMessageStore::testAccount()
 
     QMessageAccountId accountId(Support::addAccount(p));
     QVERIFY(accountId.isValid());
+    QVERIFY(accountId != QMessageAccountId());
     
     QMessageAccount account(accountId);
     QCOMPARE(account.id(), accountId);
@@ -192,6 +193,7 @@ void tst_QMessageStore::testFolder()
 
     QMessageFolderId folderId(Support::addFolder(p));
     QVERIFY(folderId.isValid());
+    QVERIFY(folderId != QMessageFolderId());
     
     QMessageFolder folder(folderId);
     QCOMPARE(folder.id(), folderId);
@@ -420,6 +422,7 @@ void tst_QMessageStore::testMessage()
 
     QMessageId messageId(Support::addMessage(p));
     QVERIFY(messageId.isValid());
+    QVERIFY(messageId != QMessageId());
     
     QMessage message(messageId);
     QCOMPARE(message.id(), messageId);
