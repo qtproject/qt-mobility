@@ -633,10 +633,8 @@ void tst_QValueSpaceItem::contentsChanged()
         connect(&item, SIGNAL(contentsChanged()), listener, SIGNAL(baseChanged()));
     } else {
         spy = new QSignalSpy(&item, SIGNAL(contentsChanged()));
-        item.setNotify(true);
+        item.valuex();
     }
-
-    QVERIFY(item.notify());
 
     QCOMPARE(spy->count(), 0);
 
@@ -660,18 +658,6 @@ void tst_QValueSpaceItem::contentsChanged()
 
     QTRY_COMPARE(spy->count(), should_emit_signal);
     QCOMPARE(item.value(value_path,!old_value).toBool(), new_value);
-
-    if (!implicit) {
-        item.setNotify(false);
-        QVERIFY(!item.notify());
-
-        spy->clear();
-        busy->setAttribute("alex/busy", old_value);
-        busy->sync();
-
-        QTRY_COMPARE(item.value(value_path, new_value).toBool(), old_value);
-        QVERIFY(spy->isEmpty());
-    }
 
     delete spy;
     delete listener;

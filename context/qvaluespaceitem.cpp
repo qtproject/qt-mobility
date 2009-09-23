@@ -178,7 +178,7 @@ public slots:
 
 public:
     QList<QPair<QAbstractValueSpaceLayer *, QAbstractValueSpaceLayer::Handle> > readers;
-    QHash<QValueSpaceItem *,int> connections;
+    QHash<const QValueSpaceItem *,int> connections;
 };
 
 struct QValueSpaceItemPrivate
@@ -280,7 +280,7 @@ struct QValueSpaceItemPrivate
 
     }
 
-    void connect(QValueSpaceItem * space)
+    void connect(const QValueSpaceItem *space)
     {
         if (!connections) {
             qRegisterMetaType<quintptr>("quintptr");
@@ -312,7 +312,7 @@ struct QValueSpaceItemPrivate
     bool disconnect(QValueSpaceItem * space)
     {
         if (connections) {
-            QHash<QValueSpaceItem *, int>::Iterator iter =
+            QHash<const QValueSpaceItem *, int>::Iterator iter =
                 connections->connections.find(space);
             if (iter != connections->connections.end()) {
                 --(*iter);
@@ -657,26 +657,14 @@ QVariant QValueSpaceItem::value(const QByteArray & subPath, const QVariant &def)
     return def;
 }
 
-bool QValueSpaceItem::notify()
+QVariant QValueSpaceItem::valuex(const QVariant &def) const
 {
-    if (!d->connections)
-        return false;
+    VS_CALL_ASSERT;
 
-    QHash<QValueSpaceItem *, int>::ConstIterator iter =
-        d->connections->connections.constFind(this);
+    if (!d->connections || d->connections->connections.value(this) == 0)
+        d->connect(this);
 
-    if (iter == d->connections->connections.end())
-        return false;
-
-    return *iter > 0;
-}
-
-void QValueSpaceItem::setNotify(bool notify)
-{
-    if (notify)
-        connectNotify(SIGNAL(contentsChanged()));
-    else
-        disconnectNotify(SIGNAL(contentsChanged()));
+    return value(QByteArray(), def);
 }
 
 /*!
