@@ -1,0 +1,295 @@
+/****************************************************************************
+**
+** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+**
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file. Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain
+** additional rights. These rights are described in the Nokia Qt LGPL
+** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
+** package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at http://qt.nokia.com/contact.
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+#include <multimedia/qmediaplayercontrol.h>
+#include <multimedia/qabstractmediacontrol_p.h>
+#include <multimedia/qmediaplayer.h>
+
+
+/*!
+    \class QMediaPlayerControl
+    \ingroup multimedia
+
+    \preliminary
+    \brief The abstract class for controling media playback, this is provided
+    by a QAbstractMediaService object, and is used by QMediaPlayer for playback.
+
+    \sa QAbstractMediaService, QMediaPlayer
+*/
+
+/*!
+    Destroys a media player control.
+*/
+QMediaPlayerControl::~QMediaPlayerControl()
+{
+}
+
+/*!
+    Constructs a new media player control with the given \a parent.
+*/
+QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
+    QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
+{
+}
+
+/*!
+    \fn QMediaPlayerControl::state() const
+
+    Returns the state of a player control.
+*/
+
+/*!
+    \fn QMediaPlayerControl::stateChanged(QMediaPlayer::State state)
+
+    Signals that the \a state of a player control has changed.
+
+    \sa state()
+*/
+
+/*!
+    \fn QMediaPlayerControl::mediaStatus() const
+
+    Returns the status of the current media.
+*/
+
+/*!
+    \fn QMediaPlayerControl::mediaStatusChanged(QMediaPlayer::MediaStatus status)
+
+    Signals that the \a status of the current media has changed.
+
+    \sa mediaStatus()
+*/
+
+
+/*!
+    \fn QMediaPlayerControl::duration() const
+
+    Returns the duration of the current media in milliseconds.
+*/
+
+/*!
+    \fn QMediaPlayerControl::durationChanged(qint64 duration)
+
+    Signals that the \a duration of the current media has changed.
+
+    \sa duration()
+*/
+
+/*!
+    \fn QMediaPlayerControl::position() const
+
+    Returns the current playback position in milliseconds.
+*/
+
+/*!
+    \fn QMediaPlayerControl::setPosition(qint64 position)
+
+    Sets the playback \a position of the current media.  This will initiate a seek and it may take
+    some time for playback to reach the position set.
+*/
+
+/*!
+    \fn QMediaPlayerControl::positionChanged(qint64 position)
+
+    Signals the playback \a position has changed.
+
+    This is only emitted in when there has been a discontinous change in the playback postion, such
+    as a seek or the position being reset.
+
+    \sa position()
+*/
+
+/*!
+    \fn QMediaPlayerControl::volume() const
+
+    Returns the audio volume of a player control.
+*/
+
+/*!
+    \fn QMediaPlayerControl::setVolume(int volume)
+
+    Sets the audio \a volume of a player control.
+*/
+
+/*!
+    \fn QMediaPlayerControl::volumeChanged(int volume)
+
+    Signals the audio \a volume of a player control has changed.
+
+    \sa volume()
+*/
+
+/*!
+    \fn QMediaPlayerControl::isMuted() const
+
+    Returns the mute state of a player control.
+*/
+
+/*!
+    \fn QMediaPlayerControl::setMuted(bool mute)
+
+    Sets the \a mute state of a player control.
+*/
+
+/*!
+    \fn QMediaPlayerControl::mutingChanged(bool mute)
+
+    Signals a change in the \a mute status of a player control.
+
+    \sa isMuted()
+*/
+
+/*!
+    \fn QMediaPlayerControl::bufferStatus() const
+
+    Returns the buffering progress of the current media.  Progress is measured in the percentage
+    of the buffer filled.
+*/
+
+/*!
+    \fn QMediaPlayerControl::bufferStatusChanged(int progress)
+
+    Signals that buffering \a progress has changed.
+
+    \sa bufferStatus()
+*/
+
+/*!
+    \fn QMediaPlayerControl::isVideoAvailable() const
+
+    Identifies if there is video output available for the current media.
+
+    Returns true if video output is available and false otherwise.
+*/
+
+/*!
+    \fn QMediaPlayerControl::videoAvailabilityChanged(bool video)
+
+    Signals that there has been a change in the availability of \a video output.
+
+    \sa isVideoAvailable()
+*/
+
+/*!
+    \fn QMediaPlayerControl::isSeekable() const
+
+    Identifies if the current media is seekable.
+
+    Returns true if it possible to seek within the current media, and false otherwise.
+*/
+
+/*!
+    \fn QMediaPlayerControl::seekableChanged(bool seekable)
+
+    Signals that the \a seekable state of a player control has changed.
+
+    \sa isSeekable()
+*/
+
+/*!
+    \fn QMediaPlayerControl::playbackRate() const
+
+    Returns the rate of playback.
+*/
+
+/*!
+    \fn QMediaPlayerControl::setPlaybackRate(float rate)
+
+    Sets the \a rate of playback.
+*/
+
+/*!
+    \fn QMediaPlayerControl::media() const
+
+    Returns the current media source.
+*/
+
+/*!
+    \fn QMediaPlayerControl::mediaStream() const
+
+    Returns the current media stream. This is only a valid if a stream was passed to setMedia().
+
+    \sa setMedia()
+*/
+
+/*!
+    \fn QMediaPlayerControl::setMedia(const QMediaSource &media, QIODevice *stream)
+
+    Sets the current \a media source.  If a \a stream is supplied; data will be read from that
+    instead of attempting to resolve the media source.  The media source may still be used to
+    supply media information such as mime type.
+*/
+
+/*!
+    \fn QMediaPlayerControl::currentSourceChanged(const QMediaSource& source)
+
+    Signals that the current media \a source has changed.
+*/
+
+/*!
+    \fn QMediaPlayerControl::play()
+
+    Starts playback of the current media.
+
+    If successful the player control will immediately enter the \l {QMediaPlayer::PlayingState}
+    {playing} state.
+
+    \sa state()
+*/
+
+/*!
+    \fn QMediaPlayerControl::pause()
+
+    Pauses playback of the current media.
+
+    If sucessful the player control will immediately enter the \l {QMediaPlayer::PausedState}
+    {paused} state.
+
+    \sa state(), play(), stop()
+*/
+
+/*!
+    \fn QMediaPlayerControl::stop()
+
+    Stops playback of the current media.
+
+    If succesful the player control will immediately enter the \l {QMediaPlayer::StoppedState}
+    {stopped} state.
+*/
+
+/*!
+    \fn QMediaPlayerControl::error(int error, const QString &errorString)
+
+    Signals that an \a error has occurred.  The \a errorString provides a more detailed explanation.
+*/

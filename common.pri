@@ -84,12 +84,15 @@ symbian {
 
     # Engine plugins should be installed in their own .pro
     DEPLOYMENT += CONTACTS_DEPLOYMENT
+    
+    TARGET.CAPABILITY = ALL -TCB
 }
 
 # Add the output dirs to the link path too
 LIBS += -L$$OUTPUT_DIR/lib
 
 DEPENDPATH += . $$SOURCE_DIR
+INCLUDEPATH += $$SOURCE_DIR
 #INCLUDEPATH += . \
 #    $$SOURCE_DIR \
 #    $$SOURCE_DIR/contacts \
@@ -97,3 +100,9 @@ DEPENDPATH += . $$SOURCE_DIR
 #    $$SOURCE_DIR/contacts/engines \
 #    $$SOURCE_DIR/contacts/filters \
 #    $$SOURCE_DIR/contacts/requests
+
+contains(QT_CONFIG, multimedia) {
+    QT += multimedia
+} else {
+    DEFINES *= QT_NO_MULTIMEDIA
+}

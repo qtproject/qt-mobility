@@ -1,6 +1,8 @@
+.DS_Store
 .obj
 *.moc
 Makefile*
+*.dylib
 *.so.*
 *.so
 *.so.debug
@@ -26,6 +28,9 @@ bin/sysinfo*
 bin/examples/*
 bin/sysinfo*
 install/*
+lib
+*.app
+*.pro.user
 
 #Symbian specific
 *.mmp

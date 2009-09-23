@@ -51,3 +51,17 @@ SUBDIRS +=  qcontact \                      #Contacts
             qcontactmanager \
             qcontactmanagerplugins \
             qcontactmanagerfiltering
+
+SUBDIRS = \           #Multimedia
+        qabstractmediaobject \
+        qabstractmediaservice \
+        qmediaplaylist \
+        qmediaplaylistnavigator \
+        qmediaresource \
+        qmediasource \
+        qvideowidget \
+        qmediaplayer \
+        qradioplayer \
+        qmediarecorder \
+        qaudiosource \
+        qcamera

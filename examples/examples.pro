@@ -29,3 +29,11 @@ contains(QT_CONFIG, declarative) {
 
 #System Information
 SUBDIRS += sysinfo
+
+#Multimedia
+SUBDIRS = \
+        player \
+        recorder \
+        cameracapture \
+        slideshow \
+        streamplayer

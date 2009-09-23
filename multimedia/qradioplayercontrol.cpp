@@ -1,0 +1,217 @@
+/****************************************************************************
+**
+** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+**
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file. Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain
+** additional rights. These rights are described in the Nokia Qt LGPL
+** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
+** package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at http://qt.nokia.com/contact.
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+#include <multimedia/qradioplayercontrol.h>
+#include <multimedia/qabstractmediacontrol_p.h>
+
+
+/*!
+    \class QRadioPlayerControl
+    \ingroup multimedia
+
+    \preliminary
+    \brief The abstract class for controling the tuning of radio devices.
+
+    \sa QAbstractMediaService, QRadioPlayer
+*/
+
+/*!
+    Construct a radio player control class.
+*/
+
+QRadioPlayerControl::QRadioPlayerControl(QObject *parent):
+    QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
+{
+}
+
+/*!
+    Destruct the radio player control class.
+*/
+
+QRadioPlayerControl::~QRadioPlayerControl()
+{
+}
+
+/*!
+    \fn QRadioPlayer::Band QRadioPlayerControl::band() const
+
+    Returns the current band being used.
+*/
+
+/*!
+    \fn void QRadioPlayerControl::bandChanged(QRadioPlayer::Band band)
+
+    Signal emitted when \a band changed.
+*/
+
+/*!
+    \fn void QRadioPlayerControl::setBand(QRadioPlayer::Band band)
+
+    Set current band to \a band.
+*/
+
+/*!
+    \fn bool QRadioPlayerControl::isSupportedBand(QRadioPlayer::Band band) const
+
+    Return true if \a band is available.
+*/
+
+/*!
+    \fn int QRadioPlayerControl::frequency() const
+
+    Returns the current frequency being used.
+*/
+
+/*!
+    \fn void QRadioPlayerControl::setFrequency(int frequency)
+
+    Set the frequency to \a frequency.
+*/
+
+/*!
+    \fn bool QRadioPlayerControl::isStereo() const
+
+    Return true if in stereo mode.
+*/
+
+/*!
+    \fn void QRadioPlayerControl::setStereo(bool stereo)
+
+    Set to stereo mode if \a stereo is true.
+*/
+
+/*!
+    \fn int QRadioPlayerControl::signalStrength() const
+
+    Return the current signal strength as a percentage.
+*/
+
+/*!
+    \fn qint64 QRadioPlayerControl::duration() const
+
+    Returns the time in milliseconds at this frequency.
+*/
+
+/*!
+    \fn int QRadioPlayerControl::volume() const
+
+    Returns the volume as a percentage.
+*/
+
+/*!
+    \fn void QRadioPlayerControl::setVolume(int volume)
+
+    Set the volume to \a volume (percentage)
+*/
+
+/*!
+    \fn bool QRadioPlayerControl::isMuted() const
+
+    Returns true if muted.
+*/
+
+/*!
+    \fn void QRadioPlayerControl::setMuted(bool muted)
+
+    Set mute state to \a muted.
+*/
+
+/*!
+    \fn bool QRadioPlayerControl::isSearching() const
+
+    Returns true if currently scanning.
+*/
+
+/*!
+    \fn  void QRadioPlayerControl::searchForward()
+
+    Start scanning, ascending freqeuncy.
+*/
+
+/*!
+    \fn void QRadioPlayerControl::searchBackward()
+
+    Start scanning, descending frequency.
+*/
+
+/*!
+    \fn void QRadioPlayerControl::cancelSearch()
+
+    Stop any scanning being done.
+*/
+
+
+/*!
+    \fn void QRadioPlayerControl::frequencyChanged(int frequency)
+
+    Signal emitted when \a frequency changed.
+*/
+
+/*!
+    \fn void QRadioPlayerControl::stereoStatusChanged(bool stereo)
+
+    Signal emitted when \a stereo mode changed.
+*/
+
+/*!
+    \fn void QRadioPlayerControl::searchingStatusChanged(bool searching)
+
+    Signal emitted when \a searching status changed.
+*/
+
+/*!
+    \fn void QRadioPlayerControl::signalStrengthChanged(int signalStrength)
+
+    Signal emitted when \a signalStrength changed (percentage).
+*/
+
+/*!
+    \fn void QRadioPlayerControl::durationChanged(qint64 duration)
+
+    Signal emitted when \a duration changed.
+*/
+
+/*!
+    \fn void QRadioPlayerControl::volumeChanged(int volume)
+
+    Signal emitted when \a volume changed (percentage).
+*/
+
+/*!
+    \fn void QRadioPlayerControl::mutingChanged(bool muted)
+
+    Signal emitted when \a muted state changed.
+*/
+
+

@@ -1,0 +1,15 @@
+
+Design
+- Fix up audio/video device (inputs and outputs) representation
+
+Add Interfaces
+- QAudioEncoder
+- (QVideoEncoder - later)
+- (QMovieEncoder - later)
+
+QMediaMetaData 
+- Potentially needs to set data
+
+
+- Some system information
+ - mimetypes etc.

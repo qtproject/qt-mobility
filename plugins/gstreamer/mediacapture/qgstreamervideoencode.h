@@ -1,0 +1,96 @@
+/****************************************************************************
+**
+** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+**
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file. Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain
+** additional rights. These rights are described in the Nokia Qt LGPL
+** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
+** package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at http://qt.nokia.com/contact.
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+#ifndef QGSTREAMERVIDEOENCODE_H
+#define QGSTREAMERVIDEOENCODE_H
+
+#include <multimedia/qvideoencodercontrol.h>
+class QGstreamerCaptureSession;
+
+#include <QtCore/qstringlist.h>
+#include <QtCore/qmap.h>
+
+#include <gst/gst.h>
+
+class QGstreamerVideoEncode : public QVideoEncoderControl
+{
+    Q_OBJECT
+public:
+    QGstreamerVideoEncode(QObject *parent);
+    virtual ~QGstreamerVideoEncode();
+
+    QSize resolution() const;
+    QSize minimumResolution() const;
+    QSize maximumResolution() const;
+    QList<QSize> supportedResolutions() const;
+    void setResolution(const QSize &);
+
+    QMediaRecorder::FrameRate frameRate() const;
+    QMediaRecorder::FrameRate minimumFrameRate() const;
+    QMediaRecorder::FrameRate maximumFrameRate() const;
+    QList< QMediaRecorder::FrameRate > supportedFrameRates() const;
+    void setFrameRate(const QMediaRecorder::FrameRate &rate);
+
+    QStringList supportedVideoCodecs() const;
+    QString videoCodecDescription(const QString &codecName) const;
+
+    QString videoCodec() const;
+    bool setVideoCodec(const QString &codecName);
+    QString audioCodec() const;
+
+    int bitrate() const;
+    void setBitrate(int);
+
+    int quality() const;
+    void setQuality(int);
+
+    QStringList supportedEncodingOptions() const;
+    QVariant encodingOption(const QString &name) const;
+    void setEncodingOption(const QString &name, const QVariant &value);
+
+    GstElement *createEncoder();
+
+private:
+    QStringList m_codecs;
+    QMap<QString,QString> m_codecDescriptions;
+    QMap<QString,QByteArray> m_elementNames;
+    QMap<QString,QStringList> m_codecOptions;
+
+    QString m_codec;
+    QMap<QString, QVariant> m_options;
+    QSize m_resolution;
+    QMediaRecorder::FrameRate m_frameRate;
+};
+
+#endif
