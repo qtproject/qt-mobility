@@ -139,14 +139,14 @@ QCameraFocusControl::~QCameraFocusControl()
 
 
 /*!
-  qreal QCameraFocusControl::zoomValue() const
+  \fn qreal QCameraFocusControl::zoomValue() const
 
   Return the zoom value.
 */
 
 
 /*!
-  void QCameraFocusControl::zoomTo(int value)
+  \fn void QCameraFocusControl::zoomTo(qreal value)
 
   Set the zoom value to \a value
 */

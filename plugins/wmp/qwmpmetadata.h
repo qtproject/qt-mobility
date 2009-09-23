@@ -35,8 +35,8 @@
 #ifndef QWMPMETADATA_H
 #define QWMPMETADATA_H
 
-#include "qmetadataprovidercontrol.h"
-#include "qmediaresource.h"
+#include <multimedia/qmetadataprovidercontrol.h>
+#include <multimedia/qmediaresource.h>
 
 #include <wmp.h>
 

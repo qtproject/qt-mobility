@@ -33,7 +33,6 @@
 ****************************************************************************/
 
 #include <multimedia/qradioplayer.h>
-
 #include <multimedia/qabstractmediaobject_p.h>
 #include <multimedia/qradioplayercontrol.h>
 

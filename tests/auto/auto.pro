@@ -11,5 +11,6 @@ SUBDIRS = \
         qmediaplayer \
         qradioplayer \
         qmediarecorder \
+        qaudiosource \
         qcamera
 

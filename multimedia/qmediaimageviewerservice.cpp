@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qmediaslideshowservice_p.h>
+#include <multimedia/qmediaimageviewerservice_p.h>
 
 #include <multimedia/qabstractmediacontrol_p.h>
 #include <multimedia/qabstractmediaservice_p.h>
@@ -58,12 +58,12 @@
 #include <QtMultimedia/qabstractvideosurface.h>
 #include <QtMultimedia/qvideosurfaceformat.h>
 
-class QMediaSlideShowRenderer : public QVideoRendererControl
+class QMediaImageViewerRenderer : public QVideoRendererControl
 {
     Q_OBJECT
 public:
-    QMediaSlideShowRenderer(QObject *parent = 0);
-    ~QMediaSlideShowRenderer();
+    QMediaImageViewerRenderer(QObject *parent = 0);
+    ~QMediaImageViewerRenderer();
 
     QAbstractVideoSurface *surface() const;
     void setSurface(QAbstractVideoSurface *surface);
@@ -75,32 +75,32 @@ private:
     QAbstractVideoSurface *m_surface;
 };
 
-QMediaSlideShowRenderer::QMediaSlideShowRenderer(QObject *parent)
+QMediaImageViewerRenderer::QMediaImageViewerRenderer(QObject *parent)
     : QVideoRendererControl(parent)
     , m_surface(0)
 {
 }
 
-QMediaSlideShowRenderer::~QMediaSlideShowRenderer()
+QMediaImageViewerRenderer::~QMediaImageViewerRenderer()
 {
 }
 
-QAbstractVideoSurface *QMediaSlideShowRenderer::surface() const
+QAbstractVideoSurface *QMediaImageViewerRenderer::surface() const
 {
     return m_surface;
 }
 
-void QMediaSlideShowRenderer::setSurface(QAbstractVideoSurface *surface)
+void QMediaImageViewerRenderer::setSurface(QAbstractVideoSurface *surface)
 {
     emit surfaceChanged(m_surface = surface);
 }
 #endif
 
-class QMediaSlideShowWidget : public QWidget
+class QMediaImageViewerWidget : public QWidget
 {
     Q_OBJECT
 public:
-    QMediaSlideShowWidget(QWidget *parent = 0);
+    QMediaImageViewerWidget(QWidget *parent = 0);
 
     QImage image() const;
     void setImage(const QImage &image);
@@ -116,37 +116,37 @@ private:
     QImage m_image;
 };
 
-QMediaSlideShowWidget::QMediaSlideShowWidget(QWidget *parent)
+QMediaImageViewerWidget::QMediaImageViewerWidget(QWidget *parent)
     : QWidget(parent)
     , m_aspectRatio(QVideoWidget::AspectRatioAuto)
 {
 }
 
-QImage QMediaSlideShowWidget::image() const
+QImage QMediaImageViewerWidget::image() const
 {
     return m_image;
 }
 
-void QMediaSlideShowWidget::setImage(const QImage &image)
+void QMediaImageViewerWidget::setImage(const QImage &image)
 {
     m_image = image;
 
     update();
 }
 
-QVideoWidget::AspectRatio QMediaSlideShowWidget::aspectRatio() const
+QVideoWidget::AspectRatio QMediaImageViewerWidget::aspectRatio() const
 {
     return m_aspectRatio;
 }
 
-void QMediaSlideShowWidget::setAspectRatio(QVideoWidget::AspectRatio ratio)
+void QMediaImageViewerWidget::setAspectRatio(QVideoWidget::AspectRatio ratio)
 {
     m_aspectRatio = ratio;
 
     update();
 }
 
-void QMediaSlideShowWidget::paintEvent(QPaintEvent *)
+void QMediaImageViewerWidget::paintEvent(QPaintEvent *)
 {
     if (!m_image.isNull()) {
         QPainter painter(this);
@@ -176,11 +176,11 @@ void QMediaSlideShowWidget::paintEvent(QPaintEvent *)
     }
 }
 
-class QMediaSlideShowWidgetControl : public QVideoWidgetControl
+class QMediaImageViewerWidgetControl : public QVideoWidgetControl
 {
     Q_OBJECT
 public:
-    QMediaSlideShowWidgetControl(QMediaSlideShowWidget *widget, QObject *parent = 0);
+    QMediaImageViewerWidgetControl(QMediaImageViewerWidget *widget, QObject *parent = 0);
 
     QWidget *videoWidget();
 
@@ -206,47 +206,47 @@ public:
     void setSaturation(int saturation);
 
 private:
-    QMediaSlideShowWidget *m_widget;
+    QMediaImageViewerWidget *m_widget;
 };
 
-QMediaSlideShowWidgetControl::QMediaSlideShowWidgetControl(
-        QMediaSlideShowWidget *widget, QObject *parent)
+QMediaImageViewerWidgetControl::QMediaImageViewerWidgetControl(
+        QMediaImageViewerWidget *widget, QObject *parent)
     : QVideoWidgetControl(parent)
     , m_widget(widget)
 {
 }
 
-QWidget *QMediaSlideShowWidgetControl::videoWidget()
+QWidget *QMediaImageViewerWidgetControl::videoWidget()
 {
     return m_widget;
 }
 
-QVideoWidget::AspectRatio QMediaSlideShowWidgetControl::aspectRatio() const
+QVideoWidget::AspectRatio QMediaImageViewerWidgetControl::aspectRatio() const
 {
     return m_widget->aspectRatio();
 }
 
-void QMediaSlideShowWidgetControl::setAspectRatio(QVideoWidget::AspectRatio ratio)
+void QMediaImageViewerWidgetControl::setAspectRatio(QVideoWidget::AspectRatio ratio)
 {
     m_widget->setAspectRatio(ratio);
 }
 
-QSize QMediaSlideShowWidgetControl::customAspectRatio() const
+QSize QMediaImageViewerWidgetControl::customAspectRatio() const
 {
     return QSize(1, 1);
 }
 
-void QMediaSlideShowWidgetControl::setCustomAspectRatio(const QSize &customRatio)
+void QMediaImageViewerWidgetControl::setCustomAspectRatio(const QSize &customRatio)
 {
     Q_UNUSED(customRatio);
 }
 
-bool QMediaSlideShowWidgetControl::isFullscreen() const
+bool QMediaImageViewerWidgetControl::isFullscreen() const
 {
     return m_widget->isFullScreen();
 }
 
-void QMediaSlideShowWidgetControl::setFullscreen(bool fullscreen)
+void QMediaImageViewerWidgetControl::setFullscreen(bool fullscreen)
 {
     if (fullscreen) {
         m_widget->setWindowFlags(m_widget->windowFlags() | Qt::Window | Qt::WindowStaysOnTopHint);
@@ -265,51 +265,51 @@ void QMediaSlideShowWidgetControl::setFullscreen(bool fullscreen)
     }
 }
 
-int QMediaSlideShowWidgetControl::brightness() const
+int QMediaImageViewerWidgetControl::brightness() const
 {
     return 0;
 }
 
-void QMediaSlideShowWidgetControl::setBrightness(int brightness)
+void QMediaImageViewerWidgetControl::setBrightness(int brightness)
 {
     Q_UNUSED(brightness);
 }
 
-int QMediaSlideShowWidgetControl::contrast() const
+int QMediaImageViewerWidgetControl::contrast() const
 {
     return 0;
 }
 
-void QMediaSlideShowWidgetControl::setContrast(int contrast)
+void QMediaImageViewerWidgetControl::setContrast(int contrast)
 {
     Q_UNUSED(contrast);
 }
 
-int QMediaSlideShowWidgetControl::hue() const
+int QMediaImageViewerWidgetControl::hue() const
 {
     return 0;
 }
 
-void QMediaSlideShowWidgetControl::setHue(int hue)
+void QMediaImageViewerWidgetControl::setHue(int hue)
 {
     Q_UNUSED(hue);
 }
 
-int QMediaSlideShowWidgetControl::saturation() const
+int QMediaImageViewerWidgetControl::saturation() const
 {
     return 0;
 }
 
-void QMediaSlideShowWidgetControl::setSaturation(int saturation)
+void QMediaImageViewerWidgetControl::setSaturation(int saturation)
 {
     Q_UNUSED(saturation);
 }
 
-class QMediaSlideShowOutputControl : public QVideoOutputControl
+class QMediaImageViewerOutputControl : public QVideoOutputControl
 {
     Q_OBJECT
 public:
-    QMediaSlideShowOutputControl(QObject *parent = 0);
+    QMediaImageViewerOutputControl(QObject *parent = 0);
 
     QList<Output> availableOutputs() const;
 
@@ -323,14 +323,14 @@ private:
     Output m_output;
 };
 
-QMediaSlideShowOutputControl::QMediaSlideShowOutputControl(QObject *parent)
+QMediaImageViewerOutputControl::QMediaImageViewerOutputControl(QObject *parent)
     : QVideoOutputControl(parent)
     , m_output(NoOutput)
 {
 }
 
 
-QList<QVideoOutputControl::Output> QMediaSlideShowOutputControl::availableOutputs() const
+QList<QVideoOutputControl::Output> QMediaImageViewerOutputControl::availableOutputs() const
 {
     return QList<Output>()
 #ifndef QT_NO_MULTIMEDIA
@@ -339,12 +339,12 @@ QList<QVideoOutputControl::Output> QMediaSlideShowOutputControl::availableOutput
             << WidgetOutput;
 }
 
-QVideoOutputControl::Output QMediaSlideShowOutputControl::output() const
+QVideoOutputControl::Output QMediaImageViewerOutputControl::output() const
 {
     return m_output;
 }
 
-void QMediaSlideShowOutputControl::setOutput(Output output)
+void QMediaImageViewerOutputControl::setOutput(Output output)
 {
     switch (output) {
 #ifndef QT_NO_MULTIMEDIA
@@ -358,11 +358,11 @@ void QMediaSlideShowOutputControl::setOutput(Output output)
     }
 }
 
-class QMediaSlideShowServicePrivate : public QAbstractMediaServicePrivate
+class QMediaImageViewerServicePrivate : public QAbstractMediaServicePrivate
 {
 public:
-    QMediaSlideShowServicePrivate()
-        : slideControl(0)
+    QMediaImageViewerServicePrivate()
+        : viewerControl(0)
         , outputControl(0)
 #ifndef QT_NO_MULTIMEDIA
         , rendererControl(0)
@@ -378,13 +378,13 @@ public:
 #endif
     void _q_outputChanged(QVideoOutputControl::Output output);
 
-    QMediaSlideShowControl *slideControl;
-    QMediaSlideShowOutputControl *outputControl;
+    QMediaImageViewerControl *viewerControl;
+    QMediaImageViewerOutputControl *outputControl;
 #ifndef QT_NO_MULTIMEDIA
-    QMediaSlideShowRenderer *rendererControl;
+    QMediaImageViewerRenderer *rendererControl;
 #endif
-    QMediaSlideShowWidgetControl *widgetControl;
-    QMediaSlideShowWidget *widget;
+    QMediaImageViewerWidgetControl *widgetControl;
+    QMediaImageViewerWidget *widget;
     QNetworkAccessManager *network;
 
 #ifndef QT_NO_MULTIMEDIA
@@ -392,7 +392,7 @@ public:
 #endif
 };
 
-bool QMediaSlideShowServicePrivate::load(QIODevice *device)
+bool QMediaImageViewerServicePrivate::load(QIODevice *device)
 {
     QImageReader reader(device);
 
@@ -450,7 +450,7 @@ bool QMediaSlideShowServicePrivate::load(QIODevice *device)
     return false;
 }
 
-void QMediaSlideShowServicePrivate::clear()
+void QMediaImageViewerServicePrivate::clear()
 {
 #ifndef QT_NO_MULTIMEDIA
     if (surface)
@@ -460,13 +460,13 @@ void QMediaSlideShowServicePrivate::clear()
 }
 
 #ifndef QT_NO_MULTIMEDIA
-void QMediaSlideShowServicePrivate::_q_surfaceChanged(QAbstractVideoSurface *surface)
+void QMediaImageViewerServicePrivate::_q_surfaceChanged(QAbstractVideoSurface *surface)
 {
     this->surface = surface;
 }
 #endif
 
-void QMediaSlideShowServicePrivate::_q_outputChanged(QVideoOutputControl::Output output)
+void QMediaImageViewerServicePrivate::_q_outputChanged(QVideoOutputControl::Output output)
 {
     if (output != QVideoOutputControl::WidgetOutput) {
         widget->setImage(QImage());
@@ -478,37 +478,39 @@ void QMediaSlideShowServicePrivate::_q_outputChanged(QVideoOutputControl::Output
 }
 
 /*!
-    \class QMediaSlideShowService
+    \class QMediaImageViewerService
     \internal
 */
 
 /*!
 */
-QMediaSlideShowService::QMediaSlideShowService(QObject *parent)
-    : QAbstractMediaService(*new QMediaSlideShowServicePrivate, parent)
+QMediaImageViewerService::QMediaImageViewerService(QObject *parent)
+    : QAbstractMediaService(*new QMediaImageViewerServicePrivate, parent)
 {
-    Q_D(QMediaSlideShowService);
+    Q_D(QMediaImageViewerService);
 
-    d->slideControl = new QMediaSlideShowControl(this);
-    d->outputControl = new QMediaSlideShowOutputControl;
+    d->viewerControl = new QMediaImageViewerControl(this);
+    d->outputControl = new QMediaImageViewerOutputControl;
     connect(d->outputControl, SIGNAL(outputChanged(QVideoOutputControl::Output)),
             SLOT(_q_outputChanged(QVideoOutputControl::Output)));
 
 #ifndef QT_NO_MULTIMEDIA
-    d->rendererControl = new QMediaSlideShowRenderer;
+    d->rendererControl = new QMediaImageViewerRenderer;
 
     connect(d->rendererControl, SIGNAL(surfaceChanged(QAbstractVideoSurface*)),
             this, SLOT(_q_surfaceChanged(QAbstractVideoSurface*)));
 #endif
-    d->widget = new QMediaSlideShowWidget;
-    d->widgetControl = new QMediaSlideShowWidgetControl(d->widget);
+    d->widget = new QMediaImageViewerWidget;
+    d->widgetControl = new QMediaImageViewerWidgetControl(d->widget);
+
+    d->network = new QNetworkAccessManager(this);
 }
 
 /*!
 */
-QMediaSlideShowService::~QMediaSlideShowService()
+QMediaImageViewerService::~QMediaImageViewerService()
 {
-    Q_D(QMediaSlideShowService);
+    Q_D(QMediaImageViewerService);
 
     delete d->widgetControl;
     delete d->widget;
@@ -516,17 +518,17 @@ QMediaSlideShowService::~QMediaSlideShowService()
     delete d->rendererControl;
 #endif
     delete d->outputControl;
-    delete d->slideControl;
+    delete d->viewerControl;
 }
 
 /*!
 */
-QAbstractMediaControl *QMediaSlideShowService::control(const char *name) const
+QAbstractMediaControl *QMediaImageViewerService::control(const char *name) const
 {
-    Q_D(const QMediaSlideShowService);
+    Q_D(const QMediaImageViewerService);
 
-    if (qstrcmp(name, QMediaSlideShowControl_iid) == 0) {
-        return d->slideControl;
+    if (qstrcmp(name, QMediaImageViewerControl_iid) == 0) {
+        return d->viewerControl;
     } else if (qstrcmp(name, QVideoOutputControl_iid) == 0) {
         return d->outputControl;
 #ifndef QT_NO_MULTIMEDIA
@@ -542,27 +544,20 @@ QAbstractMediaControl *QMediaSlideShowService::control(const char *name) const
 
 /*!
 */
-QNetworkAccessManager *QMediaSlideShowService::networkManager() const
+QNetworkAccessManager *QMediaImageViewerService::networkManager() const
 {
     return d_func()->network;
 }
 
-/*!
-*/
-void QMediaSlideShowService::setNetworkManager(QNetworkAccessManager *manager)
+class QMediaImageViewerControlPrivate : public QAbstractMediaControlPrivate
 {
-    d_func()->network = manager;
-}
-
-class QMediaSlideShowControlPrivate : public QAbstractMediaControlPrivate
-{
-    Q_DECLARE_PUBLIC(QMediaSlideShowControl)
+    Q_DECLARE_PUBLIC(QMediaImageViewerControl)
 public:
-    QMediaSlideShowControlPrivate()
+    QMediaImageViewerControlPrivate()
         : service(0)
         , getReply(0)
         , headReply(0)
-        , status(QMediaSlideShow::NoMedia)
+        , status(QMediaImageViewer::NoMedia)
     {
     }
 
@@ -574,16 +569,16 @@ public:
     void _q_getFinished();
     void _q_headFinished();
 
-    QMediaSlideShowService *service;
+    QMediaImageViewerService *service;
     QNetworkReply *getReply;
     QNetworkReply *headReply;
-    QMediaSlideShow::MediaStatus status;
+    QMediaImageViewer::MediaStatus status;
     QMediaSource media;
     QMediaResource currentMedia;
     QList<QMediaResource> possibleResources;
 };
 
-bool QMediaSlideShowControlPrivate::isImageType(const QUrl &uri, const QString &mimeType) const
+bool QMediaImageViewerControlPrivate::isImageType(const QUrl &uri, const QString &mimeType) const
 {
     if (!mimeType.isEmpty()) {
         return mimeType.startsWith(QLatin1String("image/"))
@@ -602,7 +597,7 @@ bool QMediaSlideShowControlPrivate::isImageType(const QUrl &uri, const QString &
     }
 }
 
-void QMediaSlideShowControlPrivate::loadImage()
+void QMediaImageViewerControlPrivate::loadImage()
 {
     cancelRequests();
 
@@ -611,7 +606,7 @@ void QMediaSlideShowControlPrivate::loadImage()
     if (!network) {
         possibleResources.clear();
 
-        status = QMediaSlideShow::InvalidMedia;
+        status = QMediaImageViewer::InvalidMedia;
         currentMedia = QMediaResource();
     } else {
         while (!possibleResources.isEmpty() && !headReply && !getReply) {
@@ -636,7 +631,7 @@ void QMediaSlideShowControlPrivate::loadImage()
     emit q_func()->mediaStatusChanged(status);
 }
 
-void QMediaSlideShowControlPrivate::cancelRequests()
+void QMediaImageViewerControlPrivate::cancelRequests()
 {
     if (getReply) {
         getReply->abort();
@@ -651,14 +646,14 @@ void QMediaSlideShowControlPrivate::cancelRequests()
     }
 }
 
-void QMediaSlideShowControlPrivate::_q_getFinished()
+void QMediaImageViewerControlPrivate::_q_getFinished()
 {
     QImage image;
 
     if (service->d_func()->load(getReply)) {
         possibleResources.clear();
 
-        status = QMediaSlideShow::LoadedMedia;
+        status = QMediaImageViewer::LoadedMedia;
 
         emit q_func()->mediaStatusChanged(status);
     } else {
@@ -666,7 +661,7 @@ void QMediaSlideShowControlPrivate::_q_getFinished()
     }
 }
 
-void QMediaSlideShowControlPrivate::_q_headFinished()
+void QMediaImageViewerControlPrivate::_q_headFinished()
 {
     QString mimeType = headReply->header(QNetworkRequest::ContentTypeHeader)
             .toString().section(QLatin1Char(';'), 0, 0);
@@ -687,49 +682,49 @@ void QMediaSlideShowControlPrivate::_q_headFinished()
 }
 
 /*!
-    \class QMediaSlideShowControl
+    \class QMediaImageViewerControl
     \internal
 */
-QMediaSlideShowControl::QMediaSlideShowControl(QMediaSlideShowService *parent)
-    : QAbstractMediaControl(*new QMediaSlideShowControlPrivate, parent)
+QMediaImageViewerControl::QMediaImageViewerControl(QMediaImageViewerService *parent)
+    : QAbstractMediaControl(*new QMediaImageViewerControlPrivate, parent)
 {
-    Q_D(QMediaSlideShowControl);
+    Q_D(QMediaImageViewerControl);
 
     d->service = parent;
 }
 
 /*!
 */
-QMediaSlideShowControl::~QMediaSlideShowControl()
+QMediaImageViewerControl::~QMediaImageViewerControl()
 {
-    Q_D(QMediaSlideShowControl);
+    Q_D(QMediaImageViewerControl);
 
     delete d->getReply;
 }
 
 /*!
 */
-QMediaSlideShow::MediaStatus QMediaSlideShowControl::mediaStatus() const
+QMediaImageViewer::MediaStatus QMediaImageViewerControl::mediaStatus() const
 {
     return d_func()->status;
 }
 
 /*!
-    \fn QMediaSlideShowControl::mediaStatusChanged(QMediaSlideShow::MediaStatus status);
+    \fn QMediaImageViewerControl::mediaStatusChanged(QMediaImageViewer::MediaStatus status);
 */
 
 /*!
 */
-QMediaSource QMediaSlideShowControl::media() const
+QMediaSource QMediaImageViewerControl::media() const
 {
     return d_func()->media;
 }
 
 /*!
 */
-void QMediaSlideShowControl::setMedia(const QMediaSource &media)
+void QMediaImageViewerControl::setMedia(const QMediaSource &media)
 {
-    Q_D(QMediaSlideShowControl);
+    Q_D(QMediaImageViewerControl);
 
     d->media = media;
     d->currentMedia = QMediaResource();
@@ -738,7 +733,7 @@ void QMediaSlideShowControl::setMedia(const QMediaSource &media)
         d->cancelRequests();
         d->service->d_func()->clear();
 
-        d->status = QMediaSlideShow::NoMedia;
+        d->status = QMediaImageViewer::NoMedia;
 
         emit currentMediaChanged(d->currentMedia);
         emit mediaStatusChanged(d->status);
@@ -758,14 +753,14 @@ void QMediaSlideShowControl::setMedia(const QMediaSource &media)
 
 /*!
 */
-QMediaResource QMediaSlideShowControl::currentMedia() const
+QMediaResource QMediaImageViewerControl::currentMedia() const
 {
     return d_func()->currentMedia;
 }
 
 /*!
-    \fn QMediaSlideShowControl::currentMediaChanged(const QMediaResource &media)
+    \fn QMediaImageViewerControl::currentMediaChanged(const QMediaResource &media)
 */
 
-#include "moc_qmediaslideshowservice_p.cpp"
-#include "qmediaslideshowservice.moc"
+#include "moc_qmediaimageviewerservice_p.cpp"
+#include "qmediaimageviewerservice.moc"

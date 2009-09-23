@@ -12,8 +12,6 @@ for(p, TMP_SEARCHPATHS): exists($${p}/evr.h): DEFINES *= QWMP_EVR
 
 LIBS += -lQtMedia -lstrmiids -lole32 -lOleaut32 -luser32 -lgdi32
 
-INCLUDEPATH += $$PWD/../../multimedia
-
 HEADERS = \
     qevrvideooverlay.h \
     qmfactivate.h \

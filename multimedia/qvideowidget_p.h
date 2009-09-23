@@ -98,7 +98,7 @@ public:
     QFullScreenVideoWidget(QWidget *parent = 0);
     ~QFullScreenVideoWidget();
 
-    QVideoWidget::DisplayMode displayMode() const;
+    QVideoWidget::DisplayMode displayMode() const { return m_displayMode; }
     void setDisplayMode(QVideoWidget::DisplayMode mode);
 
     QWidget *widget();
@@ -149,7 +149,7 @@ public:
     void setHue(int hue);
     void setSaturation(int saturation);
 
-    QVideoWidget::DisplayMode displayMode() const;
+    QVideoWidget::DisplayMode displayMode() const { return m_displayMode; }
     void setDisplayMode(QVideoWidget::DisplayMode mode);
 
     void setAspectRatio(QVideoWidget::AspectRatio ratio);
@@ -222,6 +222,66 @@ private:
     QVideoWindowControl *m_windowControl;
     QVideoWidget::AspectRatio m_aspectRatioMode;
     QSize m_pixelAspectRatio;
+};
+
+class QAbstractMediaService;
+class QStackedLayout;
+class QVideoOutputControl;
+
+class QVideoWidgetPrivate
+{
+    Q_DECLARE_PUBLIC(QVideoWidget)
+public:
+    QVideoWidgetPrivate()
+        : q_ptr(0)
+        , layout(0)
+        , service(0)
+        , outputControl(0)
+        , widgetBackend(0)
+        , windowBackend(0)
+#ifndef QT_NO_MULTIMEDIA
+        , rendererBackend(0)
+#endif
+        , currentBackend(0)
+        , brightness(0)
+        , contrast(0)
+        , hue(0)
+        , saturation(0)
+        , displayMode(QVideoWidget::WindowedDisplay)
+        , aspectRatio(QVideoWidget::AspectRatioAuto)
+        , customPixelAspectRatio(1, 1)
+    {
+    }
+
+    QVideoWidget *q_ptr;
+    QStackedLayout *layout;
+    QAbstractMediaService *service;
+    QVideoOutputControl *outputControl;
+    QVideoWidgetControlBackend *widgetBackend;
+    QVideoWindowWidget *windowBackend;
+#ifndef QT_NO_MULTIMEDIA
+    QVideoRendererWidget *rendererBackend;
+#endif
+    QVideoWidgetBackendInterface *currentBackend;
+    int brightness;
+    int contrast;
+    int hue;
+    int saturation;
+    QVideoWidget::DisplayMode displayMode;
+    QVideoWidget::AspectRatio aspectRatio;
+    QSize customPixelAspectRatio;
+
+    void setCurrentBackend(QVideoWidgetBackendInterface *backend);
+
+    void _q_serviceDestroyed();
+    void _q_brightnessChanged(int brightness);
+    void _q_contrastChanged(int contrast);
+    void _q_hueChanged(int hue);
+    void _q_saturationChanged(int saturation);
+    void _q_fullScreenChanged(bool fullscreen);
+    void _q_displayModeChanged(QVideoWidget::DisplayMode mode);
+    void _q_aspectRatioModeChanged(QVideoWidget::AspectRatio mode);
+    void _q_customAspectRatioChanged(const QSize &ratio);
 };
 
 #endif

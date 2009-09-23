@@ -9,8 +9,6 @@ include (../../common.pri)
 LIBS += -lQtMedia
 
 DEPENDPATH += .
-INCLUDEPATH += . \
-    ../../multimedia
 
 unix:contains(QT_CONFIG, alsa) {
 DEFINES += HAVE_ALSA

@@ -35,7 +35,7 @@
 #ifndef QWMPPLAYLIST_H
 #define QWMPPLAYLIST_H
 
-#include "qmediaplaylistprovider.h"
+#include <multimedia/qmediaplaylistprovider.h>
 
 #include <QtCore/qvariant.h>
 

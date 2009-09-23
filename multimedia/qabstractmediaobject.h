@@ -155,6 +155,8 @@ protected:
     void addPropertyWatch(QByteArray const &name);
     void removePropertyWatch(QByteArray const &name);
 
+    void registerService(QAbstractMediaService *service);
+
     QAbstractMediaObjectPrivate *d_ptr;
 
 private:

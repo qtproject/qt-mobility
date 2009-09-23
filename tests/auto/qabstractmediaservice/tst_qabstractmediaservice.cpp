@@ -37,11 +37,18 @@
 #include "multimedia/qabstractmediacontrol.h"
 #include "multimedia/qabstractmediaservice.h"
 
+class QtTestMediaService;
+
 class tst_QAbstractMediaService : public QObject
 {
     Q_OBJECT
 private slots:
     void control();
+
+    void testEndpoints();
+
+private:
+    QtTestMediaService *m_service;
 };
 
 class QtTestMediaControlA : public QAbstractMediaControl
@@ -107,12 +114,27 @@ public:
 
 void tst_QAbstractMediaService::control()
 {
-    QtTestMediaService service;
+    m_service = new QtTestMediaService;
 
-    QCOMPARE(service.control<QtTestMediaControlA *>(), &service.controlA);
-    QCOMPARE(service.control<QtTestMediaControlB *>(), &service.controlB);
-    QVERIFY(!service.control<QtTestMediaControlC *>());  // Faulty implementation returns A.
-    QVERIFY(!service.control<QtTestMediaControlD *>());  // No control of that type.
+    QCOMPARE(m_service->control<QtTestMediaControlA *>(), &m_service->controlA);
+    QCOMPARE(m_service->control<QtTestMediaControlB *>(), &m_service->controlB);
+    QVERIFY(!m_service->control<QtTestMediaControlC *>());  // Faulty implementation returns A.
+    QVERIFY(!m_service->control<QtTestMediaControlD *>());  // No control of that type.
+}
+
+void tst_QAbstractMediaService::testEndpoints()
+{
+    QVERIFY(!m_service->isEndpointSupported(QAbstractMediaService::AudioInput));
+    m_service->setInputStream((QIODevice*)0);
+    QVERIFY(m_service->inputStream() == 0);
+    m_service->setOutputStream((QIODevice*)0);
+    QVERIFY(m_service->outputStream() == 0);
+    QList<QString> endpoints = m_service->activeEndpoints(QAbstractMediaService::AudioInput);
+    QVERIFY(endpoints.count() == 0);
+    QVERIFY(!m_service->setActiveEndpoint(QAbstractMediaService::AudioInput, "test"));
+    QVERIFY(m_service->endpointDescription(QAbstractMediaService::AudioInput, "test") == QString());
+    endpoints = m_service->supportedEndpoints(QAbstractMediaService::AudioInput);
+    QVERIFY(endpoints.count() == 0);
 }
 
 QTEST_MAIN(tst_QAbstractMediaService)

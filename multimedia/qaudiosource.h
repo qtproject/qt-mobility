@@ -32,40 +32,46 @@
 **
 ****************************************************************************/
 
-#ifndef AUDIODEVICECONTROL_H
-#define AUDIODEVICECONTROL_H
+#ifndef QAUDIOSOURCE_H
+#define QAUDIOSOURCE_H
 
-#include "qaudiodevicecontrol.h"
-#include <QStringList>
+#include <QtCore/qstringlist.h>
+#include <QtCore/qpair.h>
+#include <QtCore/qsize.h>
 
-class AudioCaptureSession;
+#include <QtMultimedia/qaudioformat.h>
 
-class AudioDeviceEndpoint : public QAudioDeviceControl
+#include <multimedia/qmediarecorder.h>
+#include <multimedia/qabstractmediacontrol.h>
+#include <multimedia/qabstractmediaobject.h>
+#include <multimedia/qabstractmediaservice.h>
+
+#include <multimedia/qmediaserviceprovider.h>
+
+class QAudioSourcePrivate;
+
+class Q_MEDIA_EXPORT QAudioSource : public QAbstractMediaObject
 {
-Q_OBJECT
+    Q_OBJECT
+
+    Q_ENUMS(State)
 public:
-    AudioDeviceEndpoint(QObject *parent);
-    virtual ~AudioDeviceEndpoint();
+    QAudioSource(QObject *parent = 0, QMediaServiceProvider *service = 0);
+    ~QAudioSource();
 
-    int deviceCount() const;
+    bool isValid() const;
 
-    QString name(int index) const;
-    QString description(int index) const;
-    QIcon icon(int index) const;
+    QAudioFormat format() const;
+    void setFormat(const QAudioFormat &format);
+    bool isFormatSupported(const QAudioFormat &format) const;
 
-    int defaultDevice() const;
-    int selectedDevice() const;
-
-public Q_SLOTS:
-    void setSelectedDevice(int index);
+    QStringList supportedCodecs() const;
+    QList<int> supportedFrequencies() const;
+    QList<int> supportedChannels() const;
+    QList<int> supportedSampleSizes() const;
 
 private:
-    void update();
-
-    QString     m_device;
-    QStringList m_names;
-    QStringList m_descriptions;
-    AudioCaptureSession* m_session;
+    Q_DECLARE_PRIVATE(QAudioSource)
 };
 
-#endif // AUDIODEVICECONTROL_H
+#endif  // QAUDIOSOURCE_H

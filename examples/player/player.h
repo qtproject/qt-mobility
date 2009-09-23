@@ -37,9 +37,9 @@
 
 #include <QtGui/QWidget>
 
-#include "qmediaplayer.h"
-#include "qmediaplaylist.h"
-#include "qvideowidget.h"
+#include <multimedia/qmediaplayer.h>
+#include <multimedia/qmediaplaylist.h>
+#include <multimedia/qvideowidget.h>
 
 class QLabel;
 class QMediaPlayer;

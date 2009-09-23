@@ -482,7 +482,7 @@ void QMediaPlaylistNavigatorPrivate::_q_itemsChanged(int start, int end)
 }
 
 /*!
-    \fn void QMediaPlaylistNavigator::activated(const QMediaSource &&source)
+    \fn void QMediaPlaylistNavigator::activated(const QMediaSource &source)
 
     Signal the playback of \a source should be started.
     it's usually related to change of the current item
@@ -491,9 +491,6 @@ void QMediaPlaylistNavigatorPrivate::_q_itemsChanged(int start, int end)
 
 /*!
   \fn void QMediaPlaylistNavigator::currentPositionChanged(int)
-  */
-/*!
-  \fn void QMediaPlaylistNavigator::playbackModeChanged(PlaybackMode mode)
   */
 
 

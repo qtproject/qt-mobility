@@ -32,30 +32,13 @@
 **
 ****************************************************************************/
 
+#include <multimedia/qaudiosourceservice.h>
 
-#ifndef AUDIOFORMATCONTROL_H
-#define AUDIOFORMATCONTROL_H
-
-#include "qmediaformatcontrol.h"
-#include <QtCore/qstringlist.h>
-
-class AudioFormatControl : public QMediaFormatControl
+QAudioSourceService::QAudioSourceService(QObject *parent):
+    QAbstractMediaService(parent)
 {
-Q_OBJECT
-public:
-    AudioFormatControl(QObject *parent);
-    virtual ~AudioFormatControl() {};
+}
 
-    virtual QStringList supportedFormats() const { return m_supportedFormats; }
-    virtual QString format() const { return m_format; }
-    virtual void setFormat(const QString &formatMimeType) { m_format = formatMimeType; }
-
-    virtual QString formatDescription(const QString &formatMimeType) const { return m_formatDescriptions.value(formatMimeType); }
-
-private:
-    QString m_format;
-    QStringList m_supportedFormats;
-    QMap<QString, QString> m_formatDescriptions;
-};
-
-#endif // AUDIOFORMATCONTROL_H
+QAudioSourceService::~QAudioSourceService()
+{
+}

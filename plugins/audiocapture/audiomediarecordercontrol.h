@@ -32,17 +32,37 @@
 **
 ****************************************************************************/
 
-#include "audioformatcontrol.h"
+#ifndef AUDIOMEDIARECORDERCONTROL_H
+#define AUDIOMEDIARECORDERCONTROL_H
 
-AudioFormatControl::AudioFormatControl(QObject *parent)
-    :QMediaFormatControl(parent)
+#include <QtCore/qobject.h>
+
+#include "qmediarecorder.h"
+#include "qmediarecordercontrol.h"
+
+class AudioCaptureSession;
+
+class AudioMediaRecorderControl : public QMediaRecorderControl
 {
-    m_supportedFormats.clear();
-    m_formatDescriptions.clear();
+    Q_OBJECT
+public:
+    AudioMediaRecorderControl(QObject *parent = 0);
+    ~AudioMediaRecorderControl();
 
-    m_supportedFormats.append("audio/pcm");
-    m_formatDescriptions.insert("audio/pcm","Raw audio format");
+    QUrl sink() const;
+    bool setSink(const QUrl &sink);
 
-    setFormat(m_supportedFormats[0]);
-}
+    QMediaRecorder::State state() const;
 
+    qint64 duration() const;
+
+public slots:
+    void record();
+    void pause();
+    void stop();
+
+private:
+    AudioCaptureSession* m_session;
+};
+
+#endif

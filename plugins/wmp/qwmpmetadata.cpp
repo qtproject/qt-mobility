@@ -37,7 +37,7 @@
 #include "qwmpevents.h"
 #include "qwmpglobal.h"
 
-#include "qmediasource.h"
+#include <multimedia/qmediasource.h>
 
 #include <QtCore/qdatetime.h>
 #include <QtCore/qdir.h>

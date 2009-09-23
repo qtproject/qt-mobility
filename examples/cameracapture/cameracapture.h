@@ -43,10 +43,7 @@ namespace Ui {
 
 class QMediaRecorder;
 class QCamera;
-class QAudioDeviceControl;
-class QAudioEncoderControl;
-class QVideoEncoderControl;
-class QMediaFormatControl;
+class QAbstractMediaService;
 
 class CameraCapture : public QMainWindow
 {
@@ -80,7 +77,7 @@ private:
 
     QMediaRecorder* mediaRecorder;
     QCamera *camera;
-    QAudioDeviceControl *audioDevice;
+    QAbstractMediaService *service;
 };
 
 #endif

@@ -32,37 +32,54 @@
 **
 ****************************************************************************/
 
-#ifndef AUDIOMEDIACONTROL_H
-#define AUDIOMEDIACONTROL_H
+#include "audiocapturesession.h"
+#include "audiomediarecordercontrol.h"
 
-#include <QtCore/qobject.h>
+#include <QtCore/qdebug.h>
 
-#include "qmediarecorder.h"
-#include "qmediarecordercontrol.h"
-
-class AudioCaptureSession;
-
-class AudioMediaControl : public QMediaRecorderControl
+AudioMediaRecorderControl::AudioMediaRecorderControl(QObject *parent)
+    :QMediaRecorderControl(parent)
 {
-    Q_OBJECT
-public:
-    AudioMediaControl(QObject *parent = 0);
-    ~AudioMediaControl();
+    m_session = qobject_cast<AudioCaptureSession*>(parent);
+    connect(m_session,SIGNAL(positionChanged(qint64)),this,SIGNAL(durationChanged(qint64)));
+    connect(m_session,SIGNAL(stateChanged(QMediaRecorder::State)),this,SIGNAL(stateChanged(QMediaRecorder::State)));
+}
 
-    QUrl sink() const;
-    bool setSink(const QUrl &sink);
+AudioMediaRecorderControl::~AudioMediaRecorderControl()
+{
+}
 
-    QMediaRecorder::State state() const;
+QUrl AudioMediaRecorderControl::sink() const
+{
+    return m_session->sink();
+}
 
-    qint64 duration() const;
+bool AudioMediaRecorderControl::setSink(const QUrl& sink)
+{
+    return m_session->setSink(sink);
+}
 
-public slots:
-    void record();
-    void pause();
-    void stop();
+QMediaRecorder::State AudioMediaRecorderControl::state() const
+{
+    return (QMediaRecorder::State)m_session->state();
+}
 
-private:
-    AudioCaptureSession* m_session;
-};
+qint64 AudioMediaRecorderControl::duration() const
+{
+    return m_session->position();
+}
 
-#endif
+void AudioMediaRecorderControl::record()
+{
+    m_session->record();
+}
+
+void AudioMediaRecorderControl::pause()
+{
+    m_session->stop();
+}
+
+void AudioMediaRecorderControl::stop()
+{
+    m_session->stop();
+}

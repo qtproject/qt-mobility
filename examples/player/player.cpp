@@ -37,8 +37,8 @@
 #include "playercontrols.h"
 #include "playlistmodel.h"
 
-#include <qabstractmediaservice.h>
-#include <qmediaplaylist.h>
+#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qmediaplaylist.h>
 
 #include <QtGui>
 
@@ -175,7 +175,7 @@ void Player::positionChanged(qint64 progress)
 
 void Player::metaDataChanged()
 {
-    qDebug() << "update metadata" << player->metaData(QAbstractMediaObject::Title).toString();
+    //qDebug() << "update metadata" << player->metaData(QAbstractMediaObject::Title).toString();
     if (player->isMetaDataAvailable()) {
         setTrackInfo(QString("%1 - %2")
                 .arg(player->metaData(QAbstractMediaObject::AlbumArtist).toString())

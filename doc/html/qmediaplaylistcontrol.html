@@ -27,10 +27,10 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#advance">advance</a></b> () = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#back">back</a></b> () = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#currentPosition">currentPosition</a></b> () const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#nextPosition">nextPosition</a></b> ( int <i>steps</i> ) const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#nextPosition">nextPosition</a></b> ( int <i>step</i> ) const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QMediaPlaylist::PlaybackMode </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#playbackMode">playbackMode</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QMediaPlaylistProvider * </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#playlistProvider">playlistProvider</a></b> () const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#previousPosition">previousPosition</a></b> ( int <i>steps</i> ) const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#previousPosition">previousPosition</a></b> ( int <i>step</i> ) const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#setCurrentPosition">setCurrentPosition</a></b> ( int <i>position</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#setPlaybackMode">setPlaybackMode</a></b> ( QMediaPlaylist::PlaybackMode <i>mode</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#setPlaylistProvider">setPlaylistProvider</a></b> ( QMediaPlaylistProvider * <i>playlist</i> ) = 0</td></tr>
@@ -42,6 +42,7 @@
 <a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#currentMediaChanged">currentMediaChanged</a></b> ( const QMediaSource &amp; )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#playbackModeChanged">playbackModeChanged</a></b> ( QMediaPlaylist::PlaybackMode <i>mode</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#playlistPositionChanged">playlistPositionChanged</a></b> ( int <i>position</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#playlistProviderChanged">playlistProviderChanged</a></b> ()</td></tr>
@@ -81,28 +82,29 @@
 <p>Moves to the next item in playlist.</p>
 <h3 class="fn"><a name="back"></a>void QMediaPlaylistControl::back ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns to the previous item in playlist.</p>
+<h3 class="fn"><a name="currentMediaChanged"></a>void QMediaPlaylistControl::currentMediaChanged ( const <a href="qmediasource.html">QMediaSource</a> &amp; )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <h3 class="fn"><a name="currentPosition"></a>int QMediaPlaylistControl::currentPosition () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns position of the current media source in the playlist.</p>
 <p>See also <a href="qmediaplaylistcontrol.html#setCurrentPosition">setCurrentPosition</a>().</p>
-<h3 class="fn"><a name="nextPosition"></a>int QMediaPlaylistControl::nextPosition ( int <i>steps</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="nextPosition"></a>int QMediaPlaylistControl::nextPosition ( int <i>step</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the position of item, which were current after calling <a href="qmediaplaylistcontrol.html#advance">advance</a>() <i>step</i> times.</p>
 <p>Returned value depends on the size of playlist, current position and playback mode.</p>
-<p>See also previousPosition and <a href="qmediaplaylist.html#playbackMode-prop">QMediaPlaylist::playbackMode</a>.</p>
+<p>See also <a href="qmediaplaylist.html#playbackMode-prop">QMediaPlaylist::playbackMode</a>.</p>
 <h3 class="fn"><a name="playbackMode"></a><a href="qmediaplaylist.html#PlaybackMode-enum">QMediaPlaylist::PlaybackMode</a> QMediaPlaylistControl::playbackMode () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the playlist navigation mode.</p>
 <p>See also <a href="qmediaplaylistcontrol.html#setPlaybackMode">setPlaybackMode</a>() and <a href="qmediaplaylist.html#PlaybackMode-enum">QMediaPlaylist::PlaybackMode</a>.</p>
 <h3 class="fn"><a name="playbackModeChanged"></a>void QMediaPlaylistControl::playbackModeChanged ( <a href="qmediaplaylist.html#PlaybackMode-enum">QMediaPlaylist::PlaybackMode</a> <i>mode</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal emited when the playback <i>mode</i> is changed.</p>
 <h3 class="fn"><a name="playlistPositionChanged"></a>void QMediaPlaylistControl::playlistPositionChanged ( int <i>position</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signal emited when the playlist position is changed.</p>
+<p>Signal emited when the playlist <i>position</i> is changed.</p>
 <h3 class="fn"><a name="playlistProvider"></a><a href="qmediaplaylistprovider.html">QMediaPlaylistProvider</a> * QMediaPlaylistControl::playlistProvider () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the playlist used by this media player.</p>
 <p>See also <a href="qmediaplaylistcontrol.html#setPlaylistProvider">setPlaylistProvider</a>().</p>
 <h3 class="fn"><a name="playlistProviderChanged"></a>void QMediaPlaylistControl::playlistProviderChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal emited when the playlist provider is changed.</p>
-<h3 class="fn"><a name="previousPosition"></a>int QMediaPlaylistControl::previousPosition ( int <i>steps</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="previousPosition"></a>int QMediaPlaylistControl::previousPosition ( int <i>step</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the position of item, which were current after calling <a href="qmediaplaylistcontrol.html#back">back</a>() <i>step</i> times.</p>
-<p>See also nextPosition and <a href="qmediaplaylist.html#playbackMode-prop">QMediaPlaylist::playbackMode</a>.</p>
+<p>See also <a href="qmediaplaylist.html#playbackMode-prop">QMediaPlaylist::playbackMode</a>.</p>
 <h3 class="fn"><a name="setCurrentPosition"></a>void QMediaPlaylistControl::setCurrentPosition ( int <i>position</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Jump to the item at the given <i>position</i>.</p>
 <p>See also <a href="qmediaplaylistcontrol.html#currentPosition">currentPosition</a>().</p>
@@ -110,7 +112,7 @@
 <p>Sets the playback <i>mode</i>.</p>
 <p>See also <a href="qmediaplaylistcontrol.html#playbackMode">playbackMode</a>() and <a href="qmediaplaylist.html#PlaybackMode-enum">QMediaPlaylist::PlaybackMode</a>.</p>
 <h3 class="fn"><a name="setPlaylistProvider"></a>bool QMediaPlaylistControl::setPlaylistProvider ( <a href="qmediaplaylistprovider.html">QMediaPlaylistProvider</a> * <i>playlist</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Set the playlist of this media player to <i>mediaPlaylist</i>.</p>
+<p>Set the playlist of this media player to <i>playlist</i>.</p>
 <p>In many cases it is possible just to use the playlist constructed by player, but sometimes replacing the whole playlist allows to avoid copyting of all the items bettween playlists.</p>
 <p>Returns true if player can use this passed playlist; otherwise returns false.</p>
 <p>See also <a href="qmediaplaylistcontrol.html#playlistProvider">playlistProvider</a>().</p>

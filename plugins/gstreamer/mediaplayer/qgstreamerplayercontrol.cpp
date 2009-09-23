@@ -37,13 +37,28 @@
 
 #include <multimedia/qmediaplaylistnavigator.h>
 
+#include <QtCore/qdir.h>
+#include <QtCore/qsocketnotifier.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qdebug.h>
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *session, QObject *parent)
-   :QMediaPlayerControl(parent), m_session(session)
+    : QMediaPlayerControl(parent)
+    , m_session(session)
+    , m_stream(0)
+    , m_fifoNotifier(0)
+    , m_fifoCanWrite(false)
+    , m_bufferSize(0)
+    , m_bufferOffset(0)
 {
+    m_fifoFd[0] = -1;
+    m_fifoFd[1] = -1;
+
     connect(m_session, SIGNAL(positionChanged(qint64)),
             this, SIGNAL(positionChanged(qint64)));
     connect(m_session, SIGNAL(durationChanged(qint64)),
@@ -66,6 +81,12 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *sessio
 
 QGstreamerPlayerControl::~QGstreamerPlayerControl()
 {
+    if (m_fifoFd[0] >= 0) {
+        ::close(m_fifoFd[0]);
+        ::close(m_fifoFd[1]);
+        m_fifoFd[0] = -1;
+        m_fifoFd[1] = -1;
+    }
 }
 
 qint64 QGstreamerPlayerControl::position() const
@@ -126,6 +147,12 @@ void QGstreamerPlayerControl::setPosition(qint64 pos)
 void QGstreamerPlayerControl::play()
 {
     m_session->play();
+
+    if (m_fifoFd[1] >= 0) {
+        m_fifoCanWrite = true;
+
+        writeFifo();
+    }
 }
 
 void QGstreamerPlayerControl::pause()
@@ -155,19 +182,33 @@ QMediaSource QGstreamerPlayerControl::media() const
 
 const QIODevice *QGstreamerPlayerControl::mediaStream() const
 {
-    return 0;
+    return m_stream;
 }
 
-void QGstreamerPlayerControl::setMedia(const QMediaSource &source, QIODevice *)
+void QGstreamerPlayerControl::setMedia(const QMediaSource &source, QIODevice *stream)
 {
+    m_session->stop();
+
+    if (m_stream) {
+        closeFifo();
+
+        disconnect(m_stream, SIGNAL(readyRead()), this, SLOT(writeFifo()));
+        m_stream = 0;
+    }
+
     m_currentResource = source;
+    m_stream = stream;
 
     QUrl url;
 
-    if (!source.isNull())
+    if (m_stream) {
+        if (m_stream->isReadable() && openFifo()) {
+            url = QUrl(QString(QLatin1String("fd://%1")).arg(m_fifoFd[0]));
+        }
+    } else if (!source.isNull()) {
         url = source.contentUri();
+    }
 
-    m_session->stop();
     m_session->load(url);
 
     emit currentSourceChanged(m_currentResource);
@@ -181,4 +222,96 @@ void QGstreamerPlayerControl::setVideoOutput(QObject *output)
 bool QGstreamerPlayerControl::isVideoAvailable() const
 {
     return m_session->isVideoAvailable();
+}
+
+void QGstreamerPlayerControl::writeFifo()
+{
+    if (m_fifoCanWrite) {
+        qint64 bytesToRead = qMin<qint64>(
+                m_stream->bytesAvailable(), PIPE_BUF - m_bufferSize);
+
+        if (bytesToRead > 0) {
+            int bytesRead = m_stream->read(&m_buffer[m_bufferOffset + m_bufferSize], bytesToRead);
+
+            if (bytesRead > 0)
+                m_bufferSize += bytesRead;
+        }
+
+        if (m_bufferSize > 0) {
+            int bytesWritten = ::write(m_fifoFd[1], &m_buffer[m_bufferOffset], size_t(m_bufferSize));
+
+            if (bytesWritten > 0) {
+                m_bufferOffset += bytesWritten;
+                m_bufferSize -= bytesWritten;
+
+                if (m_bufferSize == 0)
+                    m_bufferOffset = 0;
+            } else if (errno == EAGAIN) {
+                m_fifoCanWrite = false;
+            } else {
+                closeFifo();
+            }
+        }
+    }
+
+    m_fifoNotifier->setEnabled(m_stream->bytesAvailable() > 0);
+}
+
+void QGstreamerPlayerControl::fifoReadyWrite(int socket)
+{
+    if (socket == m_fifoFd[1]) {
+        m_fifoCanWrite = true;
+
+        writeFifo();
+    }
+}
+
+bool QGstreamerPlayerControl::openFifo()
+{
+    Q_ASSERT(m_fifoFd[0] < 0);
+    Q_ASSERT(m_fifoFd[1] < 0);
+
+    if (::pipe(m_fifoFd) == 0) {
+        int flags = ::fcntl(m_fifoFd[1], F_GETFD);
+
+        if (::fcntl(m_fifoFd[1], F_SETFD, flags | O_NONBLOCK) >= 0) {
+            m_fifoNotifier = new QSocketNotifier(m_fifoFd[1], QSocketNotifier::Write);
+
+            connect(m_fifoNotifier, SIGNAL(activated(int)), this, SLOT(fifoReadyWrite(int)));
+
+            return true;
+        } else {
+            qWarning("Failed to make pipe non blocking %d", errno);
+
+            ::close(m_fifoFd[0]);
+            ::close(m_fifoFd[1]);
+
+            m_fifoFd[0] = -1;
+            m_fifoFd[1] = -1;
+
+            return false;
+        }
+    } else {
+        qWarning("Failed to create pipe %d", errno);
+
+        return false;
+    }
+}
+
+void QGstreamerPlayerControl::closeFifo()
+{
+    if (m_fifoFd[0] >= 0) {
+        delete m_fifoNotifier;
+        m_fifoNotifier = 0;
+
+        ::close(m_fifoFd[0]);
+        ::close(m_fifoFd[1]);
+        m_fifoFd[0] = -1;
+        m_fifoFd[1] = -1;
+
+        m_fifoCanWrite = false;
+
+        m_bufferSize = 0;
+        m_bufferOffset = 0;
+    }
 }

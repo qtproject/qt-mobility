@@ -433,14 +433,18 @@ void tst_QMediaRecorder::testRecord()
     QSignalSpy stateSignal(capture,SIGNAL(stateChanged(QMediaRecorder::State)));
     QSignalSpy progressSignal(capture, SIGNAL(durationChanged(qint64)));
     capture->record();
-
+    QVERIFY(capture->state() == QMediaRecorder::RecordingState);
+    QVERIFY(capture->error() == QMediaRecorder::NoError);
+    QVERIFY(capture->errorString() == QString());
     QTestEventLoop::instance().enterLoop(1);
     QVERIFY(stateSignal.count() == 1);
     QVERIFY(progressSignal.count() == 1);
     capture->pause();
+    QVERIFY(capture->state() == QMediaRecorder::PausedState);
     QTestEventLoop::instance().enterLoop(1);
     QVERIFY(stateSignal.count() == 2);
     capture->stop();
+    QVERIFY(capture->state() == QMediaRecorder::StoppedState);
     QTestEventLoop::instance().enterLoop(1);
     QVERIFY(stateSignal.count() == 3);
 }
@@ -460,15 +464,16 @@ void tst_QMediaRecorder::testAudioDeviceControl()
 
 void tst_QMediaRecorder::testAudioEncodeControl()
 {
-    QStringList codecs = encode->supportedAudioCodecs();
+    QStringList codecs = capture->supportedAudioCodecs();
     QVERIFY(codecs.count() == 2);
-    QVERIFY(encode->setAudioCodec("audio/mpeg"));
-    QVERIFY(encode->audioCodec() == QString("audio/mpeg"));
-    QCOMPARE(encode->quality(), 50);
-    encode->setQuality(1);
-    QCOMPARE(encode->quality(), 1);
-    encode->setBitrate(64);
-    QVERIFY(encode->bitrate() == 64);
+    QVERIFY(capture->setAudioCodec("audio/mpeg"));
+    QVERIFY(capture->audioCodec() == QString("audio/mpeg"));
+    QVERIFY(capture->audioCodecDescription("audio/pcm") == "Pulse Code Modulation");
+    QCOMPARE(capture->audioQuality(), 50);
+    capture->setAudioQuality(1);
+    QCOMPARE(capture->audioQuality(), 1);
+    capture->setAudioBitrate(64);
+    QVERIFY(capture->audioBitrate() == 64);
     QStringList options = encode->supportedEncodingOptions();
     QCOMPARE(options.count(), 6);
     encode->setEncodingOption("mp3",QStringList() << "bitrate" << "vbr");

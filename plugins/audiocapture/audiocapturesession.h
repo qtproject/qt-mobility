@@ -38,14 +38,14 @@
 #include <QFile>
 #include <QUrl>
 
-#include "audioencodecontrol.h"
-#include "qmediarecordercontrol.h"
-#include "qmediarecorder.h"
+#include "audioencodercontrol.h"
+#include "audiodevicecontrol.h"
+#include "audiomediarecordercontrol.h"
 
 #include <QtMultimedia/qaudioformat.h>
 #include <QtMultimedia/qaudioinput.h>
+#include <QtMultimedia/qaudiodeviceinfo.h>
 
-class QAudioDeviceInfo;
 
 class AudioCaptureSession : public QObject
 {
@@ -53,8 +53,6 @@ class AudioCaptureSession : public QObject
 public:
     AudioCaptureSession(QObject *parent = 0);
     ~AudioCaptureSession();
-
-    // encode controls
 
     QAudioFormat format() const;
     QAudioDeviceInfo* deviceInfo() const;
@@ -64,15 +62,6 @@ public:
     QString codecDescription(const QString &codecName);
     bool setAudioCodec(const QString &codecName);
     QString audioCodec() const;
-    int bitrate() const;
-    void setBitrate(int);
-    qreal quality() const;
-    void setQuality(qreal);
-    QStringList supportedEncodingOptions();
-    QVariant encodingOption(const QString &name);
-    void setEncodingOption(const QString &name, const QVariant &value);
-
-    // media controls
 
     QUrl sink() const;
     bool setSink(const QUrl& sink);

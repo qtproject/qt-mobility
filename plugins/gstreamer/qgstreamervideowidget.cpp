@@ -34,20 +34,65 @@
 
 #include "qgstreamervideowidget.h"
 
-#include <QEvent>
-#include <QApplication>
+#include <QtCore/qcoreevent.h>
+#include <QtCore/qdebug.h>
+#include <QtGui/qapplication.h>
+#include <QtGui/qpainter.h>
 
 #include <X11/Xlib.h>
 #include <gst/gst.h>
 #include <gst/interfaces/xoverlay.h>
 #include <gst/interfaces/propertyprobe.h>
 
+class QGstreamerVideoWidget : public QWidget
+{
+public:
+    QGstreamerVideoWidget(QWidget *parent = 0)
+        :QWidget(parent)
+    {
+        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        QPalette palette;
+        palette.setColor(QPalette::Background, Qt::black);
+        setPalette(palette);
+    }
+
+    virtual ~QGstreamerVideoWidget() {}
+
+    QSize sizeHint() const
+    {
+        return m_nativeSize;
+    }
+
+    void setNativeSize( const QSize &size)
+    {
+        if (size != m_nativeSize) {
+            m_nativeSize = size;
+            if (size.isEmpty())
+                setMinimumSize(0,0);
+            else
+                setMinimumSize(160,120);
+
+            updateGeometry();
+        }
+    }
+
+protected:
+    void paintEvent(QPaintEvent *)
+    {
+        QPainter painter(this);
+        painter.fillRect(rect(), palette().background());
+    }
+
+    QSize m_nativeSize;
+};
+
 QGstreamerVideoWidgetControl::QGstreamerVideoWidgetControl(QObject *parent)
     : QVideoWidgetControl(parent)
     , m_videoSink(0)
-    , m_widget(new QWidget)
+    , m_widget(new QGstreamerVideoWidget)
 {
     m_widget->installEventFilter(this);
+    m_windowId = m_widget->winId();
 
     m_videoSink = gst_element_factory_make ("xvimagesink", NULL);
     if (m_videoSink) {
@@ -67,8 +112,6 @@ QGstreamerVideoWidgetControl::QGstreamerVideoWidgetControl(QObject *parent)
 
     gst_object_ref (GST_OBJECT (m_videoSink)); //Take ownership
     gst_object_sink (GST_OBJECT (m_videoSink));
-
-    setOverlay();
 }
 
 QGstreamerVideoWidgetControl::~QGstreamerVideoWidgetControl()
@@ -87,12 +130,19 @@ GstElement *QGstreamerVideoWidgetControl::videoSink()
 bool QGstreamerVideoWidgetControl::eventFilter(QObject *object, QEvent *e)
 {
     if (object == m_widget) {
+        if (e->type() == QEvent::ParentChange || e->type() == QEvent::Show) {
+            WId newWId = m_widget->winId();
+            if (newWId != m_windowId) {
+                m_windowId = newWId;
+                setOverlay();
+            }
+        }
+
         if (e->type() == QEvent::Show) {
             // Setting these values ensures smooth resizing since it
             // will prevent the system from clearing the background
-            //setAttribute(Qt::WA_NoSystemBackground, true);
+            m_widget->setAttribute(Qt::WA_NoSystemBackground, true);
             m_widget->setAttribute(Qt::WA_PaintOnScreen, true);
-            setOverlay();
         } else if (e->type() == QEvent::Resize) {
             // This is a workaround for missing background repaints
             // when reducing window size
@@ -103,17 +153,51 @@ bool QGstreamerVideoWidgetControl::eventFilter(QObject *object, QEvent *e)
     return false;
 }
 
+void QGstreamerVideoWidgetControl::precessNewStream()
+{
+    setOverlay();
+    QMetaObject::invokeMethod(this, "updateNativeVideoSize", Qt::QueuedConnection);
+}
+
 void QGstreamerVideoWidgetControl::setOverlay()
 {
     if (m_videoSink && GST_IS_X_OVERLAY(m_videoSink)) {
-        WId windowId = m_widget->winId();
         // Even if we have created a winId at this point, other X applications
         // need to be aware of it.
         QApplication::syncX();
-        gst_x_overlay_set_xwindow_id ( GST_X_OVERLAY(m_videoSink) ,  windowId );
+        gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(m_videoSink), m_windowId);
     }
-    windowExposed();
 }
+
+void QGstreamerVideoWidgetControl::updateNativeVideoSize()
+{
+    if (m_videoSink) {
+        //find video native size to update video widget size hint
+        GstPad *pad = gst_element_get_static_pad(m_videoSink,"sink");
+        GstCaps *caps = gst_pad_get_negotiated_caps(pad);
+
+        if (caps) {
+            GstStructure *str;
+            gint width, height;
+
+            if ((str = gst_caps_get_structure (caps, 0))) {
+                if (gst_structure_get_int (str, "width", &width) && gst_structure_get_int (str, "height", &height)) {
+                    gint aspectNum = 0;
+                    gint aspectDenum = 0;
+                    if (gst_structure_get_fraction(str, "pixel-aspect-ratio", &aspectNum, &aspectDenum)) {
+                        if (aspectDenum > 0)
+                            width = width*aspectNum/aspectDenum;
+                    }
+                    m_widget->setNativeSize(QSize(width, height));
+                }
+            }
+            gst_caps_unref(caps);
+        }
+    } else {
+        m_widget->setNativeSize(QSize());
+    }
+}
+
 
 void QGstreamerVideoWidgetControl::windowExposed()
 {

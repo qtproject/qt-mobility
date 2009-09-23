@@ -157,7 +157,7 @@ QVideoEncoderControl::~QVideoEncoderControl()
 */
 
 /*!
-  \fn QVideoEncoderControl::setQuality(qreal value)
+  \fn QVideoEncoderControl::setQuality(int value)
 
   Sets the video quality to \a value.
 

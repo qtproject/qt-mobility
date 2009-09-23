@@ -114,3 +114,9 @@ QVideoDeviceControl::~QVideoDeviceControl()
 
     Signals that list of available devices was changed.
 */
+
+/*!
+    \fn QVideoDeviceControl::setSelectedDevice(int index)
+
+    Set the device to the device associated with \a index.
+*/

@@ -32,41 +32,24 @@
 **
 ****************************************************************************/
 
-#ifndef QAUDIOINPUTDEVICECONTROL_H
-#define QAUDIOINPUTDEVICECONTROL_H
+#ifndef QAUDIOSOURCESERVICE_H
+#define QAUDIOSOURCESERVICE_H
 
-#include <multimedia/qabstractmediacontrol.h>
+#include <multimedia/qabstractmediaservice.h>
 
-class Q_MEDIA_EXPORT QAudioInputDeviceControl : public QAbstractMediaControl
+
+class QAudioSourceServicePrivate;
+class Q_MEDIA_EXPORT QAudioSourceService : public QAbstractMediaService
 {
     Q_OBJECT
 
 public:
-    virtual ~QAudioInputDeviceControl();
+    ~QAudioSourceService();
 
-    virtual int deviceCount() const = 0;
-
-    virtual QString name(int index) const = 0;
-    virtual QString description(int index) const = 0;
-    virtual QIcon icon(int index) const = 0;
-
-    virtual int defaultDevice() const = 0;
-    virtual int selectedDevice() const = 0;
-
-public Q_SLOTS:
-    virtual void setSelectedDevice(int index) = 0;
-
-Q_SIGNALS:
-    void selectedDeviceChanged(int index);
-    void selectedDeviceChanged(const QString &deviceName);
-    void devicesChanged();
+    virtual QAbstractMediaControl* control(const char *name) const = 0;
 
 protected:
-    QAudioInputDeviceControl(QObject *parent);
+    QAudioSourceService(QObject *parent);
 };
 
-#define QAudioInputDeviceControl_iid "com.nokia.Qt.QAudioInputDeviceControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QAudioInputDeviceControl, QAudioInputDeviceControl_iid)
-
-
-#endif // QAUDIOINPUTDEVICECONTROL_H
+#endif  // QAUDIOSOURCESERVICE_H

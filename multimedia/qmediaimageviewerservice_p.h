@@ -36,46 +36,45 @@
 #define QMEDIASLIDESHOWSERVICE_P_H
 
 #include <multimedia/qabstractmediaservice.h>
-#include <multimedia/qmediaslideshow.h>
+#include <multimedia/qmediaimageviewer.h>
 #include <multimedia/qvideooutputcontrol.h>
 
 class QAbstractVideoSurface;
 class QNetworkAccessManager;
 
-class QMediaSlideShowServicePrivate;
+class QMediaImageViewerServicePrivate;
 
-class QMediaSlideShowService : public QAbstractMediaService
+class QMediaImageViewerService : public QAbstractMediaService
 {
     Q_OBJECT
 public:
-    explicit QMediaSlideShowService(QObject *parent = 0);
-    ~QMediaSlideShowService();
+    explicit QMediaImageViewerService(QObject *parent = 0);
+    ~QMediaImageViewerService();
 
     QAbstractMediaControl *control(const char *name) const;
 
     QNetworkAccessManager *networkManager() const;
-    void setNetworkManager(QNetworkAccessManager *manager);
 
 private:
-    Q_DECLARE_PRIVATE(QMediaSlideShowService)
+    Q_DECLARE_PRIVATE(QMediaImageViewerService)
 #ifndef QT_NO_MULTIMEDIA
     Q_PRIVATE_SLOT(d_func(), void _q_surfaceChanged(QAbstractVideoSurface *surface))
 #endif
     Q_PRIVATE_SLOT(d_func(), void _q_outputChanged(QVideoOutputControl::Output output))
-    friend class QMediaSlideShowControl;
-    friend class QMediaSlideShowControlPrivate;
+    friend class QMediaImageViewerControl;
+    friend class QMediaImageViewerControlPrivate;
 };
 
-class QMediaSlideShowControlPrivate;
+class QMediaImageViewerControlPrivate;
 
-class QMediaSlideShowControl : public QAbstractMediaControl
+class QMediaImageViewerControl : public QAbstractMediaControl
 {
     Q_OBJECT
 public:
-    explicit QMediaSlideShowControl(QMediaSlideShowService *parent);
-    ~QMediaSlideShowControl();
+    explicit QMediaImageViewerControl(QMediaImageViewerService *parent);
+    ~QMediaImageViewerControl();
 
-    QMediaSlideShow::MediaStatus mediaStatus() const;
+    QMediaImageViewer::MediaStatus mediaStatus() const;
 
     QMediaSource media() const;
     void setMedia(const QMediaSource &media);
@@ -85,15 +84,15 @@ public:
 Q_SIGNALS:
     void mediaChanged(const QMediaSource &media);
     void currentMediaChanged(const QMediaResource &media);
-    void mediaStatusChanged(QMediaSlideShow::MediaStatus status);
+    void mediaStatusChanged(QMediaImageViewer::MediaStatus status);
 
 private:
-    Q_DECLARE_PRIVATE(QMediaSlideShowControl)
+    Q_DECLARE_PRIVATE(QMediaImageViewerControl)
     Q_PRIVATE_SLOT(d_func(), void _q_headFinished())
     Q_PRIVATE_SLOT(d_func(), void _q_getFinished())
 };
 
-#define QMediaSlideShowControl_iid "com.nokia.Qt.QMediaSlideShowControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QMediaSlideShowControl, QMediaSlideShowControl_iid)
+#define QMediaImageViewerControl_iid "com.nokia.Qt.QMediaImageViewerControl/1.0"
+Q_MEDIA_DECLARE_CONTROL(QMediaImageViewerControl, QMediaImageViewerControl_iid)
 
 #endif

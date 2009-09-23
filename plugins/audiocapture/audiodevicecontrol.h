@@ -32,54 +32,40 @@
 **
 ****************************************************************************/
 
-#include "audiocapturesession.h"
-#include "audiomediacontrol.h"
+#ifndef AUDIODEVICECONTROL_H
+#define AUDIODEVICECONTROL_H
 
-#include <QtCore/qdebug.h>
+#include "qaudiodevicecontrol.h"
+#include <QStringList>
 
-AudioMediaControl::AudioMediaControl(QObject *parent)
-    :QMediaRecorderControl(parent)
+class AudioCaptureSession;
+
+class AudioDeviceControl : public QAudioDeviceControl
 {
-    m_session = qobject_cast<AudioCaptureSession*>(parent);
-    connect(m_session,SIGNAL(positionChanged(qint64)),this,SIGNAL(durationChanged(qint64)));
-    connect(m_session,SIGNAL(stateChanged(QMediaRecorder::State)),this,SIGNAL(stateChanged(QMediaRecorder::State)));
-}
+Q_OBJECT
+public:
+    AudioDeviceControl(QObject *parent);
+    virtual ~AudioDeviceControl();
 
-AudioMediaControl::~AudioMediaControl()
-{
-}
+    int deviceCount() const;
 
-QUrl AudioMediaControl::sink() const
-{
-    return m_session->sink();
-}
+    QString name(int index) const;
+    QString description(int index) const;
+    QIcon icon(int index) const;
 
-bool AudioMediaControl::setSink(const QUrl& sink)
-{
-    return m_session->setSink(sink);
-}
+    int defaultDevice() const;
+    int selectedDevice() const;
 
-QMediaRecorder::State AudioMediaControl::state() const
-{
-    return (QMediaRecorder::State)m_session->state();
-}
+public Q_SLOTS:
+    void setSelectedDevice(int index);
 
-qint64 AudioMediaControl::duration() const
-{
-    return m_session->position();
-}
+private:
+    void update();
 
-void AudioMediaControl::record()
-{
-    m_session->record();
-}
+    QString     m_device;
+    QStringList m_names;
+    QStringList m_descriptions;
+    AudioCaptureSession* m_session;
+};
 
-void AudioMediaControl::pause()
-{
-    m_session->stop();
-}
-
-void AudioMediaControl::stop()
-{
-    m_session->stop();
-}
+#endif // AUDIODEVICECONTROL_H

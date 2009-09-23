@@ -35,20 +35,14 @@
 #include "cameracapture.h"
 #include "ui_cameracapture.h"
 
-#include <qabstractmediaservice.h>
-#include <qmediarecorder.h>
-#include <qaudiodevicecontrol.h>
-#include <qaudioencodercontrol.h>
-#include <qvideoencodercontrol.h>
-#include <qmediaformatcontrol.h>
-#include <qcamera.h>
-#include <qvideowidget.h>
-
-#ifndef QT_NO_MULTIMEDIA
-#include <QtMultimedia/qaudioformat.h>
-#else
-#include <qaudioformat.h>
-#endif
+#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qmediarecorder.h>
+#include <multimedia/qaudiodevicecontrol.h>
+#include <multimedia/qaudioencodercontrol.h>
+#include <multimedia/qvideoencodercontrol.h>
+#include <multimedia/qmediaformatcontrol.h>
+#include <multimedia/qcamera.h>
+#include <multimedia/qvideowidget.h>
 
 #include <QtGui>
 
@@ -57,25 +51,31 @@ CameraCapture::CameraCapture(QWidget *parent) :
     ui(new Ui::CameraCapture),
     mediaRecorder(0),
     camera(0),
-    audioDevice(0)
+    service(0)
 {
     ui->setupUi(this);
 
     camera = new QCamera;
+    service = camera->service();
     mediaRecorder = new QMediaRecorder(camera);
 
+    Q_ASSERT(service);
+
     mediaRecorder->setSink(QUrl("test.mkv"));
-    audioDevice = mediaRecorder->service()->control<QAudioDeviceControl*>();
 
     connect(mediaRecorder, SIGNAL(durationChanged(qint64)), this, SLOT(updateRecordTime()));
     connect(mediaRecorder, SIGNAL(error(QMediaRecorder::Error)), this, SLOT(displayErrorMessage()));
 
-    if (audioDevice) {
-        for (int i=0; i<audioDevice->deviceCount(); i++) {
-             ui->audioInputDeviceBox->addItem(audioDevice->description(i));
-        }
-    } else
-        ui->audioInputDeviceBox->setEnabled(false);
+    //audio devices
+    foreach(const QString deviceName, service->supportedEndpoints(QAbstractMediaService::AudioInput)) {
+        QString description = service->endpointDescription(QAbstractMediaService::AudioInput, deviceName);
+        ui->audioInputDeviceBox->addItem(deviceName+" "+description, QVariant(deviceName));
+    }
+
+    //camera devices
+    foreach(const QString deviceName, camera->devices()) {
+        ui->cameraDeviceBox->addItem(deviceName+" "+camera->deviceDescription(deviceName), QVariant(deviceName));
+    }
 
     //audio codecs
     foreach(const QString &codecName, mediaRecorder->supportedAudioCodecs()) {
@@ -118,10 +118,6 @@ CameraCapture::CameraCapture(QWidget *parent) :
             ui->containerFormatBox->setCurrentIndex(ui->containerFormatBox->count()-1);
     }
 
-    //camera devices
-    foreach(const QString deviceName, camera->devices()) {
-        ui->cameraDeviceBox->addItem(deviceName+" "+camera->deviceDescription(deviceName), QVariant(deviceName));
-    }
 
     camera->setMetaData(QAbstractMediaObject::Title, QVariant(QLatin1String("Test Title")));
 
@@ -142,7 +138,8 @@ void CameraCapture::updateRecordTime()
 
 void CameraCapture::setAudioInputDevice(int idx)
 {
-    audioDevice->setSelectedDevice(idx);
+    QString deviceName = ui->audioInputDeviceBox->itemData(idx).toString();
+    service->setActiveEndpoint(QAbstractMediaService::AudioInput, deviceName );
 }
 
 void CameraCapture::setCameraDevice(int idx)

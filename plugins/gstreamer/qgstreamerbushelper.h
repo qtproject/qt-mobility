@@ -40,6 +40,11 @@
 #include <qgstreamermessage.h>
 #include <gst/gst.h>
 
+class QGstreamerSyncEventFilter {
+public:
+    //returns true if message was processed and should be dropped, false otherwise
+    virtual bool processSyncMessage(const QGstreamerMessage &message) = 0;
+};
 
 class QGstreamerBusHelperPrivate;
 
@@ -52,8 +57,11 @@ public:
     QGstreamerBusHelper(GstBus* bus, QObject* parent = 0);
     ~QGstreamerBusHelper();
 
+    void installSyncEventFilter(QGstreamerSyncEventFilter *filter);
+
 signals:
     void message(QGstreamerMessage const& message);
+
 
 private:
     QGstreamerBusHelperPrivate*   d;

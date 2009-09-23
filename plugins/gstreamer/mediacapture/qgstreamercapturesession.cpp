@@ -77,6 +77,7 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
 
     m_bus = gst_element_get_bus(m_pipeline);
     m_busHelper = new QGstreamerBusHelper(m_bus, this);
+    m_busHelper->installSyncEventFilter(this);
     connect(m_busHelper, SIGNAL(message(QGstreamerMessage)), SLOT(busMessage(QGstreamerMessage)));
     m_audioEncodeControl = new QGstreamerAudioEncode(this);
     m_videoEncodeControl = new QGstreamerVideoEncode(this);
@@ -584,6 +585,25 @@ void QGstreamerCaptureSession::setMetaData(const QMap<QByteArray, QVariant> &dat
     }
 }
 
+bool QGstreamerCaptureSession::processSyncMessage(const QGstreamerMessage &message)
+{
+    GstMessage* gm = message.rawMessage();
+
+    if (gm && GST_MESSAGE_TYPE(gm) == GST_MESSAGE_ELEMENT &&
+            gst_structure_has_name(gm->structure, "prepare-xwindow-id"))
+        {
+            if (m_audioPreviewFactory)
+                m_audioPreviewFactory->prepareWinId();
+
+            if (m_videoPreviewFactory)
+                m_videoPreviewFactory->prepareWinId();
+
+            return true;
+        }
+
+    return false;
+}
+
 void QGstreamerCaptureSession::busMessage(const QGstreamerMessage &message)
 {
     GstMessage* gm = message.rawMessage();
@@ -596,16 +616,6 @@ void QGstreamerCaptureSession::busMessage(const QGstreamerMessage &message)
             emit error(int(QMediaRecorder::ResourceError),QString::fromUtf8(err->message));
             g_error_free (err);
             g_free (debug);
-        }
-
-        if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_ELEMENT &&
-            gst_structure_has_name(gm->structure, "prepare-xwindow-id"))
-        {
-            if (m_audioPreviewFactory)
-                m_audioPreviewFactory->prepareWinId();
-
-            if (m_videoPreviewFactory)
-                m_videoPreviewFactory->prepareWinId();
         }
 
         if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_pipeline)) {

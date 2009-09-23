@@ -34,44 +34,38 @@
 #include <QDebug>
 
 #include "audiocaptureservice.h"
-#include "audiodeviceendpoint.h"
 #include "audiocapturesession.h"
-#include "audioencodecontrol.h"
-#include "audiomediacontrol.h"
-#include "audioformatcontrol.h"
+#include "audiodevicecontrol.h"
+#include "audioencodercontrol.h"
+#include "audiomediarecordercontrol.h"
 
 AudioCaptureService::AudioCaptureService(QObject *parent)
-    :QMediaRecorderService(parent)
+    :QAudioSourceService(parent)
 {
     m_session = new AudioCaptureSession(this);
-    m_encode  = new AudioEncodeControl(m_session);
-    m_media   = new AudioMediaControl(m_session);
-    m_format  = new AudioFormatControl(m_session);
-    m_audio   = new AudioDeviceEndpoint(m_session);
+    m_encoderControl  = new AudioEncoderControl(m_session);
+    m_mediaControl   = new AudioMediaRecorderControl(m_session);
+    m_deviceControl  = new AudioDeviceControl(m_session);
 }
 
 AudioCaptureService::~AudioCaptureService()
 {
-    delete m_audio;
-    delete m_encode;
-    delete m_media;
-    delete m_format;
+    delete m_encoderControl;
+    delete m_deviceControl;
+    delete m_mediaControl;
     delete m_session;
 }
 
 QAbstractMediaControl *AudioCaptureService::control(const char *name) const
 {
     if (qstrcmp(name,QMediaRecorderControl_iid) == 0)
-        return m_media;
+        return m_mediaControl;
 
     if (qstrcmp(name,QAudioEncoderControl_iid) == 0)
-        return m_encode;
+        return m_encoderControl;
 
     if (qstrcmp(name,QAudioDeviceControl_iid) == 0)
-        return m_audio;
-
-    if (qstrcmp(name,QMediaFormatControl_iid) == 0)
-        return m_format;
+        return m_deviceControl;
 
     return 0;
 }

@@ -34,6 +34,7 @@
 
 #include <QMap>
 #include <QTimer>
+#include <QMutex>
 
 #include "qgstreamerbushelper.h"
 
@@ -49,6 +50,7 @@ public:
         setParent(helper);
         m_tag = gst_bus_add_watch_full(bus, 0, busCallback, this, NULL);
         m_helper = helper;
+        filter = 0;
     }
 
     void removeWatch(QGstreamerBusHelper* helper)
@@ -77,6 +79,11 @@ private:
 
     guint       m_tag;
     QGstreamerBusHelper*  m_helper;
+
+public:
+    GstBus* bus;
+    QGstreamerSyncEventFilter *filter;
+    QMutex filterMutex;
 };
 
 #else
@@ -136,8 +143,27 @@ private:
 
     HelperMap   m_helperMap;
     QTimer*     m_intervalTimer;
+
+public:
+    GstBus* bus;
+    QGstreamerSyncEventFilter *filter;
+    QMutex filterMutex;
 };
 #endif
+
+
+static GstBusSyncReply syncGstBusFilter(GstBus* bus, GstMessage* message, QGstreamerBusHelperPrivate *d)
+{
+    Q_UNUSED(bus);
+    QMutexLocker lock(&d->filterMutex);
+
+    bool res = false;
+
+    if (d->filter)
+        res = d->filter->processSyncMessage(QGstreamerMessage(message));
+
+    return res ? GST_BUS_DROP : GST_BUS_PASS;
+}
 
 
 /*!
@@ -149,12 +175,22 @@ QGstreamerBusHelper::QGstreamerBusHelper(GstBus* bus, QObject* parent):
     QObject(parent),
     d(QGstreamerBusHelperPrivate::instance())
 {
+    d->bus = bus;
     d->addWatch(bus, this);
+
+    gst_bus_set_sync_handler(bus, (GstBusSyncHandler)syncGstBusFilter, d);
 }
 
 QGstreamerBusHelper::~QGstreamerBusHelper()
 {
     d->removeWatch(this);
+    gst_bus_set_sync_handler(d->bus,0,0);
+}
+
+void QGstreamerBusHelper::installSyncEventFilter(QGstreamerSyncEventFilter *filter)
+{
+    QMutexLocker lock(&d->filterMutex);
+    d->filter = filter;
 }
 
 #include "qgstreamerbushelper.moc"

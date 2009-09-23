@@ -21,6 +21,8 @@ HEADERS = \
     qabstractmediaservice_p.h  \
     qlocalmediaplaylistprovider.h \
     qmetadataprovidercontrol.h \
+    qmediaimageviewer.h \
+    qmediaimageviewerservice_p.h \
     qmediaplayer.h \
     qmediaplayercontrol.h \
     qmediaplaylist.h \
@@ -35,8 +37,6 @@ HEADERS = \
     qmediarecordercontrol.h \
     qmediaserviceprovider.h \
     qmediaserviceproviderplugin.h \
-    qmediaslideshow.h \
-    qmediaslideshowservice_p.h \
     qmultimediaglobal.h \
     qradioplayer.h \
     qradioplayercontrol.h \
@@ -48,6 +48,9 @@ HEADERS = \
     qaudioencodercontrol.h \
     qvideoencodercontrol.h \
     qimageencodercontrol.h \
+    qimagecapturecontrol.h \
+    qaudiosource.h \
+    qaudiosourceservice.h \
     qcamera.h \
     qcameracontrol.h \
     qcameraexposurecontrol.h \
@@ -64,6 +67,8 @@ SOURCES = qabstractmediacontrol.cpp \
     qabstractmediaservice.cpp \
     qlocalmediaplaylistprovider.cpp \
     qmetadataprovidercontrol.cpp \
+    qmediaimageviewer.cpp \
+    qmediaimageviewerservice.cpp \
     qmediaplayer.cpp \
     qmediaplayercontrol.cpp \
     qmediaplaylist.cpp \
@@ -75,8 +80,6 @@ SOURCES = qabstractmediacontrol.cpp \
     qmediasource.cpp \
     qmediaresource.cpp \
     qmediaserviceprovider.cpp \
-    qmediaslideshow.cpp \
-    qmediaslideshowservice.cpp \
     qradioplayer.cpp \
     qradioplayercontrol.cpp \
     qvideooutputcontrol.cpp \
@@ -86,6 +89,9 @@ SOURCES = qabstractmediacontrol.cpp \
     qaudioencodercontrol.cpp \
     qvideoencodercontrol.cpp \
     qimageencodercontrol.cpp \
+    qimagecapturecontrol.cpp \
+    qaudiosource.cpp \
+    qaudiosourceservice.cpp \
     qcamera.cpp \
     qcameracontrol.cpp \
     qcameraexposurecontrol.cpp \

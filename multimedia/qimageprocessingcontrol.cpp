@@ -89,3 +89,30 @@ QImageProcessingControl::~QImageProcessingControl()
     Set the white balance to \a colorTemperature
 */
 
+/*!
+    \fn QImageProcessingControl::contrast() const
+    Return the contrast.
+*/
+
+/*!
+    \fn QImageProcessingControl::setContrast(qreal value) const
+    Set the contrast to \a value.
+*/
+
+/*!
+    \fn QImageProcessingControl::isDenoisingSupported() const
+    Returns true if denoising is supported.
+*/
+
+/*!
+    \fn QImageProcessingControl::saturation() const
+    Returns the saturation value.
+*/
+
+/*!
+    \fn QImageProcessingControl::setSaturation(qreal value)
+    Sets the saturation value to \a value.
+*/
+
+
+

@@ -43,6 +43,7 @@ private slots:
     void constructNull();
     void construct_data();
     void construct();
+    void setResolution();
     void equality();
     void copy();
     void assign();
@@ -229,6 +230,58 @@ void tst_QMediaResource::construct()
     }
 }
 
+void tst_QMediaResource::setResolution()
+{
+    QMediaResource resource(
+            QUrl(QString::fromLatin1("file::///thumbs/test.png")),
+            QString::fromLatin1("image/png"),
+            QMediaResource::ThumbnailRole);
+
+    QCOMPARE(resource.resolution(), QSize());
+
+    resource.setResolution(QSize(120, 80));
+    QCOMPARE(resource.resolution(), QSize(120, 80));
+
+    resource.setResolution(QSize(-1, 23));
+    QCOMPARE(resource.resolution(), QSize(-1, 23));
+
+    resource.setResolution(QSize(-43, 34));
+    QCOMPARE(resource.resolution(), QSize(-43, 34));
+
+    resource.setResolution(QSize(64, -1));
+    QCOMPARE(resource.resolution(), QSize(64, -1));
+
+    resource.setResolution(QSize(64, -83));
+    QCOMPARE(resource.resolution(), QSize(64, -83));
+
+    resource.setResolution(QSize(-12, -83));
+    QCOMPARE(resource.resolution(), QSize(-12, -83));
+
+    resource.setResolution(QSize());
+    QCOMPARE(resource.resolution(), QSize(-1, -1));
+
+    resource.setResolution(120, 80);
+    QCOMPARE(resource.resolution(), QSize(120, 80));
+
+    resource.setResolution(-1, 23);
+    QCOMPARE(resource.resolution(), QSize(-1, 23));
+
+    resource.setResolution(-43, 34);
+    QCOMPARE(resource.resolution(), QSize(-43, 34));
+
+    resource.setResolution(64, -1);
+    QCOMPARE(resource.resolution(), QSize(64, -1));
+
+    resource.setResolution(64, -83);
+    QCOMPARE(resource.resolution(), QSize(64, -83));
+
+    resource.setResolution(-12, -83);
+    QCOMPARE(resource.resolution(), QSize(-12, -83));
+
+    resource.setResolution(-1, -1);
+    QCOMPARE(resource.resolution(), QSize());
+}
+
 void tst_QMediaResource::equality()
 {
     QMediaResource resource1(
@@ -351,6 +404,17 @@ void tst_QMediaResource::equality()
     QCOMPARE(resource1 == resource2, true);
     QCOMPARE(resource1 != resource2, false);
 
+    resource2.setResolution(-1, -1);
+
+    // Equal
+    QCOMPARE(resource1 == resource2, true);
+    QCOMPARE(resource1 != resource2, false);
+
+    resource1.setResolution(QSize(-640, -480));
+
+    // Not equal, differing resolution.
+    QCOMPARE(resource1 == resource2, false);
+    QCOMPARE(resource1 != resource2, true);
     resource1.setResolution(QSize(640, 480));
     resource2.setResolution(QSize(800, 600));
 

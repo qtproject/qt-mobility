@@ -55,6 +55,10 @@ QAbstractMediaControl::~QAbstractMediaControl()
     delete d_ptr;
 }
 
+/*!
+    Constructs a abstract media object with \a parent.
+*/
+
 QAbstractMediaControl::QAbstractMediaControl(QObject *parent)
     : QObject(parent)
     , d_ptr(new QAbstractMediaControlPrivate)

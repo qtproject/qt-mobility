@@ -68,6 +68,7 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
         m_bus = gst_element_get_bus(m_playbin);
         m_busHelper = new QGstreamerBusHelper(m_bus, this);
         connect(m_busHelper, SIGNAL(message(QGstreamerMessage)), SLOT(busMessage(QGstreamerMessage)));
+        m_busHelper->installSyncEventFilter(this);
 
         // Initial volume
         double volume = 1.0;
@@ -285,6 +286,22 @@ void QGstreamerPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)
     }
 }
 
+bool QGstreamerPlayerSession::processSyncMessage(const QGstreamerMessage &message)
+{
+    GstMessage* gm = message.rawMessage();
+
+    if (gm &&
+        GST_MESSAGE_TYPE(gm) == GST_MESSAGE_ELEMENT &&
+        gst_structure_has_name(gm->structure, "prepare-xwindow-id"))
+    {
+        if (m_renderer)
+            m_renderer->precessNewStream();
+        return true;
+    }
+
+    return false;
+}
+
 void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
 {
     GstMessage* gm = message.rawMessage();
@@ -311,13 +328,6 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
             emit tagsChanged();
         }
 
-        if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_ELEMENT &&
-            gst_structure_has_name(gm->structure, "prepare-xwindow-id"))
-        {
-            if (m_renderer)
-                m_renderer->precessNewStream();
-        }
-
         if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_playbin)) {
             switch (GST_MESSAGE_TYPE(gm))  {
             case GST_MESSAGE_DURATION:
@@ -331,13 +341,13 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
 
                     gst_message_parse_state_changed(gm, &oldState, &newState, &pending);
 
-                    QStringList states;
+                    /*QStringList states;
                     states << "GST_STATE_VOID_PENDING" <<  "GST_STATE_NULL" << "GST_STATE_READY" << "GST_STATE_PAUSED" << "GST_STATE_PLAYING";
 
                     qDebug() << QString("state changed: old: %1  new: %2  pending: %3") \
                             .arg(states[oldState]) \
                             .arg(states[newState]) \
-                            .arg(states[pending]);
+                            .arg(states[pending]);*/
 
                     switch (newState) {
                     case GST_STATE_VOID_PENDING:
@@ -379,6 +389,9 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
 
                             if (!qFuzzyCompare(m_playbackRate, float(1.0)))
                                 setPlaybackRate(m_playbackRate);
+
+                            if (m_renderer)
+                                m_renderer->precessNewStream();
 
                         }
 
@@ -428,6 +441,9 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
 #if (GST_VERSION_MAJOR >= 0) &&  (GST_VERSION_MINOR >= 10) && (GST_VERSION_MICRO >= 13)
             case GST_MESSAGE_ASYNC_START:
             case GST_MESSAGE_ASYNC_DONE:
+#if GST_VERSION_MICRO >= 23
+            case GST_MESSAGE_REQUEST_STATE:
+#endif
 #endif
             case GST_MESSAGE_ANY:
                 break;

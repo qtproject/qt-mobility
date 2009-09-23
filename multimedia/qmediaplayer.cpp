@@ -97,16 +97,23 @@ void QMediaPlayerPrivate::_q_mediaStatusChanged(QMediaPlayer::MediaStatus status
     case QMediaPlayer::StalledMedia:
     case QMediaPlayer::BufferingMedia:
         q->addPropertyWatch("bufferStatus");
+        emit q->mediaStatusChanged(status);
         break;
     case QMediaPlayer::EndOfMedia:
-        if (playlist)
-            playlist->advance();
-        //fall
+        q->removePropertyWatch("bufferStatus");
+        if (playlist) {
+            if (playlist->nextPosition(1) != -1) {
+                playlist->advance();
+            } else
+                emit q->mediaStatusChanged(status);
+        }
+        break;
     default:
         q->removePropertyWatch("bufferStatus");
+        emit q->mediaStatusChanged(status);
         break;
     }
-    emit q->mediaStatusChanged(status);
+
 }
 
 void QMediaPlayerPrivate::_q_error(int error, const QString &errorString)
@@ -252,6 +259,10 @@ float QMediaPlayer::playbackRate() const
     return d_func()->control->playbackRate();
 }
 
+/*!
+    Returns the current error state.
+*/
+
 QMediaPlayer::Error QMediaPlayer::error() const
 {
     return d_func()->error;
@@ -354,8 +365,10 @@ void QMediaPlayer::bind(QObject *obj)
         QMediaPlaylist *playlist = qobject_cast<QMediaPlaylist*>(obj);
 
         if (playlist) {
+            qDebug() << "playlist attached";
             d->playlist = playlist;
-            connect(d->playlist, SIGNAL(currentMediaChanged(QMediaSource)), SLOT(_q_updateMedia(QMediaSource)));
+            connect(d->playlist, SIGNAL(currentMediaChanged(QMediaSource)),
+                    this, SLOT(_q_updateMedia(QMediaSource)));
         }
     }
 }

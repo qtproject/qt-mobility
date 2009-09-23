@@ -32,29 +32,23 @@
 **
 ****************************************************************************/
 
-#ifndef QMEDIASLIDESHOW_H
-#define QMEDIASLIDESHOW_H
+#ifndef QMEDIAIMAGEVIEWER_H
+#define QMEDIAIMAGEVIEWER_H
 
 #include <multimedia/qabstractmediaobject.h>
 #include <multimedia/qmediasource.h>
 
-class QMediaPlaylistProvider;
+class QMediaImageViewerPrivate;
 
-
-class QMediaSlideShowPrivate;
-
-class Q_MEDIA_EXPORT QMediaSlideShow : public QAbstractMediaObject
+class Q_MEDIA_EXPORT QMediaImageViewer : public QAbstractMediaObject
 {
     Q_OBJECT
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(MediaStatus mediaStatus READ mediaStatus NOTIFY mediaStatusChanged)
     Q_PROPERTY(QMediaSource media READ media WRITE setMedia NOTIFY mediaChanged)
     Q_PROPERTY(QMediaResource currentMedia READ currentMedia NOTIFY currentMediaChanged)
-    Q_PROPERTY(int currentIndex READ currentIndex WRITE setCurrentIndex NOTIFY currentIndexChanged)
-    Q_PROPERTY(QMediaPlaylistProvider* playlist READ playlist)
     Q_PROPERTY(int timeout READ timeout WRITE setTimeout)
     Q_ENUMS(State MediaStatus)
-
 public:
     enum State
     {
@@ -71,54 +65,41 @@ public:
         InvalidMedia
     };
 
-    explicit QMediaSlideShow(QObject *parent = 0);
-    ~QMediaSlideShow();
-
-    QAbstractMediaService *service() const;
-
-    bool isValid() const;
+    explicit QMediaImageViewer(QObject *parent = 0);
+    ~QMediaImageViewer();
 
     State state() const;
     MediaStatus mediaStatus() const;
 
     QMediaSource media() const;
-    void setMedia(const QMediaSource &media);
-
     QMediaResource currentMedia() const;
-
-    int currentIndex() const;
-
-    QMediaPlaylistProvider *playlist() const;
 
     int timeout() const;
 
+    void bind(QObject *);
 
 public Q_SLOTS:
+    void setMedia(const QMediaSource &media);
+
     void play();
     void pause();
     void stop();
 
-    void next();
-    void previous();
-
-    void setCurrentIndex(int index);
-
     void setTimeout(int timeout);
 
 Q_SIGNALS:
-    void stateChanged(QMediaSlideShow::State state);
-    void mediaStatusChanged(QMediaSlideShow::MediaStatus status);
+    void stateChanged(QMediaImageViewer::State state);
+    void mediaStatusChanged(QMediaImageViewer::MediaStatus status);
     void mediaChanged(const QMediaSource &media);
     void currentMediaChanged(const QMediaResource &media);
-    void currentIndexChanged(int index);
 
 protected:
     void timerEvent(QTimerEvent *event);
 
 private:
-    Q_DECLARE_PRIVATE(QMediaSlideShow)
-    Q_PRIVATE_SLOT(d_func(), void _q_headFinished())
-    Q_PRIVATE_SLOT(d_func(), void _q_getFinished())
+    Q_DECLARE_PRIVATE(QMediaImageViewer)
+    Q_PRIVATE_SLOT(d_func(), void _q_playlistMediaChanged(const QMediaSource &))
+    Q_PRIVATE_SLOT(d_func(), void _q_playlistDestroyed(QObject *))
 };
 
 #endif

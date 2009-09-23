@@ -174,7 +174,7 @@ bool QMediaPlaylistProvider::insertItem(int pos, const QMediaSource &source)
 }
 
 /*!
-  Remove a \a sources from the playlist at position \a pos.
+  Remove a source from the playlist at position \a pos.
 
   Returns true if the operation is successfull, other wise return false.
 */
