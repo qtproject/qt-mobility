@@ -138,6 +138,7 @@ perl -S %PROJECT_PWD%\bin\syncheaders %PROJECT_PWD%\include %PROJECT_PWD%\contex
 perl -S %PROJECT_PWD%\bin\syncheaders %PROJECT_PWD%\include %PROJECT_PWD%\location
 perl -S %PROJECT_PWD%\bin\syncheaders %PROJECT_PWD%\include %PROJECT_PWD%\serviceframework
 perl -S %PROJECT_PWD%\bin\syncheaders %PROJECT_PWD%\include %PROJECT_PWD%\systeminfo
+perl -S %PROJECT_PWD%\bin\syncheaders %PROJECT_PWD%\include %PROJECT_PWD%\contacts
 
 echo Running qmake...
 qmake -recursive

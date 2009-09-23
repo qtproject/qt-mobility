@@ -17,6 +17,10 @@ contains(QT_CONFIG, webkit) {
     SUBDIRS += fetchgooglemaps
 }
 
+#Contacts examples
+SUBDIRS += samplephonebook \
+           incomingcalls
+
 #Publish and Sbscribe examples
 SUBDIRS += publish-subscribe
 contains(QT_CONFIG, declarative) {

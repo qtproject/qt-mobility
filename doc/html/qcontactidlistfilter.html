@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- ../../contacts/filters/qcontactidlistfilter.cpp -->
+<head>
+  <title>QContactIdListFilter Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QContactIdListFilter Class Reference</h1>
+<p>The QContactIdListFilter class provides a filter based around a list of contact ids <a href="#details">More...</a></p>
+<pre>    #include &lt;QContactIdListFilter&gt;</pre><p>Inherits <a href="qcontactfilter.html">QContactFilter</a>.</p>
+<ul>
+<li><a href="qcontactidlistfilter-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactidlistfilter.html#QContactIdListFilter">QContactIdListFilter</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactidlistfilter.html#QContactIdListFilter-2">QContactIdListFilter</a></b> ( const QContactFilter &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QUniqueId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactidlistfilter.html#ids">ids</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactidlistfilter.html#setIds">setIds</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>ids</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>4 public functions inherited from <a href="qcontactfilter.html#public-functions">QContactFilter</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QContactIdListFilter class provides a filter based around a list of contact ids</p>
+<p>It may be used to select contacts whose ids are contained in the given list of ids</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<h3 class="fn"><a name="QContactIdListFilter"></a>QContactIdListFilter::QContactIdListFilter ()</h3>
+<p>Constructs a new contact id list filter</p>
+<h3 class="fn"><a name="QContactIdListFilter-2"></a>QContactIdListFilter::QContactIdListFilter ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>other</i> )</h3>
+<p>Constructs a copy of <i>other</i> if possible, otherwise constructs a new contact id list filter</p>
+<h3 class="fn"><a name="ids"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QUniqueId&gt; QContactIdListFilter::ids () const</h3>
+<p>Returns the list of ids of contacts which match this filter</p>
+<p>See also <a href="qcontactidlistfilter.html#setIds">setIds</a>().</p>
+<h3 class="fn"><a name="setIds"></a>void QContactIdListFilter::setIds ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QUniqueId&gt; &amp; <i>ids</i> )</h3>
+<p>Sets the list which contains the ids of possible matching contacts to <i>ids</i></p>
+<p>See also <a href="qcontactidlistfilter.html#ids">ids</a>().</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="right"><div align="right">Qt Contacts</div></td>
+</tr></table></div></address></body>
+</html>
