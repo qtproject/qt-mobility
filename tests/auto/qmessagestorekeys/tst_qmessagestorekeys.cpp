@@ -522,6 +522,9 @@ void tst_QMessageStoreKeys::testAccountFilter()
     QFETCH(QMessageAccountIdList, negatedIds);
 
     if (filter.isSupported()) {
+        QVERIFY(filter == filter);
+        QCOMPARE(filter != QMessageAccountFilter(), !filter.isEmpty());
+
         // Order is irrelevant for filtering
         QCOMPARE(QMessageStore::instance()->queryAccounts(filter).toSet().subtract(existingAccountIds), ids.toSet());
         QCOMPARE(QMessageStore::instance()->queryAccounts(~filter).toSet().subtract(existingAccountIds), negatedIds.toSet());
@@ -546,6 +549,9 @@ void tst_QMessageStoreKeys::testAccountOrdering()
 {
     QFETCH(QMessageAccountOrdering, ordering);
     QFETCH(QMessageAccountIdList, ids);
+
+    QVERIFY(ordering == ordering);
+    QCOMPARE(ordering != QMessageAccountOrdering(), !ordering.isEmpty());
 
     // Filter out the existing accounts
     QMessageAccountIdList sortedIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilter(), ordering));
@@ -1140,6 +1146,9 @@ void tst_QMessageStoreKeys::testFolderFilter()
     QFETCH(QMessageFolderIdList, negatedIds);
 
     if (filter.isSupported()) {
+        QVERIFY(filter == filter);
+        QCOMPARE(filter != QMessageFolderFilter(), !filter.isEmpty());
+
         // Order is irrelevant for filtering
         QCOMPARE(QMessageStore::instance()->queryFolders(filter).toSet().subtract(existingFolderIds), ids.toSet());
         QCOMPARE(QMessageStore::instance()->queryFolders(~filter).toSet().subtract(existingFolderIds), negatedIds.toSet());
@@ -1172,6 +1181,9 @@ void tst_QMessageStoreKeys::testFolderOrdering()
 {
     QFETCH(QMessageFolderOrdering, ordering);
     QFETCH(QMessageFolderIdList, ids);
+
+    QVERIFY(ordering == ordering);
+    QCOMPARE(ordering != QMessageFolderOrdering(), !ordering.isEmpty());
 
     // Filter out the existing folders
     QMessageFolderIdList sortedIds(QMessageStore::instance()->queryFolders(QMessageFolderFilter(), ordering));
@@ -2144,6 +2156,9 @@ void tst_QMessageStoreKeys::testMessageFilter()
     QFETCH(QMessageIdList, negatedIds);
 
     if (filter.isSupported()) {
+        QVERIFY(filter == filter);
+        QCOMPARE(filter != QMessageFilter(), !filter.isEmpty());
+
         // Order is irrelevant for filtering
         QCOMPARE(QMessageStore::instance()->queryMessages(filter).toSet().subtract(existingMessageIds), ids.toSet());
         QCOMPARE(QMessageStore::instance()->queryMessages(~filter).toSet().subtract(existingMessageIds), negatedIds.toSet());
@@ -2332,6 +2347,9 @@ void tst_QMessageStoreKeys::testMessageOrdering()
 {
     QFETCH(QMessageOrdering, ordering);
     QFETCH(MessageListList, ids);
+
+    QVERIFY(ordering == ordering);
+    QCOMPARE(ordering != QMessageOrdering(), !ordering.isEmpty());
 
     // Filter out the existing messages
     QMessageIdList sortedIds(QMessageStore::instance()->queryMessages(QMessageFilter(), ordering));
