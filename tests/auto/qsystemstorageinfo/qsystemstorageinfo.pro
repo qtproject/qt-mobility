@@ -1,6 +1,6 @@
-SOURCES  += tst_qsystemmemoryinfo.cpp
+SOURCES  += tst_qsystemstorageinfo.cpp
 HEADERS  += 
-TARGET = tst_qsystemmemoryinfo
+TARGET = tst_qsystemstorageinfo
 CONFIG+=testcase
 QT -= gui
 

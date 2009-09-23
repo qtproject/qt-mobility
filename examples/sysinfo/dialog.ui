@@ -548,11 +548,11 @@
      </widget>
      <widget class="QWidget" name="sysmemorytab">
       <attribute name="title">
-       <string>Memory</string>
+       <string>Storage</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
        <item row="0" column="0">
-        <widget class="QTreeWidget" name="memoryTreeWidget">
+        <widget class="QTreeWidget" name="storageTreeWidget">
          <column>
           <property name="text">
            <string>Volume Name</string>

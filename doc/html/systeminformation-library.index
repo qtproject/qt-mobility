@@ -128,26 +128,26 @@
                 <parameter left="int" right="" name="screenNumber" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QSystemMemoryInfo" href="qsystemmemoryinfo.html" location="qsysteminfo.h" bases="QObject" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QSystemMemoryInfo" fullname="QSystemMemoryInfo::QSystemMemoryInfo" href="qsystemmemoryinfo.html#QSystemMemoryInfo" location="qsysteminfo.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSystemMemoryInfo(QObject * parent)">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QSystemStorageInfo" href="qsystemstorageinfo.html" location="qsysteminfo.h" bases="QObject" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QSystemStorageInfo" fullname="QSystemStorageInfo::QSystemStorageInfo" href="qsystemstorageinfo.html#QSystemStorageInfo" location="qsysteminfo.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSystemStorageInfo(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QSystemMemoryInfo" fullname="QSystemMemoryInfo::~QSystemMemoryInfo" href="qsystemmemoryinfo.html#dtor.QSystemMemoryInfo" location="qsysteminfo.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QSystemMemoryInfo()"/>
-            <enum access="public" threadsafety="unspecified" status="commendable" name="VolumeType" fullname="QSystemMemoryInfo::VolumeType" href="qsystemmemoryinfo.html#VolumeType-enum" location="qsysteminfo.h">
-                <value name="NoVolume" value="0"/>
-                <value name="Internal" value="1"/>
-                <value name="Removable" value="2"/>
-                <value name="Remote" value="3"/>
-                <value name="Cdrom" value="4"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QSystemStorageInfo" fullname="QSystemStorageInfo::~QSystemStorageInfo" href="qsystemstorageinfo.html#dtor.QSystemStorageInfo" location="qsysteminfo.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QSystemStorageInfo()"/>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="DriveType" fullname="QSystemStorageInfo::DriveType" href="qsystemstorageinfo.html#DriveType-enum" location="qsysteminfo.h">
+                <value name="NoDrive" value="0"/>
+                <value name="InternalDrive" value="1"/>
+                <value name="RemovableDrive" value="2"/>
+                <value name="RemoteDrive" value="3"/>
+                <value name="CdromDrive" value="4"/>
             </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="totalDiskSpace" fullname="QSystemMemoryInfo::totalDiskSpace" href="qsystemmemoryinfo.html#totalDiskSpace" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="qlonglong" signature="totalDiskSpace(const QString &amp; volumeDrive)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="totalDiskSpace" fullname="QSystemStorageInfo::totalDiskSpace" href="qsystemstorageinfo.html#totalDiskSpace" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="qlonglong" signature="totalDiskSpace(const QString &amp; volumeDrive)">
                 <parameter left="const QString &amp;" right="" name="volumeDrive" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="availableDiskSpace" fullname="QSystemMemoryInfo::availableDiskSpace" href="qsystemmemoryinfo.html#availableDiskSpace" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="qlonglong" signature="availableDiskSpace(const QString &amp; volumeDrive)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="availableDiskSpace" fullname="QSystemStorageInfo::availableDiskSpace" href="qsystemstorageinfo.html#availableDiskSpace" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="qlonglong" signature="availableDiskSpace(const QString &amp; volumeDrive)">
                 <parameter left="const QString &amp;" right="" name="volumeDrive" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="listOfVolumes" fullname="QSystemMemoryInfo::listOfVolumes" href="qsystemmemoryinfo.html#listOfVolumes" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QStringList" signature="listOfVolumes()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="volumeType" fullname="QSystemMemoryInfo::volumeType" href="qsystemmemoryinfo.html#volumeType" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QSystemMemoryInfo::VolumeType" signature="volumeType(const QString &amp; driveVolume)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="logicalDrives" fullname="QSystemStorageInfo::logicalDrives" href="qsystemstorageinfo.html#logicalDrives" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QStringList" signature="logicalDrives()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="typeForDrive" fullname="QSystemStorageInfo::typeForDrive" href="qsystemstorageinfo.html#typeForDrive" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QSystemStorageInfo::DriveType" signature="typeForDrive(const QString &amp; driveVolume)">
                 <parameter left="const QString &amp;" right="" name="driveVolume" default=""/>
             </function>
         </class>
@@ -176,7 +176,7 @@
                 <value name="UnknownPower" value="0"/>
                 <value name="BatteryPower" value="1"/>
                 <value name="WallPower" value="2"/>
-                <value name="WallPowerCharging" value="3"/>
+                <value name="WallPowerChargingBattery" value="3"/>
             </enum>
             <enum access="public" threadsafety="unspecified" status="commendable" name="InputMethod" fullname="QSystemDeviceInfo::InputMethod" href="qsystemdeviceinfo.html#InputMethod-enum" location="qsysteminfo.h" typedef="QSystemDeviceInfo::InputMethodFlags">
                 <value name="Keys" value="0x0000001"/>

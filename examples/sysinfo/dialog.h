@@ -24,7 +24,7 @@ private:
     void setupGeneral();
     void setupDevice();
     void setupDisplay();
-    void setupMemory();
+    void setupStorage();
     void setupNetwork();
     void setupSaver();
 

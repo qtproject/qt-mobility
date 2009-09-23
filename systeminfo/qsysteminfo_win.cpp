@@ -345,10 +345,10 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::MemcardFeature :
         {
-            QSystemMemoryInfo mi;
-            QStringList drives = mi.listOfVolumes();
+            QSystemStorageInfo mi;
+            QStringList drives = mi.logicalDrives();
             foreach(QString drive, drives) {
-                if(mi.volumeType(drive) == QSystemMemoryInfo::Removable) {
+                if(mi.DriveType(drive) == QSystemStorageInfo::Removable) {
                     featureSupported = true;
                 }
             }
@@ -1052,18 +1052,18 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
     return bpp;
 }
 
-//////// QSystemMemoryInfo
-QSystemMemoryInfoPrivate::QSystemMemoryInfoPrivate(QObject *parent)
+//////// QSystemStorageInfo
+QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
         : QObject(parent)
 {
 }
 
 
-QSystemMemoryInfoPrivate::~QSystemMemoryInfoPrivate()
+QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 {
 }
 
-qint64 QSystemMemoryInfoPrivate::availableDiskSpace(const QString &driveVolume)
+qint64 QSystemStorageInfoPrivate::availableDiskSpace(const QString &driveVolume)
 {
     qint64 freeBytes;
     qint64 totalBytes;
@@ -1075,7 +1075,7 @@ qint64 QSystemMemoryInfoPrivate::availableDiskSpace(const QString &driveVolume)
     return totalFreeBytes;
 }
 
-qint64 QSystemMemoryInfoPrivate::totalDiskSpace(const QString &driveVolume)
+qint64 QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
 {
     qint64 freeBytes;
     qint64 totalBytes;
@@ -1087,33 +1087,33 @@ qint64 QSystemMemoryInfoPrivate::totalDiskSpace(const QString &driveVolume)
     return totalBytes;
 }
 
-QSystemMemoryInfo::VolumeType QSystemMemoryInfoPrivate::volumeType(const QString &driveVolume)
+QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QString &driveVolume)
 {
     uint result =  GetDriveType((WCHAR *)driveVolume.utf16());
     switch(result) {
     case 0:
     case 1: //unknown
-        return QSystemMemoryInfo::NoVolume;
+        return QSystemStorageInfo::NoDrive;
         break;
     case 2://removable
-        return QSystemMemoryInfo::Removable;
+        return QSystemStorageInfo::RemovableDrive;
         break;
     case 3:   //fixed
-        return QSystemMemoryInfo::Internal;
+        return QSystemStorageInfo::InternalDrive;
         break;
     case 4: //remote:
-        return QSystemMemoryInfo::Remote;
+        return QSystemStorageInfo::RemoteDrive;
         break;
     case 5: //cdrom
-        return QSystemMemoryInfo::Cdrom;
+        return QSystemStorageInfo::CdromDrive;
         break;
     case 6: //ramdisk
         break;
     };
-    return QSystemMemoryInfo::NoVolume;
+    return QSystemStorageInfo::NoDrive;
 }
 
-QStringList QSystemMemoryInfoPrivate::listOfVolumes()
+QStringList QSystemStorageInfoPrivate::logicalDrives()
 {
     QStringList drivesList;
     quint32 driveLetter = (quint32) GetLogicalDrives();

@@ -2,7 +2,7 @@ TEMPLATE = subdirs
 SUBDIRS = qsysteminfo \
           qsystemdeviceinfo \
           qsystemdisplayinfo \
-          qsystemmemoryinfo \
+          qsystemstorageinfo \
           qsystemnetworkinfo \
           qsystemscreensaver
 

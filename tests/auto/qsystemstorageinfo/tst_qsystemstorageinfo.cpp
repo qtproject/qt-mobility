@@ -33,9 +33,9 @@
 #include <QtTest/QtTest>
 #include "qsysteminfo.h"
 
-Q_DECLARE_METATYPE(QSystemMemoryInfo::VolumeType);
+Q_DECLARE_METATYPE(QSystemStorageInfo::DriveType);
 
-class tst_QSystemMemoryInfo : public QObject
+class tst_QSystemStorageInfo : public QObject
 {
     Q_OBJECT
 
@@ -44,49 +44,49 @@ private slots:
 
     void tst_totalDiskSpace();
     void tst_availableDiskSpace();
-    void tst_listOfVolumes();
-    void tst_volumeType();
+    void tst_logicalDrives();
+    void tst_typeForDrive();
 
 };
 
-void tst_QSystemMemoryInfo::initTestCase()
+void tst_QSystemStorageInfo::initTestCase()
 {
-    qRegisterMetaType<QSystemMemoryInfo::VolumeType>("QSystemMemoryInfo::VolumeType");
+    qRegisterMetaType<QSystemStorageInfo::DriveType>("QSystemStorageInfo::VolumeType");
 }
 
-void tst_QSystemMemoryInfo::tst_totalDiskSpace()
+void tst_QSystemStorageInfo::tst_totalDiskSpace()
 {
-    QSystemMemoryInfo mi;
-    QStringList volList = mi.listOfVolumes();
+    QSystemStorageInfo mi;
+    QStringList volList = mi.logicalDrives();
     foreach(QString vol, volList) {
         QVERIFY(mi.totalDiskSpace(vol) > -1);
     }
 }
 
-void tst_QSystemMemoryInfo::tst_availableDiskSpace()
+void tst_QSystemStorageInfo::tst_availableDiskSpace()
 {
-    QSystemMemoryInfo mi;
-    QStringList volList = mi.listOfVolumes();
+    QSystemStorageInfo mi;
+    QStringList volList = mi.logicalDrives();
     foreach(QString vol, volList) {
         QVERIFY(mi.availableDiskSpace(vol) != 0);
     }
 }
 
-void tst_QSystemMemoryInfo::tst_listOfVolumes()
+void tst_QSystemStorageInfo::tst_logicalDrives()
 {
-    QSystemMemoryInfo mi;
-    QVERIFY(mi.listOfVolumes().count() > -1);
+    QSystemStorageInfo mi;
+    QVERIFY(mi.logicalDrives().count() > -1);
 }
 
-void tst_QSystemMemoryInfo::tst_volumeType()
+void tst_QSystemStorageInfo::tst_typeForDrive()
 {
-    QSystemMemoryInfo mi;
-    QStringList volList = mi.listOfVolumes();
+    QSystemStorageInfo mi;
+    QStringList volList = mi.logicalDrives();
     foreach(QString vol, volList) {
-        QVERIFY(mi.volumeType(vol) != QSystemMemoryInfo::NoVolume);
+        QVERIFY(mi.typeForDrive(vol) != QSystemStorageInfo::NoDrive);
     }
 }
 
 
-QTEST_MAIN(tst_QSystemMemoryInfo)
-#include "tst_qsystemmemoryinfo.moc"
+QTEST_MAIN(tst_QSystemStorageInfo)
+#include "tst_qsystemstorageinfo.moc"

@@ -25,7 +25,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#BatteryStatus-enum">BatteryStatus</a></b> { NoBatteryLevel, BatteryCritical, BatteryVeryLow, BatteryLow, BatteryNormal }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#InputMethod-enum">InputMethod</a></b> { Keys, Keypad, Keyboard, SingleTouch, MultiTouch, Mouse }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#InputMethod-enum">InputMethodFlags</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#PowerState-enum">PowerState</a></b> { UnknownPower, BatteryPower, WallPower, WallPowerCharging }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#PowerState-enum">PowerState</a></b> { UnknownPower, BatteryPower, WallPower, WallPowerChargingBattery }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#Profile-enum">Profile</a></b> { UnknownProfile, SilentProfile, NormalProfile, LoudProfile, ..., CustomProfile }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#SimStatus-enum">SimStatus</a></b> { SimNotAvailable, SingleAvailable, DualAvailable, Locked }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#SimStatus-enum">SimStatusFlags</a></b></td></tr>
@@ -126,7 +126,7 @@
 <tr><td valign="top"><tt>QSystemDeviceInfo::UnknownPower</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Power error.</td></tr>
 <tr><td valign="top"><tt>QSystemDeviceInfo::BatteryPower</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">On battery power.</td></tr>
 <tr><td valign="top"><tt>QSystemDeviceInfo::WallPower</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">On wall power.</td></tr>
-<tr><td valign="top"><tt>QSystemDeviceInfo::WallPowerCharging</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">On wall power and charging main battery.</td></tr>
+<tr><td valign="top"><tt>QSystemDeviceInfo::WallPowerChargingBattery</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">On wall power and charging main battery.</td></tr>
 </table></p>
 <h3 class="fn"><a name="Profile-enum"></a>enum QSystemDeviceInfo::Profile</h3>
 <p>This enum describes the current operating profile of the device or computer.</p>

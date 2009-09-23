@@ -143,21 +143,21 @@ QT_BEGIN_NAMESPACE
   */
 
   /*!
-    \class QSystemMemoryInfo
+    \class QSystemStorageInfo
 
-    \brief The QSystemMemoryInfo class provides access to memory and disk information from the system.
+    \brief The QSystemStorageInfo class provides access to memory and disk information from the system.
 
   */
 
 /*!
-    \enum QSystemMemoryInfo::VolumeType
+    \enum QSystemStorageInfo::DriveType
     This enum describes the type of drive or volume
 
-    \value NoVolume               Volume type undetermined.
-    \value Internal                   Is internal drive.
-    \value Removable              Is removable.
-    \value Remote                     Is a network drive.
-    \value Cdrom                      Is a cd rom drive.
+    \value NoDrive               Drive type undetermined.
+    \value InternalDrive         Is internal drive.
+    \value RemovableDrive        Is removable.
+    \value RemoteDrive           Is a network drive.
+    \value CdromDrive            Is a cd rom drive.
 */
 
 
@@ -210,10 +210,10 @@ QT_BEGIN_NAMESPACE
     \enum QSystemDeviceInfo::PowerState
     This enum describes the power state:
 
-    \value UnknownPower            Power error.
-    \value BatteryPower            On battery power.
-    \value WallPower               On wall power.
-    \value WallPowerCharging       On wall power and charging main battery.
+    \value UnknownPower                   Power error.
+    \value BatteryPower                   On battery power.
+    \value WallPower                      On wall power.
+    \value WallPowerChargingBattery       On wall power and charging main battery.
 
   */
 /*!
@@ -551,17 +551,17 @@ int QSystemDisplayInfo::colorDepth(int screenNumber)
 }
 
  /*!
-   Constructs a QSystemMemoryInfo object with the given \a parent.
+   Constructs a QSystemStorageInfo object with the given \a parent.
  */
-QSystemMemoryInfo::QSystemMemoryInfo(QObject *parent)
+QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
 {
-    d = new QSystemMemoryInfoPrivate(parent);
+    d = new QSystemStorageInfoPrivate(parent);
 }
 
 /*!
-  Destroys the QSystemMemoryInfo object.
+  Destroys the QSystemStorageInfo object.
 */
-QSystemMemoryInfo::~QSystemMemoryInfo()
+QSystemStorageInfo::~QSystemStorageInfo()
 {
     delete d;
 }
@@ -570,7 +570,7 @@ QSystemMemoryInfo::~QSystemMemoryInfo()
     Returns the amount of total space on the \a volumeDrive,
     in bytes.
 */
-qlonglong QSystemMemoryInfo::totalDiskSpace(const QString &volumeDrive)
+qlonglong QSystemStorageInfo::totalDiskSpace(const QString &volumeDrive)
 {
     return d->totalDiskSpace(volumeDrive);
 }
@@ -579,7 +579,7 @@ qlonglong QSystemMemoryInfo::totalDiskSpace(const QString &volumeDrive)
     Returns the amount of available free space on the \a volumeDrive,
 in bytes.
 */
-qlonglong QSystemMemoryInfo::availableDiskSpace(const QString &volumeDrive)
+qlonglong QSystemStorageInfo::availableDiskSpace(const QString &volumeDrive)
 {
     return d->availableDiskSpace(volumeDrive);
 }
@@ -587,18 +587,18 @@ qlonglong QSystemMemoryInfo::availableDiskSpace(const QString &volumeDrive)
 /*!
     Returns a QStringList of volumes or partitions.
 */
-QStringList QSystemMemoryInfo::listOfVolumes()
+QStringList QSystemStorageInfo::logicalDrives()
 {
-    QSystemMemoryInfoPrivate dp;
-    return dp.listOfVolumes();
+    QSystemStorageInfoPrivate dp;
+    return dp.logicalDrives();
 }
 
 /*!
   Returns the type of volume \a driveVolume
 */
-QSystemMemoryInfo::VolumeType QSystemMemoryInfo::volumeType(const QString &driveVolume)
+QSystemStorageInfo::DriveType QSystemStorageInfo::typeForDrive(const QString &driveVolume)
 {
-    return d->volumeType(driveVolume);
+    return d->typeForDrive(driveVolume);
 }
 
 // device

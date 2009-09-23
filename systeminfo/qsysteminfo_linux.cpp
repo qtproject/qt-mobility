@@ -1069,19 +1069,19 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
 }
 
 
-//////// QSystemMemoryInfo
-QSystemMemoryInfoPrivate::QSystemMemoryInfoPrivate(QObject *parent)
+//////// QSystemStorageInfo
+QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
         : QObject(parent)
 {
     halIsAvailable = halAvailable();
 }
 
 
-QSystemMemoryInfoPrivate::~QSystemMemoryInfoPrivate()
+QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 {
 }
 
-qint64 QSystemMemoryInfoPrivate::availableDiskSpace(const QString &driveVolume)
+qint64 QSystemStorageInfoPrivate::availableDiskSpace(const QString &driveVolume)
 {
     mountEntries();
     struct statfs fs;
@@ -1093,7 +1093,7 @@ qint64 QSystemMemoryInfoPrivate::availableDiskSpace(const QString &driveVolume)
     return 0;
 }
 
-qint64 QSystemMemoryInfoPrivate::totalDiskSpace(const QString &driveVolume)
+qint64 QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
 {
     mountEntries();
     mountEntriesHash[driveVolume];
@@ -1106,7 +1106,7 @@ qint64 QSystemMemoryInfoPrivate::totalDiskSpace(const QString &driveVolume)
     return 0;
 }
 
-QSystemMemoryInfo::VolumeType QSystemMemoryInfoPrivate::volumeType(const QString &driveVolume)
+QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QString &driveVolume)
 {
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
@@ -1119,9 +1119,9 @@ QSystemMemoryInfo::VolumeType QSystemMemoryInfoPrivate::volumeType(const QString
                 if(driveVolume == ifaceDevice.getPropertyString("block.device")) {
                     QHalDeviceInterface ifaceDeviceParent(ifaceDevice.getPropertyString("info.parent"), this);
                     if(ifaceDeviceParent.getPropertyBool("storage.removable")) {
-                        return QSystemMemoryInfo::Removable;
+                        return QSystemStorageInfo::RemovableDrive;
                     } else {
-                        return QSystemMemoryInfo::Internal;
+                        return QSystemStorageInfo::InternalDrive;
                     }
                 }
             }
@@ -1130,16 +1130,16 @@ QSystemMemoryInfo::VolumeType QSystemMemoryInfoPrivate::volumeType(const QString
     } else {
 
     }
-    return QSystemMemoryInfo::Internal;
+    return QSystemStorageInfo::InternalDrive;
 }
 
-QStringList QSystemMemoryInfoPrivate::listOfVolumes()
+QStringList QSystemStorageInfoPrivate::logicalDrives()
 {
     mountEntries();
     return mountEntriesHash.keys();
 }
 
-void QSystemMemoryInfoPrivate::mountEntries()
+void QSystemStorageInfoPrivate::mountEntries()
 {
     mountEntriesHash.clear();
     FILE *mntfp = setmntent( "/proc/mounts", "r" );

@@ -19,9 +19,9 @@
         <keyword ref="qsystemdeviceinfo.html#InputMethod-enum">QSystemDeviceInfo::SingleTouch</keyword>
         <keyword ref="qsystemdeviceinfo.html#PowerState-enum">PowerState</keyword>
         <keyword ref="qsystemdeviceinfo.html#PowerState-enum">QSystemDeviceInfo::UnknownPower</keyword>
-        <keyword ref="qsystemdeviceinfo.html#PowerState-enum">QSystemDeviceInfo::WallPowerCharging</keyword>
         <keyword ref="qsystemdeviceinfo.html#PowerState-enum">QSystemDeviceInfo::WallPower</keyword>
         <keyword ref="qsystemdeviceinfo.html#PowerState-enum">QSystemDeviceInfo::BatteryPower</keyword>
+        <keyword ref="qsystemdeviceinfo.html#PowerState-enum">QSystemDeviceInfo::WallPowerChargingBattery</keyword>
         <keyword ref="qsystemdeviceinfo.html#Profile-enum">Profile</keyword>
         <keyword ref="qsystemdeviceinfo.html#Profile-enum">QSystemDeviceInfo::VibProfile</keyword>
         <keyword ref="qsystemdeviceinfo.html#Profile-enum">QSystemDeviceInfo::LoudProfile</keyword>
@@ -97,20 +97,6 @@
         <keyword ref="qsysteminfo.html#version">version</keyword>
         <section ref="qsysteminfo-members.html" title="List of all members"/>
     </section>
-    <section ref="qsystemmemoryinfo.html" title="QSystemMemoryInfo Class Reference">
-        <keyword ref="qsystemmemoryinfo.html">QSystemMemoryInfo</keyword>
-        <keyword ref="qsystemmemoryinfo.html#VolumeType-enum">VolumeType</keyword>
-        <keyword ref="qsystemmemoryinfo.html#VolumeType-enum">QSystemMemoryInfo::Internal</keyword>
-        <keyword ref="qsystemmemoryinfo.html#VolumeType-enum">QSystemMemoryInfo::Removable</keyword>
-        <keyword ref="qsystemmemoryinfo.html#VolumeType-enum">QSystemMemoryInfo::Remote</keyword>
-        <keyword ref="qsystemmemoryinfo.html#VolumeType-enum">QSystemMemoryInfo::NoVolume</keyword>
-        <keyword ref="qsystemmemoryinfo.html#VolumeType-enum">QSystemMemoryInfo::Cdrom</keyword>
-        <keyword ref="qsystemmemoryinfo.html#availableDiskSpace">availableDiskSpace</keyword>
-        <keyword ref="qsystemmemoryinfo.html#listOfVolumes">listOfVolumes</keyword>
-        <keyword ref="qsystemmemoryinfo.html#totalDiskSpace">totalDiskSpace</keyword>
-        <keyword ref="qsystemmemoryinfo.html#volumeType">volumeType</keyword>
-        <section ref="qsystemmemoryinfo-members.html" title="List of all members"/>
-    </section>
     <section ref="qsystemnetworkinfo.html" title="QSystemNetworkInfo Class Reference">
         <keyword ref="qsystemnetworkinfo.html">QSystemNetworkInfo</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">NetworkMode</keyword>
@@ -160,6 +146,20 @@
         <keyword ref="qsystemscreensaver.html#setScreenBlankingEnabled">setScreenBlankingEnabled</keyword>
         <keyword ref="qsystemscreensaver.html#setScreenSaverEnabled">setScreenSaverEnabled</keyword>
         <section ref="qsystemscreensaver-members.html" title="List of all members"/>
+    </section>
+    <section ref="qsystemstorageinfo.html" title="QSystemStorageInfo Class Reference">
+        <keyword ref="qsystemstorageinfo.html">QSystemStorageInfo</keyword>
+        <keyword ref="qsystemstorageinfo.html#DriveType-enum">DriveType</keyword>
+        <keyword ref="qsystemstorageinfo.html#DriveType-enum">QSystemStorageInfo::RemovableDrive</keyword>
+        <keyword ref="qsystemstorageinfo.html#DriveType-enum">QSystemStorageInfo::InternalDrive</keyword>
+        <keyword ref="qsystemstorageinfo.html#DriveType-enum">QSystemStorageInfo::NoDrive</keyword>
+        <keyword ref="qsystemstorageinfo.html#DriveType-enum">QSystemStorageInfo::CdromDrive</keyword>
+        <keyword ref="qsystemstorageinfo.html#DriveType-enum">QSystemStorageInfo::RemoteDrive</keyword>
+        <keyword ref="qsystemstorageinfo.html#availableDiskSpace">availableDiskSpace</keyword>
+        <keyword ref="qsystemstorageinfo.html#logicalDrives">logicalDrives</keyword>
+        <keyword ref="qsystemstorageinfo.html#totalDiskSpace">totalDiskSpace</keyword>
+        <keyword ref="qsystemstorageinfo.html#typeForDrive">typeForDrive</keyword>
+        <section ref="qsystemstorageinfo-members.html" title="List of all members"/>
     </section>
 </section>
 <section ref="overviews.html" title="Overviews">
