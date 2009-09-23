@@ -305,7 +305,8 @@ void VSExplorer::subscriptions()
 
 void VSExplorer::subscribe()
 {
-    QValueSpaceItem *item = new QValueSpaceItem(pwd);
+    QValueSpaceItem *item = new QValueSpaceItem;
+    item->setPath(&pwd);
     QObject::connect(item, SIGNAL(contentsChanged()),
                      this, SLOT(contentsChanged()));
     subs.insert(item);
@@ -456,14 +457,14 @@ void VSExplorer::processLine(const QString &line)
             newPath = newPath.left(newPath.length() - 1);
         }
         if(newPath.startsWith("/")) {
-            pwd = QValueSpaceItem(newPath);
+            pwd.setPath(newPath);
         } else {
             QString oldPath = pwd.path();
             if(!oldPath.endsWith("/"))
                 oldPath.append("/");
             oldPath.append(newPath);
             oldPath = QDir::cleanPath(oldPath);
-            pwd = QValueSpaceItem(oldPath);
+            pwd.setPath(oldPath);
         }
     } else if(cmd == "unwatch" && 2 <= cmds.count()) {
         QStringList newCmds = cmds;
@@ -779,13 +780,16 @@ void usage(char * app)
 
 void dodump(QValueSpaceItem * item)
 {
-    QStringList children = item->subPaths();
-    foreach(QString child, children) {
-        if ( child.isEmpty() )
+    foreach (const QString &child, item->subPaths()) {
+        if (child.isEmpty())
             continue;
-        QValueSpaceItem subitem(*item, child);
-        dodump(&subitem);
+
+        QValueSpaceItem subItem;
+        subItem.setPath(item);
+        subItem.cd(child);
+        dodump(&subItem);
     }
+
     QVariant var = item->value();
     fprintf(stdout, "%s '%s' %s\n",
             item->path().toAscii().constData(),
@@ -795,7 +799,8 @@ void dodump(QValueSpaceItem * item)
 
 void VSExplorer::dump()
 {
-    QValueSpaceItem item(pwd);
+    QValueSpaceItem item;
+    item.setPath(&pwd);
     dodump(&item);
     fflush(stdout);
 }

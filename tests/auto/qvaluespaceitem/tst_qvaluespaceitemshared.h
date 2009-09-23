@@ -42,7 +42,7 @@ class tst_QValueSpaceItem : public QObject
     Q_OBJECT
 
 public:
-    enum Type { Copy, CharStar, String };
+    enum Type { CharStar, String };
 
 private slots:
     void initTestCase();
@@ -52,8 +52,6 @@ private slots:
     void testConstructor();
     void testFilterConstructor_data();
     void testFilterConstructor();
-    void testAssignmentOperator_data();
-    void testAssignmentOperator();
 
     void contentsChanged_data();
     void contentsChanged();
@@ -68,8 +66,6 @@ private slots:
 
     void setValue_data();
     void setValue();
-    void copySetValue_data();
-    void copySetValue();
     void ipcSetValue_data();
     void ipcSetValue();
 

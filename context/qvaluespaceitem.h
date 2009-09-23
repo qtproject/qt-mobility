@@ -69,14 +69,13 @@ public:
     QValueSpaceItem(const QString &path, const QUuid &uuid, QObject *parent = 0);
     QValueSpaceItem(const char *path, const QUuid &uuid, QObject *parent = 0);
 
-    QValueSpaceItem(const QValueSpaceItem &other, QObject *parent = 0);
-    QValueSpaceItem(const QValueSpaceItem &base, const QString &path, QObject *parent = 0);
-    QValueSpaceItem(const QValueSpaceItem &base, const char * path, QObject *parent = 0);
-
     virtual ~QValueSpaceItem();
 
     void setPath(const QString &path);
+    void setPath(QValueSpaceItem *item);
     QString path() const;
+    void cd(const QString &path);
+    void cdUp();
 
     bool isValid() const;
 
@@ -99,8 +98,6 @@ public:
     QVariant value(const char *subPath, const QVariant &def = QVariant()) const;
     QVariant value(const QString &subPath, const QVariant &def = QVariant()) const;
 
-    QValueSpaceItem &operator=(const QValueSpaceItem &other);
-
     void setNotify(bool notify);
     bool notify();
 
@@ -112,6 +109,7 @@ protected:
     virtual void disconnectNotify(const char *signal);
 
 private:
+    Q_DISABLE_COPY(QValueSpaceItem)
     QValueSpaceItemPrivate *d;
 };
 

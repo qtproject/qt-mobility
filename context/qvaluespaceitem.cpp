@@ -537,123 +537,6 @@ QValueSpaceItem::QValueSpaceItem(const char *path, const QUuid &uuid, QObject *p
 }
 
 /*!
-    Constructs a QValueSpaceItem with the specified \a parent that refers to the same path as
-    \a other.
-
-    The constructed Value Space item will access the same \l {QAbstractValueSpaceLayer}{layers} as
-    \a other.
-*/
-QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &other, QObject* parent)
-:   QObject(parent)
-{
-    VS_CALL_ASSERT;
-
-    QVALUESPACEITEM_D(other.d);
-    if (other.d->type == QValueSpaceItemPrivate::Data)
-        d = md;
-    else
-        d = new QValueSpaceItemPrivateWrite(*static_cast<QValueSpaceItemPrivateWrite *>(other.d));
-
-    md->AddRef();
-}
-
-/*!
-    \overload
-
-    Constructs a QValueSpaceItem with the specified \a parent that refers to the sub-\a path of
-    \a base.  This constructor is equivalent to calling
-    \c {QValueSpaceItem(base, path.toUtf8(), parent)}.
-
-    The constructed Value Space item will access the same \l {QAbstractValueSpaceLayer}{layers} as
-    \a base.
-*/
-QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &base, const QString &path, QObject *parent)
-:   QObject(parent)
-{
-    VS_CALL_ASSERT;
-
-    QVALUESPACEITEM_D(base.d);
-
-    if (path.isEmpty() || path == QLatin1String("/"))
-        d = md;
-    else if (md->path == "/")
-        d = new QValueSpaceItemPrivateData(path.toUtf8(), md->layers());
-    else
-        d = new QValueSpaceItemPrivateData(md->path + '/' + path.toUtf8(), md->layers());
-
-    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
-}
-
-/*!
-    \overload
-
-    Constructs a QValueSpaceItem with the specified \a parent that refers to the sub-\a path of
-    \a base.  This constructor is equivalent to calling
-    \c {QValueSpaceItem(base, QByteArray(path), parent)}.
-
-    The constructed Value Space item will access the same \l {QAbstractValueSpaceLayer}{layers} as
-    \a base.
-*/
-QValueSpaceItem::QValueSpaceItem(const QValueSpaceItem &base, const char *path, QObject* parent)
-:   QObject(parent)
-{
-    VS_CALL_ASSERT;
-
-    QVALUESPACEITEM_D(base.d);
-
-    if (qstrlen(path) == 0 || qstrcmp(path, "/") == 0)
-        d = md;
-    else if (md->path == "/")
-        d = new QValueSpaceItemPrivateData(QByteArray(path), md->layers());
-    else
-        d = new QValueSpaceItemPrivateData(md->path + '/' + QByteArray(path), md->layers());
-
-    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
-}
-
-/*!
-    Assign \a other to this.
-*/
-QValueSpaceItem &QValueSpaceItem::operator=(const QValueSpaceItem& other)
-{
-    VS_CALL_ASSERT;
-    if (other.d == d)
-        return *this;
-
-    bool reconnect = false;
-    {
-        QVALUESPACEITEM_D(d);
-        reconnect = md->disconnect(this);
-        if (d->type == QValueSpaceItemPrivate::Data) {
-            md->Release();
-            d = 0;
-        } else {
-            md->Release();
-            delete d;
-        }
-    }
-
-    {
-        QVALUESPACEITEM_D(other.d);
-        md->AddRef();
-
-        if (other.d->type == QValueSpaceItemPrivate::Data) {
-            d = other.d;
-        } else {
-            d = new QValueSpaceItemPrivateWrite(
-                *static_cast<QValueSpaceItemPrivateWrite *>(other.d));
-        }
-    }
-
-    if (reconnect) {
-        QVALUESPACEITEM_D(d);
-        md->connect(this);
-    }
-
-    return *this;
-}
-
-/*!
     Destroys the QValueSpaceItem
 */
 QValueSpaceItem::~QValueSpaceItem()
@@ -693,12 +576,71 @@ void QValueSpaceItem::setPath(const QString &path)
     static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
 }
 
+/*!
+    Sets the path to the same path as \a item.
+
+    Calling this function causes the QValueSpaceItem to disconnect and reconnect to the value space
+    with the a path.
+
+    Calling this function disconnects all signal/slot connections.
+*/
+void QValueSpaceItem::setPath(QValueSpaceItem *item)
+{
+    VS_CALL_ASSERT;
+
+    {
+        QVALUESPACEITEM_D(d);
+
+        if (d->type == QValueSpaceItemPrivate::Write)
+            delete d;
+
+        md->Release();
+    }
+
+    disconnect();
+
+    {
+        QVALUESPACEITEM_D(item->d);
+
+        d = md;
+
+        md->AddRef();
+    }
+}
+
 QString QValueSpaceItem::path() const
 {
     VS_CALL_ASSERT;
     QVALUESPACEITEM_D(d);
 
     return QString::fromUtf8(md->path.constData(), md->path.length());
+}
+
+void QValueSpaceItem::cd(const QString &path)
+{
+    VS_CALL_ASSERT;
+
+    QVALUESPACEITEM_D(d);
+
+    setPath(md->path + '/' + path);
+}
+
+void QValueSpaceItem::cdUp()
+{
+    VS_CALL_ASSERT;
+
+    QVALUESPACEITEM_D(d);
+
+    if (md->path == "/")
+        return;
+
+    QByteArray p(md->path);
+
+    int index = p.lastIndexOf('/');
+
+    p.truncate(index);
+
+    setPath(p);
 }
 
 /*!
