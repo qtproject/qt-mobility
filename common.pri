@@ -4,8 +4,20 @@
 #
 ######################################################################
 
+
+CONFIG(debug, debug|release) {
+    WAS_IN_DEBUG=debug
+} else {
+    WAS_IN_DEBUG=release
+}
+
 include(config.pri)
 
+#MacOSX always builds debug and release libs
+mac:contains(TEMPLATE, lib) {
+    CONFIG+=$$WAS_IN_DEBUG
+    CONFIG += debug_and_release build_all
+}
 # Make sure this goes everywhere we need it
 symbian: load(data_caging_paths)
 
@@ -23,6 +35,14 @@ symbian:CONTACTS_BACKENDS += symbian
 OUTPUT_DIR = $$PWD
 SOURCE_DIR = $$PWD
 
+CONFIG(debug, debug|release) {
+    SUBDIRPART=Debug
+} else {
+    SUBDIRPART=Release
+}
+
+
+
 #test whether we have a unit test
 !testcase {
     OBJECTS_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET
@@ -30,13 +50,8 @@ SOURCE_DIR = $$PWD
         contains(TEMPLATE, lib):DESTDIR = $$OUTPUT_DIR/lib
         else:DESTDIR = $$OUTPUT_DIR/bin
     } else {
-        ### plugins get installed to the plugins directory
         testplugin:DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/contacts
         !testplugin:DESTDIR = $$OUTPUT_DIR/plugins/contacts
-
-        # And since we're a plugin, add the base lib path to the lib dirs
-#testplugin:LIBS += -L$$OUTPUT_DIR/build/tests/bin  #link against base dir as well
-#        !testplugin:LIBS += -L$$OUTPUT_DIR/build/bin       #link against base dir as well
     }
 
     MOC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/moc
@@ -52,7 +67,6 @@ SOURCE_DIR = $$PWD
     MOC_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/moc
     RCC_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/rcc
     UI_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/ui
-#    LIBS += -L$$OUTPUT_DIR/lib  #link against library that we test
     symbian {
         #The default include path doesn't include MOC_DIR on symbian
         INCLUDEPATH += $$MOC_DIR
@@ -89,17 +103,14 @@ symbian {
 }
 
 # Add the output dirs to the link path too
+mac {
+    #add framework option
+    contains(TEMPLATE, app)|contains(CONFIG,plugin):LIBS+=-F$$OUTPUT_DIR/lib
+}
 LIBS += -L$$OUTPUT_DIR/lib
 
 DEPENDPATH += . $$SOURCE_DIR
 INCLUDEPATH += $$SOURCE_DIR
-#INCLUDEPATH += . \
-#    $$SOURCE_DIR \
-#    $$SOURCE_DIR/contacts \
-#    $$SOURCE_DIR/contacts/details \
-#    $$SOURCE_DIR/contacts/engines \
-#    $$SOURCE_DIR/contacts/filters \
-#    $$SOURCE_DIR/contacts/requests
 
 contains(QT_CONFIG, multimedia) {
     QT += multimedia

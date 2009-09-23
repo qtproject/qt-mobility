@@ -71,7 +71,7 @@ while [ "$#" -gt 0 ]; do
             RELEASEMODE=debug
             ;;
         -release)
-            RELEASEMODE=debug
+            RELEASEMODE=release
             ;;
         *)
             echo "Unknown option: $1"
@@ -172,9 +172,9 @@ mv config.in config.pri
 
 echo "Running qmake..."
 if qmake -recursive; then
-    echo -e "\n"
+    echo ""
     echo "configure has finished. You may run make or gmake to build the project now."
 else
-    echo -e "\n"
+    echo ""
     echo "configure failed."
 fi
