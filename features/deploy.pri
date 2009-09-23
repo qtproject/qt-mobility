@@ -7,7 +7,6 @@ contains(TEMPLATE,lib) {
     TARGET = $$qtLibraryTarget($$TARGET)
 } else {
     contains(TEMPLATE,app):target.path=$$QT_MOBILITY_BIN
-    LIBS += -F$${PWD}/../lib
 }
 
 INSTALLS+=headers target

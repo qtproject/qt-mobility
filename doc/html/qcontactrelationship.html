@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- ../../contacts/details/qcontactdetails.cpp -->
+<head>
+  <title>QContactRelationship Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QContactRelationship Class Reference</h1>
+<p>Describes the relationship that this contact has to another <a href="#details">More...</a></p>
+<pre>    #include &lt;QContactRelationship&gt;</pre><p>Inherits <a href="qcontactdetail.html">QContactDetail</a>.</p>
+<ul>
+<li><a href="qcontactrelationship-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationship.html#relatedContactLabel">relatedContactLabel</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationship.html#relatedContactManagerUri">relatedContactManagerUri</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationship.html#relatedContactUid">relatedContactUid</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationship.html#relationshipType">relationshipType</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationship.html#setRelatedContactLabel">setRelatedContactLabel</a></b> ( const QString &amp; <i>label</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationship.html#setRelatedContactManagerUri">setRelatedContactManagerUri</a></b> ( const QString &amp; <i>managerUri</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationship.html#setRelatedContactUid">setRelatedContactUid</a></b> ( const QString &amp; <i>contactUid</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationship.html#setRelationshipType">setRelationshipType</a></b> ( const QString &amp; <i>relationshipType</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>15 public functions inherited from <a href="qcontactdetail.html#public-functions">QContactDetail</a></li>
+</ul>
+<hr />
+<a name="public-variables"></a>
+<h2>Public Variables</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationship.html#DefinitionName-var">DefinitionName</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationship.html#FieldRelatedContactLabel-var">FieldRelatedContactLabel</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationship.html#FieldRelatedContactManagerUri-var">FieldRelatedContactManagerUri</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationship.html#FieldRelatedContactUid-var">FieldRelatedContactUid</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationship.html#FieldRelationshipType-var">FieldRelationshipType</a></b></td></tr>
+</table>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 protected function inherited from <a href="qcontactdetail.html#protected-functions">QContactDetail</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>Describes the relationship that this contact has to another</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<h3 class="fn"><a name="relatedContactLabel"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactRelationship::relatedContactLabel () const</h3>
+<p>Returns the label for the contact to whom this contact has the relationship</p>
+<p>See also <a href="qcontactrelationship.html#setRelatedContactLabel">setRelatedContactLabel</a>().</p>
+<h3 class="fn"><a name="relatedContactManagerUri"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactRelationship::relatedContactManagerUri () const</h3>
+<p>Returns the universal resource identifier of the manager which contains the contact with whom this contact has a relationship</p>
+<p>See also <a href="qcontactrelationship.html#setRelatedContactManagerUri">setRelatedContactManagerUri</a>().</p>
+<h3 class="fn"><a name="relatedContactUid"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactRelationship::relatedContactUid () const</h3>
+<p>Returns the unique identifier of the contact to whom this contact has the relationship</p>
+<p>See also <a href="qcontactrelationship.html#setRelatedContactUid">setRelatedContactUid</a>().</p>
+<h3 class="fn"><a name="relationshipType"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactRelationship::relationshipType () const</h3>
+<p>Returns the relationship type saved in this detail</p>
+<p>See also <a href="qcontactrelationship.html#setRelationshipType">setRelationshipType</a>().</p>
+<h3 class="fn"><a name="setRelatedContactLabel"></a>void QContactRelationship::setRelatedContactLabel ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>label</i> )</h3>
+<p>Sets the label for the contact to whom this contact has a relationship with to <i>label</i>. This is especially useful if no unique identifier (or other information) for the related contact is known.</p>
+<p>See also <a href="qcontactrelationship.html#relatedContactLabel">relatedContactLabel</a>().</p>
+<h3 class="fn"><a name="setRelatedContactManagerUri"></a>void QContactRelationship::setRelatedContactManagerUri ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>managerUri</i> )</h3>
+<p>Sets the value of the universal resource identifier of the manager containing the contact to whom this contact has a relationship with to <i>managerUri</i></p>
+<p>See also <a href="qcontactrelationship.html#relatedContactManagerUri">relatedContactManagerUri</a>().</p>
+<h3 class="fn"><a name="setRelatedContactUid"></a>void QContactRelationship::setRelatedContactUid ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>contactUid</i> )</h3>
+<p>Sets the value of the unique identifier of the contact to whom this contact has a relationship with to <i>contactUid</i></p>
+<p>See also <a href="qcontactrelationship.html#relatedContactUid">relatedContactUid</a>().</p>
+<h3 class="fn"><a name="setRelationshipType"></a>void QContactRelationship::setRelationshipType ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>relationshipType</i> )</h3>
+<p>Sets the relationship type saved in this detail to <i>relationshipType</i></p>
+<p>See also <a href="qcontactrelationship.html#relationshipType">relationshipType</a>().</p>
+<hr />
+<h2>Member Variable Documentation</h2>
+<h3 class="fn"><a name="DefinitionName-var"></a>const char * QContactRelationship::DefinitionName</h3>
+<p>The constant string which identifies the definition of details which contain information about a relationship of a contact to another contact</p>
+<h3 class="fn"><a name="FieldRelatedContactLabel-var"></a>const char * QContactRelationship::FieldRelatedContactLabel</h3>
+<p>The constant key for the value which is stored in details of the <a href="qcontactrelationship.html">QContactRelationship</a> type which contains the label of the other contact with whom this contact has the relationship</p>
+<h3 class="fn"><a name="FieldRelatedContactManagerUri-var"></a>const char * QContactRelationship::FieldRelatedContactManagerUri</h3>
+<p>The constant key for the value which is stored in details of the <a href="qcontactrelationship.html">QContactRelationship</a> type which defines the universal resource identifier of the manager which contains the contact to whom this contact has the relationship</p>
+<h3 class="fn"><a name="FieldRelatedContactUid-var"></a>const char * QContactRelationship::FieldRelatedContactUid</h3>
+<p>The constant key for the value which is stored in details of the <a href="qcontactrelationship.html">QContactRelationship</a> type which defines the unique identifier of the other contact to whom this contact has the relationship</p>
+<h3 class="fn"><a name="FieldRelationshipType-var"></a>const char * QContactRelationship::FieldRelationshipType</h3>
+<p>The constant key for the value which is stored in details of the <a href="qcontactrelationship.html">QContactRelationship</a> type which defines the type of relationship that is being described in the detail</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="right"><div align="right">Qt Contacts</div></td>
+</tr></table></div></address></body>
+</html>

@@ -8,5 +8,4 @@ include(../../../common.pri)
 SOURCES += tst_qpacket.cpp
 
 qtAddLibrary(QtContextFramework)
-symbian:TARGET.CAPABILITY = ALL \
-    -TCB
+symbian:TARGET.CAPABILITY = ALL -TCB

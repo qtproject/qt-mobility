@@ -22,7 +22,9 @@ mobility.prf
 bin/servicexmlgen*
 bin/servicefw*
 bin/vsexplorer*
+bin/sysinfo*
 bin/examples/*
+bin/sysinfo*
 install/*
 
 #Symbian specific
@@ -43,6 +45,10 @@ plugin_commonU.def
 #Visual Studio files
 *.sln
 *.vcproj
+*.suo
+*.ncb
+*.user
 
 #QtCreator project files
 *.pro.user
+
