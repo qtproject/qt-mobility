@@ -76,8 +76,6 @@ public:
     static void sync();
 
 signals:
-    void itemRemove(const QByteArray &attribute);
-    void itemSetValue(const QByteArray &attribute, const QVariant &value);
     void itemNotify(const QByteArray &path, bool interested);
 
 public slots:

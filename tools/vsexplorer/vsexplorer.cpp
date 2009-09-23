@@ -375,12 +375,6 @@ void VSExplorer::suppress()
     fflush(stdout);
 }
 
-void VSExplorer::write(const QByteArray &name, const QString &value)
-{
-    pwd.setValue(name, value);
-    pwd.sync();
-}
-
 void VSExplorer::set(const QByteArray &name, const QString &value)
 {
     if('/' == *name.constData())
@@ -389,12 +383,6 @@ void VSExplorer::set(const QByteArray &name, const QString &value)
         prov.setAttribute(pwd.path() + name, value);
     else
         prov.setAttribute(pwd.path() + "/" + name, value);
-}
-
-void VSExplorer::remove(const QByteArray &name)
-{
-    pwd.remove(name);
-    pwd.sync();
 }
 
 void VSExplorer::clear(const QByteArray &name)
@@ -506,10 +494,6 @@ void VSExplorer::processLine(const QString &line)
             finalPath = QValueSpaceItem(oldPath).path();
         }
         watch(finalPath.toUtf8());
-    } else if(cmd == "write" && 3 == cmds.count()) {
-        write(cmds.at(1).trimmed().toAscii(), cmds.at(2).trimmed());
-    } else if(cmd == "remove" && 2 == cmds.count()) {
-        remove(cmds.at(1).trimmed().toAscii());
     } else if(cmd == "set" && 3 == cmds.count()) {
         set(cmds.at(1).trimmed().toAscii(), cmds.at(2).trimmed());
     } else if(cmd == "clear" && 2 == cmds.count()) {

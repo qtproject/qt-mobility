@@ -51,7 +51,7 @@ class Q_CFW_EXPORT QValueSpaceItem : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QString path READ path WRITE setPath);
-    Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY contentsChanged);
+    Q_PROPERTY(QVariant value READ value NOTIFY contentsChanged);
     Q_PROPERTY(bool notify READ notify WRITE setNotify);
 
 public:
@@ -80,18 +80,6 @@ public:
     bool isValid() const;
 
     QStringList subPaths() const;
-
-    bool remove();
-    bool remove(const QByteArray &subPath);
-    bool remove(const char *subPath);
-    bool remove(const QString &subPath);
-
-    bool setValue(const QVariant &value);
-    bool setValue(const QByteArray &subPath, const QVariant &value);
-    bool setValue(const char *subPath, const QVariant &value);
-    bool setValue(const QString &subPath, const QVariant &value);
-
-    bool sync();
 
     QVariant value(const QByteArray &subPath = QByteArray(),
                    const QVariant &def = QVariant()) const;

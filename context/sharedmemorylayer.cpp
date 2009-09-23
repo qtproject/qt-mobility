@@ -1680,9 +1680,6 @@ public:
 
     /* QValueSpaceItem functions */
     bool supportsRequests() const { return true; }
-    bool requestSetValue(Handle handle, const QVariant &data);
-    bool requestSetValue(Handle handle, const QByteArray &path, const QVariant &data);
-    bool requestRemoveValue(Handle handle, const QByteArray &path);
     bool notifyInterest(Handle handle, bool interested);
     bool syncRequests();
 
@@ -1714,8 +1711,6 @@ private:
 #endif
     QList<NodeWatch> watchers(const QByteArray &);
     void doClientEmit();
-    void doClientRemove(const QByteArray &path);
-    void doClientWrite(const QByteArray &path, const QVariant &newData);
     void doClientTransmit();
     void doServerTransmit();
     bool doRemove(const QByteArray &path);
@@ -1826,8 +1821,6 @@ QVALUESPACE_AUTO_INSTALL_LAYER(SharedMemoryLayer);
 #define SHMLAYER_ADD 0
 #define SHMLAYER_REM 1
 #define SHMLAYER_DONE 2
-#define SHMLAYER_WRITE 3
-#define SHMLAYER_REMOVE 4
 #define SHMLAYER_ADDWATCH 5
 #define SHMLAYER_REMWATCH 6
 #define SHMLAYER_SYNC 7
@@ -2149,22 +2142,7 @@ void SharedMemoryLayer::readyRead()
                     doClientEmit();
                 }
                 break;
-            case SHMLAYER_REMOVE:
-                {
-                    QByteArray path;
-                    pack >> path;
-                    doClientRemove(path);
-                }
-                break;
 
-            case SHMLAYER_WRITE:
-                {
-                    QByteArray path;
-                    QVariant val;
-                    pack >> path >> val;
-                    doClientWrite(path, val);
-                }
-                break;
             case SHMLAYER_NOTIFY:
                 {
                     unsigned long owner;
@@ -2214,23 +2192,6 @@ void SharedMemoryLayer::readyRead()
                         owner.data1 = (unsigned long)protocol;
                         owner.data2 = own;
                         changed |= doRemItems(owner, path);
-                    }
-                    break;
-
-                case SHMLAYER_WRITE:
-                    {
-                        QByteArray path;
-                        QVariant value;
-                        pack >> path >> value;
-                        changed |= doWriteItem(path, value);
-                    }
-                    break;
-
-                case SHMLAYER_REMOVE:
-                    {
-                        QByteArray path;
-                        pack >> path;
-                        changed |= doRemove(path);
                     }
                     break;
 
@@ -2755,60 +2716,6 @@ QList<NodeWatch> SharedMemoryLayer::watchers(const QByteArray &path)
     return owners;
 }
 
-bool SharedMemoryLayer::doRemove(const QByteArray &path)
-{
-    QList<NodeWatch> owners = watchers(path);
-
-    QSet<unsigned long> written;
-    bool sendLocal = false;
-
-    for(int ii = 0; ii < owners.count(); ++ii) {
-        const NodeWatch & watch = owners.at(ii);
-        if(0 == watch.data1) {
-            // Local
-            sendLocal = true;
-        } else {
-            // Remote
-            if(!written.contains(watch.data1)) {
-                ((QPacketProtocol *)watch.data1)->send()
-                    << (quint8)SHMLAYER_REMOVE << path;
-                written.insert(watch.data1);
-            }
-        }
-    }
-    if (sendLocal)
-        doClientRemove(path);
-
-    return true;
-}
-
-bool SharedMemoryLayer::doWriteItem(const QByteArray &path, const QVariant &val)
-{
-    QList<NodeWatch> owners = watchers(path);
-
-    QSet<unsigned long> written;
-    bool sendLocal = false;
-
-    for(int ii = 0; ii < owners.count(); ++ii) {
-        const NodeWatch & watch = owners.at(ii);
-        if(0 == watch.data1) {
-            // Local
-            sendLocal = true;
-        } else {
-            // Remote
-            if(!written.contains(watch.data1)) {
-                ((QPacketProtocol *)watch.data1)->send()
-                    << (quint8)SHMLAYER_WRITE << path << val;
-                written.insert(watch.data1);
-            }
-        }
-    }
-    if (sendLocal) 
-        doClientWrite(path, val);
-
-    return true;
-}
-
 void SharedMemoryLayer::doNotify(const QByteArray &path, const QPacketProtocol *protocol,
                                  bool interested)
 {
@@ -3277,49 +3184,6 @@ SharedMemoryLayer * SharedMemoryLayer::instance()
 typedef QSet<QValueSpaceObject *> WatchObjects;
 Q_GLOBAL_STATIC(WatchObjects, watchObjects);
 
-// define SharedMemoryLayer
-void SharedMemoryLayer::doClientRemove(const QByteArray &path)
-{
-    // If objects are deleted etc. in here we have a problem
-    QSet<QValueSpaceObject *> objects = *watchObjects();
-    for(QSet<QValueSpaceObject *>::ConstIterator iter = objects.begin();
-            iter != objects.end();
-            ++iter) {
-
-        QValueSpaceObject * obj = *iter;
-
-        const QByteArray objectPath = obj->path().toUtf8();
-
-        if (objectPath.length() < path.length()) {
-            if (path.startsWith(objectPath) && path.at(objectPath.length()) == '/')
-                emitItemRemove(obj, path.mid(objectPath.length()));
-        } else if (objectPath == path) {
-            emitItemRemove(obj, QByteArray());
-        }
-    }
-}
-
-void SharedMemoryLayer::doClientWrite(const QByteArray &path,
-                                     const QVariant &newData)
-{
-    // If objects are deleted etc. in here we have a problem
-    QSet<QValueSpaceObject *> objects = *watchObjects();
-    for(QSet<QValueSpaceObject *>::ConstIterator iter = objects.begin();
-            iter != objects.end();
-            ++iter) {
-        QValueSpaceObject * obj = *iter;
-
-        const QByteArray objectPath = obj->path().toUtf8();
-
-        if (objectPath.length() < path.length()) {
-            if (path.startsWith(objectPath) && path.at(objectPath.length()) == '/')
-                emitItemSetValue(obj, path.mid(objectPath.length()), newData);
-        } else if (objectPath == path) {
-            emitItemSetValue(obj, QByteArray(), newData);
-        }
-    }
-}
-
 void SharedMemoryLayer::doClientNotify(QValueSpaceObject *object, const QByteArray &path,
                                        bool interested)
 {
@@ -3342,89 +3206,6 @@ void SharedMemoryLayer::doClientNotify(QValueSpaceObject *object, const QByteArr
 
     emitItemNotify(object, emitPath, interested);
  }
-
-bool SharedMemoryLayer::requestSetValue(Handle handle, const QVariant &value)
-{
-    if (!valid)
-        return false;
-    Q_ASSERT(layer);
-    ReadHandle * rhandle = rh(handle);
-
-    if(Client == type) {
-        if(todo.isEmpty())
-            todo << newPackId();
-
-        todo << (quint8)SHMLAYER_WRITE << rhandle->path << value;
-        triggerTodo();
-    } else {
-        bool changed = doWriteItem(rhandle->path, value);
-        if(changed) triggerTodo();
-    }
-    return true;
-}
-
-bool SharedMemoryLayer::requestSetValue(Handle handle, const QByteArray &subPath,
-                                        const QVariant &value)
-{
-    if (!valid)
-        return false;
-    Q_ASSERT(layer);
-    Q_ASSERT(!subPath.isEmpty());
-    Q_ASSERT(*subPath.constData() == '/');
-
-    ReadHandle * rhandle = rh(handle);
-    if(Client == type) {
-        if(todo.isEmpty())
-            todo << newPackId();
-
-        if(rhandle->path != "/")
-            todo << (quint8)SHMLAYER_WRITE << (rhandle->path + subPath) << value;
-        else
-            todo << (quint8)SHMLAYER_WRITE << subPath << value;
-        triggerTodo();
-    } else {
-        bool changed;
-        if(rhandle->path != "/")
-            changed = doWriteItem(rhandle->path + subPath, value);
-        else
-            changed = doWriteItem(subPath, value);
-
-        if(changed) triggerTodo();
-    }
-    return true;
-}
-
-bool SharedMemoryLayer::requestRemoveValue(Handle handle, const QByteArray &subPath)
-{
-    if (!valid)
-        return false;
-    Q_ASSERT(layer);
-    //Q_ASSERT(!subPath.isEmpty());
-    //Q_ASSERT(*subPath.constData() == '/');
-
-    ReadHandle * rhandle = rh(handle);
-
-    QByteArray fullPath;
-    if (rhandle->path == "/")
-        fullPath = subPath;
-    else if (subPath.length() > 1)
-        fullPath = rhandle->path + subPath;
-    else
-        fullPath = rhandle->path;
-
-    if(Client == type) {
-        if(todo.isEmpty())
-            todo << newPackId();
-
-        todo << (quint8)SHMLAYER_REMOVE << fullPath;
-
-        triggerTodo();
-    } else {
-        if (doRemove(fullPath))
-            triggerTodo();
-    }
-    return true;
-}
 
 bool SharedMemoryLayer::notifyInterest(Handle handle, bool interested)
 {

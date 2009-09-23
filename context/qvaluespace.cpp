@@ -229,35 +229,6 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn bool QAbstractValueSpaceLayer::requestSetValue(Handle handle, const QVariant &value)
-
-    Process a client side QValueSpaceItem::setValue() call by sending a request to the provider of
-    the value space item identified by \a handle to set it to \a value.
-
-    Returns true if the request was successfully sent; otherwise returns false.
-
-    \sa handleChanged()
-*/
-
-/*!
-    \fn bool QAbstractValueSpaceLayer::requestSetValue(Handle handle, const QByteArray &subPath, const QVariant &value)
-
-    Process a client side QValueSpaceItem::setValue() call by sending a request to the provider of
-    the value space item identified by \a handle and \a subPath to set the value to \a value.
-
-    Returns true if the request was successfully sent; otherwise returns false.
-*/
-
-/*!
-    \fn bool QAbstractValueSpaceLayer::requestRemoveValue(Handle handle, const QByteArray &subPath)
-
-    Process a client side QValueSpaceItem::remove() call by sending a request to the provider of
-    the value space item identified by \a handle and \a subPath to remove the item.
-
-    Returns true if the request was successfully sent; otherwise returns false.
-*/
-
-/*!
     \fn bool QAbstractValueSpaceLayer::notifyInterest(Handle handle, bool interested)
 
     Registers or unregisters that the caller is interested in \a handle and any subpaths under it.
@@ -326,24 +297,6 @@ QT_BEGIN_NAMESPACE
 
     Flushes all pending changes made by calls to setValue(), removeValue() and removeSubTree().
 */
-
-/*!
-    Emits the QValueSpaceObject::itemRemove() signal on \a object with \a path.
-*/
-void QAbstractValueSpaceLayer::emitItemRemove(QValueSpaceObject *object, const QByteArray &path)
-{
-    emit object->itemRemove(path);
-}
-
-/*!
-    Emits the QValueSpaceObject::itemSetValue() signal on \a object with \a path and \a data.
-*/
-void QAbstractValueSpaceLayer::emitItemSetValue(QValueSpaceObject *object,
-                                                const QByteArray &path,
-                                                const QVariant &data)
-{
-    emit object->itemSetValue(path, data);
-}
 
 /*!
     Emits the QValueSpaceObject::itemNotify() signal on \a object with \a path and \a interested.

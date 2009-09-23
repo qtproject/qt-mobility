@@ -106,8 +106,7 @@ QT_BEGIN_NAMESPACE
     \l {QAbstractValueSpaceLayer}{layers}, depending on the constructor and filter parameters used
     to construct it.  Calls to value() will return the value that is stored in the layer with the
     highest \l {QAbstractValueSpaceLayer::order()}{order} of all the accessible layers that contain
-    the specified key.  Calls to setValue() and remove() will send requests to all accessible
-    layers.
+    the specified key.
 
     For example,
 
@@ -184,17 +183,10 @@ public:
 
 struct QValueSpaceItemPrivate
 {
-    enum Type { Data, Write };
-    QValueSpaceItemPrivate(Type t) : type(t) {}
-    Type type;
-};
-
-struct QValueSpaceItemPrivateData : public QValueSpaceItemPrivate
-{
-    QValueSpaceItemPrivateData(const QByteArray &_path,
-                               QAbstractValueSpaceLayer::LayerOptions filter =
-                                   QAbstractValueSpaceLayer::UnspecifiedLayer)
-        : QValueSpaceItemPrivate(Data), refCount(0), connections(0)
+    QValueSpaceItemPrivate(const QByteArray &_path,
+                           QAbstractValueSpaceLayer::LayerOptions filter =
+                               QAbstractValueSpaceLayer::UnspecifiedLayer)
+        : refCount(0), connections(0)
     {
         path = qCanonicalPath(_path);
 
@@ -229,8 +221,8 @@ struct QValueSpaceItemPrivateData : public QValueSpaceItemPrivate
         }
     }
 
-    QValueSpaceItemPrivateData(const QByteArray &_path, const QUuid &uuid)
-        : QValueSpaceItemPrivate(Data), refCount(0), connections(0)
+    QValueSpaceItemPrivate(const QByteArray &_path, const QUuid &uuid)
+    :   refCount(0), connections(0)
     {
         path = qCanonicalPath(_path);
 
@@ -256,9 +248,9 @@ struct QValueSpaceItemPrivateData : public QValueSpaceItemPrivate
         }
     }
 
-    QValueSpaceItemPrivateData(const QByteArray &_path,
-                               const QList<QAbstractValueSpaceLayer *> &readerList)
-        : QValueSpaceItemPrivate(Data), refCount(0), connections(0)
+    QValueSpaceItemPrivate(const QByteArray &_path,
+                           const QList<QAbstractValueSpaceLayer *> &readerList)
+    :   refCount(0), connections(0)
     {
         path = qCanonicalPath(_path);
 
@@ -276,7 +268,7 @@ struct QValueSpaceItemPrivateData : public QValueSpaceItemPrivate
         }
     }
 
-    ~QValueSpaceItemPrivateData()
+    ~QValueSpaceItemPrivate()
     {
         for (int ii = 0; ii < readers.count(); ++ii) {
             readers[ii].first->notifyInterest(readers[ii].second, false);
@@ -366,32 +358,6 @@ struct QValueSpaceItemPrivateData : public QValueSpaceItemPrivate
     QValueSpaceItemPrivateProxy * connections;
 };
 
-struct QValueSpaceItemPrivateWrite : public QValueSpaceItemPrivate
-{
-    QValueSpaceItemPrivateWrite(const QValueSpaceItemPrivateWrite &other)
-        : QValueSpaceItemPrivate(other.type), data(other.data), ops(other.ops)
-        {}
-    QValueSpaceItemPrivateWrite() : QValueSpaceItemPrivate(Write), data(0) {}
-    QValueSpaceItemPrivateData * data;
-
-    struct Op {
-        enum Type { Set, Remove };
-        Type type;
-        QByteArray path;
-        QVariant value;
-        Op(const QByteArray &p, const QVariant &v)
-            : type(Set), path(p), value(v) {}
-        Op(const QByteArray &p)
-            : type(Remove), path(p) {}
-    };
-    QList<Op> ops;
-};
-
-#define QVALUESPACEITEM_D(d) QValueSpaceItemPrivateData *md = \
-    (QValueSpaceItemPrivate::Data == d->type) ? \
-        static_cast<QValueSpaceItemPrivateData *>(d) : \
-        static_cast<QValueSpaceItemPrivateWrite *>(d)->data;
-
 #define VS_CALL_ASSERT Q_ASSERT(!QCoreApplication::instance() || \
                             QCoreApplication::instance()->thread() == QThread::currentThread());
 
@@ -406,8 +372,8 @@ QValueSpaceItem::QValueSpaceItem(QObject *parent)
 {
     VS_CALL_ASSERT;
 
-    d = new QValueSpaceItemPrivateData("/");
-    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
+    d = new QValueSpaceItemPrivate("/");
+    d->AddRef();
 }
 
 /*!
@@ -424,8 +390,8 @@ QValueSpaceItem::QValueSpaceItem(const QString &path, QObject *parent)
 {
     VS_CALL_ASSERT;
 
-    d = new QValueSpaceItemPrivateData(path.toUtf8());
-    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
+    d = new QValueSpaceItemPrivate(path.toUtf8());
+    d->AddRef();
 }
 
 /*!
@@ -442,8 +408,8 @@ QValueSpaceItem::QValueSpaceItem(const char *path, QObject *parent)
 {
     VS_CALL_ASSERT;
 
-    d = new QValueSpaceItemPrivateData(QByteArray(path));
-    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
+    d = new QValueSpaceItemPrivate(QByteArray(path));
+    d->AddRef();
 }
 
 /*!
@@ -464,8 +430,8 @@ QValueSpaceItem::QValueSpaceItem(const QString &path,
 {
     VS_CALL_ASSERT;
 
-    d = new QValueSpaceItemPrivateData(path.toUtf8(), filter);
-    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
+    d = new QValueSpaceItemPrivate(path.toUtf8(), filter);
+    d->AddRef();
 }
 
 /*!
@@ -486,8 +452,8 @@ QValueSpaceItem::QValueSpaceItem(const char *path,
 {
     VS_CALL_ASSERT;
 
-    d = new QValueSpaceItemPrivateData(QByteArray(path), filter);
-    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
+    d = new QValueSpaceItemPrivate(QByteArray(path), filter);
+    d->AddRef();
 }
 
 /*!
@@ -509,8 +475,8 @@ QValueSpaceItem::QValueSpaceItem(const QString &path, const QUuid &uuid, QObject
 {
     VS_CALL_ASSERT;
 
-    d = new QValueSpaceItemPrivateData(path.toUtf8(), uuid);
-    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
+    d = new QValueSpaceItemPrivate(path.toUtf8(), uuid);
+    d->AddRef();
 }
 
 /*!
@@ -532,8 +498,8 @@ QValueSpaceItem::QValueSpaceItem(const char *path, const QUuid &uuid, QObject *p
 {
     VS_CALL_ASSERT;
 
-    d = new QValueSpaceItemPrivateData(QByteArray(path), uuid);
-    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
+    d = new QValueSpaceItemPrivate(QByteArray(path), uuid);
+    d->AddRef();
 }
 
 /*!
@@ -542,11 +508,8 @@ QValueSpaceItem::QValueSpaceItem(const char *path, const QUuid &uuid, QObject *p
 QValueSpaceItem::~QValueSpaceItem()
 {
     VS_CALL_ASSERT;
-    QVALUESPACEITEM_D(d);
-    if(d->type == QValueSpaceItemPrivate::Write)
-        delete d;
 
-    md->Release();
+    d->Release();
 }
 
 /*!
@@ -561,19 +524,15 @@ void QValueSpaceItem::setPath(const QString &path)
 {
     VS_CALL_ASSERT;
 
-    QVALUESPACEITEM_D(d);
-    if (md->path == path.toUtf8())
+    if (d->path == path.toUtf8())
         return;
 
-    if (d->type == QValueSpaceItemPrivate::Write)
-        delete d;
-
-    md->Release();
+    d->Release();
 
     disconnect();
 
-    d = new QValueSpaceItemPrivateData(path.toUtf8());
-    static_cast<QValueSpaceItemPrivateData *>(d)->AddRef();
+    d = new QValueSpaceItemPrivate(path.toUtf8());
+    d->AddRef();
 }
 
 /*!
@@ -588,53 +547,37 @@ void QValueSpaceItem::setPath(QValueSpaceItem *item)
 {
     VS_CALL_ASSERT;
 
-    {
-        QVALUESPACEITEM_D(d);
-
-        if (d->type == QValueSpaceItemPrivate::Write)
-            delete d;
-
-        md->Release();
-    }
+    d->Release();
 
     disconnect();
 
-    {
-        QVALUESPACEITEM_D(item->d);
+    d = item->d;
 
-        d = md;
-
-        md->AddRef();
-    }
+    d->AddRef();
 }
 
 QString QValueSpaceItem::path() const
 {
     VS_CALL_ASSERT;
-    QVALUESPACEITEM_D(d);
 
-    return QString::fromUtf8(md->path.constData(), md->path.length());
+    return QString::fromUtf8(d->path.constData(), d->path.length());
 }
 
 void QValueSpaceItem::cd(const QString &path)
 {
     VS_CALL_ASSERT;
 
-    QVALUESPACEITEM_D(d);
-
-    setPath(md->path + '/' + path);
+    setPath(d->path + '/' + path);
 }
 
 void QValueSpaceItem::cdUp()
 {
     VS_CALL_ASSERT;
 
-    QVALUESPACEITEM_D(d);
-
-    if (md->path == "/")
+    if (d->path == "/")
         return;
 
-    QByteArray p(md->path);
+    QByteArray p(d->path);
 
     int index = p.lastIndexOf('/');
 
@@ -651,280 +594,8 @@ void QValueSpaceItem::cdUp()
 bool QValueSpaceItem::isValid() const
 {
     VS_CALL_ASSERT;
-    QVALUESPACEITEM_D(d);
 
-    return !md->readers.isEmpty();
-}
-
-/*!
-    Request that the item be removed.  The provider of the item determines whether
-    the request is honored or ignored.
-
-    \i {Note:} This call asynchronously \i asks the current provider of the object to
-    change the value.  To explicitly make a change use QValueSpaceObject.
-
-    Returns false if none of the available value space layers support sending requests; otherwise
-    returns true.
-
-    \sa QValueSpaceObject::itemRemove()
-*/
-bool QValueSpaceItem::remove()
-{
-    VS_CALL_ASSERT;
-    return remove(QByteArray());
-}
-
-/*!
-    \overload
-
-    Request that the \a subPath of item be removed.  The provider of the sub path
-    determines whether the request is honored or ignored.
-
-    \i {Note:} This call asynchronously \i asks the current provider of the object to
-    change the value.  To explicitly make a change use QValueSpaceObject.
-
-    Returns false if none of the available value space layers support sending requests; otherwise
-    returns true.
-
-    \sa QValueSpaceObject::itemRemove()
-*/
-bool QValueSpaceItem::remove(const QByteArray &subPath)
-{
-    VS_CALL_ASSERT;
-
-    if (d->type == QValueSpaceItemPrivate::Data) {
-        bool supportsRequests = false;
-
-        QValueSpaceItemPrivateData *md = static_cast<QValueSpaceItemPrivateData *>(d);
-        for (int ii = md->readers.count(); ii > 0 && !supportsRequests; --ii)
-            supportsRequests |= md->readers[ii - 1].first->supportsRequests();
-
-        if (!supportsRequests)
-            return false;
-    }
-
-    if(QValueSpaceItemPrivate::Data == d->type) {
-        QValueSpaceItemPrivateWrite * write = new QValueSpaceItemPrivateWrite();
-        write->data = static_cast<QValueSpaceItemPrivateData *>(d);
-        d = write;
-    }
-    QValueSpaceItemPrivateWrite * write =
-        static_cast<QValueSpaceItemPrivateWrite *>(d);
-
-    write->ops.append(QValueSpaceItemPrivateWrite::Op(subPath));
-
-    return true;
-}
-
-/*!
-    \overload
-
-    Request that the \a subPath of item be removed.  The provider of the sub path
-    determines whether the request is honored or ignored.
-
-    \i {Note:} This call asynchronously \i asks the current provider of the object to
-    change the value.  To explicitly make a change use QValueSpaceObject.
-
-    Returns false if none of the available value space layers support sending requests; otherwise
-    returns true.
-
-    \sa QValueSpaceObject::itemRemove()
-*/
-bool QValueSpaceItem::remove(const char *subPath)
-{
-    VS_CALL_ASSERT;
-    return remove(QByteArray(subPath));
-}
-
-/*!
-    \overload
-
-    Request that the \a subPath of item be removed.  The provider of the sub path
-    determines whether the request is honored or ignored.
-
-    \i {Note:} This call asynchronously \i asks the current provider of the object to
-    change the value.  To explicitly make a change use QValueSpaceObject.
-
-    Returns false if none of the available value space layers support sending requests; otherwise
-    returns true.
-
-    \sa QValueSpaceObject::itemRemove()
-*/
-bool QValueSpaceItem::remove(const QString &subPath)
-{
-    VS_CALL_ASSERT;
-    return remove(subPath.toUtf8());
-}
-
-/*!
-    Request that the value of this item be changed to \a value.  The provider of
-    the item determines whether the request is honored or ignored.
-
-    \i {Note:} This call asynchronously \i asks the current provider of the object to
-    change the value.  To explicitly make a change use QValueSpaceObject.
-
-    Returns false if none of the available value space layers support sending requests; otherwise
-    returns true.
-
-    \sa QValueSpaceObject::itemSetValue()
-*/
-bool QValueSpaceItem::setValue(const QVariant &value)
-{
-    VS_CALL_ASSERT;
-    return setValue(QByteArray(), value);
-}
-
-/*!
-    \overload
-
-    Request that the value of the \a subPath of this item be changed to \a value.
-    The provider of the sub path determines whether the request is honored or
-    ignored.
-
-    \i {Note:} This call asynchronously \i asks the current provider of the object to
-    change the value.  To explicitly make a change use QValueSpaceObject.
-
-    Returns false if none of the available value space layers support sending requests; otherwise
-    returns true.
-
-    \sa QValueSpaceObject::itemSetValue()
-*/
-bool QValueSpaceItem::setValue(const QByteArray &subPath,
-                               const QVariant &value)
-{
-    VS_CALL_ASSERT;
-
-    if (d->type == QValueSpaceItemPrivate::Data) {
-        bool supportsRequests = false;
-
-        QValueSpaceItemPrivateData *md = static_cast<QValueSpaceItemPrivateData *>(d);
-        for (int ii = md->readers.count(); ii > 0 && !supportsRequests; --ii)
-            supportsRequests |= md->readers[ii - 1].first->supportsRequests();
-
-        if (!supportsRequests)
-            return false;
-    }
-
-    if(QValueSpaceItemPrivate::Data == d->type) {
-        QValueSpaceItemPrivateWrite * write = new QValueSpaceItemPrivateWrite();
-        write->data = static_cast<QValueSpaceItemPrivateData *>(d);
-        d = write;
-    }
-    QValueSpaceItemPrivateWrite * write =
-        static_cast<QValueSpaceItemPrivateWrite *>(d);
-
-
-    write->ops.append(QValueSpaceItemPrivateWrite::Op(subPath, value));
-
-    return true;
-}
-
-/*!
-    \overload
-
-    Request that the value of the \a subPath of this item be changed to \a value.
-    The provider of the sub path determines whether the request is honored or
-    ignored.
-
-    \i {Note:} This call asynchronously \i asks the current provider of the object to
-    change the value.  To explicitly make a change use QValueSpaceObject.
-
-    Returns false if none of the available value space layers support sending requests; otherwise
-    returns true.
-
-    \sa QValueSpaceObject::itemSetValue()
-*/
-bool QValueSpaceItem::setValue(const char * subPath,
-                               const QVariant &value)
-{
-    VS_CALL_ASSERT;
-    return setValue(QByteArray(subPath), value);
-}
-
-/*!
-    \overload
-
-    Request that the value of the \a subPath of this item be changed to \a value.
-    The provider of the sub path determines whether the request is honored or
-    ignored.
-
-    \i {Note:} This call asynchronously \i asks the current provider of the object to
-    change the value.  To explicitly make a change use QValueSpaceObject.
-
-    Returns false if none of the available value space layers support sending requests; otherwise
-    returns true.
-
-    \sa QValueSpaceObject::itemSetValue()
-*/
-bool QValueSpaceItem::setValue(const QString & subPath,
-                               const QVariant &value)
-{
-    VS_CALL_ASSERT;
-    return setValue(subPath.toUtf8(), value);
-}
-
-/*!
-    Commit all change requests made by calls to setValue() or remove().
-
-    Returns true if there are no pending change requests to send or the requests were successfully
-    sent to all provides; otherwise returns false.
-*/
-bool QValueSpaceItem::sync()
-{
-    VS_CALL_ASSERT;
-    if (d->type == QValueSpaceItemPrivate::Data)
-        return true;
-
-    QValueSpaceItemPrivateWrite * write = static_cast<QValueSpaceItemPrivateWrite *>(d);
-    QValueSpaceItemPrivateData * md = write->data;
-    QList<QValueSpaceItemPrivateWrite::Op> ops = write->ops;
-    write->ops.clear();
-
-    bool rv = true;
-    for (int ii = 0; ii < ops.count(); ++ii) {
-        const QByteArray & path = ops.at(ii).path;
-        const QVariant & value = ops.at(ii).value;
-
-        if (ops.at(ii).type == QValueSpaceItemPrivateWrite::Op::Set) {
-            if (path.isEmpty()) {
-                for (int ii = md->readers.count(); ii > 0; --ii) {
-                    if (!md->readers[ii - 1].first->requestSetValue(md->readers[ii - 1].second,
-                                                                    value)) {
-                        rv = false;
-                    }
-                }
-            } else {
-                const QByteArray vpath(qCanonicalPath(path));
-                for (int ii = md->readers.count(); ii > 0; --ii) {
-                    if (!md->readers[ii - 1].first->requestSetValue(md->readers[ii - 1].second,
-                                                                    vpath, value)) {
-                        rv = false;
-                    }
-                }
-            }
-        } else {
-            if (path.isEmpty()) {
-                for (int ii = md->readers.count(); ii > 0; --ii) {
-                    if (!md->readers[ii - 1].first->requestRemoveValue(md->readers[ii - 1].second))
-                        rv = false;
-                }
-            } else {
-                const QByteArray vpath(qCanonicalPath(path));
-                for (int ii = md->readers.count(); ii > 0; --ii) {
-                    if (!md->readers[ii - 1].first->requestRemoveValue(md->readers[ii - 1].second,
-                                                                       vpath)) {
-                        rv = false;
-                    }
-                }
-            }
-        }
-    }
-
-    for (int ii = md->readers.count(); ii > 0; --ii) {
-        if (!md->readers[ii - 1].first->syncRequests())
-            rv = false;
-    }
-    return rv;
+    return !d->readers.isEmpty();
 }
 
 /*!
@@ -969,19 +640,17 @@ QVariant QValueSpaceItem::value(const char * subPath, const QVariant &def) const
 QVariant QValueSpaceItem::value(const QByteArray & subPath, const QVariant &def) const
 {
     VS_CALL_ASSERT;
-    QVALUESPACEITEM_D(d);
+
     QVariant value;
     if(subPath.isEmpty()) {
-        for(int ii = md->readers.count(); ii > 0; --ii) {
-            if(md->readers[ii - 1].first->value(md->readers[ii - 1].second,
-                                                &value))
+        for (int ii = d->readers.count(); ii > 0; --ii) {
+            if (d->readers[ii - 1].first->value(d->readers[ii - 1].second, &value))
                 return value;
         }
     } else {
         const QByteArray vpath(qCanonicalPath(subPath));
-        for(int ii = md->readers.count(); ii > 0; --ii) {
-            if(md->readers[ii - 1].first->value(md->readers[ii - 1].second,
-                                                vpath, &value))
+        for (int ii = d->readers.count(); ii > 0; --ii) {
+            if (d->readers[ii - 1].first->value(d->readers[ii - 1].second, vpath, &value))
                 return value;
         }
     }
@@ -990,15 +659,13 @@ QVariant QValueSpaceItem::value(const QByteArray & subPath, const QVariant &def)
 
 bool QValueSpaceItem::notify()
 {
-    QVALUESPACEITEM_D(d);
-
-    if (!md->connections)
+    if (!d->connections)
         return false;
 
     QHash<QValueSpaceItem *, int>::ConstIterator iter =
-        md->connections->connections.constFind(this);
+        d->connections->connections.constFind(this);
 
-    if (iter == md->connections->connections.end())
+    if (iter == d->connections->connections.end())
         return false;
 
     return *iter > 0;
@@ -1020,12 +687,10 @@ void QValueSpaceItem::setNotify(bool notify)
 void QValueSpaceItem::connectNotify(const char *signal)
 {
     VS_CALL_ASSERT;
-    if(QLatin1String(signal) == SIGNAL(contentsChanged())) {
-        QVALUESPACEITEM_D(d);
-        md->connect(this);
-    } else {
+    if (QLatin1String(signal) == SIGNAL(contentsChanged()))
+        d->connect(this);
+    else
         QObject::connectNotify(signal);
-    }
 }
 
 /*!
@@ -1037,12 +702,10 @@ void QValueSpaceItem::connectNotify(const char *signal)
 void QValueSpaceItem::disconnectNotify(const char *signal)
 {
     VS_CALL_ASSERT;
-    if(QLatin1String(signal) == SIGNAL(contentsChanged())) {
-        QVALUESPACEITEM_D(d);
-        md->disconnect(this);
-    } else {
+    if (QLatin1String(signal) == SIGNAL(contentsChanged()))
+        d->disconnect(this);
+    else
         QObject::disconnectNotify(signal);
-    }
 }
 
 /*!
@@ -1062,10 +725,10 @@ void QValueSpaceItem::disconnectNotify(const char *signal)
 QStringList QValueSpaceItem::subPaths() const
 {
     VS_CALL_ASSERT;
-    QVALUESPACEITEM_D(d);
+
     QSet<QByteArray> rv;
-    for(int ii = 0; ii < md->readers.count(); ++ii)
-        rv.unite(md->readers[ii].first->children(md->readers[ii].second));
+    for(int ii = 0; ii < d->readers.count(); ++ii)
+        rv.unite(d->readers[ii].first->children(d->readers[ii].second));
 
     QStringList rvs;
     for(QSet<QByteArray>::ConstIterator iter = rv.begin();

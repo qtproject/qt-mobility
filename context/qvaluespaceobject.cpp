@@ -119,18 +119,6 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn void QValueSpaceObject::itemRemove(const QByteArray &attribute)
-
-    Signal that is emitted when a request to remove \a attribute is received.
-*/
-
-/*!
-    \fn void QValueSpaceObject::itemSetValue(const QByteArray &attribute, const QVariant &value)
-
-    Signal that is emitted when a request to set \a attribute to \a value is received.
-*/
-
-/*!
     \fn void QValueSpaceObject::itemNotify(const QByteArray &attribute, bool interested)
 
     Signal that is emitted when interest in \a attribute changes.  If \a interested is true at
@@ -503,7 +491,7 @@ void QValueSpaceObject::removeAttribute(const QByteArray &attribute)
     If you reimplement this virtual function it is important that you call this implementation from
     your implementation.
 
-    \sa itemRemove(), itemSetValue()
+    \sa itemNotify()
 */
 void QValueSpaceObject::connectNotify(const char *member)
 {

@@ -68,9 +68,6 @@ public:
 
     /* QValueSpaceItem functions */
     bool supportsRequests() const { return false; }
-    bool requestSetValue(Handle handle, const QVariant &data);
-    bool requestSetValue(Handle handle, const QByteArray &path, const QVariant &data);
-    bool requestRemoveValue(Handle handle, const QByteArray &path);
     bool notifyInterest(Handle handle, bool interested);
     bool syncRequests();
 

@@ -64,13 +64,6 @@ private slots:
     void ipcTests_data();
     void ipcTests();
 
-    void setValue_data();
-    void setValue();
-    void ipcSetValue_data();
-    void ipcSetValue();
-
-    void removeValue_data();
-    void removeValue();
     void ipcRemoveKey_data();
     void ipcRemoveKey();
 

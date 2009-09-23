@@ -66,9 +66,6 @@ public:
 
     /* QValueSpaceItem functions */
     bool supportsRequests() const { return true; }
-    bool requestSetValue(Handle handle, const QVariant &value);
-    bool requestSetValue(Handle handle, const QByteArray &subPath, const QVariant &value);
-    bool requestRemoveValue(Handle handle, const QByteArray &path = QByteArray());
     bool notifyInterest(Handle handle, bool interested);
     bool syncRequests() { return true; }
 
@@ -173,34 +170,6 @@ QSet<QByteArray> FakeLayer::children(Handle handle)
 QAbstractValueSpaceLayer::LayerOptions FakeLayer::layerOptions() const
 {
     return NonPermanentLayer;
-}
-
-bool FakeLayer::requestSetValue(Handle handle, const QVariant &)
-{
-    if (!handles.contains(handle))
-        m_testErrors << QLatin1String("Unknown handle");
-
-    return true;
-}
-
-bool FakeLayer::requestSetValue(Handle handle, const QByteArray &subPath, const QVariant &)
-{
-    if (!handles.contains(handle))
-        m_testErrors << QLatin1String("Unknown handle");
-
-    testPath(subPath);
-
-    return true;
-}
-
-bool FakeLayer::requestRemoveValue(Handle handle, const QByteArray &path)
-{
-    if (!handles.contains(handle))
-        m_testErrors << QLatin1String("Unknown handle");
-
-    testPath(path);
-
-    return true;
 }
 
 bool FakeLayer::notifyInterest(Handle handle, bool interested)
@@ -396,10 +365,6 @@ void tst_QValueSpace::layerInterface()
 
     CHECK_ERRORS(item->value(attribute));
     CHECK_ERRORS(item->children());
-    CHECK_ERRORS(item->setValue(10); item->sync());
-    CHECK_ERRORS(item->setValue(attribute, 10); item->sync());
-    CHECK_ERRORS(item->remove(); item->sync());
-    CHECK_ERRORS(item->remove(attribute); item->sync());
 
     CHECK_ERRORS(delete item);
 

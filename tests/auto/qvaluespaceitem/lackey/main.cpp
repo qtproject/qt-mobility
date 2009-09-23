@@ -50,7 +50,7 @@ class Controller : public QObject
     Q_OBJECT
 
 public:
-    enum Function { Invalid, IpcTests, IpcSetValue, IpcInterestNotification, IpcRemoveKey };
+    enum Function { Invalid, IpcTests, IpcInterestNotification, IpcRemoveKey };
 
     Controller(Function function, const QUuid uuid)
         : QObject(0), index(0), abortCode(0)
@@ -61,8 +61,6 @@ public:
             break;
         case IpcTests:
             object = new QValueSpaceObject("/usr/lackey/subdir", uuid, this);
-            connect(object, SIGNAL(itemSetValue(QByteArray,QVariant)),
-                    this, SLOT(itemSetValue(QByteArray,QVariant)));
             object->setObjectName("original_lackey");
             object->setAttribute("value", 100);
             object->sync();
@@ -70,15 +68,6 @@ public:
             connect(item, SIGNAL(contentsChanged()), this, SLOT(changes()));
 
             QTimer::singleShot(TIMEOUT, this, SLOT(proceed()));
-            break;
-        case IpcSetValue:
-            item = new QValueSpaceItem("/usr/lackey", uuid, this);
-            if (item->setValue("changeRequests/value", 501)) {
-                QTimer::singleShot(TIMEOUT, this, SLOT(setValueNextStep()));
-            } else {
-                abortCode = ERROR_SETVALUE_NOT_SUPPORTED;
-                QTimer::singleShot(0, this, SLOT(abort()));
-            }
             break;
         case IpcInterestNotification:
             object = new QValueSpaceObject("/ipcInterestNotification", uuid, this);
@@ -95,39 +84,6 @@ public:
     }
 
 private slots:
-    void setValueNextStep()
-    {
-        switch(index) {
-            case 0:
-                item->setValue(QByteArray("changeRequests/value"), 502);
-                break;
-            case 1:
-                item->remove("changeRequests/value");
-                break;
-            case 2:
-                item->setValue(QString("changeRequests/value"), 503);
-                break;
-            case 3:
-                item->remove(QString("changeRequests/value"));
-                break;
-            case 4:
-                item->remove(QByteArray("changeRequests/value"));
-                break;
-            case 5:
-                item->remove("changeRequests/test");
-                break;
-            case 6:
-                item->remove();
-                break;
-        }
-        index++;
-        item->sync();
-        if (index == 7)
-            QTimer::singleShot(TIMEOUT, qApp, SLOT(quit()));
-        else
-            QTimer::singleShot(TIMEOUT, this, SLOT(setValueNextStep()));
-    }
-
     void proceed() {
         switch(index) {
             case 0:
@@ -158,11 +114,6 @@ private slots:
 
     void abort() {
         qApp->exit(abortCode);
-    }
-
-    void itemSetValue(const QByteArray& /*path*/, const QVariant& /*variant*/ )
-    {
-        //qDebug() << sender()->objectName() << path << variant.toInt();
     }
 
     void changes()
@@ -215,8 +166,6 @@ int main(int argc, char** argv)
 
         if (arg == "-ipcTests") {
             function = Controller::IpcTests;
-        } else if (arg == "-ipcSetValue") {
-            function = Controller::IpcSetValue;
         } else if (arg == "-ipcInterestNotification") {
             function = Controller::IpcInterestNotification;
         } else if (arg == "-ipcRemoveKey") {

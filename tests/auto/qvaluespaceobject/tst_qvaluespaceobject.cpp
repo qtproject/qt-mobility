@@ -63,7 +63,6 @@ class ChangeListener : public QObject
     Q_OBJECT
 Q_SIGNALS:
     void changeValue(const QByteArray&, const QVariant&);
-    void itemRemove(const QByteArray&);
     void itemNotify(const QByteArray&,bool);
 };
 
@@ -369,22 +368,14 @@ void tst_QValueSpaceObject::testSignals()
     QValueSpaceObject *object = new QValueSpaceObject(objectPath, layer->id());
 
     ChangeListener listener;
-    connect(object, SIGNAL(itemSetValue(QByteArray,QVariant)),
-            &listener, SIGNAL(changeValue(QByteArray,QVariant)));
-    connect(object, SIGNAL(itemRemove(QByteArray)),
-            &listener, SIGNAL(itemRemove(QByteArray)));
     connect(object, SIGNAL(itemNotify(QByteArray,bool)),
             &listener, SIGNAL(itemNotify(QByteArray,bool)));
 
-    QSignalSpy setValueSpy(&listener, SIGNAL(changeValue(QByteArray,QVariant)));
-    QSignalSpy removeSpy(&listener, SIGNAL(itemRemove(QByteArray)));
     QSignalSpy itemNotifySpy(&listener, SIGNAL(itemNotify(QByteArray,bool)));
 
     QValueSpaceItem *item = new QValueSpaceItem(itemPath, layer->id());
 
     QTRY_COMPARE(itemNotifySpy.count(), 1);
-    QVERIFY(setValueSpy.isEmpty());
-    QVERIFY(removeSpy.isEmpty());
 
     QList<QVariant> arguments = itemNotifySpy.takeFirst();
     QCOMPARE(arguments.count(), 2);
@@ -393,41 +384,9 @@ void tst_QValueSpaceObject::testSignals()
     QCOMPARE(arguments.at(1).type(), QVariant::Bool);
     QVERIFY(arguments.at(1).toBool());
 
-    if (itemAttribute.isEmpty())
-        item->setValue(10);
-    else
-        item->setValue(itemAttribute, 10);
-    item->sync();
-
-    QTRY_COMPARE(setValueSpy.count(), 1);
-    QVERIFY(removeSpy.isEmpty());
-    QVERIFY(itemNotifySpy.isEmpty());
-
-    arguments = setValueSpy.takeFirst();
-    QCOMPARE(arguments.count(), 2);
-    QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
-    QCOMPARE(arguments.at(0).toByteArray(), objectAttribute);
-    QCOMPARE(arguments.at(1).userType(), variantMetaTypeId);
-    QCOMPARE(arguments.at(1).value<QVariant>().type(), QVariant::Int);
-    QCOMPARE(arguments.at(1).value<QVariant>().toInt(), 10);
-
-    item->remove(itemAttribute);
-    item->sync();
-
-    QTRY_COMPARE(removeSpy.count(), 1);
-    QVERIFY(setValueSpy.isEmpty());
-    QVERIFY(itemNotifySpy.isEmpty());
-
-    arguments = removeSpy.takeFirst();
-    QCOMPARE(arguments.count(), 1);
-    QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
-    QCOMPARE(arguments.at(0).toByteArray(), objectAttribute);
-
     delete item;
 
     QTRY_COMPARE(itemNotifySpy.count(), 1);
-    QVERIFY(setValueSpy.isEmpty());
-    QVERIFY(removeSpy.isEmpty());
 
     arguments = itemNotifySpy.takeFirst();
     QCOMPARE(arguments.count(), 2);
