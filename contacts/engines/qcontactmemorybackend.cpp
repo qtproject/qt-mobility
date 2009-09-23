@@ -174,10 +174,6 @@ bool QContactMemoryEngine::saveContact(QContact* contact, QContactChangeSet& cha
         return false;
     }
 
-    QSet<QUniqueId> groupsChanged = changeSet.changedGroups();
-    QSet<QUniqueId> contactsChanged = changeSet.changedContacts();
-    QSet<QUniqueId> contactsAdded = changeSet.addedContacts();
-
     // check to see if this contact already exists
     int index = d->m_contactIds.indexOf(contact->id());
     if (index != -1) {
@@ -208,7 +204,7 @@ bool QContactMemoryEngine::saveContact(QContact* contact, QContactChangeSet& cha
         // See what groups are no longer present...
         QSet<QUniqueId> oldGroups = d->m_contacts.at(index).groups().toSet();
         oldGroups.subtract(contact->groups().toSet());
-        groupsChanged.unite(oldGroups);
+        changeSet.changedGroups().unite(oldGroups);
 
         // Remove this contact from those groups
         QSetIterator<QUniqueId> git(oldGroups);
@@ -223,8 +219,7 @@ bool QContactMemoryEngine::saveContact(QContact* contact, QContactChangeSet& cha
 
         // Looks ok, so continue
         d->m_contacts.replace(index, *contact);
-
-        contactsChanged << contact->id();
+        changeSet.changedContacts().insert(contact->id());
     } else {
         // id does not exist; if not zero, fail.
         if (contact->id() != 0) {
@@ -245,7 +240,7 @@ bool QContactMemoryEngine::saveContact(QContact* contact, QContactChangeSet& cha
         d->m_contacts.append(*contact);             // add contact to list
         d->m_contactIds.append(contact->id());      // track the contact id.
 
-        contactsAdded << contact->id();
+        changeSet.addedContacts().insert(contact->id());
     }
 
     error = QContactManager::NoError;     // successful.
@@ -254,14 +249,9 @@ bool QContactMemoryEngine::saveContact(QContact* contact, QContactChangeSet& cha
     for (int i=0; i < contact->groups().size(); i++) {
         QUniqueId groupId = contact->groups().at(i);
         if (d->m_groups[groupId].addMember(contact->id())) {
-            groupsChanged << groupId;
+            changeSet.changedGroups().insert(groupId);
         }
     }
-
-    // don't emit signals, but update the changeset variable.
-    changeSet.setAddedContacts(contactsAdded);
-    changeSet.setChangedContacts(contactsChanged);
-    changeSet.setChangedGroups(groupsChanged);
 
     return true;
 }
@@ -312,9 +302,6 @@ bool QContactMemoryEngine::removeContact(const QUniqueId& contactId, QContactCha
         return false;
     }
 
-    QSet<QUniqueId> changedGroups = changeSet.changedGroups();
-    QSet<QUniqueId> removedContacts = changeSet.removedContacts();
-
     // remove the contact from the lists.
     d->m_contacts.removeAt(index);
     d->m_contactIds.removeAt(index);
@@ -325,15 +312,10 @@ bool QContactMemoryEngine::removeContact(const QUniqueId& contactId, QContactCha
     while (it.hasNext()) {
         it.next();
         if(it.value().removeMember(contactId))
-            changedGroups << it.value().id();
+            changeSet.changedGroups().insert(it.value().id());
     }
 
-    removedContacts.insert(contactId);
-
-    // don't emit signals, but update the changeset variable.
-    changeSet.setChangedGroups(changedGroups);
-    changeSet.setRemovedContacts(removedContacts);
-
+    changeSet.removedContacts().insert(contactId);
     return true;
 }
 
@@ -353,26 +335,25 @@ QList<QContactManager::Error> QContactMemoryEngine::removeContacts(QList<QUnique
     if (!contactIds) {
         error = QContactManager::BadArgumentError;
         return ret;
-    } else {
-        // for batch processing, we store up the changes and emit at the end.
-        QContactChangeSet changeSet;
-        QList<QUniqueId> removedList;
-        QContactManager::Error functionError = QContactManager::NoError;
-        for (int i = 0; i < contactIds->count(); i++) {
-            QUniqueId current = contactIds->at(i);
-            if (!removeContact(current, changeSet, error)) {
-                functionError = error;
-                ret.append(functionError);
-            } else {
-                (*contactIds)[i] = 0;
-                ret.append(QContactManager::NoError);
-            }
-        }
-
-        error = functionError;
-        changeSet.emitSignals(this);
-        return ret;
     }
+
+    // for batch processing, we store up the changes and emit at the end.
+    QContactChangeSet changeSet;
+    QContactManager::Error functionError = QContactManager::NoError;
+    for (int i = 0; i < contactIds->count(); i++) {
+        QUniqueId current = contactIds->at(i);
+        if (!removeContact(current, changeSet, error)) {
+            functionError = error;
+            ret.append(functionError);
+        } else {
+            (*contactIds)[i] = 0;
+            ret.append(QContactManager::NoError);
+        }
+    }
+
+    error = functionError;
+    changeSet.emitSignals(this);
+    return ret;
 }
 
 /*! \reimp */
@@ -404,16 +385,12 @@ bool QContactMemoryEngine::saveGroup(QContactGroup* group, QContactChangeSet& ch
         return false;
     }
 
-    QSet<QUniqueId> groupsAdded = changeSet.addedGroups();
-    QSet<QUniqueId> groupsChanged = changeSet.changedGroups();
-    QSet<QUniqueId> contactsChanged = changeSet.changedContacts();
-
     // if the group does not exist, generate a new group id for it.
     if (!d->m_groups.contains(group->id())) {
         group->setId(++d->m_nextGroupId);
-        groupsAdded << group->id();
+        changeSet.addedGroups().insert(group->id());
     } else {
-        groupsChanged << group->id();
+        changeSet.changedGroups().insert(group->id());
     }
 
     // save it in the database
@@ -426,14 +403,9 @@ bool QContactMemoryEngine::saveGroup(QContactGroup* group, QContactChangeSet& ch
         if (!groups.contains(group->id())) {
             groups.append(group->id());
             d->m_contacts[idx].setGroups(groups);
-            contactsChanged << d->m_contacts[idx].id();
+            changeSet.changedContacts().insert(d->m_contacts[idx].id());
         }
     }
-
-    // don't emit signals, but update the changeset variable.
-    changeSet.setAddedGroups(groupsAdded);
-    changeSet.setChangedGroups(groupsChanged);
-    changeSet.setChangedContacts(contactsChanged);
 
     error = QContactManager::NoError;
     return true;
@@ -455,9 +427,6 @@ bool QContactMemoryEngine::removeGroup(const QUniqueId& groupId, QContactChangeS
         return false;
     }
 
-    QSet<QUniqueId> groupsRemoved = changeSet.removedGroups();
-    QSet<QUniqueId> contactsChanged = changeSet.changedContacts();
-
     /* Update any contacts that this group has */
     QContactGroup g = d->m_groups.value(groupId);
     for (int i=0; i < g.members().count(); i++) {
@@ -465,15 +434,11 @@ bool QContactMemoryEngine::removeGroup(const QUniqueId& groupId, QContactChangeS
         QList<QUniqueId> groups = d->m_contacts[idx].groups();
         groups.removeAll(groupId);
         d->m_contacts[idx].setGroups(groups);
-        contactsChanged << d->m_contacts[idx].id();
+        changeSet.changedContacts().insert(d->m_contacts[idx].id());
     }
 
     d->m_groups.remove(groupId);
-    groupsRemoved << groupId;
-
-    // don't emit signals, but update the changeset variable.
-    changeSet.setRemovedGroups(groupsRemoved);
-    changeSet.setChangedContacts(contactsChanged);
+    changeSet.removedGroups().insert(groupId);
 
     error = QContactManager::NoError;
     return true;

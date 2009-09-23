@@ -98,6 +98,60 @@ bool QContactChangeSet::dataChanged()
 }
 
 /*!
+ * Returns a reference to the set of ids of contacts which have been added to
+ * the database.
+ */
+QSet<QUniqueId>& QContactChangeSet::addedContacts()
+{
+    return d->m_addedContacts;
+}
+
+/*!
+ * Returns a reference to the set of ids of contacts which have been changed in
+ * the database.
+ */
+QSet<QUniqueId>& QContactChangeSet::changedContacts()
+{
+    return d->m_changedContacts;
+}
+
+/*!
+ * Returns a reference to the set of ids of contacts which have been removed from
+ * the database.
+ */
+QSet<QUniqueId>& QContactChangeSet::removedContacts()
+{
+    return d->m_removedContacts;
+}
+
+/*!
+ * Returns a reference to the set of ids of groups which have been added to
+ * the database.
+ */
+QSet<QUniqueId>& QContactChangeSet::addedGroups()
+{
+    return d->m_addedGroups;
+}
+
+/*!
+ * Returns a reference to the set of ids of groups which have been changed in
+ * the database.
+ */
+QSet<QUniqueId>& QContactChangeSet::changedGroups()
+{
+    return d->m_changedGroups;
+}
+
+/*!
+ * Returns a reference to the set of ids of groups which have been removed from
+ * the database.
+ */
+QSet<QUniqueId>& QContactChangeSet::removedGroups()
+{
+    return d->m_removedGroups;
+}
+
+/*!
  * Sets the set of ids of contacts which have been added to the managed store to \a ids.
  * If this is done prior to calling \l emitSignals(), and the data changed flag is not set to true
  * when \l emitSignals() is called, the \l QContactManagerEngine::contactsAdded() signal will be emitted
@@ -111,7 +165,7 @@ void QContactChangeSet::setAddedContacts(const QSet<QUniqueId>& ids)
 /*!
  * Returns the set of ids of contacts which have been added, which has previously been set in this change set
  */
-QSet<QUniqueId> QContactChangeSet::addedContacts()
+QSet<QUniqueId> QContactChangeSet::addedContacts() const
 {
     return d->m_addedContacts;
 }
@@ -130,7 +184,7 @@ void QContactChangeSet::setChangedContacts(const QSet<QUniqueId>& ids)
 /*!
  * Returns the set of ids of contacts which have been changed, which has previously been set in this change set
  */
-QSet<QUniqueId> QContactChangeSet::changedContacts()
+QSet<QUniqueId> QContactChangeSet::changedContacts() const
 {
     return d->m_changedContacts;
 }
@@ -149,7 +203,7 @@ void QContactChangeSet::setRemovedContacts(const QSet<QUniqueId>& ids)
 /*!
  * Returns the set of ids of contacts which have been removed, which has previously been set in this change set
  */
-QSet<QUniqueId> QContactChangeSet::removedContacts()
+QSet<QUniqueId> QContactChangeSet::removedContacts() const
 {
     return d->m_removedContacts;
 }
@@ -168,7 +222,7 @@ void QContactChangeSet::setAddedGroups(const QSet<QUniqueId>& ids)
 /*!
  * Returns the set of ids of groups which have been added, which has previously been set in this change set
  */
-QSet<QUniqueId> QContactChangeSet::addedGroups()
+QSet<QUniqueId> QContactChangeSet::addedGroups() const
 {
     return d->m_addedGroups;
 }
@@ -187,7 +241,7 @@ void QContactChangeSet::setChangedGroups(const QSet<QUniqueId>& ids)
 /*!
  * Returns the set of ids of groups which have been changed, which has previously been set in this change set
  */
-QSet<QUniqueId> QContactChangeSet::changedGroups()
+QSet<QUniqueId> QContactChangeSet::changedGroups() const
 {
     return d->m_changedGroups;
 }
@@ -206,7 +260,7 @@ void QContactChangeSet::setRemovedGroups(const QSet<QUniqueId>& ids)
 /*!
  * Returns the set of ids of groups which have been removed, which has previously been set in this change set
  */
-QSet<QUniqueId> QContactChangeSet::removedGroups()
+QSet<QUniqueId> QContactChangeSet::removedGroups() const
 {
     return d->m_removedGroups;
 }
