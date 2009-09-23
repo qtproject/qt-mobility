@@ -304,11 +304,10 @@ public:
 
     enum SimStatus {
         SimNotAvailable = 0,
-		SingleAvailable,
-		DualAvailable,
-		Locked
+        SingleSimAvailable,
+        DualSimAvailable,
+        SimLocked
 	};
-    Q_DECLARE_FLAGS(SimStatusFlags, SimStatus)
 
     bool isDeviceLocked();
     QSystemDeviceInfo::SimStatus simStatus();
