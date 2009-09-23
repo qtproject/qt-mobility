@@ -7,10 +7,11 @@
 TEMPLATE = app
 TARGET = incomingcalls
 DEPENDPATH += .
-INCLUDEPATH += .
-LIBS += -lQtContacts
+INCLUDEPATH += . ../../contacts \
+               ../../contacts/details \
+               ../../contacts/requests \
+               ../../contacts/filters
 
-include(../../common.pri)
 
 # Input
 SOURCES += main.cpp \
@@ -23,3 +24,5 @@ HEADERS += testmodelui.h \
            qcontactlistmodel.h \
            qcontactlistmodel_p.h
 
+qtAddLibrary(QtContacts)
+include(../examples.pri)

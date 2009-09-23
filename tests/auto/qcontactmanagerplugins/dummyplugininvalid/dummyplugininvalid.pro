@@ -1,21 +1,18 @@
-######################################################################
-#
-# Contacts Mobility API - dummy test plugin copy (so we have two)
-#
-######################################################################
-
 TEMPLATE = lib
 CONFIG += plugin testplugin
 TARGET = $$qtLibraryTarget(contacts_testdummyinvalid)
 
 include(../../../../common.pri)
 
+INCLUDEPATH += ../../../../contacts \
+               ../../../../contacts/details \
+               ../../../../contacts/requests \
+               ../../../../contacts/filters
+
+qtAddLibrary(QtContacts)
 DEFINES += DUMMYPLUGINTARGET=contacts_testdummyinvalid
 DEFINES += DUMMYPLUGINNAME=invalid
 
 SOURCES += ../dummyplugin/dummyplugin.cpp
-
-# We need to link against this for all sorts of reasons :)
-LIBS += -lQtContacts
 
 include(../../contacts_plugins.pri)

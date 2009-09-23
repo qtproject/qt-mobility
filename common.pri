@@ -6,23 +6,6 @@
 
 include(config.pri)
 
-# On win32 and mac, debug and release libraries are named differently.
-# We must follow the debug and release settings Qt was compiled with:
-# build debug iff Qt built debug, build release iff Qt built release.
-win32|mac {
-    !contains(QT_CONFIG,debug)|!contains(QT_CONFIG,release) {
-        CONFIG -= debug_and_release debug release
-        contains(QT_CONFIG,debug):  CONFIG+=debug
-        contains(QT_CONFIG,release):CONFIG+=release
-    }
-}
-
-CONFIG(debug, debug|release) {
-    SUBDIRPART = Debug
-} else {
-    SUBDIRPART = Release
-}
-
 # Make sure this goes everywhere we need it
 symbian: load(data_caging_paths)
 
@@ -49,11 +32,11 @@ SOURCE_DIR = $$PWD
     } else {
         ### plugins get installed to the plugins directory
         testplugin:DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/contacts
-        !testplugin:DESTDIR = $$OUTPUT_DIR/build/bin/plugins/contacts
+        !testplugin:DESTDIR = $$OUTPUT_DIR/plugins/contacts
 
         # And since we're a plugin, add the base lib path to the lib dirs
-        testplugin:LIBS += -L$$OUTPUT_DIR/build/tests/bin  #link against base dir as well
-        !testplugin:LIBS += -L$$OUTPUT_DIR/build/bin       #link against base dir as well
+#testplugin:LIBS += -L$$OUTPUT_DIR/build/tests/bin  #link against base dir as well
+#        !testplugin:LIBS += -L$$OUTPUT_DIR/build/bin       #link against base dir as well
     }
 
     MOC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/moc
@@ -69,7 +52,7 @@ SOURCE_DIR = $$PWD
     MOC_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/moc
     RCC_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/rcc
     UI_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/ui
-    LIBS += -L$$OUTPUT_DIR/lib  #link against library that we test
+#    LIBS += -L$$OUTPUT_DIR/lib  #link against library that we test
     symbian {
         #The default include path doesn't include MOC_DIR on symbian
         INCLUDEPATH += $$MOC_DIR
@@ -107,10 +90,10 @@ symbian {
 LIBS += -L$$OUTPUT_DIR/lib
 
 DEPENDPATH += . $$SOURCE_DIR
-INCLUDEPATH += . \
-    $$SOURCE_DIR \
-    $$SOURCE_DIR/contacts \
-    $$SOURCE_DIR/contacts/details \
-    $$SOURCE_DIR/contacts/engines \
-    $$SOURCE_DIR/contacts/filters \
-    $$SOURCE_DIR/contacts/requests
+#INCLUDEPATH += . \
+#    $$SOURCE_DIR \
+#    $$SOURCE_DIR/contacts \
+#    $$SOURCE_DIR/contacts/details \
+#    $$SOURCE_DIR/contacts/engines \
+#    $$SOURCE_DIR/contacts/filters \
+#    $$SOURCE_DIR/contacts/requests

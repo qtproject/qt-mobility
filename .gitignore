@@ -23,6 +23,7 @@ bin/servicexmlgen*
 bin/servicefw*
 bin/vsexplorer*
 bin/examples/*
+bin/sysinfo*
 install/*
 
 #Symbian specific

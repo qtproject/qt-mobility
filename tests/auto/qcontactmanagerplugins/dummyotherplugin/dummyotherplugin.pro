@@ -1,9 +1,3 @@
-######################################################################
-#
-# Contacts Mobility API - dummy test plugin with a different interface
-#
-######################################################################
-
 TEMPLATE = lib
 CONFIG += plugin testplugin
 TARGET = $$qtLibraryTarget(contacts_testotherdummy)

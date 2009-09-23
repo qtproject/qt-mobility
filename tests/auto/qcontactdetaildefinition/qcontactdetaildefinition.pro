@@ -5,8 +5,13 @@ CONFIG+=testcase
 
 include(../../../common.pri)
 
+INCLUDEPATH += ../../../contacts \
+               ../../../contacts/details \
+               ../../../contacts/requests \
+               ../../../contacts/filters
+
+qtAddLibrary(QtContacts)
 SOURCES  += tst_qcontactdetaildefinition.cpp
-LIBS += -lQtContacts
 
 symbian: {
     TARGET.CAPABILITY = ReadUserData \

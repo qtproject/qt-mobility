@@ -7,9 +7,14 @@ PLUGIN_SUBDIR=dummyplugin/plugins
 
 include(../../../../common.pri)
 
-SOURCES  += tst_qcontactasync.cpp
+INCLUDEPATH += ../../../../contacts \
+               ../../../../contacts/details \
+               ../../../../contacts/requests \
+               ../../../../contacts/filters
 
-LIBS += -lQtContacts
+qtAddLibrary(QtContacts)
+
+SOURCES  += tst_qcontactasync.cpp
 
 # App local deployment
 symbian:QCONTACTASYNC_PLUGINS_DEPLOY.sources = contacts_maliciousplugin.dll

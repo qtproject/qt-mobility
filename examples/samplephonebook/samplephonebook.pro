@@ -7,12 +7,14 @@
 TEMPLATE = app
 TARGET = samplephonebook
 DEPENDPATH += .
-INCLUDEPATH += .
-INCLUDEPATH += ../incomingcalls
-VPATH += ../incomingcalls
-LIBS += -lQtContacts
+INCLUDEPATH += . \
+               ../incomingcalls\
+               ../../contacts\
+               ../../contacts/filters \
+               ../../contacts/requests \
+               ../../contacts/details 
 
-include(../../common.pri)
+VPATH += ../incomingcalls
 
 # Input
 SOURCES +=  contactdetailsform.cpp \
@@ -47,3 +49,5 @@ symbian: {
                         AllFiles \
                         SwEvent
 }
+include(../examples.pri)
+qtAddLibrary(QtContacts)

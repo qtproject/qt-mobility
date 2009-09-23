@@ -7,9 +7,13 @@ PLUGIN_SUBDIR=dummyplugin/plugins
 
 include(../../../../common.pri)
 
-SOURCES  += tst_qcontactactions.cpp
+INCLUDEPATH += ../../../../contacts \
+               ../../../../contacts/details \
+               ../../../../contacts/requests \
+               ../../../../contacts/filters
 
-LIBS += -lQtContacts
+qtAddLibrary(QtContacts)
+SOURCES  += tst_qcontactactions.cpp
 
 # App local deployment
 symbian:QCONTACTACTION_PLUGINS_DEPLOY.sources = contacts_sendemailactionfactory.dll

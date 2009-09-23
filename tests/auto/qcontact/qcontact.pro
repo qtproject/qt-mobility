@@ -5,8 +5,14 @@ CONFIG+=testcase
 
 include(../../../common.pri)
 
+INCLUDEPATH += ../../../contacts \
+               ../../../contacts/details \
+               ../../../contacts/requests \
+               ../../../contacts/filters
+
+qtAddLibrary(QtContacts)
+
 SOURCES  += tst_qcontact.cpp
-LIBS += -lQtContacts
 
 # App local deployment
 symbian:QCONTACTACTION_PLUGINS_DEPLOY.sources = contacts_sendemailactionfactory.dll
