@@ -11,6 +11,7 @@ contains(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 5) {
     error(Qt Mobility requires Qt 4.5 or higher. Qt $${QT_VERSION} was found.);
 }
 
+
 #generate prf file for Qt integration
 
 PRF_OUTPUT=features/mobility.prf

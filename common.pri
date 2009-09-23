@@ -4,7 +4,21 @@
 #
 ######################################################################
 
+
+CONFIG(debug, debug|release) {
+    WAS_IN_DEBUG=debug
+} else {
+    WAS_IN_DEBUG=release
+}
+
 include(config.pri)
+
+
+#MacOSX always builds debug and release libs
+mac:contains(TEMPLATE, lib) {
+    CONFIG+=$$WAS_IN_DEBUG
+    CONFIG += debug_and_release build_all
+}
 
 # For symbian, we are not attempting to freeze APIs yet.
 symbian:MMP_RULES += "EXPORTUNFROZEN"
@@ -12,6 +26,14 @@ symbian:MMP_RULES += "EXPORTUNFROZEN"
 # Figure out the root of where stuff should go (this could be done via configure)
 OUTPUT_DIR = $$PWD
 SOURCE_DIR = $$PWD
+
+CONFIG(debug, debug|release) {
+    SUBDIRPART=Debug
+} else {
+    SUBDIRPART=Release
+}
+
+
 
 #test whether we have a unit test
 !testcase {
