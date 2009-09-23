@@ -439,11 +439,6 @@ void QVideoWidgetPrivate::_q_serviceDestroyed()
     service = 0;
 }
 
-void QVideoWidgetPrivate::_q_dimensionsChanged()
-{
-    q_func()->updateGeometry();
-}
-
 void QVideoWidgetPrivate::_q_brightnessChanged(int b)
 {
     if (b != brightness)
