@@ -129,7 +129,7 @@ public:
     static QString homeMobileCountryCode();
     static QString homeMobileNetworkCode();
 
-    static QString networkName(); //signal
+    static QString networkName(QSystemNetworkInfo::NetworkMode mode); //signal
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);

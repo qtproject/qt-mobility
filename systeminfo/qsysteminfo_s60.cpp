@@ -147,7 +147,7 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
     return "No Network";
 }
 
-QString QSystemNetworkInfoPrivate::networkName()
+QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
     return QString();
 }
