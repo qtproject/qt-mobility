@@ -61,6 +61,7 @@ private slots:
     void nullService();
     void nullOutputControl();
     void noOutputs();
+    void serviceDestroyed();
 
     void showWindowControl();
     void eventFilterWindowControl();
@@ -548,6 +549,33 @@ void tst_QVideoWidget::noOutputs()
 
     widget.setSaturation(100);
     QCOMPARE(widget.saturation(), 100);
+}
+
+void tst_QVideoWidget::serviceDestroyed()
+{
+    QtTestVideoObject *object = new QtTestVideoObject(
+            new QtTestWindowControl,
+            new QtTestWidgetControl,
+            0);
+
+    QVideoWidget widget(object);
+
+    widget.show();
+
+    widget.setBrightness(100);
+    widget.setContrast(100);
+    widget.setHue(100);
+    widget.setSaturation(100);
+
+    delete object;
+
+    QCOMPARE(widget.brightness(), 100);
+    QCOMPARE(widget.contrast(), 100);
+    QCOMPARE(widget.hue(), 100);
+    QCOMPARE(widget.saturation(), 100);
+
+    widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
+    QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
 }
 
 void tst_QVideoWidget::showWindowControl()
