@@ -23,3 +23,7 @@ include(../../common.pri)
 LIBS += -lQtSystemInfo
 
 CONFIG += console
+
+symbian {
+    TARGET.CAPABILITY = ALL -TCB
+}
