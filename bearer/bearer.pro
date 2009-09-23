@@ -84,6 +84,7 @@ symbian: {
             message("NetworkManager backend requires Qt DBus support");
         }
     }
+    win32:INCLUDEPATH += .
 
     win32: {
         HEADERS += qnlaengine_win_p.h
