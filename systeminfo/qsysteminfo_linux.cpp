@@ -1690,7 +1690,7 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
                          qWarning() << reply.error();
                      }
 //                 }
-             }
+//             }
          }
 #endif
      } else {
