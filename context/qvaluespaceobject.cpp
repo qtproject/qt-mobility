@@ -131,8 +131,7 @@ class QValueSpaceObjectPrivate
 {
 public:
     QValueSpaceObjectPrivate(const QByteArray &objectPath,
-                             QAbstractValueSpaceLayer::LayerOptions filter =
-                                 QAbstractValueSpaceLayer::UnspecifiedLayer);
+                             QValueSpace::LayerOptions filter = QValueSpace::UnspecifiedLayer);
     QValueSpaceObjectPrivate(const QByteArray &objectPath, const QUuid &uuid);
 
     QByteArray path;
@@ -145,22 +144,22 @@ public:
 };
 
 QValueSpaceObjectPrivate::QValueSpaceObjectPrivate(const QByteArray &objectPath,
-                                                   QAbstractValueSpaceLayer::LayerOptions filter)
+                                                   QValueSpace::LayerOptions filter)
 :   layer(0), handle(QAbstractValueSpaceLayer::InvalidHandle), hasSet(false), hasWatch(false)
 {
     path = qCanonicalPath(objectPath);
 
-    if ((filter & QAbstractValueSpaceLayer::PermanentLayer &&
-         filter & QAbstractValueSpaceLayer::NonPermanentLayer) ||
-        (filter & QAbstractValueSpaceLayer::WriteableLayer &&
-         filter & QAbstractValueSpaceLayer::NonWriteableLayer)) {
+    if ((filter & QValueSpace::PermanentLayer &&
+         filter & QValueSpace::NonPermanentLayer) ||
+        (filter & QValueSpace::WriteableLayer &&
+         filter & QValueSpace::NonWriteableLayer)) {
         return;
     }
 
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
 
     for (int ii = 0; ii < layers.count(); ++ii) {
-        if (filter == QAbstractValueSpaceLayer::UnspecifiedLayer ||
+        if (filter == QValueSpace::UnspecifiedLayer ||
             layers.at(ii)->layerOptions() & filter) {
             QAbstractValueSpaceLayer::Handle h =
                     layers.at(ii)->item(QAbstractValueSpaceLayer::InvalidHandle, path);
@@ -234,7 +233,7 @@ QValueSpaceObject::QValueSpaceObject(const char *path, QObject *parent)
     \sa isValid()
 */
 QValueSpaceObject::QValueSpaceObject(const QString &path,
-                                     QAbstractValueSpaceLayer::LayerOptions filter,
+                                     QValueSpace::LayerOptions filter,
                                      QObject *parent)
 :   QObject(parent), d(new QValueSpaceObjectPrivate(path.toUtf8(), filter))
 {
@@ -258,7 +257,7 @@ QValueSpaceObject::QValueSpaceObject(const QString &path,
     \sa isValid()
 */
 QValueSpaceObject::QValueSpaceObject(const char *path,
-                                     QAbstractValueSpaceLayer::LayerOptions filter,
+                                     QValueSpace::LayerOptions filter,
                                      QObject *parent)
 :   QObject(parent), d(new QValueSpaceObjectPrivate(path, filter))
 {
@@ -322,7 +321,7 @@ QValueSpaceObject::~QValueSpaceObject()
     if (!d->layer)
         return;
 
-    if (d->hasSet && !(d->layer->layerOptions() & QAbstractValueSpaceLayer::PermanentLayer))
+    if (d->hasSet && !(d->layer->layerOptions() & QValueSpace::PermanentLayer))
         d->layer->removeSubTree(this, d->handle);
 
     if (d->hasWatch)

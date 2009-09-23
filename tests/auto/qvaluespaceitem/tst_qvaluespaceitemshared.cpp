@@ -79,7 +79,7 @@ Q_SIGNALS:
 Q_DECLARE_METATYPE(QValueSpaceItem*)
 Q_DECLARE_METATYPE(QAbstractValueSpaceLayer*)
 Q_DECLARE_METATYPE(QVariant)
-Q_DECLARE_METATYPE(QAbstractValueSpaceLayer::LayerOptions)
+Q_DECLARE_METATYPE(QValueSpace::LayerOptions)
 Q_DECLARE_METATYPE(tst_QValueSpaceItem::Type)
 Q_DECLARE_METATYPE(QUuid)
 
@@ -87,7 +87,7 @@ void tst_QValueSpaceItem::initTestCase()
 {
     qRegisterMetaType<QVariant>("QVariant");
     qRegisterMetaType<tst_QValueSpaceItem::Type>("tst_QValueSpaceItem::Type");
-    qRegisterMetaType<QAbstractValueSpaceLayer::LayerOptions>("QAbstractValueSpaceLayer::LayerOptions");
+    qRegisterMetaType<QValueSpace::LayerOptions>("QValueSpace::LayerOptions");
 
 #ifdef Q_OS_WIN
     HKEY key;
@@ -147,7 +147,7 @@ void tst_QValueSpaceItem::cleanupTestCase()
     foreach (QAbstractValueSpaceLayer *layer, roots.keys()) {
         QValueSpaceObject *root = roots.take(layer);
 
-        if (layer->layerOptions() & QAbstractValueSpaceLayer::PermanentLayer) {
+        if (layer->layerOptions() & QValueSpace::PermanentLayer) {
             root->removeAttribute("/home/user/bool");
             root->removeAttribute("/home/user/int");
             root->removeAttribute("/home/user/QString");
@@ -172,7 +172,7 @@ void tst_QValueSpaceItem::cleanupTestCase()
     foreach (QAbstractValueSpaceLayer *layer, busys.keys()) {
         QValueSpaceObject *busy = busys.take(layer);
 
-        if (layer->layerOptions() & QAbstractValueSpaceLayer::PermanentLayer) {
+        if (layer->layerOptions() & QValueSpace::PermanentLayer) {
             busy->removeAttribute("alex/busy");
             busy->removeAttribute("alex");
             busy->removeAttribute("lorn/busy");
@@ -246,7 +246,7 @@ void tst_QValueSpaceItem::dataVersatility()
     QCOMPARE(v.type(), (QVariant::Type)typeIdent);
     QCOMPARE(v, data);
 
-    if (layer->layerOptions() & QAbstractValueSpaceLayer::PermanentLayer)
+    if (layer->layerOptions() & QValueSpace::PermanentLayer)
         object.removeAttribute(typeString);
 }
 
@@ -420,14 +420,14 @@ void tst_QValueSpaceItem::testConstructor()
 
 #define ADD(opt, invalid) do {\
     QTest::newRow(QString::number(opt).append(" const char *").toLocal8Bit().constData()) \
-        << (QAbstractValueSpaceLayer::UnspecifiedLayer | opt) << CharStar << invalid; \
+        << (QValueSpace::UnspecifiedLayer | opt) << CharStar << invalid; \
     QTest::newRow(QString::number(opt).append(" const QString &").toLocal8Bit().constData()) \
-        << (QAbstractValueSpaceLayer::UnspecifiedLayer | opt) << String << invalid; \
+        << (QValueSpace::UnspecifiedLayer | opt) << String << invalid; \
 } while (false)
 
 void tst_QValueSpaceItem::testFilterConstructor_data()
 {
-    QTest::addColumn<QAbstractValueSpaceLayer::LayerOptions>("options");
+    QTest::addColumn<QValueSpace::LayerOptions>("options");
     QTest::addColumn<Type>("type");
     QTest::addColumn<bool>("invalid");
 
@@ -439,20 +439,18 @@ void tst_QValueSpaceItem::testFilterConstructor_data()
         ADD(layer->layerOptions(), false);
     }
 
-    ADD(QAbstractValueSpaceLayer::UnspecifiedLayer, false);
-    ADD(QAbstractValueSpaceLayer::PermanentLayer, false);
-    ADD(QAbstractValueSpaceLayer::NonPermanentLayer, false);
-    ADD(QAbstractValueSpaceLayer::PermanentLayer |
-        QAbstractValueSpaceLayer::NonPermanentLayer, true);
-    ADD(QAbstractValueSpaceLayer::WriteableLayer, false);
-    ADD(QAbstractValueSpaceLayer::NonWriteableLayer, false);
-    ADD(QAbstractValueSpaceLayer::WriteableLayer |
-        QAbstractValueSpaceLayer::NonWriteableLayer, true);
+    ADD(QValueSpace::UnspecifiedLayer, false);
+    ADD(QValueSpace::PermanentLayer, false);
+    ADD(QValueSpace::NonPermanentLayer, false);
+    ADD(QValueSpace::PermanentLayer | QValueSpace::NonPermanentLayer, true);
+    ADD(QValueSpace::WriteableLayer, false);
+    ADD(QValueSpace::NonWriteableLayer, false);
+    ADD(QValueSpace::WriteableLayer | QValueSpace::NonWriteableLayer, true);
 }
 
 void tst_QValueSpaceItem::testFilterConstructor()
 {
-    QFETCH(QAbstractValueSpaceLayer::LayerOptions, options);
+    QFETCH(QValueSpace::LayerOptions, options);
     QFETCH(Type, type);
     QFETCH(bool, invalid);
 
@@ -474,10 +472,10 @@ void tst_QValueSpaceItem::testFilterConstructor()
         QVERIFY(!item->isValid());
 
     if (item->isValid()) {
-        QAbstractValueSpaceLayer::LayerOptions actualOptions =
-            QAbstractValueSpaceLayer::LayerOptions(item->value("options", 0).toUInt());
+        QValueSpace::LayerOptions actualOptions =
+            QValueSpace::LayerOptions(item->value("options", 0).toUInt());
 
-        QVERIFY(options == QAbstractValueSpaceLayer::UnspecifiedLayer || actualOptions & options);
+        QVERIFY(options == QValueSpace::UnspecifiedLayer || actualOptions & options);
     }
 }
 
@@ -775,7 +773,7 @@ void tst_QValueSpaceItem::ipcRemoveKey_data()
     for (int i = 0; i < layers.count(); ++i) {
         QAbstractValueSpaceLayer *layer = layers.at(i);
 
-        if (layer->layerOptions() & QAbstractValueSpaceLayer::PermanentLayer)
+        if (layer->layerOptions() & QValueSpace::PermanentLayer)
             continue;
 
         skip = false;

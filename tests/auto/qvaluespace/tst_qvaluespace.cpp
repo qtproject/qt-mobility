@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 
-#include <qvaluespace.h>
+#include <qvaluespace_p.h>
 #include <qvaluespaceitem.h>
 #include <qvaluespaceobject.h>
 
@@ -62,7 +62,7 @@ public:
     bool value(Handle handle, const QByteArray &subPath, QVariant *data);
     QSet<QByteArray> children(Handle handle);
 
-    LayerOptions layerOptions() const;
+    QValueSpace::LayerOptions layerOptions() const;
 
     /* QValueSpaceItem functions */
     bool supportsRequests() const { return true; }
@@ -167,9 +167,9 @@ QSet<QByteArray> FakeLayer::children(Handle handle)
     return QSet<QByteArray>();
 }
 
-QAbstractValueSpaceLayer::LayerOptions FakeLayer::layerOptions() const
+QValueSpace::LayerOptions FakeLayer::layerOptions() const
 {
-    return NonPermanentLayer;
+    return QValueSpace::NonPermanentLayer;
 }
 
 bool FakeLayer::notifyInterest(Handle handle, bool interested)

@@ -58,12 +58,8 @@ public:
     explicit QValueSpaceItem(const QString &path, QObject *parent = 0);
     explicit QValueSpaceItem(const char *path, QObject *parent = 0);
 
-    QValueSpaceItem(const QString &path,
-                    QAbstractValueSpaceLayer::LayerOptions filter,
-                    QObject *parent = 0);
-    QValueSpaceItem(const char *path,
-                    QAbstractValueSpaceLayer::LayerOptions filter,
-                    QObject *parent = 0);
+    QValueSpaceItem(const QString &path, QValueSpace::LayerOptions filter, QObject *parent = 0);
+    QValueSpaceItem(const char *path, QValueSpace::LayerOptions filter, QObject *parent = 0);
 
     QValueSpaceItem(const QString &path, const QUuid &uuid, QObject *parent = 0);
     QValueSpaceItem(const char *path, const QUuid &uuid, QObject *parent = 0);

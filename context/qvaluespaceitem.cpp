@@ -184,8 +184,7 @@ public:
 struct QValueSpaceItemPrivate
 {
     QValueSpaceItemPrivate(const QByteArray &_path,
-                           QAbstractValueSpaceLayer::LayerOptions filter =
-                               QAbstractValueSpaceLayer::UnspecifiedLayer)
+                           QValueSpace::LayerOptions filter = QValueSpace::UnspecifiedLayer)
         : refCount(0), connections(0)
     {
         path = qCanonicalPath(_path);
@@ -194,10 +193,10 @@ struct QValueSpaceItemPrivate
         if (!man)
             return;
 
-        if ((filter & QAbstractValueSpaceLayer::PermanentLayer &&
-             filter & QAbstractValueSpaceLayer::NonPermanentLayer) ||
-            (filter & QAbstractValueSpaceLayer::WriteableLayer &&
-             filter & QAbstractValueSpaceLayer::NonWriteableLayer)) {
+        if ((filter & QValueSpace::PermanentLayer &&
+             filter & QValueSpace::NonPermanentLayer) ||
+            (filter & QValueSpace::WriteableLayer &&
+             filter & QValueSpace::NonWriteableLayer)) {
             return;
         }
 
@@ -205,7 +204,7 @@ struct QValueSpaceItemPrivate
 
         for (int ii = 0; ii < readerList.count(); ++ii) {
             QAbstractValueSpaceLayer *read = readerList.at(ii);
-            if (filter != QAbstractValueSpaceLayer::UnspecifiedLayer &&
+            if (filter != QValueSpace::UnspecifiedLayer &&
                 !(read->layerOptions() & filter)) {
                 continue;
             }
@@ -424,7 +423,7 @@ QValueSpaceItem::QValueSpaceItem(const char *path, QObject *parent)
     \sa isValid()
 */
 QValueSpaceItem::QValueSpaceItem(const QString &path,
-                                 QAbstractValueSpaceLayer::LayerOptions filter,
+                                 QValueSpace::LayerOptions filter,
                                  QObject *parent)
 :   QObject(parent)
 {
@@ -446,7 +445,7 @@ QValueSpaceItem::QValueSpaceItem(const QString &path,
     \sa isValid()
 */
 QValueSpaceItem::QValueSpaceItem(const char *path,
-                                 QAbstractValueSpaceLayer::LayerOptions filter,
+                                 QValueSpace::LayerOptions filter,
                                  QObject *parent)
 :   QObject(parent)
 {

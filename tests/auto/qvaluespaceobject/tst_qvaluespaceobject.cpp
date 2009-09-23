@@ -97,7 +97,7 @@ Q_DECLARE_METATYPE(tst_QValueSpaceObject::Type)
 Q_DECLARE_METATYPE(QAbstractValueSpaceLayer *)
 Q_DECLARE_METATYPE(QUuid)
 Q_DECLARE_METATYPE(QVariant)
-Q_DECLARE_METATYPE(QAbstractValueSpaceLayer::LayerOptions);
+Q_DECLARE_METATYPE(QValueSpace::LayerOptions)
 
 void tst_QValueSpaceObject::initTestCase()
 {
@@ -243,7 +243,7 @@ void tst_QValueSpaceObject::testConstructor()
 
     delete object;
 
-    if (layer && layer->layerOptions() & QAbstractValueSpaceLayer::PermanentLayer) {
+    if (layer && layer->layerOptions() & QValueSpace::PermanentLayer) {
         QValueSpaceObject root("/", uuid);
         while (!canonical.isEmpty()) {
             root.removeAttribute(canonical.mid(1));
@@ -255,14 +255,14 @@ void tst_QValueSpaceObject::testConstructor()
 
 #define ADD(opt, valid) do {\
     QTest::newRow(QString::number(opt).append(" const char *").toLocal8Bit().constData()) \
-        << (QAbstractValueSpaceLayer::UnspecifiedLayer | opt) << CharStar << valid; \
+        << (QValueSpace::UnspecifiedLayer | opt) << CharStar << valid; \
     QTest::newRow(QString::number(opt).append(" const QString &").toLocal8Bit().constData()) \
-        << (QAbstractValueSpaceLayer::UnspecifiedLayer | opt) << String << valid; \
+        << (QValueSpace::UnspecifiedLayer | opt) << String << valid; \
 } while (false)
 
 void tst_QValueSpaceObject::testFilterConstructor_data()
 {
-    QTest::addColumn<QAbstractValueSpaceLayer::LayerOptions>("options");
+    QTest::addColumn<QValueSpace::LayerOptions>("options");
     QTest::addColumn<Type>("type");
     QTest::addColumn<bool>("valid");
 
@@ -274,15 +274,15 @@ void tst_QValueSpaceObject::testFilterConstructor_data()
         ADD(layer->layerOptions(), true);
     }
 
-    ADD(QAbstractValueSpaceLayer::PermanentLayer | QAbstractValueSpaceLayer::NonPermanentLayer,
+    ADD(QValueSpace::PermanentLayer | QValueSpace::NonPermanentLayer,
         false);
-    ADD(QAbstractValueSpaceLayer::WriteableLayer | QAbstractValueSpaceLayer::NonWriteableLayer,
+    ADD(QValueSpace::WriteableLayer | QValueSpace::NonWriteableLayer,
         false);
 }
 
 void tst_QValueSpaceObject::testFilterConstructor()
 {
-    QFETCH(QAbstractValueSpaceLayer::LayerOptions, options);
+    QFETCH(QValueSpace::LayerOptions, options);
     QFETCH(Type, type);
     QFETCH(bool, valid);
 
@@ -423,7 +423,7 @@ void tst_QValueSpaceObject::valuePermanence()
 
     delete object;
 
-    if (layer->layerOptions() & QAbstractValueSpaceLayer::PermanentLayer) {
+    if (layer->layerOptions() & QValueSpace::PermanentLayer) {
         // Permanent layer, check that value is still available after object is deleted.
         QCOMPARE(item.value("value", 0).toInt(), 10);
 

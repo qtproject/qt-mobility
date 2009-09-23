@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 
-#include "qvaluespace.h"
+#include "qvaluespace_p.h"
 #include "qmallocpool_p.h"
 #include "qvaluespaceobject.h"
 #include "qsystemreadwritelock_p.h"
@@ -1676,7 +1676,7 @@ public:
     bool value(Handle, const QByteArray &, QVariant *);
     QSet<QByteArray> children(Handle);
 
-    LayerOptions layerOptions() const;
+    QValueSpace::LayerOptions layerOptions() const;
 
     /* QValueSpaceItem functions */
     bool supportsRequests() const { return true; }
@@ -2472,9 +2472,9 @@ QSet<QByteArray> SharedMemoryLayer::children(Handle handle)
     return rv;
 }
 
-QAbstractValueSpaceLayer::LayerOptions SharedMemoryLayer::layerOptions() const
+QValueSpace::LayerOptions SharedMemoryLayer::layerOptions() const
 {
-    return NonPermanentLayer | WriteableLayer;
+    return QValueSpace::NonPermanentLayer | QValueSpace::WriteableLayer;
 }
 
 SharedMemoryLayer::Handle SharedMemoryLayer::item(Handle parent,
