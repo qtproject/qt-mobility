@@ -32,10 +32,10 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qmediaslideshow.h>
+#include <multimedia/qmediaimageviewer.h>
 
 #include <multimedia/qabstractmediaobject_p.h>
-#include <multimedia/qmediaslideshowservice_p.h>
+#include <multimedia/qmediaimageviewerservice_p.h>
 
 #include <multimedia/qmediaplaylist.h>
 #include <multimedia/qmediasource.h>
@@ -44,15 +44,15 @@
 #include <QtCore/qcoreevent.h>
 #include <QtCore/qtextstream.h>
 
-class QMediaSlideShowPrivate : public QAbstractMediaObjectPrivate
+class QMediaImageViewerPrivate : public QAbstractMediaObjectPrivate
 {
-    Q_DECLARE_PUBLIC(QMediaSlideShow)
+    Q_DECLARE_PUBLIC(QMediaImageViewer)
 public:
-    QMediaSlideShowPrivate()
+    QMediaImageViewerPrivate()
         : service(0)
         , slideControl(0)
         , playlist(0)
-        , state(QMediaSlideShow::StoppedState)
+        , state(QMediaImageViewer::StoppedState)
         , timeout(3000)
     {
     }
@@ -60,16 +60,16 @@ public:
     void _q_playlistMediaChanged(const QMediaSource &source);
     void _q_playlistDestroyed(QObject *playlist);
 
-    QMediaSlideShowService *service;
-    QMediaSlideShowControl *slideControl;
+    QMediaImageViewerService *service;
+    QMediaImageViewerControl *slideControl;
     QMediaPlaylist *playlist;
-    QMediaSlideShow::State state;
+    QMediaImageViewer::State state;
     int timeout;
     QBasicTimer timer;
     QMediaSource media;
 };
 
-void QMediaSlideShowPrivate::_q_playlistMediaChanged(const QMediaSource &source)
+void QMediaImageViewerPrivate::_q_playlistMediaChanged(const QMediaSource &source)
 {
     media = source;
 
@@ -78,20 +78,20 @@ void QMediaSlideShowPrivate::_q_playlistMediaChanged(const QMediaSource &source)
     timer.start(timeout, q_func());
 }
 
-void QMediaSlideShowPrivate::_q_playlistDestroyed(QObject *object)
+void QMediaImageViewerPrivate::_q_playlistDestroyed(QObject *object)
 {
     if (object == playlist) {
         playlist = 0;
         timer.stop();
 
-        if (state != QMediaSlideShow::StoppedState)
-            emit q_func()->stateChanged(state = QMediaSlideShow::StoppedState);
+        if (state != QMediaImageViewer::StoppedState)
+            emit q_func()->stateChanged(state = QMediaImageViewer::StoppedState);
     }
 }
 
 /*!
-    \class QMediaSlideShow
-    \brief The QMediaSlideShow class presents a slide show of images from a playlist.
+    \class QMediaImageViewer
+    \brief The QMediaImageViewer class presents a slide show of images from a playlist.
     \preliminary
 
     A slide show playlist may be composed of a variety of media.  If a playlist item itself isn't
@@ -100,7 +100,7 @@ void QMediaSlideShowPrivate::_q_playlistDestroyed(QObject *object)
 */
 
 /*!
-    \enum QMediaSlideShow::State
+    \enum QMediaImageViewer::State
 
     \value StoppedState The slide show is not progressing, and has been reset.
     \value PlayingState The slide show is progressing.
@@ -108,7 +108,7 @@ void QMediaSlideShowPrivate::_q_playlistDestroyed(QObject *object)
 */
 
 /*!
-    \enum QMediaSlideShow::MediaStatus
+    \enum QMediaImageViewer::MediaStatus
 
     \value NoMedia  There is no current media.
     \value LoadingMedia The slide show is loading the current media.
@@ -119,23 +119,23 @@ void QMediaSlideShowPrivate::_q_playlistDestroyed(QObject *object)
 /*!
     Constructs a new slide show with the given \a parent.
 */
-QMediaSlideShow::QMediaSlideShow(QObject *parent)
-    : QAbstractMediaObject(*new QMediaSlideShowPrivate, parent)
+QMediaImageViewer::QMediaImageViewer(QObject *parent)
+    : QAbstractMediaObject(*new QMediaImageViewerPrivate, parent)
 {
-    Q_D(QMediaSlideShow);
+    Q_D(QMediaImageViewer);
 
-    d->service = new QMediaSlideShowService;
+    d->service = new QMediaImageViewerService;
 
-    d->slideControl = qobject_cast<QMediaSlideShowControl*>(
-            d->service->control(QMediaSlideShowControl_iid));
+    d->slideControl = qobject_cast<QMediaImageViewerControl*>(
+            d->service->control(QMediaImageViewerControl_iid));
 }
 
 /*!
     Destroys a slide show.
 */
-QMediaSlideShow::~QMediaSlideShow()
+QMediaImageViewer::~QMediaImageViewer()
 {
-    Q_D(QMediaSlideShow);
+    Q_D(QMediaImageViewer);
 
     delete d->service;
 }
@@ -143,7 +143,7 @@ QMediaSlideShow::~QMediaSlideShow()
 /*!
     \reimp
 */
-QAbstractMediaService *QMediaSlideShow::service() const
+QAbstractMediaService *QMediaImageViewer::service() const
 {
     return d_func()->service;
 }
@@ -151,35 +151,35 @@ QAbstractMediaService *QMediaSlideShow::service() const
 /*!
     \reimp
 */
-bool QMediaSlideShow::isValid() const
+bool QMediaImageViewer::isValid() const
 {
     return d_func()->service != 0;
 }
 
 /*!
-    \property QMediaSlideShow::state
+    \property QMediaImageViewer::state
     \brief the playback state of a slide show.
 */
 
-QMediaSlideShow::State QMediaSlideShow::state() const
+QMediaImageViewer::State QMediaImageViewer::state() const
 {
     return d_func()->state;
 }
 
 /*!
-    \fn QMediaSlideShow::stateChanged(QMediaSlideShow::State state)
+    \fn QMediaImageViewer::stateChanged(QMediaImageViewer::State state)
 
     Signals that the playback \a state of a slide show has changed.
 */
 
 /*!
-    \property QMediaSlideShow::mediaStatus
+    \property QMediaImageViewer::mediaStatus
     \brief the status of the current media.
 */
 
-QMediaSlideShow::MediaStatus QMediaSlideShow::mediaStatus() const
+QMediaImageViewer::MediaStatus QMediaImageViewer::mediaStatus() const
 {
-    Q_D(const QMediaSlideShow);
+    Q_D(const QMediaImageViewer);
 
     return d->slideControl
             ? d->slideControl->mediaStatus()
@@ -187,13 +187,13 @@ QMediaSlideShow::MediaStatus QMediaSlideShow::mediaStatus() const
 }
 
 /*!
-    \fn QMediaSlideShow::mediaStatusChanged(QMediaSlideShow::MediaStatus status)
+    \fn QMediaImageViewer::mediaStatusChanged(QMediaImageViewer::MediaStatus status)
 
     Signals the the \a status of the current media has changed.
 */
 
 /*!
-    \property QMediaSlideShow::media
+    \property QMediaImageViewer::media
     \brief the media a slide show is presenting.
 
     This is the media used to initially populate the playlist, and may not be representive of the
@@ -202,40 +202,40 @@ QMediaSlideShow::MediaStatus QMediaSlideShow::mediaStatus() const
     \sa currentMedia
 */
 
-QMediaSource QMediaSlideShow::media() const
+QMediaSource QMediaImageViewer::media() const
 {
-    Q_D(const QMediaSlideShow);
+    Q_D(const QMediaImageViewer);
 
     return d->media;
 }
 
-void QMediaSlideShow::setMedia(const QMediaSource &media)
+void QMediaImageViewer::setMedia(const QMediaSource &media)
 {
-    Q_D(QMediaSlideShow);
+    Q_D(QMediaImageViewer);
 
     d->media = media;
     d->timer.stop();
 
-    if (d->state != QMediaSlideShow::StoppedState)
-        emit stateChanged(d->state = QMediaSlideShow::StoppedState);
+    if (d->state != QMediaImageViewer::StoppedState)
+        emit stateChanged(d->state = QMediaImageViewer::StoppedState);
 
     emit mediaChanged(d->media);
 }
 
 /*!
-    \fn QMediaSlideShow::mediaChanged(const QMediaSource &media)
+    \fn QMediaImageViewer::mediaChanged(const QMediaSource &media)
 
     Signals that the \a media a slide show is presenting.
 */
 
 /*!
-    \property QMediaSlideShow::currentMedia
+    \property QMediaImageViewer::currentMedia
     \brief the actual media resource the slide show is currently displaying.
 */
 
-QMediaResource QMediaSlideShow::currentMedia() const
+QMediaResource QMediaImageViewer::currentMedia() const
 {
-    Q_D(const QMediaSlideShow);
+    Q_D(const QMediaImageViewer);
 
     return d->slideControl
             ? d->slideControl->currentMedia()
@@ -243,24 +243,24 @@ QMediaResource QMediaSlideShow::currentMedia() const
 }
 
 /*!
-    \fn QMediaSlideShow::currentMediaChanged(const QMediaResource &media)
+    \fn QMediaImageViewer::currentMediaChanged(const QMediaResource &media)
 
     Signals that the \a media resource a slide show is presenting has changed.
 */
 
 /*!
-    \property QMediaSlideShow::timeout
+    \property QMediaImageViewer::timeout
     \brief the amount of time an image is displayed for before moving to the next image.
 */
 
-int QMediaSlideShow::timeout() const
+int QMediaImageViewer::timeout() const
 {
     return d_func()->timeout;
 }
 
-void QMediaSlideShow::setTimeout(int timeout)
+void QMediaImageViewer::setTimeout(int timeout)
 {
-    Q_D(QMediaSlideShow);
+    Q_D(QMediaImageViewer);
 
     d->timeout = timeout;
 }
@@ -268,13 +268,13 @@ void QMediaSlideShow::setTimeout(int timeout)
 /*!
     \reimp
 */
-void QMediaSlideShow::bind(QObject *object)
+void QMediaImageViewer::bind(QObject *object)
 {
-    Q_D(QMediaSlideShow);
+    Q_D(QMediaImageViewer);
 
     if (QMediaPlaylist *playlist = qobject_cast<QMediaPlaylist *>(object)) {
         if (d->playlist) {
-            qWarning("QMediaSlideShow::bind(): already bound to a playlist");
+            qWarning("QMediaImageViewer::bind(): already bound to a playlist");
         } else {
             d->playlist = playlist;
 
@@ -292,9 +292,9 @@ void QMediaSlideShow::bind(QObject *object)
     If there is no current index set this will start at the beginning of the playlist, otherwise it
     will resume from the current index.
 */
-void QMediaSlideShow::play()
+void QMediaImageViewer::play()
 {
-    Q_D(QMediaSlideShow);
+    Q_D(QMediaImageViewer);
 
     if (d->playlist && d->playlist->size() > 0 && d->state != PlayingState) {
         bool advance = d->state == StoppedState && d->playlist->currentPosition() < 0;
@@ -314,9 +314,9 @@ void QMediaSlideShow::play()
 
     The current index is retained.
 */
-void QMediaSlideShow::pause()
+void QMediaImageViewer::pause()
 {
-    Q_D(QMediaSlideShow);
+    Q_D(QMediaImageViewer);
 
     if (d->state == PlayingState) {
         d->timer.stop();
@@ -330,16 +330,16 @@ void QMediaSlideShow::pause()
 
     This will reset the current index and media to null states.
 */
-void QMediaSlideShow::stop()
+void QMediaImageViewer::stop()
 {
-    Q_D(QMediaSlideShow);
+    Q_D(QMediaImageViewer);
 
     switch (d->state) {
     case PlayingState:
         d->timer.stop();
         // fall through.
     case PausedState:
-        d->state = QMediaSlideShow::StoppedState;
+        d->state = QMediaImageViewer::StoppedState;
 
         if (d->playlist)
             d->playlist->setCurrentPosition(-1);
@@ -354,9 +354,9 @@ void QMediaSlideShow::stop()
 /*!
     \reimp
 */
-void QMediaSlideShow::timerEvent(QTimerEvent *event)
+void QMediaImageViewer::timerEvent(QTimerEvent *event)
 {
-    Q_D(QMediaSlideShow);
+    Q_D(QMediaImageViewer);
 
     if (event->timerId() == d->timer.timerId()) {
         Q_ASSERT(d->playlist);
@@ -373,4 +373,4 @@ void QMediaSlideShow::timerEvent(QTimerEvent *event)
     }
 }
 
-#include "moc_qmediaslideshow.cpp"
+#include "moc_qmediaimageviewer.cpp"
