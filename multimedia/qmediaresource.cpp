@@ -379,7 +379,7 @@ QSize QMediaResource::resolution() const
 */
 void QMediaResource::setResolution(const QSize &resolution)
 {
-    if (resolution.isValid())
+    if (resolution.width() != -1 || resolution.height() != -1)
         values.insert(Resolution, resolution);
     else
         values.remove(Resolution);
@@ -390,7 +390,7 @@ void QMediaResource::setResolution(const QSize &resolution)
 */
 void QMediaResource::setResolution(int width, int height)
 {
-    if (width >= 0 && height >= 0)
+    if (width != -1 || height != -1)
         values.insert(Resolution, QSize(width, height));
     else
         values.remove(Resolution);

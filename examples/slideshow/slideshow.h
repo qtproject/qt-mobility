@@ -36,10 +36,12 @@
 #define SLIDESHOW_H
 
 #include <QWidget>
-#include <multimedia/qmediaslideshow.h>
+#include <multimedia/qmediaimageviewer.h>
 
 class QAbstractButton;
 class QLabel;
+
+class QMediaPlaylist;
 
 class SlideShow : public QWidget
 {
@@ -54,10 +56,11 @@ private slots:
 
     void play();
 
-    void stateChanged(QMediaSlideShow::State state);
+    void stateChanged(QMediaImageViewer::State state);
 
 private:
-    QMediaSlideShow *slideShow;
+    QMediaImageViewer *imageViewer;
+    QMediaPlaylist *playlist;
     QLabel *imageLabel;
     QAbstractButton *playButton;
     QAbstractButton *stopButton;
