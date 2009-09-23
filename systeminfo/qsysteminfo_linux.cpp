@@ -1656,7 +1656,7 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
  {
  }
 
- bool QSystemScreenSaverPrivate::setScreenSaverEnabled(bool state)
+ bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
  {
      if(kdeIsRunning || gnomeIsRunning) {
      #if !defined(QT_NO_DBUS)
@@ -1673,24 +1673,23 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
                                                       iface.toLatin1(),
                                                       dbusConnection);
              if(connectionInterface->isValid() ) {
-                 if (state){
                      qWarning() << "unInhibit"<< currentPid;
                      connectionInterface->call("UnInhibit",currentPid);
                      currentPid = 0;
                      return true;;
 
-                 } else {
-                     QDBusReply<uint> reply =  connectionInterface->call("Inhibit",
-                                                                         QString::number((int)pid),
-                                                                         "QSystemScreenSaver");
-                     if(reply.isValid()) {
-                         currentPid = reply.value();
-                         qWarning() << "Inhibit" << currentPid;
-                         return reply.isValid();
-                     } else {
-                         qWarning() << reply.error();
-                     }
-                 }
+//                 } else {
+//                     QDBusReply<uint> reply =  connectionInterface->call("Inhibit",
+//                                                                         QString::number((int)pid),
+//                                                                         "QSystemScreenSaver");
+//                     if(reply.isValid()) {
+//                         currentPid = reply.value();
+//                         qWarning() << "Inhibit" << currentPid;
+//                         return reply.isValid();
+//                     } else {
+//                         qWarning() << reply.error();
+//                     }
+//                 }
              }
          }
 #endif
@@ -1701,11 +1700,11 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
          int preferBlank;
          int allowExp;
          XGetScreenSaver(QX11Info::display(), &timeout, &interval, &preferBlank, &allowExp);
-         if(state) {
+//         if(state) {
              timeout = -1;
-         } else {
-             timeout = 0;
-         }
+//        } else {
+//             timeout = 0;
+//         }
 
          XSetScreenSaver(QX11Info::display(), timeout, interval, preferBlank, allowExp);
 #endif
@@ -1713,54 +1712,8 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
     return false;
 }
 
-bool QSystemScreenSaverPrivate::setScreenBlankingEnabled(bool state)
-{
-    if(kdeIsRunning) {
-        QString kdeSSConfig;
-        if(QDir( QDir::homePath()+"/.kde4/").exists()) {
-            kdeSSConfig = QDir::homePath()+"/.kde4/share/config/kscreensaverrc";
-        } else if(QDir(QDir::homePath()+"/.kde/").exists()) {
-            kdeSSConfig = QDir::homePath()+"/.kde/share/config/kscreensaverrc";
-        }
 
-        QSettings kdeScreenSaveConfig(kdeSSConfig, QSettings::IniFormat);
-        kdeScreenSaveConfig.beginGroup("ScreenSaver");
-        if(kdeScreenSaveConfig.status() == QSettings::NoError) {
-            if(state) {
-                screenPath = kdeScreenSaveConfig.value("Saver").toString();
-                kdeScreenSaveConfig.setValue("Saver","kblank.desktop");
-                return true;
-            } else {
-                kdeScreenSaveConfig.setValue("Saver", screenPath);
-                screenPath = "";
-                return true;
-            }
-        }
-    } else if(gnomeIsRunning) {
-
-    }
-
-
-#ifdef Q_WS_X11
-    int timeout;
-    int interval;
-    int preferBlank;
-    int allowExp;
-    XGetScreenSaver(QX11Info::display(), &timeout, &interval, &preferBlank, &allowExp);
-    if(state) {
-        preferBlank = PreferBlanking;
-    } else {
-        preferBlank = DontPreferBlanking;
-    }
-
-    XSetScreenSaver(QX11Info::display(), timeout, interval, preferBlank, allowExp);
-#endif
-
-
-    return false;
-}
-
-bool QSystemScreenSaverPrivate::screenSaverEnabled()
+bool QSystemScreenSaverPrivate::screenSaverInhibited()
 {
     if(kdeIsRunning) {
         QString kdeSSConfig;
@@ -1791,42 +1744,6 @@ bool QSystemScreenSaverPrivate::screenSaverEnabled()
         return true;
     }
 
-#endif
-
-    return false;
-}
-
-bool QSystemScreenSaverPrivate::screenBlankingEnabled()
-{
-    //bool saverEnabled = false;
-    if(kdeIsRunning) {
-        QString kdeSSConfig;
-        if(QDir( QDir::homePath()+"/.kde4/").exists()) {
-            kdeSSConfig = QDir::homePath()+"/.kde4/share/config/kscreensaverrc";
-        } else if(QDir(QDir::homePath()+"/.kde/").exists()) {
-            kdeSSConfig = QDir::homePath()+"/.kde/share/config/kscreensaverrc";
-        }
-
-        QSettings kdeScreenSaveConfig(kdeSSConfig, QSettings::IniFormat);
-        kdeScreenSaveConfig.beginGroup("ScreenSaver");
-        if(kdeScreenSaveConfig.status() == QSettings::NoError) {
-            if(screenSaverEnabled() && kdeScreenSaveConfig.value("Saver").toString().contains("kblank")) {
-                return true;
-            }
-        }
-    } else if(gnomeIsRunning) {
-
-    }
-
-#ifdef Q_WS_X11
-    int timeout;
-    int interval;
-    int preferBlank;
-    int allowExp;
-    XGetScreenSaver(QX11Info::display(), &timeout, &interval, &preferBlank, &allowExp);
-    if(preferBlank == PreferBlanking) {
-        return true;
-    }
 #endif
 
     return false;

@@ -754,8 +754,8 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfo::currentPowerState()
 QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
 {
     d = new QSystemScreenSaverPrivate(parent);
-    screenSaverIsEnabled = screenSaverEnabled();
-    screenBlankingIsEnabled = screenBlankingEnabled();
+    screenSaverIsInhibited = screenSaverInhibited();
+
 }
 
 /*!
@@ -764,15 +764,14 @@ QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
 QSystemScreenSaver::~QSystemScreenSaver()
 {
     qWarning() << Q_FUNC_INFO;
-    if(screenSaverIsEnabled != screenSaverEnabled())
-        setScreenSaverEnabled(screenSaverIsEnabled);
-    if(screenBlankingIsEnabled != screenBlankingEnabled())
-        setScreenBlankingEnabled(screenBlankingIsEnabled);
+//    if(screenSaverIsInhibited != screenSaverInhibited())
+//        setScreenSaverEnabled(screenSaverIsInhibited);
+
     delete d;
 }
 
 /*!
-    Temporarily enables the screensaver if  \a b is true, otherwise inhibits it.
+    Temporarily inhibits the screensaver.
 
     Will be reverted upon destruction of the QSystemScreenSaver object.
     Returns true on success, otherwise false.
@@ -780,39 +779,17 @@ QSystemScreenSaver::~QSystemScreenSaver()
     On platforms that support it, if screensaver is secure by policy, the policy will be honored
     and this will fail.
 */
-bool QSystemScreenSaver::setScreenSaverEnabled(bool b)
+bool QSystemScreenSaver::setScreenSaverInhibit()
 {
-    return d->setScreenSaverEnabled(b);
+    return d->setScreenSaverInhibit();
 }
 
 /*!
-    Temporarily enables the screen blanking on if  \a b is true, otherwise inhibits it.
-
-    Will be reverted upon destruction of the QSystemScreenSaver object.
-    Returns true on success, otherwise false.
-
-    On platforms that support it, if screensaver is secure by policy, the policy will be honored
-    and this will fail.
+   Returns true if the screensaver is inhibited, otherwise false.
 */
-bool QSystemScreenSaver::setScreenBlankingEnabled(bool b)
+bool QSystemScreenSaver::screenSaverInhibited()
 {
-    return d->setScreenBlankingEnabled(b);
-}
-
-/*!
-   Returns true if the screensaver is enabled, otherwise false.
-*/
-bool QSystemScreenSaver::screenSaverEnabled()
-{
-    return d->screenSaverEnabled();
-}
-
-/*!
-   Returns true if screen blanking is enabled, otherwise false.
-*/
-bool QSystemScreenSaver::screenBlankingEnabled()
-{
-    return d->screenBlankingEnabled();
+    return d->screenSaverInhibited();
 }
 
 /*!

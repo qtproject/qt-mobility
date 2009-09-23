@@ -542,29 +542,19 @@ QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
 {
 }
 
-bool QSystemScreenSaverPrivate::setScreenSaverEnabled(bool state)
+bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
 {
         Q_UNUSED(state);
 
     return false;
 }
 
-bool QSystemScreenSaverPrivate::setScreenBlankingEnabled(bool state)
-{
-        Q_UNUSED(state);
 
-    return false;
-}
-
-bool QSystemScreenSaverPrivate::screenSaverEnabled()
+bool QSystemScreenSaverPrivate::screenSaverInhibited()
 {
     return false;
 }
 
-bool QSystemScreenSaverPrivate::screenBlankingEnabled()
-{
-   return false;
-}
 
 bool QSystemScreenSaverPrivate::isScreenLockOn()
 {

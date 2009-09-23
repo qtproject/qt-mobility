@@ -1446,7 +1446,7 @@ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
 }
 
 
-bool QSystemScreenSaverPrivate::setScreenSaverEnabled(bool state)
+bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
 {
     if(screenSaverSecure)
         return false;
@@ -1454,53 +1454,11 @@ bool QSystemScreenSaverPrivate::setScreenSaverEnabled(bool state)
     return SystemParametersInfo(SPI_SETSCREENSAVEACTIVE,state,0,SPIF_SENDWININICHANGE);
 }
 
-bool QSystemScreenSaverPrivate::setScreenBlankingEnabled(bool state)
-{
-    qWarning() << Q_FUNC_INFO;
-
-    if(screenSaverSecure)
-        return false;
-    QSettings screenSettings(settingsPath, QSettings::NativeFormat);
-    QString winDir;
-
-    TCHAR systemPath[MAX_PATH];
-
-#ifndef Q_CC_MINGW
-    GetSystemDirectory(systemPath, MAX_PATH);
-
-    winDir = QString::fromUtf16(systemPath);
-
-    if(settingsPath.contains("Policies")) {
-        winDir = "";
-    }
-
-    if(state) {
-        screenSettings.setValue("SCRNSAVE.EXE", winDir+"\\scrnsave.scr");
-        if(screenSettings.value("SCRNSAVE.EXE").toString().contains("scrnsave.scr")) {
-            return true;
-        }
-    } else {
-        screenSettings.setValue("SCRNSAVE.EXE", screenPath);
-        if(screenSettings.value("SCRNSAVE.EXE").toString().contains(screenPath)) {
-            return true;
-        }
-    }
-#endif
-    return false;
-}
-
-bool QSystemScreenSaverPrivate::screenSaverEnabled()
+bool QSystemScreenSaverPrivate::screenSaverInhibited()
 {
     QSettings screenSettings(settingsPath, QSettings::NativeFormat);
     return !screenSettings.value("SCRNSAVE.EXE").toString().isEmpty();
 }
-
-bool QSystemScreenSaverPrivate::screenBlankingEnabled()
-{
-    QSettings screenSettings(settingsPath, QSettings::NativeFormat);
-    return screenSettings.value("SCRNSAVE.EXE").toString().contains("scrnsave.scr");
-}
-
 bool QSystemScreenSaverPrivate::isScreenLockOn()
 {
     QSettings screenSettings(settingsPath, QSettings::NativeFormat);

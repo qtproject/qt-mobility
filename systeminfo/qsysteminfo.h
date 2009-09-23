@@ -340,27 +340,16 @@ public:
     QSystemScreenSaver(QObject *parent = 0);
     ~QSystemScreenSaver();
 
-//    enum ScreenSaverState {
-//        UnknownScreenSaverState = 0,
-//        ScreenSaverDisabled,
-//        ScreenSaverEnabled
-//    };
+     //TODO: to Qt QDesktopWidget
+    bool screenSaverInhibited();
 
      //TODO: to Qt QDesktopWidget
-    bool screenSaverEnabled();
-     //TODO: to Qt QDesktopWidget
-    bool screenBlankingEnabled();
-
-     //TODO: to Qt QDesktopWidget
-    bool setScreenSaverEnabled(bool b);
-     //TODO: to Qt QDesktopWidget
-    bool setScreenBlankingEnabled(bool b);
+    bool setScreenSaverInhibit();
      //TODO: to Qt QDesktopWidget
     static bool isScreenLockOn();
 
 private:
-    bool  screenSaverIsEnabled;
-    bool screenBlankingIsEnabled;
+    bool screenSaverIsInhibited;
     QSystemScreenSaverPrivate *d;
 };
 
