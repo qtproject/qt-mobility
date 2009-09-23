@@ -274,7 +274,6 @@ public:
     void setCurrentBackend(QVideoWidgetBackendInterface *backend);
 
     void _q_serviceDestroyed();
-    void _q_dimensionsChanged();
     void _q_brightnessChanged(int brightness);
     void _q_contrastChanged(int contrast);
     void _q_hueChanged(int hue);

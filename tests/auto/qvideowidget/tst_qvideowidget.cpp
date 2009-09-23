@@ -50,8 +50,83 @@
 
 #include <QtGui/qapplication.h>
 
+class tst_QVideoWidget : public QObject
+{
+    Q_OBJECT
+public slots:
+    void init();
+
+private slots:
+    void nullObject();
+    void nullService();
+    void nullOutputControl();
+    void noOutputs();
+    void serviceDestroyed();
+
+    void showWindowControl();
+    void eventFilterWindowControl();
+    void displayModeWindowControl();
+    void aspectRatioWindowControl();
+    void customPixelAspectRatioWindowControl();
+    void sizeHintWindowControl_data() { sizeHint_data(); }
+    void sizeHintWindowControl();
+    void brightnessWindowControl_data() { color_data(); }
+    void brightnessWindowControl();
+    void contrastWindowControl_data() { color_data(); }
+    void contrastWindowControl();
+    void hueWindowControl_data() { color_data(); }
+    void hueWindowControl();
+    void saturationWindowControl_data() { color_data(); }
+    void saturationWindowControl();
+
+    void showWidgetControl();
+    void eventFilterWidgetControl();
+    void displayModeWidgetControl();
+    void aspectRatioWidgetControl();
+    void customPixelAspectRatioWidgetControl();
+    void sizeHintWidgetControl_data() { sizeHint_data(); }
+    void sizeHintWidgetControl();
+    void brightnessWidgetControl_data() { color_data(); }
+    void brightnessWidgetControl();
+    void contrastWidgetControl_data() { color_data(); }
+    void contrastWidgetControl();
+    void hueWidgetControl_data() { color_data(); }
+    void hueWidgetControl();
+    void saturationWidgetControl_data() { color_data(); }
+    void saturationWidgetControl();
+
+#ifndef QT_NO_MULTIMEDIA
+    void showRendererControl();
+    void eventFilterRendererControl();
+    void displayModeRendererControl();
+    void aspectRatioRendererControl();
+    void customPixelAspectRatioRendererControl();
+    void sizeHintRendererControl_data();
+    void sizeHintRendererControl();
+    void brightnessRendererControl_data() { color_data(); }
+    void brightnessRendererControl();
+    void contrastRendererControl_data() { color_data(); }
+    void contrastRendererControl();
+    void hueRendererControl_data() { color_data(); }
+    void hueRendererControl();
+    void saturationRendererControl_data() { color_data(); }
+    void saturationRendererControl();
+
+    void rendererSupportedFormat_data();
+    void rendererSupportedFormat();
+
+    void rendererPresent_data();
+    void rendererPresent();
+#endif
+
+private:
+    void sizeHint_data();
+    void color_data();
+};
+
 Q_DECLARE_METATYPE(QVideoWidget::AspectRatio)
 Q_DECLARE_METATYPE(const uchar *)
+Q_DECLARE_METATYPE(QVideoWidget::DisplayMode);
 
 class QtTestOutputControl : public QVideoOutputControl
 {
@@ -323,81 +398,6 @@ protected:
     void mouseMoveEvent(QMouseEvent *e) { ++mouseMoveCount;  e->accept(); }
 };
 
-class tst_QVideoWidget : public QObject
-{
-    Q_OBJECT
-public slots:
-    void init();
-
-private slots:
-    void nullObject();
-    void nullService();
-    void nullOutputControl();
-    void noOutputs();
-
-    void showWindowControl();
-    void eventFilterWindowControl();
-    void displayModeWindowControl();
-    void aspectRatioWindowControl();
-    void customPixelAspectRatioWindowControl();
-    void sizeHintWindowControl_data() { sizeHint_data(); }
-    void sizeHintWindowControl();
-    void brightnessWindowControl_data() { color_data(); }
-    void brightnessWindowControl();
-    void contrastWindowControl_data() { color_data(); }
-    void contrastWindowControl();
-    void hueWindowControl_data() { color_data(); }
-    void hueWindowControl();
-    void saturationWindowControl_data() { color_data(); }
-    void saturationWindowControl();
-
-    void showWidgetControl();
-    void eventFilterWidgetControl();
-    void displayModeWidgetControl();
-    void aspectRatioWidgetControl();
-    void customPixelAspectRatioWidgetControl();
-    void sizeHintWidgetControl_data() { sizeHint_data(); }
-    void sizeHintWidgetControl();
-    void brightnessWidgetControl_data() { color_data(); }
-    void brightnessWidgetControl();
-    void contrastWidgetControl_data() { color_data(); }
-    void contrastWidgetControl();
-    void hueWidgetControl_data() { color_data(); }
-    void hueWidgetControl();
-    void saturationWidgetControl_data() { color_data(); }
-    void saturationWidgetControl();
-
-#ifndef QT_NO_MULTIMEDIA
-    void showRendererControl();
-    void eventFilterRendererControl();
-    void displayModeRendererControl();
-    void aspectRatioRendererControl();
-    void customPixelAspectRatioRendererControl();
-    void sizeHintRendererControl_data();
-    void sizeHintRendererControl();
-    void brightnessRendererControl_data() { color_data(); }
-    void brightnessRendererControl();
-    void contrastRendererControl_data() { color_data(); }
-    void contrastRendererControl();
-    void hueRendererControl_data() { color_data(); }
-    void hueRendererControl();
-    void saturationRendererControl_data() { color_data(); }
-    void saturationRendererControl();
-
-    void rendererSupportedFormat_data();
-    void rendererSupportedFormat();
-
-    void rendererPresent_data();
-    void rendererPresent();
-#endif
-
-private:
-    void sizeHint_data();
-    void color_data();
-};
-
-Q_DECLARE_METATYPE(QVideoWidget::DisplayMode);
-
 void tst_QVideoWidget::init()
 {
     qRegisterMetaType<QVideoWidget::DisplayMode>();
@@ -412,17 +412,71 @@ void tst_QVideoWidget::nullObject()
     widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
     QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
 
-    widget.setBrightness(100);
-    QCOMPARE(widget.brightness(), 100);
+    {
+        QSignalSpy spy(&widget, SIGNAL(brightnessChanged(int)));
 
-    widget.setContrast(100);
-    QCOMPARE(widget.contrast(), 100);
+        widget.setBrightness(100);
+        QCOMPARE(widget.brightness(), 100);
+        QCOMPARE(spy.count(), 1);
+        QCOMPARE(spy.value(0).value(0).toInt(), 100);
 
-    widget.setHue(100);
-    QCOMPARE(widget.hue(), 100);
+        widget.setBrightness(100);
+        QCOMPARE(widget.brightness(), 100);
+        QCOMPARE(spy.count(), 1);
 
-    widget.setSaturation(100);
-    QCOMPARE(widget.saturation(), 100);
+        widget.setBrightness(-120);
+        QCOMPARE(widget.brightness(), -100);
+        QCOMPARE(spy.count(), 2);
+        QCOMPARE(spy.value(1).value(0).toInt(), -100);
+    } {
+        QSignalSpy spy(&widget, SIGNAL(contrastChanged(int)));
+
+        widget.setContrast(100);
+        QCOMPARE(widget.contrast(), 100);
+        QCOMPARE(spy.count(), 1);
+        QCOMPARE(spy.value(0).value(0).toInt(), 100);
+
+        widget.setContrast(100);
+        QCOMPARE(widget.contrast(), 100);
+        QCOMPARE(spy.count(), 1);
+
+        widget.setContrast(-120);
+        QCOMPARE(widget.contrast(), -100);
+        QCOMPARE(spy.count(), 2);
+        QCOMPARE(spy.value(1).value(0).toInt(), -100);
+    } {
+        QSignalSpy spy(&widget, SIGNAL(hueChanged(int)));
+
+        widget.setHue(100);
+        QCOMPARE(widget.hue(), 100);
+        QCOMPARE(spy.count(), 1);
+        QCOMPARE(spy.value(0).value(0).toInt(), 100);
+
+        widget.setHue(100);
+        QCOMPARE(widget.hue(), 100);
+        QCOMPARE(spy.count(), 1);
+
+        widget.setHue(-120);
+        QCOMPARE(widget.hue(), -100);
+        QCOMPARE(spy.count(), 2);
+        QCOMPARE(spy.value(1).value(0).toInt(), -100);
+    } {
+        QSignalSpy spy(&widget, SIGNAL(saturationChanged(int)));
+
+        widget.setSaturation(100);
+        QCOMPARE(widget.saturation(), 100);
+        QCOMPARE(spy.count(), 1);
+        QCOMPARE(spy.value(0).value(0).toInt(), 100);
+
+        widget.setSaturation(100);
+        QCOMPARE(widget.saturation(), 100);
+        QCOMPARE(spy.count(), 1);
+
+        widget.setSaturation(-120);
+        QCOMPARE(widget.saturation(), -100);
+        QCOMPARE(spy.count(), 2);
+        QCOMPARE(spy.value(1).value(0).toInt(), -100);
+    }
 }
 
 void tst_QVideoWidget::nullService()
@@ -495,6 +549,33 @@ void tst_QVideoWidget::noOutputs()
 
     widget.setSaturation(100);
     QCOMPARE(widget.saturation(), 100);
+}
+
+void tst_QVideoWidget::serviceDestroyed()
+{
+    QtTestVideoObject *object = new QtTestVideoObject(
+            new QtTestWindowControl,
+            new QtTestWidgetControl,
+            0);
+
+    QVideoWidget widget(object);
+
+    widget.show();
+
+    widget.setBrightness(100);
+    widget.setContrast(100);
+    widget.setHue(100);
+    widget.setSaturation(100);
+
+    delete object;
+
+    QCOMPARE(widget.brightness(), 100);
+    QCOMPARE(widget.contrast(), 100);
+    QCOMPARE(widget.hue(), 100);
+    QCOMPARE(widget.saturation(), 100);
+
+    widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
+    QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
 }
 
 void tst_QVideoWidget::showWindowControl()
@@ -1079,21 +1160,30 @@ void tst_QVideoWidget::displayModeWindowControl()
     QCoreApplication::processEvents();
 
     if (QWidget *keyWidget = QApplication::activeWindow()) {
-        {
+        {   // Test non-escape key doesn't exit full-screen mode.
+            QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_5, Qt::NoModifier);
+            QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
+        }
+        QCOMPARE(object.testService->windowControl->isFullscreen(), true);
+        QCOMPARE(widget.displayMode(), QVideoWidget::FullscreenDisplay);
+        QCOMPARE(spy.count(), 3);
+
+        {   // Test escape key exits full-screen mode.
             QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
             QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
         }
         QCOMPARE(object.testService->windowControl->isFullscreen(), false);
-        QCOMPARE(widget.isFullScreen(), false);
+        QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
         QCOMPARE(spy.count(), 4);
         QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(3).value(0)),
                  QVideoWidget::WindowedDisplay);
-        {
+
+        {   // Test escape key doesn't enter full-screen mode.
             QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
             QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
         }
         QCOMPARE(object.testService->windowControl->isFullscreen(), false);
-        QCOMPARE(widget.isFullScreen(), false);
+        QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
         QCOMPARE(spy.count(), 4);
     } else {
         qWarning("no active window");
@@ -1126,7 +1216,16 @@ void tst_QVideoWidget::displayModeWidgetControl()
 
     widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
 
-    {
+    {   // Test non-escape key doesn't exit full-screen mode.
+        QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_5, Qt::NoModifier);
+        QCoreApplication::sendEvent(
+                object.testService->widgetControl->videoWidget(), &keyPressEvent);
+    }
+    QCOMPARE(object.testService->widgetControl->isFullscreen(), true);
+    QCOMPARE(widget.displayMode(), QVideoWidget::FullscreenDisplay);
+    QCOMPARE(spy.count(), 3);
+
+    {   // Test escape key exits full-screen mode.
         QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
         QCoreApplication::sendEvent(
                 object.testService->widgetControl->videoWidget(), &keyPressEvent);
@@ -1136,7 +1235,8 @@ void tst_QVideoWidget::displayModeWidgetControl()
     QCOMPARE(spy.count(), 4);
     QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(3).value(0)),
              QVideoWidget::WindowedDisplay);
-    {
+
+    {   // Test escape key doesn't enter full-screen mode.
         QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
         QCoreApplication::sendEvent(
                 object.testService->widgetControl->videoWidget(), &keyPressEvent);
@@ -1181,7 +1281,16 @@ void tst_QVideoWidget::displayModeRendererControl()
              QVideoWidget::FullscreenDisplay);
 
     if (QWidget *keyWidget = QApplication::activeWindow()) {
-        {
+        {   // Test non-escape key doesn't exit full-screen mode.
+            QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_5, Qt::NoModifier);
+            QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
+        }
+        QCOMPARE(widget.displayMode(), QVideoWidget::FullscreenDisplay);
+        QCOMPARE(spy.count(), 3);
+        QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(0).value(0)),
+                 QVideoWidget::FullscreenDisplay);
+
+        {   // Test escape key exits full-screen mode.
             QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
             QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
         }
@@ -1189,7 +1298,8 @@ void tst_QVideoWidget::displayModeRendererControl()
         QCOMPARE(spy.count(), 4);
         QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(3).value(0)),
                  QVideoWidget::WindowedDisplay);
-        {
+
+        {   // Test escape key doesn't enter full-screen mode.
             QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
             QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
         }
