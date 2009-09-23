@@ -32,11 +32,11 @@
 **
 ****************************************************************************/
 
-#include "qabstractmediaservice.h"
-#include "qabstractmediaservice_p.h"
+#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qabstractmediaservice_p.h>
 
-#include "qaudiodevicecontrol.h"
-#include "qvideodevicecontrol.h"
+#include <multimedia/qaudiodevicecontrol.h>
+#include <multimedia/qvideodevicecontrol.h>
 
 #include <QtCore/qtimer.h>
 
@@ -151,12 +151,12 @@ QIODevice* QAbstractMediaService::outputStream() const
 }
 
 /*!
-    Returns the currently active endpoint id for \a endpointType.
+    Returns a list of currently active endpoints for \a endpointType.
 */
 
-QString QAbstractMediaService::activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType)
+QList<QString> QAbstractMediaService::activeEndpoints(QAbstractMediaService::MediaEndpoint endpointType)
 {
-    QString ret;
+    QList<QString> ret;
     int idx = 0;
 
     QAudioDeviceControl *audioControl = control<QAudioDeviceControl *>();
@@ -166,25 +166,25 @@ QString QAbstractMediaService::activeEndpoint(QAbstractMediaService::MediaEndpoi
         case QAbstractMediaService::AudioInput:
             if(audioControl) {
                 idx = audioControl->selectedDevice();
-                ret = audioControl->name(idx);
+                ret << audioControl->name(idx);
             }
             break;
         case QAbstractMediaService::AudioOutput:
             if(audioControl) {
                 idx = audioControl->selectedDevice();
-                ret = audioControl->name(idx);
+                ret << audioControl->name(idx);
             }
             break;
         case QAbstractMediaService::VideoInput:
             if(videoControl) {
                 idx = videoControl->selectedDevice();
-                ret = videoControl->name(idx);
+                ret << videoControl->name(idx);
             }
             break;
         case QAbstractMediaService::VideoOutput:
             if(videoControl) {
                 idx = videoControl->selectedDevice();
-                ret = videoControl->name(idx);
+                ret << videoControl->name(idx);
             }
             break;
         default:
@@ -195,10 +195,10 @@ QString QAbstractMediaService::activeEndpoint(QAbstractMediaService::MediaEndpoi
 }
 
 /*!
-    Sets the active endpoint for \a endpointType to \a endpoint
+    Returns true if set of the active endpoint for \a endpointType to \a endpoint succeeds.
 */
 
-void QAbstractMediaService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint)
+bool QAbstractMediaService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint)
 {
     int numDevices = 0;
 
@@ -207,52 +207,74 @@ void QAbstractMediaService::setActiveEndpoint(QAbstractMediaService::MediaEndpoi
 
     switch(endpointType) {
         case QAbstractMediaService::AudioInput:
-            if(audioControl) {
-                numDevices = audioControl->deviceCount();
-                for(int i=0;i<numDevices;i++) {
-                    if(qstrcmp(endpoint.toLocal8Bit().constData(),audioControl->name(i).toLocal8Bit().constData()) == 0) {
-                        audioControl->setSelectedDevice(i);
-                        break;
-                    }
-                }
-            }
-            break;
         case QAbstractMediaService::AudioOutput:
             if(audioControl) {
                 numDevices = audioControl->deviceCount();
                 for(int i=0;i<numDevices;i++) {
-                    if(qstrcmp(endpoint.toLocal8Bit().constData(),audioControl->name(i).toLocal8Bit().constData()) == 0) {
+                    if (endpoint == audioControl->name(i)) {
                         audioControl->setSelectedDevice(i);
-                        break;
+                        return true;
                     }
                 }
             }
             break;
         case QAbstractMediaService::VideoInput:
-            if(videoControl) {
-                numDevices = videoControl->deviceCount();
-                for(int i=0;i<numDevices;i++) {
-                    if(qstrcmp(endpoint.toLocal8Bit().constData(),videoControl->name(i).toLocal8Bit().constData()) == 0) {
-                        videoControl->setSelectedDevice(i);
-                        break;
-                    }
-                }
-            }
-            break;
         case QAbstractMediaService::VideoOutput:
             if(videoControl) {
                 numDevices = videoControl->deviceCount();
                 for(int i=0;i<numDevices;i++) {
-                    if(qstrcmp(endpoint.toLocal8Bit().constData(),videoControl->name(i).toLocal8Bit().constData()) == 0) {
+                    if (endpoint == videoControl->name(i)) {
                         videoControl->setSelectedDevice(i);
-                        break;
+                        return true;
                     }
                 }
             }
             break;
         default:
-            return;
+            return false;
     }
+    return false;
+}
+
+/*!
+    Returns the description of the \a endpoint for the \a endpointType.
+*/
+
+QString QAbstractMediaService::endpointDescription(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint)
+{
+    QString desc;
+    switch(endpointType) {
+        case QAbstractMediaService::AudioInput:
+        case QAbstractMediaService::AudioOutput:
+            {
+                QAudioDeviceControl *audioControl = control<QAudioDeviceControl *>();
+                if(audioControl) {
+                    int numDevices = audioControl->deviceCount();
+                    for(int i=0;i<numDevices;i++) {
+                        if (endpoint == audioControl->name(i))
+                            return audioControl->description(i);
+
+                    }
+                }
+            }
+            break;
+        case QAbstractMediaService::VideoInput:
+        case QAbstractMediaService::VideoOutput:
+            {
+                QVideoDeviceControl *videoControl = control<QVideoDeviceControl *>();
+                if(videoControl) {
+                    int numDevices = videoControl->deviceCount();
+                    for(int i=0;i<numDevices;i++) {
+                        if (endpoint == videoControl->name(i))
+                            return videoControl->description(i);
+                    }
+                }
+            }
+            break;
+        default:
+            break;
+    }
+    return desc;
 }
 
 /*!

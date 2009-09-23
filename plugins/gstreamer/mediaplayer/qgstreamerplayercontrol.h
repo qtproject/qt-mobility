@@ -37,8 +37,8 @@
 
 #include <QtCore/qobject.h>
 
-#include "qmediaplayercontrol.h"
-#include "qmediaplayer.h"
+#include <multimedia/qmediaplayercontrol.h>
+#include <multimedia/qmediaplayer.h>
 
 
 class QMediaPlaylist;
@@ -76,7 +76,8 @@ public:
     void setPlaybackRate(float rate);
 
     QMediaSource media() const;
-    void setMedia(const QMediaSource&);
+    const QIODevice *mediaStream() const;
+    void setMedia(const QMediaSource&, QIODevice *);
 
 public Q_SLOTS:
     void setPosition(qint64 pos);

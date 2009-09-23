@@ -35,27 +35,27 @@
 #ifndef QGSTREAMERCAPTUREMETADATACONTROL_H
 #define QGSTREAMERCAPTUREMETADATACONTROL_H
 
-#include <qmetadataprovidercontrol.h>
+#include <multimedia/qmetadataprovidercontrol.h>
 
-class QGstreamerCaptureMetadataControl : public QMetadataProviderControl
+class QGstreamerCaptureMetaDataControl : public QMetaDataProviderControl
 {
     Q_OBJECT
 public:
-    QGstreamerCaptureMetadataControl(QObject *parent);
-    virtual ~QGstreamerCaptureMetadataControl() {};
+    QGstreamerCaptureMetaDataControl(QObject *parent);
+    virtual ~QGstreamerCaptureMetaDataControl() {};
 
 
-    bool metadataAvailable() const { return true; }
-    bool isReadOnly() const { return false; }  
+    bool isMetaDataAvailable() const { return true; }
+    bool isWritable() const { return true; }
 
-    QVariant metadata(QMediaMetadata::Key key) const;
-    void setMetadata(QMediaMetadata::Key key, const QVariant &value);
+    QVariant metaData(QAbstractMediaObject::MetaData key) const;
+    void setMetaData(QAbstractMediaObject::MetaData key, const QVariant &value);
 
-    QVariant extendedMetadata(QString const &name) const;
-    void setExtendedMetadata(QString const &name, QVariant const &value);
+    QVariant extendedMetaData(QString const &name) const;
+    void setExtendedMetaData(QString const &name, QVariant const &value);
 
 Q_SIGNALS:
-    void metadataChanged(const QMap<QByteArray, QVariant>&);
+    void metaDataChanged(const QMap<QByteArray, QVariant>&);
 
 private:
     QMap<QByteArray, QVariant> m_values;

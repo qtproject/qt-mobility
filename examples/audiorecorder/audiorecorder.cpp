@@ -36,7 +36,7 @@
 #include <qabstractmediaservice.h>
 
 #include <qaudioinputdevicecontrol.h>
-#include <qaudioencodecontrol.h>
+#include <qaudioencodercontrol.h>
 #include <qmediaformatcontrol.h>
 
 #include <QtGui>
@@ -79,22 +79,13 @@ AudioRecorder::AudioRecorder()
         }
 
         // Audio Encode Control
-        audioEncodeControl = capture->service()->control<QAudioEncodeControl*>();
-        if(!audioEncodeControl)
+        audioEncoderControl = capture->service()->control<QAudioEncoderControl*>();
+        if(!audioEncoderControl)
             qWarning()<<"no audio encode control available";
         else {
             qWarning()<<"FOUND audio encode control";
             for(int i = 0; i < formats.size(); ++i) {
-                QAudioFormat fmt;
-                fmt.setFrequency(formats.at(i).first);
-                fmt.setChannels(formats.at(i).second);
-                fmt.setSampleSize(8);
-                fmt.setByteOrder(QAudioFormat::LittleEndian);
-                fmt.setSampleType(QAudioFormat::UnSignedInt);
-                fmt.setCodec("audio/pcm");
-                if(audioEncodeControl->isFormatSupported(fmt)) {
-                    paramsBox->addItem(QString("f=%1,ch=%2").arg(formats.at(i).first).arg(formats.at(i).second));
-                }
+                paramsBox->addItem(QString("f=%1,ch=%2").arg(formats.at(i).first).arg(formats.at(i).second));
             }
         }
 
@@ -165,19 +156,22 @@ void AudioRecorder::paramsChanged(int idx)
 
     parts = paramsBox->itemText(idx).split(",");
     if(parts.size() != 2) return;
-    QAudioFormat fmt = audioEncodeControl->format();
+    QAudioFormat fmt;
+    fmt.setCodec(audioEncoderControl->audioCodec());
+    fmt.setSampleType(QAudioFormat::SignedInt);
+    fmt.setByteOrder(QAudioFormat::LittleEndian);
 
-    // freq
-    values = parts.at(0).split("=");
-    fmt.setFrequency(values.at(1).toInt());
-    // channels
-    values = parts.at(1).split("=");
-    fmt.setChannels(values.at(1).toInt());
-    fmt.setSampleSize(8);
+    if(audioEncoderControl) {
+        // freq
+        values = parts.at(0).split("=");
+        audioEncoderControl->setFrequency(values.at(1).toInt());
 
-    if(audioEncodeControl) {
-        qWarning()<<"try to set new params";
-        audioEncodeControl->setFormat(fmt);
+        // channels
+        values = parts.at(1).split("=");
+        audioEncoderControl->setChannels(values.at(1).toInt());
+
+        audioEncoderControl->setSampleSize(8);
+        audioEncoderControl->setAudioCodec("audio/pcm");
     }
 }
 

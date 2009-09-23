@@ -44,6 +44,7 @@
 
 #include "qgstreamervideooutputcontrol.h"
 #include "qgstreameraudioinputdevicecontrol.h"
+#include "qgstreamervideoinputdevicecontrol.h"
 
 #ifndef QT_NO_MULTIMEDIA
 #include "qgstreamervideooverlay.h"
@@ -122,13 +123,18 @@ QGstreamerCaptureService::QGstreamerCaptureService(const char *interface, QObjec
 //    if (QLatin1String(interface) == QLatin1String(QAudioRecorderService_iid)) {
 //        m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::Audio, this);
 //        m_cameraControl = 0;
+//        m_videoInputDevice = 0;
 //    }
 
- //   if (QLatin1String(interface) == QLatin1String(QCameraService_iid)) {
+//   if (QLatin1String(interface) == QLatin1String(QCameraService_iid)) {
         m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::AudioAndVideo, this);
         m_cameraControl = new QGstreamerCameraControl(m_captureSession);
         m_captureSession->setVideoInput(m_cameraControl);
- //   }
+        m_videoInputDevice = new QGstreamerVideoInputDeviceControl(m_captureSession);
+
+        connect(m_videoInputDevice, SIGNAL(selectedDeviceChanged(QString)),
+                m_cameraControl, SLOT(setDevice(QString)));
+//    }
 
     m_videoOutput = new QGstreamerVideoOutputControl(this);
     connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
@@ -153,9 +159,9 @@ QGstreamerCaptureService::QGstreamerCaptureService(const char *interface, QObjec
     m_audioInputDevice = new QGstreamerAudioInputDeviceControl(this);
     connect(m_audioInputDevice, SIGNAL(selectedDeviceChanged(QString)), m_captureSession, SLOT(setCaptureDevice(QString)));
 
-    m_metadataControl = new QGstreamerCaptureMetadataControl(this);
-    connect(m_metadataControl, SIGNAL(metadataChanged(QMap<QByteArray,QVariant>)),
-            m_captureSession, SLOT(setMetadata(QMap<QByteArray,QVariant>)));
+    m_metaDataControl = new QGstreamerCaptureMetaDataControl(this);
+    connect(m_metaDataControl, SIGNAL(metaDataChanged(QMap<QByteArray,QVariant>)),
+            m_captureSession, SLOT(setMetaData(QMap<QByteArray,QVariant>)));
 }
 
 QGstreamerCaptureService::~QGstreamerCaptureService()
@@ -181,6 +187,9 @@ QAbstractMediaControl *QGstreamerCaptureService::control(const char *name) const
     if (qstrcmp(name,QAudioDeviceControl_iid) == 0)
         return m_audioInputDevice;
 
+    if (qstrcmp(name,QVideoDeviceControl_iid) == 0)
+        return m_videoInputDevice;
+
     if (qstrcmp(name,QMediaRecorderControl_iid) == 0)
         return m_captureSession->recorderControl();
 
@@ -196,8 +205,8 @@ QAbstractMediaControl *QGstreamerCaptureService::control(const char *name) const
     if (qstrcmp(name,QCameraControl_iid) == 0)
         return m_cameraControl;
 
-    if (qstrcmp(name,QMetadataProviderControl_iid) == 0)
-        return m_metadataControl;
+    if (qstrcmp(name,QMetaDataProviderControl_iid) == 0)
+        return m_metaDataControl;
 
     return 0;
 }

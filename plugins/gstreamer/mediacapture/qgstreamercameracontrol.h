@@ -36,18 +36,17 @@
 #ifndef QGSTREAMERCAMERACONTROL_H
 #define QGSTREAMERCAMERACONTROL_H
 
-#include "qcameracontrol.h"
+#include <multimedia/qcameracontrol.h>
 #include "qgstreamercapturesession.h"
 
 class QGstreamerCameraControl : public QCameraControl, public QGstreamerElementFactory
 {
+    Q_OBJECT
 public:
     QGstreamerCameraControl( QGstreamerCaptureSession *session );
     virtual ~QGstreamerCameraControl();
 
     bool isValid() const { return true; }
-
-    void setDevice(const QString &device);
 
     QCamera::State state() const;
 
@@ -56,6 +55,8 @@ public:
     void start();
     void stop();
 
+public slots:
+    void setDevice(const QString &device);
 
 private:
     QGstreamerCaptureSession *m_session;

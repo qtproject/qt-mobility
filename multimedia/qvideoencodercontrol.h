@@ -35,8 +35,8 @@
 #ifndef QVIDEOENCODERCONTROL_H
 #define QVIDEOENCODERCONTROL_H
 
-#include "qabstractmediacontrol.h"
-#include "qmediarecorder.h"
+#include <multimedia/qabstractmediacontrol.h>
+#include <multimedia/qmediarecorder.h>
 
 #include <QtCore/qpair.h>
 #include <QtCore/qsize.h>
@@ -72,8 +72,8 @@ public:
     virtual int bitrate() const = 0;
     virtual void setBitrate(int) = 0;
 
-    virtual qreal quality() const = 0;
-    virtual void setQuality(qreal) = 0;
+    virtual int quality() const = 0;
+    virtual void setQuality(int) = 0;
 
     virtual QStringList supportedEncodingOptions() const;
     virtual QVariant encodingOption(const QString &name) const;

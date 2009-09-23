@@ -40,8 +40,8 @@
 #include <Phonon/MediaObject>
 #include <Phonon/AudioOutput>
 
-#include "qmediaplayercontrol.h"
-#include "qmediaplayer.h"
+#include <multimedia/qmediaplayercontrol.h>
+#include <multimedia/qmediaplayer.h>
 
 
 class QMediaPlaylist;
@@ -63,7 +63,8 @@ public:
     QMediaPlayer::MediaStatus mediaStatus() const;
 
     QMediaSource media() const;
-    void setMedia(const QMediaSource &resources);
+    const QIODevice *mediaStream() const;
+    void setMedia(const QMediaSource &resources, QIODevice *stream);
 
     qint64 position() const;
     qint64 duration() const;
@@ -102,6 +103,7 @@ private:
     Phonon::AudioOutput *m_audioOutput;
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_mediaStatus;
+    QIODevice *m_mediaStream;
     QMediaSource m_resources;
 };
 

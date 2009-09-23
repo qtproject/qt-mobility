@@ -35,8 +35,8 @@
 #ifndef QMEDIARECORDER_H
 #define QMEDIARECORDER_H
 
-#include "qabstractmediaobject.h"
-#include "qmediaserviceprovider.h"
+#include <multimedia/qabstractmediaobject.h>
+#include <multimedia/qmediaserviceprovider.h>
 
 #include <QtCore/qpair.h>
 
@@ -108,11 +108,11 @@ public:
     QString audioCodec() const;
 
     int audioBitrate() const;
-    qreal audioQuality() const;
+    int audioQuality() const;
 
-    QStringList supportedAudioEncodingOptions() const;
-    QVariant audioEncodingOption(const QString &name) const;
-    void setAudioEncodingOption(const QString &name, const QVariant &value);
+    QStringList supportedVideoCodecs() const;
+    QString videoCodecDescription(const QString &codecName) const;
+    QString videoCodec() const;
 
     QSize resolution() const;
     QSize minimumResolution() const;
@@ -124,16 +124,8 @@ public:
     FrameRate maximumFrameRate();
     QList<FrameRate> supportedFrameRates() const;
 
-    QStringList supportedVideoCodecs() const;
-    QString videoCodecDescription(const QString &codecName) const;
-    QString videoCodec() const;
-
     int videoBitrate() const;
-    qreal videoQuality() const;
-
-    QStringList supportedVideoEncodingOptions() const;
-    QVariant videoEncodingOption(const QString &name) const;
-    void setVideoEncodingOption(const QString &name, const QVariant &value);
+    int videoQuality() const;
 
 public slots:
     void record();
@@ -144,13 +136,13 @@ public slots:
 
     bool setAudioCodec(const QString &codecName);
     void setAudioBitrate(int bitrate);
-    void setAudioQuality(qreal quality);
+    void setAudioQuality(int quality);
 
     void setResolution(const QSize &);
     void setFrameRate(const QMediaRecorder::FrameRate &rate);
     bool setVideoCodec(const QString &codecName);
     void setVideoBitrate(int bitrate);
-    void setVideoQuality(qreal);
+    void setVideoQuality(int quality);
 
 signals:
     void stateChanged(QMediaRecorder::State state);

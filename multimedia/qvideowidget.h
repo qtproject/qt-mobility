@@ -37,7 +37,7 @@
 
 #include <QtGui/qwidget.h>
 
-#include "qmultimediaglobal.h"
+#include <multimedia/qmultimediaglobal.h>
 
 class QAbstractMediaObject;
 

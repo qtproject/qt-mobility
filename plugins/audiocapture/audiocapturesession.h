@@ -57,6 +57,7 @@ public:
     // encode controls
 
     QAudioFormat format() const;
+    QAudioDeviceInfo* deviceInfo() const;
     bool isFormatSupported(const QAudioFormat &format) const;
     bool setFormat(const QAudioFormat &format);
     QStringList supportedAudioCodecs() const;

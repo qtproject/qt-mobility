@@ -35,10 +35,10 @@
 #ifndef QCAMERACONTROL_H
 #define QCAMERACONTROL_H
 
-#include "qabstractmediacontrol.h"
-#include "qabstractmediaobject.h"
+#include <multimedia/qabstractmediacontrol.h>
+#include <multimedia/qabstractmediaobject.h>
 
-#include "qcamera.h"
+#include <multimedia/qcamera.h>
 
 class Q_MEDIA_EXPORT QCameraControl : public QAbstractMediaControl
 {
@@ -50,8 +50,6 @@ public:
     virtual void start() = 0;
     virtual void stop() = 0;
     virtual QCamera::State state() const = 0;
-
-    virtual void setDevice(const QString &device) = 0;
 
 Q_SIGNALS:
     void stateChanged(QCamera::State);

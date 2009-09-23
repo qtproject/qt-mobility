@@ -35,7 +35,8 @@
 #ifndef QGSTREAMERCAPTURESERVICE_H
 #define QGSTREAMERCAPTURESERVICE_H
 
-#include <qabstractmediaservice.h>
+#include <multimedia/qabstractmediaservice.h>
+
 #include "qgstreamervideooutputcontrol.h"
 
 #include <gst/gst.h>
@@ -43,13 +44,14 @@
 class QGstreamerCaptureSession;
 class QGstreamerCameraControl;
 class QAudioDeviceControl;
+class QVideoDeviceControl;
 class QGstreamerMessage;
 class QGstreamerBusHelper;
 class QGstreamerVideoRenderer;
 class QGstreamerVideoOverlay;
 class QGstreamerVideoWidgetControl;
 class QGstreamerElementFactory;
-class QGstreamerCaptureMetadataControl;
+class QGstreamerCaptureMetaDataControl;
 
 class QGstreamerCaptureService : public QAbstractMediaService
 {
@@ -68,9 +70,10 @@ private:
 
     QGstreamerCaptureSession *m_captureSession;
     QGstreamerCameraControl *m_cameraControl;
-    QGstreamerCaptureMetadataControl *m_metadataControl;
+    QGstreamerCaptureMetaDataControl *m_metaDataControl;
 
     QAudioDeviceControl *m_audioInputDevice;
+    QVideoDeviceControl *m_videoInputDevice;
 
     QGstreamerVideoOutputControl *m_videoOutput;
 #ifndef QT_NO_MULTIMEDIA

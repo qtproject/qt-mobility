@@ -39,6 +39,7 @@
 #include <QtCore/qiodevice.h>
 
 #include <qabstractmediaservice.h>
+
 #include "qgstreamervideooutputcontrol.h"
 
 class QMediaMetaData;
@@ -48,7 +49,7 @@ class QMediaPlaylist;
 class QGstreamerMetaData;
 class QGstreamerPlayerControl;
 class QGstreamerPlayerSession;
-class QGstreamerMetadataProvider;
+class QGstreamerMetaDataProvider;
 #ifndef QT_NO_MULTIMEDIA
 class QGstreamerVideoRenderer;
 class QGstreamerVideoOverlay;
@@ -74,7 +75,7 @@ private slots:
 private:
     QGstreamerPlayerControl *m_control;
     QGstreamerPlayerSession *m_session;
-    QGstreamerMetadataProvider *m_metadata;
+    QGstreamerMetaDataProvider *m_metaData;
     QGstreamerVideoOutputControl *m_videoOutput;
 #ifndef QT_NO_MULTIMEDIA
     QGstreamerVideoRenderer *m_videoRenderer;

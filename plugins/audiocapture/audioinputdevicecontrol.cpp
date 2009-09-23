@@ -72,11 +72,11 @@ void AudioInputDeviceControl::updateDevices()
     m_names.clear();
     m_descriptions.clear();
 
-    QList<QAudioDeviceId> devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
+    QList<QAudioDeviceInfo> devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
     qWarning()<<"devices="<<devices.size();
     for(int i = 0; i < devices.size(); ++i) {
-        m_names.append(QAudioDeviceInfo(devices.at(i)).deviceName());
-        m_descriptions.append(QAudioDeviceInfo(devices.at(i)).deviceName());
+        m_names.append(devices.at(i).deviceName());
+        m_descriptions.append(devices.at(i).deviceName());
     }
 }
 

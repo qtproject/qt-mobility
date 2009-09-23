@@ -225,9 +225,14 @@ QMediaSource QWmpPlayerControl::media() const
     return resources;
 }
 
-void QWmpPlayerControl::setMedia(const QMediaSource &source)
+const QIODevice *QWmpPlayerControl::mediaStream() const
 {
-    if (!source.isNull())
+    return 0;
+}
+
+void QWmpPlayerControl::setMedia(const QMediaSource &source, QIODevice *stream)
+{
+    if (!source.isNull() && !stream)
         setUrl(source.contentUri());
     else
         setUrl(QUrl());

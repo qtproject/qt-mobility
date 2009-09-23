@@ -35,39 +35,40 @@
 #ifndef QMETADATAPROVIDERCONTROL_H
 #define QMETADATAPROVIDERCONTROL_H
 
-#include <qabstractmediacontrol.h>
-#include "qmediametadata.h"
+#include <multimedia/qabstractmediacontrol.h>
+#include <multimedia/qabstractmediaobject.h>
 
-#include "qmediaresource.h"
+#include <multimedia/qmediaresource.h>
 
-class QMetadataProviderControlPrivate;
-class Q_MEDIA_EXPORT QMetadataProviderControl : public QAbstractMediaControl
+class QMetaDataProviderControlPrivate;
+class Q_MEDIA_EXPORT QMetaDataProviderControl : public QAbstractMediaControl
 {
     Q_OBJECT
 
 public:
-    ~QMetadataProviderControl();
+    ~QMetaDataProviderControl();
 
-    virtual bool metadataAvailable() const = 0;
-    virtual bool isReadOnly() const = 0;
+    virtual bool isWritable() const = 0;
+    virtual bool isMetaDataAvailable() const = 0;
 
-    virtual QVariant metadata(QMediaMetadata::Key key) const = 0;
-    virtual void setMetadata(QMediaMetadata::Key key, const QVariant &value) = 0;
+    virtual QVariant metaData(QAbstractMediaObject::MetaData key) const = 0;
+    virtual void setMetaData(QAbstractMediaObject::MetaData key, const QVariant &value) = 0;
 
-    virtual QVariant extendedMetadata(const QString &key) const = 0;
-    virtual void setExtendedMetadata(const QString &key, const QVariant &value) = 0;
+    virtual QVariant extendedMetaData(const QString &key) const = 0;
+    virtual void setExtendedMetaData(const QString &key, const QVariant &value) = 0;
 
 
 Q_SIGNALS:
-    void metadataChanged();
-    void metadataAvailabilityChanged(bool available);
-    void readOnlyChanged(bool readOnly);
+    void metaDataChanged();
+
+    void writableChanged(bool writable);
+    void metaDataAvailableChanged(bool available);
 
 protected:
-    QMetadataProviderControl(QObject *parent = 0);
+    QMetaDataProviderControl(QObject *parent = 0);
 };
 
-#define QMetadataProviderControl_iid "com.nokia.Qt.QMetadataProviderControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QMetadataProviderControl, QMetadataProviderControl_iid)
+#define QMetaDataProviderControl_iid "com.nokia.Qt.QMetaDataProviderControl/1.0"
+Q_MEDIA_DECLARE_CONTROL(QMetaDataProviderControl, QMetaDataProviderControl_iid)
 
 #endif  // QMETADATAPROVIDER_H

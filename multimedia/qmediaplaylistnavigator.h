@@ -35,8 +35,8 @@
 #ifndef QMEDIAPLAYLISTNAVIGATOR_H
 #define QMEDIAPLAYLISTNAVIGATOR_H
 
-#include "qmediaplaylistprovider.h"
-#include "qmediaplaylist.h"
+#include <multimedia/qmediaplaylistprovider.h>
+#include <multimedia/qmediaplaylist.h>
 #include <QtCore/qobject.h>
 
 class QMediaPlaylistNavigatorPrivate;

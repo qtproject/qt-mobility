@@ -34,14 +34,14 @@
 
 #include <QDebug>
 
-#include "qcamera.h"
+#include <multimedia/qcamera.h>
 
-#include "qabstractmediaobject_p.h"
-#include "qcameracontrol.h"
-#include "qcameraexposurecontrol.h"
-#include "qcamerafocuscontrol.h"
-#include "qmediarecordercontrol.h"
-#include "qimageprocessingcontrol.h"
+#include <multimedia/qabstractmediaobject_p.h>
+#include <multimedia/qcameracontrol.h>
+#include <multimedia/qcameraexposurecontrol.h>
+#include <multimedia/qcamerafocuscontrol.h>
+#include <multimedia/qmediarecordercontrol.h>
+#include <multimedia/qimageprocessingcontrol.h>
 
 /*!
     \class QCamera
@@ -190,16 +190,14 @@ void QCamera::unlockFocus()
     Returns a list of camera device's available.
 */
 
-QList<QString> QCamera::deviceList()
+QStringList QCamera::devices() const
 {
-    Q_D(QCamera);
+    Q_D(const QCamera);
 
-    QList<QString> list;
+    if (d->service != 0)
+        return d->service->supportedEndpoints(QAbstractMediaService::VideoInput);
 
-    if (isValid())
-        list << d->service->supportedEndpoints(QAbstractMediaService::VideoInput);
-
-    return list;
+    return QStringList();
 }
 
 /*!
@@ -210,18 +208,22 @@ void QCamera::setDevice(const QString& device)
 {
     Q_D(QCamera);
 
-    if(d->control)
-        d->control->setDevice(device);
+    if (d->service)
+        d->service->setActiveEndpoint(QAbstractMediaService::VideoInput, device);
 }
 
 /*!
     Returns the description of the \a device.
 */
 
-QString QCamera::deviceDescription(const QString &device)
+QString QCamera::deviceDescription(const QString &device) const
 {
-    Q_UNUSED(device);
-    return QString();
+    Q_D(const QCamera);
+
+    if (d->service != 0)
+        return d->service->endpointDescription(QAbstractMediaService::VideoInput, device);
+    else
+        return device;
 }
 
 QCamera::State QCamera::state() const

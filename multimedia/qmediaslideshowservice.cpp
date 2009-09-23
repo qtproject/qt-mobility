@@ -32,18 +32,18 @@
 **
 ****************************************************************************/
 
-#include "qmediaslideshowservice_p.h"
+#include <multimedia/qmediaslideshowservice_p.h>
 
-#include "qabstractmediacontrol_p.h"
-#include "qabstractmediaservice_p.h"
+#include <multimedia/qabstractmediacontrol_p.h>
+#include <multimedia/qabstractmediaservice_p.h>
 
-#include "qmediasource.h"
-#include "qmediaresource.h"
-#include "qvideooutputcontrol.h"
+#include <multimedia/qmediasource.h>
+#include <multimedia/qmediaresource.h>
+#include <multimedia/qvideooutputcontrol.h>
 #ifndef QT_NO_MULTIMEDIA
-#include "qvideorenderercontrol.h"
+#include <multimedia/qvideorenderercontrol.h>
 #endif
-#include "qvideowidgetcontrol.h"
+#include <multimedia/qvideowidgetcontrol.h>
 
 #include <QtCore/qurl.h>
 #include <QtGui/qimage.h>

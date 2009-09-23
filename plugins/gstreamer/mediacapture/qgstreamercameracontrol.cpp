@@ -32,8 +32,9 @@
 **
 ****************************************************************************/
 
-
 #include "qgstreamercameracontrol.h"
+
+#include <QtCore/qdebug.h>
 
 QGstreamerCameraControl::QGstreamerCameraControl(QGstreamerCaptureSession *session)
     :QCameraControl(session), m_session(session)
@@ -67,6 +68,7 @@ void QGstreamerCameraControl::stop()
 
 void QGstreamerCameraControl::setDevice(const QString &device)
 {
+    qDebug() << "QGstreamerCameraControl::setDevice" << device;
     m_device = device.toLocal8Bit().constData();
 }
 

@@ -139,16 +139,12 @@ void QGstreamerAudioInputDeviceControl::updateAlsaDevices()
 void QGstreamerAudioInputDeviceControl::updateOssDevices()
 {
     QDir devDir("/dev");
+    devDir.setFilter(QDir::System);
 
-    QStringList entries = QString("dsp dsp0 dsp1 dsp2 dsp3 dsp4 dsp5 dsp6 dsp7 dsp8 dsp9").split(' ');
-
-    foreach (const QString &entry, entries) {
-        if (devDir.exists(entry)) {
-            QString device = devDir.absoluteFilePath(entry);
-
-            m_names.append(QLatin1String("oss:")+device);
-            m_descriptions.append(QString("OSS device %1").arg(device));
-        }
+    QFileInfoList entries = devDir.entryInfoList(QStringList() << "dsp*");
+    foreach(const QFileInfo& entryInfo, entries) {
+        m_names.append(QLatin1String("oss:")+entryInfo.filePath());
+        m_descriptions.append(QString("OSS device %1").arg(entryInfo.fileName()));
     }
 }
 

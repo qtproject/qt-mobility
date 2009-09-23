@@ -95,9 +95,6 @@ void QGstreamerPlayerSession::load(const QUrl &url)
         emit tagsChanged();
 
         g_object_set(G_OBJECT(m_playbin), "uri", m_url.toString().toLocal8Bit().constData(), NULL);
-
-        if (m_renderer)
-            m_renderer->precessNewStream();
     }
 }
 
@@ -196,8 +193,13 @@ void QGstreamerPlayerSession::pause()
 
 void QGstreamerPlayerSession::stop()
 {
-    if (m_playbin)
+    if (m_playbin) {
         gst_element_set_state(m_playbin, GST_STATE_NULL);
+
+        //we have to do it here, since gstreamer will not emit bus messages any more
+        if (m_state != QMediaPlayer::StoppedState)
+            emit stateChanged(m_state = QMediaPlayer::StoppedState);
+    }
 }
 
 void QGstreamerPlayerSession::seek(qint64 ms)
@@ -299,14 +301,21 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
     } else {
         //tag message comes from elements inside playbin, not from playbin itself
         if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_TAG) {
-            qDebug() << "tag message";
+            //qDebug() << "tag message";
             GstTagList *tag_list;
             gst_message_parse_tag(gm, &tag_list);
             gst_tag_list_foreach(tag_list, addTagToMap, &m_tags);
 
-            qDebug() << m_tags;
+            //qDebug() << m_tags;
 
             emit tagsChanged();
+        }
+
+        if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_ELEMENT &&
+            gst_structure_has_name(gm->structure, "prepare-xwindow-id"))
+        {
+            if (m_renderer)
+                m_renderer->precessNewStream();
         }
 
         if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_playbin)) {
@@ -322,18 +331,31 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
 
                     gst_message_parse_state_changed(gm, &oldState, &newState, &pending);
 
+                    QStringList states;
+                    states << "GST_STATE_VOID_PENDING" <<  "GST_STATE_NULL" << "GST_STATE_READY" << "GST_STATE_PAUSED" << "GST_STATE_PLAYING";
+
+                    qDebug() << QString("state changed: old: %1  new: %2  pending: %3") \
+                            .arg(states[oldState]) \
+                            .arg(states[newState]) \
+                            .arg(states[pending]);
+
                     switch (newState) {
                     case GST_STATE_VOID_PENDING:
                     case GST_STATE_NULL:
                         setMediaStatus(QMediaPlayer::UnknownMediaStatus);
                         setSeekable(false);
+                        if (m_state != QMediaPlayer::StoppedState)
+                            emit stateChanged(m_state = QMediaPlayer::StoppedState);
                         break;
                     case GST_STATE_READY:
                         setMediaStatus(QMediaPlayer::LoadedMedia);
                         setSeekable(false);
+                        if (m_state != QMediaPlayer::StoppedState)
+                            emit stateChanged(m_state = QMediaPlayer::StoppedState);
                         break;
                     case GST_STATE_PAUSED:
-                        if (m_state != QMediaPlayer::PausedState)
+                        //don't emit state changes for intermediate states
+                        if (m_state != QMediaPlayer::PausedState && pending == GST_STATE_VOID_PENDING)
                             emit stateChanged(m_state = QMediaPlayer::PausedState);
 
                         setMediaStatus(QMediaPlayer::LoadedMedia);
@@ -341,17 +363,17 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                         //check for seekable
                         if (oldState == GST_STATE_READY) {
                             /*
-                            //gst_element_seek_simple doesn't work reliably here, have to find a better solution
+                                //gst_element_seek_simple doesn't work reliably here, have to find a better solution
 
-                            GstFormat   format = GST_FORMAT_TIME;
-                            gint64      position = 0;
-                            bool seekable = false;
-                            if (gst_element_query_position(m_playbin, &format, &position)) {
-                                seekable = gst_element_seek_simple(m_playbin, format, GST_SEEK_FLAG_NONE, position);
-                            }
+                                GstFormat   format = GST_FORMAT_TIME;
+                                gint64      position = 0;
+                                bool seekable = false;
+                                if (gst_element_query_position(m_playbin, &format, &position)) {
+                                    seekable = gst_element_seek_simple(m_playbin, format, GST_SEEK_FLAG_NONE, position);
+                                }
 
-                            setSeekable(seekable);
-                            */
+                                setSeekable(seekable);
+                                */
 
                             setSeekable(true);
 
@@ -359,6 +381,7 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                                 setPlaybackRate(m_playbackRate);
 
                         }
+
 
                         break;
                     case GST_STATE_PLAYING:

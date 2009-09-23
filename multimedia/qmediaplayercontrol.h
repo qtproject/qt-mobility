@@ -35,8 +35,8 @@
 #ifndef QMEDIAPLAYERCONTROL_H
 #define QMEDIAPLAYERCONTROL_H
 
-#include "qabstractmediacontrol.h"
-#include "qmediaplayer.h"
+#include <multimedia/qabstractmediacontrol.h>
+#include <multimedia/qmediaplayer.h>
 
 class QMediaPlaylist;
 
@@ -72,7 +72,8 @@ public:
     virtual void setPlaybackRate(float rate) = 0;
 
     virtual QMediaSource media() const = 0;
-    virtual void setMedia(const QMediaSource &media) = 0;
+    virtual const QIODevice *mediaStream() const = 0;
+    virtual void setMedia(const QMediaSource &media, QIODevice *stream) = 0;
 
     virtual void play() = 0;
     virtual void pause() = 0;

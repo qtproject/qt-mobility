@@ -32,24 +32,26 @@
 **
 ****************************************************************************/
 
-#include "qmediarecorder.h"
+#include <multimedia/qmediarecorder.h>
 
-#include "qmediarecordercontrol.h"
-#include "qabstractmediaobject_p.h"
-#include "qmediaserviceprovider.h"
-#include "qabstractmediaservice.h"
-#include "qaudioencodercontrol.h"
-#include "qvideoencodercontrol.h"
-#include "qmediaformatcontrol.h"
+#include <multimedia/qmediarecordercontrol.h>
+#include <multimedia/qabstractmediaobject_p.h>
+#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qmediaserviceprovider.h>
+#include <multimedia/qaudioencodercontrol.h>
+#include <multimedia/qvideoencodercontrol.h>
+#include <multimedia/qmediaformatcontrol.h>
+
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qstringlist.h>
+#include <QtCore/qmetaobject.h>
 
 #ifndef QT_NO_MULTIMEDIA
 #include <QtMultimedia/QAudioFormat>
 #else
-#include "qaudioformat.h"
+#include <multimedia/qaudioformat.h>
 #endif
 
 /*!
@@ -76,8 +78,8 @@ public:
     QAudioEncoderControl *audioControl;
     QVideoEncoderControl *videoControl;
 
-    bool ownService;
 
+    QMediaRecorder::State state;
     QMediaRecorder::Error error;
     QString errorString;
 
@@ -91,7 +93,7 @@ QMediaRecorderPrivate::QMediaRecorderPrivate():
      formatControl(0),
      audioControl(0),
      videoControl(0),
-     ownService(false),
+     state(QMediaRecorder::StoppedState),
      error(QMediaRecorder::NoError)
 {
 }
@@ -117,6 +119,9 @@ void QMediaRecorderPrivate::initControls()
     }
 }
 
+#define ENUM_NAME(c,e,v) (c::staticMetaObject.enumerator(c::staticMetaObject.indexOfEnumerator(e)).valueToKey((v)))
+
+
 void QMediaRecorderPrivate::_q_stateChanged(QMediaRecorder::State ps)
 {
     Q_Q(QMediaRecorder);
@@ -126,7 +131,12 @@ void QMediaRecorderPrivate::_q_stateChanged(QMediaRecorder::State ps)
     else
         q->removePropertyWatch("duration");
 
-    emit q->stateChanged(ps);
+//    qDebug() << "Recorder state changed:" << ENUM_NAME(QMediaRecorder,"State",ps);
+    if (state != ps) {
+        emit q->stateChanged(ps);
+    }
+
+    state = ps;
 }
 
 
@@ -172,10 +182,6 @@ QMediaRecorder::QMediaRecorder(QObject *parent, QMediaServiceProvider *provider)
 
 QMediaRecorder::~QMediaRecorder()
 {
-    Q_D(QMediaRecorder);
-
-    if (d->ownService)
-        delete d->service;
 }
 
 /*!
@@ -358,43 +364,16 @@ void QMediaRecorder::setAudioBitrate(int bitrate)
   Depending on codec, the quality property may affect
   different parameters, like bitrate or presets.
 */
-qreal QMediaRecorder::audioQuality() const
+int QMediaRecorder::audioQuality() const
 {
     return d_func()->audioControl ?
-           d_func()->audioControl->quality() : -1.0;
+           d_func()->audioControl->quality() : -1;
 }
 
-void QMediaRecorder::setAudioQuality(qreal quality)
+void QMediaRecorder::setAudioQuality(int quality)
 {
     if (d_func()->audioControl)
         d_func()->audioControl->setQuality(quality);
-}
-
-/*!
-  Returns the list of codec specific audio encoding options.
-*/
-QStringList QMediaRecorder::supportedAudioEncodingOptions() const
-{
-    return d_func()->audioControl ?
-           d_func()->audioControl->supportedEncodingOptions() : QStringList();
-}
-
-/*!
-  Returns value of audio encoding \a option.
-*/
-QVariant QMediaRecorder::audioEncodingOption(const QString &option) const
-{
-    return d_func()->audioControl ?
-           d_func()->audioControl->encodingOption(option) : QVariant();
-}
-
-/*!
-  Set the codec specific \a option to \a value.
-*/
-void QMediaRecorder::setAudioEncodingOption(const QString &option, const QVariant &value)
-{
-    if (d_func()->audioControl)
-        d_func()->audioControl->setEncodingOption(option, value);
 }
 
 /*!
@@ -569,42 +548,16 @@ void QMediaRecorder::setVideoBitrate(int bitrate)
   Depending on codec, the quality property may affect
   different parameters, like bitrate or presets.
 */
-qreal QMediaRecorder::videoQuality() const
+int QMediaRecorder::videoQuality() const
 {
     return d_func()->videoControl ?
-           d_func()->videoControl->quality() : -1.0;
+           d_func()->videoControl->quality() : -1;
 }
 
-void QMediaRecorder::setVideoQuality(qreal quality)
+void QMediaRecorder::setVideoQuality(int quality)
 {
     if (d_func()->videoControl)
         d_func()->videoControl->setQuality(quality);
-}
-
-/*!
-  Returns the list of codec specific video encoding options.
-*/
-QStringList QMediaRecorder::supportedVideoEncodingOptions() const
-{
-    return d_func()->videoControl ?
-           d_func()->videoControl->supportedEncodingOptions() : QStringList();
-}
-/*!
-  Returns value of audio encoding \a option.
-*/
-QVariant QMediaRecorder::videoEncodingOption(const QString &option) const
-{
-    return d_func()->videoControl ?
-           d_func()->videoControl->encodingOption(option) : QVariant();
-}
-
-/*!
-  Set the codec specific \a option to \a value.
-*/
-void QMediaRecorder::setVideoEncodingOption(const QString &option, const QVariant &value)
-{
-    if (d_func()->videoControl)
-        d_func()->videoControl->setEncodingOption(option, value);
 }
 
 
@@ -711,7 +664,7 @@ void QMediaRecorder::stop()
 */
 
 /*!
-    \fn audioQualityChanged(qreal quality);
+    \fn audioQualityChanged(int quality);
 
     Signal emitted when audio \a quality changed.
 */
@@ -741,7 +694,7 @@ void QMediaRecorder::stop()
 */
 
 /*!
-    \fn videoQualityChanged(qreal quality);
+    \fn videoQualityChanged(int quality);
 
     Signal emitted when video \a quality value is changed.
 */

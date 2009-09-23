@@ -34,7 +34,7 @@
 
 #include <QtTest/QtTest>
 #include <QDebug>
-#include "qmediaplaylist.h"
+#include "multimedia/qmediaplaylist.h"
 
 class tst_QMediaPlaylist : public QObject
 {

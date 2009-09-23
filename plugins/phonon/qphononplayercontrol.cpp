@@ -34,7 +34,7 @@
 
 #include "qphononplayercontrol.h"
 
-#include "qmediaplaylistnavigator.h"
+#include <multimedia/qmediaplaylistnavigator.h>
 
 #include <QtCore/qurl.h>
 #include <QtCore/qdebug.h>
@@ -44,6 +44,7 @@ QPhononPlayerControl::QPhononPlayerControl(Phonon::MediaObject *session, QObject
    , m_session(session)
    , m_state(QMediaPlayer::StoppedState)
    , m_mediaStatus(QMediaPlayer::NoMedia)
+   , m_mediaStream(0)
 {
     m_audioOutput = new Phonon::AudioOutput(Phonon::VideoCategory, this);
     Phonon::createPath(m_session, m_audioOutput);
@@ -175,9 +176,15 @@ QMediaSource QPhononPlayerControl::media() const
     return m_resources;
 }
 
-void QPhononPlayerControl::setMedia(const QMediaSource &source)
+const QIODevice *QPhononPlayerControl::mediaStream() const
+{
+    return m_mediaStream;
+}
+
+void QPhononPlayerControl::setMedia(const QMediaSource &source, QIODevice *stream)
 {
     m_resources = source;
+    m_mediaStream = stream;
 
     QUrl url;
 
@@ -185,7 +192,10 @@ void QPhononPlayerControl::setMedia(const QMediaSource &source)
         url = source.contentUri();
 
     m_session->stop();
-    m_session->setCurrentSource(url);
+    if (m_mediaStream)
+        m_session->setCurrentSource(Phonon::MediaSource(m_mediaStream));
+    else
+        m_session->setCurrentSource(Phonon::MediaSource(url));
 }
 
 bool QPhononPlayerControl::isVideoAvailable() const

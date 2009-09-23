@@ -35,11 +35,12 @@
 #include <QtTest/QtTest>
 #include <QDebug>
 #include <QTimer>
-#include <qabstractmediaobject.h>
-#include <qabstractmediacontrol.h>
-#include <qabstractmediaservice.h>
-#include <qradioplayercontrol.h>
-#include <qradioplayer.h>
+
+#include <multimedia/qabstractmediaobject.h>
+#include <multimedia/qabstractmediacontrol.h>
+#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qradioplayercontrol.h>
+#include <multimedia/qradioplayer.h>
 
 class MockControl : public QRadioPlayerControl
 {

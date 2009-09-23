@@ -82,8 +82,8 @@ QIcon AudioDeviceEndpoint::icon(int index) const
 
 int AudioDeviceEndpoint::defaultDevice() const
 {
-    QAudioDeviceId idx = QAudioDeviceInfo::defaultInputDevice();
-    QList<QAudioDeviceId> devices;
+    QAudioDeviceInfo idx = QAudioDeviceInfo::defaultInputDevice();
+    QList<QAudioDeviceInfo> devices;
     devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
     QString devName = QAudioDeviceInfo(idx).deviceName();
     for(int i=0;i<m_names.count();i++) {
@@ -115,11 +115,11 @@ void AudioDeviceEndpoint::update()
     m_names.clear();
     m_descriptions.clear();
 
-    QList<QAudioDeviceId> devices;
+    QList<QAudioDeviceInfo> devices;
     devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
     for(int i = 0; i < devices.size(); ++i) {
-        m_names.append(QAudioDeviceInfo(devices.at(i)).deviceName());
-        m_descriptions.append(QAudioDeviceInfo(devices.at(i)).deviceName());
+        m_names.append(devices.at(i).deviceName());
+        m_descriptions.append(devices.at(i).deviceName());
     }
     m_device = QAudioDeviceInfo(QAudioDeviceInfo::defaultInputDevice()).deviceName();
 }

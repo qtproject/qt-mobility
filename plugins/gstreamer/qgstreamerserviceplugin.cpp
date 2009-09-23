@@ -44,7 +44,7 @@
 #include "qgstreamercaptureservice.h"
 #endif
 
-#include <qmediaserviceprovider.h>
+#include <multimedia/qmediaserviceprovider.h>
 
 
 QStringList QGstreamerServicePlugin::keys() const
@@ -55,7 +55,7 @@ QStringList QGstreamerServicePlugin::keys() const
             << QLatin1String("gstreamermediaplayer")
 #endif
 #ifdef QMEDIA_GSTREAMER_CAPTURE
-            << QLatin1String("audiorecorder")
+            << QLatin1String("mediarecorder")
             << QLatin1String("camera")
 #endif
             ;

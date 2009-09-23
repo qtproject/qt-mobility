@@ -35,7 +35,7 @@
 #ifndef QAUDIOENCODERCONTROL_H
 #define QAUDIOENCODERCONTROL_H
 
-#include "qabstractmediacontrol.h"
+#include <multimedia/qabstractmediacontrol.h>
 #include <QtCore/qlist.h>
 #include <QtCore/qpair.h>
 
@@ -58,8 +58,8 @@ public:
     virtual int bitrate() const = 0;
     virtual void setBitrate(int) = 0;
 
-    virtual qreal quality() const = 0;
-    virtual void setQuality(qreal) = 0;
+    virtual int quality() const = 0;
+    virtual void setQuality(int) = 0;
 
     virtual QStringList supportedEncodingOptions() const;
     virtual QVariant encodingOption(const QString &name) const;

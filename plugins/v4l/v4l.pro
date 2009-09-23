@@ -17,4 +17,4 @@ HEADERS += v4lserviceplugin.h
 SOURCES += v4lserviceplugin.cpp
 
 include(radio/radio.pri)
-include(camera/camera.pri)
+#include(camera/camera.pri)

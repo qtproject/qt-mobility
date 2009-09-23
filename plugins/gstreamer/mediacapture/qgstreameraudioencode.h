@@ -35,7 +35,7 @@
 #ifndef QGSTREAMERAUDIOENCODE_H
 #define QGSTREAMERAUDIOENCODE_H
 
-#include "qaudioencodercontrol.h"
+#include <multimedia/qaudioencodercontrol.h>
 class QGstreamerCaptureSession;
 
 #include <QtCore/qstringlist.h>
@@ -46,7 +46,7 @@ class QGstreamerCaptureSession;
 #ifndef QT_NO_MULTIMEDIA
 #include <QtMultimedia/qaudioformat.h>
 #else
-#include <qaudioformat.h>
+#include <multimedia/qaudioformat.h>
 #endif
 
 class QGstreamerAudioEncode : public QAudioEncoderControl
@@ -64,8 +64,8 @@ public:
     int bitrate() const;
     void setBitrate(int);
 
-    qreal quality() const;
-    void setQuality(qreal);
+    int quality() const;
+    void setQuality(int);
 
     QStringList supportedEncodingOptions() const;
     QVariant encodingOption(const QString &name) const;

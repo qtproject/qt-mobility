@@ -36,7 +36,7 @@
 #ifndef QMEDIAFORMATCONTROL_H
 #define QMEDIAFORMATCONTROL_H
 
-#include "qabstractmediacontrol.h"
+#include <multimedia/qabstractmediacontrol.h>
 
 class Q_MEDIA_EXPORT QMediaFormatControl : public QAbstractMediaControl
 {
@@ -49,9 +49,6 @@ public:
     virtual void setFormat(const QString &formatMimeType) = 0;
 
     virtual QString formatDescription(const QString &formatMimeType) const = 0;
-
-signals:
-    void formatChanged(const QString &formatMimeType);
 
 protected:
     QMediaFormatControl(QObject *parent);

@@ -36,7 +36,7 @@
 #include <QtCore/qdebug.h>
 
 #include "v4lserviceplugin.h"
-#include "v4lcameraservice.h"
+//#include "v4lcameraservice.h"
 #include "v4lradioservice.h"
 
 #include <qradioplayercontrol.h>

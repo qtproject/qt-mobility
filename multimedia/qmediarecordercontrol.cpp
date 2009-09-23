@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include "qmediarecordercontrol.h"
+#include <multimedia/qmediarecordercontrol.h>
 
 
 /*!

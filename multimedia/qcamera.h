@@ -39,11 +39,11 @@
 #include <QtCore/qpair.h>
 #include <QtCore/qsize.h>
 
-#include "qabstractmediacontrol.h"
-#include "qabstractmediaobject.h"
-#include "qabstractmediaservice.h"
+#include <multimedia/qabstractmediacontrol.h>
+#include <multimedia/qabstractmediaobject.h>
+#include <multimedia/qabstractmediaservice.h>
 
-#include "qmediaserviceprovider.h"
+#include <multimedia/qmediaserviceprovider.h>
 
 class QCameraService;
 class QCameraControl;
@@ -130,9 +130,9 @@ public:
     QCamera(QObject *parent = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
     ~QCamera();
 
-    QList<QString> deviceList();
+    QStringList devices() const;
+    QString deviceDescription(const QString &device) const;
     void setDevice(const QString& device);
-    QString deviceDescription(const QString &device);
 
     bool isValid() const;
 

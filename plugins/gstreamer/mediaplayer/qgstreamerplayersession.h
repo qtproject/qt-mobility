@@ -38,7 +38,7 @@
 #include <QObject>
 #include <QUrl>
 #include "qgstreamerplayercontrol.h"
-#include "qmediaplayer.h"
+#include <multimedia/qmediaplayer.h>
 
 #include <gst/gst.h>
 

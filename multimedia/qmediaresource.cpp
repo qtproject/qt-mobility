@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include "qmediaresource.h"
+#include <multimedia/qmediaresource.h>
 
 #include <QtCore/qsize.h>
 #include <QtCore/qurl.h>

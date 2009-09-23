@@ -1,7 +1,7 @@
 #ifndef AUDIOENCODECONTROL_H
 #define AUDIOENCODECONTROL_H
 
-#include "qaudioencodecontrol.h"
+#include "qaudioencodercontrol.h"
 
 #include <QtCore/qstringlist.h>
 #include <QtCore/qmap.h>
@@ -10,31 +10,41 @@
 
 class AudioCaptureSession;
 
-class AudioEncodeControl : public QAudioEncodeControl
+class AudioEncodeControl : public QAudioEncoderControl
 {
     Q_OBJECT
 public:
     AudioEncodeControl(QObject *parent);
     virtual ~AudioEncodeControl();
 
-    QAudioFormat format() const;
-    bool isFormatSupported(const QAudioFormat &format) const;
-    bool setFormat(const QAudioFormat &format);
-
     QStringList supportedAudioCodecs() const;
-    QString codecDescription(const QString &codecName) const;
-    bool setAudioCodec(const QString &codecName);
     QString audioCodec() const;
+    bool setAudioCodec(const QString &codecName);
+
+    QString codecDescription(const QString &codecName) const;
 
     int bitrate() const;
     void setBitrate(int);
 
-    qreal quality() const;
-    void setQuality(qreal);
+    int quality() const;
+    void setQuality(int);
 
-    QStringList supportedEncodingOptions();
-    QVariant encodingOption(const QString &name);
+    QStringList supportedEncodingOptions() const;
+    QVariant encodingOption(const QString &name) const;
     void setEncodingOption(const QString &name, const QVariant &value);
+
+    int frequency() const;
+    void setFrequency(int frequency);
+    QList<int> supportedFrequencies() const;
+    QPair<int,int> supportedFrequencyRange() const;
+
+    int channels() const;
+    void setChannels(int channels);
+    QList<int> supportedChannelCounts() const;
+
+    int sampleSize() const;
+    void setSampleSize(int sampleSize);
+    QList<int> supportedSampleSizes() const;
 
 private:
     AudioCaptureSession* m_session;

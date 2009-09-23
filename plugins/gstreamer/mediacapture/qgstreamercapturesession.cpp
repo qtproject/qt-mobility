@@ -38,7 +38,7 @@
 #include "qgstreameraudioencode.h"
 #include "qgstreamervideoencode.h"
 #include "qgstreamerbushelper.h"
-#include "qmediarecorder.h"
+#include <multimedia/qmediarecorder.h>
 
 #include <gst/gsttagsetter.h>
 
@@ -46,6 +46,7 @@
 #include <QUrl>
 #include <QSet>
 #include <QCoreApplication>
+#include <QtCore/qmetaobject.h>
 
 #define gstRef(element) { gst_object_ref(GST_OBJECT(element)); gst_object_sink(GST_OBJECT(element)); }
 #define gstUnref(element) { if (element) { gst_object_unref(GST_OBJECT(element)); element = 0; } }
@@ -53,6 +54,7 @@
 QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::CaptureMode captureMode, QObject *parent)
     :QObject(parent),
      m_state(StoppedState),
+     m_pendingState(StoppedState),
      m_pipelineMode(EmptyPipeline),
      m_captureMode(captureMode),
      m_previewEnabled(false),
@@ -92,15 +94,19 @@ QGstreamerCaptureSession::~QGstreamerCaptureSession()
 
 GstElement *QGstreamerCaptureSession::buildEncodeBin()
 {
+    bool ok = true;
+
     GstElement *encodeBin = gst_bin_new("encode-bin");
 
     GstElement *muxer = gst_element_factory_make( m_mediaFormatControl->formatElementName().constData(), "muxer");
     GstElement *fileSink = gst_element_factory_make("filesink", "filesink");
 
+    ok &= muxer != 0;
+
     g_object_set(G_OBJECT(fileSink), "location", m_sink.toString().toLocal8Bit().constData(), NULL);
 
     gst_bin_add_many(GST_BIN(encodeBin), muxer, fileSink,  NULL);
-    gst_element_link(muxer, fileSink);
+    ok &= gst_element_link(muxer, fileSink);
 
     if (m_captureMode & Audio) {
         GstElement *audioConvert = gst_element_factory_make("audioconvert", "audioconvert");
@@ -108,9 +114,11 @@ GstElement *QGstreamerCaptureSession::buildEncodeBin()
         GstElement *volume = gst_element_factory_make("volume", "volume");
         GstElement *audioEncoder = m_audioEncodeControl->createEncoder();
 
+        ok &= audioEncoder != 0;
+
         gst_bin_add_many(GST_BIN(encodeBin), audioConvert, audioQueue, volume, audioEncoder,  NULL);
 
-        gst_element_link_many(audioConvert, audioQueue, volume, audioEncoder, muxer, NULL);
+        ok &= gst_element_link_many(audioConvert, audioQueue, volume, audioEncoder, muxer, NULL);
         //g_object_set(G_OBJECT(volume), "volume", 10.0, NULL);
 
         // add ghostpads
@@ -127,14 +135,21 @@ GstElement *QGstreamerCaptureSession::buildEncodeBin()
 
         GstElement *videoEncoder = m_videoEncodeControl->createEncoder();
 
+        ok &= videoEncoder != 0;
+
         gst_bin_add_many(GST_BIN(encodeBin), videoQueue, colorspace, videoscale, videoEncoder, NULL);
-        gst_element_link_many(videoQueue, colorspace, videoscale, videoEncoder, muxer, NULL);
+        ok &= gst_element_link_many(videoQueue, colorspace, videoscale, videoEncoder, muxer, NULL);
 
         // add ghostpads
         GstPad *pad = gst_element_get_static_pad(videoQueue, "sink");
         Q_ASSERT(pad);
         gst_element_add_pad(GST_ELEMENT(encodeBin), gst_ghost_pad_new("videosink", pad));
         gst_object_unref(GST_OBJECT(pad));
+    }
+
+    if (!ok) {
+        gst_object_unref(encodeBin);
+        encodeBin = 0;
     }
 
     return encodeBin;
@@ -245,7 +260,7 @@ GstElement *QGstreamerCaptureSession::buildVideoPreview()
 
 #define REMOVE_ELEMENT(element) { if (element) {gst_bin_remove(GST_BIN(m_pipeline), element); element = 0;} }
 
-void QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMode newMode)
+bool QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMode newMode)
 {
     REMOVE_ELEMENT(m_audioSrc);
     REMOVE_ELEMENT(m_audioPreview);
@@ -266,6 +281,10 @@ void QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
             if (m_captureMode & Audio) {
                 m_audioSrc = buildAudioSrc();
                 m_audioPreview = buildAudioPreview();
+
+                ok &= m_audioSrc != 0;
+                ok &= m_audioPreview != 0;
+
                 if (m_audioSrc && m_audioPreview) {
                     gst_bin_add_many(GST_BIN(m_pipeline), m_audioSrc, m_audioPreview, NULL);
                     ok &= gst_element_link(m_audioSrc, m_audioPreview);
@@ -274,6 +293,10 @@ void QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
             if (m_captureMode & Video) {
                 m_videoSrc = buildVideoSrc();
                 m_videoPreview = buildVideoPreview();
+
+                ok &= m_videoSrc != 0;
+                ok &= m_videoPreview != 0;
+
                 if (m_videoSrc && m_videoPreview) {
                     gst_bin_add_many(GST_BIN(m_pipeline), m_videoSrc, m_videoPreview, NULL);
                     ok &= gst_element_link(m_videoSrc, m_videoPreview);
@@ -286,23 +309,29 @@ void QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
 
             if (m_captureMode & Audio) {
                 m_audioSrc = buildAudioSrc();
+                ok &= m_audioSrc != 0;
+
                 gst_bin_add(GST_BIN(m_pipeline), m_audioSrc);
                 ok &= gst_element_link(m_audioSrc, m_encodeBin);
             }
 
             if (m_captureMode & Video) {
                 m_videoSrc = buildVideoSrc();
+                ok &= m_videoSrc != 0;
+
                 gst_bin_add(GST_BIN(m_pipeline), m_videoSrc);
                 ok &= gst_element_link(m_videoSrc, m_encodeBin);
             }
 
-            if (!m_metadata.isEmpty())
-                setMetadata(m_metadata);
+            if (!m_metaData.isEmpty())
+                setMetaData(m_metaData);
 
             break;
         case PreviewAndRecordingPipeline:
             m_encodeBin = buildEncodeBin();
             gst_bin_add(GST_BIN(m_pipeline), m_encodeBin);
+
+            ok &= m_encodeBin != 0;
 
             if (m_captureMode & Audio) {
                 m_audioSrc = buildAudioSrc();
@@ -330,8 +359,8 @@ void QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
                 ok &= gst_element_link(m_videoTee, m_encodeBin);
             }
 
-            if (!m_metadata.isEmpty())
-                setMetadata(m_metadata);
+            if (!m_metaData.isEmpty())
+                setMetaData(m_metaData);
 
 
             break;
@@ -347,7 +376,23 @@ void QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
         _gst_debug_bin_to_dot_file(GST_BIN(m_encodeBin), GST_DEBUG_GRAPH_SHOW_ALL, fileName.toAscii());
     }
 
-    m_pipelineMode = newMode;
+    if (ok) {
+        m_pipelineMode = newMode;
+    } else {
+        m_pipelineMode = EmptyPipeline;
+
+        REMOVE_ELEMENT(m_audioSrc);
+        REMOVE_ELEMENT(m_audioPreview);
+        REMOVE_ELEMENT(m_audioPreviewQueue);
+        REMOVE_ELEMENT(m_audioTee);
+        REMOVE_ELEMENT(m_videoSrc);
+        REMOVE_ELEMENT(m_videoPreview);
+        REMOVE_ELEMENT(m_videoPreviewQueue);
+        REMOVE_ELEMENT(m_videoTee);
+        REMOVE_ELEMENT(m_encodeBin);
+    }
+
+    return ok;
 }
 
 void QGstreamerCaptureSession::dumpGraph(const QString &fileName)
@@ -406,8 +451,10 @@ void QGstreamerCaptureSession::waitForStopped()
 
 void QGstreamerCaptureSession::setState(QGstreamerCaptureSession::State newState)
 {
-    if (newState == m_state)
+    if (newState == m_pendingState)
         return;
+
+    m_pendingState = newState;
 
     PipelineMode newMode = EmptyPipeline;
 
@@ -430,7 +477,13 @@ void QGstreamerCaptureSession::setState(QGstreamerCaptureSession::State newState
         //It would be better to do this async. but
         //gstreamer doesn't notify about pipeline went to NULL state
         waitForStopped();
-        rebuildGraph(newMode);
+        if (!rebuildGraph(newMode)) {
+            m_pendingState = StoppedState;
+            m_state = StoppedState;
+            emit stateChanged(StoppedState);
+
+            return;
+        }
     }
 
     switch (newState) {
@@ -444,7 +497,12 @@ void QGstreamerCaptureSession::setState(QGstreamerCaptureSession::State newState
         case StoppedState:
             gst_element_set_state(m_pipeline, GST_STATE_NULL);
     }
-    m_state = newState;
+
+    //we have to do it here, since gstreamer will not emit bus messages any more
+    if (newState == StoppedState) {
+        m_state = StoppedState;
+        emit stateChanged(StoppedState);
+    }
 }
 
 
@@ -476,10 +534,10 @@ void QGstreamerCaptureSession::enablePreview(bool enabled)
     }
 }
 
-void QGstreamerCaptureSession::setMetadata(const QMap<QByteArray, QVariant> &data)
+void QGstreamerCaptureSession::setMetaData(const QMap<QByteArray, QVariant> &data)
 {
-    //qDebug() << "QGstreamerCaptureSession::setMetadata" << data;
-    m_metadata = data;
+    //qDebug() << "QGstreamerCaptureSession::setMetaData" << data;
+    m_metaData = data;
 
     if (m_encodeBin) {
         GstIterator *elements = gst_bin_iterate_all_by_interface(GST_BIN(m_encodeBin), GST_TYPE_TAG_SETTER);
@@ -550,7 +608,7 @@ void QGstreamerCaptureSession::busMessage(const QGstreamerMessage &message)
                 m_videoPreviewFactory->prepareWinId();
         }
 
-        if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_encodeBin)) {
+        if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_pipeline)) {
             switch (GST_MESSAGE_TYPE(gm))  {
             case GST_MESSAGE_DURATION:
                 break;
@@ -564,29 +622,46 @@ void QGstreamerCaptureSession::busMessage(const QGstreamerMessage &message)
 
                     gst_message_parse_state_changed(gm, &oldState, &newState, &pending);
 
+                    QStringList states;
+                    states << "GST_STATE_VOID_PENDING" <<  "GST_STATE_NULL" << "GST_STATE_READY" << "GST_STATE_PAUSED" << "GST_STATE_PLAYING";
+
+                    /*
+                    qDebug() << QString("state changed: old: %1  new: %2  pending: %3") \
+                            .arg(states[oldState]) \
+                           .arg(states[newState]) \
+                            .arg(states[pending]);
+
+                    #define ENUM_NAME(c,e,v) (c::staticMetaObject.enumerator(c::staticMetaObject.indexOfEnumerator(e)).valueToKey((v)))
+
+                    qDebug() << "Current session state:" << ENUM_NAME(QGstreamerCaptureSession,"State",m_state);
+                    qDebug() << "Pending session state:" << ENUM_NAME(QGstreamerCaptureSession,"State",m_pendingState);
+                    */
+
                     switch (newState) {
                     case GST_STATE_VOID_PENDING:
                     case GST_STATE_NULL:
                     case GST_STATE_READY:
-                        if (m_state != StoppedState) {
+                        if (m_state != StoppedState && m_pendingState == StoppedState) {
                             emit stateChanged(m_state = StoppedState);
                             dumpGraph("stopped");
                         }
                         break;
                     case GST_STATE_PAUSED:
-                        if (m_state != PausedState)
+                        if (m_state != PausedState && m_pendingState == PausedState)
                             emit stateChanged(m_state = PausedState);
                         dumpGraph("paused");
 
-                        if (m_pipelineMode == RecordingPipeline && !m_metadata.isEmpty())
-                            setMetadata(m_metadata);
+                        if (m_pipelineMode == RecordingPipeline && !m_metaData.isEmpty())
+                            setMetaData(m_metaData);
                         break;
                     case GST_STATE_PLAYING:
                         {
-                            State newState = m_pipelineMode == PreviewPipeline ? PreviewState : RecordingState;
-
-                            if (m_state != newState)
-                                emit stateChanged(m_state = newState);
+                            if ((m_pendingState == PreviewState || m_pendingState == RecordingState) &&
+                                m_state != m_pendingState)
+                            {
+                                m_state = m_pendingState;
+                                emit stateChanged(m_state);
+                            }
 
                             if (m_pipelineMode == PreviewPipeline)
                                 dumpGraph("preview");
@@ -600,6 +675,7 @@ void QGstreamerCaptureSession::busMessage(const QGstreamerMessage &message)
             default:
                 break;
             }
+            //qDebug() << "New session state:" << ENUM_NAME(QGstreamerCaptureSession,"State",m_state);
         }
     }
 }

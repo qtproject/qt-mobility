@@ -43,7 +43,6 @@
 #include <qmediaformatcontrol.h>
 #include <qcamera.h>
 #include <qvideowidget.h>
-#include <qmediametadata.h>
 
 #ifndef QT_NO_MULTIMEDIA
 #include <QtMultimedia/qaudioformat.h>
@@ -63,11 +62,7 @@ CameraCapture::CameraCapture(QWidget *parent) :
     ui->setupUi(this);
 
     camera = new QCamera;
-
-    if(camera->isValid())
-        mediaRecorder = new QMediaRecorder(camera);
-    else
-        mediaRecorder = new QMediaRecorder();
+    mediaRecorder = new QMediaRecorder(camera);
 
     mediaRecorder->setSink(QUrl("test.mkv"));
     audioDevice = mediaRecorder->service()->control<QAudioDeviceControl*>();
@@ -123,8 +118,12 @@ CameraCapture::CameraCapture(QWidget *parent) :
             ui->containerFormatBox->setCurrentIndex(ui->containerFormatBox->count()-1);
     }
 
-    metadata = new QMediaMetadata(camera);
-    metadata->setMetadata(QMediaMetadata::Title, QVariant(QLatin1String("Test Title")));
+    //camera devices
+    foreach(const QString deviceName, camera->devices()) {
+        ui->cameraDeviceBox->addItem(deviceName+" "+camera->deviceDescription(deviceName), QVariant(deviceName));
+    }
+
+    camera->setMetaData(QAbstractMediaObject::Title, QVariant(QLatin1String("Test Title")));
 
     QWidget *videoWidget = new QVideoWidget(mediaRecorder);
     videoWidget->resize(640,480);
@@ -148,7 +147,7 @@ void CameraCapture::setAudioInputDevice(int idx)
 
 void CameraCapture::setCameraDevice(int idx)
 {
-    Q_UNUSED(idx);
+    camera->setDevice(ui->cameraDeviceBox->itemData(idx).toString());
 }
 
 void CameraCapture::setAudioCodec(int idx)

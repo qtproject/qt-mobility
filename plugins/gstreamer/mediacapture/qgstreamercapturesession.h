@@ -35,8 +35,8 @@
 #ifndef QGSTREAMERCAPTURESESSION_H
 #define QGSTREAMERCAPTURESESSION_H
 
-#include "qmediarecordercontrol.h"
-#include "qmediarecorder.h"
+#include <multimedia/qmediarecordercontrol.h>
+#include <multimedia/qmediarecorder.h>
 
 #include <QtCore/qurl.h>
 
@@ -60,6 +60,8 @@ class QGstreamerCaptureSession : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
+    Q_ENUMS(State)
+    Q_ENUMS(CaptureMode)
 public:
     enum CaptureMode { Audio = 1, Video = 2, AudioAndVideo = Audio | Video };
     enum State { StoppedState, PreviewState, PausedState, RecordingState };
@@ -98,7 +100,7 @@ public slots:
     void dumpGraph(const QString &fileName);
     void enablePreview(bool enabled);
 
-    void setMetadata(const QMap<QByteArray, QVariant>&);
+    void setMetaData(const QMap<QByteArray, QVariant>&);
 
 private slots:
     void busMessage(const QGstreamerMessage &message);
@@ -113,15 +115,16 @@ private:
     GstElement *buildVideoPreview();
 
     void waitForStopped();
-    void rebuildGraph(QGstreamerCaptureSession::PipelineMode newMode);
+    bool rebuildGraph(QGstreamerCaptureSession::PipelineMode newMode);
 
     QUrl m_sink;
     QString m_captureDevice;
     State m_state;
+    State m_pendingState;
     PipelineMode m_pipelineMode;
     QGstreamerCaptureSession::CaptureMode m_captureMode;
     bool m_previewEnabled;
-    QMap<QByteArray, QVariant> m_metadata;
+    QMap<QByteArray, QVariant> m_metaData;
 
     QGstreamerElementFactory *m_audioInputFactory;
     QGstreamerElementFactory *m_audioPreviewFactory;

@@ -43,7 +43,6 @@
 
 class QLabel;
 class QMediaPlayer;
-class QMediaMetadata;
 class QModelIndex;
 class QSlider;
 class QTableView;
@@ -65,7 +64,7 @@ private slots:
     void open();
     void durationChanged(qint64 duration);
     void positionChanged(qint64 progress);
-    void metadataChanged();
+    void metaDataChanged();
 
     void seek(int seconds);
     void jump(const QModelIndex &index);
@@ -85,7 +84,6 @@ private:
 
     QMediaPlayer *player;
     QMediaPlaylist *playlist;
-    QMediaMetadata *metaData;
     QVideoWidget *videoWidget;
     QLabel *coverLabel;
     QSlider *slider;

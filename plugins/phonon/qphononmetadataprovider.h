@@ -35,35 +35,34 @@
 #ifndef QGSTREAMERMETADATAPROVIDER_H
 #define QGSTREAMERMETADATAPROVIDER_H
 
-#include "qmetadataprovidercontrol.h"
+#include <multimedia/qmetadataprovidercontrol.h>
 
 #include <Phonon/MediaObject>
 
 class QPhononPlayerSession;
 
-class QPhononMetadataProvider : public QMetadataProviderControl
+class QPhononMetaDataProvider : public QMetaDataProviderControl
 {
     Q_OBJECT
 public:
-    QPhononMetadataProvider( Phonon::MediaObject *session, QObject *parent );
-    virtual ~QPhononMetadataProvider();
+    QPhononMetaDataProvider( Phonon::MediaObject *session, QObject *parent );
+    virtual ~QPhononMetaDataProvider();
 
-    bool metadataAvailable() const;
-    bool isReadOnly() const;
-    void setReadOnly(bool readonly);
+    bool isMetaDataAvailable() const;
+    bool isWritable() const;
 
-    QVariant metadata(QMediaMetadata::Key key) const;
-    void setMetadata(QMediaMetadata::Key key, const QVariant &value);
+    QVariant metaData(QAbstractMediaObject::MetaData key) const;
+    void setMetaData(QAbstractMediaObject::MetaData key, const QVariant &value);
 
-    QVariant extendedMetadata(const QString &key) const;
-    void setExtendedMetadata(const QString &key, const QVariant &value);
+    QVariant extendedMetaData(const QString &key) const;
+    void setExtendedMetaData(const QString &key, const QVariant &value);
 
 private slots:
     void updateTags();
 
 private:
     Phonon::MediaObject *m_session;
-    bool m_metadataAvailable;
+    bool m_metaDataAvailable;
 };
 
 #endif // QGSTREAMERMETADATAPROVIDER_H

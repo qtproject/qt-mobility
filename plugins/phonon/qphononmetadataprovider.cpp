@@ -38,75 +38,70 @@
 
 #include <QDebug>
 
-QPhononMetadataProvider::QPhononMetadataProvider(Phonon::MediaObject *session, QObject *parent)
-    :QMetadataProviderControl(parent), m_session(session), m_metadataAvailable(false)
+QPhononMetaDataProvider::QPhononMetaDataProvider(Phonon::MediaObject *session, QObject *parent)
+    :QMetaDataProviderControl(parent), m_session(session), m_metaDataAvailable(false)
 {
     connect(m_session, SIGNAL(metaDataChanged()), SLOT(updateTags()));
 }
 
-QPhononMetadataProvider::~QPhononMetadataProvider()
+QPhononMetaDataProvider::~QPhononMetaDataProvider()
 {
 }
 
-bool QPhononMetadataProvider::metadataAvailable() const
+bool QPhononMetaDataProvider::isMetaDataAvailable() const
 {
     return !m_session->metaData().isEmpty();
 }
 
-bool QPhononMetadataProvider::isReadOnly() const
+bool QPhononMetaDataProvider::isWritable() const
 {
-    return true;
+    return false;
 }
 
-void QPhononMetadataProvider::setReadOnly(bool readonly)
-{
-    Q_UNUSED(readonly);
-}
-
-QVariant QPhononMetadataProvider::metadata(QMediaMetadata::Key key) const
+QVariant QPhononMetaDataProvider::metaData(QAbstractMediaObject::MetaData key) const
 {
     switch (key) {
-    case QMediaMetadata::ContributingArtist:
+    case QAbstractMediaObject::ContributingArtist:
         return m_session->metaData(Phonon::ArtistMetaData);
-    case QMediaMetadata::AlbumTitle:
+    case QAbstractMediaObject::AlbumTitle:
         return m_session->metaData(Phonon::AlbumMetaData);
-    case QMediaMetadata::Title:
+    case QAbstractMediaObject::Title:
         return m_session->metaData(Phonon::TitleMetaData);
-    case QMediaMetadata::Date:
+    case QAbstractMediaObject::Date:
         return m_session->metaData(Phonon::DateMetaData);
-    case QMediaMetadata::TrackNumber:
+    case QAbstractMediaObject::TrackNumber:
         return m_session->metaData(Phonon::TracknumberMetaData);
-    case QMediaMetadata::Description:
+    case QAbstractMediaObject::Description:
         return m_session->metaData(Phonon::DescriptionMetaData);
     default:
         return QVariant();
     }
 }
 
-void QPhononMetadataProvider::setMetadata(QMediaMetadata::Key key, QVariant const &value)
+void QPhononMetaDataProvider::setMetaData(QAbstractMediaObject::MetaData key, QVariant const &value)
 {
     Q_UNUSED(key);
     Q_UNUSED(value);
 }
 
-QVariant QPhononMetadataProvider::extendedMetadata(const QString &key) const
+QVariant QPhononMetaDataProvider::extendedMetaData(const QString &key) const
 {
     Q_UNUSED(key);
 
     return QVariant();
 }
 
-void QPhononMetadataProvider::setExtendedMetadata(const QString &key, QVariant const &value)
+void QPhononMetaDataProvider::setExtendedMetaData(const QString &key, QVariant const &value)
 {
     Q_UNUSED(key);
     Q_UNUSED(value);
 }
 
-void QPhononMetadataProvider::updateTags()
+void QPhononMetaDataProvider::updateTags()
 {
-    emit metadataChanged();
-    if (metadataAvailable() != m_metadataAvailable) {
-        m_metadataAvailable = !m_metadataAvailable;
-        emit metadataAvailabilityChanged(m_metadataAvailable);
+    emit metaDataChanged();
+    if (isMetaDataAvailable() != m_metaDataAvailable) {
+        m_metaDataAvailable = !m_metaDataAvailable;
+        emit metaDataAvailableChanged(m_metaDataAvailable);
     }
 }

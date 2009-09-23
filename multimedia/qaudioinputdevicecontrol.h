@@ -35,7 +35,7 @@
 #ifndef QAUDIOINPUTDEVICECONTROL_H
 #define QAUDIOINPUTDEVICECONTROL_H
 
-#include <qabstractmediacontrol.h>
+#include <multimedia/qabstractmediacontrol.h>
 
 class Q_MEDIA_EXPORT QAudioInputDeviceControl : public QAbstractMediaControl
 {

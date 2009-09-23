@@ -42,21 +42,21 @@
 
 class QWmpEvents;
 
-class QWmpMetaData : public QMetadataProviderControl
+class QWmpMetaData : public QMetaDataProviderControl
 {
     Q_OBJECT
 public:
     QWmpMetaData(IWMPCore3 *player, QWmpEvents *events, QObject *parent = 0);
     ~QWmpMetaData();
 
-    bool metadataAvailable() const;
-    bool isReadOnly() const;
+    bool isMetaDataAvailable() const;
+    bool isWritable() const;
 
-    QVariant metadata(QMediaMetadata::Key key) const;
-    void setMetadata(QMediaMetadata::Key key, const QVariant &value);
+    QVariant metaData(QAbstractMediaObject::MetaData key) const;
+    void setMetaData(QAbstractMediaObject::MetaData key, const QVariant &value);
 
-    QVariant extendedMetadata(const QString &key) const ;
-    void setExtendedMetadata(const QString &key, const QVariant &value);
+    QVariant extendedMetaData(const QString &key) const ;
+    void setExtendedMetaData(const QString &key, const QVariant &value);
 
     static QStringList keys(IWMPMedia *media);
     static QVariant value(IWMPMedia *media, BSTR key);

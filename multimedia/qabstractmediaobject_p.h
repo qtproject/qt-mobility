@@ -50,21 +50,24 @@
 #include <QtCore/qlist.h>
 #include <QtCore/qtimer.h>
 
-#include "qabstractmediaobject.h"
+#include <multimedia/qabstractmediaobject.h>
+
+class QMetaDataProviderControl;
 
 class QAbstractMediaObjectPrivate
 {
     Q_DECLARE_PUBLIC(QAbstractMediaObject)
 
 public:
-    QAbstractMediaObjectPrivate() {}
+    QAbstractMediaObjectPrivate():metaDataControl(0), notifyTimer(0) {}
 
     void _q_notify();
 
+    QAbstractMediaService *service;
+    QMetaDataProviderControl *metaDataControl;
     QTimer* notifyTimer;
     QList<QByteArray>   notifyProperties;
 
-    QAbstractMediaService *service;
     QAbstractMediaObject *q_ptr;
 };
 

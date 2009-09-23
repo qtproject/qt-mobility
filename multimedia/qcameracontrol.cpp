@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include "qcameracontrol.h"
+#include <multimedia/qcameracontrol.h>
 #include  "qabstractmediacontrol_p.h"
 
 /*!
@@ -81,13 +81,6 @@ QCameraControl::~QCameraControl()
 
     \sa QCamera::state
 */
-
-/*!
-    \fn QCameraControl::setDevice(const QString& device)
-
-    Set the camera device being used to \a device.
-*/
-
 
 /*!
     \fn void QCameraControl::stateChanged(QCamera::State state)

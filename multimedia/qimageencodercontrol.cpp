@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include "qimageencodercontrol.h"
+#include <multimedia/qimageencodercontrol.h>
 #include <QtCore/qstringlist.h>
 
 /*!

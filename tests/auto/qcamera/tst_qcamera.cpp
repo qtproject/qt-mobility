@@ -34,11 +34,12 @@
 
 #include <QtTest/QtTest>
 #include <QDebug>
-#include <qcameracontrol.h>
-#include <qcameraexposurecontrol.h>
-#include <qcamerafocuscontrol.h>
-#include <qabstractmediaservice.h>
-#include <qcamera.h>
+
+#include <multimedia/qcameracontrol.h>
+#include <multimedia/qcameraexposurecontrol.h>
+#include <multimedia/qcamerafocuscontrol.h>
+#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qcamera.h>
 
 
 class MockCameraControl : public QCameraControl
@@ -53,14 +54,11 @@ public:
 
     ~MockCameraControl() {}
 
-    void setDevice(const QString& device) { m_device = device; }
-
     void start() { m_state = QCamera::ActiveState; };
     virtual void stop() { m_state = QCamera::StoppedState; }
     QCamera::State state() const { return m_state; }
 
     QCamera::State m_state;
-    QString m_device;
 };
 
 class MockCameraExposureControl : public QCameraExposureControl
