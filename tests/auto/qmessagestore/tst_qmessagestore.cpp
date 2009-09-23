@@ -423,6 +423,7 @@ void tst_QMessageStore::testMessage()
     
     QMessage message(messageId);
     QCOMPARE(message.id(), messageId);
+    QCOMPARE(message.isModified(), false);
 
 #if !defined(Q_OS_WIN)
     // Addresses are currently in the wrong format using MAPI
