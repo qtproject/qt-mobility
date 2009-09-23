@@ -429,7 +429,7 @@ bool QMessageStore::addMessage(QMessage *message)
                     mapiFolder = mapiStore->findFolder(lError, message->standardFolder());
 
                 if(*lError == QMessageStore::NoError && !mapiFolder.isNull()) {
-                    IMessage* mapiMessage = mapiFolder->createMessage(*message,session,lError);
+                    IMessage* mapiMessage = mapiFolder->createMessage(*message,session,lError,MapiFolder::DoNothing);
                     if (*lError == QMessageStore::NoError && mapiMessage) {
 
                         if (FAILED(mapiMessage->SaveChanges(0))) {
@@ -449,6 +449,8 @@ bool QMessageStore::addMessage(QMessage *message)
                             MapiRecordKey recordKey(properties[0].Value.bin.lpb, properties[0].Value.bin.cb);
                             MapiEntryId entryId(properties[1].Value.bin.lpb, properties[1].Value.bin.cb);
                             message->d_ptr->_id = QMessageIdPrivate::from(recordKey, mapiFolder->recordKey(), mapiFolder->storeKey(), entryId);
+                            message->d_ptr->_modified = false;
+
                             MAPIFreeBuffer(properties);
                         }
                         else

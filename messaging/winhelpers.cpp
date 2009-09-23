@@ -1445,7 +1445,6 @@ MapiFolderPtr MapiStore::findFolder(QMessageStore::ErrorCode *lastError, QMessag
 
     if(!commonFolderSupported)
     {
-        qWarning() << "Common folder unsupported on this MAPI store";
         return result;
     }
 
@@ -2137,6 +2136,8 @@ QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessag
     result.d_ptr->_elementsPresent.body = 0;
     result.d_ptr->_elementsPresent.attachments = 0;
 
+    result.d_ptr->_modified = false;
+
     return result;
 }
 
@@ -2145,6 +2146,7 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
     bool result(false);
 
     if (!msg->d_ptr->_elementsPresent.properties) {
+        bool isModified(msg->d_ptr->_modified);
         msg->d_ptr->_elementsPresent.properties = 1;
 
         IMessage *message = openMapiMessage(lastError, msg->id());
@@ -2242,6 +2244,9 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                     QMessagePrivate::setSenderName(*msg, senderName);
                 }
 
+                if (!isModified) {
+                    msg->d_ptr->_modified = false;
+                }
                 result = true;
 
                 MAPIFreeBuffer(properties);
@@ -2261,6 +2266,7 @@ bool MapiSession::updateMessageRecipients(QMessageStore::ErrorCode *lastError, Q
     bool result(false);
 
     if (!msg->d_ptr->_elementsPresent.recipients) {
+        bool isModified(msg->d_ptr->_modified);
         msg->d_ptr->_elementsPresent.recipients = 1;
 
         IMessage *message = openMapiMessage(lastError, msg->id());
@@ -2321,6 +2327,9 @@ bool MapiSession::updateMessageRecipients(QMessageStore::ErrorCode *lastError, Q
                         msg->setBcc(bcc);
                     }
 
+                    if (!isModified) {
+                        msg->d_ptr->_modified = false;
+                    }
                     result = true;
 
                     FreeProws(rows);
@@ -2354,6 +2363,7 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
             }
         }
 
+        bool isModified(msg->d_ptr->_modified);
         msg->d_ptr->_elementsPresent.body = 1;
 
         QByteArray messageBody;
@@ -2505,6 +2515,9 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                         msg->d_ptr->_bodyId = messageContainer->appendContent(bodyPart);
                     }
 
+                    if (!isModified) {
+                        msg->d_ptr->_modified = false;
+                    }
                     result = true;
                 }
 
@@ -2530,6 +2543,7 @@ bool MapiSession::updateMessageAttachments(QMessageStore::ErrorCode *lastError, 
             }
         }
 
+        bool isModified(msg->d_ptr->_modified);
         msg->d_ptr->_elementsPresent.attachments = 1;
 
         if (msg->d_ptr->_hasAttachments) {
@@ -2621,6 +2635,9 @@ bool MapiSession::updateMessageAttachments(QMessageStore::ErrorCode *lastError, 
                             messageContainer->appendContent(attachment);
                         }
 
+                        if (!isModified) {
+                            msg->d_ptr->_modified = false;
+                        }
                         result = true;
 
                         FreeProws(rows);
