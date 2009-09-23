@@ -38,7 +38,7 @@
 #include <QtCore/qobject.h>
 #include <QtCore/qiodevice.h>
 
-#include <qabstractmediaservice.h>
+#include <multimedia/qabstractmediaservice.h>
 
 #include "qgstreamervideooutputcontrol.h"
 
