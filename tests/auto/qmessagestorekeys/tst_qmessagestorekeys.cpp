@@ -52,6 +52,7 @@ public:
     virtual ~tst_QMessageStoreKeys();
 
 private slots:
+    void init();
     void initTestCase();
     void cleanup();
     void cleanupTestCase();
@@ -86,6 +87,8 @@ private:
 
     QSet<QMessageId> existingMessageIds;
     QMessageIdList messageIds;
+
+    uint unsupportedCount;
 };
 
 Q_DECLARE_METATYPE(QMessageAccountIdList)
@@ -155,6 +158,11 @@ public:
         return result;
     }
 };
+
+void tst_QMessageStoreKeys::init()
+{
+    unsupportedCount = 0;
+}
 
 void tst_QMessageStoreKeys::initTestCase()
 {
@@ -277,6 +285,9 @@ void tst_QMessageStoreKeys::initTestCase()
 
 void tst_QMessageStoreKeys::cleanup()
 {
+    if (unsupportedCount != 0) {
+        qWarning() << QString("%1 unsupported tests bypassed").arg(unsupportedCount);
+    }
 }
 
 void tst_QMessageStoreKeys::cleanupTestCase()
@@ -528,6 +539,8 @@ void tst_QMessageStoreKeys::testAccountFilter()
         // Order is irrelevant for filtering
         QCOMPARE(QMessageStore::instance()->queryAccounts(filter).toSet().subtract(existingAccountIds), ids.toSet());
         QCOMPARE(QMessageStore::instance()->queryAccounts(~filter).toSet().subtract(existingAccountIds), negatedIds.toSet());
+    } else {
+        ++unsupportedCount;
     }
 }
 
@@ -550,20 +563,24 @@ void tst_QMessageStoreKeys::testAccountOrdering()
     QFETCH(QMessageAccountOrdering, ordering);
     QFETCH(QMessageAccountIdList, ids);
 
-    QVERIFY(ordering == ordering);
-    QCOMPARE(ordering != QMessageAccountOrdering(), !ordering.isEmpty());
+    if (ordering.isSupported()) {
+        QVERIFY(ordering == ordering);
+        QCOMPARE(ordering != QMessageAccountOrdering(), !ordering.isEmpty());
 
-    // Filter out the existing accounts
-    QMessageAccountIdList sortedIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilter(), ordering));
-    for (QMessageAccountIdList::iterator it = sortedIds.begin(); it != sortedIds.end(); ) {
-        if (existingAccountIds.contains(*it)) {
-            it = sortedIds.erase(it);
-        } else {
-            ++it;
+        // Filter out the existing accounts
+        QMessageAccountIdList sortedIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilter(), ordering));
+        for (QMessageAccountIdList::iterator it = sortedIds.begin(); it != sortedIds.end(); ) {
+            if (existingAccountIds.contains(*it)) {
+                it = sortedIds.erase(it);
+            } else {
+                ++it;
+            }
         }
-    }
 
-    QCOMPARE(sortedIds, ids);
+        QCOMPARE(sortedIds, ids);
+    } else {
+        ++unsupportedCount;
+    }
 }
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
@@ -1152,6 +1169,8 @@ void tst_QMessageStoreKeys::testFolderFilter()
         // Order is irrelevant for filtering
         QCOMPARE(QMessageStore::instance()->queryFolders(filter).toSet().subtract(existingFolderIds), ids.toSet());
         QCOMPARE(QMessageStore::instance()->queryFolders(~filter).toSet().subtract(existingFolderIds), negatedIds.toSet());
+    } else {
+        ++unsupportedCount;
     }
 }
 
@@ -1182,20 +1201,24 @@ void tst_QMessageStoreKeys::testFolderOrdering()
     QFETCH(QMessageFolderOrdering, ordering);
     QFETCH(QMessageFolderIdList, ids);
 
-    QVERIFY(ordering == ordering);
-    QCOMPARE(ordering != QMessageFolderOrdering(), !ordering.isEmpty());
+    if (ordering.isSupported()) {
+        QVERIFY(ordering == ordering);
+        QCOMPARE(ordering != QMessageFolderOrdering(), !ordering.isEmpty());
 
-    // Filter out the existing folders
-    QMessageFolderIdList sortedIds(QMessageStore::instance()->queryFolders(QMessageFolderFilter(), ordering));
-    for (QMessageFolderIdList::iterator it = sortedIds.begin(); it != sortedIds.end(); ) {
-        if (existingFolderIds.contains(*it)) {
-            it = sortedIds.erase(it);
-        } else {
-            ++it;
+        // Filter out the existing folders
+        QMessageFolderIdList sortedIds(QMessageStore::instance()->queryFolders(QMessageFolderFilter(), ordering));
+        for (QMessageFolderIdList::iterator it = sortedIds.begin(); it != sortedIds.end(); ) {
+            if (existingFolderIds.contains(*it)) {
+                it = sortedIds.erase(it);
+            } else {
+                ++it;
+            }
         }
-    }
 
-    QCOMPARE(sortedIds, ids);
+        QCOMPARE(sortedIds, ids);
+    } else {
+        ++unsupportedCount;
+    }
 }
 
 #endif //QMESSAGING_OPTIONAL_FOLDER
@@ -2162,6 +2185,8 @@ void tst_QMessageStoreKeys::testMessageFilter()
         // Order is irrelevant for filtering
         QCOMPARE(QMessageStore::instance()->queryMessages(filter).toSet().subtract(existingMessageIds), ids.toSet());
         QCOMPARE(QMessageStore::instance()->queryMessages(~filter).toSet().subtract(existingMessageIds), negatedIds.toSet());
+    } else {
+        ++unsupportedCount;
     }
 }
 
@@ -2348,42 +2373,47 @@ void tst_QMessageStoreKeys::testMessageOrdering()
     QFETCH(QMessageOrdering, ordering);
     QFETCH(MessageListList, ids);
 
-    QVERIFY(ordering == ordering);
-    QCOMPARE(ordering != QMessageOrdering(), !ordering.isEmpty());
+    if (ordering.isSupported()) {
+        QVERIFY(ordering == ordering);
+        QCOMPARE(ordering != QMessageOrdering(), !ordering.isEmpty());
 
-    // Filter out the existing messages
-    QMessageIdList sortedIds(QMessageStore::instance()->queryMessages(QMessageFilter(), ordering));
-    for (QMessageIdList::iterator it = sortedIds.begin(); it != sortedIds.end(); ) {
-        if (existingMessageIds.contains(*it)) {
-            it = sortedIds.erase(it);
-        } else {
-            ++it;
-        }
-    }
-
-    QMessageIdList::const_iterator sit = sortedIds.begin();
-    MessageListList::const_iterator iit = ids.begin();
-
-    bool match(true);
-    for (int groupCount = 0; sit != sortedIds.end(); ++sit) {
-        if (iit == ids.end()) {
-            match = false;
-            break;
-        } else {
-            if ((*iit).contains(*sit)) {
-                ++groupCount;
-                if (groupCount == (*iit).count()) {
-                    // We have matched all members of this group
-                    ++iit;
-                    groupCount = 0;
-                }
+        // Filter out the existing messages
+        QMessageIdList sortedIds(QMessageStore::instance()->queryMessages(QMessageFilter(), ordering));
+        for (QMessageIdList::iterator it = sortedIds.begin(); it != sortedIds.end(); ) {
+            if (existingMessageIds.contains(*it)) {
+                it = sortedIds.erase(it);
             } else {
-                match = false;
-                break;
+                ++it;
             }
         }
+
+        QMessageIdList::const_iterator sit = sortedIds.begin();
+        MessageListList::const_iterator iit = ids.begin();
+
+        bool match(true);
+        for (int groupCount = 0; sit != sortedIds.end(); ++sit) {
+            if (iit == ids.end()) {
+                match = false;
+                break;
+            } else {
+                if ((*iit).contains(*sit)) {
+                    ++groupCount;
+                    if (groupCount == (*iit).count()) {
+                        // We have matched all members of this group
+                        ++iit;
+                        groupCount = 0;
+                    }
+                } else {
+                    match = false;
+                    break;
+                }
+            }
+        }
+
+        QVERIFY(match);
+        QVERIFY(iit == ids.end());
+    } else {
+        ++unsupportedCount;
     }
-    QVERIFY(match);
-    QVERIFY(iit == ids.end());
 }
 
