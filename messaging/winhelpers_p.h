@@ -133,6 +133,29 @@ public:
     bool _initialized;
 };
 
+class QueryAllRows
+{
+    static const int BatchSize = 20;
+public:
+    QueryAllRows(LPMAPITABLE ptable,
+                 LPSPropTagArray ptaga,
+                 LPSRestriction pres,
+                 LPSSortOrderSet psos);
+    ~QueryAllRows();
+
+    bool query();
+    LPSRowSet rows() const;
+    QMessageStore::ErrorCode lastError() const;
+
+private:
+    LPMAPITABLE m_table;
+    LPSPropTagArray m_tagArray;
+    LPSRestriction m_restriction;
+    LPSSortOrderSet m_sortOrderSet;
+    LPSRowSet m_rows;
+    QMessageStore::ErrorCode m_lastError;
+};
+
 }
 
 class MapiFolder {
@@ -238,53 +261,53 @@ private:
 };
 
 class MapiSession {
-public:
-    static MapiSessionPtr createSession(QMessageStore::ErrorCode *lastError);
+    public:
+        static MapiSessionPtr createSession(QMessageStore::ErrorCode *lastError);
 
-    ~MapiSession();
+        ~MapiSession();
 
-    bool isValid() const { return (_mapiSession != 0); }
+        bool isValid() const { return (_mapiSession != 0); }
 
-    MapiStorePtr findStore(QMessageStore::ErrorCode *lastError, const QMessageAccountId &id = QMessageAccountId(), bool cachedMode = true) const;
-    MapiStorePtr defaultStore(QMessageStore::ErrorCode *lastError, bool cachedMode = true) const { return findStore(lastError,QMessageAccountId(),cachedMode); }
-    QList<MapiStorePtr> allStores(QMessageStore::ErrorCode *lastError, bool cachedMode = true) const;
-    MapiStorePtr openStore(QMessageStore::ErrorCode *lastError, const MapiEntryId& id, bool cachedMode = true) const;
+        MapiStorePtr findStore(QMessageStore::ErrorCode *lastError, const QMessageAccountId &id = QMessageAccountId(), bool cachedMode = true) const;
+        MapiStorePtr defaultStore(QMessageStore::ErrorCode *lastError, bool cachedMode = true) const { return findStore(lastError,QMessageAccountId(),cachedMode); }
+        QList<MapiStorePtr> allStores(QMessageStore::ErrorCode *lastError, bool cachedMode = true) const;
+        MapiStorePtr openStore(QMessageStore::ErrorCode *lastError, const MapiEntryId& id, bool cachedMode = true) const;
 
-    QMessageAccountId defaultAccountId(QMessageStore::ErrorCode *lastError, QMessage::Type type) const;
+        QMessageAccountId defaultAccountId(QMessageStore::ErrorCode *lastError, QMessage::Type type) const;
 
-    QMessageFolder folder(QMessageStore::ErrorCode *lastError, const QMessageFolderId& id) const;
-    QMessage message(QMessageStore::ErrorCode *lastError, const QMessageId& id) const;
+        QMessageFolder folder(QMessageStore::ErrorCode *lastError, const QMessageFolderId& id) const;
+        QMessage message(QMessageStore::ErrorCode *lastError, const QMessageId& id) const;
 
-    bool updateMessageProperties(QMessageStore::ErrorCode *lastError, QMessage *msg) const;
-    bool updateMessageRecipients(QMessageStore::ErrorCode *lastError, QMessage *msg) const;
-    bool updateMessageBody(QMessageStore::ErrorCode *lastError, QMessage *msg) const;
-    bool updateMessageAttachments(QMessageStore::ErrorCode *lastError, QMessage *msg) const;
+        bool updateMessageProperties(QMessageStore::ErrorCode *lastError, QMessage *msg) const;
+        bool updateMessageRecipients(QMessageStore::ErrorCode *lastError, QMessage *msg) const;
+        bool updateMessageBody(QMessageStore::ErrorCode *lastError, QMessage *msg) const;
+        bool updateMessageAttachments(QMessageStore::ErrorCode *lastError, QMessage *msg) const;
 
-    QByteArray attachmentData(QMessageStore::ErrorCode *lastError, const QMessageId& id, ULONG number) const;
+        QByteArray attachmentData(QMessageStore::ErrorCode *lastError, const QMessageId& id, ULONG number) const;
 
-    bool showForm(IMessage* message, IMAPIFolder* folder, IMsgStore* store);
+        bool showForm(IMessage* message, IMAPIFolder* folder, IMsgStore* store);
 
-    IMAPISession* session() const { return _mapiSession; }
+        IMAPISession* session() const { return _mapiSession; }
 
-    bool flushQueues();
+        bool flushQueues();
 
-private:
-    MapiSession();
-    MapiSession(QMessageStore::ErrorCode *lastError);
+    private:
+        MapiSession();
+        MapiSession(QMessageStore::ErrorCode *lastError);
 
-    IMsgStore *openMapiStore(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId, bool cachedMode = true) const;
-    IMessage *openMapiMessage(QMessageStore::ErrorCode *lastError, const QMessageId &id) const;
+        IMsgStore *openMapiStore(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId, bool cachedMode = true) const;
+        IMessage *openMapiMessage(QMessageStore::ErrorCode *lastError, const QMessageId &id) const;
 
-    void addRecipients(LPMESSAGE message, const QMessageAddressList& addressList, unsigned long mapiAddressType);
-    void addAttachment(LPMESSAGE message, const QMessageContentContainer& attachmentContainer);
+        void addRecipients(LPMESSAGE message, const QMessageAddressList& addressList, unsigned long mapiAddressType);
+        void addAttachment(LPMESSAGE message, const QMessageContentContainer& attachmentContainer);
 
-private:
-    WinHelpers::MapiInitializationToken _token;
-    IMAPISession* _mapiSession;
+    private:
+        WinHelpers::MapiInitializationToken _token;
+        IMAPISession* _mapiSession;
 
-    static QWeakPointer<MapiSession> _session;
+        static QWeakPointer<MapiSession> _session;
 
-    static QHash<MapiEntryId, QWeakPointer<MapiStore> > _storeMap;
+        static QHash<MapiEntryId, QWeakPointer<MapiStore> > _storeMap;
 };
 
 #endif

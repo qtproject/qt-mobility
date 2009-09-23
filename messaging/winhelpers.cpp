@@ -843,6 +843,67 @@ namespace WinHelpers {
         return result;
     }
 
+    QueryAllRows::QueryAllRows(LPMAPITABLE ptable,
+                               LPSPropTagArray ptaga,
+                               LPSRestriction pres,
+                               LPSSortOrderSet psos)
+    :
+        m_table(ptable),
+        m_tagArray(ptaga),
+        m_restriction(pres),
+        m_sortOrderSet(psos),
+        m_rows(0),
+        m_lastError(QMessageStore::NoError)
+    {
+        bool initFailed = false;
+
+        initFailed |= FAILED(m_table->SetColumns(m_tagArray, TBL_BATCH));
+
+        if(m_restriction)
+            initFailed |= FAILED(m_table->Restrict(m_restriction, TBL_BATCH));
+
+        if(m_sortOrderSet)
+            initFailed |= FAILED(m_table->SortTable(m_sortOrderSet, TBL_BATCH));
+
+        initFailed |= FAILED(m_table->SeekRow(BOOKMARK_BEGINNING,0, NULL));
+
+        if(initFailed) m_lastError = QMessageStore::ContentInaccessible;
+    }
+
+    QueryAllRows::~QueryAllRows()
+    {
+        FreeProws(m_rows);
+        m_rows = 0;
+    }
+
+    bool QueryAllRows::query()
+    {
+        if(m_lastError != QMessageStore::NoError)
+            return false;
+
+        FreeProws(m_rows);
+        m_rows = 0;
+        m_lastError = QMessageStore::NoError;
+
+        bool failed = FAILED(m_table->QueryRows( QueryAllRows::BatchSize, NULL, &m_rows));
+
+        if(failed)
+            m_lastError = QMessageStore::ContentInaccessible;
+
+        if(failed || m_rows && !m_rows->cRows) return false;
+
+        return true;
+    }
+
+    LPSRowSet QueryAllRows::rows() const
+    {
+        return m_rows;
+    }
+
+    QMessageStore::ErrorCode QueryAllRows::lastError() const
+    {
+        return m_lastError;
+    }
 }
 
 using namespace WinHelpers;
@@ -1798,12 +1859,12 @@ MapiStorePtr MapiSession::findStore(QMessageStore::ErrorCode *lastError, const Q
     const int nCols(3);
     enum { defaultStoreColumn = 0, entryIdColumn, recordKeyColumn };
     SizedSPropTagArray(nCols, columns) = {nCols, {PR_DEFAULT_STORE, PR_ENTRYID, PR_RECORD_KEY}};
-    LPSRowSet rows(0);
-#ifndef _WIN32_WCE
-    HRESULT rv = HrQueryAllRows(mapiMessageStoresTable, reinterpret_cast<LPSPropTagArray>(&columns), 0, 0, 0, &rows);
-    if (HR_SUCCEEDED(rv)) {
-        for (uint n = 0; n < rows->cRows; ++n) {
-            SPropValue *props = rows->aRow[n].lpProps;
+
+    QueryAllRows qar(mapiMessageStoresTable, reinterpret_cast<LPSPropTagArray>(&columns), 0, 0);
+
+    while(qar.query()) {
+        for (uint n = 0; n < qar.rows()->cRows; ++n) {
+            SPropValue *props = qar.rows()->aRow[n].lpProps;
             MapiRecordKey storeKey(props[recordKeyColumn].Value.bin.lpb, props[recordKeyColumn].Value.bin.cb);
 
             if ((!id.isValid() && props[defaultStoreColumn].Value.b) ||  // default store found
@@ -1813,14 +1874,12 @@ MapiStorePtr MapiSession::findStore(QMessageStore::ErrorCode *lastError, const Q
                 break;
             }
         }
-
-        FreeProws(rows);
-    } else {
-        *lastError = QMessageStore::ContentInaccessible;
     }
-#endif
+
+    *lastError = qar.lastError();
 
     mapiRelease(mapiMessageStoresTable);
+
     return result;
 }
 
@@ -1838,20 +1897,18 @@ QList<MapiStorePtr> MapiSession::allStores(QMessageStore::ErrorCode *lastError, 
         *lastError = QMessageStore::ContentInaccessible;
     } else {
         SizedSPropTagArray(1, columns) = {1, {PR_ENTRYID}};
-        LPSRowSet rows(0);
-#ifndef _WIN32_WCE
-        HRESULT rv = HrQueryAllRows(mapiMessageStoresTable, reinterpret_cast<LPSPropTagArray>(&columns), 0, 0, 0, &rows);
-        if (HR_SUCCEEDED(rv)) {
-            for (uint n = 0; n < rows->cRows; ++n) {
-                MapiEntryId entryId(rows->aRow[n].lpProps[0].Value.bin.lpb, rows->aRow[n].lpProps[0].Value.bin.cb);
+
+        QueryAllRows qar(mapiMessageStoresTable, reinterpret_cast<LPSPropTagArray>(&columns), 0, 0);
+
+        while(qar.query()) {
+            for (uint n = 0; n < qar.rows()->cRows; ++n) {
+                MapiEntryId entryId(qar.rows()->aRow[n].lpProps[0].Value.bin.lpb, qar.rows()->aRow[n].lpProps[0].Value.bin.cb);
                 result.append(openStore(lastError, entryId, cachedMode));
             }
-
-            FreeProws(rows);
-        } else {
-            *lastError = QMessageStore::ContentInaccessible;
         }
-#endif
+
+        *lastError = qar.lastError();
+
         mapiRelease(mapiMessageStoresTable);
     }
 
@@ -1974,7 +2031,6 @@ bool MapiSession::flushQueues()
 {
     LPMAPISTATUS  pStat = 0;    //MAPI Status Pointer
     LPMAPITABLE     pTbl  = 0;
-    LPSRowSet       pRow  = 0;
     HRESULT         hRes;
     SRestriction    sres;
     SPropValue      spv;
@@ -1983,7 +2039,10 @@ bool MapiSession::flushQueues()
     const static SizedSPropTagArray(2,sptCols) = {2,PR_RESOURCE_TYPE,PR_ENTRYID};
 
     if (FAILED(hRes = _mapiSession->GetStatusTable(0,&pTbl)))
-        goto Quit;
+    {
+        mapiRelease(pTbl);
+        return false;
+    }
 
     sres.rt = RES_PROPERTY;
     sres.res.resProperty.relop     = RELOP_EQ;
@@ -1993,23 +2052,22 @@ bool MapiSession::flushQueues()
     spv.ulPropTag = PR_RESOURCE_TYPE;
     spv.Value.l   = MAPI_SPOOLER;
 
-#ifndef _WIN32_WCE
-    if (FAILED(hRes = HrQueryAllRows(pTbl,
-                    (LPSPropTagArray) &sptCols,
-                    &sres,
-                    NULL,
-                    0,
-                    &pRow)))
+    QueryAllRows qar(pTbl,
+            (LPSPropTagArray) &sptCols,
+            &sres,
+            0);
+
+    if(!qar.query())
         goto Quit;
-#endif
-    if (!pRow -> cRows || PR_ENTRYID != pRow -> aRow[0].lpProps[1].ulPropTag)
+
+    if (!qar.rows()->cRows || PR_ENTRYID != qar.rows()->aRow[0].lpProps[1].ulPropTag)
     {
         hRes = MAPI_E_NOT_FOUND;
         goto Quit;
     }
 
-    hRes =  _mapiSession->OpenEntry(pRow -> aRow[0].lpProps[1].Value.bin.cb,
-            (LPENTRYID)pRow -> aRow[0].lpProps[1].Value.bin.lpb,
+    hRes =  _mapiSession->OpenEntry(qar.rows()->aRow[0].lpProps[1].Value.bin.cb,
+            (LPENTRYID)qar.rows()->aRow[0].lpProps[1].Value.bin.lpb,
             NULL,
             MAPI_BEST_ACCESS,
             &ulObjType,
@@ -2036,7 +2094,6 @@ bool MapiSession::flushQueues()
 
 Quit:
     if (pTbl) pTbl -> Release();
-    FreeProws(pRow);
     return false;
 }
 
@@ -2126,6 +2183,8 @@ QMessageFolder MapiSession::folder(QMessageStore::ErrorCode *lastError, const QM
 
 QMessage MapiSession::message(QMessageStore::ErrorCode *lastError, const QMessageId& id) const
 {
+    Q_UNUSED(lastError);
+
     QMessage result = QMessagePrivate::from(id);
 
     // How do we find what type of message this is?
@@ -2276,18 +2335,18 @@ bool MapiSession::updateMessageRecipients(QMessageStore::ErrorCode *lastError, Q
             HRESULT rv = message->GetRecipientTable(0, &recipientsTable);
             if (HR_SUCCEEDED(rv)) {
                 SizedSPropTagArray(3, rcpCols) = {3, { PR_DISPLAY_NAME, PR_EMAIL_ADDRESS, PR_RECIPIENT_TYPE}};
-                LPSRowSet rows(0);
-#ifndef _WIN32_WCE
-                rv = HrQueryAllRows(recipientsTable, reinterpret_cast<LPSPropTagArray>(&rcpCols), NULL, NULL, 0, &rows);
-                if (HR_SUCCEEDED(rv)) {
-                    QMessageAddressList to;
-                    QMessageAddressList cc;
-                    QMessageAddressList bcc;
 
-                    for (uint n = 0; n < rows->cRows; ++n) {
+                QMessageAddressList to;
+                QMessageAddressList cc;
+                QMessageAddressList bcc;
+
+                QueryAllRows qar(recipientsTable, reinterpret_cast<LPSPropTagArray>(&rcpCols), 0, 0);
+
+                while(qar.query()) {
+                    for (uint n = 0; n < qar.rows()->cRows; ++n) {
                         QMessageAddressList *list = 0;
 
-                        SPropValue *props = rows->aRow[n].lpProps;
+                        SPropValue *props = qar.rows()->aRow[n].lpProps;
                         switch (props[2].Value.l) {
                         case MAPI_TO:
                             list = &to;
@@ -2307,37 +2366,42 @@ bool MapiSession::updateMessageRecipients(QMessageStore::ErrorCode *lastError, Q
                             QString address;
 
                             if (props[0].ulPropTag == PR_DISPLAY_NAME)
-                                name = QStringFromLpctstr(rows->aRow[n].lpProps[0].Value.LPSZ);
+                                name = QStringFromLpctstr(qar.rows()->aRow[n].lpProps[0].Value.LPSZ);
                             if (props[1].ulPropTag == PR_EMAIL_ADDRESS)
-                                address = QStringFromLpctstr(rows->aRow[n].lpProps[1].Value.LPSZ);
+                                address = QStringFromLpctstr(qar.rows()->aRow[n].lpProps[1].Value.LPSZ);
 
                             if (!name.isEmpty() || ! address.isEmpty()) {
                                 list->append(createAddress(name, address));
                             }
                         }
                     }
+                }
 
-                    if (!to.isEmpty()) {
-                        msg->setTo(to);
-                    }
-                    if (!cc.isEmpty()) {
-                        msg->setCc(cc);
-                    }
-                    if (!bcc.isEmpty()) {
-                        msg->setBcc(bcc);
-                    }
 
-                    if (!isModified) {
-                        msg->d_ptr->_modified = false;
-                    }
+                if (!to.isEmpty()) {
+                    msg->setTo(to);
+                }
+                if (!cc.isEmpty()) {
+                    msg->setCc(cc);
+                }
+                if (!bcc.isEmpty()) {
+                    msg->setBcc(bcc);
+                }
+
+                if (!isModified) {
+                    msg->d_ptr->_modified = false;
+                }
+
+                if(qar.lastError() != QMessageStore::NoError)
+                {
+                    *lastError = qar.lastError();
+                    result = false;
+                }
+                else
                     result = true;
 
-                    FreeProws(rows);
-                } else {
-                    *lastError = QMessageStore::ContentInaccessible;
-                }
-#endif
                 mapiRelease(recipientsTable);
+
             } else {
                 *lastError = QMessageStore::ContentInaccessible;
             }
@@ -2554,7 +2618,11 @@ bool MapiSession::updateMessageAttachments(QMessageStore::ErrorCode *lastError, 
                 // Find any attachments for this message
                 IMAPITable *attachmentsTable(0);
 
-#ifndef _WIN32_WCE
+
+
+
+
+
                 HRESULT rv = message->GetAttachmentTable(0, &attachmentsTable);
                 if (HR_SUCCEEDED(rv)) {
                     // Find the properties of these attachments
@@ -2565,10 +2633,12 @@ bool MapiSession::updateMessageAttachments(QMessageStore::ErrorCode *lastError, 
                                                            PR_ATTACH_CONTENT_ID,
                                                            PR_ATTACH_SIZE,
                                                            PR_RENDERING_POSITION }};
-                    LPSRowSet rows(0);
-                    rv = HrQueryAllRows(attachmentsTable, reinterpret_cast<LPSPropTagArray>(&attCols), NULL, NULL, 0, &rows);
-                    if (HR_SUCCEEDED(rv)) {
-                        for (uint n = 0; n < rows->cRows; ++n) {
+
+
+
+                    QueryAllRows qar(attachmentsTable, reinterpret_cast<LPSPropTagArray>(&attCols), NULL, NULL);
+                    while(qar.query()) {
+                        for (uint n = 0; n < qar.rows()->cRows; ++n) {
                             LONG number(0);
                             QString extension;
                             QString filename;
@@ -2577,29 +2647,29 @@ bool MapiSession::updateMessageAttachments(QMessageStore::ErrorCode *lastError, 
                             LONG renderingPosition(0);
 
                             // If not available, the output tag will not match our requested content tag
-                            if (rows->aRow[n].lpProps[0].ulPropTag == PR_ATTACH_NUM) {
-                                number = rows->aRow[n].lpProps[0].Value.l;
+                            if (qar.rows()->aRow[n].lpProps[0].ulPropTag == PR_ATTACH_NUM) {
+                                number = qar.rows()->aRow[n].lpProps[0].Value.l;
                             } else {
                                 // We can't access this part...
                                 continue;
                             }
 
-                            if (rows->aRow[n].lpProps[1].ulPropTag == PR_ATTACH_EXTENSION) {
-                                extension = QStringFromLpctstr(rows->aRow[n].lpProps[1].Value.LPSZ);
+                            if (qar.rows()->aRow[n].lpProps[1].ulPropTag == PR_ATTACH_EXTENSION) {
+                                extension = QStringFromLpctstr(qar.rows()->aRow[n].lpProps[1].Value.LPSZ);
                             }
-                            if (rows->aRow[n].lpProps[2].ulPropTag == PR_ATTACH_LONG_FILENAME) {
-                                filename = QStringFromLpctstr(rows->aRow[n].lpProps[2].Value.LPSZ);
-                            } else if (rows->aRow[n].lpProps[3].ulPropTag == PR_ATTACH_FILENAME) {
-                                filename = QStringFromLpctstr(rows->aRow[n].lpProps[3].Value.LPSZ);
+                            if (qar.rows()->aRow[n].lpProps[2].ulPropTag == PR_ATTACH_LONG_FILENAME) {
+                                filename = QStringFromLpctstr(qar.rows()->aRow[n].lpProps[2].Value.LPSZ);
+                            } else if (qar.rows()->aRow[n].lpProps[3].ulPropTag == PR_ATTACH_FILENAME) {
+                                filename = QStringFromLpctstr(qar.rows()->aRow[n].lpProps[3].Value.LPSZ);
                             }
-                            if (rows->aRow[n].lpProps[4].ulPropTag == PR_ATTACH_CONTENT_ID) {
-                                contentId = QStringFromLpctstr(rows->aRow[n].lpProps[4].Value.LPSZ);
+                            if (qar.rows()->aRow[n].lpProps[4].ulPropTag == PR_ATTACH_CONTENT_ID) {
+                                contentId = QStringFromLpctstr(qar.rows()->aRow[n].lpProps[4].Value.LPSZ);
                             }
-                            if (rows->aRow[n].lpProps[5].ulPropTag == PR_ATTACH_SIZE) {
-                                size = rows->aRow[n].lpProps[5].Value.l;
+                            if (qar.rows()->aRow[n].lpProps[5].ulPropTag == PR_ATTACH_SIZE) {
+                                size = qar.rows()->aRow[n].lpProps[5].Value.l;
                             }
-                            if (rows->aRow[n].lpProps[6].ulPropTag == PR_RENDERING_POSITION) {
-                                renderingPosition = rows->aRow[n].lpProps[6].Value.l;
+                            if (qar.rows()->aRow[n].lpProps[6].ulPropTag == PR_RENDERING_POSITION) {
+                                renderingPosition = qar.rows()->aRow[n].lpProps[6].Value.l;
                             }
 
                             WinHelpers::AttachmentLocator locator(msg->id(), number);
@@ -2638,15 +2708,18 @@ bool MapiSession::updateMessageAttachments(QMessageStore::ErrorCode *lastError, 
                         if (!isModified) {
                             msg->d_ptr->_modified = false;
                         }
-                        result = true;
-
-                        FreeProws(rows);
                     }
-                } else {
-                    *lastError = QMessageStore::ContentInaccessible;
+
+                    if(qar.lastError() != QMessageStore::NoError)
+                        *lastError = qar.lastError();
+                    else
+                        result = true;
                 }
-#endif
+                else
+                    *lastError = QMessageStore::ContentInaccessible;
+
                 mapiRelease(message);
+
             }
         }
     }
@@ -2746,3 +2819,4 @@ bool MapiSession::showForm(IMessage* message, IMAPIFolder* folder, LPMDB store)
     }
     return true;
 }
+
