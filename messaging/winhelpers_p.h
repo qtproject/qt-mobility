@@ -138,7 +138,7 @@ public:
 class MapiFolder {
 
 public:
-    enum PostSendAction { DeleteAfterSend, MoveAfterSend };
+    enum PostSendAction { DoNothing = 0, DeleteAfterSend, MoveAfterSend };
 
 public:
     static MapiFolderPtr createFolder(QMessageStore::ErrorCode *lastError, const MapiStorePtr &store, IMAPIFolder *folder, const MapiRecordKey &recordKey, const QString &name, const MapiEntryId &entryId, bool hasSubFolders, uint messageCount);
