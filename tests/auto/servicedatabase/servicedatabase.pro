@@ -10,7 +10,7 @@ wince*|symbian*: {
 }
 
 wince* {
-    DEFINES+= SRCDIR=\\\".\\\"
+    DEFINES+= TESTDATA_DIR=\\\".\\\"
 } else:!symbian {
     DEFINES += TESTDATA_DIR=\\\"$$PWD/\\\"
 }
