@@ -1,8 +1,7 @@
-
 TEMPLATE = lib
 CONFIG += plugin
 QT += phonon
-TARGET = phononengine
+TARGET = $$qtLibraryTarget(phononengine)
 
 PLUGIN_SUBDIR = mediaservice
 
@@ -27,3 +26,6 @@ SOURCES += \
     qphononvideowidget.cpp \
     qphononserviceplugin.cpp \
     qphononmetadataprovider.cpp \
+
+target.path=$$QT_MOBILITY_PREFIX/plugins/mediaservice
+INSTALLS+=target

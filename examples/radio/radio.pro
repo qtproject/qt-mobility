@@ -4,7 +4,7 @@ CONFIG += example
 INCLUDEPATH += $$PWD/../../multimedia $$PWD/../../multimedia/endpoints
 include (../../common.pri)
 
-LIBS += -lQtMedia
+qtAddLibrary(QtMedia)
 
 QMAKE_RPATHDIR += $$DESTDIR
 

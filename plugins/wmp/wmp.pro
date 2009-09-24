@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = qwmp
+TARGET = $$qtLibraryTarget(qwmp)
 
 PLUGIN_SUBDIR = mediaservice
 
@@ -42,3 +42,5 @@ SOURCES = \
     qwmpvideooutputcontrol.cpp \
     qwmpvideooverlay.cpp
 
+target.path=$$QT_MOBILITY_PREFIX/plugins/mediaservice
+INSTALLS+=target

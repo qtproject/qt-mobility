@@ -1,12 +1,12 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = m3u
+TARGET = $$qtLibraryTarget(m3u)
 
 PLUGIN_SUBDIR = playlistformats
 
 include (../../common.pri)
 
-LIBS += -lQtMedia
+qtAddLibrary(QtMedia)
 
 DEPENDPATH += .
 INCLUDEPATH += . \
@@ -16,3 +16,5 @@ HEADERS += qm3uhandler.h
 SOURCES += main.cpp \
            qm3uhandler.cpp
 
+target.path=$$QT_MOBILITY_PREFIX/plugins/playlistformats
+INSTALLS+=target

@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = gstengine
+TARGET = $$qtLibraryTarget(gstengine)
 
 include(../../common.pri)
 INCLUDEPATH+=../../multimedia
@@ -8,7 +8,6 @@ INCLUDEPATH+=../../multimedia
 PLUGIN_SUBDIR = mediaservice
 testplugin:DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/mediaservice/
 !testplugin:DESTDIR = $$OUTPUT_DIR/plugins/mediaservice/
-
 
 qtAddLibrary(QtMedia)
 
@@ -72,3 +71,6 @@ contains(QT_CONFIG, multimedia) {
 
 include(mediaplayer/mediaplayer.pri)
 include(mediacapture/mediacapture.pri)
+
+target.path=$$QT_MOBILITY_PREFIX/plugins/mediaservice
+INSTALLS+=target

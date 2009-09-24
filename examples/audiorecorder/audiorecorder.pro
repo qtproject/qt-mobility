@@ -3,10 +3,10 @@ CONFIG += example
 
 contains(QT_CONFIG, multimedia): QT += multimedia
 
-INCLUDEPATH += $$PWD/../../multimedia $$PWD/../../multimedia/endpoints
+INCLUDEPATH += ../../multimedia ../../multimedia/endpoints
 include (../../common.pri)
 
-LIBS += -lQtMedia
+qtAddLibrary(QtMedia)
 
 QMAKE_RPATHDIR += $$DESTDIR
 
