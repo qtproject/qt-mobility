@@ -61,7 +61,7 @@ symbian: {
 
         HEADERS += qnetworksession_maemo_p.h \
                    qnetworkconfigmanager_maemo_p.h \
-                   qnetworkconfiguration_p.h \
+                   qnetworkconfiguration_maemo_p.h
 
         SOURCES += qnetworkconfigmanager_maemo.cpp \
 		   qnetworksession_maemo.cpp

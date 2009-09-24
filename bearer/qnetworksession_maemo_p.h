@@ -52,7 +52,7 @@
 // We mean it.
 //
 
-#include "qnetworkconfigmanager_p.h"
+#include "qnetworkconfigmanager_maemo_p.h"
 #include "qnetworksession.h"
 
 #include <qnetworksession.h>

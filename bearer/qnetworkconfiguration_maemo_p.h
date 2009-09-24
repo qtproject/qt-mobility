@@ -58,9 +58,6 @@ public:
         : isValid(false), type(QNetworkConfiguration::Invalid), 
           roamingSupported(false), purpose(QNetworkConfiguration::Unknown)
     {
-#ifdef BEARER_ENGINE
-        internet = false;
-#endif
     }
 
     ~QNetworkConfigurationPrivate()
@@ -77,12 +74,12 @@ public:
     bool roamingSupported;
     QNetworkConfiguration::Purpose purpose;
 
-#ifdef BEARER_ENGINE
-    bool internet;
-#endif
-
     QList<QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > serviceNetworkMembers;
     QNetworkInterface serviceInterface;
+
+    /* In Maemo the id field (defined above) is the IAP id (which typically is UUID) */
+    QByteArray network_id; /* typically WLAN ssid or similar */
+    QString iap_type; /* is this one WLAN or GPRS */
 
 private:
 

@@ -53,7 +53,7 @@
 //
 
 #include <qnetworkconfigmanager.h>
-#include <qnetworkconfiguration_p.h>
+#include <qnetworkconfiguration_maemo_p.h>
 
 #include <QHash>
 #include <QStringList>
