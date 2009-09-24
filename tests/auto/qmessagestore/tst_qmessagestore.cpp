@@ -63,6 +63,34 @@ void approximateCompare(const T1 &actual, const T2 &expected, const T2 &variance
 }
 #define QAPPROXIMATECOMPARE(a,e,v) approximateCompare(a,e,v,(__LINE__))
 
+class SignalCatcher : public QObject
+{
+    Q_OBJECT
+    
+public:
+    typedef QPair<QMessageId, QSet<QMessageStore::NotificationFilterId> > Notification;
+
+    QList<Notification> added;
+    QList<Notification> updated;
+    QList<Notification> removed;
+
+public slots:
+    void messageAdded(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &filterIds)
+    {
+        added.append(qMakePair(id, filterIds));
+    }
+
+    void messageUpdated(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &filterIds)
+    {
+        updated.append(qMakePair(id, filterIds));
+    }
+
+    void messageRemoved(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &filterIds)
+    {
+        removed.append(qMakePair(id, filterIds));
+    }
+};
+
 /*
     Unit test for QMessageStore class.
 */
@@ -424,6 +452,17 @@ void tst_QMessageStore::testMessage()
     QMessageFolder testFolder(testFolderId);
 #endif
 
+    SignalCatcher catcher;
+    connect(QMessageStore::instance(), SIGNAL(messageAdded(QMessageId, QSet<QMessageStore::NotificationFilterId>)), &catcher, SLOT(messageAdded(QMessageId, QSet<QMessageStore::NotificationFilterId>)));
+    connect(QMessageStore::instance(), SIGNAL(messageUpdated(QMessageId, QSet<QMessageStore::NotificationFilterId>)), &catcher, SLOT(messageUpdated(QMessageId, QSet<QMessageStore::NotificationFilterId>)));
+
+    SignalCatcher removeCatcher;
+    connect(QMessageStore::instance(), SIGNAL(messageRemoved(QMessageId, QSet<QMessageStore::NotificationFilterId>)), &removeCatcher, SLOT(messageRemoved(QMessageId, QSet<QMessageStore::NotificationFilterId>)));
+
+    QMessageStore::NotificationFilterId filter1 = QMessageStore::instance()->registerNotificationFilter(QMessageFilter::byParentAccountId(QMessageAccountId()));
+    QMessageStore::NotificationFilterId filter2 = QMessageStore::instance()->registerNotificationFilter(QMessageFilter::byParentAccountId(testAccountId));
+    QMessageStore::NotificationFilterId filter3 = QMessageStore::instance()->registerNotificationFilter(QMessageFilter());
+
     QFETCH(QString, to);
     QFETCH(QString, from);
     QFETCH(QString, date);
@@ -468,6 +507,11 @@ void tst_QMessageStore::testMessage()
     QVERIFY(messageId != QMessageId());
     QCOMPARE(QMessageStore::instance()->countMessages(), originalCount + 1);
     
+    QCOMPARE(catcher.added.count(), 1);
+    QCOMPARE(catcher.added.first().first, messageId);
+    QCOMPARE(catcher.added.first().second.count(), 2);
+    QCOMPARE(catcher.added.first().second, QSet<QMessageStore::NotificationFilterId>() << filter2 << filter3);
+
     QMessage message(messageId);
     QCOMPARE(message.id(), messageId);
     QCOMPARE(message.isModified(), false);
@@ -543,6 +587,11 @@ void tst_QMessageStore::testMessage()
     QMessageStore::instance()->updateMessage(&message);
     QCOMPARE(QMessageStore::instance()->lastError(), QMessageStore::NoError);
 
+    QCOMPARE(catcher.updated.count(), 1);
+    QCOMPARE(catcher.updated.first().first, messageId);
+    QCOMPARE(catcher.updated.first().second.count(), 2);
+    QCOMPARE(catcher.updated.first().second, QSet<QMessageStore::NotificationFilterId>() << filter2 << filter3);
+
     QMessage updated(message.id());
 
     QCOMPARE(updated.id(), message.id());
@@ -563,5 +612,14 @@ void tst_QMessageStore::testMessage()
     QMessageStore::instance()->removeMessage(message.id());
     QCOMPARE(QMessageStore::instance()->lastError(), QMessageStore::NoError);
     QCOMPARE(QMessageStore::instance()->countMessages(), originalCount);
+
+    QCOMPARE(removeCatcher.removed.count(), 1);
+    QCOMPARE(removeCatcher.removed.first().first, messageId);
+    QCOMPARE(removeCatcher.removed.first().second.count(), 1);
+    QCOMPARE(removeCatcher.removed.first().second, QSet<QMessageStore::NotificationFilterId>() << filter3);
+
+    QMessageStore::instance()->unregisterNotificationFilter(filter1);
+    QMessageStore::instance()->unregisterNotificationFilter(filter2);
+    QMessageStore::instance()->unregisterNotificationFilter(filter3);
 }
 
