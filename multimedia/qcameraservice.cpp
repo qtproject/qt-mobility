@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qcameraservice.h>
+#include <qcameraservice.h>
 
 QCameraService::QCameraService(QObject *parent):
     QAbstractMediaService(parent)

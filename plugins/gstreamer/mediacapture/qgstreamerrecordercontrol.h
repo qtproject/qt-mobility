@@ -36,7 +36,7 @@
 #ifndef QGSTREAMERCAPTURECONTROL_H
 #define QGSTREAMERCAPTURECONTROL_H
 
-#include <multimedia/qmediarecordercontrol.h>
+#include <qmediarecordercontrol.h>
 #include "qgstreamercapturesession.h"
 
 class QGstreamerRecorderControl : public QMediaRecorderControl

@@ -32,14 +32,14 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qmediaslideshow.h>
+#include <qmediaslideshow.h>
 
-#include <multimedia/qabstractmediaobject_p.h>
-#include <multimedia/qmediaslideshowservice_p.h>
+#include <qabstractmediaobject_p.h>
+#include <qmediaslideshowservice_p.h>
 
-#include <multimedia/qlocalmediaplaylistprovider.h>
-#include <multimedia/qmediasource.h>
-#include <multimedia/qmediaresource.h>
+#include <qlocalmediaplaylistprovider.h>
+#include <qmediasource.h>
+#include <qmediaresource.h>
 
 #include <QtCore/qcoreevent.h>
 #include <QtCore/qtextstream.h>

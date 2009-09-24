@@ -35,8 +35,8 @@
 #ifndef QMEDIASLIDESHOW_H
 #define QMEDIASLIDESHOW_H
 
-#include <multimedia/qabstractmediaobject.h>
-#include <multimedia/qmediasource.h>
+#include <qabstractmediaobject.h>
+#include <qmediasource.h>
 
 class QMediaPlaylistProvider;
 

@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qvideooutputcontrol.h>
+#include <qvideooutputcontrol.h>
 
 /*!
     \enum QVideoOutputControl::Output

@@ -1,9 +1,10 @@
 TEMPLATE = app
-CONFIG += example
+TARGET = player
 
-include (../../common.pri)
+INCLUDEPATH += ../../multimedia
 
-LIBS += -lQtMedia
+include(../examples.pri)
+qtAddLibrary(QtMedia)
 
 HEADERS = \
     player.h \

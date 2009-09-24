@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qvideowindowcontrol.h>
+#include <qvideowindowcontrol.h>
 
 /*!
     \class QVideoWindowControl

@@ -36,7 +36,7 @@
 #ifndef QGSTREAMERCAMERACONTROL_H
 #define QGSTREAMERCAMERACONTROL_H
 
-#include <multimedia/qcameracontrol.h>
+#include <qcameracontrol.h>
 #include "qgstreamercapturesession.h"
 
 class QGstreamerCameraControl : public QCameraControl, public QGstreamerElementFactory

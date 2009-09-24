@@ -28,9 +28,8 @@ bin/sysinfo*
 bin/examples/*
 bin/sysinfo*
 install/*
-lib
+lib/*
 *.app
-*.pro.user
 
 #Symbian specific
 *.mmp

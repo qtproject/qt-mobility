@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qpaintervideosurface_p.h>
+#include <qpaintervideosurface_p.h>
 
 #include <qpainter.h>
 #include <qvariant.h>

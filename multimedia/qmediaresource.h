@@ -38,7 +38,7 @@
 #include <QtCore/qmap.h>
 #include <QtCore/qmetatype.h>
 
-#include <multimedia/qmultimediaglobal.h>
+#include <qmultimediaglobal.h>
 
 class Q_MEDIA_EXPORT QMediaResource
 {

@@ -35,10 +35,10 @@
 #ifndef QCAMERAEXPOSURECONTROL_H
 #define QCAMERAEXPOSURECONTROL_H
 
-#include <multimedia/qabstractmediacontrol.h>
-#include <multimedia/qabstractmediaobject.h>
+#include <qabstractmediacontrol.h>
+#include <qabstractmediaobject.h>
 
-#include <multimedia/qcamera.h>
+#include <qcamera.h>
 
 class Q_MEDIA_EXPORT QCameraExposureControl : public QAbstractMediaControl
 {

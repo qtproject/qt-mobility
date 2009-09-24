@@ -37,7 +37,7 @@
 
 #include <QObject>
 
-#include <multimedia/qmediasource.h>
+#include <qmediasource.h>
 
 class QString;
 

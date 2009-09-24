@@ -8,9 +8,9 @@ PLUGIN_SUBDIR = mediaservice
 
 include (../../common.pri)
 
-LIBS += -lQtMedia
+qtAddLibrary(QtMedia)
 
-INCLUDEPATH += $$SOURCE_DIR
+INCLUDEPATH += ../../multimedia
 
 DEPENDPATH += .
 

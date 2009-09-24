@@ -35,14 +35,14 @@
 #ifndef QVIDEOWIDGET_P_H
 #define QVIDEOWIDGET_P_H
 
-#include <multimedia/qvideowidget.h>
+#include <qvideowidget.h>
 
 #ifndef QT_NO_OPENGL
 #include <QGLWidget>
 #endif
 
 #ifndef QT_NO_MULTIMEDIA
-#include <multimedia/qpaintervideosurface_p.h>
+#include <qpaintervideosurface_p.h>
 #endif
 
 class QVideoWidgetBackendInterface

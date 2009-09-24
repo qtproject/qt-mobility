@@ -35,7 +35,7 @@
 #ifndef QWMPVIDEOOVERLAY_H
 #define QWMPVIDEOOVERLAY_H
 
-#include <multimedia/qvideowindowcontrol.h>
+#include <qvideowindowcontrol.h>
 
 #include "qwmpplayerservice.h"
 

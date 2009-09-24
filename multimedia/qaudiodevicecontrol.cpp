@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qaudiodevicecontrol.h>
+#include <qaudiodevicecontrol.h>
 
 /*!
     \class QAudioDeviceControl

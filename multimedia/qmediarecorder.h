@@ -35,8 +35,8 @@
 #ifndef QMEDIARECORDER_H
 #define QMEDIARECORDER_H
 
-#include <multimedia/qabstractmediaobject.h>
-#include <multimedia/qmediaserviceprovider.h>
+#include <qabstractmediaobject.h>
+#include <qmediaserviceprovider.h>
 
 #include <QtCore/qpair.h>
 

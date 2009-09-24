@@ -118,7 +118,7 @@ mac:contains(QT_CONFIG,qt_framework) {
 LIBS += -L$$OUTPUT_DIR/lib
 
 DEPENDPATH += . $$SOURCE_DIR
-INCLUDEPATH += $$SOURCE_DIR
+#INCLUDEPATH += $$SOURCE_DIR
 
 contains(QT_CONFIG, multimedia) {
     QT += multimedia

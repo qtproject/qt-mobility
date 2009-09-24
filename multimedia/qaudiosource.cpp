@@ -34,12 +34,12 @@
 
 #include <QDebug>
 
-#include <multimedia/qabstractmediaobject_p.h>
-#include <multimedia/qaudiosource.h>
-#include <multimedia/qaudiosourceservice.h>
-#include <multimedia/qaudiorecorderservice.h>
-#include <multimedia/qaudioencodercontrol.h>
-#include <multimedia/qmediarecordercontrol.h>
+#include <qabstractmediaobject_p.h>
+#include <qaudiosource.h>
+#include <qaudiosourceservice.h>
+#include <qaudiorecorderservice.h>
+#include <qaudioencodercontrol.h>
+#include <qmediarecordercontrol.h>
 
 /*!
     \class QAudioSource

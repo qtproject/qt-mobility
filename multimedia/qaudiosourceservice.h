@@ -35,7 +35,7 @@
 #ifndef QAUDIOSOURCESERVICE_H
 #define QAUDIOSOURCESERVICE_H
 
-#include <multimedia/qabstractmediaservice.h>
+#include <qabstractmediaservice.h>
 
 
 class QAudioSourceServicePrivate;

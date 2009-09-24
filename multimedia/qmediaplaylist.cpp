@@ -32,14 +32,14 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qmediaplaylist.h>
-#include <multimedia/qmediaplaylist_p.h>
-#include <multimedia/qmediaplaylistprovider.h>
-#include <multimedia/qlocalmediaplaylistprovider.h>
-#include <multimedia/qmediaplaylistioplugin.h>
-#include <multimedia/qabstractmediaservice.h>
-#include <multimedia/qmediaplaylistcontrol.h>
-#include <multimedia/qmediaplayercontrol.h>
+#include <qmediaplaylist.h>
+#include <qmediaplaylist_p.h>
+#include <qmediaplaylistprovider.h>
+#include <qlocalmediaplaylistprovider.h>
+#include <qmediaplaylistioplugin.h>
+#include <qabstractmediaservice.h>
+#include <qmediaplaylistcontrol.h>
+#include <qmediaplayercontrol.h>
 
 #include <QtCore/qlist.h>
 #include <QtCore/qfile.h>
@@ -47,7 +47,7 @@
 #include <QtCore/qcoreevent.h>
 #include <QtCore/qcoreapplication.h>
 
-#include <multimedia/qmediapluginloader_p.h>
+#include <qmediapluginloader_p.h>
 
 Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
         (QMediaPlaylistIOInterface_iid, QLatin1String("/playlistformats"), Qt::CaseInsensitive))

@@ -35,7 +35,7 @@
 #ifndef QAUDIORECORDERSERVICE_H
 #define QAUDIORECORDERSERVICE_H
 
-#include <multimedia/qabstractmediaservice.h>
+#include <qabstractmediaservice.h>
 
 class Q_MEDIA_EXPORT QAudioRecorderService : public QAbstractMediaService
 {

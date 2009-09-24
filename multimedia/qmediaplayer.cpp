@@ -37,14 +37,14 @@
 
 #include <QtCore/qcoreevent.h>
 
-#include <multimedia/qmediaplayer.h>
+#include <qmediaplayer.h>
 
-#include <multimedia/qabstractmediaobject_p.h>
-#include <multimedia/qmediaplayerservice.h>
-#include <multimedia/qmediaplayercontrol.h>
-#include <multimedia/qmediaserviceprovider.h>
-#include <multimedia/qmediaplaylist.h>
-#include <multimedia/qmediaplaylistcontrol.h>
+#include <qabstractmediaobject_p.h>
+#include <qmediaplayerservice.h>
+#include <qmediaplayercontrol.h>
+#include <qmediaserviceprovider.h>
+#include <qmediaplaylist.h>
+#include <qmediaplaylistcontrol.h>
 
 /*!
     \class QMediaPlayer

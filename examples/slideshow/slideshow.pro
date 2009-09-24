@@ -1,10 +1,9 @@
 TEMPLATE = app
 TARGET = slideshow
-CONFIG += example
+INCLUDEPATH+=../../multimedia
+include (../examples.pri)
 
-include (../../common.pri)
-
-LIBS += -lQtMedia
+qtAddLibrary(QtMedia)
 
 HEADERS = \
     slideshow.h

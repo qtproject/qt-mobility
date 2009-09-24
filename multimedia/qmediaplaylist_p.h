@@ -46,11 +46,11 @@
 // We mean it.
 //
 
-#include <multimedia/qmediaplaylist.h>
-#include <multimedia/qmediaplaylistcontrol.h>
-#include <multimedia/qmediaplayer.h>
-#include <multimedia/qmediaplayercontrol.h>
-#include <multimedia/qlocalmediaplaylistprovider.h>
+#include <qmediaplaylist.h>
+#include <qmediaplaylistcontrol.h>
+#include <qmediaplayer.h>
+#include <qmediaplayercontrol.h>
+#include <qlocalmediaplaylistprovider.h>
 
 #include <QtCore/qdebug.h>
 

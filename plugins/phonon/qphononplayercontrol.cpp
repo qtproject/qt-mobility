@@ -34,7 +34,7 @@
 
 #include "qphononplayercontrol.h"
 
-#include <multimedia/qmediaplaylistnavigator.h>
+#include <qmediaplaylistnavigator.h>
 
 #include <QtCore/qurl.h>
 #include <QtCore/qdebug.h>

@@ -33,8 +33,8 @@
 ****************************************************************************/
 
 
-#include <multimedia/qmediaplaylistcontrol.h>
-#include <multimedia/qabstractmediacontrol_p.h>
+#include <qmediaplaylistcontrol.h>
+#include <qabstractmediacontrol_p.h>
 
 /*!
     \class QMediaPlaylistControl

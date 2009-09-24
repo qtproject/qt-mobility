@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qmediaplaylistioplugin.h>
+#include <qmediaplaylistioplugin.h>
 
 QMediaPlaylistReader::~QMediaPlaylistReader()
 {

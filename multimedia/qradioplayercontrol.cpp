@@ -32,8 +32,8 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qradioplayercontrol.h>
-#include <multimedia/qabstractmediacontrol_p.h>
+#include <qradioplayercontrol.h>
+#include <qabstractmediacontrol_p.h>
 
 
 /*!

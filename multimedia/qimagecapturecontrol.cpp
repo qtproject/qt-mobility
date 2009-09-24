@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qimagecapturecontrol.h>
+#include <qimagecapturecontrol.h>
 #include <QtCore/qstringlist.h>
 
 /*!

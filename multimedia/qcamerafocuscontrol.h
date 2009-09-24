@@ -35,10 +35,10 @@
 #ifndef QCAMERAFOCUSCONTROL_H
 #define QCAMERAFOCUSCONTROL_H
 
-#include <multimedia/qabstractmediacontrol.h>
-#include <multimedia/qabstractmediaobject.h>
+#include <qabstractmediacontrol.h>
+#include <qabstractmediaobject.h>
 
-#include <multimedia/qcamera.h>
+#include <qcamera.h>
 
 class Q_MEDIA_EXPORT QCameraFocusControl : public QAbstractMediaControl
 {

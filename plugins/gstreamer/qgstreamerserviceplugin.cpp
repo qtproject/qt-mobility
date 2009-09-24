@@ -44,7 +44,7 @@
 #include "qgstreamercaptureservice.h"
 #endif
 
-#include <multimedia/qmediaserviceprovider.h>
+#include <qmediaserviceprovider.h>
 
 
 class QGstreamerProvider : public QMediaServiceProvider

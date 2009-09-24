@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qimageprocessingcontrol.h>
+#include <qimageprocessingcontrol.h>
 #include  "qabstractmediacontrol_p.h"
 
 /*!

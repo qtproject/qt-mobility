@@ -35,7 +35,7 @@
 #ifndef QLOCALMEDIAPAYLISTPROVIDER_H
 #define QLOCALMEDIAPAYLISTPROVIDER_H
 
-#include <multimedia/qmediaplaylistprovider.h>
+#include <qmediaplaylistprovider.h>
 
 class QLocalMediaPlaylistProviderPrivate;
 class Q_MEDIA_EXPORT QLocalMediaPlaylistProvider : public QMediaPlaylistProvider

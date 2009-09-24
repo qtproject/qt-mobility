@@ -41,12 +41,12 @@
 
 #include <QtMultimedia/qaudioformat.h>
 
-#include <multimedia/qmediarecorder.h>
-#include <multimedia/qabstractmediacontrol.h>
-#include <multimedia/qabstractmediaobject.h>
-#include <multimedia/qabstractmediaservice.h>
+#include <qmediarecorder.h>
+#include <qabstractmediacontrol.h>
+#include <qabstractmediaobject.h>
+#include <qabstractmediaservice.h>
 
-#include <multimedia/qmediaserviceprovider.h>
+#include <qmediaserviceprovider.h>
 
 class QAudioSourceService;
 class QAudioSourcePrivate;

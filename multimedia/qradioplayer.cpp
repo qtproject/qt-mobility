@@ -32,11 +32,11 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qradioplayer.h>
+#include <qradioplayer.h>
 
-#include <multimedia/qabstractmediaobject_p.h>
-#include <multimedia/qradioplayercontrol.h>
-#include <multimedia/qradioservice.h>
+#include <qabstractmediaobject_p.h>
+#include <qradioplayercontrol.h>
+#include <qradioservice.h>
 
 #include <QDebug>
 

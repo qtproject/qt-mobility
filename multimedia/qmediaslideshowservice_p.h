@@ -35,9 +35,9 @@
 #ifndef QMEDIASLIDESHOWSERVICE_P_H
 #define QMEDIASLIDESHOWSERVICE_P_H
 
-#include <multimedia/qabstractmediaservice.h>
-#include <multimedia/qmediaslideshow.h>
-#include <multimedia/qvideooutputcontrol.h>
+#include <qabstractmediaservice.h>
+#include <qmediaslideshow.h>
+#include <qvideooutputcontrol.h>
 
 class QAbstractVideoSurface;
 class QNetworkAccessManager;

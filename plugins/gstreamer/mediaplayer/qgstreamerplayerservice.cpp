@@ -49,8 +49,8 @@
 
 #include "qgstreamervideowidget.h"
 
-#include <multimedia/qmediaplaylistnavigator.h>
-#include <multimedia/qmediaplaylist.h>
+#include <qmediaplaylistnavigator.h>
+#include <qmediaplaylist.h>
 
 QGstreamerPlayerService::QGstreamerPlayerService(QObject *parent)
     : QMediaPlayerService(parent)

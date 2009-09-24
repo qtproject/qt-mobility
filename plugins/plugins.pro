@@ -5,9 +5,6 @@
 ######################################################################
 
 TEMPLATE = subdirs
-
-CONFIG += ordered
-
 SUBDIRS += contacts
 
 contains(QT_CONFIG, phonon): SUBDIRS += phonon

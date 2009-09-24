@@ -31,8 +31,7 @@ contains(QT_CONFIG, declarative) {
 SUBDIRS += sysinfo
 
 #Multimedia
-SUBDIRS = \
-        player \
+SUBDIRS += player \
         recorder \
         cameracapture \
         slideshow \

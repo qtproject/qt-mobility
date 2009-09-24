@@ -35,7 +35,7 @@
 #ifndef QGSTREAMERMETADATAPROVIDER_H
 #define QGSTREAMERMETADATAPROVIDER_H
 
-#include <multimedia/qmetadataprovidercontrol.h>
+#include <qmetadataprovidercontrol.h>
 
 class QGstreamerPlayerSession;
 

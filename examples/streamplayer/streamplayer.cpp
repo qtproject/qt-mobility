@@ -34,7 +34,7 @@
 
 #include "streamplayer.h"
 
-#include <multimedia/qmediaplayer.h>
+#include <qmediaplayer.h>
 
 #include <QtGui>
 

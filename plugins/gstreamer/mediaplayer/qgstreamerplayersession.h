@@ -39,7 +39,7 @@
 #include <QUrl>
 #include "qgstreamerplayercontrol.h"
 #include "qgstreamerbushelper.h"
-#include <multimedia/qmediaplayer.h>
+#include <qmediaplayer.h>
 
 #include <gst/gst.h>
 

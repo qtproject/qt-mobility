@@ -32,8 +32,8 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qvideowidgetcontrol.h>
-#include <multimedia/qabstractmediacontrol_p.h>
+#include <qvideowidgetcontrol.h>
+#include <qabstractmediacontrol_p.h>
 
 /*!
     \class QVideoWidgetControl

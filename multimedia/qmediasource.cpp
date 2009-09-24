@@ -34,7 +34,7 @@
 
 #include <QtCore/qurl.h>
 
-#include <multimedia/qmediasource.h>
+#include <qmediasource.h>
 
 
 class QMediaSourcePrivate : public QSharedData

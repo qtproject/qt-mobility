@@ -4,13 +4,15 @@ TARGET = qwmp
 
 PLUGIN_SUBDIR = mediaservice
 
+INCLUDEPATH+=../../multimedia
 include(../../common.pri)
 
 TMP_INCLUDE = $$quote($$(INCLUDE))
 TMP_SEARCHPATHS = $$split(TMP_INCLUDE, ";") $$QMAKE_INCDIR
 for(p, TMP_SEARCHPATHS): exists($${p}/evr.h): DEFINES *= QWMP_EVR
 
-LIBS += -lQtMedia -lstrmiids -lole32 -lOleaut32 -luser32 -lgdi32
+qtAddLibrary(QtMedia)
+LIBS += -lstrmiids -lole32 -lOleaut32 -luser32 -lgdi32
 
 HEADERS = \
     qevrvideooverlay.h \

@@ -32,9 +32,9 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qmediaplayercontrol.h>
-#include <multimedia/qabstractmediacontrol_p.h>
-#include <multimedia/qmediaplayer.h>
+#include <qmediaplayercontrol.h>
+#include <qabstractmediacontrol_p.h>
+#include <qmediaplayer.h>
 
 
 /*!

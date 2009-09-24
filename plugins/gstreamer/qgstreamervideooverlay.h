@@ -37,7 +37,7 @@
 
 #ifndef QT_NO_MULTIMEDIA
 
-#include <multimedia/qvideowindowcontrol.h>
+#include <qvideowindowcontrol.h>
 
 #include "qgstreamervideorendererinterface.h"
 

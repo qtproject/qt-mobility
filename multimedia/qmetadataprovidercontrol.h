@@ -35,10 +35,10 @@
 #ifndef QMETADATAPROVIDERCONTROL_H
 #define QMETADATAPROVIDERCONTROL_H
 
-#include <multimedia/qabstractmediacontrol.h>
-#include <multimedia/qabstractmediaobject.h>
+#include <qabstractmediacontrol.h>
+#include <qabstractmediaobject.h>
 
-#include <multimedia/qmediaresource.h>
+#include <qmediaresource.h>
 
 class QMetaDataProviderControlPrivate;
 class Q_MEDIA_EXPORT QMetaDataProviderControl : public QAbstractMediaControl

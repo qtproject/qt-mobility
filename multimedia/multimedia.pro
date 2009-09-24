@@ -4,6 +4,7 @@ TEMPLATE = lib
 TARGET = QtMedia
 
 include (../common.pri)
+INCLUDEPATH+= .
 
 QT += network
 
@@ -127,3 +128,5 @@ contains(QT_CONFIG, multimedia) {
     HEADERS += qaudioformat.h
     SOURCES += qaudioformat.cpp
 }
+
+include(../features/deploy.pri)

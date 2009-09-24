@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qcamerafocuscontrol.h>
+#include <qcamerafocuscontrol.h>
 #include  "qabstractmediacontrol_p.h"
 
 /*!

@@ -42,7 +42,7 @@
 #include "qwmpplaylistcontrol.h"
 #include "qwmpvideooverlay.h"
 
-#include <multimedia/qmediaplayer.h>
+#include <qmediaplayer.h>
 
 #include <QtCore/qcoreapplication.h>
 #include <QtCore/quuid.h>

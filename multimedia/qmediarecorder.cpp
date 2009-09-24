@@ -32,16 +32,16 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qmediarecorder.h>
+#include <qmediarecorder.h>
 
-#include <multimedia/qmediarecordercontrol.h>
-#include <multimedia/qabstractmediaobject_p.h>
-#include <multimedia/qaudiorecorderservice.h>
-#include <multimedia/qmediaserviceprovider.h>
-#include <multimedia/qaudioencodercontrol.h>
-#include <multimedia/qvideoencodercontrol.h>
-#include <multimedia/qmediaformatcontrol.h>
-#include <multimedia/qmediarecorderservice.h>
+#include <qmediarecordercontrol.h>
+#include <qabstractmediaobject_p.h>
+#include <qaudiorecorderservice.h>
+#include <qmediaserviceprovider.h>
+#include <qaudioencodercontrol.h>
+#include <qvideoencodercontrol.h>
+#include <qmediaformatcontrol.h>
+#include <qmediarecorderservice.h>
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qurl.h>
@@ -51,7 +51,7 @@
 #ifndef QT_NO_MULTIMEDIA
 #include <QtMultimedia/QAudioFormat>
 #else
-#include <multimedia/qaudioformat.h>
+#include <qaudioformat.h>
 #endif
 
 /*!

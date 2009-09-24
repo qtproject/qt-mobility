@@ -35,7 +35,7 @@
 #ifndef QWMPVIDEOOUTPUTCONTROL_H
 #define QWMPVIDEOOUTPUTCONTROL_H
 
-#include <multimedia/qvideooutputcontrol.h>
+#include <qvideooutputcontrol.h>
 
 class QWmpVideoOutputControl : public QVideoOutputControl
 {

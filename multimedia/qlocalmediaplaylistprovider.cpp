@@ -32,9 +32,9 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qlocalmediaplaylistprovider.h>
-#include <multimedia/qmediaplaylistprovider_p.h>
-#include <multimedia/qmediasource.h>
+#include <qlocalmediaplaylistprovider.h>
+#include <qmediaplaylistprovider_p.h>
+#include <qmediasource.h>
 
 class QLocalMediaPlaylistProviderPrivate: public QMediaPlaylistProviderPrivate
 {

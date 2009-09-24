@@ -46,7 +46,7 @@
 // We mean it.
 //
 
-#include <multimedia/qmediaplaylist.h>
+#include <qmediaplaylist.h>
 
 class QMediaPlaylistProviderPrivate
 {

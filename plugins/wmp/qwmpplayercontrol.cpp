@@ -39,8 +39,8 @@
 #include "qwmpmetadata.h"
 #include "qwmpplaylist.h"
 
-#include <multimedia/qmediaplayer.h>
-#include <multimedia/qmediaplaylist.h>
+#include <qmediaplayer.h>
+#include <qmediaplaylist.h>
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qurl.h>

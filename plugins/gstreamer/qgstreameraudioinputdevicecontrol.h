@@ -35,7 +35,7 @@
 #ifndef QGSTREAMERAUDIOINPUTDEVICECONTROL_H
 #define QGSTREAMERAUDIOINPUTDEVICECONTROL_H
 
-#include <multimedia/qaudiodevicecontrol.h>
+#include <qaudiodevicecontrol.h>
 #include <QtCore/qstringlist.h>
 
 class QGstreamerAudioInputDeviceControl : public QAudioDeviceControl

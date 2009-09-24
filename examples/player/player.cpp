@@ -37,8 +37,8 @@
 #include "playercontrols.h"
 #include "playlistmodel.h"
 
-#include <multimedia/qabstractmediaservice.h>
-#include <multimedia/qmediaplaylist.h>
+#include <qabstractmediaservice.h>
+#include <qmediaplaylist.h>
 
 #include <QtGui>
 

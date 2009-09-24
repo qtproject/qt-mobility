@@ -35,7 +35,7 @@
 #ifndef QIMAGECAPTURECONTROL_H
 #define QIMAGECAPTURECONTROL_H
 
-#include <multimedia/qabstractmediacontrol.h>
+#include <qabstractmediacontrol.h>
 
 class QImage;
 

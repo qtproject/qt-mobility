@@ -34,10 +34,10 @@
 
 #include <QtCore/qmetaobject.h>
 
-#include <multimedia/qabstractmediaobject_p.h>
+#include <qabstractmediaobject_p.h>
 
-#include <multimedia/qabstractmediaservice.h>
-#include <multimedia/qmetadataprovidercontrol.h>
+#include <qabstractmediaservice.h>
+#include <qmetadataprovidercontrol.h>
 
 void QAbstractMediaObjectPrivate::_q_notify()
 {

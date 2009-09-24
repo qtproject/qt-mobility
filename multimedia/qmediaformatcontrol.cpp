@@ -33,7 +33,7 @@
 ****************************************************************************/
 
 
-#include <multimedia/qmediaformatcontrol.h>
+#include <qmediaformatcontrol.h>
 
 QMediaFormatControl::QMediaFormatControl(QObject *parent)
     :QAbstractMediaControl(parent)

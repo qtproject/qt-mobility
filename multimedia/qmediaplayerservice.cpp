@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qmediaplayerservice.h>
+#include <qmediaplayerservice.h>
 
 
 QMediaPlayerService::~QMediaPlayerService()

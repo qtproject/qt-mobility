@@ -37,9 +37,9 @@
 
 #include <QtCore/qobject.h>
 
-#include <multimedia/qabstractmediaobject.h>
-#include <multimedia/qabstractmediaservice.h>
-#include <multimedia/qmediaserviceprovider.h>
+#include <qabstractmediaobject.h>
+#include <qabstractmediaservice.h>
+#include <qmediaserviceprovider.h>
 
 class QRadioService;
 class QRadioPlayerPrivate;

@@ -34,9 +34,9 @@
 
 #include "slideshow.h"
 
-#include <multimedia/qabstractmediaservice.h>
-#include <multimedia/qmediaplaylistprovider.h>
-#include <multimedia/qvideowidget.h>
+#include <qabstractmediaservice.h>
+#include <qmediaplaylistprovider.h>
+#include <qvideowidget.h>
 
 #include <QtGui>
 

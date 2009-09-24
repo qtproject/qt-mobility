@@ -35,7 +35,7 @@
 #ifndef QWMPPLAYLISTCONTROL_H
 #define QWMPPLAYLISTCONTROL_H
 
-#include <multimedia/qmediaplaylistcontrol.h>
+#include <qmediaplaylistcontrol.h>
 
 #include <wmp.h>
 

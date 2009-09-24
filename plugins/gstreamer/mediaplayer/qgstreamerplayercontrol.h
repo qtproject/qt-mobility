@@ -37,8 +37,8 @@
 
 #include <QtCore/qobject.h>
 
-#include <multimedia/qmediaplayercontrol.h>
-#include <multimedia/qmediaplayer.h>
+#include <qmediaplayercontrol.h>
+#include <qmediaplayer.h>
 
 #include <limits.h>
 

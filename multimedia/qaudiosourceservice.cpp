@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qaudiosourceservice.h>
+#include <qaudiosourceservice.h>
 
 QAudioSourceService::QAudioSourceService(QObject *parent):
     QAbstractMediaService(parent)

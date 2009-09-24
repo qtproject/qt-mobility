@@ -32,9 +32,9 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qmediaplaylistnavigator.h>
-#include <multimedia/qmediaplaylistprovider.h>
-#include <multimedia/qmediaplaylist.h>
+#include <qmediaplaylistnavigator.h>
+#include <qmediaplaylistprovider.h>
+#include <qmediaplaylist.h>
 
 #include <QtCore/qdebug.h>
 

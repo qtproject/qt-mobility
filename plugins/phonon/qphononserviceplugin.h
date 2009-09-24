@@ -36,7 +36,7 @@
 #ifndef QGSTREAMERSERVICEPLUGIN_H
 #define QGSTREAMERSERVICEPLUGIN_H
 
-#include <multimedia/qmediaserviceproviderplugin.h>
+#include <qmediaserviceproviderplugin.h>
 
 class QPhononServicePlugin : public QMediaServiceProviderPlugin
 {

@@ -38,7 +38,7 @@
 #include "qphononserviceplugin.h"
 #include "qphononplayerservice.h"
 
-#include <multimedia/qmediaserviceprovider.h>
+#include <qmediaserviceprovider.h>
 
 
 class QPhononProvider : public QMediaServiceProvider

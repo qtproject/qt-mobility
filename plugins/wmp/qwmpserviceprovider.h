@@ -35,8 +35,8 @@
 #ifndef QWMPSERVICEPROVIDER_H
 #define QWMPSERVICEPROVIDER_H
 
-#include <multimedia/qmediaserviceprovider.h>
-#include <multimedia/qmediaserviceproviderplugin.h>
+#include <qmediaserviceprovider.h>
+#include <qmediaserviceproviderplugin.h>
 
 class QWmpServiceProvider : public QMediaServiceProvider
 {

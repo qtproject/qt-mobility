@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qaudioformat.h>
+#include <qaudioformat.h>
 
 
 class QAudioFormatPrivate : public QSharedData

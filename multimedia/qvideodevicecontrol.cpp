@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qvideodevicecontrol.h>
+#include <qvideodevicecontrol.h>
 
 /*!
     \class QVideoDeviceControl

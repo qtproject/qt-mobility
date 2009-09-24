@@ -2,14 +2,15 @@ TEMPLATE = lib
 CONFIG += plugin
 TARGET = gstengine
 
-include (../../common.pri)
+include(../../common.pri)
+INCLUDEPATH+=../../multimedia
 
 PLUGIN_SUBDIR = mediaservice
 testplugin:DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/mediaservice/
 !testplugin:DESTDIR = $$OUTPUT_DIR/plugins/mediaservice/
 
 
-LIBS += -lQtMedia
+qtAddLibrary(QtMedia)
 
 DEPENDPATH += .
 

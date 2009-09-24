@@ -55,7 +55,7 @@
 #include <QtMultimedia/qabstractvideosurface.h>
 #include <QtMultimedia/qvideoframe.h>
 
-#include <multimedia/qmultimediaglobal.h>
+#include <qmultimediaglobal.h>
 
 #ifndef QT_NO_OPENGL
 # include <QtOpenGL/qgl.h>

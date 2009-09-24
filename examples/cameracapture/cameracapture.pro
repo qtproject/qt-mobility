@@ -1,9 +1,10 @@
 TEMPLATE = app
-CONFIG += example
+TARGET = cameracapture
 
-include(../../common.pri)
+INCLUDEPATH+=../../multimedia
+include(../examples.pri)
 
-LIBS += -lQtMedia
+qtAddLibrary(QtMedia)
 
 HEADERS = cameracapture.h
 

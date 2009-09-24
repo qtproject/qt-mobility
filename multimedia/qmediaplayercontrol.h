@@ -35,8 +35,8 @@
 #ifndef QMEDIAPLAYERCONTROL_H
 #define QMEDIAPLAYERCONTROL_H
 
-#include <multimedia/qabstractmediacontrol.h>
-#include <multimedia/qmediaplayer.h>
+#include <qabstractmediacontrol.h>
+#include <qmediaplayer.h>
 
 class QMediaPlaylist;
 

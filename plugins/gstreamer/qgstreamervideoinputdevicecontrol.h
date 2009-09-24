@@ -35,7 +35,7 @@
 #ifndef QGSTREAMERVIDEOINPUTDEVICECONTROL_H
 #define QGSTREAMERVIDEOINPUTDEVICECONTROL_H
 
-#include <multimedia/qvideodevicecontrol.h>
+#include <qvideodevicecontrol.h>
 #include <QtCore/qstringlist.h>
 
 class QGstreamerVideoInputDeviceControl : public QVideoDeviceControl

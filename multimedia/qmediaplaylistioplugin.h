@@ -39,9 +39,9 @@
 #include <QtCore/qplugin.h>
 #include <QtCore/qfactoryinterface.h>
 
-#include <multimedia/qmultimediaglobal.h>
+#include <qmultimediaglobal.h>
 
-#include <multimedia/qmediasource.h>
+#include <qmediasource.h>
 
 class QString;
 class QUrl;

@@ -34,15 +34,15 @@
 
 #include <QDebug>
 
-#include <multimedia/qcamera.h>
+#include <qcamera.h>
 
-#include <multimedia/qabstractmediaobject_p.h>
-#include <multimedia/qcameracontrol.h>
-#include <multimedia/qcameraexposurecontrol.h>
-#include <multimedia/qcamerafocuscontrol.h>
-#include <multimedia/qcameraservice.h>
-#include <multimedia/qmediarecordercontrol.h>
-#include <multimedia/qimageprocessingcontrol.h>
+#include <qabstractmediaobject_p.h>
+#include <qcameracontrol.h>
+#include <qcameraexposurecontrol.h>
+#include <qcamerafocuscontrol.h>
+#include <qcameraservice.h>
+#include <qmediarecordercontrol.h>
+#include <qimageprocessingcontrol.h>
 
 /*!
     \class QCamera

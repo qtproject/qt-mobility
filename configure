@@ -167,6 +167,7 @@ $relpath/bin/syncheaders $relpath/include $relpath/location
 $relpath/bin/syncheaders $relpath/include $relpath/serviceframework
 $relpath/bin/syncheaders $relpath/include $relpath/systeminfo
 $relpath/bin/syncheaders $relpath/include $relpath/contacts
+$relpath/bin/syncheaders $relpath/include $relpath/multimedia
 
 mv config.in config.pri
 

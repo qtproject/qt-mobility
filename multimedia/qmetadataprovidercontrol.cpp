@@ -32,8 +32,8 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qabstractmediacontrol_p.h>
-#include <multimedia/qmetadataprovidercontrol.h>
+#include <qabstractmediacontrol_p.h>
+#include <qmetadataprovidercontrol.h>
 
 
 /*!
