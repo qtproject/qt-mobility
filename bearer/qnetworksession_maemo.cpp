@@ -73,7 +73,9 @@ static DBusHandlerResult signal_handler(DBusConnection *connection,
 static inline DBusConnection *get_dbus_conn(DBusError *error)
 {
     DBusConnection *conn = dbus_bus_get(DBUS_BUS_SYSTEM, error);
+#ifdef BEARER_MANAGEMENT_DEBUG
     qDebug() << "Listening to bus" << dbus_bus_get_unique_name(conn);
+#endif
 
     return conn;
 }
@@ -195,7 +197,9 @@ void IcdListener::setup(QNetworkSessionPrivate *d)
 	    return;
 	}
 
+#ifdef BEARER_MANAGEMENT_DEBUG
 	qDebug() << "Listening" << ICD_STATUS_CHANGED_SIG << "signal from" << ICD_DBUS_SERVICE;
+#endif
 	first_call = false;
 	dbus_error_free(&error);
     }
@@ -215,17 +219,23 @@ void IcdListener::icdSignalReceived(QString& iap_id,
     if (iap_id == OSSO_IAP_SCAN) // icd sends scan status signals which we will ignore
 	return;
 
+#ifdef BEARER_MANAGEMENT_DEBUG
     qDebug() << "Status received:" << iap_id << "type" << network_type << "state" << state;
+#endif
 
     if (!sessions.contains(iap_id)) {
+#ifdef BEARER_MANAGEMENT_DEBUG
 	qDebug() << "No session for IAP" << iap_id;
+#endif
 	return;
     }
 
     QNetworkSessionPrivate *session = sessions.value(iap_id);
     QNetworkConfiguration ap_conf = session->manager.configurationFromIdentifier(iap_id);
     if (!ap_conf.isValid()) {
+#ifdef BEARER_MANAGEMENT_DEBUG
 	qDebug() << "Unknown IAP" << iap_id;
+#endif
 	return;
     }
 
@@ -247,7 +257,9 @@ void IcdListener::icdSignalReceived(QString& iap_id,
 	    /* The IAP was just disconnected by Icd */
 	    session->updateState(QNetworkSession::Disconnected);
 	} else {
+#ifdef BEARER_MANAGEMENT_DEBUG
 	    qDebug() << "Got a network disconnect when in state" << ap_conf.state();
+#endif
 	}
     } else if (status == CONNECTED) {
 	/* The IAP was just connected by Icd */
@@ -258,9 +270,13 @@ void IcdListener::icdSignalReceived(QString& iap_id,
 	    // TODO: the returned IAP id is not the ssid and it cannot be found when doing updateConfigurations(), fix me
 	    session->updateIdentifier(iap_id);
 	    // TODO: what about updating other fields in publicConfig
+#ifdef BEARER_MANAGEMENT_DEBUG
 	    qDebug() << "IAP" << iap_id << "connected when connecting to" << OSSO_IAP_ANY;
+#endif
 	} else {
+#ifdef BEARER_MANAGEMENT_DEBUG
 	    qDebug() << "IAP" << iap_id << "connected";
+#endif
 	}
     }
 
@@ -398,14 +414,18 @@ static QString get_network_interface()
     ret = icd.addrinfo(addr_results);
     if (ret == 0) {
 	/* No results */
+#ifdef BEARER_MANAGEMENT_DEBUG
 	qDebug() << "Cannot get addrinfo from icd, are you connected?";
+#endif
 	return iface;
     }
 
     const char *address = addr_results.first().ip_info.first().address.toAscii().constData();
     struct in_addr addr;
     if (inet_aton(address, &addr) == 0) {
+#ifdef BEARER_MANAGEMENT_DEBUG
 	qDebug() << "address" << address << "invalid";
+#endif
 	return iface;
     }
 
@@ -413,7 +433,9 @@ static QString get_network_interface()
     int family;
 
     if (getifaddrs(&ifaddr) == -1) {
+#ifdef BEARER_MANAGEMENT_DEBUG
 	qDebug() << "getifaddrs() failed";
+#endif
 	return iface;
     }
 
@@ -447,7 +469,9 @@ void QNetworkSessionPrivate::do_open()
     QString bearer_name;
 
     if (state == QNetworkSession::Connected) {
+#ifdef BEARER_MANAGEMENT_DEBUG
 	qDebug() << "Already connected to" << publicConfig.identifier();
+#endif
         emit q->stateChanged(QNetworkSession::Connected);
 	return;
     }
@@ -468,7 +492,9 @@ void QNetworkSessionPrivate::do_open()
 	return;
 
     if (iap == OSSO_IAP_ANY) {
+#ifdef BEARER_MANAGEMENT_DEBUG
 	qDebug() << "connecting to default IAP" << iap;
+#endif
 	st = icd->connect(flags, connect_result);
     } else {
 	QList<Maemo::ConnectParams> params;
@@ -477,7 +503,9 @@ void QNetworkSessionPrivate::do_open()
 	param.connect.network_attrs = 0;
 	param.connect.network_id = QByteArray(iap.toLatin1());
 	params.append(param);
+#ifdef BEARER_MANAGEMENT_DEBUG
 	qDebug() << "connecting to" << param.connect.network_id.data() << "type" << param.connect.network_type;
+#endif
 	st = icd->connect(flags, params, connect_result);
     }
 
@@ -486,7 +514,9 @@ void QNetworkSessionPrivate::do_open()
 	QString connected_iap = result;
 
 	if (connected_iap.isEmpty()) {
+#ifdef BEARER_MANAGEMENT_DEBUG
 	    qDebug() << "connect to"<< iap << "failed, result is empty";
+#endif
 	    emit q->error(QNetworkSession::InvalidConfigurationError);
 	    goto out;
 	}
@@ -527,13 +557,17 @@ void QNetworkSessionPrivate::do_open()
 	icd = 0;
 	currentNetworkInterface = get_network_interface();
 
+#ifdef BEARER_MANAGEMENT_DEBUG
 	qDebug() << "connected to" << result << publicConfig.d->name << "at" << currentNetworkInterface;
+#endif
 
 	activeConfig = publicConfig;
 	emit q->sessionOpened();
 
     } else {
+#ifdef BEARER_MANAGEMENT_DEBUG
 	qDebug() << "connect to"<< iap << "failed";
+#endif
 	emit q->error(QNetworkSession::UnknownSessionError);
     }
 
@@ -546,7 +580,9 @@ void QNetworkSessionPrivate::close()
 {
     // this one simulates the application disconnect (same as libconic i.e., the connection is not really closed)
     Maemo::Icd icd;
+#ifdef BEARER_MANAGEMENT_DEBUG
     qDebug() << "closing session" << publicConfig.identifier();
+#endif
     icd.disconnect(ICD_CONNECTION_FLAG_APPLICATION_EVENT);
     startTime = QDateTime();
     updateState(QNetworkSession::Disconnected);
@@ -558,7 +594,9 @@ void QNetworkSessionPrivate::stop()
 {
     // this one simulates the UI originated disconnect (the connection is closed for real)
     Maemo::Icd icd;
+#ifdef BEARER_MANAGEMENT_DEBUG
     qDebug() << "stopping session" << publicConfig.identifier();
+#endif
     icd.disconnect(ICD_CONNECTION_FLAG_UI_EVENT);
     startTime = QDateTime();
     updateState(QNetworkSession::Disconnected);

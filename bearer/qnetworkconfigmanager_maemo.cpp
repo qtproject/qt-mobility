@@ -297,7 +297,9 @@ void QNetworkConfigurationManagerPrivate::deleteConfiguration(QString& iap_id)
 	QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.take(iap_id);
 	if (priv) {
 	    priv->isValid = false;
+#ifdef BEARER_MANAGEMENT_DEBUG
 	    qDebug() << "IAP" << iap_id << "was removed from storage.";
+#endif
 
 	    QNetworkConfiguration item;
 	    item.d = priv;
@@ -305,7 +307,9 @@ void QNetworkConfigurationManagerPrivate::deleteConfiguration(QString& iap_id)
 	} else
 	    qWarning("Configuration not found for IAP %s", iap_id.toAscii().data());
     } else {
+#ifdef BEARER_MANAGEMENT_DEBUG
 	qDebug("IAP: %s, already missing from the known list", iap_id.toAscii().data());
+#endif
     }
 }
 
@@ -329,7 +333,9 @@ void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
 	    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);
 	    accessPointConfigurations.insert(iap_id, ptr);
 
+#ifdef BEARER_MANAGEMENT_DEBUG
 	    qDebug("IAP: %s, name: %s, added to known list", iap_id.toAscii().data(), cpPriv->name.toAscii().data());
+#endif
 
 	    QNetworkConfiguration item;
 	    item.d = ptr;
@@ -338,7 +344,9 @@ void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
 	    qWarning("IAP %s does not have \"type\" field defined, skipping this IAP.", iap_id.toAscii().data());
 	}
     } else {
+#ifdef BEARER_MANAGEMENT_DEBUG
 	qDebug() << "IAP" << iap_id << "already in gconf.";
+#endif
     }
 }
 
@@ -367,7 +375,9 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	Maemo::IAPConf saved_ap(iap_id);
 	bool is_temporary = saved_ap.value("temporary").toBool();
 	if (is_temporary) {
+#ifdef BEARER_MANAGEMENT_DEBUG
 	    qDebug() << "IAP" << iap_id << "is temporary, skipping it.";
+#endif
 	    continue;
 	}
 
@@ -388,7 +398,9 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	    qWarning() << "IAP" << iap_id << "network type is not set! Skipping it";
 	    continue;
 	} else {
+#ifdef BEARER_MANAGEMENT_DEBUG
 	    qDebug() << "IAP" << iap_id << "network type is" << iap_type;
+#endif
 	    ssid.clear();
 	}
 
@@ -411,9 +423,13 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);
 	    accessPointConfigurations.insert(iap_id, ptr);
 
+#ifdef BEARER_MANAGEMENT_DEBUG
 	    qDebug("IAP: %s, name: %s, ssid: %s, added to known list", iap_id.toAscii().data(), cpPriv->name.toAscii().data(), ssid.size() ? ssid.data() : "-");
+#endif
 	} else {
+#ifdef BEARER_MANAGEMENT_DEBUG
 	    qDebug("IAP: %s, ssid: %s, already exists in the known list", iap_id.toAscii().data(), ssid.size() ? ssid.data() : "-");
+#endif
 	}
     }
 
@@ -430,7 +446,9 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	if (!error.isEmpty()) {
 	    qWarning() << "Network scanning failed.";
 	} else {
+#ifdef BEARER_MANAGEMENT_DEBUG
 	    qDebug() << "Scan returned" << scanned.size() << "networks";
+#endif
 	}
     }
 
@@ -446,7 +464,9 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	    if (priv) {
 		priv->state = QNetworkConfiguration::Discovered; /* Defined is set automagically */
 		accessPointConfigurations.insert(iapid, priv);
+#ifdef BEARER_MANAGEMENT_DEBUG
 		qDebug("IAP: %s, ssid: %s, discovered", iapid.toAscii().data(), priv->network_id.data());
+#endif
 
 		if (!ap.scan.network_type.contains(wlan))
 		    continue; // not a wlan AP
@@ -462,7 +482,9 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 			network_attrs_to_security(ap.scan.network_attrs)) {
 			/* Remove IAP from the list */
 			knownConfigs.remove(priv->network_id, iap);
+#ifdef BEARER_MANAGEMENT_DEBUG
 			qDebug() << "Removed IAP" << iap->iap_id << "from unknown config";
+#endif
 			known_iaps.removeAt(k);
 			delete iap;
 			goto rescan_list;
@@ -488,7 +510,9 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);
 	    accessPointConfigurations.insert(cpPriv->id, ptr);
 
+#ifdef BEARER_MANAGEMENT_DEBUG
 	    qDebug() << "IAP with network id" << cpPriv->id << "was found in the scan.";
+#endif
 
 	    QNetworkConfiguration item;
 	    item.d = ptr;
@@ -509,7 +533,9 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.take(iap_id);
 	    if (priv) {
 		priv->isValid = false;
+#ifdef BEARER_MANAGEMENT_DEBUG
 		qDebug() << "IAP" << iap_id << "was removed as it was not found in scan.";
+#endif
 
 		QNetworkConfiguration item;
 		item.d = priv;
