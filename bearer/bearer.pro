@@ -59,6 +59,11 @@ symbian: {
         QT += dbus
 	CONFIG += link_pkgconfig
 
+	exists(../debug) {
+		message("Enabling debug messages.")
+		DEFINES += BEARER_MANAGEMENT_DEBUG
+	}
+
         HEADERS += qnetworksession_maemo_p.h \
                    qnetworkconfigmanager_maemo_p.h \
                    qnetworkconfiguration_maemo_p.h
