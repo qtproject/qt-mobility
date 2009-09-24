@@ -367,8 +367,26 @@ void QMessage::setPriority(Priority newPriority)
 
 uint QMessage::size() const
 {
+    uint size = 0;
+
     d_ptr->ensurePropertiesPresent(const_cast<QMessage*>(this));
-    return d_ptr->_size;
+    if (d_ptr->_size != 0) {
+        size = d_ptr->_size;
+    } else {
+        QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
+        if (container->_size != 0) {
+            size += ((container->_size / 1024) + 1) * 1024;
+        }
+        foreach (const QMessageContentContainer &attachment, container->_attachments) {
+            // Round size to a multiple of 1KB
+            size += ((attachment.size() / 1024) + 1) * 1024;
+        }
+
+        // Allow for header
+        size += 1024;
+    }
+
+    return size;
 }
 
 QMessageContentContainerId QMessage::bodyId() const

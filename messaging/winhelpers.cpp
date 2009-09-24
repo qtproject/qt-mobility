@@ -2289,7 +2289,8 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
 #else
                     case PR_MESSAGE_SIZE:
 #endif
-                        QMessagePrivate::setSize(*msg, prop.Value.ul);
+                        // Increase the size estimate by a third to allow for transfer encoding
+                        QMessagePrivate::setSize(*msg, prop.Value.ul * 4 / 3);
                         break;
                     default:
                         break;
@@ -2666,7 +2667,8 @@ bool MapiSession::updateMessageAttachments(QMessageStore::ErrorCode *lastError, 
                                 contentId = QStringFromLpctstr(qar.rows()->aRow[n].lpProps[4].Value.LPSZ);
                             }
                             if (qar.rows()->aRow[n].lpProps[5].ulPropTag == PR_ATTACH_SIZE) {
-                                size = qar.rows()->aRow[n].lpProps[5].Value.l;
+                                // Increase the size estimate by a third to allow for transfer encoding
+                                size = (qar.rows()->aRow[n].lpProps[5].Value.l * 4 / 3);
                             }
                             if (qar.rows()->aRow[n].lpProps[6].ulPropTag == PR_RENDERING_POSITION) {
                                 renderingPosition = qar.rows()->aRow[n].lpProps[6].Value.l;

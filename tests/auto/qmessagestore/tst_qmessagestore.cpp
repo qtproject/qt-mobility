@@ -283,7 +283,7 @@ void tst_QMessageStore::testMessage_data()
         << "Last message..."
         << QByteArray("text")
         << QByteArray("plain")
-        << 2048u
+        << 1536u
         << "...before Y2K"
         << QByteArray("text")
         << QByteArray("plain")
@@ -301,11 +301,11 @@ void tst_QMessageStore::testMessage_data()
         << "Last HTML message..."
         << QByteArray("text")
         << QByteArray("html")
-        << 2048u
+        << 1536u
         << "<html><p>...before <b>Y2K</b></p></html>"
         << QByteArray("text")
         << QByteArray("html")
-        << 48u
+        << 64u
         << QStringList()
         << QList<QByteArray>()
         << QList<QByteArray>()
@@ -319,7 +319,7 @@ void tst_QMessageStore::testMessage_data()
         << "Last message..."
         << QByteArray("multipart")
         << QByteArray("mixed")
-        << 2048u
+        << 1536u
         << "...before Y2K"
         << QByteArray("text")
         << QByteArray("plain")
@@ -341,7 +341,7 @@ void tst_QMessageStore::testMessage_data()
         << "<html><p>...before <b>Y2K</b></p></html>"
         << QByteArray("text")
         << QByteArray("html")
-        << 48u
+        << 64u
         << ( QStringList() << "1.txt" << "qtlogo.png" )
         << ( QList<QByteArray>() << "text" << "image" )
         << ( QList<QByteArray>() << "plain" << "png" )

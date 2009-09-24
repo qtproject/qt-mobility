@@ -331,15 +331,15 @@ void tst_QMessage::testToTransmissionFormat_multipart()
     const QString subject("This is a multipart message");
     const QByteArray contentType("multipart");
     const QByteArray contentSubType("mixed");
-    const unsigned messageSize(5120u);
+    const unsigned messageSize(6244u);
     const unsigned messageVariance(3072u);
 
     const QByteArray p1ContentType("text");
     const QByteArray p1ContentSubType("plain");
     const QByteArray p1ContentCharset(defaultCharset);
     const QString p1ContentText(QString("This is the happy face:").append(QChar(0x263a)));
-    const unsigned p1Size(32u);
-    const unsigned p1Variance(16u);
+    const unsigned p1Size(48u);
+    const unsigned p1Variance(24u);
 
     const QByteArray p2FileName("1.txt");
     const QByteArray p2ContentType("text");

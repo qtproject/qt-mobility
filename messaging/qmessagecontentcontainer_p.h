@@ -277,6 +277,7 @@ public:
         setContentType(type, subType, charset);
 
         _textContent = content;
+        _size = content.length() * sizeof(TCHAR);
         _available = true;
     }
 
@@ -285,6 +286,7 @@ public:
         setContentType(type, subType, charset);
 
         _content = content;
+        _size = content.length();
         _available = true;
     }
 
@@ -356,6 +358,7 @@ public:
 
         QFileInfo fi(attachmentPath);
         _name = fi.fileName().toLatin1();
+        _size = fi.size();
 
         //set the mime-type
 
