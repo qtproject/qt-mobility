@@ -1,6 +1,6 @@
 TEMPLATE = subdirs
 
-SUBDIRS =
+SUBDIRS = m3u
 
 contains(QT_CONFIG, phonon): SUBDIRS += phonon
 
