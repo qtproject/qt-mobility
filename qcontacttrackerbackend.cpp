@@ -23,7 +23,7 @@
 #include <QRegExp>
 #include <QDir>
 #include <QFile>
-
+#include <QSet>
 
 Live<nco::Role> QContactTrackerEngineData::contactByContext(const QContactDetail& det, const Live<nco::PersonContact>& ncoContact) {
     if (locationContext(det) == ContactContext::Work) {
@@ -101,14 +101,9 @@ void QContactTrackerEngine::connectToSignals()
     //this corresponds with telepathysupport/ TrackerSink::onSimplePresenceChanged
        signaler = SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(
                     nfo::IMAccount::iri());
-         connect(signaler, SIGNAL(subjectsAdded(const QStringList &)),
-                this, SLOT(subjectsAdded(const QStringList &)));
-        connect(signaler,
-                SIGNAL(baseRemoveSubjectsd(const QStringList &)), this,
-                SLOT(subjectsRemoved(const QStringList &)));
         connect(signaler,
                 SIGNAL(subjectsChanged(const QStringList &)), this,
-                SLOT(subjectsChanged(const QStringList &)));
+                SLOT(imAccountChanged(const QStringList &)));
 }
 
 QContactTrackerEngine& QContactTrackerEngine::operator=(const QContactTrackerEngine& other)
@@ -901,6 +896,24 @@ QUniqueId url2UniqueId(const QString &contactUrl)
 
 }
 
+// Let's then continue this trend with temporary methods. Here is a temporary
+// method to quick and ugly return the contact ID of the contact whos
+// status message was updated.
+QUniqueId contactIdFromIMAccount(const QString &IMAccount) {
+    QUniqueId id;
+    RDFVariable RDFContact = RDFVariable::fromType<nco::PersonContact>();
+    RDFSelect query;
+
+    query.addColumn("contact_uri", RDFContact);
+    query.addColumn("contactId", RDFContact.property<nco::contactUID>());
+    query.addColumn("imAccount", RDFContact.property<nco::hasIMAccount>() = QUrl(IMAccount));
+    LiveNodes ncoContacts = ::tracker()->modelQuery(query);
+    for(int i=0; i<ncoContacts->rowCount(); i++) {
+        id = ncoContacts->index(i, 1).data().toUInt();
+    }
+    return id;
+}
+
 void QContactTrackerEngine::subjectsAdded(const QStringList &subjects)
 {
     QList<QUniqueId> added;
@@ -933,6 +946,20 @@ void QContactTrackerEngine::subjectsChanged(const QStringList &subjects)
     }
     qDebug()<<Q_FUNC_INFO<<"added contactids:"<<added;
     emit contactsChanged(added);
+}
+
+void QContactTrackerEngine::imAccountChanged(const QStringList& subjects) {
+    QList<QUniqueId> contactsChangedPresence;
+
+    foreach(const QString &uri, subjects) {
+        contactsChangedPresence << contactIdFromIMAccount(uri);
+    }
+
+    // Remove duplicates, if changed subjects belonged to same contacts.
+    QSet<QUniqueId> noDuplicates = contactsChangedPresence.toSet();
+    contactsChangedPresence = noDuplicates.toList();
+
+    emit contactsChanged(contactsChangedPresence);
 }
 
 /*! \reimp */
