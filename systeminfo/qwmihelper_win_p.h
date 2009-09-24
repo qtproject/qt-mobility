@@ -68,11 +68,17 @@ public:
    void setConditional(const QString &conditional); //see WQL SQL for WMI)
 
 private:
+   IWbemLocator *wbemLocator;
+   IWbemServices *wbemServices;
+   IWbemClassObject *wbemCLassObject;
+
    QString m_className;
    QStringList m_classProperties;
    QString m_conditional;
    QString m_wmiNamespace;
    QVariant  msVariantToQVariant(VARIANT msVariant, CIMTYPE variantType);
+   void initializeWMI(const QString &wmiNamespace);
+   QHash <QString, bool> initializedNamespaces;
 
 };
 #endif

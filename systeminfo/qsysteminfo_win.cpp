@@ -348,7 +348,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
             QSystemStorageInfo mi;
             QStringList drives = mi.logicalDrives();
             foreach(QString drive, drives) {
-                if(mi.DriveType(drive) == QSystemStorageInfo::Removable) {
+                if(mi.typeForDrive(drive) == QSystemStorageInfo::Removable) {
                     featureSupported = true;
                 }
             }
@@ -1451,7 +1451,7 @@ bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
     if(screenSaverSecure)
         return false;
 
-    return SystemParametersInfo(SPI_SETSCREENSAVEACTIVE,state,0,SPIF_SENDWININICHANGE);
+    return SystemParametersInfo(SPI_SETSCREENSAVEACTIVE,true,0,SPIF_SENDWININICHANGE);
 }
 
 bool QSystemScreenSaverPrivate::screenSaverInhibited()
