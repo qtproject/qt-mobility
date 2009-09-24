@@ -52,7 +52,7 @@ SUBDIRS +=  qcontact \                      #Contacts
             qcontactmanagerplugins \
             qcontactmanagerfiltering
 
-SUBDIRS = \           #Multimedia
+SUBDIRS += \           #Multimedia
         qabstractmediaobject \
         qabstractmediaservice \
         qmediaplaylist \
