@@ -348,7 +348,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
             QSystemStorageInfo mi;
             QStringList drives = mi.logicalDrives();
             foreach(QString drive, drives) {
-                if(mi.typeForDrive(drive) == QSystemStorageInfo::Removable) {
+                if(mi.typeForDrive(drive) == QSystemStorageInfo::RemovableDrive) {
                     featureSupported = true;
                 }
             }
