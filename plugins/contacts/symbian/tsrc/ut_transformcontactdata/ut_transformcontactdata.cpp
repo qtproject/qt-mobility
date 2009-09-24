@@ -37,6 +37,7 @@
 #include "transformnickname.h"
 #include "transformphonenumber.h"
 #include "transformaddress.h"
+//#include "transformsipaddress.h"
 
 #include <QtTest/QtTest>
 
@@ -97,6 +98,12 @@ void TestTransformContactData::executeTransformAddress()
                              _L(""), QString(""));
 }
 
+/*void TestTransformContactData::executeTransformSipAddress()
+{
+    validateTransformSipAddress(_L("dummysip"), QString("dummysip"));
+    validateTransformSipAddress(_L(""), QString(""));
+}
+*/
 void TestTransformContactData::validateTransformEmail(TPtrC16 field, QString detail)
 {
     TransformContactData* transformEmail = new TransformEmail();
@@ -334,6 +341,25 @@ void TestTransformContactData::validateTransformPhonenumber(TPtrC16 field, QStri
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldVCardMapCAR));
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
     
+/*    QContactPhoneNumber phoneNumber8;
+    phoneNumber8.setNumber(detail);
+    phoneNumber8.setSubTypes(QContactPhoneNumber::SubTypeDtmf);
+    fields = transformPhoneNumber->transformDetailL(phoneNumber8);
+    QVERIFY(fields.count() == 1);
+    QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldDTMF));
+    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
+    
+    QContactPhoneNumber phoneNumber9;
+    phoneNumber9.setNumber(detail);
+    phoneNumber9.setSubTypes(QContactPhoneNumber::SubTypeAssistant);
+    fields = transformPhoneNumber->transformDetailL(phoneNumber9);
+    QVERIFY(fields.count() == 1);
+    QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldPhoneNumber));
+    QVERIFY(fields.at(0)->ContentType().Mapping() == KuidContactFieldVCardMapAssistantTel);
+    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
+*/    
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPhoneNumber);
     newField->TextStorage()->SetTextL(field);
     QContact contact;
@@ -417,6 +443,29 @@ void TestTransformContactData::validateTransformPhonenumber(TPtrC16 field, QStri
     delete newField;
     newField = 0;
     
+/*    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldDTMF);
+    newField->TextStorage()->SetTextL(field);
+    contactDetail = transformPhoneNumber->transformItemField(*newField, contact);
+    const QContactPhoneNumber* phoneNumberInfo7(static_cast<const QContactPhoneNumber*>(contactDetail));
+    QCOMPARE(phoneNumberInfo7->number(), detail);
+    QVERIFY(phoneNumberInfo7->subTypes().contains(QContactPhoneNumber::SubTypeDtmf));
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+    
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPhoneNumber);
+    newField->TextStorage()->SetTextL(field);
+    newField->SetMapping(KUidContactFieldVCardMapAssistantTel);
+    contactDetail = transformPhoneNumber->transformItemField(*newField, contact);
+    const QContactPhoneNumber* phoneNumberInfo8(static_cast<const QContactPhoneNumber*>(contactDetail));
+    QCOMPARE(phoneNumberInfo8->number(), detail);
+    QVERIFY(phoneNumberInfo8->subTypes().contains(QContactPhoneNumber::SubTypeAssistant));
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+*/    
     delete transformPhoneNumber; 
 }
 
@@ -531,6 +580,88 @@ void TestTransformContactData::validateTransformAddress(TPtrC16 countryField, QS
     delete transformAddress;
 }
 
+/*void TestTransformContactData::validateTransformSipAddress(TPtrC16 sipField, QString sipDetail)
+{
+    TransformContactData* transformSipAddress = new TransformSipAddress();
+    QVERIFY(transformSipAddress != 0);
+    QVERIFY(transformSipAddress->supportsField(KUidContactFieldSIPID.iUid));
+    QVERIFY(transformSipAddress->supportsDetail(QContactSipAddress::DefinitionName));
+     
+    validateContexts(transformSipAddress);
+     
+    QContactSipAddress sipAddress1;
+    sipAddress1.setSipAddress(sipDetail);
+    sipAddress1.setSubTypes(QContactSipAddress::SubTypeInternet);
+    QList<CContactItemField *> fields = transformSipAddress->transformDetailL(sipAddress1);
+    QVERIFY(fields.count() == 1);
+    QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldSIPID));
+    QVERIFY(fields.at(0)->ContentType().Mapping() == KUidContactFieldVCardMapSIPID);
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldVCardMapVOIP));
+    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(sipField), 0);
+    
+    QContactSipAddress sipAddress2;
+    sipAddress2.setSipAddress(sipDetail);
+    sipAddress2.setSubTypes(QContactSipAddress::SubTypeShareVideo);
+    QList<CContactItemField *> fields = transformSipAddress->transformDetailL(sipAddress2);
+    QVERIFY(fields.count() == 1);
+    QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldSIPID));
+    QVERIFY(fields.at(0)->ContentType().Mapping() == KUidContactFieldVCardMapSIPID);
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldVCardMapSWIS));
+    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(sipField), 0);
+ 
+    QContactSipAddress sipAddress3;
+    sipAddress3.setSipAddress(sipDetail);
+    sipAddress3.setSubTypes(QContactSipAddress::SubTypeSip);
+    QList<CContactItemField *> fields = transformSipAddress->transformDetailL(sipAddress2);
+    QVERIFY(fields.count() == 1);
+    QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldSIPID));
+    QVERIFY(fields.at(0)->ContentType().Mapping() == KUidContactFieldVCardMapSIPID);
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldVCardMapSIPID));
+    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(sipField), 0);
+    
+    CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldSIPID);
+    newField->TextStorage()->SetTextL(sipField);
+    newField->AddFieldTypeL(KUidContactFieldVCardMapVOIP);
+    QContact contact;
+    QContactDetail* contactDetail = transformSipAddress->transformItemField(*newField, contact);
+    const QContactSipAddress* sipAddress1(static_cast<const QContactSipAddress*>(contactDetail));
+    QCOMPARE(sipAddress1->sipAddress(), sipDetail);
+    QVERIFY(sipAddress1->subTypes().contains(QContactSipAddress::SubTypeInternet));
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+    
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldSIPID);
+    newField->TextStorage()->SetTextL(sipField);
+    newField->AddFieldTypeL(KUidContactFieldVCardMapSWIS);
+    contactDetail = transformSipAddress->transformItemField(*newField, contact);
+    const QContactSipAddress* sipAddress2(static_cast<const QContactSipAddress*>(contactDetail));
+    QCOMPARE(sipAddress2->sipAddress(), sipDetail);
+    QVERIFY(sipAddress2->subTypes().contains(QContactSipAddress::SubTypeShareVideo));
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+    
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldSIPID);
+    newField->TextStorage()->SetTextL(sipField);
+    newField->AddFieldTypeL(KUidContactFieldVCardMapSIPID);
+    contactDetail = transformSipAddress->transformItemField(*newField, contact);
+    const QContactSipAddress* sipAddress3(static_cast<const QContactSipAddress*>(contactDetail));
+    QCOMPARE(sipAddress3->sipAddress(), sipDetail);
+    QVERIFY(sipAddress3->subTypes().contains(QContactSipAddress::SubTypeSip));
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+    
+    delete transformSipAddress;
+}
+*/
 void TestTransformContactData::validateContexts(TransformContactData* transformContactData) const
 {
     QContactDetail detail1;
