@@ -1,6 +1,12 @@
 <!DOCTYPE DCF>
 <DCF ref="index.html" icon="qt-mobility-library.png" imagedir="../../gif" title="Qt Mobility Library Reference Documentation">
 <section ref="classes.html" title="Classes">
+    <section ref="qcontactdetaildefinition-field.html" title="Field Class Reference">
+        <keyword ref="qcontactdetaildefinition-field.html">Field</keyword>
+        <keyword ref="qcontactdetaildefinition-field.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qcontactdetaildefinition-field.html#operator-eq-eq">operator==</keyword>
+        <section ref="qcontactdetaildefinition-field-members.html" title="List of all members"/>
+    </section>
     <section ref="qmallocpool-memorystats.html" title="MemoryStats Class Reference">
         <keyword ref="qmallocpool-memorystats.html">MemoryStats</keyword>
         <section ref="qmallocpool-memorystats-members.html" title="List of all members"/>
@@ -45,6 +51,795 @@
         <keyword ref="qabstractvaluespacelayer.html#value">value</keyword>
         <keyword ref="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER">QVALUESPACE_AUTO_INSTALL_LAYER</keyword>
         <section ref="qabstractvaluespacelayer-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontact.html" title="QContact Class Reference">
+        <keyword ref="qcontact.html">QContact</keyword>
+        <keyword ref="qcontact.html#availableActions">availableActions</keyword>
+        <keyword ref="qcontact.html#clearDetails">clearDetails</keyword>
+        <keyword ref="qcontact.html#detail">detail</keyword>
+        <keyword ref="qcontact.html#detailWithAction">detailWithAction</keyword>
+        <keyword ref="qcontact.html#details">details</keyword>
+        <keyword ref="qcontact.html#detailsWithAction">detailsWithAction</keyword>
+        <keyword ref="qcontact.html#displayLabel">displayLabel</keyword>
+        <keyword ref="qcontact.html#groups">groups</keyword>
+        <keyword ref="qcontact.html#id">id</keyword>
+        <keyword ref="qcontact.html#isEmpty">isEmpty</keyword>
+        <keyword ref="qcontact.html#isPreferredDetail">isPreferredDetail</keyword>
+        <keyword ref="qcontact.html#preferredDetail">preferredDetail</keyword>
+        <keyword ref="qcontact.html#removeDetail">removeDetail</keyword>
+        <keyword ref="qcontact.html#saveDetail">saveDetail</keyword>
+        <keyword ref="qcontact.html#setDisplayLabel">setDisplayLabel</keyword>
+        <keyword ref="qcontact.html#setGroups">setGroups</keyword>
+        <keyword ref="qcontact.html#setId">setId</keyword>
+        <keyword ref="qcontact.html#setPreferredDetail">setPreferredDetail</keyword>
+        <keyword ref="qcontact.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qcontact.html#operator-eq">operator=</keyword>
+        <keyword ref="qcontact.html#operator-eq-eq">operator==</keyword>
+        <section ref="qcontact-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactabstractrequest.html" title="QContactAbstractRequest Class Reference">
+        <keyword ref="qcontactabstractrequest.html">QContactAbstractRequest</keyword>
+        <keyword ref="qcontactabstractrequest.html#RequestType-enum">RequestType</keyword>
+        <keyword ref="qcontactabstractrequest.html#RequestType-enum">QContactAbstractRequest::GroupFetchRequest</keyword>
+        <keyword ref="qcontactabstractrequest.html#RequestType-enum">QContactAbstractRequest::GroupSaveRequest</keyword>
+        <keyword ref="qcontactabstractrequest.html#RequestType-enum">QContactAbstractRequest::ContactIdFetchRequest</keyword>
+        <keyword ref="qcontactabstractrequest.html#RequestType-enum">QContactAbstractRequest::DetailDefinitionSaveRequest</keyword>
+        <keyword ref="qcontactabstractrequest.html#RequestType-enum">QContactAbstractRequest::DetailDefinitionRemoveRequest</keyword>
+        <keyword ref="qcontactabstractrequest.html#RequestType-enum">QContactAbstractRequest::ContactRemoveRequest</keyword>
+        <keyword ref="qcontactabstractrequest.html#RequestType-enum">QContactAbstractRequest::InvalidRequest</keyword>
+        <keyword ref="qcontactabstractrequest.html#RequestType-enum">QContactAbstractRequest::GroupRemoveRequest</keyword>
+        <keyword ref="qcontactabstractrequest.html#RequestType-enum">QContactAbstractRequest::ContactSaveRequest</keyword>
+        <keyword ref="qcontactabstractrequest.html#RequestType-enum">QContactAbstractRequest::DetailDefinitionFetchRequest</keyword>
+        <keyword ref="qcontactabstractrequest.html#RequestType-enum">QContactAbstractRequest::ContactFetchRequest</keyword>
+        <keyword ref="qcontactabstractrequest.html#Status-enum">Status</keyword>
+        <keyword ref="qcontactabstractrequest.html#Status-enum">QContactAbstractRequest::Cancelling</keyword>
+        <keyword ref="qcontactabstractrequest.html#Status-enum">QContactAbstractRequest::Active</keyword>
+        <keyword ref="qcontactabstractrequest.html#Status-enum">QContactAbstractRequest::Cancelled</keyword>
+        <keyword ref="qcontactabstractrequest.html#Status-enum">QContactAbstractRequest::Finished</keyword>
+        <keyword ref="qcontactabstractrequest.html#Status-enum">QContactAbstractRequest::Inactive</keyword>
+        <keyword ref="qcontactabstractrequest.html#cancel">cancel</keyword>
+        <keyword ref="qcontactabstractrequest.html#error">error</keyword>
+        <keyword ref="qcontactabstractrequest.html#errors">errors</keyword>
+        <keyword ref="qcontactabstractrequest.html#isActive">isActive</keyword>
+        <keyword ref="qcontactabstractrequest.html#isFinished">isFinished</keyword>
+        <keyword ref="qcontactabstractrequest.html#manager">manager</keyword>
+        <keyword ref="qcontactabstractrequest.html#setManager">setManager</keyword>
+        <keyword ref="qcontactabstractrequest.html#start">start</keyword>
+        <keyword ref="qcontactabstractrequest.html#status">status</keyword>
+        <keyword ref="qcontactabstractrequest.html#type">type</keyword>
+        <keyword ref="qcontactabstractrequest.html#waitForFinished">waitForFinished</keyword>
+        <keyword ref="qcontactabstractrequest.html#waitForProgress">waitForProgress</keyword>
+        <section ref="qcontactabstractrequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactaction.html" title="QContactAction Class Reference">
+        <keyword ref="qcontactaction.html">QContactAction</keyword>
+        <keyword ref="qcontactaction.html#action">action</keyword>
+        <keyword ref="qcontactaction.html#actionDescriptor">actionDescriptor</keyword>
+        <keyword ref="qcontactaction.html#actionDescriptors">actionDescriptors</keyword>
+        <keyword ref="qcontactaction.html#availableActions">availableActions</keyword>
+        <keyword ref="qcontactaction.html#contactFilter">contactFilter</keyword>
+        <keyword ref="qcontactaction.html#metadata">metadata</keyword>
+        <keyword ref="qcontactaction.html#performAction">performAction</keyword>
+        <keyword ref="qcontactaction.html#supportedDetails">supportedDetails</keyword>
+        <keyword ref="qcontactaction.html#supportsDetail">supportsDetail</keyword>
+        <section ref="qcontactaction-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactactiondescriptor.html" title="QContactActionDescriptor Class Reference">
+        <keyword ref="qcontactactiondescriptor.html">QContactActionDescriptor</keyword>
+        <keyword ref="qcontactactiondescriptor.html#actionName">actionName</keyword>
+        <keyword ref="qcontactactiondescriptor.html#implementationVersion">implementationVersion</keyword>
+        <keyword ref="qcontactactiondescriptor.html#isEmpty">isEmpty</keyword>
+        <keyword ref="qcontactactiondescriptor.html#setActionName">setActionName</keyword>
+        <keyword ref="qcontactactiondescriptor.html#setImplementationVersion">setImplementationVersion</keyword>
+        <keyword ref="qcontactactiondescriptor.html#setVendorName">setVendorName</keyword>
+        <keyword ref="qcontactactiondescriptor.html#vendorName">vendorName</keyword>
+        <keyword ref="qcontactactiondescriptor.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qcontactactiondescriptor.html#operator-eq">operator=</keyword>
+        <keyword ref="qcontactactiondescriptor.html#operator-eq-eq">operator==</keyword>
+        <section ref="qcontactactiondescriptor-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactactionfactory.html" title="QContactActionFactory Class Reference">
+        <keyword ref="qcontactactionfactory.html">QContactActionFactory</keyword>
+        <keyword ref="qcontactactionfactory.html#actionDescriptors">actionDescriptors</keyword>
+        <keyword ref="qcontactactionfactory.html#actionMetadata">actionMetadata</keyword>
+        <keyword ref="qcontactactionfactory.html#instance">instance</keyword>
+        <keyword ref="qcontactactionfactory.html#name">name</keyword>
+        <section ref="qcontactactionfactory-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactactionfilter.html" title="QContactActionFilter Class Reference">
+        <keyword ref="qcontactactionfilter.html">QContactActionFilter</keyword>
+        <keyword ref="qcontactactionfilter.html#actionName">actionName</keyword>
+        <keyword ref="qcontactactionfilter.html#implementationVersion">implementationVersion</keyword>
+        <keyword ref="qcontactactionfilter.html#setActionName">setActionName</keyword>
+        <keyword ref="qcontactactionfilter.html#setValue">setValue</keyword>
+        <keyword ref="qcontactactionfilter.html#setVendor">setVendor</keyword>
+        <keyword ref="qcontactactionfilter.html#value">value</keyword>
+        <keyword ref="qcontactactionfilter.html#vendorName">vendorName</keyword>
+        <section ref="qcontactactionfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactaddress.html" title="QContactAddress Class Reference">
+        <keyword ref="qcontactaddress.html">QContactAddress</keyword>
+        <keyword ref="qcontactaddress.html#country">country</keyword>
+        <keyword ref="qcontactaddress.html#displayLabel">displayLabel</keyword>
+        <keyword ref="qcontactaddress.html#locality">locality</keyword>
+        <keyword ref="qcontactaddress.html#postOfficeBox">postOfficeBox</keyword>
+        <keyword ref="qcontactaddress.html#postcode">postcode</keyword>
+        <keyword ref="qcontactaddress.html#region">region</keyword>
+        <keyword ref="qcontactaddress.html#setCountry">setCountry</keyword>
+        <keyword ref="qcontactaddress.html#setDisplayLabel">setDisplayLabel</keyword>
+        <keyword ref="qcontactaddress.html#setLocality">setLocality</keyword>
+        <keyword ref="qcontactaddress.html#setPostOfficeBox">setPostOfficeBox</keyword>
+        <keyword ref="qcontactaddress.html#setPostcode">setPostcode</keyword>
+        <keyword ref="qcontactaddress.html#setRegion">setRegion</keyword>
+        <keyword ref="qcontactaddress.html#setStreet">setStreet</keyword>
+        <keyword ref="qcontactaddress.html#setSubTypes">setSubTypes</keyword>
+        <keyword ref="qcontactaddress.html#street">street</keyword>
+        <keyword ref="qcontactaddress.html#subTypes">subTypes</keyword>
+        <keyword ref="qcontactaddress.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactaddress.html#FieldCountry-var">FieldCountry</keyword>
+        <keyword ref="qcontactaddress.html#FieldDisplayLabel-var">FieldDisplayLabel</keyword>
+        <keyword ref="qcontactaddress.html#FieldLocality-var">FieldLocality</keyword>
+        <keyword ref="qcontactaddress.html#FieldPostOfficeBox-var">FieldPostOfficeBox</keyword>
+        <keyword ref="qcontactaddress.html#FieldPostcode-var">FieldPostcode</keyword>
+        <keyword ref="qcontactaddress.html#FieldRegion-var">FieldRegion</keyword>
+        <keyword ref="qcontactaddress.html#FieldStreet-var">FieldStreet</keyword>
+        <keyword ref="qcontactaddress.html#FieldSubTypes-var">FieldSubTypes</keyword>
+        <keyword ref="qcontactaddress.html#SubTypeDomestic-var">SubTypeDomestic</keyword>
+        <keyword ref="qcontactaddress.html#SubTypeInternational-var">SubTypeInternational</keyword>
+        <keyword ref="qcontactaddress.html#SubTypeParcel-var">SubTypeParcel</keyword>
+        <keyword ref="qcontactaddress.html#SubTypePostal-var">SubTypePostal</keyword>
+        <section ref="qcontactaddress-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactanniversary.html" title="QContactAnniversary Class Reference">
+        <keyword ref="qcontactanniversary.html">QContactAnniversary</keyword>
+        <keyword ref="qcontactanniversary.html#calendarId">calendarId</keyword>
+        <keyword ref="qcontactanniversary.html#event">event</keyword>
+        <keyword ref="qcontactanniversary.html#originalDate">originalDate</keyword>
+        <keyword ref="qcontactanniversary.html#setCalendarId">setCalendarId</keyword>
+        <keyword ref="qcontactanniversary.html#setEvent">setEvent</keyword>
+        <keyword ref="qcontactanniversary.html#setOriginalDate">setOriginalDate</keyword>
+        <keyword ref="qcontactanniversary.html#setSubType">setSubType</keyword>
+        <keyword ref="qcontactanniversary.html#subType">subType</keyword>
+        <keyword ref="qcontactanniversary.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactanniversary.html#FieldCalendarId-var">FieldCalendarId</keyword>
+        <keyword ref="qcontactanniversary.html#FieldEvent-var">FieldEvent</keyword>
+        <keyword ref="qcontactanniversary.html#FieldOriginalDate-var">FieldOriginalDate</keyword>
+        <keyword ref="qcontactanniversary.html#FieldSubType-var">FieldSubType</keyword>
+        <keyword ref="qcontactanniversary.html#SubTypeEmployment-var">SubTypeEmployment</keyword>
+        <keyword ref="qcontactanniversary.html#SubTypeEngagement-var">SubTypeEngagement</keyword>
+        <keyword ref="qcontactanniversary.html#SubTypeHouse-var">SubTypeHouse</keyword>
+        <keyword ref="qcontactanniversary.html#SubTypeMemorial-var">SubTypeMemorial</keyword>
+        <keyword ref="qcontactanniversary.html#SubTypeWedding-var">SubTypeWedding</keyword>
+        <section ref="qcontactanniversary-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactavatar.html" title="QContactAvatar Class Reference">
+        <keyword ref="qcontactavatar.html">QContactAvatar</keyword>
+        <keyword ref="qcontactavatar.html#avatar">avatar</keyword>
+        <keyword ref="qcontactavatar.html#setAvatar">setAvatar</keyword>
+        <keyword ref="qcontactavatar.html#setSubType">setSubType</keyword>
+        <keyword ref="qcontactavatar.html#subType">subType</keyword>
+        <keyword ref="qcontactavatar.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactavatar.html#FieldAvatar-var">FieldAvatar</keyword>
+        <keyword ref="qcontactavatar.html#FieldSubType-var">FieldSubType</keyword>
+        <keyword ref="qcontactavatar.html#SubTypeImage-var">SubTypeImage</keyword>
+        <keyword ref="qcontactavatar.html#SubTypeTexturedMesh-var">SubTypeTexturedMesh</keyword>
+        <keyword ref="qcontactavatar.html#SubTypeVideo-var">SubTypeVideo</keyword>
+        <section ref="qcontactavatar-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactbirthday.html" title="QContactBirthday Class Reference">
+        <keyword ref="qcontactbirthday.html">QContactBirthday</keyword>
+        <keyword ref="qcontactbirthday.html#date">date</keyword>
+        <keyword ref="qcontactbirthday.html#setDate">setDate</keyword>
+        <keyword ref="qcontactbirthday.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactbirthday.html#FieldBirthday-var">FieldBirthday</keyword>
+        <section ref="qcontactbirthday-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactchangelogfilter.html" title="QContactChangeLogFilter Class Reference">
+        <keyword ref="qcontactchangelogfilter.html">QContactChangeLogFilter</keyword>
+        <keyword ref="qcontactchangelogfilter.html#EventType-enum">EventType</keyword>
+        <keyword ref="qcontactchangelogfilter.html#EventType-enum">QContactChangeLogFilter::EventAdded</keyword>
+        <keyword ref="qcontactchangelogfilter.html#EventType-enum">QContactChangeLogFilter::EventChanged</keyword>
+        <keyword ref="qcontactchangelogfilter.html#EventType-enum">QContactChangeLogFilter::EventRemoved</keyword>
+        <keyword ref="qcontactchangelogfilter.html#eventType">eventType</keyword>
+        <keyword ref="qcontactchangelogfilter.html#setEventType">setEventType</keyword>
+        <keyword ref="qcontactchangelogfilter.html#setSince">setSince</keyword>
+        <keyword ref="qcontactchangelogfilter.html#since">since</keyword>
+        <section ref="qcontactchangelogfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactdetail.html" title="QContactDetail Class Reference">
+        <keyword ref="qcontactdetail.html">QContactDetail</keyword>
+        <keyword ref="qcontactdetail.html#assign">assign</keyword>
+        <keyword ref="qcontactdetail.html#contexts">contexts</keyword>
+        <keyword ref="qcontactdetail.html#definitionName">definitionName</keyword>
+        <keyword ref="qcontactdetail.html#hasValue">hasValue</keyword>
+        <keyword ref="qcontactdetail.html#isEmpty">isEmpty</keyword>
+        <keyword ref="qcontactdetail.html#removeValue">removeValue</keyword>
+        <keyword ref="qcontactdetail.html#setContexts">setContexts</keyword>
+        <keyword ref="qcontactdetail.html#setValue">setValue</keyword>
+        <keyword ref="qcontactdetail.html#value">value</keyword>
+        <keyword ref="qcontactdetail.html#values">values</keyword>
+        <keyword ref="qcontactdetail.html#variantValue">variantValue</keyword>
+        <keyword ref="qcontactdetail.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qcontactdetail.html#operator-eq">operator=</keyword>
+        <keyword ref="qcontactdetail.html#operator-eq-eq">operator==</keyword>
+        <keyword ref="qcontactdetail.html#Q_DECLARE_CUSTOM_CONTACT_DETAIL">Q_DECLARE_CUSTOM_CONTACT_DETAIL</keyword>
+        <section ref="qcontactdetail-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactdetaildefinition.html" title="QContactDetailDefinition Class Reference">
+        <keyword ref="qcontactdetaildefinition.html">QContactDetailDefinition</keyword>
+        <keyword ref="qcontactdetaildefinition.html#AccessConstraint-enum">AccessConstraint</keyword>
+        <keyword ref="qcontactdetaildefinition.html#AccessConstraint-enum">QContactDetailDefinition::NoConstraint</keyword>
+        <keyword ref="qcontactdetaildefinition.html#AccessConstraint-enum">QContactDetailDefinition::CreateOnly</keyword>
+        <keyword ref="qcontactdetaildefinition.html#AccessConstraint-enum">QContactDetailDefinition::ReadOnly</keyword>
+        <keyword ref="qcontactdetaildefinition.html#accessConstraint">accessConstraint</keyword>
+        <keyword ref="qcontactdetaildefinition.html#fields">fields</keyword>
+        <keyword ref="qcontactdetaildefinition.html#isEmpty">isEmpty</keyword>
+        <keyword ref="qcontactdetaildefinition.html#isUnique">isUnique</keyword>
+        <keyword ref="qcontactdetaildefinition.html#name">name</keyword>
+        <keyword ref="qcontactdetaildefinition.html#setAccessConstraint">setAccessConstraint</keyword>
+        <keyword ref="qcontactdetaildefinition.html#setFields">setFields</keyword>
+        <keyword ref="qcontactdetaildefinition.html#setName">setName</keyword>
+        <keyword ref="qcontactdetaildefinition.html#setUnique">setUnique</keyword>
+        <keyword ref="qcontactdetaildefinition.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qcontactdetaildefinition.html#operator-eq">operator=</keyword>
+        <keyword ref="qcontactdetaildefinition.html#operator-eq-eq">operator==</keyword>
+        <section ref="qcontactdetaildefinition-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactdetaildefinitionfetchrequest.html" title="QContactDetailDefinitionFetchRequest Class Reference">
+        <keyword ref="qcontactdetaildefinitionfetchrequest.html">QContactDetailDefinitionFetchRequest</keyword>
+        <keyword ref="qcontactdetaildefinitionfetchrequest.html#definitions">definitions</keyword>
+        <keyword ref="qcontactdetaildefinitionfetchrequest.html#names">names</keyword>
+        <keyword ref="qcontactdetaildefinitionfetchrequest.html#progress">progress</keyword>
+        <keyword ref="qcontactdetaildefinitionfetchrequest.html#setNames">setNames</keyword>
+        <section ref="qcontactdetaildefinitionfetchrequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactdetaildefinitionremoverequest.html" title="QContactDetailDefinitionRemoveRequest Class Reference">
+        <keyword ref="qcontactdetaildefinitionremoverequest.html">QContactDetailDefinitionRemoveRequest</keyword>
+        <keyword ref="qcontactdetaildefinitionremoverequest.html#names">names</keyword>
+        <keyword ref="qcontactdetaildefinitionremoverequest.html#progress">progress</keyword>
+        <keyword ref="qcontactdetaildefinitionremoverequest.html#setNames">setNames</keyword>
+        <section ref="qcontactdetaildefinitionremoverequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactdetaildefinitionsaverequest.html" title="QContactDetailDefinitionSaveRequest Class Reference">
+        <keyword ref="qcontactdetaildefinitionsaverequest.html">QContactDetailDefinitionSaveRequest</keyword>
+        <keyword ref="qcontactdetaildefinitionsaverequest.html#definitions">definitions</keyword>
+        <keyword ref="qcontactdetaildefinitionsaverequest.html#progress">progress</keyword>
+        <keyword ref="qcontactdetaildefinitionsaverequest.html#setDefinitions">setDefinitions</keyword>
+        <section ref="qcontactdetaildefinitionsaverequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactdetailfilter.html" title="QContactDetailFilter Class Reference">
+        <keyword ref="qcontactdetailfilter.html">QContactDetailFilter</keyword>
+        <keyword ref="qcontactdetailfilter.html#detailDefinitionName">detailDefinitionName</keyword>
+        <keyword ref="qcontactdetailfilter.html#detailFieldName">detailFieldName</keyword>
+        <keyword ref="qcontactdetailfilter.html#matchFlags">matchFlags</keyword>
+        <keyword ref="qcontactdetailfilter.html#setDetailDefinitionName">setDetailDefinitionName</keyword>
+        <keyword ref="qcontactdetailfilter.html#setMatchFlags">setMatchFlags</keyword>
+        <keyword ref="qcontactdetailfilter.html#setValue">setValue</keyword>
+        <keyword ref="qcontactdetailfilter.html#value">value</keyword>
+        <section ref="qcontactdetailfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactdetailrangefilter.html" title="QContactDetailRangeFilter Class Reference">
+        <keyword ref="qcontactdetailrangefilter.html">QContactDetailRangeFilter</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#RangeFlag-enum">RangeFlag</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#RangeFlag-enum">RangeFlags</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#RangeFlag-enum">QContactDetailRangeFilter::IncludeLower</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#RangeFlag-enum">QContactDetailRangeFilter::IncludeUpper</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#RangeFlag-enum">QContactDetailRangeFilter::ExcludeUpper</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#RangeFlag-enum">QContactDetailRangeFilter::ExcludeLower</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#detailDefinitionName">detailDefinitionName</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#detailFieldName">detailFieldName</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#matchFlags">matchFlags</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#maxValue">maxValue</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#minValue">minValue</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#rangeFlags">rangeFlags</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#setDetailDefinitionName">setDetailDefinitionName</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#setMatchFlags">setMatchFlags</keyword>
+        <keyword ref="qcontactdetailrangefilter.html#setRange">setRange</keyword>
+        <section ref="qcontactdetailrangefilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactdisplaylabel.html" title="QContactDisplayLabel Class Reference">
+        <keyword ref="qcontactdisplaylabel.html">QContactDisplayLabel</keyword>
+        <keyword ref="qcontactdisplaylabel.html#isSynthesised">isSynthesised</keyword>
+        <keyword ref="qcontactdisplaylabel.html#label">label</keyword>
+        <keyword ref="qcontactdisplaylabel.html#setLabel">setLabel</keyword>
+        <keyword ref="qcontactdisplaylabel.html#setSynthesised">setSynthesised</keyword>
+        <keyword ref="qcontactdisplaylabel.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactdisplaylabel.html#FieldLabel-var">FieldLabel</keyword>
+        <keyword ref="qcontactdisplaylabel.html#FieldSynthesised-var">FieldSynthesised</keyword>
+        <section ref="qcontactdisplaylabel-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactemailaddress.html" title="QContactEmailAddress Class Reference">
+        <keyword ref="qcontactemailaddress.html">QContactEmailAddress</keyword>
+        <keyword ref="qcontactemailaddress.html#emailAddress">emailAddress</keyword>
+        <keyword ref="qcontactemailaddress.html#setEmailAddress">setEmailAddress</keyword>
+        <keyword ref="qcontactemailaddress.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactemailaddress.html#FieldEmailAddress-var">FieldEmailAddress</keyword>
+        <section ref="qcontactemailaddress-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactfetchrequest.html" title="QContactFetchRequest Class Reference">
+        <keyword ref="qcontactfetchrequest.html">QContactFetchRequest</keyword>
+        <keyword ref="qcontactfetchrequest.html#contacts">contacts</keyword>
+        <keyword ref="qcontactfetchrequest.html#definitionRestrictions">definitionRestrictions</keyword>
+        <keyword ref="qcontactfetchrequest.html#filter">filter</keyword>
+        <keyword ref="qcontactfetchrequest.html#progress">progress</keyword>
+        <keyword ref="qcontactfetchrequest.html#setDefinitionRestrictions">setDefinitionRestrictions</keyword>
+        <keyword ref="qcontactfetchrequest.html#setFilter">setFilter</keyword>
+        <keyword ref="qcontactfetchrequest.html#setSorting">setSorting</keyword>
+        <keyword ref="qcontactfetchrequest.html#sorting">sorting</keyword>
+        <section ref="qcontactfetchrequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactfilter.html" title="QContactFilter Class Reference">
+        <keyword ref="qcontactfilter.html">QContactFilter</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">FilterType</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::InvalidFilter</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::UnionFilter</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::DefaultFilter</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::GroupMembershipFilter</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::ChangeLogFilter</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::ActionFilter</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::IdListFilter</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::IntersectionFilter</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::ContactDetailFilter</keyword>
+        <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::ContactDetailRangeFilter</keyword>
+        <keyword ref="qcontactfilter.html#type">type</keyword>
+        <keyword ref="qcontactfilter.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qcontactfilter.html#operator-eq">operator=</keyword>
+        <keyword ref="qcontactfilter.html#operator-eq-eq">operator==</keyword>
+        <section ref="qcontactfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactgender.html" title="QContactGender Class Reference">
+        <keyword ref="qcontactgender.html">QContactGender</keyword>
+        <keyword ref="qcontactgender.html#gender">gender</keyword>
+        <keyword ref="qcontactgender.html#setGender">setGender</keyword>
+        <keyword ref="qcontactgender.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactgender.html#FieldGender-var">FieldGender</keyword>
+        <section ref="qcontactgender-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactgeolocation.html" title="QContactGeolocation Class Reference">
+        <keyword ref="qcontactgeolocation.html">QContactGeolocation</keyword>
+        <keyword ref="qcontactgeolocation.html#accuracy">accuracy</keyword>
+        <keyword ref="qcontactgeolocation.html#altitude">altitude</keyword>
+        <keyword ref="qcontactgeolocation.html#altitudeAccuracy">altitudeAccuracy</keyword>
+        <keyword ref="qcontactgeolocation.html#heading">heading</keyword>
+        <keyword ref="qcontactgeolocation.html#label">label</keyword>
+        <keyword ref="qcontactgeolocation.html#latitude">latitude</keyword>
+        <keyword ref="qcontactgeolocation.html#longitude">longitude</keyword>
+        <keyword ref="qcontactgeolocation.html#setAccuracy">setAccuracy</keyword>
+        <keyword ref="qcontactgeolocation.html#setAltitude">setAltitude</keyword>
+        <keyword ref="qcontactgeolocation.html#setAltitudeAccuracy">setAltitudeAccuracy</keyword>
+        <keyword ref="qcontactgeolocation.html#setHeading">setHeading</keyword>
+        <keyword ref="qcontactgeolocation.html#setLabel">setLabel</keyword>
+        <keyword ref="qcontactgeolocation.html#setLatitude">setLatitude</keyword>
+        <keyword ref="qcontactgeolocation.html#setLongitude">setLongitude</keyword>
+        <keyword ref="qcontactgeolocation.html#setSpeed">setSpeed</keyword>
+        <keyword ref="qcontactgeolocation.html#setTimestamp">setTimestamp</keyword>
+        <keyword ref="qcontactgeolocation.html#speed">speed</keyword>
+        <keyword ref="qcontactgeolocation.html#timestamp">timestamp</keyword>
+        <keyword ref="qcontactgeolocation.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactgeolocation.html#FieldAccuracy-var">FieldAccuracy</keyword>
+        <keyword ref="qcontactgeolocation.html#FieldAltitude-var">FieldAltitude</keyword>
+        <keyword ref="qcontactgeolocation.html#FieldAltitudeAccuracy-var">FieldAltitudeAccuracy</keyword>
+        <keyword ref="qcontactgeolocation.html#FieldHeading-var">FieldHeading</keyword>
+        <keyword ref="qcontactgeolocation.html#FieldLabel-var">FieldLabel</keyword>
+        <keyword ref="qcontactgeolocation.html#FieldLatitude-var">FieldLatitude</keyword>
+        <keyword ref="qcontactgeolocation.html#FieldLongitude-var">FieldLongitude</keyword>
+        <keyword ref="qcontactgeolocation.html#FieldSpeed-var">FieldSpeed</keyword>
+        <keyword ref="qcontactgeolocation.html#FieldTimestamp-var">FieldTimestamp</keyword>
+        <section ref="qcontactgeolocation-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactgroup.html" title="QContactGroup Class Reference">
+        <keyword ref="qcontactgroup.html">QContactGroup</keyword>
+        <keyword ref="qcontactgroup.html#addMember">addMember</keyword>
+        <keyword ref="qcontactgroup.html#hasMember">hasMember</keyword>
+        <keyword ref="qcontactgroup.html#id">id</keyword>
+        <keyword ref="qcontactgroup.html#isEmpty">isEmpty</keyword>
+        <keyword ref="qcontactgroup.html#members">members</keyword>
+        <keyword ref="qcontactgroup.html#name">name</keyword>
+        <keyword ref="qcontactgroup.html#removeMember">removeMember</keyword>
+        <keyword ref="qcontactgroup.html#setId">setId</keyword>
+        <keyword ref="qcontactgroup.html#setMembers">setMembers</keyword>
+        <keyword ref="qcontactgroup.html#setName">setName</keyword>
+        <keyword ref="qcontactgroup.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qcontactgroup.html#operator-eq">operator=</keyword>
+        <keyword ref="qcontactgroup.html#operator-eq-eq">operator==</keyword>
+        <section ref="qcontactgroup-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactgroupfetchrequest.html" title="QContactGroupFetchRequest Class Reference">
+        <keyword ref="qcontactgroupfetchrequest.html">QContactGroupFetchRequest</keyword>
+        <keyword ref="qcontactgroupfetchrequest.html#groups">groups</keyword>
+        <keyword ref="qcontactgroupfetchrequest.html#ids">ids</keyword>
+        <keyword ref="qcontactgroupfetchrequest.html#progress">progress</keyword>
+        <keyword ref="qcontactgroupfetchrequest.html#setIds">setIds</keyword>
+        <section ref="qcontactgroupfetchrequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactgroupmembershipfilter.html" title="QContactGroupMembershipFilter Class Reference">
+        <keyword ref="qcontactgroupmembershipfilter.html">QContactGroupMembershipFilter</keyword>
+        <keyword ref="qcontactgroupmembershipfilter.html#groupId">groupId</keyword>
+        <keyword ref="qcontactgroupmembershipfilter.html#setGroupId">setGroupId</keyword>
+        <section ref="qcontactgroupmembershipfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactgroupremoverequest.html" title="QContactGroupRemoveRequest Class Reference">
+        <keyword ref="qcontactgroupremoverequest.html">QContactGroupRemoveRequest</keyword>
+        <keyword ref="qcontactgroupremoverequest.html#ids">ids</keyword>
+        <keyword ref="qcontactgroupremoverequest.html#progress">progress</keyword>
+        <keyword ref="qcontactgroupremoverequest.html#setIds">setIds</keyword>
+        <section ref="qcontactgroupremoverequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactgroupsaverequest.html" title="QContactGroupSaveRequest Class Reference">
+        <keyword ref="qcontactgroupsaverequest.html">QContactGroupSaveRequest</keyword>
+        <keyword ref="qcontactgroupsaverequest.html#groups">groups</keyword>
+        <keyword ref="qcontactgroupsaverequest.html#progress">progress</keyword>
+        <keyword ref="qcontactgroupsaverequest.html#setGroups">setGroups</keyword>
+        <section ref="qcontactgroupsaverequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactguid.html" title="QContactGuid Class Reference">
+        <keyword ref="qcontactguid.html">QContactGuid</keyword>
+        <keyword ref="qcontactguid.html#guid">guid</keyword>
+        <keyword ref="qcontactguid.html#setGuid">setGuid</keyword>
+        <keyword ref="qcontactguid.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactguid.html#FieldGuid-var">FieldGuid</keyword>
+        <section ref="qcontactguid-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactidfetchrequest.html" title="QContactIdFetchRequest Class Reference">
+        <keyword ref="qcontactidfetchrequest.html">QContactIdFetchRequest</keyword>
+        <keyword ref="qcontactidfetchrequest.html#filter">filter</keyword>
+        <keyword ref="qcontactidfetchrequest.html#ids">ids</keyword>
+        <keyword ref="qcontactidfetchrequest.html#progress">progress</keyword>
+        <keyword ref="qcontactidfetchrequest.html#setFilter">setFilter</keyword>
+        <keyword ref="qcontactidfetchrequest.html#setSorting">setSorting</keyword>
+        <keyword ref="qcontactidfetchrequest.html#sorting">sorting</keyword>
+        <section ref="qcontactidfetchrequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactidlistfilter.html" title="QContactIdListFilter Class Reference">
+        <keyword ref="qcontactidlistfilter.html">QContactIdListFilter</keyword>
+        <keyword ref="qcontactidlistfilter.html#ids">ids</keyword>
+        <keyword ref="qcontactidlistfilter.html#setIds">setIds</keyword>
+        <section ref="qcontactidlistfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactintersectionfilter.html" title="QContactIntersectionFilter Class Reference">
+        <keyword ref="qcontactintersectionfilter.html">QContactIntersectionFilter</keyword>
+        <keyword ref="qcontactintersectionfilter.html#append">append</keyword>
+        <keyword ref="qcontactintersectionfilter.html#filters">filters</keyword>
+        <keyword ref="qcontactintersectionfilter.html#prepend">prepend</keyword>
+        <keyword ref="qcontactintersectionfilter.html#remove">remove</keyword>
+        <keyword ref="qcontactintersectionfilter.html#setFilters">setFilters</keyword>
+        <keyword ref="qcontactintersectionfilter.html#operator-lt-lt">operator&lt;&lt;</keyword>
+        <section ref="qcontactintersectionfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactinvalidengine.html" title="QContactInvalidEngine Class Reference">
+        <keyword ref="qcontactinvalidengine.html">QContactInvalidEngine</keyword>
+        <keyword ref="qcontactinvalidengine.html#deref">deref</keyword>
+        <keyword ref="qcontactinvalidengine.html#synthesiseDisplayLabel">synthesiseDisplayLabel</keyword>
+        <section ref="qcontactinvalidengine-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactinvalidfilter.html" title="QContactInvalidFilter Class Reference">
+        <keyword ref="qcontactinvalidfilter.html">QContactInvalidFilter</keyword>
+        <section ref="qcontactinvalidfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactmanager.html" title="QContactManager Class Reference">
+        <keyword ref="qcontactmanager.html">QContactManager</keyword>
+        <keyword ref="qcontactmanager.html#Error-enum">Error</keyword>
+        <keyword ref="qcontactmanager.html#Error-enum">QContactManager::InvalidDetailError</keyword>
+        <keyword ref="qcontactmanager.html#Error-enum">QContactManager::AlreadyExistsError</keyword>
+        <keyword ref="qcontactmanager.html#Error-enum">QContactManager::UnspecifiedError</keyword>
+        <keyword ref="qcontactmanager.html#Error-enum">QContactManager::NoError</keyword>
+        <keyword ref="qcontactmanager.html#Error-enum">QContactManager::DoesNotExistError</keyword>
+        <keyword ref="qcontactmanager.html#Error-enum">QContactManager::OutOfMemoryError</keyword>
+        <keyword ref="qcontactmanager.html#Error-enum">QContactManager::BadArgumentError</keyword>
+        <keyword ref="qcontactmanager.html#Error-enum">QContactManager::PermissionsError</keyword>
+        <keyword ref="qcontactmanager.html#Error-enum">QContactManager::LockedError</keyword>
+        <keyword ref="qcontactmanager.html#Error-enum">QContactManager::DetailAccessError</keyword>
+        <keyword ref="qcontactmanager.html#Error-enum">QContactManager::NotSupportedError</keyword>
+        <keyword ref="qcontactmanager.html#availableManagers">availableManagers</keyword>
+        <keyword ref="qcontactmanager.html#buildUri">buildUri</keyword>
+        <keyword ref="qcontactmanager.html#contact">contact</keyword>
+        <keyword ref="qcontactmanager.html#contacts">contacts</keyword>
+        <keyword ref="qcontactmanager.html#contactsAdded">contactsAdded</keyword>
+        <keyword ref="qcontactmanager.html#contactsChanged">contactsChanged</keyword>
+        <keyword ref="qcontactmanager.html#contactsRemoved">contactsRemoved</keyword>
+        <keyword ref="qcontactmanager.html#detailDefinition">detailDefinition</keyword>
+        <keyword ref="qcontactmanager.html#detailDefinitions">detailDefinitions</keyword>
+        <keyword ref="qcontactmanager.html#error">error</keyword>
+        <keyword ref="qcontactmanager.html#fromUri">fromUri</keyword>
+        <keyword ref="qcontactmanager.html#group">group</keyword>
+        <keyword ref="qcontactmanager.html#groups">groups</keyword>
+        <keyword ref="qcontactmanager.html#groupsAdded">groupsAdded</keyword>
+        <keyword ref="qcontactmanager.html#groupsChanged">groupsChanged</keyword>
+        <keyword ref="qcontactmanager.html#groupsRemoved">groupsRemoved</keyword>
+        <keyword ref="qcontactmanager.html#information">information</keyword>
+        <keyword ref="qcontactmanager.html#managerName">managerName</keyword>
+        <keyword ref="qcontactmanager.html#managerParameters">managerParameters</keyword>
+        <keyword ref="qcontactmanager.html#removeContact">removeContact</keyword>
+        <keyword ref="qcontactmanager.html#removeContacts">removeContacts</keyword>
+        <keyword ref="qcontactmanager.html#removeDetailDefinition">removeDetailDefinition</keyword>
+        <keyword ref="qcontactmanager.html#removeGroup">removeGroup</keyword>
+        <keyword ref="qcontactmanager.html#saveContact">saveContact</keyword>
+        <keyword ref="qcontactmanager.html#saveContacts">saveContacts</keyword>
+        <keyword ref="qcontactmanager.html#saveDetailDefinition">saveDetailDefinition</keyword>
+        <keyword ref="qcontactmanager.html#saveGroup">saveGroup</keyword>
+        <keyword ref="qcontactmanager.html#splitUri">splitUri</keyword>
+        <keyword ref="qcontactmanager.html#storeUri">storeUri</keyword>
+        <keyword ref="qcontactmanager.html#synthesiseDisplayLabel">synthesiseDisplayLabel</keyword>
+        <section ref="qcontactmanager-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactmanagerengine.html" title="QContactManagerEngine Class Reference">
+        <keyword ref="qcontactmanagerengine.html">QContactManagerEngine</keyword>
+        <keyword ref="qcontactmanagerengine.html#addSorted">addSorted</keyword>
+        <keyword ref="qcontactmanagerengine.html#cancelRequest">cancelRequest</keyword>
+        <keyword ref="qcontactmanagerengine.html#compareContact">compareContact</keyword>
+        <keyword ref="qcontactmanagerengine.html#compareVariant">compareVariant</keyword>
+        <keyword ref="qcontactmanagerengine.html#contact">contact</keyword>
+        <keyword ref="qcontactmanagerengine.html#contacts">contacts</keyword>
+        <keyword ref="qcontactmanagerengine.html#contactsAdded">contactsAdded</keyword>
+        <keyword ref="qcontactmanagerengine.html#contactsChanged">contactsChanged</keyword>
+        <keyword ref="qcontactmanagerengine.html#contactsRemoved">contactsRemoved</keyword>
+        <keyword ref="qcontactmanagerengine.html#deref">deref</keyword>
+        <keyword ref="qcontactmanagerengine.html#detailDefinition">detailDefinition</keyword>
+        <keyword ref="qcontactmanagerengine.html#detailDefinitions">detailDefinitions</keyword>
+        <keyword ref="qcontactmanagerengine.html#filterSupported">filterSupported</keyword>
+        <keyword ref="qcontactmanagerengine.html#group">group</keyword>
+        <keyword ref="qcontactmanagerengine.html#groups">groups</keyword>
+        <keyword ref="qcontactmanagerengine.html#groupsAdded">groupsAdded</keyword>
+        <keyword ref="qcontactmanagerengine.html#groupsChanged">groupsChanged</keyword>
+        <keyword ref="qcontactmanagerengine.html#groupsRemoved">groupsRemoved</keyword>
+        <keyword ref="qcontactmanagerengine.html#hasFeature">hasFeature</keyword>
+        <keyword ref="qcontactmanagerengine.html#parameters">parameters</keyword>
+        <keyword ref="qcontactmanagerengine.html#removeContact">removeContact</keyword>
+        <keyword ref="qcontactmanagerengine.html#removeContacts">removeContacts</keyword>
+        <keyword ref="qcontactmanagerengine.html#removeDetailDefinition">removeDetailDefinition</keyword>
+        <keyword ref="qcontactmanagerengine.html#removeGroup">removeGroup</keyword>
+        <keyword ref="qcontactmanagerengine.html#requestDestroyed">requestDestroyed</keyword>
+        <keyword ref="qcontactmanagerengine.html#saveContact">saveContact</keyword>
+        <keyword ref="qcontactmanagerengine.html#saveContacts">saveContacts</keyword>
+        <keyword ref="qcontactmanagerengine.html#saveDetailDefinition">saveDetailDefinition</keyword>
+        <keyword ref="qcontactmanagerengine.html#saveGroup">saveGroup</keyword>
+        <keyword ref="qcontactmanagerengine.html#schemaDefinitions">schemaDefinitions</keyword>
+        <keyword ref="qcontactmanagerengine.html#startRequest">startRequest</keyword>
+        <keyword ref="qcontactmanagerengine.html#supportedDataTypes">supportedDataTypes</keyword>
+        <keyword ref="qcontactmanagerengine.html#synthesiseDisplayLabel">synthesiseDisplayLabel</keyword>
+        <keyword ref="qcontactmanagerengine.html#testFilter">testFilter</keyword>
+        <keyword ref="qcontactmanagerengine.html#updateRequest">updateRequest</keyword>
+        <keyword ref="qcontactmanagerengine.html#updateRequestStatus">updateRequestStatus</keyword>
+        <keyword ref="qcontactmanagerengine.html#validateActionFilter">validateActionFilter</keyword>
+        <keyword ref="qcontactmanagerengine.html#validateContact">validateContact</keyword>
+        <keyword ref="qcontactmanagerengine.html#validateDefinition">validateDefinition</keyword>
+        <keyword ref="qcontactmanagerengine.html#validateGroup">validateGroup</keyword>
+        <keyword ref="qcontactmanagerengine.html#waitForRequestFinished">waitForRequestFinished</keyword>
+        <keyword ref="qcontactmanagerengine.html#waitForRequestProgress">waitForRequestProgress</keyword>
+        <section ref="qcontactmanagerengine-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactmanagerenginefactory.html" title="QContactManagerEngineFactory Class Reference">
+        <keyword ref="qcontactmanagerenginefactory.html">QContactManagerEngineFactory</keyword>
+        <keyword ref="qcontactmanagerenginefactory.html#engine">engine</keyword>
+        <keyword ref="qcontactmanagerenginefactory.html#managerName">managerName</keyword>
+        <section ref="qcontactmanagerenginefactory-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactmanagerinfo.html" title="QContactManagerInfo Class Reference">
+        <keyword ref="qcontactmanagerinfo.html">QContactManagerInfo</keyword>
+        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">ManagerFeature</keyword>
+        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Groups</keyword>
+        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ActionPreferences</keyword>
+        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Anonymous</keyword>
+        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::MutableDefinitions</keyword>
+        <keyword ref="qcontactmanagerinfo.html#filterSupported">filterSupported</keyword>
+        <keyword ref="qcontactmanagerinfo.html#hasFeature">hasFeature</keyword>
+        <keyword ref="qcontactmanagerinfo.html#supportedDataTypes">supportedDataTypes</keyword>
+        <section ref="qcontactmanagerinfo-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactmemoryengine.html" title="QContactMemoryEngine Class Reference">
+        <keyword ref="qcontactmemoryengine.html">QContactMemoryEngine</keyword>
+        <keyword ref="qcontactmemoryengine.html#cancelRequest">cancelRequest</keyword>
+        <keyword ref="qcontactmemoryengine.html#contact">contact</keyword>
+        <keyword ref="qcontactmemoryengine.html#contacts">contacts</keyword>
+        <keyword ref="qcontactmemoryengine.html#createMemoryEngine">createMemoryEngine</keyword>
+        <keyword ref="qcontactmemoryengine.html#deref">deref</keyword>
+        <keyword ref="qcontactmemoryengine.html#detailDefinitions">detailDefinitions</keyword>
+        <keyword ref="qcontactmemoryengine.html#filterSupported">filterSupported</keyword>
+        <keyword ref="qcontactmemoryengine.html#group">group</keyword>
+        <keyword ref="qcontactmemoryengine.html#groups">groups</keyword>
+        <keyword ref="qcontactmemoryengine.html#hasFeature">hasFeature</keyword>
+        <keyword ref="qcontactmemoryengine.html#parameters">parameters</keyword>
+        <keyword ref="qcontactmemoryengine.html#removeContact">removeContact</keyword>
+        <keyword ref="qcontactmemoryengine.html#removeDetailDefinition">removeDetailDefinition</keyword>
+        <keyword ref="qcontactmemoryengine.html#removeGroup">removeGroup</keyword>
+        <keyword ref="qcontactmemoryengine.html#requestDestroyed">requestDestroyed</keyword>
+        <keyword ref="qcontactmemoryengine.html#saveContact">saveContact</keyword>
+        <keyword ref="qcontactmemoryengine.html#saveDetailDefinition">saveDetailDefinition</keyword>
+        <keyword ref="qcontactmemoryengine.html#saveGroup">saveGroup</keyword>
+        <keyword ref="qcontactmemoryengine.html#startRequest">startRequest</keyword>
+        <keyword ref="qcontactmemoryengine.html#supportedDataTypes">supportedDataTypes</keyword>
+        <keyword ref="qcontactmemoryengine.html#waitForRequestFinished">waitForRequestFinished</keyword>
+        <keyword ref="qcontactmemoryengine.html#waitForRequestProgress">waitForRequestProgress</keyword>
+        <section ref="qcontactmemoryengine-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactname.html" title="QContactName Class Reference">
+        <keyword ref="qcontactname.html">QContactName</keyword>
+        <keyword ref="qcontactname.html#first">first</keyword>
+        <keyword ref="qcontactname.html#last">last</keyword>
+        <keyword ref="qcontactname.html#middle">middle</keyword>
+        <keyword ref="qcontactname.html#prefix">prefix</keyword>
+        <keyword ref="qcontactname.html#setFirst">setFirst</keyword>
+        <keyword ref="qcontactname.html#setLast">setLast</keyword>
+        <keyword ref="qcontactname.html#setMiddle">setMiddle</keyword>
+        <keyword ref="qcontactname.html#setPrefix">setPrefix</keyword>
+        <keyword ref="qcontactname.html#setSuffix">setSuffix</keyword>
+        <keyword ref="qcontactname.html#suffix">suffix</keyword>
+        <keyword ref="qcontactname.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactname.html#FieldFirst-var">FieldFirst</keyword>
+        <keyword ref="qcontactname.html#FieldLast-var">FieldLast</keyword>
+        <keyword ref="qcontactname.html#FieldMiddle-var">FieldMiddle</keyword>
+        <keyword ref="qcontactname.html#FieldPrefix-var">FieldPrefix</keyword>
+        <keyword ref="qcontactname.html#FieldSuffix-var">FieldSuffix</keyword>
+        <section ref="qcontactname-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactnickname.html" title="QContactNickname Class Reference">
+        <keyword ref="qcontactnickname.html">QContactNickname</keyword>
+        <keyword ref="qcontactnickname.html#nickname">nickname</keyword>
+        <keyword ref="qcontactnickname.html#setNickname">setNickname</keyword>
+        <keyword ref="qcontactnickname.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactnickname.html#FieldNickname-var">FieldNickname</keyword>
+        <section ref="qcontactnickname-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactonlineaccount.html" title="QContactOnlineAccount Class Reference">
+        <keyword ref="qcontactonlineaccount.html">QContactOnlineAccount</keyword>
+        <keyword ref="qcontactonlineaccount.html#accountUri">accountUri</keyword>
+        <keyword ref="qcontactonlineaccount.html#setAccountUri">setAccountUri</keyword>
+        <keyword ref="qcontactonlineaccount.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactonlineaccount.html#FieldAccountUri-var">FieldAccountUri</keyword>
+        <section ref="qcontactonlineaccount-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactorganisation.html" title="QContactOrganisation Class Reference">
+        <keyword ref="qcontactorganisation.html">QContactOrganisation</keyword>
+        <keyword ref="qcontactorganisation.html#department">department</keyword>
+        <keyword ref="qcontactorganisation.html#displayLabel">displayLabel</keyword>
+        <keyword ref="qcontactorganisation.html#location">location</keyword>
+        <keyword ref="qcontactorganisation.html#logo">logo</keyword>
+        <keyword ref="qcontactorganisation.html#setDepartment">setDepartment</keyword>
+        <keyword ref="qcontactorganisation.html#setDisplayLabel">setDisplayLabel</keyword>
+        <keyword ref="qcontactorganisation.html#setLocation">setLocation</keyword>
+        <keyword ref="qcontactorganisation.html#setLogo">setLogo</keyword>
+        <keyword ref="qcontactorganisation.html#setTitle">setTitle</keyword>
+        <keyword ref="qcontactorganisation.html#title">title</keyword>
+        <keyword ref="qcontactorganisation.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactorganisation.html#FieldDepartment-var">FieldDepartment</keyword>
+        <keyword ref="qcontactorganisation.html#FieldDisplayLabel-var">FieldDisplayLabel</keyword>
+        <keyword ref="qcontactorganisation.html#FieldLocation-var">FieldLocation</keyword>
+        <keyword ref="qcontactorganisation.html#FieldLogo-var">FieldLogo</keyword>
+        <keyword ref="qcontactorganisation.html#FieldTitle-var">FieldTitle</keyword>
+        <section ref="qcontactorganisation-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactphonenumber.html" title="QContactPhoneNumber Class Reference">
+        <keyword ref="qcontactphonenumber.html">QContactPhoneNumber</keyword>
+        <keyword ref="qcontactphonenumber.html#number">number</keyword>
+        <keyword ref="qcontactphonenumber.html#setNumber">setNumber</keyword>
+        <keyword ref="qcontactphonenumber.html#setSubTypes">setSubTypes</keyword>
+        <keyword ref="qcontactphonenumber.html#subTypes">subTypes</keyword>
+        <keyword ref="qcontactphonenumber.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactphonenumber.html#FieldNumber-var">FieldNumber</keyword>
+        <keyword ref="qcontactphonenumber.html#FieldSubType-var">FieldSubType</keyword>
+        <keyword ref="qcontactphonenumber.html#SubTypeBulletinBoardSystem-var">SubTypeBulletinBoardSystem</keyword>
+        <keyword ref="qcontactphonenumber.html#SubTypeCar-var">SubTypeCar</keyword>
+        <keyword ref="qcontactphonenumber.html#SubTypeFacsimile-var">SubTypeFacsimile</keyword>
+        <keyword ref="qcontactphonenumber.html#SubTypeLandline-var">SubTypeLandline</keyword>
+        <keyword ref="qcontactphonenumber.html#SubTypeMessagingCapable-var">SubTypeMessagingCapable</keyword>
+        <keyword ref="qcontactphonenumber.html#SubTypeMobile-var">SubTypeMobile</keyword>
+        <keyword ref="qcontactphonenumber.html#SubTypeModem-var">SubTypeModem</keyword>
+        <keyword ref="qcontactphonenumber.html#SubTypePager-var">SubTypePager</keyword>
+        <keyword ref="qcontactphonenumber.html#SubTypeVideo-var">SubTypeVideo</keyword>
+        <keyword ref="qcontactphonenumber.html#SubTypeVoice-var">SubTypeVoice</keyword>
+        <section ref="qcontactphonenumber-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactpresence.html" title="QContactPresence Class Reference">
+        <keyword ref="qcontactpresence.html">QContactPresence</keyword>
+        <keyword ref="qcontactpresence.html#accountUri">accountUri</keyword>
+        <keyword ref="qcontactpresence.html#nickname">nickname</keyword>
+        <keyword ref="qcontactpresence.html#presence">presence</keyword>
+        <keyword ref="qcontactpresence.html#setAccountUri">setAccountUri</keyword>
+        <keyword ref="qcontactpresence.html#setNickname">setNickname</keyword>
+        <keyword ref="qcontactpresence.html#setPresence">setPresence</keyword>
+        <keyword ref="qcontactpresence.html#setStatusMessage">setStatusMessage</keyword>
+        <keyword ref="qcontactpresence.html#statusMessage">statusMessage</keyword>
+        <keyword ref="qcontactpresence.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactpresence.html#FieldAccountUri-var">FieldAccountUri</keyword>
+        <keyword ref="qcontactpresence.html#FieldNickname-var">FieldNickname</keyword>
+        <keyword ref="qcontactpresence.html#FieldPresence-var">FieldPresence</keyword>
+        <keyword ref="qcontactpresence.html#FieldStatusMessage-var">FieldStatusMessage</keyword>
+        <section ref="qcontactpresence-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactrelationship.html" title="QContactRelationship Class Reference">
+        <keyword ref="qcontactrelationship.html">QContactRelationship</keyword>
+        <keyword ref="qcontactrelationship.html#relatedContactLabel">relatedContactLabel</keyword>
+        <keyword ref="qcontactrelationship.html#relatedContactManagerUri">relatedContactManagerUri</keyword>
+        <keyword ref="qcontactrelationship.html#relatedContactUid">relatedContactUid</keyword>
+        <keyword ref="qcontactrelationship.html#relationshipType">relationshipType</keyword>
+        <keyword ref="qcontactrelationship.html#setRelatedContactLabel">setRelatedContactLabel</keyword>
+        <keyword ref="qcontactrelationship.html#setRelatedContactManagerUri">setRelatedContactManagerUri</keyword>
+        <keyword ref="qcontactrelationship.html#setRelatedContactUid">setRelatedContactUid</keyword>
+        <keyword ref="qcontactrelationship.html#setRelationshipType">setRelationshipType</keyword>
+        <keyword ref="qcontactrelationship.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactrelationship.html#FieldRelatedContactLabel-var">FieldRelatedContactLabel</keyword>
+        <keyword ref="qcontactrelationship.html#FieldRelatedContactManagerUri-var">FieldRelatedContactManagerUri</keyword>
+        <keyword ref="qcontactrelationship.html#FieldRelatedContactUid-var">FieldRelatedContactUid</keyword>
+        <keyword ref="qcontactrelationship.html#FieldRelationshipType-var">FieldRelationshipType</keyword>
+        <section ref="qcontactrelationship-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactremoverequest.html" title="QContactRemoveRequest Class Reference">
+        <keyword ref="qcontactremoverequest.html">QContactRemoveRequest</keyword>
+        <keyword ref="qcontactremoverequest.html#filter">filter</keyword>
+        <keyword ref="qcontactremoverequest.html#progress">progress</keyword>
+        <keyword ref="qcontactremoverequest.html#setFilter">setFilter</keyword>
+        <section ref="qcontactremoverequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactsaverequest.html" title="QContactSaveRequest Class Reference">
+        <keyword ref="qcontactsaverequest.html">QContactSaveRequest</keyword>
+        <keyword ref="qcontactsaverequest.html#contacts">contacts</keyword>
+        <keyword ref="qcontactsaverequest.html#progress">progress</keyword>
+        <keyword ref="qcontactsaverequest.html#setContacts">setContacts</keyword>
+        <section ref="qcontactsaverequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactsortorder.html" title="QContactSortOrder Class Reference">
+        <keyword ref="qcontactsortorder.html">QContactSortOrder</keyword>
+        <keyword ref="qcontactsortorder.html#BlankPolicy-enum">BlankPolicy</keyword>
+        <keyword ref="qcontactsortorder.html#BlankPolicy-enum">QContactSortOrder::BlanksLast</keyword>
+        <keyword ref="qcontactsortorder.html#BlankPolicy-enum">QContactSortOrder::BlanksFirst</keyword>
+        <keyword ref="qcontactsortorder.html#blankPolicy">blankPolicy</keyword>
+        <keyword ref="qcontactsortorder.html#caseSensitivity">caseSensitivity</keyword>
+        <keyword ref="qcontactsortorder.html#detailDefinitionName">detailDefinitionName</keyword>
+        <keyword ref="qcontactsortorder.html#detailFieldName">detailFieldName</keyword>
+        <keyword ref="qcontactsortorder.html#direction">direction</keyword>
+        <keyword ref="qcontactsortorder.html#isValid">isValid</keyword>
+        <keyword ref="qcontactsortorder.html#setBlankPolicy">setBlankPolicy</keyword>
+        <keyword ref="qcontactsortorder.html#setCaseSensitivity">setCaseSensitivity</keyword>
+        <keyword ref="qcontactsortorder.html#setDetailDefinitionName">setDetailDefinitionName</keyword>
+        <keyword ref="qcontactsortorder.html#setDirection">setDirection</keyword>
+        <keyword ref="qcontactsortorder.html#operator-QList-ltQContactSortOrder-gt">operator QList&lt;QContactSortOrder&gt;</keyword>
+        <keyword ref="qcontactsortorder.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qcontactsortorder.html#operator-eq">operator=</keyword>
+        <keyword ref="qcontactsortorder.html#operator-eq-eq">operator==</keyword>
+        <section ref="qcontactsortorder-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactsynctarget.html" title="QContactSyncTarget Class Reference">
+        <keyword ref="qcontactsynctarget.html">QContactSyncTarget</keyword>
+        <keyword ref="qcontactsynctarget.html#setSyncTarget">setSyncTarget</keyword>
+        <keyword ref="qcontactsynctarget.html#syncTarget">syncTarget</keyword>
+        <keyword ref="qcontactsynctarget.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactsynctarget.html#FieldSyncTarget-var">FieldSyncTarget</keyword>
+        <section ref="qcontactsynctarget-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontacttimestamp.html" title="QContactTimestamp Class Reference">
+        <keyword ref="qcontacttimestamp.html">QContactTimestamp</keyword>
+        <keyword ref="qcontacttimestamp.html#created">created</keyword>
+        <keyword ref="qcontacttimestamp.html#lastModified">lastModified</keyword>
+        <keyword ref="qcontacttimestamp.html#setCreated">setCreated</keyword>
+        <keyword ref="qcontacttimestamp.html#setLastModified">setLastModified</keyword>
+        <keyword ref="qcontacttimestamp.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontacttimestamp.html#FieldCreationTimestamp-var">FieldCreationTimestamp</keyword>
+        <keyword ref="qcontacttimestamp.html#FieldModificationTimestamp-var">FieldModificationTimestamp</keyword>
+        <section ref="qcontacttimestamp-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactunionfilter.html" title="QContactUnionFilter Class Reference">
+        <keyword ref="qcontactunionfilter.html">QContactUnionFilter</keyword>
+        <keyword ref="qcontactunionfilter.html#append">append</keyword>
+        <keyword ref="qcontactunionfilter.html#filters">filters</keyword>
+        <keyword ref="qcontactunionfilter.html#prepend">prepend</keyword>
+        <keyword ref="qcontactunionfilter.html#remove">remove</keyword>
+        <keyword ref="qcontactunionfilter.html#setFilters">setFilters</keyword>
+        <keyword ref="qcontactunionfilter.html#operator-lt-lt">operator&lt;&lt;</keyword>
+        <section ref="qcontactunionfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontacturl.html" title="QContactUrl Class Reference">
+        <keyword ref="qcontacturl.html">QContactUrl</keyword>
+        <keyword ref="qcontacturl.html#setSubType">setSubType</keyword>
+        <keyword ref="qcontacturl.html#setUrl">setUrl</keyword>
+        <keyword ref="qcontacturl.html#subType">subType</keyword>
+        <keyword ref="qcontacturl.html#url">url</keyword>
+        <keyword ref="qcontacturl.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontacturl.html#FieldSubType-var">FieldSubType</keyword>
+        <keyword ref="qcontacturl.html#FieldUrl-var">FieldUrl</keyword>
+        <keyword ref="qcontacturl.html#SubTypeFavourite-var">SubTypeFavourite</keyword>
+        <keyword ref="qcontacturl.html#SubTypeHomePage-var">SubTypeHomePage</keyword>
+        <keyword ref="qcontacturl.html#SubTypeSocialNetworking-var">SubTypeSocialNetworking</keyword>
+        <section ref="qcontacturl-members.html" title="List of all members"/>
     </section>
     <section ref="qgeoareamonitor.html" title="QGeoAreaMonitor Class Reference">
         <keyword ref="qgeoareamonitor.html">QGeoAreaMonitor</keyword>
@@ -599,6 +1394,9 @@
     <section ref="bearer-management.html" title="Bearer Management">
         <keyword ref="bearer-management.html">Bearer Management</keyword>
     </section>
+    <section ref="contacts.html" title="Contacts">
+        <keyword ref="contacts.html">Contacts</keyword>
+    </section>
     <section ref="location-overview.html" title="Location">
         <keyword ref="location-overview.html">Location</keyword>
     </section>
@@ -607,6 +1405,9 @@
     </section>
     <section ref="bearer.html" title="Qt Bearer Management API">
         <keyword ref="bearer.html">Qt Bearer Management API</keyword>
+    </section>
+    <section ref="contactsschema.html" title="Qt Contacts Schema">
+        <keyword ref="contactsschema.html">Qt Contacts Schema</keyword>
     </section>
     <section ref="mobility.html" title="Qt Mobility APIs">
         <keyword ref="mobility.html">Qt Mobility APIs</keyword>
@@ -642,6 +1443,9 @@
     </section>
     <section ref="publish-subscribe.html" title="Publish and Subscribe Example">
         <keyword ref="publish-subscribe.html">Publish and Subscribe Example</keyword>
+    </section>
+    <section ref="samplephonebook.html" title="Sample Phonebook Example">
+        <keyword ref="samplephonebook.html">Sample Phonebook Example</keyword>
     </section>
     <section ref="servicebrowser.html" title="Service Browser Example">
         <keyword ref="servicebrowser.html">Service Browser Example</keyword>

@@ -80,4 +80,6 @@ symbian {
         BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
     }
 }
+win32: INCLUDEPATH += .
+include(../common.pri)
 include(../features/deploy.pri)

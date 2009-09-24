@@ -52,10 +52,11 @@
     #include &quot;qcontact.h&quot;
     #include &quot;qcontactmanager.h&quot;
 
-    GroupEditDialog::GroupEditDialog(QContactManager *contactManager)
-            : cm(contactManager)
+    GroupEditDialog::GroupEditDialog(QWidget *parent, QContactManager *contactManager)
+            : QDialog(parent), cm(contactManager)
     {
         Q_ASSERT(contactManager);
+        setWindowTitle(tr(&quot;Groups Edit&quot;));
 
         QFormLayout *layout = new QFormLayout;
 
@@ -153,8 +154,7 @@
             bool result = false;
             if (!grp.isEmpty()){
                 grp.setName(groupNameEdit-&gt;text());
-                if (result)
-                    result = cm-&gt;saveGroup(&amp;grp);
+                result = cm-&gt;saveGroup(&amp;grp);
             }
             if (!result){
                 QMessageBox::information(this, tr(&quot;Save Group&quot;),
@@ -212,6 +212,6 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Contacts</div></td>
+<td align="right"><div align="right">Qt Mobility API</div></td>
 </tr></table></div></address></body>
 </html>

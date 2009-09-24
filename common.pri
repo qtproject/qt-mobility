@@ -13,11 +13,20 @@ CONFIG(debug, debug|release) {
 
 include(config.pri)
 
-#MacOSX always builds debug and release libs
-mac:contains(TEMPLATE, lib) {
-    CONFIG+=$$WAS_IN_DEBUG
-    CONFIG += debug_and_release build_all
+mac {
+    contains(QT_CONFIG, qt_framework):contains(TEMPLATE, lib) {
+        #MacOSX always builds debug and release libs when using mac framework
+        CONFIG+=$$WAS_IN_DEBUG
+        CONFIG += debug_and_release build_all
+    } else {
+        !contains(QT_CONFIG,debug)|!contains(QT_CONFIG,release) {
+            CONFIG -= debug_and_release debug release
+            contains(QT_CONFIG,debug): CONFIG+=debug
+            contains(QT_CONFIG,release): CONFIG+=release
+        }
+    }
 }
+
 # Make sure this goes everywhere we need it
 symbian: load(data_caging_paths)
 
@@ -40,7 +49,6 @@ CONFIG(debug, debug|release) {
 } else {
     SUBDIRPART=Release
 }
-
 
 
 #test whether we have a unit test
@@ -103,7 +111,7 @@ symbian {
 }
 
 # Add the output dirs to the link path too
-mac {
+mac:contains(QT_CONFIG,qt_framework) {
     #add framework option
     contains(TEMPLATE, app)|contains(CONFIG,plugin):LIBS+=-F$$OUTPUT_DIR/lib
 }

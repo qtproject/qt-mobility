@@ -62,7 +62,7 @@ symbian {
 
     SOURCES +=  servicedatabase.cpp \
                 databasemanager.cpp
-
+    win32:INCLUDEPATH += .
 }
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS

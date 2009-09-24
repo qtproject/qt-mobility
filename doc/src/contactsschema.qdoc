@@ -8,7 +8,7 @@
 
 \section1 Introduction
 
-The \l{Qt Contacts Developer Resources}{Qt Contacts API} makes use of detail leaf classes
+The \l{Contacts}{Qt Contacts API} makes use of detail leaf classes
 which provide certain well-known functionality.  In order to develop a backend engine which
 can service clients or provide synchronisation to other backends, the schema must be
 known.

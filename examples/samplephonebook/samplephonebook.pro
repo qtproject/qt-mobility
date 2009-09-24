@@ -14,8 +14,6 @@ INCLUDEPATH += . \
                ../../contacts/requests \
                ../../contacts/details 
 
-VPATH += ../incomingcalls
-
 # Input
 SOURCES +=  contactdetailsform.cpp \
             maindialogform_240_320.cpp \
@@ -23,7 +21,7 @@ SOURCES +=  contactdetailsform.cpp \
             phonebook.cpp \
             serialiser.cpp \
             finddialog.cpp \
-            filterdialog.cpp \ 
+            ../incomingcalls/filterdialog.cpp \ 
             groupeditdialog.cpp \ 
             groupdetailsdialog.cpp \
             main.cpp
@@ -33,7 +31,7 @@ HEADERS   = contactdetailsform.h \
             phonebook.h \
             serialiser.h \
             finddialog.h \
-            filterdialog.h \
+            ../incomingcalls/filterdialog.h \
             groupeditdialog.h \
             groupdetailsdialog.h
 

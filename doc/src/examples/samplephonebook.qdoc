@@ -6,7 +6,7 @@
 
     \section1 Phone Book
 
-    This example shows how to write a simple phonebook with the \l{Qt Contacts Developer Resources}{Contacts API}.
+    This example shows how to write a simple phonebook with the \l{Contacts}{Contacts API}.
 
     \section2 Motivation
     This application was written to provide an example to developers of how to use the Qt Contacts API.
