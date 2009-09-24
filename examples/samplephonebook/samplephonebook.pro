@@ -8,23 +8,23 @@ TEMPLATE = app
 TARGET = samplephonebook
 DEPENDPATH += .
 INCLUDEPATH += . \
-               ../incomingcalls\
                ../../contacts\
                ../../contacts/filters \
                ../../contacts/requests \
                ../../contacts/details 
 
+
 # Input
-SOURCES +=  contactdetailsform.cpp \
+SOURCES =  contactdetailsform.cpp \
             maindialogform_240_320.cpp \
             maindialogform_640_480.cpp \
             phonebook.cpp \
             serialiser.cpp \
-            finddialog.cpp \
-            ../incomingcalls/filterdialog.cpp \ 
             groupeditdialog.cpp \ 
             groupdetailsdialog.cpp \
-            main.cpp
+            main.cpp \
+            finddialog.cpp
+
 HEADERS   = contactdetailsform.h \
             maindialogform_240_320.h \
             maindialogform_640_480.h \
