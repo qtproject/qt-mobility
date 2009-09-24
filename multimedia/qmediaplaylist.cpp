@@ -347,12 +347,10 @@ bool QMediaPlaylist::load(const QUrl &location, const char *format)
             QMediaPlaylistReader *reader = plugin->createReader(location,QByteArray(format));
             if (reader && d->readItems(reader)) {
                 delete reader;
-                delete plugin;
                 return true;
             }
             delete reader;
         }
-        delete plugin;
     }
 
     return false;
@@ -378,12 +376,10 @@ bool QMediaPlaylist::load(QIODevice * device, const char *format)
             QMediaPlaylistReader *reader = plugin->createReader(device,QByteArray(format));
             if (reader && d->readItems(reader)) {
                 delete reader;
-                delete plugin;
                 return true;
             }
             delete reader;
         }
-        delete plugin;
     }
 
     return false;
@@ -420,18 +416,18 @@ bool QMediaPlaylist::save(QIODevice * device, const char *format)
     if (d->playlist()->save(device,format))
         return true;
 
+    //qDebug() << "playlist io loaders:" << playlistIOLoader()->keys();
+
     foreach (QString const& key, playlistIOLoader()->keys()) {
         QMediaPlaylistIOInterface* plugin = qobject_cast<QMediaPlaylistIOInterface*>(playlistIOLoader()->instance(key));
         if (plugin && plugin->canWrite(device,format)) {
             QMediaPlaylistWritter *writter = plugin->createWritter(device,QByteArray(format));
             if (writter && d->writeItems(writter)) {
                 delete writter;
-                delete plugin;
                 return true;
             }
             delete writter;
         }
-        delete plugin;
     }
 
     return false;
