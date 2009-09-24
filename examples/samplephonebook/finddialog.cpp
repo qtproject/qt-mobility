@@ -32,7 +32,8 @@
 ****************************************************************************/
 
 #include "finddialog.h"
-#include "filterdialog.h"
+#include "../incomingcalls/filterdialog.h"
+#include "../incomingcalls/filterdialog.cpp"
 #include <QtGui>
 
 FindDialog::FindDialog(QWidget *parent)
