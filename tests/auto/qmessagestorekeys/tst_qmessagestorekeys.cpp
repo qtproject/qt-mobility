@@ -524,6 +524,19 @@ void tst_QMessageStoreKeys::testAccountFilter_data()
         << QMessageAccountFilter::byName("", QMessageDataComparator::Excludes) 
         << QMessageAccountIdList()
         << accountIds;
+
+    // Test some basic combinations
+    QTest::newRow("id inequality AND name equality")
+        << ( QMessageAccountFilter::byId(accountIds[0], QMessageDataComparator::NotEqual) &
+             QMessageAccountFilter::byName("Personal", QMessageDataComparator::Equal) )
+        << ( QMessageAccountIdList() << accountIds[1] )
+        << ( QMessageAccountIdList() << accountIds[0] << accountIds[2] );
+
+    QTest::newRow("id equality OR name inequality")
+        << ( QMessageAccountFilter::byId(accountIds[0], QMessageDataComparator::Equal) |
+             QMessageAccountFilter::byName("Personal", QMessageDataComparator::NotEqual) )
+        << ( QMessageAccountIdList() << accountIds[0] << accountIds[2] )
+        << ( QMessageAccountIdList() << accountIds[1] );
 }
 
 void tst_QMessageStoreKeys::testAccountFilter()
@@ -1154,6 +1167,19 @@ void tst_QMessageStoreKeys::testFolderFilter_data()
         << QMessageFolderFilter::byAncestorFolderIds(QMessageFolderFilter::byPath("NoneSuch"), QMessageDataComparator::Excludes) 
         << folderIds
         << QMessageFolderIdList();
+
+    // Test some basic combinations
+    QTest::newRow("id inequality AND displayName inclusion")
+        << ( QMessageFolderFilter::byId(folderIds[0], QMessageDataComparator::NotEqual) &
+             QMessageFolderFilter::byDisplayName("X-A", QMessageDataComparator::Includes) )
+        << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] );
+
+    QTest::newRow("id equality OR displayName equality")
+        << ( QMessageFolderFilter::byId(folderIds[0], QMessageDataComparator::Equal) |
+             QMessageFolderFilter::byDisplayName("X-Announce", QMessageDataComparator::Equal) )
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[2] )
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[3] );
 }
 
 void tst_QMessageStoreKeys::testFolderFilter()
@@ -2170,6 +2196,19 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << messageIds
         << QMessageIdList();
 #endif
+
+    // Test some basic combinations
+    QTest::newRow("status mask inclusion AND timeStamp greater than")
+        << ( QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Includes) &
+             QMessageFilter::byTimeStamp(epoch, QMessageDataComparator::GreaterThan) )
+        << ( QMessageIdList() << messageIds[3] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[4] );
+
+    QTest::newRow("size greater than equal OR timeStamp greater than")
+        << ( QMessageFilter::bySize(discriminator, QMessageDataComparator::GreaterThanEqual) |
+             QMessageFilter::byTimeStamp(epoch, QMessageDataComparator::GreaterThan) )
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[4] );
 }
 
 void tst_QMessageStoreKeys::testMessageFilter()
