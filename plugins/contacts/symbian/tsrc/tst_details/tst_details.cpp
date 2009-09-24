@@ -54,10 +54,16 @@ public:
 
 private:
     void dumpContact(const QContact &c);
-    void saveAndVerifyContact( QContact* original );
-
-
-
+    
+    template <typename T>
+    void removeDetail( QContact& contact )
+    {
+        T detail = contact.detail<T>();
+        contact.removeDetail( &detail );
+    }    
+    
+    bool saveAndLoadContact( QContact &original, QContact &loaded );
+    void saveAndVerifyContact( QContact &original );
 
 private slots:
     void initTestCase();
@@ -72,7 +78,7 @@ private slots:
     void testNickName();
     void testOrganisation();
     void testPhoneNumber();
-    void testUrl();
+    void testUrl();    
 
 private slots:
 
@@ -116,34 +122,47 @@ void tst_details::cleanupTestCase()
     cm.removeContacts( &ids );
 }
 
-void tst_details::saveAndVerifyContact( QContact* original )
+bool tst_details::saveAndLoadContact( QContact &original, QContact &loaded )
 {
     QContactManager cm("symbian");
 
     // Save contact
-    QVERIFY( cm.saveContact(original) );
-    QVERIFY( original->id() != 0 );
+    if( cm.saveContact(&original) == false )
+        return false;
+    
+    // Check the id
+    if( original.id() == 0 )
+        return false;
 
-    // Load same contact
-    QContact loaded = cm.contact( original->id() );
+    // Load same contact from database
+    loaded = cm.contact( original.id() );
+    if( cm.error() )
+        return false;
 
-    // Remove display label & guid from comparison
-    QContactDisplayLabel displayLabel = original->detail(QContactDisplayLabel::DefinitionName);
-    original->removeDetail( &displayLabel );
-    displayLabel = loaded.detail(QContactDisplayLabel::DefinitionName);
-    loaded.removeDetail( &displayLabel );
-    QContactGuid guid = loaded.detail(QContactGuid::DefinitionName);
-    loaded.removeDetail( &guid );
-
+    // Ignore some details which are not relevant and will mess
+    // up direct comparison between two contacts.
+    removeDetail<QContactDisplayLabel>(original);
+    removeDetail<QContactDisplayLabel>(loaded);
+    removeDetail<QContactGuid>(original);
+    removeDetail<QContactGuid>(loaded);
+    removeDetail<QContactTimestamp>(original);    
+    removeDetail<QContactTimestamp>(loaded);
+    
     // Dump to log for debugging
     //qDebug() << "Original contact:";
-    //dumpContact( *original );
+    //dumpContact( original );
     //qDebug() << "Loaded contact:";
     //dumpContact( loaded );
+    
+    return true;
+}
 
-    // Compare
-    QVERIFY( original->details().count() == loaded.details().count() );
-    QCOMPARE( *original, loaded );
+void tst_details::saveAndVerifyContact( QContact &original )
+{
+    QContact loaded;
+    QVERIFY( saveAndLoadContact( original, loaded ) );
+    QVERIFY( original.details().count() == loaded.details().count() );
+    QCOMPARE( original, loaded );
 }
 
 void tst_details::testAddress()
@@ -161,12 +180,12 @@ void tst_details::testAddress()
         a.setPostOfficeBox("POBox");
         c.saveDetail( &a );
 
-        saveAndVerifyContact( &c );
+        saveAndVerifyContact( c );
     }
 
     // general address *2
     {
-        QContact c;
+        QContact c1;
 
         QContactAddress a1;
         a1.setStreet("street1");
@@ -175,7 +194,7 @@ void tst_details::testAddress()
         a1.setPostcode("postcode1");
         a1.setCountry("country1");
         a1.setPostOfficeBox("POBox1");
-        c.saveDetail( &a1 );
+        c1.saveDetail( &a1 );
 
         QContactAddress a2;
         a2.setStreet("street2");
@@ -184,9 +203,14 @@ void tst_details::testAddress()
         a2.setPostcode("postcode2");
         a2.setCountry("country2");
         a2.setPostOfficeBox("POBox2");
-        c.saveDetail( &a2 );
+        c1.saveDetail( &a2 );
 
-        saveAndVerifyContact( &c );
+        QContact c2;
+        saveAndLoadContact( c1, c2 );
+        
+        // TODO: Should we now have two addresses or one?
+        QVERIFY( c2.details<QContactAddress>().count() == 1 );
+        QVERIFY( a2 == c2.detail<QContactAddress>() );
     }
 
     // general + home + work address
@@ -210,7 +234,7 @@ void tst_details::testAddress()
         a3.setContexts( QContactDetail::ContextWork );
         c.saveDetail( &a3 );
 
-        saveAndVerifyContact( &c );
+        saveAndVerifyContact( c );
     }
 }
 void tst_details::testAnniversary()
@@ -221,7 +245,7 @@ void tst_details::testAnniversary()
     a.setOriginalDate( QDate(2009,9,9) );
     c.saveDetail( &a );
 
-    saveAndVerifyContact( &c );
+    saveAndVerifyContact( c );
 }
 
 void tst_details::testAvatar()
@@ -233,7 +257,7 @@ void tst_details::testAvatar()
     a.setSubType( QContactAvatar::SubTypeImage );
     c.saveDetail( &a );
 
-    saveAndVerifyContact( &c );
+    saveAndVerifyContact( c );
 }
 
 void tst_details::testBirthday()
@@ -244,7 +268,7 @@ void tst_details::testBirthday()
     b.setDate( QDate(2001,1,1) );
     c.saveDetail( &b );
 
-    saveAndVerifyContact( &c );
+    saveAndVerifyContact( c );
 }
 
 void tst_details::testEmailAddress()
@@ -255,7 +279,7 @@ void tst_details::testEmailAddress()
     e.setEmailAddress( "foo@bar.com" );
     c.saveDetail( &e );
 
-    saveAndVerifyContact( &c );
+    saveAndVerifyContact( c );
 }
 
 void tst_details::testName()
@@ -270,7 +294,7 @@ void tst_details::testName()
     n.setSuffix( "suffix" );
     c.saveDetail( &n );
 
-    saveAndVerifyContact( &c );
+    saveAndVerifyContact( c );
 }
 
 void tst_details::testNickName()
@@ -281,13 +305,13 @@ void tst_details::testNickName()
     n1.setNickname("nickname1");
     c.saveDetail( &n1 );
 
-    saveAndVerifyContact( &c );
+    saveAndVerifyContact( c );
 
     QContactNickname n2;
     n2.setNickname("nickname2");
     c.saveDetail( &n2 );
 
-    saveAndVerifyContact( &c );
+    saveAndVerifyContact( c );
 }
 
 void tst_details::testOrganisation()
@@ -299,7 +323,7 @@ void tst_details::testOrganisation()
     o.setTitle( "Bicycle mechanic" );
     c.saveDetail( &o );
 
-    saveAndVerifyContact( &c );
+    saveAndVerifyContact( c );
 }
 
 void tst_details::testPhoneNumber()
@@ -312,7 +336,7 @@ void tst_details::testPhoneNumber()
         n.setNumber( "1" );
         c.saveDetail( &n );
 
-        saveAndVerifyContact( &c );
+        saveAndVerifyContact( c );
     }
 
     // general number + general landline number
@@ -330,7 +354,7 @@ void tst_details::testPhoneNumber()
         n2.setSubTypes( QContactPhoneNumber::SubTypeLandline );
         c.saveDetail( &n2 );
 
-        saveAndVerifyContact( &c );
+        saveAndVerifyContact( c );
     }
 
     // home mobile number + work landline number
@@ -351,7 +375,7 @@ void tst_details::testPhoneNumber()
         n2.setContexts( QContactDetail::ContextWork );
         c.saveDetail( &n2 );
 
-        saveAndVerifyContact( &c );
+        saveAndVerifyContact( c );
     }
 
     // General number + fax number + dtmf number
@@ -372,7 +396,7 @@ void tst_details::testPhoneNumber()
         n3.setSubTypes( "Dtmf" ); // TODO: replace with proper definition
         c.saveDetail( &n3 );
 
-        saveAndVerifyContact( &c );
+        saveAndVerifyContact( c );
     }
 }
 
@@ -384,7 +408,7 @@ void tst_details::testUrl()
     u.setUrl("http://failblog.org");
     c.saveDetail( &u );
 
-    saveAndVerifyContact( &c );
+    saveAndVerifyContact( c );
 }
 
 QTEST_MAIN(tst_details)
