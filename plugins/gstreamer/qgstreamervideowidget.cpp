@@ -134,6 +134,9 @@ bool QGstreamerVideoWidgetControl::eventFilter(QObject *object, QEvent *e)
             WId newWId = m_widget->winId();
             if (newWId != m_windowId) {
                 m_windowId = newWId;
+                // Even if we have created a winId at this point, other X applications
+                // need to be aware of it.
+                QApplication::syncX();
                 setOverlay();
             }
         }
@@ -162,9 +165,6 @@ void QGstreamerVideoWidgetControl::precessNewStream()
 void QGstreamerVideoWidgetControl::setOverlay()
 {
     if (m_videoSink && GST_IS_X_OVERLAY(m_videoSink)) {
-        // Even if we have created a winId at this point, other X applications
-        // need to be aware of it.
-        QApplication::syncX();
         gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(m_videoSink), m_windowId);
     }
 }
@@ -201,7 +201,6 @@ void QGstreamerVideoWidgetControl::updateNativeVideoSize()
 
 void QGstreamerVideoWidgetControl::windowExposed()
 {
-    QApplication::syncX();
     if (m_videoSink && GST_IS_X_OVERLAY(m_videoSink))
         gst_x_overlay_expose(GST_X_OVERLAY(m_videoSink));
 }
