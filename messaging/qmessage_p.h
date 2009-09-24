@@ -46,6 +46,11 @@ class QMessagePrivate
 {
 #ifdef USE_QMF_IMPLEMENTATION
 public:
+    QMessagePrivate() 
+    {
+        _message.setStatus(QMailMessage::LocalOnly);
+    }
+
     QMailMessage _message;
 
     typedef QMap<QMessage::StandardFolder, QMessageFolderId> StandardFolderMap;

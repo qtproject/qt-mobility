@@ -199,10 +199,20 @@ QByteArray charsetFor(const QString &input)
 
 }
 
+// This class has friend access to QMailMessage
+struct QMailStorePrivate
+{
+    static inline void setUnmodified(QMailMessage *msg)
+    {
+        msg->setUnmodified();
+    }
+};
+
 QMessage::QMessage()
     : d_ptr(new QMessagePrivate)
 {
     setDerivedMessage(this);
+    QMailStorePrivate::setUnmodified(&d_ptr->_message);
 }
 
 QMessage::QMessage(const QMessageId& id)
@@ -210,6 +220,7 @@ QMessage::QMessage(const QMessageId& id)
 {
     *this = QMessageStore::instance()->message(id);
     setDerivedMessage(this);
+    QMailStorePrivate::setUnmodified(&d_ptr->_message);
 }
 
 QMessage::QMessage(const QMessage &other)
@@ -218,6 +229,7 @@ QMessage::QMessage(const QMessage &other)
 {
     this->operator=(other);
     setDerivedMessage(this);
+    QMailStorePrivate::setUnmodified(&d_ptr->_message);
 }
 
 QMessage& QMessage::operator=(const QMessage& other)
@@ -242,6 +254,7 @@ QMessage QMessage::fromTransmissionFormat(Type t, const QByteArray &ba)
 
     QMailMessage msg = QMailMessage::fromRfc2822(ba);
     msg.setMessageType(convert(t));
+    msg.setStatus(QMailMessage::LocalOnly, true);
 
     result.d_ptr->_message = msg;
     return result;
@@ -253,6 +266,7 @@ QMessage QMessage::fromTransmissionFormatFile(Type t, const QString& fileName)
 
     QMailMessage msg = QMailMessage::fromRfc2822File(fileName);
     msg.setMessageType(convert(t));
+    msg.setStatus(QMailMessage::LocalOnly, true);
 
     result.d_ptr->_message = msg;
     return result;
@@ -435,7 +449,14 @@ void QMessage::setPriority(Priority newPriority)
 
 uint QMessage::size() const
 {
-    return 0; // stub
+    if ((d_ptr->_message.status() & QMailMessage::LocalOnly) && 
+        (d_ptr->_message.dataModified() ||
+         d_ptr->_message.contentModified())) {
+        // We need to update the size estimate for this message
+        d_ptr->_message.setSize(d_ptr->_message.indicativeSize() * 1024);
+    }
+
+    return d_ptr->_message.size();
 }
 
 QMessageContentContainerId QMessage::bodyId() const
@@ -530,6 +551,7 @@ void QMessage::appendAttachments(const QStringList &fileNames)
             QString bodyText(d_ptr->_message.body().data());
 
             QMailMessageContentDisposition cd(QMailMessageContentDisposition::Inline);
+            cd.setSize(bodyText.length());
 
             QMailMessagePart textPart(QMailMessagePart::fromData(bodyText, cd, ct, QMailMessageBody::Base64));
 
@@ -548,6 +570,7 @@ void QMessage::appendAttachments(const QStringList &fileNames)
 
             QMailMessageContentDisposition cd(QMailMessageContentDisposition::Attachment);
             cd.setFilename(fi.fileName().toAscii());
+            cd.setSize(fi.size());
 
             QMailMessageContentType ct(mimeType.toAscii());
 

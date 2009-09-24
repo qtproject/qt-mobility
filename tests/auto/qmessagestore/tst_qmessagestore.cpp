@@ -48,6 +48,21 @@ const QByteArray defaultCharset("UTF-8");
 const QByteArray alternateCharset("UTF-16");
 #endif
 
+template<typename T1, typename T2>
+void approximateCompare(const T1 &actual, const T2 &expected, const T2 &variance, int line)
+{
+    if (!((expected - variance) < actual) ||
+        !(actual < (expected + variance))) {
+        qWarning() << "at line:" << line;
+        qWarning() << "\tactual:" << actual;
+        qWarning() << "\texpected:" << expected;
+        qWarning() << "\tvariance:" << variance;
+    }
+    QVERIFY((expected - variance) < actual);
+    QVERIFY(actual < (expected + variance));
+}
+#define QAPPROXIMATECOMPARE(a,e,v) approximateCompare(a,e,v,(__LINE__))
+
 /*
     Unit test for QMessageStore class.
 */
@@ -233,6 +248,7 @@ void tst_QMessageStore::testFolder()
 #endif
 
 Q_DECLARE_METATYPE(QList<QByteArray>)
+Q_DECLARE_METATYPE(QList<unsigned>)
 
 typedef QMap<QString, QString> CustomFieldMap;
 Q_DECLARE_METATYPE(CustomFieldMap)
@@ -245,12 +261,15 @@ void tst_QMessageStore::testMessage_data()
     QTest::addColumn<QString>("subject");
     QTest::addColumn<QByteArray>("messageType");
     QTest::addColumn<QByteArray>("messageSubType");
+    QTest::addColumn<unsigned>("messageSize");
     QTest::addColumn<QString>("text");
     QTest::addColumn<QByteArray>("bodyType");
     QTest::addColumn<QByteArray>("bodySubType");
+    QTest::addColumn<unsigned>("bodySize");
     QTest::addColumn<QStringList>("attachments");
     QTest::addColumn<QList<QByteArray> >("attachmentType");
     QTest::addColumn<QList<QByteArray> >("attachmentSubType");
+    QTest::addColumn<QList<unsigned> >("attachmentSize");
     QTest::addColumn<CustomFieldMap>("custom");
 
     CustomFieldMap customData;
@@ -264,12 +283,15 @@ void tst_QMessageStore::testMessage_data()
         << "Last message..."
         << QByteArray("text")
         << QByteArray("plain")
+        << 2048u
         << "...before Y2K"
         << QByteArray("text")
         << QByteArray("plain")
+        << 24u
         << QStringList()
         << QList<QByteArray>()
         << QList<QByteArray>()
+        << QList<unsigned>()
         << customData;
 
     QTest::newRow("2")
@@ -279,12 +301,15 @@ void tst_QMessageStore::testMessage_data()
         << "Last HTML message..."
         << QByteArray("text")
         << QByteArray("html")
+        << 2048u
         << "<html><p>...before <b>Y2K</b></p></html>"
         << QByteArray("text")
         << QByteArray("html")
+        << 48u
         << QStringList()
         << QList<QByteArray>()
         << QList<QByteArray>()
+        << QList<unsigned>()
         << customData;
 
     QTest::newRow("3")
@@ -294,12 +319,15 @@ void tst_QMessageStore::testMessage_data()
         << "Last message..."
         << QByteArray("multipart")
         << QByteArray("mixed")
+        << 2048u
         << "...before Y2K"
         << QByteArray("text")
         << QByteArray("plain")
+        << 24u
         << ( QStringList() << "1.txt" )
         << ( QList<QByteArray>() << "text" )
         << ( QList<QByteArray>() << "plain" )
+        << ( QList<unsigned>() << 512u )
         << customData;
 
     QTest::newRow("4")
@@ -309,12 +337,15 @@ void tst_QMessageStore::testMessage_data()
         << "Last HTML message..."
         << QByteArray("multipart")
         << QByteArray("mixed")
+        << 5120u
         << "<html><p>...before <b>Y2K</b></p></html>"
         << QByteArray("text")
         << QByteArray("html")
+        << 48u
         << ( QStringList() << "1.txt" << "qtlogo.png" )
         << ( QList<QByteArray>() << "text" << "image" )
         << ( QList<QByteArray>() << "plain" << "png" )
+        << ( QList<unsigned>() << 512u << 4096u )
         << customData;
 }
 
@@ -393,12 +424,15 @@ void tst_QMessageStore::testMessage()
     QFETCH(QString, subject);
     QFETCH(QByteArray, messageType);
     QFETCH(QByteArray, messageSubType);
+    QFETCH(unsigned, messageSize);
     QFETCH(QString, text);
     QFETCH(QByteArray, bodyType);
     QFETCH(QByteArray, bodySubType);
+    QFETCH(unsigned, bodySize);
     QFETCH(QStringList, attachments);
     QFETCH(QList<QByteArray>, attachmentType);
     QFETCH(QList<QByteArray>, attachmentSubType);
+    QFETCH(QList<unsigned>, attachmentSize);
     QFETCH(CustomFieldMap, custom);
 
     Support::Parameters p;
@@ -447,6 +481,8 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(message.contentType().toLower(), messageType.toLower());
     QCOMPARE(message.contentSubType().toLower(), messageSubType.toLower());
 
+    QAPPROXIMATECOMPARE(message.size(), messageSize, (messageSize / 2));
+
     QMessageContentContainerId bodyId(message.bodyId());
     QVERIFY(bodyId.isValid());
 
@@ -459,6 +495,7 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(body.contentCharset().toLower(), defaultCharset.toLower());
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), text);
+    QAPPROXIMATECOMPARE(body.size(), bodySize, (bodySize / 2));
 
     QMessageContentContainerIdList attachmentIds(message.attachmentIds());
     QCOMPARE(attachmentIds.count(), attachments.count());
@@ -468,6 +505,7 @@ void tst_QMessageStore::testMessage()
         QCOMPARE(attachment.contentType().toLower(), attachmentType[i].toLower());
         QCOMPARE(attachment.contentSubType().toLower(), attachmentSubType[i].toLower());
         QCOMPARE(attachment.suggestedFileName(), attachments[i].toAscii());
+        QAPPROXIMATECOMPARE(attachment.size(), attachmentSize[i], (attachmentSize[i] / 2));
     }
 
     QMessageIdList messageIds(QMessageStore::instance()->queryMessages());
@@ -484,5 +522,6 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(body.contentCharset().toLower(), alternateCharset.toLower());
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), replacementText);
+    QAPPROXIMATECOMPARE(body.size(), 72u, 36u);
 }
 

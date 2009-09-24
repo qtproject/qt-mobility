@@ -46,6 +46,21 @@ const QByteArray defaultCharset("UTF-16");
 const QByteArray defaultCharset("UTF-8");
 #endif
 
+template<typename T1, typename T2>
+void approximateCompare(const T1 &actual, const T2 &expected, const T2 &variance, int line)
+{
+    if (!((expected - variance) < actual) ||
+        !(actual < (expected + variance))) {
+        qWarning() << "at line:" << line;
+        qWarning() << "\tactual:" << actual;
+        qWarning() << "\texpected:" << expected;
+        qWarning() << "\tvariance:" << variance;
+    }
+    QVERIFY((expected - variance) < actual);
+    QVERIFY(actual < (expected + variance));
+}
+#define QAPPROXIMATECOMPARE(a,e,v) approximateCompare(a,e,v,(__LINE__))
+
 /*
     Unit test for QMessage class.
 */
@@ -285,6 +300,7 @@ void tst_QMessage::testToTransmissionFormat_simple()
     QCOMPARE(m1.bcc().first().recipient(), bcc);
     QCOMPARE(m1.subject(), subject);
     QCOMPARE(m1.date(), date);
+    QAPPROXIMATECOMPARE(m1.size(), 2048u, 1024u);
 
     QCOMPARE(m1.contentType().toLower(), contentType.toLower());
     QCOMPARE(m1.contentSubType().toLower(), contentSubType.toLower());
@@ -299,6 +315,7 @@ void tst_QMessage::testToTransmissionFormat_simple()
     QCOMPARE(m2.cc().first().recipient(), cc);
     QCOMPARE(m2.bcc().count(), 0);
     QCOMPARE(m2.date(), date);
+    QAPPROXIMATECOMPARE(m2.size(), 2048u, 1024u);
 
     QCOMPARE(m2.contentType().toLower(), contentType.toLower());
     QCOMPARE(m2.contentSubType().toLower(), contentSubType.toLower());
@@ -314,11 +331,15 @@ void tst_QMessage::testToTransmissionFormat_multipart()
     const QString subject("This is a multipart message");
     const QByteArray contentType("multipart");
     const QByteArray contentSubType("mixed");
+    const unsigned messageSize(5120u);
+    const unsigned messageVariance(3072u);
 
     const QByteArray p1ContentType("text");
     const QByteArray p1ContentSubType("plain");
     const QByteArray p1ContentCharset(defaultCharset);
     const QString p1ContentText(QString("This is the happy face:").append(QChar(0x263a)));
+    const unsigned p1Size(32u);
+    const unsigned p1Variance(16u);
 
     const QByteArray p2FileName("1.txt");
     const QByteArray p2ContentType("text");
@@ -345,11 +366,15 @@ Do you like this message?\r\n\
 \r\n\
 -Me\r\n\
 ");
+    const unsigned p2Size(512u);
+    const unsigned p2Variance(256u);
 
     const QByteArray p3FileName("qtlogo.png");
     const QByteArray p3ContentType("image");
     const QByteArray p3ContentSubType("png");
     const QByteArray p3ContentCharset("");
+    const unsigned p3Size(4096u);
+    const unsigned p3Variance(2048u);
 
     const QByteArray p4FileName("pointless.sh");
     const QByteArray p4ContentType("application");
@@ -363,12 +388,16 @@ Do you like this message?\r\n\
 #!/bin/sh\n\
 # This script does nothing\n\
 exit 0\n");
+    const unsigned p4Size(64u);
+    const unsigned p4Variance(32u);
 
     const QByteArray p5FileName("datafile");
     const QByteArray p5ContentType("application");
     const QByteArray p5ContentSubType("octet-stream");
     const QByteArray p5ContentCharset("");
     const QByteArray p5ContentData("abcdefghijklmnopqrstuvwxyz");
+    const unsigned p5Size(48u);
+    const unsigned p5Variance(24u);
 
     QMessage m1;
 
@@ -392,6 +421,7 @@ exit 0\n");
         QCOMPARE(m1.from().recipient(), from);
         QCOMPARE(m1.to().first().recipient(), to);
         QCOMPARE(m1.subject(), subject);
+        QAPPROXIMATECOMPARE(m1.size(), messageSize, messageVariance);
 
         QCOMPARE(m1.contentType().toLower(), contentType.toLower());
         QCOMPARE(m1.contentSubType().toLower(), contentSubType.toLower());
@@ -412,6 +442,7 @@ exit 0\n");
         QCOMPARE(p1.isContentAvailable(), true);
         QCOMPARE(p1.contentIds().count(), 0);
         QCOMPARE(p1.textContent(), p1ContentText);
+        QAPPROXIMATECOMPARE(p1.size(), p1Size, p1Variance);
 
         QMessageContentContainer p2(m1.find(ids.at(1)));
 
@@ -421,6 +452,7 @@ exit 0\n");
         QCOMPARE(p2.isContentAvailable(), true);
         QCOMPARE(p2.contentIds().count(), 0);
         QCOMPARE(p2.textContent(), p2ContentText);
+        QAPPROXIMATECOMPARE(p2.size(), p2Size, p2Variance);
 
         QMessageContentContainer p3(m1.find(ids.at(2)));
 
@@ -430,6 +462,7 @@ exit 0\n");
         QCOMPARE(p3.isContentAvailable(), true);
         QCOMPARE(p3.contentIds().count(), 0);
         QCOMPARE(p3.content().length(), 4075);
+        QAPPROXIMATECOMPARE(p3.size(), p3Size, p3Variance);
 
         QMessageContentContainer p4(m1.find(ids.at(3)));
 
@@ -439,6 +472,7 @@ exit 0\n");
         QCOMPARE(p4.isContentAvailable(), true);
         QCOMPARE(p4.contentIds().count(), 0);
         QCOMPARE(p4.content(), p4ContentData);
+        QAPPROXIMATECOMPARE(p4.size(), p4Size, p4Variance);
 
         QMessageContentContainer p5(m1.find(ids.at(4)));
 
@@ -448,6 +482,7 @@ exit 0\n");
         QCOMPARE(p5.isContentAvailable(), true);
         QCOMPARE(p5.contentIds().count(), 0);
         QCOMPARE(p5.content(), p5ContentData);
+        QAPPROXIMATECOMPARE(p5.size(), p5Size, p5Variance);
     }
 
     // Verify that attachments can be removed
@@ -461,6 +496,7 @@ exit 0\n");
         QCOMPARE(m2.from().recipient(), from);
         QCOMPARE(m2.to().first().recipient(), to);
         QCOMPARE(m2.subject(), subject);
+        QAPPROXIMATECOMPARE(m2.size(), messageSize, messageVariance);
 
         QCOMPARE(m2.contentType().toLower(), contentType.toLower());
         QCOMPARE(m2.contentSubType().toLower(), contentSubType.toLower());
@@ -481,6 +517,7 @@ exit 0\n");
         QCOMPARE(p1.isContentAvailable(), true);
         QCOMPARE(p1.contentIds().count(), 0);
         QCOMPARE(p1.textContent(), p1ContentText);
+        QAPPROXIMATECOMPARE(p1.size(), p1Size, p1Variance);
 
         QMessageContentContainer p2(m2.find(ids.at(1)));
 
@@ -491,6 +528,7 @@ exit 0\n");
         QCOMPARE(p2.contentIds().count(), 0);
         // This text has had the '\r' stripped out...
         QCOMPARE(p2.textContent(), QString(p2ContentText).replace("\r\n", "\n"));
+        QAPPROXIMATECOMPARE(p2.size(), p2Size, p2Variance);
 
         QMessageContentContainer p3(m2.find(ids.at(2)));
 
@@ -500,6 +538,7 @@ exit 0\n");
         QCOMPARE(p3.isContentAvailable(), true);
         QCOMPARE(p3.contentIds().count(), 0);
         QCOMPARE(p3.content().length(), 4075);
+        QAPPROXIMATECOMPARE(p3.size(), p3Size, p3Variance);
 
         QMessageContentContainer p4(m2.find(ids.at(3)));
 
@@ -509,6 +548,7 @@ exit 0\n");
         QCOMPARE(p4.isContentAvailable(), true);
         QCOMPARE(p4.contentIds().count(), 0);
         QCOMPARE(p4.content(), p4ContentData);
+        QAPPROXIMATECOMPARE(p4.size(), p4Size, p4Variance);
 
         QMessageContentContainer p5(m2.find(ids.at(4)));
 
@@ -518,6 +558,7 @@ exit 0\n");
         QCOMPARE(p5.isContentAvailable(), true);
         QCOMPARE(p5.contentIds().count(), 0);
         QCOMPARE(p5.content(), p5ContentData);
+        QAPPROXIMATECOMPARE(p5.size(), p5Size, p5Variance);
     }
 #endif
 }

@@ -175,6 +175,10 @@ uint QMessageContentContainer::size() const
 {
     applyPendingChanges();
 
+    if (d_ptr->_container->hasBody()) {
+        return d_ptr->_container->body().length();
+    }
+
     SizeAccumulator accumulator;
     d_ptr->_container->foreachPart<SizeAccumulator&>(accumulator);
 
