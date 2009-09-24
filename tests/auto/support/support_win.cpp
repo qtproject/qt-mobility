@@ -59,6 +59,95 @@
 
 namespace {
 
+class QueryAllRows
+{
+    static const int BatchSize = 20;
+public:
+    QueryAllRows(LPMAPITABLE ptable,
+                 LPSPropTagArray ptaga,
+                 LPSRestriction pres,
+                 LPSSortOrderSet psos);
+    ~QueryAllRows();
+
+    bool query();
+    LPSRowSet rows() const;
+    QMessageStore::ErrorCode lastError() const;
+
+private:
+    LPMAPITABLE m_table;
+    LPSPropTagArray m_tagArray;
+    LPSRestriction m_restriction;
+    LPSSortOrderSet m_sortOrderSet;
+    LPSRowSet m_rows;
+    QMessageStore::ErrorCode m_lastError;
+};
+
+QueryAllRows::QueryAllRows(LPMAPITABLE ptable,
+                               LPSPropTagArray ptaga,
+                               LPSRestriction pres,
+                               LPSSortOrderSet psos)
+    :
+        m_table(ptable),
+        m_tagArray(ptaga),
+        m_restriction(pres),
+        m_sortOrderSet(psos),
+        m_rows(0),
+        m_lastError(QMessageStore::NoError)
+    {
+        bool initFailed = false;
+
+        initFailed |= FAILED(m_table->SetColumns(m_tagArray, TBL_BATCH));
+
+        if(m_restriction)
+            initFailed |= FAILED(m_table->Restrict(m_restriction, TBL_BATCH));
+
+        if(m_sortOrderSet)
+            initFailed |= FAILED(m_table->SortTable(m_sortOrderSet, TBL_BATCH));
+
+        initFailed |= FAILED(m_table->SeekRow(BOOKMARK_BEGINNING,0, NULL));
+
+        if(initFailed) m_lastError = QMessageStore::ContentInaccessible;
+    }
+
+    QueryAllRows::~QueryAllRows()
+    {
+        FreeProws(m_rows);
+        m_rows = 0;
+    }
+
+    bool QueryAllRows::query()
+    {
+        if(m_lastError != QMessageStore::NoError)
+            return false;
+
+        FreeProws(m_rows);
+        m_rows = 0;
+        m_lastError = QMessageStore::NoError;
+
+        bool failed = FAILED(m_table->QueryRows( QueryAllRows::BatchSize, NULL, &m_rows));
+
+        if(failed)
+            m_lastError = QMessageStore::ContentInaccessible;
+
+        if(failed || m_rows && !m_rows->cRows) return false;
+
+        return true;
+    }
+
+    LPSRowSet QueryAllRows::rows() const
+    {
+        return m_rows;
+    }
+
+    QMessageStore::ErrorCode QueryAllRows::lastError() const
+    {
+        return m_lastError;
+    }
+
+
+
+
+
 GUID GuidPublicStrings = { 0x00020329, 0x0000, 0x0000, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46 };
 
 void doInit()
@@ -102,25 +191,25 @@ QList<ProfileDetail> profileDetails(LPPROFADMIN profAdmin)
     LPMAPITABLE profileTable(0);
     HRESULT rv = profAdmin->GetProfileTable(0, &profileTable);
     if (HR_SUCCEEDED(rv)) {
-        LPSRowSet rows(0);
+
         SizedSPropTagArray(2, cols) = {2, {PR_DISPLAY_NAME_A, PR_DEFAULT_PROFILE}};
-#ifndef _WIN32_WCE
-        rv = HrQueryAllRows(profileTable, reinterpret_cast<LPSPropTagArray>(&cols), NULL, NULL, 0, &rows);
-        if (HR_SUCCEEDED(rv)) {
-            for (uint n = 0; n < rows->cRows; ++n) {
-                if (rows->aRow[n].lpProps[0].ulPropTag == PR_DISPLAY_NAME_A) {
-                    QByteArray profileName(rows->aRow[n].lpProps[0].Value.lpszA);
-                    bool defaultProfile(rows->aRow[n].lpProps[1].Value.b);
+
+        QueryAllRows qar(profileTable, reinterpret_cast<LPSPropTagArray>(&cols), NULL, NULL);
+        while(qar.query()) {
+            for (uint n = 0; n < qar.rows()->cRows; ++n) {
+                if (qar.rows()->aRow[n].lpProps[0].ulPropTag == PR_DISPLAY_NAME_A) {
+                    QByteArray profileName(qar.rows()->aRow[n].lpProps[0].Value.lpszA);
+                    bool defaultProfile(qar.rows()->aRow[n].lpProps[1].Value.b);
                     result.append(qMakePair(profileName, defaultProfile));
                 }
             }
-
-            FreeProws(rows);
-        } else {
-            qWarning() << "profileNames: HrQueryAllRows failed";
         }
-#endif
+
+        if(qar.lastError() != QMessageStore::NoError)
+            qWarning() << "profileNames: QueryAllRows failed";
+
         profileTable->Release();
+
     } else {
         qWarning() << "profileNames: GetProfileTable failed";
     }
@@ -160,29 +249,29 @@ QList<ServiceDetail> serviceDetails(LPSERVICEADMIN svcAdmin)
     IMAPITable *svcTable(0);
     HRESULT rv = svcAdmin->GetMsgServiceTable(0, &svcTable);
     if (HR_SUCCEEDED(rv)) {
-        LPSRowSet rows(0);
+
         SizedSPropTagArray(3, cols) = {3, {PR_SERVICE_NAME_A, PR_DISPLAY_NAME_A, PR_SERVICE_UID}};
-#ifndef _WIN32_WCE
-        rv = HrQueryAllRows(svcTable, reinterpret_cast<LPSPropTagArray>(&cols), 0, 0, 0, &rows);
-        if (HR_SUCCEEDED(rv)) {
-            for (uint n = 0; n < rows->cRows; ++n) {
-                if (rows->aRow[n].lpProps[0].ulPropTag == PR_SERVICE_NAME_A) {
-                    QByteArray svcName(rows->aRow[n].lpProps[0].Value.lpszA);
+
+        QueryAllRows qar(svcTable, reinterpret_cast<LPSPropTagArray>(&cols), 0, 0);
+        while(qar.query()) {
+            for (uint n = 0; n < qar.rows()->cRows; ++n) {
+                if (qar.rows()->aRow[n].lpProps[0].ulPropTag == PR_SERVICE_NAME_A) {
+                    QByteArray svcName(qar.rows()->aRow[n].lpProps[0].Value.lpszA);
                     QByteArray displayName;
-                    if (rows->aRow[n].lpProps[1].ulPropTag == PR_DISPLAY_NAME_A) {
-                        displayName = QByteArray(rows->aRow[n].lpProps[1].Value.lpszA);
+                    if (qar.rows()->aRow[n].lpProps[1].ulPropTag == PR_DISPLAY_NAME_A) {
+                        displayName = QByteArray(qar.rows()->aRow[n].lpProps[1].Value.lpszA);
                     }
-                    MAPIUID svcUid(*(reinterpret_cast<MAPIUID*>(rows->aRow[n].lpProps[2].Value.bin.lpb)));
+                    MAPIUID svcUid(*(reinterpret_cast<MAPIUID*>(qar.rows()->aRow[n].lpProps[2].Value.bin.lpb)));
                     result.append(qMakePair(qMakePair(svcName, displayName), svcUid));
                 }
             }
-
-            FreeProws(rows);
-        } else {
-            qWarning() << "serviceDetails: HrQueryAllRows failed";
         }
-#endif
+
+        if(qar.lastError() != QMessageStore::NoError)
+            qWarning() << "serviceDetails: QueryAllRows failed";
+
         svcTable->Release();
+
     } else {
         qWarning() << "serviceDetails: GetMsgServiceTable failed";
     }
@@ -199,13 +288,12 @@ QList<StoreDetail> storeDetails(LPMAPISESSION session)
     IMAPITable *storesTable(0);
     HRESULT rv = session->GetMsgStoresTable(0, &storesTable);
     if (HR_SUCCEEDED(rv)) {
-        LPSRowSet rows(0);
         SizedSPropTagArray(3, cols) = {3, {PR_DISPLAY_NAME_A, PR_RECORD_KEY, PR_ENTRYID}};
-#ifndef _WIN32_WCE
-        rv = HrQueryAllRows(storesTable, reinterpret_cast<LPSPropTagArray>(&cols), 0, 0, 0, &rows);
-        if (HR_SUCCEEDED(rv)) {
-            for (uint n = 0; n < rows->cRows; ++n) {
-                SPropValue *props(rows->aRow[n].lpProps);
+
+        QueryAllRows qar(storesTable, reinterpret_cast<LPSPropTagArray>(&cols), 0, 0);
+        while(qar.query()) {
+            for (uint n = 0; n < qar.rows()->cRows; ++n) {
+                SPropValue *props(qar.rows()->aRow[n].lpProps);
                 if (props[0].ulPropTag == PR_DISPLAY_NAME_A) {
                     QByteArray storeName(props[0].Value.lpszA);
                     QByteArray recordKey(binaryResult(props[1]));
@@ -213,12 +301,11 @@ QList<StoreDetail> storeDetails(LPMAPISESSION session)
                     result.append(qMakePair(storeName, qMakePair(recordKey, entryId)));
                 }
             }
-
-            FreeProws(rows);
-        } else {
-            qWarning() << "storeDetails: HrQueryAllRows failed";
         }
-#endif
+
+        if(qar.lastError() != QMessageStore::NoError)
+            qWarning() << "storeDetails: QueryAllRows failed";
+
         storesTable->Release();
     } else {
         qWarning() << "storeDetails: GetMsgStoresTable failed";
@@ -395,13 +482,13 @@ MAPIUID findProviderUid(const QByteArray &name, IProviderAdmin *providerAdmin)
     IMAPITable *providerTable(0);
     HRESULT rv = providerAdmin->GetProviderTable(0, &providerTable);
     if (HR_SUCCEEDED(rv)) {
-        LPSRowSet rows(0);
+
         SizedSPropTagArray(2, cols) = {2, {PR_SERVICE_NAME_A, PR_PROVIDER_UID}};
-#ifndef _WIN32_WCE
-        rv = HrQueryAllRows(providerTable, reinterpret_cast<LPSPropTagArray>(&cols), 0, 0, 0, &rows);
-        if (HR_SUCCEEDED(rv)) {
-            for (uint n = 0; n < rows->cRows; ++n) {
-                SPropValue *props(rows->aRow[n].lpProps);
+
+        QueryAllRows qar(providerTable, reinterpret_cast<LPSPropTagArray>(&cols), 0, 0);
+        while(qar.query()) {
+            for (uint n = 0; n < qar.rows()->cRows; ++n) {
+                SPropValue *props(qar.rows()->aRow[n].lpProps);
                 if (props[0].ulPropTag == PR_SERVICE_NAME_A) {
                     QByteArray serviceName(props[0].Value.lpszA);
                     if (name.isEmpty() || (serviceName.toLower() == name.toLower())) {
@@ -410,12 +497,11 @@ MAPIUID findProviderUid(const QByteArray &name, IProviderAdmin *providerAdmin)
                     }
                 }
             }
-
-            FreeProws(rows);
-        } else {
-            qWarning() << "findProviderUid: HrQueryAllRows failed";
         }
-#endif
+
+        if(qar.lastError() != QMessageStore::NoError)
+            qWarning() << "findProviderUid: QueryAllRows failed";
+
         providerTable->Release();
     } else {
         qWarning() << "findProviderUid: GetProviderTable failed";
@@ -561,27 +647,28 @@ IMsgStore *openStoreByName(const QByteArray &storeName, IMAPISession* session)
         IMAPITable *storesTable(0);
         HRESULT rv = session->GetMsgStoresTable(0, &storesTable);
         if (HR_SUCCEEDED(rv)) {
-            LPSRowSet rows(0);
+
             SizedSPropTagArray(2, cols) = {2, {PR_DISPLAY_NAME_A, PR_ENTRYID}};
-#ifndef _WIN32_WCE
-            rv = HrQueryAllRows(storesTable, reinterpret_cast<LPSPropTagArray>(&cols), 0, 0, 0, &rows);
-            if (HR_SUCCEEDED(rv)) {
-                for (uint n = 0; n < rows->cRows; ++n) {
-                    if (rows->aRow[n].lpProps[0].ulPropTag == PR_DISPLAY_NAME_A) {
-                        QByteArray name(rows->aRow[n].lpProps[0].Value.lpszA);
+
+            QueryAllRows qar(storesTable, reinterpret_cast<LPSPropTagArray>(&cols), 0, 0);
+            while(qar.query()) {
+                for (uint n = 0; n < qar.rows()->cRows; ++n) {
+                    if (qar.rows()->aRow[n].lpProps[0].ulPropTag == PR_DISPLAY_NAME_A) {
+                        QByteArray name(qar.rows()->aRow[n].lpProps[0].Value.lpszA);
                         if (name.toLower() == storeName.toLower()) {
-                            entryId = binaryResult(rows->aRow[n].lpProps[1]);
+                            entryId = binaryResult(qar.rows()->aRow[n].lpProps[1]);
                             break;
                         }
                     }
                 }
 
-                FreeProws(rows);
-            } else {
-                qWarning() << "openStoreByName: HrQueryAllRows failed";
             }
-#endif
+
+            if(qar.lastError() != QMessageStore::NoError)
+                qWarning() << "openStoreByName: QueryAllRows failed";
+
             storesTable->Release();
+
         } else {
             qWarning() << "openStoreByName: GetMsgStoresTable failed";
         }
@@ -641,23 +728,22 @@ QList<QByteArray> subFolderEntryIds(IMAPIFolder *folder)
         IMAPITable *hierarchyTable(0);
         HRESULT rv = folder->GetHierarchyTable(MAPI_UNICODE, &hierarchyTable);
         if (HR_SUCCEEDED(rv)) {
-            LPSRowSet rows(0);
+
             SizedSPropTagArray(2, cols) = {2, {PR_OBJECT_TYPE, PR_ENTRYID}};
-#ifndef _WIN32_WCE
-            rv = HrQueryAllRows(hierarchyTable, reinterpret_cast<LPSPropTagArray>(&cols), NULL, NULL, 0, &rows);
-            if (HR_SUCCEEDED(rv)) {
-                for (uint n = 0; n < rows->cRows; ++n) {
-                    if ((rows->aRow[n].lpProps[0].ulPropTag == PR_OBJECT_TYPE) &&
-                        (rows->aRow[n].lpProps[0].Value.l == MAPI_FOLDER)) {
-                        result.append(binaryResult(rows->aRow[n].lpProps[1]));
+
+            QueryAllRows qar(hierarchyTable, reinterpret_cast<LPSPropTagArray>(&cols), NULL, NULL);
+            while(qar.query()) {
+                for (uint n = 0; n < qar.rows()->cRows; ++n) {
+                    if ((qar.rows()->aRow[n].lpProps[0].ulPropTag == PR_OBJECT_TYPE) &&
+                        (qar.rows()->aRow[n].lpProps[0].Value.l == MAPI_FOLDER)) {
+                        result.append(binaryResult(qar.rows()->aRow[n].lpProps[1]));
                     }
                 }
-
-                FreeProws(rows);
-            } else {
-                qWarning() << "subFolderEntryIds: HrQueryAllRows failed";
             }
-#endif
+
+            if(qar.lastError() != QMessageStore::NoError)
+                qWarning() << "subFolderEntryIds: QueryAllRows failed";
+
             hierarchyTable->Release();
         }
     }
