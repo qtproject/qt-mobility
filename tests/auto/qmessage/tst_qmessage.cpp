@@ -625,11 +625,13 @@ void tst_QMessage::testFrom()
     QMessageAddress addr("alice@example.org", QMessageAddress::Email);
     msg.setFrom(addr);
     QCOMPARE(msg.from(), addr);
+    QCOMPARE(msg.from() != QMessageAddress(), true);
     QCOMPARE(msg.isModified(), true);
 
     addr = QMessageAddress("bob@example.org", QMessageAddress::Xmpp);
     msg.setFrom(addr);
     QCOMPARE(msg.from(), addr);
+    QCOMPARE(msg.from() != QMessageAddress(), true);
 }
 
 void tst_QMessage::testSubject()
