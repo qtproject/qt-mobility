@@ -278,6 +278,9 @@ bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageStore::
 
 bool QMessageStore::addMessage(QMessage *m)
 {
+    // Ensure that the size estimate is updated if necessary
+    (void)m->size();
+
     QMailMessage msg(convert(*m));
 
     d_ptr->_error = QMessageStore::NoError;
@@ -286,6 +289,9 @@ bool QMessageStore::addMessage(QMessage *m)
 
 bool QMessageStore::updateMessage(QMessage *m)
 {
+    // Ensure that the size estimate is updated if necessary
+    (void)m->size();
+
     QMailMessage msg(convert(*m));
 
     d_ptr->_error = QMessageStore::NoError;

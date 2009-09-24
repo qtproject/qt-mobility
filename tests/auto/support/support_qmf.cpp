@@ -160,6 +160,8 @@ QMessageId addMessage(const Parameters &params)
             if (folderIds.count() == 1) {
                 QMailMessage message;
 
+                message.setStatus(QMailMessage::LocalOnly, true);
+
                 message.setParentAccountId(accountIds.first());
                 message.setParentFolderId(folderIds.first());
 
@@ -199,10 +201,6 @@ QMessageId addMessage(const Parameters &params)
                     }
                 }
 
-                if (!size.isEmpty()) {
-                    message.setSize(size.toUInt());
-                }
-
                 if (!text.isEmpty()) {
                     QMailMessageContentType ct(mimeType.toAscii());
 
@@ -217,6 +215,8 @@ QMessageId addMessage(const Parameters &params)
                         message.setMultipartType(QMailMessage::MultipartMixed);
 
                         QMailMessageContentDisposition cd(QMailMessageContentDisposition::Inline);
+                        cd.setSize(text.length());
+
                         QMailMessagePart textPart(QMailMessagePart::fromData(text, cd, ct, QMailMessageBody::Base64));
                         message.appendPart(textPart);
                     } else {
@@ -241,6 +241,7 @@ QMessageId addMessage(const Parameters &params)
 
                             QMailMessageContentDisposition cd(QMailMessageContentDisposition::Attachment);
                             cd.setFilename(fi.fileName().toAscii());
+                            cd.setSize(fi.size());
 
                             QMailMessageContentType ct(mimeType.toAscii());
                             QMailMessagePart part(QMailMessagePart::fromFile(fileName, cd, ct, QMailMessageBody::Base64, QMailMessageBody::RequiresEncoding));
@@ -254,6 +255,13 @@ QMessageId addMessage(const Parameters &params)
                     if (it.key().startsWith("custom-")) {
                         message.setCustomField(it.key().mid(7), it.value());
                     }
+                }
+
+                if (!size.isEmpty()) {
+                    message.setSize(size.toUInt());
+                } else {
+                    // Estimate the message size
+                    message.setSize(message.indicativeSize() * 1024);
                 }
 
                 if (!QMailStore::instance()->addMessage(&message)) {
