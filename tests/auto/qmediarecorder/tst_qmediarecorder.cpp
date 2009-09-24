@@ -432,8 +432,6 @@ void tst_QMediaRecorder::init()
 void tst_QMediaRecorder::cleanup()
 {
     delete mock;
-    delete object;
-    delete capture;
 }
 
 void tst_QMediaRecorder::testSink()
