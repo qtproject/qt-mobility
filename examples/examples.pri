@@ -1,4 +1,14 @@
 include(../config.pri)
+        
+mac {
+    #due to different debug/release library names we have to comply with 
+    #whatever Qt does
+    !contains(QT_CONFIG,debug)|!contains(QT_CONFIG,release) {
+        CONFIG -= debug_and_release debug release
+        contains(QT_CONFIG,debug): CONFIG+=debug
+        contains(QT_CONFIG,release): CONFIG+=release
+    }
+}
 !contains(build_examples, yes):error(Please use the -examples configure switch to enable building of examples)
 
 OUTPUT_DIR = $$PWD/..

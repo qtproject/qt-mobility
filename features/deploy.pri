@@ -11,7 +11,7 @@ contains(TEMPLATE,lib) {
 
 INSTALLS+=headers target
 
-mac {
+mac:contains(QT_CONFIG,qt_framework) {
 #CONFIG += lib_bundle absolute_library_soname
     CONFIG += lib_bundle
     FRAMEWORK_HEADERS.version = Versions
