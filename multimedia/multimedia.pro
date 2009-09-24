@@ -22,6 +22,8 @@ HEADERS = \
     qaudiorecorderservice.h \
     qlocalmediaplaylistprovider.h \
     qmetadataprovidercontrol.h \
+    qmediaimageviewer.h \
+    qmediaimageviewerservice_p.h \
     qmediaplayer.h \
     qmediaplayercontrol.h \
     qmediaplayerservice.h \
@@ -39,8 +41,6 @@ HEADERS = \
     qmediarecordercontrol.h \
     qmediaserviceprovider.h \
     qmediaserviceproviderplugin.h \
-    qmediaslideshow.h \
-    qmediaslideshowservice_p.h \
     qmultimediaglobal.h \
     qradioplayer.h \
     qradioservice.h \
@@ -74,6 +74,8 @@ SOURCES = qabstractmediacontrol.cpp \
     qaudiorecorderservice.cpp \
     qlocalmediaplaylistprovider.cpp \
     qmetadataprovidercontrol.cpp \
+    qmediaimageviewer.cpp \
+    qmediaimageviewerservice.cpp \
     qmediaplayer.cpp \
     qmediaplayercontrol.cpp \
     qmediaplayerservice.cpp \
@@ -88,8 +90,6 @@ SOURCES = qabstractmediacontrol.cpp \
     qmediasource.cpp \
     qmediaresource.cpp \
     qmediaserviceprovider.cpp \
-    qmediaslideshow.cpp \
-    qmediaslideshowservice.cpp \
     qradioplayer.cpp \
     qradioservice.cpp \
     qradioplayercontrol.cpp \

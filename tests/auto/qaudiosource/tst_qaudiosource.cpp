@@ -262,6 +262,7 @@ void tst_QAudioSource::initTestCase()
 void tst_QAudioSource::cleanupTestCase()
 {
     delete mockAudioSourceService;
+    delete audiosource;
 }
 
 void tst_QAudioSource::testAudioSource()

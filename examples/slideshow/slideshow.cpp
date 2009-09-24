@@ -42,20 +42,20 @@
 
 SlideShow::SlideShow(QWidget *parent)
     : QWidget(parent)
-    , slideShow(0)
+    , imageViewer(0)
     , playlist(0)
     , imageLabel(0)
     , playButton(0)
     , stopButton(0)
 {
-    slideShow = new QMediaSlideShow(this);
+    imageViewer = new QMediaImageViewer(this);
 
-    connect(slideShow, SIGNAL(stateChanged(QMediaSlideShow::State)),
-            this, SLOT(stateChanged(QMediaSlideShow::State)));
+    connect(imageViewer, SIGNAL(stateChanged(QMediaImageViewer::State)),
+            this, SLOT(stateChanged(QMediaImageViewer::State)));
 
-    playlist = new QMediaPlaylist(slideShow);
+    playlist = new QMediaPlaylist(imageViewer);
 
-    QVideoWidget *videoWidget = new QVideoWidget(slideShow);
+    QVideoWidget *videoWidget = new QVideoWidget(imageViewer);
 
     QMenu *openMenu = new QMenu(this);
     openMenu->addAction(tr("Directory..."), this, SLOT(openDirectory()));
@@ -76,7 +76,7 @@ SlideShow::SlideShow(QWidget *parent)
     stopButton->setIcon(style()->standardIcon(QStyle::SP_MediaStop));
     stopButton->setEnabled(false);
 
-    connect(stopButton, SIGNAL(clicked()), slideShow, SLOT(stop()));
+    connect(stopButton, SIGNAL(clicked()), imageViewer, SLOT(stop()));
 
     QAbstractButton *nextButton = new QToolButton;
     nextButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipForward));
@@ -169,29 +169,29 @@ void SlideShow::openLocation()
 
 void SlideShow::play()
 {
-    switch (slideShow->state()) {
-    case QMediaSlideShow::StoppedState:
-    case QMediaSlideShow::PausedState:
-        slideShow->play();
+    switch (imageViewer->state()) {
+    case QMediaImageViewer::StoppedState:
+    case QMediaImageViewer::PausedState:
+        imageViewer->play();
         break;
-    case QMediaSlideShow::PlayingState:
-        slideShow->pause();
+    case QMediaImageViewer::PlayingState:
+        imageViewer->pause();
         break;
     }
 }
 
-void SlideShow::stateChanged(QMediaSlideShow::State state)
+void SlideShow::stateChanged(QMediaImageViewer::State state)
 {
     switch (state) {
-    case QMediaSlideShow::StoppedState:
+    case QMediaImageViewer::StoppedState:
         stopButton->setEnabled(false);
         playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
         break;
-    case QMediaSlideShow::PlayingState:
+    case QMediaImageViewer::PlayingState:
         stopButton->setEnabled(true);
         playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
         break;
-    case QMediaSlideShow::PausedState:
+    case QMediaImageViewer::PausedState:
         stopButton->setEnabled(true);
         playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
         break;
