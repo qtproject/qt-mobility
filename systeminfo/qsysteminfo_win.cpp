@@ -1243,7 +1243,7 @@ QString QSystemDeviceInfoPrivate::manufacturer()
    QString manu;
 #ifndef Q_CC_MINGW
     WMIHelper *wHelper;
-    wHelper = new WMIHelper;
+    wHelper = new WMIHelper(this);
     wHelper->setWmiNamespace("root/cimv2");
     wHelper->setClassName("Win32_ComputerSystemProduct");
     wHelper->setClassProperty(QStringList() << "Vendor");
@@ -1262,7 +1262,7 @@ QString QSystemDeviceInfoPrivate::model()
    QString model;
 #ifndef Q_CC_MINGW
     WMIHelper *wHelper;
-    wHelper = new WMIHelper;
+    wHelper = new WMIHelper(this);
     wHelper->setWmiNamespace("root/cimv2");
 
     //    wHelper->setClassName("Win32_Processor");
@@ -1339,7 +1339,7 @@ QString QSystemDeviceInfoPrivate::productName()
    QString name;
 #ifndef Q_CC_MINGW
     WMIHelper *wHelper;
-    wHelper = new WMIHelper;
+    wHelper = new WMIHelper(this);
     wHelper->setWmiNamespace("root/cimv2");
     wHelper->setClassName("Win32_ComputerSystemProduct");
     wHelper->setClassProperty(QStringList() << "Name");

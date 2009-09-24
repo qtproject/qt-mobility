@@ -76,8 +76,8 @@ void WMIHelper::initializeWMI(const QString &wmiNamespace)
                                 IID_IWbemLocator, (LPVOID *) &wbemLocator);
     }
 
-    if (!SUCCEEDED(hres)) {
-        qWarning() << "Failed to create IWbemLocator object.";
+    if (hres != S_OK) {
+       qWarning() << "Failed to create IWbemLocator object." << hres;
         return ;
     }
     wbemServices = 0;
@@ -92,8 +92,8 @@ void WMIHelper::initializeWMI(const QString &wmiNamespace)
     hres = CoSetProxyBlanket( wbemServices, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE, 0,
                               RPC_C_AUTHN_LEVEL_CALL, RPC_C_IMP_LEVEL_IMPERSONATE, 0, EOAC_NONE );
 
-    if (SUCCEEDED(hres)) {
-        qWarning() << "Could not set proxy blanket";
+    if (hres != S_OK) {
+       qWarning() << "Could not set proxy blanket" << hres;
         return ;
     }
 
