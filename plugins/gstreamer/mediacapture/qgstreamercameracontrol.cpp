@@ -37,8 +37,10 @@
 #include <QtCore/qdebug.h>
 
 QGstreamerCameraControl::QGstreamerCameraControl(QGstreamerCaptureSession *session)
-    :QCameraControl(session), m_session(session)
+    :QCameraControl(session), m_session(session), m_state(QCamera::StoppedState)
 {
+    connect(m_session, SIGNAL(stateChanged(QGstreamerCaptureSession::State)),
+            this, SLOT(updateState()));
 }
 
 QGstreamerCameraControl::~QGstreamerCameraControl()
@@ -80,3 +82,11 @@ QCamera::State QGstreamerCameraControl::state() const
         return QCamera::ActiveState;
 }
 
+void QGstreamerCameraControl::updateState()
+{
+    QCamera::State newState = state();
+    if (m_state != newState) {
+        m_state = newState;
+        emit stateChanged(m_state);
+    }
+}
