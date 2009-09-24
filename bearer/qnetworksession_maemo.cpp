@@ -473,6 +473,7 @@ void QNetworkSessionPrivate::do_open()
 	qDebug() << "Already connected to" << publicConfig.identifier();
 #endif
         emit q->stateChanged(QNetworkSession::Connected);
+	emit quitPendingWaitsForOpened();
 	return;
     }
 
@@ -484,8 +485,8 @@ void QNetworkSessionPrivate::do_open()
     /* Note that this needs to be allocated from heap and then
      * destroyed before call to get_network_interface()
      * because of the limitation of Maemo::Icd class (only one
-     * instance at a time is supported).
-     * XXX: FIXME
+     * instance at a time is supported currently).
+     * XXX: TODO FIXME
      */
     icd = new Maemo::Icd(ICD_LONG_CONNECT_TIMEOUT);
     if (!icd)
@@ -517,6 +518,7 @@ void QNetworkSessionPrivate::do_open()
 #ifdef BEARER_MANAGEMENT_DEBUG
 	    qDebug() << "connect to"<< iap << "failed, result is empty";
 #endif
+	    updateState(QNetworkSession::Disconnected);
 	    emit q->error(QNetworkSession::InvalidConfigurationError);
 	    goto out;
 	}
@@ -551,7 +553,7 @@ void QNetworkSessionPrivate::do_open()
 	/* This delete needs to be done before call
 	 * to get_network_interface(), as only one Icd() call may be pending
 	 * at a time. This should be fixed!
-	 * XXX: FIXME
+	 * XXX: TODO FIXME
 	 */
 	delete icd;
 	icd = 0;
@@ -563,11 +565,13 @@ void QNetworkSessionPrivate::do_open()
 
 	activeConfig = publicConfig;
 	emit q->sessionOpened();
+	emit quitPendingWaitsForOpened();
 
     } else {
 #ifdef BEARER_MANAGEMENT_DEBUG
 	qDebug() << "connect to"<< iap << "failed";
 #endif
+	updateState(QNetworkSession::Disconnected);
 	emit q->error(QNetworkSession::UnknownSessionError);
     }
 
