@@ -47,16 +47,18 @@ public:
     QMailMessageKey _key;
     QMessageDataComparator::Options _options;
 
-    static QMessageFilter convert(const QMailMessageKey &key);
+    //static QMessageFilter convert(const QMailMessageKey &key);
     static QMailMessageKey convert(const QMessageFilter &key);
 };
 
+/*
 QMessageFilter QMessageFilterPrivate::convert(const QMailMessageKey &key)
 {
     QMessageFilter result;
     result.d_ptr->_key = key;
     return result;
 }
+*/
 
 QMailMessageKey QMessageFilterPrivate::convert(const QMessageFilter &key)
 {
@@ -65,10 +67,12 @@ QMailMessageKey QMessageFilterPrivate::convert(const QMessageFilter &key)
 
 namespace QmfHelpers {
 
+/*
 QMessageFilter convert(const QMailMessageKey &key)
 {
     return QMessageFilterPrivate::convert(key);
 }
+*/
 
 QMailMessageKey convert(const QMessageFilter &key)
 {

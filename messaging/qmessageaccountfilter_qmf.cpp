@@ -45,16 +45,18 @@ public:
     QMailAccountKey _key;
     QMessageDataComparator::Options _options;
 
-    static QMessageAccountFilter convert(const QMailAccountKey &key);
+    //static QMessageAccountFilter convert(const QMailAccountKey &key);
     static QMailAccountKey convert(const QMessageAccountFilter &key);
 };
 
+/*
 QMessageAccountFilter QMessageAccountFilterPrivate::convert(const QMailAccountKey &key)
 {
     QMessageAccountFilter result;
     result.d_ptr->_key = key;
     return result;
 }
+*/
 
 QMailAccountKey QMessageAccountFilterPrivate::convert(const QMessageAccountFilter &filter)
 {
@@ -63,10 +65,12 @@ QMailAccountKey QMessageAccountFilterPrivate::convert(const QMessageAccountFilte
 
 namespace QmfHelpers {
 
+/*
 QMessageAccountFilter convert(const QMailAccountKey &key)
 {
     return QMessageAccountFilterPrivate::convert(key);
 }
+*/
 
 QMailAccountKey convert(const QMessageAccountFilter &filter)
 {

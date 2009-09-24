@@ -80,7 +80,7 @@ QMessageFolderIdList convert(const QList<QMailFolderId> &ids);
 QList<QMailFolderId> convert(const QMessageFolderIdList &ids);
 
 QMessageContentContainerIdList convert(const QList<QMailMessagePart::Location> &locations);
-QList<QMailMessagePart::Location> convert(const QMessageContentContainerIdList &ids);
+//QList<QMailMessagePart::Location> convert(const QMessageContentContainerIdList &ids);
 
 QMailMessage::MessageType convert(QMessage::Type t);
 QMessage::Type convert(QMailMessage::MessageType t);
@@ -92,14 +92,14 @@ quint64 convert(QMessage::Status v);
 
 quint64 convert(QMessage::StatusFlags v);
 
-QMailStore::ErrorCode convert(QMessageStore::ErrorCode v);
 QMessageStore::ErrorCode convert(QMailStore::ErrorCode v);
+//QMailStore::ErrorCode convert(QMessageStore::ErrorCode v);
 
+//QMessageStore::RemovalOption convert(QMailStore::MessageRemovalOption v);
 QMailStore::MessageRemovalOption convert(QMessageStore::RemovalOption v);
-QMessageStore::RemovalOption convert(QMailStore::MessageRemovalOption v);
 
-QMailServiceAction::Activity convert(QMessageServiceAction::State v);
 QMessageServiceAction::State convert(QMailServiceAction::Activity v);
+QMailServiceAction::Activity convert(QMessageServiceAction::State v);
 
 QMessageAddress convert(const QMailAddress &address);
 QMailAddress convert(const QMessageAddress &address);
@@ -107,44 +107,44 @@ QMailAddress convert(const QMessageAddress &address);
 QMessageAddressList convert(const QList<QMailAddress> &list);
 QList<QMailAddress> convert(const QMessageAddressList& list);
 
-QMessageDataComparator::EqualityComparator convert(QMailDataComparator::EqualityComparator cmp);
+//QMessageDataComparator::EqualityComparator convert(QMailDataComparator::EqualityComparator cmp);
 QMailDataComparator::EqualityComparator convert(QMessageDataComparator::EqualityComparator cmp);
 
-QMessageDataComparator::InclusionComparator convert(QMailDataComparator::InclusionComparator cmp);
+//QMessageDataComparator::InclusionComparator convert(QMailDataComparator::InclusionComparator cmp);
 QMailDataComparator::InclusionComparator convert(QMessageDataComparator::InclusionComparator cmp);
 
-QMessageDataComparator::RelationComparator convert(QMailDataComparator::RelationComparator cmp);
+//QMessageDataComparator::RelationComparator convert(QMailDataComparator::RelationComparator cmp);
 QMailDataComparator::RelationComparator convert(QMessageDataComparator::RelationComparator cmp);
 
-QMessageAccountFilter convert(const QMailAccountKey &key);
+//QMessageAccountFilter convert(const QMailAccountKey &key);
 QMailAccountKey convert(const QMessageAccountFilter &filter);
 
-QMessageFolderFilter convert(const QMailFolderKey &key);
+//QMessageFolderFilter convert(const QMailFolderKey &key);
 QMailFolderKey convert(const QMessageFolderFilter &filter);
 
-QMessageFilter convert(const QMailMessageKey &key);
+//QMessageFilter convert(const QMailMessageKey &key);
 QMailMessageKey convert(const QMessageFilter &filter);
 
-QMessageAccountOrdering convert(const QMailAccountSortKey &key);
+//QMessageAccountOrdering convert(const QMailAccountSortKey &key);
 QMailAccountSortKey convert(const QMessageAccountOrdering &ordering);
 
-QMessageFolderOrdering convert(const QMailFolderSortKey &key);
+//QMessageFolderOrdering convert(const QMailFolderSortKey &key);
 QMailFolderSortKey convert(const QMessageFolderOrdering &ordering);
 
-QMessageOrdering convert(const QMailMessageSortKey &key);
+//QMessageOrdering convert(const QMailMessageSortKey &key);
 QMailMessageSortKey convert(const QMessageOrdering &ordering);
 
 QMessageAccount convert(const QMailAccount &account);
-QMailAccount convert(const QMessageAccount &account);
+//QMailAccount convert(const QMessageAccount &account);
 
 QMessageFolder convert(const QMailFolder &folder);
-QMailFolder convert(const QMessageFolder &folder);
+//QMailFolder convert(const QMessageFolder &folder);
 
 QMessage convert(const QMailMessage &message);
 QMailMessage convert(const QMessage &message);
 
 QMailMessage* convert(QMessage *message);
-const QMailMessage* convert(const QMessage *message);
+//const QMailMessage* convert(const QMessage *message);
 
 QMailStore *convert(QMessageStore *store);
 

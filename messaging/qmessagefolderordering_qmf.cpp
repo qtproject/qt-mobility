@@ -40,16 +40,18 @@ class QMessageFolderOrderingPrivate
 public:
     QMailFolderSortKey _key;
 
-    static QMessageFolderOrdering convert(const QMailFolderSortKey &key);
+    //static QMessageFolderOrdering convert(const QMailFolderSortKey &key);
     static QMailFolderSortKey convert(const QMessageFolderOrdering &ordering);
 };
 
+/*
 QMessageFolderOrdering QMessageFolderOrderingPrivate::convert(const QMailFolderSortKey &key)
 {
     QMessageFolderOrdering result;
     result.d_ptr->_key = key;
     return result;
 }
+*/
 
 QMailFolderSortKey QMessageFolderOrderingPrivate::convert(const QMessageFolderOrdering &ordering)
 {
@@ -58,10 +60,12 @@ QMailFolderSortKey QMessageFolderOrderingPrivate::convert(const QMessageFolderOr
 
 namespace QmfHelpers {
 
+/*
 QMessageFolderOrdering convert(const QMailFolderSortKey &key)
 {
     return QMessageFolderOrderingPrivate::convert(key);
 }
+*/
 
 QMailFolderSortKey convert(const QMessageFolderOrdering &ordering)
 {

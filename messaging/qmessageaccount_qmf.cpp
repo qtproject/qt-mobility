@@ -44,7 +44,7 @@ public:
     QMailAccount _account;
 
     static QMessageAccount convert(const QMailAccount &account);
-    static QMailAccount convert(const QMessageAccount &account);
+    //static QMailAccount convert(const QMessageAccount &account);
 };
 
 QMessageAccount QMessageAccountPrivate::convert(const QMailAccount &account)
@@ -54,10 +54,12 @@ QMessageAccount QMessageAccountPrivate::convert(const QMailAccount &account)
     return result;
 }
 
+/*
 QMailAccount QMessageAccountPrivate::convert(const QMessageAccount &account)
 {
     return account.d_ptr->_account;
 }
+*/
 
 namespace QmfHelpers {
 
@@ -66,10 +68,12 @@ QMessageAccount convert(const QMailAccount &account)
     return QMessageAccountPrivate::convert(account);
 }
 
+/*
 QMailAccount convert(const QMessageAccount &account)
 {
     return QMessageAccountPrivate::convert(account);
 }
+*/
 
 }
 

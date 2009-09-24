@@ -44,7 +44,7 @@ public:
     QMailFolder _folder;
 
     static QMessageFolder convert(const QMailFolder &folder);
-    static QMailFolder convert(const QMessageFolder &folder);
+    //static QMailFolder convert(const QMessageFolder &folder);
 };
 
 QMessageFolder QMessageFolderPrivate::convert(const QMailFolder &folder)
@@ -54,10 +54,12 @@ QMessageFolder QMessageFolderPrivate::convert(const QMailFolder &folder)
     return result;
 }
 
+/*
 QMailFolder QMessageFolderPrivate::convert(const QMessageFolder &folder)
 {
     return folder.d_ptr->_folder;
 }
+*/
 
 namespace QmfHelpers {
 
@@ -66,10 +68,12 @@ QMessageFolder convert(const QMailFolder &folder)
     return QMessageFolderPrivate::convert(folder);
 }
 
+/*
 QMailFolder convert(const QMessageFolder &folder)
 {
     return QMessageFolderPrivate::convert(folder);
 }
+*/
 
 }
 

@@ -62,7 +62,7 @@ public:
     static QMessage convert(const QMailMessage &message);
     static QMailMessage convert(const QMessage &message);
     static QMailMessage *convert(QMessage *message);
-    static const QMailMessage *convert(const QMessage *message);
+    //static const QMailMessage *convert(const QMessage *message);
 #else
     Q_DECLARE_PUBLIC(QMessage)
 

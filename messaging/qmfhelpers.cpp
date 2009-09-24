@@ -162,6 +162,7 @@ QMessageContentContainerIdList convert(const QList<QMailMessagePart::Location> &
     return result;
 }
 
+/*
 QList<QMailMessagePart::Location> convert(const QMessageContentContainerIdList &ids)
 {
     QList<QMailMessagePart::Location> result;
@@ -172,6 +173,7 @@ QList<QMailMessagePart::Location> convert(const QMessageContentContainerIdList &
 
     return result;
 }
+*/
 
 QMailMessage::MessageType convert(QMessage::Type t)
 {
@@ -220,6 +222,7 @@ QMailMessage::MessageType convert(QMessage::TypeFlags v)
     return convert(static_cast<QMessage::Type>(static_cast<uint>(v)));
 }
 
+/*
 QMailStore::ErrorCode convert(QMessageStore::ErrorCode v)
 {
     switch (v) {
@@ -233,6 +236,7 @@ QMailStore::ErrorCode convert(QMessageStore::ErrorCode v)
 
     return QMailStore::NoError;
 }
+*/
 
 QMessageStore::ErrorCode convert(QMailStore::ErrorCode v)
 {
@@ -258,6 +262,7 @@ QMailStore::MessageRemovalOption convert(QMessageStore::RemovalOption v)
     return QMailStore::NoRemovalRecord;
 }
 
+/*
 QMessageStore::RemovalOption convert(QMailStore::MessageRemovalOption v)
 {
     switch (v) {
@@ -267,6 +272,7 @@ QMessageStore::RemovalOption convert(QMailStore::MessageRemovalOption v)
 
     return QMessageStore::RemoveLocalCopyOnly;
 }
+*/
 
 QMailServiceAction::Activity convert(QMessageServiceAction::State v)
 {
@@ -406,6 +412,7 @@ QList<QMailAddress> convert(const QMessageAddressList& list)
     return result;
 }
 
+/*
 QMessageDataComparator::EqualityComparator convert(QMailDataComparator::EqualityComparator cmp)
 {
     switch (cmp)
@@ -417,6 +424,7 @@ QMessageDataComparator::EqualityComparator convert(QMailDataComparator::Equality
 
     return QMessageDataComparator::Equal;
 }
+*/
 
 QMailDataComparator::EqualityComparator convert(QMessageDataComparator::EqualityComparator cmp)
 {
@@ -430,6 +438,7 @@ QMailDataComparator::EqualityComparator convert(QMessageDataComparator::Equality
     return QMailDataComparator::Equal;
 }
 
+/*
 QMessageDataComparator::InclusionComparator convert(QMailDataComparator::InclusionComparator cmp)
 {
     switch (cmp)
@@ -441,6 +450,7 @@ QMessageDataComparator::InclusionComparator convert(QMailDataComparator::Inclusi
     
     return QMessageDataComparator::Includes;
 }
+*/
 
 QMailDataComparator::InclusionComparator convert(QMessageDataComparator::InclusionComparator cmp)
 {
@@ -454,6 +464,7 @@ QMailDataComparator::InclusionComparator convert(QMessageDataComparator::Inclusi
     return QMailDataComparator::Includes;
 }
 
+/*
 QMessageDataComparator::RelationComparator convert(QMailDataComparator::RelationComparator cmp)
 {
     switch (cmp)
@@ -467,6 +478,7 @@ QMessageDataComparator::RelationComparator convert(QMailDataComparator::Relation
     
     return QMessageDataComparator::LessThan;
 }
+*/
 
 QMailDataComparator::RelationComparator convert(QMessageDataComparator::RelationComparator cmp)
 {

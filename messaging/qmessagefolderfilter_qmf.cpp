@@ -48,16 +48,18 @@ public:
     QMailFolderKey _key;
     QMessageDataComparator::Options _options;
 
-    static QMessageFolderFilter convert(const QMailFolderKey &key);
+    //static QMessageFolderFilter convert(const QMailFolderKey &key);
     static QMailFolderKey convert(const QMessageFolderFilter &filter);
 };
 
+/*
 QMessageFolderFilter QMessageFolderFilterPrivate::convert(const QMailFolderKey &key)
 {
     QMessageFolderFilter result;
     result.d_ptr->_key = key;
     return result;
 }
+*/
 
 QMailFolderKey QMessageFolderFilterPrivate::convert(const QMessageFolderFilter &filter)
 {
@@ -66,10 +68,12 @@ QMailFolderKey QMessageFolderFilterPrivate::convert(const QMessageFolderFilter &
 
 namespace QmfHelpers {
 
+/*
 QMessageFolderFilter convert(const QMailFolderKey &key)
 {
     return QMessageFolderFilterPrivate::convert(key);
 }
+*/
 
 QMailFolderKey convert(const QMessageFolderFilter &filter)
 {

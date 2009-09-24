@@ -97,11 +97,13 @@ QMailMessage *QMessagePrivate::convert(QMessage *message)
     return &message->d_ptr->_message;
 }
 
+/*
 const QMailMessage *QMessagePrivate::convert(const QMessage *message)
 {
     message->applyPendingChanges();
     return &message->d_ptr->_message;
 }
+*/
 
 void QMessagePrivate::setStandardFolder(QMessage& message, QMessage::StandardFolder sf)
 {
@@ -126,10 +128,12 @@ QMailMessage *convert(QMessage *message)
     return QMessagePrivate::convert(message);
 }
 
+/*
 const QMailMessage *convert(const QMessage *message)
 {
     return QMessagePrivate::convert(message);
 }
+*/
 
 }
 
