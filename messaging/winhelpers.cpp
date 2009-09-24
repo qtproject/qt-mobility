@@ -630,6 +630,96 @@ namespace {
         return html;
     }
 
+    //used in preference to HrQueryAllRows
+    //as per: http://blogs.msdn.com/stephen_griffin/archive/2009/03/23/try-not-to-query-all-rows.aspx
+
+    class QueryAllRows
+    {
+        static const int BatchSize = 20;
+        public:
+        QueryAllRows(LPMAPITABLE ptable,
+                LPSPropTagArray ptaga,
+                LPSRestriction pres,
+                LPSSortOrderSet psos);
+        ~QueryAllRows();
+
+        bool query();
+        LPSRowSet rows() const;
+        QMessageStore::ErrorCode lastError() const;
+
+        private:
+        LPMAPITABLE m_table;
+        LPSPropTagArray m_tagArray;
+        LPSRestriction m_restriction;
+        LPSSortOrderSet m_sortOrderSet;
+        LPSRowSet m_rows;
+        QMessageStore::ErrorCode m_lastError;
+    };
+
+    QueryAllRows::QueryAllRows(LPMAPITABLE ptable,
+                               LPSPropTagArray ptaga,
+                               LPSRestriction pres,
+                               LPSSortOrderSet psos)
+    :
+        m_table(ptable),
+        m_tagArray(ptaga),
+        m_restriction(pres),
+        m_sortOrderSet(psos),
+        m_rows(0),
+        m_lastError(QMessageStore::NoError)
+    {
+        bool initFailed = false;
+
+        initFailed |= FAILED(m_table->SetColumns(m_tagArray, TBL_BATCH));
+
+        if(m_restriction)
+            initFailed |= FAILED(m_table->Restrict(m_restriction, TBL_BATCH));
+
+        if(m_sortOrderSet)
+            initFailed |= FAILED(m_table->SortTable(m_sortOrderSet, TBL_BATCH));
+
+        initFailed |= FAILED(m_table->SeekRow(BOOKMARK_BEGINNING,0, NULL));
+
+        if(initFailed) m_lastError = QMessageStore::ContentInaccessible;
+    }
+
+    QueryAllRows::~QueryAllRows()
+    {
+        FreeProws(m_rows);
+        m_rows = 0;
+    }
+
+    bool QueryAllRows::query()
+    {
+        if(m_lastError != QMessageStore::NoError)
+            return false;
+
+        FreeProws(m_rows);
+        m_rows = 0;
+        m_lastError = QMessageStore::NoError;
+
+        bool failed = FAILED(m_table->QueryRows( QueryAllRows::BatchSize, NULL, &m_rows));
+
+        if(failed)
+            m_lastError = QMessageStore::ContentInaccessible;
+
+        if(failed || m_rows && !m_rows->cRows) return false;
+
+        return true;
+    }
+
+    LPSRowSet QueryAllRows::rows() const
+    {
+        return m_rows;
+    }
+
+    QMessageStore::ErrorCode QueryAllRows::lastError() const
+    {
+        return m_lastError;
+    }
+
+
+
 }
 
 // TODO: Move many un-exported functions from this namespace to the anonymous namespace
@@ -843,67 +933,6 @@ namespace WinHelpers {
         return result;
     }
 
-    QueryAllRows::QueryAllRows(LPMAPITABLE ptable,
-                               LPSPropTagArray ptaga,
-                               LPSRestriction pres,
-                               LPSSortOrderSet psos)
-    :
-        m_table(ptable),
-        m_tagArray(ptaga),
-        m_restriction(pres),
-        m_sortOrderSet(psos),
-        m_rows(0),
-        m_lastError(QMessageStore::NoError)
-    {
-        bool initFailed = false;
-
-        initFailed |= FAILED(m_table->SetColumns(m_tagArray, TBL_BATCH));
-
-        if(m_restriction)
-            initFailed |= FAILED(m_table->Restrict(m_restriction, TBL_BATCH));
-
-        if(m_sortOrderSet)
-            initFailed |= FAILED(m_table->SortTable(m_sortOrderSet, TBL_BATCH));
-
-        initFailed |= FAILED(m_table->SeekRow(BOOKMARK_BEGINNING,0, NULL));
-
-        if(initFailed) m_lastError = QMessageStore::ContentInaccessible;
-    }
-
-    QueryAllRows::~QueryAllRows()
-    {
-        FreeProws(m_rows);
-        m_rows = 0;
-    }
-
-    bool QueryAllRows::query()
-    {
-        if(m_lastError != QMessageStore::NoError)
-            return false;
-
-        FreeProws(m_rows);
-        m_rows = 0;
-        m_lastError = QMessageStore::NoError;
-
-        bool failed = FAILED(m_table->QueryRows( QueryAllRows::BatchSize, NULL, &m_rows));
-
-        if(failed)
-            m_lastError = QMessageStore::ContentInaccessible;
-
-        if(failed || m_rows && !m_rows->cRows) return false;
-
-        return true;
-    }
-
-    LPSRowSet QueryAllRows::rows() const
-    {
-        return m_rows;
-    }
-
-    QMessageStore::ErrorCode QueryAllRows::lastError() const
-    {
-        return m_lastError;
-    }
 }
 
 using namespace WinHelpers;

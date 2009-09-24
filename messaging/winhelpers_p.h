@@ -133,29 +133,6 @@ public:
     bool _initialized;
 };
 
-class QueryAllRows
-{
-    static const int BatchSize = 20;
-public:
-    QueryAllRows(LPMAPITABLE ptable,
-                 LPSPropTagArray ptaga,
-                 LPSRestriction pres,
-                 LPSSortOrderSet psos);
-    ~QueryAllRows();
-
-    bool query();
-    LPSRowSet rows() const;
-    QMessageStore::ErrorCode lastError() const;
-
-private:
-    LPMAPITABLE m_table;
-    LPSPropTagArray m_tagArray;
-    LPSRestriction m_restriction;
-    LPSSortOrderSet m_sortOrderSet;
-    LPSRowSet m_rows;
-    QMessageStore::ErrorCode m_lastError;
-};
-
 }
 
 class MapiFolder {
