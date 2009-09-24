@@ -46,14 +46,10 @@ public:
     ~QImageCaptureControl();
 
     virtual bool isReady() const = 0;
-
-    virtual void capture() = 0;
     virtual void capture(const QString &fileName) = 0;
 
 Q_SIGNALS:
     void readyStatusChanged(bool);
-
-    void imageCaptured(const QImage &frame);
     void imageCaptured(const QString &fileName, const QImage &preview);
 
 protected:
