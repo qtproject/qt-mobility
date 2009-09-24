@@ -530,5 +530,28 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), replacementText);
     QAPPROXIMATECOMPARE(body.size(), 72u, 36u);
+
+    QMessageStore::instance()->updateMessage(&message);
+    QCOMPARE(QMessageStore::instance()->lastError(), QMessageStore::NoError);
+
+    QMessage updated(message.id());
+
+    QCOMPARE(updated.id(), message.id());
+    QCOMPARE(updated.isModified(), false);
+
+    bodyId = updated.bodyId();
+    QCOMPARE(bodyId.isValid(), true);
+    QCOMPARE(bodyId != QMessageContentContainerId(), true);
+    QCOMPARE(QMessageContentContainerId(bodyId.toString()), bodyId);
+
+    QCOMPARE(body.contentType().toLower(), QByteArray("text"));
+    QCOMPARE(body.contentSubType().toLower(), QByteArray("fancy"));
+    QCOMPARE(body.contentCharset().toLower(), alternateCharset.toLower());
+    QCOMPARE(body.isContentAvailable(), true);
+    QCOMPARE(body.textContent(), replacementText);
+    QAPPROXIMATECOMPARE(body.size(), 72u, 36u);
+
+    QMessageStore::instance()->removeMessage(message.id());
+    QCOMPARE(QMessageStore::instance()->lastError(), QMessageStore::NoError);
 }
 
