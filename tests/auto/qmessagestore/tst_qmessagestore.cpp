@@ -484,7 +484,9 @@ void tst_QMessageStore::testMessage()
     QAPPROXIMATECOMPARE(message.size(), messageSize, (messageSize / 2));
 
     QMessageContentContainerId bodyId(message.bodyId());
-    QVERIFY(bodyId.isValid());
+    QCOMPARE(bodyId.isValid(), true);
+    QCOMPARE(bodyId != QMessageContentContainerId(), true);
+    QCOMPARE(QMessageContentContainerId(bodyId.toString()), bodyId);
 
     QMessageContentContainer body(message.find(bodyId));
     // Note: this is not true, which is somewhat counter-intuitive:
@@ -501,7 +503,12 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(attachmentIds.count(), attachments.count());
 
     for (int i = 0; i < attachments.count(); ++i) {
-        QMessageContentContainer attachment(message.find(attachmentIds[i]));
+        QMessageContentContainerId attachmentId(attachmentIds.at(i));
+        QCOMPARE(attachmentId.isValid(), true);
+        QCOMPARE(attachmentId != QMessageContentContainerId(), true);
+        QCOMPARE(QMessageContentContainerId(attachmentId.toString()), attachmentId);
+
+        QMessageContentContainer attachment(message.find(attachmentId));
         QCOMPARE(attachment.contentType().toLower(), attachmentType[i].toLower());
         QCOMPARE(attachment.contentSubType().toLower(), attachmentSubType[i].toLower());
         QCOMPARE(attachment.suggestedFileName(), attachments[i].toAscii());

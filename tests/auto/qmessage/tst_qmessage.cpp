@@ -433,8 +433,16 @@ exit 0\n");
         QMessageContentContainerIdList ids(m1.contentIds());
 
         QCOMPARE(bodyId, ids.first());
+        QCOMPARE(bodyId.isValid(), true);
+        QCOMPARE(bodyId != QMessageContentContainerId(), true);
+        QCOMPARE(QMessageContentContainerId(bodyId.toString()), bodyId);
 
-        QMessageContentContainer p1(m1.find(ids.at(0)));
+        QMessageContentContainerId attachmentId(ids.at(0));
+        QCOMPARE(attachmentId.isValid(), true);
+        QCOMPARE(attachmentId != QMessageContentContainerId(), true);
+        QCOMPARE(QMessageContentContainerId(attachmentId.toString()), bodyId);
+
+        QMessageContentContainer p1(m1.find(attachmentId));
 
         QCOMPARE(p1.contentType().toLower(), p1ContentType.toLower());
         QCOMPARE(p1.contentSubType().toLower(), p1ContentSubType.toLower());
@@ -444,7 +452,12 @@ exit 0\n");
         QCOMPARE(p1.textContent(), p1ContentText);
         QAPPROXIMATECOMPARE(p1.size(), p1Size, p1Variance);
 
-        QMessageContentContainer p2(m1.find(ids.at(1)));
+        attachmentId = ids.at(1);
+        QCOMPARE(attachmentId.isValid(), true);
+        QCOMPARE(attachmentId != QMessageContentContainerId(), true);
+        QCOMPARE(QMessageContentContainerId(attachmentId.toString()), attachmentId);
+
+        QMessageContentContainer p2(m1.find(attachmentId));
 
         QCOMPARE(p2.contentType().toLower(), p2ContentType.toLower());
         QCOMPARE(p2.contentSubType().toLower(), p2ContentSubType.toLower());
@@ -454,7 +467,12 @@ exit 0\n");
         QCOMPARE(p2.textContent(), p2ContentText);
         QAPPROXIMATECOMPARE(p2.size(), p2Size, p2Variance);
 
-        QMessageContentContainer p3(m1.find(ids.at(2)));
+        attachmentId = ids.at(2);
+        QCOMPARE(attachmentId.isValid(), true);
+        QCOMPARE(attachmentId != QMessageContentContainerId(), true);
+        QCOMPARE(QMessageContentContainerId(attachmentId.toString()), attachmentId);
+
+        QMessageContentContainer p3(m1.find(attachmentId));
 
         QCOMPARE(p3.contentType().toLower(), p3ContentType.toLower());
         QCOMPARE(p3.contentSubType().toLower(), p3ContentSubType.toLower());
@@ -464,7 +482,12 @@ exit 0\n");
         QCOMPARE(p3.content().length(), 4075);
         QAPPROXIMATECOMPARE(p3.size(), p3Size, p3Variance);
 
-        QMessageContentContainer p4(m1.find(ids.at(3)));
+        attachmentId = ids.at(3);
+        QCOMPARE(attachmentId.isValid(), true);
+        QCOMPARE(attachmentId != QMessageContentContainerId(), true);
+        QCOMPARE(QMessageContentContainerId(attachmentId.toString()), attachmentId);
+
+        QMessageContentContainer p4(m1.find(attachmentId));
 
         QCOMPARE(p4.contentType().toLower(), p4ContentType.toLower());
         QCOMPARE(p4.contentSubType().toLower(), p4ContentSubType.toLower());
@@ -474,7 +497,12 @@ exit 0\n");
         QCOMPARE(p4.content(), p4ContentData);
         QAPPROXIMATECOMPARE(p4.size(), p4Size, p4Variance);
 
-        QMessageContentContainer p5(m1.find(ids.at(4)));
+        attachmentId = ids.at(4);
+        QCOMPARE(attachmentId.isValid(), true);
+        QCOMPARE(attachmentId != QMessageContentContainerId(), true);
+        QCOMPARE(QMessageContentContainerId(attachmentId.toString()), attachmentId);
+
+        QMessageContentContainer p5(m1.find(attachmentId));
 
         QCOMPARE(p5.contentType().toLower(), p5ContentType.toLower());
         QCOMPARE(p5.contentSubType().toLower(), p5ContentSubType.toLower());

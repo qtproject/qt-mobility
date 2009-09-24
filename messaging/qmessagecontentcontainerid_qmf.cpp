@@ -114,7 +114,7 @@ QMessageContentContainerId::QMessageContentContainerId(const QString& id)
 
     if (!input.isEmpty()) {
         QMailMessagePart::Location loc(input);
-        if (loc.isValid(true) || loc.containingMessageId().isValid()) {
+        if (loc.isValid(false) || loc.containingMessageId().isValid()) {
             d_ptr->_location = loc;
         }
     }
@@ -157,6 +157,6 @@ QString QMessageContentContainerId::toString() const
 bool QMessageContentContainerId::isValid() const
 {
     // Either we have a valid part locator, or we indicate a message body
-    return (d_ptr->_body || d_ptr->_location.isValid(true));
+    return (d_ptr->_body || d_ptr->_location.isValid(false));
 }
 
