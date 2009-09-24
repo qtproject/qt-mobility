@@ -613,10 +613,11 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	i.remove();
     }
 
+    if (!firstUpdate)
+	emit configurationUpdateComplete();
+
     if (firstUpdate)
         firstUpdate = false;
-
-    QTimer::singleShot(0, this, SIGNAL(configurationUpdateComplete()));
 }
 
 
