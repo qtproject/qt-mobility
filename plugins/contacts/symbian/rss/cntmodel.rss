@@ -372,6 +372,14 @@ RESOURCE ARRAY r_cntui_new_field_defns
 			category = EContactCategoryWork;
 			fieldName = qtn_phob_lbl_fax_work;
 			},
+			FIELD //Assistant number
+      {
+      fieldStorageType=KStorageTypeText;
+      contactFieldType=KUidContactFieldPhoneNumberValue;
+      vCardMapping=KIntContactFieldVCardMapAssistantTel;
+      category=EContactCategoryWork;
+      fieldName=qtn_phob_lbl_assistant_name;
+      },
       FIELD	// Email Address (Work)
 			{
 			fieldStorageType = KStorageTypeText;
