@@ -544,8 +544,6 @@ QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
 
 bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
 {
-        Q_UNUSED(state);
-
     return false;
 }
 
