@@ -287,6 +287,13 @@ struct SSIDInfo {
 };
 
 
+void QNetworkConfigurationManagerPrivate::configurationChanged(QNetworkConfigurationPrivate *ptr)
+{
+    QNetworkConfiguration item;
+    item.d = ptr;
+    emit configurationChanged(item);
+}
+
 void QNetworkConfigurationManagerPrivate::deleteConfiguration(QString& iap_id)
 {
     /* Called when IAPs are deleted in gconf, in this case we do not scan
@@ -316,6 +323,8 @@ void QNetworkConfigurationManagerPrivate::deleteConfiguration(QString& iap_id)
 
 void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
 {
+    const QRegExp wlan = QRegExp("WLAN.*");
+
     if (!accessPointConfigurations.contains(iap_id)) {
 	Maemo::IAPConf saved_iap(iap_id);
 	QString iap_type = saved_iap.value("type").toString();
@@ -327,6 +336,12 @@ void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
 	    cpPriv->isValid = true;
 	    cpPriv->id = iap_id;
 	    cpPriv->iap_type = iap_type;
+	    if (iap_type.contains(wlan)) {
+		QByteArray ssid = saved_iap.value("wlan_ssid").toByteArray();
+		if (ssid.isEmpty()) {
+		    qWarning() << "Cannot get ssid for" << iap_id;
+		}
+	    }
 	    cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
 	    cpPriv->state = QNetworkConfiguration::Defined;
 
@@ -347,6 +362,47 @@ void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
 #ifdef BEARER_MANAGEMENT_DEBUG
 	qDebug() << "IAP" << iap_id << "already in gconf.";
 #endif
+
+	/* Check if the data in gconf changed and update configuration
+	 * accordingly
+	 */
+	QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr = accessPointConfigurations.take(iap_id);
+	if (ptr) {
+	    Maemo::IAPConf changed_iap(iap_id);
+	    QString iap_type = changed_iap.value("type").toString();
+	    bool update_needed = false; /* if IAP type or ssid changed, we need to change the state */
+
+	    if (!iap_type.isEmpty()) {
+		ptr->name = changed_iap.value("name").toString();
+		if (ptr->name.isEmpty())
+		    ptr->name = iap_id;
+		ptr->isValid = true;
+		if (ptr->iap_type != iap_type) {
+		    ptr->iap_type = iap_type;
+		    update_needed = true;
+		}
+		if (iap_type.contains(wlan)) {
+		    QByteArray ssid = changed_iap.value("wlan_ssid").toByteArray();
+		    if (ssid.isEmpty()) {
+			qWarning() << "Cannot get ssid for" << iap_id;
+		    }
+		    if (ptr->network_id != ssid) {
+			ptr->network_id = ssid;
+			update_needed = true;
+		    }
+		}
+	    }
+	    accessPointConfigurations.insert(iap_id, ptr);
+	    if (update_needed) {
+		ptr->type = QNetworkConfiguration::InternetAccessPoint;
+		if (ptr->state != QNetworkConfiguration::Defined) {
+		    ptr->state = QNetworkConfiguration::Defined;
+		    configurationChanged(ptr.data());
+		}
+	    }
+	} else {
+	    qWarning("Cannot find IAP %s from current configuration although it should be there.", iap_id.toAscii().data());
+	}
     }
 }
 
@@ -463,6 +519,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.take(iapid);
 	    if (priv) {
 		priv->state = QNetworkConfiguration::Discovered; /* Defined is set automagically */
+		configurationChanged(priv.data());
 		accessPointConfigurations.insert(iapid, priv);
 #ifdef BEARER_MANAGEMENT_DEBUG
 		qDebug("IAP: %s, ssid: %s, discovered", iapid.toAscii().data(), priv->network_id.data());

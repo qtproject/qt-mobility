@@ -109,6 +109,7 @@ public:
     void cleanup();
     void deleteConfiguration(QString &iap_id);
     void addConfiguration(QString &iap_id);
+    void configurationChanged(QNetworkConfigurationPrivate *ptr);
 
 public slots:
     void updateConfigurations();
