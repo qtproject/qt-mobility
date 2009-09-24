@@ -38,6 +38,7 @@
 #include "transformphonenumber.h"
 #include "transformemail.h"
 #include "transformaddress.h"
+//#include "transformsipaddress.h"
 
 #include <qtcontacts.h>
 #include <cntfldst.h>
@@ -64,6 +65,7 @@ void TransformContact::initializeTransformContactData()
 	m_transformContactData.insert(PhoneNumber, new TransformPhoneNumber);
 	m_transformContactData.insert(EmailAddress, new TransformEmail);
 	m_transformContactData.insert(Address, new TransformAddress);
+//	m_transformContactData.insert(SipAddress, new TransformSipAddress);
 }
 
 

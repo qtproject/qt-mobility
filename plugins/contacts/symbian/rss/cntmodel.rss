@@ -746,7 +746,69 @@ RESOURCE ARRAY r_cntui_new_field_defns
 			vCardMapping = KIntContactFieldVCardMapGEO;
 			category=EContactCategoryNone;
 			fieldName=qtn_phob_lbl_geo;
-			}
+			},
+    FIELD 	// Share video (general)
+      {
+      fieldStorageType=KStorageTypeText;
+      contactFieldType=KUidContactFieldSIPIDValue;
+      vCardMapping=KIntContactFieldVCardMapSIPID;
+      extraMapping=
+	        {
+          MAPPING { mapping=KIntContactFieldVCardMapSWIS; }
+          };
+      category=EContactCategoryNone;
+      fieldName=qtn_phob_lbl_swis;
+      },
+    FIELD // VOIP (general)
+      {
+      fieldStorageType=KStorageTypeText;
+      contactFieldType=KUidContactFieldSIPIDValue;
+      vCardMapping=KIntContactFieldVCardMapSIPID;
+      extraMapping=
+          {
+          MAPPING { mapping=KIntContactFieldVCardMapVOIP; }
+          };
+      category=EContactCategoryNone;
+      fieldName=qtn_phob_lbl_voip;
+      },
+    FIELD // VOIP (home)
+      {
+      fieldStorageType=KStorageTypeText;
+      contactFieldType=KUidContactFieldSIPIDValue;
+      vCardMapping=KIntContactFieldVCardMapSIPID;
+      extraMapping=
+          {
+          MAPPING { mapping=KIntContactFieldVCardMapVOIP; },
+          MAPPING { mapping=KIntContactFieldVCardMapHOME; }
+          };
+      category=EContactCategoryHome;
+      fieldName=qtn_phob_lbl_voip_home;
+      },
+    FIELD // VOIP (work)
+      {
+      fieldStorageType=KStorageTypeText;
+      contactFieldType=KUidContactFieldSIPIDValue;
+      vCardMapping=KIntContactFieldVCardMapSIPID;
+      extraMapping=
+          {
+          MAPPING { mapping=KIntContactFieldVCardMapVOIP; },
+          MAPPING { mapping=KIntContactFieldVCardMapWORK; }
+          };
+      category=EContactCategoryWork;
+      fieldName=qtn_phob_lbl_voip_work;
+      },          
+    FIELD // SIP (general)
+      {
+      fieldStorageType=KStorageTypeText;
+      contactFieldType=KUidContactFieldSIPIDValue;
+      vCardMapping=KIntContactFieldVCardMapSIPID;
+      extraMapping=
+          {
+          MAPPING { mapping=KIntContactFieldVCardMapSIPID; }
+          };
+      category=EContactCategoryNone;
+      fieldName=qtn_phob_lbl_sip;
+      }
     };
  }
 

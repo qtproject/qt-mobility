@@ -61,7 +61,8 @@ private:
 		Nickname,
 		PhoneNumber,
 		EmailAddress,
-		Address
+		Address,
+		SipAddress
 	};
 	
 	void initializeTransformContactData();
