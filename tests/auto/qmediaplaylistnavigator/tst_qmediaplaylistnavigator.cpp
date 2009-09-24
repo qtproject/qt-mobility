@@ -49,6 +49,9 @@ private slots:
     void setPlaylist();
     void linearPlayback();
     void loopPlayback();
+    void currentItemOnce();
+    void currentItemInLoop();
+    void randomPlayback();
 };
 
 void tst_QMediaPlaylistNavigator::init()
@@ -128,11 +131,14 @@ void tst_QMediaPlaylistNavigator::linearPlayback()
     navigator.advance();
     QCOMPARE(navigator.currentPosition(), 1);
     navigator.advance();
+    QCOMPARE(navigator.currentPosition(), -1);
+    navigator.advance();//jump to the first item
+    QCOMPARE(navigator.currentPosition(), 0);
+
+    navigator.back();
+    QCOMPARE(navigator.currentPosition(), -1);
+    navigator.back();//jump to the last item
     QCOMPARE(navigator.currentPosition(), 1);
-    navigator.back();
-    QCOMPARE(navigator.currentPosition(), 0);
-    navigator.back();
-    QCOMPARE(navigator.currentPosition(), 0);
 }
 
 void tst_QMediaPlaylistNavigator::loopPlayback()
@@ -183,6 +189,114 @@ void tst_QMediaPlaylistNavigator::loopPlayback()
     QCOMPARE(navigator.currentPosition(), 1);
     navigator.back();
     QCOMPARE(navigator.currentPosition(), 0);
+}
+
+void tst_QMediaPlaylistNavigator::currentItemOnce()
+{
+    QLocalMediaPlaylistProvider playlist;
+    QMediaPlaylistNavigator navigator(&playlist);
+
+    navigator.setPlaybackMode(QMediaPlaylist::CurrentItemOnce);
+
+    QCOMPARE(navigator.playbackMode(), QMediaPlaylist::CurrentItemOnce);
+    QCOMPARE(navigator.currentPosition(), -1);
+
+    playlist.appendItem(QMediaSource(QUrl(QLatin1String("file:///1"))));
+    playlist.appendItem(QMediaSource(QUrl(QLatin1String("file:///2"))));
+    playlist.appendItem(QMediaSource(QUrl(QLatin1String("file:///3"))));
+
+    QCOMPARE(navigator.currentPosition(), -1);
+    navigator.advance();
+    QCOMPARE(navigator.currentPosition(), -1);
+
+    navigator.jump(1);
+    QCOMPARE(navigator.currentPosition(), 1);
+    navigator.advance();
+    QCOMPARE(navigator.currentPosition(), -1);
+    navigator.advance();
+    QCOMPARE(navigator.currentPosition(), -1);
+    navigator.back();
+    QCOMPARE(navigator.currentPosition(), -1);
+    navigator.jump(1);
+    navigator.back();
+    QCOMPARE(navigator.currentPosition(), -1);
+}
+
+void tst_QMediaPlaylistNavigator::currentItemInLoop()
+{
+    QLocalMediaPlaylistProvider playlist;
+    QMediaPlaylistNavigator navigator(&playlist);
+
+    navigator.setPlaybackMode(QMediaPlaylist::CurrentItemInLoop);
+
+    QCOMPARE(navigator.playbackMode(), QMediaPlaylist::CurrentItemInLoop);
+    QCOMPARE(navigator.currentPosition(), -1);
+
+    playlist.appendItem(QMediaSource(QUrl(QLatin1String("file:///1"))));
+    playlist.appendItem(QMediaSource(QUrl(QLatin1String("file:///2"))));
+    playlist.appendItem(QMediaSource(QUrl(QLatin1String("file:///3"))));
+
+    QCOMPARE(navigator.currentPosition(), -1);
+    navigator.advance();
+    QCOMPARE(navigator.currentPosition(), -1);
+    navigator.jump(1);
+    navigator.advance();
+    QCOMPARE(navigator.currentPosition(), 1);
+    navigator.advance();
+    QCOMPARE(navigator.currentPosition(), 1);
+    navigator.back();
+    QCOMPARE(navigator.currentPosition(), 1);
+    navigator.back();
+    QCOMPARE(navigator.currentPosition(), 1);
+}
+
+void tst_QMediaPlaylistNavigator::randomPlayback()
+{
+    QLocalMediaPlaylistProvider playlist;
+    QMediaPlaylistNavigator navigator(&playlist);
+
+    navigator.setPlaybackMode(QMediaPlaylist::Random);
+
+    QCOMPARE(navigator.playbackMode(), QMediaPlaylist::Random);
+    QCOMPARE(navigator.currentPosition(), -1);
+
+    playlist.appendItem(QMediaSource(QUrl(QLatin1String("file:///1"))));
+    playlist.appendItem(QMediaSource(QUrl(QLatin1String("file:///2"))));
+    playlist.appendItem(QMediaSource(QUrl(QLatin1String("file:///3"))));
+
+    QCOMPARE(navigator.currentPosition(), -1);
+    navigator.advance();
+    int pos1 = navigator.currentPosition();
+    navigator.advance();
+    int pos2 = navigator.currentPosition();
+    navigator.advance();
+    int pos3 = navigator.currentPosition();
+
+    QVERIFY(pos1 != -1);
+    QVERIFY(pos2 != -1);
+    QVERIFY(pos3 != -1);
+
+    navigator.back();
+    QCOMPARE(navigator.currentPosition(), pos2);
+    navigator.advance();
+    QCOMPARE(navigator.currentPosition(), pos3);
+    navigator.advance();
+    int pos4 = navigator.currentPosition();
+    navigator.back();
+    QCOMPARE(navigator.currentPosition(), pos3);
+    navigator.back();
+    QCOMPARE(navigator.currentPosition(), pos2);
+    navigator.back();
+    QCOMPARE(navigator.currentPosition(), pos1);
+    navigator.back();
+    int pos0 = navigator.currentPosition();
+    QVERIFY(pos0 != -1);
+    navigator.advance();
+    navigator.advance();
+    navigator.advance();
+    navigator.advance();
+    QCOMPARE(navigator.currentPosition(), pos4);
+
 }
 
 QTEST_MAIN(tst_QMediaPlaylistNavigator)

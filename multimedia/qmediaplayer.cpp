@@ -128,10 +128,9 @@ void QMediaPlayerPrivate::_q_mediaStatusChanged(QMediaPlayer::MediaStatus status
     case QMediaPlayer::EndOfMedia:
         q->removePropertyWatch("bufferStatus");
         if (playlist) {
-            if (playlist->nextPosition(1) != -1) {
-                playlist->advance();
-            } else
+            if (playlist->nextPosition(1) == -1)
                 emit q->mediaStatusChanged(status);
+            playlist->advance();
         }
         break;
     default:
@@ -156,7 +155,10 @@ void QMediaPlayerPrivate::_q_updateMedia(const QMediaSource &media)
 {
     Q_Q(QMediaPlayer);
     q->setMedia(media);
-    q->play();
+    if (!media.isNull())
+        q->play();
+    else
+        q->stop();
 }
 
 

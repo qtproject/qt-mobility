@@ -51,7 +51,7 @@ static const QGstreamerMetaDataKeyLookup qt_gstreamerMetaDataKeys[] =
     { QAbstractMediaObject::Description, GST_TAG_DESCRIPTION },
     //{ QAbstractMediaObject::Category, 0 },
     { QAbstractMediaObject::Genre, GST_TAG_GENRE },
-    //{ QAbstractMediaObject::Year, 0 },
+    { QAbstractMediaObject::Year, "year" },
     //{ QAbstractMediaObject::UserRating, 0 },
 
     { QAbstractMediaObject::Language, GST_TAG_LANGUAGE_CODE },
@@ -135,8 +135,7 @@ QVariant QGstreamerMetaDataProvider::metaData(QAbstractMediaObject::MetaData key
 
     for (int i = 0; i < count; ++i) {
         if (qt_gstreamerMetaDataKeys[i].key == key) {
-            return m_session->tags().value(QByteArray::fromRawData(
-                    qt_gstreamerMetaDataKeys[i].token, qstrlen(qt_gstreamerMetaDataKeys[i].token)));
+            return m_session->tags().value(QByteArray(qt_gstreamerMetaDataKeys[i].token));
         }
     }
     return QVariant();

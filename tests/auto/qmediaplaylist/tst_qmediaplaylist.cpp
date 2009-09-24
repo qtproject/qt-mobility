@@ -138,8 +138,8 @@ void tst_QMediaPlaylist::currentItem()
 
     QCOMPARE(playlist.nextPosition(), 0);
     QCOMPARE(playlist.nextPosition(2), 1);
-    QCOMPARE(playlist.previousPosition(), -1);
-    QCOMPARE(playlist.previousPosition(2), -1);
+    QCOMPARE(playlist.previousPosition(), 1);
+    QCOMPARE(playlist.previousPosition(2), 0);
 
     playlist.setCurrentPosition(0);
     QCOMPARE(playlist.currentPosition(), 0);
@@ -154,14 +154,15 @@ void tst_QMediaPlaylist::currentItem()
     QCOMPARE(playlist.currentPosition(), 1);
     QCOMPARE(playlist.currentMedia(), source2);
 
-    playlist.setCurrentPosition(2); //warning is expected
-    QCOMPARE(playlist.currentPosition(), 1);
-    QCOMPARE(playlist.currentMedia(), source2);
-
     QCOMPARE(playlist.nextPosition(), -1);
     QCOMPARE(playlist.nextPosition(2), -1);
     QCOMPARE(playlist.previousPosition(), 0);
     QCOMPARE(playlist.previousPosition(2), -1);
+
+    //warning is expected, jump outsize of playlist range
+    playlist.setCurrentPosition(2);
+    QCOMPARE(playlist.currentPosition(), -1);
+    QCOMPARE(playlist.currentMedia(), QMediaSource());
 }
 
 void tst_QMediaPlaylist::clear()

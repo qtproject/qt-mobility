@@ -56,6 +56,7 @@ public:
     QMediaPlaylistNavigatorPrivate()
         :playlist(0),
         currentPos(-1),
+        lastValidPos(-1),
         playbackMode(QMediaPlaylist::Linear),
         randomPositionsOffset(-1)
     {
@@ -63,6 +64,7 @@ public:
 
     QMediaPlaylistProvider *playlist;
     int currentPos;
+    int lastValidPos; //to be used with CurrentItemOnce playback mode
     QMediaPlaylist::PlaybackMode playbackMode;
     QMediaSource currentItem;
 
@@ -90,7 +92,7 @@ int QMediaPlaylistNavigatorPrivate::nextItemPos(int steps) const
 
     switch (playbackMode) {
         case QMediaPlaylist::CurrentItemOnce:
-            return -1;
+            return /*currentPos == -1 ? lastValidPos :*/ -1;
         case QMediaPlaylist::CurrentItemInLoop:
             return currentPos;
         case QMediaPlaylist::Linear:
@@ -135,12 +137,12 @@ int QMediaPlaylistNavigatorPrivate::previousItemPos(int steps) const
 
     switch (playbackMode) {
         case QMediaPlaylist::CurrentItemOnce:
-            return -1;
+            return /*currentPos == -1 ? lastValidPos :*/ -1;
         case QMediaPlaylist::CurrentItemInLoop:
             return currentPos;
         case QMediaPlaylist::Linear:
             {
-                int prevPos = currentPos - steps;
+                int prevPos = currentPos == -1 ? playlist->size() - steps : currentPos - steps;
                 return prevPos>=0 ? prevPos : -1;
             }
         case QMediaPlaylist::Loop:
@@ -355,17 +357,11 @@ void QMediaPlaylistNavigator::advance()
     Q_D(QMediaPlaylistNavigator);
 
     int nextPos = d->nextItemPos();
-    if (nextPos >= 0) {
-        if ( playbackMode() == QMediaPlaylist::Random )
+
+    if ( playbackMode() == QMediaPlaylist::Random )
             d->randomPositionsOffset++;
 
-        jump(nextPos);
-
-        if (playbackMode() == QMediaPlaylist::CurrentItemInLoop ||
-            (playbackMode() == QMediaPlaylist::Loop && d->playlist->size() == 1)) {
-                emit activated(d->currentItem);
-        }
-    }
+    jump(nextPos);
 }
 
 /*!
@@ -379,17 +375,10 @@ void QMediaPlaylistNavigator::back()
     Q_D(QMediaPlaylistNavigator);
 
     int prevPos = d->previousItemPos();
-    if (prevPos >= 0) {
-        if ( playbackMode() == QMediaPlaylist::Random )
-            d->randomPositionsOffset--;
+    if ( playbackMode() == QMediaPlaylist::Random )
+        d->randomPositionsOffset--;
 
-        jump(prevPos);
-
-        if (playbackMode() == QMediaPlaylist::CurrentItemInLoop ||
-            (playbackMode() == QMediaPlaylist::Loop && d->playlist->size() == 1)) {
-                emit activated(d->currentItem);
-        }
-    }
+    jump(prevPos);
 }
 
 /*!
@@ -400,10 +389,13 @@ void QMediaPlaylistNavigator::jump(int pos)
 {
     Q_D(QMediaPlaylistNavigator);
 
-    if (pos<0 || pos>=d->playlist->size()) {
+    if (pos<-1 || pos>=d->playlist->size()) {
         qWarning() << "Jump outside playlist range";
-        return;
+        pos = -1;
     }
+
+    if (pos != -1)
+        d->lastValidPos = pos;
 
     if (playbackMode() == QMediaPlaylist::Random) {
         if (d->randomModePositions[d->randomPositionsOffset] != pos) {
@@ -413,17 +405,18 @@ void QMediaPlaylistNavigator::jump(int pos)
         }
     }
 
+    if (pos != -1)
+        d->currentItem = d->playlist->media(pos);
+    else
+        d->currentItem = QMediaSource();
+
     if (pos != d->currentPos) {
         d->currentPos = pos;
         emit currentPositionChanged(d->currentPos);
         emit surroundingItemsChanged();
     }
 
-    QMediaSource src = d->playlist->media(pos);
-    if (src != d->currentItem) {
-        d->currentItem = src;
-        emit activated(src);
-    };
+    emit activated(d->currentItem);
 }
 
 /*!
