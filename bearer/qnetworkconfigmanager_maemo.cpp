@@ -46,6 +46,7 @@
 #include <QDebug>
 #include <QtDBus>
 #include <QRegExp>
+#include <QHash>
 
 #include <wlancond.h>
 #include <libicd-network-wlan-dev.h>
@@ -62,6 +63,102 @@ static IapMonitor &iapMonitor();
 static int iap_prefix_len;
 static void notify_iap(GConfClient *client, guint id,
 		    GConfEntry *entry, gpointer user_data);
+
+
+/* The IapAddTimer is a helper class that makes sure we update
+ * the configuration only after all gconf additions to certain
+ * iap are finished (after a certain timeout)
+ */
+class _IapAddTimer : public QObject
+{
+    Q_OBJECT
+
+public:
+    _IapAddTimer() {}
+    ~_IapAddTimer()
+    {
+	if (timer.isActive()) {
+	    QObject::disconnect(&timer, SIGNAL(timeout()), this, SLOT(timeout()));
+	    timer.stop();
+	}
+    }
+
+    void add(QString& iap_id, QNetworkConfigurationManagerPrivate *d);
+
+    QString iap_id;
+    QTimer timer;
+    QNetworkConfigurationManagerPrivate *d;
+
+public Q_SLOTS:
+    void timeout();
+};
+
+
+void _IapAddTimer::add(QString& id, QNetworkConfigurationManagerPrivate *d_ptr)
+{
+    iap_id = id;
+    d = d_ptr;
+
+    if (timer.isActive()) {
+	QObject::disconnect(&timer, SIGNAL(timeout()), this, SLOT(timeout()));
+	timer.stop();
+    }
+    timer.setSingleShot(true);
+    QObject::connect(&timer, SIGNAL(timeout()), this, SLOT(timeout()));
+    timer.start(1500);
+}
+
+
+void _IapAddTimer::timeout()
+{
+    d->addConfiguration(iap_id);
+}
+
+
+class IapAddTimer {
+    QHash<QString, _IapAddTimer* > timers;
+
+public:
+    IapAddTimer() {}
+    ~IapAddTimer() {}
+
+    void add(QString& iap_id, QNetworkConfigurationManagerPrivate *d);
+    void del(QString& iap_id);
+    void removeAll();
+};
+
+
+void IapAddTimer::removeAll()
+{
+    QHashIterator<QString, _IapAddTimer* > i(timers);
+    while (i.hasNext()) {
+	i.next();
+	_IapAddTimer *t = i.value();
+	delete t;
+    }
+    timers.clear();
+}
+
+void IapAddTimer::add(QString& iap_id, QNetworkConfigurationManagerPrivate *d)
+{
+    if (timers.contains(iap_id)) {
+	_IapAddTimer *iap = timers.value(iap_id);
+	iap->add(iap_id, d);
+    } else {
+	_IapAddTimer *iap = new _IapAddTimer;
+	iap->add(iap_id, d);
+	timers.insert(iap_id, iap);
+    }
+}
+
+void IapAddTimer::del(QString& iap_id)
+{
+    if (timers.contains(iap_id)) {
+	_IapAddTimer *iap = timers.take(iap_id);
+	delete iap;
+    }
+}
+
 
 class IapMonitor
 {
@@ -82,7 +179,7 @@ private:
 
     Maemo::IAPMonitor *iap;
     QNetworkConfigurationManagerPrivate *d;
-    QTimer timer;
+    IapAddTimer timers;
 };
 
 
@@ -124,29 +221,21 @@ void IapMonitor::cleanup()
 {
     if (!first_call) {
 	delete iap;
-	if (timer.isActive()) {
-	    QObject::disconnect(&timer, SIGNAL(timeout()), d, SLOT(updateConfigurations()));
-	    timer.stop();
-	}
+	timers.removeAll();
 	first_call = true;
     }
 }
 
 
-void IapMonitor::iapAdded(const char * /*key*/, GConfEntry * /*entry*/)
+void IapMonitor::iapAdded(const char *key, GConfEntry * /*entry*/)
 {
     //qDebug("Notify called for added element: %s=%s", gconf_entry_get_key(entry), gconf_value_to_string(gconf_entry_get_value(entry)));
 
     /* We cannot know when the IAP is fully added to gconf, so a timer is
      * installed instead. When the timer expires we hope that IAP is added ok.
      */
-    if (timer.isActive()) {
-	QObject::disconnect(&timer, SIGNAL(timeout()), d, SLOT(updateConfigurations()));
-	timer.stop();
-    }
-    timer.setSingleShot(true);
-    QObject::connect(&timer, SIGNAL(timeout()), d, SLOT(updateConfigurations()));
-    timer.start(1500);
+    QString iap_id = QString(key + iap_prefix_len + 1).section('/',0,0);
+    timers.add(iap_id, d);
 }
 
 
@@ -161,10 +250,8 @@ void IapMonitor::iapDeleted(const char *key, GConfEntry * /*entry*/)
 	return;
     }
 
-    //const char *iap_id = key + iap_prefix_len + 1;
-    //qDebug("IAP %s deleted", iap_id);
-
-    d->performAsyncConfigurationUpdate();
+    QString iap_id = key + iap_prefix_len + 1;
+    d->deleteConfiguration(iap_id);
 }
 
 
@@ -198,6 +285,62 @@ struct SSIDInfo {
     QString iap_id;
     QString wlan_security;
 };
+
+
+void QNetworkConfigurationManagerPrivate::deleteConfiguration(QString& iap_id)
+{
+    /* Called when IAPs are deleted in gconf, in this case we do not scan
+     * or read all the IAPs from gconf because it might take too much power
+     * (multiple applications would need to scan and read all IAPs from gconf)
+     */
+    if (accessPointConfigurations.contains(iap_id)) {
+	QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.take(iap_id);
+	if (priv) {
+	    priv->isValid = false;
+	    qDebug() << "IAP" << iap_id << "was removed from storage.";
+
+	    QNetworkConfiguration item;
+	    item.d = priv;
+	    emit configurationRemoved(item);
+	} else
+	    qWarning("Configuration not found for IAP %s", iap_id.toAscii().data());
+    } else {
+	qDebug("IAP: %s, already missing from the known list", iap_id.toAscii().data());
+    }
+}
+
+
+void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
+{
+    if (!accessPointConfigurations.contains(iap_id)) {
+	Maemo::IAPConf saved_iap(iap_id);
+	QString iap_type = saved_iap.value("type").toString();
+	if (!iap_type.isEmpty()) {
+	    QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
+	    cpPriv->name = saved_iap.value("name").toString();
+	    if (cpPriv->name.isEmpty())
+		cpPriv->name = iap_id;
+	    cpPriv->isValid = true;
+	    cpPriv->id = iap_id;
+	    cpPriv->iap_type = iap_type;
+	    cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
+	    cpPriv->state = QNetworkConfiguration::Defined;
+
+	    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);
+	    accessPointConfigurations.insert(iap_id, ptr);
+
+	    qDebug("IAP: %s, name: %s, added to known list", iap_id.toAscii().data(), cpPriv->name.toAscii().data());
+
+	    QNetworkConfiguration item;
+	    item.d = ptr;
+	    emit configurationAdded(item);
+	} else {
+	    qWarning("IAP %s does not have \"type\" field defined, skipping this IAP.", iap_id.toAscii().data());
+	}
+    } else {
+	qDebug() << "IAP" << iap_id << "already in gconf.";
+    }
+}
 
 
 void QNetworkConfigurationManagerPrivate::updateConfigurations()
@@ -426,5 +569,7 @@ void QNetworkConfigurationManagerPrivate::cleanup()
 {
     iapMonitor().cleanup();
 }
+
+#include "qnetworkconfigmanager_maemo.moc"
 
 QT_END_NAMESPACE

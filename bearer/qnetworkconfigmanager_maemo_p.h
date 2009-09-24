@@ -107,6 +107,8 @@ public:
     bool firstUpdate;
     friend class IapMonitor;
     void cleanup();
+    void deleteConfiguration(QString &iap_id);
+    void addConfiguration(QString &iap_id);
 
 public slots:
     void updateConfigurations();
