@@ -135,9 +135,12 @@ void tst_QMessageStore::testAccount()
     p.insert("name", name);
     p.insert("fromAddress", fromAddress);
 
+    int originalCount = QMessageStore::instance()->countAccounts();
+
     QMessageAccountId accountId(Support::addAccount(p));
     QVERIFY(accountId.isValid());
     QVERIFY(accountId != QMessageAccountId());
+    QCOMPARE(QMessageStore::instance()->countAccounts(), originalCount + 1);
     
     QMessageAccount account(accountId);
     QCOMPARE(account.id(), accountId);
@@ -207,9 +210,12 @@ void tst_QMessageStore::testFolder()
     p.insert("parentAccountName", testAccountName);
     p.insert("parentFolderPath", parentFolderPath);
 
+    int originalCount = QMessageStore::instance()->countFolders();
+
     QMessageFolderId folderId(Support::addFolder(p));
     QVERIFY(folderId.isValid());
     QVERIFY(folderId != QMessageFolderId());
+    QCOMPARE(QMessageStore::instance()->countFolders(), originalCount + 1);
     
     QMessageFolder folder(folderId);
     QCOMPARE(folder.id(), folderId);
@@ -455,9 +461,12 @@ void tst_QMessageStore::testMessage()
         p.insert("status-hasAttachments", "true");
     }
 
+    int originalCount = QMessageStore::instance()->countMessages();
+
     QMessageId messageId(Support::addMessage(p));
     QVERIFY(messageId.isValid());
     QVERIFY(messageId != QMessageId());
+    QCOMPARE(QMessageStore::instance()->countMessages(), originalCount + 1);
     
     QMessage message(messageId);
     QCOMPARE(message.id(), messageId);
@@ -553,5 +562,6 @@ void tst_QMessageStore::testMessage()
 
     QMessageStore::instance()->removeMessage(message.id());
     QCOMPARE(QMessageStore::instance()->lastError(), QMessageStore::NoError);
+    QCOMPARE(QMessageStore::instance()->countMessages(), originalCount);
 }
 
