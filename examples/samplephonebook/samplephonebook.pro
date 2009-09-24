@@ -13,6 +13,8 @@ INCLUDEPATH += . \
                ../../contacts/requests \
                ../../contacts/details 
 
+VPATH += ../incomingcalls
+
 # Input
 SOURCES =  contactdetailsform.cpp \
             maindialogform_240_320.cpp \
