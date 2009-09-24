@@ -36,11 +36,11 @@
 #include <QDebug>
 #include <QAudioFormat>
 
-#include <multimedia/qaudiosourceservice.h>
-#include <multimedia/qaudiosource.h>
-#include <multimedia/qaudioencodercontrol.h>
-#include <multimedia/qmediarecordercontrol.h>
-#include <multimedia/qaudiodevicecontrol.h>
+#include <qaudiosourceservice.h>
+#include <qaudiosource.h>
+#include <qaudioencodercontrol.h>
+#include <qmediarecordercontrol.h>
+#include <qaudiodevicecontrol.h>
 
 class MockAudioEncoderControl : public QAudioEncoderControl
 {

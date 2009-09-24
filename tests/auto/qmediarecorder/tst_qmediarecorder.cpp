@@ -34,19 +34,19 @@
 
 #include <QtTest/QtTest>
 #include <QDebug>
-#include <multimedia/qabstractmediaobject.h>
-#include <multimedia/qabstractmediacontrol.h>
-#include <multimedia/qabstractmediaservice.h>
-#include <multimedia/qmediarecordercontrol.h>
-#include <multimedia/qmediarecorder.h>
-#include <multimedia/qaudiodevicecontrol.h>
-#include <multimedia/qaudioencodercontrol.h>
-#include <multimedia/qmediaformatcontrol.h>
+#include <qabstractmediaobject.h>
+#include <qabstractmediacontrol.h>
+#include <qabstractmediaservice.h>
+#include <qmediarecordercontrol.h>
+#include <qmediarecorder.h>
+#include <qaudiodevicecontrol.h>
+#include <qaudioencodercontrol.h>
+#include <qmediaformatcontrol.h>
 
 #ifndef QT_NO_MULTIMEDIA
 #include <QtMultimedia/qaudioformat.h>
 #else
-#include <multimedia/qaudioformat.h>
+#include <qaudioformat.h>
 #endif
 
 class MockMediaFormatControl : public QMediaFormatControl

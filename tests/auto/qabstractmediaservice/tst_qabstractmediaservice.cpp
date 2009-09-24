@@ -34,8 +34,8 @@
 
 #include <QtTest/QtTest>
 
-#include "multimedia/qabstractmediacontrol.h"
-#include "multimedia/qabstractmediaservice.h"
+#include "qabstractmediacontrol.h"
+#include "qabstractmediaservice.h"
 
 class QtTestMediaService;
 

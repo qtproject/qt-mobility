@@ -36,9 +36,9 @@
 
 #include <QtCore/qtimer.h>
 
-#include <multimedia/qabstractmediaobject.h>
-#include <multimedia/qabstractmediaservice.h>
-#include <multimedia/qmetadataprovidercontrol.h>
+#include <qabstractmediaobject.h>
+#include <qabstractmediaservice.h>
+#include <qmetadataprovidercontrol.h>
 
 class tst_QAbstractMediaObject : public QObject
 {

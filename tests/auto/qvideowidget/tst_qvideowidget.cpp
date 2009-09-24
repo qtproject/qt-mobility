@@ -34,16 +34,16 @@
 
 #include <QtTest/QtTest>
 
-#include "multimedia/qvideowidget.h"
+#include "qvideowidget.h"
 
-#include "multimedia/qabstractmediaobject.h"
-#include "multimedia/qabstractmediaservice.h"
-#include "multimedia/qvideooutputcontrol.h"
-#include "multimedia/qvideowindowcontrol.h"
-#include "multimedia/qvideowidgetcontrol.h"
+#include "qabstractmediaobject.h"
+#include "qabstractmediaservice.h"
+#include "qvideooutputcontrol.h"
+#include "qvideowindowcontrol.h"
+#include "qvideowidgetcontrol.h"
 
 #ifndef QT_NO_MULTIMEDIA
-#include "multimedia/qvideorenderercontrol.h"
+#include "qvideorenderercontrol.h"
 #include <QtMultimedia/qabstractvideosurface.h>
 #include <QtMultimedia/qvideosurfaceformat.h>
 #endif
