@@ -56,7 +56,7 @@ public:
         if (plugin != 0)
             return plugin->create(key);
 
-        qWarning() << "defaultServiceProvider::createService(): no plugin found for -" << key;
+        qWarning() << "defaultServiceProvider::requestService(): no plugin found for -" << key;
         return 0;
     }
 

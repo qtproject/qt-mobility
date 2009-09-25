@@ -317,7 +317,7 @@ bool QPainterVideoSurface::start(const QVideoSurfaceFormat &format)
                 } else {
                     const GLubyte* errorString = glGetString(GL_PROGRAM_ERROR_STRING_ARB);
 
-                    qWarning("Shader compile error %s", reinterpret_cast<const char *>(errorString));
+                    qWarning("QPainterVideoSurface: Shader compile error %s", reinterpret_cast<const char *>(errorString));
                     glDeleteProgramsARB(1, &m_shaderId);
 
                     m_textureCount = 0;

@@ -376,7 +376,6 @@ void QMediaPlayer::bind(QObject *obj)
         QMediaPlaylist *playlist = qobject_cast<QMediaPlaylist*>(obj);
 
         if (playlist) {
-            qDebug() << "playlist attached";
             d->playlist = playlist;
             connect(d->playlist, SIGNAL(currentMediaChanged(QMediaSource)),
                     this, SLOT(_q_updateMedia(QMediaSource)));

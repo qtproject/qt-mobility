@@ -390,7 +390,7 @@ void QMediaPlaylistNavigator::jump(int pos)
     Q_D(QMediaPlaylistNavigator);
 
     if (pos<-1 || pos>=d->playlist->size()) {
-        qWarning() << "Jump outside playlist range";
+        qWarning() << "QMediaPlaylistNavigator: Jump outside playlist range";
         pos = -1;
     }
 

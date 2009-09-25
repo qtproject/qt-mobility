@@ -90,10 +90,9 @@ void QMediaPluginLoader::load()
                 }
 
                 continue;
-            } else {
-                qWarning()<<"FAILED trying to load plugin: "<<pluginLib;
-                qWarning()<<loader.errorString();
             }
+            else
+                qWarning() << "QMediaPluginLoader: Failed to load plugin: " << pluginLib << loader.errorString();
 
             delete o;
             loader.unload();
