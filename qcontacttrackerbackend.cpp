@@ -190,9 +190,12 @@ QList<QUniqueId> QContactTrackerEngine::contacts(const QList<QContactSortOrder>&
 
 QContact QContactTrackerEngine::contact(const QUniqueId& contactId, QContactManager::Error& error ) const
 {
-    
     qWarning()<<"QContactManager::contact()"<<"api is not supported for tracker plugin. Please use asynchronous API QContactFetchRequest.";
-    
+    return contact_impl(contactId, error);
+}
+// used in tests, removed warning while decided if to provide sync api. Until then customers are advised to use async
+QContact QContactTrackerEngine::contact_impl(const QUniqueId& contactId, QContactManager::Error& error ) const
+{
     // the rest of the code is for internal usage, unit tests etc.
     QContactIdListFilter idlist;
     QList<QUniqueId> ids; ids << contactId;
@@ -757,6 +760,11 @@ QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions
                 qDebug() << def;
             }
         }
+        // modification: name is unique
+        QContactDetailDefinition nameDef = d->m_definitions.value(QContactName::DefinitionName);
+        nameDef.setUnique(true);
+        d->m_definitions.insert(QContactName::DefinitionName, nameDef);
+
         // modification: avatar is unique.
         QContactDetailDefinition avatarDef = d->m_definitions.value(QContactAvatar::DefinitionName);
         avatarDef.setUnique(true);

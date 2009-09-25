@@ -162,11 +162,13 @@ private:
     //called from both constructors, connecting to all contact NodeList changes signals
     void connectToSignals();
     RDFVariable contactDetail2Rdf(const RDFVariable& rdfContact, const QString& definitionName, const QString& fieldName) const;
+    QContact contact_impl(const QUniqueId& contactId, QContactManager::Error& error) const;
 
 private:
     QSharedDataPointer<QContactTrackerEngineData> d;
     const QString contactArchiveFile;
     const QString contactArchiveDir;    
+    friend class ut_qtcontacts_trackerplugin;
 };
 
 class Q_DECL_EXPORT ContactTrackerFactory : public QObject, public QContactManagerEngineFactory
