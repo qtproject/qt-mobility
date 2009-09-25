@@ -11,6 +11,7 @@ QT_MOBILITY_BIN=
 BUILD_UNITTESTS=
 BUILD_EXAMPLES=
 RELEASEMODE=
+CONTACTS_PLUGIN=
 
 usage() 
 {
@@ -32,7 +33,11 @@ usage()
     echo "-release .......... Build without debugging symbols"
     echo "-tests ............ Build unit tests (not build by default)"
     echo "-examples ......... Build example applications"
-
+    echo
+    echo "-contact-src <backend> ..."
+    echo "                    Compile the specified contacts API backend. Not selecting any backend"
+    echo "                    will result in default selection for build platform"
+    echo "                    options: symbian, wince, kabc, memory"
     
     rm config.in
     exit    
@@ -73,6 +78,10 @@ while [ "$#" -gt 0 ]; do
         -release)
             RELEASEMODE=release
             ;;
+        -contact-src)
+            CONTACTS_PLUGIN="$CONTACTS_PLUGIN $2"
+            shift
+            ;;
         *)
             echo "Unknown option: $1"
             usage
@@ -85,6 +94,7 @@ if [ -z "$RELEASEMODE" ]; then
     RELEASEMODE="debug"
 fi
 echo "CONFIG += $RELEASEMODE" >> config.in
+echo "CONTACTS_BACKENDS = $CONTACTS_PLUGIN" >> config.in
 
 #process PREFIX
 if [ -d "$QT_MOBILITY_PREFIX" ]; then
