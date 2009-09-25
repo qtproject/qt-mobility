@@ -910,11 +910,10 @@ QUniqueId url2UniqueId(const QString &contactUrl)
 QUniqueId contactIdFromIMAccount(const QString &IMAccount) {
     QUniqueId id;
     RDFVariable RDFContact = RDFVariable::fromType<nco::PersonContact>();
-    RDFSelect query;
+    RDFContact.property<nco::hasIMAccount>() = QUrl(IMAccount);
 
-    query.addColumn("contact_uri", RDFContact);
+    RDFSelect query;
     query.addColumn("contactId", RDFContact.property<nco::contactUID>());
-    query.addColumn("imAccount", RDFContact.property<nco::hasIMAccount>() = QUrl(IMAccount));
     LiveNodes ncoContacts = ::tracker()->modelQuery(query);
     for(int i=0; i<ncoContacts->rowCount(); i++) {
         id = ncoContacts->index(i, 1).data().toUInt();
