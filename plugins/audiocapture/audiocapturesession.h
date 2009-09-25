@@ -50,6 +50,7 @@
 class AudioCaptureSession : public QObject
 {
     Q_OBJECT
+
 public:
     AudioCaptureSession(QObject *parent = 0);
     ~AudioCaptureSession();

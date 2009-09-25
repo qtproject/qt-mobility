@@ -32,16 +32,16 @@
 **
 ****************************************************************************/
 
-#include <QDebug>
+#include <QtCore/qdebug.h>
 #include <QtCore/qurl.h>
 #include <QtMultimedia/qaudiodeviceinfo.h>
 
 #include <multimedia/qmediarecorder.h>
 
-
 #include "audiocapturesession.h"
 
-AudioCaptureSession::AudioCaptureSession(QObject *parent)
+AudioCaptureSession::AudioCaptureSession(QObject *parent):
+    QObject(parent)
 {
     m_deviceInfo = new QAudioDeviceInfo(QAudioDeviceInfo::defaultInputDevice());
     m_audioInput = 0;

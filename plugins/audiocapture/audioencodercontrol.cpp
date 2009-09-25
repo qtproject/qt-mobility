@@ -54,6 +54,7 @@ int AudioEncoderControl::bitrate() const
 
 void AudioEncoderControl::setBitrate(int value)
 {
+    Q_UNUSED(value)
 }
 
 int AudioEncoderControl::quality() const
@@ -63,6 +64,7 @@ int AudioEncoderControl::quality() const
 
 void AudioEncoderControl::setQuality(int value)
 {
+    Q_UNUSED(value)
 }
 
 QStringList AudioEncoderControl::supportedEncodingOptions() const
@@ -82,6 +84,8 @@ QVariant AudioEncoderControl::encodingOption(const QString &name) const
 
 void AudioEncoderControl::setEncodingOption(const QString &name, const QVariant &value)
 {
+    Q_UNUSED(value)
+
     QAudioFormat fmt = m_session->format();
 
     if(qstrcmp(name.toLocal8Bit().constData(),"bitrate") == 0) {
