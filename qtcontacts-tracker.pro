@@ -6,12 +6,13 @@
 include(../../version.pri)
 
 include(../../common/commonfilters.pri)
+include(qtcontacts-tracker.pri)
 
 TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(qtcontacts_tracker)
-LIBS += -L/usr/lib \
-    -lqttracker
+LIBS += -L/usr/lib 
+    
 DEPENDPATH += .
 INCLUDEPATH += . 
 
