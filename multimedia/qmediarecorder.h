@@ -81,7 +81,7 @@ public:
     };
 
     QMediaRecorder(QAbstractMediaObject *mediaObject);
-    QMediaRecorder(QObject *parent = 0, QMediaRecorderService *service = 0);
+    QMediaRecorder(QObject *parent = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
     ~QMediaRecorder();
 
     bool isValid() const;

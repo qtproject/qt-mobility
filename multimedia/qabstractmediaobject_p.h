@@ -59,10 +59,7 @@ class QAbstractMediaObjectPrivate
     Q_DECLARE_PUBLIC(QAbstractMediaObject)
 
 public:
-    QAbstractMediaObjectPrivate()
-        : metaDataControl(0)
-        , notifyTimer(0)
-    {}
+    QAbstractMediaObjectPrivate():metaDataControl(0), notifyTimer(0) {}
 
     void _q_notify();
 

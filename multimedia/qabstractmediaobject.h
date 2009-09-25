@@ -123,9 +123,9 @@ public:
 
     ~QAbstractMediaObject();
 
-    virtual QAbstractMediaService* service() const = 0;
+    virtual QAbstractMediaService* service() const;
 
-    virtual bool isValid() const = 0;
+    virtual bool isValid() const;
 
     int notifyInterval() const;
     void setNotifyInterval(int milliSeconds);
@@ -149,8 +149,8 @@ Q_SIGNALS:
     void metaDataChanged();
 
 protected:
-    QAbstractMediaObject(QObject *parent = 0);
-    QAbstractMediaObject(QAbstractMediaObjectPrivate &dd, QObject *parent);
+    QAbstractMediaObject(QObject *parent, QAbstractMediaService *service);
+    QAbstractMediaObject(QAbstractMediaObjectPrivate &dd, QObject *parent, QAbstractMediaService *service);
 
     void addPropertyWatch(QByteArray const &name);
     void removePropertyWatch(QByteArray const &name);
@@ -160,6 +160,8 @@ protected:
     QAbstractMediaObjectPrivate *d_ptr;
 
 private:
+    void setupMetaData();
+
     Q_DECLARE_PRIVATE(QAbstractMediaObject)
     Q_PRIVATE_SLOT(d_func(), void _q_notify())
 };

@@ -328,3 +328,43 @@ QList<QString> QAbstractMediaService::supportedEndpoints(QAbstractMediaService::
 
     If the service does not implment the control a null pointer is returned instead.
 */
+
+/*
+
+QAbstractMediaService* createService(const QString &type,
+                                     const QList<QByteArray> &optional = QList<QByteArray>(),
+                                     QMediaServiceProvider *provider = 0)
+{
+    if (provider != 0)
+        return provider->createService(type, optional);
+
+    // Check for name of provider in type, else use default
+    QMediaServiceProvider *p = defaultServiceProvider(
+    if (p != 0)
+        return p->createService(type, optional);
+
+    return 0;
+}
+
+QAbstractMediaService* createMediaPlayerService()
+{
+    QByteArray providerKey = qgetenv("QT_MEDIAPLAYER_PROVIDER");
+
+    QMediaServiceProvider *provider = defaultServiceProvider(!providerKey.isNull()
+            ? providerKey.constData()
+            : "mediaplayer");
+
+    QObject *object = provider ? provider->createObject(QMediaPlayerService_iid) : 0;
+
+    if (object != 0) {
+        QMediaPlayerService *service = qobject_cast<QMediaPlayerService*>(object);
+
+        if (service != 0)
+            return service;
+
+        delete object;
+    }
+
+    return 0;
+}
+*/

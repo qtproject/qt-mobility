@@ -39,8 +39,8 @@
 #include "audioencodercontrol.h"
 #include "audiomediarecordercontrol.h"
 
-AudioCaptureService::AudioCaptureService(QObject *parent)
-    :QAudioSourceService(parent)
+AudioCaptureService::AudioCaptureService(QObject *parent):
+    QAbstractMediaService(parent)
 {
     m_session = new AudioCaptureSession(this);
     m_encoderControl  = new AudioEncoderControl(m_session);

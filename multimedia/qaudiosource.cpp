@@ -36,8 +36,6 @@
 
 #include <multimedia/qabstractmediaobject_p.h>
 #include <multimedia/qaudiosource.h>
-#include <multimedia/qaudiosourceservice.h>
-#include <multimedia/qaudiorecorderservice.h>
 #include <multimedia/qaudioencodercontrol.h>
 #include <multimedia/qmediarecordercontrol.h>
 
@@ -51,61 +49,28 @@
     \sa
 */
 
-/*!
-    \a internal
-*/
-
-QAbstractMediaService* createAudioSourceService()
-{
-    QMediaServiceProvider *provider = defaultServiceProvider("audiorecorder");
-    QObject *object = provider ? provider->createObject(QAudioRecorderService_iid) : 0;
-
-    if (object != 0) {
-        QAbstractMediaService *service = qobject_cast<QAbstractMediaService*>(object);
-        if (service)
-            return service;
-
-        delete object;
-    }
-
-    return 0;
-}
-
 class QAudioSourcePrivate : public QAbstractMediaObjectPrivate
 {
 public:
-    QAbstractMediaService *service;
+    QAudioSourcePrivate():audioEncoderControl(0), mediaRecorderControl(0) {}
     QAudioEncoderControl  *audioEncoderControl;
     QMediaRecorderControl *mediaRecorderControl;
-    bool ownService;
 };
 
 /*!
     Construct a QAudioSource from \a service with \a parent.
 */
 
-QAudioSource::QAudioSource(QObject *parent, QAbstractMediaService *service):
-    QAbstractMediaObject(*new QAudioSourcePrivate, parent)
+QAudioSource::QAudioSource(QObject *parent, QMediaServiceProvider *provider):
+    QAbstractMediaObject(*new QAudioSourcePrivate, parent, provider->requestService("audiosource"))
 {
     Q_D(QAudioSource);
 
-    if (service) {
-        d->service = service;
-        d->ownService = false;
-    } else {
-        d->service = createAudioSourceService();
-        d->ownService = true;
-    }
-
     Q_ASSERT(d->service != 0);
 
-    if (d->service) {
+    if (d->service != 0) {
         d->audioEncoderControl = qobject_cast<QAudioEncoderControl *>(d->service->control(QAudioEncoderControl_iid));
         d->mediaRecorderControl = qobject_cast<QMediaRecorderControl *>(d->service->control(QMediaRecorderControl_iid));
-        registerService(d->service);
-    } else {
-        d->audioEncoderControl = 0;
-        d->mediaRecorderControl = 0;
     }
 }
 
@@ -115,14 +80,6 @@ QAudioSource::QAudioSource(QObject *parent, QAbstractMediaService *service):
 
 QAudioSource::~QAudioSource()
 {
-    Q_D(QAudioSource);
-
-    registerService(0);
-
-    if (d->ownService) {
-        delete d->service;
-        d->service = 0;
-    }
 }
 
 /*!
@@ -131,16 +88,10 @@ QAudioSource::~QAudioSource()
 
 bool QAudioSource::isValid() const
 {
-    return (d_func()->audioEncoderControl != NULL && d_func()->mediaRecorderControl != NULL);
-}
+    Q_D(const QAudioSource);
 
-/*!
-    Returns the service.
-*/
-
-QAbstractMediaService *QAudioSource::service() const
-{
-    return d_func()->service;
+    return QAbstractMediaObject::isValid() &&
+            (d->audioEncoderControl != NULL && d->mediaRecorderControl != NULL);
 }
 
 /*!

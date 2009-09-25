@@ -34,8 +34,9 @@
 
 #include <QtTest/QtTest>
 #include <QDebug>
+
 #include <multimedia/qmediaplayercontrol.h>
-#include <multimedia/qmediaplayerservice.h>
+#include <multimedia/qabstractmediaservice.h>
 #include <multimedia/qmediaplayer.h>
 
 
@@ -94,12 +95,12 @@ public:
     QString _errorString;
 };
 
-class MockPlayerService : public QMediaPlayerService
+class MockPlayerService : public QAbstractMediaService
 {
     Q_OBJECT
 
 public:
-    MockPlayerService():QMediaPlayerService(0)
+    MockPlayerService():QAbstractMediaService(0)
     {
         mockControl = new MockPlayerControl;
     }
@@ -148,6 +149,19 @@ public:
     MockPlayerControl *mockControl;
 };
 
+class MockProvider : public QMediaServiceProvider
+{
+public:
+    MockProvider(MockPlayerService *service):mockService(service) {}
+    QAbstractMediaService *requestService(const QByteArray &, const QList<QByteArray> &)
+    {
+        return mockService;
+    }
+
+    void releaseService(QAbstractMediaService *) {}
+
+    MockPlayerService *mockService;
+};
 
 class tst_QMediaPlayer: public QObject
 {
@@ -179,7 +193,8 @@ private slots:
     void testStop();
 
 private:
-    MockPlayerService  *mockService;;
+    MockProvider *mockProvider;
+    MockPlayerService  *mockService;
     QMediaPlayer *player;
 };
 
@@ -226,7 +241,8 @@ void tst_QMediaPlayer::initTestCase_data()
 void tst_QMediaPlayer::initTestCase()
 {
     mockService = new MockPlayerService;
-    player = new QMediaPlayer(0, mockService);
+    mockProvider = new MockProvider(mockService);
+    player = new QMediaPlayer(0, mockProvider);
 }
 
 void tst_QMediaPlayer::cleanupTestCase()

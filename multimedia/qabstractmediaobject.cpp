@@ -39,6 +39,7 @@
 #include <multimedia/qabstractmediaservice.h>
 #include <multimedia/qmetadataprovidercontrol.h>
 
+
 void QAbstractMediaObjectPrivate::_q_notify()
 {
     Q_Q(QAbstractMediaObject);
@@ -161,6 +162,11 @@ QAbstractMediaObject::~QAbstractMediaObject()
     Returns the media service that provide the functionality for the Multimedia object.
 */
 
+QAbstractMediaService* QAbstractMediaObject::service() const
+{
+    return d_func()->service;
+}
+
 /*!
     \fn bool QAbstractMediaObject::isValid() const
 
@@ -168,40 +174,9 @@ QAbstractMediaObject::~QAbstractMediaObject()
     false otherwise.
 */
 
-/*!
-*/
-void QAbstractMediaObject::registerService(QAbstractMediaService *service)
+bool QAbstractMediaObject::isValid() const
 {
-    Q_D(QAbstractMediaObject);
-
-    d->service = service;
-
-    if (d->metaDataControl) {
-        disconnect(d->metaDataControl, SIGNAL(metaDataChanged()), this, SIGNAL(metaDataChanged()));
-        disconnect(
-                d->metaDataControl, SIGNAL(metaDataAvailableChanged(bool)),
-                this, SIGNAL(metaDataAvailableChanged(bool)));
-        disconnect(
-                d->metaDataControl, SIGNAL(writableChanged(bool)),
-                this, SIGNAL(metaDataWritableChanged(bool)));
-    }
-
-    if (service) {
-        d->metaDataControl = qobject_cast<QMetaDataProviderControl *>(
-                service->control(QMetaDataProviderControl_iid));
-
-        if (d->metaDataControl) {
-            connect(d->metaDataControl, SIGNAL(metaDataChanged()), this, SIGNAL(metaDataChanged()));
-            connect(d->metaDataControl,
-                    SIGNAL(metaDataAvailableChanged(bool)),
-                    SIGNAL(metaDataAvailableChanged(bool)));
-            connect(d->metaDataControl,
-                    SIGNAL(writableChanged(bool)),
-                    SIGNAL(metaDataWritableChanged(bool)));
-        }
-    } else {
-        d->metaDataControl = 0;
-    }
+    return d_func()->service != 0;
 }
 
 int QAbstractMediaObject::notifyInterval() const
@@ -232,9 +207,9 @@ void QAbstractMediaObject::bind(QObject*)
     base class for Multimedia objects so this constructor is protected.
 */
 
-QAbstractMediaObject::QAbstractMediaObject(QObject *parent)
-    : QObject(parent)
-    , d_ptr(new QAbstractMediaObjectPrivate)
+QAbstractMediaObject::QAbstractMediaObject(QObject *parent, QAbstractMediaService *service):
+    QObject(parent),
+    d_ptr(new QAbstractMediaObjectPrivate)
 
 {
     Q_D(QAbstractMediaObject);
@@ -244,15 +219,20 @@ QAbstractMediaObject::QAbstractMediaObject(QObject *parent)
     d->notifyTimer = new QTimer(this);
     d->notifyTimer->setInterval(1000);
     connect(d->notifyTimer, SIGNAL(timeout()), SLOT(_q_notify()));
+
+    d->service = service;
+
+    setupMetaData();
 }
 
 /*!
     \internal
 */
 
-QAbstractMediaObject::QAbstractMediaObject(QAbstractMediaObjectPrivate &dd, QObject *parent)
-    : QObject(parent)
-    , d_ptr(&dd)
+QAbstractMediaObject::QAbstractMediaObject(QAbstractMediaObjectPrivate &dd, QObject *parent,
+                                            QAbstractMediaService *service):
+    QObject(parent),
+    d_ptr(&dd)
 {
     Q_D(QAbstractMediaObject);
     d->q_ptr = this;
@@ -260,6 +240,10 @@ QAbstractMediaObject::QAbstractMediaObject(QAbstractMediaObjectPrivate &dd, QObj
     d->notifyTimer = new QTimer(this);
     d->notifyTimer->setInterval(1000);
     connect(d->notifyTimer, SIGNAL(timeout()), SLOT(_q_notify()));
+
+    d->service = service;
+
+    setupMetaData();
 }
 
 /*!
@@ -419,5 +403,26 @@ void QAbstractMediaObject::setExtendedMetaData(const QString &key, const QVarian
     if (d->metaDataControl)
         d->metaDataControl->setExtendedMetaData(key, value);
 }
+
+void QAbstractMediaObject::setupMetaData()
+{
+    Q_D(QAbstractMediaObject);
+
+    if (d->service != 0) {
+        d->metaDataControl =
+            qobject_cast<QMetaDataProviderControl*>(d->service->control(QMetaDataProviderControl_iid));
+
+        if (d->metaDataControl) {
+            connect(d->metaDataControl, SIGNAL(metaDataChanged()), SIGNAL(metaDataChanged()));
+            connect(d->metaDataControl,
+                    SIGNAL(metaDataAvailableChanged(bool)),
+                    SIGNAL(metaDataAvailableChanged(bool)));
+            connect(d->metaDataControl,
+                    SIGNAL(writableChanged(bool)),
+                    SIGNAL(metaDataWritableChanged(bool)));
+        }
+    }
+}
+
 
 #include "moc_qabstractmediaobject.cpp"

@@ -376,22 +376,9 @@ class MockObject : public QAbstractMediaObject
     Q_OBJECT
 public:
     MockObject(QObject *parent, QAbstractMediaControl *control):
-        QAbstractMediaObject(parent),
-        mockService(new MockService(this, control))
+        QAbstractMediaObject(parent, new MockService(this, control))
     {
     }
-
-    bool isValid() const
-    {
-        return true;
-    }
-
-    QAbstractMediaService* service() const
-    {
-        return mockService;
-    }
-
-    QAbstractMediaService *mockService;
 };
 
 class tst_QMediaRecorder: public QObject

@@ -35,18 +35,19 @@
 #include <QtTest/QtTest>
 #include <QDebug>
 #include <QTimer>
+
 #include <multimedia/qabstractmediaobject.h>
 #include <multimedia/qabstractmediacontrol.h>
-#include <multimedia/qradioservice.h>
+#include <multimedia/qabstractmediaservice.h>
 #include <multimedia/qradioplayercontrol.h>
 #include <multimedia/qradioplayer.h>
 
-class MockProvider : public QRadioPlayerControl
+class MockControl : public QRadioPlayerControl
 {
     Q_OBJECT
 
 public:
-    MockProvider(QObject *parent):
+    MockControl(QObject *parent):
         QRadioPlayerControl(parent),
         m_searching(false),m_muted(false),m_stereo(true),
         m_volume(100),m_signal(0),m_frequency(0),
@@ -162,12 +163,12 @@ public:
     QRadioPlayer::Band m_band;
 };
 
-class MockService : public QRadioService
+class MockService : public QAbstractMediaService
 {
     Q_OBJECT
 public:
     MockService(QObject *parent, QAbstractMediaControl *control):
-        QRadioService(parent),
+        QAbstractMediaService(parent),
         mockControl(control) {}
 
     QAbstractMediaControl* control(const char *) const
@@ -183,9 +184,9 @@ class MockObject : public QAbstractMediaObject
     Q_OBJECT
 public:
     MockObject(QObject *parent, QAbstractMediaControl *control):
-        QAbstractMediaObject(parent),
-        mockService(new MockService(this, control))
+        QAbstractMediaObject(parent, new MockService(this, control))
     {
+        mockService = service();
     }
 
     bool isValid() const
@@ -193,12 +194,21 @@ public:
         return true;
     }
 
-    QRadioService* service() const
+    QAbstractMediaService *mockService;
+};
+
+class MockProvider : public QMediaServiceProvider
+{
+public:
+    MockProvider(MockService *service):mockService(service) {}
+    QAbstractMediaService *requestService(const QByteArray &, const QList<QByteArray> &)
     {
         return mockService;
     }
 
-    QRadioService *mockService;
+    void releaseService(QAbstractMediaService *) {}
+
+    MockService *mockService;
 };
 
 class tst_QRadioPlayer: public QObject
@@ -221,15 +231,17 @@ private slots:
 
 private:
     MockObject      *object;
-    MockProvider    *mock;
+    MockControl     *mock;
+    MockProvider    *provider;
     QRadioPlayer    *radio;
 };
 
 void tst_QRadioPlayer::init()
 {
-    mock = new MockProvider(this);
+    mock = new MockControl(this);
     object = new MockObject(this, mock);
-    radio = new QRadioPlayer(0,object->service());
+    provider = new MockProvider(static_cast<MockService*>(object->service()));
+    radio = new QRadioPlayer(0,provider);
     QVERIFY(radio->service() != 0);
     QVERIFY(radio->isValid());
 }
@@ -237,6 +249,7 @@ void tst_QRadioPlayer::init()
 void tst_QRadioPlayer::cleanup()
 {
     delete radio;
+    delete provider;
 }
 
 void tst_QRadioPlayer::testBand()

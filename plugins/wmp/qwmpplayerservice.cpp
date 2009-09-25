@@ -53,7 +53,7 @@
 #include <wmprealestate.h>
 
 QWmpPlayerService::QWmpPlayerService(EmbedMode mode, QObject *parent)
-    : QMediaPlayerService(parent)
+    : QAbstractMediaService(parent)
     , m_ref(1)
     , m_embedMode(mode)
     , m_player(0)

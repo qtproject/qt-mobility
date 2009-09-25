@@ -37,14 +37,14 @@
 
 #include <QtCore/qobject.h>
 
-#include <multimedia/qaudiosourceservice.h>
+#include <multimedia/qabstractmediaservice.h>
 
 class AudioCaptureSession;
 class AudioEncoderControl;
 class AudioMediaRecorderControl;
 class AudioDeviceControl;
 
-class AudioCaptureService : public QAudioSourceService
+class AudioCaptureService : public QAbstractMediaService
 {
     Q_OBJECT
 public:

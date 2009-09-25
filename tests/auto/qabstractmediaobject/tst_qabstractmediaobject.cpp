@@ -135,12 +135,10 @@ class QtTestMediaObject : public QAbstractMediaObject
     Q_PROPERTY(int b READ b WRITE setB NOTIFY bChanged)
     Q_PROPERTY(int c READ c WRITE setC NOTIFY cChanged)
 public:
-    QtTestMediaObject() : m_a(0), m_b(0), m_c(0) {}
+    QtTestMediaObject(): QAbstractMediaObject(0, 0), m_a(0), m_b(0), m_c(0) {}
 
-    QAbstractMediaService* service() const { return 0; }
     bool isValid() const { return true; }
 
-    using QAbstractMediaObject::registerService;
     using QAbstractMediaObject::addPropertyWatch;
     using QAbstractMediaObject::removePropertyWatch;
 
@@ -371,7 +369,6 @@ void tst_QAbstractMediaObject::isMetaDataAvailable()
     service.metaData.setMetaDataAvailable(false);
 
     QtTestMediaObject object;
-    object.registerService(&service);
 
     QSignalSpy spy(&object, SIGNAL(metaDataAvailableChanged(bool)));
 
@@ -396,7 +393,6 @@ void tst_QAbstractMediaObject::isWritable()
     service.metaData.setWritable(false);
 
     QtTestMediaObject object;
-    object.registerService(&service);
 
     QSignalSpy spy(&object, SIGNAL(metaDataWritableChanged(bool)));
 
@@ -419,7 +415,6 @@ void tst_QAbstractMediaObject::metaDataChanged()
 {
     QtTestMetaDataService service;
     QtTestMediaObject object;
-    object.registerService(&service);
 
     QSignalSpy spy(&object, SIGNAL(metaDataChanged()));
 
@@ -456,7 +451,6 @@ void tst_QAbstractMediaObject::metaData()
     service.metaData.m_data.insert(QAbstractMediaObject::Genre, genre);
 
     QtTestMediaObject object;
-    object.registerService(&service);
 
     QCOMPARE(object.metaData(QAbstractMediaObject::AlbumArtist).toString(), artist);
     QCOMPARE(object.metaData(QAbstractMediaObject::Title).toString(), title);
@@ -478,7 +472,6 @@ void tst_QAbstractMediaObject::setMetaData()
     service.metaData.populateMetaData();
 
     QtTestMediaObject object;
-    object.registerService(&service);
 
     object.setMetaData(QAbstractMediaObject::Title, title);
     QCOMPARE(object.metaData(QAbstractMediaObject::Title).toString(), title);
@@ -497,7 +490,6 @@ void tst_QAbstractMediaObject::extendedMetaData()
     service.metaData.m_extendedData.insert(QLatin1String("Genre"), genre);
 
     QtTestMediaObject object;
-    object.registerService(&service);
 
     QCOMPARE(object.extendedMetaData(QLatin1String("Artist")).toString(), artist);
     QCOMPARE(object.extendedMetaData(QLatin1String("Title")).toString(), title);
@@ -509,7 +501,6 @@ void tst_QAbstractMediaObject::setExtendedMetaData()
     service.metaData.populateMetaData();
 
     QtTestMediaObject object;
-    object.registerService(&service);
 
     QString title(QLatin1String("In the Kingdom of the Blind the One eyed are Kings"));
 

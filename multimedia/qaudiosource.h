@@ -52,7 +52,6 @@
 
 #include <multimedia/qmediaserviceprovider.h>
 
-class QAudioSourceService;
 class QAudioSourcePrivate;
 
 class Q_MEDIA_EXPORT QAudioSource : public QAbstractMediaObject
@@ -60,12 +59,12 @@ class Q_MEDIA_EXPORT QAudioSource : public QAbstractMediaObject
     Q_OBJECT
 
     Q_ENUMS(State)
+
 public:
-    QAudioSource(QObject *parent = 0, QAbstractMediaService *service = 0);
+    QAudioSource(QObject *parent = 0, QMediaServiceProvider *service = 0);
     ~QAudioSource();
 
     bool isValid() const;
-    QAbstractMediaService* service() const;
 
     QAudioFormat format() const;
     void setFormat(const QAudioFormat &format);

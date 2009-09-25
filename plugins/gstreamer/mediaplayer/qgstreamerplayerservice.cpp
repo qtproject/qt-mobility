@@ -52,8 +52,8 @@
 #include <multimedia/qmediaplaylistnavigator.h>
 #include <multimedia/qmediaplaylist.h>
 
-QGstreamerPlayerService::QGstreamerPlayerService(QObject *parent)
-    : QMediaPlayerService(parent)
+QGstreamerPlayerService::QGstreamerPlayerService(QObject *parent):
+     QAbstractMediaService(parent)
 {
     m_session = new QGstreamerPlayerSession(this);
     m_control = new QGstreamerPlayerControl(m_session, this);

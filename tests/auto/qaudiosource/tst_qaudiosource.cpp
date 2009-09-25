@@ -36,7 +36,6 @@
 #include <QDebug>
 #include <QAudioFormat>
 
-#include <multimedia/qaudiosourceservice.h>
 #include <multimedia/qaudiosource.h>
 #include <multimedia/qaudioencodercontrol.h>
 #include <multimedia/qmediarecordercontrol.h>
@@ -196,12 +195,12 @@ private:
 };
 
 
-class MockAudioSourceService : public QAudioSourceService
+class MockAudioSourceService : public QAbstractMediaService
 {
     Q_OBJECT
 
 public:
-    MockAudioSourceService(): QAudioSourceService(0)
+    MockAudioSourceService(): QAbstractMediaService(0)
     {
         mockAudioEncoderControl = new MockAudioEncoderControl(this);
         mockMediaRecorderControl = new MockMediaRecorderControl(this);
@@ -234,6 +233,20 @@ public:
     MockAudioDeviceControl *mockAudioDeviceControl;
 };
 
+class MockProvider : public QMediaServiceProvider
+{
+public:
+    MockProvider(MockAudioSourceService *service):mockService(service) {}
+    QAbstractMediaService *requestService(const QByteArray&, const QList<QByteArray> &)
+    {
+        return mockService;
+    }
+
+    void releaseService(QAbstractMediaService *) {}
+
+    MockAudioSourceService *mockService;
+};
+
 
 class tst_QAudioSource: public QObject
 {
@@ -252,22 +265,24 @@ private slots:
 private:
     QAudioSource *audiosource;
     MockAudioSourceService  *mockAudioSourceService;
+    MockProvider *mockProvider;
 };
 
 void tst_QAudioSource::initTestCase()
 {
     mockAudioSourceService = new MockAudioSourceService;
+    mockProvider = new MockProvider(mockAudioSourceService);
 }
 
 void tst_QAudioSource::cleanupTestCase()
 {
-    delete mockAudioSourceService;
     delete audiosource;
+    delete mockProvider;
 }
 
 void tst_QAudioSource::testAudioSource()
 {
-    audiosource = new QAudioSource(0, mockAudioSourceService);
+    audiosource = new QAudioSource(0, mockProvider);
 
     QCOMPARE(audiosource->service(), mockAudioSourceService);
 

@@ -68,10 +68,6 @@ public:
     explicit QMediaImageViewer(QObject *parent = 0);
     ~QMediaImageViewer();
 
-    QAbstractMediaService *service() const;
-
-    bool isValid() const;
-
     State state() const;
     MediaStatus mediaStatus() const;
 

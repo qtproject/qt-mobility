@@ -120,11 +120,9 @@ void QMediaImageViewerPrivate::_q_playlistDestroyed(QObject *object)
     Constructs a new slide show with the given \a parent.
 */
 QMediaImageViewer::QMediaImageViewer(QObject *parent)
-    : QAbstractMediaObject(*new QMediaImageViewerPrivate, parent)
+    : QAbstractMediaObject(*new QMediaImageViewerPrivate, parent, new QMediaImageViewerService)
 {
     Q_D(QMediaImageViewer);
-
-    d->service = new QMediaImageViewerService;
 
     d->slideControl = qobject_cast<QMediaImageViewerControl*>(
             d->service->control(QMediaImageViewerControl_iid));
@@ -138,22 +136,6 @@ QMediaImageViewer::~QMediaImageViewer()
     Q_D(QMediaImageViewer);
 
     delete d->service;
-}
-
-/*!
-    \reimp
-*/
-QAbstractMediaService *QMediaImageViewer::service() const
-{
-    return d_func()->service;
-}
-
-/*!
-    \reimp
-*/
-bool QMediaImageViewer::isValid() const
-{
-    return d_func()->service != 0;
 }
 
 /*!

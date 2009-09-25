@@ -37,7 +37,7 @@
 
 #include <QtCore/qobject.h>
 
-#include "qcameraservice.h"
+#include <multimedia/qabstractmediaservice.h>
 
 class V4LMediaFormatControl;
 class V4LVideoEncode;
@@ -46,9 +46,10 @@ class V4LMediaControl;
 class V4LCameraSession;
 class V4LVideoOutputControl;
 
-class V4LCameraService : public QCameraService
+class V4LCameraService : public QAbstractMediaService
 {
     Q_OBJECT
+
 public:
     V4LCameraService(QObject *parent = 0);
     ~V4LCameraService();
