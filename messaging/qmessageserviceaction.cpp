@@ -64,6 +64,9 @@
 
     Each QMessageServiceAction instance will report only the changes pertaining to the request
     that instance delivers.
+
+    Except where noted QMessageServiceActions may initiate network activity. Other functions in
+    the mobility messaging API will not initiate network activity.
 */
 
 /*!
@@ -109,6 +112,9 @@
     unknown.
     
     Returns true if the action can be initiated; otherwise returns false.
+
+    Note: This function should not initiate network activity, instead only message data
+    already stored on the device will be used during evaluation of the function.
     
     \sa  QMessage, QMessageFilter, QMessageOrdering, messagesFound(), progressChanged(), countMessages()
 */
@@ -134,6 +140,9 @@
 
     Returns true if the action can be initiated; otherwise returns false.
     
+    Note: This function should not initiate network activity, instead only message data
+    already stored on the device will be used during evaluation of the function.
+    
     \sa  QMessage, QMessageFilter, QMessageOrdering, messagesFound(), progressChanged(), countMessages()
 */
 
@@ -152,6 +161,9 @@
     unknown.
     
     Returns true if the action can be initiated; otherwise returns false.
+    
+    Note: This function should not initiate network activity, instead only message data
+    already stored on the device will be used during evaluation of the function.
     
     \sa  QMessage, QMessageFilter, messagesCounted(), progressChanged(), queryMessages()
 */
@@ -172,6 +184,9 @@
     unknown.
     
     Returns true if the action can be initiated; otherwise returns false.
+    
+    Note: This function should not initiate network activity, instead only message data
+    already stored on the device will be used during evaluation of the function.
     
     \sa  QMessage, QMessageFilter, messagesCounted(), progressChanged(), queryMessages()
 */

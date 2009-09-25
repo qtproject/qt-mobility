@@ -212,6 +212,10 @@ showing a message using a native application.
 
 Service actions communciate their operational status by emitting signals.
 
+Functions outside the QMessageServiceAction class should not invoke
+network activity. That is only QMessageServiceAction functions should
+be responsible for initiating network activity.
+
 \section1 Concurrent Access to Messaging Data
 
 The library provides a level of concurrent access to messaging data by
