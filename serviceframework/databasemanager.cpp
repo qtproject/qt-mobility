@@ -32,7 +32,7 @@
 ****************************************************************************/
 
 #include "databasemanager_p.h"
-#include <qserviceinterfacedescriptor_p.h>
+#include "qserviceinterfacedescriptor_p.h"
 #include <QFileSystemWatcher>
 #include <QHash>
 

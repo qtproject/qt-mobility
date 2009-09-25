@@ -45,7 +45,7 @@
 // We mean it.
 //
 
-#include <qnetworkconfiguration.h>
+#include "qnetworkconfiguration.h"
 #include <QtCore/qshareddata.h>
 #include <QNetworkInterface>
 

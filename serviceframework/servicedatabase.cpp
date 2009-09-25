@@ -36,8 +36,8 @@
 #include <QDir>
 #include <QSet>
 #include "servicedatabase_p.h"
-#include <qserviceinterfacedescriptor.h>
-#include <qserviceinterfacedescriptor_p.h>
+#include "qserviceinterfacedescriptor.h"
+#include "qserviceinterfacedescriptor_p.h"
 #include <QUuid>
 #include "dberror.h"
 

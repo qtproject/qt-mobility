@@ -36,7 +36,7 @@
 #include "qbearerglobal.h"
 
 #include <QtCore/qobject.h>
-#include <qnetworkconfiguration.h>
+#include "qnetworkconfiguration.h"
 
 QT_BEGIN_HEADER
 

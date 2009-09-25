@@ -45,8 +45,8 @@
 // We mean it.
 //
 
-#include <qnetworkconfigmanager.h>
-#include <qnetworkconfiguration_p.h>
+#include "qnetworkconfigmanager.h"
+#include "qnetworkconfiguration_p.h"
 
 #include <QHash>
 

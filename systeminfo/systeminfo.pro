@@ -32,7 +32,6 @@ win32 {
 #    INCLUDEPATH += "C:\Program Files\Microsoft SDKs\Windows\v6.0A\Include" \
         #"C:\Program Files\Microsoft Visual Studio 9.0\VC\include" \
  #       "C:\Program Files\Microsoft SDKs\Windows\v6.1\Include"
-    INCLUDEPATH += .
 
     wince*:LIBS += aygshell.lib \
         Nleddrv.lib \
