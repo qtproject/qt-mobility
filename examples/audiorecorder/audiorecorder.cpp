@@ -32,12 +32,12 @@
 **
 ****************************************************************************/
 
-#include <qmediarecorder.h>
-#include <qmediaservice.h>
-
-#include <qaudiosource.h>
-
 #include <QtGui>
+
+#include <multimedia/qaudiosource.h>
+#include <multimedia/qmediarecorder.h>
+#include <multimedia/qmediaservice.h>
+
 
 #ifndef QT_NO_MULTIMEDIA
 #include <QtMultimedia/qaudioformat.h>
