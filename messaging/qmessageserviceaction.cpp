@@ -66,7 +66,9 @@
     that instance delivers.
 
     Except where noted QMessageServiceActions may initiate network activity. Other functions in
-    the mobility messaging API will not initiate network activity.
+    the mobility messaging API will not initiate network activity, with the exception of MAPI
+    based platforms which may initiate network activity during the evaluation of any function
+    call.
 */
 
 /*!

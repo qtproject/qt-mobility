@@ -50,9 +50,9 @@
     QMessageFilter, QMessageFolderFilter, QMessageAccountFilter classes 
     respectively.
     
-    QMessageStore functions should not initiate network activity. Instead they are
-    restricted to operating on data already on the device. See QMessageServiceAction for
-    functions related to initiating network activity.
+    With the exception of MAPI based platforms, QMessageStore functions should not initiate 
+    network activity. Instead they are restricted to operating on data already on the device.
+    See QMessageServiceAction for functions related to initiating network activity.
 
     If a QMessageStore operation fails, the lastError() function will return an error code
     value indicating the failure mode encountered.  A successful operation will set the 
