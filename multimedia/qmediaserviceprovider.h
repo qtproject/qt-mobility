@@ -45,7 +45,8 @@ class Q_MEDIA_EXPORT QMediaServiceProvider : public QObject
     Q_OBJECT
 
 public:
-    virtual QAbstractMediaService* createService(const QByteArray &type, const QList<QByteArray> &optional = QList<QByteArray>()) const = 0;
+    virtual QAbstractMediaService* requestService(const QByteArray &type, const QList<QByteArray> &optional = QList<QByteArray>()) = 0;
+    virtual void releaseService(QAbstractMediaService *service) = 0;
 
     static QMediaServiceProvider* defaultServiceProvider();
 };

@@ -166,7 +166,7 @@ QMediaRecorder::QMediaRecorder(QAbstractMediaObject *mediaObject):
 }
 
 QMediaRecorder::QMediaRecorder(QObject *parent, QMediaServiceProvider *provider):
-    QAbstractMediaObject(*new QMediaRecorderPrivate, parent, provider->createService("mediarecorder"))
+    QAbstractMediaObject(*new QMediaRecorderPrivate, parent, provider->requestService("mediarecorder"))
 {
     Q_D(QMediaRecorder);
 

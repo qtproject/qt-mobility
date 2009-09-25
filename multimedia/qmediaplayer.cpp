@@ -63,6 +63,7 @@ class QMediaPlayerPrivate : public QAbstractMediaObjectPrivate
 public:
     QMediaPlayerPrivate():service(0), control(0) {}
 
+    QMediaServiceProvider *provider;
     QAbstractMediaService* service;
     QMediaPlayerControl* control;
     QMediaPlayer::Error error;
@@ -141,12 +142,13 @@ void QMediaPlayerPrivate::_q_updateMedia(const QMediaSource &media)
 */
 
 QMediaPlayer::QMediaPlayer(QObject *parent, QMediaServiceProvider *provider):
-    QAbstractMediaObject(*new QMediaPlayerPrivate, parent, provider->createService("mediaplayer"))
+    QAbstractMediaObject(*new QMediaPlayerPrivate, parent, provider->requestService("mediaplayer"))
 {
     Q_D(QMediaPlayer);
 
-    Q_ASSERT(d->service != 0);
+    d->provider = provider;
 
+    Q_ASSERT(d->service != 0);
     if (d->service != 0) {
         d->control = qobject_cast<QMediaPlayerControl*>(d->service->control(QMediaPlayerControl_iid));
         if (d->control != 0) {
@@ -180,6 +182,9 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaServiceProvider *provider):
 
 QMediaPlayer::~QMediaPlayer()
 {
+    Q_D(QMediaPlayer);
+
+    d->provider->releaseService(d->service);
 }
 
 /*!

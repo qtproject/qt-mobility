@@ -52,6 +52,7 @@
 class QAudioSourcePrivate : public QAbstractMediaObjectPrivate
 {
 public:
+    QAudioSourcePrivate():audioEncoderControl(0), mediaRecorderControl(0) {}
     QAudioEncoderControl  *audioEncoderControl;
     QMediaRecorderControl *mediaRecorderControl;
 };
@@ -61,7 +62,7 @@ public:
 */
 
 QAudioSource::QAudioSource(QObject *parent, QMediaServiceProvider *provider):
-    QAbstractMediaObject(*new QAudioSourcePrivate, parent, provider->createService("audiosource"))
+    QAbstractMediaObject(*new QAudioSourcePrivate, parent, provider->requestService("audiosource"))
 {
     Q_D(QAudioSource);
 
@@ -70,10 +71,6 @@ QAudioSource::QAudioSource(QObject *parent, QMediaServiceProvider *provider):
     if (d->service != 0) {
         d->audioEncoderControl = qobject_cast<QAudioEncoderControl *>(d->service->control(QAudioEncoderControl_iid));
         d->mediaRecorderControl = qobject_cast<QMediaRecorderControl *>(d->service->control(QMediaRecorderControl_iid));
-    }
-    else {
-        d->audioEncoderControl = 0;
-        d->mediaRecorderControl = 0;
     }
 }
 

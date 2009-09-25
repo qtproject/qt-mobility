@@ -201,10 +201,12 @@ class MockProvider : public QMediaServiceProvider
 {
 public:
     MockProvider(MockService *service):mockService(service) {}
-    QAbstractMediaService *createService(const QByteArray &, const QList<QByteArray> &) const
+    QAbstractMediaService *requestService(const QByteArray &, const QList<QByteArray> &)
     {
         return mockService;
     }
+
+    void releaseService(QAbstractMediaService *) {}
 
     MockService *mockService;
 };

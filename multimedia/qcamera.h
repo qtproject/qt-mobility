@@ -45,7 +45,6 @@
 
 #include <multimedia/qmediaserviceprovider.h>
 
-class QCameraService;
 class QCameraControl;
 
 

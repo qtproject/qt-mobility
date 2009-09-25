@@ -69,7 +69,7 @@ public:
 */
 
 QCamera::QCamera(QObject *parent, QMediaServiceProvider *provider):
-    QAbstractMediaObject(*new QCameraPrivate, parent, provider->createService("camea"))
+    QAbstractMediaObject(*new QCameraPrivate, parent, provider->requestService("camea"))
 {
     Q_D(QCamera);
 

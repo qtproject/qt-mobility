@@ -81,7 +81,7 @@ public:
 */
 
 QRadioPlayer::QRadioPlayer(QObject *parent, QMediaServiceProvider* provider):
-    QAbstractMediaObject(*new QRadioPlayerPrivate, parent, provider->createService("radio"))
+    QAbstractMediaObject(*new QRadioPlayerPrivate, parent, provider->requestService("radio"))
 {
     Q_D(QRadioPlayer);
 

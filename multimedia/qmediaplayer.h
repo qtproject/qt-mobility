@@ -164,9 +164,8 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_updateMedia(const QMediaSource&))
 };
 
-Q_DECLARE_METATYPE(QMediaPlayer::State);
-Q_DECLARE_METATYPE(QMediaPlayer::MediaStatus);
-Q_DECLARE_METATYPE(QMediaPlayer::Error);
-
+Q_DECLARE_METATYPE(QMediaPlayer::State)
+Q_DECLARE_METATYPE(QMediaPlayer::MediaStatus)
+Q_DECLARE_METATYPE(QMediaPlayer::Error)
 
 #endif  // QMEDIAPLAYER_H

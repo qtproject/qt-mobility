@@ -46,7 +46,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, loader,
 class QPluginServiceProvider : public QMediaServiceProvider
 {
 public:
-    QAbstractMediaService* createService(const QByteArray &type, const QList<QByteArray> &optional) const
+    QAbstractMediaService* requestService(const QByteArray &type, const QList<QByteArray> &)
     {
         QString key(type);
         QMediaServiceProviderPlugin *plugin =
@@ -58,7 +58,13 @@ public:
         qWarning() << "defaultServiceProvider::createService(): no plugin found for -" << key;
         return 0;
     }
+
+    void releaseService(QAbstractMediaService *service)
+    {
+        delete service;
+    }
 };
+
 Q_GLOBAL_STATIC(QPluginServiceProvider, pluginProvider);
 
 
