@@ -35,10 +35,11 @@
 #ifndef QMEDIAPLAYLIST_H
 #define QMEDIAPLAYLIST_H
 
+#include <QtCore/qobject.h>
+
 #include <multimedia/qmediasource.h>
 #include <multimedia/qmediaobject.h>
 
-#include <QtCore/qobject.h>
 
 class QMediaPlaylistProvider;
 

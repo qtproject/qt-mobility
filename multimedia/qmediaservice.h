@@ -35,16 +35,17 @@
 #ifndef QABSTRACTMEDIASERVICE_H
 #define QABSTRACTMEDIASERVICE_H
 
-#include <multimedia/qmediacontrol.h>
-
 #include <QtCore/qobject.h>
 #include <QtCore/qlist.h>
 
-class QMediaServicePrivate;
+#include <multimedia/qmediacontrol.h>
 
+
+class QMediaServicePrivate;
 class Q_MEDIA_EXPORT QMediaService : public QObject
 {
     Q_OBJECT
+
 public:
     enum MediaEndpoint
     {

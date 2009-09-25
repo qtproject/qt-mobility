@@ -42,7 +42,6 @@
 #include <multimedia/qmultimediaglobal.h>
 
 class QMediaControlPrivate;
-
 class Q_MEDIA_EXPORT QMediaControl : public QObject
 {
     Q_OBJECT
@@ -52,9 +51,10 @@ public:
 
 protected:
     QMediaControl(QObject *parent = 0);
-    QMediaControl(QMediaControlPrivate &dd, QObject* parent = 0);
+    QMediaControl(QMediaControlPrivate &dd, QObject *parent = 0);
 
     QMediaControlPrivate *d_ptr;
+
 private:
     Q_DECLARE_PRIVATE(QMediaControl)
 };

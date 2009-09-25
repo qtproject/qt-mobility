@@ -38,8 +38,8 @@
 #include <multimedia/qmediaobject.h>
 #include <multimedia/qmediasource.h>
 
-class QMediaImageViewerPrivate;
 
+class QMediaImageViewerPrivate;
 class Q_MEDIA_EXPORT QMediaImageViewer : public QMediaObject
 {
     Q_OBJECT
@@ -49,6 +49,7 @@ class Q_MEDIA_EXPORT QMediaImageViewer : public QMediaObject
     Q_PROPERTY(QMediaResource currentMedia READ currentMedia NOTIFY currentMediaChanged)
     Q_PROPERTY(int timeout READ timeout WRITE setTimeout)
     Q_ENUMS(State MediaStatus)
+
 public:
     enum State
     {

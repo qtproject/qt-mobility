@@ -42,7 +42,6 @@
 class QMediaObject;
 
 class QVideoWidgetPrivate;
-
 class Q_MEDIA_EXPORT QVideoWidget : public QWidget
 {
     Q_OBJECT
