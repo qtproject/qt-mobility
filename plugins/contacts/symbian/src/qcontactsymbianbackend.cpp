@@ -210,7 +210,14 @@ bool QContactSymbianEngine::removeGroup(const QUniqueId& groupId, QSet<QUniqueId
 QMap<QString, QContactDetailDefinition> QContactSymbianEngine::detailDefinitions(QContactManager::Error& error) const
 {
     error = QContactManager::NoError;
-    return QContactManagerEngine::schemaDefinitions();
+
+    // get default constraints schema 
+    QMap<QString, QContactDetailDefinition> defMap = QContactManagerEngine::schemaDefinitions();
+    
+    // update default constraints
+    defMap[QContactName::DefinitionName].setUnique(true);
+    defMap[QContactNickname::DefinitionName].setUnique(true);
+    return defMap;
 }
 
 bool QContactSymbianEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const

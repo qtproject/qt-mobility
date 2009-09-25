@@ -144,11 +144,11 @@ void TransformContact::transformContactL(
             transformGuidDetailL(detailList.at(i), contactItem);
 		}
 		
-	    // Add contact's timestamp
-	    if (detailList.at(i).definitionName() == QContactTimestamp::DefinitionName)
-	    {
-            transformTimestampDetailL(detailList.at(i), contactItem);
-	    }
+	    // Add contact's timestamp - just ignored silently for now
+	    //if (detailList.at(i).definitionName() == QContactTimestamp::DefinitionName)
+	    //{
+        //    transformTimestampDetailL(detailList.at(i), contactItem);
+	    //}
 	}
 	
 	contactItem.UpdateFieldSet(fieldSet);
