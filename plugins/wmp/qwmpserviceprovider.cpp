@@ -45,12 +45,17 @@ QStringList QWmpServiceProviderPlugin::keys() const
 
 QMediaService *QWmpServiceProviderPlugin::create(const QString &key)
 {
-    if (qstrcmp(type.constData(), "mediaplayer") == 0)
+    if (QLatin1String("mediaplayer") == key) {
+        QByteArray providerKey = qgetenv("QT_MEDIAPLAYER_PROVIDER");
+        if (!providerKey.isNull() && qstrcmp(providerKey.constData(), "windowsmediaplayer") == 0)
+            return new QWmpPlayerService(QWmpPlayerService::RemoteEmbed);
+
         return new QWmpPlayerService(QWmpPlayerService::LocalEmbed);
-        /*
-    else if (qstrcmp(iid, QRemoteMediaPlayerService_iid) == 0)
+    }
+
+    else if (QLatin1String("windowsmediaplayer") == key)
         return new QWmpPlayerService(QWmpPlayerService::RemoteEmbed);
-        */
+
     return 0;
 }
 
