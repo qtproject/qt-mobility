@@ -52,27 +52,26 @@ QStringList QGstreamerServicePlugin::keys() const
     return QStringList()
 #ifdef QMEDIA_GSTREAMER_PLAYER
             << QLatin1String("mediaplayer")
-            << QLatin1String("gstreamermediaplayer")
 #endif
 #ifdef QMEDIA_GSTREAMER_CAPTURE
-            << QLatin1String("mediarecorder")
+            << QLatin1String("audiosource")
             << QLatin1String("camera")
 #endif
             ;
 }
 
-QAbstractMediaService* QGstreamerServicePlugin::create(QString const& key)
+QAbstractMediaService* QGstreamerServicePlugin::create(const QString &key)
 {
 #ifdef QMEDIA_GSTREAMER_PLAYER
     if (key == QLatin1String("mediaplayer"))
         return new QGstreamerPlayerService;
 #endif
 #ifdef QMEDIA_GSTREAMER_CAPTURE
-//    if (key == QLatin1String("mediarecorder"))
-//        return new QGstreamerCaptureService(interface);
+    if (key == QLatin1String("audiosource"))
+        return new QGstreamerCaptureService(key);
 
-//    if (key == QLatin1String("camera"))
-//        return new QGstreamerCaptureService(interface);
+    if (key == QLatin1String("camera"))
+        return new QGstreamerCaptureService(key);
 #endif
 
     qDebug() << "unsupported key:" << key;
