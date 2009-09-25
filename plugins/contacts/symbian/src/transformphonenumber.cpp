@@ -106,6 +106,7 @@ QList<CContactItemField *> TransformPhoneNumber::transformDetailL(const QContact
 /*	else if (subTypes.contains(QContactPhoneNumber::SubTypeDtmf))
 	{
         newField->AddFieldTypeL(KUidContactFieldDTMF);
+        newField->SetMapping(KUidContactFieldVCardMapUnknown);
 	}
 	
 	// assistant number

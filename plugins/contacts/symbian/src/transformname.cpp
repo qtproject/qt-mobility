@@ -45,6 +45,7 @@ QList<CContactItemField *> TransformName::transformDetailL(const QContactDetail 
 	TPtrC fieldTextPrefix(reinterpret_cast<const TUint16*>(name.prefix().utf16()));
 	CContactItemField* prefix = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldPrefixName);
 	prefix->TextStorage()->SetTextL(fieldTextPrefix);
+	prefix->SetMapping(KUidContactFieldVCardMapUnusedN);
 	fieldList.append(prefix);
 	CleanupStack::Pop(prefix);
 	
@@ -52,6 +53,7 @@ QList<CContactItemField *> TransformName::transformDetailL(const QContactDetail 
 	TPtrC fieldTextFirstName(reinterpret_cast<const TUint16*>(name.first().utf16()));
 	CContactItemField* firstName = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldGivenName);
 	firstName->TextStorage()->SetTextL(fieldTextFirstName);
+	firstName->SetMapping(KUidContactFieldVCardMapUnusedN);
 	fieldList.append(firstName);
 	CleanupStack::Pop(firstName);
 
@@ -59,6 +61,7 @@ QList<CContactItemField *> TransformName::transformDetailL(const QContactDetail 
 	TPtrC fieldTextMiddleName(reinterpret_cast<const TUint16*>(name.middle().utf16()));
 	CContactItemField* middleName = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldAdditionalName);
 	middleName->TextStorage()->SetTextL(fieldTextMiddleName);
+	middleName->SetMapping(KUidContactFieldVCardMapUnusedN);
 	fieldList.append(middleName);
 	CleanupStack::Pop(middleName);
 	
@@ -66,6 +69,7 @@ QList<CContactItemField *> TransformName::transformDetailL(const QContactDetail 
 	TPtrC fieldTextLastName(reinterpret_cast<const TUint16*>(name.last().utf16()));
 	CContactItemField* lastName = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldFamilyName);
 	lastName->TextStorage()->SetTextL(fieldTextLastName);
+	lastName->SetMapping(KUidContactFieldVCardMapUnusedN);
 	fieldList.append(lastName);
 	CleanupStack::Pop(lastName);
 	
@@ -73,6 +77,7 @@ QList<CContactItemField *> TransformName::transformDetailL(const QContactDetail 
 	TPtrC fieldTextSuffix(reinterpret_cast<const TUint16*>(name.suffix().utf16()));
 	CContactItemField* suffix = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldSuffixName);
 	suffix->TextStorage()->SetTextL(fieldTextSuffix);
+	suffix->SetMapping(KUidContactFieldVCardMapUnusedN);
 	fieldList.append(suffix);
 	CleanupStack::Pop(suffix);
 	
