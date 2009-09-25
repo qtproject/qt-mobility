@@ -33,6 +33,7 @@
 ****************************************************************************/
 
 #include <multimedia/qradioplayer.h>
+#include <multimedia/qmediaservice.h>
 #include <multimedia/qmediaobject_p.h>
 #include <multimedia/qradioplayercontrol.h>
 

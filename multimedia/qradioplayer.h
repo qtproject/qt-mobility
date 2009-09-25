@@ -38,13 +38,10 @@
 #include <QtCore/qobject.h>
 
 #include <multimedia/qmediaobject.h>
-#include <multimedia/qmediaservice.h>
 #include <multimedia/qmediaserviceprovider.h>
 
-class QRadioService;
+
 class QRadioPlayerPrivate;
-
-
 class Q_MEDIA_EXPORT QRadioPlayer : public QMediaObject
 {
     Q_OBJECT
