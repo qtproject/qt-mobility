@@ -137,5 +137,5 @@ QT += network
 include (../common.pri)
 
 headers.files = $$PUBLIC_HEADERS
-headers.path = $$OUTPUT_DIR/include
+!maemo:headers.path = $$OUTPUT_DIR/include
 INSTALLS+=headers
