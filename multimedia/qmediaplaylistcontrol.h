@@ -36,11 +36,12 @@
 #ifndef QMEDIAPLAYLISTCONTROL_H
 #define QMEDIAPLAYLISTCONTROL_H
 
-#include <multimedia/qabstractmediacontrol.h>
+#include <multimedia/qmediacontrol.h>
 #include <multimedia/qmediaplaylistnavigator.h>
+
 class QMediaPlaylistProvider;
 
-class Q_MEDIA_EXPORT QMediaPlaylistControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QMediaPlaylistControl : public QMediaControl
 {
     Q_OBJECT
 public:

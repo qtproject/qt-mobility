@@ -39,9 +39,9 @@
 #include <QtCore/qpair.h>
 #include <QtCore/qsize.h>
 
-#include <multimedia/qabstractmediacontrol.h>
-#include <multimedia/qabstractmediaobject.h>
-#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qmediacontrol.h>
+#include <multimedia/qmediaobject.h>
+#include <multimedia/qmediaservice.h>
 
 #include <multimedia/qmediaserviceprovider.h>
 
@@ -49,7 +49,7 @@ class QCameraControl;
 
 
 class QCameraPrivate;
-class Q_MEDIA_EXPORT QCamera : public QAbstractMediaObject
+class Q_MEDIA_EXPORT QCamera : public QMediaObject
 {
     Q_OBJECT
 

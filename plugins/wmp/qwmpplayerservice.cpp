@@ -53,7 +53,7 @@
 #include <wmprealestate.h>
 
 QWmpPlayerService::QWmpPlayerService(EmbedMode mode, QObject *parent)
-    : QAbstractMediaService(parent)
+    : QMediaService(parent)
     , m_ref(1)
     , m_embedMode(mode)
     , m_player(0)
@@ -136,7 +136,7 @@ QWmpPlayerService::~QWmpPlayerService()
     Q_ASSERT(m_ref == 1);
 }
 
-QAbstractMediaControl *QWmpPlayerService::control(const char *name) const
+QMediaControl *QWmpPlayerService::control(const char *name) const
 {
     if (qstrcmp(name, QMediaPlayerControl_iid) == 0) {
         return m_control;

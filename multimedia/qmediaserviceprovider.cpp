@@ -35,7 +35,7 @@
 
 #include <QtCore/qdebug.h>
 
-#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qmediaservice.h>
 #include <multimedia/qmediaserviceprovider.h>
 #include <multimedia/qmediaserviceproviderplugin.h>
 #include <multimedia/qmediapluginloader_p.h>
@@ -47,7 +47,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, loader,
 class QPluginServiceProvider : public QMediaServiceProvider
 {
 public:
-    QAbstractMediaService* requestService(const QByteArray &type, const QList<QByteArray> &)
+    QMediaService* requestService(const QByteArray &type, const QList<QByteArray> &)
     {
         QString key(type);
         QMediaServiceProviderPlugin *plugin =
@@ -60,7 +60,7 @@ public:
         return 0;
     }
 
-    void releaseService(QAbstractMediaService *service)
+    void releaseService(QMediaService *service)
     {
         delete service;
     }

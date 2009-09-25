@@ -44,7 +44,7 @@ class AudioCaptureServicePlugin : public QMediaServiceProviderPlugin
 
 public:
     QStringList keys() const;
-    QAbstractMediaService* create(QString const& key);
+    QMediaService* create(QString const& key);
 };
 
 #endif // AUDIOCAPTURESERVICEPLUGIN_H

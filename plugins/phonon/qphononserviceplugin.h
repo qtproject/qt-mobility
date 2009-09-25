@@ -43,7 +43,7 @@ class QPhononServicePlugin : public QMediaServiceProviderPlugin
     Q_OBJECT
 public:
     QStringList keys() const;
-    QAbstractMediaService* create(QString const& key);
+    QMediaService* create(QString const& key);
 };
 
 #endif // QGSTREAMERSERVICEPLUGIN_H

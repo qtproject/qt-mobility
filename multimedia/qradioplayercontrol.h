@@ -35,11 +35,10 @@
 #ifndef QRADIOPLAYERCONTROL_H
 #define QRADIOPLAYERCONTROL_H
 
-#include <multimedia/qabstractmediacontrol.h>
-
+#include <multimedia/qmediacontrol.h>
 #include <multimedia/qradioplayer.h>
 
-class Q_MEDIA_EXPORT QRadioPlayerControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QRadioPlayerControl : public QMediaControl
 {
     Q_OBJECT
 

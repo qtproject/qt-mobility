@@ -1,8 +1,8 @@
 TEMPLATE = subdirs
 
 SUBDIRS = \
-        qabstractmediaobject \
-        qabstractmediaservice \
+        qmediaobject \
+        qmediaservice \
         qmediaplaylist \
         qmediaplaylistnavigator \
         qmediaresource \

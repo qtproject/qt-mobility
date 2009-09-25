@@ -33,7 +33,7 @@
 ****************************************************************************/
 
 #include <multimedia/qcameraexposurecontrol.h>
-#include  "qabstractmediacontrol_p.h"
+#include  "qmediacontrol_p.h"
 
 /*!
     \class QCameraExposureControl
@@ -50,7 +50,7 @@
 */
 
 QCameraExposureControl::QCameraExposureControl(QObject *parent):
-    QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
+    QMediaControl(*new QMediaControlPrivate, parent)
 {
 }
 

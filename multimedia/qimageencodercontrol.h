@@ -35,14 +35,14 @@
 #ifndef QIMAGEENCODERCONTROL_H
 #define QIMAGEENCODERCONTROL_H
 
-#include <multimedia/qabstractmediacontrol.h>
+#include <multimedia/qmediacontrol.h>
 
 #include <QtCore/qsize.h>
 
 class QByteArray;
 class QStringList;
 
-class Q_MEDIA_EXPORT QImageEncoderControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QImageEncoderControl : public QMediaControl
 {
     Q_OBJECT
 public:

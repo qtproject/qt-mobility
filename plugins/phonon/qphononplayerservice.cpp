@@ -46,7 +46,7 @@
 #include <multimedia/qmediaplaylist.h>
 
 QPhononPlayerService::QPhononPlayerService(QObject *parent):
-    QAbstractMediaService(parent)
+    QMediaService(parent)
 {
     m_mediaObject = new Phonon::MediaObject(this);
     m_videoWidget = new Phonon::VideoWidget();
@@ -62,7 +62,7 @@ QPhononPlayerService::~QPhononPlayerService()
 {
 }
 
-QAbstractMediaControl *QPhononPlayerService::control(const char *name) const
+QMediaControl *QPhononPlayerService::control(const char *name) const
 {
     if (qstrcmp(name, QMediaPlayerControl_iid) == 0)
         return m_control;

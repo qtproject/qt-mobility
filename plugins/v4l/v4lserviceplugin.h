@@ -43,7 +43,7 @@ class V4LServicePlugin : public QMediaServiceProviderPlugin
     Q_OBJECT
 public:
     QStringList keys() const;
-    QAbstractMediaService* create(QString const& key);
+    QMediaService* create(QString const& key);
 };
 
 #endif // V4LSERVICEPLUGIN_H

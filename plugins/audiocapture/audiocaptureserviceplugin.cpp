@@ -46,7 +46,7 @@ QStringList AudioCaptureServicePlugin::keys() const
     return QStringList() << "mediarecorder";
 }
 
-QAbstractMediaService* AudioCaptureServicePlugin::create(QString const& key)
+QMediaService* AudioCaptureServicePlugin::create(QString const& key)
 {
     if (key == QLatin1String("mediarecorder"))
         return new AudioCaptureService;

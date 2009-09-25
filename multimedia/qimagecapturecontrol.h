@@ -35,11 +35,11 @@
 #ifndef QIMAGECAPTURECONTROL_H
 #define QIMAGECAPTURECONTROL_H
 
-#include <multimedia/qabstractmediacontrol.h>
+#include <multimedia/qmediacontrol.h>
 
 class QImage;
 
-class Q_MEDIA_EXPORT QImageCaptureControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QImageCaptureControl : public QMediaControl
 {
     Q_OBJECT
 public:

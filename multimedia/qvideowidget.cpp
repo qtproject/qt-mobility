@@ -34,8 +34,8 @@
 
 #include <multimedia/qvideowidget_p.h>
 
-#include <multimedia/qabstractmediaobject.h>
-#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qmediaobject.h>
+#include <multimedia/qmediaservice.h>
 #include <multimedia/qvideooutputcontrol.h>
 #include <multimedia/qvideowindowcontrol.h>
 #include <multimedia/qvideowidgetcontrol.h>
@@ -523,7 +523,7 @@ void QVideoWidgetPrivate::_q_customAspectRatioChanged(const QSize &ratio)
     Constructs a new widget with the given \a parent which displays video produced by a media
     \a object.
 */
-QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
+QVideoWidget::QVideoWidget(QMediaObject *object, QWidget *parent)
     : QWidget(parent, 0)
     , d_ptr(new QVideoWidgetPrivate)
 {

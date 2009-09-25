@@ -33,7 +33,7 @@
 ****************************************************************************/
 
 #include <multimedia/qvideowidgetcontrol.h>
-#include <multimedia/qabstractmediacontrol_p.h>
+#include <multimedia/qmediacontrol_p.h>
 
 /*!
     \class QVideoWidgetControl
@@ -46,7 +46,7 @@
     Constructs a new video widget control with the given \a parent.
 */
 QVideoWidgetControl::QVideoWidgetControl(QObject *parent)
-    :QAbstractMediaControl(parent)
+    :QMediaControl(parent)
 {
 }
 

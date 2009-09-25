@@ -36,8 +36,8 @@
 
 #include "multimedia/qvideowidget.h"
 
-#include "multimedia/qabstractmediaobject.h"
-#include "multimedia/qabstractmediaservice.h"
+#include "multimedia/qmediaobject.h"
+#include "multimedia/qmediaservice.h"
 #include "multimedia/qvideooutputcontrol.h"
 #include "multimedia/qvideowindowcontrol.h"
 #include "multimedia/qvideowidgetcontrol.h"
@@ -282,7 +282,7 @@ private:
 class QtTestRendererControl;
 #endif
 
-class QtTestVideoService : public QAbstractMediaService
+class QtTestVideoService : public QMediaService
 {
     Q_OBJECT
 public:
@@ -291,7 +291,7 @@ public:
             QtTestWindowControl *window,
             QtTestWidgetControl *widget,
             QtTestRendererControl *renderer)
-        : QAbstractMediaService(0)
+        : QMediaService(0)
         , outputControl(output)
         , windowControl(window)
         , widgetControl(widget)
@@ -309,7 +309,7 @@ public:
 #endif
     }
 
-    QAbstractMediaControl *control(const char *name) const
+    QMediaControl *control(const char *name) const
     {
         if (qstrcmp(name, QVideoOutputControl_iid) == 0)
             return outputControl;
@@ -331,7 +331,7 @@ public:
     QtTestRendererControl *rendererControl;
 };
 
-class QtTestVideoObject : public QAbstractMediaObject
+class QtTestVideoObject : public QMediaObject
 {
     Q_OBJECT
 public:
@@ -339,7 +339,7 @@ public:
             QtTestWindowControl *window,
             QtTestWidgetControl *widget,
             QtTestRendererControl *renderer):
-        QAbstractMediaObject(0, new QtTestVideoService(new QtTestOutputControl, window, widget, renderer))
+        QMediaObject(0, new QtTestVideoService(new QtTestOutputControl, window, widget, renderer))
     {
         testService = qobject_cast<QtTestVideoService*>(service());
         QList<QVideoOutputControl::Output> outputs;
@@ -355,7 +355,7 @@ public:
     }
 
     QtTestVideoObject(QtTestVideoService *service):
-        QAbstractMediaObject(0, service),
+        QMediaObject(0, service),
         testService(service)
     {
     }
@@ -372,7 +372,7 @@ public:
 class QtTestVideoWidget : public QVideoWidget
 {
 public:
-    QtTestVideoWidget(QAbstractMediaObject *object)
+    QtTestVideoWidget(QMediaObject *object)
         : QVideoWidget(object)
         , keyPressCount(0)
         , keyReleaseCount(0)

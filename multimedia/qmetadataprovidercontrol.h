@@ -35,13 +35,13 @@
 #ifndef QMETADATAPROVIDERCONTROL_H
 #define QMETADATAPROVIDERCONTROL_H
 
-#include <multimedia/qabstractmediacontrol.h>
-#include <multimedia/qabstractmediaobject.h>
+#include <multimedia/qmediacontrol.h>
+#include <multimedia/qmediaobject.h>
 
 #include <multimedia/qmediaresource.h>
 
 class QMetaDataProviderControlPrivate;
-class Q_MEDIA_EXPORT QMetaDataProviderControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QMetaDataProviderControl : public QMediaControl
 {
     Q_OBJECT
 
@@ -51,8 +51,8 @@ public:
     virtual bool isWritable() const = 0;
     virtual bool isMetaDataAvailable() const = 0;
 
-    virtual QVariant metaData(QAbstractMediaObject::MetaData key) const = 0;
-    virtual void setMetaData(QAbstractMediaObject::MetaData key, const QVariant &value) = 0;
+    virtual QVariant metaData(QMediaObject::MetaData key) const = 0;
+    virtual void setMetaData(QMediaObject::MetaData key, const QVariant &value) = 0;
 
     virtual QVariant extendedMetaData(const QString &key) const = 0;
     virtual void setExtendedMetaData(const QString &key, const QVariant &value) = 0;

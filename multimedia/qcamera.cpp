@@ -36,7 +36,7 @@
 
 #include <multimedia/qcamera.h>
 
-#include <multimedia/qabstractmediaobject_p.h>
+#include <multimedia/qmediaobject_p.h>
 #include <multimedia/qcameracontrol.h>
 #include <multimedia/qcameraexposurecontrol.h>
 #include <multimedia/qcamerafocuscontrol.h>
@@ -54,10 +54,10 @@
 */
 
 
-class QCameraPrivate : public QAbstractMediaObjectPrivate
+class QCameraPrivate : public QMediaObjectPrivate
 {
 public:
-    QAbstractMediaService *service;
+    QMediaService *service;
     QCameraControl *control;
     QCameraExposureControl *exposureControl;
     QCameraFocusControl *focusControl;
@@ -69,7 +69,7 @@ public:
 */
 
 QCamera::QCamera(QObject *parent, QMediaServiceProvider *provider):
-    QAbstractMediaObject(*new QCameraPrivate, parent, provider->requestService("camea"))
+    QMediaObject(*new QCameraPrivate, parent, provider->requestService("camea"))
 {
     Q_D(QCamera);
 
@@ -195,7 +195,7 @@ QStringList QCamera::devices() const
     Q_D(const QCamera);
 
     if (d->service != 0)
-        return d->service->supportedEndpoints(QAbstractMediaService::VideoInput);
+        return d->service->supportedEndpoints(QMediaService::VideoInput);
 
     return QStringList();
 }
@@ -209,7 +209,7 @@ void QCamera::setDevice(const QString& device)
     Q_D(QCamera);
 
     if (d->service)
-        d->service->setActiveEndpoint(QAbstractMediaService::VideoInput, device);
+        d->service->setActiveEndpoint(QMediaService::VideoInput, device);
 }
 
 /*!
@@ -221,7 +221,7 @@ QString QCamera::deviceDescription(const QString &device) const
     Q_D(const QCamera);
 
     if (d->service != 0)
-        return d->service->endpointDescription(QAbstractMediaService::VideoInput, device);
+        return d->service->endpointDescription(QMediaService::VideoInput, device);
     else
         return device;
 }

@@ -32,8 +32,8 @@
 **
 ****************************************************************************/
 
-#ifndef QABSTRACTMEDIASERVICE_P_H
-#define QABSTRACTMEDIASERVICE_P_H
+#ifndef QABSTRACTMEDIACONTROL_P_H
+#define QABSTRACTMEDIACONTROL_P_H
 
 //
 //  W A R N I N G
@@ -46,22 +46,14 @@
 // We mean it.
 //
 
+class QMediaControl;
 
-class QAbstractMediaServicePrivate
+class QMediaControlPrivate
 {
 public:
-    QAbstractMediaServicePrivate()
-        : q_ptr(0)
-        , inputStream(0)
-        , outputStream(0)
-    {
-    }
+    virtual ~QMediaControlPrivate() {}
 
-    QAbstractMediaService *q_ptr;
-
-    QIODevice* inputStream;
-    QIODevice* outputStream;
+    QMediaControl *q_ptr;
 };
-
 
 #endif

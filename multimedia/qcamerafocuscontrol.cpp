@@ -33,7 +33,7 @@
 ****************************************************************************/
 
 #include <multimedia/qcamerafocuscontrol.h>
-#include  "qabstractmediacontrol_p.h"
+#include  "qmediacontrol_p.h"
 
 /*!
     \class QCameraFocusControl
@@ -50,7 +50,7 @@
 */
 
 QCameraFocusControl::QCameraFocusControl(QObject *parent):
-    QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
+    QMediaControl(*new QMediaControlPrivate, parent)
 {
 }
 

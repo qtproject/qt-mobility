@@ -61,7 +61,7 @@
     Constructs a new audio device control with the given \a parent.
 */
 QAudioDeviceControl::QAudioDeviceControl(QObject *parent)
-    :QAbstractMediaControl(parent)
+    :QMediaControl(parent)
 {
 }
 

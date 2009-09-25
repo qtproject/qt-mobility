@@ -195,12 +195,12 @@ private:
 };
 
 
-class MockAudioSourceService : public QAbstractMediaService
+class MockAudioSourceService : public QMediaService
 {
     Q_OBJECT
 
 public:
-    MockAudioSourceService(): QAbstractMediaService(0)
+    MockAudioSourceService(): QMediaService(0)
     {
         mockAudioEncoderControl = new MockAudioEncoderControl(this);
         mockMediaRecorderControl = new MockMediaRecorderControl(this);
@@ -214,7 +214,7 @@ public:
         delete mockAudioDeviceControl;
     }
 
-    QAbstractMediaControl* control(const char *iid) const
+    QMediaControl* control(const char *iid) const
     {
         if (qstrcmp(iid, QAudioEncoderControl_iid) == 0)
             return mockAudioEncoderControl;
@@ -237,12 +237,12 @@ class MockProvider : public QMediaServiceProvider
 {
 public:
     MockProvider(MockAudioSourceService *service):mockService(service) {}
-    QAbstractMediaService *requestService(const QByteArray&, const QList<QByteArray> &)
+    QMediaService *requestService(const QByteArray&, const QList<QByteArray> &)
     {
         return mockService;
     }
 
-    void releaseService(QAbstractMediaService *) {}
+    void releaseService(QMediaService *) {}
 
     MockAudioSourceService *mockService;
 };

@@ -34,7 +34,7 @@
 
 #include <multimedia/qvideorenderercontrol.h>
 
-#include <multimedia/qabstractmediacontrol_p.h>
+#include <multimedia/qmediacontrol_p.h>
 
 /*!
     \class QVideoRendererControl
@@ -45,7 +45,7 @@
     The interface name of QVideoRendererControl is \c com.nokia.Qt.QVideoRendererControl/1.0 as
     defined in QVideoRendererControl_iid.
 
-    \sa QAbstractMediaService::control(), QAbstractMediaService::setActiveEndpoint()
+    \sa QMediaService::control(), QMediaService::setActiveEndpoint()
 */
 
 /*!
@@ -62,7 +62,7 @@
     Constructs a new video renderer media end point with the given \a parent.
 */
 QVideoRendererControl::QVideoRendererControl(QObject *parent)
-    : QAbstractMediaControl(parent)
+    : QMediaControl(parent)
 {
 }
 

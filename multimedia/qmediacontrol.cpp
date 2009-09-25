@@ -32,43 +32,49 @@
 **
 ****************************************************************************/
 
-#ifndef QABSTRACTMEDIAOBJECT_P_H
-#define QABSTRACTMEDIAOBJECT_P_H
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include <QtCore/qbytearray.h>
-#include <QtCore/qlist.h>
+#include <QtCore/qmetaobject.h>
 #include <QtCore/qtimer.h>
 
-#include <multimedia/qabstractmediaobject.h>
+#include <multimedia/qmediacontrol.h>
+#include <multimedia/qmediacontrol_p.h>
 
-class QMetaDataProviderControl;
 
-class QAbstractMediaObjectPrivate
+
+/*!
+    \class QMediaControl
+    \ingroup multimedia
+
+    \preliminary
+    \brief The base Multimedia control object.
+
+    \sa QMediaService, QMediaObject
+*/
+
+QMediaControl::~QMediaControl()
 {
-    Q_DECLARE_PUBLIC(QAbstractMediaObject)
+    delete d_ptr;
+}
 
-public:
-    QAbstractMediaObjectPrivate():metaDataControl(0), notifyTimer(0) {}
+/*!
+    Constructs a abstract media object with \a parent.
+*/
 
-    void _q_notify();
+QMediaControl::QMediaControl(QObject *parent)
+    : QObject(parent)
+    , d_ptr(new QMediaControlPrivate)
+{
+    d_ptr->q_ptr = this;
+}
 
-    QAbstractMediaService *service;
-    QMetaDataProviderControl *metaDataControl;
-    QTimer* notifyTimer;
-    QList<QByteArray>   notifyProperties;
+/*!
+    \internal
+*/
 
-    QAbstractMediaObject *q_ptr;
-};
+QMediaControl::QMediaControl(QMediaControlPrivate &dd, QObject *parent)
+    : QObject(parent)
+    , d_ptr(&dd)
 
-#endif
+{
+    d_ptr->q_ptr = this;
+}
+

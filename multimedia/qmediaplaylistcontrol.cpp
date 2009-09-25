@@ -34,7 +34,7 @@
 
 
 #include <multimedia/qmediaplaylistcontrol.h>
-#include <multimedia/qabstractmediacontrol_p.h>
+#include <multimedia/qmediacontrol_p.h>
 
 /*!
     \class QMediaPlaylistControl
@@ -42,17 +42,17 @@
 
     \preliminary
     \brief The abstract class for controling media playlist navigation,
-    this is provided by a QAbstractMediaService object,
+    this is provided by a QMediaService object,
     and is used by QMediaPlayer for playback.
 
-    \sa QAbstractMediaService, QMediaPlayer
+    \sa QMediaService, QMediaPlayer
 */
 
 /*!
   Create a new playlist control object with the given \a parent.
 */
 QMediaPlaylistControl::QMediaPlaylistControl(QObject *parent):
-    QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
+    QMediaControl(*new QMediaControlPrivate, parent)
 {
 }
 

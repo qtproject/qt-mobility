@@ -33,7 +33,7 @@
 ****************************************************************************/
 
 #include <multimedia/qimageprocessingcontrol.h>
-#include  "qabstractmediacontrol_p.h"
+#include  "qmediacontrol_p.h"
 
 /*!
     \class QImageProcessingControl
@@ -43,7 +43,7 @@
     \brief The abstract class for controling image processing parameters,
     like white balance, contrast, saturation, sharpening and denoising.
     
-    \sa QAbstractMediaService, QCamera
+    \sa QMediaService, QCamera
 */
 
 /*!
@@ -51,7 +51,7 @@
 */
 
 QImageProcessingControl::QImageProcessingControl(QObject *parent):
-    QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
+    QMediaControl(*new QMediaControlPrivate, parent)
 {
 }
 

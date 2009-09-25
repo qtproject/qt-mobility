@@ -13,12 +13,12 @@ contains(QT_CONFIG, opengl): QT += opengl
 DEFINES += QT_BUILD_MEDIA_LIB
 
 HEADERS = \
-    qabstractmediacontrol.h \
-    qabstractmediacontrol_p.h \
-    qabstractmediaobject.h \
-    qabstractmediaobject_p.h \
-    qabstractmediaservice.h \
-    qabstractmediaservice_p.h  \
+    qmediacontrol.h \
+    qmediacontrol_p.h \
+    qmediaobject.h \
+    qmediaobject_p.h \
+    qmediaservice.h \
+    qmediaservice_p.h  \
     qlocalmediaplaylistprovider.h \
     qmetadataprovidercontrol.h \
     qmediaimageviewer.h \
@@ -61,9 +61,9 @@ HEADERS = \
     qvideodevicecontrol.h \
     qmediapluginloader_p.h
 
-SOURCES = qabstractmediacontrol.cpp \
-    qabstractmediaobject.cpp \
-    qabstractmediaservice.cpp \
+SOURCES = qmediacontrol.cpp \
+    qmediaobject.cpp \
+    qmediaservice.cpp \
     qlocalmediaplaylistprovider.cpp \
     qmetadataprovidercontrol.cpp \
     qmediaimageviewer.cpp \

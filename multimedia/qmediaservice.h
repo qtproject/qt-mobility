@@ -35,14 +35,14 @@
 #ifndef QABSTRACTMEDIASERVICE_H
 #define QABSTRACTMEDIASERVICE_H
 
-#include <multimedia/qabstractmediacontrol.h>
+#include <multimedia/qmediacontrol.h>
 
 #include <QtCore/qobject.h>
 #include <QtCore/qlist.h>
 
-class QAbstractMediaServicePrivate;
+class QMediaServicePrivate;
 
-class Q_MEDIA_EXPORT QAbstractMediaService : public QObject
+class Q_MEDIA_EXPORT QMediaService : public QObject
 {
     Q_OBJECT
 public:
@@ -56,9 +56,9 @@ public:
         StreamOutput
     };
 
-    ~QAbstractMediaService();
+    ~QMediaService();
 
-    virtual bool isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType);
+    virtual bool isEndpointSupported(QMediaService::MediaEndpoint endpointType);
 
     virtual void setInputStream(QIODevice* stream);
     virtual QIODevice* inputStream() const;
@@ -66,12 +66,12 @@ public:
     virtual void setOutputStream(QIODevice* stream);
     virtual QIODevice* outputStream() const;
 
-    virtual QList<QString> activeEndpoints(QAbstractMediaService::MediaEndpoint endpointType);
-    virtual bool setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint);
-    virtual QString endpointDescription(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint);
-    virtual QList<QString> supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const;
+    virtual QList<QString> activeEndpoints(QMediaService::MediaEndpoint endpointType);
+    virtual bool setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
+    virtual QString endpointDescription(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
+    virtual QList<QString> supportedEndpoints(QMediaService::MediaEndpoint endpointType) const;
 
-    virtual QAbstractMediaControl* control(const char *name) const = 0;
+    virtual QMediaControl* control(const char *name) const = 0;
 
 #ifndef QT_NO_MEMBER_TEMPLATES
     template <typename T> inline T control() const {
@@ -83,13 +83,13 @@ public:
 #endif
 
 protected:
-    QAbstractMediaService(QObject* parent);
-    QAbstractMediaService(QAbstractMediaServicePrivate &dd, QObject *parent);
+    QMediaService(QObject* parent);
+    QMediaService(QMediaServicePrivate &dd, QObject *parent);
 
-    QAbstractMediaServicePrivate *d_ptr;
+    QMediaServicePrivate *d_ptr;
 
 private:
-    Q_DECLARE_PRIVATE(QAbstractMediaService)
+    Q_DECLARE_PRIVATE(QMediaService)
 };
 
 #endif  // QABSTRACTMEDIASERVICE_H

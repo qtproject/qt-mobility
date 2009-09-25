@@ -35,12 +35,12 @@
 #ifndef QMEDIARECORDERCONTROL_H
 #define QMEDIARECORDERCONTROL_H
 
-#include <multimedia/qabstractmediacontrol.h>
+#include <multimedia/qmediacontrol.h>
 #include <multimedia/qmediarecorder.h>
 
 class QUrl;
 
-class Q_MEDIA_EXPORT QMediaRecorderControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QMediaRecorderControl : public QMediaControl
 {
     Q_OBJECT
 

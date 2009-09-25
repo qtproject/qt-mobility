@@ -35,7 +35,7 @@
 #include "recorder.h"
 #include "ui_recorder.h"
 
-#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qmediaservice.h>
 #include <multimedia/qmediarecorder.h>
 #include <multimedia/qaudiodevicecontrol.h>
 #include <multimedia/qaudioencodercontrol.h>
@@ -58,10 +58,10 @@ Recorder::Recorder(QWidget *parent) :
     if(audioRecorder->service()) {
         // Audio Input
         QList<QString> audioInputs;
-        audioInputs = audioRecorder->service()->supportedEndpoints(QAbstractMediaService::AudioInput);
+        audioInputs = audioRecorder->service()->supportedEndpoints(QMediaService::AudioInput);
         if(audioInputs.size() > 0) {
             qWarning()<<"FOUND audioInputs: "<<audioInputs;
-            audioRecorder->service()->setActiveEndpoint(QAbstractMediaService::AudioInput,audioInputs.first().toLocal8Bit().constData());
+            audioRecorder->service()->setActiveEndpoint(QMediaService::AudioInput,audioInputs.first().toLocal8Bit().constData());
             for(int i = 0; i < audioInputs.size(); ++i) {
                 ui->inputDeviceBox->addItem(audioInputs.at(i));
             }
@@ -115,16 +115,16 @@ Recorder::Recorder(QWidget *parent) :
     if(audioRecorder->service()) {
         // Video Output
         QList<QString> videoOutputs;
-        videoOutputs = audioRecorder->service()->supportedEndpoints(QAbstractMediaService::VideoOutput);
+        videoOutputs = audioRecorder->service()->supportedEndpoints(QMediaService::VideoOutput);
 
         // default video output
         if(videoOutputs.size() > 0)
-            audioRecorder->service()->setActiveEndpoint(QAbstractMediaService::VideoOutput,videoOutputs.first().toLocal8Bit().constData());
+            audioRecorder->service()->setActiveEndpoint(QMediaService::VideoOutput,videoOutputs.first().toLocal8Bit().constData());
 
         // try to find a specific one, videoWidget
         for(int i=0;i<videoOutputs.size();i++) {
             if(qstrcmp(videoOutputs.at(i).toLocal8Bit().constData(),"videoWidget") == 0) {
-                audioRecorder->service()->setActiveEndpoint(QAbstractMediaService::VideoOutput,videoOutputs.at(i).toLocal8Bit().constData());
+                audioRecorder->service()->setActiveEndpoint(QMediaService::VideoOutput,videoOutputs.at(i).toLocal8Bit().constData());
                 break;
             }
         }

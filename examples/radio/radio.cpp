@@ -34,7 +34,7 @@
 
 #include "radio.h"
 
-#include <qabstractmediaservice.h>
+#include <qmediaservice.h>
 #include <qradioplayercontrol.h>
 
 #include <QtGui>

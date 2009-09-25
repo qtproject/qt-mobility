@@ -51,8 +51,8 @@ public:
     bool isMetaDataAvailable() const;
     bool isWritable() const;
 
-    QVariant metaData(QAbstractMediaObject::MetaData key) const;
-    void setMetaData(QAbstractMediaObject::MetaData key, const QVariant &value);
+    QVariant metaData(QMediaObject::MetaData key) const;
+    void setMetaData(QMediaObject::MetaData key, const QVariant &value);
 
     QVariant extendedMetaData(const QString &key) const;
     void setExtendedMetaData(const QString &key, const QVariant &value);

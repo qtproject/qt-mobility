@@ -35,9 +35,8 @@
 #ifndef QMEDIAPLAYER_H
 #define QMEDIAPLAYER_H
 
-#include <multimedia/qabstractmediaobject.h>
-
 #include <multimedia/qmediaserviceprovider.h>
+#include <multimedia/qmediaobject.h>
 #include <multimedia/qmediasource.h>
 
 
@@ -45,7 +44,7 @@ class QMediaPlaylist;
 
 
 class QMediaPlayerPrivate;
-class Q_MEDIA_EXPORT QMediaPlayer : public QAbstractMediaObject
+class Q_MEDIA_EXPORT QMediaPlayer : public QMediaObject
 {
     Q_OBJECT
     Q_PROPERTY(QMediaSource media READ media WRITE setMedia NOTIFY mediaChanged)

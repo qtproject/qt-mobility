@@ -36,7 +36,7 @@
 #include <QDebug>
 
 #include <multimedia/qmediaplayercontrol.h>
-#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qmediaservice.h>
 #include <multimedia/qmediaplayer.h>
 
 
@@ -95,17 +95,17 @@ public:
     QString _errorString;
 };
 
-class MockPlayerService : public QAbstractMediaService
+class MockPlayerService : public QMediaService
 {
     Q_OBJECT
 
 public:
-    MockPlayerService():QAbstractMediaService(0)
+    MockPlayerService():QMediaService(0)
     {
         mockControl = new MockPlayerControl;
     }
 
-    QAbstractMediaControl* control(const char *iid) const
+    QMediaControl* control(const char *iid) const
     {
         if (qstrcmp(iid, QMediaPlayerControl_iid) == 0)
             return mockControl;
@@ -153,12 +153,12 @@ class MockProvider : public QMediaServiceProvider
 {
 public:
     MockProvider(MockPlayerService *service):mockService(service) {}
-    QAbstractMediaService *requestService(const QByteArray &, const QList<QByteArray> &)
+    QMediaService *requestService(const QByteArray &, const QList<QByteArray> &)
     {
         return mockService;
     }
 
-    void releaseService(QAbstractMediaService *) {}
+    void releaseService(QMediaService *) {}
 
     MockPlayerService *mockService;
 };

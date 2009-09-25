@@ -53,7 +53,7 @@
 #include <multimedia/qmediaplaylist.h>
 
 QGstreamerPlayerService::QGstreamerPlayerService(QObject *parent):
-     QAbstractMediaService(parent)
+     QMediaService(parent)
 {
     m_session = new QGstreamerPlayerSession(this);
     m_control = new QGstreamerPlayerControl(m_session, this);
@@ -79,7 +79,7 @@ QGstreamerPlayerService::~QGstreamerPlayerService()
 {
 }
 
-QAbstractMediaControl *QGstreamerPlayerService::control(const char *name) const
+QMediaControl *QGstreamerPlayerService::control(const char *name) const
 {
     if (qstrcmp(name,QMediaPlayerControl_iid) == 0)
         return m_control;

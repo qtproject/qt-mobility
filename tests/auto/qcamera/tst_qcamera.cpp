@@ -38,7 +38,7 @@
 #include <multimedia/qcameracontrol.h>
 #include <multimedia/qcameraexposurecontrol.h>
 #include <multimedia/qcamerafocuscontrol.h>
-#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qmediaservice.h>
 #include <multimedia/qcamera.h>
 
 
@@ -332,12 +332,12 @@ private:
     QCamera::FocusMode m_focusMode;
 };
 
-class MockSimpleCameraService : public QAbstractMediaService
+class MockSimpleCameraService : public QMediaService
 {
     Q_OBJECT
 
 public:
-    MockSimpleCameraService(): QAbstractMediaService(0)
+    MockSimpleCameraService(): QMediaService(0)
     {
         mockControl = new MockCameraControl(this);
     }
@@ -346,7 +346,7 @@ public:
     {
     }
 
-    QAbstractMediaControl* control(const char *iid) const
+    QMediaControl* control(const char *iid) const
     {
         if (qstrcmp(iid, QCameraControl_iid) == 0)
             return mockControl;
@@ -357,12 +357,12 @@ public:
     MockCameraControl *mockControl;
 };
 
-class MockCameraService : public QAbstractMediaService
+class MockCameraService : public QMediaService
 {
     Q_OBJECT
 
 public:
-    MockCameraService(): QAbstractMediaService(0)
+    MockCameraService(): QMediaService(0)
     {
         mockControl = new MockCameraControl(this);
         mockExposureControl = new MockCameraExposureControl(this);
@@ -373,7 +373,7 @@ public:
     {
     }
 
-    QAbstractMediaControl* control(const char *iid) const
+    QMediaControl* control(const char *iid) const
     {
         if (qstrcmp(iid, QCameraControl_iid) == 0)
             return mockControl;
@@ -395,14 +395,14 @@ public:
 class MockProvider : public QMediaServiceProvider
 {
 public:
-    QAbstractMediaService *requestService(const QByteArray &, const QList<QByteArray> &)
+    QMediaService *requestService(const QByteArray &, const QList<QByteArray> &)
     {
         return service;
     }
 
-    void releaseService(QAbstractMediaService *) {}
+    void releaseService(QMediaService *) {}
 
-    QAbstractMediaService *service;
+    QMediaService *service;
 };
 
 

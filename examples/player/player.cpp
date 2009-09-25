@@ -37,7 +37,7 @@
 #include "playercontrols.h"
 #include "playlistmodel.h"
 
-#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qmediaservice.h>
 #include <multimedia/qmediaplaylist.h>
 
 #include <QtGui>
@@ -175,14 +175,14 @@ void Player::positionChanged(qint64 progress)
 
 void Player::metaDataChanged()
 {
-    //qDebug() << "update metadata" << player->metaData(QAbstractMediaObject::Title).toString();
+    //qDebug() << "update metadata" << player->metaData(QMediaObject::Title).toString();
     if (player->isMetaDataAvailable()) {
         setTrackInfo(QString("%1 - %2")
-                .arg(player->metaData(QAbstractMediaObject::AlbumArtist).toString())
-                .arg(player->metaData(QAbstractMediaObject::Title).toString()));
+                .arg(player->metaData(QMediaObject::AlbumArtist).toString())
+                .arg(player->metaData(QMediaObject::Title).toString()));
 
         if (coverLabel) {
-            QUrl uri = player->metaData(QAbstractMediaObject::CoverArtUriLarge).value<QUrl>();
+            QUrl uri = player->metaData(QMediaObject::CoverArtUriLarge).value<QUrl>();
 
             coverLabel->setPixmap(!uri.isEmpty()
                     ? QPixmap(uri.toString())

@@ -32,8 +32,8 @@
 **
 ****************************************************************************/
 
-#ifndef QABSTRACTMEDIACONTROL_P_H
-#define QABSTRACTMEDIACONTROL_P_H
+#ifndef QABSTRACTMEDIAOBJECT_P_H
+#define QABSTRACTMEDIAOBJECT_P_H
 
 //
 //  W A R N I N G
@@ -46,14 +46,29 @@
 // We mean it.
 //
 
-class QAbstractMediaControl;
+#include <QtCore/qbytearray.h>
+#include <QtCore/qlist.h>
+#include <QtCore/qtimer.h>
 
-class QAbstractMediaControlPrivate
+#include <multimedia/qmediaobject.h>
+
+class QMetaDataProviderControl;
+
+class QMediaObjectPrivate
 {
-public:
-    virtual ~QAbstractMediaControlPrivate() {}
+    Q_DECLARE_PUBLIC(QMediaObject)
 
-    QAbstractMediaControl *q_ptr;
+public:
+    QMediaObjectPrivate():metaDataControl(0), notifyTimer(0) {}
+
+    void _q_notify();
+
+    QMediaService *service;
+    QMetaDataProviderControl *metaDataControl;
+    QTimer* notifyTimer;
+    QList<QByteArray>   notifyProperties;
+
+    QMediaObject *q_ptr;
 };
 
 #endif

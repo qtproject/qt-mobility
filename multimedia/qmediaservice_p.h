@@ -32,36 +32,36 @@
 **
 ****************************************************************************/
 
-#ifndef QABSTRACTMEDIACONTROL_H
-#define QABSTRACTMEDIACONTROL_H
+#ifndef QABSTRACTMEDIASERVICE_P_H
+#define QABSTRACTMEDIASERVICE_P_H
 
-#include <QtCore/qobject.h>
-#include <QtCore/qstring.h>
-#include <QtCore/qvariant.h>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <multimedia/qmultimediaglobal.h>
 
-class QAbstractMediaControlPrivate;
-
-class Q_MEDIA_EXPORT QAbstractMediaControl : public QObject
+class QMediaServicePrivate
 {
-    Q_OBJECT
-
 public:
-    ~QAbstractMediaControl();
+    QMediaServicePrivate()
+        : q_ptr(0)
+        , inputStream(0)
+        , outputStream(0)
+    {
+    }
 
-protected:
-    QAbstractMediaControl(QObject *parent = 0);
-    QAbstractMediaControl(QAbstractMediaControlPrivate &dd, QObject* parent = 0);
+    QMediaService *q_ptr;
 
-    QAbstractMediaControlPrivate *d_ptr;
-private:
-    Q_DECLARE_PRIVATE(QAbstractMediaControl)
+    QIODevice* inputStream;
+    QIODevice* outputStream;
 };
 
-template <typename T> const char *qmediacontrol_iid() { return 0; }
 
-#define Q_MEDIA_DECLARE_CONTROL(IFace, IId) \
-    template <> inline const char *qmediacontrol_iid<IFace *>() { return IId; }
-
-#endif  // QABSTRACTMEDIACONTROL_H
+#endif

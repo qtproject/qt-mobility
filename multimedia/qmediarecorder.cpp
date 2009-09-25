@@ -35,8 +35,8 @@
 #include <multimedia/qmediarecorder.h>
 
 #include <multimedia/qmediarecordercontrol.h>
-#include <multimedia/qabstractmediaobject_p.h>
-#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qmediaobject_p.h>
+#include <multimedia/qmediaservice.h>
 #include <multimedia/qmediaserviceprovider.h>
 #include <multimedia/qaudioencodercontrol.h>
 #include <multimedia/qvideoencodercontrol.h>
@@ -64,7 +64,7 @@
     \sa
 */
 
-class QMediaRecorderPrivate : public QAbstractMediaObjectPrivate
+class QMediaRecorderPrivate : public QMediaObjectPrivate
 {
     Q_DECLARE_PUBLIC(QMediaRecorder)
 
@@ -72,7 +72,7 @@ public:
     QMediaRecorderPrivate();
     void initControls();
 
-    QAbstractMediaService *service;
+    QMediaService *service;
     QMediaRecorderControl *control;
     QMediaFormatControl *formatControl;
     QAudioEncoderControl *audioControl;
@@ -155,8 +155,8 @@ void QMediaRecorderPrivate::_q_error(int error, const QString &errorString)
     Construct a media recorder object with \a mediaObject.
 */
 
-QMediaRecorder::QMediaRecorder(QAbstractMediaObject *mediaObject):
-    QAbstractMediaObject(*new QMediaRecorderPrivate, mediaObject, mediaObject->service())
+QMediaRecorder::QMediaRecorder(QMediaObject *mediaObject):
+    QMediaObject(*new QMediaRecorderPrivate, mediaObject, mediaObject->service())
 {
     Q_D(QMediaRecorder);
 
@@ -166,7 +166,7 @@ QMediaRecorder::QMediaRecorder(QAbstractMediaObject *mediaObject):
 }
 
 QMediaRecorder::QMediaRecorder(QObject *parent, QMediaServiceProvider *provider):
-    QAbstractMediaObject(*new QMediaRecorderPrivate, parent, provider->requestService("mediarecorder"))
+    QMediaObject(*new QMediaRecorderPrivate, parent, provider->requestService("mediarecorder"))
 {
     Q_D(QMediaRecorder);
 
@@ -197,7 +197,7 @@ bool QMediaRecorder::isValid() const
     Returns the media service being used.
 */
 
-QAbstractMediaService* QMediaRecorder::service() const
+QMediaService* QMediaRecorder::service() const
 {
     return d_func()->service;
 }

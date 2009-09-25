@@ -35,7 +35,7 @@
 #include "cameracapture.h"
 #include "ui_cameracapture.h"
 
-#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qmediaservice.h>
 #include <multimedia/qmediarecorder.h>
 #include <multimedia/qaudiodevicecontrol.h>
 #include <multimedia/qaudioencodercontrol.h>
@@ -67,8 +67,8 @@ CameraCapture::CameraCapture(QWidget *parent) :
     connect(mediaRecorder, SIGNAL(error(QMediaRecorder::Error)), this, SLOT(displayErrorMessage()));
 
     //audio devices
-    foreach(const QString deviceName, service->supportedEndpoints(QAbstractMediaService::AudioInput)) {
-        QString description = service->endpointDescription(QAbstractMediaService::AudioInput, deviceName);
+    foreach(const QString deviceName, service->supportedEndpoints(QMediaService::AudioInput)) {
+        QString description = service->endpointDescription(QMediaService::AudioInput, deviceName);
         ui->audioInputDeviceBox->addItem(deviceName+" "+description, QVariant(deviceName));
     }
 
@@ -119,7 +119,7 @@ CameraCapture::CameraCapture(QWidget *parent) :
     }
 
 
-    camera->setMetaData(QAbstractMediaObject::Title, QVariant(QLatin1String("Test Title")));
+    camera->setMetaData(QMediaObject::Title, QVariant(QLatin1String("Test Title")));
 
     QWidget *videoWidget = new QVideoWidget(mediaRecorder);
     videoWidget->resize(640,480);
@@ -139,7 +139,7 @@ void CameraCapture::updateRecordTime()
 void CameraCapture::setAudioInputDevice(int idx)
 {
     QString deviceName = ui->audioInputDeviceBox->itemData(idx).toString();
-    service->setActiveEndpoint(QAbstractMediaService::AudioInput, deviceName );
+    service->setActiveEndpoint(QMediaService::AudioInput, deviceName );
 }
 
 void CameraCapture::setCameraDevice(int idx)

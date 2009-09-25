@@ -40,12 +40,12 @@
 #include <QtCore/qfactoryinterface.h>
 #include <multimedia/qmultimediaglobal.h>
 
-class QAbstractMediaService;
+class QMediaService;
 
 struct Q_MEDIA_EXPORT QMediaServiceProviderFactoryInterface : public QFactoryInterface
 {
     virtual QStringList keys() const = 0;
-    virtual QAbstractMediaService* create(QString const& key) = 0;
+    virtual QMediaService* create(QString const& key) = 0;
 };
 
 #define QMediaServiceProviderFactoryInterface_iid \
@@ -59,7 +59,7 @@ class Q_MEDIA_EXPORT QMediaServiceProviderPlugin : public QObject, public QMedia
 
 public:
     virtual QStringList keys() const = 0;
-    virtual QAbstractMediaService* create(QString const& key) = 0;
+    virtual QMediaService* create(QString const& key) = 0;
 };
 
 

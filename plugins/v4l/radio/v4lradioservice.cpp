@@ -50,14 +50,14 @@ V4LRadioService::~V4LRadioService()
 {
 }
 
-QAbstractMediaControl *V4LRadioService::control(const char* name) const
+QMediaControl *V4LRadioService::control(const char* name) const
 {
     Q_UNUSED(name)
 
     return m_control;
 }
 
-bool V4LRadioService::isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType)
+bool V4LRadioService::isEndpointSupported(QMediaService::MediaEndpoint endpointType)
 {
     return false;
 }
@@ -80,17 +80,17 @@ QIODevice* V4LRadioService::outputStream() const
     return 0;
 }
 
-QString V4LRadioService::activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType)
+QString V4LRadioService::activeEndpoint(QMediaService::MediaEndpoint endpointType)
 {
     return QByteArray();
 }
 
-bool V4LRadioService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint)
+bool V4LRadioService::setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint)
 {
     return true;
 }
 
-QList<QString> V4LRadioService::supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const
+QList<QString> V4LRadioService::supportedEndpoints(QMediaService::MediaEndpoint endpointType) const
 {
     QList<QString> list;
     //TODO

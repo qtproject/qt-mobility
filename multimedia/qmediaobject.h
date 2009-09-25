@@ -40,10 +40,10 @@
 
 #include <multimedia/qmultimediaglobal.h>
 
-class QAbstractMediaService;
+class QMediaService;
 
-class QAbstractMediaObjectPrivate;
-class Q_MEDIA_EXPORT QAbstractMediaObject : public QObject
+class QMediaObjectPrivate;
+class Q_MEDIA_EXPORT QMediaObject : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(int notifyInterval READ notifyInterval WRITE setNotifyInterval NOTIFY notifyIntervalChanged)
@@ -121,9 +121,9 @@ public:
         Subject
     };
 
-    ~QAbstractMediaObject();
+    ~QMediaObject();
 
-    virtual QAbstractMediaService* service() const;
+    virtual QMediaService* service() const;
 
     virtual bool isValid() const;
 
@@ -149,20 +149,18 @@ Q_SIGNALS:
     void metaDataChanged();
 
 protected:
-    QAbstractMediaObject(QObject *parent, QAbstractMediaService *service);
-    QAbstractMediaObject(QAbstractMediaObjectPrivate &dd, QObject *parent, QAbstractMediaService *service);
+    QMediaObject(QObject *parent, QMediaService *service);
+    QMediaObject(QMediaObjectPrivate &dd, QObject *parent, QMediaService *service);
 
     void addPropertyWatch(QByteArray const &name);
     void removePropertyWatch(QByteArray const &name);
 
-    void registerService(QAbstractMediaService *service);
-
-    QAbstractMediaObjectPrivate *d_ptr;
+    QMediaObjectPrivate *d_ptr;
 
 private:
     void setupMetaData();
 
-    Q_DECLARE_PRIVATE(QAbstractMediaObject)
+    Q_DECLARE_PRIVATE(QMediaObject)
     Q_PRIVATE_SLOT(d_func(), void _q_notify())
 };
 

@@ -32,49 +32,36 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qmetaobject.h>
-#include <QtCore/qtimer.h>
+#ifndef QABSTRACTMEDIACONTROL_H
+#define QABSTRACTMEDIACONTROL_H
 
-#include <multimedia/qabstractmediacontrol.h>
-#include <multimedia/qabstractmediacontrol_p.h>
+#include <QtCore/qobject.h>
+#include <QtCore/qstring.h>
+#include <QtCore/qvariant.h>
 
+#include <multimedia/qmultimediaglobal.h>
 
+class QMediaControlPrivate;
 
-/*!
-    \class QAbstractMediaControl
-    \ingroup multimedia
-
-    \preliminary
-    \brief The base Multimedia control object.
-
-    \sa QAbstractMediaService, QAbstractMediaObject
-*/
-
-QAbstractMediaControl::~QAbstractMediaControl()
+class Q_MEDIA_EXPORT QMediaControl : public QObject
 {
-    delete d_ptr;
-}
+    Q_OBJECT
 
-/*!
-    Constructs a abstract media object with \a parent.
-*/
+public:
+    ~QMediaControl();
 
-QAbstractMediaControl::QAbstractMediaControl(QObject *parent)
-    : QObject(parent)
-    , d_ptr(new QAbstractMediaControlPrivate)
-{
-    d_ptr->q_ptr = this;
-}
+protected:
+    QMediaControl(QObject *parent = 0);
+    QMediaControl(QMediaControlPrivate &dd, QObject* parent = 0);
 
-/*!
-    \internal
-*/
+    QMediaControlPrivate *d_ptr;
+private:
+    Q_DECLARE_PRIVATE(QMediaControl)
+};
 
-QAbstractMediaControl::QAbstractMediaControl(QAbstractMediaControlPrivate &dd, QObject *parent)
-    : QObject(parent)
-    , d_ptr(&dd)
+template <typename T> const char *qmediacontrol_iid() { return 0; }
 
-{
-    d_ptr->q_ptr = this;
-}
+#define Q_MEDIA_DECLARE_CONTROL(IFace, IId) \
+    template <> inline const char *qmediacontrol_iid<IFace *>() { return IId; }
 
+#endif  // QABSTRACTMEDIACONTROL_H

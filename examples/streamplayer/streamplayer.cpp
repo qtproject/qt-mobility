@@ -88,5 +88,5 @@ void StreamPlayer::positionChanged(qint64 position)
 
 void StreamPlayer::metaDataChanged()
 {
-    setWindowTitle(player->metaData(QAbstractMediaObject::Title).toString());
+    setWindowTitle(player->metaData(QMediaObject::Title).toString());
 }

@@ -48,7 +48,7 @@
 #include "v4lvideoencode.h"
 
 V4LCameraService::V4LCameraService(QObject *parent):
-    QAbstractMediaService(parent)
+    QMediaService(parent)
 {
     m_session = new V4LCameraSession(this);
     m_control = new V4LCameraControl(this,m_session);
@@ -76,11 +76,11 @@ void V4LCameraService::setVideoOutput(QObject *output)
         m_session->setVideoOutput(videoWidget);
     }
 
-    QAbstractMediaService::setVideoOutput(output);
+    QMediaService::setVideoOutput(output);
 }
 */
 
-QAbstractMediaControl *V4LCameraService::control(const char *name) const
+QMediaControl *V4LCameraService::control(const char *name) const
 {
     if (qstrcmp(name,QMediaRecorderControl_iid) == 0)
         return m_media;

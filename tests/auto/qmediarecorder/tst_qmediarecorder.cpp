@@ -34,9 +34,9 @@
 
 #include <QtTest/QtTest>
 #include <QDebug>
-#include <multimedia/qabstractmediaobject.h>
-#include <multimedia/qabstractmediacontrol.h>
-#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qmediaobject.h>
+#include <multimedia/qmediacontrol.h>
+#include <multimedia/qmediaservice.h>
 #include <multimedia/qmediarecordercontrol.h>
 #include <multimedia/qmediarecorder.h>
 #include <multimedia/qaudiodevicecontrol.h>
@@ -337,12 +337,12 @@ public:
     qint64     m_position;
 };
 
-class MockService : public QAbstractMediaService
+class MockService : public QMediaService
 {
     Q_OBJECT
 public:
-    MockService(QObject *parent, QAbstractMediaControl *control):
-        QAbstractMediaService(parent),
+    MockService(QObject *parent, QMediaControl *control):
+        QMediaService(parent),
         mockControl(control)
     {
         mockAudioDeviceControl = new MockAudioDeviceProvider(parent);
@@ -350,7 +350,7 @@ public:
         mockFormatControl = new MockMediaFormatControl(parent);
     }
 
-    QAbstractMediaControl* control(const char * name) const
+    QMediaControl* control(const char * name) const
     {
         if(qstrcmp(name,QAudioEncoderControl_iid) == 0)
             return mockAudioEncodeControl;
@@ -365,18 +365,18 @@ public:
         return 0;
     }
 
-    QAbstractMediaControl   *mockControl;
+    QMediaControl   *mockControl;
     QAudioDeviceControl     *mockAudioDeviceControl;
     QAudioEncoderControl    *mockAudioEncodeControl;
     QMediaFormatControl     *mockFormatControl;
 };
 
-class MockObject : public QAbstractMediaObject
+class MockObject : public QMediaObject
 {
     Q_OBJECT
 public:
-    MockObject(QObject *parent, QAbstractMediaControl *control):
-        QAbstractMediaObject(parent, new MockService(this, control))
+    MockObject(QObject *parent, QMediaControl *control):
+        QMediaObject(parent, new MockService(this, control))
     {
     }
 };

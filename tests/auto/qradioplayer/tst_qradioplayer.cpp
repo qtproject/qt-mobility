@@ -36,9 +36,9 @@
 #include <QDebug>
 #include <QTimer>
 
-#include <multimedia/qabstractmediaobject.h>
-#include <multimedia/qabstractmediacontrol.h>
-#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qmediaobject.h>
+#include <multimedia/qmediacontrol.h>
+#include <multimedia/qmediaservice.h>
 #include <multimedia/qradioplayercontrol.h>
 #include <multimedia/qradioplayer.h>
 
@@ -163,28 +163,28 @@ public:
     QRadioPlayer::Band m_band;
 };
 
-class MockService : public QAbstractMediaService
+class MockService : public QMediaService
 {
     Q_OBJECT
 public:
-    MockService(QObject *parent, QAbstractMediaControl *control):
-        QAbstractMediaService(parent),
+    MockService(QObject *parent, QMediaControl *control):
+        QMediaService(parent),
         mockControl(control) {}
 
-    QAbstractMediaControl* control(const char *) const
+    QMediaControl* control(const char *) const
     {
         return mockControl;
     }
 
-    QAbstractMediaControl   *mockControl;
+    QMediaControl   *mockControl;
 };
 
-class MockObject : public QAbstractMediaObject
+class MockObject : public QMediaObject
 {
     Q_OBJECT
 public:
-    MockObject(QObject *parent, QAbstractMediaControl *control):
-        QAbstractMediaObject(parent, new MockService(this, control))
+    MockObject(QObject *parent, QMediaControl *control):
+        QMediaObject(parent, new MockService(this, control))
     {
         mockService = service();
     }
@@ -194,19 +194,19 @@ public:
         return true;
     }
 
-    QAbstractMediaService *mockService;
+    QMediaService *mockService;
 };
 
 class MockProvider : public QMediaServiceProvider
 {
 public:
     MockProvider(MockService *service):mockService(service) {}
-    QAbstractMediaService *requestService(const QByteArray &, const QList<QByteArray> &)
+    QMediaService *requestService(const QByteArray &, const QList<QByteArray> &)
     {
         return mockService;
     }
 
-    void releaseService(QAbstractMediaService *) {}
+    void releaseService(QMediaService *) {}
 
     MockService *mockService;
 };

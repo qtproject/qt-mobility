@@ -43,7 +43,7 @@ QStringList QWmpServiceProviderPlugin::keys() const
             << QLatin1String("windowsmediaplayer");
 }
 
-QAbstractMediaService *QWmpServiceProviderPlugin::create(const QString &key)
+QMediaService *QWmpServiceProviderPlugin::create(const QString &key)
 {
     if (qstrcmp(type.constData(), "mediaplayer") == 0)
         return new QWmpPlayerService(QWmpPlayerService::LocalEmbed);

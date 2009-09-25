@@ -44,7 +44,7 @@
     Constructs a new video window control with the given \a parent.
 */
 QVideoWindowControl::QVideoWindowControl(QObject *parent)
-    : QAbstractMediaControl(parent)
+    : QMediaControl(parent)
 {
 }
 

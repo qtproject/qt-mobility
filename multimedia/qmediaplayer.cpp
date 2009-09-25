@@ -39,8 +39,8 @@
 
 #include <multimedia/qmediaplayer.h>
 
-#include <multimedia/qabstractmediaobject_p.h>
-#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qmediaobject_p.h>
+#include <multimedia/qmediaservice.h>
 #include <multimedia/qmediaplayercontrol.h>
 #include <multimedia/qmediaserviceprovider.h>
 #include <multimedia/qmediaplaylist.h>
@@ -56,7 +56,7 @@
     \sa
 */
 
-class QMediaPlayerPrivate : public QAbstractMediaObjectPrivate
+class QMediaPlayerPrivate : public QMediaObjectPrivate
 {
     Q_DECLARE_PUBLIC(QMediaPlayer)
 
@@ -64,7 +64,7 @@ public:
     QMediaPlayerPrivate():service(0), control(0) {}
 
     QMediaServiceProvider *provider;
-    QAbstractMediaService* service;
+    QMediaService* service;
     QMediaPlayerControl* control;
     QMediaPlayer::Error error;
     QString errorString;
@@ -144,7 +144,7 @@ void QMediaPlayerPrivate::_q_updateMedia(const QMediaSource &media)
 */
 
 QMediaPlayer::QMediaPlayer(QObject *parent, QMediaServiceProvider *provider):
-    QAbstractMediaObject(*new QMediaPlayerPrivate, parent, provider->requestService("mediaplayer"))
+    QMediaObject(*new QMediaPlayerPrivate, parent, provider->requestService("mediaplayer"))
 {
     Q_D(QMediaPlayer);
 
@@ -195,7 +195,7 @@ QMediaPlayer::~QMediaPlayer()
 
 bool QMediaPlayer::isValid() const
 {
-    return QAbstractMediaObject::isValid() && d_func()->control != 0;
+    return QMediaObject::isValid() && d_func()->control != 0;
 }
 
 QMediaSource QMediaPlayer::media() const

@@ -34,7 +34,7 @@
 
 #include <QDebug>
 
-#include <multimedia/qabstractmediaobject_p.h>
+#include <multimedia/qmediaobject_p.h>
 #include <multimedia/qaudiosource.h>
 #include <multimedia/qaudioencodercontrol.h>
 #include <multimedia/qmediarecordercontrol.h>
@@ -49,7 +49,7 @@
     \sa
 */
 
-class QAudioSourcePrivate : public QAbstractMediaObjectPrivate
+class QAudioSourcePrivate : public QMediaObjectPrivate
 {
 public:
     QAudioSourcePrivate():audioEncoderControl(0), mediaRecorderControl(0) {}
@@ -62,7 +62,7 @@ public:
 */
 
 QAudioSource::QAudioSource(QObject *parent, QMediaServiceProvider *provider):
-    QAbstractMediaObject(*new QAudioSourcePrivate, parent, provider->requestService("audiosource"))
+    QMediaObject(*new QAudioSourcePrivate, parent, provider->requestService("audiosource"))
 {
     Q_D(QAudioSource);
 
@@ -90,7 +90,7 @@ bool QAudioSource::isValid() const
 {
     Q_D(const QAudioSource);
 
-    return QAbstractMediaObject::isValid() &&
+    return QMediaObject::isValid() &&
             (d->audioEncoderControl != NULL && d->mediaRecorderControl != NULL);
 }
 

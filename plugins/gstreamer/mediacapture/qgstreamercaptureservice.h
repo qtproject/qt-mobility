@@ -35,7 +35,7 @@
 #ifndef QGSTREAMERCAPTURESERVICE_H
 #define QGSTREAMERCAPTURESERVICE_H
 
-#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qmediaservice.h>
 
 #include "qgstreamervideooutputcontrol.h"
 
@@ -53,7 +53,7 @@ class QGstreamerVideoWidgetControl;
 class QGstreamerElementFactory;
 class QGstreamerCaptureMetaDataControl;
 
-class QGstreamerCaptureService : public QAbstractMediaService
+class QGstreamerCaptureService : public QMediaService
 {
     Q_OBJECT
 
@@ -61,7 +61,7 @@ public:
     QGstreamerCaptureService(const QString &service, QObject *parent = 0);
     virtual ~QGstreamerCaptureService();
 
-    QAbstractMediaControl *control(const char *name) const;
+    QMediaControl *control(const char *name) const;
 
 private slots:
     void videoOutputChanged(QVideoOutputControl::Output output);

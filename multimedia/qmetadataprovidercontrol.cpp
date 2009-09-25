@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qabstractmediacontrol_p.h>
+#include <multimedia/qmediacontrol_p.h>
 #include <multimedia/qmetadataprovidercontrol.h>
 
 
@@ -69,13 +69,13 @@ QMetaDataProviderControl::~QMetaDataProviderControl()
 */
 
 /*!
-    \fn QVariant QMetaDataProviderControl::metaData(QAbstractMediaObject::MetaData key) const
+    \fn QVariant QMetaDataProviderControl::metaData(QMediaObject::MetaData key) const
 
     Returns the meta-data for the given \a key.
 */
 
 /*!
-    \fn void QMetaDataProviderControl::setMetaData(QAbstractMediaObject::MetaData key, const QVariant &value)
+    \fn void QMetaDataProviderControl::setMetaData(QMediaObject::MetaData key, const QVariant &value)
 
     Sets the \a value of the meta-data element with the given \a key.
 */
@@ -124,7 +124,7 @@ QMetaDataProviderControl::~QMetaDataProviderControl()
 */
 
 QMetaDataProviderControl::QMetaDataProviderControl(QObject *parent):
-    QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
+    QMediaControl(*new QMediaControlPrivate, parent)
 {
 }
 

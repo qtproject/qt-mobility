@@ -35,7 +35,7 @@
 #ifndef QMEDIASLIDESHOWSERVICE_P_H
 #define QMEDIASLIDESHOWSERVICE_P_H
 
-#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qmediaservice.h>
 #include <multimedia/qmediaimageviewer.h>
 #include <multimedia/qvideooutputcontrol.h>
 
@@ -44,14 +44,14 @@ class QNetworkAccessManager;
 
 class QMediaImageViewerServicePrivate;
 
-class QMediaImageViewerService : public QAbstractMediaService
+class QMediaImageViewerService : public QMediaService
 {
     Q_OBJECT
 public:
     explicit QMediaImageViewerService(QObject *parent = 0);
     ~QMediaImageViewerService();
 
-    QAbstractMediaControl *control(const char *name) const;
+    QMediaControl *control(const char *name) const;
 
     QNetworkAccessManager *networkManager() const;
 
@@ -67,7 +67,7 @@ private:
 
 class QMediaImageViewerControlPrivate;
 
-class QMediaImageViewerControl : public QAbstractMediaControl
+class QMediaImageViewerControl : public QMediaControl
 {
     Q_OBJECT
 public:

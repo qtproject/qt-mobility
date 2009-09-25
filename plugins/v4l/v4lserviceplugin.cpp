@@ -49,7 +49,7 @@ QStringList V4LServicePlugin::keys() const
     return QStringList() << QLatin1String("radio") /*<< QLatin1String("camera")*/;
 }
 
-QAbstractMediaService* V4LServicePlugin::create(QString const& key)
+QMediaService* V4LServicePlugin::create(QString const& key)
 {
     if (key == "radio")
         return new V4LRadioService;

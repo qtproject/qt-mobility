@@ -39,7 +39,7 @@
   Create a new image encode control object with the given \a parent
 */
 QImageEncoderControl::QImageEncoderControl(QObject *parent)
-    :QAbstractMediaControl(parent)
+    :QMediaControl(parent)
 {
 }
 

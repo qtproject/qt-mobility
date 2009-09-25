@@ -60,7 +60,7 @@ QStringList QGstreamerServicePlugin::keys() const
             ;
 }
 
-QAbstractMediaService* QGstreamerServicePlugin::create(const QString &key)
+QMediaService* QGstreamerServicePlugin::create(const QString &key)
 {
 #ifdef QMEDIA_GSTREAMER_PLAYER
     if (key == QLatin1String("mediaplayer"))

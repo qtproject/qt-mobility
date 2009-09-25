@@ -35,14 +35,14 @@
 #ifndef QVIDEOWIDGETCONTROL_H
 #define QVIDEOWIDGETCONTROL_H
 
-#include <multimedia/qabstractmediacontrol.h>
+#include <multimedia/qmediacontrol.h>
 #include <multimedia/qvideowidget.h>
 
 #include <QtGui/qwidget.h>
 
 class QVideoWidgetControlPrivate;
 
-class Q_MEDIA_EXPORT QVideoWidgetControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QVideoWidgetControl : public QMediaControl
 {
     Q_OBJECT
 public:

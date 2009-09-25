@@ -37,15 +37,15 @@
 
 #include <QtCore/qobject.h>
 
-#include <multimedia/qabstractmediaobject.h>
-#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qmediaobject.h>
+#include <multimedia/qmediaservice.h>
 #include <multimedia/qmediaserviceprovider.h>
 
 class QRadioService;
 class QRadioPlayerPrivate;
 
 
-class Q_MEDIA_EXPORT QRadioPlayer : public QAbstractMediaObject
+class Q_MEDIA_EXPORT QRadioPlayer : public QMediaObject
 {
     Q_OBJECT
     Q_PROPERTY(Band band READ band WRITE setBand NOTIFY bandChanged)

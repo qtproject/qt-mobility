@@ -46,15 +46,15 @@
 #endif
 
 #include <multimedia/qmediarecorder.h>
-#include <multimedia/qabstractmediacontrol.h>
-#include <multimedia/qabstractmediaobject.h>
-#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qmediacontrol.h>
+#include <multimedia/qmediaobject.h>
+#include <multimedia/qmediaservice.h>
 
 #include <multimedia/qmediaserviceprovider.h>
 
 class QAudioSourcePrivate;
 
-class Q_MEDIA_EXPORT QAudioSource : public QAbstractMediaObject
+class Q_MEDIA_EXPORT QAudioSource : public QMediaObject
 {
     Q_OBJECT
 

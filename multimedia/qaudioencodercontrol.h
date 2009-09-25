@@ -35,7 +35,7 @@
 #ifndef QAUDIOENCODERCONTROL_H
 #define QAUDIOENCODERCONTROL_H
 
-#include <multimedia/qabstractmediacontrol.h>
+#include <multimedia/qmediacontrol.h>
 #include <QtCore/qlist.h>
 #include <QtCore/qpair.h>
 
@@ -43,7 +43,7 @@ class QAudioFormat;
 class QStringList;
 
 
-class Q_MEDIA_EXPORT QAudioEncoderControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QAudioEncoderControl : public QMediaControl
 {
     Q_OBJECT
 public:

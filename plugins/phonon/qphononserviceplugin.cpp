@@ -46,7 +46,7 @@ QStringList QPhononServicePlugin::keys() const
     return QStringList() << "mediaplayer";
 }
 
-QAbstractMediaService* QPhononServicePlugin::create(QString const& key)
+QMediaService* QPhononServicePlugin::create(QString const& key)
 {
     if (key == QLatin1String("mediaplayer"))
         return new QPhononPlayerService;

@@ -33,7 +33,7 @@
 ****************************************************************************/
 
 #include <multimedia/qradioplayer.h>
-#include <multimedia/qabstractmediaobject_p.h>
+#include <multimedia/qmediaobject_p.h>
 #include <multimedia/qradioplayercontrol.h>
 
 
@@ -63,11 +63,11 @@
 */
 
 
-class QRadioPlayerPrivate : public QAbstractMediaObjectPrivate
+class QRadioPlayerPrivate : public QMediaObjectPrivate
 {
 public:
     QRadioPlayerPrivate():service(0), control(0) {}
-    QAbstractMediaService*  service;
+    QMediaService*  service;
     QRadioPlayerControl* control;
     bool ownService;
 };
@@ -81,7 +81,7 @@ public:
 */
 
 QRadioPlayer::QRadioPlayer(QObject *parent, QMediaServiceProvider* provider):
-    QAbstractMediaObject(*new QRadioPlayerPrivate, parent, provider->requestService("radio"))
+    QMediaObject(*new QRadioPlayerPrivate, parent, provider->requestService("radio"))
 {
     Q_D(QRadioPlayer);
 
@@ -273,7 +273,7 @@ void QRadioPlayer::setMuted(bool muted)
 
 bool QRadioPlayer::isValid() const
 {
-    return QAbstractMediaObject::isValid() && d_func()->control != 0;
+    return QMediaObject::isValid() && d_func()->control != 0;
 }
 
 /*!

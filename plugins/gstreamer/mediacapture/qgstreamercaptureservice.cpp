@@ -112,7 +112,7 @@ private:
 
 
 QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObject *parent):
-    QAbstractMediaService(parent)
+    QMediaService(parent)
 {
     static bool initialized = false;
     if (!initialized) {
@@ -168,7 +168,7 @@ QGstreamerCaptureService::~QGstreamerCaptureService()
 {
 }
 
-QAbstractMediaControl *QGstreamerCaptureService::control(const char *name) const
+QMediaControl *QGstreamerCaptureService::control(const char *name) const
 {
     if (qstrcmp(name, QVideoOutputControl_iid) == 0)
         return m_videoOutput;
