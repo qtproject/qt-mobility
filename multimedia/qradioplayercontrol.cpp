@@ -47,7 +47,7 @@
 */
 
 /*!
-    Construct a radio player control class.
+    Construct a radio player control class parented to \a parent.
 */
 
 QRadioPlayerControl::QRadioPlayerControl(QObject *parent):

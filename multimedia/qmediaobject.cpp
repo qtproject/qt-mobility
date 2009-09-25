@@ -203,8 +203,9 @@ void QMediaObject::bind(QObject*)
 }
 
 /*!
-    Construct a QMediaObject with \a parent. This class is meant as a
-    base class for Multimedia objects so this constructor is protected.
+    Construct a QMediaObject using QMediaService \a service, with \a parent.
+    This class is meant as a base class for Multimedia objects so this
+    constructor is protected.
 */
 
 QMediaObject::QMediaObject(QObject *parent, QMediaService *service):

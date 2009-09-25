@@ -75,7 +75,7 @@ public:
 
 
 /*!
-    Construct a QRadioPlayer object with \a service and \a parent.
+    Construct a QRadioPlayer object with service \a provider and \a parent.
 
     If the service is not specified the system default will be used.
 */

@@ -17,10 +17,10 @@
 <p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td width="45%" valign="top"><ul>
 <li><div class="fn">enum <b><a href="qradioplayer.html#Band-enum">Band</a></b></div></li>
-<li><div class="fn">enum <b><a href="qabstractmediaobject.html#MetaData-enum">MetaData</a></b></div></li>
-<li><div class="fn"><b><a href="qradioplayer.html#QRadioPlayer">QRadioPlayer</a></b> ( QObject *, QRadioService * )</div></li>
+<li><div class="fn">enum <b><a href="qmediaobject.html#MetaData-enum">MetaData</a></b></div></li>
+<li><div class="fn"><b><a href="qradioplayer.html#QRadioPlayer">QRadioPlayer</a></b> ( QObject *, QMediaServiceProvider * )</div></li>
 <li><div class="fn"><b><a href="qradioplayer.html#dtor.QRadioPlayer">~QRadioPlayer</a></b> ()</div></li>
-<li><div class="fn"><b><a href="qabstractmediaobject.html#addPropertyWatch">addPropertyWatch</a></b> ( QByteArray const &amp; )</div></li>
+<li><div class="fn"><b><a href="qmediaobject.html#addPropertyWatch">addPropertyWatch</a></b> ( QByteArray const &amp; )</div></li>
 <li><div class="fn"><b><a href="qradioplayer.html#band-prop">band</a></b> () const : Band</div></li>
 <li><div class="fn"><b><a href="qradioplayer.html#bandChanged">bandChanged</a></b> ( QRadioPlayer::Band )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#blockSignals">blockSignals</a></b> ( bool )</div></li>
@@ -31,7 +31,7 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#connect-2">connect</a></b> ( const QObject *, const char *, const char *, Qt::ConnectionType ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#connectNotify">connectNotify</a></b> ( const char * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#customEvent">customEvent</a></b> ( QEvent * )</div></li>
-<li><div class="fn"><b><a href="qabstractmediaobject.html#d_ptr-var">d_ptr</a></b> : QAbstractMediaObjectPrivate *</div></li>
+<li><div class="fn"><b><a href="qmediaobject.html#d_ptr-var">d_ptr</a></b> : QMediaObjectPrivate *</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#deleteLater">deleteLater</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#destroyed">destroyed</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#disconnect">disconnect</a></b> ( const QObject *, const char *, const QObject *, const char * )</div></li>
@@ -45,7 +45,7 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#dynamicPropertyNames">dynamicPropertyNames</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#event">event</a></b> ( QEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#eventFilter">eventFilter</a></b> ( QObject *, QEvent * )</div></li>
-<li><div class="fn"><b><a href="qabstractmediaobject.html#extendedMetaData">extendedMetaData</a></b> ( const QString &amp; ) const : QVariant</div></li>
+<li><div class="fn"><b><a href="qmediaobject.html#extendedMetaData">extendedMetaData</a></b> ( const QString &amp; ) const : QVariant</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#findChild">findChild</a></b> ( const QString &amp; ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#findChildren">findChildren</a></b> ( const QString &amp; ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#findChildren-2">findChildren</a></b> ( const QRegExp &amp; ) const</div></li>
@@ -53,43 +53,42 @@
 <li><div class="fn"><b><a href="qradioplayer.html#frequencyChanged">frequencyChanged</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#inherits">inherits</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#installEventFilter">installEventFilter</a></b> ( QObject * )</div></li>
-<li><div class="fn"><b><a href="qabstractmediaobject.html#metaDataAvailable-prop">isMetaDataAvailable</a></b> () const : bool</div></li>
-<li><div class="fn"><b><a href="qabstractmediaobject.html#metaDataWritable-prop">isMetaDataWritable</a></b> () const : bool</div></li>
+<li><div class="fn"><b><a href="qmediaobject.html#metaDataAvailable-prop">isMetaDataAvailable</a></b> () const : bool</div></li>
+<li><div class="fn"><b><a href="qmediaobject.html#metaDataWritable-prop">isMetaDataWritable</a></b> () const : bool</div></li>
 <li><div class="fn"><b><a href="qradioplayer.html#muted-prop">isMuted</a></b> () const : bool</div></li>
 <li><div class="fn"><b><a href="qradioplayer.html#searching-prop">isSearching</a></b> () const : bool</div></li>
 <li><div class="fn"><b><a href="qradioplayer.html#stereo-prop">isStereo</a></b> () const : bool</div></li>
 <li><div class="fn"><b><a href="qradioplayer.html#isSupportedBand">isSupportedBand</a></b> ( Band ) const : bool</div></li>
 <li><div class="fn"><b><a href="qradioplayer.html#isValid">isValid</a></b> () const : bool</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#isWidgetType">isWidgetType</a></b> () const</div></li>
-<li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#killTimer">killTimer</a></b> ( int )</div></li>
 </ul></td><td valign="top"><ul>
-<li><div class="fn"><b><a href="qabstractmediaobject.html#metaData">metaData</a></b> ( MetaData ) const : QVariant</div></li>
-<li><div class="fn"><b><a href="qabstractmediaobject.html#metaDataAvailableChanged">metaDataAvailableChanged</a></b> ( bool )</div></li>
-<li><div class="fn"><b><a href="qabstractmediaobject.html#metaDataChanged">metaDataChanged</a></b> ()</div></li>
-<li><div class="fn"><b><a href="qabstractmediaobject.html#metaDataWritableChanged">metaDataWritableChanged</a></b> ( bool )</div></li>
+<li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#killTimer">killTimer</a></b> ( int )</div></li>
+<li><div class="fn"><b><a href="qmediaobject.html#metaData">metaData</a></b> ( MetaData ) const : QVariant</div></li>
+<li><div class="fn"><b><a href="qmediaobject.html#metaDataAvailableChanged">metaDataAvailableChanged</a></b> ( bool )</div></li>
+<li><div class="fn"><b><a href="qmediaobject.html#metaDataChanged">metaDataChanged</a></b> ()</div></li>
+<li><div class="fn"><b><a href="qmediaobject.html#metaDataWritableChanged">metaDataWritableChanged</a></b> ( bool )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#metaObject">metaObject</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#moveToThread">moveToThread</a></b> ( QThread * )</div></li>
 <li><div class="fn"><b><a href="qradioplayer.html#mutingChanged">mutingChanged</a></b> ( bool )</div></li>
-<li><div class="fn"><b><a href="qabstractmediaobject.html#notifyInterval-prop">notifyInterval</a></b> () const : int</div></li>
-<li><div class="fn"><b><a href="qabstractmediaobject.html#notifyIntervalChanged">notifyIntervalChanged</a></b> ( int )</div></li>
+<li><div class="fn"><b><a href="qmediaobject.html#notifyInterval-prop">notifyInterval</a></b> () const : int</div></li>
+<li><div class="fn"><b><a href="qmediaobject.html#notifyIntervalChanged">notifyIntervalChanged</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#objectName-prop">objectName</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#parent">parent</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#property">property</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#receivers">receivers</a></b> ( const char * ) const</div></li>
-<li><div class="fn"><b><a href="qabstractmediaobject.html#registerService">registerService</a></b> ( QAbstractMediaService * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#removeEventFilter">removeEventFilter</a></b> ( QObject * )</div></li>
-<li><div class="fn"><b><a href="qabstractmediaobject.html#removePropertyWatch">removePropertyWatch</a></b> ( QByteArray const &amp; )</div></li>
+<li><div class="fn"><b><a href="qmediaobject.html#removePropertyWatch">removePropertyWatch</a></b> ( QByteArray const &amp; )</div></li>
 <li><div class="fn"><b><a href="qradioplayer.html#searchBackward">searchBackward</a></b> ()</div></li>
 <li><div class="fn"><b><a href="qradioplayer.html#searchForward">searchForward</a></b> ()</div></li>
 <li><div class="fn"><b><a href="qradioplayer.html#searchingStatusChanged">searchingStatusChanged</a></b> ( bool )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#sender">sender</a></b> () const</div></li>
-<li><div class="fn"><b><a href="qradioplayer.html#service">service</a></b> () const : QAbstractMediaService *</div></li>
+<li><div class="fn"><b><a href="qmediaobject.html#service">service</a></b> () const : QMediaService *</div></li>
 <li><div class="fn"><b><a href="qradioplayer.html#band-prop">setBand</a></b> ( Band )</div></li>
-<li><div class="fn"><b><a href="qabstractmediaobject.html#setExtendedMetaData">setExtendedMetaData</a></b> ( const QString &amp;, const QVariant &amp; )</div></li>
+<li><div class="fn"><b><a href="qmediaobject.html#setExtendedMetaData">setExtendedMetaData</a></b> ( const QString &amp;, const QVariant &amp; )</div></li>
 <li><div class="fn"><b><a href="qradioplayer.html#frequency-prop">setFrequency</a></b> ( int )</div></li>
-<li><div class="fn"><b><a href="qabstractmediaobject.html#setMetaData">setMetaData</a></b> ( MetaData, const QVariant &amp; )</div></li>
+<li><div class="fn"><b><a href="qmediaobject.html#setMetaData">setMetaData</a></b> ( MetaData, const QVariant &amp; )</div></li>
 <li><div class="fn"><b><a href="qradioplayer.html#muted-prop">setMuted</a></b> ( bool )</div></li>
-<li><div class="fn"><b><a href="qabstractmediaobject.html#notifyInterval-prop">setNotifyInterval</a></b> ( int )</div></li>
+<li><div class="fn"><b><a href="qmediaobject.html#notifyInterval-prop">setNotifyInterval</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#objectName-prop">setObjectName</a></b> ( const QString &amp; )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#setParent">setParent</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#setProperty">setProperty</a></b> ( const char *, const QVariant &amp; )</div></li>

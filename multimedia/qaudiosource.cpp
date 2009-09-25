@@ -58,7 +58,7 @@ public:
 };
 
 /*!
-    Construct a QAudioSource from \a service with \a parent.
+    Construct a QAudioSource using the QMediaService from \a provider, with \a parent.
 */
 
 QAudioSource::QAudioSource(QObject *parent, QMediaServiceProvider *provider):

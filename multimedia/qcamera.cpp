@@ -65,7 +65,7 @@ public:
 };
 
 /*!
-    Construct a QCamera from \a service with \a parent.
+    Construct a QCamera from service \a provider and \a parent.
 */
 
 QCamera::QCamera(QObject *parent, QMediaServiceProvider *provider):

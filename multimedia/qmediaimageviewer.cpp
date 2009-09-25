@@ -248,7 +248,7 @@ void QMediaImageViewer::setTimeout(int timeout)
 }
 
 /*!
-    \reimp
+    \internal
 */
 void QMediaImageViewer::bind(QObject *object)
 {

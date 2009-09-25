@@ -138,7 +138,7 @@ void QMediaPlayerPrivate::_q_updateMedia(const QMediaSource &media)
 
 
 /*!
-    Construct a QMediaPlayer to operate on the QMediaPlayerService \a service, parented to \a parent.
+    Construct a QMediaPlayer that uses the playback service from \a provider, parented to \a parent.
 
     If a playback service is not specified the system default will be used.
 */
@@ -363,6 +363,10 @@ void QMediaPlayer::setMedia(const QMediaSource &media, QIODevice *stream)
 {
     d_func()->control->setMedia(media, stream);
 }
+
+/*!
+    \internal
+*/
 
 void QMediaPlayer::bind(QObject *obj)
 {

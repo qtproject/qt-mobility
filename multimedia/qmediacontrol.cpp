@@ -50,6 +50,10 @@
     \sa QMediaService, QMediaObject
 */
 
+/*!
+    Destroys the QMediaControl object.
+*/
+
 QMediaControl::~QMediaControl()
 {
     delete d_ptr;
