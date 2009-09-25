@@ -74,13 +74,13 @@ QCamera::QCamera(QObject *parent, QMediaServiceProvider *provider):
 {
     Q_D(QCamera);
 
-    Q_ASSERT(service() != 0);
+    Q_ASSERT(d->service != 0);
 
-    if (service()) {
-        d->control = qobject_cast<QCameraControl *>(service()->control(QCameraControl_iid));
-        d->exposureControl = qobject_cast<QCameraExposureControl *>(service()->control(QCameraExposureControl_iid));
-        d->focusControl = qobject_cast<QCameraFocusControl *>(service()->control(QCameraFocusControl_iid));
-        d->imageControl = qobject_cast<QImageProcessingControl *>(service()->control(QImageProcessingControl_iid));
+    if (d->service) {
+        d->control = qobject_cast<QCameraControl *>(d->service->control(QCameraControl_iid));
+        d->exposureControl = qobject_cast<QCameraExposureControl *>(d->service->control(QCameraExposureControl_iid));
+        d->focusControl = qobject_cast<QCameraFocusControl *>(d->service->control(QCameraFocusControl_iid));
+        d->imageControl = qobject_cast<QImageProcessingControl *>(d->service->control(QImageProcessingControl_iid));
 
         connect(d->control, SIGNAL(stateChanged(QCamera::State)), this, SIGNAL(stateChanged(QCamera::State)));
     } else {
@@ -208,8 +208,8 @@ void QCamera::unlockFocus()
 
 QStringList QCamera::devices() const
 {
-    if (service() != 0)
-        return service()->supportedEndpoints(QMediaService::VideoInput);
+    if (d_func()->service != 0)
+        return d_func()->service->supportedEndpoints(QMediaService::VideoInput);
 
     return QStringList();
 }
@@ -220,8 +220,10 @@ QStringList QCamera::devices() const
 
 void QCamera::setDevice(const QString& device)
 {
-    if (service())
-        service()->setActiveEndpoint(QMediaService::VideoInput, device);
+    Q_D(QCamera);
+
+    if (d->service)
+        d->service->setActiveEndpoint(QMediaService::VideoInput, device);
 }
 
 /*!
@@ -230,8 +232,8 @@ void QCamera::setDevice(const QString& device)
 
 QString QCamera::deviceDescription(const QString &device) const
 {
-    if (service() != 0)
-        return service()->endpointDescription(QMediaService::VideoInput, device);
+    if (d_func()->service != 0)
+        return d_func()->service->endpointDescription(QMediaService::VideoInput, device);
     else
         return device;
 }
