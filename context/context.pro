@@ -36,7 +36,10 @@ symbian {
 unix {
     HEADERS += qsystemreadwritelock_p.h
     SOURCES += sharedmemorylayer.cpp \
-               qsystemreadwritelock.cpp
+               qsystemreadwritelock.cpp \
+               contextkitlayer.cpp
+    CONFIG += link_pkgconfig
+    PKGCONFIG += contextsubscriber-1.0
 }
 
 win32 {
