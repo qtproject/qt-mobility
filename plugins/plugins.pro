@@ -19,3 +19,5 @@ unix:!mac {
         gstreamer-video-0.10 >= 0.10.19
     system(pkg-config --exists \'$${TMP_GST_LIBS}\' --print-errors): SUBDIRS += gstreamer
 }
+
+contains(QT_CONFIG, multimedia): SUBDIRS += audiocapture

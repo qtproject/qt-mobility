@@ -39,7 +39,11 @@
 #include <QtCore/qpair.h>
 #include <QtCore/qsize.h>
 
+#ifndef QT_NO_MULTIMEDIA
 #include <QtMultimedia/qaudioformat.h>
+#else
+#include <multimedia/qaudioformat.h>
+#endif
 
 #include <multimedia/qmediarecorder.h>
 #include <multimedia/qabstractmediacontrol.h>
