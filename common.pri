@@ -125,3 +125,7 @@ contains(QT_CONFIG, multimedia) {
 } else {
     DEFINES *= QT_NO_MULTIMEDIA
 }
+
+# Messaging specific:
+DEFINES+=QMESSAGING_OPTIONAL_FOLDER
+

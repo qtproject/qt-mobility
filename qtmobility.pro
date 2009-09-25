@@ -38,7 +38,7 @@ SUBDIRS += serviceframework
 symbian:SUBDIRS += serviceframework/symbian/dll/databasemanagerserver_dll.pro \
                    serviceframework/symbian/exe/databasemanagerserver_exe.pro
 
-SUBDIRS += bearer location context systeminfo contacts multimedia tools plugins
+SUBDIRS += bearer location context systeminfo contacts multimedia messaging tools plugins
 
 contains(build_unit_tests, yes):SUBDIRS+=tests
 contains(build_examples, yes):SUBDIRS+=examples

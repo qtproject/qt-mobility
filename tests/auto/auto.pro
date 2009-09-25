@@ -1,4 +1,7 @@
 TEMPLATE = subdirs
+
+CONFIG += ordered
+
 #sfw unit tests dont work yet on Symbian. enable later
 !symbian {
     SUBDIRS += servicemetadata \            #service framework
@@ -65,3 +68,10 @@ SUBDIRS += \           #Multimedia
         qmediarecorder \
         qaudiosource \
         qcamera
+
+SUBDIRS += \            #Messaging
+    support \
+    qmessagestore \
+    qmessagestorekeys \
+    qmessage
+

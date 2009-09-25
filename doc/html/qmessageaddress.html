@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- ../../messaging/qmessageaddress.cpp -->
+<head>
+  <title>QMessageAddress Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMessageAddress Class Reference</h1>
+<p>The QMessageAddress class provides an interface for a message address. <a href="#details">More...</a></p>
+<pre>    #include &lt;QMessageAddress&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<ul>
+<li><a href="qmessageaddress-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="public-types"></a>
+<h3>Public Types</h3>
+<ul>
+<li><div class="fn"></div>enum <b><a href="qmessageaddress.html#Type-enum">Type</a></b> { System, Phone, Email, Xmpp }</li>
+</ul>
+<a name="public-functions"></a>
+<h3>Public Functions</h3>
+<ul>
+<li><div class="fn"></div><b><a href="qmessageaddress.html#QMessageAddress">QMessageAddress</a></b> ()</li>
+<li><div class="fn"></div><b><a href="qmessageaddress.html#QMessageAddress-2">QMessageAddress</a></b> ( const QString &amp; <i>recipient</i>, Type <i>type</i> )</li>
+<li><div class="fn"></div><b><a href="qmessageaddress.html#QMessageAddress-3">QMessageAddress</a></b> ( const QMessageAddress &amp; <i>other</i> )</li>
+<li><div class="fn"></div>virtual <b><a href="qmessageaddress.html#dtor.QMessageAddress">~QMessageAddress</a></b> ()</li>
+<li><div class="fn"></div>QString <b><a href="qmessageaddress.html#recipient">recipient</a></b> () const</li>
+<li><div class="fn"></div>void <b><a href="qmessageaddress.html#setRecipient">setRecipient</a></b> ( const QString &amp; <i>recipient</i> )</li>
+<li><div class="fn"></div>void <b><a href="qmessageaddress.html#setType">setType</a></b> ( Type <i>type</i> )</li>
+<li><div class="fn"></div>Type <b><a href="qmessageaddress.html#type">type</a></b> () const</li>
+<li><div class="fn"></div>const QMessageAddress &amp; <b><a href="qmessageaddress.html#operator-eq">operator=</a></b> ( const QMessageAddress &amp; <i>other</i> )</li>
+<li><div class="fn"></div>bool <b><a href="qmessageaddress.html#operator-eq-eq">operator==</a></b> ( const QMessageAddress &amp; <i>other</i> ) const</li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QMessageAddress class provides an interface for a message address.</p>
+<p>A message address consists of a recipient string and a type.</p>
+<hr />
+<h2>Member Type Documentation</h2>
+<h3 class="fn"><a name="Type-enum"></a>enum QMessageAddress::Type</h3>
+<p>This enum type is used to describe the type of a message address.</p>
+<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QMessageAddress::System</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">A system address.</td></tr>
+<tr><td valign="top"><tt>QMessageAddress::Phone</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">A telephony address.</td></tr>
+<tr><td valign="top"><tt>QMessageAddress::Email</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">An Email, Internet Message Format address.</td></tr>
+<tr><td valign="top"><tt>QMessageAddress::Xmpp</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">An XMPP, Extensible Messaging and Presence Protocol address.</td></tr>
+</table></p>
+<p>See also <a href="qmessageaddress.html#type">type</a>() and <a href="qmessageaddress.html#setType">setType</a>().</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<h3 class="fn"><a name="QMessageAddress"></a>QMessageAddress::QMessageAddress ()</h3>
+<p>Constructs an empty message address.</p>
+<h3 class="fn"><a name="QMessageAddress-2"></a>QMessageAddress::QMessageAddress ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>recipient</i>, <a href="qmessageaddress.html#Type-enum">Type</a> <i>type</i> )</h3>
+<p>Constructs a message address with the given recipient <i>recipient</i> and type <i>type</i>.</p>
+<h3 class="fn"><a name="QMessageAddress-3"></a>QMessageAddress::QMessageAddress ( const QMessageAddress &amp; <i>other</i> )</h3>
+<p>Constructs a copy of <i>other</i>.</p>
+<p>See also <a href="qmessageaddress.html#operator-eq">operator=</a>().</p>
+<h3 class="fn"><a name="dtor.QMessageAddress"></a>QMessageAddress::~QMessageAddress ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Destroys the message address.</p>
+<h3 class="fn"><a name="recipient"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMessageAddress::recipient () const</h3>
+<p>Returns the recipient.</p>
+<p>See also <a href="qmessageaddress.html#setRecipient">setRecipient</a>().</p>
+<h3 class="fn"><a name="setRecipient"></a>void QMessageAddress::setRecipient ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>recipient</i> )</h3>
+<p>Sets the recipient to <i>recipient</i>.</p>
+<p>See also <a href="qmessageaddress.html#recipient">recipient</a>().</p>
+<h3 class="fn"><a name="setType"></a>void QMessageAddress::setType ( <a href="qmessageaddress.html#Type-enum">Type</a> <i>type</i> )</h3>
+<p>Sets the type of the message address to <i>type</i>.</p>
+<p>See also <a href="qmessageaddress.html#type">type</a>().</p>
+<h3 class="fn"><a name="type"></a><a href="qmessageaddress.html#Type-enum">Type</a> QMessageAddress::type () const</h3>
+<p>Returns the type of the message address.</p>
+<p>See also <a href="qmessageaddress.html#setType">setType</a>().</p>
+<h3 class="fn"><a name="operator-eq"></a>const QMessageAddress &amp; QMessageAddress::operator= ( const QMessageAddress &amp; <i>other</i> )</h3>
+<p>Assign the value of the <a href="qmessageaddress.html">QMessageAddress</a> <i>other</i> to this.</p>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QMessageAddress::operator== ( const QMessageAddress &amp; <i>other</i> ) const</h3>
+<p>Returns true if the message address is equal to that contained by <i>other</i>.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="right"><div align="right">Messaging API</div></td>
+</tr></table></div></address></body>
+</html>

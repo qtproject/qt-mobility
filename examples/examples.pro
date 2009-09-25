@@ -21,7 +21,7 @@ contains(QT_CONFIG, webkit) {
 SUBDIRS += samplephonebook \
            incomingcalls
 
-#Publish and Sbscribe examples
+#Publish and Subscribe examples
 SUBDIRS += publish-subscribe
 contains(QT_CONFIG, declarative) {
     SUBDIRS += battery-charge
@@ -36,3 +36,11 @@ SUBDIRS += player \
         cameracapture \
         slideshow \
         streamplayer
+
+#Messaging examples
+SUBDIRS += \
+    keepintouch\
+    querymessages\
+    sendmessage\
+    serviceactions
+
