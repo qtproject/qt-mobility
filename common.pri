@@ -54,12 +54,12 @@ CONFIG(debug, debug|release) {
 #test whether we have a unit test
 !testcase {
     OBJECTS_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET
-    !plugin:!testplugin {
+    !plugin {
         contains(TEMPLATE, lib):DESTDIR = $$OUTPUT_DIR/lib
         else:DESTDIR = $$OUTPUT_DIR/bin
     } else {
-        testplugin:DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/contacts
-        !testplugin:DESTDIR = $$OUTPUT_DIR/plugins/contacts
+        testplugin:DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/$$PLUGIN_TYPE
+        !testplugin:DESTDIR = $$OUTPUT_DIR/plugins/$$PLUGIN_TYPE
     }
 
     MOC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/moc
@@ -93,7 +93,7 @@ wince* {
     CONTACTS_DEPLOYMENT.path = /Windows
 
     # Plugins
-    CONTACTS_PLUGINS_DEPLOYMENT.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/plugins/contacts/*.dll
+    CONTACTS_PLUGINS_DEPLOYMENT.sources = $$OUTPUT_DIR/plugins/contacts/*.dll
     CONTACTS_PLUGINS_DEPLOYMENT.path = plugins/contacts
 
     DEPLOYMENT += CONTACTS_DEPLOYMENT CONTACTS_PLUGINS_DEPLOYMENT

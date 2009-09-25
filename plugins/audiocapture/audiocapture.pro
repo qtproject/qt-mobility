@@ -1,8 +1,7 @@
 TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(audioengine)
-
-PLUGIN_SUBDIR = mediaservice
+PLUGIN_TYPE=mediaservice
 
 include (../../common.pri)
 

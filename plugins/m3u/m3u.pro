@@ -2,7 +2,7 @@ TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(m3u)
 
-PLUGIN_SUBDIR = playlistformats
+PLUGIN_TYPE = playlistformats
 
 include (../../common.pri)
 

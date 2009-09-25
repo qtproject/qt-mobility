@@ -1,12 +1,8 @@
-######################################################################
-#
-# Contacts Mobility API
-#
-######################################################################
-
 TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(contacts_kabc)
+
+PLUGIN_TYPE=contacts
 
 include(../../../common.pri)
 

@@ -2,7 +2,7 @@ TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(qwmp)
 
-PLUGIN_SUBDIR = mediaservice
+PLUGIN_TYPE = mediaservice
 
 INCLUDEPATH+=../../multimedia
 include(../../common.pri)

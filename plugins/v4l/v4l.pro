@@ -2,7 +2,7 @@ TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(v4lengine)
 
-PLUGIN_SUBDIR = mediaservice
+PLUGIN_TYPE = mediaservice
 
 include (../../common.pri)
 

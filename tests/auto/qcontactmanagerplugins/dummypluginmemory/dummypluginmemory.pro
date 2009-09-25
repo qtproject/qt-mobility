@@ -1,6 +1,7 @@
 TEMPLATE = lib
 CONFIG += plugin testplugin
 TARGET = $$qtLibraryTarget(contacts_testdummymemory)
+PLUGIN_TYPE=contacts
 
 INCLUDEPATH += ../../../../contacts \
                ../../../../contacts/details \

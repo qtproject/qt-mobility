@@ -1,12 +1,7 @@
-######################################################################
-#
-# Contacts Mobility API
-#
-######################################################################
-
 TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(mobapicontactspluginsymbian)
+PLUGIN_TYPE=contacts
 
 include(../../../common.pri)
 

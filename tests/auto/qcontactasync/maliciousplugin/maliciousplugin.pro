@@ -1,6 +1,7 @@
 TEMPLATE = lib
 CONFIG += plugin testplugin
 TARGET = $$qtLibraryTarget(contacts_maliciousplugin)
+PLUGIN_TYPE=contacts
 
 include(../../../../common.pri)
 

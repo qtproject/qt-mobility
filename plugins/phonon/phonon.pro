@@ -3,7 +3,7 @@ CONFIG += plugin
 QT += phonon
 TARGET = $$qtLibraryTarget(phononengine)
 
-PLUGIN_SUBDIR = mediaservice
+PLUGIN_TYPE = mediaservice
 
 include (../../common.pri)
 

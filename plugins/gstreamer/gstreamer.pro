@@ -1,13 +1,10 @@
 TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(gstengine)
+PLUGIN_TYPE=mediaservice
 
 include(../../common.pri)
 INCLUDEPATH+=../../multimedia
-
-PLUGIN_SUBDIR = mediaservice
-testplugin:DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/mediaservice/
-!testplugin:DESTDIR = $$OUTPUT_DIR/plugins/mediaservice/
 
 qtAddLibrary(QtMedia)
 
