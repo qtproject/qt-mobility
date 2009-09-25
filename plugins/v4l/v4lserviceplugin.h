@@ -36,7 +36,7 @@
 #ifndef V4LSERVICEPLUGIN_H
 #define V4LSERVICEPLUGIN_H
 
-#include <qmediaserviceproviderplugin.h>
+#include <multimedia/qmediaserviceproviderplugin.h>
 
 class V4LServicePlugin : public QMediaServiceProviderPlugin
 {

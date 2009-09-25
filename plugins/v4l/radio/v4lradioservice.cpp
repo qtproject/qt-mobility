@@ -34,14 +34,14 @@
 
 #include <QtCore/qvariant.h>
 #include <QtCore/qdebug.h>
-#include <QtGui/qwidget.h>
 #include <QtCore/qfile.h>
+#include <QtGui/qwidget.h>
 
 #include "v4lradioservice.h"
 #include "v4lradiocontrol.h"
 
-V4LRadioService::V4LRadioService(QObject *parent)
-    : QRadioService(parent)
+V4LRadioService::V4LRadioService(QObject *parent):
+    QMediaService(parent)
 {
     m_control = new V4LRadioControl(this);
 }

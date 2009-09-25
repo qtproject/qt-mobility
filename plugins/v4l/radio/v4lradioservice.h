@@ -37,13 +37,14 @@
 
 #include <QtCore/qobject.h>
 
-#include "qradioservice.h"
+#include <multimedia/qmediaservice.h>
 
 class V4LRadioControl;
 
-class V4LRadioService : public QRadioService
+class V4LRadioService : public QMediaService
 {
     Q_OBJECT
+
 public:
     V4LRadioService(QObject *parent = 0);
     ~V4LRadioService();
@@ -61,6 +62,7 @@ public:
     QString activeEndpoint(QMediaService::MediaEndpoint endpointType);
     bool setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
     QList<QString> supportedEndpoints(QMediaService::MediaEndpoint endpointType) const;
+
 private:
     V4LRadioControl *m_control;
 };

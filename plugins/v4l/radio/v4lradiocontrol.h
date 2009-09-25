@@ -37,10 +37,9 @@
 
 #include <QtCore/qobject.h>
 #include <QtCore/qtimer.h>
-#include <QTime>
+#include <QtCore/qdatetime.h>
 
-#include "qradioplayercontrol.h"
-#include "qradioplayer.h"
+#include <multimedia/qradioplayercontrol.h>
 
 #include "linux/videodev2.h"
 
