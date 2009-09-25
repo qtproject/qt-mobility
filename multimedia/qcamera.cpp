@@ -48,20 +48,21 @@
     \ingroup multimedia
 
     \preliminary
-    \brief
-
-    \sa
+    \brief The QCamera class provides interface for system
+    camera devices.
 */
 
 
 class QCameraPrivate : public QMediaObjectPrivate
 {
 public:
-    QMediaService *service;
     QCameraControl *control;
     QCameraExposureControl *exposureControl;
     QCameraFocusControl *focusControl;
     QImageProcessingControl *imageControl;
+
+    QCamera::Error error;
+    QString errorString;
 };
 
 /*!
@@ -69,17 +70,17 @@ public:
 */
 
 QCamera::QCamera(QObject *parent, QMediaServiceProvider *provider):
-    QMediaObject(*new QCameraPrivate, parent, provider->requestService("camea"))
+    QMediaObject(*new QCameraPrivate, parent, provider->requestService("camera"))
 {
     Q_D(QCamera);
 
-    Q_ASSERT(d->service != 0);
+    Q_ASSERT(service() != 0);
 
-    if (d->service) {
-        d->control = qobject_cast<QCameraControl *>(d->service->control(QCameraControl_iid));
-        d->exposureControl = qobject_cast<QCameraExposureControl *>(d->service->control(QCameraExposureControl_iid));
-        d->focusControl = qobject_cast<QCameraFocusControl *>(d->service->control(QCameraFocusControl_iid));
-        d->imageControl = qobject_cast<QImageProcessingControl *>(d->service->control(QImageProcessingControl_iid));
+    if (service()) {
+        d->control = qobject_cast<QCameraControl *>(service()->control(QCameraControl_iid));
+        d->exposureControl = qobject_cast<QCameraExposureControl *>(service()->control(QCameraExposureControl_iid));
+        d->focusControl = qobject_cast<QCameraFocusControl *>(service()->control(QCameraFocusControl_iid));
+        d->imageControl = qobject_cast<QImageProcessingControl *>(service()->control(QImageProcessingControl_iid));
 
         connect(d->control, SIGNAL(stateChanged(QCamera::State)), this, SIGNAL(stateChanged(QCamera::State)));
     } else {
@@ -110,8 +111,23 @@ QCamera::~QCamera()
 {
 }
 
+QCamera::Error QCamera::error() const
+{
+    return d_func()->error;
+}
+
+QString QCamera::errorString() const
+{
+    return d_func()->errorString;
+}
+
 /*!
-    Start camera.
+    Starts the camera.
+
+    This can involve powering up the camera device and can be asynchronyous.
+
+    State is changed to QCamera::ActiveState if camera is started
+    succesfuly, otherwise error() signal is emited.
 */
 
 void QCamera::start()
@@ -123,7 +139,7 @@ void QCamera::start()
 }
 
 /*!
-    Stop camera.
+    Stops the camera.
 */
 
 void QCamera::stop()
@@ -192,10 +208,8 @@ void QCamera::unlockFocus()
 
 QStringList QCamera::devices() const
 {
-    Q_D(const QCamera);
-
-    if (d->service != 0)
-        return d->service->supportedEndpoints(QMediaService::VideoInput);
+    if (service() != 0)
+        return service()->supportedEndpoints(QMediaService::VideoInput);
 
     return QStringList();
 }
@@ -206,10 +220,8 @@ QStringList QCamera::devices() const
 
 void QCamera::setDevice(const QString& device)
 {
-    Q_D(QCamera);
-
-    if (d->service)
-        d->service->setActiveEndpoint(QMediaService::VideoInput, device);
+    if (service())
+        service()->setActiveEndpoint(QMediaService::VideoInput, device);
 }
 
 /*!
@@ -218,10 +230,8 @@ void QCamera::setDevice(const QString& device)
 
 QString QCamera::deviceDescription(const QString &device) const
 {
-    Q_D(const QCamera);
-
-    if (d->service != 0)
-        return d->service->endpointDescription(QMediaService::VideoInput, device);
+    if (service() != 0)
+        return service()->endpointDescription(QMediaService::VideoInput, device);
     else
         return device;
 }

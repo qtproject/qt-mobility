@@ -58,9 +58,13 @@ public:
 public slots:
     void setDevice(const QString &device);
 
+private slots:
+    void updateState();
+
 private:
     QGstreamerCaptureSession *m_session;
     QByteArray m_device;
+    QCamera::State m_state;
 };
 
 #endif // QGSTREAMERCAMERACONTROL_H

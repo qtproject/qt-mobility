@@ -53,6 +53,7 @@ public:
 
 Q_SIGNALS:
     void stateChanged(QCamera::State);
+    void error(int error, const QString &errorString);
 
 protected:
     QCameraControl(QObject* parent);

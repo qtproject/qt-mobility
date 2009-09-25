@@ -58,6 +58,12 @@ class Q_MEDIA_EXPORT QCamera : public QMediaObject
 public:
     enum State { ActiveState, StoppedState };
 
+    enum Error
+    {
+        NoError,
+        CameraError
+    };
+
     enum FlashMode {
         FlashOff = 0x1,
         FlashOn = 0x2,
@@ -194,6 +200,9 @@ public:
     bool isExposureLocked() const;
     bool isFocusLocked() const;
 
+    Error error() const;
+    QString errorString() const;
+
 public Q_SLOTS:
     void lockExposure();
     void unlockExposure();
@@ -209,6 +218,7 @@ Q_SIGNALS:
     void focusLocked();
 
     void stateChanged(QCamera::State);
+    void error(QCamera::Error);
 
 private:
     Q_DISABLE_COPY(QCamera)

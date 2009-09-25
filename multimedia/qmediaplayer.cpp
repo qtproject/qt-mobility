@@ -61,10 +61,9 @@ class QMediaPlayerPrivate : public QMediaObjectPrivate
     Q_DECLARE_PUBLIC(QMediaPlayer)
 
 public:
-    QMediaPlayerPrivate():service(0), control(0) {}
+    QMediaPlayerPrivate(): control(0) {}
 
     QMediaServiceProvider *provider;
-    QMediaService* service;
     QMediaPlayerControl* control;
     QMediaPlayer::Error error;
     QString errorString;
@@ -150,9 +149,9 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaServiceProvider *provider):
 
     d->provider = provider;
 
-    Q_ASSERT(d->service != 0);
-    if (d->service != 0) {
-        d->control = qobject_cast<QMediaPlayerControl*>(d->service->control(QMediaPlayerControl_iid));
+    Q_ASSERT(service() != 0);
+    if (service() != 0) {
+        d->control = qobject_cast<QMediaPlayerControl*>(service()->control(QMediaPlayerControl_iid));
         if (d->control != 0) {
             connect(d->control, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(_q_stateChanged(QMediaPlayer::State)));
             connect(d->control, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
@@ -172,7 +171,7 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaServiceProvider *provider):
             if (d->control->mediaStatus() == StalledMedia || d->control->mediaStatus() == BufferingMedia)
                 addPropertyWatch("bufferStatus");
 
-            d->hasPlaylistControl = (d->service->control(QMediaPlaylistControl_iid) != 0);
+            d->hasPlaylistControl = (service()->control(QMediaPlaylistControl_iid) != 0);
         }
     }
 }
@@ -186,7 +185,7 @@ QMediaPlayer::~QMediaPlayer()
 {
     Q_D(QMediaPlayer);
 
-    d->provider->releaseService(d->service);
+    d->provider->releaseService(service());
 }
 
 /*!
