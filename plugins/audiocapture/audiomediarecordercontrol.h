@@ -37,8 +37,8 @@
 
 #include <QtCore/qobject.h>
 
-#include "qmediarecorder.h"
-#include "qmediarecordercontrol.h"
+#include <multimedia/qmediarecorder.h>
+#include <multimedia/qmediarecordercontrol.h>
 
 class AudioCaptureSession;
 

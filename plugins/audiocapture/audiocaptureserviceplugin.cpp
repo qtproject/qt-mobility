@@ -38,8 +38,8 @@
 #include "audiocaptureserviceplugin.h"
 #include "audiocaptureservice.h"
 
-#include <qmediaserviceprovider.h>
-#include <qaudiorecorderservice.h>
+#include <multimedia/qmediaserviceprovider.h>
+#include <multimedia/qaudiorecorderservice.h>
 
 
 class AudioCaptureProvider : public QMediaServiceProvider

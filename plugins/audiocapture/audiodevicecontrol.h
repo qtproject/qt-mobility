@@ -35,8 +35,9 @@
 #ifndef AUDIODEVICECONTROL_H
 #define AUDIODEVICECONTROL_H
 
-#include "qaudiodevicecontrol.h"
 #include <QStringList>
+
+#include <multimedia/qaudiodevicecontrol.h>
 
 class AudioCaptureSession;
 
