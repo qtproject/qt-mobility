@@ -23,32 +23,29 @@
     TARGET = samplephonebook
     DEPENDPATH += .
     INCLUDEPATH += . \
-                   ../incomingcalls\
                    ../../contacts\
                    ../../contacts/filters \
                    ../../contacts/requests \
                    ../../contacts/details
 
-    VPATH += ../incomingcalls
-
     # Input
-    SOURCES +=  contactdetailsform.cpp \
+    SOURCES =  contactdetailsform.cpp \
                 maindialogform_240_320.cpp \
                 maindialogform_640_480.cpp \
                 phonebook.cpp \
                 serialiser.cpp \
-                finddialog.cpp \
-                filterdialog.cpp \
                 groupeditdialog.cpp \
                 groupdetailsdialog.cpp \
-                main.cpp
+                main.cpp \
+                finddialog.cpp
+
     HEADERS   = contactdetailsform.h \
                 maindialogform_240_320.h \
                 maindialogform_640_480.h \
                 phonebook.h \
                 serialiser.h \
                 finddialog.h \
-                filterdialog.h \
+                ../incomingcalls/filterdialog.h \
                 groupeditdialog.h \
                 groupdetailsdialog.h
 

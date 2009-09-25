@@ -9,6 +9,7 @@ headerdirs = ../../bearer \
              ../../context \
              ../../systeminfo \
              ../../contacts \
+             ../../multimedia \
              .
 
 sourcedirs = ../../bearer \
@@ -17,6 +18,7 @@ sourcedirs = ../../bearer \
              ../../context \
              ../../systeminfo \
              ../../contacts \
+             ../../multimedia \
              .
 
 exampledirs = ../../examples \

@@ -130,12 +130,20 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QMediaSource </td><td class="memItemRight" valign="bottom"><b>currentMedia</b> () const</td></tr>
 </table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#currentMediaChanged">currentMediaChanged</a></b> ( const QMediaSource &amp; <i>source</i> )</td></tr>
+</table>
 <h3 class="fn"><a name="currentPosition-prop"></a>currentPosition : int</h3>
 <p>This property holds current position.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>currentPosition</b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setCurrentPosition</b> ( int <i>playlistPosition</i> )</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#playlistPositionChanged">playlistPositionChanged</a></b> ( int <i>position</i> )</td></tr>
 </table>
 <h3 class="fn"><a name="playbackMode-prop"></a>playbackMode : <a href="qmediaplaylist.html#PlaybackMode-enum">QMediaPlaylist::PlaybackMode</a></h3>
 <p>This property defines the order, items in playlist are played.</p>
@@ -144,6 +152,10 @@
 <tr><td class="memItemLeft" align="right" valign="top">PlaybackMode </td><td class="memItemRight" valign="bottom"><b>playbackMode</b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setPlaybackMode</b> ( PlaybackMode <i>mode</i> )</td></tr>
 </table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#playbackModeChanged">playbackModeChanged</a></b> ( QMediaPlaylist::PlaybackMode <i>mode</i> )</td></tr>
+</table>
 <p>See also <a href="qmediaplaylist.html#PlaybackMode-enum">QMediaPlaylist::PlaybackMode</a>.</p>
 <h3 class="fn"><a name="playlistProvider-prop"></a>playlistProvider : <a href="qmediaplaylistprovider.html">QMediaPlaylistProvider</a> *</h3>
 <p>This property holds current playlist provider.</p>
@@ -151,6 +163,10 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QMediaPlaylistProvider * </td><td class="memItemRight" valign="bottom"><b>playlistProvider</b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>setPlaylistProvider</b> ( QMediaPlaylistProvider * <i>playlist</i> )</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#playlistProviderChanged">playlistProviderChanged</a></b> ()</td></tr>
 </table>
 <hr />
 <h2>Member Function Documentation</h2>
@@ -232,6 +248,6 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Multimedia API</div></td>
+<td align="right"><div align="right">Qt Mobility API</div></td>
 </tr></table></div></address></body>
 </html>
