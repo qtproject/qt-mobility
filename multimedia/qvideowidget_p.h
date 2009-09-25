@@ -224,7 +224,7 @@ private:
     QSize m_pixelAspectRatio;
 };
 
-class QAbstractMediaService;
+class QMediaService;
 class QStackedLayout;
 class QVideoOutputControl;
 
@@ -255,7 +255,7 @@ public:
 
     QVideoWidget *q_ptr;
     QStackedLayout *layout;
-    QAbstractMediaService *service;
+    QMediaService *service;
     QVideoOutputControl *outputControl;
     QVideoWidgetControlBackend *widgetBackend;
     QVideoWindowWidget *windowBackend;

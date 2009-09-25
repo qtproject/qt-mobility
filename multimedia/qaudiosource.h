@@ -46,26 +46,25 @@
 #endif
 
 #include <multimedia/qmediarecorder.h>
-#include <multimedia/qabstractmediacontrol.h>
-#include <multimedia/qabstractmediaobject.h>
-#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qmediacontrol.h>
+#include <multimedia/qmediaobject.h>
+#include <multimedia/qmediaservice.h>
 
 #include <multimedia/qmediaserviceprovider.h>
 
-class QAudioSourceService;
 class QAudioSourcePrivate;
 
-class Q_MEDIA_EXPORT QAudioSource : public QAbstractMediaObject
+class Q_MEDIA_EXPORT QAudioSource : public QMediaObject
 {
     Q_OBJECT
 
     Q_ENUMS(State)
+
 public:
-    QAudioSource(QObject *parent = 0, QAbstractMediaService *service = 0);
+    QAudioSource(QObject *parent = 0, QMediaServiceProvider *service = 0);
     ~QAudioSource();
 
     bool isValid() const;
-    QAbstractMediaService* service() const;
 
     QAudioFormat format() const;
     void setFormat(const QAudioFormat &format);

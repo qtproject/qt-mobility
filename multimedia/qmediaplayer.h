@@ -35,18 +35,16 @@
 #ifndef QMEDIAPLAYER_H
 #define QMEDIAPLAYER_H
 
-#include <multimedia/qabstractmediaobject.h>
-
 #include <multimedia/qmediaserviceprovider.h>
+#include <multimedia/qmediaobject.h>
 #include <multimedia/qmediasource.h>
 
 
-class QMediaPlayerService;
 class QMediaPlaylist;
 
 
 class QMediaPlayerPrivate;
-class Q_MEDIA_EXPORT QMediaPlayer : public QAbstractMediaObject
+class Q_MEDIA_EXPORT QMediaPlayer : public QMediaObject
 {
     Q_OBJECT
     Q_PROPERTY(QMediaSource media READ media WRITE setMedia NOTIFY mediaChanged)
@@ -94,7 +92,7 @@ public:
         AccessDeniedError
     };
 
-    QMediaPlayer(QObject *parent = 0, QMediaPlayerService *service = 0);
+    QMediaPlayer(QObject *parent = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
     ~QMediaPlayer();
 
     bool isValid() const;
@@ -119,8 +117,6 @@ public:
 
     Error error() const;
     QString errorString() const;
-
-    QAbstractMediaService* service() const;
 
 public Q_SLOTS:
     void play();
@@ -167,9 +163,8 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_updateMedia(const QMediaSource&))
 };
 
-Q_DECLARE_METATYPE(QMediaPlayer::State);
-Q_DECLARE_METATYPE(QMediaPlayer::MediaStatus);
-Q_DECLARE_METATYPE(QMediaPlayer::Error);
-
+Q_DECLARE_METATYPE(QMediaPlayer::State)
+Q_DECLARE_METATYPE(QMediaPlayer::MediaStatus)
+Q_DECLARE_METATYPE(QMediaPlayer::Error)
 
 #endif  // QMEDIAPLAYER_H

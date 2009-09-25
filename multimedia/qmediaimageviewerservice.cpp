@@ -34,8 +34,8 @@
 
 #include <multimedia/qmediaimageviewerservice_p.h>
 
-#include <multimedia/qabstractmediacontrol_p.h>
-#include <multimedia/qabstractmediaservice_p.h>
+#include <multimedia/qmediacontrol_p.h>
+#include <multimedia/qmediaservice_p.h>
 
 #include <multimedia/qmediasource.h>
 #include <multimedia/qmediaresource.h>
@@ -358,7 +358,7 @@ void QMediaImageViewerOutputControl::setOutput(Output output)
     }
 }
 
-class QMediaImageViewerServicePrivate : public QAbstractMediaServicePrivate
+class QMediaImageViewerServicePrivate : public QMediaServicePrivate
 {
 public:
     QMediaImageViewerServicePrivate()
@@ -485,7 +485,7 @@ void QMediaImageViewerServicePrivate::_q_outputChanged(QVideoOutputControl::Outp
 /*!
 */
 QMediaImageViewerService::QMediaImageViewerService(QObject *parent)
-    : QAbstractMediaService(*new QMediaImageViewerServicePrivate, parent)
+    : QMediaService(*new QMediaImageViewerServicePrivate, parent)
 {
     Q_D(QMediaImageViewerService);
 
@@ -523,7 +523,7 @@ QMediaImageViewerService::~QMediaImageViewerService()
 
 /*!
 */
-QAbstractMediaControl *QMediaImageViewerService::control(const char *name) const
+QMediaControl *QMediaImageViewerService::control(const char *name) const
 {
     Q_D(const QMediaImageViewerService);
 
@@ -549,7 +549,7 @@ QNetworkAccessManager *QMediaImageViewerService::networkManager() const
     return d_func()->network;
 }
 
-class QMediaImageViewerControlPrivate : public QAbstractMediaControlPrivate
+class QMediaImageViewerControlPrivate : public QMediaControlPrivate
 {
     Q_DECLARE_PUBLIC(QMediaImageViewerControl)
 public:
@@ -686,7 +686,7 @@ void QMediaImageViewerControlPrivate::_q_headFinished()
     \internal
 */
 QMediaImageViewerControl::QMediaImageViewerControl(QMediaImageViewerService *parent)
-    : QAbstractMediaControl(*new QMediaImageViewerControlPrivate, parent)
+    : QMediaControl(*new QMediaImageViewerControlPrivate, parent)
 {
     Q_D(QMediaImageViewerControl);
 

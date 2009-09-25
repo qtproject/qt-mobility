@@ -33,7 +33,7 @@
 ****************************************************************************/
 
 #include <multimedia/qradioplayercontrol.h>
-#include <multimedia/qabstractmediacontrol_p.h>
+#include <multimedia/qmediacontrol_p.h>
 
 
 /*!
@@ -43,15 +43,15 @@
     \preliminary
     \brief The abstract class for controling the tuning of radio devices.
 
-    \sa QAbstractMediaService, QRadioPlayer
+    \sa QMediaService, QRadioPlayer
 */
 
 /*!
-    Construct a radio player control class.
+    Construct a radio player control class parented to \a parent.
 */
 
 QRadioPlayerControl::QRadioPlayerControl(QObject *parent):
-    QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
+    QMediaControl(*new QMediaControlPrivate, parent)
 {
 }
 

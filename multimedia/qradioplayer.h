@@ -37,15 +37,15 @@
 
 #include <QtCore/qobject.h>
 
-#include <multimedia/qabstractmediaobject.h>
-#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qmediaobject.h>
+#include <multimedia/qmediaservice.h>
 #include <multimedia/qmediaserviceprovider.h>
 
 class QRadioService;
 class QRadioPlayerPrivate;
 
 
-class Q_MEDIA_EXPORT QRadioPlayer : public QAbstractMediaObject
+class Q_MEDIA_EXPORT QRadioPlayer : public QMediaObject
 {
     Q_OBJECT
     Q_PROPERTY(Band band READ band WRITE setBand NOTIFY bandChanged)
@@ -61,7 +61,7 @@ class Q_MEDIA_EXPORT QRadioPlayer : public QAbstractMediaObject
 public:
     enum Band { AM, FM, SW, LW };
 
-    QRadioPlayer(QObject *parent = 0, QRadioService *service = 0);
+    QRadioPlayer(QObject *parent = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
     ~QRadioPlayer();
 
     bool isValid() const;
@@ -82,8 +82,6 @@ public:
     bool isMuted() const;
 
     bool isSearching() const;
-
-    QAbstractMediaService* service() const;
 
 public Q_SLOTS:
     void searchForward();

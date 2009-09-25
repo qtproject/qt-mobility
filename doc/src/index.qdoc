@@ -34,9 +34,9 @@ To build the library, run \tt qmake and \tt make.
 \section2 Classes for service implementers.
 
 \list
-    \o \l{QAbstractMediaService}
-    \o \l{QAbstractMediaObject}
-    \o \l{QAbstractMediaControl}
+    \o \l{QMediaService}
+    \o \l{QMediaObject}
+    \o \l{QMediaControl}
     \o \l{QMediaPlayerControl}
     \o \l{QMediaPlayerControl}
     \o \l{QMediaRecorderControl}

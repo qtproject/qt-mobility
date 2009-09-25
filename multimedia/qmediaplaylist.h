@@ -36,7 +36,7 @@
 #define QMEDIAPLAYLIST_H
 
 #include <multimedia/qmediasource.h>
-#include <multimedia/qabstractmediaobject.h>
+#include <multimedia/qmediaobject.h>
 
 #include <QtCore/qobject.h>
 
@@ -55,7 +55,7 @@ class Q_MEDIA_EXPORT QMediaPlaylist : public QObject
 public:
     enum PlaybackMode { CurrentItemOnce, CurrentItemInLoop, Linear, Loop, Random };
 
-    QMediaPlaylist(QAbstractMediaObject *parent = 0);
+    QMediaPlaylist(QMediaObject *parent = 0);
     virtual ~QMediaPlaylist();
 
     QMediaPlaylistProvider* playlistProvider() const;

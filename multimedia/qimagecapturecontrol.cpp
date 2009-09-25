@@ -39,7 +39,7 @@
   Create a new image capture control object with the given \a parent
 */
 QImageCaptureControl::QImageCaptureControl(QObject *parent)
-    :QAbstractMediaControl(parent)
+    :QMediaControl(parent)
 {
 }
 

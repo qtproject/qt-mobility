@@ -51,7 +51,7 @@
 */
 
 QMediaRecorderControl::QMediaRecorderControl(QObject* parent)
-    : QAbstractMediaControl(parent)
+    : QMediaControl(parent)
 {
 }
 

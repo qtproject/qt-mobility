@@ -39,18 +39,17 @@
 #include <QtCore/qpair.h>
 #include <QtCore/qsize.h>
 
-#include <multimedia/qabstractmediacontrol.h>
-#include <multimedia/qabstractmediaobject.h>
-#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qmediacontrol.h>
+#include <multimedia/qmediaobject.h>
+#include <multimedia/qmediaservice.h>
 
 #include <multimedia/qmediaserviceprovider.h>
 
-class QCameraService;
 class QCameraControl;
 
 
 class QCameraPrivate;
-class Q_MEDIA_EXPORT QCamera : public QAbstractMediaObject
+class Q_MEDIA_EXPORT QCamera : public QMediaObject
 {
     Q_OBJECT
 
@@ -133,7 +132,7 @@ public:
 
     Q_PROPERTY(QCamera::State state READ state NOTIFY stateChanged)
 
-    QCamera(QObject *parent = 0, QAbstractMediaService *service = 0);
+    QCamera(QObject *parent = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
     ~QCamera();
 
     QStringList devices() const;
@@ -141,7 +140,6 @@ public:
     void setDevice(const QString& device);
 
     bool isValid() const;
-    QAbstractMediaService* service() const;
 
     void start();
     void stop();

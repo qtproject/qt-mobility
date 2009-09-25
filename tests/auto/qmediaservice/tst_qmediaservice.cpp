@@ -34,12 +34,12 @@
 
 #include <QtTest/QtTest>
 
-#include "multimedia/qabstractmediacontrol.h"
-#include "multimedia/qabstractmediaservice.h"
+#include "multimedia/qmediacontrol.h"
+#include "multimedia/qmediaservice.h"
 
 class QtTestMediaService;
 
-class tst_QAbstractMediaService : public QObject
+class tst_QMediaService : public QObject
 {
     Q_OBJECT
 private slots:
@@ -51,7 +51,7 @@ private:
     QtTestMediaService *m_service;
 };
 
-class QtTestMediaControlA : public QAbstractMediaControl
+class QtTestMediaControlA : public QMediaControl
 {
     Q_OBJECT
 };
@@ -59,7 +59,7 @@ class QtTestMediaControlA : public QAbstractMediaControl
 #define QtTestMediaControlA_iid "com.nokia.QtTestMediaControlA"
 Q_MEDIA_DECLARE_CONTROL(QtTestMediaControlA, QtTestMediaControlA_iid)
 
-class QtTestMediaControlB : public QAbstractMediaControl
+class QtTestMediaControlB : public QMediaControl
 {
     Q_OBJECT
 };
@@ -67,7 +67,7 @@ class QtTestMediaControlB : public QAbstractMediaControl
 #define QtTestMediaControlB_iid "com.nokia.QtTestMediaControlB"
 Q_MEDIA_DECLARE_CONTROL(QtTestMediaControlB, QtTestMediaControlB_iid)
 
-class QtTestMediaControlC : public QAbstractMediaControl
+class QtTestMediaControlC : public QMediaControl
 {
     Q_OBJECT
 };
@@ -75,7 +75,7 @@ class QtTestMediaControlC : public QAbstractMediaControl
 #define QtTestMediaControlC_iid "com.nokia.QtTestMediaControlC"
 Q_MEDIA_DECLARE_CONTROL(QtTestMediaControlC, QtTestMediaControlA_iid) // Yes A.
 
-class QtTestMediaControlD : public QAbstractMediaControl
+class QtTestMediaControlD : public QMediaControl
 {
     Q_OBJECT
 };
@@ -84,16 +84,16 @@ class QtTestMediaControlD : public QAbstractMediaControl
 Q_MEDIA_DECLARE_CONTROL(QtTestMediaControlD, QtTestMediaControlD_iid)
 
 
-class QtTestMediaService : public QAbstractMediaService
+class QtTestMediaService : public QMediaService
 {
     Q_OBJECT
 public:
     QtTestMediaService()
-        : QAbstractMediaService(0)
+        : QMediaService(0)
     {
     }
 
-    QAbstractMediaControl* control(const char *name) const
+    QMediaControl* control(const char *name) const
     {
         if (strcmp(name, QtTestMediaControlA_iid) == 0)
             return const_cast<QtTestMediaControlA *>(&controlA);
@@ -105,14 +105,14 @@ public:
             return 0;
     }
 
-    using QAbstractMediaService::control;
+    using QMediaService::control;
 
     QtTestMediaControlA controlA;
     QtTestMediaControlB controlB;
     QtTestMediaControlC controlC;
 };
 
-void tst_QAbstractMediaService::control()
+void tst_QMediaService::control()
 {
     m_service = new QtTestMediaService;
 
@@ -122,21 +122,21 @@ void tst_QAbstractMediaService::control()
     QVERIFY(!m_service->control<QtTestMediaControlD *>());  // No control of that type.
 }
 
-void tst_QAbstractMediaService::testEndpoints()
+void tst_QMediaService::testEndpoints()
 {
-    QVERIFY(!m_service->isEndpointSupported(QAbstractMediaService::AudioInput));
+    QVERIFY(!m_service->isEndpointSupported(QMediaService::AudioInput));
     m_service->setInputStream((QIODevice*)0);
     QVERIFY(m_service->inputStream() == 0);
     m_service->setOutputStream((QIODevice*)0);
     QVERIFY(m_service->outputStream() == 0);
-    QList<QString> endpoints = m_service->activeEndpoints(QAbstractMediaService::AudioInput);
+    QList<QString> endpoints = m_service->activeEndpoints(QMediaService::AudioInput);
     QVERIFY(endpoints.count() == 0);
-    QVERIFY(!m_service->setActiveEndpoint(QAbstractMediaService::AudioInput, "test"));
-    QVERIFY(m_service->endpointDescription(QAbstractMediaService::AudioInput, "test") == QString());
-    endpoints = m_service->supportedEndpoints(QAbstractMediaService::AudioInput);
+    QVERIFY(!m_service->setActiveEndpoint(QMediaService::AudioInput, "test"));
+    QVERIFY(m_service->endpointDescription(QMediaService::AudioInput, "test") == QString());
+    endpoints = m_service->supportedEndpoints(QMediaService::AudioInput);
     QVERIFY(endpoints.count() == 0);
 }
 
-QTEST_MAIN(tst_QAbstractMediaService)
+QTEST_MAIN(tst_QMediaService)
 
-#include "tst_qabstractmediaservice.moc"
+#include "tst_qmediaservice.moc"

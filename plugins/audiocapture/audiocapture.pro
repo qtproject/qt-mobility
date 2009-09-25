@@ -6,11 +6,9 @@ PLUGIN_SUBDIR = mediaservice
 
 include (../../common.pri)
 
-DEFINES += AUDIOSERVICES
+LIBS += -lQtMedia
 
 DEPENDPATH += .
-INCLUDEPATH += . \
-    ../../multimedia
 
 # Input
 HEADERS += audioencodercontrol.h \

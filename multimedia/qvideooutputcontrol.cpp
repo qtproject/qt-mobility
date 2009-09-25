@@ -50,7 +50,7 @@
     Constructs a new video output control with the given \a parent.
 */
 QVideoOutputControl::QVideoOutputControl(QObject *parent)
-    : QAbstractMediaControl(parent)
+    : QMediaControl(parent)
 {
 }
 

@@ -39,8 +39,8 @@
 
 #include <multimedia/qmediaplayer.h>
 
-#include <multimedia/qabstractmediaobject_p.h>
-#include <multimedia/qmediaplayerservice.h>
+#include <multimedia/qmediaobject_p.h>
+#include <multimedia/qmediaservice.h>
 #include <multimedia/qmediaplayercontrol.h>
 #include <multimedia/qmediaserviceprovider.h>
 #include <multimedia/qmediaplaylist.h>
@@ -56,43 +56,18 @@
     \sa
 */
 
-/*!
-    \internal
-*/
-
-QMediaPlayerService* createMediaPlayerService()
-{
-    QByteArray providerKey = qgetenv("QT_MEDIAPLAYER_PROVIDER");
-
-    QMediaServiceProvider *provider = defaultServiceProvider(!providerKey.isNull()
-            ? providerKey.constData()
-            : "mediaplayer");
-
-    QObject *object = provider ? provider->createObject(QMediaPlayerService_iid) : 0;
-
-    if (object != 0) {
-        QMediaPlayerService *service = qobject_cast<QMediaPlayerService*>(object);
-
-        if (service != 0)
-            return service;
-
-        delete object;
-    }
-
-    return 0;
-}
-
-
-class QMediaPlayerPrivate : public QAbstractMediaObjectPrivate
+class QMediaPlayerPrivate : public QMediaObjectPrivate
 {
     Q_DECLARE_PUBLIC(QMediaPlayer)
 
 public:
-    QMediaPlayerService* service;
+    QMediaPlayerPrivate():service(0), control(0) {}
+
+    QMediaServiceProvider *provider;
+    QMediaService* service;
     QMediaPlayerControl* control;
     QMediaPlayer::Error error;
     QString errorString;
-    bool ownService;
     bool hasPlaylistControl;
 
     QMediaPlaylist *playlist;
@@ -163,55 +138,45 @@ void QMediaPlayerPrivate::_q_updateMedia(const QMediaSource &media)
 
 
 /*!
-    Construct a QMediaPlayer to operate on the QMediaPlayerService \a service, parented to \a parent.
+    Construct a QMediaPlayer that uses the playback service from \a provider, parented to \a parent.
 
     If a playback service is not specified the system default will be used.
 */
 
-QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayerService *service):
-    QAbstractMediaObject(*new QMediaPlayerPrivate, parent)
+QMediaPlayer::QMediaPlayer(QObject *parent, QMediaServiceProvider *provider):
+    QMediaObject(*new QMediaPlayerPrivate, parent, provider->requestService("mediaplayer"))
 {
     Q_D(QMediaPlayer);
 
-    if (service) {
-        d->service = service;
-        d->ownService = false;
-    } else {
-        d->service = createMediaPlayerService();
-        d->ownService = true;
-    }
-
-    d->playlist = 0;
+    d->provider = provider;
 
     Q_ASSERT(d->service != 0);
-
-    if (d->service) {
+    if (d->service != 0) {
         d->control = qobject_cast<QMediaPlayerControl*>(d->service->control(QMediaPlayerControl_iid));
-        connect(d->control, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(_q_stateChanged(QMediaPlayer::State)));
-        connect(d->control, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
-                SLOT(_q_mediaStatusChanged(QMediaPlayer::MediaStatus)));
-        connect(d->control, SIGNAL(error(int,QString)), SLOT(_q_error(int,QString)));
+        if (d->control != 0) {
+            connect(d->control, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(_q_stateChanged(QMediaPlayer::State)));
+            connect(d->control, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
+                    SLOT(_q_mediaStatusChanged(QMediaPlayer::MediaStatus)));
+            connect(d->control, SIGNAL(error(int,QString)), SLOT(_q_error(int,QString)));
 
-        connect(d->control, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
-        connect(d->control, SIGNAL(positionChanged(qint64)), SIGNAL(positionChanged(qint64)));
-        connect(d->control, SIGNAL(videoAvailabilityChanged(bool)), SIGNAL(videoAvailabilityChanged(bool)));
-        connect(d->control, SIGNAL(volumeChanged(int)), SIGNAL(volumeChanged(int)));
-        connect(d->control, SIGNAL(mutingChanged(bool)), SIGNAL(mutingChanged(bool)));
-        connect(d->control, SIGNAL(seekableChanged(bool)), SIGNAL(seekableChanged(bool)));
+            connect(d->control, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
+            connect(d->control, SIGNAL(positionChanged(qint64)), SIGNAL(positionChanged(qint64)));
+            connect(d->control, SIGNAL(videoAvailabilityChanged(bool)), SIGNAL(videoAvailabilityChanged(bool)));
+            connect(d->control, SIGNAL(volumeChanged(int)), SIGNAL(volumeChanged(int)));
+            connect(d->control, SIGNAL(mutingChanged(bool)), SIGNAL(mutingChanged(bool)));
+            connect(d->control, SIGNAL(seekableChanged(bool)), SIGNAL(seekableChanged(bool)));
 
-        if (d->control->state() == PlayingState)
-            addPropertyWatch("position");
+            if (d->control->state() == PlayingState)
+                addPropertyWatch("position");
 
-        if (d->control->mediaStatus() == StalledMedia || d->control->mediaStatus() == BufferingMedia)
-            addPropertyWatch("bufferStatus");
+            if (d->control->mediaStatus() == StalledMedia || d->control->mediaStatus() == BufferingMedia)
+                addPropertyWatch("bufferStatus");
 
-        d->hasPlaylistControl = (d->service->control(QMediaPlaylistControl_iid) != 0);
-
-        registerService(d->service);
-    } else {
-        d->control = 0;
+            d->hasPlaylistControl = (d->service->control(QMediaPlaylistControl_iid) != 0);
+        }
     }
 }
+
 
 /*!
     Destroys the player object.
@@ -221,10 +186,7 @@ QMediaPlayer::~QMediaPlayer()
 {
     Q_D(QMediaPlayer);
 
-    registerService(0);
-
-    if (d->ownService)
-        delete d->service;
+    d->provider->releaseService(d->service);
 }
 
 /*!
@@ -233,7 +195,7 @@ QMediaPlayer::~QMediaPlayer()
 
 bool QMediaPlayer::isValid() const
 {
-    return d_func()->control;
+    return QMediaObject::isValid() && d_func()->control != 0;
 }
 
 QMediaSource QMediaPlayer::media() const
@@ -248,6 +210,7 @@ QMediaSource QMediaPlayer::media() const
 
     \sa setMedia()
 */
+
 const QIODevice *QMediaPlayer::mediaStream() const
 {
     return d_func()->control->mediaStream();
@@ -317,15 +280,6 @@ QString QMediaPlayer::errorString() const
     return d_func()->errorString;
 }
 
-/*!
-    Returns the session object being controlled by this Player.
-*/
-
-QAbstractMediaService* QMediaPlayer::service() const
-{
-    return d_func()->service;
-}
-
 //public Q_SLOTS:
 /*!
     Start or resume playing the current source.
@@ -373,12 +327,12 @@ void QMediaPlayer::setPosition(qint64 position)
     if (!isSeekable())
         return;
 
-    d_func()->control->setPosition(qMax(qint64(0), qMin(duration(), position)));
+    d_func()->control->setPosition(qBound(qint64(0), duration(), position));
 }
 
 void QMediaPlayer::setVolume(int v)
 {
-    int clamped = qMax(0, qMin(100, v));
+    int clamped = qBound(0, v, 100);
     if (clamped == volume())
         return;
 
@@ -409,6 +363,10 @@ void QMediaPlayer::setMedia(const QMediaSource &media, QIODevice *stream)
 {
     d_func()->control->setMedia(media, stream);
 }
+
+/*!
+    \internal
+*/
 
 void QMediaPlayer::bind(QObject *obj)
 {

@@ -32,14 +32,36 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qmediaplayerservice.h>
+#ifndef QABSTRACTMEDIACONTROL_H
+#define QABSTRACTMEDIACONTROL_H
 
+#include <QtCore/qobject.h>
+#include <QtCore/qstring.h>
+#include <QtCore/qvariant.h>
 
-QMediaPlayerService::~QMediaPlayerService()
+#include <multimedia/qmultimediaglobal.h>
+
+class QMediaControlPrivate;
+
+class Q_MEDIA_EXPORT QMediaControl : public QObject
 {
-}
+    Q_OBJECT
 
-QMediaPlayerService::QMediaPlayerService(QObject *parent):
-    QAbstractMediaService(parent)
-{
-}
+public:
+    ~QMediaControl();
+
+protected:
+    QMediaControl(QObject *parent = 0);
+    QMediaControl(QMediaControlPrivate &dd, QObject* parent = 0);
+
+    QMediaControlPrivate *d_ptr;
+private:
+    Q_DECLARE_PRIVATE(QMediaControl)
+};
+
+template <typename T> const char *qmediacontrol_iid() { return 0; }
+
+#define Q_MEDIA_DECLARE_CONTROL(IFace, IId) \
+    template <> inline const char *qmediacontrol_iid<IFace *>() { return IId; }
+
+#endif  // QABSTRACTMEDIACONTROL_H

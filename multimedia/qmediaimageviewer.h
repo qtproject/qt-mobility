@@ -35,12 +35,12 @@
 #ifndef QMEDIAIMAGEVIEWER_H
 #define QMEDIAIMAGEVIEWER_H
 
-#include <multimedia/qabstractmediaobject.h>
+#include <multimedia/qmediaobject.h>
 #include <multimedia/qmediasource.h>
 
 class QMediaImageViewerPrivate;
 
-class Q_MEDIA_EXPORT QMediaImageViewer : public QAbstractMediaObject
+class Q_MEDIA_EXPORT QMediaImageViewer : public QMediaObject
 {
     Q_OBJECT
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
@@ -67,10 +67,6 @@ public:
 
     explicit QMediaImageViewer(QObject *parent = 0);
     ~QMediaImageViewer();
-
-    QAbstractMediaService *service() const;
-
-    bool isValid() const;
 
     State state() const;
     MediaStatus mediaStatus() const;

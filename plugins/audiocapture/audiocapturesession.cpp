@@ -32,13 +32,14 @@
 **
 ****************************************************************************/
 
-#include "audiocapturesession.h"
-#include "qmediarecorder.h"
-
 #include <QDebug>
-#include <QUrl>
-
+#include <QtCore/qurl.h>
 #include <QtMultimedia/qaudiodeviceinfo.h>
+
+#include <multimedia/qmediarecorder.h>
+
+
+#include "audiocapturesession.h"
 
 AudioCaptureSession::AudioCaptureSession(QObject *parent)
 {

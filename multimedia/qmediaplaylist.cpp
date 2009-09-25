@@ -37,7 +37,7 @@
 #include <multimedia/qmediaplaylistprovider.h>
 #include <multimedia/qlocalmediaplaylistprovider.h>
 #include <multimedia/qmediaplaylistioplugin.h>
-#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qmediaservice.h>
 #include <multimedia/qmediaplaylistcontrol.h>
 #include <multimedia/qmediaplayercontrol.h>
 
@@ -90,7 +90,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
   Create a new playlist object for with the given \a parent.
   If source is null, internal local memory playlist source will be created.
   */
-QMediaPlaylist::QMediaPlaylist(QAbstractMediaObject *parent)
+QMediaPlaylist::QMediaPlaylist(QMediaObject *parent)
     : QObject(parent)
     , d_ptr(new QMediaPlaylistPrivate)
 {

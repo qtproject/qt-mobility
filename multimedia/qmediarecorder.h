@@ -35,7 +35,7 @@
 #ifndef QMEDIARECORDER_H
 #define QMEDIARECORDER_H
 
-#include <multimedia/qabstractmediaobject.h>
+#include <multimedia/qmediaobject.h>
 #include <multimedia/qmediaserviceprovider.h>
 
 #include <QtCore/qpair.h>
@@ -47,7 +47,7 @@ class QSize;
 class QMediaRecorderService;
 
 class QMediaRecorderPrivate;
-class Q_MEDIA_EXPORT QMediaRecorder : public QAbstractMediaObject
+class Q_MEDIA_EXPORT QMediaRecorder : public QMediaObject
 {
     Q_OBJECT
     Q_ENUMS(State)
@@ -80,8 +80,8 @@ public:
         FormatError
     };
 
-    QMediaRecorder(QAbstractMediaObject *mediaObject);
-    QMediaRecorder(QObject *parent = 0, QMediaRecorderService *service = 0);
+    QMediaRecorder(QMediaObject *mediaObject);
+    QMediaRecorder(QObject *parent = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
     ~QMediaRecorder();
 
     bool isValid() const;
@@ -96,7 +96,7 @@ public:
 
     qint64 duration() const;
 
-    QAbstractMediaService* service() const;
+    QMediaService* service() const;
 
     QStringList supportedFormats() const;
     QString formatDescription(const QString &formatMimeType) const;

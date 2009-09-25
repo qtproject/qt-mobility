@@ -61,7 +61,7 @@
     Constructs a new video device control with the given \a parent.
 */
 QVideoDeviceControl::QVideoDeviceControl(QObject *parent)
-    :QAbstractMediaControl(parent)
+    :QMediaControl(parent)
 {
 }
 

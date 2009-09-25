@@ -37,11 +37,11 @@
 
 #ifndef QT_NO_MULTIMEDIA
 
-#include <multimedia/qabstractmediacontrol.h>
+#include <multimedia/qmediacontrol.h>
 
 class QAbstractVideoSurface;
 
-class Q_MEDIA_EXPORT QVideoRendererControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QVideoRendererControl : public QMediaControl
 {
     Q_OBJECT
 public:

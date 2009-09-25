@@ -35,7 +35,7 @@
 #ifndef QVIDEOENCODERCONTROL_H
 #define QVIDEOENCODERCONTROL_H
 
-#include <multimedia/qabstractmediacontrol.h>
+#include <multimedia/qmediacontrol.h>
 #include <multimedia/qmediarecorder.h>
 
 #include <QtCore/qpair.h>
@@ -44,7 +44,7 @@
 class QByteArray;
 class QStringList;
 
-class Q_MEDIA_EXPORT QVideoEncoderControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QVideoEncoderControl : public QMediaControl
 {
     Q_OBJECT
 public:

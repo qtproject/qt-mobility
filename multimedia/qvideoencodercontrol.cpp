@@ -40,7 +40,7 @@
   Create a new video encode control object with the given \a parent.
 */
 QVideoEncoderControl::QVideoEncoderControl(QObject *parent)
-    :QAbstractMediaControl(parent)
+    :QMediaControl(parent)
 {
 }
 

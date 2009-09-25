@@ -33,7 +33,7 @@
 ****************************************************************************/
 
 #include <multimedia/qcameracontrol.h>
-#include  "qabstractmediacontrol_p.h"
+#include  "qmediacontrol_p.h"
 
 /*!
     \class QCameraControl
@@ -41,9 +41,9 @@
 
     \preliminary
     \brief The abstract class for controling still or video cameras, this is provided
-    by a QAbstractMediaService object, and is used by QCamera.
+    by a QMediaService object, and is used by QCamera.
 
-    \sa QAbstractMediaService, QCamera
+    \sa QMediaService, QCamera
 */
 
 /*!
@@ -51,7 +51,7 @@
 */
 
 QCameraControl::QCameraControl(QObject *parent):
-    QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
+    QMediaControl(*new QMediaControlPrivate, parent)
 {
 }
 

@@ -36,7 +36,6 @@
 #include <QDebug>
 #include <QAudioFormat>
 
-#include <multimedia/qaudiosourceservice.h>
 #include <multimedia/qaudiosource.h>
 #include <multimedia/qaudioencodercontrol.h>
 #include <multimedia/qmediarecordercontrol.h>
@@ -196,12 +195,12 @@ private:
 };
 
 
-class MockAudioSourceService : public QAudioSourceService
+class MockAudioSourceService : public QMediaService
 {
     Q_OBJECT
 
 public:
-    MockAudioSourceService(): QAudioSourceService(0)
+    MockAudioSourceService(): QMediaService(0)
     {
         mockAudioEncoderControl = new MockAudioEncoderControl(this);
         mockMediaRecorderControl = new MockMediaRecorderControl(this);
@@ -215,7 +214,7 @@ public:
         delete mockAudioDeviceControl;
     }
 
-    QAbstractMediaControl* control(const char *iid) const
+    QMediaControl* control(const char *iid) const
     {
         if (qstrcmp(iid, QAudioEncoderControl_iid) == 0)
             return mockAudioEncoderControl;
@@ -232,6 +231,20 @@ public:
     MockAudioEncoderControl *mockAudioEncoderControl;
     MockMediaRecorderControl *mockMediaRecorderControl;
     MockAudioDeviceControl *mockAudioDeviceControl;
+};
+
+class MockProvider : public QMediaServiceProvider
+{
+public:
+    MockProvider(MockAudioSourceService *service):mockService(service) {}
+    QMediaService *requestService(const QByteArray&, const QList<QByteArray> &)
+    {
+        return mockService;
+    }
+
+    void releaseService(QMediaService *) {}
+
+    MockAudioSourceService *mockService;
 };
 
 
@@ -252,22 +265,24 @@ private slots:
 private:
     QAudioSource *audiosource;
     MockAudioSourceService  *mockAudioSourceService;
+    MockProvider *mockProvider;
 };
 
 void tst_QAudioSource::initTestCase()
 {
     mockAudioSourceService = new MockAudioSourceService;
+    mockProvider = new MockProvider(mockAudioSourceService);
 }
 
 void tst_QAudioSource::cleanupTestCase()
 {
-    delete mockAudioSourceService;
     delete audiosource;
+    delete mockProvider;
 }
 
 void tst_QAudioSource::testAudioSource()
 {
-    audiosource = new QAudioSource(0, mockAudioSourceService);
+    audiosource = new QAudioSource(0, mockProvider);
 
     QCOMPARE(audiosource->service(), mockAudioSourceService);
 

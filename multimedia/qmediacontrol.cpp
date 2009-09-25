@@ -32,27 +32,53 @@
 **
 ****************************************************************************/
 
-#ifndef QCAMERASERVICE_H
-#define QCAMERASERVICE_H
+#include <QtCore/qmetaobject.h>
+#include <QtCore/qtimer.h>
 
-#include <multimedia/qabstractmediaservice.h>
-#include <multimedia/qcameracontrol.h>
+#include <multimedia/qmediacontrol.h>
+#include <multimedia/qmediacontrol_p.h>
 
 
-class QCameraServicePrivate;
-class Q_MEDIA_EXPORT QCameraService : public QAbstractMediaService
+
+/*!
+    \class QMediaControl
+    \ingroup multimedia
+
+    \preliminary
+    \brief The base Multimedia control object.
+
+    \sa QMediaService, QMediaObject
+*/
+
+/*!
+    Destroys the QMediaControl object.
+*/
+
+QMediaControl::~QMediaControl()
 {
-    Q_OBJECT
+    delete d_ptr;
+}
 
-public:
-    ~QCameraService();
+/*!
+    Constructs a abstract media object with \a parent.
+*/
 
-    virtual QAbstractMediaControl* control(const char *name) const = 0;
+QMediaControl::QMediaControl(QObject *parent)
+    : QObject(parent)
+    , d_ptr(new QMediaControlPrivate)
+{
+    d_ptr->q_ptr = this;
+}
 
-protected:
-    QCameraService(QObject *parent);
-};
+/*!
+    \internal
+*/
 
-#define QCameraService_iid "com.nokia.Qt.QCameraService/1.0"
+QMediaControl::QMediaControl(QMediaControlPrivate &dd, QObject *parent)
+    : QObject(parent)
+    , d_ptr(&dd)
 
-#endif  // QCAMERASERVICE_H
+{
+    d_ptr->q_ptr = this;
+}
+

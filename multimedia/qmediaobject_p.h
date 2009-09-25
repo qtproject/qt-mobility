@@ -32,36 +32,43 @@
 **
 ****************************************************************************/
 
-#ifndef QABSTRACTMEDIACONTROL_H
-#define QABSTRACTMEDIACONTROL_H
+#ifndef QABSTRACTMEDIAOBJECT_P_H
+#define QABSTRACTMEDIAOBJECT_P_H
 
-#include <QtCore/qobject.h>
-#include <QtCore/qstring.h>
-#include <QtCore/qvariant.h>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <multimedia/qmultimediaglobal.h>
+#include <QtCore/qbytearray.h>
+#include <QtCore/qlist.h>
+#include <QtCore/qtimer.h>
 
-class QAbstractMediaControlPrivate;
+#include <multimedia/qmediaobject.h>
 
-class Q_MEDIA_EXPORT QAbstractMediaControl : public QObject
+class QMetaDataProviderControl;
+
+class QMediaObjectPrivate
 {
-    Q_OBJECT
+    Q_DECLARE_PUBLIC(QMediaObject)
 
 public:
-    ~QAbstractMediaControl();
+    QMediaObjectPrivate():metaDataControl(0), notifyTimer(0) {}
 
-protected:
-    QAbstractMediaControl(QObject *parent = 0);
-    QAbstractMediaControl(QAbstractMediaControlPrivate &dd, QObject* parent = 0);
+    void _q_notify();
 
-    QAbstractMediaControlPrivate *d_ptr;
-private:
-    Q_DECLARE_PRIVATE(QAbstractMediaControl)
+    QMediaService *service;
+    QMetaDataProviderControl *metaDataControl;
+    QTimer* notifyTimer;
+    QList<QByteArray>   notifyProperties;
+
+    QMediaObject *q_ptr;
 };
 
-template <typename T> const char *qmediacontrol_iid() { return 0; }
-
-#define Q_MEDIA_DECLARE_CONTROL(IFace, IId) \
-    template <> inline const char *qmediacontrol_iid<IFace *>() { return IId; }
-
-#endif  // QABSTRACTMEDIACONTROL_H
+#endif

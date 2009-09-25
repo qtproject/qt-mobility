@@ -13,37 +13,32 @@ contains(QT_CONFIG, opengl): QT += opengl
 DEFINES += QT_BUILD_MEDIA_LIB
 
 HEADERS = \
-    qabstractmediacontrol.h \
-    qabstractmediacontrol_p.h \
-    qabstractmediaobject.h \
-    qabstractmediaobject_p.h \
-    qabstractmediaservice.h \
-    qabstractmediaservice_p.h  \
-    qaudiorecorderservice.h \
+    qmediacontrol.h \
+    qmediacontrol_p.h \
+    qmediaobject.h \
+    qmediaobject_p.h \
+    qmediaservice.h \
+    qmediaservice_p.h  \
     qlocalmediaplaylistprovider.h \
     qmetadataprovidercontrol.h \
     qmediaimageviewer.h \
     qmediaimageviewerservice_p.h \
     qmediaplayer.h \
     qmediaplayercontrol.h \
-    qmediaplayerservice.h \
     qmediaplaylist.h \
     qmediaplaylist_p.h \
     qmediaplaylistnavigator.h \
     qmediaplaylistprovider.h \
     qmediaplaylistprovider_p.h \
     qmediaplaylistioplugin.h \
-    qmediaproviderfactory_p.h \
     qmediasource.h \
     qmediaresource.h \
     qmediarecorder.h \
-    qmediarecorderservice.h \
     qmediarecordercontrol.h \
     qmediaserviceprovider.h \
     qmediaserviceproviderplugin.h \
     qmultimediaglobal.h \
     qradioplayer.h \
-    qradioservice.h \
     qradioplayercontrol.h \
     qvideooutputcontrol.h \
     qvideowidget.h \
@@ -55,43 +50,36 @@ HEADERS = \
     qimageencodercontrol.h \
     qimagecapturecontrol.h \
     qaudiosource.h \
-    qaudiosourceservice.h \
     qcamera.h \
     qcameracontrol.h \
     qcameraexposurecontrol.h \
     qcamerafocuscontrol.h \
     qimageprocessingcontrol.h \
-    qcameraservice.h \
     qmediaformatcontrol.h \
     qmediaplaylistcontrol.h \
     qaudiodevicecontrol.h \
     qvideodevicecontrol.h \
     qmediapluginloader_p.h
 
-SOURCES = qabstractmediacontrol.cpp \
-    qabstractmediaobject.cpp \
-    qabstractmediaservice.cpp \
-    qaudiorecorderservice.cpp \
+SOURCES = qmediacontrol.cpp \
+    qmediaobject.cpp \
+    qmediaservice.cpp \
     qlocalmediaplaylistprovider.cpp \
     qmetadataprovidercontrol.cpp \
     qmediaimageviewer.cpp \
     qmediaimageviewerservice.cpp \
     qmediaplayer.cpp \
     qmediaplayercontrol.cpp \
-    qmediaplayerservice.cpp \
     qmediaplaylist.cpp \
     qmediaplaylistioplugin.cpp \
     qmediaplaylistnavigator.cpp \
     qmediaplaylistprovider.cpp \
-    qmediaproviderfactory.cpp \
     qmediarecorder.cpp \
-    qmediarecorderservice.cpp \
     qmediarecordercontrol.cpp \
     qmediasource.cpp \
     qmediaresource.cpp \
     qmediaserviceprovider.cpp \
     qradioplayer.cpp \
-    qradioservice.cpp \
     qradioplayercontrol.cpp \
     qvideooutputcontrol.cpp \
     qvideowidget.cpp \
@@ -102,13 +90,11 @@ SOURCES = qabstractmediacontrol.cpp \
     qimageencodercontrol.cpp \
     qimagecapturecontrol.cpp \
     qaudiosource.cpp \
-    qaudiosourceservice.cpp \
     qcamera.cpp \
     qcameracontrol.cpp \
     qcameraexposurecontrol.cpp \
     qcamerafocuscontrol.cpp \
     qimageprocessingcontrol.cpp \
-    qcameraservice.cpp \
     qmediaformatcontrol.cpp \
     qmediaplaylistcontrol.cpp \
     qaudiodevicecontrol.cpp \

@@ -39,8 +39,8 @@
 #include "audioencodercontrol.h"
 #include "audiomediarecordercontrol.h"
 
-AudioCaptureService::AudioCaptureService(QObject *parent)
-    :QAudioSourceService(parent)
+AudioCaptureService::AudioCaptureService(QObject *parent):
+    QMediaService(parent)
 {
     m_session = new AudioCaptureSession(this);
     m_encoderControl  = new AudioEncoderControl(m_session);
@@ -56,7 +56,7 @@ AudioCaptureService::~AudioCaptureService()
     delete m_session;
 }
 
-QAbstractMediaControl *AudioCaptureService::control(const char *name) const
+QMediaControl *AudioCaptureService::control(const char *name) const
 {
     if (qstrcmp(name,QMediaRecorderControl_iid) == 0)
         return m_mediaControl;

@@ -34,7 +34,7 @@
 
 #include <multimedia/qmediaimageviewer.h>
 
-#include <multimedia/qabstractmediaobject_p.h>
+#include <multimedia/qmediaobject_p.h>
 #include <multimedia/qmediaimageviewerservice_p.h>
 
 #include <multimedia/qmediaplaylist.h>
@@ -44,7 +44,7 @@
 #include <QtCore/qcoreevent.h>
 #include <QtCore/qtextstream.h>
 
-class QMediaImageViewerPrivate : public QAbstractMediaObjectPrivate
+class QMediaImageViewerPrivate : public QMediaObjectPrivate
 {
     Q_DECLARE_PUBLIC(QMediaImageViewer)
 public:
@@ -120,11 +120,9 @@ void QMediaImageViewerPrivate::_q_playlistDestroyed(QObject *object)
     Constructs a new slide show with the given \a parent.
 */
 QMediaImageViewer::QMediaImageViewer(QObject *parent)
-    : QAbstractMediaObject(*new QMediaImageViewerPrivate, parent)
+    : QMediaObject(*new QMediaImageViewerPrivate, parent, new QMediaImageViewerService)
 {
     Q_D(QMediaImageViewer);
-
-    d->service = new QMediaImageViewerService;
 
     d->slideControl = qobject_cast<QMediaImageViewerControl*>(
             d->service->control(QMediaImageViewerControl_iid));
@@ -138,22 +136,6 @@ QMediaImageViewer::~QMediaImageViewer()
     Q_D(QMediaImageViewer);
 
     delete d->service;
-}
-
-/*!
-    \reimp
-*/
-QAbstractMediaService *QMediaImageViewer::service() const
-{
-    return d_func()->service;
-}
-
-/*!
-    \reimp
-*/
-bool QMediaImageViewer::isValid() const
-{
-    return d_func()->service != 0;
 }
 
 /*!
@@ -266,7 +248,7 @@ void QMediaImageViewer::setTimeout(int timeout)
 }
 
 /*!
-    \reimp
+    \internal
 */
 void QMediaImageViewer::bind(QObject *object)
 {
@@ -369,7 +351,7 @@ void QMediaImageViewer::timerEvent(QTimerEvent *event)
             emit stateChanged(d->state = StoppedState);
         }
     } else {
-        QAbstractMediaObject::timerEvent(event);
+        QMediaObject::timerEvent(event);
     }
 }
 

@@ -35,8 +35,6 @@
 #ifndef QWMPPLAYERSERVICE_H
 #define QWMPPLAYERSERVICE_H
 
-#include <multimedia/qmediaplayerservice.h>
-
 #include "qwmpevents.h"
 #include "qwmpvideooutputcontrol.h"
 
@@ -52,7 +50,7 @@ class QWmpPlaylistControl;
 class QWmpVideoOverlay;
 
 class QWmpPlayerService
-    : public QMediaPlayerService
+    : public QMediaService
     , public IOleClientSite
     , public IServiceProvider
     , public IWMPRemoteMediaServices
@@ -68,7 +66,7 @@ public:
     QWmpPlayerService(EmbedMode mode, QObject *parent = 0);
     ~QWmpPlayerService();
 
-    QAbstractMediaControl *control(const char *name) const;
+    QMediaControl *control(const char *name) const;
 
     // IUnknown
     HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **object);

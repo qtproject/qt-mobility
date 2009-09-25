@@ -36,15 +36,6 @@
 
 #include "qwmpplayerservice.h"
 
-QObject *QWmpServiceProvider::createObject(const char *iid) const
-{
-    if (qstrcmp(iid, QMediaPlayerService_iid) == 0)
-        return new QWmpPlayerService(QWmpPlayerService::LocalEmbed);
-    else if (qstrcmp(iid, QRemoteMediaPlayerService_iid) == 0)
-        return new QWmpPlayerService(QWmpPlayerService::RemoteEmbed);
-    return 0;
-}
-
 QStringList QWmpServiceProviderPlugin::keys() const
 {
     return QStringList()
@@ -52,10 +43,14 @@ QStringList QWmpServiceProviderPlugin::keys() const
             << QLatin1String("windowsmediaplayer");
 }
 
-QMediaServiceProvider *QWmpServiceProviderPlugin::create(const QString &key)
+QMediaService *QWmpServiceProviderPlugin::create(const QString &key)
 {
-    if (key == QLatin1String("mediaplayer") || key == QLatin1String("windowsmediaplayer"))
-        return new QWmpServiceProvider;
+    if (qstrcmp(type.constData(), "mediaplayer") == 0)
+        return new QWmpPlayerService(QWmpPlayerService::LocalEmbed);
+        /*
+    else if (qstrcmp(iid, QRemoteMediaPlayerService_iid) == 0)
+        return new QWmpPlayerService(QWmpPlayerService::RemoteEmbed);
+        */
     return 0;
 }
 

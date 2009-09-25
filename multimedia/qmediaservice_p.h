@@ -32,24 +32,36 @@
 **
 ****************************************************************************/
 
-#ifndef QAUDIOSOURCESERVICE_H
-#define QAUDIOSOURCESERVICE_H
+#ifndef QABSTRACTMEDIASERVICE_P_H
+#define QABSTRACTMEDIASERVICE_P_H
 
-#include <multimedia/qabstractmediaservice.h>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
 
-class QAudioSourceServicePrivate;
-class Q_MEDIA_EXPORT QAudioSourceService : public QAbstractMediaService
+class QMediaServicePrivate
 {
-    Q_OBJECT
-
 public:
-    ~QAudioSourceService();
+    QMediaServicePrivate()
+        : q_ptr(0)
+        , inputStream(0)
+        , outputStream(0)
+    {
+    }
 
-    virtual QAbstractMediaControl* control(const char *name) const = 0;
+    QMediaService *q_ptr;
 
-protected:
-    QAudioSourceService(QObject *parent);
+    QIODevice* inputStream;
+    QIODevice* outputStream;
 };
 
-#endif  // QAUDIOSOURCESERVICE_H
+
+#endif

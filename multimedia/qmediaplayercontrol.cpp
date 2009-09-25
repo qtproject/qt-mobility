@@ -33,7 +33,7 @@
 ****************************************************************************/
 
 #include <multimedia/qmediaplayercontrol.h>
-#include <multimedia/qabstractmediacontrol_p.h>
+#include <multimedia/qmediacontrol_p.h>
 #include <multimedia/qmediaplayer.h>
 
 
@@ -43,9 +43,9 @@
 
     \preliminary
     \brief The abstract class for controling media playback, this is provided
-    by a QAbstractMediaService object, and is used by QMediaPlayer for playback.
+    by a QMediaService object, and is used by QMediaPlayer for playback.
 
-    \sa QAbstractMediaService, QMediaPlayer
+    \sa QMediaService, QMediaPlayer
 */
 
 /*!
@@ -59,7 +59,7 @@ QMediaPlayerControl::~QMediaPlayerControl()
     Constructs a new media player control with the given \a parent.
 */
 QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
-    QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
+    QMediaControl(*new QMediaControlPrivate, parent)
 {
 }
 

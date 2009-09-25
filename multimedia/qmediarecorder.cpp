@@ -35,13 +35,13 @@
 #include <multimedia/qmediarecorder.h>
 
 #include <multimedia/qmediarecordercontrol.h>
-#include <multimedia/qabstractmediaobject_p.h>
-#include <multimedia/qaudiorecorderservice.h>
+#include <multimedia/qmediaobject_p.h>
+#include <multimedia/qmediaservice.h>
 #include <multimedia/qmediaserviceprovider.h>
 #include <multimedia/qaudioencodercontrol.h>
 #include <multimedia/qvideoencodercontrol.h>
 #include <multimedia/qmediaformatcontrol.h>
-#include <multimedia/qmediarecorderservice.h>
+
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qurl.h>
@@ -64,26 +64,7 @@
     \sa
 */
 
-QMediaRecorderService *createMediaRecorderService()
-{
-    QMediaServiceProvider *provider = defaultServiceProvider("mediarecorder");
-
-    QObject *object = provider ? provider->createObject(QAudioRecorderService_iid) : 0;
-
-    if (object != 0) {
-        QMediaRecorderService *service = qobject_cast<QMediaRecorderService*>(object);
-
-        if (service != 0)
-            return service;
-
-        delete object;
-    }
-
-    return 0;
-}
-
-
-class QMediaRecorderPrivate : public QAbstractMediaObjectPrivate
+class QMediaRecorderPrivate : public QMediaObjectPrivate
 {
     Q_DECLARE_PUBLIC(QMediaRecorder)
 
@@ -91,13 +72,12 @@ public:
     QMediaRecorderPrivate();
     void initControls();
 
-    QAbstractMediaService *service;
+    QMediaService *service;
     QMediaRecorderControl *control;
     QMediaFormatControl *formatControl;
     QAudioEncoderControl *audioControl;
     QVideoEncoderControl *videoControl;
 
-    bool ownService;
 
     QMediaRecorder::State state;
     QMediaRecorder::Error error;
@@ -113,7 +93,6 @@ QMediaRecorderPrivate::QMediaRecorderPrivate():
      formatControl(0),
      audioControl(0),
      videoControl(0),
-     ownService(false),
      state(QMediaRecorder::StoppedState),
      error(QMediaRecorder::NoError)
 {
@@ -152,7 +131,7 @@ void QMediaRecorderPrivate::_q_stateChanged(QMediaRecorder::State ps)
     else
         q->removePropertyWatch("duration");
 
-    qDebug() << "Recorder state changed:" << ENUM_NAME(QMediaRecorder,"State",ps);
+//    qDebug() << "Recorder state changed:" << ENUM_NAME(QMediaRecorder,"State",ps);
     if (state != ps) {
         emit q->stateChanged(ps);
     }
@@ -176,42 +155,24 @@ void QMediaRecorderPrivate::_q_error(int error, const QString &errorString)
     Construct a media recorder object with \a mediaObject.
 */
 
-QMediaRecorder::QMediaRecorder(QAbstractMediaObject *mediaObject):
-    QAbstractMediaObject(*new QMediaRecorderPrivate, mediaObject)
+QMediaRecorder::QMediaRecorder(QMediaObject *mediaObject):
+    QMediaObject(*new QMediaRecorderPrivate, mediaObject, mediaObject->service())
 {
     Q_D(QMediaRecorder);
 
-    d->service = mediaObject->service();
     Q_ASSERT(d->service != 0);
-    d->ownService = false;
 
     d->initControls();
-
-    registerService(d->service);
 }
 
-/*!
-    Construct a media recorder object with \a service and \a parent.
-*/
-
-QMediaRecorder::QMediaRecorder(QObject *parent, QMediaRecorderService *service):
-    QAbstractMediaObject(*new QMediaRecorderPrivate, parent)
+QMediaRecorder::QMediaRecorder(QObject *parent, QMediaServiceProvider *provider):
+    QMediaObject(*new QMediaRecorderPrivate, parent, provider->requestService("mediarecorder"))
 {
     Q_D(QMediaRecorder);
-
-    if (service) {
-        d->service = service;
-        d->ownService = false;
-    } else {
-        d->service = createMediaRecorderService();
-        d->ownService = true;
-    }
 
     Q_ASSERT(d->service != 0);
 
     d->initControls();
-
-    registerService(service);
 }
 
 
@@ -221,12 +182,6 @@ QMediaRecorder::QMediaRecorder(QObject *parent, QMediaRecorderService *service):
 
 QMediaRecorder::~QMediaRecorder()
 {
-    Q_D(QMediaRecorder);
-
-    registerService(0);
-
-    if (d->ownService)
-        delete d->service;
 }
 
 /*!
@@ -242,7 +197,7 @@ bool QMediaRecorder::isValid() const
     Returns the media service being used.
 */
 
-QAbstractMediaService* QMediaRecorder::service() const
+QMediaService* QMediaRecorder::service() const
 {
     return d_func()->service;
 }

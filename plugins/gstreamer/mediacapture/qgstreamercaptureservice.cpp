@@ -111,8 +111,8 @@ private:
 };
 
 
-QGstreamerCaptureService::QGstreamerCaptureService(const char *interface, QObject *parent)
-    :QCameraService(parent)
+QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObject *parent):
+    QMediaService(parent)
 {
     static bool initialized = false;
     if (!initialized) {
@@ -120,13 +120,13 @@ QGstreamerCaptureService::QGstreamerCaptureService(const char *interface, QObjec
         gst_init(NULL, NULL);
     }
 
-    if (QLatin1String(interface) == QLatin1String(QAudioRecorderService_iid)) {
+    if (service == QLatin1String("audiosource")) {
         m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::Audio, this);
         m_cameraControl = 0;
         m_videoInputDevice = 0;
     }
 
-    if (QLatin1String(interface) == QLatin1String(QCameraService_iid)) {
+   if (service == QLatin1String("camera")) {
         m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::AudioAndVideo, this);
         m_cameraControl = new QGstreamerCameraControl(m_captureSession);
         m_captureSession->setVideoInput(m_cameraControl);
@@ -168,7 +168,7 @@ QGstreamerCaptureService::~QGstreamerCaptureService()
 {
 }
 
-QAbstractMediaControl *QGstreamerCaptureService::control(const char *name) const
+QMediaControl *QGstreamerCaptureService::control(const char *name) const
 {
     if (qstrcmp(name, QVideoOutputControl_iid) == 0)
         return m_videoOutput;

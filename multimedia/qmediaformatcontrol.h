@@ -36,9 +36,9 @@
 #ifndef QMEDIAFORMATCONTROL_H
 #define QMEDIAFORMATCONTROL_H
 
-#include <multimedia/qabstractmediacontrol.h>
+#include <multimedia/qmediacontrol.h>
 
-class Q_MEDIA_EXPORT QMediaFormatControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QMediaFormatControl : public QMediaControl
 {
 Q_OBJECT
 public:

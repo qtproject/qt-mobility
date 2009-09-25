@@ -42,9 +42,9 @@
 
     \preliminary
     \brief The abstract class for controling audio encoding parameters, this is provided
-    by a QAbstractMediaService object, and is used by QMediaRecorder.
+    by a QMediaService object, and is used by QMediaRecorder.
 
-    \sa QAbstractMediaService, QMediaRecorder
+    \sa QMediaService, QMediaRecorder
 */
 
 
@@ -52,7 +52,7 @@
   Create a new audio encode control object with the given \a parent.
 */
 QAudioEncoderControl::QAudioEncoderControl(QObject *parent)
-    :QAbstractMediaControl(parent)
+    :QMediaControl(parent)
 {
 }
 

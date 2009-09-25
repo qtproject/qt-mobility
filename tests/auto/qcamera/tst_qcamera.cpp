@@ -34,10 +34,11 @@
 
 #include <QtTest/QtTest>
 #include <QDebug>
+
 #include <multimedia/qcameracontrol.h>
 #include <multimedia/qcameraexposurecontrol.h>
 #include <multimedia/qcamerafocuscontrol.h>
-#include <multimedia/qcameraservice.h>
+#include <multimedia/qmediaservice.h>
 #include <multimedia/qcamera.h>
 
 
@@ -331,12 +332,12 @@ private:
     QCamera::FocusMode m_focusMode;
 };
 
-class MockSimpleCameraService : public QCameraService
+class MockSimpleCameraService : public QMediaService
 {
     Q_OBJECT
 
 public:
-    MockSimpleCameraService(): QCameraService(0)
+    MockSimpleCameraService(): QMediaService(0)
     {
         mockControl = new MockCameraControl(this);
     }
@@ -345,7 +346,7 @@ public:
     {
     }
 
-    QAbstractMediaControl* control(const char *iid) const
+    QMediaControl* control(const char *iid) const
     {
         if (qstrcmp(iid, QCameraControl_iid) == 0)
             return mockControl;
@@ -356,12 +357,12 @@ public:
     MockCameraControl *mockControl;
 };
 
-class MockCameraService : public QCameraService
+class MockCameraService : public QMediaService
 {
     Q_OBJECT
 
 public:
-    MockCameraService(): QCameraService(0)
+    MockCameraService(): QMediaService(0)
     {
         mockControl = new MockCameraControl(this);
         mockExposureControl = new MockCameraExposureControl(this);
@@ -372,7 +373,7 @@ public:
     {
     }
 
-    QAbstractMediaControl* control(const char *iid) const
+    QMediaControl* control(const char *iid) const
     {
         if (qstrcmp(iid, QCameraControl_iid) == 0)
             return mockControl;
@@ -391,6 +392,18 @@ public:
     MockCameraFocusControl *mockFocusControl;
 };
 
+class MockProvider : public QMediaServiceProvider
+{
+public:
+    QMediaService *requestService(const QByteArray &, const QList<QByteArray> &)
+    {
+        return service;
+    }
+
+    void releaseService(QMediaService *) {}
+
+    QMediaService *service;
+};
 
 
 class tst_QCamera: public QObject
@@ -413,22 +426,26 @@ private slots:
 
 private:
     MockSimpleCameraService  *mockSimpleCameraService;
+    MockProvider *provider;
 };
 
 void tst_QCamera::initTestCase()
 {
+    provider = new MockProvider;
     mockSimpleCameraService = new MockSimpleCameraService;
+    provider->service = mockSimpleCameraService;
 }
 
 void tst_QCamera::cleanupTestCase()
 {
     delete mockSimpleCameraService;
+    delete provider;
 }
 
 
 void tst_QCamera::testSimpleCamera()
 {
-    QCamera camera(0, mockSimpleCameraService);
+    QCamera camera(0, provider);
 
     QCOMPARE(camera.service(), mockSimpleCameraService);
 
@@ -442,7 +459,7 @@ void tst_QCamera::testSimpleCamera()
 
 void tst_QCamera::testSimpleCameraWhiteBalance()
 {
-    QCamera camera(0, mockSimpleCameraService);
+    QCamera camera(0, provider);
 
     //only WhiteBalanceAuto is supported
     QCOMPARE(camera.supportedWhiteBalanceModes(), QCamera::WhiteBalanceAuto);
@@ -456,7 +473,7 @@ void tst_QCamera::testSimpleCameraWhiteBalance()
 
 void tst_QCamera::testSimpleCameraExposure()
 {
-    QCamera camera(0, mockSimpleCameraService);
+    QCamera camera(0, provider);
 
     QCOMPARE(camera.supportedExposureModes(), QCamera::ExposureAuto);
     QCOMPARE(camera.exposureMode(), QCamera::ExposureAuto);
@@ -508,7 +525,7 @@ void tst_QCamera::testSimpleCameraExposure()
 
 void tst_QCamera::testSimpleCameraFocus()
 {
-    QCamera camera(0, mockSimpleCameraService);
+    QCamera camera(0, provider);
 
     QCOMPARE(camera.supportedFocusModes(), QCamera::AutoFocus);
     QCOMPARE(camera.focusMode(), QCamera::AutoFocus);
@@ -533,7 +550,8 @@ void tst_QCamera::testSimpleCameraFocus()
 void tst_QCamera::testCameraExposure()
 {
     MockCameraService service;
-    QCamera camera(0, &service);
+    provider->service = &service;
+    QCamera camera(0, provider);
 
     QVERIFY(camera.supportedExposureModes() & QCamera::ExposureAuto);
     QCOMPARE(camera.exposureMode(), QCamera::ExposureAuto);
@@ -620,7 +638,8 @@ void tst_QCamera::testCameraExposure()
 void tst_QCamera::testCameraFocus()
 {
     MockCameraService service;
-    QCamera camera(0, &service);
+    provider->service = &service;
+    QCamera camera(0, provider);
 
     QCOMPARE(camera.supportedFocusModes(), QCamera::AutoFocus | QCamera::ContinuousFocus);
     QCOMPARE(camera.focusMode(), QCamera::AutoFocus);

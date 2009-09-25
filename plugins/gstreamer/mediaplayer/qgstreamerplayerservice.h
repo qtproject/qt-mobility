@@ -38,7 +38,7 @@
 #include <QtCore/qobject.h>
 #include <QtCore/qiodevice.h>
 
-#include <multimedia/qmediaplayerservice.h>
+#include <multimedia/qmediaservice.h>
 
 #include "qgstreamervideooutputcontrol.h"
 
@@ -58,7 +58,7 @@ class QGstreamerVideoWidgetControl;
 
 class QMediaPlaylistNavigator;
 
-class QGstreamerPlayerService : public QMediaPlayerService
+class QGstreamerPlayerService : public QMediaService
 {
     Q_OBJECT
 public:
@@ -67,7 +67,7 @@ public:
 
     //void setVideoOutput(QObject *output);
 
-    QAbstractMediaControl *control(const char *name) const;
+    QMediaControl *control(const char *name) const;
 
 private slots:
     void videoOutputChanged(QVideoOutputControl::Output output);

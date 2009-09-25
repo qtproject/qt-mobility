@@ -39,7 +39,7 @@
 
 #include <multimedia/qmultimediaglobal.h>
 
-class QAbstractMediaObject;
+class QMediaObject;
 
 class QVideoWidgetPrivate;
 
@@ -65,7 +65,7 @@ public:
 
     enum AspectRatio { AspectRatioAuto, AspectRatioWidget, AspectRatioCustom };
 
-    QVideoWidget(QAbstractMediaObject *object, QWidget *parent = 0);
+    QVideoWidget(QMediaObject *object, QWidget *parent = 0);
     ~QVideoWidget();
 
     DisplayMode displayMode() const;

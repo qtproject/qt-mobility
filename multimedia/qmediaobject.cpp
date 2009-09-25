@@ -34,14 +34,15 @@
 
 #include <QtCore/qmetaobject.h>
 
-#include <multimedia/qabstractmediaobject_p.h>
+#include <multimedia/qmediaobject_p.h>
 
-#include <multimedia/qabstractmediaservice.h>
+#include <multimedia/qmediaservice.h>
 #include <multimedia/qmetadataprovidercontrol.h>
 
-void QAbstractMediaObjectPrivate::_q_notify()
+
+void QMediaObjectPrivate::_q_notify()
 {
-    Q_Q(QAbstractMediaObject);
+    Q_Q(QMediaObject);
 
     const int len = notifyProperties.length();
 
@@ -63,17 +64,17 @@ void QAbstractMediaObjectPrivate::_q_notify()
 
 
 /*!
-    \class QAbstractMediaObject
+    \class QMediaObject
     \ingroup multimedia
 
     \preliminary
     \brief The base Multimedia object.
 
-    \sa QAbstractMediaService, QAbstractMediaControl
+    \sa QMediaService, QMediaControl
 */
 
 /*!
-    \enum QAbstractMediaObject::MetaData
+    \enum QMediaObject::MetaData
 
     Common attributes
     \value Title The title of the media.  QString.
@@ -147,71 +148,45 @@ void QAbstractMediaObjectPrivate::_q_notify()
 */
 
 /*!
-    Destroys the QAbstractMediaObject object.
+    Destroys the QMediaObject object.
 */
 
-QAbstractMediaObject::~QAbstractMediaObject()
+QMediaObject::~QMediaObject()
 {
     delete d_ptr;
 }
 
 /*!
-    \fn QAbstractMediaService* QAbstractMediaObject::service() const
+    \fn QMediaService* QMediaObject::service() const
 
     Returns the media service that provide the functionality for the Multimedia object.
 */
 
+QMediaService* QMediaObject::service() const
+{
+    return d_func()->service;
+}
+
 /*!
-    \fn bool QAbstractMediaObject::isValid() const
+    \fn bool QMediaObject::isValid() const
 
     Returns true if the concrete media object is capable of normal operation;
     false otherwise.
 */
 
-/*!
-*/
-void QAbstractMediaObject::registerService(QAbstractMediaService *service)
+bool QMediaObject::isValid() const
 {
-    Q_D(QAbstractMediaObject);
-
-    d->service = service;
-
-    if (d->metaDataControl) {
-        disconnect(d->metaDataControl, SIGNAL(metaDataChanged()), this, SIGNAL(metaDataChanged()));
-        disconnect(
-                d->metaDataControl, SIGNAL(metaDataAvailableChanged(bool)),
-                this, SIGNAL(metaDataAvailableChanged(bool)));
-        disconnect(
-                d->metaDataControl, SIGNAL(writableChanged(bool)),
-                this, SIGNAL(metaDataWritableChanged(bool)));
-    }
-
-    if (service) {
-        d->metaDataControl = qobject_cast<QMetaDataProviderControl *>(
-                service->control(QMetaDataProviderControl_iid));
-
-        if (d->metaDataControl) {
-            connect(d->metaDataControl, SIGNAL(metaDataChanged()), this, SIGNAL(metaDataChanged()));
-            connect(d->metaDataControl,
-                    SIGNAL(metaDataAvailableChanged(bool)),
-                    SIGNAL(metaDataAvailableChanged(bool)));
-            connect(d->metaDataControl,
-                    SIGNAL(writableChanged(bool)),
-                    SIGNAL(metaDataWritableChanged(bool)));
-        }
-    } else {
-        d->metaDataControl = 0;
-    }
+    return d_func()->service != 0;
 }
 
-int QAbstractMediaObject::notifyInterval() const
+int QMediaObject::notifyInterval() const
 {
     return d_func()->notifyTimer->interval();
 }
 
-void QAbstractMediaObject::setNotifyInterval(int milliSeconds)
+void QMediaObject::setNotifyInterval(int milliSeconds)
 {
-    Q_D(QAbstractMediaObject);
+    Q_D(QMediaObject);
 
     if (d->notifyTimer->interval() != milliSeconds) {
         d->notifyTimer->setInterval(milliSeconds);
@@ -223,43 +198,53 @@ void QAbstractMediaObject::setNotifyInterval(int milliSeconds)
 /*!
   \internal
 */
-void QAbstractMediaObject::bind(QObject*)
+void QMediaObject::bind(QObject*)
 {
 }
 
 /*!
-    Construct a QAbstractMediaObject with \a parent. This class is meant as a
-    base class for Multimedia objects so this constructor is protected.
+    Construct a QMediaObject using QMediaService \a service, with \a parent.
+    This class is meant as a base class for Multimedia objects so this
+    constructor is protected.
 */
 
-QAbstractMediaObject::QAbstractMediaObject(QObject *parent)
-    : QObject(parent)
-    , d_ptr(new QAbstractMediaObjectPrivate)
+QMediaObject::QMediaObject(QObject *parent, QMediaService *service):
+    QObject(parent),
+    d_ptr(new QMediaObjectPrivate)
 
 {
-    Q_D(QAbstractMediaObject);
+    Q_D(QMediaObject);
 
     d->q_ptr = this;
 
     d->notifyTimer = new QTimer(this);
     d->notifyTimer->setInterval(1000);
     connect(d->notifyTimer, SIGNAL(timeout()), SLOT(_q_notify()));
+
+    d->service = service;
+
+    setupMetaData();
 }
 
 /*!
     \internal
 */
 
-QAbstractMediaObject::QAbstractMediaObject(QAbstractMediaObjectPrivate &dd, QObject *parent)
-    : QObject(parent)
-    , d_ptr(&dd)
+QMediaObject::QMediaObject(QMediaObjectPrivate &dd, QObject *parent,
+                                            QMediaService *service):
+    QObject(parent),
+    d_ptr(&dd)
 {
-    Q_D(QAbstractMediaObject);
+    Q_D(QMediaObject);
     d->q_ptr = this;
 
     d->notifyTimer = new QTimer(this);
     d->notifyTimer->setInterval(1000);
     connect(d->notifyTimer, SIGNAL(timeout()), SLOT(_q_notify()));
+
+    d->service = service;
+
+    setupMetaData();
 }
 
 /*!
@@ -269,9 +254,9 @@ QAbstractMediaObject::QAbstractMediaObject(QAbstractMediaObjectPrivate &dd, QObj
     \sa notifyInterval
 */
 
-void QAbstractMediaObject::addPropertyWatch(QByteArray const &name)
+void QMediaObject::addPropertyWatch(QByteArray const &name)
 {
-    Q_D(QAbstractMediaObject);
+    Q_D(QMediaObject);
 
     d->notifyProperties << name;
 
@@ -286,9 +271,9 @@ void QAbstractMediaObject::addPropertyWatch(QByteArray const &name)
     \sa notifyInterval
 */
 
-void QAbstractMediaObject::removePropertyWatch(QByteArray const &name)
+void QMediaObject::removePropertyWatch(QByteArray const &name)
 {
-    Q_D(QAbstractMediaObject);
+    Q_D(QMediaObject);
 
     d->notifyProperties.removeAll(name);
 
@@ -297,7 +282,7 @@ void QAbstractMediaObject::removePropertyWatch(QByteArray const &name)
 }
 
 /*!
-    \property QAbstractMediaObject::notifyInterval
+    \property QMediaObject::notifyInterval
 
     The interval at which notifiable properties will update.
 
@@ -307,13 +292,13 @@ void QAbstractMediaObject::removePropertyWatch(QByteArray const &name)
 */
 
 /*!
-    \fn void QAbstractMediaObject::notifyIntervalChanged(int milliSeconds)
+    \fn void QMediaObject::notifyIntervalChanged(int milliSeconds)
 
     Signal a change in the notify interval period to \a milliSeconds.
 */
 
 /*!
-    \property QAbstractMediaObject::metaDataAvailable
+    \property QMediaObject::metaDataAvailable
     \brief Identifies if access to a media object's meta-data is available.
 */
 
@@ -322,9 +307,9 @@ void QAbstractMediaObject::removePropertyWatch(QByteArray const &name)
 
     Returns true if the meta-data is available and false otherwise.
 */
-bool QAbstractMediaObject::isMetaDataAvailable() const
+bool QMediaObject::isMetaDataAvailable() const
 {
-    Q_D(const QAbstractMediaObject);
+    Q_D(const QMediaObject);
 
     return d->metaDataControl
             ? d->metaDataControl->isMetaDataAvailable()
@@ -332,13 +317,13 @@ bool QAbstractMediaObject::isMetaDataAvailable() const
 }
 
 /*!
-    \fn QAbstractMediaObject::metaDataAvailableChanged(bool available)
+    \fn QMediaObject::metaDataAvailableChanged(bool available)
 
     Signals that the \a available state of a media object's meta-data has changed.
 */
 
 /*!
-    \property QAbstractMediaObject::metaDataWritable
+    \property QMediaObject::metaDataWritable
     \brief Identifies if a media object's meta-data is writable.
 */
 
@@ -347,9 +332,9 @@ bool QAbstractMediaObject::isMetaDataAvailable() const
 
     Returns true if the meta-data can be edited and false otherwise.
 */
-bool QAbstractMediaObject::isMetaDataWritable() const
+bool QMediaObject::isMetaDataWritable() const
 {
-    Q_D(const QAbstractMediaObject);
+    Q_D(const QMediaObject);
 
     return d->metaDataControl
             ? d->metaDataControl->isWritable()
@@ -357,7 +342,7 @@ bool QAbstractMediaObject::isMetaDataWritable() const
 }
 
 /*!
-    \fn QAbstractMediaObject::metaDataWritableChanged(bool writable)
+    \fn QMediaObject::metaDataWritableChanged(bool writable)
 
     Signals that the \a writable state of a media object's meta-data has changed.
 */
@@ -365,9 +350,9 @@ bool QAbstractMediaObject::isMetaDataWritable() const
 /*!
     Returns the value associated with a meta-data \a key.
 */
-QVariant QAbstractMediaObject::metaData(MetaData key) const
+QVariant QMediaObject::metaData(MetaData key) const
 {
-    Q_D(const QAbstractMediaObject);
+    Q_D(const QMediaObject);
 
     return d->metaDataControl
             ? d->metaDataControl->metaData(key)
@@ -377,16 +362,16 @@ QVariant QAbstractMediaObject::metaData(MetaData key) const
 /*!
     Sets a \a value for a meta-data \a key.
 */
-void QAbstractMediaObject::setMetaData(MetaData key, const QVariant &value)
+void QMediaObject::setMetaData(MetaData key, const QVariant &value)
 {
-    Q_D(QAbstractMediaObject);
+    Q_D(QMediaObject);
 
     if (d->metaDataControl)
         d->metaDataControl->setMetaData(key, value);
 }
 
 /*!
-    \fn QAbstractMediaObject::metaDataChanged()
+    \fn QMediaObject::metaDataChanged()
 
     Signals that a media object's meta-data has changed.
 */
@@ -397,9 +382,9 @@ void QAbstractMediaObject::setMetaData(MetaData key, const QVariant &value)
     The naming and type of extended meta-data is not standardized, so the values and meaning
     of keys may vary between backends.
 */
-QVariant QAbstractMediaObject::extendedMetaData(const QString &key) const
+QVariant QMediaObject::extendedMetaData(const QString &key) const
 {
-    Q_D(const QAbstractMediaObject);
+    Q_D(const QMediaObject);
 
     return d->metaDataControl
             ? d->metaDataControl->extendedMetaData(key)
@@ -412,12 +397,33 @@ QVariant QAbstractMediaObject::extendedMetaData(const QString &key) const
     The naming and type of extended meta-data is not standardized, so the values and meaning
     of keys may vary between backends.
 */
-void QAbstractMediaObject::setExtendedMetaData(const QString &key, const QVariant &value)
+void QMediaObject::setExtendedMetaData(const QString &key, const QVariant &value)
 {
-    Q_D(QAbstractMediaObject);
+    Q_D(QMediaObject);
 
     if (d->metaDataControl)
         d->metaDataControl->setExtendedMetaData(key, value);
 }
 
-#include "moc_qabstractmediaobject.cpp"
+void QMediaObject::setupMetaData()
+{
+    Q_D(QMediaObject);
+
+    if (d->service != 0) {
+        d->metaDataControl =
+            qobject_cast<QMetaDataProviderControl*>(d->service->control(QMetaDataProviderControl_iid));
+
+        if (d->metaDataControl) {
+            connect(d->metaDataControl, SIGNAL(metaDataChanged()), SIGNAL(metaDataChanged()));
+            connect(d->metaDataControl,
+                    SIGNAL(metaDataAvailableChanged(bool)),
+                    SIGNAL(metaDataAvailableChanged(bool)));
+            connect(d->metaDataControl,
+                    SIGNAL(writableChanged(bool)),
+                    SIGNAL(metaDataWritableChanged(bool)));
+        }
+    }
+}
+
+
+#include "moc_qmediaobject.cpp"

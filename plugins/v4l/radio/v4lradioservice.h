@@ -48,9 +48,9 @@ public:
     V4LRadioService(QObject *parent = 0);
     ~V4LRadioService();
 
-    QAbstractMediaControl *control(const char* name) const;
+    QMediaControl *control(const char* name) const;
 
-    bool isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType);
+    bool isEndpointSupported(QMediaService::MediaEndpoint endpointType);
 
     void setInputStream(QIODevice* stream);
     QIODevice* inputStream() const;
@@ -58,9 +58,9 @@ public:
     void setOutputStream(QIODevice* stream);
     QIODevice* outputStream() const;
 
-    QString activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType);
-    bool setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint);
-    QList<QString> supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const;
+    QString activeEndpoint(QMediaService::MediaEndpoint endpointType);
+    bool setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
+    QList<QString> supportedEndpoints(QMediaService::MediaEndpoint endpointType) const;
 private:
     V4LRadioControl *m_control;
 };

@@ -40,7 +40,8 @@
 #include <Phonon/MediaObject>
 #include <Phonon/VideoWidget>
 
-#include <multimedia/qmediaplayerservice.h>
+#include <multimedia/qmediaservice.h>
+
 #include "qphononvideowidget.h"
 
 
@@ -55,7 +56,7 @@ class QPhononMetaDataProvider;
 
 class QMediaPlaylistNavigator;
 
-class QPhononPlayerService : public QMediaPlayerService
+class QPhononPlayerService : public QMediaService
 {
     Q_OBJECT
 
@@ -63,7 +64,7 @@ public:
     QPhononPlayerService(QObject *parent = 0);
     ~QPhononPlayerService();
 
-    QAbstractMediaControl *control(const char *name) const;
+    QMediaControl *control(const char *name) const;
 
 private:
     Phonon::MediaObject *m_mediaObject;

@@ -38,38 +38,22 @@
 #include "audiocaptureserviceplugin.h"
 #include "audiocaptureservice.h"
 
-#include <qmediaserviceprovider.h>
-#include <qaudiorecorderservice.h>
+#include <multimedia/qmediaserviceprovider.h>
 
-
-class AudioCaptureProvider : public QMediaServiceProvider
-{
-    Q_OBJECT
-public:
-    QObject* createObject(const char *interface) const
-    {
-        if (QLatin1String(interface) == QLatin1String(QAudioRecorderService_iid))
-            return new AudioCaptureService;
-
-        return 0;
-    }
-};
 
 QStringList AudioCaptureServicePlugin::keys() const
 {
-    return QStringList() << "audiorecorder";
+    return QStringList() << "mediarecorder";
 }
 
-QMediaServiceProvider* AudioCaptureServicePlugin::create(QString const& key)
+QMediaService* AudioCaptureServicePlugin::create(QString const& key)
 {
-    if (key == "audiorecorder")
-        return new AudioCaptureProvider;
+    if (key == QLatin1String("mediarecorder"))
+        return new AudioCaptureService;
 
     qDebug() << "unsupported key:" << key;
     return 0;
 }
-
-#include "audiocaptureserviceplugin.moc"
 
 Q_EXPORT_PLUGIN2(audioengine, AudioCaptureServicePlugin);
 

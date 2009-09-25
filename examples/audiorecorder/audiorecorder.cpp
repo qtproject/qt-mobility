@@ -33,7 +33,7 @@
 ****************************************************************************/
 
 #include <qmediarecorder.h>
-#include <qabstractmediaservice.h>
+#include <qmediaservice.h>
 
 #include <qaudiosource.h>
 
@@ -69,10 +69,10 @@ AudioRecorder::AudioRecorder()
     if(capture->service()) {
 
         QList<QString> audioInputs;
-        audioInputs = capture->service()->supportedEndpoints(QAbstractMediaService::AudioInput);
+        audioInputs = capture->service()->supportedEndpoints(QMediaService::AudioInput);
         if(audioInputs.size() > 0) {
             qWarning()<<"FOUND audioInputs: "<<audioInputs;
-            capture->service()->setActiveEndpoint(QAbstractMediaService::AudioInput,audioInputs.first());
+            capture->service()->setActiveEndpoint(QMediaService::AudioInput,audioInputs.first());
             for(int i = 0; i < audioInputs.size(); ++i) {
                 deviceBox->addItem(audioInputs.at(i));
             }
@@ -132,7 +132,7 @@ void AudioRecorder::stateChanged(QMediaRecorder::State state)
 
 void AudioRecorder::deviceChanged(int idx)
 {
-    capture->service()->setActiveEndpoint(QAbstractMediaService::AudioInput,deviceBox->itemText(idx));
+    capture->service()->setActiveEndpoint(QMediaService::AudioInput,deviceBox->itemText(idx));
 }
 
 void AudioRecorder::paramsChanged(int idx)

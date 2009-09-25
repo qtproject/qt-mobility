@@ -36,14 +36,15 @@
 #ifndef AUDIOCAPTURESERVICEPLUGIN_H
 #define AUDIOCAPTURESERVICEPLUGIN_H
 
-#include <qmediaserviceproviderplugin.h>
+#include <multimedia/qmediaserviceproviderplugin.h>
 
 class AudioCaptureServicePlugin : public QMediaServiceProviderPlugin
 {
     Q_OBJECT
+
 public:
     QStringList keys() const;
-    QMediaServiceProvider* create(QString const& key);
+    QMediaService* create(QString const& key);
 };
 
 #endif // AUDIOCAPTURESERVICEPLUGIN_H
