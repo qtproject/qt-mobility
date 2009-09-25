@@ -62,7 +62,7 @@ goto exitTag
 
 :contactsTag
 shift
-set CONTACTS_PLUGIN="%CONTACTS_PLUGIN% %1"
+set CONTACTS_PLUGIN=%CONTACTS_PLUGIN% %1
 shift
 goto cmdline_parsing
 
