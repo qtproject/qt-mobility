@@ -47,8 +47,8 @@
 #include "v4lmediaformatcontrol.h"
 #include "v4lvideoencode.h"
 
-V4LCameraService::V4LCameraService(QObject *parent)
-    : QCameraService(parent)
+V4LCameraService::V4LCameraService(QObject *parent):
+    QAbstractMediaService(parent)
 {
     m_session = new V4LCameraSession(this);
     m_control = new V4LCameraControl(this,m_session);
