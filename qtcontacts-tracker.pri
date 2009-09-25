@@ -4,7 +4,6 @@ message("qtcontacts-tracker.pri")
 message(" ^ including")
 DEFINES += QTCONTACTS-TRACKER_PRI
 
-
 INCLUDEPATH += /usr/include/qt4/QtContacts
 INCLUDEPATH += $$PWD
 
@@ -16,5 +15,4 @@ HEADERS += qcontacttrackerbackend_p.h \
 
 SOURCES += qcontacttrackerbackend.cpp \
            qtrackercontactasyncrequest.cpp
-
 }
