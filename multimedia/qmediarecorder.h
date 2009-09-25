@@ -96,8 +96,6 @@ public:
 
     qint64 duration() const;
 
-    QMediaService* service() const;
-
     QStringList supportedFormats() const;
     QString formatDescription(const QString &formatMimeType) const;
     QString format() const;

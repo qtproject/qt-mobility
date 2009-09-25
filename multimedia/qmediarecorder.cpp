@@ -72,12 +72,10 @@ public:
     QMediaRecorderPrivate();
     void initControls();
 
-    QMediaService *service;
     QMediaRecorderControl *control;
     QMediaFormatControl *formatControl;
     QAudioEncoderControl *audioControl;
     QVideoEncoderControl *videoControl;
-
 
     QMediaRecorder::State state;
     QMediaRecorder::Error error;
@@ -88,7 +86,6 @@ public:
 };
 
 QMediaRecorderPrivate::QMediaRecorderPrivate():
-     service(0),
      control(0),
      formatControl(0),
      audioControl(0),
@@ -160,7 +157,7 @@ QMediaRecorder::QMediaRecorder(QMediaObject *mediaObject):
 {
     Q_D(QMediaRecorder);
 
-    Q_ASSERT(d->service != 0);
+    Q_ASSERT(service() != 0);
 
     d->initControls();
 }
@@ -170,7 +167,7 @@ QMediaRecorder::QMediaRecorder(QObject *parent, QMediaServiceProvider *provider)
 {
     Q_D(QMediaRecorder);
 
-    Q_ASSERT(d->service != 0);
+    Q_ASSERT(service() != 0);
 
     d->initControls();
 }
@@ -193,14 +190,6 @@ bool QMediaRecorder::isValid() const
     return d_func()->control != 0;
 }
 
-/*!
-    Returns the media service being used.
-*/
-
-QMediaService* QMediaRecorder::service() const
-{
-    return d_func()->service;
-}
 
 /*!
     Returns the sink being used.
