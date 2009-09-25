@@ -34,9 +34,6 @@
 
 #include "radio.h"
 
-#include <qmediaservice.h>
-#include <qradioplayercontrol.h>
-
 #include <QtGui>
 
 Radio::Radio()
@@ -129,12 +126,12 @@ void Radio::searchDown()
     player->searchBackward();
 }
 
-void Radio::freqChanged(int f)
+void Radio::freqChanged(int)
 {
     freq->setText(QString("%1 kHz").arg(player->frequency()/1000));
 }
 
-void Radio::signalChanged(int s)
+void Radio::signalChanged(int)
 {
     if(player->signalStrength() > 25)
         signal->setText(tr("Got Signal"));

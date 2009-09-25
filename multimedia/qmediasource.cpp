@@ -43,6 +43,8 @@ public:
     QMediaSourcePrivate() {}
     QMediaSourcePrivate(const QMediaResourceList &r):
         resources(r) {}
+    /*
+       Uncomment if QMediaSource acquires mutating members.
     QMediaSourcePrivate(const QMediaSourcePrivate &other):
         QSharedData(other),
         resources(other.resources) {}
@@ -52,6 +54,7 @@ public:
         resources = other.resources;
         return *this;
     }
+    */
 
     QMediaResourceList  resources;
 };
