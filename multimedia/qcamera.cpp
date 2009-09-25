@@ -49,9 +49,8 @@
     \ingroup multimedia
 
     \preliminary
-    \brief
-
-    \sa
+    \brief The QCamera class provides interface for system
+    camera devices.
 */
 
 /*!
@@ -84,6 +83,9 @@ public:
     QCameraFocusControl *focusControl;
     QImageProcessingControl *imageControl;
     bool ownService;
+
+    QCamera::Error error;
+    QString errorString;
 };
 
 /*!
@@ -150,8 +152,23 @@ QCamera::~QCamera()
     }
 }
 
+QCamera::Error QCamera::error() const
+{
+    return d_func()->error;
+}
+
+QString QCamera::errorString() const
+{
+    return d_func()->errorString;
+}
+
 /*!
-    Start camera.
+    Starts the camera.
+
+    This can involve powering up the camera device and can be asynchronyous.
+
+    State is changed to QCamera::ActiveState if camera is started
+    succesfuly, otherwise error() signal is emited.
 */
 
 void QCamera::start()
@@ -163,7 +180,7 @@ void QCamera::start()
 }
 
 /*!
-    Stop camera.
+    Stops the camera.
 */
 
 void QCamera::stop()
