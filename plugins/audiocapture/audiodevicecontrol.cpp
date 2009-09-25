@@ -82,13 +82,10 @@ QIcon AudioDeviceControl::icon(int index) const
 
 int AudioDeviceControl::defaultDevice() const
 {
-    QAudioDeviceId idx = QAudioDeviceInfo::defaultInputDevice();
-    QList<QAudioDeviceId> devices;
-    //QAudioDeviceInfo idx = QAudioDeviceInfo::defaultInputDevice();
-    //QList<QAudioDeviceInfo> devices;
+    QAudioDeviceInfo idx = QAudioDeviceInfo::defaultInputDevice();
+    QList<QAudioDeviceInfo> devices;
     devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
     QString devName = QAudioDeviceInfo(idx).deviceName();
-    //QString devName = QAudioDeviceInfo(idx).deviceName();
     for(int i=0;i<m_names.count();i++) {
         if(qstrcmp(devName.toLocal8Bit().constData(),
                     m_names.at(i).toLocal8Bit().constData()) == 0)
@@ -118,14 +115,11 @@ void AudioDeviceControl::update()
     m_names.clear();
     m_descriptions.clear();
 
-    QList<QAudioDeviceId> devices;
-    //QList<QAudioDeviceInfo> devices;
+    QList<QAudioDeviceInfo> devices;
     devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
     for(int i = 0; i < devices.size(); ++i) {
-        m_names.append(QAudioDeviceInfo(devices.at(i)).deviceName());
-        m_descriptions.append(QAudioDeviceInfo(devices.at(i)).deviceName());
-        //m_names.append(devices.at(i).deviceName());
-        //m_descriptions.append(devices.at(i).deviceName());
+        m_names.append(devices.at(i).deviceName());
+        m_descriptions.append(devices.at(i).deviceName());
     }
     m_device = QAudioDeviceInfo(QAudioDeviceInfo::defaultInputDevice()).deviceName();
 }
