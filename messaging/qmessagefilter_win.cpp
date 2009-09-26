@@ -893,7 +893,7 @@ QMessageFilter QMessageFilter::byPriority(QMessage::Priority value, QMessageData
 
 QMessageFilter QMessageFilter::bySize(int value, QMessageDataComparator::EqualityComparator cmp)
 {
-    // TODO: Test this filer
+    // TODO: Test this filter
     return QMessageFilterPrivate::from(QMessageFilterPrivate::Size, QVariant(value), cmp);
 }
 
