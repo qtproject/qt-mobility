@@ -25,6 +25,8 @@
 #include <QFile>
 #include <QSet>
 
+#include "trackerchangelistener.h"
+
 Live<nco::Role> QContactTrackerEngineData::contactByContext(const QContactDetail& det, const Live<nco::PersonContact>& ncoContact) {
     if (locationContext(det) == ContactContext::Work) {
         // For "work" properties, we need to get the affiliation containing job related contact data
@@ -80,30 +82,10 @@ QContactTrackerEngine::QContactTrackerEngine(const QContactTrackerEngine& other)
 
 void QContactTrackerEngine::connectToSignals()
 {
-    SopranoLive::BackEnds::Tracker::ClassUpdateSignaler *signaler =
-            SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(
-                    nco::PersonContact::iri());
-    // Note here that we are not using
-    // QAbstractItemModel signals from LiveNodes::model() because
-    // node list for which notification comes is fixed. Those are used for
-    // async implementation
-    if (signaler)
-    {
-        QObject::connect(signaler, SIGNAL(subjectsAdded(const QStringList &)),
-                this, SLOT(subjectsAdded(const QStringList &)));
-        QObject::connect(signaler,
-                SIGNAL(baseRemoveSubjectsd(const QStringList &)), this,
-                SLOT(subjectsRemoved(const QStringList &)));
-        QObject::connect(signaler,
-                SIGNAL(subjectsChanged(const QStringList &)), this,
-                SLOT(subjectsChanged(const QStringList &)));
-    }
-    //this corresponds with telepathysupport/ TrackerSink::onSimplePresenceChanged
-       signaler = SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(
-                    nfo::IMAccount::iri());
-        connect(signaler,
-                SIGNAL(subjectsChanged(const QStringList &)), this,
-                SLOT(imAccountChanged(const QStringList &)));
+    TrackerChangeListener *listener = new TrackerChangeListener(this);
+    connect(listener, SIGNAL(contactsAdded(const QList<QUniqueId>&)), SIGNAL(contactsAdded(const QList<QUniqueId>&)));
+    connect(listener, SIGNAL(contactsChanged(const QList<QUniqueId>&)), SIGNAL(contactsChanged(const QList<QUniqueId>&)));
+    connect(listener, SIGNAL(contactsRemoved(const QList<QUniqueId>&)), SIGNAL(contactsRemoved(const QList<QUniqueId>&)));
 }
 
 QContactTrackerEngine& QContactTrackerEngine::operator=(const QContactTrackerEngine& other)
@@ -886,88 +868,7 @@ QString QContactTrackerEngine::escaped(const QString& input) const
 }
 #endif
 
-// TEMPORARY here we'll for now extract ids from tracker contact URI.
-// In future need nonblocking async way to get contact ids from tracker contact urls
-// let's see which signals will be used from libqttracker
-QUniqueId url2UniqueId(const QString &contactUrl)
-{
-    QRegExp rx("(\\d+)");
-    bool conversion = false;
-    QUniqueId id = 0;
-    if( rx.lastIndexIn(contactUrl) != -1 )
-    {
-        id = rx.cap(1).toUInt(&conversion, 10);
-    }
-    if( !conversion )
-        qWarning()<<Q_FUNC_INFO<<"unparsed uri to uniqueI:"<<contactUrl;
-    return id;
 
-}
-
-// Let's then continue this trend with temporary methods. Here is a temporary
-// method to quick and ugly return the contact ID of the contact whos
-// status message was updated.
-QUniqueId contactIdFromIMAccount(const QString &IMAccount) {
-    QUniqueId id;
-    RDFVariable RDFContact = RDFVariable::fromType<nco::PersonContact>();
-    RDFContact.property<nco::hasIMAccount>() = QUrl(IMAccount);
-
-    RDFSelect query;
-    query.addColumn("contactId", RDFContact.property<nco::contactUID>());
-    LiveNodes ncoContacts = ::tracker()->modelQuery(query);
-    for(int i=0; i<ncoContacts->rowCount(); i++) {
-        id = ncoContacts->index(i, 1).data().toUInt();
-    }
-    return id;
-}
-
-void QContactTrackerEngine::subjectsAdded(const QStringList &subjects)
-{
-    QList<QUniqueId> added;
-    foreach(const QString &uri, subjects)
-    {
-        added << url2UniqueId(uri);
-    }
-    qDebug()<<Q_FUNC_INFO<<"added contactids:"<<added;
-    emit contactsAdded(added);
-}
-
-void QContactTrackerEngine::subjectsRemoved(const QStringList &subjects)
-{
-    QList<QUniqueId> added;
-    foreach(const QString &uri, subjects)
-    {
-        added << url2UniqueId(uri);
-    }
-    qDebug()<<Q_FUNC_INFO<<"added contactids:"<<added;
-    emit contactsRemoved(added);
-}
-
-// TODO data changed for full query
-void QContactTrackerEngine::subjectsChanged(const QStringList &subjects)
-{
-    QList<QUniqueId> added;
-    foreach(const QString &uri, subjects)
-    {
-        added << url2UniqueId(uri);
-    }
-    qDebug()<<Q_FUNC_INFO<<"added contactids:"<<added;
-    emit contactsChanged(added);
-}
-
-void QContactTrackerEngine::imAccountChanged(const QStringList& subjects) {
-    QList<QUniqueId> contactsChangedPresence;
-
-    foreach(const QString &uri, subjects) {
-        contactsChangedPresence << contactIdFromIMAccount(uri);
-    }
-
-    // Remove duplicates, if changed subjects belonged to same contacts.
-    QSet<QUniqueId> noDuplicates = contactsChangedPresence.toSet();
-    contactsChangedPresence = noDuplicates.toList();
-
-    emit contactsChanged(contactsChangedPresence);
-}
 
 /*! \reimp */
 void QContactTrackerEngine::requestDestroyed(QContactAbstractRequest* req)

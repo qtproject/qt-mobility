@@ -148,10 +148,7 @@ private slots:
     void rowsInserted(const QModelIndex &parent, int first, int last);
     void rowsRemoved(const QModelIndex &parent, int first, int last);
 */
-    void subjectsAdded(const QStringList &subjects);
-    void subjectsRemoved(const QStringList &subjects);
-    void subjectsChanged(const QStringList &subjects);
-    void imAccountChanged(const QStringList &subjects);
+
 
 
 private:

@@ -17,9 +17,11 @@ INCLUDEPATH += .
 
 LIBS += -lqttracker
 HEADERS += qcontacttrackerbackend_p.h \
-    qtrackercontactasyncrequest.h
+    qtrackercontactasyncrequest.h \
+    trackerchangelistener.h
 SOURCES += qcontacttrackerbackend.cpp \
-    qtrackercontactasyncrequest.cpp
+    qtrackercontactasyncrequest.cpp \
+    trackerchangelistener.cpp
 
 # QT += contacts
 INCLUDEPATH += /usr/include/qt4/QtContacts
