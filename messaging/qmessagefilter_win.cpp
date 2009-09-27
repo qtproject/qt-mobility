@@ -33,6 +33,7 @@
 #include "qmessagefilter.h"
 #include "qmessagefilter_p.h"
 #include "qvariant.h"
+#include "qdebug.h"
 #include "winhelpers_p.h"
 #include "qmessagefolderid_p.h"
 
@@ -566,7 +567,8 @@ QMessageFilterPrivate::QMessageFilterPrivate(QMessageFilter *messageFilter)
      _right(0),
      _buffer(0),
      _buffer2(0),
-     _valid(true)
+     _valid(true),
+     _complex(false)
 {
 }
 
@@ -576,6 +578,41 @@ QMessageFilterPrivate::~QMessageFilterPrivate()
     _buffer = 0;
     delete _buffer2;
     _buffer2 = 0;
+}
+
+bool QMessageFilterPrivate::containerFiltersAreEmpty()
+{
+    return (_standardFoldersInclude.isEmpty() 
+            && _standardFoldersExclude.isEmpty() 
+            && _accountsInclude.isEmpty() 
+            && _accountsExclude.isEmpty());
+}
+
+QMessageFilter QMessageFilterPrivate::containerFiltersPart()
+{
+    QMessageFilter result;
+    result.d_ptr->_standardFoldersInclude = _standardFoldersInclude;
+    result.d_ptr->_standardFoldersExclude = _standardFoldersExclude;
+    result.d_ptr->_accountsInclude = _accountsInclude;
+    result.d_ptr->_accountsExclude = _accountsExclude;
+    return result;
+}
+
+QMessageFilter QMessageFilterPrivate::nonContainerFiltersPart()
+{
+    QMessageFilter result;
+    result.d_ptr->q_ptr = &result;
+    result.d_ptr->_field = _field;
+    result.d_ptr->_comparatorType = _comparatorType;
+    result.d_ptr->_comparatorValue = _comparatorValue;
+    result.d_ptr->_operator = _operator;
+    result.d_ptr->_left = _left;
+    result.d_ptr->_right = _right;
+    result.d_ptr->_buffer = _buffer;
+    result.d_ptr->_buffer2 = _buffer2;
+    result.d_ptr->_valid = _valid;
+    result.d_ptr->_complex = _complex;
+    return result;
 }
 
 QMessageFilter::QMessageFilter()
@@ -611,6 +648,11 @@ QMessageFilter& QMessageFilter::operator=(const QMessageFilter& other)
     d_ptr->_operator = other.d_ptr->_operator;
     d_ptr->_buffer = 0; // Delay construction of buffer until it is used
     d_ptr->_valid = other.d_ptr->_valid;
+    d_ptr->_standardFoldersInclude = other.d_ptr->_standardFoldersInclude;
+    d_ptr->_standardFoldersExclude = other.d_ptr->_standardFoldersExclude;
+    d_ptr->_accountsInclude = other.d_ptr->_accountsInclude;
+    d_ptr->_accountsExclude = other.d_ptr->_accountsExclude;
+    d_ptr->_complex = other.d_ptr->_complex;
 
     if (other.d_ptr->_left)
         d_ptr->_left = new QMessageFilter(*other.d_ptr->_left);
@@ -632,7 +674,11 @@ QMessageDataComparator::Options QMessageFilter::options() const
 bool QMessageFilter::isEmpty() const
 {
     return ((d_ptr->_field == QMessageFilterPrivate::None) 
-        && (d_ptr->_operator == QMessageFilterPrivate::Identity));
+        && (d_ptr->_operator == QMessageFilterPrivate::Identity)
+        && d_ptr->_standardFoldersInclude.isEmpty()
+        && d_ptr->_standardFoldersExclude.isEmpty() 
+        && d_ptr->_accountsInclude.isEmpty() 
+        && d_ptr->_accountsExclude.isEmpty());
 }
 
 bool QMessageFilter::isSupported() const
@@ -642,11 +688,94 @@ bool QMessageFilter::isSupported() const
 
 QMessageFilter QMessageFilter::operator~() const
 {
-    QMessageFilter result(*this);
-    int op = static_cast<int>(d_ptr->_operator) + static_cast<int>(QMessageFilterPrivate::Not);
-    op = op % static_cast<int>(QMessageFilterPrivate::OperatorEnd);
-    result.d_ptr->_operator = static_cast<QMessageFilterPrivate::Operator>(op);
-
+    QMessageFilter result;
+    if (d_ptr->containerFiltersAreEmpty() && !d_ptr->_complex) {
+        result = *this;
+        int op = static_cast<int>(d_ptr->_operator) + static_cast<int>(QMessageFilterPrivate::Not);
+        op = op % static_cast<int>(QMessageFilterPrivate::OperatorEnd);
+        result.d_ptr->_operator = static_cast<QMessageFilterPrivate::Operator>(op);
+    } else if (d_ptr->_complex) {
+        //~(F&(X|Y)) -> ~F&~X&~Y
+        QMessageFilter result;
+        QMessageFilter resultL(~*d_ptr->_left);
+        QMessageFilter resultR(~*d_ptr->_right);
+        result.d_ptr->_left = new QMessageFilter(resultL.d_ptr->nonContainerFiltersPart());
+        result.d_ptr->_right = new QMessageFilter(resultR.d_ptr->nonContainerFiltersPart());
+        result.d_ptr->_operator = QMessageFilterPrivate::And;
+        result.d_ptr->_standardFoldersInclude = d_ptr->_standardFoldersExclude;
+        result.d_ptr->_standardFoldersExclude = d_ptr->_standardFoldersInclude;
+        result.d_ptr->_accountsInclude = d_ptr->_accountsExclude;
+        result.d_ptr->_accountsExclude = d_ptr->_accountsInclude;
+        result.d_ptr->_standardFoldersInclude &= resultL.d_ptr->containerFiltersPart().d_ptr->_standardFoldersInclude;
+        result.d_ptr->_standardFoldersInclude &= resultL.d_ptr->containerFiltersPart().d_ptr->_standardFoldersInclude;
+        result.d_ptr->_standardFoldersExclude |= resultL.d_ptr->containerFiltersPart().d_ptr->_standardFoldersExclude;
+        result.d_ptr->_standardFoldersExclude |= resultL.d_ptr->containerFiltersPart().d_ptr->_standardFoldersExclude;
+        result.d_ptr->_accountsInclude &= resultL.d_ptr->containerFiltersPart().d_ptr->_accountsInclude;
+        result.d_ptr->_accountsInclude &= resultL.d_ptr->containerFiltersPart().d_ptr->_accountsInclude;
+        result.d_ptr->_accountsExclude |= resultL.d_ptr->containerFiltersPart().d_ptr->_accountsExclude;
+        result.d_ptr->_accountsExclude |= resultL.d_ptr->containerFiltersPart().d_ptr->_accountsExclude;
+    } else {
+        switch (d_ptr->_operator)
+        {
+            case QMessageFilterPrivate::Identity: // fall through
+            case QMessageFilterPrivate::Not:
+            {
+                //~(F&A) -> ~F|~A
+                //~(F&~A) -> ~F|A
+                result.d_ptr->_operator = QMessageFilterPrivate::Or;
+                result.d_ptr->_left = new QMessageFilter();
+                result.d_ptr->_left->d_ptr->_standardFoldersInclude = d_ptr->_standardFoldersExclude;
+                result.d_ptr->_left->d_ptr->_standardFoldersExclude = d_ptr->_standardFoldersInclude;
+                result.d_ptr->_left->d_ptr->_accountsInclude = d_ptr->_accountsExclude;
+                result.d_ptr->_left->d_ptr->_accountsExclude = d_ptr->_accountsInclude;
+                result.d_ptr->_right = new QMessageFilter(~d_ptr->nonContainerFiltersPart());
+                break;
+            }
+            case QMessageFilterPrivate::And: // fall through
+            case QMessageFilterPrivate::Nand: // fall through
+            case QMessageFilterPrivate::Or: // fall through
+            case QMessageFilterPrivate::Nor:
+            {
+                QMessageFilter result;
+                QMessageFilter resultL;
+                QMessageFilter resultR;
+                result.d_ptr->_operator = QMessageFilterPrivate::Or;
+                result.d_ptr->_left = &resultL;
+                result.d_ptr->_right = &resultR;
+                resultL.d_ptr->_left->d_ptr->_standardFoldersInclude = d_ptr->_standardFoldersExclude;
+                resultL.d_ptr->_left->d_ptr->_standardFoldersExclude = d_ptr->_standardFoldersInclude;
+                resultL.d_ptr->_left->d_ptr->_accountsInclude = d_ptr->_accountsExclude;
+                resultL.d_ptr->_left->d_ptr->_accountsExclude = d_ptr->_accountsInclude;
+                if (d_ptr->_operator == QMessageFilterPrivate::And) {
+                    //~(F&(A&B)) -> ~F|(~A|~B)
+                    resultR.d_ptr->_operator = QMessageFilterPrivate::Or;
+                    resultR.d_ptr->_left = new QMessageFilter(~*d_ptr->_left);
+                    resultR.d_ptr->_right = new QMessageFilter(~*d_ptr->_right);
+                } else if (d_ptr->_operator == QMessageFilterPrivate::Nand) {
+                    //~(F&~(A&B)) -> ~F|(A&B)
+                    resultR.d_ptr->_operator = QMessageFilterPrivate::And;
+                    resultR.d_ptr->_left = new QMessageFilter(*d_ptr->_left);
+                    resultR.d_ptr->_right = new QMessageFilter(*d_ptr->_right);
+                } else if (d_ptr->_operator == QMessageFilterPrivate::Or) {
+                    //~(F&(A|B)) -> ~F|(~A&~B)
+                    resultR.d_ptr->_operator = QMessageFilterPrivate::And;
+                    resultR.d_ptr->_left = new QMessageFilter(~*d_ptr->_left);
+                    resultR.d_ptr->_right = new QMessageFilter(~*d_ptr->_right);
+                } else if (d_ptr->_operator == QMessageFilterPrivate::Nor) {
+                    //~(F&~(A|B)) -> ~F|(A|B)
+                    resultR.d_ptr->_operator = QMessageFilterPrivate::Or;
+                    resultR.d_ptr->_left = new QMessageFilter(*d_ptr->_left);
+                    resultR.d_ptr->_right = new QMessageFilter(*d_ptr->_right);
+                }
+                break;
+            }
+            default: 
+            {
+                qWarning() << "Unhandled filter negation case.";
+                break;
+            }
+        }
+    }
     return result;
 }
 
@@ -726,6 +855,20 @@ const QMessageFilter& QMessageFilter::operator|=(const QMessageFilter& other)
 
 bool QMessageFilter::operator==(const QMessageFilter& other) const
 {
+    if (d_ptr->_standardFoldersInclude != other.d_ptr->_standardFoldersInclude)
+        return false;
+    if (d_ptr->_standardFoldersExclude != other.d_ptr->_standardFoldersExclude)
+        return false;
+    if (d_ptr->_accountsInclude != other.d_ptr->_accountsInclude)
+        return false;
+    if (d_ptr->_accountsExclude != other.d_ptr->_accountsExclude)
+        return false;
+    if (d_ptr->_complex != other.d_ptr->_complex)
+        return false;
+
+    if (other.d_ptr->_operator != d_ptr->_operator)
+        return false;
+
     if (d_ptr->_operator == QMessageFilterPrivate::Identity) {
         if (other.d_ptr->_operator != QMessageFilterPrivate::Identity)
             return false;
@@ -734,14 +877,13 @@ bool QMessageFilter::operator==(const QMessageFilter& other) const
             && d_ptr->_comparatorType == other.d_ptr->_comparatorType
             && d_ptr->_comparatorValue == other.d_ptr->_comparatorValue);
     }
-    if (other.d_ptr->_operator != d_ptr->_operator)
-        return false;
+
     if (d_ptr->_left == other.d_ptr->_left 
         && d_ptr->_right == other.d_ptr->_right)
         return true;
     if (d_ptr->_left == other.d_ptr->_right 
         && d_ptr->_right == other.d_ptr->_left)
-        return true;
+        return true; // Commutativity
 
     // TODO: For a system of determining equality of boolean algebra expressions see:
     // TODO:  Completely distributed normal form http://wikpedia.org/wiki/Boolean_algebra(logic)
