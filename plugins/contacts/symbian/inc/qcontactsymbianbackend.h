@@ -75,15 +75,16 @@ public:
     QList<QUniqueId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
-    bool saveContact(QContact* contact, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error);
-    bool removeContact(const QUniqueId& contactId, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error);
+    bool saveContact(QContact* contact, QContactManager::Error& error);
+    QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
+    bool removeContact(const QUniqueId& contactId, QContactManager::Error& error);
+    QList<QContactManager::Error> removeContacts(QList<QUniqueId>* contactIds, QContactManager::Error& error);
 
     /* Groups - Accessors and Mutators */
     QList<QUniqueId> groups(QContactManager::Error& error) const;
     QContactGroup group(const QUniqueId& groupId, QContactManager::Error& error) const;
-    bool saveGroup(QContactGroup* group, QSet<QUniqueId>& groupsAdded, QSet<QUniqueId>& groupsChanged, QSet<QUniqueId>& contactsChanged, QContactManager::Error& error);
-    bool removeGroup(const QUniqueId& groupId, QSet<QUniqueId>& groupsRemoved, QSet<QUniqueId>& contactsChanged, QContactManager::Error& error);
-
+    bool saveGroup(QContactGroup* group, QContactManager::Error& error);
+    bool removeGroup(const QUniqueId& groupId, QContactManager::Error& error);
 
     /* Definitions */
     QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
@@ -104,6 +105,7 @@ private slots:
 	void eventGroupChanged(const QUniqueId &groupId);
     
 private:
+    bool doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error& error);
     void updateDisplayLabel(QContact& contact) const;
     QContactSymbianEngineData *d;
 };

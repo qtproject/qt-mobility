@@ -49,6 +49,8 @@
 //remember to remove this in the code and just return a normal list
 //typedef QList<QUniqueId> QUniqueIdIterator;
 
+class QContactChangeSet;
+
 class QContactSymbianEngineData : public QObject,
 							   public MContactDbObserver
 {
@@ -72,9 +74,9 @@ public:
     void clearPersonalContactId();
 
     /* Add/Update/Remove */ 
-    bool addContact(QContact& contact, int &id, QContactManager::Error& qtError);
-    bool updateContact(QContact& contact, QContactManager::Error& qtError);
-    bool removeContact(const QUniqueId &id, QContactManager::Error& qtError);
+    bool addContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError);
+    bool updateContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError);
+    bool removeContact(const QUniqueId &id, QContactChangeSet& changeSet, QContactManager::Error& qtError);
     
     //function to find contacts, based on the communication method
     //communication type - call (number, voip fields), digits to match
@@ -85,8 +87,8 @@ public:
     /* Groups functionality */
 	QList<QUniqueId> groups(QContactManager::Error& qtError) const;
 	QContactGroup group(const QUniqueId& groupId, QContactManager::Error& qtError) const;
-	bool saveGroup(QContactGroup& group, QContactManager::Error& qtError);
-	bool removeGroup(const QUniqueId& groupId, QContactManager::Error& qtError);
+	bool saveGroup(QContactGroup& group, QContactChangeSet& changeSet, QContactManager::Error& qtError);
+	bool removeGroup(const QUniqueId& groupId, QContactChangeSet& changeSet, QContactManager::Error& qtError);
 	QUniqueId simPhonebookGroupId() const;
     
 public:

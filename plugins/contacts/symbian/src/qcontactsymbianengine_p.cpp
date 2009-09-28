@@ -38,6 +38,7 @@
 
 #include <qtcontacts.h>
 #include <QSet>
+#include "qcontactchangeset.h"
 
 /* ... The macros changed names */
 #if QT_VERSION < QT_VERSION_CHECK(4, 6, 0)
@@ -184,14 +185,20 @@ QList<QUniqueId> QContactSymbianEngineData::contacts(QContactManager::Error& qtE
  * \param qtError Qt error code.
  * \return Error status
  */
-bool QContactSymbianEngineData::addContact(QContact& contact, int &id, QContactManager::Error& qtError)
+bool QContactSymbianEngineData::addContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError)
 {
 	// Attempt to persist contact, trapping errors
     int err(0);
+    QUniqueId id(0);
     TRAP(err, QT_TRYCATCH_LEAVING(id = addContactL(contact)));
     if(err == KErrNone)
+    {
+        contact.setId(id);
+        //TODO: check what to do with groupsChanged
+        changeSet.addedContacts().insert(id);
         m_contactsAddedEmitted.append(id);
-	transformError(err, qtError);
+    }
+    transformError(err, qtError);
 
 	return (err==KErrNone);
 }
@@ -203,12 +210,16 @@ bool QContactSymbianEngineData::addContact(QContact& contact, int &id, QContactM
  * \param qtError Qt error code. 
  * \return Error status.
  */
-bool QContactSymbianEngineData::updateContact(QContact& contact, QContactManager::Error& qtError)
+bool QContactSymbianEngineData::updateContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError)
 {
     int err(0);
     TRAP(err, QT_TRYCATCH_LEAVING(updateContactL(contact)));
     if(err == KErrNone)
+    {
+        //TODO: check what to do with groupsChanged
+        changeSet.changedContacts().insert(contact.id());
         m_contactsChangedEmitted.append(contact.id());
+    }
     transformError(err, qtError);
     return (err==KErrNone);
 }
@@ -226,12 +237,16 @@ bool QContactSymbianEngineData::updateContact(QContact& contact, QContactManager
  * \param qtError Qt error code. 
  * \return Error status.
  */
-bool QContactSymbianEngineData::removeContact(const QUniqueId &id, QContactManager::Error& qtError)
+bool QContactSymbianEngineData::removeContact(const QUniqueId &id, QContactChangeSet& changeSet, QContactManager::Error& qtError)
 {
     // removeContactL() can't throw c++ exception
 	TRAPD(err, removeContactL(id));
     if(err == KErrNone)
+    {
+        //TODO: check what to do with groupsChanged?
+        changeSet.removedContacts().insert(id);
         m_contactsRemovedEmitted.append(id);
+    }
     transformError(err, qtError);
 	return (err==KErrNone);
 }
@@ -300,11 +315,16 @@ QContactGroup QContactSymbianEngineData::group(const QUniqueId& groupId, QContac
  * \param qtError Qt error code. 
  * \return a bool indicating whether the operation was successful.
  */
-bool QContactSymbianEngineData::saveGroup(QContactGroup& group, QContactManager::Error& qtError)
+bool QContactSymbianEngineData::saveGroup(QContactGroup& group, QContactChangeSet& changeSet, QContactManager::Error& qtError)
 {
     int err(0);
     TRAP(err, QT_TRYCATCH_LEAVING(saveGroupL(group)));
-	
+    if(err == KErrNone)
+    {
+        // TODO: should we signal contactsChanged in some cases?
+        changeSet.changedGroups().insert(group.id());
+        m_contactsChangedEmitted.append(group.id());
+    }
 	transformError(err, qtError);
 	return (err==KErrNone); 
 }
@@ -316,10 +336,16 @@ bool QContactSymbianEngineData::saveGroup(QContactGroup& group, QContactManager:
  * \param qtError Qt error code. 
  * \return a bool indicating whether the operation was successful.
  */
-bool QContactSymbianEngineData::removeGroup(const QUniqueId& groupId, QContactManager::Error& qtError)
+bool QContactSymbianEngineData::removeGroup(const QUniqueId& groupId, QContactChangeSet& changeSet, QContactManager::Error& qtError)
 {
     // removeGroupL() can't throw c++ exception
 	TRAPD(err, removeGroupL(groupId));
+    if(err == KErrNone)
+    {
+        // TODO: should we signal contactsChanged in some cases?
+        changeSet.removedGroups().insert(groupId);
+        m_contactsChangedEmitted.append(groupId);
+    }
 	transformError(err, qtError);
 	return (err == KErrNone);
 }

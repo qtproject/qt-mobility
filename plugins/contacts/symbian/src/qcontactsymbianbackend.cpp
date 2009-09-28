@@ -45,6 +45,7 @@
 
 #include "qcontactsymbianbackend.h"
 #include "qcontactsymbianengine_p.h" 
+#include "qcontactchangeset.h"
 
 QContactSymbianEngine::QContactSymbianEngine(const QMap<QString, QString>& /*parameters*/, QContactManager::Error& error)
 {
@@ -122,30 +123,54 @@ QContact QContactSymbianEngine::contact(const QUniqueId& contactId, QContactMana
     return contact;
 }
 
-bool QContactSymbianEngine::saveContact(QContact* contact, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& /*groupsChanged*/, QContactManager::Error& error)
+bool QContactSymbianEngine::saveContact(QContact* contact, QContactManager::Error& error)
+{
+    QContactChangeSet changeSet;
+    TBool ret = doSaveContact(contact, changeSet, error);
+    changeSet.emitSignals(this);
+    return ret;
+}
+
+QList<QContactManager::Error> QContactSymbianEngine::saveContacts(QList<QContact>* contacts, QContactManager::Error& error)
+{
+    QContactChangeSet changeSet;
+    QList<QContactManager::Error> ret;
+    if (!contacts) {
+        error = QContactManager::BadArgumentError;
+    } else {
+        QContactManager::Error functionError = QContactManager::NoError;
+        for (int i = 0; i < contacts->count(); i++) {
+            QContact current = contacts->at(i);
+            if (!doSaveContact(&current, changeSet, error)) {
+                functionError = error;
+                ret.append(functionError);
+            } else {
+                (*contacts)[i] = current;
+                ret.append(QContactManager::NoError);
+            }
+        }
+        error = functionError;
+    }
+    changeSet.emitSignals(this);
+    return ret;
+}
+
+bool QContactSymbianEngine::doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error& error)
 {
     bool ret = false;
-	
-	if (contact->id()) { //save contact
-		ret = d->updateContact(*contact, error);
-		if (ret) {
-            //TODO: check what to do with groupsChanged
-		    contactsChanged.insert(contact->id());
-	        updateDisplayLabel(*contact);
-		}
-	}
-	else { //create new contact
-        int newContactId = 0;
-        ret = d->addContact(*contact, newContactId, error);
+    if (contact->id()) { //save contact
+        ret = d->updateContact(*contact, changeSet, error);
+        if (ret)
+            updateDisplayLabel(*contact);
+    }
+    else { //create new contact
+        ret = d->addContact(*contact, changeSet, error);
         if (ret) {
-            ASSERT(newContactId);
-            contact->setId(newContactId);
-            contactsAdded.insert(newContactId);
+            ASSERT(contact->id());
             updateDisplayLabel(*contact);
         }
-	}
-
-	return ret;
+    }
+    return ret;
 }
 
 void QContactSymbianEngine::updateDisplayLabel(QContact& contact) const
@@ -160,14 +185,39 @@ void QContactSymbianEngine::updateDisplayLabel(QContact& contact) const
     }
 }
 
-bool QContactSymbianEngine::removeContact(const QUniqueId& contactId, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& /*groupsChanged*/, QContactManager::Error& error)
+bool QContactSymbianEngine::removeContact(const QUniqueId& contactId, QContactManager::Error& error)
 {
-    bool ret = d->removeContact(contactId, error);
-    if (ret) {
-        //TODO: check what to do with groupsChanged
-        contactsChanged.insert(contactId);
+    QContactChangeSet changeSet;
+    TBool ret = d->removeContact(contactId, changeSet, error);
+    changeSet.emitSignals(this);
+    return ret;
+}
+
+QList<QContactManager::Error> QContactSymbianEngine::removeContacts(QList<QUniqueId>* contactIds, QContactManager::Error& error)
+{
+    QContactChangeSet changeSet;
+    QList<QContactManager::Error> ret;
+    if (!contactIds) {
+        error = QContactManager::BadArgumentError;
+        return ret;
+    } else {
+        QList<QUniqueId> removedList;
+        QContactManager::Error functionError = QContactManager::NoError;
+        for (int i = 0; i < contactIds->count(); i++) {
+            QUniqueId current = contactIds->at(i);
+            if (!d->removeContact(current, changeSet, error)) {
+                functionError = error;
+                ret.append(functionError);
+            } else {
+                (*contactIds)[i] = 0;
+                ret.append(QContactManager::NoError);
+            }
+        }
+
+        error = functionError;
     }
-    return ret;    
+    changeSet.emitSignals(this);
+    return ret;
 }
 
 QList<QUniqueId> QContactSymbianEngine::groups(QContactManager::Error& error) const
@@ -180,30 +230,25 @@ QContactGroup QContactSymbianEngine::group(const QUniqueId& groupId, QContactMan
 	return d->group(groupId, error);
 }
 
-bool QContactSymbianEngine::saveGroup(QContactGroup* group, QSet<QUniqueId>& groupsAdded, QSet<QUniqueId>& groupsChanged, QSet<QUniqueId>& /*contactsChanged*/, QContactManager::Error& error)
+bool QContactSymbianEngine::saveGroup(QContactGroup* group, QContactManager::Error& error)
 {
+    QContactChangeSet changeSet;
     bool ret = false;
     if (group->id() > 0) {
-        ret = d->saveGroup(*group, error);
-        if (ret) {
-            groupsChanged.insert(group->id());
-        }
+        ret = d->saveGroup(*group, changeSet, error);
     }
     else {
-        ret = d->saveGroup(*group, error);
-        if (ret) {
-            groupsAdded.insert(group->id());
-        }
+        ret = d->saveGroup(*group, changeSet, error);
     }
+    changeSet.emitSignals(this);
     return ret;
 }
 
-bool QContactSymbianEngine::removeGroup(const QUniqueId& groupId, QSet<QUniqueId>& groupsRemoved, QSet<QUniqueId>& /*contactsChanged*/, QContactManager::Error& error)
+bool QContactSymbianEngine::removeGroup(const QUniqueId& groupId, QContactManager::Error& error)
 {
-    bool ret = d->removeGroup(groupId, error);
-    if (ret) {
-        groupsRemoved.insert(groupId);
-    }
+    QContactChangeSet changeSet;
+    bool ret = d->removeGroup(groupId, changeSet, error);
+    changeSet.emitSignals(this);
     return ret;
 }
 
