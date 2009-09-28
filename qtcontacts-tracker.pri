@@ -5,17 +5,16 @@ message(" ^ including")
 DEFINES += QTCONTACTS-TRACKER_PRI
 
 INCLUDEPATH += /usr/include/qt4/QtContacts
-INCLUDEPATH += $$PWD
 
 LIBS += -lqttracker
 LIBS += -lQtContacts
 
-HEADERS += qcontacttrackerbackend_p.h \
-           qtrackercontactasyncrequest.h \
-           trackerchangelistener.h 
+HEADERS += $$PWD/qcontacttrackerbackend_p.h \
+           $$PWD/qtrackercontactasyncrequest.h \
+           $$PWD/trackerchangelistener.h 
            
 
-SOURCES += qcontacttrackerbackend.cpp \
-           qtrackercontactasyncrequest.cpp \
-           trackerchangelistener.cpp
+SOURCES += $$PWD/qcontacttrackerbackend.cpp \
+           $$PWD/qtrackercontactasyncrequest.cpp \
+           $$PWD/trackerchangelistener.cpp
 }
