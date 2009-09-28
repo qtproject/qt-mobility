@@ -7,6 +7,7 @@ set RELEASEMODE=release
 set QT_MOBILITY_LIB=
 set BUILD_UNITTESTS=no
 set BUILD_EXAMPLES=no
+set CONTACTS_PLUGIN=
 
 if exist "%PROJECT_CONFIG%" del %PROJECT_CONFIG%
 echo CONFIG += silent > %PROJECT_CONFIG%
@@ -22,6 +23,7 @@ if "%1" == "-bindir"        goto binTag
 if "%1" == "-headerdir"     goto headerTag
 if "%1" == "-tests"         goto testTag
 if "%1" == "-examples"      goto exampleTag
+if "%1" == "-contact-src"   goto contactsTag
 if "%1" == "/?"             goto usage
 if "%1" == "-h"             goto usage
 if "%1" == "-help"          goto usage
@@ -49,10 +51,20 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo -release .......... Build without debugging symbols
     echo -tests ............ Build unit tests (not build by default)
     echo -examples ......... Build example applications
+    echo "-contact-src <backend> ..."
+    echo "                   Compile the specified contacts API backend. Not selecting any backend"
+    echo "                   will result in default selection for build platform"
+    echo "                   options: symbian, wince, kabc, memory"
 
 
 del config.in
 goto exitTag
+
+:contactsTag
+shift
+set CONTACTS_PLUGIN=%CONTACTS_PLUGIN% %1
+shift
+goto cmdline_parsing
 
 :debugTag
 if "%RELEASEMODE%" == "release" set RELEASEMODE=debug
@@ -101,6 +113,7 @@ goto cmdline_parsing
 :startProcessing
 
 echo CONFIG += %RELEASEMODE% >> %PROJECT_CONFIG%
+echo CONTACTS_BACKENDS = %CONTACTS_PLUGIN% >> %PROJECT_CONFIG%
 
 set CURRENTDIR=%CD%
 echo %CURRENTDIR%

@@ -50,7 +50,7 @@
 #include "qnetworksessionengine_p.h"
 #endif
 
-#include <qnetworksession.h>
+#include "qnetworksession.h"
 #include <QNetworkInterface>
 #include <QDateTime>
 

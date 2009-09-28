@@ -32,7 +32,7 @@
 ****************************************************************************/
 #include <QFile>
 #include "servicemetadata_p.h"
-#include <qserviceinterfacedescriptor_p.h>
+#include "qserviceinterfacedescriptor_p.h"
 
 //XML tags and attributes
 //General

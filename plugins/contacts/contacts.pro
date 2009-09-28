@@ -4,8 +4,10 @@ CONFIG += ordered
 
 include(../../common.pri)
 
+!simulator {
 # If qmake has CONTACTS_BACKEND option with kabc included, do that too
-contains(CONTACTS_BACKENDS, kabc): SUBDIRS += kabc
-contains(CONTACTS_BACKENDS, symbian): SUBDIRS += symbian
-contains(CONTACTS_BACKENDS, symbian): SUBDIRS += symbian/tsrc
-contains(CONTACTS_BACKENDS, wince): SUBDIRS += wince
+    contains(CONTACTS_BACKENDS, kabc): SUBDIRS += kabc
+    contains(CONTACTS_BACKENDS, symbian): SUBDIRS += symbian
+    contains(CONTACTS_BACKENDS, symbian): SUBDIRS += symbian/tsrc
+    contains(CONTACTS_BACKENDS, wince): SUBDIRS += wince
+}
