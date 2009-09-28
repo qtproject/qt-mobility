@@ -1,16 +1,16 @@
 TEMPLATE = subdirs
 
 SUBDIRS = \
+        qaudiosource \
+        qcamera \
+        qmediaimageviewer \
         qmediaobject \
-        qmediaservice \
+        qmediaplayer \
         qmediaplaylist \
         qmediaplaylistnavigator \
-        qmediaresource \
-        qmediasource \
-        qvideowidget \
-        qmediaplayer \
-        qradioplayer \
         qmediarecorder \
-        qaudiosource \
-        qcamera
-
+        qmediaresource \
+        qmediaservice \
+        qmediasource \
+        qradioplayer \
+        qvideowidget

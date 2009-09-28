@@ -45,6 +45,8 @@
 #endif
 #include <multimedia/qvideowidgetcontrol.h>
 
+#include <QtCore/qdebug.h>
+
 #include <QtCore/qurl.h>
 #include <QtGui/qimage.h>
 #include <QtGui/qimagereader.h>
@@ -449,6 +451,8 @@ bool QMediaImageViewerServicePrivate::load(QIODevice *device)
             }
         }
 #endif
+    } else {
+        qWarning("QMediaImageViewerService: no video output connected");
     }
     return false;
 }
@@ -604,13 +608,15 @@ void QMediaImageViewerControlPrivate::loadImage()
 {
     cancelRequests();
 
+    QMediaImageViewer::MediaStatus currentStatus = status;
+    status = QMediaImageViewer::InvalidMedia;
+
     QNetworkAccessManager *network = service->networkManager();
 
     if (!network) {
-        possibleResources.clear();
+        qWarning("QMediaImageViewerControlPrivate: No network manager");
 
-        status = QMediaImageViewer::InvalidMedia;
-        currentMedia = QMediaResource();
+        possibleResources.clear();
     } else {
         while (!possibleResources.isEmpty() && !headReply && !getReply) {
             currentMedia = possibleResources.takeFirst();
@@ -619,10 +625,14 @@ void QMediaImageViewerControlPrivate::loadImage()
             QString mimeType = currentMedia.mimeType();
 
             if (isImageType(uri, mimeType)) {
+                status = QMediaImageViewer::LoadingMedia;
+
                 getReply = network->get(QNetworkRequest(uri));
 
                 QObject::connect(getReply, SIGNAL(finished()), q_func(), SLOT(_q_getFinished()));
             } else if (mimeType.isEmpty() && uri.scheme() != QLatin1String("file")) {
+                status = QMediaImageViewer::LoadingMedia;
+
                 headReply = network->head(QNetworkRequest(currentMedia.uri()));
 
                 QObject::connect(headReply, SIGNAL(finished()), q_func(), SLOT(_q_headFinished()));
@@ -630,8 +640,13 @@ void QMediaImageViewerControlPrivate::loadImage()
         }
     }
 
+    if (status == QMediaImageViewer::InvalidMedia)
+        currentMedia = QMediaResource();
+
+    if (status != currentStatus)
+        emit q_func()->mediaStatusChanged(status);
+
     emit q_func()->currentMediaChanged(currentMedia);
-    emit q_func()->mediaStatusChanged(status);
 }
 
 void QMediaImageViewerControlPrivate::cancelRequests()
@@ -651,6 +666,9 @@ void QMediaImageViewerControlPrivate::cancelRequests()
 
 void QMediaImageViewerControlPrivate::_q_getFinished()
 {
+    if (getReply != q_func()->sender())
+        return;
+
     QImage image;
 
     if (service->d_func()->load(getReply)) {
@@ -666,6 +684,9 @@ void QMediaImageViewerControlPrivate::_q_getFinished()
 
 void QMediaImageViewerControlPrivate::_q_headFinished()
 {
+    if (headReply != q_func()->sender())
+        return;
+
     QString mimeType = headReply->header(QNetworkRequest::ContentTypeHeader)
             .toString().section(QLatin1Char(';'), 0, 0);
     QUrl uri = headReply->url();
@@ -732,7 +753,7 @@ void QMediaImageViewerControl::setMedia(const QMediaSource &media)
     d->media = media;
     d->currentMedia = QMediaResource();
 
-    if (media.isNull()) {    
+    if (media.isNull()) {
         d->cancelRequests();
         d->service->d_func()->clear();
 
@@ -746,12 +767,8 @@ void QMediaImageViewerControl::setMedia(const QMediaSource &media)
                 + media.resources(QMediaResource::PreviewRole)
                 + media.resources(QMediaResource::PosterRole)
                 + media.resources(QMediaResource::CoverArtRole);
-
         d->loadImage();
     }
-
-    emit mediaChanged(d->media);
-
 }
 
 /*!

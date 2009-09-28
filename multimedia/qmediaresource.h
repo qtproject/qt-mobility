@@ -126,6 +126,7 @@ private:
 typedef QList<QMediaResource> QMediaResourceList;
 
 Q_DECLARE_METATYPE(QMediaResource::ResourceRole)
+Q_DECLARE_METATYPE(QMediaResource)
 Q_DECLARE_METATYPE(QMediaResourceList)
 
 #endif

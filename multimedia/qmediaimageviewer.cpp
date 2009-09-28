@@ -71,7 +71,7 @@ void QMediaImageViewerPrivate::_q_playlistMediaChanged(const QMediaSource &sourc
 
     slideControl->setMedia(media);
 
-    timer.start(timeout, q_func());
+    emit q_func()->mediaChanged(media);
 }
 
 void QMediaImageViewerPrivate::_q_playlistDestroyed(QObject *object)
@@ -122,6 +122,11 @@ QMediaImageViewer::QMediaImageViewer(QObject *parent)
 
     d->slideControl = qobject_cast<QMediaImageViewerControl*>(
             d->service->control(QMediaImageViewerControl_iid));
+
+    connect(d->slideControl, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)),
+            this, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)));
+    connect(d->slideControl, SIGNAL(currentMediaChanged(QMediaResource)),
+            this, SIGNAL(currentMediaChanged(QMediaResource)));
 }
 
 /*!
@@ -196,6 +201,9 @@ void QMediaImageViewer::setMedia(const QMediaSource &media)
 
     if (d->state != QMediaImageViewer::StoppedState)
         emit stateChanged(d->state = QMediaImageViewer::StoppedState);
+
+    if (d->slideControl)
+        d->slideControl->setMedia(d->media);
 
     emit mediaChanged(d->media);
 }
@@ -275,15 +283,14 @@ void QMediaImageViewer::play()
     Q_D(QMediaImageViewer);
 
     if (d->playlist && d->playlist->size() > 0 && d->state != PlayingState) {
-        bool advance = d->state == StoppedState && d->playlist->currentPosition() < 0;
-
         if (d->timeout >= 0)
             d->timer.start(d->timeout, this);
 
-        emit stateChanged(d->state = PlayingState);
+        d->state = PlayingState;
+        d->playlist->advance();
 
-        if (advance)
-            d->playlist->advance();
+        if (d->state == QMediaImageViewer::PlayingState)
+            emit stateChanged(d->state);
     }
 }
 
@@ -314,6 +321,7 @@ void QMediaImageViewer::stop()
 
     switch (d->state) {
     case PlayingState:
+        qDebug("stop the timer");
         d->timer.stop();
         // fall through.
     case PausedState:
@@ -321,7 +329,6 @@ void QMediaImageViewer::stop()
 
         if (d->playlist)
             d->playlist->setCurrentPosition(-1);
-
         emit stateChanged(d->state);
         break;
     case StoppedState:
