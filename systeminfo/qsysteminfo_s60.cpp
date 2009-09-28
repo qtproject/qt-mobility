@@ -292,12 +292,7 @@ QString QSystemDeviceInfoPrivate::imei()
     TRAPD(error,
         deviceInfo = CDeviceInfo::NewL();
     )
-    if (deviceInfo->imei().length() > 0) {
-        return deviceInfo->imei();
-    }
-    else {
-        return QString();
-    }
+    return deviceInfo->imei();
 }
 
 QString QSystemDeviceInfoPrivate::imsi()
@@ -306,12 +301,7 @@ QString QSystemDeviceInfoPrivate::imsi()
     TRAPD(error,
         deviceInfo = CDeviceInfo::NewL();
     )
-    if (deviceInfo->imsi().length() > 0) {
-        return deviceInfo->imsi();
-    }
-    else {
-        return QString();
-    }
+    return deviceInfo->imsi();
 }
 
 QString QSystemDeviceInfoPrivate::manufacturer()
@@ -434,7 +424,7 @@ void CDeviceInfo::ConstructL()
 
 void CDeviceInfo::DoCancel()
 {
-    iTelephony->CancelAsync(CTelephony::EGetPhoneIdCancel);
+    iTelephony->CancelAsync(m_requestToCancel);
 }
  
 void CDeviceInfo::RunL()
@@ -456,13 +446,15 @@ CDeviceInfo::CDeviceInfo()
 CDeviceInfo::~CDeviceInfo()
 {
     Cancel();
-    delete iTelephony;  
+    delete iWait;
+    delete iTelephony;
 }
 
 QSystemDeviceInfo::PowerState CDeviceInfo::currentPowerState()
 {
     Cancel();
     iTelephony->GetBatteryInfo(iStatus,iBatteryInfoV1Pkg);
+    m_requestToCancel = CTelephony::EGetBatteryInfoCancel;
     SetActive();
 
     if (!iWait->IsStarted()) {
@@ -484,6 +476,7 @@ QString CDeviceInfo::imei()
 {
     Cancel();
     iTelephony->GetPhoneId(iStatus, iPhoneIdV1Pkg);
+    m_requestToCancel = CTelephony::EGetPhoneIdCancel;
     SetActive();
     
     if (!iWait->IsStarted()) {
@@ -497,6 +490,7 @@ QString CDeviceInfo::imsi()
 {
     Cancel();
     iTelephony->GetSubscriberId(iStatus,iSubscriberIdV1Pckg);
+    m_requestToCancel = CTelephony::EGetSubscriberIdCancel;
     SetActive();
     
     if (!iWait->IsStarted()) {
@@ -510,6 +504,7 @@ QString CDeviceInfo::manufacturer()
 {
     Cancel();
     iTelephony->GetPhoneId(iStatus, iPhoneIdV1Pkg);
+    m_requestToCancel = CTelephony::EGetPhoneIdCancel;
     SetActive();
     
     if (!iWait->IsStarted()) {
@@ -523,6 +518,7 @@ QString CDeviceInfo::model()
 {
     Cancel();
     iTelephony->GetPhoneId(iStatus, iPhoneIdV1Pkg);
+    m_requestToCancel = CTelephony::EGetPhoneIdCancel;
     SetActive();
     
     if (!iWait->IsStarted()) {
@@ -538,6 +534,7 @@ bool CDeviceInfo::isBatteryCharging()
     
     Cancel();
     iTelephony->GetIndicator(iStatus,iIndicatorV1Pckg);
+    m_requestToCancel = CTelephony::EGetIndicatorCancel;
     SetActive();
     if ( !iWait->IsStarted() ) {
         iWait->Start();
@@ -553,6 +550,7 @@ TUint CDeviceInfo::batteryLevel()
 {
     Cancel();
     iTelephony->GetBatteryInfo(iStatus,iBatteryInfoV1Pkg);
+    m_requestToCancel = CTelephony::EGetBatteryInfoCancel;
     SetActive();
     
     if (!iWait->IsStarted()) {

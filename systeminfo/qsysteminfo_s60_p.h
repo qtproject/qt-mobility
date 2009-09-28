@@ -305,6 +305,7 @@ private:
     CTelephony::TIndicatorV1 iIndicatorV1;
     
     CActiveSchedulerWait *iWait;
+    CTelephony::TCancellationRequest m_requestToCancel;
 };
 
 //////// For monitoring bluetooth state
