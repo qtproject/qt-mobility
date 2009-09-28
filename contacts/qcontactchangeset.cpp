@@ -82,7 +82,8 @@ QContactChangeSet& QContactChangeSet::operator=(const QContactChangeSet& other)
 
 /*!
  * Sets the data changed flag to \a dataChanged.  If this is set to true prior to calling \l emitSignals(),
- * only the \l QContactManagerEngine::dataChanged() signal will be emitted.
+ * only the \l QContactManagerEngine::dataChanged() signal will be emitted; otherwise, the appropriate
+ * finer-grained signals will be emitted.
  */
 void QContactChangeSet::setDataChanged(bool dataChanged)
 {
@@ -147,120 +148,6 @@ QSet<QUniqueId>& QContactChangeSet::changedGroups()
  * the database.
  */
 QSet<QUniqueId>& QContactChangeSet::removedGroups()
-{
-    return d->m_removedGroups;
-}
-
-/*!
- * Sets the set of ids of contacts which have been added to the managed store to \a ids.
- * If this is done prior to calling \l emitSignals(), and the data changed flag is not set to true
- * when \l emitSignals() is called, the \l QContactManagerEngine::contactsAdded() signal will be emitted
- * (if the set is non-empty).
- */
-void QContactChangeSet::setAddedContacts(const QSet<QUniqueId>& ids)
-{
-    d->m_addedContacts = ids;
-}
-
-/*!
- * Returns the set of ids of contacts which have been added, which has previously been set in this change set
- */
-QSet<QUniqueId> QContactChangeSet::addedContacts() const
-{
-    return d->m_addedContacts;
-}
-
-/*!
- * Sets the set of ids of contacts which have been changed in the managed store to \a ids.
- * If this is done prior to calling \l emitSignals(), and the data changed flag is not set to true
- * when \l emitSignals() is called, the \l QContactManagerEngine::contactsChanged() signal will be emitted
- * (if the set is non-empty).
- */
-void QContactChangeSet::setChangedContacts(const QSet<QUniqueId>& ids)
-{
-    d->m_changedContacts = ids;
-}
-
-/*!
- * Returns the set of ids of contacts which have been changed, which has previously been set in this change set
- */
-QSet<QUniqueId> QContactChangeSet::changedContacts() const
-{
-    return d->m_changedContacts;
-}
-
-/*!
- * Sets the set of ids of contacts which have been removed from the managed store to \a ids.
- * If this is done prior to calling \l emitSignals(), and the data changed flag is not set to true
- * when \l emitSignals() is called, the \l QContactManagerEngine::contactsRemoved() signal will be emitted
- * (if the set is non-empty).
- */
-void QContactChangeSet::setRemovedContacts(const QSet<QUniqueId>& ids)
-{
-    d->m_removedContacts = ids;
-}
-
-/*!
- * Returns the set of ids of contacts which have been removed, which has previously been set in this change set
- */
-QSet<QUniqueId> QContactChangeSet::removedContacts() const
-{
-    return d->m_removedContacts;
-}
-
-/*!
- * Sets the set of ids of groups which have been added to the managed store to \a ids.
- * If this is done prior to calling \l emitSignals(), and the data changed flag is not set to true
- * when \l emitSignals() is called, the \l QContactManagerEngine::groupsAdded() signal will be emitted
- * (if the set is non-empty).
- */
-void QContactChangeSet::setAddedGroups(const QSet<QUniqueId>& ids)
-{
-    d->m_addedGroups = ids;
-}
-
-/*!
- * Returns the set of ids of groups which have been added, which has previously been set in this change set
- */
-QSet<QUniqueId> QContactChangeSet::addedGroups() const
-{
-    return d->m_addedGroups;
-}
-
-/*!
- * Sets the set of ids of groups which have been changed in the managed store to \a ids.
- * If this is done prior to calling \l emitSignals(), and the data changed flag is not set to true
- * when \l emitSignals() is called, the \l QContactManagerEngine::groupsChanged() signal will be emitted
- * (if the set is non-empty).
- */
-void QContactChangeSet::setChangedGroups(const QSet<QUniqueId>& ids)
-{
-    d->m_changedGroups = ids;
-}
-
-/*!
- * Returns the set of ids of groups which have been changed, which has previously been set in this change set
- */
-QSet<QUniqueId> QContactChangeSet::changedGroups() const
-{
-    return d->m_changedGroups;
-}
-
-/*!
- * Sets the set of ids of groups which have been removed from the managed store to \a ids.
- * If this is done prior to calling \l emitSignals(), and the data changed flag is not set to true
- * when \l emitSignals() is called, the \l QContactManagerEngine::groupsRemoved() signal will be emitted
- * (if the set is non-empty).
- */
-void QContactChangeSet::setRemovedGroups(const QSet<QUniqueId>& ids)
-{
-    d->m_removedGroups = ids;
-}
-
-/*!
- * Returns the set of ids of groups which have been removed, which has previously been set in this change set
- */
-QSet<QUniqueId> QContactChangeSet::removedGroups() const
 {
     return d->m_removedGroups;
 }

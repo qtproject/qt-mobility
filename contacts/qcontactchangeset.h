@@ -61,20 +61,6 @@ public:
     QSet<QUniqueId>& changedGroups();
     QSet<QUniqueId>& removedGroups();
 
-    QSet<QUniqueId> addedContacts() const;
-    QSet<QUniqueId> changedContacts() const;
-    QSet<QUniqueId> removedContacts() const;
-    QSet<QUniqueId> addedGroups() const;
-    QSet<QUniqueId> changedGroups() const;
-    QSet<QUniqueId> removedGroups() const;
-
-    void setAddedContacts(const QSet<QUniqueId>& ids);
-    void setChangedContacts(const QSet<QUniqueId>& ids);
-    void setRemovedContacts(const QSet<QUniqueId>& ids);
-    void setAddedGroups(const QSet<QUniqueId>& ids);
-    void setChangedGroups(const QSet<QUniqueId>& ids);
-    void setRemovedGroups(const QSet<QUniqueId>& ids);
-
     void clear();
 
     void emitSignals(QContactManagerEngine *engine);
