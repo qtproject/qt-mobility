@@ -59,9 +59,10 @@ public:
     void setOutputStream(QIODevice* stream);
     QIODevice* outputStream() const;
 
-    QString activeEndpoint(QMediaService::MediaEndpoint endpointType);
+    QList<QString> activeEndpoints(QMediaService::MediaEndpoint endpointType);
     bool setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
     QList<QString> supportedEndpoints(QMediaService::MediaEndpoint endpointType) const;
+    QString endpointDescription(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
 
 private:
     V4LRadioControl *m_control;

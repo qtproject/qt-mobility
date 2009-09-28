@@ -80,9 +80,10 @@ QIODevice* V4LRadioService::outputStream() const
     return 0;
 }
 
-QString V4LRadioService::activeEndpoint(QMediaService::MediaEndpoint endpointType)
+QList<QString> V4LRadioService::activeEndpoints(QMediaService::MediaEndpoint endpointType)
 {
-    return QByteArray();
+    QList<QString> list;
+    return list;
 }
 
 bool V4LRadioService::setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint)
@@ -95,5 +96,10 @@ QList<QString> V4LRadioService::supportedEndpoints(QMediaService::MediaEndpoint 
     QList<QString> list;
     //TODO
     return list;
+}
+
+QString V4LRadioService::endpointDescription(QMediaService::MediaEndpoint endpointType, const QString& endpoint)
+{
+    return QString();
 }
 
