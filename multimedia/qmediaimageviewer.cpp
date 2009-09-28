@@ -48,19 +48,15 @@ class QMediaImageViewerPrivate : public QMediaObjectPrivate
 {
     Q_DECLARE_PUBLIC(QMediaImageViewer)
 public:
-    QMediaImageViewerPrivate()
-        : service(0)
-        , slideControl(0)
-        , playlist(0)
-        , state(QMediaImageViewer::StoppedState)
-        , timeout(3000)
+    QMediaImageViewerPrivate():
+        slideControl(0), playlist(0),
+        state(QMediaImageViewer::StoppedState), timeout(3000)
     {
     }
 
     void _q_playlistMediaChanged(const QMediaSource &source);
     void _q_playlistDestroyed(QObject *playlist);
 
-    QMediaImageViewerService *service;
     QMediaImageViewerControl *slideControl;
     QMediaPlaylist *playlist;
     QMediaImageViewer::State state;
