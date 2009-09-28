@@ -1,5 +1,5 @@
 TEMPLATE = subdirs
-SUBDIRS = publish-subscribe contextkit
+SUBDIRS = publish-subscribe
 
 contains(QT_CONFIG, declarative) {
     SUBDIRS += battery-charge
