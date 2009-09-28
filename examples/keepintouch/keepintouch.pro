@@ -3,7 +3,7 @@ TARGET = keepintouch
 
 QT += gui
 
-include(../../common.pri)
+include(../examples.pri)
 
 qtAddLibrary(QtMessaging)
 INCLUDEPATH += ../../messaging

@@ -19,51 +19,55 @@
 <ul>
 <li><a href="qmessageserviceaction-members.html">List of all members, including inherited members</a></li>
 </ul>
+<hr />
 <a name="public-types"></a>
-<h3>Public Types</h3>
-<ul>
-<li><div class="fn"></div>enum <b><a href="qmessageserviceaction.html#State-enum">State</a></b> { Pending, InProgress, Successful, Failed }</li>
-</ul>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#State-enum">State</a></b> { Pending, InProgress, Successful, Failed }</td></tr>
+</table>
+<hr />
 <a name="public-functions"></a>
-<h3>Public Functions</h3>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#QMessageServiceAction">QMessageServiceAction</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#dtor.QMessageServiceAction">~QMessageServiceAction</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#compose">compose</a></b> ( const QMessage &amp; <i>message</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#countMessages">countMessages</a></b> ( const QMessageFilter &amp; <i>filter</i> = QMessageFilter(), uint <i>limit</i> = 0 ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#countMessages-2">countMessages</a></b> ( const QMessageFilter &amp; <i>filter</i>, const QString &amp; <i>body</i>, QMessageDataComparator::Options <i>options</i> = 0, uint <i>limit</i> = 0 ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#exportUpdates">exportUpdates</a></b> ( const QMessageAccountId &amp; <i>id</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMessageStore::ErrorCode </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#lastError">lastError</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#queryMessages">queryMessages</a></b> ( const QMessageFilter &amp; <i>filter</i> = QMessageFilter(), const QMessageOrdering &amp; <i>ordering</i> = QMessageOrdering(), uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#queryMessages-2">queryMessages</a></b> ( const QMessageFilter &amp; <i>filter</i>, const QString &amp; <i>body</i>, QMessageDataComparator::Options <i>options</i> = 0, const QMessageOrdering &amp; <i>ordering</i> = QMessageOrdering(), uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#retrieve">retrieve</a></b> ( const QMessageContentContainerId &amp; <i>id</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#retrieveBody">retrieveBody</a></b> ( const QMessageId &amp; <i>id</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#retrieveHeader">retrieveHeader</a></b> ( const QMessageId &amp; <i>id</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#send">send</a></b> ( QMessage &amp; <i>message</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#show">show</a></b> ( const QMessageId &amp; <i>id</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">State </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#state">state</a></b> () const</td></tr>
+</table>
 <ul>
-<li><div class="fn"></div><b><a href="qmessageserviceaction.html#QMessageServiceAction">QMessageServiceAction</a></b> ( QObject * <i>parent</i> = 0 )</li>
-<li><div class="fn"></div><b><a href="qmessageserviceaction.html#dtor.QMessageServiceAction">~QMessageServiceAction</a></b> ()</li>
-<li><div class="fn"></div>bool <b><a href="qmessageserviceaction.html#compose">compose</a></b> ( const QMessage &amp; <i>message</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qmessageserviceaction.html#countMessages">countMessages</a></b> ( const QMessageFilter &amp; <i>filter</i> = QMessageFilter(), uint <i>limit</i> = 0 ) const</li>
-<li><div class="fn"></div>bool <b><a href="qmessageserviceaction.html#countMessages-2">countMessages</a></b> ( const QString &amp; <i>body</i>, QMessageDataComparator::Options <i>options</i>, const QMessageFilter &amp; <i>filter</i> = QMessageFilter(), uint <i>limit</i> = 0 ) const</li>
-<li><div class="fn"></div>bool <b><a href="qmessageserviceaction.html#exportUpdates">exportUpdates</a></b> ( const QMessageAccountId &amp; <i>id</i> )</li>
-<li><div class="fn"></div>QMessageStore::ErrorCode <b><a href="qmessageserviceaction.html#lastError">lastError</a></b> () const</li>
-<li><div class="fn"></div>bool <b><a href="qmessageserviceaction.html#queryMessages">queryMessages</a></b> ( const QMessageFilter &amp; <i>filter</i> = QMessageFilter(), const QMessageOrdering &amp; <i>ordering</i> = QMessageOrdering(), uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</li>
-<li><div class="fn"></div>bool <b><a href="qmessageserviceaction.html#queryMessages-2">queryMessages</a></b> ( const QString &amp; <i>body</i>, QMessageDataComparator::Options <i>options</i>, const QMessageFilter &amp; <i>filter</i> = QMessageFilter(), const QMessageOrdering &amp; <i>ordering</i> = QMessageOrdering(), uint <i>limit</i> = 0, uint <i>offset</i> = 0 ) const</li>
-<li><div class="fn"></div>bool <b><a href="qmessageserviceaction.html#retrieve">retrieve</a></b> ( const QMessageContentContainerId &amp; <i>id</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qmessageserviceaction.html#retrieveBody">retrieveBody</a></b> ( const QMessageId &amp; <i>id</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qmessageserviceaction.html#retrieveHeader">retrieveHeader</a></b> ( const QMessageId &amp; <i>id</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qmessageserviceaction.html#send">send</a></b> ( QMessage &amp; <i>message</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qmessageserviceaction.html#show">show</a></b> ( const QMessageId &amp; <i>id</i> )</li>
-<li><div class="fn"></div>State <b><a href="qmessageserviceaction.html#state">state</a></b> () const</li>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
 </ul>
-<ul>
-<li><div class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
-</ul>
+<hr />
 <a name="public-slots"></a>
-<h3>Public Slots</h3>
+<h2>Public Slots</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#cancelOperation">cancelOperation</a></b> ()</td></tr>
+</table>
 <ul>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#cancelOperation">cancelOperation</a></b> ()</li>
+<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-slots">QObject</a></li>
 </ul>
-<ul>
-<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-slots">QObject</a></li>
-</ul>
+<hr />
 <a name="signals"></a>
-<h3>Signals</h3>
+<h2>Signals</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#messagesCounted">messagesCounted</a></b> ( int <i>count</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#messagesFound">messagesFound</a></b> ( const QMessageIdList &amp; <i>ids</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#progressChanged">progressChanged</a></b> ( uint <i>value</i>, uint <i>total</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#stateChanged">stateChanged</a></b> ( QMessageServiceAction::State <i>newState</i> )</td></tr>
+</table>
 <ul>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#messagesCounted">messagesCounted</a></b> ( int <i>count</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#messagesFound">messagesFound</a></b> ( const QMessageIdList &amp; <i>ids</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#progressChanged">progressChanged</a></b> ( uint <i>value</i>, uint <i>total</i> )</li>
-<li><div class="fn"></div>void <b><a href="qmessageserviceaction.html#stateChanged">stateChanged</a></b> ( QMessageServiceAction::State <i>newState</i> )</li>
-</ul>
-<ul>
-<li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
@@ -88,7 +92,7 @@
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="State-enum"></a>enum QMessageServiceAction::State</h3>
 <p>This enum type is used to describe the state of the requested action.</p>
-<p><table border="1" cellpadding="2" cellspacing="1" width="100%">
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QMessageServiceAction::Pending</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The action has not yet begun execution.</td></tr>
 <tr><td valign="top"><tt>QMessageServiceAction::InProgress</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The action is currently executing.</td></tr>
@@ -115,7 +119,7 @@
 <p>Calling this function may result in the <a href="qmessageserviceaction.html#progressChanged">progressChanged</a>() signal being emitted multiple times. An emission of the <a href="qmessageserviceaction.html#progressChanged">progressChanged</a>() signal with a total of 0 indicates that the number of progress steps is unknown.</p>
 <p>Returns true if the action can be initiated; otherwise returns false.</p>
 <p>See also <a href="qmessage.html">QMessage</a>, <a href="qmessagefilter.html">QMessageFilter</a>, <a href="qmessageserviceaction.html#messagesCounted">messagesCounted</a>(), <a href="qmessageserviceaction.html#progressChanged">progressChanged</a>(), and <a href="qmessageserviceaction.html#queryMessages">queryMessages</a>().</p>
-<h3 class="fn"><a name="countMessages-2"></a>bool QMessageServiceAction::countMessages ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>body</i>, <a href="qmessagedatacomparator.html#Option-enum">QMessageDataComparator::Options</a> <i>options</i>, const <a href="qmessagefilter.html">QMessageFilter</a> &amp; <i>filter</i> = QMessageFilter(), <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#uint-typedef">uint</a> <i>limit</i> = 0 ) const</h3>
+<h3 class="fn"><a name="countMessages-2"></a>bool QMessageServiceAction::countMessages ( const <a href="qmessagefilter.html">QMessageFilter</a> &amp; <i>filter</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>body</i>, <a href="qmessagedatacomparator.html#Option-enum">QMessageDataComparator::Options</a> <i>options</i> = 0, <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#uint-typedef">uint</a> <i>limit</i> = 0 ) const</h3>
 <p>Emits via a <a href="qmessageserviceaction.html#messagesCounted">messagesCounted</a>() signal the number messages in the messaging store matching <i>filter</i> and with a body containing the string <i>body</i> using searching options <i>options</i>.</p>
 <p>Unless <i>limit</i> is lower and not zero, in which case a count of <i>limit</i> will be emitted via the <a href="qmessageserviceaction.html#messagesCounted">messagesCounted</a>() signal.</p>
 <p>Calling this function may result in the <a href="qmessageserviceaction.html#progressChanged">progressChanged</a>() signal being emitted multiple times. An emission of the <a href="qmessageserviceaction.html#progressChanged">progressChanged</a>() signal with a total of 0 indicates that the number of progress steps is unknown.</p>
@@ -145,7 +149,7 @@
 <p>Calling this function may result in the <a href="qmessageserviceaction.html#messagesFound">messagesFound</a>() and <a href="qmessageserviceaction.html#progressChanged">progressChanged</a>() signals being emitted multiple times. An emission of the <a href="qmessageserviceaction.html#progressChanged">progressChanged</a>() signal with a total of 0 indicates that the number of progress steps is unknown.</p>
 <p>Returns true if the action can be initiated; otherwise returns false.</p>
 <p>See also <a href="qmessage.html">QMessage</a>, <a href="qmessagefilter.html">QMessageFilter</a>, <a href="qmessageordering.html">QMessageOrdering</a>, <a href="qmessageserviceaction.html#messagesFound">messagesFound</a>(), <a href="qmessageserviceaction.html#progressChanged">progressChanged</a>(), and <a href="qmessageserviceaction.html#countMessages">countMessages</a>().</p>
-<h3 class="fn"><a name="queryMessages-2"></a>bool QMessageServiceAction::queryMessages ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>body</i>, <a href="qmessagedatacomparator.html#Option-enum">QMessageDataComparator::Options</a> <i>options</i>, const <a href="qmessagefilter.html">QMessageFilter</a> &amp; <i>filter</i> = QMessageFilter(), const <a href="qmessageordering.html">QMessageOrdering</a> &amp; <i>ordering</i> = QMessageOrdering(), <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#uint-typedef">uint</a> <i>limit</i> = 0, <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#uint-typedef">uint</a> <i>offset</i> = 0 ) const</h3>
+<h3 class="fn"><a name="queryMessages-2"></a>bool QMessageServiceAction::queryMessages ( const <a href="qmessagefilter.html">QMessageFilter</a> &amp; <i>filter</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>body</i>, <a href="qmessagedatacomparator.html#Option-enum">QMessageDataComparator::Options</a> <i>options</i> = 0, const <a href="qmessageordering.html">QMessageOrdering</a> &amp; <i>ordering</i> = QMessageOrdering(), <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#uint-typedef">uint</a> <i>limit</i> = 0, <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#uint-typedef">uint</a> <i>offset</i> = 0 ) const</h3>
 <p>Emits via the <a href="qmessageserviceaction.html#messagesFound">messagesFound</a>() signal <a href="qmessageid.html">QMessageId</a>s of messages in the messaging store. If <i>filter</i> is not empty only identifiers for messages matching the parameters set by <i>filter</i> and with a body containing the string <i>body</i> will be emitted, otherwise identifiers for all messages with a body containing <i>body</i> using search options <i>options</i> will be emitted. If <i>ordering</i> is not empty, then the identifiers will be sorted by the parameters set by <i>ordering</i>. If <i>limit</i> is not zero, then <i>limit</i> places an upper bound on the number of ids in the list returned. <i>offset</i> specifies how many ids to skip at the beginning of the list returned.</p>
 <p>Calling this function may result in the <a href="qmessageserviceaction.html#messagesFound">messagesFound</a>() and <a href="qmessageserviceaction.html#progressChanged">progressChanged</a>() signals being emitted multiple times. An emission of the <a href="qmessageserviceaction.html#progressChanged">progressChanged</a>() signal with a total of 0 indicates that the number of progress steps is unknown.</p>
 <p>Returns true if the action can be initiated; otherwise returns false.</p>
@@ -184,6 +188,6 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Messaging API</div></td>
+<td align="right"><div align="right">Qt Mobility API</div></td>
 </tr></table></div></address></body>
 </html>
