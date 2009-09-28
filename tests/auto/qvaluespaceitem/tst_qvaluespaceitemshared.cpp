@@ -52,14 +52,14 @@
 #define ERROR_SETVALUE_NOT_SUPPORTED 1
 
 #define QTRY_COMPARE(a,e)                       \
-    for (int _i = 0; _i < 5000; _i += 100) {    \
+    for (int _i = 0; _i < 10000; _i += 100) {    \
         if ((a) == (e)) break;                  \
         QTest::qWait(100);                      \
     }                                           \
     QCOMPARE(a, e)
 
 #define QTRY_VERIFY(a)                       \
-    for (int _i = 0; _i < 5000; _i += 100) {    \
+    for (int _i = 0; _i < 10000; _i += 100) {    \
         if (a) break;                  \
         QTest::qWait(100);                      \
     }                                           \
