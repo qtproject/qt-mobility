@@ -54,7 +54,7 @@ public:
     static void sortTable(QMessageStore::ErrorCode *lastError, const QMessageOrdering &ordering, LPMAPITABLE);
     static QMessageOrdering from(QMessageOrderingPrivate::Field field, Qt::SortOrder order);
 
-    bool isFilterType(const QMessageOrdering &ordering);
+    static bool isFilterType(const QMessageOrdering &ordering);
     static QList<QMessageFilter> normalize(const QList<QMessageFilter> &filters, const QMessageOrdering &ordering);
 #endif
 };
