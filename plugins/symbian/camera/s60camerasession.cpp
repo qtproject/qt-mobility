@@ -36,7 +36,7 @@
 #include <QWidget>
 
 #include "s60camerasession.h"
-#include "s60videowidget.h"
+//#include "s60videowidget.h"
 #include <fbs.h>
 
 S60CameraSession::S60CameraSession(QObject *parent)
