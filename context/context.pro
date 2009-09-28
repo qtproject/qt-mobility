@@ -39,7 +39,7 @@ unix {
                qsystemreadwritelock.cpp \
                contextkitlayer.cpp
     CONFIG += link_pkgconfig
-    PKGCONFIG += contextsubscriber-1.0
+    PKGCONFIG += contextsubscriber-1.0 QtDBus
 }
 
 win32 {
