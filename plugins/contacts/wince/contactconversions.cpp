@@ -883,3 +883,394 @@ bool QContactWinCEEngine::convertFromQContact(const QContact& contact, IItem* it
     return false;
 }
 
+/**
+ * Convert the given POOM property \a id into a POOM property name string for POOM native query.
+ * The complete set of Contact property identifiers and their string names for queries.
+ * All the string names copied from: http://msdn.microsoft.com/en-us/library/bb415504.aspx.
+ */
+QString getPropertyName(const CEPROPID& id)
+{
+    switch (id) {
+        case PIMPR_ACCOUNT_NAME: return "[AccountName]";
+        case PIMPR_ANNIVERSARY: return "[Anniversary]";
+        case PIMPR_ASSISTANT_NAME: return "[AssistantName]";
+        case PIMPR_ASSISTANT_TELEPHONE_NUMBER: return "[AssistantTelephoneNumber]";
+        case PIMPR_BIRTHDAY: return "[Birthday]";
+        case PIMPR_BUSINESS_ADDRESS: return "[BusinessAddress]";
+        case PIMPR_BUSINESS_ADDRESS_CITY: return "[BusinessAddressCity]";
+        case PIMPR_BUSINESS_ADDRESS_COUNTRY: return "[BusinessAddressCountry]";
+        case PIMPR_BUSINESS_ADDRESS_POSTAL_CODE: return "[BusinessAddressPostalCode]";
+        case PIMPR_BUSINESS_ADDRESS_STATE: return "[BusinessAddressState]";
+        case PIMPR_BUSINESS_ADDRESS_STREET: return "[BusinessAddressStreet]";
+        case PIMPR_BUSINESS_FAX_NUMBER: return "[BusinessFaxNumber]";
+        case PIMPR_BUSINESS_TELEPHONE_NUMBER: return "[BusinessTelephoneNumber]";
+        case PIMPR_BUSINESS2_TELEPHONE_NUMBER: return "[Business2TelephoneNumber]";
+        case PIMPR_CAR_TELEPHONE_NUMBER: return "[CarTelephoneNumber]";
+        case PIMPR_CHILDREN: return "[Children]";
+        case PIMPR_COMPANY_NAME: return "[CompanyName]";
+        case PIMPR_COMPANY_TELEPHONE_NUMBER: return "[CompanyTelephoneNumber]";
+#if defined (PIMPR_CONTACT_TYPE)
+        //PIMPR_CONTACT_TYPE is only supported by Windows Mobile 6 and later.
+        case PIMPR_CONTACT_TYPE: return "[ContactType]";
+#endif
+        case PIMPR_CUSTOMERID: return "[CustomerId]";
+        case PIMPR_DEPARTMENT: return "[Department]";
+        case PIMPR_DISPLAY_NAME: return "[DisplayName]";
+        case PIMPR_EMAIL1_ADDRESS: return "[Email1Address]";
+        case PIMPR_EMAIL2_ADDRESS: return "[Email2Address]";
+        case PIMPR_EMAIL3_ADDRESS: return "[Email3Address]";
+        case PIMPR_FILEAS: return "[FileAs]";
+        case PIMPR_FIRST_NAME: return "[FirstName]";
+        case PIMPR_GOVERNMENTID: return "[GovernmentId]";
+        case PIMPR_HOME_ADDRESS: return "[HomeAddress]";
+        case PIMPR_HOME_ADDRESS_CITY: return "[HomeAddressCity]";
+        case PIMPR_HOME_ADDRESS_COUNTRY: return "[HomeAddressCountry]";
+        case PIMPR_HOME_ADDRESS_POSTAL_CODE: return "[HomeAddressPostalCode]";
+        case PIMPR_HOME_ADDRESS_STATE: return "[HomeAddressState]";
+        case PIMPR_HOME_ADDRESS_STREET: return "[HomeAddressStreet]";
+        case PIMPR_HOME_FAX_NUMBER: return "[HomeFaxNumber]";
+        case PIMPR_HOME_TELEPHONE_NUMBER: return "[HomeTelephoneNumber]";
+        case PIMPR_HOME2_TELEPHONE_NUMBER: return "[Home2TelephoneNumber]";
+        case PIMPR_IM1_ADDRESS: return "[IM1Address]";
+        case PIMPR_IM2_ADDRESS: return "[IM2Address]";
+        case PIMPR_IM3_ADDRESS: return "[IM3Address]";
+        case PIMPR_JOB_TITLE: return "[JobTitle]";
+        case PIMPR_LAST_NAME: return "[LastName]";
+        case PIMPR_MANAGER: return "[Manager]";
+        case PIMPR_MIDDLE_NAME: return "[MiddleName]";
+        case PIMPR_MMS: return "[Mms]";
+        case PIMPR_MOBILE_TELEPHONE_NUMBER: return "[MobileTelephoneNumber]";
+        case PIMPR_NICKNAME: return "[Nickname]";
+        case PIMPR_OFFICE_LOCATION: return "[OfficeLocation]";
+        case PIMPR_OTHER_ADDRESS: return "[OtherAddress]";
+        case PIMPR_OTHER_ADDRESS_CITY: return "[OtherAddressCity]";
+        case PIMPR_OTHER_ADDRESS_COUNTRY: return "[OtherAddressCountry]";
+        case PIMPR_OTHER_ADDRESS_POSTAL_CODE: return "[OtherAddressPostalCode]";
+        case PIMPR_OTHER_ADDRESS_STATE: return "[OtherAddressState]";
+        case PIMPR_OTHER_ADDRESS_STREET: return "[OtherAddressStreet]";
+        case PIMPR_PAGER_NUMBER: return "[PagerNumber]";
+        case PIMPR_PICTURE: return "[Picture]";
+        case PIMPR_RADIO_TELEPHONE_NUMBER: return "[RadioTelephoneNumber]";
+        case PIMPR_RINGTONE: return "[RingTone]";
+        case PIMPR_SIM_PHONE: return "[SIMPhone]";
+        case PIMPR_SMARTPROP: return "[SmartProperty]";
+        case PIMPR_SMS: return "[Sms]";
+        case PIMPR_SPOUSE: return "[Spouse]";
+        case PIMPR_SUFFIX: return "[Suffix]";
+        case PIMPR_TITLE: return "[Prefix]";
+        case PIMPR_WEB_PAGE: return "[WebPage]";
+        case PIMPR_YOMI_COMPANY: return "[YomiCompanyName]";
+        case PIMPR_YOMI_FILEAS: return "[YomiFileAs]";
+        case PIMPR_YOMI_FIRSTNAME: return "[YomiFirstName]";
+        case PIMPR_YOMI_LASTNAME: return "[YomiLastName]";
+    }
+    return "";
+}
+
+static QString convertToCEPropValString(const CEPROPID& id, const QVariant& val)
+{
+    if (id != PIMPR_INVALID_ID && val.isValid()) {
+        if (id & CEVT_LPWSTR) {
+            return QString("\"%1\"").arg(val.toString());
+        } else {
+            return val.toString();
+        }
+    }
+    return QString();
+}
+
+// Hash for contact detail definition names to POOM prop ids.
+static QHash<QString, CEPROPID> hashForContactDetailToPoomPropId;
+
+#define Q_HASH_CONTACT_DETAIL_TO_POOM_ID(contactClass, contactField, poomId) \
+        hashForContactDetailToPoomPropId.insertMulti(((QString)contactClass::DefinitionName).append((QString)contactClass::contactField), poomId)
+
+void buildHashForContactDetailToPoomPropId()
+{
+    if (hashForContactDetailToPoomPropId.isEmpty()) {
+        //QContactName
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactName, FieldPrefix, PIMPR_TITLE);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactName, FieldFirst, PIMPR_FIRST_NAME);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactName, FieldMiddle, PIMPR_MIDDLE_NAME);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactName, FieldLast, PIMPR_LAST_NAME);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactName, FieldSuffix, PIMPR_SUFFIX);
+
+        // Display label
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactDisplayLabel, FieldLabel, PIMPR_FILEAS);
+
+        // Home address
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactAddress, FieldStreet, PIMPR_HOME_ADDRESS_STREET);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactAddress, FieldPostcode, PIMPR_HOME_ADDRESS_POSTAL_CODE);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactAddress, FieldLocality, PIMPR_HOME_ADDRESS_CITY);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactAddress, FieldRegion, PIMPR_HOME_ADDRESS_STATE);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactAddress, FieldCountry, PIMPR_HOME_ADDRESS_COUNTRY);
+        
+        // Work address
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactAddress, FieldStreet, PIMPR_BUSINESS_ADDRESS_STREET);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactAddress, FieldPostcode, PIMPR_BUSINESS_ADDRESS_POSTAL_CODE);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactAddress, FieldLocality, PIMPR_BUSINESS_ADDRESS_CITY);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactAddress, FieldCountry, PIMPR_BUSINESS_ADDRESS_COUNTRY);
+
+        // Other address
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactAddress, FieldStreet, PIMPR_OTHER_ADDRESS_STREET);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactAddress, FieldPostcode, PIMPR_OTHER_ADDRESS_POSTAL_CODE);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactAddress, FieldLocality, PIMPR_OTHER_ADDRESS_CITY);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactAddress, FieldCountry, PIMPR_OTHER_ADDRESS_COUNTRY);
+
+        // Emails
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactEmailAddress, FieldEmailAddress, PIMPR_EMAIL1_ADDRESS);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactEmailAddress, FieldEmailAddress, PIMPR_EMAIL2_ADDRESS);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactEmailAddress, FieldEmailAddress, PIMPR_EMAIL3_ADDRESS);
+
+        // Phone numbers
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactPhoneNumber, FieldNumber, PIMPR_BUSINESS_TELEPHONE_NUMBER);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactPhoneNumber, FieldNumber, PIMPR_BUSINESS2_TELEPHONE_NUMBER);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactPhoneNumber, FieldNumber, PIMPR_CAR_TELEPHONE_NUMBER);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactPhoneNumber, FieldNumber, PIMPR_MOBILE_TELEPHONE_NUMBER);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactPhoneNumber, FieldNumber, PIMPR_HOME_TELEPHONE_NUMBER);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactPhoneNumber, FieldNumber, PIMPR_HOME2_TELEPHONE_NUMBER);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactPhoneNumber, FieldNumber, PIMPR_PAGER_NUMBER);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactPhoneNumber, FieldNumber, PIMPR_RADIO_TELEPHONE_NUMBER);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactPhoneNumber, FieldNumber, PIMPR_SIM_PHONE);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactPhoneNumber, FieldNumber, PIMPR_HOME_FAX_NUMBER);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactPhoneNumber, FieldNumber, PIMPR_BUSINESS_FAX_NUMBER);
+
+        // Dates
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactAnniversary, FieldOriginalDate, PIMPR_ANNIVERSARY);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactBirthday, FieldBirthday, PIMPR_BIRTHDAY);
+
+        // Spouse and children
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactRelationship,FieldRelatedContactLabel, PIMPR_SPOUSE);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactRelationship,FieldRelatedContactLabel, PIMPR_CHILDREN);
+
+        // Nickname
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactNickname, FieldNickname, PIMPR_NICKNAME);
+
+        // Webpage
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactUrl, FieldUrl, PIMPR_WEB_PAGE);
+
+        // Organisation
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactOrganisation, FieldDisplayLabel, PIMPR_COMPANY_NAME);
+    }
+}
+
+static QList<CEPROPID> convertToCEPropIds(const QString& detailDefinitionName, const QString& detailFieldName)
+{
+    return hashForContactDetailToPoomPropId.values(QString(detailDefinitionName).append(detailFieldName));
+}
+
+
+/*!
+ * Convert from the supplied QContactFilter \a filter into a POOM query string.
+ * Return empty string if any error occured.
+ */
+QString convertFilterToQueryString(const QContactFilter& filter)
+{
+    QString ret;
+    switch(filter.type()) {
+        case QContactFilter::InvalidFilter:
+            {
+                //Always FALSE
+                ret = "([Oid] = 0 AND [Oid] <> 0)";
+            }
+            break;
+        case QContactFilter::DefaultFilter:
+            {
+                //Always TRUE?
+                ret = "[Oid] <> 0";
+            }
+            break;
+
+        case QContactFilter::IdListFilter:
+            {
+                const QContactIdListFilter idf(filter);
+                QList<QUniqueId> ids = idf.ids();
+                if (!ids.isEmpty())
+                {
+                    QStringList idList;
+                    foreach(const QUniqueId id, ids) {
+                        idList << QString("[Oid] = %1").arg(id);
+                    }
+                    ret = idList.join(" OR ");
+                    ret.prepend('(').append(')');
+                }
+            }
+            break;
+
+        case QContactFilter::ContactDetailFilter:
+            {
+                const QContactDetailFilter cdf(filter);
+                //XXX Only exact match can be supported?
+                if (cdf.matchFlags() == Qt::MatchExactly && cdf.value().isValid()) {
+                    QList<CEPROPID> ids = convertToCEPropIds(cdf.detailDefinitionName(), cdf.detailFieldName());
+                    if (!ids.isEmpty()) {
+                        QStringList strList;
+                        foreach (CEPROPID id, ids) {
+                            strList << QString("%1 = %2").arg(getPropertyName(id))
+                                                .arg(convertToCEPropValString(id, cdf.value()));
+                        }
+                        ret = QString("(%1)").arg(strList.join(" OR "));
+                    }
+                }
+                // Fall through to end
+            }
+            break;
+
+        case QContactFilter::ContactDetailRangeFilter:
+            {
+                const QContactDetailRangeFilter cdf(filter);
+                //XXX Only exact match can be supported?
+                if (cdf.matchFlags() == Qt::MatchExactly && (cdf.minValue().isValid() || cdf.maxValue().isValid())) {
+                    QList<CEPROPID> ids = convertToCEPropIds(cdf.detailDefinitionName(), cdf.detailFieldName());
+                    if (!ids.isEmpty()) {
+                        const QString minComp = cdf.rangeFlags() & QContactDetailRangeFilter::ExcludeLower ? ">" : ">=";
+                        const QString maxComp = cdf.rangeFlags() & QContactDetailRangeFilter::IncludeUpper ? "<=" : "<";
+
+                        QString minCompString, maxCompString;
+                        QStringList strList;
+
+                        foreach (CEPROPID id, ids) {
+                            if (cdf.minValue().isValid()) {
+                                minCompString = QString("%1 %2 %3").arg(getPropertyName(id))
+                                                                   .arg(minComp)
+                                                                   .arg(convertToCEPropValString(id, cdf.minValue()));
+                            }
+                            if (cdf.maxValue().isValid()) {
+                                maxCompString = QString("%1 %2 %3").arg(getPropertyName(id))
+                                                                   .arg(maxComp)
+                                                                   .arg(convertToCEPropValString(id, cdf.maxValue()));
+                            }
+                            
+                            if (!minCompString.isEmpty() && !maxCompString.isEmpty()) {
+                                strList << QString("(%1 AND %2)").arg(minCompString).arg(maxCompString);
+                            } else {
+                                strList << (minCompString.isEmpty() ? maxCompString : minCompString);
+                            }
+                        }
+                        ret = QString("(%1)").arg(strList.join(" OR "));
+                    }
+                }
+                // Fall through to end
+            }
+            break;
+
+        case QContactFilter::GroupMembershipFilter:
+            //XXX Group detail is not supported by WinCE backend
+            break;
+
+        case QContactFilter::ChangeLogFilter:
+            //XXX Timestamp detail is not supported by WinCE backend
+            break;
+
+        case QContactFilter::ActionFilter:
+            {
+                // Find any matching actions, and do a union filter on their filter objects
+                QContactActionFilter af(filter);
+                QList<QContactActionDescriptor> descriptors = QContactAction::actionDescriptors(af.actionName(), af.vendorName(), af.implementationVersion());
+                
+                QString str;
+                QStringList strList;
+                for (int j = 0; j < descriptors.count(); j++) {
+                    QContactAction* action = QContactAction::action(descriptors.at(j));
+
+                    QContactFilter d = action->contactFilter(af.value());
+                    delete action; // clean up.
+                    if (!QContactManagerEngine::validateActionFilter(d))
+                        return QString();
+                    
+                    str = convertFilterToQueryString(d);
+                    if (str.isEmpty())
+                        return QString();
+                    strList << str;
+                }
+
+                if (!strList.isEmpty()) {
+                    ret =QString("(%1)").arg(strList.join(" OR "));
+                }
+                // Fall through to end
+            }
+            break;
+
+        case QContactFilter::IntersectionFilter:
+            {
+                const QContactIntersectionFilter bf(filter);
+                const QList<QContactFilter>& terms = bf.filters();
+                if (terms.count() > 0) {
+                    QString str;
+                    QStringList strList;
+                    for(int j = 0; j < terms.count(); j++) {
+                        str = convertFilterToQueryString(terms.at(j));
+                        if (str.isEmpty())
+                            return QString();
+                        strList << str;
+                    }
+                    if (!strList.isEmpty()) {
+                        ret =QString("(%1)").arg(strList.join(" AND "));
+                    }
+                }
+                // Fall through to end
+            }
+            break;
+
+        case QContactFilter::UnionFilter:
+            {
+                const QContactUnionFilter bf(filter);
+                const QList<QContactFilter>& terms = bf.filters();
+                if (terms.count() > 0) {
+                    QString str;
+                    QStringList strList;
+                    for(int j = 0; j < terms.count(); j++) {
+                        str = convertFilterToQueryString(terms.at(j));
+                        if (str.isEmpty())
+                            return QString();
+                    }
+                    if (!strList.isEmpty()) {
+                        ret =QString("(%1)").arg(strList.join(" OR "));
+                    }
+                }
+                // Fall through to end
+            }
+            break;
+    }
+    return ret;
+}
+
+
+/*!
+ * Return a list of QContact ids from the given POOM item \a collection.
+ */
+QList<QUniqueId> convertP2QIdList(SimpleComPointer<IPOutlookItemCollection> collection)
+{
+    SimpleComPointer<IPOlItems2> items;
+    QList<QUniqueId> ids;
+    if (SUCCEEDED(collection->QueryInterface<IPOlItems2>(&items))) {
+        CEPROPID propid = PIMPR_OID;
+        CEPROPVAL *ppropval = 0;
+
+        int count = 0;
+        items->get_Count(&count);
+
+        ULONG cbSize = 0;
+
+        // Allocate something to start with
+        ppropval = (CEPROPVAL*) HeapAlloc(GetProcessHeap(), 0, sizeof(CEPROPVAL));
+        
+        HRESULT hr;
+        for(int i=0; i < count; i++) {
+            hr = items->GetProps(i +1, &propid, 0, 1, &ppropval, &cbSize, NULL);
+            if (HRESULT_FROM_WIN32(ERROR_INSUFFICIENT_BUFFER) == hr) {
+                ppropval = (CEPROPVAL*) HeapReAlloc(GetProcessHeap(), 0, ppropval, cbSize);
+                hr = items->GetProps(i + 1, &propid, 0, 1, &ppropval, &cbSize, NULL);
+            }
+            if (SUCCEEDED(hr)) {
+                ids << (QUniqueId) ppropval->val.ulVal;
+            } else {
+                qDebug() << QString("Eternal sadness: %1").arg(HRESULT_CODE(hr), 0, 16);
+            }
+        }
+
+        HeapFree(GetProcessHeap(), 0, ppropval);
+    }
+    return ids;
+}
+

@@ -193,6 +193,9 @@ public:
     QContactWinCEEngine& operator=(const QContactWinCEEngine& other);
     void deref();
 
+    /* Filtering */
+    QList<QUniqueId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+
     /* Contacts - Accessors and Mutators */
     QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
