@@ -67,10 +67,9 @@
 class QRadioPlayerPrivate : public QMediaObjectPrivate
 {
 public:
-    QRadioPlayerPrivate():service(0), control(0) {}
-    QMediaService*  service;
+    QRadioPlayerPrivate():provider(0), control(0) {}
+    QMediaServiceProvider *provider;
     QRadioPlayerControl* control;
-    bool ownService;
 };
 
 
@@ -85,6 +84,8 @@ QRadioPlayer::QRadioPlayer(QObject *parent, QMediaServiceProvider* provider):
     QMediaObject(*new QRadioPlayerPrivate, parent, provider->requestService("radio"))
 {
     Q_D(QRadioPlayer);
+
+    d->provider = provider;
 
     Q_ASSERT(d->service != 0);
 
@@ -111,6 +112,9 @@ QRadioPlayer::QRadioPlayer(QObject *parent, QMediaServiceProvider* provider):
 
 QRadioPlayer::~QRadioPlayer()
 {
+    Q_D(QRadioPlayer);
+
+    d->provider->releaseService(d->service);
 }
 
 /*!
