@@ -76,7 +76,6 @@ public:
 
     QStringList subPaths() const;
 
-    QVariant valuex(const QVariant &def = QVariant()) const;
     QVariant value(const QByteArray &subPath = QByteArray(),
                    const QVariant &def = QVariant()) const;
     QVariant value(const char *subPath, const QVariant &def = QVariant()) const;
@@ -88,6 +87,9 @@ signals:
 protected:
     virtual void connectNotify(const char *signal);
     virtual void disconnectNotify(const char *signal);
+
+private:
+    QVariant valuex(const QVariant &def = QVariant()) const;
 
 private:
     Q_DISABLE_COPY(QValueSpaceItem)

@@ -631,7 +631,7 @@ void tst_QValueSpaceItem::contentsChanged()
         connect(&item, SIGNAL(contentsChanged()), listener, SIGNAL(baseChanged()));
     } else {
         spy = new QSignalSpy(&item, SIGNAL(contentsChanged()));
-        item.valuex();
+        item.property("value");
     }
 
     QCOMPARE(spy->count(), 0);
