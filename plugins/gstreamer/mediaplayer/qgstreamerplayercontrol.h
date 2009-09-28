@@ -73,8 +73,8 @@ public:
 
     bool isSeekable() const;
 
-    float playbackRate() const;
-    void setPlaybackRate(float rate);
+    qreal playbackRate() const;
+    void setPlaybackRate(qreal rate);
 
     QMediaSource media() const;
     const QIODevice *mediaStream() const;

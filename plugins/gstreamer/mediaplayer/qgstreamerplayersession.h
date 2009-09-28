@@ -76,8 +76,8 @@ public:
 
     bool isSeekable() const;
 
-    float playbackRate() const;
-    void setPlaybackRate(float rate);
+    qreal playbackRate() const;
+    void setPlaybackRate(qreal rate);
 
     QMap<QByteArray ,QVariant> tags() const { return m_tags; }
     QMap<QString,QVariant> streamProperties(int streamNumber) const { return m_streamProperties[streamNumber]; }
@@ -132,7 +132,7 @@ private:
 
 
     int m_volume;
-    float m_playbackRate;
+    qreal m_playbackRate;
     bool m_muted;
     bool m_videoAvailable;
     bool m_seekable;

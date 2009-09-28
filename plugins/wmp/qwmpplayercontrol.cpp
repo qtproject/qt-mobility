@@ -179,7 +179,7 @@ bool QWmpPlayerControl::isSeekable() const
     return true;
 }
 
-float QWmpPlayerControl::playbackRate() const
+qreal QWmpPlayerControl::playbackRate() const
 {
     double rate = 0.;
 
@@ -189,7 +189,7 @@ float QWmpPlayerControl::playbackRate() const
     return rate;
 }
 
-void QWmpPlayerControl::setPlaybackRate(float rate)
+void QWmpPlayerControl::setPlaybackRate(qreal rate)
 {
     if (m_settings)
         m_settings->put_rate(rate);

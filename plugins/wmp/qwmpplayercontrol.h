@@ -75,8 +75,8 @@ public:
     bool isVideoAvailable() const;
     void setVideoAvailable(bool available);
 
-    float playbackRate() const;
-    void setPlaybackRate(float rate);
+    qreal playbackRate() const;
+    void setPlaybackRate(qreal rate);
 
     bool isSeekable() const;
 

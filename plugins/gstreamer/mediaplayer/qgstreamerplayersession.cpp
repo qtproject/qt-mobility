@@ -118,12 +118,12 @@ qint64 QGstreamerPlayerSession::position() const
         return 0;
 }
 
-float QGstreamerPlayerSession::playbackRate() const
+qreal QGstreamerPlayerSession::playbackRate() const
 {
     return m_playbackRate;
 }
 
-void QGstreamerPlayerSession::setPlaybackRate(float rate)
+void QGstreamerPlayerSession::setPlaybackRate(qreal rate)
 {
     m_playbackRate = rate;
 
@@ -408,7 +408,7 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
 
                             setSeekable(true);
 
-                            if (!qFuzzyCompare(m_playbackRate, float(1.0)))
+                            if (!qFuzzyCompare(m_playbackRate, qreal(1.0)))
                                 setPlaybackRate(m_playbackRate);
 
                             if (m_renderer)
