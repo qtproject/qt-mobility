@@ -125,6 +125,7 @@ symbian: {
     qtmobilitymultimedia.sources = QtMedia.dll
     qtmobilitymultimedia.path = "/sys/bin"    
 
+    MMP_RULES += EXPORTUNFROZEN
     DEPLOYMENT += qtmobilitymultimedia    
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL -TCB
