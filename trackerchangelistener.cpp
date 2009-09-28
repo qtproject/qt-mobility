@@ -114,7 +114,7 @@ void TrackerChangeListener::imAccountChanged(const QStringList& subjects) {
 
     QSharedPointer<AsyncQuery> request = QSharedPointer<AsyncQuery> (new AsyncQuery(query),
                        &QObject::deleteLater);
-    connect(request.data(), SIGNAL(queryReady(AsyncQuery*)), SLOT(queryReady(AsyncQuery*)));
+    connect(request.data(), SIGNAL(queryReady(AsyncQuery*)), SLOT(imQueryReady(AsyncQuery*)));
     pendingQueries[request.data()] = request;
 }
 
@@ -130,7 +130,7 @@ void AsyncQuery::queryReady()
     emit queryReady(this);
 }
 
-void TrackerChangeListener::queryReady(AsyncQuery* req)
+void TrackerChangeListener::imQueryReady(AsyncQuery* req)
 {
     if( pendingQueries.contains(req))
     {

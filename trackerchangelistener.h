@@ -20,7 +20,17 @@
 using namespace SopranoLive;
 
 /*!
- * Helper class to handle multiple async queries at the same time inside TrackerChangeListener
+ * Helper class to handle multiple async queries at the same time inside TrackerChangeListener.
+ * This class is designed to be generic, and initially used to get all contacts that correspond
+ * to list of IMAccounts. When we get signal that multiple IMAccounts have changed, we read
+ * all contacts and emit signal contacts changed for them.
+ *
+ * Usage: construct AsyncQuery with RDFSelect query. When signal queryReady(AsyncQuery *self)
+ * is received, read data from rows in self->nodes (self-nodes()->rowCount() ...)
+ *
+ * Intention: The class has been created to wrap LiveNodes::modelUpdated signal,
+ * and to know which query it corresponds to (not possible to fetch it from sender()).
+ * \sa queryReady(AsyncQuery *)
  */
 class AsyncQuery: public QObject
 {
@@ -28,11 +38,11 @@ class AsyncQuery: public QObject
 public:
     AsyncQuery(RDFSelect selectQuery);
     LiveNodes nodes;
-// queryready slot and signals are used just to avoid using sender to identify
-// which query is ready
+
 private slots:
     void queryReady();
 signals:
+    // emitted when modelUpdated() from LiveNodes related to selectQuery is received
     void queryReady(AsyncQuery *self);
 };
 
@@ -51,6 +61,7 @@ public:
     virtual ~TrackerChangeListener();
 
 signals:
+    // signals are with the same semantics as in QContactManagerEngine
     void contactsAdded(const QList<QUniqueId>& contactIds);
     void contactsChanged(const QList<QUniqueId>& contactIds);
     void contactsRemoved(const QList<QUniqueId>& contactIds);
@@ -60,7 +71,8 @@ private slots:
     void subjectsRemoved(const QStringList &subjects);
     void subjectsChanged(const QStringList &subjects);
     void imAccountChanged(const QStringList &subjects);
-    void queryReady(AsyncQuery*);
+    // receives
+    void imQueryReady(AsyncQuery*);
 private:
     QHash<AsyncQuery*, QSharedPointer<AsyncQuery> > pendingQueries;
 };
