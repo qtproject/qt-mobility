@@ -115,12 +115,12 @@ bool QPhononPlayerControl::isSeekable() const
     return m_session->isSeekable();
 }
 
-float QPhononPlayerControl::playbackRate() const
+qreal QPhononPlayerControl::playbackRate() const
 {
     return 1;
 }
 
-void QPhononPlayerControl::setPlaybackRate(float rate)
+void QPhononPlayerControl::setPlaybackRate(qreal rate)
 {
     Q_UNUSED(rate);
 }

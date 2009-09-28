@@ -80,8 +80,8 @@ public:
 
     bool isSeekable() const;
 
-    float playbackRate() const;
-    void setPlaybackRate(float rate);
+    qreal playbackRate() const;
+    void setPlaybackRate(qreal rate);
 
 public Q_SLOTS:
     void setPosition(qint64 pos);
