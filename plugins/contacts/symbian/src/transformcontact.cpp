@@ -37,7 +37,9 @@
 #include "transformnickname.h"
 #include "transformphonenumber.h"
 #include "transformemail.h"
+#include "transformurl.h"
 #include "transformaddress.h"
+#include "transformbirthday.h"
 //#include "transformsipaddress.h"
 
 #include <qtcontacts.h>
@@ -65,6 +67,8 @@ void TransformContact::initializeTransformContactData()
 	m_transformContactData.insert(PhoneNumber, new TransformPhoneNumber);
 	m_transformContactData.insert(EmailAddress, new TransformEmail);
 	m_transformContactData.insert(Address, new TransformAddress);
+	m_transformContactData.insert(URL, new TransformUrl);
+	m_transformContactData.insert(Birthday, new TransformBirthday);
 //	m_transformContactData.insert(SipAddress, new TransformSipAddress);
 }
 

@@ -50,6 +50,8 @@ private slots:
 	void executeTransformNickname();
 	void executeTransformPhonenumber();
 	void executeTransformAddress();
+	void executeTransformUrl();
+	void executeTransformBithday();
 	//void executeTransformSipAddress();
 	
 private:
@@ -67,6 +69,8 @@ private:
                                   TPtrC16 localityField, QString localityDetail,
                                   TPtrC16 regionField, QString regionDetail,
                                   TPtrC16 postOfficeBoxField, QString postOfficeBoxDetail);
+    void validateTransformUrl(TPtrC16 field, QString detail);
+    void validateTransformBirthday(TTime field, QDate detail);
     //void validateTransformSipAddress(TPtrC16 sipField, QString sipDetail);
     void validateContexts(TransformContactData* transformContactData) const; 
 };

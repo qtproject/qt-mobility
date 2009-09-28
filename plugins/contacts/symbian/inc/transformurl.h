@@ -30,54 +30,18 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef TRANSFORMURL_H
+#define TRANSFORMURL_H
 
-#ifndef TRANSFORMCONCTACT_H
-#define TRANSFORMCONCTACT_H
+#include "transformcontactdata.h"
 
-#include <qtcontacts.h>
-
-#include <cntfldst.h>
-#include <cntdb.h>
-#include <cntdef.h>
-#include <cntitem.h>
-
-class TransformContactData;
-class TransformContact
+class TransformUrl : public TransformContactData
 {
-public:
-	TransformContact();
-	virtual ~TransformContact();
-
-public:
-	QContact transformContactL(CContactItem &contact, CContactDatabase &contactDatabase) const;
-	void transformContactL(
-	        QContact &contact,
-	        CContactItem &contactItem) const;
-
-private:
-	enum ContactData
-	{
-		Name = 0,
-		Nickname,
-		PhoneNumber,
-		EmailAddress,
-		Address,
-		URL,
-		SipAddress,
-		Birthday
-	};
-	
-	void initializeTransformContactData();
-	QList<CContactItemField *> transformDetailL(const QContactDetail &detail) const;
-	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact) const;
-	
-	QContactDetail *transformGuidItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const;
-	void transformGuidDetailL(const QContactDetail &guidDetail, CContactItem &contactItem) const;
-	QContactDetail *transformTimestampItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const;
-	void transformTimestampDetailL(const QContactDetail &guidDetail, CContactItem &contactItem) const;
-	
-private:
-	QMap<ContactData, TransformContactData*> m_transformContactData;
+protected:
+	QList<CContactItemField *> transformDetailL(const QContactDetail &detail);
+	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact);
+	bool supportsField(TUint32 fieldType) const;
+	bool supportsDetail(QString detailName) const;
 };
 
-#endif /* TRANSFORMCONCTACT_H_ */
+#endif

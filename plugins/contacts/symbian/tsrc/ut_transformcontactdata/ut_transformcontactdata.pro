@@ -26,6 +26,8 @@ symbian:
 				../../inc/transformnickname.h \
 				../../inc/transformphonenumber.h \
 				../../inc/transformaddress.h \
+				../../inc/transformurl.h \
+				../../inc/transformbirthday.h
       
 	
 	SOURCES += ut_transformcontactdata.cpp \ 
@@ -35,6 +37,8 @@ symbian:
 				../../src/transformnickname.cpp \
 				../../src/transformphonenumber.cpp \
 				../../src/transformaddress.cpp \
+				../../src/transformurl.cpp \
+				../../src/transformbirthday.cpp
 
 	TARGET.CAPABILITY = ALL -TCB
   

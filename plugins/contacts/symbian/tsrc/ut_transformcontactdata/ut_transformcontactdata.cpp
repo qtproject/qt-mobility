@@ -37,6 +37,8 @@
 #include "transformnickname.h"
 #include "transformphonenumber.h"
 #include "transformaddress.h"
+#include "transformurl.h"
+#include "transformbirthday.h"
 //#include "transformsipaddress.h"
 
 #include <QtTest/QtTest>
@@ -96,6 +98,20 @@ void TestTransformContactData::executeTransformAddress()
                              _L(""), QString(""),
                              _L(""), QString(""),
                              _L(""), QString(""));
+}
+void TestTransformContactData::executeTransformUrl()
+{
+    validateTransformUrl(_L("dummyurl"), QString("dummyurl"));
+    validateTransformUrl(_L(""), QString(""));
+}
+
+void TestTransformContactData::executeTransformBithday()
+{
+    TDateTime dateTime(2009, ESeptember, 28, 0, 0, 0, 0);
+    TTime field(dateTime);
+    QDate detail(2009, 9, 28);
+    
+    validateTransformBirthday(field, detail);
 }
 
 /*void TestTransformContactData::executeTransformSipAddress()
@@ -578,6 +594,69 @@ void TestTransformContactData::validateTransformAddress(TPtrC16 countryField, QS
     newField = 0;
     
     delete transformAddress;
+}
+
+void TestTransformContactData::validateTransformUrl(TPtrC16 field, QString detail)
+{
+    TransformContactData* transformUrl = new TransformUrl();
+    QVERIFY(transformUrl != 0);
+    QVERIFY(transformUrl->supportsField(KUidContactFieldUrl.iUid));
+    QVERIFY(transformUrl->supportsDetail(QContactUrl::DefinitionName));
+    
+    validateContexts(transformUrl);
+    
+    QContactUrl url;
+    url.setUrl(detail);
+    url.setSubType(QContactUrl::SubTypeHomePage);
+    QList<CContactItemField *> fields = transformUrl->transformDetailL(url);
+    QVERIFY(fields.count() == 1);
+    QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldUrl));
+    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
+    
+    CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldUrl);
+    newField->TextStorage()->SetTextL(field);
+    QContact contact;
+    QContactDetail* contactDetail = transformUrl->transformItemField(*newField, contact);
+    const QContactUrl* urlAddress(static_cast<const QContactUrl*>(contactDetail));
+    QCOMPARE(urlAddress->url(), detail);
+        
+    delete contactDetail;
+    delete newField;
+    delete transformUrl;
+}
+
+void TestTransformContactData::validateTransformBirthday(TTime field, QDate detail)
+{
+    TransformContactData* transformBirthday = new TransformBirthday();
+    QVERIFY(transformBirthday != 0);
+    QVERIFY(transformBirthday->supportsField(KUidContactFieldBirthday.iUid));
+    QVERIFY(transformBirthday->supportsDetail(QContactBirthday::DefinitionName));
+    
+    validateContexts(transformBirthday);
+    
+    QContactBirthday birthday;
+    birthday.setDate(detail);
+    QList<CContactItemField *> fields = transformBirthday->transformDetailL(birthday);
+    QVERIFY(fields.count() == 1);
+    QVERIFY(fields.at(0)->StorageType() == KStorageTypeDateTime);
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldBirthday));
+    QCOMPARE(fields.at(0)->DateTimeStorage()->Time().DateTime().Year(), detail.year());
+    QCOMPARE(fields.at(0)->DateTimeStorage()->Time().DateTime().Month() + 1, detail.month());
+    QCOMPARE(fields.at(0)->DateTimeStorage()->Time().DateTime().Day(), detail.day());
+    
+    CContactItemField* newField = CContactItemField::NewL(KStorageTypeDateTime, KUidContactFieldBirthday);
+    newField->DateTimeStorage()->SetTime(field);
+    QContact contact;
+    QContactDetail* contactDetail = transformBirthday->transformItemField(*newField, contact);
+    const QContactBirthday* birthdayInfo(static_cast<const QContactBirthday*>(contactDetail));
+    QCOMPARE(birthdayInfo->date().year(), field.DateTime().Year());
+    QCOMPARE(birthdayInfo->date().month(), field.DateTime().Month() + 1);
+    QCOMPARE(birthdayInfo->date().day(), field.DateTime().Day());
+        
+    delete contactDetail;
+    delete newField;
+    delete transformBirthday;  
 }
 
 /*void TestTransformContactData::validateTransformSipAddress(TPtrC16 sipField, QString sipDetail)
