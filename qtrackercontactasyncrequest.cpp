@@ -27,10 +27,8 @@ void applyFilterToRDFVariable(RDFVariable &variable,
 {
     if (filter.type() == QContactFilter::IdList){
         QContactIdListFilter filt = filter;
-        // for now only works for one ID, TODO ask iridian how to do it in one query
-
         if( !filt.ids().isEmpty() )
-            variable.property<nco::contactUID>() = LiteralValue(filt.ids()[0]);
+            variable.property<nco::contactUID>().isMemberOf(filt.ids());// = LiteralValue(filt.ids()[0]);
         else
             qWarning()<<Q_FUNC_INFO<<"QContactIdListFilter idlist is empty";
     }
@@ -59,6 +57,28 @@ void applyFilterToRDFVariable(RDFVariable &variable,
             }
             else
                 qWarning()<<"QContactTrackerEngine: Unsupported QContactFilter::ContactDetail"<<filt.detailDefinitionName();
+        }
+    } 
+    else if(filter.type() == QContactFilter::ChangeLog)
+    {
+        const QContactChangeLogFilter& clFilter = static_cast<const QContactChangeLogFilter&>(filter);
+        // do not return facebook and telepathy contacts here
+        // it is a temp implementation for the what to offer to synchronization constraint 
+        variable.property<nao::hasTag>().property<nao::prefLabel>() = LiteralValue("addressbook");
+
+        // Removed since
+        if (clFilter.changeType() == QContactChangeLogFilter::Removed) {
+            // did not find how to set errror to async request
+            // error = QContactManager::NotSupportedError;
+            qWarning()<<"QContactTrackerEngine: Unsupported QContactChangeLogFilter::Removed (contacts removed since)";
+        }
+        // Added since
+        else if (clFilter.changeType() == QContactChangeLogFilter::Added) {
+            variable.property<nie::contentCreated>() >= LiteralValue(clFilter.since().toString(Qt::ISODate));
+        }
+        // Changed since
+        else if (clFilter.changeType() == QContactChangeLogFilter::Changed) {
+            variable.property<nie::contentLastModified>() >= LiteralValue(clFilter.since().toString(Qt::ISODate));
         }
     }
 }
