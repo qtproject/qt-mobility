@@ -164,6 +164,7 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaServiceProvider *provider):
             connect(d->control, SIGNAL(volumeChanged(int)), SIGNAL(volumeChanged(int)));
             connect(d->control, SIGNAL(mutingChanged(bool)), SIGNAL(mutingChanged(bool)));
             connect(d->control, SIGNAL(seekableChanged(bool)), SIGNAL(seekableChanged(bool)));
+            connect(d->control, SIGNAL(playbackRateChanged(qreal)), SIGNAL(playbackRateChanged(qreal)));
 
             if (d->control->state() == PlayingState)
                 addPropertyWatch("position");
@@ -260,7 +261,7 @@ bool QMediaPlayer::isSeekable() const
     return d_func()->control->isSeekable();
 }
 
-float QMediaPlayer::playbackRate() const
+qreal QMediaPlayer::playbackRate() const
 {
     return d_func()->control->playbackRate();
 }
@@ -346,7 +347,7 @@ void QMediaPlayer::setMuted(bool muted)
     d_func()->control->setMuted(muted);
 }
 
-void QMediaPlayer::setPlaybackRate(float rate)
+void QMediaPlayer::setPlaybackRate(qreal rate)
 {
     d_func()->control->setPlaybackRate(rate);
 }
@@ -461,7 +462,7 @@ void QMediaPlayer::bind(QObject *obj)
 */
 
 /*!
-    \fn void QMediaPlayer::playbackRateChanged(float rate);
+    \fn void QMediaPlayer::playbackRateChanged(qreal rate);
 
     Signals the playbackRate has changed to \a rate.
 */

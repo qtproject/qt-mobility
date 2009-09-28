@@ -68,8 +68,8 @@ public:
 
     bool isSeekable() const { return _isSeekable; }
 
-    float playbackRate() const { return _playbackRate; }
-    void setPlaybackRate(float rate) { _playbackRate = rate; }
+    qreal playbackRate() const { return _playbackRate; }
+    void setPlaybackRate(qreal rate) { if (rate != _playbackRate) emit playbackRateChanged(_playbackRate = rate); }
 
     QMediaSource media() const { return _media; }
     void setMedia(const QMediaSource &source, QIODevice *stream) { Q_UNUSED(stream); _media = source; }
@@ -89,7 +89,7 @@ public:
     int _bufferStatus;
     bool _videoAvailable;
     bool _isSeekable;
-    float _playbackRate;
+    qreal _playbackRate;
     QMediaSource _media;
     bool _isValid;
     QString _errorString;
@@ -124,7 +124,7 @@ public:
     void setMuted(bool muted) { mockControl->_muted = muted; }
     void setVideoAvailable(bool videoAvailable) { mockControl->_videoAvailable = videoAvailable; }
     void setBufferStatus(int bufferStatus) { mockControl->_bufferStatus = bufferStatus; }
-    void setPlaybackRate(float playbackRate) { mockControl->_playbackRate = playbackRate; }
+    void setPlaybackRate(qreal playbackRate) { mockControl->_playbackRate = playbackRate; }
     void setError(QMediaPlayer::Error error) { mockControl->_error = error; emit mockControl->error(mockControl->_error, mockControl->_errorString); }
     void setErrorString(QString errorString) { mockControl->_errorString = errorString; emit mockControl->error(mockControl->_error, mockControl->_errorString); }
 
@@ -211,31 +211,31 @@ void tst_QMediaPlayer::initTestCase_data()
     QTest::addColumn<bool>("muted");
     QTest::addColumn<bool>("videoAvailable");
     QTest::addColumn<int>("bufferStatus");
-    QTest::addColumn<float>("playbackRate");
+    QTest::addColumn<qreal>("playbackRate");
     QTest::addColumn<QMediaPlayer::Error>("error");
     QTest::addColumn<QString>("errorString");
 
     QTest::newRow("invalid") << false << QMediaPlayer::StoppedState << QMediaPlayer::UnknownMediaStatus <<
                                 QMediaSource() << qint64(0) << qint64(0) << false << 0 << false << false << 0 <<
-                                float(0) << QMediaPlayer::NoError << QString();
+                                qreal(0) << QMediaPlayer::NoError << QString();
     QTest::newRow("valid+null") << true << QMediaPlayer::StoppedState << QMediaPlayer::UnknownMediaStatus <<
                                 QMediaSource() << qint64(0) << qint64(0) << false << 0 << false << false << 50 <<
-                                float(0) << QMediaPlayer::NoError << QString();
+                                qreal(0) << QMediaPlayer::NoError << QString();
     QTest::newRow("valid+content+stopped") << true << QMediaPlayer::StoppedState << QMediaPlayer::UnknownMediaStatus <<
                                 QMediaSource(QUrl("file:///some.mp3")) << qint64(0) << qint64(0) << false << 50 << false << false << 0 <<
-                                float(1) << QMediaPlayer::NoError << QString();
+                                qreal(1) << QMediaPlayer::NoError << QString();
     QTest::newRow("valid+content+playing") << true << QMediaPlayer::PlayingState << QMediaPlayer::LoadedMedia <<
                                 QMediaSource(QUrl("file:///some.mp3")) << qint64(10000) << qint64(10) << true << 50 << true << false << 0 <<
-                                float(1) << QMediaPlayer::NoError << QString();
+                                qreal(1) << QMediaPlayer::NoError << QString();
     QTest::newRow("valid+content+paused") << true << QMediaPlayer::PausedState << QMediaPlayer::LoadedMedia <<
                                 QMediaSource(QUrl("file:///some.mp3")) << qint64(10000) << qint64(10) << true << 50 << true << false << 0 <<
-                                float(1)  << QMediaPlayer::NoError << QString();
+                                qreal(1)  << QMediaPlayer::NoError << QString();
     QTest::newRow("valud+streaming") << true << QMediaPlayer::PlayingState << QMediaPlayer::LoadedMedia <<
                                 QMediaSource(QUrl("http://example.com/stream")) << qint64(10000) << qint64(10000) << false << 50 << false << true << 0 <<
-                                float(1)  << QMediaPlayer::NoError << QString();
+                                qreal(1)  << QMediaPlayer::NoError << QString();
     QTest::newRow("valid+error") << true << QMediaPlayer::StoppedState << QMediaPlayer::UnknownMediaStatus <<
                                 QMediaSource(QUrl("http://example.com/stream")) << qint64(0) << qint64(0) << false << 50 << false << false << 0 <<
-                                float(0) << QMediaPlayer::ResourceError << QString("Resource unavailable");
+                                qreal(0) << QMediaPlayer::ResourceError << QString("Resource unavailable");
 }
 
 void tst_QMediaPlayer::initTestCase()
@@ -404,10 +404,18 @@ void tst_QMediaPlayer::testSeekable()
 
 void tst_QMediaPlayer::testPlaybackRate()
 {
-    QFETCH_GLOBAL(float, playbackRate);
+    QFETCH_GLOBAL(bool, valid);
+    QFETCH_GLOBAL(qreal, playbackRate);
 
-    mockService->setPlaybackRate(playbackRate);
-    QVERIFY(player->playbackRate() == playbackRate);
+    if (valid) {
+        mockService->setPlaybackRate(playbackRate);
+        QVERIFY(player->playbackRate() == playbackRate);
+
+        QSignalSpy spy(player, SIGNAL(playbackRateChanged(qreal)));
+        player->setPlaybackRate(playbackRate + 0.5f);
+        QCOMPARE(player->playbackRate(), playbackRate + 0.5f);
+        QCOMPARE(spy.count(), 1);
+    }
 }
 
 void tst_QMediaPlayer::testError()

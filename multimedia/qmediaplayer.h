@@ -55,7 +55,7 @@ class Q_MEDIA_EXPORT QMediaPlayer : public QMediaObject
     Q_PROPERTY(int bufferStatus READ bufferStatus NOTIFY bufferStatusChanged)
     Q_PROPERTY(bool videoAvailable READ isVideoAvailable NOTIFY videoAvailablityChanged)
     Q_PROPERTY(bool seekable READ isSeekable NOTIFY seekableChanged)
-    Q_PROPERTY(float playbackRate READ playbackRate WRITE setPlaybackRate NOTIFY playbackRateChange)
+    Q_PROPERTY(qreal playbackRate READ playbackRate WRITE setPlaybackRate NOTIFY playbackRateChanged)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(MediaStatus mediaStatus READ mediaStatus NOTIFY mediaStatusChanged)
     Q_PROPERTY(QString error READ errorString)
@@ -113,7 +113,7 @@ public:
     int bufferStatus() const;
 
     bool isSeekable() const;
-    float playbackRate() const;
+    qreal playbackRate() const;
 
     Error error() const;
     QString errorString() const;
@@ -127,7 +127,7 @@ public Q_SLOTS:
     void setVolume(int volume);
     void setMuted(bool muted);
 
-    void setPlaybackRate(float rate);
+    void setPlaybackRate(qreal rate);
 
     void setMedia(const QMediaSource &media, QIODevice *stream = 0);
 
@@ -147,7 +147,7 @@ Q_SIGNALS:
     void bufferStatusChanged(int percentFilled);
 
     void seekableChanged(bool seekable);
-    void playbackRateChanged(float rate);
+    void playbackRateChanged(qreal rate);
 
     void error(QMediaPlayer::Error error);
 

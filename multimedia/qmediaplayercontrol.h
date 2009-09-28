@@ -68,8 +68,8 @@ public:
 
     virtual bool isSeekable() const = 0;
 
-    virtual float playbackRate() const = 0;
-    virtual void setPlaybackRate(float rate) = 0;
+    virtual qreal playbackRate() const = 0;
+    virtual void setPlaybackRate(qreal rate) = 0;
 
     virtual QMediaSource media() const = 0;
     virtual const QIODevice *mediaStream() const = 0;
@@ -90,6 +90,7 @@ Q_SIGNALS:
     void videoAvailabilityChanged(bool videoAvailable);
     void bufferStatusChanged(int percentFilled);
     void seekableChanged(bool);
+    void playbackRateChanged(qreal rate);
     void error(int error, const QString &errorString);
 
 protected:

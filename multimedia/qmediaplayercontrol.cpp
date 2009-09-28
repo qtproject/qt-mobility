@@ -218,13 +218,13 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 */
 
 /*!
-    \fn QMediaPlayerControl::playbackRate() const
+    \fn qreal QMediaPlayerControl::playbackRate() const
 
     Returns the rate of playback.
 */
 
 /*!
-    \fn QMediaPlayerControl::setPlaybackRate(float rate)
+    \fn QMediaPlayerControl::setPlaybackRate(qreal rate)
 
     Sets the \a rate of playback.
 */
