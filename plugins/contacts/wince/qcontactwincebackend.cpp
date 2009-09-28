@@ -36,6 +36,7 @@
 #include "qcontactgroup_p.h"
 #include "qcontactmanager.h"
 #include "qcontactmanager_p.h"
+#include "qcontactchangeset.h"
 
 #define INITGUID
 #include "qcontactwincebackend_p.h"
@@ -206,12 +207,14 @@ QContact QContactWinCEEngine::contact(const QUniqueId& contactId, QContactManage
     return ret;
 }
 
-bool QContactWinCEEngine::saveContact(QContact* contact, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error)
+bool QContactWinCEEngine::saveContact(QContact* contact, QContactManager::Error& error)
 {
     if (contact == 0) {
         error = QContactManager::BadArgumentError;
         return false;
     }
+
+    QContactChangeSet cs;
 
     // ensure that the contact's details conform to their definitions
     if (!validateContact(*contact, error)) {
@@ -270,11 +273,13 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QSet<QUniqueId>& contac
                 if (SUCCEEDED(hr)) {
                     contact->setId((QUniqueId)oid);
                     if (wasOld)
-                        contactsChanged.insert(contact->id());
+                        cs.changedContacts().insert(contact->id());
                     else
-                        contactsAdded.insert(contact->id());
+                        cs.addedContacts().insert(contact->id());
                     d->m_ids.append(contact->id());
                     error = QContactManager::NoError;
+
+                    cs.emitSignals(this);
                     return true;
                 }
                 qDebug() << "Saved contact, but couldn't retrieve id again??" << HRESULT_CODE(hr);
@@ -292,18 +297,21 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QSet<QUniqueId>& contac
     return false;
 }
 
-bool QContactWinCEEngine::removeContact(const QUniqueId& contactId, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& , QContactManager::Error& error)
+bool QContactWinCEEngine::removeContact(const QUniqueId& contactId, QContactManager::Error& error)
 {
     // Fetch an IItem* for this
     if (contactId != 0) {
         SimpleComPointer<IItem> item ;
+        QContactChangeSet cs;
+
         HRESULT hr = d->m_app->GetItemFromOidEx(contactId, 0, &item);
         if (SUCCEEDED(hr)) {
             hr = item->Delete();
             if (SUCCEEDED(hr)) {
-                contactsChanged.insert(contactId);
                 error = QContactManager::NoError;
                 d->m_ids.removeAll(contactId);
+                cs.removedContacts().insert(contactId);
+                cs.emitSignals(this);
                 return true;
             }
             qDebug() << "Failed to delete:" << HRESULT_CODE(hr);
