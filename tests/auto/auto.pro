@@ -69,9 +69,12 @@ SUBDIRS += \           #Multimedia
         qaudiosource \
         qcamera
 
-SUBDIRS += \            #Messaging
-    support \
-    qmessagestore \
-    qmessagestorekeys \
-    qmessage
+#Messaging
+contains(qmf_enabled,yes)|wince*|win32 {
+    SUBDIRS += \
+        support \
+        qmessagestore \
+        qmessagestorekeys \
+        qmessage
+}
 

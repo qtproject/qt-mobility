@@ -159,13 +159,21 @@ else
     echo "build_examples = yes" >> config.in
 fi
 
+#search for QMF. Enabled if QMF_LIBDIR and QMF_INCLUDEPATH are set enable messging on windows
+#TODO: convert into proper compile test
+if [ -z "$QMF_LIBDIR" ]; then
+    echo "qmf_enabled = no" >> config.in
+elif [ -z "$QMF_INCLUDEDIR" ]; then
+    echo "qmf_enabled = no" >> config.in
+else
+    echo "qmf_enabled = yes" >> config.in
+fi
 
 echo "Testing Qt installation..."
 if ! which qmake; then
     echo >&2 "Cannot find 'qmake' in your PATH";
     echo >&2 "Aborting." 
 fi
-
 
 echo "Generating Mobility Headers..."
 #remove old headers

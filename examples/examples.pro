@@ -38,9 +38,11 @@ SUBDIRS += player \
         streamplayer
 
 #Messaging examples
-SUBDIRS += \
-    keepintouch\
-    querymessages\
-    sendmessage\
-    serviceactions
+contains(qmf_enabled,yes)|wince*|win32 {
+    SUBDIRS += \
+        keepintouch\
+        querymessages\
+        sendmessage\
+        serviceactions
+}
 
