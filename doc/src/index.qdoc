@@ -49,17 +49,6 @@
 */
 
 /*!
-    \group messaging
-    \title Qt Mobility Messaging API
-
-    The Messaging API enables access to messaging services to send
-    messages and retrieve message data is provided, as well as messaging
-    services to compose, reply to, forward and show messages using a
-    native application.
-
-*/
-
-/*!
     \page index.html
     \startpage index.html  Qt Reference Documentation
 

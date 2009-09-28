@@ -41,8 +41,9 @@
 
 /*!
 \page messaging.html
+\ingroup mobility
 
-\title Messaging Library Developer Resources
+\title Messaging
 
 \brief The Messaging API enables access to messaging services.
 

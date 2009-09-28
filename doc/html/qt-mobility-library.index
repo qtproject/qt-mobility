@@ -5279,7 +5279,6 @@
         <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_SHAREDMEMORY_LAYER" href="qvaluespace.html#QVALUESPACE_SHAREDMEMORY_LAYER" location="qvaluespace.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QValueSpace" type="" signature="QVALUESPACE_SHAREDMEMORY_LAYER()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_REGISTRY_LAYER" href="qvaluespace.html#QVALUESPACE_REGISTRY_LAYER" location="qvaluespace.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QValueSpace" type="" signature="QVALUESPACE_REGISTRY_LAYER()"/>
         <page access="public" status="commendable" name="mobility" href="mobility.html" subtype="group" title="Qt Mobility APIs" fulltitle="Qt Mobility APIs" subtitle="" location="index.qdoc"/>
-        <page access="public" status="commendable" name="messaging" href="messaging.html" subtype="group" title="Qt Mobility Messaging API" fulltitle="Qt Mobility Messaging API" subtitle="" location="index.qdoc"/>
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Overview" fulltitle="Qt Mobility Overview" subtitle="" location="index.qdoc">
             <contents name="mobility-component-apis" title="Mobility Component APIs" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
@@ -5324,7 +5323,7 @@
             <contents name="main-classes" title="Main classes" level="2"/>
             <contents name="classes-for-service-implementers" title="Classes for service implementers." level="2"/>
         </page>
-        <page access="public" status="commendable" name="messaging.html" href="messaging.html" subtype="page" title="Messaging Library Developer Resources" fulltitle="Messaging Library Developer Resources" subtitle="" location="messaging.qdoc">
+        <page access="public" status="commendable" name="messaging.html" href="messaging.html" subtype="page" title="Messaging" fulltitle="Messaging" subtitle="" location="messaging.qdoc">
             <contents name="overview" title="Overview" level="1"/>
             <contents name="reference-documentation" title="Reference documentation" level="1"/>
             <contents name="main-classes" title="Main classes" level="2"/>

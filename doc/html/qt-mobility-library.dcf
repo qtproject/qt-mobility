@@ -2578,8 +2578,8 @@
     <section ref="location-overview.html" title="Location">
         <keyword ref="location-overview.html">Location</keyword>
     </section>
-    <section ref="messaging.html" title="Messaging Library Developer Resources">
-        <keyword ref="messaging.html">Messaging Library Developer Resources</keyword>
+    <section ref="messaging.html" title="Messaging">
+        <keyword ref="messaging.html">Messaging</keyword>
     </section>
     <section ref="multimedia.html" title="Multimedia">
         <keyword ref="multimedia.html">Multimedia</keyword>
@@ -2598,9 +2598,6 @@
     </section>
     <section ref="location.html" title="Qt Mobility Location API">
         <keyword ref="location.html">Qt Mobility Location API</keyword>
-    </section>
-    <section ref="messaging.html" title="Qt Mobility Messaging API">
-        <keyword ref="messaging.html">Qt Mobility Messaging API</keyword>
     </section>
     <section ref="index.html" title="Qt Mobility Overview">
         <keyword ref="index.html">Qt Mobility Overview</keyword>
