@@ -36,7 +36,7 @@ unix:SUBDIRS += qpacket \
                 qsystemreadwritelock \
                 qsystemreadwritelock_oop
 
-SUBDIRS += qsysteminfo \                    #SystemInformation
+!symbian:SUBDIRS += qsysteminfo \                    #SystemInformation
           qsystemdeviceinfo \
           qsystemdisplayinfo \
           qsystemmemoryinfo \

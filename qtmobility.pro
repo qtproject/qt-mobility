@@ -38,7 +38,10 @@ SUBDIRS += serviceframework
 symbian:SUBDIRS += serviceframework/symbian/dll/databasemanagerserver_dll.pro \
                    serviceframework/symbian/exe/databasemanagerserver_exe.pro
 
-SUBDIRS += bearer location context systeminfo contacts multimedia tools plugins
+SUBDIRS += bearer location context contacts multimedia tools plugins
+
+#remove systeminfo from build. It does not work yet
+!symbian:SUBDIRS += systeminfo
 
 contains(qmf_enabled, yes)|wince*|win32|symbian|maemo {
     SUBDIRS += messaging
