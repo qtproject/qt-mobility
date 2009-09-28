@@ -331,8 +331,10 @@ extern "C" {
 
 
 #include <stdio.h>    /* needed for malloc_stats */
-#include <errno.h>    /* needed for optional MALLOC_FAILURE_ACTION */
 
+#ifndef LACKS_ERRNO_H
+#include <errno.h>    /* needed for optional MALLOC_FAILURE_ACTION */
+#endif
 
 /*
   Debugging:
@@ -5392,6 +5394,73 @@ static void vminfo (CHUNK_SIZE_T  *free, CHUNK_SIZE_T  *reserved, CHUNK_SIZE_T  
     }
 }
 
+#ifdef Q_OS_WINCE
+
+#include <tlhelp32.h>
+
+static int cpuinfo (int whole, CHUNK_SIZE_T  *kernel, CHUNK_SIZE_T  *user) {
+    if (whole) {
+        __int64 totalKernel64 = 0;
+        __int64 totalUser64 = 0;
+
+        HANDLE threadSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, GetCurrentProcessId());
+        if (threadSnapshot == INVALID_HANDLE_VALUE) {
+            *kernel = 0;
+            *user = 0;
+            return FALSE;
+        }
+
+        THREADENTRY32 threadEntry;
+        threadEntry.dwSize = sizeof(THREADENTRY32);
+
+        if (!Thread32First(threadSnapshot, &threadEntry)) {
+            *kernel = 0;
+            *user = 0;
+            return FALSE;
+        }
+
+        do {
+            __int64 creation64, exit64, kernel64, user64;
+            HANDLE threadHandle = OpenProcess(0, false, threadEntry.th32ThreadID);
+
+            int rc = GetThreadTimes(threadHandle,
+                                    (FILETIME *) &creation64,
+                                    (FILETIME *) &exit64,
+                                    (FILETIME *) &kernel64,
+                                    (FILETIME *) &user64);
+
+            CloseHandle(threadHandle);
+
+            if (!rc)
+                continue;
+
+            totalKernel64 += kernel64;
+            totalUser64 += user64;
+        } while (Thread32Next(threadSnapshot, &threadEntry));
+
+        CloseHandle(threadSnapshot);
+
+        *kernel = (CHUNK_SIZE_T) (totalKernel64 / 10000);
+        *user = (CHUNK_SIZE_T) (totalUser64 / 10000);
+        return TRUE;
+    } else {
+        __int64 creation64, exit64, kernel64, user64;
+        int rc = GetThreadTimes (GetCurrentThread (),
+                                 (FILETIME *) &creation64,
+                                 (FILETIME *) &exit64,
+                                 (FILETIME *) &kernel64,
+                                 (FILETIME *) &user64);
+        if (! rc) {
+            *kernel = 0;
+            *user = 0;
+            return FALSE;
+        }
+        *kernel = (CHUNK_SIZE_T) (kernel64 / 10000);
+        *user = (CHUNK_SIZE_T) (user64 / 10000);
+        return TRUE;
+    }
+}
+#else
 static int cpuinfo (int whole, CHUNK_SIZE_T  *kernel, CHUNK_SIZE_T  *user) {
     if (whole) {
         __int64 creation64, exit64, kernel64, user64;
@@ -5425,6 +5494,7 @@ static int cpuinfo (int whole, CHUNK_SIZE_T  *kernel, CHUNK_SIZE_T  *user) {
         return TRUE;
     }
 }
+#endif
 
 #endif /* WIN32 */
 

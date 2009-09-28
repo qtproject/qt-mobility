@@ -45,7 +45,8 @@ win32 {
                qsystemreadwritelock.cpp \
                registrylayer_win.cpp
 
-    LIBS += -ladvapi32
+    !wince*:LIBS += -ladvapi32
+    wince*:LIBS += -ltoolhelp
 }
 
 headers.files = $$PUBLIC_HEADERS

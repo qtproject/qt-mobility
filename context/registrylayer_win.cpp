@@ -39,20 +39,107 @@
 #include <QEventLoop>
 #include <QTimer>
 
+#ifdef Q_OS_WINCE
+#include <QThread>
+#endif
+
 #include <QDebug>
 
 // Define win32 version to pull in RegisterWaitForSingleObject and UnregisterWait.
 #define _WIN32_WINNT 0x0500
 #include <windows.h>
 
+#ifdef Q_OS_WINCE
+#include <regext.h>
+#define RegistryCallback REGISTRYNOTIFYCALLBACK
+#else
+#define RegistryCallback WAITORTIMERCALLBACK
+#endif
+
 QT_BEGIN_NAMESPACE
+
+#ifdef Q_OS_WINCE
+class QWindowsCENotify : public QThread
+{
+    Q_OBJECT
+
+public:
+    QWindowsCENotify(QObject *parent = 0);
+    ~QWindowsCENotify();
+
+    void addHandle(HANDLE handle);
+    void removeHandle(HANDLE handle);
+
+protected:
+    void run();
+
+signals:
+    void eventSignaled(void *handle);
+
+private:
+    HANDLE wakeUp;
+    QSet<HANDLE> handles;
+};
+
+QWindowsCENotify::QWindowsCENotify(QObject *parent)
+:   QThread(parent)
+{
+    wakeUp = CreateEvent(0, false, false, 0);
+}
+
+QWindowsCENotify::~QWindowsCENotify()
+{
+    CloseHandle(wakeUp);
+    wakeUp = INVALID_HANDLE_VALUE;
+    wait();
+}
+
+void QWindowsCENotify::addHandle(HANDLE handle)
+{
+    handles.insert(handle);
+
+    SetEvent(wakeUp);
+}
+
+void QWindowsCENotify::removeHandle(HANDLE handle)
+{
+    handles.remove(handle);
+
+    SetEvent(wakeUp);
+}
+
+void QWindowsCENotify::run()
+{
+    while (wakeUp != INVALID_HANDLE_VALUE) {
+        ResetEvent(wakeUp);
+
+        QVector<HANDLE> waitHandles = handles.toList().toVector();
+        waitHandles.append(wakeUp);
+        DWORD index = WaitForMultipleObjects(waitHandles.count(), waitHandles.data(),
+                                             false, INFINITE);
+
+        if (index >= WAIT_OBJECT_0 && index < WAIT_OBJECT_0 + waitHandles.count()) {
+            qDebug() << "woke up because of index" << index - WAIT_OBJECT_0 << waitHandles.count();
+
+            if (index - WAIT_OBJECT_0 != waitHandles.count() - 1) {
+                handles.remove(waitHandles.at(index - WAIT_OBJECT_0));
+                emit eventSignaled(waitHandles.at(index - WAIT_OBJECT_0));
+            }
+        } else if (index >= WAIT_ABANDONED_0 && index < WAIT_ABANDONED_0 + waitHandles.count()) {
+            qDebug() << "woke up because of abandoned index" << index - WAIT_ABANDONED_0;
+        } else {
+            qDebug() << "WaitForMultipleObjects failed with error" << GetLastError();
+        }
+    }
+}
+#endif
 
 class RegistryLayer : public QAbstractValueSpaceLayer
 {
     Q_OBJECT
 
 public:
-    RegistryLayer(const QByteArray &basePath, bool volatileKeys, WAITORTIMERCALLBACK callback);
+    RegistryLayer(const QByteArray &basePath, bool volatileKeys, RegistryCallback callback);
     ~RegistryLayer();
 
     /* Common functions */
@@ -85,6 +172,9 @@ public:
 
 public slots:
     void emitHandleChanged(void *hkey);
+#ifdef Q_OS_WINCE
+    void eventSignaled(void *handle);
+#endif
 
 private:
     struct RegistryHandle {
@@ -106,7 +196,7 @@ private:
 
     QByteArray m_basePath;
     bool m_volatileKeys;
-    WAITORTIMERCALLBACK m_callback;
+    RegistryCallback m_callback;
 
     QHash<QByteArray, RegistryHandle *> handles;
 
@@ -125,6 +215,9 @@ private:
     QMap<RegistryHandle *, HKEY> hKeys;
     QMultiMap<RegistryHandle *, RegistryHandle *> notifyProxies;
     QMap<HKEY, QPair<::HANDLE, ::HANDLE> > waitHandles;
+#ifdef Q_OS_WINCE
+    QWindowsCENotify *notifyThread;
+#endif
 
     QMap<QValueSpaceObject *, QList<QByteArray> > creators;
 };
@@ -173,6 +266,18 @@ public:
 Q_GLOBAL_STATIC(NonVolatileRegistryLayer, nonVolatileRegistryLayer);
 QVALUESPACE_AUTO_INSTALL_LAYER(NonVolatileRegistryLayer);
 
+#ifdef Q_OS_WINCE
+void qVolatileRegistryLayerCallback(HREGNOTIFY hNotify, DWORD dwUserData,
+                                    const PBYTE pData, const UINT cbdata)
+{
+}
+
+void qNonVolatileRegistryLayerCallback(HREGNOTIFY hNotify, DWORD dwUserData,
+                                    const PBYTE pData, const UINT cbdata)
+{
+}
+
+#else
 void CALLBACK qVolatileRegistryLayerCallback(PVOID lpParameter, BOOLEAN)
 {
     QMetaObject::invokeMethod(volatileRegistryLayer(), "emitHandleChanged", Qt::QueuedConnection,
@@ -184,6 +289,7 @@ void CALLBACK qNonVolatileRegistryLayerCallback(PVOID lpParameter, BOOLEAN)
     QMetaObject::invokeMethod(nonVolatileRegistryLayer(), "emitHandleChanged",
                               Qt::QueuedConnection, Q_ARG(void *, lpParameter));
 }
+#endif
 
 static QString qConvertPath(const QByteArray &path)
 {
@@ -270,7 +376,7 @@ NonVolatileRegistryLayer *NonVolatileRegistryLayer::instance()
 }
 
 RegistryLayer::RegistryLayer(const QByteArray &basePath, bool volatileKeys,
-                             WAITORTIMERCALLBACK callback)
+                             RegistryCallback callback)
 :   m_basePath(basePath), m_volatileKeys(volatileKeys), m_callback(callback)
 {
     // Ensure that the m_basePath key exists and is non-volatile.
@@ -279,6 +385,13 @@ RegistryLayer::RegistryLayer(const QByteArray &basePath, bool volatileKeys,
                    0, 0, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, 0, &key, 0);
 
     RegCloseKey(key);
+
+#ifdef Q_OS_WINCE
+    notifyThread = new QWindowsCENotify(this);
+    connect(notifyThread, SIGNAL(eventSignaled(void*)),
+            this, SLOT(eventSignaled(void*)), Qt::QueuedConnection);
+    notifyThread->start();
+#endif
 }
 
 RegistryLayer::~RegistryLayer()
@@ -547,6 +660,18 @@ void RegistryLayer::setProperty(Handle handle, Properties properties)
         if (waitHandles.contains(key))
             return;
 
+#ifdef Q_OS_WINCE
+        DWORD filter = REG_NOTIFY_CHANGE_NAME | REG_NOTIFY_CHANGE_LAST_SET;
+        ::HANDLE event = CeFindFirstRegChange(key, true, filter);
+        if (event == INVALID_HANDLE_VALUE) {
+            qDebug() << "CeFindFirstRegChange failed with error" << GetLastError();
+            return;
+        }
+
+        notifyThread->addHandle(event);
+
+        waitHandles.insert(key, QPair<::HANDLE, ::HANDLE>(event, INVALID_HANDLE_VALUE));
+#else
         ::HANDLE event = CreateEvent(0, false, false, 0);
         if (event == 0) {
             qDebug() << "CreateEvent failed with error" << GetLastError();
@@ -569,6 +694,7 @@ void RegistryLayer::setProperty(Handle handle, Properties properties)
         }
 
         waitHandles.insert(key, QPair<::HANDLE, ::HANDLE>(event, waitHandle));
+#endif
     }
     if (!(properties & QAbstractValueSpaceLayer::Publish)) {
         // Disable change notification for handle
@@ -577,12 +703,17 @@ void RegistryLayer::setProperty(Handle handle, Properties properties)
 
         HKEY key = hKeys.value(rh);
 
-        QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
-        ::HANDLE event = wait.first;
-        ::HANDLE waitHandle = wait.second;
+        if (waitHandles.contains(key)) {
+            QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
 
-        UnregisterWait(waitHandle);
-        CloseHandle(event);
+#ifdef Q_OS_WINCE
+            notifyThread->removeHandle(wait.first);
+#else
+            UnregisterWait(wait.second);
+#endif
+
+            CloseHandle(wait.first);
+        }
     }
 }
 
@@ -619,10 +750,17 @@ void RegistryLayer::closeRegistryKey(RegistryHandle *handle)
     if (!hKeys.keys(key).isEmpty())
         return;
 
-    QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
+    if (waitHandles.contains(key)) {
+        QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
 
-    UnregisterWait(wait.second);
-    CloseHandle(wait.first);
+#ifdef Q_OS_WINCE
+        notifyThread->removeHandle(wait.first);
+#else
+        UnregisterWait(wait.second);
+#endif
+
+        CloseHandle(wait.first);
+    }
 
     RegCloseKey(key);
 }
@@ -684,6 +822,22 @@ bool RegistryLayer::removeRegistryValue(RegistryHandle *handle, const QByteArray
         createdHandle = true;
     }
 
+#ifdef Q_OS_WINCE
+    QList<RegistryHandle *> deletedKeys;
+    QByteArray fullPath;
+    if (rh && rh->path != "/")
+        fullPath = rh->path + '/' + value.toUtf8();
+    else
+        fullPath = '/' + value.toUtf8();
+
+    foreach (RegistryHandle *h, hKeys.keys()) {
+        if (h->path.startsWith(fullPath)) {
+            deletedKeys.append(h);
+            closeRegistryKey(h);
+        }
+    }
+#endif
+
     openRegistryKey(rh);
     if (!hKeys.contains(rh)) {
         if (createdHandle)
@@ -713,6 +867,11 @@ bool RegistryLayer::removeRegistryValue(RegistryHandle *handle, const QByteArray
     } else if (result != ERROR_SUCCESS) {
         qDebug() << "RegDeleteValue failed with error" << result;
     }
+
+#ifdef Q_OS_WINCE
+    while (!deletedKeys.isEmpty())
+        emit handleChanged(Handle(deletedKeys.takeFirst()));
+#endif
 
     if (createdHandle)
         removeHandle(Handle(rh));
@@ -879,10 +1038,17 @@ void RegistryLayer::emitHandleChanged(void *k)
 
     QList<RegistryHandle *> changedHandles = hKeys.keys(key);
     if (changedHandles.isEmpty()) {
-        QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
-        UnregisterWait(wait.second);
-        CloseHandle(wait.first);
-        return;
+        if (waitHandles.contains(key)) {
+            QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
+
+#ifdef Q_OS_WINCE
+            notifyThread->removeHandle(wait.first);
+#else
+            UnregisterWait(wait.second);
+#endif
+            CloseHandle(wait.first);
+            return;
+        }
     }
 
     while (!changedHandles.isEmpty()) {
@@ -902,46 +1068,90 @@ void RegistryLayer::emitHandleChanged(void *k)
         }
     }
 
-    QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
+    if (waitHandles.contains(key)) {
+        QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
 
-    ::HANDLE event = wait.first;
-    ::HANDLE waitHandle = wait.second;
+        ::HANDLE event = wait.first;
 
-    UnregisterWait(waitHandle);
+#ifdef Q_OS_WINCE
+        notifyThread->removeHandle(event);
+#else
+        UnregisterWait(wait.second);
+#endif
 
-    long result = RegNotifyChangeKeyValue(key, true, REG_NOTIFY_CHANGE_NAME |
-                                                     REG_NOTIFY_CHANGE_ATTRIBUTES |
-                                                     REG_NOTIFY_CHANGE_LAST_SET,
-                                          event, true);
+#ifdef Q_OS_WINCE
+        if (!CeFindNextRegChange(event)) {
+            long result = GetLastError();
+            if (result == ERROR_KEY_DELETED) {
+                CloseHandle(event);
 
-    if (result != ERROR_SUCCESS) {
-        if (result == ERROR_KEY_DELETED || result == ERROR_INVALID_PARAMETER) {
-            CloseHandle(event);
+                QList<RegistryHandle *> changedHandles = hKeys.keys(key);
 
-            QList<RegistryHandle *> changedHandles = hKeys.keys(key);
+                for (int i = 0; i < changedHandles.count(); ++i)
+                    hKeys.remove(changedHandles.at(i));
 
-            for (int i = 0; i < changedHandles.count(); ++i)
-                hKeys.remove(changedHandles.at(i));
+                RegCloseKey(key);
 
-            RegCloseKey(key);
+                for (int i = 0; i < changedHandles.count(); ++i)
+                    setProperty(Handle(changedHandles.at(i)), Publish);
+            } else {
+                qDebug() << "CeFindNextRegChange failed with error" << result;
+            }
 
-            for (int i = 0; i < changedHandles.count(); ++i)
-                setProperty(Handle(changedHandles.at(i)), Publish);
-        } else {
-            qDebug() << "RegNotifyChangeKeyValue failed with error" << result;
+            return;
         }
 
-        return;
-    }
+        notifyThread->addHandle(event);
 
-    if (!RegisterWaitForSingleObject(&waitHandle, event, m_callback, key,
-                                     INFINITE, WT_EXECUTEDEFAULT)) {
-      qDebug() << "RegisterWaitForSingleObject failed with error" << GetLastError();
-      return;
-    }
+        waitHandles.insert(key, QPair<::HANDLE, ::HANDLE>(event, INVALID_HANDLE_VALUE));
+#else
+        long result = RegNotifyChangeKeyValue(key, true, REG_NOTIFY_CHANGE_NAME |
+                                              REG_NOTIFY_CHANGE_ATTRIBUTES |
+                                              REG_NOTIFY_CHANGE_LAST_SET,
+                                              event, true);
 
-    waitHandles.insert(key, QPair<::HANDLE, ::HANDLE>(event, waitHandle));
+        if (result != ERROR_SUCCESS) {
+            if (result == ERROR_KEY_DELETED || result == ERROR_INVALID_PARAMETER) {
+                CloseHandle(event);
+
+                QList<RegistryHandle *> changedHandles = hKeys.keys(key);
+
+                for (int i = 0; i < changedHandles.count(); ++i)
+                    hKeys.remove(changedHandles.at(i));
+
+                RegCloseKey(key);
+
+                for (int i = 0; i < changedHandles.count(); ++i)
+                    setProperty(Handle(changedHandles.at(i)), Publish);
+            } else {
+                qDebug() << "RegNotifyChangeKeyValue failed with error" << result;
+            }
+
+            return;
+        }
+
+        ::HANDLE waitHandle;
+
+        if (!RegisterWaitForSingleObject(&waitHandle, event, m_callback, key,
+                                         INFINITE, WT_EXECUTEDEFAULT)) {
+            qDebug() << "RegisterWaitForSingleObject failed with error" << GetLastError();
+            return;
+        }
+
+        waitHandles.insert(key, QPair<::HANDLE, ::HANDLE>(event, waitHandle));
+#endif
+    }
 }
+
+#ifdef Q_OS_WINCE
+void RegistryLayer::eventSignaled(void *handle)
+{
+    HKEY key = waitHandles.key(QPair<::HANDLE, ::HANDLE>(handle, INVALID_HANDLE_VALUE), 0);
+
+    if (key != 0)
+        emitHandleChanged(key);
+}
+#endif
 
 void RegistryLayer::openRegistryKey(RegistryHandle *handle)
 {
