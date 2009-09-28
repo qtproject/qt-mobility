@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = symbianmm
+TARGET = QtMobilityMultimediaEngine
 PLUGIN_SUBDIR = mediaservice
 include (../../common.pri)
 LIBS += -lQtMedia
@@ -16,9 +16,9 @@ include(camera/camera_s60.pri)
 
 
 load(data_caging_paths)
-    pluginDep.sources = symbianmm.dll
+    pluginDep.sources = QtMobilityMultimediaEngine.dll
     pluginDep.path = $$QT_PLUGINS_BASE_DIR\mediaservice    
 
     DEPLOYMENT += pluginDep    
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.CAPABILITY = ALL -TCB -DRM
+    TARGET.CAPABILITY = ALL -TCB
