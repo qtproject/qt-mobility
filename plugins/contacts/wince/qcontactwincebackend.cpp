@@ -347,9 +347,6 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(Q
     // No logo for organisation
     defns[QContactOrganisation::DefinitionName].fields().remove(QContactOrganisation::FieldLogo);
 
-    // Address label is read only
-    defns[QContactAddress::DefinitionName].fields().remove(QContactAddress::FieldDisplayLabel); // XXX This is a bit heavy handed
-
     // No subtypes for these details
     defns[QContactAddress::DefinitionName].fields().remove(QContactAddress::FieldSubTypes);
     defns[QContactUrl::DefinitionName].fields().remove(QContactUrl::FieldSubType);

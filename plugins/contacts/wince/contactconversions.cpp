@@ -171,12 +171,11 @@ static void processAddress(const QString& context, const QVariantList& values, Q
 {
     QContactAddress address;
     address.setContexts(context);
-    setIfNotEmpty(address, QContactAddress::FieldStreet, values[1].toString());
-    setIfNotEmpty(address, QContactAddress::FieldPostcode, values[2].toString());
-    setIfNotEmpty(address, QContactAddress::FieldLocality, values[3].toString());
-    setIfNotEmpty(address, QContactAddress::FieldRegion, values[4].toString());
-    setIfNotEmpty(address, QContactAddress::FieldCountry, values[5].toString());
-    setIfNotEmpty(address, QContactAddress::FieldDisplayLabel, values[0].toString());
+    setIfNotEmpty(address, QContactAddress::FieldStreet, values[0].toString());
+    setIfNotEmpty(address, QContactAddress::FieldPostcode, values[1].toString());
+    setIfNotEmpty(address, QContactAddress::FieldLocality, values[2].toString());
+    setIfNotEmpty(address, QContactAddress::FieldRegion, values[3].toString());
+    setIfNotEmpty(address, QContactAddress::FieldCountry, values[4].toString());
     if (!address.isEmpty())
         ret.saveDetail(&address);
 }
@@ -399,19 +398,19 @@ static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<C
 
         // Home address
         PoomContactElement homeAddress;
-        homeAddress.poom << PIMPR_HOME_ADDRESS << PIMPR_HOME_ADDRESS_STREET << PIMPR_HOME_ADDRESS_POSTAL_CODE << PIMPR_HOME_ADDRESS_CITY << PIMPR_HOME_ADDRESS_STATE << PIMPR_HOME_ADDRESS_COUNTRY;
+        homeAddress.poom << PIMPR_HOME_ADDRESS_STREET << PIMPR_HOME_ADDRESS_POSTAL_CODE << PIMPR_HOME_ADDRESS_CITY << PIMPR_HOME_ADDRESS_STATE << PIMPR_HOME_ADDRESS_COUNTRY;
         homeAddress.func = processHomeAddress;
         list.append(homeAddress);
 
         // Work address
         PoomContactElement workAddress;
-        workAddress.poom << PIMPR_BUSINESS_ADDRESS << PIMPR_BUSINESS_ADDRESS_STREET << PIMPR_BUSINESS_ADDRESS_POSTAL_CODE << PIMPR_BUSINESS_ADDRESS_CITY << PIMPR_BUSINESS_ADDRESS_COUNTRY;
+        workAddress.poom << PIMPR_BUSINESS_ADDRESS_STREET << PIMPR_BUSINESS_ADDRESS_POSTAL_CODE << PIMPR_BUSINESS_ADDRESS_CITY << PIMPR_BUSINESS_ADDRESS_COUNTRY;
         workAddress.func = processWorkAddress;
         list.append(workAddress);
 
         // Other address
         PoomContactElement otherAddress;
-        otherAddress.poom << PIMPR_OTHER_ADDRESS << PIMPR_OTHER_ADDRESS_STREET << PIMPR_OTHER_ADDRESS_POSTAL_CODE << PIMPR_OTHER_ADDRESS_CITY << PIMPR_OTHER_ADDRESS_COUNTRY;
+        otherAddress.poom << PIMPR_OTHER_ADDRESS_STREET << PIMPR_OTHER_ADDRESS_POSTAL_CODE << PIMPR_OTHER_ADDRESS_CITY << PIMPR_OTHER_ADDRESS_COUNTRY;
         otherAddress.func = processOtherAddress;
         list.append(otherAddress);
 
@@ -680,7 +679,6 @@ static void processQAddresses(const QList<QContactAddress>& addresses, QVector<C
                 addIfNotEmpty(PIMPR_HOME_ADDRESS_POSTAL_CODE, address.postcode(), props);
                 addIfNotEmpty(PIMPR_HOME_ADDRESS_STATE, address.region(), props);
                 addIfNotEmpty(PIMPR_HOME_ADDRESS_STREET, address.street(), props);
-                addIfNotEmpty(PIMPR_HOME_ADDRESS, address.displayLabel(), props);
                 homeAvailable = false;
             } else {
                 deferred.append(address);
@@ -692,7 +690,6 @@ static void processQAddresses(const QList<QContactAddress>& addresses, QVector<C
                 addIfNotEmpty(PIMPR_BUSINESS_ADDRESS_POSTAL_CODE, address.postcode(), props);
                 addIfNotEmpty(PIMPR_BUSINESS_ADDRESS_STATE, address.region(), props);
                 addIfNotEmpty(PIMPR_BUSINESS_ADDRESS_STREET, address.street(), props);
-                addIfNotEmpty(PIMPR_BUSINESS_ADDRESS, address.displayLabel(), props);
                 workAvailable = false;
             } else {
                 deferred.append(address);
@@ -704,7 +701,6 @@ static void processQAddresses(const QList<QContactAddress>& addresses, QVector<C
                 addIfNotEmpty(PIMPR_OTHER_ADDRESS_POSTAL_CODE, address.postcode(), props);
                 addIfNotEmpty(PIMPR_OTHER_ADDRESS_STATE, address.region(), props);
                 addIfNotEmpty(PIMPR_OTHER_ADDRESS_STREET, address.street(), props);
-                addIfNotEmpty(PIMPR_OTHER_ADDRESS, address.displayLabel(), props);
                 otherAvailable = false;
             } else {
                 deferred.append(address);
@@ -725,7 +721,6 @@ static void processQAddresses(const QList<QContactAddress>& addresses, QVector<C
         // Well, first choice is to use other
         // but we really need to save the contexts XXX
         if (otherAvailable) {
-            addIfNotEmpty(PIMPR_OTHER_ADDRESS, address.displayLabel(), props);
             addIfNotEmpty(PIMPR_OTHER_ADDRESS_CITY, address.locality(), props);
             addIfNotEmpty(PIMPR_OTHER_ADDRESS_COUNTRY, address.country(), props);
             addIfNotEmpty(PIMPR_OTHER_ADDRESS_POSTAL_CODE, address.postcode(), props);
@@ -733,7 +728,6 @@ static void processQAddresses(const QList<QContactAddress>& addresses, QVector<C
             addIfNotEmpty(PIMPR_OTHER_ADDRESS_STREET, address.street(), props);
             otherAvailable = false;
         } else if (workAvailable) {
-            addIfNotEmpty(PIMPR_BUSINESS_ADDRESS, address.displayLabel(), props);
             addIfNotEmpty(PIMPR_BUSINESS_ADDRESS_CITY, address.locality(), props);
             addIfNotEmpty(PIMPR_BUSINESS_ADDRESS_COUNTRY, address.country(), props);
             addIfNotEmpty(PIMPR_BUSINESS_ADDRESS_POSTAL_CODE, address.postcode(), props);
@@ -741,7 +735,6 @@ static void processQAddresses(const QList<QContactAddress>& addresses, QVector<C
             addIfNotEmpty(PIMPR_BUSINESS_ADDRESS_STREET, address.street(), props);
             workAvailable = false;
         } else {
-            addIfNotEmpty(PIMPR_HOME_ADDRESS, address.displayLabel(), props);
             addIfNotEmpty(PIMPR_HOME_ADDRESS_CITY, address.locality(), props);
             addIfNotEmpty(PIMPR_HOME_ADDRESS_COUNTRY, address.country(), props);
             addIfNotEmpty(PIMPR_HOME_ADDRESS_POSTAL_CODE, address.postcode(), props);
