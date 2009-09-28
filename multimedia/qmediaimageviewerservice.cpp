@@ -368,6 +368,9 @@ public:
         , rendererControl(0)
 #endif
         , network(0)
+#ifndef QT_NO_MULTIMEDIA
+        , surface(0)
+#endif
     {
     }
 
