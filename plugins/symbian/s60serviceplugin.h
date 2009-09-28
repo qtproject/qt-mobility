@@ -40,19 +40,19 @@
 #include <qmediaserviceprovider.h>
 
 
-class S60ServiceProvider : public QMediaServiceProvider
+/*class S60ServiceProvider : public QMediaServiceProvider
 {
     Q_OBJECT
 public:
     QObject* createObject(const char *iid) const;
-};
+};*/
 
 class S60ServiceProviderPlugin : public QMediaServiceProviderPlugin
 {
     Q_OBJECT
 public:
     QStringList keys() const;
-    QMediaServiceProvider* create(QString const& key);
+    QMediaService* create(QString const& key);
 };
 
 #endif // S60SERVICEPLUGIN_H

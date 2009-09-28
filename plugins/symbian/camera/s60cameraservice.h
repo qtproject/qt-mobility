@@ -37,7 +37,7 @@
 
 #include <QtCore/qobject.h>
 
-#include "qcameraservice.h"
+#include <multimedia/qmediaservice.h>
 
 class S60MediaFormatControl;
 class S60VideoEncoder;
@@ -46,14 +46,14 @@ class S60MediaControl;
 class S60CameraSession;
 class S60VideoOutputControl;
 
-class S60CameraService : public QCameraService
+class S60CameraService : public QMediaService
 {
     Q_OBJECT
 public:
     S60CameraService(QObject *parent = 0);
     ~S60CameraService();
 
-    QAbstractMediaControl *control(const char *name) const;
+    QMediaControl *control(const char *name) const;
 
 private:
     

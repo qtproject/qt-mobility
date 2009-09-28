@@ -37,20 +37,20 @@
 
 #include <QtCore/qobject.h>
 
-#include "qradioservice.h"
+#include <multimedia/qmediaservice.h>
 
 class S60RadioControl;
 
-class S60RadioService : public QRadioService
+class S60RadioService : public QMediaService
 {
     Q_OBJECT
 public:
     S60RadioService(QObject *parent = 0);
     ~S60RadioService();
 
-    QAbstractMediaControl *control(const char* name) const;
+    QMediaControl *control(const char* name) const;
 
-    bool isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType);
+    bool isEndpointSupported(QMediaService::MediaEndpoint endpointType);
 
     void setInputStream(QIODevice* stream);
     QIODevice* inputStream() const;
@@ -58,9 +58,9 @@ public:
     void setOutputStream(QIODevice* stream);
     QIODevice* outputStream() const;
 
-    QString activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType);
-    bool setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint);
-    QList<QString> supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const;
+    QString activeEndpoint(QMediaService::MediaEndpoint endpointType);
+    bool setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
+    QList<QString> supportedEndpoints(QMediaService::MediaEndpoint endpointType) const;
 private:
     S60RadioControl *m_control;
 };

@@ -48,7 +48,7 @@
 #include "s60videoencoder.h"
 
 S60CameraService::S60CameraService(QObject *parent)
-    : QCameraService(parent)
+    : QMediaService(parent)
 {
     m_session = new S60CameraSession(this);
     m_control = new S60CameraControl(this,m_session);
@@ -82,7 +82,7 @@ void S60CameraService::setVideoOutput(QObject *output)
 }
 */
 
-QAbstractMediaControl *S60CameraService::control(const char *name) const
+QMediaControl *S60CameraService::control(const char *name) const
 {
     if (qstrcmp(name,QMediaRecorderControl_iid) == 0)
         return m_media;

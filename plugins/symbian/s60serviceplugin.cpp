@@ -45,7 +45,7 @@
 //#include <qmediaserviceprovider.h>
 
 
-QObject* S60ServiceProvider::createObject(const char *interface) const
+/*QObject* S60ServiceProvider::createObject(const char *interface) const
 {
     if (qstrcmp(interface,QRadioService_iid) == 0)
         return new S60RadioService;
@@ -54,7 +54,7 @@ QObject* S60ServiceProvider::createObject(const char *interface) const
         return new S60CameraService;
 
     return 0;
-};
+};*/
 
 QStringList S60ServiceProviderPlugin::keys() const
 {
@@ -64,10 +64,12 @@ QStringList S60ServiceProviderPlugin::keys() const
     return list;
 }
 
-QMediaServiceProvider* S60ServiceProviderPlugin::create(QString const& key)
+QMediaService* S60ServiceProviderPlugin::create(QString const& key)
 {
-    if (key == QLatin1String("radio") || key == QLatin1String("camera"))
-        return new S60ServiceProvider;
+    if (key == QLatin1String("radio")) 
+        return new S60RadioService;
+    else if (key == QLatin1String("camera"))
+        return new S60RadioService;
 
     qDebug() << "unsupported key:" << key;
     return 0;

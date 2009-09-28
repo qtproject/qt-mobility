@@ -41,7 +41,7 @@
 #include "s60radiocontrol.h"
 
 S60RadioService::S60RadioService(QObject *parent)
-    : QRadioService(parent)
+    : QMediaService(parent)
 {
     m_control = new S60RadioControl(this);
 }
@@ -50,14 +50,14 @@ S60RadioService::~S60RadioService()
 {
 }
 
-QAbstractMediaControl *S60RadioService::control(const char* name) const
+QMediaControl *S60RadioService::control(const char* name) const
 {
     Q_UNUSED(name)
 
     return m_control;
 }
 
-bool S60RadioService::isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType)
+bool S60RadioService::isEndpointSupported(QMediaService::MediaEndpoint endpointType)
 {
     return false;
 }
@@ -80,17 +80,17 @@ QIODevice* S60RadioService::outputStream() const
     return 0;
 }
 
-QString S60RadioService::activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType)
+QString S60RadioService::activeEndpoint(QMediaService::MediaEndpoint endpointType)
 {
     return QByteArray();
 }
 
-bool S60RadioService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint)
+bool S60RadioService::setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint)
 {
     return true;
 }
 
-QList<QString> S60RadioService::supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const
+QList<QString> S60RadioService::supportedEndpoints(QMediaService::MediaEndpoint endpointType) const
 {
     QList<QString> list;
     //TODO
