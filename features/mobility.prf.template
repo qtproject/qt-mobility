@@ -21,3 +21,15 @@ contains(MOBILITY, serviceframework) {
 contains(MOBILITY, systeminfo) {
     qtAddLibrary(QtSystemInfo)
 }
+
+contains(MOBILITY, multimedia) {
+    qtAddLibrary(QtMedia)
+}
+
+contains(MOBILITY, contacts) {
+    qtAddLibrary(QtContacts)
+}
+
+contains(MOBILITY, messaging) {
+    qtAddLibrary(QtMessaging)
+}
