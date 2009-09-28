@@ -234,11 +234,19 @@ bool QContactSymbianEngine::saveGroup(QContactGroup* group, QContactManager::Err
 {
     QContactChangeSet changeSet;
     bool ret = false;
-    if (group->id() > 0) {
-        ret = d->saveGroup(*group, changeSet, error);
+
+    if(group)
+    {
+        if (group->id() > 0) {
+            ret = d->updateGroup(*group, changeSet, error);
+        }
+        else {
+            ret = d->addGroup(*group, changeSet, error);
+        }
     }
-    else {
-        ret = d->saveGroup(*group, changeSet, error);
+    else
+    {
+        error = QContactManager::BadArgumentError;
     }
     changeSet.emitSignals(this);
     return ret;
@@ -273,8 +281,10 @@ bool QContactSymbianEngine::hasFeature(QContactManagerInfo::ManagerFeature featu
            QContactManagerInfo::ActionPreferences,
            QContactManagerInfo::MutableDefinitions,
            QContactManagerInfo::Anonymous? */
-        default:
-            return false;
+    case QContactManagerInfo::Groups:
+        return true;
+    default:
+        return false;
     }
 }
 

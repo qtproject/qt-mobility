@@ -87,7 +87,8 @@ public:
     /* Groups functionality */
 	QList<QUniqueId> groups(QContactManager::Error& qtError) const;
 	QContactGroup group(const QUniqueId& groupId, QContactManager::Error& qtError) const;
-	bool saveGroup(QContactGroup& group, QContactChangeSet& changeSet, QContactManager::Error& qtError);
+	bool addGroup(QContactGroup& group, QContactChangeSet& changeSet, QContactManager::Error& qtError);
+	bool updateGroup(QContactGroup& group, QContactChangeSet& changeSet, QContactManager::Error& qtError);
 	bool removeGroup(const QUniqueId& groupId, QContactChangeSet& changeSet, QContactManager::Error& qtError);
 	QUniqueId simPhonebookGroupId() const;
     
@@ -107,30 +108,32 @@ signals:
 private:
     // Utility function to convert symbian error to QContactManager error
 	void transformError(TInt symbianError, QContactManager::Error& qtError) const;
-		
+
 	// Leaving functions implementing CNTMODEL interaction.
 	QContact contactL(const QUniqueId &id) const;
 	QList<QUniqueId> contactsL() const;
 	int countL() const;
-	
+
 	int addContactL(QContact &contact);
 	void updateContactL(QContact &contact);
     int removeContactL(QUniqueId id);
-	
+
 	QList<QUniqueId>  matchCommunicationAddressL( const QString &communicationType, const QString &communicationAddress );
 
 	//Leaving functions for groups functionality
 	QList<QUniqueId> groupsL() const;
 	QContactGroup groupL(const QUniqueId& groupId) const;
-	void saveGroupL(QContactGroup& group);
+	void addGroupL(QContactGroup& group);
+	void updateGroupL(QContactGroup& group);
 	void removeGroupL(const QUniqueId& groupId);
 	QUniqueId simPhonebookGroupIdL() const;
+	QList<QUniqueId> memberOfGroupsL(const TContactItemId contactId) const;
+	void updateMemberOfGroupsL(QContact contact);
 
 	//utility functions
 	CContactGroup* fetchCGroup(const QUniqueId& id) const;
 	bool isGroup(const QUniqueId& id) const;
-	
-	
+
 private:
 	CContactDatabase* m_contactDatabase;
 #ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__  

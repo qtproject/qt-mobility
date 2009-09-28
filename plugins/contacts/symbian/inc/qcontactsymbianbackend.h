@@ -59,6 +59,7 @@
 
 
 class QContactSymbianEngineData;
+class QContactChangeSet;
 
 class QContactSymbianEngine : public QContactManagerEngine
 {
