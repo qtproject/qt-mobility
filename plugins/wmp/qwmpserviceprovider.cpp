@@ -59,4 +59,10 @@ QMediaService *QWmpServiceProviderPlugin::create(const QString &key)
     return 0;
 }
 
+void QWmpServiceProviderPlugin::release(QMediaService *service)
+{
+    delete service;
+}
+
+
 Q_EXPORT_PLUGIN2(qwmp, QWmpServiceProviderPlugin);

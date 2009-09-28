@@ -55,5 +55,10 @@ QMediaService* QPhononServicePlugin::create(QString const& key)
     return 0;
 }
 
+void QPhononServicePlugin::release(QMediaService *service)
+{
+    delete service;
+}
+
 Q_EXPORT_PLUGIN2(phonon_serviceplugin, QPhononServicePlugin);
 

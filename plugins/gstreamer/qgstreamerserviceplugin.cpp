@@ -78,5 +78,10 @@ QMediaService* QGstreamerServicePlugin::create(const QString &key)
     return 0;
 }
 
+void QGstreamerServicePlugin::release(QMediaService *service)
+{
+    delete service;
+}
+
 Q_EXPORT_PLUGIN2(gstengine, QGstreamerServicePlugin);
 

@@ -55,5 +55,10 @@ QMediaService* AudioCaptureServicePlugin::create(QString const& key)
     return 0;
 }
 
+void AudioCaptureServicePlugin::release(QMediaService *service)
+{
+    delete service;
+}
+
 Q_EXPORT_PLUGIN2(audioengine, AudioCaptureServicePlugin);
 

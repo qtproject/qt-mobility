@@ -46,6 +46,7 @@ struct Q_MEDIA_EXPORT QMediaServiceProviderFactoryInterface : public QFactoryInt
 {
     virtual QStringList keys() const = 0;
     virtual QMediaService* create(QString const& key) = 0;
+    virtual void release(QMediaService *service) = 0;
 };
 
 #define QMediaServiceProviderFactoryInterface_iid \
@@ -60,6 +61,7 @@ class Q_MEDIA_EXPORT QMediaServiceProviderPlugin : public QObject, public QMedia
 public:
     virtual QStringList keys() const = 0;
     virtual QMediaService* create(QString const& key) = 0;
+    virtual void release(QMediaService *service) = 0;
 };
 
 

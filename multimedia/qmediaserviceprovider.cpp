@@ -34,6 +34,7 @@
 
 
 #include <QtCore/qdebug.h>
+#include <QtCore/qmap.h>
 
 #include <multimedia/qmediaservice.h>
 #include <multimedia/qmediaserviceprovider.h>
@@ -46,6 +47,8 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, loader,
 
 class QPluginServiceProvider : public QMediaServiceProvider
 {
+    QMap<QMediaService*, QMediaServiceProviderPlugin*> pluginMap;
+
 public:
     QMediaService* requestService(const QByteArray &type, const QList<QByteArray> &)
     {
@@ -53,16 +56,26 @@ public:
         QMediaServiceProviderPlugin *plugin =
             qobject_cast<QMediaServiceProviderPlugin*>(loader()->instance(key));
 
-        if (plugin != 0)
-            return plugin->create(key);
+        if (plugin != 0) {
+            QMediaService *service = plugin->create(key);
+            if (service != 0)
+                pluginMap.insert(service, plugin);
 
-        qWarning() << "defaultServiceProvider::requestService(): no plugin found for -" << key;
+            return service;
+        }
+
+        qWarning() << "defaultServiceProvider::requestService(): no service found for -" << key;
         return 0;
     }
 
     void releaseService(QMediaService *service)
     {
-        delete service;
+        if (service != 0) {
+            QMediaServiceProviderPlugin *plugin = pluginMap.take(service);
+
+            if (plugin != 0)
+                plugin->release(service);
+        }
     }
 };
 

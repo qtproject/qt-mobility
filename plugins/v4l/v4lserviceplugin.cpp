@@ -59,5 +59,10 @@ QMediaService* V4LServicePlugin::create(QString const& key)
     return 0;
 }
 
+void V4LServicePlugin::release(QMediaService *service)
+{
+    delete service;
+}
+
 Q_EXPORT_PLUGIN2(v4lengine, V4LServicePlugin);
 

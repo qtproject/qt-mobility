@@ -44,6 +44,7 @@ class QGstreamerServicePlugin : public QMediaServiceProviderPlugin
 public:
     QStringList keys() const;
     QMediaService* create(QString const& key);
+    void release(QMediaService *service);
 };
 
 #endif // QGSTREAMERSERVICEPLUGIN_H

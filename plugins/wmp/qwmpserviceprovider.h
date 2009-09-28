@@ -45,6 +45,7 @@ class QWmpServiceProviderPlugin : public QMediaServiceProviderPlugin
 public:
     QStringList keys() const;
     QMediaService *create(const QString &key);
+    void release(QMediaService *service);
 };
 
 #endif
