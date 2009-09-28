@@ -70,7 +70,7 @@ SUBDIRS += \           #Multimedia
         qcamera
 
 #Messaging
-contains(qmf_enabled,yes)|wince*|win32 {
+contains(qmf_enabled,yes)|wince*|win32|symbian|maemo {
     SUBDIRS += \
         support \
         qmessagestore \

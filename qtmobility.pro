@@ -40,8 +40,7 @@ symbian:SUBDIRS += serviceframework/symbian/dll/databasemanagerserver_dll.pro \
 
 SUBDIRS += bearer location context systeminfo contacts multimedia tools plugins
 
-contains(qmf_enabled, yes)|wince*|win32 {
-    message(ffffffffffff)
+contains(qmf_enabled, yes)|wince*|win32|symbian|maemo {
     SUBDIRS += messaging
 }
 

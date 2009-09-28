@@ -38,7 +38,7 @@ SUBDIRS += player \
         streamplayer
 
 #Messaging examples
-contains(qmf_enabled,yes)|wince*|win32 {
+contains(qmf_enabled,yes)|wince*|win32|symbian|maemo {
     SUBDIRS += \
         keepintouch\
         querymessages\
