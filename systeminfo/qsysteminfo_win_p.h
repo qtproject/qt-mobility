@@ -51,7 +51,7 @@
 #include <QHash>
 
 #include "qsysteminfo.h"
-#include <qsysinfoglobal.h>
+#include "qsysinfoglobal.h"
 
 QT_BEGIN_HEADER
 
