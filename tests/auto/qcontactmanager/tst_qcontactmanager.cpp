@@ -519,9 +519,11 @@ void tst_QContactManager::groups()
         QVERIFY(g2.id() == g.id());
         QVERIFY(g2.members().count() == 0);
         QCOMPARE(g.members(), g2.members());
+        QCOMPARE(g.name(), g2.name());
 
         /* Update the group */
         g.addMember(a.id());
+        g.setName("YYYYYYYYY Group");
         QVERIFY(g.members().count() == 1);
         QVERIFY(g.members().at(0) == a.id());
 
@@ -540,6 +542,7 @@ void tst_QContactManager::groups()
         QVERIFY(g2.members().count() == 1);
         QVERIFY(g2.members().at(0) == a.id());
         QCOMPARE(g.members(), g2.members());
+        QCOMPARE(g.name(), g2.name());
 
         /* Remove the group */
         QVERIFY(cm->removeGroup(g.id()) == true);
@@ -587,9 +590,15 @@ void tst_QContactManager::groups()
         QVERIFY(g2.members().count() == 2);
         QCOMPARE(g2.members(), g3.members());
 
+        /* Add the first group back again - should fail with does not exist since it has a stale id */
+        QVERIFY(!cm->saveGroup(&g));
+        QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
 
-        /* Add the first group back again */
+        /* Clearing the id and re setting should work */
+        g.setId(0);
         QVERIFY(cm->saveGroup(&g));
+        QCOMPARE(cm->error(), QContactManager::NoError);
+
         /* Add the g group to another two contacts */
         c = cm->contact(c.id());
         QList<QUniqueId> ids = c.groups();

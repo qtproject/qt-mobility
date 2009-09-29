@@ -387,8 +387,13 @@ bool QContactMemoryEngine::saveGroup(QContactGroup* group, QContactChangeSet& ch
 
     // if the group does not exist, generate a new group id for it.
     if (!d->m_groups.contains(group->id())) {
-        group->setId(++d->m_nextGroupId);
-        changeSet.addedGroups().insert(group->id());
+        if (group->id() != 0) {
+            error = QContactManager::DoesNotExistError;
+            return false;
+        } else {
+            group->setId(++d->m_nextGroupId);
+            changeSet.addedGroups().insert(group->id());
+        }
     } else {
         changeSet.changedGroups().insert(group->id());
     }
