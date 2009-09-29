@@ -272,11 +272,12 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QContactManager::Error&
                 hr = icontact->get_Oid(&oid);
                 if (SUCCEEDED(hr)) {
                     contact->setId((QUniqueId)oid);
-                    if (wasOld)
+                    if (wasOld) {
                         cs.changedContacts().insert(contact->id());
-                    else
+                    } else {
                         cs.addedContacts().insert(contact->id());
-                    d->m_ids.append(contact->id());
+                        d->m_ids.append(contact->id());
+                    }
                     error = QContactManager::NoError;
 
                     cs.emitSignals(this);
