@@ -678,6 +678,7 @@ void QTrackerContactAsyncRequest::processQueryIMAccounts(SopranoLive::LiveNodes 
                     presence.setContexts(QContactPresence::ContextWork);
                 presence.setValue(QContactPresence::FieldNickname, queryIMAccounts->index(i, 4).data().toString()); // nick
                 presence.setValue(QContactPresence::FieldPresence, queryIMAccounts->index(i, 2).data().toString()); // imStatus
+                qDebug() << "the status from **tracker**" << presence.value(QContactPresence::FieldPresence);
                 presence.setValue(QContactPresence::FieldStatusMessage, queryIMAccounts->index(i, 3).data().toString()); // imStatusMessage
                 contacts[j].saveDetail(&presence);
                 break;
