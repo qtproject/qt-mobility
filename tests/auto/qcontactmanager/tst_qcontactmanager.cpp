@@ -34,6 +34,7 @@
 #include <QtTest/QtTest>
 
 #include "qtcontacts.h"
+#include "qcontactchangeset.h"
 
 //TESTED_CLASS=
 //TESTED_FILES=
@@ -87,6 +88,7 @@ private slots:
     void detailDefinitions();
     void displayName();
     void actionPreferences();
+    void selfContactId();
 
     /* Tests that take no data */
     void contactValidation();
@@ -94,6 +96,7 @@ private slots:
     void ctors();
     void invalidManager();
     void memoryManager();
+    void changeSet();
 
     /* data providers (mostly all engines) */
     void uriParsing_data(); // Special data
@@ -108,6 +111,7 @@ private slots:
     void detailDefinitions_data() {addManagers();}
     void displayName_data() {addManagers();}
     void actionPreferences_data() {addManagers();}
+    void selfContactId_data() {addManagers();}
 };
 
 tst_QContactManager::tst_QContactManager()
@@ -2423,6 +2427,84 @@ void tst_QContactManager::actionPreferences()
 
     cm->removeContact(c.id());
     delete cm;
+}
+
+void tst_QContactManager::changeSet()
+{
+    QUniqueId id(1);
+
+    QContactChangeSet cs;
+    QVERIFY(cs.addedContacts().isEmpty());
+    QVERIFY(cs.changedContacts().isEmpty());
+    QVERIFY(cs.removedContacts().isEmpty());
+    QVERIFY(cs.addedGroups().isEmpty());
+    QVERIFY(cs.changedGroups().isEmpty());
+    QVERIFY(cs.removedGroups().isEmpty());
+
+    cs.addedContacts().insert(id);
+    QVERIFY(!cs.addedContacts().isEmpty());
+    QVERIFY(cs.changedContacts().isEmpty());
+    QVERIFY(cs.removedContacts().isEmpty());
+    QVERIFY(cs.addedGroups().isEmpty());
+    QVERIFY(cs.changedGroups().isEmpty());
+    QVERIFY(cs.removedGroups().isEmpty());
+    QVERIFY(cs.addedContacts().contains(id));
+
+    cs.changedContacts().insert(id);
+    cs.changedContacts().insert(id);
+    QVERIFY(cs.changedContacts().size() == 1); // set, should only be added once.
+    QVERIFY(!cs.addedContacts().isEmpty());
+    QVERIFY(!cs.changedContacts().isEmpty());
+    QVERIFY(cs.removedContacts().isEmpty());
+    QVERIFY(cs.addedGroups().isEmpty());
+    QVERIFY(cs.changedGroups().isEmpty());
+    QVERIFY(cs.removedGroups().isEmpty());
+    QVERIFY(cs.changedContacts().contains(id));
+
+    QVERIFY(cs.dataChanged() == false);
+    cs.setDataChanged(true);
+    QVERIFY(cs.dataChanged() == true);
+
+    QContactChangeSet cs2;
+    cs2 = cs;
+    QVERIFY(cs.addedContacts() == cs2.addedContacts());
+    cs.emitSignals(0);
+
+    cs2.clear();
+    QVERIFY(cs.addedContacts() != cs2.addedContacts());
+    QVERIFY(cs.dataChanged() != cs2.dataChanged());
+
+    QContactChangeSet cs3(cs2);
+    QVERIFY(cs.dataChanged() != cs3.dataChanged());
+    QVERIFY(cs.addedContacts() != cs3.addedContacts());
+    QVERIFY(cs2.addedContacts() == cs3.addedContacts());
+}
+
+void tst_QContactManager::selfContactId()
+{
+    QFETCH(QString, uri);
+    QContactManager* cm = QContactManager::fromUri(uri);
+
+    // generate a new self contact id
+    QUniqueId selfContact = cm->selfContactId();
+    QUniqueId newSelfContact = QUniqueId(321);
+    if (newSelfContact == selfContact)
+        newSelfContact = QUniqueId(123);
+
+    // early out if the manager doesn't support self contact id saving
+    if (!cm->information()->hasFeature(QContactManagerInfo::SelfContact)) {
+        // ensure that the error codes / return values are meaningful failures.
+        QVERIFY(cm->error() == QContactManager::DoesNotExistError);
+        QVERIFY(!cm->setSelfContactId(newSelfContact));
+        QVERIFY(cm->error() == QContactManager::NotSupportedError);
+        QSKIP("Manager does not support the concept of a self-contact", SkipSingle);
+        return;
+    }
+
+    QVERIFY(cm->error() == QContactManager::NoError);
+    cm->setSelfContactId(newSelfContact);
+    QVERIFY(cm->selfContactId() == newSelfContact);
+    QVERIFY(cm->error() == QContactManager::NoError);
 }
 
 QTEST_MAIN(tst_QContactManager)
