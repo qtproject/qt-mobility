@@ -128,7 +128,7 @@ wince* {
     LIBS += cemapi.lib strmiids.lib uuid.lib
 }
 else {
-    LIBS += mapi32.lib shlwapi.lib
+    LIBS += mapi32.lib shlwapi.lib user32.lib
 }
 
 }

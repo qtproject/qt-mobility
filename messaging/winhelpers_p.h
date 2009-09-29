@@ -280,6 +280,9 @@ signals:
     void messageRemoved(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &matchingFilterIds);
     void messageUpdated(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &matchingFilterIds);
 
+public slots:
+    void dispatchNotifications();
+
 private:
     MapiSession();
     MapiSession(QMessageStore::ErrorCode *lastError);

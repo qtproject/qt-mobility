@@ -54,12 +54,15 @@
 #include "qmessageordering_p.h"
 #include "qmessagefilter_p.h"
 
+#include <QCoreApplication>
 #include <QDebug>
+#include <QFile>
 #include <QTextCodec>
+#include <QTimer>
+
 #include <shlwapi.h>
 #include <shlguid.h>
 #include <tchar.h>
-#include <QFile>
 #include <mapitags.h>
 
 
@@ -930,7 +933,6 @@ namespace WinHelpers {
 
         return result;
     }
-
 }
 
 using namespace WinHelpers;
@@ -1844,7 +1846,8 @@ MapiSession::MapiSession()
 }
 
 MapiSession::MapiSession(QMessageStore::ErrorCode *lastError)
-    :_token(WinHelpers::initializeMapi()),
+    :QObject(),
+     _token(WinHelpers::initializeMapi()),
      _mapiSession(0),
      _filterId(0),
      _registered(false)
@@ -1859,6 +1862,10 @@ MapiSession::MapiSession(QMessageStore::ErrorCode *lastError)
             *lastError = QMessageStore::ContentInaccessible;
             _mapiSession = 0;
         }
+
+        // This thread must run the message pump for the hidden MAPI window
+        // http://blogs.msdn.com/stephen_griffin/archive/2009/05/22/the-fifth-mapi-multithreading-rule.aspx
+        dispatchNotifications();
     }
 }
 
@@ -2896,16 +2903,15 @@ QMessageStore::NotificationFilterId MapiSession::registerNotificationFilter(QMes
                     IMAPIAdviseSink *wrappedSink(0);
                     HrThisThreadAdviseSink(sink, &wrappedSink);
                     mapiRelease(sink);
-                    sink = wrappedSink;
 
                     ULONG mask(fnevNewMail | fnevObjectCreated | fnevObjectCopied | fnevObjectDeleted | fnevObjectModified | fnevObjectMoved);
                     ULONG connectionNumber;
-                    rv = store->store()->Advise(0, NULL, mask, sink, &connectionNumber);
+                    rv = store->store()->Advise(0, 0, mask, wrappedSink, &connectionNumber);
                     if (HR_FAILED(rv)) {
                         qWarning() << "Unable to register for notifications from store.";
                     }
 
-                    mapiRelease(sink);
+                    mapiRelease(wrappedSink);
                 } else {
                     qWarning() << "unable to allocate advise sink.";
                 }
@@ -2921,4 +2927,15 @@ QMessageStore::NotificationFilterId MapiSession::registerNotificationFilter(QMes
 void MapiSession::unregisterNotificationFilter(QMessageStore::ErrorCode *lastError, QMessageStore::NotificationFilterId filterId)
 {
     _filters.remove(filterId);
+}
+
+void MapiSession::dispatchNotifications()
+{
+    MSG msg = { 0 };
+    while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
+
+    QTimer::singleShot(1000, this, SLOT(dispatchNotifications()));
 }
