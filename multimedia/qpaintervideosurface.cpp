@@ -54,6 +54,10 @@
 #endif
 #endif
 
+#ifndef GL_UNSIGNED_SHORT_5_6_5
+#define GL_UNSIGNED_SHORT_5_6_5 33635
+#endif
+
 // Paints an RGB32 frame
 static const char *qt_xrgbShaderProgram =
     "!!ARBfp1.0\n"
@@ -150,18 +154,18 @@ QPainterVideoSurface::QPainterVideoSurface(const QGLContext *context, QObject *p
     if (context) {
         const_cast<QGLContext *>(context)->makeCurrent();
 
-        glProgramStringARB = reinterpret_cast<_glProgramStringARB>(
-                context->getProcAddress(QLatin1String("glProgramStringARB")));
-        glBindProgramARB = reinterpret_cast<_glBindProgramARB>(
-                context->getProcAddress(QLatin1String("glBindProgramARB")));
-        glDeleteProgramsARB = reinterpret_cast<_glDeleteProgramsARB>(
-                context->getProcAddress(QLatin1String("glDeleteProgramsARB")));
-        glGenProgramsARB = reinterpret_cast<_glGenProgramsARB>(
-                context->getProcAddress(QLatin1String("glGenProgramsARB")));
-        glProgramLocalParameter4fARB = reinterpret_cast<_glProgramLocalParameter4fARB>(
-                context->getProcAddress(QLatin1String("glProgramLocalParameter4fARB")));
-        glActiveTexture = reinterpret_cast<_glActiveTexture>(
-                context->getProcAddress(QLatin1String("glActiveTexture")));
+        glProgramStringARB = (_glProgramStringARB) context->getProcAddress(
+                QLatin1String("glProgramStringARB"));
+        glBindProgramARB = (_glBindProgramARB) context->getProcAddress(
+                QLatin1String("glBindProgramARB"));
+        glDeleteProgramsARB = (_glDeleteProgramsARB) context->getProcAddress(
+                QLatin1String("glDeleteProgramsARB"));
+        glGenProgramsARB = (_glGenProgramsARB) context->getProcAddress(
+                QLatin1String("glGenProgramsARB"));
+        glProgramLocalParameter4fARB = (_glProgramLocalParameter4fARB) context->getProcAddress(
+                QLatin1String("glProgramLocalParameter4fARB"));
+        glActiveTexture = (_glActiveTexture) context->getProcAddress(
+                QLatin1String("glActiveTexture"));
 
         if (glProgramStringARB
                 && glBindProgramARB
@@ -260,7 +264,7 @@ bool QPainterVideoSurface::start(const QVideoSurfaceFormat &format)
                     program = qt_argbShaderProgram;
                     break;
                 case QVideoFrame::Format_RGB565:
-                    initRgbTextureInfo(GL_RGB16, GL_RGB, imageSize);
+                    initRgbTextureInfo(GL_UNSIGNED_SHORT_5_6_5, GL_RGB, imageSize);
                     program = qt_rgbShaderProgram;
                     break;
                 case QVideoFrame::Format_YV12:
@@ -528,13 +532,18 @@ void QPainterVideoSurface::paint(QPainter *painter, const QRect &rect)
         float txBottom = float(m_sourceRect.bottom()) / float(m_imageSize.height());
 
         const float tx_array[] =
-        {   txLeft, txTop, txRight, txTop, txRight, txBottom, txLeft, txBottom };
+        {
+            txLeft , txBottom,
+            txRight, txBottom,
+            txLeft , txTop,
+            txRight, txTop
+        };
         const float v_array[] =
         {
-            rect.left(),      rect.top(),
-            rect.right() + 1, rect.top(),
+            rect.left()     , rect.bottom() + 1,
             rect.right() + 1, rect.bottom() + 1,
-            rect.left(),      rect.bottom() + 1
+            rect.left()     , rect.top(),
+            rect.right() + 1, rect.top()
         };
 
         glEnable(GL_FRAGMENT_PROGRAM_ARB);
@@ -582,7 +591,7 @@ void QPainterVideoSurface::paint(QPainter *painter, const QRect &rect)
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-        glDrawArrays(GL_QUADS, 0, 4);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
         glDisableClientState(GL_VERTEX_ARRAY);
