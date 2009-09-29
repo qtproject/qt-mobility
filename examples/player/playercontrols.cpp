@@ -174,7 +174,7 @@ void PlayerControls::muteClicked()
     emit changeMuting(!playerMuted);
 }
 
-float PlayerControls::playbackRate() const
+qreal PlayerControls::playbackRate() const
 {
     return rateBox->itemData(rateBox->currentIndex()).toDouble();
 }

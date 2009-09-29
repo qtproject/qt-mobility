@@ -53,7 +53,7 @@ public:
 
     int volume() const;
     bool isMuted() const;
-    float playbackRate() const;
+    qreal playbackRate() const;
 
 public slots:
     void setState(QMediaPlayer::State state);
@@ -69,7 +69,7 @@ signals:
     void previous();
     void changeVolume(int volume);
     void changeMuting(bool muting);
-    void changeRate(float rate);
+    void changeRate(qreal rate);
 
 private slots:
     void playClicked();
