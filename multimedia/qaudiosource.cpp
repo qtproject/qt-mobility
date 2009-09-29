@@ -32,8 +32,6 @@
 **
 ****************************************************************************/
 
-#include <QDebug>
-
 #include <multimedia/qmediaobject_p.h>
 #include <multimedia/qaudiosource.h>
 #include <multimedia/qaudioencodercontrol.h>
@@ -41,12 +39,41 @@
 
 /*!
     \class QAudioSource
+    \brief The QAudioSource class provides an interface to query and select an audio format.
     \ingroup multimedia
 
     \preliminary
-    \brief
 
-    \sa
+    QAudioSource provides access to the audio formats available from the audio devices available on your system.
+
+    You can query formats available and select a format to use.
+
+    A format in this context is a set consisting of a specific byte order,
+    channel, codec, frequency, sample rate and sample type.
+    A format is represented by the QAudioFormat class.
+
+    The combinations supported are dependent on the platform,
+    plugins installed and the audio device capabilities.
+
+    A typical implementation example:
+    \code
+        QAudioSource* audiosource = new QAudioSource;
+        QMediaRecorder* capture = new QMediaRecorder(audiosource);
+    \endcode
+
+    The audiosource interface is then used to:
+
+    - Get and Set the audio format used (this is dependant on the audio device selected in the capture interface)
+
+    The capture interface is then used to:
+
+    - Set the destination source using setSink()
+
+    - Get and Set the audio device using supportedEndpoints(), setActiveEndpoint()
+
+    - Control the recording using record(),stop()
+
+    \sa QMediaRecorder
 */
 
 class QAudioSourcePrivate : public QMediaObjectPrivate
@@ -96,6 +123,8 @@ bool QAudioSource::isValid() const
 
 /*!
     Returns the audio format.
+
+    \sa QAudioFormat
 */
 
 QAudioFormat QAudioSource::format() const
@@ -116,6 +145,8 @@ QAudioFormat QAudioSource::format() const
 
 /*!
     Sets the audio format to \a format.
+
+    \sa QAudioFormat
 */
 
 void QAudioSource::setFormat(const QAudioFormat &format)
@@ -152,6 +183,12 @@ bool QAudioSource::isFormatSupported(const QAudioFormat &format) const
 
 /*!
     Returns a list of available codecs.
+
+    For example "audio/pcm" for Linear PCM audio data.
+
+    For additional codec values
+
+    \sa QAudioDeviceInfo::supportedCodecs()
 */
 
 QStringList QAudioSource::supportedCodecs() const
@@ -165,6 +202,10 @@ QStringList QAudioSource::supportedCodecs() const
 
 /*!
     Returns a list of available frequencies.
+
+    Frequency is in Hertz.
+
+    For example 8000,11025,22100,44100
 */
 
 QList<int> QAudioSource::supportedFrequencies() const
@@ -178,6 +219,8 @@ QList<int> QAudioSource::supportedFrequencies() const
 
 /*!
     Returns a list of available channels.
+
+    This is typically 1 for mono, 2 for stereo.
 */
 
 QList<int> QAudioSource::supportedChannels() const
@@ -191,6 +234,9 @@ QList<int> QAudioSource::supportedChannels() const
 
 /*!
     Returns a list of available sample sizes.
+
+    Sample Size is the number of bits used for a sample.
+    This is typically 8 or 16.
 */
 
 QList<int> QAudioSource::supportedSampleSizes() const
