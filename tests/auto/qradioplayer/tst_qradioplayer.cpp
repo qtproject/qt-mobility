@@ -183,18 +183,10 @@ class MockObject : public QMediaObject
 {
     Q_OBJECT
 public:
-    MockObject(QObject *parent, QMediaControl *control):
-        QMediaObject(parent, new MockService(this, control))
+    MockObject(QObject *parent, QMediaService *service, QMediaControl *control):
+        QMediaObject(parent, service)
     {
-        mockService = service();
     }
-
-    bool isValid() const
-    {
-        return true;
-    }
-
-    QMediaService *mockService;
 };
 
 class MockProvider : public QMediaServiceProvider
@@ -232,15 +224,19 @@ private slots:
 private:
     MockObject      *object;
     MockControl     *mock;
+    MockService     *service;
     MockProvider    *provider;
     QRadioPlayer    *radio;
 };
 
 void tst_QRadioPlayer::init()
 {
+    qRegisterMetaType<QRadioPlayer::Band>("QRadioPlayer::Band");
+
     mock = new MockControl(this);
-    object = new MockObject(this, mock);
-    provider = new MockProvider(static_cast<MockService*>(object->service()));
+    service = new MockService(this, mock);
+    object = new MockObject(this, service,  mock);
+    provider = new MockProvider(service);
     radio = new QRadioPlayer(0,provider);
     QVERIFY(radio->service() != 0);
     QVERIFY(radio->isValid());
@@ -249,6 +245,7 @@ void tst_QRadioPlayer::init()
 void tst_QRadioPlayer::cleanup()
 {
     delete radio;
+    delete service;
     delete provider;
 }
 
