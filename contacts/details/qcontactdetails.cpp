@@ -708,12 +708,6 @@ Q_DEFINE_LATIN1_LITERAL(QContactUrl::SubTypeHomePage, "HomePage");
 Q_DEFINE_LATIN1_LITERAL(QContactUrl::SubTypeFavourite, "Favourite");
 
 /*!
- * \variable QContactUrl::SubTypeSocialNetworking
- * The constant attribute value which describes the url as being one of the social networking pages of the contact
- */
-Q_DEFINE_LATIN1_LITERAL(QContactUrl::SubTypeSocialNetworking, "SocialNetworking");
-
-/*!
  * \variable QContactAnniversary::SubTypeWedding
  * The constant attribute value which describes the anniversary as being a wedding anniversary
  */
