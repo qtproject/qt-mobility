@@ -40,7 +40,8 @@ symbian: {
       inc/transformaddress.h \
       inc/transformurl.h \
       inc/transformbirthday.h \
-      inc/transformonlineaccount.h
+      inc/transformonlineaccount.h \
+      inc/transformorganisation.h
       
   SOURCES += \
   		src/qcontactsymbianbackend.cpp \
@@ -54,7 +55,8 @@ symbian: {
       src/transformaddress.cpp \
       src/transformurl.cpp \
       src/transformbirthday.cpp \
-      src/transformonlineaccount.cpp
+      src/transformonlineaccount.cpp \
+      src/transformorganisation.cpp
       
   LIBS += \
   				-lcntmodel \
