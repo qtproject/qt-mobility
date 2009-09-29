@@ -40,7 +40,7 @@
 #include "transformurl.h"
 #include "transformaddress.h"
 #include "transformbirthday.h"
-//#include "transformsipaddress.h"
+#include "transformonlineaccount.h"
 
 #include <qtcontacts.h>
 #include <cntfldst.h>
@@ -69,7 +69,7 @@ void TransformContact::initializeTransformContactData()
 	m_transformContactData.insert(Address, new TransformAddress);
 	m_transformContactData.insert(URL, new TransformUrl);
 	m_transformContactData.insert(Birthday, new TransformBirthday);
-//	m_transformContactData.insert(SipAddress, new TransformSipAddress);
+	m_transformContactData.insert(OnlineAccount, new TransformOnlineAccount);
 }
 
 

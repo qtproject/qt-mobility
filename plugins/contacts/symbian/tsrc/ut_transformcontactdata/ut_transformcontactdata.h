@@ -52,7 +52,7 @@ private slots:
 	void executeTransformAddress();
 	void executeTransformUrl();
 	void executeTransformBithday();
-	//void executeTransformSipAddress();
+	void executeTransformOnlineAccount();
 	
 private:
     void validateTransformEmail(TPtrC16 field, QString detail);
@@ -71,6 +71,6 @@ private:
                                   TPtrC16 postOfficeBoxField, QString postOfficeBoxDetail);
     void validateTransformUrl(TPtrC16 field, QString detail);
     void validateTransformBirthday(TTime field, QDate detail);
-    //void validateTransformSipAddress(TPtrC16 sipField, QString sipDetail);
+    void validateTransformOnlineAccount(TPtrC16 sipField, QString sipDetail);
     void validateContexts(TransformContactData* transformContactData) const; 
 };

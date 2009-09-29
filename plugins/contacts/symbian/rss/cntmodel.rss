@@ -726,7 +726,7 @@ RESOURCE ARRAY r_cntui_new_field_defns
 		FIELD   // Geo (Home)
 			{
 			fieldStorageType=KStorageTypeText;
-			contactFieldType=KUidContactFieldGeoValue;
+			contactFieldType=KUidContactFieldGEOValue;
 			vCardMapping = KIntContactFieldVCardMapGEO;
 			extraMapping=
 			    {
@@ -738,7 +738,7 @@ RESOURCE ARRAY r_cntui_new_field_defns
 		FIELD   // Geo (Work)
 			{
 			fieldStorageType=KStorageTypeText;
-			contactFieldType=KUidContactFieldGeoValue;
+			contactFieldType=KUidContactFieldGEOValue;
 			vCardMapping = KIntContactFieldVCardMapGEO;
 			extraMapping=
 			    {
@@ -750,7 +750,7 @@ RESOURCE ARRAY r_cntui_new_field_defns
 		FIELD   // Geo (general)
 			{
 			fieldStorageType=KStorageTypeText;
-			contactFieldType=KUidContactFieldGeoValue;
+			contactFieldType=KUidContactFieldGEOValue;
 			vCardMapping = KIntContactFieldVCardMapGEO;
 			category=EContactCategoryNone;
 			fieldName=qtn_phob_lbl_geo;

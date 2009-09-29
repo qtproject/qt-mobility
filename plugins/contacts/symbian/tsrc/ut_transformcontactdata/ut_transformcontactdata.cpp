@@ -39,7 +39,8 @@
 #include "transformaddress.h"
 #include "transformurl.h"
 #include "transformbirthday.h"
-//#include "transformsipaddress.h"
+#include "transformonlineaccount.h"
+#include "cntmodelextuids.h"
 
 #include <QtTest/QtTest>
 
@@ -114,12 +115,12 @@ void TestTransformContactData::executeTransformBithday()
     validateTransformBirthday(field, detail);
 }
 
-/*void TestTransformContactData::executeTransformSipAddress()
+void TestTransformContactData::executeTransformOnlineAccount()
 {
-    validateTransformSipAddress(_L("dummysip"), QString("dummysip"));
-    validateTransformSipAddress(_L(""), QString(""));
+    validateTransformOnlineAccount(_L("dummysip"), QString("dummysip"));
+    validateTransformOnlineAccount(_L(""), QString(""));
 }
-*/
+
 void TestTransformContactData::validateTransformEmail(TPtrC16 field, QString detail)
 {
     TransformContactData* transformEmail = new TransformEmail();
@@ -659,19 +660,20 @@ void TestTransformContactData::validateTransformBirthday(TTime field, QDate deta
     delete transformBirthday;  
 }
 
-/*void TestTransformContactData::validateTransformSipAddress(TPtrC16 sipField, QString sipDetail)
+void TestTransformContactData::validateTransformOnlineAccount(TPtrC16 sipField, QString sipDetail)
 {
-    TransformContactData* transformSipAddress = new TransformSipAddress();
-    QVERIFY(transformSipAddress != 0);
-    QVERIFY(transformSipAddress->supportsField(KUidContactFieldSIPID.iUid));
-    QVERIFY(transformSipAddress->supportsDetail(QContactSipAddress::DefinitionName));
+    TransformContactData* transformOnlineAccount = new TransformOnlineAccount();
+    QVERIFY(transformOnlineAccount != 0);
+    QVERIFY(transformOnlineAccount->supportsField(KUidContactFieldSIPID.iUid));
+    QVERIFY(transformOnlineAccount->supportsField(KUidContactFieldIMPP.iUid));
+    QVERIFY(transformOnlineAccount->supportsDetail(QContactOnlineAccount::DefinitionName));
      
-    validateContexts(transformSipAddress);
+    validateContexts(transformOnlineAccount);
      
-    QContactSipAddress sipAddress1;
-    sipAddress1.setSipAddress(sipDetail);
-    sipAddress1.setSubTypes(QContactSipAddress::SubTypeInternet);
-    QList<CContactItemField *> fields = transformSipAddress->transformDetailL(sipAddress1);
+    QContactOnlineAccount onlineAccount1;
+    onlineAccount1.setAccountUri(sipDetail);
+    onlineAccount1.setSubTypes(QContactOnlineAccount::SubTypeInternet);
+    QList<CContactItemField *> fields = transformOnlineAccount->transformDetailL(onlineAccount1);
     QVERIFY(fields.count() == 1);
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldSIPID));
@@ -679,10 +681,10 @@ void TestTransformContactData::validateTransformBirthday(TTime field, QDate deta
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldVCardMapVOIP));
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(sipField), 0);
     
-    QContactSipAddress sipAddress2;
-    sipAddress2.setSipAddress(sipDetail);
-    sipAddress2.setSubTypes(QContactSipAddress::SubTypeShareVideo);
-    QList<CContactItemField *> fields = transformSipAddress->transformDetailL(sipAddress2);
+    QContactOnlineAccount onlineAccount2;
+    onlineAccount2.setAccountUri(sipDetail);
+    onlineAccount2.setSubTypes(QContactOnlineAccount::SubTypeShareVideo);
+    fields = transformOnlineAccount->transformDetailL(onlineAccount2);
     QVERIFY(fields.count() == 1);
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldSIPID));
@@ -690,10 +692,10 @@ void TestTransformContactData::validateTransformBirthday(TTime field, QDate deta
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldVCardMapSWIS));
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(sipField), 0);
  
-    QContactSipAddress sipAddress3;
-    sipAddress3.setSipAddress(sipDetail);
-    sipAddress3.setSubTypes(QContactSipAddress::SubTypeSip);
-    QList<CContactItemField *> fields = transformSipAddress->transformDetailL(sipAddress2);
+    QContactOnlineAccount onlineAccount3;
+    onlineAccount3.setAccountUri(sipDetail);
+    onlineAccount3.setSubTypes(QContactOnlineAccount::SubTypeSip);
+    fields = transformOnlineAccount->transformDetailL(onlineAccount3);
     QVERIFY(fields.count() == 1);
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldSIPID));
@@ -701,14 +703,24 @@ void TestTransformContactData::validateTransformBirthday(TTime field, QDate deta
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldVCardMapSIPID));
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(sipField), 0);
     
+    QContactOnlineAccount onlineAccount4;
+    onlineAccount4.setAccountUri(sipDetail);
+    onlineAccount4.setSubTypes(QContactOnlineAccount::SubTypeXmpp);
+    fields = transformOnlineAccount->transformDetailL(onlineAccount4);
+    QVERIFY(fields.count() == 1);
+    QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldIMPP));
+    QVERIFY(fields.at(0)->ContentType().Mapping() == KUidContactFieldVCardMapUnknown);
+    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(sipField), 0);
+    
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldSIPID);
     newField->TextStorage()->SetTextL(sipField);
     newField->AddFieldTypeL(KUidContactFieldVCardMapVOIP);
     QContact contact;
-    QContactDetail* contactDetail = transformSipAddress->transformItemField(*newField, contact);
-    const QContactSipAddress* sipAddress1(static_cast<const QContactSipAddress*>(contactDetail));
-    QCOMPARE(sipAddress1->sipAddress(), sipDetail);
-    QVERIFY(sipAddress1->subTypes().contains(QContactSipAddress::SubTypeInternet));
+    QContactDetail* contactDetail = transformOnlineAccount->transformItemField(*newField, contact);
+    const QContactOnlineAccount* onlineAccountDetail1(static_cast<const QContactOnlineAccount*>(contactDetail));
+    QCOMPARE(onlineAccountDetail1->accountUri(), sipDetail);
+    QVERIFY(onlineAccountDetail1->subTypes().contains(QContactOnlineAccount::SubTypeInternet));
     delete contactDetail;
     contactDetail = 0;
     delete newField;
@@ -717,10 +729,10 @@ void TestTransformContactData::validateTransformBirthday(TTime field, QDate deta
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldSIPID);
     newField->TextStorage()->SetTextL(sipField);
     newField->AddFieldTypeL(KUidContactFieldVCardMapSWIS);
-    contactDetail = transformSipAddress->transformItemField(*newField, contact);
-    const QContactSipAddress* sipAddress2(static_cast<const QContactSipAddress*>(contactDetail));
-    QCOMPARE(sipAddress2->sipAddress(), sipDetail);
-    QVERIFY(sipAddress2->subTypes().contains(QContactSipAddress::SubTypeShareVideo));
+    contactDetail = transformOnlineAccount->transformItemField(*newField, contact);
+    const QContactOnlineAccount* onlineAccountDetail2(static_cast<const QContactOnlineAccount*>(contactDetail));
+    QCOMPARE(onlineAccountDetail2->accountUri(), sipDetail);
+    QVERIFY(onlineAccountDetail2->subTypes().contains(QContactOnlineAccount::SubTypeShareVideo));
     delete contactDetail;
     contactDetail = 0;
     delete newField;
@@ -729,18 +741,29 @@ void TestTransformContactData::validateTransformBirthday(TTime field, QDate deta
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldSIPID);
     newField->TextStorage()->SetTextL(sipField);
     newField->AddFieldTypeL(KUidContactFieldVCardMapSIPID);
-    contactDetail = transformSipAddress->transformItemField(*newField, contact);
-    const QContactSipAddress* sipAddress3(static_cast<const QContactSipAddress*>(contactDetail));
-    QCOMPARE(sipAddress3->sipAddress(), sipDetail);
-    QVERIFY(sipAddress3->subTypes().contains(QContactSipAddress::SubTypeSip));
+    contactDetail = transformOnlineAccount->transformItemField(*newField, contact);
+    const QContactOnlineAccount* onlineAccountDetail3(static_cast<const QContactOnlineAccount*>(contactDetail));
+    QCOMPARE(onlineAccountDetail3->accountUri(), sipDetail);
+    QVERIFY(onlineAccountDetail3->subTypes().contains(QContactOnlineAccount::SubTypeSip));
     delete contactDetail;
     contactDetail = 0;
     delete newField;
     newField = 0;
     
-    delete transformSipAddress;
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldIMPP);
+    newField->TextStorage()->SetTextL(sipField);
+    contactDetail = transformOnlineAccount->transformItemField(*newField, contact);
+    const QContactOnlineAccount* onlineAccountDetail4(static_cast<const QContactOnlineAccount*>(contactDetail));
+    QCOMPARE(onlineAccountDetail4->accountUri(), sipDetail);
+    QVERIFY(onlineAccountDetail4->subTypes().contains(QContactOnlineAccount::SubTypeXmpp));
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+    
+    delete transformOnlineAccount;
 }
-*/
+
 void TestTransformContactData::validateContexts(TransformContactData* transformContactData) const
 {
     QContactDetail detail1;

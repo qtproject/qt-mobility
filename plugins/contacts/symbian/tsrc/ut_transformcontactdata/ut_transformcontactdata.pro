@@ -13,6 +13,7 @@ DEPENDPATH += .
 INCLUDEPATH += .
 INCLUDEPATH += .\inc
 INCLUDEPATH += ..\..\inc
+INCLUDEPATH += ..\..\rss
 
 symbian:
 {
@@ -27,7 +28,8 @@ symbian:
 				../../inc/transformphonenumber.h \
 				../../inc/transformaddress.h \
 				../../inc/transformurl.h \
-				../../inc/transformbirthday.h
+				../../inc/transformbirthday.h \
+				../../inc/transformonlineaccount.h
       
 	
 	SOURCES += ut_transformcontactdata.cpp \ 
@@ -38,7 +40,8 @@ symbian:
 				../../src/transformphonenumber.cpp \
 				../../src/transformaddress.cpp \
 				../../src/transformurl.cpp \
-				../../src/transformbirthday.cpp
+				../../src/transformbirthday.cpp \
+				../../src/transformonlineaccount.cpp
 
 	TARGET.CAPABILITY = ALL -TCB
   
