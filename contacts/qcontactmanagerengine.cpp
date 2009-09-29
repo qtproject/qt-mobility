@@ -246,6 +246,37 @@ QContact QContactManagerEngine::contact(const QUniqueId& contactId, QContactMana
 }
 
 /*!
+ * Sets the id of the "self" contact to the given \a contactId.
+ * Returns true if the "self" contact id was set successfully.
+ * If the given \a contactId does not identify a contact
+ * stored in this manager, the \a error will be set to
+ * \c QContactManager::DoesNotExistError and the function will
+ * return false; if the backend does not support the
+ * concept of a "self" contact, the \a error will be set to
+ * \c QContactManager::NotSupportedError and the function will
+ * return false.
+ */
+bool QContactManagerEngine::setSelfContactId(const QUniqueId& contactId, QContactManager::Error& error)
+{
+    Q_UNUSED(contactId);
+    error = QContactManager::NotSupportedError;
+    return false;
+}
+
+/*!
+ * Returns the id of the "self" contact which has previously been set.
+ * If no "self" contact has been set, or if the self contact was removed
+ * from the manager after being set, or if the backend does not support
+ * the concept of a "self" contact, an invalid id will be returned
+ * and the \a error will be set to \c QContactManager::DoesNotExistError.
+ */
+QUniqueId QContactManagerEngine::selfContactId(QContactManager::Error& error) const
+{
+    error = QContactManager::DoesNotExistError;
+    return QUniqueId();
+}
+
+/*!
  * Synthesises the display label of the given \a contact in a platform specific manner.
  * Any error that occurs will be stored in \a error.
  * Returns the synthesised display label.

@@ -105,6 +105,10 @@ public:
     /* Synthesise the display label of a contact */
     QString synthesiseDisplayLabel(const QContact& contact) const;
 
+    /* "Self" contact id (MyCard) */
+    bool setSelfContactId(const QUniqueId& contactId);
+    QUniqueId selfContactId() const;
+
     /* Groups - Accessors and Mutators */
     QList<QUniqueId> groups() const;
     QContactGroup group(const QUniqueId& groupId) const;

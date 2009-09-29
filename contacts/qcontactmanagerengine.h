@@ -80,6 +80,10 @@ public:
     /* Synthesise the display label of a contact */
     virtual QString synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
 
+    /* "Self" contact id (MyCard) */
+    bool setSelfContactId(const QUniqueId& contactId, QContactManager::Error& error);
+    QUniqueId selfContactId(QContactManager::Error& error) const;
+
     /* Validation for saving */
     virtual bool validateContact(const QContact& contact, QContactManager::Error& error) const;
     virtual bool validateGroup(const QContactGroup& group, QContactManager::Error& error) const;

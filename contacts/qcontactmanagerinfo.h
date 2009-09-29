@@ -51,6 +51,7 @@ public:
         Groups = 0,
         ActionPreferences,
         MutableDefinitions,
+        SelfContact,
         Anonymous
     };
 

@@ -58,6 +58,7 @@
  * \value Groups The manager supports all QContactGroup related operations, and emits the appropriate signals
  * \value ActionPreferences The manager supports saving preferred details per action per contact
  * \value MutableDefinitions The manager supports saving, updating or removing detail definitions.  Some built-in definitions may still be immutable
+ * \value SelfContact The manager supports the concept of saving a contact which represents the current user
  * \value Anonymous The manager is isolated from other managers
  */
 

@@ -355,6 +355,34 @@ QString QContactManager::synthesiseDisplayLabel(const QContact& contact) const
     return d->m_engine->synthesiseDisplayLabel(contact, d->m_error);
 }
 
+/*!
+ * Sets the id of the "self" contact to the given \a contactId.
+ * Returns true if the "self" contact id was set successfully.
+ * If the given \a contactId does not identify a contact
+ * stored in this manager, the error will be set to
+ * \c QContactManager::DoesNotExistError and the function will
+ * return false; if the backend does not support the
+ * concept of a "self" contact then the error will be set to
+ * \c QContactManager::NotSupportedError and the function will
+ * return false.
+ */
+bool QContactManager::setSelfContactId(const QUniqueId& contactId)
+{
+    return d->m_engine->setSelfContactId(contactId, d->m_error);
+}
+
+/*!
+ * Returns the id of the "self" contact which has previously been set.
+ * If no "self" contact has been set, or if the self contact was removed
+ * from the manager after being set, or if the backend does not support
+ * the concept of a "self" contact, an invalid id will be returned
+ * and the error will be set to \c QContactManager::DoesNotExistError.
+ */
+QUniqueId QContactManager::selfContactId() const
+{
+    return d->m_engine->selfContactId(d->m_error);
+}
+
 /*! Return the list of added group ids */
 QList<QUniqueId> QContactManager::groups() const
 {
