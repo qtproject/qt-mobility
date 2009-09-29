@@ -42,9 +42,6 @@ public:
         Svg
     };
 
-    virtual QByteArray toByteArray() const = 0;
-    virtual void fromByteArray(const QByteArray& data) const = 0;
-
     virtual QString key() const = 0;
     virtual QStringList types() const = 0;
     virtual QPair<QVariant, Encoding> value() const = 0;
@@ -90,10 +87,6 @@ public:
     virtual QString source() const = 0;
     // etc.
 
-    virtual QByteArray toByteArray() const = 0;
-    virtual void fromByteArray(const QByteArray& data) = 0;
-    virtual QList<QContact> toContactList() const = 0;
-    virtual void fromContactList(const QList<QContact>& contacts) = 0;
     virtual QList<QVersitProperty> properties() const = 0;
     virtual void setProperties(QList<QVersitProperty>& properties) const = 0;
 };
