@@ -16,7 +16,8 @@ CONFIG += ordered
 SUBDIRS += qnetworkconfigmanager \          #Bearer management
            qnetworkconfiguration \
            qnetworksession \
-           tst_qgeocoordinate \             #Location
+
+SUBDIRS += tst_qgeocoordinate \             #Location
            tst_qgeopositioninfo \
            tst_qsatelliteinfo \
            tst_qsatelliteinfosource \
@@ -25,8 +26,9 @@ SUBDIRS += qnetworkconfigmanager \          #Bearer management
            tst_qlocationutils \
            tst_qnmeapositioninfosource \
            tst_qnmeapositioninfosource_realtime \
-           tst_qnmeapositioninfosource_sim \ 
-           qvaluespace \                    #Publish and Subscribe
+           tst_qnmeapositioninfosource_sim
+
+!wince:SUBDIRS += qvaluespace \                    #Publish and Subscribe
            qvaluespaceobject \
            qvaluespaceitem \
            qmallocpool

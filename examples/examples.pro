@@ -22,9 +22,11 @@ SUBDIRS += samplephonebook \
            incomingcalls
 
 #Publish and Subscribe examples
-SUBDIRS += publish-subscribe
-contains(QT_CONFIG, declarative) {
-    SUBDIRS += battery-charge
+!wince*{
+    SUBDIRS += publish-subscribe
+    contains(QT_CONFIG, declarative) {
+        SUBDIRS += battery-charge
+    }
 }
 
 #System Information
