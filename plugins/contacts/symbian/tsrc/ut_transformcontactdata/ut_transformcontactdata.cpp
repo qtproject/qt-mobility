@@ -357,9 +357,9 @@ void TestTransformContactData::validateTransformPhonenumber(TPtrC16 field, QStri
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldVCardMapCAR));
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
     
-/*    QContactPhoneNumber phoneNumber8;
+    QContactPhoneNumber phoneNumber8;
     phoneNumber8.setNumber(detail);
-    phoneNumber8.setSubTypes(QContactPhoneNumber::SubTypeDtmf);
+    phoneNumber8.setSubTypes(QContactPhoneNumber::SubTypeDtmfMenu);
     fields = transformPhoneNumber->transformDetailL(phoneNumber8);
     QVERIFY(fields.count() == 1);
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
@@ -373,9 +373,9 @@ void TestTransformContactData::validateTransformPhonenumber(TPtrC16 field, QStri
     QVERIFY(fields.count() == 1);
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldPhoneNumber));
-    QVERIFY(fields.at(0)->ContentType().Mapping() == KuidContactFieldVCardMapAssistantTel);
+    QVERIFY(fields.at(0)->ContentType().Mapping() == KUidContactFieldVCardMapAssistantTel);
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
-*/    
+    
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPhoneNumber);
     newField->TextStorage()->SetTextL(field);
     QContact contact;
@@ -459,12 +459,12 @@ void TestTransformContactData::validateTransformPhonenumber(TPtrC16 field, QStri
     delete newField;
     newField = 0;
     
-/*    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldDTMF);
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldDTMF);
     newField->TextStorage()->SetTextL(field);
     contactDetail = transformPhoneNumber->transformItemField(*newField, contact);
     const QContactPhoneNumber* phoneNumberInfo7(static_cast<const QContactPhoneNumber*>(contactDetail));
     QCOMPARE(phoneNumberInfo7->number(), detail);
-    QVERIFY(phoneNumberInfo7->subTypes().contains(QContactPhoneNumber::SubTypeDtmf));
+    QVERIFY(phoneNumberInfo7->subTypes().contains(QContactPhoneNumber::SubTypeDtmfMenu));
     delete contactDetail;
     contactDetail = 0;
     delete newField;
@@ -481,7 +481,7 @@ void TestTransformContactData::validateTransformPhonenumber(TPtrC16 field, QStri
     contactDetail = 0;
     delete newField;
     newField = 0;
-*/    
+    
     delete transformPhoneNumber; 
 }
 
