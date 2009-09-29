@@ -32,14 +32,15 @@
 ****************************************************************************/
 
 #include "performance.h"
-#include <vector>
 
 #include <QtTest/QtTest>
+#include <QDebug>
+#include <QFile>
 #include <QTime>
 
-void TestPluginPerfomance::initTestCase()
+void tst_SymbianPluginPerfomance::initTestCase()
 {
-    QString absolutePath("C:/logs/qtphonebook/logs.htm");
+    QString absolutePath("C:/logs/qtphonebook/performancelog.htm");
 	mFile = new QFile(absolutePath);
     
     if (mFile->open(QIODevice::Text | QIODevice::WriteOnly))
@@ -54,19 +55,63 @@ void TestPluginPerfomance::initTestCase()
     }
 }
 
-void TestPluginPerfomance::createContactsTestCase()
+void tst_SymbianPluginPerfomance::cleanupTestCase()
 {
-    int noOfContacts = 1000;
+    log() << "------------- End symbian backend performance test ---------------<br>";
+    delete mCntMng;
+    delete mDebug;
+    mFile->close();
+    delete mFile;
+}
+
+void tst_SymbianPluginPerfomance::simpleContactsTestCase()
+{
     QTime t;
     t.start();
-    for(int i=0; i<noOfContacts; i++) {
+    
+    // Create N contacts
+    for(int i=0; i<NO_OF_CONTACTS; i++) {
+        QChar c(i);
+        QString first("Alice");        
+        QContact alice;
+    
+        // Contact details
+        QContactName aliceName;
+        aliceName.setFirst(first.append(c));
+        alice.saveDetail(&aliceName);
+            
+        // Save the contact
+        if (mCntMng->saveContact(&alice))
+            mContactList.append(alice.id());
+    }    
+    log() << "Created " << mContactList.count() << " simple contacts in " 
+        << t.elapsed() / 1000 << "s" << t.elapsed() % 1000 << "ms<br>";
+    
+    // Remove N contacts
+    t.restart();
+    for(int i=0; i<mContactList.count(); i++)    
+        mCntMng->removeContact(mContactList[i]);
+    
+    log() << "Removed " << mContactList.count() << " simple contacts in " 
+        << t.elapsed() / 1000 << "s" << t.elapsed() % 1000 << "ms<br>";
+    
+    mContactList.clear();
+}
+
+void tst_SymbianPluginPerfomance::complexContactsTestCase()
+{
+    QTime t;
+    t.start();
+    
+    // Create N contacts
+    for(int i=0; i<NO_OF_CONTACTS; i++) {
+        QContact alice;
+        
+        // Contact details
         QChar c(i);
         QString first("Alice");
         QString last("Jones");
         
-        QContact alice;
-
-        /* Set the contact's name */
         QContactName aliceName;
         aliceName.setFirst(first.append(c));
         aliceName.setLast(last.append(c));
@@ -77,7 +122,6 @@ void TestPluginPerfomance::createContactsTestCase()
         aliceDisplay.setLabel(label.append(c));
         alice.saveDetail(&aliceDisplay);
 
-        /* Add a phone number */
         QContactPhoneNumber number;
         number.setContexts("Home");
         number.setSubTypes("Mobile");
@@ -85,50 +129,67 @@ void TestPluginPerfomance::createContactsTestCase()
         alice.saveDetail(&number);
         alice.setPreferredDetail("DialAction", number);
 
-        /* Add a second phone number */
         QContactPhoneNumber number2;
         number2.setContexts("Work");
         number2.setSubTypes("Landline");
         number2.setNumber("555-4444");
         alice.saveDetail(&number2);
 
-        /* Save the contact */
+        QContactAddress add;
+        add.setStreet("Leeds West Yorkshire");
+        add.setPostcode("10087");
+        add.setRegion("New York");
+        add.setCountry("United States");
+        alice.saveDetail(&add);
+        
+        QContactGender gender;
+        gender.setGender("Female");
+        alice.saveDetail(&gender);
+        
+        QContactBirthday bday;
+        bday.setDate(QDate(25,10,1978));
+        alice.saveDetail(&bday);
+        
+        QContactOnlineAccount acc;
+        acc.setAccountUri("sips:alice.jones@nokia.com");
+        alice.saveDetail(&acc);
+        
+        QContactEmailAddress email;
+        email.setEmailAddress("mailto:alice.jones@nokia.com");
+        alice.saveDetail(&email);
+        
+        QContactOrganisation org;
+        org.setDepartment("Services");
+        org.setTitle("Assistant Manager");
+        org.setLocation("Nokia Cyber Park");
+        alice.saveDetail(&email);
+        
+        // Save the contact
         if (mCntMng->saveContact(&alice))
             mContactList.append(alice.id());
         
     }   
-    log() << "Created " << noOfContacts << " contacts in " 
-        << t.elapsed() / 1000 << " s " << t.elapsed() % 1000 << " ms <br>";
-}
-
-void TestPluginPerfomance::removeContactsTestCase()
-{
-    QTime t;
-    t.start();
+    log() << "Created " << mContactList.count() << " complex contacts in " 
+        << t.elapsed() / 1000 << "s" << t.elapsed() % 1000 << "ms<br>";
     
+    // Remove N contacts
+    t.restart();
     for(int i=0; i<mContactList.count(); i++)    
         mCntMng->removeContact(mContactList[i]);
     
-    log() << "Removed " << mContactList.count() << " contacts in " 
-        << t.elapsed() / 1000 << " s " << t.elapsed() % 1000 << " ms <br>";
+    log() << "Removed " << mContactList.count() << " complex contacts in " 
+        << t.elapsed() / 1000 << "s" << t.elapsed() % 1000 << "ms<br>";
+    
+    mContactList.clear();
 }
 
-void TestPluginPerfomance::cleanupTestCase()
-{
-    log() << "------------- End symbian backend performance test --------------- <br>";
-    delete mCntMng;
-    mFile->close();
-    delete mFile;
-    delete mDebug;
-}
-
-QDebug TestPluginPerfomance::log()
+QDebug tst_SymbianPluginPerfomance::log()
 {
     if (mDebug != NULL) {
-       return *mDebug;
+        return *mDebug;
     } else {
        return qDebug();
     }
 }
 
-QTEST_MAIN(TestPluginPerfomance);
+QTEST_MAIN(tst_SymbianPluginPerfomance);

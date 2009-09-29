@@ -31,25 +31,35 @@
 **
 ****************************************************************************/
 #include <QObject>
-
-#include <cntdb.h>
-#include <cntitem.h>
 #include <qtcontacts.h>
-#include <QDebug>
-#include <QFile>
 
-class TestPluginPerfomance : public QObject
+class QDebug;
+class QFile;
+
+#define NO_OF_CONTACTS 1000
+
+class tst_SymbianPluginPerfomance : public QObject
 {
     Q_OBJECT
 
-private slots:
+private slots:  // Init & cleanup
 	void initTestCase();
-	void createContactsTestCase();
-	
-	void removeContactsTestCase();
 	void cleanupTestCase();
 
-private:
+private slots:  // Test cases
+	void simpleContactsTestCase();
+	void complexContactsTestCase();
+	/*
+	void sortContacts();
+	void createViews();
+	void operation1();
+	void operation2();
+	void asyncOperation1();    // requests
+	void asyncOperation2();
+	// feel free to add more...
+	*/
+
+private:    // Logging
     QDebug log();
 
 private:
