@@ -128,6 +128,51 @@ Q_DECLARE_METATYPE(QVideoWidget::AspectRatio)
 Q_DECLARE_METATYPE(const uchar *)
 Q_DECLARE_METATYPE(QVideoWidget::DisplayMode);
 
+class QtTestEventCounter : public QObject
+{
+public:
+    QtTestEventCounter(QObject *object, QEvent::Type type)
+        : m_type(type)
+        , m_maximum(0)
+        , m_count(0)
+    {
+        object->installEventFilter(this);
+    }
+
+    int count() const { return m_count; }
+
+    bool eventFilter(QObject *, QEvent *e)
+    {
+        if (e->type() == m_type) {
+            if (++m_count == m_maximum)
+                QTestEventLoop::instance().exitLoop();
+        }
+        return false;
+    }
+
+    static bool waitForEvent(QObject *object, QEvent::Type type, int secs, int count = 1)
+    {
+        QtTestEventCounter counter(object, type, count);
+
+        QTestEventLoop::instance().enterLoop(secs);
+
+        return counter.m_count >= counter.m_maximum;
+    }
+
+private:
+    QtTestEventCounter(QObject *object, QEvent::Type type, int maximum)
+        : m_type(type)
+        , m_maximum(maximum)
+        , m_count(0)
+    {
+        object->installEventFilter(this);
+    }
+
+    QEvent::Type m_type;
+    int m_maximum;
+    int m_count;
+};
+
 class QtTestOutputControl : public QVideoOutputControl
 {
 public:
@@ -594,10 +639,7 @@ void tst_QVideoWidget::showWindowControl()
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::WindowOutput);
     QVERIFY(object.testService->windowControl->winId() != 0);
 
-    QCoreApplication::processEvents();
-
-    if (!QApplication::activeWindow())
-        QSKIP("window not yet activated", SkipSingle);
+    QVERIFY(QtTestEventCounter::waitForEvent(&widget, QEvent::ActivationChange, 1));
 
     QVERIFY(object.testService->windowControl->repaintCount() > 0);
 
@@ -651,12 +693,10 @@ void tst_QVideoWidget::eventFilterWindowControl()
     widget.show();
     widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
 
-    QCoreApplication::processEvents();
+    QVERIFY(QtTestEventCounter::waitForEvent(&widget, QEvent::ActivationChange, 1));
 
     QWidget *activeWindow = QApplication::activeWindow();
-
-    if (!activeWindow)
-        QSKIP("No active window", SkipSingle);
+    QVERIFY(activeWindow != 0);
 
     {
         QKeyEvent e(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
@@ -719,12 +759,10 @@ void tst_QVideoWidget::eventFilterWidgetControl()
     widget.show();
     widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
 
-    QCoreApplication::processEvents();
+    QVERIFY(QtTestEventCounter::waitForEvent(&widget, QEvent::ActivationChange, 1));
 
     QWidget *activeWindow = object.testService->widgetControl->videoWidget();
-
-    if (!activeWindow)
-        QSKIP("No active window", SkipSingle);
+    QVERIFY(activeWindow != 0);
 
     {
         QKeyEvent e(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
@@ -789,12 +827,10 @@ void tst_QVideoWidget::eventFilterRendererControl()
     widget.show();
     widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
 
-    QCoreApplication::processEvents();
+    QVERIFY(QtTestEventCounter::waitForEvent(&widget, QEvent::ActivationChange, 1));
 
     QWidget *activeWindow = QApplication::activeWindow();
-
-    if (!activeWindow)
-        QSKIP("No active window", SkipSingle);
+    QVERIFY(activeWindow != 0);
 
     {
         QKeyEvent e(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
@@ -1159,37 +1195,36 @@ void tst_QVideoWidget::displayModeWindowControl()
 
     widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
 
-    QCoreApplication::processEvents();
+    QVERIFY(QtTestEventCounter::waitForEvent(&widget, QEvent::ActivationChange, 1));
 
-    if (QWidget *keyWidget = QApplication::activeWindow()) {
-        {   // Test non-escape key doesn't exit full-screen mode.
-            QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_5, Qt::NoModifier);
-            QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
-        }
-        QCOMPARE(object.testService->windowControl->isFullscreen(), true);
-        QCOMPARE(widget.displayMode(), QVideoWidget::FullscreenDisplay);
-        QCOMPARE(spy.count(), 3);
+    QWidget *keyWidget = QApplication::activeWindow();
+    QVERIFY(keyWidget != 0);
 
-        {   // Test escape key exits full-screen mode.
-            QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
-            QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
-        }
-        QCOMPARE(object.testService->windowControl->isFullscreen(), false);
-        QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
-        QCOMPARE(spy.count(), 4);
-        QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(3).value(0)),
-                 QVideoWidget::WindowedDisplay);
-
-        {   // Test escape key doesn't enter full-screen mode.
-            QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
-            QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
-        }
-        QCOMPARE(object.testService->windowControl->isFullscreen(), false);
-        QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
-        QCOMPARE(spy.count(), 4);
-    } else {
-        qWarning("no active window");
+    {   // Test non-escape key doesn't exit full-screen mode.
+        QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_5, Qt::NoModifier);
+        QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
     }
+    QCOMPARE(object.testService->windowControl->isFullscreen(), true);
+    QCOMPARE(widget.displayMode(), QVideoWidget::FullscreenDisplay);
+    QCOMPARE(spy.count(), 3);
+
+    {   // Test escape key exits full-screen mode.
+        QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
+        QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
+    }
+    QCOMPARE(object.testService->windowControl->isFullscreen(), false);
+    QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
+    QCOMPARE(spy.count(), 4);
+    QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(3).value(0)),
+             QVideoWidget::WindowedDisplay);
+
+    {   // Test escape key doesn't enter full-screen mode.
+        QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
+        QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
+    }
+    QCOMPARE(object.testService->windowControl->isFullscreen(), false);
+    QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
+    QCOMPARE(spy.count(), 4);
 }
 
 void tst_QVideoWidget::displayModeWidgetControl()
@@ -1259,7 +1294,7 @@ void tst_QVideoWidget::displayModeRendererControl()
     QSignalSpy spy(&widget, SIGNAL(displayModeChanged(QVideoWidget::DisplayMode)));
 
     widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
-    QCoreApplication::processEvents();
+    QVERIFY(QtTestEventCounter::waitForEvent(&widget, QEvent::ActivationChange, 1));
 
     QCOMPARE(widget.displayMode(), QVideoWidget::FullscreenDisplay);
     QCOMPARE(spy.count(), 1);
@@ -1267,7 +1302,7 @@ void tst_QVideoWidget::displayModeRendererControl()
              QVideoWidget::FullscreenDisplay);
 
     widget.setDisplayMode(QVideoWidget::WindowedDisplay);
-    QCoreApplication::processEvents();
+    QVERIFY(QtTestEventCounter::waitForEvent(&widget, QEvent::ActivationChange, 1));
 
     QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
     QCOMPARE(spy.count(), 2);
@@ -1275,41 +1310,40 @@ void tst_QVideoWidget::displayModeRendererControl()
              QVideoWidget::WindowedDisplay);
 
     widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
-    QCoreApplication::processEvents();
+    QVERIFY(QtTestEventCounter::waitForEvent(&widget, QEvent::ActivationChange, 1));
 
     QCOMPARE(widget.displayMode(), QVideoWidget::FullscreenDisplay);
     QCOMPARE(spy.count(), 3);
     QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(2).value(0)),
              QVideoWidget::FullscreenDisplay);
 
-    if (QWidget *keyWidget = QApplication::activeWindow()) {
-        {   // Test non-escape key doesn't exit full-screen mode.
-            QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_5, Qt::NoModifier);
-            QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
-        }
-        QCOMPARE(widget.displayMode(), QVideoWidget::FullscreenDisplay);
-        QCOMPARE(spy.count(), 3);
-        QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(0).value(0)),
-                 QVideoWidget::FullscreenDisplay);
+    QWidget *keyWidget = QApplication::activeWindow();
+    QVERIFY(keyWidget != 0);
 
-        {   // Test escape key exits full-screen mode.
-            QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
-            QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
-        }
-        QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
-        QCOMPARE(spy.count(), 4);
-        QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(3).value(0)),
-                 QVideoWidget::WindowedDisplay);
-
-        {   // Test escape key doesn't enter full-screen mode.
-            QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
-            QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
-        }
-        QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
-        QCOMPARE(spy.count(), 4);
-    } else {
-        qWarning("no active window");
+    {   // Test non-escape key doesn't exit full-screen mode.
+        QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_5, Qt::NoModifier);
+        QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
     }
+    QCOMPARE(widget.displayMode(), QVideoWidget::FullscreenDisplay);
+    QCOMPARE(spy.count(), 3);
+    QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(0).value(0)),
+             QVideoWidget::FullscreenDisplay);
+
+    {   // Test escape key exits full-screen mode.
+        QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
+        QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
+    }
+    QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
+    QCOMPARE(spy.count(), 4);
+    QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(3).value(0)),
+             QVideoWidget::WindowedDisplay);
+
+    {   // Test escape key doesn't enter full-screen mode.
+        QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
+        QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
+    }
+    QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
+    QCOMPARE(spy.count(), 4);
 }
 
 #endif
