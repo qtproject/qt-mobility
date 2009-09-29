@@ -103,7 +103,7 @@ QList<CContactItemField *> TransformPhoneNumber::transformDetailL(const QContact
 	}
 	
 	//DTMF
-/*	else if (subTypes.contains(QContactPhoneNumber::SubTypeDtmf))
+	else if (subTypes.contains(QContactPhoneNumber::SubTypeDtmfMenu))
 	{
         newField->AddFieldTypeL(KUidContactFieldDTMF);
         newField->SetMapping(KUidContactFieldVCardMapUnknown);
@@ -115,7 +115,7 @@ QList<CContactItemField *> TransformPhoneNumber::transformDetailL(const QContact
         newField->AddFieldTypeL(KUidContactFieldPhoneNumber);
         newField->SetMapping(KUidContactFieldVCardMapAssistantTel);
     }
-*/	
+	
 	else
 	{
         User::LeaveIfError(KErrNotSupported);
@@ -157,16 +157,16 @@ QContactDetail *TransformPhoneNumber::transformItemField(const CContactItemField
         else if (field.ContentType().ContainsFieldType(KUidContactFieldVCardMapCAR)) {
             phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeCar);
         }
-        //else if (field.ContentType().Mapping() == KUidContactFieldVCardMapAssistantTel) {
-        //    phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeAssistant);
-        //}
+        else if (field.ContentType().Mapping() == KUidContactFieldVCardMapAssistantTel) {
+            phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeAssistant);
+        }
 	}
     else if (field.ContentType().ContainsFieldType(KUidContactFieldFax)) {
         phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeFacsimile);
     }
-    //else if (field.ContentType().ContainsFieldType(KUidContactFieldDTMF)) {
-    //    phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeDtmf);
-    //}
+    else if (field.ContentType().ContainsFieldType(KUidContactFieldDTMF)) {
+        phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeDtmfMenu);
+    }
 	
 	// set context
 	for (int i = 0; i < field.ContentType().FieldTypeCount(); i++) {
@@ -180,8 +180,8 @@ bool TransformPhoneNumber::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldPhoneNumber.iUid ||
-        fieldType == KUidContactFieldFax.iUid /*||
-        fieldType == KUidContactFieldDTMF.iUid*/) {
+        fieldType == KUidContactFieldFax.iUid ||
+        fieldType == KUidContactFieldDTMF.iUid) {
         ret = true;
     }
     return ret;
