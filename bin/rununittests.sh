@@ -13,7 +13,6 @@ if [ ! -d "$shell_path/../build/tests/bin" ]; then
 fi
 cd $shell_path/../build/tests/bin
 
-
 LD_LIBRARY_PATH=$shell_path/../lib:$LD_LIBRARY_PATH
 
 #service framework
@@ -31,12 +30,12 @@ LD_LIBRARY_PATH=$shell_path/../lib:$LD_LIBRARY_PATH
 ./tst_qnetworksession
 
 #Location
+./tst_qgeoareamonitor
 ./tst_qgeocoordinate
 ./tst_qgeopositioninfo
-./tst_qsatelliteinfo
-./tst_qsatelliteinfosource
 ./tst_qgeopositioninfosource
-./tst_qgeoareamonitor
+./tst_qgeosatelliteinfo
+./tst_qgeosatelliteinfosource
 ./tst_qlocationutils
 ./tst_qnmeapositioninfosource
 
