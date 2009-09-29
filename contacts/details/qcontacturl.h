@@ -57,7 +57,6 @@ public:
     Q_DECLARE_LATIN1_LITERAL(FieldSubType, "SubType");
     Q_DECLARE_LATIN1_LITERAL(SubTypeHomePage, "HomePage");
     Q_DECLARE_LATIN1_LITERAL(SubTypeFavourite, "Favourite");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeSocialNetworking, "SocialNetworking");
 #endif
 
     void setUrl(const QString& url) {setValue(FieldUrl, url);}

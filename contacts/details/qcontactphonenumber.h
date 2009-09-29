@@ -60,6 +60,8 @@ public:
     const char* SubTypeCar;
     const char* SubTypeBulletinBoardSystem;
     const char* SubTypeMessagingCapable;
+    const char* SubTypeAssistant;
+    const char* SubTypeDtmfMenu;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPhoneNumber, "PhoneNumber")
     Q_DECLARE_LATIN1_LITERAL(FieldNumber, "PhoneNumber");
@@ -74,6 +76,8 @@ public:
     Q_DECLARE_LATIN1_LITERAL(SubTypeCar, "Car");
     Q_DECLARE_LATIN1_LITERAL(SubTypeBulletinBoardSystem, "BulletinBoardSystem");
     Q_DECLARE_LATIN1_LITERAL(SubTypeMessagingCapable, "MessagingCapable");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeAssistant, "Assistant");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeDtmfMenu, "DtmfMenu");
 #endif
 
     void setNumber(const QString& number) {setValue(FieldNumber, number);}

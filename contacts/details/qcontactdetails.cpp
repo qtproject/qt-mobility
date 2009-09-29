@@ -642,6 +642,18 @@ Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeVideo, "Video");
 Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeMessagingCapable, "MessagingCapable");
 
 /*!
+ * \variable QContactPhoneNumber::SubTypeAssistant
+ * The constant attribute value which describes the phone number as an assistant phone number
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeAssistant, "Assistant");
+
+/*!
+ * \variable QContactPhoneNumber::SubTypeDtmfMenu
+ * The constant attribute value which describes the phone number as supporting DTMF-controlled electronic menu navigation
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeDtmfMenu, "DtmfMenu");
+
+/*!
  * \variable QContactAddress::SubTypeParcel
  * The constant attribute value which describes the address as being an address for parcel delivery
  */
