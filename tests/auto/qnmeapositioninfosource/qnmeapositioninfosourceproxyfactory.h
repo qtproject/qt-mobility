@@ -30,50 +30,48 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOAREAMONITOR_H
-#define QGEOAREAMONITOR_H
-
-#include "qlocationglobal.h"
-#include "qgeocoordinate.h"
+#ifndef QNMEAPOSITIONINFOSOURCEPROXYFACTORY_H
+#define QNMEAPOSITIONINFOSOURCEPROXYFACTORY_H
 
 #include <QObject>
 
-class QGeoPositionInfo;
-class QGeoAreaMonitorPrivate;
+#include <qnmeapositioninfosource.h>
 
-QT_BEGIN_HEADER
+class QTcpServer;
+class QNmeaPositionInfoSource;
+class QIODevice;
 
-QT_BEGIN_NAMESPACE
-
-class Q_LOCATION_EXPORT QGeoAreaMonitor : public QObject
+class QNmeaPositionInfoSourceProxy : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter)
-    Q_PROPERTY(qreal radius READ radius WRITE setRadius)
-
 public:
-    explicit QGeoAreaMonitor(QObject *parent);
-    virtual ~QGeoAreaMonitor() = 0;
+    QNmeaPositionInfoSourceProxy(QNmeaPositionInfoSource *source, QIODevice *outDevice);
+    ~QNmeaPositionInfoSourceProxy();
 
-    virtual void setCenter(const QGeoCoordinate &coordinate);
-    QGeoCoordinate center() const;
+    QGeoPositionInfoSource *source() const;
 
-    virtual void setRadius(qreal radius);
-    qreal radius() const;
+    void feedUpdate(const QDateTime &dt);
 
-    static QGeoAreaMonitor *createDefaultMonitor(QObject *parent);
+    void feedBytes(const QByteArray &bytes);
 
-Q_SIGNALS:
-    void areaEntered(const QGeoPositionInfo &update);
-    void areaExited(const QGeoPositionInfo &update);
+    int updateIntervalErrorMargin() const { return 50; }
 
 private:
-    Q_DISABLE_COPY(QGeoAreaMonitor)
-    QGeoAreaMonitorPrivate *d;
-}; 
+    QNmeaPositionInfoSource *m_source;
+    QIODevice *m_outDevice;
+};
 
-QT_END_NAMESPACE
+class QNmeaPositionInfoSourceProxyFactory : public QObject
+{
+    Q_OBJECT
+public:
+    QNmeaPositionInfoSourceProxyFactory();
 
-QT_END_HEADER
+    // proxy is created as child of source
+    QNmeaPositionInfoSourceProxy *createProxy(QNmeaPositionInfoSource *source);
+
+private:
+    QTcpServer *m_server;
+};
 
 #endif

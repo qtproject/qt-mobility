@@ -30,50 +30,11 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOAREAMONITOR_H
-#define QGEOAREAMONITOR_H
+#include "../testqgeopositioninfosource_p.h"
 
-#include "qlocationglobal.h"
-#include "qgeocoordinate.h"
-
-#include <QObject>
-
-class QGeoPositionInfo;
-class QGeoAreaMonitorPrivate;
-
-QT_BEGIN_HEADER
-
-QT_BEGIN_NAMESPACE
-
-class Q_LOCATION_EXPORT QGeoAreaMonitor : public QObject
+int main(int argc, char *argv[])
 {
-    Q_OBJECT
-    Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter)
-    Q_PROPERTY(qreal radius READ radius WRITE setRadius)
+    TestQGeoPositionInfoSource *test = TestQGeoPositionInfoSource::createDefaultSourceTest();
+    return QTest::qExec(test, argc, argv);
+}
 
-public:
-    explicit QGeoAreaMonitor(QObject *parent);
-    virtual ~QGeoAreaMonitor() = 0;
-
-    virtual void setCenter(const QGeoCoordinate &coordinate);
-    QGeoCoordinate center() const;
-
-    virtual void setRadius(qreal radius);
-    qreal radius() const;
-
-    static QGeoAreaMonitor *createDefaultMonitor(QObject *parent);
-
-Q_SIGNALS:
-    void areaEntered(const QGeoPositionInfo &update);
-    void areaExited(const QGeoPositionInfo &update);
-
-private:
-    Q_DISABLE_COPY(QGeoAreaMonitor)
-    QGeoAreaMonitorPrivate *d;
-}; 
-
-QT_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif

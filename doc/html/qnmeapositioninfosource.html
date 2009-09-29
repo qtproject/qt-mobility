@@ -51,7 +51,7 @@
 <a name="public-slots"></a>
 <h2>Public Slots</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qnmeapositioninfosource.html#requestUpdate">requestUpdate</a></b> ( int <i>msec</i> = 5000 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qnmeapositioninfosource.html#requestUpdate">requestUpdate</a></b> ( int <i>msec</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qnmeapositioninfosource.html#startUpdates">startUpdates</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qnmeapositioninfosource.html#stopUpdates">stopUpdates</a></b> ()</td></tr>
 </table>
@@ -61,6 +61,7 @@
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
+<li><div class="fn"></div>2 properties inherited from <a href="qgeopositioninfosource.html#properties">QGeoPositionInfoSource</a></li>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>2 signals inherited from <a href="qgeopositioninfosource.html#signals">QGeoPositionInfoSource</a></li>
 <li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
@@ -99,8 +100,8 @@
 <h3 class="fn"><a name="lastKnownPosition"></a><a href="qgeopositioninfo.html">QGeoPositionInfo</a> QNmeaPositionInfoSource::lastKnownPosition ( bool <i>fromSatellitePositioningMethodsOnly</i> = false ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qgeopositioninfosource.html#lastKnownPosition">QGeoPositionInfoSource::lastKnownPosition</a>().</p>
 <h3 class="fn"><a name="minimumUpdateInterval"></a>int QNmeaPositionInfoSource::minimumUpdateInterval () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Reimplemented from <a href="qgeopositioninfosource.html#minimumUpdateInterval">QGeoPositionInfoSource::minimumUpdateInterval</a>().</p>
-<h3 class="fn"><a name="requestUpdate"></a>void QNmeaPositionInfoSource::requestUpdate ( int <i>msec</i> = 5000 )&nbsp;&nbsp;<tt> [virtual slot]</tt></h3>
+<p>Reimplemented from <a href="qgeopositioninfosource.html#minimumUpdateInterval-prop">QGeoPositionInfoSource::minimumUpdateInterval</a>().</p>
+<h3 class="fn"><a name="requestUpdate"></a>void QNmeaPositionInfoSource::requestUpdate ( int <i>msec</i> = 0 )&nbsp;&nbsp;<tt> [virtual slot]</tt></h3>
 <p>Reimplemented from <a href="qgeopositioninfosource.html#requestUpdate">QGeoPositionInfoSource::requestUpdate</a>().</p>
 <h3 class="fn"><a name="setDevice"></a>void QNmeaPositionInfoSource::setDevice ( <a href="http://qt.nokia.com/doc/4.5/qiodevice.html">QIODevice</a> * <i>device</i> )</h3>
 <p>Sets the NMEA data source to <i>device</i>. If the device is not open, it will be opened in <a href="http://qt.nokia.com/doc/4.5/qiodevice.html#OpenModeFlag-enum">QIODevice::ReadOnly</a> mode.</p>
@@ -108,7 +109,7 @@
 <p><b>Note:</b> The <i>device</i> must emit <a href="http://qt.nokia.com/doc/4.5/qiodevice.html#readyRead">QIODevice::readyRead</a>() for the source to be notified when data is available for reading.</p>
 <p>See also <a href="qnmeapositioninfosource.html#device">device</a>().</p>
 <h3 class="fn"><a name="setUpdateInterval"></a>void QNmeaPositionInfoSource::setUpdateInterval ( int <i>msec</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Reimplemented from <a href="qgeopositioninfosource.html#setUpdateInterval">QGeoPositionInfoSource::setUpdateInterval</a>().</p>
+<p>Reimplemented from <a href="qgeopositioninfosource.html#updateInterval-prop">QGeoPositionInfoSource::setUpdateInterval</a>().</p>
 <h3 class="fn"><a name="startUpdates"></a>void QNmeaPositionInfoSource::startUpdates ()&nbsp;&nbsp;<tt> [virtual slot]</tt></h3>
 <p>Reimplemented from <a href="qgeopositioninfosource.html#startUpdates">QGeoPositionInfoSource::startUpdates</a>().</p>
 <h3 class="fn"><a name="stopUpdates"></a>void QNmeaPositionInfoSource::stopUpdates ()&nbsp;&nbsp;<tt> [virtual slot]</tt></h3>

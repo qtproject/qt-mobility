@@ -38,7 +38,9 @@
     \ingroup location
 
     A QGeoAreaMonitor emits signals when the current position is in
-    range, or has moved out of range, of a specified area.
+    range, or has moved out of range, of a specified circular area.
+    The area is specified by a coordinate (the center point) and a
+    radius (in meters).
 
     For example:
 
@@ -46,17 +48,18 @@
         public:
             MyClass::MyClass()
             {
-                QGeoAreaMonitor *monitor = QGeoAreaMonitor::createMonitor();
+                QGeoAreaMonitor *monitor = QGeoAreaMonitor::createDefaultMonitor();
                 connect(monitor, SIGNAL(areaEntered(QGeoPositionInfo)),
                         this, SLOT(areaEntered(QGeoPositionInfo)));
                 connect(monitor, SIGNAL(areaExited(QGeoPositionInfo)),
                         this, SLOT(areaExited(QGeoPositionInfo)));
 
                 QGeoCoordinate bigBenLocation(51.50104, -0.124632);
-                monitor->setMonitoredArea(bigBenLocation, 100);
+                monitor->setCenter(bigBenLocation);
+                monitor->setRadius(100);
             }
 
-        public slots:
+        public Q_SLOTS:
             void areaEntered(const QGeoPositionInfo &update)
             {
                 qDebug() << "Now within 100 meters, current position is" << update.coordinate();
@@ -69,12 +72,11 @@
     \endcode
 */
 
-
 class QGeoAreaMonitorPrivate
 {
 public:
     QGeoCoordinate coord;
-    int radius;
+    qreal radius;
 };
 
 
@@ -85,7 +87,7 @@ QGeoAreaMonitor::QGeoAreaMonitor(QObject *parent)
     : QObject(parent),
       d(new QGeoAreaMonitorPrivate)
 {
-    d->radius = 0;
+    d->radius = qreal(0.0);
 }
 
 /*!
@@ -95,38 +97,49 @@ QGeoAreaMonitor::~QGeoAreaMonitor()
 {
 }
 
-/*!
-    Sets the area to be monitored to the area specified by \a coordinate
-    with a radius of \a radius.
 
-    If the current position is within the specified area, areaEntered()
+/*!
+    \property QGeoAreaMonitor::center
+    \brief This property holds the center of the area to be monitored.
+
+    When this property is set, if the radius has already been set and
+    the current position is within the monitored area, areaEntered()
     is emitted immediately.
 
-    Note: Subclass implementations of this method should call the base
-    implementation to ensure coordinate() and radius() return the correct
-    values.
-*/
+    By default, this property contains an invalid coordinate.
 
-void QGeoAreaMonitor::setMonitoredArea(const QGeoCoordinate &coordinate, int radius)
+    Note: Subclass implementations must call the base implementation of
+    setCenter() so that center() returns the correct value.
+*/
+void QGeoAreaMonitor::setCenter(const QGeoCoordinate &coordinate)
 {
     d->coord = coordinate;
-    d->radius = radius;
 }
 
-/*!
-    Returns the coordinate set with setMonitoredArea(), or an invalid
-    coordinate if no area has been set.
-*/
-QGeoCoordinate QGeoAreaMonitor::coordinate() const
+QGeoCoordinate QGeoAreaMonitor::center() const
 {
     return d->coord;
 }
 
 /*!
-    Returns the radius set with setMonitoredArea(), or 0 if no area
-    has been set.
+    \property QGeoAreaMonitor::radius
+    \brief This property holds the radius of the area to be monitored, in meters.
+
+    When this property is set, if the center coordinate has already been set and
+    the current position is within the monitored area, areaEntered()
+    is emitted immediately.
+
+    By default, this property is 0.
+
+    Note: Subclass implementations must call the base implementation of
+    setRadius() so that radius() returns the correct value.
 */
-int QGeoAreaMonitor::radius() const
+void QGeoAreaMonitor::setRadius(qreal radius)
+{
+    d->radius = radius;
+}
+
+qreal QGeoAreaMonitor::radius() const
 {
     return d->radius;
 }
@@ -137,7 +150,7 @@ int QGeoAreaMonitor::radius() const
 
     Returns 0 if the system has no support for position monitoring.
 */
-QGeoAreaMonitor *QGeoAreaMonitor::createMonitor(QObject * /*parent*/)
+QGeoAreaMonitor *QGeoAreaMonitor::createDefaultMonitor(QObject * /*parent*/)
 {
     return 0;
 }

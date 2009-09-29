@@ -30,47 +30,57 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOAREAMONITOR_H
-#define QGEOAREAMONITOR_H
+#ifndef QGEOSATELLITEINFO_H
+#define QGEOSATELLITEINFO_H
 
 #include "qlocationglobal.h"
-#include "qgeocoordinate.h"
 
-#include <QObject>
-
-class QGeoPositionInfo;
-class QGeoAreaMonitorPrivate;
+class QDebug;
+class QGeoSatelliteInfoPrivate;
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATION_EXPORT QGeoAreaMonitor : public QObject
+class Q_LOCATION_EXPORT QGeoSatelliteInfo
 {
-    Q_OBJECT
-    Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter)
-    Q_PROPERTY(qreal radius READ radius WRITE setRadius)
-
 public:
-    explicit QGeoAreaMonitor(QObject *parent);
-    virtual ~QGeoAreaMonitor() = 0;
+    enum Property {
+        Elevation,
+        Azimuth
+    };
 
-    virtual void setCenter(const QGeoCoordinate &coordinate);
-    QGeoCoordinate center() const;
+    QGeoSatelliteInfo();
+    QGeoSatelliteInfo(const QGeoSatelliteInfo &other);
+    ~QGeoSatelliteInfo();
 
-    virtual void setRadius(qreal radius);
-    qreal radius() const;
+    QGeoSatelliteInfo &operator=(const QGeoSatelliteInfo &other);
 
-    static QGeoAreaMonitor *createDefaultMonitor(QObject *parent);
+    bool operator==(const QGeoSatelliteInfo &other) const;
+    inline bool operator!=(const QGeoSatelliteInfo &other) const { return !operator==(other); }
 
-Q_SIGNALS:
-    void areaEntered(const QGeoPositionInfo &update);
-    void areaExited(const QGeoPositionInfo &update);
+    void setPrnNumber(int prn);
+    int prnNumber() const;
+
+    void setSignalStrength(int signalStrength);
+    int signalStrength() const;
+
+    void setProperty(Property property, qreal value);
+    qreal property(Property property) const;
+    void removeProperty(Property property);
+
+    bool hasProperty(Property property) const;
 
 private:
-    Q_DISABLE_COPY(QGeoAreaMonitor)
-    QGeoAreaMonitorPrivate *d;
-}; 
+#ifndef QT_NO_DEBUG_STREAM
+    friend Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info);
+#endif
+    QGeoSatelliteInfoPrivate *d;
+};
+
+#ifndef QT_NO_DEBUG_STREAM
+Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info);
+#endif
 
 QT_END_NAMESPACE
 

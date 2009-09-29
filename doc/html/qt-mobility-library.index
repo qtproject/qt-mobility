@@ -93,6 +93,26 @@
                 <parameter left="const QString &amp;" right="" name="expectedDefinitionId" default=""/>
             </function>
         </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QGeoSatelliteInfoSource" href="qgeosatelliteinfosource.html" location="qgeosatelliteinfosource.h" bases="QObject" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QGeoSatelliteInfoSource" fullname="QGeoSatelliteInfoSource::QGeoSatelliteInfoSource" href="qgeosatelliteinfosource.html#QGeoSatelliteInfoSource" location="qgeosatelliteinfosource.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeoSatelliteInfoSource(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="createDefaultSource" fullname="QGeoSatelliteInfoSource::createDefaultSource" href="qgeosatelliteinfosource.html#createDefaultSource" location="qgeosatelliteinfosource.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QGeoSatelliteInfoSource *" signature="createDefaultSource(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="startUpdates" fullname="QGeoSatelliteInfoSource::startUpdates" href="qgeosatelliteinfosource.html#startUpdates" location="qgeosatelliteinfosource.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="startUpdates()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="stopUpdates" fullname="QGeoSatelliteInfoSource::stopUpdates" href="qgeosatelliteinfosource.html#stopUpdates" location="qgeosatelliteinfosource.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="stopUpdates()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="requestUpdate" fullname="QGeoSatelliteInfoSource::requestUpdate" href="qgeosatelliteinfosource.html#requestUpdate" location="qgeosatelliteinfosource.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="requestUpdate(int timeout)">
+                <parameter left="int" right="" name="timeout" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="satellitesInViewUpdated" fullname="QGeoSatelliteInfoSource::satellitesInViewUpdated" href="qgeosatelliteinfosource.html#satellitesInViewUpdated" location="qgeosatelliteinfosource.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="satellitesInViewUpdated(const QList&lt;QGeoSatelliteInfo&gt; &amp; satellites)">
+                <parameter left="const QList&lt;QGeoSatelliteInfo&gt; &amp;" right="" name="satellites" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="satellitesInUseUpdated" fullname="QGeoSatelliteInfoSource::satellitesInUseUpdated" href="qgeosatelliteinfosource.html#satellitesInUseUpdated" location="qgeosatelliteinfosource.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="satellitesInUseUpdated(const QList&lt;QGeoSatelliteInfo&gt; &amp; satellites)">
+                <parameter left="const QList&lt;QGeoSatelliteInfo&gt; &amp;" right="" name="satellites" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="requestTimeout" fullname="QGeoSatelliteInfoSource::requestTimeout" href="qgeosatelliteinfosource.html#requestTimeout" location="qgeosatelliteinfosource.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="requestTimeout()"/>
+        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceItem" href="qvaluespaceitem.html" location="qvaluespaceitem.h" bases="QObject" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceItem" fullname="QValueSpaceItem::QValueSpaceItem" href="qvaluespaceitem.html#QValueSpaceItem" location="qvaluespaceitem.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QValueSpaceItem(const QValueSpaceItem &amp; base, const QByteArray &amp; path, QObject * parent)">
                 <parameter left="const QValueSpaceItem &amp;" right="" name="base" default=""/>
@@ -2372,60 +2392,29 @@
                 <parameter left="Property" right="" name="property" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QSatelliteInfo" href="qsatelliteinfo.html" location="qsatelliteinfo.h" bases="" module="">
-            <enum access="public" threadsafety="unspecified" status="commendable" name="Property" fullname="QSatelliteInfo::Property" href="qsatelliteinfo.html#Property-enum" location="qsatelliteinfo.h">
-                <value name="Elevation" value="0"/>
-                <value name="Azimuth" value="1"/>
-            </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QSatelliteInfo" fullname="QSatelliteInfo::QSatelliteInfo" href="qsatelliteinfo.html#QSatelliteInfo" location="qsatelliteinfo.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSatelliteInfo()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QSatelliteInfo" fullname="QSatelliteInfo::QSatelliteInfo" href="qsatelliteinfo.html#QSatelliteInfo-2" location="qsatelliteinfo.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QSatelliteInfo(const QSatelliteInfo &amp; other)">
-                <parameter left="const QSatelliteInfo &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QSatelliteInfo" fullname="QSatelliteInfo::~QSatelliteInfo" href="qsatelliteinfo.html#dtor.QSatelliteInfo" location="qsatelliteinfo.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QSatelliteInfo()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QSatelliteInfo::operator=" href="qsatelliteinfo.html#operator=" location="qsatelliteinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QSatelliteInfo &amp;" signature="operator=(const QSatelliteInfo &amp; other)">
-                <parameter left="const QSatelliteInfo &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="operator==" fullname="QSatelliteInfo::operator==" href="qsatelliteinfo.html#operator==" location="qsatelliteinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator==(const QSatelliteInfo &amp; other) const">
-                <parameter left="const QSatelliteInfo &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="operator!=" fullname="QSatelliteInfo::operator!=" href="qsatelliteinfo.html#operator!=" location="qsatelliteinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator!=(const QSatelliteInfo &amp; other) const">
-                <parameter left="const QSatelliteInfo &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setPrnNumber" fullname="QSatelliteInfo::setPrnNumber" href="qsatelliteinfo.html#setPrnNumber" location="qsatelliteinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setPrnNumber(int prn)">
-                <parameter left="int" right="" name="prn" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="prnNumber" fullname="QSatelliteInfo::prnNumber" href="qsatelliteinfo.html#prnNumber" location="qsatelliteinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="prnNumber() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setSignalStrength" fullname="QSatelliteInfo::setSignalStrength" href="qsatelliteinfo.html#setSignalStrength" location="qsatelliteinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSignalStrength(int signalStrength)">
-                <parameter left="int" right="" name="signalStrength" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="signalStrength" fullname="QSatelliteInfo::signalStrength" href="qsatelliteinfo.html#signalStrength" location="qsatelliteinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="signalStrength() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setProperty" fullname="QSatelliteInfo::setProperty" href="qsatelliteinfo.html#setProperty" location="qsatelliteinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setProperty(Property property, qreal value)">
-                <parameter left="Property" right="" name="property" default=""/>
-                <parameter left="qreal" right="" name="value" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="property" fullname="QSatelliteInfo::property" href="qsatelliteinfo.html#property" location="qsatelliteinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="qreal" signature="property(Property property) const">
-                <parameter left="Property" right="" name="property" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="removeProperty" fullname="QSatelliteInfo::removeProperty" href="qsatelliteinfo.html#removeProperty" location="qsatelliteinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="removeProperty(Property property)">
-                <parameter left="Property" right="" name="property" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="hasProperty" fullname="QSatelliteInfo::hasProperty" href="qsatelliteinfo.html#hasProperty" location="qsatelliteinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="hasProperty(Property property) const">
-                <parameter left="Property" right="" name="property" default=""/>
-            </function>
-        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QGeoAreaMonitor" href="qgeoareamonitor.html" location="qgeoareamonitor.h" bases="QObject" module="">
+            <property access="public" threadsafety="unspecified" status="commendable" name="center" fullname="QGeoAreaMonitor::center" href="qgeoareamonitor.html#center-prop" location="qgeoareamonitor.h" type="QGeoCoordinate">
+                <getter name="center"/>
+                <setter name="setCenter"/>
+            </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="radius" fullname="QGeoAreaMonitor::radius" href="qgeoareamonitor.html#radius-prop" location="qgeoareamonitor.h" type="qreal">
+                <getter name="radius"/>
+                <setter name="setRadius"/>
+            </property>
             <function access="public" threadsafety="unspecified" status="commendable" name="QGeoAreaMonitor" fullname="QGeoAreaMonitor::QGeoAreaMonitor" href="qgeoareamonitor.html#QGeoAreaMonitor" location="qgeoareamonitor.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeoAreaMonitor(QObject * parent)">
-                <parameter left="QObject *" right="" name="parent" default="0"/>
+                <parameter left="QObject *" right="" name="parent" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoAreaMonitor" fullname="QGeoAreaMonitor::~QGeoAreaMonitor" href="qgeoareamonitor.html#dtor.QGeoAreaMonitor" location="qgeoareamonitor.h" virtual="pure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoAreaMonitor()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setMonitoredArea" fullname="QGeoAreaMonitor::setMonitoredArea" href="qgeoareamonitor.html#setMonitoredArea" location="qgeoareamonitor.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setMonitoredArea(const QGeoCoordinate &amp; coordinate, int radius)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="setCenter" fullname="QGeoAreaMonitor::setCenter" href="qgeoareamonitor.html#center-prop" location="qgeoareamonitor.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" associated-property="center" type="void" signature="setCenter(const QGeoCoordinate &amp; coordinate)">
                 <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default=""/>
-                <parameter left="int" right="" name="radius" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="coordinate" fullname="QGeoAreaMonitor::coordinate" href="qgeoareamonitor.html#coordinate" location="qgeoareamonitor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoCoordinate" signature="coordinate() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="radius" fullname="QGeoAreaMonitor::radius" href="qgeoareamonitor.html#radius" location="qgeoareamonitor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="radius() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="createMonitor" fullname="QGeoAreaMonitor::createMonitor" href="qgeoareamonitor.html#createMonitor" location="qgeoareamonitor.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QGeoAreaMonitor *" signature="createMonitor(QObject * parent)">
-                <parameter left="QObject *" right="" name="parent" default="0"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="center" fullname="QGeoAreaMonitor::center" href="qgeoareamonitor.html#center-prop" location="qgeoareamonitor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="center" type="QGeoCoordinate" signature="center() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setRadius" fullname="QGeoAreaMonitor::setRadius" href="qgeoareamonitor.html#radius-prop" location="qgeoareamonitor.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" associated-property="radius" type="void" signature="setRadius(qreal radius)">
+                <parameter left="qreal" right="" name="radius" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="radius" fullname="QGeoAreaMonitor::radius" href="qgeoareamonitor.html#radius-prop" location="qgeoareamonitor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="radius" type="qreal" signature="radius() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="createDefaultMonitor" fullname="QGeoAreaMonitor::createDefaultMonitor" href="qgeoareamonitor.html#createDefaultMonitor" location="qgeoareamonitor.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QGeoAreaMonitor *" signature="createDefaultMonitor(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="areaEntered" fullname="QGeoAreaMonitor::areaEntered" href="qgeoareamonitor.html#areaEntered" location="qgeoareamonitor.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="areaEntered(const QGeoPositionInfo &amp; update)">
                 <parameter left="const QGeoPositionInfo &amp;" right="" name="update" default=""/>
@@ -3066,7 +3055,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="startUpdates" fullname="QNmeaPositionInfoSource::startUpdates" href="qnmeapositioninfosource.html#startUpdates" location="qnmeapositioninfosource.h" virtual="impure" meta="slot" const="false" static="false" overload="false" type="void" signature="startUpdates()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="stopUpdates" fullname="QNmeaPositionInfoSource::stopUpdates" href="qnmeapositioninfosource.html#stopUpdates" location="qnmeapositioninfosource.h" virtual="impure" meta="slot" const="false" static="false" overload="false" type="void" signature="stopUpdates()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="requestUpdate" fullname="QNmeaPositionInfoSource::requestUpdate" href="qnmeapositioninfosource.html#requestUpdate" location="qnmeapositioninfosource.h" virtual="impure" meta="slot" const="false" static="false" overload="false" type="void" signature="requestUpdate(int msec)">
-                <parameter left="int" right="" name="msec" default="5000"/>
+                <parameter left="int" right="" name="msec" default="0"/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactPresence" href="qcontactpresence.html" location="qcontactpresence.h" bases="QContactDetail" module="">
@@ -3551,6 +3540,47 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="since" fullname="QContactChangeLogFilter::since" href="qcontactchangelogfilter.html#since" location="qcontactchangelogfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QDateTime" signature="since() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="eventType" fullname="QContactChangeLogFilter::eventType" href="qcontactchangelogfilter.html#eventType" location="qcontactchangelogfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QContactChangeLogFilter::EventType" signature="eventType() const"/>
         </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QGeoSatelliteInfo" href="qgeosatelliteinfo.html" location="qgeosatelliteinfo.h" bases="" module="">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="Property" fullname="QGeoSatelliteInfo::Property" href="qgeosatelliteinfo.html#Property-enum" location="qgeosatelliteinfo.h">
+                <value name="Elevation" value="0"/>
+                <value name="Azimuth" value="1"/>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QGeoSatelliteInfo" fullname="QGeoSatelliteInfo::QGeoSatelliteInfo" href="qgeosatelliteinfo.html#QGeoSatelliteInfo" location="qgeosatelliteinfo.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeoSatelliteInfo()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QGeoSatelliteInfo" fullname="QGeoSatelliteInfo::QGeoSatelliteInfo" href="qgeosatelliteinfo.html#QGeoSatelliteInfo-2" location="qgeosatelliteinfo.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QGeoSatelliteInfo(const QGeoSatelliteInfo &amp; other)">
+                <parameter left="const QGeoSatelliteInfo &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoSatelliteInfo" fullname="QGeoSatelliteInfo::~QGeoSatelliteInfo" href="qgeosatelliteinfo.html#dtor.QGeoSatelliteInfo" location="qgeosatelliteinfo.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoSatelliteInfo()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QGeoSatelliteInfo::operator=" href="qgeosatelliteinfo.html#operator=" location="qgeosatelliteinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QGeoSatelliteInfo &amp;" signature="operator=(const QGeoSatelliteInfo &amp; other)">
+                <parameter left="const QGeoSatelliteInfo &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator==" fullname="QGeoSatelliteInfo::operator==" href="qgeosatelliteinfo.html#operator==" location="qgeosatelliteinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator==(const QGeoSatelliteInfo &amp; other) const">
+                <parameter left="const QGeoSatelliteInfo &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator!=" fullname="QGeoSatelliteInfo::operator!=" href="qgeosatelliteinfo.html#operator!=" location="qgeosatelliteinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator!=(const QGeoSatelliteInfo &amp; other) const">
+                <parameter left="const QGeoSatelliteInfo &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setPrnNumber" fullname="QGeoSatelliteInfo::setPrnNumber" href="qgeosatelliteinfo.html#setPrnNumber" location="qgeosatelliteinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setPrnNumber(int prn)">
+                <parameter left="int" right="" name="prn" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="prnNumber" fullname="QGeoSatelliteInfo::prnNumber" href="qgeosatelliteinfo.html#prnNumber" location="qgeosatelliteinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="prnNumber() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setSignalStrength" fullname="QGeoSatelliteInfo::setSignalStrength" href="qgeosatelliteinfo.html#setSignalStrength" location="qgeosatelliteinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSignalStrength(int signalStrength)">
+                <parameter left="int" right="" name="signalStrength" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="signalStrength" fullname="QGeoSatelliteInfo::signalStrength" href="qgeosatelliteinfo.html#signalStrength" location="qgeosatelliteinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="signalStrength() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setProperty" fullname="QGeoSatelliteInfo::setProperty" href="qgeosatelliteinfo.html#setProperty" location="qgeosatelliteinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setProperty(Property property, qreal value)">
+                <parameter left="Property" right="" name="property" default=""/>
+                <parameter left="qreal" right="" name="value" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="property" fullname="QGeoSatelliteInfo::property" href="qgeosatelliteinfo.html#property" location="qgeosatelliteinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="qreal" signature="property(Property property) const">
+                <parameter left="Property" right="" name="property" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="removeProperty" fullname="QGeoSatelliteInfo::removeProperty" href="qgeosatelliteinfo.html#removeProperty" location="qgeosatelliteinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="removeProperty(Property property)">
+                <parameter left="Property" right="" name="property" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="hasProperty" fullname="QGeoSatelliteInfo::hasProperty" href="qgeosatelliteinfo.html#hasProperty" location="qgeosatelliteinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="hasProperty(Property property) const">
+                <parameter left="Property" right="" name="property" default=""/>
+            </function>
+        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactInvalidEngine" href="qcontactinvalidengine.html" location="qcontactinvalidbackend_p.h" bases="QContactManagerEngine" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactInvalidEngine" fullname="QContactInvalidEngine::QContactInvalidEngine" href="qcontactinvalidengine.html#QContactInvalidEngine" location="qcontactinvalidbackend_p.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactInvalidEngine()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="deref" fullname="QContactInvalidEngine::deref" href="qcontactinvalidengine.html#deref" location="qcontactinvalidbackend_p.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="deref()"/>
@@ -3858,26 +3888,6 @@
             <variable access="protected" threadsafety="unspecified" status="commendable" name="b" fullname="QPacket::b" href="qpacket.html#b-var" location="qpacketprotocol_p.h" type="QByteArray" static="false"/>
             <variable access="protected" threadsafety="unspecified" status="commendable" name="buf" fullname="QPacket::buf" href="qpacket.html#buf-var" location="qpacketprotocol_p.h" type="QBuffer *" static="false"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QSatelliteInfoSource" href="qsatelliteinfosource.html" location="qsatelliteinfosource.h" bases="QObject" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QSatelliteInfoSource" fullname="QSatelliteInfoSource::QSatelliteInfoSource" href="qsatelliteinfosource.html#QSatelliteInfoSource" location="qsatelliteinfosource.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSatelliteInfoSource(QObject * parent)">
-                <parameter left="QObject *" right="" name="parent" default="0"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="createSource" fullname="QSatelliteInfoSource::createSource" href="qsatelliteinfosource.html#createSource" location="qsatelliteinfosource.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QSatelliteInfoSource *" signature="createSource(QObject * parent)">
-                <parameter left="QObject *" right="" name="parent" default="0"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="startUpdates" fullname="QSatelliteInfoSource::startUpdates" href="qsatelliteinfosource.html#startUpdates" location="qsatelliteinfosource.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="startUpdates()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="stopUpdates" fullname="QSatelliteInfoSource::stopUpdates" href="qsatelliteinfosource.html#stopUpdates" location="qsatelliteinfosource.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="stopUpdates()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="requestUpdate" fullname="QSatelliteInfoSource::requestUpdate" href="qsatelliteinfosource.html#requestUpdate" location="qsatelliteinfosource.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="requestUpdate(int timeout)">
-                <parameter left="int" right="" name="timeout" default="5000"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="satellitesInViewUpdated" fullname="QSatelliteInfoSource::satellitesInViewUpdated" href="qsatelliteinfosource.html#satellitesInViewUpdated" location="qsatelliteinfosource.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="satellitesInViewUpdated(const QList&lt;QSatelliteInfo&gt; &amp; satellites)">
-                <parameter left="const QList&lt;QSatelliteInfo&gt; &amp;" right="" name="satellites" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="satellitesInUseUpdated" fullname="QSatelliteInfoSource::satellitesInUseUpdated" href="qsatelliteinfosource.html#satellitesInUseUpdated" location="qsatelliteinfosource.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="satellitesInUseUpdated(const QList&lt;QSatelliteInfo&gt; &amp; satellites)">
-                <parameter left="const QList&lt;QSatelliteInfo&gt; &amp;" right="" name="satellites" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="requestTimeout" fullname="QSatelliteInfoSource::requestTimeout" href="qsatelliteinfosource.html#requestTimeout" location="qsatelliteinfosource.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="requestTimeout()"/>
-        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QGeoCoordinate" href="qgeocoordinate.html" location="qgeocoordinate.h" bases="" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="CoordinateType" fullname="QGeoCoordinate::CoordinateType" href="qgeocoordinate.html#CoordinateType-enum" location="qgeocoordinate.h">
                 <value name="InvalidCoordinate" value="0"/>
@@ -4044,6 +4054,13 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="updateCompleted" fullname="QNetworkConfigurationManager::updateCompleted" href="qnetworkconfigurationmanager.html#updateCompleted" location="qnetworkconfigmanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="updateCompleted()"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QGeoPositionInfoSource" href="qgeopositioninfosource.html" location="qgeopositioninfosource.h" bases="QObject" module="">
+            <property access="public" threadsafety="unspecified" status="commendable" name="updateInterval" fullname="QGeoPositionInfoSource::updateInterval" href="qgeopositioninfosource.html#updateInterval-prop" location="qgeopositioninfosource.h" type="int">
+                <getter name="updateInterval"/>
+                <setter name="setUpdateInterval"/>
+            </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="minimumUpdateInterval" fullname="QGeoPositionInfoSource::minimumUpdateInterval" href="qgeopositioninfosource.html#minimumUpdateInterval-prop" location="qgeopositioninfosource.h" type="int">
+                <getter name="minimumUpdateInterval"/>
+            </property>
             <enum access="public" threadsafety="unspecified" status="commendable" name="PositioningMethod" fullname="QGeoPositionInfoSource::PositioningMethod" href="qgeopositioninfosource.html#PositioningMethod-enum" location="qgeopositioninfosource.h" typedef="QGeoPositionInfoSource::PositioningMethods">
                 <value name="SatellitePositioningMethods" value="0x000000ff"/>
                 <value name="NonSatellitePositioningMethods" value="0xffffff00"/>
@@ -4051,13 +4068,13 @@
             </enum>
             <typedef access="public" threadsafety="unspecified" status="commendable" name="PositioningMethods" fullname="QGeoPositionInfoSource::PositioningMethods" href="qgeopositioninfosource.html#PositioningMethods-typedef" location="qgeopositioninfosource.h" enum="QGeoPositionInfoSource::PositioningMethod"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QGeoPositionInfoSource" fullname="QGeoPositionInfoSource::QGeoPositionInfoSource" href="qgeopositioninfosource.html#QGeoPositionInfoSource" location="qgeopositioninfosource.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeoPositionInfoSource(QObject * parent)">
-                <parameter left="QObject *" right="" name="parent" default="0"/>
+                <parameter left="QObject *" right="" name="parent" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoPositionInfoSource" fullname="QGeoPositionInfoSource::~QGeoPositionInfoSource" href="qgeopositioninfosource.html#dtor.QGeoPositionInfoSource" location="qgeopositioninfosource.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoPositionInfoSource()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setUpdateInterval" fullname="QGeoPositionInfoSource::setUpdateInterval" href="qgeopositioninfosource.html#setUpdateInterval" location="qgeopositioninfosource.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setUpdateInterval(int msec)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="setUpdateInterval" fullname="QGeoPositionInfoSource::setUpdateInterval" href="qgeopositioninfosource.html#updateInterval-prop" location="qgeopositioninfosource.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" associated-property="updateInterval" type="void" signature="setUpdateInterval(int msec)">
                 <parameter left="int" right="" name="msec" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="updateInterval" fullname="QGeoPositionInfoSource::updateInterval" href="qgeopositioninfosource.html#updateInterval" location="qgeopositioninfosource.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="updateInterval() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="updateInterval" fullname="QGeoPositionInfoSource::updateInterval" href="qgeopositioninfosource.html#updateInterval-prop" location="qgeopositioninfosource.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="updateInterval" type="int" signature="updateInterval() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setPreferredPositioningMethods" fullname="QGeoPositionInfoSource::setPreferredPositioningMethods" href="qgeopositioninfosource.html#setPreferredPositioningMethods" location="qgeopositioninfosource.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setPreferredPositioningMethods(QFlags&lt;QGeoPositionInfoSource::PositioningMethod&gt; methods)">
                 <parameter left="QFlags&lt;QGeoPositionInfoSource::PositioningMethod&gt;" right="" name="methods" default=""/>
             </function>
@@ -4066,14 +4083,14 @@
                 <parameter left="bool" right="" name="fromSatellitePositioningMethodsOnly" default="false"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="supportedPositioningMethods" fullname="QGeoPositionInfoSource::supportedPositioningMethods" href="qgeopositioninfosource.html#supportedPositioningMethods" location="qgeopositioninfosource.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="PositioningMethods" signature="supportedPositioningMethods() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="minimumUpdateInterval" fullname="QGeoPositionInfoSource::minimumUpdateInterval" href="qgeopositioninfosource.html#minimumUpdateInterval" location="qgeopositioninfosource.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="minimumUpdateInterval() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="createSource" fullname="QGeoPositionInfoSource::createSource" href="qgeopositioninfosource.html#createSource" location="qgeopositioninfosource.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QGeoPositionInfoSource *" signature="createSource(QObject * parent)">
-                <parameter left="QObject *" right="" name="parent" default="0"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="minimumUpdateInterval" fullname="QGeoPositionInfoSource::minimumUpdateInterval" href="qgeopositioninfosource.html#minimumUpdateInterval-prop" location="qgeopositioninfosource.h" virtual="pure" meta="plain" const="true" static="false" overload="false" associated-property="minimumUpdateInterval" type="int" signature="minimumUpdateInterval() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="createDefaultSource" fullname="QGeoPositionInfoSource::createDefaultSource" href="qgeopositioninfosource.html#createDefaultSource" location="qgeopositioninfosource.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QGeoPositionInfoSource *" signature="createDefaultSource(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="startUpdates" fullname="QGeoPositionInfoSource::startUpdates" href="qgeopositioninfosource.html#startUpdates" location="qgeopositioninfosource.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="startUpdates()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="stopUpdates" fullname="QGeoPositionInfoSource::stopUpdates" href="qgeopositioninfosource.html#stopUpdates" location="qgeopositioninfosource.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="stopUpdates()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="requestUpdate" fullname="QGeoPositionInfoSource::requestUpdate" href="qgeopositioninfosource.html#requestUpdate" location="qgeopositioninfosource.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="requestUpdate(int timeout)">
-                <parameter left="int" right="" name="timeout" default="5000"/>
+                <parameter left="int" right="" name="timeout" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="positionUpdated" fullname="QGeoPositionInfoSource::positionUpdated" href="qgeopositioninfosource.html#positionUpdated" location="qgeopositioninfosource.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="positionUpdated(const QGeoPositionInfo &amp; update)">
                 <parameter left="const QGeoPositionInfo &amp;" right="" name="update" default=""/>

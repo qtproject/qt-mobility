@@ -17,16 +17,15 @@ SUBDIRS += qnetworkconfigmanager \          #Bearer management
            qnetworkconfiguration \
            qnetworksession \
 
-SUBDIRS += tst_qgeocoordinate \             #Location
-           tst_qgeopositioninfo \
-           tst_qsatelliteinfo \
-           tst_qsatelliteinfosource \
-           tst_qgeopositioninfosource \
-           tst_qgeoareamonitor \
-           tst_qlocationutils \
-           tst_qnmeapositioninfosource \
-           tst_qnmeapositioninfosource_realtime \
-           tst_qnmeapositioninfosource_sim
+SUBDIRS += qgeocoordinate \                 #Location
+          qgeopositioninfo \
+          qgeosatelliteinfo \
+          qgeosatelliteinfosource \
+          qgeopositioninfosource \
+          qgeoareamonitor \
+          qlocationutils \
+          qnmeapositioninfosource 
+symbian:SUBDIRS += qgeopositioninfosource_s60 
 
 !wince:SUBDIRS += qvaluespace \                    #Publish and Subscribe
            qvaluespaceobject \
@@ -78,5 +77,3 @@ contains(qmf_enabled,yes)|wince*|win32|symbian|maemo {
         qmessagestore \
         qmessagestorekeys \
         qmessage
-}
-

@@ -30,47 +30,44 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOAREAMONITOR_H
-#define QGEOAREAMONITOR_H
+#ifndef QGEOSATELLITEINFOSOURCE_H
+#define QGEOSATELLITEINFOSOURCE_H
 
 #include "qlocationglobal.h"
-#include "qgeocoordinate.h"
+#include "qgeosatelliteinfo.h"
 
 #include <QObject>
+#include <QList>
 
-class QGeoPositionInfo;
-class QGeoAreaMonitorPrivate;
+class QGeoSatelliteInfoSourcePrivate;
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATION_EXPORT QGeoAreaMonitor : public QObject
+class Q_LOCATION_EXPORT QGeoSatelliteInfoSource : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter)
-    Q_PROPERTY(qreal radius READ radius WRITE setRadius)
-
 public:
-    explicit QGeoAreaMonitor(QObject *parent);
-    virtual ~QGeoAreaMonitor() = 0;
+    explicit QGeoSatelliteInfoSource(QObject *parent);
 
-    virtual void setCenter(const QGeoCoordinate &coordinate);
-    QGeoCoordinate center() const;
+    static QGeoSatelliteInfoSource *createDefaultSource(QObject *parent);
 
-    virtual void setRadius(qreal radius);
-    qreal radius() const;
+public Q_SLOTS:
+    virtual void startUpdates() = 0;
+    virtual void stopUpdates() = 0;
 
-    static QGeoAreaMonitor *createDefaultMonitor(QObject *parent);
+    virtual void requestUpdate(int timeout = 0) = 0;
 
 Q_SIGNALS:
-    void areaEntered(const QGeoPositionInfo &update);
-    void areaExited(const QGeoPositionInfo &update);
+    void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
+    void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
+    void requestTimeout();
 
 private:
-    Q_DISABLE_COPY(QGeoAreaMonitor)
-    QGeoAreaMonitorPrivate *d;
-}; 
+    Q_DISABLE_COPY(QGeoSatelliteInfoSource)
+    QGeoSatelliteInfoSourcePrivate *d;
+};
 
 QT_END_NAMESPACE
 

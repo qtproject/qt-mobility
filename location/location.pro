@@ -14,8 +14,8 @@ PUBLIC_HEADERS +=
 PUBLIC_HEADERS += qlocationglobal.h \
                   qgeocoordinate.h \
                   qgeopositioninfo.h \
-                  qsatelliteinfo.h \
-                  qsatelliteinfosource.h \
+                  qgeosatelliteinfo.h \
+                  qgeosatelliteinfosource.h \
                   qgeopositioninfosource.h \
                   qgeoareamonitor.h \
                   qnmeapositioninfosource.h
@@ -37,18 +37,18 @@ HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 SOURCES +=  qlocationutils.cpp \
             qgeocoordinate.cpp \
             qgeopositioninfo.cpp \
-            qsatelliteinfo.cpp \
-            qsatelliteinfosource.cpp \
+            qgeosatelliteinfo.cpp \
+            qgeosatelliteinfosource.cpp \
             qgeopositioninfosource.cpp \
             qgeoareamonitor.cpp \
             qnmeapositioninfosource.cpp
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
-    INCLUDEPATH += \epoc32\include\osextensions
+    INCLUDEPATH += $$EPOCROOT\epoc32\include\osextensions
     LIBS += -llbs
 
-    deploy.path = /
+    deploy.path = $$EPOCROOT
     exportheaders.sources = $$PUBLIC_HEADERS
     exportheaders.path = epoc32/include
     DEPLOYMENT += exportheaders

@@ -74,10 +74,10 @@ public:
     PositioningMethods supportedPositioningMethods() const;
     int minimumUpdateInterval() const;
 
-public slots:
+public Q_SLOTS:
     void startUpdates();
     void stopUpdates();
-    void requestUpdate(int timeout = 5000);
+    void requestUpdate(int timeout = 0);
 
 private:
     Q_DISABLE_COPY(QNmeaPositionInfoSource)

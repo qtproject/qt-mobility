@@ -41,7 +41,7 @@
     \brief The QGeoPositionInfoSource class is an abstract base class for the distribution of positional updates.
     \ingroup location
 
-    The static function QGeoPositionInfoSource::createSource() creates a default
+    The static function QGeoPositionInfoSource::createDefaultSource() creates a default
     position source that is appropriate for the platform, if one is available.
     Otherwise, QGeoPositionInfoSource can be subclassed to create an appropriate
     custom source of position data.
@@ -59,7 +59,7 @@
 
     \code
         // Emit updates every 10 seconds if available
-        QGeoPositionInfoSource *source = QGeoPositionInfoSource::createSource();
+        QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource();
         source->setUpdateInterval(10000);
     \endcode
 
@@ -108,32 +108,27 @@ QGeoPositionInfoSource::~QGeoPositionInfoSource()
 }
 
 /*!
-    Sets the source to emit updates every \a msec milliseconds.
-    If \a msec is 0, the source will provide updates using a default interval
-    or some internal logic that determines when an update should be provided.
+    \property QGeoPositionInfoSource::updateInterval
+    \brief This property holds the requested interval in milliseconds between each update.
 
-    If \a msec is not 0 and is less than the value returned by
-    minimumUpdateInterval(), the interval will be set to the minimum interval.
+    If the update interval is not set (or is set to 0) the
+    source will provide updates as often as necessary.
 
-    Note that implementations may not provide updates at the exact
-    interval specified. For example, a given millisecond interval value may be
-    rounded to the nearest second if the implementation does not support
-    intervals specified to millisecond precision.
+    If the update interval is set, the source will provide updates at an
+    interval as close to the requested interval as possible. If the requested
+    interval is less than the minimumUpdateInterval(),
+    the minimum interval is used instead.
 
-    \bold {Note:} When reimplementing this method, subclasses must call the
-    base method implementation to ensure updateInterval() returns the correct
-    value.
+    The default value for this property is 0.
+
+    Note: Subclass implementations must call the base implementation of
+    setUpdateInterval() so that updateInterval() returns the correct value.
 */
 void QGeoPositionInfoSource::setUpdateInterval(int msec)
 {
     d->interval = msec;
 }
 
-/*!
-    Returns the interval value set by setUpdateInterval().
-
-    Returns 0 if no interval has been set.
-*/
 int QGeoPositionInfoSource::updateInterval() const
 {
     return d->interval;
@@ -170,7 +165,7 @@ QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSource::preferredPosi
     Returns 0 if the system has no default position source.
 */
 
-QGeoPositionInfoSource *QGeoPositionInfoSource::createSource(QObject *parent)
+QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *parent)
 {
 #if defined(Q_OS_SYMBIAN)
     return CQGeoPositionInfoSourceS60::NewL(parent);
@@ -199,10 +194,13 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createSource(QObject *parent)
     \sa setPreferredPositioningMethods()
 */
 
-/*!
-    \fn virtual int QGeoPositionInfoSource::minimumUpdateInterval() const = 0;
 
-    Returns the minimum value accepted by setUpdateInterval().
+/*!
+    \property QGeoPositionInfoSource::minimumUpdateInterval
+    \brief This property holds the minimum time (in milliseconds) required to retrieve a position update.
+
+    This is the minimum value accepted by setUpdateInterval() and 
+    requestUpdate().
 */
 
 
@@ -222,13 +220,15 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createSource(QObject *parent)
 */
 
 /*!
-    \fn virtual void QGeoPositionInfoSource::requestUpdate(int timeout = 5000);
+    \fn virtual void QGeoPositionInfoSource::requestUpdate(int timeout = 0);
 
     Attempts to get the current position and emit positionUpdated() with
-    this information. This is useful if you do not need the regular updates
-    provided by startUpdates(). If the current position cannot be found
-    within the given \a timeout (in milliseconds), requestTimeout() is
-    emitted.
+    this information. If the current position cannot be found within the given \a timeout
+    (in milliseconds) or if \a timeout is less than the value returned by
+    minimumUpdateInterval(), requestTimeout() is emitted.
+
+    If the timeout is zero, the timeout defaults to a reasonable timeout
+    period as appropriate for the source.
 
     This does nothing if another update request is in progress. However
     it can be called even if startUpdates() has already been called and

@@ -38,7 +38,6 @@
 #include <QDataStream>
 #include <QDebug>
 #include <qnumeric.h>
-#include <qmath.h>
 
 #include <math.h>
 
@@ -326,11 +325,11 @@ qreal QGeoCoordinate::distanceTo(const QGeoCoordinate &other) const
     // Haversine formula
     double dlat = qgeocoordinate_degToRad(other.d->lat - d->lat);
     double dlon = qgeocoordinate_degToRad(other.d->lng - d->lng);
-    double y = qSin(dlat/2.0) * qSin(dlat/2.0)
-            + qCos(qgeocoordinate_degToRad(d->lat))
-            * qCos(qgeocoordinate_degToRad(other.d->lat))
-            * qSin(dlon/2.0) * qSin(dlon/2.0);
-    double x = 2 * atan2(qSqrt(y), qSqrt(1-y));
+    double y = sin(dlat/2.0) * sin(dlat/2.0)
+            + cos(qgeocoordinate_degToRad(d->lat))
+            * cos(qgeocoordinate_degToRad(other.d->lat))
+            * sin(dlon/2.0) * sin(dlon/2.0);
+    double x = 2 * atan2(sqrt(y), sqrt(1-y));
     return qreal(x * qgeocoordinate_EARTH_MEAN_RADIUS * 1000);
 }
 
@@ -355,8 +354,8 @@ qreal QGeoCoordinate::azimuthTo(const QGeoCoordinate &other) const
     double lat1Rad = qgeocoordinate_degToRad(d->lat);
     double lat2Rad = qgeocoordinate_degToRad(other.d->lat);
 
-    double y = qSin(dlon) * qCos(lat2Rad);
-    double x = qCos(lat1Rad) * qSin(lat2Rad) - qSin(lat1Rad) * qCos(lat2Rad) * qCos(dlon);
+    double y = sin(dlon) * cos(lat2Rad);
+    double x = cos(lat1Rad) * sin(lat2Rad) - sin(lat1Rad) * cos(lat2Rad) * cos(dlon);
 
     double whole;
     double fraction = modf(qgeocoordinate_radToDeg(atan2(y, x)), &whole);
@@ -515,6 +514,9 @@ QDebug operator<<(QDebug dbg, const QGeoCoordinate &coord)
 
 #ifndef QT_NO_DATASTREAM
 /*!
+    \fn QDataStream &operator<<(QDataStream &stream, const QGeoCoordinate &coordinate)
+    \relates QGeoCoordinate
+
     Writes the given \a coordinate to the specified \a stream.
 
     \sa {Format of the QDataStream Operators}
@@ -531,6 +533,9 @@ QDataStream &operator<<(QDataStream &stream, const QGeoCoordinate &coordinate)
 
 #ifndef QT_NO_DATASTREAM
 /*!
+    \fn QDataStream &operator>>(QDataStream &stream, QGeoCoordinate &coordinate)
+    \relates QGeoCoordinate
+
     Reads a coordinate from the specified \a stream into the given
     \a coordinate.
 

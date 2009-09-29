@@ -100,6 +100,7 @@ wince* {
 
     DEPLOYMENT += CONTACTS_DEPLOYMENT CONTACTS_PLUGINS_DEPLOYMENT
 }
+
 symbian {
     ### Contacts
     # Main library

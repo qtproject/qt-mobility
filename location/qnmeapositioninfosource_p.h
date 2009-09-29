@@ -93,13 +93,13 @@ public:
     QGeoPositionInfo m_lastUpdate;
     bool m_invokedStart;
 
-public slots:
+public Q_SLOTS:
     void readyRead();
 
 protected:
     void timerEvent(QTimerEvent *event);
 
-private slots:
+private Q_SLOTS:
     void emitPendingUpdate();
     void sourceDataClosed();
     void updateRequestTimeout();
@@ -154,7 +154,7 @@ public:
 protected:
     virtual void timerEvent(QTimerEvent *event);
 
-private slots:
+private Q_SLOTS:
     void simulatePendingUpdate();
 
 private:
