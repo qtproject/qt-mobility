@@ -350,7 +350,7 @@ public:
         mockFormatControl = new MockMediaFormatControl(parent);
     }
 
-    QMediaControl* control(const char * name) const
+	QMediaControl* control(const char *name) const
     {
         if(qstrcmp(name,QAudioEncoderControl_iid) == 0)
             return mockAudioEncodeControl;
@@ -360,7 +360,6 @@ public:
             return mockControl;
         if(qstrcmp(name,QMediaFormatControl_iid) == 0)
             return mockFormatControl;
-
 
         return 0;
     }
@@ -375,8 +374,8 @@ class MockObject : public QMediaObject
 {
     Q_OBJECT
 public:
-    MockObject(QObject *parent, QMediaControl *control):
-        QMediaObject(parent, new MockService(this, control))
+    MockObject(QObject *parent, MockService *service):
+        QMediaObject(parent, service)
     {
     }
 };
@@ -400,6 +399,7 @@ private:
     QAudioEncoderControl* encode;
     QAudioDeviceControl* audio;
     MockObject      *object;
+	MockService		*service;
     MockProvider    *mock;
     QMediaRecorder  *capture;
 };
@@ -409,7 +409,8 @@ void tst_QMediaRecorder::init()
     qRegisterMetaType<QMediaRecorder::State>("QMediaRecorder::State");
 
     mock = new MockProvider(this);
-    object = new MockObject(this, mock);
+	service = new MockService(this, mock);
+    object = new MockObject(this, service);
     capture = new QMediaRecorder(object);
     QVERIFY(capture->isValid());
     audio = qobject_cast<QAudioDeviceControl*>(capture->service()->control(QAudioDeviceControl_iid));
