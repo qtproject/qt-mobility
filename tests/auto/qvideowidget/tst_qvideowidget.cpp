@@ -362,6 +362,7 @@ public:
 
     ~QtTestVideoObject()
     {
+        delete testService;
     }
 
     bool isValid() const { return true; }
