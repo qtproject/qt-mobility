@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 TEMPLATE = subdirs
 
 SUBDIRS = m3u
@@ -30,4 +31,5 @@ symbian: {
     SUBDIRS -= phonon
     SUBDIRS -= audiocapture
     SUBDIRS += symbian
+    MMP_RULES += EXPORTUNFROZEN
 }

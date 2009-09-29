@@ -18,7 +18,7 @@ include(camera/camera_s60.pri)
 load(data_caging_paths)
     pluginDep.sources = QtMobilityMultimediaEngine.dll
     pluginDep.path = $$QT_PLUGINS_BASE_DIR\mediaservice    
-
     DEPLOYMENT += pluginDep    
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL -TCB
+    MMP_RULES += EXPORTUNFROZEN
