@@ -2,7 +2,7 @@
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- ../../multimedia/qmediaplayercontrol.cpp -->
+<!-- qmediaplayercontrol.cpp -->
 <head>
   <title>QMediaPlayerControl Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
@@ -34,11 +34,11 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual const QIODevice * </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#mediaStream">mediaStream</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#pause">pause</a></b> () = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#play">play</a></b> () = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual float </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#playbackRate">playbackRate</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual qreal </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#playbackRate">playbackRate</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual qint64 </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#position">position</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#setMedia">setMedia</a></b> ( const QMediaSource &amp; <i>media</i>, QIODevice * <i>stream</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#setMuted">setMuted</a></b> ( bool <i>mute</i> ) = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#setPlaybackRate">setPlaybackRate</a></b> ( float <i>rate</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#setPlaybackRate">setPlaybackRate</a></b> ( qreal <i>rate</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#setPosition">setPosition</a></b> ( qint64 <i>position</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#setVolume">setVolume</a></b> ( int <i>volume</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QMediaPlayer::State </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#state">state</a></b> () const = 0</td></tr>
@@ -58,6 +58,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#error">error</a></b> ( int <i>error</i>, const QString &amp; <i>errorString</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#mediaStatusChanged">mediaStatusChanged</a></b> ( QMediaPlayer::MediaStatus <i>status</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#mutingChanged">mutingChanged</a></b> ( bool <i>mute</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#playbackRateChanged">playbackRateChanged</a></b> ( qreal <i>rate</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#positionChanged">positionChanged</a></b> ( qint64 <i>position</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#seekableChanged">seekableChanged</a></b> ( bool <i>seekable</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#stateChanged">stateChanged</a></b> ( QMediaPlayer::State <i>state</i> )</td></tr>
@@ -139,9 +140,11 @@
 <p>Starts playback of the current media.</p>
 <p>If successful the player control will immediately enter the <a href="qmediaplayer.html#State-enum">playing</a> state.</p>
 <p>See also <a href="qmediaplayercontrol.html#state">state</a>().</p>
-<h3 class="fn"><a name="playbackRate"></a>float QMediaPlayerControl::playbackRate () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="playbackRate"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> QMediaPlayerControl::playbackRate () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the rate of playback.</p>
 <p>See also <a href="qmediaplayercontrol.html#setPlaybackRate">setPlaybackRate</a>().</p>
+<h3 class="fn"><a name="playbackRateChanged"></a>void QMediaPlayerControl::playbackRateChanged ( <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> <i>rate</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal emitted when playback rate changes to <i>rate</i>.</p>
 <h3 class="fn"><a name="position"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qint64-typedef">qint64</a> QMediaPlayerControl::position () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the current playback position in milliseconds.</p>
 <p>See also <a href="qmediaplayercontrol.html#setPosition">setPosition</a>().</p>
@@ -158,7 +161,7 @@
 <h3 class="fn"><a name="setMuted"></a>void QMediaPlayerControl::setMuted ( bool <i>mute</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Sets the <i>mute</i> state of a player control.</p>
 <p>See also <a href="qmediaplayercontrol.html#isMuted">isMuted</a>().</p>
-<h3 class="fn"><a name="setPlaybackRate"></a>void QMediaPlayerControl::setPlaybackRate ( float <i>rate</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="setPlaybackRate"></a>void QMediaPlayerControl::setPlaybackRate ( <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> <i>rate</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Sets the <i>rate</i> of playback.</p>
 <p>See also <a href="qmediaplayercontrol.html#playbackRate">playbackRate</a>().</p>
 <h3 class="fn"><a name="setPosition"></a>void QMediaPlayerControl::setPosition ( <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qint64-typedef">qint64</a> <i>position</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>

@@ -2,7 +2,7 @@
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- ../../multimedia/qmediaplayer.cpp -->
+<!-- qmediaplayer.cpp -->
 <head>
   <title>QMediaPlayer Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
@@ -38,7 +38,7 @@
 <li><div class="fn"><b><a href="qmediaplayer.html#mediaStatus-prop">mediaStatus</a></b> : const MediaStatus</div></li>
 <li><div class="fn"><b><a href="qmediaplayer.html#muted-prop">muted</a></b> : bool</div></li>
 </ul></td><td valign="top"><ul>
-<li><div class="fn"><b><a href="qmediaplayer.html#playbackRate-prop">playbackRate</a></b> : float</div></li>
+<li><div class="fn"><b><a href="qmediaplayer.html#playbackRate-prop">playbackRate</a></b> : qreal</div></li>
 <li><div class="fn"><b><a href="qmediaplayer.html#position-prop">position</a></b> : qint64</div></li>
 <li><div class="fn"><b><a href="qmediaplayer.html#seekable-prop">seekable</a></b> : const bool</div></li>
 <li><div class="fn"><b><a href="qmediaplayer.html#state-prop">state</a></b> : const State</div></li>
@@ -67,7 +67,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">QMediaSource </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#media-prop">media</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">MediaStatus </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#mediaStatus-prop">mediaStatus</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const QIODevice * </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#mediaStream">mediaStream</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">float </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#playbackRate-prop">playbackRate</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#playbackRate-prop">playbackRate</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">qint64 </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#position-prop">position</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">State </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#state-prop">state</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#volume-prop">volume</a></b> () const</td></tr>
@@ -90,7 +90,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#play">play</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#media-prop">setMedia</a></b> ( const QMediaSource &amp; <i>media</i>, QIODevice * <i>stream</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#muted-prop">setMuted</a></b> ( bool <i>muted</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#playbackRate-prop">setPlaybackRate</a></b> ( float <i>rate</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#playbackRate-prop">setPlaybackRate</a></b> ( qreal <i>rate</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#position-prop">setPosition</a></b> ( qint64 <i>position</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#volume-prop">setVolume</a></b> ( int <i>volume</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#stop">stop</a></b> ()</td></tr>
@@ -108,7 +108,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#mediaChanged">mediaChanged</a></b> ( const QMediaSource &amp; <i>media</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#mediaStatusChanged">mediaStatusChanged</a></b> ( QMediaPlayer::MediaStatus <i>status</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#mutingChanged">mutingChanged</a></b> ( bool <i>muted</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#playbackRateChanged">playbackRateChanged</a></b> ( float <i>rate</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#playbackRateChanged">playbackRateChanged</a></b> ( qreal <i>rate</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#positionChanged">positionChanged</a></b> ( qint64 <i>position</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#seekableChanged">seekableChanged</a></b> ( bool <i>seekable</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#stateChanged">stateChanged</a></b> ( QMediaPlayer::State <i>state</i> )</td></tr>
@@ -231,12 +231,16 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#mutingChanged">mutingChanged</a></b> ( bool <i>muted</i> )</td></tr>
 </table>
-<h3 class="fn"><a name="playbackRate-prop"></a>playbackRate : float</h3>
+<h3 class="fn"><a name="playbackRate-prop"></a>playbackRate : <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a></h3>
 <p>This property holds the rate of playback.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">float </td><td class="memItemRight" valign="bottom"><b>playbackRate</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setPlaybackRate</b> ( float <i>rate</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>playbackRate</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setPlaybackRate</b> ( qreal <i>rate</i> )</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#playbackRateChanged">playbackRateChanged</a></b> ( qreal <i>rate</i> )</td></tr>
 </table>
 <h3 class="fn"><a name="position-prop"></a>position : <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qint64-typedef">qint64</a></h3>
 <p>This property holds the current playback position in milliseconds from the beginning.</p>
@@ -322,7 +326,7 @@
 <p>Pause playing the current source.</p>
 <h3 class="fn"><a name="play"></a>void QMediaPlayer::play ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Start or resume playing the current source.</p>
-<h3 class="fn"><a name="playbackRateChanged"></a>void QMediaPlayer::playbackRateChanged ( float <i>rate</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="playbackRateChanged"></a>void QMediaPlayer::playbackRateChanged ( <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> <i>rate</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals the <a href="qmediaplayer.html#playbackRate-prop">playbackRate</a> has changed to <i>rate</i>.</p>
 <h3 class="fn"><a name="positionChanged"></a>void QMediaPlayer::positionChanged ( <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qint64-typedef">qint64</a> <i>position</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal the position of the content has changed to <i>position</i>, expressed in milliseconds approximately every 1000milliseconds.</p>

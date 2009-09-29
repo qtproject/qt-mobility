@@ -114,5 +114,19 @@ QImageProcessingControl::~QImageProcessingControl()
     Sets the saturation value to \a value.
 */
 
+/*!
+    \fn QImageProcessingControl::denoisingLevel() const
+    Returns the denoising level.
+*/
+
+/*!
+    \fn QImageProcessingControl::setSharpeningLevel(qreal value)
+    Set sharpening level to \a value.
+*/
+
+/*!
+    \fn QImageProcessingControl::sharpeningLevel() const
+    Returns the sharpening level.
+*/
 
 

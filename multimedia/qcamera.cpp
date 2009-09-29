@@ -111,6 +111,10 @@ QCamera::~QCamera()
 {
 }
 
+/*!
+    Returns the error state of the object.
+*/
+
 QCamera::Error QCamera::error() const
 {
     return d_func()->error;
@@ -772,5 +776,18 @@ bool QCamera::isFocusLocked() const
     \fn void QCamera::zoomValueChanged(qreal value)
 
     Signal emitted when zoom value changes to new \a value.
+*/
+
+/*!
+    \enum QCamera::Error
+
+    \value  NoError      No errors have occurred.
+    \value  CameraError  An error has occurred.
+*/
+
+/*!
+    \fn void QCamera::error(QCamera::Error value)
+
+    Signal emitted when error state changes to \a value.
 */
 

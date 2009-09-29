@@ -2,7 +2,7 @@
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- ../../multimedia/qcamera.cpp -->
+<!-- qcamera.cpp -->
 <head>
   <title>QCamera Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
@@ -13,6 +13,7 @@
 <td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QCamera Class Reference</h1>
+<p>The QCamera class provides interface for system camera devices. <a href="#details">More...</a></p>
 <pre>    #include &lt;QCamera&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
 <p>Inherits <a href="qmediaobject.html">QMediaObject</a>.</p>
 <ul>
@@ -22,6 +23,7 @@
 <a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#Error-enum">Error</a></b> { NoError, CameraError }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#ExposureMode-enum">ExposureMode</a></b> { ExposureManual, ExposureAuto, ExposureNight, ExposureBacklight, ..., ExposurePortrait }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#ExposureMode-enum">ExposureModes</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#ExposureStatus-enum">ExposureStatus</a></b> { CorrectExposure, UnderExposure, OverExposure }</td></tr>
@@ -55,6 +57,8 @@
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#aperture">aperture</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#deviceDescription">deviceDescription</a></b> ( const QString &amp; <i>device</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#devices">devices</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">Error </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#error">error</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#errorString">errorString</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#exposureCompensation">exposureCompensation</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">ExposureMode </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#exposureMode">exposureMode</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">FlashMode </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#flashMode">flashMode</a></b> () const</td></tr>
@@ -127,6 +131,7 @@
 <a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#error-2">error</a></b> ( QCamera::Error <i>value</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#exposureLocked">exposureLocked</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#flashReady">flashReady</a></b> ( bool <i>ready</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#focusLocked">focusLocked</a></b> ()</td></tr>
@@ -149,8 +154,15 @@
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
+<p>The QCamera class provides interface for system camera devices.</p>
 <hr />
 <h2>Member Type Documentation</h2>
+<h3 class="fn"><a name="Error-enum"></a>enum QCamera::Error</h3>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QCamera::NoError</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">No errors have occurred.</td></tr>
+<tr><td valign="top"><tt>QCamera::CameraError</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">An error has occurred.</td></tr>
+</table></p>
 <h3 class="flags"><a name="ExposureMode-enum"></a>enum QCamera::ExposureMode<br />flags QCamera::ExposureModes</h3>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
@@ -254,6 +266,11 @@
 <p>Returns the description of the <i>device</i>.</p>
 <h3 class="fn"><a name="devices"></a><a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> QCamera::devices () const</h3>
 <p>Returns a list of camera device's available.</p>
+<h3 class="fn"><a name="error"></a><a href="qcamera.html#Error-enum">Error</a> QCamera::error () const</h3>
+<p>Returns the error state of the object.</p>
+<h3 class="fn"><a name="error-2"></a>void QCamera::error ( <a href="qcamera.html#Error-enum">QCamera::Error</a> <i>value</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal emitted when error state changes to <i>value</i>.</p>
+<h3 class="fn"><a name="errorString"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QCamera::errorString () const</h3>
 <h3 class="fn"><a name="exposureCompensation"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> QCamera::exposureCompensation () const</h3>
 <p>Returns the exposure compensation.</p>
 <p>See also <a href="qcamera.html#setExposureCompensation">setExposureCompensation</a>().</p>
@@ -347,11 +364,13 @@
 <h3 class="fn"><a name="shutterSpeed"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> QCamera::shutterSpeed () const</h3>
 <p>Return the current shutter speed.</p>
 <h3 class="fn"><a name="start"></a>void QCamera::start ()</h3>
-<p>Start camera.</p>
+<p>Starts the camera.</p>
+<p>This can involve powering up the camera device and can be asynchronyous.</p>
+<p>State is changed to <a href="qcamera.html#State-enum">QCamera::ActiveState</a> if camera is started succesfuly, otherwise <a href="qcamera.html#error">error</a>() signal is emited.</p>
 <h3 class="fn"><a name="stateChanged"></a>void QCamera::stateChanged ( <a href="qcamera.html#State-enum">QCamera::State</a> <i>state</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal emitted when <i>state</i> of the Camera object has changed.</p>
 <h3 class="fn"><a name="stop"></a>void QCamera::stop ()</h3>
-<p>Stop camera.</p>
+<p>Stops the camera.</p>
 <h3 class="fn"><a name="supportedApertureRange"></a><a href="http://qt.nokia.com/doc/4.5/qpair.html">QPair</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a>, <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a>&gt; QCamera::supportedApertureRange () const</h3>
 <p>Returns the supported aperture ranges available.</p>
 <h3 class="fn"><a name="supportedExposureModes"></a><a href="qcamera.html#ExposureMode-enum">ExposureModes</a> QCamera::supportedExposureModes () const</h3>

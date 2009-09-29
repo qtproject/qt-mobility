@@ -82,6 +82,9 @@
     </section>
     <section ref="qcamera.html" title="QCamera Class Reference">
         <keyword ref="qcamera.html">QCamera</keyword>
+        <keyword ref="qcamera.html#Error-enum">Error</keyword>
+        <keyword ref="qcamera.html#Error-enum">QCamera::NoError</keyword>
+        <keyword ref="qcamera.html#Error-enum">QCamera::CameraError</keyword>
         <keyword ref="qcamera.html#ExposureMode-enum">ExposureMode</keyword>
         <keyword ref="qcamera.html#ExposureMode-enum">ExposureModes</keyword>
         <keyword ref="qcamera.html#ExposureMode-enum">QCamera::ExposureSmallAperture</keyword>
@@ -141,6 +144,8 @@
         <keyword ref="qcamera.html#aperture">aperture</keyword>
         <keyword ref="qcamera.html#deviceDescription">deviceDescription</keyword>
         <keyword ref="qcamera.html#devices">devices</keyword>
+        <keyword ref="qcamera.html#error">error</keyword>
+        <keyword ref="qcamera.html#errorString">errorString</keyword>
         <keyword ref="qcamera.html#exposureCompensation">exposureCompensation</keyword>
         <keyword ref="qcamera.html#exposureLocked">exposureLocked</keyword>
         <keyword ref="qcamera.html#exposureMode">exposureMode</keyword>
@@ -200,6 +205,7 @@
     </section>
     <section ref="qcameracontrol.html" title="QCameraControl Class Reference">
         <keyword ref="qcameracontrol.html">QCameraControl</keyword>
+        <keyword ref="qcameracontrol.html#error">error</keyword>
         <keyword ref="qcameracontrol.html#start">start</keyword>
         <keyword ref="qcameracontrol.html#state">state</keyword>
         <keyword ref="qcameracontrol.html#stateChanged">stateChanged</keyword>
@@ -465,6 +471,7 @@
         <keyword ref="qmediaplayercontrol.html#pause">pause</keyword>
         <keyword ref="qmediaplayercontrol.html#play">play</keyword>
         <keyword ref="qmediaplayercontrol.html#playbackRate">playbackRate</keyword>
+        <keyword ref="qmediaplayercontrol.html#playbackRateChanged">playbackRateChanged</keyword>
         <keyword ref="qmediaplayercontrol.html#position">position</keyword>
         <keyword ref="qmediaplayercontrol.html#positionChanged">positionChanged</keyword>
         <keyword ref="qmediaplayercontrol.html#seekableChanged">seekableChanged</keyword>
@@ -603,7 +610,6 @@
         <keyword ref="qmediarecorder.html#minimumResolution">minimumResolution</keyword>
         <keyword ref="qmediarecorder.html#pause">pause</keyword>
         <keyword ref="qmediarecorder.html#record">record</keyword>
-        <keyword ref="qmediarecorder.html#service">service</keyword>
         <keyword ref="qmediarecorder.html#setSink">setSink</keyword>
         <keyword ref="qmediarecorder.html#sink">sink</keyword>
         <keyword ref="qmediarecorder.html#state">state</keyword>

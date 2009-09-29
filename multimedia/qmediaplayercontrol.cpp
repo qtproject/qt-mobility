@@ -293,3 +293,11 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 
     Signals that an \a error has occurred.  The \a errorString provides a more detailed explanation.
 */
+
+/*!
+    \fn QMediaPlayerControl::playbackRateChanged(qreal rate)
+
+    Signal emitted when playback rate changes to \a rate.
+*/
+
+

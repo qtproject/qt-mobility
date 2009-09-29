@@ -161,3 +161,11 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
 
   Signal emited when the playback \a mode is changed.
 */
+
+/*!
+  \fn QMediaPlaylistControl::currentMediaChanged(const QMediaSource& source)
+
+  Signal emitted when current media changes to \a source.
+*/
+
+

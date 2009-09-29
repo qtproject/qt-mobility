@@ -622,5 +622,10 @@ void QMediaRecorder::stop()
     Signal emitted when \a error changed.
 */
 
+/*!
+    \typedef QMediaRecorder::FrameRate
+
+*/
+
 
 #include "moc_qmediarecorder.cpp"

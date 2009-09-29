@@ -2,7 +2,7 @@
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- ../../multimedia/qimageprocessingcontrol.cpp -->
+<!-- qimageprocessingcontrol.cpp -->
 <head>
   <title>QImageProcessingControl Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
@@ -76,6 +76,7 @@
 <p>Return the contrast.</p>
 <p>See also <a href="qimageprocessingcontrol.html#setContrast">setContrast</a>().</p>
 <h3 class="fn"><a name="denoisingLevel"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> QImageProcessingControl::denoisingLevel () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns the denoising level.</p>
 <p>See also <a href="qimageprocessingcontrol.html#setDenoisingLevel">setDenoisingLevel</a>().</p>
 <h3 class="fn"><a name="isDenoisingSupported"></a>bool QImageProcessingControl::isDenoisingSupported () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns true if denoising is supported.</p>
@@ -98,11 +99,13 @@
 <p>Sets the saturation value to <i>value</i>.</p>
 <p>See also <a href="qimageprocessingcontrol.html#saturation">saturation</a>().</p>
 <h3 class="fn"><a name="setSharpeningLevel"></a>void QImageProcessingControl::setSharpeningLevel ( <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> <i>value</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Set sharpening level to <i>value</i>.</p>
 <p>See also <a href="qimageprocessingcontrol.html#sharpeningLevel">sharpeningLevel</a>().</p>
 <h3 class="fn"><a name="setWhiteBalanceMode"></a>void QImageProcessingControl::setWhiteBalanceMode ( <a href="qcamera.html#WhiteBalanceMode-enum">QCamera::WhiteBalanceMode</a> <i>mode</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Set the white balance mode to <i>mode</i></p>
 <p>See also <a href="qimageprocessingcontrol.html#whiteBalanceMode">whiteBalanceMode</a>().</p>
 <h3 class="fn"><a name="sharpeningLevel"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> QImageProcessingControl::sharpeningLevel () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns the sharpening level.</p>
 <p>See also <a href="qimageprocessingcontrol.html#setSharpeningLevel">setSharpeningLevel</a>().</p>
 <h3 class="fn"><a name="supportedWhiteBalanceModes"></a><a href="qcamera.html#WhiteBalanceMode-enum">QCamera::WhiteBalanceModes</a> QImageProcessingControl::supportedWhiteBalanceModes () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Return the list of supported white balance modes.</p>
