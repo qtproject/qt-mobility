@@ -181,6 +181,10 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="synthesiseDisplayLabel" fullname="QContactManager::synthesiseDisplayLabel" href="qcontactmanager.html#synthesiseDisplayLabel" location="qcontactmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="synthesiseDisplayLabel(const QContact &amp; contact) const">
                 <parameter left="const QContact &amp;" right="" name="contact" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setSelfContactId" fullname="QContactManager::setSelfContactId" href="qcontactmanager.html#setSelfContactId" location="qcontactmanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="setSelfContactId(const QUniqueId &amp; contactId)">
+                <parameter left="const QUniqueId &amp;" right="" name="contactId" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="selfContactId" fullname="QContactManager::selfContactId" href="qcontactmanager.html#selfContactId" location="qcontactmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QUniqueId" signature="selfContactId() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="groups" fullname="QContactManager::groups" href="qcontactmanager.html#groups" location="qcontactmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QUniqueId&gt;" signature="groups() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="group" fullname="QContactManager::group" href="qcontactmanager.html#group" location="qcontactmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QContactGroup" signature="group(const QUniqueId &amp; groupId) const">
                 <parameter left="const QUniqueId &amp;" right="" name="groupId" default=""/>
@@ -203,6 +207,7 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="information" fullname="QContactManager::information" href="qcontactmanager.html#information" location="qcontactmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QContactManagerInfo *" signature="information() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="availableManagers" fullname="QContactManager::availableManagers" href="qcontactmanager.html#availableManagers" location="qcontactmanager.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QStringList" signature="availableManagers()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="dataChanged" fullname="QContactManager::dataChanged" href="qcontactmanager.html#dataChanged" location="qcontactmanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="dataChanged()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="contactsAdded" fullname="QContactManager::contactsAdded" href="qcontactmanager.html#contactsAdded" location="qcontactmanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="contactsAdded(const QList&lt;QUniqueId&gt; &amp; contactIds)">
                 <parameter left="const QList&lt;QUniqueId&gt; &amp;" right="" name="contactIds" default=""/>
             </function>
@@ -272,7 +277,6 @@
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactAddress" href="qcontactaddress.html" location="qcontactaddress.h" bases="QContactDetail" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactAddress::DefinitionName" href="qcontactaddress.html#DefinitionName-var" location="qcontactaddress.h" type="const char *" static="false"/>
-            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldDisplayLabel" fullname="QContactAddress::FieldDisplayLabel" href="qcontactaddress.html#FieldDisplayLabel-var" location="qcontactaddress.h" type="const char *" static="false"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="FieldStreet" fullname="QContactAddress::FieldStreet" href="qcontactaddress.html#FieldStreet-var" location="qcontactaddress.h" type="const char *" static="false"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="FieldLocality" fullname="QContactAddress::FieldLocality" href="qcontactaddress.html#FieldLocality-var" location="qcontactaddress.h" type="const char *" static="false"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="FieldRegion" fullname="QContactAddress::FieldRegion" href="qcontactaddress.html#FieldRegion-var" location="qcontactaddress.h" type="const char *" static="false"/>
@@ -284,10 +288,6 @@
             <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypePostal" fullname="QContactAddress::SubTypePostal" href="qcontactaddress.html#SubTypePostal-var" location="qcontactaddress.h" type="const char *" static="false"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypeDomestic" fullname="QContactAddress::SubTypeDomestic" href="qcontactaddress.html#SubTypeDomestic-var" location="qcontactaddress.h" type="const char *" static="false"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypeInternational" fullname="QContactAddress::SubTypeInternational" href="qcontactaddress.html#SubTypeInternational-var" location="qcontactaddress.h" type="const char *" static="false"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setDisplayLabel" fullname="QContactAddress::setDisplayLabel" href="qcontactaddress.html#setDisplayLabel" location="qcontactaddress.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDisplayLabel(const QString &amp; displayLabel)">
-                <parameter left="const QString &amp;" right="" name="displayLabel" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="displayLabel" fullname="QContactAddress::displayLabel" href="qcontactaddress.html#displayLabel" location="qcontactdetails.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="displayLabel() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setStreet" fullname="QContactAddress::setStreet" href="qcontactaddress.html#setStreet" location="qcontactaddress.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setStreet(const QString &amp; street)">
                 <parameter left="const QString &amp;" right="" name="street" default=""/>
             </function>
@@ -341,7 +341,8 @@
                 <value name="Groups" value="0"/>
                 <value name="ActionPreferences" value="1"/>
                 <value name="MutableDefinitions" value="2"/>
-                <value name="Anonymous" value="3"/>
+                <value name="SelfContact" value="3"/>
+                <value name="Anonymous" value="4"/>
             </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="hasFeature" fullname="QContactManagerInfo::hasFeature" href="qcontactmanagerinfo.html#hasFeature" location="qcontactmanagerinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="hasFeature(QContactManagerInfo::ManagerFeature feature) const">
                 <parameter left="QContactManagerInfo::ManagerFeature" right="" name="feature" default=""/>
@@ -548,34 +549,31 @@
                 <parameter left="const QUniqueId &amp;" right="" name="contactId" default=""/>
                 <parameter left="QContactManager::Error &amp;" right="" name="error" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="saveContact" fullname="QContactManagerEngine::saveContact" href="qcontactmanagerengine.html#saveContact" location="qcontactmanagerengine.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="saveContact(QContact * contact, QSet&lt;QUniqueId&gt; &amp; contactsAdded, QSet&lt;QUniqueId&gt; &amp; contactsChanged, QSet&lt;QUniqueId&gt; &amp; groupsChanged, QContactManager::Error &amp; error)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="saveContact" fullname="QContactManagerEngine::saveContact" href="qcontactmanagerengine.html#saveContact" location="qcontactmanagerengine.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="saveContact(QContact * contact, QContactManager::Error &amp; error)">
                 <parameter left="QContact *" right="" name="contact" default=""/>
-                <parameter left="QSet&lt;QUniqueId&gt; &amp;" right="" name="contactsAdded" default=""/>
-                <parameter left="QSet&lt;QUniqueId&gt; &amp;" right="" name="contactsChanged" default=""/>
-                <parameter left="QSet&lt;QUniqueId&gt; &amp;" right="" name="groupsChanged" default=""/>
                 <parameter left="QContactManager::Error &amp;" right="" name="error" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="saveContacts" fullname="QContactManagerEngine::saveContacts" href="qcontactmanagerengine.html#saveContacts" location="qcontactmanagerengine.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="QList&lt;QContactManager::Error&gt;" signature="saveContacts(QList&lt;QContact&gt; * contacts, QSet&lt;QUniqueId&gt; &amp; contactsAdded, QSet&lt;QUniqueId&gt; &amp; contactsChanged, QSet&lt;QUniqueId&gt; &amp; groupsChanged, QContactManager::Error &amp; error)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="saveContacts" fullname="QContactManagerEngine::saveContacts" href="qcontactmanagerengine.html#saveContacts" location="qcontactmanagerengine.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="QList&lt;QContactManager::Error&gt;" signature="saveContacts(QList&lt;QContact&gt; * contacts, QContactManager::Error &amp; error)">
                 <parameter left="QList&lt;QContact&gt; *" right="" name="contacts" default=""/>
-                <parameter left="QSet&lt;QUniqueId&gt; &amp;" right="" name="contactsAdded" default=""/>
-                <parameter left="QSet&lt;QUniqueId&gt; &amp;" right="" name="contactsChanged" default=""/>
-                <parameter left="QSet&lt;QUniqueId&gt; &amp;" right="" name="groupsChanged" default=""/>
                 <parameter left="QContactManager::Error &amp;" right="" name="error" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="removeContact" fullname="QContactManagerEngine::removeContact" href="qcontactmanagerengine.html#removeContact" location="qcontactmanagerengine.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="removeContact(const QUniqueId &amp; contactId, QSet&lt;QUniqueId&gt; &amp; removedContacts, QSet&lt;QUniqueId&gt; &amp; changedGroups, QContactManager::Error &amp; error)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="removeContact" fullname="QContactManagerEngine::removeContact" href="qcontactmanagerengine.html#removeContact" location="qcontactmanagerengine.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="removeContact(const QUniqueId &amp; contactId, QContactManager::Error &amp; error)">
                 <parameter left="const QUniqueId &amp;" right="" name="contactId" default=""/>
-                <parameter left="QSet&lt;QUniqueId&gt; &amp;" right="" name="removedContacts" default=""/>
-                <parameter left="QSet&lt;QUniqueId&gt; &amp;" right="" name="changedGroups" default=""/>
                 <parameter left="QContactManager::Error &amp;" right="" name="error" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="removeContacts" fullname="QContactManagerEngine::removeContacts" href="qcontactmanagerengine.html#removeContacts" location="qcontactmanagerengine.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="QList&lt;QContactManager::Error&gt;" signature="removeContacts(QList&lt;QUniqueId&gt; * contactIds, QSet&lt;QUniqueId&gt; &amp; removedContacts, QSet&lt;QUniqueId&gt; &amp; changedGroups, QContactManager::Error &amp; error)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="removeContacts" fullname="QContactManagerEngine::removeContacts" href="qcontactmanagerengine.html#removeContacts" location="qcontactmanagerengine.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="QList&lt;QContactManager::Error&gt;" signature="removeContacts(QList&lt;QUniqueId&gt; * contactIds, QContactManager::Error &amp; error)">
                 <parameter left="QList&lt;QUniqueId&gt; *" right="" name="contactIds" default=""/>
-                <parameter left="QSet&lt;QUniqueId&gt; &amp;" right="" name="removedContacts" default=""/>
-                <parameter left="QSet&lt;QUniqueId&gt; &amp;" right="" name="changedGroups" default=""/>
                 <parameter left="QContactManager::Error &amp;" right="" name="error" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="synthesiseDisplayLabel" fullname="QContactManagerEngine::synthesiseDisplayLabel" href="qcontactmanagerengine.html#synthesiseDisplayLabel" location="qcontactmanagerengine.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QString" signature="synthesiseDisplayLabel(const QContact &amp; contact, QContactManager::Error &amp; error) const">
                 <parameter left="const QContact &amp;" right="" name="contact" default=""/>
+                <parameter left="QContactManager::Error &amp;" right="" name="error" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setSelfContactId" fullname="QContactManagerEngine::setSelfContactId" href="qcontactmanagerengine.html#setSelfContactId" location="qcontactmanagerengine.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="setSelfContactId(const QUniqueId &amp; contactId, QContactManager::Error &amp; error)">
+                <parameter left="const QUniqueId &amp;" right="" name="contactId" default=""/>
+                <parameter left="QContactManager::Error &amp;" right="" name="error" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="selfContactId" fullname="QContactManagerEngine::selfContactId" href="qcontactmanagerengine.html#selfContactId" location="qcontactmanagerengine.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QUniqueId" signature="selfContactId(QContactManager::Error &amp; error) const">
                 <parameter left="QContactManager::Error &amp;" right="" name="error" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="validateContact" fullname="QContactManagerEngine::validateContact" href="qcontactmanagerengine.html#validateContact" location="qcontactmanagerengine.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="bool" signature="validateContact(const QContact &amp; contact, QContactManager::Error &amp; error) const">
@@ -597,17 +595,12 @@
                 <parameter left="const QUniqueId &amp;" right="" name="groupId" default=""/>
                 <parameter left="QContactManager::Error &amp;" right="" name="error" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="saveGroup" fullname="QContactManagerEngine::saveGroup" href="qcontactmanagerengine.html#saveGroup" location="qcontactmanagerengine.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="saveGroup(QContactGroup * group, QSet&lt;QUniqueId&gt; &amp; groupsAdded, QSet&lt;QUniqueId&gt; &amp; groupsChanged, QSet&lt;QUniqueId&gt; &amp; contactsChanged, QContactManager::Error &amp; error)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="saveGroup" fullname="QContactManagerEngine::saveGroup" href="qcontactmanagerengine.html#saveGroup" location="qcontactmanagerengine.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="saveGroup(QContactGroup * group, QContactManager::Error &amp; error)">
                 <parameter left="QContactGroup *" right="" name="group" default=""/>
-                <parameter left="QSet&lt;QUniqueId&gt; &amp;" right="" name="groupsAdded" default=""/>
-                <parameter left="QSet&lt;QUniqueId&gt; &amp;" right="" name="groupsChanged" default=""/>
-                <parameter left="QSet&lt;QUniqueId&gt; &amp;" right="" name="contactsChanged" default=""/>
                 <parameter left="QContactManager::Error &amp;" right="" name="error" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="removeGroup" fullname="QContactManagerEngine::removeGroup" href="qcontactmanagerengine.html#removeGroup" location="qcontactmanagerengine.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="removeGroup(const QUniqueId &amp; groupId, QSet&lt;QUniqueId&gt; &amp; groupsRemoved, QSet&lt;QUniqueId&gt; &amp; contactsChanged, QContactManager::Error &amp; error)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="removeGroup" fullname="QContactManagerEngine::removeGroup" href="qcontactmanagerengine.html#removeGroup" location="qcontactmanagerengine.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="removeGroup(const QUniqueId &amp; groupId, QContactManager::Error &amp; error)">
                 <parameter left="const QUniqueId &amp;" right="" name="groupId" default=""/>
-                <parameter left="QSet&lt;QUniqueId&gt; &amp;" right="" name="groupsRemoved" default=""/>
-                <parameter left="QSet&lt;QUniqueId&gt; &amp;" right="" name="contactsChanged" default=""/>
                 <parameter left="QContactManager::Error &amp;" right="" name="error" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="detailDefinitions" fullname="QContactManagerEngine::detailDefinitions" href="qcontactmanagerengine.html#detailDefinitions" location="qcontactmanagerengine.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QMap&lt;QString, QContactDetailDefinition&gt;" signature="detailDefinitions(QContactManager::Error &amp; error) const">
@@ -696,6 +689,7 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="supportedDataTypes" fullname="QContactManagerEngine::supportedDataTypes" href="qcontactmanagerengine.html#supportedDataTypes" location="qcontactmanagerengine.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QList&lt;QVariant::Type&gt;" signature="supportedDataTypes() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="schemaDefinitions" fullname="QContactManagerEngine::schemaDefinitions" href="qcontactmanagerengine.html#schemaDefinitions" location="qcontactmanagerengine.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QMap&lt;QString, QContactDetailDefinition&gt;" signature="schemaDefinitions()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="dataChanged" fullname="QContactManagerEngine::dataChanged" href="qcontactmanagerengine.html#dataChanged" location="qcontactmanagerengine.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="dataChanged()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="contactsAdded" fullname="QContactManagerEngine::contactsAdded" href="qcontactmanagerengine.html#contactsAdded" location="qcontactmanagerengine.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="contactsAdded(const QList&lt;QUniqueId&gt; &amp; contactIds)">
                 <parameter left="const QList&lt;QUniqueId&gt; &amp;" right="" name="contactIds" default=""/>
             </function>
@@ -879,6 +873,8 @@
             <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypeCar" fullname="QContactPhoneNumber::SubTypeCar" href="qcontactphonenumber.html#SubTypeCar-var" location="qcontactphonenumber.h" type="const char *" static="false"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypeBulletinBoardSystem" fullname="QContactPhoneNumber::SubTypeBulletinBoardSystem" href="qcontactphonenumber.html#SubTypeBulletinBoardSystem-var" location="qcontactphonenumber.h" type="const char *" static="false"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypeMessagingCapable" fullname="QContactPhoneNumber::SubTypeMessagingCapable" href="qcontactphonenumber.html#SubTypeMessagingCapable-var" location="qcontactphonenumber.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypeAssistant" fullname="QContactPhoneNumber::SubTypeAssistant" href="qcontactphonenumber.html#SubTypeAssistant-var" location="qcontactphonenumber.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypeDtmfMenu" fullname="QContactPhoneNumber::SubTypeDtmfMenu" href="qcontactphonenumber.html#SubTypeDtmfMenu-var" location="qcontactphonenumber.h" type="const char *" static="false"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setNumber" fullname="QContactPhoneNumber::setNumber" href="qcontactphonenumber.html#setNumber" location="qcontactphonenumber.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setNumber(const QString &amp; number)">
                 <parameter left="const QString &amp;" right="" name="number" default=""/>
             </function>
@@ -971,10 +967,28 @@
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactOnlineAccount" href="qcontactonlineaccount.html" location="qcontactonlineaccount.h" bases="QContactDetail" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactOnlineAccount::DefinitionName" href="qcontactonlineaccount.html#DefinitionName-var" location="qcontactonlineaccount.h" type="const char *" static="false"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="FieldAccountUri" fullname="QContactOnlineAccount::FieldAccountUri" href="qcontactonlineaccount.html#FieldAccountUri-var" location="qcontactonlineaccount.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldSubTypes" fullname="QContactOnlineAccount::FieldSubTypes" href="qcontactonlineaccount.html#FieldSubTypes-var" location="qcontactonlineaccount.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypeSip" fullname="QContactOnlineAccount::SubTypeSip" href="qcontactonlineaccount.html#SubTypeSip-var" location="qcontactonlineaccount.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypeH323" fullname="QContactOnlineAccount::SubTypeH323" href="qcontactonlineaccount.html#SubTypeH323-var" location="qcontactonlineaccount.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypeXmpp" fullname="QContactOnlineAccount::SubTypeXmpp" href="qcontactonlineaccount.html#SubTypeXmpp-var" location="qcontactonlineaccount.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypeInternet" fullname="QContactOnlineAccount::SubTypeInternet" href="qcontactonlineaccount.html#SubTypeInternet-var" location="qcontactonlineaccount.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypeShareVideo" fullname="QContactOnlineAccount::SubTypeShareVideo" href="qcontactonlineaccount.html#SubTypeShareVideo-var" location="qcontactonlineaccount.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypeFlickr" fullname="QContactOnlineAccount::SubTypeFlickr" href="qcontactonlineaccount.html#SubTypeFlickr-var" location="qcontactonlineaccount.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypeFacebook" fullname="QContactOnlineAccount::SubTypeFacebook" href="qcontactonlineaccount.html#SubTypeFacebook-var" location="qcontactonlineaccount.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypeMyspace" fullname="QContactOnlineAccount::SubTypeMyspace" href="qcontactonlineaccount.html#SubTypeMyspace-var" location="qcontactonlineaccount.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypeTwitter" fullname="QContactOnlineAccount::SubTypeTwitter" href="qcontactonlineaccount.html#SubTypeTwitter-var" location="qcontactonlineaccount.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypeWindowsLive" fullname="QContactOnlineAccount::SubTypeWindowsLive" href="qcontactonlineaccount.html#SubTypeWindowsLive-var" location="qcontactonlineaccount.h" type="const char *" static="false"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setAccountUri" fullname="QContactOnlineAccount::setAccountUri" href="qcontactonlineaccount.html#setAccountUri" location="qcontactonlineaccount.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setAccountUri(const QString &amp; accountUri)">
                 <parameter left="const QString &amp;" right="" name="accountUri" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="accountUri" fullname="QContactOnlineAccount::accountUri" href="qcontactonlineaccount.html#accountUri" location="qcontactonlineaccount.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="accountUri() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setSubTypes" fullname="QContactOnlineAccount::setSubTypes" href="qcontactonlineaccount.html#setSubTypes" location="qcontactonlineaccount.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSubTypes(const QStringList &amp; subTypes)">
+                <parameter left="const QStringList &amp;" right="" name="subTypes" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setSubTypes" fullname="QContactOnlineAccount::setSubTypes" href="qcontactonlineaccount.html#setSubTypes-2" location="qcontactonlineaccount.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="void" signature="setSubTypes(const QString &amp; subType)">
+                <parameter left="const QString &amp;" right="" name="subType" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="subTypes" fullname="QContactOnlineAccount::subTypes" href="qcontactonlineaccount.html#subTypes" location="qcontactonlineaccount.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="subTypes() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactInvalidFilter" href="qcontactinvalidfilter.html" location="qcontactinvalidfilter.h" bases="QContactFilter" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactInvalidFilter" fullname="QContactInvalidFilter::QContactInvalidFilter" href="qcontactinvalidfilter.html#QContactInvalidFilter" location="qcontactinvalidfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactInvalidFilter()"/>
@@ -1005,6 +1019,18 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactAction" href="qcontactaction.html" location="qcontactaction.h" bases="QObject" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="availableActions" fullname="QContactAction::availableActions" href="qcontactaction.html#availableActions" location="qcontactaction.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QStringList" signature="availableActions(const QString &amp; vendor, int implementationVersion)">
+                <parameter left="const QString &amp;" right="" name="vendor" default="QString()"/>
+                <parameter left="int" right="" name="implementationVersion" default="-1"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="actionDescriptors" fullname="QContactAction::actionDescriptors" href="qcontactaction.html#actionDescriptors" location="qcontactaction.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QList&lt;QContactActionDescriptor&gt;" signature="actionDescriptors(const QString &amp; actionName, const QString &amp; vendorName, int implementationVersion)">
+                <parameter left="const QString &amp;" right="" name="actionName" default="QString()"/>
+                <parameter left="const QString &amp;" right="" name="vendorName" default="QString()"/>
+                <parameter left="int" right="" name="implementationVersion" default="-1"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="action" fullname="QContactAction::action" href="qcontactaction.html#action" location="qcontactaction.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QContactAction *" signature="action(const QContactActionDescriptor &amp; descriptor)">
+                <parameter left="const QContactActionDescriptor &amp;" right="" name="descriptor" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QContactAction" fullname="QContactAction::~QContactAction" href="qcontactaction.html#dtor.QContactAction" location="qcontactaction.cpp" virtual="pure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QContactAction()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="actionDescriptor" fullname="QContactAction::actionDescriptor" href="qcontactaction.html#actionDescriptor" location="qcontactaction.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QContactActionDescriptor" signature="actionDescriptor() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="metadata" fullname="QContactAction::metadata" href="qcontactaction.html#metadata" location="qcontactaction.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QVariantMap" signature="metadata() const"/>
@@ -1017,21 +1043,21 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="supportedDetails" fullname="QContactAction::supportedDetails" href="qcontactaction.html#supportedDetails" location="qcontactaction.cpp" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactDetail&gt;" signature="supportedDetails(const QContact &amp; contact) const">
                 <parameter left="const QContact &amp;" right="" name="contact" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="performAction" fullname="QContactAction::performAction" href="qcontactaction.html#performAction" location="qcontactaction.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="performAction(const QContact &amp; contact, const QContactDetail &amp; detail)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="invokeAction" fullname="QContactAction::invokeAction" href="qcontactaction.html#invokeAction" location="qcontactaction.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="invokeAction(const QContact &amp; contact, const QContactDetail &amp; detail)">
                 <parameter left="const QContact &amp;" right="" name="contact" default=""/>
                 <parameter left="const QContactDetail &amp;" right="" name="detail" default="QContactDetail()"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="availableActions" fullname="QContactAction::availableActions" href="qcontactaction.html#availableActions" location="qcontactaction.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QStringList" signature="availableActions(const QString &amp; vendor, int implementationVersion)">
-                <parameter left="const QString &amp;" right="" name="vendor" default="QString()"/>
-                <parameter left="int" right="" name="implementationVersion" default="-1"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="actionDescriptors" fullname="QContactAction::actionDescriptors" href="qcontactaction.html#actionDescriptors" location="qcontactaction.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QList&lt;QContactActionDescriptor&gt;" signature="actionDescriptors(const QString &amp; actionName, const QString &amp; vendorName, int implementationVersion)">
-                <parameter left="const QString &amp;" right="" name="actionName" default="QString()"/>
-                <parameter left="const QString &amp;" right="" name="vendorName" default="QString()"/>
-                <parameter left="int" right="" name="implementationVersion" default="-1"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="action" fullname="QContactAction::action" href="qcontactaction.html#action" location="qcontactaction.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QContactAction *" signature="action(const QContactActionDescriptor &amp; descriptor)">
-                <parameter left="const QContactActionDescriptor &amp;" right="" name="descriptor" default=""/>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="Status" fullname="QContactAction::Status" href="qcontactaction.html#Status-enum" location="qcontactaction.h">
+                <value name="Inactive" value="0"/>
+                <value name="Autonomous" value="1"/>
+                <value name="Active" value="2"/>
+                <value name="Finished" value="3"/>
+                <value name="FinishedWithError" value="4"/>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="result" fullname="QContactAction::result" href="qcontactaction.html#result" location="qcontactaction.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QVariantMap" signature="result() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="progress" fullname="QContactAction::progress" href="qcontactaction.html#progress" location="qcontactaction.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="progress(QContactAction::Status status, const QVariantMap &amp; result)">
+                <parameter left="QContactAction::Status" right="" name="status" default=""/>
+                <parameter left="const QVariantMap &amp;" right="" name="result" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactRemoveRequest" href="qcontactremoverequest.html" location="qcontactremoverequest.h" bases="QContactAbstractRequest" module="">
@@ -1051,20 +1077,20 @@
                 <value name="EventChanged" value="1"/>
                 <value name="EventRemoved" value="2"/>
             </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QContactChangeLogFilter" fullname="QContactChangeLogFilter::QContactChangeLogFilter" href="qcontactchangelogfilter.html#QContactChangeLogFilter" location="qcontactchangelogfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactChangeLogFilter(EventType type)">
-                <parameter left="EventType" right="" name="type" default="EventAdded"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactChangeLogFilter" fullname="QContactChangeLogFilter::QContactChangeLogFilter" href="qcontactchangelogfilter.html#QContactChangeLogFilter" location="qcontactchangelogfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactChangeLogFilter(QContactChangeLogFilter::EventType type)">
+                <parameter left="QContactChangeLogFilter::EventType" right="" name="type" default="QContactChangeLogFilter::EventAdded"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactChangeLogFilter" fullname="QContactChangeLogFilter::QContactChangeLogFilter" href="qcontactchangelogfilter.html#QContactChangeLogFilter-2" location="qcontactchangelogfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QContactChangeLogFilter(const QContactFilter &amp; other)">
                 <parameter left="const QContactFilter &amp;" right="" name="other" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setEventType" fullname="QContactChangeLogFilter::setEventType" href="qcontactchangelogfilter.html#setEventType" location="qcontactchangelogfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setEventType(EventType type)">
-                <parameter left="EventType" right="" name="type" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setEventType" fullname="QContactChangeLogFilter::setEventType" href="qcontactchangelogfilter.html#setEventType" location="qcontactchangelogfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setEventType(QContactChangeLogFilter::EventType type)">
+                <parameter left="QContactChangeLogFilter::EventType" right="" name="type" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setSince" fullname="QContactChangeLogFilter::setSince" href="qcontactchangelogfilter.html#setSince" location="qcontactchangelogfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSince(const QDateTime &amp; since)">
                 <parameter left="const QDateTime &amp;" right="" name="since" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="since" fullname="QContactChangeLogFilter::since" href="qcontactchangelogfilter.html#since" location="qcontactchangelogfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QDateTime" signature="since() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="eventType" fullname="QContactChangeLogFilter::eventType" href="qcontactchangelogfilter.html#eventType" location="qcontactchangelogfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="EventType" signature="eventType() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="eventType" fullname="QContactChangeLogFilter::eventType" href="qcontactchangelogfilter.html#eventType" location="qcontactchangelogfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QContactChangeLogFilter::EventType" signature="eventType() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactGroupRemoveRequest" href="qcontactgroupremoverequest.html" location="qcontactgroupremoverequest.h" bases="QContactAbstractRequest" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactGroupRemoveRequest" fullname="QContactGroupRemoveRequest::QContactGroupRemoveRequest" href="qcontactgroupremoverequest.html#QContactGroupRemoveRequest" location="qcontactgroupremoverequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactGroupRemoveRequest()"/>
@@ -1118,6 +1144,30 @@
             <parameter left="const QContactFilter &amp;" right="" name="left" default=""/>
             <parameter left="const QContactFilter &amp;" right="" name="right" default=""/>
         </function>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QContactChangeSet" href="qcontactchangeset.html" location="qcontactchangeset.h" bases="" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactChangeSet" fullname="QContactChangeSet::QContactChangeSet" href="qcontactchangeset.html#QContactChangeSet" location="qcontactchangeset.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactChangeSet()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactChangeSet" fullname="QContactChangeSet::QContactChangeSet" href="qcontactchangeset.html#QContactChangeSet-2" location="qcontactchangeset.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QContactChangeSet(const QContactChangeSet &amp; other)">
+                <parameter left="const QContactChangeSet &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QContactChangeSet" fullname="QContactChangeSet::~QContactChangeSet" href="qcontactchangeset.html#dtor.QContactChangeSet" location="qcontactchangeset.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QContactChangeSet()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QContactChangeSet::operator=" href="qcontactchangeset.html#operator=" location="qcontactchangeset.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QContactChangeSet &amp;" signature="operator=(const QContactChangeSet &amp; other)">
+                <parameter left="const QContactChangeSet &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setDataChanged" fullname="QContactChangeSet::setDataChanged" href="qcontactchangeset.html#setDataChanged" location="qcontactchangeset.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDataChanged(bool dataChanged)">
+                <parameter left="bool" right="" name="dataChanged" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="dataChanged" fullname="QContactChangeSet::dataChanged" href="qcontactchangeset.html#dataChanged" location="qcontactchangeset.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="dataChanged()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="addedContacts" fullname="QContactChangeSet::addedContacts" href="qcontactchangeset.html#addedContacts" location="qcontactchangeset.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QSet&lt;QUniqueId&gt; &amp;" signature="addedContacts()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="changedContacts" fullname="QContactChangeSet::changedContacts" href="qcontactchangeset.html#changedContacts" location="qcontactchangeset.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QSet&lt;QUniqueId&gt; &amp;" signature="changedContacts()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="removedContacts" fullname="QContactChangeSet::removedContacts" href="qcontactchangeset.html#removedContacts" location="qcontactchangeset.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QSet&lt;QUniqueId&gt; &amp;" signature="removedContacts()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="addedGroups" fullname="QContactChangeSet::addedGroups" href="qcontactchangeset.html#addedGroups" location="qcontactchangeset.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QSet&lt;QUniqueId&gt; &amp;" signature="addedGroups()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="changedGroups" fullname="QContactChangeSet::changedGroups" href="qcontactchangeset.html#changedGroups" location="qcontactchangeset.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QSet&lt;QUniqueId&gt; &amp;" signature="changedGroups()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="removedGroups" fullname="QContactChangeSet::removedGroups" href="qcontactchangeset.html#removedGroups" location="qcontactchangeset.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QSet&lt;QUniqueId&gt; &amp;" signature="removedGroups()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="clear" fullname="QContactChangeSet::clear" href="qcontactchangeset.html#clear" location="qcontactchangeset.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="clear()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="emitSignals" fullname="QContactChangeSet::emitSignals" href="qcontactchangeset.html#emitSignals" location="qcontactchangeset.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="emitSignals(QContactManagerEngine * engine)">
+                <parameter left="QContactManagerEngine *" right="" name="engine" default=""/>
+            </function>
+        </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QContactManagerEngineFactory" href="qcontactmanagerenginefactory.html" location="qcontactmanagerenginefactory.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="~QContactManagerEngineFactory" fullname="QContactManagerEngineFactory::~QContactManagerEngineFactory" href="qcontactmanagerenginefactory.html#dtor.QContactManagerEngineFactory" location="qcontactmanagerenginefactory.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QContactManagerEngineFactory()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="engine" fullname="QContactManagerEngineFactory::engine" href="qcontactmanagerenginefactory.html#engine" location="qcontactmanagerenginefactory.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="QContactManagerEngine *" signature="engine(const QMap&lt;QString, QString&gt; &amp; parameters, QContactManager::Error &amp; error)">
@@ -1214,17 +1264,20 @@
                 <parameter left="const QUniqueId &amp;" right="" name="contactId" default=""/>
                 <parameter left="QContactManager::Error &amp;" right="" name="error" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="saveContact" fullname="QContactMemoryEngine::saveContact" href="qcontactmemoryengine.html#saveContact" location="qcontactmemorybackend_p.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="saveContact(QContact * contact, QSet&lt;QUniqueId&gt; &amp; contactsAdded, QSet&lt;QUniqueId&gt; &amp; contactsChanged, QSet&lt;QUniqueId&gt; &amp; groupsChanged, QContactManager::Error &amp; error)">
-                <parameter left="QContact *" right="" name="contact" default=""/>
-                <parameter left="QSet&lt;QUniqueId&gt; &amp;" right="" name="contactsAdded" default=""/>
-                <parameter left="QSet&lt;QUniqueId&gt; &amp;" right="" name="contactsChanged" default=""/>
-                <parameter left="QSet&lt;QUniqueId&gt; &amp;" right="" name="groupsChanged" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="saveContacts" fullname="QContactMemoryEngine::saveContacts" href="qcontactmemoryengine.html#saveContacts" location="qcontactmemorybackend_p.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="QList&lt;QContactManager::Error&gt;" signature="saveContacts(QList&lt;QContact&gt; * contacts, QContactManager::Error &amp; error)">
+                <parameter left="QList&lt;QContact&gt; *" right="" name="contacts" default=""/>
                 <parameter left="QContactManager::Error &amp;" right="" name="error" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="removeContact" fullname="QContactMemoryEngine::removeContact" href="qcontactmemoryengine.html#removeContact" location="qcontactmemorybackend_p.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="removeContact(const QUniqueId &amp; contactId, QSet&lt;QUniqueId&gt; &amp; removedContacts, QSet&lt;QUniqueId&gt; &amp; changedGroups, QContactManager::Error &amp; error)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="saveContact" fullname="QContactMemoryEngine::saveContact" href="qcontactmemoryengine.html#saveContact" location="qcontactmemorybackend_p.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="saveContact(QContact * contact, QContactManager::Error &amp; error)">
+                <parameter left="QContact *" right="" name="contact" default=""/>
+                <parameter left="QContactManager::Error &amp;" right="" name="error" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="removeContacts" fullname="QContactMemoryEngine::removeContacts" href="qcontactmemoryengine.html#removeContacts" location="qcontactmemorybackend_p.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="QList&lt;QContactManager::Error&gt;" signature="removeContacts(QList&lt;QUniqueId&gt; * contactIds, QContactManager::Error &amp; error)">
+                <parameter left="QList&lt;QUniqueId&gt; *" right="" name="contactIds" default=""/>
+                <parameter left="QContactManager::Error &amp;" right="" name="error" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="removeContact" fullname="QContactMemoryEngine::removeContact" href="qcontactmemoryengine.html#removeContact" location="qcontactmemorybackend_p.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="removeContact(const QUniqueId &amp; contactId, QContactManager::Error &amp; error)">
                 <parameter left="const QUniqueId &amp;" right="" name="contactId" default=""/>
-                <parameter left="QSet&lt;QUniqueId&gt; &amp;" right="" name="removedContacts" default=""/>
-                <parameter left="QSet&lt;QUniqueId&gt; &amp;" right="" name="changedGroups" default=""/>
                 <parameter left="QContactManager::Error &amp;" right="" name="error" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="groups" fullname="QContactMemoryEngine::groups" href="qcontactmemoryengine.html#groups" location="qcontactmemorybackend_p.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QList&lt;QUniqueId&gt;" signature="groups(QContactManager::Error &amp; error) const">
@@ -1234,17 +1287,12 @@
                 <parameter left="const QUniqueId &amp;" right="" name="groupId" default=""/>
                 <parameter left="QContactManager::Error &amp;" right="" name="error" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="saveGroup" fullname="QContactMemoryEngine::saveGroup" href="qcontactmemoryengine.html#saveGroup" location="qcontactmemorybackend_p.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="saveGroup(QContactGroup * group, QSet&lt;QUniqueId&gt; &amp; groupsAdded, QSet&lt;QUniqueId&gt; &amp; groupsChanged, QSet&lt;QUniqueId&gt; &amp; contactsChanged, QContactManager::Error &amp; error)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="saveGroup" fullname="QContactMemoryEngine::saveGroup" href="qcontactmemoryengine.html#saveGroup" location="qcontactmemorybackend_p.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="saveGroup(QContactGroup * group, QContactManager::Error &amp; error)">
                 <parameter left="QContactGroup *" right="" name="group" default=""/>
-                <parameter left="QSet&lt;QUniqueId&gt; &amp;" right="" name="groupsAdded" default=""/>
-                <parameter left="QSet&lt;QUniqueId&gt; &amp;" right="" name="groupsChanged" default=""/>
-                <parameter left="QSet&lt;QUniqueId&gt; &amp;" right="" name="contactsChanged" default=""/>
                 <parameter left="QContactManager::Error &amp;" right="" name="error" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="removeGroup" fullname="QContactMemoryEngine::removeGroup" href="qcontactmemoryengine.html#removeGroup" location="qcontactmemorybackend_p.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="removeGroup(const QUniqueId &amp; groupId, QSet&lt;QUniqueId&gt; &amp; groupsRemoved, QSet&lt;QUniqueId&gt; &amp; contactsChanged, QContactManager::Error &amp; error)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="removeGroup" fullname="QContactMemoryEngine::removeGroup" href="qcontactmemoryengine.html#removeGroup" location="qcontactmemorybackend_p.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="removeGroup(const QUniqueId &amp; groupId, QContactManager::Error &amp; error)">
                 <parameter left="const QUniqueId &amp;" right="" name="groupId" default=""/>
-                <parameter left="QSet&lt;QUniqueId&gt; &amp;" right="" name="groupsRemoved" default=""/>
-                <parameter left="QSet&lt;QUniqueId&gt; &amp;" right="" name="contactsChanged" default=""/>
                 <parameter left="QContactManager::Error &amp;" right="" name="error" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="detailDefinitions" fullname="QContactMemoryEngine::detailDefinitions" href="qcontactmemoryengine.html#detailDefinitions" location="qcontactmemorybackend_p.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QMap&lt;QString, QContactDetailDefinition&gt;" signature="detailDefinitions(QContactManager::Error &amp; error) const">

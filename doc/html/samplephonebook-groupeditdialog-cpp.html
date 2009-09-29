@@ -52,10 +52,11 @@
     #include &quot;qcontact.h&quot;
     #include &quot;qcontactmanager.h&quot;
 
-    GroupEditDialog::GroupEditDialog(QContactManager *contactManager)
-            : cm(contactManager)
+    GroupEditDialog::GroupEditDialog(QWidget *parent, QContactManager *contactManager)
+            : QDialog(parent), cm(contactManager)
     {
         Q_ASSERT(contactManager);
+        setWindowTitle(tr(&quot;Groups Edit&quot;));
 
         QFormLayout *layout = new QFormLayout;
 
@@ -153,8 +154,7 @@
             bool result = false;
             if (!grp.isEmpty()){
                 grp.setName(groupNameEdit-&gt;text());
-                if (result)
-                    result = cm-&gt;saveGroup(&amp;grp);
+                result = cm-&gt;saveGroup(&amp;grp);
             }
             if (!result){
                 QMessageBox::information(this, tr(&quot;Save Group&quot;),

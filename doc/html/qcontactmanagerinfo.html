@@ -21,7 +21,7 @@
 <a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerinfo.html#ManagerFeature-enum">ManagerFeature</a></b> { Groups, ActionPreferences, MutableDefinitions, Anonymous }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerinfo.html#ManagerFeature-enum">ManagerFeature</a></b> { Groups, ActionPreferences, MutableDefinitions, SelfContact, Anonymous }</td></tr>
 </table>
 <hr />
 <a name="public-functions"></a>
@@ -47,7 +47,8 @@
 <tr><td valign="top"><tt>QContactManagerInfo::Groups</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The manager supports all <a href="qcontactgroup.html">QContactGroup</a> related operations, and emits the appropriate signals</td></tr>
 <tr><td valign="top"><tt>QContactManagerInfo::ActionPreferences</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The manager supports saving preferred details per action per contact</td></tr>
 <tr><td valign="top"><tt>QContactManagerInfo::MutableDefinitions</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The manager supports saving, updating or removing detail definitions. Some built-in definitions may still be immutable</td></tr>
-<tr><td valign="top"><tt>QContactManagerInfo::Anonymous</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The manager is isolated from other managers</td></tr>
+<tr><td valign="top"><tt>QContactManagerInfo::SelfContact</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The manager supports the concept of saving a contact which represents the current user</td></tr>
+<tr><td valign="top"><tt>QContactManagerInfo::Anonymous</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The manager is isolated from other managers</td></tr>
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>

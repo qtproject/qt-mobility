@@ -48,6 +48,8 @@
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QContactManager::Error&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#saveContacts">saveContacts</a></b> ( QList&lt;QContact&gt; * <i>contactList</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#saveDetailDefinition">saveDetailDefinition</a></b> ( const QContactDetailDefinition &amp; <i>def</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#saveGroup">saveGroup</a></b> ( QContactGroup * <i>group</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QUniqueId </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#selfContactId">selfContactId</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#setSelfContactId">setSelfContactId</a></b> ( const QUniqueId &amp; <i>contactId</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#storeUri">storeUri</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#synthesiseDisplayLabel">synthesiseDisplayLabel</a></b> ( const QContact &amp; <i>contact</i> ) const</td></tr>
 </table>
@@ -61,6 +63,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#contactsAdded">contactsAdded</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>contactIds</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#contactsChanged">contactsChanged</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>contactIds</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#contactsRemoved">contactsRemoved</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>contactIds</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#dataChanged">dataChanged</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#groupsAdded">groupsAdded</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>groupIds</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#groupsChanged">groupsChanged</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>groupIds</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#groupsRemoved">groupsRemoved</a></b> ( const QList&lt;QUniqueId&gt; &amp; <i>groupIds</i> )</td></tr>
@@ -130,11 +133,13 @@
 <p>Returns a list of contact ids that match the given <i>filter</i>, sorted according to the given list of <i>sortOrders</i>.</p>
 <p>Depending on the backend, this filtering operation may involve retrieving all the contacts.</p>
 <h3 class="fn"><a name="contactsAdded"></a>void QContactManager::contactsAdded ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QUniqueId&gt; &amp; <i>contactIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>This signal is emitted at some point once the contacts identified by <i>contactIds</i> have been added to a datastore managed by this manager</p>
+<p>This signal is emitted at some point once the contacts identified by <i>contactIds</i> have been added to a datastore managed by this manager. This signal must not be emitted if the <a href="qcontactmanager.html#dataChanged">dataChanged</a>() signal was previously emitted for these changes.</p>
 <h3 class="fn"><a name="contactsChanged"></a>void QContactManager::contactsChanged ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QUniqueId&gt; &amp; <i>contactIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>This signal is emitted at some point once the contacts identified by <i>contactIds</i> have been modified in a datastore managed by this manager</p>
+<p>This signal is emitted at some point once the contacts identified by <i>contactIds</i> have been modified in a datastore managed by this manager. This signal must not be emitted if the <a href="qcontactmanager.html#dataChanged">dataChanged</a>() signal was previously emitted for these changes.</p>
 <h3 class="fn"><a name="contactsRemoved"></a>void QContactManager::contactsRemoved ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QUniqueId&gt; &amp; <i>contactIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>This signal is emitted at some point once the contacts identified by <i>contactIds</i> have been removed from a datastore managed by this manager</p>
+<p>This signal is emitted at some point once the contacts identified by <i>contactIds</i> have been removed from a datastore managed by this manager. This signal must not be emitted if the <a href="qcontactmanager.html#dataChanged">dataChanged</a>() signal was previously emitted for these changes.</p>
+<h3 class="fn"><a name="dataChanged"></a>void QContactManager::dataChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>signal is emitted by the manager if its internal state changes, and it is unable to determine the changes which occurred, or if the manager considers the changes to be radical enough to require clients to reload all data. If this signal is emitted, no other signals will be emitted for the associated changes.</p>
 <h3 class="fn"><a name="detailDefinition"></a><a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> QContactManager::detailDefinition ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>definitionName</i> ) const</h3>
 <p>Returns the definition identified by the given <i>definitionName</i> that is valid for the contacts in this store, or a default-constructed <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> if no such definition exists</p>
 <h3 class="fn"><a name="detailDefinitions"></a><a href="http://qt.nokia.com/doc/4.5/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>, <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a>&gt; QContactManager::detailDefinitions () const</h3>
@@ -148,11 +153,11 @@
 <h3 class="fn"><a name="groups"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QUniqueId&gt; QContactManager::groups () const</h3>
 <p>Return the list of added group ids</p>
 <h3 class="fn"><a name="groupsAdded"></a>void QContactManager::groupsAdded ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QUniqueId&gt; &amp; <i>groupIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>This signal is emitted at some point once the groups identified by <i>groupIds</i> have been added to a datastore managed by this manager</p>
+<p>This signal is emitted at some point once the groups identified by <i>groupIds</i> have been added to a datastore managed by this manager. This signal must not be emitted if the <a href="qcontactmanager.html#dataChanged">dataChanged</a>() signal was previously emitted for these changes.</p>
 <h3 class="fn"><a name="groupsChanged"></a>void QContactManager::groupsChanged ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QUniqueId&gt; &amp; <i>groupIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>This signal is emitted at some point once the groups identified by <i>groupIds</i> have been modified in a datastore managed by this manager</p>
+<p>This signal is emitted at some point once the groups identified by <i>groupIds</i> have been modified in a datastore managed by this manager. This signal must not be emitted if the <a href="qcontactmanager.html#dataChanged">dataChanged</a>() signal was previously emitted for these changes.</p>
 <h3 class="fn"><a name="groupsRemoved"></a>void QContactManager::groupsRemoved ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QUniqueId&gt; &amp; <i>groupIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>This signal is emitted at some point once the groups identified by <i>groupIds</i> have been removed from a datastore managed by this manager</p>
+<p>This signal is emitted at some point once the groups identified by <i>groupIds</i> have been removed from a datastore managed by this manager. This signal must not be emitted if the <a href="qcontactmanager.html#dataChanged">dataChanged</a>() signal was previously emitted for these changes.</p>
 <h3 class="fn"><a name="information"></a><a href="qcontactmanagerinfo.html">QContactManagerInfo</a> * QContactManager::information () const</h3>
 <p>Returns an object describing the supported functionality of this <a href="qcontactmanager.html">QContactManager</a>.</p>
 <p>See also <a href="qcontactmanagerinfo.html">QContactManagerInfo</a>.</p>
@@ -183,6 +188,12 @@
 <h3 class="fn"><a name="saveGroup"></a>bool QContactManager::saveGroup ( <a href="qcontactgroup.html">QContactGroup</a> * <i>group</i> )</h3>
 <p>Saves the group <i>group</i> in the database. The id of the group is used to determine the group to update. If the group has no name set, this function will fail. If the group does not already exist, it is added to the database.</p>
 <p>Returns true on success, or false on failure.</p>
+<h3 class="fn"><a name="selfContactId"></a>QUniqueId QContactManager::selfContactId () const</h3>
+<p>Returns the id of the &quot;self&quot; contact which has previously been set. If no &quot;self&quot; contact has been set, or if the self contact was removed from the manager after being set, or if the backend does not support the concept of a &quot;self&quot; contact, an invalid id will be returned and the error will be set to <tt>QContactManager::DoesNotExistError</tt>.</p>
+<p>See also <a href="qcontactmanager.html#setSelfContactId">setSelfContactId</a>().</p>
+<h3 class="fn"><a name="setSelfContactId"></a>bool QContactManager::setSelfContactId ( const QUniqueId &amp; <i>contactId</i> )</h3>
+<p>Sets the id of the &quot;self&quot; contact to the given <i>contactId</i>. Returns true if the &quot;self&quot; contact id was set successfully. If the given <i>contactId</i> does not identify a contact stored in this manager, the error will be set to <tt>QContactManager::DoesNotExistError</tt> and the function will return false; if the backend does not support the concept of a &quot;self&quot; contact then the error will be set to <tt>QContactManager::NotSupportedError</tt> and the function will return false.</p>
+<p>See also <a href="qcontactmanager.html#selfContactId">selfContactId</a>().</p>
 <h3 class="fn"><a name="splitUri"></a>bool QContactManager::splitUri ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>uri</i>, <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> * <i>pManagerId</i>, <a href="http://qt.nokia.com/doc/4.5/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>, <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>&gt; * <i>pParams</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Splits the given <i>uri</i> into the manager, store, and parameters that it describes, and places the information into the memory addressed by <i>pManagerId</i> and <i>pParams</i> respectively. Returns true if <i>uri</i> could be split successfully, otherwise returns false</p>
 <h3 class="fn"><a name="storeUri"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactManager::storeUri () const</h3>

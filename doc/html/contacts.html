@@ -80,16 +80,16 @@
 
         <span class="comment">/* Add a phone number */</span>
         QContactPhoneNumber number;
-        number.setContexts(&quot;Home&quot;);
-        number.setSubTypes(&quot;Mobile&quot;);
+        number.setContexts(QContactDetail::ContextHome);
+        number.setSubTypes(QContactPhoneNumber::SubTypeMobile);
         number.setNumber(&quot;12345678&quot;);
         alice.saveDetail(&amp;number);
         alice.setPreferredDetail(&quot;DialAction&quot;, number);
 
         <span class="comment">/* Add a second phone number */</span>
         QContactPhoneNumber number2;
-        number2.setContexts(&quot;Work&quot;);
-        number2.setSubTypes(&quot;Landline&quot;);
+        number2.setContexts(QContactDetail::ContextWork);
+        number2.setSubTypes(QContactPhoneNumber::SubTypeLandline);
         number2.setNumber(&quot;555-4444&quot;);
         alice.saveDetail(&amp;number2);
 
@@ -102,7 +102,7 @@
 <pre>    void matchCall(QContactManager* cm, const QString&amp; incomingCallNbr)
     {
         QContactDetailFilter phoneFilter;
-        phoneFilter.setDetailDefinitionName(&quot;PhoneNumber&quot;, &quot;PhoneNumber&quot;);
+        phoneFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
         phoneFilter.setValue(incomingCallNbr);
         phoneFilter.setMatchFlags(Qt::MatchExactly);
 
@@ -130,7 +130,7 @@
         if (cdl.isEmpty())
             cdl.setLabel(cm-&gt;synthesiseDisplayLabel(a));
         qDebug() &lt;&lt; &quot;The first phone number of&quot; &lt;&lt; cdl.label()
-                 &lt;&lt; &quot;is&quot; &lt;&lt; a.details(&quot;PhoneNumber&quot;).first().value(&quot;PhoneNumber&quot;);
+                 &lt;&lt; &quot;is&quot; &lt;&lt; a.detail(QContactPhoneNumber::DefinitionName).value(QContactPhoneNumber::FieldNumber);
     }</pre>
 <a name="viewing-all-of-the-details-of-a-contact"></a>
 <h4>Viewing all of the details of a contact</h4>
@@ -194,14 +194,14 @@
         qDebug() &lt;&lt; &quot;Modifying the details of&quot; &lt;&lt; cdl.label();
 
         <span class="comment">/* Change the first phone number */</span>
-        QList&lt;QContactDetail&gt; numbers = a.details(&quot;PhoneNumber&quot;);
+        QList&lt;QContactDetail&gt; numbers = a.details(QContactPhoneNumber::DefinitionName);
         QContactPhoneNumber phone = numbers.value(0);
         phone.setNumber(&quot;123-4445&quot;);
 
         <span class="comment">/* Add an email address */</span>
         QContactEmailAddress email;
         email.setEmailAddress(&quot;alice.jones@example&quot;);
-        email.setContexts(&quot;Work&quot;);
+        email.setContexts(QContactDetail::ContextHome);
         email.setValue(&quot;Label&quot;, &quot;Alice's Work Email Address&quot;);
 
         <span class="comment">/* Save the updated details to the contact. */</span>
