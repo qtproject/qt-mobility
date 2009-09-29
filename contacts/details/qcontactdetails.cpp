@@ -479,6 +479,72 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldTimestamp, "Timestamp");
 Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldAccountUri, "AccountUri");
 
 /*!
+ * \variable QContactOnlineAccount::FieldSubTypes
+ * The constant key for which the subtypes value is stored in details of the QContactOnlineAccount type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldSubTypes, "SubTypes");
+
+/*!
+ * \variable QContactOnlineAccount::SubTypeSip
+ * The constant attribute value which describes the online account as supporting SIP
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeSip, "Sip");
+
+/*!
+ * \variable QContactOnlineAccount::SubTypeH323
+ * The constant attribute value which describes the online account as supporting H323
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeH323, "H323");
+
+/*!
+ * \variable QContactOnlineAccount::SubTypeXmpp
+ * The constant attribute value which describes the online account as supporting XMPP
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeXmpp, "Xmpp");
+
+/*!
+ * \variable QContactOnlineAccount::SubTypeInternet
+ * The constant attribute value which describes the online account as supporting internet sessions
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeInternet, "Internet");
+
+/*!
+ * \variable QContactOnlineAccount::SubTypeShareVideo
+ * The constant attribute value which describes the online account as supporting ShareVideo
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeShareVideo, "ShareVideo");
+
+/*!
+ * \variable QContactOnlineAccount::SubTypeFlickr
+ * The constant attribute value which describes the online account as supporting Flickr
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeFlickr, "Flickr");
+
+/*!
+ * \variable QContactOnlineAccount::SubTypeFacebook
+ * The constant attribute value which describes the online account as supporting Facebook
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeFacebook, "Facebook");
+
+/*!
+ * \variable QContactOnlineAccount::SubTypeMyspace
+ * The constant attribute value which describes the online account as supporting Myspace
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeMyspace, "Myspace");
+
+/*!
+ * \variable QContactOnlineAccount::SubTypeTwitter
+ * The constant attribute value which describes the online account as supporting Twitter
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeTwitter, "Twitter");
+
+/*!
+ * \variable QContactOnlineAccount::SubTypeWindowsLive
+ * The constant attribute value which describes the online account as supporting WindowsLive
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeWindowsLive, "WindowsLive");
+
+/*!
  * \variable QContactOrganisation::FieldDisplayLabel
  * The constant key for which the display label value is stored in details of the QContactOrganisation type
  */
@@ -1207,6 +1273,21 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
 /*!
  * \fn QContactOnlineAccount::accountUri() const
  * Returns the universal resource identifier of the online account of the contact
+ */
+
+/*!
+ * \fn QContactOnlineAccount::setSubTypes(const QStringList& subTypes)
+ * Sets the subtypes which this detail implements to be those contained in the list of given \a subTypes
+ */
+
+/*!
+ * \fn QContactOnlineAccount::setSubTypes(const QString& subType)
+ * Sets the subtypes which this detail implements to be just the given \a subType
+ */
+
+/*!
+ * \fn QContactOnlineAccount::subTypes() const
+ * Returns the list of subtypes that this detail implements
  */
 
 /*!

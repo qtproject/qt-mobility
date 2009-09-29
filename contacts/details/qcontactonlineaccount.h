@@ -48,13 +48,39 @@ public:
 #ifdef Q_QDOC
     const char* DefinitionName;
     const char* FieldAccountUri;
+    const char* FieldSubTypes;
+    const char* SubTypeSip;
+    const char* SubTypeH323;
+    const char* SubTypeXmpp;
+    const char* SubTypeInternet;
+    const char* SubTypeShareVideo;
+    const char* SubTypeFlickr;
+    const char* SubTypeFacebook;
+    const char* SubTypeMyspace;
+    const char* SubTypeTwitter;
+    const char* SubTypeWindowsLive;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOnlineAccount, "OnlineAccount")
     Q_DECLARE_LATIN1_LITERAL(FieldAccountUri, "AccountUri");
+    Q_DECLARE_LATIN1_LITERAL(FieldSubTypes, "SubTypes");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeSip, "Sip");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeH323, "H323");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeXmpp, "Xmpp");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeInternet, "Internet");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeShareVideo, "ShareVideo");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeFlickr, "Flickr");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeFacebook, "Facebook");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeMyspace, "Myspace");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeTwitter, "Twitter");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeWindowsLive, "WindowsLive");
 #endif
 
     void setAccountUri(const QString& accountUri) {setValue(FieldAccountUri, accountUri);}
     QString accountUri() const {return value(FieldAccountUri);}
+
+    void setSubTypes(const QStringList& subTypes) {setValue(FieldSubTypes, subTypes);}
+    void setSubTypes(const QString& subType) {setValue(FieldSubTypes, QStringList(subType));}
+    QStringList subTypes() const {return value<QStringList>(FieldSubTypes);}
 };
 
 #endif

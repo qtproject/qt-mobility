@@ -607,6 +607,8 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     f.dataType = QVariant::StringList;
     f.allowableValues = contexts;
     fields.insert(QContactDetail::FieldContext, f);
+    f.allowableValues = QVariantList(); // allow any subtypes!
+    fields.insert(QContactOnlineAccount::FieldSubTypes, f);
     d.setFields(fields);
     d.setUnique(false);
     d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
