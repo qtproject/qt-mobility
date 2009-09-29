@@ -18,34 +18,30 @@
 */
 
 
-#ifndef CNTMODELEXTUIDS_HRH
-#define CNTMODELEXTUIDS_HRH
+#ifndef CNTMODELEXTUIDS_H
+#define CNTMODELEXTUIDS_H
+
+#include "cntmodelextuids.hrh"
 
 //  CONSTANTS  
-
-/**
- * Storage type for thumbnail fields. 
- * Currently filename link is the default.
- */
-#define KPbkThumbnailFieldStorageType KStorageTypeStore
 
 /**
  * Phonebook custom Field value.
  * Locationing privacy field type.
  */
-#define KPbkUidContactFieldLocationPrivValue    0x101F4FF2
+const TUid KPbkUidContactFieldLocationPriv={KPbkUidContactFieldLocationPrivValue};
 
 /**
  * Phonebook custom Field value.
  * Top Contact field type.
  */
-#define KUidContactFieldTopContactValue 	0x200100E3
+const TUid KUidContactFieldTopContact={KUidContactFieldTopContactValue};
 
 /**
  * Phonebook custom Field value.
  * IMPP field type.
  */
-#define KUidContactFieldIMPPValue        	0x200100E4
+const TUid KUidContactFieldIMPP={KUidContactFieldIMPPValue};
 
 #endif // CNTMODELEXTUIDS_HRH
 
