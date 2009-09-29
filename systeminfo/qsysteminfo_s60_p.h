@@ -47,6 +47,7 @@
 
 
 #include <QObject>
+#include <QStringList>
 
 #include "qsysinfoglobal.h"
 #include "qsysteminfo.h"
@@ -140,7 +141,20 @@ public:
     qint64 totalDiskSpace(const QString &driveVolume);
     qint64 availableDiskSpace(const QString &driveVolume);
     QStringList listOfVolumes();
-    QSystemMemoryInfo::VolumeType volumeType(const QString &driveVolume); //returns enum
+};
+
+class QSystemStorageInfoPrivate : public QObject
+{
+    Q_OBJECT
+
+public:
+    QSystemStorageInfoPrivate(QObject *parent = 0);
+    virtual ~QSystemStorageInfoPrivate() {};
+    qlonglong totalDiskSpace(const QString &driveVolume) {return -1;}
+    qlonglong availableDiskSpace(const QString &driveVolume) {return -1;}
+    static QStringList logicalDrives() {return QStringList();}
+
+    QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume) {return QSystemStorageInfo::NoDrive;};
 };
 
 //////// QSystemDeviceInfo
@@ -193,16 +207,9 @@ class QSystemScreenSaverPrivate : public QObject
 public:
     QSystemScreenSaverPrivate(QObject *parent = 0);
 
-    bool screenSaverEnabled();
-    bool screenBlankingEnabled();
-    bool setScreenSaverEnabled(bool b);
-    bool setScreenBlankingEnabled(bool b);
-    bool isScreenLockOn();
-
-private:
-    QString screenPath;
-    QString settingsPath;
-    bool screenSaverSecure;
+    bool screenSaverInhibited() {return false;}
+    bool setScreenSaverInhibit() {return false;}
+    static bool isScreenLockOn() {return false;}
 };
 
 //////// DeviceInfo (singleton)

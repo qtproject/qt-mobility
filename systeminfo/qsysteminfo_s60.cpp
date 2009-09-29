@@ -180,14 +180,14 @@ qint64 QSystemMemoryInfoPrivate::totalDiskSpace(const QString &driveVolume)
     return -1;  //TODO
 }
 
-QSystemMemoryInfo::VolumeType QSystemMemoryInfoPrivate::volumeType(const QString &driveVolume)
-{
-    return QSystemMemoryInfo::NoVolume; //TODO
-}
-
 QStringList QSystemMemoryInfoPrivate::listOfVolumes()
 {
     return QStringList();   //TODO
+}
+
+QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
+        : QObject(parent)
+{
 }
 
 //////// QSystemDeviceInfo
@@ -318,31 +318,6 @@ DeviceInfo *DeviceInfo::m_instance = NULL;
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
         : QObject(parent)
 {
-}
-
-bool QSystemScreenSaverPrivate::setScreenSaverEnabled(bool state)
-{
-    return false;   //TODO
-}
-
-bool QSystemScreenSaverPrivate::setScreenBlankingEnabled(bool state)
-{
-    return false;   //TODO
-}
-
-bool QSystemScreenSaverPrivate::screenSaverEnabled()
-{
-    return false;   //TODO
-}
-
-bool QSystemScreenSaverPrivate::screenBlankingEnabled()
-{
-    return false;   //TODO
-}
-
-bool QSystemScreenSaverPrivate::isScreenLockOn()
-{
-    return false;   //TODO
 }
 
 QT_END_NAMESPACE
