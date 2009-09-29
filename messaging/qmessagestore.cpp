@@ -334,6 +334,9 @@
     and messageUpdated() signals.  Returns an identifier value that can be used to identify the 
     reason that a signal was emitted, and to unregister the filter at a later time.
 
+    The filter is applied to the state of the data after the occurrence of the event for which 
+    a notification may be emitted.
+
     \sa unregisterNotificationFilter(), messageAdded(), messageRemoved(), messageUpdated()
 */
 
@@ -371,6 +374,9 @@
     \a matchingFilters contains a set of values identifiying registered notification filters 
     that matched the message.
 
+    Since the filters apply to the state of the data after the message removal, the only 
+    data item that may be subject to filtration is the identifier of the removed message.
+
     \sa messageAdded(), messageUpdated(), registerNotificationFilter()
 */
 
@@ -380,6 +386,10 @@
     Signal that is emitted when the message identified by \a id is updated in the message store.
     \a matchingFilters contains a set of values identifiying registered notification filters 
     that matched the message.
+
+    Since the filters apply to the state of the data after the message modification, updates 
+    to messages which matched a given filter prior to modification but not afterwards will not 
+    result in the emission of the messageUpdated signal.
 
     \sa messageAdded(), messageRemoved(), registerNotificationFilter()
 */
