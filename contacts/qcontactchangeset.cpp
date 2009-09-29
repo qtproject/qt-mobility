@@ -171,6 +171,9 @@ void QContactChangeSet::clear()
  */
 void QContactChangeSet::emitSignals(QContactManagerEngine *engine)
 {
+    if (!engine)
+        return;
+
     if (d->m_dataChanged) {
         emit engine->dataChanged();
     } else {
