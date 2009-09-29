@@ -175,8 +175,10 @@ void FolderHeap::sink(int i)
     }
 }
 
-class QMessageStorePrivatePlatform
+class QMessageStorePrivatePlatform : public QObject
 {
+    Q_OBJECT
+
 public:
     QMessageStorePrivatePlatform(QMessageStorePrivate *d, QMessageStore *q);
     ~QMessageStorePrivatePlatform();
@@ -185,18 +187,25 @@ public:
     QMessageStore *q_ptr;
     QMessageStore::ErrorCode lastError;
 
-    WinHelpers::MapiInitializationToken token;
+    MapiSessionPtr session;
+
+signals:
+    void messageAdded(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &matchingFilterIds);
+    void messageRemoved(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &matchingFilterIds);
+    void messageUpdated(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &matchingFilterIds);
 };
 
 QMessageStorePrivatePlatform::QMessageStorePrivatePlatform(QMessageStorePrivate *d, QMessageStore *q)
     :d_ptr(d), 
      q_ptr(q),
-     token(WinHelpers::initializeMapi())
+     lastError(QMessageStore::NoError),
+     session(MapiSession::createSession(&lastError))
 {
-    if (token->_initialized) {
-        lastError = QMessageStore::NoError;
-    } else {
-        lastError = QMessageStore::ContentInaccessible;
+    if (session && (lastError == QMessageStore::NoError)) {
+        MapiSession *o(session.data());
+        connect(o, SIGNAL(messageAdded(QMessageId, QSet<QMessageStore::NotificationFilterId>)), this, SIGNAL(messageAdded(QMessageId, QSet<QMessageStore::NotificationFilterId>)));
+        connect(o, SIGNAL(messageRemoved(QMessageId, QSet<QMessageStore::NotificationFilterId>)), this, SIGNAL(messageRemoved(QMessageId, QSet<QMessageStore::NotificationFilterId>)));
+        connect(o, SIGNAL(messageUpdated(QMessageId, QSet<QMessageStore::NotificationFilterId>)), this, SIGNAL(messageUpdated(QMessageId, QSet<QMessageStore::NotificationFilterId>)));
     }
 }
 
@@ -248,15 +257,17 @@ QMessageStore::ErrorCode QMessageStore::lastError() const
 QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
 {
     QMessageIdList result;
-    d_ptr->p_ptr->lastError = QMessageStore::NoError;
 
-    MapiSessionPtr mapiSession(MapiSession::createSession(&d_ptr->p_ptr->lastError));
-    if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
+    if (!d_ptr->p_ptr->session) {
+        d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
         return result;
+    } else {
+        d_ptr->p_ptr->lastError = QMessageStore::NoError;
+    }
 
     QList<FolderHeapNodePtr> folderNodes;
 
-    MapiStoreIterator storeIt(QMessageFilterPrivate::storeIterator(filter, &d_ptr->p_ptr->lastError, mapiSession));
+    MapiStoreIterator storeIt(QMessageFilterPrivate::storeIterator(filter, &d_ptr->p_ptr->lastError, d_ptr->p_ptr->session));
     for (MapiStorePtr store(storeIt.next()); store && store->isValid(); store = storeIt.next()) {
         MapiFolderIterator folderIt(QMessageFilterPrivate::folderIterator(filter, &d_ptr->p_ptr->lastError, store));
         for (MapiFolderPtr folder(folderIt.next()); folder && folder->isValid(); folder = folderIt.next()) {
@@ -275,7 +286,7 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
         }
     }
 
-    FolderHeap folderHeap(&d_ptr->p_ptr->lastError, mapiSession, folderNodes, ordering);
+    FolderHeap folderHeap(&d_ptr->p_ptr->lastError, d_ptr->p_ptr->session, folderNodes, ordering);
     if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
         return result;
 
@@ -324,14 +335,17 @@ QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &fil
 {
     Q_UNUSED(filter)
     Q_UNUSED(ordering)
+
     QMessageFolderIdList result;
-    d_ptr->p_ptr->lastError = QMessageStore::NoError;
 
-    MapiSessionPtr mapiSession(MapiSession::createSession(&d_ptr->p_ptr->lastError));
-    if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
+    if (!d_ptr->p_ptr->session) {
+        d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
         return result;
+    } else {
+        d_ptr->p_ptr->lastError = QMessageStore::NoError;
+    }
 
-    foreach (const MapiStorePtr &store, mapiSession->allStores(&d_ptr->p_ptr->lastError)) {
+    foreach (const MapiStorePtr &store, d_ptr->p_ptr->session->allStores(&d_ptr->p_ptr->lastError)) {
         result.append(store->folderIds(&d_ptr->p_ptr->lastError));
     }
 
@@ -349,14 +363,17 @@ QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &
     Q_UNUSED(ordering)
     Q_UNUSED(limit)
     Q_UNUSED(offset)
+
     QMessageAccountIdList result;
-    d_ptr->p_ptr->lastError = QMessageStore::NoError;
 
-    MapiSessionPtr mapiSession(MapiSession::createSession(&d_ptr->p_ptr->lastError));
-    if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
+    if (!d_ptr->p_ptr->session) {
+        d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
         return result;
+    } else {
+        d_ptr->p_ptr->lastError = QMessageStore::NoError;
+    }
 
-    foreach (const MapiStorePtr &store, mapiSession->allStores(&d_ptr->p_ptr->lastError)) {
+    foreach (const MapiStorePtr &store, d_ptr->p_ptr->session->allStores(&d_ptr->p_ptr->lastError)) {
         result.append(QMessageAccountId(store->id()));
     }
 
@@ -402,78 +419,70 @@ bool QMessageStore::addMessage(QMessage *message)
 {
     bool result(false);
 
-    if (!message || !message->id().isValid()) {
+    if (!d_ptr->p_ptr->session) {
+        d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
+        return result;
+    } else {
+        d_ptr->p_ptr->lastError = QMessageStore::NoError;
+    }
 
+    if (!message || !message->id().isValid()) {
         QMessageStore::ErrorCode* lError = &d_ptr->p_ptr->lastError;
 
-        *lError = QMessageStore::NoError;
+        MapiStorePtr mapiStore = d_ptr->p_ptr->session->findStore(lError,message->parentAccountId(),false);
+        if (*lError == QMessageStore::NoError && !mapiStore.isNull()) {
+            MapiFolderPtr mapiFolder;
 
-        MapiSessionPtr session(MapiSession::createSession(lError));
-        if (*lError == QMessageStore::NoError) {
+            // Find the parent folder for this message
+            QMessageFolder folder(message->parentFolderId());
+            if (folder.id().isValid()) {
+                mapiFolder = mapiStore->findFolder(lError, QMessageFolderIdPrivate::folderRecordKey(folder.id()));
+            } else {
+                mapiFolder = mapiStore->findFolder(lError, message->standardFolder());
+            }
 
-            MapiStorePtr mapiStore = session->findStore(lError,message->parentAccountId(),false);
-
-            if (*lError == QMessageStore::NoError && !mapiStore.isNull()) {
-
-                MapiFolderPtr mapiFolder;
-
-                // Find the parent folder for this message
-
-                QMessageFolder folder(message->parentFolderId());
-
-                *lError = QMessageStore::NoError;
-
-                if(folder.id().isValid())
-                    mapiFolder = mapiStore->findFolder(lError, QMessageFolderIdPrivate::folderRecordKey(folder.id()));
-                else
-                    mapiFolder = mapiStore->findFolder(lError, message->standardFolder());
-
-                if(*lError == QMessageStore::NoError && !mapiFolder.isNull()) {
-                    IMessage* mapiMessage = mapiFolder->createMessage(*message,session,lError,MapiFolder::DoNothing);
-                    if (*lError == QMessageStore::NoError && mapiMessage) {
-
-                        if (FAILED(mapiMessage->SaveChanges(0))) {
-                            qWarning() << "Unable to save changes on message.";
-                            mapiRelease(mapiMessage);
-                            return false;
-                        }
-
-                        //set the new QMessageId
-                        //we can only be guaranteed of an entry id after IMessage->SaveChanges has been called
-
-                        SizedSPropTagArray(2, columns) = {2, {PR_RECORD_KEY, PR_ENTRYID}};
-                        SPropValue *properties(0);
-                        ULONG count;
-                        HRESULT rv = mapiMessage->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), 0, &count, &properties);
-                        if (HR_SUCCEEDED(rv) && (properties[0].ulPropTag == PR_RECORD_KEY) && (properties[1].ulPropTag == PR_ENTRYID)) {
-                            MapiRecordKey recordKey(properties[0].Value.bin.lpb, properties[0].Value.bin.cb);
-                            MapiEntryId entryId(properties[1].Value.bin.lpb, properties[1].Value.bin.cb);
-                            message->d_ptr->_id = QMessageIdPrivate::from(recordKey, mapiFolder->recordKey(), mapiFolder->storeKey(), entryId);
-                            message->d_ptr->_modified = false;
-
-                            MAPIFreeBuffer(properties);
-                        }
-                        else
-                        {
-                            qWarning() << "Unable to set the new ID in message.";
-                            result = false;
-                        }
-
-                        mapiMessage->Release();
-
-                        result = true;
-
-                    } else {
-                        qWarning() << "Cannot CreateMessage";
+            if (*lError == QMessageStore::NoError && !mapiFolder.isNull()) {
+                IMessage* mapiMessage = mapiFolder->createMessage(*message,d_ptr->p_ptr->session,lError,MapiFolder::DoNothing);
+                if (*lError == QMessageStore::NoError && mapiMessage) {
+                    if (FAILED(mapiMessage->SaveChanges(0))) {
+                        qWarning() << "Unable to save changes on message.";
+                        mapiRelease(mapiMessage);
+                        return false;
                     }
+
+                    //set the new QMessageId
+                    //we can only be guaranteed of an entry id after IMessage->SaveChanges has been called
+
+                    SizedSPropTagArray(2, columns) = {2, {PR_RECORD_KEY, PR_ENTRYID}};
+                    SPropValue *properties(0);
+                    ULONG count;
+                    HRESULT rv = mapiMessage->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), 0, &count, &properties);
+                    if (HR_SUCCEEDED(rv) && (properties[0].ulPropTag == PR_RECORD_KEY) && (properties[1].ulPropTag == PR_ENTRYID)) {
+                        MapiRecordKey recordKey(properties[0].Value.bin.lpb, properties[0].Value.bin.cb);
+                        MapiEntryId entryId(properties[1].Value.bin.lpb, properties[1].Value.bin.cb);
+                        message->d_ptr->_id = QMessageIdPrivate::from(recordKey, mapiFolder->recordKey(), mapiFolder->storeKey(), entryId);
+                        message->d_ptr->_modified = false;
+
+                        MAPIFreeBuffer(properties);
+                    }
+                    else
+                    {
+                        qWarning() << "Unable to set the new ID in message.";
+                        result = false;
+                    }
+
+                    mapiMessage->Release();
+
+                    result = true;
+
                 } else {
-                    qWarning() << "Cannot get MAPI folder from store";
+                    qWarning() << "Cannot CreateMessage";
                 }
             } else {
-                qWarning() << "Cannot get default store";
+                qWarning() << "Cannot get MAPI folder from store";
             }
         } else {
-            qWarning() << "Cannot get session";
+            qWarning() << "Cannot get default store";
         }
     } else {
         qWarning() << "Valid message ID at addition";
@@ -490,39 +499,45 @@ bool QMessageStore::updateMessage(QMessage *m)
 QMessage QMessageStore::message(const QMessageId& id) const
 {
     QMessage result;
-    d_ptr->p_ptr->lastError = QMessageStore::NoError;
 
-    MapiSessionPtr mapiSession(MapiSession::createSession(&d_ptr->p_ptr->lastError));
-    if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
+    if (!d_ptr->p_ptr->session) {
+        d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
         return result;
+    } else {
+        d_ptr->p_ptr->lastError = QMessageStore::NoError;
+    }
 
-    return mapiSession->message(&d_ptr->p_ptr->lastError, id);
+    return d_ptr->p_ptr->session->message(&d_ptr->p_ptr->lastError, id);
 }
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
 {
     QMessageFolder result;
-    d_ptr->p_ptr->lastError = QMessageStore::NoError;
 
-    MapiSessionPtr mapiSession(MapiSession::createSession(&d_ptr->p_ptr->lastError));
-    if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
+    if (!d_ptr->p_ptr->session) {
+        d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
         return result;
+    } else {
+        d_ptr->p_ptr->lastError = QMessageStore::NoError;
+    }
 
-    return mapiSession->folder(&d_ptr->p_ptr->lastError, id);
+    return d_ptr->p_ptr->session->folder(&d_ptr->p_ptr->lastError, id);
 }
 #endif
 
 QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
 {
     QMessageAccount result;
-    d_ptr->p_ptr->lastError = QMessageStore::NoError;
 
-    MapiSessionPtr mapiSession(MapiSession::createSession(&d_ptr->p_ptr->lastError));
-    if (d_ptr->p_ptr->lastError != QMessageStore::NoError)
+    if (!d_ptr->p_ptr->session) {
+        d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
         return result;
+    } else {
+        d_ptr->p_ptr->lastError = QMessageStore::NoError;
+    }
 
-    MapiStorePtr mapiStore(mapiSession->findStore(&d_ptr->p_ptr->lastError, id));
+    MapiStorePtr mapiStore(d_ptr->p_ptr->session->findStore(&d_ptr->p_ptr->lastError, id));
     if (mapiStore && mapiStore->isValid()) {
         result = QMessageAccountPrivate::from(mapiStore->id(), mapiStore->name(), mapiStore->address(), mapiStore->types());
     }
@@ -532,12 +547,26 @@ QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
 
 QMessageStore::NotificationFilterId QMessageStore::registerNotificationFilter(const QMessageFilter &filter)
 {
-    Q_UNUSED(filter)
-    return 0; // stub
+    QMessageStore::NotificationFilterId result(0);
+
+    if (!d_ptr->p_ptr->session) {
+        d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
+        return result;
+    } else {
+        d_ptr->p_ptr->lastError = QMessageStore::NoError;
+    }
+
+    return d_ptr->p_ptr->session->registerNotificationFilter(&d_ptr->p_ptr->lastError, filter);
 }
 
 void QMessageStore::unregisterNotificationFilter(NotificationFilterId notificationFilterId)
 {
-    Q_UNUSED(notificationFilterId)
+    if (!d_ptr->p_ptr->session) {
+        d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
+    } else {
+        d_ptr->p_ptr->lastError = QMessageStore::NoError;
+        d_ptr->p_ptr->session->unregisterNotificationFilter(&d_ptr->p_ptr->lastError, notificationFilterId);
+    }
 }
 
+#include "qmessagestore_win.moc"

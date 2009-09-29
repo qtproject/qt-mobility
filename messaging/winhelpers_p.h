@@ -34,6 +34,7 @@
 #define QMESSAGEWINHELPERPRIVATE_H
 
 #include <QHash>
+#include <QMap>
 #include <QPair>
 #include <QSharedPointer>
 #include <QString>
@@ -237,54 +238,71 @@ private:
     static QHash<MapiEntryId, QWeakPointer<MapiFolder> > _folderMap;
 };
 
-class MapiSession {
-    public:
-        static MapiSessionPtr createSession(QMessageStore::ErrorCode *lastError);
+class MapiSession : public QObject
+{
+    Q_OBJECT
 
-        ~MapiSession();
+public:
+    static MapiSessionPtr createSession(QMessageStore::ErrorCode *lastError);
 
-        bool isValid() const { return (_mapiSession != 0); }
+    ~MapiSession();
 
-        MapiStorePtr findStore(QMessageStore::ErrorCode *lastError, const QMessageAccountId &id = QMessageAccountId(), bool cachedMode = true) const;
-        MapiStorePtr defaultStore(QMessageStore::ErrorCode *lastError, bool cachedMode = true) const { return findStore(lastError,QMessageAccountId(),cachedMode); }
-        QList<MapiStorePtr> allStores(QMessageStore::ErrorCode *lastError, bool cachedMode = true) const;
-        MapiStorePtr openStore(QMessageStore::ErrorCode *lastError, const MapiEntryId& id, bool cachedMode = true) const;
+    bool isValid() const { return (_mapiSession != 0); }
 
-        QMessageAccountId defaultAccountId(QMessageStore::ErrorCode *lastError, QMessage::Type type) const;
+    MapiStorePtr findStore(QMessageStore::ErrorCode *lastError, const QMessageAccountId &id = QMessageAccountId(), bool cachedMode = true) const;
+    MapiStorePtr defaultStore(QMessageStore::ErrorCode *lastError, bool cachedMode = true) const { return findStore(lastError,QMessageAccountId(),cachedMode); }
+    QList<MapiStorePtr> allStores(QMessageStore::ErrorCode *lastError, bool cachedMode = true) const;
+    MapiStorePtr openStore(QMessageStore::ErrorCode *lastError, const MapiEntryId& id, bool cachedMode = true) const;
 
-        QMessageFolder folder(QMessageStore::ErrorCode *lastError, const QMessageFolderId& id) const;
-        QMessage message(QMessageStore::ErrorCode *lastError, const QMessageId& id) const;
+    QMessageAccountId defaultAccountId(QMessageStore::ErrorCode *lastError, QMessage::Type type) const;
 
-        bool updateMessageProperties(QMessageStore::ErrorCode *lastError, QMessage *msg) const;
-        bool updateMessageRecipients(QMessageStore::ErrorCode *lastError, QMessage *msg) const;
-        bool updateMessageBody(QMessageStore::ErrorCode *lastError, QMessage *msg) const;
-        bool updateMessageAttachments(QMessageStore::ErrorCode *lastError, QMessage *msg) const;
+    QMessageFolder folder(QMessageStore::ErrorCode *lastError, const QMessageFolderId& id) const;
+    QMessage message(QMessageStore::ErrorCode *lastError, const QMessageId& id) const;
 
-        QByteArray attachmentData(QMessageStore::ErrorCode *lastError, const QMessageId& id, ULONG number) const;
+    bool updateMessageProperties(QMessageStore::ErrorCode *lastError, QMessage *msg) const;
+    bool updateMessageRecipients(QMessageStore::ErrorCode *lastError, QMessage *msg) const;
+    bool updateMessageBody(QMessageStore::ErrorCode *lastError, QMessage *msg) const;
+    bool updateMessageAttachments(QMessageStore::ErrorCode *lastError, QMessage *msg) const;
 
-        bool showForm(IMessage* message, IMAPIFolder* folder, IMsgStore* store);
+    QByteArray attachmentData(QMessageStore::ErrorCode *lastError, const QMessageId& id, ULONG number) const;
 
-        IMAPISession* session() const { return _mapiSession; }
+    bool showForm(IMessage* message, IMAPIFolder* folder, IMsgStore* store);
 
-        bool flushQueues();
+    IMAPISession* session() const { return _mapiSession; }
 
-    private:
-        MapiSession();
-        MapiSession(QMessageStore::ErrorCode *lastError);
+    bool flushQueues();
 
-        IMsgStore *openMapiStore(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId, bool cachedMode = true) const;
-        IMessage *openMapiMessage(QMessageStore::ErrorCode *lastError, const QMessageId &id) const;
+    QMessageStore::NotificationFilterId registerNotificationFilter(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter);
+    void unregisterNotificationFilter(QMessageStore::ErrorCode *lastError, QMessageStore::NotificationFilterId filterId);
 
-        void addRecipients(LPMESSAGE message, const QMessageAddressList& addressList, unsigned long mapiAddressType);
-        void addAttachment(LPMESSAGE message, const QMessageContentContainer& attachmentContainer);
+signals:
+    void messageAdded(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &matchingFilterIds);
+    void messageRemoved(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &matchingFilterIds);
+    void messageUpdated(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &matchingFilterIds);
 
-    private:
-        WinHelpers::MapiInitializationToken _token;
-        IMAPISession* _mapiSession;
+private:
+    MapiSession();
+    MapiSession(QMessageStore::ErrorCode *lastError);
 
-        static QWeakPointer<MapiSession> _session;
+    IMsgStore *openMapiStore(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId, bool cachedMode = true) const;
+    IMessage *openMapiMessage(QMessageStore::ErrorCode *lastError, const QMessageId &id) const;
 
-        static QHash<MapiEntryId, QWeakPointer<MapiStore> > _storeMap;
+    void addRecipients(LPMESSAGE message, const QMessageAddressList& addressList, unsigned long mapiAddressType);
+    void addAttachment(LPMESSAGE message, const QMessageContentContainer& attachmentContainer);
+
+    static ULONG notify(void *context, ULONG notificationCount, NOTIFICATION *notifications);
+    void notify(ULONG notificationCount, NOTIFICATION *notifications);
+
+private:
+    WinHelpers::MapiInitializationToken _token;
+    IMAPISession* _mapiSession;
+    QMessageStore::NotificationFilterId _filterId;
+    QMap<QMessageStore::NotificationFilterId, QMessageFilter> _filters;
+    bool _registered;
+
+    static QWeakPointer<MapiSession> _session;
+
+    static QHash<MapiEntryId, QWeakPointer<MapiStore> > _storeMap;
 };
 
 #endif

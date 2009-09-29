@@ -718,8 +718,6 @@ namespace {
         return m_lastError;
     }
 
-
-
 }
 
 // TODO: Move many un-exported functions from this namespace to the anonymous namespace
@@ -1839,13 +1837,17 @@ MapiSessionPtr MapiSession::createSession(QMessageStore::ErrorCode *lastError)
 
 MapiSession::MapiSession()
     :_token(0),
-     _mapiSession(0)
+     _mapiSession(0),
+     _filterId(0),
+     _registered(false)
 {
 }
 
 MapiSession::MapiSession(QMessageStore::ErrorCode *lastError)
     :_token(WinHelpers::initializeMapi()),
-     _mapiSession(0)
+     _mapiSession(0),
+     _filterId(0),
+     _registered(false)
 {
     if (!_token->_initialized) {
         *lastError = QMessageStore::ContentInaccessible;
@@ -2851,3 +2853,72 @@ bool MapiSession::showForm(IMessage* message, IMAPIFolder* folder, LPMDB store)
     return true;
 }
 
+ULONG MapiSession::notify(void *context, ULONG notificationCount, NOTIFICATION *notifications)
+{
+    reinterpret_cast<MapiSession*>(context)->notify(notificationCount, notifications);
+    return S_OK;
+}
+
+void MapiSession::notify(ULONG notificationCount, NOTIFICATION *notifications)
+{
+    //qDebug() << "got notifications:" << notificationCount;
+}
+
+QMessageStore::NotificationFilterId MapiSession::registerNotificationFilter(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter)
+{
+    QMessageStore::NotificationFilterId result(0);
+
+    QMessageStore::NotificationFilterId filterId = ++_filterId;
+    _filters.insert(filterId, filter);
+
+    if (!_registered) {
+        _registered = true;
+
+        foreach (MapiStorePtr store, allStores(lastError)) {
+            // test whether this store supports notifications
+            bool supported(false);
+
+            SPropValue *prop;
+            HRESULT rv = HrGetOneProp(store->store(), PR_STORE_SUPPORT_MASK, &prop);
+            if (HR_SUCCEEDED(rv)) {
+                supported = (prop->Value.ul & STORE_NOTIFY_OK);
+
+                MAPIFreeBuffer(prop);
+            } else {
+                qWarning() << "Unable to query store support mask.";
+            }
+
+            if (supported) {
+                IMAPIAdviseSink *sink(0);
+                ULONG (*callback)(void *, ULONG, NOTIFICATION*) = &MapiSession::notify;
+                HrAllocAdviseSink(reinterpret_cast<LPNOTIFCALLBACK>(callback), this, &sink);
+                if (sink) {
+                    IMAPIAdviseSink *wrappedSink(0);
+                    HrThisThreadAdviseSink(sink, &wrappedSink);
+                    mapiRelease(sink);
+                    sink = wrappedSink;
+
+                    ULONG mask(fnevNewMail | fnevObjectCreated | fnevObjectCopied | fnevObjectDeleted | fnevObjectModified | fnevObjectMoved);
+                    ULONG connectionNumber;
+                    rv = store->store()->Advise(0, NULL, mask, sink, &connectionNumber);
+                    if (HR_FAILED(rv)) {
+                        qWarning() << "Unable to register for notifications from store.";
+                    }
+
+                    mapiRelease(sink);
+                } else {
+                    qWarning() << "unable to allocate advise sink.";
+                }
+            } else {
+                qWarning() << "Store does not support notifications.";
+            }
+        }
+    }
+
+    return result;
+}
+
+void MapiSession::unregisterNotificationFilter(QMessageStore::ErrorCode *lastError, QMessageStore::NotificationFilterId filterId)
+{
+    _filters.remove(filterId);
+}
