@@ -271,18 +271,22 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
     for (MapiStorePtr store(storeIt.next()); store && store->isValid(); store = storeIt.next()) {
         MapiFolderIterator folderIt(QMessageFilterPrivate::folderIterator(filter, &d_ptr->p_ptr->lastError, store));
         for (MapiFolderPtr folder(folderIt.next()); folder && folder->isValid(); folder = folderIt.next()) {
-            FolderHeapNodePtr node(new FolderHeapNode);
-            node->filter = filter;
-            node->store = store;
-            node->folder = folder;
-            node->key = folder->recordKey();
-            node->parentStoreKey = folder->storeKey();
-            node->parentStoreEntryId = store->entryId();
-            node->name = folder->name();
-            node->entryId = folder->entryId();
-            node->hasSubFolders = folder->hasSubFolders();
-            node->messageCount = folder->messageCount();
-            folderNodes.append(node);
+            QList<QMessageFilter> orderingFilters;
+            orderingFilters.append(filter);
+            foreach(QMessageFilter orderingFilter, QMessageOrderingPrivate::normalize(orderingFilters, ordering)) {
+                FolderHeapNodePtr node(new FolderHeapNode);
+                node->filter = orderingFilter;
+                node->store = store;
+                node->folder = folder;
+                node->key = folder->recordKey();
+                node->parentStoreKey = folder->storeKey();
+                node->parentStoreEntryId = store->entryId();
+                node->name = folder->name();
+                node->entryId = folder->entryId();
+                node->hasSubFolders = folder->hasSubFolders();
+                node->messageCount = folder->messageCount();
+                folderNodes.append(node);
+            }
         }
     }
 

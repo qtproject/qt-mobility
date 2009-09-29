@@ -33,6 +33,7 @@
 #include "qmessageordering.h"
 #if defined(Q_OS_WIN)
 #include "qmessagestore.h"
+#include "qmessagefilter.h"
 #include <qpair.h>
 #include "winhelpers_p.h"
 #endif
@@ -52,5 +53,8 @@ public:
     static bool lessThan(const QMessageOrdering &ordering, const QMessage &left, const QMessage &right);
     static void sortTable(QMessageStore::ErrorCode *lastError, const QMessageOrdering &ordering, LPMAPITABLE);
     static QMessageOrdering from(QMessageOrderingPrivate::Field field, Qt::SortOrder order);
+
+    static bool isFilterType(const QMessageOrdering &ordering);
+    static QList<QMessageFilter> normalize(const QList<QMessageFilter> &filters, const QMessageOrdering &ordering);
 #endif
 };

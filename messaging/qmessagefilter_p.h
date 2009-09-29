@@ -35,6 +35,7 @@
 #include "qmessagestore.h"
 #include "winhelpers_p.h"
 #include <qvariant.h>
+#include <qset.h>
 #endif
 
 #if defined(Q_OS_WIN)
@@ -87,12 +88,25 @@ public:
     wchar_t *_buffer2;
     bool _valid;
 
+    QSet<QMessage::StandardFolder> _standardFoldersInclude; // only match messages directly in one of these folders
+    QSet<QMessage::StandardFolder> _standardFoldersExclude; // only match messages not directly in any of these folders
+    QSet<QMessageAccountId> _accountsInclude; // only match messages in one of these accounts
+    QSet<QMessageAccountId> _accountsExclude; // only match messages not in any of these accounts
+    bool _complex; // true iff operator is Or and left or right terms contain non-null containerFilters
+
+    bool containerFiltersAreEmpty(); // returns true IFF above QSets are empty
+    QMessageFilter containerFiltersPart(); // returns a filter comprised of just the container filters
+    QMessageFilter nonContainerFiltersPart(); // returns a filter comprised of everything but the container filters
+
     static void filterTable(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter, LPMAPITABLE);
     static QMessageFilter from(QMessageFilterPrivate::Field field, const QVariant &value, QMessageDataComparator::EqualityComparator cmp);
     static QMessageFilter from(QMessageFilterPrivate::Field field, const QVariant &value, QMessageDataComparator::RelationComparator cmp);
     static QMessageFilter from(QMessageFilterPrivate::Field field, const QVariant &value, QMessageDataComparator::InclusionComparator cmp);
     static QMessageFilterPrivate* implementation(const QMessageFilter &filter);
+
     static MapiFolderIterator folderIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, MapiStorePtr store);
     static MapiStoreIterator storeIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, MapiSessionPtr session);
+
+
 #endif
 };

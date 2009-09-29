@@ -153,6 +153,8 @@ void tst_QMessage::cleanupTestCase()
 }
 
 #if !defined(Q_OS_WIN)
+Q_DECLARE_METATYPE(QList<QByteArray>)
+
 void tst_QMessage::testFromTransmissionFormat_data()
 {
     QTest::addColumn<QString>("fileName");
@@ -165,6 +167,8 @@ void tst_QMessage::testFromTransmissionFormat_data()
     QTest::addColumn<QByteArray>("subtype");
     QTest::addColumn<QByteArray>("charset");
     QTest::addColumn<QString>("text");
+    QTest::addColumn<QList<QByteArray> >("headerFields");
+    QTest::addColumn<QStringList>("headerFieldValues");
 
     // A simple message
     QTest::newRow("1") 
@@ -184,7 +188,29 @@ Hi,\n\
 Do you like this message?\n\
 \n\
 -Me\n\
-";
+"
+        << ( QList<QByteArray>() << "Return-Path"
+                                 << "Delivered-To"
+                                 << "Received" 
+                                 << "MIME-Version"
+                                 << "Content-Type"
+                                 << "Content-Transfer-Encoding"
+                                 << "Message-ID"
+                                 << "From"
+                                 << "To"
+                                 << "Subject"
+                                 << "Date" )
+        << ( QStringList() << "<bbb@zzz.test>" 
+                           << "bbb@zzz.test"
+                           << "by mail.zzz.test (Postfix, from userid 889)\tid 27CEAD38CC; Fri,  4 May 2001 14:05:44 -0400 (EDT)"
+                           << "1.0"
+                           << "text/plain; charset=us-ascii"
+                           << "7bit"
+                           << "<15090.61304.110929.45684@aaa.zzz.test>"
+                           << "bbb@ddd.example (John X. Doe)"
+                           << "bbb@zzz.test"
+                           << "This is a test message"
+                           << "Fri, 4 May 2001 14:05:44 -0400" );
 
     // A multipart message
     QTest::newRow("2") 
@@ -197,7 +223,35 @@ Do you like this message?\n\
         << QByteArray("multipart")
         << QByteArray("mixed")
         << QByteArray()
-        << QString();
+        << QString()
+        << ( QList<QByteArray>() << "Return-Path"
+                                 << "Delivered-To"
+                                 << "Received" 
+                                 << "MIME-Version"
+                                 << "Content-Type"
+                                 << "Content-Transfer-Encoding"
+                                 << "Message-ID"
+                                 << "From"
+                                 << "To"
+                                 << "Subject"
+                                 << "Date"
+                                 << "X-Mailer"
+                                 << "X-Attribution"
+                                 << "X-Oblique-Strategy" )
+        << ( QStringList() << "<barry@python.test>"
+                           << "barry@python.test"
+                           << "by mail.python.test (Postfix, from userid 889)\tid C2BF0D37C6; Tue, 11 Sep 2001 00:05:05 -0400 (EDT)"
+                           << "1.0"
+                           << "multipart/mixed; boundary=\"h90VIIIKmx\""
+                           << "7bit"
+                           << "<15261.36209.358846.118674@anthem.python.test>"
+                           << "barry@python.test (Barry A. Krakow)"
+                           << "barry@python.test"
+                           << "a simple multipart"
+                           << "Tue, 11 Sep 2001 00:05:05 -0400"
+                           << "VM 6.95 under 21.4 (patch 4) \"Artificial Intelligence\" XEmacs Lucid"
+                           << "BAW"
+                           << "Make a door into a window" );
 
     // A nested multipart message
     QTest::newRow("3") 
@@ -210,7 +264,19 @@ Do you like this message?\n\
         << QByteArray("multipart")
         << QByteArray("mixed")
         << QByteArray()
-        << QString();
+        << QString()
+        << ( QList<QByteArray>() << "MIME-Version"
+                                 << "From"
+                                 << "To"
+                                 << "Subject"
+                                 << "Date"
+                                 << "Content-Type" )
+        << ( QStringList() << "1.0"
+                           << "Barry <barry@example.com>"
+                           << "Dingus Lovers <cravindogs@cravindogs.test>"
+                           << "Here is your dingus fish"
+                           << "Fri, 20 Apr 2001 19:35:02 -0400"
+                           << "multipart/mixed; boundary=\"OUTER\"" );
 }
 
 void tst_QMessage::testFromTransmissionFormat()
@@ -225,6 +291,8 @@ void tst_QMessage::testFromTransmissionFormat()
     QFETCH(QByteArray, subtype);
     QFETCH(QByteArray, charset);
     QFETCH(QString, text);
+    QFETCH(QList<QByteArray>, headerFields);
+    QFETCH(QStringList, headerFieldValues);
 
     QString path(SRCDIR "/testdata/" + fileName);
     QMessage message(QMessage::fromTransmissionFormatFile(QMessage::Email, path));
@@ -250,6 +318,20 @@ void tst_QMessage::testFromTransmissionFormat()
         QCOMPARE(body.contentCharset().toLower(), charset);
         QCOMPARE(body.isContentAvailable(), true);
         QCOMPARE(body.textContent(), text);
+    }
+
+    QCOMPARE(message.headerFields(), headerFields);
+
+    QStringList::const_iterator it = headerFieldValues.begin(), end = headerFieldValues.end();
+    foreach (const QByteArray &field, headerFields) {
+        QVERIFY(it != end);
+        QCOMPARE(message.headerFieldValue(field), *it);
+
+        foreach (const QString &value, message.headerFieldValues(field)) {
+            QVERIFY(it != end);
+            QCOMPARE(value, *it);
+            ++it;
+        }
     }
 }
 #endif
