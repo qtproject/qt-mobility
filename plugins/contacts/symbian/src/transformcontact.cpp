@@ -41,6 +41,7 @@
 #include "transformaddress.h"
 #include "transformbirthday.h"
 #include "transformonlineaccount.h"
+#include "transformorganisation.h"
 
 #include <qtcontacts.h>
 #include <cntfldst.h>
@@ -70,6 +71,7 @@ void TransformContact::initializeTransformContactData()
 	m_transformContactData.insert(URL, new TransformUrl);
 	m_transformContactData.insert(Birthday, new TransformBirthday);
 	m_transformContactData.insert(OnlineAccount, new TransformOnlineAccount);
+	m_transformContactData.insert(Organisation, new TransformOrganisation);
 }
 
 
