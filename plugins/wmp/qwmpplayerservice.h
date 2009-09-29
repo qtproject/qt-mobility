@@ -38,6 +38,8 @@
 #include "qwmpevents.h"
 #include "qwmpvideooutputcontrol.h"
 
+#include <multimedia/qmediaservice.h>
+
 class QMediaMetaData;
 class QMediaPlayerControl;
 class QMediaPlaylist;
