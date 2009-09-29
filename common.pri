@@ -48,7 +48,6 @@ SOURCE_DIR = $$PWD
     UI_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/ui
     LIBS += -L$$OUTPUT_DIR/build/$$SUBDIRPART/bin  #link against library that we test
     INCLUDEPATH += $$MOC_DIR
-    !contains(TARGET, ^tst_.*):TARGET = $$join(TARGET,,"tst_")
 }
 
 
