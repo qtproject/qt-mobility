@@ -32,11 +32,10 @@
         <keyword ref="qsystemdeviceinfo.html#Profile-enum">QSystemDeviceInfo::UnknownProfile</keyword>
         <keyword ref="qsystemdeviceinfo.html#Profile-enum">QSystemDeviceInfo::CustomProfile</keyword>
         <keyword ref="qsystemdeviceinfo.html#SimStatus-enum">SimStatus</keyword>
-        <keyword ref="qsystemdeviceinfo.html#SimStatus-enum">SimStatusFlags</keyword>
         <keyword ref="qsystemdeviceinfo.html#SimStatus-enum">QSystemDeviceInfo::SimNotAvailable</keyword>
-        <keyword ref="qsystemdeviceinfo.html#SimStatus-enum">QSystemDeviceInfo::DualAvailable</keyword>
-        <keyword ref="qsystemdeviceinfo.html#SimStatus-enum">QSystemDeviceInfo::Locked</keyword>
-        <keyword ref="qsystemdeviceinfo.html#SimStatus-enum">QSystemDeviceInfo::SingleAvailable</keyword>
+        <keyword ref="qsystemdeviceinfo.html#SimStatus-enum">QSystemDeviceInfo::DualSimAvailable</keyword>
+        <keyword ref="qsystemdeviceinfo.html#SimStatus-enum">QSystemDeviceInfo::SimLocked</keyword>
+        <keyword ref="qsystemdeviceinfo.html#SimStatus-enum">QSystemDeviceInfo::SingleSimAvailable</keyword>
         <keyword ref="qsystemdeviceinfo.html#currentPowerState-prop">currentPowerState</keyword>
         <keyword ref="qsystemdeviceinfo.html#currentProfile-prop">currentProfile</keyword>
         <keyword ref="qsystemdeviceinfo.html#simStatus-prop">simStatus</keyword>
@@ -141,10 +140,8 @@
     <section ref="qsystemscreensaver.html" title="QSystemScreenSaver Class Reference">
         <keyword ref="qsystemscreensaver.html">QSystemScreenSaver</keyword>
         <keyword ref="qsystemscreensaver.html#isScreenLockOn">isScreenLockOn</keyword>
-        <keyword ref="qsystemscreensaver.html#screenBlankingEnabled">screenBlankingEnabled</keyword>
-        <keyword ref="qsystemscreensaver.html#screenSaverEnabled">screenSaverEnabled</keyword>
-        <keyword ref="qsystemscreensaver.html#setScreenBlankingEnabled">setScreenBlankingEnabled</keyword>
-        <keyword ref="qsystemscreensaver.html#setScreenSaverEnabled">setScreenSaverEnabled</keyword>
+        <keyword ref="qsystemscreensaver.html#screenSaverInhibited">screenSaverInhibited</keyword>
+        <keyword ref="qsystemscreensaver.html#setScreenSaverInhibit">setScreenSaverInhibit</keyword>
         <section ref="qsystemscreensaver-members.html" title="List of all members"/>
     </section>
     <section ref="qsystemstorageinfo.html" title="QSystemStorageInfo Class Reference">

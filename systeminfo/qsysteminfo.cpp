@@ -236,9 +236,9 @@ QT_BEGIN_NAMESPACE
     This enum describes the status is the sim card or cards.
 
     \value SimNotAvailable         SIM is not available on this device.
-    \value SingleAvailable         One SIM card is available on this.
-    \value DualAvailable           Two SIM cards are available on this device.
-    \value Locked                  Device has SIM lock enabled.
+    \value SingleSimAvailable         One SIM card is available on this.
+    \value DualSimAvailable           Two SIM cards are available on this device.
+    \value SimLocked                  Device has SIM lock enabled.
 */
 
 /*!
