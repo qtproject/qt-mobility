@@ -63,7 +63,7 @@
         Q_OBJECT
 
     public:
-        GroupDetailsDialog(QContactManager *contactManager, const QContact &amp;contact);
+        GroupDetailsDialog(QWidget *parent, QContactManager *contactManager, const QContact &amp;contact);
         QList&lt;QUniqueId&gt; groups();
 
     private:
