@@ -106,7 +106,7 @@ int QSystemNetworkInfoPrivate::locationAreaCode()
 // Mobile Country Code
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
-    return "No Network";
+    return QString();   //TODO
 }
 
 // Mobile Network Code
@@ -194,10 +194,12 @@ QStringList QSystemMemoryInfoPrivate::listOfVolumes()
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
         : QObject(parent)
 {
+    DeviceInfo::instance()->batteryInfo()->addObserver(this);
 }
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
+    DeviceInfo::instance()->batteryInfo()->removeObserver(this);
 }
 
 QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
@@ -221,7 +223,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 
         case CTelephony::EBatteryConnectedButExternallyPowered:
         {
-            if (DeviceInfo::instance()->batteryInfo()->batteryLevel() < 100) {
+            if (DeviceInfo::instance()->batteryInfo()->batteryLevel() < 100) {  //TODO: Use real indicator
                 return QSystemDeviceInfo::WallPowerChargingBattery;
             } else {
                 return QSystemDeviceInfo::WallPower;
@@ -298,6 +300,16 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
 {
     return false;   //TODO
+}
+
+void QSystemDeviceInfoPrivate::batteryStatusChanged()
+{
+    emit powerStateChanged(currentPowerState());
+}
+
+void QSystemDeviceInfoPrivate::batteryLevelChanged()
+{
+    emit batteryLevelChanged(batteryLevel());
 }
 
 DeviceInfo *DeviceInfo::m_instance = NULL;

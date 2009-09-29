@@ -46,6 +46,16 @@ CTelephonyInfo::~CTelephonyInfo()
     delete m_wait;
 }
 
+void CTelephonyInfo::addObserver(MTelephonyInfoObserver *observer)
+{
+    m_observers.append(observer);
+}
+
+void CTelephonyInfo::removeObserver(MTelephonyInfoObserver *observer)
+{
+    m_observers.removeOne(observer);
+}
+
 void CTelephonyInfo::RunL()
 {
     m_wait->AsyncStop();
@@ -140,26 +150,65 @@ bool CIndicatorInfo::isBatteryCharging() const
 */
 
 CBatteryInfo::CBatteryInfo(CTelephony &telephony) : CTelephonyInfo(telephony),
-    m_batteryInfoV1Pckg(m_batteryInfoV1)
+    m_batteryInfoV1Pckg(m_batteryInfoV1), m_initializing(true)
 {
     m_telephony.GetBatteryInfo(iStatus, m_batteryInfoV1Pckg);
     makeRequest();
-    
+
     m_batteryLevel = m_batteryInfoV1.iChargeLevel;
+    m_previousBatteryLevel = m_batteryLevel;
+
     m_batteryStatus = m_batteryInfoV1.iStatus;
+    m_previousBatteryStatus = m_batteryStatus;
+    
+    m_initializing = false;
+
+    startMonitoring();
+}
+
+void CBatteryInfo::RunL()
+{
+    if (m_initializing) {
+        CTelephonyInfo::RunL();
+    } else {
+        m_batteryLevel = m_batteryInfoV1.iChargeLevel;
+        m_batteryStatus = m_batteryInfoV1.iStatus;
+
+        foreach (MTelephonyInfoObserver *observer, m_observers) {
+            if (m_batteryStatus != m_previousBatteryStatus) {
+                m_previousBatteryStatus = m_batteryStatus;
+                observer->batteryStatusChanged();
+            }
+            if (m_batteryLevel != m_previousBatteryLevel) {
+                m_previousBatteryLevel = m_batteryLevel;
+                observer->batteryLevelChanged();
+            }
+        }
+        startMonitoring();
+    }
 }
 
 void CBatteryInfo::DoCancel()
 {
-    m_telephony.CancelAsync(CTelephony::EGetBatteryInfoCancel);
+    if (m_initializing) {
+        m_telephony.CancelAsync(CTelephony::EGetBatteryInfoCancel);
+    } else {
+        m_telephony.CancelAsync(CTelephony::EBatteryInfoChangeCancel);
+    }
 }
 
 int CBatteryInfo::batteryLevel() const
 {
-    return m_batteryLevel;
+    return m_previousBatteryLevel;
 }
 
 CTelephony::TBatteryStatus CBatteryInfo::batteryStatus() const
 {
-    return m_batteryStatus;
+    return m_previousBatteryStatus;
+}
+
+void CBatteryInfo::startMonitoring()
+{
+    m_telephony.NotifyChange(iStatus, CTelephony::EBatteryInfoChange, m_batteryInfoV1Pckg);
+    SetActive();
 }

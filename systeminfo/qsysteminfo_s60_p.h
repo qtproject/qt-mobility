@@ -144,7 +144,9 @@ public:
 };
 
 //////// QSystemDeviceInfo
-class QSystemDeviceInfoPrivate : public QObject
+class DeviceInfo;
+
+class QSystemDeviceInfoPrivate : public QObject, public MTelephonyInfoObserver
 {
     Q_OBJECT
 
@@ -178,7 +180,9 @@ Q_SIGNALS:
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void powerStateChanged(QSystemDeviceInfo::PowerState);
 
-private:
+protected:  //from MTelephonyInfoObserver
+    void batteryStatusChanged();
+    void batteryLevelChanged();
 };
 
 //////// QSystemScreenSaver
@@ -201,6 +205,7 @@ private:
     bool screenSaverSecure;
 };
 
+//////// DeviceInfo (singleton)
 class DeviceInfo
 {
 public:

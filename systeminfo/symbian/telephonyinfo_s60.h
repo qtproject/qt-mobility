@@ -37,14 +37,25 @@
 #include <e32base.h>
 #include <Etel3rdParty.h>
 #include <QString>
+#include <QList>
 
 class CActiveSchedulerWait;
+
+class MTelephonyInfoObserver
+{
+public:
+    virtual void batteryStatusChanged() = 0;
+    virtual void batteryLevelChanged() = 0;
+};
 
 class CTelephonyInfo : public CActive
 {
 public:
     CTelephonyInfo(CTelephony &telephony);
     ~CTelephonyInfo();
+
+    void addObserver(MTelephonyInfoObserver *observer);
+    void removeObserver(MTelephonyInfoObserver *observer);
 
 protected:  //from CActive
     void RunL();
@@ -54,6 +65,7 @@ protected:
 
 protected:
     CTelephony &m_telephony;
+    QList<MTelephonyInfoObserver *> m_observers;
     CActiveSchedulerWait *m_wait;
 };
 
@@ -119,8 +131,10 @@ class CBatteryInfo : public CTelephonyInfo
 {
 public:
     CBatteryInfo(CTelephony &telephony);
+    void startMonitoring();
 
 protected:
+    void RunL();
     void DoCancel();
 
 public:
@@ -128,10 +142,15 @@ public:
     CTelephony::TBatteryStatus batteryStatus() const;
 
 private:
+    bool m_initializing;
+
     CTelephony::TBatteryInfoV1 m_batteryInfoV1;
     CTelephony::TBatteryInfoV1Pckg m_batteryInfoV1Pckg;
     
     int m_batteryLevel;
+    int m_previousBatteryLevel;
+
+    CTelephony::TBatteryStatus m_previousBatteryStatus;
     CTelephony::TBatteryStatus m_batteryStatus;
 };
 
