@@ -486,8 +486,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.insert(QContactPhoneNumber::FieldNumber, f);
     f.dataType = QVariant::StringList; // can implement multiple subtypes
     subTypes.clear();
+    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeAssistant));
     subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeBulletinBoardSystem));
     subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeCar));
+    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeDtmfMenu));
     subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeFacsimile));
     subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeLandline));
     subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeMessagingCapable));
@@ -573,7 +575,6 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     subTypes.clear();
     subTypes << QString(QLatin1String(QContactUrl::SubTypeFavourite));
     subTypes << QString(QLatin1String(QContactUrl::SubTypeHomePage));
-    subTypes << QString(QLatin1String(QContactUrl::SubTypeSocialNetworking));
     f.allowableValues = subTypes;
     fields.insert(QContactUrl::FieldSubType, f);
     f.dataType = QVariant::StringList;
