@@ -215,7 +215,9 @@ QStringList QSystemMemoryInfoPrivate::listOfVolumes()
 
 //////// QSystemDeviceInfo
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
-        : QObject(parent)
+        : QObject(parent),
+        iBatteryStatusObserver(NULL), iBatteryLevelObserver(NULL), iChargingStatusObserver(NULL),
+        iProfileEngine(NULL), iBluetoothMonitor(NULL), iProfileMonitor(NULL), iDeviceInfo(NULL)
 {
     TRAP(iError,
         iDeviceInfo = CDeviceInfo::NewL();
@@ -245,27 +247,17 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
-    if(iBatteryStatusObserver) {
-        delete iBatteryStatusObserver;
-    }
-    if(iBatteryLevelObserver) {
-        delete iBatteryLevelObserver;
-    }
-    if(iChargingStatusObserver) {
-        delete iChargingStatusObserver;
-    }
+    delete iChargingStatusObserver;
+    delete iBatteryLevelObserver;
+    delete iBatteryStatusObserver;
+    delete iProfileMonitor;
+    delete iBluetoothMonitor;
+
     if(iProfileEngine) {
         iProfileEngine->Release();
     }
-    if(iBluetoothMonitor) {
-        delete iBluetoothMonitor;
-    }
-    if(iProfileMonitor) {
-        delete iProfileMonitor;
-    }
-    if(iProfileEngine) {
-        delete iDeviceInfo;
-    }
+    
+    delete iDeviceInfo;
 }
 
 QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
@@ -314,8 +306,8 @@ QString QSystemDeviceInfoPrivate::imsi()
     TRAPD(error,
         deviceInfo = CDeviceInfo::NewL();
     )
-    if (deviceInfo->imei().length() > 0) {
-        return deviceInfo->imei();
+    if (deviceInfo->imsi().length() > 0) {
+        return deviceInfo->imsi();
     }
     else {
         return QString();
