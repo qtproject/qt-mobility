@@ -119,19 +119,6 @@
 */
 
 /*!
-    \fn QMessageContentContainer::containerId() const
-    
-    Returns the identifier of the container object.
-*/
-
-/*!
-    \fn QMessageContentContainer::messageId() const
-
-    Returns the identifier of the containing (parent) message if any; otherwise returns an invalid 
-    message identifier.
-*/
-
-/*!
     \fn QMessageContentContainer::setContentType(const QByteArray &data)
     
     Clears all existing content, including all parts, using clearContents() and sets the content 

@@ -87,20 +87,17 @@ QMessage QMessagePrivate::convert(const QMailMessage &message)
 
 QMailMessage QMessagePrivate::convert(const QMessage &message)
 {
-    message.applyPendingChanges();
     return message.d_ptr->_message;
 }
 
 QMailMessage *QMessagePrivate::convert(QMessage *message)
 {
-    message->applyPendingChanges();
     return &message->d_ptr->_message;
 }
 
 /*
 const QMailMessage *QMessagePrivate::convert(const QMessage *message)
 {
-    message->applyPendingChanges();
     return &message->d_ptr->_message;
 }
 */
@@ -278,13 +275,11 @@ QMessage QMessage::fromTransmissionFormatFile(Type t, const QString& fileName)
 
 QByteArray QMessage::toTransmissionFormat() const
 {
-    applyPendingChanges();
     return d_ptr->_message.toRfc2822(QMailMessage::TransmissionFormat);
 }
 
 void QMessage::toTransmissionFormat(QDataStream& out) const
 {
-    applyPendingChanges();
     d_ptr->_message.toRfc2822(out, QMailMessage::TransmissionFormat);
 }
 

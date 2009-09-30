@@ -704,44 +704,21 @@ QMessageFilter QMessageFilter::operator~() const
         op = op % static_cast<int>(QMessageFilterPrivate::OperatorEnd);
         result.d_ptr->_operator = static_cast<QMessageFilterPrivate::Operator>(op);
     } else if (d_ptr->_complex) {
-        // A filter consists of a non-native part and a native part &'d together.
-        // A native part can be evaluated using a MAPI SRestriction.
-        // On Windows, only account and folder filters are non-native, i.e. can't be evaluated using a MAPI SRestriction.
+        // A filter can be in one of two forms, either
+        // 1) An account and/or standard folder restriction &'d with a 'native' filter part 
+        //  that can be evaluated using a MAPI SRestriction.
+        // or 2) a 'complex' filter part that consists of two subparts |'d together
+        //     at least one of which is non-native. That is at least one subpart is either
+        //     complex itself, or has an account and/or standard folder restriction.
+        //
+        // On Windows, only account and folder filters are non-native, i.e. can't be evaluated 
+        //  using a MAPI SRestriction.
         // 
-        // A complex filter is a filter that consists of a non-native part and  a boolean operator where either the 
-        //   right or left argument contains a non-native part.
-        // On MAPI we ensure (programatically) that only | (and not &) type filters can be complex.
-        //
-        // So ~(F&(X|Y)) -> ~F&~X&~Y -> G&A
-        // where F and G are non-native filter parts, X and Y are filters and possibly complex, and A is a native filter.
-        //
-        // This simplification is possible because on MAPI native terms can be &'d together to create another native term
-        // and (for X and Y the term is either native so that the complement is native (on MAPI)
-        //      or the term is non-native and non-complex 
-        //          so that the non-native part can be factored out, complemented, and &'d together with ~F
-        //          and the native part can be natively complemented, and natively &'d together.
-        //      or the term is non-native and complex so that it is in the form F1&(X1|Y1) 
-        //          and can be recursively evaluated using a divide-and conqueror approach to reach a simpler case as above)
-        QMessageFilter result;
-        QMessageFilter resultL(~*d_ptr->_left); // recursive evaluation
-        QMessageFilter resultR(~*d_ptr->_right); // recursive evaluation
-        result.d_ptr->_left = new QMessageFilter(resultL.d_ptr->nonContainerFiltersPart());
-        result.d_ptr->_right = new QMessageFilter(resultR.d_ptr->nonContainerFiltersPart());
-        result.d_ptr->_operator = QMessageFilterPrivate::And;
-        // To find ~F, swap includes and excludes
-        result.d_ptr->_standardFoldersInclude = d_ptr->_standardFoldersExclude;
-        result.d_ptr->_standardFoldersExclude = d_ptr->_standardFoldersInclude;
-        result.d_ptr->_accountsInclude = d_ptr->_accountsExclude;
-        result.d_ptr->_accountsExclude = d_ptr->_accountsInclude;
-        // To find G, intersect includes and union excludes
-        result.d_ptr->_standardFoldersInclude &= resultL.d_ptr->containerFiltersPart().d_ptr->_standardFoldersInclude;
-        result.d_ptr->_standardFoldersInclude &= resultR.d_ptr->containerFiltersPart().d_ptr->_standardFoldersInclude;
-        result.d_ptr->_standardFoldersExclude |= resultL.d_ptr->containerFiltersPart().d_ptr->_standardFoldersExclude;
-        result.d_ptr->_standardFoldersExclude |= resultR.d_ptr->containerFiltersPart().d_ptr->_standardFoldersExclude;
-        result.d_ptr->_accountsInclude &= resultL.d_ptr->containerFiltersPart().d_ptr->_accountsInclude;
-        result.d_ptr->_accountsInclude &= resultR.d_ptr->containerFiltersPart().d_ptr->_accountsInclude;
-        result.d_ptr->_accountsExclude |= resultL.d_ptr->containerFiltersPart().d_ptr->_accountsExclude;
-        result.d_ptr->_accountsExclude |= resultR.d_ptr->containerFiltersPart().d_ptr->_accountsExclude;
+        // So ~(X|Y)) -> ~X&~Y -> and & will transform further
+
+        if (!d_ptr->containerFiltersAreEmpty())
+            qWarning("Complex filter has non empty container filter part");
+        result = ~*d_ptr->_left & ~*d_ptr->_right;
     } else {
         switch (d_ptr->_operator)
         {
@@ -759,6 +736,7 @@ QMessageFilter QMessageFilter::operator~() const
                 result.d_ptr->_left->d_ptr->_accountsExclude = d_ptr->_accountsInclude;
                 // Find ~A or ~~A
                 result.d_ptr->_right = new QMessageFilter(~d_ptr->nonContainerFiltersPart());
+                result.d_ptr->_complex = true;
                 break;
             }
             case QMessageFilterPrivate::And: // fall through
@@ -774,6 +752,7 @@ QMessageFilter QMessageFilter::operator~() const
                 result.d_ptr->_operator = QMessageFilterPrivate::Or;
                 result.d_ptr->_left = &resultL;
                 result.d_ptr->_right = &resultR;
+                result.d_ptr->_complex = true;
                 // Find ~F swap inclusion and exclusions
                 resultL.d_ptr->_left->d_ptr->_standardFoldersInclude = d_ptr->_standardFoldersExclude;
                 resultL.d_ptr->_left->d_ptr->_standardFoldersExclude = d_ptr->_standardFoldersInclude;

@@ -121,21 +121,6 @@ public:
 
         return ct;
     }
-    
-    void applyPendingChanges() const
-    {
-        if (!_content.isEmpty()) {
-            _container->setBody(QMailMessageBody::fromData(_content, contentType(), QMailMessageBody::Base64, QMailMessageBody::RequiresEncoding));
-        } else if (!_textContent.isEmpty()) {
-            _container->setBody(QMailMessageBody::fromData(_textContent, contentType(), QMailMessageBody::Base64));
-        } else if (!_filename.isEmpty()) {
-            _container->setBody(QMailMessageBody::fromFile(_filename, contentType(), QMailMessageBody::Base64, QMailMessageBody::RequiresEncoding));
-        } else {
-            if (contentType().type() == "multipart") {
-                _container->setMultipartType(QMailMessagePartContainer::multipartTypeForName(_subType));
-            }
-        }
-    }
 };
 
 #else
@@ -305,7 +290,7 @@ public:
                 return _message;
             } else {
                 foreach (const QMessageContentContainer &container, _attachments) {
-                    if (container.containerId() == id) {
+                    if (container.d_ptr->_id == id) {
                         return const_cast<QMessageContentContainer*>(&container);
                     }
                 }
@@ -324,7 +309,7 @@ public:
                 return _message;
             } else {
                 foreach (const QMessageContentContainer &container, _attachments) {
-                    if (container.containerId() == id) {
+                    if (container.d_ptr->_id == id) {
                         return &container;
                     }
                 }

@@ -51,16 +51,6 @@ QMessageContentContainer::~QMessageContentContainer()
 {
 }
 
-QMessageContentContainerId QMessageContentContainer::containerId() const
-{
-    return QMessageContentContainerId();
-}
-
-QMessageId QMessageContentContainer::messageId() const
-{
-    return QMessageId(); // stub
-}
-
 QByteArray QMessageContentContainer::contentType() const
 {
     return QByteArray(); // stub
@@ -148,10 +138,6 @@ QList<QByteArray> QMessageContentContainer::headerFields() const
 void QMessageContentContainer::setDerivedMessage(QMessage *derived)
 {
     Q_UNUSED(derived)
-}
-
-void QMessageContentContainer::applyPendingChanges() const
-{
 }
 
 void QMessageContentContainer::removeContent(const QMessageContentContainerId &id)

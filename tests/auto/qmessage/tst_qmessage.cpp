@@ -37,6 +37,10 @@
 #include "qtmessaging.h"
 #include "../support/support.h"
 
+#if defined(Q_OS_SYMBIAN)
+# define TESTDATA_DIR "."
+#endif
+
 //TESTED_CLASS=
 //TESTED_FILES=
 
@@ -294,7 +298,7 @@ void tst_QMessage::testFromTransmissionFormat()
     QFETCH(QList<QByteArray>, headerFields);
     QFETCH(QStringList, headerFieldValues);
 
-    QString path(SRCDIR "/testdata/" + fileName);
+    QString path(TESTDATA_DIR "/testdata/" + fileName);
     QMessage message(QMessage::fromTransmissionFormatFile(QMessage::Email, path));
 
     QCOMPARE(message.to().first().recipient(), to);
@@ -493,7 +497,7 @@ exit 0\n");
 
     QStringList attachments;
     foreach (const QString &file, ( QStringList() << p2FileName << p3FileName << p4FileName << p5FileName)) {
-        attachments.append(SRCDIR "/testdata/" + file);
+        attachments.append(TESTDATA_DIR "/testdata/" + file);
     }
     m1.appendAttachments(attachments);
 
