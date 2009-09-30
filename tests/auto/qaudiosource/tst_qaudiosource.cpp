@@ -256,11 +256,9 @@ public slots:
     void initTestCase();
     void cleanupTestCase();
 
-
 private slots:
     void testAudioSource();
-    void testFormat();
-    void testSupported();
+
 
 private:
     QAudioSource *audiosource;
@@ -287,35 +285,6 @@ void tst_QAudioSource::testAudioSource()
     QCOMPARE(audiosource->service(), mockAudioSourceService);
 
     QVERIFY(audiosource->isValid());
-}
-
-void tst_QAudioSource::testFormat()
-{
-    QAudioFormat fmt;
-    QAudioFormat fmt2;
-    fmt.setCodec("audio/pcm");
-    fmt.setFrequency(44100);
-    fmt.setChannels(2);
-    fmt.setSampleSize(16);
-    audiosource->setFormat(fmt);
-    fmt2  = audiosource->format();
-    QVERIFY(fmt2.frequency() == fmt.frequency());
-    QVERIFY(fmt2.channels() == fmt.channels());
-    QVERIFY(fmt2.sampleSize() == fmt.sampleSize());
-
-    QVERIFY(audiosource->isFormatSupported(fmt));
-}
-
-void tst_QAudioSource::testSupported()
-{
-    QStringList codecs = audiosource->supportedCodecs();
-    QVERIFY(codecs.count() == 2);
-    QList<int> freqs = audiosource->supportedFrequencies();
-    QVERIFY(freqs.count() == 4);
-    QList<int> channels = audiosource->supportedChannels();
-    QVERIFY(channels.count() == 2);
-    QList<int> sampleSizes = audiosource->supportedSampleSizes();
-    QVERIFY(sampleSizes.count() == 2);
 }
 
 QTEST_MAIN(tst_QAudioSource)
