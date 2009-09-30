@@ -9,7 +9,8 @@
 
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::Dialog)
+    ui(new Ui::Dialog),
+    systemInfo(NULL), di(NULL), saver(NULL)
 {
     ui->setupUi(this);
     setupGeneral();
@@ -24,6 +25,9 @@ Dialog::Dialog(QWidget *parent) :
 Dialog::~Dialog()
 {
     delete ui;
+    delete systemInfo;
+    delete di;
+    delete saver;
 }
 
 void Dialog::changeEvent(QEvent *e)
@@ -64,6 +68,7 @@ void Dialog::tabChanged(int index)
 
 void Dialog::setupGeneral()
 {
+    delete systemInfo;
     systemInfo = new QSystemInfo(this);
     ui->curLanguageLineEdit->setText( systemInfo->currentLanguage());
     ui->languagesComboBox->insertItems(0,systemInfo->availableLanguages());
@@ -72,6 +77,7 @@ void Dialog::setupGeneral()
 
 void Dialog::setupDevice()
 {
+    delete di;
     di = new QSystemDeviceInfo(this);
     ui->batteryLevelBar->setValue(di->batteryLevel());
 
@@ -336,6 +342,7 @@ void Dialog::getFeature(int index)
 
 void Dialog::setupSaver()
 {
+    delete saver;
     saver = new QSystemScreenSaver(this);
     bool saverEnabled = saver->screenSaverInhibited();
 
