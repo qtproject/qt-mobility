@@ -23,3 +23,9 @@ include(../../common.pri)
 LIBS += -lQtSystemInfo
 
 CONFIG += console
+
+symbian: {
+    sysinfo.sources = QtSystemInfo.dll
+    sysinfo.path = /sys/bin
+    DEPLOYMENT += sysinfo
+}

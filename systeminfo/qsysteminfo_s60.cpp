@@ -34,11 +34,6 @@
 #include "qsysteminfo_s60_p.h"
 
 #include <QStringList>
-#include <QSize>
-#include <QFile>
-#include <QNetworkInterface>
-#include <QList>
-#include <QString>
 
 #include <SysUtil.h>
 #include <e32const.h> 
@@ -47,7 +42,7 @@
 #include <FeatDiscovery.h>
 #include <e32property.h>
 
-////////
+//////// QSystemInfo
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
  : QObject(parent)
 {
@@ -161,6 +156,11 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
     return QNetworkInterface();
 }
 
+void QSystemNetworkInfoPrivate::SignalStatusL(TInt32 aStrength, TInt8 /*aBars*/)
+{
+    emit networkSignalStrengthChanged(QSystemNetworkInfo::GsmMode, aStrength);
+}
+
 //////// QSystemDisplayInfo
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
         : QObject(parent)
@@ -221,7 +221,13 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
     )
     
     TRAP(iError,
-        iProfileEngine = ProEngFactory::NewEngineL();   
+        iProfileEngine = ProEngFactory::NewEngineL();
+    )
+    
+    TRAP(iError,
+        if (!iBatteryMonitor) {
+            iBatteryMonitor = CBatteryMonitor::NewL(*this);
+        }
     )
 }
 
@@ -257,7 +263,7 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
 
 QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 {
-    return QSystemDeviceInfo::UnknownPower;
+    return iDeviceInfo->currentPowerState();
 }
 
 QString QSystemDeviceInfoPrivate::imei() const
@@ -266,7 +272,7 @@ QString QSystemDeviceInfoPrivate::imei() const
         return iDeviceInfo->imei();
     }
     else {
-        return QString("");
+        return QString();
     }
 }
 
@@ -276,18 +282,18 @@ QString QSystemDeviceInfoPrivate::imsi() const
         return iDeviceInfo->imei();
     }
     else {
-        return QString("");
+        return QString();
     }
 }
 
 QString QSystemDeviceInfoPrivate::manufacturer() const
 {
-    return QString("System manufacturer");
+    return iDeviceInfo->manufacturer();
 }
 
 QString QSystemDeviceInfoPrivate::model() const
 {
-    return QString("System model");
+    return iDeviceInfo->model();
 }
 
 QString QSystemDeviceInfoPrivate::productName() const
@@ -312,7 +318,43 @@ int QSystemDeviceInfoPrivate::batteryLevel() const
 
 QSystemDeviceInfo::BatteryStatus QSystemDeviceInfoPrivate::batteryStatus()
 {
+    int batteryLevel = iDeviceInfo->batteryLevel();
+    if(batteryLevel < 4) {
+        return QSystemDeviceInfo::BatteryCritical;
+    }   else if(batteryLevel < 11) {
+        return QSystemDeviceInfo::BatteryVeryLow;
+    }  else if(batteryLevel < 41) {
+        return QSystemDeviceInfo::BatteryLow;
+    }   else if(batteryLevel > 40) {
+        return QSystemDeviceInfo::BatteryNormal;
+    }
+
     return QSystemDeviceInfo::NoBatteryLevel;
+}
+
+void QSystemDeviceInfoPrivate::BatteryMonitorChangedL(TUint aLevel, CTelephony::TBatteryStatus aState)
+{
+    emit batteryLevelChanged(aLevel);
+    
+    if(aLevel == 3) {
+        emit batteryStatusChanged(QSystemDeviceInfo::BatteryCritical);
+    } else if(aLevel == 10) {
+        emit batteryStatusChanged(QSystemDeviceInfo::BatteryVeryLow);
+    } else if(aLevel == 40) {
+        emit batteryStatusChanged(QSystemDeviceInfo::BatteryLow);
+    } else if(aLevel > 40) {
+        if (batteryStatus() != QSystemDeviceInfo::BatteryNormal) {
+            emit batteryStatusChanged(QSystemDeviceInfo::BatteryNormal);
+        }
+    }
+    
+    if (aState == CTelephony::EPowerStatusUnknown) {
+        emit powerStateChanged(QSystemDeviceInfo::UnknownPower);
+    } else if (aState == CTelephony::EPoweredByBattery) {
+        emit powerStateChanged(QSystemDeviceInfo::BatteryPower);
+    } else if (aState == CTelephony::EBatteryConnectedButExternallyPowered) {
+        emit powerStateChanged(QSystemDeviceInfo::WallPower);
+    }
 }
 
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
@@ -322,12 +364,10 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
 {
-    //TODO: What this means? Is this possible with S60
     return false;
 }
 
-//////////////
-///////
+//////// QSystemScreenSaver
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
         : QObject(parent)
 {
@@ -362,28 +402,28 @@ bool QSystemScreenSaverPrivate::isScreenLockOn()
 CDeviceInfo* CDeviceInfo::NewL()
 {
     CDeviceInfo* self = NewLC();
-    CleanupStack::Pop( self );
+    CleanupStack::Pop(self);
     return self;
 }
     
 CDeviceInfo* CDeviceInfo::NewLC()
 {
-    CDeviceInfo* self = new ( ELeave ) CDeviceInfo();
-    CleanupStack::PushL( self );
+    CDeviceInfo* self = new (ELeave) CDeviceInfo();
+    CleanupStack::PushL(self);
     self->ConstructL();
     return self;
 }
 
 void CDeviceInfo::ConstructL()
 {   
-    CActiveScheduler::Add( this );
+    CActiveScheduler::Add(this);
     iTelephony = CTelephony::NewL();  
-    iWait = new ( ELeave ) CActiveSchedulerWait();
+    iWait = new (ELeave) CActiveSchedulerWait();
 }
 
 void CDeviceInfo::DoCancel()
 {
-    iTelephony->CancelAsync( CTelephony::EGetPhoneIdCancel );
+    iTelephony->CancelAsync(CTelephony::EGetPhoneIdCancel);
 }
  
 void CDeviceInfo::RunL()
@@ -392,13 +432,13 @@ void CDeviceInfo::RunL()
 }
 
 CDeviceInfo::CDeviceInfo()
-:CActive( EPriorityNormal ), iBatteryInfoV1Pkg( iBatteryInfoV1 ),
-    iPhoneIdV1Pkg( iPhoneIdV1 ),
-    iSignalStrengthV1Pckg( iSignalStrengthV1 ),
-    iSubscriberIdV1Pckg( iSubscriberIdV1 ),
-    iNetworkRegistrationV1Pckg( iNetworkRegistrationV1 ),
-    iNetworkInfoV1Pckg( iNetworkInfoV1 ),
-    iIndicatorV1Pckg( iIndicatorV1 )
+:CActive(EPriorityNormal), iBatteryInfoV1Pkg(iBatteryInfoV1),
+    iPhoneIdV1Pkg(iPhoneIdV1),
+    iSignalStrengthV1Pckg(iSignalStrengthV1),
+    iSubscriberIdV1Pckg(iSubscriberIdV1),
+    iNetworkRegistrationV1Pckg(iNetworkRegistrationV1),
+    iNetworkInfoV1Pckg(iNetworkInfoV1),
+    iIndicatorV1Pckg(iIndicatorV1)
 {
 }
 
@@ -408,13 +448,32 @@ CDeviceInfo::~CDeviceInfo()
     delete iTelephony;  
 }
 
+QSystemDeviceInfo::PowerState CDeviceInfo::currentPowerState()
+{
+    Cancel();
+    iTelephony->GetBatteryInfo(iStatus,iBatteryInfoV1Pkg);
+    SetActive();
+
+    if (!iWait->IsStarted()) {
+        iWait->Start();
+    }
+
+    if (iBatteryInfoV1.iStatus == CTelephony::EPowerStatusUnknown) {
+        return QSystemDeviceInfo::UnknownPower;
+    } else if (iBatteryInfoV1.iStatus == CTelephony::EPoweredByBattery) {
+        return QSystemDeviceInfo::BatteryPower;
+    } else if (iBatteryInfoV1.iStatus == CTelephony::EBatteryConnectedButExternallyPowered) {
+        return QSystemDeviceInfo::WallPower;
+    }
+}
+
 QString CDeviceInfo::imei()
 {
     Cancel();
-    iTelephony->GetPhoneId( iStatus, iPhoneIdV1Pkg );
+    iTelephony->GetPhoneId(iStatus, iPhoneIdV1Pkg);
     SetActive();
     
-    if ( !iWait->IsStarted() ) {
+    if (!iWait->IsStarted()) {
         iWait->Start();
     }
     TBuf<CTelephony::KPhoneSerialNumberSize> imei = iPhoneIdV1.iSerialNumber;
@@ -424,13 +483,12 @@ QString CDeviceInfo::imei()
 QString CDeviceInfo::imsi()
 {
     Cancel();
-    iTelephony->GetSubscriberId( iStatus,iSubscriberIdV1Pckg );
+    iTelephony->GetSubscriberId(iStatus,iSubscriberIdV1Pckg);
     SetActive();
     
-    if (!iWait->IsStarted()) 
-        {
+    if (!iWait->IsStarted()) {
         iWait->Start();
-        }
+    }
     TBuf<CTelephony::KIMSISize> imsi = iSubscriberIdV1.iSubscriberId;
     return QString::fromUtf16(imsi.Ptr(), imsi.Length());
 }
@@ -438,10 +496,10 @@ QString CDeviceInfo::imsi()
 QString CDeviceInfo::manufacturer()
 {
     Cancel();
-    iTelephony->GetPhoneId( iStatus, iPhoneIdV1Pkg );
+    iTelephony->GetPhoneId(iStatus, iPhoneIdV1Pkg);
     SetActive();
     
-    if ( !iWait->IsStarted() ) {
+    if (!iWait->IsStarted()) {
         iWait->Start();
     }
     TBuf<CTelephony::KPhoneManufacturerIdSize> manufacturer = iPhoneIdV1.iManufacturer;
@@ -451,10 +509,10 @@ QString CDeviceInfo::manufacturer()
 QString CDeviceInfo::model()
 {
     Cancel();
-    iTelephony->GetPhoneId( iStatus, iPhoneIdV1Pkg );
+    iTelephony->GetPhoneId(iStatus, iPhoneIdV1Pkg);
     SetActive();
     
-    if ( !iWait->IsStarted() ) {
+    if (!iWait->IsStarted()) {
         iWait->Start();
     }
     TBuf<CTelephony::KPhoneModelIdSize> model = iPhoneIdV1.iModel;
@@ -466,7 +524,7 @@ bool CDeviceInfo::isBatteryCharging()
     bool chargeStatus = false;
     
     Cancel();
-    iTelephony->GetIndicator( iStatus,iIndicatorV1Pckg );
+    iTelephony->GetIndicator(iStatus,iIndicatorV1Pckg);
     SetActive();
     if ( !iWait->IsStarted() ) {
         iWait->Start();
@@ -474,7 +532,6 @@ bool CDeviceInfo::isBatteryCharging()
     
     if (iIndicatorV1.iIndicator & CTelephony::KIndChargerConnected) {
         chargeStatus = true;
-        qDebug() <<"bool"<<QString::number(chargeStatus, 10);
     }
     return chargeStatus;
 }
@@ -482,13 +539,60 @@ bool CDeviceInfo::isBatteryCharging()
 TUint CDeviceInfo::batteryLevel()
 {
     Cancel();
-    iTelephony->GetBatteryInfo( iStatus,iBatteryInfoV1Pkg );
+    iTelephony->GetBatteryInfo(iStatus,iBatteryInfoV1Pkg);
     SetActive();
     
-    if ( !iWait->IsStarted() ) {
+    if (!iWait->IsStarted()) {
         iWait->Start();
     }
     return iBatteryInfoV1.iChargeLevel;
+}
+
+//////// For monitoring battery level
+CBatteryMonitor::CBatteryMonitor(MBatteryObserver& aObserver)
+    : CActive(EPriorityStandard), iObserver(aObserver), iBatteryInfoV1Pckg(iBatteryInfoV1)
+{
+    CActiveScheduler::Add(this);
+}
+
+CBatteryMonitor::~CBatteryMonitor()
+{
+    Cancel();
+    delete iTelephony;
+}
+
+CBatteryMonitor* CBatteryMonitor::NewL(MBatteryObserver& aObserver)
+{
+    CBatteryMonitor* self = CBatteryMonitor::NewLC(aObserver);
+    CleanupStack::Pop(self);
+    return self;
+}
+ 
+CBatteryMonitor* CBatteryMonitor::NewLC(MBatteryObserver& aObserver)
+{
+    CBatteryMonitor* self = new (ELeave) CBatteryMonitor(aObserver);
+    CleanupStack::PushL(self);
+    self->ConstructL();
+    return self;
+}
+ 
+void CBatteryMonitor::ConstructL()
+{
+    iTelephony = CTelephony::NewL();
+    iTelephony->GetBatteryInfo(iStatus, iBatteryInfoV1Pckg);
+    SetActive();
+}
+ 
+void CBatteryMonitor::RunL()
+{
+    iObserver.BatteryMonitorChangedL(iBatteryInfoV1.iChargeLevel, iBatteryInfoV1.iStatus);
+    iTelephony->NotifyChange(iStatus, CTelephony::EBatteryInfoChange, iBatteryInfoV1Pckg);
+    SetActive();
+}
+ 
+void CBatteryMonitor::DoCancel()
+{
+    iTelephony->CancelAsync(CTelephony::EBatteryInfoChangeCancel);
 }
 
 QT_END_NAMESPACE

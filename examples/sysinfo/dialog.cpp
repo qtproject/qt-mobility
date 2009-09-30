@@ -16,8 +16,8 @@ Dialog::Dialog(QWidget *parent) :
 
 
     connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(tabChanged(int)));
-   connect(ui->versionComboBox,SIGNAL(activated(int)), this,SLOT(getVersion(int)));
-   connect(ui->featureComboBox,SIGNAL(activated(int)), this,SLOT(getFeature(int)));
+    connect(ui->versionComboBox,SIGNAL(activated(int)), this,SLOT(getVersion(int)));
+    connect(ui->featureComboBox,SIGNAL(activated(int)), this,SLOT(getFeature(int)));
 
 }
 

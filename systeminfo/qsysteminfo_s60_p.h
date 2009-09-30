@@ -70,9 +70,20 @@ class QStringList;
 class QSystemNetworkInfo;
 class QTimer;
 class QSystemInfo;
-;
-class CDeviceInfo;
 
+class CDeviceInfo;
+class CBatteryMonitor;
+
+//////// Observer for monitoring battery level, battery state and power state.
+class MBatteryObserver
+{
+
+public:
+     virtual void BatteryMonitorChangedL(TUint aLevel,
+         CTelephony::TBatteryStatus aState) = 0;
+};
+
+//////// QSystemInfo
 class QSystemInfoPrivate : public QObject
 {
     Q_OBJECT
@@ -99,7 +110,7 @@ Q_SIGNALS:
     void currentLanguageChanged(const QString &);
 };
 
-////////
+//////// QSystemNetworkInfo
 class QSystemNetworkInfoPrivate : public QObject
 {
     Q_OBJECT
@@ -125,6 +136,9 @@ public:
 
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
 
+private: // From MNetworkSignalObserver
+    void SignalStatusL(TInt32 aStrength, TInt8 aBars);
+
 Q_SIGNALS:
    void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
    void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int);
@@ -134,7 +148,7 @@ Q_SIGNALS:
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
 };
 
-////////
+//////// QSystemDisplayInfo
 class QSystemDisplayInfoPrivate : public QObject
 {
     Q_OBJECT
@@ -150,7 +164,7 @@ public:
     static int colorDepth(int screen);
 };
 
-////////
+//////// QSystemMemoryInfo
 class QSystemMemoryInfoPrivate : public QObject
 {
     Q_OBJECT
@@ -167,8 +181,8 @@ public:
     QSystemMemoryInfo::VolumeType volumeType(const QString &driveVolume); //returns enum
 };
 
-////////
-class QSystemDeviceInfoPrivate : public QObject
+//////// QSystemDeviceInfo
+class QSystemDeviceInfoPrivate : public QObject, public MBatteryObserver
 {
     Q_OBJECT
 
@@ -197,27 +211,30 @@ public:
     
     QSystemDeviceInfo::PowerState currentPowerState();
 
+private: // From MBatteryObserver
+    void BatteryMonitorChangedL(TUint aLevel, CTelephony::TBatteryStatus aState);
+
 Q_SIGNALS:
     void batteryLevelChanged(int);
-    void powerStateChanged(QSystemDeviceInfo::PowerState);
-    void currentProfileChanged(QSystemDeviceInfo::Profile);
-    void currentPowerStateChanged(QSystemDeviceInfo::PowerState);
+    void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus);
     void bluetoothStateChanged(bool);
+    void currentProfileChanged(QSystemDeviceInfo::Profile);
+    void powerStateChanged(QSystemDeviceInfo::PowerState);
 
 private:
     CDeviceInfo* iDeviceInfo;
     MProEngEngine* iProfileEngine;
+    CBatteryMonitor* iBatteryMonitor;
     mutable int iError;
 };
 
-////////
+//////// QSystemScreenSaver
 class QSystemScreenSaverPrivate : public QObject
 {
     Q_OBJECT
 
 public:
     QSystemScreenSaverPrivate(QObject *parent = 0);
-    //virtual ~QSystemScreenSaverPrivate();
 
      //TODO: to Qt QDesktopWidget
     bool screenSaverEnabled();
@@ -236,6 +253,7 @@ private:
     bool screenSaverSecure;
 };
 
+//////// CDeviceInfo for getting S60 data
 class CDeviceInfo : public CActive
 {
 
@@ -244,6 +262,7 @@ public:
     static CDeviceInfo* NewLC();
     ~CDeviceInfo();
 
+    QSystemDeviceInfo::PowerState currentPowerState();
     QString imei();
     QString imsi();
     QString manufacturer();
@@ -282,6 +301,28 @@ private:
     CTelephony::TIndicatorV1 iIndicatorV1;
     
     CActiveSchedulerWait *iWait;
+};
+
+//////// For monitoring battery level
+class CBatteryMonitor : public CActive
+{
+
+public:
+    CBatteryMonitor(MBatteryObserver& aObserver);
+    static CBatteryMonitor* NewL(MBatteryObserver& aObserver);
+    static CBatteryMonitor* NewLC(MBatteryObserver& aObserver);
+    void ConstructL();
+    ~CBatteryMonitor();
+
+private:
+    void RunL();
+    void DoCancel();
+
+private:
+    MBatteryObserver& iObserver;
+    CTelephony* iTelephony;
+    CTelephony::TBatteryInfoV1Pckg iBatteryInfoV1Pckg;
+    CTelephony::TBatteryInfoV1 iBatteryInfoV1;
 };
 
 QT_END_NAMESPACE
