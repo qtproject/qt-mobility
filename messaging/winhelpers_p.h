@@ -319,7 +319,7 @@ private:
 
     static QWeakPointer<MapiSession> _session;
 
-    static QHash<MapiEntryId, QWeakPointer<MapiStore> > _storeMap;
+    static QHash<MapiEntryId, QSharedPointer<MapiStore> > _storeMap;
 };
 
 #endif

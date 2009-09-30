@@ -1779,7 +1779,6 @@ MapiFolderPtr MapiStore::openFolder(QMessageStore::ErrorCode *lastError, const M
         if (!result.isNull()) {
             return result;
         }
-        else qDebug() << "expired weak pointer";
     }
 
     // We need to create a new instance
@@ -1819,7 +1818,7 @@ MapiFolderPtr MapiStore::openFolder(QMessageStore::ErrorCode *lastError, const M
 
 QWeakPointer<MapiSession> MapiSession::_session;
 
-QHash<MapiEntryId, QWeakPointer<MapiStore> > MapiSession::_storeMap;
+QHash<MapiEntryId, QSharedPointer<MapiStore> > MapiSession::_storeMap;
 
 MapiSessionPtr MapiSession::createSession(QMessageStore::ErrorCode *lastError)
 {
@@ -1977,14 +1976,9 @@ MapiStorePtr MapiSession::openStore(QMessageStore::ErrorCode *lastError, const M
     MapiStorePtr result(0);
 
     // See if we can create a new pointer to an existing store
-    QWeakPointer<MapiStore> &existing = _storeMap[entryId];
+    QSharedPointer<MapiStore> &existing = _storeMap[entryId];
     if (!existing.isNull()) {
-        // Get a pointer to the existing store
-        result = existing.toStrongRef();
-        if (!result.isNull()) {
-            return result;
-        }
-        else qDebug() << "expired weak pointer";
+        return existing;
     }
 
     // We need to create a new instance
