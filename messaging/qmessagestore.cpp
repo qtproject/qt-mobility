@@ -45,10 +45,18 @@
     The QMessageStore class is accessed through a singleton interface and provides functions 
     for adding, updating and deleting messages in the messaging store. 
     
-    QMessageStore also provides queryMessages() and countMessages() functions for querying 
-    and counting of QMessage, QMessageFolder and QMessageAccount objects by using the
-    QMessageFilter, QMessageFolderFilter, QMessageAccountFilter classes 
-    respectively.
+    QMessageStore provides the countFolders() and queryFolders() functions for
+    counting and listing the folders contained by the messaging store, and the 
+    countAccounts() and queryAccounts() functions for counting and listing the
+    accounts contained by the store.  These functions use the QMessageFolderFilter
+    and QMessageFolderOrdering classes, and the QMessageAccountFilter and 
+    QMessageAccountOrdering classes to constrain their searches.
+
+    QMessageStore also implements functionality allowing the messages contained by the 
+    store to be counted or listed, using various filtering and ordering constraints.
+    Clients can access this functionality via the \l{QMessageServiceAction::countMessages()}{countMessages}
+    and \l{QMessageServiceAction::queryMessages()}{queryMessages} functions of the
+    QMessageServiceAction class.
     
     With the exception of MAPI based platforms, QMessageStore functions should not initiate 
     network activity. Instead they are restricted to operating on data already on the device.
@@ -70,7 +78,7 @@
     Messaging store manipulations involving messages are reported via the messagesAdded(), 
     messagesUpdated() and messagesRemoved() signals.
 
-    \sa QMessage, QMessageId, QMessageContentContainerId, QMessageFilter, QMessageOrdering
+    \sa QMessage, QMessageId, QMessageContentContainerId, QMessageServiceAction
 */
 
 /*!
@@ -144,10 +152,9 @@
 */
 
 /*!
+    \internal
     \fn QMessageStore::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
     
-    WARNING: This function will be removed and replaced by QMessageServiceAction::queryMessages().
-
     Returns the \l{QMessageId}s of messages in the messaging store. If \a filter is not empty 
     only messages matching the parameters set by \a filter will be returned, otherwise 
     identifiers for all messages will be returned.
@@ -161,10 +168,9 @@
 */
 
 /*!
+    \internal
     \fn QMessageStore::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const
     
-    WARNING: This function will be removed and replaced by QMessageServiceAction::queryMessages().
-
     Returns the \l{QMessageId}s of messages in the messaging store. If \a filter is not empty 
     only messages matching the parameters set by \a filter and with a body containing the 
     string \a body will be returned, otherwise identifiers for all messages with 
@@ -191,7 +197,7 @@
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
     
-    \sa lastError(), countMessages()
+    \sa lastError(), countFolders()
 */
 
 /*!
@@ -206,14 +212,13 @@
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
     
-    \sa lastError(), countMessages()
+    \sa lastError(), countAccounts()
 */
 
 /*!
+    \internal
     \fn QMessageStore::countMessages(const QMessageFilter& filter) const
     
-    WARNING: This function will be removed and replaced by QMessageServiceAction::queryMessages().
-
     Returns the number of messages which match the 
     filtering criteria defined in QMessageFilter \a filter. If 
     filter is empty a count of all messages is returned.
@@ -228,7 +233,7 @@
     filtering criteria defined in QMessageFolderFilter \a filter. If 
     filter is empty a count of all messages is returned.
     
-    \sa lastError(), queryMessages()
+    \sa lastError(), queryFolders()
 */
 
 /*!
@@ -238,7 +243,7 @@
     filtering criteria defined in QMessageAccountFilter \a filter. If 
     filter is empty a count of all messages is returned.
     
-    \sa lastError(), queryMessages()
+    \sa lastError(), queryAccounts()
 */
 
 /*!
