@@ -1,10 +1,15 @@
 #include "dialog.h"
-#include "ui_dialog.h"
 #include <QDebug>
 #include <QDesktopWidget>
 #include <QMessageBox>
 
 #include <qsysteminfo.h>
+
+#ifdef Q_OS_SYMBIAN
+#include "ui_dialog_s60.h"
+#else
+#include "ui_dialog.h"
+#endif
 
 
 Dialog::Dialog(QWidget *parent) :
@@ -44,6 +49,43 @@ void Dialog::changeEvent(QEvent *e)
 
 void Dialog::tabChanged(int index)
 {
+#ifdef Q_OS_SYMBIAN
+    switch(index) {
+    case 0:
+        setupGeneral();
+        break;
+    case 1:
+        setupGeneral();
+        break;
+    case 2:
+        setupDevice();
+        break;
+    case 3:
+        setupDevice();
+        break;
+    case 4:
+        setupDevice();
+        break;
+    case 5:
+        setupDisplay();
+        break;
+    case 6:
+        setupStorage();
+        break;
+    case 7:
+        setupNetwork();
+        break;
+    case 8:
+        setupNetwork();
+        break;
+    case 9:
+        setupNetwork();
+        break;
+    case 10:
+        setupSaver();
+        break;
+    };
+#else
     switch(index) {
     case 0:
         setupGeneral();
@@ -55,15 +97,16 @@ void Dialog::tabChanged(int index)
         setupDisplay();
         break;
     case 3:
-        setupStorage();
+        setupMemory();
         break;
     case 4:
         setupNetwork();
         break;
-        case 5:
+    case 5:
         setupSaver();
         break;
     };
+#endif
 }
 
 void Dialog::setupGeneral()

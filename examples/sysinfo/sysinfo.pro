@@ -15,8 +15,6 @@ SOURCES += main.cpp\
 
 HEADERS  += dialog.h
 
-FORMS    += dialog.ui
-
 INCLUDEPATH += ../../systeminfo
 
 include(../../common.pri)
@@ -24,6 +22,21 @@ LIBS += -lQtSystemInfo
 
 CONFIG += console
 
+win32 {
+    FORMS += dialog.ui
+}
+
+unix: {
+    linux-*: {
+        FORMS += dialog.ui
+    }
+    
+    mac: {
+        FORMS += dialog.ui
+    }
+}
+
 symbian {
     TARGET.CAPABILITY = ALL -TCB
+    FORMS    += dialog_s60.ui
 }
