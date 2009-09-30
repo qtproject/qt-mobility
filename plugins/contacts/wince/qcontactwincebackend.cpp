@@ -63,11 +63,6 @@
  * - Address formatting - PIMPR_HOME_ADDRESS seems to be read only
  */
 
-static QVariant convertCEPropVal(const CEPROPVAL& val);
-QString getPropertyName(const CEPROPID& id);
-QString convertFilterToQueryString(const QContactFilter& filter);
-QList<QUniqueId> convertP2QIdList(SimpleComPointer<IPOutlookItemCollection> collection);
-void buildHashForContactDetailToPoomPropId();
 
 QContactWinCEEngine::QContactWinCEEngine(const QMap<QString, QString>& , QContactManager::Error& error)
     : d(new QContactWinCEEngineData)
@@ -86,6 +81,15 @@ QContactWinCEEngine::QContactWinCEEngine(const QMap<QString, QString>& , QContac
             } else {
                 if(SUCCEEDED(d->m_app->GetDefaultFolder(olFolderContacts, &d->m_folder))) {
                     if(SUCCEEDED(d->m_folder->get_Items(&d->m_collection))) {
+                        // Register/retrieve our custom ids
+                        LPCWSTR customIds[2] = { L"QTCONTACTS_PHONE_META", L"QTCONTACTS_EMAIL_META" };
+                        CEPROPID outIds[2];
+
+                        if (SUCCEEDED(d->m_app->GetIDsFromNames(2, customIds, PIM_CREATE | CEVT_LPWSTR, outIds))) {
+                            d->m_phonemeta = outIds[0];
+                            d->m_emailmeta = outIds[1];
+                        }
+
                         // get an IPOLItems2 pointer for the collection, too
                         if (SUCCEEDED(d->m_collection->QueryInterface<IPOlItems2>(&d->m_items2))) {
                             d->m_ids = convertP2QIdList(d->m_collection);
@@ -415,8 +419,8 @@ QString QContactWinCEEngine::synthesiseDisplayLabel(const QContact& contact, QCo
         }
     } else if (!name.first().isEmpty()) {
         return name.first();
-    } else if (!org.displayLabel().isEmpty()) {
-        return org.displayLabel();
+    } else if (!org.name().isEmpty()) {
+        return org.name();
     } else {
         // XXX grargh.
         return QLatin1String("Unnamed");

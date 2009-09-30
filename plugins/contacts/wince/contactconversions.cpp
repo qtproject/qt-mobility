@@ -363,7 +363,7 @@ static void processWebpage(const QVariantList& values, QContact& ret)
 static void processOrganisation(const QVariantList& values, QContact& ret)
 {
     QContactOrganization org;
-    setIfNotEmpty(org, QContactOrganization::FieldDisplayLabel, values[0].toString());
+    setIfNotEmpty(org, QContactOrganization::FieldName, values[0].toString());
 
     if (!org.isEmpty())
         ret.saveDetail(&org);
@@ -540,7 +540,7 @@ static void processQOrganisation(const QContactDetail& detail, QVector<CEPROPVAL
 {
     QContactOrganization org(detail);
 
-    addIfNotEmpty(PIMPR_COMPANY_NAME, org.displayLabel(), props);
+    addIfNotEmpty(PIMPR_COMPANY_NAME, org.name(), props);
 }
 
 static void processQWebpage(const QContactDetail& detail, QVector<CEPROPVAL>& props)
@@ -888,81 +888,150 @@ bool QContactWinCEEngine::convertFromQContact(const QContact& contact, IItem* it
  * The complete set of Contact property identifiers and their string names for queries.
  * All the string names copied from: http://msdn.microsoft.com/en-us/library/bb415504.aspx.
  */
-QString getPropertyName(const CEPROPID& id)
+static QString getPropertyName(const CEPROPID& id)
 {
     switch (id) {
-        case PIMPR_ACCOUNT_NAME: return "[AccountName]";
-        case PIMPR_ANNIVERSARY: return "[Anniversary]";
-        case PIMPR_ASSISTANT_NAME: return "[AssistantName]";
-        case PIMPR_ASSISTANT_TELEPHONE_NUMBER: return "[AssistantTelephoneNumber]";
-        case PIMPR_BIRTHDAY: return "[Birthday]";
-        case PIMPR_BUSINESS_ADDRESS: return "[BusinessAddress]";
-        case PIMPR_BUSINESS_ADDRESS_CITY: return "[BusinessAddressCity]";
-        case PIMPR_BUSINESS_ADDRESS_COUNTRY: return "[BusinessAddressCountry]";
-        case PIMPR_BUSINESS_ADDRESS_POSTAL_CODE: return "[BusinessAddressPostalCode]";
-        case PIMPR_BUSINESS_ADDRESS_STATE: return "[BusinessAddressState]";
-        case PIMPR_BUSINESS_ADDRESS_STREET: return "[BusinessAddressStreet]";
-        case PIMPR_BUSINESS_FAX_NUMBER: return "[BusinessFaxNumber]";
-        case PIMPR_BUSINESS_TELEPHONE_NUMBER: return "[BusinessTelephoneNumber]";
-        case PIMPR_BUSINESS2_TELEPHONE_NUMBER: return "[Business2TelephoneNumber]";
-        case PIMPR_CAR_TELEPHONE_NUMBER: return "[CarTelephoneNumber]";
-        case PIMPR_CHILDREN: return "[Children]";
-        case PIMPR_COMPANY_NAME: return "[CompanyName]";
-        case PIMPR_COMPANY_TELEPHONE_NUMBER: return "[CompanyTelephoneNumber]";
+        case PIMPR_ACCOUNT_NAME:
+            return "[AccountName]";
+        case PIMPR_ANNIVERSARY:
+            return "[Anniversary]";
+        case PIMPR_ASSISTANT_NAME:
+            return "[AssistantName]";
+        case PIMPR_ASSISTANT_TELEPHONE_NUMBER:
+            return "[AssistantTelephoneNumber]";
+        case PIMPR_BIRTHDAY:
+            return "[Birthday]";
+        case PIMPR_BUSINESS_ADDRESS:
+            return "[BusinessAddress]";
+        case PIMPR_BUSINESS_ADDRESS_CITY:
+            return "[BusinessAddressCity]";
+        case PIMPR_BUSINESS_ADDRESS_COUNTRY:
+            return "[BusinessAddressCountry]";
+        case PIMPR_BUSINESS_ADDRESS_POSTAL_CODE:
+            return "[BusinessAddressPostalCode]";
+        case PIMPR_BUSINESS_ADDRESS_STATE:
+            return "[BusinessAddressState]";
+        case PIMPR_BUSINESS_ADDRESS_STREET:
+            return "[BusinessAddressStreet]";
+        case PIMPR_BUSINESS_FAX_NUMBER:
+            return "[BusinessFaxNumber]";
+        case PIMPR_BUSINESS_TELEPHONE_NUMBER:
+            return "[BusinessTelephoneNumber]";
+        case PIMPR_BUSINESS2_TELEPHONE_NUMBER:
+            return "[Business2TelephoneNumber]";
+        case PIMPR_CAR_TELEPHONE_NUMBER:
+            return "[CarTelephoneNumber]";
+        case PIMPR_CHILDREN:
+            return "[Children]";
+        case PIMPR_COMPANY_NAME:
+            return "[CompanyName]";
+        case PIMPR_COMPANY_TELEPHONE_NUMBER:
+            return "[CompanyTelephoneNumber]";
 #if defined (PIMPR_CONTACT_TYPE)
         //PIMPR_CONTACT_TYPE is only supported by Windows Mobile 6 and later.
-        case PIMPR_CONTACT_TYPE: return "[ContactType]";
+        case PIMPR_CONTACT_TYPE:
+            return "[ContactType]";
 #endif
-        case PIMPR_CUSTOMERID: return "[CustomerId]";
-        case PIMPR_DEPARTMENT: return "[Department]";
-        case PIMPR_DISPLAY_NAME: return "[DisplayName]";
-        case PIMPR_EMAIL1_ADDRESS: return "[Email1Address]";
-        case PIMPR_EMAIL2_ADDRESS: return "[Email2Address]";
-        case PIMPR_EMAIL3_ADDRESS: return "[Email3Address]";
-        case PIMPR_FILEAS: return "[FileAs]";
-        case PIMPR_FIRST_NAME: return "[FirstName]";
-        case PIMPR_GOVERNMENTID: return "[GovernmentId]";
-        case PIMPR_HOME_ADDRESS: return "[HomeAddress]";
-        case PIMPR_HOME_ADDRESS_CITY: return "[HomeAddressCity]";
-        case PIMPR_HOME_ADDRESS_COUNTRY: return "[HomeAddressCountry]";
-        case PIMPR_HOME_ADDRESS_POSTAL_CODE: return "[HomeAddressPostalCode]";
-        case PIMPR_HOME_ADDRESS_STATE: return "[HomeAddressState]";
-        case PIMPR_HOME_ADDRESS_STREET: return "[HomeAddressStreet]";
-        case PIMPR_HOME_FAX_NUMBER: return "[HomeFaxNumber]";
-        case PIMPR_HOME_TELEPHONE_NUMBER: return "[HomeTelephoneNumber]";
-        case PIMPR_HOME2_TELEPHONE_NUMBER: return "[Home2TelephoneNumber]";
-        case PIMPR_IM1_ADDRESS: return "[IM1Address]";
-        case PIMPR_IM2_ADDRESS: return "[IM2Address]";
-        case PIMPR_IM3_ADDRESS: return "[IM3Address]";
-        case PIMPR_JOB_TITLE: return "[JobTitle]";
-        case PIMPR_LAST_NAME: return "[LastName]";
-        case PIMPR_MANAGER: return "[Manager]";
-        case PIMPR_MIDDLE_NAME: return "[MiddleName]";
-        case PIMPR_MMS: return "[Mms]";
-        case PIMPR_MOBILE_TELEPHONE_NUMBER: return "[MobileTelephoneNumber]";
-        case PIMPR_NICKNAME: return "[Nickname]";
-        case PIMPR_OFFICE_LOCATION: return "[OfficeLocation]";
-        case PIMPR_OTHER_ADDRESS: return "[OtherAddress]";
-        case PIMPR_OTHER_ADDRESS_CITY: return "[OtherAddressCity]";
-        case PIMPR_OTHER_ADDRESS_COUNTRY: return "[OtherAddressCountry]";
-        case PIMPR_OTHER_ADDRESS_POSTAL_CODE: return "[OtherAddressPostalCode]";
-        case PIMPR_OTHER_ADDRESS_STATE: return "[OtherAddressState]";
-        case PIMPR_OTHER_ADDRESS_STREET: return "[OtherAddressStreet]";
-        case PIMPR_PAGER_NUMBER: return "[PagerNumber]";
-        case PIMPR_PICTURE: return "[Picture]";
-        case PIMPR_RADIO_TELEPHONE_NUMBER: return "[RadioTelephoneNumber]";
-        case PIMPR_RINGTONE: return "[RingTone]";
-        case PIMPR_SIM_PHONE: return "[SIMPhone]";
-        case PIMPR_SMARTPROP: return "[SmartProperty]";
-        case PIMPR_SMS: return "[Sms]";
-        case PIMPR_SPOUSE: return "[Spouse]";
-        case PIMPR_SUFFIX: return "[Suffix]";
-        case PIMPR_TITLE: return "[Prefix]";
-        case PIMPR_WEB_PAGE: return "[WebPage]";
-        case PIMPR_YOMI_COMPANY: return "[YomiCompanyName]";
-        case PIMPR_YOMI_FILEAS: return "[YomiFileAs]";
-        case PIMPR_YOMI_FIRSTNAME: return "[YomiFirstName]";
-        case PIMPR_YOMI_LASTNAME: return "[YomiLastName]";
+        case PIMPR_CUSTOMERID:
+            return "[CustomerId]";
+        case PIMPR_DEPARTMENT:
+            return "[Department]";
+        case PIMPR_DISPLAY_NAME:
+            return "[DisplayName]";
+        case PIMPR_EMAIL1_ADDRESS:
+            return "[Email1Address]";
+        case PIMPR_EMAIL2_ADDRESS:
+            return "[Email2Address]";
+        case PIMPR_EMAIL3_ADDRESS:
+            return "[Email3Address]";
+        case PIMPR_FILEAS:
+            return "[FileAs]";
+        case PIMPR_FIRST_NAME:
+            return "[FirstName]";
+        case PIMPR_GOVERNMENTID:
+            return "[GovernmentId]";
+        case PIMPR_HOME_ADDRESS:
+            return "[HomeAddress]";
+        case PIMPR_HOME_ADDRESS_CITY:
+            return "[HomeAddressCity]";
+        case PIMPR_HOME_ADDRESS_COUNTRY:
+            return "[HomeAddressCountry]";
+        case PIMPR_HOME_ADDRESS_POSTAL_CODE:
+            return "[HomeAddressPostalCode]";
+        case PIMPR_HOME_ADDRESS_STATE:
+            return "[HomeAddressState]";
+        case PIMPR_HOME_ADDRESS_STREET:
+            return "[HomeAddressStreet]";
+        case PIMPR_HOME_FAX_NUMBER:
+            return "[HomeFaxNumber]";
+        case PIMPR_HOME_TELEPHONE_NUMBER:
+            return "[HomeTelephoneNumber]";
+        case PIMPR_HOME2_TELEPHONE_NUMBER:
+            return "[Home2TelephoneNumber]";
+        case PIMPR_IM1_ADDRESS:
+            return "[IM1Address]";
+        case PIMPR_IM2_ADDRESS:
+            return "[IM2Address]";
+        case PIMPR_IM3_ADDRESS:
+            return "[IM3Address]";
+        case PIMPR_JOB_TITLE:
+            return "[JobTitle]";
+        case PIMPR_LAST_NAME:
+            return "[LastName]";
+        case PIMPR_MANAGER:
+            return "[Manager]";
+        case PIMPR_MIDDLE_NAME:
+            return "[MiddleName]";
+        case PIMPR_MMS:
+            return "[Mms]";
+        case PIMPR_MOBILE_TELEPHONE_NUMBER:
+            return "[MobileTelephoneNumber]";
+        case PIMPR_NICKNAME:
+            return "[Nickname]";
+        case PIMPR_OFFICE_LOCATION:
+            return "[OfficeLocation]";
+        case PIMPR_OTHER_ADDRESS:
+            return "[OtherAddress]";
+        case PIMPR_OTHER_ADDRESS_CITY:
+            return "[OtherAddressCity]";
+        case PIMPR_OTHER_ADDRESS_COUNTRY:
+            return "[OtherAddressCountry]";
+        case PIMPR_OTHER_ADDRESS_POSTAL_CODE:
+            return "[OtherAddressPostalCode]";
+        case PIMPR_OTHER_ADDRESS_STATE:
+            return "[OtherAddressState]";
+        case PIMPR_OTHER_ADDRESS_STREET:
+            return "[OtherAddressStreet]";
+        case PIMPR_PAGER_NUMBER:
+            return "[PagerNumber]";
+        case PIMPR_PICTURE:
+            return "[Picture]";
+        case PIMPR_RADIO_TELEPHONE_NUMBER:
+            return "[RadioTelephoneNumber]";
+        case PIMPR_RINGTONE:
+            return "[RingTone]";
+        case PIMPR_SIM_PHONE:
+            return "[SIMPhone]";
+        case PIMPR_SMARTPROP:
+            return "[SmartProperty]";
+        case PIMPR_SMS:
+            return "[Sms]";
+        case PIMPR_SPOUSE:
+            return "[Spouse]";
+        case PIMPR_SUFFIX:
+            return "[Suffix]";
+        case PIMPR_TITLE:
+            return "[Prefix]";
+        case PIMPR_WEB_PAGE:
+            return "[WebPage]";
+        case PIMPR_YOMI_COMPANY:
+            return "[YomiCompanyName]";
+        case PIMPR_YOMI_FILEAS:
+            return "[YomiFileAs]";
+        case PIMPR_YOMI_FIRSTNAME:
+            return "[YomiFirstName]";
+        case PIMPR_YOMI_LASTNAME:
+            return "[YomiLastName]";
     }
     return "";
 }
@@ -985,7 +1054,7 @@ static QHash<QString, CEPROPID> hashForContactDetailToPoomPropId;
 #define Q_HASH_CONTACT_DETAIL_TO_POOM_ID(contactClass, contactField, poomId) \
         hashForContactDetailToPoomPropId.insertMulti(((QString)contactClass::DefinitionName).append((QString)contactClass::contactField), poomId)
 
-void buildHashForContactDetailToPoomPropId()
+void QContactWinCEEngine::buildHashForContactDetailToPoomPropId() const
 {
     if (hashForContactDetailToPoomPropId.isEmpty()) {
         //QContactName
@@ -1050,7 +1119,7 @@ void buildHashForContactDetailToPoomPropId()
         Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactUrl, FieldUrl, PIMPR_WEB_PAGE);
 
         // Organisation
-        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactOrganisation, FieldDisplayLabel, PIMPR_COMPANY_NAME);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactOrganization, FieldName, PIMPR_COMPANY_NAME);
     }
 }
 
@@ -1064,7 +1133,7 @@ static QList<CEPROPID> convertToCEPropIds(const QString& detailDefinitionName, c
  * Convert from the supplied QContactFilter \a filter into a POOM query string.
  * Return empty string if any error occured.
  */
-QString convertFilterToQueryString(const QContactFilter& filter)
+QString QContactWinCEEngine::convertFilterToQueryString(const QContactFilter& filter) const
 {
     QString ret;
     switch(filter.type()) {
@@ -1239,7 +1308,7 @@ QString convertFilterToQueryString(const QContactFilter& filter)
 /*!
  * Return a list of QContact ids from the given POOM item \a collection.
  */
-QList<QUniqueId> convertP2QIdList(SimpleComPointer<IPOutlookItemCollection> collection)
+QList<QUniqueId> QContactWinCEEngine::convertP2QIdList(SimpleComPointer<IPOutlookItemCollection> collection) const
 {
     SimpleComPointer<IPOlItems2> items;
     QList<QUniqueId> ids;
