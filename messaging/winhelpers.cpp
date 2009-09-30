@@ -1215,6 +1215,12 @@ IMessage *MapiFolder::openMessage(QMessageStore::ErrorCode *lastError, const Map
     return message;
 }
 
+QMessage::StandardFolder MapiFolder::standardFolder() const
+{
+    // TODO implement this function
+    return QMessage::InboxFolder; // stub
+}
+
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolderId MapiFolder::id() const
 {
