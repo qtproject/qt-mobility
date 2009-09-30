@@ -96,6 +96,8 @@ unix: {
 
         TARGET.CAPABILITY = ALL -TCB
         TARGET.EPOCALLOWDLLDATA = 1
+        MMP_RULES += EXPORTUNFROZEN
+        
 
         QtSystemInfoDeployment.sources = QtSystemInfo.dll
         QtSystemInfoDeployment.path = /sys/bin
