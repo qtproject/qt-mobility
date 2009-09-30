@@ -95,7 +95,7 @@ Player::Player(QWidget *parent)
     connect(controls, SIGNAL(previous()), playlist, SLOT(back()));
     connect(controls, SIGNAL(changeVolume(int)), player, SLOT(setVolume(int)));
     connect(controls, SIGNAL(changeMuting(bool)), player, SLOT(setMuted(bool)));
-    connect(controls, SIGNAL(changeRate(float)), player, SLOT(setPlaybackRate(float)));
+    connect(controls, SIGNAL(changeRate(qreal)), player, SLOT(setPlaybackRate(qreal)));
 
     connect(player, SIGNAL(stateChanged(QMediaPlayer::State)),
             controls, SLOT(setState(QMediaPlayer::State)));

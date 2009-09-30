@@ -166,19 +166,15 @@ void tst_QMediaObject::propertyWatch()
     object.setNotifyInterval(0);
 
     QEventLoop loop;
-    QTimer timer;
-    connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
-    connect(&object, SIGNAL(aChanged(int)), &loop, SLOT(quit()));
-    connect(&object, SIGNAL(bChanged(int)), &loop, SLOT(quit()));
-    connect(&object, SIGNAL(cChanged(int)), &loop, SLOT(quit()));
+    connect(&object, SIGNAL(aChanged(int)), &QTestEventLoop::instance(), SLOT(exitLoop()));
+    connect(&object, SIGNAL(bChanged(int)), &QTestEventLoop::instance(), SLOT(exitLoop()));
+    connect(&object, SIGNAL(cChanged(int)), &QTestEventLoop::instance(), SLOT(exitLoop()));
 
     QSignalSpy aSpy(&object, SIGNAL(aChanged(int)));
     QSignalSpy bSpy(&object, SIGNAL(bChanged(int)));
     QSignalSpy cSpy(&object, SIGNAL(cChanged(int)));
 
-    timer.start(20);
-    loop.exec();
-    timer.stop();
+    QTestEventLoop::instance().enterLoop(1);
 
     QCOMPARE(aSpy.count(), 0);
     QCOMPARE(bSpy.count(), 0);
@@ -190,9 +186,7 @@ void tst_QMediaObject::propertyWatch()
 
     object.addPropertyWatch("a");
 
-    timer.start(20);
-    loop.exec();
-    timer.stop();
+    QTestEventLoop::instance().enterLoop(1);
 
     QVERIFY(aSpy.count() > aCount);
     QCOMPARE(bSpy.count(), 0);
@@ -205,9 +199,7 @@ void tst_QMediaObject::propertyWatch()
     object.setB(342);
     object.setC(233);
 
-    timer.start(20);
-    loop.exec();
-    timer.stop();
+    QTestEventLoop::instance().enterLoop(1);
 
     QVERIFY(aSpy.count() > aCount);
     QCOMPARE(bSpy.count(), 0);
@@ -221,9 +213,7 @@ void tst_QMediaObject::propertyWatch()
     object.setB(235);
     object.setC(90);
 
-    timer.start(20);
-    loop.exec();
-    timer.stop();
+    QTestEventLoop::instance().enterLoop(1);
 
     QVERIFY(aSpy.count() > aCount);
     QVERIFY(bSpy.count() > bCount);
@@ -237,9 +227,7 @@ void tst_QMediaObject::propertyWatch()
     object.removePropertyWatch("a");
     object.addPropertyWatch("c");
 
-    timer.start(20);
-    loop.exec();
-    timer.stop();
+    QTestEventLoop::instance().enterLoop(1);
 
     QCOMPARE(aSpy.count(), aCount);
     QVERIFY(bSpy.count() > bCount);
@@ -253,9 +241,7 @@ void tst_QMediaObject::propertyWatch()
     object.setA(435);
     object.setC(9845);
 
-    timer.start(20);
-    loop.exec();
-    timer.stop();
+    QTestEventLoop::instance().enterLoop(1);
 
     QCOMPARE(aSpy.count(), aCount);
     QVERIFY(bSpy.count() > bCount);
@@ -271,9 +257,7 @@ void tst_QMediaObject::propertyWatch()
     object.setC(443);
     object.removePropertyWatch("c");
 
-    timer.start(20);
-    loop.exec();
-    timer.stop();
+    QTestEventLoop::instance().enterLoop(1);
 
     QCOMPARE(aSpy.count(), aCount);
     QVERIFY(bSpy.count() > bCount);
@@ -285,9 +269,7 @@ void tst_QMediaObject::propertyWatch()
 
     object.removePropertyWatch("b");
 
-    timer.start(20);
-    loop.exec();
-    timer.stop();
+    QTestEventLoop::instance().enterLoop(1);
 
     QCOMPARE(aSpy.count(), aCount);
     QCOMPARE(bSpy.count(), bCount);
@@ -298,24 +280,19 @@ void tst_QMediaObject::setupNotifyTests()
 {
     QTest::addColumn<int>("interval");
     QTest::addColumn<int>("count");
-    QTest::addColumn<int>("wait");
 
-    QTest::newRow("single 50ms")
-            << 50
-            << 1
-            << 100;
-    QTest::newRow("single 100ms")
-            << 100
-            << 1
-            << 200;
-    QTest::newRow("x3 50ms")
-            << 50
-            << 3
-            << 200;
-    QTest::newRow("x3 100ms")
-            << 100
-            << 3
-            << 400;
+    QTest::newRow("single 750ms")
+            << 750
+            << 1;
+    QTest::newRow("single 600ms")
+            << 600
+            << 1;
+    QTest::newRow("x3 300ms")
+            << 300
+            << 3;
+    QTest::newRow("x5 180ms")
+            << 180
+            << 5;
 }
 
 void tst_QMediaObject::notifySignals_data()
@@ -327,7 +304,6 @@ void tst_QMediaObject::notifySignals()
 {
     QFETCH(int, interval);
     QFETCH(int, count);
-    QFETCH(int, wait);
 
     QtTestMediaObject object;
     object.setNotifyInterval(interval);
@@ -335,15 +311,9 @@ void tst_QMediaObject::notifySignals()
 
     QSignalSpy spy(&object, SIGNAL(aChanged(int)));
 
-    QEventLoop loop;
-    QTimer timer;
-    connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
+    QTestEventLoop::instance().enterLoop(1);
 
-    timer.start(wait);
-    loop.exec();
-
-    QVERIFY(spy.count() >= count);
-    QVERIFY(spy.count() < count + 2);
+    QCOMPARE(spy.count(), count);
 }
 
 void tst_QMediaObject::notifyInterval_data()
