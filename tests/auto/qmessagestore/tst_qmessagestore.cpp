@@ -37,6 +37,10 @@
 #include "qtmessaging.h"
 #include "../support/support.h"
 
+#if defined(Q_OS_SYMBIAN)
+# define TESTDATA_DIR "."
+#endif
+
 //TESTED_CLASS=
 //TESTED_FILES=
 
@@ -494,7 +498,7 @@ void tst_QMessageStore::testMessage()
     if (!attachments.isEmpty()) {
         QStringList attachmentPaths;
         foreach (const QString &fileName, attachments) {
-            attachmentPaths.append(SRCDIR "/testdata/" + fileName);
+            attachmentPaths.append(TESTDATA_DIR "/testdata/" + fileName);
         }
         p.insert("attachments", attachmentPaths.join("\n"));
         p.insert("status-hasAttachments", "true");
