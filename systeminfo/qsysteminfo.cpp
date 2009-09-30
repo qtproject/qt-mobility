@@ -626,7 +626,7 @@ QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
 
     connect(d,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
             this,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)));
-    }
+}
 
 /*!
   Destroys the QSystemDeviceInfo object.
@@ -649,8 +649,9 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfo::inputMethodType()
 */
 QString QSystemDeviceInfo::imei()
 {
-    QSystemDeviceInfoPrivate dip;
-    return dip.imei();
+    //QSystemDeviceInfoPrivate dip;
+    //return dip.imei();
+    return QString();
 }
 
 /*!
@@ -658,8 +659,9 @@ QString QSystemDeviceInfo::imei()
 */
 QString QSystemDeviceInfo::imsi()
 {
-    QSystemDeviceInfoPrivate dip;
-    return dip.imsi();
+    //QSystemDeviceInfoPrivate dip;
+    //return dip.imsi();
+    return QString();
 }
 
 /*!
@@ -668,8 +670,9 @@ QString QSystemDeviceInfo::imsi()
 */
 QString QSystemDeviceInfo::manufacturer()
 {
-    QSystemDeviceInfoPrivate dip;
-    return dip.manufacturer();
+    //QSystemDeviceInfoPrivate dip;
+    //return dip.manufacturer();
+    return QString();
 }
 
 /*!
@@ -679,8 +682,9 @@ QString QSystemDeviceInfo::manufacturer()
 */
 QString QSystemDeviceInfo::model()
 {
-    QSystemDeviceInfoPrivate dip;
-    return dip.model();
+    //QSystemDeviceInfoPrivate dip;
+    //return dip.model();
+    return QString();
 }
 
 /*!
@@ -689,8 +693,9 @@ QString QSystemDeviceInfo::model()
 */
 QString QSystemDeviceInfo::productName()
 {
-    QSystemDeviceInfoPrivate dip;
-    return dip.productName();
+    //QSystemDeviceInfoPrivate dip;
+    //return dip.productName();
+    return QString();
 }
 /*!
     Returns the battery charge level as percentage 1 - 100 scale.

@@ -46,6 +46,8 @@
 #include <CenRepNotifyHandler.h>
 #include <btserversdkcrkeys.h>
 
+#include <HWRMPowerStateSDKPSKeys.h>
+
 //////// QSystemInfo
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
  : QObject(parent)
@@ -231,14 +233,39 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
             iProfileMonitor = CProfileMonitor::NewL(*this);
         }
     )
+    TRAP(iError,
+        iBatteryStatusObserver = 
+            CBatteryStateObserver::NewL(*this, KPSUidHWRMPowerState, KHWRMBatteryStatus);
+        iBatteryLevelObserver = 
+            CBatteryStateObserver::NewL(*this, KPSUidHWRMPowerState, KHWRMBatteryLevel);
+        iChargingStatusObserver = 
+            CBatteryStateObserver::NewL(*this, KPSUidHWRMPowerState, KHWRMChargingStatus);
+    )
 }
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
+    if(iBatteryStatusObserver) {
+        delete iBatteryStatusObserver;
+    }
+    if(iBatteryLevelObserver) {
+        delete iBatteryLevelObserver;
+    }
+    if(iChargingStatusObserver) {
+        delete iChargingStatusObserver;
+    }
     if(iProfileEngine) {
         iProfileEngine->Release();
     }
-    delete iDeviceInfo;
+    if(iBluetoothMonitor) {
+        delete iBluetoothMonitor;
+    }
+    if(iProfileMonitor) {
+        delete iProfileMonitor;
+    }
+    if(iProfileEngine) {
+        delete iDeviceInfo;
+    }
 }
 
 QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
@@ -641,6 +668,109 @@ void CProfileMonitor::HandleNotifyInt(TUint32 aId, TInt aNewValue)
         }
     }
     emit iSystemDeviceInfoPrivate.currentProfileChanged(currentProfile);
+}
+
+//////// For monitoring battery state
+CBatteryStateObserver::CBatteryStateObserver(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate,
+    const TUid aUid, const TUint32 aKey) : CActive(EPriorityNormal), iSystemDeviceInfoPrivate(aSystemDeviceInfoPrivate),
+    iUid( aUid ), iKey( aKey )
+{
+}
+
+CBatteryStateObserver* CBatteryStateObserver::NewL(
+    QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate, const TUid aUid, const TUint32 aKey)
+{
+    CBatteryStateObserver* self = new(ELeave) CBatteryStateObserver(aSystemDeviceInfoPrivate, aUid, aKey);
+    CleanupStack::PushL(self);
+    self->ConstructL();
+    CleanupStack::Pop(self);
+    return self;
+}
+
+void CBatteryStateObserver::ConstructL()
+{
+    User::LeaveIfError(iProperty.Attach(iUid, iKey));
+
+    CActiveScheduler::Add(this);
+    // initial subscription and process current property value
+    RunL();
+}
+
+CBatteryStateObserver::~CBatteryStateObserver()
+{
+    Cancel();
+    iProperty.Close();
+}
+
+void CBatteryStateObserver::DoCancel()
+{
+    iProperty.Cancel();
+}
+
+void CBatteryStateObserver::RunL()
+{
+    //resubscribe before processing new value to prevent missing updates
+    iProperty.Subscribe( iStatus );
+    SetActive();
+ 
+    switch(iKey) {
+        case KHWRMBatteryLevel: {
+            emit iSystemDeviceInfoPrivate.batteryLevelChanged(iSystemDeviceInfoPrivate.batteryLevel());
+            
+            int level = iSystemDeviceInfoPrivate.batteryLevel();
+            if(level < 4) {
+                if (iSystemDeviceInfoPrivate.batteryStatus() != QSystemDeviceInfo::BatteryCritical) {
+                    emit iSystemDeviceInfoPrivate.batteryStatusChanged(QSystemDeviceInfo::BatteryCritical);
+                }
+            } else if(level < 11) {
+                if (iSystemDeviceInfoPrivate.batteryStatus() != QSystemDeviceInfo::BatteryVeryLow) {
+                    emit iSystemDeviceInfoPrivate.batteryStatusChanged(QSystemDeviceInfo::BatteryVeryLow);
+                }
+            } else if(level < 41) {
+                if (iSystemDeviceInfoPrivate.batteryStatus() != QSystemDeviceInfo::BatteryLow) {
+                    emit iSystemDeviceInfoPrivate.batteryStatusChanged(QSystemDeviceInfo::BatteryLow);
+                }
+            } else if(level > 40) {
+                if (iSystemDeviceInfoPrivate.batteryStatus() != QSystemDeviceInfo::BatteryNormal) {
+                    emit iSystemDeviceInfoPrivate.batteryStatusChanged(QSystemDeviceInfo::BatteryNormal);
+                }
+            }
+            break;
+        }
+        case KHWRMBatteryStatus: {
+            int level = iSystemDeviceInfoPrivate.batteryLevel();
+            if(level < 4) {
+                if (iSystemDeviceInfoPrivate.batteryStatus() != QSystemDeviceInfo::BatteryCritical) {
+                    emit iSystemDeviceInfoPrivate.batteryStatusChanged(QSystemDeviceInfo::BatteryCritical);
+                }
+            } else if(level < 11) {
+                if (iSystemDeviceInfoPrivate.batteryStatus() != QSystemDeviceInfo::BatteryVeryLow) {
+                    emit iSystemDeviceInfoPrivate.batteryStatusChanged(QSystemDeviceInfo::BatteryVeryLow);
+                }
+            } else if(level < 41) {
+                if (iSystemDeviceInfoPrivate.batteryStatus() != QSystemDeviceInfo::BatteryLow) {
+                    emit iSystemDeviceInfoPrivate.batteryStatusChanged(QSystemDeviceInfo::BatteryLow);
+                }
+            } else if(level > 40) {
+                if (iSystemDeviceInfoPrivate.batteryStatus() != QSystemDeviceInfo::BatteryNormal) {
+                    emit iSystemDeviceInfoPrivate.batteryStatusChanged(QSystemDeviceInfo::BatteryNormal);
+                }
+            }
+            break;
+        }
+        case KHWRMChargingStatus: {
+            if (iSystemDeviceInfoPrivate.isBatteryCharging()) {
+                emit iSystemDeviceInfoPrivate.powerStateChanged(QSystemDeviceInfo::WallPower);
+            } else if (!iSystemDeviceInfoPrivate.isBatteryCharging()) {
+                emit iSystemDeviceInfoPrivate.powerStateChanged(QSystemDeviceInfo::BatteryPower);
+            } else {
+                emit iSystemDeviceInfoPrivate.powerStateChanged(QSystemDeviceInfo::UnknownPower);
+            }
+            break;
+        }
+        default:
+            break;
+    }
 }
 
 QT_END_NAMESPACE

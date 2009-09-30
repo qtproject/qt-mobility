@@ -61,7 +61,9 @@
 #include <MProEngProfileName.h>
 
 #include <cenrepnotifyhandler.h>
-#include <ProfileEngineSDKCRKeys.h> 
+#include <ProfileEngineSDKCRKeys.h>
+
+#include <e32property.h>
 
 QT_BEGIN_HEADER
 
@@ -76,6 +78,8 @@ class CDeviceInfo;
 class CBluetoothMonitor;
 class CProfileMonitor;
 class MCenRepNotifyHandlerCallback;
+
+class CBatteryStateObserver;
 
 //////// QSystemInfo
 class QSystemInfoPrivate : public QObject
@@ -129,9 +133,6 @@ public:
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
-
-private: // From MNetworkSignalObserver
-    void SignalStatusL(TInt32 aStrength, TInt8 aBars);
 
 Q_SIGNALS:
    void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
@@ -191,20 +192,20 @@ public:
     static QString manufacturer();
     static QString model();
     static QString productName();
-    
+
     bool isBatteryCharging();
     int batteryLevel() const;
 
     QSystemDeviceInfo::InputMethodFlags inputMethodType();
-    
+
     QSystemDeviceInfo::BatteryStatus batteryStatus();
 
     QSystemDeviceInfo::SimStatus simStatus();
     bool isDeviceLocked();
     QSystemDeviceInfo::Profile currentProfile();
-    
+
     QSystemDeviceInfo::PowerState currentPowerState();
-    
+
     void ProfileChangedL(TUint aLevel, CTelephony::TBatteryStatus aState);
 
 Q_SIGNALS:
@@ -217,12 +218,17 @@ Q_SIGNALS:
 private:
     friend class CBluetoothMonitor;
     friend class CProfileMonitor;
-    
+    friend class CBatteryStateObserver;
+
     CDeviceInfo* iDeviceInfo;
     CBluetoothMonitor* iBluetoothMonitor;
     CProfileMonitor* iProfileMonitor;
     MProEngEngine* iProfileEngine;
-    
+
+    CBatteryStateObserver* iBatteryStatusObserver;
+    CBatteryStateObserver* iBatteryLevelObserver;
+    CBatteryStateObserver* iChargingStatusObserver;
+
     mutable int iError;
 };
 
@@ -347,6 +353,26 @@ private:
     MProEngEngine* iProfileEngine;
     
     mutable int iError;
+};
+
+//////// For monitoring battery state
+class CBatteryStateObserver : public CActive
+{
+
+public:
+    static CBatteryStateObserver* NewL(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate, const TUid aUid, const TUint32 aKey);
+    virtual ~CBatteryStateObserver();
+
+private:
+    CBatteryStateObserver(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate, const TUid aUid, const TUint32 aKey);
+    void ConstructL();
+    void RunL();
+    void DoCancel();
+private:
+    RProperty iProperty;
+    QSystemDeviceInfoPrivate& iSystemDeviceInfoPrivate;
+    const TUid iUid;
+    const TUint32 iKey;
 };
 
 QT_END_NAMESPACE
