@@ -50,6 +50,14 @@
 
 \tableofcontents
 
+\list
+    \o \l{QSystemDeviceInfo}
+    \o \l{QSystemDisplayInfo}
+    \o \l{QSystemInfo}
+    \o \l{QSystemStorageInfo}
+    \o \l{QSystemNetworkInfo}
+    \o \l{QSystemScreenSaver}
+\endlist
 
 \section1 System Information
 

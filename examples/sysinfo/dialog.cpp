@@ -51,7 +51,7 @@ void Dialog::tabChanged(int index)
         setupDisplay();
         break;
     case 3:
-        setupMemory();
+        setupStorage();
         break;
     case 4:
         setupNetwork();
@@ -138,27 +138,27 @@ void Dialog::setupDisplay()
 
 }
 
-void Dialog::setupMemory()
+void Dialog::setupStorage()
 {
-    QSystemMemoryInfo mi;
-    ui->memoryTreeWidget->clear();
+    QSystemStorageInfo mi;
+    ui->storageTreeWidget->clear();
 
-    QStringList vols = mi.listOfVolumes();
+    QStringList vols = mi.logicalDrives();
     foreach(QString volName, vols) {
         QString type;
-        QSystemMemoryInfo::VolumeType volType;
-        volType = mi.volumeType(volName);
-        if(volType == QSystemMemoryInfo::Internal) {
+        QSystemStorageInfo::DriveType volType;
+        volType = mi.typeForDrive(volName);
+        if(volType == QSystemStorageInfo::InternalDrive) {
             type =  "Internal";
         }
 
-        if(volType == QSystemMemoryInfo::Removable) {
+        if(volType == QSystemStorageInfo::RemovableDrive) {
             type = "Removable";
         }
-        if(volType == QSystemMemoryInfo::Cdrom) {
+        if(volType == QSystemStorageInfo::CdromDrive) {
             type =  "Cdrom";
         }
-        if(volType == QSystemMemoryInfo::Remote) {
+        if(volType == QSystemStorageInfo::RemoteDrive) {
             type =  "Network";
         }
         QStringList items;
@@ -167,7 +167,7 @@ void Dialog::setupMemory()
         items << QString::number(mi.totalDiskSpace(volName));
         items << QString::number(mi.availableDiskSpace(volName));
         QTreeWidgetItem *item = new QTreeWidgetItem(items);
-        ui->memoryTreeWidget->addTopLevelItem(item);
+        ui->storageTreeWidget->addTopLevelItem(item);
     }
 }
 
@@ -304,7 +304,7 @@ void Dialog::getFeature(int index)
 
 //void Dialog::doVolumes(int /*index*/)
 //{
-//    QSystemMemoryInfo mi;
+//    QSystemStorageInfo mi;
 //    QString vol = ui->volumesComboBox->currentText();
 //    int index2 = ui->diskComboBox->currentIndex();
 //    switch(index2) {
@@ -318,15 +318,15 @@ void Dialog::getFeature(int index)
 //        break;
 //        case 2:
 //        //type
-//        QSystemMemoryInfo::VolumeType volType;
+//        QSystemStorageInfo::VolumeType volType;
 //        volType = mi.getVolumeType(vol);
-//        if(volType == QSystemMemoryInfo::Internal) {
+//        if(volType == QSystemStorageInfo::Internal) {
 //                ui->diskSpaceLineEdit->setText( "Internal");
 //        } else
-//        if(volType == QSystemMemoryInfo::Removable) {
+//        if(volType == QSystemStorageInfo::Removable) {
 //                ui->diskSpaceLineEdit->setText( "Removable");
 //        }
-//        if(volType == QSystemMemoryInfo::Cdrom) {
+//        if(volType == QSystemStorageInfo::Cdrom) {
 //                ui->diskSpaceLineEdit->setText( "Cdrom");
 //        }
 //        break;
@@ -337,33 +337,25 @@ void Dialog::getFeature(int index)
 void Dialog::setupSaver()
 {
     saver = new QSystemScreenSaver(this);
-    bool saverEnabled = saver->screenSaverEnabled();
-    bool blankingEnabled = saver->screenBlankingEnabled();
+    bool saverEnabled = saver->screenSaverInhibited();
 
     ui->screenLockCheckBox->setChecked(saver->isScreenLockOn());
 
     connect( ui->saverEnabledCheckBox, SIGNAL(clicked(bool)),
              this,SLOT(setSaverEnabled(bool)));
-    connect( ui->screenBlankingCheckBox, SIGNAL(clicked(bool)),
-             this,SLOT(setBlankingEnabled(bool)));
 
     ui->saverEnabledCheckBox->setChecked(saverEnabled);
-    ui->screenBlankingCheckBox->setChecked(blankingEnabled);
 
 }
 
 
 void Dialog::setSaverEnabled(bool b)
 {
-    if(saver->setScreenSaverEnabled(b)) {
-    }    
-}
-
-void Dialog::setBlankingEnabled(bool b)
-{
-    if(saver->setScreenBlankingEnabled(b)) {   
+    if (b)
+    if(saver->setScreenSaverInhibit()) {
     }
 }
+
 
 void Dialog::updateBatteryStatus(int level)
 {

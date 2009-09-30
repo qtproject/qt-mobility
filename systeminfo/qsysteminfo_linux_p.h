@@ -168,20 +168,20 @@ public:
     int colorDepth(int screen);
 };
 
-class QSystemMemoryInfoPrivate : public QObject
+class QSystemStorageInfoPrivate : public QObject
 {
     Q_OBJECT
 
 public:
 
-    QSystemMemoryInfoPrivate(QObject *parent = 0);
-    virtual ~QSystemMemoryInfoPrivate();
+    QSystemStorageInfoPrivate(QObject *parent = 0);
+    virtual ~QSystemStorageInfoPrivate();
 
     // memory
     qint64 availableDiskSpace(const QString &driveVolume);
     qint64 totalDiskSpace(const QString &driveVolume);
-    QStringList listOfVolumes();
-    QSystemMemoryInfo::VolumeType volumeType(const QString &driveVolume); //returns enum
+    QStringList logicalDrives();
+    QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume); //returns enum
 
 private:
     QHash<QString, QString> mountEntriesHash;
@@ -245,10 +245,8 @@ public:
     QSystemScreenSaverPrivate(QObject *parent = 0);
     ~QSystemScreenSaverPrivate();
 
-    bool screenSaverEnabled();
-    bool screenBlankingEnabled();
-    bool setScreenSaverEnabled(bool b);
-    bool setScreenBlankingEnabled(bool b);
+    bool screenSaverInhibited();
+    bool setScreenSaverInhibit();
     bool isScreenLockOn();
 
 private:

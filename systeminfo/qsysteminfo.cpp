@@ -143,21 +143,21 @@ QT_BEGIN_NAMESPACE
   */
 
   /*!
-    \class QSystemMemoryInfo
+    \class QSystemStorageInfo
 
-    \brief The QSystemMemoryInfo class provides access to memory and disk information from the system.
+    \brief The QSystemStorageInfo class provides access to memory and disk information from the system.
 
   */
 
 /*!
-    \enum QSystemMemoryInfo::VolumeType
+    \enum QSystemStorageInfo::DriveType
     This enum describes the type of drive or volume
 
-    \value NoVolume               Volume type undetermined.
-    \value Internal                   Is internal drive.
-    \value Removable              Is removable.
-    \value Remote                     Is a network drive.
-    \value Cdrom                      Is a cd rom drive.
+    \value NoDrive               Drive type undetermined.
+    \value InternalDrive         Is internal drive.
+    \value RemovableDrive        Is removable.
+    \value RemoteDrive           Is a network drive.
+    \value CdromDrive            Is a cd rom drive.
 */
 
 
@@ -210,10 +210,10 @@ QT_BEGIN_NAMESPACE
     \enum QSystemDeviceInfo::PowerState
     This enum describes the power state:
 
-    \value UnknownPower            Power error.
-    \value BatteryPower            On battery power.
-    \value WallPower               On wall power.
-    \value WallPowerCharging       On wall power and charging main battery.
+    \value UnknownPower                   Power error.
+    \value BatteryPower                   On battery power.
+    \value WallPower                      On wall power.
+    \value WallPowerChargingBattery       On wall power and charging main battery.
 
   */
 /*!
@@ -236,9 +236,9 @@ QT_BEGIN_NAMESPACE
     This enum describes the status is the sim card or cards.
 
     \value SimNotAvailable         SIM is not available on this device.
-    \value SingleAvailable         One SIM card is available on this.
-    \value DualAvailable           Two SIM cards are available on this device.
-    \value Locked                  Device has SIM lock enabled.
+    \value SingleSimAvailable         One SIM card is available on this.
+    \value DualSimAvailable           Two SIM cards are available on this device.
+    \value SimLocked                  Device has SIM lock enabled.
 */
 
 /*!
@@ -551,17 +551,17 @@ int QSystemDisplayInfo::colorDepth(int screenNumber)
 }
 
  /*!
-   Constructs a QSystemMemoryInfo object with the given \a parent.
+   Constructs a QSystemStorageInfo object with the given \a parent.
  */
-QSystemMemoryInfo::QSystemMemoryInfo(QObject *parent)
+QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
 {
-    d = new QSystemMemoryInfoPrivate(parent);
+    d = new QSystemStorageInfoPrivate(parent);
 }
 
 /*!
-  Destroys the QSystemMemoryInfo object.
+  Destroys the QSystemStorageInfo object.
 */
-QSystemMemoryInfo::~QSystemMemoryInfo()
+QSystemStorageInfo::~QSystemStorageInfo()
 {
     delete d;
 }
@@ -570,7 +570,7 @@ QSystemMemoryInfo::~QSystemMemoryInfo()
     Returns the amount of total space on the \a volumeDrive,
     in bytes.
 */
-qlonglong QSystemMemoryInfo::totalDiskSpace(const QString &volumeDrive)
+qlonglong QSystemStorageInfo::totalDiskSpace(const QString &volumeDrive)
 {
     return d->totalDiskSpace(volumeDrive);
 }
@@ -579,7 +579,7 @@ qlonglong QSystemMemoryInfo::totalDiskSpace(const QString &volumeDrive)
     Returns the amount of available free space on the \a volumeDrive,
 in bytes.
 */
-qlonglong QSystemMemoryInfo::availableDiskSpace(const QString &volumeDrive)
+qlonglong QSystemStorageInfo::availableDiskSpace(const QString &volumeDrive)
 {
     return d->availableDiskSpace(volumeDrive);
 }
@@ -587,18 +587,18 @@ qlonglong QSystemMemoryInfo::availableDiskSpace(const QString &volumeDrive)
 /*!
     Returns a QStringList of volumes or partitions.
 */
-QStringList QSystemMemoryInfo::listOfVolumes()
+QStringList QSystemStorageInfo::logicalDrives()
 {
-    QSystemMemoryInfoPrivate dp;
-    return dp.listOfVolumes();
+    QSystemStorageInfoPrivate dp;
+    return dp.logicalDrives();
 }
 
 /*!
   Returns the type of volume \a driveVolume
 */
-QSystemMemoryInfo::VolumeType QSystemMemoryInfo::volumeType(const QString &driveVolume)
+QSystemStorageInfo::DriveType QSystemStorageInfo::typeForDrive(const QString &driveVolume)
 {
-    return d->volumeType(driveVolume);
+    return d->typeForDrive(driveVolume);
 }
 
 // device
@@ -754,8 +754,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfo::currentPowerState()
 QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
 {
     d = new QSystemScreenSaverPrivate(parent);
-    screenSaverIsEnabled = screenSaverEnabled();
-    screenBlankingIsEnabled = screenBlankingEnabled();
+    screenSaverIsInhibited = screenSaverInhibited();
 }
 
 /*!
@@ -764,15 +763,14 @@ QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
 QSystemScreenSaver::~QSystemScreenSaver()
 {
     qWarning() << Q_FUNC_INFO;
-    if(screenSaverIsEnabled != screenSaverEnabled())
-        setScreenSaverEnabled(screenSaverIsEnabled);
-    if(screenBlankingIsEnabled != screenBlankingEnabled())
-        setScreenBlankingEnabled(screenBlankingIsEnabled);
+//    if(screenSaverIsInhibited != screenSaverInhibited())
+//        setScreenSaverEnabled(screenSaverIsInhibited);
+
     delete d;
 }
 
 /*!
-    Temporarily enables the screensaver if  \a b is true, otherwise inhibits it.
+    Temporarily inhibits the screensaver.
 
     Will be reverted upon destruction of the QSystemScreenSaver object.
     Returns true on success, otherwise false.
@@ -780,39 +778,17 @@ QSystemScreenSaver::~QSystemScreenSaver()
     On platforms that support it, if screensaver is secure by policy, the policy will be honored
     and this will fail.
 */
-bool QSystemScreenSaver::setScreenSaverEnabled(bool b)
+bool QSystemScreenSaver::setScreenSaverInhibit()
 {
-    return d->setScreenSaverEnabled(b);
+    return d->setScreenSaverInhibit();
 }
 
 /*!
-    Temporarily enables the screen blanking on if  \a b is true, otherwise inhibits it.
-
-    Will be reverted upon destruction of the QSystemScreenSaver object.
-    Returns true on success, otherwise false.
-
-    On platforms that support it, if screensaver is secure by policy, the policy will be honored
-    and this will fail.
+   Returns true if the screensaver is inhibited, otherwise false.
 */
-bool QSystemScreenSaver::setScreenBlankingEnabled(bool b)
+bool QSystemScreenSaver::screenSaverInhibited()
 {
-    return d->setScreenBlankingEnabled(b);
-}
-
-/*!
-   Returns true if the screensaver is enabled, otherwise false.
-*/
-bool QSystemScreenSaver::screenSaverEnabled()
-{
-    return d->screenSaverEnabled();
-}
-
-/*!
-   Returns true if screen blanking is enabled, otherwise false.
-*/
-bool QSystemScreenSaver::screenBlankingEnabled()
-{
-    return d->screenBlankingEnabled();
+    return d->screenSaverInhibited();
 }
 
 /*!

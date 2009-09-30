@@ -53,7 +53,21 @@
 
 #include <locale.h>
 
+#include <IOBluetoothHostController.h>
+#include <SystemConfiguration/SystemConfiguration.h>
+#include <CoreFoundation/CFArray.h>
 ////////
+static QString stringFromCFString(CFStringRef value) {
+    QString retVal;
+    CFIndex maxLength = 2 * CFStringGetLength(value) + 1/*zero term*/; // max UTF8
+    char *cstring = new char[maxLength];
+    if (CFStringGetCString(CFStringRef(value), cstring, maxLength, kCFStringEncodingUTF8)) {
+        retVal = QString::fromUtf8(cstring);
+    }
+    delete cstring;
+    return retVal;
+}
+
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
  : QObject(parent)
 {
@@ -149,7 +163,12 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     switch (feature) {
     case QSystemInfo::BluetoothFeature :
         {
-
+            //IOBluetoothHostController
+            //addressAsString
+            IOBluetoothHostController* controller = [IOBluetoothHostController defaultController];
+            if (controller != NULL) {
+                featureSupported = true;
+            }
         }
         break;
     case QSystemInfo::CameraFeature :
@@ -237,6 +256,8 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         break;
     case QSystemNetworkInfo::WlanMode:
         {
+//SCNetworkConnectionStatus SCNetworkConnectionGetStatus (
+  //  SCNetworkConnectionRef connection );
 
         }
         break;
@@ -328,13 +349,50 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
 
 QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
 {
-    return interfaceForMode(mode).hardwareAddress();
+    QString mac;
+    if(mode == QSystemNetworkInfo::BluetoothMode) {
+        NSString *addy;
+        IOBluetoothHostController* controller = [IOBluetoothHostController defaultController];
+        if (controller != NULL) {
+            addy = [controller addressAsString];
+            mac = [addy UTF8String];
+            mac.replace("-",":");
+        }
+    } else {
+        mac = interfaceForMode(mode).hardwareAddress();
+    }
+    return mac;
 }
 
 QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
-    Q_UNUSED(mode);
-    return QNetworkInterface();
+    //    qWarning() << __FUNCTION__ << mode;
+    QNetworkInterface netInterface;
+
+    CFArrayRef interfaceArray = SCNetworkInterfaceCopyAll(); //10.4
+    CFStringRef iName;
+    CFStringRef type;
+
+    for ( long i = 0; i < CFArrayGetCount(interfaceArray); i++) {
+        SCNetworkInterfaceRef thisInterface =  (SCNetworkInterfaceRef ) CFArrayGetValueAtIndex(interfaceArray, i);
+        type = SCNetworkInterfaceGetInterfaceType(thisInterface);
+        iName = SCNetworkInterfaceGetBSDName(thisInterface);
+        //        qWarning() << stringFromCFString(type) <<stringFromCFString( iName);
+        if (type != NULL) {
+            if (CFEqual(type, kSCNetworkInterfaceTypeBluetooth) && mode == QSystemNetworkInfo::BluetoothMode) {
+                netInterface = QNetworkInterface::interfaceFromName(stringFromCFString(iName));
+                break;
+            } else if (CFEqual(type, kSCNetworkInterfaceTypeEthernet) && mode == QSystemNetworkInfo::EthernetMode) {
+                netInterface = QNetworkInterface::interfaceFromName(stringFromCFString(iName));
+                break;
+            } else if (CFEqual(type, kSCNetworkInterfaceTypeIEEE80211) && mode == QSystemNetworkInfo::WlanMode) {
+                netInterface = QNetworkInterface::interfaceFromName(stringFromCFString(iName));
+                break;
+            }
+        }
+    }
+    CFRelease(interfaceArray);
+    return netInterface;
 }
 
 //////// QSystemDisplayInfo
@@ -361,18 +419,18 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
     return bpp;
 }
 
-//////// QSystemMemoryInfo
-QSystemMemoryInfoPrivate::QSystemMemoryInfoPrivate(QObject *parent)
+//////// QSystemStorageInfo
+QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
         : QObject(parent)
 {
 }
 
 
-QSystemMemoryInfoPrivate::~QSystemMemoryInfoPrivate()
+QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 {
 }
 
-qint64 QSystemMemoryInfoPrivate::availableDiskSpace(const QString &driveVolume)
+qint64 QSystemStorageInfoPrivate::availableDiskSpace(const QString &driveVolume)
 {
         Q_UNUSED(driveVolume);
 
@@ -380,7 +438,7 @@ qint64 QSystemMemoryInfoPrivate::availableDiskSpace(const QString &driveVolume)
     return  totalFreeBytes;
 }
 
-qint64 QSystemMemoryInfoPrivate::totalDiskSpace(const QString &driveVolume)
+qint64 QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
 {
         Q_UNUSED(driveVolume);
 
@@ -388,14 +446,14 @@ qint64 QSystemMemoryInfoPrivate::totalDiskSpace(const QString &driveVolume)
     return totalBytes;
 }
 
-QSystemMemoryInfo::VolumeType QSystemMemoryInfoPrivate::volumeType(const QString &driveVolume)
+QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QString &driveVolume)
 {
         Q_UNUSED(driveVolume);
 
-    return QSystemMemoryInfo::NoVolume;
+    return QSystemStorageInfo::NoDrive;
 }
 
-QStringList QSystemMemoryInfoPrivate::listOfVolumes()
+QStringList QSystemStorageInfoPrivate::logicalDrives()
 {
     QStringList drivesList;
     return drivesList;
@@ -484,28 +542,15 @@ QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
 {
 }
 
-bool QSystemScreenSaverPrivate::setScreenSaverEnabled(bool state)
-{
-        Q_UNUSED(state);
-
-    return false;
-}
-
-bool QSystemScreenSaverPrivate::setScreenBlankingEnabled(bool state)
-{
-        Q_UNUSED(state);
-
-    return false;
-}
-
-bool QSystemScreenSaverPrivate::screenSaverEnabled()
+bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
 {
     return false;
 }
 
-bool QSystemScreenSaverPrivate::screenBlankingEnabled()
+
+bool QSystemScreenSaverPrivate::screenSaverInhibited()
 {
-   return false;
+    return false;
 }
 
 bool QSystemScreenSaverPrivate::isScreenLockOn()

@@ -925,9 +925,6 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
 
 QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
-    QList<QNetworkInterface> interfaceList;
-    interfaceList = QNetworkInterface::allInterfaces();
-
     QString result;
     QString baseSysDir = "/sys/class/net/";
     QDir eDir(baseSysDir);
@@ -1072,19 +1069,19 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
 }
 
 
-//////// QSystemMemoryInfo
-QSystemMemoryInfoPrivate::QSystemMemoryInfoPrivate(QObject *parent)
+//////// QSystemStorageInfo
+QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
         : QObject(parent)
 {
     halIsAvailable = halAvailable();
 }
 
 
-QSystemMemoryInfoPrivate::~QSystemMemoryInfoPrivate()
+QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 {
 }
 
-qint64 QSystemMemoryInfoPrivate::availableDiskSpace(const QString &driveVolume)
+qint64 QSystemStorageInfoPrivate::availableDiskSpace(const QString &driveVolume)
 {
     mountEntries();
     struct statfs fs;
@@ -1096,7 +1093,7 @@ qint64 QSystemMemoryInfoPrivate::availableDiskSpace(const QString &driveVolume)
     return 0;
 }
 
-qint64 QSystemMemoryInfoPrivate::totalDiskSpace(const QString &driveVolume)
+qint64 QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
 {
     mountEntries();
     mountEntriesHash[driveVolume];
@@ -1109,7 +1106,7 @@ qint64 QSystemMemoryInfoPrivate::totalDiskSpace(const QString &driveVolume)
     return 0;
 }
 
-QSystemMemoryInfo::VolumeType QSystemMemoryInfoPrivate::volumeType(const QString &driveVolume)
+QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QString &driveVolume)
 {
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
@@ -1122,9 +1119,9 @@ QSystemMemoryInfo::VolumeType QSystemMemoryInfoPrivate::volumeType(const QString
                 if(driveVolume == ifaceDevice.getPropertyString("block.device")) {
                     QHalDeviceInterface ifaceDeviceParent(ifaceDevice.getPropertyString("info.parent"), this);
                     if(ifaceDeviceParent.getPropertyBool("storage.removable")) {
-                        return QSystemMemoryInfo::Removable;
+                        return QSystemStorageInfo::RemovableDrive;
                     } else {
-                        return QSystemMemoryInfo::Internal;
+                        return QSystemStorageInfo::InternalDrive;
                     }
                 }
             }
@@ -1133,16 +1130,16 @@ QSystemMemoryInfo::VolumeType QSystemMemoryInfoPrivate::volumeType(const QString
     } else {
 
     }
-    return QSystemMemoryInfo::Internal;
+    return QSystemStorageInfo::InternalDrive;
 }
 
-QStringList QSystemMemoryInfoPrivate::listOfVolumes()
+QStringList QSystemStorageInfoPrivate::logicalDrives()
 {
     mountEntries();
     return mountEntriesHash.keys();
 }
 
-void QSystemMemoryInfoPrivate::mountEntries()
+void QSystemStorageInfoPrivate::mountEntries()
 {
     mountEntriesHash.clear();
     FILE *mntfp = setmntent( "/proc/mounts", "r" );
@@ -1659,7 +1656,7 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
  {
  }
 
- bool QSystemScreenSaverPrivate::setScreenSaverEnabled(bool state)
+ bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
  {
      if(kdeIsRunning || gnomeIsRunning) {
      #if !defined(QT_NO_DBUS)
@@ -1675,14 +1672,13 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
                                                       "/ScreenSaver",
                                                       iface.toLatin1(),
                                                       dbusConnection);
-             if(connectionInterface->isValid() ) {
-                 if (state){
-                     qWarning() << "unInhibit"<< currentPid;
-                     connectionInterface->call("UnInhibit",currentPid);
-                     currentPid = 0;
-                     return true;;
+//             if(connectionInterface->isValid() ) {
+//                     qWarning() << "unInhibit"<< currentPid;
+//                     connectionInterface->call("UnInhibit",currentPid);
+//                     currentPid = 0;
+//                     return true;;
 
-                 } else {
+//                 } else {
                      QDBusReply<uint> reply =  connectionInterface->call("Inhibit",
                                                                          QString::number((int)pid),
                                                                          "QSystemScreenSaver");
@@ -1693,8 +1689,8 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
                      } else {
                          qWarning() << reply.error();
                      }
-                 }
-             }
+//                 }
+//             }
          }
 #endif
      } else {
@@ -1704,11 +1700,11 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
          int preferBlank;
          int allowExp;
          XGetScreenSaver(QX11Info::display(), &timeout, &interval, &preferBlank, &allowExp);
-         if(state) {
+//         if(state) {
              timeout = -1;
-         } else {
-             timeout = 0;
-         }
+//        } else {
+//             timeout = 0;
+//         }
 
          XSetScreenSaver(QX11Info::display(), timeout, interval, preferBlank, allowExp);
 #endif
@@ -1716,54 +1712,8 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
     return false;
 }
 
-bool QSystemScreenSaverPrivate::setScreenBlankingEnabled(bool state)
-{
-    if(kdeIsRunning) {
-        QString kdeSSConfig;
-        if(QDir( QDir::homePath()+"/.kde4/").exists()) {
-            kdeSSConfig = QDir::homePath()+"/.kde4/share/config/kscreensaverrc";
-        } else if(QDir(QDir::homePath()+"/.kde/").exists()) {
-            kdeSSConfig = QDir::homePath()+"/.kde/share/config/kscreensaverrc";
-        }
 
-        QSettings kdeScreenSaveConfig(kdeSSConfig, QSettings::IniFormat);
-        kdeScreenSaveConfig.beginGroup("ScreenSaver");
-        if(kdeScreenSaveConfig.status() == QSettings::NoError) {
-            if(state) {
-                screenPath = kdeScreenSaveConfig.value("Saver").toString();
-                kdeScreenSaveConfig.setValue("Saver","kblank.desktop");
-                return true;
-            } else {
-                kdeScreenSaveConfig.setValue("Saver", screenPath);
-                screenPath = "";
-                return true;
-            }
-        }
-    } else if(gnomeIsRunning) {
-
-    }
-
-
-#ifdef Q_WS_X11
-    int timeout;
-    int interval;
-    int preferBlank;
-    int allowExp;
-    XGetScreenSaver(QX11Info::display(), &timeout, &interval, &preferBlank, &allowExp);
-    if(state) {
-        preferBlank = PreferBlanking;
-    } else {
-        preferBlank = DontPreferBlanking;
-    }
-
-    XSetScreenSaver(QX11Info::display(), timeout, interval, preferBlank, allowExp);
-#endif
-
-
-    return false;
-}
-
-bool QSystemScreenSaverPrivate::screenSaverEnabled()
+bool QSystemScreenSaverPrivate::screenSaverInhibited()
 {
     if(kdeIsRunning) {
         QString kdeSSConfig;
@@ -1794,42 +1744,6 @@ bool QSystemScreenSaverPrivate::screenSaverEnabled()
         return true;
     }
 
-#endif
-
-    return false;
-}
-
-bool QSystemScreenSaverPrivate::screenBlankingEnabled()
-{
-    //bool saverEnabled = false;
-    if(kdeIsRunning) {
-        QString kdeSSConfig;
-        if(QDir( QDir::homePath()+"/.kde4/").exists()) {
-            kdeSSConfig = QDir::homePath()+"/.kde4/share/config/kscreensaverrc";
-        } else if(QDir(QDir::homePath()+"/.kde/").exists()) {
-            kdeSSConfig = QDir::homePath()+"/.kde/share/config/kscreensaverrc";
-        }
-
-        QSettings kdeScreenSaveConfig(kdeSSConfig, QSettings::IniFormat);
-        kdeScreenSaveConfig.beginGroup("ScreenSaver");
-        if(kdeScreenSaveConfig.status() == QSettings::NoError) {
-            if(screenSaverEnabled() && kdeScreenSaveConfig.value("Saver").toString().contains("kblank")) {
-                return true;
-            }
-        }
-    } else if(gnomeIsRunning) {
-
-    }
-
-#ifdef Q_WS_X11
-    int timeout;
-    int interval;
-    int preferBlank;
-    int allowExp;
-    XGetScreenSaver(QX11Info::display(), &timeout, &interval, &preferBlank, &allowExp);
-    if(preferBlank == PreferBlanking) {
-        return true;
-    }
 #endif
 
     return false;

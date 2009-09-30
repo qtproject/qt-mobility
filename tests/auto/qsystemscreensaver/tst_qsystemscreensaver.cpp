@@ -39,11 +39,8 @@ class tst_QSystemScreenSaver : public QObject
 
 private slots:
         void initTestCase();
-    void tst_screenSaverEnabled();
-    void tst_screenBlankingEnabled();
-    void tst_setScreenSaverEnabled();
-    void tst_setScreenBlankingEnabled();
-
+    void tst_screenSaverInhibited();
+    void tst_setScreenSaverInhibit();
     void tst_isScreenLockOn();
 
 };
@@ -53,39 +50,17 @@ private slots:
 
  }
 
-void tst_QSystemScreenSaver::tst_screenSaverEnabled()
+void tst_QSystemScreenSaver::tst_screenSaverInhibited()
 {
     QSystemScreenSaver si;
-    bool enabled = si.screenSaverEnabled();
-    QVERIFY( enabled || !enabled);
-
-}
-
-void tst_QSystemScreenSaver::tst_screenBlankingEnabled()
-{
-    QSystemScreenSaver si;
-    bool enabled = si.screenBlankingEnabled();
-    QVERIFY( enabled || !enabled);
-
-}
-
-void tst_QSystemScreenSaver::tst_setScreenSaverEnabled()
-{
-    QSystemScreenSaver si;
-    bool enabled = si.setScreenSaverEnabled(true);
-    QVERIFY( enabled || !enabled);
-
-    enabled = si.setScreenSaverEnabled(false);
+    bool enabled = si.screenSaverInhibited();
     QVERIFY( enabled || !enabled);
 }
 
-void tst_QSystemScreenSaver::tst_setScreenBlankingEnabled()
+void tst_QSystemScreenSaver::tst_setScreenSaverInhibit()
 {
     QSystemScreenSaver si;
-    bool enabled = si.setScreenBlankingEnabled(true);
-    QVERIFY( enabled || !enabled);
-
-    enabled = si.setScreenBlankingEnabled(false);
+    bool enabled = si.setScreenSaverInhibit();
     QVERIFY( enabled || !enabled);
 }
 

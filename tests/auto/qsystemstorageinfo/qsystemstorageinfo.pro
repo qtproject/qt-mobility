@@ -1,9 +1,10 @@
-TARGET = tst_qsystemmemoryinfo
+HEADERS  += 
+TARGET = tst_qsystemstorageinfo
 CONFIG+=testcase
 
 QT = core network
 
-SOURCES  += tst_qsystemmemoryinfo.cpp
+SOURCES  += tst_qsystemstorageinfo.cpp
 INCLUDEPATH += ../../../systeminfo
 
 include(../../../common.pri)

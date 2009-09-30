@@ -53,7 +53,7 @@ LD_LIBRARY_PATH=$shell_path/../lib:$LD_LIBRARY_PATH
 ./tst_qsystemdeviceinfo
 ./tst_qsystemdisplayinfo
 ./tst_qsysteminfo
-./tst_qsystemmemoryinfo
+./tst_qsystemstorageinfo
 ./tst_qsystemnetworkinfo
 ./tst_qsystemscreensaver
 

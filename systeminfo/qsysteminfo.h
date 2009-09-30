@@ -47,7 +47,7 @@ class QStringList;
 
 class QSystemInfoPrivate;
 class QSystemNetworkInfoPrivate;
-class QSystemMemoryInfoPrivate;
+class QSystemStorageInfoPrivate;
 class QSystemDeviceInfoPrivate;
 class QSystemDisplayInfoPrivate;
 
@@ -204,35 +204,35 @@ public:
 
 
 ////////
-class  Q_SYSINFO_EXPORT QSystemMemoryInfo : public QObject
+class  Q_SYSINFO_EXPORT QSystemStorageInfo : public QObject
 {
     Q_OBJECT
-    Q_ENUMS(VolumeType)
+    Q_ENUMS(DriveType)
 
 public:
 
-    QSystemMemoryInfo(QObject *parent = 0);
-    ~QSystemMemoryInfo();
+    QSystemStorageInfo(QObject *parent = 0);
+    ~QSystemStorageInfo();
 
-    enum VolumeType {
-        NoVolume = 0,
-        Internal,
-        Removable,
-        Remote,
-        Cdrom
+    enum DriveType {
+        NoDrive = 0,
+        InternalDrive,
+        RemovableDrive,
+        RemoteDrive,
+        CdromDrive
 	};
 
     qlonglong totalDiskSpace(const QString &driveVolume);
     qlonglong availableDiskSpace(const QString &driveVolume);
-    static QStringList listOfVolumes();
+    static QStringList logicalDrives();
 
-    QSystemMemoryInfo::VolumeType volumeType(const QString &driveVolume); //returns enum
+    QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume); //returns enum
 
     //bool isDiskSpaceCritical(const QString &driveVolume);
 Q_SIGNALS:
 
 private:
-    QSystemMemoryInfoPrivate *d;
+    QSystemStorageInfoPrivate *d;
 };
 
 ////////
@@ -304,11 +304,10 @@ public:
 
     enum SimStatus {
         SimNotAvailable = 0,
-		SingleAvailable,
-		DualAvailable,
-		Locked
+        SingleSimAvailable,
+        DualSimAvailable,
+        SimLocked
 	};
-    Q_DECLARE_FLAGS(SimStatusFlags, SimStatus)
 
     bool isDeviceLocked();
     QSystemDeviceInfo::SimStatus simStatus();
@@ -341,27 +340,16 @@ public:
     QSystemScreenSaver(QObject *parent = 0);
     ~QSystemScreenSaver();
 
-//    enum ScreenSaverState {
-//        UnknownScreenSaverState = 0,
-//        ScreenSaverDisabled,
-//        ScreenSaverEnabled
-//    };
+     //TODO: to Qt QDesktopWidget
+    bool screenSaverInhibited();
 
      //TODO: to Qt QDesktopWidget
-    bool screenSaverEnabled();
-     //TODO: to Qt QDesktopWidget
-    bool screenBlankingEnabled();
-
-     //TODO: to Qt QDesktopWidget
-    bool setScreenSaverEnabled(bool b);
-     //TODO: to Qt QDesktopWidget
-    bool setScreenBlankingEnabled(bool b);
+    bool setScreenSaverInhibit();
      //TODO: to Qt QDesktopWidget
     static bool isScreenLockOn();
 
 private:
-    bool  screenSaverIsEnabled;
-    bool screenBlankingIsEnabled;
+    bool screenSaverIsInhibited;
     QSystemScreenSaverPrivate *d;
 };
 

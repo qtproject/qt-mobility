@@ -49,9 +49,24 @@
 #include <QObject>
 #include <QSize>
 #include <QHash>
+#include <QThread>
+#include <QMutex>
 
 #include "qsysteminfo.h"
 #include "qsysinfoglobal.h"
+
+#include <winsock2.h>
+#include <mswsock.h>
+
+#ifdef Q_CC_MSVC
+#include <Wlanapi.h>
+#include <ntddndis.h>
+#else
+#include <ddk/ntddndis.h>
+#endif
+
+#include <QBasicTimer>
+
 
 QT_BEGIN_HEADER
 
@@ -84,7 +99,9 @@ Q_SIGNALS:
 private:
 
     bool hasSysFeature(const QString &featureStr);
-
+    QString currentLanguageStr;
+private Q_SLOTS:
+     void currentLanguageTimeout();
 
 };
 
@@ -113,6 +130,14 @@ public:
 
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
 
+
+   void emitNetworkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
+   void emitNetworkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int);
+
+   static QSystemNetworkInfoPrivate *instance();
+protected:
+   void timerEvent(QTimerEvent *event);
+
 Q_SIGNALS:
    void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
    void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int);
@@ -120,6 +145,17 @@ Q_SIGNALS:
    void currentMobileNetworkCodeChanged(const QString &);
    void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &);
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
+private Q_SLOTS:
+   void nlaNetworkChanged();
+   void networkStrengthTimeout();
+   void networkStatusTimeout();
+private:
+    quint32 wifiStrength;
+    quint32 ethStrength;
+
+   QBasicTimer netStrengthTimer;
+
+   QBasicTimer netStatusTimer;
 
 };
 
@@ -138,20 +174,20 @@ public:
     int colorDepth(int screen);
 };
 
-class QSystemMemoryInfoPrivate : public QObject
+class QSystemStorageInfoPrivate : public QObject
 {
     Q_OBJECT
 
 public:
 
-    QSystemMemoryInfoPrivate(QObject *parent = 0);
-    virtual ~QSystemMemoryInfoPrivate();
+    QSystemStorageInfoPrivate(QObject *parent = 0);
+    virtual ~QSystemStorageInfoPrivate();
 
     // memory
     qint64 availableDiskSpace(const QString &driveVolume);
     qint64 totalDiskSpace(const QString &driveVolume);
-    QStringList listOfVolumes();
-    QSystemMemoryInfo::VolumeType volumeType(const QString &driveVolume); //returns enum
+    QStringList logicalDrives();
+    QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume); //returns enum
 
 private:
     QHash<QString, QString> mountEntriesHash;
@@ -170,11 +206,11 @@ public:
 
 // device
 
-    static QString imei();
-    static QString imsi();
-    static QString manufacturer();
-    static QString model();
-    static QString productName();
+    QString imei();
+    QString imsi();
+    QString manufacturer();
+    QString model();
+    QString productName();
 
     QSystemDeviceInfo::InputMethodFlags inputMethodType();
 
@@ -208,10 +244,8 @@ class QSystemScreenSaverPrivate : public QObject
 public:
     QSystemScreenSaverPrivate(QObject *parent = 0);
 
-    bool screenSaverEnabled();
-    bool screenBlankingEnabled();
-    bool setScreenSaverEnabled(bool b);
-    bool setScreenBlankingEnabled(bool b);
+    bool screenSaverInhibited();
+    bool setScreenSaverInhibit();
     bool isScreenLockOn();
 
 private:
@@ -220,6 +254,8 @@ private:
     bool screenSaverSecure;
 
 };
+
+
 
 QT_END_NAMESPACE
 

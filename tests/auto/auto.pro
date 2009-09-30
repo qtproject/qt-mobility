@@ -40,7 +40,7 @@ unix:SUBDIRS += qpacket \
 !symbian:SUBDIRS += qsysteminfo \                    #SystemInformation
           qsystemdeviceinfo \
           qsystemdisplayinfo \
-          qsystemmemoryinfo \
+          qsystemstorageinfo \
           qsystemnetworkinfo \
           qsystemscreensaver
 

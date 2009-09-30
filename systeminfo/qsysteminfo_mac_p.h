@@ -30,8 +30,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QSYSTEMINFO_LINUX_P_H
-#define QSYSTEMINFO_LINUX_P_H
+#ifndef QSYSTEMINFO_MAC_P_H
+#define QSYSTEMINFO_MAC_P_H
 
 
 //
@@ -140,20 +140,20 @@ public:
     int colorDepth(int screen);
 };
 
-class QSystemMemoryInfoPrivate : public QObject
+class QSystemStorageInfoPrivate : public QObject
 {
     Q_OBJECT
 
 public:
 
-    QSystemMemoryInfoPrivate(QObject *parent = 0);
-    virtual ~QSystemMemoryInfoPrivate();
+    QSystemStorageInfoPrivate(QObject *parent = 0);
+    virtual ~QSystemStorageInfoPrivate();
 
     // memory
     qint64 availableDiskSpace(const QString &driveVolume);
     qint64 totalDiskSpace(const QString &driveVolume);
-    QStringList listOfVolumes();
-    QSystemMemoryInfo::VolumeType volumeType(const QString &driveVolume); //returns enum
+    QStringList logicalDrives();
+    QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume); //returns enum
 
 private:
     QHash<QString, QString> mountEntriesHash;
@@ -210,10 +210,8 @@ public:
     QSystemScreenSaverPrivate(QObject *parent = 0);
     ~QSystemScreenSaverPrivate();
 
-    bool screenSaverEnabled();
-    bool screenBlankingEnabled();
-    bool setScreenSaverEnabled(bool b);
-    bool setScreenBlankingEnabled(bool b);
+    bool screenSaverInhibited();
+    bool setScreenSaverInhibit();
     bool isScreenLockOn();
 
 private:
@@ -221,18 +219,13 @@ private:
     QString settingsPath;
     bool screenSaverSecure;
 
-    uint currentPid;
-    bool kdeIsRunning;
-    bool gnomeIsRunning;
-    void whichWMRunning();
-
 };
 
 QT_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif /*QSYSTEMSINFO_LINUX_P_H*/
+#endif /*QSYSTEMSINFO_MAC_P_H*/
 
 // End of file
 

@@ -24,7 +24,7 @@ private:
     void setupGeneral();
     void setupDevice();
     void setupDisplay();
-    void setupMemory();
+    void setupStorage();
     void setupNetwork();
     void setupSaver();
 
@@ -38,7 +38,7 @@ private slots:
     void getVersion(int index);
     void getFeature(int index);
     void setSaverEnabled(bool b);
-    void setBlankingEnabled(bool b);
+
     void netStatusComboActivated(int);
     void updateBatteryStatus(int);
     void updatePowerState(QSystemDeviceInfo::PowerState);

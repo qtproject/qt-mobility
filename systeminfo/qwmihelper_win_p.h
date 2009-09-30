@@ -45,6 +45,7 @@
 // We mean it.
 //
 
+#ifndef Q_CC_MINGW
 #include <QObject>
 #include <QVariant>
 #include <QString>
@@ -55,7 +56,7 @@
 class WMIHelper : public QObject
 {
 public:
-    WMIHelper();
+    WMIHelper(QObject *parent = 0);
     ~WMIHelper();
     QVariant getWMIData();
     QVariant getWMIData(const QString &wmiNamespace,const QString &className, const QStringList &classProperties);
@@ -67,12 +68,18 @@ public:
    void setConditional(const QString &conditional); //see WQL SQL for WMI)
 
 private:
+   IWbemLocator *wbemLocator;
+   IWbemServices *wbemServices;
+   IWbemClassObject *wbemCLassObject;
+
    QString m_className;
    QStringList m_classProperties;
    QString m_conditional;
    QString m_wmiNamespace;
    QVariant  msVariantToQVariant(VARIANT msVariant, CIMTYPE variantType);
+   void initializeWMI(const QString &wmiNamespace);
+   QHash <QString, bool> initializedNamespaces;
 
 };
-
+#endif
 #endif // WMIHELPER_H

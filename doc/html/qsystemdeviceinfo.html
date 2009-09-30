@@ -25,10 +25,9 @@
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#BatteryStatus-enum">BatteryStatus</a></b> { NoBatteryLevel, BatteryCritical, BatteryVeryLow, BatteryLow, BatteryNormal }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#InputMethod-enum">InputMethod</a></b> { Keys, Keypad, Keyboard, SingleTouch, MultiTouch, Mouse }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#InputMethod-enum">InputMethodFlags</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#PowerState-enum">PowerState</a></b> { UnknownPower, BatteryPower, WallPower, WallPowerCharging }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#PowerState-enum">PowerState</a></b> { UnknownPower, BatteryPower, WallPower, WallPowerChargingBattery }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#Profile-enum">Profile</a></b> { UnknownProfile, SilentProfile, NormalProfile, LoudProfile, ..., CustomProfile }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#SimStatus-enum">SimStatus</a></b> { SimNotAvailable, SingleAvailable, DualAvailable, Locked }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#SimStatus-enum">SimStatusFlags</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#SimStatus-enum">SimStatus</a></b> { SimNotAvailable, SingleSimAvailable, DualSimAvailable, SimLocked }</td></tr>
 </table>
 <hr />
 <a name="properties"></a>
@@ -126,7 +125,7 @@
 <tr><td valign="top"><tt>QSystemDeviceInfo::UnknownPower</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Power error.</td></tr>
 <tr><td valign="top"><tt>QSystemDeviceInfo::BatteryPower</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">On battery power.</td></tr>
 <tr><td valign="top"><tt>QSystemDeviceInfo::WallPower</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">On wall power.</td></tr>
-<tr><td valign="top"><tt>QSystemDeviceInfo::WallPowerCharging</tt></td><td align="center" valign="top">?</td><td valign="top">On wall power and charging main battery.</td></tr>
+<tr><td valign="top"><tt>QSystemDeviceInfo::WallPowerChargingBattery</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">On wall power and charging main battery.</td></tr>
 </table></p>
 <h3 class="fn"><a name="Profile-enum"></a>enum QSystemDeviceInfo::Profile</h3>
 <p>This enum describes the current operating profile of the device or computer.</p>
@@ -141,16 +140,15 @@
 <tr><td valign="top"><tt>QSystemDeviceInfo::PowersaveProfile</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">Powersave profile.</td></tr>
 <tr><td valign="top"><tt>QSystemDeviceInfo::CustomProfile</tt></td><td align="center" valign="top"><tt>7</tt></td><td valign="top">Custom profile.</td></tr>
 </table></p>
-<h3 class="flags"><a name="SimStatus-enum"></a>enum QSystemDeviceInfo::SimStatus<br />flags QSystemDeviceInfo::SimStatusFlags</h3>
+<h3 class="fn"><a name="SimStatus-enum"></a>enum QSystemDeviceInfo::SimStatus</h3>
 <p>This enum describes the status is the sim card or cards.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QSystemDeviceInfo::SimNotAvailable</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">SIM is not available on this device.</td></tr>
-<tr><td valign="top"><tt>QSystemDeviceInfo::SingleAvailable</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">One SIM card is available on this.</td></tr>
-<tr><td valign="top"><tt>QSystemDeviceInfo::DualAvailable</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Two SIM cards are available on this device.</td></tr>
-<tr><td valign="top"><tt>QSystemDeviceInfo::Locked</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Device has SIM lock enabled.</td></tr>
+<tr><td valign="top"><tt>QSystemDeviceInfo::SingleSimAvailable</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">One SIM card is available on this.</td></tr>
+<tr><td valign="top"><tt>QSystemDeviceInfo::DualSimAvailable</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Two SIM cards are available on this device.</td></tr>
+<tr><td valign="top"><tt>QSystemDeviceInfo::SimLocked</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Device has SIM lock enabled.</td></tr>
 </table></p>
-<p>The SimStatusFlags type is a typedef for <a href="qflags.html">QFlags</a>&lt;SimStatus&gt;. It stores an OR combination of SimStatus values.</p>
 <hr />
 <h2>Property Documentation</h2>
 <h3 class="fn"><a name="currentPowerState-prop"></a>currentPowerState : const <a href="qsystemdeviceinfo.html#PowerState-enum">PowerState</a></h3>
