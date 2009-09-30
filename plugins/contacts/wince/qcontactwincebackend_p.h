@@ -193,6 +193,9 @@ public:
     QContactWinCEEngine& operator=(const QContactWinCEEngine& other);
     void deref();
 
+    /* Filtering */
+    QList<QUniqueId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+
     /* Contacts - Accessors and Mutators */
     QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
@@ -220,6 +223,9 @@ private:
 
     QContact convertToQContact(IItem *contact) const;
     bool convertFromQContact(const QContact& contact, IItem* item, QContactManager::Error &error) const;
+    void buildHashForContactDetailToPoomPropId() const;
+    QString convertFilterToQueryString(const QContactFilter& filter) const;
+    QList<QUniqueId> convertP2QIdList(SimpleComPointer<IPOutlookItemCollection> collection) const;
 };
 
 class Q_DECL_EXPORT ContactWinceFactory : public QObject, public QContactManagerEngineFactory

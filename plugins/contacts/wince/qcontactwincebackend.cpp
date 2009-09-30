@@ -63,10 +63,13 @@
  * - Address formatting - PIMPR_HOME_ADDRESS seems to be read only
  */
 
+
 QContactWinCEEngine::QContactWinCEEngine(const QMap<QString, QString>& , QContactManager::Error& error)
     : d(new QContactWinCEEngineData)
 {
     error = QContactManager::NoError;
+    
+    buildHashForContactDetailToPoomPropId();
 
     if (SUCCEEDED(d->m_cominit.hr())) {
         if (SUCCEEDED(CoCreateInstance(CLSID_Application, NULL,
@@ -78,45 +81,18 @@ QContactWinCEEngine::QContactWinCEEngine(const QMap<QString, QString>& , QContac
             } else {
                 if(SUCCEEDED(d->m_app->GetDefaultFolder(olFolderContacts, &d->m_folder))) {
                     if(SUCCEEDED(d->m_folder->get_Items(&d->m_collection))) {
+                        // Register/retrieve our custom ids
+                        LPCWSTR customIds[2] = { L"QTCONTACTS_PHONE_META", L"QTCONTACTS_EMAIL_META" };
+                        CEPROPID outIds[2];
+
+                        if (SUCCEEDED(d->m_app->GetIDsFromNames(2, customIds, PIM_CREATE | CEVT_LPWSTR, outIds))) {
+                            d->m_phonemeta = outIds[0];
+                            d->m_emailmeta = outIds[1];
+                        }
+
                         // get an IPOLItems2 pointer for the collection, too
                         if (SUCCEEDED(d->m_collection->QueryInterface<IPOlItems2>(&d->m_items2))) {
-                            HRESULT hr;
-
-                            // Register/retrieve our custom ids
-                            LPCWSTR customIds[2] = { L"QTCONTACTS_PHONE_META", L"QTCONTACTS_EMAIL_META" };
-                            CEPROPID outIds[2];
-
-                            if (SUCCEEDED(d->m_app->GetIDsFromNames(2, customIds, PIM_CREATE | CEVT_LPWSTR, outIds))) {
-                                d->m_phonemeta = outIds[0];
-                                d->m_emailmeta = outIds[1];
-                            }
-
-                            // Retrieve some ids [don't need this, really]
-                            CEPROPID propid = PIMPR_OID;
-                            CEPROPVAL *ppropval = 0;
-
-                            int count = 0;
-                            d->m_items2->get_Count(&count);
-
-                            ULONG cbSize = 0;
-
-                            // Allocate something to start with
-                            ppropval = (CEPROPVAL*) HeapAlloc(GetProcessHeap(), 0, sizeof(CEPROPVAL));
-
-                            for(int i=0; i < count; i++) {
-                                hr = d->m_items2->GetProps(i +1, &propid, 0, 1, &ppropval, &cbSize, NULL);
-                                if (HRESULT_FROM_WIN32(ERROR_INSUFFICIENT_BUFFER) == hr) {
-                                    ppropval = (CEPROPVAL*) HeapReAlloc(GetProcessHeap(), 0, ppropval, cbSize);
-                                    hr = d->m_items2->GetProps(i + 1, &propid, 0, 1, &ppropval, &cbSize, NULL);
-                                }
-                                if (SUCCEEDED(hr)) {
-                                    d->m_ids << (QUniqueId) ppropval->val.ulVal;
-                                } else {
-                                    qDebug() << QString("Eternal sadness: %1").arg(HRESULT_CODE(hr), 0, 16);
-                                }
-                            }
-
-                            HeapFree(GetProcessHeap(), 0, ppropval);
+                            d->m_ids = convertP2QIdList(d->m_collection);
                         }
                     } else {
                         qDebug() << "Failed to get items";
@@ -158,8 +134,33 @@ void QContactWinCEEngine::deref()
         delete this;
 }
 
+QList<QUniqueId> QContactWinCEEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+{
+    QString query = convertFilterToQueryString(filter);
+    
+    if (!query.isEmpty()) {
+        //Filtering contacts with POOM API
+        SimpleComPointer<IPOutlookItemCollection> collection;
+        HRESULT hr = d->m_collection->Restrict((BSTR)(query.constData()), &collection);
+
+        if (SUCCEEDED(hr)) {
+            //XXX sort the filtered items first
+            return convertP2QIdList(collection);
+        } else {
+            //Should we fail back to generic filtering here?
+            qDebug() << "Can't filter contacts" << HRESULT_CODE(hr);
+            error = QContactManager::UnspecifiedError;
+        }
+    }
+    //Fail back to generic filtering
+    return QContactManagerEngine::contacts(filter, sortOrders, error);
+}
+
+
 QList<QUniqueId> QContactWinCEEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
+    //XXX   POOM doses not support multi sort orders
+
     QList<QUniqueId> allCIds = d->m_ids;
     error = QContactManager::NoError;
 
