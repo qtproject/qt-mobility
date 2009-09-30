@@ -201,8 +201,8 @@ public:
     CharacterEncoding characterEncoding() const;
     ImageFormat imageFormat() const;
 
-    // blob provider (eg, image detail value (uri) -> QPixmap in a QVariant)
-    virtual QVariant loadBlob(const QString& uri);
+    // blob provider (eg, image detail value -> QPixmap in a QVariant)
+    virtual QVariant loadBlob(const QContactDetail& detail, const QString& fieldName);
 
     enum Error {
         // ...
