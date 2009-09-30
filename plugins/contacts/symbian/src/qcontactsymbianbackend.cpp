@@ -306,8 +306,8 @@ QString QContactSymbianEngine::synthesiseDisplayLabel(const QContact& contact, Q
         }
     } else if (!name.first().isEmpty()) {
         return name.first();
-    } else if (!org.displayLabel().isEmpty()) {
-        return org.displayLabel();
+    } else if (!org.name().isEmpty()) {
+        return org.name();
     } else {
         // XXX grargh.
         return QLatin1String("Unnamed");

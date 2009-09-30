@@ -789,7 +789,7 @@ void TestTransformContactData::validateTransformOrganisation(TPtrC16 companyFiel
     validateContexts(transformOrganisation);
     
     QContactOrganization organisation;
-    organisation.setDisplayLabel(companyDetail);
+    organisation.setName(companyDetail);
     organisation.setDepartment(departmentDetail);
     organisation.setTitle(jobtitleDetail);
     QList<CContactItemField *> fields = transformOrganisation->transformDetailL(organisation);
@@ -809,7 +809,7 @@ void TestTransformContactData::validateTransformOrganisation(TPtrC16 companyFiel
     QContact contact;
     QContactDetail* contactDetail = transformOrganisation->transformItemField(*newField, contact);
     const QContactOrganization* organisationInfo1(static_cast<const QContactOrganization*>(contactDetail));
-    QCOMPARE(organisationInfo1->displayLabel(), companyDetail);
+    QCOMPARE(organisationInfo1->name(), companyDetail);
     delete contactDetail;
     contactDetail = 0;
     delete newField;
