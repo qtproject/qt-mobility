@@ -38,12 +38,15 @@ SUBDIRS += serviceframework
 symbian:SUBDIRS += serviceframework/symbian/dll/databasemanagerserver_dll.pro \
                    serviceframework/symbian/exe/databasemanagerserver_exe.pro
 
-SUBDIRS += bearer location context contacts multimedia tools plugins
+SUBDIRS += bearer location contacts multimedia 
 
 #remove systeminfo from Symbian build. It does not work yet
 !symbian:SUBDIRS += systeminfo
 #remove publish and subscribe from Wince build. It does not work yet
 !wince*:SUBDIRS += context
+
+SUBDIRS += tools plugins
+
 
 contains(qmf_enabled, yes)|wince*|win32|symbian|maemo {
     SUBDIRS += messaging
