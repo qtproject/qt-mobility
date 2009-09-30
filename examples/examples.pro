@@ -5,4 +5,5 @@ SUBDIRS = \
         recorder \
         cameracapture \
         slideshow \
-        streamplayer
+        streamplayer \
+        audiorecorder

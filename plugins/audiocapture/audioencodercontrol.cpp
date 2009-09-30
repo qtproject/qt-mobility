@@ -54,7 +54,31 @@ int AudioEncoderControl::bitrate() const
 
 void AudioEncoderControl::setBitrate(int value)
 {
-    Q_UNUSED(value)
+    QAudioFormat fmt = m_session->format();
+
+    if(value <= 8) {
+        // low, 8000Hz mono U8
+        fmt.setSampleType(QAudioFormat::UnSignedInt);
+        fmt.setSampleSize(8);
+        fmt.setFrequency(8000);
+        fmt.setChannels(1);
+
+    } else if(value <= 44) {
+        // medium, 22050Hz mono S16
+        fmt.setSampleType(QAudioFormat::SignedInt);
+        fmt.setSampleSize(16);
+        fmt.setFrequency(22050);
+        fmt.setChannels(1);
+
+    } else {
+        // high, 44100Hz mono S16
+        fmt.setSampleType(QAudioFormat::SignedInt);
+        fmt.setSampleSize(16);
+        fmt.setFrequency(44100);
+        fmt.setChannels(1);
+
+    }
+    m_session->setFormat(fmt);
 }
 
 int AudioEncoderControl::quality() const

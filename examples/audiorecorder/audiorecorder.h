@@ -54,9 +54,10 @@ public:
 
 private slots:
     void deviceChanged(int idx);
-    void paramsChanged(int idx);
+    void codecChanged(int idx);
+    void qualityChanged(int idx);
     void selectOutputFile();
-    void togglePlay();
+    void toggleRecord();
     void stateChanged(QMediaRecorder::State);
     void updateProgress(qint64 pos);
 
@@ -65,15 +66,14 @@ private:
     QMediaRecorder* capture;
 
     QComboBox*     deviceBox;
-    QComboBox*     paramsBox;
+    QComboBox*     codecsBox;
+    QComboBox*     qualityBox;
     QLabel*        recTime;
     QPushButton*   button;
     QPushButton*   fileButton;
     bool           active;
     int            currentTime;
     QUrl           destination;
-
-    QList< QPair<int, int> > formats;
 };
 
 #endif

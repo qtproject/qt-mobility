@@ -70,14 +70,16 @@
     </section>
     <section ref="qaudiosource.html" title="QAudioSource Class Reference">
         <keyword ref="qaudiosource.html">QAudioSource</keyword>
-        <keyword ref="qaudiosource.html#format">format</keyword>
-        <keyword ref="qaudiosource.html#isFormatSupported">isFormatSupported</keyword>
+        <keyword ref="qaudiosource.html#defaultDevice">defaultDevice</keyword>
+        <keyword ref="qaudiosource.html#description">description</keyword>
+        <keyword ref="qaudiosource.html#deviceCount">deviceCount</keyword>
+        <keyword ref="qaudiosource.html#devicesChanged">devicesChanged</keyword>
+        <keyword ref="qaudiosource.html#icon">icon</keyword>
         <keyword ref="qaudiosource.html#isValid">isValid</keyword>
-        <keyword ref="qaudiosource.html#setFormat">setFormat</keyword>
-        <keyword ref="qaudiosource.html#supportedChannels">supportedChannels</keyword>
-        <keyword ref="qaudiosource.html#supportedCodecs">supportedCodecs</keyword>
-        <keyword ref="qaudiosource.html#supportedFrequencies">supportedFrequencies</keyword>
-        <keyword ref="qaudiosource.html#supportedSampleSizes">supportedSampleSizes</keyword>
+        <keyword ref="qaudiosource.html#name">name</keyword>
+        <keyword ref="qaudiosource.html#selectedDevice">selectedDevice</keyword>
+        <keyword ref="qaudiosource.html#selectedDeviceChanged">selectedDeviceChanged</keyword>
+        <keyword ref="qaudiosource.html#setSelectedDevice">setSelectedDevice</keyword>
         <section ref="qaudiosource-members.html" title="List of all members"/>
     </section>
     <section ref="qcamera.html" title="QCamera Class Reference">

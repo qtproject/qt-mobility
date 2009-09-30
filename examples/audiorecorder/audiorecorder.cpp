@@ -54,57 +54,67 @@ AudioRecorder::AudioRecorder()
 
     // set a default file
     capture->setSink(QUrl("test.raw"));
-    // setup default freq,channel combinations available
-    formats << qMakePair<int,int>(8000,1);
-    formats << qMakePair<int,int>(11025,1);
-    formats << qMakePair<int,int>(22050,1);
-    formats << qMakePair<int,int>(44100,1);
 
     QWidget *window = new QWidget;
-    QVBoxLayout* layout = new QVBoxLayout;
+    QGridLayout* layout = new QGridLayout;
 
+    QLabel* deviceLabel = new QLabel;
+    deviceLabel->setText("Devices");
     deviceBox = new QComboBox(this);
-    paramsBox = new QComboBox(this);
+    deviceBox->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
-    if(capture->service()) {
+    QLabel* codecLabel = new QLabel;
+    codecLabel->setText("Codecs");
+    codecsBox = new QComboBox(this);
+    codecsBox->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
-        QList<QString> audioInputs;
-        audioInputs = capture->service()->supportedEndpoints(QMediaService::AudioInput);
-        if(audioInputs.size() > 0) {
-            qWarning()<<"FOUND audioInputs: "<<audioInputs;
-            capture->service()->setActiveEndpoint(QMediaService::AudioInput,audioInputs.first());
-            for(int i = 0; i < audioInputs.size(); ++i) {
-                deviceBox->addItem(audioInputs.at(i));
-            }
-        } else {
-            qWarning()<<"no audio input available";
-        }
-        for(int i = 0; i < formats.size(); ++i) {
-            paramsBox->addItem(QString("f=%1,ch=%2").arg(formats.at(i).first).arg(formats.at(i).second));
-        }
+    QLabel* qualityLabel = new QLabel;
+    qualityLabel->setText("Quality");
+    qualityBox = new QComboBox(this);
+    qualityBox->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+
+    if(capture->isValid()) {
+
+        for(int i = 0; i < audiosource->deviceCount(); i++)
+            deviceBox->addItem(audiosource->name(i));
+
+        QStringList codecs = capture->supportedAudioCodecs();
+        for(int i = 0; i < codecs.count(); i++)
+            codecsBox->addItem(codecs.at(i));
+
+        qualityBox->addItem("Low");
+        qualityBox->addItem("Medium");
+        qualityBox->addItem("High");
+
         connect(capture, SIGNAL(durationChanged(qint64)), this, SLOT(updateProgress(qint64)));
         connect(capture, SIGNAL(stateChanged(QMediaRecorder::State)), this, SLOT(stateChanged(QMediaRecorder::State)));
     }
 
+    layout->addWidget(deviceLabel,0,0,Qt::AlignHCenter);
     connect(deviceBox,SIGNAL(activated(int)),SLOT(deviceChanged(int)));
-    layout->addWidget(deviceBox);
+    layout->addWidget(deviceBox,0,1,1,3,Qt::AlignLeft);
 
-    connect(paramsBox,SIGNAL(activated(int)),SLOT(paramsChanged(int)));
-    layout->addWidget(paramsBox);
+    layout->addWidget(codecLabel,1,0,Qt::AlignHCenter);
+    connect(codecsBox,SIGNAL(activated(int)),SLOT(codecChanged(int)));
+    layout->addWidget(codecsBox,1,1,Qt::AlignLeft);
+
+    layout->addWidget(qualityLabel,1,2,Qt::AlignHCenter);
+    connect(qualityBox,SIGNAL(activated(int)),SLOT(qualityChanged(int)));
+    layout->addWidget(qualityBox,1,3,Qt::AlignLeft);
 
     fileButton = new QPushButton(this);
-    fileButton->setText(tr("Select Output File"));
+    fileButton->setText(tr("Output File"));
     connect(fileButton,SIGNAL(clicked()),SLOT(selectOutputFile()));
-    layout->addWidget(fileButton);
+    layout->addWidget(fileButton,3,0,Qt::AlignHCenter);
 
     button = new QPushButton(this);
-    button->setText(tr("Click to start recording"));
-    connect(button,SIGNAL(clicked()),SLOT(togglePlay()));
-    layout->addWidget(button);
+    button->setText(tr("Record"));
+    connect(button,SIGNAL(clicked()),SLOT(toggleRecord()));
+    layout->addWidget(button,3,3,Qt::AlignHCenter);
 
     recTime = new QLabel;
     recTime->setText("0 sec");
-    layout->addWidget(recTime);
+    layout->addWidget(recTime,4,0,Qt::AlignHCenter);
 
     window->setLayout(layout);
     setCentralWidget(window);
@@ -132,38 +142,45 @@ void AudioRecorder::stateChanged(QMediaRecorder::State state)
 
 void AudioRecorder::deviceChanged(int idx)
 {
-    capture->service()->setActiveEndpoint(QMediaService::AudioInput,deviceBox->itemText(idx));
+    for(int i = 0; i < audiosource->deviceCount(); i++) {
+        if(deviceBox->itemText(idx).compare(audiosource->name(i)) == 0)
+            audiosource->setSelectedDevice(i);
+    }
 }
 
-void AudioRecorder::paramsChanged(int idx)
+void AudioRecorder::codecChanged(int idx)
 {
-    QStringList parts;
-    QStringList values;
-
-    parts = paramsBox->itemText(idx).split(",");
-    if(parts.size() != 2) return;
-
-    QAudioFormat fmt = audiosource->format();
-    // freq
-    values = parts.at(0).split("=");
-    fmt.setFrequency(values.at(1).toInt());
-    // channels
-    values = parts.at(1).split("=");
-    fmt.setChannels(values.at(1).toInt());
+    capture->setAudioCodec(codecsBox->itemText(idx));
 }
 
-void AudioRecorder::togglePlay()
+void AudioRecorder::qualityChanged(int idx)
+{
+    if(capture->audioCodec().compare("audio/pcm") == 0) {
+        if(qualityBox->itemText(idx).compare("Low") == 0) {
+            // 8000Hz mono is 8kbps
+            capture->setAudioBitrate(8);
+        } else if(qualityBox->itemText(idx).compare("Medium") == 0) {
+            // 22050Hz mono is 44.1kbps
+            capture->setAudioBitrate(44);
+        } else if(qualityBox->itemText(idx).compare("High") == 0) {
+            // 44100Hz mono is 88.2kbps
+            capture->setAudioBitrate(88);
+        }
+    }
+}
+
+void AudioRecorder::toggleRecord()
 {
     if(!active) {
         recTime->setText("0 sec");
         currentTime = 0;
         capture->record();
 
-        button->setText(tr("Click to stop"));
+        button->setText(tr("Stop"));
         active = true;
     } else {
         capture->stop();
-        button->setText(tr("Click to start recording"));
+        button->setText(tr("Record"));
         active = false;
     }
 }

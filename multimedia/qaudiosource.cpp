@@ -32,28 +32,21 @@
 **
 ****************************************************************************/
 
+#include <QIcon>
 #include <multimedia/qmediaobject_p.h>
 #include <multimedia/qaudiosource.h>
-#include <multimedia/qaudioencodercontrol.h>
-#include <multimedia/qmediarecordercontrol.h>
+#include <multimedia/qaudiodevicecontrol.h>
 
 /*!
     \class QAudioSource
-    \brief The QAudioSource class provides an interface to query and select an audio format.
+    \brief The QAudioSource class provides an interface to query and select an audio input device.
     \ingroup multimedia
 
     \preliminary
 
-    QAudioSource provides access to the audio formats available from the audio devices available on your system.
+    QAudioSource provides access to the audio audio devices available on your system.
 
-    You can query formats available and select a format to use.
-
-    A format in this context is a set consisting of a specific byte order,
-    channel, codec, frequency, sample rate and sample type.
-    A format is represented by the QAudioFormat class.
-
-    The combinations supported are dependent on the platform,
-    plugins installed and the audio device capabilities.
+    You can query these devices and select one to use.
 
     A typical implementation example:
     \code
@@ -63,13 +56,13 @@
 
     The audiosource interface is then used to:
 
-    - Get and Set the audio format used (this is dependant on the audio device selected in the capture interface)
+    - Get and Set the audio device to use.
 
     The capture interface is then used to:
 
     - Set the destination source using setSink()
 
-    - Get and Set the audio device using supportedEndpoints(), setActiveEndpoint()
+    - Set the format parameters using setAudioCodec(), 
 
     - Control the recording using record(),stop()
 
@@ -79,9 +72,8 @@
 class QAudioSourcePrivate : public QMediaObjectPrivate
 {
 public:
-    QAudioSourcePrivate():audioEncoderControl(0), mediaRecorderControl(0) {}
-    QAudioEncoderControl  *audioEncoderControl;
-    QMediaRecorderControl *mediaRecorderControl;
+    QAudioSourcePrivate():audioDeviceControl(0) {}
+    QAudioDeviceControl   *audioDeviceControl;
 };
 
 /*!
@@ -95,9 +87,13 @@ QAudioSource::QAudioSource(QObject *parent, QMediaServiceProvider *provider):
 
     Q_ASSERT(d->service != 0);
 
-    if (d->service != 0) {
-        d->audioEncoderControl = qobject_cast<QAudioEncoderControl *>(d->service->control(QAudioEncoderControl_iid));
-        d->mediaRecorderControl = qobject_cast<QMediaRecorderControl *>(d->service->control(QMediaRecorderControl_iid));
+    if (d->service != 0)
+        d->audioDeviceControl = qobject_cast<QAudioDeviceControl *>(d->service->control(QAudioDeviceControl_iid));
+
+    if(d->audioDeviceControl) {
+        connect(d->audioDeviceControl,SIGNAL(selectedDeviceChanged(int)),this,SIGNAL(selectedDeviceChanged(int)));
+        connect(d->audioDeviceControl,SIGNAL(selectedDeviceChanged(const QString&)),this,SIGNAL(selectedDeviceChanged(const QString&)));
+        connect(d->audioDeviceControl,SIGNAL(devicesChanged()),this,SIGNAL(devicesChanged()));
     }
 }
 
@@ -117,134 +113,126 @@ bool QAudioSource::isValid() const
 {
     Q_D(const QAudioSource);
 
-    return QMediaObject::isValid() &&
-            (d->audioEncoderControl != NULL && d->mediaRecorderControl != NULL);
+    return QMediaObject::isValid() && (d->audioDeviceControl != NULL);
 }
 
 /*!
-    Returns the audio format.
-
-    \sa QAudioFormat
+    Returns the number of audio input devices available.
 */
 
-QAudioFormat QAudioSource::format() const
+int QAudioSource::deviceCount() const
 {
-    if(d_func()->audioEncoderControl) {
-        QAudioFormat fmt;
-        fmt.setFrequency(d_func()->audioEncoderControl->frequency());
-        fmt.setChannels(d_func()->audioEncoderControl->channels());
-        fmt.setSampleSize(d_func()->audioEncoderControl->sampleSize());
-        fmt.setCodec(d_func()->audioEncoderControl->audioCodec());
-        fmt.setSampleType(QAudioFormat::UnSignedInt);
-        fmt.setByteOrder(QAudioFormat::LittleEndian);
-        return fmt;
-    }
+    Q_D(const QAudioSource);
 
-    return QAudioFormat();
+    if(d->audioDeviceControl)
+        return d->audioDeviceControl->deviceCount();
+
+    return 0;
 }
 
 /*!
-    Sets the audio format to \a format.
-
-    \sa QAudioFormat
+    Returns the name of the audio input device at \a index.
 */
 
-void QAudioSource::setFormat(const QAudioFormat &format)
+QString QAudioSource::name(int index) const
 {
-    if(d_func()->audioEncoderControl) {
-        d_func()->audioEncoderControl->setAudioCodec(format.codec());
-        d_func()->audioEncoderControl->setFrequency(format.frequency());
-        d_func()->audioEncoderControl->setChannels(format.channels());
-        d_func()->audioEncoderControl->setSampleSize(format.sampleSize());
-    }
+    Q_D(const QAudioSource);
+
+    QString text;
+
+    if(d->audioDeviceControl)
+        text = d->audioDeviceControl->name(index);
+
+    return text;
 }
 
 /*!
-    Returns true if able to set the audio format to \a format.
+    Returns the description of the audio input device at \a index.
 */
 
-bool QAudioSource::isFormatSupported(const QAudioFormat &format) const
+QString QAudioSource::description(int index) const
 {
-    if(d_func()->audioEncoderControl) {
-        if(!d_func()->audioEncoderControl->supportedAudioCodecs().contains(format.codec()))
-            return false;
-        if(!d_func()->audioEncoderControl->supportedFrequencies().contains(format.frequency()))
-            return false;
-        if(!d_func()->audioEncoderControl->supportedChannelCounts().contains(format.channels()))
-            return false;
-        if(!d_func()->audioEncoderControl->supportedSampleSizes().contains(format.sampleSize()))
-            return false;
+    Q_D(const QAudioSource);
 
-        return true;
-    }
+    QString text;
 
-    return false;
+    if(d->audioDeviceControl)
+        text = d->audioDeviceControl->description(index);
+
+    return text;
 }
 
 /*!
-    Returns a list of available codecs.
-
-    For example "audio/pcm" for Linear PCM audio data.
-
-    For additional codec values
-
-    \sa QAudioDeviceInfo::supportedCodecs()
+    Returns the icon for the audio input device at \a index.
 */
 
-QStringList QAudioSource::supportedCodecs() const
+QIcon QAudioSource::icon(int index) const
 {
-    QStringList list;
-    if(d_func()->audioEncoderControl)
-        list << d_func()->audioEncoderControl->supportedAudioCodecs();
+    Q_D(const QAudioSource);
 
-    return list;
+    if(d->audioDeviceControl)
+        return d->audioDeviceControl->icon(index);
+
+    return QIcon();
 }
 
 /*!
-    Returns a list of available frequencies.
-
-    Frequency is in Hertz.
-
-    For example 8000,11025,22100,44100
+    Returns the default audio input devices index.
 */
 
-QList<int> QAudioSource::supportedFrequencies() const
+int QAudioSource::defaultDevice() const
 {
-    QList<int> list;
-    if(d_func()->audioEncoderControl)
-        list << d_func()->audioEncoderControl->supportedFrequencies();
+    Q_D(const QAudioSource);
 
-    return list;
+    if(d->audioDeviceControl)
+        return d->audioDeviceControl->defaultDevice();
+
+    return 0;
 }
 
 /*!
-    Returns a list of available channels.
-
-    This is typically 1 for mono, 2 for stereo.
+    Returns the index of the currently selected audio input device.
 */
 
-QList<int> QAudioSource::supportedChannels() const
+int QAudioSource::selectedDevice() const
 {
-    QList<int> list;
-    if(d_func()->audioEncoderControl)
-        list << d_func()->audioEncoderControl->supportedChannelCounts();
+    Q_D(const QAudioSource);
 
-    return list;
+    if(d->audioDeviceControl)
+        return d->audioDeviceControl->selectedDevice();
+
+    return 0;
 }
 
 /*!
-    Returns a list of available sample sizes.
-
-    Sample Size is the number of bits used for a sample.
-    This is typically 8 or 16.
+    Sets the audio input device to \a index.
 */
 
-QList<int> QAudioSource::supportedSampleSizes() const
+void QAudioSource::setSelectedDevice(int index)
 {
-    QList<int> list;
-    if(d_func()->audioEncoderControl)
-        list << d_func()->audioEncoderControl->supportedSampleSizes();
+    Q_D(const QAudioSource);
 
-    return list;
+    if(d->audioDeviceControl)
+        d->audioDeviceControl->setSelectedDevice(index);
 }
+
+/*!
+    \fn QAudioSource::selectedDeviceChanged(int index)
+
+    Signal emitted when selected audio device changes to \a index.
+*/
+
+/*!
+    \fn QAudioSource::selectedDeviceChanged(const QString &deviceName)
+
+    Signal emitted when selected audio device changes to \a deviceName.
+*/
+
+/*!
+    \fn QAudioSource::devicesChanged()
+
+    Signal is emitted when the available audio input devices has changed.
+*/
+
+
 

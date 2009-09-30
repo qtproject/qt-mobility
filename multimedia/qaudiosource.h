@@ -66,14 +66,22 @@ public:
 
     bool isValid() const;
 
-    QAudioFormat format() const;
-    void setFormat(const QAudioFormat &format);
-    bool isFormatSupported(const QAudioFormat &format) const;
+    int deviceCount() const;
 
-    QStringList supportedCodecs() const;
-    QList<int> supportedFrequencies() const;
-    QList<int> supportedChannels() const;
-    QList<int> supportedSampleSizes() const;
+    QString name(int index) const;
+    QString description(int index) const;
+    QIcon icon(int index) const;
+
+    int defaultDevice() const;
+    int selectedDevice() const;
+
+public Q_SLOTS:
+    void setSelectedDevice(int index);
+
+Q_SIGNALS:
+    void selectedDeviceChanged(int index);
+    void selectedDeviceChanged(const QString &deviceName);
+    void devicesChanged();
 
 private:
     Q_DECLARE_PRIVATE(QAudioSource)
