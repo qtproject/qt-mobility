@@ -95,6 +95,7 @@ public:
     bool _complex; // true iff operator is Or and left or right terms contain non-null containerFilters
 
     bool containerFiltersAreEmpty(); // returns true IFF above QSets are empty
+    bool nonContainerFiltersAreEmpty();
     QMessageFilter containerFiltersPart(); // returns a filter comprised of just the container filters
     QMessageFilter nonContainerFiltersPart(); // returns a filter comprised of everything but the container filters
 
