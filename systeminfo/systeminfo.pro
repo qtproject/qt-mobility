@@ -78,5 +78,18 @@ unix: {
 }
 
     symbian::
+    {
+        QT+= network
+        INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
+        SOURCES += qsysteminfo_s60.cpp
+        HEADERS += qsysteminfo_s60_p.h
+        LIBS += -lprofileengine \
+            -letel3rdparty \
+            -lsysutil \
+            -lefsrv \
+            -lfeatdiscovery
+        TARGET.CAPABILITY = All -TCB -AllFiles -DRM
+        TARGET.EPOCALLOWDLLDATA = 1
+    }
 }
 include(../common.pri)
