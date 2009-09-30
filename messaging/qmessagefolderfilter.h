@@ -44,7 +44,7 @@ class QMessageFolderFilterPrivate;
 
 class Q_MESSAGING_EXPORT QMessageFolderFilter
 {
-    Q_DECLARE_PRIVATE(QMessageFolderFilter)
+    friend class QMessageFolderFilterPrivate;
 
 public:
     QMessageFolderFilter();

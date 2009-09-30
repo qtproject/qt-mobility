@@ -39,8 +39,9 @@
 
 class QMessageAccountPrivate;
 
-class Q_MESSAGING_EXPORT QMessageAccount {
-    Q_DECLARE_PRIVATE(QMessageAccount)
+class Q_MESSAGING_EXPORT QMessageAccount
+{
+    friend class QMessageAccountPrivate;
 
 public:
     QMessageAccount();

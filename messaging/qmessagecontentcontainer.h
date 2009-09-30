@@ -50,7 +50,7 @@ class QMessageContentContainerPrivate;
 
 class Q_MESSAGING_EXPORT QMessageContentContainer
 {
-    Q_DECLARE_PRIVATE(QMessageContentContainer)
+    friend class QMessageContentContainerPrivate;
 
 public:
     QMessageContentContainer();
