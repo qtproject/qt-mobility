@@ -1444,7 +1444,9 @@ IMessage* MapiFolder::createMessage(const QMessage& source, const MapiSessionPtr
 
 MapiStore::MapiStore()
     :_valid(false),
-     _store(0)
+     _store(0),
+     _cachedMode(true),
+     _adviseConnection(0)
 {
 }
 
@@ -1463,14 +1465,17 @@ MapiStore::MapiStore(const MapiSessionPtr &session, LPMDB store, const MapiRecor
      _key(key),
      _entryId(entryId),
      _name(name),
-     _cachedMode(cachedMode)
+     _cachedMode(cachedMode),
+     _adviseConnection(0)
 {
 }
 
 MapiStore::~MapiStore()
 {
+    if (_adviseConnection != 0) {
+        _store->Unadvise(_adviseConnection);
+    }
     mapiRelease(_store);
-    _store = 0;
     _valid = false;
 }
 
@@ -1815,6 +1820,20 @@ MapiFolderPtr MapiStore::openFolder(QMessageStore::ErrorCode *lastError, const M
     return result;
 }
 
+bool MapiStore::setAdviseSink(ULONG mask, IMAPIAdviseSink *sink)
+{
+    if (_adviseConnection != 0) {
+        _store->Unadvise(_adviseConnection);
+    }
+
+    HRESULT rv = _store->Advise(0, 0, mask, sink, &_adviseConnection);
+    if (HR_FAILED(rv)) {
+        qWarning() << "Unable to register for notifications from store.";
+        return false;
+    }
+
+    return true;
+}
 
 QWeakPointer<MapiSession> MapiSession::_session;
 
@@ -2917,18 +2936,10 @@ QMessageStore::NotificationFilterId MapiSession::registerNotificationFilter(QMes
 
             if (supported) {
                 AdviseSink *sink(new AdviseSink(this));
-                if (sink) {
-                    ULONG mask(fnevNewMail | fnevObjectCreated | fnevObjectCopied | fnevObjectDeleted | fnevObjectModified | fnevObjectMoved);
-                    ULONG connectionNumber;
-                    rv = store->store()->Advise(0, 0, mask, sink, &connectionNumber);
-                    if (HR_FAILED(rv)) {
-                        qWarning() << "Unable to register for notifications from store.";
-                        delete sink;
-                    } else {
-                        // sink will be deleted when the store releases it
-                    }
+                if (store->setAdviseSink(fnevNewMail | fnevObjectCreated | fnevObjectCopied | fnevObjectDeleted | fnevObjectModified | fnevObjectMoved, sink)) {
+                    // sink will be deleted when the store releases it
                 } else {
-                    qWarning() << "unable to allocate advise sink.";
+                    delete sink;
                 }
             } else {
                 qWarning() << "Store does not support notifications.";

@@ -220,12 +220,13 @@ public:
 
     MapiFolderPtr openFolder(QMessageStore::ErrorCode *lastError, const MapiEntryId& id) const;
 
+    bool setAdviseSink(ULONG mask, IMAPIAdviseSink *sink);
+
 private:
     MapiStore();
     MapiStore(const MapiSessionPtr &session, LPMDB store, const MapiRecordKey &key, const MapiEntryId &entryId, const QString &name, bool cachedMode);
 
     IMAPIFolder *openMapiFolder(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId) const;
-
 
     MapiSessionPtr _session;
     bool _valid;
@@ -234,6 +235,7 @@ private:
     MapiEntryId _entryId;
     QString _name;
     bool _cachedMode;
+    ULONG _adviseConnection;
 
     static QHash<MapiEntryId, QWeakPointer<MapiFolder> > _folderMap;
 };
