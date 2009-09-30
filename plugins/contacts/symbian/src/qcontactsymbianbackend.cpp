@@ -292,7 +292,7 @@ bool QContactSymbianEngine::hasFeature(QContactManagerInfo::ManagerFeature featu
 QString QContactSymbianEngine::synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& /*error*/) const
 {
     QContactName name = contact.detail<QContactName>();
-    QContactOrganisation org = contact.detail<QContactOrganisation>();
+    QContactOrganization org = contact.detail<QContactOrganization>();
 
     QString firstName = name.first();
     QString lastName = name.last();

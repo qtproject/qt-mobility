@@ -362,8 +362,8 @@ static void processWebpage(const QVariantList& values, QContact& ret)
 
 static void processOrganisation(const QVariantList& values, QContact& ret)
 {
-    QContactOrganisation org;
-    setIfNotEmpty(org, QContactOrganisation::FieldDisplayLabel, values[0].toString());
+    QContactOrganization org;
+    setIfNotEmpty(org, QContactOrganization::FieldDisplayLabel, values[0].toString());
 
     if (!org.isEmpty())
         ret.saveDetail(&org);
@@ -538,7 +538,7 @@ static void processQNickname(const QContactDetail& detail, QVector<CEPROPVAL>& p
 
 static void processQOrganisation(const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
-    QContactOrganisation org(detail);
+    QContactOrganization org(detail);
 
     addIfNotEmpty(PIMPR_COMPANY_NAME, org.displayLabel(), props);
 }
@@ -767,7 +767,7 @@ static void contactQ2PTransforms(QHash<QString, processContactPoomElement>& ret)
         hash.insert(QContactAnniversary::DefinitionName, processQAnniversary);
         hash.insert(QContactBirthday::DefinitionName, processQBirthday);
         hash.insert(QContactNickname::DefinitionName, processQNickname);
-        hash.insert(QContactOrganisation::DefinitionName, processQOrganisation);
+        hash.insert(QContactOrganization::DefinitionName, processQOrganisation);
         hash.insert(QContactUrl::DefinitionName, processQWebpage);
     }
     ret = hash;

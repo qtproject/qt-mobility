@@ -37,7 +37,7 @@ QList<CContactItemField *> TransformOrganisation::transformDetailL(const QContac
 	QList<CContactItemField *> fieldList;
 	
 	//cast to orgenisation
-	const QContactOrganisation &orgDetails(static_cast<const QContactOrganisation&>(detail));
+        const QContactOrganization &orgDetails(static_cast<const QContactOrganization&>(detail));
 	
 	//Company
 	TPtrC fieldTextCompany(reinterpret_cast<const TUint16*>(orgDetails.displayLabel().utf16()));
@@ -69,7 +69,7 @@ QList<CContactItemField *> TransformOrganisation::transformDetailL(const QContac
 
 QContactDetail *TransformOrganisation::transformItemField(const CContactItemField& field, const QContact &contact)
 {
-	QContactOrganisation *organisation = new QContactOrganisation(contact.detail<QContactOrganisation>());
+        QContactOrganization *organisation = new QContactOrganization(contact.detail<QContactOrganization>());
 	
 	CContactTextField* storage = field.TextStorage();
 	QString orgDetail = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
@@ -112,7 +112,7 @@ bool TransformOrganisation::supportsField(TUint32 fieldType) const
 bool TransformOrganisation::supportsDetail(QString detailName) const
 {
     bool ret = false;
-    if (detailName == QContactOrganisation::DefinitionName) {
+    if (detailName == QContactOrganization::DefinitionName) {
         ret = true;
     }
     return ret;

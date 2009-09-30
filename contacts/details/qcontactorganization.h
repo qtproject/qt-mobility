@@ -31,8 +31,8 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTORGANISATION_H
-#define QCONTACTORGANISATION_H
+#ifndef QCONTACTORGANIZATION_H
+#define QCONTACTORGANIZATION_H
 
 #include <QString>
 
@@ -41,27 +41,27 @@
 #include "qcontact.h"
 
 /* Leaf class */
-class QTCONTACTS_EXPORT QContactOrganisation : public QContactDetail
+class QTCONTACTS_EXPORT QContactOrganization : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
     const char* DefinitionName;
-    const char* FieldDisplayLabel;
+    const char* FieldName;
     const char* FieldLogo;
     const char* FieldDepartment;
     const char* FieldLocation;
     const char* FieldTitle;
 #else
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOrganisation, "Organisation")
-    Q_DECLARE_LATIN1_LITERAL(FieldDisplayLabel, "DisplayLabel");
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOrganization, "Organization")
+    Q_DECLARE_LATIN1_LITERAL(FieldName, "Name");
     Q_DECLARE_LATIN1_LITERAL(FieldLogo, "Logo");
     Q_DECLARE_LATIN1_LITERAL(FieldDepartment, "Department");
     Q_DECLARE_LATIN1_LITERAL(FieldLocation, "Location");
     Q_DECLARE_LATIN1_LITERAL(FieldTitle, "Title");
 #endif
 
-    void setDisplayLabel(const QString& displayLabel) {setValue(FieldDisplayLabel, displayLabel);}
-    QString displayLabel() const {return value(FieldDisplayLabel);}
+    void setName(const QString& name) {setValue(FieldName, name);}
+    QString name() const {return value(FieldName);}
     void setLogo(const QString& logo) {setValue(FieldLogo, logo);}
     QString logo() const {return value(FieldLogo);}
     void setDepartment(const QString& department) {setValue(FieldDepartment, department);}

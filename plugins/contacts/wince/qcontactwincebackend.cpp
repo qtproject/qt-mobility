@@ -351,7 +351,7 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(Q
     defns[QContactAnniversary::DefinitionName].fields().remove(QContactAnniversary::FieldSubType);
 
     // No logo for organisation
-    defns[QContactOrganisation::DefinitionName].fields().remove(QContactOrganisation::FieldLogo);
+    defns[QContactOrganization::DefinitionName].fields().remove(QContactOrganization::FieldLogo);
 
     // No subtypes for these details
     defns[QContactAddress::DefinitionName].fields().remove(QContactAddress::FieldSubTypes);
@@ -364,7 +364,7 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(Q
     defns[QContactBirthday::DefinitionName].fields().remove(QContactDetail::FieldContext);
     defns[QContactName::DefinitionName].fields().remove(QContactDetail::FieldContext);
     defns[QContactNickname::DefinitionName].fields().remove(QContactDetail::FieldContext);
-    defns[QContactOrganisation::DefinitionName].fields().remove(QContactDetail::FieldContext);
+    defns[QContactOrganization::DefinitionName].fields().remove(QContactDetail::FieldContext);
     defns[QContactUrl::DefinitionName].fields().remove(QContactDetail::FieldContext);
 
     // Simple phone number types (non multiple)
@@ -399,7 +399,7 @@ QString QContactWinCEEngine::synthesiseDisplayLabel(const QContact& contact, QCo
     // The POOM API (well, lack thereof) makes this a bit strange.
     // It's basically just "Last, First" or "Company", if "FileAs" is not set.
     QContactName name = contact.detail<QContactName>();
-    QContactOrganisation org = contact.detail<QContactOrganisation>();
+    QContactOrganization org = contact.detail<QContactOrganization>();
 
     // Basically we ignore any existing labels for this contact, since we're being
     // asked what the synthesized label would be
