@@ -685,25 +685,25 @@
         <keyword ref="qcontactonlineaccount.html#SubTypeXmpp-var">SubTypeXmpp</keyword>
         <section ref="qcontactonlineaccount-members.html" title="List of all members"/>
     </section>
-    <section ref="qcontactorganisation.html" title="QContactOrganisation Class Reference">
-        <keyword ref="qcontactorganisation.html">QContactOrganisation</keyword>
-        <keyword ref="qcontactorganisation.html#department">department</keyword>
-        <keyword ref="qcontactorganisation.html#displayLabel">displayLabel</keyword>
-        <keyword ref="qcontactorganisation.html#location">location</keyword>
-        <keyword ref="qcontactorganisation.html#logo">logo</keyword>
-        <keyword ref="qcontactorganisation.html#setDepartment">setDepartment</keyword>
-        <keyword ref="qcontactorganisation.html#setDisplayLabel">setDisplayLabel</keyword>
-        <keyword ref="qcontactorganisation.html#setLocation">setLocation</keyword>
-        <keyword ref="qcontactorganisation.html#setLogo">setLogo</keyword>
-        <keyword ref="qcontactorganisation.html#setTitle">setTitle</keyword>
-        <keyword ref="qcontactorganisation.html#title">title</keyword>
-        <keyword ref="qcontactorganisation.html#DefinitionName-var">DefinitionName</keyword>
-        <keyword ref="qcontactorganisation.html#FieldDepartment-var">FieldDepartment</keyword>
-        <keyword ref="qcontactorganisation.html#FieldDisplayLabel-var">FieldDisplayLabel</keyword>
-        <keyword ref="qcontactorganisation.html#FieldLocation-var">FieldLocation</keyword>
-        <keyword ref="qcontactorganisation.html#FieldLogo-var">FieldLogo</keyword>
-        <keyword ref="qcontactorganisation.html#FieldTitle-var">FieldTitle</keyword>
-        <section ref="qcontactorganisation-members.html" title="List of all members"/>
+    <section ref="qcontactorganization.html" title="QContactOrganization Class Reference">
+        <keyword ref="qcontactorganization.html">QContactOrganization</keyword>
+        <keyword ref="qcontactorganization.html#department">department</keyword>
+        <keyword ref="qcontactorganization.html#location">location</keyword>
+        <keyword ref="qcontactorganization.html#logo">logo</keyword>
+        <keyword ref="qcontactorganization.html#name">name</keyword>
+        <keyword ref="qcontactorganization.html#setDepartment">setDepartment</keyword>
+        <keyword ref="qcontactorganization.html#setLocation">setLocation</keyword>
+        <keyword ref="qcontactorganization.html#setLogo">setLogo</keyword>
+        <keyword ref="qcontactorganization.html#setName">setName</keyword>
+        <keyword ref="qcontactorganization.html#setTitle">setTitle</keyword>
+        <keyword ref="qcontactorganization.html#title">title</keyword>
+        <keyword ref="qcontactorganization.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactorganization.html#FieldDepartment-var">FieldDepartment</keyword>
+        <keyword ref="qcontactorganization.html#FieldLocation-var">FieldLocation</keyword>
+        <keyword ref="qcontactorganization.html#FieldLogo-var">FieldLogo</keyword>
+        <keyword ref="qcontactorganization.html#FieldName-var">FieldName</keyword>
+        <keyword ref="qcontactorganization.html#FieldTitle-var">FieldTitle</keyword>
+        <section ref="qcontactorganization-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactphonenumber.html" title="QContactPhoneNumber Class Reference">
         <keyword ref="qcontactphonenumber.html">QContactPhoneNumber</keyword>
