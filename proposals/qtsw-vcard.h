@@ -97,8 +97,8 @@ class QVersitReader : public QObject
     Q_OBJECT
 
 public:
-    QVersitGenerator() : QObject() {}
-    ~QVersitGenerator() {}
+    QVersitReader() : QObject() {}
+    ~QVersitReader() {}
 
     // async read / write operation
     virtual bool setDevice(QIODevice* device) = 0;
@@ -118,8 +118,8 @@ class QVersitWriter : public QObject
     Q_OBJECT
 
 public:
-    QVersitParser() : QObject() {}
-    ~QVersitParser() {}
+    QVersitWriter() : QObject() {}
+    ~QVersitWriter() {}
 
     // input:
     virtual bool setVersitDocument(const QVersitDocument& versitDocument) = 0;
