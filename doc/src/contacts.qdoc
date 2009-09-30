@@ -195,7 +195,7 @@ they may offer their own which provide similar functionality.
     \o \l{QContactName}
     \o \l{QContactNickname}
     \o \l{QContactOnlineAccount}
-    \o \l{QContactOrganisation}
+    \o \l{QContactOrganization}
     \o \l{QContactPhoneNumber}
     \o \l{QContactPresence}
     \o \l{QContactSyncTarget}
