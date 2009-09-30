@@ -51,16 +51,6 @@ QMessageContentContainer::~QMessageContentContainer()
 {
 }
 
-QMessageContentContainerId QMessageContentContainer::containerId() const
-{
-    return QMessageContentContainerId();
-}
-
-QMessageId QMessageContentContainer::messageId() const
-{
-    return QMessageId(); // stub
-}
-
 QByteArray QMessageContentContainer::contentType() const
 {
     return QByteArray(); // stub

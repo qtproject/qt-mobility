@@ -59,9 +59,6 @@ public:
 
     QMessageContentContainer& operator=(const QMessageContentContainer &other);
 
-    QMessageContentContainerId containerId() const;
-    QMessageId messageId() const;
-
     QByteArray contentType() const;
     QByteArray contentSubType() const;
     QByteArray contentCharset() const;

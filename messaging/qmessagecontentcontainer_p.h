@@ -290,7 +290,7 @@ public:
                 return _message;
             } else {
                 foreach (const QMessageContentContainer &container, _attachments) {
-                    if (container.containerId() == id) {
+                    if (container.d_ptr->_id == id) {
                         return const_cast<QMessageContentContainer*>(&container);
                     }
                 }
@@ -309,7 +309,7 @@ public:
                 return _message;
             } else {
                 foreach (const QMessageContentContainer &container, _attachments) {
-                    if (container.containerId() == id) {
+                    if (container.d_ptr->_id == id) {
                         return &container;
                     }
                 }

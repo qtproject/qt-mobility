@@ -546,9 +546,6 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(QMessageContentContainerId(bodyId.toString()), bodyId);
 
     QMessageContentContainer body(message.find(bodyId));
-    // Note: this is not true, which is somewhat counter-intuitive:
-    //QVERIFY(body.containerId().isValid());
-
     QCOMPARE(body.contentType().toLower(), bodyType.toLower());
     QCOMPARE(body.contentSubType().toLower(), bodySubType.toLower());
     QCOMPARE(body.contentCharset().toLower(), defaultCharset.toLower());

@@ -111,24 +111,6 @@ QMessageContentContainer::~QMessageContentContainer()
     delete d_ptr;
 }
 
-QMessageContentContainerId QMessageContentContainer::containerId() const
-{
-    if (d_ptr->_container == &d_ptr->_part) {
-        return convert(d_ptr->_part.location());
-    } else {
-        return QmfHelpers::bodyId(convert(d_ptr->_message)->id());
-    }
-}
-
-QMessageId QMessageContentContainer::messageId() const
-{
-    if (d_ptr->_container == &d_ptr->_part) {
-        return convert(d_ptr->_part.location().containingMessageId());
-    } else {
-        return convert(convert(d_ptr->_message)->id());
-    }
-}
-
 QByteArray QMessageContentContainer::contentType() const
 {
     if (!d_ptr->_type.isEmpty()) {
