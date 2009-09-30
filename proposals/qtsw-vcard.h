@@ -91,19 +91,14 @@ public:
     virtual void setProperties(QList<QVersitProperty>& properties) const = 0;
 };
 
-// If you set an IO device, the generator will write the versitDocument out incrementally;
-// otherwise, once it is finished, you may request the versit document directly via result().
-class QVersitGenerator : public QObject
+// reads QVersitDocument from iodevice
+class QVersitReader : public QObject
 {
     Q_OBJECT
 
 public:
-    QVersitGenerator() : QObject() {}
-    ~QVersitGenerator() {}
-
-    // input:
-    virtual bool setContacts(const QList<QContact>& contacts) = 0;
-    virtual QList<QContact> contacts() const = 0;
+    QVersitReader() : QObject() {}
+    ~QVersitReader() {}
 
     // async read / write operation
     virtual bool setDevice(QIODevice* device) = 0;
@@ -117,16 +112,14 @@ signals:
     void progress(bool finished);
 };
 
-// If you set an IO device, the parser will read the versitDocument from the device incrementally;
-// otherwise, it will use the versit document set specifically via the input mutator.
-// Once it is finished, you may request the versit document directly via result().
-class QVersitParser : public QObject
+// writes QVersitDocument to iodevice
+class QVersitWriter : public QObject
 {
     Q_OBJECT
 
 public:
-    QVersitParser() : QObject() {}
-    ~QVersitParser() {}
+    QVersitWriter() : QObject() {}
+    ~QVersitWriter() {}
 
     // input:
     virtual bool setVersitDocument(const QVersitDocument& versitDocument) = 0;
@@ -137,9 +130,86 @@ public:
     virtual QIODevice* device() const = 0;
     virtual bool start() = 0;
 
-    // output:
-    virtual QList<QContact> result() const = 0;
-
 signals:
     void progress(bool finished);
+};
+
+// Generates a list of contacts from a QVersitDocument
+class QVersitContactGenerator
+{
+public:
+    QVersitContactGenerator() {}
+    ~QVersitContactGenerator() {}
+
+    enum Error {
+        // ...
+    };
+
+    Error error() const;
+
+    QList<QContact> generateContacts(const QVersitDocument& versitDocument);
+};
+
+// Converts a list of contacts to a QVersitDocument
+class QVersitContactConverter
+{
+public:
+    QVersitContactConverter() {}
+    ~QVersitContactConverter() {}
+
+    enum VersitType {
+        VCard21 = 0,
+        VCard30,
+        VCardDav,
+        VCalendar10,
+        ICalendar20
+        // ... etc.
+    };
+
+    enum BinaryEncoding {
+        // whatever values required here.
+        Base64 = 0,
+        Uucode,
+    };
+
+    enum CharacterEncoding {
+        // whatever values required here.
+        Latin1 = 0,
+        Utf8,
+        Utf16,
+        Utf32
+    };
+
+    enum ImageFormat {
+        // whatever values required here.
+        Jpeg = 0,
+        Bitmap,
+        Gif,
+        Png,
+        Svg
+    };
+
+    // knobs that affect behaviour of the converter
+    void setVersitType(VersitType type);
+    void setBinaryEnconding(BinaryEncoding encoding);
+    void setCharacterEncoding(CharacterEncoding encoding);
+    void setImageFormat(ImageFormat format);
+
+    // accessors for those knobs
+    VersitType versitType() const;
+    BinaryEncoding binaryEncoding() const;
+    CharacterEncoding characterEncoding() const;
+    ImageFormat imageFormat() const;
+
+    // blob provider (eg, image detail value -> QPixmap in a QVariant)
+    virtual QVariant loadBlob(const QContactDetail& detail, const QString& fieldName);
+
+    enum Error {
+        // ...
+    };
+
+    Error error() const;
+
+    // convert the list of contacts into a versit document.
+    QVersitDocument convertContacts(const QList<QContact>& contacts);
 };
