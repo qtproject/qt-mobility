@@ -293,7 +293,21 @@ private:
     void addRecipients(LPMESSAGE message, const QMessageAddressList& addressList, unsigned long mapiAddressType);
     void addAttachment(LPMESSAGE message, const QMessageContentContainer& attachmentContainer);
 
-    static ULONG notify(void *context, ULONG notificationCount, NOTIFICATION *notifications);
+    class AdviseSink : public IMAPIAdviseSink
+    {
+        MapiSession *_session;
+        LONG _refCount;
+
+    public:
+        AdviseSink(MapiSession *session) : _session(session), _refCount(0) {}
+
+        STDMETHOD(QueryInterface)(REFIID riid, LPVOID FAR* ppvObj);
+        STDMETHOD_(ULONG, AddRef)();
+        STDMETHOD_(ULONG, Release)();
+
+        STDMETHOD_(ULONG, OnNotify)(ULONG cNotification, LPNOTIFICATION lpNotifications);
+    };
+
     void notify(ULONG notificationCount, NOTIFICATION *notifications);
 
 private:

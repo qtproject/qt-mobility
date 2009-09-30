@@ -2860,10 +2860,36 @@ bool MapiSession::showForm(IMessage* message, IMAPIFolder* folder, LPMDB store)
     return true;
 }
 
-ULONG MapiSession::notify(void *context, ULONG notificationCount, NOTIFICATION *notifications)
+HRESULT MapiSession::AdviseSink::QueryInterface(REFIID id, LPVOID FAR* o)
 {
-    reinterpret_cast<MapiSession*>(context)->notify(notificationCount, notifications);
-    return S_OK;
+    if (id == IID_IUnknown) {
+        *o = this;
+        AddRef();
+        return S_OK;
+    }
+
+    return E_NOINTERFACE;
+}
+
+ULONG MapiSession::AdviseSink::AddRef()
+{
+    return InterlockedIncrement(&_refCount);
+}
+
+ULONG MapiSession::AdviseSink::Release()
+{
+    ULONG result = InterlockedDecrement(&_refCount);
+    if (result == 0) {
+        delete this;
+    }
+
+    return result;
+}
+
+ULONG MapiSession::AdviseSink::OnNotify(ULONG notificationCount, LPNOTIFICATION notifications)
+{
+    _session->notify(notificationCount, notifications);
+    return 0;
 }
 
 void MapiSession::notify(ULONG notificationCount, NOTIFICATION *notifications)
@@ -2896,22 +2922,17 @@ QMessageStore::NotificationFilterId MapiSession::registerNotificationFilter(QMes
             }
 
             if (supported) {
-                IMAPIAdviseSink *sink(0);
-                ULONG (*callback)(void *, ULONG, NOTIFICATION*) = &MapiSession::notify;
-                HrAllocAdviseSink(reinterpret_cast<LPNOTIFCALLBACK>(callback), this, &sink);
+                AdviseSink *sink(new AdviseSink(this));
                 if (sink) {
-                    IMAPIAdviseSink *wrappedSink(0);
-                    HrThisThreadAdviseSink(sink, &wrappedSink);
-                    mapiRelease(sink);
-
                     ULONG mask(fnevNewMail | fnevObjectCreated | fnevObjectCopied | fnevObjectDeleted | fnevObjectModified | fnevObjectMoved);
                     ULONG connectionNumber;
-                    rv = store->store()->Advise(0, 0, mask, wrappedSink, &connectionNumber);
+                    rv = store->store()->Advise(0, 0, mask, sink, &connectionNumber);
                     if (HR_FAILED(rv)) {
                         qWarning() << "Unable to register for notifications from store.";
+                        delete sink;
+                    } else {
+                        // sink will be deleted when the store releases it
                     }
-
-                    mapiRelease(wrappedSink);
                 } else {
                     qWarning() << "unable to allocate advise sink.";
                 }
