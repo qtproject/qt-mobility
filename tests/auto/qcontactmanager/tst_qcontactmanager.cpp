@@ -1567,7 +1567,7 @@ void tst_QContactManager::nameSynthesis()
     QContact c;
 
     QContactName name, name2;
-    QContactOrganisation org, org2;
+    QContactOrganization org, org2;
 
     name.setPrefix(prefix);
     name.setFirst(first);
@@ -1581,8 +1581,8 @@ void tst_QContactManager::nameSynthesis()
     name2.setLast(secondlast);
     name2.setSuffix(secondsuffix);
 
-    org.setDisplayLabel(company);
-    org2.setDisplayLabel(secondcompany);
+    org.setName(company);
+    org2.setName(secondcompany);
 
     if (addname)
         c.saveDetail(&name);

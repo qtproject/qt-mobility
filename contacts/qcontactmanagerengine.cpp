@@ -328,11 +328,11 @@ QString QContactManagerEngine::synthesiseDisplayLabel(const QContact& contact, Q
     }
 
     /* Well, we had no non empty names. if we have orgs, fall back to those */
-    QList<QContactDetail> allOrgs = contact.details(QContactOrganisation::DefinitionName);
+    QList<QContactDetail> allOrgs = contact.details(QContactOrganization::DefinitionName);
     for (int i=0; i < allOrgs.size(); i++) {
-        const QContactOrganisation& org = allOrgs.at(i);
-        if (!org.displayLabel().isEmpty()) {
-            return org.displayLabel();
+        const QContactOrganization& org = allOrgs.at(i);
+        if (!org.name().isEmpty()) {
+            return org.name();
         }
     }
 
@@ -464,12 +464,12 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setName(QContactOrganisation::DefinitionName);
-    fields.insert(QContactOrganisation::FieldLogo, f);
-    fields.insert(QContactOrganisation::FieldDisplayLabel, f);
-    fields.insert(QContactOrganisation::FieldLocation, f);
-    fields.insert(QContactOrganisation::FieldDepartment, f);
-    fields.insert(QContactOrganisation::FieldTitle, f);
+    d.setName(QContactOrganization::DefinitionName);
+    fields.insert(QContactOrganization::FieldName, f);
+    fields.insert(QContactOrganization::FieldLogo, f);
+    fields.insert(QContactOrganization::FieldLocation, f);
+    fields.insert(QContactOrganization::FieldDepartment, f);
+    fields.insert(QContactOrganization::FieldTitle, f);
     f.dataType = QVariant::StringList;
     f.allowableValues = contexts;
     fields.insert(QContactDetail::FieldContext, f);

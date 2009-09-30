@@ -14,7 +14,7 @@ PUBLIC_HEADERS += \
     details/qcontactname.h \
     details/qcontactnickname.h \
     details/qcontactonlineaccount.h \
-    details/qcontactorganisation.h \
+    details/qcontactorganization.h \
     details/qcontactphonenumber.h \
     details/qcontactpresence.h \
     details/qcontactrelationship.h \

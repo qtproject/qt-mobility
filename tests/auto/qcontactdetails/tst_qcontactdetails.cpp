@@ -64,7 +64,7 @@ private slots:
     void name();
     void nickname();
     void onlineAccount();
-    void organisation();
+    void organization();
     void phoneNumber();
     void presence();
     void relationship();
@@ -556,35 +556,35 @@ void tst_QContactDetails::onlineAccount()
     QCOMPARE(c.details(QContactOnlineAccount::DefinitionName).count(), 0);
 }
 
-void tst_QContactDetails::organisation()
+void tst_QContactDetails::organization()
 {
     QContact c;
-    QContactOrganisation o1, o2;
+    QContactOrganization o1, o2;
 
     // test property set
-    o1.setDisplayLabel("organisation one");
-    QCOMPARE(o1.displayLabel(), QString("organisation one"));
-    QCOMPARE(o1.value(QContactOrganisation::FieldDisplayLabel), QString("organisation one"));
+    o1.setName("organization one");
+    QCOMPARE(o1.name(), QString("organization one"));
+    QCOMPARE(o1.value(QContactOrganization::FieldName), QString("organization one"));
 
     // test property add
     QVERIFY(c.saveDetail(&o1));
-    QCOMPARE(c.details(QContactOrganisation::DefinitionName).count(), 1);
-    QCOMPARE(QContactOrganisation(c.details(QContactOrganisation::DefinitionName).value(0)).displayLabel(), o1.displayLabel());
+    QCOMPARE(c.details(QContactOrganization::DefinitionName).count(), 1);
+    QCOMPARE(QContactOrganization(c.details(QContactOrganization::DefinitionName).value(0)).name(), o1.name());
 
     // test property update
-    o1.setDisplayLabel("organisation two");
+    o1.setName("organization two");
     QVERIFY(c.saveDetail(&o1));
-    QCOMPARE(c.details(QContactOrganisation::DefinitionName).value(0).value(QContactOrganisation::FieldDisplayLabel), QString("organisation two"));
+    QCOMPARE(c.details(QContactOrganization::DefinitionName).value(0).value(QContactOrganization::FieldName), QString("organization two"));
 
     // test property remove
     QVERIFY(c.removeDetail(&o1));
-    QCOMPARE(c.details(QContactOrganisation::DefinitionName).count(), 0);
+    QCOMPARE(c.details(QContactOrganization::DefinitionName).count(), 0);
     QVERIFY(c.saveDetail(&o2));
-    QCOMPARE(c.details(QContactOrganisation::DefinitionName).count(), 1);
+    QCOMPARE(c.details(QContactOrganization::DefinitionName).count(), 1);
     QVERIFY(c.removeDetail(&o2));
-    QCOMPARE(c.details(QContactOrganisation::DefinitionName).count(), 0);
+    QCOMPARE(c.details(QContactOrganization::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&o2) == false);
-    QCOMPARE(c.details(QContactOrganisation::DefinitionName).count(), 0);
+    QCOMPARE(c.details(QContactOrganization::DefinitionName).count(), 0);
 }
 
 void tst_QContactDetails::phoneNumber()

@@ -784,11 +784,11 @@ void TestTransformContactData::validateTransformOrganisation(TPtrC16 companyFiel
     QVERIFY(transformOrganisation->supportsField(KUidContactFieldCompanyName.iUid));
     QVERIFY(transformOrganisation->supportsField(KUidContactFieldDepartmentName.iUid));
     QVERIFY(transformOrganisation->supportsField(KUidContactFieldJobTitle.iUid));
-    QVERIFY(transformOrganisation->supportsDetail(QContactOrganisation::DefinitionName));
+    QVERIFY(transformOrganisation->supportsDetail(QContactOrganization::DefinitionName));
     
     validateContexts(transformOrganisation);
     
-    QContactOrganisation organisation;
+    QContactOrganization organisation;
     organisation.setDisplayLabel(companyDetail);
     organisation.setDepartment(departmentDetail);
     organisation.setTitle(jobtitleDetail);
@@ -808,7 +808,7 @@ void TestTransformContactData::validateTransformOrganisation(TPtrC16 companyFiel
     newField->TextStorage()->SetTextL(companyField);
     QContact contact;
     QContactDetail* contactDetail = transformOrganisation->transformItemField(*newField, contact);
-    const QContactOrganisation* organisationInfo1(static_cast<const QContactOrganisation*>(contactDetail));
+    const QContactOrganization* organisationInfo1(static_cast<const QContactOrganization*>(contactDetail));
     QCOMPARE(organisationInfo1->displayLabel(), companyDetail);
     delete contactDetail;
     contactDetail = 0;
@@ -818,7 +818,7 @@ void TestTransformContactData::validateTransformOrganisation(TPtrC16 companyFiel
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldDepartmentName);
     newField->TextStorage()->SetTextL(departmentField);
     contactDetail = transformOrganisation->transformItemField(*newField, contact);
-    const QContactOrganisation* organisationInfo2(static_cast<const QContactOrganisation*>(contactDetail));
+    const QContactOrganization* organisationInfo2(static_cast<const QContactOrganization*>(contactDetail));
     QCOMPARE(organisationInfo2->department(), departmentDetail);
     delete contactDetail;
     contactDetail = 0;
@@ -828,7 +828,7 @@ void TestTransformContactData::validateTransformOrganisation(TPtrC16 companyFiel
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldJobTitle);
     newField->TextStorage()->SetTextL(jobtitleField);
     contactDetail = transformOrganisation->transformItemField(*newField, contact);
-    const QContactOrganisation* organisationInfo3(static_cast<const QContactOrganisation*>(contactDetail));
+    const QContactOrganization* organisationInfo3(static_cast<const QContactOrganization*>(contactDetail));
     QCOMPARE(organisationInfo3->title(), jobtitleDetail);
     delete contactDetail;
     contactDetail = 0;
