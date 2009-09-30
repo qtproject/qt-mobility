@@ -321,6 +321,51 @@ void QNetworkConfigurationManagerPrivate::deleteConfiguration(QString& iap_id)
 }
 
 
+uint32_t QNetworkConfigurationManagerPrivate::getNetworkAttrs(bool is_iap_id,
+							    QString& iap_id,
+							    QString& iap_type,
+							    QString security_method)
+{
+    guint network_attr = 0;
+    dbus_uint32_t cap = 0;
+
+    if (iap_type == "WLAN_INFRA")
+	cap |= WLANCOND_INFRA;
+    else if (iap_type == "WLAN_ADHOC")
+	cap |= WLANCOND_ADHOC;
+
+    if (security_method.isEmpty() && (cap & (WLANCOND_INFRA | WLANCOND_ADHOC))) {
+	Maemo::IAPConf saved_ap(iap_id);
+	security_method = saved_ap.value("wlan_security").toString();
+    }
+
+    if (!security_method.isEmpty()) {
+	if (security_method == "WEP")
+	    cap |= WLANCOND_WEP;
+	else if (security_method == "WPA_PSK")
+	    cap |= WLANCOND_WPA_PSK;
+	else if (security_method == "WPA_EAP")
+	    cap |= WLANCOND_WPA_EAP;
+	else if (security_method == "NONE")
+	    cap |= WLANCOND_OPEN;
+
+	if (cap & (WLANCOND_WPA_PSK | WLANCOND_WPA_EAP)) {
+	    Maemo::IAPConf saved_iap(iap_id);
+	    bool wpa2_only = saved_iap.value("EAP_wpa2_only_mode").toBool();
+	    if (wpa2_only) {
+		cap |= WLANCOND_WPA2;
+	    }
+	}
+    }
+
+    cap2nwattr(cap, &network_attr);
+    if (is_iap_id)
+	network_attr |= ICD_NW_ATTR_IAPNAME;
+
+    return (uint32_t)network_attr;
+}
+
+
 void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
 {
     const QRegExp wlan = QRegExp("WLAN.*");
@@ -336,6 +381,9 @@ void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
 	    cpPriv->isValid = true;
 	    cpPriv->id = iap_id;
 	    cpPriv->iap_type = iap_type;
+	    cpPriv->network_attrs = getNetworkAttrs(true, iap_id, iap_type, QString());
+	    cpPriv->service_id = saved_iap.value("service_id").toString();
+	    cpPriv->service_type = saved_iap.value("service_type").toString();
 	    if (iap_type.contains(wlan)) {
 		QByteArray ssid = saved_iap.value("wlan_ssid").toByteArray();
 		if (ssid.isEmpty()) {
@@ -371,6 +419,10 @@ void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
 	    Maemo::IAPConf changed_iap(iap_id);
 	    QString iap_type = changed_iap.value("type").toString();
 	    bool update_needed = false; /* if IAP type or ssid changed, we need to change the state */
+
+	    ptr->network_attrs = getNetworkAttrs(true, iap_id, iap_type, QString());
+	    ptr->service_id = changed_iap.value("service_id").toString();
+	    ptr->service_type = changed_iap.value("service_type").toString();
 
 	    if (!iap_type.isEmpty()) {
 		ptr->name = changed_iap.value("name").toString();
@@ -420,14 +472,34 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
     /* Turn on IAP monitoring */
     iapMonitor().setup(this);
 
+    if (firstUpdate) {
+	/* We create a default configuration which is a pseudo config */
+	QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
+	cpPriv->name = "UserChoice";
+	cpPriv->state = QNetworkConfiguration::Discovered;
+	cpPriv->isValid = true;
+	cpPriv->id = OSSO_IAP_ANY;
+	cpPriv->type = QNetworkConfiguration::UserChoice;
+	cpPriv->purpose = QNetworkConfiguration::Unknown;
+	cpPriv->roamingSupported = false;
+	QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);
+	userChoiceConfigurations.insert(cpPriv->id, ptr);
+    }
+
     /* We return currently configured IAPs in the first run and do the WLAN
      * scan in subsequent runs.
      */
     QList<QString> all_iaps;
     Maemo::IAPConf::getAll(all_iaps);
 
-    foreach (QString iap_id, all_iaps) {
+    foreach (QString escaped_iap_id, all_iaps) {
 	QByteArray ssid;
+
+	/* The key that is returned by getAll() needs to be unescaped */
+	gchar *unescaped_id = gconf_unescape_key(escaped_iap_id.toUtf8().data(), -1);
+	QString iap_id = QString((char *)unescaped_id);
+	g_free(unescaped_id);
+
 	Maemo::IAPConf saved_ap(iap_id);
 	bool is_temporary = saved_ap.value("temporary").toBool();
 	if (is_temporary) {
@@ -472,7 +544,10 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	    cpPriv->isValid = true;
 	    cpPriv->id = iap_id;
 	    cpPriv->network_id = ssid;
+	    cpPriv->network_attrs = getNetworkAttrs(true, iap_id, iap_type, QString());
 	    cpPriv->iap_type = iap_type;
+	    cpPriv->service_id = saved_ap.value("service_id").toString();
+	    cpPriv->service_type = saved_ap.value("service_type").toString();
 	    cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
 	    cpPriv->state = QNetworkConfiguration::Defined;
 
@@ -500,7 +575,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 				    scanned,
 				    error);
 	if (!error.isEmpty()) {
-	    qWarning() << "Network scanning failed.";
+	    qWarning() << "Network scanning failed" << error;
 	} else {
 #ifdef BEARER_MANAGEMENT_DEBUG
 	    qDebug() << "Scan returned" << scanned.size() << "networks";
@@ -519,6 +594,11 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.take(iapid);
 	    if (priv) {
 		priv->state = QNetworkConfiguration::Discovered; /* Defined is set automagically */
+		priv->network_attrs = ap.scan.network_attrs;
+		priv->service_id = ap.scan.service_id;
+		priv->service_type = ap.scan.service_type;
+		priv->service_attrs = ap.scan.service_attrs;
+
 		configurationChanged(priv.data());
 		accessPointConfigurations.insert(iapid, priv);
 #ifdef BEARER_MANAGEMENT_DEBUG
@@ -535,6 +615,11 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	    rescan_list:
 		for (int k=0; k<known_iaps.size(); ++k) {
 		    SSIDInfo *iap = known_iaps.at(k);
+
+#ifdef BEARER_MANAGEMENT_DEBUG
+		    //qDebug() << "iap" << iap->iap_id << "security" << iap->wlan_security << "scan" << network_attrs_to_security(ap.scan.network_attrs);
+#endif
+
 		    if (iap->wlan_security == 
 			network_attrs_to_security(ap.scan.network_attrs)) {
 			/* Remove IAP from the list */
@@ -548,7 +633,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 		    }
 		}
 	    } else {
-		qWarning() << "IAP" << iapid << "is missing!";
+		qWarning() << "IAP" << iapid << "is missing in configuration.";
 	    }
 
 	} else {
@@ -556,11 +641,17 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	    QByteArray scanned_ssid = ap.scan.network_id;
 	    QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
 	    QString hrs = scanned_ssid.data();
+
 	    cpPriv->name = ap.network_name.isEmpty() ? hrs : ap.network_name;
 	    cpPriv->isValid = true;
 	    cpPriv->id = scanned_ssid.data();  // Note: id is now ssid, it should be set to IAP id if the IAP is saved
 	    cpPriv->network_id = scanned_ssid;
 	    cpPriv->iap_type = ap.scan.network_type;
+	    cpPriv->network_attrs = ap.scan.network_attrs;
+	    cpPriv->service_id = ap.scan.service_id;
+	    cpPriv->service_type = ap.scan.service_type;
+	    cpPriv->service_attrs = ap.scan.service_attrs;
+
 	    cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
 	    cpPriv->state = QNetworkConfiguration::Undefined;
 
@@ -623,22 +714,12 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 
 QNetworkConfiguration QNetworkConfigurationManagerPrivate::defaultConfiguration()
 {
-    /* Here we just create a [ANY] request to icd and let the icd decide which
+    /* Here we just return [ANY] request to icd and let the icd decide which
      * IAP to connect.
      */
-    QNetworkConfigurationPrivate *d = new QNetworkConfigurationPrivate;
-    if (d) {
-	d->name = OSSO_IAP_ANY;
-	d->id = OSSO_IAP_ANY;
-	d->state = QNetworkConfiguration::Defined;
-	d->type = QNetworkConfiguration::UserChoice;
-	d->roamingSupported = false;
-	d->isValid = true;
-    }
-
     QNetworkConfiguration item;
-    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(d);
-    item.d = ptr;
+    if (userChoiceConfigurations.contains(OSSO_IAP_ANY))
+        item.d = userChoiceConfigurations.value(OSSO_IAP_ANY);
     return item;
 }
 

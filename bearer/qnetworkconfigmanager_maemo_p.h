@@ -88,6 +88,13 @@ public:
             priv->id.clear();
         }
 
+        configIdents = userChoiceConfigurations.keys();
+        foreach(const QString oldIface, configIdents) {
+            QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = userChoiceConfigurations.take(oldIface);
+            priv->isValid = false;
+            priv->id.clear();
+        }
+
 	cleanup();
     }
 
@@ -110,6 +117,8 @@ public:
     void deleteConfiguration(QString &iap_id);
     void addConfiguration(QString &iap_id);
     void configurationChanged(QNetworkConfigurationPrivate *ptr);
+    uint32_t getNetworkAttrs(bool is_iap_id, QString& iap_id,
+			     QString& iap_type, QString security_method);
 
 public slots:
     void updateConfigurations();

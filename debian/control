@@ -3,7 +3,7 @@ Priority: optional
 Maintainer: Jukka Rissanen <jukka.rissanen@nokia.com>
 Build-Depends: debhelper (>= 7.0.17), qt4-dev-tools (>= 4.5),
  libqt4-dev (>= 4.5), libgconf2-dev, icd2-dev, icd2-osso-ic-dev,
- libconninet0-dev (>= 0.18), libicd-network-wlan-dev, osso-wlan-dev
+ libconninet0-dev (>= 0.19), libicd-network-wlan-dev, osso-wlan-dev
 Standards-Version: 3.7.2
 Section: net
 
@@ -26,7 +26,7 @@ Section: net
 Architecture: any
 Depends: libbearer (= ${Source-Version}), libqt4-dev (>= 4.5.0),
  libgconf2-dev, icd2-osso-ic-dev, icd2-dev (>= 0.89), libdui-dev (>= 0.8),
- libconninet0-dev (>= 0.18), libicd-network-wlan-dev, osso-wlan-dev
+ libconninet0-dev (>= 0.19), libicd-network-wlan-dev, osso-wlan-dev
 Description: Qt network Bearer API development files
  Qt network Bearer API development files.
 

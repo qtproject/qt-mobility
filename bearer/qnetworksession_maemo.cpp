@@ -144,10 +144,7 @@ static DBusHandlerResult signal_handler(DBusConnection *,
 				    DBUS_TYPE_STRING, &network_type,
 				    DBUS_TYPE_STRING, &state,
 				    DBUS_TYPE_INVALID) == FALSE) {
-
-
 	    qWarning() << QString("Failed to parse icd status signal: %1").arg(error.message);
-
         } else {
 	    QString _iap_id(iap_id);
 	    QString _network_type(network_type);
@@ -213,7 +210,11 @@ void IcdListener::setup(QNetworkSessionPrivate *d)
 
 
 void IcdListener::icdSignalReceived(QString& iap_id,
+#ifdef BEARER_MANAGEMENT_DEBUG
 				    QString& network_type,
+#else
+				    QString&,
+#endif
 				    QString& state)
 {
     if (iap_id == OSSO_IAP_SCAN) // icd sends scan status signals which we will ignore
@@ -313,12 +314,13 @@ void QNetworkSessionPrivate::updateState(QNetworkSession::State newState)
 	if (state == QNetworkSession::Disconnected) {
 	    isActive = false;
 	    currentNetworkInterface = QString();
-	} else if (state == QNetworkSession::Connected)
+	} else if (state == QNetworkSession::Connected) {
 	    isActive = true;
 
-	if (publicConfig.d &&
-	    publicConfig.d->type == QNetworkConfiguration::UserChoice)
-	    publicConfig.d->type = QNetworkConfiguration::InternetAccessPoint;
+	    if (publicConfig.d &&
+		publicConfig.d->type == QNetworkConfiguration::UserChoice)
+		publicConfig.d->type = QNetworkConfiguration::InternetAccessPoint;
+	}
 
 	emit q->stateChanged(state);
     }
@@ -327,6 +329,7 @@ void QNetworkSessionPrivate::updateState(QNetworkSession::State newState)
 
 QString QNetworkSessionPrivate::updateIdentifier(QString &newId)
 {
+    publicConfig.d->network_attrs |= ICD_NW_ATTR_IAPNAME;
     return (publicConfig.d->id = newId);
 }
 
@@ -500,12 +503,19 @@ void QNetworkSessionPrivate::do_open()
     } else {
 	QList<Maemo::ConnectParams> params;
 	Maemo::ConnectParams param;
-	param.connect.network_type = bearerName();
-	param.connect.network_attrs = 0;
-	param.connect.network_id = QByteArray(iap.toLatin1());
+	param.connect.service_type = publicConfig.d->service_type;
+	param.connect.service_attrs = publicConfig.d->service_attrs = 0; // TODO: This should be initialized somewhere else
+	param.connect.service_id = publicConfig.d->service_id;
+	param.connect.network_type = publicConfig.d->iap_type;
+	param.connect.network_attrs = publicConfig.d->network_attrs;
+	if (publicConfig.d->network_attrs & ICD_NW_ATTR_IAPNAME)
+	    param.connect.network_id = QByteArray(iap.toLatin1());
+	else
+	    param.connect.network_id = publicConfig.d->network_id;
 	params.append(param);
+
 #ifdef BEARER_MANAGEMENT_DEBUG
-	qDebug() << "connecting to" << param.connect.network_id.data() << "type" << param.connect.network_type;
+	qDebug("connecting to %s/%s/0x%x/%s/0x%x/%s", param.connect.network_id.data(), param.connect.network_type.toAscii().constData(), param.connect.network_attrs, param.connect.service_type.toAscii().constData(), param.connect.service_attrs, param.connect.service_id.toAscii().constData());
 #endif
 	st = icd->connect(flags, params, connect_result);
     }
@@ -523,13 +533,27 @@ void QNetworkSessionPrivate::do_open()
 	    goto out;
 	}
 
-	// TODO: the returned IAP id is not the ssid and it cannot be found when doing updateConfigurations(), fix me
-	updateIdentifier(connected_iap);
+	/* Did we connect to non saved IAP? */
+	if (!(publicConfig.d->network_attrs & ICD_NW_ATTR_IAPNAME)) {
+	    updateIdentifier(connected_iap);
 
-	/* TODO:
-	 * - listen IAP gconf deletions and remove configurations if necessary
-	 * - when starting use state flag to get current online/offline status
-	 */
+	    /* User might have changed the IAP name when a new IAP was saved */
+	    Maemo::IAPConf iap_name(publicConfig.d->id);
+	    QString name = iap_name.value("name").toString();
+	    if (!name.isEmpty())
+		publicConfig.d->name = name;
+	}
+
+	if (publicConfig.d->type == QNetworkConfiguration::UserChoice) {
+	    /* For default IAP, the name must be fixed here */
+	    Maemo::IAPConf iap_name(connected_iap);
+	    publicConfig.d->id = connected_iap;
+	    QString name = iap_name.value("name").toString();
+	    if (!name.isEmpty())
+		publicConfig.d->name = name;
+	    else
+		publicConfig.d->name = connected_iap;
+	}
 
 	bearer_name = connect_result.connect.network_type;
 	if (bearer_name == "WLAN_INFRA" ||
@@ -542,8 +566,6 @@ void QNetworkSessionPrivate::do_open()
 
 	publicConfig.d->isValid = true;
 
-	Maemo::IAPConf iap_name(publicConfig.d->id);
-	publicConfig.d->name = iap_name.value("name").toString();
 	publicConfig.d->state = QNetworkConfiguration::Active;
 	publicConfig.d->type = QNetworkConfiguration::InternetAccessPoint;
 
@@ -569,7 +591,7 @@ void QNetworkSessionPrivate::do_open()
 
     } else {
 #ifdef BEARER_MANAGEMENT_DEBUG
-	qDebug() << "connect to"<< iap << "failed";
+	qDebug() << "connect to"<< iap << "failed" << st;
 #endif
 	updateState(QNetworkSession::Disconnected);
 	emit q->error(QNetworkSession::UnknownSessionError);

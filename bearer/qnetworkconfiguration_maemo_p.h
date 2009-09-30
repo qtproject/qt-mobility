@@ -80,6 +80,11 @@ public:
     /* In Maemo the id field (defined above) is the IAP id (which typically is UUID) */
     QByteArray network_id; /* typically WLAN ssid or similar */
     QString iap_type; /* is this one WLAN or GPRS */
+    uint32_t network_attrs; /* network attributes for this IAP, this is the value returned by icd and passed to it when connecting */
+
+    QString service_type;
+    QString service_id;
+    uint32_t service_attrs;
 
 private:
 
