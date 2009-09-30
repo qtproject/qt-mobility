@@ -173,8 +173,6 @@ bool QMessageContentContainer::isContentAvailable() const
 
 uint QMessageContentContainer::size() const
 {
-    applyPendingChanges();
-
     if (d_ptr->_container->hasBody()) {
         return d_ptr->_container->body().length();
     }
@@ -187,19 +185,16 @@ uint QMessageContentContainer::size() const
 
 QString QMessageContentContainer::textContent() const
 {
-    applyPendingChanges();
     return d_ptr->_container->body().data();
 }
 
 QByteArray QMessageContentContainer::content() const
 {
-    applyPendingChanges();
     return d_ptr->_container->body().data(QMailMessageBody::Decoded);
 }
 
 void QMessageContentContainer::writeTextContentTo(QTextStream& out) const
 {
-    applyPendingChanges();
     if (d_ptr->_container->hasBody()) {
         d_ptr->_container->body().toStream(out);
     }
@@ -207,7 +202,6 @@ void QMessageContentContainer::writeTextContentTo(QTextStream& out) const
 
 void QMessageContentContainer::writeContentTo(QDataStream& out) const
 {
-    applyPendingChanges();
     if (d_ptr->_container->hasBody()) {
         d_ptr->_container->body().toStream(out, QMailMessageBody::Decoded);
     }
@@ -289,7 +283,3 @@ void QMessageContentContainer::setDerivedMessage(QMessage *derived)
     d_ptr->setDerivedMessage(derived);
 }
 
-void QMessageContentContainer::applyPendingChanges() const
-{
-    d_ptr->applyPendingChanges();
-}

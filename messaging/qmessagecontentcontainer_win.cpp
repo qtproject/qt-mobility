@@ -302,6 +302,3 @@ void QMessageContentContainer::setDerivedMessage(QMessage *derived)
     d_ptr->setDerivedMessage(derived);
 }
 
-void QMessageContentContainer::applyPendingChanges() const
-{
-}

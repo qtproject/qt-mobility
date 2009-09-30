@@ -94,7 +94,6 @@ private:
 #endif
 
     void setDerivedMessage(QMessage *derived);
-    void applyPendingChanges() const;
 
     QMessageContentContainerPrivate* d_ptr;
 };
