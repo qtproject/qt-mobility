@@ -40,7 +40,7 @@ QList<CContactItemField *> TransformOrganisation::transformDetailL(const QContac
         const QContactOrganization &orgDetails(static_cast<const QContactOrganization&>(detail));
 	
 	//Company
-	TPtrC fieldTextCompany(reinterpret_cast<const TUint16*>(orgDetails.displayLabel().utf16()));
+        TPtrC fieldTextCompany(reinterpret_cast<const TUint16*>(orgDetails.name().utf16()));
 	CContactItemField* company = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldCompanyName);
 	company->TextStorage()->SetTextL(fieldTextCompany);
 	company->SetMapping(KUidContactFieldVCardMapORG);
@@ -79,7 +79,7 @@ QContactDetail *TransformOrganisation::transformItemField(const CContactItemFiel
 		//Company
 		if (field.ContentType().FieldType(i) == KUidContactFieldCompanyName)
 		{
-            organisation->setDisplayLabel(orgDetail);
+            organisation->setName(orgDetail);
 		}
 		
 		//Department
