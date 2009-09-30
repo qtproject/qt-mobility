@@ -36,6 +36,7 @@
 
 #include "playercontrols.h"
 #include "playlistmodel.h"
+#include "videowidget.h"
 
 #include <multimedia/qmediaservice.h>
 #include <multimedia/qmediaplaylist.h>
@@ -60,15 +61,12 @@ Player::Player(QWidget *parent)
             this, SLOT(statusChanged(QMediaPlayer::MediaStatus)));
     connect(player, SIGNAL(bufferStatusChanged(int)), this, SLOT(bufferingProgress(int)));
 
-    videoWidget = new QVideoWidget(player);
-
-    connect(videoWidget, SIGNAL(displayModeChanged(QVideoWidget::DisplayMode)),
-            this, SLOT(displayModeChanged(QVideoWidget::DisplayMode)));
+    videoWidget = new VideoWidget(player);
 
     playlistModel = new PlaylistModel(this);
     playlistModel->setPlaylist(playlist);
 
-    playlistView = new QTableView;
+    playlistView = new QListView;
     playlistView->setModel(playlistModel);
     playlistView->setCurrentIndex(playlistModel->index(playlist->currentPosition(), 0));
 
@@ -105,16 +103,26 @@ Player::Player(QWidget *parent)
     QPushButton *fullscreenButton = new QPushButton(tr("Fullscreen"));
     fullscreenButton->setCheckable(true);
 
-    connect(fullscreenButton, SIGNAL(clicked(bool)), this, SLOT(setFullscreen(bool)));
-    connect(this, SIGNAL(fullscreenChanged(bool)), fullscreenButton, SLOT(setChecked(bool)));
-
-    fullscreenButton->setEnabled(videoWidget != 0);
+    if (videoWidget != 0) {
+        connect(fullscreenButton, SIGNAL(clicked(bool)), videoWidget, SLOT(setFullScreen(bool)));
+        connect(videoWidget, SIGNAL(fullScreenChanged(bool)),
+                fullscreenButton, SLOT(setChecked(bool)));
+    } else {
+        fullscreenButton->setEnabled(false);
+    }
 
     QPushButton *colorButton = new QPushButton(tr("Color Options..."));
     if (videoWidget)
         connect(colorButton, SIGNAL(clicked()), this, SLOT(showColorDialog()));
     else
         colorButton->setEnabled(false);
+
+    QBoxLayout *displayLayout = new QHBoxLayout;
+    if (videoWidget)
+        displayLayout->addWidget(videoWidget, 2, Qt::AlignLeft);
+    else
+        displayLayout->addWidget(coverLabel, 2, Qt::AlignLeft);
+    displayLayout->addWidget(playlistView, 1, Qt::AlignRight);
 
     QBoxLayout *controlLayout = new QHBoxLayout;
     controlLayout->setMargin(0);
@@ -126,17 +134,7 @@ Player::Player(QWidget *parent)
     controlLayout->addWidget(colorButton);
 
     QBoxLayout *layout = new QVBoxLayout;
-    if (videoWidget) {
-        QSplitter *splitter = new QSplitter(Qt::Vertical);
-
-        splitter->addWidget(videoWidget);
-        splitter->addWidget(playlistView);
-
-        layout->addWidget(splitter);
-    } else {
-        layout->addWidget(coverLabel, 0, Qt::AlignCenter);
-        layout->addWidget(playlistView);
-    }
+    layout->addLayout(displayLayout);
     layout->addWidget(slider);
     layout->addLayout(controlLayout);
 
@@ -266,17 +264,6 @@ void Player::setStatusInfo(const QString &info)
         setWindowTitle(QString("%1 | %2").arg(trackInfo).arg(statusInfo));
     else
         setWindowTitle(trackInfo);
-}
-
-void Player::setFullscreen(bool fullscreen)
-{
-    videoWidget->setDisplayMode(
-            fullscreen ? QVideoWidget::FullscreenDisplay : QVideoWidget::WindowedDisplay);
-}
-
-void Player::displayModeChanged(QVideoWidget::DisplayMode mode)
-{
-    emit fullscreenChanged(mode == QVideoWidget::FullscreenDisplay);
 }
 
 void Player::showColorDialog()

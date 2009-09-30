@@ -61,7 +61,7 @@ class QMediaPlayerPrivate : public QMediaObjectPrivate
     Q_DECLARE_PUBLIC(QMediaPlayer)
 
 public:
-    QMediaPlayerPrivate(): control(0) {}
+    QMediaPlayerPrivate(): provider(0), control(0), error(QMediaPlayer::NoError), playlist(0) {}
 
     QMediaServiceProvider *provider;
     QMediaPlayerControl* control;

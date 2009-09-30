@@ -45,11 +45,7 @@ class PlaylistModel : public QAbstractItemModel
 public:
     enum Column
     {
-        Track = 0,
-        Title,
-        Album,
-        AlbumArtist,
-        ContributingArtist,
+        Title = 0,
         ColumnCount
     };
 
@@ -62,8 +58,6 @@ public:
     QModelIndex parent(const QModelIndex &child) const;
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    QVariant headerData(
-            int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
     QMediaPlaylist *playlist() const;
     void setPlaylist(QMediaPlaylist *playlist);

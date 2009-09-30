@@ -55,7 +55,7 @@ public:
     virtual void setHue(int hue) = 0;
     virtual void setSaturation(int saturation) = 0;
 
-    virtual void setDisplayMode(QVideoWidget::DisplayMode mode) = 0;
+    virtual void setFullScreen(bool fullScreen) = 0;
 
     virtual void setAspectRatio(QVideoWidget::AspectRatio ratio) = 0;
     virtual void setCustomPixelAspectRatio(const QSize &customRatio) = 0;
@@ -76,7 +76,7 @@ public:
     void setHue(int hue);
     void setSaturation(int saturation);
 
-    void setDisplayMode(QVideoWidget::DisplayMode mode);
+    void setFullScreen(bool fullScreen);
 
     void setAspectRatio(QVideoWidget::AspectRatio ratio);
     void setCustomPixelAspectRatio(const QSize &customRatio);
@@ -89,25 +89,6 @@ Q_SIGNALS:
 
 private:
     QVideoWidgetControl *m_widgetControl;
-};
-
-class QFullScreenVideoWidget : public QWidget, public QVideoWidgetBackendInterface
-{
-    Q_OBJECT
-public:
-    QFullScreenVideoWidget(QWidget *parent = 0);
-    ~QFullScreenVideoWidget();
-
-    QVideoWidget::DisplayMode displayMode() const { return m_displayMode; }
-    void setDisplayMode(QVideoWidget::DisplayMode mode);
-
-    QWidget *widget();
-
-Q_SIGNALS:
-    void displayModeChanged(QVideoWidget::DisplayMode mode);
-
-private:
-    QVideoWidget::DisplayMode m_displayMode;
 };
 
 #ifndef QT_NO_MULTIMEDIA
@@ -149,8 +130,7 @@ public:
     void setHue(int hue);
     void setSaturation(int saturation);
 
-    QVideoWidget::DisplayMode displayMode() const { return m_displayMode; }
-    void setDisplayMode(QVideoWidget::DisplayMode mode);
+    void setFullScreen(bool fullScreen);
 
     void setAspectRatio(QVideoWidget::AspectRatio ratio);
     virtual void setCustomPixelAspectRatio(const QSize &customRatio);
@@ -164,7 +144,6 @@ Q_SIGNALS:
     void contrastChanged(int contrast);
     void hueChanged(int hue);
     void saturationChanged(int saturation);
-    void displayModeChanged(QVideoWidget::DisplayMode mode);
     void aspectRatioModeChanged(QVideoWidget::AspectRatio mode);
     void customAspectRatioChanged(const QSize &ratio);
 
@@ -179,7 +158,6 @@ private:
 
     QVideoRendererControl *m_rendererControl;
     QPainterVideoSurface *m_surface;
-    QVideoWidget::DisplayMode m_displayMode;
     QVideoWidget::AspectRatio m_aspectRatioMode;
     QSize m_aspectRatio;
 };
@@ -187,7 +165,7 @@ private:
 
 class QVideoWindowControl;
 
-class QVideoWindowWidget : public QFullScreenVideoWidget
+class QVideoWindowWidget : public QWidget, public QVideoWidgetBackendInterface
 {
     Q_OBJECT
 public:
@@ -199,10 +177,12 @@ public:
     void setHue(int hue);
     void setSaturation(int saturation);
 
-    void setDisplayMode(QVideoWidget::DisplayMode mode);
+   void setFullScreen(bool fullScreen);
 
     void setAspectRatio(QVideoWidget::AspectRatio ratio);
     virtual void setCustomPixelAspectRatio(const QSize &customRatio);
+
+    QWidget *widget();
 
     QSize sizeHint() const;
 
@@ -247,9 +227,9 @@ public:
         , contrast(0)
         , hue(0)
         , saturation(0)
-        , displayMode(QVideoWidget::WindowedDisplay)
         , aspectRatio(QVideoWidget::AspectRatioAuto)
         , customPixelAspectRatio(1, 1)
+        , wasFullScreen(false)
     {
     }
 
@@ -267,9 +247,9 @@ public:
     int contrast;
     int hue;
     int saturation;
-    QVideoWidget::DisplayMode displayMode;
     QVideoWidget::AspectRatio aspectRatio;
     QSize customPixelAspectRatio;
+    bool wasFullScreen;
 
     void setCurrentBackend(QVideoWidgetBackendInterface *backend);
 
@@ -279,7 +259,6 @@ public:
     void _q_hueChanged(int hue);
     void _q_saturationChanged(int saturation);
     void _q_fullScreenChanged(bool fullscreen);
-    void _q_displayModeChanged(QVideoWidget::DisplayMode mode);
     void _q_aspectRatioModeChanged(QVideoWidget::AspectRatio mode);
     void _q_customAspectRatioChanged(const QSize &ratio);
 };

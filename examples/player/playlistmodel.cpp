@@ -81,64 +81,6 @@ QVariant PlaylistModel::data(const QModelIndex &index, int role) const
         }
 
         return value;
-        /*
-        switch (index.column()) {
-        case Track:
-            return m_playlist->itemAt(index.row()).mimeType();
-//            return m_playlist->value(index.row(), QLatin1String("WM/TrackNumber"));
-        case Title:
-            {
-                QVariant location = m_playlist->itemAt(index.row()).dataLocation();
-                return QFileInfo(location.toString()).fileName();
-            }
-            //return m_playlist->itemAt(index.row()).mimeType();
-//            return m_playlist->value(index.row(), QLatin1String("Title"));
-        case Album:
-            return m_playlist->itemAt(index.row()).mimeType();
-//            return m_playlist->value(index.row(), QLatin1String("WM/AlbumTitle"));
-        case AlbumArtist:
-            return m_playlist->itemAt(index.row()).mimeType();
-//            return m_playlist->value(index.row(), QLatin1String("WM/AlbumArtist"));
-        case ContributingArtist:
-            {
-            return m_playlist->itemAt(index.row()).mimeType();
-            *//*
-                QVariantList values = m_playlist->values(
-                        index.row(), QLatin1String("Author"));
-
-                if (!values.isEmpty()) {
-                    QString artists = values.first().toString();
-                    for (int i = 1; i < values.count(); ++i)
-                        artists += QLatin1String("; ") + values.at(i).toString();
-                    return artists;
-                };
-            *//*}
-            break;
-        case ColumnCount:
-            break;
-        }
-*/
-    }
-    return QVariant();
-}
-
-QVariant PlaylistModel::headerData(int section, Qt::Orientation orientation, int role) const
-{
-    if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
-        switch (section) {
-        case Track:
-            return tr("Track");
-        case Title:
-            return tr("Title");
-        case Album:
-            return tr("Album");
-        case AlbumArtist:
-            return tr("Album Artist");
-        case ContributingArtist:
-            return tr("Contributing Artist");
-        case ColumnCount:
-            break;
-        }
     }
     return QVariant();
 }

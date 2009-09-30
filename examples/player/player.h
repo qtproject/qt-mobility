@@ -41,11 +41,11 @@
 #include <multimedia/qmediaplaylist.h>
 #include <multimedia/qvideowidget.h>
 
+class QAbstractItemView;
 class QLabel;
 class QMediaPlayer;
 class QModelIndex;
 class QSlider;
-class QTableView;
 class QVideoWidget;
 
 class PlaylistModel;
@@ -73,9 +73,6 @@ private slots:
     void statusChanged(QMediaPlayer::MediaStatus status);
     void bufferingProgress(int progress);
 
-    void setFullscreen(bool fullscreen);
-    void displayModeChanged(QVideoWidget::DisplayMode mode);
-
     void showColorDialog();
 
 private:
@@ -88,7 +85,7 @@ private:
     QLabel *coverLabel;
     QSlider *slider;
     PlaylistModel *playlistModel;
-    QTableView *playlistView;
+    QAbstractItemView *playlistView;
     QDialog *colorDialog;
     QString trackInfo;
     QString statusInfo;

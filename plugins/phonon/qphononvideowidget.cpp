@@ -86,14 +86,16 @@ bool QPhononVideoWidget::isFullscreen() const
 
 void QPhononVideoWidget::setFullscreen(bool fullscreen)
 {
-    if (fullscreen != isFullscreen()) {
-        if (fullscreen)
-            m_videoWidget->enterFullScreen();
-        else
-            m_videoWidget->exitFullScreen();
-
-        emit fullscreenChanged(fullscreen);
+    if (fullscreen) {
+        m_videoWidget->enterFullScreen();
+        m_videoWidget->setWindowFlags(
+                m_videoWidget->windowFlags() & ~(Qt::Window | Qt::WindowStaysOnTopHint));
+        m_videoWidget->show();
+    } else {
+        m_videoWidget->exitFullScreen();
     }
+
+    emit fullscreenChanged(fullscreen);
 }
 
 int QPhononVideoWidget::brightness() const
