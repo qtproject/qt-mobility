@@ -363,7 +363,7 @@ static void processWebpage(const QVariantList& values, QContact& ret)
 static void processOrganisation(const QVariantList& values, QContact& ret)
 {
     QContactOrganization org;
-    setIfNotEmpty(org, QContactOrganization::FieldDisplayLabel, values[0].toString());
+    setIfNotEmpty(org, QContactOrganization::FieldName, values[0].toString());
 
     if (!org.isEmpty())
         ret.saveDetail(&org);
@@ -540,7 +540,7 @@ static void processQOrganisation(const QContactDetail& detail, QVector<CEPROPVAL
 {
     QContactOrganization org(detail);
 
-    addIfNotEmpty(PIMPR_COMPANY_NAME, org.displayLabel(), props);
+    addIfNotEmpty(PIMPR_COMPANY_NAME, org.name(), props);
 }
 
 static void processQWebpage(const QContactDetail& detail, QVector<CEPROPVAL>& props)
