@@ -78,49 +78,6 @@ public:
         _part = QMailMessagePart();
         _container = QmfHelpers::convert(_message);
     }
-
-    void clearContents()
-    {
-        _type = QByteArray("text");
-        _subType = QByteArray("plain");
-        _charset = QByteArray();
-        _name = QByteArray();
-        _content = QByteArray();
-        _textContent = QString();
-        _filename = QString();
-    }
-
-    void setContentType(const QByteArray &type, const QByteArray &subType, const QByteArray &charset)
-    {
-        clearContents();
-
-        _type = type;
-        _subType = subType;
-        _charset = charset;
-    }
-
-    void setContent(const QString &content, const QByteArray &type, const QByteArray &subType, const QByteArray &charset)
-    {
-        setContentType(type, subType, charset);
-
-        _textContent = content;
-    }
-
-    QMailMessageContentType contentType() const 
-    {
-        QMailMessageContentType ct;
-        ct.setType(_type);
-        ct.setSubType(_subType);
-
-        if (!_name.isEmpty()) {
-            ct.setName(_name);
-        }
-        if (!_charset.isEmpty()) {
-            ct.setCharset(_charset);
-        }
-
-        return ct;
-    }
 };
 
 #else
