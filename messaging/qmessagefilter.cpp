@@ -232,14 +232,6 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 */
 
 /*!
-    \fn QMessageFilter::byRecipients(const QString &value, QMessageDataComparator::EqualityComparator cmp)
-  
-    Returns a filter matching messages whose recipients include \a value, according to \a cmp.
-
-    \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
-*/
-
-/*!
     \fn QMessageFilter::byRecipients(const QString &value, QMessageDataComparator::InclusionComparator cmp)
   
     Returns a filter matching messages whose recipients include the substring \a value, 
@@ -335,24 +327,6 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
     Returns a filter matching messages whose size matches \a value, according to \a cmp.
 
     \sa QMessage::size()
-*/
-
-/*!
-    \fn QMessageFilter::byCustomField(const QString &name, const QString &value, QMessageDataComparator::EqualityComparator cmp)
-  
-    Returns a filter matching messages having a custom field with the name \a name, whose 
-    value matches \a value, according to \a cmp.
-
-    \sa QMessage::customField()
-*/
-
-/*!
-    \fn QMessageFilter::byCustomField(const QString &name, const QString &value, QMessageDataComparator::InclusionComparator cmp)
-  
-    Returns a filter matching messages having a custom field with the name \a name, whose value 
-    matches the substring \a value, according to \a cmp.
-
-    \sa QMessage::customField()
 */
 
 /*!
