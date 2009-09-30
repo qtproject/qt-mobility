@@ -35,7 +35,7 @@
 #include "qvariant.h"
 #include "qdebug.h"
 #include "winhelpers_p.h"
-#include "qmessagefolderid_p.h"
+#include "qmessageaccountid_p.h"
 
 // Not sure if this will work on WinCE
 #ifndef PR_SMTP_ADDRESS
@@ -69,16 +69,10 @@ MapiFolderIterator::MapiFolderIterator()
 {
 }
 
-MapiFolderIterator::MapiFolderIterator(MapiStorePtr store, MapiFolderPtr root)
-    :_store(store)
+MapiFolderIterator::MapiFolderIterator(MapiStorePtr store, MapiFolderPtr root, QSet<QMessage::StandardFolder> standardFoldersInclude, QSet<QMessage::StandardFolder> standardFoldersExclude)
+    :_store(store), _standardFoldersInclude(standardFoldersInclude), _standardFoldersExclude(standardFoldersExclude)
 {
     _folders.append(root);
-}
-
-MapiFolderIterator::MapiFolderIterator(MapiStorePtr store, QMessageFolderIdList ids)
-    :_store(store), 
-     _ids(ids)
-{
 }
 
 MapiFolderPtr MapiFolderIterator::next()
@@ -100,20 +94,16 @@ MapiFolderPtr MapiFolderIterator::next()
         }
         if (folder && folder->isValid()) {
             _folders.append(folder);
-            return folder;
+            QMessage::StandardFolder folderType(folder->standardFolder());
+            if ((_standardFoldersInclude.isEmpty() || _standardFoldersInclude.contains(folderType))
+                && (_standardFoldersExclude.isEmpty() || !_standardFoldersExclude.contains(folderType))) {
+                return folder;
+            } else {
+                continue;
+            }
         }
         _folders.pop_back();
         continue;
-    }
-
-    while (_store && _store->isValid() && !_ids.isEmpty()) {
-        QMessageFolderId id(_ids.takeFirst());
-        QMessageStore::ErrorCode error(QMessageStore::NoError);
-        MapiFolderPtr folderPtr(_store->findFolder(&error, QMessageFolderIdPrivate::folderRecordKey(id)));
-        if (error != QMessageStore::NoError)
-            continue;
-
-        return folderPtr;
     }
 
     return MapiFolderPtr();
@@ -123,15 +113,21 @@ MapiStoreIterator::MapiStoreIterator()
 {
 }
 
-MapiStoreIterator::MapiStoreIterator(QList<MapiStorePtr> stores)
-    :_stores(stores)
+MapiStoreIterator::MapiStoreIterator(QList<MapiStorePtr> stores, QSet<QMessageAccountId> accountsInclude, QSet<QMessageAccountId> accountsExclude)
+    :_stores(stores), _accountsInclude(accountsInclude), _accountsExclude(accountsExclude)
 {
 }
 
 MapiStorePtr MapiStoreIterator::next()
 {
-    if (!_stores.isEmpty())
-        return _stores.takeFirst();
+    while (!_stores.isEmpty()) {
+        MapiStorePtr store(_stores.takeFirst());
+        QMessageAccountId key(QMessageAccountIdPrivate::from(store->recordKey()));
+        if ((_accountsInclude.isEmpty() || _accountsInclude.contains(key))
+            && (_accountsExclude.isEmpty() || !_accountsExclude.contains(key))) {
+            return store;
+        }
+    }
 
     return MapiStorePtr();
 }
@@ -173,14 +169,12 @@ QMessageFilterPrivate* QMessageFilterPrivate::implementation(const QMessageFilte
 
 MapiFolderIterator QMessageFilterPrivate::folderIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, MapiStorePtr store)
 {
-    Q_UNUSED(filter)
-    return MapiFolderIterator(store, store->rootFolder(lastError));
+    return MapiFolderIterator(store, store->rootFolder(lastError), filter.d_ptr->_standardFoldersInclude, filter.d_ptr->_standardFoldersExclude);
 }
 
 MapiStoreIterator QMessageFilterPrivate::storeIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, MapiSessionPtr session)
 {
-    Q_UNUSED(filter)
-    return MapiStoreIterator(session->allStores(lastError));
+    return MapiStoreIterator(session->allStores(lastError), filter.d_ptr->_accountsInclude, filter.d_ptr->_accountsExclude);
 }
 
 class MapiRestriction {

@@ -42,24 +42,24 @@
 class MapiFolderIterator {
 public:
     MapiFolderIterator();
-    MapiFolderIterator(MapiStorePtr store, MapiFolderPtr root);
-    MapiFolderIterator(MapiStorePtr store, QMessageFolderIdList ids);
+    MapiFolderIterator(MapiStorePtr store, MapiFolderPtr root, QSet<QMessage::StandardFolder> standardFoldersInclude, QSet<QMessage::StandardFolder> standardFoldersExclude);
     MapiFolderPtr next();
 private:
     QList<MapiFolderPtr> _folders; 
-#ifdef QMESSAGING_OPTIONAL_FOLDER
     MapiStorePtr _store;
-    QMessageFolderIdList _ids;
-#endif
+    QSet<QMessage::StandardFolder> _standardFoldersInclude;
+    QSet<QMessage::StandardFolder> _standardFoldersExclude;
 };
 
 class MapiStoreIterator {
 public:
     MapiStoreIterator();
-    MapiStoreIterator(QList<MapiStorePtr> stores);
+    MapiStoreIterator(QList<MapiStorePtr> stores, QSet<QMessageAccountId> accountsInclude, QSet<QMessageAccountId> accountsExclude);
     MapiStorePtr next();
 private:
     QList<MapiStorePtr> _stores; 
+    QSet<QMessageAccountId> _accountsInclude;
+    QSet<QMessageAccountId> _accountsExclude;
 };
 #endif
 
