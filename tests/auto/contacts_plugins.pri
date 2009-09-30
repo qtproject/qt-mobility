@@ -11,7 +11,7 @@
 #
 symbian{
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.CAPABILITY = CAP_GENERAL_DLL
+    TARGET.CAPABILITY = ALL -TCB
 
     testplugin.sources = $${TARGET}.dll
     testplugin.path = plugins\contacts

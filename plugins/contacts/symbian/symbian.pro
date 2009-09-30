@@ -13,7 +13,7 @@ include(../../../common.pri)
 symbian: { 
 	load(data_caging_paths)
 
-	TARGET.CAPABILITY = CAP_GENERAL_DLL
+	TARGET.CAPABILITY = ALL -TCB
 	TARGET.EPOCALLOWDLLDATA = 1
   TARGET.UID3 = 0xE5E2F4B4
   
