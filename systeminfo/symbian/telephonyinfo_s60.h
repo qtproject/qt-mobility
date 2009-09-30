@@ -1,0 +1,138 @@
+/****************************************************************************
+**
+** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain
+** additional rights. These rights are described in the Nokia Qt LGPL
+** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
+** package.
+**
+** If you have questions regarding the use of this file, please
+** contact Nokia at http://qt.nokia.com/contact.
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+#ifndef DEVICEINFO_H
+#define DEVICEINFO_H
+
+#include <e32base.h>
+#include <Etel3rdParty.h>
+#include <QString>
+
+class CActiveSchedulerWait;
+
+class CTelephonyInfo : public CActive
+{
+public:
+    CTelephonyInfo(CTelephony &telephony);
+    ~CTelephonyInfo();
+
+protected:  //from CActive
+    void RunL();
+
+protected:
+    void makeRequest();
+
+protected:
+    CTelephony &m_telephony;
+    CActiveSchedulerWait *m_wait;
+};
+
+class CPhoneInfo : public CTelephonyInfo
+{
+public:
+    CPhoneInfo(CTelephony &telephony);
+
+protected:
+    void DoCancel();
+
+public:
+    QString imei() const;
+    QString manufacturer() const;
+    QString model() const;
+
+private:
+    CTelephony::TPhoneIdV1 m_phoneIdV1;
+    CTelephony::TPhoneIdV1Pckg m_phoneIdV1Pckg;
+
+    QString m_imei;
+    QString m_manufacturer;
+    QString m_model;
+};
+
+class CSubscriberInfo : public CTelephonyInfo
+{
+public:
+    CSubscriberInfo(CTelephony &telephony);
+
+protected:
+    void DoCancel();
+
+public:
+    QString imsi() const;
+
+private:
+    CTelephony::TSubscriberIdV1 m_subscriberIdV1;
+    CTelephony::TSubscriberIdV1Pckg m_subscriberIdV1Pckg;
+
+    QString m_imsi;
+};
+
+/*
+class CIndicatorInfo : public CTelephonyInfo
+{
+public:
+    CIndicatorInfo(CTelephony &telephony);
+
+protected:
+    void DoCancel();
+
+public:
+    bool isBatteryCharging() const;
+
+private:
+    CTelephony::TBatteryInfoV1Pckg m_batteryInfoV1Pckg;
+    CTelephony::TBatteryInfoV1 m_batteryInfoV1;
+};
+*/
+
+class CBatteryInfo : public CTelephonyInfo
+{
+public:
+    CBatteryInfo(CTelephony &telephony);
+
+protected:
+    void DoCancel();
+
+public:
+    int batteryLevel() const;
+    CTelephony::TBatteryStatus batteryStatus() const;
+
+private:
+    CTelephony::TBatteryInfoV1 m_batteryInfoV1;
+    CTelephony::TBatteryInfoV1Pckg m_batteryInfoV1Pckg;
+    
+    int m_batteryLevel;
+    CTelephony::TBatteryStatus m_batteryStatus;
+};
+
+#endif //DEVICEINFO_H

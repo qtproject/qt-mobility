@@ -80,9 +80,13 @@ unix: {
     symbian::
     {
         INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
+        DEPENDPATH += symbian
+        
+        SOURCES += qsysteminfo_s60.cpp \
+            telephonyinfo_s60.cpp
 
-        SOURCES += qsysteminfo_s60.cpp
-        HEADERS += qsysteminfo_s60_p.h
+        HEADERS += qsysteminfo_s60_p.h \
+            telephonyinfo_s60.h
 
         LIBS += -lprofileengine \
             -letel3rdparty \

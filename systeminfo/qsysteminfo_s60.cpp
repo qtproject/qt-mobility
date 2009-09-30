@@ -36,17 +36,6 @@
 #include <QStringList>
 
 #include <SysUtil.h>
-#include <e32const.h> 
-#include <etel3rdparty.h>
-#include <f32file.h>
-#include <FeatDiscovery.h>
-#include <e32property.h>
-
-#include <centralrepository.h>  
-#include <CenRepNotifyHandler.h>
-#include <btserversdkcrkeys.h>
-
-#include <HWRMPowerStateSDKPSKeys.h>
 
 //////// QSystemInfo
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
@@ -58,41 +47,30 @@ QSystemInfoPrivate::~QSystemInfoPrivate()
 {
 }
 
-// 2 letter ISO 639-1
 QString QSystemInfoPrivate::currentLanguage() const
 {
-    QString lang = QLocale::system().name().left(2);
-    if(lang.isEmpty() || lang == "C") {
-        lang = "en";
-    }
-    //return lang;
-    return QString();
+    return QString();   //TODO
 }
 
-// 2 letter ISO 639-1
 QStringList QSystemInfoPrivate::availableLanguages() const
 {
-    return QStringList() << currentLanguage();
+    return QStringList();   //TODO
 }
 
-// "major.minor.build" format.
 QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
 {
-    QString errorStr = "Not Available";
-    return errorStr;
+    return QString();   //TODO
 }
 
-//2 letter ISO 3166-1
 QString QSystemInfoPrivate::currentCountryCode() const
 {
-    return QLocale::system().name().mid(3,2);
+    return QString();   //TODO
 }
 
 
 bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 {
-    bool featureSupported = false;
-    return featureSupported;
+    return false;   //TODO
 }
 
 //////// QSystemNetworkInfo
@@ -107,22 +85,22 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
-    return QSystemNetworkInfo::UndefinedStatus;
+    return QSystemNetworkInfo::UndefinedStatus;     //TODO
 }
 
 int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
-    return 1;
+    return -1;   //TODO
 }
 
 int QSystemNetworkInfoPrivate::cellId()
 {
-    return -1;
+    return -1;  //TODO
 }
 
 int QSystemNetworkInfoPrivate::locationAreaCode()
 {
-    return -1;
+    return -1;  //TODO
 }
 
 // Mobile Country Code
@@ -134,32 +112,32 @@ QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 // Mobile Network Code
 QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
 {
-    return "No Network";
+    return QString();   //TODO
 }
 
 QString QSystemNetworkInfoPrivate::homeMobileCountryCode()
 {
-    return "No Network";
+    return QString();   //TODO
 }
 
 QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 {
-    return "No Network";
+    return QString();   //TODO
 }
 
 QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
-    return QString();
+    return QString();   //TODO
 }
 
 QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
 {
-    return QString();
+    return QString();   //TODO
 }
 
 QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
-    return QNetworkInterface();
+    return QNetworkInterface();     //TODO
 }
 
 //////// QSystemDisplayInfo
@@ -174,12 +152,12 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 
 int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 {
-    return -1;
+    return -1;  //TODO
 }
 
 int QSystemDisplayInfoPrivate::colorDepth(int screen)
 {
-    return -1;
+    return -1;  //TODO
 }
 
 //////// QSystemMemoryInfo
@@ -194,132 +172,90 @@ QSystemMemoryInfoPrivate::~QSystemMemoryInfoPrivate()
 
 qint64 QSystemMemoryInfoPrivate::availableDiskSpace(const QString &driveVolume)
 {
-    return 0;
+    return -1;  //TODO
 }
 
 qint64 QSystemMemoryInfoPrivate::totalDiskSpace(const QString &driveVolume)
 {
-    return 0;
+    return -1;  //TODO
 }
 
 QSystemMemoryInfo::VolumeType QSystemMemoryInfoPrivate::volumeType(const QString &driveVolume)
 {
-    return QSystemMemoryInfo::NoVolume;
+    return QSystemMemoryInfo::NoVolume; //TODO
 }
 
 QStringList QSystemMemoryInfoPrivate::listOfVolumes()
 {
-    QStringList drivesList;
-    return drivesList << QString("C");
+    return QStringList();   //TODO
 }
 
 //////// QSystemDeviceInfo
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
-        : QObject(parent),
-        iBatteryStatusObserver(NULL), iBatteryLevelObserver(NULL), iChargingStatusObserver(NULL),
-        iProfileEngine(NULL), iBluetoothMonitor(NULL), iProfileMonitor(NULL), iDeviceInfo(NULL)
+        : QObject(parent)
 {
-    TRAP(iError,
-        iDeviceInfo = CDeviceInfo::NewL();
-    )    
-    TRAP(iError,
-        iProfileEngine = ProEngFactory::NewEngineL();
-    )
-    TRAP(iError,
-        if (!iBluetoothMonitor) {
-            iBluetoothMonitor = CBluetoothMonitor::NewL(*this);
-        }
-    )
-    TRAP(iError,
-        if (!iProfileMonitor) {
-            iProfileMonitor = CProfileMonitor::NewL(*this);
-        }
-    )
-    TRAP(iError,
-        iBatteryStatusObserver = 
-            CBatteryStateObserver::NewL(*this, KPSUidHWRMPowerState, KHWRMBatteryStatus);
-        iBatteryLevelObserver = 
-            CBatteryStateObserver::NewL(*this, KPSUidHWRMPowerState, KHWRMBatteryLevel);
-        iChargingStatusObserver = 
-            CBatteryStateObserver::NewL(*this, KPSUidHWRMPowerState, KHWRMChargingStatus);
-    )
 }
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
-    delete iChargingStatusObserver;
-    delete iBatteryLevelObserver;
-    delete iBatteryStatusObserver;
-    delete iProfileMonitor;
-    delete iBluetoothMonitor;
-
-    if(iProfileEngine) {
-        iProfileEngine->Release();
-    }
-    
-    delete iDeviceInfo;
 }
 
 QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 {
-    QSystemDeviceInfo::Profile currentProfile = QSystemDeviceInfo::UnknownProfile;
-    if(iProfileEngine) {
-        MProEngProfile* activeProfile = NULL;
-        TRAP(iError, activeProfile = iProfileEngine->ActiveProfileL();)
-        
-        if (iError == KErrNone) {
-            currentProfile = static_cast<QSystemDeviceInfo::Profile>(activeProfile->ProfileName().Id());
-            activeProfile->Release();
-        }
-    }
-    return currentProfile;
+    return QSystemDeviceInfo::UnknownProfile;   //TODO
 }
 
 QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
 {
-    QSystemDeviceInfo::InputMethodFlags methods;
+    QSystemDeviceInfo::InputMethodFlags methods;    //TODO
     return methods;
 }
 
 QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 {
-    return iDeviceInfo->currentPowerState();
+    CTelephony::TBatteryStatus batteryStatus = DeviceInfo::instance()->batteryInfo()->batteryStatus();
+
+    switch (batteryStatus) {
+        case CTelephony::EPoweredByBattery:
+            return QSystemDeviceInfo::BatteryPower;
+
+        case CTelephony::EBatteryConnectedButExternallyPowered:
+        {
+            if (DeviceInfo::instance()->batteryInfo()->batteryLevel() < 100) {
+                return QSystemDeviceInfo::WallPowerChargingBattery;
+            } else {
+                return QSystemDeviceInfo::WallPower;
+            }
+            return QSystemDeviceInfo::WallPower;
+        }
+        case CTelephony::ENoBatteryConnected:
+            return QSystemDeviceInfo::WallPower;
+
+        case CTelephony::EPowerFault:
+        case CTelephony::EPowerStatusUnknown:
+        default:
+            return QSystemDeviceInfo::UnknownPower;
+    }
 }
 
 QString QSystemDeviceInfoPrivate::imei()
 {
-    CDeviceInfo* deviceInfo = NULL;
-    TRAPD(error,
-        deviceInfo = CDeviceInfo::NewL();
-    )
-    return deviceInfo->imei();
+    return DeviceInfo::instance()->phoneInfo()->imei();
 }
 
 QString QSystemDeviceInfoPrivate::imsi()
 {
-    CDeviceInfo* deviceInfo = NULL;
-    TRAPD(error,
-        deviceInfo = CDeviceInfo::NewL();
-    )
-    return deviceInfo->imsi();
+    return DeviceInfo::instance()->subscriberInfo()->imsi();
 }
 
 QString QSystemDeviceInfoPrivate::manufacturer()
 {
-    CDeviceInfo* deviceInfo = NULL;
-    TRAPD(error,
-        deviceInfo = CDeviceInfo::NewL();
-    )
-    return deviceInfo->manufacturer();
+    return DeviceInfo::instance()->phoneInfo()->manufacturer();
 }
 
 QString QSystemDeviceInfoPrivate::model()
 {
-    CDeviceInfo* deviceInfo = NULL;
-    TRAPD(error,
-        deviceInfo = CDeviceInfo::NewL();
-    )
-    return deviceInfo->model();
+    return DeviceInfo::instance()->phoneInfo()->model();
 }
 
 QString QSystemDeviceInfoPrivate::productName()
@@ -332,26 +268,22 @@ QString QSystemDeviceInfoPrivate::productName()
     return productname.split("\n").at(2);
 }
 
-bool QSystemDeviceInfoPrivate::isBatteryCharging()
-{
-    return iDeviceInfo->isBatteryCharging();
-}
-
 int QSystemDeviceInfoPrivate::batteryLevel() const
 {
-    return iDeviceInfo->batteryLevel();
+    return DeviceInfo::instance()->batteryInfo()->batteryLevel();
 }
 
 QSystemDeviceInfo::BatteryStatus QSystemDeviceInfoPrivate::batteryStatus()
 {
-    int batteryLevel = iDeviceInfo->batteryLevel();
+    //TODO: To be moved in QSystemDeviceInfo?
+    int batteryLevel = DeviceInfo::instance()->batteryInfo()->batteryLevel();
     if(batteryLevel < 4) {
         return QSystemDeviceInfo::BatteryCritical;
-    }   else if(batteryLevel < 11) {
+    }   else if (batteryLevel < 11) {
         return QSystemDeviceInfo::BatteryVeryLow;
-    }  else if(batteryLevel < 41) {
+    }  else if (batteryLevel < 41) {
         return QSystemDeviceInfo::BatteryLow;
-    }   else if(batteryLevel > 40) {
+    }   else if (batteryLevel > 40) {
         return QSystemDeviceInfo::BatteryNormal;
     }
 
@@ -360,13 +292,15 @@ QSystemDeviceInfo::BatteryStatus QSystemDeviceInfoPrivate::batteryStatus()
 
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 {
-    return QSystemDeviceInfo::SimNotAvailable;
+    return QSystemDeviceInfo::SimNotAvailable;  //TODO
 }
 
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
 {
-    return false;
+    return false;   //TODO
 }
+
+DeviceInfo *DeviceInfo::m_instance = NULL;
 
 //////// QSystemScreenSaver
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
@@ -376,391 +310,27 @@ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
 
 bool QSystemScreenSaverPrivate::setScreenSaverEnabled(bool state)
 {
-    return false;
+    return false;   //TODO
 }
 
 bool QSystemScreenSaverPrivate::setScreenBlankingEnabled(bool state)
 {
-    return false;
+    return false;   //TODO
 }
 
 bool QSystemScreenSaverPrivate::screenSaverEnabled()
 {
-    return false;
+    return false;   //TODO
 }
 
 bool QSystemScreenSaverPrivate::screenBlankingEnabled()
 {
-    return false;
+    return false;   //TODO
 }
 
 bool QSystemScreenSaverPrivate::isScreenLockOn()
 {
-    return false;
-}
-
-//////// CDeviceInfo for getting S60 data
-CDeviceInfo* CDeviceInfo::NewL()
-{
-    CDeviceInfo* self = NewLC();
-    CleanupStack::Pop(self);
-    return self;
-}
-    
-CDeviceInfo* CDeviceInfo::NewLC()
-{
-    CDeviceInfo* self = new (ELeave) CDeviceInfo();
-    CleanupStack::PushL(self);
-    self->ConstructL();
-    return self;
-}
-
-void CDeviceInfo::ConstructL()
-{   
-    CActiveScheduler::Add(this);
-    iTelephony = CTelephony::NewL();  
-    iWait = new (ELeave) CActiveSchedulerWait();
-}
-
-void CDeviceInfo::DoCancel()
-{
-    iTelephony->CancelAsync(m_requestToCancel);
-}
- 
-void CDeviceInfo::RunL()
-{
-    iWait->AsyncStop();
-}
-
-CDeviceInfo::CDeviceInfo()
-:CActive(EPriorityNormal), iBatteryInfoV1Pkg(iBatteryInfoV1),
-    iPhoneIdV1Pkg(iPhoneIdV1),
-    iSignalStrengthV1Pckg(iSignalStrengthV1),
-    iSubscriberIdV1Pckg(iSubscriberIdV1),
-    iNetworkRegistrationV1Pckg(iNetworkRegistrationV1),
-    iNetworkInfoV1Pckg(iNetworkInfoV1),
-    iIndicatorV1Pckg(iIndicatorV1)
-{
-}
-
-CDeviceInfo::~CDeviceInfo()
-{
-    Cancel();
-    delete iWait;
-    delete iTelephony;
-}
-
-QSystemDeviceInfo::PowerState CDeviceInfo::currentPowerState()
-{
-    Cancel();
-    iTelephony->GetBatteryInfo(iStatus,iBatteryInfoV1Pkg);
-    m_requestToCancel = CTelephony::EGetBatteryInfoCancel;
-    SetActive();
-
-    if (!iWait->IsStarted()) {
-        iWait->Start();
-    }
-
-    if (iBatteryInfoV1.iStatus == CTelephony::EPowerStatusUnknown) {
-        return QSystemDeviceInfo::UnknownPower;
-    } else if (iBatteryInfoV1.iStatus == CTelephony::EPoweredByBattery) {
-        return QSystemDeviceInfo::BatteryPower;
-    } else if (iBatteryInfoV1.iStatus == CTelephony::EBatteryConnectedButExternallyPowered) {
-        return QSystemDeviceInfo::WallPower;
-    } else {
-        return QSystemDeviceInfo::UnknownPower;
-    }
-}
-
-QString CDeviceInfo::imei()
-{
-    Cancel();
-    iTelephony->GetPhoneId(iStatus, iPhoneIdV1Pkg);
-    m_requestToCancel = CTelephony::EGetPhoneIdCancel;
-    SetActive();
-    
-    if (!iWait->IsStarted()) {
-        iWait->Start();
-    }
-    TBuf<CTelephony::KPhoneSerialNumberSize> imei = iPhoneIdV1.iSerialNumber;
-    return QString::fromUtf16(imei.Ptr(), imei.Length());
-}
-
-QString CDeviceInfo::imsi()
-{
-    Cancel();
-    iTelephony->GetSubscriberId(iStatus,iSubscriberIdV1Pckg);
-    m_requestToCancel = CTelephony::EGetSubscriberIdCancel;
-    SetActive();
-    
-    if (!iWait->IsStarted()) {
-        iWait->Start();
-    }
-    TBuf<CTelephony::KIMSISize> imsi = iSubscriberIdV1.iSubscriberId;
-    return QString::fromUtf16(imsi.Ptr(), imsi.Length());
-}
-
-QString CDeviceInfo::manufacturer()
-{
-    Cancel();
-    iTelephony->GetPhoneId(iStatus, iPhoneIdV1Pkg);
-    m_requestToCancel = CTelephony::EGetPhoneIdCancel;
-    SetActive();
-    
-    if (!iWait->IsStarted()) {
-        iWait->Start();
-    }
-    TBuf<CTelephony::KPhoneManufacturerIdSize> manufacturer = iPhoneIdV1.iManufacturer;
-    return QString::fromUtf16(manufacturer.Ptr(), manufacturer.Length());
-}
-
-QString CDeviceInfo::model()
-{
-    Cancel();
-    iTelephony->GetPhoneId(iStatus, iPhoneIdV1Pkg);
-    m_requestToCancel = CTelephony::EGetPhoneIdCancel;
-    SetActive();
-    
-    if (!iWait->IsStarted()) {
-        iWait->Start();
-    }
-    TBuf<CTelephony::KPhoneModelIdSize> model = iPhoneIdV1.iModel;
-    return QString::fromUtf16(model.Ptr(), model.Length());
-}
-
-bool CDeviceInfo::isBatteryCharging()
-{
-    bool chargeStatus = false;
-    
-    Cancel();
-    iTelephony->GetIndicator(iStatus,iIndicatorV1Pckg);
-    m_requestToCancel = CTelephony::EGetIndicatorCancel;
-    SetActive();
-    if ( !iWait->IsStarted() ) {
-        iWait->Start();
-    }
-    
-    if (iIndicatorV1.iIndicator & CTelephony::KIndChargerConnected) {
-        chargeStatus = true;
-    }
-    return chargeStatus;
-}
-
-TUint CDeviceInfo::batteryLevel()
-{
-    Cancel();
-    iTelephony->GetBatteryInfo(iStatus,iBatteryInfoV1Pkg);
-    m_requestToCancel = CTelephony::EGetBatteryInfoCancel;
-    SetActive();
-    
-    if (!iWait->IsStarted()) {
-        iWait->Start();
-    }
-    return iBatteryInfoV1.iChargeLevel;
-}
-
-//////// For monitoring bluetooth state
-CBluetoothMonitor::CBluetoothMonitor(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate)
-    : iSystemDeviceInfoPrivate(aSystemDeviceInfoPrivate)
-{
-}
-
-CBluetoothMonitor::~CBluetoothMonitor()
-{
-    delete iNotifyHandler;
-    delete iSession;
-}
-
-CBluetoothMonitor* CBluetoothMonitor::NewL(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate)
-{
-    CBluetoothMonitor* self = CBluetoothMonitor::NewLC(aSystemDeviceInfoPrivate);
-    CleanupStack::Pop(self);
-    return self;
-}
- 
-CBluetoothMonitor* CBluetoothMonitor::NewLC(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate)
-{
-    CBluetoothMonitor* self = new (ELeave) CBluetoothMonitor(aSystemDeviceInfoPrivate);
-    CleanupStack::PushL(self);
-    self->ConstructL();
-    return self;
-}
- 
-void CBluetoothMonitor::ConstructL()
-{
-    iSession = CRepository::NewL(KCRUidBluetoothPowerState);
-    iNotifyHandler = CCenRepNotifyHandler::NewL(*this, *iSession,
-        CCenRepNotifyHandler::EIntKey, KBTPowerState);
-    iNotifyHandler->StartListeningL();
-}
-
-
-void CBluetoothMonitor::HandleNotifyInt(TUint32 aId, TInt aNewValue)
-{
-    if (aId == KBTPowerState  && aNewValue & 0x00000001) {
-        emit iSystemDeviceInfoPrivate.bluetoothStateChanged(true);
-    } else {
-        emit iSystemDeviceInfoPrivate.bluetoothStateChanged(false);
-    }
-}
-
-//////// For monitoring current profile
-CProfileMonitor::CProfileMonitor(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate)
-    : iSystemDeviceInfoPrivate(aSystemDeviceInfoPrivate)
-{
-}
-
-CProfileMonitor::~CProfileMonitor()
-{
-    if(iProfileEngine) {
-        iProfileEngine->Release();
-    }
-    delete iNotifyHandler;
-    delete iSession;
-}
-
-CProfileMonitor* CProfileMonitor::NewL(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate)
-{
-    CProfileMonitor* self = CProfileMonitor::NewLC(aSystemDeviceInfoPrivate);
-    CleanupStack::Pop(self);
-    return self;
-}
- 
-CProfileMonitor* CProfileMonitor::NewLC(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate)
-{
-    CProfileMonitor* self = new (ELeave) CProfileMonitor(aSystemDeviceInfoPrivate);
-    CleanupStack::PushL(self);
-    self->ConstructL();
-    return self;
-}
- 
-void CProfileMonitor::ConstructL()
-{
-    iProfileEngine = ProEngFactory::NewEngineL();
-    iSession = CRepository::NewL(KCRUidProfileEngine);
-    iNotifyHandler = CCenRepNotifyHandler::NewL(*this, *iSession,
-        CCenRepNotifyHandler::EIntKey, KProEngActiveProfile);
-    iNotifyHandler->StartListeningL();
-}
-
-
-void CProfileMonitor::HandleNotifyInt(TUint32 aId, TInt aNewValue)
-{
-    QSystemDeviceInfo::Profile currentProfile = QSystemDeviceInfo::UnknownProfile;
-    if(iProfileEngine) {
-        MProEngProfile* activeProfile = NULL;
-        TRAP(iError, activeProfile = iProfileEngine->ActiveProfileL();)
-        
-        if (iError == KErrNone) {
-            currentProfile = static_cast<QSystemDeviceInfo::Profile>
-                (activeProfile->ProfileName().Id());
-            activeProfile->Release();
-        }
-    }
-    emit iSystemDeviceInfoPrivate.currentProfileChanged(currentProfile);
-}
-
-//////// For monitoring battery state
-CBatteryStateObserver::CBatteryStateObserver(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate,
-    const TUid aUid, const TUint32 aKey) : CActive(EPriorityNormal), iSystemDeviceInfoPrivate(aSystemDeviceInfoPrivate),
-    iUid( aUid ), iKey( aKey )
-{
-}
-
-CBatteryStateObserver* CBatteryStateObserver::NewL(
-    QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate, const TUid aUid, const TUint32 aKey)
-{
-    CBatteryStateObserver* self = new(ELeave) CBatteryStateObserver(aSystemDeviceInfoPrivate, aUid, aKey);
-    CleanupStack::PushL(self);
-    self->ConstructL();
-    CleanupStack::Pop(self);
-    return self;
-}
-
-void CBatteryStateObserver::ConstructL()
-{
-    User::LeaveIfError(iProperty.Attach(iUid, iKey));
-
-    CActiveScheduler::Add(this);
-    // initial subscription and process current property value
-    RunL();
-}
-
-CBatteryStateObserver::~CBatteryStateObserver()
-{
-    Cancel();
-    iProperty.Close();
-}
-
-void CBatteryStateObserver::DoCancel()
-{
-    iProperty.Cancel();
-}
-
-void CBatteryStateObserver::RunL()
-{
-    //resubscribe before processing new value to prevent missing updates
-    iProperty.Subscribe( iStatus );
-    SetActive();
- 
-    switch(iKey) {
-        case KHWRMBatteryLevel: {
-            emit iSystemDeviceInfoPrivate.batteryLevelChanged(iSystemDeviceInfoPrivate.batteryLevel());
-            
-            int level = iSystemDeviceInfoPrivate.batteryLevel();
-            if(level < 4) {
-                if (iSystemDeviceInfoPrivate.batteryStatus() != QSystemDeviceInfo::BatteryCritical) {
-                    emit iSystemDeviceInfoPrivate.batteryStatusChanged(QSystemDeviceInfo::BatteryCritical);
-                }
-            } else if(level < 11) {
-                if (iSystemDeviceInfoPrivate.batteryStatus() != QSystemDeviceInfo::BatteryVeryLow) {
-                    emit iSystemDeviceInfoPrivate.batteryStatusChanged(QSystemDeviceInfo::BatteryVeryLow);
-                }
-            } else if(level < 41) {
-                if (iSystemDeviceInfoPrivate.batteryStatus() != QSystemDeviceInfo::BatteryLow) {
-                    emit iSystemDeviceInfoPrivate.batteryStatusChanged(QSystemDeviceInfo::BatteryLow);
-                }
-            } else if(level > 40) {
-                if (iSystemDeviceInfoPrivate.batteryStatus() != QSystemDeviceInfo::BatteryNormal) {
-                    emit iSystemDeviceInfoPrivate.batteryStatusChanged(QSystemDeviceInfo::BatteryNormal);
-                }
-            }
-            break;
-        }
-        case KHWRMBatteryStatus: {
-            int level = iSystemDeviceInfoPrivate.batteryLevel();
-            if(level < 4) {
-                if (iSystemDeviceInfoPrivate.batteryStatus() != QSystemDeviceInfo::BatteryCritical) {
-                    emit iSystemDeviceInfoPrivate.batteryStatusChanged(QSystemDeviceInfo::BatteryCritical);
-                }
-            } else if(level < 11) {
-                if (iSystemDeviceInfoPrivate.batteryStatus() != QSystemDeviceInfo::BatteryVeryLow) {
-                    emit iSystemDeviceInfoPrivate.batteryStatusChanged(QSystemDeviceInfo::BatteryVeryLow);
-                }
-            } else if(level < 41) {
-                if (iSystemDeviceInfoPrivate.batteryStatus() != QSystemDeviceInfo::BatteryLow) {
-                    emit iSystemDeviceInfoPrivate.batteryStatusChanged(QSystemDeviceInfo::BatteryLow);
-                }
-            } else if(level > 40) {
-                if (iSystemDeviceInfoPrivate.batteryStatus() != QSystemDeviceInfo::BatteryNormal) {
-                    emit iSystemDeviceInfoPrivate.batteryStatusChanged(QSystemDeviceInfo::BatteryNormal);
-                }
-            }
-            break;
-        }
-        case KHWRMChargingStatus: {
-            if (iSystemDeviceInfoPrivate.isBatteryCharging()) {
-                emit iSystemDeviceInfoPrivate.powerStateChanged(QSystemDeviceInfo::WallPower);
-            } else if (!iSystemDeviceInfoPrivate.isBatteryCharging()) {
-                emit iSystemDeviceInfoPrivate.powerStateChanged(QSystemDeviceInfo::BatteryPower);
-            } else {
-                emit iSystemDeviceInfoPrivate.powerStateChanged(QSystemDeviceInfo::UnknownPower);
-            }
-            break;
-        }
-        default:
-            break;
-    }
+    return false;   //TODO
 }
 
 QT_END_NAMESPACE

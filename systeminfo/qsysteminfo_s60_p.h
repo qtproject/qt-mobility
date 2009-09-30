@@ -51,35 +51,11 @@
 #include "qsysinfoglobal.h"
 #include "qsysteminfo.h"
 
-// For S60
-#include <e32base.h>
-#include <Etel3rdParty.h>
-#include <featureinfo.h>
-#include <mproengengine.h> 
-#include <proengfactory.h>
-#include <mproengprofile.h>
-#include <MProEngProfileName.h>
-
-#include <cenrepnotifyhandler.h>
-#include <ProfileEngineSDKCRKeys.h>
-
-#include <e32property.h>
-
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class QStringList;
-class QSystemNetworkInfo;
-class QTimer;
-class QSystemInfo;
-
-class CDeviceInfo;
-class CBluetoothMonitor;
-class CProfileMonitor;
-class MCenRepNotifyHandlerCallback;
-
-class CBatteryStateObserver;
+#include "telephonyinfo_s60.h"
 
 //////// QSystemInfo
 class QSystemInfoPrivate : public QObject
@@ -87,21 +63,14 @@ class QSystemInfoPrivate : public QObject
     Q_OBJECT
 
 public:
-
     QSystemInfoPrivate(QObject *parent = 0);
     virtual ~QSystemInfoPrivate();
 
-// general
+    QString currentLanguage() const;
+    QStringList availableLanguages() const;
+    QString currentCountryCode() const;
 
-     //TODO: to Qt QLocale
-    QString currentLanguage() const; // 2 letter ISO 639-1 //signal
-    //TODO: to Qt QLocale
-    QStringList availableLanguages() const; // 2 letter ISO 639-1
-    //TODO: to Qt QLocale
-    QString currentCountryCode() const; //2 letter ISO 3166-1
-    
     QString version(QSystemInfo::Version type, const QString &parameter = QString());
-    
     bool hasFeatureSupported(QSystemInfo::Feature feature);
 
 Q_SIGNALS:
@@ -123,8 +92,8 @@ public:
     static int cellId();
     static int locationAreaCode();
 
-    static QString currentMobileCountryCode(); // Mobile Country Code
-    static QString currentMobileNetworkCode(); // Mobile Network Code
+    static QString currentMobileCountryCode();
+    static QString currentMobileNetworkCode();
 
     static QString homeMobileCountryCode();
     static QString homeMobileNetworkCode();
@@ -153,9 +122,7 @@ public:
     QSystemDisplayInfoPrivate(QObject *parent = 0);
     virtual ~QSystemDisplayInfoPrivate();
 
-     //TODO: to Qt QDesktopWidget
     static int displayBrightness(int screen);
-     //TODO: to Qt QDesktopWidget
     static int colorDepth(int screen);
 };
 
@@ -186,6 +153,8 @@ public:
     QSystemDeviceInfoPrivate(QObject *parent = 0);
     virtual ~QSystemDeviceInfoPrivate();
 
+    QSystemDeviceInfo::InputMethodFlags inputMethodType();
+
     // device
     static QString imei();
     static QString imsi();
@@ -193,20 +162,14 @@ public:
     static QString model();
     static QString productName();
 
-    bool isBatteryCharging();
     int batteryLevel() const;
-
-    QSystemDeviceInfo::InputMethodFlags inputMethodType();
-
     QSystemDeviceInfo::BatteryStatus batteryStatus();
 
-    QSystemDeviceInfo::SimStatus simStatus();
     bool isDeviceLocked();
+    QSystemDeviceInfo::SimStatus simStatus();
     QSystemDeviceInfo::Profile currentProfile();
 
     QSystemDeviceInfo::PowerState currentPowerState();
-
-    void ProfileChangedL(TUint aLevel, CTelephony::TBatteryStatus aState);
 
 Q_SIGNALS:
     void batteryLevelChanged(int);
@@ -216,20 +179,6 @@ Q_SIGNALS:
     void powerStateChanged(QSystemDeviceInfo::PowerState);
 
 private:
-    friend class CBluetoothMonitor;
-    friend class CProfileMonitor;
-    friend class CBatteryStateObserver;
-
-    CDeviceInfo* iDeviceInfo;
-    CBluetoothMonitor* iBluetoothMonitor;
-    CProfileMonitor* iProfileMonitor;
-    MProEngEngine* iProfileEngine;
-
-    CBatteryStateObserver* iBatteryStatusObserver;
-    CBatteryStateObserver* iBatteryLevelObserver;
-    CBatteryStateObserver* iChargingStatusObserver;
-
-    mutable int iError;
 };
 
 //////// QSystemScreenSaver
@@ -240,15 +189,10 @@ class QSystemScreenSaverPrivate : public QObject
 public:
     QSystemScreenSaverPrivate(QObject *parent = 0);
 
-     //TODO: to Qt QDesktopWidget
     bool screenSaverEnabled();
-     //TODO: to Qt QDesktopWidget
     bool screenBlankingEnabled();
-     //TODO: to Qt QDesktopWidget
     bool setScreenSaverEnabled(bool b);
-     //TODO: to Qt QDesktopWidget
     bool setScreenBlankingEnabled(bool b);
-     //TODO: to Qt QDesktopWidget
     bool isScreenLockOn();
 
 private:
@@ -257,123 +201,63 @@ private:
     bool screenSaverSecure;
 };
 
-//////// CDeviceInfo for getting S60 data
-class CDeviceInfo : public CActive
+class DeviceInfo
 {
-
 public:
-    static CDeviceInfo* NewL();
-    static CDeviceInfo* NewLC();
-    ~CDeviceInfo();
+    static DeviceInfo *instance()
+    {
+        if (!m_instance)
+        {
+            m_instance = new DeviceInfo;
+        }
+        return m_instance;
+    }
 
-    QSystemDeviceInfo::PowerState currentPowerState();
-    QString imei();
-    QString imsi();
-    QString manufacturer();
-    QString model();
-    bool isBatteryCharging();
-    TUint batteryLevel();
+    CPhoneInfo *phoneInfo()
+    {
+        if (!m_phoneInfo) {
+            m_phoneInfo = new CPhoneInfo(*m_telephony);
+        }
+        return m_phoneInfo;
+    }
+    
 
-protected:
-    CDeviceInfo();
-    void ConstructL();
-    void DoCancel();
-    void RunL();
+    CSubscriberInfo *subscriberInfo()
+    {
+        if (!m_subscriberInfo) {
+            m_subscriberInfo = new CSubscriberInfo(*m_telephony);
+        }
+        return m_subscriberInfo;
+    }
+
+    CBatteryInfo *batteryInfo()
+    {
+        if (!m_batteryInfo) {
+            m_batteryInfo = new CBatteryInfo(*m_telephony);
+        }
+        return m_batteryInfo;
+    }
 
 private:
-    CTelephony* iTelephony;
-    
-    CTelephony::TBatteryInfoV1Pckg iBatteryInfoV1Pkg;
-    CTelephony::TBatteryInfoV1 iBatteryInfoV1;
-    
-    CTelephony::TPhoneIdV1 iPhoneIdV1;
-    CTelephony::TPhoneIdV1Pckg iPhoneIdV1Pkg;
-        
-    CTelephony::TSignalStrengthV1Pckg iSignalStrengthV1Pckg;
-    CTelephony::TSignalStrengthV1 iSignalStrengthV1;
-    
-    CTelephony::TSubscriberIdV1Pckg iSubscriberIdV1Pckg;
-    CTelephony::TSubscriberIdV1 iSubscriberIdV1;
-    
-    CTelephony::TNetworkRegistrationV1Pckg iNetworkRegistrationV1Pckg;
-    CTelephony::TNetworkRegistrationV1 iNetworkRegistrationV1;
-    
-    CTelephony::TNetworkInfoV1Pckg iNetworkInfoV1Pckg;
-    CTelephony::TNetworkInfoV1 iNetworkInfoV1;
-    
-    CTelephony::TIndicatorV1Pckg iIndicatorV1Pckg;
-    CTelephony::TIndicatorV1 iIndicatorV1;
-    
-    CActiveSchedulerWait *iWait;
-    CTelephony::TCancellationRequest m_requestToCancel;
-};
+    DeviceInfo() : m_phoneInfo(NULL), m_subscriberInfo(NULL), m_batteryInfo(NULL)
+    {
+        m_telephony = CTelephony::NewL();
+    };
 
-//////// For monitoring bluetooth state
-class CBluetoothMonitor : public MCenRepNotifyHandlerCallback
-{
+    ~DeviceInfo()
+    {
+        delete m_batteryInfo;
+        delete m_subscriberInfo;
+        delete m_phoneInfo;
+        delete m_telephony;
+    }
 
-public:
-    static CBluetoothMonitor* NewL(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate);
-    static CBluetoothMonitor* NewLC(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate);
-    void ConstructL();
-    virtual ~CBluetoothMonitor();
+    static DeviceInfo *m_instance;
 
-private:
-        CBluetoothMonitor(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate);
-
-private: // From MCenRepNotifyHandlerCallback
-    void HandleNotifyInt(TUint32 aId, TInt aNewValue);
-
-private:
-    CCenRepNotifyHandler* iNotifyHandler;
-    CRepository* iSession;
-    QSystemDeviceInfoPrivate& iSystemDeviceInfoPrivate;
-};
-
-//////// For monitoring current profile
-class CProfileMonitor : public MCenRepNotifyHandlerCallback
-{
-
-public:
-    static CProfileMonitor* NewL(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate);
-    static CProfileMonitor* NewLC(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate);
-    void ConstructL();
-    virtual ~CProfileMonitor();
-
-private:
-        CProfileMonitor(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate);
-
-private: // From MCenRepNotifyHandlerCallback
-    void HandleNotifyInt(TUint32 aId, TInt aNewValue);
-
-private:
-    CCenRepNotifyHandler* iNotifyHandler;
-    CRepository* iSession;
-    QSystemDeviceInfoPrivate& iSystemDeviceInfoPrivate;
-    CProfileMonitor* iProfileMonitor;
-    MProEngEngine* iProfileEngine;
-    
-    mutable int iError;
-};
-
-//////// For monitoring battery state
-class CBatteryStateObserver : public CActive
-{
-
-public:
-    static CBatteryStateObserver* NewL(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate, const TUid aUid, const TUint32 aKey);
-    virtual ~CBatteryStateObserver();
-
-private:
-    CBatteryStateObserver(QSystemDeviceInfoPrivate& aSystemDeviceInfoPrivate, const TUid aUid, const TUint32 aKey);
-    void ConstructL();
-    void RunL();
-    void DoCancel();
-private:
-    RProperty iProperty;
-    QSystemDeviceInfoPrivate& iSystemDeviceInfoPrivate;
-    const TUid iUid;
-    const TUint32 iKey;
+    CTelephony *m_telephony;
+    CPhoneInfo *m_phoneInfo;
+    CSubscriberInfo *m_subscriberInfo;
+    CBatteryInfo *m_batteryInfo;
 };
 
 QT_END_NAMESPACE
@@ -383,4 +267,3 @@ QT_END_HEADER
 #endif /*QSYSTEMSINFO_S60_H*/
 
 // End of file
-
