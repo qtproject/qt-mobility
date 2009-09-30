@@ -77,3 +77,4 @@ contains(qmf_enabled,yes)|wince*|win32|symbian|maemo {
         qmessagestore \
         qmessagestorekeys \
         qmessage
+}
