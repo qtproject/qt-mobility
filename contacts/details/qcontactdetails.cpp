@@ -756,6 +756,19 @@ Q_DEFINE_LATIN1_LITERAL(QContactAvatar::SubTypeImage, "Image");
 Q_DEFINE_LATIN1_LITERAL(QContactAvatar::SubTypeVideo, "Video");
 
 /*!
+ * \variable QContactAvatar::SubTypeAudioRingtone
+ * The constant attribute value which describes the avatar as being an audio ringtone
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactAvatar::SubTypeAudioRingtone, "AudioRingtone");
+
+/*!
+ * \variable QContactAvatar::SubTypeVideoRingtone
+ * The constant attribute value which describes the avatar as being a video ringtone
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactAvatar::SubTypeVideoRingtone, "VideoRingtone");
+
+
+/*!
  * \variable QContactAvatar::SubTypeTexturedMesh
  * The constant attribute value which describes the avatar as being a textured, 3D mesh
  */

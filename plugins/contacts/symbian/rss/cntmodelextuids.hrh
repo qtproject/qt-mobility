@@ -47,6 +47,12 @@
  */
 #define KUidContactFieldIMPPValue        	0x200100E4
 
+/**
+ * Phonebook custom Field value.
+ * Video ringtone field type.
+ */
+#define KUidContactFieldVideoRingToneValue	0x200100E5
+
 #endif // CNTMODELEXTUIDS_HRH
 
 // End of File

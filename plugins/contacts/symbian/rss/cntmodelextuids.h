@@ -43,6 +43,12 @@ const TUid KUidContactFieldTopContact={KUidContactFieldTopContactValue};
  */
 const TUid KUidContactFieldIMPP={KUidContactFieldIMPPValue};
 
+/**
+ * Phonebook custom Field value.
+ * Video ringtone field type.
+ */
+const TUid KUidContactFieldVideoRingTone={KUidContactFieldVideoRingToneValue};
+
 #endif // CNTMODELEXTUIDS_HRH
 
 // End of File

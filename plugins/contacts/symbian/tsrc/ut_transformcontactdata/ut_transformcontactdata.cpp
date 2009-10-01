@@ -851,6 +851,7 @@ void TestTransformContactData::validateTransformAvatar(TPtrC16 field, QString de
     QVERIFY(transformAvatar != 0);
     QVERIFY(transformAvatar->supportsField(KUidContactFieldPicture.iUid));
     QVERIFY(transformAvatar->supportsField(KUidContactFieldRingTone.iUid));
+    QVERIFY(transformAvatar->supportsField(KUidContactFieldVideoRingTone.iUid));
     QVERIFY(transformAvatar->supportsDetail(QContactAvatar::DefinitionName));
     
     validateContexts(transformAvatar);
@@ -866,11 +867,20 @@ void TestTransformContactData::validateTransformAvatar(TPtrC16 field, QString de
 
     QContactAvatar avatar2;
     avatar2.setAvatar(detail);
-    avatar2.setSubType(QContactAvatar::SubTypeVideo);
+    avatar2.setSubType(QContactAvatar::SubTypeAudioRingtone);
     fields = transformAvatar->transformDetailL(avatar2);
     QVERIFY(fields.count() == 1);
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldRingTone));
+    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
+    
+    QContactAvatar avatar3;
+    avatar2.setAvatar(detail);
+    avatar2.setSubType(QContactAvatar::SubTypeVideoRingtone);
+    fields = transformAvatar->transformDetailL(avatar2);
+    QVERIFY(fields.count() == 1);
+    QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldVideoRingTone));
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
     
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPicture);
@@ -890,11 +900,22 @@ void TestTransformContactData::validateTransformAvatar(TPtrC16 field, QString de
     contactDetail = transformAvatar->transformItemField(*newField, contact);
     const QContactAvatar* avatarInfo2(static_cast<const QContactAvatar*>(contactDetail));
     QCOMPARE(avatarInfo2->avatar(), detail);
-    QVERIFY(avatarInfo2->subType().contains(QContactAvatar::SubTypeVideo));
+    QVERIFY(avatarInfo2->subType().contains(QContactAvatar::SubTypeAudioRingtone));
     delete contactDetail;
     contactDetail = 0;
     delete newField;
     newField = 0;
+
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldVideoRingTone);
+    newField->TextStorage()->SetTextL(field);
+    contactDetail = transformAvatar->transformItemField(*newField, contact);
+    const QContactAvatar* avatarInfo3(static_cast<const QContactAvatar*>(contactDetail));
+    QCOMPARE(avatarInfo3->avatar(), detail);
+    QVERIFY(avatarInfo3->subType().contains(QContactAvatar::SubTypeVideoRingtone));
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;    
     
     delete transformAvatar; 
 }

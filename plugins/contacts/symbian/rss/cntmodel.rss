@@ -700,6 +700,18 @@ RESOURCE ARRAY r_cntui_new_field_defns
             // NOTE: Ringing tone is not imported or exported with PC Sync
 			flags=EContactFieldFlagDisabled;
 			},
+		FIELD	// Personal Video Ringing Tone Indication
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldVideoRingToneValue;
+            // NOTE: Ringing tone is not imported or exported in vCards
+			vCardMapping = KIntContactFieldVCardMapUnknown;
+			category = EContactCategoryNone;
+			fieldName = STRING_r_cntui_new_field_defns12;
+            // NOTE: Ringing tone is not imported or exported with PC Sync
+			flags=EContactFieldFlagDisabled;
+			},
+	
      // NOTE: There is no corresponding field in the contact model default template
 		FIELD	// Location privacy indicator
 			{

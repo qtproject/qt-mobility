@@ -25,6 +25,7 @@
 #define STRING_r_cntui_new_field_defns5 "Suffix" 
 #define STRING_r_cntui_new_field_defns10 "Bulletin Board" 
 #define STRING_r_cntui_new_field_defns11 "Car phone number" 
+#define STRING_r_cntui_new_field_defns12 "video ringtone" 
 
 //d:Label text for "first name" memory entry item
 //l:list_single_graphic_pane_t1_cp2
