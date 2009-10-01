@@ -172,6 +172,27 @@ QString QMediaResource::mimeType() const
 }
 
 /*!
+    Returns the language of a media resource as an ISO 639-2 code.
+
+    This may be null if the language is unknown.
+*/
+QString QMediaResource::language() const
+{
+    return qvariant_cast<QString>(values.value(Language));
+}
+
+/*!
+    Sets the \a language of a media resource.
+*/
+void QMediaResource::setLanguage(const QString &language)
+{
+    if (!language.isNull())
+        values.insert(Language, language);
+    else
+        values.remove(Language);
+}
+
+/*!
     Returns the audio codec of a media resource.
 
     This may be null if the media resource does not contain an audio stream, or the codec is
@@ -394,26 +415,4 @@ void QMediaResource::setResolution(int width, int height)
         values.insert(Resolution, QSize(width, height));
     else
         values.remove(Resolution);
-}
-
-/*!
-    Returns the color depth in bits per pixel of a media resource.
-
-    This may be zero if the color depth is unknown, or the resource contains no pixel data (i.e. the
-    resource is an audio stream.
-*/
-int QMediaResource::bitsPerPixel() const
-{
-    return qvariant_cast<int>(values.value(BitsPerPixel));
-}
-
-/*!
-    Sets the color depth in \a bits per pixel of a media resource.
-*/
-void QMediaResource::setBitsPerPixel(int bits)
-{
-    if (bits != 0)
-        values.insert(BitsPerPixel, bits);
-    else
-        values.remove(BitsPerPixel);
 }

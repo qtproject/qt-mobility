@@ -68,6 +68,9 @@ public:
     ResourceRole role() const;
     QString mimeType() const;
 
+    QString language() const;
+    void setLanguage(const QString &language);
+
     QString audioCodec() const;
     void setAudioCodec(const QString &codec);
 
@@ -99,8 +102,6 @@ public:
     void setResolution(const QSize &resolution);
     void setResolution(int width, int height);
 
-    int bitsPerPixel() const;
-    void setBitsPerPixel(int bits);
 
 private:
     enum Property
@@ -108,6 +109,7 @@ private:
         Uri,
         MimeType,
         Role,
+        Language,
         AudioCodec,
         VideoCodec,
         Size,
@@ -118,7 +120,6 @@ private:
         Frequency,
         Channels,
         Resolution,
-        BitsPerPixel,
     };
     QMap<int, QVariant> values;
 };
