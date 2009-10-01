@@ -184,7 +184,7 @@ public:
     QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume); //returns enum
 
 private:
-    QHash<QString, QString> mountEntriesHash;
+    QMap<QString, QString> mountEntriesMap;
     void mountEntries();
 
 };

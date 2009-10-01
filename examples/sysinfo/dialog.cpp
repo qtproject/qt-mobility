@@ -142,6 +142,7 @@ void Dialog::setupStorage()
 {
     QSystemStorageInfo mi;
     ui->storageTreeWidget->clear();
+    ui->storageTreeWidget->header()->setResizeMode(QHeaderView::ResizeToContents);
 
     QStringList vols = mi.logicalDrives();
     foreach(QString volName, vols) {

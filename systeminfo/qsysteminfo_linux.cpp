@@ -45,6 +45,7 @@
 #include <QTimer>
 #include <QDir>
 #include <QTimer>
+#include <QMapIterator>
 
 #if !defined(QT_NO_DBUS)
 #include <qhalservice_linux_p.h>
@@ -62,10 +63,10 @@
 
 #include <locale.h>
 #include <sys/types.h>
-#include <sys/stat.h>
 #include <unistd.h>
 #include <sys/vfs.h>
 #include <mntent.h>
+#include <sys/stat.h>
 
 #ifdef Q_WS_X11
 #include <QX11Info>
@@ -1085,20 +1086,19 @@ qint64 QSystemStorageInfoPrivate::availableDiskSpace(const QString &driveVolume)
 {
     mountEntries();
     struct statfs fs;
-    if(statfs(mountEntriesHash[driveVolume].toLatin1(), &fs ) ==0 ) {
-        long blockSize = fs.f_bsize;
-        long availBlocks = fs.f_bavail;
-        return (double)availBlocks * blockSize;
-    }
+    if(statfs(mountEntriesMap[driveVolume].toLatin1(), &fs ) == 0 ) {
+                long blockSize = fs.f_bsize;
+                long availBlocks = fs.f_bavail;
+                return (double)availBlocks * blockSize;
+            }
     return 0;
 }
 
 qint64 QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
 {
     mountEntries();
-    mountEntriesHash[driveVolume];
     struct statfs fs;
-    if(statfs(mountEntriesHash[driveVolume].toLatin1(), &fs ) == 0 ) {
+    if(statfs(mountEntriesMap[driveVolume].toLatin1(), &fs ) == 0 ) {
         long blockSize = fs.f_bsize;
         long totalBlocks = fs.f_blocks;
         return (double)totalBlocks * blockSize;
@@ -1118,17 +1118,56 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
                 QHalDeviceInterface ifaceDevice(vol);
                 if(driveVolume == ifaceDevice.getPropertyString("block.device")) {
                     QHalDeviceInterface ifaceDeviceParent(ifaceDevice.getPropertyString("info.parent"), this);
-                    if(ifaceDeviceParent.getPropertyBool("storage.removable")) {
+
+                    if(ifaceDeviceParent.getPropertyBool("storage.removable")
+                        ||  ifaceDeviceParent.getPropertyString("storage.drive_type") != "disk") {
                         return QSystemStorageInfo::RemovableDrive;
+                        break;
                     } else {
-                        return QSystemStorageInfo::InternalDrive;
+                         return QSystemStorageInfo::InternalDrive;
                     }
                 }
             }
         }
 #endif
     } else {
+        //no hal need to manually read sys file for block device
+        QString dmFile;
 
+        if(driveVolume.contains("mapper")) {
+            struct stat stat_buf;
+            stat( driveVolume.toLatin1(), &stat_buf);
+            //                    qWarning() << "Device number"
+            //                            << ((stat_buf.st_rdev >> 8) & 0377)
+            //                            << (stat_buf.st_rdev & 0377);
+
+            dmFile = QString("/sys/block/dm-%1/removable").arg(stat_buf.st_rdev & 0377);
+
+        } else {
+
+            dmFile = driveVolume.section("/",2,3);
+            if (dmFile.left(3) == "mmc") { //assume this dev is removable sd/mmc card.
+                return QSystemStorageInfo::RemovableDrive;
+            }
+
+            if(dmFile.length() > 3) { //if device has number, we need the 'parent' device
+                dmFile.chop(1);
+                if (dmFile.right(1) == "p") //get rid of partition number
+                    dmFile.chop(1);
+            }
+            dmFile = "/sys/block/"+dmFile+"/removable";
+        }
+
+        QFile file(dmFile);
+        if (!file.open(QIODevice::ReadOnly)) {
+            qWarning() << "Could not open sys file";
+        } else {
+            QTextStream sysinfo(&file);
+            QString line = sysinfo.readAll();
+            if(line.contains("1")) {
+                return QSystemStorageInfo::RemovableDrive;
+            }
+        }
     }
     return QSystemStorageInfo::InternalDrive;
 }
@@ -1136,26 +1175,36 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
 QStringList QSystemStorageInfoPrivate::logicalDrives()
 {
     mountEntries();
-    return mountEntriesHash.keys();
+    return mountEntriesMap.keys();
 }
 
 void QSystemStorageInfoPrivate::mountEntries()
 {
-    mountEntriesHash.clear();
-    FILE *mntfp = setmntent( "/proc/mounts", "r" );
+    mountEntriesMap.clear();
+    FILE *mntfp = setmntent( _PATH_MOUNTED/*_PATH_MNTTAB*//*"/proc/mounts"*/, "r" );
     mntent *me = getmntent(mntfp);
     while(me != NULL) {
         struct statfs fs;
         if(statfs(me->mnt_dir, &fs ) ==0 ) {
-            long blockSize = fs.f_bsize;
-            long totalBlocks = fs.f_blocks;
-            double total = (double)totalBlocks * blockSize;
-            if(total > 0 && !mountEntriesHash.keys().contains(me->mnt_dir)) {
-//                qWarning() << me->mnt_type;
-                mountEntriesHash[me->mnt_fsname] = me->mnt_dir;
+            QString num;
+            // weed out a few types
+            if ( fs.f_type != 0x01021994 //tmpfs
+                 && fs.f_type != 0x9fa0 //procfs
+                 && fs.f_type != 0x1cd1 //
+                 && fs.f_type != 0x62656572
+                 && fs.f_type != 0xabababab // ???
+                 && fs.f_type != 0x52654973
+                 && fs.f_type != 0x42494e4d
+                 && fs.f_type != 0x64626720
+                 && fs.f_type != 0x73636673 //securityfs
+                 && fs.f_type != 0x65735543 //fusectl
+                 ) {
+                if(!mountEntriesMap.keys().contains(me->mnt_dir)
+                    && QString(me->mnt_fsname).contains("/dev")) {
+                    mountEntriesMap[me->mnt_fsname] = me->mnt_dir;
+                }
             }
         }
-
         me = getmntent(mntfp);
     }
     endmntent(mntfp);
