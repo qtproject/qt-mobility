@@ -34,7 +34,6 @@
 #include "qcontactmanager.h"
 
 #include "qcontact_p.h"
-#include "qcontactgroup_p.h"
 #include "qcontactdetaildefinition.h"
 #include "qcontactmanager_p.h"
 #include "qcontactmanagerengine.h"
@@ -201,18 +200,6 @@ bool QContactMemoryEngine::saveContact(QContact* contact, QContactChangeSet& cha
             }
         }
 
-        // See what groups are no longer present...
-        QSet<QUniqueId> oldGroups = d->m_contacts.at(index).groups().toSet();
-        oldGroups.subtract(contact->groups().toSet());
-        changeSet.changedGroups().unite(oldGroups);
-
-        // Remove this contact from those groups
-        QSetIterator<QUniqueId> git(oldGroups);
-
-        while(git.hasNext()) {
-            d->m_groups[git.next()].removeMember(contact->id());
-        };
-
         QContactTimestamp ts = contact->detail(QContactTimestamp::DefinitionName);
         ts.setLastModified(QDateTime::currentDateTime());
         contact->saveDetail(&ts);
@@ -244,14 +231,6 @@ bool QContactMemoryEngine::saveContact(QContact* contact, QContactChangeSet& cha
     }
 
     error = QContactManager::NoError;     // successful.
-
-    // now fix up groups that this contact has
-    for (int i=0; i < contact->groups().size(); i++) {
-        QUniqueId groupId = contact->groups().at(i);
-        if (d->m_groups[groupId].addMember(contact->id())) {
-            changeSet.changedGroups().insert(groupId);
-        }
-    }
 
     return true;
 }
@@ -307,14 +286,6 @@ bool QContactMemoryEngine::removeContact(const QUniqueId& contactId, QContactCha
     d->m_contactIds.removeAt(index);
     error = QContactManager::NoError;
 
-    // also remove it from any groups that we have
-    QMutableMapIterator<QUniqueId, QContactGroup> it(d->m_groups);
-    while (it.hasNext()) {
-        it.next();
-        if(it.value().removeMember(contactId))
-            changeSet.changedGroups().insert(it.value().id());
-    }
-
     changeSet.removedContacts().insert(contactId);
     return true;
 }
@@ -354,108 +325,6 @@ QList<QContactManager::Error> QContactMemoryEngine::removeContacts(QList<QUnique
     error = functionError;
     changeSet.emitSignals(this);
     return ret;
-}
-
-/*! \reimp */
-QList<QUniqueId> QContactMemoryEngine::groups(QContactManager::Error& error) const
-{
-    error = QContactManager::NoError;
-    return d->m_groups.keys();
-}
-
-/*! \reimp */
-QContactGroup QContactMemoryEngine::group(const QUniqueId& groupId, QContactManager::Error& error) const
-{
-    error = QContactManager::NoError;
-    if (!d->m_groups.contains(groupId))
-        error = QContactManager::DoesNotExistError;
-
-    return d->m_groups.value(groupId);
-}
-
-
-bool QContactMemoryEngine::saveGroup(QContactGroup* group, QContactChangeSet& changeSet, QContactManager::Error& error)
-{
-    if (!group) {
-        error = QContactManager::BadArgumentError;
-        return false;
-    }
-
-    if (!validateGroup(*group, error)) {
-        return false;
-    }
-
-    // if the group does not exist, generate a new group id for it.
-    if (!d->m_groups.contains(group->id())) {
-        if (group->id() != 0) {
-            error = QContactManager::DoesNotExistError;
-            return false;
-        } else {
-            group->setId(++d->m_nextGroupId);
-            changeSet.addedGroups().insert(group->id());
-        }
-    } else {
-        changeSet.changedGroups().insert(group->id());
-    }
-
-    // save it in the database
-    d->m_groups.insert(group->id(), *group);
-
-    // and update any members with the new information
-    for (int i=0; i < group->members().count(); i++) {
-        int idx = d->m_contactIds.indexOf(group->members().value(i));
-        QList<QUniqueId> groups = d->m_contacts[idx].groups();
-        if (!groups.contains(group->id())) {
-            groups.append(group->id());
-            d->m_contacts[idx].setGroups(groups);
-            changeSet.changedContacts().insert(d->m_contacts[idx].id());
-        }
-    }
-
-    error = QContactManager::NoError;
-    return true;
-}
-
-/*! \reimp */
-bool QContactMemoryEngine::saveGroup(QContactGroup* group, QContactManager::Error& error)
-{
-    QContactChangeSet changeSet;
-    bool retn = saveGroup(group, changeSet, error);
-    changeSet.emitSignals(this);
-    return retn;
-}
-
-bool QContactMemoryEngine::removeGroup(const QUniqueId& groupId, QContactChangeSet& changeSet, QContactManager::Error& error)
-{
-    if (!d->m_groups.contains(groupId)) {
-        error = QContactManager::DoesNotExistError;
-        return false;
-    }
-
-    /* Update any contacts that this group has */
-    QContactGroup g = d->m_groups.value(groupId);
-    for (int i=0; i < g.members().count(); i++) {
-        int idx = d->m_contactIds.indexOf(g.members().value(i));
-        QList<QUniqueId> groups = d->m_contacts[idx].groups();
-        groups.removeAll(groupId);
-        d->m_contacts[idx].setGroups(groups);
-        changeSet.changedContacts().insert(d->m_contacts[idx].id());
-    }
-
-    d->m_groups.remove(groupId);
-    changeSet.removedGroups().insert(groupId);
-
-    error = QContactManager::NoError;
-    return true;
-}
-
-/*! \reimp */
-bool QContactMemoryEngine::removeGroup(const QUniqueId& groupId, QContactManager::Error& error)
-{
-    QContactChangeSet changeSet;
-    bool retn = removeGroup(groupId, changeSet, error);
-    changeSet.emitSignals(this);
-    return retn;
 }
 
 /*! \reimp */
@@ -709,78 +578,6 @@ void QContactMemoryEngine::performAsynchronousOperation()
             // there are no results, so just update the status with the error.
             QList<QContactManager::Error> dummy;
             updateRequestStatus(currentRequest, operationError, dummy, QContactAbstractRequest::Finished);
-        }
-        break;
-
-        case QContactAbstractRequest::GroupFetchRequest:
-        {
-            QContactGroupFetchRequest* r = static_cast<QContactGroupFetchRequest*>(currentRequest);
-            QContactManager::Error operationError = QContactManager::NoError;
-            QList<QContactManager::Error> operationErrors;
-            QList<QContactGroup> requestedGroups;
-            QList<QUniqueId> requestedGroupIds = r->ids();
-            if (requestedGroupIds.isEmpty())
-                requestedGroupIds = groups(operationError); // all groups.
-
-            QContactManager::Error tempError;
-            for (int i = 0; i < requestedGroupIds.size(); i++) {
-                QContactGroup current = group(requestedGroupIds.at(i), tempError);
-                operationErrors.append(tempError);
-
-                // add the group to the result list.
-                requestedGroups.append(current);
-
-                if (tempError != QContactManager::NoError)
-                    operationError = tempError;
-            }
-
-            // update the request with the results.
-            updateRequest(currentRequest, requestedGroups, operationError, operationErrors, QContactAbstractRequest::Finished);
-        }
-        break;
-
-        case QContactAbstractRequest::GroupSaveRequest:
-        {
-            QContactGroupSaveRequest* r = static_cast<QContactGroupSaveRequest*>(currentRequest);
-            QContactManager::Error operationError = QContactManager::NoError;
-            QList<QContactManager::Error> operationErrors;
-            QList<QContactGroup> groups = r->groups();
-            QList<QContactGroup> savedGroups;
-
-            for (int i = 0; i < groups.size(); i++) {
-                QContactManager::Error tempError;
-                QContactGroup current = groups.at(i);
-                saveGroup(&current, changeSet, tempError);
-                savedGroups.append(current);
-                operationErrors.append(tempError);
-
-                if (tempError != QContactManager::NoError)
-                    operationError = tempError;
-            }
-
-            updateRequest(currentRequest, savedGroups, operationError, operationErrors, QContactAbstractRequest::Finished);
-        }
-        break;
-
-        case QContactAbstractRequest::GroupRemoveRequest:
-        {
-            QContactGroupRemoveRequest* r = static_cast<QContactGroupRemoveRequest*>(currentRequest);
-            QList<QUniqueId> ids = r->ids();
-
-            QContactManager::Error operationError = QContactManager::NoError;
-            QList<QContactManager::Error> operationErrors;
-
-            for (int i = 0; i < ids.size(); i++) {
-                QContactManager::Error tempError;
-                removeGroup(ids.at(i), changeSet, tempError);
-                operationErrors.append(tempError);
-
-                if (tempError != QContactManager::NoError)
-                    operationError = tempError;
-            }
-
-            // there are no results, so just emit our changes and update the status with any errors.
-            updateRequestStatus(currentRequest, operationError, operationErrors, QContactAbstractRequest::Finished);
         }
         break;
 
