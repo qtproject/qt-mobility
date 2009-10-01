@@ -780,27 +780,26 @@ void QVideoWidget::setVisible(bool visible)
 {
     Q_D(QVideoWidget);
 
-    if (d->service == 0 || d->outputControl == 0) {
-        visible = false;
-    } else if (visible) {
-        if (d->widgetBackend != 0) {
-            d->setCurrentBackend(d->widgetBackend);
-            d->outputControl->setOutput(QVideoOutputControl::WidgetOutput);
-        } else if (d->windowBackend != 0
-                && (window() == 0 || !window()->testAttribute(Qt::WA_DontShowOnScreen))) {
-            d->setCurrentBackend(d->windowBackend);
-            d->outputControl->setOutput(QVideoOutputControl::WindowOutput);
+    if (d->outputControl != 0) {
+        if (visible) {
+            if (d->widgetBackend != 0) {
+                d->setCurrentBackend(d->widgetBackend);
+                d->outputControl->setOutput(QVideoOutputControl::WidgetOutput);
+            } else if (d->windowBackend != 0
+                    && (window() == 0 || !window()->testAttribute(Qt::WA_DontShowOnScreen))) {
+                d->setCurrentBackend(d->windowBackend);
+                d->outputControl->setOutput(QVideoOutputControl::WindowOutput);
 #ifndef QT_NO_MULTIMEDIA
-        } else if (d->rendererBackend != 0) {
-            d->setCurrentBackend(d->rendererBackend);
-            d->outputControl->setOutput(QVideoOutputControl::RendererOutput);
+            } else if (d->rendererBackend != 0) {
+                d->setCurrentBackend(d->rendererBackend);
+                d->outputControl->setOutput(QVideoOutputControl::RendererOutput);
 #endif
+            } else {
+                d->outputControl->setOutput(QVideoOutputControl::NoOutput);
+            }
         } else {
             d->outputControl->setOutput(QVideoOutputControl::NoOutput);
-            visible = false;
         }
-    } else {
-        d->outputControl->setOutput(QVideoOutputControl::NoOutput);
     }
 
     QWidget::setVisible(visible);

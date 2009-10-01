@@ -119,10 +119,10 @@ Player::Player(QWidget *parent)
 
     QBoxLayout *displayLayout = new QHBoxLayout;
     if (videoWidget)
-        displayLayout->addWidget(videoWidget, 2, Qt::AlignLeft);
+        displayLayout->addWidget(videoWidget, 2);
     else
-        displayLayout->addWidget(coverLabel, 2, Qt::AlignLeft);
-    displayLayout->addWidget(playlistView, 1, Qt::AlignRight);
+        displayLayout->addWidget(coverLabel, 2);
+    displayLayout->addWidget(playlistView);
 
     QBoxLayout *controlLayout = new QHBoxLayout;
     controlLayout->setMargin(0);
