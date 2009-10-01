@@ -34,18 +34,17 @@
 #ifndef QVALUESPACE_P_H
 #define QVALUESPACE_P_H
 
-#include <QByteArray>
-#include <QObject>
-#include <QUuid>
-
 #include "qcontextglobal.h"
 #include "qvaluespace.h"
+
+#include <QObject>
+#include <QUuid>
 
 QT_BEGIN_NAMESPACE
 
 class QValueSpaceObject;
 
-QByteArray qCanonicalPath(const QByteArray &path);
+QString qCanonicalPath(const QString &path);
 
 class Q_AUTOTEST_EXPORT QAbstractValueSpaceLayer : public QObject
 {
@@ -66,13 +65,13 @@ public:
 
     enum Properties { Publish = 0x00000001 };
 
-    virtual Handle item(Handle parent, const QByteArray &subPath) = 0;
+    virtual Handle item(Handle parent, const QString &subPath) = 0;
     virtual void removeHandle(Handle handle) = 0;
     virtual void setProperty(Handle handle, Properties properties) = 0;
 
     virtual bool value(Handle handle, QVariant *data) = 0;
-    virtual bool value(Handle handle, const QByteArray &subPath, QVariant *data) = 0;
-    virtual QSet<QByteArray> children(Handle handle) = 0;
+    virtual bool value(Handle handle, const QString &subPath, QVariant *data) = 0;
+    virtual QSet<QString> children(Handle handle) = 0;
 
     virtual QValueSpace::LayerOptions layerOptions() const = 0;
 
@@ -81,9 +80,9 @@ public:
 
     /* QValueSpaceObject functions */
     virtual bool setValue(QValueSpaceObject *creator, Handle handle,
-                          const QByteArray &subPath, const QVariant &value) = 0;
+                          const QString &subPath, const QVariant &value) = 0;
     virtual bool removeValue(QValueSpaceObject *creator, Handle handle,
-                             const QByteArray &subPath) = 0;
+                             const QString &subPath) = 0;
     virtual bool removeSubTree(QValueSpaceObject *creator, Handle handle) = 0;
     virtual void addWatch(QValueSpaceObject *creator, Handle handle) = 0;
     virtual void removeWatches(QValueSpaceObject *creator, Handle parent) = 0;

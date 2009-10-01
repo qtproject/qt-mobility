@@ -77,10 +77,9 @@ public:
 
     QStringList subPaths() const;
 
-    QVariant value(const QByteArray &subPath = QByteArray(),
-                   const QVariant &def = QVariant()) const;
+    QVariant value(const QString &subPath = QString(), const QVariant &def = QVariant()) const;
     QVariant value(const char *subPath, const QVariant &def = QVariant()) const;
-    QVariant value(const QString &subPath, const QVariant &def = QVariant()) const;
+
 
 signals:
     void contentsChanged();

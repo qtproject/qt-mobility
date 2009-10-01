@@ -183,7 +183,7 @@ public:
 
 struct QValueSpaceItemPrivate
 {
-    QValueSpaceItemPrivate(const QByteArray &_path,
+    QValueSpaceItemPrivate(const QString &_path,
                            QValueSpace::LayerOptions filter = QValueSpace::UnspecifiedLayer)
         : refCount(0), connections(0)
     {
@@ -219,7 +219,7 @@ struct QValueSpaceItemPrivate
         }
     }
 
-    QValueSpaceItemPrivate(const QByteArray &_path, const QUuid &uuid)
+    QValueSpaceItemPrivate(const QString &_path, const QUuid &uuid)
     :   refCount(0), connections(0)
     {
         path = qCanonicalPath(_path);
@@ -245,7 +245,7 @@ struct QValueSpaceItemPrivate
         }
     }
 
-    QValueSpaceItemPrivate(const QByteArray &_path,
+    QValueSpaceItemPrivate(const QString &_path,
                            const QList<QAbstractValueSpaceLayer *> &readerList)
     :   refCount(0), connections(0)
     {
@@ -349,7 +349,7 @@ struct QValueSpaceItemPrivate
     }
 
     unsigned int refCount;
-    QByteArray path;
+    QString path;
     QList<QPair<QAbstractValueSpaceLayer *, QAbstractValueSpaceLayer::Handle> > readers;
     QValueSpaceItemPrivateProxy * connections;
 };
@@ -368,7 +368,7 @@ QValueSpaceItem::QValueSpaceItem(QObject *parent)
 {
     VS_CALL_ASSERT;
 
-    d = new QValueSpaceItemPrivate("/");
+    d = new QValueSpaceItemPrivate(QLatin1String("/"));
     d->AddRef();
 }
 
@@ -386,7 +386,7 @@ QValueSpaceItem::QValueSpaceItem(const QString &path, QObject *parent)
 {
     VS_CALL_ASSERT;
 
-    d = new QValueSpaceItemPrivate(path.toUtf8());
+    d = new QValueSpaceItemPrivate(path);
     d->AddRef();
 }
 
@@ -394,7 +394,7 @@ QValueSpaceItem::QValueSpaceItem(const QString &path, QObject *parent)
     \overload
 
     Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.  This
-    constructor is equivalent to calling \c {QValueSpaceItem(QByteArray(path), parent)}.
+    constructor is equivalent to calling \c {QValueSpaceItem(QString(path), parent)}.
 
     The constructed Value Space item will access all available
     \l {QAbstractValueSpaceLayer}{layers}.
@@ -404,7 +404,7 @@ QValueSpaceItem::QValueSpaceItem(const char *path, QObject *parent)
 {
     VS_CALL_ASSERT;
 
-    d = new QValueSpaceItemPrivate(QByteArray(path));
+    d = new QValueSpaceItemPrivate(QString::fromLatin1(path));
     d->AddRef();
 }
 
@@ -427,7 +427,7 @@ QValueSpaceItem::QValueSpaceItem(const QString &path,
 {
     VS_CALL_ASSERT;
 
-    d = new QValueSpaceItemPrivate(path.toUtf8(), filter);
+    d = new QValueSpaceItemPrivate(path, filter);
     d->AddRef();
 }
 
@@ -436,7 +436,7 @@ QValueSpaceItem::QValueSpaceItem(const QString &path,
 
     Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.  The
     \a filter parameter is used to limit which layers this QValueSpaceItem will access.  This
-    constructor is equivalent to calling \c {QValueSpaceItem(QByteArray(path), filter, parent)}.
+    constructor is equivalent to calling \c {QValueSpaceItem(QString(path), filter, parent)}.
 
     If a layer matching \a filter is not found, the constructed QValueSpaceItem will be
     unconnected.
@@ -450,7 +450,7 @@ QValueSpaceItem::QValueSpaceItem(const char *path,
 {
     VS_CALL_ASSERT;
 
-    d = new QValueSpaceItemPrivate(QByteArray(path), filter);
+    d = new QValueSpaceItemPrivate(QString::fromLatin1(path), filter);
     d->AddRef();
 }
 
@@ -474,7 +474,7 @@ QValueSpaceItem::QValueSpaceItem(const QString &path, const QUuid &uuid, QObject
 {
     VS_CALL_ASSERT;
 
-    d = new QValueSpaceItemPrivate(path.toUtf8(), uuid);
+    d = new QValueSpaceItemPrivate(path, uuid);
     d->AddRef();
 }
 
@@ -483,7 +483,7 @@ QValueSpaceItem::QValueSpaceItem(const QString &path, const QUuid &uuid, QObject
 
     Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.  This
     QValueSpaceItem will only use the layer identified by \a uuid.  This constructor is equivalent
-    to calling \c {QValueSpaceItem(QByteArray(path), uuid, parent)}.
+    to calling \c {QValueSpaceItem(QString(path), uuid, parent)}.
 
     Use of this constructor is not platform agnostic.  If possible use one of the constructors that
     take a QAbstractValueSpaceLayer::LayerOptions parameter instead.
@@ -498,7 +498,7 @@ QValueSpaceItem::QValueSpaceItem(const char *path, const QUuid &uuid, QObject *p
 {
     VS_CALL_ASSERT;
 
-    d = new QValueSpaceItemPrivate(QByteArray(path), uuid);
+    d = new QValueSpaceItemPrivate(QString::fromLatin1(path), uuid);
     d->AddRef();
 }
 
@@ -524,14 +524,14 @@ void QValueSpaceItem::setPath(const QString &path)
 {
     VS_CALL_ASSERT;
 
-    if (d->path == path.toUtf8())
+    if (d->path == path)
         return;
 
     d->Release();
 
     disconnect();
 
-    d = new QValueSpaceItemPrivate(path.toUtf8());
+    d = new QValueSpaceItemPrivate(path);
     d->AddRef();
 }
 
@@ -560,26 +560,26 @@ QString QValueSpaceItem::path() const
 {
     VS_CALL_ASSERT;
 
-    return QString::fromUtf8(d->path.constData(), d->path.length());
+    return d->path;
 }
 
 void QValueSpaceItem::cd(const QString &path)
 {
     VS_CALL_ASSERT;
 
-    setPath(d->path + '/' + path);
+    setPath(d->path + QChar::fromLatin1('/') + path);
 }
 
 void QValueSpaceItem::cdUp()
 {
     VS_CALL_ASSERT;
 
-    if (d->path == "/")
+    if (d->path == QLatin1String("/"))
         return;
 
-    QByteArray p(d->path);
+    QString p(d->path);
 
-    int index = p.lastIndexOf('/');
+    int index = p.lastIndexOf(QChar::fromLatin1('/'));
 
     p.truncate(index);
 
@@ -599,62 +599,49 @@ bool QValueSpaceItem::isConnected() const
 }
 
 /*!
-    \overload
-
-    This is a convenience overload and is equivalent to
-    \c {value(subPath.toUtf8(), def)}.
-*/
-QVariant QValueSpaceItem::value(const QString & subPath, const QVariant &def) const
-{
-    VS_CALL_ASSERT;
-    return value(subPath.toUtf8(), def);
-}
-
-/*!
-    \overload
-
-    This is a convenience overload and is equivalent to
-    \c {value(QByteArray(subPath), def)}.
-*/
-QVariant QValueSpaceItem::value(const char * subPath, const QVariant &def) const
-{
-    VS_CALL_ASSERT;
-    return value(QByteArray(subPath), def);
-}
-
-
-/*!
-    Returns the value of sub-item \a subPath of this item, or the value of this
-    item if \a subPath is empty.  If the item does not exists, \a def is returned.
+    Returns the value of the sub-item \a subPath of this item, or the value of this item if
+    \a subPath is empty.  If the item does not exists, \a def is returned.
 
     The following code shows how the item and \a subPath relate.
 
     \code
-    QValueSpaceItem base("/Settings");
-    QValueSpaceItem equiv("/Settings/Nokia/General/Mappings);
+        QValueSpaceItem base("/Settings");
+        QValueSpaceItem equiv("/Settings/Nokia/General/Mappings);
 
-    // Is true
-    equiv.value() == base.value("Nokia/General/Mapping");
+        // Is true
+        equiv.value() == base.value("Nokia/General/Mapping");
     \endcode
 */
-QVariant QValueSpaceItem::value(const QByteArray & subPath, const QVariant &def) const
+QVariant QValueSpaceItem::value(const QString & subPath, const QVariant &def) const
 {
     VS_CALL_ASSERT;
 
     QVariant value;
-    if(subPath.isEmpty()) {
+    if (subPath.isEmpty()) {
         for (int ii = d->readers.count(); ii > 0; --ii) {
             if (d->readers[ii - 1].first->value(d->readers[ii - 1].second, &value))
                 return value;
         }
     } else {
-        const QByteArray vpath(qCanonicalPath(subPath));
+        const QString vpath(qCanonicalPath(subPath));
         for (int ii = d->readers.count(); ii > 0; --ii) {
             if (d->readers[ii - 1].first->value(d->readers[ii - 1].second, vpath, &value))
                 return value;
         }
     }
     return def;
+}
+
+/*!
+    \overload
+
+    This is a convenience overload and is equivalent to
+    \c {value(QString::fromLatin1(subPath), def)}.
+*/
+QVariant QValueSpaceItem::value(const char *subPath, const QVariant &def) const
+{
+    VS_CALL_ASSERT;
+    return value(QString::fromLatin1(subPath), def);
 }
 
 QVariant QValueSpaceItem::valuex(const QVariant &def) const
@@ -664,7 +651,7 @@ QVariant QValueSpaceItem::valuex(const QVariant &def) const
     if (!d->connections || d->connections->connections.value(this) == 0)
         d->connect(this);
 
-    return value(QByteArray(), def);
+    return value(QString(), def);
 }
 
 /*!
@@ -714,15 +701,13 @@ QStringList QValueSpaceItem::subPaths() const
 {
     VS_CALL_ASSERT;
 
-    QSet<QByteArray> rv;
-    for(int ii = 0; ii < d->readers.count(); ++ii)
+    QSet<QString> rv;
+    for (int ii = 0; ii < d->readers.count(); ++ii)
         rv.unite(d->readers[ii].first->children(d->readers[ii].second));
 
     QStringList rvs;
-    for(QSet<QByteArray>::ConstIterator iter = rv.begin();
-            iter != rv.end();
-            ++iter)
-        rvs.append(QString::fromUtf8(iter->constData(), iter->length()));
+    for (QSet<QString>::ConstIterator iter = rv.begin(); iter != rv.end(); ++iter)
+        rvs.append(*iter);
 
     return rvs;
 }

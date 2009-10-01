@@ -38,7 +38,6 @@
 #include "qvaluespaceobject.h"
 #include "qpacketprotocol_p.h"
 
-#include <QByteArray>
 #include <QObject>
 #include <QMap>
 #include <QPair>
@@ -162,7 +161,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn Handle QAbstractValueSpaceLayer::item(Handle parent, const QByteArray &subPath)
+    \fn Handle QAbstractValueSpaceLayer::item(Handle parent, const QString &subPath)
 
     Returns a new opaque handle for the requested \a subPath of \a parent.  If \a parent is an
     InvalidHandle, \a subPath is interpreted as an absolute path.
@@ -191,14 +190,14 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn bool QAbstractValueSpaceLayer::value(Handle handle, const QByteArray &subPath, QVariant *data)
+    \fn bool QAbstractValueSpaceLayer::value(Handle handle, const QString &subPath, QVariant *data)
 
     Returns the value for a particular \a subPath of \a handle.  If a value is available, the
     layer will set \a data and return true.  If no value is available, false is returned.
 */
 
 /*!
-    \fn QSet<QByteArray> QAbstractValueSpaceLayer::children(Handle handle)
+    \fn QSet<QString> QAbstractValueSpaceLayer::children(Handle handle)
 
     Returns the set of children of \a handle.  For example, in a layer providing the following
     items:
@@ -234,7 +233,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn bool QAbstractValueSpaceLayer::setValue(QValueSpaceObject *creator, Handle handle, const QByteArray &subPath, const QVariant &value)
+    \fn bool QAbstractValueSpaceLayer::setValue(QValueSpaceObject *creator, Handle handle, const QString &subPath, const QVariant &value)
 
     Process calls to QValueSpaceObject::setAttribute() by setting the value specified by the
     \a subPath under \a handle to \a value.  Ownership of the value space item is assigned to
@@ -244,7 +243,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn bool QAbstractValueSpaceLayer::removeValue(QValueSpaceObject *creator, Handle handle, const QByteArray &subPath)
+    \fn bool QAbstractValueSpaceLayer::removeValue(QValueSpaceObject *creator, Handle handle, const QString &subPath)
 
     Process calls to QValueSpaceObject::removeAttribute() by removing the value space item
     identified by \a handle and \a subPath and created by \a creator.
@@ -423,22 +422,22 @@ QList<QUuid> QValueSpace::availableLayers()
 
     Returns \a path with all duplicate '/' characters removed.
 */
-QByteArray qCanonicalPath(const QByteArray &path)
+QString qCanonicalPath(const QString &path)
 {
-    QByteArray result;
+    QString result;
     result.resize(path.length());
-    const char *from = path.constData();
-    const char *fromend = from + path.length();
+    const QChar *from = path.constData();
+    const QChar *fromend = from + path.length();
     int outc=0;
-    char *to = result.data();
+    QChar *to = result.data();
     do {
-        to[outc++] = '/';
-        while (from!=fromend && *from == '/')
+        to[outc++] = QChar::fromLatin1('/');
+        while (from!=fromend && *from == QChar::fromLatin1('/'))
             ++from;
-        while (from!=fromend && *from != '/')
+        while (from!=fromend && *from != QChar::fromLatin1('/'))
             to[outc++] = *from++;
     } while (from != fromend);
-    if (outc > 1 && to[outc-1] == '/')
+    if (outc > 1 && to[outc-1] == QChar::fromLatin1('/'))
         --outc;
     result.resize(outc);
     return result;

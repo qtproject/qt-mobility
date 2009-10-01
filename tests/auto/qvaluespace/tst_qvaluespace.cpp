@@ -54,13 +54,13 @@ public:
                               0x54, 0x21, 0xff, 0xa3, 0x63, 0x74, 0xf7); }
     unsigned int order() { return 0x20000000; }
 
-    Handle item(Handle parent, const QByteArray &subPath);
+    Handle item(Handle parent, const QString &subPath);
     void removeHandle(Handle handle);
     void setProperty(Handle, Properties) { }
 
     bool value(Handle handle, QVariant *data);
-    bool value(Handle handle, const QByteArray &subPath, QVariant *data);
-    QSet<QByteArray> children(Handle handle);
+    bool value(Handle handle, const QString &subPath, QVariant *data);
+    QSet<QString> children(Handle handle);
 
     QValueSpace::LayerOptions layerOptions() const;
 
@@ -68,8 +68,8 @@ public:
     bool notifyInterest(Handle handle, bool interested);
 
     /* QValueSpaceObject functions */
-    bool setValue(QValueSpaceObject *creator, Handle handle, const QByteArray &subPath, const QVariant &value);
-    bool removeValue(QValueSpaceObject *creator, Handle handle, const QByteArray &subPath);
+    bool setValue(QValueSpaceObject *creator, Handle handle, const QString &subPath, const QVariant &value);
+    bool removeValue(QValueSpaceObject *creator, Handle handle, const QString &subPath);
     bool removeSubTree(QValueSpaceObject *creator, Handle handle);
     void addWatch(QValueSpaceObject *creator, Handle handle);
     void removeWatches(QValueSpaceObject *creator, Handle parent);
@@ -78,15 +78,15 @@ public:
     QStringList testErrors();
 
 private:
-    bool testPath(const QByteArray &path);
+    bool testPath(const QString &path);
 
-    QMap<uint, QByteArray> handles;
+    QMap<uint, QString> handles;
     QMap<uint, uint> interest;
 
     QStringList m_testErrors;
 };
 
-bool FakeLayer::testPath(const QByteArray &path)
+bool FakeLayer::testPath(const QString &path)
 {
     if (path.isEmpty())
         m_testErrors << QLatin1String("path is empty");
@@ -105,7 +105,7 @@ bool FakeLayer::testPath(const QByteArray &path)
     return false;
 }
 
-QAbstractValueSpaceLayer::Handle FakeLayer::item(Handle parent, const QByteArray &subPath)
+QAbstractValueSpaceLayer::Handle FakeLayer::item(Handle parent, const QString &subPath)
 {
     if (parent == InvalidHandle) {
         if (testPath(subPath)) {
@@ -141,7 +141,7 @@ bool FakeLayer::value(Handle handle, QVariant *data)
     return true;
 }
 
-bool FakeLayer::value(Handle handle, const QByteArray &subPath, QVariant *data)
+bool FakeLayer::value(Handle handle, const QString &subPath, QVariant *data)
 {
     if (!handles.contains(handle))
         m_testErrors << QLatin1String("Unknown handle");
@@ -157,12 +157,12 @@ bool FakeLayer::value(Handle handle, const QByteArray &subPath, QVariant *data)
     }
 }
 
-QSet<QByteArray> FakeLayer::children(Handle handle)
+QSet<QString> FakeLayer::children(Handle handle)
 {
     if (!handles.contains(handle))
         m_testErrors << QLatin1String("Unknown handle");
 
-    return QSet<QByteArray>();
+    return QSet<QString>();
 }
 
 QValueSpace::LayerOptions FakeLayer::layerOptions() const
@@ -191,7 +191,7 @@ bool FakeLayer::notifyInterest(Handle handle, bool interested)
 }
 
 bool FakeLayer::setValue(QValueSpaceObject *creator, Handle handle,
-                         const QByteArray &subPath, const QVariant &)
+                         const QString &subPath, const QVariant &)
 {
     if (!creator)
         m_testErrors << QLatin1String("creator is null");
@@ -204,7 +204,7 @@ bool FakeLayer::setValue(QValueSpaceObject *creator, Handle handle,
     return true;
 }
 
-bool FakeLayer::removeValue(QValueSpaceObject *creator, Handle handle, const QByteArray &subPath)
+bool FakeLayer::removeValue(QValueSpaceObject *creator, Handle handle, const QString &subPath)
 {
     if (!creator)
         m_testErrors << QLatin1String("creator is null");
@@ -324,17 +324,17 @@ void tst_QValueSpace::layerInterface_data()
           << QString("/layerInterface/subpath/") << QString("/layerInterface/subpath//");
 
     QStringList attributes;
-    attributes << QByteArray()
-               << QByteArray("/")
-               << QByteArray("//")
-               << QByteArray("value")
-               << QByteArray("value/")
-               << QByteArray("value//")
-               << QByteArray("/value")
-               << QByteArray("//value")
-               << QByteArray("/value/")
-               << QByteArray("subpath/value")
-               << QByteArray("subpath//value");
+    attributes << QString()
+               << QString("/")
+               << QString("//")
+               << QString("value")
+               << QString("value/")
+               << QString("value//")
+               << QString("/value")
+               << QString("//value")
+               << QString("/value/")
+               << QString("subpath/value")
+               << QString("subpath//value");
 
     foreach (const QString &path, paths) {
         foreach (const QString &attribute, attributes) {

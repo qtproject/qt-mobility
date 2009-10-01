@@ -685,7 +685,7 @@ void tst_QValueSpaceItem::value()
 
     QValueSpaceItem *base1 = new QValueSpaceItem(QString("/home"), layer->id(), this);
     QCOMPARE( base1->value(QString("usercount"),5).toInt(),1);
-    QCOMPARE( base1->value(QByteArray("user/QString"), "default").toString(), QString("testString") );
+    QCOMPARE( base1->value(QString("user/QString"), "default").toString(), QString("testString") );
     QCOMPARE( base1->value("user/bool", false).toBool(), true);
     QCOMPARE( base1->value("user/int", 5).toInt(), 3);
     QCOMPARE( base1->value("user/QByteArray", QByteArray("invalid")).toByteArray(), QByteArray("testByteArray"));
@@ -693,7 +693,7 @@ void tst_QValueSpaceItem::value()
     //QCOMPARE( base1->value("user/float", 4.0).toString(), QString("4.56"));
 
     QValueSpaceItem *base2 = new QValueSpaceItem(QString("/home/user"), layer->id(), this);
-    QCOMPARE( base2->value(QByteArray("usercount"), 5).toInt(), 5);
+    QCOMPARE( base2->value(QString("usercount"), 5).toInt(), 5);
     QCOMPARE( base2->value(QString("QString"), "default").toString(), QString("testString") );
     QCOMPARE( base2->value("bool", false).toBool(), true);
     QCOMPARE( base2->value("int", 5).toInt(), 3);

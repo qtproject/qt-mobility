@@ -405,7 +405,7 @@ FixedMemoryTree::FixedMemoryTree(void * mem, unsigned int size,
         pool =
             new QMallocPool(poolMem + sizeof(VersionTable),
                             size - sizeof(VersionTable),
-                            QMallocPool::Owned, "FixedMemoryTree");
+                            QMallocPool::Owned, QLatin1String("FixedMemoryTree"));
 
         /* Create root node and fixup free block pointer */
         versionTable()->nxtFreeBlk =
@@ -1669,13 +1669,13 @@ public:
     QUuid id();
     unsigned int order();
 
-    Handle item(Handle parent, const QByteArray &);
+    Handle item(Handle parent, const QString &);
     void removeHandle(Handle);
     void setProperty(Handle handle, Properties);
 
     bool value(Handle, QVariant *);
-    bool value(Handle, const QByteArray &, QVariant *);
-    QSet<QByteArray> children(Handle);
+    bool value(Handle, const QString &, QVariant *);
+    QSet<QString> children(Handle);
 
     QValueSpace::LayerOptions layerOptions() const;
 
@@ -1683,8 +1683,8 @@ public:
     bool notifyInterest(Handle handle, bool interested);
 
     /* QValueSpaceObject functions */
-    bool setValue(QValueSpaceObject *creator, Handle handle, const QByteArray &, const QVariant &);
-    bool removeValue(QValueSpaceObject *creator, Handle handle, const QByteArray &);
+    bool setValue(QValueSpaceObject *creator, Handle handle, const QString &, const QVariant &);
+    bool removeValue(QValueSpaceObject *creator, Handle handle, const QString &);
     bool removeSubTree(QValueSpaceObject *creator, Handle handle);
     void addWatch(QValueSpaceObject *creator, Handle handle);
     void removeWatches(QValueSpaceObject *creator, Handle parent);
@@ -1770,7 +1770,7 @@ private:
     Type type;
     FixedMemoryTree * layer;
     QSystemReadWriteLock * lock;
-    QMap<QByteArray, ReadHandle *> handles;
+    QMap<QString, ReadHandle *> handles;
 
     void triggerTodo();
     int todoTimer;
@@ -1857,7 +1857,7 @@ SharedMemoryLayer::~SharedMemoryLayer()
 
 QString SharedMemoryLayer::name()
 {
-    return "Shared Memory Layer";
+    return QLatin1String("Shared Memory Layer");
 }
 
 static void ShmLayerNodeChanged(unsigned short, void *);
@@ -2275,13 +2275,13 @@ void SharedMemoryLayer::closeConnections()
 
 void SharedMemoryLayer::doClientEmit()
 {
-    QMap<QByteArray, ReadHandle *> cpy = handles;
-    for(QMap<QByteArray, ReadHandle *>::ConstIterator iter = cpy.begin();
+    QMap<QString, ReadHandle *> cpy = handles;
+    for(QMap<QString, ReadHandle *>::ConstIterator iter = cpy.begin();
             iter != cpy.end();
             ++iter)
         ++(*iter)->refCount;
 
-    for(QMap<QByteArray, ReadHandle *>::ConstIterator iter = cpy.begin();
+    for(QMap<QString, ReadHandle *>::ConstIterator iter = cpy.begin();
             iter != cpy.end();
             ++iter)  {
         if(refreshHandle(*iter)) {
@@ -2304,7 +2304,7 @@ void SharedMemoryLayer::doClientEmit()
     }
 
     while(forceChangeCount) {
-        for(QMap<QByteArray, ReadHandle *>::ConstIterator iter = cpy.begin();
+        for(QMap<QString, ReadHandle *>::ConstIterator iter = cpy.begin();
             forceChangeCount && iter != cpy.end();
             ++iter)  {
 
@@ -2318,7 +2318,7 @@ void SharedMemoryLayer::doClientEmit()
         }
     }
 
-    for(QMap<QByteArray, ReadHandle *>::ConstIterator iter = cpy.begin();
+    for(QMap<QString, ReadHandle *>::ConstIterator iter = cpy.begin();
             iter != cpy.end();
             ++iter)
         removeHandle((Handle)*iter);
@@ -2382,13 +2382,13 @@ bool SharedMemoryLayer::value(Handle handle, QVariant *data)
     return rv;
 }
 
-bool SharedMemoryLayer::value(Handle handle, const QByteArray &subPath,
+bool SharedMemoryLayer::value(Handle handle, const QString &subPath,
                              QVariant *data)
 {
     Q_ASSERT(layer);
     Q_ASSERT(data);
     Q_ASSERT(!subPath.isEmpty());
-    Q_ASSERT(*subPath.constData() == '/');
+    Q_ASSERT(*subPath.constData() == QChar::fromLatin1('/'));
 
     ReadHandle * rhandle = rh(handle);
 
@@ -2404,9 +2404,9 @@ bool SharedMemoryLayer::value(Handle handle, const QByteArray &subPath,
 
     bool rv = false;
     if(0xFFFFFFFF == rhandle->currentPath) {
-        QByteArray abs_path = rhandle->path + subPath;
+        QByteArray abs_path = rhandle->path + subPath.toUtf8();
         if (rhandle->path.length() == 1) 
-            abs_path = subPath;
+            abs_path = subPath.toUtf8();
         ReadHandle vhandle(abs_path);
         clearHandle(&vhandle);
         refreshHandle(&vhandle);
@@ -2425,12 +2425,12 @@ bool SharedMemoryLayer::value(Handle handle, const QByteArray &subPath,
     return rv;
 }
 
-QSet<QByteArray> SharedMemoryLayer::children(Handle handle)
+QSet<QString> SharedMemoryLayer::children(Handle handle)
 {
     Q_ASSERT(layer);
     ReadHandle * rhandle = rh(handle);
 
-    QSet<QByteArray> rv;
+    QSet<QString> rv;
     lock->lockForRead();
 
     if(0xFFFFFFFF != rhandle->currentPath)
@@ -2462,8 +2462,7 @@ QSet<QByteArray> SharedMemoryLayer::children(Handle handle)
         Q_ASSERT(node);
         for(unsigned short ii = 0; ii < node->subNodes; ++ii) {
             Node * n = layer->subNode(rhandle->currentNode, ii);
-            QByteArray name(n->name, n->nameLen);
-            rv.insert(name);
+            rv.insert(QString::fromUtf8(n->name, n->nameLen));
         }
     }
 
@@ -2476,19 +2475,18 @@ QValueSpace::LayerOptions SharedMemoryLayer::layerOptions() const
     return QValueSpace::NonPermanentLayer | QValueSpace::WriteableLayer;
 }
 
-SharedMemoryLayer::Handle SharedMemoryLayer::item(Handle parent,
-                                                const QByteArray &key)
+SharedMemoryLayer::Handle SharedMemoryLayer::item(Handle parent, const QString &key)
 {
     Q_UNUSED(parent);
     Q_ASSERT(layer);
-    Q_ASSERT(*key.constData() == '/');
+    Q_ASSERT(*key.constData() == QChar::fromLatin1('/'));
     Q_ASSERT(InvalidHandle == parent);
-    QMap<QByteArray, ReadHandle *>::Iterator iter = handles.find(key);
+    QMap<QString, ReadHandle *>::Iterator iter = handles.find(key);
     if(iter != handles.end()) {
         ++(*iter)->refCount;
         return (QAbstractValueSpaceLayer::Handle)*iter;
     } else {
-        ReadHandle * handle = new ReadHandle(key);
+        ReadHandle * handle = new ReadHandle(key.toUtf8());
         clearHandle(handle);
         lock->lockForRead();
         refreshHandle(handle);
@@ -2627,7 +2625,7 @@ void SharedMemoryLayer::removeHandle(Handle h)
     Q_ASSERT(rhandle->refCount);
     --rhandle->refCount;
     if(!rhandle->refCount) {
-        handles.remove(rhandle->path);
+        handles.remove(QString::fromUtf8(rhandle->path.constData(), rhandle->path.length()));
         clearHandle(rhandle);
         delete rhandle;
     }
@@ -3032,14 +3030,14 @@ int display_id()
     Display *dpy = QX11Info::display();
     QString name;
     if ( dpy ) {
-        name = QString( DisplayString( dpy ) );
+        name = QString::fromLatin1(DisplayString(dpy));
     } else {
         const char *d = getenv("DISPLAY");
         if ( !d )
             return 0;
-        name = QString( d );
+        name = QString::fromLatin1(d);
     }
-    int index = name.indexOf(QChar(':'));
+    int index = name.indexOf(QChar::fromLatin1(':'));
     if ( index >= 0 )
         return name.mid(index + 1).toInt();
     else
@@ -3054,7 +3052,7 @@ static QString qtTempDir()
 {
     QString result;
 
-    result = QString("/tmp/qt-%1/").arg(QString::number(display_id()));
+    result = QString::fromLatin1("/tmp/qt-%1/").arg(QString::number(display_id()));
 
     //works for unix only
     static bool pipePathExists = false;
@@ -3203,7 +3201,7 @@ void SharedMemoryLayer::doClientNotify(QValueSpaceObject *object, const QByteArr
         return;
     }
 
-    emitAttributeInterestChanged(object, emitPath, interested);
+    emitAttributeInterestChanged(object, QString::fromUtf8(emitPath.constData()), interested);
  }
 
 bool SharedMemoryLayer::notifyInterest(Handle handle, bool interested)
@@ -3227,7 +3225,7 @@ bool SharedMemoryLayer::notifyInterest(Handle handle, bool interested)
     return true;
 }
 
-bool SharedMemoryLayer::setValue(QValueSpaceObject *creator, Handle handle, const QByteArray &path,
+bool SharedMemoryLayer::setValue(QValueSpaceObject *creator, Handle handle, const QString &path,
                                  const QVariant &data)
 {
     ReadHandle *readHandle = reinterpret_cast<ReadHandle *>(handle);
@@ -3244,7 +3242,7 @@ bool SharedMemoryLayer::setValue(QValueSpaceObject *creator, Handle handle, cons
         fullPath.append('/');
 
     int index = 0;
-    while (index < path.length() && path[index] == '/')
+    while (index < path.length() && path[index] == QChar::fromLatin1('/'))
         ++index;
 
     fullPath.append(path.mid(index));
@@ -3252,8 +3250,7 @@ bool SharedMemoryLayer::setValue(QValueSpaceObject *creator, Handle handle, cons
     return setItem(owner, fullPath, data);
 }
 
-bool SharedMemoryLayer::removeValue(QValueSpaceObject *creator, Handle handle,
-                                    const QByteArray &path)
+bool SharedMemoryLayer::removeValue(QValueSpaceObject *creator, Handle handle, const QString &path)
 {
     ReadHandle *readHandle = reinterpret_cast<ReadHandle *>(handle);
 
@@ -3269,7 +3266,7 @@ bool SharedMemoryLayer::removeValue(QValueSpaceObject *creator, Handle handle,
         fullPath.append('/');
 
     int index = 0;
-    while (index < path.length() && path[index] == '/')
+    while (index < path.length() && path[index] == QChar::fromLatin1('/'))
         ++index;
 
     fullPath.append(path.mid(index));

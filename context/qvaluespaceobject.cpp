@@ -130,11 +130,11 @@ QT_BEGIN_NAMESPACE
 class QValueSpaceObjectPrivate
 {
 public:
-    QValueSpaceObjectPrivate(const QByteArray &objectPath,
+    QValueSpaceObjectPrivate(const QString &objectPath,
                              QValueSpace::LayerOptions filter = QValueSpace::UnspecifiedLayer);
-    QValueSpaceObjectPrivate(const QByteArray &objectPath, const QUuid &uuid);
+    QValueSpaceObjectPrivate(const QString &objectPath, const QUuid &uuid);
 
-    QByteArray path;
+    QString path;
 
     QAbstractValueSpaceLayer *layer;
     QAbstractValueSpaceLayer::Handle handle;
@@ -143,7 +143,7 @@ public:
     bool hasWatch;
 };
 
-QValueSpaceObjectPrivate::QValueSpaceObjectPrivate(const QByteArray &objectPath,
+QValueSpaceObjectPrivate::QValueSpaceObjectPrivate(const QString &objectPath,
                                                    QValueSpace::LayerOptions filter)
 :   layer(0), handle(QAbstractValueSpaceLayer::InvalidHandle), hasSet(false), hasWatch(false)
 {
@@ -173,7 +173,7 @@ QValueSpaceObjectPrivate::QValueSpaceObjectPrivate(const QByteArray &objectPath,
     }
 }
 
-QValueSpaceObjectPrivate::QValueSpaceObjectPrivate(const QByteArray &objectPath, const QUuid &uuid)
+QValueSpaceObjectPrivate::QValueSpaceObjectPrivate(const QString &objectPath, const QUuid &uuid)
 :   layer(0), handle(QAbstractValueSpaceLayer::InvalidHandle), hasSet(false), hasWatch(false)
 {
     path = qCanonicalPath(objectPath);
@@ -197,7 +197,7 @@ QValueSpaceObjectPrivate::QValueSpaceObjectPrivate(const QByteArray &objectPath,
     \c {QValueSpaceItem(path.toUtf8(), parent)}.
 */
 QValueSpaceObject::QValueSpaceObject(const QString &path, QObject *parent)
-:   QObject(parent), d(new QValueSpaceObjectPrivate(path.toUtf8()))
+:   QObject(parent), d(new QValueSpaceObjectPrivate(path))
 {
     VS_CALL_ASSERT;
     QValueSpaceManager::instance()->init();
@@ -208,10 +208,10 @@ QValueSpaceObject::QValueSpaceObject(const QString &path, QObject *parent)
 
     Constructs a QValueSpaceObject with the specified \a parent that publishes values under
     \a path.  This constructor is equivalent to calling
-    \c {QValueSpaceItem(QByteArray(path), parent)}.
+    \c {QValueSpaceItem(QString(path), parent)}.
 */
 QValueSpaceObject::QValueSpaceObject(const char *path, QObject *parent)
-:   QObject(parent), d(new QValueSpaceObjectPrivate(QByteArray(path)))
+:   QObject(parent), d(new QValueSpaceObjectPrivate(QString::fromLatin1(path)))
 {
     VS_CALL_ASSERT;
     QValueSpaceManager::instance()->init();
@@ -237,7 +237,7 @@ QValueSpaceObject::QValueSpaceObject(const char *path, QObject *parent)
 QValueSpaceObject::QValueSpaceObject(const QString &path,
                                      QValueSpace::LayerOptions filter,
                                      QObject *parent)
-:   QObject(parent), d(new QValueSpaceObjectPrivate(path.toUtf8(), filter))
+:   QObject(parent), d(new QValueSpaceObjectPrivate(path, filter))
 {
     VS_CALL_ASSERT;
     QValueSpaceManager::instance()->init();
@@ -249,7 +249,7 @@ QValueSpaceObject::QValueSpaceObject(const QString &path,
     Constructs a QValueSpaceObject with the specified \a parent that publishes values under
     \a path.  The \a filter parameter is used to limit which layer this QValueSpaceObject will
     access.  This constructor is equivalent to calling
-    \c {QValueSpaceObject(QByteArray(path), filter, parent)}.
+    \c {QValueSpaceObject(QString::fromLatin1(path), filter, parent)}.
 
     The constructed Value Space object will access the \l {QAbstractValueSpaceLayer}{layer} with
     the highest \l {QAbstractValueSpaceLayer::order()}{order} that matches \a filter and for which
@@ -263,7 +263,7 @@ QValueSpaceObject::QValueSpaceObject(const QString &path,
 QValueSpaceObject::QValueSpaceObject(const char *path,
                                      QValueSpace::LayerOptions filter,
                                      QObject *parent)
-:   QObject(parent), d(new QValueSpaceObjectPrivate(path, filter))
+:   QObject(parent), d(new QValueSpaceObjectPrivate(QString::fromLatin1(path), filter))
 {
     VS_CALL_ASSERT;
     QValueSpaceManager::instance()->init();
@@ -286,7 +286,7 @@ QValueSpaceObject::QValueSpaceObject(const char *path,
 */
 
 QValueSpaceObject::QValueSpaceObject(const QString &path, const QUuid &uuid, QObject *parent)
-:   QObject(parent), d(new QValueSpaceObjectPrivate(path.toUtf8(), uuid))
+:   QObject(parent), d(new QValueSpaceObjectPrivate(path, uuid))
 {
     VS_CALL_ASSERT;
     QValueSpaceManager::instance()->init();
@@ -297,7 +297,7 @@ QValueSpaceObject::QValueSpaceObject(const QString &path, const QUuid &uuid, QOb
 
     Constructs a QValueSpaceObject with the specified \a parent that publishes values under
     \a path.  Only the layer identified by \a uuid will be accessed by this object.  This
-    constructor is equivalent to calling \c {QValueSpaceObject(QByteArray(path), uuid, parent)}.
+    constructor is equivalent to calling \c {QValueSpaceObject(QString(path), uuid, parent)}.
 
     Use of this constructor is not platform agnostic.  If possible use one of the constructors that
     take a QAbstractValueSpaceLayer::LayerOptions parameter instead.
@@ -308,7 +308,7 @@ QValueSpaceObject::QValueSpaceObject(const QString &path, const QUuid &uuid, QOb
     \sa isConnected()
 */
 QValueSpaceObject::QValueSpaceObject(const char *path, const QUuid &uuid, QObject *parent)
-:   QObject(parent), d(new QValueSpaceObjectPrivate(path, uuid))
+:   QObject(parent), d(new QValueSpaceObjectPrivate(QString::fromLatin1(path), uuid))
 {
     VS_CALL_ASSERT;
     QValueSpaceManager::instance()->init();
@@ -340,7 +340,7 @@ QValueSpaceObject::~QValueSpaceObject()
 QString QValueSpaceObject::path() const
 {
     VS_CALL_ASSERT;
-    return QString::fromUtf8(d->path);
+    return d->path;
 }
 
 /*!
@@ -395,7 +395,7 @@ void QValueSpaceObject::setAttribute(const QString &attribute, const QVariant &d
     }
 
     d->hasSet = true;
-    d->layer->setValue(this, d->handle, qCanonicalPath(attribute.toUtf8()), data);
+    d->layer->setValue(this, d->handle, qCanonicalPath(attribute), data);
 }
 
 /*!
@@ -407,7 +407,7 @@ void QValueSpaceObject::setAttribute(const QString &attribute, const QVariant &d
 void QValueSpaceObject::setAttribute(const char *attribute, const QVariant &data)
 {
     VS_CALL_ASSERT;
-    setAttribute(QString(attribute), data);
+    setAttribute(QString::fromLatin1(attribute), data);
 }
 
 /*!
@@ -437,7 +437,7 @@ void QValueSpaceObject::removeAttribute(const QString &attribute)
         return;
     }
 
-    d->layer->removeValue(this, d->handle, qCanonicalPath(attribute.toUtf8()));
+    d->layer->removeValue(this, d->handle, qCanonicalPath(attribute));
 }
 
 /*!
@@ -448,7 +448,7 @@ void QValueSpaceObject::removeAttribute(const QString &attribute)
 void QValueSpaceObject::removeAttribute(const char *attribute)
 {
     VS_CALL_ASSERT;
-    removeAttribute(QString(attribute));
+    removeAttribute(QString::fromLatin1(attribute));
 }
 
 /*!
