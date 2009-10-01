@@ -49,7 +49,6 @@
 #include "qcontactfilter.h"
 #include "qcontactsortorder.h"
 #include "qcontact.h"
-#include "qcontactgroup.h"
 #include "qtcontactsglobal.h"
 
 #include <QStringList>
@@ -138,68 +137,6 @@ public:
 
     QContactFilter m_filter;
     QList<QContactSortOrder> m_sorting;
-
-    QList<QUniqueId> m_ids;
-};
-
-class QContactGroupFetchRequestPrivate : public QContactAbstractRequestPrivate
-{
-public:
-    QContactGroupFetchRequestPrivate()
-        : QContactAbstractRequestPrivate()
-    {
-    }
-
-    ~QContactGroupFetchRequestPrivate()
-    {
-    }
-
-    QContactAbstractRequest::RequestType type() const
-    {
-        return QContactAbstractRequest::GroupFetchRequest;
-    }
-
-    QList<QUniqueId> m_ids;
-    QList<QContactGroup> m_groups;
-};
-
-class QContactGroupSaveRequestPrivate : public QContactAbstractRequestPrivate
-{
-public:
-    QContactGroupSaveRequestPrivate()
-        : QContactAbstractRequestPrivate()
-    {
-    }
-
-    ~QContactGroupSaveRequestPrivate()
-    {
-    }
-
-    QContactAbstractRequest::RequestType type() const
-    {
-        return QContactAbstractRequest::GroupSaveRequest;
-    }
-
-    QList<QContactGroup> m_groups;
-
-};
-
-class QContactGroupRemoveRequestPrivate : public QContactAbstractRequestPrivate
-{
-public:
-    QContactGroupRemoveRequestPrivate()
-        : QContactAbstractRequestPrivate()
-    {
-    }
-
-    ~QContactGroupRemoveRequestPrivate()
-    {
-    }
-
-    QContactAbstractRequest::RequestType type() const
-    {
-        return QContactAbstractRequest::GroupRemoveRequest;
-    }
 
     QList<QUniqueId> m_ids;
 };

@@ -188,6 +188,12 @@ Q_DEFINE_LATIN1_LITERAL(QContactSyncTarget::DefinitionName, "SyncTarget");
 Q_DEFINE_LATIN1_LITERAL(QContactTimestamp::DefinitionName, "Timestamp");
 
 /*!
+ * \variable QContactType::DefinitionName
+ * The constant string which identifies the definition of details which identify the type of the contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactType::DefinitionName, "Type");
+
+/*!
  * \variable QContactGuid::DefinitionName
  * The constant string which identifies the definition of details which are globally unique identifiers
  */
