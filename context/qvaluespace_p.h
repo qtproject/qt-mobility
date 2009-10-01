@@ -91,7 +91,8 @@ public:
 
 protected:
     /* QValueSpaceObject functions */
-    void emitItemNotify(QValueSpaceObject *object, const QString &path, bool interested);
+    void emitAttributeInterestChanged(QValueSpaceObject *object, const QString &attribute,
+                                      bool interested);
 
 signals:
     void handleChanged(quintptr);

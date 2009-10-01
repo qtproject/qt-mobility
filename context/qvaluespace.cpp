@@ -288,9 +288,9 @@ QT_BEGIN_NAMESPACE
     \a interested.
 */
 
-void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object,
-                                              const QString &path,
-                                              bool interested)
+void QAbstractValueSpaceLayer::emitAttributeInterestChanged(QValueSpaceObject *object,
+                                                            const QString &path,
+                                                            bool interested)
 {
     emit object->attributeInterestChanged(path, interested);
 }

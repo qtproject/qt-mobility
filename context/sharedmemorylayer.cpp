@@ -3202,7 +3202,7 @@ void SharedMemoryLayer::doClientNotify(QValueSpaceObject *object, const QByteArr
         return;
     }
 
-    emitItemNotify(object, emitPath, interested);
+    emitAttributeInterestChanged(object, emitPath, interested);
  }
 
 bool SharedMemoryLayer::notifyInterest(Handle handle, bool interested)
