@@ -73,7 +73,7 @@ Q_SIGNALS:
     void baseChanged();
     void copyChanged();
     void changeValue(const QByteArray&, const QVariant&);
-    void itemNotify(const QByteArray&, bool);
+    void attributeInterestChanged(const QString&, bool);
 };
 
 Q_DECLARE_METATYPE(QValueSpaceItem*)
@@ -852,10 +852,11 @@ void tst_QValueSpaceItem::interestNotification()
     object = new QValueSpaceObject(objectPath, layer->id());
 
     ChangeListener notificationListener;
-    connect(object, SIGNAL(itemNotify(QByteArray,bool)),
-            &notificationListener, SIGNAL(itemNotify(QByteArray,bool)));
+    connect(object, SIGNAL(attributeInterestChanged(QString,bool)),
+            &notificationListener, SIGNAL(attributeInterestChanged(QString,bool)));
 
-    QSignalSpy notificationSpy(&notificationListener, SIGNAL(itemNotify(QByteArray,bool)));
+    QSignalSpy notificationSpy(&notificationListener,
+                               SIGNAL(attributeInterestChanged(QString,bool)));
 
     const QString itemPath = objectPath + attribute;
 
@@ -875,8 +876,8 @@ void tst_QValueSpaceItem::interestNotification()
     QTRY_COMPARE(notificationSpy.count(), 1);
 
     QList<QVariant> arguments = notificationSpy.takeFirst();
-    QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
-    QCOMPARE(arguments.at(0).toByteArray(), attribute.toUtf8());
+    QCOMPARE(arguments.at(0).type(), QVariant::String);
+    QCOMPARE(arguments.at(0).toString(), attribute);
     QCOMPARE(arguments.at(1).type(), QVariant::Bool);
     QCOMPARE(arguments.at(1).toBool(), true);
 
@@ -894,8 +895,8 @@ void tst_QValueSpaceItem::interestNotification()
     QTRY_COMPARE(notificationSpy.count(), 1);
 
     arguments = notificationSpy.takeFirst();
-    QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
-    QCOMPARE(arguments.at(0).toByteArray(), attribute.toUtf8());
+    QCOMPARE(arguments.at(0).type(), QVariant::String);
+    QCOMPARE(arguments.at(0).toString(), attribute);
     QCOMPARE(arguments.at(1).type(), QVariant::Bool);
     QCOMPARE(arguments.at(1).toBool(), false);
 
@@ -942,13 +943,13 @@ void tst_QValueSpaceItem::ipcInterestNotification()
         << "-ipcInterestNotification" << layer->id().toString());
     QVERIFY(process.waitForStarted());
 
-    // Lackey will receive itemNotify from server and  set the attribute.
+    // Lackey will receive attributeInterestChanged from server and set the attribute.
     QTRY_COMPARE(changeSpy.count(), 1);
     changeSpy.clear();
 
     QCOMPARE(item->value(QString(), 10).toInt(), 5);
 
-    // Lackey will receive itemNotify and remove attribute.
+    // Lackey will receive attributeInterestChanged and remove attribute.
     delete item;
     QTest::qWait(1000);
 

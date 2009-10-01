@@ -71,8 +71,8 @@ public:
             break;
         case IpcInterestNotification:
             object = new QValueSpaceObject("/ipcInterestNotification", uuid, this);
-            connect(object, SIGNAL(itemNotify(QByteArray,bool)),
-                    this, SLOT(itemNotify(QByteArray,bool)));
+            connect(object, SIGNAL(attributeInterestChanged(QString,bool)),
+                    this, SLOT(attributeInterestChanged(QString,bool)));
             break;
         case IpcRemoveKey:
             object = new QValueSpaceObject("/ipcRemoveKey", uuid, this);
@@ -121,14 +121,14 @@ private slots:
         //qDebug() << "changes:" << item->value("mine", 6).toInt();
     }
 
-    void itemNotify(const QByteArray &path, bool interested)
+    void attributeInterestChanged(const QString &attribute, bool interested)
     {
         //qDebug() << Q_FUNC_INFO << path << interested;
         if (interested) {
-            if (path == "/value")
-                object->setAttribute(path, 5);
+            if (attribute == "/value")
+                object->setAttribute(attribute, 5);
         } else {
-            object->removeAttribute(path);
+            object->removeAttribute(attribute);
         }
     }
 

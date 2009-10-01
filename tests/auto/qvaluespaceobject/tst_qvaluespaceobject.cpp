@@ -63,7 +63,7 @@ class ChangeListener : public QObject
     Q_OBJECT
 Q_SIGNALS:
     void changeValue(const QByteArray&, const QVariant&);
-    void itemNotify(const QByteArray&,bool);
+    void attributeInterestChanged(const QString&, bool);
 };
 
 class tst_QValueSpaceObject: public QObject
@@ -358,30 +358,30 @@ void tst_QValueSpaceObject::testSignals()
     QValueSpaceObject *object = new QValueSpaceObject(objectPath, layer->id());
 
     ChangeListener listener;
-    connect(object, SIGNAL(itemNotify(QByteArray,bool)),
-            &listener, SIGNAL(itemNotify(QByteArray,bool)));
+    connect(object, SIGNAL(attributeInterestChanged(QString,bool)),
+            &listener, SIGNAL(attributeInterestChanged(QString,bool)));
 
-    QSignalSpy itemNotifySpy(&listener, SIGNAL(itemNotify(QByteArray,bool)));
+    QSignalSpy interestChangedSpy(&listener, SIGNAL(attributeInterestChanged(QString,bool)));
 
     QValueSpaceItem *item = new QValueSpaceItem(itemPath, layer->id());
 
-    QTRY_COMPARE(itemNotifySpy.count(), 1);
+    QTRY_COMPARE(interestChangedSpy.count(), 1);
 
-    QList<QVariant> arguments = itemNotifySpy.takeFirst();
+    QList<QVariant> arguments = interestChangedSpy.takeFirst();
     QCOMPARE(arguments.count(), 2);
-    QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
-    QVERIFY(arguments.at(0).toByteArray().isEmpty());
+    QCOMPARE(arguments.at(0).type(), QVariant::String);
+    QVERIFY(arguments.at(0).toString().isEmpty());
     QCOMPARE(arguments.at(1).type(), QVariant::Bool);
     QVERIFY(arguments.at(1).toBool());
 
     delete item;
 
-    QTRY_COMPARE(itemNotifySpy.count(), 1);
+    QTRY_COMPARE(interestChangedSpy.count(), 1);
 
-    arguments = itemNotifySpy.takeFirst();
+    arguments = interestChangedSpy.takeFirst();
     QCOMPARE(arguments.count(), 2);
-    QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
-    QVERIFY(arguments.at(0).toByteArray().isEmpty());
+    QCOMPARE(arguments.at(0).type(), QVariant::String);
+    QVERIFY(arguments.at(0).toString().isEmpty());
     QCOMPARE(arguments.at(1).type(), QVariant::Bool);
     QVERIFY(!arguments.at(1).toBool());
 }

@@ -377,7 +377,8 @@ void tst_QValueSpace::layerInterface()
     CHECK_ERRORS(object->removeAttribute(attribute));
 
     SignalSink sink;
-    CHECK_ERRORS(connect(object, SIGNAL(itemNotify(QByteArray,bool)), &sink, SLOT(slot())));
+    CHECK_ERRORS(connect(object, SIGNAL(attributeInterestChanged(QString,bool)),
+                         &sink, SLOT(slot())));
 
     CHECK_ERRORS(delete object);
 }

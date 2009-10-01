@@ -119,7 +119,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn void QValueSpaceObject::itemNotify(const QByteArray &attribute, bool interested)
+    \fn void QValueSpaceObject::attributeInterestChanged(const QString &attribute, bool interested)
 
     Signal that is emitted when interest in \a attribute changes.  If \a interested is true at
     least on QValueSpaceItem is interested in the value of \a attribute.
@@ -485,7 +485,7 @@ void QValueSpaceObject::removeAttribute(const QByteArray &attribute)
     If you reimplement this virtual function it is important that you call this implementation from
     your implementation.
 
-    \sa itemNotify()
+    \sa attributeInterestChanged()
 */
 void QValueSpaceObject::connectNotify(const char *member)
 {

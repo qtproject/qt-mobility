@@ -284,14 +284,15 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    Emits the QValueSpaceObject::itemNotify() signal on \a object with \a path and \a interested.
+    Emits the QValueSpaceObject::attributeInterestChanged() signal on \a object with \a path and
+    \a interested.
 */
 
 void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object,
-                                              const QByteArray &path,
+                                              const QString &path,
                                               bool interested)
 {
-    emit object->itemNotify(path, interested);
+    emit object->attributeInterestChanged(path, interested);
 }
 
 /*!

@@ -70,7 +70,7 @@ public:
     static void sync();
 
 signals:
-    void itemNotify(const QByteArray &path, bool interested);
+    void attributeInterestChanged(const QString &attribute, bool interested);
 
 public slots:
     void setAttribute(const char *attribute, const QVariant &data);
