@@ -42,8 +42,7 @@
  * \brief Provides a simple API to simplify the emission of state-change signals from QContactManagerEngine implementations.
  *
  * This class can be utilised by backend implementations to ensure correct emission of the \l QContactManagerEngine::dataChanged(),
- * \l QContactManagerEngine::contactsAdded(), \l QContactManagerEngine::contactsChanged(), \l QContactManagerEngine::contactsRemoved(),
- * \l QContactManagerEngine::groupsAdded(), \l QContactManagerEngine::groupsChanged(), and \l QContactManagerEngine::groupsRemoved() signals.
+ * \l QContactManagerEngine::contactsAdded(), \l QContactManagerEngine::contactsChanged() and \l QContactManagerEngine::contactsRemoved().
  *
  * \sa QContactManagerEngine
  */
@@ -126,33 +125,6 @@ QSet<QUniqueId>& QContactChangeSet::removedContacts()
 }
 
 /*!
- * Returns a reference to the set of ids of groups which have been added to
- * the database.
- */
-QSet<QUniqueId>& QContactChangeSet::addedGroups()
-{
-    return d->m_addedGroups;
-}
-
-/*!
- * Returns a reference to the set of ids of groups which have been changed in
- * the database.
- */
-QSet<QUniqueId>& QContactChangeSet::changedGroups()
-{
-    return d->m_changedGroups;
-}
-
-/*!
- * Returns a reference to the set of ids of groups which have been removed from
- * the database.
- */
-QSet<QUniqueId>& QContactChangeSet::removedGroups()
-{
-    return d->m_removedGroups;
-}
-
-/*!
  * Clears all flags and sets of ids in this change set
  */
 void QContactChangeSet::clear()
@@ -161,9 +133,6 @@ void QContactChangeSet::clear()
     d->m_addedContacts.clear();
     d->m_changedContacts.clear();
     d->m_removedContacts.clear();
-    d->m_addedGroups.clear();
-    d->m_changedGroups.clear();
-    d->m_removedGroups.clear();
 }
 
 /*!
@@ -183,11 +152,5 @@ void QContactChangeSet::emitSignals(QContactManagerEngine *engine)
             emit engine->contactsChanged(d->m_changedContacts.toList());
         if (!d->m_removedContacts.isEmpty())
             emit engine->contactsRemoved(d->m_removedContacts.toList());
-        if (!d->m_addedGroups.isEmpty())
-            emit engine->groupsAdded(d->m_addedGroups.toList());
-        if (!d->m_changedGroups.isEmpty())
-            emit engine->groupsChanged(d->m_changedGroups.toList());
-        if (!d->m_removedGroups.isEmpty())
-            emit engine->groupsRemoved(d->m_removedGroups.toList());
     }
 }

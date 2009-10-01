@@ -24,7 +24,6 @@ PUBLIC_HEADERS += \
     qcontactdetail.h \
     qcontactdetaildefinition.h \
     qcontactfilter.h \
-    qcontactgroup.h \
     qcontactmanager.h \
     qcontactmanagerengine.h \
     qcontactmanagerenginefactory.h \
@@ -42,7 +41,6 @@ PRIVATE_HEADERS += \
     qcontactdetail_p.h \
     qcontactdetaildefinition_p.h \
     qcontactfilter_p.h \
-    qcontactgroup_p.h \
     qcontactmanager_p.h \
     qcontacts_p.h \
     qcontactsortorder_p.h
@@ -57,7 +55,6 @@ SOURCES += \
     qcontactdetail.cpp \
     qcontactdetaildefinition.cpp \
     qcontactfilter.cpp \
-    qcontactgroup.cpp \
     qcontactmanager_p.cpp \
     qcontactmanager.cpp \
     qcontactmanagerengine.cpp \

@@ -31,38 +31,36 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTGROUPFETCHREQUEST_H
-#define QCONTACTGROUPFETCHREQUEST_H
+#ifndef QCONTACTTYPE_H
+#define QCONTACTTYPE_H
+
+#include <QString>
 
 #include "qtcontactsglobal.h"
-#include "qcontactabstractrequest.h"
-#include "qcontactgroup.h"
+#include "qcontactdetail.h"
+#include "qcontact.h"
 
-#include <QList>
-
-class QContactGroupFetchRequestPrivate;
-class QTCONTACTS_EXPORT QContactGroupFetchRequest : public QContactAbstractRequest
+/* Leaf class */
+class QTCONTACTS_EXPORT QContactType : public QContactDetail
 {
-    Q_OBJECT
-
 public:
-    QContactGroupFetchRequest();
-    ~QContactGroupFetchRequest();
+#ifdef Q_QDOC
+    const char* DefinitionName;
+    const char* FieldType;
+    const char* TypeContact;
+    const char* TypeGroup;
+    const char* TypeMetacontact;
+#else
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactType, "Type")
+    Q_DECLARE_LATIN1_LITERAL(FieldType, "Type");
+    Q_DECLARE_LATIN1_LITERAL(TypeContact, "Contact");
+    Q_DECLARE_LATIN1_LITERAL(TypeGroup, "Group");
+    Q_DECLARE_LATIN1_LITERAL(TypeMetacontact, "Metacontact");
+#endif
 
-    /* Selection */
-    void setIds(const QList<QUniqueId>& ids);
-    QList<QUniqueId> ids() const;
-
-    /* Results */
-    QList<QContactGroup> groups() const;
-
-signals:
-    void progress(QContactGroupFetchRequest* self, bool appendOnly);
-
-private:
-    Q_DISABLE_COPY(QContactGroupFetchRequest)
-    friend class QContactManagerEngine;
-    Q_DECLARE_PRIVATE_D(d_ptr, QContactGroupFetchRequest)
+    void setType(const QString& type) {setValue(FieldType, type);}
+    QString type() const {return value(FieldType);}
 };
 
 #endif
+

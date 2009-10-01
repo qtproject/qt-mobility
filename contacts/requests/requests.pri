@@ -5,9 +5,6 @@ PUBLIC_HEADERS += \
     requests/qcontactidfetchrequest.h \
     requests/qcontactsaverequest.h \
     requests/qcontactremoverequest.h \
-    requests/qcontactgroupfetchrequest.h \
-    requests/qcontactgroupsaverequest.h \
-    requests/qcontactgroupremoverequest.h \
     requests/qcontactdetaildefinitionfetchrequest.h \
     requests/qcontactdetaildefinitionsaverequest.h \
     requests/qcontactdetaildefinitionremoverequest.h \
@@ -21,9 +18,6 @@ SOURCES += \
     requests/qcontactidfetchrequest.cpp \
     requests/qcontactsaverequest.cpp \
     requests/qcontactremoverequest.cpp \
-    requests/qcontactgroupfetchrequest.cpp \
-    requests/qcontactgroupsaverequest.cpp \
-    requests/qcontactgroupremoverequest.cpp \
     requests/qcontactdetaildefinitionfetchrequest.cpp \
     requests/qcontactdetaildefinitionsaverequest.cpp \
     requests/qcontactdetaildefinitionremoverequest.cpp

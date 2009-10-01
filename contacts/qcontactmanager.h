@@ -44,7 +44,6 @@
 #include <QDateTime>
 
 #include "qcontact.h"
-#include "qcontactgroup.h"
 #include "qcontactmanagerinfo.h"
 #include "qcontactsortorder.h"
 
@@ -109,12 +108,6 @@ public:
     bool setSelfContactId(const QUniqueId& contactId);
     QUniqueId selfContactId() const;
 
-    /* Groups - Accessors and Mutators */
-    QList<QUniqueId> groups() const;
-    QContactGroup group(const QUniqueId& groupId) const;
-    bool saveGroup(QContactGroup* group);
-    bool removeGroup(const QUniqueId& groupId);
-
     /* Definitions - Accessors and Mutators */
     QMap<QString, QContactDetailDefinition> detailDefinitions() const;
     QContactDetailDefinition detailDefinition(const QString& definitionName) const;
@@ -132,9 +125,6 @@ signals:
     void contactsAdded(const QList<QUniqueId>& contactIds);
     void contactsChanged(const QList<QUniqueId>& contactIds);
     void contactsRemoved(const QList<QUniqueId>& contactIds);
-    void groupsAdded(const QList<QUniqueId>& groupIds);
-    void groupsChanged(const QList<QUniqueId>& groupIds);
-    void groupsRemoved(const QList<QUniqueId>& groupIds);
 
 private:
     friend class QContactManagerData;

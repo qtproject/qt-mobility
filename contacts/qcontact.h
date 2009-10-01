@@ -47,6 +47,7 @@
 #include "qcontactdetail.h"
 #include "qcontactdetaildefinition.h"
 #include "qcontactdisplaylabel.h"
+#include "qcontacttype.h"
 
 class QContactManager;
 class QContactData;
@@ -69,9 +70,10 @@ public:
     QUniqueId id() const;
     void setId(const QUniqueId& id);
 
-    /* Group IDs */
-    QList<QUniqueId> groups() const;
-    void setGroups(const QList<QUniqueId> & groupIds);
+    /* Type - contact, group, metacontact, ... */
+    QString type() const;
+    void setType(const QString& type);
+    void setType(const QContactType& type);
 
     /* The (possibly synthesised) display label of the contact */
     QContactDisplayLabel displayLabel() const;

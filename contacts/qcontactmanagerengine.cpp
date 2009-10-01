@@ -35,7 +35,6 @@
 
 #include "qcontactdetaildefinition.h"
 #include "qcontactdetails.h"
-#include "qcontactgroup_p.h"
 #include "qcontactsortorder.h"
 #include "qcontactfilters.h"
 #include "qcontactaction.h"
@@ -95,7 +94,7 @@
  * As it is possible that other processes (or other devices) may have caused the
  * changes, the timing can not be determined.
  *
- * \sa contactsAdded(), contactsChanged(), contactsRemoved(), groupsAdded(), groupsChanged(), groupsRemoved()
+ * \sa contactsAdded(), contactsChanged(), contactsRemoved()
  */
 
 /*!
@@ -139,50 +138,6 @@
  *
  * \sa dataChanged()
  */
-
-
-/*!
- * \fn QContactManagerEngine::groupsAdded(const QList<QUniqueId>& groupIds);
- *
- * This signal is emitted some time after a set of contact groups has been added to
- * this engine where the \l dataChanged() signal was not emitted for those changes.
- * As it is possible that other processes (or other devices) may
- * have added the groups, the timing cannot be determined.
- *
- * The list of ids added is given by \a groupIds.  There may be one or more
- * ids in the list.
- *
- * \sa dataChanged()
- */
-
-/*!
- * \fn QContactManagerEngine::groupsChanged(const QList<QUniqueId>& groupIds);
- *
- * This signal is emitted some time after a set of contact groups has been modified in
- * this engine where the \l dataChanged() signal was not emitted for those changes.
- * As it is possible that other processes (or other devices) may
- * have modified the groups, the timing cannot be determined.
- *
- * The list of ids added is given by \a groupIds.  There may be one or more
- * ids in the list.
- *
- * \sa dataChanged()
- */
-
-/*!
- * \fn QContactManagerEngine::groupsRemoved(const QList<QUniqueId>& groupIds);
- *
- * This signal is emitted some time after a set of contact groups has been removed from
- * this engine where the \l dataChanged() signal was not emitted for those changes.
- * As it is possible that other processes (or other devices) may
- * have removed the groups, the timing cannot be determined.
- *
- * The list of ids added is given by \a groupIds.  There may be one or more
- * ids in the list.
- *
- * \sa dataChanged()
- */
-
 
 /*!
  * Returns the parameters with which this engine was constructed.  Note that
@@ -413,6 +368,18 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     d.setFields(fields);
     d.setUnique(true);
     d.setAccessConstraint(QContactDetailDefinition::ReadOnly);
+    retn.insert(d.name(), d);
+
+    // type
+    fields.clear();
+    f.dataType = QVariant::String;
+    subTypes.clear();
+    subTypes << QString(QLatin1String(QContactType::TypeContact)) << QString(QLatin1String(QContactType::TypeGroup)) << QString(QLatin1String(QContactType::TypeMetacontact));
+    f.allowableValues = subTypes;
+    d.setName(QContactType::DefinitionName);
+    fields.insert(QContactType::FieldType, f); // note: NO CONTEXT!!
+    d.setUnique(true);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // guid
@@ -875,23 +842,6 @@ bool QContactManagerEngine::validateContact(const QContact& contact, QContactMan
         }
     }
 
-    // Check that any groups in the contact actually exist
-    if (contact.groups().count() > 0) {
-        QList<QUniqueId> allGroups = groups(error);
-        if (error == QContactManager::NoError) {
-            for (int i=0; i < contact.groups().count(); i++) {
-                QUniqueId groupId = contact.groups().at(i);
-                if (!allGroups.contains(groupId)) {
-                    error = QContactManager::DoesNotExistError;
-                    return false;
-                }
-            }
-        } else {
-            // pass the original error back
-            return false;
-        }
-    }
-
     return true;
 }
 
@@ -956,33 +906,6 @@ bool QContactManagerEngine::validateDefinition(const QContactDetailDefinition& d
 }
 
 /*!
- * Checks that the given \a group passes seems valid.
- * Saves any error that may occur during validation in \a error.
- *
- * This means:
- * - it has a name
- * - any contacts that are in the group exist
- *
- * Returns true if the group seems valid, false otherwise.
- */
-bool QContactManagerEngine::validateGroup(const QContactGroup& group, QContactManager::Error& error) const
-{
-    if (group.name().isEmpty()) {
-        error = QContactManager::BadArgumentError;
-        return false;
-    }
-
-    // Fetch a whole contact to test for existence?
-    for (int i=0; i < group.members().count(); i++) {
-        if (contact(group.members().at(i), error).isEmpty()) {
-            error = QContactManager::DoesNotExistError;
-            return false;
-        }
-    }
-    return true;
-}
-
-/*!
  * Remove the contact identified by \a contactId from the database.
  * Returns true if the contact was removed successfully, otherwise
  * returns false.
@@ -996,73 +919,6 @@ bool QContactManagerEngine::validateGroup(const QContactGroup& group, QContactMa
 bool QContactManagerEngine::removeContact(const QUniqueId& contactId, QContactManager::Error& error)
 {
     Q_UNUSED(contactId);
-    error = QContactManager::NotSupportedError;
-    return false;
-}
-
-/*!
- * Return the list of group ids present in this manager.
- *
- * Any errors encountered during this operation should be stored to
- * \a error.
- */
-QList<QUniqueId> QContactManagerEngine::groups(QContactManager::Error& error) const
-{
-    error = QContactManager::NotSupportedError;
-    return QList<QUniqueId>();
-}
-
-/*!
- * Returns the group which is identified by the given \a groupId,
- * or a default-constructed group if no such group exists
- *
- * Any errors encountered during this operation should be stored to
- * \a error.
- */
-QContactGroup QContactManagerEngine::group(const QUniqueId& groupId, QContactManager::Error& error) const
-{
-    Q_UNUSED(groupId);
-    error = QContactManager::NotSupportedError;
-    return QContactGroup();
-}
-
-/*!
- * Saves the group \a group in the database.  The id of the group is
- * used to determine the group to update.  If the group has no name set,
- * this function should fail.  If the group does not already
- * exist, it should be added to the database.
- *
- * Returns true on success, or false on failure.
- *
- * The backend must emit the appropriate signals to inform clients of changes
- * to the database resulting from this operation.
- *
- * Any errors encountered during this operation should be stored to
- * \a error.
- */
-bool QContactManagerEngine::saveGroup(QContactGroup* group, QContactManager::Error& error)
-{
-    error = QContactManager::NotSupportedError;
-    if (group == 0)
-        error = QContactManager::BadArgumentError;
-    return false;
-}
-
-/*!
- * Remove the group with the given id \a groupId from the database.
- *
- * Returns false if no group with that id exists, or the operation otherwise failed.
- * Returns true if the group was successfully deleted.
- *
- * The backend must emit the appropriate signals to inform clients of changes
- * to the database resulting from this operation.
- *
- * Any errors encountered during this operation should be stored to
- * \a error.
- */
-bool QContactManagerEngine::removeGroup(const QUniqueId& groupId, QContactManager::Error& error)
-{
-    Q_UNUSED(groupId);
     error = QContactManager::NotSupportedError;
     return false;
 }
@@ -1475,8 +1331,11 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                 // check the specified group for membership.
                 const QContactGroupMembershipFilter cgf(filter);
 
-                if (contact.groups().contains(cgf.groupId()))
-                    return true;
+                // oldcode:
+                //if (contact.groups().contains(cgf.groupId()))
+                //    return true;
+                // newcode:
+                //if (contact.containsRelationshipDetail(is, cfg.groupId())) return true.
 
                 // Fall through to end
             }
@@ -1756,27 +1615,6 @@ void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
         }
         break;
 
-        case QContactAbstractRequest::GroupFetchRequest:
-        {
-            QContactGroupFetchRequest* r = static_cast<QContactGroupFetchRequest*>(req);
-            emit r->progress(r, appendOnly);
-        }
-        break;
-
-        case QContactAbstractRequest::GroupSaveRequest:
-        {
-            QContactGroupSaveRequest* r = static_cast<QContactGroupSaveRequest*>(req);
-            emit r->progress(r);
-        }
-        break;
-
-        case QContactAbstractRequest::GroupRemoveRequest:
-        {
-            QContactGroupRemoveRequest* r = static_cast<QContactGroupRemoveRequest*>(req);
-            emit r->progress(r);
-        }
-        break;
-
         case QContactAbstractRequest::DetailDefinitionFetchRequest:
         {
             QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(req);
@@ -1852,44 +1690,6 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
         default:
         {
             // this request type does not have a list of contacts to update...
-            return;
-        }
-    }
-}
-
-/*!
- * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request, with the \a appendOnly flag set (if required) to indicate result ordering stability.  If the request is of a type which does not return a list of groups as a result, this function will return without doing anything.
- */
-void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactGroup>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
-{
-    switch (req->type()) {
-        case QContactAbstractRequest::GroupFetchRequest:
-        {
-            req->d_ptr->m_error = error;
-            req->d_ptr->m_errors = errors;
-            req->d_ptr->m_status = status;
-            QContactGroupFetchRequestPrivate* rd = static_cast<QContactGroupFetchRequestPrivate*>(req->d_ptr);
-            rd->m_groups = result;
-            QContactGroupFetchRequest* r = static_cast<QContactGroupFetchRequest*>(req);
-            emit r->progress(r, appendOnly);
-        }
-        break;
-
-        case QContactAbstractRequest::GroupSaveRequest:
-        {
-            req->d_ptr->m_error = error;
-            req->d_ptr->m_errors = errors;
-            req->d_ptr->m_status = status;
-            QContactGroupSaveRequestPrivate* rd = static_cast<QContactGroupSaveRequestPrivate*>(req->d_ptr);
-            rd->m_groups = result;
-            QContactGroupSaveRequest* r = static_cast<QContactGroupSaveRequest*>(req);
-            emit r->progress(r);
-        }
-        break;
-
-        default:
-        {
-            // this request type does not have a list of groups to update...
             return;
         }
     }

@@ -104,7 +104,7 @@ bool QContact::isEmpty() const
 
 /*!
  * Removes all details of the contact.
- * This function does not modify the id or group membership of the contact.
+ * This function does not modify the id of the contact.
  * Calling isEmpty() after calling this function will return true.
  */
 void QContact::clearDetails()
@@ -135,33 +135,36 @@ QUniqueId QContact::id() const
 }
 
 /*!
- * Returns a list of QUniqueIds that identify any QContactGroups that
- * this contact is a member of.
+ * Returns the type of the contact.  Every contact has exactly one type which
+ * is either set manually (by saving a modified copy of the QCotnactType
+ * in the contact, or by calling \l setType()) or synthesised automatically.
  *
- * You should check that your \l QContactManager supports
- * groups.
- *
- * \sa QContactGroup
+ * \sa setType()
  */
-QList<QUniqueId> QContact::groups() const
+QString QContact::type() const
 {
-    return d->m_groups;
+    // type is detail 1
+    return d->m_details.at(1).value(QContactType::FieldType);
 }
 
 /*!
- * Sets the list of QContactGroups that this contact is
- * a member of to those identified in \a groups.
- * Returns true if the contact was added to the groups
- * successfully, otherwise returns false.
- *
- * You should check that your \l QContactManager supports
- * groups.
- *
- * \sa QContactGroup
+ * Sets the type of the contact to the given \a type.
  */
-void QContact::setGroups(const QList<QUniqueId>& groups)
+void QContact::setType(const QString& type)
 {
-    d->m_groups = groups;
+    // type is detail 1
+    QContactType newType;
+    newType.setType(type);
+    d->m_details[1] = newType;
+}
+
+/*!
+ * Sets the type of the contact to the given \a type.
+ */
+void QContact::setType(const QContactType& type)
+{
+    // type is detail 1
+    d->m_details[1] = type;
 }
 
 /*!

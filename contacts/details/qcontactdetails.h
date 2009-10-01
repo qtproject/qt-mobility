@@ -63,6 +63,7 @@
 #include "qcontactrelationship.h"
 #include "qcontactsynctarget.h"
 #include "qcontacttimestamp.h"
+#include "qcontacttype.h"
 #include "qcontacturl.h"
 
 #endif
