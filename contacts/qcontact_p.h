@@ -59,7 +59,7 @@ public:
     QContactData()
         : QSharedData(),
         m_id(0),
-        m_nextDetailId(1)
+        m_nextDetailId(2) // already two "must have" details: DisplayLabel and Type
     {
     }
 

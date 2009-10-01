@@ -135,6 +135,39 @@ QUniqueId QContact::id() const
 }
 
 /*!
+ * Returns the type of the contact.  Every contact has exactly one type which
+ * is either set manually (by saving a modified copy of the QCotnactType
+ * in the contact, or by calling \l setType()) or synthesised automatically.
+ *
+ * \sa setType()
+ */
+QString QContact::type() const
+{
+    // type is detail 1
+    return d->m_details.at(1).value(QContactType::FieldType);
+}
+
+/*!
+ * Sets the type of the contact to the given \a type.
+ */
+void QContact::setType(const QString& type)
+{
+    // type is detail 1
+    QContactType newType;
+    newType.setType(type);
+    d->m_details[1] = newType;
+}
+
+/*!
+ * Sets the type of the contact to the given \a type.
+ */
+void QContact::setType(const QContactType& type)
+{
+    // type is detail 1
+    d->m_details[1] = type;
+}
+
+/*!
  * Returns the display label of the contact.  Every contact has exactly one display label
  * which is either set manually (by saving a modified copy of the QContactDisplayLabel
  * in the contact, or by calling \l setDisplayLabel()) or synthesised by the manager from
