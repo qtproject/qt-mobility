@@ -370,6 +370,18 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     d.setAccessConstraint(QContactDetailDefinition::ReadOnly);
     retn.insert(d.name(), d);
 
+    // type
+    fields.clear();
+    f.dataType = QVariant::String;
+    subTypes.clear();
+    subTypes << QString(QLatin1String(QContactType::TypeContact)) << QString(QLatin1String(QContactType::TypeGroup)) << QString(QLatin1String(QContactType::TypeMetacontact));
+    f.allowableValues = subTypes;
+    d.setName(QContactType::DefinitionName);
+    fields.insert(QContactType::FieldType, f); // note: NO CONTEXT!!
+    d.setUnique(true);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+    retn.insert(d.name(), d);
+
     // guid
     fields.clear();
     f.dataType = QVariant::String;

@@ -20,6 +20,7 @@ PUBLIC_HEADERS += \
     details/qcontactrelationship.h \
     details/qcontactsynctarget.h \
     details/qcontacttimestamp.h \
+    details/qcontacttype.h \
     details/qcontacturl.h
 
 SOURCES += details/qcontactdetails.cpp

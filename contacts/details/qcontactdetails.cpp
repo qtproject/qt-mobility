@@ -129,6 +129,11 @@
  */
 
 /*!
+ * \class QContactType
+ * \brief Describes the type of the contact
+ */
+
+/*!
  * \class QContactUrl
  * \brief A url associated with a contact
  */
@@ -646,6 +651,30 @@ Q_DEFINE_LATIN1_LITERAL(QContactTimestamp::FieldModificationTimestamp, "Modifica
  */
 Q_DEFINE_LATIN1_LITERAL(QContactTimestamp::FieldCreationTimestamp, "CreationTimestamp");
 
+/*!
+ * \variable QContactType::FieldType
+ * The constant key for the type value which is stored in details of the QContactType definition
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactType::FieldType, "Type");
+
+
+/*!
+ * \variable QContactType::TypeContact
+ * The constant attribute value which describes the contact as being an ordinary contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactType::TypeContact, "Contact");
+
+/*!
+ * \variable QContactType::TypeGroup
+ * The constant attribute value which describes the contact as being a group
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactType::TypeGroup, "Group");
+
+/*!
+ * \variable QContactType::TypeMetacontact
+ * The constant attribute value which describes the contact as being a metacontact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactType::TypeMetacontact, "Metacontact");
 
 /*!
  * \variable QContactPhoneNumber::SubTypeLandline
@@ -1202,6 +1231,16 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
 /*!
  * \fn QContactTimestamp::setLastModified(const QDateTime& dateTime)
  * Sets the last-modified timestamp saved in this detail to \a dateTime
+ */
+
+/*!
+ * \fn QContactType::type() const
+ * Returns the contact type value stored in this detail
+ */
+
+/*!
+ * \fn QContactType::setType(const QString& type)
+ * Sets the type of the contact to be the give \a type
  */
 
 /*!
