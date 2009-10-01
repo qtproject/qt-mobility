@@ -429,6 +429,24 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::FieldSubType, "SubType");
 Q_DEFINE_LATIN1_LITERAL(QContactGender::FieldGender, "Gender");
 
 /*!
+ * \variable QContactGender::GenderMale
+ * The value that identifies this contact as being male
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGender::GenderMale, "Male");
+
+/*!
+ * \variable QContactGender::GenderFemale
+ * The value that identifies this contact as being female
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGender::GenderFemale, "Female");
+
+/*!
+ * \variable QContactGender::GenderUnspecified
+ * The value that identifies this contact as being of unspecified gender
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGender::GenderUnspecified, "Unspecified");
+
+/*!
  * \variable QContactGeolocation::FieldLabel
  * The constant key for which the location label value is stored in details of the QContactGeolocation type
  */
@@ -526,36 +544,6 @@ Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeInternet, "Internet");
 Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeShareVideo, "ShareVideo");
 
 /*!
- * \variable QContactOnlineAccount::SubTypeFlickr
- * The constant attribute value which describes the online account as supporting Flickr
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeFlickr, "Flickr");
-
-/*!
- * \variable QContactOnlineAccount::SubTypeFacebook
- * The constant attribute value which describes the online account as supporting Facebook
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeFacebook, "Facebook");
-
-/*!
- * \variable QContactOnlineAccount::SubTypeMyspace
- * The constant attribute value which describes the online account as supporting Myspace
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeMyspace, "Myspace");
-
-/*!
- * \variable QContactOnlineAccount::SubTypeTwitter
- * The constant attribute value which describes the online account as supporting Twitter
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeTwitter, "Twitter");
-
-/*!
- * \variable QContactOnlineAccount::SubTypeWindowsLive
- * The constant attribute value which describes the online account as supporting WindowsLive
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeWindowsLive, "WindowsLive");
-
-/*!
  * \variable QContactOrganization::FieldName
  * The constant key for which the name value is stored in details of the QContactOrganization type
  */
@@ -604,6 +592,48 @@ Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldNickname, "Nickname");
 Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldPresence, "Presence");
 
 /*!
+ * \variable QContactPresence::PresenceAvailable
+ * The value for presence which specifies that the contact's current status is available
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::PresenceAvailable, "Available");
+
+/*!
+ * \variable QContactPresence::PresenceHidden
+ * The value for presence which specifies that the contact's current status is hidden
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::PresenceHidden, "Hidden");
+
+/*!
+ * \variable QContactPresence::PresenceBusy
+ * The value for presence which specifies that the contact's current status is busy
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::PresenceBusy, "Busy");
+
+/*!
+ * \variable QContactPresence::PresenceAway
+ * The value for presence which specifies that the contact's current status is away
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::PresenceAway, "Away");
+
+/*!
+ * \variable QContactPresence::PresenceExtendedAway
+ * The value for presence which specifies that the contact's current status is extended away
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::PresenceExtendedAway, "ExtendedAway");
+
+/*!
+ * \variable QContactPresence::PresenceUnknown
+ * The value for presence which specifies that the contact's current status is unknown
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::PresenceUnknown, "Unknown");
+
+/*!
+ * \variable QContactPresence::PresenceOffline
+ * The value for presence which specifies that the contact's current status is offline
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::PresenceOffline, "Offline");
+
+/*!
  * \variable QContactPresence::FieldStatusMessage
  * The constant key for which the status message value is stored in details of the QContactPresence type
  */
@@ -626,6 +656,168 @@ Q_DEFINE_LATIN1_LITERAL(QContactDisplayLabel::FieldSynthesised, "Synthesised");
  * The constant key for the value which is stored in details of the QContactRelationship type which defines the type of relationship that is being described in the detail
  */
 Q_DEFINE_LATIN1_LITERAL(QContactRelationship::FieldRelationshipType, "RelationshipType");
+
+/*!
+ * \variable QContactRelationship::RelationshipTypeAggregatedBy
+ * The value for the relationship type which identifies this contact as being aggregated by the other contact into a master contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeAggregatedBy, "AggregatedBy");
+
+/*!
+ * \variable QContactRelationship::RelationshipTypeAggregates
+ * The value for the relationship type which identifies this contact as aggregating the other contact (and possibly others) into a master contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeAggregates, "Aggregates");
+
+/*!
+ * \variable QContactRelationship::RelationshipTypeMemberOfGroup
+ * The value for the relationship type which identifies this contact as being a member of the group represented by the other contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeMemberOfGroup, "MemberOfGroup");
+
+/*!
+ * \variable QContactRelationship::RelationshipTypeIs
+ * The value for the relationship type which identifies this contact as being the other contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeIs, "Is");
+
+/*!
+ * \variable QContactRelationship::RelationshipTypeWas
+ * The value for the relationship type which identifies this contact as formerly being the other contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeWas, "Was");
+
+/*!
+ * \variable QContactRelationship::RelationshipTypeParent
+ * The value for the relationship type which identifies this contact as being a parent of the other contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeParent, "Parent");
+
+/*!
+ * \variable QContactRelationship::RelationshipTypeFather
+ * The value for the relationship type which identifies this contact as being the father of the other contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeFather, "Father");
+
+/*!
+ * \variable QContactRelationship::RelationshipTypeMother
+ * The value for the relationship type which identifies this contact as being the mother of the other contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeMother, "Mother");
+
+/*!
+ * \variable QContactRelationship::RelationshipTypeChild
+ * The value for the relationship type which identifies this contact as being a child of the other contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeChild, "Child");
+
+/*!
+ * \variable QContactRelationship::RelationshipTypeSon
+ * The value for the relationship type which identifies this contact as being a son of the other contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeSon, "Son");
+
+/*!
+ * \variable QContactRelationship::RelationshipTypeDaughter
+ * The value for the relationship type which identifies this contact as being a daughter of the other contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeDaughter, "Daughter");
+
+/*!
+ * \variable QContactRelationship::RelationshipTypeSibling
+ * The value for the relationship type which identifies this contact as being a sibling of the other contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeSibling, "Sibling");
+
+/*!
+ * \variable QContactRelationship::RelationshipTypeBrother
+ * The value for the relationship type which identifies this contact as being a brother of the other contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeBrother, "Brother");
+
+/*!
+ * \variable QContactRelationship::RelationshipTypeSister
+ * The value for the relationship type which identifies this contact as being a sister of the other contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeSister, "Sister");
+
+/*!
+ * \variable QContactRelationship::RelationshipTypeCousin
+ * The value for the relationship type which identifies this contact as being a cousin of the other contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeCousin, "Cousin");
+
+/*!
+ * \variable QContactRelationship::RelationshipTypeFriend
+ * The value for the relationship type which identifies this contact as being a friend of the other contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeFriend, "Friend");
+
+/*!
+ * \variable QContactRelationship::RelationshipTypeSpouse
+ * The value for the relationship type which identifies this contact as being the spouse of the other contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeSpouse, "Spouse");
+
+/*!
+ * \variable QContactRelationship::RelationshipTypeFiance
+ * The value for the relationship type which identifies this contact as being the fiance of the other contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeFiance, "Fiance");
+
+/*!
+ * \variable QContactRelationship::RelationshipTypeFiancee
+ * The value for the relationship type which identifies this contact as being the fiancee of the other contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeFiancee, "Fiancee");
+
+/*!
+ * \variable QContactRelationship::RelationshipTypeHusband
+ * The value for the relationship type which identifies this contact as being the husband of the other contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeHusband, "Husband");
+
+/*!
+ * \variable QContactRelationship::RelationshipTypeWife
+ * The value for the relationship type which identifies this contact as being the wife of the other contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeWife, "Wife");
+
+/*!
+ * \variable QContactRelationship::RelationshipTypeWidower
+ * The value for the relationship type which identifies this contact as being the widower of the other contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeWidower, "Widower");
+
+/*!
+ * \variable QContactRelationship::RelationshipTypeWidow
+ * The value for the relationship type which identifies this contact as being the widow of the other contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeWidow, "Widow");
+
+/*!
+ * \variable QContactRelationship::RelationshipTypeEmployer
+ * The value for the relationship type which identifies this contact as being the employer of the other contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeEmployer, "Employer");
+
+/*!
+ * \variable QContactRelationship::RelationshipTypeEmployee
+ * The value for the relationship type which identifies this contact as being an employee of the other contact
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeEmployee, "Employee");
+
+/*!
+ * \variable QContactRelationship::RelationshipTypeOther
+ * The value for the relationship type which identifies this contact as being related to the other contact in a way other than listed
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeOther, "Other");
+
+/*!
+ * \variable QContactRelationship::RelationshipTypeUnknown
+ * The value for the relationship type which identifies this contact as being related to the other contact in an unknown fashion
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeUnknown, "Unknown");
 
 /*!
  * \variable QContactRelationship::FieldRelatedContactLabel
