@@ -147,7 +147,7 @@ QString QContact::type() const
     QString type = d->m_details.at(1).value(QContactType::FieldType);
     if (type.isEmpty())
         return QString(QLatin1String(QContactType::TypeContact));
-    returntype;
+    return type;
 }
 
 /*!

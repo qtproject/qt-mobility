@@ -609,7 +609,8 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     // relationship
     fields.clear();
     QVariantList relationshipTypes;
-    relationshipTypes << QString(QLatin1String(QContactRelationship::RelationshipTypeMemberOfGroup));
+    relationshipTypes << QString(QLatin1String(QContactRelationship::RelationshipTypeHasMember));
+    relationshipTypes << QString(QLatin1String(QContactRelationship::RelationshipTypeIsMemberOf));
     relationshipTypes << QString(QLatin1String(QContactRelationship::RelationshipTypeAggregates));
     relationshipTypes << QString(QLatin1String(QContactRelationship::RelationshipTypeAggregatedBy));
     relationshipTypes << QString(QLatin1String(QContactRelationship::RelationshipTypeIs));
