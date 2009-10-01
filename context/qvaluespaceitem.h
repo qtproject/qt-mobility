@@ -69,6 +69,7 @@ public:
     void setPath(const QString &path);
     void setPath(QValueSpaceItem *item);
     QString path() const;
+
     void cd(const QString &path);
     void cdUp();
 
