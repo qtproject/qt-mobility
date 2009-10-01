@@ -429,30 +429,30 @@ void tst_QValueSpaceItem::testFilterConstructor_data()
 {
     QTest::addColumn<QValueSpace::LayerOptions>("options");
     QTest::addColumn<Type>("type");
-    QTest::addColumn<bool>("invalid");
+    QTest::addColumn<bool>("connected");
 
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
 
     for (int i = 0; i < layers.count(); ++i) {
         QAbstractValueSpaceLayer *layer = layers.at(i);
 
-        ADD(layer->layerOptions(), false);
+        ADD(layer->layerOptions(), true);
     }
 
-    ADD(QValueSpace::UnspecifiedLayer, false);
-    ADD(QValueSpace::PermanentLayer, false);
-    ADD(QValueSpace::NonPermanentLayer, false);
-    ADD(QValueSpace::PermanentLayer | QValueSpace::NonPermanentLayer, true);
-    ADD(QValueSpace::WriteableLayer, false);
-    ADD(QValueSpace::NonWriteableLayer, false);
-    ADD(QValueSpace::WriteableLayer | QValueSpace::NonWriteableLayer, true);
+    ADD(QValueSpace::UnspecifiedLayer, true);
+    ADD(QValueSpace::PermanentLayer, true);
+    ADD(QValueSpace::NonPermanentLayer, true);
+    ADD(QValueSpace::PermanentLayer | QValueSpace::NonPermanentLayer, false);
+    ADD(QValueSpace::WriteableLayer, true);
+    ADD(QValueSpace::NonWriteableLayer, true);
+    ADD(QValueSpace::WriteableLayer | QValueSpace::NonWriteableLayer, false);
 }
 
 void tst_QValueSpaceItem::testFilterConstructor()
 {
     QFETCH(QValueSpace::LayerOptions, options);
     QFETCH(Type, type);
-    QFETCH(bool, invalid);
+    QFETCH(bool, connected);
 
     QValueSpaceItem *item;
 
@@ -468,10 +468,10 @@ void tst_QValueSpaceItem::testFilterConstructor()
         return;
     };
 
-    if (invalid)
-        QVERIFY(!item->isValid());
+    if (!connected)
+        QVERIFY(!item->isConnected());
 
-    if (item->isValid()) {
+    if (item->isConnected()) {
         QValueSpace::LayerOptions actualOptions =
             QValueSpace::LayerOptions(item->value("options", 0).toUInt());
 

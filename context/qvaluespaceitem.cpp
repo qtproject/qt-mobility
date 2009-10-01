@@ -415,9 +415,10 @@ QValueSpaceItem::QValueSpaceItem(const char *path, QObject *parent)
     \a filter parameter is used to limit which layers this QValueSpaceItem will access.  This
     constructor is equivalent to calling \c {QValueSpaceItem(path.toUtf8(), filter, parent)}.
 
-    If a layer matching \a filter is not found an invalid QValueSpaceItem will be constructed.
+    If a layer matching \a filter is not found, the constructed QValueSpaceItem will be
+    unconnected.
 
-    \sa isValid()
+    \sa isConnected()
 */
 QValueSpaceItem::QValueSpaceItem(const QString &path,
                                  QValueSpace::LayerOptions filter,
@@ -437,9 +438,10 @@ QValueSpaceItem::QValueSpaceItem(const QString &path,
     \a filter parameter is used to limit which layers this QValueSpaceItem will access.  This
     constructor is equivalent to calling \c {QValueSpaceItem(QByteArray(path), filter, parent)}.
 
-    If a layer matching \a filter is not found an invalid QValueSpaceItem will be constructed.
+    If a layer matching \a filter is not found, the constructed QValueSpaceItem will be
+    unconnected.
 
-    \sa isValid()
+    \sa isConnected()
 */
 QValueSpaceItem::QValueSpaceItem(const char *path,
                                  QValueSpace::LayerOptions filter,
@@ -462,9 +464,10 @@ QValueSpaceItem::QValueSpaceItem(const char *path,
     Use of this constructor is not platform agnostic.  If possible use one of the constructors that
     take a QAbstractValueSpaceLayer::LayerOptions parameter instead.
 
-    If a layer with a matching \a uuid is not found an invalid QValueSpaceItem will be constructed.
+    If a layer with a matching \a uuid is not found, the constructed QValueSpaceItem will be
+    unconnected.
 
-    \sa QAbstractValueSpaceLayer::id(), QValueSpace, isValid()
+    \sa QAbstractValueSpaceLayer::id(), QValueSpace, isConnected()
 */
 QValueSpaceItem::QValueSpaceItem(const QString &path, const QUuid &uuid, QObject *parent)
 :   QObject(parent)
@@ -485,9 +488,10 @@ QValueSpaceItem::QValueSpaceItem(const QString &path, const QUuid &uuid, QObject
     Use of this constructor is not platform agnostic.  If possible use one of the constructors that
     take a QAbstractValueSpaceLayer::LayerOptions parameter instead.
 
-    If a layer with a matching \a uuid is not found an invalid QValueSpaceItem will be constructed.
+    If a layer with a matching \a uuid is not found, the constructed QValueSpaceItem will be
+    unconnected.
 
-    \sa QAbstractValueSpaceLayer::id(), QValueSpace, isValid()
+    \sa QAbstractValueSpaceLayer::id(), QValueSpace, isConnected()
 */
 QValueSpaceItem::QValueSpaceItem(const char *path, const QUuid &uuid, QObject *parent)
 :   QObject(parent)
@@ -583,11 +587,11 @@ void QValueSpaceItem::cdUp()
 }
 
 /*!
-    Returns true if this object is valid; otherwise returns false.  An object is valid if there is
-    atleast one layer available.  An invalid object is constructed if the filtering parameters
-    passed to the QValueSpaceItem constructor eliminate all available layers.
+    Returns true if this QValueSpaceItem is connected to atleast one available layer; otherwise
+    returns false.  An unconnected QValueSpaceItem is constructed if the filtering parameters
+    passed to the constructor eliminate all available layers.
 */
-bool QValueSpaceItem::isValid() const
+bool QValueSpaceItem::isConnected() const
 {
     VS_CALL_ASSERT;
 

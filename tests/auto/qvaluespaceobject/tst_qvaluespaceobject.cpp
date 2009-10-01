@@ -139,7 +139,7 @@ void tst_QValueSpaceObject::testConstructor_data()
     QTest::addColumn<Type>("type");
     QTest::addColumn<QString>("path");
     QTest::addColumn<QString>("canonical");
-    QTest::addColumn<bool>("valid");
+    QTest::addColumn<bool>("connected");
 
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
 
@@ -172,7 +172,7 @@ void tst_QValueSpaceObject::testConstructor()
     QFETCH(Type, type);
     QFETCH(QString, path);
     QFETCH(QString, canonical);
-    QFETCH(bool, valid);
+    QFETCH(bool, connected);
 
     QValueSpaceObject *object;
 
@@ -188,7 +188,7 @@ void tst_QValueSpaceObject::testConstructor()
     };
 
     QCOMPARE(object->path(), canonical);
-    QCOMPARE(object->isValid(), valid);
+    QCOMPARE(object->isConnected(), connected);
 
     if (layer) {
         QAbstractValueSpaceLayer::Handle handle =
@@ -264,7 +264,7 @@ void tst_QValueSpaceObject::testFilterConstructor_data()
 {
     QTest::addColumn<QValueSpace::LayerOptions>("options");
     QTest::addColumn<Type>("type");
-    QTest::addColumn<bool>("valid");
+    QTest::addColumn<bool>("connected");
 
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
 
@@ -284,7 +284,7 @@ void tst_QValueSpaceObject::testFilterConstructor()
 {
     QFETCH(QValueSpace::LayerOptions, options);
     QFETCH(Type, type);
-    QFETCH(bool, valid);
+    QFETCH(bool, connected);
 
     QValueSpaceObject *object;
 
@@ -300,19 +300,19 @@ void tst_QValueSpaceObject::testFilterConstructor()
         return;
     };
 
-    QCOMPARE(object->isValid(), valid);
+    QCOMPARE(object->isConnected(), connected);
 }
 
 void tst_QValueSpaceObject::testBaseConstructor()
 {
     {
         QValueSpaceObject object("/");
-        QVERIFY(object.isValid());
+        QVERIFY(object.isConnected());
     }
 
     {
         QValueSpaceObject object(QString("/"));
-        QVERIFY(object.isValid());
+        QVERIFY(object.isConnected());
     }
 }
 

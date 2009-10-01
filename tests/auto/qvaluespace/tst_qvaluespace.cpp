@@ -371,7 +371,7 @@ void tst_QValueSpace::layerInterface()
 
     CHECK_ERRORS(object = new QValueSpaceObject(path, fakeLayer->id()));
 
-    QVERIFY(object->isValid());
+    QVERIFY(object->isConnected());
 
     CHECK_ERRORS(object->setAttribute(attribute, 10));
     CHECK_ERRORS(object->removeAttribute(attribute));

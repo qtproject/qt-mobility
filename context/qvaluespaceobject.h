@@ -65,7 +65,7 @@ public:
 
     QString path() const;
 
-    bool isValid() const;
+    bool isConnected() const;
 
     static void sync();
 

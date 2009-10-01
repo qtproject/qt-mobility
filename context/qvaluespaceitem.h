@@ -72,7 +72,7 @@ public:
     void cd(const QString &path);
     void cdUp();
 
-    bool isValid() const;
+    bool isConnected() const;
 
     QStringList subPaths() const;
 

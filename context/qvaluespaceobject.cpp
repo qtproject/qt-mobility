@@ -227,10 +227,12 @@ QValueSpaceObject::QValueSpaceObject(const char *path, QObject *parent)
 
     The constructed Value Space object will access the \l {QAbstractValueSpaceLayer}{layer} with
     the highest \l {QAbstractValueSpaceLayer::order()}{order} that matches \a filter and for which
-    \a path is a valid path.  If no suitable \l {QAbstractValueSpaceLayer}{layer} is found an
-    invalid QValueSpaceObject is constructed.
+    \a path is a valid path.
 
-    \sa isValid()
+    If no suitable \l {QAbstractValueSpaceLayer}{layer} is found, the constructed QValueSpaceObject
+    will be unconnected.
+
+    \sa isConnected()
 */
 QValueSpaceObject::QValueSpaceObject(const QString &path,
                                      QValueSpace::LayerOptions filter,
@@ -251,10 +253,12 @@ QValueSpaceObject::QValueSpaceObject(const QString &path,
 
     The constructed Value Space object will access the \l {QAbstractValueSpaceLayer}{layer} with
     the highest \l {QAbstractValueSpaceLayer::order()}{order} that matches \a filter and for which
-    \a path is a valid path.  If no suitable \l {QAbstractValueSpaceLayer}{layer} is found an
-    invalid QValueSpaceObject is constructed.
+    \a path is a valid path.
 
-    \sa isValid()
+    If no suitable \l {QAbstractValueSpaceLayer}{layer} is found, the constructed QValueSpaceObject
+    will be unconnected.
+
+    \sa isConnected()
 */
 QValueSpaceObject::QValueSpaceObject(const char *path,
                                      QValueSpace::LayerOptions filter,
@@ -275,10 +279,10 @@ QValueSpaceObject::QValueSpaceObject(const char *path,
     Use of this constructor is not platform agnostic.  If possible use one of the constructors that
     take a QAbstractValueSpaceLayer::LayerOptions parameter instead.
 
-    If a layer with a matching \a uuid is not found an invalid QValueSpaceObject will be
-    constructed.
+    If a layer with a matching \a uuid is not found, the constructed QValueSpaceObject will be
+    unconnected.
 
-    \sa isValid()
+    \sa isConnected()
 */
 
 QValueSpaceObject::QValueSpaceObject(const QString &path, const QUuid &uuid, QObject *parent)
@@ -298,10 +302,10 @@ QValueSpaceObject::QValueSpaceObject(const QString &path, const QUuid &uuid, QOb
     Use of this constructor is not platform agnostic.  If possible use one of the constructors that
     take a QAbstractValueSpaceLayer::LayerOptions parameter instead.
 
-    If a layer with a matching \a uuid is not found an invalid QValueSpaceObject will be
-    constructed.
+    If a layer with a matching \a uuid is not found, the constructed QValueSpaceObject will be
+    unconnected.
 
-    \sa isValid()
+    \sa isConnected()
 */
 QValueSpaceObject::QValueSpaceObject(const char *path, const QUuid &uuid, QObject *parent)
 :   QObject(parent), d(new QValueSpaceObjectPrivate(path, uuid))
@@ -340,10 +344,10 @@ QString QValueSpaceObject::path() const
 }
 
 /*!
-    Returns true if this object is valid; otherwise returns false.  An object is valid if its
-    associated QAbstractValueSpaceLayer is available.
+    Returns true if this QValueSpaceObject is connected to an available layer; otherwise returns
+    false.
 */
-bool QValueSpaceObject::isValid() const
+bool QValueSpaceObject::isConnected() const
 {
     return (d->layer && d->handle != QAbstractValueSpaceLayer::InvalidHandle);
 }
@@ -409,8 +413,8 @@ void QValueSpaceObject::setAttribute(const QByteArray &attribute, const QVariant
 {
     VS_CALL_ASSERT;
 
-    if (!isValid()) {
-        qWarning("setAttribute called on invalid QValueSpaceObject.");
+    if (!isConnected()) {
+        qWarning("setAttribute called on unconnected QValueSpaceObject.");
         return;
     }
 
@@ -463,8 +467,8 @@ void QValueSpaceObject::removeAttribute(const QByteArray &attribute)
 {
     VS_CALL_ASSERT;
 
-    if (!isValid()) {
-        qWarning("removeAttribute called on invalid QValueSpaceObject.");
+    if (!isConnected()) {
+        qWarning("removeAttribute called on unconnected QValueSpaceObject.");
         return;
     }
 
