@@ -140,10 +140,10 @@ void TransformContact::transformContactL(
 		QList<CContactItemField *> fieldList = transformDetailL( detailList.at(i) );
 		int fieldCount = fieldList.count();
 		
-		for (int i = 0; i < fieldCount; i++)
+		for (int j = 0; j < fieldCount; j++)
         {
 			//Add field to fieldSet
-			fieldSet->AddL(*fieldList.at(i));
+			fieldSet->AddL(*fieldList.at(j));
 		}
 		
 		// Add contact's UID
