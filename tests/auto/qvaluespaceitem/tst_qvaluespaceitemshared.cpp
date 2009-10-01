@@ -71,8 +71,6 @@ class ChangeListener : public QObject
 
 Q_SIGNALS:
     void baseChanged();
-    void copyChanged();
-    void changeValue(const QByteArray&, const QVariant&);
     void attributeInterestChanged(const QString&, bool);
 };
 
@@ -366,9 +364,9 @@ void tst_QValueSpaceItem::testConstructor_data()
 
     // setPath to /
     item1 = new QValueSpaceItem(this);
-    item1->setPath(QByteArray("/"));
+    item1->setPath("/");
     qVariantSetValue(data, item1);
-    QTest::newRow("QValueSpaceItem::setPath(QByteArray(\"/\")")
+    QTest::newRow("QValueSpaceItem::setPath(\"/\"")
         << data
         << QVariant()
         << rootPaths
@@ -378,9 +376,9 @@ void tst_QValueSpaceItem::testConstructor_data()
 
     // setPath to /home
     item1 = new QValueSpaceItem(this);
-    item1->setPath(QByteArray("/home"));
+    item1->setPath("/home");
     qVariantSetValue(data, item1);
-    QTest::newRow("QValueSpaceItem::setPath(QByteArray(\"/home\"))")
+    QTest::newRow("QValueSpaceItem::setPath(\"/home\")")
         << data
         << QVariant()
         << homePaths
@@ -390,9 +388,9 @@ void tst_QValueSpaceItem::testConstructor_data()
 
     // setPath to /home/user
     item1 = new QValueSpaceItem(this);
-    item1->setPath(QByteArray("/home/user"));
+    item1->setPath("/home/user");
     qVariantSetValue(data, item1);
-    QTest::newRow("QValueSpaceItem::setPath(QByteArray(\"/home/user\"))")
+    QTest::newRow("QValueSpaceItem::setPath(\"/home/user\")")
         << data
         << QVariant()
         << allPaths

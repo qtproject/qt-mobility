@@ -62,7 +62,6 @@ class ChangeListener : public QObject
 {
     Q_OBJECT
 Q_SIGNALS:
-    void changeValue(const QByteArray&, const QVariant&);
     void attributeInterestChanged(const QString&, bool);
 };
 
@@ -321,7 +320,6 @@ void tst_QValueSpaceObject::testSignals_data()
     QTest::addColumn<QAbstractValueSpaceLayer *>("layer");
 
     QTest::addColumn<QString>("objectPath");
-    QTest::addColumn<QByteArray>("objectAttribute");
     QTest::addColumn<QString>("itemPath");
     QTest::addColumn<QString>("itemAttribute");
 
@@ -333,14 +331,12 @@ void tst_QValueSpaceObject::testSignals_data()
         QTest::newRow("root")
             << layer
             << QString("/")
-            << QByteArray()
             << QString("/")
             << QString();
 
         QTest::newRow("")
             << layer
             << QString("/testSignals")
-            << QByteArray("/value")
             << QString("/testSignals")
             << QString("value");
     }
@@ -351,7 +347,6 @@ void tst_QValueSpaceObject::testSignals()
     QFETCH(QAbstractValueSpaceLayer *, layer);
 
     QFETCH(QString, objectPath);
-    QFETCH(QByteArray, objectAttribute);
     QFETCH(QString, itemPath);
     QFETCH(QString, itemAttribute);
 

@@ -82,15 +82,13 @@ public:
     void listwatchers();
     void watch(const QString &);
     void unwatch(const QString &);
-    void write(const QByteArray &, const QString &);
-    void remove(const QByteArray &);
     void set(const QString &, const QString &);
     void clear(const QString &);
     void subscriptions();
 
-    QByteArray path() const
+    QString path() const
     {
-        return pwd.path().toAscii();
+        return pwd.path();
     }
 
 public slots:
@@ -98,8 +96,7 @@ public slots:
 
 private slots:
     void contentsChanged();
-    void removed(const QByteArray &attribute);
-    void written(const QByteArray &attribute, const QVariant &newData);
+    void interestChanged(const QString &attribute, bool interested);
 
 private:
     void lsPath(QValueSpaceItem *, int = 0, bool = false);
@@ -156,14 +153,14 @@ VSExplorer::VSExplorer()
 {
 }
 
-void VSExplorer::removed(const QByteArray &attribute)
+void VSExplorer::interestChanged(const QString &attribute, bool interested)
 {
     Q_ASSERT(sender());
 
-    if(!isSuppress) {
-        QValueSpaceObject * obj = static_cast<QValueSpaceObject *>(sender());
-        fprintf(stdout, "\nRemoved: %s ... %s\n",
-                obj->path().toAscii().constData(), attribute.constData());
+    if (!isSuppress) {
+        QValueSpaceObject *obj = static_cast<QValueSpaceObject *>(sender());
+        fprintf(stdout, "\nInterest Changed: %s ... %s %d\n",
+                qPrintable(obj->path()), qPrintable(attribute), interested);
     }
 }
 
@@ -173,18 +170,6 @@ static QString variantToString( const QVariant& var )
         return var.toStringList().join(", ");
     else
         return var.toString();
-}
-
-void VSExplorer::written(const QByteArray &attribute, const QVariant &newData)
-{
-    Q_ASSERT(sender());
-    if(!isSuppress) {
-        QValueSpaceObject * obj = static_cast<QValueSpaceObject *>(sender());
-        fprintf(stdout, "\nWritten: %s ... %s to '%s' (%s)\n",
-                obj->path().toAscii().constData(),
-                attribute.constData(), variantToString(newData).toAscii().constData(),
-                newData.typeName());
-    }
 }
 
 void VSExplorer::contentsChanged()
@@ -214,8 +199,6 @@ void VSExplorer::printHelp()
     fprintf(stdout, "suppress: Toggle suppression of publish messages\n");
     fprintf(stdout, "subscriptions: List current subscriptions\n");
     fprintf(stdout, "set <key> <value>: Set app layer<key> to <value>\n");
-    fprintf(stdout, "write <key> <value>: Set <key> to <value>\n");
-    fprintf(stdout, "remove <key>: Clear <key>\n");
     fprintf(stdout, "clear <key>: Clear app layer <key>\n");
     fprintf(stdout, "cd <path>: Change working path\n");
     fprintf(stdout, "watch <path>: Add a watch for the path\n");
@@ -340,21 +323,20 @@ void VSExplorer::quit()
 
 void VSExplorer::watch(const QString &path)
 {
-    foreach(QValueSpaceObject *obj, watchers) {
-        if (obj->path().toUtf8() == path)
+    foreach (QValueSpaceObject *obj, watchers) {
+        if (obj->path() == path)
             return;
     }
+
     QValueSpaceObject * newObject = new QValueSpaceObject(path);
     watchers.insert(newObject);
-    QObject::connect(newObject, SIGNAL(itemRemove(QByteArray)),
-                     this, SLOT(removed(QByteArray)));
-    QObject::connect(newObject, SIGNAL(itemSetValue(QByteArray,QVariant)),
-                     this, SLOT(written(QByteArray,QVariant)));
+    QObject::connect(newObject, SIGNAL(attributeInterestChanged(QString,bool)),
+                     this, SLOT(interestChanged(QString,bool)));
 }
 
 void VSExplorer::unwatch(const QString &path)
 {
-    foreach(QValueSpaceObject *obj, watchers) {
+    foreach (QValueSpaceObject *obj, watchers) {
         if (obj->path() == path) {
             watchers.remove(obj);
             delete obj;
@@ -365,7 +347,7 @@ void VSExplorer::unwatch(const QString &path)
 
 void VSExplorer::suppress()
 {
-    if(isSuppress) {
+    if (isSuppress) {
         isSuppress = false;
         fprintf(stdout, "Suppression off.\n");
     } else {
@@ -550,7 +532,7 @@ LineInput::LineInput()
     sock = new QSocketNotifier(ts.handle(), QSocketNotifier::Read, this);
     QObject::connect(sock, SIGNAL(activated(int)), this, SLOT(readyRead()));
 
-    fprintf(stdout, "%s > ", vse->path().constData());
+    fprintf(stdout, "%s > ", qPrintable(vse->path()));
     fflush(stdout);
 #endif
 }
@@ -560,12 +542,12 @@ void LineInput::readyRead()
 {
     QByteArray line = ts.readLine();
 
-    emit this->line(line);
+    emit this->line(QString::fromLocal8Bit(line));
 
     if(terminateRequested)
         exit(0);
 
-    fprintf(stdout, "%s > ", vse->path().constData());
+    fprintf(stdout, "%s > ", qPrintable(vse->path()));
     fflush(stdout);
 }
 #endif
@@ -621,19 +603,19 @@ char * command_generator(const char * t, int num)
         children.clear();
 
         // Command
-        static char * commands[] = { "help ",
-                                     "quit ",
-                                     "pwd ",
-                                     "ls ",
-                                     "subscribe ",
-                                     "unsubscribe ",
-                                     "suppress ",
-                                     "subscriptions ",
-                                     "set ",
-                                     "clear ",
-                                     "cd " };
+        static const char * commands[] = { "help ",
+                                           "quit ",
+                                           "pwd ",
+                                           "ls ",
+                                           "subscribe ",
+                                           "unsubscribe ",
+                                           "suppress ",
+                                           "subscriptions ",
+                                           "set ",
+                                           "clear ",
+                                           "cd " };
 
-        for(int ii = 0; ii < sizeof(commands) / sizeof(char *); ++ii)
+        for(unsigned int ii = 0; ii < sizeof(commands) / sizeof(char *); ++ii)
             if(0 == ::strncmp(commands[ii], t, strlen(t)))
                 children.append(commands[ii]);
     }
@@ -650,7 +632,7 @@ char * command_generator(const char * t, int num)
 
 char * item_generator(const char * t, int num)
 {
-    static QList<QByteArray> children;
+    static QStringList children;
 
     rl_filename_completion_desired = 1;
     rl_filename_quoting_desired = 1;
@@ -659,9 +641,9 @@ char * item_generator(const char * t, int num)
         children.clear();
 
         // Path
-        QByteArray text = t;
-        QByteArray textExt;
-        QByteArray textBase;
+        QString text = QString::fromLocal8Bit(t);
+        QString textExt;
+        QString textBase;
 
         int last = text.lastIndexOf('/');
         if(-1 == last) {
@@ -671,10 +653,10 @@ char * item_generator(const char * t, int num)
             textExt = text.mid(last + 1);
         }
 
-        QByteArray vsBase;
+        QString vsBase;
 
         if(*textBase.constData() != '/') {
-            QByteArray in = vse->path();
+            QString in = vse->path();
             if(!in.endsWith("/"))
                 vsBase = in + "/" + textBase;
             else
@@ -689,7 +671,7 @@ char * item_generator(const char * t, int num)
 
         foreach(QString child, schildren) {
             if(child.startsWith(textExt)) {
-                QByteArray completion;
+                QString completion;
                 completion.append(textBase);
                 if(!completion.isEmpty())
                     completion.append("/");
@@ -703,9 +685,9 @@ char * item_generator(const char * t, int num)
     if(children.isEmpty())
         return 0;
 
-    char * rv = (char *)malloc(children.at(0).length() + 1);
-    ::memcpy(rv, children.at(0).constData(), children.at(0).length() + 1);
-    children.removeFirst();
+    QByteArray child = children.takeFirst().toLocal8Bit();
+    char *rv = (char *)malloc(child.length() + 1);
+    ::memcpy(rv, child.constData(), child.length() + 1);
 
     return rv;
 }
@@ -716,10 +698,10 @@ void LineInput::run()
     while(true) {
         /* Get a line from the user. */
         mutex.lock();
-        QByteArray prompt = vse->path();
+        QString prompt = vse->path();
         prompt.append(" > ");
         mutex.unlock();
-        char *line_read = readline (prompt.constData());
+        char *line_read = readline (prompt.toLocal8Bit().constData());
 
         /* If the line has any text in it,
            save it on the history. */
