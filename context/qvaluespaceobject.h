@@ -61,7 +61,7 @@ public:
     QValueSpaceObject(const QString &objectPath, const QUuid &uuid, QObject *parent = 0);
     QValueSpaceObject(const char *objectPath, const QUuid &uuid, QObject *parent = 0);
 
-    ~QValueSpaceObject();
+    virtual ~QValueSpaceObject();
 
     QString path() const;
 
