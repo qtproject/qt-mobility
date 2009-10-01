@@ -34,12 +34,10 @@
 #ifndef QVALUESPACE_H
 #define QVALUESPACE_H
 
-#include <QVariant>
-#include <QByteArray>
+#include "qcontextglobal.h"
+
 #include <QList>
 #include <QUuid>
-
-#include "qcontextglobal.h"
 
 QT_BEGIN_HEADER
 

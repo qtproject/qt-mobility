@@ -42,6 +42,7 @@
 #include <QLocalSocket>
 #include <QLocalServer>
 #include <QDir>
+#include <QVariant>
 
 #include <QMutex>
 #include <QWaitCondition>
