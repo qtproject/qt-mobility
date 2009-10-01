@@ -71,7 +71,7 @@ void tst_SymbianPluginPerfomance::simpleContactsTestCase()
     
     // Create N contacts
     for(int i=0; i<NO_OF_CONTACTS; i++) {
-        QChar c(i);
+        QString c = QString::number(i);
         QString first("Alice");        
         QContact alice;
     
@@ -108,7 +108,7 @@ void tst_SymbianPluginPerfomance::complexContactsTestCase()
         QContact alice;
         
         // Contact details
-        QChar c(i);
+        QString c = QString::number(i);
         QString first("Alice");
         QString last("Jones");
         
@@ -158,7 +158,7 @@ void tst_SymbianPluginPerfomance::complexContactsTestCase()
         email.setEmailAddress("mailto:alice.jones@nokia.com");
         alice.saveDetail(&email);
         
-        QContactOrganisation org;
+        QContactOrganization org;
         org.setDepartment("Services");
         org.setTitle("Assistant Manager");
         org.setLocation("Nokia Cyber Park");
