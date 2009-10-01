@@ -2907,7 +2907,48 @@ ULONG MapiSession::AdviseSink::OnNotify(ULONG notificationCount, LPNOTIFICATION 
 
 void MapiSession::notify(ULONG notificationCount, NOTIFICATION *notifications)
 {
-    //qDebug() << "got notifications:" << notificationCount;
+    for (uint i = 0; i < notificationCount; ++i) {
+        NOTIFICATION &notification(notifications[i]);
+
+        if (notification.ulEventType == fnevNewMail) {
+            NEWMAIL_NOTIFICATION &newmail(notification.info.newmail);
+            qDebug() << "new mail";
+        } else {
+            OBJECT_NOTIFICATION &object(notification.info.obj);
+
+            if (object.ulObjType == MAPI_MESSAGE) {
+                MapiEntryId entryId(object.lpEntryID, object.cbEntryID);
+                MapiEntryId parentEntryId(object.lpParentID, object.cbParentID);
+
+                if (!entryId.isEmpty()) {
+                    switch (notification.ulEventType)
+                    {
+                    case fnevObjectCopied:
+                        qDebug() << "copied";
+                        break;
+
+                    case fnevObjectCreated:
+                        qDebug() << "created";
+                        break;
+
+                    case fnevObjectDeleted:
+                        qDebug() << "deleted";
+                        break;
+
+                    case fnevObjectModified:
+                        qDebug() << "modified";
+                        break;
+
+                    case fnevObjectMoved:
+                        qDebug() << "moved";
+                        break;
+                    }
+                } else {
+                    qWarning() << "Received notification, but no entry ID";
+                }
+            }
+        }
+    }
 }
 
 QMessageStore::NotificationFilterId MapiSession::registerNotificationFilter(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter)
