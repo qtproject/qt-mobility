@@ -144,7 +144,10 @@ QUniqueId QContact::id() const
 QString QContact::type() const
 {
     // type is detail 1
-    return d->m_details.at(1).value(QContactType::FieldType);
+    QString type = d->m_details.at(1).value(QContactType::FieldType);
+    if (type.isEmpty())
+        return QString(QLatin1String(QContactType::TypeContact));
+    returntype;
 }
 
 /*!
