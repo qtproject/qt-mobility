@@ -27,5 +27,6 @@ symbian {
 SUBDIRS -= \
         qmediaplaylistnavigator \
         qcamera \
-
+        qmediaimageviewer \
+        qaudiocapturesource
 }

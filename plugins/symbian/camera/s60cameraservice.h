@@ -45,6 +45,8 @@ class S60CameraControl;
 class S60MediaControl;
 class S60CameraSession;
 class S60VideoOutputControl;
+class S60CameraFocusControl;
+class S60CameraExposureControl;
 
 class S60CameraService : public QMediaService
 {
@@ -54,12 +56,15 @@ public:
     ~S60CameraService();
 
     QMediaControl *control(const char *name) const;
+    
 
 private:
     
     S60MediaFormatControl *m_mediaFormat;
     S60VideoEncoder *m_videoEncoder;
     S60CameraControl *m_control;
+    S60CameraFocusControl *m_focusControl;
+    S60CameraExposureControl *m_exposureControl;
     S60MediaControl  *m_media;
     S60CameraSession *m_session;
     S60VideoOutputControl *m_videoOutput;

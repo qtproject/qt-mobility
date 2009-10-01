@@ -120,6 +120,7 @@ QString S60VideoEncoder::audioCodec() const
 
 bool S60VideoEncoder::setVideoCodec(const QString &codecName)
 {
+    Q_UNUSED(codecName);
     //TODO
     return true;
 }

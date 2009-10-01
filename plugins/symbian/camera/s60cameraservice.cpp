@@ -35,11 +35,13 @@
 #include <QtCore/qvariant.h>
 #include <QtCore/qdebug.h>
 #include <QtGui/qwidget.h>
-
+#include <QtCore/qlist.h>
 #include "qvideowidget.h"
 
 #include "S60cameraservice.h"
 #include "S60cameracontrol.h"
+#include "S60camerafocuscontrol.h"
+#include "S60cameraexposurecontrol.h"
 #include "S60mediacontrol.h"
 #include "S60camerasession.h"
 //#include "S60videowidget.h"
@@ -52,24 +54,28 @@ S60CameraService::S60CameraService(QObject *parent)
 {
     m_session = new S60CameraSession(this);
     m_control = new S60CameraControl(this,m_session);
-    
+    m_focusControl = new S60CameraFocusControl(this, m_session);
+    m_exposureControl = new S60CameraExposureControl(this, m_session);
     m_media = new S60MediaControl(m_session);
     m_mediaFormat = new S60MediaFormatControl(m_session);
     m_videoEncoder = new S60VideoEncoder(m_session);
     m_videoOutput = new S60VideoOutputControl(m_session);
 
-    
 }
 
 S60CameraService::~S60CameraService()
 {
     delete m_media;
     delete m_control;
+    delete m_focusControl;
+    delete m_exposureControl;
     delete m_session;
     delete m_videoEncoder;
     delete m_mediaFormat;
     delete m_videoOutput;
 }
+
+
 /*
 void S60CameraService::setVideoOutput(QObject *output)
 {
@@ -98,6 +104,12 @@ QMediaControl *S60CameraService::control(const char *name) const
 
     if(qstrcmp(name,QVideoOutputControl_iid) == 0)
         return m_videoOutput;
+    
+    if(qstrcmp(name,QCameraExposureControl_iid) == 0)
+        return m_exposureControl;
+    
+    if(qstrcmp(name,QCameraFocusControl_iid) == 0)
+        return m_focusControl;
 
     return 0;
 }

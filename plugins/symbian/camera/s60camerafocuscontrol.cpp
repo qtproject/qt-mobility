@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include "s60cameracontrol.h"
+#include "s60camerafocuscontrol.h"
 #include "s60cameraservice.h"
 #include "s60camerasession.h"
 
@@ -40,36 +40,86 @@
 #include <QtCore/qstring.h>
 
 
-S60CameraControl::S60CameraControl(QObject *parent)
-    :QCameraControl(parent)
+S60CameraFocusControl::S60CameraFocusControl(QObject *parent)
+    :QCameraFocusControl(parent)
 {
     m_session = qobject_cast<S60CameraSession*>(parent);
 }
 
-S60CameraControl::S60CameraControl(S60CameraService *service, QObject *parent)
-   :QCameraControl(parent), m_service(service)
+S60CameraFocusControl::S60CameraFocusControl(S60CameraService *service, QObject *parent)
+   :QCameraFocusControl(parent), m_service(service)
 {
     m_session = qobject_cast<S60CameraSession*>(parent);
 }
 
-S60CameraControl::~S60CameraControl()
+S60CameraFocusControl::~S60CameraFocusControl()
 {
 }
-void S60CameraControl::start()
+
+QCamera::FocusMode S60CameraFocusControl::focusMode() const
 {
-    // start the default (primary camera)
-    // this is also called with enable preview.
-    if (m_session->startCamera()) {
-        //TODO fix error code
-        emit error(-1, QLatin1String("Unable to start camera or no cameras in devices"));
-    }
-        
+    return QCamera::AutoFocus;
 }
-void S60CameraControl::stop()
+
+void S60CameraFocusControl::setFocusMode(QCamera::FocusMode mode)
 {
-    m_session->stopCamera();
+    Q_UNUSED(mode)
 }
-QCamera::State S60CameraControl::state() const
+
+QCamera::FocusModes S60CameraFocusControl::supportedFocusModes() const
 {
-    return (QCamera::State)m_session->state();
+    return QCamera::AutoFocus;
 }
+
+QCamera::FocusStatus S60CameraFocusControl::focusStatus() const
+{
+    return QCamera::FocusDisabled;
+}
+
+bool S60CameraFocusControl::macroFocusingEnabled() const
+{
+    return false;
+}
+
+bool S60CameraFocusControl::isMacroFocusingSupported() const
+{
+    return false;
+}
+
+void S60CameraFocusControl::setMacroFocusingEnabled(bool /*e*/)
+{
+
+}
+qreal S60CameraFocusControl::maximumOpticalZoom() const
+{
+    return 1.0;
+}
+
+qreal S60CameraFocusControl::maximumDigitalZoom() const
+{
+    return 1.0;
+}
+
+qreal S60CameraFocusControl::zoomValue() const
+{
+    return 1.0;
+}
+
+void S60CameraFocusControl::zoomTo(qreal value)
+{
+    Q_UNUSED(value);
+}
+
+bool S60CameraFocusControl::isFocusLocked() const
+{
+    return true;
+}
+
+void S60CameraFocusControl::lockFocus()
+{
+}
+
+void S60CameraFocusControl::unlockFocus()
+{
+}
+

@@ -32,35 +32,46 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qstring.h>
-#include <QtCore/qdebug.h>
+#ifndef S60CAMERAIMAGEPROCESSINGCONTROL_H
+#define S60CAMERAIMAGEPROCESSINGCONTROL_H
 
+#include <QtCore/qobject.h>
+#include "qimageprocessingcontrol.h"  
 
-#include "s60serviceplugin.h"
-#include "s60radioservice.h"
-#include "s60cameraservice.h"
+class S60CameraService;
+class S60CameraSession;
 
-QStringList S60ServicePlugin::keys() const
+class S60CameraImageProcessingControl : public QImageProcessingControl
 {
-    QStringList list;
-    list << QLatin1String("radio");
-    list << QLatin1String("camera");
-    return list;
-}
+    Q_OBJECT
+public:
+    S60CameraImageProcessingControl(QObject *parent = 0);
+    S60CameraImageProcessingControl(S60CameraService *service, QObject *parent = 0);
+    ~S60CameraImageProcessingControl();
 
-QMediaService* S60ServicePlugin::create(QString const& key)
-{
-    if (key == QLatin1String("radio")) 
-        return new S60RadioService;
-    else if (key == QLatin1String("camera"))
-        return new S60CameraService;
+    QCamera::WhiteBalanceMode whiteBalanceMode() const;
+    void setWhiteBalanceMode(QCamera::WhiteBalanceMode mode);
+    QCamera::WhiteBalanceModes supportedWhiteBalanceModes() const;
+    int manualWhiteBalance() const;
+    void setManualWhiteBalance(int colorTemperature);
+    
+    qreal contrast() const;
+    void setContrast(qreal value) const;
 
-    qDebug() << "unsupported key:" << key;
-    return 0;
-}
-void S60ServicePlugin::release(QMediaService *service)
-{
-    delete service;
-}
+    qreal saturation() const;
+    void setSaturation(qreal value);
 
-Q_EXPORT_PLUGIN2(QtMobilityMultimediaEngine, S60ServicePlugin);
+    bool isSharpeningSupported() const;
+    qreal sharpeningLevel() const;
+    void setSharpeningLevel(qreal value);
+
+    bool isDenoisingSupported() const;
+    qreal denoisingLevel() const;
+    void setDenoisingLevel(qreal value);
+    
+private:
+    S60CameraSession *m_session;
+    S60CameraService *m_service;
+};
+
+#endif

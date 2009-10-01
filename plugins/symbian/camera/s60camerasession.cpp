@@ -46,34 +46,51 @@ S60CameraSession::S60CameraSession(QObject *parent)
     resolutions.clear();
     formats.clear();
     m_state = QCamera::StoppedState;
-
     m_windowSize = QSize(320,240);
     pixelF = QVideoFrame::Format_RGB24;
+    
 }
 
 S60CameraSession::~S60CameraSession()
 {
     delete iCameraEngine;
+    iCameraEngine = NULL;
 }
 bool S60CameraSession::startCamera(int index)
 {
     /*
-     * Try to start camera. Boolean indicating status of openging returned.
+     * Try to start camera.
      */
-    iCameraEngine = CCameraEngine::NewL(index, 0, this);
-    iCameraEngine->ReserveAndPowerOn();
-    iError = KErrNone;
-    iIndex = index;
+    if (CCameraEngine::CamerasAvailable() > 0) {
+        if (!iCameraEngine) {
+            TRAP(iError, iCameraEngine = CCameraEngine::NewL(index, 0, this));
+        }
+        iCameraEngine->ReserveAndPowerOn();
+        iError = KErrNone;
+        iIndex = index;
+    }
+    else
+        iError = KErrNotSupported;
+    
     return (iError == KErrNone);
+}
+
+void S60CameraSession::stopCamera()
+{
+    if (iCameraEngine) {
+        iCameraEngine->ReleaseAndPowerOff();
+        emit stateChanged(QCamera::StoppedState);
+    }
 }
 void S60CameraSession::capture()
 {
     
     /**
-     * Capture image: Gets the image size for the index passed by calling the CCamera::EnumerateCaptureSizes() function. 
-     * The image details such as image format and the size index are passed to the CCamera::PrepareImageCaptureL() 
-     * function to allocate the memory for the image to be captured. 
-     * Then, a call to the CCamera::CaptureImage() captures the image.
+     * Capture image: Gets the image size for the index passed by calling the 
+     * CCamera::EnumerateCaptureSizes() function. The image details such as image format and 
+     * the size index are passed to the CCamera::PrepareImageCaptureL() function to allocate
+     * the memory for the image to be captured. Then, a call to the CCamera::CaptureImage() 
+     * captures the image.
      */
     if (iCameraEngine)
     {
@@ -127,29 +144,27 @@ int S60CameraSession::brightness() const
 
 void S60CameraSession::setBrightness(int b)
 {
-
+    Q_UNUSED(b);
 }
 
 int S60CameraSession::contrast() const
 {
-
     return -1;
 }
 
 void S60CameraSession::setContrast(int c)
 {
-
+    Q_UNUSED(c);
 }
 
 int S60CameraSession::saturation() const
 {
-
     return -1;
 }
 
 void S60CameraSession::setSaturation(int s)
 {
-
+    Q_UNUSED(s);
 }
 
 int S60CameraSession::hue() const
@@ -159,7 +174,7 @@ int S60CameraSession::hue() const
 
 void S60CameraSession::setHue(int h)
 {
-
+    Q_UNUSED(h)
 }
 
 int S60CameraSession::sharpness() const
@@ -304,24 +319,9 @@ int S60CameraSession::state() const
     if (iCameraEngine ) {
         if (iCameraEngine->State() > 0 )
             return QCamera::ActiveState;
-        else
-            return QCamera::StoppedState;
     }
-}
-void S60CameraSession::record()
-{
-    capture();
-}
-
-void S60CameraSession::pause()
-{
-       
-}
-
-void S60CameraSession::stop()
-{
-    
-    iCameraEngine->StopViewFinder();
+    return QCamera::StoppedState;
+        
 }
 
 void S60CameraSession::startRecording()
@@ -352,8 +352,6 @@ void S60CameraSession::captureFrame()
 void S60CameraSession::MceoCameraReady()
 {
     emit stateChanged(QCamera::ActiveState);
-    TSize windowSize (m_windowSize.width(), m_windowSize.height());
-    iCameraEngine->StartViewFinderL(windowSize);
 }
 
 void S60CameraSession::MceoFocusComplete()
@@ -364,6 +362,7 @@ void S60CameraSession::MceoFocusComplete()
 
 void S60CameraSession::MceoCapturedDataReady(TDesC8* aData)
 {
+    Q_UNUSED(aData);
     //emit q->captureCompleted(QByteArray::fromRawData((const char *)aData->Ptr(), aData->Length()));
 }
 
@@ -444,11 +443,10 @@ void S60CameraSession::MceoViewFinderFrameReady(CFbsBitmap& aFrame)
     }
 }
 
-void S60CameraSession::MceoHandleError(TCameraEngineError /*aErrorType*/,
-    TInt aError)
+void S60CameraSession::MceoHandleError(TCameraEngineError aErrorType, TInt aError)
 {   
+    Q_UNUSED(aErrorType);
     iError = aError;
-    //emit q->error(error());
 }
 
 void S60CameraSession::setVFProcessor(MVFProcessor* VFProcessor)

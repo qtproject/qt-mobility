@@ -121,15 +121,13 @@ public:
     QUrl sink() const;
     qint64 position() const;
     int state() const;
-    void record();
-    void pause();
-    void stop();
 
     void setVideoOutput(QWidget* widget);
     
     //added based on s60 camera needs
     void releaseImageBuffer();
     bool startCamera(int index=0);
+    void stopCamera();
     void capture();
     
     // for mediacontrol

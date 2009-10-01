@@ -38,20 +38,15 @@
 
 #include <multimedia/qmediaserviceproviderplugin.h>
 
-/*class S60ServiceProvider : public QMediaServiceProvider
-{
-    Q_OBJECT
-public:
-    QObject* createObject(const char *iid) const;
-};*/
-
 class S60ServicePlugin : public QMediaServiceProviderPlugin
 {
     Q_OBJECT
 public:
+
     QStringList keys() const;
     QMediaService* create(QString const& key);
     void release(QMediaService *service);
+
 };
 
 #endif // S60SERVICEPLUGIN_H

@@ -32,35 +32,47 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qstring.h>
-#include <QtCore/qdebug.h>
+#ifndef S60CAMERAFOCUSCONTROL_H
+#define S60CAMERAFOCUSCONTROL_H
 
+#include <QtCore/qobject.h>
+#include "qcamerafocuscontrol.h"
 
-#include "s60serviceplugin.h"
-#include "s60radioservice.h"
-#include "s60cameraservice.h"
+class S60CameraService;
+class S60CameraSession;
 
-QStringList S60ServicePlugin::keys() const
+class S60CameraFocusControl : public QCameraFocusControl
 {
-    QStringList list;
-    list << QLatin1String("radio");
-    list << QLatin1String("camera");
-    return list;
-}
+    Q_OBJECT
+public:
+    S60CameraFocusControl(QObject *parent = 0);
+    S60CameraFocusControl(S60CameraService *service, QObject *parent = 0);
+    ~S60CameraFocusControl();
 
-QMediaService* S60ServicePlugin::create(QString const& key)
-{
-    if (key == QLatin1String("radio")) 
-        return new S60RadioService;
-    else if (key == QLatin1String("camera"))
-        return new S60CameraService;
+    QCamera::FocusMode focusMode() const;
+    void setFocusMode(QCamera::FocusMode mode);
+    QCamera::FocusModes supportedFocusModes() const;
+    QCamera::FocusStatus focusStatus() const;
 
-    qDebug() << "unsupported key:" << key;
-    return 0;
-}
-void S60ServicePlugin::release(QMediaService *service)
-{
-    delete service;
-}
+    bool macroFocusingEnabled() const;
+    bool isMacroFocusingSupported() const;
+    void setMacroFocusingEnabled(bool);
 
-Q_EXPORT_PLUGIN2(QtMobilityMultimediaEngine, S60ServicePlugin);
+    qreal maximumOpticalZoom() const;
+    qreal maximumDigitalZoom() const;
+    qreal zoomValue() const;
+    void zoomTo(qreal value);
+
+    bool isFocusLocked() const;
+
+public Q_SLOTS:
+
+    void lockFocus();
+    void unlockFocus();
+
+private:
+    S60CameraSession *m_session;
+    S60CameraService *m_service;
+};
+
+#endif
