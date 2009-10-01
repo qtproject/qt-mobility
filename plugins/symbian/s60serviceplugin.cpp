@@ -56,7 +56,7 @@
     return 0;
 };*/
 
-QStringList S60ServiceProviderPlugin::keys() const
+QStringList S60ServicePlugin::keys() const
 {
     QStringList list;
     list << QLatin1String("radio");
@@ -64,7 +64,7 @@ QStringList S60ServiceProviderPlugin::keys() const
     return list;
 }
 
-QMediaService* S60ServiceProviderPlugin::create(QString const& key)
+QMediaService* S60ServicePlugin::create(QString const& key)
 {
     if (key == QLatin1String("radio")) 
         return new S60RadioService;
@@ -75,5 +75,10 @@ QMediaService* S60ServiceProviderPlugin::create(QString const& key)
     return 0;
 }
 
-Q_EXPORT_PLUGIN2(symbianmm, S60ServiceProviderPlugin);
+void S60ServicePlugin::release(QMediaService *service)
+{
+    delete service;
+}
+
+Q_EXPORT_PLUGIN2(QtMobilityMultimediaEngine, S60ServicePlugin);
 

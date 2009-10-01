@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 TEMPLATE = subdirs
 
 SUBDIRS = m3u

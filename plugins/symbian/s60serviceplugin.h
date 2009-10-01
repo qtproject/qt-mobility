@@ -36,9 +36,7 @@
 #ifndef S60SERVICEPLUGIN_H
 #define S60SERVICEPLUGIN_H
 
-#include <qmediaserviceproviderplugin.h>
-#include <qmediaserviceprovider.h>
-
+#include <multimedia/qmediaserviceproviderplugin.h>
 
 /*class S60ServiceProvider : public QMediaServiceProvider
 {
@@ -47,12 +45,13 @@ public:
     QObject* createObject(const char *iid) const;
 };*/
 
-class S60ServiceProviderPlugin : public QMediaServiceProviderPlugin
+class S60ServicePlugin : public QMediaServiceProviderPlugin
 {
     Q_OBJECT
 public:
     QStringList keys() const;
     QMediaService* create(QString const& key);
+    void release(QMediaService *service);
 };
 
 #endif // S60SERVICEPLUGIN_H
