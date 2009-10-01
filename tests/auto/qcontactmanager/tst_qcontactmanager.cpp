@@ -88,6 +88,7 @@ private slots:
     void displayName();
     void actionPreferences();
     void selfContactId();
+    void detailOrders();
 
     /* Tests that take no data */
     void contactValidation();
@@ -110,6 +111,7 @@ private slots:
     void displayName_data() {addManagers();}
     void actionPreferences_data() {addManagers();}
     void selfContactId_data() {addManagers();}
+    void detailOrders_data() {addManagers();}
 };
 
 tst_QContactManager::tst_QContactManager()
@@ -2061,5 +2063,76 @@ void tst_QContactManager::selfContactId()
     QVERIFY(cm->error() == QContactManager::NoError);
 }
 
+void tst_QContactManager::detailOrders()
+{
+    QFETCH(QString, uri);
+    QContactManager* cm = QContactManager::fromUri(uri);
+
+    QContact a, b;
+    QContactName name;
+    QContactPhoneNumber number;
+    QContactEmailAddress email;
+    QContactAddress address;
+
+    name.setFirst("Aaron");
+    name.setLast("Aaronson");
+    number.setNumber("555-1212");
+    email.setEmailAddress("aaron@example.com");
+    address.setStreet("Brandl St");
+    address.setRegion("Brisbane");
+
+    a.saveDetail(&name);
+    a.saveDetail(&number);
+    a.saveDetail(&email);
+    a.saveDetail(&address);
+
+    b.saveDetail(&name);
+    b.saveDetail(&email);
+    b.saveDetail(&number);
+    b.saveDetail(&address);
+
+    QVERIFY(cm->saveContact(&a));
+    QVERIFY(cm->saveContact(&b));
+
+    a = cm->contact(a.id());
+
+    QList<QContactDetail> details = a.details();
+    QVERIFY(details.count() == 5);
+    QVERIFY(details.at(1).definitionName() == QContactName::DefinitionName);
+    QVERIFY(details.at(2).definitionName() == QContactPhoneNumber::DefinitionName);
+    QVERIFY(details.at(3).definitionName() == QContactEmailAddress::DefinitionName);
+    QVERIFY(details.at(4).definitionName() == QContactAddress::DefinitionName);
+
+    QVERIFY(a.removeDetail(&details[3]));
+    QVERIFY(cm->saveContact(&a));
+    a = cm->contact(a.id());
+    details = a.details();
+    QVERIFY(details.count() == 4);
+    QVERIFY(details.at(1).definitionName() == QContactName::DefinitionName);
+    QVERIFY(details.at(2).definitionName() == QContactPhoneNumber::DefinitionName);
+    QVERIFY(details.at(3).definitionName() == QContactAddress::DefinitionName);
+
+    a.saveDetail(&email);
+    QVERIFY(cm->saveContact(&a));
+    a = cm->contact(a.id());
+    details = a.details();
+    QVERIFY(details.count() == 5);
+    QVERIFY(details.at(1).definitionName() == QContactName::DefinitionName);
+    QVERIFY(details.at(2).definitionName() == QContactPhoneNumber::DefinitionName);
+    QVERIFY(details.at(3).definitionName() == QContactAddress::DefinitionName);
+    QVERIFY(details.at(4).definitionName() == QContactEmailAddress::DefinitionName);
+
+    QVERIFY(a.removeDetail(&details[4]));
+    QVERIFY(a.removeDetail(&details[2]));
+    QVERIFY(a.removeDetail(&details[1]));
+    QVERIFY(cm->saveContact(&a));
+    a = cm->contact(a.id());
+    details = a.details();
+    QVERIFY(details.count() == 2);
+    QVERIFY(details.at(1).definitionName() == QContactAddress::DefinitionName);
+
+    QVERIFY(cm->removeContact(a.id()));
+    QVERIFY(cm->error() == QContactManager::NoError);
+}
 QTEST_MAIN(tst_QContactManager)
 #include "tst_qcontactmanager.moc"
