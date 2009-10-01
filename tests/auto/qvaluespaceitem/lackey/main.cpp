@@ -88,7 +88,7 @@ private slots:
         switch(index) {
             case 0:
                 //qDebug() << "Setting 101";
-                object->setAttribute(QByteArray("value"), 101);
+                object->setAttribute("value", 101);
                 break;
             case 1:
                 //qDebug() << "Removing";
@@ -96,7 +96,7 @@ private slots:
                 break;
             case 2:
                 //qDebug() << "Setting 102";
-                object->setAttribute(QString("value"), 102);
+                object->setAttribute("value", 102);
                 break;
             case 3:
                 qDebug() << "Removing";

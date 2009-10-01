@@ -177,7 +177,7 @@ void tst_QValueSpaceItem::cleanupTestCase()
             busy->removeAttribute("alex");
             busy->removeAttribute("lorn/busy");
             busy->removeAttribute("lorn");
-            busy->removeAttribute(QByteArray());
+            busy->removeAttribute(QString());
         }
 
         delete busy;

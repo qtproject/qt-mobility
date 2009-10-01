@@ -313,7 +313,7 @@ void tst_QValueSpace::availableLayers()
 void tst_QValueSpace::layerInterface_data()
 {
     QTest::addColumn<QString>("path");
-    QTest::addColumn<QByteArray>("attribute");
+    QTest::addColumn<QString>("attribute");
 
     QStringList paths;
     paths << QString() << QString("/") << QString("//")
@@ -323,7 +323,7 @@ void tst_QValueSpace::layerInterface_data()
           << QString("/layerInterface/subpath") << QString("/layerInterface//subpath")
           << QString("/layerInterface/subpath/") << QString("/layerInterface/subpath//");
 
-    QList<QByteArray> attributes;
+    QStringList attributes;
     attributes << QByteArray()
                << QByteArray("/")
                << QByteArray("//")
@@ -337,8 +337,8 @@ void tst_QValueSpace::layerInterface_data()
                << QByteArray("subpath//value");
 
     foreach (const QString &path, paths) {
-        foreach (const QByteArray &attribute, attributes) {
-            QString id = QString("p:%1 a:%2").arg(QString(path), QString(attribute));
+        foreach (const QString &attribute, attributes) {
+            QString id = QString("p:%1 a:%2").arg(path, attribute);
             QTest::newRow(id.toLocal8Bit().constData()) << path << attribute;
         }
     }
@@ -355,7 +355,7 @@ public slots:
 void tst_QValueSpace::layerInterface()
 {
     QFETCH(QString, path);
-    QFETCH(QByteArray, attribute);
+    QFETCH(QString, attribute);
 
     QValueSpaceItem *item;
 

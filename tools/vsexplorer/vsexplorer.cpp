@@ -84,8 +84,8 @@ public:
     void unwatch(const QString &);
     void write(const QByteArray &, const QString &);
     void remove(const QByteArray &);
-    void set(const QByteArray &, const QString &);
-    void clear(const QByteArray &);
+    void set(const QString &, const QString &);
+    void clear(const QString &);
     void subscriptions();
 
     QByteArray path() const
@@ -375,7 +375,7 @@ void VSExplorer::suppress()
     fflush(stdout);
 }
 
-void VSExplorer::set(const QByteArray &name, const QString &value)
+void VSExplorer::set(const QString &name, const QString &value)
 {
     if('/' == *name.constData())
         prov.setAttribute(name, value);
@@ -385,7 +385,7 @@ void VSExplorer::set(const QByteArray &name, const QString &value)
         prov.setAttribute(pwd.path() + "/" + name, value);
 }
 
-void VSExplorer::clear(const QByteArray &name)
+void VSExplorer::clear(const QString &name)
 {
     if('/' == *name.constData())
         prov.removeAttribute(name);
@@ -495,9 +495,9 @@ void VSExplorer::processLine(const QString &line)
         }
         watch(finalPath.toUtf8());
     } else if(cmd == "set" && 3 == cmds.count()) {
-        set(cmds.at(1).trimmed().toAscii(), cmds.at(2).trimmed());
+        set(cmds.at(1).trimmed(), cmds.at(2).trimmed());
     } else if(cmd == "clear" && 2 == cmds.count()) {
-        clear(cmds.at(1).trimmed().toAscii());
+        clear(cmds.at(1).trimmed());
     } else if((cmd == "subscribe" || cmd == "sub") && 1 == cmds.count()) {
         subscribe();
     } else if((cmd == "unsubscribe" || cmd == "unsub") && 1 == cmds.count()) {

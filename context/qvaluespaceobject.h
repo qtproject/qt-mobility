@@ -73,12 +73,11 @@ signals:
     void attributeInterestChanged(const QString &attribute, bool interested);
 
 public slots:
-    void setAttribute(const char *attribute, const QVariant &data);
-    void removeAttribute(const char *attribute);
     void setAttribute(const QString &attribute, const QVariant &data);
+    void setAttribute(const char *attribute, const QVariant &data);
+
     void removeAttribute(const QString &attribute);
-    void setAttribute(const QByteArray &attribute, const QVariant &data);
-    void removeAttribute(const QByteArray &attribute);
+    void removeAttribute(const char *attribute);
 
 protected:
     virtual void connectNotify(const char *);

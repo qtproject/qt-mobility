@@ -423,7 +423,7 @@ void tst_QValueSpaceObject::valuePermanence()
 
         QCOMPARE(item.value("value", 0).toInt(), 0);
 
-        object->removeAttribute(QByteArray());
+        object->removeAttribute(QString());
 
         delete object;
     } else {

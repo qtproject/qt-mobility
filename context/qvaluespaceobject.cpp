@@ -372,30 +372,6 @@ void QValueSpaceObject::sync()
 }
 
 /*!
-    \overload
-
-    This is a convenience overload and is equivalent to
-    \c {setAttribute(QByteArray(attribute), data)}.
-*/
-void QValueSpaceObject::setAttribute(const char *attribute, const QVariant &data)
-{
-    VS_CALL_ASSERT;
-    setAttribute(QByteArray(attribute), data);
-}
-
-/*!
-    \overload
-
-    This is a convenience overload and is equivalent to
-    \c {setAttribute(attribute.toUtf8(), data)}.
-*/
-void QValueSpaceObject::setAttribute(const QString &attribute, const QVariant &data)
-{
-    VS_CALL_ASSERT;
-    setAttribute(attribute.toUtf8(), data);
-}
-
-/*!
     Set an \a attribute on the object to \a data.  If attribute is empty, this call will set the
     object's value.
 
@@ -409,7 +385,7 @@ void QValueSpaceObject::setAttribute(const QString &attribute, const QVariant &d
         // QValueSpaceItem("/Device/State").value() == QVariant("Starting")
     \endcode
 */
-void QValueSpaceObject::setAttribute(const QByteArray &attribute, const QVariant &data)
+void QValueSpaceObject::setAttribute(const QString &attribute, const QVariant &data)
 {
     VS_CALL_ASSERT;
 
@@ -419,30 +395,19 @@ void QValueSpaceObject::setAttribute(const QByteArray &attribute, const QVariant
     }
 
     d->hasSet = true;
-    d->layer->setValue(this, d->handle, qCanonicalPath(attribute), data);
+    d->layer->setValue(this, d->handle, qCanonicalPath(attribute.toUtf8()), data);
 }
 
 /*!
     \overload
 
     This is a convenience overload and is equivalent to
-    \c {removeAttribute(QByteArray(attribute))}.
+    \c {setAttribute(QString(attribute), data)}.
 */
-void QValueSpaceObject::removeAttribute(const char *attribute)
+void QValueSpaceObject::setAttribute(const char *attribute, const QVariant &data)
 {
     VS_CALL_ASSERT;
-    removeAttribute(QByteArray(attribute));
-}
-
-/*!
-    \overload
-
-    This is a convenience overload and is equivalent to \c {removeAttribute(attribute.toUtf8())}.
-*/
-void QValueSpaceObject::removeAttribute(const QString &attribute)
-{
-    VS_CALL_ASSERT;
-    removeAttribute(attribute.toUtf8());
+    setAttribute(QString(attribute), data);
 }
 
 /*!
@@ -463,7 +428,7 @@ void QValueSpaceObject::removeAttribute(const QString &attribute)
         // QValueSpaceItem("/Device/State/Memory").value() == QVariant();
     \endcode
 */
-void QValueSpaceObject::removeAttribute(const QByteArray &attribute)
+void QValueSpaceObject::removeAttribute(const QString &attribute)
 {
     VS_CALL_ASSERT;
 
@@ -472,7 +437,18 @@ void QValueSpaceObject::removeAttribute(const QByteArray &attribute)
         return;
     }
 
-    d->layer->removeValue(this, d->handle, qCanonicalPath(attribute));
+    d->layer->removeValue(this, d->handle, qCanonicalPath(attribute.toUtf8()));
+}
+
+/*!
+    \overload
+
+    This is a convenience overload and is equivalent to \c {removeAttribute(QString(attribute))}.
+*/
+void QValueSpaceObject::removeAttribute(const char *attribute)
+{
+    VS_CALL_ASSERT;
+    removeAttribute(QString(attribute));
 }
 
 /*!
