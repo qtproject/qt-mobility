@@ -78,23 +78,23 @@ QVideoWindowControl::~QVideoWindowControl()
 */
 
 /*!
-    \fn QVideoWindowControl::isFullscreen() const
+    \fn QVideoWindowControl::isFullScreen() const
 
-    Identifies if a video overlay is a fullscreen overlay.
+    Identifies if a video overlay is a fullScreen overlay.
 
-    Returns true if the video overlay is fullscreen, and false otherwise.
+    Returns true if the video overlay is fullScreen, and false otherwise.
 */
 
 /*!
-    \fn QVideoWindowControl::setFullscreen(bool fullscreen)
+    \fn QVideoWindowControl::setFullScreen(bool fullScreen)
 
-    Sets whether a video overlay is a \a fullscreen overlay.
+    Sets whether a video overlay is a \a fullScreen overlay.
 */
 
 /*!
-    \fn QVideoWindowControl::fullscreenChanged(bool fullscreen)
+    \fn QVideoWindowControl::fullScreenChanged(bool fullScreen)
 
-    Signals that the \a fullscreen state of a video overlay has changed.
+    Signals that the \a fullScreen state of a video overlay has changed.
 */
 
 /*!

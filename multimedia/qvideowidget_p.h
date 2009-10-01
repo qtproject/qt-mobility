@@ -258,7 +258,7 @@ public:
     void _q_contrastChanged(int contrast);
     void _q_hueChanged(int hue);
     void _q_saturationChanged(int saturation);
-    void _q_fullScreenChanged(bool fullscreen);
+    void _q_fullScreenChanged(bool fullScreen);
     void _q_aspectRatioModeChanged(QVideoWidget::AspectRatio mode);
     void _q_customAspectRatioChanged(const QSize &ratio);
 };

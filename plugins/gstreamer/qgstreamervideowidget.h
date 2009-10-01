@@ -62,8 +62,8 @@ public:
     void setAspectRatio(QVideoWidget::AspectRatio ratio);
     void setCustomAspectRatio(const QSize &customRatio);
 
-    bool isFullscreen() const;
-    void setFullscreen(bool fullscreen);
+    bool isFullScreen() const;
+    void setFullScreen(bool fullScreen);
 
     int brightness() const;
     void setBrightness(int brightness);

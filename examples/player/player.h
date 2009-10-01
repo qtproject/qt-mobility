@@ -58,7 +58,7 @@ public:
     ~Player();
 
 Q_SIGNALS:
-    void fullscreenChanged(bool fullscreen);
+    void fullScreenChanged(bool fullScreen);
 
 private slots:
     void open();

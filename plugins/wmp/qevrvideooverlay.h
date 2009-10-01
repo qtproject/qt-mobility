@@ -54,8 +54,8 @@ public:
     QRect displayRect() const;
     void setDisplayRect(const QRect &rect);
 
-    bool isFullscreen() const;
-    void setFullscreen(bool fullscreen);
+    bool isFullScreen() const;
+    void setFullScreen(bool fullScreen);
 
     QSize nativeSize() const;
 
@@ -103,7 +103,7 @@ private:
     QSize m_sizeHint;
     QRect m_displayRect;
     WId m_winId;
-    bool m_fullscreen;
+    bool m_fullScreen;
 };
 
 #endif

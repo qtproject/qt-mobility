@@ -120,16 +120,16 @@ void QWmpVideoOverlay::setDisplayRect(const QRect &rect)
     m_displayRect = rect;
 }
 
-bool QWmpVideoOverlay::isFullscreen() const
+bool QWmpVideoOverlay::isFullScreen() const
 {
-    return m_fullscreen;
+    return m_fullScreen;
 }
 
-void QWmpVideoOverlay::setFullscreen(bool fullscreen)
+void QWmpVideoOverlay::setFullScreen(bool fullScreen)
 {
-	m_player->put_fullScreen(fullscreen);
+    m_player->put_fullScreen(fullScreen);
 
-    emit fullscreenChanged(m_fullscreen = fullscreen);
+    emit fullScreenChanged(m_fullScreen = fullScreen);
 }
 
 QSize QWmpVideoOverlay::nativeSize() const

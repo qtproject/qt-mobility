@@ -44,7 +44,7 @@ QEvrVideoOverlay::QEvrVideoOverlay(HINSTANCE evrHwnd)
     , m_displayControl(0)
     , m_aspectRatioMode(QVideoWidget::AspectRatioAuto)
     , m_winId(0)
-    , m_fullscreen(0)
+    , m_fullScreen(0)
 {
     ptrMFCreateVideoPresenter = reinterpret_cast<PtrMFCreateVideoPresenter>(
             GetProcAddress(m_evrHwnd, "MFCreateVideoPresenter"));
@@ -91,15 +91,15 @@ void QEvrVideoOverlay::setDisplayRect(const QRect &rect)
     m_displayRect = rect;
 }
 
-bool QEvrVideoOverlay::isFullscreen() const
+bool QEvrVideoOverlay::isFullScreen() const
 {
-    return m_fullscreen;
+    return m_fullScreen;
 }
 
-void QEvrVideoOverlay::setFullscreen(bool fullscreen)
+void QEvrVideoOverlay::setFullScreen(bool fullScreen)
 {
-    if (m_displayControl && m_displayControl->SetFullscreen(fullscreen) == S_OK)
-        emit fullscreenChanged(m_fullscreen = fullscreen);
+    if (m_displayControl && m_displayControl->SetFullScreen(fullScreen) == S_OK)
+        emit fullScreenChanged(m_fullScreen = fullScreen);
 }
 
 QSize QEvrVideoOverlay::nativeSize() const

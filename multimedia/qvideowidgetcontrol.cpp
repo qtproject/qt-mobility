@@ -58,19 +58,19 @@ QVideoWidgetControl::~QVideoWidgetControl()
 }
 
 /*!
-  \fn bool QVideoWidgetControl::isFullscreen() const
+  \fn bool QVideoWidgetControl::isFullScreen() const
   Returns true if the video  is shown using the complete screen.
 */
 
 /*!
-  \fn void QVideoWidgetControl::setFullscreen(bool fullscreen)
-    Sets whether a video widget is in \a fullscreen mode.
+  \fn void QVideoWidgetControl::setFullScreen(bool fullScreen)
+    Sets whether a video widget is in \a fullScreen mode.
 */
 
 /*!
-    \fn QVideoWidgetControl::fullscreenChanged(bool fullscreen)
+    \fn QVideoWidgetControl::fullScreenChanged(bool fullScreen)
 
-    Signals that the \a fullscreen state of a video widget has changed.
+    Signals that the \a fullScreen state of a video widget has changed.
 */
 
 /*!

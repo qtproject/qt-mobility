@@ -59,8 +59,8 @@ public:
     QRect displayRect() const;
     void setDisplayRect(const QRect &rect);
 
-    bool isFullscreen() const;
-    void setFullscreen(bool fullscreen);
+    bool isFullScreen() const;
+    void setFullScreen(bool fullScreen);
 
     QSize nativeSize() const;
 
@@ -99,7 +99,7 @@ private:
     QVideoWidget::AspectRatio m_aspectRatioMode;
     QRect m_displayRect;
     QSize m_aspectRatio;
-    bool m_fullscreen;
+    bool m_fullScreen;
 };
 
 #endif
