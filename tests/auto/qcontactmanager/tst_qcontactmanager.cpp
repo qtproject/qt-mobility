@@ -63,7 +63,7 @@ private:
     void dumpContact(const QContact &c);
     void dumpContacts(QContactManager *cm);
     bool isSuperset(const QContact& ca, const QContact& cb);
-
+    QList<QContactDetail> removeAllDefaultDetails(const QList<QContactDetail>& details);
     void addManagers(); // add standard managers to the data
 public slots:
     void init();
@@ -2063,12 +2063,23 @@ void tst_QContactManager::selfContactId()
     QVERIFY(cm->error() == QContactManager::NoError);
 }
 
+QList<QContactDetail> tst_QContactManager::removeAllDefaultDetails(const QList<QContactDetail>& details)
+{
+    QList<QContactDetail> newlist;
+    foreach (const QContactDetail d, details) {
+        if (d.definitionName() != QContactDisplayLabel::DefinitionName && d.definitionName() != QContactTimestamp::DefinitionName) {
+            newlist << d;
+        }
+    }
+    return newlist;
+}
+
 void tst_QContactManager::detailOrders()
 {
     QFETCH(QString, uri);
     QContactManager* cm = QContactManager::fromUri(uri);
 
-    QContact a, b;
+    QContact a;
     QContactName name;
     QContactPhoneNumber number;
     QContactEmailAddress email;
@@ -2086,50 +2097,44 @@ void tst_QContactManager::detailOrders()
     a.saveDetail(&email);
     a.saveDetail(&address);
 
-    b.saveDetail(&name);
-    b.saveDetail(&email);
-    b.saveDetail(&number);
-    b.saveDetail(&address);
-
     QVERIFY(cm->saveContact(&a));
-    QVERIFY(cm->saveContact(&b));
 
     a = cm->contact(a.id());
 
-    QList<QContactDetail> details = a.details();
-    QVERIFY(details.count() == 5);
-    QVERIFY(details.at(1).definitionName() == QContactName::DefinitionName);
-    QVERIFY(details.at(2).definitionName() == QContactPhoneNumber::DefinitionName);
-    QVERIFY(details.at(3).definitionName() == QContactEmailAddress::DefinitionName);
-    QVERIFY(details.at(4).definitionName() == QContactAddress::DefinitionName);
-
-    QVERIFY(a.removeDetail(&details[3]));
-    QVERIFY(cm->saveContact(&a));
-    a = cm->contact(a.id());
-    details = a.details();
+    QList<QContactDetail> details = removeAllDefaultDetails(a.details());
     QVERIFY(details.count() == 4);
-    QVERIFY(details.at(1).definitionName() == QContactName::DefinitionName);
-    QVERIFY(details.at(2).definitionName() == QContactPhoneNumber::DefinitionName);
+    QVERIFY(details.at(0).definitionName() == QContactName::DefinitionName);
+    QVERIFY(details.at(1).definitionName() == QContactPhoneNumber::DefinitionName);
+    QVERIFY(details.at(2).definitionName() == QContactEmailAddress::DefinitionName);
     QVERIFY(details.at(3).definitionName() == QContactAddress::DefinitionName);
+
+    QVERIFY(a.removeDetail(&details[2]));
+    QVERIFY(cm->saveContact(&a));
+    a = cm->contact(a.id());
+    details = removeAllDefaultDetails(a.details());
+    QVERIFY(details.count() == 3);
+    QVERIFY(details.at(0).definitionName() == QContactName::DefinitionName);
+    QVERIFY(details.at(1).definitionName() == QContactPhoneNumber::DefinitionName);
+    QVERIFY(details.at(2).definitionName() == QContactAddress::DefinitionName);
 
     a.saveDetail(&email);
     QVERIFY(cm->saveContact(&a));
     a = cm->contact(a.id());
-    details = a.details();
-    QVERIFY(details.count() == 5);
-    QVERIFY(details.at(1).definitionName() == QContactName::DefinitionName);
-    QVERIFY(details.at(2).definitionName() == QContactPhoneNumber::DefinitionName);
-    QVERIFY(details.at(3).definitionName() == QContactAddress::DefinitionName);
-    QVERIFY(details.at(4).definitionName() == QContactEmailAddress::DefinitionName);
+    details = removeAllDefaultDetails(a.details());
+    QVERIFY(details.count() == 4);
+    QVERIFY(details.at(0).definitionName() == QContactName::DefinitionName);
+    QVERIFY(details.at(1).definitionName() == QContactPhoneNumber::DefinitionName);
+    QVERIFY(details.at(2).definitionName() == QContactAddress::DefinitionName);
+    QVERIFY(details.at(3).definitionName() == QContactEmailAddress::DefinitionName);
 
-    QVERIFY(a.removeDetail(&details[4]));
-    QVERIFY(a.removeDetail(&details[2]));
+    QVERIFY(a.removeDetail(&details[3]));
     QVERIFY(a.removeDetail(&details[1]));
+    QVERIFY(a.removeDetail(&details[0]));
     QVERIFY(cm->saveContact(&a));
     a = cm->contact(a.id());
-    details = a.details();
-    QVERIFY(details.count() == 2);
-    QVERIFY(details.at(1).definitionName() == QContactAddress::DefinitionName);
+    details = removeAllDefaultDetails(a.details());
+    QVERIFY(details.count() == 1);
+    QVERIFY(details.at(0).definitionName() == QContactAddress::DefinitionName);
 
     QVERIFY(cm->removeContact(a.id()));
     QVERIFY(cm->error() == QContactManager::NoError);
