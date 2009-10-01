@@ -69,10 +69,6 @@ public:
     QUniqueId id() const;
     void setId(const QUniqueId& id);
 
-    /* Group IDs */
-    QList<QUniqueId> groups() const;
-    void setGroups(const QList<QUniqueId> & groupIds);
-
     /* The (possibly synthesised) display label of the contact */
     QContactDisplayLabel displayLabel() const;
     void setDisplayLabel(const QContactDisplayLabel& label);

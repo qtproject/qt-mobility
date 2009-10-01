@@ -35,7 +35,6 @@
 
 #include "qcontact_p.h"
 #include "qcontactfilter.h"
-#include "qcontactgroup_p.h"
 #include "qcontactdetaildefinition.h"
 #include "qcontactmanager_p.h"
 #include "qcontactmanagerinfo.h"
@@ -47,7 +46,7 @@
 /*!
  * \class QContactManager
  *
- * This class provides adding, updating and removal of contacts and groups.
+ * This class provides adding, updating and removal of contacts.
  * It also provides definitions for fields that can be found in contacts.
  */
 
@@ -73,24 +72,6 @@
 /*!
  * \fn QContactManager::contactsRemoved(const QList<QUniqueId>& contactIds)
  * This signal is emitted at some point once the contacts identified by \a contactIds have been removed from a datastore managed by this manager.
- * This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
- */
-
-/*!
- * \fn QContactManager::groupsAdded(const QList<QUniqueId>& groupIds)
- * This signal is emitted at some point once the groups identified by \a groupIds have been added to a datastore managed by this manager.
- * This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
- */
-
-/*!
- * \fn QContactManager::groupsChanged(const QList<QUniqueId>& groupIds)
- * This signal is emitted at some point once the groups identified by \a groupIds have been modified in a datastore managed by this manager.
- * This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
- */
-
-/*!
- * \fn QContactManager::groupsRemoved(const QList<QUniqueId>& groupIds)
- * This signal is emitted at some point once the groups identified by \a groupIds have been removed from a datastore managed by this manager.
  * This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
@@ -222,9 +203,6 @@ QContactManager::QContactManager(const QString& managerName, const QMap<QString,
     connect(d->m_engine, SIGNAL(contactsAdded(QList<QUniqueId>)), this, SIGNAL(contactsAdded(QList<QUniqueId>)));
     connect(d->m_engine, SIGNAL(contactsChanged(QList<QUniqueId>)), this, SIGNAL(contactsChanged(QList<QUniqueId>)));
     connect(d->m_engine, SIGNAL(contactsRemoved(QList<QUniqueId>)), this, SIGNAL(contactsRemoved(QList<QUniqueId>)));
-    connect(d->m_engine, SIGNAL(groupsAdded(QList<QUniqueId>)), this, SIGNAL(groupsAdded(QList<QUniqueId>)));
-    connect(d->m_engine, SIGNAL(groupsChanged(QList<QUniqueId>)), this, SIGNAL(groupsChanged(QList<QUniqueId>)));
-    connect(d->m_engine, SIGNAL(groupsRemoved(QList<QUniqueId>)), this, SIGNAL(groupsRemoved(QList<QUniqueId>)));
 }
 
 /*! Frees the memory used by the QContactManager */
@@ -240,8 +218,8 @@ QContactManager::~QContactManager()
  * This enum specifies an error that occurred during the most recent operation:
  *
  * \value NoError The most recent operation was successful
- * \value DoesNotExistError The most recent operation failed because the requested contact, group or definition does not exist
- * \value AlreadyExistsError The most recent operation failed because the specified contact, group or definition already exists
+ * \value DoesNotExistError The most recent operation failed because the requested contact or detail definition does not exist
+ * \value AlreadyExistsError The most recent operation failed because the specified contact or detail definition already exists
  * \value InvalidDetailError The most recent operation failed because the specified contact contains details which do not conform to their definition
  * \value LockedError The most recent operation failed because the datastore specified is currently locked
  * \value DetailAccessError The most recent operation failed because a detail was modified or removed and its access method does not allow that
@@ -381,37 +359,6 @@ bool QContactManager::setSelfContactId(const QUniqueId& contactId)
 QUniqueId QContactManager::selfContactId() const
 {
     return d->m_engine->selfContactId(d->m_error);
-}
-
-/*! Return the list of added group ids */
-QList<QUniqueId> QContactManager::groups() const
-{
-    return d->m_engine->groups(d->m_error);
-}
-
-/*! Returns the group which is identified by the given \a groupId, or a default-constructed group if no such group exists */
-QContactGroup QContactManager::group(const QUniqueId& groupId) const
-{
-    return d->m_engine->group(groupId, d->m_error);
-}
-
-/*!
- * Saves the group \a group in the database.  The id of the group is
- * used to determine the group to update.  If the group has no name set,
- * this function will fail.  If the group does not already
- * exist, it is added to the database.
- *
- * Returns true on success, or false on failure.
- */
-bool QContactManager::saveGroup(QContactGroup* group)
-{
-    return d->m_engine->saveGroup(group, d->m_error);
-}
-
-/*! Remove the group with the given id \a groupId from the database.  Returns false if no group with that id exists, or the operation otherwise failed.  Returns true if the group was successfully deleted. */
-bool QContactManager::removeGroup(const QUniqueId& groupId)
-{
-    return d->m_engine->removeGroup(groupId, d->m_error);
 }
 
 /*!

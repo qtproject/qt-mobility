@@ -46,6 +46,7 @@
 // We mean it.
 //
 
+#include "qtcontactsglobal.h"
 #include <QSharedData>
 
 class QContactChangeSetData : public QSharedData
@@ -62,10 +63,7 @@ public:
         m_dataChanged(other.m_dataChanged),
         m_addedContacts(other.m_addedContacts),
         m_changedContacts(other.m_changedContacts),
-        m_removedContacts(other.m_removedContacts),
-        m_addedGroups(other.m_addedGroups),
-        m_changedGroups(other.m_changedGroups),
-        m_removedGroups(other.m_removedGroups)
+        m_removedContacts(other.m_removedContacts)
     {
     }
 
@@ -77,9 +75,6 @@ public:
     QSet<QUniqueId> m_addedContacts;
     QSet<QUniqueId> m_changedContacts;
     QSet<QUniqueId> m_removedContacts;
-    QSet<QUniqueId> m_addedGroups;
-    QSet<QUniqueId> m_changedGroups;
-    QSet<QUniqueId> m_removedGroups;
 };
 
 #endif

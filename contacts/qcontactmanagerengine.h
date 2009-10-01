@@ -45,7 +45,6 @@
 
 #include "qcontact.h"
 #include "qcontactdetaildefinition.h"
-#include "qcontactgroup.h"
 #include "qcontactmanager.h"
 #include "qcontactmanagerinfo.h"
 #include "qcontactabstractrequest.h"
@@ -86,14 +85,7 @@ public:
 
     /* Validation for saving */
     virtual bool validateContact(const QContact& contact, QContactManager::Error& error) const;
-    virtual bool validateGroup(const QContactGroup& group, QContactManager::Error& error) const;
     virtual bool validateDefinition(const QContactDetailDefinition& def, QContactManager::Error& error) const;
-
-    /* Groups - Accessors and Mutators */
-    virtual QList<QUniqueId> groups(QContactManager::Error& error) const;
-    virtual QContactGroup group(const QUniqueId& groupId, QContactManager::Error& error) const;
-    virtual bool saveGroup(QContactGroup* group, QContactManager::Error& error);
-    virtual bool removeGroup(const QUniqueId& groupId, QContactManager::Error& error);
 
     /* Definitions - Accessors and Mutators */
     virtual QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
@@ -110,7 +102,6 @@ public:
     void updateRequestStatus(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
     void updateRequest(QContactAbstractRequest* req, const QList<QUniqueId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
     void updateRequest(QContactAbstractRequest* req, const QList<QContact>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
-    void updateRequest(QContactAbstractRequest* req, const QList<QContactGroup>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
     void updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status);
     void updateRequest(QContactAbstractRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
 
@@ -127,9 +118,6 @@ signals:
     void contactsAdded(const QList<QUniqueId>& contactIds);
     void contactsChanged(const QList<QUniqueId>& contactIds);
     void contactsRemoved(const QList<QUniqueId>& contactIds);
-    void groupsAdded(const QList<QUniqueId>& groupIds);
-    void groupsChanged(const QList<QUniqueId>& groupIds);
-    void groupsRemoved(const QList<QUniqueId>& groupIds);
 
 public:
     /* Helper functions */
