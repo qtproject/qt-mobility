@@ -49,6 +49,12 @@ const TUid KUidContactFieldIMPP={KUidContactFieldIMPPValue};
  */
 const TUid KUidContactFieldVideoRingTone={KUidContactFieldVideoRingToneValue};
 
+/**
+ * Phonebook custom Field value.
+ * Sync target field type.
+ */
+const TUid KUidContactFieldSyncTarget={KUidContactFieldSyncTargetValue};
+
 #endif // CNTMODELEXTUIDS_HRH
 
 // End of File

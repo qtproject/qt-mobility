@@ -836,7 +836,15 @@ RESOURCE ARRAY r_cntui_new_field_defns
           };
       category=EContactCategoryNone;
       fieldName=qtn_phob_lbl_sip;
-      }
+      },
+    FIELD // Sync target
+      {
+      fieldStorageType=KStorageTypeText;
+      contactFieldType=KUidContactFieldSyncTargetValue;
+      vCardMapping=KIntContactFieldVCardMapUnknown;
+      category=EContactCategoryNone;
+      fieldName=STRING_r_cntui_new_field_defns13;
+      }      
     };
  }
 

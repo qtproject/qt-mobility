@@ -42,7 +42,8 @@ symbian: {
       inc/transformbirthday.h \
       inc/transformonlineaccount.h \
       inc/transformorganisation.h \
-      inc/transformavatar.h
+      inc/transformavatar.h \
+      inc/transformsynctarget.h
       
   SOURCES += \
   		src/qcontactsymbianbackend.cpp \
@@ -58,7 +59,8 @@ symbian: {
       src/transformbirthday.cpp \
       src/transformonlineaccount.cpp \
       src/transformorganisation.cpp \
-      src/transformavatar.cpp 
+      src/transformavatar.cpp \
+      src/transformsynctarget.cpp
       
   LIBS += \
   				-lcntmodel \

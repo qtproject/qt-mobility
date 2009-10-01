@@ -43,6 +43,7 @@
 #include "cntmodelextuids.h"
 #include "transformorganisation.h"
 #include "transformavatar.h"
+#include "transformsynctarget.h"
 
 #include <QtTest/QtTest>
 
@@ -137,6 +138,12 @@ void TestTransformContactData::executeTransformAvatar()
 {
     validateTransformAvatar(_L("dummyavatar"), QString("dummyavatar"));
     validateTransformAvatar(_L(""), QString(""));
+}
+
+void TestTransformContactData::executeTransformSyncTarget()
+{
+    validateTransformSyncTarget(_L("dummysynctarget"), QString("dummysynctarget"));
+    validateTransformSyncTarget(_L(""), QString(""));
 }
 
 void TestTransformContactData::validateTransformEmail(TPtrC16 field, QString detail)
@@ -918,6 +925,35 @@ void TestTransformContactData::validateTransformAvatar(TPtrC16 field, QString de
     newField = 0;    
     
     delete transformAvatar; 
+}
+
+void TestTransformContactData::validateTransformSyncTarget(TPtrC16 field, QString detail)
+{
+    TransformContactData* transformSyncTarget = new TransformSyncTarget();
+    QVERIFY(transformSyncTarget != 0);
+    QVERIFY(transformSyncTarget->supportsField(KUidContactFieldSyncTarget.iUid));
+    QVERIFY(transformSyncTarget->supportsDetail(QContactSyncTarget::DefinitionName));
+    
+    validateContexts(transformSyncTarget);
+    
+    QContactSyncTarget syncTarget;
+    syncTarget.setSyncTarget(detail);
+    QList<CContactItemField *> fields = transformSyncTarget->transformDetailL(syncTarget);
+    QVERIFY(fields.count() == 1);
+    QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldSyncTarget));
+    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
+    
+    CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldSyncTarget);
+    newField->TextStorage()->SetTextL(field);
+    QContact contact;
+    QContactDetail* contactDetail = transformSyncTarget->transformItemField(*newField, contact);
+    const QContactSyncTarget* syncTargetInfo(static_cast<const QContactSyncTarget*>(contactDetail));
+    QCOMPARE(syncTargetInfo->syncTarget(), detail);
+        
+    delete contactDetail;
+    delete newField;
+    delete transformSyncTarget;
 }
 
 void TestTransformContactData::validateContexts(TransformContactData* transformContactData) const

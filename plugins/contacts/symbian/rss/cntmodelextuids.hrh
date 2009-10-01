@@ -53,6 +53,12 @@
  */
 #define KUidContactFieldVideoRingToneValue	0x200100E5
 
+/**
+ * Phonebook custom Field value.
+ * Sync target field type.
+ */
+#define KUidContactFieldSyncTargetValue		0x200100E6
+
 #endif // CNTMODELEXTUIDS_HRH
 
 // End of File
