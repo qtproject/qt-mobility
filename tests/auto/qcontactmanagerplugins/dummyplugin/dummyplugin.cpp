@@ -41,7 +41,6 @@
 #define makename(x) makestr(x)
 
 #include "qcontact_p.h"
-#include "qcontactgroup_p.h"
 #include "qcontactmanager.h"
 #include "qcontactmanager_p.h"
 
@@ -188,7 +187,7 @@ bool DummyEngine::removeContact(const QUniqueId& contactId, bool batch, QContact
 QStringList DummyEngine::capabilities() const
 {
     QStringList caplist;
-    caplist << "Groups" << "Locking" << "Batch" << "ReadOnly" << "Filtering" << "Sorting" << "Preferences";
+    caplist << "Locking" << "Batch" << "ReadOnly" << "Filtering" << "Sorting" << "Preferences";
     // ie, doesn't support: Changelog, Volatile, Asynchronous.
     return caplist;
 }

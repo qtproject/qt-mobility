@@ -45,7 +45,6 @@
 #include "maliciousplugin_p.h"
 
 #include "qcontact_p.h"
-#include "qcontactgroup_p.h"
 #include "qcontactmanager.h"
 #include "qcontactmanager_p.h"
 
@@ -72,7 +71,6 @@ bool MaliciousAsyncManagerEngine::startRequest(QContactAbstractRequest* req)
     QList<QContactManager::Error> errorsResult;
     QList<QUniqueId> idResult;
     QList<QContact> contactResult;
-    QList<QContactGroup> groupResult;
     QList<QContactDetailDefinition> defResult;
     QMap<QString, QContactDetailDefinition> defMapResult;
 
@@ -80,7 +78,6 @@ bool MaliciousAsyncManagerEngine::startRequest(QContactAbstractRequest* req)
     updateRequestStatus(req, errorResult, errorsResult, QContactAbstractRequest::Active, false);
     updateRequest(req, idResult, errorResult, errorsResult, QContactAbstractRequest::Active, false);
     updateRequest(req, contactResult, errorResult, errorsResult, QContactAbstractRequest::Active, false);
-    updateRequest(req, groupResult, errorResult, errorsResult, QContactAbstractRequest::Active, false);
     updateRequest(req, defResult, errorResult, errorsResult, QContactAbstractRequest::Active);
     updateRequest(req, defMapResult, errorResult, errorsResult, QContactAbstractRequest::Active, false);
 

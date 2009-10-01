@@ -82,7 +82,6 @@ private slots:
     void add();
     void update();
     void remove();
-    void groups();
     void batch();
     void signalEmission();
     void detailDefinitions();
@@ -105,7 +104,6 @@ private slots:
     void add_data() {addManagers();}
     void update_data() {addManagers();}
     void remove_data() {addManagers();}
-    void groups_data() {addManagers();}
     void batch_data() {addManagers();}
     void signalEmission_data() {addManagers();}
     void detailDefinitions_data() {addManagers();}
@@ -306,8 +304,6 @@ void tst_QContactManager::nullIdOperations()
     QVERIFY(!cm->removeContact(QUniqueId()));
     QVERIFY(cm->error() == QContactManager::DoesNotExistError);
 
-    QVERIFY(!cm->removeGroup(QUniqueId()));
-    QVERIFY(cm->error() == QContactManager::NotSupportedError || cm->error() == QContactManager::DoesNotExistError);
 
     QContact c = cm->contact(QUniqueId());
     QVERIFY(c.id() == 0);
@@ -464,226 +460,6 @@ void tst_QContactManager::doDump()
 
         dumpContacts(cm);
     }
-}
-
-void tst_QContactManager::groups()
-{
-    QFETCH(QString, uri);
-    QContactManager* cm = QContactManager::fromUri(uri);
-
-    if (cm->information()->hasFeature(QContactManagerInfo::Groups)) {
-        /* Positive testing */
-
-        /* Test adding a null doesn't crash, before we do anything else */
-        QVERIFY(cm->saveGroup(0) == false);
-        QVERIFY(cm->error() == QContactManager::BadArgumentError);
-
-        /* We need some contacts.. */
-
-        QContact a;
-        QContactName na;
-        na.setFirst("XXXXXX Albert");
-        a.saveDetail(&na);
-
-        QContact b;
-        QContactName nb;
-        nb.setFirst("XXXXXX Bob");
-        b.saveDetail(&nb);
-
-        QContact c;
-        QContactName nc;
-        nc.setFirst("XXXXXX Carol");
-        c.saveDetail(&nc);
-
-        /* Add them */
-        QVERIFY(cm->saveContact(&a));
-        QVERIFY(cm->saveContact(&b));
-        QVERIFY(cm->saveContact(&c));
-
-        /* Get the initial list of groups */
-        QList<QUniqueId> origGroups = cm->groups();
-        QCOMPARE(cm->error(), QContactManager::NoError);
-
-        /* Add a group */
-        QContactGroup g;
-
-        /* No name, so should fail */
-        QVERIFY(cm->saveGroup(&g) == false);
-        QVERIFY(cm->error() == QContactManager::BadArgumentError);
-
-        /* Name but no contents should be legal */
-        g.setName("XXXXXX Group");
-        QVERIFY(cm->saveGroup(&g) == true);
-        QCOMPARE(cm->error(), QContactManager::NoError);
-        QVERIFY(g.id() != 0);
-
-        QContactGroup g2 = cm->group(g.id());
-        QCOMPARE(cm->error(), QContactManager::NoError);
-        QVERIFY(!g2.isEmpty());
-        QVERIFY(g2.id() == g.id());
-        QVERIFY(g2.members().count() == 0);
-        QCOMPARE(g.members(), g2.members());
-        QCOMPARE(g.name(), g2.name());
-
-        /* Update the group */
-        g.addMember(a.id());
-        g.setName("YYYYYYYYY Group");
-        QVERIFY(g.members().count() == 1);
-        QVERIFY(g.members().at(0) == a.id());
-
-        QVERIFY(cm->saveGroup(&g) == true);
-        QCOMPARE(cm->error(), QContactManager::NoError);
-
-        /* Check that retrieving a again shows the updated group */
-        QContact a2 = cm->contact(a.id());
-        QVERIFY(a2.groups().contains(g.id()));
-
-        g2 = cm->group(g2.id());
-        QCOMPARE(cm->error(), QContactManager::NoError);
-
-        QVERIFY(!g2.isEmpty());
-        QVERIFY(g2.id() == g.id());
-        QVERIFY(g2.members().count() == 1);
-        QVERIFY(g2.members().at(0) == a.id());
-        QCOMPARE(g.members(), g2.members());
-        QCOMPARE(g.name(), g2.name());
-
-        /* Remove the group */
-        QVERIFY(cm->removeGroup(g.id()) == true);
-        QCOMPARE(cm->error(), QContactManager::NoError);
-
-        g2 = cm->group(g2.id());
-        QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
-        QVERIFY(g2.isEmpty());
-        QVERIFY(g2.id() == 0);
-        QVERIFY(g2.members().count() == 0);
-
-        /* Check that retrieving a again shows the updated group */
-        a2 = cm->contact(a.id());
-        QVERIFY(!a2.groups().contains(g.id()));
-
-        /* Save a new group with multiple people */
-        QContactGroup g3;
-        g3.setName("XXXXXX Group 2");
-        g3.addMember(b.id());
-        g3.addMember(c.id());
-
-        QVERIFY(cm->saveGroup(&g3));
-        QCOMPARE(cm->error(), QContactManager::NoError);
-        QVERIFY(g3.id() != 0);
-
-        g2 = cm->group(g3.id());
-        QVERIFY(g2.id() == g3.id());
-        QVERIFY(g2.members().count() == 2);
-        QCOMPARE(g2.members(), g3.members());
-        /* We don't check order at this time */
-
-        /* Remove one member and save again */
-        g3.removeMember(c.id());
-        QVERIFY(cm->saveGroup(&g3));
-        g2 = cm->group(g3.id());
-        QVERIFY(g2.id() == g3.id());
-        QVERIFY(g2.members().count() == 1);
-        QCOMPARE(g2.members(), g3.members());
-
-        /* Add it back again */
-        g3.addMember(c.id());
-        QVERIFY(cm->saveGroup(&g3));
-        g2 = cm->group(g3.id());
-        QVERIFY(g2.id() == g3.id());
-        QVERIFY(g2.members().count() == 2);
-        QCOMPARE(g2.members(), g3.members());
-
-        /* Add the first group back again - should fail with does not exist since it has a stale id */
-        QVERIFY(!cm->saveGroup(&g));
-        QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
-
-        /* Clearing the id and re setting should work */
-        g.setId(0);
-        QVERIFY(cm->saveGroup(&g));
-        QCOMPARE(cm->error(), QContactManager::NoError);
-
-        /* Add the g group to another two contacts */
-        c = cm->contact(c.id());
-        QList<QUniqueId> ids = c.groups();
-        ids.append(g.id());
-        c.setGroups(ids);
-        b = cm->contact(b.id());
-        ids = b.groups();
-        ids.append(g.id());
-        b.setGroups(ids);
-        QList<QContact> contacts;
-        contacts << b << c;
-        QVERIFY(cm->saveContacts(&contacts).count() == 2);
-
-        /* Now remove the contacts, make sure they disappear from the groups */
-        QVERIFY(cm->removeContact(a.id()));
-        QVERIFY(cm->removeContact(b.id()));
-
-        /* Make sure we can't save the group with a or b in it */
-        QVERIFY(!cm->saveGroup(&g2));
-        QVERIFY(cm->error() == QContactManager::DoesNotExistError);
-
-        /* Just adjust c to not have any groups */
-        c.setGroups(QList<QUniqueId>());
-        QVERIFY(cm->saveContact(&c));
-
-        g2 = cm->group(g3.id());
-        QVERIFY(g2.id() == g3.id());
-        QVERIFY(g2.members().count() == 0);
-
-        /* Now remove again */
-        QVERIFY(cm->removeGroup(g3.id()));
-        QCOMPARE(cm->error(), QContactManager::NoError);
-
-        /* Test double remove */
-        QVERIFY(cm->removeGroup(g3.id()) == false);
-        QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
-
-        /* Test that g has no members (but is not empty) as well */
-        g2 = cm->group(g.id());
-        QVERIFY(!g2.isEmpty());
-        QVERIFY(g2.id() == g.id());
-        QVERIFY(g2.members().count() == 0);
-
-        /* Remove g as well */
-        QVERIFY(cm->removeGroup(g.id()));
-
-        /* And remove c as well */
-        QVERIFY(cm->removeContact(c.id()));
-
-        /*
-         * Now we should hopefully be back to our normal number of groups
-         * (unless some other process added groups behind our back.. )
-         */
-        QCOMPARE(cm->groups().count(), origGroups.count());
-
-    } else {
-        /* Negative testing - make sure it fails properly */
-        QList<QUniqueId> groups = cm->groups();
-        QVERIFY(groups.count() == 0);
-        QVERIFY(cm->error() == QContactManager::NotSupportedError);
-
-        QContactGroup g;
-        g.addMember(1);
-        g.addMember(2);
-
-        /* Test adding a null doesn't crash, before we do anything else */
-        QVERIFY(cm->saveGroup(0) == false);
-        QVERIFY(cm->error() == QContactManager::BadArgumentError);
-
-        QVERIFY(cm->saveGroup(&g) == false);
-        QVERIFY(cm->error() == QContactManager::NotSupportedError);
-
-        QVERIFY(cm->removeGroup(1) == false);
-        QVERIFY(cm->error() == QContactManager::NotSupportedError);
-
-        g = cm->group(1);
-        QVERIFY(g.isEmpty());
-        QVERIFY(g.id() == 0);
-        QVERIFY(cm->error() == QContactManager::NotSupportedError);
-    }
-    delete cm;
 }
 
 void tst_QContactManager::add()
@@ -1197,25 +973,6 @@ void tst_QContactManager::invalidManager()
     QVERIFY(manager.removeContacts(&idlist) == (QList<QContactManager::Error>() << QContactManager::NotSupportedError));
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
 
-    /* Groups */
-    QVERIFY(manager.groups().count() == 0);
-
-    QVERIFY(manager.saveGroup(0) == false);
-    QVERIFY(manager.error() == QContactManager::BadArgumentError);
-
-    QContactGroup group;
-    group.addMember(foo.id());
-    QVERIFY(manager.saveGroup(&group) == false);
-    QVERIFY(manager.error() == QContactManager::NotSupportedError);
-    QVERIFY(group.id() == 0);
-    QVERIFY(manager.groups().count() == 0);
-
-    QVERIFY(manager.group(group.id()).id() == 0);
-    QVERIFY(manager.error() == QContactManager::NotSupportedError);
-
-    QVERIFY(manager.removeGroup(group.id()) == false);
-    QVERIFY(manager.error() == QContactManager::NotSupportedError);
-
     /* Detail definitions */
     QVERIFY(manager.detailDefinitions().count() == 0);
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
@@ -1247,7 +1004,6 @@ void tst_QContactManager::invalidManager()
     /* Capabilities */
     QContactManagerInfo* info = manager.information();
     QVERIFY(info->supportedDataTypes().count() == 0);
-    QVERIFY(!info->hasFeature(QContactManagerInfo::Groups));
     QVERIFY(!info->hasFeature(QContactManagerInfo::ActionPreferences));
     QVERIFY(!info->hasFeature(QContactManagerInfo::MutableDefinitions));
 
@@ -1269,7 +1025,6 @@ void tst_QContactManager::memoryManager()
 
     QContactManagerInfo* info = m1.information();
 
-    QVERIFY(info->hasFeature(QContactManagerInfo::Groups));
     QVERIFY(info->hasFeature(QContactManagerInfo::ActionPreferences));
     QVERIFY(info->hasFeature(QContactManagerInfo::MutableDefinitions));
     QVERIFY(info->hasFeature(QContactManagerInfo::Anonymous));
@@ -1752,43 +1507,7 @@ void tst_QContactManager::contactValidation()
     QVERIFY(!cm->saveContact(&c));
     QCOMPARE(cm->error(), QContactManager::DetailAccessError);
 
-    /* Have to test group validation, as well */
-    QContact d;
-    d.setDisplayLabel("Dummy contact");
 
-    QVERIFY(cm->saveContact(&d));
-    QList<QUniqueId> ids;
-    d.setGroups(ids);
-    QVERIFY(cm->saveContact(&d));
-
-    // Add a few groups
-    QContactGroup g1, g2, g3;
-    g1.setName("Group XXXXXX-1");
-    g2.setName("Group XXXXXX-2");
-    g3.setName("To be removed");
-
-    QVERIFY(cm->saveGroup(&g1));
-    QVERIFY(cm->saveGroup(&g2));
-    QVERIFY(cm->saveGroup(&g3));
-
-    QVERIFY(cm->removeGroup(g3.id()));
-    QVERIFY(cm->group(g3.id()).id() == 0);
-
-    // now g3.id is an invalid group
-
-    ids << g1.id() << g2.id();
-    d.setGroups(ids);
-    QVERIFY(cm->saveContact(&d));
-    QVERIFY(cm->error() == QContactManager::NoError);
-
-    ids << g3.id();
-    d.setGroups(ids);
-    QVERIFY(!cm->saveContact(&d));
-    QVERIFY(cm->error() == QContactManager::DoesNotExistError);
-
-    QVERIFY(cm->removeGroup(g2.id()));
-    QVERIFY(cm->removeGroup(g1.id()));
-    QVERIFY(cm->removeContact(d.id()));
 
     delete cm;
 }
@@ -1807,9 +1526,6 @@ void tst_QContactManager::signalEmission()
     QSignalSpy spyCA(m1, SIGNAL(contactsAdded(QList<QUniqueId>)));
     QSignalSpy spyCM(m1, SIGNAL(contactsChanged(QList<QUniqueId>)));
     QSignalSpy spyCR(m1, SIGNAL(contactsRemoved(QList<QUniqueId>)));
-    QSignalSpy spyGA(m1, SIGNAL(groupsAdded(QList<QUniqueId>)));
-    QSignalSpy spyGC(m1, SIGNAL(groupsChanged(QList<QUniqueId>)));
-    QSignalSpy spyGR(m1, SIGNAL(groupsRemoved(QList<QUniqueId>)));
 
     QList<QVariant> args;
     QContact c;
@@ -1969,159 +1685,6 @@ void tst_QContactManager::signalEmission()
         QCOMPARE(spyCM.count(), 1); // check that we received the update signals.
         m2->removeContact(c.id());
         QCOMPARE(spyCR.count(), 1); // check that we received the remove signal.
-    }
-
-    /* Check groups, if supported */
-    if (m1->information()->hasFeature(QContactManagerInfo::Groups)) {
-        QContactGroup g1;
-        g1.setName("XXXXXX Group");
-
-        /* For cross notification testing, add everything to m2 and watch on m1 */
-        QContactManager *adder = m2->information()->hasFeature(QContactManagerInfo::Anonymous) ? m1 : m2;
-
-        adder->removeContact(c.id());
-        adder->removeContact(c2.id());
-
-        // Reset the counts so we don't get confused.
-        spyCA.clear();
-        spyCM.clear();
-        spyCR.clear();
-        spyGA.clear();
-        spyGC.clear();
-        spyGR.clear();
-
-        // Make sure we have two contacts to test with
-        c.setId(0);
-        c2.setId(0);
-        batchAdd.clear();
-        batchAdd << c << c2;
-        QVERIFY(adder->saveContacts(&batchAdd).count() == 2);
-        QVERIFY(adder->error() == QContactManager::NoError);
-
-        c = batchAdd.at(0);
-        c2 = batchAdd.at(1);
-
-        QVERIFY(spyCA.count() == 1); // only one signal, even though there's 2 contacts.
-        QVERIFY(spyCM.count() == 0);
-        QVERIFY(spyCR.count() == 0);
-        QVERIFY(spyGA.count() == 0);
-        QVERIFY(spyGC.count() == 0);
-        QVERIFY(spyGR.count() == 0);
-
-        args = spyCA.takeFirst();
-        QVERIFY(args.size() == 1);
-        sigids = args.at(0).value<QList<QUniqueId> >();
-        QVERIFY(sigids.count() == 2);
-        // The order is indeterminate
-        QVERIFY(sigids.contains(c.id()));
-        QVERIFY(sigids.contains(c2.id()));
-
-        // Save an empty group
-        QVERIFY(adder->saveGroup(&g1));
-
-        QVERIFY(spyCA.count() == 0);
-        QVERIFY(spyCM.count() == 0);
-        QVERIFY(spyCR.count() == 0);
-        QVERIFY(spyGA.count() == 1);
-        QVERIFY(spyGC.count() == 0);
-        QVERIFY(spyGR.count() == 0);
-
-        args = spyGA.takeFirst();
-        QVERIFY(args.size() == 1);
-        sigids = args.at(0).value<QList<QUniqueId> >();
-        QVERIFY(sigids.count() == 1);
-        QVERIFY(sigids.value(0) == g1.id());
-
-        // Add one member (via the group)
-        g1.addMember(c.id());
-        QVERIFY(adder->saveGroup(&g1));
-
-        QVERIFY(spyCA.count() == 0);
-        QVERIFY(spyCM.count() == 1);
-        QVERIFY(spyCR.count() == 0);
-        QVERIFY(spyGA.count() == 0);
-        QVERIFY(spyGC.count() == 1);
-        QVERIFY(spyGR.count() == 0);
-
-        args = spyCM.takeFirst();
-        QVERIFY(args.size() == 1);
-        sigids = args.at(0).value<QList<QUniqueId> >();
-        QVERIFY(sigids.count() == 1);
-        QVERIFY(sigids.value(0) == c.id());
-
-        args = spyGC.takeFirst();
-        QVERIFY(args.size() == 1);
-        sigids = args.at(0).value<QList<QUniqueId> >();
-        QVERIFY(sigids.count() == 1);
-        QVERIFY(sigids.value(0) == g1.id());
-
-        // Add one member (via the contact)
-        c2.setGroups(QList<QUniqueId>() << g1.id());
-        QVERIFY(adder->saveContact(&c2));
-
-        QVERIFY(spyCA.count() == 0);
-        QVERIFY(spyCM.count() == 1);
-        QVERIFY(spyCR.count() == 0);
-        QVERIFY(spyGA.count() == 0);
-        QVERIFY(spyGC.count() == 1);
-        QVERIFY(spyGR.count() == 0);
-
-        args = spyCM.takeFirst();
-        QVERIFY(args.size() == 1);
-        sigids = args.at(0).value<QList<QUniqueId> >();
-        QVERIFY(sigids.count() == 1);
-        QVERIFY(sigids.value(0) == c2.id());
-
-        args = spyGC.takeFirst();
-        QVERIFY(args.size() == 1);
-        sigids = args.at(0).value<QList<QUniqueId> >();
-        QVERIFY(sigids.count() == 1);
-        QVERIFY(sigids.value(0) == g1.id());
-
-        // delete from group (via removing contact)
-        batchRemove.clear();
-        batchRemove << c.id();
-        QVERIFY(adder->removeContacts(&batchRemove).value(0, QContactManager::AlreadyExistsError) == QContactManager::NoError);
-        QVERIFY(spyCA.count() == 0);
-        QVERIFY(spyCM.count() == 0);
-        QVERIFY(spyCR.count() == 1);
-        QVERIFY(spyGA.count() == 0);
-        QVERIFY(spyGC.count() == 1);
-        QVERIFY(spyGR.count() == 0);
-
-        args = spyCR.takeFirst();
-        QVERIFY(args.size() == 1);
-        sigids = args.at(0).value<QList<QUniqueId> >();
-        QVERIFY(sigids.count() == 1);
-        QVERIFY(sigids.value(0) == c.id());
-
-        args = spyGC.takeFirst();
-        QVERIFY(args.size() == 1);
-        sigids = args.at(0).value<QList<QUniqueId> >();
-        QVERIFY(sigids.count() == 1);
-        QVERIFY(sigids.value(0) == g1.id());
-
-        // Delete the group
-        QVERIFY(adder->removeGroup(g1.id()));
-        QVERIFY(spyCA.count() == 0);
-        QVERIFY(spyCM.count() == 1);
-        QVERIFY(spyCR.count() == 0);
-        QVERIFY(spyGA.count() == 0);
-        QVERIFY(spyGC.count() == 0);
-        QVERIFY(spyGR.count() == 1);
-
-        args = spyCM.takeFirst();
-        QVERIFY(args.size() == 1);
-        sigids = args.at(0).value<QList<QUniqueId> >();
-        QVERIFY(sigids.count() == 1);
-        QVERIFY(sigids.value(0) == c2.id());
-
-        args = spyGR.takeFirst();
-        QVERIFY(args.size() == 1);
-        sigids = args.at(0).value<QList<QUniqueId> >();
-        QVERIFY(sigids.count() == 1);
-        QVERIFY(sigids.value(0) == g1.id());
-
     }
 
     delete m1;
@@ -2437,17 +2000,11 @@ void tst_QContactManager::changeSet()
     QVERIFY(cs.addedContacts().isEmpty());
     QVERIFY(cs.changedContacts().isEmpty());
     QVERIFY(cs.removedContacts().isEmpty());
-    QVERIFY(cs.addedGroups().isEmpty());
-    QVERIFY(cs.changedGroups().isEmpty());
-    QVERIFY(cs.removedGroups().isEmpty());
 
     cs.addedContacts().insert(id);
     QVERIFY(!cs.addedContacts().isEmpty());
     QVERIFY(cs.changedContacts().isEmpty());
     QVERIFY(cs.removedContacts().isEmpty());
-    QVERIFY(cs.addedGroups().isEmpty());
-    QVERIFY(cs.changedGroups().isEmpty());
-    QVERIFY(cs.removedGroups().isEmpty());
     QVERIFY(cs.addedContacts().contains(id));
 
     cs.changedContacts().insert(id);
@@ -2456,9 +2013,6 @@ void tst_QContactManager::changeSet()
     QVERIFY(!cs.addedContacts().isEmpty());
     QVERIFY(!cs.changedContacts().isEmpty());
     QVERIFY(cs.removedContacts().isEmpty());
-    QVERIFY(cs.addedGroups().isEmpty());
-    QVERIFY(cs.changedGroups().isEmpty());
-    QVERIFY(cs.removedGroups().isEmpty());
     QVERIFY(cs.changedContacts().contains(id));
 
     QVERIFY(cs.dataChanged() == false);

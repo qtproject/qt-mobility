@@ -52,7 +52,6 @@ private slots:
     void preferences();
     void displayName();
     void emptiness();
-    void groups();
 };
 
 tst_QContact::tst_QContact()
@@ -566,21 +565,6 @@ void tst_QContact::emptiness()
 
     c.setDisplayLabel(QString());
     QVERIFY(c.isEmpty() == true);
-}
-
-void tst_QContact::groups()
-{
-    QContact c;
-    QVERIFY(c.groups().isEmpty());
-
-    QList<QUniqueId> g;
-    g << 5 << 6 << 7;
-
-    c.setGroups(g);
-    QVERIFY(c.groups() == g);
-
-    c.setGroups(QList<QUniqueId>());
-    QVERIFY(c.groups().isEmpty());
 }
 
 QTEST_MAIN(tst_QContact)
