@@ -264,7 +264,11 @@ bool QPainterVideoSurface::start(const QVideoSurfaceFormat &format)
                     program = qt_argbShaderProgram;
                     break;
                 case QVideoFrame::Format_RGB565:
+#ifdef QT_OPENGL_ES
                     initRgbTextureInfo(GL_UNSIGNED_SHORT_5_6_5, GL_RGB, imageSize);
+#else
+                    initRgbTextureInfo(GL_RGB16, GL_RGB, imageSize);
+#endif
                     program = qt_rgbShaderProgram;
                     break;
                 case QVideoFrame::Format_YV12:
