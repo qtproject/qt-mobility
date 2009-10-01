@@ -498,4 +498,3 @@ void Dialog::displayNetworkStatus(QSystemNetworkInfo::NetworkStatus status)
     };
     ui->cellNetworkStatusLabel->setText(stat);
 }
-
