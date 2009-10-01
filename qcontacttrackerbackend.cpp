@@ -113,7 +113,7 @@ void QContactTrackerEngine::deref()
 
 QList<QUniqueId> QContactTrackerEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
-    
+
     // TODO Implement sorting
     QList<QUniqueId> ids;
     RDFVariable rdfContact = RDFVariable::fromType<nco::PersonContact>();
@@ -495,11 +495,19 @@ void QContactTrackerEngine::saveContactDetails( RDFServicePtr service,
         if(definition == QContactName::DefinitionName) {
             QContactDetail detail;
             detail = details[0];
+            ncoContact->setNameHonorificPrefix(detail.value(QContactName::FieldPrefix));
             ncoContact->setNameGiven(detail.value(QContactName::FieldFirst));
             ncoContact->setNameAdditional(detail.value(QContactName::FieldMiddle));
             ncoContact->setNameFamily(detail.value(QContactName::FieldLast));
             continue;
-        } 
+        }
+
+        if(definition == QContactNickname::DefinitionName) {
+            QContactDetail detail;
+            detail = details[0];
+            ncoContact->setNickname(detail.value(QContactNickname::FieldNickname));
+            continue;
+        }
 
         // all the rest might need to save to PersonContact and to Affiliation contact
         RDFVariable rdfPerson = RDFVariable::fromType<nco::PersonContact>();
@@ -643,7 +651,7 @@ QList<QContactManager::Error> QContactTrackerEngine::saveContacts(QList<QContact
         QSet<QUniqueId> added4One;
         QSet<QUniqueId> changed4One;
         QSet<QUniqueId> changedGroup4One;
-        
+
         if(!saveContact(&contact, added4One, changed4One, changedGroup4One, error)) {
             functionError = error;
             errorList.append(functionError);
@@ -815,7 +823,7 @@ QStringList QContactTrackerEngine::fastFilterableDefinitions() const
  */
 QList<QVariant::Type> QContactTrackerEngine::supportedDataTypes() const
 {
-    // TODO: Check supported datatypes for Tracker backend. 
+    // TODO: Check supported datatypes for Tracker backend.
     QList<QVariant::Type> st;
     st.append(QVariant::String);
     st.append(QVariant::Date);
@@ -842,6 +850,9 @@ RDFVariable QContactTrackerEngine::contactDetail2Rdf(const RDFVariable& rdfConta
         }
         else if (fieldName == QContactName::FieldSuffix) {
             return rdfContact.property<nco::nameHonorificSuffix>();
+        }
+        else if (fieldName == QContactNickname::FieldNickname) {
+            return rdfContact.property<nco::nickname>();
         }
     }
     return RDFVariable();

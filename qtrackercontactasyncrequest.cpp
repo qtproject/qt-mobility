@@ -36,7 +36,7 @@ void applyFilterToRDFVariable(RDFVariable &variable,
         // right now implementing this for phone numbers
         // later for the rest of fields
         QContactDetailFilter filt = filter;
-        // TODO doesnt pass at the moment, check the reason 
+        // TODO doesnt pass at the moment, check the reason
         //if( filt.matchFlags() &  Qt::MatchExactly)// | Qt::MatchEndsWith | Qt::MatchStartsWith | Qt::MatchContains ) )
         {
             if( QContactPhoneNumber::DefinitionName == filt.detailDefinitionName()
@@ -58,12 +58,12 @@ void applyFilterToRDFVariable(RDFVariable &variable,
             else
                 qWarning()<<"QContactTrackerEngine: Unsupported QContactFilter::ContactDetail"<<filt.detailDefinitionName();
         }
-    } 
+    }
     else if(filter.type() == QContactFilter::ChangeLog)
     {
         const QContactChangeLogFilter& clFilter = static_cast<const QContactChangeLogFilter&>(filter);
         // do not return facebook and telepathy contacts here
-        // it is a temp implementation for the what to offer to synchronization constraint 
+        // it is a temp implementation for the what to offer to synchronization constraint
         variable.property<nao::hasTag>().property<nao::prefLabel>() = LiteralValue("addressbook");
 
         // Removed since
@@ -104,7 +104,6 @@ RDFSelect preparePhoneNumbersQuery(RDFVariable &rdfcontact1, bool forAffiliation
     RDFSelect queryidsnumbers;
     queryidsnumbers.addColumn("contactId", rdfcontact1.property<nco::contactUID> ());
     queryidsnumbers.addColumn("phoneno", phone.property<nco::phoneNumber> ());
-    rdfcontact1.property<nco::hasPhoneNumber> ().isOfType( nco::PhoneNumber::iri(), true);
     queryidsnumbers.addColumn("type", type);
     queryidsnumbers.distinct();
     return queryidsnumbers;
@@ -242,20 +241,23 @@ QTrackerContactAsyncRequest::QTrackerContactAsyncRequest(
                     QObject::connect(queryIMAccountNodes[forAffiliations].model(),SIGNAL(modelUpdated()),SLOT(iMAcountsReady()));
                 }
             }
-            
+
             QList<QUniqueId> ids;
             RDFVariable RDFContact1 = RDFVariable::fromType<nco::PersonContact>();
             applyFilterToRDFVariable(RDFContact1, r->filter());
             RDFSelect quer;
+            RDFVariable prefix = RDFContact1.optional().property<nco::nameHonorificPrefix>();
             RDFVariable lastname = RDFContact1.optional().property<nco::nameFamily>();
             RDFVariable middlename = RDFContact1.optional().property<nco::nameAdditional>();
             RDFVariable firstname = RDFContact1.optional().property<nco::nameGiven>();
+            RDFVariable nickname = RDFContact1.optional().property<nco::nickname>();
             quer.addColumn("contactId",  RDFContact1.property<nco::contactUID>());
+            quer.addColumn("prefix",  prefix);
             quer.addColumn("firstname",  firstname);
             quer.addColumn("middlename",  middlename);
             quer.addColumn("secondname", lastname);
             quer.addColumn("photo",      RDFContact1.optional().property<nco::photo>());
-
+            quer.addColumn("nickname", nickname);
 
             // for now adding columns to main query. later separate queries
             if (r->definitionRestrictions().contains(QContactAddress::DefinitionName))
@@ -395,13 +397,14 @@ void QTrackerContactAsyncRequest::contactsReady()
             }
             Q_ASSERT(query->index(i, 0).data().toUInt() == contact.id());
         }
-        
+
 
         // using redundancy to get less queries to tracker - it is possible
         // that rows are repeating: information for one contact is in several rows
         // that's why we update existing contact and append details to it if they
         // are not already in QContact
         QContactName name = contact.detail(QContactName::DefinitionName);
+        name.setPrefix(query->index(i, column++).data().toString());
         name.setFirst(query->index(i, column++).data().toString());
         name.setMiddle(query->index(i, column++).data().toString());
         name.setLast(query->index(i, column++).data().toString());
@@ -411,6 +414,11 @@ void QTrackerContactAsyncRequest::contactsReady()
         avatar.setAvatar(query->index(i, column++).data().toString());
         if( !avatar.avatar().isEmpty() )
             contact.saveDetail(&avatar);
+
+        QContactNickname nick = contact.detail(QContactNickname::DefinitionName);
+        nick.setNickname(query->index(i, column++).data().toString());
+        contact.saveDetail(&nick);
+
         // TODO extract generic from bellow ... mapping field names
         if (request->definitionRestrictions().contains(QContactAddress::DefinitionName))
         {
