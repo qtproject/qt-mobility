@@ -51,7 +51,8 @@ public:
     const char* FieldRelatedContactLabel;
     const char* FieldRelatedContactUid;
     const char* FieldRelatedContactManagerUri;
-    const char* RelationshipTypeMemberOfGroup;
+    const char* RelationshipTypeHasMember;
+    const char* RelationshipTypeIsMemberOf;
     const char* RelationshipTypeAggregates;
     const char* RelationshipTypeAggregatedBy;
     const char* RelationshipTypeIs;
@@ -84,7 +85,8 @@ public:
     Q_DECLARE_LATIN1_LITERAL(FieldRelatedContactLabel, "RelatedContactLabel");
     Q_DECLARE_LATIN1_LITERAL(FieldRelatedContactUid, "RelatedContactUid");
     Q_DECLARE_LATIN1_LITERAL(FieldRelatedContactManagerUri, "RelatedContactManagerUri");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeMemberOfGroup, "MemberOfGroup");
+    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeHasMember, "HasMember");
+    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeIsMemberOf, "IsMemberOf");
     Q_DECLARE_LATIN1_LITERAL(RelationshipTypeAggregates, "Aggregates");
     Q_DECLARE_LATIN1_LITERAL(RelationshipTypeAggregatedBy, "AggregatedBy");
     Q_DECLARE_LATIN1_LITERAL(RelationshipTypeIs, "Is");

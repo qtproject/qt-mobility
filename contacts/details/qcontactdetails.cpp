@@ -670,10 +670,16 @@ Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeAggregatedBy, "Agg
 Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeAggregates, "Aggregates");
 
 /*!
- * \variable QContactRelationship::RelationshipTypeMemberOfGroup
+ * \variable QContactRelationship::RelationshipTypeHasMember
+ * The value for the relationship type which identifies this contact as a group which has the other contact as a member
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeHasMember, "HasMember");
+
+/*!
+ * \variable QContactRelationship::RelationshipTypeIsMemberOf
  * The value for the relationship type which identifies this contact as being a member of the group represented by the other contact
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeMemberOfGroup, "MemberOfGroup");
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeIsMemberOf, "IsMemberOf");
 
 /*!
  * \variable QContactRelationship::RelationshipTypeIs
