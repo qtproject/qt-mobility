@@ -192,8 +192,8 @@ public:
     QSize customAspectRatio() const;
     void setCustomAspectRatio(const QSize &customRatio);
 
-    bool isFullscreen() const;
-    void setFullscreen(bool fullscreen);
+    bool isFullScreen() const;
+    void setFullScreen(bool fullScreen);
 
     int brightness() const;
     void setBrightness(int brightness);
@@ -243,27 +243,27 @@ void QMediaImageViewerWidgetControl::setCustomAspectRatio(const QSize &customRat
     Q_UNUSED(customRatio);
 }
 
-bool QMediaImageViewerWidgetControl::isFullscreen() const
+bool QMediaImageViewerWidgetControl::isFullScreen() const
 {
     return m_widget->isFullScreen();
 }
 
-void QMediaImageViewerWidgetControl::setFullscreen(bool fullscreen)
+void QMediaImageViewerWidgetControl::setFullScreen(bool fullScreen)
 {
-    if (fullscreen) {
+    if (fullScreen) {
         m_widget->setWindowFlags(m_widget->windowFlags() | Qt::Window | Qt::WindowStaysOnTopHint);
         m_widget->setWindowState(m_widget->windowState() | Qt::WindowFullScreen);
 
         m_widget->show();
 
-        emit fullscreenChanged(m_widget->isFullScreen());
+        emit fullScreenChanged(m_widget->isFullScreen());
     } else {
         m_widget->setWindowFlags(m_widget->windowFlags() & ~(Qt::Window | Qt::WindowStaysOnTopHint));
         m_widget->setWindowState(m_widget->windowState() & ~Qt::WindowFullScreen);
 
         m_widget->show();
 
-        emit fullscreenChanged(m_widget->isFullScreen());
+        emit fullScreenChanged(m_widget->isFullScreen());
     }
 }
 

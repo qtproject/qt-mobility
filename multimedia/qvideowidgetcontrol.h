@@ -57,8 +57,8 @@ public:
     virtual void setAspectRatio(QVideoWidget::AspectRatio ratio) = 0;
     virtual void setCustomAspectRatio(const QSize &customRatio) = 0;
 
-    virtual bool isFullscreen() const = 0;
-    virtual void setFullscreen(bool fullscreen) = 0;
+    virtual bool isFullScreen() const = 0;
+    virtual void setFullScreen(bool fullScreen) = 0;
 
     virtual int brightness() const = 0;
     virtual void setBrightness(int brightness) = 0;
@@ -73,7 +73,7 @@ public:
     virtual void setSaturation(int saturation) = 0;
 
 Q_SIGNALS:
-    void fullscreenChanged(bool fullscreen);
+    void fullScreenChanged(bool fullScreen);
     void brightnessChanged(int brightness);
     void contrastChanged(int contrast);
     void hueChanged(int hue);

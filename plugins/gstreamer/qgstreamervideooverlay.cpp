@@ -44,7 +44,7 @@ QGstreamerVideoOverlay::QGstreamerVideoOverlay(QObject *parent)
     , m_surface(new QX11VideoSurface)
     , m_videoSink(reinterpret_cast<GstElement*>(QVideoSurfaceGstSink::createSink(m_surface)))
     , m_aspectRatioMode(QVideoWidget::AspectRatioAuto)
-    , m_fullscreen(false)
+    , m_fullScreen(false)
 {
     if (m_videoSink) {
         gst_object_ref(GST_OBJECT(m_videoSink)); //Take ownership
@@ -161,14 +161,14 @@ void QGstreamerVideoOverlay::setSaturation(int saturation)
     emit saturationChanged(m_surface->saturation());
 }
 
-bool QGstreamerVideoOverlay::isFullscreen() const
+bool QGstreamerVideoOverlay::isFullScreen() const
 {
-    return m_fullscreen;
+    return m_fullScreen;
 }
 
-void QGstreamerVideoOverlay::setFullscreen(bool fullscreen)
+void QGstreamerVideoOverlay::setFullScreen(bool fullScreen)
 {
-    emit fullscreenChanged(m_fullscreen = fullscreen);
+    emit fullScreenChanged(m_fullScreen = fullScreen);
 }
 
 QSize QGstreamerVideoOverlay::nativeSize() const

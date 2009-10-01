@@ -192,7 +192,7 @@ public:
         , m_contrast(0)
         , m_saturation(0)
         , m_aspectRatioMode(QVideoWidget::AspectRatioAuto)
-        , m_fullscreen(0)
+        , m_fullScreen(0)
     {
     }
 
@@ -202,8 +202,8 @@ public:
     QRect displayRect() const { return m_displayRect; }
     void setDisplayRect(const QRect &rect) { m_displayRect = rect; }
 
-    bool isFullscreen() const { return m_fullscreen; }
-    void setFullscreen(bool fullscreen) { emit fullscreenChanged(m_fullscreen = fullscreen); }
+    bool isFullScreen() const { return m_fullScreen; }
+    void setFullScreen(bool fullScreen) { emit fullScreenChanged(m_fullScreen = fullScreen); }
 
     int repaintCount() const { return m_repaintCount; }
     void setRepaintCount(int count) { m_repaintCount = count; }
@@ -241,7 +241,7 @@ private:
     QRect m_displayRect;
     QSize m_nativeSize;
     QSize m_customRatio;
-    bool m_fullscreen;
+    bool m_fullScreen;
 };
 
 class QtTestWidgetControl : public QVideoWidgetControl
@@ -253,12 +253,12 @@ public:
         , m_hue(1.0)
         , m_saturation(1.0)
         , m_aspectRatioMode(QVideoWidget::AspectRatioAuto)
-        , m_fullscreen(false)
+        , m_fullScreen(false)
     {
     }
 
-    bool isFullscreen() const { return m_fullscreen; }
-    void setFullscreen(bool fullscreen) { emit fullscreenChanged(m_fullscreen = fullscreen); }
+    bool isFullScreen() const { return m_fullScreen; }
+    void setFullScreen(bool fullScreen) { emit fullScreenChanged(m_fullScreen = fullScreen); }
 
     QVideoWidget::AspectRatio aspectRatio() const { return m_aspectRatioMode; }
     void setAspectRatio(QVideoWidget::AspectRatio ratio) { m_aspectRatioMode = ratio; }
@@ -298,7 +298,7 @@ private:
     QVideoWidget::AspectRatio m_aspectRatioMode;
     QSize m_customRatio;
     QSize m_sizeHint;
-    bool m_fullscreen;
+    bool m_fullScreen;
 };
 
 #ifndef QT_NO_MULTIMEDIA
@@ -936,61 +936,61 @@ void tst_QVideoWidget::fullScreenWindowControl()
 
     // Test showing full screen with setFullScreen(true).
     widget.setFullScreen(true);
-    QCOMPARE(object.testService->windowControl->isFullscreen(), true);
+    QCOMPARE(object.testService->windowControl->isFullScreen(), true);
     QCOMPARE(widget.isFullScreen(), true);
     QCOMPARE(spy.count(), 1);
     QCOMPARE(spy.value(0).value(0).toBool(), true);
 
     // Test returning to normal with setFullScreen(false).
     widget.setFullScreen(false);
-    QCOMPARE(object.testService->windowControl->isFullscreen(), false);
+    QCOMPARE(object.testService->windowControl->isFullScreen(), false);
     QCOMPARE(widget.isFullScreen(), false);
     QCOMPARE(spy.count(), 2);
     QCOMPARE(spy.value(1).value(0).toBool(), false);
 
     // Test showing full screen with showFullScreen().
     widget.showFullScreen();
-    QCOMPARE(object.testService->windowControl->isFullscreen(), true);
+    QCOMPARE(object.testService->windowControl->isFullScreen(), true);
     QCOMPARE(widget.isFullScreen(), true);
     QCOMPARE(spy.count(), 3);
     QCOMPARE(spy.value(2).value(0).toBool(), true);
 
     // Test returning to normal with showNormal().
     widget.showNormal();
-    QCOMPARE(object.testService->windowControl->isFullscreen(), false);
+    QCOMPARE(object.testService->windowControl->isFullScreen(), false);
     QCOMPARE(widget.isFullScreen(), false);
     QCOMPARE(spy.count(), 4);
     QCOMPARE(spy.value(3).value(0).toBool(), false);
 
     // Test setFullScreen(false) and showNormal() do nothing when isFullScreen() == false.
     widget.setFullScreen(false);
-    QCOMPARE(object.testService->windowControl->isFullscreen(), false);
+    QCOMPARE(object.testService->windowControl->isFullScreen(), false);
     QCOMPARE(widget.isFullScreen(), false);
     QCOMPARE(spy.count(), 4);
     widget.showNormal();
-    QCOMPARE(object.testService->windowControl->isFullscreen(), false);
+    QCOMPARE(object.testService->windowControl->isFullScreen(), false);
     QCOMPARE(widget.isFullScreen(), false);
     QCOMPARE(spy.count(), 4);
 
     // Test setFullScreen(true) and showFullScreen() do nothing when isFullScreen() == true.
     widget.showFullScreen();
     widget.setFullScreen(true);
-    QCOMPARE(object.testService->windowControl->isFullscreen(), true);
+    QCOMPARE(object.testService->windowControl->isFullScreen(), true);
     QCOMPARE(widget.isFullScreen(), true);
     QCOMPARE(spy.count(), 5);
     widget.showFullScreen();
-    QCOMPARE(object.testService->windowControl->isFullscreen(), true);
+    QCOMPARE(object.testService->windowControl->isFullScreen(), true);
     QCOMPARE(widget.isFullScreen(), true);
     QCOMPARE(spy.count(), 5);
 
     // Test if the window control exits full screen mode, the widget follows suit.
-    object.testService->windowControl->setFullscreen(false);
+    object.testService->windowControl->setFullScreen(false);
     QCOMPARE(widget.isFullScreen(), false);
     QCOMPARE(spy.count(), 6);
     QCOMPARE(spy.value(5).value(0).toBool(), false);
 
     // Test if the window control enters full screen mode, the widget does nothing.
-    object.testService->windowControl->setFullscreen(false);
+    object.testService->windowControl->setFullScreen(false);
     QCOMPARE(widget.isFullScreen(), false);
     QCOMPARE(spy.count(), 6);
 }
@@ -1005,61 +1005,61 @@ void tst_QVideoWidget::fullScreenWidgetControl()
 
     // Test showing full screen with setFullScreen(true).
     widget.setFullScreen(true);
-    QCOMPARE(object.testService->widgetControl->isFullscreen(), true);
+    QCOMPARE(object.testService->widgetControl->isFullScreen(), true);
     QCOMPARE(widget.isFullScreen(), true);
     QCOMPARE(spy.count(), 1);
     QCOMPARE(spy.value(0).value(0).toBool(), true);
 
     // Test returning to normal with setFullScreen(false).
     widget.setFullScreen(false);
-    QCOMPARE(object.testService->widgetControl->isFullscreen(), false);
+    QCOMPARE(object.testService->widgetControl->isFullScreen(), false);
     QCOMPARE(widget.isFullScreen(), false);
     QCOMPARE(spy.count(), 2);
     QCOMPARE(spy.value(1).value(0).toBool(), false);
 
     // Test showing full screen with showFullScreen().
     widget.showFullScreen();
-    QCOMPARE(object.testService->widgetControl->isFullscreen(), true);
+    QCOMPARE(object.testService->widgetControl->isFullScreen(), true);
     QCOMPARE(widget.isFullScreen(), true);
     QCOMPARE(spy.count(), 3);
     QCOMPARE(spy.value(2).value(0).toBool(), true);
 
     // Test returning to normal with showNormal().
     widget.showNormal();
-    QCOMPARE(object.testService->widgetControl->isFullscreen(), false);
+    QCOMPARE(object.testService->widgetControl->isFullScreen(), false);
     QCOMPARE(widget.isFullScreen(), false);
     QCOMPARE(spy.count(), 4);
     QCOMPARE(spy.value(3).value(0).toBool(), false);
 
     // Test setFullScreen(false) and showNormal() do nothing when isFullScreen() == false.
     widget.setFullScreen(false);
-    QCOMPARE(object.testService->widgetControl->isFullscreen(), false);
+    QCOMPARE(object.testService->widgetControl->isFullScreen(), false);
     QCOMPARE(widget.isFullScreen(), false);
     QCOMPARE(spy.count(), 4);
     widget.showNormal();
-    QCOMPARE(object.testService->widgetControl->isFullscreen(), false);
+    QCOMPARE(object.testService->widgetControl->isFullScreen(), false);
     QCOMPARE(widget.isFullScreen(), false);
     QCOMPARE(spy.count(), 4);
 
     // Test setFullScreen(true) and showFullScreen() do nothing when isFullScreen() == true.
     widget.showFullScreen();
     widget.setFullScreen(true);
-    QCOMPARE(object.testService->widgetControl->isFullscreen(), true);
+    QCOMPARE(object.testService->widgetControl->isFullScreen(), true);
     QCOMPARE(widget.isFullScreen(), true);
     QCOMPARE(spy.count(), 5);
     widget.showFullScreen();
-    QCOMPARE(object.testService->widgetControl->isFullscreen(), true);
+    QCOMPARE(object.testService->widgetControl->isFullScreen(), true);
     QCOMPARE(widget.isFullScreen(), true);
     QCOMPARE(spy.count(), 5);
 
     // Test if the window control exits full screen mode, the widget follows suit.
-    object.testService->widgetControl->setFullscreen(false);
+    object.testService->widgetControl->setFullScreen(false);
     QCOMPARE(widget.isFullScreen(), false);
     QCOMPARE(spy.count(), 6);
     QCOMPARE(spy.value(5).value(0).toBool(), false);
 
     // Test if the window control enters full screen mode, the widget does nothing.
-    object.testService->widgetControl->setFullscreen(false);
+    object.testService->widgetControl->setFullScreen(false);
     QCOMPARE(widget.isFullScreen(), false);
     QCOMPARE(spy.count(), 6);
 }

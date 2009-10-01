@@ -53,8 +53,8 @@ public:
     virtual QRect displayRect() const = 0;
     virtual void setDisplayRect(const QRect &rect) = 0;
 
-    virtual bool isFullscreen() const = 0;
-    virtual void setFullscreen(bool fullscreen) = 0;
+    virtual bool isFullScreen() const = 0;
+    virtual void setFullScreen(bool fullScreen) = 0;
 
     virtual void repaint() = 0;
 
@@ -79,7 +79,7 @@ public:
     virtual void setSaturation(int saturation) = 0;
 
 Q_SIGNALS:
-    void fullscreenChanged(bool fullscreen);
+    void fullScreenChanged(bool fullScreen);
     void brightnessChanged(int brightness);
     void contrastChanged(int contrast);
     void hueChanged(int hue);

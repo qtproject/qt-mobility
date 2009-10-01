@@ -5,7 +5,7 @@
 VideoWidget::VideoWidget(QMediaObject *object, QWidget *parent)
     : QVideoWidget(object, parent)
 {
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 }
 
 void VideoWidget::keyPressEvent(QKeyEvent *event)

@@ -79,14 +79,14 @@ void QPhononVideoWidget::setCustomAspectRatio(const QSize &ratio)
 }
 
 
-bool QPhononVideoWidget::isFullscreen() const
+bool QPhononVideoWidget::isFullScreen() const
 {
     return m_videoWidget->isFullScreen();
 }
 
-void QPhononVideoWidget::setFullscreen(bool fullscreen)
+void QPhononVideoWidget::setFullScreen(bool fullScreen)
 {
-    if (fullscreen) {
+    if (fullScreen) {
         m_videoWidget->enterFullScreen();
         m_videoWidget->setWindowFlags(
                 m_videoWidget->windowFlags() & ~(Qt::Window | Qt::WindowStaysOnTopHint));
@@ -95,7 +95,7 @@ void QPhononVideoWidget::setFullscreen(bool fullscreen)
         m_videoWidget->exitFullScreen();
     }
 
-    emit fullscreenChanged(fullscreen);
+    emit fullScreenChanged(fullScreen);
 }
 
 int QPhononVideoWidget::brightness() const

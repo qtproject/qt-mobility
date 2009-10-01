@@ -100,15 +100,15 @@ Player::Player(QWidget *parent)
     connect(player, SIGNAL(volumeChanged(int)), controls, SLOT(setVolume(int)));
     connect(player, SIGNAL(mutingChanged(bool)), controls, SLOT(setMuted(bool)));
 
-    QPushButton *fullscreenButton = new QPushButton(tr("Fullscreen"));
-    fullscreenButton->setCheckable(true);
+    QPushButton *fullScreenButton = new QPushButton(tr("FullScreen"));
+    fullScreenButton->setCheckable(true);
 
     if (videoWidget != 0) {
-        connect(fullscreenButton, SIGNAL(clicked(bool)), videoWidget, SLOT(setFullScreen(bool)));
+        connect(fullScreenButton, SIGNAL(clicked(bool)), videoWidget, SLOT(setFullScreen(bool)));
         connect(videoWidget, SIGNAL(fullScreenChanged(bool)),
-                fullscreenButton, SLOT(setChecked(bool)));
+                fullScreenButton, SLOT(setChecked(bool)));
     } else {
-        fullscreenButton->setEnabled(false);
+        fullScreenButton->setEnabled(false);
     }
 
     QPushButton *colorButton = new QPushButton(tr("Color Options..."));
@@ -119,10 +119,10 @@ Player::Player(QWidget *parent)
 
     QBoxLayout *displayLayout = new QHBoxLayout;
     if (videoWidget)
-        displayLayout->addWidget(videoWidget, 2, Qt::AlignLeft);
+        displayLayout->addWidget(videoWidget, 2);
     else
-        displayLayout->addWidget(coverLabel, 2, Qt::AlignLeft);
-    displayLayout->addWidget(playlistView, 1, Qt::AlignRight);
+        displayLayout->addWidget(coverLabel, 2);
+    displayLayout->addWidget(playlistView);
 
     QBoxLayout *controlLayout = new QHBoxLayout;
     controlLayout->setMargin(0);
@@ -130,7 +130,7 @@ Player::Player(QWidget *parent)
     controlLayout->addStretch(1);
     controlLayout->addWidget(controls);
     controlLayout->addStretch(1);
-    controlLayout->addWidget(fullscreenButton);
+    controlLayout->addWidget(fullScreenButton);
     controlLayout->addWidget(colorButton);
 
     QBoxLayout *layout = new QVBoxLayout;

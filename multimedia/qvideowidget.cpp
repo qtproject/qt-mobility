@@ -79,7 +79,7 @@ void QVideoWidgetControlBackend::setSaturation(int saturation)
 
 void QVideoWidgetControlBackend::setFullScreen(bool fullScreen)
 {
-    m_widgetControl->setFullscreen(fullScreen);
+    m_widgetControl->setFullScreen(fullScreen);
 }
 
 void QVideoWidgetControlBackend::setAspectRatio(QVideoWidget::AspectRatio ratio)
@@ -299,7 +299,7 @@ void QVideoWindowWidget::setSaturation(int saturation)
 
 void QVideoWindowWidget::setFullScreen(bool fullScreen)
 {
-    m_windowControl->setFullscreen(fullScreen);
+    m_windowControl->setFullScreen(fullScreen);
 }
 
 void QVideoWindowWidget::setAspectRatio(QVideoWidget::AspectRatio ratio)
@@ -448,7 +448,7 @@ void QVideoWidgetPrivate::_q_customAspectRatioChanged(const QSize &ratio)
     Specifies whether video is displayed full screen, or is confined to a window.
 
     \value WindowedDisplay Video is displayed within a window.
-    \value FullscreenDisplay Video is displayed full screen.
+    \value FullScreenDisplay Video is displayed full screen.
 */
 
 /*!
@@ -504,7 +504,7 @@ QVideoWidget::QVideoWidget(QMediaObject *object, QWidget *parent)
         connect(widgetControl, SIGNAL(contrastChanged(int)), SLOT(_q_contrastChanged(int)));
         connect(widgetControl, SIGNAL(hueChanged(int)), SLOT(_q_hueChanged(int)));
         connect(widgetControl, SIGNAL(saturationChanged(int)), SLOT(_q_saturationChanged(int)));
-        connect(widgetControl, SIGNAL(fullscreenChanged(bool)), SLOT(_q_fullScreenChanged(bool)));
+        connect(widgetControl, SIGNAL(fullScreenChanged(bool)), SLOT(_q_fullScreenChanged(bool)));
 
         connect(d->widgetBackend, SIGNAL(aspectRatioModeChanged(QVideoWidget::AspectRatio)),
                 SLOT(_q_aspectRatioModeChanged(QVideoWidget::AspectRatio)));
@@ -523,7 +523,7 @@ QVideoWidget::QVideoWidget(QMediaObject *object, QWidget *parent)
             connect(windowControl, SIGNAL(contrastChanged(int)), SLOT(_q_contrastChanged(int)));
             connect(windowControl, SIGNAL(hueChanged(int)), SLOT(_q_hueChanged(int)));
             connect(windowControl, SIGNAL(saturationChanged(int)), SLOT(_q_saturationChanged(int)));
-            connect(windowControl, SIGNAL(fullscreenChanged(bool)),
+            connect(windowControl, SIGNAL(fullScreenChanged(bool)),
                     SLOT(_q_fullScreenChanged(bool)));
 
             connect(d->windowBackend, SIGNAL(aspectRatioModeChanged(QVideoWidget::AspectRatio)),
@@ -639,7 +639,7 @@ void QVideoWidget::setCustomPixelAspectRatio(const QSize &customRatio)
 
 /*!
     \property QVideoWidget::fullScreen
-    \brief whether video display is confined to a window or is fullscreen.
+    \brief whether video display is confined to a window or is fullScreen.
 */
 
 void QVideoWidget::setFullScreen(bool fullScreen)
@@ -780,27 +780,26 @@ void QVideoWidget::setVisible(bool visible)
 {
     Q_D(QVideoWidget);
 
-    if (d->service == 0 || d->outputControl == 0) {
-        visible = false;
-    } else if (visible) {
-        if (d->widgetBackend != 0) {
-            d->setCurrentBackend(d->widgetBackend);
-            d->outputControl->setOutput(QVideoOutputControl::WidgetOutput);
-        } else if (d->windowBackend != 0
-                && (window() == 0 || !window()->testAttribute(Qt::WA_DontShowOnScreen))) {
-            d->setCurrentBackend(d->windowBackend);
-            d->outputControl->setOutput(QVideoOutputControl::WindowOutput);
+    if (d->outputControl != 0) {
+        if (visible) {
+            if (d->widgetBackend != 0) {
+                d->setCurrentBackend(d->widgetBackend);
+                d->outputControl->setOutput(QVideoOutputControl::WidgetOutput);
+            } else if (d->windowBackend != 0
+                    && (window() == 0 || !window()->testAttribute(Qt::WA_DontShowOnScreen))) {
+                d->setCurrentBackend(d->windowBackend);
+                d->outputControl->setOutput(QVideoOutputControl::WindowOutput);
 #ifndef QT_NO_MULTIMEDIA
-        } else if (d->rendererBackend != 0) {
-            d->setCurrentBackend(d->rendererBackend);
-            d->outputControl->setOutput(QVideoOutputControl::RendererOutput);
+            } else if (d->rendererBackend != 0) {
+                d->setCurrentBackend(d->rendererBackend);
+                d->outputControl->setOutput(QVideoOutputControl::RendererOutput);
 #endif
+            } else {
+                d->outputControl->setOutput(QVideoOutputControl::NoOutput);
+            }
         } else {
             d->outputControl->setOutput(QVideoOutputControl::NoOutput);
-            visible = false;
         }
-    } else {
-        d->outputControl->setOutput(QVideoOutputControl::NoOutput);
     }
 
     QWidget::setVisible(visible);
