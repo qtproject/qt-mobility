@@ -220,13 +220,30 @@ public:
 
     MapiFolderPtr openFolder(QMessageStore::ErrorCode *lastError, const MapiEntryId& id) const;
 
-    bool setAdviseSink(ULONG mask, IMAPIAdviseSink *sink);
+    void notifyEvents(ULONG mask);
 
 private:
     MapiStore();
     MapiStore(const MapiSessionPtr &session, LPMDB store, const MapiRecordKey &key, const MapiEntryId &entryId, const QString &name, bool cachedMode);
 
     IMAPIFolder *openMapiFolder(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId) const;
+
+    bool setAdviseSink(ULONG mask, IMAPIAdviseSink *sink);
+
+    class AdviseSink : public IMAPIAdviseSink
+    {
+        MapiStore *_store;
+        LONG _refCount;
+
+    public:
+        AdviseSink(MapiStore *store) : _store(store), _refCount(0) {}
+
+        STDMETHOD(QueryInterface)(REFIID riid, LPVOID FAR* ppvObj);
+        STDMETHOD_(ULONG, AddRef)();
+        STDMETHOD_(ULONG, Release)();
+
+        STDMETHOD_(ULONG, OnNotify)(ULONG cNotification, LPNOTIFICATION lpNotifications);
+    };
 
     MapiSessionPtr _session;
     bool _valid;
@@ -277,6 +294,8 @@ public:
     QMessageStore::NotificationFilterId registerNotificationFilter(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter);
     void unregisterNotificationFilter(QMessageStore::ErrorCode *lastError, QMessageStore::NotificationFilterId filterId);
 
+    void notify(MapiStore *store, ULONG notificationCount, NOTIFICATION *notifications);
+
 signals:
     void messageAdded(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &matchingFilterIds);
     void messageRemoved(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &matchingFilterIds);
@@ -294,23 +313,6 @@ private:
 
     void addRecipients(LPMESSAGE message, const QMessageAddressList& addressList, unsigned long mapiAddressType);
     void addAttachment(LPMESSAGE message, const QMessageContentContainer& attachmentContainer);
-
-    class AdviseSink : public IMAPIAdviseSink
-    {
-        MapiSession *_session;
-        LONG _refCount;
-
-    public:
-        AdviseSink(MapiSession *session) : _session(session), _refCount(0) {}
-
-        STDMETHOD(QueryInterface)(REFIID riid, LPVOID FAR* ppvObj);
-        STDMETHOD_(ULONG, AddRef)();
-        STDMETHOD_(ULONG, Release)();
-
-        STDMETHOD_(ULONG, OnNotify)(ULONG cNotification, LPNOTIFICATION lpNotifications);
-    };
-
-    void notify(ULONG notificationCount, NOTIFICATION *notifications);
 
 private:
     WinHelpers::MapiInitializationToken _token;

@@ -1835,6 +1835,61 @@ bool MapiStore::setAdviseSink(ULONG mask, IMAPIAdviseSink *sink)
     return true;
 }
 
+void MapiStore::notifyEvents(ULONG mask)
+{
+    // Test whether this store supports notifications
+    SPropValue *prop;
+    HRESULT rv = HrGetOneProp(_store, PR_STORE_SUPPORT_MASK, &prop);
+    if (HR_SUCCEEDED(rv)) {
+        if (prop->Value.ul & STORE_NOTIFY_OK) {
+            AdviseSink *sink(new AdviseSink(this));
+            if (setAdviseSink(mask, sink)) {
+                // sink will be deleted when the store releases it
+            } else {
+                delete sink;
+            }
+        } else {
+            qWarning() << "Store does not support notifications.";
+        }
+
+        MAPIFreeBuffer(prop);
+    } else {
+        qWarning() << "Unable to query store support mask.";
+    }
+}
+
+HRESULT MapiStore::AdviseSink::QueryInterface(REFIID id, LPVOID FAR* o)
+{
+    if (id == IID_IUnknown) {
+        *o = this;
+        AddRef();
+        return S_OK;
+    }
+
+    return E_NOINTERFACE;
+}
+
+ULONG MapiStore::AdviseSink::AddRef()
+{
+    return InterlockedIncrement(&_refCount);
+}
+
+ULONG MapiStore::AdviseSink::Release()
+{
+    ULONG result = InterlockedDecrement(&_refCount);
+    if (result == 0) {
+        delete this;
+    }
+
+    return result;
+}
+
+ULONG MapiStore::AdviseSink::OnNotify(ULONG notificationCount, LPNOTIFICATION notifications)
+{
+    _store->_session->notify(_store, notificationCount, notifications);
+    return 0;
+}
+
 QWeakPointer<MapiSession> MapiSession::_session;
 
 QHash<MapiEntryId, QSharedPointer<MapiStore> > MapiSession::_storeMap;
@@ -2873,39 +2928,7 @@ bool MapiSession::showForm(IMessage* message, IMAPIFolder* folder, LPMDB store)
     return true;
 }
 
-HRESULT MapiSession::AdviseSink::QueryInterface(REFIID id, LPVOID FAR* o)
-{
-    if (id == IID_IUnknown) {
-        *o = this;
-        AddRef();
-        return S_OK;
-    }
-
-    return E_NOINTERFACE;
-}
-
-ULONG MapiSession::AdviseSink::AddRef()
-{
-    return InterlockedIncrement(&_refCount);
-}
-
-ULONG MapiSession::AdviseSink::Release()
-{
-    ULONG result = InterlockedDecrement(&_refCount);
-    if (result == 0) {
-        delete this;
-    }
-
-    return result;
-}
-
-ULONG MapiSession::AdviseSink::OnNotify(ULONG notificationCount, LPNOTIFICATION notifications)
-{
-    _session->notify(notificationCount, notifications);
-    return 0;
-}
-
-void MapiSession::notify(ULONG notificationCount, NOTIFICATION *notifications)
+void MapiSession::notify(MapiStore *store, ULONG notificationCount, NOTIFICATION *notifications)
 {
     for (uint i = 0; i < notificationCount; ++i) {
         NOTIFICATION &notification(notifications[i]);
@@ -2962,29 +2985,7 @@ QMessageStore::NotificationFilterId MapiSession::registerNotificationFilter(QMes
         _registered = true;
 
         foreach (MapiStorePtr store, allStores(lastError)) {
-            // test whether this store supports notifications
-            bool supported(false);
-
-            SPropValue *prop;
-            HRESULT rv = HrGetOneProp(store->store(), PR_STORE_SUPPORT_MASK, &prop);
-            if (HR_SUCCEEDED(rv)) {
-                supported = (prop->Value.ul & STORE_NOTIFY_OK);
-
-                MAPIFreeBuffer(prop);
-            } else {
-                qWarning() << "Unable to query store support mask.";
-            }
-
-            if (supported) {
-                AdviseSink *sink(new AdviseSink(this));
-                if (store->setAdviseSink(fnevNewMail | fnevObjectCreated | fnevObjectCopied | fnevObjectDeleted | fnevObjectModified | fnevObjectMoved, sink)) {
-                    // sink will be deleted when the store releases it
-                } else {
-                    delete sink;
-                }
-            } else {
-                qWarning() << "Store does not support notifications.";
-            }
+            store->notifyEvents(fnevNewMail | fnevObjectCreated | fnevObjectCopied | fnevObjectDeleted | fnevObjectModified | fnevObjectMoved);
         }
     }
 
