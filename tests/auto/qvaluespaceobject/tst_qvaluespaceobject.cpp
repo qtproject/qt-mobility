@@ -116,7 +116,7 @@ void tst_QValueSpaceObject::initTestCase()
     }
 #endif
 
-    QValueSpace::initValueSpaceManager();
+    QValueSpace::initValueSpaceServer();
 }
 
 void tst_QValueSpaceObject::cleanupTestCase()

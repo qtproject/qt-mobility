@@ -332,7 +332,7 @@ void QAbstractValueSpaceLayer::emitAttributeInterestChanged(QValueSpaceObject *o
     process acting as the server and should be called before any process in the system uses a value
     space class.
 */
-void QValueSpace::initValueSpaceManager()
+void QValueSpace::initValueSpaceServer()
 {
     QValueSpaceManager::instance()->initServer();
 }

@@ -59,7 +59,7 @@ namespace QValueSpace {
     };
     Q_DECLARE_FLAGS(LayerOptions, LayerOption);
 
-    Q_CFW_EXPORT void initValueSpaceManager();
+    Q_CFW_EXPORT void initValueSpaceServer();
 
     Q_CFW_EXPORT QList<QUuid> availableLayers();
 };

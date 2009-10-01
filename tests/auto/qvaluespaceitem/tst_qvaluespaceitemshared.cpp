@@ -103,7 +103,7 @@ void tst_QValueSpaceItem::initTestCase()
 #endif
 
 #if defined(QT_START_VALUESPACE)
-    QValueSpace::initValueSpaceManager();
+    QValueSpace::initValueSpaceServer();
 #endif
 
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();

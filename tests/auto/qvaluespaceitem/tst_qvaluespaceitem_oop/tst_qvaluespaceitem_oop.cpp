@@ -77,7 +77,7 @@ int main(int argc, char** argv)
         tst_QValueSpaceItemOop test;
         return QTest::qExec(&test, argc-1, argv);
     } else {
-        QValueSpace::initValueSpaceManager();
+        QValueSpace::initValueSpaceServer();
         QProcess process;
         ShutdownControl control(&process);
         process.setProcessChannelMode(QProcess::ForwardedChannels);

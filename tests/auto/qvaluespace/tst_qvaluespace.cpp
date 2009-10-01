@@ -276,7 +276,7 @@ void tst_QValueSpace::initTestCase()
 
     fakeLayer = new FakeLayer;
     QValueSpace::installLayer(fakeLayer);
-    QValueSpace::initValueSpaceManager();
+    QValueSpace::initValueSpaceServer();
 }
 
 void tst_QValueSpace::cleanupTestCase()
