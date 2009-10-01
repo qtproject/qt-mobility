@@ -223,6 +223,11 @@ void TransformContact::transformGuidDetailL(const QContactDetail &guidDetail, CC
 QContactDetail* TransformContact::transformTimestampItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const
 {
     QContactTimestamp *timestampDetail = 0;
+    
+    // NOTE: In S60 3.1 we cannot use ContactGuid::GetCreationDate() because
+    // it is not exported.
+    // TODO: Make sure SYMBIAN_CNTMODEL_V2 is the right flag for this.
+#ifdef SYMBIAN_CNTMODEL_V2
     HBufC* guidBuf = contactItem.UidStringL(contactDatabase.MachineId()).AllocLC();
     TPtr ptr = guidBuf->Des();
     if (ContactGuid::GetCreationDate(ptr, contactDatabase.MachineId()))
@@ -254,6 +259,7 @@ QContactDetail* TransformContact::transformTimestampItemFieldL(CContactItem &con
         }
     }
     CleanupStack::PopAndDestroy(guidBuf);
+#endif
     return timestampDetail;      
 }
 
