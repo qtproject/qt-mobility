@@ -24,5 +24,5 @@ symbian {
 }
 
 win32 {
-    LIBS += -ladvapi32
+    !wince*:LIBS += -ladvapi32
 }

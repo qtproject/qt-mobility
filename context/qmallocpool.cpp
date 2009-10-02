@@ -42,6 +42,11 @@ static void* qmallocpool_sbrk(intptr_t increment);
 #define MORECORE qmallocpool_sbrk
 #define HAVE_MMAP 0
 #define __STD_C 1
+#ifdef Q_OS_WINCE
+#define WIN32
+#define LACKS_ERRNO_H
+#define MALLOC_FAILURE_ACTION
+#endif
 
 struct malloc_state;
 static QMallocPoolPrivate * qmallocpool_instance = 0;

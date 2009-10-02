@@ -15,11 +15,3 @@ LIBS += -lQtContextFramework
 symbian {
     TARGET.CAPABILITY = ALL -TCB
 }
-
-wince*: {
-	externApp.sources = ../process/vsextern.exe
-	externApp.path = vsextern
-	DEPLOYMENT += externApp
-
-}
-
