@@ -260,6 +260,27 @@ QList<QContactDetail> QContact::details(const QString& definitionName) const
     return sublist;
 }
 
+/*! Returns a list of details of the given \a definitionName, \a fieldName and field \a value*/
+QList<QContactDetail> QContact::details(const QString& definitionName, const QString& fieldName, const QString& value) const
+{
+    // build the sub-list of matching details.
+    QList<QContactDetail> sublist;
+
+    // special case
+    if (fieldName.isEmpty()) {
+        sublist = details(definitionName);
+    } else {
+        for (int i = 0; i < d->m_details.size(); i++) {
+            const QContactDetail& existing = d->m_details.at(i);
+            if (definitionName == existing.definitionName() && existing.hasValue(fieldName) && value == existing.value(fieldName)) {
+                sublist.append(existing);
+            }
+        }
+    }
+
+    return sublist;
+}
+
 /*!
  * Saves the given \a detail in the list of stored details, and sets its Id.
  * If another detail of the same type and Id has been previously saved in
@@ -342,6 +363,85 @@ bool QContact::removeDetail(QContactDetail* detail)
     d->m_details.removeOne(*detail);
     detail->d->m_id = 0;
     return true;
+}
+
+/*!
+ * Add the this contact into the given \a group.
+ *
+ * Returns true if the underlying relationship detail was added successfully, false if an error occurred.
+ */
+bool QContact::addToGroup(const QString& group)
+{
+    QContactRelationship r;
+    r.setRelationshipType(QContactRelationship::RelationshipTypeIsMemberOf);
+    r.setRelatedContactLabel(group);
+    
+    return saveDetail(&r);
+}
+
+/*!
+ * Add the this contact into a group by the given \a groupId, \a managerUri and \a groupLabel.
+ *
+ * Returns true if the underlying relationship detail was added successfully, false if an error occurred.
+ */
+bool QContact::addToGroup(const QUniqueId& groupId, const QString& managerUri, const QString& groupLabel)
+{
+    QContactRelationship r;
+    r.setRelationshipType(QContactRelationship::RelationshipTypeIsMemberOf);
+    r.setRelatedContactUid(QString::number(groupId));
+    r.setRelatedContactManagerUri(managerUri);
+    r.setRelatedContactLabel(groupLabel);
+
+    return saveDetail(&r);
+}
+
+/*!
+ * Removes the group relationship with the given \a group name from the contact.
+ *
+ * Returns true if the underlying relationship detail was removed successfully, false if an error occurred.
+ */
+bool QContact::removeFromGroup(const QString& group)
+{
+    QContactRelationship r;
+    r.setRelationshipType(QContactRelationship::RelationshipTypeIsMemberOf);
+    r.setRelatedContactLabel(group);
+    
+    return removeDetail(&r);
+}
+
+/*!
+ * Removes the group relationship with the given \a groupId, \a managerUri and \a groupLabel from the contact.
+ *
+ * Returns true if the underlying relationship detail was removed successfully, false if an error occurred.
+ */
+bool QContact::removeFromGroup(const QUniqueId& groupId, const QString& managerUri, const QString& groupLabel)
+{
+    QContactRelationship r;
+    r.setRelationshipType(QContactRelationship::RelationshipTypeIsMemberOf);
+    r.setRelatedContactUid(QString::number(groupId));
+    r.setRelatedContactManagerUri(managerUri);
+    r.setRelatedContactLabel(groupLabel);
+
+    return removeDetail(&r);
+}
+
+/*! Returns all group Ids which this contact belongs to */
+QList<QUniqueId> QContact::groups() const
+{
+    QList<QUniqueId> ids;
+    for (int i = 0; i < d->m_details.size(); i++) {
+        const QContactDetail& existing = d->m_details.at(i);
+        if (QContactRelationship::DefinitionName == existing.definitionName()
+            &&
+            existing.hasValue(QContactRelationship::FieldRelationshipType)
+            &&
+            existing.value(QContactRelationship::FieldRelationshipType) == QContactRelationship::RelationshipTypeIsMemberOf
+            &&
+            existing.hasValue(QContactRelationship::FieldRelatedContactUid)) {
+            ids << existing.value(QContactRelationship::FieldRelatedContactUid).toUInt();
+        }
+    }
+    return ids;
 }
 
 /*! Returns true if this contact is equal to the \a other contact, false if either the id or stored details are not the same */

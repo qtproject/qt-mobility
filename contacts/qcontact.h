@@ -99,6 +99,19 @@ public:
             ret.append(T(prop));
         return ret;
     }
+    
+    /* Templated (type-specific) detail retrieval base on given detail field name and field value */
+    template<typename T> QList<T> details(const QString& fieldName, const QString& value) const
+    {
+        QList<QContactDetail> props = details(T::DefinitionName, fieldName, value);
+        QList<T> ret;
+        foreach(QContactDetail prop, props)
+            ret.append(T(prop));
+        return ret;
+    }
+    
+    /* Detail retrieval base on given detail definition name, field name and field value */
+    QList<QContactDetail> details(const QString& definitionName, const QString& fieldName, const QString& value) const;
 
     template<typename T> T detail() const
     {
@@ -109,6 +122,15 @@ public:
     bool saveDetail(QContactDetail* detail);   // modifies the detail - sets its ID if detail already exists
     bool removeDetail(QContactDetail* detail); // modifies the detail - unsets its ID
 
+    /* Group addition/removal functions */
+    bool addToGroup(const QString& group);
+    bool addToGroup(const QUniqueId& groupId, const QString& managerUri, const QString& groupLabel);
+    bool removeFromGroup(const QString& group);
+    bool removeFromGroup(const QUniqueId& groupId, const QString& managerUri, const QString& groupLabel);
+
+    /* Return all group Ids which this contact belongs to */
+    QList<QUniqueId> groups() const;
+    
     /* Actions available to be performed on this contact */
     QStringList availableActions() const;
 
