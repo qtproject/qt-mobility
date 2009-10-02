@@ -93,6 +93,7 @@ public:
     /* Contacts - Accessors and Mutators */
     QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const;    // retrieve contact ids
     QList<QUniqueId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const; // retrieve ids of contacts matching the filter
+    QList<QUniqueId> contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders) const; // retrieve contacts of the given type
 
     QContact contact(const QUniqueId& contactId) const;  // retrieve a contact
 

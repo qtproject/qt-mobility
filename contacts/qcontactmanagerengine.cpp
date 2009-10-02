@@ -189,6 +189,18 @@ QList<QUniqueId> QContactManagerEngine::contacts(const QContactFilter& filter, c
 }
 
 /*!
+ * Returns a list of ids of contacts of the given \a contactType, sorted according to the given list of \a sortOrders.
+ * Any error which occurs is saved in \a error.
+ */
+QList<QUniqueId> QContactManagerEngine::contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+{
+    QContactDetailFilter df;
+    df.setDetailDefinitionName(QContactType::DefinitionName, QContactType::FieldType);
+    df.setValue(contactType);
+    return contacts(df, sortOrders, error);
+}
+
+/*!
  * Returns the contact in the database identified by \a contactId
  *
  * Any errors encountered should be stored to \a error.

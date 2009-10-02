@@ -252,6 +252,14 @@ QList<QUniqueId> QContactManager::contacts(const QContactFilter &filter, const Q
     return d->m_engine->contacts(filter, sortOrders, d->m_error);
 }
 
+/*! 
+ * Returns a list of ids of contacts of the given \a contactType, sorted according to the given list of \a sortOrders.
+ */
+QList<QUniqueId> QContactManager::contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders) const
+{
+    return d->m_engine->contacts(contactType, sortOrders, d->m_error);
+}
+
 /*! Returns the contact in the database identified by \a contactId */
 QContact QContactManager::contact(const QUniqueId& contactId) const
 {

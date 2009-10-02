@@ -69,6 +69,7 @@ public:
     /* Contacts - Accessors and Mutators */
     virtual QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     virtual QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
+    QList<QUniqueId> contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
 
     virtual bool saveContact(QContact* contact, QContactManager::Error& error);
     virtual QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
