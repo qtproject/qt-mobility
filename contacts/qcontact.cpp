@@ -428,17 +428,14 @@ bool QContact::removeFromGroup(const QUniqueId& groupId, const QString& managerU
 /*! Returns all group Ids which this contact belongs to */
 QList<QUniqueId> QContact::groups() const
 {
+    QList<QContactDetail> relationships = details(QContactRelationship::DefinitionName);
     QList<QUniqueId> ids;
-    for (int i = 0; i < d->m_details.size(); i++) {
-        const QContactDetail& existing = d->m_details.at(i);
-        if (QContactRelationship::DefinitionName == existing.definitionName()
-            &&
-            existing.hasValue(QContactRelationship::FieldRelationshipType)
-            &&
-            existing.value(QContactRelationship::FieldRelationshipType) == QContactRelationship::RelationshipTypeIsMemberOf
-            &&
-            existing.hasValue(QContactRelationship::FieldRelatedContactUid)) {
-            ids << existing.value(QContactRelationship::FieldRelatedContactUid).toUInt();
+    foreach (const QContactRelationship& rs, relationships) {
+        if (rs.relationshipType() == QContactRelationship::RelationshipTypeIsMemberOf) {
+            bool ok = false;
+            QUniqueId result = QUniqueId(rs.relatedContactUid().toUInt(&ok));
+            if (ok)
+                ids.append(result);
         }
     }
     return ids;
