@@ -68,9 +68,9 @@ public:
     void setBitrate(int) {}
     int quality() const { return 0; }
     void setQuality(int) {}
-    QStringList supportedEncodingOptions() const { return QStringList(); }
-    QVariant encodingOption(const QString &name) const { return QVariant(); }
-    void setEncodingOption(const QString &name, const QVariant &value) {}
+    QStringList supportedEncodingOptions() const { return QStringList() << "bitrate"; }
+    QVariant encodingOption(const QString &name) const { return m_optionValue; }
+    void setEncodingOption(const QString &name, const QVariant &value) { m_optionValue = value; }
     int frequency() const { return m_freq; }
     void setFrequency(int frequency) { m_freq = frequency; }
     QList<int> supportedFrequencies() const { return m_freqs; }
@@ -90,6 +90,7 @@ public:
     QPair<int,int> m_freqRange;
     int m_channels;
     int m_sampleSize;
+    QVariant m_optionValue;
 };
 
 class MockMediaRecorderControl : public QMediaRecorderControl
@@ -258,7 +259,8 @@ public slots:
 
 private slots:
     void testAudioSource();
-
+    void testOptions();
+    void testDevices();
 
 private:
     QAudioSource *audiosource;
@@ -285,6 +287,29 @@ void tst_QAudioSource::testAudioSource()
     QCOMPARE(audiosource->service(), mockAudioSourceService);
 
     QVERIFY(audiosource->isValid());
+}
+
+void tst_QAudioSource::testOptions()
+{
+    QStringList options = mockAudioSourceService->mockAudioEncoderControl->supportedEncodingOptions();
+    QVERIFY(options.count() == 1);
+    mockAudioSourceService->mockAudioEncoderControl->setEncodingOption(options.first(),8000);
+    QVERIFY(mockAudioSourceService->mockAudioEncoderControl->encodingOption(options.first()).toInt() == 8000);
+}
+
+void tst_QAudioSource::testDevices()
+{
+    int devices = audiosource->deviceCount();
+    QVERIFY(devices > 0);
+    QVERIFY(audiosource->name(0).compare("device1") == 0);
+    QVERIFY(audiosource->description(0).compare("dev1 comment") == 0);
+    QVERIFY(audiosource->icon(0).isNull());
+    QVERIFY(audiosource->defaultDevice() == 1);
+
+    QSignalSpy checkSignal(audiosource, SIGNAL(selectedDeviceChanged(int)));
+    audiosource->setSelectedDevice(2);
+    QVERIFY(audiosource->selectedDevice() == 2);
+    QVERIFY(checkSignal.count() == 1);
 }
 
 QTEST_MAIN(tst_QAudioSource)
