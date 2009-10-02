@@ -58,8 +58,6 @@ class Q_MEDIA_EXPORT QAudioSource : public QMediaObject
 {
     Q_OBJECT
 
-    Q_ENUMS(State)
-
 public:
     QAudioSource(QObject *parent = 0, QMediaServiceProvider *service = QMediaServiceProvider::defaultServiceProvider());
     ~QAudioSource();
