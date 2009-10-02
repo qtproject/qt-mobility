@@ -196,7 +196,8 @@ QContact QContactTrackerEngine::contact_impl(const QUniqueId& contactId, QContac
             << QContactOnlineAccount::DefinitionName
             << QContactOrganisation::DefinitionName
             << QContactPhoneNumber::DefinitionName
-            << QContactPresence::DefinitionName;
+            << QContactPresence::DefinitionName
+            << QContactUrl::DefinitionName;
     request.setDefinitionRestrictions(fields);
     request.setFilter(idlist);
 
@@ -289,6 +290,28 @@ bool contactHasWorkRelatedDetails(const QContact &c)
     return false;
 }
 
+// Delete all existing phone numbers from the contact so that edits are
+// reflected to Tracker correctly.
+void cleanOldPhoneNumbers(const RDFVariable& rdfContactIn) {
+    RDFUpdate up;
+    RDFVariable rdfContact = rdfContactIn.deepCopy();
+    RDFVariable rdfContact2 = rdfContactIn.deepCopy();
+
+    // Get the associations from the contact object.
+    RDFVariable rdfAffiliations = rdfContact.property<nco::hasAffiliation>();
+    RDFVariable rdfPhonesHome = rdfContact2.property<nco::hasPhoneNumber>();
+    RDFVariable rdfPhonesWork = rdfAffiliations.property<nco::hasPhoneNumber>();
+
+    // Delete the references to phone numbers and the numbers themselves.
+    up.addDeletion(rdfContact, nco::hasPhoneNumber::iri(), rdfPhonesHome);
+    up.addDeletion(rdfPhonesHome, rdf::type::iri(), rdfs::Resource::iri());
+
+    up.addDeletion(rdfAffiliations, nco::hasPhoneNumber::iri(), rdfPhonesWork);
+    up.addDeletion(rdfPhonesWork, rdf::type::iri(), rdfs::Resource::iri());
+
+    ::tracker()->executeQuery(up);
+}
+
 /*!
  * write all phone numbers on one query to tracker
  * TODO this is temporary code for creating new, saving contacts need to handle only what was
@@ -297,18 +320,11 @@ bool contactHasWorkRelatedDetails(const QContact &c)
 void appendPhoneNumbersUpdate(RDFUpdate &up, RDFVariable &var, const QList<QContactPhoneNumber> &details )
 {
 
-    // not perfect way, supposed to delete all and add all in one rdf update,
-    // fix after learning how to use sparql modify
     RDFVariable varForInsert = var.deepCopy();
-    RDFVariable phones = var.property<nco::hasPhoneNumber>();
-    RDFVariable types = phones.property<rdf::type>();
-    up.addDeletion(RDFVariableStatement(var, nco::hasPhoneNumber::iri(), phones));
-    up.addDeletion(phones, rdf::type::iri(), types);
     foreach(const QContactPhoneNumber& det, details)
     {
         QUrl newPhone = ::tracker()->createLiveNode().uri();
         up.addInsertion(varForInsert, nco::hasPhoneNumber::iri(), newPhone);
-        //QString type = det.attribute(QContactPhoneNumber::AttributeSubType);
 
         if( det.subTypes().contains(QContactPhoneNumber::SubTypeMobile))
             up.addInsertion(newPhone, rdf::type::iri(), nco::CellPhoneNumber::iri());
@@ -328,7 +344,6 @@ void appendPhoneNumbersUpdate(RDFUpdate &up, RDFVariable &var, const QList<QCont
             up.addInsertion(newPhone, rdf::type::iri(), nco::VoicePhoneNumber::iri());
 
         up.addInsertion(newPhone, nco::phoneNumber::iri(), LiteralValue(det.value(QContactPhoneNumber::FieldNumber)));
-
     }
 }
 
@@ -487,6 +502,13 @@ void QContactTrackerEngine::saveContactDetails( RDFServicePtr service,
     error = QContactManager::NoError;
     QStringList detailDefinitionsToSave = detailsDefinitionsInContact(*contact);
 
+    // all the rest might need to save to PersonContact and to Affiliation contact
+    RDFVariable rdfPerson = RDFVariable::fromType<nco::PersonContact>();
+    rdfPerson.property<nco::contactUID>() = LiteralValue(QString::number(contact->id()));
+
+    // Delete all existing phone numbers - office and home
+    cleanOldPhoneNumbers(rdfPerson);
+
     foreach(QString definition, detailDefinitionsToSave)
     {
         QList<QContactDetail> details = contact->details(definition);
@@ -509,25 +531,22 @@ void QContactTrackerEngine::saveContactDetails( RDFServicePtr service,
             continue;
         }
 
-        // all the rest might need to save to PersonContact and to Affiliation contact
-        RDFVariable rdfPerson = RDFVariable::fromType<nco::PersonContact>();
-        rdfPerson.property<nco::contactUID>() = LiteralValue(QString::number(contact->id()));
-
+        RDFUpdate updateQuery;
         RDFVariable rdfAffiliation;
         RDFVariable rdfPerson1;
         rdfPerson1.property<nco::hasAffiliation>() = rdfAffiliation;
         rdfPerson1.property<nco::contactUID>() = LiteralValue(QString::number(contact->id()));
-        RDFUpdate updateQuery;
 
         QList<QContactDetail> toAffiliation;
         QList<QContactDetail> toPerson;
-        foreach(const QContactDetail& det, details)
-            {
-                if( det.contexts().contains(QContactDetail::ContextWork) )
-                    toAffiliation << det;
-                else
-                    toPerson << det;
+        foreach(const QContactDetail& det, details) {
+            if( det.contexts().contains(QContactDetail::ContextWork) ) {
+                toAffiliation << det;
+            } else {
+                toPerson << det;
             }
+        }
+
         /* Save all phone numbers at once */
         if(definition == QContactPhoneNumber::DefinitionName) {
             if (!toPerson.isEmpty()) {
@@ -591,9 +610,9 @@ void QContactTrackerEngine::saveContactDetails( RDFServicePtr service,
                     Live<nco::Role> contact = d->contactByContext(det, ncoContact);
                     Live<nco::IMAccount> liveIMAccount = contact->firstHasIMAccount();
                     if (0 == liveIMAccount)
-                        {
-                            liveIMAccount = contact->addHasIMAccount();
-                        }
+                    {
+                        liveIMAccount = contact->addHasIMAccount();
+                    }
                     liveIMAccount->setImID(account);
                     liveIMAccount->setImAccountType(serviceName);
                 }

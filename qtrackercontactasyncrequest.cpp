@@ -272,6 +272,7 @@ QTrackerContactAsyncRequest::QTrackerContactAsyncRequest(
             if (r->definitionRestrictions().contains(QContactUrl::DefinitionName))
             {
                 quer.addColumn("homepage", RDFContact.optional().property<nco::websiteUrl>());
+                quer.addColumn("work_homepage", RDFContact.optional().property<nco::hasAffiliation>().property<nco::websiteUrl>());
             }
             if (r->definitionRestrictions().contains(QContactBirthday::DefinitionName))
             {
@@ -462,6 +463,13 @@ void QTrackerContactAsyncRequest::contactsReady()
             if(!url.url().isEmpty())
                 if( !detailExisting(QContactUrl::DefinitionName, contact, url) )
                     contact.saveDetail(&url);
+            QContactUrl workurl;
+            workurl.setContexts(QContactUrl::ContextWork);
+            workurl.setUrl(query->index(i, column++).data().toString());
+            if(!workurl.url().isEmpty())
+                if( !detailExisting(QContactUrl::DefinitionName, contact, workurl) )
+                    contact.saveDetail(&workurl);
+
         }
         if (request->definitionRestrictions().contains(QContactBirthday::DefinitionName))
         {

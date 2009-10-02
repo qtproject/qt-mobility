@@ -17,7 +17,9 @@
 #include <QSharedPointer>
 #include <QtTracker/QLive>
 #include <QtTracker/Tracker>
-using namespace SopranoLive;
+
+
+QUniqueId url2UniqueId(const QString &contactUrl);
 
 /*!
  * Helper class to handle multiple async queries at the same time inside TrackerChangeListener.
@@ -36,8 +38,8 @@ class AsyncQuery: public QObject
 {
     Q_OBJECT
 public:
-    AsyncQuery(RDFSelect selectQuery);
-    LiveNodes nodes;
+    AsyncQuery(SopranoLive::RDFSelect selectQuery);
+    SopranoLive::LiveNodes nodes;
 
 private slots:
     void queryReady();
