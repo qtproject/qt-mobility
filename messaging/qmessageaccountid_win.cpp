@@ -103,6 +103,11 @@ QMessageAccountId& QMessageAccountId::operator=(const QMessageAccountId& other)
     return *this;
 }
 
+bool QMessageAccountId::operator<(const QMessageAccountId& other) const
+{
+    return (d_ptr->_storeRecordKey < other.d_ptr->_storeRecordKey);
+}
+
 QString QMessageAccountId::toString() const
 {
     if (!isValid())

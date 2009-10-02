@@ -92,6 +92,11 @@ QMessageAccountId& QMessageAccountId::operator=(const QMessageAccountId& other)
     return *this;
 }
 
+bool QMessageAccountId::operator<(const QMessageAccountId& other) const
+{
+    return (d_ptr->_id < other.d_ptr->_id);
+}
+
 QString QMessageAccountId::toString() const
 {
     return (isValid() ? QString::number(d_ptr->_id.toULongLong()) : QString());

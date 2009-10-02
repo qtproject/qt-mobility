@@ -53,6 +53,8 @@ public:
     bool operator==(const QMessageAccountId &other) const;
     bool operator!=(const QMessageAccountId &other) const;
 
+    bool operator<(const QMessageAccountId &other) const;
+
     QString toString() const;
     bool isValid() const;
 

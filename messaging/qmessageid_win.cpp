@@ -140,6 +140,11 @@ bool QMessageId::operator==(const QMessageId& other) const
     }
 }
 
+bool QMessageId::operator<(const QMessageId& other) const
+{
+    return (d_ptr->_entryId < other.d_ptr->_entryId);
+}
+
 QString QMessageId::toString() const
 {
     if (!isValid())

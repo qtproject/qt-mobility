@@ -129,6 +129,15 @@ bool QMessageFolderId::operator==(const QMessageFolderId& other) const
     }
 }
 
+bool QMessageFolderId::operator<(const QMessageFolderId& other) const
+{
+    if (d_ptr->_storeRecordKey == other.d_ptr->_storeRecordKey) {
+        return (d_ptr->_folderRecordKey < other.d_ptr->_folderRecordKey);
+    }
+
+    return (d_ptr->_storeRecordKey < other.d_ptr->_storeRecordKey);
+}
+
 QString QMessageFolderId::toString() const
 {
     if (!isValid())

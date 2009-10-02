@@ -54,6 +54,8 @@ public:
     bool operator==(const QMessageFolderId &other) const;
     bool operator!=(const QMessageFolderId &other) const;
 
+    bool operator<(const QMessageFolderId &other) const;
+
     QString toString() const;
     bool isValid() const;
 

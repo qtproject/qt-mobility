@@ -96,6 +96,11 @@ bool QMessageId::operator!=(const QMessageId &other) const
 }
 
 /*!
+    \internal
+    \fn bool QMessageId::operator<(const QMessageId &other) const
+*/
+
+/*!
     \fn bool QMessageId::toString() const
 
     Returns the string representation of this identifier.
