@@ -34,103 +34,136 @@
 #include "qcontactdetails.h"
 
 /*!
- * \class QContactAddress
- * \brief An address of a contact
+   \class QContactAddress
+   \brief The QContactAddress class provides an address of a contact.
+   \ingroup contacts-details
  */
 
 /*!
- * \class QContactAnniversary
- * \brief An anniversary of a contact
+   \class QContactAnniversary
+   \brief The QContactAnniversary class provides an anniversary of a
+contact.
+   \ingroup contacts-details
  */
 
 /*!
- * \class QContactAvatar
- * \brief An avatar of a contact
+   \class QContactAvatar
+   \brief The QContactAvatar class provides an avatar of a contact.
+   \ingroup contacts-details
  */
 
 /*!
- * \class QContactBirthday
- * \brief The birthday of a contact
+   \class QContactBirthday
+   \brief The QContactBirthday class provides a birthdate of a contact.
+   \ingroup contacts-details
  */
 
 /*!
- * \class QContactDisplayLabel
- * \brief The (possibly synthesised) display label of a contact
+   \class QContactDisplayLabel
+   \brief The QContactDisplayLabel class provides a, possibly
+synthesized, display label of a contact.
+   \ingroup contacts-details
  */
 
 /*!
- * \class QContactEmailAddress
- * \brief An email address of a contact
+   \class QContactEmailAddress
+   \brief The QContactEmailAddress class provides an email address of a
+contact.
+   \ingroup contacts-details
  */
 
 /*!
- * \class QContactGender
- * \brief The gender of a contact
+   \class QContactGender
+   \brief The QContactGender class provides the gender of a contact.
+   \ingroup contacts-details
  */
 
 /*!
- * \class QContactGeolocation
- * \brief A global location coordinate associated with a contact
+   \class QContactGeolocation
+   \brief The QContactGeolocation class provides a global location
+    coordinate associated with a contact.
+   \ingroup contacts-details
  */
 
 /*!
- * \class QContactGuid
- * \brief The globally unique Id of a contact
+   \class QContactGuid
+   \brief The QContactGuid class provides the globally unique Id of a
+    contact.
+   \ingroup contacts-details
  */
 
 /*!
- * \class QContactName
- * \brief The name of a contact
+   \class QContactName
+   \brief The QContactName class provides the name of a contact.
+   \ingroup contacts-details
  */
 
 /*!
- * \class QContactNickname
- * \brief A nickname of a contact
+   \class QContactNickname
+   \brief The QContactNickname class provides a nickname of a contact.
+   \ingroup contacts-details
  */
 
 /*!
- * \class QContactOnlineAccount
- * \brief An online account which the contact uses to communicate with friends and family
+   \class QContactOnlineAccount
+   \brief The QContactOnlineAccount class provides an online account
+    which the contact uses to communicate with friends and family.
+   \ingroup contacts-details
  */
 
 /*!
- * \class QContactOrganisation
- * \brief Details about an organisation that the contact is either a part of, or stands for
+   \class QContactOrganisation
+   \brief The QContactOrganisation class provides the details about an
+    organization that the contact is either a part of, or stands for.
+   \ingroup contacts-details
  */
 
 /*!
- * \class QContactPhoneNumber
- * \brief A phone number of a contact
+   \class QContactPhoneNumber
+   \brief The QContactPhoneNumber class is a phone number of a contact.
+   \ingroup contacts-details
  */
 
 /*!
- * \class QContactPresence
- * \brief Presence information relating to a QContactOnlineAccount of the contact
- *
- * Details containing presence information are linked to a particular online account detail.
- * The backend should update the presence information relating to an online account when it
- * is available, and delete the presence information detail if its corresponding online account
- * detail is deleted.
+   \class QContactPresence
+   \brief The QContactPresence class supplies presence information
+    relating to a QContactOnlineAccount of the contact.
+   \ingroup contacts-details
+ 
+   Details containing presence information are linked to a particular
+online account detail.
+   The backend should update the presence information relating to an
+online account when it
+   is available, and delete the presence information detail if its
+corresponding online account
+   detail is deleted.
  */
 
 /*!
- * \class QContactRelationship
- * \brief Describes the relationship that this contact has to another
+   \class QContactRelationship
+   \brief The QContactRelationship class describes the relationship that
+    this contact has to another.
+   \ingroup contacts-details
  */
 
 /*!
- * \class QContactSyncTarget
- * \brief A sync target for a contact
+   \class QContactSyncTarget
+   \brief The QContactSyncTarget class supplies a sync target for a
+    contact.
+   \ingroup contacts-details
  */
 
 /*!
- * \class QContactTimestamp
- * \brief Contains the creation and last-modified timestamp associated with the contact
+   \class QContactTimestamp
+   \brief The QContactTimestamp class contains the creation and
+    last-modified timestamp associated with the contact.
+   \ingroup contacts-details
  */
 
 /*!
- * \class QContactUrl
- * \brief A url associated with a contact
+   \class QContactUrl
+   \brief The QContactUrl class provides a url associated with a contact.
+   \ingroup contacts-details
  */
 
 /*!
