@@ -44,6 +44,8 @@
 #include "qcontactrequests.h"
 #include "qcontactrequests_p.h"
 
+#include <QDebug>
+
 /*!
  * \class QContactManagerEngine
  * \preliminary
@@ -354,10 +356,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     QVariantList subTypes;
 
     // sync target
+    d.setName(QContactSyncTarget::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setName(QContactSyncTarget::DefinitionName);
     fields.insert(QContactSyncTarget::FieldSyncTarget, f);
     f.dataType = QVariant::StringList;
     f.allowableValues = contexts;
@@ -368,10 +370,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // timestamp
+    d.setName(QContactTimestamp::DefinitionName);
     fields.clear();
     f.dataType = QVariant::DateTime;
     f.allowableValues = QVariantList();
-    d.setName(QContactTimestamp::DefinitionName);
     fields.insert(QContactTimestamp::FieldModificationTimestamp, f);
     fields.insert(QContactTimestamp::FieldCreationTimestamp, f);
     f.dataType = QVariant::StringList;
@@ -383,22 +385,23 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // type
+    d.setName(QContactType::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
     subTypes.clear();
     subTypes << QString(QLatin1String(QContactType::TypeContact)) << QString(QLatin1String(QContactType::TypeGroup));
     f.allowableValues = subTypes;
-    d.setName(QContactType::DefinitionName);
     fields.insert(QContactType::FieldType, f); // note: NO CONTEXT!!
+    d.setFields(fields);
     d.setUnique(true);
     d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // guid
+    d.setName(QContactGuid::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setName(QContactGuid::DefinitionName);
     fields.insert(QContactGuid::FieldGuid, f);
     f.dataType = QVariant::StringList;
     f.allowableValues = contexts;
@@ -409,10 +412,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // display label
+    d.setName(QContactDisplayLabel::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setName(QContactDisplayLabel::DefinitionName);
     fields.insert(QContactDisplayLabel::FieldLabel, f);
     f.dataType = QVariant::Bool;
     f.allowableValues = QVariantList();
@@ -426,10 +429,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // email address
+    d.setName(QContactEmailAddress::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setName(QContactEmailAddress::DefinitionName);
     fields.insert(QContactEmailAddress::FieldEmailAddress, f);
     f.dataType = QVariant::StringList;
     f.allowableValues = contexts;
@@ -440,10 +443,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // organisation
+    d.setName(QContactOrganization::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setName(QContactOrganization::DefinitionName);
     fields.insert(QContactOrganization::FieldName, f);
     fields.insert(QContactOrganization::FieldLogo, f);
     fields.insert(QContactOrganization::FieldLocation, f);
@@ -458,10 +461,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // phone number
+    d.setName(QContactPhoneNumber::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setName(QContactPhoneNumber::DefinitionName);
     fields.insert(QContactPhoneNumber::FieldNumber, f);
     f.dataType = QVariant::StringList; // can implement multiple subtypes
     subTypes.clear();
@@ -488,10 +491,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // anniversary
+    d.setName(QContactAnniversary::DefinitionName);
     fields.clear();
     f.dataType = QVariant::Date;
     f.allowableValues = QVariantList();
-    d.setName(QContactAnniversary::DefinitionName);
     fields.insert(QContactAnniversary::FieldOriginalDate, f);
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
@@ -517,10 +520,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // birthday
+    d.setName(QContactBirthday::DefinitionName);
     fields.clear();
     f.dataType = QVariant::Date;
     f.allowableValues = QVariantList();
-    d.setName(QContactBirthday::DefinitionName);
     fields.insert(QContactBirthday::FieldBirthday, f);
     f.dataType = QVariant::StringList;
     f.allowableValues = contexts;
@@ -531,10 +534,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // nickname
+    d.setName(QContactNickname::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setName(QContactNickname::DefinitionName);
     fields.insert(QContactNickname::FieldNickname, f);
     f.dataType = QVariant::StringList;
     f.allowableValues = contexts;
@@ -545,10 +548,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // url
+    d.setName(QContactUrl::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setName(QContactUrl::DefinitionName);
     fields.insert(QContactUrl::FieldUrl, f);
     f.dataType = QVariant::String; // only allowed to be a single subtype
     subTypes.clear();
@@ -565,10 +568,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // gender
+    d.setName(QContactGender::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList() << QString(QLatin1String(QContactGender::GenderMale)) << QString(QLatin1String(QContactGender::GenderFemale)) << QString(QLatin1String(QContactGender::GenderUnspecified));
-    d.setName(QContactGender::DefinitionName);
     fields.insert(QContactGender::FieldGender, f);
     f.dataType = QVariant::StringList;
     f.allowableValues = contexts;
@@ -579,9 +582,9 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // online account
+    d.setName(QContactOnlineAccount::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
-    d.setName(QContactOnlineAccount::DefinitionName);
     fields.insert(QContactOnlineAccount::FieldAccountUri, f);
     f.dataType = QVariant::StringList;
     f.allowableValues = contexts;
@@ -594,9 +597,9 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // presence
+    d.setName(QContactPresence::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
-    d.setName(QContactPresence::DefinitionName);
     fields.insert(QContactPresence::FieldAccountUri, f);
     fields.insert(QContactPresence::FieldNickname, f);
     fields.insert(QContactPresence::FieldStatusMessage, f);
@@ -619,10 +622,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // relationship
+    d.setName(QContactRelationship::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setName(QContactRelationship::DefinitionName);
     fields.insert(QContactRelationship::FieldRelatedContactUid, f);
     fields.insert(QContactRelationship::FieldRelatedContactManagerUri, f);
     fields.insert(QContactRelationship::FieldRelationshipType, f);
@@ -635,10 +638,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // avatar
+    d.setName(QContactAvatar::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setName(QContactAvatar::DefinitionName);
     fields.insert(QContactAvatar::FieldAvatar, f);
     f.dataType = QVariant::String; // only allowed to be a single subtype
     subTypes.clear();
@@ -656,10 +659,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // geolocation
+    d.setName(QContactGeolocation::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setName(QContactGeolocation::DefinitionName);
     fields.insert(QContactGeolocation::FieldLabel, f);
     f.dataType = QVariant::Double;
     fields.insert(QContactGeolocation::FieldLatitude, f);
@@ -680,10 +683,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // street address
+    d.setName(QContactAddress::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setName(QContactAddress::DefinitionName);
     fields.insert(QContactAddress::FieldPostOfficeBox, f);
     fields.insert(QContactAddress::FieldStreet, f);
     fields.insert(QContactAddress::FieldLocality, f);
@@ -707,10 +710,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // name
+    d.setName(QContactName::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setName(QContactName::DefinitionName);
     fields.insert(QContactName::FieldPrefix, f);
     fields.insert(QContactName::FieldFirst, f);
     fields.insert(QContactName::FieldMiddle, f);

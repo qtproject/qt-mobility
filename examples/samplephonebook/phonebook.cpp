@@ -145,7 +145,7 @@ PhoneBook::~PhoneBook()
 void PhoneBook::backendChanged(const QList<QUniqueId>& changes)
 {
     // load all contacts from the updated backend
-    QList<QUniqueId> contactIds = cm->contacts();
+    QList<QUniqueId> contactIds = cm->contacts(QContactType::TypeContact);
     contacts.clear();
     foreach (const QUniqueId cid, contactIds)
         contacts.append(cm->contact(cid));

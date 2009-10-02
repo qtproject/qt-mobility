@@ -78,6 +78,9 @@ QContact::QContact()
     contactLabel.d->m_id = 1;
     contactLabel.setSynthesised(true);
     d->m_details.insert(0, contactLabel);
+    QContactType contactType;
+    contactType.setType(QContactType::TypeContact);
+    d->m_details.insert(1, contactType);
 }
 
 /*! Initializes this QContact from \a other */
@@ -90,21 +93,22 @@ QContact::QContact(const QContact& other)
  * Returns true if this QContact is empty, false if not.
  *
  * An empty QContact has an empty label and no extra details.
+ * The type of the contact is irrelevant.
  */
 bool QContact::isEmpty() const
 {
     /* Every contact has a display label field.. */
-    if (d->m_details.count() > 1)
+    if (d->m_details.count() > 2)
         return false;
 
-    /* We know we have one detail (a display label) */
+    /* We know we have two details (a display label and a type) */
     const QContactDisplayLabel& label = d->m_details.at(0);
     return label.label().isEmpty();
 }
 
 /*!
  * Removes all details of the contact.
- * This function does not modify the id of the contact.
+ * This function does not modify the id or type of the contact.
  * Calling isEmpty() after calling this function will return true.
  */
 void QContact::clearDetails()
@@ -302,6 +306,13 @@ bool QContact::saveDetail(QContactDetail* detail)
     if (detail->definitionName() == QContactDisplayLabel::DefinitionName) {
         d->m_details[0] = *detail;
         detail->d->m_id = 1;
+        return true;
+    }
+
+    /* Also handle contact type specially */
+    if (detail->definitionName() == QContactType::DefinitionName) {
+        d->m_details[1] = *detail;
+        detail->d->m_id = 2;
         return true;
     }
 
