@@ -758,39 +758,43 @@ void tst_QContactManagerFiltering::groupMembershipFiltering()
     QFETCH(QString, expectedone);
     QFETCH(QString, expectedtwo);
 
-    QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
-    QList<QUniqueId> idsone, idstwo;
+    if (cm->information()->hasFeature(QContactManagerInfo::Groups)) {
+        QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
+        QList<QUniqueId> idsone, idstwo;
 
-    QContactGroup g1, g2;
-    g1.setName("GroupOne");
-    g2.setName("GroupTwo");
+        QContactGroup g1, g2;
+        g1.setName("GroupOne");
+        g2.setName("GroupTwo");
 
-    // add the specified members to the specified groups
-    for (int i = 0; i < expectedone.size(); i++)
-        g1.addMember(contacts.at(expectedone.at(i).toLower().toAscii() - 'a'));
-    for (int i = 0; i < expectedtwo.size(); i++)
-        g2.addMember(contacts.at(expectedtwo.at(i).toLower().toAscii() - 'a'));
+        // add the specified members to the specified groups
+        for (int i = 0; i < expectedone.size(); i++)
+            g1.addMember(contacts.at(expectedone.at(i).toLower().toAscii() - 'a'));
+        for (int i = 0; i < expectedtwo.size(); i++)
+            g2.addMember(contacts.at(expectedtwo.at(i).toLower().toAscii() - 'a'));
 
-    // save them to the manager.
-    cm->saveGroup(&g1);
-    cm->saveGroup(&g2);
+        // save them to the manager.
+        cm->saveGroup(&g1);
+        cm->saveGroup(&g2);
 
-    // build the group membership filters
-    QContactGroupMembershipFilter cg1f, cg2f;
-    cg1f.setGroupId(g1.id());
-    cg2f.setGroupId(g2.id());
+        // build the group membership filters
+        QContactGroupMembershipFilter cg1f, cg2f;
+        cg1f.setGroupId(g1.id());
+        cg2f.setGroupId(g2.id());
 
-    /* At this point, since we're using memory, assume the filter isn't really supported */
-    QVERIFY(cm->information()->filterSupported(cg1f) == false);
+        /* At this point, since we're using memory, assume the filter isn't really supported */
+        QVERIFY(cm->information()->filterSupported(cg1f) == false);
 
-    idsone = cm->contacts(cg1f);
-    idstwo = cm->contacts(cg2f);
+        idsone = cm->contacts(cg1f);
+        idstwo = cm->contacts(cg2f);
 
-    QString output = convertIds(contacts, idsone);
-    QCOMPARE(output, expectedone);
+        QString output = convertIds(contacts, idsone);
+        QCOMPARE(output, expectedone);
 
-    output = convertIds(contacts, idstwo);
-    QCOMPARE(output, expectedtwo);
+        output = convertIds(contacts, idstwo);
+        QCOMPARE(output, expectedtwo);
+    } else {
+        QSKIP("This engine does not support groups", SkipSingle);
+    }
 }
 
 void tst_QContactManagerFiltering::intersectionFiltering_data()
@@ -2121,14 +2125,18 @@ void tst_QContactManagerFiltering::allFiltering()
     QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
     QContactFilter f; // default = permissive
     QList<QUniqueId> ids = cm->contacts(f);
-    QVERIFY(ids.count() == contacts.size());
+    QString output = convertIds(contacts, ids);
+    QString expected = convertIds(contacts, contacts); // :)
+    QCOMPARE(output, expected);
 
     // Try unions/intersections of defaults
     ids = cm->contacts(f || f);
-    QVERIFY(ids.count() == contacts.size());
+    output = convertIds(contacts, ids);
+    QCOMPARE(output, expected);
 
     ids = cm->contacts(f && f);
-    QVERIFY(ids.count() == contacts.size());
+    output = convertIds(contacts, ids);
+    QCOMPARE(output, expected);
 }
 
 void tst_QContactManagerFiltering::changelogFiltering_data()
@@ -2145,52 +2153,58 @@ void tst_QContactManagerFiltering::changelogFiltering_data()
 
     for (int i = 0; i < managers.size(); i++) {
         QContactManager *manager = managers.at(i);
-        QList<QUniqueId> contacts = contactsAddedToManagers.values(manager);
-        QContact a,b,c,d;
-        a = manager->contact(contacts.at(0));
-        b = manager->contact(contacts.at(1));
-        c = manager->contact(contacts.at(2));
-        d = manager->contact(contacts.at(3));
 
-        QDateTime ac = a.detail<QContactTimestamp>().created();
-        QDateTime bc = b.detail<QContactTimestamp>().created();
-        QDateTime cc = c.detail<QContactTimestamp>().created();
-        QDateTime dc = d.detail<QContactTimestamp>().created();
+        if (manager->information()->hasFeature(QContactManagerInfo::ChangeLogs)) {
+            QList<QUniqueId> contacts = contactsAddedToManagers.values(manager);
+            QContact a,b,c,d;
+            a = manager->contact(contacts.at(0));
+            b = manager->contact(contacts.at(1));
+            c = manager->contact(contacts.at(2));
+            d = manager->contact(contacts.at(3));
 
-        QDateTime am = a.detail<QContactTimestamp>().lastModified();
-        QDateTime bm = b.detail<QContactTimestamp>().lastModified();
-        QDateTime cm = c.detail<QContactTimestamp>().lastModified();
-        QDateTime dm = d.detail<QContactTimestamp>().lastModified();
+            QDateTime ac = a.detail<QContactTimestamp>().created();
+            QDateTime bc = b.detail<QContactTimestamp>().created();
+            QDateTime cc = c.detail<QContactTimestamp>().created();
+            QDateTime dc = d.detail<QContactTimestamp>().created();
 
-        newMRow("Added since before start", manager) << manager << contacts << added << ac.addSecs(-1) << "abcdefg";
-        newMRow("Added since first", manager) << manager << contacts << added << ac << "abcdefg";
-        newMRow("Added since second", manager) << manager << contacts << added << bc << "bcdefg";
-        newMRow("Added since third", manager) << manager << contacts << added << cc << "cdefg";
-        newMRow("Added since fourth", manager) << manager << contacts << added << dc << "defg";
-        newMRow("Added since after fourth", manager) << manager << contacts << added << dc.addSecs(1) << "efg";
-        newMRow("Added since first changed", manager) << manager << contacts << added << am << "";
-        newMRow("Added since second changed", manager) << manager << contacts << added << bm << "";
-        newMRow("Added since third changed", manager) << manager << contacts << added << cm << "";
-        newMRow("Added since fourth changed", manager) << manager << contacts << added << cm << "";
+            QDateTime am = a.detail<QContactTimestamp>().lastModified();
+            QDateTime bm = b.detail<QContactTimestamp>().lastModified();
+            QDateTime cm = c.detail<QContactTimestamp>().lastModified();
+            QDateTime dm = d.detail<QContactTimestamp>().lastModified();
 
-        newMRow("Changed since before start", manager) << manager << contacts << changed << ac.addSecs(-1) << "abcdefg";
-        newMRow("Changed since first", manager) << manager << contacts << changed << ac << "abcdefg";
-        newMRow("Changed since second", manager) << manager << contacts << changed << bc << "abcdefg";
-        newMRow("Changed since third", manager) << manager << contacts << changed << cc << "abcdefg";
-        newMRow("Changed since fourth", manager) << manager << contacts << changed << dc << "abcdefg";
-        newMRow("Changed since after fourth", manager) << manager << contacts << changed << dc.addSecs(1) << "abcefg";
-        newMRow("Changed since first changed", manager) << manager << contacts << changed << am << "a";
-        newMRow("Changed since second changed", manager) << manager << contacts << changed << bm << "ab";
-        newMRow("Changed since third changed", manager) << manager << contacts << changed << cm << "abc";
-        newMRow("Changed since fourth changed", manager) << manager << contacts << changed << dm << "abcdefg";
+            newMRow("Added since before start", manager) << manager << contacts << added << ac.addSecs(-1) << "abcdefg";
+            newMRow("Added since first", manager) << manager << contacts << added << ac << "abcdefg";
+            newMRow("Added since second", manager) << manager << contacts << added << bc << "bcdefg";
+            newMRow("Added since third", manager) << manager << contacts << added << cc << "cdefg";
+            newMRow("Added since fourth", manager) << manager << contacts << added << dc << "defg";
+            newMRow("Added since after fourth", manager) << manager << contacts << added << dc.addSecs(1) << "efg";
+            newMRow("Added since first changed", manager) << manager << contacts << added << am << "";
+            newMRow("Added since second changed", manager) << manager << contacts << added << bm << "";
+            newMRow("Added since third changed", manager) << manager << contacts << added << cm << "";
+            newMRow("Added since fourth changed", manager) << manager << contacts << added << cm << "";
 
-        // These are currently useless..
-        newMRow("Removed since before start", manager) << manager << contacts << removed << ac.addSecs(-1) << "";
-        newMRow("Removed since first", manager) << manager << contacts << removed << ac << "";
-        newMRow("Removed since second", manager) << manager << contacts << removed << bc << "";
-        newMRow("Removed since third", manager) << manager << contacts << removed << cc << "";
-        newMRow("Removed since fourth", manager) << manager << contacts << removed << dc << "";
-        newMRow("Removed since after fourth", manager) << manager << contacts << removed << dc.addSecs(1) << "";
+            newMRow("Changed since before start", manager) << manager << contacts << changed << ac.addSecs(-1) << "abcdefg";
+            newMRow("Changed since first", manager) << manager << contacts << changed << ac << "abcdefg";
+            newMRow("Changed since second", manager) << manager << contacts << changed << bc << "abcdefg";
+            newMRow("Changed since third", manager) << manager << contacts << changed << cc << "abcdefg";
+            newMRow("Changed since fourth", manager) << manager << contacts << changed << dc << "abcdefg";
+            newMRow("Changed since after fourth", manager) << manager << contacts << changed << dc.addSecs(1) << "abcefg";
+            newMRow("Changed since first changed", manager) << manager << contacts << changed << am << "a";
+            newMRow("Changed since second changed", manager) << manager << contacts << changed << bm << "ab";
+            newMRow("Changed since third changed", manager) << manager << contacts << changed << cm << "abc";
+            newMRow("Changed since fourth changed", manager) << manager << contacts << changed << dm << "abcdefg";
+
+            // These are currently useless..
+            newMRow("Removed since before start", manager) << manager << contacts << removed << ac.addSecs(-1) << "";
+            newMRow("Removed since first", manager) << manager << contacts << removed << ac << "";
+            newMRow("Removed since second", manager) << manager << contacts << removed << bc << "";
+            newMRow("Removed since third", manager) << manager << contacts << removed << cc << "";
+            newMRow("Removed since fourth", manager) << manager << contacts << removed << dc << "";
+            newMRow("Removed since after fourth", manager) << manager << contacts << removed << dc.addSecs(1) << "";
+        } else {
+            // Stop spam and asserts with a single row
+            newMRow("Unsupported", manager) << manager << QList<QUniqueId>() << added << QDateTime() << QString();
+        }
     }
 }
 
@@ -2202,15 +2216,19 @@ void tst_QContactManagerFiltering::changelogFiltering()
     QFETCH(QContactManager*, cm);
     QFETCH(QList<QUniqueId>, contacts);
 
-    QList<QUniqueId> ids;
+    if (cm->information()->hasFeature(QContactManagerInfo::ChangeLogs)) {
+        QList<QUniqueId> ids;
 
-    QContactChangeLogFilter clf((QContactChangeLogFilter::EventType)eventType);
-    clf.setSince(since);
+        QContactChangeLogFilter clf((QContactChangeLogFilter::EventType)eventType);
+        clf.setSince(since);
 
-    ids = cm->contacts(clf);
+        ids = cm->contacts(clf);
 
-    QString output = convertIds(contacts, ids);
-    QCOMPARE(output, expected);
+        QString output = convertIds(contacts, ids);
+        QCOMPARE(output, expected);
+    } else {
+        QSKIP("Changelogs not supported by this manager.", SkipSingle);
+    }
 }
 
 QPair<QString, QString> tst_QContactManagerFiltering::definitionAndField(QContactManager *cm, QVariant::Type type, bool *nativelyFilterable)
@@ -2316,6 +2334,10 @@ QList<QUniqueId> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
     QMap<QString, QPair<QString, QString> > definitionDetails; // per value type string
     QPair<QString, QString> defAndFieldNames;
     bool nativelyFilterable;
+
+    // If the engine doesn't support changelogs, don't insert pauses.
+    bool supportsChangelog = cm->information()->hasFeature(QContactManagerInfo::ChangeLogs);
+    int napTime = supportsChangelog ? 2000 : 1;
 
     /* String */
     defAndFieldNames = definitionAndField(cm, QVariant::String, &nativelyFilterable);
@@ -2521,13 +2543,13 @@ QList<QUniqueId> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
     qDebug() << "Generating contacts with different timestamps, please wait..";
     int originalContactCount = cm->contacts().count();
     Q_ASSERT(cm->saveContact(&a));
-    QTest::qSleep(2000);
+    QTest::qSleep(napTime);
     Q_ASSERT(cm->saveContact(&b));
-    QTest::qSleep(2000);
+    QTest::qSleep(napTime);
     Q_ASSERT(cm->saveContact(&c));
-    QTest::qSleep(2000);
+    QTest::qSleep(napTime);
     Q_ASSERT(cm->saveContact(&d));
-    QTest::qSleep(2000);
+    QTest::qSleep(napTime);
 
     /* Now add some contacts specifically for multisorting */
     QContact e,f,g;
@@ -2549,16 +2571,16 @@ QList<QUniqueId> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
     Q_ASSERT(cm->contacts().count() == originalContactCount);
 
     /* Ensure the last modified times are different */
-    QTest::qSleep(2000);
+    QTest::qSleep(napTime);
     c.setDisplayLabel("Clarence");
     cm->saveContact(&c);
-    QTest::qSleep(2000);
+    QTest::qSleep(napTime);
     b.setDisplayLabel("Boris");
     cm->saveContact(&b);
-    QTest::qSleep(2000);
+    QTest::qSleep(napTime);
     a.setDisplayLabel("Albert");
     cm->saveContact(&a);
-    QTest::qSleep(2000);
+    QTest::qSleep(napTime);
 
     /* Add our newly saved contacts to our internal list of added contacts */
     contactsAddedToManagers.insert(cm, g.id());
