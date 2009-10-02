@@ -241,6 +241,9 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
     // check to see if this contact already exists
     int index = d->m_contactIds.indexOf(theContact->id());
     if (index != -1) {
+        /* This contact already exists in the database. Enumerate the relationships, maintain bidirectional links */
+        // TODO !!!
+
         /* We also need to check that there are no modified create only details */
         QContact oldContact = d->m_contacts.at(index);
 
