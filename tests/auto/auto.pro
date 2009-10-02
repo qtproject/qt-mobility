@@ -15,7 +15,7 @@ SUBDIRS = \
         qmediaserviceprovider \
         qmediacontent \
         qradiotuner \
-        qvideowidget
+        qvideowidget \
 
 contains(QT_CONFIG, multimedia) {
     SUBDIRS += \
@@ -23,10 +23,12 @@ contains(QT_CONFIG, multimedia) {
             qpaintervideosurface
 }
 
-symbian {
+symbian { 
 SUBDIRS -= \
         qmediaplaylistnavigator \
         qcamera \
         qmediaimageviewer \
-        qaudiocapturesource
+        qmediapluginloader \
+        qmediaserviceprovider \
 }
+
