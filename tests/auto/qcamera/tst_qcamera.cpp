@@ -420,6 +420,7 @@ private slots:
     void testSimpleCameraWhiteBalance();
     void testSimpleCameraExposure();
     void testSimpleCameraFocus();
+    void testSimpleCameraCapture();
 
     void testCameraExposure();
     void testCameraFocus();
@@ -545,6 +546,18 @@ void tst_QCamera::testSimpleCameraFocus()
     QCOMPARE(camera.zoomValue(), 1.0);
 
     QCOMPARE(camera.isFocusLocked(), true);
+}
+
+void tst_QCamera::testSimpleCameraCapture()
+{
+    QCamera camera(0, provider);
+
+    QVERIFY(!camera.isReadyForCapture());
+
+    QSignalSpy errorSignal(&camera, SIGNAL(error(QCamera::Error)));
+    camera.capture(QString::fromLatin1("/dev/null"));
+    QCOMPARE(errorSignal.size(), 1);
+    QCOMPARE(camera.error(), QCamera::NotReadyToCaptureError);
 }
 
 void tst_QCamera::testCameraExposure()
