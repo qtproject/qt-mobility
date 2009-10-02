@@ -14,4 +14,6 @@ SUBDIRS = \
         qmediasource \
         qradioplayer \
         qvideowidget \
-        qmediapluginloader
+        qmediapluginloader \
+        qmediaserviceprovider
+
