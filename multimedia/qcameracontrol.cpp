@@ -40,7 +40,7 @@
     \ingroup multimedia
 
     \preliminary
-    \brief The abstract class for controling still or video cameras, this is provided
+    \brief The QCameraControl class provides control of still or video cameras, this is supplied
     by a QAbstractMediaService object, and is used by QCamera.
 
     \sa QAbstractMediaService, QCamera

@@ -41,7 +41,8 @@
     \ingroup multimedia
 
     \preliminary
-    \brief The abstract class for controling the tuning of radio devices.
+    \brief The QRadioPlayerControl class is an abstract class for controling
+    the tuning of radio devices.
 
     \sa QAbstractMediaService, QRadioPlayer
 */
