@@ -5261,13 +5261,13 @@
             <contents name="asynchronous-api-usage" title="Asynchronous API Usage" level="2"/>
             <contents name="requesting-contacts" title="Requesting Contacts" level="3"/>
             <contents name="other-asynchronous-operations" title="Other Asynchronous Operations" level="3"/>
-            <contents name="manager-settings-and-configuration" title="Manager Settings And Configuration" level="2"/>
-            <contents name="loading-the-manager-for-a-specific-backend" title="Loading the manager for a specific backend" level="3"/>
-            <contents name="loading-a-manager-with-specific-parameters" title="Loading a manager with specific parameters" level="3"/>
+            <contents name="manager-settings-and-configuration" title="Manager Settings And Configuration" level="1"/>
+            <contents name="loading-the-manager-for-a-specific-backend" title="Loading the manager for a specific backend" level="2"/>
+            <contents name="loading-a-manager-with-specific-parameters" title="Loading a manager with specific parameters" level="2"/>
             <contents name="building-and-compiling" title="Building and compiling" level="1"/>
             <contents name="reference-documentation" title="Reference documentation" level="1"/>
             <contents name="main-classes" title="Main classes" level="2"/>
-            <contents name="detail-leaf-classes" title="Detail leaf classes" level="2"/>
+            <contents name="contact-details-leaf-classes" title="&quot;Contact Details&quot; Leaf Classes" level="2"/>
             <contents name="asynchronous-requests" title="Asynchronous Requests" level="2"/>
             <contents name="contact-selection" title="Contact Selection" level="2"/>
             <contents name="actions" title="Actions" level="2"/>
@@ -5327,8 +5327,9 @@
             <contents name="bearer-monitor-example" title="Bearer Monitor Example" level="2"/>
             <contents name="classes" title="Classes" level="1"/>
         </page>
+        <page access="public" status="commendable" name="multimedia" href="multimedia.html" subtype="group" title="Mobility Multimedia" fulltitle="Mobility Multimedia" subtitle="" location="multimedia.qdoc"/>
         <page access="public" status="commendable" name="multimedia.html" href="multimedia.html" subtype="page" title="Multimedia" fulltitle="Multimedia" subtitle="" location="multimedia.qdoc">
-            <contents name="introduction" title="Introduction" level="1"/>
+            <contents name="overview" title="Overview" level="1"/>
             <contents name="reference-documentation" title="Reference documentation" level="1"/>
             <contents name="main-classes" title="Main classes" level="2"/>
             <contents name="classes-for-service-implementers" title="Classes for service implementers." level="2"/>
