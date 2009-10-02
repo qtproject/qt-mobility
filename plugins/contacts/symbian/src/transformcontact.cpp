@@ -146,13 +146,13 @@ void TransformContact::transformContactL(
 			fieldSet->AddL(*fieldList.at(j));
 		}
 		
-		// Add contact's UID
-		if (detailList.at(i).definitionName() == QContactGuid::DefinitionName)
-		{
-            transformGuidDetailL(detailList.at(i), contactItem);
-		}
+		// Add contact's UID - just ignored silently since it's read only
+		//if (detailList.at(i).definitionName() == QContactGuid::DefinitionName)
+		//{
+        //    transformGuidDetailL(detailList.at(i), contactItem);
+		//}
 		
-	    // Add contact's timestamp - just ignored silently for now
+	    // Add contact's timestamp - just ignored silently since it's read only
 	    //if (detailList.at(i).definitionName() == QContactTimestamp::DefinitionName)
 	    //{
         //    transformTimestampDetailL(detailList.at(i), contactItem);
