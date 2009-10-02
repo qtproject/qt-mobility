@@ -16,7 +16,7 @@ symbian:QCONTACTACTION_PLUGINS_DEPLOY.sources = contacts_sendemailactionfactory.
 
 wince* {
     DLL_SUFFIX = ".dll"
-    CONFIG(debug, debug|release): DLL_SUFFIX="d.dll"
+    CONFIG(debug, debug|release): debug_and_release: DLL_SUFFIX="d.dll"
     QCONTACTACTION_PLUGINS_DEPLOY.sources = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/plugins/contacts/contacts_sendemailactionfactory$$DLL_SUFFIX
 }
 

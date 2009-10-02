@@ -22,7 +22,7 @@ symbian|wince* {
     symbian:QCONTACTMANAGER_PLUGINS_DEPLOY.sources = $$join(TESTDLLS, ".dll ", " ", ".dll")
     wince* {
         DLL_SUFFIX = ".dll"
-        CONFIG(debug, debug|release): DLL_SUFFIX="d.dll"
+        CONFIG(debug, debug|release): debug_and_release: DLL_SUFFIX="d.dll"
         QCONTACTMANAGER_PLUGINS_DEPLOY.sources = $$join(TESTDLLS, "$$DLL_SUFFIX $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/plugins/contacts/", "$$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/plugins/contacts/", "$$DLL_SUFFIX")
     }
     QCONTACTMANAGER_PLUGINS_DEPLOY.path = ./plugins/contacts
