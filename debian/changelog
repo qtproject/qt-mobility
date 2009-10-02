@@ -1,3 +1,9 @@
+libbearer (0.24) unstable; urgency=low
+
+  * Emit onlineStateChanged signal.
+
+ -- Jukka Rissanen <jukka.rissanen@nokia.com>  Thu,  1 Oct 2009 13:39:36 +0300
+
 libbearer (0.23) unstable; urgency=low
 
   * Fixes: NB#132694 - Connecting to specific IAP does not work.

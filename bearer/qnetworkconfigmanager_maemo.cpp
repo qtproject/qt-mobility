@@ -302,7 +302,7 @@ void QNetworkConfigurationManagerPrivate::deleteConfiguration(QString& iap_id)
      */
     if (accessPointConfigurations.contains(iap_id)) {
 	QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.take(iap_id);
-	if (priv) {
+	if (priv.data()) {
 	    priv->isValid = false;
 #ifdef BEARER_MANAGEMENT_DEBUG
 	    qDebug() << "IAP" << iap_id << "was removed from storage.";
@@ -311,6 +311,7 @@ void QNetworkConfigurationManagerPrivate::deleteConfiguration(QString& iap_id)
 	    QNetworkConfiguration item;
 	    item.d = priv;
 	    emit configurationRemoved(item);
+	    configChanged(priv.data(), false);
 	} else
 	    qWarning("Configuration not found for IAP %s", iap_id.toAscii().data());
     } else {
@@ -403,6 +404,7 @@ void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
 	    QNetworkConfiguration item;
 	    item.d = ptr;
 	    emit configurationAdded(item);
+	    configChanged(ptr.data(), true);
 	} else {
 	    qWarning("IAP %s does not have \"type\" field defined, skipping this IAP.", iap_id.toAscii().data());
 	}
@@ -415,7 +417,7 @@ void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
 	 * accordingly
 	 */
 	QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr = accessPointConfigurations.take(iap_id);
-	if (ptr) {
+	if (ptr.data()) {
 	    Maemo::IAPConf changed_iap(iap_id);
 	    QString iap_type = changed_iap.value("type").toString();
 	    bool update_needed = false; /* if IAP type or ssid changed, we need to change the state */
@@ -592,7 +594,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	    /* The network_id is IAP id, so the IAP is a known one */
 	    QString iapid = ap.scan.network_id.data();
 	    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.take(iapid);
-	    if (priv) {
+	    if (priv.data()) {
 		priv->state = QNetworkConfiguration::Discovered; /* Defined is set automagically */
 		priv->network_attrs = ap.scan.network_attrs;
 		priv->service_id = ap.scan.service_id;
@@ -679,7 +681,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	    //qDebug() << i.key() << ": " << iap_id;
 
 	    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.take(iap_id);
-	    if (priv) {
+	    if (priv.data()) {
 		priv->isValid = false;
 #ifdef BEARER_MANAGEMENT_DEBUG
 		qDebug() << "IAP" << iap_id << "was removed as it was not found in scan.";
@@ -688,6 +690,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 		QNetworkConfiguration item;
 		item.d = priv;
 		emit configurationRemoved(item);
+		configChanged(priv.data(), false);
 
 		//if we would have SNAP support we would have to remove the references
 		//from existing ServiceNetworks to the removed access point configuration
@@ -734,6 +737,27 @@ void QNetworkConfigurationManagerPrivate::cleanup()
 {
     iapMonitor().cleanup();
 }
+
+
+void QNetworkConfigurationManagerPrivate::configChanged(QNetworkConfigurationPrivate *ptr, bool added)
+{
+    if (added) {
+	if (ptr && ptr->state == QNetworkConfiguration::Active) {
+	    onlineConfigurations++;
+	    if (!firstUpdate && onlineConfigurations == 1)
+		emit onlineStateChanged(true);
+	}
+    } else {
+	if (ptr && ptr->state == QNetworkConfiguration::Active) {
+	    onlineConfigurations--;
+	    if (!firstUpdate && onlineConfigurations == 0)
+		emit onlineStateChanged(false);
+	    if (onlineConfigurations < 0)
+		onlineConfigurations = 0;
+	}
+    }
+}
+
 
 #include "qnetworkconfigmanager_maemo.moc"
 
