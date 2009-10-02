@@ -223,7 +223,7 @@ void tst_QMediaPlaylist::removeItems()
 
 void tst_QMediaPlaylist::saveAndLoad()
 {
-    /*
+    //it's necessary to ensure the m3u plugin is loaded for this test
     QMediaPlaylist playlist;
     playlist.appendItem(source1);
     playlist.appendItem(source2);
@@ -243,7 +243,8 @@ void tst_QMediaPlaylist::saveAndLoad()
     QVERIFY(res);
     QCOMPARE(playlist.size(), playlist2.size());
     QCOMPARE(playlist.media(0), playlist2.media(0));
-    */
+    QCOMPARE(playlist.media(1), playlist2.media(1));
+    QCOMPARE(playlist.media(3), playlist2.media(3));
 }
 
 QTEST_MAIN(tst_QMediaPlaylist)
