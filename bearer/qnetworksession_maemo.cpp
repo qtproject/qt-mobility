@@ -314,11 +314,12 @@ void QNetworkSessionPrivate::updateState(QNetworkSession::State newState)
 	if (state == QNetworkSession::Disconnected) {
 	    isActive = false;
 	    currentNetworkInterface = QString();
+	    publicConfig.d->state = QNetworkConfiguration::Defined;
+
 	} else if (state == QNetworkSession::Connected) {
 	    isActive = true;
-
-	    if (publicConfig.d &&
-		publicConfig.d->type == QNetworkConfiguration::UserChoice)
+	    publicConfig.d->state = QNetworkConfiguration::Active;
+	    if (publicConfig.d->type == QNetworkConfiguration::UserChoice)
 		publicConfig.d->type = QNetworkConfiguration::InternetAccessPoint;
 	}
 
@@ -565,7 +566,6 @@ void QNetworkSessionPrivate::do_open()
 	    currentBearerName = bearer_name;
 
 	publicConfig.d->isValid = true;
-
 	publicConfig.d->state = QNetworkConfiguration::Active;
 	publicConfig.d->type = QNetworkConfiguration::InternetAccessPoint;
 
