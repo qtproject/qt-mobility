@@ -35,13 +35,17 @@
 #include "qcontactdetaildefinition_p.h"
 
 /*!
- * \class QContactDetailDefinition
- *
- * The QContactDetailDefinition class provides the specification for
- * a detail that can be included in any particular QContact.
- * The definition does not include any data, but defines
- * the semantics of the representation and use of data
- * details that are stored in a QContact.
+  \class QContactDetailDefinition
+  \brief The QContactDetailDefinition class supplies a definition of the
+    semantics of the Details data representation and use.
+    \ingroup contacts-main
+ 
+  The QContactDetailDefinition class provides the specification for
+  a detail that can be included in any particular QContact.
+  The definition does not include any data, but defines
+  the semantics of the representation and use of data
+  details that are stored in a QContact.
+  \sa QContact
  */
 
 /*!

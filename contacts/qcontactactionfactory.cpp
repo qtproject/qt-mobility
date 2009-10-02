@@ -34,8 +34,9 @@
 #include "qcontactactionfactory.h"
 
 /*!
- * \class QContactActionFactory
- * \brief Provides an interface for clients to retrieve instances of action implementations
+  \class QContactActionFactory
+  \brief The QContactActionfactory class provides an interface for clients
+  to retrieve instances of action implementations
  */
 
 QContactActionFactory::~QContactActionFactory()

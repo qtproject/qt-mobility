@@ -45,10 +45,12 @@
 #include <QSet>
 
 /*!
- * \class QContactManager
- *
- * This class provides adding, updating and removal of contacts and groups.
- * It also provides definitions for fields that can be found in contacts.
+  \class QContactManager
+  \brief The QContactManager class provides control over contacts and groups.
+  \ingroup contacts-main
+ 
+  This class provides adding, updating and removal of contacts and groups.
+  It also provides definitions for fields that can be found in contacts.
  */
 
 /*!

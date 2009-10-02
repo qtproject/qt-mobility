@@ -35,10 +35,12 @@
 #include "qcontactgroup_p.h"
 
 /*! \class QContactGroup
- *
- * The QContactGroup class provides a collection of contacts that share some
- * commonality.  A QContactGroup has a name and consists of a list of ids
- * of contacts who are a member of the group.
+    \brief The QContactGroup class acts as a container for a list of contacts.
+    \ingroup contacts-main
+ 
+  The QContactGroup class provides a collection of contacts that share some
+  commonality.  A QContactGroup has a name and consists of a list of ids
+  of contacts who are a member of the group.
  */
 
 /*!

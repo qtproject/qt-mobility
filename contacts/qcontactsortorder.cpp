@@ -35,8 +35,8 @@
 #include "qcontactsortorder_p.h"
 
 /*!
- * \class QContactSortOrder
- * \brief The QContactSortOrder class defines how a list of contacts should be ordered according to some criteria
+  \class QContactSortOrder
+  \brief The QContactSortOrder class defines how a list of contacts should be ordered according to some criteria
  */
 
 /*!

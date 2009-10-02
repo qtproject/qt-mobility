@@ -42,64 +42,65 @@ Q_DEFINE_LATIN1_LITERAL(QContactDetail::ContextHome, "Home");
 Q_DEFINE_LATIN1_LITERAL(QContactDetail::ContextWork, "Work");
 
 /*!
- * \class QContactDetail
- *
- * \brief The QContactDetail class provides access to a single, complete detail about a contact.
- *
- * All of the information for a contact is stored in one or more QContactDetail objects.
- *
- * A detail is a group of logically related bits of data - for example, a street address is a single
- * detail that has multiple fields (number, region, country etc).  Every QContactDetail has an
- * associated QContactDetailDefinition id that describes the fields, their data type, any
- * restrictions on their values, and any restrictions on creating or updating details of that
- * definition.
- *
- * A field which is common to all details is the context field.  This field is intended to store the
- * context that this detail is associated with.  Commonly this will be something like
- * "Home" or "Work", although no limitations are placed on which values may be stored in this field.
- *
- * It is possible to inherit from QContactDetail to provide convenience or
- * standardized access to values.  For example, \l QContactPhoneNumber provides
- * a convenient API for manipulating a QContactDetail as a phone number, according
- * to the schema.
- *
- * If you wish to create your own, customized contact detail, you should use
- * the \l Q_DECLARE_CUSTOM_CONTACT_DETAIL macro in order to ensure proper
- * operation.  See the predefined leaf classes (like \l QContactPhoneNumber,
- * \l QContactAddress) for more information.
- *
- * QContactDetail objects act like values.  In general, you can assign them
- * to and fro and have reasonable behaviour, like the following example.
- *
- * \code
- *
- * QContactPhoneNumber number;
- * number.setNumber("555-1212");
- * // number.value(QContactPhoneNumber::FieldNumber) == "555-1212";
- * // number.definitionName() == QContactPhoneNumber::staticType()
- *
- * QContactDetail detail = number;
- * // detail.value(QContactPhoneNumber::FieldNumber) == "555-1212";
- * // detail.definitionName() == QContactPhoneNumber::staticType()
- *
- * QContactPhoneNumber otherNumber = detail;
- * // otherNumber.number() == "555-1212";
- * // otherNumber.definitionName() == QContactPhoneNumber::staticType()
- *
- * QContactAddress address = detail;
- * // address is now a default constructed QContactAddress
- * // address.error() == QContactDetail::IncompatibleAssignmentError
- * // address.value(QContactPhoneNumber::FieldNumber) is empty
- * // address.definitionName() == QContactAddress::staticType()
- *
- * QContactAddress otherAddress = number;
- * // otherAddress is now a default constructed QContactAddress
- * // otherAddress.error() == QContactDetail::IncompatibleAssignmentError
- * // otherAddress.value(QContactPhoneNumber::FieldNumber) is empty
- * // otherAddress.definitionName() == QContactAddress::staticType()
- * \endcode
- *
- * \sa QContact, QContactDetailDefinition, Q_DECLARE_CUSTOM_CONTACT_DETAIL
+  \class QContactDetail
+ 
+  \brief The QContactDetail class provides access to a single, complete detail about a contact.
+  \ingroup contacts-main
+ 
+  All of the information for a contact is stored in one or more QContactDetail objects.
+ 
+  A detail is a group of logically related bits of data - for example, a street address is a single
+  detail that has multiple fields (number, region, country etc).  Every QContactDetail has an
+  associated QContactDetailDefinition id that describes the fields, their data type, any
+  restrictions on their values, and any restrictions on creating or updating details of that
+  definition.
+ 
+  A field which is common to all details is the context field.  This field is intended to store the
+  context that this detail is associated with.  Commonly this will be something like
+  "Home" or "Work", although no limitations are placed on which values may be stored in this field.
+ 
+  It is possible to inherit from QContactDetail to provide convenience or
+  standardized access to values.  For example, \l QContactPhoneNumber provides
+  a convenient API for manipulating a QContactDetail as a phone number, according
+  to the schema.
+ 
+  If you wish to create your own, customized contact detail, you should use
+  the \l Q_DECLARE_CUSTOM_CONTACT_DETAIL macro in order to ensure proper
+  operation.  See the predefined leaf classes (like \l QContactPhoneNumber,
+  \l QContactAddress) for more information.
+ 
+  QContactDetail objects act like values.  In general, you can assign them
+  to and fro and have reasonable behaviour, like the following example.
+ 
+  \code
+ 
+  QContactPhoneNumber number;
+  number.setNumber("555-1212");
+  // number.value(QContactPhoneNumber::FieldNumber) == "555-1212";
+  // number.definitionName() == QContactPhoneNumber::staticType()
+ 
+  QContactDetail detail = number;
+  // detail.value(QContactPhoneNumber::FieldNumber) == "555-1212";
+  // detail.definitionName() == QContactPhoneNumber::staticType()
+ 
+  QContactPhoneNumber otherNumber = detail;
+  // otherNumber.number() == "555-1212";
+  // otherNumber.definitionName() == QContactPhoneNumber::staticType()
+ 
+  QContactAddress address = detail;
+  // address is now a default constructed QContactAddress
+  // address.error() == QContactDetail::IncompatibleAssignmentError
+  // address.value(QContactPhoneNumber::FieldNumber) is empty
+  // address.definitionName() == QContactAddress::staticType()
+ 
+  QContactAddress otherAddress = number;
+  // otherAddress is now a default constructed QContactAddress
+  // otherAddress.error() == QContactDetail::IncompatibleAssignmentError
+  // otherAddress.value(QContactPhoneNumber::FieldNumber) is empty
+  // otherAddress.definitionName() == QContactAddress::staticType()
+  \endcode
+ 
+  \sa QContact, QContactDetailDefinition, Q_DECLARE_CUSTOM_CONTACT_DETAIL
  */
 
 /*!

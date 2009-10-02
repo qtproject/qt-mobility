@@ -40,11 +40,11 @@
 #include "qcontactmanager.h"
 
 /*!
- * \class QContactFilter
- * \brief The QContactFilter class is used to select contacts made available through a QContactManager
- *
- * This class is used as a parameter to various functions offered by QContactManager, to allow
- * selection of contacts which have certain details or properties.
+  \class QContactFilter
+  \brief The QContactFilter class is used to select contacts made available through a QContactManager
+ 
+  This class is used as a parameter to various functions offered by QContactManager, to allow
+  selection of contacts which have certain details or properties.
  */
 
 /*!

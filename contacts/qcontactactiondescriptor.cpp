@@ -35,9 +35,10 @@
 #include "qcontactactiondescriptor_p.h"
 
 /*!
- * \class QContactActionDescriptor
- * \brief Contains information that uniquely identifies a specific implementation of an action
- */
+  \class QContactActionDescriptor
+  \brief The QContactActionDescriptor class contains information that
+  uniquely identifies a specific implementation of an action
+*/
 
 /*!
  * Constructs a new action descriptor for the implementation of the action identified by the given \a actionName
