@@ -120,7 +120,7 @@ private:
     int lastIndex;
     bool addingContact;
     bool editingContact;
-	bool smallScreenSize;
+    bool smallScreenSize;
     QList<QContact> contacts;
     QList<QUniqueId> contactGroups;
 

@@ -316,7 +316,13 @@ QContact PhoneBook::buildContact() const
     if (!address.street().isEmpty())
         c.saveDetail(&address);
 
-    c.setGroups(contactGroups);
+    foreach (const QUniqueId& gid, contactGroups) {
+        QContactRelationship groupRelationship;
+        QContact currGroup = cm->contact(gid);
+        groupRelationship.setRelatedContactUid(QString::number(gid));
+        groupRelationship.setRelatedContactLabel(currGroup.displayLabel().label());
+        c.saveDetail(&groupRelationship);
+    }
 
     return c;
 }
@@ -326,7 +332,16 @@ void PhoneBook::displayContact()
     QContact c = contacts.value(currentIndex);
     c = cm->contact(c.id()); // this removes any unsaved information.
 
-    contactGroups = c.groups();
+    QList<QContactDetail> relationships = c.details(QContactRelationship::DefinitionName);
+    QList<QUniqueId> currentGroups;
+    foreach (const QContactRelationship& currRel, relationships) {
+        if (currRel.relationshipType() == QContactRelationship::RelationshipTypeIsMemberOf) {
+            bool ok = false;
+            QUniqueId result = QUniqueId(currRel.relatedContactUid().toUInt(&ok));
+            currentGroups.append(result);
+        }
+    }
+    contactGroups = currentGroups;
 
     // display the name
     nameLine->setText(c.displayLabel().label());

@@ -875,12 +875,6 @@ Q_DEFINE_LATIN1_LITERAL(QContactType::TypeContact, "Contact");
 Q_DEFINE_LATIN1_LITERAL(QContactType::TypeGroup, "Group");
 
 /*!
- * \variable QContactType::TypeMetacontact
- * The constant attribute value which describes the contact as being a metacontact
- */
-Q_DEFINE_LATIN1_LITERAL(QContactType::TypeMetacontact, "Metacontact");
-
-/*!
  * \variable QContactPhoneNumber::SubTypeLandline
  * The constant attribute value which describes the phone number as identifying a landline phone
  */

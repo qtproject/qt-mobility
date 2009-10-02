@@ -386,7 +386,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::String;
     subTypes.clear();
-    subTypes << QString(QLatin1String(QContactType::TypeContact)) << QString(QLatin1String(QContactType::TypeGroup)) << QString(QLatin1String(QContactType::TypeMetacontact));
+    subTypes << QString(QLatin1String(QContactType::TypeContact)) << QString(QLatin1String(QContactType::TypeGroup));
     f.allowableValues = subTypes;
     d.setName(QContactType::DefinitionName);
     fields.insert(QContactType::FieldType, f); // note: NO CONTEXT!!

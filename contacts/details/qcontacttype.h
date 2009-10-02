@@ -49,13 +49,11 @@ public:
     const char* FieldType;
     const char* TypeContact;
     const char* TypeGroup;
-    const char* TypeMetacontact;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactType, "Type")
     Q_DECLARE_LATIN1_LITERAL(FieldType, "Type");
     Q_DECLARE_LATIN1_LITERAL(TypeContact, "Contact");
     Q_DECLARE_LATIN1_LITERAL(TypeGroup, "Group");
-    Q_DECLARE_LATIN1_LITERAL(TypeMetacontact, "Metacontact");
 #endif
 
     void setType(const QString& type) {setValue(FieldType, type);}
