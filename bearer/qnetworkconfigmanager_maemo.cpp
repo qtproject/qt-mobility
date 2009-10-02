@@ -45,7 +45,6 @@
 
 #include <QDebug>
 #include <QtDBus>
-#include <QRegExp>
 #include <QHash>
 
 #include <wlancond.h>
@@ -369,8 +368,6 @@ uint32_t QNetworkConfigurationManagerPrivate::getNetworkAttrs(bool is_iap_id,
 
 void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
 {
-    const QRegExp wlan = QRegExp("WLAN.*");
-
     if (!accessPointConfigurations.contains(iap_id)) {
 	Maemo::IAPConf saved_iap(iap_id);
 	QString iap_type = saved_iap.value("type").toString();
@@ -385,7 +382,7 @@ void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
 	    cpPriv->network_attrs = getNetworkAttrs(true, iap_id, iap_type, QString());
 	    cpPriv->service_id = saved_iap.value("service_id").toString();
 	    cpPriv->service_type = saved_iap.value("service_type").toString();
-	    if (iap_type.contains(wlan)) {
+	    if (iap_type.startsWith("WLAN")) {
 		QByteArray ssid = saved_iap.value("wlan_ssid").toByteArray();
 		if (ssid.isEmpty()) {
 		    qWarning() << "Cannot get ssid for" << iap_id;
@@ -435,7 +432,7 @@ void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
 		    ptr->iap_type = iap_type;
 		    update_needed = true;
 		}
-		if (iap_type.contains(wlan)) {
+		if (iap_type.startsWith("WLAN")) {
 		    QByteArray ssid = changed_iap.value("wlan_ssid").toByteArray();
 		    if (ssid.isEmpty()) {
 			qWarning() << "Cannot get ssid for" << iap_id;
@@ -468,8 +465,6 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 
     /* All the scanned access points */
     QList<Maemo::IcdScanResult> scanned;
-
-    const QRegExp wlan = QRegExp("WLAN.*");
 
     /* Turn on IAP monitoring */
     iapMonitor().setup(this);
@@ -512,7 +507,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	}
 
 	QString iap_type = saved_ap.value("type").toString();
-	if (iap_type.contains(wlan)) {
+	if (iap_type.startsWith("WLAN")) {
 	    ssid = saved_ap.value("wlan_ssid").toByteArray();
 	    if (ssid.isEmpty()) {
 		qWarning() << "Cannot get ssid for" << iap_id;
@@ -607,7 +602,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 		qDebug("IAP: %s, ssid: %s, discovered", iapid.toAscii().data(), priv->network_id.data());
 #endif
 
-		if (!ap.scan.network_type.contains(wlan))
+		if (!ap.scan.network_type.startsWith("WLAN"))
 		    continue; // not a wlan AP
 
 		/* Remove scanned AP from known configurations so that we can
