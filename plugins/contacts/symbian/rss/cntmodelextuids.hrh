@@ -59,6 +59,11 @@
  */
 #define KUidContactFieldSyncTargetValue		0x200100E6
 
+// !! In case this is undefined on earlier platforms
+#ifndef KUidContactFieldGEOValue
+#define KUidContactFieldGEOValue            0x10274DB2
+#endif
+
 #endif // CNTMODELEXTUIDS_HRH
 
 // End of File
