@@ -77,9 +77,110 @@ public:
                 plugin->release(service);
         }
     }
+
+    QMediaServiceProvider::SupportEstimate canPlay(const QByteArray &serviceType,
+                                                   const QString &mimeType,
+                                                   const QStringList& codecs) const
+    {
+        bool found = false;
+        QMediaServiceProvider::SupportEstimate supportEstimate = NotSupported;
+
+        foreach(QObject *obj, loader()->instances(serviceType)) {
+            QMediaServiceProviderSupportedFormatsInterface *iface =
+                    qobject_cast<QMediaServiceProviderSupportedFormatsInterface*>(obj);
+
+            if (iface) {
+                found = true;
+                supportEstimate = qMax(supportEstimate, iface->canPlay(mimeType, codecs));
+            }
+        }
+
+        //don't return PreferedService
+        supportEstimate = qMin(supportEstimate, ProbablySupported);
+
+        return found ? supportEstimate : MaybeSupported;
+    }
+
+    QList<QByteArray> devices(const QByteArray &serviceType) const
+    {
+        QList<QByteArray> res;
+
+        foreach(QObject *obj, loader()->instances(serviceType)) {
+            QMediaServiceProviderSupportedDevicesInterface *iface =
+                    qobject_cast<QMediaServiceProviderSupportedDevicesInterface*>(obj);
+
+            if (iface) {
+                res.append(iface->devices());
+            }
+        }
+
+        return res;
+    }
+
+    QString deviceDescription(const QByteArray &serviceType, const QByteArray &device)
+    {
+        foreach(QObject *obj, loader()->instances(serviceType)) {
+            QMediaServiceProviderSupportedDevicesInterface *iface =
+                    qobject_cast<QMediaServiceProviderSupportedDevicesInterface*>(obj);
+
+            if (iface) {
+                if (iface->devices().contains(device))
+                    return iface->deviceDescription(device);
+            }
+        }
+
+        return QString();
+    }
 };
 
 Q_GLOBAL_STATIC(QPluginServiceProvider, pluginProvider);
+
+/*!
+  \enum QMediaServiceProvider::SupportEstimate
+
+  \item NotSupported
+  \item MaybeSupported
+  \item ProbablySupported
+  \item PreferedService
+*/
+
+/*!
+  \fn QMediaServiceProvider::canPlay(const QString &type, const QStringList& codecs) const
+
+  Returns how confident the available service is that it can play media resources of the given mime \a type
+  with content encoded with \a codecs. If multiple services with the same \a serviceType are
+  available, the result from the most confident one is returned.
+*/
+QMediaServiceProvider::SupportEstimate QMediaServiceProvider::canPlay(const QByteArray &serviceType,
+                                                                      const QString &mimeType,
+                                                                      const QStringList& codecs) const
+{
+    Q_UNUSED(serviceType);
+    Q_UNUSED(mimeType);
+    Q_UNUSED(codecs);
+
+    return MaybeSupported;
+}
+
+/*!
+  Returns the list of devices related to \a service type.
+*/
+QList<QByteArray> QMediaServiceProvider::devices(const QByteArray &service) const
+{
+    Q_UNUSED(service);
+    return QList<QByteArray>();
+}
+
+/*!
+  Returns the description of \a device related to \a service type,
+  suitable to be displayed to user.
+*/
+QString QMediaServiceProvider::deviceDescription(const QByteArray &serviceType, const QByteArray &device)
+{
+    Q_UNUSED(serviceType);
+    Q_UNUSED(device);
+    return QString();
+}
 
 
 QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()

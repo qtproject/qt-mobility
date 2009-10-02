@@ -88,7 +88,7 @@ void QMediaObjectPrivate::_q_notify()
     \value Date The date of the media. QDate.
     \value UserRating A user rating of the media. int [0..100].
     \value Keywords A list of keywords describing the media.  QStringList.
-    \value Language
+    \value Language The language of media, as an ISO 639-2 code.
 
     \value Publisher The publisher of the media.  QString.
     \value Copyright The media's copyright notice.  QString.
