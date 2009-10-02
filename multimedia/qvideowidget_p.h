@@ -125,6 +125,8 @@ public:
     QVideoRendererWidget(QVideoRendererControl *control, QWidget *parent = 0);
     ~QVideoRendererWidget();
 
+    void clearSurface();
+
     void setBrightness(int brightness);
     void setContrast(int contrast);
     void setHue(int hue);

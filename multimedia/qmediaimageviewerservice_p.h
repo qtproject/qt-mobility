@@ -38,6 +38,11 @@
 #include <multimedia/qmediaservice.h>
 #include <multimedia/qmediaimageviewer.h>
 #include <multimedia/qvideooutputcontrol.h>
+#include <multimedia/qvideorenderercontrol.h>
+#include <multimedia/qvideowidget.h>
+#include <multimedia/qvideowidgetcontrol.h>
+
+#include <QtGui/qimage.h>
 
 class QAbstractVideoSurface;
 class QNetworkAccessManager;
@@ -57,9 +62,6 @@ public:
 
 private:
     Q_DECLARE_PRIVATE(QMediaImageViewerService)
-#ifndef QT_NO_MULTIMEDIA
-    Q_PRIVATE_SLOT(d_func(), void _q_surfaceChanged(QAbstractVideoSurface *surface))
-#endif
     Q_PRIVATE_SLOT(d_func(), void _q_outputChanged(QVideoOutputControl::Output output))
     friend class QMediaImageViewerControl;
     friend class QMediaImageViewerControlPrivate;
@@ -76,8 +78,7 @@ public:
 
     QMediaImageViewer::MediaStatus mediaStatus() const;
 
-    QMediaSource media() const;
-    void setMedia(const QMediaSource &media);
+    void showMedia(const QMediaSource &media);
 
     QMediaResource currentMedia() const;
 
@@ -93,5 +94,102 @@ private:
 
 #define QMediaImageViewerControl_iid "com.nokia.Qt.QMediaImageViewerControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QMediaImageViewerControl, QMediaImageViewerControl_iid)
+
+class QMediaImageViewerRenderer : public QVideoRendererControl
+{
+    Q_OBJECT
+public:
+    QMediaImageViewerRenderer(QObject *parent = 0);
+    ~QMediaImageViewerRenderer();
+
+    QAbstractVideoSurface *surface() const;
+    void setSurface(QAbstractVideoSurface *surface);
+
+    void showImage(const QImage &image);
+
+Q_SIGNALS:
+    void surfaceChanged(QAbstractVideoSurface *surface);
+
+private:
+    QAbstractVideoSurface *m_surface;
+    QImage m_image;
+};
+
+class QMediaImageViewerWidget : public QWidget
+{
+    Q_OBJECT
+public:
+    QMediaImageViewerWidget(QWidget *parent = 0);
+
+    void showImage(const QImage &image);
+
+    QVideoWidget::AspectRatio aspectRatio() const { return m_aspectRatio; }
+    void setAspectRatio(QVideoWidget::AspectRatio ratio);
+
+    QSize customAspectRatio() const { return m_customAspectRatio; }
+    void setCustomAspectRatio(const QSize &ratio);
+
+    QSize sizeHint() const;
+
+protected:
+    void paintEvent(QPaintEvent *event);
+
+private:
+    QVideoWidget::AspectRatio m_aspectRatio;
+    QSize m_customAspectRatio;
+    QImage m_image;
+};
+
+class QMediaImageViewerWidgetControl : public QVideoWidgetControl
+{
+    Q_OBJECT
+public:
+    QMediaImageViewerWidgetControl(QMediaImageViewerWidget *widget, QObject *parent = 0);
+
+    QWidget *videoWidget();
+
+    QVideoWidget::AspectRatio aspectRatio() const { return m_widget->aspectRatio(); }
+    void setAspectRatio(QVideoWidget::AspectRatio ratio);
+
+    QSize customAspectRatio() const { return m_widget->customAspectRatio(); }
+    void setCustomAspectRatio(const QSize &customRatio);
+
+    bool isFullScreen() const { return m_fullScreen; }
+    void setFullScreen(bool fullScreen);
+
+    int brightness() const { return 0; }
+    void setBrightness(int) {}
+
+    int contrast() const { return 0; }
+    void setContrast(int) {}
+
+    int hue() const { return 0; }
+    void setHue(int) {}
+
+    int saturation() const { return 0; }
+    void setSaturation(int) {}
+
+private:
+    QMediaImageViewerWidget *m_widget;
+    bool m_fullScreen;
+};
+
+class QMediaImageViewerOutputControl : public QVideoOutputControl
+{
+    Q_OBJECT
+public:
+    QMediaImageViewerOutputControl(QObject *parent = 0);
+
+    QList<Output> availableOutputs() const;
+
+    Output output() const { return m_output; }
+    void setOutput(Output output);
+
+Q_SIGNALS:
+    void outputChanged(QVideoOutputControl::Output output);
+
+private:
+    Output m_output;
+};
 
 #endif

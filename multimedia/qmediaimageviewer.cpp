@@ -49,7 +49,7 @@ class QMediaImageViewerPrivate : public QMediaObjectPrivate
     Q_DECLARE_PUBLIC(QMediaImageViewer)
 public:
     QMediaImageViewerPrivate():
-        slideControl(0), playlist(0),
+        viewerControl(0), playlist(0),
         state(QMediaImageViewer::StoppedState), timeout(3000)
     {
     }
@@ -57,7 +57,7 @@ public:
     void _q_playlistMediaChanged(const QMediaSource &source);
     void _q_playlistDestroyed(QObject *playlist);
 
-    QMediaImageViewerControl *slideControl;
+    QMediaImageViewerControl *viewerControl;
     QMediaPlaylist *playlist;
     QMediaImageViewer::State state;
     int timeout;
@@ -69,7 +69,7 @@ void QMediaImageViewerPrivate::_q_playlistMediaChanged(const QMediaSource &sourc
 {
     media = source;
 
-    slideControl->setMedia(media);
+    viewerControl->showMedia(media);
 
     emit q_func()->mediaChanged(media);
 }
@@ -120,12 +120,12 @@ QMediaImageViewer::QMediaImageViewer(QObject *parent)
 {
     Q_D(QMediaImageViewer);
 
-    d->slideControl = qobject_cast<QMediaImageViewerControl*>(
+    d->viewerControl = qobject_cast<QMediaImageViewerControl*>(
             d->service->control(QMediaImageViewerControl_iid));
 
-    connect(d->slideControl, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)),
+    connect(d->viewerControl, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)),
             this, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)));
-    connect(d->slideControl, SIGNAL(currentMediaChanged(QMediaResource)),
+    connect(d->viewerControl, SIGNAL(currentMediaChanged(QMediaResource)),
             this, SIGNAL(currentMediaChanged(QMediaResource)));
 }
 
@@ -164,8 +164,8 @@ QMediaImageViewer::MediaStatus QMediaImageViewer::mediaStatus() const
 {
     Q_D(const QMediaImageViewer);
 
-    return d->slideControl
-            ? d->slideControl->mediaStatus()
+    return d->viewerControl
+            ? d->viewerControl->mediaStatus()
             : NoMedia;
 }
 
@@ -202,8 +202,8 @@ void QMediaImageViewer::setMedia(const QMediaSource &media)
     if (d->state != QMediaImageViewer::StoppedState)
         emit stateChanged(d->state = QMediaImageViewer::StoppedState);
 
-    if (d->slideControl)
-        d->slideControl->setMedia(d->media);
+    if (d->viewerControl)
+        d->viewerControl->showMedia(d->media);
 
     emit mediaChanged(d->media);
 }
@@ -223,8 +223,8 @@ QMediaResource QMediaImageViewer::currentMedia() const
 {
     Q_D(const QMediaImageViewer);
 
-    return d->slideControl
-            ? d->slideControl->currentMedia()
+    return d->viewerControl
+            ? d->viewerControl->currentMedia()
             : QMediaResource();
 }
 
@@ -321,7 +321,6 @@ void QMediaImageViewer::stop()
 
     switch (d->state) {
     case PlayingState:
-        qDebug("stop the timer");
         d->timer.stop();
         // fall through.
     case PausedState:

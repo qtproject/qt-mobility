@@ -148,9 +148,12 @@ QVideoRendererWidget::QVideoRendererWidget(QVideoRendererControl *control, QWidg
 
 QVideoRendererWidget::~QVideoRendererWidget()
 {
-    m_rendererControl->setSurface(0);
-
     delete m_surface;
+}
+
+void QVideoRendererWidget::clearSurface()
+{
+    m_rendererControl->setSurface(0);
 }
 
 void QVideoRendererWidget::setBrightness(int brightness)
@@ -578,7 +581,11 @@ QVideoWidget::~QVideoWidget()
         }
         delete d_ptr->windowBackend;
 #ifndef QT_NO_MULTIMEDIA
-        delete d_ptr->rendererBackend;
+        if (d_ptr->rendererBackend) {
+            d_ptr->rendererBackend->clearSurface();
+
+            delete d_ptr->rendererBackend;
+        }
 #endif
     }
     delete d_ptr;

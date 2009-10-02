@@ -38,7 +38,13 @@
 
 #include <multimedia/qmediaimageviewer.h>
 #include <multimedia/qmediaplaylist.h>
-#include <multimedia/qvideowidget.h>
+#include <multimedia/qmediaservice.h>
+#include <multimedia/qvideooutputcontrol.h>
+#include <multimedia/qvideorenderercontrol.h>
+#include <multimedia/qvideowidgetcontrol.h>
+
+#include <QtMultimedia/qabstractvideosurface.h>
+#include <QtMultimedia/qvideosurfaceformat.h>
 
 class tst_QMediaImageViewer : public QObject
 {
@@ -50,26 +56,46 @@ private slots:
     void setMedia_data();
     void setMedia();
     void playlist();
+    void outputControl();
+    void widgetControl();
+#ifndef QT_NO_MULTIMEDIA
+    void rendererControl();
+#endif
 
 public:
-    tst_QMediaImageViewer()
-        : m_imageDir(QLatin1String(TESTDATA_DIR))
-#ifndef Q_OS_WIN
-        , m_fileProtocol(QLatin1String("file://"))
-#else
-        , m_fileProtocol(QLatin1String("file:///"))
-#endif
-    {}
+    tst_QMediaImageViewer() : m_imageDir(QLatin1String(TESTDATA_DIR)) {}
 
 private:
     QUrl imageUri(const char *fileName) const {
-        return QUrl(m_fileProtocol + m_imageDir.absoluteFilePath(QLatin1String(fileName))); }
+        return QUrl::fromLocalFile(m_imageDir.absoluteFilePath(QLatin1String(fileName))); }
 
     QDir m_imageDir;
     QString m_fileProtocol;
 };
 
 Q_DECLARE_METATYPE(QMediaImageViewer::State)
+
+#ifndef QT_NO_MULTIMEDIA
+class QtTestVideoSurface : public QAbstractVideoSurface
+{
+public:
+    QList<QVideoFrame::PixelFormat> supportedPixelFormats(
+            QAbstractVideoBuffer::HandleType handleType) const {
+        QList<QVideoFrame::PixelFormat> formats;
+        if (handleType == QAbstractVideoBuffer::NoHandle) {
+            formats << QVideoFrame::Format_RGB32;
+        }
+        return formats;
+    }
+
+    QVideoFrame frame() const { return m_frame;  }
+
+    bool present(const QVideoFrame &frame) { m_frame = frame; return true; }
+
+private:
+    QVideoFrame m_frame;
+};
+#endif
 
 void tst_QMediaImageViewer::initTestCase()
 {
@@ -81,6 +107,7 @@ void tst_QMediaImageViewer::isValid()
     QMediaImageViewer viewer;
 
     QVERIFY(viewer.isValid());
+    QVERIFY(viewer.service() != 0);
 }
 
 void tst_QMediaImageViewer::setMedia_data()
@@ -139,8 +166,6 @@ void tst_QMediaImageViewer::setMedia()
     QFETCH(QMediaResource, currentMedia);
 
     QMediaImageViewer viewer;
-    QVideoWidget widget(&viewer);
-    widget.show();
 
     connect(&viewer, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)),
             &QTestEventLoop::instance(), SLOT(exitLoop()));
@@ -301,6 +326,180 @@ void tst_QMediaImageViewer::playlist()
     QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::NoMedia);
     QCOMPARE(playlist.currentPosition(), -1);
 }
+
+void tst_QMediaImageViewer::outputControl()
+{
+    QMediaImageViewer viewer;
+
+    QMediaService *service = viewer.service();
+    if (service == 0)
+        QSKIP("Image viewer object has no service.", SkipSingle);
+
+    QVideoOutputControl *outputControl = qobject_cast<QVideoOutputControl *>(
+            service->control(QVideoOutputControl_iid));
+
+    QVERIFY(outputControl != 0);
+
+    QVERIFY(outputControl->availableOutputs().contains(QVideoOutputControl::WidgetOutput));
+#ifndef QT_NO_MULTIMEDIA
+    QVERIFY(outputControl->availableOutputs().contains(QVideoOutputControl::RendererOutput));
+#endif
+    QVERIFY(!outputControl->availableOutputs().contains(QVideoOutputControl::UserOutput));
+
+    QCOMPARE(outputControl->output(), QVideoOutputControl::NoOutput);
+
+    outputControl->setOutput(QVideoOutputControl::WidgetOutput);
+    QCOMPARE(outputControl->output(), QVideoOutputControl::WidgetOutput);
+
+#ifndef QT_NO_MULTIMEDIA
+    outputControl->setOutput(QVideoOutputControl::RendererOutput);
+    QCOMPARE(outputControl->output(), QVideoOutputControl::RendererOutput);
+#endif
+
+    outputControl->setOutput(QVideoOutputControl::UserOutput);
+    QCOMPARE(outputControl->output(), QVideoOutputControl::NoOutput);
+}
+
+void tst_QMediaImageViewer::widgetControl()
+{
+    QMediaImageViewer viewer;
+
+    QMediaService *service = viewer.service();
+    if (service == 0)
+        QSKIP("Image viewer object has no service.", SkipSingle);
+
+    QVideoOutputControl *outputControl = qobject_cast<QVideoOutputControl *>(
+            service->control(QVideoOutputControl_iid));
+    if (outputControl == 0)
+        QSKIP("Image viewer object has no video output control.", SkipSingle);
+
+    QVideoWidgetControl *widgetControl = qobject_cast<QVideoWidgetControl *>(
+            service->control(QVideoWidgetControl_iid));
+    QVERIFY(widgetControl != 0);
+
+    QWidget *widget = widgetControl->videoWidget();
+    QVERIFY(widget != 0);
+
+    outputControl->setOutput(QVideoOutputControl::WidgetOutput);
+
+    // Test initial values.
+    QCOMPARE(widgetControl->brightness(), 0);
+    QCOMPARE(widgetControl->contrast(), 0);
+    QCOMPARE(widgetControl->hue(), 0);
+    QCOMPARE(widgetControl->saturation(), 0);
+    QCOMPARE(widgetControl->isFullScreen(), false);
+    QCOMPARE(widgetControl->aspectRatio(), QVideoWidget::AspectRatioAuto);
+    QCOMPARE(widgetControl->customAspectRatio(), QSize(1, 1));
+
+    // Test setting color adjustment values.  Unsupported, so they stay at 0.
+    widgetControl->setBrightness(12);
+    QCOMPARE(widgetControl->brightness(), 0);
+    widgetControl->setContrast(12);
+    QCOMPARE(widgetControl->contrast(), 0);
+    widgetControl->setHue(12);
+    QCOMPARE(widgetControl->hue(), 0);
+    widgetControl->setSaturation(12);
+    QCOMPARE(widgetControl->saturation(), 0);
+
+    {   // Test full screen mode.  Doesn't do anything more than adknowledge the change in mode.
+        QSignalSpy fullScreenSpy(widgetControl, SIGNAL(fullScreenChanged(bool)));
+
+        widgetControl->setFullScreen(true);
+        QCOMPARE(widgetControl->isFullScreen(), true);
+        QCOMPARE(fullScreenSpy.count(), 1);
+        QCOMPARE(fullScreenSpy.value(0).value(0).toBool(), true);
+
+        widgetControl->setFullScreen(false);
+        QCOMPARE(widgetControl->isFullScreen(), false);
+        QCOMPARE(fullScreenSpy.count(), 2);
+        QCOMPARE(fullScreenSpy.value(1).value(0).toBool(), false);
+    }
+
+    // Load an image so the viewer has some dimensions to work with.
+    viewer.setMedia(QMediaSource(imageUri("image.png")));
+
+    connect(&viewer, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)),
+            &QTestEventLoop::instance(), SLOT(exitLoop()));
+    QTestEventLoop::instance().enterLoop(2);
+
+    if (viewer.mediaStatus() != QMediaImageViewer::LoadedMedia)
+        QSKIP("failed to load test image", SkipSingle);
+
+    // If the aspect ratio is determined automatically or follows the widget the size hint
+    // should the size of the image.
+    QCOMPARE(widget->sizeHint(), QSize(75, 50));
+
+    widgetControl->setAspectRatio(QVideoWidget::AspectRatioWidget);
+    QCOMPARE(widgetControl->aspectRatio(), QVideoWidget::AspectRatioWidget);
+    QCOMPARE(widget->sizeHint(), QSize(75, 50));
+
+    // If the aspect ratio is explicitly set the size hint should be scaled appropriately.
+    widgetControl->setAspectRatio(QVideoWidget::AspectRatioCustom);
+    QCOMPARE(widgetControl->aspectRatio(), QVideoWidget::AspectRatioCustom);
+    QCOMPARE(widget->sizeHint(), QSize(75, 50));
+
+    widgetControl->setCustomAspectRatio(QSize(4, 3));
+    QCOMPARE(widget->sizeHint(), QSize(100, 50));
+
+    // A non 1:1 aspect ratio should be ignored if aspectRatio() != CustomAspectRatio.
+    widgetControl->setAspectRatio(QVideoWidget::AspectRatioWidget);
+    QCOMPARE(widget->sizeHint(), QSize(75, 50));
+    widgetControl->setAspectRatio(QVideoWidget::AspectRatioAuto);
+    QCOMPARE(widget->sizeHint(), QSize(75, 50));
+}
+
+#ifndef QT_NO_MULTIMEDIA
+void tst_QMediaImageViewer::rendererControl()
+{
+    QtTestVideoSurface surface;
+
+    QMediaImageViewer viewer;
+
+    QMediaService *service = viewer.service();
+    if (service == 0)
+        QSKIP("Image viewer object has no service.", SkipSingle);
+
+    QVideoOutputControl *outputControl = qobject_cast<QVideoOutputControl *>(
+            service->control(QVideoOutputControl_iid));
+    if (outputControl == 0)
+        QSKIP("Image viewer object has no video output control.", SkipSingle);
+
+    QVideoRendererControl *rendererControl = qobject_cast<QVideoRendererControl *>(
+            service->control(QVideoRendererControl_iid));
+    QVERIFY(rendererControl != 0);
+
+    rendererControl->setSurface(&surface);
+    QCOMPARE(rendererControl->surface(), &surface);
+
+    outputControl->setOutput(QVideoOutputControl::RendererOutput);
+
+    // Load an image so the viewer has some dimensions to work with.
+    viewer.setMedia(QMediaSource(imageUri("image.png")));
+
+    connect(&viewer, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)),
+            &QTestEventLoop::instance(), SLOT(exitLoop()));
+    QTestEventLoop::instance().enterLoop(2);
+
+    if (viewer.mediaStatus() != QMediaImageViewer::LoadedMedia)
+        QSKIP("failed to load test image", SkipSingle);
+
+    QCOMPARE(surface.isStarted(), true);
+
+    QVideoSurfaceFormat format = surface.surfaceFormat();
+    QCOMPARE(format.handleType(), QAbstractVideoBuffer::NoHandle);
+    QCOMPARE(format.pixelFormat(), QVideoFrame::Format_RGB32);
+    QCOMPARE(format.frameSize(), QSize(75, 50));
+
+    QVideoFrame frame = surface.frame();
+    QCOMPARE(frame.handleType(), QAbstractVideoBuffer::NoHandle);
+    QCOMPARE(frame.pixelFormat(), QVideoFrame::Format_RGB32);
+    QCOMPARE(frame.size(), QSize(75, 50));
+
+    viewer.setMedia(QMediaSource());
+
+    QCOMPARE(surface.isStarted(), false);
+}
+#endif
 
 QTEST_MAIN(tst_QMediaImageViewer)
 
