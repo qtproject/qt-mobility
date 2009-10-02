@@ -41,7 +41,7 @@ class QMessageIdPrivate;
 
 class Q_MESSAGING_EXPORT QMessageId 
 {
-    Q_DECLARE_PRIVATE(QMessageId)
+    friend class QMessageIdPrivate;
 
 public:
     QMessageId();

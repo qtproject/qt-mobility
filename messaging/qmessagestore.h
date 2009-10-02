@@ -50,7 +50,8 @@ class QMessageStorePrivate;
 class Q_MESSAGING_EXPORT QMessageStore : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(QMessageStore)
+
+    friend class QMessageStorePrivate;
 
 public:
     enum RemovalOption

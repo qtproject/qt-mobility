@@ -372,7 +372,7 @@
     \fn void QMessageStore::messageAdded(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &matchingFilterIds);
 
     Signal that is emitted when the message identified by \a id is added to the message store.
-    \a matchingFilters contains a set of values identifiying registered notification filters 
+    \a matchingFilterIds contains a set of values identifiying registered notification filters 
     that matched the message.
 
     \sa messageRemoved(), messageUpdated(), registerNotificationFilter()
@@ -382,7 +382,7 @@
     \fn void QMessageStore::messageRemoved(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &matchingFilterIds);
 
     Signal that is emitted when the message identified by \a id is removed from the message store.
-    \a matchingFilters contains a set of values identifiying registered notification filters 
+    \a matchingFilterIds contains a set of values identifiying registered notification filters 
     that matched the message.
 
     Since the filters apply to the state of the data after the message removal, the only 
@@ -395,7 +395,7 @@
     \fn void QMessageStore::messageUpdated(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &matchingFilterIds);
 
     Signal that is emitted when the message identified by \a id is updated in the message store.
-    \a matchingFilters contains a set of values identifiying registered notification filters 
+    \a matchingFilterIds contains a set of values identifiying registered notification filters 
     that matched the message.
 
     Since the filters apply to the state of the data after the message modification, updates 
