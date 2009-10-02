@@ -49,7 +49,7 @@ public:
     const char* DefinitionName;
     const char* FieldRelationshipType;
     const char* FieldRelatedContactLabel;
-    const char* FieldRelatedContactUid;
+    const char* FieldRelatedContactId;
     const char* FieldRelatedContactManagerUri;
     const char* RelationshipTypeHasMember;
     const char* RelationshipTypeIsMemberOf;
@@ -63,7 +63,7 @@ public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactRelationship, "Relationship")
     Q_DECLARE_LATIN1_LITERAL(FieldRelationshipType, "RelationshipType");
     Q_DECLARE_LATIN1_LITERAL(FieldRelatedContactLabel, "RelatedContactLabel");
-    Q_DECLARE_LATIN1_LITERAL(FieldRelatedContactUid, "RelatedContactUid");
+    Q_DECLARE_LATIN1_LITERAL(FieldRelatedContactId, "RelatedContactId");
     Q_DECLARE_LATIN1_LITERAL(FieldRelatedContactManagerUri, "RelatedContactManagerUri");
     Q_DECLARE_LATIN1_LITERAL(RelationshipTypeHasMember, "HasMember");
     Q_DECLARE_LATIN1_LITERAL(RelationshipTypeIsMemberOf, "IsMemberOf");
@@ -79,8 +79,8 @@ public:
     QString relationshipType() const {return value(FieldRelationshipType);}
     void setRelatedContactLabel(const QString& label) {setValue(FieldRelatedContactLabel, label);}
     QString relatedContactLabel() const {return value(FieldRelatedContactLabel);}
-    void setRelatedContactUid(const QString& uid) {setValue(FieldRelatedContactUid, uid);}
-    QString relatedContactUid() const {return value(FieldRelatedContactUid);}
+    void setRelatedContactId(const QUniqueId& id) {setValue(FieldRelatedContactId, id);}
+    QUniqueId relatedContactId() const {return QUniqueId(value(FieldRelatedContactId).toUInt());}
     void setRelatedContactManagerUri(const QString& managerUri) {setValue(FieldRelatedContactManagerUri, managerUri);}
     QString relatedContactManagerUri() const {return value(FieldRelatedContactManagerUri);}
 };

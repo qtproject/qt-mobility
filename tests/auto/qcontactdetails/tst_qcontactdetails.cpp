@@ -671,19 +671,19 @@ void tst_QContactDetails::relationship()
     QContactRelationship r1, r2;
 
     // test property set
-    r1.setRelatedContactUid("contact12345");
-    QCOMPARE(r1.relatedContactUid(), QString("contact12345"));
-    QCOMPARE(r1.value(QContactRelationship::FieldRelatedContactUid), QString("contact12345"));
+    r1.setRelatedContactId(QUniqueId(12345));
+    QCOMPARE(r1.relatedContactId(), QUniqueId(12345));
+    QCOMPARE(QUniqueId(r1.variantValue(QContactRelationship::FieldRelatedContactId).toUInt()), QUniqueId(12345));
 
     // test property add
     QVERIFY(c.saveDetail(&r1));
     QCOMPARE(c.details(QContactRelationship::DefinitionName).count(), 1);
-    QCOMPARE(QContactRelationship(c.details(QContactRelationship::DefinitionName).value(0)).relatedContactUid(), r1.relatedContactUid());
+    QCOMPARE(QContactRelationship(c.details(QContactRelationship::DefinitionName).value(0)).relatedContactId(), r1.relatedContactId());
 
     // test property update
-    r1.setRelatedContactUid("contact54321");
+    r1.setRelatedContactId(QUniqueId(54321));
     QVERIFY(c.saveDetail(&r1));
-    QCOMPARE(c.details(QContactRelationship::DefinitionName).value(0).value(QContactRelationship::FieldRelatedContactUid), QString("contact54321"));
+    QCOMPARE(QUniqueId(c.details(QContactRelationship::DefinitionName).value(0).variantValue(QContactRelationship::FieldRelatedContactId).toUInt()), QUniqueId(54321));
 
     // test property remove
     QVERIFY(c.removeDetail(&r1));

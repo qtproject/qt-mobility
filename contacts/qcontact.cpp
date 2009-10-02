@@ -399,7 +399,7 @@ bool QContact::addToGroup(const QUniqueId& groupId, const QString& managerUri, c
 {
     QContactRelationship r;
     r.setRelationshipType(QContactRelationship::RelationshipTypeIsMemberOf);
-    r.setRelatedContactUid(QString::number(groupId));
+    r.setRelatedContactId(groupId);
     r.setRelatedContactManagerUri(managerUri);
     r.setRelatedContactLabel(groupLabel);
 
@@ -413,6 +413,9 @@ bool QContact::addToGroup(const QUniqueId& groupId, const QString& managerUri, c
  */
 bool QContact::removeFromGroup(const QString& group)
 {
+    // TODO: find the relationship which matches the arguments, and remove it
+    // constructing on stack means no id, means will never be removed.
+
     QContactRelationship r;
     r.setRelationshipType(QContactRelationship::RelationshipTypeIsMemberOf);
     r.setRelatedContactLabel(group);
@@ -427,9 +430,12 @@ bool QContact::removeFromGroup(const QString& group)
  */
 bool QContact::removeFromGroup(const QUniqueId& groupId, const QString& managerUri, const QString& groupLabel)
 {
+    // TODO: find the relationship which matches the arguments, and remove it
+    // constructing on stack means no id, means will never be removed.
+
     QContactRelationship r;
     r.setRelationshipType(QContactRelationship::RelationshipTypeIsMemberOf);
-    r.setRelatedContactUid(QString::number(groupId));
+    r.setRelatedContactId(groupId);
     r.setRelatedContactManagerUri(managerUri);
     r.setRelatedContactLabel(groupLabel);
 
@@ -443,10 +449,7 @@ QList<QUniqueId> QContact::groups() const
     QList<QUniqueId> ids;
     foreach (const QContactRelationship& rs, relationships) {
         if (rs.relationshipType() == QContactRelationship::RelationshipTypeIsMemberOf) {
-            bool ok = false;
-            QUniqueId result = QUniqueId(rs.relatedContactUid().toUInt(&ok));
-            if (ok)
-                ids.append(result);
+            ids.append(rs.relatedContactId());
         }
     }
     return ids;

@@ -319,7 +319,7 @@ QContact PhoneBook::buildContact() const
     foreach (const QUniqueId& gid, contactGroups) {
         QContactRelationship groupRelationship;
         QContact currGroup = cm->contact(gid);
-        groupRelationship.setRelatedContactUid(QString::number(gid));
+        groupRelationship.setRelatedContactId(gid);
         groupRelationship.setRelatedContactLabel(currGroup.displayLabel().label());
         c.saveDetail(&groupRelationship);
     }
@@ -336,9 +336,7 @@ void PhoneBook::displayContact()
     QList<QUniqueId> currentGroups;
     foreach (const QContactRelationship& currRel, relationships) {
         if (currRel.relationshipType() == QContactRelationship::RelationshipTypeIsMemberOf) {
-            bool ok = false;
-            QUniqueId result = QUniqueId(currRel.relatedContactUid().toUInt(&ok));
-            currentGroups.append(result);
+            currentGroups.append(currRel.relatedContactId());
         }
     }
     contactGroups = currentGroups;

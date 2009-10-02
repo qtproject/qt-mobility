@@ -712,10 +712,10 @@ Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeSpouse, "Spouse");
 Q_DEFINE_LATIN1_LITERAL(QContactRelationship::FieldRelatedContactLabel, "RelatedContactLabel");
 
 /*!
- * \variable QContactRelationship::FieldRelatedContactUid
+ * \variable QContactRelationship::FieldRelatedContactId
  * The constant key for the value which is stored in details of the QContactRelationship type which defines the unique identifier of the other contact to whom this contact has the relationship
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::FieldRelatedContactUid, "RelatedContactUid");
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::FieldRelatedContactId, "RelatedContactId");
 
 /*!
  * \variable QContactRelationship::FieldRelatedContactManagerUri
@@ -1343,12 +1343,12 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
  */
 
 /*!
- * \fn QContactRelationship::setRelatedContactUid(const QString& contactUid)
- * Sets the value of the unique identifier of the contact to whom this contact has a relationship with to \a contactUid
+ * \fn QContactRelationship::setRelatedContactId(const QUniqueId& id)
+ * Sets the value of the unique identifier of the contact to whom this contact has a relationship with to \a id
  */
 
 /*!
- * \fn QContactRelationship::relatedContactUid() const
+ * \fn QContactRelationship::relatedContactId() const
  * Returns the unique identifier of the contact to whom this contact has the relationship
  */
 

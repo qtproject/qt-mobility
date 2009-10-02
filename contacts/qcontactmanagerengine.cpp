@@ -199,6 +199,7 @@ QList<QUniqueId> QContactManagerEngine::contacts(const QString& contactType, con
     QContactDetailFilter df;
     df.setDetailDefinitionName(QContactType::DefinitionName, QContactType::FieldType);
     df.setValue(contactType);
+    df.setMatchFlags(Qt::MatchExactly);
     return contacts(df, sortOrders, error);
 }
 
@@ -626,7 +627,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    fields.insert(QContactRelationship::FieldRelatedContactUid, f);
+    fields.insert(QContactRelationship::FieldRelatedContactId, f);
     fields.insert(QContactRelationship::FieldRelatedContactManagerUri, f);
     fields.insert(QContactRelationship::FieldRelationshipType, f);
     f.dataType = QVariant::StringList;

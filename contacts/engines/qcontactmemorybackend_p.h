@@ -148,7 +148,7 @@ private slots:
 
 private:
     /* Implement "signal coalescing" for batch functions via change set */
-    bool saveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error& error);
+    bool saveContact(QContact* theContact, QContactChangeSet& changeSet, QContactManager::Error& error);
     bool removeContact(const QUniqueId& contactId, QContactChangeSet& changeSet, QContactManager::Error& error);
     bool saveDetailDefinition(const QContactDetailDefinition& def, QContactChangeSet& changeSet, QContactManager::Error& error);
     bool removeDetailDefinition(const QString& definitionId, QContactChangeSet& changeSet, QContactManager::Error& error);
