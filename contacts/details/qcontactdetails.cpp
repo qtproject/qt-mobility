@@ -658,10 +658,10 @@ Q_DEFINE_LATIN1_LITERAL(QContactDisplayLabel::FieldSynthesised, "Synthesised");
 Q_DEFINE_LATIN1_LITERAL(QContactRelationship::FieldRelationshipType, "RelationshipType");
 
 /*!
- * \variable QContactRelationship::RelationshipTypeAggregatedBy
+ * \variable QContactRelationship::RelationshipTypeIsAggregatedBy
  * The value for the relationship type which identifies this contact as being aggregated by the other contact into a master contact
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeAggregatedBy, "AggregatedBy");
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeIsAggregatedBy, "IsAggregatedBy");
 
 /*!
  * \variable QContactRelationship::RelationshipTypeAggregates
@@ -688,142 +688,22 @@ Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeIsMemberOf, "IsMem
 Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeIs, "Is");
 
 /*!
- * \variable QContactRelationship::RelationshipTypeWas
- * The value for the relationship type which identifies this contact as formerly being the other contact
+ * \variable QContactRelationship::RelationshipTypeAssistant
+ * The value for the relationship type which identifies this contact as being the assistant of the other contact
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeWas, "Was");
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeAssistant, "Assistant");
 
 /*!
- * \variable QContactRelationship::RelationshipTypeParent
- * The value for the relationship type which identifies this contact as being a parent of the other contact
+ * \variable QContactRelationship::RelationshipTypeManager
+ * The value for the relationship type which identifies this contact as being the manager of the other contact
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeParent, "Parent");
-
-/*!
- * \variable QContactRelationship::RelationshipTypeFather
- * The value for the relationship type which identifies this contact as being the father of the other contact
- */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeFather, "Father");
-
-/*!
- * \variable QContactRelationship::RelationshipTypeMother
- * The value for the relationship type which identifies this contact as being the mother of the other contact
- */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeMother, "Mother");
-
-/*!
- * \variable QContactRelationship::RelationshipTypeChild
- * The value for the relationship type which identifies this contact as being a child of the other contact
- */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeChild, "Child");
-
-/*!
- * \variable QContactRelationship::RelationshipTypeSon
- * The value for the relationship type which identifies this contact as being a son of the other contact
- */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeSon, "Son");
-
-/*!
- * \variable QContactRelationship::RelationshipTypeDaughter
- * The value for the relationship type which identifies this contact as being a daughter of the other contact
- */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeDaughter, "Daughter");
-
-/*!
- * \variable QContactRelationship::RelationshipTypeSibling
- * The value for the relationship type which identifies this contact as being a sibling of the other contact
- */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeSibling, "Sibling");
-
-/*!
- * \variable QContactRelationship::RelationshipTypeBrother
- * The value for the relationship type which identifies this contact as being a brother of the other contact
- */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeBrother, "Brother");
-
-/*!
- * \variable QContactRelationship::RelationshipTypeSister
- * The value for the relationship type which identifies this contact as being a sister of the other contact
- */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeSister, "Sister");
-
-/*!
- * \variable QContactRelationship::RelationshipTypeCousin
- * The value for the relationship type which identifies this contact as being a cousin of the other contact
- */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeCousin, "Cousin");
-
-/*!
- * \variable QContactRelationship::RelationshipTypeFriend
- * The value for the relationship type which identifies this contact as being a friend of the other contact
- */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeFriend, "Friend");
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeManager, "Manager");
 
 /*!
  * \variable QContactRelationship::RelationshipTypeSpouse
  * The value for the relationship type which identifies this contact as being the spouse of the other contact
  */
 Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeSpouse, "Spouse");
-
-/*!
- * \variable QContactRelationship::RelationshipTypeFiance
- * The value for the relationship type which identifies this contact as being the fiance of the other contact
- */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeFiance, "Fiance");
-
-/*!
- * \variable QContactRelationship::RelationshipTypeFiancee
- * The value for the relationship type which identifies this contact as being the fiancee of the other contact
- */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeFiancee, "Fiancee");
-
-/*!
- * \variable QContactRelationship::RelationshipTypeHusband
- * The value for the relationship type which identifies this contact as being the husband of the other contact
- */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeHusband, "Husband");
-
-/*!
- * \variable QContactRelationship::RelationshipTypeWife
- * The value for the relationship type which identifies this contact as being the wife of the other contact
- */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeWife, "Wife");
-
-/*!
- * \variable QContactRelationship::RelationshipTypeWidower
- * The value for the relationship type which identifies this contact as being the widower of the other contact
- */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeWidower, "Widower");
-
-/*!
- * \variable QContactRelationship::RelationshipTypeWidow
- * The value for the relationship type which identifies this contact as being the widow of the other contact
- */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeWidow, "Widow");
-
-/*!
- * \variable QContactRelationship::RelationshipTypeEmployer
- * The value for the relationship type which identifies this contact as being the employer of the other contact
- */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeEmployer, "Employer");
-
-/*!
- * \variable QContactRelationship::RelationshipTypeEmployee
- * The value for the relationship type which identifies this contact as being an employee of the other contact
- */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeEmployee, "Employee");
-
-/*!
- * \variable QContactRelationship::RelationshipTypeOther
- * The value for the relationship type which identifies this contact as being related to the other contact in a way other than listed
- */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeOther, "Other");
-
-/*!
- * \variable QContactRelationship::RelationshipTypeUnknown
- * The value for the relationship type which identifies this contact as being related to the other contact in an unknown fashion
- */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeUnknown, "Unknown");
 
 /*!
  * \variable QContactRelationship::FieldRelatedContactLabel
