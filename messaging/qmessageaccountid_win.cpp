@@ -105,7 +105,11 @@ QMessageAccountId& QMessageAccountId::operator=(const QMessageAccountId& other)
 
 bool QMessageAccountId::operator<(const QMessageAccountId& other) const
 {
-    return (d_ptr->_storeRecordKey < other.d_ptr->_storeRecordKey);
+    if (d_ptr && other.d_ptr) {
+        return (d_ptr->_storeRecordKey < other.d_ptr->_storeRecordKey);
+    }
+
+    return false;
 }
 
 QString QMessageAccountId::toString() const
