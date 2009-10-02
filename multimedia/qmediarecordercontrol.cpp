@@ -38,6 +38,7 @@
 /*!
     \class QMediaRecorderControl
     \ingroup multimedia
+    \ingroup multimedia-serv
 
     \preliminary
     \brief

@@ -41,8 +41,10 @@
     \ingroup multimedia
 
     \preliminary
-    \brief The abstract class for controling audio encoding parameters, this is provided
-    by a QAbstractMediaService object, and is used by QMediaRecorder.
+    
+    \brief The QAudioEncoderControl class is an abstract class for
+    controling audio encoding parameters, this is provided by a
+    QAbstractMediaService object, and is used by QMediaRecorder.
 
     \sa QAbstractMediaService, QMediaRecorder
 */

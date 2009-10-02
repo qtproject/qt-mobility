@@ -40,8 +40,9 @@
     \ingroup multimedia
 
     \preliminary
-    \brief The abstract class for controling image processing parameters,
-    like white balance, contrast, saturation, sharpening and denoising.
+    \brief The QImageProcessingControl class provides an abstract class
+    for controling image processing parameters, like white balance,
+    contrast, saturation, sharpening and denoising.
     
     \sa QAbstractMediaService, QCamera
 */

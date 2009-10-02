@@ -43,9 +43,11 @@
 /*!
     \class QAbstractMediaControl
     \ingroup multimedia
+    \ingroup multimedia-serv
 
     \preliminary
-    \brief The base Multimedia control object.
+    \brief The QAbstractMediaControl class is the base Multimedia control
+    object.
 
     \sa QAbstractMediaService, QAbstractMediaObject
 */

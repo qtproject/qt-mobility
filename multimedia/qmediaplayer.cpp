@@ -48,6 +48,7 @@
 
 /*!
     \class QMediaPlayer
+    \brief The QMediaPlayer class allows the playing of a media source.
     \ingroup multimedia
 
     \preliminary

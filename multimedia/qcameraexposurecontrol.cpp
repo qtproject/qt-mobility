@@ -40,7 +40,8 @@
     \ingroup multimedia
 
     \preliminary
-    \brief Media control for exposure related camera parameters.
+    \brief The QCameraExposureControl class supplies control for exposure
+    related camera parameters.
 
     \sa QCamera
 */

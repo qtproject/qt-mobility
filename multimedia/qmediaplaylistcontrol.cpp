@@ -41,9 +41,10 @@
     \ingroup multimedia
 
     \preliminary
-    \brief The abstract class for controling media playlist navigation,
-    this is provided by a QAbstractMediaService object,
-    and is used by QMediaPlayer for playback.
+    \brief The QMediaPlaylistControl class is an abstract class for
+    controling media playlist navigation, this is provided by a
+    QAbstractMediaService object, and is used by QMediaPlayer for
+    playback.
 
     \sa QAbstractMediaService, QMediaPlayer
 */

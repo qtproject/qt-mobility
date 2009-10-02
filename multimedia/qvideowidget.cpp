@@ -497,6 +497,8 @@ void QVideoWidgetPrivate::_q_customAspectRatioChanged(const QSize &ratio)
     \class QVideoWidget
     \brief The QVideoWidget class provides a widget which displays video produced by a media
     object.
+    \ingroup multimedia
+    
     \preliminary
 */
 

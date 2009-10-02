@@ -40,7 +40,8 @@
     \ingroup multimedia
 
     \preliminary
-    \brief Media control for focusing related camera parameters.
+    \brief The QCameraFocusControl class supplies control for
+    focusing related camera parameters.
 
     \sa QCamera
 */

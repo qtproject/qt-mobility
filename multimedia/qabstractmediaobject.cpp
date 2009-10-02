@@ -65,9 +65,11 @@ void QAbstractMediaObjectPrivate::_q_notify()
 /*!
     \class QAbstractMediaObject
     \ingroup multimedia
+    \ingroup multimedia-serv
 
     \preliminary
-    \brief The base Multimedia object.
+    \brief The QAbstractMediaObject class supplies the base Multimedia
+    object.
 
     \sa QAbstractMediaService, QAbstractMediaControl
 */

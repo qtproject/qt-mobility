@@ -46,7 +46,7 @@
     \ingroup multimedia
 
     \preliminary
-    \brief
+    \brief The QAudioSource class provides control and information of the audio source.
 
     \sa
 */
