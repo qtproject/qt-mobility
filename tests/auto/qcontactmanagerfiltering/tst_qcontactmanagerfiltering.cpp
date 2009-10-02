@@ -189,9 +189,10 @@ tst_QContactManagerFiltering::~tst_QContactManagerFiltering()
 QString tst_QContactManagerFiltering::convertIds(QList<QUniqueId> allIds, QList<QUniqueId> ids)
 {
     QString ret;
-    /* Expected is of the form "abcd".. */
+    /* Expected is of the form "abcd".. it's possible that there are some extra contacts */
     for (int i = 0; i < ids.size(); i++) {
-        ret += ('a' + allIds.indexOf(ids.at(i)));
+        if (allIds.indexOf(ids.at(i)) >= 0)
+            ret += ('a' + allIds.indexOf(ids.at(i)));
     }
 
     return ret;
