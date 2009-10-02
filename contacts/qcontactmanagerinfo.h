@@ -52,7 +52,8 @@ public:
         ActionPreferences,
         MutableDefinitions,
         SelfContact,
-        Anonymous
+        Anonymous,
+        ChangeLogs
     };
 
     bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;
