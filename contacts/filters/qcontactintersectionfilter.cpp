@@ -37,10 +37,11 @@
 #include "qcontactmanager.h"
 
 /*!
- * \class QContactIntersectionFilter
- * \brief The QContactIntersectionFilter class provides a filter which intersects the results of other filters
- *
- * It may be used to select contacts which match all of the filters in the intersection
+  \class QContactIntersectionFilter
+  \brief The QContactIntersectionFilter class provides a filter which intersects the results of other filters.
+   \ingroup contacts-filters
+ 
+  It may be used to select contacts which match all of the filters in the intersection
  */
 
 Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactIntersectionFilter);

@@ -37,10 +37,12 @@
 #include "qcontactmanager.h"
 
 /*!
- * \class QContactUnionFilter
- * \brief The QContactUnionFilter class provides a filter which unions the results of other filters
- *
- * It may be used to select contacts which match all of the filters in the union
+   \class QContactUnionFilter
+   \brief The QContactUnionFilter class provides a filter which unions the
+    results of other filters.
+   \ingroup contacts-filters
+ 
+   It may be used to select contacts which match all of the filters in the union
  */
 
 Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactUnionFilter);

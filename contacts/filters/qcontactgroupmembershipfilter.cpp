@@ -37,10 +37,11 @@
 #include "qcontactmanager.h"
 
 /*!
- * \class QContactGroupMembershipFilter
- * \brief The QContactGroupMembershipFilter class provides a filter based around a group membership criterion
- *
- * It may be used to select contacts which are members of a particular group
+  \class QContactGroupMembershipFilter
+  \brief The QContactGroupMembershipFilter class provides a filter based around a group membership criterion.
+   \ingroup contacts-filters
+ 
+  It may be used to select contacts which are members of a particular group
  */
 
 Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactGroupMembershipFilter);

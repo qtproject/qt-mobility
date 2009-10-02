@@ -35,10 +35,11 @@
 #include "qcontactfilter_p.h"
 
 /*!
- * \class QContactInvalidFilter
- * \brief A QContactInvalidFilter matches no contacts
- *
- * This class provides a filter which will never match any contacts
+  \class QContactInvalidFilter
+  \brief The QContactInvalidFilter class matches no contacts.
+   \ingroup contacts-filters
+ 
+  This class provides a filter which will never match any contacts
  */
 
 class QContactInvalidFilterPrivate : public QContactFilterPrivate
