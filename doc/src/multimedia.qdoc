@@ -39,18 +39,35 @@
 **
 ****************************************************************************/
 
+
+/*!
+    \group multimedia
+    \title Mobility Multimedia
+    APIs to play and record media, and manage a collection of media content.
+*/
+
+
+
 /*!
 
 \page multimedia.html
 
 \title Multimedia
+
+\brief Provides a set of APIs to play and record media, and manage a 
+collection of media content.
+
 \ingroup mobility
+
+Multimedia provides a set of APIs that allow the developer to play, record
+and manage a collection of media content.
+
 \tableofcontents
 
 
-\section1 Introduction
+\section1 Overview
 
-The Multimedia Library provides a set of APIs to play and record media, and manage a collection of media content.
+
 
 This library will require Qt 4.6. 
 
@@ -61,28 +78,11 @@ To build the library, run \tt qmake and \tt make.
 
 \section2 Main classes
 
-\list
-    \o \l{QMediaSource}
-    \o \l{QMediaPlayer}
-    \o \l{QVideoWidget}
-    \o \l{QMediaRecorder}
-    \o \l{QRadioPlayer}
-    \o \l{QMediaPlaylist}
-    \o \l{QCamera}
-    \o \l{QAudioSource}
-\endlist
+\annotatedlist multimedia-main
+
 
 \section2 Classes for service implementers.
 
-\list
-    \o \l{QAbstractMediaService}
-    \o \l{QAbstractMediaObject}
-    \o \l{QAbstractMediaControl}
-    \o \l{QMediaPlayerControl}
-    \o \l{QMediaPlayerControl}
-    \o \l{QMediaRecorderControl}
-    \o \l{QMetaDataProviderControl}
-    \o \l{QRadioPlayerControl}
-    \o \l{QCameraControl}
-\endlist
+\annotatedlist multimedia-serv
+
 */
