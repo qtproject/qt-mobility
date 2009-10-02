@@ -1680,6 +1680,7 @@ public:
     QValueSpace::LayerOptions layerOptions() const;
 
     /* QValueSpaceItem functions */
+    bool supportsInterestNotification() const;
     bool notifyInterest(Handle handle, bool interested);
 
     /* QValueSpaceObject functions */
@@ -2388,7 +2389,7 @@ bool SharedMemoryLayer::value(Handle handle, const QString &subPath,
     Q_ASSERT(layer);
     Q_ASSERT(data);
     Q_ASSERT(!subPath.isEmpty());
-    Q_ASSERT(*subPath.constData() == QChar::fromLatin1('/'));
+    Q_ASSERT(*subPath.constData() == QLatin1Char('/'));
 
     ReadHandle * rhandle = rh(handle);
 
@@ -2479,7 +2480,7 @@ SharedMemoryLayer::Handle SharedMemoryLayer::item(Handle parent, const QString &
 {
     Q_UNUSED(parent);
     Q_ASSERT(layer);
-    Q_ASSERT(*key.constData() == QChar::fromLatin1('/'));
+    Q_ASSERT(*key.constData() == QLatin1Char('/'));
     Q_ASSERT(InvalidHandle == parent);
     QMap<QString, ReadHandle *>::Iterator iter = handles.find(key);
     if(iter != handles.end()) {
@@ -3037,7 +3038,7 @@ int display_id()
             return 0;
         name = QString::fromLatin1(d);
     }
-    int index = name.indexOf(QChar::fromLatin1(':'));
+    int index = name.indexOf(QLatin1Char(':'));
     if ( index >= 0 )
         return name.mid(index + 1).toInt();
     else
@@ -3204,6 +3205,11 @@ void SharedMemoryLayer::doClientNotify(QValueSpaceObject *object, const QByteArr
     emitAttributeInterestChanged(object, QString::fromUtf8(emitPath.constData()), interested);
  }
 
+bool SharedMemoryLayer::supportsInterestNotification() const
+{
+    return true;
+}
+
 bool SharedMemoryLayer::notifyInterest(Handle handle, bool interested)
 {
     if (!valid)
@@ -3242,7 +3248,7 @@ bool SharedMemoryLayer::setValue(QValueSpaceObject *creator, Handle handle, cons
         fullPath.append('/');
 
     int index = 0;
-    while (index < path.length() && path[index] == QChar::fromLatin1('/'))
+    while (index < path.length() && path[index] == QLatin1Char('/'))
         ++index;
 
     fullPath.append(path.mid(index));
@@ -3266,7 +3272,7 @@ bool SharedMemoryLayer::removeValue(QValueSpaceObject *creator, Handle handle, c
         fullPath.append('/');
 
     int index = 0;
-    while (index < path.length() && path[index] == QChar::fromLatin1('/'))
+    while (index < path.length() && path[index] == QLatin1Char('/'))
         ++index;
 
     fullPath.append(path.mid(index));

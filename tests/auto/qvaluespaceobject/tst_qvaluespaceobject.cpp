@@ -328,6 +328,9 @@ void tst_QValueSpaceObject::testSignals_data()
     for (int i = 0; i < layers.count(); ++i) {
         QAbstractValueSpaceLayer *layer = layers.at(i);
 
+        if (!layer->supportsInterestNotification())
+            continue;
+
         QTest::newRow("root")
             << layer
             << QString("/")
@@ -379,6 +382,8 @@ void tst_QValueSpaceObject::testSignals()
     QVERIFY(arguments.at(0).toString().isEmpty());
     QCOMPARE(arguments.at(1).type(), QVariant::Bool);
     QVERIFY(!arguments.at(1).toBool());
+
+    delete object;
 }
 
 void tst_QValueSpaceObject::valuePermanence_data()

@@ -65,6 +65,7 @@ public:
     QValueSpace::LayerOptions layerOptions() const;
 
     /* QValueSpaceItem functions */
+    bool supportsInterestNotification() const;
     bool notifyInterest(Handle handle, bool interested);
 
     /* QValueSpaceObject functions */
@@ -168,6 +169,11 @@ QSet<QString> FakeLayer::children(Handle handle)
 QValueSpace::LayerOptions FakeLayer::layerOptions() const
 {
     return QValueSpace::NonPermanentLayer;
+}
+
+bool FakeLayer::supportsInterestNotification() const
+{
+    return true;
 }
 
 bool FakeLayer::notifyInterest(Handle handle, bool interested)

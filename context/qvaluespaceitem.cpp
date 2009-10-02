@@ -567,7 +567,7 @@ void QValueSpaceItem::cd(const QString &path)
 {
     VS_CALL_ASSERT;
 
-    setPath(d->path + QChar::fromLatin1('/') + path);
+    setPath(d->path + QLatin1Char('/') + path);
 }
 
 void QValueSpaceItem::cdUp()
@@ -579,7 +579,7 @@ void QValueSpaceItem::cdUp()
 
     QString p(d->path);
 
-    int index = p.lastIndexOf(QChar::fromLatin1('/'));
+    int index = p.lastIndexOf(QLatin1Char('/'));
 
     p.truncate(index);
 

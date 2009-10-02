@@ -831,6 +831,9 @@ void tst_QValueSpaceItem::interestNotification_data()
     for (int i = 0; i < layers.count(); ++i) {
         QAbstractValueSpaceLayer *layer = layers.at(i);
 
+        if (!layer->supportsInterestNotification())
+            continue;
+
         QTest::newRow("QValueSpaceItem(char *)")
             << layer << CharStar << "/interestNotification" << "/value";
         QTest::newRow("QValueSpaceItem(QString)")
@@ -911,6 +914,9 @@ void tst_QValueSpaceItem::ipcInterestNotification_data()
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
     for (int i = 0; i < layers.count(); ++i) {
         QAbstractValueSpaceLayer *layer = layers.at(i);
+
+        if (!layer->supportsInterestNotification())
+            continue;
 
         QTest::newRow(layer->name().toLocal8Bit().constData()) << layer;
     }

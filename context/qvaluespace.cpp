@@ -431,13 +431,13 @@ QString qCanonicalPath(const QString &path)
     int outc=0;
     QChar *to = result.data();
     do {
-        to[outc++] = QChar::fromLatin1('/');
-        while (from!=fromend && *from == QChar::fromLatin1('/'))
+        to[outc++] = QLatin1Char('/');
+        while (from!=fromend && *from == QLatin1Char('/'))
             ++from;
-        while (from!=fromend && *from != QChar::fromLatin1('/'))
+        while (from!=fromend && *from != QLatin1Char('/'))
             to[outc++] = *from++;
     } while (from != fromend);
-    if (outc > 1 && to[outc-1] == QChar::fromLatin1('/'))
+    if (outc > 1 && to[outc-1] == QLatin1Char('/'))
         --outc;
     result.resize(outc);
     return result;
