@@ -35,8 +35,10 @@
 #include "qcontactrequests_p.h"
 
 /*!
- * \class QContactGroupFetchRequest
- * \brief Allows a client to asynchronously request groups from a contacts store manager
+  \class QContactGroupFetchRequest
+  \brief The QContactGroupFetchRequest class allows a client to asynchronously
+    request groups from a contacts store manager.
+   \ingroup contacts-requests
  */
 
 /*!

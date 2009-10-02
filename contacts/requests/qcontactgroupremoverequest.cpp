@@ -35,8 +35,10 @@
 #include "qcontactrequests_p.h"
 
 /*!
- * \class QContactGroupRemoveRequest
- * \brief Allows a client to asynchronously request that certain groups be removed from a contacts store
+  \class QContactGroupRemoveRequest
+  \brief The QContactGroupRemoveRequest class allows a client to asynchronously
+    request that certain groups be removed from a contacts store.
+   \ingroup contacts-requests
  */
 
 /*!

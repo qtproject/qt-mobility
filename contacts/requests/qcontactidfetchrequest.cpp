@@ -35,8 +35,10 @@
 #include "qcontactrequests_p.h"
 
 /*!
- * \class QContactIdFetchRequest
- * \brief Allows a client to asynchronously request a list of contact ids from a contacts store manager
+  \class QContactIdFetchRequest
+  \brief The QContactIdFetchRequest class allows a client to asynchronously
+    request a list of contact ids from a contacts store manager.
+   \ingroup contacts-requests
  */
 
 /*!

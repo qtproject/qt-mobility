@@ -35,8 +35,10 @@
 #include "qcontactrequests_p.h"
 
 /*!
- * \class QContactSaveRequest
- * \brief Allows a client to asynchronously request that certain contacts be saved to a contacts store
+  \class QContactSaveRequest
+  \brief The QContactSaveRequest class allows a client to asynchronously
+    request that certain contacts be saved to a contacts store.
+   \ingroup contacts-requests
  */
 
 /*!

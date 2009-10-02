@@ -35,8 +35,11 @@
 #include "qcontactrequests_p.h"
 
 /*!
- * \class QContactDetailDefinitionRemoveRequest
- * \brief Allows a client to asynchronously request that certain detail definitions be removed from a contacts store
+  \class QContactDetailDefinitionRemoveRequest
+  \brief The QContactDetailDefinitionRemoveRequest class allows a client
+    to asynchronously request that certain detail definitions be removed
+    from a contacts store.
+   \ingroup constacts-requests
  */
 
 /*!

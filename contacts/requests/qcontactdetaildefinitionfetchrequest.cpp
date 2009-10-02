@@ -35,8 +35,10 @@
 #include "qcontactrequests_p.h"
 
 /*!
- * \class QContactDetailDefinitionFetchRequest
- * \brief Allows a client to asynchronously request detail definitions from a contacts store manager
+  \class QContactDetailDefinitionFetchRequest
+  \brief The QContactDetailDefinitionFetchRequest class allows a client to
+    asynchronously request detail definitions from a contacts store manager.
+   \ingroup contacts-requests
  */
 
 /*!
