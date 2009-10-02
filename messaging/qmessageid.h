@@ -34,6 +34,7 @@
 #define QMESSAGEID_H
 #include <QString>
 #include <QList>
+#include <QMetaType>
 #include <qmessageglobal.h>
 
 class QMessageIdPrivate;
@@ -59,6 +60,8 @@ public:
 private:
     QMessageIdPrivate *d_ptr;
 };
+
+Q_DECLARE_METATYPE(QMessageId)
 
 typedef QList<QMessageId> QMessageIdList;
 

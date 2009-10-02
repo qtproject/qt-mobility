@@ -2930,40 +2930,52 @@ bool MapiSession::showForm(IMessage* message, IMAPIFolder* folder, LPMDB store)
 
 void MapiSession::notify(MapiStore *store, ULONG notificationCount, NOTIFICATION *notifications)
 {
+    QList<QMessageId> addedIds;
+    QList<QMessageId> removedIds;
+    QList<QMessageId> updatedIds;
+
     for (uint i = 0; i < notificationCount; ++i) {
         NOTIFICATION &notification(notifications[i]);
 
         if (notification.ulEventType == fnevNewMail) {
             NEWMAIL_NOTIFICATION &newmail(notification.info.newmail);
-            qDebug() << "new mail";
+            //qDebug() << "new mail";
         } else {
             OBJECT_NOTIFICATION &object(notification.info.obj);
 
             if (object.ulObjType == MAPI_MESSAGE) {
                 MapiEntryId entryId(object.lpEntryID, object.cbEntryID);
-                MapiEntryId parentEntryId(object.lpParentID, object.cbParentID);
+
+                // Create a partial ID from the information we have (a message can be
+                // retrieved using only the store key and the message entry ID)
+                QMessageId messageId(QMessageIdPrivate::from(MapiRecordKey(), MapiRecordKey(), store->recordKey(), entryId));
 
                 if (!entryId.isEmpty()) {
                     switch (notification.ulEventType)
                     {
                     case fnevObjectCopied:
                         qDebug() << "copied";
+                        addedIds.append(messageId);
                         break;
 
                     case fnevObjectCreated:
                         qDebug() << "created";
+                        addedIds.append(messageId);
                         break;
 
                     case fnevObjectDeleted:
                         qDebug() << "deleted";
+                        removedIds.append(messageId);
                         break;
 
                     case fnevObjectModified:
                         qDebug() << "modified";
+                        updatedIds.append(messageId);
                         break;
 
                     case fnevObjectMoved:
                         qDebug() << "moved";
+                        updatedIds.append(messageId);
                         break;
                     }
                 } else {
@@ -2971,6 +2983,16 @@ void MapiSession::notify(MapiStore *store, ULONG notificationCount, NOTIFICATION
                 }
             }
         }
+    }
+
+    foreach (const QMessageId &id, addedIds) {
+        emit messageAdded(id, QMessageStore::NotificationFilterIdSet());
+    }
+    foreach (const QMessageId &id, removedIds) {
+        emit messageRemoved(id, QMessageStore::NotificationFilterIdSet());
+    }
+    foreach (const QMessageId &id, updatedIds) {
+        emit messageUpdated(id, QMessageStore::NotificationFilterIdSet());
     }
 }
 

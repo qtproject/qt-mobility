@@ -33,6 +33,9 @@
 #ifndef QMESSAGESTORE_H
 #define QMESSAGESTORE_H
 #include <QObject>
+#include <QSet>
+#include <QMetaType>
+
 #include <qmessageglobal.h>
 #include <qmessagefilter.h>
 #include <qmessageordering.h>
@@ -68,6 +71,7 @@ public:
     };
 
     typedef int NotificationFilterId;
+    typedef QSet<QMessageStore::NotificationFilterId> NotificationFilterIdSet;
 
     QMessageStore::ErrorCode lastError() const;
 
@@ -101,9 +105,9 @@ public:
     static QMessageStore* instance();
     
 signals:
-    void messageAdded(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &matchingFilterIds);
-    void messageRemoved(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &matchingFilterIds);
-    void messageUpdated(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &matchingFilterIds);
+    void messageAdded(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &matchingFilterIds);
+    void messageRemoved(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &matchingFilterIds);
+    void messageUpdated(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &matchingFilterIds);
 
 private:
     friend class QGlobalStaticDeleter<QMessageStore>;
@@ -112,5 +116,8 @@ private:
 
     QMessageStorePrivate *d_ptr;
 };
+
+Q_DECLARE_METATYPE(QMessageStore::NotificationFilterId)
+Q_DECLARE_METATYPE(QMessageStore::NotificationFilterIdSet)
 
 #endif

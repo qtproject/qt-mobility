@@ -188,11 +188,6 @@ public:
     QMessageStore::ErrorCode lastError;
 
     MapiSessionPtr session;
-
-signals:
-    void messageAdded(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &matchingFilterIds);
-    void messageRemoved(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &matchingFilterIds);
-    void messageUpdated(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &matchingFilterIds);
 };
 
 QMessageStorePrivatePlatform::QMessageStorePrivatePlatform(QMessageStorePrivate *d, QMessageStore *q)
@@ -203,9 +198,9 @@ QMessageStorePrivatePlatform::QMessageStorePrivatePlatform(QMessageStorePrivate 
 {
     if (session && (lastError == QMessageStore::NoError)) {
         MapiSession *o(session.data());
-        connect(o, SIGNAL(messageAdded(QMessageId, QSet<QMessageStore::NotificationFilterId>)), this, SIGNAL(messageAdded(QMessageId, QSet<QMessageStore::NotificationFilterId>)));
-        connect(o, SIGNAL(messageRemoved(QMessageId, QSet<QMessageStore::NotificationFilterId>)), this, SIGNAL(messageRemoved(QMessageId, QSet<QMessageStore::NotificationFilterId>)));
-        connect(o, SIGNAL(messageUpdated(QMessageId, QSet<QMessageStore::NotificationFilterId>)), this, SIGNAL(messageUpdated(QMessageId, QSet<QMessageStore::NotificationFilterId>)));
+        connect(o, SIGNAL(messageAdded(QMessageId, QMessageStore::NotificationFilterIdSet)), q, SIGNAL(messageAdded(QMessageId, QMessageStore::NotificationFilterIdSet)));
+        connect(o, SIGNAL(messageRemoved(QMessageId, QMessageStore::NotificationFilterIdSet)), q, SIGNAL(messageRemoved(QMessageId, QMessageStore::NotificationFilterIdSet)));
+        connect(o, SIGNAL(messageUpdated(QMessageId, QMessageStore::NotificationFilterIdSet)), q, SIGNAL(messageUpdated(QMessageId, QMessageStore::NotificationFilterIdSet)));
     }
 }
 
@@ -244,8 +239,9 @@ QMessageStore* QMessageStore::instance()
 {
     QMessageStorePrivate *d = data();
     Q_ASSERT(d != 0);
-    if (!d->q_ptr)
+    if (!d->q_ptr) {
         d->initialize(new QMessageStore());
+    }
     return d->q_ptr;
 }
 

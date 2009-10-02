@@ -72,24 +72,25 @@ class SignalCatcher : public QObject
     Q_OBJECT
     
 public:
-    typedef QPair<QMessageId, QSet<QMessageStore::NotificationFilterId> > Notification;
+    typedef QPair<QMessageId, QMessageStore::NotificationFilterIdSet> Notification;
 
     QList<Notification> added;
     QList<Notification> updated;
     QList<Notification> removed;
 
 public slots:
-    void messageAdded(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &filterIds)
+    void messageAdded(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &filterIds)
     {
         added.append(qMakePair(id, filterIds));
+        //qDebug() << "message added:" << QMessage(id).subject();
     }
 
-    void messageUpdated(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &filterIds)
+    void messageUpdated(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &filterIds)
     {
         updated.append(qMakePair(id, filterIds));
     }
 
-    void messageRemoved(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &filterIds)
+    void messageRemoved(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &filterIds)
     {
         removed.append(qMakePair(id, filterIds));
     }
@@ -457,11 +458,11 @@ void tst_QMessageStore::testMessage()
 #endif
 
     SignalCatcher catcher;
-    connect(QMessageStore::instance(), SIGNAL(messageAdded(QMessageId, QSet<QMessageStore::NotificationFilterId>)), &catcher, SLOT(messageAdded(QMessageId, QSet<QMessageStore::NotificationFilterId>)));
-    connect(QMessageStore::instance(), SIGNAL(messageUpdated(QMessageId, QSet<QMessageStore::NotificationFilterId>)), &catcher, SLOT(messageUpdated(QMessageId, QSet<QMessageStore::NotificationFilterId>)));
+    connect(QMessageStore::instance(), SIGNAL(messageAdded(QMessageId, QMessageStore::NotificationFilterIdSet)), &catcher, SLOT(messageAdded(QMessageId, QMessageStore::NotificationFilterIdSet)));
+    connect(QMessageStore::instance(), SIGNAL(messageUpdated(QMessageId, QMessageStore::NotificationFilterIdSet)), &catcher, SLOT(messageUpdated(QMessageId, QMessageStore::NotificationFilterIdSet)));
 
     SignalCatcher removeCatcher;
-    connect(QMessageStore::instance(), SIGNAL(messageRemoved(QMessageId, QSet<QMessageStore::NotificationFilterId>)), &removeCatcher, SLOT(messageRemoved(QMessageId, QSet<QMessageStore::NotificationFilterId>)));
+    connect(QMessageStore::instance(), SIGNAL(messageRemoved(QMessageId, QMessageStore::NotificationFilterIdSet)), &removeCatcher, SLOT(messageRemoved(QMessageId, QMessageStore::NotificationFilterIdSet)));
 
     QMessageStore::NotificationFilterId filter1 = QMessageStore::instance()->registerNotificationFilter(QMessageFilter::byParentAccountId(QMessageAccountId()));
     QMessageStore::NotificationFilterId filter2 = QMessageStore::instance()->registerNotificationFilter(QMessageFilter::byParentAccountId(testAccountId));
@@ -511,6 +512,9 @@ void tst_QMessageStore::testMessage()
     QVERIFY(messageId != QMessageId());
     QCOMPARE(QMessageStore::instance()->countMessages(), originalCount + 1);
     
+    while (QCoreApplication::hasPendingEvents())
+        QCoreApplication::processEvents();
+
     QCOMPARE(catcher.added.count(), 1);
     QCOMPARE(catcher.added.first().first, messageId);
     QCOMPARE(catcher.added.first().second.count(), 2);
@@ -546,6 +550,7 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(QMessageContentContainerId(bodyId.toString()), bodyId);
 
     QMessageContentContainer body(message.find(bodyId));
+
     QCOMPARE(body.contentType().toLower(), bodyType.toLower());
     QCOMPARE(body.contentSubType().toLower(), bodySubType.toLower());
     QCOMPARE(body.contentCharset().toLower(), defaultCharset.toLower());
@@ -588,6 +593,9 @@ void tst_QMessageStore::testMessage()
     QMessageStore::instance()->updateMessage(&message);
     QCOMPARE(QMessageStore::instance()->lastError(), QMessageStore::NoError);
 
+    while (QCoreApplication::hasPendingEvents())
+        QCoreApplication::processEvents();
+
     QCOMPARE(catcher.updated.count(), 1);
     QCOMPARE(catcher.updated.first().first, messageId);
     QCOMPARE(catcher.updated.first().second.count(), 2);
@@ -613,6 +621,9 @@ void tst_QMessageStore::testMessage()
     QMessageStore::instance()->removeMessage(message.id());
     QCOMPARE(QMessageStore::instance()->lastError(), QMessageStore::NoError);
     QCOMPARE(QMessageStore::instance()->countMessages(), originalCount);
+
+    while (QCoreApplication::hasPendingEvents())
+        QCoreApplication::processEvents();
 
     QCOMPARE(removeCatcher.removed.count(), 1);
     QCOMPARE(removeCatcher.removed.first().first, messageId);

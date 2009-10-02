@@ -96,6 +96,12 @@
     This type contains a value identifying a registered message filter.
 */
 
+/*!
+    \typedef QMessageStore::NotificationFilterIdSet
+
+    This type contains a set of values identifying registered message filters.
+*/
+
 /*
     TODO capabilities AtomicBooleanSearch AtomicSlices Sms Mms Email Xmpp Presence AtomicExtendedSearching AtomicBodySearching
       ExtendedServices AtomicCustomSearching CaseInsensitiveSearching FullWordSearching
@@ -363,7 +369,7 @@
 */
 
 /*!
-    \fn void QMessageStore::messageAdded(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &matchingFilterIds);
+    \fn void QMessageStore::messageAdded(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &matchingFilterIds);
 
     Signal that is emitted when the message identified by \a id is added to the message store.
     \a matchingFilters contains a set of values identifiying registered notification filters 
@@ -373,7 +379,7 @@
 */
 
 /*!
-    \fn void QMessageStore::messageRemoved(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &matchingFilterIds);
+    \fn void QMessageStore::messageRemoved(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &matchingFilterIds);
 
     Signal that is emitted when the message identified by \a id is removed from the message store.
     \a matchingFilters contains a set of values identifiying registered notification filters 
@@ -386,7 +392,7 @@
 */
 
 /*!
-    \fn void QMessageStore::messageUpdated(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &matchingFilterIds);
+    \fn void QMessageStore::messageUpdated(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &matchingFilterIds);
 
     Signal that is emitted when the message identified by \a id is updated in the message store.
     \a matchingFilters contains a set of values identifiying registered notification filters 
@@ -399,3 +405,5 @@
     \sa messageAdded(), messageRemoved(), registerNotificationFilter()
 */
 
+static const int registrationId1 = qRegisterMetaType<QMessageStore::NotificationFilterId>();
+static const int registrationId2 = qRegisterMetaType<QMessageStore::NotificationFilterIdSet>();
