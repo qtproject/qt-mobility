@@ -42,6 +42,7 @@
 #include <multimedia/qcamerafocuscontrol.h>
 #include <multimedia/qmediarecordercontrol.h>
 #include <multimedia/qimageprocessingcontrol.h>
+#include <multimedia/qimagecapturecontrol.h>
 
 /*!
     \class QCamera
@@ -60,6 +61,7 @@ public:
     QCameraExposureControl *exposureControl;
     QCameraFocusControl *focusControl;
     QImageProcessingControl *imageControl;
+    QImageCaptureControl *captureControl;
 
     QCamera::Error error;
     QString errorString;
@@ -81,6 +83,7 @@ QCamera::QCamera(QObject *parent, QMediaServiceProvider *provider):
         d->exposureControl = qobject_cast<QCameraExposureControl *>(d->service->control(QCameraExposureControl_iid));
         d->focusControl = qobject_cast<QCameraFocusControl *>(d->service->control(QCameraFocusControl_iid));
         d->imageControl = qobject_cast<QImageProcessingControl *>(d->service->control(QImageProcessingControl_iid));
+        d->captureControl = qobject_cast<QImageCaptureControl *>(d->service->control(QImageCaptureControl_iid));
 
         connect(d->control, SIGNAL(stateChanged(QCamera::State)), this, SIGNAL(stateChanged(QCamera::State)));
     } else {
@@ -88,6 +91,7 @@ QCamera::QCamera(QObject *parent, QMediaServiceProvider *provider):
         d->exposureControl = 0;
         d->focusControl = 0;
         d->imageControl = 0;
+        d->captureControl = 0;
     }
 
     if (d->exposureControl) {
@@ -100,6 +104,13 @@ QCamera::QCamera(QObject *parent, QMediaServiceProvider *provider):
                 this, SIGNAL(focusStatusChanged(QCamera::FocusStatus)));
         connect(d->focusControl, SIGNAL(zoomValueChanged(qreal)), this, SIGNAL(zoomValueChanged(qreal)));
         connect(d->focusControl, SIGNAL(focusLocked()), this, SIGNAL(focusLocked()));
+    }
+
+    if (d->captureControl) {
+        connect(d->captureControl, SIGNAL(imageCaptured(QString,QImage)),
+                this, SIGNAL(imageCaptured(QString,QImage)));
+        connect(d->captureControl, SIGNAL(readyForCaptureChanged(bool)),
+                this, SIGNAL(readyForCaptureChanged(bool)));
     }
 }
 
@@ -652,6 +663,35 @@ bool QCamera::isExposureLocked() const
 bool QCamera::isFocusLocked() const
 {
     return d_func()->focusControl ? d_func()->focusControl->isFocusLocked() : true;
+}
+
+/*!
+  \property QCamera::readyForCapture
+   Indicates the camera is ready to capture an image immediately.
+*/
+
+bool QCamera::isReadyForCapture() const
+{
+    return d_func()->captureControl ? d_func()->captureControl->isReadyForCapture() : false;
+}
+
+/*!
+    Capture the image and save it to file.
+    This operation is asynchronous in majority of cases,
+    followed by signal QCamera::imageCaptured() or error()
+*/
+void QCamera::capture(const QString &file)
+{
+    Q_D(QCamera);
+
+    if (d->captureControl) {
+        d->captureControl->capture(file);
+    } else {
+        d->error = NotReadyToCaptureError;
+        d->errorString = tr("Device does not support images capture.");
+
+        emit error(d->error);
+    }
 }
 
 

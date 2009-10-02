@@ -61,7 +61,9 @@ public:
     enum Error
     {
         NoError,
-        CameraError
+        CameraError,
+        NotReadyToCaptureError,
+        InvalidRequestError
     };
 
     enum FlashMode {
@@ -131,6 +133,7 @@ public:
     Q_DECLARE_FLAGS(WhiteBalanceModes, WhiteBalanceMode)
 
     Q_PROPERTY(QCamera::State state READ state NOTIFY stateChanged)
+    Q_PROPERTY(bool readyForCapture READ isReadyForCapture NOTIFY readyForCaptureChanged)
 
     QCamera(QObject *parent = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
     ~QCamera();
@@ -200,6 +203,8 @@ public:
     bool isExposureLocked() const;
     bool isFocusLocked() const;
 
+    bool isReadyForCapture() const;
+
     Error error() const;
     QString errorString() const;
 
@@ -210,12 +215,17 @@ public Q_SLOTS:
     void lockFocus();
     void unlockFocus();
 
+    void capture(const QString &fileName);
+
 Q_SIGNALS:
     void flashReady(bool);
     void focusStatusChanged(QCamera::FocusStatus);
     void zoomValueChanged(qreal);
     void exposureLocked();
     void focusLocked();
+
+    void readyForCaptureChanged(bool);
+    void imageCaptured(const QString &fileName, const QImage &preview);
 
     void stateChanged(QCamera::State);
     void error(QCamera::Error);

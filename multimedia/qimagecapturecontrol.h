@@ -45,11 +45,11 @@ class Q_MEDIA_EXPORT QImageCaptureControl : public QMediaControl
 public:
     ~QImageCaptureControl();
 
-    virtual bool isReady() const = 0;
+    virtual bool isReadyForCapture() const = 0;
     virtual void capture(const QString &fileName) = 0;
 
 Q_SIGNALS:
-    void readyStatusChanged(bool);
+    void readyForCaptureChanged(bool);
     void imageCaptured(const QString &fileName, const QImage &preview);
 
 protected:
