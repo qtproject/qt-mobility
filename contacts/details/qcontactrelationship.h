@@ -54,31 +54,11 @@ public:
     const char* RelationshipTypeHasMember;
     const char* RelationshipTypeIsMemberOf;
     const char* RelationshipTypeAggregates;
-    const char* RelationshipTypeAggregatedBy;
+    const char* RelationshipTypeIsAggregatedBy;
     const char* RelationshipTypeIs;
-    const char* RelationshipTypeWas;
-    const char* RelationshipTypeParent;
-    const char* RelationshipTypeFather;
-    const char* RelationshipTypeMother;
-    const char* RelationshipTypeChild;
-    const char* RelationshipTypeSon;
-    const char* RelationshipTypeDaughter;
-    const char* RelationshipTypeSibling;
-    const char* RelationshipTypeBrother;
-    const char* RelationshipTypeSister;
-    const char* RelationshipTypeCousin;
-    const char* RelationshipTypeFriend;
+    const char* RelationshipTypeAssistant;
+    const char* RelationshipTypeManager;
     const char* RelationshipTypeSpouse;
-    const char* RelationshipTypeFiance;
-    const char* RelationshipTypeFiancee;
-    const char* RelationshipTypeHusband;
-    const char* RelationshipTypeWife;
-    const char* RelationshipTypeWidower;
-    const char* RelationshipTypeWidow;
-    const char* RelationshipTypeEmployer;
-    const char* RelationshipTypeEmployee;
-    const char* RelationshipTypeOther;
-    const char* RelationshipTypeUnknown;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactRelationship, "Relationship")
     Q_DECLARE_LATIN1_LITERAL(FieldRelationshipType, "RelationshipType");
@@ -88,31 +68,11 @@ public:
     Q_DECLARE_LATIN1_LITERAL(RelationshipTypeHasMember, "HasMember");
     Q_DECLARE_LATIN1_LITERAL(RelationshipTypeIsMemberOf, "IsMemberOf");
     Q_DECLARE_LATIN1_LITERAL(RelationshipTypeAggregates, "Aggregates");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeAggregatedBy, "AggregatedBy");
+    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeIsAggregatedBy, "IsAggregatedBy");
     Q_DECLARE_LATIN1_LITERAL(RelationshipTypeIs, "Is");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeWas, "Was");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeParent, "Parent");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeFather, "Father");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeMother, "Mother");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeChild, "Child");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeSon, "Son");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeDaughter, "Daughter");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeSibling, "Sibling");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeBrother, "Brother");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeSister, "Sister");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeCousin, "Cousin");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeFriend, "Friend");
+    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeAssistant, "Assistant");
+    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeManager, "Manager");
     Q_DECLARE_LATIN1_LITERAL(RelationshipTypeSpouse, "Spouse");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeFiance, "Fiance");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeFiancee, "Fiancee");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeHusband, "Husband");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeWife, "Wife");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeWidower, "Widower");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeWidow, "Widow");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeEmployer, "Employer");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeEmployee, "Employee");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeOther, "Other");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeUnknown, "Unknown");
 #endif
 
     void setRelationshipType(const QString& relationshipType) {setValue(FieldRelationshipType, relationshipType);}
