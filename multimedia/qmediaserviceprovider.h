@@ -36,17 +36,51 @@
 #define QMEDIASERVICEPROVIDER_H
 
 #include <QtCore/qobject.h>
+#include <QtCore/qshareddata.h>
 #include <multimedia/qmultimediaglobal.h>
 
 class QMediaService;
+
+class QMediaServiceProviderHintPrivate;
+class QMediaServiceProviderHint
+{
+public:
+    enum Type { Null, ContentType, Device };
+    QMediaServiceProviderHint();
+    QMediaServiceProviderHint(const QString &mimeType, const QStringList& codecs);
+    QMediaServiceProviderHint(const QByteArray &device);
+    QMediaServiceProviderHint(const QMediaServiceProviderHint &other);
+    ~QMediaServiceProviderHint();
+
+    QMediaServiceProviderHint& operator=(const QMediaServiceProviderHint &other);
+
+    Type type() const;
+
+    QString mimeType() const;
+    QStringList codecs() const;
+
+    QByteArray device() const;
+
+    //to be extended, if necessary
+
+private:
+    QSharedDataPointer<QMediaServiceProviderHintPrivate> d;
+};
 
 class Q_MEDIA_EXPORT QMediaServiceProvider : public QObject
 {
     Q_OBJECT
 
 public:
+    enum SupportEstimate { NotSupported, MaybeSupported, ProbablySupported, PreferedService };
+
     virtual QMediaService* requestService(const QByteArray &type, const QList<QByteArray> &optional = QList<QByteArray>()) = 0;
     virtual void releaseService(QMediaService *service) = 0;
+
+    virtual SupportEstimate canPlay(const QByteArray &serviceType, const QString &mimeType, const QStringList& codecs) const;
+
+    virtual QList<QByteArray> devices(const QByteArray &serviceType) const;
+    virtual QString deviceDescription(const QByteArray &serviceType, const QByteArray &device);
 
     static QMediaServiceProvider* defaultServiceProvider();
 };
