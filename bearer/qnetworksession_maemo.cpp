@@ -669,7 +669,7 @@ QVariant QNetworkSessionPrivate::property(const QString& key)
         if (!isActive) {
             return QString();
         } else if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork){
-            return activeConfig.identifier();
+            return serviceConfig.identifier();
         } else { 
             return publicConfig.identifier();
         }
