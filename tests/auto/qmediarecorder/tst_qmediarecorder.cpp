@@ -556,31 +556,31 @@ void tst_QMediaRecorder::testMediaFormatsControl()
 
 void tst_QMediaRecorder::testVideoEncodeControl()
 {
-    QList<QSize> sizes = videoEncode->supportedResolutions();
+    QList<QSize> sizes = capture->supportedResolutions();
     QVERIFY(sizes.count() == 2);
-    videoEncode->setResolution(sizes.first());
-    QVERIFY(videoEncode->resolution() == QSize(320,240));
-    QVERIFY(videoEncode->minimumResolution() == QSize(320,240));
-    QVERIFY(videoEncode->maximumResolution() == QSize(640,480));
+    capture->setResolution(sizes.first());
+    QVERIFY(capture->resolution() == QSize(320,240));
+    QVERIFY(capture->minimumResolution() == QSize(320,240));
+    QVERIFY(capture->maximumResolution() == QSize(640,480));
 
-    QList<QMediaRecorder::FrameRate> rates = videoEncode-> supportedFrameRates();
+    QList<QMediaRecorder::FrameRate> rates = capture->supportedFrameRates();
     QVERIFY(rates.count() == 3);
-    videoEncode->setFrameRate(rates.first());
-    QVERIFY(videoEncode->frameRate().first == 30);
-    QVERIFY(videoEncode->minimumFrameRate().first == 1);
-    QVERIFY(videoEncode->maximumFrameRate().first == 30);
+    capture->setFrameRate(rates.first());
+    QVERIFY(capture->frameRate().first == 30);
+    QVERIFY(capture->minimumFrameRate().first == 1);
+    QVERIFY(capture->maximumFrameRate().first == 30);
 
-    QStringList vCodecs = videoEncode->supportedVideoCodecs();
+    QStringList vCodecs = capture->supportedVideoCodecs();
     QVERIFY(vCodecs.count() == 2);
-    videoEncode->setVideoCodec(vCodecs.first());
-    QVERIFY(videoEncode->videoCodec().compare("video/3gpp") == 0);
-    QVERIFY(videoEncode->videoCodecDescription("video/3gpp").compare("no comment") == 0);
+    capture->setVideoCodec(vCodecs.first());
+    QVERIFY(capture->videoCodec().compare("video/3gpp") == 0);
+    QVERIFY(capture->videoCodecDescription("video/3gpp").compare("no comment") == 0);
 
-    videoEncode->setBitrate(8000);
-    QVERIFY(videoEncode->bitrate() == 8000);
+    capture->setAudioBitrate(8000);
+    QVERIFY(capture->audioBitrate() == 8000);
 
-    videoEncode->setQuality(1);
-    QVERIFY(videoEncode->quality() == 1);
+    capture->setAudioQuality(1);
+    QVERIFY(capture->audioQuality() == 1);
 }
 
 QTEST_MAIN(tst_QMediaRecorder)
