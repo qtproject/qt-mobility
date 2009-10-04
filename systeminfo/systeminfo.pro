@@ -77,8 +77,7 @@ unix: {
 
 }
 
-    symbian::
-    {
+    symbian:{
         INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
         DEPENDPATH += symbian
         
