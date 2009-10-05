@@ -42,7 +42,7 @@
 class QMediaService;
 
 class QMediaServiceProviderHintPrivate;
-class QMediaServiceProviderHint
+class Q_MEDIA_EXPORT QMediaServiceProviderHint
 {
 public:
     enum Type { Null, ContentType, Device };
