@@ -62,7 +62,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QAbstractValueSpaceLayer::LayerOption
+    \enum QValueSpace::LayerOption
 
     This enum describes the behaviour of the Value Space layer.  In addition this enum is used as
     a filter when constructing a QValueSpaceObject or QValueSpaceItem.
@@ -213,11 +213,17 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QAbstractValueSpaceLayer::LayerOptions QAbstractValueSpaceLayer::layerOptions() const
+    \fn QValueSpace::LayerOptions QAbstractValueSpaceLayer::layerOptions() const
 
-    Returns the LayerOptions describing this layer.
+    Returns the QValueSpace::LayerOptions describing this layer.
 
-    \sa LayerOption
+    \sa QValueSpace::LayerOption
+*/
+
+/*!
+    \fn bool QAbstractValueSpaceLayer::supportsInterestNotification() const
+
+    Returns true if the layer supports interest notifications; otherwise returns false.
 */
 
 /*!
@@ -265,7 +271,7 @@ QT_BEGIN_NAMESPACE
 
     Registers \a creator for change notifications to values under \a handle.
 
-    \sa removeWatches(), emitItemRemove(), emitItemSetValue()
+    \sa removeWatches()
 */
 
 /*!
@@ -273,7 +279,7 @@ QT_BEGIN_NAMESPACE
 
     Removes all registered change notifications for \a creator under \a parent.
 
-    \sa addWatch(), emitItemRemove(), emitItemSetValue()
+    \sa addWatch()
 */
 
 /*!

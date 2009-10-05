@@ -131,15 +131,6 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \property QValueSpaceItem::notify
-
-    This property holds whether change notifications are enabled.
-
-    Explicitly enabling change notifications is not normally necessary as they are automatically
-    enabled when a connection is made to the contentsChanged() signals.
-*/
-
-/*!
     \property QValueSpaceItem::path
 
     This property holds the current path that the QValueSpaceItem refers to.
