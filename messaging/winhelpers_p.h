@@ -288,6 +288,8 @@ public:
 
     QByteArray attachmentData(QMessageStore::ErrorCode *lastError, const QMessageId& id, ULONG number) const;
 
+    QMessageIdList queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const;
+
     bool showForm(IMessage* message, IMAPIFolder* folder, IMsgStore* store);
 
     IMAPISession* session() const { return _mapiSession; }
