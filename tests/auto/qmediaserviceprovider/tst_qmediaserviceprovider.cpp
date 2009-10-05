@@ -37,6 +37,20 @@
 
 #include <multimedia/qmediaserviceprovider.h>
 
+class MockMediaServiceProvider : public QMediaServiceProvider
+{
+    QMediaService* requestService(const QByteArray &type, const QMediaServiceProviderHint &)
+    {
+        Q_UNUSED(type);
+        return 0;
+    }
+
+    void releaseService(QMediaService *service)
+    {
+        Q_UNUSED(service);
+    }
+};
+
 
 class tst_QMediaServiceProvider : public QObject
 {
@@ -45,6 +59,8 @@ class tst_QMediaServiceProvider : public QObject
 private slots:
     void testDefaultProviderAvailable();
     void testObtainService();
+    void testCanPlay();
+    void testDevices();
     void testProviderHints();
 };
 
@@ -65,6 +81,34 @@ void tst_QMediaServiceProvider::testObtainService()
     service = provider->requestService("mediaplayer");
     QVERIFY(service != 0);
     provider->releaseService(service);
+}
+
+void tst_QMediaServiceProvider::testCanPlay()
+{
+    MockMediaServiceProvider mockProvider;
+    QCOMPARE(mockProvider.canPlay(QByteArray("mediaplayer"), "video/ogv", QStringList()),
+             QMediaServiceProvider::MaybeSupported);
+
+    QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider();
+    QCOMPARE(provider->canPlay(QByteArray("mediaplayer"), "video/ogv", QStringList()),
+             QMediaServiceProvider::MaybeSupported);
+
+    QCOMPARE(provider->canPlay(QByteArray("non existing service"), "video/ogv", QStringList()),
+             QMediaServiceProvider::NotSupported);
+}
+
+void tst_QMediaServiceProvider::testDevices()
+{
+    MockMediaServiceProvider mockProvider;
+    QVERIFY(mockProvider.devices(QByteArray("camera")).isEmpty());
+
+    QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider();
+
+    //how to test this properly?
+    //it depends on plugins installed
+    //QVERIFY(!provider->devices(QByteArray("camera")).isEmpty());
+
+    QVERIFY(provider->devices(QByteArray("non existing service")).isEmpty());
 }
 
 
