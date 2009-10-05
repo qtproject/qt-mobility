@@ -209,6 +209,16 @@ bool QContactDetail::operator==(const QContactDetail& other) const
     return true;
 }
 
+void QContactDetail::setPreferredActions(const QList<QContactActionDescriptor>& preferredActions)
+{
+    d->m_preferredActions = preferredActions;
+}
+
+QList<QContactActionDescriptor> QContactDetail::preferredActions() const
+{
+    return d->m_preferredActions;
+}
+
 /*! Returns true if no values are contained in this detail.  Note that context is stored as a value; hence, if a context is set, this function will return false. */
 bool QContactDetail::isEmpty() const
 {
