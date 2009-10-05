@@ -178,6 +178,7 @@ private:
 
     friend class MapiStore;
 
+    QWeakPointer<MapiFolder> _self;
     MapiStorePtr _store;
     bool _valid;
     IMAPIFolder* _folder;
@@ -220,6 +221,8 @@ public:
 
     MapiFolderPtr openFolder(QMessageStore::ErrorCode *lastError, const MapiEntryId& id) const;
 
+    QMessageIdList queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const;
+
     void notifyEvents(ULONG mask);
 
 private:
@@ -245,6 +248,7 @@ private:
         STDMETHOD_(ULONG, OnNotify)(ULONG cNotification, LPNOTIFICATION lpNotifications);
     };
 
+    QWeakPointer<MapiStore> _self;
     MapiSessionPtr _session;
     bool _valid;
     IMsgStore* _store;
@@ -320,6 +324,7 @@ private:
     void addAttachment(LPMESSAGE message, const QMessageContentContainer& attachmentContainer);
 
 private:
+    QWeakPointer<MapiSession> _self;
     WinHelpers::MapiInitializationToken _token;
     IMAPISession* _mapiSession;
     QMessageStore::NotificationFilterId _filterId;
