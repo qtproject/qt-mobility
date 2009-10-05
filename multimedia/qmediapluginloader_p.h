@@ -41,7 +41,7 @@
 class QMediaServiceProviderPlugin;
 
 
-class QMediaPluginLoader
+class Q_AUTOTEST_EXPORT QMediaPluginLoader
 {
 public:
     QMediaPluginLoader(const char *iid,
