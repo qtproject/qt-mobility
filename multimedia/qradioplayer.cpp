@@ -241,6 +241,8 @@ int QRadioPlayer::volume() const
 
     if (d->control != 0)
         return d->control->volume();
+
+    return 0;
 }
 
 /*!
