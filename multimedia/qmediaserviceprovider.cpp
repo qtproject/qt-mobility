@@ -200,15 +200,69 @@ public:
     QMediaService* requestService(const QByteArray &type, const QMediaServiceProviderHint &hint)
     {
         QString key(type);
-        QMediaServiceProviderPlugin *plugin =
-            qobject_cast<QMediaServiceProviderPlugin*>(loader()->instance(key));
 
-        if (plugin != 0) {
-            QMediaService *service = plugin->create(key);
-            if (service != 0)
-                pluginMap.insert(service, plugin);
+        QList<QMediaServiceProviderPlugin *>plugins;
+        foreach (QObject *obj, loader()->instances(key)) {
+            QMediaServiceProviderPlugin *plugin =
+                qobject_cast<QMediaServiceProviderPlugin*>(obj);
+            if (plugin)
+                plugins << plugin;
+        }
 
-            return service;
+        if (!plugins.isEmpty()) {
+            QMediaServiceProviderPlugin *plugin = 0;
+
+            switch (hint.type()) {
+            case QMediaServiceProviderHint::Null:
+                plugin = plugins[0];
+                break;
+            case QMediaServiceProviderHint::Device: {
+                    foreach (QMediaServiceProviderPlugin *currentPlugin, plugins) {
+                        QMediaServiceProviderSupportedDevicesInterface *iface =
+                                qobject_cast<QMediaServiceProviderSupportedDevicesInterface*>(plugin);
+
+                        if (!iface) {
+                            // the plugin may support the device,
+                            // but this choice still can be overridden
+                            plugin = currentPlugin;
+                        } else {
+                            if (iface->devices().contains(hint.device())) {
+                                plugin = currentPlugin;
+                                break;
+                            }
+                        }
+                    }
+                }
+                break;
+            case QMediaServiceProviderHint::ContentType: {
+                    SupportEstimate estimate = NotSupported;
+                    foreach (QMediaServiceProviderPlugin *currentPlugin, plugins) {
+                        SupportEstimate currentEstimate = MaybeSupported;
+                        QMediaServiceProviderSupportedFormatsInterface *iface =
+                                qobject_cast<QMediaServiceProviderSupportedFormatsInterface*>(plugin);
+
+                        if (iface)
+                            currentEstimate = iface->canPlay(hint.mimeType(), hint.codecs());
+
+                        if (currentEstimate > estimate) {
+                            estimate = currentEstimate;
+                            plugin = currentPlugin;
+
+                            if (currentEstimate == PreferedService)
+                                break;
+                        }
+                    }
+                }
+                break;
+            }
+
+            if (plugin != 0) {
+                QMediaService *service = plugin->create(key);
+                if (service != 0)
+                    pluginMap.insert(service, plugin);
+
+                return service;
+            }
         }
 
         qWarning() << "defaultServiceProvider::requestService(): no service found for -" << key;
@@ -232,7 +286,12 @@ public:
         bool found = false;
         QMediaServiceProvider::SupportEstimate supportEstimate = NotSupported;
 
-        foreach(QObject *obj, loader()->instances(serviceType)) {
+        QList<QObject*> instances = loader()->instances(serviceType);
+
+        if (instances.isEmpty())
+            return NotSupported;
+
+        foreach(QObject *obj, instances) {
             QMediaServiceProviderSupportedFormatsInterface *iface =
                     qobject_cast<QMediaServiceProviderSupportedFormatsInterface*>(obj);
 
