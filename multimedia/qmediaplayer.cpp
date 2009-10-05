@@ -51,9 +51,23 @@
     \ingroup multimedia
 
     \preliminary
-    \brief
+    \brief The QMediaPlayer class is used for the playback of media sources.
 
-    \sa
+    The QMediaPlayer class is a high level media playback class. It can be used
+    to playback such content as songs, movies and internet radio. The content
+    to playback is specified as a QMediaSource, which can be thought of as a
+    main or canonical URL with addition information attached. When provided
+    with a QMediaSource playback may be able to commence.
+
+    \code
+        player = new QMediaPlayer;
+        connect(player, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
+        player->setMedia(QUrl::fromLocalFile("/Users/me/Music/coolsong.mp3"));
+        player->setVolume(50);
+        player->play();
+    \endcode
+
+    \sa QMediaObject, QMediaService
 */
 
 class QMediaPlayerPrivate : public QMediaObjectPrivate
@@ -137,7 +151,8 @@ void QMediaPlayerPrivate::_q_updateMedia(const QMediaSource &media)
 
 
 /*!
-    Construct a QMediaPlayer that uses the playback service from \a provider, parented to \a parent.
+    Construct a QMediaPlayer that uses the playback service from \a provider,
+    parented to \a parent.
 
     If a playback service is not specified the system default will be used.
 */
@@ -492,7 +507,7 @@ void QMediaPlayer::bind(QObject *obj)
 
 /*!
     \property QMediaPlayer::media
-    \brief The media currently being by the player object.
+    \brief the active media source being used by the player object.
 
     The player object will use the QMediaSource for selection of the content to
     be played.
@@ -506,7 +521,8 @@ void QMediaPlayer::bind(QObject *obj)
     \property QMediaPlayer::mediaStatus
     \brief the status of the current media stream.
 
-    The stream status describes how the playback of the current stream is progressing.
+    The stream status describes how the playback of the current stream is
+    progressing.
 
     By default this property is QMediaPlayer::NoMedia
 
@@ -515,43 +531,85 @@ void QMediaPlayer::bind(QObject *obj)
 
 /*!
     \property QMediaPlayer::duration
-    \brief The total playback time in milliseconds of the current source.
-*/
+    \brief the duration of the current media.
 
+    The value is the total playback time in milliseconds of the current media.
+    The value may change across the life time of the QMediaPlayer object and
+    may not be available when initial playback begins, connect to the
+    durationChanged() signal to receive status notifications.
+*/
 
 /*!
     \property QMediaPlayer::position
-    \brief The current playback position in milliseconds from the beginning.
+    \brief the playback position of the current media.
+
+    The value is the current playback position, expressed in milliseconds since
+    the beginning of the media. Periodically changes in the position will be
+    indicated with the signal positionChanged(), the interval between updates
+    can be set with QMediaObject's method setNotifyInterval().
 */
 
 /*!
     \property QMediaPlayer::volume
-    \brief The current playback volume. Volume is a linear effect from 0-100.
+    \brief the current playback volume.
+
+    The playback volume is a linear in effect and the value can range from 0 -
+    100, values outside this range will be clamped.
 */
 
 /*!
     \property QMediaPlayer::muted
-    \brief true if the playback volume is muted; otherwise false.
+    \brief the muted state of the current media.
+
+    The value will be true if the playback volume is muted; otherwise false.
 */
 
 /*!
     \property QMediaPlayer::bufferStatus
-    \brief When buffering; returns the percent of the local buffer filled.
+    \brief the percentage of the temporary buffer filled before playback begins.
+
+    When the player object is buffering; this property holds the percentage of
+    the temporary buffer that is filled. The buffer will need to reach 100%
+    filled before playback can resume, at which time the MediaStatus will be
+    BufferedMedia.
+
+    \sa mediaStatus()
 */
 
 /*!
     \property QMediaPlayer::videoAvailable
-    \brief true if there is visual content available; otherwise false.
+    \brief the video availability status for the current media.
+
+    If available, the QVideoWidget class can be used to view the video. As the
+    life time of QMediaPlayer can be longer than the playback of one
+    QMediaSource, this property may change over time, the
+    videoAvailabilityChanged signal can be used to monitor it's status.
+
+    \sa QVideoWidget, QMediaSource
 */
 
 /*!
     \property QMediaPlayer::seekable
-    \brief true if the currently playing content is seekable; otherwise false.
+    \brief the seek-able status of the current media
+
+    If seeking is supported this property will be true; false otherwise. The
+    status of this property may change across the life time of the QMediaPlayer
+    object, use the seekableChanged signal to monitor changes.
 */
 
 /*!
     \property QMediaPlayer::playbackRate
-    \brief the rate of playback
+    \brief the playback rate of the current media.
+
+    This value is a multiplier applied to the media's standard play rate. By
+    default this value is 1.0, indicating that the media is playing at the
+    standard pace. Values higher than 1.0 will increase the rate of play.
+    Values less than zero can be set and indicate the media will rewind at the
+    multiplier of the standard pace.
+
+    Not all playback services support change of the playback rate. It is
+    framework defined as to the status and quality of audio and video
+    while fast forwarding or rewinding.
 */
 
 /*!
@@ -564,7 +622,7 @@ void QMediaPlayer::bind(QObject *obj)
     \fn void QMediaPlayer::positionChanged(qint64 position)
 
     Signal the position of the content has changed to \a position, expressed in
-    milliseconds approximately every 1000milliseconds.
+    milliseconds.
 */
 
 /*!
