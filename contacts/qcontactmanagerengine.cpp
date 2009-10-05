@@ -1652,6 +1652,19 @@ void QContactManagerEngine::addSorted(QList<QContact>* sorted, const QContact& t
     sorted->append(toAdd);
 }
 
+QList<QUniqueId> QContactManagerEngine::sortContacts(const QList<QContact>& contacts, const QList<QContactSortOrder>& sortOrders)
+{
+    QList<QUniqueId> sortedIds;
+    QList<QContact> sortedContacts;
+
+    foreach (const QContact& contact, contacts) {
+        QContactManagerEngine::addSorted(&sortedContacts, contact, sortOrders);
+    }
+    for (int i = 0; i < sortedContacts.size(); i++)
+        sortedIds.append(sortedContacts.at(i).id());
+    return sortedIds;
+}
+
 /*!
  * Notifies the manager engine that the given request \a req has been destroyed
  */

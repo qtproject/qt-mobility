@@ -134,49 +134,8 @@ void QContactWinCEEngine::deref()
         delete this;
 }
 
-QList<QUniqueId> QContactWinCEEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
-{
-    QString query = convertFilterToQueryString(filter);
-    
-    if (!query.isEmpty()) {
-        //Filtering contacts with POOM API
-        SimpleComPointer<IPOutlookItemCollection> collection;
-        HRESULT hr = d->m_collection->Restrict((BSTR)(query.constData()), &collection);
-
-        if (SUCCEEDED(hr)) {
-            //XXX sort the filtered items first
-            return convertP2QIdList(collection);
-        } else {
-            //Should we fail back to generic filtering here?
-            qDebug() << "Can't filter contacts" << HRESULT_CODE(hr);
-            error = QContactManager::UnspecifiedError;
-        }
-    }
-    //Fail back to generic filtering
-    return QContactManagerEngine::contacts(filter, sortOrders, error);
-}
 
 
-QList<QUniqueId> QContactWinCEEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
-{
-    //XXX   POOM doses not support multi sort orders
-
-    QList<QUniqueId> allCIds = d->m_ids;
-    error = QContactManager::NoError;
-
-    return d->m_ids;
-
-    // return the list sorted according to sortOrders
-    QContactManager::Error sortError;
-    QList<QContact> sorted;
-    QList<QUniqueId> sortedIds;
-    for (int i = 0; i < allCIds.size(); i++)
-        QContactManagerEngine::addSorted(&sorted, contact(allCIds.at(i), sortError), sortOrders);
-    for (int i = 0; i < sorted.size(); i++)
-        sortedIds.append(sorted.at(i).id());
-
-    return sortedIds;
-}
 
 QContact QContactWinCEEngine::contact(const QUniqueId& contactId, QContactManager::Error& error) const
 {
