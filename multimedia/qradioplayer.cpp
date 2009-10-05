@@ -87,8 +87,6 @@ QRadioPlayer::QRadioPlayer(QObject *parent, QMediaServiceProvider* provider):
 
     d->provider = provider;
 
-    Q_ASSERT(d->service != 0);
-
     if (d->service != 0) {
         d->control = qobject_cast<QRadioPlayerControl*>(d->service->control(QRadioPlayerControl_iid));
         if (d->control != 0) {

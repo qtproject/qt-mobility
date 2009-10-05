@@ -157,8 +157,6 @@ QMediaRecorder::QMediaRecorder(QMediaObject *mediaObject):
 {
     Q_D(QMediaRecorder);
 
-    Q_ASSERT(d->service != 0);
-
     d->initControls();
 }
 
@@ -166,8 +164,6 @@ QMediaRecorder::QMediaRecorder(QObject *parent, QMediaServiceProvider *provider)
     QMediaObject(*new QMediaRecorderPrivate, parent, provider->requestService("mediarecorder"))
 {
     Q_D(QMediaRecorder);
-
-    Q_ASSERT(d->service != 0);
 
     d->initControls();
 }

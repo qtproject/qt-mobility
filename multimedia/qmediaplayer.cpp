@@ -164,7 +164,6 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaServiceProvider *provider):
 
     d->provider = provider;
 
-    Q_ASSERT(d->service != 0);
     if (d->service != 0) {
         d->control = qobject_cast<QMediaPlayerControl*>(d->service->control(QMediaPlayerControl_iid));
         if (d->control != 0) {
