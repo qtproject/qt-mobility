@@ -44,24 +44,25 @@ QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class QValueSpaceObjectPrivate;
-class Q_CFW_EXPORT QValueSpaceObject : public QObject
+class QValueSpaceProviderPrivate;
+class Q_CFW_EXPORT QValueSpaceProvider : public QObject
 {
     friend class QAbstractValueSpaceLayer;
 
     Q_OBJECT
 
 public:
-    explicit QValueSpaceObject(const QString &path, QObject *parent = 0);
-    explicit QValueSpaceObject(const char *path, QObject *parent = 0);
+    explicit QValueSpaceProvider(const QString &path, QObject *parent = 0);
+    explicit QValueSpaceProvider(const char *path, QObject *parent = 0);
 
-    QValueSpaceObject(const QString &path, QValueSpace::LayerOptions filter, QObject *parent = 0);
-    QValueSpaceObject(const char *path, QValueSpace::LayerOptions filter, QObject *parent = 0);
+    QValueSpaceProvider(const QString &path, QValueSpace::LayerOptions filter,
+                        QObject *parent = 0);
+    QValueSpaceProvider(const char *path, QValueSpace::LayerOptions filter, QObject *parent = 0);
 
-    QValueSpaceObject(const QString &objectPath, const QUuid &uuid, QObject *parent = 0);
-    QValueSpaceObject(const char *objectPath, const QUuid &uuid, QObject *parent = 0);
+    QValueSpaceProvider(const QString &path, const QUuid &uuid, QObject *parent = 0);
+    QValueSpaceProvider(const char *path, const QUuid &uuid, QObject *parent = 0);
 
-    virtual ~QValueSpaceObject();
+    virtual ~QValueSpaceProvider();
 
     QString path() const;
 
@@ -83,8 +84,9 @@ protected:
     virtual void connectNotify(const char *);
 
 private:
-    Q_DISABLE_COPY(QValueSpaceObject)
-    QValueSpaceObjectPrivate *d;
+    Q_DISABLE_COPY(QValueSpaceProvider)
+
+    QValueSpaceProviderPrivate *d;
 };
 
 QT_END_NAMESPACE

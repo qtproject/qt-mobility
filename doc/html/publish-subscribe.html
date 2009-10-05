@@ -35,7 +35,7 @@
 </table></p>
 <a name="provider"></a>
 <h2>Provider</h2>
-<p>When acting as a provider of Value Space content the program creates a ProviderDialog. This dialog contains a widget for setting the base path of the <a href="qvaluespaceobject.html">QValueSpaceObject</a> and widgets for setting the value of the two fixed attributes 'intValue' and 'stringValue'.</p>
+<p>When acting as a provider of Value Space content the program creates a ProviderDialog. This dialog contains a widget for setting the base path of the QValueSpaceObject and widgets for setting the value of the two fixed attributes 'intValue' and 'stringValue'.</p>
 <p align="center"><img src="images/publish-subscribe-provider.png" /></p><p>We declare three slots which we will use to respond to user input in the dialog.</p>
 <pre>    private slots:
         void createNewObject();
@@ -45,27 +45,27 @@
 <pre>        connect(ui-&gt;connectButton, SIGNAL(clicked()), this, SLOT(createNewObject()));
         connect(ui-&gt;intValue, SIGNAL(valueChanged(int)), this, SLOT(intValueChanged(int)));
         connect(ui-&gt;setButton, SIGNAL(clicked()), this, SLOT(setStringValue()));</pre>
-<p>To publish values in the Value Space we first need to create a <a href="qvaluespaceobject.html">QValueSpaceObject</a>. We do this in the <tt>createNewObject()</tt> slot, which is also used to handle changes in the base path. After the object is constructed we publish the initial values by explicitly calling the other two slots.</p>
+<p>To publish values in the Value Space we first need to create a QValueSpaceObject. We do this in the <tt>createNewObject()</tt> slot, which is also used to handle changes in the base path. After the object is constructed we publish the initial values by explicitly calling the other two slots.</p>
 <pre>    void ProviderDialog::createNewObject()
     {
-        if (object)
-            delete object;
+        if (provider)
+            delete provider;
 
-        object = new QValueSpaceObject(ui-&gt;basePath-&gt;text());
+        provider = new QValueSpaceProvider(ui-&gt;basePath-&gt;text());
         intValueChanged(ui-&gt;intValue-&gt;value());
         setStringValue();
     }</pre>
-<p>We use <a href="qvaluespaceobject.html#setAttribute">QValueSpaceObject::setAttribute</a>() to set the values in response to dialog input.</p>
+<p>We use QValueSpaceObject::setAttribute() to set the values in response to dialog input.</p>
 <pre>    void ProviderDialog::intValueChanged(int value)
     {
-        object-&gt;setAttribute(&quot;intValue&quot;, value);
+        provider-&gt;setAttribute(&quot;intValue&quot;, value);
     }
 
     void ProviderDialog::setStringValue()
     {
-        object-&gt;setAttribute(&quot;stringValue&quot;, ui-&gt;stringValue-&gt;text());
+        provider-&gt;setAttribute(&quot;stringValue&quot;, ui-&gt;stringValue-&gt;text());
     }</pre>
-<p>As a final step in the constructor we explicitly call the <tt>createNewObject()</tt> slot to create an initial <a href="qvaluespaceobject.html">QValueSpaceObject</a>.</p>
+<p>As a final step in the constructor we explicitly call the <tt>createNewObject()</tt> slot to create an initial QValueSpaceObject.</p>
 <pre>        createNewObject();</pre>
 <a name="consumer"></a>
 <h2>Consumer</h2>

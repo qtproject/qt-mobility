@@ -13,7 +13,7 @@ export PATH=.
 ./tst_qpacket
 ./tst_qpacketprotocol
 ./tst_qvaluespace
-./tst_qvaluespaceobject
+./tst_qvaluespaceprovider
 ./tst_qvaluespaceitem
 ./tst_qvaluespaceitem_oop
 ./tst_qsystemreadwritelock

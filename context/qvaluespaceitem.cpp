@@ -76,17 +76,16 @@ QT_BEGIN_NAMESPACE
     for each.  Likewise, the sub-item object schema contains two attributes -
     \c {Name} and \c {Usable}.
 
-    Applications may use the QValueSpaceObject class to create a schema object
+    Applications may use the QValueSpaceProvider class to create a schema object
     within the Value Space.  Objects remain in the Value Space as long as the
-    QValueSpaceObject instance exists - that is, they are not persistent.  If
+    QValueSpaceProvider instance exists - that is, they are not persistent.  If
     the object is destroyed, or the application containing it exits (or crashes)
     the items are removed.
 
-    Change notification is modeled in a similar way.  Applications subscribe to
-    notifications at a particular object (i.e. item) in the tree.  If anything in
-    that object (i.e. under that item) changes, the application is notified.  This
-    allows, for example, subscription to just the \c {/Device/Buttons} item to
-    receive notification when anything "button" related changes.
+    Change notification is modeled in a similar way.  Applications subscribe to notifications at a
+    particular path in the tree.  If anything under that path changes, the application is notified.
+    This allows, for example, subscription to just the \c {/Device/Buttons} item to receive
+    notification when anything "button" related changes.
 
     For example,
 

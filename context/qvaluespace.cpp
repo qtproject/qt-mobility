@@ -35,7 +35,7 @@
 #include "qvaluespace_p.h"
 #include "qvaluespacemanager_p.h"
 #include "qmallocpool_p.h"
-#include "qvaluespaceobject.h"
+#include "qvaluespaceprovider.h"
 #include "qpacketprotocol_p.h"
 
 #include <QObject>
@@ -65,7 +65,7 @@ QT_BEGIN_NAMESPACE
     \enum QValueSpace::LayerOption
 
     This enum describes the behaviour of the Value Space layer.  In addition this enum is used as
-    a filter when constructing a QValueSpaceObject or QValueSpaceItem.
+    a filter when constructing a QValueSpaceProvider or QValueSpaceItem.
 
     \value UnspecifiedLayer     Used as a filter to specify that any layer should be used.
     \value PermanentLayer       Indicates that the layer uses a permanent backing store.  When used
@@ -239,9 +239,10 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn bool QAbstractValueSpaceLayer::setValue(QValueSpaceObject *creator, Handle handle, const QString &subPath, const QVariant &value)
+    \fn bool QAbstractValueSpaceLayer::setValue(QValueSpaceProvider *creator, Handle handle,
+                                                const QString &subPath, const QVariant &value)
 
-    Process calls to QValueSpaceObject::setAttribute() by setting the value specified by the
+    Process calls to QValueSpaceProvider::setAttribute() by setting the value specified by the
     \a subPath under \a handle to \a value.  Ownership of the value space item is assigned to
     \a creator.
 
@@ -249,25 +250,26 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn bool QAbstractValueSpaceLayer::removeValue(QValueSpaceObject *creator, Handle handle, const QString &subPath)
+    \fn bool QAbstractValueSpaceLayer::removeValue(QValueSpaceProvider *creator, Handle handle,
+                                                   const QString &subPath)
 
-    Process calls to QValueSpaceObject::removeAttribute() by removing the value space item
+    Process calls to QValueSpaceProvider::removeAttribute() by removing the value space item
     identified by \a handle and \a subPath and created by \a creator.
 
     Returns true on success; otherwise returns false.
 */
 
 /*!
-    \fn bool QAbstractValueSpaceLayer::removeSubTree(QValueSpaceObject *creator, Handle handle)
+    \fn bool QAbstractValueSpaceLayer::removeSubTree(QValueSpaceProvider *creator, Handle handle)
 
-    Process calls to QValueSpaceObject::~QValueSpaceObject() by removing the entire sub tree
+    Process calls to QValueSpaceProvider::~QValueSpaceProvider() by removing the entire sub tree
     created by \a creator under \a handle.
 
     Returns true on success; otherwise returns false.
 */
 
 /*!
-    \fn void QAbstractValueSpaceLayer::addWatch(QValueSpaceObject *creator, Handle handle)
+    \fn void QAbstractValueSpaceLayer::addWatch(QValueSpaceProvider *creator, Handle handle)
 
     Registers \a creator for change notifications to values under \a handle.
 
@@ -275,7 +277,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn void QAbstractValueSpaceLayer::removeWatches(QValueSpaceObject *creator, Handle parent)
+    \fn void QAbstractValueSpaceLayer::removeWatches(QValueSpaceProvider *creator, Handle parent)
 
     Removes all registered change notifications for \a creator under \a parent.
 
@@ -289,15 +291,15 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    Emits the QValueSpaceObject::attributeInterestChanged() signal on \a object with \a path and
-    \a interested.
+    Emits the QValueSpaceProvider::attributeInterestChanged() signal on \a provider with \a path
+    and \a interested.
 */
 
-void QAbstractValueSpaceLayer::emitAttributeInterestChanged(QValueSpaceObject *object,
+void QAbstractValueSpaceLayer::emitAttributeInterestChanged(QValueSpaceProvider *provider,
                                                             const QString &path,
                                                             bool interested)
 {
-    emit object->attributeInterestChanged(path, interested);
+    emit provider->attributeInterestChanged(path, interested);
 }
 
 /*!
@@ -371,8 +373,8 @@ void QValueSpace::installLayer(LayerCreateFunc func)
     The UUID of the Shared Memory Layer as a QUuid.  The actual UUID value is
     {d81199c1-6f60-4432-934e-0ce4d37ef252}.
 
-    This value can be passed to the constructor of QValueSpaceObject to force the constructed value
-    space object to publish its values in the Shared Memory Layer.
+    This value can be passed to the constructor of QValueSpaceProvider to force the constructed
+    value space provider to publish its values in the Shared Memory Layer.
 
     You can test if the Shared Memory Layer is available by checking if the list returned by
     QValueSpace::availableLayers() contains this value.
@@ -385,8 +387,8 @@ void QValueSpace::installLayer(LayerCreateFunc func)
     The UUID of the Volatile Registry Layer as a QUuid.  The actual UUID value is
     {8ceb5811-4968-470f-8fc2-264767e0bbd9}.
 
-    This value can be passed to the constructor of QValueSpaceObject to force the constructed value
-    space object to publish its values in the Volatile Registry Layer.
+    This value can be passed to the constructor of QValueSpaceProvider to force the constructed
+    value space provider to publish its values in the Volatile Registry Layer.
 
     You can test if the Volatile Registry Layer is available by checking if the list returned by
     QValueSpace::availableLayers() contains this value.  The Volatile Registry Layer is only
@@ -400,8 +402,8 @@ void QValueSpace::installLayer(LayerCreateFunc func)
     The UUID of the Non-Volatile Registry Layer as a QUuid.  The actual UUID value is
     {8e29561c-a0f0-4e89-ba56-080664abc017}.
 
-    This value can be passed to the constructor of QValueSpaceObject to force the constructed value
-    space object to publish its values in the Non-Volatile Registry Layer.
+    This value can be passed to the constructor of QValueSpaceProvider to force the constructed
+    value space provider to publish its values in the Non-Volatile Registry Layer.
 
     You can test if the Non-Volatile Registry Layer is available by checking if the list returned
     by QValueSpace::availableLayers() contains this value.  The Non-Volatile Registry Layer is only

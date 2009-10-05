@@ -34,7 +34,7 @@
 #include <QObject>
 #include <QMap>
 
-class QValueSpaceObject;
+class QValueSpaceProvider;
 class QAbstractValueSpaceLayer;
 
 class tst_QValueSpaceItem : public QObject
@@ -77,6 +77,6 @@ private slots:
     void clientServer();
 
 private:
-    QMap<QAbstractValueSpaceLayer *, QValueSpaceObject *> roots;
-    QMap<QAbstractValueSpaceLayer*, QValueSpaceObject *> busys;
+    QMap<QAbstractValueSpaceLayer *, QValueSpaceProvider *> roots;
+    QMap<QAbstractValueSpaceLayer*, QValueSpaceProvider *> busys;
 };

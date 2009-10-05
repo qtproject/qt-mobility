@@ -49,14 +49,14 @@
     #include &quot;providerdialog.h&quot;
     #include &quot;ui_providerdialog.h&quot;
 
-    #include &lt;qvaluespaceobject.h&gt;
+    #include &lt;qvaluespaceprovider.h&gt;
 
     #include &lt;QDebug&gt;
 
     ProviderDialog::ProviderDialog(QWidget *parent) :
             QDialog(parent),
             ui(new Ui::ProviderDialog),
-            object(0)
+            provider(0)
     {
         ui-&gt;setupUi(this);
 
@@ -74,7 +74,7 @@
     ProviderDialog::~ProviderDialog()
     {
         delete ui;
-        delete object;
+        delete provider;
     }
 
     void ProviderDialog::changeEvent(QEvent *e)
@@ -91,20 +91,20 @@
 
     void ProviderDialog::intValueChanged(int value)
     {
-        object-&gt;setAttribute(&quot;intValue&quot;, value);
+        provider-&gt;setAttribute(&quot;intValue&quot;, value);
     }
 
     void ProviderDialog::setStringValue()
     {
-        object-&gt;setAttribute(&quot;stringValue&quot;, ui-&gt;stringValue-&gt;text());
+        provider-&gt;setAttribute(&quot;stringValue&quot;, ui-&gt;stringValue-&gt;text());
     }
 
     void ProviderDialog::createNewObject()
     {
-        if (object)
-            delete object;
+        if (provider)
+            delete provider;
 
-        object = new QValueSpaceObject(ui-&gt;basePath-&gt;text());
+        provider = new QValueSpaceProvider(ui-&gt;basePath-&gt;text());
         intValueChanged(ui-&gt;intValue-&gt;value());
         setStringValue();
     }</pre>

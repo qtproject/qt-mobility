@@ -9,7 +9,7 @@ DEFINES += QT_BUILD_CFW_LIB QT_MAKEDLL
 
 PUBLIC_HEADERS += qcontextglobal.h \
            qvaluespace.h \
-           qvaluespaceobject.h \
+           qvaluespaceprovider.h \
            qvaluespaceitem.h
 
 PRIVATE_HEADERS += qpacketprotocol_p.h \
@@ -23,7 +23,7 @@ SOURCES += qpacketprotocol.cpp \
            qmallocpool.cpp \
            qvaluespace.cpp \
            qvaluespacemanager.cpp \
-           qvaluespaceobject.cpp \
+           qvaluespaceprovider.cpp \
            qvaluespaceitem.cpp
 
 symbian {

@@ -44,7 +44,7 @@
 
 #include <qvaluespace.h>
 #include <qvaluespaceitem.h>
-#include <qvaluespaceobject.h>
+#include <qvaluespaceprovider.h>
 
 #ifdef USE_READLINE
 #include <stdio.h>
@@ -103,9 +103,9 @@ private:
 
     bool isSuppress;
     QValueSpaceItem pwd;
-    QValueSpaceObject prov;
+    QValueSpaceProvider prov;
     QSet<QValueSpaceItem *> subs;
-    QSet<QValueSpaceObject *> watchers;
+    QSet<QValueSpaceProvider *> watchers;
 };
 static VSExplorer * vse = 0;
 
@@ -158,7 +158,7 @@ void VSExplorer::interestChanged(const QString &attribute, bool interested)
     Q_ASSERT(sender());
 
     if (!isSuppress) {
-        QValueSpaceObject *obj = static_cast<QValueSpaceObject *>(sender());
+        QValueSpaceProvider *obj = static_cast<QValueSpaceProvider *>(sender());
         fprintf(stdout, "\nInterest Changed: %s ... %s %d\n",
                 qPrintable(obj->path()), qPrintable(attribute), interested);
     }
@@ -265,7 +265,7 @@ void VSExplorer::listwatchers()
         fprintf(stdout, "No watchers.\n");
     } else {
         fprintf(stdout, "Current watchers:\n");
-        foreach(QValueSpaceObject *obj, watchers)
+        foreach(QValueSpaceProvider *obj, watchers)
             fprintf(stdout, "\t%s\n", obj->path().toAscii().constData());
     }
 
@@ -323,12 +323,12 @@ void VSExplorer::quit()
 
 void VSExplorer::watch(const QString &path)
 {
-    foreach (QValueSpaceObject *obj, watchers) {
+    foreach (QValueSpaceProvider *obj, watchers) {
         if (obj->path() == path)
             return;
     }
 
-    QValueSpaceObject * newObject = new QValueSpaceObject(path);
+    QValueSpaceProvider * newObject = new QValueSpaceProvider(path);
     watchers.insert(newObject);
     QObject::connect(newObject, SIGNAL(attributeInterestChanged(QString,bool)),
                      this, SLOT(interestChanged(QString,bool)));
@@ -336,7 +336,7 @@ void VSExplorer::watch(const QString &path)
 
 void VSExplorer::unwatch(const QString &path)
 {
-    foreach (QValueSpaceObject *obj, watchers) {
+    foreach (QValueSpaceProvider *obj, watchers) {
         if (obj->path() == path) {
             watchers.remove(obj);
             delete obj;
