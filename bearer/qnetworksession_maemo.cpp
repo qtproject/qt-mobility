@@ -660,22 +660,13 @@ QNetworkInterface QNetworkSessionPrivate::currentInterface() const
 }
 
 
-QVariant QNetworkSessionPrivate::property(const QString& key)
+QVariant QNetworkSessionPrivate::property(const QString& /*key*/) const
 {
-    if (!publicConfig.isValid())
-        return QVariant();
+    return QVariant();
+}
 
-    if (key == "ActiveConfigurationIdentifier") {
-        if (!isActive) {
-            return QString();
-        } else if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork){
-            return activeConfig.identifier();
-        } else { 
-            return publicConfig.identifier();
-        }
-    }
-
-    return properties.value(key);
+void QNetworkSessionPrivate::setProperty(const QString& /*key*/, const QVariant& /*value*/)
+{
 }
 
 

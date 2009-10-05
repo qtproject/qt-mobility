@@ -262,25 +262,13 @@ QNetworkInterface QNetworkSessionPrivate::currentInterface() const
     return QNetworkInterface::interfaceFromName(interface);
 }
 
-QVariant QNetworkSessionPrivate::property(const QString& key)
+QVariant QNetworkSessionPrivate::property(const QString& /*key*/) const
 {
-#if defined(BACKEND_NM)
-    if (!publicConfig.isValid())
-        return QVariant();
-
-    if (key == "ActiveConfigurationIdentifier") {
-        if (!isActive) {
-            return QString();
-        } else if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork){
-            return serviceConfig.identifier();
-        } else {
-            return publicConfig.identifier();
-        }
-    }
-#else
-    Q_UNUSED(key);
-#endif
     return QVariant();
+}
+
+void QNetworkSessionPrivate::setProperty(const QString& /*key*/, const QVariant& /*value*/)
+{
 }
 
 QString QNetworkSessionPrivate::bearerName() const
