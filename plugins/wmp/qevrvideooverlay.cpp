@@ -98,7 +98,7 @@ bool QEvrVideoOverlay::isFullScreen() const
 
 void QEvrVideoOverlay::setFullScreen(bool fullScreen)
 {
-    if (m_displayControl && m_displayControl->SetFullScreen(fullScreen) == S_OK)
+    if (m_displayControl && m_displayControl->SetFullscreen(fullScreen) == S_OK)
         emit fullScreenChanged(m_fullScreen = fullScreen);
 }
 

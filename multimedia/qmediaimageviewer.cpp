@@ -162,11 +162,7 @@ QMediaImageViewer::State QMediaImageViewer::state() const
 
 QMediaImageViewer::MediaStatus QMediaImageViewer::mediaStatus() const
 {
-    Q_D(const QMediaImageViewer);
-
-    return d->viewerControl
-            ? d->viewerControl->mediaStatus()
-            : NoMedia;
+    return d_func()->viewerControl->mediaStatus();
 }
 
 /*!
@@ -202,8 +198,7 @@ void QMediaImageViewer::setMedia(const QMediaSource &media)
     if (d->state != QMediaImageViewer::StoppedState)
         emit stateChanged(d->state = QMediaImageViewer::StoppedState);
 
-    if (d->viewerControl)
-        d->viewerControl->showMedia(d->media);
+    d->viewerControl->showMedia(d->media);
 
     emit mediaChanged(d->media);
 }
@@ -221,11 +216,7 @@ void QMediaImageViewer::setMedia(const QMediaSource &media)
 
 QMediaResource QMediaImageViewer::currentMedia() const
 {
-    Q_D(const QMediaImageViewer);
-
-    return d->viewerControl
-            ? d->viewerControl->currentMedia()
-            : QMediaResource();
+    return d_func()->viewerControl->currentMedia();
 }
 
 /*!
@@ -248,7 +239,7 @@ void QMediaImageViewer::setTimeout(int timeout)
 {
     Q_D(QMediaImageViewer);
 
-    d->timeout = timeout;
+    d->timeout = qMax(0, timeout);
 }
 
 /*!
