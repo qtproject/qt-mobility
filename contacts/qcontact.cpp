@@ -361,6 +361,14 @@ bool QContact::removeDetail(QContactDetail* detail)
         return true;
     }
 
+    // Check if this a type
+    if (detail->d->m_definitionName == QContactType::DefinitionName) {
+        QContactType type = d->m_details[1];
+        type.setType(QContactType::TypeContact);
+        d->m_details[1] = type;
+        return true;
+    }
+
     // remove any preferences we may have stored for the detail.
     QStringList keys = d->m_preferences.keys();
     for (int i = 0; i < keys.size(); i++) {

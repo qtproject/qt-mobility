@@ -2067,7 +2067,9 @@ QList<QContactDetail> tst_QContactManager::removeAllDefaultDetails(const QList<Q
 {
     QList<QContactDetail> newlist;
     foreach (const QContactDetail d, details) {
-        if (d.definitionName() != QContactDisplayLabel::DefinitionName && d.definitionName() != QContactTimestamp::DefinitionName) {
+        if (d.definitionName() != QContactDisplayLabel::DefinitionName
+                && d.definitionName() != QContactType::DefinitionName
+                && d.definitionName() != QContactTimestamp::DefinitionName) {
             newlist << d;
         }
     }
