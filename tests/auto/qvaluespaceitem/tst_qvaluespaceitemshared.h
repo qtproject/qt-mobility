@@ -53,6 +53,8 @@ private slots:
     void testFilterConstructor_data();
     void testFilterConstructor();
 
+    void testPathChanges();
+
     void contentsChanged_data();
     void contentsChanged();
     void dataVersatility_data();

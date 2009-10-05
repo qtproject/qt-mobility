@@ -267,9 +267,9 @@ void tst_QValueSpaceItem::testConstructor_data()
     homePaths << "user" << "usercount";
 
     //valid items based on / path
-    QValueSpaceItem* item1 = new QValueSpaceItem(QString(), this);
+    QValueSpaceItem* item = new QValueSpaceItem(QString(), this);
     QVariant data;
-    qVariantSetValue(data, item1);
+    qVariantSetValue(data, item);
     QTest::newRow("QValueSpaceItem(QString(), this)") 
         << data
         << QVariant()
@@ -278,8 +278,8 @@ void tst_QValueSpaceItem::testConstructor_data()
         << QString("home/user/int")
         << 3;
 
-    item1 = new QValueSpaceItem(QString("/"), this);
-    qVariantSetValue(data, item1);
+    item = new QValueSpaceItem(QString("/"), this);
+    qVariantSetValue(data, item);
     QTest::newRow("QValueSpaceItem(QString(\"/\"), this)") 
         << data
         << QVariant()
@@ -288,8 +288,8 @@ void tst_QValueSpaceItem::testConstructor_data()
         << QString("home/user/int")
         << 3;
 
-    item1 = new QValueSpaceItem("", this);
-    qVariantSetValue(data, item1);
+    item = new QValueSpaceItem("", this);
+    qVariantSetValue(data, item);
     QTest::newRow("QValueSpaceItem(\"\", this)") 
         << data
         << QVariant()
@@ -298,8 +298,8 @@ void tst_QValueSpaceItem::testConstructor_data()
         << QString("home/user/int")
         << 3;
 
-    item1 = new QValueSpaceItem("/", this);
-    qVariantSetValue(data, item1);
+    item = new QValueSpaceItem("/", this);
+    qVariantSetValue(data, item);
     QTest::newRow("QValueSpaceItem(\"/\", this)") 
         << data
         << QVariant()
@@ -308,8 +308,8 @@ void tst_QValueSpaceItem::testConstructor_data()
         << QString("home/user/int")
         << 3;
 
-    item1 = new QValueSpaceItem(this);
-    qVariantSetValue(data, item1);
+    item = new QValueSpaceItem(this);
+    qVariantSetValue(data, item);
     QTest::newRow("QValueSpaceItem(this)") 
         << data
         << QVariant()
@@ -319,8 +319,8 @@ void tst_QValueSpaceItem::testConstructor_data()
         << 3;
 
     //valid items based on /home path
-    item1 = new QValueSpaceItem(QString("/home"), this);
-    qVariantSetValue(data, item1);
+    item = new QValueSpaceItem(QString("/home"), this);
+    qVariantSetValue(data, item);
     QTest::newRow("QValueSpaceItem(QString(\"/home\"), this)") 
         << data
         << QVariant()
@@ -330,8 +330,8 @@ void tst_QValueSpaceItem::testConstructor_data()
         << 3;
 
     //valid items based on /home/user path
-    item1 = new QValueSpaceItem(QString("/home/user"), this);
-    qVariantSetValue(data, item1);
+    item = new QValueSpaceItem(QString("/home/user"), this);
+    qVariantSetValue(data, item);
     QTest::newRow("QValueSpaceItem(QString(\"/home/user\"), this)") 
         << data
         << QVariant()
@@ -341,8 +341,8 @@ void tst_QValueSpaceItem::testConstructor_data()
         << 3;
 
     // direct value item /home/user/int
-    item1 = new QValueSpaceItem("/home/user/int", this);
-    qVariantSetValue(data, item1);
+    item = new QValueSpaceItem("/home/user/int", this);
+    qVariantSetValue(data, item);
     QTest::newRow("QValueSpaceItem(\"/home/user/int\", this)")
         << data
         << QVariant(3)
@@ -352,8 +352,8 @@ void tst_QValueSpaceItem::testConstructor_data()
         << 3;
 
     //invalid path
-    item1 = new QValueSpaceItem(QString("/home/invalidPath"), this);
-    qVariantSetValue(data, item1);
+    item = new QValueSpaceItem(QString("/home/invalidPath"), this);
+    qVariantSetValue(data, item);
     QTest::newRow("QValueSpaceItem(QString(\"/home/invalidPath\"), this)")
         << data
         << QVariant()
@@ -363,9 +363,9 @@ void tst_QValueSpaceItem::testConstructor_data()
         << 100; //should fails -> returns default
 
     // setPath to /
-    item1 = new QValueSpaceItem(this);
-    item1->setPath("/");
-    qVariantSetValue(data, item1);
+    item = new QValueSpaceItem(this);
+    item->setPath("/");
+    qVariantSetValue(data, item);
     QTest::newRow("QValueSpaceItem::setPath(\"/\"")
         << data
         << QVariant()
@@ -375,9 +375,9 @@ void tst_QValueSpaceItem::testConstructor_data()
         << 3;
 
     // setPath to /home
-    item1 = new QValueSpaceItem(this);
-    item1->setPath("/home");
-    qVariantSetValue(data, item1);
+    item = new QValueSpaceItem(this);
+    item->setPath("/home");
+    qVariantSetValue(data, item);
     QTest::newRow("QValueSpaceItem::setPath(\"/home\")")
         << data
         << QVariant()
@@ -387,10 +387,25 @@ void tst_QValueSpaceItem::testConstructor_data()
         << 3;
 
     // setPath to /home/user
-    item1 = new QValueSpaceItem(this);
-    item1->setPath("/home/user");
-    qVariantSetValue(data, item1);
+    item = new QValueSpaceItem(this);
+    item->setPath("/home/user");
+    qVariantSetValue(data, item);
     QTest::newRow("QValueSpaceItem::setPath(\"/home/user\")")
+        << data
+        << QVariant()
+        << allPaths
+        << QString("/home/user")
+        << QString("int")
+        << 3;
+
+    // setPath to QValueSpaceItem
+    item = new QValueSpaceItem(this);
+    {
+        QValueSpaceItem user("/home/user");
+        item->setPath(&user);
+    }
+    qVariantSetValue(data, item);
+    QTest::newRow("QValueSpaceItem::setPath(&QValueSpaceItem(\"/home/user\")")
         << data
         << QVariant()
         << allPaths
@@ -475,6 +490,40 @@ void tst_QValueSpaceItem::testFilterConstructor()
 
         QVERIFY(options == QValueSpace::UnspecifiedLayer || actualOptions & options);
     }
+}
+
+void tst_QValueSpaceItem::testPathChanges()
+{
+    QValueSpaceItem item;
+
+    QStringList rootPaths;
+    rootPaths << "layer" << "usr" << "home";
+
+    QStringList homePaths;
+    homePaths << "user" << "usercount";
+
+    QStringList homeUserPaths;
+    homeUserPaths << "bool" << "int" << "QString" << "QStringList" << "qint64" << "QByteArray"
+                  << "double" << "float" << "QChar";
+
+    QCOMPARE(item.path(), QLatin1String("/"));
+    QCOMPARE(item.subPaths().toSet(), rootPaths.toSet());
+
+    item.cd("home");
+    QCOMPARE(item.path(), QLatin1String("/home"));
+    QCOMPARE(item.subPaths().toSet(), homePaths.toSet());
+
+    item.cd("user");
+    QCOMPARE(item.path(), QLatin1String("/home/user"));
+    QCOMPARE(item.subPaths().toSet(), homeUserPaths.toSet());
+
+    item.cdUp();
+    QCOMPARE(item.path(), QLatin1String("/home"));
+    QCOMPARE(item.subPaths().toSet(), homePaths.toSet());
+
+    item.cd("/home/user");
+    QCOMPARE(item.path(), QLatin1String("/home/user"));
+    QCOMPARE(item.subPaths().toSet(), homeUserPaths.toSet());
 }
 
 void tst_QValueSpaceItem::contentsChanged_data()
