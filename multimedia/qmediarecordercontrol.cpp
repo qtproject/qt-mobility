@@ -41,7 +41,8 @@
     \ingroup multimedia-serv
 
     \preliminary
-    \brief
+    \brief The QMediaRecorderControl class provides an abstract class for
+    control of media recording.
 
     \sa QMediaRecorder
 

@@ -52,7 +52,6 @@
     \ingroup multimedia
 
     \preliminary
-    \brief
 
     \sa
 */

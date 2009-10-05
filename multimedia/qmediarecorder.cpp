@@ -59,7 +59,7 @@
     \ingroup multimedia
 
     \preliminary
-    \brief
+    \brief The QMediaRecorder class provides a media recording service.
 
     \sa
 */
