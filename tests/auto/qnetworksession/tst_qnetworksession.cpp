@@ -249,6 +249,11 @@ void tst_QNetworkSession::userChoiceSession()
             QVERIFY(userChoiceConfiguration.isValid());
             QVERIFY(userChoiceConfiguration.type() != QNetworkConfiguration::UserChoice);
 
+            const QString testIdentifier("abc");
+            //resetting UserChoiceConfigurationIdentifier is ignored (read only property)
+            session.setProperty("UserChoiceConfigurationIdentifier", testIdentifier);
+            QVERIFY(session.property("UserChoiceConfigurationIdentifier").toString() != testIdentifier);
+
             const QString activeIdentifier =
                 session.property("ActiveConfigurationIdentifier").toString();
 
@@ -260,6 +265,10 @@ void tst_QNetworkSession::userChoiceSession()
 
             QVERIFY(activeConfiguration.isValid());
             QVERIFY(activeConfiguration.type() == QNetworkConfiguration::InternetAccessPoint);
+            
+            //resetting ActiveConfigurationIdentifier is ignored (read only property)
+            session.setProperty("ActiveConfigurationIdentifier", testIdentifier);
+            QVERIFY(session.property("ActiveConfigurationIdentifier").toString() != testIdentifier);
 
             if (userChoiceConfiguration.type() == QNetworkConfiguration::InternetAccessPoint) {
                 QVERIFY(userChoiceConfiguration == activeConfiguration);

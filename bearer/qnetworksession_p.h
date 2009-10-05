@@ -77,7 +77,8 @@ public:
     void syncStateWithInterface();
 
     QNetworkInterface currentInterface() const;
-    QVariant property(const QString& key);
+    QVariant property(const QString& key) const;
+    void setProperty(const QString& key, const QVariant& value);
     QString bearerName() const;
 
     void open();
