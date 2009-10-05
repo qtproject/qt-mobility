@@ -102,6 +102,42 @@ namespace {
         return dt;
     }
 
+    bool getMapiProperty(IMAPIProp *object, ULONG tag, ULONG *value)
+    {
+        bool result(false);
+
+        SPropValue *prop;
+        HRESULT rv = HrGetOneProp(object, tag, &prop);
+        if (HR_SUCCEEDED(rv)) {
+            if (prop->ulPropTag == tag) {
+                *value = prop->Value.ul;
+                result = true;
+            }
+
+            MAPIFreeBuffer(prop);
+        }
+
+        return result;
+    }
+
+    bool getMapiProperty(IMAPIProp *object, ULONG tag, QByteArray *value)
+    {
+        bool result(false);
+
+        SPropValue *prop;
+        HRESULT rv = HrGetOneProp(object, tag, &prop);
+        if (HR_SUCCEEDED(rv)) {
+            if (prop->ulPropTag == tag) {
+                *value = QByteArray(reinterpret_cast<const char*>(prop->Value.bin.lpb), prop->Value.bin.cb);
+                result = true;
+            }
+
+            MAPIFreeBuffer(prop);
+        }
+
+        return result;
+    }
+
     bool setMapiProperty(IMAPIProp *object, ULONG tag, const QString &value)
     {
         SPropValue prop = { 0 };
@@ -1132,7 +1168,7 @@ QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, co
             LPSPropValue recordKeyProp(&rows->aRow[0].lpProps[recordKeyColumn]);
             MapiRecordKey recordKey(recordKeyProp->Value.bin.lpb, recordKeyProp->Value.bin.cb);
             MapiEntryId entryId(entryIdProp->Value.bin.lpb, entryIdProp->Value.bin.cb);
-            result.append(QMessageIdPrivate::from(recordKey, _key, _store->recordKey(), entryId));
+            result.append(QMessageIdPrivate::from(_store->recordKey(), entryId, recordKey, _key));
         }
         FreeProws(rows);
         if (limit && !workingLimit)
@@ -1844,10 +1880,9 @@ bool MapiStore::setAdviseSink(ULONG mask, IMAPIAdviseSink *sink)
 void MapiStore::notifyEvents(ULONG mask)
 {
     // Test whether this store supports notifications
-    SPropValue *prop;
-    HRESULT rv = HrGetOneProp(_store, PR_STORE_SUPPORT_MASK, &prop);
-    if (HR_SUCCEEDED(rv)) {
-        if (prop->Value.ul & STORE_NOTIFY_OK) {
+    ULONG supportMask(0);
+    if (getMapiProperty(_store, PR_STORE_SUPPORT_MASK, &supportMask)) {
+        if (supportMask & STORE_NOTIFY_OK) {
             AdviseSink *sink(new AdviseSink(this));
             if (setAdviseSink(mask, sink)) {
                 // sink will be deleted when the store releases it
@@ -1857,8 +1892,6 @@ void MapiStore::notifyEvents(ULONG mask)
         } else {
             qWarning() << "Store does not support notifications.";
         }
-
-        MAPIFreeBuffer(prop);
     } else {
         qWarning() << "Unable to query store support mask.";
     }
@@ -2137,6 +2170,60 @@ IMessage *MapiSession::openMapiMessage(QMessageStore::ErrorCode *lastError, cons
     }
 
     return message;
+}
+
+MapiRecordKey MapiSession::messageRecordKey(QMessageStore::ErrorCode *lastError, const QMessageId &id)
+{
+    MapiRecordKey result;
+
+    IMessage *message = openMapiMessage(lastError, id);
+    if (*lastError == QMessageStore::NoError) {
+        if (!getMapiProperty(message, PR_RECORD_KEY, &result)) {
+            qWarning() << "Unable to query message record key.";
+        }
+
+        mapiRelease(message);
+    }
+
+    return result;
+}
+
+MapiRecordKey MapiSession::folderRecordKey(QMessageStore::ErrorCode *lastError, const QMessageId &id)
+{
+    MapiRecordKey result;
+
+    IMessage *message = openMapiMessage(lastError, id);
+    if (*lastError == QMessageStore::NoError) {
+        // Find the other properties of this store
+        SizedSPropTagArray(2, columns) = {2, {PR_STORE_ENTRYID, PR_PARENT_ENTRYID}};
+        SPropValue *properties(0);
+        ULONG count;
+        HRESULT rv = message->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &properties);
+        if (HR_SUCCEEDED(rv)) {
+            if ((properties[0].ulPropTag == PR_STORE_ENTRYID) && (properties[1].ulPropTag == PR_PARENT_ENTRYID)) {
+                MapiEntryId storeId(properties[0].Value.bin.lpb, properties[0].Value.bin.cb);
+                MapiEntryId folderId(properties[1].Value.bin.lpb, properties[1].Value.bin.cb);
+
+                MapiStorePtr store = openStore(lastError, storeId, true);
+                if (*lastError == QMessageStore::NoError) {
+                    MapiFolderPtr folder = store->openFolder(lastError, folderId);
+                    if (*lastError == QMessageStore::NoError) {
+                        result = folder->recordKey();
+                    }
+                }
+            } else {
+                qWarning() << "Unable to extract store and folder entry IDs from message.";
+            }
+
+            MAPIFreeBuffer(properties);
+        } else {
+            qWarning() << "Unable to query store and folder entry IDs from message.";
+        }
+
+        mapiRelease(message);
+    }
+
+    return result;
 }
 
 bool MapiSession::flushQueues()
@@ -2579,13 +2666,12 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                 if (bodySubType.isEmpty()) {
                     if (!msg->d_ptr->_rtfInSync) {
                         // See if we need to sync the RTF
-                        SPropValue *prop;
-                        HRESULT rv = HrGetOneProp(mapiStore->store(), PR_STORE_SUPPORT_MASK, &prop);
-                        if (HR_SUCCEEDED(rv)) {
-                            if ((prop->Value.ul & STORE_RTF_OK) == 0) {
+                        ULONG supportMask(0);
+                        if (getMapiProperty(mapiStore->store(), PR_STORE_SUPPORT_MASK, &supportMask)) {
+                            if ((supportMask & STORE_RTF_OK) == 0) {
                                 BOOL updated(FALSE);
 #ifndef _WIN32_WCE
-                                rv = RTFSync(message, RTF_SYNC_BODY_CHANGED, &updated);
+                                HRESULT rv = RTFSync(message, RTF_SYNC_BODY_CHANGED, &updated);
                                 if (HR_SUCCEEDED(rv)) {
                                     if (updated) {
                                         if (HR_FAILED(message->SaveChanges(0))) {
@@ -2597,8 +2683,6 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                                 }
 #endif
                             }
-
-                            MAPIFreeBuffer(prop);
                         } else {
                             qWarning() << "Unable to query store support mask.";
                         }
@@ -2936,9 +3020,10 @@ bool MapiSession::showForm(IMessage* message, IMAPIFolder* folder, LPMDB store)
 
 void MapiSession::notify(MapiStore *store, ULONG notificationCount, NOTIFICATION *notifications)
 {
-    QList<QMessageId> addedIds;
-    QList<QMessageId> removedIds;
-    QList<QMessageId> updatedIds;
+    enum NotifyType { Added = 1, Removed, Updated };
+
+    typedef QPair<QMessageId, NotifyType> NotifyMessage;
+    QList<NotifyMessage> notifyIds;
 
     for (uint i = 0; i < notificationCount; ++i) {
         NOTIFICATION &notification(notifications[i]);
@@ -2952,36 +3037,36 @@ void MapiSession::notify(MapiStore *store, ULONG notificationCount, NOTIFICATION
             if (object.ulObjType == MAPI_MESSAGE) {
                 MapiEntryId entryId(object.lpEntryID, object.cbEntryID);
 
-                // Create a partial ID from the information we have (a message can be
-                // retrieved using only the store key and the message entry ID)
-                QMessageId messageId(QMessageIdPrivate::from(MapiRecordKey(), MapiRecordKey(), store->recordKey(), entryId));
-
                 if (!entryId.isEmpty()) {
+                    // Create a partial ID from the information we have (a message can be
+                    // retrieved using only the store key and the message entry ID)
+                    QMessageId messageId(QMessageIdPrivate::from(store->recordKey(), entryId));
+
                     switch (notification.ulEventType)
                     {
                     case fnevObjectCopied:
                         qDebug() << "copied";
-                        addedIds.append(messageId);
+                        notifyIds.append(qMakePair(messageId, Added));
                         break;
 
                     case fnevObjectCreated:
                         qDebug() << "created";
-                        addedIds.append(messageId);
+                        notifyIds.append(qMakePair(messageId, Added));
                         break;
 
                     case fnevObjectDeleted:
                         qDebug() << "deleted";
-                        removedIds.append(messageId);
+                        notifyIds.append(qMakePair(messageId, Removed));
                         break;
 
                     case fnevObjectModified:
                         qDebug() << "modified";
-                        updatedIds.append(messageId);
+                        notifyIds.append(qMakePair(messageId, Updated));
                         break;
 
                     case fnevObjectMoved:
                         qDebug() << "moved";
-                        updatedIds.append(messageId);
+                        notifyIds.append(qMakePair(messageId, Updated));
                         break;
                     }
                 } else {
@@ -2991,14 +3076,34 @@ void MapiSession::notify(MapiStore *store, ULONG notificationCount, NOTIFICATION
         }
     }
 
-    foreach (const QMessageId &id, addedIds) {
-        emit messageAdded(id, QMessageStore::NotificationFilterIdSet());
+    QMap<QPair<QMessageId, NotifyType>, QMessageStore::NotificationFilterIdSet> matches;
+
+    QMap<QMessageStore::NotificationFilterId, QMessageFilter>::const_iterator it = _filters.begin(), end = _filters.end();
+    for ( ; it != end; ++it) {
+        const QMessageFilter &filter(it.value());
+
+        QSet<QMessageId> filteredIds;
+        if (!filter.isEmpty()) {
+            // Empty filter matches all messages; otherwise get the filtered set
+            // TODO: We only need to find the messages in this MAPI store
+            //filteredIds = QMessageStore::instance()->queryMessages(filter).toSet();
+        }
+
+        foreach (const NotifyMessage &message, notifyIds) {
+            const QMessageId &id(message.first);
+            if (filter.isEmpty() || filteredIds.contains(id)) {
+                matches[qMakePair(id, message.second)].insert(it.key());
+            }
+        }
     }
-    foreach (const QMessageId &id, removedIds) {
-        emit messageRemoved(id, QMessageStore::NotificationFilterIdSet());
-    }
-    foreach (const QMessageId &id, updatedIds) {
-        emit messageUpdated(id, QMessageStore::NotificationFilterIdSet());
+
+    QMap<QPair<QMessageId, NotifyType>, QMessageStore::NotificationFilterIdSet>::const_iterator mit = matches.begin(), mend = matches.end();
+    for ( ; mit != mend; ++mit) {
+        void (MapiSession::*signal)(const QMessageId &, const QMessageStore::NotificationFilterIdSet &) =
+            ((mit.key().second == Added) ? &MapiSession::messageAdded
+                                         : ((mit.key().second == Removed) ? &MapiSession::messageRemoved
+                                                                          : &MapiSession::messageUpdated));
+        emit (this->*signal)(mit.key().first, mit.value());
     }
 }
 

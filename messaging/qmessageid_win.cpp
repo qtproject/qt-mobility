@@ -36,45 +36,72 @@
 #include <MAPIUtil.h>
 #include <QDebug>
 
-QMessageId QMessageIdPrivate::from(const MapiRecordKey &messageKey, const MapiRecordKey &folderKey, const MapiRecordKey &storeKey, const MapiEntryId &entryId)
+QMessageId QMessageIdPrivate::from(const MapiRecordKey &storeKey, const MapiEntryId &entryId, const MapiRecordKey &messageKey, const MapiRecordKey &folderKey)
 {
     QMessageId result;
     if (!result.d_ptr)
         result.d_ptr = new QMessageIdPrivate(&result);
-    result.d_ptr->_messageRecordKey = messageKey;
-    result.d_ptr->_folderRecordKey = folderKey;
+
     result.d_ptr->_storeRecordKey = storeKey;
     result.d_ptr->_entryId = entryId;
+    result.d_ptr->_folderRecordKey = folderKey;
+    result.d_ptr->_messageRecordKey = messageKey;
 
     return result;
 }
 
 MapiEntryId QMessageIdPrivate::entryId(const QMessageId &id)
 {
-    if (id.d_ptr)
+    if (id.isValid()) {
         return id.d_ptr->_entryId;
+    }
+
     return MapiEntryId();
 }
 
 MapiRecordKey QMessageIdPrivate::messageRecordKey(const QMessageId &id)
 {
-    if (id.d_ptr)
-        return id.d_ptr->_messageRecordKey;
+    if (id.isValid()) {
+        if (id.d_ptr->_messageRecordKey.isEmpty()) {
+            return id.d_ptr->_messageRecordKey;
+        } else {
+            // Look up the record key for this ID
+            QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
+            MapiSessionPtr session(MapiSession::createSession(&ignoredError));
+            if (ignoredError == QMessageStore::NoError) {
+                return session->messageRecordKey(&ignoredError, id);
+            }
+        }
+    }
+
     return MapiRecordKey();
 }
 
 MapiRecordKey QMessageIdPrivate::folderRecordKey(const QMessageId &id)
 {
-    if (id.d_ptr)
-        return id.d_ptr->_folderRecordKey;
+    if (id.isValid()) {
+        if (id.d_ptr->_folderRecordKey.isEmpty()) {
+            return id.d_ptr->_folderRecordKey;
+        } else {
+            // Look up the folder record key for this ID
+            QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
+            MapiSessionPtr session(MapiSession::createSession(&ignoredError));
+            if (ignoredError == QMessageStore::NoError) {
+                return session->folderRecordKey(&ignoredError, id);
+            }
+        }
+    }
+
     return MapiRecordKey();
 }
 
 MapiRecordKey QMessageIdPrivate::storeRecordKey(const QMessageId &id)
 {
-    if (id.d_ptr)
+    if (id.isValid()) {
         return id.d_ptr->_storeRecordKey;
-    return MapiRecordKey();
+    }
+
+    return MapiEntryId();
 }
 
 QMessageId::QMessageId()
@@ -95,8 +122,7 @@ QMessageId::QMessageId(const QString& id)
     idStream >> d_ptr->_messageRecordKey;
     idStream >> d_ptr->_folderRecordKey;
     idStream >> d_ptr->_storeRecordKey;
-    if (!idStream.atEnd())
-        idStream >> d_ptr->_entryId;
+    idStream >> d_ptr->_entryId;
 }
 
 QMessageId::~QMessageId()
@@ -129,9 +155,8 @@ bool QMessageId::operator==(const QMessageId& other) const
     if (isValid()) {
         if (other.isValid()) {
             bool result(true);
-            result &= (d_ptr->_messageRecordKey == other.d_ptr->_messageRecordKey);
-            result &= (d_ptr->_folderRecordKey == other.d_ptr->_folderRecordKey);
             result &= (d_ptr->_storeRecordKey == other.d_ptr->_storeRecordKey);
+            result &= (d_ptr->_entryId == other.d_ptr->_entryId);
             return result;
         }
         return false;
@@ -153,19 +178,20 @@ QString QMessageId::toString() const
 {
     if (!isValid())
         return QString();
+
     QByteArray encodedId;
     QDataStream encodedIdStream(&encodedId, QIODevice::WriteOnly);
     encodedIdStream << d_ptr->_messageRecordKey;
     encodedIdStream << d_ptr->_folderRecordKey;
     encodedIdStream << d_ptr->_storeRecordKey;
-    if (d_ptr->_entryId.count())
-        encodedIdStream << d_ptr->_entryId;
+    encodedIdStream << d_ptr->_entryId;
+
     return encodedId.toBase64();
 }
 
 bool QMessageId::isValid() const
 {
-    return (d_ptr && !d_ptr->_messageRecordKey.isEmpty() && !d_ptr->_folderRecordKey.isEmpty() && !d_ptr->_storeRecordKey.isEmpty());
+    return (d_ptr && !d_ptr->_storeRecordKey.isEmpty() && !d_ptr->_entryId.isEmpty());
 }
 
 uint qHash(const QMessageId &id)

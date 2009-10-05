@@ -275,6 +275,9 @@ public:
 
     QMessageAccountId defaultAccountId(QMessageStore::ErrorCode *lastError, QMessage::Type type) const;
 
+    MapiRecordKey messageRecordKey(QMessageStore::ErrorCode *lastError, const QMessageId &id);
+    MapiRecordKey folderRecordKey(QMessageStore::ErrorCode *lastError, const QMessageId &id);
+
     QMessageFolder folder(QMessageStore::ErrorCode *lastError, const QMessageFolderId& id) const;
     QMessage message(QMessageStore::ErrorCode *lastError, const QMessageId& id) const;
 
