@@ -116,6 +116,10 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="property" fullname="QNetworkSession::property" href="qnetworksession.html#property" location="qnetworksession.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="property(const QString &amp; key) const">
                 <parameter left="const QString &amp;" right="" name="key" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setProperty" fullname="QNetworkSession::setProperty" href="qnetworksession.html#setProperty" location="qnetworksession.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setProperty(const QString &amp; key, const QVariant &amp; value)">
+                <parameter left="const QString &amp;" right="" name="key" default=""/>
+                <parameter left="const QVariant &amp;" right="" name="value" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="sentData" fullname="QNetworkSession::sentData" href="qnetworksession.html#sentData" location="qnetworksession.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint64" signature="sentData() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="receivedData" fullname="QNetworkSession::receivedData" href="qnetworksession.html#receivedData" location="qnetworksession.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint64" signature="receivedData() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="activeTime" fullname="QNetworkSession::activeTime" href="qnetworksession.html#activeTime" location="qnetworksession.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint64" signature="activeTime() const"/>

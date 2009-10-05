@@ -42,6 +42,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#property">property</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">quint64 </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#receivedData">receivedData</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">quint64 </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#sentData">sentData</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#setProperty">setProperty</a></b> ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">State </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#state">state</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#waitForOpened">waitForOpened</a></b> ( int <i>msecs</i> = 30000 )</td></tr>
 </table>
@@ -218,6 +219,7 @@
 <tr valign="top" class="even"><td>UserChoiceConfigurationIdentifier</td><td>If the session <a href="qnetworksession.html#isActive">isActive</a>() and is bound to a <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> of type UserChoice, this property returns the identifier of the <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> that the configuration resolved to when <a href="qnetworksession.html#open">open</a>() was called; otherwise an empty string.<p>The purpose of this key is to determine the real <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> that the session is using. This key is different to <i>ActiveConfigurationIdentifier</i> in that this key may return an identifier for either a <a href="qnetworkconfiguration.html#Type-enum">service network</a> or a <a href="qnetworkconfiguration.html#Type-enum">Internet access points</a> configurations whereas <i>ActiveConfigurationIdentifier</i> always returns identifiers for <a href="qnetworkconfiguration.html#Type-enum">Internet access points</a> configurations.</p>
 </td></tr>
 </table></p>
+<p>See also <a href="qnetworksession.html#setProperty">setProperty</a>().</p>
 <h3 class="fn"><a name="receivedData"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#quint64-typedef">quint64</a> QNetworkSession::receivedData () const</h3>
 <p>Returns the amount of data received in bytes; otherwise 0.</p>
 <p>This field value includes the usage across all active network sessions which use the same network interface.</p>
@@ -236,6 +238,10 @@
 <h3 class="fn"><a name="sessionOpened"></a>void QNetworkSession::sessionOpened ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted when the network session has been opened.</p>
 <p>The underlying network interface will not be shut down as long as the session remains open. Note that this feature is dependent on <a href="qnetworkconfigurationmanager.html#CapabilityFlag-enum">system wide session support</a>.</p>
+<h3 class="fn"><a name="setProperty"></a>void QNetworkSession::setProperty ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>key</i>, const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
+<p>Sets the property <i>value</i> on the session. The property is identified using <i>key</i>. Removing an already set property can be achieved by passing an invalid <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a>.</p>
+<p>Note that the <i>UserChoiceConfigurationIdentifier</i> and <i>ActiveConfigurationIdentifier</i> properties are read only and cannot be changed using this method.</p>
+<p>See also <a href="qnetworksession.html#property">property</a>().</p>
 <h3 class="fn"><a name="state"></a><a href="qnetworksession.html#State-enum">State</a> QNetworkSession::state () const</h3>
 <p>Returns the state of the session. If the session is based on a single access point configuration the state of the session is the same as the state of the associated network interface. Therefore a network session object can be used to monitor network interfaces.</p>
 <p>A <a href="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::ServiceNetwork</a> based session summarizes the state of all its children and therefore returns the <a href="qnetworksession.html#State-enum">Connected</a> state if at least one of its sub configurations is connected.</p>

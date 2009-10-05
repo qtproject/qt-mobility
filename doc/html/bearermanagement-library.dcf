@@ -90,6 +90,7 @@
         <keyword ref="qnetworksession.html#sentData">sentData</keyword>
         <keyword ref="qnetworksession.html#sessionClosed">sessionClosed</keyword>
         <keyword ref="qnetworksession.html#sessionOpened">sessionOpened</keyword>
+        <keyword ref="qnetworksession.html#setProperty">setProperty</keyword>
         <keyword ref="qnetworksession.html#state">state</keyword>
         <keyword ref="qnetworksession.html#stateChanged">stateChanged</keyword>
         <keyword ref="qnetworksession.html#stop">stop</keyword>
