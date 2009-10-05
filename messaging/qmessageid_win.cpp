@@ -196,7 +196,6 @@ bool QMessageId::isValid() const
 
 uint qHash(const QMessageId &id)
 {
-    Q_UNUSED(id)
-    return 0; // stub
+    return qHash(id.d_ptr->_storeRecordKey) ^ qHash(id.d_ptr->_entryId);
 }
 

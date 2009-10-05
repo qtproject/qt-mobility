@@ -59,6 +59,8 @@ public:
     bool isValid() const;
 
 private:
+    friend Q_MESSAGING_EXPORT uint qHash(const QMessageAccountId &id);
+
     QMessageAccountIdPrivate *d_ptr;
 };
 

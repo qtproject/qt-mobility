@@ -162,8 +162,7 @@ bool QMessageFolderId::isValid() const
 
 uint qHash(const QMessageFolderId &id)
 {
-    Q_UNUSED(id)
-    return 0; // stub
+    return (qHash(id.d_ptr->_folderRecordKey) ^ qHash(id.d_ptr->_storeRecordKey));
 }
 
 #endif

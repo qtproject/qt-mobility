@@ -60,6 +60,8 @@ public:
     bool isValid() const;
 
 private:
+    friend Q_MESSAGING_EXPORT uint qHash(const QMessageFolderId &id);
+
     QMessageFolderIdPrivate *d_ptr;
 };
 
