@@ -35,21 +35,21 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediaresource.html#dtor.QMediaResource">~QMediaResource</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaresource.html#audioBitRate">audioBitRate</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qmediaresource.html#audioCodec">audioCodec</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaresource.html#bitsPerPixel">bitsPerPixel</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaresource.html#channels">channels</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">qint64 </td><td class="memItemRight" valign="bottom"><b><a href="qmediaresource.html#duration">duration</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaresource.html#frequency">frequency</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaresource.html#isNull">isNull</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qmediaresource.html#language">language</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qmediaresource.html#mimeType">mimeType</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QSize </td><td class="memItemRight" valign="bottom"><b><a href="qmediaresource.html#resolution">resolution</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">ResourceRole </td><td class="memItemRight" valign="bottom"><b><a href="qmediaresource.html#role">role</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaresource.html#sampleSize">sampleSize</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaresource.html#setAudioBitRate">setAudioBitRate</a></b> ( int <i>rate</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaresource.html#setAudioCodec">setAudioCodec</a></b> ( const QString &amp; <i>codec</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaresource.html#setBitsPerPixel">setBitsPerPixel</a></b> ( int <i>bits</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaresource.html#setChannels">setChannels</a></b> ( int <i>channels</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaresource.html#setDuration">setDuration</a></b> ( qint64 <i>duration</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaresource.html#setFrequency">setFrequency</a></b> ( int <i>frequency</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaresource.html#setLanguage">setLanguage</a></b> ( const QString &amp; <i>language</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaresource.html#setResolution">setResolution</a></b> ( const QSize &amp; <i>resolution</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaresource.html#setResolution-2">setResolution</a></b> ( int <i>width</i>, int <i>height</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaresource.html#setSampleSize">setSampleSize</a></b> ( int <i>size</i> )</td></tr>
@@ -100,10 +100,6 @@
 <p>Returns the audio codec of a media resource.</p>
 <p>This may be null if the media resource does not contain an audio stream, or the codec is unknown.</p>
 <p>See also <a href="qmediaresource.html#setAudioCodec">setAudioCodec</a>().</p>
-<h3 class="fn"><a name="bitsPerPixel"></a>int QMediaResource::bitsPerPixel () const</h3>
-<p>Returns the color depth in bits per pixel of a media resource.</p>
-<p>This may be zero if the color depth is unknown, or the resource contains no pixel data (i.e&#x2e; the resource is an audio stream.</p>
-<p>See also <a href="qmediaresource.html#setBitsPerPixel">setBitsPerPixel</a>().</p>
 <h3 class="fn"><a name="channels"></a>int QMediaResource::channels () const</h3>
 <p>Returns the number of audio channels in a media resource.</p>
 <p>This may be zero if the sample size is unknown, or the resource contains no audio stream.</p>
@@ -119,6 +115,10 @@
 <h3 class="fn"><a name="isNull"></a>bool QMediaResource::isNull () const</h3>
 <p>Identifies if a media resource is null.</p>
 <p>Returns true if the resource is null, and false otherwise.</p>
+<h3 class="fn"><a name="language"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMediaResource::language () const</h3>
+<p>Returns the language of a media resource as an ISO 639-2 code.</p>
+<p>This may be null if the language is unknown.</p>
+<p>See also <a href="qmediaresource.html#setLanguage">setLanguage</a>().</p>
 <h3 class="fn"><a name="mimeType"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMediaResource::mimeType () const</h3>
 <p>Returns the MIME type of a media resource.</p>
 <p>This may be null if the MIME type is unknown.</p>
@@ -138,9 +138,6 @@
 <h3 class="fn"><a name="setAudioCodec"></a>void QMediaResource::setAudioCodec ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>codec</i> )</h3>
 <p>Sets the audio <i>codec</i> of a media resource.</p>
 <p>See also <a href="qmediaresource.html#audioCodec">audioCodec</a>().</p>
-<h3 class="fn"><a name="setBitsPerPixel"></a>void QMediaResource::setBitsPerPixel ( int <i>bits</i> )</h3>
-<p>Sets the color depth in <i>bits</i> per pixel of a media resource.</p>
-<p>See also <a href="qmediaresource.html#bitsPerPixel">bitsPerPixel</a>().</p>
 <h3 class="fn"><a name="setChannels"></a>void QMediaResource::setChannels ( int <i>channels</i> )</h3>
 <p>Sets the number of audio <i>channels</i> in a media resource.</p>
 <p>See also <a href="qmediaresource.html#channels">channels</a>().</p>
@@ -150,6 +147,9 @@
 <h3 class="fn"><a name="setFrequency"></a>void QMediaResource::setFrequency ( int <i>frequency</i> )</h3>
 <p>Sets the audio sample <i>frequency</i> of a media resource.</p>
 <p>See also <a href="qmediaresource.html#frequency">frequency</a>().</p>
+<h3 class="fn"><a name="setLanguage"></a>void QMediaResource::setLanguage ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>language</i> )</h3>
+<p>Sets the <i>language</i> of a media resource.</p>
+<p>See also <a href="qmediaresource.html#language">language</a>().</p>
 <h3 class="fn"><a name="setResolution"></a>void QMediaResource::setResolution ( const <a href="http://qt.nokia.com/doc/4.5/qsize.html">QSize</a> &amp; <i>resolution</i> )</h3>
 <p>Sets the <i>resolution</i> in pixels of a media resource.</p>
 <p>See also <a href="qmediaresource.html#resolution">resolution</a>().</p>

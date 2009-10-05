@@ -24,7 +24,6 @@
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#AspectRatio-enum">AspectRatio</a></b> { AspectRatioAuto, AspectRatioWidget, AspectRatioCustom }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#DisplayMode-enum">DisplayMode</a></b> { WindowedDisplay, FullscreenDisplay }</td></tr>
 </table>
 <hr />
 <a name="properties"></a>
@@ -36,7 +35,7 @@
 <li><div class="fn"><b><a href="qvideowidget.html#contrast-prop">contrast</a></b> : int</div></li>
 <li><div class="fn"><b><a href="qvideowidget.html#customPixelAspectRatio-prop">customPixelAspectRatio</a></b> : QSize</div></li>
 </ul></td><td valign="top"><ul>
-<li><div class="fn"><b><a href="qvideowidget.html#displayMode-prop">displayMode</a></b> : DisplayMode</div></li>
+<li><div class="fn"><b><a href="qvideowidget.html#fullScreen-prop">fullScreen</a></b> : bool</div></li>
 <li><div class="fn"><b><a href="qvideowidget.html#hue-prop">hue</a></b> : int</div></li>
 <li><div class="fn"><b><a href="qvideowidget.html#saturation-prop">saturation</a></b> : int</div></li>
 </ul>
@@ -56,15 +55,8 @@
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#brightness-prop">brightness</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#contrast-prop">contrast</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QSize </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#customPixelAspectRatio-prop">customPixelAspectRatio</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">DisplayMode </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#displayMode-prop">displayMode</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#hue-prop">hue</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#saturation-prop">saturation</a></b> () const</td></tr>
-</table>
-<hr />
-<a name="reimplemented-public-functions"></a>
-<h2>Reimplemented Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#eventFilter">eventFilter</a></b> ( QObject * <i>object</i>, QEvent * <i>e</i> )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>208 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qwidget.html#public-functions">QWidget</a></li>
@@ -79,7 +71,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#brightness-prop">setBrightness</a></b> ( int <i>brightness</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#contrast-prop">setContrast</a></b> ( int <i>contrast</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#customPixelAspectRatio-prop">setCustomPixelAspectRatio</a></b> ( const QSize &amp; <i>customRatio</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#displayMode-prop">setDisplayMode</a></b> ( DisplayMode <i>mode</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#fullScreen-prop">setFullScreen</a></b> ( bool <i>fullScreen</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#hue-prop">setHue</a></b> ( int <i>hue</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#saturation-prop">setSaturation</a></b> ( int <i>saturation</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#setVisible">setVisible</a></b> ( bool <i>visible</i> )</td></tr>
@@ -96,7 +88,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#brightnessChanged">brightnessChanged</a></b> ( int <i>brightness</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#contrastChanged">contrastChanged</a></b> ( int <i>contrast</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#customPixelAspectRatioChanged">customPixelAspectRatioChanged</a></b> ( const QSize &amp; <i>ratio</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#displayModeChanged">displayModeChanged</a></b> ( QVideoWidget::DisplayMode <i>mode</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#fullScreenChanged">fullScreenChanged</a></b> ( bool <i>fullScreen</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#hueChanged">hueChanged</a></b> ( int <i>hue</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#saturationChanged">saturationChanged</a></b> ( int <i>saturation</i> )</td></tr>
 </table>
@@ -108,7 +100,7 @@
 <a name="reimplemented-protected-functions"></a>
 <h2>Reimplemented Protected Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#keyPressEvent">keyPressEvent</a></b> ( QKeyEvent * <i>event</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#event">event</a></b> ( QEvent * <i>event</i> )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>37 protected functions inherited from <a href="http://qt.nokia.com/doc/4.5/qwidget.html#protected-functions">QWidget</a></li>
@@ -140,13 +132,6 @@
 <tr><td valign="top"><tt>QVideoWidget::AspectRatioAuto</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The aspect ratio is repected, and the video is letter-boxed.</td></tr>
 <tr><td valign="top"><tt>QVideoWidget::AspectRatioWidget</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The aspect ratio is ignored and the video stretched to fit the widget.</td></tr>
 <tr><td valign="top"><tt>QVideoWidget::AspectRatioCustom</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The video is stretched to a specified aspect ratio and letter-boxed.</td></tr>
-</table></p>
-<h3 class="fn"><a name="DisplayMode-enum"></a>enum QVideoWidget::DisplayMode</h3>
-<p>Specifies whether video is displayed full screen, or is confined to a window.</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QVideoWidget::WindowedDisplay</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Video is displayed within a window.</td></tr>
-<tr><td valign="top"><tt>QVideoWidget::FullscreenDisplay</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Video is displayed full screen.</td></tr>
 </table></p>
 <hr />
 <h2>Property Documentation</h2>
@@ -197,16 +182,15 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#customPixelAspectRatioChanged">customPixelAspectRatioChanged</a></b> ( const QSize &amp; <i>ratio</i> )</td></tr>
 </table>
-<h3 class="fn"><a name="displayMode-prop"></a>displayMode : <a href="qvideowidget.html#DisplayMode-enum">DisplayMode</a></h3>
-<p>This property holds whether video display is confined to a window or is fullscreen.</p>
+<h3 class="fn"><a name="fullScreen-prop"></a>fullScreen : bool</h3>
+<p>This property holds whether video display is confined to a window or is fullScreen.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">DisplayMode </td><td class="memItemRight" valign="bottom"><b>displayMode</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setDisplayMode</b> ( DisplayMode <i>mode</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setFullScreen</b> ( bool <i>fullScreen</i> )</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#displayModeChanged">displayModeChanged</a></b> ( QVideoWidget::DisplayMode <i>mode</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#fullScreenChanged">fullScreenChanged</a></b> ( bool <i>fullScreen</i> )</td></tr>
 </table>
 <h3 class="fn"><a name="hue-prop"></a>hue : int</h3>
 <p>This property holds an adjustment to the hue of displayed video.</p>
@@ -246,14 +230,12 @@
 <p>Signals that a video widgets's <i>contrast</i> adjustment has changed.</p>
 <h3 class="fn"><a name="customPixelAspectRatioChanged"></a>void QVideoWidget::customPixelAspectRatioChanged ( const <a href="http://qt.nokia.com/doc/4.5/qsize.html">QSize</a> &amp; <i>ratio</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the override pixel aspect <i>ratio</i> of a video widget has changed.</p>
-<h3 class="fn"><a name="displayModeChanged"></a>void QVideoWidget::displayModeChanged ( <a href="qvideowidget.html#DisplayMode-enum">QVideoWidget::DisplayMode</a> <i>mode</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signals that the display <i>mode</i> of a video widget has changed.</p>
-<h3 class="fn"><a name="eventFilter"></a>bool QVideoWidget::eventFilter ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>object</i>, <a href="http://qt.nokia.com/doc/4.5/qevent.html">QEvent</a> * <i>e</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.5/qobject.html#eventFilter">QObject::eventFilter</a>().</p>
+<h3 class="fn"><a name="event"></a>bool QVideoWidget::event ( <a href="http://qt.nokia.com/doc/4.5/qevent.html">QEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.5/qobject.html#event">QObject::event</a>().</p>
+<h3 class="fn"><a name="fullScreenChanged"></a>void QVideoWidget::fullScreenChanged ( bool <i>fullScreen</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals that the <i>fullScreen</i> mode of a video widget has changed.</p>
 <h3 class="fn"><a name="hueChanged"></a>void QVideoWidget::hueChanged ( int <i>hue</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that a video widgets's <i>hue</i> has changed.</p>
-<h3 class="fn"><a name="keyPressEvent"></a>void QVideoWidget::keyPressEvent ( <a href="http://qt.nokia.com/doc/4.5/qkeyevent.html">QKeyEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
-<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.5/qwidget.html#keyPressEvent">QWidget::keyPressEvent</a>().</p>
 <h3 class="fn"><a name="saturationChanged"></a>void QVideoWidget::saturationChanged ( int <i>saturation</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <h3 class="fn"><a name="setVisible"></a>void QVideoWidget::setVisible ( bool <i>visible</i> )&nbsp;&nbsp;<tt> [virtual slot]</tt></h3>
 <p>Reimplemented from <a href="http://qt.nokia.com/doc/4.5/qwidget.html#visible-prop">QWidget::setVisible</a>().</p>

@@ -197,9 +197,8 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QVideoWidget" href="qvideowidget.html" location="qvideowidget.h" bases="QWidget" module="">
-            <property access="public" threadsafety="unspecified" status="commendable" name="displayMode" fullname="QVideoWidget::displayMode" href="qvideowidget.html#displayMode-prop" location="qvideowidget.h" type="DisplayMode">
-                <getter name="displayMode"/>
-                <setter name="setDisplayMode"/>
+            <property access="public" threadsafety="unspecified" status="commendable" name="fullScreen" fullname="QVideoWidget::fullScreen" href="qvideowidget.html#fullScreen-prop" location="qvideowidget.h" type="bool">
+                <setter name="setFullScreen"/>
             </property>
             <property access="public" threadsafety="unspecified" status="commendable" name="aspectRatio" fullname="QVideoWidget::aspectRatio" href="qvideowidget.html#aspectRatio-prop" location="qvideowidget.h" type="AspectRatio">
                 <getter name="aspectRatio"/>
@@ -225,10 +224,6 @@
                 <getter name="saturation"/>
                 <setter name="setSaturation"/>
             </property>
-            <enum access="public" threadsafety="unspecified" status="commendable" name="DisplayMode" fullname="QVideoWidget::DisplayMode" href="qvideowidget.html#DisplayMode-enum" location="qvideowidget.h">
-                <value name="WindowedDisplay" value="0"/>
-                <value name="FullscreenDisplay" value="1"/>
-            </enum>
             <enum access="public" threadsafety="unspecified" status="commendable" name="AspectRatio" fullname="QVideoWidget::AspectRatio" href="qvideowidget.html#AspectRatio-enum" location="qvideowidget.h">
                 <value name="AspectRatioAuto" value="0"/>
                 <value name="AspectRatioWidget" value="1"/>
@@ -239,22 +234,17 @@
                 <parameter left="QWidget *" right="" name="parent" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QVideoWidget" fullname="QVideoWidget::~QVideoWidget" href="qvideowidget.html#dtor.QVideoWidget" location="qvideowidget.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QVideoWidget()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="displayMode" fullname="QVideoWidget::displayMode" href="qvideowidget.html#displayMode-prop" location="qvideowidget.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="displayMode" type="DisplayMode" signature="displayMode() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="aspectRatio" fullname="QVideoWidget::aspectRatio" href="qvideowidget.html#aspectRatio-prop" location="qvideowidget.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="aspectRatio" type="AspectRatio" signature="aspectRatio() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="customPixelAspectRatio" fullname="QVideoWidget::customPixelAspectRatio" href="qvideowidget.html#customPixelAspectRatio-prop" location="qvideowidget.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="customPixelAspectRatio" type="QSize" signature="customPixelAspectRatio() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="brightness" fullname="QVideoWidget::brightness" href="qvideowidget.html#brightness-prop" location="qvideowidget.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="brightness" type="int" signature="brightness() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="contrast" fullname="QVideoWidget::contrast" href="qvideowidget.html#contrast-prop" location="qvideowidget.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="contrast" type="int" signature="contrast() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="hue" fullname="QVideoWidget::hue" href="qvideowidget.html#hue-prop" location="qvideowidget.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="hue" type="int" signature="hue() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="saturation" fullname="QVideoWidget::saturation" href="qvideowidget.html#saturation-prop" location="qvideowidget.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="saturation" type="int" signature="saturation() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="eventFilter" fullname="QVideoWidget::eventFilter" href="qvideowidget.html#eventFilter" location="qvideowidget.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="eventFilter(QObject * object, QEvent * e)">
-                <parameter left="QObject *" right="" name="object" default=""/>
-                <parameter left="QEvent *" right="" name="e" default=""/>
-            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setVisible" fullname="QVideoWidget::setVisible" href="qvideowidget.html#setVisible" location="qvideowidget.h" virtual="impure" meta="slot" const="false" static="false" overload="false" type="void" signature="setVisible(bool visible)">
                 <parameter left="bool" right="" name="visible" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setDisplayMode" fullname="QVideoWidget::setDisplayMode" href="qvideowidget.html#displayMode-prop" location="qvideowidget.cpp" virtual="non" meta="slot" const="false" static="false" overload="false" associated-property="displayMode" type="void" signature="setDisplayMode(DisplayMode mode)">
-                <parameter left="DisplayMode" right="" name="mode" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setFullScreen" fullname="QVideoWidget::setFullScreen" href="qvideowidget.html#fullScreen-prop" location="qvideowidget.cpp" virtual="non" meta="slot" const="false" static="false" overload="false" associated-property="fullScreen" type="void" signature="setFullScreen(bool fullScreen)">
+                <parameter left="bool" right="" name="fullScreen" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setAspectRatio" fullname="QVideoWidget::setAspectRatio" href="qvideowidget.html#aspectRatio-prop" location="qvideowidget.cpp" virtual="non" meta="slot" const="false" static="false" overload="false" associated-property="aspectRatio" type="void" signature="setAspectRatio(AspectRatio ratio)">
                 <parameter left="AspectRatio" right="" name="ratio" default=""/>
@@ -274,8 +264,8 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setSaturation" fullname="QVideoWidget::setSaturation" href="qvideowidget.html#saturation-prop" location="qvideowidget.cpp" virtual="non" meta="slot" const="false" static="false" overload="false" associated-property="saturation" type="void" signature="setSaturation(int saturation)">
                 <parameter left="int" right="" name="saturation" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="displayModeChanged" fullname="QVideoWidget::displayModeChanged" href="qvideowidget.html#displayModeChanged" location="qvideowidget.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="displayModeChanged(QVideoWidget::DisplayMode mode)">
-                <parameter left="QVideoWidget::DisplayMode" right="" name="mode" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="fullScreenChanged" fullname="QVideoWidget::fullScreenChanged" href="qvideowidget.html#fullScreenChanged" location="qvideowidget.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="fullScreenChanged(bool fullScreen)">
+                <parameter left="bool" right="" name="fullScreen" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="aspectRatioChanged" fullname="QVideoWidget::aspectRatioChanged" href="qvideowidget.html#aspectRatioChanged" location="qvideowidget.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="aspectRatioChanged(QVideoWidget::AspectRatio ratio)">
                 <parameter left="QVideoWidget::AspectRatio" right="" name="ratio" default=""/>
@@ -295,8 +285,8 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="saturationChanged" fullname="QVideoWidget::saturationChanged" href="qvideowidget.html#saturationChanged" location="qvideowidget.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="saturationChanged(int saturation)">
                 <parameter left="int" right="" name="saturation" default=""/>
             </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="keyPressEvent" fullname="QVideoWidget::keyPressEvent" href="qvideowidget.html#keyPressEvent" location="qvideowidget.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="keyPressEvent(QKeyEvent * event)">
-                <parameter left="QKeyEvent *" right="" name="event" default=""/>
+            <function access="protected" threadsafety="unspecified" status="commendable" name="event" fullname="QVideoWidget::event" href="qvideowidget.html#event" location="qvideowidget.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="event(QEvent * event)">
+                <parameter left="QEvent *" right="" name="event" default=""/>
             </function>
             <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QVideoWidget::d_ptr" href="qvideowidget.html#d_ptr-var" location="qvideowidget.h" type="QVideoWidgetPrivate *" static="false"/>
         </class>
@@ -732,9 +722,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setDisplayRect" fullname="QVideoWindowControl::setDisplayRect" href="qvideowindowcontrol.html#setDisplayRect" location="qvideowindowcontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setDisplayRect(const QRect &amp; rect)">
                 <parameter left="const QRect &amp;" right="" name="rect" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isFullscreen" fullname="QVideoWindowControl::isFullscreen" href="qvideowindowcontrol.html#isFullscreen" location="qvideowindowcontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isFullscreen() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setFullscreen" fullname="QVideoWindowControl::setFullscreen" href="qvideowindowcontrol.html#setFullscreen" location="qvideowindowcontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setFullscreen(bool fullscreen)">
-                <parameter left="bool" right="" name="fullscreen" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isFullScreen" fullname="QVideoWindowControl::isFullScreen" href="qvideowindowcontrol.html#isFullScreen" location="qvideowindowcontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isFullScreen() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setFullScreen" fullname="QVideoWindowControl::setFullScreen" href="qvideowindowcontrol.html#setFullScreen" location="qvideowindowcontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setFullScreen(bool fullScreen)">
+                <parameter left="bool" right="" name="fullScreen" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="repaint" fullname="QVideoWindowControl::repaint" href="qvideowindowcontrol.html#repaint" location="qvideowindowcontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="repaint()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="nativeSize" fullname="QVideoWindowControl::nativeSize" href="qvideowindowcontrol.html#nativeSize" location="qvideowindowcontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QSize" signature="nativeSize() const"/>
@@ -762,8 +752,8 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setSaturation" fullname="QVideoWindowControl::setSaturation" href="qvideowindowcontrol.html#setSaturation" location="qvideowindowcontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setSaturation(int saturation)">
                 <parameter left="int" right="" name="saturation" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="fullscreenChanged" fullname="QVideoWindowControl::fullscreenChanged" href="qvideowindowcontrol.html#fullscreenChanged" location="qvideowindowcontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="fullscreenChanged(bool fullscreen)">
-                <parameter left="bool" right="" name="fullscreen" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="fullScreenChanged" fullname="QVideoWindowControl::fullScreenChanged" href="qvideowindowcontrol.html#fullScreenChanged" location="qvideowindowcontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="fullScreenChanged(bool fullScreen)">
+                <parameter left="bool" right="" name="fullScreen" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="brightnessChanged" fullname="QVideoWindowControl::brightnessChanged" href="qvideowindowcontrol.html#brightnessChanged" location="qvideowindowcontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="brightnessChanged(int brightness)">
                 <parameter left="int" right="" name="brightness" default=""/>
@@ -892,9 +882,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setCustomAspectRatio" fullname="QVideoWidgetControl::setCustomAspectRatio" href="qvideowidgetcontrol.html#setCustomAspectRatio" location="qvideowidgetcontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setCustomAspectRatio(const QSize &amp; ratio)">
                 <parameter left="const QSize &amp;" right="" name="ratio" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isFullscreen" fullname="QVideoWidgetControl::isFullscreen" href="qvideowidgetcontrol.html#isFullscreen" location="qvideowidgetcontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isFullscreen() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setFullscreen" fullname="QVideoWidgetControl::setFullscreen" href="qvideowidgetcontrol.html#setFullscreen" location="qvideowidgetcontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setFullscreen(bool fullscreen)">
-                <parameter left="bool" right="" name="fullscreen" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isFullScreen" fullname="QVideoWidgetControl::isFullScreen" href="qvideowidgetcontrol.html#isFullScreen" location="qvideowidgetcontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isFullScreen() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setFullScreen" fullname="QVideoWidgetControl::setFullScreen" href="qvideowidgetcontrol.html#setFullScreen" location="qvideowidgetcontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setFullScreen(bool fullScreen)">
+                <parameter left="bool" right="" name="fullScreen" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="brightness" fullname="QVideoWidgetControl::brightness" href="qvideowidgetcontrol.html#brightness" location="qvideowidgetcontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="brightness() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setBrightness" fullname="QVideoWidgetControl::setBrightness" href="qvideowidgetcontrol.html#setBrightness" location="qvideowidgetcontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setBrightness(int brightness)">
@@ -912,8 +902,8 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setSaturation" fullname="QVideoWidgetControl::setSaturation" href="qvideowidgetcontrol.html#setSaturation" location="qvideowidgetcontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setSaturation(int saturation)">
                 <parameter left="int" right="" name="saturation" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="fullscreenChanged" fullname="QVideoWidgetControl::fullscreenChanged" href="qvideowidgetcontrol.html#fullscreenChanged" location="qvideowidgetcontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="fullscreenChanged(bool fullscreen)">
-                <parameter left="bool" right="" name="fullscreen" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="fullScreenChanged" fullname="QVideoWidgetControl::fullScreenChanged" href="qvideowidgetcontrol.html#fullScreenChanged" location="qvideowidgetcontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="fullScreenChanged(bool fullScreen)">
+                <parameter left="bool" right="" name="fullScreen" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="brightnessChanged" fullname="QVideoWidgetControl::brightnessChanged" href="qvideowidgetcontrol.html#brightnessChanged" location="qvideowidgetcontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="brightnessChanged(int brightness)">
                 <parameter left="int" right="" name="brightness" default=""/>
@@ -1177,6 +1167,10 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="uri" fullname="QMediaResource::uri" href="qmediaresource.html#uri" location="qmediaresource.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QUrl" signature="uri() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="role" fullname="QMediaResource::role" href="qmediaresource.html#role" location="qmediaresource.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="ResourceRole" signature="role() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="mimeType" fullname="QMediaResource::mimeType" href="qmediaresource.html#mimeType" location="qmediaresource.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="mimeType() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="language" fullname="QMediaResource::language" href="qmediaresource.html#language" location="qmediaresource.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="language() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setLanguage" fullname="QMediaResource::setLanguage" href="qmediaresource.html#setLanguage" location="qmediaresource.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setLanguage(const QString &amp; language)">
+                <parameter left="const QString &amp;" right="" name="language" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="audioCodec" fullname="QMediaResource::audioCodec" href="qmediaresource.html#audioCodec" location="qmediaresource.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="audioCodec() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setAudioCodec" fullname="QMediaResource::setAudioCodec" href="qmediaresource.html#setAudioCodec" location="qmediaresource.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setAudioCodec(const QString &amp; codec)">
                 <parameter left="const QString &amp;" right="" name="codec" default=""/>
@@ -1220,10 +1214,6 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setResolution" fullname="QMediaResource::setResolution" href="qmediaresource.html#setResolution-2" location="qmediaresource.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="void" signature="setResolution(int width, int height)">
                 <parameter left="int" right="" name="width" default=""/>
                 <parameter left="int" right="" name="height" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="bitsPerPixel" fullname="QMediaResource::bitsPerPixel" href="qmediaresource.html#bitsPerPixel" location="qmediaresource.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="bitsPerPixel() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setBitsPerPixel" fullname="QMediaResource::setBitsPerPixel" href="qmediaresource.html#setBitsPerPixel" location="qmediaresource.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setBitsPerPixel(int bits)">
-                <parameter left="int" right="" name="bits" default=""/>
             </function>
         </class>
         <typedef access="public" threadsafety="unspecified" status="commendable" name="QMediaResourceList" href="#QMediaResourceList-typedef" location="qmediaresource.h"/>
