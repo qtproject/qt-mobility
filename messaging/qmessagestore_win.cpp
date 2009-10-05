@@ -279,7 +279,7 @@ bool QMessageStore::addMessage(QMessage *message)
                     if (HR_SUCCEEDED(rv) && (properties[0].ulPropTag == PR_RECORD_KEY) && (properties[1].ulPropTag == PR_ENTRYID)) {
                         MapiRecordKey recordKey(properties[0].Value.bin.lpb, properties[0].Value.bin.cb);
                         MapiEntryId entryId(properties[1].Value.bin.lpb, properties[1].Value.bin.cb);
-                        message->d_ptr->_id = QMessageIdPrivate::from(recordKey, mapiFolder->recordKey(), mapiFolder->storeKey(), entryId);
+                        message->d_ptr->_id = QMessageIdPrivate::from(mapiFolder->storeKey(), entryId, recordKey, mapiFolder->recordKey());
                         message->d_ptr->_modified = false;
 
                         MAPIFreeBuffer(properties);
