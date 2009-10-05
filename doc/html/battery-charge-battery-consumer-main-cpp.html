@@ -48,7 +48,7 @@
 
     #include &lt;QApplication&gt;
     #include &lt;QObject&gt;
-    #include &lt;QFxView&gt;
+    #include &lt;QmlView&gt;
     #include &lt;QWidget&gt;
     #include &lt;QVBoxLayout&gt;
     #include &lt;QPushButton&gt;
@@ -67,7 +67,7 @@
         MainWidget();
 
     private:
-        QFxView *view;
+        QmlView *view;
     };
 
     MainWidget::MainWidget()
@@ -76,7 +76,7 @@
         vbox-&gt;setMargin(0);
         setLayout(vbox);
 
-        view = new QFxView(this);
+        view = new QmlView(this);
         view-&gt;setFixedSize(100, 230);
         vbox-&gt;addWidget(view);
 

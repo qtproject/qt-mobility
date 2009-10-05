@@ -2,7 +2,7 @@
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- ./examples/publish-subscribe.qdoc -->
+<!-- publish-subscribe.qdoc -->
 <head>
   <title>Publish and Subscribe Example</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
@@ -29,7 +29,7 @@
 <p>This example program can act either a provider of Value Space content, a consumer of a Value Space content or both. It can also optionally act as the Value Space Manager. The behavior is selected by passing a combination of three optional command line parameters when starting the program. If no parameters are supplied the program defaults to acting as both a provider and consumer.</p>
 <p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
 <thead><tr valign="top" class="qt-style"><th>Parameter</th><th>Description</th></tr></thead>
-<tr valign="top" class="odd"><td>-manager</td><td>Starts the Value Space Manager. Only one instance should be started with the this parameter.</td></tr>
+<tr valign="top" class="odd"><td>-server</td><td>Starts the Value Space Server. Only one instance should be started with the this parameter. This parameter is only needed if the Value Space will use a layer that has a client-server architecture and a server needs to be started.</td></tr>
 <tr valign="top" class="even"><td>-provider</td><td>Publish values in the Value Space and create a dialog to control those values directly.</td></tr>
 <tr valign="top" class="odd"><td>-consumer</td><td>Create a dialog to view Value Space items.</td></tr>
 </table></p>
@@ -93,7 +93,7 @@
     {
         ui-&gt;values-&gt;clearContents();
 
-        QList&lt;QString&gt; subPaths = item-&gt;subPaths();
+        QStringList subPaths = item-&gt;subPaths();
         ui-&gt;values-&gt;setRowCount(subPaths.count());
 
         for (int i = 0; i &lt; subPaths.count(); ++i) {

@@ -2,7 +2,7 @@
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- ../../context/qvaluespaceitem.cpp -->
+<!-- qvaluespaceitem.cpp -->
 <head>
   <title>QValueSpaceItem Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
@@ -21,48 +21,30 @@
 <a name="properties"></a>
 <h2>Properties</h2>
 <ul>
-<li><div class="fn"><b><a href="qvaluespaceitem.html#notify-prop">notify</a></b> : bool</div></li>
 <li><div class="fn"><b><a href="qvaluespaceitem.html#path-prop">path</a></b> : QString</div></li>
-<li><div class="fn"><b><a href="qvaluespaceitem.html#value-prop">value</a></b> : QVariant</div></li>
+<li><div class="fn"><b><a href="qvaluespaceitem.html#value-prop">value</a></b> : const QVariant</div></li>
 </ul>
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#QValueSpaceItem">QValueSpaceItem</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#QValueSpaceItem-2">QValueSpaceItem</a></b> ( const QByteArray &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#QValueSpaceItem-3">QValueSpaceItem</a></b> ( const QByteArray &amp; <i>path</i>, QAbstractValueSpaceLayer::LayerOptions <i>filter</i>, QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#QValueSpaceItem-4">QValueSpaceItem</a></b> ( const QByteArray &amp; <i>path</i>, const QUuid &amp; <i>uuid</i>, QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#QValueSpaceItem-5">QValueSpaceItem</a></b> ( const QValueSpaceItem &amp; <i>other</i>, QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#QValueSpaceItem-6">QValueSpaceItem</a></b> ( const QValueSpaceItem &amp; <i>base</i>, const QByteArray &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#QValueSpaceItem-7">QValueSpaceItem</a></b> ( const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#QValueSpaceItem-8">QValueSpaceItem</a></b> ( const char * <i>path</i>, QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#QValueSpaceItem-9">QValueSpaceItem</a></b> ( const QString &amp; <i>path</i>, QAbstractValueSpaceLayer::LayerOptions <i>filter</i>, QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#QValueSpaceItem-10">QValueSpaceItem</a></b> ( const char * <i>path</i>, QAbstractValueSpaceLayer::LayerOptions <i>filter</i>, QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#QValueSpaceItem-11">QValueSpaceItem</a></b> ( const QString &amp; <i>path</i>, const QUuid &amp; <i>uuid</i>, QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#QValueSpaceItem-12">QValueSpaceItem</a></b> ( const char * <i>path</i>, const QUuid &amp; <i>uuid</i>, QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#QValueSpaceItem-13">QValueSpaceItem</a></b> ( const QValueSpaceItem &amp; <i>base</i>, const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#QValueSpaceItem-14">QValueSpaceItem</a></b> ( const QValueSpaceItem &amp; <i>base</i>, const char * <i>path</i>, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#QValueSpaceItem-2">QValueSpaceItem</a></b> ( const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#QValueSpaceItem-3">QValueSpaceItem</a></b> ( const char * <i>path</i>, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#QValueSpaceItem-4">QValueSpaceItem</a></b> ( const QString &amp; <i>path</i>, QValueSpace::LayerOptions <i>filter</i>, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#QValueSpaceItem-5">QValueSpaceItem</a></b> ( const char * <i>path</i>, QValueSpace::LayerOptions <i>filter</i>, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#QValueSpaceItem-6">QValueSpaceItem</a></b> ( const QString &amp; <i>path</i>, const QUuid &amp; <i>uuid</i>, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#QValueSpaceItem-7">QValueSpaceItem</a></b> ( const char * <i>path</i>, const QUuid &amp; <i>uuid</i>, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#dtor.QValueSpaceItem">~QValueSpaceItem</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#isValid">isValid</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#notify-prop">notify</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#cd">cd</a></b> ( const QString &amp; <i>path</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#cdUp">cdUp</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#isConnected">isConnected</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#path-prop">path</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#remove">remove</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#remove-2">remove</a></b> ( const QByteArray &amp; <i>subPath</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#remove-3">remove</a></b> ( const char * <i>subPath</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#remove-4">remove</a></b> ( const QString &amp; <i>subPath</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#notify-prop">setNotify</a></b> ( bool <i>notify</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#path-prop">setPath</a></b> ( const QString &amp; <i>path</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#value-prop">setValue</a></b> ( const QVariant &amp; <i>value</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#value-prop">setValue</a></b> ( const QByteArray &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#value-prop">setValue</a></b> ( const char * <i>subPath</i>, const QVariant &amp; <i>value</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#value-prop">setValue</a></b> ( const QString &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QString&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#subPaths">subPaths</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#sync">sync</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#value-prop">value</a></b> ( const QByteArray &amp; <i>subPath</i> = QByteArray(), const QVariant &amp; <i>def</i> = QVariant() ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#value-prop">value</a></b> ( const QString &amp; <i>subPath</i>, const QVariant &amp; <i>def</i> = QVariant() ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#value-prop">value</a></b> ( const char * <i>subPath</i>, const QVariant &amp; <i>def</i> = QVariant() ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QValueSpaceItem &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#operator-eq">operator=</a></b> ( const QValueSpaceItem &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#path-prop">setPath</a></b> ( QValueSpaceItem * <i>item</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#subPaths">subPaths</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#value">value</a></b> ( const QString &amp; <i>subPath</i> = QString(), const QVariant &amp; <i>def</i> = QVariant() ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#value-2">value</a></b> ( const char * <i>subPath</i>, const QVariant &amp; <i>def</i> = QVariant() ) const</td></tr>
 </table>
 <hr />
 <a name="signals"></a>
@@ -93,7 +75,7 @@
     QObject::connect(buttons, SIGNAL(contentsChanged()),
                    this, SLOT(buttonInfoChanged()));</pre>
 <p>will invoke the <tt>buttonInfoChanged()</tt> slot whenever any item under <tt>/Device/Buttons</tt> changes. This includes the value of <tt>/Device/Buttons</tt> itself, a change of a sub-object such as <tt>/Device/Buttons/2/Name</tt> or the creation (or removal) of a new sub-object, such as <tt>/Device/Buttons/4</tt>.</p>
-<p>When a QValueSpaceItem is constructed it will access zero, one or many <a href="qabstractvaluespacelayer.html">layers</a>, depending on the constructor and filter parameters used to construct it. Calls to <a href="qvaluespaceitem.html#value-prop">value</a>() will return the value that is stored in the layer with the highest <a href="qabstractvaluespacelayer.html#order">order</a> of all the accessible layers that contain the specified key. Calls to <a href="qvaluespaceitem.html#value-prop">setValue</a>() and <a href="qvaluespaceitem.html#remove">remove</a>() will send requests to all accessible layers.</p>
+<p>When a QValueSpaceItem is constructed it will access zero, one or many <a href="qabstractvaluespacelayer.html">layers</a>, depending on the constructor and filter parameters used to construct it. Calls to <a href="qvaluespaceitem.html#value">value</a>() will return the value that is stored in the layer with the highest <a href="qabstractvaluespacelayer.html#order">order</a> of all the accessible layers that contain the specified key.</p>
 <p>For example,</p>
 <pre>    QValueSpaceItem *buttons = new QValueSpaceItem(&quot;/Device/Buttons&quot;,
                                                    QAbstractValueSpaceLayer::NonPermanentLayer);
@@ -102,14 +84,6 @@
 <p><i>Note:</i> The QValueSpaceItem class is not thread safe and may only be used from an application's main thread.</p>
 <hr />
 <h2>Property Documentation</h2>
-<h3 class="fn"><a name="notify-prop"></a>notify : bool</h3>
-<p>This property holds whether change notifications are enabled.</p>
-<p>Explicitly enabling change notifications is not normally necessary as they are automatically enabled when a connection is made to the <a href="qvaluespaceitem.html#contentsChanged">contentsChanged</a>() signals.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>notify</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setNotify</b> ( bool <i>notify</i> )</td></tr>
-</table>
 <h3 class="fn"><a name="path-prop"></a>path : QString</h3>
 <p>This property holds the current path that the <a href="qvaluespaceitem.html">QValueSpaceItem</a> refers to.</p>
 <p>Settings this property causes the <a href="qvaluespaceitem.html">QValueSpaceItem</a> to disconnect and reconnect to the Value Space with the new path. As a result all signal/slot connections are disconnected.</p>
@@ -117,19 +91,10 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>path</b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setPath</b> ( const QString &amp; <i>path</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setPath</b> ( QValueSpaceItem * <i>item</i> )</td></tr>
 </table>
-<h3 class="fn"><a name="value-prop"></a>value : QVariant</h3>
+<h3 class="fn"><a name="value-prop"></a>value : const QVariant</h3>
 <p>This property holds the value of this item.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b>value</b> ( const QByteArray &amp; <i>subPath</i> = QByteArray(), const QVariant &amp; <i>def</i> = QVariant() ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b>value</b> ( const char * <i>subPath</i>, const QVariant &amp; <i>def</i> = QVariant() ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b>value</b> ( const QString &amp; <i>subPath</i>, const QVariant &amp; <i>def</i> = QVariant() ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>setValue</b> ( const QVariant &amp; <i>value</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>setValue</b> ( const QByteArray &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>setValue</b> ( const char * <i>subPath</i>, const QVariant &amp; <i>value</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>setValue</b> ( const QString &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> )</td></tr>
-</table>
 <p><b>Notifier signal:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespaceitem.html#contentsChanged">contentsChanged</a></b> ()</td></tr>
@@ -139,103 +104,64 @@
 <h3 class="fn"><a name="QValueSpaceItem"></a>QValueSpaceItem::QValueSpaceItem ( QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to the root path.</p>
 <p>The constructed Value Space item will access all available <a href="qabstractvaluespacelayer.html">layers</a>.</p>
-<h3 class="fn"><a name="QValueSpaceItem-2"></a>QValueSpaceItem::QValueSpaceItem ( const QByteArray &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
-<p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to <i>path</i>.</p>
-<p>The constructed Value Space item will access all available <a href="qabstractvaluespacelayer.html">layers</a>.</p>
-<h3 class="fn"><a name="QValueSpaceItem-3"></a>QValueSpaceItem::QValueSpaceItem ( const QByteArray &amp; <i>path</i>, <a href="qabstractvaluespacelayer.html#LayerOption-enum">QAbstractValueSpaceLayer::LayerOptions</a> <i>filter</i>, QObject * <i>parent</i> = 0 )</h3>
-<p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to <i>path</i>. The <i>filter</i> parameter is used to limit which layers this <a href="qvaluespaceitem.html">QValueSpaceItem</a> will access.</p>
-<p>If a layer matching <i>filter</i> is not found an invalid <a href="qvaluespaceitem.html">QValueSpaceItem</a> will be constructed.</p>
-<p>See also <a href="qvaluespaceitem.html#isValid">isValid</a>().</p>
-<h3 class="fn"><a name="QValueSpaceItem-4"></a>QValueSpaceItem::QValueSpaceItem ( const QByteArray &amp; <i>path</i>, const QUuid &amp; <i>uuid</i>, QObject * <i>parent</i> = 0 )</h3>
-<p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to <i>path</i>. This <a href="qvaluespaceitem.html">QValueSpaceItem</a> will only use the layer identified by <i>uuid</i>.</p>
-<p>Use of this constructor is not platform agnostic. If possible use one of the constructors that take a <a href="qabstractvaluespacelayer.html#LayerOption-enum">QAbstractValueSpaceLayer::LayerOptions</a> parameter instead.</p>
-<p>If a layer with a matching <i>uuid</i> is not found an invalid <a href="qvaluespaceitem.html">QValueSpaceItem</a> will be constructed.</p>
-<p>See also <a href="qabstractvaluespacelayer.html#id">QAbstractValueSpaceLayer::id</a>(), <a href="qvaluespace.html">QValueSpace</a>, and <a href="qvaluespaceitem.html#isValid">isValid</a>().</p>
-<h3 class="fn"><a name="QValueSpaceItem-5"></a>QValueSpaceItem::QValueSpaceItem ( const QValueSpaceItem &amp; <i>other</i>, QObject * <i>parent</i> = 0 )</h3>
-<p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to the same path as <i>other</i>.</p>
-<p>The constructed Value Space item will access the same <a href="qabstractvaluespacelayer.html">layers</a> as <i>other</i>.</p>
-<h3 class="fn"><a name="QValueSpaceItem-6"></a>QValueSpaceItem::QValueSpaceItem ( const QValueSpaceItem &amp; <i>base</i>, const QByteArray &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
-<p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to the sub-<i>path</i> of <i>base</i>.</p>
-<p>The constructed Value Space item will access the same <a href="qabstractvaluespacelayer.html">layers</a> as <i>base</i>.</p>
-<h3 class="fn"><a name="QValueSpaceItem-7"></a>QValueSpaceItem::QValueSpaceItem ( const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QValueSpaceItem-2"></a>QValueSpaceItem::QValueSpaceItem ( const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>This is an overloaded function.</p>
 <p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to <i>path</i>. This constructor is equivalent to calling <tt>QValueSpaceItem(path.toUtf8(), parent)</tt>.</p>
 <p>The constructed Value Space item will access all available <a href="qabstractvaluespacelayer.html">layers</a>.</p>
-<h3 class="fn"><a name="QValueSpaceItem-8"></a>QValueSpaceItem::QValueSpaceItem ( const char * <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QValueSpaceItem-3"></a>QValueSpaceItem::QValueSpaceItem ( const char * <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>This is an overloaded function.</p>
-<p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to <i>path</i>. This constructor is equivalent to calling <tt>QValueSpaceItem(QByteArray(path), parent)</tt>.</p>
+<p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to <i>path</i>. This constructor is equivalent to calling <tt>QValueSpaceItem(QString(path), parent)</tt>.</p>
 <p>The constructed Value Space item will access all available <a href="qabstractvaluespacelayer.html">layers</a>.</p>
-<h3 class="fn"><a name="QValueSpaceItem-9"></a>QValueSpaceItem::QValueSpaceItem ( const QString &amp; <i>path</i>, <a href="qabstractvaluespacelayer.html#LayerOption-enum">QAbstractValueSpaceLayer::LayerOptions</a> <i>filter</i>, QObject * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QValueSpaceItem-4"></a>QValueSpaceItem::QValueSpaceItem ( const QString &amp; <i>path</i>, <a href="qvaluespace.html#LayerOption-enum">QValueSpace::LayerOptions</a> <i>filter</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>This is an overloaded function.</p>
 <p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to <i>path</i>. The <i>filter</i> parameter is used to limit which layers this <a href="qvaluespaceitem.html">QValueSpaceItem</a> will access. This constructor is equivalent to calling <tt>QValueSpaceItem(path.toUtf8(), filter, parent)</tt>.</p>
-<p>If a layer matching <i>filter</i> is not found an invalid <a href="qvaluespaceitem.html">QValueSpaceItem</a> will be constructed.</p>
-<p>See also <a href="qvaluespaceitem.html#isValid">isValid</a>().</p>
-<h3 class="fn"><a name="QValueSpaceItem-10"></a>QValueSpaceItem::QValueSpaceItem ( const char * <i>path</i>, <a href="qabstractvaluespacelayer.html#LayerOption-enum">QAbstractValueSpaceLayer::LayerOptions</a> <i>filter</i>, QObject * <i>parent</i> = 0 )</h3>
+<p>If a layer matching <i>filter</i> is not found, the constructed <a href="qvaluespaceitem.html">QValueSpaceItem</a> will be unconnected.</p>
+<p>See also <a href="qvaluespaceitem.html#isConnected">isConnected</a>().</p>
+<h3 class="fn"><a name="QValueSpaceItem-5"></a>QValueSpaceItem::QValueSpaceItem ( const char * <i>path</i>, <a href="qvaluespace.html#LayerOption-enum">QValueSpace::LayerOptions</a> <i>filter</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>This is an overloaded function.</p>
-<p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to <i>path</i>. The <i>filter</i> parameter is used to limit which layers this <a href="qvaluespaceitem.html">QValueSpaceItem</a> will access. This constructor is equivalent to calling <tt>QValueSpaceItem(QByteArray(path), filter, parent)</tt>.</p>
-<p>If a layer matching <i>filter</i> is not found an invalid <a href="qvaluespaceitem.html">QValueSpaceItem</a> will be constructed.</p>
-<p>See also <a href="qvaluespaceitem.html#isValid">isValid</a>().</p>
-<h3 class="fn"><a name="QValueSpaceItem-11"></a>QValueSpaceItem::QValueSpaceItem ( const QString &amp; <i>path</i>, const QUuid &amp; <i>uuid</i>, QObject * <i>parent</i> = 0 )</h3>
+<p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to <i>path</i>. The <i>filter</i> parameter is used to limit which layers this <a href="qvaluespaceitem.html">QValueSpaceItem</a> will access. This constructor is equivalent to calling <tt>QValueSpaceItem(QString(path), filter, parent)</tt>.</p>
+<p>If a layer matching <i>filter</i> is not found, the constructed <a href="qvaluespaceitem.html">QValueSpaceItem</a> will be unconnected.</p>
+<p>See also <a href="qvaluespaceitem.html#isConnected">isConnected</a>().</p>
+<h3 class="fn"><a name="QValueSpaceItem-6"></a>QValueSpaceItem::QValueSpaceItem ( const QString &amp; <i>path</i>, const QUuid &amp; <i>uuid</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>This is an overloaded function.</p>
 <p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to <i>path</i>. This <a href="qvaluespaceitem.html">QValueSpaceItem</a> will only use the layer identified by <i>uuid</i>. This constructor is equivalent to calling <tt>QValueSpaceItem(path.toUtf8(), uuid, parent)</tt>.</p>
-<p>Use of this constructor is not platform agnostic. If possible use one of the constructors that take a <a href="qabstractvaluespacelayer.html#LayerOption-enum">QAbstractValueSpaceLayer::LayerOptions</a> parameter instead.</p>
-<p>If a layer with a matching <i>uuid</i> is not found an invalid <a href="qvaluespaceitem.html">QValueSpaceItem</a> will be constructed.</p>
-<p>See also <a href="qabstractvaluespacelayer.html#id">QAbstractValueSpaceLayer::id</a>(), <a href="qvaluespace.html">QValueSpace</a>, and <a href="qvaluespaceitem.html#isValid">isValid</a>().</p>
-<h3 class="fn"><a name="QValueSpaceItem-12"></a>QValueSpaceItem::QValueSpaceItem ( const char * <i>path</i>, const QUuid &amp; <i>uuid</i>, QObject * <i>parent</i> = 0 )</h3>
+<p>Use of this constructor is not platform agnostic. If possible use one of the constructors that take a QAbstractValueSpaceLayer::LayerOptions parameter instead.</p>
+<p>If a layer with a matching <i>uuid</i> is not found, the constructed <a href="qvaluespaceitem.html">QValueSpaceItem</a> will be unconnected.</p>
+<p>See also <a href="qabstractvaluespacelayer.html#id">QAbstractValueSpaceLayer::id</a>(), <a href="qvaluespace.html">QValueSpace</a>, and <a href="qvaluespaceitem.html#isConnected">isConnected</a>().</p>
+<h3 class="fn"><a name="QValueSpaceItem-7"></a>QValueSpaceItem::QValueSpaceItem ( const char * <i>path</i>, const QUuid &amp; <i>uuid</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>This is an overloaded function.</p>
-<p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to <i>path</i>. This <a href="qvaluespaceitem.html">QValueSpaceItem</a> will only use the layer identified by <i>uuid</i>. This constructor is equivalent to calling <tt>QValueSpaceItem(QByteArray(path), uuid, parent)</tt>.</p>
-<p>Use of this constructor is not platform agnostic. If possible use one of the constructors that take a <a href="qabstractvaluespacelayer.html#LayerOption-enum">QAbstractValueSpaceLayer::LayerOptions</a> parameter instead.</p>
-<p>If a layer with a matching <i>uuid</i> is not found an invalid <a href="qvaluespaceitem.html">QValueSpaceItem</a> will be constructed.</p>
-<p>See also <a href="qabstractvaluespacelayer.html#id">QAbstractValueSpaceLayer::id</a>(), <a href="qvaluespace.html">QValueSpace</a>, and <a href="qvaluespaceitem.html#isValid">isValid</a>().</p>
-<h3 class="fn"><a name="QValueSpaceItem-13"></a>QValueSpaceItem::QValueSpaceItem ( const QValueSpaceItem &amp; <i>base</i>, const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
-<p>This is an overloaded function.</p>
-<p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to the sub-<i>path</i> of <i>base</i>. This constructor is equivalent to calling <tt>QValueSpaceItem(base, path.toUtf8(), parent)</tt>.</p>
-<p>The constructed Value Space item will access the same <a href="qabstractvaluespacelayer.html">layers</a> as <i>base</i>.</p>
-<h3 class="fn"><a name="QValueSpaceItem-14"></a>QValueSpaceItem::QValueSpaceItem ( const QValueSpaceItem &amp; <i>base</i>, const char * <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
-<p>This is an overloaded function.</p>
-<p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to the sub-<i>path</i> of <i>base</i>. This constructor is equivalent to calling <tt>QValueSpaceItem(base, QByteArray(path), parent)</tt>.</p>
-<p>The constructed Value Space item will access the same <a href="qabstractvaluespacelayer.html">layers</a> as <i>base</i>.</p>
+<p>Constructs a <a href="qvaluespaceitem.html">QValueSpaceItem</a> with the specified <i>parent</i> that refers to <i>path</i>. This <a href="qvaluespaceitem.html">QValueSpaceItem</a> will only use the layer identified by <i>uuid</i>. This constructor is equivalent to calling <tt>QValueSpaceItem(QString(path), uuid, parent)</tt>.</p>
+<p>Use of this constructor is not platform agnostic. If possible use one of the constructors that take a QAbstractValueSpaceLayer::LayerOptions parameter instead.</p>
+<p>If a layer with a matching <i>uuid</i> is not found, the constructed <a href="qvaluespaceitem.html">QValueSpaceItem</a> will be unconnected.</p>
+<p>See also <a href="qabstractvaluespacelayer.html#id">QAbstractValueSpaceLayer::id</a>(), <a href="qvaluespace.html">QValueSpace</a>, and <a href="qvaluespaceitem.html#isConnected">isConnected</a>().</p>
 <h3 class="fn"><a name="dtor.QValueSpaceItem"></a>QValueSpaceItem::~QValueSpaceItem ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the <a href="qvaluespaceitem.html">QValueSpaceItem</a></p>
+<h3 class="fn"><a name="cd"></a>void QValueSpaceItem::cd ( const QString &amp; <i>path</i> )</h3>
+<p>Changes the path to <i>path</i>.</p>
+<h3 class="fn"><a name="cdUp"></a>void QValueSpaceItem::cdUp ()</h3>
+<p>Sets the path to parent of the current path.</p>
 <h3 class="fn"><a name="contentsChanged"></a>void QValueSpaceItem::contentsChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Emitted whenever the value of this item, or any of its sub-items change.</p>
-<h3 class="fn"><a name="isValid"></a>bool QValueSpaceItem::isValid () const</h3>
-<p>Returns true if this object is valid; otherwise returns false. An object is valid if there is atleast one layer available. An invalid object is constructed if the filtering parameters passed to the <a href="qvaluespaceitem.html">QValueSpaceItem</a> constructor eliminate all available layers.</p>
-<h3 class="fn"><a name="remove"></a>bool QValueSpaceItem::remove ()</h3>
-<p>Request that the item be removed. The provider of the item determines whether the request is honored or ignored.</p>
-<p><i>Note:</i> This call asynchronously <i>asks</i> the current provider of the object to change the value. To explicitly make a change use <a href="qvaluespaceobject.html">QValueSpaceObject</a>.</p>
-<p>Returns false if none of the available value space layers support sending requests; otherwise returns true.</p>
-<p>See also <a href="qvaluespaceobject.html#itemRemove">QValueSpaceObject::itemRemove</a>().</p>
-<h3 class="fn"><a name="remove-2"></a>bool QValueSpaceItem::remove ( const QByteArray &amp; <i>subPath</i> )</h3>
-<p>This is an overloaded function.</p>
-<p>Request that the <i>subPath</i> of item be removed. The provider of the sub path determines whether the request is honored or ignored.</p>
-<p><i>Note:</i> This call asynchronously <i>asks</i> the current provider of the object to change the value. To explicitly make a change use <a href="qvaluespaceobject.html">QValueSpaceObject</a>.</p>
-<p>Returns false if none of the available value space layers support sending requests; otherwise returns true.</p>
-<p>See also <a href="qvaluespaceobject.html#itemRemove">QValueSpaceObject::itemRemove</a>().</p>
-<h3 class="fn"><a name="remove-3"></a>bool QValueSpaceItem::remove ( const char * <i>subPath</i> )</h3>
-<p>This is an overloaded function.</p>
-<p>Request that the <i>subPath</i> of item be removed. The provider of the sub path determines whether the request is honored or ignored.</p>
-<p><i>Note:</i> This call asynchronously <i>asks</i> the current provider of the object to change the value. To explicitly make a change use <a href="qvaluespaceobject.html">QValueSpaceObject</a>.</p>
-<p>Returns false if none of the available value space layers support sending requests; otherwise returns true.</p>
-<p>See also <a href="qvaluespaceobject.html#itemRemove">QValueSpaceObject::itemRemove</a>().</p>
-<h3 class="fn"><a name="remove-4"></a>bool QValueSpaceItem::remove ( const QString &amp; <i>subPath</i> )</h3>
-<p>This is an overloaded function.</p>
-<p>Request that the <i>subPath</i> of item be removed. The provider of the sub path determines whether the request is honored or ignored.</p>
-<p><i>Note:</i> This call asynchronously <i>asks</i> the current provider of the object to change the value. To explicitly make a change use <a href="qvaluespaceobject.html">QValueSpaceObject</a>.</p>
-<p>Returns false if none of the available value space layers support sending requests; otherwise returns true.</p>
-<p>See also <a href="qvaluespaceobject.html#itemRemove">QValueSpaceObject::itemRemove</a>().</p>
-<h3 class="fn"><a name="subPaths"></a>QList&lt;QString&gt; QValueSpaceItem::subPaths () const</h3>
+<h3 class="fn"><a name="isConnected"></a>bool QValueSpaceItem::isConnected () const</h3>
+<p>Returns true if this <a href="qvaluespaceitem.html">QValueSpaceItem</a> is connected to atleast one available layer; otherwise returns false. An unconnected <a href="qvaluespaceitem.html">QValueSpaceItem</a> is constructed if the filtering parameters passed to the constructor eliminate all available layers.</p>
+<h3 class="fn"><a name="subPaths"></a>QStringList QValueSpaceItem::subPaths () const</h3>
 <p>Returns a list of sub-paths for this item. For example, given a Value Space tree containing:</p>
 <pre>    /Settings/Nokia/Device
     /Settings/Nokia/Other
     /Settings/Qt
     /Device/Buttons</pre>
 <p><tt>QValueSpaceItem(&quot;/Settings&quot;).subPaths()</tt> will return a list containing <tt>{ Nokia, Qt }</tt> in no particular order.</p>
-<h3 class="fn"><a name="sync"></a>bool QValueSpaceItem::sync ()</h3>
-<p>Commit all change requests made by calls to <a href="qvaluespaceitem.html#value-prop">setValue</a>() or <a href="qvaluespaceitem.html#remove">remove</a>().</p>
-<p>Returns true if there are no pending change requests to send or the requests were successfully sent to all provides; otherwise returns false.</p>
-<h3 class="fn"><a name="operator-eq"></a>QValueSpaceItem &amp; QValueSpaceItem::operator= ( const QValueSpaceItem &amp; <i>other</i> )</h3>
-<p>Assign <i>other</i> to this.</p>
+<h3 class="fn"><a name="value"></a>QVariant QValueSpaceItem::value ( const QString &amp; <i>subPath</i> = QString(), const QVariant &amp; <i>def</i> = QVariant() ) const</h3>
+<p>Returns the value of the sub-item <i>subPath</i> of this item, or the value of this item if <i>subPath</i> is empty. If the item does not exists, <i>def</i> is returned.</p>
+<p>The following code shows how the item and <i>subPath</i> relate.</p>
+<pre>    QValueSpaceItem base(&quot;/Settings&quot;);
+    QValueSpaceItem equiv(&quot;/Settings/Nokia/General/Mappings);
+
+<span class="comment">    // Is true</span>
+    equiv.value() == base.value(&quot;Nokia/General/Mapping&quot;);</pre>
+<h3 class="fn"><a name="value-2"></a>QVariant QValueSpaceItem::value ( const char * <i>subPath</i>, const QVariant &amp; <i>def</i> = QVariant() ) const</h3>
+<p>This is an overloaded function.</p>
+<p>This is a convenience overload and is equivalent to <tt>value(QString::fromLatin1(subPath), def)</tt>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

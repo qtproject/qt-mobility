@@ -2,7 +2,7 @@
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- ./examples/battery-charge.qdoc -->
+<!-- battery-charge.qdoc -->
 <head>
   <title>Accessing Publish and Subscribe from QML</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
@@ -42,12 +42,10 @@
 <pre>        ValueSpaceItem {
             id: batteryCharge
             path: &quot;/power/battery/charge&quot;
-            notify: true
         }
         ValueSpaceItem {
             id: batteryCharging
             path: &quot;/power/battery/charging&quot;
-            notify: true
         }</pre>
 <p>The default state of the rectangle used to visualize the battery charge uses the <i>charge</i> property of our BatteryCharge class in the expression for its height.</p>
 <pre>            id: visualCharge

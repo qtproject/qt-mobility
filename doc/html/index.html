@@ -2,7 +2,7 @@
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- ./index.qdoc -->
+<!-- index.qdoc -->
 <head>
   <title>Qt Context Framework Developer Resources</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
@@ -47,8 +47,8 @@
 </table></p>
 <a name="architecture"></a>
 <h4>Architecture</h4>
-<p>Layers in the Qt Value Space are provided by objects implementing the <a href="qabstractvaluespacelayer.html">QAbstractValueSpaceLayer</a> interface. The two internal layers, the Shared Memory layer and the Registry layer, are implemented in this fashion. The Value Space supports adding new, 3rd party layers through calls to the <a href="qvaluespace.html#installLayer">QValueSpace::installLayer</a>() method and <a href="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER">QVALUESPACE_AUTO_INSTALL_LAYER</a>() macro. All layers must be installed prior to the first Value Space usage. Although it is legal to have a different set of layers installed in each process (a process local layer, for example) this asymmetric model is discouraged as it might cause confusion if these two processes communicate.</p>
-<p>The Qt Value Space system is divided into two parts: a single server and zero or more clients. Internally the Value Space system draws no distinction between the two - the server is also a client, for example - but certain layers, in particular the Shared Memory layer, do. The Value Space server <b>must</b> be initialized via a call to <a href="qvaluespace.html#initValueSpaceManager">QValueSpace::initValueSpaceManager</a>() prior to any use of the Value Space. Value Space clients will automatically initialize the first time Value Space functionality is used.</p>
+<p>Layers in the Qt Value Space are provided by objects implementing the <a href="qabstractvaluespacelayer.html">QAbstractValueSpaceLayer</a> interface. The two internal layers, the Shared Memory layer and the Registry layer, are implemented in this fashion. The Value Space supports adding new, 3rd party layers through calls to the QValueSpace::installLayer() method and <a href="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER">QVALUESPACE_AUTO_INSTALL_LAYER</a>() macro. All layers must be installed prior to the first Value Space usage. Although it is legal to have a different set of layers installed in each process (a process local layer, for example) this asymmetric model is discouraged as it might cause confusion if these two processes communicate.</p>
+<p>The Qt Value Space system is divided into two parts: a single server and zero or more clients. Internally the Value Space system draws no distinction between the two - the server is also a client, for example - but certain layers, in particular the Shared Memory layer, do. The Value Space server <b>must</b> be initialized via a call to QValueSpace::initValueSpaceManager() prior to any use of the Value Space. Value Space clients will automatically initialize the first time Value Space functionality is used.</p>
 <a name="shared-memory-layer"></a>
 <h5>Shared Memory Layer</h5>
 <p>The external use of the Shared Memory layer is described in <a href="qvaluespaceobject.html">QValueSpaceObject</a>. The Shared Memory layer stores all values in a 10MB block of shared memory which is reserved when the Value Space initializes. As the layer creates this region at startup, it is assumed that the operating system lazily commits memory. If this assumption is invalid, the Shared Memory layer will unnecessarily consume 10MB of memory.</p>
