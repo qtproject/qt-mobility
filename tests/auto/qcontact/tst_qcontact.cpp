@@ -536,10 +536,10 @@ void tst_QContact::displayName()
 
     /* Remove the detail via removeDetail */
     QContactDisplayLabel old = d.displayLabel();
-    QVERIFY(d.details().count() == 2);
+    QVERIFY(d.details().count() == 3);
     QVERIFY(d.removeDetail(&old));
     QVERIFY(d.isEmpty() == false);
-    QVERIFY(d.details().count() == 2); // it should not be removed, only cleared (!)
+    QVERIFY(d.details().count() == 3); // it should not be removed, only cleared (!)
 
     /* Make sure we go back to the old synth version */
     QVERIFY(d.displayLabel().isSynthesised() == true);
