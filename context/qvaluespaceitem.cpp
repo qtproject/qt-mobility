@@ -236,25 +236,6 @@ struct QValueSpaceItemPrivate
         }
     }
 
-    QValueSpaceItemPrivate(const QString &_path,
-                           const QList<QAbstractValueSpaceLayer *> &readerList)
-    :   refCount(0), connections(0)
-    {
-        path = qCanonicalPath(_path);
-
-        for (int ii = 0; ii < readerList.count(); ++ii) {
-            QAbstractValueSpaceLayer *read = readerList.at(ii);
-
-            QAbstractValueSpaceLayer::Handle handle =
-                read->item(QAbstractValueSpaceLayer::InvalidHandle, path);
-            if (QAbstractValueSpaceLayer::InvalidHandle != handle) {
-                readers.append(qMakePair(read, handle));
-
-                read->notifyInterest(handle, true);
-            }
-        }
-    }
-
     ~QValueSpaceItemPrivate()
     {
         for (int ii = 0; ii < readers.count(); ++ii) {
@@ -327,16 +308,6 @@ struct QValueSpaceItemPrivate
         --refCount;
         if (!refCount)
             delete this;
-    }
-
-    QList<QAbstractValueSpaceLayer *> layers() const
-    {
-        QList<QAbstractValueSpaceLayer *> layers;
-
-        for (int i = 0; i < readers.count(); ++i)
-            layers.append(readers.at(i).first);
-
-        return layers;
     }
 
     unsigned int refCount;
