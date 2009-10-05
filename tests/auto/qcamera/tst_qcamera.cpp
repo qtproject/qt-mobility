@@ -395,7 +395,7 @@ public:
 class MockProvider : public QMediaServiceProvider
 {
 public:
-    QMediaService *requestService(const QByteArray &, const QList<QByteArray> &)
+    QMediaService *requestService(const QByteArray &, const QMediaServiceProviderHint &)
     {
         return service;
     }

@@ -41,6 +41,153 @@
 #include <multimedia/qmediaserviceproviderplugin.h>
 #include <multimedia/qmediapluginloader_p.h>
 
+class QMediaServiceProviderHintPrivate : public QSharedData
+{
+public:
+    QMediaServiceProviderHintPrivate(QMediaServiceProviderHint::Type type)
+        :type(type)
+    {
+    }
+
+    QMediaServiceProviderHintPrivate(const QMediaServiceProviderHintPrivate &other)
+        :QSharedData(other),
+        type(other.type),
+        device(other.device),
+        mimeType(other.mimeType),
+        codecs(other.codecs)
+    {
+    }
+
+    ~QMediaServiceProviderHintPrivate()
+    {
+    }
+
+    QMediaServiceProviderHint::Type type;
+    QByteArray device;
+    QString mimeType;
+    QStringList codecs;
+};
+
+/*!
+  \class QMediaServiceProviderHint
+*/
+
+/*!
+  Construct an empty media service provider hint.
+*/
+QMediaServiceProviderHint::QMediaServiceProviderHint()
+    :d(new QMediaServiceProviderHintPrivate(Null))
+{
+}
+
+/*!
+  Constructs the content type related media service provider hint.
+  Passing this hint to the service provider allows it to choose the service
+  suitable to play content with certain mime \a type and \a codecs list.
+*/
+QMediaServiceProviderHint::QMediaServiceProviderHint(const QString &type, const QStringList& codecs)
+    :d(new QMediaServiceProviderHintPrivate(ContentType))
+{
+    d->mimeType = type;
+    d->codecs = codecs;
+}
+
+/*!
+  Constructs the device related media service provider hint.
+  Passing this hint to the service provider allows it to choose the service
+  able to work with \a device.
+*/
+QMediaServiceProviderHint::QMediaServiceProviderHint(const QByteArray &device)
+    :d(new QMediaServiceProviderHintPrivate(Device))
+{
+    d->device = device;
+}
+
+/*!
+  Constructs a copy of \a other.
+*/
+QMediaServiceProviderHint::QMediaServiceProviderHint(const QMediaServiceProviderHint &other)
+    :d(other.d)
+{
+}
+
+/*!
+  Destroys the service provider hint.
+*/
+QMediaServiceProviderHint::~QMediaServiceProviderHint()
+{
+}
+
+/*!
+  Assigns \a other to this service provider hint and returns a reference to this hint.
+*/
+QMediaServiceProviderHint& QMediaServiceProviderHint::operator=(const QMediaServiceProviderHint &other)
+{
+    d = other.d;
+    return *this;
+}
+
+/*!
+  Returns true if this hint is equal to \a other; otherwise returns false.
+*/
+bool QMediaServiceProviderHint::operator == (const QMediaServiceProviderHint &other) const
+{
+    return (d == other.d) ||
+           (d->type == other.d->type &&
+            d->device == other.d->device &&
+            d->mimeType == other.d->mimeType &&
+            d->codecs == other.d->codecs);
+}
+
+/*!
+  Returns true if this hint is not equal to \a other; otherwise returns false.
+*/
+bool QMediaServiceProviderHint::operator != (const QMediaServiceProviderHint &other) const
+{
+    return !(*this == other);
+}
+
+/*!
+  Returns true if this hint null.
+*/
+bool QMediaServiceProviderHint::isNull() const
+{
+    return d->type == Null;
+}
+
+/*!
+  Returns hint type.
+*/
+QMediaServiceProviderHint::Type QMediaServiceProviderHint::type() const
+{
+    return d->type;
+}
+
+/*!
+  Returns mime type of media the service is expected to play.
+*/
+QString QMediaServiceProviderHint::mimeType() const
+{
+    return d->mimeType;
+}
+
+/*!
+  Returns the codecs list of media the service is expected to play.
+*/
+QStringList QMediaServiceProviderHint::codecs() const
+{
+    return d->codecs;
+}
+
+/*!
+  Returns the device name, the service is expected to work with.
+*/
+QByteArray QMediaServiceProviderHint::device() const
+{
+    return d->device;
+}
+
+
 Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, loader,
         (QMediaServiceProviderFactoryInterface_iid, QLatin1String("/mediaservice"), Qt::CaseInsensitive))
 
@@ -50,7 +197,7 @@ class QPluginServiceProvider : public QMediaServiceProvider
     QMap<QMediaService*, QMediaServiceProviderPlugin*> pluginMap;
 
 public:
-    QMediaService* requestService(const QByteArray &type, const QList<QByteArray> &)
+    QMediaService* requestService(const QByteArray &type, const QMediaServiceProviderHint &hint)
     {
         QString key(type);
         QMediaServiceProviderPlugin *plugin =

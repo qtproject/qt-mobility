@@ -54,6 +54,11 @@ public:
 
     QMediaServiceProviderHint& operator=(const QMediaServiceProviderHint &other);
 
+    bool operator == (const QMediaServiceProviderHint &other) const;
+    bool operator != (const QMediaServiceProviderHint &other) const;
+
+    bool isNull() const;
+
     Type type() const;
 
     QString mimeType() const;
@@ -74,7 +79,7 @@ class Q_MEDIA_EXPORT QMediaServiceProvider : public QObject
 public:
     enum SupportEstimate { NotSupported, MaybeSupported, ProbablySupported, PreferedService };
 
-    virtual QMediaService* requestService(const QByteArray &type, const QList<QByteArray> &optional = QList<QByteArray>()) = 0;
+    virtual QMediaService* requestService(const QByteArray &type, const QMediaServiceProviderHint &hint = QMediaServiceProviderHint()) = 0;
     virtual void releaseService(QMediaService *service) = 0;
 
     virtual SupportEstimate canPlay(const QByteArray &serviceType, const QString &mimeType, const QStringList& codecs) const;

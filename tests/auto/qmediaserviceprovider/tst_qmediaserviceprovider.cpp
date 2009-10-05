@@ -45,6 +45,7 @@ class tst_QMediaServiceProvider : public QObject
 private slots:
     void testDefaultProviderAvailable();
     void testObtainService();
+    void testProviderHints();
 };
 
 void tst_QMediaServiceProvider::testDefaultProviderAvailable()
@@ -64,6 +65,68 @@ void tst_QMediaServiceProvider::testObtainService()
     service = provider->requestService("mediaplayer");
     QVERIFY(service != 0);
     provider->releaseService(service);
+}
+
+
+void tst_QMediaServiceProvider::testProviderHints()
+{
+    {
+        QMediaServiceProviderHint hint;
+        QVERIFY(hint.isNull());
+        QCOMPARE(hint.type(), QMediaServiceProviderHint::Null);
+        QVERIFY(hint.device().isEmpty());
+        QVERIFY(hint.mimeType().isEmpty());
+        QVERIFY(hint.codecs().isEmpty());
+    }
+
+    {
+        QByteArray deviceName(QByteArray("testDevice"));
+        QMediaServiceProviderHint hint(deviceName);
+        QVERIFY(!hint.isNull());
+        QCOMPARE(hint.type(), QMediaServiceProviderHint::Device);
+        QCOMPARE(hint.device(), deviceName);
+        QVERIFY(hint.mimeType().isEmpty());
+        QVERIFY(hint.codecs().isEmpty());
+    }
+
+    {
+        QString mimeType(QLatin1String("video/ogg"));
+        QStringList codecs;
+        codecs << "theora" << "vorbis";
+
+        QMediaServiceProviderHint hint(mimeType,codecs);
+        QVERIFY(!hint.isNull());
+        QCOMPARE(hint.type(), QMediaServiceProviderHint::ContentType);
+        QVERIFY(hint.device().isEmpty());
+        QCOMPARE(hint.mimeType(), mimeType);
+        QCOMPARE(hint.codecs(), codecs);
+
+        QMediaServiceProviderHint hint2(hint);
+
+        QVERIFY(!hint2.isNull());
+        QCOMPARE(hint2.type(), QMediaServiceProviderHint::ContentType);
+        QVERIFY(hint2.device().isEmpty());
+        QCOMPARE(hint2.mimeType(), mimeType);
+        QCOMPARE(hint2.codecs(), codecs);
+
+        QMediaServiceProviderHint hint3;
+        QVERIFY(hint3.isNull());
+        hint3 = hint;
+        QVERIFY(!hint3.isNull());
+        QCOMPARE(hint3.type(), QMediaServiceProviderHint::ContentType);
+        QVERIFY(hint3.device().isEmpty());
+        QCOMPARE(hint3.mimeType(), mimeType);
+        QCOMPARE(hint3.codecs(), codecs);
+
+        QCOMPARE(hint, hint2);
+        QCOMPARE(hint3, hint2);
+
+        QMediaServiceProviderHint hint4(mimeType,codecs);
+        QCOMPARE(hint, hint4);
+
+        QMediaServiceProviderHint hint5(mimeType,QStringList());
+        QVERIFY(hint != hint5);
+    }
 }
 
 QTEST_MAIN(tst_QMediaServiceProvider)
