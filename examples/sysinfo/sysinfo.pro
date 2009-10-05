@@ -1,9 +1,3 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2009-08-06T10:02:21
-#
-#-------------------------------------------------
-
 QT       += network
 
 TARGET = sysinfo
@@ -19,7 +13,7 @@ FORMS    += dialog.ui
 
 INCLUDEPATH += ../../systeminfo
 
-include(../../common.pri)
+include(../examples.pri)
 qtAddLibrary(QtSystemInfo)
 
 CONFIG += console

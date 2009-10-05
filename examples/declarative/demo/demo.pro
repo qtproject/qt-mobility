@@ -2,7 +2,7 @@ TEMPLATE=app
 TARGET=sfw-kinetic-example
 INCLUDEPATH += ../../../serviceframework
 
-include(../../../common.pri)
+include(../../examples.pri)
 
 QT += gui declarative
 

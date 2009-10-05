@@ -67,6 +67,7 @@ CONFIG(debug, debug|release) {
     MOC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/moc
     RCC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/rcc
     UI_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/ui
+    QMAKE_RPATHDIR += $$QT_MOBILITY_LIB
 } else {
     # Unit test code (no plugins! test plugins are just normal plugins installed elsewhere)
     QT *= testlib
@@ -77,10 +78,12 @@ CONFIG(debug, debug|release) {
     MOC_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/moc
     RCC_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/rcc
     UI_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/ui
+    QMAKE_RPATHDIR += $$OUTPUT_DIR/lib
     symbian {
         #The default include path doesn't include MOC_DIR on symbian
         INCLUDEPATH += $$MOC_DIR
     }
+
 }
 
 wince* {
