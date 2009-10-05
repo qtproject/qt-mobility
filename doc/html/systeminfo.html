@@ -15,22 +15,63 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">System Information<br /><span class="subtitle"></span>
 </h1>
 <ul><li><a href="#system-information">System Information</a></li>
+<li><a href="#overview">Overview</a></li>
+<ul><li><a href="#information-categories">Information Categories</a></li>
+<ul><li><a href="#version">Version</a></li>
+<li><a href="#features-hardware">Features (hardware)</a></li>
+<li><a href="#network">Network</a></li>
+<li><a href="#display-information">Display Information</a></li>
+<li><a href="#storage-information">Storage Information</a></li>
+<li><a href="#device-information">Device Information</a></li>
+<li><a href="#screensaver">Screensaver</a></li>
+</ul>
+</ul>
 <li><a href="#building-and-compiling">Building and compiling</a></li>
 <li><a href="#reference-documentation">Reference documentation</a></li>
 <ul><li><a href="#examples">Examples</a></li>
 </ul>
 </ul>
-<ul>
-<li><a href="qsystemdeviceinfo.html">QSystemDeviceInfo</a></li>
-<li><a href="qsystemdisplayinfo.html">QSystemDisplayInfo</a></li>
-<li><a href="qsysteminfo.html">QSystemInfo</a></li>
-<li><a href="qsystemstorageinfo.html">QSystemStorageInfo</a></li>
-<li><a href="qsystemnetworkinfo.html">QSystemNetworkInfo</a></li>
-<li><a href="qsystemscreensaver.html">QSystemScreenSaver</a></li>
-</ul>
+<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><th><a href="qsystemdeviceinfo.html">QSystemDeviceInfo</a></th><td>Access to device information from the system</td></tr>
+<tr valign="top" class="even"><th><a href="qsystemdisplayinfo.html">QSystemDisplayInfo</a></th><td>Access to display information from the system</td></tr>
+<tr valign="top" class="odd"><th><a href="qsysteminfo.html">QSystemInfo</a></th><td>Access to various general information from the system</td></tr>
+<tr valign="top" class="even"><th><a href="qsystemnetworkinfo.html">QSystemNetworkInfo</a></th><td>Access to network information from the system</td></tr>
+<tr valign="top" class="odd"><th><a href="qsystemscreensaver.html">QSystemScreenSaver</a></th><td>Access to screen saver and blanking</td></tr>
+<tr valign="top" class="even"><th><a href="qsystemstorageinfo.html">QSystemStorageInfo</a></th><td>Access to memory and disk information from the system</td></tr>
+</table></p>
 <a name="system-information"></a>
 <h3>System Information</h3>
 <p>The System Information API provides a set of APIs to discover system related information and capabilities.</p>
+<a name="overview"></a>
+<h3>Overview</h3>
+<p>The System Information API returns the system information related to a number of categories.</p>
+<a name="information-categories"></a>
+<h4>Information Categories</h4>
+<a name="version"></a>
+<h5>Version</h5>
+<p>Contains version information for a range of supporting software on the device. For example, from the Operating System and Firmware to the version of WebKit, Qt and the Service Framework.</p>
+<a name="features-hardware"></a>
+<h5>Features (hardware)</h5>
+<p>This lists the supported hardware on the device. Feautures include items such as the camera, bluetooth, GPS, fm radio etc.</p>
+<a name="network"></a>
+<h5>Network</h5>
+<p>The state of the network connection, and also the type of network e.g&#x2e; gsm, cdma, ethernet etc.</p>
+<a name="display-information"></a>
+<h5>Display Information</h5>
+<a name="storage-information"></a>
+<h5>Storage Information</h5>
+<p>The presence of various storage devices. Including: none, internal, removable, cdrom.</p>
+<a name="device-information"></a>
+<h5>Device Information</h5>
+<ul>
+<li>Battery Status</li>
+<li>Power State</li>
+<li>Profile (silent, vibrating, normal etc)</li>
+<li>Sim</li>
+<li>Input Method (key/buttons, keypad, qwerty, single touch screen, multitouch etc)</li>
+</ul>
+<a name="screensaver"></a>
+<h5>Screensaver</h5>
 <a name="building-and-compiling"></a>
 <h3>Building and compiling</h3>
 <p>This library requires Qt 4.6 to be installed.</p>

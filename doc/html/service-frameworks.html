@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- sf.qdoc -->
 <head>
-  <title>Service Frameworks</title>
+  <title>Qt Service Framework</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -12,34 +12,34 @@
 <tr>
 <td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Service Frameworks<br /><span class="subtitle"></span>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Qt Service Framework<br /><span class="subtitle"></span>
 </h1>
 <p>The Qt Service Framework allows clients to discover and instantiate arbitrary services.</p>
 <ul><li><a href="#introduction">Introduction</a></li>
 <li><a href="#overview">Overview</a></li>
-<li><a href="#using-the-framework">Using the framework</a></li>
-<ul><li><a href="#verbose-lookup">Verbose lookup</a></li>
-<li><a href="#default-lookup">Default lookup</a></li>
-<ul><li><a href="#header-lookup">Header lookup</a></li>
+<li><a href="#using-the-framework">Using the Framework</a></li>
+<ul><li><a href="#verbose-lookup">Verbose Lookup</a></li>
+<li><a href="#default-lookup">Default Lookup</a></li>
+<ul><li><a href="#header-lookup">Header Lookup</a></li>
 </ul>
 </ul>
-<li><a href="#service-scope">Service scope</a></li>
-<ul><li><a href="#user-scope">User scope</a></li>
-<li><a href="#system-scope">System scope</a></li>
+<li><a href="#service-scope">Service Scope</a></li>
+<ul><li><a href="#user-scope">User Scope</a></li>
+<li><a href="#system-scope">System Scope</a></li>
 </ul>
-<li><a href="#adding-and-removing-of-services">Adding and removing of services</a></li>
-<ul><li><a href="#xml-format">XML format</a></li>
+<li><a href="#adding-and-removing-of-services">Adding and Removing of Services</a></li>
+<ul><li><a href="#xml-format">XML Format</a></li>
 </ul>
-<li><a href="#tools-for-xml-generation">Tools for XML generation</a></li>
-<li><a href="#installing-the-service-at-runtime">Installing the service at runtime</a></li>
-<li><a href="#identifying-services">Identifying services</a></li>
-<ul><li><a href="#upgrading-services">Upgrading services</a></li>
+<li><a href="#tools-for-xml-generation">Tools for XML Generation</a></li>
+<li><a href="#installing-the-service-at-runtime">Installing the Service at Runtime</a></li>
+<li><a href="#identifying-services">Identifying Services</a></li>
+<ul><li><a href="#upgrading-services">Upgrading Services</a></li>
 </ul>
 <li><a href="#examples">Examples</a></li>
 </ul>
 <a name="introduction"></a>
 <h3>Introduction</h3>
-<p>The Qt Service Framework works by defining a unified way of finding, implementing and accessing services across multiple platforms.</p>
+<p>The Qt Service Framework defines a unified way of finding, implementing and accessing services across multiple platforms.</p>
 <p>Due to the service frameworks knowledge of service interfaces, their versions and <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a>-based introspection it may even be used to unify and access multiple platform specific service implementations via the same Qt-based client application.</p>
 <a name="overview"></a>
 <h3>Overview</h3>
@@ -48,18 +48,18 @@
 <p>Each service plug-in implements one service only but can provide multiple implementations for multiple interfaces. Therefore a service (plug-in) can retain a certain level of backwards compatibility even if the main service interface breaks in such a way that a new interface name has to be used. Existing clients can still use the previous version of service interface whereas new clients can utilize the new interface.</p>
 <p>Future versions of this framework may also enable access to out-of-process service provider.</p>
 <a name="using-the-framework"></a>
-<h3>Using the framework</h3>
+<h3>Using the Framework</h3>
 <p>This section assumes that the user wants to access the <i>FileManager</i> service which offers an implementation for the <i>com.nokia.qt.examples.FileStorage</i> interface The service framework enables multiple ways of accessing those implementations.</p>
 <p><a href="qservicemanager.html">QServiceManager</a> is the main class to lookup and instantiate services. Services can be found by constraining the search via service meta data or by using the default lookup mechanism.</p>
 <a name="verbose-lookup"></a>
-<h4>Verbose lookup</h4>
+<h4>Verbose Lookup</h4>
 <p>The client code has precise knowledge of the service and its interfaces.</p>
 <pre>    QServiceManager manager;
     QServiceFilter filter(&quot;com.nokia.qt.examples.FileStorage&quot;);
     filter.setServiceName(&quot;FileManager&quot;);
 
 <span class="comment">    // find services complying with filter</span>
-    QList&lt;QServiceInterfaceDescriptor&gt; foundServices
+    QList&lt;QServiceInterfaceDescriptor&gt; foundServices;
     foundServices = manager.findInterfaces(filter);
     Q_ASSERT(foundServices.count());
 
@@ -67,13 +67,13 @@
     QObject *fileStorage;
     fileStorage = manager.loadInterface(foundServices.at(0));</pre>
 <a name="default-lookup"></a>
-<h4>Default lookup</h4>
+<h4>Default Lookup</h4>
 <p>The client code has knowledge of the interface and doesn't really care about the service that implements the interface. In such cases the default service lookup can be utilized to create a service object instance. If the same service provides multiple versions of the same interface the latest version is returned. Therefore subsequent versions of the same interface must always be binary compatible to previous versions.</p>
 <pre>    QServiceManager manager;
     QObject *storage;
     storage = manager.loadInterface(&quot;com.nokia.qt.examples.FileStorage&quot;);</pre>
 <a name="header-lookup"></a>
-<h5>Header lookup</h5>
+<h5>Header Lookup</h5>
 <p>So far all lookup mechanism returned a <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> pointer. This pointer can be utilised by introspecting the object using Qt's meta object system. Therefore the client does not have to have any knowledge of the object header or symbols. However in some use cases it may be more convenient to directly interact with the service object by including the service header and/or linking against the service provider.</p>
 <p>The subsequent code snippet demonstrates how this may look like:</p>
 <pre>    #include &lt;filestorage.h&gt;
@@ -84,23 +84,23 @@
     manager.setInterfaceDefault(&quot;FileManager&quot;, &quot;com.nokia.qt.examples.FileStorage&quot;);
     storage = manager.getInterface&lt;FileStorage&gt;(&quot;com.nokia.qt.examples.FileStorage&quot;);</pre>
 <a name="service-scope"></a>
-<h3>Service scope</h3>
+<h3>Service Scope</h3>
 <p>The <a href="qservicemanager.html">QServiceManager</a> operates in either <a href="qservicemanager.html#Scope-enum">User scope</a> or <a href="qservicemanager.html#Scope-enum">System scope</a>. By default, it operates in user scope. The choice of scope affects whether registered services are available system-wide or only to the current user, and whether service and interface lookups are limited to system-wide service or whether the current user's together with system service configurations are considered.</p>
 <a name="user-scope"></a>
-<h4>User scope</h4>
+<h4>User Scope</h4>
 <p>In user scope, services are registered in a storage location specific to the current user. When a default service is set for an interface using <a href="qservicemanager.html#setInterfaceDefault">setInterfaceDefault()</a>, the referenced service can be either a user-specific or system-wide service.</p>
 <p>For service and interface lookups, a manager will first search the user-specific services; if the requested component is not found, the manager then searches the system-wide services, if the user has sufficient permissions to do so.</p>
 <p>The <a href="qservicemanager.html#serviceAdded">QServiceManager::serviceAdded</a>() and <a href="qservicemanager.html#serviceRemoved">QServiceManager::serviceRemoved</a>() notifications are emitted when services are added or removed from either the user-specific or system-wide services. These signals have a <tt>scope</tt> parameter to indicate the scope in which the service was added or removed. (Note the system-wide service notifications are only available if the user has sufficient permissions to access the system-wide service storage.)</p>
 <a name="system-scope"></a>
-<h4>System scope</h4>
+<h4>System Scope</h4>
 <p>In system scope, services are registered in a system-wide storage location. The manager does not access user-specific services for any operations. Service and interface lookups fail if the requested services are not found in the system-wide service storage. Service registration is performed in the system-wide storage.</p>
 <p>If <a href="qservicemanager.html#setInterfaceDefault">setInterfaceDefault()</a> is called for a user-specific service, the operation fails.</p>
 <p>Also, the <a href="qservicemanager.html#serviceAdded">QServiceManager::serviceAdded</a>() and <a href="qservicemanager.html#serviceRemoved">QServiceManager::serviceRemoved</a>() notifications are only emitted for system-wide services.</p>
 <a name="adding-and-removing-of-services"></a>
-<h3>Adding and removing of services</h3>
+<h3>Adding and Removing of Services</h3>
 <p>New services can be installed and removed at runtime. An XML file is used to describe the service meta data and links the service code to its meta description.</p>
 <a name="xml-format"></a>
-<h4>XML format</h4>
+<h4>XML Format</h4>
 <p>Services are installed via an XML file which describes the meta data and location of the service. The xml file can be described via the following DTD:</p>
 <pre>        &lt;!ELEMENT service ( name, filepath, description?, interface+ ) &gt;
         &lt;!ELEMENT description ( #CDATA ) &gt;
@@ -154,14 +154,14 @@
             &lt;/interface&gt;
         &lt;/service&gt;</pre>
 <a name="tools-for-xml-generation"></a>
-<h3>Tools for XML generation</h3>
+<h3>Tools for XML Generation</h3>
 <p>The framework includes a GUI tool under <tt>tools/servicexmlgen</tt> for generating and inspecting service XML files. This makes it easy to enter service metadata and interface details and generate the appropriate XML to describe the service. It can also be used to load and inspect existing service XML files.</p>
 <p>Here is a screenshot of the application, loaded with the <i>TestService</i> XML description provided above.</p>
 <p align="center"><img src="images/servicexmlgen.png" /></p><a name="installing-the-service-at-runtime"></a>
-<h3>Installing the service at runtime</h3>
+<h3>Installing the Service at Runtime</h3>
 <p>New services can be added and removed at any time via <a href="qservicemanager.html#addService">QServiceManager::addService</a>() and <a href="qservicemanager.html#removeService">QServiceManager::removeService</a>().</p>
 <a name="identifying-services"></a>
-<h3>Identifying services</h3>
+<h3>Identifying Services</h3>
 <p>Each implementation is identified by a service name, an interface name and its version. This information is encapsulated by <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> which can be used to request references to service objects.</p>
 <p><a href="qservicefilter.html">QServiceFilter</a> simplifies the lookup of already installed services. Developers specifies the criteria used during the meta data lookup. The subsequent example demonstrates the interaction between <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> and <a href="qservicefilter.html">QServiceFilter</a> by creating references to all services that implement the interface <i>com.nokia.qt.ILocation</i>:</p>
 <pre>        QServiceManager mgr;
@@ -177,7 +177,7 @@
                 serviceObject-&gt;setParent(this);
         }</pre>
 <a name="upgrading-services"></a>
-<h4>Upgrading services</h4>
+<h4>Upgrading Services</h4>
 <p>There are two ways in which to upgrade a service. The first is an incremental approach whereby <a href="qservicemanager.html#addService">QServiceManager::addService</a>() is used to register an XML descriptor whose service name already exists but defines new interface implementations. For example an already existing service, &quot;ovi&quot; may define version 1.0 of interface,&quot;IDownload&quot;. <a href="qservicemanager.html#addService">QServiceManager::addService</a>() is then called with an XML descriptor that declares itself as belonging the &quot;ovi&quot; service, but implements version 1.1 of the interface &quot;IDownload&quot;. Both implementation versions will be available for use.</p>
 <p>The second method is a replacement approach whereby an existing service is completely removed and replaced by a new service.</p>
 <p>As an example the already existing &quot;ovi&quot; service may implement interface &quot;IDownload&quot; version 1.0, the new &quot;ovi&quot; service may implement &quot;IDownload&quot; version 1.0 and version 1.1&#x2e; In this case the old service implementation must be first be removed using <a href="qservicemanager.html#removeService">QServiceManager::removeService</a>() to make way for the new service implementation.</p>

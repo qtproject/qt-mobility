@@ -39,6 +39,12 @@
 **
 ****************************************************************************/
 
+/*!
+    \group systeminfo
+    \title System Information
+
+    A set of APIs that supplies that supplies system information.
+ */
 
 /*!
 \page systeminfo.html
@@ -50,18 +56,58 @@
 
 \tableofcontents
 
-\list
-    \o \l{QSystemDeviceInfo}
-    \o \l{QSystemDisplayInfo}
-    \o \l{QSystemInfo}
-    \o \l{QSystemStorageInfo}
-    \o \l{QSystemNetworkInfo}
-    \o \l{QSystemScreenSaver}
-\endlist
+\annotatedlist systeminfo
+
 
 \section1 System Information
 
-The System Information API provides a set of APIs to discover system related information and capabilities.
+The System Information API provides a set of APIs to discover system
+related information and capabilities.
+
+\section1 Overview
+The System Information API returns the system information related to a
+number of categories.
+
+\section2 Information Categories
+
+\section3 Version
+
+Contains version information for a range of supporting software on the
+device. For example, from the Operating System and Firmware to the version
+of WebKit, Qt and the Service Framework.
+
+\section3 Features (hardware)
+
+This lists the supported hardware on the device. Feautures include items
+such as the camera, bluetooth, GPS, fm radio etc.
+
+
+\section3 Network
+
+The state of the network connection, and also the type of network e.g.
+gsm, cdma, ethernet etc.
+
+
+\section3 Display Information
+
+
+\section3 Storage Information
+The presence of various storage devices. Including: none, internal,
+removable, cdrom.
+
+\section3 Device Information
+\list
+    \o Battery Status
+    \o Power State
+    \o Profile (silent, vibrating, normal etc)
+    \o Sim
+    \o Input Method (key/buttons, keypad, qwerty, single touch screen,
+multitouch etc)
+\endlist
+
+
+\section3 Screensaver
+
 
 \section1 Building and compiling
 

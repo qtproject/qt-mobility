@@ -61,6 +61,8 @@ QT_BEGIN_NAMESPACE
   /*!
     \class QSystemInfo
 
+    \ingroup systeminfo
+
     \brief The QSystemInfo class provides access to various general information from the system.
 
   */
@@ -90,7 +92,7 @@ QT_BEGIN_NAMESPACE
     \value IrFeature              Infrared feature available.
     \value LedFeature             LED's feature available.
     \value MemcardFeature         Memory card feature available.
-    \value UsbFeature             Univeral System Bus (USB) feature available.
+    \value UsbFeature             Universal System Bus (USB) feature available.
     \value VibFeature             Vibration feature available.
     \value WlanFeature            Wireless Local Area Network (WLAN) feature available.
     \value SimFeature             Subscriber Identity Module (SIM) available.
@@ -101,6 +103,8 @@ QT_BEGIN_NAMESPACE
 
   /*!
     \class QSystemNetworkInfo
+
+    \ingroup systeminfo
 
     \brief The QSystemNetworkInfo class provides access to network information from the system.
 
@@ -138,12 +142,16 @@ QT_BEGIN_NAMESPACE
 /*!
     \class QSystemDisplayInfo
 
+    \ingroup systeminfo
+
     \brief The QSystemDisplayInfo class provides access to display information from the system.
 
   */
 
   /*!
     \class QSystemStorageInfo
+
+    \ingroup systeminfo
 
     \brief The QSystemStorageInfo class provides access to memory and disk information from the system.
 
@@ -164,7 +172,10 @@ QT_BEGIN_NAMESPACE
 /*!
     \class QSystemDeviceInfo
 
-    \brief The QSystemDeviceInfo class provides access to device information from the system.
+    \ingroup systeminfo
+    
+    \brief The QSystemDeviceInfo class provides access to device
+information from the system.
 
   */
 /*!
@@ -255,6 +266,8 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QSystemScreenSaver
+
+    \ingroup systeminfo
 
     \brief The QSystemScreenSaver class provides access to screen saver and blanking.
 
