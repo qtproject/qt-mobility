@@ -167,18 +167,6 @@ QMediaService* QMediaObject::service() const
     return d_func()->service;
 }
 
-/*!
-    \fn bool QMediaObject::isValid() const
-
-    Returns true if the concrete media object is capable of normal operation;
-    false otherwise.
-*/
-
-bool QMediaObject::isValid() const
-{
-    return d_func()->service != 0;
-}
-
 int QMediaObject::notifyInterval() const
 {
     return d_func()->notifyTimer->interval();

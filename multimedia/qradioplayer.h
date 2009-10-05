@@ -61,8 +61,6 @@ public:
     QRadioPlayer(QObject *parent = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
     ~QRadioPlayer();
 
-    bool isValid() const;
-
     Band band() const;
 
     bool isSupportedBand(Band b) const;

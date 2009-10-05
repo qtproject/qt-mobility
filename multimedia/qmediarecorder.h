@@ -84,8 +84,6 @@ public:
     QMediaRecorder(QObject *parent = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
     ~QMediaRecorder();
 
-    bool isValid() const;
-
     QUrl sink() const;
     bool setSink(const QUrl &sink);
 

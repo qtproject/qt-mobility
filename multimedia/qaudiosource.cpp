@@ -106,17 +106,6 @@ QAudioSource::~QAudioSource()
 }
 
 /*!
-    Returns true if audiosource device available.
-*/
-
-bool QAudioSource::isValid() const
-{
-    Q_D(const QAudioSource);
-
-    return QMediaObject::isValid() && (d->audioDeviceControl != NULL);
-}
-
-/*!
     Returns the number of audio input devices available.
 */
 

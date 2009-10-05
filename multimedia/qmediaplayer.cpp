@@ -32,10 +32,11 @@
 **
 ****************************************************************************/
 
+#include <QtCore/qcoreevent.h>
+#include <QtCore/qmetaobject.h>
 #include <QtCore/qtimer.h>
 #include <QtCore/qdebug.h>
 
-#include <QtCore/qcoreevent.h>
 
 #include <multimedia/qmediaplayer.h>
 
@@ -203,18 +204,14 @@ QMediaPlayer::~QMediaPlayer()
     d->provider->releaseService(d->service);
 }
 
-/*!
-    \reimp
-*/
-
-bool QMediaPlayer::isValid() const
-{
-    return QMediaObject::isValid() && d_func()->control != 0;
-}
-
 QMediaSource QMediaPlayer::media() const
 {
-    return d_func()->control->media();
+    Q_D(const QMediaPlayer);
+
+    if (d->control != 0)
+        return d->control->media();
+
+    return QMediaSource();
 }
 
 /*!
@@ -227,57 +224,112 @@ QMediaSource QMediaPlayer::media() const
 
 const QIODevice *QMediaPlayer::mediaStream() const
 {
-    return d_func()->control->mediaStream();
+    Q_D(const QMediaPlayer);
+
+    if (d->control != 0)
+        return d->control->mediaStream();
+
+    return 0;
 }
 
 QMediaPlayer::State QMediaPlayer::state() const
 {
-    return QMediaPlayer::State(d_func()->control->state());
+    Q_D(const QMediaPlayer);
+
+    if (d->control != 0)
+        return QMediaPlayer::State(d->control->state());
+
+    return QMediaPlayer::StoppedState;
 }
 
 QMediaPlayer::MediaStatus QMediaPlayer::mediaStatus() const
 {
-    return QMediaPlayer::MediaStatus(d_func()->control->mediaStatus());
+    Q_D(const QMediaPlayer);
+
+    if (d->control != 0)
+        return QMediaPlayer::MediaStatus(d->control->mediaStatus());
+
+    return QMediaPlayer::UnknownMediaStatus;
 }
 
 qint64 QMediaPlayer::duration() const
 {
-    return d_func()->control->duration();
+    Q_D(const QMediaPlayer);
+
+    if (d->control != 0)
+        return d->control->duration();
+
+    return -1;
 }
 
 qint64 QMediaPlayer::position() const
 {
-    return d_func()->control->position();
+    Q_D(const QMediaPlayer);
+
+    if (d->control != 0)
+        return d->control->position();
+
+    return 0;
 }
 
 int QMediaPlayer::volume() const
 {
-    return d_func()->control->volume();
+    Q_D(const QMediaPlayer);
+
+    if (d->control != 0)
+        return d->control->volume();
+
+    return 0;
 }
 
 bool QMediaPlayer::isMuted() const
 {
-    return d_func()->control->isMuted();
+    Q_D(const QMediaPlayer);
+
+    if (d->control != 0)
+        return d->control->isMuted();
+
+    return false;
 }
 
 int QMediaPlayer::bufferStatus() const
 {
-    return d_func()->control->bufferStatus();
+    Q_D(const QMediaPlayer);
+
+    if (d->control != 0)
+        return d->control->bufferStatus();
+
+    return 0;
 }
 
 bool QMediaPlayer::isVideoAvailable() const
 {
-    return d_func()->control->isVideoAvailable();
+    Q_D(const QMediaPlayer);
+
+    if (d->control != 0)
+        return d->control->isVideoAvailable();
+
+    return false;
 }
 
 bool QMediaPlayer::isSeekable() const
 {
-    return d_func()->control->isSeekable();
+    Q_D(const QMediaPlayer);
+
+    if (d->control != 0)
+        return d->control->isSeekable();
+
+    return false;
 }
 
 qreal QMediaPlayer::playbackRate() const
 {
-    return d_func()->control->playbackRate();
+    Q_D(const QMediaPlayer);
+
+    if (d->control != 0)
+        return d->control->playbackRate();
+
+    return 0.0;
 }
 
 /*!
@@ -303,6 +355,13 @@ void QMediaPlayer::play()
 {
     Q_D(QMediaPlayer);
 
+    if (d->control == 0) {
+        QMetaObject::invokeMethod(this, "_q_error", Qt::QueuedConnection);
+                                    Q_ARG(int, QMediaPlayer::ServiceMissingError),
+                                    Q_ARG(QString, tr("The QMediaPlayer object does not have a valid service"));
+        return;
+    }
+
     if (d->playlist &&
         d->playlist->currentPosition() == -1 &&
         !d->playlist->isEmpty())
@@ -324,7 +383,10 @@ void QMediaPlayer::play()
 
 void QMediaPlayer::pause()
 {
-    d_func()->control->pause();
+    Q_D(QMediaPlayer);
+
+    if (d->control != 0)
+        d->control->pause();
 }
 
 /*!
@@ -333,37 +395,52 @@ void QMediaPlayer::pause()
 
 void QMediaPlayer::stop()
 {
-    d_func()->control->stop();
+    Q_D(QMediaPlayer);
+
+    if (d->control != 0)
+        d->control->stop();
 }
 
 void QMediaPlayer::setPosition(qint64 position)
 {
-    if (!isSeekable())
+    Q_D(QMediaPlayer);
+
+    if (d->control == 0 || !isSeekable())
         return;
 
-    d_func()->control->setPosition(qBound(qint64(0), duration(), position));
+    d->control->setPosition(qBound(qint64(0), duration(), position));
 }
 
 void QMediaPlayer::setVolume(int v)
 {
+    Q_D(QMediaPlayer);
+
+    if (d->control == 0)
+        return;
+
     int clamped = qBound(0, v, 100);
     if (clamped == volume())
         return;
 
-    d_func()->control->setVolume(clamped);
+    d->control->setVolume(clamped);
 }
 
 void QMediaPlayer::setMuted(bool muted)
 {
-    if (muted == isMuted())
+    Q_D(QMediaPlayer);
+
+    if (d->control == 0 || muted == isMuted())
         return;
 
-    d_func()->control->setMuted(muted);
+    d->control->setMuted(muted);
 }
 
 void QMediaPlayer::setPlaybackRate(qreal rate)
 {
-    d_func()->control->setPlaybackRate(rate);
+    Q_D(QMediaPlayer);
+
+    if (d->control != 0)
+        d->control->setPlaybackRate(rate);
 }
 
 /*!
@@ -373,9 +450,13 @@ void QMediaPlayer::setPlaybackRate(qreal rate)
     source.  In this case the media source may still be used to resolve additional information
     about the media such as mime type.
 */
+
 void QMediaPlayer::setMedia(const QMediaSource &media, QIODevice *stream)
 {
-    d_func()->control->setMedia(media, stream);
+    Q_D(QMediaPlayer);
+
+    if (d->control != 0)
+        d_func()->control->setMedia(media, stream);
 }
 
 /*!
@@ -385,6 +466,9 @@ void QMediaPlayer::setMedia(const QMediaSource &media, QIODevice *stream)
 void QMediaPlayer::bind(QObject *obj)
 {
     Q_D(QMediaPlayer);
+
+    if (d->control == 0)
+        return;
 
     if (!d->hasPlaylistControl) {
         QMediaPlaylist *playlist = qobject_cast<QMediaPlaylist*>(obj);

@@ -62,8 +62,6 @@ public:
     QAudioSource(QObject *parent = 0, QMediaServiceProvider *service = QMediaServiceProvider::defaultServiceProvider());
     ~QAudioSource();
 
-    bool isValid() const;
-
     int deviceCount() const;
 
     QString name(int index) const;

@@ -178,16 +178,6 @@ QMediaRecorder::~QMediaRecorder()
 }
 
 /*!
-    Returns true if a valid recording device is available.
-*/
-
-bool QMediaRecorder::isValid() const
-{
-    return d_func()->control != 0;
-}
-
-
-/*!
     Returns the sink being used.
 */
 

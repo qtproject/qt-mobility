@@ -147,8 +147,12 @@ void QCamera::start()
 {
     Q_D(QCamera);
 
-    if(d->control)
+    if (d->control)
         d->control->start();
+    else {
+        QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
+                                    Q_ARG(QCamera::Error, QCamera::ServiceMissingError));
+    }
 }
 
 /*!
@@ -257,15 +261,6 @@ QCamera::State QCamera::state() const
         return (QCamera::State)d_func()->control->state();
 
     return QCamera::StoppedState;
-}
-
-/*!
-    Returns true if camera device available.
-*/
-
-bool QCamera::isValid() const
-{
-    return d_func()->control != NULL;
 }
 
 /*!

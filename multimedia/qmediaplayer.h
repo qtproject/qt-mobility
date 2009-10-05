@@ -89,13 +89,12 @@ public:
         ResourceError,
         FormatError,
         NetworkError,
-        AccessDeniedError
+        AccessDeniedError,
+        ServiceMissingError
     };
 
     QMediaPlayer(QObject *parent = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
     ~QMediaPlayer();
-
-    bool isValid() const;
 
     QMediaSource media() const;
     const QIODevice *mediaStream() const;

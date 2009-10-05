@@ -108,7 +108,6 @@ void tst_QMediaImageViewer::isValid()
 {
     QMediaImageViewer viewer;
 
-    QVERIFY(viewer.isValid());
     QVERIFY(viewer.service() != 0);
 }
 
