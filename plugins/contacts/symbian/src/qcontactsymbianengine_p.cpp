@@ -40,11 +40,20 @@
 #include <QSet>
 #include "qcontactchangeset.h"
 
+typedef QList<QUniqueId> QUniqueIdList;
+
 /* ... The macros changed names */
 #if QT_VERSION < QT_VERSION_CHECK(4, 6, 0)
 #define QT_TRAP_THROWING QT_TRANSLATE_SYMBIAN_LEAVE_TO_EXCEPTION
 #define QT_TRYCATCH_LEAVING QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE
 #endif
+
+// NOTE: There is a bug with arm-compiler(?) which causes the local stack
+// variable to corrupt if the called function leaves. As a workaround we are
+// reserving the objects from heap so it will not get corrupted.
+// This of course applies only to those stack variables which are passed to
+// the called function or the return value of the function is placed to the
+// variable.
 
 QContactSymbianEngineData::QContactSymbianEngineData() :
     m_contactDatabase(0),
@@ -113,13 +122,11 @@ QList<QUniqueId> QContactSymbianEngineData::contacts(const QContactFilter& filte
  */
 QContact QContactSymbianEngineData::contact(const QUniqueId& contactId, QContactManager::Error& qtError) const
 {
-	QContact contact;
-	int err(0);
-	
-	TRAP(err, QT_TRYCATCH_LEAVING(contact = contactL(contactId)));
-	
-	transformError(err, qtError);
-	return contact;
+    // See QT_TRYCATCH_LEAVING note at the begginning of this file
+    QContact* contact = new QContact();
+    TRAPD(err, QT_TRYCATCH_LEAVING(*contact = contactL(contactId)));
+    transformError(err, qtError);
+    return *QScopedPointer<QContact>(contact);
 }
 
 
@@ -162,17 +169,17 @@ int QContactSymbianEngineData::count() const
  */
 QList<QUniqueId> QContactSymbianEngineData::contacts(QContactManager::Error& qtError) const
 {
-	// Create an empty list
-	QList<QUniqueId> ids;
-	
-	// Attempt to read from database, leaving the list empty if
-	// there was a problem
-	int err(0);
-    TRAP(err, QT_TRYCATCH_LEAVING(ids = contactsL()));
-	
-	transformError(err, qtError);
+    // Create an empty list
+    // See QT_TRYCATCH_LEAVING note at the begginning of this file
+    QUniqueIdList *ids = new QUniqueIdList();
+    
+    // Attempt to read from database, leaving the list empty if
+    // there was a problem
+    TRAPD(err, QT_TRYCATCH_LEAVING(*ids = contactsL()));
+    
+    transformError(err, qtError);
 
-	return ids;
+    return *QScopedPointer<QUniqueIdList>(ids);
 }
 
 /* add/update/delete */
@@ -264,13 +271,14 @@ bool QContactSymbianEngineData::removeContact(const QUniqueId &id, QContactChang
  */
 QList<QUniqueId> QContactSymbianEngineData::matchCommunicationAddress(const QString &communicationType, const QString &communicationAddress)
 {
-	// Create an empty list to return on failure
-	QList<QUniqueId> matches;
-	
-	// Attempt to match address, list will remain empty if there's an error
-    TRAP_IGNORE(QT_TRYCATCH_LEAVING(matches = matchCommunicationAddressL(communicationType, communicationAddress)));
-	
-	return matches;
+    // Create an empty list to return on failure
+    // See QT_TRYCATCH_LEAVING note at the begginning of this file
+    QUniqueIdList *matches = new QUniqueIdList();
+    
+    // Attempt to match address, list will remain empty if there's an error
+    TRAP_IGNORE(QT_TRYCATCH_LEAVING(*matches = matchCommunicationAddressL(communicationType, communicationAddress)));
+    
+    return *QScopedPointer<QUniqueIdList>(matches);
 }
 
 /* groups */
@@ -283,12 +291,11 @@ QList<QUniqueId> QContactSymbianEngineData::matchCommunicationAddress(const QStr
  */
 QList<QUniqueId> QContactSymbianEngineData::groups(QContactManager::Error& qtError) const
 {
-	QList<QUniqueId> list;
-	int err(0);
-    TRAP(err, QT_TRYCATCH_LEAVING(list = groupsL()));
-	
-	transformError(err, qtError);
-	return list;
+    // See QT_TRYCATCH_LEAVING note at the begginning of this file
+    QUniqueIdList *list = new QUniqueIdList();
+    TRAPD(err, QT_TRYCATCH_LEAVING(*list = groupsL()));
+    transformError(err, qtError);
+    return *QScopedPointer<QUniqueIdList>(list);
 }
 
 /*!
@@ -300,12 +307,11 @@ QList<QUniqueId> QContactSymbianEngineData::groups(QContactManager::Error& qtErr
  */
 QContactGroup QContactSymbianEngineData::group(const QUniqueId& groupId, QContactManager::Error& qtError) const
 {
-	QContactGroup qGroup;
-	int err(0);
-    TRAP(err, QT_TRYCATCH_LEAVING(qGroup = groupL(groupId)));
-	    
+    // See QT_TRYCATCH_LEAVING note at the begginning of this file
+    QContactGroup *qGroup = new QContactGroup();
+    TRAPD(err, QT_TRYCATCH_LEAVING(*qGroup = groupL(groupId)));
     transformError(err, qtError);
-	return qGroup;
+    return *QScopedPointer<QContactGroup>(qGroup);
 }
 
 /*!
