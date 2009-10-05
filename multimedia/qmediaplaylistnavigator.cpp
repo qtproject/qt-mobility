@@ -44,7 +44,7 @@ public:
     QMediaPlaylistNullProvider() :QMediaPlaylistProvider() {}
     virtual ~QMediaPlaylistNullProvider() {}
     virtual int size() const {return 0;}
-    virtual QMediaSource media(int) const { return QMediaSource(); }
+    virtual QMediaContent media(int) const { return QMediaContent(); }
 };
 
 Q_GLOBAL_STATIC(QMediaPlaylistNullProvider, _q_nullMediaPlaylist)
@@ -66,7 +66,7 @@ public:
     int currentPos;
     int lastValidPos; //to be used with CurrentItemOnce playback mode
     QMediaPlaylist::PlaybackMode playbackMode;
-    QMediaSource currentItem;
+    QMediaContent currentItem;
 
     mutable QList<int> randomModePositions;
     mutable int randomPositionsOffset;
@@ -268,7 +268,7 @@ void QMediaPlaylistNavigator::setPlaylist(QMediaPlaylistProvider *playlist)
     }
 
     if (!d->currentItem.isNull()) {
-        d->currentItem = QMediaSource();
+        d->currentItem = QMediaContent();
         emit activated(d->currentItem); //stop playback
     }
 }
@@ -279,14 +279,14 @@ void QMediaPlaylistNavigator::setPlaylist(QMediaPlaylistProvider *playlist)
 
   \sa currentPosition()
   */
-QMediaSource QMediaPlaylistNavigator::currentItem() const
+QMediaContent QMediaPlaylistNavigator::currentItem() const
 {
     return itemAt(d_func()->currentPos);
 }
 
 /*!
   */
-QMediaSource QMediaPlaylistNavigator::nextItem(int steps) const
+QMediaContent QMediaPlaylistNavigator::nextItem(int steps) const
 {
     return itemAt(nextPosition(steps));
 }
@@ -294,7 +294,7 @@ QMediaSource QMediaPlaylistNavigator::nextItem(int steps) const
 /*!
   */
 
-QMediaSource QMediaPlaylistNavigator::previousItem(int steps) const
+QMediaContent QMediaPlaylistNavigator::previousItem(int steps) const
 {
     return itemAt(previousPosition(steps));
 }
@@ -303,7 +303,7 @@ QMediaSource QMediaPlaylistNavigator::previousItem(int steps) const
   Returns the media source at playlist position \a pos or
   invalid media source object if \a pos is out the playlist positions range.
   */
-QMediaSource QMediaPlaylistNavigator::itemAt(int pos) const
+QMediaContent QMediaPlaylistNavigator::itemAt(int pos) const
 {
     return d_func()->playlist->media(pos);
 }
@@ -408,7 +408,7 @@ void QMediaPlaylistNavigator::jump(int pos)
     if (pos != -1)
         d->currentItem = d->playlist->media(pos);
     else
-        d->currentItem = QMediaSource();
+        d->currentItem = QMediaContent();
 
     if (pos != d->currentPos) {
         d->currentPos = pos;
@@ -463,7 +463,7 @@ void QMediaPlaylistNavigatorPrivate::_q_itemsChanged(int start, int end)
     Q_Q(QMediaPlaylistNavigator);
 
     if (currentPos >= start && currentPos<=end) {
-        QMediaSource src = playlist->media(currentPos);
+        QMediaContent src = playlist->media(currentPos);
         if (src != currentItem) {
             currentItem = src;
             emit q->activated(src);
@@ -475,7 +475,7 @@ void QMediaPlaylistNavigatorPrivate::_q_itemsChanged(int start, int end)
 }
 
 /*!
-    \fn void QMediaPlaylistNavigator::activated(const QMediaSource &source)
+    \fn void QMediaPlaylistNavigator::activated(const QMediaContent &content)
 
     Signal the playback of \a source should be started.
     it's usually related to change of the current item

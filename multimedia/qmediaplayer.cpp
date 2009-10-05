@@ -56,9 +56,9 @@
 
     The QMediaPlayer class is a high level media playback class. It can be used
     to playback such content as songs, movies and internet radio. The content
-    to playback is specified as a QMediaSource, which can be thought of as a
+    to playback is specified as a QMediaContent, which can be thought of as a
     main or canonical URL with addition information attached. When provided
-    with a QMediaSource playback may be able to commence.
+    with a QMediaContent playback may be able to commence.
 
     \code
         player = new QMediaPlayer;
@@ -89,7 +89,7 @@ public:
     void _q_stateChanged(QMediaPlayer::State state);
     void _q_mediaStatusChanged(QMediaPlayer::MediaStatus status);
     void _q_error(int error, const QString &errorString);
-    void _q_updateMedia(const QMediaSource&);
+    void _q_updateMedia(const QMediaContent&);
 };
 
 void QMediaPlayerPrivate::_q_stateChanged(QMediaPlayer::State ps)
@@ -140,7 +140,7 @@ void QMediaPlayerPrivate::_q_error(int error, const QString &errorString)
     emit q->error(this->error);
 }
 
-void QMediaPlayerPrivate::_q_updateMedia(const QMediaSource &media)
+void QMediaPlayerPrivate::_q_updateMedia(const QMediaContent &media)
 {
     Q_Q(QMediaPlayer);
     q->setMedia(media);
@@ -204,14 +204,14 @@ QMediaPlayer::~QMediaPlayer()
     d->provider->releaseService(d->service);
 }
 
-QMediaSource QMediaPlayer::media() const
+QMediaContent QMediaPlayer::media() const
 {
     Q_D(const QMediaPlayer);
 
     if (d->control != 0)
         return d->control->media();
 
-    return QMediaSource();
+    return QMediaContent();
 }
 
 /*!
@@ -451,7 +451,7 @@ void QMediaPlayer::setPlaybackRate(qreal rate)
     about the media such as mime type.
 */
 
-void QMediaPlayer::setMedia(const QMediaSource &media, QIODevice *stream)
+void QMediaPlayer::setMedia(const QMediaContent &media, QIODevice *stream)
 {
     Q_D(QMediaPlayer);
 
@@ -475,8 +475,8 @@ void QMediaPlayer::bind(QObject *obj)
 
         if (playlist) {
             d->playlist = playlist;
-            connect(d->playlist, SIGNAL(currentMediaChanged(QMediaSource)),
-                    this, SLOT(_q_updateMedia(QMediaSource)));
+            connect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
+                    this, SLOT(_q_updateMedia(QMediaContent)));
         }
     }
 }
@@ -552,7 +552,7 @@ void QMediaPlayer::bind(QObject *obj)
 */
 
 /*!
-    \fn void QMediaPlayer::mediaChanged(const QMediaSource &media);
+    \fn void QMediaPlayer::mediaChanged(const QMediaContent &media);
 
     Signals that the current playing content will be obtained from \a media.
 
@@ -592,12 +592,12 @@ void QMediaPlayer::bind(QObject *obj)
     \property QMediaPlayer::media
     \brief the active media source being used by the player object.
 
-    The player object will use the QMediaSource for selection of the content to
+    The player object will use the QMediaContent for selection of the content to
     be played.
 
-    By default this property has a null QMediaSource.
+    By default this property has a null QMediaContent.
 
-    \sa QMediaSource
+    \sa QMediaContent
 */
 
 /*!
@@ -665,10 +665,10 @@ void QMediaPlayer::bind(QObject *obj)
 
     If available, the QVideoWidget class can be used to view the video. As the
     life time of QMediaPlayer can be longer than the playback of one
-    QMediaSource, this property may change over time, the
+    QMediaContent, this property may change over time, the
     videoAvailabilityChanged signal can be used to monitor it's status.
 
-    \sa QVideoWidget, QMediaSource
+    \sa QVideoWidget, QMediaContent
 */
 
 /*!

@@ -175,7 +175,7 @@ void QGstreamerPlayerControl::setMuted(bool muted)
     m_session->setMuted(muted);
 }
 
-QMediaSource QGstreamerPlayerControl::media() const
+QMediaContent QGstreamerPlayerControl::media() const
 {
     return m_currentResource;
 }
@@ -185,7 +185,7 @@ const QIODevice *QGstreamerPlayerControl::mediaStream() const
     return m_stream;
 }
 
-void QGstreamerPlayerControl::setMedia(const QMediaSource &source, QIODevice *stream)
+void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *stream)
 {
     m_session->stop();
 
@@ -196,7 +196,7 @@ void QGstreamerPlayerControl::setMedia(const QMediaSource &source, QIODevice *st
         m_stream = 0;
     }
 
-    m_currentResource = source;
+    m_currentResource = content;
     m_stream = stream;
 
     QUrl url;
@@ -205,8 +205,8 @@ void QGstreamerPlayerControl::setMedia(const QMediaSource &source, QIODevice *st
         if (m_stream->isReadable() && openFifo()) {
             url = QUrl(QString(QLatin1String("fd://%1")).arg(m_fifoFd[0]));
         }
-    } else if (!source.isNull()) {
-        url = source.contentUri();
+    } else if (!content.isNull()) {
+        url = content.contentUri();
     }
 
     m_session->load(url);

@@ -98,34 +98,34 @@ void tst_QMediaPlaylistNavigator::linearPlayback()
     QVERIFY(navigator.currentItem().isNull());
     QCOMPARE(navigator.currentPosition(), -1);
 
-    QMediaSource source1(QUrl(QLatin1String("file:///1")));
-    playlist.appendItem(source1);
+    QMediaContent content1(QUrl(QLatin1String("file:///1")));
+    playlist.appendItem(content1);
     navigator.jump(0);
     QVERIFY(!navigator.currentItem().isNull());
 
     QCOMPARE(navigator.currentPosition(), 0);
-    QCOMPARE(navigator.currentItem(), source1);
-    QCOMPARE(navigator.nextItem(), QMediaSource());
-    QCOMPARE(navigator.nextItem(2), QMediaSource());
-    QCOMPARE(navigator.previousItem(), QMediaSource());
-    QCOMPARE(navigator.previousItem(2), QMediaSource());
+    QCOMPARE(navigator.currentItem(), content1);
+    QCOMPARE(navigator.nextItem(), QMediaContent());
+    QCOMPARE(navigator.nextItem(2), QMediaContent());
+    QCOMPARE(navigator.previousItem(), QMediaContent());
+    QCOMPARE(navigator.previousItem(2), QMediaContent());
 
-    QMediaSource source2(QUrl(QLatin1String("file:///2")));
-    playlist.appendItem(source2);
+    QMediaContent content2(QUrl(QLatin1String("file:///2")));
+    playlist.appendItem(content2);
     QCOMPARE(navigator.currentPosition(), 0);
-    QCOMPARE(navigator.currentItem(), source1);
-    QCOMPARE(navigator.nextItem(), source2);
-    QCOMPARE(navigator.nextItem(2), QMediaSource());
-    QCOMPARE(navigator.previousItem(), QMediaSource());
-    QCOMPARE(navigator.previousItem(2), QMediaSource());
+    QCOMPARE(navigator.currentItem(), content1);
+    QCOMPARE(navigator.nextItem(), content2);
+    QCOMPARE(navigator.nextItem(2), QMediaContent());
+    QCOMPARE(navigator.previousItem(), QMediaContent());
+    QCOMPARE(navigator.previousItem(2), QMediaContent());
 
     navigator.jump(1);
     QCOMPARE(navigator.currentPosition(), 1);
-    QCOMPARE(navigator.currentItem(), source2);
-    QCOMPARE(navigator.nextItem(), QMediaSource());
-    QCOMPARE(navigator.nextItem(2), QMediaSource());
-    QCOMPARE(navigator.previousItem(), source1);
-    QCOMPARE(navigator.previousItem(2), QMediaSource());
+    QCOMPARE(navigator.currentItem(), content2);
+    QCOMPARE(navigator.nextItem(), QMediaContent());
+    QCOMPARE(navigator.nextItem(2), QMediaContent());
+    QCOMPARE(navigator.previousItem(), content1);
+    QCOMPARE(navigator.previousItem(2), QMediaContent());
 
     navigator.jump(0);
     navigator.advance();
@@ -151,34 +151,34 @@ void tst_QMediaPlaylistNavigator::loopPlayback()
     QVERIFY(navigator.currentItem().isNull());
     QCOMPARE(navigator.currentPosition(), -1);
 
-    QMediaSource source1(QUrl(QLatin1String("file:///1")));
-    playlist.appendItem(source1);
+    QMediaContent content1(QUrl(QLatin1String("file:///1")));
+    playlist.appendItem(content1);
     navigator.jump(0);
     QVERIFY(!navigator.currentItem().isNull());
 
     QCOMPARE(navigator.currentPosition(), 0);
-    QCOMPARE(navigator.currentItem(), source1);
-    QCOMPARE(navigator.nextItem(), source1);
-    QCOMPARE(navigator.nextItem(2), source1);
-    QCOMPARE(navigator.previousItem(), source1);
-    QCOMPARE(navigator.previousItem(2), source1);
+    QCOMPARE(navigator.currentItem(), content1);
+    QCOMPARE(navigator.nextItem(), content1);
+    QCOMPARE(navigator.nextItem(2), content1);
+    QCOMPARE(navigator.previousItem(), content1);
+    QCOMPARE(navigator.previousItem(2), content1);
 
-    QMediaSource source2(QUrl(QLatin1String("file:///2")));
-    playlist.appendItem(source2);
+    QMediaContent content2(QUrl(QLatin1String("file:///2")));
+    playlist.appendItem(content2);
     QCOMPARE(navigator.currentPosition(), 0);
-    QCOMPARE(navigator.currentItem(), source1);
-    QCOMPARE(navigator.nextItem(), source2);
-    QCOMPARE(navigator.nextItem(2), source1); //loop over end of the list
-    QCOMPARE(navigator.previousItem(), source2);
-    QCOMPARE(navigator.previousItem(2), source1);
+    QCOMPARE(navigator.currentItem(), content1);
+    QCOMPARE(navigator.nextItem(), content2);
+    QCOMPARE(navigator.nextItem(2), content1); //loop over end of the list
+    QCOMPARE(navigator.previousItem(), content2);
+    QCOMPARE(navigator.previousItem(2), content1);
 
     navigator.jump(1);
     QCOMPARE(navigator.currentPosition(), 1);
-    QCOMPARE(navigator.currentItem(), source2);
-    QCOMPARE(navigator.nextItem(), source1);
-    QCOMPARE(navigator.nextItem(2), source2);
-    QCOMPARE(navigator.previousItem(), source1);
-    QCOMPARE(navigator.previousItem(2), source2);
+    QCOMPARE(navigator.currentItem(), content2);
+    QCOMPARE(navigator.nextItem(), content1);
+    QCOMPARE(navigator.nextItem(2), content2);
+    QCOMPARE(navigator.previousItem(), content1);
+    QCOMPARE(navigator.previousItem(2), content2);
 
     navigator.jump(0);
     navigator.advance();
@@ -201,9 +201,9 @@ void tst_QMediaPlaylistNavigator::currentItemOnce()
     QCOMPARE(navigator.playbackMode(), QMediaPlaylist::CurrentItemOnce);
     QCOMPARE(navigator.currentPosition(), -1);
 
-    playlist.appendItem(QMediaSource(QUrl(QLatin1String("file:///1"))));
-    playlist.appendItem(QMediaSource(QUrl(QLatin1String("file:///2"))));
-    playlist.appendItem(QMediaSource(QUrl(QLatin1String("file:///3"))));
+    playlist.appendItem(QMediaContent(QUrl(QLatin1String("file:///1"))));
+    playlist.appendItem(QMediaContent(QUrl(QLatin1String("file:///2"))));
+    playlist.appendItem(QMediaContent(QUrl(QLatin1String("file:///3"))));
 
     QCOMPARE(navigator.currentPosition(), -1);
     navigator.advance();
@@ -232,9 +232,9 @@ void tst_QMediaPlaylistNavigator::currentItemInLoop()
     QCOMPARE(navigator.playbackMode(), QMediaPlaylist::CurrentItemInLoop);
     QCOMPARE(navigator.currentPosition(), -1);
 
-    playlist.appendItem(QMediaSource(QUrl(QLatin1String("file:///1"))));
-    playlist.appendItem(QMediaSource(QUrl(QLatin1String("file:///2"))));
-    playlist.appendItem(QMediaSource(QUrl(QLatin1String("file:///3"))));
+    playlist.appendItem(QMediaContent(QUrl(QLatin1String("file:///1"))));
+    playlist.appendItem(QMediaContent(QUrl(QLatin1String("file:///2"))));
+    playlist.appendItem(QMediaContent(QUrl(QLatin1String("file:///3"))));
 
     QCOMPARE(navigator.currentPosition(), -1);
     navigator.advance();
@@ -260,9 +260,9 @@ void tst_QMediaPlaylistNavigator::randomPlayback()
     QCOMPARE(navigator.playbackMode(), QMediaPlaylist::Random);
     QCOMPARE(navigator.currentPosition(), -1);
 
-    playlist.appendItem(QMediaSource(QUrl(QLatin1String("file:///1"))));
-    playlist.appendItem(QMediaSource(QUrl(QLatin1String("file:///2"))));
-    playlist.appendItem(QMediaSource(QUrl(QLatin1String("file:///3"))));
+    playlist.appendItem(QMediaContent(QUrl(QLatin1String("file:///1"))));
+    playlist.appendItem(QMediaContent(QUrl(QLatin1String("file:///2"))));
+    playlist.appendItem(QMediaContent(QUrl(QLatin1String("file:///3"))));
 
     QCOMPARE(navigator.currentPosition(), -1);
     navigator.advance();

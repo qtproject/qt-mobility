@@ -81,20 +81,20 @@ public:
         return nextResource.isNull();
     }
 
-    virtual QMediaSource readItem()
+    virtual QMediaContent readItem()
     {
-        QMediaSource item;
+        QMediaContent item;
         if (!nextResource.isNull())
-        item = QMediaSource(nextResource);
+        item = QMediaContent(nextResource);
 
-        nextResource = QMediaSource();
+        nextResource = QMediaContent();
 
         while (m_textStream && !m_textStream->atEnd()) {
             QString line = m_textStream->readLine();
             if (line.isEmpty() || line[0] == '#')
                 continue;
 
-            nextResource = QMediaSource(QUrl(line));
+            nextResource = QMediaContent(QUrl(line));
             break;
         }
 
@@ -109,7 +109,7 @@ private:
     bool m_ownDevice;
     QIODevice *m_device;
     QTextStream *m_textStream;
-    QMediaSource nextResource;
+    QMediaContent nextResource;
 };
 
 class QM3uPlaylistWritter : public QMediaPlaylistWritter
@@ -125,7 +125,7 @@ public:
         delete m_textStream;
     }
 
-    virtual bool writeItem(const QMediaSource& item)
+    virtual bool writeItem(const QMediaContent& item)
     {
         *m_textStream << item.contentUri().toString() << endl;
         return true;

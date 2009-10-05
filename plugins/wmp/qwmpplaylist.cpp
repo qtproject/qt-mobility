@@ -104,7 +104,7 @@ int QWmpPlaylist::size() const
     return m_count;
 }
 
-QMediaSource QWmpPlaylist::media(int pos) const
+QMediaContent QWmpPlaylist::media(int pos) const
 {
     QMediaResourceList resources;
 
@@ -123,13 +123,13 @@ bool QWmpPlaylist::isReadOnly() const
     return false;
 }
 
-bool QWmpPlaylist::appendItem(const QMediaSource &source)
+bool QWmpPlaylist::appendItem(const QMediaContent &content)
 {
     bool appended = false;
 
     IWMPMedia *media = 0;
-    if (!source.isNull() && m_playlist && m_player && m_player->newMedia(
-            QAutoBStr(source.contentUri()), &media) == S_OK) {
+    if (!content.isNull() && m_playlist && m_player && m_player->newMedia(
+            QAutoBStr(content.contentUri()), &media) == S_OK) {
         appended = m_playlist->appendItem(media) == S_OK;
 
         media->Release();
@@ -138,13 +138,13 @@ bool QWmpPlaylist::appendItem(const QMediaSource &source)
     return appended;
 }
 
-bool QWmpPlaylist::insertItem(int pos, const QMediaSource &source)
+bool QWmpPlaylist::insertItem(int pos, const QMediaContent &content)
 {
     bool inserted = false;
 
     IWMPMedia *media = 0;
     if (m_playlist && m_player && m_player->newMedia(
-            QAutoBStr(source.contentUri()), &media) == S_OK) {
+            QAutoBStr(content.contentUri()), &media) == S_OK) {
         inserted = m_playlist->insertItem(pos, media) == S_OK;
 
         media->Release();

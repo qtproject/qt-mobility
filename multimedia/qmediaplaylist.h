@@ -37,7 +37,7 @@
 
 #include <QtCore/qobject.h>
 
-#include <multimedia/qmediasource.h>
+#include <multimedia/qmediacontent.h>
 #include <multimedia/qmediaobject.h>
 
 
@@ -49,7 +49,7 @@ class Q_MEDIA_EXPORT QMediaPlaylist : public QObject
     Q_OBJECT
     Q_PROPERTY(QMediaPlaylistProvider* playlistProvider READ playlistProvider WRITE setPlaylistProvider NOTIFY playlistProviderChanged)
     Q_PROPERTY(QMediaPlaylist::PlaybackMode playbackMode READ playbackMode WRITE setPlaybackMode NOTIFY playbackModeChanged)
-    Q_PROPERTY(QMediaSource currentMedia READ currentMedia NOTIFY currentMediaChanged)
+    Q_PROPERTY(QMediaContent currentMedia READ currentMedia NOTIFY currentMediaChanged)
     Q_PROPERTY(int currentPosition READ currentPosition WRITE setCurrentPosition NOTIFY playlistPositionChanged)
     Q_ENUMS(PlaybackMode)
 
@@ -66,19 +66,19 @@ public:
     void setPlaybackMode(PlaybackMode mode);
 
     int currentPosition() const;
-    QMediaSource currentMedia() const;
+    QMediaContent currentMedia() const;
 
     int nextPosition(int steps = 1) const;
     int previousPosition(int steps = 1) const;
 
-    QMediaSource media(int position) const;
+    QMediaContent media(int position) const;
 
     int size() const;
     bool isEmpty() const;
     bool isReadOnly() const;
 
-    bool appendItem(const QMediaSource &source);
-    bool insertItem(int index, const QMediaSource &source);
+    bool appendItem(const QMediaContent &content);
+    bool insertItem(int index, const QMediaContent &content);
     bool removeItem(int pos);
     bool removeItems(int start, int end);
     bool clear();
@@ -101,7 +101,7 @@ Q_SIGNALS:
 
     void playlistPositionChanged(int position);
     void playbackModeChanged(QMediaPlaylist::PlaybackMode mode);
-    void currentMediaChanged(const QMediaSource&);
+    void currentMediaChanged(const QMediaContent&);
 
     void itemsAboutToBeInserted(int start, int end);
     void itemsInserted(int start, int end);

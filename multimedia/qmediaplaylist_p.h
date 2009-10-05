@@ -93,7 +93,7 @@ public:
         m_navigator->setPlaybackMode(QMediaPlaylist::Linear);
 
         connect(m_navigator, SIGNAL(currentPositionChanged(int)), SIGNAL(playlistPositionChanged(int)));
-        connect(m_navigator, SIGNAL(activated(QMediaSource)), SIGNAL(currentMediaChanged(QMediaSource)));
+        connect(m_navigator, SIGNAL(activated(QMediaContent)), SIGNAL(currentMediaChanged(QMediaContent)));
     }
 
     virtual ~QLocalMediaPlaylistControl() {};

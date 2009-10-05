@@ -84,9 +84,9 @@ public:
     void pause();
     void stop();
 
-    QMediaSource media() const;
+    QMediaContent media() const;
     const QIODevice *mediaStream() const;
-    void setMedia(const QMediaSource &source, QIODevice *stream);
+    void setMedia(const QMediaContent &content, QIODevice *stream);
 
     QUrl url() const;
     void setUrl(const QUrl &url);

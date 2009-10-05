@@ -21,7 +21,7 @@ To build the library, run \tt qmake and \tt make.
 \section2 Main classes
 
 \list
-    \o \l{QMediaSource}
+    \o \l{QMediaContent}
     \o \l{QMediaPlayer}
     \o \l{QVideoWidget}
     \o \l{QMediaRecorder}

@@ -37,7 +37,7 @@
 
 #include <multimedia/qmediaserviceprovider.h>
 #include <multimedia/qmediaobject.h>
-#include <multimedia/qmediasource.h>
+#include <multimedia/qmediacontent.h>
 
 
 class QMediaPlaylist;
@@ -47,7 +47,7 @@ class QMediaPlayerPrivate;
 class Q_MEDIA_EXPORT QMediaPlayer : public QMediaObject
 {
     Q_OBJECT
-    Q_PROPERTY(QMediaSource media READ media WRITE setMedia NOTIFY mediaChanged)
+    Q_PROPERTY(QMediaContent media READ media WRITE setMedia NOTIFY mediaChanged)
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(qint64 position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
@@ -96,7 +96,7 @@ public:
     QMediaPlayer(QObject *parent = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
     ~QMediaPlayer();
 
-    QMediaSource media() const;
+    QMediaContent media() const;
     const QIODevice *mediaStream() const;
 
     State state() const;
@@ -128,10 +128,10 @@ public Q_SLOTS:
 
     void setPlaybackRate(qreal rate);
 
-    void setMedia(const QMediaSource &media, QIODevice *stream = 0);
+    void setMedia(const QMediaContent &media, QIODevice *stream = 0);
 
 Q_SIGNALS:
-    void mediaChanged(const QMediaSource &media);
+    void mediaChanged(const QMediaContent &media);
 
     void stateChanged(QMediaPlayer::State newState);
     void mediaStatusChanged(QMediaPlayer::MediaStatus status);
@@ -159,7 +159,7 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_stateChanged(QMediaPlayer::State))
     Q_PRIVATE_SLOT(d_func(), void _q_mediaStatusChanged(QMediaPlayer::MediaStatus))
     Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &))
-    Q_PRIVATE_SLOT(d_func(), void _q_updateMedia(const QMediaSource&))
+    Q_PRIVATE_SLOT(d_func(), void _q_updateMedia(const QMediaContent&))
 };
 
 Q_DECLARE_METATYPE(QMediaPlayer::State)

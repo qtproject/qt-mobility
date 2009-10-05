@@ -78,7 +78,7 @@ public:
 
     QMediaImageViewer::MediaStatus mediaStatus() const;
 
-    void showMedia(const QMediaSource &media);
+    void showMedia(const QMediaContent &media);
 
     QMediaResource currentMedia() const;
 

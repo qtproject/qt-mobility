@@ -76,9 +76,9 @@ public:
     qreal playbackRate() const;
     void setPlaybackRate(qreal rate);
 
-    QMediaSource media() const;
+    QMediaContent media() const;
     const QIODevice *mediaStream() const;
-    void setMedia(const QMediaSource&, QIODevice *);
+    void setMedia(const QMediaContent&, QIODevice *);
 
 public Q_SLOTS:
     void setPosition(qint64 pos);
@@ -99,7 +99,7 @@ private:
     void closeFifo();
 
     QGstreamerPlayerSession *m_session;
-    QMediaSource m_currentResource;
+    QMediaContent m_currentResource;
     QIODevice *m_stream;
     QSocketNotifier *m_fifoNotifier;
     int m_fifoFd[2];

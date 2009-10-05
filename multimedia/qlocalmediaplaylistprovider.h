@@ -46,12 +46,12 @@ public:
     virtual ~QLocalMediaPlaylistProvider();
 
     virtual int size() const;
-    virtual QMediaSource media(int pos) const;
+    virtual QMediaContent media(int pos) const;
 
     virtual bool isReadOnly() const;
 
-    virtual bool appendItem(const QMediaSource &source);
-    virtual bool insertItem(int pos, const QMediaSource &source);
+    virtual bool appendItem(const QMediaContent &content);
+    virtual bool insertItem(int pos, const QMediaContent &content);
     virtual bool removeItem(int pos);
     virtual bool removeItems(int start, int end);
     virtual bool clear();

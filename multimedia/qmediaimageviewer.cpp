@@ -38,7 +38,7 @@
 #include <multimedia/qmediaimageviewerservice_p.h>
 
 #include <multimedia/qmediaplaylist.h>
-#include <multimedia/qmediasource.h>
+#include <multimedia/qmediacontent.h>
 #include <multimedia/qmediaresource.h>
 
 #include <QtCore/qcoreevent.h>
@@ -54,7 +54,7 @@ public:
     {
     }
 
-    void _q_playlistMediaChanged(const QMediaSource &source);
+    void _q_playlistMediaChanged(const QMediaContent &content);
     void _q_playlistDestroyed(QObject *playlist);
 
     QMediaImageViewerControl *viewerControl;
@@ -62,12 +62,12 @@ public:
     QMediaImageViewer::State state;
     int timeout;
     QBasicTimer timer;
-    QMediaSource media;
+    QMediaContent media;
 };
 
-void QMediaImageViewerPrivate::_q_playlistMediaChanged(const QMediaSource &source)
+void QMediaImageViewerPrivate::_q_playlistMediaChanged(const QMediaContent &content)
 {
-    media = source;
+    media = content;
 
     viewerControl->showMedia(media);
 
@@ -181,14 +181,14 @@ QMediaImageViewer::MediaStatus QMediaImageViewer::mediaStatus() const
     \sa currentMedia
 */
 
-QMediaSource QMediaImageViewer::media() const
+QMediaContent QMediaImageViewer::media() const
 {
     Q_D(const QMediaImageViewer);
 
     return d->media;
 }
 
-void QMediaImageViewer::setMedia(const QMediaSource &media)
+void QMediaImageViewer::setMedia(const QMediaContent &media)
 {
     Q_D(QMediaImageViewer);
 
@@ -204,7 +204,7 @@ void QMediaImageViewer::setMedia(const QMediaSource &media)
 }
 
 /*!
-    \fn QMediaImageViewer::mediaChanged(const QMediaSource &media)
+    \fn QMediaImageViewer::mediaChanged(const QMediaContent &media)
 
     Signals that the \a media a slide show is presenting.
 */
@@ -255,8 +255,8 @@ void QMediaImageViewer::bind(QObject *object)
         } else {
             d->playlist = playlist;
 
-            connect(d->playlist, SIGNAL(currentMediaChanged(QMediaSource)),
-                    this, SLOT(_q_playlistMediaChanged(QMediaSource)));
+            connect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
+                    this, SLOT(_q_playlistMediaChanged(QMediaContent)));
             connect(d->playlist, SIGNAL(destroyed(QObject*)),
                     this, SLOT(_q_playlistDestroyed(QObject *)));
         }

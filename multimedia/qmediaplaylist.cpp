@@ -63,7 +63,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
     Depending on playlist source implementation,
     most of playlist modifcation operations can be asynchronous.
 
-    \sa QMediaSource
+    \sa QMediaContent
 */
 
 
@@ -118,8 +118,8 @@ QMediaPlaylist::QMediaPlaylist(QMediaObject *parent)
             this, SIGNAL(playlistProviderChanged()));
     connect(d->control, SIGNAL(playlistPositionChanged(int)),
             this, SIGNAL(playlistPositionChanged(int)));
-    connect(d->control, SIGNAL(currentMediaChanged(QMediaSource)),
-            this, SIGNAL(currentMediaChanged(QMediaSource)));
+    connect(d->control, SIGNAL(currentMediaChanged(QMediaContent)),
+            this, SIGNAL(currentMediaChanged(QMediaContent)));
 
     if (parent)
         parent->bind(this);
@@ -186,7 +186,7 @@ int QMediaPlaylist::currentPosition() const
   Returns the current media source.
 */
 
-QMediaSource QMediaPlaylist::currentMedia() const
+QMediaContent QMediaPlaylist::currentMedia() const
 {
     return d_func()->playlist()->media(currentPosition());
 }
@@ -250,7 +250,7 @@ bool QMediaPlaylist::isReadOnly() const
   Returns the media source at index \a position in the playlist.
 */
 
-QMediaSource QMediaPlaylist::media(int position) const
+QMediaContent QMediaPlaylist::media(int position) const
 {
     return d_func()->playlist()->media(position);
 }
@@ -260,9 +260,9 @@ QMediaSource QMediaPlaylist::media(int position) const
 
   Returns true if the operation is successfull, other wise return false.
   */
-bool QMediaPlaylist::appendItem(const QMediaSource &source)
+bool QMediaPlaylist::appendItem(const QMediaContent &content)
 {
-    return d_func()->control->playlistProvider()->appendItem(source);
+    return d_func()->control->playlistProvider()->appendItem(content);
 }
 
 /*!
@@ -271,9 +271,9 @@ bool QMediaPlaylist::appendItem(const QMediaSource &source)
   Returns true if the operation is successful, otherwise false.
 */
 
-bool QMediaPlaylist::insertItem(int pos, const QMediaSource &source)
+bool QMediaPlaylist::insertItem(int pos, const QMediaContent &content)
 {
-    return d_func()->playlist()->insertItem(pos, source);
+    return d_func()->playlist()->insertItem(pos, content);
 }
 
 /*!
@@ -519,7 +519,7 @@ void QMediaPlaylist::setCurrentPosition(int playlistPosition)
 */
 
 /*!
-    \fn void QMediaPlaylist::currentMediaChanged(const QMediaSource &source)
+    \fn void QMediaPlaylist::currentMediaChanged(const QMediaContent &content)
 
     Signal emitted when current media changes to \a source.
 */
