@@ -554,13 +554,22 @@ QString QValueSpaceItem::path() const
     return d->path;
 }
 
+/*!
+    Changes the path to \a path.
+*/
 void QValueSpaceItem::cd(const QString &path)
 {
     VS_CALL_ASSERT;
 
-    setPath(d->path + QLatin1Char('/') + path);
+    if (path.startsWith(QLatin1Char('/')))
+        setPath(path);
+    else
+        setPath(d->path + QLatin1Char('/') + path);
 }
 
+/*!
+    Sets the path to parent of the current path.
+*/
 void QValueSpaceItem::cdUp()
 {
     VS_CALL_ASSERT;
