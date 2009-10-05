@@ -28,3 +28,9 @@ symbian {
 win32 {
     !wince*:LIBS += -ladvapi32
 }
+
+wince* {
+    DEPLOYLACKEY.sources = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/vsiTestLackey.exe
+    DEPLOYLACKEY.path = .
+    DEPLOYMENT += DEPLOYLACKEY
+}

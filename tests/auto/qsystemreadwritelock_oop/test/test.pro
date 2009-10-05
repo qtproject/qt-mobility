@@ -15,3 +15,9 @@ LIBS += -lQtContextFramework
 symbian {
     TARGET.CAPABILITY = ALL -TCB
 }
+
+wince* {
+    DEPLOYLACKEY.sources = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/lackey.exe
+    DEPLOYLACKEY.path = .
+    DEPLOYMENT += DEPLOYLACKEY
+}

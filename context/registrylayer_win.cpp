@@ -120,14 +120,12 @@ void QWindowsCENotify::run()
                                              false, INFINITE);
 
         if (index >= WAIT_OBJECT_0 && index < WAIT_OBJECT_0 + waitHandles.count()) {
-            qDebug() << "woke up because of index" << index - WAIT_OBJECT_0 << waitHandles.count();
-
             if (index - WAIT_OBJECT_0 != waitHandles.count() - 1) {
                 handles.remove(waitHandles.at(index - WAIT_OBJECT_0));
                 emit eventSignaled(waitHandles.at(index - WAIT_OBJECT_0));
             }
         } else if (index >= WAIT_ABANDONED_0 && index < WAIT_ABANDONED_0 + waitHandles.count()) {
-            qDebug() << "woke up because of abandoned index" << index - WAIT_ABANDONED_0;
+            //qDebug() << "woke up because of abandoned index" << index - WAIT_ABANDONED_0;
         } else {
             qDebug() << "WaitForMultipleObjects failed with error" << GetLastError();
         }
@@ -821,11 +819,11 @@ bool RegistryLayer::removeRegistryValue(RegistryHandle *handle, const QString &s
 
 #ifdef Q_OS_WINCE
     QList<RegistryHandle *> deletedKeys;
-    QByteArray fullPath;
-    if (rh && rh->path != "/")
-        fullPath = rh->path + '/' + value.toUtf8();
+    QString fullPath;
+    if (rh && rh->path != QLatin1String("/"))
+        fullPath = rh->path + QLatin1Char('/') + value;
     else
-        fullPath = '/' + value.toUtf8();
+        fullPath = QLatin1Char('/') + value;
 
     foreach (RegistryHandle *h, hKeys.keys()) {
         if (h->path.startsWith(fullPath)) {
