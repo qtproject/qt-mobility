@@ -53,8 +53,10 @@ private slots:
     void initTestCase();
 
     void isValid();
+    void timeout();
     void setMedia_data();
     void setMedia();
+    void setInvalidMedia();
     void playlist();
     void outputControl();
     void widgetControl();
@@ -108,6 +110,22 @@ void tst_QMediaImageViewer::isValid()
 
     QVERIFY(viewer.isValid());
     QVERIFY(viewer.service() != 0);
+}
+
+void tst_QMediaImageViewer::timeout()
+{
+    QMediaImageViewer viewer;
+
+    QCOMPARE(viewer.timeout(), 3000);
+
+    viewer.setTimeout(0);
+    QCOMPARE(viewer.timeout(), 0);
+
+    viewer.setTimeout(45);
+    QCOMPARE(viewer.timeout(), 45);
+
+    viewer.setTimeout(-3000);
+    QCOMPARE(viewer.timeout(), 0);
 }
 
 void tst_QMediaImageViewer::setMedia_data()
@@ -179,6 +197,68 @@ void tst_QMediaImageViewer::setMedia()
 
     QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadedMedia);
     QCOMPARE(viewer.currentMedia(), currentMedia);
+}
+
+void tst_QMediaImageViewer::setInvalidMedia()
+{
+    QMediaImageViewer viewer;
+
+    connect(&viewer, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)),
+            &QTestEventLoop::instance(), SLOT(exitLoop()));
+
+    {
+        QMediaSource source(imageUri("invalid.png"));
+
+        viewer.setMedia(source);
+        QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
+
+        QTestEventLoop::instance().enterLoop(2);
+        QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::InvalidMedia);
+        QCOMPARE(viewer.currentMedia(), QMediaResource());
+        QCOMPARE(viewer.media(), source);
+    } {
+        QMediaSource source(imageUri("deleted.png"));
+
+        viewer.setMedia(source);
+        QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
+
+        QTestEventLoop::instance().enterLoop(2);
+        QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::InvalidMedia);
+        QCOMPARE(viewer.currentMedia(), QMediaResource());
+        QCOMPARE(viewer.media(), source);
+    } {
+        QMediaResource invalidResource(imageUri("invalid.png"));
+        QMediaResource deletedResource(imageUri("deleted.png"));
+        QMediaSource source(QMediaResourceList() << invalidResource << deletedResource);
+
+        viewer.setMedia(source);
+        QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
+
+        QTestEventLoop::instance().enterLoop(2);
+        QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::InvalidMedia);
+        QCOMPARE(viewer.currentMedia(), QMediaResource());
+        QCOMPARE(viewer.media(), source);
+    } {
+        QMediaResource resource(imageUri("image.png"), QLatin1String("audio/mpeg"));
+        QMediaSource source(resource);
+
+        viewer.setMedia(source);
+        QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::InvalidMedia);
+        QCOMPARE(viewer.currentMedia(), QMediaResource());
+        QCOMPARE(viewer.media(), source);
+    } {
+        QMediaResource audioResource(imageUri("image.png"), QLatin1String("audio/mpeg"));
+        QMediaResource invalidResource(imageUri("invalid.png"));
+        QMediaSource source(QMediaResourceList() << audioResource << invalidResource);
+
+        viewer.setMedia(source);
+        QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
+
+        QTestEventLoop::instance().enterLoop(2);
+        QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::InvalidMedia);
+        QCOMPARE(viewer.currentMedia(), QMediaResource());
+        QCOMPARE(viewer.media(), source);
+    }
 }
 
 void tst_QMediaImageViewer::playlist()
