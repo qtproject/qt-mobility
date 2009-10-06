@@ -31,24 +31,50 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITCONTACTGENERATOR_H
-#define QVERSITCONTACTGENERATOR_H
+#include "qversitcontactgenerator_p.h"
+#include "ut_qversitcontactgenerator_p.h"
 
-#include "qcontact.h"
-#include "qversitdocument.h"
 
-class QVersitContactGeneratorPrivate;
+#include <qversitproperty.h>
+#include <qversitdocument.h>
+#include <QtTest/QtTest>
 
-class QVersitContactGenerator
+void UT_QVersitContactGeneratorPrivate::initTestCase()
+{    
+   d_ptr = new QVersitContactGeneratorPrivate();
+   QVERIFY(d_ptr);
+}
+
+void UT_QVersitContactGeneratorPrivate::cleanupTestCase()
 {
-public:
-    QVersitContactGenerator();
-    ~QVersitContactGenerator();
-    // Generates a list of contacts from a QVersitDocument
-    QList<QContact> generateContacts(const QVersitDocument& versitDocument);
-private:
-    QVersitContactGeneratorPrivate *d;
-};
+   delete d_ptr;
+}
 
-#endif
+void UT_QVersitContactGeneratorPrivate::generateContacts()
+{
+   /*
+   QByteArray firstName = "Homer";
+   QByteArray lastName = "Simpson";
+   QByteArray mobileNo = "+358704860613";
+   QByteArray email = "homer@holycow.com";
+   QVersitDocument* doc = new QVersitDocument();
+   QVersitProperty* property = new QVersitProperty();
+   // test for basic firstname,lastname
+   property->setName("FN");
+   property->setValue(firstName);
+   doc->addProperty(*property);
+   delete property;
+   property = new QVersitProperty();
+   property->setName("LN");
+   property->setValue(lastName);
+   doc->addProperty(*property);
+   delete property;
 
+   QList<QContact> contacts = d_ptr->generateContacts(*doc);
+
+   foreach( QContact contact,contacts){
+       // Verify for contact details matched with.
+   }
+   delete doc;
+   */
+}

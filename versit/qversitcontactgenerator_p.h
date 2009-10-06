@@ -31,24 +31,18 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITCONTACTGENERATOR_H
-#define QVERSITCONTACTGENERATOR_H
+#ifndef QVERSITCONTACTGENERATOR_P_H
+#define QVERSITCONTACTGENERATOR_P_H
 
-#include "qcontact.h"
-#include "qversitdocument.h"
+#include "qversitcontactgenerator.h"
 
-class QVersitContactGeneratorPrivate;
-
-class QVersitContactGenerator
+class QVersitContactGeneratorPrivate
 {
 public:
-    QVersitContactGenerator();
-    ~QVersitContactGenerator();
-    // Generates a list of contacts from a QVersitDocument
+    QVersitContactGeneratorPrivate();
+    ~QVersitContactGeneratorPrivate();
     QList<QContact> generateContacts(const QVersitDocument& versitDocument);
 private:
-    QVersitContactGeneratorPrivate *d;
 };
 
-#endif
-
+#endif // QVERSITCONTACTGENERATOR_P_H

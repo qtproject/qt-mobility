@@ -31,24 +31,32 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITCONTACTGENERATOR_H
-#define QVERSITCONTACTGENERATOR_H
+#include "testresultxmlparser.h"
+#include "ut_qversitcontactgenerator.h"
 
-#include "qcontact.h"
-#include "qversitdocument.h"
+#include <QtTest/QtTest>
 
-class QVersitContactGeneratorPrivate;
-
-class QVersitContactGenerator
+int main(int argc, char *argv[]) 
 {
-public:
-    QVersitContactGenerator();
-    ~QVersitContactGenerator();
-    // Generates a list of contacts from a QVersitDocument
-    QList<QContact> generateContacts(const QVersitDocument& versitDocument);
-private:
-    QVersitContactGeneratorPrivate *d;
-};
+    printf("Running tests...\n");
+    
+    QApplication app(argc, argv);
+    TestResultXmlParser parser;    
+    QString resultFileName = "c:/ut_versit_testresults.xml";
+    QStringList args( "ut_versit");
+    args << "-xml" << "-o" << resultFileName;
 
-#endif
+    UT_QVersitContactGenerator ut_qVersitContactGenerator;
+    QTest::qExec(&ut_qVersitContactGenerator, args);
 
+    parser.parseAndPrintResults(resultFileName,true); 
+
+    printf("Press any key...\n");
+    getchar(); 
+
+    return 0;   
+}
+
+
+
+ 

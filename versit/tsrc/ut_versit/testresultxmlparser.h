@@ -31,24 +31,54 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITCONTACTGENERATOR_H
-#define QVERSITCONTACTGENERATOR_H
+#ifndef TESTRESULTXMLPARSER_H
+#define TESTRESULTXMLPARSER_H
 
-#include "qcontact.h"
-#include "qversitdocument.h"
+#include <QXmlDefaultHandler>
 
-class QVersitContactGeneratorPrivate;
 
-class QVersitContactGenerator
+class TestResultXmlParser : public QXmlDefaultHandler
 {
-public:
-    QVersitContactGenerator();
-    ~QVersitContactGenerator();
-    // Generates a list of contacts from a QVersitDocument
-    QList<QContact> generateContacts(const QVersitDocument& versitDocument);
-private:
-    QVersitContactGeneratorPrivate *d;
+public: // Constructors and destructor
+    TestResultXmlParser();
+    ~TestResultXmlParser();    
+    
+public: // From QXmlContentHandler 
+    bool startElement(
+        const QString& namespaceURI,
+        const QString& localName,
+        const QString& qName,
+        const QXmlAttributes& atts);
+    
+    bool endElement(
+        const QString& namespaceURI,
+        const QString& localName,
+        const QString& qName);
+    
+    bool characters(const QString& ch);
+       
+public: // New functions
+    
+    int parse(const QString& fileName);
+    
+    int parseAndPrintResults(
+        const QString& fileName,
+        bool printDetails=false);
+    
+    int testCount();
+    
+    QStringList errors();
+    
+private: // Data
+    int mTestCount;
+    QStringList* mErrors;
+    bool mParsingIncidentElement;
+    bool mParsingDescriptionElement;
+    bool mCurrentTestFailed;
+    QString mCurrentTestName;
+    QString mCurrentTestFile;
+    int mCurrentTestFailureLine;
 };
 
-#endif
 
+#endif // TESTRESULTXMLPARSER_H

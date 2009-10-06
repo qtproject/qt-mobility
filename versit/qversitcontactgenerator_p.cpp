@@ -31,24 +31,37 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITCONTACTGENERATOR_H
-#define QVERSITCONTACTGENERATOR_H
+/*!
+ * \class QContact
+ *
+ * \brief The QContact class provides an addressbook contact.
+ *
+ * A QContact consists of zero or more details.
+ *
+ * An instance of the QContact class represents an in-memory contact,
+ * and may not reflect the state of that contact found in persistent
+ * storage until the appropriate synchronisation method is called
+ * on the QContactManager (i.e., saveContact, removeContact).
+ *
+ * \sa QContactManager, QContactDetail
+ */
 
-#include "qcontact.h"
-#include "qversitdocument.h"
+#include "qversitcontactgenerator_p.h"
 
-class QVersitContactGeneratorPrivate;
-
-class QVersitContactGenerator
+QVersitContactGeneratorPrivate::QVersitContactGeneratorPrivate()
 {
-public:
-    QVersitContactGenerator();
-    ~QVersitContactGenerator();
-    // Generates a list of contacts from a QVersitDocument
-    QList<QContact> generateContacts(const QVersitDocument& versitDocument);
-private:
-    QVersitContactGeneratorPrivate *d;
-};
+    // TODO : Implement
+}
 
-#endif
+QVersitContactGeneratorPrivate::~QVersitContactGeneratorPrivate()
+{
+    // TODO : Implement
+}
+
+QList<QContact> QVersitContactGeneratorPrivate::generateContacts(const QVersitDocument& versitDocument)
+{
+    // TODO : Implement
+}
+
+
 

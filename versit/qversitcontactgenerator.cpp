@@ -46,4 +46,21 @@
  * \sa QContactManager, QContactDetail
  */
 
+#include <qversitcontactgenerator.h>
+#include "qversitcontactgenerator_p.h"
+
+QVersitContactGenerator::QVersitContactGenerator()
+{
+    d = new QVersitContactGeneratorPrivate();
+}
+
+QVersitContactGenerator::~QVersitContactGenerator()
+{
+    delete d;
+}
+
+QList<QContact> QVersitContactGenerator::generateContacts(const QVersitDocument& versitDocument)
+{
+    return d->generateContacts(versitDocument);
+}
 
