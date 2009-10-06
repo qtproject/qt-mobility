@@ -59,6 +59,7 @@ Cloud::Cloud(const QNetworkConfiguration &config, QGraphicsItem *parent)
             this, SLOT(stateChanged(QNetworkSession::State)));
 
     setFlag(ItemIsMovable);
+    setFlag(ItemSendsGeometryChanges);
     setZValue(1);
 
     icon = new QGraphicsSvgItem(this);
@@ -197,7 +198,7 @@ void Cloud::paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *)
 }
 
 //! [4]
-QVariant Cloud::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
+QVariant Cloud::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     switch (change) {
     case ItemPositionHasChanged:

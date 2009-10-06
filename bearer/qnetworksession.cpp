@@ -516,6 +516,23 @@ QVariant QNetworkSession::property(const QString& key) const
 }
 
 /*!
+    Sets the property \a value on the session. The property is identified using
+    \a key. Removing an already set  property can be achieved by passing an 
+    invalid QVariant.
+
+    Note that the \i UserChoiceConfigurationIdentifier and \i ActiveConfigurationIdentifier
+    properties are read only and cannot be changed using this method.
+*/
+void QNetworkSession::setProperty(const QString& key, const QVariant& value)
+{
+    if (key == "ActiveConfigurationIdentifier" 
+            || key == "UserChoiceConfigurationIdentifier") 
+        return;
+
+    d->setProperty(key, value);
+}
+
+/*!
     Instructs the session to roam to the new access point. The old access point remains active 
     until the application calls accept().
 

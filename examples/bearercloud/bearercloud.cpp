@@ -143,6 +143,8 @@ void BearerCloud::configurationAdded(const QNetworkConfiguration &config)
                  radius * sin((count-1) * angle + offset[state]));
 
     addItem(item);
+
+    cloudMoved();
 }
 //! [2]
 
@@ -156,6 +158,8 @@ void BearerCloud::configurationRemoved(const QNetworkConfiguration &config)
 
     item->setFinalScale(0.0);
     item->setDeleteAfterAnimation(true);
+
+    cloudMoved();
 }
 //! [3]
 
@@ -166,6 +170,8 @@ void BearerCloud::configurationChanged(const QNetworkConfiguration &config)
         configStates.remove(state, config.identifier());
 
     configStates.insert(config.state(), config.identifier());
+
+    cloudMoved();
 }
 //! [4]
 
