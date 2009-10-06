@@ -44,6 +44,7 @@
 #include <QDateTime>
 
 #include "qcontact.h"
+#include "qcontactrelationship.h"
 #include "qcontactmanagerinfo.h"
 #include "qcontactsortorder.h"
 
@@ -108,6 +109,15 @@ public:
     /* "Self" contact id (MyCard) */
     bool setSelfContactId(const QUniqueId& contactId);
     QUniqueId selfContactId() const;
+
+    /* Relationships */
+    QList<QContactRelationship> relationships(const QUniqueId& leftId, const QString& relationshipType, const QUniqueId& rightId);
+    QList<QContactRelationship> relationships(const QString& relationshipType = QString(), const QUniqueId& participantId = QUniqueId(0));
+    QList<QContactRelationship> relationships(const QUniqueId& participantId);
+    bool saveRelationship(QContactRelationship* relationship);
+    QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships);
+    bool removeRelationship(const QContactRelationship& relationship);
+    QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships);
 
     /* Definitions - Accessors and Mutators */
     QMap<QString, QContactDetailDefinition> detailDefinitions() const;

@@ -60,7 +60,6 @@
 #include "qcontactorganization.h"
 #include "qcontactphonenumber.h"
 #include "qcontactpresence.h"
-#include "qcontactrelationship.h"
 #include "qcontactsynctarget.h"
 #include "qcontacttimestamp.h"
 #include "qcontacttype.h"

@@ -36,38 +36,23 @@
 #define QCONTACTRELATIONSHIP_H
 
 #include <QString>
-#include <QVariant>
+#include <QSharedDataPointer>
 
 #include "qtcontactsglobal.h"
-#include "qcontactdetail.h"
 
-/* Leaf class */
-class QTCONTACTS_EXPORT QContactRelationship : public QContactDetail
+class QContactRelationshipData;
+class QTCONTACTS_EXPORT QContactRelationship
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldRelationshipType;
-    const char* FieldRelatedContactLabel;
-    const char* FieldRelatedContactId;
-    const char* FieldRelatedContactManagerUri;
-    const char* RelationshipTypeHasMember;
     const char* RelationshipTypeIsMemberOf;
-    const char* RelationshipTypeAggregates;
     const char* RelationshipTypeIsAggregatedBy;
     const char* RelationshipTypeIs;
     const char* RelationshipTypeAssistant;
     const char* RelationshipTypeManager;
     const char* RelationshipTypeSpouse;
 #else
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactRelationship, "Relationship")
-    Q_DECLARE_LATIN1_LITERAL(FieldRelationshipType, "RelationshipType");
-    Q_DECLARE_LATIN1_LITERAL(FieldRelatedContactLabel, "RelatedContactLabel");
-    Q_DECLARE_LATIN1_LITERAL(FieldRelatedContactId, "RelatedContactId");
-    Q_DECLARE_LATIN1_LITERAL(FieldRelatedContactManagerUri, "RelatedContactManagerUri");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeHasMember, "HasMember");
     Q_DECLARE_LATIN1_LITERAL(RelationshipTypeIsMemberOf, "IsMemberOf");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeAggregates, "Aggregates");
     Q_DECLARE_LATIN1_LITERAL(RelationshipTypeIsAggregatedBy, "IsAggregatedBy");
     Q_DECLARE_LATIN1_LITERAL(RelationshipTypeIs, "Is");
     Q_DECLARE_LATIN1_LITERAL(RelationshipTypeAssistant, "Assistant");
@@ -75,14 +60,25 @@ public:
     Q_DECLARE_LATIN1_LITERAL(RelationshipTypeSpouse, "Spouse");
 #endif
 
-    void setRelationshipType(const QString& relationshipType) {setValue(FieldRelationshipType, relationshipType);}
-    QString relationshipType() const {return value(FieldRelationshipType);}
-    void setRelatedContactLabel(const QString& label) {setValue(FieldRelatedContactLabel, label);}
-    QString relatedContactLabel() const {return value(FieldRelatedContactLabel);}
-    void setRelatedContactId(const QUniqueId& id) {setValue(FieldRelatedContactId, id);}
-    QUniqueId relatedContactId() const {return QUniqueId(value(FieldRelatedContactId).toUInt());}
-    void setRelatedContactManagerUri(const QString& managerUri) {setValue(FieldRelatedContactManagerUri, managerUri);}
-    QString relatedContactManagerUri() const {return value(FieldRelatedContactManagerUri);}
+    QContactRelationship();
+    ~QContactRelationship();
+
+    QUniqueId leftId() const;
+    QUniqueId rightId() const;
+    QString leftManagerUri() const;
+    QString rightManagerUri() const;
+    QString relationshipType() const;
+    int priority() const;
+
+    void setLeftId(const QUniqueId& id);
+    void setRightId(const QUniqueId& id);
+    void setLeftManagerUri(const QString& uri = QString());
+    void setRightManagerUri(const QString& uri = QString());
+    void setRelationshipType(const QString& relationshipType);
+    void setPriority(int priority);
+
+private:
+    QSharedDataPointer<QContactRelationshipData> d;
 };
 
 #endif

@@ -173,77 +173,9 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
         return false;
     }
 
-    // ensure that any Group Membership relationships are reciprocated
-    QContact checkGroups = *theContact;
-    QList<QContactDetail> groupMemberships = checkGroups.details(QContactRelationship::DefinitionName, QContactRelationship::FieldRelationshipType, QContactRelationship::RelationshipTypeIsMemberOf);
-    QList<QPair<QUniqueId, QContactRelationship> >bidirectionalLinks;
-    foreach (const QContactRelationship currRel, groupMemberships) {
-        // need my uri value..
-
-        // check that the group is not anonymous, and that it is a group, and that it's stored in this backend
-        if (currRel.relatedContactId() != QUniqueId(0) && currRel.relatedContactManagerUri().isEmpty()) { // OR equals(myUri)...
-            QContact other = contact(currRel.relatedContactId(), error);
-            if (other.type() != QContactType::TypeGroup) {
-                // this contact is not a group!  fail!
-                error = QContactManager::InvalidDetailError;
-                return false;
-            }
-
-            // ensure that the membership link is bidirectional; update if required.
-            if (!other.groups().contains(checkGroups.id())) {
-                QContactRelationship bidirLink;
-                bidirLink.setRelatedContactId(checkGroups.id());
-                bidirLink.setRelationshipType(QContactRelationship::RelationshipTypeHasMember);
-                bidirectionalLinks.append(QPair<QUniqueId, QContactRelationship>(other.id(), bidirLink));
-            }
-        }
-    }
-
-    // attempt to save the bidirectional links to the contacts.
-    QList<QContact> origBidirContacts;
-    QList<QContact> bidirContacts;
-    bool saveHasFailed = false;
-    for (int i = 0; i < bidirectionalLinks.size(); i++) {
-        QContact curr = contact(bidirectionalLinks.at(i).first, error);
-        origBidirContacts.append(curr);
-        QContactRelationship bidirLink = bidirectionalLinks.at(i).second;
-        if (!curr.saveDetail(&bidirLink)) {
-            saveHasFailed = true;
-            break;
-        }
-
-        // the save of detail succeeded in the contact..
-        bidirContacts.append(curr);
-    }
-
-    if (saveHasFailed) {
-        error = QContactManager::UnspecifiedError;
-        return false;
-    }
-
-    // save those contacts in the database
-    for (int i = 0; i < bidirContacts.size(); i++) {
-        QContact curr = bidirContacts.at(i);
-        if (!saveContact(&curr, changeSet, error)) {
-            saveHasFailed = true;
-            break;
-        }
-    }
-
-    if (saveHasFailed) {
-        // if failed, undo all the changes - cheap hack transaction :-/
-        for (int i = 0; i < origBidirContacts.size(); i++) {
-            QContact curr = origBidirContacts.at(i);
-            saveContact(&curr, changeSet, error);
-        }
-    }
-
     // check to see if this contact already exists
     int index = d->m_contactIds.indexOf(theContact->id());
     if (index != -1) {
-        /* This contact already exists in the database. Enumerate the relationships, maintain bidirectional links */
-        // TODO !!!
-
         /* We also need to check that there are no modified create only details */
         QContact oldContact = d->m_contacts.at(index);
 
@@ -255,11 +187,6 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
 
             /* Any entries in old should still be in new */
             if (newDetails.count() < details.count()) {
-                // if failed, undo all the changes - cheap hack transaction :-/
-                for (int i = 0; i < origBidirContacts.size(); i++) {
-                    QContact curr = origBidirContacts.at(i);
-                    saveContact(&curr, changeSet, error);
-                }
                 error = QContactManager::DetailAccessError;
                 return false;
             }
@@ -267,11 +194,6 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
             /* Now do a more detailed check */
             for (int i=0; i < details.count(); i++) {
                 if (!newDetails.contains(details.at(i))) {
-                    // if failed, undo all the changes - cheap hack transaction :-/
-                    for (int i = 0; i < origBidirContacts.size(); i++) {
-                        QContact curr = origBidirContacts.at(i);
-                        saveContact(&curr, changeSet, error);
-                    }
                     error = QContactManager::DetailAccessError;
                     return false;
                 }
@@ -288,11 +210,6 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
     } else {
         // id does not exist; if not zero, fail.
         if (theContact->id() != 0) {
-            // if failed, undo all the changes - cheap hack transaction :-/
-            for (int i = 0; i < origBidirContacts.size(); i++) {
-                QContact curr = origBidirContacts.at(i);
-                saveContact(&curr, changeSet, error);
-            }
             error = QContactManager::DoesNotExistError;
             return false;
         }

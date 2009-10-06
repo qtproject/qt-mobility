@@ -31,9 +31,8 @@
 **
 ****************************************************************************/
 
-
-#ifndef QCONTACTS_P_H
-#define QCONTACTS_P_H
+#ifndef QCONTACTRELATIONSHIP_P_H
+#define QCONTACTRELATIONSHIP_P_H
 
 //
 //  W A R N I N G
@@ -46,7 +45,44 @@
 // We mean it.
 //
 
-// The following macro detaches the shared data before setting the error member, if required.
-#define SET_ERROR(error) if (d_ptr.constData()->m_error != error) { d_ptr.detach(); d_ptr.constData()->m_error = error; }
+#include "qtcontactsglobal.h"
+
+#include <QString>
+#include <QVariant>
+#include <QSharedData>
+
+class QContactRelationshipData : public QSharedData
+{
+public:
+    QContactRelationshipData()
+            : QSharedData(),
+            m_leftId(0),
+            m_rightId(0),
+            m_priority(0)
+    {
+    }
+
+    QContactRelationshipData(const QContactRelationshipData& other)
+            : QSharedData(other),
+            m_leftId(other.m_leftId),
+            m_rightId(other.m_rightId),
+            m_leftManagerUri(other.m_leftManagerUri),
+            m_rightManagerUri(other.m_rightManagerUri),
+            m_relationshipType(other.m_relationshipType),
+            m_priority(other.m_priority)
+    {
+    }
+
+    ~QContactRelationshipData()
+    {
+    }
+
+    QUniqueId m_leftId;
+    QUniqueId m_rightId;
+    QString m_leftManagerUri;
+    QString m_rightManagerUri;
+    QString m_relationshipType;
+    int m_priority;
+};
 
 #endif

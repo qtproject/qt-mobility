@@ -54,5 +54,6 @@
 #include "qcontactactionfactory.h"              // action factory
 #include "qcontactabstractrequest.h"            // asynchronous request
 #include "qcontactrequests.h"                   // request leaf classes
+#include "qcontactrelationship.h"               // contact relationships
 
 #endif

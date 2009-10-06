@@ -17,7 +17,6 @@ PUBLIC_HEADERS += \
     details/qcontactorganization.h \
     details/qcontactphonenumber.h \
     details/qcontactpresence.h \
-    details/qcontactrelationship.h \
     details/qcontactsynctarget.h \
     details/qcontacttimestamp.h \
     details/qcontacttype.h \

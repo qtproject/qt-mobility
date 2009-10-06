@@ -247,6 +247,86 @@ QUniqueId QContactManagerEngine::selfContactId(QContactManager::Error& error) co
 }
 
 /*!
+ * Returns all relationships of the given \a relationshipType which the contact identified by \a leftId has with the contact identified by \a rightId.
+ * If the \a leftId is the zero id, a list of all of the relationships of the given \a relationshipType where the contact identified by \a rightId is
+ * the right participant is returned.  If the \a rightId is the zero id, a list of all of the relationships of the given \a relationshipType where the
+ * contact identified by \a leftId is the left participant is returned.  If the \a relationshipType is empty, relationships of any type are returned.
+ * If no relationships are found, \a error is set to \c QContactManager::DoesNotExistError; if the operation completes successfully, \a error is set
+ * to \c QContactManager::NoError.
+ */
+QList<QContactRelationship> QContactManager::relationships(const QUniqueId& leftId, const QString& relationshipType, const QUniqueId& rightId, QContactManager::Error& error)
+{
+    error = QContactManager::DoesNotExistError;
+    return QList<QContactRelationship>();
+}
+
+/*!
+ * Returns all relationships of the specified \a relationshipType in which the contact identified by \a participantId is a left or right participant.
+ * If \a participantId is the zero id, all relationships of the given \a relationshipType are returned.  If the \a relationshipType
+ * is empty, all relationships in which the contact identified by \a participantId is a left or right participant are returned.
+ * If no relationships are found, \a error is set to \c QContactManager::DoesNotExistError; if the operation completes successfully, \a error is set
+ * to \c QContactManager::NoError.
+ */
+QList<QContactRelationship> QContactManager::relationships(const QString& relationshipType, const QUniqueId& participantId, QContactManager::Error& error)
+{
+    return d->m_engine->relationships(relationshipType, participantId, d->m_error);
+}
+
+/*!
+ * Returns all relationships of any type in which the contact identified by \a participantId is a left or right participant.
+ * If no relationships are found, \a error is set to \c QContactManager::DoesNotExistError; if the operation completes successfully, \a error is set
+ * to \c QContactManager::NoError.
+ */
+QList<QContactRelationship> QContactManager::relationships(const QUniqueId& participantId, QContactManager::Error& error)
+{
+    return d->m_engine->relationships(participantId, d->m_error);
+}
+
+/*!
+ * Saves the given \a relationship in the database.  If the relationship already exists in the database, but the priority
+ * of the relationship has changed, the relationship in the database will be updated with the new priority.  If the relationship
+ * already exists in the database, and the priority is the same, this function will return \c false and the \a error will be set
+ * to \c QContactManager::AlreadyExistsError.  If the relationship is saved or updated successfully, this function will return
+ * \c true and \a error will be set to \c QContactManager::NoError.
+ *
+ * If the left contact manager URI or the right contact manager URI is not set in the \a relationship, these will be
+ * automatically set to the URI of this manager, before the relationship is saved.
+ */
+bool QContactManager::saveRelationship(QContactRelationship* relationship, QContactManager::Error& error)
+{
+    return d->m_engine->saveRelationship(relationship, d->m_error);
+}
+
+/*!
+ * Saves the given \a relationships in the database and returns a list of error codes.  Any error which occurs will be saved in \a error.
+ */
+QList<QContactManager::Error> QContactManager::saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error)
+{
+    return d->m_engine->saveRelationships(relationships, d->m_error);
+}
+
+/*!
+ * Removes the given \a relationship from the manager.  If the relationship exists in the manager, the relationship
+ * will be removed, the \a error will be set to \c QContactManager::NoError and this function will return true.  If no such
+ * relationship exists in the manager, the \a error will be set to \c QContactManager::DoesNotExistError and this function
+ * will return false.
+ *
+ * The priority of the relationship is ignored when determining existence of the relationship.
+ */
+bool QContactManager::removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error)
+{
+    return d->m_engine->removeRelationship(relationship, d->m_error);
+}
+
+/*!
+ * Removes the given \a relationships from the database and returns a list of error codes.  Any error which occurs will be saved in \a error.
+ */
+QList<QContactManager::Error> QContactManager::removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error)
+{
+    return d->m_engine->removeRelationships(relationships, d->m_error);
+}
+
+/*!
  * Synthesises the display label of the given \a contact in a platform specific manner.
  * Any error that occurs will be stored in \a error.
  * Returns the synthesised display label.
@@ -620,22 +700,6 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     d.setFields(fields);
     d.setUnique(false);
     d.setAccessConstraint(QContactDetailDefinition::ReadOnly);
-    retn.insert(d.name(), d);
-
-    // relationship
-    d.setName(QContactRelationship::DefinitionName);
-    fields.clear();
-    f.dataType = QVariant::String;
-    f.allowableValues = QVariantList();
-    fields.insert(QContactRelationship::FieldRelatedContactId, f);
-    fields.insert(QContactRelationship::FieldRelatedContactManagerUri, f);
-    fields.insert(QContactRelationship::FieldRelationshipType, f);
-    f.dataType = QVariant::StringList;
-    f.allowableValues = contexts;
-    fields.insert(QContactDetail::FieldContext, f);
-    d.setFields(fields);
-    d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // avatar

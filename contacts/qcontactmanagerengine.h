@@ -84,6 +84,15 @@ public:
     bool setSelfContactId(const QUniqueId& contactId, QContactManager::Error& error);
     QUniqueId selfContactId(QContactManager::Error& error) const;
 
+    /* Relationships between contacts */
+    QList<QContactRelationship> relationships(const QUniqueId& leftId, const QString& relationshipType, const QUniqueId& rightId, QContactManager::Error& error);
+    QList<QContactRelationship> relationships(const QString& relationshipType, const QUniqueId& participantId, QContactManager::Error& error);
+    QList<QContactRelationship> relationships(const QUniqueId& participantId, QContactManager::Error& error);
+    bool saveRelationship(QContactRelationship* relationship, QContactManager::Error& error);
+    QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error);
+    bool removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error);
+    QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error);
+
     /* Validation for saving */
     virtual bool validateContact(const QContact& contact, QContactManager::Error& error) const;
     virtual bool validateDefinition(const QContactDetailDefinition& def, QContactManager::Error& error) const;

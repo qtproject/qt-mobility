@@ -67,7 +67,6 @@ private slots:
     void organization();
     void phoneNumber();
     void presence();
-    void relationship();
     void syncTarget();
     void timestamp();
     void type();
@@ -689,46 +688,6 @@ void tst_QContactDetails::presence()
     QCOMPARE(c.details(QContactPresence::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&p2) == false);
     QCOMPARE(c.details(QContactPresence::DefinitionName).count(), 0);
-}
-
-void tst_QContactDetails::relationship()
-{
-    QContact c;
-    QContactRelationship r1, r2;
-
-    // test property set
-    r1.setRelatedContactId(QUniqueId(12345));
-    QCOMPARE(r1.relatedContactId(), QUniqueId(12345));
-    QCOMPARE(QUniqueId(r1.variantValue(QContactRelationship::FieldRelatedContactId).toUInt()), QUniqueId(12345));
-
-    // test property add
-    QVERIFY(c.saveDetail(&r1));
-    QCOMPARE(c.details(QContactRelationship::DefinitionName).count(), 1);
-    QCOMPARE(QContactRelationship(c.details(QContactRelationship::DefinitionName).value(0)).relatedContactId(), r1.relatedContactId());
-
-    // test property update
-    r1.setRelatedContactId(QUniqueId(54321));
-    QVERIFY(c.saveDetail(&r1));
-    QCOMPARE(QUniqueId(c.details(QContactRelationship::DefinitionName).value(0).variantValue(QContactRelationship::FieldRelatedContactId).toUInt()), QUniqueId(54321));
-
-    // test property remove
-    QVERIFY(c.removeDetail(&r1));
-    QCOMPARE(c.details(QContactRelationship::DefinitionName).count(), 0);
-    QVERIFY(c.saveDetail(&r2));
-    QCOMPARE(c.details(QContactRelationship::DefinitionName).count(), 1);
-    QVERIFY(c.removeDetail(&r2));
-    QCOMPARE(c.details(QContactRelationship::DefinitionName).count(), 0);
-    QVERIFY(c.removeDetail(&r2) == false);
-    QCOMPARE(c.details(QContactRelationship::DefinitionName).count(), 0);
-
-    // relationship-specific API testing
-    r1.setRelatedContactLabel("Bob");
-    r1.setRelatedContactManagerUri("memory");
-    r1.setRelationshipType(QContactRelationship::RelationshipTypeManager);
-    c.saveDetail(&r1);
-    QVERIFY(c.detail(QContactRelationship::DefinitionName).value(QContactRelationship::FieldRelatedContactLabel) == QString("Bob"));
-    QVERIFY(c.detail(QContactRelationship::DefinitionName).value(QContactRelationship::FieldRelatedContactManagerUri) == QString("memory"));
-    QVERIFY(c.detail(QContactRelationship::DefinitionName).value(QContactRelationship::FieldRelationshipType) == QString(QLatin1String(QContactRelationship::RelationshipTypeManager)));
 }
 
 void tst_QContactDetails::syncTarget()
