@@ -46,8 +46,7 @@ class Q_MEDIA_EXPORT QVideoWidget : public QWidget
 {
     Q_OBJECT
     Q_PROPERTY(bool fullScreen READ isFullScreen WRITE setFullScreen NOTIFY fullScreenChanged)
-    Q_PROPERTY(AspectRatio aspectRatio READ aspectRatio WRITE setAspectRatio NOTIFY aspectRatioChanged)
-    Q_PROPERTY(QSize customPixelAspectRatio READ customPixelAspectRatio WRITE setCustomPixelAspectRatio NOTIFY customPixelAspectRatioChanged)
+    Q_PROPERTY(AspectRatioMode aspectRatioMode READ aspectRatioMode WRITE setAspectRatioMode NOTIFY aspectRatioModeChanged)
     Q_PROPERTY(int brightness READ brightness WRITE setBrightness NOTIFY brightnessChanged)
     Q_PROPERTY(int contrast READ contrast WRITE setContrast NOTIFY contrastChanged)
     Q_PROPERTY(int hue READ hue WRITE setHue NOTIFY hueChanged)
@@ -55,13 +54,12 @@ class Q_MEDIA_EXPORT QVideoWidget : public QWidget
     Q_ENUMS(AspectRatio)
 
 public:
-    enum AspectRatio { AspectRatioAuto, AspectRatioWidget, AspectRatioCustom };
+    enum AspectRatioMode { IgnoreAspectRatio, KeepAspectRatio };
 
     QVideoWidget(QMediaObject *object, QWidget *parent = 0);
     ~QVideoWidget();
 
-    AspectRatio aspectRatio() const;
-    QSize customPixelAspectRatio() const;
+    AspectRatioMode aspectRatioMode() const;
 
     int brightness() const;
     int contrast() const;
@@ -71,8 +69,7 @@ public:
 public Q_SLOTS:
     void setVisible(bool visible);
     void setFullScreen(bool fullScreen);
-    void setAspectRatio(AspectRatio ratio);
-    void setCustomPixelAspectRatio(const QSize &customRatio);
+    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
     void setBrightness(int brightness);
     void setContrast(int contrast);
     void setHue(int hue);
@@ -80,8 +77,6 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void fullScreenChanged(bool fullScreen);
-    void aspectRatioChanged(QVideoWidget::AspectRatio);
-    void customPixelAspectRatioChanged(const QSize&);
     void brightnessChanged(int brightness);
     void contrastChanged(int contrast);
     void hueChanged(int hue);
@@ -101,8 +96,6 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_hueChanged(int))
     Q_PRIVATE_SLOT(d_func(), void _q_saturationChanged(int))
     Q_PRIVATE_SLOT(d_func(), void _q_fullScreenChanged(bool))
-    Q_PRIVATE_SLOT(d_func(), void _q_aspectRatioModeChanged(QVideoWidget::AspectRatio))
-    Q_PRIVATE_SLOT(d_func(), void _q_customAspectRatioChanged(const QSize &))
 };
 
 #endif

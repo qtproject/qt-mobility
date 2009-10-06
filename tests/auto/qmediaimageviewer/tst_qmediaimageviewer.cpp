@@ -467,8 +467,7 @@ void tst_QMediaImageViewer::widgetControl()
     QCOMPARE(widgetControl->hue(), 0);
     QCOMPARE(widgetControl->saturation(), 0);
     QCOMPARE(widgetControl->isFullScreen(), false);
-    QCOMPARE(widgetControl->aspectRatio(), QVideoWidget::AspectRatioAuto);
-    QCOMPARE(widgetControl->customAspectRatio(), QSize(1, 1));
+    QCOMPARE(widgetControl->aspectRatioMode(), QVideoWidget::KeepAspectRatio);
 
     // Test setting color adjustment values.  Unsupported, so they stay at 0.
     widgetControl->setBrightness(12);
@@ -504,27 +503,11 @@ void tst_QMediaImageViewer::widgetControl()
     if (viewer.mediaStatus() != QMediaImageViewer::LoadedMedia)
         QSKIP("failed to load test image", SkipSingle);
 
-    // If the aspect ratio is determined automatically or follows the widget the size hint
-    // should the size of the image.
+
     QCOMPARE(widget->sizeHint(), QSize(75, 50));
 
-    widgetControl->setAspectRatio(QVideoWidget::AspectRatioWidget);
-    QCOMPARE(widgetControl->aspectRatio(), QVideoWidget::AspectRatioWidget);
-    QCOMPARE(widget->sizeHint(), QSize(75, 50));
-
-    // If the aspect ratio is explicitly set the size hint should be scaled appropriately.
-    widgetControl->setAspectRatio(QVideoWidget::AspectRatioCustom);
-    QCOMPARE(widgetControl->aspectRatio(), QVideoWidget::AspectRatioCustom);
-    QCOMPARE(widget->sizeHint(), QSize(75, 50));
-
-    widgetControl->setCustomAspectRatio(QSize(4, 3));
-    QCOMPARE(widget->sizeHint(), QSize(100, 50));
-
-    // A non 1:1 aspect ratio should be ignored if aspectRatio() != CustomAspectRatio.
-    widgetControl->setAspectRatio(QVideoWidget::AspectRatioWidget);
-    QCOMPARE(widget->sizeHint(), QSize(75, 50));
-    widgetControl->setAspectRatio(QVideoWidget::AspectRatioAuto);
-    QCOMPARE(widget->sizeHint(), QSize(75, 50));
+    widgetControl->setAspectRatioMode(QVideoWidget::IgnoreAspectRatio);
+    QCOMPARE(widgetControl->aspectRatioMode(), QVideoWidget::IgnoreAspectRatio);
 }
 
 #ifndef QT_NO_MULTIMEDIA

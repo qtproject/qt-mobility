@@ -59,11 +59,8 @@ public:
 
     QSize nativeSize() const;
 
-    QVideoWidget::AspectRatio aspectRatio() const;
-    void setAspectRatio(QVideoWidget::AspectRatio ratio);
-
-    QSize customAspectRatio() const;
-    void setCustomAspectRatio(const QSize &customRatio);
+    QVideoWidget::AspectRatioMode aspectRatioMode() const;
+    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
 
     void repaint();
 
@@ -99,7 +96,7 @@ private:
     PtrMFCreateVideoPresenter ptrMFCreateVideoPresenter;
     IMFVideoPresenter *m_presenter;
     IMFVideoDisplayControl *m_displayControl;
-    QVideoWidget::AspectRatio m_aspectRatioMode;
+    QVideoWidget::AspectRatioMode m_aspectRatioMode;
     QSize m_sizeHint;
     QRect m_displayRect;
     WId m_winId;

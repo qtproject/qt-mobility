@@ -56,11 +56,8 @@ public:
 
     QWidget *videoWidget();
 
-    QVideoWidget::AspectRatio aspectRatio() const;
-    QSize customAspectRatio() const;
-
-    void setAspectRatio(QVideoWidget::AspectRatio ratio);
-    void setCustomAspectRatio(const QSize &customRatio);
+    QVideoWidget::AspectRatioMode aspectRatioMode() const;
+    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
 
     bool isFullScreen() const;
     void setFullScreen(bool fullScreen);
@@ -90,8 +87,7 @@ private:
     GstElement *m_videoSink;
     QGstreamerVideoWidget *m_widget;
     WId m_windowId;
-    QVideoWidget::AspectRatio m_aspectRatioMode;
-    QSize m_customAspectRatio;
+    QVideoWidget::AspectRatioMode m_aspectRatioMode;
 };
 
 #endif // QGSTREAMERVIDEOWIDGET_H

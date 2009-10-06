@@ -144,8 +144,7 @@ void QMediaImageViewerRenderer::showImage(const QImage &image)
 
 QMediaImageViewerWidget::QMediaImageViewerWidget(QWidget *parent)
     : QWidget(parent)
-    , m_aspectRatio(QVideoWidget::AspectRatioAuto)
-    , m_customAspectRatio(1, 1)
+    , m_aspectRatioMode(QVideoWidget::KeepAspectRatio)
 {
 }
 
@@ -156,31 +155,16 @@ void QMediaImageViewerWidget::showImage(const QImage &image)
     update();
 }
 
-void QMediaImageViewerWidget::setAspectRatio(QVideoWidget::AspectRatio ratio)
+void QMediaImageViewerWidget::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
 {
-    m_aspectRatio = ratio;
-
-    updateGeometry();
-}
-
-void QMediaImageViewerWidget::setCustomAspectRatio(const QSize &ratio)
-{
-    m_customAspectRatio = ratio;
+    m_aspectRatioMode = mode;
 
     updateGeometry();
 }
 
 QSize QMediaImageViewerWidget::sizeHint() const
 {
-    if (m_aspectRatio == QVideoWidget::AspectRatioCustom) {
-        QSize size = m_image.size();
-
-        size.setWidth(size.width() * m_customAspectRatio.width() / m_customAspectRatio.height());
-
-        return size;
-    } else {
-        return m_image.size();
-    }
+    return m_image.size();
 }
 
 void QMediaImageViewerWidget::paintEvent(QPaintEvent *)
@@ -192,11 +176,8 @@ void QMediaImageViewerWidget::paintEvent(QPaintEvent *)
 
         QSize size = m_image.size();
 
-        switch (m_aspectRatio) {
-        case QVideoWidget::AspectRatioCustom:
-            size.setWidth(size.width() * m_customAspectRatio.width() / m_customAspectRatio.height());
-            // fall through
-        case QVideoWidget::AspectRatioAuto:
+        switch (m_aspectRatioMode) {
+        case QVideoWidget::KeepAspectRatio:
             size.scale(displayRect.size(), Qt::KeepAspectRatio);
             {
                 QRect rect(QPoint(0, 0), size);
@@ -205,7 +186,7 @@ void QMediaImageViewerWidget::paintEvent(QPaintEvent *)
                 displayRect = rect;
             }
             break;
-        case QVideoWidget::AspectRatioWidget:
+        case QVideoWidget::IgnoreAspectRatio:
             break;
         }
 
@@ -226,14 +207,9 @@ QWidget *QMediaImageViewerWidgetControl::videoWidget()
     return m_widget;
 }
 
-void QMediaImageViewerWidgetControl::setAspectRatio(QVideoWidget::AspectRatio ratio)
+void QMediaImageViewerWidgetControl::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
 {
-    m_widget->setAspectRatio(ratio);
-}
-
-void QMediaImageViewerWidgetControl::setCustomAspectRatio(const QSize &customRatio)
-{
-    m_widget->setCustomAspectRatio(customRatio);
+    m_widget->setAspectRatioMode(mode);
 }
 
 void QMediaImageViewerWidgetControl::setFullScreen(bool fullScreen)

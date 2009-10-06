@@ -41,7 +41,7 @@ QWmpVideoOverlay::QWmpVideoOverlay(IWMPPlayer4 *player, IOleObject *object, QWmp
 	, m_player(player)
     , m_object(object)
     , m_inPlaceObject(0)
-    , m_aspectRatioMode(QVideoWidget::AspectRatioAuto)
+    , m_aspectRatioMode(QVideoWidget::KeepAspectRatio)
     , m_enabled(false)
 {
     HRESULT hr;
@@ -146,36 +146,27 @@ void QWmpVideoOverlay::setNativeSize(const QSize &size)
     }
 }
 
-QVideoWidget::AspectRatio QWmpVideoOverlay::aspectRatio() const
+QVideoWidget::AspectRatioMode QWmpVideoOverlay::aspectRatioMode() const
 {
     return m_aspectRatioMode;
 }
 
-void QWmpVideoOverlay::setAspectRatio(QVideoWidget::AspectRatio ratio)
+void QWmpVideoOverlay::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
 {
-	switch (ratio) {
-	case QVideoWidget::AspectRatioAuto:
+        switch (mode) {
+        case QVideoWidget::KeepAspectRatio:
 		m_player->put_stretchToFit(FALSE);
 
-		m_aspectRatioMode = ratio;
+                m_aspectRatioMode = mode;
 		break;
-	case QVideoWidget::AspectRatioWidget:
+        case QVideoWidget::IgnoreAspectRatio:
 		m_player->put_stretchToFit(TRUE);
 
-		m_aspectRatioMode = ratio;
+                m_aspectRatioMode = mode;
 		break;
 	default:
 		break;
 	}
-}
-
-QSize QWmpVideoOverlay::customAspectRatio() const
-{
-    return QSize();
-}
-
-void QWmpVideoOverlay::setCustomAspectRatio(const QSize &)
-{
 }
 
 void QWmpVideoOverlay::repaint()

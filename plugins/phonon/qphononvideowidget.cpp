@@ -41,43 +41,32 @@
 QPhononVideoWidget::QPhononVideoWidget(Phonon::VideoWidget *videoWidget, QObject *parent)
     :QVideoWidgetControl(parent), m_videoWidget(videoWidget)
 {
-    setAspectRatio(QVideoWidget::AspectRatioAuto);
+    setAspectRatioMode(QVideoWidget::KeepAspectRatio);
 }
 
 QPhononVideoWidget::~QPhononVideoWidget()
 {
 }
 
-QVideoWidget::AspectRatio QPhononVideoWidget::aspectRatio() const
+QVideoWidget::AspectRatioMode QPhononVideoWidget::aspectRatioMode() const
 {
-    return m_aspectRatio;
+    return m_aspectRatioMode;
 }
 
-QSize QPhononVideoWidget::customAspectRatio() const
+void QPhononVideoWidget::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
 {
-    return m_customAspectRatio;
-}
-
-void QPhononVideoWidget::setAspectRatio(QVideoWidget::AspectRatio ratio)
-{
-    m_aspectRatio = ratio;
-    switch (ratio) {
-        case QVideoWidget::AspectRatioAuto:
+    m_aspectRatioMode = mode;
+    switch (mode) {
+        case QVideoWidget::KeepAspectRatio:
             m_videoWidget->setAspectRatio(Phonon::VideoWidget::AspectRatioAuto);
             break;
-        case QVideoWidget::AspectRatioWidget:
+        case QVideoWidget::IgnoreAspectRatio:
             m_videoWidget->setAspectRatio(Phonon::VideoWidget::AspectRatioWidget);
             break;
         default:
             m_videoWidget->setAspectRatio(Phonon::VideoWidget::AspectRatioAuto);
     }
 }
-
-void QPhononVideoWidget::setCustomAspectRatio(const QSize &ratio)
-{
-    m_customAspectRatio = ratio;
-}
-
 
 bool QPhononVideoWidget::isFullScreen() const
 {

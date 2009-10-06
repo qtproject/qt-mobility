@@ -116,28 +116,18 @@ QVideoWindowControl::~QVideoWindowControl()
     Signals that the native dimensions of the video have changed.
 */
 
-/*!
-    \fn QVideoWindowControl::aspectRatio() const
 
-    Returns the aspect ratio policy for scaling the video.
+/*!
+    \fn QVideoWindowControl::aspectRatioMode() const
+
+    Returns how video is scaled to fit the display region with respect to its aspect ratio.
 */
 
 /*!
-    \fn QVideoWindowControl::setAspectRatio(QVideoWidget::AspectRatio ratio)
+    \fn QVideoWindowControl::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
 
-    Sets the aspect \a ratio policy for scaling the video.
-*/
-
-/*!
-    \fn QVideoWindowControl::customAspectRatio() const
-
-    Returns the a custom aspect ratio used to scale the video.
-*/
-
-/*!
-    \fn QVideoWindowControl::setCustomAspectRatio(const QSize &ratio)
-
-    Sets a custom aspect \a ratio used to scale the video.
+    Sets the aspect ratio \a mode which determines how video is scaled to the fit the display region
+    with respect to its aspect ratio.
 */
 
 /*!

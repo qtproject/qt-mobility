@@ -43,7 +43,7 @@ QGstreamerVideoOverlay::QGstreamerVideoOverlay(QObject *parent)
     : QVideoWindowControl(parent)
     , m_surface(new QX11VideoSurface)
     , m_videoSink(reinterpret_cast<GstElement*>(QVideoSurfaceGstSink::createSink(m_surface)))
-    , m_aspectRatioMode(QVideoWidget::AspectRatioAuto)
+    , m_aspectRatioMode(QVideoWidget::KeepAspectRatio)
     , m_fullScreen(false)
 {
     if (m_videoSink) {
@@ -85,26 +85,14 @@ void QGstreamerVideoOverlay::setDisplayRect(const QRect &rect)
     setScaledDisplayRect();
 }
 
-QVideoWidget::AspectRatio QGstreamerVideoOverlay::aspectRatio() const
+QVideoWidget::AspectRatioMode QGstreamerVideoOverlay::aspectRatioMode() const
 {
     return m_aspectRatioMode;
 }
 
-void QGstreamerVideoOverlay::setAspectRatio(QVideoWidget::AspectRatio ratio)
+void QGstreamerVideoOverlay::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
 {
-    m_aspectRatioMode = ratio;
-
-    setScaledDisplayRect();
-}
-
-QSize QGstreamerVideoOverlay::customAspectRatio() const
-{
-    return m_aspectRatio;
-}
-
-void QGstreamerVideoOverlay::setCustomAspectRatio(const QSize &customRatio)
-{
-    m_aspectRatio = customRatio;
+    m_aspectRatioMode = mode;
 
     setScaledDisplayRect();
 }
@@ -196,7 +184,7 @@ void QGstreamerVideoOverlay::surfaceFormatChanged()
 void QGstreamerVideoOverlay::setScaledDisplayRect()
 {
     switch (m_aspectRatioMode) {
-    case QVideoWidget::AspectRatioAuto:
+    case QVideoWidget::KeepAspectRatio:
         {
             QSize size = m_surface->surfaceFormat().viewport().size();
 
@@ -208,20 +196,8 @@ void QGstreamerVideoOverlay::setScaledDisplayRect()
             m_surface->setDisplayRect(rect);
         }
         break;
-    case QVideoWidget::AspectRatioWidget:
+    case QVideoWidget::IgnoreAspectRatio:
         m_surface->setDisplayRect(m_displayRect);
-        break;
-    case QVideoWidget::AspectRatioCustom:
-        {
-            QSize size = m_aspectRatio;
-
-            size.scale(m_surface->surfaceFormat().viewport().size(), Qt::KeepAspectRatio);
-
-            QRect rect(QPoint(0, 0), size);
-            rect.moveCenter(m_displayRect.center());
-
-            m_surface->setDisplayRect(rect);
-        }
         break;
     };
 }

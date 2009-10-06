@@ -63,7 +63,6 @@ private slots:
     void showWindowControl();
     void fullScreenWindowControl();
     void aspectRatioWindowControl();
-    void customPixelAspectRatioWindowControl();
     void sizeHintWindowControl_data() { sizeHint_data(); }
     void sizeHintWindowControl();
     void brightnessWindowControl_data() { color_data(); }
@@ -78,7 +77,6 @@ private slots:
     void showWidgetControl();
     void fullScreenWidgetControl();
     void aspectRatioWidgetControl();
-    void customPixelAspectRatioWidgetControl();
     void sizeHintWidgetControl_data() { sizeHint_data(); }
     void sizeHintWidgetControl();
     void brightnessWidgetControl_data() { color_data(); }
@@ -94,7 +92,6 @@ private slots:
     void showRendererControl();
     void fullScreenRendererControl();
     void aspectRatioRendererControl();
-    void customPixelAspectRatioRendererControl();
     void sizeHintRendererControl_data();
     void sizeHintRendererControl();
     void brightnessRendererControl_data() { color_data(); }
@@ -118,7 +115,7 @@ private:
     void color_data();
 };
 
-Q_DECLARE_METATYPE(QVideoWidget::AspectRatio)
+Q_DECLARE_METATYPE(QVideoWidget::AspectRatioMode)
 Q_DECLARE_METATYPE(const uchar *)
 
 class QtTestEventCounter : public QObject
@@ -191,7 +188,7 @@ public:
         , m_brightness(0)
         , m_contrast(0)
         , m_saturation(0)
-        , m_aspectRatioMode(QVideoWidget::AspectRatioAuto)
+        , m_aspectRatioMode(QVideoWidget::KeepAspectRatio)
         , m_fullScreen(0)
     {
     }
@@ -212,11 +209,8 @@ public:
     QSize nativeSize() const { return m_nativeSize; }
     void setNativeSize(const QSize &size) { m_nativeSize = size; emit nativeSizeChanged(); }
 
-    QVideoWidget::AspectRatio aspectRatio() const { return m_aspectRatioMode; }
-    void setAspectRatio(QVideoWidget::AspectRatio ratio) { m_aspectRatioMode = ratio; }
-
-    QSize customAspectRatio() const { return m_customRatio; }
-    void setCustomAspectRatio(const QSize &customRatio) { m_customRatio = customRatio; }
+    QVideoWidget::AspectRatioMode aspectRatioMode() const { return m_aspectRatioMode; }
+    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode) { m_aspectRatioMode = mode; }
 
     int brightness() const { return m_brightness; }
     void setBrightness(int brightness) { emit brightnessChanged(m_brightness = brightness); }
@@ -237,10 +231,9 @@ private:
     int m_contrast;
     int m_hue;
     int m_saturation;
-    QVideoWidget::AspectRatio m_aspectRatioMode;
+    QVideoWidget::AspectRatioMode m_aspectRatioMode;
     QRect m_displayRect;
     QSize m_nativeSize;
-    QSize m_customRatio;
     bool m_fullScreen;
 };
 
@@ -252,7 +245,7 @@ public:
         , m_contrast(1.0)
         , m_hue(1.0)
         , m_saturation(1.0)
-        , m_aspectRatioMode(QVideoWidget::AspectRatioAuto)
+        , m_aspectRatioMode(QVideoWidget::KeepAspectRatio)
         , m_fullScreen(false)
     {
     }
@@ -260,11 +253,8 @@ public:
     bool isFullScreen() const { return m_fullScreen; }
     void setFullScreen(bool fullScreen) { emit fullScreenChanged(m_fullScreen = fullScreen); }
 
-    QVideoWidget::AspectRatio aspectRatio() const { return m_aspectRatioMode; }
-    void setAspectRatio(QVideoWidget::AspectRatio ratio) { m_aspectRatioMode = ratio; }
-
-    QSize customAspectRatio() const { return m_customRatio; }
-    void setCustomAspectRatio(const QSize &customRatio) { m_customRatio = customRatio; }
+    QVideoWidget::AspectRatioMode aspectRatioMode() const { return m_aspectRatioMode; }
+    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode) { m_aspectRatioMode = mode; }
 
     int brightness() const { return m_brightness; }
     void setBrightness(int brightness) { emit brightnessChanged(m_brightness = brightness); }
@@ -295,8 +285,7 @@ private:
     int m_contrast;
     int m_hue;
     int m_saturation;
-    QVideoWidget::AspectRatio m_aspectRatioMode;
-    QSize m_customRatio;
+    QVideoWidget::AspectRatioMode m_aspectRatioMode;
     QSize m_sizeHint;
     bool m_fullScreen;
 };
@@ -644,59 +633,59 @@ void tst_QVideoWidget::showRendererControl()
 void tst_QVideoWidget::aspectRatioWindowControl()
 {
     QtTestVideoObject object(new QtTestWindowControl, 0, 0);
-    object.testService->windowControl->setAspectRatio(QVideoWidget::AspectRatioWidget);
+    object.testService->windowControl->setAspectRatioMode(QVideoWidget::IgnoreAspectRatio);
 
     QVideoWidget widget(&object);
 
-    // Test the aspect ratio defaults to auto.
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioAuto);
+    // Test the aspect ratio defaults to keeping the aspect ratio.
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::KeepAspectRatio);
 
     // Test the control has been informed of the aspect ratio change, post show.
     widget.show();
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioAuto);
-    QCOMPARE(object.testService->windowControl->aspectRatio(), QVideoWidget::AspectRatioAuto);
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::KeepAspectRatio);
+    QCOMPARE(object.testService->windowControl->aspectRatioMode(), QVideoWidget::KeepAspectRatio);
 
     // Test an aspect ratio change is enforced immediately while visible.
-    widget.setAspectRatio(QVideoWidget::AspectRatioWidget);
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioWidget);
-    QCOMPARE(object.testService->windowControl->aspectRatio(), QVideoWidget::AspectRatioWidget);
+    widget.setAspectRatioMode(QVideoWidget::IgnoreAspectRatio);
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::IgnoreAspectRatio);
+    QCOMPARE(object.testService->windowControl->aspectRatioMode(), QVideoWidget::IgnoreAspectRatio);
 
     // Test an aspect ratio set while not visible is respected.
     widget.hide();
-    widget.setAspectRatio(QVideoWidget::AspectRatioCustom);
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioCustom);
+    widget.setAspectRatioMode(QVideoWidget::KeepAspectRatio);
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::KeepAspectRatio);
     widget.show();
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioCustom);
-    QCOMPARE(object.testService->windowControl->aspectRatio(), QVideoWidget::AspectRatioCustom);
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::KeepAspectRatio);
+    QCOMPARE(object.testService->windowControl->aspectRatioMode(), QVideoWidget::KeepAspectRatio);
 }
 
 void tst_QVideoWidget::aspectRatioWidgetControl()
 {
     QtTestVideoObject object(0, new QtTestWidgetControl, 0);
-    object.testService->widgetControl->setAspectRatio(QVideoWidget::AspectRatioWidget);
+    object.testService->widgetControl->setAspectRatioMode(QVideoWidget::IgnoreAspectRatio);
 
     QVideoWidget widget(&object);
 
-    // Test the aspect ratio defaults to auto.
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioAuto);
+    // Test the aspect ratio defaults to keeping the aspect ratio.
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::KeepAspectRatio);
 
     // Test the control has been informed of the aspect ratio change, post show.
     widget.show();
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioAuto);
-    QCOMPARE(object.testService->widgetControl->aspectRatio(), QVideoWidget::AspectRatioAuto);
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::KeepAspectRatio);
+    QCOMPARE(object.testService->widgetControl->aspectRatioMode(), QVideoWidget::KeepAspectRatio);
 
     // Test an aspect ratio change is enforced immediately while visible.
-    widget.setAspectRatio(QVideoWidget::AspectRatioWidget);
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioWidget);
-    QCOMPARE(object.testService->widgetControl->aspectRatio(), QVideoWidget::AspectRatioWidget);
+    widget.setAspectRatioMode(QVideoWidget::IgnoreAspectRatio);
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::IgnoreAspectRatio);
+    QCOMPARE(object.testService->widgetControl->aspectRatioMode(), QVideoWidget::IgnoreAspectRatio);
 
     // Test an aspect ratio set while not visible is respected.
     widget.hide();
-    widget.setAspectRatio(QVideoWidget::AspectRatioCustom);
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioCustom);
+    widget.setAspectRatioMode(QVideoWidget::KeepAspectRatio);
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::KeepAspectRatio);
     widget.show();
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioCustom);
-    QCOMPARE(object.testService->widgetControl->aspectRatio(), QVideoWidget::AspectRatioCustom);
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::KeepAspectRatio);
+    QCOMPARE(object.testService->widgetControl->aspectRatioMode(), QVideoWidget::KeepAspectRatio);
 }
 
 #ifndef QT_NO_MULTIMEDIA
@@ -706,107 +695,23 @@ void tst_QVideoWidget::aspectRatioRendererControl()
 
     QVideoWidget widget(&object);
 
-    // Test the aspect ratio defaults to auto.
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioAuto);
+    // Test the aspect ratio defaults to keeping the aspect ratio.
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::KeepAspectRatio);
 
     // Test the control has been informed of the aspect ratio change, post show.
     widget.show();
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioAuto);
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::KeepAspectRatio);
 
     // Test an aspect ratio change is enforced immediately while visible.
-    widget.setAspectRatio(QVideoWidget::AspectRatioWidget);
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioWidget);
+    widget.setAspectRatioMode(QVideoWidget::IgnoreAspectRatio);
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::IgnoreAspectRatio);
 
     // Test an aspect ratio set while not visible is respected.
     widget.hide();
-    widget.setAspectRatio(QVideoWidget::AspectRatioCustom);
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioCustom);
+    widget.setAspectRatioMode(QVideoWidget::KeepAspectRatio);
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::KeepAspectRatio);
     widget.show();
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioCustom);
-}
-#endif
-
-void tst_QVideoWidget::customPixelAspectRatioWindowControl()
-{
-    QtTestVideoObject object(new QtTestWindowControl, 0, 0);
-    object.testService->windowControl->setCustomAspectRatio(QSize(4, 3));
-
-    QVideoWidget widget(&object);
-
-    // Test the aspect ratio defaults to auto.
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(1, 1));
-
-    // Test the control has been informed of the aspect ratio change, post show.
-    widget.show();
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(1, 1));
-    QCOMPARE(object.testService->windowControl->customAspectRatio(), QSize(1, 1));
-
-    // Test an aspect ratio change is enforced immediately while visible.
-    widget.setCustomPixelAspectRatio(QSize(4, 3));
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(4, 3));
-    QCOMPARE(object.testService->windowControl->customAspectRatio(), QSize(4, 3));
-
-    // Test an aspect ratio set while not visible is respected.
-    widget.hide();
-    widget.setCustomPixelAspectRatio(QSize(16, 9));
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(16, 9));
-    widget.show();
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(16, 9));
-    QCOMPARE(object.testService->windowControl->customAspectRatio(), QSize(16, 9));
-}
-
-void tst_QVideoWidget::customPixelAspectRatioWidgetControl()
-{
-    QtTestVideoObject object(0, new QtTestWidgetControl, 0);
-    object.testService->widgetControl->setCustomAspectRatio(QSize(4, 3));
-
-    QVideoWidget widget(&object);
-
-    // Test the aspect ratio defaults to auto.
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(1, 1));
-
-    // Test the control has been informed of the aspect ratio change, post show.
-    widget.show();
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(1, 1));
-    QCOMPARE(object.testService->widgetControl->customAspectRatio(), QSize(1, 1));
-
-    // Test an aspect ratio change is enforced immediately while visible.
-    widget.setCustomPixelAspectRatio(QSize(4, 3));
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(4, 3));
-    QCOMPARE(object.testService->widgetControl->customAspectRatio(), QSize(4, 3));
-
-    // Test an aspect ratio set while not visible is respected.
-    widget.hide();
-    widget.setCustomPixelAspectRatio(QSize(16, 9));
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(16, 9));
-    widget.show();
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(16, 9));
-    QCOMPARE(object.testService->widgetControl->customAspectRatio(), QSize(16, 9));
-}
-
-#ifndef QT_NO_MULTIMEDIA
-void tst_QVideoWidget::customPixelAspectRatioRendererControl()
-{
-    QtTestVideoObject object(0, new QtTestWidgetControl, 0);
-    QVideoWidget widget(&object);
-
-    // Test the aspect ratio defaults to auto.
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(1, 1));
-
-    // Test the control has been informed of the aspect ratio change, post show.
-    widget.show();
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(1, 1));
-
-    // Test an aspect ratio change is enforced immediately while visible.
-    widget.setCustomPixelAspectRatio(QSize(4, 3));
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(4, 3));
-
-    // Test an aspect ratio set while not visible is respected.
-    widget.hide();
-    widget.setCustomPixelAspectRatio(QSize(16, 9));
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(16, 9));
-    widget.show();
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(16, 9));
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::KeepAspectRatio);
 }
 #endif
 
@@ -852,15 +757,11 @@ void tst_QVideoWidget::sizeHintRendererControl_data()
     QTest::addColumn<QSize>("frameSize");
     QTest::addColumn<QRect>("viewport");
     QTest::addColumn<QSize>("pixelAspectRatio");
-    QTest::addColumn<QVideoWidget::AspectRatio>("aspectRatioMode");
-    QTest::addColumn<QSize>("customAspectRatio");
     QTest::addColumn<QSize>("expectedSize");
 
     QTest::newRow("640x480")
             << QSize(640, 480)
             << QRect(0, 0, 640, 480)
-            << QSize(1, 1)
-            << QVideoWidget::AspectRatioAuto
             << QSize(1, 1)
             << QSize(640, 480);
 
@@ -868,33 +769,14 @@ void tst_QVideoWidget::sizeHintRendererControl_data()
             << QSize(800, 600)
             << QRect(80, 60, 640, 480)
             << QSize(1, 1)
-            << QVideoWidget::AspectRatioAuto
-            << QSize(1, 1)
             << QSize(640, 480);
 
     QTest::newRow("800x600, (80,60, 640x480) viewport, 4:3")
             << QSize(800, 600)
             << QRect(80, 60, 640, 480)
             << QSize(4, 3)
-            << QVideoWidget::AspectRatioAuto
-            << QSize(1, 1)
             << QSize(853, 480);
 
-    QTest::newRow("800x600, 4:3, custom 5:4")
-            << QSize(800, 600)
-            << QRect(0, 0, 800, 600)
-            << QSize(4, 3)
-            << QVideoWidget::AspectRatioCustom
-            << QSize(5, 4)
-            << QSize(1000, 600);
-
-    QTest::newRow("800x600, 4:3, custom 1:1")
-            << QSize(800, 600)
-            << QRect(0, 0, 800, 600)
-            << QSize(4, 3)
-            << QVideoWidget::AspectRatioCustom
-            << QSize(1, 1)
-            << QSize(800, 600);
 }
 
 void tst_QVideoWidget::sizeHintRendererControl()
@@ -902,14 +784,10 @@ void tst_QVideoWidget::sizeHintRendererControl()
     QFETCH(QSize, frameSize);
     QFETCH(QRect, viewport);
     QFETCH(QSize, pixelAspectRatio);
-    QFETCH(QVideoWidget::AspectRatio, aspectRatioMode);
-    QFETCH(QSize, customAspectRatio);
     QFETCH(QSize, expectedSize);
 
     QtTestVideoObject object(0, 0, new QtTestRendererControl);
     QVideoWidget widget(&object);
-    widget.setAspectRatio(aspectRatioMode);
-    widget.setCustomPixelAspectRatio(customAspectRatio);
 
     widget.show();
 

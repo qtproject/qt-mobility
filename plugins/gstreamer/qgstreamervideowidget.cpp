@@ -210,31 +210,21 @@ QWidget *QGstreamerVideoWidgetControl::videoWidget()
     return m_widget;
 }
 
-QVideoWidget::AspectRatio QGstreamerVideoWidgetControl::aspectRatio() const
+QVideoWidget::AspectRatioMode QGstreamerVideoWidgetControl::aspectRatioMode() const
 {
     return m_aspectRatioMode;
 }
 
-QSize QGstreamerVideoWidgetControl::customAspectRatio() const
-{
-    return m_customAspectRatio;
-}
-
-void QGstreamerVideoWidgetControl::setAspectRatio(QVideoWidget::AspectRatio ratio)
+void QGstreamerVideoWidgetControl::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
 {
     if (m_videoSink) {
         g_object_set(G_OBJECT(m_videoSink),
                      "force-aspect-ratio",
-                     (ratio == QVideoWidget::AspectRatioAuto),
+                     (mode == QVideoWidget::KeepAspectRatio),
                      (const char*)NULL);
     }
 
-    m_aspectRatioMode = ratio;
-}
-
-void QGstreamerVideoWidgetControl::setCustomAspectRatio(const QSize &ratio)
-{
-    m_customAspectRatio = ratio;
+    m_aspectRatioMode = mode;
 }
 
 bool QGstreamerVideoWidgetControl::isFullScreen() const

@@ -123,11 +123,8 @@ public:
 
     void showImage(const QImage &image);
 
-    QVideoWidget::AspectRatio aspectRatio() const { return m_aspectRatio; }
-    void setAspectRatio(QVideoWidget::AspectRatio ratio);
-
-    QSize customAspectRatio() const { return m_customAspectRatio; }
-    void setCustomAspectRatio(const QSize &ratio);
+    QVideoWidget::AspectRatioMode aspectRatioMode() const { return m_aspectRatioMode; }
+    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
 
     QSize sizeHint() const;
 
@@ -135,8 +132,7 @@ protected:
     void paintEvent(QPaintEvent *event);
 
 private:
-    QVideoWidget::AspectRatio m_aspectRatio;
-    QSize m_customAspectRatio;
+    QVideoWidget::AspectRatioMode m_aspectRatioMode;
     QImage m_image;
 };
 
@@ -148,11 +144,8 @@ public:
 
     QWidget *videoWidget();
 
-    QVideoWidget::AspectRatio aspectRatio() const { return m_widget->aspectRatio(); }
-    void setAspectRatio(QVideoWidget::AspectRatio ratio);
-
-    QSize customAspectRatio() const { return m_widget->customAspectRatio(); }
-    void setCustomAspectRatio(const QSize &customRatio);
+    QVideoWidget::AspectRatioMode aspectRatioMode() const { return m_widget->aspectRatioMode(); }
+    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
 
     bool isFullScreen() const { return m_fullScreen; }
     void setFullScreen(bool fullScreen);
