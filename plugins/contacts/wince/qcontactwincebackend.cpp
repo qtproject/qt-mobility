@@ -386,6 +386,22 @@ QString QContactWinCEEngine::synthesiseDisplayLabel(const QContact& contact, QCo
     }
 }
 
+/*! \reimp */
+bool QContactWinCEEngine::filterSupported(const QContactFilter& filter) const
+{
+    switch (filter.type()) {
+        case QContactFilter::InvalidFilter:
+        case QContactFilter::DefaultFilter:
+        case QContactFilter::IdListFilter:
+        case QContactFilter::ContactDetailFilter:
+        case QContactFilter::ContactDetailRangeFilter:
+        case QContactFilter::ActionFilter:
+        case QContactFilter::IntersectionFilter:
+        case QContactFilter::UnionFilter:
+            return true;
+    }
+    return false;
+}
 /*!
  * Returns the list of data types supported by the WinCE engine
  */

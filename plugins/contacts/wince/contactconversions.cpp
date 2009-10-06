@@ -1039,7 +1039,7 @@ static QString getPropertyName(const CEPROPID& id)
 static QString convertToCEPropValString(const CEPROPID& id, const QVariant& val)
 {
     if (id != PIMPR_INVALID_ID && val.isValid()) {
-        if (id & CEVT_LPWSTR) {
+        if ((id & CEVT_LPWSTR) || (id & CEVT_FILETIME)) {
             return QString("\"%1\"").arg(val.toString());
         } else {
             return val.toString();
@@ -1092,6 +1092,7 @@ void QContactWinCEEngine::buildHashForContactDetailToPoomPropId() const
         Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactEmailAddress, FieldEmailAddress, PIMPR_EMAIL3_ADDRESS);
 
         // Phone numbers
+        //XXX If too many PIM_PR* bind to the same detail field will cause the POOM query string too long...
         Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactPhoneNumber, FieldNumber, PIMPR_BUSINESS_TELEPHONE_NUMBER);
         Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactPhoneNumber, FieldNumber, PIMPR_BUSINESS2_TELEPHONE_NUMBER);
         Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactPhoneNumber, FieldNumber, PIMPR_CAR_TELEPHONE_NUMBER);
@@ -1308,7 +1309,7 @@ QString QContactWinCEEngine::convertFilterToQueryString(const QContactFilter& fi
 /*!
  * Return a list of QContact ids from the given POOM item \a collection.
  */
-QList<QUniqueId> QContactWinCEEngine::convertP2QIdList(SimpleComPointer<IPOutlookItemCollection> collection) const
+QList<QUniqueId> QContactWinCEEngine::convertP2QIdList(const SimpleComPointer<IPOutlookItemCollection>& collection) const
 {
     SimpleComPointer<IPOlItems2> items;
     QList<QUniqueId> ids;
@@ -1346,27 +1347,30 @@ QList<QUniqueId> QContactWinCEEngine::convertP2QIdList(SimpleComPointer<IPOutloo
 /*!
  * Return a list of contacts from the given POOM \a collection.
  */
-bool QContactWinCEEngine::convertP2QContacts(SimpleComPointer<IPOutlookItemCollection> collection, QList<QContact>* contacts) const
+bool QContactWinCEEngine::convertP2QContacts(const SimpleComPointer<IPOutlookItemCollection>& collection, QList<QContact>* contacts) const
 {
     int itemCount;
-    
-    collection->get_Count(&itemCount);
-    SimpleComPointer<IDispatch> idisp = 0;
-    SimpleComPointer<IItem> iItem;
-    for (int i = 0; i < itemCount; i++) {
-        HRESULT hr = collection->Item(i, &idisp);
-        if (SUCCEEDED(hr) &&
-            SUCCEEDED(hr = idisp->QueryInterface<IItem>(&iItem))) {
-                contacts->append(convertToQContact(iItem));
-        } else {
-            qDebug() << QString("Eternal sadness: %1").arg(HRESULT_CODE(hr), 0, 16);
-            return false;
+    HRESULT hr;
+    hr = collection->get_Count(&itemCount);
+    if (SUCCEEDED(hr)) {
+        SimpleComPointer<IDispatch> idisp = 0;
+        SimpleComPointer<IItem> iItem;
+        for (int i = 1; i <= itemCount; i++) {
+            HRESULT hr = collection->Item(i, &idisp);
+            if (SUCCEEDED(hr) &&
+                SUCCEEDED(hr = idisp->QueryInterface<IItem>(&iItem))) {
+                    contacts->append(convertToQContact(iItem));
+            } else {
+                qDebug() << QString("Eternal sadness: %1").arg(HRESULT_CODE(hr), 0, 16);
+                return false;
+            }
         }
+        return true;
     }
-    return true;
+    return false;
 }
 
-static bool sortPOOMContacts(SimpleComPointer<IPOutlookItemCollection> collection, const QContactSortOrder& sortOrder)
+static bool sortPOOMContacts(const SimpleComPointer<IPOutlookItemCollection>& collection, const QContactSortOrder& sortOrder)
 {
     HRESULT hr = S_FALSE;
     QList<CEPROPID> ids = convertToCEPropIds(sortOrder.detailDefinitionName(), sortOrder.detailFieldName());
@@ -1405,9 +1409,9 @@ QList<QUniqueId> QContactWinCEEngine::contacts(const QContactFilter& filter, con
                 ids = convertP2QIdList(collection);
             } else {
                 //Multi sort orders or native sorting failed, fall back to the generic sorting
-                QList<QContact> contacts;
-                if (convertP2QContacts(collection, &contacts)) {
-                    ids = sortContacts(contacts, sortOrders);
+                QList<QContact> filteredContacts;
+                if (convertP2QContacts(collection, &filteredContacts)) {
+                    ids = sortContacts(filteredContacts, sortOrders);
                 } else {
                     error = QContactManager::UnspecifiedError;
                     qDebug() << "Wince contact manager internal error";
@@ -1416,7 +1420,7 @@ QList<QUniqueId> QContactWinCEEngine::contacts(const QContactFilter& filter, con
             return ids;
         } else {
             //Should we fail back to generic filtering here?
-            qDebug() << "Can't filter contacts" << HRESULT_CODE(hr);
+            qDebug() << "Can't filter contacts with query string:" << query << ", HRESULT=" << HRESULT_CODE(hr);
             error = QContactManager::UnspecifiedError;
         }
     }
@@ -1427,24 +1431,28 @@ QList<QUniqueId> QContactWinCEEngine::contacts(const QContactFilter& filter, con
 QList<QUniqueId> QContactWinCEEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     QList<QUniqueId> ids;
-    SimpleComPointer<IPOutlookItemCollection> newCollection;
-    HRESULT hr = d->m_collection->Restrict(TEXT("[Oid <> 0]"), &newCollection);
-
-    if (SUCCEEDED(hr)) {
-        //Try native sorting first...
-        if (sortOrders.size() == 1 && sortPOOMContacts(newCollection, sortOrders.at(0))) {
-            ids = convertP2QIdList(newCollection);
-            return ids;
-        } 
-    }
-
-    //Multi sort orders or native sorting failed, fall back to the generic sorting
-    QList<QContact> contacts;
-    if (convertP2QContacts(d->m_collection, &contacts)) {
-        ids = sortContacts(contacts, sortOrders);
+    if (sortOrders.isEmpty()) {
+        ids = d->m_ids;
     } else {
-        error = QContactManager::UnspecifiedError;
-        qDebug() << "Wince contact manager internal error";
+        SimpleComPointer<IPOutlookItemCollection> newCollection;
+        HRESULT hr = d->m_collection->Restrict(TEXT("[Oid <> 0]"), &newCollection);
+
+        if (SUCCEEDED(hr)) {
+            //Try native sorting first...
+            if (sortOrders.size() == 1 && sortPOOMContacts(newCollection, sortOrders.at(0))) {
+                ids = convertP2QIdList(newCollection);
+                return ids;
+            } 
+        }
+
+        //Multi sort orders or native sorting failed, fall back to the generic sorting
+        QList<QContact> contacts;
+        if (convertP2QContacts(d->m_collection, &contacts)) {
+            ids = sortContacts(contacts, sortOrders);
+        } else {
+            error = QContactManager::UnspecifiedError;
+            qDebug() << "Wince contact manager internal error";
+        }
     }
     return ids;
 }

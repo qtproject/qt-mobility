@@ -1652,16 +1652,23 @@ void QContactManagerEngine::addSorted(QList<QContact>* sorted, const QContact& t
     sorted->append(toAdd);
 }
 
-QList<QUniqueId> QContactManagerEngine::sortContacts(const QList<QContact>& contacts, const QList<QContactSortOrder>& sortOrders)
+QList<QUniqueId> QContactManagerEngine::sortContacts(const QList<QContact>& cs, const QList<QContactSortOrder>& sortOrders)
 {
     QList<QUniqueId> sortedIds;
     QList<QContact> sortedContacts;
+    if (!sortOrders.isEmpty()) {
+        foreach (const QContact& c, cs) {
+            QContactManagerEngine::addSorted(&sortedContacts, c, sortOrders);
+        }
 
-    foreach (const QContact& contact, contacts) {
-        QContactManagerEngine::addSorted(&sortedContacts, contact, sortOrders);
+        foreach(const QContact c, sortedContacts) {
+            sortedIds.append(c.id());
+        }
+    } else {
+        foreach(const QContact c, cs) {
+            sortedIds.append(c.id());
+        }
     }
-    for (int i = 0; i < sortedContacts.size(); i++)
-        sortedIds.append(sortedContacts.at(i).id());
     return sortedIds;
 }
 
