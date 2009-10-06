@@ -40,7 +40,8 @@
 
 #include "qtcontactsglobal.h"
 
-class QContactRelationshipData;
+class QContactRelationshipPrivate;
+
 class QTCONTACTS_EXPORT QContactRelationship
 {
 public:
@@ -63,6 +64,11 @@ public:
     QContactRelationship();
     ~QContactRelationship();
 
+    QContactRelationship(const QContactRelationship& other);
+    QContactRelationship& operator=(const QContactRelationship& other);
+    bool operator==(const QContactRelationship &other) const;
+    bool operator!=(const QContactRelationship &other) const { return !(*this==other); }
+
     QUniqueId leftId() const;
     QUniqueId rightId() const;
     QString leftManagerUri() const;
@@ -78,7 +84,7 @@ public:
     void setPriority(int priority);
 
 private:
-    QSharedDataPointer<QContactRelationshipData> d;
+    QSharedDataPointer<QContactRelationshipPrivate> d;
 };
 
 #endif

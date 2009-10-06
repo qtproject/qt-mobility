@@ -403,7 +403,8 @@ QList<QContactRelationship> QContactManager::relationships(const QUniqueId& part
  * of the relationship has changed, the relationship in the database will be updated with the new priority.  If the relationship
  * already exists in the database, and the priority is the same, this function will return \c false and the error will be set
  * to \c QContactManager::AlreadyExistsError.  If the relationship is saved or updated successfully, this function will return
- * \c true and error will be set to \c QContactManager::NoError.
+ * \c true and error will be set to \c QContactManager::NoError.  If the given relationship could not be saved in the database
+ * the function will return \c false and error will be set to \c QContactManager::NotSupportedError.
  *
  * If the left contact manager URI or the right contact manager URI is not set in the \a relationship, these will be
  * automatically set to the URI of this manager, before the relationship is saved.

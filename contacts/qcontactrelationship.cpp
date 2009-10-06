@@ -40,7 +40,7 @@
  * \brief Describes a relationship between two contacts.
  *
  * Each relationship is uniquely identified by the combination of the
- * left contact id, the relationship type, and the right contact id.
+ * left contact id, the left contact manager uri, the relationship type, the right contact id and the right contact manager uri.
  * That is, the priority of a relationship is not a defining datum.
  */
 
@@ -84,7 +84,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeSpouse, "Spouse");
  * Constructs a new relationship
  */
 QContactRelationship::QContactRelationship()
-        : d(new QContactRelationshipData)
+        : d(new QContactRelationshipPrivate)
 {
 }
 
@@ -93,6 +93,42 @@ QContactRelationship::QContactRelationship()
  */
 QContactRelationship::~QContactRelationship()
 {
+}
+
+/*!
+ * Creates a copy of the \a other relationship
+ */
+QContactRelationship::QContactRelationship(const QContactRelationship& other)
+        : d(other.d)
+{
+}
+
+/*!
+ * Assigns this relationship to be equal to \a other
+ */
+QContactRelationship& QContactRelationship::operator=(const QContactRelationship& other)
+{
+    d = other.d;
+    return *this;
+}
+
+/*!
+ * Returns true if this relationship is equal to the \a other relationship, otherwise returns false.
+ * Ignores the priority of the relationship when calculating equality.
+ */
+bool QContactRelationship::operator==(const QContactRelationship &other) const
+{
+    if (d->m_leftId != other.d->m_leftId)
+        return false;
+    if (d->m_rightId != other.d->m_rightId)
+        return false;
+    if (d->m_leftManagerUri != other.d->m_leftManagerUri)
+        return false;
+    if (d->m_rightManagerUri != other.d->m_rightManagerUri)
+        return false;
+    if (d->m_relationshipType != other.d->m_relationshipType)
+        return false;
+    return true;
 }
 
 /*!

@@ -45,16 +45,15 @@
 // We mean it.
 //
 
-#include "qtcontactsglobal.h"
-
 #include <QString>
-#include <QVariant>
 #include <QSharedData>
 
-class QContactRelationshipData : public QSharedData
+#include "qtcontactsglobal.h"
+
+class QContactRelationshipPrivate : public QSharedData
 {
 public:
-    QContactRelationshipData()
+    QContactRelationshipPrivate()
             : QSharedData(),
             m_leftId(0),
             m_rightId(0),
@@ -62,7 +61,7 @@ public:
     {
     }
 
-    QContactRelationshipData(const QContactRelationshipData& other)
+    QContactRelationshipPrivate(const QContactRelationshipPrivate& other)
             : QSharedData(other),
             m_leftId(other.m_leftId),
             m_rightId(other.m_rightId),
@@ -73,7 +72,7 @@ public:
     {
     }
 
-    ~QContactRelationshipData()
+    ~QContactRelationshipPrivate()
     {
     }
 

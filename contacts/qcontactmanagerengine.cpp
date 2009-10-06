@@ -254,8 +254,11 @@ QUniqueId QContactManagerEngine::selfContactId(QContactManager::Error& error) co
  * If no relationships are found, \a error is set to \c QContactManager::DoesNotExistError; if the operation completes successfully, \a error is set
  * to \c QContactManager::NoError.
  */
-QList<QContactRelationship> QContactManager::relationships(const QUniqueId& leftId, const QString& relationshipType, const QUniqueId& rightId, QContactManager::Error& error)
+QList<QContactRelationship> QContactManagerEngine::relationships(const QUniqueId& leftId, const QString& relationshipType, const QUniqueId& rightId, QContactManager::Error& error)
 {
+    Q_UNUSED(leftId);
+    Q_UNUSED(relationshipType);
+    Q_UNUSED(rightId);
     error = QContactManager::DoesNotExistError;
     return QList<QContactRelationship>();
 }
@@ -267,9 +270,12 @@ QList<QContactRelationship> QContactManager::relationships(const QUniqueId& left
  * If no relationships are found, \a error is set to \c QContactManager::DoesNotExistError; if the operation completes successfully, \a error is set
  * to \c QContactManager::NoError.
  */
-QList<QContactRelationship> QContactManager::relationships(const QString& relationshipType, const QUniqueId& participantId, QContactManager::Error& error)
+QList<QContactRelationship> QContactManagerEngine::relationships(const QString& relationshipType, const QUniqueId& participantId, QContactManager::Error& error)
 {
-    return d->m_engine->relationships(relationshipType, participantId, d->m_error);
+    Q_UNUSED(relationshipType);
+    Q_UNUSED(participantId);
+    error = QContactManager::DoesNotExistError;
+    return QList<QContactRelationship>();
 }
 
 /*!
@@ -277,9 +283,11 @@ QList<QContactRelationship> QContactManager::relationships(const QString& relati
  * If no relationships are found, \a error is set to \c QContactManager::DoesNotExistError; if the operation completes successfully, \a error is set
  * to \c QContactManager::NoError.
  */
-QList<QContactRelationship> QContactManager::relationships(const QUniqueId& participantId, QContactManager::Error& error)
+QList<QContactRelationship> QContactManagerEngine::relationships(const QUniqueId& participantId, QContactManager::Error& error)
 {
-    return d->m_engine->relationships(participantId, d->m_error);
+    Q_UNUSED(participantId);
+    error = QContactManager::DoesNotExistError;
+    return QList<QContactRelationship>();
 }
 
 /*!
@@ -287,22 +295,27 @@ QList<QContactRelationship> QContactManager::relationships(const QUniqueId& part
  * of the relationship has changed, the relationship in the database will be updated with the new priority.  If the relationship
  * already exists in the database, and the priority is the same, this function will return \c false and the \a error will be set
  * to \c QContactManager::AlreadyExistsError.  If the relationship is saved or updated successfully, this function will return
- * \c true and \a error will be set to \c QContactManager::NoError.
+ * \c true and \a error will be set to \c QContactManager::NoError.  If the given relationship could not be saved in the database
+ * the function will return \c false and \a error will be set to \c QContactManager::NotSupportedError.
  *
  * If the left contact manager URI or the right contact manager URI is not set in the \a relationship, these will be
  * automatically set to the URI of this manager, before the relationship is saved.
  */
-bool QContactManager::saveRelationship(QContactRelationship* relationship, QContactManager::Error& error)
+bool QContactManagerEngine::saveRelationship(QContactRelationship* relationship, QContactManager::Error& error)
 {
-    return d->m_engine->saveRelationship(relationship, d->m_error);
+    Q_UNUSED(relationship);
+    error = QContactManager::NotSupportedError;
+    return false;
 }
 
 /*!
  * Saves the given \a relationships in the database and returns a list of error codes.  Any error which occurs will be saved in \a error.
  */
-QList<QContactManager::Error> QContactManager::saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error)
+QList<QContactManager::Error> QContactManagerEngine::saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error)
 {
-    return d->m_engine->saveRelationships(relationships, d->m_error);
+    Q_UNUSED(relationships);
+    error = QContactManager::NotSupportedError;
+    return QList<QContactManager::Error>();
 }
 
 /*!
@@ -313,17 +326,21 @@ QList<QContactManager::Error> QContactManager::saveRelationships(QList<QContactR
  *
  * The priority of the relationship is ignored when determining existence of the relationship.
  */
-bool QContactManager::removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error)
+bool QContactManagerEngine::removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error)
 {
-    return d->m_engine->removeRelationship(relationship, d->m_error);
+    Q_UNUSED(relationship);
+    error = QContactManager::DoesNotExistError;
+    return false;
 }
 
 /*!
  * Removes the given \a relationships from the database and returns a list of error codes.  Any error which occurs will be saved in \a error.
  */
-QList<QContactManager::Error> QContactManager::removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error)
+QList<QContactManager::Error> QContactManagerEngine::removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error)
 {
-    return d->m_engine->removeRelationships(relationships, d->m_error);
+    Q_UNUSED(relationships);
+    error = QContactManager::DoesNotExistError;
+    return QList<QContactManager::Error>();
 }
 
 /*!
