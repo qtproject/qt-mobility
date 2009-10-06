@@ -90,7 +90,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
   Create a new playlist object for with the given \a parent.
   If source is null, internal local memory playlist source will be created.
   */
-QMediaPlaylist::QMediaPlaylist(QMediaObject *parent)
+QMediaPlaylist::QMediaPlaylist(QMediaObject *mediaObject, QObject *parent)
     : QObject(parent)
     , d_ptr(new QMediaPlaylistPrivate)
 {
@@ -98,8 +98,8 @@ QMediaPlaylist::QMediaPlaylist(QMediaObject *parent)
 
     d->q_ptr = this;
 
-    if (parent)
-        d->control = qobject_cast<QMediaPlaylistControl*>(parent->service()->control(QMediaPlaylistControl_iid));
+    if (mediaObject)
+        d->control = qobject_cast<QMediaPlaylistControl*>(mediaObject->service()->control(QMediaPlaylistControl_iid));
 
     if (!d->control)
         d->control = new QLocalMediaPlaylistControl(this);
@@ -121,8 +121,8 @@ QMediaPlaylist::QMediaPlaylist(QMediaObject *parent)
     connect(d->control, SIGNAL(currentMediaChanged(QMediaContent)),
             this, SIGNAL(currentMediaChanged(QMediaContent)));
 
-    if (parent)
-        parent->bind(this);
+    if (mediaObject)
+        mediaObject->bind(this);
 }
 
 /*!
