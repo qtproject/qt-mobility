@@ -58,6 +58,12 @@ SOURCE_DIR = $$PWD
     LIBS += -L$$OUTPUT_DIR/build/$$SUBDIRPART/bin  #link against library that we test
 }
 
+wince* {
+    SFW_DEPLOYMENT.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/bearer.dll
+    SFW_DEPLOYMENT.path = .
+    DEPLOYMENT += SFW_DEPLOYMENT
+}
+
 
 # Add the output dirs to the link path too
 LIBS += -L$$DESTDIR
