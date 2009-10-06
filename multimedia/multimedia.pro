@@ -41,6 +41,7 @@ HEADERS = \
     qmultimediaglobal.h \
     qradioplayer.h \
     qradioplayercontrol.h \
+    qtmedianamespace.h \
     qvideooutputcontrol.h \
     qvideowidget.h \
     qvideowidget_p.h \

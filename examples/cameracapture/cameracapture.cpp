@@ -121,7 +121,7 @@ CameraCapture::CameraCapture(QWidget *parent) :
     }
 
 
-    camera->setMetaData(QMediaObject::Title, QVariant(QLatin1String("Test Title")));
+    camera->setMetaData(QtMedia::Title, QVariant(QLatin1String("Test Title")));
 
     QWidget *videoWidget = new QVideoWidget(mediaRecorder);
     videoWidget->resize(640,480);

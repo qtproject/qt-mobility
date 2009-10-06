@@ -58,27 +58,27 @@ bool QPhononMetaDataProvider::isWritable() const
     return false;
 }
 
-QVariant QPhononMetaDataProvider::metaData(QMediaObject::MetaData key) const
+QVariant QPhononMetaDataProvider::metaData(QtMedia::MetaData key) const
 {
     switch (key) {
-    case QMediaObject::ContributingArtist:
+    case QtMedia::ContributingArtist:
         return m_session->metaData(Phonon::ArtistMetaData);
-    case QMediaObject::AlbumTitle:
+    case QtMedia::AlbumTitle:
         return m_session->metaData(Phonon::AlbumMetaData);
-    case QMediaObject::Title:
+    case QtMedia::Title:
         return m_session->metaData(Phonon::TitleMetaData);
-    case QMediaObject::Date:
+    case QtMedia::Date:
         return m_session->metaData(Phonon::DateMetaData);
-    case QMediaObject::TrackNumber:
+    case QtMedia::TrackNumber:
         return m_session->metaData(Phonon::TracknumberMetaData);
-    case QMediaObject::Description:
+    case QtMedia::Description:
         return m_session->metaData(Phonon::DescriptionMetaData);
     default:
         return QVariant();
     }
 }
 
-void QPhononMetaDataProvider::setMetaData(QMediaObject::MetaData key, QVariant const &value)
+void QPhononMetaDataProvider::setMetaData(QtMedia::MetaData key, QVariant const &value)
 {
     Q_UNUSED(key);
     Q_UNUSED(value);

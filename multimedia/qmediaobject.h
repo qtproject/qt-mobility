@@ -39,6 +39,7 @@
 #include <QtCore/qstringlist.h>
 
 #include <multimedia/qmultimediaglobal.h>
+#include <multimedia/qtmedianamespace.h>
 
 class QMediaService;
 
@@ -50,77 +51,6 @@ class Q_MEDIA_EXPORT QMediaObject : public QObject
     Q_PROPERTY(bool metaDataAvailable READ isMetaDataAvailable NOTIFY metaDataAvailableChanged)
     Q_PROPERTY(bool metaDataWritable READ isMetaDataWritable NOTIFY metaDataWritableChanged)
 public:
-    enum MetaData
-    {
-        // Common
-        Title,
-        SubTitle,
-        Author,
-        Comment,
-        Description,
-        Category,
-        Genre,
-        Year,
-        Date,
-        UserRating,
-        Keywords,
-        Language,
-        Publisher,
-        Copyright,
-        ParentalRating,
-        RatingOrganisation,
-
-        // Media
-        Size,
-        MediaType,
-        Duration,
-
-        // Audio
-        AudioBitrate,
-        AudioCodec,
-        AverageLevel,
-        Channels,
-        PeakValue,
-        Frequency,
-
-        // Music
-        AlbumTitle,
-        AlbumArtist,
-        ContributingArtist,
-        Composer,
-        Conductor,
-        Lyrics,
-        Mood,
-        TrackNumber,
-        TrackCount,
-
-        CoverArtUriSmall,
-        CoverArtUriLarge,
-
-        // Image/Video
-        Resolution,
-        PixelAspectRatio,
-
-        // Video
-        FrameRate,
-        VideoBitRate,
-        VideoCodec,
-
-        PosterUri,
-
-        // Movie
-        ChapterNumber,
-        Director,
-        LeadPerformer,
-        Writer,
-
-        // Photos
-        CameraManufacturer,
-        CameraModel,
-        Event,
-        Subject
-    };
-
     ~QMediaObject();
 
     virtual QMediaService* service() const;
@@ -133,8 +63,8 @@ public:
     bool isMetaDataAvailable() const;
     bool isMetaDataWritable() const;
 
-    QVariant metaData(MetaData key) const;
-    void setMetaData(MetaData key, const QVariant &value);
+    QVariant metaData(QtMedia::MetaData key) const;
+    void setMetaData(QtMedia::MetaData key, const QVariant &value);
 
     QVariant extendedMetaData(const QString &key) const;
     void setExtendedMetaData(const QString &key, const QVariant &value);

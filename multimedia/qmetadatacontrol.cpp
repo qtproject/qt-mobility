@@ -69,13 +69,13 @@ QMetaDataControl::~QMetaDataControl()
 */
 
 /*!
-    \fn QVariant QMetaDataControl::metaData(QMediaObject::MetaData key) const
+    \fn QVariant QMetaDataControl::metaData(QtMedia::MetaData key) const
 
     Returns the meta-data for the given \a key.
 */
 
 /*!
-    \fn void QMetaDataControl::setMetaData(QMediaObject::MetaData key, const QVariant &value)
+    \fn void QMetaDataControl::setMetaData(QtMedia::MetaData key, const QVariant &value)
 
     Sets the \a value of the meta-data element with the given \a key.
 */

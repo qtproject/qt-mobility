@@ -74,80 +74,6 @@ void QMediaObjectPrivate::_q_notify()
 */
 
 /*!
-    \enum QMediaObject::MetaData
-
-    Common attributes
-    \value Title The title of the media.  QString.
-    \value SubTitle The sub-title of the media. QString.
-    \value Author The authors of the media. QStringList.
-    \value Comment A user comment about the media. QString.
-    \value Description A description of the media.  QString
-    \value Category The category of the media.  QStringList.
-    \value Genre The genre of the media.  QStringList.
-    \value Year The year of release of the media.  int.
-    \value Date The date of the media. QDate.
-    \value UserRating A user rating of the media. int [0..100].
-    \value Keywords A list of keywords describing the media.  QStringList.
-    \value Language The language of media, as an ISO 639-2 code.
-
-    \value Publisher The publisher of the media.  QString.
-    \value Copyright The media's copyright notice.  QString.
-    \value ParentalRating  The parental rating of the media.  QString.
-    \value RatingOrganisation The organisation responsible for the parental rating of the media.
-    QString.
-
-    Media attributes
-    \value Size The size in bytes of the media. qint64
-    \value MediaType The type of the media (audio, video, etc).  QString.
-    \value Duration The duration in millseconds of the media.  qint64.
-
-    Audio attributes
-    \value AudioBitrate The bit rate of the media's audio stream in bits per second.  int.
-    \value AudioCodec The codec of the media's audio stream.  QString.
-    \value AverageLevel The average volume level of the media.  int.
-    \value Channels The number of channels in the media's audio stream. int.
-    \value PeakValue The peak volume of the media's audio stream. int
-    \value Frequency The frequency of the media's audio stream. int
-
-    Music attributes
-    \value AlbumTitle The title of the album the media belongs to.  QString.
-    \value AlbumArtist The principal artist of the album the media belongs to.  QString.
-    \value ContributingArtist The artists contributing to the media.  QStringList.
-    \value Composer The composer of the media.  QStringList.
-    \value Conductor The conductor of the media. QString.
-    \value Lyrics The lyrics to the media. QString.
-    \value Mood The mood of the media.  QString.
-    \value TrackNumber The track number of the media.  int.
-    \value TrackCount The number of tracks on the album containing the media.  int.
-
-    \value CoverArtUriSmall The URI of a small cover art image. QUrl.
-    \value CoverArtUriLarge The URI of a large cover art image. QUrl.
-
-    Image and video attributes
-    \value Resolution The dimensions of an image or video.  QSize.
-    \value PixelAspectRatio The pixel aspect ratio of an image or video.  QSize.
-
-    Video attributes
-    \value FrameRate The frame rate of the media's video stream.  QPair<int, int>.
-    \value VideoBitRate The bit rate of the media's video stream in bits per second.  int.
-    \value VideoCodec The codec of the media's video stream.  QString.
-
-    \value PosterUri The URI of a poster image.  QUrl.
-
-    Movie attributes
-    \value ChapterNumber The chapter number of the media.  int.
-    \value Director The director of the media.  QString.
-    \value LeadPerformer The lead performer in the media.  QStringList.
-    \value Writer The writer of the media.  QStringList.
-
-    Photo attributes
-    \value CameraManufacturer The manufacturer of the camera used to capture the media.  QString.
-    \value CameraModel The model of the camera used to capture the media.  QString.
-    \value Event The event during which the media was captured.  QString.
-    \value Subject The subject of the media.  QString.
-*/
-
-/*!
     Destroys the QMediaObject object.
 */
 
@@ -338,7 +264,7 @@ bool QMediaObject::isMetaDataWritable() const
 /*!
     Returns the value associated with a meta-data \a key.
 */
-QVariant QMediaObject::metaData(MetaData key) const
+QVariant QMediaObject::metaData(QtMedia::MetaData key) const
 {
     Q_D(const QMediaObject);
 
@@ -350,7 +276,7 @@ QVariant QMediaObject::metaData(MetaData key) const
 /*!
     Sets a \a value for a meta-data \a key.
 */
-void QMediaObject::setMetaData(MetaData key, const QVariant &value)
+void QMediaObject::setMetaData(QtMedia::MetaData key, const QVariant &value)
 {
     Q_D(QMediaObject);
 
