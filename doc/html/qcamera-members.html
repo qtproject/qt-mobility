@@ -25,7 +25,6 @@
 <li><div class="fn">enum <b><a href="qcamera.html#FocusMode-enum">FocusMode</a></b></div></li>
 <li><div class="fn">flags <b><a href="qcamera.html#FocusMode-enum">FocusModes</a></b></div></li>
 <li><div class="fn">enum <b><a href="qcamera.html#FocusStatus-enum">FocusStatus</a></b></div></li>
-<li><div class="fn">enum <b><a href="qmediaobject.html#MetaData-enum">MetaData</a></b></div></li>
 <li><div class="fn">enum <b><a href="qcamera.html#MeteringMode-enum">MeteringMode</a></b></div></li>
 <li><div class="fn">flags <b><a href="qcamera.html#MeteringMode-enum">MeteringModes</a></b></div></li>
 <li><div class="fn">enum <b><a href="qcamera.html#State-enum">State</a></b></div></li>
@@ -36,6 +35,7 @@
 <li><div class="fn"><b><a href="qmediaobject.html#addPropertyWatch">addPropertyWatch</a></b> ( QByteArray const &amp; )</div></li>
 <li><div class="fn"><b><a href="qcamera.html#aperture">aperture</a></b> () const : qreal</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#blockSignals">blockSignals</a></b> ( bool )</div></li>
+<li><div class="fn"><b><a href="qcamera.html#capture">capture</a></b> ( const QString &amp; )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#childEvent">childEvent</a></b> ( QChildEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#children">children</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#connect">connect</a></b> ( const QObject *, const char *, const QObject *, const char *, Qt::ConnectionType )</div></li>
@@ -72,6 +72,7 @@
 <li><div class="fn"><b><a href="qcamera.html#focusMode">focusMode</a></b> () const : FocusMode</div></li>
 <li><div class="fn"><b><a href="qcamera.html#focusStatus">focusStatus</a></b> () const : FocusStatus</div></li>
 <li><div class="fn"><b><a href="qcamera.html#focusStatusChanged">focusStatusChanged</a></b> ( QCamera::FocusStatus )</div></li>
+<li><div class="fn"><b><a href="qcamera.html#imageCaptured">imageCaptured</a></b> ( const QString &amp;, const QImage &amp; )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#inherits">inherits</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#installEventFilter">installEventFilter</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="qcamera.html#isExposureLocked">isExposureLocked</a></b> () const : bool</div></li>
@@ -80,7 +81,7 @@
 <li><div class="fn"><b><a href="qcamera.html#isMacroFocusingSupported">isMacroFocusingSupported</a></b> () const : bool</div></li>
 <li><div class="fn"><b><a href="qmediaobject.html#metaDataAvailable-prop">isMetaDataAvailable</a></b> () const : bool</div></li>
 <li><div class="fn"><b><a href="qmediaobject.html#metaDataWritable-prop">isMetaDataWritable</a></b> () const : bool</div></li>
-<li><div class="fn"><b><a href="qcamera.html#isValid">isValid</a></b> () const : bool</div></li>
+<li><div class="fn"><b><a href="qcamera.html#readyForCapture-prop">isReadyForCapture</a></b> () const : bool</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#isWidgetType">isWidgetType</a></b> () const</div></li>
 <li><div class="fn"><b><a href="qcamera.html#isoSensitivity">isoSensitivity</a></b> () const : int</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#killTimer">killTimer</a></b> ( int )</div></li>
@@ -91,7 +92,7 @@
 <li><div class="fn"><b><a href="qcamera.html#manualWhiteBalance">manualWhiteBalance</a></b> () const : int</div></li>
 <li><div class="fn"><b><a href="qcamera.html#maximumDigitalZoom">maximumDigitalZoom</a></b> () const : qreal</div></li>
 <li><div class="fn"><b><a href="qcamera.html#maximumOpticalZoom">maximumOpticalZoom</a></b> () const : qreal</div></li>
-<li><div class="fn"><b><a href="qmediaobject.html#metaData">metaData</a></b> ( MetaData ) const : QVariant</div></li>
+<li><div class="fn"><b><a href="qmediaobject.html#metaData">metaData</a></b> ( QtMedia::MetaData ) const : QVariant</div></li>
 <li><div class="fn"><b><a href="qmediaobject.html#metaDataAvailableChanged">metaDataAvailableChanged</a></b> ( bool )</div></li>
 <li><div class="fn"><b><a href="qmediaobject.html#metaDataChanged">metaDataChanged</a></b> ()</div></li>
 <li><div class="fn"><b><a href="qmediaobject.html#metaDataWritableChanged">metaDataWritableChanged</a></b> ( bool )</div></li>
@@ -103,6 +104,7 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#objectName-prop">objectName</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#parent">parent</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#property">property</a></b> ( const char * ) const</div></li>
+<li><div class="fn"><b><a href="qcamera.html#readyForCaptureChanged">readyForCaptureChanged</a></b> ( bool )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#receivers">receivers</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#removeEventFilter">removeEventFilter</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="qmediaobject.html#removePropertyWatch">removePropertyWatch</a></b> ( QByteArray const &amp; )</div></li>
@@ -122,7 +124,7 @@
 <li><div class="fn"><b><a href="qcamera.html#setManualIsoSensitivity">setManualIsoSensitivity</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="qcamera.html#setManualShutterSpeed">setManualShutterSpeed</a></b> ( qreal )</div></li>
 <li><div class="fn"><b><a href="qcamera.html#setManualWhiteBalance">setManualWhiteBalance</a></b> ( int )</div></li>
-<li><div class="fn"><b><a href="qmediaobject.html#setMetaData">setMetaData</a></b> ( MetaData, const QVariant &amp; )</div></li>
+<li><div class="fn"><b><a href="qmediaobject.html#setMetaData">setMetaData</a></b> ( QtMedia::MetaData, const QVariant &amp; )</div></li>
 <li><div class="fn"><b><a href="qcamera.html#setMeteringMode">setMeteringMode</a></b> ( MeteringMode )</div></li>
 <li><div class="fn"><b><a href="qmediaobject.html#notifyInterval-prop">setNotifyInterval</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#objectName-prop">setObjectName</a></b> ( const QString &amp; )</div></li>

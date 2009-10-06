@@ -25,17 +25,15 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvideowidgetcontrol.html#QVideoWidgetControl">QVideoWidgetControl</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidgetcontrol.html#dtor.QVideoWidgetControl">~QVideoWidgetControl</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QVideoWidget::AspectRatio </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidgetcontrol.html#aspectRatio">aspectRatio</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QVideoWidget::AspectRatioMode </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidgetcontrol.html#aspectRatioMode">aspectRatioMode</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidgetcontrol.html#brightness">brightness</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidgetcontrol.html#contrast">contrast</a></b> () const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QSize </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidgetcontrol.html#customAspectRatio">customAspectRatio</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidgetcontrol.html#hue">hue</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidgetcontrol.html#isFullScreen">isFullScreen</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidgetcontrol.html#saturation">saturation</a></b> () const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidgetcontrol.html#setAspectRatio">setAspectRatio</a></b> ( QVideoWidget::AspectRatio <i>ratio</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidgetcontrol.html#setAspectRatioMode">setAspectRatioMode</a></b> ( QVideoWidget::AspectRatioMode <i>mode</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidgetcontrol.html#setBrightness">setBrightness</a></b> ( int <i>brightness</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidgetcontrol.html#setContrast">setContrast</a></b> ( int <i>contrast</i> ) = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidgetcontrol.html#setCustomAspectRatio">setCustomAspectRatio</a></b> ( const QSize &amp; <i>ratio</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidgetcontrol.html#setFullScreen">setFullScreen</a></b> ( bool <i>fullScreen</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidgetcontrol.html#setHue">setHue</a></b> ( int <i>hue</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidgetcontrol.html#setSaturation">setSaturation</a></b> ( int <i>saturation</i> ) = 0</td></tr>
@@ -76,9 +74,9 @@
 <p>Constructs a new video widget control with the given <i>parent</i>.</p>
 <h3 class="fn"><a name="dtor.QVideoWidgetControl"></a>QVideoWidgetControl::~QVideoWidgetControl ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys a video widget control.</p>
-<h3 class="fn"><a name="aspectRatio"></a><a href="qvideowidget.html#AspectRatio-enum">QVideoWidget::AspectRatio</a> QVideoWidgetControl::aspectRatio () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Returns the aspect ratio policy for scaling the video.</p>
-<p>See also <a href="qvideowidgetcontrol.html#setAspectRatio">setAspectRatio</a>().</p>
+<h3 class="fn"><a name="aspectRatioMode"></a><a href="qvideowidget.html#AspectRatioMode-enum">QVideoWidget::AspectRatioMode</a> QVideoWidgetControl::aspectRatioMode () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns how video is scaled to fit the widget with respect to its aspect ratio.</p>
+<p>See also <a href="qvideowidgetcontrol.html#setAspectRatioMode">setAspectRatioMode</a>().</p>
 <h3 class="fn"><a name="brightness"></a>int QVideoWidgetControl::brightness () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the brightness adjustment applied to a video.</p>
 <p>Valid brightness values range between -100 and 100, the default is 0.</p>
@@ -91,9 +89,6 @@
 <p>See also <a href="qvideowidgetcontrol.html#setContrast">setContrast</a>().</p>
 <h3 class="fn"><a name="contrastChanged"></a>void QVideoWidgetControl::contrastChanged ( int <i>contrast</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that a video widget's <i>contrast</i> adjustment has changed.</p>
-<h3 class="fn"><a name="customAspectRatio"></a><a href="http://qt.nokia.com/doc/4.5/qsize.html">QSize</a> QVideoWidgetControl::customAspectRatio () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Returns the a custom aspect ratio used to scale the video.</p>
-<p>See also <a href="qvideowidgetcontrol.html#setCustomAspectRatio">setCustomAspectRatio</a>().</p>
 <h3 class="fn"><a name="fullScreenChanged"></a>void QVideoWidgetControl::fullScreenChanged ( bool <i>fullScreen</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the <i>fullScreen</i> state of a video widget has changed.</p>
 <h3 class="fn"><a name="hue"></a>int QVideoWidgetControl::hue () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
@@ -110,9 +105,9 @@
 <p>See also <a href="qvideowidgetcontrol.html#setSaturation">setSaturation</a>().</p>
 <h3 class="fn"><a name="saturationChanged"></a>void QVideoWidgetControl::saturationChanged ( int <i>saturation</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that a video widget's <i>saturation</i> adjustment has changed.</p>
-<h3 class="fn"><a name="setAspectRatio"></a>void QVideoWidgetControl::setAspectRatio ( <a href="qvideowidget.html#AspectRatio-enum">QVideoWidget::AspectRatio</a> <i>ratio</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Sets the aspect <i>ratio</i> policy for scaling the video.</p>
-<p>See also <a href="qvideowidgetcontrol.html#aspectRatio">aspectRatio</a>().</p>
+<h3 class="fn"><a name="setAspectRatioMode"></a>void QVideoWidgetControl::setAspectRatioMode ( <a href="qvideowidget.html#AspectRatioMode-enum">QVideoWidget::AspectRatioMode</a> <i>mode</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Sets the aspect ratio <i>mode</i> which determines how video is scaled to the fit the widget with respect to its aspect ratio.</p>
+<p>See also <a href="qvideowidgetcontrol.html#aspectRatioMode">aspectRatioMode</a>().</p>
 <h3 class="fn"><a name="setBrightness"></a>void QVideoWidgetControl::setBrightness ( int <i>brightness</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Sets a <i>brightness</i> adjustment for a video.</p>
 <p>Valid brightness values range between -100 and 100, the default is 0.</p>
@@ -121,9 +116,6 @@
 <p>Sets the contrast adjustment for a video widget to <i>contrast</i>.</p>
 <p>Valid contrast values range between -100 and 100, the default is 0.</p>
 <p>See also <a href="qvideowidgetcontrol.html#contrast">contrast</a>().</p>
-<h3 class="fn"><a name="setCustomAspectRatio"></a>void QVideoWidgetControl::setCustomAspectRatio ( const <a href="http://qt.nokia.com/doc/4.5/qsize.html">QSize</a> &amp; <i>ratio</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Sets a custom aspect <i>ratio</i> used to scale the video.</p>
-<p>See also <a href="qvideowidgetcontrol.html#customAspectRatio">customAspectRatio</a>().</p>
 <h3 class="fn"><a name="setFullScreen"></a>void QVideoWidgetControl::setFullScreen ( bool <i>fullScreen</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Sets whether a video widget is in <i>fullScreen</i> mode.</p>
 <p>See also <a href="qvideowidgetcontrol.html#isFullScreen">isFullScreen</a>().</p>
