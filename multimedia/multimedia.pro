@@ -37,6 +37,7 @@ HEADERS = \
     qmediaserviceprovider.h \
     qmediaserviceproviderplugin.h \
     qmetadatacontrol.h \
+    qmediastreamscontrol.h \
     qmultimediaglobal.h \
     qradioplayer.h \
     qradioplayercontrol.h \
@@ -79,6 +80,7 @@ SOURCES = qmediacontrol.cpp \
     qmediaresource.cpp \
     qmediaserviceprovider.cpp \
     qmetadatacontrol.cpp \
+    qmediastreamscontrol.cpp \
     qradioplayer.cpp \
     qradioplayercontrol.cpp \
     qvideooutputcontrol.cpp \
