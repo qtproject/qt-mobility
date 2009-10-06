@@ -1,14 +1,11 @@
 TEMPLATE      = lib
-CONFIG       += plugin
+CONFIG       += plugin testplugin
 INCLUDEPATH  += ../../serviceframework
 HEADERS       = testserviceplugin.h testservice.h testserviceinterface.h
 SOURCES       = testserviceplugin.cpp
 
 TARGET        = tst_sfw_testservice2plugin
 DESTDIR = .
-CONFIG += testcase
-
-include(../../common.pri)
 
 symbian {
     load(data_caging_paths)

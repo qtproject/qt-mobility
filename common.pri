@@ -33,7 +33,16 @@ SOURCE_DIR = $$PWD
 #test whether we have a unit test
 !testcase {
     OBJECTS_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET
-    DESTDIR = $$OUTPUT_DIR/build/$$SUBDIRPART/bin
+    !plugin {
+        DESTDIR = $$OUTPUT_DIR/build/$$SUBDIRPART/bin
+    } else {
+        testplugin:DESTDIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin
+        !testplugin:DESTDIR = $$OUTPUT_DIR/build/$$SUBDIRPART/bin
+        
+        # And since we're a plugin, add the base lib path to the lib dirs
+        LIBS += -L$$OUTPUT_DIR/build/$$SUBDIRPART/bin  #link against base dir as well
+    }
+
     MOC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/moc
     RCC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/rcc
     UI_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/ui

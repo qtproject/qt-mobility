@@ -1,12 +1,10 @@
 TEMPLATE      = lib
-CONFIG       += plugin
+CONFIG       += plugin testplugin
 INCLUDEPATH  += ../../serviceframework
 HEADERS       = sampleserviceplugin.h
 SOURCES       = sampleserviceplugin.cpp
 TARGET        = tst_sfw_sampleserviceplugin
 DESTDIR = .
-
-CONFIG += testcase
 
 include(../../common.pri)
 LIBS += -lQtServiceFramework
