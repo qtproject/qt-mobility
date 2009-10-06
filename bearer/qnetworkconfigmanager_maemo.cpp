@@ -55,9 +55,6 @@
 
 QT_BEGIN_NAMESPACE
 
-class IapMonitor;
-static IapMonitor &iapMonitor();
-
 #define IAP "/system/osso/connectivity/IAP"
 static int iap_prefix_len;
 static void notify_iap(GConfClient *client, guint id,
@@ -138,6 +135,7 @@ void IapAddTimer::removeAll()
     timers.clear();
 }
 
+
 void IapAddTimer::add(QString& iap_id, QNetworkConfigurationManagerPrivate *d)
 {
     if (timers.contains(iap_id)) {
@@ -162,16 +160,15 @@ void IapAddTimer::del(QString& iap_id)
 class IapMonitor
 {
 public:
+    IapMonitor() : first_call(true) { }
     friend void notify_iap(GConfClient *, guint,
 			GConfEntry *entry, gpointer user_data);
 
-    friend IapMonitor &iapMonitor();
     void setup(QNetworkConfigurationManagerPrivate *d);
     void cleanup();
 
 private:
     bool first_call;
-    IapMonitor() : first_call(true) { }
 
     void iapAdded(const char *key, GConfEntry *entry);
     void iapDeleted(const char *key, GConfEntry *entry);
@@ -181,12 +178,7 @@ private:
     IapAddTimer timers;
 };
 
-
-static IapMonitor &iapMonitor()
-{ 
-    static IapMonitor iap_monitor;
-    return iap_monitor;
-}
+Q_GLOBAL_STATIC(IapMonitor, iapMonitor);
 
 
 /* Notify func that is called when IAP is added or deleted */
@@ -467,7 +459,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
     QList<Maemo::IcdScanResult> scanned;
 
     /* Turn on IAP monitoring */
-    iapMonitor().setup(this);
+    iapMonitor()->setup(this);
 
     if (firstUpdate) {
 	/* We create a default configuration which is a pseudo config */
@@ -730,7 +722,7 @@ void QNetworkConfigurationManagerPrivate::performAsyncConfigurationUpdate()
 
 void QNetworkConfigurationManagerPrivate::cleanup()
 {
-    iapMonitor().cleanup();
+    iapMonitor()->cleanup();
 }
 
 
