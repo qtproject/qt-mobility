@@ -7,6 +7,8 @@ libbearer (0.25) unstable; urgency=low
   * When maemo session is created, current network status is fetched from icd.
   * Multiple simultaneous Maemo::Icd class instances are supported (requires
     libconninet v0.21).
+  * Background connection supported. You can set "ConnectBackground"
+    session property to true before calling session open.
 
  -- Jukka Rissanen <jukka.rissanen@nokia.com>  Tue,  6 Oct 2009 12:41:56 +0300
 

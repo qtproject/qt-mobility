@@ -676,7 +676,7 @@ void QNetworkSessionPrivate::open()
 
 void QNetworkSessionPrivate::do_open()
 {
-    icd_connection_flags flags = ICD_CONNECTION_FLAG_USER_EVENT;
+    icd_connection_flags flags = connectFlags;
     bool st;
     QString result;
     QString iap = publicConfig.identifier();
@@ -862,26 +862,30 @@ QNetworkInterface QNetworkSessionPrivate::currentInterface() const
 }
 
 
-void QNetworkSessionPrivate::setProperty(const QString& /*key*/, const QVariant& /*value*/)
+void QNetworkSessionPrivate::setProperty(const QString& key, const QVariant& value)
 {
+    if (value.isValid()) {
+	properties.insert(key, value);
+
+	if (key == "ConnectBackground") {
+	    bool v = value.toBool();
+	    if (v)
+		connectFlags = ICD_CONNECTION_FLAG_APPLICATION_EVENT;
+	    else
+		connectFlags = ICD_CONNECTION_FLAG_USER_EVENT;
+	}
+    } else {
+	properties.remove(key);
+
+	/* Set default value when property is removed */
+	if (key == "ConnectBackground")
+	    connectFlags = ICD_CONNECTION_FLAG_USER_EVENT;
+    }
 }
 
 
 QVariant QNetworkSessionPrivate::property(const QString& key)
 {
-    if (!publicConfig.isValid())
-        return QVariant();
-
-    if (key == "ActiveConfigurationIdentifier") {
-        if (!isActive) {
-            return QString();
-        } else if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork){
-            return serviceConfig.identifier();
-        } else { 
-            return publicConfig.identifier();
-        }
-    }
-
     return properties.value(key);
 }
 
