@@ -58,7 +58,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
     \ingroup multimedia
 
     \preliminary
-    \brief The QMediaPlaylist class provides a list of media sources to play.
+    \brief The QMediaPlaylist class provides a list of media content to play.
 
     Depending on playlist source implementation,
     most of playlist modifcation operations can be asynchronous.
@@ -88,8 +88,9 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
 
 /*!
   Create a new playlist object for with the given \a parent.
-  If source is null, internal local memory playlist source will be created.
-  */
+  If \a mediaObject is null, internal local memory playlist source will be created.
+*/
+
 QMediaPlaylist::QMediaPlaylist(QMediaObject *mediaObject, QObject *parent)
     : QObject(parent)
     , d_ptr(new QMediaPlaylistPrivate)
@@ -183,7 +184,7 @@ int QMediaPlaylist::currentPosition() const
 }
 
 /*!
-  Returns the current media source.
+  Returns the current media content.
 */
 
 QMediaContent QMediaPlaylist::currentMedia() const
@@ -247,7 +248,7 @@ bool QMediaPlaylist::isReadOnly() const
 }
 
 /*!
-  Returns the media source at index \a position in the playlist.
+  Returns the media content at index \a position in the playlist.
 */
 
 QMediaContent QMediaPlaylist::media(int position) const
@@ -256,7 +257,7 @@ QMediaContent QMediaPlaylist::media(int position) const
 }
 
 /*!
-  Append the list of media \a source to the playlist.
+  Append the list of media \a content to the playlist.
 
   Returns true if the operation is successfull, other wise return false.
   */
@@ -266,7 +267,7 @@ bool QMediaPlaylist::appendItem(const QMediaContent &content)
 }
 
 /*!
-  Insert the media \a source to the playlist at position \a pos.
+  Insert the media \a content to the playlist at position \a pos.
 
   Returns true if the operation is successful, otherwise false.
 */
@@ -443,7 +444,7 @@ void QMediaPlaylist::shuffle()
 
 
 /*!
-    Advance to the next media source in playlist.
+    Advance to the next media content in playlist.
 */
 void QMediaPlaylist::next()
 {
@@ -451,7 +452,7 @@ void QMediaPlaylist::next()
 }
 
 /*!
-    Return to the previous media source in playlist.
+    Return to the previous media content in playlist.
 */
 void QMediaPlaylist::previous()
 {
@@ -459,7 +460,7 @@ void QMediaPlaylist::previous()
 }
 
 /*!
-    Activate media source from playlist at position \a playlistPosition.
+    Activate media content from playlist at position \a playlistPosition.
 */
 
 void QMediaPlaylist::setCurrentPosition(int playlistPosition)
@@ -470,21 +471,21 @@ void QMediaPlaylist::setCurrentPosition(int playlistPosition)
 /*!
     \fn void QMediaPlaylist::itemsInserted(int start, int end)
 
-    This signal is emitted after media sources have been inserted into the playlist.
+    This signal is emitted after media has been inserted into the playlist.
     The new items are those between \a start and \a end inclusive.
  */
 
 /*!
     \fn void QMediaPlaylist::itemsRemoved(int start, int end)
 
-    This signal is emitted after media sources have been removed from the playlist.
+    This signal is emitted after media has been removed from the playlist.
     The removed items are those between \a start and \a end inclusive.
  */
 
 /*!
     \fn void QMediaPlaylist::itemsChanged(int start, int end)
 
-    This signal is emitted after media sources have been changed in the playlist
+    This signal is emitted after media has been changed in the playlist
     between \a start and \a end positions inclusive.
  */
 
@@ -521,7 +522,7 @@ void QMediaPlaylist::setCurrentPosition(int playlistPosition)
 /*!
     \fn void QMediaPlaylist::currentMediaChanged(const QMediaContent &content)
 
-    Signal emitted when current media changes to \a source.
+    Signal emitted when current media changes to \a content.
 */
 
 /*!
@@ -536,7 +537,7 @@ void QMediaPlaylist::setCurrentPosition(int playlistPosition)
 
 /*!
     \property QMediaPlaylist::currentMedia
-    \brief Current media source.
+    \brief Current media content.
 */
 
 #include "moc_qmediaplaylist.cpp"

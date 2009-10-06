@@ -165,7 +165,7 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
 /*!
   \fn QMediaPlaylistControl::currentMediaChanged(const QMediaContent& content)
 
-  Signal emitted when current media changes to \a source.
+  Signal emitted when current media changes to \a content.
 */
 
 
