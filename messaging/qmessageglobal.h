@@ -37,44 +37,19 @@
 
 #include <QtCore/qglobal.h>
 
-#if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)
-#  if defined(QT_NODLL)
-#    undef QT_MAKEDLL
-#    undef QT_DLL
-#  elif defined(QT_MAKEDLL)
-#    if defined(QT_DLL)
-#      undef QT_DLL
-#    endif
-#    if defined(QT_BUILD_MESSAGING_LIB)
-#      define Q_MESSAGING_EXPORT Q_DECL_EXPORT
-#    else
-#      define Q_MESSAGING_EXPORT Q_DECL_IMPORT
-#    endif
-#    if defined(QT_BUILD_MESSAGING_SUPPORT_LIB)
-#      define Q_MESSAGING_SUPPORT_EXPORT Q_DECL_EXPORT
-#    else
-#      define Q_MESSAGING_SUPPORT_EXPORT Q_DECL_IMPORT
-#    endif
-#  elif defined(QT_DLL) /* use a Qt DLL library */
-#    define Q_MESSAGING_EXPORT Q_DECL_IMPORT
-#    define Q_MESSAGING_SUPPORT_EXPORT Q_DECL_IMPORT
-#  endif
-#else
-#endif
-
 #if !defined(Q_MESSAGING_EXPORT)
-#  if defined(QT_SHARED)
+#  if defined(QT_BUILD_MESSAGING_LIB)
 #    define Q_MESSAGING_EXPORT Q_DECL_EXPORT
 #  else
-#    define Q_MESSAGING_EXPORT
+#    define Q_MESSAGING_EXPORT Q_DECL_IMPORT
 #  endif
 #endif
 
 #if !defined(Q_MESSAGING_SUPPORT_EXPORT)
-#  if defined(QT_SHARED)
+#  if defined(QT_BUILD_MESSAGING_SUPPORT_LIB)
 #    define Q_MESSAGING_SUPPORT_EXPORT Q_DECL_EXPORT
 #  else
-#    define Q_MESSAGING_SUPPORT_EXPORT
+#    define Q_MESSAGING_SUPPORT_EXPORT Q_DECL_IMPORT
 #  endif
 #endif
 
