@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qmediacontent.cpp -->
+<head>
+  <title>QMediaContent Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMediaContent Class Reference</h1>
+<p>The QMediaContent class provides access to the resources relating to a media content. <a href="#details">More...</a></p>
+<pre>    #include &lt;QMediaContent&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<ul>
+<li><a href="qmediacontent-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediacontent.html#QMediaContent">QMediaContent</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediacontent.html#QMediaContent-2">QMediaContent</a></b> ( const QUrl &amp; <i>contentUri</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediacontent.html#QMediaContent-3">QMediaContent</a></b> ( const QMediaResource &amp; <i>contentResource</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediacontent.html#QMediaContent-4">QMediaContent</a></b> ( const QMediaResourceList &amp; <i>resources</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediacontent.html#QMediaContent-5">QMediaContent</a></b> ( const QMediaContent &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediacontent.html#dtor.QMediaContent">~QMediaContent</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMediaResource </td><td class="memItemRight" valign="bottom"><b><a href="qmediacontent.html#contentResource">contentResource</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QUrl </td><td class="memItemRight" valign="bottom"><b><a href="qmediacontent.html#contentUri">contentUri</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediacontent.html#isNull">isNull</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMediaResourceList </td><td class="memItemRight" valign="bottom"><b><a href="qmediacontent.html#resources">resources</a></b> ( QMediaResource::ResourceRole <i>role</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediacontent.html#operator-not-eq">operator!=</a></b> ( const QMediaContent &amp; <i>other</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMediaContent &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qmediacontent.html#operator-eq">operator=</a></b> ( const QMediaContent &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediacontent.html#operator-eq-eq">operator==</a></b> ( const QMediaContent &amp; <i>other</i> ) const</td></tr>
+</table>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QMediaContent class provides access to the resources relating to a media content.</p>
+<p>QMediaContent is used within the multimedia framework as the logical handle to media content. Media content can have multiple forms or other meta-data like items attached, some examples would be different quality variants of the primary stream, or extended meta-data such as a Poster for a movie.</p>
+<p>A non-null QMediaContent will always have a primary or canonical reference to the content available through the <a href="qmediacontent.html#contentUri">contentUri</a>() or <a href="qmediacontent.html#contentResource">contentResource</a>() methods, all other resources are optional.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<h3 class="fn"><a name="QMediaContent"></a>QMediaContent::QMediaContent ()</h3>
+<p>Constructs a null <a href="qmediacontent.html">QMediaContent</a>.</p>
+<h3 class="fn"><a name="QMediaContent-2"></a>QMediaContent::QMediaContent ( const <a href="http://qt.nokia.com/doc/4.5/qurl.html">QUrl</a> &amp; <i>contentUri</i> )</h3>
+<p>Constructs a media source with <i>contentUri</i> providing a reference to the content.</p>
+<h3 class="fn"><a name="QMediaContent-3"></a>QMediaContent::QMediaContent ( const <a href="qmediaresource.html">QMediaResource</a> &amp; <i>contentResource</i> )</h3>
+<p>Constructs a media source with <i>contentResource</i> providing a reference to the content.</p>
+<h3 class="fn"><a name="QMediaContent-4"></a>QMediaContent::QMediaContent ( const QMediaResourceList &amp; <i>resources</i> )</h3>
+<p>Constructs a media source with <i>resources</i> providing a reference to the content.</p>
+<h3 class="fn"><a name="QMediaContent-5"></a>QMediaContent::QMediaContent ( const QMediaContent &amp; <i>other</i> )</h3>
+<p>Constructs a copy of media source <i>other</i>.</p>
+<h3 class="fn"><a name="dtor.QMediaContent"></a>QMediaContent::~QMediaContent ()</h3>
+<p>Destroys the media source object.</p>
+<h3 class="fn"><a name="contentResource"></a><a href="qmediaresource.html">QMediaResource</a> QMediaContent::contentResource () const</h3>
+<p>Returns a <a href="qmediaresource.html">QMediaResource</a> that represents that canonical content resource for this media content.</p>
+<h3 class="fn"><a name="contentUri"></a><a href="http://qt.nokia.com/doc/4.5/qurl.html">QUrl</a> QMediaContent::contentUri () const</h3>
+<p>Returns a <a href="http://qt.nokia.com/doc/4.5/qurl.html">QUrl</a> that represents that canonical content resource for this media content.</p>
+<h3 class="fn"><a name="isNull"></a>bool QMediaContent::isNull () const</h3>
+<p>Returns true if this media source is null (uninitialized); false otherwise.</p>
+<h3 class="fn"><a name="resources"></a>QMediaResourceList QMediaContent::resources ( <a href="qmediaresource.html#ResourceRole-enum">QMediaResource::ResourceRole</a> <i>role</i> ) const</h3>
+<p>Returns a QMediaResourceList that contains all the QMediaResources that match the resource <i>role</i>.</p>
+<p>See also <a href="qmediaresource.html#ResourceRole-enum">QMediaResource::ResourceRole</a>.</p>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QMediaContent::operator!= ( const QMediaContent &amp; <i>other</i> ) const</h3>
+<p>Returns true if <i>other</i> is not equivalent to this media source; false otherwise.</p>
+<h3 class="fn"><a name="operator-eq"></a>QMediaContent &amp; QMediaContent::operator= ( const QMediaContent &amp; <i>other</i> )</h3>
+<p>Assigns the value of <i>other</i> to this media source.</p>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QMediaContent::operator== ( const QMediaContent &amp; <i>other</i> ) const</h3>
+<p>Returns true if <i>other</i> is equivalent to this media source; false otherwise.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="right"><div align="right">Multimedia API</div></td>
+</tr></table></div></address></body>
+</html>

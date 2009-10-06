@@ -30,14 +30,14 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual QString </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodercontrol.html#codecDescription">codecDescription</a></b> ( const QString &amp; <i>codec</i> ) const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodercontrol.html#encodingOption">encodingOption</a></b> ( const QString &amp; <i>option</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodercontrol.html#frequency">frequency</a></b> () const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodercontrol.html#quality">quality</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QMediaRecorder::EncodingQuality </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodercontrol.html#quality">quality</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodercontrol.html#sampleSize">sampleSize</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodercontrol.html#setAudioCodec">setAudioCodec</a></b> ( const QString &amp; <i>codecName</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodercontrol.html#setBitrate">setBitrate</a></b> ( int <i>value</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodercontrol.html#setChannels">setChannels</a></b> ( int <i>channels</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodercontrol.html#setEncodingOption">setEncodingOption</a></b> ( const QString &amp; <i>option</i>, const QVariant &amp; <i>value</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodercontrol.html#setFrequency">setFrequency</a></b> ( int <i>frequency</i> ) = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodercontrol.html#setQuality">setQuality</a></b> ( int <i>value</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodercontrol.html#setQuality">setQuality</a></b> ( QMediaRecorder::EncodingQuality <i>value</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodercontrol.html#setSampleSize">setSampleSize</a></b> ( int <i>sampleSize</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodercontrol.html#supportedAudioCodecs">supportedAudioCodecs</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;int&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodercontrol.html#supportedChannelCounts">supportedChannelCounts</a></b> () const = 0</td></tr>
@@ -95,8 +95,8 @@
 <h3 class="fn"><a name="frequency"></a>int QAudioEncoderControl::frequency () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the frequency of audio stream.</p>
 <p>See also <a href="qaudioencodercontrol.html#setFrequency">setFrequency</a>().</p>
-<h3 class="fn"><a name="quality"></a>int QAudioEncoderControl::quality () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Returns the normalized audio quality parameter.</p>
+<h3 class="fn"><a name="quality"></a><a href="qmediarecorder.html#EncodingQuality-enum">QMediaRecorder::EncodingQuality</a> QAudioEncoderControl::quality () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns the audio encoding quality parameter.</p>
 <p>See also <a href="qaudioencodercontrol.html#setQuality">setQuality</a>().</p>
 <h3 class="fn"><a name="sampleSize"></a>int QAudioEncoderControl::sampleSize () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the sample size of uncompressed audio stream, or -1 if not specified.</p>
@@ -117,8 +117,8 @@
 <p>Sets the <i>frequency</i> of audio stream.</p>
 <p>Frequency value of -1 means the encoder will choose the suitable frequency depending on source and codec capabilities.</p>
 <p>See also <a href="qaudioencodercontrol.html#frequency">frequency</a>().</p>
-<h3 class="fn"><a name="setQuality"></a>void QAudioEncoderControl::setQuality ( int <i>value</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Set the quality of audio stream to <i>value</i> in range [0..100].</p>
+<h3 class="fn"><a name="setQuality"></a>void QAudioEncoderControl::setQuality ( <a href="qmediarecorder.html#EncodingQuality-enum">QMediaRecorder::EncodingQuality</a> <i>value</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Set the encoding quality of audio stream to <i>value</i>.</p>
 <p>See also <a href="qaudioencodercontrol.html#quality">quality</a>().</p>
 <h3 class="fn"><a name="setSampleSize"></a>void QAudioEncoderControl::setSampleSize ( int <i>sampleSize</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Sets the sample size of uncompressed audio stream to <i>sampleSize</i>.</p>

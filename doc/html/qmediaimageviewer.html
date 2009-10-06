@@ -32,7 +32,7 @@
 <p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td width="45%" valign="top"><ul>
 <li><div class="fn"><b><a href="qmediaimageviewer.html#currentMedia-prop">currentMedia</a></b> : const QMediaResource</div></li>
-<li><div class="fn"><b><a href="qmediaimageviewer.html#media-prop">media</a></b> : QMediaSource</div></li>
+<li><div class="fn"><b><a href="qmediaimageviewer.html#media-prop">media</a></b> : QMediaContent</div></li>
 <li><div class="fn"><b><a href="qmediaimageviewer.html#mediaStatus-prop">mediaStatus</a></b> : const MediaStatus</div></li>
 </ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="qmediaimageviewer.html#state-prop">state</a></b> : const State</div></li>
@@ -51,13 +51,13 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#QMediaImageViewer">QMediaImageViewer</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#dtor.QMediaImageViewer">~QMediaImageViewer</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMediaResource </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#currentMedia-prop">currentMedia</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QMediaSource </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#media-prop">media</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMediaContent </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#media-prop">media</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">MediaStatus </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#mediaStatus-prop">mediaStatus</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">State </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#state-prop">state</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#timeout-prop">timeout</a></b> () const</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>10 public functions inherited from <a href="qmediaobject.html#public-functions">QMediaObject</a></li>
+<li><div bar="2" class="fn"></div>9 public functions inherited from <a href="qmediaobject.html#public-functions">QMediaObject</a></li>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
@@ -66,7 +66,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#pause">pause</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#play">play</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#media-prop">setMedia</a></b> ( const QMediaSource &amp; <i>media</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#media-prop">setMedia</a></b> ( const QMediaContent &amp; <i>media</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#timeout-prop">setTimeout</a></b> ( int <i>timeout</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#stop">stop</a></b> ()</td></tr>
 </table>
@@ -78,7 +78,7 @@
 <h2>Signals</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#currentMediaChanged">currentMediaChanged</a></b> ( const QMediaResource &amp; <i>media</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#mediaChanged">mediaChanged</a></b> ( const QMediaSource &amp; <i>media</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#mediaChanged">mediaChanged</a></b> ( const QMediaContent &amp; <i>media</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#mediaStatusChanged">mediaStatusChanged</a></b> ( QMediaImageViewer::MediaStatus <i>status</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#stateChanged">stateChanged</a></b> ( QMediaImageViewer::State <i>state</i> )</td></tr>
 </table>
@@ -138,17 +138,17 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#currentMediaChanged">currentMediaChanged</a></b> ( const QMediaResource &amp; <i>media</i> )</td></tr>
 </table>
-<h3 class="fn"><a name="media-prop"></a>media : <a href="qmediasource.html">QMediaSource</a></h3>
+<h3 class="fn"><a name="media-prop"></a>media : <a href="qmediacontent.html">QMediaContent</a></h3>
 <p>This property holds the media a slide show is presenting.</p>
 <p>This is the media used to initially populate the playlist, and may not be representive of the currently displayed media.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QMediaSource </td><td class="memItemRight" valign="bottom"><b>media</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setMedia</b> ( const QMediaSource &amp; <i>media</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMediaContent </td><td class="memItemRight" valign="bottom"><b>media</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setMedia</b> ( const QMediaContent &amp; <i>media</i> )</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#mediaChanged">mediaChanged</a></b> ( const QMediaSource &amp; <i>media</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#mediaChanged">mediaChanged</a></b> ( const QMediaContent &amp; <i>media</i> )</td></tr>
 </table>
 <p>See also <a href="qmediaimageviewer.html#currentMedia-prop">currentMedia</a>.</p>
 <h3 class="fn"><a name="mediaStatus-prop"></a>mediaStatus : const <a href="qmediaimageviewer.html#MediaStatus-enum">MediaStatus</a></h3>
@@ -186,7 +186,7 @@
 <p>Destroys a slide show.</p>
 <h3 class="fn"><a name="currentMediaChanged"></a>void QMediaImageViewer::currentMediaChanged ( const <a href="qmediaresource.html">QMediaResource</a> &amp; <i>media</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the <i>media</i> resource a slide show is presenting has changed.</p>
-<h3 class="fn"><a name="mediaChanged"></a>void QMediaImageViewer::mediaChanged ( const <a href="qmediasource.html">QMediaSource</a> &amp; <i>media</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="mediaChanged"></a>void QMediaImageViewer::mediaChanged ( const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>media</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the <i>media</i> a slide show is presenting.</p>
 <h3 class="fn"><a name="mediaStatusChanged"></a>void QMediaImageViewer::mediaStatusChanged ( <a href="qmediaimageviewer.html#MediaStatus-enum">QMediaImageViewer::MediaStatus</a> <i>status</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals the the <i>status</i> of the current media has changed.</p>

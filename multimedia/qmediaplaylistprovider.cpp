@@ -151,7 +151,7 @@ bool QMediaPlaylistProvider::isReadOnly() const
 }
 
 /*!
-  Append \a source to the playlist.
+  Append \a content to the playlist.
 
   Returns true if the operation is successfull, other wise return false.
 */
@@ -162,7 +162,7 @@ bool QMediaPlaylistProvider::appendItem(const QMediaContent &content)
 }
 
 /*!
-  Insert a \a source to the playlist at position \a pos.
+  Insert a \a content to the playlist at position \a pos.
 
   Returns true if the operation is successfull, other wise return false.
 */

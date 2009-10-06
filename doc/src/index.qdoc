@@ -28,6 +28,7 @@ To build the library, run \tt qmake and \tt make.
     \o \l{QRadioPlayer}
     \o \l{QMediaPlaylist}
     \o \l{QCamera}
+    \o \l{QMediaImageViewer}
     \o \l{QAudioSource}
 \endlist
 
@@ -40,7 +41,7 @@ To build the library, run \tt qmake and \tt make.
     \o \l{QMediaPlayerControl}
     \o \l{QMediaPlayerControl}
     \o \l{QMediaRecorderControl}
-    \o \l{QMetaDataProviderControl}
+    \o \l{QMetaDataControl}
     \o \l{QRadioPlayerControl}
     \o \l{QCameraControl}
 \endlist

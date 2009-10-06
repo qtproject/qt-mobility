@@ -21,12 +21,6 @@
 <li><a href="qmediaobject-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
-<a name="public-types"></a>
-<h2>Public Types</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#MetaData-enum">MetaData</a></b> { Title, SubTitle, Author, Comment, ..., Subject }</td></tr>
-</table>
-<hr />
 <a name="properties"></a>
 <h2>Properties</h2>
 <ul>
@@ -45,12 +39,11 @@
 <tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#extendedMetaData">extendedMetaData</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#metaDataAvailable-prop">isMetaDataAvailable</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#metaDataWritable-prop">isMetaDataWritable</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#isValid">isValid</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#metaData">metaData</a></b> ( MetaData <i>key</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#metaData">metaData</a></b> ( QtMedia::MetaData <i>key</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#notifyInterval-prop">notifyInterval</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QMediaService * </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#service">service</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#setExtendedMetaData">setExtendedMetaData</a></b> ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#setMetaData">setMetaData</a></b> ( MetaData <i>key</i>, const QVariant &amp; <i>value</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#setMetaData">setMetaData</a></b> ( QtMedia::MetaData <i>key</i>, const QVariant &amp; <i>value</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#notifyInterval-prop">setNotifyInterval</a></b> ( int <i>milliSeconds</i> )</td></tr>
 </table>
 <ul>
@@ -91,91 +84,6 @@
 <h2>Detailed Description</h2>
 <p>The base Multimedia object.</p>
 <p>See also <a href="qmediaservice.html">QMediaService</a> and <a href="qmediacontrol.html">QMediaControl</a>.</p>
-<hr />
-<h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="MetaData-enum"></a>enum QMediaObject::MetaData</h3>
-<p>Common attributes</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QMediaObject::Title</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The title of the media. <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::SubTitle</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The sub-title of the media. <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::Author</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The authors of the media. <a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::Comment</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">A user comment about the media. <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::Description</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">A description of the media. <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a></td></tr>
-<tr><td valign="top"><tt>QMediaObject::Category</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">The category of the media. <a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::Genre</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">The genre of the media. <a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::Year</tt></td><td align="center" valign="top"><tt>7</tt></td><td valign="top">The year of release of the media. int.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::Date</tt></td><td align="center" valign="top"><tt>8</tt></td><td valign="top">The date of the media. <a href="http://qt.nokia.com/doc/4.5/qdate.html">QDate</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::UserRating</tt></td><td align="center" valign="top"><tt>9</tt></td><td valign="top">A user rating of the media. int [0..100].</td></tr>
-<tr><td valign="top"><tt>QMediaObject::Keywords</tt></td><td align="center" valign="top"><tt>10</tt></td><td valign="top">A list of keywords describing the media. <a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::Language</tt></td><td align="center" valign="top"><tt>11</tt></td><td valign="top">The language of media, as an ISO 639-2 code.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::Publisher</tt></td><td align="center" valign="top"><tt>12</tt></td><td valign="top">The publisher of the media. <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::Copyright</tt></td><td align="center" valign="top"><tt>13</tt></td><td valign="top">The media's copyright notice. <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::ParentalRating</tt></td><td align="center" valign="top"><tt>14</tt></td><td valign="top">The parental rating of the media. <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::RatingOrganisation</tt></td><td align="center" valign="top"><tt>15</tt></td><td valign="top">The organisation responsible for the parental rating of the media. <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>.</td></tr>
-</table></p>
-<p>Media attributes</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QMediaObject::Size</tt></td><td align="center" valign="top"><tt>16</tt></td><td valign="top">The size in bytes of the media. qint64</td></tr>
-<tr><td valign="top"><tt>QMediaObject::MediaType</tt></td><td align="center" valign="top"><tt>17</tt></td><td valign="top">The type of the media (audio, video, etc). <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::Duration</tt></td><td align="center" valign="top"><tt>18</tt></td><td valign="top">The duration in millseconds of the media. qint64.</td></tr>
-</table></p>
-<p>Audio attributes</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QMediaObject::AudioBitrate</tt></td><td align="center" valign="top"><tt>19</tt></td><td valign="top">The bit rate of the media's audio stream in bits per second. int.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::AudioCodec</tt></td><td align="center" valign="top"><tt>20</tt></td><td valign="top">The codec of the media's audio stream. <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::AverageLevel</tt></td><td align="center" valign="top"><tt>21</tt></td><td valign="top">The average volume level of the media. int.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::Channels</tt></td><td align="center" valign="top"><tt>22</tt></td><td valign="top">The number of channels in the media's audio stream. int.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::PeakValue</tt></td><td align="center" valign="top"><tt>23</tt></td><td valign="top">The peak volume of the media's audio stream. int</td></tr>
-<tr><td valign="top"><tt>QMediaObject::Frequency</tt></td><td align="center" valign="top"><tt>24</tt></td><td valign="top">The frequency of the media's audio stream. int</td></tr>
-</table></p>
-<p>Music attributes</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QMediaObject::AlbumTitle</tt></td><td align="center" valign="top"><tt>25</tt></td><td valign="top">The title of the album the media belongs to. <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::AlbumArtist</tt></td><td align="center" valign="top"><tt>26</tt></td><td valign="top">The principal artist of the album the media belongs to. <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::ContributingArtist</tt></td><td align="center" valign="top"><tt>27</tt></td><td valign="top">The artists contributing to the media. <a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::Composer</tt></td><td align="center" valign="top"><tt>28</tt></td><td valign="top">The composer of the media. <a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::Conductor</tt></td><td align="center" valign="top"><tt>29</tt></td><td valign="top">The conductor of the media. <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::Lyrics</tt></td><td align="center" valign="top"><tt>30</tt></td><td valign="top">The lyrics to the media. <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::Mood</tt></td><td align="center" valign="top"><tt>31</tt></td><td valign="top">The mood of the media. <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::TrackNumber</tt></td><td align="center" valign="top"><tt>32</tt></td><td valign="top">The track number of the media. int.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::TrackCount</tt></td><td align="center" valign="top"><tt>33</tt></td><td valign="top">The number of tracks on the album containing the media. int.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::CoverArtUriSmall</tt></td><td align="center" valign="top"><tt>34</tt></td><td valign="top">The URI of a small cover art image. <a href="http://qt.nokia.com/doc/4.5/qurl.html">QUrl</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::CoverArtUriLarge</tt></td><td align="center" valign="top"><tt>35</tt></td><td valign="top">The URI of a large cover art image. <a href="http://qt.nokia.com/doc/4.5/qurl.html">QUrl</a>.</td></tr>
-</table></p>
-<p>Image and video attributes</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QMediaObject::Resolution</tt></td><td align="center" valign="top"><tt>36</tt></td><td valign="top">The dimensions of an image or video. <a href="http://qt.nokia.com/doc/4.5/qsize.html">QSize</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::PixelAspectRatio</tt></td><td align="center" valign="top"><tt>37</tt></td><td valign="top">The pixel aspect ratio of an image or video. <a href="http://qt.nokia.com/doc/4.5/qsize.html">QSize</a>.</td></tr>
-</table></p>
-<p>Video attributes</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QMediaObject::FrameRate</tt></td><td align="center" valign="top"><tt>38</tt></td><td valign="top">The frame rate of the media's video stream. <a href="http://qt.nokia.com/doc/4.5/qpair.html">QPair</a>&lt;int, int&gt;.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::VideoBitRate</tt></td><td align="center" valign="top"><tt>39</tt></td><td valign="top">The bit rate of the media's video stream in bits per second. int.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::VideoCodec</tt></td><td align="center" valign="top"><tt>40</tt></td><td valign="top">The codec of the media's video stream. <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::PosterUri</tt></td><td align="center" valign="top"><tt>41</tt></td><td valign="top">The URI of a poster image. <a href="http://qt.nokia.com/doc/4.5/qurl.html">QUrl</a>.</td></tr>
-</table></p>
-<p>Movie attributes</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QMediaObject::ChapterNumber</tt></td><td align="center" valign="top"><tt>42</tt></td><td valign="top">The chapter number of the media. int.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::Director</tt></td><td align="center" valign="top"><tt>43</tt></td><td valign="top">The director of the media. <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::LeadPerformer</tt></td><td align="center" valign="top"><tt>44</tt></td><td valign="top">The lead performer in the media. <a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::Writer</tt></td><td align="center" valign="top"><tt>45</tt></td><td valign="top">The writer of the media. <a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a>.</td></tr>
-</table></p>
-<p>Photo attributes</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QMediaObject::CameraManufacturer</tt></td><td align="center" valign="top"><tt>46</tt></td><td valign="top">The manufacturer of the camera used to capture the media. <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::CameraModel</tt></td><td align="center" valign="top"><tt>47</tt></td><td valign="top">The model of the camera used to capture the media. <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::Event</tt></td><td align="center" valign="top"><tt>48</tt></td><td valign="top">The event during which the media was captured. <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaObject::Subject</tt></td><td align="center" valign="top"><tt>49</tt></td><td valign="top">The subject of the media. <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>.</td></tr>
-</table></p>
 <hr />
 <h2>Property Documentation</h2>
 <h3 class="fn"><a name="metaDataAvailable-prop"></a>metaDataAvailable : const bool</h3>
@@ -224,9 +132,7 @@
 <p>Returns the value associated with a meta-data <i>key</i>.</p>
 <p>The naming and type of extended meta-data is not standardized, so the values and meaning of keys may vary between backends.</p>
 <p>See also <a href="qmediaobject.html#setExtendedMetaData">setExtendedMetaData</a>().</p>
-<h3 class="fn"><a name="isValid"></a>bool QMediaObject::isValid () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Returns true if the concrete media object is capable of normal operation; false otherwise.</p>
-<h3 class="fn"><a name="metaData"></a><a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> QMediaObject::metaData ( <a href="qmediaobject.html#MetaData-enum">MetaData</a> <i>key</i> ) const</h3>
+<h3 class="fn"><a name="metaData"></a><a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> QMediaObject::metaData ( <a href="qtmedia.html#MetaData-enum">QtMedia::MetaData</a> <i>key</i> ) const</h3>
 <p>Returns the value associated with a meta-data <i>key</i>.</p>
 <p>See also <a href="qmediaobject.html#setMetaData">setMetaData</a>().</p>
 <h3 class="fn"><a name="metaDataAvailableChanged"></a>void QMediaObject::metaDataAvailableChanged ( bool <i>available</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
@@ -246,7 +152,7 @@
 <p>Sets a <i>value</i> for a meta-data <i>key</i>.</p>
 <p>The naming and type of extended meta-data is not standardized, so the values and meaning of keys may vary between backends.</p>
 <p>See also <a href="qmediaobject.html#extendedMetaData">extendedMetaData</a>().</p>
-<h3 class="fn"><a name="setMetaData"></a>void QMediaObject::setMetaData ( <a href="qmediaobject.html#MetaData-enum">MetaData</a> <i>key</i>, const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
+<h3 class="fn"><a name="setMetaData"></a>void QMediaObject::setMetaData ( <a href="qtmedia.html#MetaData-enum">QtMedia::MetaData</a> <i>key</i>, const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
 <p>Sets a <i>value</i> for a meta-data <i>key</i>.</p>
 <p>See also <a href="qmediaobject.html#metaData">metaData</a>().</p>
 <p /><address><hr /><div align="center">
