@@ -563,6 +563,9 @@ void tst_QMediaRecorder::testVideoEncodeControl()
     QVERIFY(capture->minimumResolution() == QSize(320,240));
     QVERIFY(capture->maximumResolution() == QSize(640,480));
 
+    QCOMPARE(capture->frameRate().first, 0);
+    QCOMPARE(capture->frameRate().second, 0);
+
     QList<QMediaRecorder::FrameRate> rates = capture->supportedFrameRates();
     QVERIFY(rates.count() == 3);
     capture->setFrameRate(rates.first());

@@ -401,12 +401,14 @@ QList<QSize> QMediaRecorder::supportedResolutions() const
 /*!
   \property QMediaRecorder::frameRate
   \brief Frame rate of video stream.
+  The framerate is a rational number ancoded as QPair<int,int>,
+  with 0/0 means undefined value.
 */
 
 QMediaRecorder::FrameRate QMediaRecorder::frameRate() const
 {
     return d_func()->videoControl ?
-           d_func()->videoControl->frameRate() : qMakePair<int,int>(-1,-1);
+           d_func()->videoControl->frameRate() : FrameRate();
 }
 
 void QMediaRecorder::setFrameRate(const QMediaRecorder::FrameRate &rate)
@@ -423,7 +425,7 @@ void QMediaRecorder::setFrameRate(const QMediaRecorder::FrameRate &rate)
 QMediaRecorder::FrameRate QMediaRecorder::minimumFrameRate()
 {
     return d_func()->videoControl ?
-           d_func()->videoControl->minimumFrameRate() : qMakePair<int,int>(-1,-1);
+           d_func()->videoControl->minimumFrameRate() : FrameRate();
 }
 
 /*!
@@ -434,7 +436,7 @@ QMediaRecorder::FrameRate QMediaRecorder::minimumFrameRate()
 QMediaRecorder::FrameRate QMediaRecorder::maximumFrameRate()
 {
     return d_func()->videoControl ?
-           d_func()->videoControl->maximumFrameRate() : qMakePair<int,int>(-1,-1);
+           d_func()->videoControl->maximumFrameRate() : FrameRate();
 }
 
 /*!

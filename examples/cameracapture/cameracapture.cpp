@@ -191,7 +191,7 @@ void CameraCapture::setVideoResolution()
 
 void CameraCapture::setVideoFramerate()
 {
-    QPair<int,int> frameRate = qMakePair<int,int>(-1,-1);
+    QPair<int,int> frameRate = QMediaRecorder::FrameRate();
     QStringList rateParts = ui->videoFramerateBox->currentText().split('/');
     if (rateParts.size() == 2) {
         frameRate.first = rateParts[0].toInt();

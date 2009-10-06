@@ -504,7 +504,7 @@ int QCamera::isoSensitivity() const
 
 QPair<int, int> QCamera::supportedIsoSensitivityRange() const
 {
-    return d_func()->exposureControl ? d_func()->exposureControl->supportedIsoSensitivityRange() : qMakePair<int,int>(-1,-1);
+    return d_func()->exposureControl ? d_func()->exposureControl->supportedIsoSensitivityRange() : QPair<int,int>(-1,-1);
 }
 
 /*!
