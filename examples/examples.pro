@@ -7,4 +7,4 @@
 TEMPLATE = subdirs
 TARGET = 
 CONFIG += ordered
-SUBDIRS += samplephonebook testmodel
+SUBDIRS += samplephonebook testmodel versittest
