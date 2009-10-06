@@ -59,8 +59,6 @@ QT_BEGIN_NAMESPACE
 static QHash<QString, QVariant> properties;
 
 static QString get_network_interface();
-class IcdListener;
-static IcdListener &icdListener();
 static DBusConnection *dbus_connection;
 static DBusHandlerResult signal_handler(DBusConnection *connection,
 					DBusMessage *message,
@@ -90,7 +88,7 @@ class IcdListener : public QObject
     Q_OBJECT
 
 public:
-    friend IcdListener &icdListener();
+    IcdListener() : first_call(true) { }
     friend DBusHandlerResult signal_handler(DBusConnection *connection,
 					    DBusMessage *message,
 					    void *user_data);
@@ -112,17 +110,11 @@ public:
 private:
     void icdSignalReceived(QString&, QString&, QString&);
     bool first_call;
-    IcdListener() : first_call(true) { }
     QHash<QString, QNetworkSessionPrivate* > sessions;
 };
 
+Q_GLOBAL_STATIC(IcdListener, icdListener);
  
-static IcdListener &icdListener()
-{ 
-    static IcdListener icd_listener;
-    return icd_listener;
-}
-
 
 static DBusHandlerResult signal_handler(DBusConnection *,
 					DBusMessage *message,
@@ -303,7 +295,7 @@ void IcdListener::cleanupSession(QNetworkSessionPrivate *ptr)
 
 void QNetworkSessionPrivate::cleanupSession(void)
 {
-    icdListener().cleanupSession(this);
+    icdListener()->cleanupSession(this);
 }
 
 
@@ -412,7 +404,7 @@ void QNetworkSessionPrivate::syncStateWithInterface()
     bool get_state = true;
 
     /* Start to listen Icd status messages. */
-    icdListener().setup(this);
+    icdListener()->setup(this);
 
     connect(&manager, SIGNAL(updateCompleted()), this, SLOT(networkConfigurationsChanged()));
     connect(&manager, SIGNAL(configurationChanged(QNetworkConfiguration)),
@@ -867,6 +859,11 @@ QNetworkInterface QNetworkSessionPrivate::currentInterface() const
         return QNetworkInterface();
 
     return QNetworkInterface::interfaceFromName(currentNetworkInterface);
+}
+
+
+void QNetworkSessionPrivate::setProperty(const QString& /*key*/, const QVariant& /*value*/)
+{
 }
 
 
