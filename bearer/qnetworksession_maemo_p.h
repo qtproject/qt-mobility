@@ -110,6 +110,8 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void do_open();
+    void networkConfigurationsChanged();
+    void configurationChanged(const QNetworkConfiguration &config);
 
 private:
     QNetworkConfigurationManager manager;
@@ -132,6 +134,7 @@ private:
 
     QNetworkSession::State state;
     bool isActive;
+    bool opened;
 
     QNetworkSession::SessionError lastError;
 

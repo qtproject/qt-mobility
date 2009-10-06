@@ -58,6 +58,7 @@ QT_BEGIN_NAMESPACE
 
 static QHash<QString, QVariant> properties;
 
+static QString get_network_interface();
 class IcdListener;
 static IcdListener &icdListener();
 static DBusConnection *dbus_connection;
@@ -265,12 +266,9 @@ void IcdListener::icdSignalReceived(QString& iap_id,
     } else if (status == CONNECTED) {
 	/* The IAP was just connected by Icd */
 	session->updateState(QNetworkSession::Connected);
+	session->updateIdentifier(iap_id);
 
-	/* Check that we connected to [ANY] so change the IAP name to real one */
 	if (session->publicConfig.identifier() == OSSO_IAP_ANY) {
-	    // TODO: the returned IAP id is not the ssid and it cannot be found when doing updateConfigurations(), fix me
-	    session->updateIdentifier(iap_id);
-	    // TODO: what about updating other fields in publicConfig
 #ifdef BEARER_MANAGEMENT_DEBUG
 	    qDebug() << "IAP" << iap_id << "connected when connecting to" << OSSO_IAP_ANY;
 #endif
@@ -296,7 +294,10 @@ void IcdListener::cleanup()
 
 void IcdListener::cleanupSession(QNetworkSessionPrivate *ptr)
 {
-    (void)sessions.take(ptr->activeConfig.identifier());
+    if (ptr->publicConfig.type() == QNetworkConfiguration::UserChoice)
+        (void)sessions.take(ptr->activeConfig.identifier());
+    else
+        (void)sessions.take(ptr->publicConfig.identifier());
 }
 
 
@@ -314,13 +315,21 @@ void QNetworkSessionPrivate::updateState(QNetworkSession::State newState)
 	if (state == QNetworkSession::Disconnected) {
 	    isActive = false;
 	    currentNetworkInterface = QString();
-	    publicConfig.d->state = QNetworkConfiguration::Defined;
+	    if (publicConfig.type() == QNetworkConfiguration::UserChoice) {
+		activeConfig.d->state = QNetworkConfiguration::Defined;
+	    } else {
+		publicConfig.d->state = QNetworkConfiguration::Defined;
+	    }
 
 	} else if (state == QNetworkSession::Connected) {
 	    isActive = true;
-	    publicConfig.d->state = QNetworkConfiguration::Active;
-	    if (publicConfig.d->type == QNetworkConfiguration::UserChoice)
+	    if (publicConfig.type() == QNetworkConfiguration::UserChoice) {
+		activeConfig.d->state = QNetworkConfiguration::Active;
+		activeConfig.d->type = QNetworkConfiguration::InternetAccessPoint;
+	    } else {
+		publicConfig.d->state = QNetworkConfiguration::Active;
 		publicConfig.d->type = QNetworkConfiguration::InternetAccessPoint;
+	    }
 	}
 
 	emit q->stateChanged(state);
@@ -330,14 +339,16 @@ void QNetworkSessionPrivate::updateState(QNetworkSession::State newState)
 
 QString QNetworkSessionPrivate::updateIdentifier(QString &newId)
 {
-    publicConfig.d->network_attrs |= ICD_NW_ATTR_IAPNAME;
-    return (publicConfig.d->id = newId);
+    if (publicConfig.type() == QNetworkConfiguration::UserChoice) {
+	activeConfig.d->network_attrs |= ICD_NW_ATTR_IAPNAME;
+	return (activeConfig.d->id = newId);
+    } else {
+	publicConfig.d->network_attrs |= ICD_NW_ATTR_IAPNAME;
+	return (publicConfig.d->id = newId);
+    }
 }
 
 
-/* The function does not update the tx_data and rx_data class vars because
- * the this update func is called from const function.
- */
 quint64 QNetworkSessionPrivate::getStatistics(bool sent) const
 {
     /* This could be also implemented by using the Maemo::Icd::statistics()
@@ -398,13 +409,181 @@ quint64 QNetworkSessionPrivate::activeTime() const
 /* This is called by QNetworkSession constructor */
 void QNetworkSessionPrivate::syncStateWithInterface()
 {
+    bool get_state = true;
+
     /* Start to listen Icd status messages. */
     icdListener().setup(this);
 
-    if (publicConfig.isValid())
-	state = QNetworkSession::NotAvailable;
+    connect(&manager, SIGNAL(updateCompleted()), this, SLOT(networkConfigurationsChanged()));
+    connect(&manager, SIGNAL(configurationChanged(QNetworkConfiguration)),
+            this, SLOT(configurationChanged(QNetworkConfiguration)));
+
+    state = QNetworkSession::Invalid;
+    lastError = QNetworkSession::UnknownSessionError;
+
+    switch (publicConfig.type()) {
+    case QNetworkConfiguration::InternetAccessPoint:
+        activeConfig = publicConfig;
+        break;
+    case QNetworkConfiguration::ServiceNetwork:
+        serviceConfig = publicConfig;
+	break;
+    case QNetworkConfiguration::UserChoice:
+        activeConfig = publicConfig; /* active config will contain correct data
+				      * after open() has succeeded
+				      */
+	break;
+    default:
+	get_state = false;
+	break;
+    }
+
+
+    /* Get the initial state from icd */
+    Maemo::Icd icd;
+    QList<Maemo::IcdStateResult> state_results;
+
+    /* Update the active config from first connection */
+    if (get_state &&
+	icd.state(state_results) &&
+	state_results.size()>0) {
+
+	switch (state_results.first().state) {
+	case ICD_STATE_DISCONNECTED:
+	    state = QNetworkSession::Disconnected;
+	    if (activeConfig.d)
+		activeConfig.d->isValid = true;
+	    break;
+	case ICD_STATE_CONNECTING:
+	    state = QNetworkSession::Connecting;
+	    if (activeConfig.d)
+		activeConfig.d->isValid = true;
+	    break;
+	case ICD_STATE_CONNECTED:
+	    if (!state_results.first().error.isEmpty())
+		break;
+	    state = QNetworkSession::Connected;
+	    if (activeConfig.d) {
+		activeConfig.d->network_id = state_results.first().params.network_id;
+		activeConfig.d->id = activeConfig.d->network_id;
+		activeConfig.d->network_attrs = state_results.first().params.network_attrs;
+		activeConfig.d->iap_type = state_results.first().params.network_type;
+		activeConfig.d->service_type = state_results.first().params.service_type;
+		activeConfig.d->service_id = state_results.first().params.service_id;
+		activeConfig.d->service_attrs = state_results.first().params.service_attrs;
+		activeConfig.d->type = QNetworkConfiguration::InternetAccessPoint;
+		activeConfig.d->state = QNetworkConfiguration::Active;
+		activeConfig.d->isValid = true;
+		currentNetworkInterface = get_network_interface();
+
+		Maemo::IAPConf iap_name(activeConfig.d->id);
+		QString name_value = iap_name.value("name").toString();
+		if (!name_value.isEmpty())
+		    activeConfig.d->name = name_value;
+		else
+		    activeConfig.d->name = activeConfig.d->id;
+	    } else {
+#ifdef BEARER_MANAGEMENT_DEBUG
+		qDebug()<<"activeConfig is not correct";
+#endif
+	    }
+	    break;
+	case ICD_STATE_DISCONNECTING:
+	    state = QNetworkSession::Closing;
+	    if (activeConfig.d)
+		activeConfig.d->isValid = true;
+	    break;
+	default:
+	    break;
+	}
+    } else {
+#ifdef BEARER_MANAGEMENT_DEBUG
+	if (get_state)
+	    qDebug() << "status_req did not return any results from icd";
+#endif
+    }
+
+    networkConfigurationsChanged();
+}
+
+
+void QNetworkSessionPrivate::networkConfigurationsChanged()
+{
+    if (serviceConfig.isValid())
+        updateStateFromServiceNetwork();
     else
-	state = QNetworkSession::Invalid;
+        updateStateFromActiveConfig();
+}
+
+
+void QNetworkSessionPrivate::updateStateFromServiceNetwork()
+{
+    QNetworkSession::State oldState = state;
+
+    foreach (const QNetworkConfiguration &config, serviceConfig.children()) {
+        if ((config.state() & QNetworkConfiguration::Active) != QNetworkConfiguration::Active)
+            continue;
+
+        if (activeConfig != config) {
+            activeConfig = config;
+            emit q->newConfigurationActivated();
+        }
+
+        state = QNetworkSession::Connected;
+        if (state != oldState)
+            emit q->stateChanged(state);
+
+        return;
+    }
+
+    if (serviceConfig.children().isEmpty())
+        state = QNetworkSession::NotAvailable;
+    else
+        state = QNetworkSession::Disconnected;
+
+    if (state != oldState)
+        emit q->stateChanged(state);
+}
+
+
+void QNetworkSessionPrivate::updateStateFromActiveConfig()
+{
+    QNetworkSession::State oldState = state;
+
+    bool newActive = false;
+
+    if (!activeConfig.isValid()) {
+        state = QNetworkSession::Invalid;
+    } else if ((activeConfig.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active) {
+        state = QNetworkSession::Connected;
+        newActive = opened;
+    } else if ((activeConfig.state() & QNetworkConfiguration::Discovered) == QNetworkConfiguration::Discovered) {
+        state = QNetworkSession::Disconnected;
+    } else if ((activeConfig.state() & QNetworkConfiguration::Defined) == QNetworkConfiguration::Defined) {
+        state = QNetworkSession::NotAvailable;
+    } else if ((activeConfig.state() & QNetworkConfiguration::Undefined) == QNetworkConfiguration::Undefined) {
+        state = QNetworkSession::NotAvailable;
+    }
+
+    bool oldActive = isActive;
+    isActive = newActive;
+
+    if (!oldActive && isActive)
+        emit quitPendingWaitsForOpened();
+    if (oldActive && !isActive)
+        emit q->sessionClosed();
+
+    if (oldState != state)
+        emit q->stateChanged(state);
+}
+
+
+void QNetworkSessionPrivate::configurationChanged(const QNetworkConfiguration &config)
+{
+    if (serviceConfig.isValid() && (config == serviceConfig || config == activeConfig))
+        updateStateFromServiceNetwork();
+    else if (config == activeConfig)
+        updateStateFromActiveConfig();
 }
 
 
@@ -419,7 +598,7 @@ static QString get_network_interface()
     if (ret == 0) {
 	/* No results */
 #ifdef BEARER_MANAGEMENT_DEBUG
-	qDebug() << "Cannot get addrinfo from icd, are you connected?";
+	qDebug() << "Cannot get addrinfo from icd, are you connected or is icd running?";
 #endif
 	return iface;
     }
@@ -461,8 +640,47 @@ static QString get_network_interface()
 
 void QNetworkSessionPrivate::open()
 {
-    QTimer::singleShot(0, this, SLOT(do_open()));
+    if (serviceConfig.isValid()) {
+        lastError = QNetworkSession::OperationNotSupportedError;
+        emit q->error(lastError);
+    } else if (!isActive) {
+
+	if (publicConfig.type() == QNetworkConfiguration::UserChoice) {
+	    // Caller is trying to connect to default IAP.
+	    // At this time we will not know the IAP details so we just
+	    // connect and update the active config when the IAP is
+	    // connected.
+	    opened = true;
+            state = QNetworkSession::Connecting;
+            emit q->stateChanged(state);
+	    QTimer::singleShot(0, this, SLOT(do_open()));
+	    return;
+	}
+
+	// User is connecting to one specific IAP. If that IAP is not
+	// in discovered state we cannot continue.
+        if ((activeConfig.state() & QNetworkConfiguration::Discovered) !=
+            QNetworkConfiguration::Discovered) {
+            lastError =QNetworkSession::InvalidConfigurationError;
+            emit q->error(lastError);
+            return;
+        }
+        opened = true;
+
+        if ((activeConfig.state() & QNetworkConfiguration::Active) != QNetworkConfiguration::Active) {
+            state = QNetworkSession::Connecting;
+            emit q->stateChanged(state);
+
+	    QTimer::singleShot(0, this, SLOT(do_open()));
+	    return;
+        }
+
+        isActive = (activeConfig.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active;
+        if (isActive)
+            emit quitPendingWaitsForOpened();
+    }
 }
+
 
 void QNetworkSessionPrivate::do_open()
 {
@@ -474,51 +692,46 @@ void QNetworkSessionPrivate::do_open()
 
     if (state == QNetworkSession::Connected) {
 #ifdef BEARER_MANAGEMENT_DEBUG
-	qDebug() << "Already connected to" << publicConfig.identifier();
+	qDebug() << "Already connected to" << activeConfig.identifier();
 #endif
         emit q->stateChanged(QNetworkSession::Connected);
 	emit quitPendingWaitsForOpened();
 	return;
     }
 
-    updateState(QNetworkSession::Connecting);
-
     Maemo::IcdConnectResult connect_result;
-    Maemo::Icd *icd;
-
-    /* Note that this needs to be allocated from heap and then
-     * destroyed before call to get_network_interface()
-     * because of the limitation of Maemo::Icd class (only one
-     * instance at a time is supported currently).
-     * XXX: TODO FIXME
-     */
-    icd = new Maemo::Icd(ICD_LONG_CONNECT_TIMEOUT);
-    if (!icd)
-	return;
+    Maemo::Icd icd(ICD_LONG_CONNECT_TIMEOUT);
+    QNetworkConfiguration *config;
+    if (publicConfig.type() == QNetworkConfiguration::UserChoice)
+	config = &activeConfig;
+    else
+	config = &publicConfig;
 
     if (iap == OSSO_IAP_ANY) {
 #ifdef BEARER_MANAGEMENT_DEBUG
 	qDebug() << "connecting to default IAP" << iap;
 #endif
-	st = icd->connect(flags, connect_result);
+	st = icd.connect(flags, connect_result);
+
     } else {
+
 	QList<Maemo::ConnectParams> params;
 	Maemo::ConnectParams param;
-	param.connect.service_type = publicConfig.d->service_type;
-	param.connect.service_attrs = publicConfig.d->service_attrs = 0; // TODO: This should be initialized somewhere else
-	param.connect.service_id = publicConfig.d->service_id;
-	param.connect.network_type = publicConfig.d->iap_type;
-	param.connect.network_attrs = publicConfig.d->network_attrs;
-	if (publicConfig.d->network_attrs & ICD_NW_ATTR_IAPNAME)
+	param.connect.service_type = config->d->service_type;
+	param.connect.service_attrs = config->d->service_attrs = 0; // TODO: This should be initialized somewhere else
+	param.connect.service_id = config->d->service_id;
+	param.connect.network_type = config->d->iap_type;
+	param.connect.network_attrs = config->d->network_attrs;
+	if (config->d->network_attrs & ICD_NW_ATTR_IAPNAME)
 	    param.connect.network_id = QByteArray(iap.toLatin1());
 	else
-	    param.connect.network_id = publicConfig.d->network_id;
+	    param.connect.network_id = config->d->network_id;
 	params.append(param);
 
 #ifdef BEARER_MANAGEMENT_DEBUG
 	qDebug("connecting to %s/%s/0x%x/%s/0x%x/%s", param.connect.network_id.data(), param.connect.network_type.toAscii().constData(), param.connect.network_attrs, param.connect.service_type.toAscii().constData(), param.connect.service_attrs, param.connect.service_id.toAscii().constData());
 #endif
-	st = icd->connect(flags, params, connect_result);
+	st = icd.connect(flags, params, connect_result);
     }
 
     if (st) {
@@ -531,30 +744,20 @@ void QNetworkSessionPrivate::do_open()
 #endif
 	    updateState(QNetworkSession::Disconnected);
 	    emit q->error(QNetworkSession::InvalidConfigurationError);
-	    goto out;
+	    return;
 	}
 
 	/* Did we connect to non saved IAP? */
-	if (!(publicConfig.d->network_attrs & ICD_NW_ATTR_IAPNAME)) {
-	    updateIdentifier(connected_iap);
-
-	    /* User might have changed the IAP name when a new IAP was saved */
-	    Maemo::IAPConf iap_name(publicConfig.d->id);
-	    QString name = iap_name.value("name").toString();
-	    if (!name.isEmpty())
-		publicConfig.d->name = name;
+	if (!(config->d->network_attrs & ICD_NW_ATTR_IAPNAME)) {
+	    config->d->network_attrs |= ICD_NW_ATTR_IAPNAME;
+	    config->d->id = connected_iap;
 	}
 
-	if (publicConfig.d->type == QNetworkConfiguration::UserChoice) {
-	    /* For default IAP, the name must be fixed here */
-	    Maemo::IAPConf iap_name(connected_iap);
-	    publicConfig.d->id = connected_iap;
-	    QString name = iap_name.value("name").toString();
-	    if (!name.isEmpty())
-		publicConfig.d->name = name;
-	    else
-		publicConfig.d->name = connected_iap;
-	}
+	/* User might have changed the IAP name when a new IAP was saved */
+	Maemo::IAPConf iap_name(config->d->id);
+	QString name = iap_name.value("name").toString();
+	if (!name.isEmpty())
+	    config->d->name = name;
 
 	bearer_name = connect_result.connect.network_type;
 	if (bearer_name == "WLAN_INFRA" ||
@@ -565,97 +768,104 @@ void QNetworkSessionPrivate::do_open()
 	else
 	    currentBearerName = bearer_name;
 
-	publicConfig.d->isValid = true;
-	publicConfig.d->state = QNetworkConfiguration::Active;
-	publicConfig.d->type = QNetworkConfiguration::InternetAccessPoint;
+	config->d->isValid = true;
+	config->d->state = QNetworkConfiguration::Active;
+	config->d->type = QNetworkConfiguration::InternetAccessPoint;
 
 	startTime = QDateTime::currentDateTime();
 	updateState(QNetworkSession::Connected);
 
-	/* This delete needs to be done before call
-	 * to get_network_interface(), as only one Icd() call may be pending
-	 * at a time. This should be fixed!
-	 * XXX: TODO FIXME
-	 */
-	delete icd;
-	icd = 0;
 	currentNetworkInterface = get_network_interface();
 
 #ifdef BEARER_MANAGEMENT_DEBUG
-	qDebug() << "connected to" << result << publicConfig.d->name << "at" << currentNetworkInterface;
+	qDebug() << "connected to" << result << config->d->name << "at" << currentNetworkInterface;
 #endif
 
-	activeConfig = publicConfig;
 	emit q->sessionOpened();
 	emit quitPendingWaitsForOpened();
 
     } else {
 #ifdef BEARER_MANAGEMENT_DEBUG
-	qDebug() << "connect to"<< iap << "failed" << st;
+	qDebug() << "connect to"<< iap << "failed, status:" << connect_result.status;
 #endif
 	updateState(QNetworkSession::Disconnected);
+	emit quitPendingWaitsForOpened();
 	emit q->error(QNetworkSession::UnknownSessionError);
     }
-
- out:
-    delete icd;
 }
 
 
 void QNetworkSessionPrivate::close()
 {
-    // this one simulates the application disconnect (same as libconic i.e., the connection is not really closed)
-    Maemo::Icd icd;
-#ifdef BEARER_MANAGEMENT_DEBUG
-    qDebug() << "closing session" << publicConfig.identifier();
-#endif
-    icd.disconnect(ICD_CONNECTION_FLAG_APPLICATION_EVENT);
-    startTime = QDateTime();
-    updateState(QNetworkSession::Disconnected);
-    emit q->sessionClosed();
+    if (serviceConfig.isValid()) {
+        lastError = QNetworkSession::OperationNotSupportedError;
+        emit q->error(lastError);
+    } else if (isActive) {
+        opened = false;
+        isActive = false;
+        emit q->sessionClosed();
+    }
 }
 
 
 void QNetworkSessionPrivate::stop()
 {
-    // this one simulates the UI originated disconnect (the connection is closed for real)
-    Maemo::Icd icd;
+    if (serviceConfig.isValid()) {
+        lastError = QNetworkSession::OperationNotSupportedError;
+        emit q->error(lastError);
+    } else {
+        if ((activeConfig.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active) {
+            state = QNetworkSession::Closing;
+            emit q->stateChanged(state);
+
+	    Maemo::Icd icd;
 #ifdef BEARER_MANAGEMENT_DEBUG
-    qDebug() << "stopping session" << publicConfig.identifier();
+	    qDebug() << "stopping session" << publicConfig.identifier();
 #endif
-    icd.disconnect(ICD_CONNECTION_FLAG_UI_EVENT);
-    startTime = QDateTime();
-    updateState(QNetworkSession::Disconnected);
-    emit q->sessionClosed();
+	    icd.disconnect(ICD_CONNECTION_FLAG_APPLICATION_EVENT);
+	    startTime = QDateTime();
+	    updateState(QNetworkSession::Disconnected);
+        }
+
+        opened = false;
+        isActive = false;
+        emit q->sessionClosed();
+    }
 }
 
 
 void QNetworkSessionPrivate::migrate()
 {
-    //TODO
+    qWarning("This platform does not support roaming (%s).", __FUNCTION__);
 }
 
 
 void QNetworkSessionPrivate::accept()
 {
-    //TODO
+    qWarning("This platform does not support roaming (%s).", __FUNCTION__);
 }
 
 
 void QNetworkSessionPrivate::ignore()
 {
-    //TODO
+    qWarning("This platform does not support roaming (%s).", __FUNCTION__);
 }
 
 
 void QNetworkSessionPrivate::reject()
 {
-    //TODO
+    qWarning("This platform does not support roaming (%s).", __FUNCTION__);
 }
 
 
 QNetworkInterface QNetworkSessionPrivate::currentInterface() const
 {
+    if (!publicConfig.isValid() || state != QNetworkSession::Connected)
+        return QNetworkInterface();
+
+    if (currentNetworkInterface.isEmpty())
+        return QNetworkInterface();
+
     return QNetworkInterface::interfaceFromName(currentNetworkInterface);
 }
 
@@ -681,6 +891,9 @@ QVariant QNetworkSessionPrivate::property(const QString& key)
 
 QString QNetworkSessionPrivate::bearerName() const
 {
+    if (!publicConfig.isValid())
+        return QString();
+
     return currentBearerName;
 }
 
