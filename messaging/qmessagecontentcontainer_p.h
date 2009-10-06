@@ -307,7 +307,11 @@ public:
         QByteArray mimeType;
 
         QString extension(fi.suffix());
+#ifdef Q_OS_WIN
         mimeType = WinHelpers::contentTypeFromExtension(extension);
+#else
+        // TODO
+#endif
         int index = mimeType.indexOf("/");
         if (index != -1) {
             _type = mimeType.left(index).trimmed();
