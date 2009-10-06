@@ -37,7 +37,7 @@
 #define QMEDIASTREAMSCONTROL_H
 
 #include "qmediacontrol.h"
-#include "qmediaobject.h"
+#include "qtmedianamespace.h"
 
 class Q_MEDIA_EXPORT QMediaStreamsControl : public QMediaControl
 {
@@ -51,7 +51,7 @@ public:
     virtual int streamCount() = 0;
     virtual StreamType streamType(int streamNumber) = 0;
 
-    virtual QVariant metadata(int streamNumber, QMediaObject::MetaData key) = 0;
+    virtual QVariant metadata(int streamNumber, QtMedia::MetaData key) = 0;
 
     virtual bool isActive(int streamNumber) = 0;
     virtual void setActive(int streamNumber, bool state) = 0;

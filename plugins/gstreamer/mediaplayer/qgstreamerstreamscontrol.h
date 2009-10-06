@@ -49,14 +49,10 @@ public:
     virtual int streamCount();
     virtual StreamType streamType(int streamNumber);
 
-    virtual QVariant metadata(int streamNumber, QMediaObject::MetaData key);
+    virtual QVariant metadata(int streamNumber, QtMedia::MetaData key);
 
     virtual bool isActive(int streamNumber);
     virtual void setActive(int streamNumber, bool state);
-
-signals:
-    void streamsChanged();
-    void activeStreamsChanged();
 
 private:
     QGstreamerPlayerSession *m_session;

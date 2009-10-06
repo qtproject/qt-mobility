@@ -99,6 +99,13 @@ void QGstreamerPlayerSession::load(const QUrl &url)
         emit tagsChanged();
 
         g_object_set(G_OBJECT(m_playbin), "uri", m_url.toString().toLocal8Bit().constData(), NULL);
+
+        if (!m_streamTypes.isEmpty()) {
+            m_streamProperties.clear();
+            m_streamTypes.clear();
+
+            emit streamsChanged();
+        }
     }
 }
 
@@ -532,8 +539,8 @@ void QGstreamerPlayerSession::getStreamsInfo()
             break;
         }
 
-        QMap<QMediaObject::MetaData, QVariant> streamProperties;
-        streamProperties[QMediaObject::Language] = QString::fromUtf8(languageCode);
+        QMap<QtMedia::MetaData, QVariant> streamProperties;
+        streamProperties[QtMedia::Language] = QString::fromUtf8(languageCode);
 
         m_streamProperties.append(streamProperties);
         m_streamTypes.append(streamType);

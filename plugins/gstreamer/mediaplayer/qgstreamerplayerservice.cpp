@@ -48,6 +48,7 @@
 #endif
 
 #include "qgstreamervideowidget.h"
+#include "qgstreamerstreamscontrol.h"
 
 #include <multimedia/qmediaplaylistnavigator.h>
 #include <multimedia/qmediaplaylist.h>
@@ -59,6 +60,8 @@ QGstreamerPlayerService::QGstreamerPlayerService(QObject *parent):
     m_control = new QGstreamerPlayerControl(m_session, this);
     m_metaData = new QGstreamerMetaDataProvider(m_session, this);
     m_videoOutput = new QGstreamerVideoOutputControl(this);
+    m_streamsControl = new QGstreamerStreamsControl(m_session,this);
+
     connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
             this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
 #ifndef QT_NO_MULTIMEDIA
@@ -86,6 +89,9 @@ QMediaControl *QGstreamerPlayerService::control(const char *name) const
 
     if (qstrcmp(name,QMetaDataControl_iid) == 0)
         return m_metaData;
+
+    if (qstrcmp(name,QMediaStreamsControl_iid) == 0)
+        return m_streamsControl;
 
     if (qstrcmp(name, QVideoOutputControl_iid) == 0)
         return m_videoOutput;

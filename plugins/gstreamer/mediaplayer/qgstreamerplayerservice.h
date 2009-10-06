@@ -50,6 +50,7 @@ class QGstreamerMetaData;
 class QGstreamerPlayerControl;
 class QGstreamerPlayerSession;
 class QGstreamerMetaDataProvider;
+class QGstreamerStreamsControl;
 #ifndef QT_NO_MULTIMEDIA
 class QGstreamerVideoRenderer;
 class QGstreamerVideoOverlay;
@@ -77,6 +78,8 @@ private:
     QGstreamerPlayerSession *m_session;
     QGstreamerMetaDataProvider *m_metaData;
     QGstreamerVideoOutputControl *m_videoOutput;
+    QGstreamerStreamsControl *m_streamsControl;
+
 #ifndef QT_NO_MULTIMEDIA
     QGstreamerVideoRenderer *m_videoRenderer;
     QGstreamerVideoOverlay *m_videoWindow;
