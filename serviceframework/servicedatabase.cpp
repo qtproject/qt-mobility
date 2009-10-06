@@ -39,7 +39,7 @@
 #include "qserviceinterfacedescriptor.h"
 #include "qserviceinterfacedescriptor_p.h"
 #include <QUuid>
-#include "dberror.h"
+#include "dberror_p.h"
 
 //database name
 #define RESOLVERDATABASE "services.db"

@@ -13,7 +13,7 @@ PUBLIC_HEADERS +=  qserviceglobal.h \
             qabstractsecuritysession.h \
             qserviceinterfacedescriptor.h \
             qservicefilter.h \
-            dberror.h
+            dberror_p.h
 
 PRIVATE_HEADERS += servicemetadata_p.h \
             qserviceinterfacedescriptor_p.h \

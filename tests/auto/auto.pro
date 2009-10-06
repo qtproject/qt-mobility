@@ -2,17 +2,15 @@ TEMPLATE = subdirs
 
 CONFIG += ordered
 
-#sfw unit tests dont work yet on Symbian. enable later
-!symbian {
-    SUBDIRS += servicemetadata \            #service framework
+SUBDIRS += databasemanager \                #service framework
            servicedatabase \
-           databasemanager \
+           servicemetadata \
            qserviceinterfacedescriptor \
            qservicefilter \
            qservicemanager \
            qabstractsecuritysession \
-           qservicecontext 
-}
+           qservicecontext
+
 SUBDIRS += qnetworkconfigmanager \          #Bearer management
            qnetworkconfiguration \
            qnetworksession \

@@ -38,7 +38,7 @@
 #include "qservicefilter.h"
 #include <QtSql>
 #include <QList>
-#include "dberror.h"
+#include "dberror_p.h"
 #include "qserviceglobal.h"
 
 QT_BEGIN_HEADER

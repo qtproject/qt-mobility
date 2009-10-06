@@ -38,6 +38,7 @@
 class ISimpleTypeTest
 {
 public:
+    virtual ~ISimpleTypeTest() {}
     virtual void callSlotAndSetName(const QString &s) = 0;
     virtual QString callSlotAndReturnName() const = 0;
 };
@@ -47,6 +48,7 @@ Q_DECLARE_INTERFACE(ISimpleTypeTest, "com.nokia.qt.test.ISimpleTypeTest/1");
 class IComplexTypeTest
 {
 public:
+    virtual ~IComplexTypeTest() {}
     virtual QObject* embeddedTestService() = 0;
 
 };

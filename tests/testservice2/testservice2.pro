@@ -9,6 +9,17 @@ DESTDIR = .
 CONFIG += testcase
 
 include(../../common.pri)
+
+symbian {
+    load(data_caging_paths)
+    pluginDep.sources = tst_sfw_testservice2plugin.dll
+    pluginDep.path = $$QT_PLUGINS_BASE_DIR
+
+    DEPLOYMENT += pluginDep
+    TARGET.EPOCALLOWDLLDATA = 1
+    TARGET.CAPABILITY = ALL -TCB
+}
+
 qtAddLibrary(QtServiceFramework)
 
 xml.path = $$DESTDIR/xmldata

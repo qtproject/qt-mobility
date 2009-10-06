@@ -57,7 +57,9 @@ public:
     {
         clientCaps = capabilities.toSet();
     }
+    
 private:
+
     QSet<QString> clientCaps;
 
 };
@@ -71,6 +73,7 @@ private slots:
     void cleanupTestCase();
     void cleanup();
     void testSecSessionHandling();
+    
 private:
    QString path; 
 };
@@ -84,6 +87,9 @@ void tst_QAbstractSecuritySession::initTestCase()
 
     QSfwTestUtil::removeTempUserDb();
     QSfwTestUtil::removeTempSystemDb();
+#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
+    QSfwTestUtil::removeDatabases();
+#endif
 }
 
 void tst_QAbstractSecuritySession::cleanup()
@@ -97,9 +103,7 @@ void tst_QAbstractSecuritySession::cleanup()
 
 void tst_QAbstractSecuritySession::testSecSessionHandling()
 {
-    QFile file(path+"testserviceplugin.xml");
-    QVERIFY(file.exists());
-
+    QFile file(QDir::toNativeSeparators(path+"testserviceplugin.xml"));
     QServiceManager mgr;
     QVERIFY(mgr.findServices().isEmpty());
     QVERIFY(mgr.addService(&file));
@@ -186,6 +190,9 @@ void tst_QAbstractSecuritySession::cleanupTestCase()
 {
     QSfwTestUtil::removeTempUserDb();
     QSfwTestUtil::removeTempSystemDb();
+#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
+    QSfwTestUtil::removeDatabases();
+#endif
 }
 
 QTEST_MAIN(tst_QAbstractSecuritySession)

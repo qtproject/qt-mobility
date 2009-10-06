@@ -2,6 +2,7 @@ TARGET=tst_servicedatabase
 QT = core sql
 INCLUDEPATH += ../../../serviceframework
 
+
 wince*|symbian*: {
     addFiles.sources = testdata/*
     addFiles.path = testdata
@@ -9,8 +10,8 @@ wince*|symbian*: {
 }
 
 wince* {
-    DEFINES+= SRCDIR=\\\".\\\"
-} !symbian {
+    DEFINES+= TESTDATA_DIR=\\\".\\\"
+} else:!symbian {
     DEFINES += TESTDATA_DIR=\\\"$$PWD/\\\"
 }
 
@@ -24,6 +25,13 @@ SOURCES += tst_servicedatabase.cpp
 qtAddLibrary(QtServiceFramework)
 
 symbian {
+    libBlock = \
+        "$${LITERAL_HASH}ifdef WINSCW" \
+        "LIBRARY SFWDatabaseManagerServer.lib" \
+        "$${LITERAL_HASH}endif"
+
+    MMP_RULES += libBlock
+
     TARGET.CAPABILITY = ALL -TCB
 }
 

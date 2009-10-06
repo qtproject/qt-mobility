@@ -79,10 +79,6 @@ CONFIG(debug, debug|release) {
     RCC_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/rcc
     UI_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/ui
     QMAKE_RPATHDIR += $$OUTPUT_DIR/lib
-    symbian {
-        #The default include path doesn't include MOC_DIR on symbian
-        INCLUDEPATH += $$MOC_DIR
-    }
 
 }
 
@@ -105,6 +101,9 @@ wince* {
 }
 
 symbian {
+    #For some reason the default include path doesn't include MOC_DIR on symbian
+    INCLUDEPATH += $$MOC_DIR
+
     ### Contacts
     # Main library
     CONTACTS_DEPLOYMENT.sources = QtContacts.dll
@@ -133,4 +132,3 @@ contains(QT_CONFIG, multimedia) {
 
 # Messaging specific:
 DEFINES+=QMESSAGING_OPTIONAL_FOLDER
-

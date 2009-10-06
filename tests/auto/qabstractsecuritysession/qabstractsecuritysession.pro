@@ -15,4 +15,9 @@ qtAddLibrary(QtServiceFramework)
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
+    
+    addFiles.sources = ../../testservice2/xml/testserviceplugin.xml
+    addFiles.path = xmldata
+    DEPLOYMENT += addFiles
+    LIBS += -lefsrv
 }

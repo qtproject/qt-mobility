@@ -103,7 +103,9 @@ void ServiceDatabaseUnitTest::testRegistration()
     QVERIFY(parser.extractMetadata());
     QVERIFY(!database.registerService(parser.parseResults()));
     QCOMPARE(database.lastError().code(), DBError::DatabaseNotOpen);
-
+#if defined(Q_OS_SYMBIAN)
+    database.m_databasePath = QDir::toNativeSeparators(QDir::currentPath().append("/services.db"));
+#endif
     QVERIFY(database.open());
     QVERIFY(database.registerService(parser.parseResults()));
 
