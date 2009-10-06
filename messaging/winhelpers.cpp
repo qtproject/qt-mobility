@@ -39,6 +39,10 @@
 #define MDB_ONLINE ((ULONG) 0x00000100)
 #endif
 
+#ifndef DELETE_HARD_DELETE
+#define DELETE_HARD_DELETE ((ULONG) 0x00000010)
+#endif
+
 #ifndef PR_IPM_DRAFTS_ENTRYID
 #define PR_IPM_DRAFTS_ENTRYID ((ULONG)0x36D7) //undocumented for outlook versions < 2007
 #endif
@@ -1169,27 +1173,6 @@ MapiFolder::MapiFolder()
 #define PR_EXTENDED_FOLDER_FLAGS PROP_TAG( PT_BINARY, 0x36DA )
 #endif
 
-void MapiFolder::findSubFolders(QMessageStore::ErrorCode *lastError)
-{
-    if (_init)
-        return;
-    _init = true;
-
-    if (!_hasSubFolders)
-        return;
-
-    LPMAPITABLE subFolders(0);
-    if (!_folder || (_folder->GetHierarchyTable(0, &subFolders) != S_OK)) {
-        Q_ASSERT(_folder);
-        *lastError = QMessageStore::ContentInaccessible;
-        return;
-    }
-
-    SizedSPropTagArray(5, columns) = {5, {PR_ENTRYID, PR_IS_NEWSGROUP, PR_IS_NEWSGROUP_ANCHOR, PR_EXTENDED_FOLDER_FLAGS, PR_FOLDER_TYPE}};
-    if (subFolders->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0) == S_OK)
-        _subFolders = subFolders;
-}
-
 MapiFolderPtr MapiFolder::createFolder(QMessageStore::ErrorCode *lastError, const MapiStorePtr &store, IMAPIFolder *folder, const MapiRecordKey &recordKey, const QString &name, const MapiEntryId &entryId, bool hasSubFolders, uint messageCount)
 {
     Q_UNUSED(lastError);
@@ -1218,13 +1201,34 @@ MapiFolder::MapiFolder(const MapiStorePtr &store, IMAPIFolder *folder, const Map
 
 MapiFolder::~MapiFolder()
 {
-    if (_subFolders)
-        _subFolders->Release();
-    _subFolders = 0;
-    if (_folder)
-        _folder->Release();
-    _folder = 0;
+    mapiRelease(_subFolders);
+    mapiRelease(_folder);
     _valid = false;
+}
+
+void MapiFolder::findSubFolders(QMessageStore::ErrorCode *lastError)
+{
+    if (!_init) {
+        _init = true;
+
+        if (_hasSubFolders) {
+            IMAPITable *subFolders(0);
+            HRESULT rv = _folder->GetHierarchyTable(0, &subFolders);
+            if (HR_SUCCEEDED(rv)) {
+                SizedSPropTagArray(5, columns) = {5, {PR_ENTRYID, PR_IS_NEWSGROUP, PR_IS_NEWSGROUP_ANCHOR, PR_EXTENDED_FOLDER_FLAGS, PR_FOLDER_TYPE}};
+                rv = subFolders->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0);
+                if (HR_SUCCEEDED(rv)) {
+                    _subFolders = subFolders;
+                } else {
+                    mapiRelease(subFolders);
+                    qWarning() << "Unable to set columns on folder table.";
+                }
+            } else {
+                *lastError = QMessageStore::ContentInaccessible;
+                qWarning() << "Unable to get hierarchy table for folder:" << name();
+            }
+        }
+    }
 }
 
 MapiFolderPtr MapiFolder::nextSubFolder(QMessageStore::ErrorCode *lastError, const MapiStore &store)
@@ -1291,20 +1295,16 @@ MapiFolderPtr MapiFolder::nextSubFolder(QMessageStore::ErrorCode *lastError, con
     return result;
 }
 
-
 QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
 {
-    Q_UNUSED(filter)
-    Q_UNUSED(ordering)
-    Q_UNUSED(offset)
+    QMessageIdList result;
 
     if (!_valid || !_folder) {
         Q_ASSERT(_valid && _folder);
         *lastError = QMessageStore::FrameworkFault;
-        return QMessageIdList();
+        return result;
     }
 
-    QMessageIdList result;
     LPMAPITABLE messagesTable;
     if (_folder->GetContentsTable(MAPI_UNICODE, &messagesTable) != S_OK) {
         *lastError = QMessageStore::ContentInaccessible;
@@ -1361,6 +1361,76 @@ QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, co
     }
 
     return result;
+}
+
+uint MapiFolder::countMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter) const
+{
+    uint result(0);
+
+    if (!_valid || !_folder) {
+        Q_ASSERT(_valid && _folder);
+        *lastError = QMessageStore::FrameworkFault;
+        return result;
+    }
+
+    IMAPITable *messagesTable(0);
+    HRESULT rv = _folder->GetContentsTable(MAPI_UNICODE, &messagesTable);
+    if (HR_SUCCEEDED(rv)) {
+        QMessageFilterPrivate::filterTable(lastError, filter, messagesTable);
+        if (*lastError == QMessageStore::NoError) {
+            ULONG count(0);
+            rv = messagesTable->GetRowCount(0, &count);
+            if (HR_SUCCEEDED(rv)) {
+                result = count;
+            } else {
+                qWarning() << "Unable to count messages in folder.";
+            }
+        }
+
+        mapiRelease(messagesTable);
+    } else {
+        *lastError = QMessageStore::ContentInaccessible;
+        qWarning() << "Unable to get folder contents table.";
+    }
+
+    return result;
+}
+
+void MapiFolder::removeMessages(QMessageStore::ErrorCode *lastError, const QMessageIdList &ids)
+{
+    SBinary *bin(0);
+    if (MAPIAllocateBuffer(ids.count() * sizeof(SBinary), reinterpret_cast<LPVOID*>(&bin)) != S_OK) {
+        return;
+    }
+
+    int index = 0;
+    foreach (const QMessageId &id, ids) {
+        MapiEntryId entryId(QMessageIdPrivate::entryId(id));
+
+        bin[index].cb = entryId.count();
+        if (MAPIAllocateMore(bin[index].cb, bin, reinterpret_cast<LPVOID*>(&bin[index].lpb)) != S_OK) {
+            break;
+        }
+
+        memcpy(bin[index].lpb, entryId.constData(), bin[index].cb);
+        ++index;
+    }
+
+    if (index > 0) {
+        ENTRYLIST entryList = { 0 };
+        entryList.cValues = index;
+        entryList.lpbin = bin;
+
+        ULONG flags(0);
+        //flags |= DELETE_HARD_DELETE;  this flag is only available when the store is exchange...
+        HRESULT rv = _folder->DeleteMessages(&entryList, 0, 0, flags);
+        if (HR_FAILED(rv)) {
+            *lastError = QMessageStore::ContentInaccessible;
+            qWarning() << "Unable to delete messages from folder.";
+        }
+    }
+
+    MAPIFreeBuffer(bin);
 }
 
 MapiEntryId MapiFolder::messageEntryId(QMessageStore::ErrorCode *lastError, const MapiRecordKey &messageKey)
@@ -1880,6 +1950,118 @@ QMessageFolder MapiStore::folderFromId(QMessageStore::ErrorCode *lastError, cons
 }
 #endif
 
+MapiFolderPtr MapiStore::openFolder(QMessageStore::ErrorCode *lastError, const MapiEntryId& entryId) const
+{
+    MapiFolderPtr result(0);
+
+    // See if we can create a new pointer to an existing folder
+    QWeakPointer<MapiFolder> &existing = _folderMap[entryId];
+    if (!existing.isNull()) {
+        // Get a pointer to the existing folder
+        result = existing.toStrongRef();
+        if (!result.isNull()) {
+            return result;
+        }
+    }
+
+    // We need to create a new instance
+    IMAPIFolder *folder = openMapiFolder(lastError, entryId);
+    if (folder && (*lastError == QMessageStore::NoError)) {
+        SizedSPropTagArray(4, columns) = {4, {PR_DISPLAY_NAME, PR_RECORD_KEY, PR_CONTENT_COUNT, PR_SUBFOLDERS}};
+        SPropValue *properties(0);
+        ULONG count;
+        HRESULT rv = folder->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &properties);
+        if (HR_SUCCEEDED(rv)) {
+            QString name(QStringFromLpctstr(properties[0].Value.LPSZ));
+            MapiRecordKey recordKey(properties[1].Value.bin.lpb, properties[1].Value.bin.cb);
+            uint messageCount = properties[2].Value.ul;
+            bool hasSubFolders = properties[3].Value.b;
+
+            MapiStorePtr self(_session->openStore(lastError, _entryId, _cachedMode));
+            MapiFolderPtr folderPtr = MapiFolder::createFolder(lastError, self, folder, recordKey, name, entryId, hasSubFolders, messageCount);
+            if (*lastError == QMessageStore::NoError) {
+                result = folderPtr;
+
+                // Add to the map
+                _folderMap.insert(entryId, result);
+            } else {
+                qWarning() << "Error creating folder object";
+            }
+
+            MAPIFreeBuffer(properties);
+        } else {
+            qWarning() << "Unable to access folder properties";
+            mapiRelease(folder);
+        }
+    }
+
+    return result;
+}
+
+MapiFolderPtr MapiStore::openFolderWithKey(QMessageStore::ErrorCode *lastError, const MapiRecordKey &recordKey) const
+{
+    MapiFolderPtr result;
+
+    MapiFolderPtr root(rootFolder(lastError));
+    if (*lastError == QMessageStore::NoError) {
+        if (root->recordKey() == recordKey) {
+            result = root;
+        } else {
+            IMAPITable *folderTable(0);
+            HRESULT rv = root->_folder->GetHierarchyTable(CONVENIENT_DEPTH | MAPI_UNICODE, &folderTable);
+            if (HR_SUCCEEDED(rv)) {
+                // Find the entry ID corresponding to this recordKey
+                SPropValue keyProp = { 0 };
+                keyProp.ulPropTag = PR_RECORD_KEY;
+                keyProp.Value.bin.cb = recordKey.count();
+                keyProp.Value.bin.lpb = reinterpret_cast<LPBYTE>(const_cast<char*>(recordKey.data()));
+
+                SRestriction restriction = { 0 };
+                restriction.rt = RES_PROPERTY;
+                restriction.res.resProperty.relop = RELOP_EQ;
+                restriction.res.resProperty.ulPropTag = PR_RECORD_KEY;
+                restriction.res.resProperty.lpProp = &keyProp;
+
+                ULONG flags(0);
+                rv = folderTable->Restrict(&restriction, flags);
+                if (HR_SUCCEEDED(rv)) {
+                    SizedSPropTagArray(1, columns) = {1, {PR_ENTRYID}};
+                    rv = folderTable->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0);
+                    if (HR_SUCCEEDED(rv)) {
+                        SRowSet *rows(0);
+                        if (folderTable->QueryRows(1, 0, &rows) == S_OK) {
+                            if (rows->cRows == 1) {
+                                MapiEntryId entryId(rows->aRow[0].lpProps[0].Value.bin.lpb, rows->aRow[0].lpProps[0].Value.bin.cb);
+
+                                 // Open the folder using its entry ID
+                                result = openFolder(lastError, entryId);
+                            } else {
+                                *lastError = QMessageStore::InvalidId;
+                            }
+                            FreeProws(rows);
+                        } else {
+                            *lastError = QMessageStore::InvalidId;
+                        }
+                    } else {
+                        *lastError = QMessageStore::ContentInaccessible;
+                        qWarning() << "Unable to set columns for folder table";
+                    }
+                } else {
+                    *lastError = QMessageStore::ContentInaccessible;
+                    qWarning() << "Unable to restrict folder table";
+                }
+
+                mapiRelease(folderTable);
+            } else {
+                *lastError = QMessageStore::ContentInaccessible;
+                qWarning() << "Unable to open hierarchy table for store.";
+            }
+        }
+    }
+
+    return result;
+}
+
 IMessage *MapiStore::openMessage(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId)
 {
     IMessage *message(0);
@@ -1952,7 +2134,7 @@ QMessageAddress MapiStore::address() const
     return result;
 }
 
-MapiFolderPtr MapiStore::rootFolder(QMessageStore::ErrorCode *lastError)
+MapiFolderPtr MapiStore::rootFolder(QMessageStore::ErrorCode *lastError) const
 {
     MapiFolderPtr result;
 
@@ -1977,7 +2159,7 @@ MapiFolderPtr MapiStore::rootFolder(QMessageStore::ErrorCode *lastError)
     return openFolder(lastError, entryId);
 }
 
-MapiFolderPtr MapiStore::receiveFolder(QMessageStore::ErrorCode *lastError)
+MapiFolderPtr MapiStore::receiveFolder(QMessageStore::ErrorCode *lastError) const
 {
     MapiFolderPtr result;
 
@@ -1995,55 +2177,6 @@ MapiFolderPtr MapiStore::receiveFolder(QMessageStore::ErrorCode *lastError)
     MAPIFreeBuffer(entryIdPtr);
 
     return openFolder(lastError, entryId);
-}
-
-
-MapiFolderPtr MapiStore::openFolder(QMessageStore::ErrorCode *lastError, const MapiEntryId& entryId) const
-{
-    MapiFolderPtr result(0);
-
-    // See if we can create a new pointer to an existing folder
-    QWeakPointer<MapiFolder> &existing = _folderMap[entryId];
-    if (!existing.isNull()) {
-        // Get a pointer to the existing folder
-        result = existing.toStrongRef();
-        if (!result.isNull()) {
-            return result;
-        }
-    }
-
-    // We need to create a new instance
-    IMAPIFolder *folder = openMapiFolder(lastError, entryId);
-    if (folder && (*lastError == QMessageStore::NoError)) {
-        SizedSPropTagArray(4, columns) = {4, {PR_DISPLAY_NAME, PR_RECORD_KEY, PR_CONTENT_COUNT, PR_SUBFOLDERS}};
-        SPropValue *properties(0);
-        ULONG count;
-        HRESULT rv = folder->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &properties);
-        if (HR_SUCCEEDED(rv)) {
-            QString name(QStringFromLpctstr(properties[0].Value.LPSZ));
-            MapiRecordKey recordKey(properties[1].Value.bin.lpb, properties[1].Value.bin.cb);
-            uint messageCount = properties[2].Value.ul;
-            bool hasSubFolders = properties[3].Value.b;
-
-            MapiStorePtr self(_session->openStore(lastError, _entryId, _cachedMode));
-            MapiFolderPtr folderPtr = MapiFolder::createFolder(lastError, self, folder, recordKey, name, entryId, hasSubFolders, messageCount);
-            if (*lastError == QMessageStore::NoError) {
-                result = folderPtr;
-
-                // Add to the map
-                _folderMap.insert(entryId, result);
-            } else {
-                qWarning() << "Error creating folder object";
-            }
-
-            MAPIFreeBuffer(properties);
-        } else {
-            qWarning() << "Unable to access folder properties";
-            mapiRelease(folder);
-        }
-    }
-
-    return result;
 }
 
 QMessageIdList MapiStore::queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
@@ -2328,6 +2461,62 @@ MapiStorePtr MapiSession::openStore(QMessageStore::ErrorCode *lastError, const M
             qWarning() << "Unable to access store properties";
             mapiRelease(store);
         }
+    }
+
+    return result;
+}
+
+MapiStorePtr MapiSession::openStoreWithKey(QMessageStore::ErrorCode *lastError, const MapiRecordKey &recordKey, bool cachedMode) const
+{
+    MapiStorePtr result;
+
+    IMAPITable *storesTable(0);
+    HRESULT rv = _mapiSession->GetMsgStoresTable(0, &storesTable);
+    if (HR_SUCCEEDED(rv)) {
+        // Find the entry ID corresponding to this recordKey
+        SPropValue keyProp = { 0 };
+        keyProp.ulPropTag = PR_RECORD_KEY;
+        keyProp.Value.bin.cb = recordKey.count();
+        keyProp.Value.bin.lpb = reinterpret_cast<LPBYTE>(const_cast<char*>(recordKey.data()));
+
+        SRestriction restriction = { 0 };
+        restriction.rt = RES_PROPERTY;
+        restriction.res.resProperty.relop = RELOP_EQ;
+        restriction.res.resProperty.ulPropTag = PR_RECORD_KEY;
+        restriction.res.resProperty.lpProp = &keyProp;
+
+        ULONG flags(0);
+        rv = storesTable->Restrict(&restriction, flags);
+        if (HR_SUCCEEDED(rv)) {
+            SizedSPropTagArray(1, columns) = {1, {PR_ENTRYID}};
+            rv = storesTable->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0);
+            if (HR_SUCCEEDED(rv)) {
+                SRowSet *rows(0);
+                if (storesTable->QueryRows(1, 0, &rows) == S_OK) {
+                    if (rows->cRows == 1) {
+                        MapiEntryId entryId(rows->aRow[0].lpProps[0].Value.bin.lpb, rows->aRow[0].lpProps[0].Value.bin.cb);
+
+                        result = openStore(lastError, entryId, cachedMode);
+                    } else {
+                        *lastError = QMessageStore::InvalidId;
+                    }
+                    FreeProws(rows);
+                } else {
+                    *lastError = QMessageStore::InvalidId;
+                }
+            } else {
+                *lastError = QMessageStore::ContentInaccessible;
+                qWarning() << "Unable to set columns for stores table";
+            }
+        } else {
+            *lastError = QMessageStore::ContentInaccessible;
+            qWarning() << "Unable to restrict stores table";
+        }
+
+        mapiRelease(storesTable);
+    } else {
+        *lastError = QMessageStore::ContentInaccessible;
+        qWarning() << "Unable to open stores table.";
     }
 
     return result;
@@ -3175,6 +3364,37 @@ QMessageIdList MapiSession::queryMessages(QMessageStore::ErrorCode *lastError, c
         return QMessageIdList();
 
     return filterMessages(lastError, folderNodes, ordering, limit, offset, session);
+}
+
+void MapiSession::removeMessages(QMessageStore::ErrorCode *lastError, const QMessageIdList &ids)
+{
+    typedef QPair<MapiRecordKey, MapiRecordKey> FolderKey;
+    QMap<FolderKey, QMessageIdList> folderMessageIds;
+
+    // Group messages by folder
+    foreach (const QMessageId &id, ids) {
+        folderMessageIds[qMakePair(QMessageIdPrivate::storeRecordKey(id), QMessageIdPrivate::folderRecordKey(id))].append(id);
+    }
+
+    QMap<FolderKey, QMessageIdList>::const_iterator it = folderMessageIds.begin(), end = folderMessageIds.end();
+    for ( ; it != end; ++it) {
+        const MapiRecordKey storeKey(it.key().first);
+        const MapiRecordKey folderKey(it.key().second);
+
+        QMessageStore::ErrorCode error(QMessageStore::NoError);
+
+        MapiStorePtr store = openStoreWithKey(&error, storeKey, true);
+        if (error == QMessageStore::NoError) {
+            MapiFolderPtr folder = store->openFolderWithKey(&error, folderKey);
+            if (error == QMessageStore::NoError) {
+                folder->removeMessages(&error, it.value());
+            }
+        }
+
+        if ((error != QMessageStore::NoError) && (*lastError == QMessageStore::NoError)) {
+            *lastError = error;
+        }
+    }
 }
 
 bool MapiSession::showForm(IMessage* message, IMAPIFolder* folder, LPMDB store)

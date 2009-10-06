@@ -222,16 +222,47 @@ int QMessageStore::countAccounts(const QMessageAccountFilter& filter) const
 
 bool QMessageStore::removeMessage(const QMessageId& id, RemovalOption option)
 {
-    Q_UNUSED(id)
+    // TODO: implement option
     Q_UNUSED(option)
-    return false; // stub
+
+    bool result(false);
+
+    if (!d_ptr->p_ptr->session) {
+        d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
+    } else {
+        d_ptr->p_ptr->lastError = QMessageStore::NoError;
+
+        QMessageIdList ids;
+        ids.append(id);
+        d_ptr->p_ptr->session->removeMessages(&d_ptr->p_ptr->lastError, ids);
+
+        result = (d_ptr->p_ptr->lastError == QMessageStore::NoError);
+    }
+
+    return result;
 }
 
 bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageStore::RemovalOption option)
 {
-    Q_UNUSED(filter)
+    // TODO: implement option
     Q_UNUSED(option)
-    return true; // stub
+
+    bool result(false);
+
+    if (!d_ptr->p_ptr->session) {
+        d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
+    } else {
+        d_ptr->p_ptr->lastError = QMessageStore::NoError;
+
+        QMessageIdList ids = queryMessages(filter, QMessageOrdering(), 0, 0);
+        if (d_ptr->p_ptr->lastError == QMessageStore::NoError) {
+            d_ptr->p_ptr->session->removeMessages(&d_ptr->p_ptr->lastError, ids);
+        }
+
+        result = (d_ptr->p_ptr->lastError == QMessageStore::NoError);
+    }
+
+    return result;
 }
 
 bool QMessageStore::addMessage(QMessage *message)

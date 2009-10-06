@@ -147,7 +147,11 @@ public:
     ~MapiFolder();
 
     MapiFolderPtr nextSubFolder(QMessageStore::ErrorCode *lastError, const MapiStore &store);
+
     QMessageIdList queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter = QMessageFilter(), const QMessageOrdering &ordering = QMessageOrdering(), uint limit = 0, uint offset = 0) const;
+    uint countMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter = QMessageFilter()) const;
+
+    void removeMessages(QMessageStore::ErrorCode *lastError, const QMessageIdList &ids);
     MapiEntryId messageEntryId(QMessageStore::ErrorCode *lastError, const MapiRecordKey &messagekey);
 #ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolderId id() const;
@@ -205,6 +209,9 @@ public:
     QMessageFolder folderFromId(QMessageStore::ErrorCode *lastError, const QMessageFolderId &folderId);
 #endif
 
+    MapiFolderPtr openFolder(QMessageStore::ErrorCode *lastError, const MapiEntryId& id) const;
+    MapiFolderPtr openFolderWithKey(QMessageStore::ErrorCode *lastError, const MapiRecordKey& key) const;
+
     bool isValid() const { return _valid; }
     QMessageAccountId id() const;
     MapiEntryId entryId() const { return _entryId; }
@@ -214,12 +221,10 @@ public:
     QMessage::TypeFlags types() const;
     QMessageAddress address() const;
 
-    MapiFolderPtr rootFolder(QMessageStore::ErrorCode *lastError);
-    MapiFolderPtr receiveFolder(QMessageStore::ErrorCode *lastError);
+    MapiFolderPtr rootFolder(QMessageStore::ErrorCode *lastError) const;
+    MapiFolderPtr receiveFolder(QMessageStore::ErrorCode *lastError) const;
 
     IMessage *openMessage(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId);
-
-    MapiFolderPtr openFolder(QMessageStore::ErrorCode *lastError, const MapiEntryId& id) const;
 
     QMessageIdList queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const;
 
@@ -275,7 +280,9 @@ public:
     MapiStorePtr findStore(QMessageStore::ErrorCode *lastError, const QMessageAccountId &id = QMessageAccountId(), bool cachedMode = true) const;
     MapiStorePtr defaultStore(QMessageStore::ErrorCode *lastError, bool cachedMode = true) const { return findStore(lastError,QMessageAccountId(),cachedMode); }
     QList<MapiStorePtr> allStores(QMessageStore::ErrorCode *lastError, bool cachedMode = true) const;
+
     MapiStorePtr openStore(QMessageStore::ErrorCode *lastError, const MapiEntryId& id, bool cachedMode = true) const;
+    MapiStorePtr openStoreWithKey(QMessageStore::ErrorCode *lastError, const MapiRecordKey& key, bool cachedMode = true) const;
 
     QMessageAccountId defaultAccountId(QMessageStore::ErrorCode *lastError, QMessage::Type type) const;
 
@@ -293,6 +300,8 @@ public:
     QByteArray attachmentData(QMessageStore::ErrorCode *lastError, const QMessageId& id, ULONG number) const;
 
     QMessageIdList queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const;
+
+    void removeMessages(QMessageStore::ErrorCode *lastError, const QMessageIdList &ids);
 
     bool showForm(IMessage* message, IMAPIFolder* folder, IMsgStore* store);
 
