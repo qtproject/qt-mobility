@@ -44,32 +44,32 @@
 #include "qcontactmanager_p.h"
 
 #include "qcontactsymbianbackend.h"
-#include "qcontactsymbianengine_p.h" 
+#include "qcontactsymbianengine_p.h"
 #include "qcontactchangeset.h"
 
 QContactSymbianEngine::QContactSymbianEngine(const QMap<QString, QString>& /*parameters*/, QContactManager::Error& error)
 {
   error = QContactManager::NoError;
-  
+
   d = new QContactSymbianEngineData();
-	
+
 	// Connect database observer events appropriately.
-	connect(d, SIGNAL(contactAdded(QUniqueId)), 
+	connect(d, SIGNAL(contactAdded(QUniqueId)),
 			this, SLOT(eventContactAdded(QUniqueId)));
-	
-	connect(d, SIGNAL(contactRemoved(QUniqueId)), 
+
+	connect(d, SIGNAL(contactRemoved(QUniqueId)),
 			this, SLOT(eventContactRemoved(QUniqueId)));
-	
-	connect(d, SIGNAL(contactChanged(QUniqueId)), 
+
+	connect(d, SIGNAL(contactChanged(QUniqueId)),
 			this, SLOT(eventContactChanged(QUniqueId)));
-	
-	connect(d, SIGNAL(groupAdded(QUniqueId)), 
+
+	connect(d, SIGNAL(groupAdded(QUniqueId)),
 			this, SLOT(eventGroupAdded(QUniqueId)));
-	
-	connect(d, SIGNAL(groupRemoved(QUniqueId)), 
+
+	connect(d, SIGNAL(groupRemoved(QUniqueId)),
 			this, SLOT(eventGroupRemoved(QUniqueId)));
-	
-	connect(d, SIGNAL(groupChanged(QUniqueId)), 
+
+	connect(d, SIGNAL(groupChanged(QUniqueId)),
 			this, SLOT(eventGroupChanged(QUniqueId)));
 }
 
@@ -95,16 +95,24 @@ void QContactSymbianEngine::deref()
 {
 	//This class is not using a private shared class so should this be always deleted?
 	//d->deref();
-	
+
 	/*if (!d->m_refCount.deref())
- 	delete this;*/ 
+ 	delete this;*/
 }
 
+/*!
+ * Returns a list of the ids of contacts that match the supplied \a filter, sorted according to the given \a sortOrders.
+ * Any error that occurs will be stored in \a error. Uses either the Symbian backend native filtering or in case of an
+ * unsupported filter, the generic (slow) filtering of QContactManagerEngine.
+ */
 QList<QUniqueId> QContactSymbianEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
-	return d->contacts(filter, sortOrders, error);
+    if(d->filterSupported(filter))
+        return d->contacts(filter, sortOrders, error);
+    else
+        // Filter not supported by the backend, use slow emulated filtering
+        return QContactManagerEngine::contacts(filter, sortOrders, error);
 }
-
 
 QList<QUniqueId> QContactSymbianEngine::contacts(const QList<QContactSortOrder>& /*sortOrders*/, QContactManager::Error& error) const
 {
@@ -264,9 +272,9 @@ QMap<QString, QContactDetailDefinition> QContactSymbianEngine::detailDefinitions
 {
     error = QContactManager::NoError;
 
-    // get default constraints schema 
+    // get default constraints schema
     QMap<QString, QContactDetailDefinition> defMap = QContactManagerEngine::schemaDefinitions();
-    
+
     // update default constraints
     defMap[QContactName::DefinitionName].setUnique(true);
     defMap[QContactNickname::DefinitionName].setUnique(true);
@@ -288,6 +296,11 @@ bool QContactSymbianEngine::hasFeature(QContactManagerInfo::ManagerFeature featu
     }
 }
 
+bool QContactSymbianEngine::filterSupported(const QContactFilter& filter) const
+{
+    return d->filterSupported(filter);
+}
+
 /* Synthesise the display label of a contact */
 QString QContactSymbianEngine::synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& /*error*/) const
 {
@@ -296,7 +309,7 @@ QString QContactSymbianEngine::synthesiseDisplayLabel(const QContact& contact, Q
 
     QString firstName = name.first();
     QString lastName = name.last();
-    
+
     if (!name.last().isEmpty()) {
         if (!name.first().isEmpty()) {
             return QString(QLatin1String("%1, %2")).arg(name.last()).arg(name.first());
@@ -331,85 +344,85 @@ QList<QVariant::Type> QContactSymbianEngine::supportedDataTypes() const
 {
     QList<QVariant::Type> st;
     st.append(QVariant::String);
-    
+
     return st;
 }
 
 /*!
  * Private slot to receive events about added entries.
- * 
+ *
  * \param contactId The new contact's ID.
  */
 void QContactSymbianEngine::eventContactAdded(const QUniqueId &contactId)
 {
 	QList<QUniqueId> contactList;
 	contactList.append(contactId);
-	
+
 	emit contactsAdded(contactList);
 }
 
 /*!
  * Private slot to receive events about deleted entries.
- * 
+ *
  * \param contactId ID for the deleted contact item.
  */
 void QContactSymbianEngine::eventContactRemoved(const QUniqueId &contactId)
 {
 	QList<QUniqueId> contactList;
 	contactList.append(contactId);
-		
+
 	emit contactsRemoved(contactList);
 }
 
 /*!
  * Private slot to receive events about modified contact items.
- * 
+ *
  * \param ID for the contact entry with modified data.
  */
 void QContactSymbianEngine::eventContactChanged(const QUniqueId &contactId)
 {
 	QList<QUniqueId> contactList;
 	contactList.append(contactId);
-		
+
 	emit contactsChanged(contactList);
 }
 
 /*!
  * Private slot to receive events about added groups.
- * 
+ *
  * \param groupId The new groups's ID.
  */
 void QContactSymbianEngine::eventGroupAdded(const QUniqueId &groupId)
 {
 	QList<QUniqueId> groupList;
 	groupList.append(groupId);
-		
+
 	emit groupsAdded(groupList);
 }
 
 /*!
  * Private slot to receive events about deleted groups.
- * 
+ *
  * \param groupId ID for the deleted contact group.
  */
 void QContactSymbianEngine::eventGroupRemoved(const QUniqueId &groupId)
 {
 	QList<QUniqueId> groupList;
 	groupList.append(groupId);
-		
+
 	emit groupsRemoved(groupList);
 }
 
 /*!
  * Private slot to receive events about modified groups.
- * 
+ *
  * \param ID for the group with modified data.
  */
 void QContactSymbianEngine::eventGroupChanged(const QUniqueId &groupId)
 {
 	QList<QUniqueId> groupList;
 	groupList.append(groupId);
-		
+
 	emit groupsChanged(groupList);
 }
 
