@@ -56,6 +56,7 @@ private slots:
 	void executeTransformOrganisation();
 	void executeTransformAvatar();
 	void executeTransformSyncTarget();
+	void executeTransformGender();
 	
 private:
     void validateTransformEmail(TPtrC16 field, QString detail);
@@ -80,5 +81,6 @@ private:
                                        TPtrC16 jobtitleField, QString jobtitleDetail);
     void validateTransformAvatar(TPtrC16 field, QString detail);
     void validateTransformSyncTarget(TPtrC16 field, QString detail);
+    void validateTransformGender(TPtrC16 field, QString detail);
     void validateContexts(TransformContactData* transformContactData) const; 
 };

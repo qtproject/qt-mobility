@@ -30,58 +30,55 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include "transformgender.h"
+#include "cntmodelextuids.h"
 
-#ifndef TRANSFORMCONCTACT_H
-#define TRANSFORMCONCTACT_H
-
-#include <qtcontacts.h>
-
-#include <cntfldst.h>
-#include <cntdb.h>
-#include <cntdef.h>
-#include <cntitem.h>
-
-class TransformContactData;
-class TransformContact
+QList<CContactItemField *> TransformGender::transformDetailL(const QContactDetail &detail)
 {
-public:
-	TransformContact();
-	virtual ~TransformContact();
-
-public:
-	QContact transformContactL(CContactItem &contact, CContactDatabase &contactDatabase) const;
-	void transformContactL(
-	        QContact &contact,
-	        CContactItem &contactItem) const;
-
-private:
-	enum ContactData
-	{
-		Name = 0,
-		Nickname,
-		PhoneNumber,
-		EmailAddress,
-		Address,
-		URL,
-		OnlineAccount,
-		Birthday,
-		Organisation,
-		Avatar,
-		SyncTarget,
-		Gender
-	};
+	QList<CContactItemField *> fieldList; 
 	
-	void initializeTransformContactData();
-	QList<CContactItemField *> transformDetailL(const QContactDetail &detail) const;
-	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact) const;
+	//cast to gender
+	const QContactGender &gender(static_cast<const QContactGender&>(detail));
 	
-	QContactDetail *transformGuidItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const;
-	void transformGuidDetailL(const QContactDetail &guidDetail, CContactItem &contactItem) const;
-	QContactDetail *transformTimestampItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const;
-	void transformTimestampDetailL(const QContactDetail &guidDetail, CContactItem &contactItem) const;
-	
-private:
-	QMap<ContactData, TransformContactData*> m_transformContactData;
-};
+	//create new field
+	TPtrC fieldText(reinterpret_cast<const TUint16*>(gender.gender().utf16()));
+	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldGender);
+ 	newField->TextStorage()->SetTextL(fieldText);
+	newField->SetMapping(KUidContactFieldVCardMapUnknown);
 
-#endif /* TRANSFORMCONCTACT_H_ */
+	fieldList.append(newField);
+	CleanupStack::Pop(newField);
+		
+	return fieldList;
+}
+
+QContactDetail *TransformGender::transformItemField(const CContactItemField& field, const QContact &contact)
+{
+	Q_UNUSED(contact);
+	
+	QContactGender *gender = new QContactGender();
+	
+	CContactTextField* storage = field.TextStorage();
+	QString genderInfo = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
+	
+	gender->setGender(genderInfo);
+	return gender;
+}
+
+bool TransformGender::supportsField(TUint32 fieldType) const
+{
+    bool ret = false;
+    if (fieldType == KUidContactFieldGender.iUid) {
+        ret = true;
+    }
+    return ret;
+}
+
+bool TransformGender::supportsDetail(QString detailName) const
+{
+    bool ret = false;
+    if (detailName == QContactGender::DefinitionName) {
+        ret = true;
+    }
+    return ret;
+}

@@ -44,6 +44,7 @@
 #include "transformorganisation.h"
 #include "transformavatar.h"
 #include "transformsynctarget.h"
+#include "transformgender.h"
 
 #include <QtTest/QtTest>
 
@@ -144,6 +145,12 @@ void TestTransformContactData::executeTransformSyncTarget()
 {
     validateTransformSyncTarget(_L("dummysynctarget"), QString("dummysynctarget"));
     validateTransformSyncTarget(_L(""), QString(""));
+}
+
+void TestTransformContactData::executeTransformGender()
+{
+    validateTransformGender(_L("dummygender"), QString("dummygender"));
+    validateTransformGender(_L(""), QString(""));
 }
 
 void TestTransformContactData::validateTransformEmail(TPtrC16 field, QString detail)
@@ -954,6 +961,35 @@ void TestTransformContactData::validateTransformSyncTarget(TPtrC16 field, QStrin
     delete contactDetail;
     delete newField;
     delete transformSyncTarget;
+}
+
+void TestTransformContactData::validateTransformGender(TPtrC16 field, QString detail)
+{
+    TransformContactData* transformGender = new TransformGender();
+    QVERIFY(transformGender != 0);
+    QVERIFY(transformGender->supportsField(KUidContactFieldGender.iUid));
+    QVERIFY(transformGender->supportsDetail(QContactGender::DefinitionName));
+    
+    validateContexts(transformGender);
+    
+    QContactGender gender;
+    gender.setGender(detail);
+    QList<CContactItemField *> fields = transformGender->transformDetailL(gender);
+    QVERIFY(fields.count() == 1);
+    QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldGender));
+    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
+    
+    CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldGender);
+    newField->TextStorage()->SetTextL(field);
+    QContact contact;
+    QContactDetail* contactDetail = transformGender->transformItemField(*newField, contact);
+    const QContactGender* genderInfo(static_cast<const QContactGender*>(contactDetail));
+    QCOMPARE(genderInfo->gender(), detail);
+        
+    delete contactDetail;
+    delete newField;
+    delete transformGender;
 }
 
 void TestTransformContactData::validateContexts(TransformContactData* transformContactData) const

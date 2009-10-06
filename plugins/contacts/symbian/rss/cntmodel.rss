@@ -844,7 +844,15 @@ RESOURCE ARRAY r_cntui_new_field_defns
       vCardMapping=KIntContactFieldVCardMapUnknown;
       category=EContactCategoryNone;
       fieldName=STRING_r_cntui_new_field_defns13;
-      }      
+      },      
+    FIELD // Gender
+      {
+      fieldStorageType=KStorageTypeText;
+      contactFieldType=KUidContactFieldGenderValue;
+      vCardMapping=KIntContactFieldVCardMapUnknown;
+      category=EContactCategoryNone;
+      fieldName=STRING_r_cntui_new_field_defns14;
+      }  
     };
  }
 

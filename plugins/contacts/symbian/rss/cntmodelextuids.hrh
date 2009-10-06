@@ -59,6 +59,12 @@
  */
 #define KUidContactFieldSyncTargetValue		0x200100E6
 
+/**
+ * Phonebook custom Field value.
+ * Gender field type.
+ */
+#define KUidContactFieldGenderValue		0x200100E7
+
 // !! In case this is undefined on earlier platforms
 #ifndef KUidContactFieldGEOValue
 #define KUidContactFieldGEOValue            0x10274DB2
