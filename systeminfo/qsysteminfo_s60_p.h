@@ -215,6 +215,7 @@ public:
 //////// DeviceInfo (singleton)
 class DeviceInfo
 {
+
 public:
     static DeviceInfo *instance()
     {
@@ -232,7 +233,6 @@ public:
         }
         return m_phoneInfo;
     }
-    
 
     CSubscriberInfo *subscriberInfo()
     {
@@ -249,15 +249,44 @@ public:
         }
         return m_batteryInfo;
     }
+    
+    CCellNetworkInfo *cellNetworkInfo()
+    {
+        if (!m_cellNetworkInfo) {
+            m_cellNetworkInfo = new CCellNetworkInfo(*m_telephony);
+        }
+        return m_cellNetworkInfo;
+    }
+    
+    CCellNetworkRegistrationInfo *cellNetworkRegistrationInfo()
+    {
+        if (!m_cellNetworkRegistrationInfo) {
+            m_cellNetworkRegistrationInfo = new CCellNetworkRegistrationInfo(*m_telephony);
+        }
+        return m_cellNetworkRegistrationInfo;
+    }
+    
+    CCellSignalStrengthInfo *cellSignalStrenghtInfo()
+    {
+        if (!m_cellSignalStrengthInfo) {
+            m_cellSignalStrengthInfo = new CCellSignalStrengthInfo(*m_telephony);
+        }
+        return m_cellSignalStrengthInfo;
+    }
 
 private:
-    DeviceInfo() : m_phoneInfo(NULL), m_subscriberInfo(NULL), m_batteryInfo(NULL)
+    DeviceInfo() : m_phoneInfo(NULL), m_subscriberInfo(NULL), m_batteryInfo(NULL),
+        m_cellNetworkInfo(NULL), m_cellNetworkRegistrationInfo(NULL),
+        m_cellSignalStrengthInfo(NULL)
     {
         m_telephony = CTelephony::NewL();
     };
 
     ~DeviceInfo()
     {
+        delete m_cellSignalStrengthInfo;
+        delete m_cellNetworkRegistrationInfo;
+        delete m_cellNetworkInfo;
         delete m_batteryInfo;
         delete m_subscriberInfo;
         delete m_phoneInfo;
@@ -270,6 +299,9 @@ private:
     CPhoneInfo *m_phoneInfo;
     CSubscriberInfo *m_subscriberInfo;
     CBatteryInfo *m_batteryInfo;
+    CCellNetworkInfo *m_cellNetworkInfo;
+    CCellNetworkRegistrationInfo *m_cellNetworkRegistrationInfo;
+    CCellSignalStrengthInfo *m_cellSignalStrengthInfo;
 };
 
 QT_END_NAMESPACE

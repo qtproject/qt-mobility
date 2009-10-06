@@ -39,7 +39,7 @@
 
 //////// QSystemInfo
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
- : QObject(parent)
+    : QObject(parent)
 {
 }
 
@@ -75,7 +75,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 
 //////// QSystemNetworkInfo
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
-        : QObject(parent)
+    : QObject(parent)
 {
 }
 
@@ -85,53 +85,155 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
-    return QSystemNetworkInfo::UndefinedStatus;     //TODO
+    //TODO: CDMA, WCDMA and WLAN modes
+    switch(mode) {
+        case QSystemNetworkInfo::GsmMode:
+        {
+            CTelephony::TRegistrationStatus networkStatus = DeviceInfo::instance()
+                ->cellNetworkRegistrationInfo()->cellNetworkStatus();
+
+            switch(networkStatus) {
+                case CTelephony::ERegistrationUnknown:
+                    return QSystemNetworkInfo::UndefinedStatus;
+
+                case CTelephony::ENotRegisteredNoService:
+                    return QSystemNetworkInfo::NoNetworkAvailable;
+
+                case CTelephony::ENotRegisteredEmergencyOnly:
+                    return QSystemNetworkInfo::EmergencyOnly;
+
+                case CTelephony::ENotRegisteredSearching:
+                    return QSystemNetworkInfo::Searching;
+
+                case CTelephony::ERegisteredBusy:
+                    return QSystemNetworkInfo::Busy;
+                /*
+                case CTelephony::ERegisteredOnHomeNetwork: //How this case should be handled? There are no connected state in CTelephony.
+                    return QSystemNetworkInfo::Connected;
+                */
+                case CTelephony::ERegisteredOnHomeNetwork:
+                    return QSystemNetworkInfo::HomeNetwork;
+
+                case CTelephony::ERegistrationDenied:
+                    return QSystemNetworkInfo::Denied;
+
+                case CTelephony::ERegisteredRoaming:
+                    return QSystemNetworkInfo::Roaming;
+
+            };
+        }
+        case QSystemNetworkInfo::CdmaMode:
+        break;
+        case QSystemNetworkInfo::WcdmaMode:
+        break;
+        case QSystemNetworkInfo::WlanMode:
+        break;
+        case QSystemNetworkInfo::EthernetMode:
+        break;
+        case QSystemNetworkInfo::BluetoothMode:
+        break;
+        case QSystemNetworkInfo::WimaxMode:
+        break;
+    };
+    return QSystemNetworkInfo::NoNetworkAvailable;
 }
 
 int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
-    return -1;   //TODO
+    //TODO: CDMA, WCDMA and WLAN modes
+    switch(mode) {
+        case QSystemNetworkInfo::GsmMode:
+            return DeviceInfo::instance()->cellSignalStrenghtInfo()->cellNetworkSignalStrength();
+
+        case QSystemNetworkInfo::CdmaMode:
+        break;
+        case QSystemNetworkInfo::WcdmaMode:
+        break;
+        case QSystemNetworkInfo::WlanMode:
+        break;
+        case QSystemNetworkInfo::EthernetMode:
+        break;
+        case QSystemNetworkInfo::BluetoothMode:
+        break;
+        case QSystemNetworkInfo::WimaxMode:
+        break;
+    };
+    return -1;  //TODO
 }
 
 int QSystemNetworkInfoPrivate::cellId()
 {
-    return -1;  //TODO
+	return DeviceInfo::instance()->cellNetworkInfo()->cellId();
 }
 
 int QSystemNetworkInfoPrivate::locationAreaCode()
 {
-    return -1;  //TODO
+	return DeviceInfo::instance()->cellNetworkInfo()->locationAreaCode();
 }
 
 // Mobile Country Code
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
-    return QString();   //TODO
+	return DeviceInfo::instance()->cellNetworkInfo()->homeMobileCountryCode();
 }
 
 // Mobile Network Code
 QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
 {
-    return QString();   //TODO
+	return DeviceInfo::instance()->cellNetworkInfo()->homeMobileNetworkCode();
 }
 
 QString QSystemNetworkInfoPrivate::homeMobileCountryCode()
 {
-    return QString();   //TODO
+	return DeviceInfo::instance()->cellNetworkInfo()->homeMobileCountryCode();
 }
 
 QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 {
-    return QString();   //TODO
+	return DeviceInfo::instance()->cellNetworkInfo()->homeMobileNetworkCode();
 }
 
 QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
-    return QString();   //TODO
+    //TODO: CDMA, WCDMA and WLAN modes
+    switch(mode) {
+        case QSystemNetworkInfo::GsmMode:
+            return DeviceInfo::instance()->cellNetworkInfo()->networkName();
+
+        break;
+        case QSystemNetworkInfo::CdmaMode:
+        break;
+        case QSystemNetworkInfo::WcdmaMode:
+        break;
+        case QSystemNetworkInfo::WlanMode:
+        break;
+        case QSystemNetworkInfo::EthernetMode:
+        break;
+        case QSystemNetworkInfo::BluetoothMode:
+        break;
+        case QSystemNetworkInfo::WimaxMode:
+        break;
+    };
 }
 
 QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
 {
+    switch(mode) {
+        case QSystemNetworkInfo::GsmMode:
+        break;
+        case QSystemNetworkInfo::CdmaMode:
+        break;
+        case QSystemNetworkInfo::WcdmaMode:
+        break;
+        case QSystemNetworkInfo::WlanMode:
+        break;
+        case QSystemNetworkInfo::EthernetMode:
+        break;
+        case QSystemNetworkInfo::BluetoothMode:
+        break;
+        case QSystemNetworkInfo::WimaxMode:
+        break;
+    };
     return QString();   //TODO
 }
 
@@ -142,7 +244,7 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
 
 //////// QSystemDisplayInfo
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
-        : QObject(parent)
+    : QObject(parent)
 {
 }
 
@@ -162,7 +264,7 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
 
 //////// QSystemMemoryInfo
 QSystemMemoryInfoPrivate::QSystemMemoryInfoPrivate(QObject *parent)
-        : QObject(parent)
+    : QObject(parent)
 {
 }
 
@@ -186,13 +288,13 @@ QStringList QSystemMemoryInfoPrivate::listOfVolumes()
 }
 
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
-        : QObject(parent)
+    : QObject(parent)
 {
 }
 
 //////// QSystemDeviceInfo
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
-        : QObject(parent)
+    : QObject(parent)
 {
     DeviceInfo::instance()->batteryInfo()->addObserver(this);
 }
@@ -223,7 +325,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 
         case CTelephony::EBatteryConnectedButExternallyPowered:
         {
-            if (DeviceInfo::instance()->batteryInfo()->batteryLevel() < 100) {  //TODO: Use real indicator
+            if (DeviceInfo::instance()->batteryInfo()->batteryLevel() < 100) { //TODO: Use real indicator, EPSHWRMChargingStatus
                 return QSystemDeviceInfo::WallPowerChargingBattery;
             } else {
                 return QSystemDeviceInfo::WallPower;
@@ -316,7 +418,7 @@ DeviceInfo *DeviceInfo::m_instance = NULL;
 
 //////// QSystemScreenSaver
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
-        : QObject(parent)
+    : QObject(parent)
 {
 }
 

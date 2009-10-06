@@ -212,3 +212,206 @@ void CBatteryInfo::startMonitoring()
     m_telephony.NotifyChange(iStatus, CTelephony::EBatteryInfoChange, m_batteryInfoV1Pckg);
     SetActive();
 }
+
+CCellNetworkInfo::CCellNetworkInfo(CTelephony &telephony) : CTelephonyInfo(telephony),
+    m_networkInfoV1Pckg(m_networkInfoV1), m_initializing(true)
+{
+    m_telephony.GetCurrentNetworkInfo(iStatus, m_networkInfoV1Pckg);
+    makeRequest();    
+
+    m_cellId = m_networkInfoV1.iCellId;
+
+	m_locationAreaCode = m_networkInfoV1.iLocationAreaCode;
+
+	TBuf<CTelephony::KNetworkIdentitySize> homeMobileNetworkCode = m_networkInfoV1.iNetworkId;
+    m_homeMobileNetworkCode = QString::fromUtf16(homeMobileNetworkCode.Ptr(), homeMobileNetworkCode.Length());
+
+    TBuf<CTelephony::KNetworkCountryCodeSize> homeMobileCountryCode = m_networkInfoV1.iCountryCode;
+    m_homeMobileCountryCode = QString::fromUtf16(homeMobileCountryCode.Ptr(), homeMobileCountryCode.Length());
+
+    TBuf<CTelephony::KNetworkLongNameSize> networkName = m_networkInfoV1.iLongName;
+    m_networkName = QString::fromUtf16(networkName.Ptr(), networkName.Length());
+    
+    m_initializing = false;
+}
+
+//TODO
+/*
+void CCellNetworkInfo::RunL()
+{
+    if (m_initializing) {
+        CTelephonyInfo::RunL();
+    } else {
+        m_homeMobileNetworkCode = m_networkInfoV1.iNetworkId;
+        m_homeMobileCountryCode = m_networkInfoV1.iCountryCode;
+        m_networkName = m_networkInfoV1.iLongName;
+
+        foreach (MTelephonyInfoObserver *observer, m_observers) {
+            if (m_homeMobileNetworkCode != m_previousHomeMobileNetworkCode) {
+                m_previousHomeMobileNetworkCode = m_homeMobileNetworkCode;
+                observer->currentMobileNetworkCodeChanged(&mnc);
+            }
+            if (m_homeMobileCountryCode != m_previousHomeMobileCountryCode) {
+                m_previousHomeMobileCountryCode = m_homeMobileCountryCode;
+                observer->currentMobileCountryCodeChanged(&mcc);
+            }
+            if (m_networkName != m_previousNetworkName) {
+                m_previousNetworkName = m_networkName;
+                observer->networkNameChanged(mode, &netName);
+            }
+        }
+        startMonitoring();
+    }
+}
+*/
+
+void CCellNetworkInfo::DoCancel()
+{
+    if (m_initializing) {
+        m_telephony.CancelAsync(CTelephony::EGetCurrentNetworkInfoCancel);
+    } else {
+        m_telephony.CancelAsync(CTelephony::ECurrentNetworkInfoChangeCancel);
+    }
+}
+
+int CCellNetworkInfo::cellId() const
+{
+    return m_cellId;
+}
+
+int CCellNetworkInfo::locationAreaCode() const
+{
+    return m_locationAreaCode;
+}
+
+QString CCellNetworkInfo::homeMobileNetworkCode() const
+{
+    return m_homeMobileNetworkCode;
+}
+
+QString CCellNetworkInfo::homeMobileCountryCode() const
+{
+    return m_homeMobileCountryCode;
+}
+
+QString CCellNetworkInfo::networkName() const
+{
+    return m_networkName;
+}
+
+//TODO
+/*
+void CCellNetworkInfo::startMonitoring()
+{
+    m_telephony.NotifyChange(iStatus, CTelephony::ESignalStrengthChange, m_signalStrengthV1Pckg);
+    SetActive();
+}
+*/
+
+CCellNetworkRegistrationInfo::CCellNetworkRegistrationInfo(CTelephony &telephony) : CTelephonyInfo(telephony),
+    m_networkRegistrationV1Pckg(m_networkRegistrationV1), m_initializing(true)
+{
+    m_telephony.GetNetworkRegistrationStatus(iStatus, m_networkRegistrationV1Pckg);
+    makeRequest();
+
+    m_networkStatus = m_networkRegistrationV1.iRegStatus;
+    m_initializing = false;
+}
+
+//TODO
+/*
+void CCellNetworkRegistrationInfo::RunL()
+{
+    if (m_initializing) {
+        CTelephonyInfo::RunL();
+    } else {
+        m_networkStatus = m_networkRegistrationV1.iRegStatus;
+
+        foreach (MTelephonyInfoObserver *observer, m_observers) {
+            if (m_networkStatus != m_previousNetworkStatus) {
+                m_previousNetworkStatus = m_networkStatus;
+                observer->networkStatusChanged(mode, status);
+            }
+        }
+        startMonitoring();
+    }
+}
+*/
+
+void CCellNetworkRegistrationInfo::DoCancel()
+{
+    if (m_initializing) {
+        m_telephony.CancelAsync(CTelephony::EGetNetworkRegistrationStatusCancel);
+    } else {
+        m_telephony.CancelAsync(CTelephony::ENetworkRegistrationStatusChangeCancel);
+    }
+}
+
+CTelephony::TRegistrationStatus CCellNetworkRegistrationInfo::cellNetworkStatus() const
+{
+    return m_networkStatus;
+}
+
+//TODO
+/*
+void CCellNetworkRegistrationInfo::startMonitoring()
+{
+    m_telephony.NotifyChange(iStatus, CTelephony::ENetworkRegistrationStatusChange, m_networkRegistrationV1Pckg);
+    SetActive();
+}
+*/
+
+CCellSignalStrengthInfo::CCellSignalStrengthInfo(CTelephony &telephony) : CTelephonyInfo(telephony),
+    m_signalStrengthV1Pckg(m_signalStrengthV1), m_initializing(true)
+{
+    m_telephony.GetSignalStrength(iStatus, m_signalStrengthV1Pckg);
+    makeRequest();
+
+    m_cellNetworkSignalStrength = m_signalStrengthV1.iSignalStrength;
+    
+    m_initializing = false;
+}
+
+//TODO
+/*
+void CCellSignalStrengthInfo::RunL()
+{
+    if (m_initializing) {
+        CTelephonyInfo::RunL();
+    } else {
+        m_cellNetworkSignalStrength = m_signalStrengthV1.iSignalStrength;
+
+        foreach (MTelephonyInfoObserver *observer, m_observers) {
+            if (m_cellNetworkSignalStrength != m_previousCellNetworkSignalStrength) {
+                m_previousCellNetworkSignalStrength = m_cellNetworkSignalStrength;
+                observer->batteryStatusChanged(mode, strength);
+            }
+        }
+        startMonitoring();
+
+    }
+}
+*/
+
+void CCellSignalStrengthInfo::DoCancel()
+{
+    if (m_initializing) {
+        m_telephony.CancelAsync(CTelephony::EGetSignalStrengthCancel);
+    } else {
+        m_telephony.CancelAsync(CTelephony::ESignalStrengthChangeCancel);
+    }
+}
+
+int CCellSignalStrengthInfo::cellNetworkSignalStrength() const
+{
+    return m_cellNetworkSignalStrength;
+}
+
+//TODO
+/*
+void CCellSignalStrengthInfo::startMonitoring()
+{
+    m_telephony.NotifyChange(iStatus, CTelephony::ESignalStrengthChange, m_signalStrengthV1Pckg);
+    SetActive();
+}
+*/

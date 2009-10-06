@@ -46,6 +46,15 @@ class MTelephonyInfoObserver
 public:
     virtual void batteryStatusChanged() = 0;
     virtual void batteryLevelChanged() = 0;
+    
+    /*
+    virtual void currentMobileCountryCodeChanged(const QString& mcc) = 0;
+    virtual void currentMobileNetworkCodeChanged(const QString& mnc) = 0;
+    virtual void networkModeChanged(QSystemNetworkInfo::NetworkMode mode) = 0;
+    virtual void networkNameChanged(QSystemNetworkInfo::NetworkMode mode, const QString& netName) = 0;
+    virtual void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode, int strength) = 0;
+    virtual void networkStatusChanged(QSystemNetworkInfo::NetworkMode mode, QSystemNetworkInfo::NetworkStatus status) = 0;
+    */
 };
 
 class CTelephonyInfo : public CActive
@@ -152,6 +161,90 @@ private:
 
     CTelephony::TBatteryStatus m_previousBatteryStatus;
     CTelephony::TBatteryStatus m_batteryStatus;
+};
+
+class CCellNetworkInfo : public CTelephonyInfo
+{
+public:
+    CCellNetworkInfo(CTelephony &telephony);
+    //void startMonitoring();
+
+protected:
+    //void RunL();
+    void DoCancel();
+
+public:
+    int cellId() const;
+	int locationAreaCode() const;
+    //QString currentHomeMobileNetworkCode(); //Is this same as below?
+    //QString currentHomeMobileCountryCode(); //Is this same as below?
+    QString homeMobileNetworkCode() const;
+    QString homeMobileCountryCode() const;
+    QString networkName() const;
+
+private:
+    bool m_initializing;
+
+    CTelephony::TNetworkInfoV1Pckg m_networkInfoV1Pckg;
+    CTelephony::TNetworkInfoV1 m_networkInfoV1;
+
+    int m_cellId;
+    int m_locationAreaCode;
+    
+	QString m_homeMobileNetworkCode;
+    QString m_previousHomeMobileNetworkCode;
+    
+    QString m_homeMobileCountryCode;
+    QString m_previousHomeMobileCountryCode;
+	
+    QString m_networkName;
+    QString m_previousNetworkName;
+};
+
+class CCellNetworkRegistrationInfo : public CTelephonyInfo
+{
+public:
+    CCellNetworkRegistrationInfo(CTelephony &telephony);
+    //void startMonitoring();
+
+protected:
+    //void RunL();
+    void DoCancel();
+
+public:
+    CTelephony::TRegistrationStatus cellNetworkStatus() const;
+
+private:
+    bool m_initializing;
+
+    CTelephony::TNetworkRegistrationV1Pckg m_networkRegistrationV1Pckg;
+    CTelephony::TNetworkRegistrationV1 m_networkRegistrationV1;
+
+    CTelephony::TRegistrationStatus m_networkStatus;
+    CTelephony::TRegistrationStatus m_previousNetworkStatus;
+};
+
+class CCellSignalStrengthInfo : public CTelephonyInfo
+{
+public:
+    CCellSignalStrengthInfo(CTelephony &telephony);
+    //void startMonitoring();
+
+protected:
+    //void RunL();
+    void DoCancel();
+
+public:
+    int cellNetworkSignalStrength() const;
+
+private:
+    bool m_initializing;
+
+    CTelephony::TSignalStrengthV1Pckg m_signalStrengthV1Pckg;
+    CTelephony::TSignalStrengthV1 m_signalStrengthV1;
+
+    int m_cellNetworkSignalStrength;
+    int m_previousCellNetworkSignalStrength;
 };
 
 #endif //DEVICEINFO_H
