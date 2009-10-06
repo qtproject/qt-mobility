@@ -43,7 +43,7 @@
 class QVideoSurfaceFormat;
 
 class QGraphicsVideoItemPrivate;
-class QGraphicsVideoItem : public QObject, public QGraphicsItem
+class  Q_MEDIA_EXPORT QGraphicsVideoItem : public QObject, public QGraphicsItem
 {
     Q_OBJECT
     Q_INTERFACES(QGraphicsItem)
