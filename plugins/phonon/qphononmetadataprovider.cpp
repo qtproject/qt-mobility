@@ -39,7 +39,7 @@
 #include <QDebug>
 
 QPhononMetaDataProvider::QPhononMetaDataProvider(Phonon::MediaObject *session, QObject *parent)
-    :QMetaDataProviderControl(parent), m_session(session), m_metaDataAvailable(false)
+    :QMetaDataControl(parent), m_session(session), m_metaDataAvailable(false)
 {
     connect(m_session, SIGNAL(metaDataChanged()), SLOT(updateTags()));
 }

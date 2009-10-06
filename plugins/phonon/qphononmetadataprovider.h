@@ -35,13 +35,13 @@
 #ifndef QGSTREAMERMETADATAPROVIDER_H
 #define QGSTREAMERMETADATAPROVIDER_H
 
-#include <multimedia/qmetadataprovidercontrol.h>
+#include <multimedia/qmetadatacontrol.h>
 
 #include <Phonon/MediaObject>
 
 class QPhononPlayerSession;
 
-class QPhononMetaDataProvider : public QMetaDataProviderControl
+class QPhononMetaDataProvider : public QMetaDataControl
 {
     Q_OBJECT
 public:

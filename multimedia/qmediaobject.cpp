@@ -37,7 +37,7 @@
 #include <multimedia/qmediaobject_p.h>
 
 #include <multimedia/qmediaservice.h>
-#include <multimedia/qmetadataprovidercontrol.h>
+#include <multimedia/qmetadatacontrol.h>
 
 
 void QMediaObjectPrivate::_q_notify()
@@ -399,7 +399,7 @@ void QMediaObject::setupMetaData()
 
     if (d->service != 0) {
         d->metaDataControl =
-            qobject_cast<QMetaDataProviderControl*>(d->service->control(QMetaDataProviderControl_iid));
+            qobject_cast<QMetaDataControl*>(d->service->control(QMetaDataControl_iid));
 
         if (d->metaDataControl) {
             connect(d->metaDataControl, SIGNAL(metaDataChanged()), SIGNAL(metaDataChanged()));

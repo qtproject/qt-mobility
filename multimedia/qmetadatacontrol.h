@@ -32,21 +32,21 @@
 **
 ****************************************************************************/
 
-#ifndef QMETADATAPROVIDERCONTROL_H
-#define QMETADATAPROVIDERCONTROL_H
+#ifndef QMETADATACONTROL_H
+#define QMETADATACONTROL_H
 
 #include <multimedia/qmediacontrol.h>
 #include <multimedia/qmediaobject.h>
 
 #include <multimedia/qmediaresource.h>
 
-class QMetaDataProviderControlPrivate;
-class Q_MEDIA_EXPORT QMetaDataProviderControl : public QMediaControl
+class QMetaDataControlPrivate;
+class Q_MEDIA_EXPORT QMetaDataControl : public QMediaControl
 {
     Q_OBJECT
 
 public:
-    ~QMetaDataProviderControl();
+    ~QMetaDataControl();
 
     virtual bool isWritable() const = 0;
     virtual bool isMetaDataAvailable() const = 0;
@@ -65,10 +65,10 @@ Q_SIGNALS:
     void metaDataAvailableChanged(bool available);
 
 protected:
-    QMetaDataProviderControl(QObject *parent = 0);
+    QMetaDataControl(QObject *parent = 0);
 };
 
-#define QMetaDataProviderControl_iid "com.nokia.Qt.QMetaDataProviderControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QMetaDataProviderControl, QMetaDataProviderControl_iid)
+#define QMetaDataControl_iid "com.nokia.Qt.QMetaDataControl/1.0"
+Q_MEDIA_DECLARE_CONTROL(QMetaDataControl, QMetaDataControl_iid)
 
 #endif  // QMETADATAPROVIDER_H

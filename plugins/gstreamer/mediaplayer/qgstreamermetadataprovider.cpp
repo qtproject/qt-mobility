@@ -110,7 +110,7 @@ static const QGstreamerMetaDataKeyLookup qt_gstreamerMetaDataKeys[] =
 };
 
 QGstreamerMetaDataProvider::QGstreamerMetaDataProvider(QGstreamerPlayerSession *session, QObject *parent)
-    :QMetaDataProviderControl(parent), m_session(session)
+    :QMetaDataControl(parent), m_session(session)
 {
     connect(m_session, SIGNAL(tagsChanged()), SLOT(updateTags()));
 }
