@@ -38,7 +38,7 @@
 
 #include <multimedia/qmediaobject.h>
 #include <multimedia/qmediaservice.h>
-#include <multimedia/qmetadataprovidercontrol.h>
+#include <multimedia/qmetadatacontrol.h>
 
 class tst_QMediaObject : public QObject
 {
@@ -67,12 +67,12 @@ private:
     void setupNotifyTests();
 };
 
-class QtTestMetaDataProvider : public QMetaDataProviderControl
+class QtTestMetaDataProvider : public QMetaDataControl
 {
     Q_OBJECT
 public:
     QtTestMetaDataProvider(QObject *parent = 0)
-        : QMetaDataProviderControl(parent)
+        : QMetaDataControl(parent)
         , m_available(false)
         , m_writable(false)
     {
@@ -95,7 +95,7 @@ public:
     void setExtendedMetaData(const QString &key, const QVariant &value) {
         m_extendedData.insert(key, value); }
 
-    using QMetaDataProviderControl::metaDataChanged;
+    using QMetaDataControl::metaDataChanged;
 
     void populateMetaData()
     {
@@ -118,7 +118,7 @@ public:
 
     QMediaControl *control(const char *iid) const
     {
-        if (qstrcmp(iid, QMetaDataProviderControl_iid) == 0)
+        if (qstrcmp(iid, QMetaDataControl_iid) == 0)
             return const_cast<QtTestMetaDataProvider *>(&metaData);
         else
             return 0;

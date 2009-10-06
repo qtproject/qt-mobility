@@ -122,7 +122,7 @@ static const QWmpMetaDataKeyLookup qt_wmpMetaDataKeys[] =
 };
 
 QWmpMetaData::QWmpMetaData(IWMPCore3 *player, QWmpEvents *events, QObject *parent)
-    : QMetaDataProviderControl(parent)
+    : QMetaDataControl(parent)
     , m_media(0)
 {
     player->get_currentMedia(&m_media);

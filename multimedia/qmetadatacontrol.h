@@ -32,47 +32,43 @@
 **
 ****************************************************************************/
 
-#ifndef RECORDER_H
-#define RECORDER_H
+#ifndef QMETADATACONTROL_H
+#define QMETADATACONTROL_H
 
-namespace Ui {
-    class Recorder;
-}
+#include <multimedia/qmediacontrol.h>
+#include <multimedia/qmediaobject.h>
 
-#include <QMainWindow>
+#include <multimedia/qmediaresource.h>
 
-class QMediaRecorder;
-class QAudioDeviceControl;
-class QAudioEncoderControl;
-class QMediaFormatControl;
-
-class Recorder : public QMainWindow
+class QMetaDataControlPrivate;
+class Q_MEDIA_EXPORT QMetaDataControl : public QMediaControl
 {
     Q_OBJECT
+
 public:
-    Recorder(QWidget *parent = 0);
-    ~Recorder();
+    ~QMetaDataControl();
 
-private slots:
-    void updateRecordTime();
-    void record();
-    void pause();
-    void stop();
+    virtual bool isWritable() const = 0;
+    virtual bool isMetaDataAvailable() const = 0;
 
-    void setInputDevice(int idx);
-    void setAudioCodec(int idx);
-    void setContainerFormat(int idx);
-    void setQuality(int value);
+    virtual QVariant metaData(QMediaObject::MetaData key) const = 0;
+    virtual void setMetaData(QMediaObject::MetaData key, const QVariant &value) = 0;
 
-    void displayErrorMessage();
+    virtual QVariant extendedMetaData(const QString &key) const = 0;
+    virtual void setExtendedMetaData(const QString &key, const QVariant &value) = 0;
 
-private:
-    Ui::Recorder *ui;
 
-    QMediaRecorder* audioRecorder;
-    QAudioDeviceControl *audioDevice;
-    QAudioEncoderControl *encodeControl;
-    QMediaFormatControl *formatControl;
+Q_SIGNALS:
+    void metaDataChanged();
+
+    void writableChanged(bool writable);
+    void metaDataAvailableChanged(bool available);
+
+protected:
+    QMetaDataControl(QObject *parent = 0);
 };
 
-#endif
+#define QMetaDataControl_iid "com.nokia.Qt.QMetaDataControl/1.0"
+Q_MEDIA_DECLARE_CONTROL(QMetaDataControl, QMetaDataControl_iid)
+
+#endif  // QMETADATAPROVIDER_H

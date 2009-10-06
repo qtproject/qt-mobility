@@ -205,7 +205,7 @@ QMediaControl *QGstreamerCaptureService::control(const char *name) const
     if (qstrcmp(name,QCameraControl_iid) == 0)
         return m_cameraControl;
 
-    if (qstrcmp(name,QMetaDataProviderControl_iid) == 0)
+    if (qstrcmp(name,QMetaDataControl_iid) == 0)
         return m_metaDataControl;
 
     return 0;

@@ -33,11 +33,11 @@
 ****************************************************************************/
 
 #include <multimedia/qmediacontrol_p.h>
-#include <multimedia/qmetadataprovidercontrol.h>
+#include <multimedia/qmetadatacontrol.h>
 
 
 /*!
-    \class QMetaDataProviderControl
+    \class QMetaDataControl
     \ingroup multimedia
 
     \preliminary
@@ -48,12 +48,12 @@
     Destroy the meta-data object.
 */
 
-QMetaDataProviderControl::~QMetaDataProviderControl()
+QMetaDataControl::~QMetaDataControl()
 {
 }
 
 /*!
-    \fn bool QMetaDataProviderControl::isMetaDataAvailable() const
+    \fn bool QMetaDataControl::isMetaDataAvailable() const
 
     Identifies if meta-data is available from a media service.
 
@@ -61,7 +61,7 @@ QMetaDataProviderControl::~QMetaDataProviderControl()
 */
 
 /*!
-    \fn bool QMetaDataProviderControl::isWritable() const
+    \fn bool QMetaDataControl::isWritable() const
 
     Identifies if a media service's meta-data can be edited.
 
@@ -69,19 +69,19 @@ QMetaDataProviderControl::~QMetaDataProviderControl()
 */
 
 /*!
-    \fn QVariant QMetaDataProviderControl::metaData(QMediaObject::MetaData key) const
+    \fn QVariant QMetaDataControl::metaData(QMediaObject::MetaData key) const
 
     Returns the meta-data for the given \a key.
 */
 
 /*!
-    \fn void QMetaDataProviderControl::setMetaData(QMediaObject::MetaData key, const QVariant &value)
+    \fn void QMetaDataControl::setMetaData(QMediaObject::MetaData key, const QVariant &value)
 
     Sets the \a value of the meta-data element with the given \a key.
 */
 
 /*!
-    \fn QMetaDataProviderControl::extendedMetaData(const QString &key) const
+    \fn QMetaDataControl::extendedMetaData(const QString &key) const
 
     Returns the metaData for an abitrary string \a key.
 
@@ -90,7 +90,7 @@ QMetaDataProviderControl::~QMetaDataProviderControl()
 */
 
 /*!
-    \fn QMetaDataProviderControl::setExtendedMetaData(const QString &key, const QVariant &value)
+    \fn QMetaDataControl::setExtendedMetaData(const QString &key, const QVariant &value)
 
     Change the value of the meta-data element with an abitrary string \a key to \a value.
 
@@ -99,31 +99,31 @@ QMetaDataProviderControl::~QMetaDataProviderControl()
 */
 
 /*!
-    \fn void QMetaDataProviderControl::metaDataChanged()
+    \fn void QMetaDataControl::metaDataChanged()
 
     Signal the changes of meta-data.
 */
 
 /*!
-    \fn void QMetaDataProviderControl::metaDataAvailableChanged(bool available)
+    \fn void QMetaDataControl::metaDataAvailableChanged(bool available)
 
     Signal the availability of meta-data has changed, \a available will
     be true if the multimedia object has meta-data.
 */
 
 /*!
-    \fn void QMetaDataProviderControl::writableChanged(bool writable)
+    \fn void QMetaDataControl::writableChanged(bool writable)
 
     Signal a change in the writable status of meta-data, \a writable will be
     true if meta-data elements can be added or adjusted.
 */
 
 /*!
-    Construct a QMetaDataProviderControl with \a parent. This class is meant as s base class
+    Construct a QMetaDataControl with \a parent. This class is meant as s base class
     for service specific metaData providers so this constructor is protected.
 */
 
-QMetaDataProviderControl::QMetaDataProviderControl(QObject *parent):
+QMetaDataControl::QMetaDataControl(QObject *parent):
     QMediaControl(*new QMediaControlPrivate, parent)
 {
 }

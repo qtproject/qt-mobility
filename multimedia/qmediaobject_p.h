@@ -52,7 +52,7 @@
 
 #include <multimedia/qmediaobject.h>
 
-class QMetaDataProviderControl;
+class QMetaDataControl;
 
 class QMediaObjectPrivate
 {
@@ -64,7 +64,7 @@ public:
     void _q_notify();
 
     QMediaService *service;
-    QMetaDataProviderControl *metaDataControl;
+    QMetaDataControl *metaDataControl;
     QTimer* notifyTimer;
     QList<QByteArray>   notifyProperties;
 
