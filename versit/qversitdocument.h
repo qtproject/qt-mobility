@@ -33,12 +33,11 @@
 #ifndef QVERSITDOCUMENT_H
 #define QVERSITDOCUMENT_H
 
-#include <QVariant>
 #include <QList>
-
 #include "qversitproperty.h"
 
 class QVersitDocumentPrivate;
+
 class QVersitDocument
 {
 public:
@@ -46,30 +45,16 @@ public:
     ~QVersitDocument() {}
 
     enum VersitType {
-        VCard21 = 0,
-        VCard30,
-        VCardDav,
-        VCalendar10,
-        ICalendar20
-        // ... etc.
+        VCard21 = 0
     };
 
     // metadata about the versit document itself.
     void setVersitType(VersitType type);
     VersitType versitType() const;
 
-    void setPublisher(const QString& publisher);
-    QString publisher() const;
-
-    void setProfile(const QString& profile);
-    QString profile() const;
-
-    void setSource(const QString& source);
-    QString source() const;
-    // etc.
-
+    void addProperty(const QVersitProperty& property);
     QList<QVersitProperty> properties() const;
-    void setProperties(QList<QVersitProperty>& properties) const;
+
 
 private:
     QVersitDocumentPrivate* d;

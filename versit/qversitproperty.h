@@ -34,75 +34,30 @@
 #ifndef QVERSITPROPERTY_H
 #define QVERSITPROPERTY_H
 
-#include <QVariant>
-#include <QList>
 #include <QString>
+#include <QStringList>
 #include <QByteArray>
 
 class QVersitDocument;
 class QVersitPropertyPrivate;
+
 class QVersitProperty
 {
 public:
     QVersitProperty() {}
     ~QVersitProperty() {}
 
-    // might not be required!
-    //QVersitDocument::VersitType versitType() const;
+    void setName(const QString& name);
+    QString name() const;
 
-    enum Error {
-        InvalidKey = 0,
-        InvalidTypes,
-        InvalidValueType,
-        IncompatibleData,
-        IncompatibleDetail,
-        InvalidEncoding,
-        InvalidFormat
-    };
-
-    virtual Error error() const;
-
-    enum BinaryEncoding {
-        // whatever values required here.
-        Base64 = 0,
-        Uucode,
-    };
-
-    enum CharacterEncoding {
-        // whatever values required here.
-        Latin1 = 0,
-        Utf8,
-        Utf16,
-        Utf32
-    };
-
-    enum ImageFormat {
-        // whatever values required here.
-        Jpeg = 0,
-        Bitmap,
-        Gif,
-        Png,
-        Svg
-    };
-
-    QString key() const;
-    QStringList types() const;
+    void addParameter(const QString& name, const QString& value);
+    QStringList parameterValues(const QString& name);
+    
+    void setValue(const QByteArray& value);
     QByteArray value() const;
 
-    // XXX virtual QPair<QVariant, Encoding> value() const;
-
-    void setKey(const QString& key);         // TEL,ADR,FN,etc
-    void setTypes(const QStringList& types); // TYPE=home,work,pref,voice,cell,intl,dom,post,etc
-    void setValue(const QString& value, CharacterEncoding encoding);
-    void setValue(const QByteArray& value, BinaryEncoding encoding);
-    void setValue(const QImage& value, ImageFormat format);
-
-    // note that some properties can have an embedded versit property (or versit document) (eg AGENT)
-    void setValue(const QVersitDocument& embedded);
-
-    QStringList validKeys() const;
-    QStringList validTypes(const QString& key = QString()) const;
-    QVariant::Type valueType() const;
+    void setEmbeddedDocument(QVersitDocument* document);
+    const QVersitDocument* embeddedDocument() const;
 
 private:
     QVersitPropertyPrivate* d;
