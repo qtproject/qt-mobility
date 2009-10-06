@@ -50,39 +50,35 @@
 //typedef QList<QUniqueId> QUniqueIdIterator;
 
 class QContactChangeSet;
+class QAbstractContactFilter;
 
 class QContactSymbianEngineData : public QObject,
 							   public MContactDbObserver
 {
 	Q_OBJECT
-	
+
 public:
     QContactSymbianEngineData();
     virtual ~QContactSymbianEngineData();
 
 public:
     /* Access */
-	QList<QUniqueId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error);
+	QList<QUniqueId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+	bool filterSupported(const QContactFilter& filter) const;
     QContact contact(const QUniqueId& contactId, QContactManager::Error& qtError) const;
     QList<QUniqueId> contacts(QContactManager::Error& qtError) const;
     int count() const;
-    
+
     /* "My card" */
     QUniqueId personalID() const;
     bool hasPersonalDetails() const; //is this needed, QUniqueId could be 0 if it doesn't exist
     int setPersonalContactId(const QUniqueId &);
     void clearPersonalContactId();
 
-    /* Add/Update/Remove */ 
+    /* Add/Update/Remove */
     bool addContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError);
     bool updateContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError);
     bool removeContact(const QUniqueId &id, QContactChangeSet& changeSet, QContactManager::Error& qtError);
-    
-    //function to find contacts, based on the communication method
-    //communication type - call (number, voip fields), digits to match
-    //communication type - sms (number fields), digits to match
-    //communication type - email (email fields)
-    QList<QUniqueId> matchCommunicationAddress( const QString &communicationType, const QString &communicationAddress );
 
     /* Groups functionality */
 	QList<QUniqueId> groups(QContactManager::Error& qtError) const;
@@ -91,15 +87,15 @@ public:
 	bool updateGroup(QContactGroup& group, QContactChangeSet& changeSet, QContactManager::Error& qtError);
 	bool removeGroup(const QUniqueId& groupId, QContactChangeSet& changeSet, QContactManager::Error& qtError);
 	QUniqueId simPhonebookGroupId() const;
-	
+
     /* "Self" contact id (MyCard) */
     bool setSelfContactId(const QUniqueId& contactId, QContactManager::Error& qtError);
     QUniqueId selfContactId(QContactManager::Error& qtError) const;
-    
+
 public:
 	// From MContactDbObserver
 	void HandleDatabaseEventL(TContactDbObserverEvent aEvent);
-    
+
 signals:
     // Database change notifications
     void contactAdded(const QUniqueId &contactId);
@@ -122,8 +118,6 @@ private:
 	void updateContactL(QContact &contact);
     int removeContactL(QUniqueId id);
 
-	QList<QUniqueId>  matchCommunicationAddressL( const QString &communicationType, const QString &communicationAddress );
-
 	//Leaving functions for groups functionality
 	QList<QUniqueId> groupsL() const;
 	QContactGroup groupL(const QUniqueId& groupId) const;
@@ -140,13 +134,14 @@ private:
 
 private:
 	CContactDatabase* m_contactDatabase;
-#ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__  
+#ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
 	CContactChangeNotifier* m_contactChangeNotifier;
-#endif	
+#endif
 	TransformContact* m_transformContact;
     QList<QUniqueId> m_contactsAddedEmitted;
     QList<QUniqueId> m_contactsChangedEmitted;
     QList<QUniqueId> m_contactsRemovedEmitted;
+    QAbstractContactFilter* m_contactFilter;
 };
 
 #endif
