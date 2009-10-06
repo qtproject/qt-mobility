@@ -40,6 +40,8 @@
 #include <QSet>
 #include "qcontactchangeset.h"
 
+#include <QDebug>
+
 typedef QList<QUniqueId> QUniqueIdList;
 
 /* ... The macros changed names */
@@ -658,10 +660,14 @@ void QContactSymbianEngineData::updateContactL(QContact &contact)
 
     // Copy the data from QContact to CContactItem
     m_transformContact->transformContactL(contact, *contactItem);
-
+    
     // Write the entry using the converted  contact
+    // note commitContactL removes empty fields from the contact
     m_contactDatabase->CommitContactL(*contactItem);
 
+    // retrieve the contact in case of empty fields that have been removed, this could also be handled in transformcontact.
+    contact = contactL(contact.id());
+    
     // Update group memberships to contact database
     updateMemberOfGroupsL(contact);
     
