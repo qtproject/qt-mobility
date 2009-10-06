@@ -31,8 +31,8 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTGROUPMEMBERSHIPFILTER_P_H
-#define QCONTACTGROUPMEMBERSHIPFILTER_P_H
+#ifndef QCONTACTRELATIONSHIPFILTER_P_H
+#define QCONTACTRELATIONSHIPFILTER_P_H
 
 //
 //  W A R N I N G
@@ -48,34 +48,61 @@
 #include "qcontactfilter_p.h"
 #include "qcontactfilter.h"
 
+#include <QString>
+#include <QStringList>
+#include <QList>
 
-class QContactGroupMembershipFilterPrivate : public QContactFilterPrivate
+class QContactRelationshipFilterPrivate : public QContactFilterPrivate
 {
 public:
-    QContactGroupMembershipFilterPrivate()
-        : QContactFilterPrivate()
-        , m_id(0)
+    QContactRelationshipFilterPrivate()
+        : QContactFilterPrivate(),
+        m_minimumPriority(-1),
+        m_maximumPriority(-1)
     {
-
     }
 
-    QContactGroupMembershipFilterPrivate(const QContactGroupMembershipFilterPrivate& other)
+    QContactRelationshipFilterPrivate(const QContactRelationshipFilterPrivate& other)
         : QContactFilterPrivate(other),
-        m_id(other.m_id)
+        m_leftIds(other.m_leftIds),
+        m_rightIds(other.m_rightIds),
+        m_leftManagerUris(other.m_leftManagerUris),
+        m_rightManagerUris(other.m_rightManagerUris),
+        m_relationshipTypes(other.m_relationshipTypes),
+        m_minimumPriority(other.m_minimumPriority),
+        m_maximumPriority(other.m_maximumPriority)
     {
     }
 
     virtual bool compare(const QContactFilterPrivate* other) const
     {
-        const QContactGroupMembershipFilterPrivate *od = static_cast<const QContactGroupMembershipFilterPrivate*>(other);
-        if (m_id != od->m_id)
+        const QContactRelationshipFilterPrivate *od = static_cast<const QContactRelationshipFilterPrivate*>(other);
+        if (m_leftIds != od->m_leftIds)
+            return false;
+        if (m_rightIds != od->m_rightIds)
+            return false;
+        if (m_leftManagerUris != od->m_leftManagerUris)
+            return false;
+        if (m_rightManagerUris != od->m_rightManagerUris)
+            return false;
+        if (m_relationshipTypes != od->m_relationshipTypes)
+            return false;
+        if (m_minimumPriority != od->m_minimumPriority)
+            return false;
+        if (m_maximumPriority != od->m_maximumPriority)
             return false;
         return true;
     }
 
-    Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactGroupMembershipFilter, QContactFilter::GroupMembershipFilter)
+    Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactRelationshipFilter, QContactFilter::RelationshipFilter)
 
-    QUniqueId m_id;
+    QList<QUniqueId> m_leftIds;
+    QList<QUniqueId> m_rightIds;
+    QStringList m_leftManagerUris;
+    QStringList m_rightManagerUris;
+    QStringList m_relationshipTypes;
+    int m_minimumPriority;
+    int m_maximumPriority;
 };
 
 #endif

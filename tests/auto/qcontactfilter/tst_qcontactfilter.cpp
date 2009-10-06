@@ -65,7 +65,7 @@ private slots:
     void detailRangeFilter();
     void changeLogFilter();
     void actionFilter();
-    void groupMembershipFilter();
+    void relationshipFilter();
     void boringFilters();
     void idListFilter();
 
@@ -590,27 +590,9 @@ void tst_QContactFilter::detailRangeFilter()
     QVERIFY(rf2 == rf);
 }
 
-void tst_QContactFilter::groupMembershipFilter()
+void tst_QContactFilter::relationshipFilter()
 {
-    QContactGroupMembershipFilter gf;
-
-    QVERIFY(gf.type() == QContactFilter::GroupMembershipFilter);
-
-    QVERIFY(gf.groupId() == 0);
-
-    gf.setGroupId(546);
-    QVERIFY(gf.groupId() == 546);
-
-    /* Test op= */
-    QContactFilter f = gf;
-    QVERIFY(f == gf);
-
-    QContactGroupMembershipFilter gf2 = f;
-    QVERIFY(gf2 == gf);
-
-    /* Self assignment should do nothing */
-    gf2 = gf2;
-    QVERIFY(gf2 == gf);
+    QSKIP("TODO!", SkipSingle);
 }
 
 void tst_QContactFilter::sortObject()

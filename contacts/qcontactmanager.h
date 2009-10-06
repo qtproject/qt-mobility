@@ -68,7 +68,7 @@ public:
 
     QString managerName() const;                       // e.g. "Symbian"
     QMap<QString, QString> managerParameters() const;  // e.g. "filename=private.db"
-    QString storeUri() const;                          // managerName + managerParameters
+    QString managerUri() const;                          // managerName + managerParameters
 
     static bool splitUri(const QString& uri, QString* managerName, QMap<QString, QString>* params);
     static QString buildUri(const QString& managerName, const QMap<QString, QString>& params);

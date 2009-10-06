@@ -230,7 +230,7 @@ void tst_QContactManager::dumpContacts(QContactManager *cm)
 {
     QList<QUniqueId> ids = cm->contacts();
 
-    qDebug() << "There are" << ids.count() << "contacts in" << cm->storeUri();
+    qDebug() << "There are" << ids.count() << "contacts in" << cm->managerUri();
 
     foreach(QUniqueId id, ids) {
         QContact c = cm->contact(id);
@@ -381,21 +381,21 @@ void tst_QContactManager::ctors()
     QContactManager cm; // default
     QContactManager cm2(defaultStore);
     QContactManager cm3(defaultStore, QMap<QString, QString>());
-    QContactManager cm4(cm.storeUri()); // should fail
+    QContactManager cm4(cm.managerUri()); // should fail
 
     QContactManager* cm5 = QContactManager::fromUri(QContactManager::buildUri(defaultStore, QMap<QString, QString>()));
-    QContactManager* cm6 = QContactManager::fromUri(cm.storeUri());
+    QContactManager* cm6 = QContactManager::fromUri(cm.managerUri());
     QContactManager* cm9 = QContactManager::fromUri(QString(), &parent);
 
     QVERIFY(cm9->parent() == &parent);
 
-    QCOMPARE(cm.storeUri(), cm2.storeUri());
-    QCOMPARE(cm.storeUri(), cm3.storeUri());
-    QCOMPARE(cm.storeUri(), cm5->storeUri());
-    QCOMPARE(cm.storeUri(), cm6->storeUri());
-    QCOMPARE(cm.storeUri(), cm9->storeUri());
+    QCOMPARE(cm.managerUri(), cm2.managerUri());
+    QCOMPARE(cm.managerUri(), cm3.managerUri());
+    QCOMPARE(cm.managerUri(), cm5->managerUri());
+    QCOMPARE(cm.managerUri(), cm6->managerUri());
+    QCOMPARE(cm.managerUri(), cm9->managerUri());
 
-    QVERIFY(cm.storeUri() != cm4.storeUri()); // don't pass a uri to the ctor
+    QVERIFY(cm.managerUri() != cm4.managerUri()); // don't pass a uri to the ctor
 
     /* Test that we get invalid stores when we do silly things */
     QContactManager em("non existent");
@@ -415,18 +415,18 @@ void tst_QContactManager::ctors()
      */
 
     /* First some URI testing for equivalent stores */
-    QVERIFY(em.storeUri() == em2.storeUri());
-    QVERIFY(em.storeUri() == em5->storeUri());
-    QVERIFY(em.storeUri() == em4->storeUri());
-    QVERIFY(em2.storeUri() == em4->storeUri());
-    QVERIFY(em2.storeUri() == em5->storeUri());
-    QVERIFY(em4->storeUri() == em5->storeUri());
+    QVERIFY(em.managerUri() == em2.managerUri());
+    QVERIFY(em.managerUri() == em5->managerUri());
+    QVERIFY(em.managerUri() == em4->managerUri());
+    QVERIFY(em2.managerUri() == em4->managerUri());
+    QVERIFY(em2.managerUri() == em5->managerUri());
+    QVERIFY(em4->managerUri() == em5->managerUri());
 
-    QVERIFY(em3.storeUri() == em6->storeUri());
+    QVERIFY(em3.managerUri() == em6->managerUri());
 
     /* Test the stores that should not be the same */
-    QVERIFY(em.storeUri() != em3.storeUri());
-    QVERIFY(em.storeUri() != em6->storeUri());
+    QVERIFY(em.managerUri() != em3.managerUri());
+    QVERIFY(em.managerUri() != em6->managerUri());
 
     /* now the components */
     QCOMPARE(em.managerName(), QString("invalid"));

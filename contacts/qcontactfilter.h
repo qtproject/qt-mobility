@@ -63,7 +63,7 @@ public:
         ContactDetailRangeFilter,
         ChangeLogFilter,
         ActionFilter,
-        GroupMembershipFilter,
+        RelationshipFilter,
         IntersectionFilter,
         UnionFilter,
         IdListFilter,

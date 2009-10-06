@@ -1402,18 +1402,9 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
             }
             break;
 
-        case QContactFilter::GroupMembershipFilter:
+        case QContactFilter::RelationshipFilter:
             {
-                // check the specified group for membership.
-                const QContactGroupMembershipFilter cgf(filter);
-
-                // oldcode:
-                //if (contact.groups().contains(cgf.groupId()))
-                //    return true;
-                // newcode:
-                //if (contact.containsRelationshipDetail(is, cfg.groupId())) return true.
-
-                // Fall through to end
+                // TODO
             }
             break;
 

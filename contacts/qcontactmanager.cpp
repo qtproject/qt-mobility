@@ -500,7 +500,7 @@ QMap<QString, QString>QContactManager::managerParameters() const
  * Return the uri describing this QContactManager, including
  * managerName, managerStoreId and any parameters.
  */
-QString QContactManager::storeUri() const
+QString QContactManager::managerUri() const
 {
     return d->m_uri;
 }
