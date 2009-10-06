@@ -36,6 +36,8 @@
 #define QCONTACTDETAIL_H
 
 #include "qtcontactsglobal.h"
+#include "qcontactactiondescriptor.h"
+
 #include <QSharedDataPointer>
 #include <QStringList>
 #include <QVariant>
@@ -70,6 +72,9 @@ public:
 
     QString definitionName() const;
     bool isEmpty() const;
+
+    void setPreferredActions(const QList<QContactActionDescriptor>& preferredActions);
+    QList<QContactActionDescriptor> preferredActions() const;
 
     QVariantMap values() const;
     QString value(const QString& key) const;
