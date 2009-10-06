@@ -314,6 +314,15 @@ QString QContactSymbianEngine::synthesiseDisplayLabel(const QContact& contact, Q
     }
 }
 
+bool QContactSymbianEngine::setSelfContactId(const QUniqueId& contactId, QContactManager::Error& error)
+{
+    return d->setSelfContactId(contactId, error);
+}
+
+QUniqueId QContactSymbianEngine::selfContactId(QContactManager::Error& error) const
+{
+    return d->selfContactId(error);
+}
 
 /*!
  * Returns the list of data types supported by the Symbian S60 engine

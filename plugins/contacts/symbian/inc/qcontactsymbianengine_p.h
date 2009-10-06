@@ -91,6 +91,10 @@ public:
 	bool updateGroup(QContactGroup& group, QContactChangeSet& changeSet, QContactManager::Error& qtError);
 	bool removeGroup(const QUniqueId& groupId, QContactChangeSet& changeSet, QContactManager::Error& qtError);
 	QUniqueId simPhonebookGroupId() const;
+	
+    /* "Self" contact id (MyCard) */
+    bool setSelfContactId(const QUniqueId& contactId, QContactManager::Error& qtError);
+    QUniqueId selfContactId(QContactManager::Error& qtError) const;
     
 public:
 	// From MContactDbObserver
