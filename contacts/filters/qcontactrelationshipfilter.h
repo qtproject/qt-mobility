@@ -49,27 +49,28 @@ public:
     QContactRelationshipFilter();
     QContactRelationshipFilter(const QContactFilter& other);
 
-    void setLeftIds(const QList<QUniqueId>& possibleIds);
-    void setRightIds(const QList<QUniqueId>& possibleIds);
-    void setLeftIds(const QUniqueId& possibleId) { setLeftIds(QList<QUniqueId>() << possibleId); }
-    void setRightIds(const QUniqueId& possibleId) { setRightIds(QList<QUniqueId>() << possibleId); }
+//QCRF { fixedUri; fixedId; relType; contactRelPosition [left, right, either] } <-- possible API?
+//QCRF { 0 ,0, 0, either }      -> any local contact that is a participant in any relationship
+//QCRF { 0, 0, 0, left}         -> only local contacts that are on the left hand side of a relationship
+//QCRF { mgr, id, 0, left }     -> only local contacts that are on the left hand side of a relationship, with mgr:id being on the right
 
-    void setLeftManagerUris(const QStringList& possibleManagerUris);
-    void setRightManagerUris(const QStringList& possibleManagerUris);
-    void setLeftManagerUris(const QString& possibleManagerUri) { setLeftManagerUris(QStringList(possibleManagerUri)); }
-    void setRightManagerUris(const QString& possibleManagerUri) { setRightManagerUris(QStringList(possibleManagerUri)); }
+    enum Side {
+        Left = 0,
+        Right,
+        Either
+    };
 
-    void setRelationshipTypes(const QStringList& relationshipTypes);
-    void setRelationshipTypes(const QString& relationshipType) { setRelationshipTypes(QStringList(relationshipType)); }
-
+    void takeSide(QContactRelationshipFilter::Side side);
+    void setFixedUri(const QString& fixedUri);
+    void setFixedId(const QUniqueId& fixedId);
+    void setRelationshipType(const QString& relationshipType);
     void setMinimumPriority(int min);
     void setMaximumPriority(int max);
 
-    QList<QUniqueId> leftIds() const;
-    QList<QUniqueId> rightIds() const;
-    QStringList leftManagerUris() const;
-    QStringList rightManagerUris() const;
-    QStringList relationshipTypes() const;
+    Side side() const;
+    QString fixedUri() const;
+    QUniqueId fixedId() const;
+    QString relationshipType() const;
     int minimumPriority() const;
     int maximumPriority() const;
 

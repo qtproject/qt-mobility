@@ -57,54 +57,48 @@ QContactRelationshipFilter::QContactRelationshipFilter()
 {
 }
 
-/*!
- * Sets the list of left-contact identifiers to \a possibleIds.
- * If \a possibleIds is empty, all contact ids will match.
- */
-void QContactRelationshipFilter::setLeftIds(const QList<QUniqueId>& possibleIds)
+void QContactRelationshipFilter::takeSide(QContactRelationshipFilter::Side side)
 {
-    Q_D(QContactRelationshipFilter);
-    d->m_leftIds = possibleIds;
+    // TODO
 }
 
-/*!
- * Sets the list of right-contact identifiers to \a possibleIds.
- * If \a possibleIds is empty, all contact ids will match.
- */
-void QContactRelationshipFilter::setRightIds(const QList<QUniqueId>& possibleIds)
+void QContactRelationshipFilter::setFixedUri(const QString& fixedUri)
 {
-    Q_D(QContactRelationshipFilter);
-    d->m_rightIds = possibleIds;
+    // TODO
 }
 
-/*!
- * Sets the list of left-contact manager URIs to \a possibleManagerUris.
- * If \a possibleManagerUris is empty, all manager URIs will match.
- */
-void QContactRelationshipFilter::setLeftManagerUris(const QStringList& possibleManagerUris)
+void QContactRelationshipFilter::setFixedId(const QUniqueId& fixedId)
 {
-    Q_D(QContactRelationshipFilter);
-    d->m_leftManagerUris = possibleManagerUris;
+    // TODO
 }
 
-/*!
- * Sets the list of right-contact manager URIs to \a possibleManagerUris.
- * If \a possibleManagerUris is empty, all manager URIs will match.
- */
-void QContactRelationshipFilter::setRightManagerUris(const QStringList& possibleManagerUris)
+void QContactRelationshipFilter::setRelationshipType(const QString& relationshipType)
 {
-    Q_D(QContactRelationshipFilter);
-    d->m_rightManagerUris = possibleManagerUris;
+    // TODO
 }
 
-/*!
- * Sets the list of relationship types which will be matched to \a relationshipTypes.
- * If \a relationshipTypes is empty, all relationship types will match.
- */
-void QContactRelationshipFilter::setRelationshipTypes(const QStringList& relationshipTypes)
+QContactRelationshipFilter::Side QContactRelationshipFilter::side() const
 {
-    Q_D(QContactRelationshipFilter);
-    d->m_relationshipTypes = relationshipTypes;
+    // TODO
+    return QContactRelationshipFilter::Left;
+}
+
+QString QContactRelationshipFilter::fixedUri() const
+{
+    // TODO
+    return QString();
+}
+
+QUniqueId QContactRelationshipFilter::fixedId() const
+{
+    // TODO
+    return QUniqueId();
+}
+
+QString QContactRelationshipFilter::relationshipType() const
+{
+    // TODO
+    return QString();
 }
 
 /*!
@@ -125,56 +119,6 @@ void QContactRelationshipFilter::setMaximumPriority(int max)
 {
     Q_D(QContactRelationshipFilter);
     d->m_maximumPriority = max;
-}
-
-/*!
- * Returns the list of left-contact ids which will be matched by this filter.
- * An empty list signifies that any left-contact id will match.
- */
-QList<QUniqueId> QContactRelationshipFilter::leftIds() const
-{
-    Q_D(const QContactRelationshipFilter);
-    return d->m_leftIds;
-}
-
-/*!
- * Returns the list of right-contact ids which will be matched by this filter.
- * An empty list signifies that any right-contact id will match.
- */
-QList<QUniqueId> QContactRelationshipFilter::rightIds() const
-{
-    Q_D(const QContactRelationshipFilter);
-    return d->m_rightIds;
-}
-
-/*!
- * Returns all left-contact manager URIs which will be matched by this filter.
- * An empty list signifies that any manager URI will match.
- */
-QStringList QContactRelationshipFilter::leftManagerUris() const
-{
-    Q_D(const QContactRelationshipFilter);
-    return d->m_leftManagerUris;
-}
-
-/*!
- * Returns all right-contact manager URIs which will be matched by this filter.
- * An empty list signifies that any manager URI will match.
- */
-QStringList QContactRelationshipFilter::rightManagerUris() const
-{
-    Q_D(const QContactRelationshipFilter);
-    return d->m_rightManagerUris;
-}
-
-/*!
- * Returns the types of relationships which will be matched by this filter.
- * An empty list signifies that any relationship type will match.
- */
-QStringList QContactRelationshipFilter::relationshipTypes() const
-{
-    Q_D(const QContactRelationshipFilter);
-    return d->m_relationshipTypes;
 }
 
 /*!
