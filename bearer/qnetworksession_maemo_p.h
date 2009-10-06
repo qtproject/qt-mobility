@@ -83,6 +83,7 @@ public:
 
     QNetworkInterface currentInterface() const;
     QVariant property(const QString& key);
+    void setProperty(const QString& key, const QVariant& value);
     QString bearerName() const;
 
     void open();
