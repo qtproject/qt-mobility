@@ -406,18 +406,33 @@ void QVideoWidgetPrivate::_q_fullScreenChanged(bool fullScreen)
 
 /*!
     \class QVideoWidget
-    \brief The QVideoWidget class provides a widget which displays video produced by a media
-    object.
     \preliminary
-*/
 
-/*!
-    \enum QVideoWidget::DisplayMode
+    \brief The QVideoWidget class provides a widget which presents video produced by a media
+    object.
 
-    Specifies whether video is displayed full screen, or is confined to a window.
+    A video widget presents video produced by the media object passed to it in it's constructor.
+    Any media object that produces video can be used as the source for a video widget, but only
+    one video output can be attached to a media object at a time.
 
-    \value WindowedDisplay Video is displayed within a window.
-    \value FullScreenDisplay Video is displayed full screen.
+    \code
+    int main(int argc, char *argv[])
+    {
+        QApplication app(argc, argv);
+
+        QMediaPlayer player;
+
+        QVideoWidget widget(&player);
+        widget.show();
+
+        player.setMedia(QUrl("http://example.com/movie.mp4"));
+        player.play();
+
+        return app.exec();
+    }
+    \endcode
+
+    \sa QMediaObject, QMediaPlayer, QGraphicsVideoItem
 */
 
 /*!
@@ -543,9 +558,10 @@ QVideoWidget::~QVideoWidget()
 }
 
 /*!
-    \property QVideoWidget::aspectRatio
+    \property QVideoWidget::aspectRatioMode
     \brief how video is scaled with respect to its aspect ratio.
 */
+
 QVideoWidget::AspectRatioMode QVideoWidget::aspectRatioMode() const
 {
     return d_func()->aspectRatioMode;
@@ -580,6 +596,8 @@ void QVideoWidget::setFullScreen(bool fullScreen)
     \fn QVideoWidget::fullScreenChanged(bool fullScreen)
 
     Signals that the \a fullScreen mode of a video widget has changed.
+
+    \sa fullScreen
 */
 
 /*!
@@ -610,6 +628,8 @@ void QVideoWidget::setBrightness(int brightness)
     \fn QVideoWidget::brightnessChanged(int brightness)
 
     Signals that a video widgets's \a brightness adjustment has changed.
+
+    \sa brightness
 */
 
 /*!
@@ -641,6 +661,8 @@ void QVideoWidget::setContrast(int contrast)
     \fn QVideoWidget::contrastChanged(int contrast)
 
     Signals that a video widgets's \a contrast adjustment has changed.
+
+    \sa contrast
 */
 
 /*!
@@ -648,12 +670,6 @@ void QVideoWidget::setContrast(int contrast)
     \brief an adjustment to the hue of displayed video.
 
     Valid hue values range between -100 and 100, the default is 0.
-*/
-
-/*!
-    \fn QVideoWidget::hueChanged(int hue)
-
-    Signals that a video widgets's \a hue has changed.
 */
 
 int QVideoWidget::hue() const
@@ -672,6 +688,14 @@ void QVideoWidget::setHue(int hue)
     else if (d->hue != boundedHue)
         emit hueChanged(d->hue = boundedHue);
 }
+
+/*!
+    \fn QVideoWidget::hueChanged(int hue)
+
+    Signals that a video widgets's \a hue has changed.
+
+    \sa hue
+*/
 
 /*!
     \property QVideoWidget::saturation
@@ -699,7 +723,16 @@ void QVideoWidget::setSaturation(int saturation)
 }
 
 /*!
+    \fn QVideoWidget::saturationChanged(int saturation)
+
+    Signals that a video widgets's \a saturation has changed.
+
+    \sa saturation
+*/
+
+/*!
     \reimp
+    \internal
 */
 
 void QVideoWidget::setVisible(bool visible)
@@ -733,6 +766,7 @@ void QVideoWidget::setVisible(bool visible)
 
 /*!
     \reimp
+    \internal
 */
 
 bool QVideoWidget::event(QEvent *event)

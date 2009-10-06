@@ -59,6 +59,10 @@ public:
     QVideoWidget(QMediaObject *object, QWidget *parent = 0);
     ~QVideoWidget();
 
+#ifdef Q_QDOC
+    bool isFullScreen() const;
+#endif
+
     AspectRatioMode aspectRatioMode() const;
 
     int brightness() const;
