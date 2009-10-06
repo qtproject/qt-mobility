@@ -285,8 +285,10 @@ void tst_QContactManagerFiltering::detailStringFiltering()
     df.setValue(value);
     df.setMatchFlags(Qt::MatchFlags(matchflags));
 
-    /* At this point, since we're using memory, assume the filter isn't really supported */
-    QVERIFY(cm->information()->filterSupported(df) == false);
+    if (cm->managerName() == "memory") {
+        /* At this point, since we're using memory, assume the filter isn't really supported */
+        QVERIFY(cm->information()->filterSupported(df) == false);
+    }
 
     ids = cm->contacts(df);
 
@@ -545,8 +547,10 @@ void tst_QContactManagerFiltering::detailVariantFiltering()
     if (setValue)
         df.setValue(value);
 
-    /* At this point, since we're using memory, assume the filter isn't really supported */
-    QVERIFY(cm->information()->filterSupported(df) == false);
+    if (cm->managerName() == "memory") {
+        /* At this point, since we're using memory, assume the filter isn't really supported */
+        QVERIFY(cm->information()->filterSupported(df) == false);
+    }
 
     ids = cm->contacts(df);
 
@@ -726,10 +730,11 @@ void tst_QContactManagerFiltering::rangeFiltering()
     if (setmfs)
         drf.setMatchFlags(matchflags);
 
-    /* At this point, since we're using memory, assume the filter isn't really supported */
-    QContactManagerInfo *info = cm->information();
-    QVERIFY(info->filterSupported(drf) == false);
-
+    if (cm->managerName() == "memory") {
+        /* At this point, since we're using memory, assume the filter isn't really supported */
+        QContactManagerInfo *info = cm->information();
+        QVERIFY(info->filterSupported(drf) == false);
+    }
     ids = cm->contacts(drf);
 
     QString output = convertIds(contacts, ids);
@@ -781,10 +786,11 @@ void tst_QContactManagerFiltering::groupMembershipFiltering()
         QContactGroupMembershipFilter cg1f, cg2f;
         cg1f.setGroupId(g1.id());
         cg2f.setGroupId(g2.id());
-
-        /* At this point, since we're using memory, assume the filter isn't really supported */
-        QVERIFY(cm->information()->filterSupported(cg1f) == false);
-
+        
+        if (cm->managerName() == "memory") {
+            /* At this point, since we're using memory, assume the filter isn't really supported */
+            QVERIFY(cm->information()->filterSupported(cg1f) == false);
+        }
         idsone = cm->contacts(cg1f);
         idstwo = cm->contacts(cg2f);
 
@@ -2320,7 +2326,7 @@ QPair<QString, QString> tst_QContactManagerFiltering::definitionAndField(QContac
             detailDefinitionsAddedToManagers.insert(cm, definitionName); // cleanup stack.
         }
     } else {
-        qWarning() << "Unable to perform tests involving detail values of the" << type << "type: not supported by manager.";
+        qWarning() << "Unable to perform tests involving detail values of the" << type << "type: not supported by manager:" << cm->managerName();
     }
 
     result.first = definitionName;
