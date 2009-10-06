@@ -69,8 +69,8 @@ public:
     int previousPosition(int steps = 1) const;
 
 public Q_SLOTS:
-    void advance();
-    void back();
+    void next();
+    void previous();
 
     void jump(int);
 

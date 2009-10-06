@@ -325,7 +325,7 @@ int QMediaPlaylistNavigator::currentPosition() const
 
   For example, for CurrentItemInLoop playback mode it's always the same as currentPosition().
 
-  If \a steps parameter is passed, the item position expected after \a step advance() actions returned.
+  If \a steps parameter is passed, the item position expected after \a step next() actions returned.
 
   \sa currentPosition(), previousPosition(int), PlaybackMode
   */
@@ -338,7 +338,7 @@ int QMediaPlaylistNavigator::nextPosition(int steps) const
   Returns the previously position in playlist.
   It's usually but not necessary currentPosition()-1 depending on playbackMode().
 
-  If \a steps parameter is passed, the item position expected after \a step back() actions returned.
+  If \a steps parameter is passed, the item position expected after \a step previous() actions returned.
 
   \sa nextPosition
   */
@@ -350,9 +350,9 @@ int QMediaPlaylistNavigator::previousPosition(int steps) const
 /*!
   Advance to the next item in the playlist.
 
-  \sa back(), seek(int), playbackMode()
+  \sa previous(), seek(int), playbackMode()
   */
-void QMediaPlaylistNavigator::advance()
+void QMediaPlaylistNavigator::next()
 {
     Q_D(QMediaPlaylistNavigator);
 
@@ -368,9 +368,9 @@ void QMediaPlaylistNavigator::advance()
   Advance to the previously item in the playlist,
   depending on playback mode.
 
-  \sa advance(), seek(int), playbackMode()
+  \sa next(), seek(int), playbackMode()
   */
-void QMediaPlaylistNavigator::back()
+void QMediaPlaylistNavigator::previous()
 {
     Q_D(QMediaPlaylistNavigator);
 

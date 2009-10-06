@@ -81,12 +81,12 @@ SlideShow::SlideShow(QWidget *parent)
     QAbstractButton *nextButton = new QToolButton;
     nextButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipForward));
 
-    connect(nextButton, SIGNAL(clicked()), playlist, SLOT(advance()));
+    connect(nextButton, SIGNAL(clicked()), playlist, SLOT(next()));
 
     QAbstractButton *previousButton = new QToolButton;
     previousButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
 
-    connect(previousButton, SIGNAL(clicked()), playlist, SLOT(back()));
+    connect(previousButton, SIGNAL(clicked()), playlist, SLOT(previous()));
 
     QBoxLayout *controlLayout = new QHBoxLayout;
     controlLayout->setMargin(0);

@@ -128,16 +128,16 @@ void tst_QMediaPlaylistNavigator::linearPlayback()
     QCOMPARE(navigator.previousItem(2), QMediaContent());
 
     navigator.jump(0);
-    navigator.advance();
+    navigator.next();
     QCOMPARE(navigator.currentPosition(), 1);
-    navigator.advance();
+    navigator.next();
     QCOMPARE(navigator.currentPosition(), -1);
-    navigator.advance();//jump to the first item
+    navigator.next();//jump to the first item
     QCOMPARE(navigator.currentPosition(), 0);
 
-    navigator.back();
+    navigator.previous();
     QCOMPARE(navigator.currentPosition(), -1);
-    navigator.back();//jump to the last item
+    navigator.previous();//jump to the last item
     QCOMPARE(navigator.currentPosition(), 1);
 }
 
@@ -181,13 +181,13 @@ void tst_QMediaPlaylistNavigator::loopPlayback()
     QCOMPARE(navigator.previousItem(2), content2);
 
     navigator.jump(0);
-    navigator.advance();
+    navigator.next();
     QCOMPARE(navigator.currentPosition(), 1);
-    navigator.advance();
+    navigator.next();
     QCOMPARE(navigator.currentPosition(), 0);
-    navigator.back();
+    navigator.previous();
     QCOMPARE(navigator.currentPosition(), 1);
-    navigator.back();
+    navigator.previous();
     QCOMPARE(navigator.currentPosition(), 0);
 }
 
@@ -206,19 +206,19 @@ void tst_QMediaPlaylistNavigator::currentItemOnce()
     playlist.appendItem(QMediaContent(QUrl(QLatin1String("file:///3"))));
 
     QCOMPARE(navigator.currentPosition(), -1);
-    navigator.advance();
+    navigator.next();
     QCOMPARE(navigator.currentPosition(), -1);
 
     navigator.jump(1);
     QCOMPARE(navigator.currentPosition(), 1);
-    navigator.advance();
+    navigator.next();
     QCOMPARE(navigator.currentPosition(), -1);
-    navigator.advance();
+    navigator.next();
     QCOMPARE(navigator.currentPosition(), -1);
-    navigator.back();
+    navigator.previous();
     QCOMPARE(navigator.currentPosition(), -1);
     navigator.jump(1);
-    navigator.back();
+    navigator.previous();
     QCOMPARE(navigator.currentPosition(), -1);
 }
 
@@ -237,16 +237,16 @@ void tst_QMediaPlaylistNavigator::currentItemInLoop()
     playlist.appendItem(QMediaContent(QUrl(QLatin1String("file:///3"))));
 
     QCOMPARE(navigator.currentPosition(), -1);
-    navigator.advance();
+    navigator.next();
     QCOMPARE(navigator.currentPosition(), -1);
     navigator.jump(1);
-    navigator.advance();
+    navigator.next();
     QCOMPARE(navigator.currentPosition(), 1);
-    navigator.advance();
+    navigator.next();
     QCOMPARE(navigator.currentPosition(), 1);
-    navigator.back();
+    navigator.previous();
     QCOMPARE(navigator.currentPosition(), 1);
-    navigator.back();
+    navigator.previous();
     QCOMPARE(navigator.currentPosition(), 1);
 }
 
@@ -265,36 +265,36 @@ void tst_QMediaPlaylistNavigator::randomPlayback()
     playlist.appendItem(QMediaContent(QUrl(QLatin1String("file:///3"))));
 
     QCOMPARE(navigator.currentPosition(), -1);
-    navigator.advance();
+    navigator.next();
     int pos1 = navigator.currentPosition();
-    navigator.advance();
+    navigator.next();
     int pos2 = navigator.currentPosition();
-    navigator.advance();
+    navigator.next();
     int pos3 = navigator.currentPosition();
 
     QVERIFY(pos1 != -1);
     QVERIFY(pos2 != -1);
     QVERIFY(pos3 != -1);
 
-    navigator.back();
+    navigator.previous();
     QCOMPARE(navigator.currentPosition(), pos2);
-    navigator.advance();
+    navigator.next();
     QCOMPARE(navigator.currentPosition(), pos3);
-    navigator.advance();
+    navigator.next();
     int pos4 = navigator.currentPosition();
-    navigator.back();
+    navigator.previous();
     QCOMPARE(navigator.currentPosition(), pos3);
-    navigator.back();
+    navigator.previous();
     QCOMPARE(navigator.currentPosition(), pos2);
-    navigator.back();
+    navigator.previous();
     QCOMPARE(navigator.currentPosition(), pos1);
-    navigator.back();
+    navigator.previous();
     int pos0 = navigator.currentPosition();
     QVERIFY(pos0 != -1);
-    navigator.advance();
-    navigator.advance();
-    navigator.advance();
-    navigator.advance();
+    navigator.next();
+    navigator.next();
+    navigator.next();
+    navigator.next();
     QCOMPARE(navigator.currentPosition(), pos4);
 
 }

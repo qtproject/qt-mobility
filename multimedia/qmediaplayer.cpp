@@ -119,7 +119,7 @@ void QMediaPlayerPrivate::_q_mediaStatusChanged(QMediaPlayer::MediaStatus status
         if (playlist) {
             if (playlist->nextPosition(1) == -1)
                 emit q->mediaStatusChanged(status);
-            playlist->advance();
+            playlist->next();
         }
         break;
     default:

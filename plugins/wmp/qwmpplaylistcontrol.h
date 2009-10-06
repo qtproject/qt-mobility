@@ -58,8 +58,8 @@ public:
     int nextPosition(int steps) const;
     int previousPosition(int steps) const;
 
-    void advance();
-    void back();
+    void next();
+    void previous();
 
     QMediaPlaylist::PlaybackMode playbackMode() const;
     void setPlaybackMode(QMediaPlaylist::PlaybackMode mode);

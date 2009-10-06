@@ -111,13 +111,13 @@ int QWmpPlaylistControl::previousPosition(int steps) const
     return currentPosition() - steps;
 }
 
-void QWmpPlaylistControl::advance()
+void QWmpPlaylistControl::next()
 {
     if (m_controls)
         m_controls->next();
 }
 
-void QWmpPlaylistControl::back()
+void QWmpPlaylistControl::previous()
 {
     if (m_controls)
         m_controls->previous();

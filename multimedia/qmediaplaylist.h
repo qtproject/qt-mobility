@@ -91,8 +91,8 @@ public:
 public Q_SLOTS:
     void shuffle();
 
-    void advance();
-    void back();
+    void next();
+    void previous();
 
     void setCurrentPosition(int position);
 

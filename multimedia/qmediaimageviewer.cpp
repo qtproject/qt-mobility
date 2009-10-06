@@ -278,7 +278,7 @@ void QMediaImageViewer::play()
             d->timer.start(d->timeout, this);
 
         d->state = PlayingState;
-        d->playlist->advance();
+        d->playlist->next();
 
         if (d->state == QMediaImageViewer::PlayingState)
             emit stateChanged(d->state);
@@ -336,7 +336,7 @@ void QMediaImageViewer::timerEvent(QTimerEvent *event)
     if (event->timerId() == d->timer.timerId()) {
         Q_ASSERT(d->playlist);
 
-        d->playlist->advance();
+        d->playlist->next();
 
         if (d->playlist->currentPosition() < 0) {
             d->timer.stop();

@@ -55,8 +55,8 @@ public:
     virtual int nextPosition(int steps) const = 0;
     virtual int previousPosition(int steps) const = 0;
 
-    virtual void advance() = 0;
-    virtual void back() = 0;
+    virtual void next() = 0;
+    virtual void previous() = 0;
 
     virtual QMediaPlaylist::PlaybackMode playbackMode() const = 0;
     virtual void setPlaybackMode(QMediaPlaylist::PlaybackMode mode) = 0;

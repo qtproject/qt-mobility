@@ -192,7 +192,7 @@ QMediaContent QMediaPlaylist::currentMedia() const
 }
 
 /*!
-  Returns the position of item, which were current after calling advance()
+  Returns the position of item, which were current after calling next()
   \a steps times.
 
   Returned value depends on the size of playlist, current position
@@ -206,7 +206,7 @@ int QMediaPlaylist::nextPosition(int steps) const
 }
 
 /*!
-  Returns the position of item, which were current after calling back()
+  Returns the position of item, which were current after calling previous()
   \a steps times.
 
   \sa QMediaPlaylist::playbackMode
@@ -445,17 +445,17 @@ void QMediaPlaylist::shuffle()
 /*!
     Advance to the next media source in playlist.
 */
-void QMediaPlaylist::advance()
+void QMediaPlaylist::next()
 {
-    d_func()->control->advance();
+    d_func()->control->next();
 }
 
 /*!
     Return to the previous media source in playlist.
 */
-void QMediaPlaylist::back()
+void QMediaPlaylist::previous()
 {
-    d_func()->control->back();
+    d_func()->control->previous();
 }
 
 /*!

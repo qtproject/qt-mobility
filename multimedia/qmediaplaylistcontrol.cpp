@@ -98,7 +98,7 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
 /*!
   \fn QMediaPlaylistControl::nextPosition(int step) const
 
-  Returns the position of item, which were current after calling advance()
+  Returns the position of item, which were current after calling next()
   \a step times.
 
   Returned value depends on the size of playlist, current position
@@ -110,20 +110,20 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
 /*!
   \fn QMediaPlaylistControl::previousPosition(int step) const
 
-  Returns the position of item, which were current after calling back()
+  Returns the position of item, which were current after calling previous()
   \a step times.
 
   \sa QMediaPlaylist::playbackMode
 */
 
 /*!
-  \fn QMediaPlaylistControl::advance()
+  \fn QMediaPlaylistControl::next()
 
   Moves to the next item in playlist.
 */
 
 /*!
-  \fn QMediaPlaylistControl::back()
+  \fn QMediaPlaylistControl::previous()
 
   Returns to the previous item in playlist.
 */

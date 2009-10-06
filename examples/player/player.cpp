@@ -89,8 +89,8 @@ Player::Player(QWidget *parent)
     connect(controls, SIGNAL(play()), player, SLOT(play()));
     connect(controls, SIGNAL(pause()), player, SLOT(pause()));
     connect(controls, SIGNAL(stop()), player, SLOT(stop()));
-    connect(controls, SIGNAL(next()), playlist, SLOT(advance()));
-    connect(controls, SIGNAL(previous()), playlist, SLOT(back()));
+    connect(controls, SIGNAL(next()), playlist, SLOT(next()));
+    connect(controls, SIGNAL(previous()), playlist, SLOT(previous()));
     connect(controls, SIGNAL(changeVolume(int)), player, SLOT(setVolume(int)));
     connect(controls, SIGNAL(changeMuting(bool)), player, SLOT(setMuted(bool)));
     connect(controls, SIGNAL(changeRate(qreal)), player, SLOT(setPlaybackRate(qreal)));
@@ -152,7 +152,7 @@ void Player::open()
 {
     QStringList fileNames = QFileDialog::getOpenFileNames();
     foreach (QString const &fileName, fileNames)
-		playlist->appendItem(QUrl::fromLocalFile(fileName));
+        playlist->appendItem(QUrl::fromLocalFile(fileName));
 }
 
 void Player::durationChanged(qint64 duration)

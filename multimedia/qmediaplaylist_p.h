@@ -111,8 +111,8 @@ public:
     int nextPosition(int steps) const { return m_navigator->nextPosition(steps); }
     int previousPosition(int steps) const { return m_navigator->previousPosition(steps); }
 
-    void advance() { m_navigator->advance(); }
-    void back() { m_navigator->back(); }
+    void next() { m_navigator->next(); }
+    void previous() { m_navigator->previous(); }
 
     QMediaPlaylist::PlaybackMode playbackMode() const { return m_navigator->playbackMode(); }
     void setPlaybackMode(QMediaPlaylist::PlaybackMode mode) { m_navigator->setPlaybackMode(mode); }
