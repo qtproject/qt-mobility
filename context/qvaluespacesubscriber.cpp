@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 
-#include "qvaluespaceitem.h"
+#include "qvaluespacesubscriber.h"
 #include "qvaluespace_p.h"
 #include "qvaluespacemanager_p.h"
 
@@ -43,12 +43,12 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \class QValueSpaceItem
+    \class QValueSpaceSubscriber
 
-    \brief The QValueSpaceItem class allows access to Value Space items.
+    \brief The QValueSpaceSubscriber class provides access to values stored in the Value Space.
 
     The Value Space is an inter-application hierarchy of readable, writable and
-    subscribable data.  The QValueSpaceItem class allows applications to read
+    subscribable data.  The QValueSpaceSubscriber class allows applications to read
     and subscribe to this data.
 
     Conceptually, the Value Space is a hierarchical tree of which each item can
@@ -66,7 +66,7 @@ QT_BEGIN_NAMESPACE
     \endcode
 
     Any application in Qt can read values from the Value Space, or be notified
-    asynchronously when they change using the QValueSpaceItem class.
+    asynchronously when they change using the QValueSpaceSubscriber class.
 
     Items in the Value Space can be thought of as representing "objects" adhering
     to a well known schema.  This is a conceptual differentiation, not a physical
@@ -90,18 +90,18 @@ QT_BEGIN_NAMESPACE
     For example,
 
     \code
-    QValueSpaceItem *buttons = new QValueSpaceItem("/Device/Buttons");
+    QValueSpaceSubscriber *buttons = new QValueSpaceSubscriber("/Device/Buttons");
     qWarning() << "There are" << buttons->value().toUInt() << "buttons";
     QObject::connect(buttons, SIGNAL(contentsChanged()),
                    this, SLOT(buttonInfoChanged()));
     \endcode
 
-    will invoke the \c {buttonInfoChanged()} slot whenever any item under
+    will invoke the \c {buttonInfoChanged()} slot whenever any values under
     \c {/Device/Buttons} changes.  This includes the value of \c {/Device/Buttons}
     itself, a change of a sub-object such as \c {/Device/Buttons/2/Name} or the
     creation (or removal) of a new sub-object, such as \c {/Device/Buttons/4}.
 
-    When a QValueSpaceItem is constructed it will access zero, one or many
+    When a QValueSpaceSubscriber is constructed it will access zero, one or many
     \l {QAbstractValueSpaceLayer}{layers}, depending on the constructor and filter parameters used
     to construct it.  Calls to value() will return the value that is stored in the layer with the
     highest \l {QAbstractValueSpaceLayer::order()}{order} of all the accessible layers that contain
@@ -110,7 +110,7 @@ QT_BEGIN_NAMESPACE
     For example,
 
     \code
-    QValueSpaceItem *buttons = new QValueSpaceItem("/Device/Buttons",
+    QValueSpaceSubscriber *buttons = new QValueSpaceSubscriber("/Device/Buttons",
                                                    QAbstractValueSpaceLayer::NonPermanentLayer);
     qWarning() << "There are" << buttons->value().toUInt() << "buttons";
     \endcode
@@ -119,32 +119,32 @@ QT_BEGIN_NAMESPACE
     is defined in multiple non-permanent layers only the values from the layer with the highest
     \l {QAbstractValueSpaceLayer::order()}{order} will be visible.
 
-    \i {Note:} The QValueSpaceItem class is not thread safe and may only be used from
+    \i {Note:} The QValueSpaceSubscriber class is not thread safe and may only be used from
     an application's main thread.
 */
 
 /*!
-    \fn QValueSpaceItem::contentsChanged()
+    \fn QValueSpaceSubscriber::contentsChanged()
 
-    Emitted whenever the value of this item, or any of its sub-items change.
+    Emitted whenever any value under this subscriber path changes.
 */
 
 /*!
-    \property QValueSpaceItem::path
+    \property QValueSpaceSubscriber::path
 
-    This property holds the current path that the QValueSpaceItem refers to.
+    This property holds the current path that the QValueSpaceSubscriber refers to.
 
-    Settings this property causes the QValueSpaceItem to disconnect and reconnect to the Value
-    Space with the new path.  As a result all signal/slot connections are disconnected.
+    Settings this property causes the QValueSpaceSubscriber to disconnect and reconnect to the
+    Value Space with the new path.  As a result all signal/slot connections are disconnected.
 */
 
 /*!
-    \property QValueSpaceItem::value
+    \property QValueSpaceSubscriber::value
 
-    This property holds the value of this item.
+    This property holds the value of the path that this QValueSpaceSubscriber refers to.
 */
 
-class QValueSpaceItemPrivateProxy : public QObject
+class QValueSpaceSubscriberPrivateProxy : public QObject
 {
     Q_OBJECT
 
@@ -163,17 +163,17 @@ public slots:
 
     void objDestroyed()
     {
-        connections.remove((QValueSpaceItem *)sender());
+        connections.remove((QValueSpaceSubscriber *)sender());
     }
 
 public:
     QList<QPair<QAbstractValueSpaceLayer *, QAbstractValueSpaceLayer::Handle> > readers;
-    QHash<const QValueSpaceItem *,int> connections;
+    QHash<const QValueSpaceSubscriber *,int> connections;
 };
 
-struct QValueSpaceItemPrivate
+struct QValueSpaceSubscriberPrivate
 {
-    QValueSpaceItemPrivate(const QString &_path,
+    QValueSpaceSubscriberPrivate(const QString &_path,
                            QValueSpace::LayerOptions filter = QValueSpace::UnspecifiedLayer)
         : refCount(0), connections(0)
     {
@@ -209,7 +209,7 @@ struct QValueSpaceItemPrivate
         }
     }
 
-    QValueSpaceItemPrivate(const QString &_path, const QUuid &uuid)
+    QValueSpaceSubscriberPrivate(const QString &_path, const QUuid &uuid)
     :   refCount(0), connections(0)
     {
         path = qCanonicalPath(_path);
@@ -235,7 +235,7 @@ struct QValueSpaceItemPrivate
         }
     }
 
-    ~QValueSpaceItemPrivate()
+    ~QValueSpaceSubscriberPrivate()
     {
         for (int ii = 0; ii < readers.count(); ++ii) {
             readers[ii].first->notifyInterest(readers[ii].second, false);
@@ -247,11 +247,11 @@ struct QValueSpaceItemPrivate
 
     }
 
-    void connect(const QValueSpaceItem *space)
+    void connect(const QValueSpaceSubscriber *space)
     {
         if (!connections) {
             qRegisterMetaType<quintptr>("quintptr");
-            connections = new QValueSpaceItemPrivateProxy;
+            connections = new QValueSpaceSubscriberPrivateProxy;
             connections->readers = readers;
             connections->connections.insert(space,1);
             QObject::connect(space, SIGNAL(destroyed(QObject*)),
@@ -276,10 +276,10 @@ struct QValueSpaceItemPrivate
         }
     }
 
-    bool disconnect(QValueSpaceItem * space)
+    bool disconnect(QValueSpaceSubscriber * space)
     {
         if (connections) {
-            QHash<const QValueSpaceItem *, int>::Iterator iter =
+            QHash<const QValueSpaceSubscriber *, int>::Iterator iter =
                 connections->connections.find(space);
             if (iter != connections->connections.end()) {
                 --(*iter);
@@ -312,161 +312,163 @@ struct QValueSpaceItemPrivate
     unsigned int refCount;
     QString path;
     QList<QPair<QAbstractValueSpaceLayer *, QAbstractValueSpaceLayer::Handle> > readers;
-    QValueSpaceItemPrivateProxy * connections;
+    QValueSpaceSubscriberPrivateProxy * connections;
 };
 
 #define VS_CALL_ASSERT Q_ASSERT(!QCoreApplication::instance() || \
                             QCoreApplication::instance()->thread() == QThread::currentThread());
 
 /*!
-    Constructs a QValueSpaceItem with the specified \a parent that refers to the root path.
+    Constructs a QValueSpaceSubscriber with the specified \a parent that refers to the root path.
 
-    The constructed Value Space item will access all available
+    The constructed Value Space subscriber will access all available
     \l {QAbstractValueSpaceLayer}{layers}.
 */
-QValueSpaceItem::QValueSpaceItem(QObject *parent)
+QValueSpaceSubscriber::QValueSpaceSubscriber(QObject *parent)
 :   QObject(parent)
 {
     VS_CALL_ASSERT;
 
-    d = new QValueSpaceItemPrivate(QLatin1String("/"));
+    d = new QValueSpaceSubscriberPrivate(QLatin1String("/"));
     d->AddRef();
 }
 
 /*!
     \overload
 
-    Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.  This
-    constructor is equivalent to calling \c {QValueSpaceItem(path.toUtf8(), parent)}.
+    Constructs a QValueSpaceSubscriber with the specified \a parent that refers to \a path.  This
+    constructor is equivalent to calling \c {QValueSpaceSubscriber(path.toUtf8(), parent)}.
 
-    The constructed Value Space item will access all available
+    The constructed Value Space subscriber will access all available
     \l {QAbstractValueSpaceLayer}{layers}.
 */
-QValueSpaceItem::QValueSpaceItem(const QString &path, QObject *parent)
+QValueSpaceSubscriber::QValueSpaceSubscriber(const QString &path, QObject *parent)
 :   QObject(parent)
 {
     VS_CALL_ASSERT;
 
-    d = new QValueSpaceItemPrivate(path);
+    d = new QValueSpaceSubscriberPrivate(path);
     d->AddRef();
 }
 
 /*!
     \overload
 
-    Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.  This
-    constructor is equivalent to calling \c {QValueSpaceItem(QString(path), parent)}.
+    Constructs a QValueSpaceSubscriber with the specified \a parent that refers to \a path.  This
+    constructor is equivalent to calling \c {QValueSpaceSubscriber(QString(path), parent)}.
 
-    The constructed Value Space item will access all available
+    The constructed Value Space subscriber will access all available
     \l {QAbstractValueSpaceLayer}{layers}.
 */
-QValueSpaceItem::QValueSpaceItem(const char *path, QObject *parent)
+QValueSpaceSubscriber::QValueSpaceSubscriber(const char *path, QObject *parent)
 :   QObject(parent)
 {
     VS_CALL_ASSERT;
 
-    d = new QValueSpaceItemPrivate(QString::fromLatin1(path));
+    d = new QValueSpaceSubscriberPrivate(QString::fromLatin1(path));
     d->AddRef();
 }
 
 /*!
     \overload
 
-    Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.  The
-    \a filter parameter is used to limit which layers this QValueSpaceItem will access.  This
-    constructor is equivalent to calling \c {QValueSpaceItem(path.toUtf8(), filter, parent)}.
+    Constructs a QValueSpaceSubscriber with the specified \a parent that refers to \a path.  The
+    \a filter parameter is used to limit which layers this QValueSpaceSubscriber will access.  This
+    constructor is equivalent to calling \c {QValueSpaceSubscriber(path.toUtf8(), filter, parent)}.
 
-    If a layer matching \a filter is not found, the constructed QValueSpaceItem will be
+    If a layer matching \a filter is not found, the constructed QValueSpaceSubscriber will be
     unconnected.
 
     \sa isConnected()
 */
-QValueSpaceItem::QValueSpaceItem(const QString &path,
+QValueSpaceSubscriber::QValueSpaceSubscriber(const QString &path,
                                  QValueSpace::LayerOptions filter,
                                  QObject *parent)
 :   QObject(parent)
 {
     VS_CALL_ASSERT;
 
-    d = new QValueSpaceItemPrivate(path, filter);
+    d = new QValueSpaceSubscriberPrivate(path, filter);
     d->AddRef();
 }
 
 /*!
     \overload
 
-    Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.  The
-    \a filter parameter is used to limit which layers this QValueSpaceItem will access.  This
-    constructor is equivalent to calling \c {QValueSpaceItem(QString(path), filter, parent)}.
+    Constructs a QValueSpaceSubscriber with the specified \a parent that refers to \a path.  The
+    \a filter parameter is used to limit which layers this QValueSpaceSubscriber will access.  This
+    constructor is equivalent to calling \c {QValueSpaceSubscriber(QString(path), filter, parent)}.
 
-    If a layer matching \a filter is not found, the constructed QValueSpaceItem will be
+    If a layer matching \a filter is not found, the constructed QValueSpaceSubscriber will be
     unconnected.
 
     \sa isConnected()
 */
-QValueSpaceItem::QValueSpaceItem(const char *path,
+QValueSpaceSubscriber::QValueSpaceSubscriber(const char *path,
                                  QValueSpace::LayerOptions filter,
                                  QObject *parent)
 :   QObject(parent)
 {
     VS_CALL_ASSERT;
 
-    d = new QValueSpaceItemPrivate(QString::fromLatin1(path), filter);
+    d = new QValueSpaceSubscriberPrivate(QString::fromLatin1(path), filter);
     d->AddRef();
 }
 
 /*!
     \overload
 
-    Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.  This
-    QValueSpaceItem will only use the layer identified by \a uuid.  This constructor is equivalent
-    to calling \c {QValueSpaceItem(path.toUtf8(), uuid, parent)}.
+    Constructs a QValueSpaceSubscriber with the specified \a parent that refers to \a path.  This
+    QValueSpaceSubscriber will only use the layer identified by \a uuid.  This constructor is
+    equivalent to calling \c {QValueSpaceSubscriber(path.toUtf8(), uuid, parent)}.
 
     Use of this constructor is not platform agnostic.  If possible use one of the constructors that
     take a QAbstractValueSpaceLayer::LayerOptions parameter instead.
 
-    If a layer with a matching \a uuid is not found, the constructed QValueSpaceItem will be
+    If a layer with a matching \a uuid is not found, the constructed QValueSpaceSubscriber will be
     unconnected.
 
     \sa QAbstractValueSpaceLayer::id(), QValueSpace, isConnected()
 */
-QValueSpaceItem::QValueSpaceItem(const QString &path, const QUuid &uuid, QObject *parent)
+QValueSpaceSubscriber::QValueSpaceSubscriber(const QString &path,
+                                             const QUuid &uuid,
+                                             QObject *parent)
 :   QObject(parent)
 {
     VS_CALL_ASSERT;
 
-    d = new QValueSpaceItemPrivate(path, uuid);
+    d = new QValueSpaceSubscriberPrivate(path, uuid);
     d->AddRef();
 }
 
 /*!
     \overload
 
-    Constructs a QValueSpaceItem with the specified \a parent that refers to \a path.  This
-    QValueSpaceItem will only use the layer identified by \a uuid.  This constructor is equivalent
-    to calling \c {QValueSpaceItem(QString(path), uuid, parent)}.
+    Constructs a QValueSpaceSubscriber with the specified \a parent that refers to \a path.  This
+    QValueSpaceSubscriber will only use the layer identified by \a uuid.  This constructor is
+    equivalent to calling \c {QValueSpaceSubscriber(QString(path), uuid, parent)}.
 
     Use of this constructor is not platform agnostic.  If possible use one of the constructors that
     take a QAbstractValueSpaceLayer::LayerOptions parameter instead.
 
-    If a layer with a matching \a uuid is not found, the constructed QValueSpaceItem will be
+    If a layer with a matching \a uuid is not found, the constructed QValueSpaceSubscriber will be
     unconnected.
 
     \sa QAbstractValueSpaceLayer::id(), QValueSpace, isConnected()
 */
-QValueSpaceItem::QValueSpaceItem(const char *path, const QUuid &uuid, QObject *parent)
+QValueSpaceSubscriber::QValueSpaceSubscriber(const char *path, const QUuid &uuid, QObject *parent)
 :   QObject(parent)
 {
     VS_CALL_ASSERT;
 
-    d = new QValueSpaceItemPrivate(QString::fromLatin1(path), uuid);
+    d = new QValueSpaceSubscriberPrivate(QString::fromLatin1(path), uuid);
     d->AddRef();
 }
 
 /*!
-    Destroys the QValueSpaceItem
+    Destroys the QValueSpaceSubscriber
 */
-QValueSpaceItem::~QValueSpaceItem()
+QValueSpaceSubscriber::~QValueSpaceSubscriber()
 {
     VS_CALL_ASSERT;
 
@@ -476,12 +478,12 @@ QValueSpaceItem::~QValueSpaceItem()
 /*!
     Sets the path to \a path.
 
-    Calling this function causes the QValueSpaceItem to disconnect and reconnect to the value
+    Calling this function causes the QValueSpaceSubscriber to disconnect and reconnect to the value
     space with the new \a path.
 
     Calling this function disconnects all signal/slot connections.
 */
-void QValueSpaceItem::setPath(const QString &path)
+void QValueSpaceSubscriber::setPath(const QString &path)
 {
     VS_CALL_ASSERT;
 
@@ -492,19 +494,19 @@ void QValueSpaceItem::setPath(const QString &path)
 
     disconnect();
 
-    d = new QValueSpaceItemPrivate(path);
+    d = new QValueSpaceSubscriberPrivate(path);
     d->AddRef();
 }
 
 /*!
-    Sets the path to the same path as \a item.
+    Sets the path to the same path as \a subscriber.
 
-    Calling this function causes the QValueSpaceItem to disconnect and reconnect to the value space
-    with the a path.
+    Calling this function causes the QValueSpaceSubscriber to disconnect and reconnect to the value
+    space with the a path.
 
     Calling this function disconnects all signal/slot connections.
 */
-void QValueSpaceItem::setPath(QValueSpaceItem *item)
+void QValueSpaceSubscriber::setPath(QValueSpaceSubscriber *subscriber)
 {
     VS_CALL_ASSERT;
 
@@ -512,12 +514,12 @@ void QValueSpaceItem::setPath(QValueSpaceItem *item)
 
     disconnect();
 
-    d = item->d;
+    d = subscriber->d;
 
     d->AddRef();
 }
 
-QString QValueSpaceItem::path() const
+QString QValueSpaceSubscriber::path() const
 {
     VS_CALL_ASSERT;
 
@@ -527,7 +529,7 @@ QString QValueSpaceItem::path() const
 /*!
     Changes the path to \a path.
 */
-void QValueSpaceItem::cd(const QString &path)
+void QValueSpaceSubscriber::cd(const QString &path)
 {
     VS_CALL_ASSERT;
 
@@ -540,7 +542,7 @@ void QValueSpaceItem::cd(const QString &path)
 /*!
     Sets the path to parent of the current path.
 */
-void QValueSpaceItem::cdUp()
+void QValueSpaceSubscriber::cdUp()
 {
     VS_CALL_ASSERT;
 
@@ -557,11 +559,11 @@ void QValueSpaceItem::cdUp()
 }
 
 /*!
-    Returns true if this QValueSpaceItem is connected to atleast one available layer; otherwise
-    returns false.  An unconnected QValueSpaceItem is constructed if the filtering parameters
-    passed to the constructor eliminate all available layers.
+    Returns true if this QValueSpaceSubscriber is connected to at least one available layer;
+    otherwise returns false.  An unconnected QValueSpaceSubscriber is constructed if the filtering
+    parameters passed to the constructor eliminate all available layers.
 */
-bool QValueSpaceItem::isConnected() const
+bool QValueSpaceSubscriber::isConnected() const
 {
     VS_CALL_ASSERT;
 
@@ -569,20 +571,20 @@ bool QValueSpaceItem::isConnected() const
 }
 
 /*!
-    Returns the value of the sub-item \a subPath of this item, or the value of this item if
-    \a subPath is empty.  If the item does not exists, \a def is returned.
+    Returns the value of the \a subPath under this subscriber path, or the value of this subscriber
+    path if \a subPath is empty.  If the value does not exists \a def is returned.
 
-    The following code shows how the item and \a subPath relate.
+    The following code shows how the subscriber path and \a subPath relate.
 
     \code
-        QValueSpaceItem base("/Settings");
-        QValueSpaceItem equiv("/Settings/Nokia/General/Mappings);
+        QValueSpaceSubscriber base("/Settings");
+        QValueSpaceSubscriber equiv("/Settings/Nokia/General/Mappings);
 
         // Is true
         equiv.value() == base.value("Nokia/General/Mapping");
     \endcode
 */
-QVariant QValueSpaceItem::value(const QString & subPath, const QVariant &def) const
+QVariant QValueSpaceSubscriber::value(const QString & subPath, const QVariant &def) const
 {
     VS_CALL_ASSERT;
 
@@ -608,13 +610,13 @@ QVariant QValueSpaceItem::value(const QString & subPath, const QVariant &def) co
     This is a convenience overload and is equivalent to
     \c {value(QString::fromLatin1(subPath), def)}.
 */
-QVariant QValueSpaceItem::value(const char *subPath, const QVariant &def) const
+QVariant QValueSpaceSubscriber::value(const char *subPath, const QVariant &def) const
 {
     VS_CALL_ASSERT;
     return value(QString::fromLatin1(subPath), def);
 }
 
-QVariant QValueSpaceItem::valuex(const QVariant &def) const
+QVariant QValueSpaceSubscriber::valuex(const QVariant &def) const
 {
     VS_CALL_ASSERT;
 
@@ -629,7 +631,7 @@ QVariant QValueSpaceItem::valuex(const QVariant &def) const
 
     Registers for change notifications in response to connection to the contentsChanged() signal.
 */
-void QValueSpaceItem::connectNotify(const char *signal)
+void QValueSpaceSubscriber::connectNotify(const char *signal)
 {
     VS_CALL_ASSERT;
     if (QLatin1String(signal) == SIGNAL(contentsChanged()))
@@ -644,7 +646,7 @@ void QValueSpaceItem::connectNotify(const char *signal)
     Unregisters for change notifications in response to disconnection from the contentsChanged()
     signal.
 */
-void QValueSpaceItem::disconnectNotify(const char *signal)
+void QValueSpaceSubscriber::disconnectNotify(const char *signal)
 {
     VS_CALL_ASSERT;
     if (QLatin1String(signal) == SIGNAL(contentsChanged()))
@@ -654,8 +656,8 @@ void QValueSpaceItem::disconnectNotify(const char *signal)
 }
 
 /*!
-    Returns a list of sub-paths for this item.  For example, given a Value Space
-    tree containing:
+    Returns a list of sub-paths under the current path.  For example, given a Value Space tree
+    containing:
 
     \code
     /Settings/Nokia/Device
@@ -664,10 +666,10 @@ void QValueSpaceItem::disconnectNotify(const char *signal)
     /Device/Buttons
     \endcode
 
-    \c { QValueSpaceItem("/Settings").subPaths() } will return a list containing
+    \c { QValueSpaceSubscriber("/Settings").subPaths() } will return a list containing
     \c { { Nokia, Qt } } in no particular order.
 */
-QStringList QValueSpaceItem::subPaths() const
+QStringList QValueSpaceSubscriber::subPaths() const
 {
     VS_CALL_ASSERT;
 
@@ -684,4 +686,4 @@ QStringList QValueSpaceItem::subPaths() const
 
 QT_END_NAMESPACE
 
-#include "qvaluespaceitem.moc"
+#include "qvaluespacesubscriber.moc"

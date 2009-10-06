@@ -31,8 +31,63 @@
 **
 ****************************************************************************/
 
-#include "tst_qvaluespaceitemshared.h"
+#include "tst_qvaluespacesubscribershared.h"
 
+#include <qvaluespace.h>
+
+#include <QObject>
+#include <QProcess>
+#include <QCoreApplication>
 #include <QTest>
 
-QTEST_MAIN(tst_QValueSpaceItem)
+class ShutdownControl : public QObject
+{
+    Q_OBJECT
+
+public:
+    ShutdownControl(QProcess* process)
+    {
+        connect(process,SIGNAL(finished(int,QProcess::ExitStatus)),
+                this, SLOT(shutDown(int, QProcess::ExitStatus)));
+    }
+
+private slots:
+    void shutDown(int, QProcess::ExitStatus)
+    {
+        qApp->quit();
+    }
+
+};
+
+class tst_QValueSpaceSubscriberOop : public tst_QValueSpaceSubscriber
+{
+    Q_OBJECT
+};
+
+int main(int argc, char** argv)
+{
+    QCoreApplication app(argc, argv);
+    QStringList args = app.arguments();
+
+#if defined(QT_NO_PROCESS)
+    tst_QValueSpaceSubscriberOop test;
+    return QTest::qExec(&test, argc-1, argv);
+#else
+    if (args.contains("-vsClientMode")) {
+        tst_QValueSpaceSubscriberOop test;
+        return QTest::qExec(&test, argc-1, argv);
+    } else {
+        QValueSpace::initValueSpaceServer();
+        QProcess process;
+        ShutdownControl control(&process);
+        process.setProcessChannelMode(QProcess::ForwardedChannels);
+        args.removeAt(0); //don't pass the binary name
+        process.start("tst_qvaluespacesubscriber_oop", args << "-vsClientMode");
+
+        return app.exec();
+    }
+#endif
+}
+
+#include "tst_qvaluespacesubscriber_oop.moc"
+

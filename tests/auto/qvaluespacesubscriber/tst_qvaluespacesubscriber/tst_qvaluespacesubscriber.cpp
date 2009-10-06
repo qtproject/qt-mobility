@@ -31,52 +31,8 @@
 **
 ****************************************************************************/
 
-#include <QObject>
-#include <QMap>
+#include "tst_qvaluespacesubscribershared.h"
 
-class QValueSpaceProvider;
-class QAbstractValueSpaceLayer;
+#include <QTest>
 
-class tst_QValueSpaceItem : public QObject
-{
-    Q_OBJECT
-
-public:
-    enum Type { CharStar, String };
-
-private slots:
-    void initTestCase();
-    void cleanupTestCase();
-
-    void testConstructor_data();
-    void testConstructor();
-    void testFilterConstructor_data();
-    void testFilterConstructor();
-
-    void testPathChanges();
-
-    void contentsChanged_data();
-    void contentsChanged();
-    void dataVersatility_data();
-    void dataVersatility();
-
-    void value_data();
-    void value();
-
-    void ipcTests_data();
-    void ipcTests();
-
-    void ipcRemoveKey_data();
-    void ipcRemoveKey();
-
-    void interestNotification_data();
-    void interestNotification();
-    void ipcInterestNotification_data();
-    void ipcInterestNotification();
-
-    void clientServer();
-
-private:
-    QMap<QAbstractValueSpaceLayer *, QValueSpaceProvider *> roots;
-    QMap<QAbstractValueSpaceLayer*, QValueSpaceProvider *> busys;
-};
+QTEST_MAIN(tst_QValueSpaceSubscriber)

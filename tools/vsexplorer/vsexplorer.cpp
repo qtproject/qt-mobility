@@ -43,7 +43,7 @@
 #include <QSet>
 
 #include <qvaluespace.h>
-#include <qvaluespaceitem.h>
+#include <qvaluespacesubscriber.h>
 #include <qvaluespaceprovider.h>
 
 #ifdef USE_READLINE
@@ -99,12 +99,12 @@ private slots:
     void interestChanged(const QString &attribute, bool interested);
 
 private:
-    void lsPath(QValueSpaceItem *, int = 0, bool = false);
+    void lsPath(QValueSpaceSubscriber *, int = 0, bool = false);
 
     bool isSuppress;
-    QValueSpaceItem pwd;
+    QValueSpaceSubscriber pwd;
     QValueSpaceProvider prov;
-    QSet<QValueSpaceItem *> subs;
+    QSet<QValueSpaceSubscriber *> subs;
     QSet<QValueSpaceProvider *> watchers;
 };
 static VSExplorer * vse = 0;
@@ -177,8 +177,8 @@ void VSExplorer::contentsChanged()
     Q_ASSERT(sender());
 
     if(!isSuppress) {
-        QValueSpaceItem * item = static_cast<QValueSpaceItem *>(sender());
-        fprintf(stdout, "\nChanged: %s\n", item->path().toAscii().constData());
+        QValueSpaceSubscriber *subscriber = static_cast<QValueSpaceSubscriber *>(sender());
+        fprintf(stdout, "\nChanged: %s\n", subscriber->path().toAscii().constData());
     }
 }
 
@@ -215,13 +215,13 @@ void VSExplorer::ls()
 
 void VSExplorer::ls(const QString &abs, bool all)
 {
-    QValueSpaceItem item(abs);
-    lsPath(&item, 0, all);
+    QValueSpaceSubscriber subscriber(abs);
+    lsPath(&subscriber, 0, all);
     fflush(stdout);
 }
 
 
-void VSExplorer::lsPath(QValueSpaceItem * p, int indent, bool showHidden)
+void VSExplorer::lsPath(QValueSpaceSubscriber * p, int indent, bool showHidden)
 {
     QStringList paths = p->subPaths();
 
@@ -279,8 +279,8 @@ void VSExplorer::subscriptions()
     } else {
         fprintf(stdout, "Current subscriptions:\n");
 
-        foreach(QValueSpaceItem *item, subs)
-            fprintf(stdout, "\t%s\n", item->path().toAscii().constData());
+        foreach (QValueSpaceSubscriber *subscriber, subs)
+            fprintf(stdout, "\t%s\n", subscriber->path().toAscii().constData());
     }
 
     fflush(stdout);
@@ -288,11 +288,11 @@ void VSExplorer::subscriptions()
 
 void VSExplorer::subscribe()
 {
-    QValueSpaceItem *item = new QValueSpaceItem;
-    item->setPath(&pwd);
-    QObject::connect(item, SIGNAL(contentsChanged()),
+    QValueSpaceSubscriber *subscriber = new QValueSpaceSubscriber;
+    subscriber->setPath(&pwd);
+    QObject::connect(subscriber, SIGNAL(contentsChanged()),
                      this, SLOT(contentsChanged()));
-    subs.insert(item);
+    subs.insert(subscriber);
 
     fprintf(stdout, "OK\n");
     fflush(stdout);
@@ -300,10 +300,10 @@ void VSExplorer::subscribe()
 
 void VSExplorer::unsubscribe()
 {
-    foreach(QValueSpaceItem *item, subs) {
-        if(item->path() == pwd.path()) {
-            subs.remove(item);
-            delete item;
+    foreach (QValueSpaceSubscriber *subscriber, subs) {
+        if (subscriber->path() == pwd.path()) {
+            subs.remove(subscriber);
+            delete subscriber;
             fprintf(stdout, "OK\n");
             fflush(stdout);
             return;
@@ -446,14 +446,14 @@ void VSExplorer::processLine(const QString &line)
             newPath = newPath.left(newPath.length() - 1);
         }
         if(newPath.startsWith("/")) {
-            finalPath = QValueSpaceItem(newPath).path();
+            finalPath = QValueSpaceSubscriber(newPath).path();
         } else {
             QString oldPath = pwd.path();
             if(!oldPath.endsWith("/"))
                 oldPath.append("/");
             oldPath.append(newPath);
             oldPath = QDir::cleanPath(oldPath);
-            finalPath = QValueSpaceItem(oldPath).path();
+            finalPath = QValueSpaceSubscriber(oldPath).path();
         }
         unwatch(finalPath.toUtf8());
     } else if(cmd == "watch" && 2 <= cmds.count()) {
@@ -466,14 +466,14 @@ void VSExplorer::processLine(const QString &line)
             newPath = newPath.left(newPath.length() - 1);
         }
         if(newPath.startsWith("/")) {
-            finalPath = QValueSpaceItem(newPath).path();
+            finalPath = QValueSpaceSubscriber(newPath).path();
         } else {
             QString oldPath = pwd.path();
             if(!oldPath.endsWith("/"))
                 oldPath.append("/");
             oldPath.append(newPath);
             oldPath = QDir::cleanPath(oldPath);
-            finalPath = QValueSpaceItem(oldPath).path();
+            finalPath = QValueSpaceSubscriber(oldPath).path();
         }
         watch(finalPath.toUtf8());
     } else if(cmd == "set" && 3 == cmds.count()) {
@@ -665,9 +665,9 @@ char * item_generator(const char * t, int num)
             vsBase = textBase;
         }
 
-        QValueSpaceItem item(vsBase);
+        QValueSpaceSubscriber subscriber(vsBase);
 
-        QStringList schildren = item.subPaths();
+        QStringList schildren = subscriber.subPaths();
 
         foreach(QString child, schildren) {
             if(child.startsWith(textExt)) {
@@ -744,30 +744,30 @@ void usage(char * app)
     exit(-1);
 }
 
-void dodump(QValueSpaceItem * item)
+void dodump(QValueSpaceSubscriber *subscriber)
 {
-    foreach (const QString &child, item->subPaths()) {
+    foreach (const QString &child, subscriber->subPaths()) {
         if (child.isEmpty())
             continue;
 
-        QValueSpaceItem subItem;
-        subItem.setPath(item);
+        QValueSpaceSubscriber subItem;
+        subItem.setPath(subscriber);
         subItem.cd(child);
         dodump(&subItem);
     }
 
-    QVariant var = item->value();
+    QVariant var = subscriber->value();
     fprintf(stdout, "%s '%s' %s\n",
-            item->path().toAscii().constData(),
+            subscriber->path().toAscii().constData(),
             variantToString(var).toAscii().constData(),
             var.typeName());
 }
 
 void VSExplorer::dump()
 {
-    QValueSpaceItem item;
-    item.setPath(&pwd);
-    dodump(&item);
+    QValueSpaceSubscriber subscriber;
+    subscriber.setPath(&pwd);
+    dodump(&subscriber);
     fflush(stdout);
 }
 
@@ -797,8 +797,8 @@ int main(int argc, char ** argv)
         QValueSpace::initValueSpaceServer();
 
     if(dump) {
-        QValueSpaceItem item("/");
-        dodump(&item);
+        QValueSpaceSubscriber subscriber("/");
+        dodump(&subscriber);
         return 0;
     } else {
         vse = new VSExplorer;

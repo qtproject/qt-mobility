@@ -49,19 +49,19 @@
     #include &quot;consumerdialog.h&quot;
     #include &quot;ui_consumerdialog.h&quot;
 
-    #include &lt;qvaluespaceitem.h&gt;
+    #include &lt;qvaluespacesubscriber.h&gt;
 
     #include &lt;QDebug&gt;
 
     ConsumerDialog::ConsumerDialog(QWidget *parent) :
             QDialog(parent),
             ui(new Ui::ConsumerDialog),
-            item(0)
+            subscriber(0)
     {
         ui-&gt;setupUi(this);
 
-        connect(ui-&gt;connectButton, SIGNAL(clicked()), this, SLOT(createNewItem()));
-        createNewItem();
+        connect(ui-&gt;connectButton, SIGNAL(clicked()), this, SLOT(changeSubscriberPath()));
+        changeSubscriberPath();
     }
 
     ConsumerDialog::~ConsumerDialog()
@@ -81,28 +81,29 @@
         }
     }
 
-    void ConsumerDialog::createNewItem()
+    void ConsumerDialog::changeSubscriberPath()
     {
-        if (item)
-            delete item;
-
         ui-&gt;values-&gt;clearContents();
 
-        item = new QValueSpaceItem(ui-&gt;basePath-&gt;text(), this);
+        if (!subscriber)
+            subscriber = new QValueSpaceSubscriber(ui-&gt;basePath-&gt;text(), this);
+        else
+            subscriber-&gt;setPath(ui-&gt;basePath-&gt;text());
 
-        connect(item, SIGNAL(contentsChanged()), this, SLOT(itemChanged()));
-        itemChanged();
+        connect(subscriber, SIGNAL(contentsChanged()), this, SLOT(subscriberChanged()));
+
+        subscriberChanged();
     }
 
-    void ConsumerDialog::itemChanged()
+    void ConsumerDialog::subscriberChanged()
     {
         ui-&gt;values-&gt;clearContents();
 
-        QStringList subPaths = item-&gt;subPaths();
+        QStringList subPaths = subscriber-&gt;subPaths();
         ui-&gt;values-&gt;setRowCount(subPaths.count());
 
         for (int i = 0; i &lt; subPaths.count(); ++i) {
-            QVariant v = item-&gt;value(subPaths.at(i));
+            QVariant v = subscriber-&gt;value(subPaths.at(i));
 
             QTableWidgetItem *pathItem = new QTableWidgetItem(subPaths.at(i));
             QTableWidgetItem *valueItem = new QTableWidgetItem(v.toString());

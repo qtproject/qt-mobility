@@ -31,63 +31,52 @@
 **
 ****************************************************************************/
 
-#include "tst_qvaluespaceitemshared.h"
-
-#include <qvaluespace.h>
-
 #include <QObject>
-#include <QProcess>
-#include <QCoreApplication>
-#include <QTest>
+#include <QMap>
 
-class ShutdownControl : public QObject
+class QValueSpaceProvider;
+class QAbstractValueSpaceLayer;
+
+class tst_QValueSpaceSubscriber : public QObject
 {
     Q_OBJECT
 
 public:
-    ShutdownControl(QProcess* process)
-    {
-        connect(process,SIGNAL(finished(int,QProcess::ExitStatus)),
-               this, SLOT(shutDown(int, QProcess::ExitStatus))); 
-    }
+    enum Type { CharStar, String };
 
 private slots:
-    void shutDown(int, QProcess::ExitStatus)
-    {
-        qApp->quit();
-    }
+    void initTestCase();
+    void cleanupTestCase();
 
+    void testConstructor_data();
+    void testConstructor();
+    void testFilterConstructor_data();
+    void testFilterConstructor();
+
+    void testPathChanges();
+
+    void contentsChanged_data();
+    void contentsChanged();
+    void dataVersatility_data();
+    void dataVersatility();
+
+    void value_data();
+    void value();
+
+    void ipcTests_data();
+    void ipcTests();
+
+    void ipcRemoveKey_data();
+    void ipcRemoveKey();
+
+    void interestNotification_data();
+    void interestNotification();
+    void ipcInterestNotification_data();
+    void ipcInterestNotification();
+
+    void clientServer();
+
+private:
+    QMap<QAbstractValueSpaceLayer *, QValueSpaceProvider *> roots;
+    QMap<QAbstractValueSpaceLayer*, QValueSpaceProvider *> busys;
 };
-
-class tst_QValueSpaceItemOop : public tst_QValueSpaceItem
-{
-    Q_OBJECT
-};
-
-int main(int argc, char** argv)
-{
-    QCoreApplication app(argc, argv);
-    QStringList args = app.arguments();
-
-#if defined(QT_NO_PROCESS)
-        tst_QValueSpaceItemOop test;
-        return QTest::qExec(&test, argc-1, argv);
-#else
-    if (args.contains("-vsClientMode")) {
-        tst_QValueSpaceItemOop test;
-        return QTest::qExec(&test, argc-1, argv);
-    } else {
-        QValueSpace::initValueSpaceServer();
-        QProcess process;
-        ShutdownControl control(&process);
-        process.setProcessChannelMode(QProcess::ForwardedChannels);
-        args.removeAt(0); //don't pass the binary name
-        process.start("tst_qvaluespaceitem_oop", args << "-vsClientMode");
-
-        return app.exec();
-    }
-#endif
-}
-
-#include "tst_qvaluespaceitem_oop.moc"
-

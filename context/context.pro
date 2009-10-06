@@ -10,7 +10,7 @@ DEFINES += QT_BUILD_CFW_LIB QT_MAKEDLL
 PUBLIC_HEADERS += qcontextglobal.h \
            qvaluespace.h \
            qvaluespaceprovider.h \
-           qvaluespaceitem.h
+           qvaluespacesubscriber.h
 
 PRIVATE_HEADERS += qpacketprotocol_p.h \
            qmallocpool_p.h \
@@ -24,7 +24,7 @@ SOURCES += qpacketprotocol.cpp \
            qvaluespace.cpp \
            qvaluespacemanager.cpp \
            qvaluespaceprovider.cpp \
-           qvaluespaceitem.cpp
+           qvaluespacesubscriber.cpp
 
 symbian {
     deploy.path = /

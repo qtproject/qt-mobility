@@ -1,7 +1,7 @@
 TEMPLATE = subdirs
 SUBDIRS += qvaluespace \
            qvaluespaceprovider \
-           qvaluespaceitem \
+           qvaluespacesubscriber \
            qmallocpool \
            qpacket \
            qpacketprotocol \

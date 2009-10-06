@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 
-#include <qvaluespaceitem.h>
+#include <qvaluespacesubscriber.h>
 #include <qvaluespaceprovider.h>
 
 #include <QCoreApplication>
@@ -64,8 +64,8 @@ public:
             provider->setObjectName("original_lackey");
             provider->setAttribute("value", 100);
             provider->sync();
-            item = new QValueSpaceItem("/usr/lackey/subdir", uuid, this);
-            connect(item, SIGNAL(contentsChanged()), this, SLOT(changes()));
+            subscriber = new QValueSpaceSubscriber("/usr/lackey/subdir", uuid, this);
+            connect(subscriber, SIGNAL(contentsChanged()), this, SLOT(changes()));
 
             QTimer::singleShot(TIMEOUT, this, SLOT(proceed()));
             break;
@@ -85,23 +85,23 @@ public:
 
 private slots:
     void proceed() {
-        switch(index) {
-            case 0:
-                //qDebug() << "Setting 101";
-                provider->setAttribute("value", 101);
-                break;
-            case 1:
-                //qDebug() << "Removing";
-                provider->removeAttribute("value");
-                break;
-            case 2:
-                //qDebug() << "Setting 102";
-                provider->setAttribute("value", 102);
-                break;
-            case 3:
-                qDebug() << "Removing";
-                provider->removeAttribute("value");
-                break;
+        switch (index) {
+        case 0:
+            //qDebug() << "Setting 101";
+            provider->setAttribute("value", 101);
+            break;
+        case 1:
+            //qDebug() << "Removing";
+            provider->removeAttribute("value");
+            break;
+        case 2:
+            //qDebug() << "Setting 102";
+            provider->setAttribute("value", 102);
+            break;
+        case 3:
+            qDebug() << "Removing";
+            provider->removeAttribute("value");
+            break;
         }
         provider->sync();
 
@@ -118,7 +118,7 @@ private slots:
 
     void changes()
     {
-        //qDebug() << "changes:" << item->value("mine", 6).toInt();
+        //qDebug() << "changes:" << subscriber->value("mine", 6).toInt();
     }
 
     void attributeInterestChanged(const QString &attribute, bool interested)
@@ -143,8 +143,8 @@ private slots:
     }
 
 private:
-    QValueSpaceProvider* provider;
-    QValueSpaceItem *item;
+    QValueSpaceProvider *provider;
+    QValueSpaceSubscriber *subscriber;
     int index;
     int abortCode;
 };

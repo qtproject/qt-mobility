@@ -48,7 +48,7 @@ QT_BEGIN_NAMESPACE
 
     \brief The QValueSpaceProvider class allows applications to add entries to the Value Space.
 
-    For an overview of the Qt Value Space, please see the QValueSpaceItem documentation.
+    For an overview of the Qt Value Space, please see the QValueSpaceSubscriber documentation.
 
     The QValueSpaceProvider class allows applications to write entries into the
     Value Space that are automatically removed when the QValueSpaceProvider is
@@ -92,15 +92,15 @@ QT_BEGIN_NAMESPACE
     QValueSpaceProvider *object1 = new QValueSpaceProvider("/Device");
     object1->setAttribute("Buttons", 2);
 
-    // QValueSpaceItem("/Device/Buttons").value() == QVariant(2)
+    // QValueSpaceSubscriber("/Device/Buttons").value() == QVariant(2)
 
     QValueSpaceProvider *object2 = new QValueSpaceProvider("/Device");
     object2->setAttribute("Buttons", 3);
 
-    // QValueSpaceItem("/Device/Buttons").value() == QVariant(2)
+    // QValueSpaceSubscriber("/Device/Buttons").value() == QVariant(2)
 
     object2->removeAttribute("Buttons");
-    // QValueSpaceItem("/Device/Buttons").value() == QVariant(3)
+    // QValueSpaceSubscriber("/Device/Buttons").value() == QVariant(3)
     \endcode
 
     For performance reasons the setting of and removing of attributes is buffered
@@ -115,7 +115,7 @@ QT_BEGIN_NAMESPACE
     \i {Note:} The QValueSpaceProvider class is not thread safe and may only be used from
     an application's main thread.
 
-    \sa QValueSpaceItem
+    \sa QValueSpaceSubscriber
 */
 
 /*!
@@ -123,7 +123,7 @@ QT_BEGIN_NAMESPACE
                                                            bool interested)
 
     Signal that is emitted when interest in \a attribute changes.  If \a interested is true at
-    least on QValueSpaceItem is interested in the value of \a attribute.
+    least on QValueSpaceSubscriber is interested in the value of \a attribute.
 */
 
 #define VS_CALL_ASSERT Q_ASSERT(!QCoreApplication::instance() || \
@@ -196,7 +196,7 @@ QValueSpaceProviderPrivate::QValueSpaceProviderPrivate(const QString &_path, con
 
     Constructs a QValueSpaceProvider with the specified \a parent that publishes values under
     \a path.  This constructor is equivalent to calling
-    \c {QValueSpaceItem(path.toUtf8(), parent)}.
+    \c {QValueSpaceSubscriber(path.toUtf8(), parent)}.
 */
 QValueSpaceProvider::QValueSpaceProvider(const QString &path, QObject *parent)
 :   QObject(parent), d(new QValueSpaceProviderPrivate(path))
@@ -210,7 +210,7 @@ QValueSpaceProvider::QValueSpaceProvider(const QString &path, QObject *parent)
 
     Constructs a QValueSpaceProvider with the specified \a parent that publishes values under
     \a path.  This constructor is equivalent to calling
-    \c {QValueSpaceItem(QString(path), parent)}.
+    \c {QValueSpaceSubscriber(QString(path), parent)}.
 */
 QValueSpaceProvider::QValueSpaceProvider(const char *path, QObject *parent)
 :   QObject(parent), d(new QValueSpaceProviderPrivate(QString::fromLatin1(path)))
@@ -384,7 +384,7 @@ void QValueSpaceProvider::sync()
         provider.setAttribute("State", "Starting");
         provider.sync();
 
-        // QValueSpaceItem("/Device/State").value() == QVariant("Starting")
+        // QValueSpaceSubscriber("/Device/State").value() == QVariant("Starting")
     \endcode
 */
 void QValueSpaceProvider::setAttribute(const QString &attribute, const QVariant &data)
@@ -421,13 +421,13 @@ void QValueSpaceProvider::setAttribute(const char *attribute, const QVariant &da
         provider.setAttribute("State", "Starting");
         provider.setAttribute("State/Memory", "1000");
         provider.sync();
-        // QValueSpaceItem("/Device/State").value() == QVariant("Starting")
-        // QValueSpaceItem("/Device/State/Memory").value() == QVariant("1000")
+        // QValueSpaceSubscriber("/Device/State").value() == QVariant("Starting")
+        // QValueSpaceSubscriber("/Device/State/Memory").value() == QVariant("1000")
 
         provider.removeAttribute("State");
         provider.sync();
-        // QValueSpaceItem("/Device/State").value() == QVariant();
-        // QValueSpaceItem("/Device/State/Memory").value() == QVariant();
+        // QValueSpaceSubscriber("/Device/State").value() == QVariant();
+        // QValueSpaceSubscriber("/Device/State/Memory").value() == QVariant();
     \endcode
 */
 void QValueSpaceProvider::removeAttribute(const QString &attribute)
@@ -454,8 +454,8 @@ void QValueSpaceProvider::removeAttribute(const char *attribute)
 }
 
 /*!
-    Registers this QValueSpaceProvider for notifications when QValueSpaceItems are interested in
-    values under path().
+    Registers this QValueSpaceProvider for notifications when QValueSpaceSubscribers are interested
+    in values under path().
 
     Generally you do not need to call this function as it is automatically called when
     connections are made to this classes signals.  \a member is the signal that has been connected.

@@ -45,8 +45,8 @@ QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-struct QValueSpaceItemPrivate;
-class Q_CFW_EXPORT QValueSpaceItem : public QObject
+struct QValueSpaceSubscriberPrivate;
+class Q_CFW_EXPORT QValueSpaceSubscriber : public QObject
 {
     Q_OBJECT
 
@@ -54,20 +54,21 @@ class Q_CFW_EXPORT QValueSpaceItem : public QObject
     Q_PROPERTY(QVariant value READ valuex NOTIFY contentsChanged);
 
 public:
-    explicit QValueSpaceItem(QObject *parent = 0);
-    explicit QValueSpaceItem(const QString &path, QObject *parent = 0);
-    explicit QValueSpaceItem(const char *path, QObject *parent = 0);
+    explicit QValueSpaceSubscriber(QObject *parent = 0);
+    explicit QValueSpaceSubscriber(const QString &path, QObject *parent = 0);
+    explicit QValueSpaceSubscriber(const char *path, QObject *parent = 0);
 
-    QValueSpaceItem(const QString &path, QValueSpace::LayerOptions filter, QObject *parent = 0);
-    QValueSpaceItem(const char *path, QValueSpace::LayerOptions filter, QObject *parent = 0);
+    QValueSpaceSubscriber(const QString &path, QValueSpace::LayerOptions filter,
+                          QObject *parent = 0);
+    QValueSpaceSubscriber(const char *path, QValueSpace::LayerOptions filter, QObject *parent = 0);
 
-    QValueSpaceItem(const QString &path, const QUuid &uuid, QObject *parent = 0);
-    QValueSpaceItem(const char *path, const QUuid &uuid, QObject *parent = 0);
+    QValueSpaceSubscriber(const QString &path, const QUuid &uuid, QObject *parent = 0);
+    QValueSpaceSubscriber(const char *path, const QUuid &uuid, QObject *parent = 0);
 
-    virtual ~QValueSpaceItem();
+    virtual ~QValueSpaceSubscriber();
 
     void setPath(const QString &path);
-    void setPath(QValueSpaceItem *item);
+    void setPath(QValueSpaceSubscriber *subscriber);
     QString path() const;
 
     void cd(const QString &path);
@@ -92,8 +93,8 @@ private:
     QVariant valuex(const QVariant &def = QVariant()) const;
 
 private:
-    Q_DISABLE_COPY(QValueSpaceItem)
-    QValueSpaceItemPrivate *d;
+    Q_DISABLE_COPY(QValueSpaceSubscriber)
+    QValueSpaceSubscriberPrivate *d;
 };
 
 QT_END_NAMESPACE

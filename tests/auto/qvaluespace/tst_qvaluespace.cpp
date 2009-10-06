@@ -32,7 +32,7 @@
 ****************************************************************************/
 
 #include <qvaluespace_p.h>
-#include <qvaluespaceitem.h>
+#include <qvaluespacesubscriber.h>
 #include <qvaluespaceprovider.h>
 
 #include <QtTest/QTest>
@@ -64,7 +64,7 @@ public:
 
     QValueSpace::LayerOptions layerOptions() const;
 
-    /* QValueSpaceItem functions */
+    /* QValueSpaceSubscriber functions */
     bool supportsInterestNotification() const;
     bool notifyInterest(Handle handle, bool interested);
 
@@ -364,14 +364,14 @@ void tst_QValueSpace::layerInterface()
     QFETCH(QString, path);
     QFETCH(QString, attribute);
 
-    QValueSpaceItem *item;
+    QValueSpaceSubscriber *subscriber;
 
-    CHECK_ERRORS(item = new QValueSpaceItem(path));
+    CHECK_ERRORS(subscriber = new QValueSpaceSubscriber(path));
 
-    CHECK_ERRORS(item->value(attribute));
-    CHECK_ERRORS(item->children());
+    CHECK_ERRORS(subscriber->value(attribute));
+    CHECK_ERRORS(subscriber->children());
 
-    CHECK_ERRORS(delete item);
+    CHECK_ERRORS(delete subscriber);
 
 
     QValueSpaceProvider *provider;

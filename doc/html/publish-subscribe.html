@@ -69,35 +69,36 @@
 <pre>        createNewObject();</pre>
 <a name="consumer"></a>
 <h2>Consumer</h2>
-<p>When acting as a consumer of Value Space content the program creates a ConsumerDialog. This dialog contains a widget for setting the base path of the <a href="qvaluespaceitem.html">QValueSpaceItem</a> and a table for displaying all of the values directly under base path in the Value Space.</p>
-<p align="center"><img src="images/publish-subscribe-consumer.png" /></p><p>We declare two slots to propagate values from the Value Space to the dialog in response to change notifications from <a href="qvaluespaceitem.html">QValueSpaceItem</a>.</p>
+<p>When acting as a consumer of Value Space content the program creates a ConsumerDialog. This dialog contains a widget for setting the base path of the QValueSpaceItem and a table for displaying all of the values directly under base path in the Value Space.</p>
+<p align="center"><img src="images/publish-subscribe-consumer.png" /></p><p>We declare two slots to propagate values from the Value Space to the dialog in response to change notifications from QValueSpaceItem.</p>
 <pre>    private slots:
-        void createNewItem();
-        void itemChanged();</pre>
-<p>To read values from the Value Space we first create a <a href="qvaluespaceitem.html">QValueSpaceItem</a> and connect to the <tt>contentsChanged()</tt> signal.</p>
+        void changeSubscriberPath();
+        void subscriberChanged();</pre>
+<p>To read values from the Value Space we first create a QValueSpaceItem and connect to the <tt>contentsChanged()</tt> signal.</p>
 <p>We explicitly call our <tt>itemChanged()</tt> slot to populate the table with the initial values.</p>
-<pre>    void ConsumerDialog::createNewItem()
+<pre>    void ConsumerDialog::changeSubscriberPath()
     {
-        if (item)
-            delete item;
-
         ui-&gt;values-&gt;clearContents();
 
-        item = new QValueSpaceItem(ui-&gt;basePath-&gt;text(), this);
+        if (!subscriber)
+            subscriber = new QValueSpaceSubscriber(ui-&gt;basePath-&gt;text(), this);
+        else
+            subscriber-&gt;setPath(ui-&gt;basePath-&gt;text());
 
-        connect(item, SIGNAL(contentsChanged()), this, SLOT(itemChanged()));
-        itemChanged();
+        connect(subscriber, SIGNAL(contentsChanged()), this, SLOT(subscriberChanged()));
+
+        subscriberChanged();
     }</pre>
 <p>In response to the <tt>contentsChanged()</tt> signal we update all the values in the table.</p>
-<pre>    void ConsumerDialog::itemChanged()
+<pre>    void ConsumerDialog::subscriberChanged()
     {
         ui-&gt;values-&gt;clearContents();
 
-        QStringList subPaths = item-&gt;subPaths();
+        QStringList subPaths = subscriber-&gt;subPaths();
         ui-&gt;values-&gt;setRowCount(subPaths.count());
 
         for (int i = 0; i &lt; subPaths.count(); ++i) {
-            QVariant v = item-&gt;value(subPaths.at(i));
+            QVariant v = subscriber-&gt;value(subPaths.at(i));
 
             QTableWidgetItem *pathItem = new QTableWidgetItem(subPaths.at(i));
             QTableWidgetItem *valueItem = new QTableWidgetItem(v.toString());

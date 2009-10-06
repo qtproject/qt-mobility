@@ -31,9 +31,9 @@ serialized version of a simple example Value Space might look like this.
 /Device/Buttons/3/Usable = true
 \endcode
 
-Existing values within the Value Space are access through the QValueSpaceItem class.  This class
-allows applications to read item values, navigate through the Value Space, subscribe to change
-notifications for items and send requests for value changes to the value provider.
+Existing values within the Value Space are access through the QValueSpaceSubscriber class.  This
+class allows applications to read item values, navigate through the Value Space, subscribe to
+change notifications for items and send requests for value changes to the value provider.
 
 New values are added to the Value Space via the QValueSpaceProvider class.  This class allows
 applications to publish values, receive interest notifications and change requests from other
@@ -61,7 +61,7 @@ items in the layers below it.
 Consider the Value Space item \c {/Device/Buttons}.  If two layer contained this item, the value in
 the layer with the higher layer order (see \l {QAbstractValueSpaceLayer::order()}) would shadow
 that with the lower layer order.  However, if only the layer with the lower order contained this
-item, it would be visible through the QValueSpaceItem class, even if the higher order layer
+item, it would be visible through the QValueSpaceSubscriber class, even if the higher order layer
 contained sub-items such as \c {/Device/Buttons/1}.  That is, layer shadowing occurs by value not
 by path.
 
@@ -154,5 +154,5 @@ acts as a communications medium between the provider dialog and the consumer gra
 battery animation. The battery is implemented in QML and C++ with Qt Value Space 
 supplying the charge level for the animation to represent.
 
-\sa QValueSpaceItem, QValueSpaceProvider, QValueSpace, QAbstractValueSpaceLayer
+\sa QValueSpaceSubscriber, QValueSpaceProvider, QValueSpace, QAbstractValueSpaceLayer
 */

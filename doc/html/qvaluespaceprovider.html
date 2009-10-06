@@ -62,7 +62,7 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QValueSpaceProvider class allows applications to add entries to the Value Space.</p>
-<p>For an overview of the Qt Value Space, please see the <a href="qvaluespaceitem.html">QValueSpaceItem</a> documentation.</p>
+<p>For an overview of the Qt Value Space, please see the <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> documentation.</p>
 <p>The QValueSpaceProvider class allows applications to write entries into the Value Space that are automatically removed when the QValueSpaceProvider is destroyed, or the application exits either cleanly or abnormally. All applications in the system will have access to the data set through QValueSpaceProvider and, if desired, can be notified when the data changes.</p>
 <p>Although, logically, the Value Space is a simple collection of hierarchical paths, these paths can conceptually be visualized as a set of objects with attributes. For example, rather than viewing the following list as 12 distinct Value Space paths:</p>
 <pre>    /Device/Network/Interfaces/eth0/Name
@@ -82,26 +82,26 @@
 <pre>    QValueSpaceProvider *object1 = new QValueSpaceProvider(&quot;/Device&quot;);
     object1-&gt;setAttribute(&quot;Buttons&quot;, 2);
 
-<span class="comment">    // QValueSpaceItem(&quot;/Device/Buttons&quot;).value() == QVariant(2)</span>
+<span class="comment">    // QValueSpaceSubscriber(&quot;/Device/Buttons&quot;).value() == QVariant(2)</span>
 
     QValueSpaceProvider *object2 = new QValueSpaceProvider(&quot;/Device&quot;);
     object2-&gt;setAttribute(&quot;Buttons&quot;, 3);
 
-<span class="comment">    // QValueSpaceItem(&quot;/Device/Buttons&quot;).value() == QVariant(2)</span>
+<span class="comment">    // QValueSpaceSubscriber(&quot;/Device/Buttons&quot;).value() == QVariant(2)</span>
 
     object2-&gt;removeAttribute(&quot;Buttons&quot;);
-<span class="comment">    // QValueSpaceItem(&quot;/Device/Buttons&quot;).value() == QVariant(3)</span></pre>
+<span class="comment">    // QValueSpaceSubscriber(&quot;/Device/Buttons&quot;).value() == QVariant(3)</span></pre>
 <p>For performance reasons the setting of and removing of attributes is buffered internally by the QValueSpaceProvider and applied as a batch sometime later. Normally this occurs the next time the application enters the Qt event loop, but this behavior should not be relied upon. If an application must synchronize application objects with others, the <a href="qvaluespaceprovider.html#sync">QValueSpaceProvider::sync</a>() method can be used to force the application of changes. This call is generally unnecessary, and should be used sparingly to prevent unnecessary load on the system.</p>
 <p><i>Note:</i> The QValueSpaceProvider class is not thread safe and may only be used from an application's main thread.</p>
-<p>See also <a href="qvaluespaceitem.html">QValueSpaceItem</a>.</p>
+<p>See also <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QValueSpaceProvider"></a>QValueSpaceProvider::QValueSpaceProvider ( const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>This is an overloaded function.</p>
-<p>Constructs a <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> with the specified <i>parent</i> that publishes values under <i>path</i>. This constructor is equivalent to calling <tt>QValueSpaceItem(path.toUtf8(), parent)</tt>.</p>
+<p>Constructs a <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> with the specified <i>parent</i> that publishes values under <i>path</i>. This constructor is equivalent to calling <tt>QValueSpaceSubscriber(path.toUtf8(), parent)</tt>.</p>
 <h3 class="fn"><a name="QValueSpaceProvider-2"></a>QValueSpaceProvider::QValueSpaceProvider ( const char * <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>This is an overloaded function.</p>
-<p>Constructs a <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> with the specified <i>parent</i> that publishes values under <i>path</i>. This constructor is equivalent to calling <tt>QValueSpaceItem(QString(path), parent)</tt>.</p>
+<p>Constructs a <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> with the specified <i>parent</i> that publishes values under <i>path</i>. This constructor is equivalent to calling <tt>QValueSpaceSubscriber(QString(path), parent)</tt>.</p>
 <h3 class="fn"><a name="QValueSpaceProvider-3"></a>QValueSpaceProvider::QValueSpaceProvider ( const QString &amp; <i>path</i>, <a href="qvaluespace.html#LayerOption-enum">QValueSpace::LayerOptions</a> <i>filter</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>This is an overloaded function.</p>
 <p>Constructs a <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> with the specified <i>parent</i> that publishes values under <i>path</i>. The <i>filter</i> parameter is used to limit which layer this <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> will access. This constructor is equivalent to calling <tt>QValueSpaceProvider(path.toUtf8(), filter, parent)</tt>.</p>
@@ -129,9 +129,9 @@
 <h3 class="fn"><a name="dtor.QValueSpaceProvider"></a>QValueSpaceProvider::~QValueSpaceProvider ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the <a href="qvaluespaceprovider.html">QValueSpaceProvider</a>. This will remove the values set by this provider in all <a href="qvaluespace.html#LayerOption-enum">non-permanent</a> layers.</p>
 <h3 class="fn"><a name="attributeInterestChanged"></a>void QValueSpaceProvider::attributeInterestChanged ( const QString &amp; <i>attribute</i>, bool <i>interested</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signal that is emitted when interest in <i>attribute</i> changes. If <i>interested</i> is true at least on <a href="qvaluespaceitem.html">QValueSpaceItem</a> is interested in the value of <i>attribute</i>.</p>
+<p>Signal that is emitted when interest in <i>attribute</i> changes. If <i>interested</i> is true at least on <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> is interested in the value of <i>attribute</i>.</p>
 <h3 class="fn"><a name="connectNotify"></a>void QValueSpaceProvider::connectNotify ( const char * <i>member</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
-<p>Registers this <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> for notifications when QValueSpaceItems are interested in values under <a href="qvaluespaceprovider.html#path">path</a>().</p>
+<p>Registers this <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> for notifications when QValueSpaceSubscribers are interested in values under <a href="qvaluespaceprovider.html#path">path</a>().</p>
 <p>Generally you do not need to call this function as it is automatically called when connections are made to this classes signals. <i>member</i> is the signal that has been connected.</p>
 <p>If you reimplement this virtual function it is important that you call this implementation from your implementation.</p>
 <p>See also <a href="qvaluespaceprovider.html#attributeInterestChanged">attributeInterestChanged</a>().</p>
@@ -146,13 +146,13 @@
     provider.setAttribute(&quot;State&quot;, &quot;Starting&quot;);
     provider.setAttribute(&quot;State/Memory&quot;, &quot;1000&quot;);
     provider.sync();
-<span class="comment">    // QValueSpaceItem(&quot;/Device/State&quot;).value() == QVariant(&quot;Starting&quot;)</span>
-<span class="comment">    // QValueSpaceItem(&quot;/Device/State/Memory&quot;).value() == QVariant(&quot;1000&quot;)</span>
+<span class="comment">    // QValueSpaceSubscriber(&quot;/Device/State&quot;).value() == QVariant(&quot;Starting&quot;)</span>
+<span class="comment">    // QValueSpaceSubscriber(&quot;/Device/State/Memory&quot;).value() == QVariant(&quot;1000&quot;)</span>
 
     provider.removeAttribute(&quot;State&quot;);
     provider.sync();
-<span class="comment">    // QValueSpaceItem(&quot;/Device/State&quot;).value() == QVariant();</span>
-<span class="comment">    // QValueSpaceItem(&quot;/Device/State/Memory&quot;).value() == QVariant();</span></pre>
+<span class="comment">    // QValueSpaceSubscriber(&quot;/Device/State&quot;).value() == QVariant();</span>
+<span class="comment">    // QValueSpaceSubscriber(&quot;/Device/State/Memory&quot;).value() == QVariant();</span></pre>
 <h3 class="fn"><a name="removeAttribute-2"></a>void QValueSpaceProvider::removeAttribute ( const char * <i>attribute</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>This is an overloaded function.</p>
 <p>This is a convenience overload and is equivalent to <tt>removeAttribute(QString(attribute))</tt>.</p>
@@ -163,7 +163,7 @@
     provider.setAttribute(&quot;State&quot;, &quot;Starting&quot;);
     provider.sync();
 
-<span class="comment">    // QValueSpaceItem(&quot;/Device/State&quot;).value() == QVariant(&quot;Starting&quot;)</span></pre>
+<span class="comment">    // QValueSpaceSubscriber(&quot;/Device/State&quot;).value() == QVariant(&quot;Starting&quot;)</span></pre>
 <h3 class="fn"><a name="setAttribute-2"></a>void QValueSpaceProvider::setAttribute ( const char * <i>attribute</i>, const QVariant &amp; <i>data</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>This is an overloaded function.</p>
 <p>This is a convenience overload and is equivalent to <tt>setAttribute(QString(attribute), data)</tt>.</p>

@@ -14,8 +14,8 @@ export PATH=.
 ./tst_qpacketprotocol
 ./tst_qvaluespace
 ./tst_qvaluespaceprovider
-./tst_qvaluespaceitem
-./tst_qvaluespaceitem_oop
+./tst_qvaluespacesubscriber
+./tst_qvaluespacesubscriber_oop
 ./tst_qsystemreadwritelock
 ./tst_qsystemreadwritelock_oop
 

@@ -152,7 +152,7 @@ public:
     bool value(Handle handle, const QString &subPath, QVariant *data);
     QSet<QString> children(Handle handle);
 
-    /* QValueSpaceItem functions */
+    /* QValueSpaceSubscriber functions */
     bool supportsInterestNotification() const;
     bool notifyInterest(Handle handle, bool interested);
 

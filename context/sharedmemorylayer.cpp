@@ -1679,7 +1679,7 @@ public:
 
     QValueSpace::LayerOptions layerOptions() const;
 
-    /* QValueSpaceItem functions */
+    /* QValueSpaceSubscriber functions */
     bool supportsInterestNotification() const;
     bool notifyInterest(Handle handle, bool interested);
 

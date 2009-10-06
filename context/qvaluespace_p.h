@@ -75,7 +75,7 @@ public:
 
     virtual QValueSpace::LayerOptions layerOptions() const = 0;
 
-    /* QValueSpaceItem functions */
+    /* QValueSpaceSubscriber functions */
     virtual bool supportsInterestNotification() const = 0;
     virtual bool notifyInterest(Handle handle, bool interested) = 0;
 

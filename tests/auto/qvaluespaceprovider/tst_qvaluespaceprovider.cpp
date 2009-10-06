@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 
-#include <qvaluespaceitem.h>
+#include <qvaluespacesubscriber.h>
 #include <qvaluespacemanager_p.h>
 #include <qvaluespaceprovider.h>
 
@@ -320,8 +320,8 @@ void tst_QValueSpaceProvider::testSignals_data()
     QTest::addColumn<QAbstractValueSpaceLayer *>("layer");
 
     QTest::addColumn<QString>("providerPath");
-    QTest::addColumn<QString>("itemPath");
-    QTest::addColumn<QString>("itemAttribute");
+    QTest::addColumn<QString>("subscriberPath");
+    QTest::addColumn<QString>("attribute");
 
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
 
@@ -331,17 +331,23 @@ void tst_QValueSpaceProvider::testSignals_data()
         if (!layer->supportsInterestNotification())
             continue;
 
-        QTest::newRow("root")
+        QTest::newRow("/ /")
             << layer
             << QString("/")
             << QString("/")
             << QString();
 
-        QTest::newRow("")
+        QTest::newRow("/ /testSignals")
+            << layer
+            << QString("/")
+            << QString("/testSignals")
+            << QString("testSignals");
+
+        QTest::newRow("/testSignals /testSignals")
             << layer
             << QString("/testSignals")
             << QString("/testSignals")
-            << QString("value");
+            << QString();
     }
 }
 
@@ -350,8 +356,8 @@ void tst_QValueSpaceProvider::testSignals()
     QFETCH(QAbstractValueSpaceLayer *, layer);
 
     QFETCH(QString, providerPath);
-    QFETCH(QString, itemPath);
-    QFETCH(QString, itemAttribute);
+    QFETCH(QString, subscriberPath);
+    QFETCH(QString, attribute);
 
     QValueSpaceProvider *provider = new QValueSpaceProvider(providerPath, layer->id());
 
@@ -361,25 +367,25 @@ void tst_QValueSpaceProvider::testSignals()
 
     QSignalSpy interestChangedSpy(&listener, SIGNAL(attributeInterestChanged(QString,bool)));
 
-    QValueSpaceItem *item = new QValueSpaceItem(itemPath, layer->id());
+    QValueSpaceSubscriber *subscriber = new QValueSpaceSubscriber(subscriberPath, layer->id());
 
     QTRY_COMPARE(interestChangedSpy.count(), 1);
 
     QList<QVariant> arguments = interestChangedSpy.takeFirst();
     QCOMPARE(arguments.count(), 2);
     QCOMPARE(arguments.at(0).type(), QVariant::String);
-    QVERIFY(arguments.at(0).toString().isEmpty());
+    QCOMPARE(arguments.at(0).toString(), attribute);
     QCOMPARE(arguments.at(1).type(), QVariant::Bool);
     QVERIFY(arguments.at(1).toBool());
 
-    delete item;
+    delete subscriber;
 
     QTRY_COMPARE(interestChangedSpy.count(), 1);
 
     arguments = interestChangedSpy.takeFirst();
     QCOMPARE(arguments.count(), 2);
     QCOMPARE(arguments.at(0).type(), QVariant::String);
-    QVERIFY(arguments.at(0).toString().isEmpty());
+    QCOMPARE(arguments.at(0).toString(), attribute);
     QCOMPARE(arguments.at(1).type(), QVariant::Bool);
     QVERIFY(!arguments.at(1).toBool());
 
@@ -408,27 +414,27 @@ void tst_QValueSpaceProvider::valuePermanence()
 
     provider->setAttribute("value", 10);
 
-    QValueSpaceItem item("/valuePermanence");
-    QCOMPARE(item.value("value", 0).toInt(), 10);
+    QValueSpaceSubscriber subscriber("/valuePermanence");
+    QCOMPARE(subscriber.value("value", 0).toInt(), 10);
 
     delete provider;
 
     if (layer->layerOptions() & QValueSpace::PermanentLayer) {
         // Permanent layer, check that value is still available after provider is deleted.
-        QCOMPARE(item.value("value", 0).toInt(), 10);
+        QCOMPARE(subscriber.value("value", 0).toInt(), 10);
 
         provider = new QValueSpaceProvider("/valuePermanence", layer->id());
 
         provider->removeAttribute("value");
 
-        QCOMPARE(item.value("value", 0).toInt(), 0);
+        QCOMPARE(subscriber.value("value", 0).toInt(), 0);
 
         provider->removeAttribute(QString());
 
         delete provider;
     } else {
         // Non-permanent layer, check that value is not available after provider is deleted.
-        QCOMPARE(item.value("value", 0).toInt(), 0);
+        QCOMPARE(subscriber.value("value", 0).toInt(), 0);
     }
 }
 

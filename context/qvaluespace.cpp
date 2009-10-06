@@ -65,7 +65,7 @@ QT_BEGIN_NAMESPACE
     \enum QValueSpace::LayerOption
 
     This enum describes the behaviour of the Value Space layer.  In addition this enum is used as
-    a filter when constructing a QValueSpaceProvider or QValueSpaceItem.
+    a filter when constructing a QValueSpaceProvider or QValueSpaceSubscriber.
 
     \value UnspecifiedLayer     Used as a filter to specify that any layer should be used.
     \value PermanentLayer       Indicates that the layer uses a permanent backing store.  When used
