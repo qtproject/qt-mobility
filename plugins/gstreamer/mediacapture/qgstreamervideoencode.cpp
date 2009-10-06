@@ -184,12 +184,13 @@ void QGstreamerVideoEncode::setBitrate(int value)
     setEncodingOption(QLatin1String("bitrate"), QVariant(value));
 }
 
-int QGstreamerVideoEncode::quality() const
+QMediaRecorder::EncodingQuality QGstreamerVideoEncode::quality() const
 {
-    return m_options.value(QLatin1String("quality"), QVariant(50)).toInt();
+    return QMediaRecorder::EncodingQuality(m_options.value(QLatin1String("quality"),
+                                                           QVariant(QMediaRecorder::NormalQuality)).toInt());
 }
 
-void QGstreamerVideoEncode::setQuality(int value)
+void QGstreamerVideoEncode::setQuality(QMediaRecorder::EncodingQuality value)
 {
     setEncodingOption(QLatin1String("quality"), QVariant(value));
 }
@@ -244,19 +245,30 @@ GstElement *QGstreamerVideoEncode::createEncoder()
             QVariant value = it.value();
 
             if (option == QLatin1String("quality")) {
-                int qualityValue = value.toInt();
+                int qualityValue = qBound(int(QMediaRecorder::VeryLowQuality), value.toInt(), int(QMediaRecorder::VeryHighQuality));
 
                 if (m_codec == QLatin1String("video/h264")) {
                     //constant quantizer mode
                     g_object_set(G_OBJECT(encoderElement), "pass", 4, NULL);
-                    //quant(0) = 50, quant(50) = 21, quant(100) = 10
-                    int quant = qRound(50-40*(pow(qualityValue/100.0, 0.46)));
-                    g_object_set(G_OBJECT(encoderElement), "quantizer", quant, NULL);
+                    int qualityTable[] = {
+                        50, //VeryLow
+                        35, //Low
+                        21, //Normal
+                        15, //High
+                        8 //VeryHigh
+                    };
+                    g_object_set(G_OBJECT(encoderElement), "quantizer", qualityTable[qualityValue], NULL);
                 } else if (m_codec == QLatin1String("video/xvid")) {
                     //constant quantizer mode
                     g_object_set(G_OBJECT(encoderElement), "pass", 3, NULL);
-                    //quant from 2 to 32, default 4
-                    int quant = qRound(31-29*(pow(qualityValue/100.0, 0.1)));
+                    int qualityTable[] = {
+                        32, //VeryLow
+                        12, //Low
+                        5, //Normal
+                        3, //High
+                        2 //VeryHigh
+                    };
+                    int quant = qualityTable[qualityValue];
                     g_object_set(G_OBJECT(encoderElement), "quantizer", quant, NULL);
                 } else if (m_codec == QLatin1String("video/mpeg4") ||
                            m_codec == QLatin1String("video/mpeg1") ||
@@ -264,11 +276,25 @@ GstElement *QGstreamerVideoEncode::createEncoder()
                     //constant quantizer mode
                     g_object_set(G_OBJECT(encoderElement), "pass", 2, NULL);
                     //quant from 1 to 30, default ~3
-                    double quant = 30.0-29*(pow(qualityValue/100.0, 0.15));
+                    double qualityTable[] = {
+                        20, //VeryLow
+                        8.0, //Low
+                        3.0, //Normal
+                        2.5, //High
+                        2.0 //VeryHigh
+                    };
+                    double quant = qualityTable[qualityValue];
                     g_object_set(G_OBJECT(encoderElement), "quantizer", quant, NULL);
                 } else if (m_codec == QLatin1String("video/theora")) {
-                    //quality from 0 to 63, default 16
-                    int quality = 63*(pow(qualityValue/100.0, 1.977));
+                    int qualityTable[] = {
+                        8, //VeryLow
+                        16, //Low
+                        32, //Normal
+                        45, //High
+                        60 //VeryHigh
+                    };
+                    //quality from 0 to 63
+                    int quality = qualityTable[qualityValue];
                     g_object_set(G_OBJECT(encoderElement), "quality", quality, NULL);
                 }
 

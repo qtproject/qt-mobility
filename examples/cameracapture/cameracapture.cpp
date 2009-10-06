@@ -85,6 +85,7 @@ CameraCapture::CameraCapture(QWidget *parent) :
             ui->audioCodecBox->setCurrentIndex(ui->audioCodecBox->count()-1);
     }
 
+    ui->audioQualitySlider->setRange(0, int(QMediaRecorder::VeryHighQuality));
     ui->audioQualitySlider->setValue(qRound(mediaRecorder->audioQuality()));
 
     //video codecs
@@ -96,6 +97,7 @@ CameraCapture::CameraCapture(QWidget *parent) :
     }
 
     ui->videoQualitySlider->setValue(qRound(mediaRecorder->videoQuality()));
+    ui->videoQualitySlider->setRange(0, int(QMediaRecorder::VeryHighQuality));
 
     ui->videoResolutionBox->addItem(tr("Default"));
     QList<QSize> supportedResolutions = mediaRecorder->supportedResolutions();
@@ -161,12 +163,12 @@ void CameraCapture::setVideoCodec(int idx)
 
 void CameraCapture::setAudioQuality(int value)
 {
-    mediaRecorder->setAudioQuality(value);
+    mediaRecorder->setAudioQuality(QMediaRecorder::EncodingQuality(value));
 }
 
 void CameraCapture::setVideoQuality(int value)
 {
-    mediaRecorder->setVideoQuality(value);
+    mediaRecorder->setVideoQuality(QMediaRecorder::EncodingQuality(value));
 }
 
 void CameraCapture::setContainerFormat(int idx)

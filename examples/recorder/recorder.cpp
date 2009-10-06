@@ -93,6 +93,7 @@ Recorder::Recorder(QWidget *parent) :
         }
 
         ui->qualitySlider->setValue(qRound(encodeControl->quality()));
+        ui->qualitySlider->setRange(0, int(QMediaRecorder::VeryHighQuality));
     } else {
         ui->audioCodecBox->setEnabled(false);
         ui->qualitySlider->setEnabled(false);
@@ -159,7 +160,7 @@ void Recorder::setAudioCodec(int idx)
 void Recorder::setQuality(int value)
 {
     if (encodeControl)
-        encodeControl->setQuality(value);
+        encodeControl->setQuality(QMediaRecorder::EncodingQuality(value));
 }
 
 void Recorder::setContainerFormat(int idx)

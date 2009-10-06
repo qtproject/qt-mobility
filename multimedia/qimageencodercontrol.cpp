@@ -122,14 +122,13 @@ QList<QSize> QImageEncoderControl::supportedResolutions() const
 /*!
   \fn QImageEncoderControl::quality() const
 
-  Image quality value, in 0..100 range.
+  Returns the image encoding quality value.
 */
 
 /*!
-  \fn QImageEncoderControl::setQuality(qreal)
+  \fn QImageEncoderControl::setQuality(QMediaRecorder::EncodingQuality)
 
-  Sets the image quality to \a value.
-  Value has the same meaning as QAudioEncoderControl::quality.
+  Sets the image encoding quality to \a value.
 
   \sa quality()
 */

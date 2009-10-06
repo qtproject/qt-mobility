@@ -108,15 +108,15 @@ QAudioEncoderControl::~QAudioEncoderControl()
 /*!
   \fn QAudioEncoderControl::quality() const
 
-  Returns the normalized audio quality parameter.
+  Returns the audio encoding quality parameter.
 
   \sa setQuality()
 */
 
 /*!
-  \fn QAudioEncoderControl::setQuality(int value)
+  \fn QAudioEncoderControl::setQuality(QMediaRecorder::EncodingQuality value)
 
-  Set the quality of audio stream to \a value in range [0..100].
+  Set the encoding quality of audio stream to \a value.
 
   \sa quality()
 */

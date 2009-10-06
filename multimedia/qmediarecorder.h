@@ -52,16 +52,17 @@ class Q_MEDIA_EXPORT QMediaRecorder : public QMediaObject
     Q_OBJECT
     Q_ENUMS(State)
     Q_ENUMS(Error)
+    Q_ENUMS(EncodingQuality)
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(QString format READ format WRITE setFormat NOTIFY formatChanged)
     Q_PROPERTY(QString audioCodec READ audioCodec WRITE setAudioCodec NOTIFY audioCodecChanged)
     Q_PROPERTY(int audioBitrate READ audioBitrate WRITE setAudioBitrate NOTIFY audioBitrateChanged)
-    Q_PROPERTY(qreal audioQuality READ audioQuality WRITE setAudioQuality NOTIFY audioQualityChanged)
+    Q_PROPERTY(QMediaRecorder::EncodingQuality audioQuality READ audioQuality WRITE setAudioQuality NOTIFY audioQualityChanged)
     Q_PROPERTY(QSize resolution READ resolution WRITE setResolution NOTIFY resolutionChanged)
     Q_PROPERTY(QMediaRecorder::FrameRate frameRate READ frameRate WRITE setFrameRate NOTIFY frameRateChanged)
     Q_PROPERTY(QString videoCodec READ videoCodec WRITE setVideoCodec NOTIFY videoCodecChanged)
     Q_PROPERTY(int videoBitrate READ videoBitrate WRITE setVideoBitrate NOTIFY videoBitrateChanged)
-    Q_PROPERTY(qreal videoQuality READ videoQuality WRITE setVideoQuality NOTIFY videoQualityChanged)
+    Q_PROPERTY(QMediaRecorder::EncodingQuality videoQuality READ videoQuality WRITE setVideoQuality NOTIFY videoQualityChanged)
 
 public:
     typedef QPair<int, int> FrameRate;
@@ -78,6 +79,15 @@ public:
         NoError,
         ResourceError,
         FormatError
+    };
+
+    enum EncodingQuality
+    {
+        VeryLowQuality = 0,
+        LowQuality,
+        NormalQuality,
+        HighQuality,
+        VeryHighQuality
     };
 
     QMediaRecorder(QMediaObject *mediaObject);
@@ -106,7 +116,7 @@ public:
     QString audioCodec() const;
 
     int audioBitrate() const;
-    int audioQuality() const;
+    EncodingQuality audioQuality() const;
 
     QStringList supportedVideoCodecs() const;
     QString videoCodecDescription(const QString &codecName) const;
@@ -123,7 +133,7 @@ public:
     QList<FrameRate> supportedFrameRates() const;
 
     int videoBitrate() const;
-    int videoQuality() const;
+    EncodingQuality videoQuality() const;
 
 public slots:
     void record();
@@ -134,13 +144,13 @@ public slots:
 
     bool setAudioCodec(const QString &codecName);
     void setAudioBitrate(int bitrate);
-    void setAudioQuality(int quality);
+    void setAudioQuality(EncodingQuality quality);
 
     void setResolution(const QSize &);
     void setFrameRate(const QMediaRecorder::FrameRate &rate);
     bool setVideoCodec(const QString &codecName);
     void setVideoBitrate(int bitrate);
-    void setVideoQuality(int quality);
+    void setVideoQuality(EncodingQuality quality);
 
 signals:
     void stateChanged(QMediaRecorder::State state);

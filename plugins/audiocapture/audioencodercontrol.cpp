@@ -81,12 +81,12 @@ void AudioEncoderControl::setBitrate(int value)
     m_session->setFormat(fmt);
 }
 
-int AudioEncoderControl::quality() const
+QMediaRecorder::EncodingQuality AudioEncoderControl::quality() const
 {
-    return 0;
+    return QMediaRecorder::NormalQuality;
 }
 
-void AudioEncoderControl::setQuality(int value)
+void AudioEncoderControl::setQuality(QMediaRecorder::EncodingQuality value)
 {
     Q_UNUSED(value)
 }

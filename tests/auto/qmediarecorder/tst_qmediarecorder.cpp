@@ -101,7 +101,7 @@ public:
         QVideoEncoderControl(parent)
     {
         m_bitrate = 0;
-        m_quality = 0;
+        m_quality = QMediaRecorder::NormalQuality;
         m_options << "option1" << "option2";
         m_videoCodecs << "video/3gpp" << "video/H264";
         m_sizes << QSize(320,240) << QSize(640,480);
@@ -125,15 +125,15 @@ public:
     QString videoCodecDescription(const QString &codecName) const { return QString("no comment"); }
     int bitrate() const { return m_bitrate; }
     void setBitrate(int bitrate) { m_bitrate = bitrate; }
-    int quality() const { return m_quality; }
-    void setQuality(int quality) { m_quality = quality; }
+    QMediaRecorder::EncodingQuality quality() const { return m_quality; }
+    void setQuality(QMediaRecorder::EncodingQuality quality) { m_quality = quality; }
     QStringList supportedEncodingOptions() const { return m_options; }
     QVariant encodingOption(const QString &name) const { return m_option; }
     void setEncodingOption(const QString &name, const QVariant &value) { m_option = value; }
 
 private:
     int m_bitrate;
-    int m_quality;
+    QMediaRecorder::EncodingQuality m_quality;
     QStringList m_options;
     QVariant m_option;
     QStringList m_videoCodecs;
@@ -159,7 +159,7 @@ public:
         m_encodeName.append("mp3");
         m_encodeOptions.append(QStringList() << "quality" << "bitrate" << "mode" << "vbr");
         m_bitrate = 128;
-        m_quality = 50;
+        m_quality = QMediaRecorder::NormalQuality;
         m_frequency = -1;
         m_sampleSize = -1;
         m_channels = -1;
@@ -223,12 +223,12 @@ public:
         m_bitrate = bitrate;
     }
 
-    int quality() const
+    QMediaRecorder::EncodingQuality quality() const
     {
         return m_quality;
     }
 
-    void setQuality(int qual)
+    void setQuality(QMediaRecorder::EncodingQuality qual)
     {
         m_quality = qual;
     }
@@ -260,7 +260,7 @@ private:
     QStringList  m_codecs;
     QStringList  m_codecsDesc;
     int          m_bitrate;
-    int        m_quality;
+    QMediaRecorder::EncodingQuality        m_quality;
 
     QList<QString>  m_encodeName;
     QList<QStringList> m_encodeOptions;
@@ -403,7 +403,7 @@ public:
         mockVideoEncodeControl = new MockVideoEncodeProvider(parent);
     }
 
-	QMediaControl* control(const char *name) const
+    QMediaControl* control(const char *name) const
     {
         if(qstrcmp(name,QAudioEncoderControl_iid) == 0)
             return mockAudioEncodeControl;
@@ -456,7 +456,7 @@ private:
     QAudioEncoderControl* encode;
     QAudioDeviceControl* audio;
     MockObject      *object;
-	MockService		*service;
+    MockService		*service;
     MockProvider    *mock;
     QMediaRecorder  *capture;
     QVideoEncoderControl* videoEncode;
@@ -467,7 +467,7 @@ void tst_QMediaRecorder::init()
     qRegisterMetaType<QMediaRecorder::State>("QMediaRecorder::State");
 
     mock = new MockProvider(this);
-	service = new MockService(this, mock);
+    service = new MockService(this, mock);
     object = new MockObject(this, service);
     capture = new QMediaRecorder(object);
     QVERIFY(capture->isValid());
@@ -529,9 +529,9 @@ void tst_QMediaRecorder::testAudioEncodeControl()
     QVERIFY(capture->setAudioCodec("audio/mpeg"));
     QVERIFY(capture->audioCodec() == QString("audio/mpeg"));
     QVERIFY(capture->audioCodecDescription("audio/pcm") == "Pulse Code Modulation");
-    QCOMPARE(capture->audioQuality(), 50);
-    capture->setAudioQuality(1);
-    QCOMPARE(capture->audioQuality(), 1);
+    QCOMPARE(capture->audioQuality(), QMediaRecorder::NormalQuality);
+    capture->setAudioQuality(QMediaRecorder::LowQuality);
+    QCOMPARE(capture->audioQuality(), QMediaRecorder::LowQuality);
     capture->setAudioBitrate(64);
     QVERIFY(capture->audioBitrate() == 64);
     QStringList options = encode->supportedEncodingOptions();
@@ -579,8 +579,8 @@ void tst_QMediaRecorder::testVideoEncodeControl()
     capture->setAudioBitrate(8000);
     QVERIFY(capture->audioBitrate() == 8000);
 
-    capture->setAudioQuality(1);
-    QVERIFY(capture->audioQuality() == 1);
+    capture->setAudioQuality(QMediaRecorder::HighQuality);
+    QVERIFY(capture->audioQuality() == QMediaRecorder::HighQuality);
 }
 
 QTEST_MAIN(tst_QMediaRecorder)

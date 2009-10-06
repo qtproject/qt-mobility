@@ -66,8 +66,8 @@ public:
     QString codecDescription(const QString &codecName) const { return m_descriptions.at(m_codecs.indexOf(codecName)); }
     int bitrate() const { return 0; }
     void setBitrate(int) {}
-    int quality() const { return 0; }
-    void setQuality(int) {}
+    QMediaRecorder::EncodingQuality quality() const { return QMediaRecorder::NormalQuality; }
+    void setQuality(QMediaRecorder::EncodingQuality) {}
     QStringList supportedEncodingOptions() const { return QStringList() << "bitrate"; }
     QVariant encodingOption(const QString &name) const { return m_optionValue; }
     void setEncodingOption(const QString &name, const QVariant &value) { m_optionValue = value; }

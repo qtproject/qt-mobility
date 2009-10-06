@@ -117,12 +117,13 @@ void QGstreamerAudioEncode::setBitrate(int value)
     setEncodingOption(QLatin1String("bitrate"), QVariant(value));
 }
 
-int QGstreamerAudioEncode::quality() const
+QMediaRecorder::EncodingQuality QGstreamerAudioEncode::quality() const
 {
-    return m_options.value(QLatin1String("quality"), QVariant(50)).toInt();
+    return QMediaRecorder::EncodingQuality(m_options.value(QLatin1String("quality"),
+                                                           QVariant(QMediaRecorder::NormalQuality)).toInt());
 }
 
-void QGstreamerAudioEncode::setQuality(int value)
+void QGstreamerAudioEncode::setQuality(QMediaRecorder::EncodingQuality value)
 {
     setEncodingOption(QLatin1String("quality"), QVariant(value));
 }
@@ -223,23 +224,37 @@ GstElement *QGstreamerAudioEncode::createEncoder()
             QVariant value = it.value();
 
             if (option == QLatin1String("quality")) {
-                int qualityValue = value.toInt();
+                int qualityValue = qBound(int(QMediaRecorder::VeryLowQuality), value.toInt(), int(QMediaRecorder::VeryHighQuality));
 
                 if (m_codec == QLatin1String("audio/vorbis")) {
-                    g_object_set(G_OBJECT(encoderElement), "quality", qualityValue/10.0, NULL);
+                    double qualityTable[] = {
+                        0.1, //VeryLow
+                        0.3, //Low
+                        0.5, //Normal
+                        0.7, //High
+                        1.0 //VeryHigh
+                    };
+                    g_object_set(G_OBJECT(encoderElement), "quality", qualityTable[qualityValue], NULL);
                 } else if (m_codec == QLatin1String("audio/mpeg")) {
-                    int preset = 1006; // Medium
-                    if (qualityValue > 40)
-                        preset = 1001; // Standard
-                    if (qualityValue > 60)
-                        preset = 1002; // Extreme
-                    if (qualityValue > 80 )
-                        preset = 1003; // Insane
-                    g_object_set(G_OBJECT(encoderElement), "preset", preset, NULL);
+                    int presets[] = {
+                        1006, //VeryLow - Medium
+                        1006, //Low - Medium
+                        1001, //Normal - Standard
+                        1002, //High - Extreme
+                        1003 //VeryHigh - Insane
+                    };
+
+                    g_object_set(G_OBJECT(encoderElement), "preset", presets[qualityValue], NULL);
                 } else if (m_codec == QLatin1String("audio/speex")) {
                     //0-10 range with default 8
-                    double q = 10.0*pow(qualityValue/100.0, 0.32);
-                    g_object_set(G_OBJECT(encoderElement), "quality", q, NULL);
+                    double qualityTable[] = {
+                        2, //VeryLow
+                        5, //Low
+                        8, //Normal
+                        9, //High
+                        10 //VeryHigh
+                    };
+                    g_object_set(G_OBJECT(encoderElement), "quality", qualityTable[qualityValue], NULL);
                 }
 
             } else {

@@ -343,23 +343,16 @@ void QMediaRecorder::setAudioBitrate(int bitrate)
   \property QMediaRecorder::audioQuality
   \brief Quality of encoded audio stream.
 
-  The quality value is normalized in range from 0 to 100,
-  with 0 means the lowest quality the audio codec supports,
-  100 - the best quality the codec supports.
-
-  The default quality value is 50 and usually means
-  some reasonable quality settings.
-
   Depending on codec, the quality property may affect
   different parameters, like bitrate or presets.
 */
-int QMediaRecorder::audioQuality() const
+QMediaRecorder::EncodingQuality QMediaRecorder::audioQuality() const
 {
     return d_func()->audioControl ?
-           d_func()->audioControl->quality() : -1;
+           d_func()->audioControl->quality() : NormalQuality;
 }
 
-void QMediaRecorder::setAudioQuality(int quality)
+void QMediaRecorder::setAudioQuality(QMediaRecorder::EncodingQuality quality)
 {
     if (d_func()->audioControl)
         d_func()->audioControl->setQuality(quality);
@@ -527,23 +520,16 @@ void QMediaRecorder::setVideoBitrate(int bitrate)
 
   Quality of encoded video stream.
 
-  The quality value is normalized in range from 0 to 100,
-  with 0 means the lowest quality the audio codec supports,
-  100 - the best quality the codec supports.
-
-  The default quality value is 50 and usually means
-  some reasonable quality settings.
-
   Depending on codec, the quality property may affect
   different parameters, like bitrate or presets.
 */
-int QMediaRecorder::videoQuality() const
+QMediaRecorder::EncodingQuality QMediaRecorder::videoQuality() const
 {
     return d_func()->videoControl ?
-           d_func()->videoControl->quality() : -1;
+           d_func()->videoControl->quality() : NormalQuality;
 }
 
-void QMediaRecorder::setVideoQuality(int quality)
+void QMediaRecorder::setVideoQuality(QMediaRecorder::EncodingQuality quality)
 {
     if (d_func()->videoControl)
         d_func()->videoControl->setQuality(quality);

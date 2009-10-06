@@ -36,6 +36,7 @@
 #define QIMAGEENCODERCONTROL_H
 
 #include <multimedia/qmediacontrol.h>
+#include <multimedia/qmediarecorder.h>
 
 #include <QtCore/qsize.h>
 
@@ -60,8 +61,8 @@ public:
 
     virtual QString imageCodecDescription(const QString &codecName) const = 0;
 
-    virtual qreal quality() const = 0;
-    virtual void setQuality(qreal) = 0;
+    virtual QMediaRecorder::EncodingQuality quality() const = 0;
+    virtual void setQuality(QMediaRecorder::EncodingQuality) = 0;
 
 protected:
     QImageEncoderControl(QObject *parent);

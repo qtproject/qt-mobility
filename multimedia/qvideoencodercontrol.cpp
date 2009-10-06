@@ -151,15 +151,15 @@ QVideoEncoderControl::~QVideoEncoderControl()
 /*!
   \fn QVideoEncoderControl::quality() const
 
-  Video quality value.
+  Video encoding quality value.
 
   \sa QMediaRecorder::videoQuality
 */
 
 /*!
-  \fn QVideoEncoderControl::setQuality(int value)
+  \fn QVideoEncoderControl::setQuality(QMediaRecorder::EncodingQuality value)
 
-  Sets the video quality to \a value.
+  Sets the video encoding quality to \a value.
 
   \sa quality(), QMediaRecorder::videoQuality
 */
