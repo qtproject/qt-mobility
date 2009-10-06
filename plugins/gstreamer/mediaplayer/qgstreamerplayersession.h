@@ -40,6 +40,7 @@
 #include "qgstreamerplayercontrol.h"
 #include "qgstreamerbushelper.h"
 #include <multimedia/qmediaplayer.h>
+#include <multimedia/qmediastreamscontrol.h>
 
 #include <gst/gst.h>
 
@@ -80,8 +81,9 @@ public:
     void setPlaybackRate(qreal rate);
 
     QMap<QByteArray ,QVariant> tags() const { return m_tags; }
-    QMap<QString,QVariant> streamProperties(int streamNumber) const { return m_streamProperties[streamNumber]; }
+    QMap<QMediaObject::MetaData,QVariant> streamProperties(int streamNumber) const { return m_streamProperties[streamNumber]; }
     int streamCount() const { return m_streamProperties.count(); }
+    QMediaStreamsControl::StreamType streamType(int streamNumber) { return m_streamTypes[streamNumber]; }
 
     bool processSyncMessage(const QGstreamerMessage &message);
 
@@ -109,6 +111,7 @@ signals:
     void bufferingProgressChanged(int percentFilled);
     void playbackFinished();
     void tagsChanged();
+    void streamsChanged();
     void seekableChanged(bool);
 
 private slots:
@@ -128,7 +131,8 @@ private:
     QGstreamerVideoRendererInterface *m_renderer;
 
     QMap<QByteArray, QVariant> m_tags;
-    QList< QMap<QString,QVariant> > m_streamProperties;
+    QList< QMap<QMediaObject::MetaData,QVariant> > m_streamProperties;
+    QList<QMediaStreamsControl::StreamType> m_streamTypes;
 
 
     int m_volume;

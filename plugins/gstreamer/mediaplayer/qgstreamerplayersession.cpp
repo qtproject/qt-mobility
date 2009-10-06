@@ -500,19 +500,49 @@ void QGstreamerPlayerSession::getStreamsInfo()
     g_object_get(G_OBJECT(m_playbin), "stream-info", &streamInfo, NULL);
 
     bool haveVideo = false;
+    m_streamProperties.clear();
+    m_streamTypes.clear();
 
     for (; streamInfo != 0; streamInfo = g_list_next(streamInfo)) {
         gint        type;
+        gchar *languageCode = 0;
+
         GObject*    obj = G_OBJECT(streamInfo->data);
 
         g_object_get(obj, "type", &type, NULL);
+        g_object_get(obj, "language-code", &languageCode, NULL);
 
         if (type == GST_STREAM_TYPE_VIDEO)
             haveVideo = true;
+
+        QMediaStreamsControl::StreamType streamType = QMediaStreamsControl::UnknownStream;
+
+        switch (type) {
+        case GST_STREAM_TYPE_VIDEO:
+            streamType = QMediaStreamsControl::VideoStream;
+            break;
+        case GST_STREAM_TYPE_AUDIO:
+            streamType = QMediaStreamsControl::AudioStream;
+            break;
+        case GST_STREAM_TYPE_SUBPICTURE:
+            streamType = QMediaStreamsControl::SubPictureStream;
+            break;
+        default:
+            streamType = QMediaStreamsControl::UnknownStream;
+            break;
+        }
+
+        QMap<QMediaObject::MetaData, QVariant> streamProperties;
+        streamProperties[QMediaObject::Language] = QString::fromUtf8(languageCode);
+
+        m_streamProperties.append(streamProperties);
+        m_streamTypes.append(streamType);
     }
 
     if (haveVideo != m_videoAvailable) {
         m_videoAvailable = haveVideo;
         emit videoAvailabilityChanged(m_videoAvailable);
     }
+
+    emit streamsChanged();
 }
