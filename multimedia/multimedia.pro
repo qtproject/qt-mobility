@@ -105,10 +105,12 @@ SOURCES = qmediacontrol.cpp \
 
 contains(QT_CONFIG, multimedia) {
     HEADERS += \
+        qgraphicsvideoitem.h \
         qpaintervideosurface_p.h \
         qvideorenderercontrol.h
 
     SOURCES += \
+        qgraphicsvideoitem.cpp \
         qpaintervideosurface.cpp \
         qvideorenderercontrol.cpp
 } else {
