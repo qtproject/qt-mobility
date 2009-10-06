@@ -32,8 +32,8 @@
 **
 ****************************************************************************/
 
-#ifndef QMEDIASOURCE_H
-#define QMEDIASOURCE_H
+#ifndef QMEDIACONTENT_H
+#define QMEDIACONTENT_H
 
 #include <QtCore/qmetatype.h>
 #include <QtCore/qshareddata.h>
@@ -43,21 +43,21 @@
 #include <multimedia/qmultimediaglobal.h>
 
 
-class QMediaSourcePrivate;
-class Q_MEDIA_EXPORT QMediaSource
+class QMediaContentPrivate;
+class Q_MEDIA_EXPORT QMediaContent
 {
 public:
-    QMediaSource();
-    QMediaSource(const QUrl &contentUrl);
-    QMediaSource(const QMediaResource &contentResource);
-    QMediaSource(const QMediaResourceList &resources);
-    QMediaSource(const QMediaSource &other);
-    ~QMediaSource();
+    QMediaContent();
+    QMediaContent(const QUrl &contentUrl);
+    QMediaContent(const QMediaResource &contentResource);
+    QMediaContent(const QMediaResourceList &resources);
+    QMediaContent(const QMediaContent &other);
+    ~QMediaContent();
 
-    QMediaSource& operator=(const QMediaSource &other);
+    QMediaContent& operator=(const QMediaContent &other);
 
-    bool operator==(const QMediaSource &other) const;
-    bool operator!=(const QMediaSource &other) const;
+    bool operator==(const QMediaContent &other) const;
+    bool operator!=(const QMediaContent &other) const;
 
     bool isNull() const;
 
@@ -67,10 +67,10 @@ public:
     QMediaResourceList resources(QMediaResource::ResourceRole role) const;
 
 private:
-    QSharedDataPointer<QMediaSourcePrivate> d;
+    QSharedDataPointer<QMediaContentPrivate> d;
 };
 
-Q_DECLARE_METATYPE(QMediaSource)
+Q_DECLARE_METATYPE(QMediaContent)
 
 
-#endif  // QMEDIASOURCE_H
+#endif  // QMEDIACONTENT_H

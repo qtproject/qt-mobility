@@ -334,11 +334,6 @@ void V4LRadioControl::search()
     emit signalStrengthChanged(signalStrength());
 }
 
-bool V4LRadioControl::isValid() const
-{
-    return available;
-}
-
 bool V4LRadioControl::initRadio()
 {
     v4l2_tuner tuner;

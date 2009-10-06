@@ -54,9 +54,9 @@ private slots:
     void saveAndLoad();
 
 private:
-    QMediaSource source1;
-    QMediaSource source2;
-    QMediaSource source3;
+    QMediaContent content1;
+    QMediaContent content2;
+    QMediaContent content3;
 };
 
 void tst_QMediaPlaylist::init()
@@ -65,9 +65,9 @@ void tst_QMediaPlaylist::init()
 
 void tst_QMediaPlaylist::initTestCase()
 {
-    source1 = QMediaSource(QUrl(QLatin1String("file:///1")));
-    source2 = QMediaSource(QUrl(QLatin1String("file:///2")));
-    source3 = QMediaSource(QUrl(QLatin1String("file:///3")));
+    content1 = QMediaContent(QUrl(QLatin1String("file:///1")));
+    content2 = QMediaContent(QUrl(QLatin1String("file:///2")));
+    content3 = QMediaContent(QUrl(QLatin1String("file:///3")));
 }
 
 void tst_QMediaPlaylist::cleanup()
@@ -86,13 +86,13 @@ void tst_QMediaPlaylist::append()
     QMediaPlaylist playlist;
     QVERIFY(!playlist.isReadOnly());
 
-    playlist.appendItem(source1);
+    playlist.appendItem(content1);
     QCOMPARE(playlist.size(), 1);
-    QCOMPARE(playlist.media(0), source1);
+    QCOMPARE(playlist.media(0), content1);
 
-    playlist.appendItem(source2);
+    playlist.appendItem(content2);
     QCOMPARE(playlist.size(), 2);
-    QCOMPARE(playlist.media(1), source2);
+    QCOMPARE(playlist.media(1), content2);
 }
 
 void tst_QMediaPlaylist::insert()
@@ -100,22 +100,22 @@ void tst_QMediaPlaylist::insert()
     QMediaPlaylist playlist;
     QVERIFY(!playlist.isReadOnly());
 
-    playlist.appendItem(source1);
+    playlist.appendItem(content1);
     QCOMPARE(playlist.size(), 1);
-    QCOMPARE(playlist.media(0), source1);
+    QCOMPARE(playlist.media(0), content1);
 
-    playlist.appendItem(source2);
+    playlist.appendItem(content2);
     QCOMPARE(playlist.size(), 2);
-    QCOMPARE(playlist.media(1), source2);
+    QCOMPARE(playlist.media(1), content2);
 
     QSignalSpy aboutToBeInsertedSignalSpy(&playlist, SIGNAL(itemsAboutToBeInserted(int,int)));
     QSignalSpy insertedSignalSpy(&playlist, SIGNAL(itemsInserted(int,int)));
 
-    playlist.insertItem(1, source3);
+    playlist.insertItem(1, content3);
     QCOMPARE(playlist.size(), 3);
-    QCOMPARE(playlist.media(0), source1);
-    QCOMPARE(playlist.media(1), source3);
-    QCOMPARE(playlist.media(2), source2);
+    QCOMPARE(playlist.media(0), content1);
+    QCOMPARE(playlist.media(1), content3);
+    QCOMPARE(playlist.media(2), content2);
 
     QCOMPARE(aboutToBeInsertedSignalSpy.count(), 1);
     QCOMPARE(aboutToBeInsertedSignalSpy.first()[0].toInt(), 1);
@@ -130,11 +130,11 @@ void tst_QMediaPlaylist::insert()
 void tst_QMediaPlaylist::currentItem()
 {
     QMediaPlaylist playlist;
-    playlist.appendItem(source1);
-    playlist.appendItem(source2);
+    playlist.appendItem(content1);
+    playlist.appendItem(content2);
 
     QCOMPARE(playlist.currentPosition(), -1);
-    QCOMPARE(playlist.currentMedia(), QMediaSource());
+    QCOMPARE(playlist.currentMedia(), QMediaContent());
 
     QCOMPARE(playlist.nextPosition(), 0);
     QCOMPARE(playlist.nextPosition(2), 1);
@@ -143,7 +143,7 @@ void tst_QMediaPlaylist::currentItem()
 
     playlist.setCurrentPosition(0);
     QCOMPARE(playlist.currentPosition(), 0);
-    QCOMPARE(playlist.currentMedia(), source1);
+    QCOMPARE(playlist.currentMedia(), content1);
 
     QCOMPARE(playlist.nextPosition(), 1);
     QCOMPARE(playlist.nextPosition(2), -1);
@@ -152,7 +152,7 @@ void tst_QMediaPlaylist::currentItem()
 
     playlist.setCurrentPosition(1);
     QCOMPARE(playlist.currentPosition(), 1);
-    QCOMPARE(playlist.currentMedia(), source2);
+    QCOMPARE(playlist.currentMedia(), content2);
 
     QCOMPARE(playlist.nextPosition(), -1);
     QCOMPARE(playlist.nextPosition(2), -1);
@@ -162,14 +162,14 @@ void tst_QMediaPlaylist::currentItem()
     //warning is expected, jump outsize of playlist range
     playlist.setCurrentPosition(2);
     QCOMPARE(playlist.currentPosition(), -1);
-    QCOMPARE(playlist.currentMedia(), QMediaSource());
+    QCOMPARE(playlist.currentMedia(), QMediaContent());
 }
 
 void tst_QMediaPlaylist::clear()
 {
     QMediaPlaylist playlist;
-    playlist.appendItem(source1);
-    playlist.appendItem(source2);
+    playlist.appendItem(content1);
+    playlist.appendItem(content2);
 
     playlist.clear();
     QVERIFY(playlist.isEmpty());
@@ -179,15 +179,15 @@ void tst_QMediaPlaylist::clear()
 void tst_QMediaPlaylist::removeItems()
 {
     QMediaPlaylist playlist;
-    playlist.appendItem(source1);
-    playlist.appendItem(source2);
-    playlist.appendItem(source3);
+    playlist.appendItem(content1);
+    playlist.appendItem(content2);
+    playlist.appendItem(content3);
 
     QSignalSpy aboutToBeRemovedSignalSpy(&playlist, SIGNAL(itemsAboutToBeRemoved(int,int)));
     QSignalSpy removedSignalSpy(&playlist, SIGNAL(itemsRemoved(int,int)));
     playlist.removeItem(1);
     QCOMPARE(playlist.size(), 2);
-    QCOMPARE(playlist.media(1), source3);
+    QCOMPARE(playlist.media(1), content3);
 
     QCOMPARE(aboutToBeRemovedSignalSpy.count(), 1);
     QCOMPARE(aboutToBeRemovedSignalSpy.first()[0].toInt(), 1);
@@ -212,22 +212,22 @@ void tst_QMediaPlaylist::removeItems()
     QCOMPARE(removedSignalSpy.first()[1].toInt(), 1);
 
 
-    playlist.appendItem(source1);
-    playlist.appendItem(source2);
-    playlist.appendItem(source3);
+    playlist.appendItem(content1);
+    playlist.appendItem(content2);
+    playlist.appendItem(content3);
 
     playlist.removeItems(0,1);
     QCOMPARE(playlist.size(), 1);
-    QCOMPARE(playlist.media(0), source3);
+    QCOMPARE(playlist.media(0), content3);
 }
 
 void tst_QMediaPlaylist::saveAndLoad()
 {
     //it's necessary to ensure the m3u plugin is loaded for this test
     QMediaPlaylist playlist;
-    playlist.appendItem(source1);
-    playlist.appendItem(source2);
-    playlist.appendItem(source3);
+    playlist.appendItem(content1);
+    playlist.appendItem(content2);
+    playlist.appendItem(content3);
 
     QBuffer buffer;
     buffer.open(QBuffer::ReadWrite);

@@ -72,7 +72,8 @@
 class QAudioSourcePrivate : public QMediaObjectPrivate
 {
 public:
-    QAudioSourcePrivate():audioDeviceControl(0) {}
+    QAudioSourcePrivate():provider(0), audioDeviceControl(0) {}
+    QMediaServiceProvider *provider;
     QAudioDeviceControl   *audioDeviceControl;
 };
 
@@ -85,15 +86,15 @@ QAudioSource::QAudioSource(QObject *parent, QMediaServiceProvider *provider):
 {
     Q_D(QAudioSource);
 
-    Q_ASSERT(d->service != 0);
+    d->provider = provider;
 
     if (d->service != 0)
-        d->audioDeviceControl = qobject_cast<QAudioDeviceControl *>(d->service->control(QAudioDeviceControl_iid));
+        d->audioDeviceControl = qobject_cast<QAudioDeviceControl*>(d->service->control(QAudioDeviceControl_iid));
 
-    if(d->audioDeviceControl) {
-        connect(d->audioDeviceControl,SIGNAL(selectedDeviceChanged(int)),this,SIGNAL(selectedDeviceChanged(int)));
-        connect(d->audioDeviceControl,SIGNAL(selectedDeviceChanged(const QString&)),this,SIGNAL(selectedDeviceChanged(const QString&)));
-        connect(d->audioDeviceControl,SIGNAL(devicesChanged()),this,SIGNAL(devicesChanged()));
+    if (d->audioDeviceControl) {
+        connect(d->audioDeviceControl, SIGNAL(selectedDeviceChanged(int)), SIGNAL(selectedDeviceChanged(int)));
+        connect(d->audioDeviceControl, SIGNAL(selectedDeviceChanged(QString)), SIGNAL(selectedDeviceChanged(QString)));
+        connect(d->audioDeviceControl, SIGNAL(devicesChanged()), SIGNAL(devicesChanged()));
     }
 }
 
@@ -103,17 +104,9 @@ QAudioSource::QAudioSource(QObject *parent, QMediaServiceProvider *provider):
 
 QAudioSource::~QAudioSource()
 {
-}
+    Q_D(QAudioSource);
 
-/*!
-    Returns true if audiosource device available.
-*/
-
-bool QAudioSource::isValid() const
-{
-    Q_D(const QAudioSource);
-
-    return QMediaObject::isValid() && (d->audioDeviceControl != NULL);
+    d->provider->releaseService(d->service);
 }
 
 /*!

@@ -71,16 +71,16 @@ public:
     virtual qreal playbackRate() const = 0;
     virtual void setPlaybackRate(qreal rate) = 0;
 
-    virtual QMediaSource media() const = 0;
+    virtual QMediaContent media() const = 0;
     virtual const QIODevice *mediaStream() const = 0;
-    virtual void setMedia(const QMediaSource &media, QIODevice *stream) = 0;
+    virtual void setMedia(const QMediaContent &media, QIODevice *stream) = 0;
 
     virtual void play() = 0;
     virtual void pause() = 0;
     virtual void stop() = 0;
 
 Q_SIGNALS:
-    void currentSourceChanged(const QMediaSource& source);
+    void currentSourceChanged(const QMediaContent& content);
     void durationChanged(qint64 duration);
     void positionChanged(qint64 position);
     void stateChanged(QMediaPlayer::State newState);

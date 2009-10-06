@@ -76,8 +76,6 @@ QCamera::QCamera(QObject *parent, QMediaServiceProvider *provider):
 {
     Q_D(QCamera);
 
-    Q_ASSERT(d->service != 0);
-
     if (d->service) {
         d->control = qobject_cast<QCameraControl *>(d->service->control(QCameraControl_iid));
         d->exposureControl = qobject_cast<QCameraExposureControl *>(d->service->control(QCameraExposureControl_iid));
@@ -149,8 +147,12 @@ void QCamera::start()
 {
     Q_D(QCamera);
 
-    if(d->control)
+    if (d->control)
         d->control->start();
+    else {
+        QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
+                                    Q_ARG(QCamera::Error, QCamera::ServiceMissingError));
+    }
 }
 
 /*!
@@ -259,15 +261,6 @@ QCamera::State QCamera::state() const
         return (QCamera::State)d_func()->control->state();
 
     return QCamera::StoppedState;
-}
-
-/*!
-    Returns true if camera device available.
-*/
-
-bool QCamera::isValid() const
-{
-    return d_func()->control != NULL;
 }
 
 /*!

@@ -37,7 +37,7 @@
 #include <multimedia/qmediacontrol_p.h>
 #include <multimedia/qmediaservice_p.h>
 
-#include <multimedia/qmediasource.h>
+#include <multimedia/qmediacontent.h>
 #include <multimedia/qmediaresource.h>
 #include <multimedia/qvideooutputcontrol.h>
 #ifndef QT_NO_MULTIMEDIA
@@ -415,7 +415,7 @@ public:
     QNetworkReply *getReply;
     QNetworkReply *headReply;
     QMediaImageViewer::MediaStatus status;
-    QMediaSource media;
+    QMediaContent media;
     QMediaResource currentMedia;
     QList<QMediaResource> possibleResources;
 };
@@ -574,7 +574,7 @@ QMediaImageViewer::MediaStatus QMediaImageViewerControl::mediaStatus() const
 
 /*!
 */
-void QMediaImageViewerControl::showMedia(const QMediaSource &media)
+void QMediaImageViewerControl::showMedia(const QMediaContent &media)
 {
     Q_D(QMediaImageViewerControl);
 

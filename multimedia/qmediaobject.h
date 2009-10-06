@@ -125,8 +125,6 @@ public:
 
     virtual QMediaService* service() const;
 
-    virtual bool isValid() const;
-
     int notifyInterval() const;
     void setNotifyInterval(int milliSeconds);
 

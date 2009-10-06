@@ -34,12 +34,12 @@
 
 #include <multimedia/qlocalmediaplaylistprovider.h>
 #include <multimedia/qmediaplaylistprovider_p.h>
-#include <multimedia/qmediasource.h>
+#include <multimedia/qmediacontent.h>
 
 class QLocalMediaPlaylistProviderPrivate: public QMediaPlaylistProviderPrivate
 {
 public:
-    QList<QMediaSource> resources;
+    QList<QMediaContent> resources;
 };
 
 QLocalMediaPlaylistProvider::QLocalMediaPlaylistProvider(QObject *parent)
@@ -61,31 +61,31 @@ int QLocalMediaPlaylistProvider::size() const
     return d_func()->resources.size();
 }
 
-QMediaSource QLocalMediaPlaylistProvider::media(int pos) const
+QMediaContent QLocalMediaPlaylistProvider::media(int pos) const
 {
     return d_func()->resources.value(pos);
 }
 
-bool QLocalMediaPlaylistProvider::appendItem(const QMediaSource &source)
+bool QLocalMediaPlaylistProvider::appendItem(const QMediaContent &content)
 {
     Q_D(QLocalMediaPlaylistProvider);
 
     int pos = d->resources.count();
 
     emit itemsAboutToBeInserted(pos, pos);
-    d->resources.append(source);
+    d->resources.append(content);
     emit itemsInserted(pos, pos);
 
     return true;
 }
 
 
-bool QLocalMediaPlaylistProvider::insertItem(int pos, const QMediaSource &source)
+bool QLocalMediaPlaylistProvider::insertItem(int pos, const QMediaContent &content)
 {
     Q_D(QLocalMediaPlaylistProvider);
 
     emit itemsAboutToBeInserted(pos, pos);
-    d->resources.insert(pos, source);
+    d->resources.insert(pos, content);
     emit itemsInserted(pos,pos);
 
     return true;
@@ -134,7 +134,7 @@ void QLocalMediaPlaylistProvider::shuffle()
 {
     Q_D(QLocalMediaPlaylistProvider);
     if (!d->resources.isEmpty()) {
-        QList<QMediaSource> resources;
+        QList<QMediaContent> resources;
 
         while (!d->resources.isEmpty()) {
             resources.append(d->resources.takeAt(qrand() % d->resources.size()));

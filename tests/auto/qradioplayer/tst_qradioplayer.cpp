@@ -239,7 +239,6 @@ void tst_QRadioPlayer::init()
     provider = new MockProvider(service);
     radio = new QRadioPlayer(0,provider);
     QVERIFY(radio->service() != 0);
-    QVERIFY(radio->isValid());
 }
 
 void tst_QRadioPlayer::cleanup()

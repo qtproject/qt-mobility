@@ -62,9 +62,9 @@ public:
     QMediaPlayer::State state() const;
     QMediaPlayer::MediaStatus mediaStatus() const;
 
-    QMediaSource media() const;
+    QMediaContent media() const;
     const QIODevice *mediaStream() const;
-    void setMedia(const QMediaSource &resources, QIODevice *stream);
+    void setMedia(const QMediaContent &content, QIODevice *stream);
 
     qint64 position() const;
     qint64 duration() const;
@@ -104,7 +104,7 @@ private:
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_mediaStatus;
     QIODevice *m_mediaStream;
-    QMediaSource m_resources;
+    QMediaContent m_resources;
 };
 
 #endif

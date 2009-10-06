@@ -108,7 +108,6 @@ void tst_QMediaImageViewer::isValid()
 {
     QMediaImageViewer viewer;
 
-    QVERIFY(viewer.isValid());
     QVERIFY(viewer.service() != 0);
 }
 
@@ -130,12 +129,12 @@ void tst_QMediaImageViewer::timeout()
 
 void tst_QMediaImageViewer::setMedia_data()
 {
-    QTest::addColumn<QMediaSource>("media");
+    QTest::addColumn<QMediaContent>("media");
     QTest::addColumn<QMediaResource>("currentMedia");
 
     {
         QMediaResource contentResource(imageUri("image.png"));
-        QMediaSource source(contentResource);
+        QMediaContent source(contentResource);
 
         QTest::newRow("png image")
                 << source
@@ -143,7 +142,7 @@ void tst_QMediaImageViewer::setMedia_data()
     } {
         QMediaResource contentResource(imageUri("song.mp3"));
         QMediaResource coverArtResource(imageUri("coverart.png"), QMediaResource::CoverArtRole);
-        QMediaSource source(QMediaResourceList() << contentResource << coverArtResource);
+        QMediaContent source(QMediaResourceList() << contentResource << coverArtResource);
 
         QTest::newRow("png cover art")
                 << source
@@ -151,7 +150,7 @@ void tst_QMediaImageViewer::setMedia_data()
     } {
         QMediaResource contentResource(imageUri("movie.mp4"));
         QMediaResource posterResource(imageUri("poster.png"), QMediaResource::PosterRole);
-        QMediaSource source(QMediaResourceList() << contentResource << posterResource);
+        QMediaContent source(QMediaResourceList() << contentResource << posterResource);
 
         QTest::newRow("png poster")
                 << source
@@ -160,7 +159,7 @@ void tst_QMediaImageViewer::setMedia_data()
         QMediaResource contentResource(imageUri("image.png"));
         QMediaResource coverArtResource(imageUri("coverart.png"), QMediaResource::CoverArtRole);
         QMediaResource posterResource(imageUri("poster.png"), QMediaResource::PosterRole);
-        QMediaSource source(QMediaResourceList()
+        QMediaContent source(QMediaResourceList()
                 << contentResource << coverArtResource << posterResource);
 
         QTest::newRow("png image with cover art and poster")
@@ -169,7 +168,7 @@ void tst_QMediaImageViewer::setMedia_data()
 #ifdef QTEST_HAVE_JPEG
     } {
         QMediaResource contentResource(imageUri("image.jpg"));
-        QMediaSource source(contentResource);
+        QMediaContent source(contentResource);
 
         QTest::newRow("jpg image")
                 << source
@@ -180,7 +179,7 @@ void tst_QMediaImageViewer::setMedia_data()
 
 void tst_QMediaImageViewer::setMedia()
 {
-    QFETCH(QMediaSource, media);
+    QFETCH(QMediaContent, media);
     QFETCH(QMediaResource, currentMedia);
 
     QMediaImageViewer viewer;
@@ -207,7 +206,7 @@ void tst_QMediaImageViewer::setInvalidMedia()
             &QTestEventLoop::instance(), SLOT(exitLoop()));
 
     {
-        QMediaSource source(imageUri("invalid.png"));
+        QMediaContent source(imageUri("invalid.png"));
 
         viewer.setMedia(source);
         QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
@@ -217,7 +216,7 @@ void tst_QMediaImageViewer::setInvalidMedia()
         QCOMPARE(viewer.currentMedia(), QMediaResource());
         QCOMPARE(viewer.media(), source);
     } {
-        QMediaSource source(imageUri("deleted.png"));
+        QMediaContent source(imageUri("deleted.png"));
 
         viewer.setMedia(source);
         QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
@@ -229,7 +228,7 @@ void tst_QMediaImageViewer::setInvalidMedia()
     } {
         QMediaResource invalidResource(imageUri("invalid.png"));
         QMediaResource deletedResource(imageUri("deleted.png"));
-        QMediaSource source(QMediaResourceList() << invalidResource << deletedResource);
+        QMediaContent source(QMediaResourceList() << invalidResource << deletedResource);
 
         viewer.setMedia(source);
         QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
@@ -240,7 +239,7 @@ void tst_QMediaImageViewer::setInvalidMedia()
         QCOMPARE(viewer.media(), source);
     } {
         QMediaResource resource(imageUri("image.png"), QLatin1String("audio/mpeg"));
-        QMediaSource source(resource);
+        QMediaContent source(resource);
 
         viewer.setMedia(source);
         QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::InvalidMedia);
@@ -249,7 +248,7 @@ void tst_QMediaImageViewer::setInvalidMedia()
     } {
         QMediaResource audioResource(imageUri("image.png"), QLatin1String("audio/mpeg"));
         QMediaResource invalidResource(imageUri("invalid.png"));
-        QMediaSource source(QMediaResourceList() << audioResource << invalidResource);
+        QMediaContent source(QMediaResourceList() << audioResource << invalidResource);
 
         viewer.setMedia(source);
         QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
@@ -263,9 +262,9 @@ void tst_QMediaImageViewer::setInvalidMedia()
 
 void tst_QMediaImageViewer::playlist()
 {
-    QMediaSource imageMedia(imageUri("image.png"));
-    QMediaSource posterMedia(imageUri("poster.png"));
-    QMediaSource coverArtMedia(imageUri("coverart.png"));
+    QMediaContent imageMedia(imageUri("image.png"));
+    QMediaContent posterMedia(imageUri("poster.png"));
+    QMediaContent coverArtMedia(imageUri("coverart.png"));
 
     QMediaImageViewer viewer;
     viewer.setTimeout(250);
@@ -367,7 +366,7 @@ void tst_QMediaImageViewer::playlist()
              QMediaImageViewer::StoppedState);
     QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::NoMedia);
     QCOMPARE(playlist.currentPosition(), -1);
-    QCOMPARE(viewer.media(), QMediaSource());
+    QCOMPARE(viewer.media(), QMediaContent());
 
     // Paused, no time out.
     QTestEventLoop::instance().enterLoop(2);
@@ -398,7 +397,7 @@ void tst_QMediaImageViewer::playlist()
              QMediaImageViewer::StoppedState);
     QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::NoMedia);
     QCOMPARE(playlist.currentPosition(), -1);
-    QCOMPARE(viewer.media(), QMediaSource());
+    QCOMPARE(viewer.media(), QMediaContent());
 
     // Stoppped, No time out.
     QTestEventLoop::instance().enterLoop(2);
@@ -496,7 +495,7 @@ void tst_QMediaImageViewer::widgetControl()
     }
 
     // Load an image so the viewer has some dimensions to work with.
-    viewer.setMedia(QMediaSource(imageUri("image.png")));
+    viewer.setMedia(QMediaContent(imageUri("image.png")));
 
     connect(&viewer, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)),
             &QTestEventLoop::instance(), SLOT(exitLoop()));
@@ -554,7 +553,7 @@ void tst_QMediaImageViewer::rendererControl()
     outputControl->setOutput(QVideoOutputControl::RendererOutput);
 
     // Load an image so the viewer has some dimensions to work with.
-    viewer.setMedia(QMediaSource(imageUri("image.png")));
+    viewer.setMedia(QMediaContent(imageUri("image.png")));
 
     connect(&viewer, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)),
             &QTestEventLoop::instance(), SLOT(exitLoop()));
@@ -575,7 +574,7 @@ void tst_QMediaImageViewer::rendererControl()
     QCOMPARE(frame.pixelFormat(), QVideoFrame::Format_RGB32);
     QCOMPARE(frame.size(), QSize(75, 50));
 
-    viewer.setMedia(QMediaSource());
+    viewer.setMedia(QMediaContent());
 
     QCOMPARE(surface.isStarted(), false);
 }

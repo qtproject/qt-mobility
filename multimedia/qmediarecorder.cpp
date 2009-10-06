@@ -157,8 +157,6 @@ QMediaRecorder::QMediaRecorder(QMediaObject *mediaObject):
 {
     Q_D(QMediaRecorder);
 
-    Q_ASSERT(d->service != 0);
-
     d->initControls();
 }
 
@@ -166,8 +164,6 @@ QMediaRecorder::QMediaRecorder(QObject *parent, QMediaServiceProvider *provider)
     QMediaObject(*new QMediaRecorderPrivate, parent, provider->requestService("mediarecorder"))
 {
     Q_D(QMediaRecorder);
-
-    Q_ASSERT(d->service != 0);
 
     d->initControls();
 }
@@ -180,16 +176,6 @@ QMediaRecorder::QMediaRecorder(QObject *parent, QMediaServiceProvider *provider)
 QMediaRecorder::~QMediaRecorder()
 {
 }
-
-/*!
-    Returns true if a valid recording device is available.
-*/
-
-bool QMediaRecorder::isValid() const
-{
-    return d_func()->control != 0;
-}
-
 
 /*!
     Returns the sink being used.

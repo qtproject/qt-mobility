@@ -470,7 +470,7 @@ void tst_QMediaRecorder::init()
     service = new MockService(this, mock);
     object = new MockObject(this, service);
     capture = new QMediaRecorder(object);
-    QVERIFY(capture->isValid());
+
     audio = qobject_cast<QAudioDeviceControl*>(capture->service()->control(QAudioDeviceControl_iid));
     encode = qobject_cast<QAudioEncoderControl*>(capture->service()->control(QAudioEncoderControl_iid));
     videoEncode = qobject_cast<QVideoEncoderControl*>(capture->service()->control(QVideoEncoderControl_iid));

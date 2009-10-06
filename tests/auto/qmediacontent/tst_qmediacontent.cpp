@@ -34,9 +34,9 @@
 
 #include <QtTest/QtTest>
 
-#include "multimedia/qmediasource.h"
+#include "multimedia/qmediacontent.h"
 
-class tst_QMediaSource : public QObject
+class tst_QMediaContent : public QObject
 {
     Q_OBJECT
 
@@ -51,54 +51,54 @@ private slots:
     void testResources();
 };
 
-void tst_QMediaSource::testNull()
+void tst_QMediaContent::testNull()
 {
-    QMediaSource media;
+    QMediaContent media;
 
     QCOMPARE(media.isNull(), true);
     QCOMPARE(media.contentUri(), QUrl());
     QCOMPARE(media.contentResource(), QMediaResource());
 }
 
-void tst_QMediaSource::testUriCtor()
+void tst_QMediaContent::testUriCtor()
 {
-    QMediaSource media(QUrl("http://example.com/movie.mov"));
+    QMediaContent media(QUrl("http://example.com/movie.mov"));
 
     QCOMPARE(media.contentUri(), QUrl("http://example.com/movie.mov"));
     QCOMPARE(media.contentResource().uri(), QUrl("http://example.com/movie.mov"));
 }
 
-void tst_QMediaSource::testResourceCtor()
+void tst_QMediaContent::testResourceCtor()
 {
-    QMediaSource media(QMediaResource(QUrl("http://example.com/movie.mov")));
+    QMediaContent media(QMediaResource(QUrl("http://example.com/movie.mov")));
 
     QCOMPARE(media.contentResource(), QMediaResource(QUrl("http://example.com/movie.mov")));
 }
 
-void tst_QMediaSource::testResourceListCtor()
+void tst_QMediaContent::testResourceListCtor()
 {
     QMediaResourceList  resourceList;
     resourceList << QMediaResource(QUrl("http://example.com/movie.mov"));
 
-    QMediaSource        media(resourceList);
+    QMediaContent        media(resourceList);
 
     QCOMPARE(media.contentUri(), QUrl("http://example.com/movie.mov"));
     QCOMPARE(media.contentResource().uri(), QUrl("http://example.com/movie.mov"));
 }
 
-void tst_QMediaSource::testCopy()
+void tst_QMediaContent::testCopy()
 {
-    QMediaSource media1(QMediaResource(QUrl("http://example.com/movie.mov")));
-    QMediaSource media2(media1);
+    QMediaContent media1(QMediaResource(QUrl("http://example.com/movie.mov")));
+    QMediaContent media2(media1);
 
     QVERIFY(media1 == media2);
 }
 
-void tst_QMediaSource::testAssignment()
+void tst_QMediaContent::testAssignment()
 {
-    QMediaSource media1(QMediaResource(QUrl("http://example.com/movie.mov")));
-    QMediaSource media2;
-    QMediaSource media3;
+    QMediaContent media1(QMediaResource(QUrl("http://example.com/movie.mov")));
+    QMediaContent media2;
+    QMediaContent media3;
 
     media2 = media1;
     QVERIFY(media2 == media1);
@@ -107,13 +107,13 @@ void tst_QMediaSource::testAssignment()
     QVERIFY(media2 == media3);
 }
 
-void tst_QMediaSource::testEquality()
+void tst_QMediaContent::testEquality()
 {
-    QMediaSource media1;
-    QMediaSource media2;
-    QMediaSource media3(QMediaResource(QUrl("http://example.com/movie.mov")));
-    QMediaSource media4(QMediaResource(QUrl("http://example.com/movie.mov")));
-    QMediaSource media5(QMediaResource(QUrl("file:///some/where/over/the/rainbow.mp3")));
+    QMediaContent media1;
+    QMediaContent media2;
+    QMediaContent media3(QMediaResource(QUrl("http://example.com/movie.mov")));
+    QMediaContent media4(QMediaResource(QUrl("http://example.com/movie.mov")));
+    QMediaContent media5(QMediaResource(QUrl("file:///some/where/over/the/rainbow.mp3")));
 
     // null == null
     QCOMPARE(media1 == media2, true);
@@ -132,7 +132,7 @@ void tst_QMediaSource::testEquality()
     QCOMPARE(media4 != media5, true);
 }
 
-void tst_QMediaSource::testResources()
+void tst_QMediaContent::testResources()
 {
     QMediaResourceList  resourceList;
 
@@ -141,7 +141,7 @@ void tst_QMediaSource::testResources()
     resourceList << QMediaResource(QUrl("http://example.com/movie-little.mov"), QMediaResource::PreviewRole);
     resourceList << QMediaResource(QUrl("http://example.com/movie-poster.jpg"), QMediaResource::PosterRole);
 
-    QMediaSource    media(resourceList);
+    QMediaContent    media(resourceList);
 
     QMediaResourceList  res = media.resources(QMediaResource::ContentRole);
     QCOMPARE(res.size(), 2);
@@ -155,6 +155,6 @@ void tst_QMediaSource::testResources()
     QCOMPARE(media.resources(QMediaResource::ThumbnailRole).size(), 0);
 }
 
-QTEST_MAIN(tst_QMediaSource)
+QTEST_MAIN(tst_QMediaContent)
 
-#include "tst_qmediasource.moc"
+#include "tst_qmediacontent.moc"

@@ -87,8 +87,6 @@ QRadioPlayer::QRadioPlayer(QObject *parent, QMediaServiceProvider* provider):
 
     d->provider = provider;
 
-    Q_ASSERT(d->service != 0);
-
     if (d->service != 0) {
         d->control = qobject_cast<QRadioPlayerControl*>(d->service->control(QRadioPlayerControl_iid));
         if (d->control != 0) {
@@ -130,7 +128,12 @@ QRadioPlayer::~QRadioPlayer()
 
 QRadioPlayer::Band QRadioPlayer::band() const
 {
-    return QRadioPlayer::Band(d_func()->control->band());
+    Q_D(const QRadioPlayer);
+
+    if (d->control != 0)
+        return d->control->band();
+
+    return QRadioPlayer::FM;
 }
 
 /*!
@@ -144,7 +147,12 @@ QRadioPlayer::Band QRadioPlayer::band() const
 
 int QRadioPlayer::frequency() const
 {
-    return d_func()->control->frequency();
+    Q_D(const QRadioPlayer);
+
+    if (d->control != 0)
+        return d->control->frequency();
+
+    return 0;
 }
 
 /*!
@@ -158,7 +166,12 @@ int QRadioPlayer::frequency() const
 
 bool QRadioPlayer::isStereo() const
 {
-    return d_func()->control->isStereo();
+    Q_D(const QRadioPlayer);
+
+    if (d->control != 0)
+        return d->control->isStereo();
+
+    return false;
 }
 
 /*!
@@ -167,7 +180,12 @@ bool QRadioPlayer::isStereo() const
 
 bool QRadioPlayer::isSupportedBand(QRadioPlayer::Band b) const
 {
-    return d_func()->control->isSupportedBand(b);
+    Q_D(const QRadioPlayer);
+
+    if (d->control != 0)
+        return d->control->isSupportedBand(b);
+
+    return false;
 }
 
 /*!
@@ -181,7 +199,12 @@ bool QRadioPlayer::isSupportedBand(QRadioPlayer::Band b) const
 
 int QRadioPlayer::signalStrength() const
 {
-    return d_func()->control->signalStrength();
+    Q_D(const QRadioPlayer);
+
+    if (d->control != 0)
+        return d->control->signalStrength();
+
+    return 0;
 }
 
 /*!
@@ -195,7 +218,12 @@ int QRadioPlayer::signalStrength() const
 
 qint64 QRadioPlayer::duration() const
 {
-    return d_func()->control->duration();
+    Q_D(const QRadioPlayer);
+
+    if (d->control != 0)
+        return d->control->duration();
+
+    return 0;
 }
 
 /*!
@@ -209,7 +237,12 @@ qint64 QRadioPlayer::duration() const
 
 int QRadioPlayer::volume() const
 {
-    return d_func()->control->volume();
+    Q_D(const QRadioPlayer);
+
+    if (d->control != 0)
+        return d->control->volume();
+
+    return 0;
 }
 
 /*!
@@ -223,7 +256,12 @@ int QRadioPlayer::volume() const
 
 bool QRadioPlayer::isMuted() const
 {
-    return d_func()->control->isMuted();
+    Q_D(const QRadioPlayer);
+
+    if (d->control != 0)
+        return d->control->isMuted();
+
+    return false;
 }
 
 /*!
@@ -232,7 +270,10 @@ bool QRadioPlayer::isMuted() const
 
 void QRadioPlayer::setBand(QRadioPlayer::Band band)
 {
-    d_func()->control->setBand(band);
+    Q_D(QRadioPlayer);
+
+    if (d->control != 0)
+        d->control->setBand(band);
 }
 
 /*!
@@ -241,7 +282,10 @@ void QRadioPlayer::setBand(QRadioPlayer::Band band)
 
 void QRadioPlayer::setFrequency(int frequency)
 {
-    d_func()->control->setFrequency(frequency);
+    Q_D(QRadioPlayer);
+
+    if (d->control != 0)
+        d->control->setFrequency(frequency);
 }
 
 /*!
@@ -250,7 +294,10 @@ void QRadioPlayer::setFrequency(int frequency)
 
 void QRadioPlayer::setStereo(bool stereo)
 {
-    d_func()->control->setStereo(stereo);
+    Q_D(QRadioPlayer);
+
+    if (d->control != 0)
+        d->control->setStereo(stereo);
 }
 
 /*!
@@ -260,7 +307,10 @@ void QRadioPlayer::setStereo(bool stereo)
 
 void QRadioPlayer::setVolume(int volume)
 {
-    d_func()->control->setVolume(volume);
+    Q_D(QRadioPlayer);
+
+    if (d->control != 0)
+        d->control->setVolume(volume);
 }
 
 /*!
@@ -269,16 +319,10 @@ void QRadioPlayer::setVolume(int volume)
 
 void QRadioPlayer::setMuted(bool muted)
 {
-    d_func()->control->setMuted(muted);
-}
+    Q_D(QRadioPlayer);
 
-/*!
-    Returns true if an available device.
-*/
-
-bool QRadioPlayer::isValid() const
-{
-    return QMediaObject::isValid() && d_func()->control != 0;
+    if (d->control != 0)
+        d->control->setMuted(muted);
 }
 
 /*!
@@ -292,7 +336,12 @@ bool QRadioPlayer::isValid() const
 
 bool QRadioPlayer::isSearching() const
 {
-    return d_func()->control->isSearching();
+    Q_D(const QRadioPlayer);
+
+    if (d->control != 0)
+        return d->control->isSearching();
+
+    return false;
 }
 
 /*!
@@ -301,7 +350,10 @@ bool QRadioPlayer::isSearching() const
 
 void QRadioPlayer::searchForward()
 {
-    d_func()->control->searchForward();
+    Q_D(QRadioPlayer);
+
+    if (d->control != 0)
+        d->control->searchForward();
 }
 
 /*!
@@ -310,7 +362,10 @@ void QRadioPlayer::searchForward()
 
 void QRadioPlayer::searchBackward()
 {
-    d_func()->control->searchBackward();
+    Q_D(QRadioPlayer);
+
+    if (d->control != 0)
+        d->control->searchBackward();
 }
 
 /*!
@@ -319,7 +374,10 @@ void QRadioPlayer::searchBackward()
 
 void QRadioPlayer::cancelSearch()
 {
-    d_func()->control->cancelSearch();
+    Q_D(QRadioPlayer);
+
+    if (d->control != 0)
+        d->control->cancelSearch();
 }
 
 /*!

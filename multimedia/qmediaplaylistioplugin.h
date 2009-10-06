@@ -41,7 +41,7 @@
 
 #include <multimedia/qmultimediaglobal.h>
 
-#include <multimedia/qmediasource.h>
+#include <multimedia/qmediacontent.h>
 
 class QString;
 class QUrl;
@@ -55,7 +55,7 @@ public:
     virtual ~QMediaPlaylistReader();
 
     virtual bool atEnd() const = 0;
-    virtual QMediaSource readItem() = 0;
+    virtual QMediaContent readItem() = 0;
     virtual void close() = 0;
 };
 
@@ -64,7 +64,7 @@ class Q_MEDIA_EXPORT QMediaPlaylistWritter
 public:
     virtual ~QMediaPlaylistWritter();
 
-    virtual bool writeItem(const QMediaSource &source) = 0;
+    virtual bool writeItem(const QMediaContent &content) = 0;
     virtual void close() = 0;
 };
 

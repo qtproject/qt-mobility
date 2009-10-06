@@ -171,7 +171,7 @@ void QPhononPlayerControl::setMuted(bool muted)
     m_audioOutput->setMuted(muted);
 }
 
-QMediaSource QPhononPlayerControl::media() const
+QMediaContent QPhononPlayerControl::media() const
 {
     return m_resources;
 }
@@ -181,15 +181,15 @@ const QIODevice *QPhononPlayerControl::mediaStream() const
     return m_mediaStream;
 }
 
-void QPhononPlayerControl::setMedia(const QMediaSource &source, QIODevice *stream)
+void QPhononPlayerControl::setMedia(const QMediaContent &content, QIODevice *stream)
 {
-    m_resources = source;
+    m_resources = content;
     m_mediaStream = stream;
 
     QUrl url;
 
-    if (!source.isNull())
-        url = source.contentUri();
+    if (!content.isNull())
+        url = content.contentUri();
 
     m_session->stop();
     if (m_mediaStream)

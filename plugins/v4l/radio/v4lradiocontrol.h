@@ -75,8 +75,6 @@ public:
     bool isSearching() const;
     void cancelSearch();
 
-    bool isValid() const;
-
     void searchForward();
     void searchBackward();
 

@@ -67,7 +67,7 @@ void StreamPlayer::setFileName(const QString &fileName)
     file.setFileName(fileName);
 
     if (file.open(QIODevice::ReadOnly)) {
-        player->setMedia(QMediaSource(), &file);
+        player->setMedia(QMediaContent(), &file);
     }
 }
 

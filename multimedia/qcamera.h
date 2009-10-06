@@ -63,7 +63,8 @@ public:
         NoError,
         CameraError,
         NotReadyToCaptureError,
-        InvalidRequestError
+        InvalidRequestError,
+        ServiceMissingError
     };
 
     enum FlashMode {
@@ -141,8 +142,6 @@ public:
     QStringList devices() const;
     QString deviceDescription(const QString &device) const;
     void setDevice(const QString& device);
-
-    bool isValid() const;
 
     void start();
     void stop();

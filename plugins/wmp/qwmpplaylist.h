@@ -56,12 +56,12 @@ public:
     bool save(QIODevice * device, const char *format);
 
     int size() const;
-    QMediaSource media(int pos) const;
+    QMediaContent media(int pos) const;
 
     bool isReadOnly() const;
 
-    bool appendItem(const QMediaSource &source);
-    bool insertItem(int pos, const QMediaSource &source);
+    bool appendItem(const QMediaContent &content);
+    bool insertItem(int pos, const QMediaContent &content);
     bool removeItem(int pos);
     bool removeItems(int start, int end);
     bool clear();

@@ -403,8 +403,6 @@ public:
         delete testService;
     }
 
-    bool isValid() const { return true; }
-
     QtTestVideoService *testService;
 };
 
