@@ -46,6 +46,7 @@
 #include "s60serviceplugin.h"
 #include "s60radiotunerservice.h"
 #include "s60cameraservice.h"
+#include "s60mediaplayerservice.h"
 
 QStringList S60ServicePlugin::keys() const
 {
@@ -61,6 +62,8 @@ QMediaService* S60ServicePlugin::create(QString const& key)
         return new S60RadioTunerService;
     else if (key == QLatin1String("camera"))
         return new S60CameraService;
+    else if (key == QLatin1String("mediaplayer"))
+        return new S60MediaPlayerService;
 
     qDebug() << "unsupported key:" << key;
     return 0;
