@@ -149,25 +149,16 @@ void QMediaRecorderPrivate::_q_error(int error, const QString &errorString)
 
 
 /*!
-    Construct a media recorder object with \a mediaObject.
+    Construct a media recorder object with \a mediaObject with the given \a parent.
 */
 
-QMediaRecorder::QMediaRecorder(QMediaObject *mediaObject):
-    QMediaObject(*new QMediaRecorderPrivate, mediaObject, mediaObject->service())
+QMediaRecorder::QMediaRecorder(QMediaObject *mediaObject, QObject *parent):
+    QMediaObject(*new QMediaRecorderPrivate, parent, mediaObject->service())
 {
     Q_D(QMediaRecorder);
 
     d->initControls();
 }
-
-QMediaRecorder::QMediaRecorder(QObject *parent, QMediaServiceProvider *provider):
-    QMediaObject(*new QMediaRecorderPrivate, parent, provider->requestService("mediarecorder"))
-{
-    Q_D(QMediaRecorder);
-
-    d->initControls();
-}
-
 
 /*!
     Destruct the media recorder object.

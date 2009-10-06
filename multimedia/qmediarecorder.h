@@ -90,8 +90,7 @@ public:
         VeryHighQuality
     };
 
-    QMediaRecorder(QMediaObject *mediaObject);
-    QMediaRecorder(QObject *parent = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
+    QMediaRecorder(QMediaObject *mediaObject, QObject *parent = 0);
     ~QMediaRecorder();
 
     QUrl sink() const;
