@@ -57,7 +57,7 @@ QUniqueId url2UniqueId(const QString &contactUrl)
     QRegExp rx("(\\d+)");
     bool conversion = false;
     QUniqueId id = 0;
-    if( rx.lastIndexIn(contactUrl) != -1 )
+    if( rx.indexIn(contactUrl) != -1 )
     {
         id = rx.cap(1).toUInt(&conversion, 10);
     }
