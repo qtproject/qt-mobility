@@ -30,7 +30,11 @@ symbian:SUBDIRS += qgeopositioninfosource_s60
 !wince:SUBDIRS += qvaluespace \                    #Publish and Subscribe
            qvaluespaceobject \
            qvaluespaceitem \
-           qmallocpool
+           qmallocpool \
+           qpacket \
+           qpacketprotocol \
+           qsystemreadwritelock \
+           qsystemreadwritelock_oop
 
 unix:SUBDIRS += qpacket \
                 qpacketprotocol \

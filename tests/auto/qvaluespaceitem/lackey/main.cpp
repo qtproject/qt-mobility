@@ -37,6 +37,7 @@
 #include <QCoreApplication>
 #include <QStringList>
 #include <QTimer>
+#include <QUuid>
 
 #include <QDebug>
 
@@ -49,40 +50,32 @@ class Controller : public QObject
     Q_OBJECT
 
 public:
-    enum Function { IpcTests, IpcSetValue, IpcInterestNotification, IpcRemoveKey };
+    enum Function { Invalid, IpcTests, IpcInterestNotification, IpcRemoveKey };
 
-    Controller(Function function)
+    Controller(Function function, const QUuid uuid)
         : QObject(0), index(0), abortCode(0)
     {
         switch (function) {
+        case Invalid:
+            QTimer::singleShot(0, this, SLOT(quit()));
+            break;
         case IpcTests:
-            object = new QValueSpaceObject("/usr/lackey/subdir", QUuid(), this);
-            connect(object, SIGNAL(itemSetValue(QByteArray,QVariant)),
-                    this, SLOT(itemSetValue(QByteArray,QVariant)));
+            object = new QValueSpaceObject("/usr/lackey/subdir", uuid, this);
             object->setObjectName("original_lackey");
             object->setAttribute("value", 100);
             object->sync();
-            item = new QValueSpaceItem("/usr/lackey/subdir", this);
+            item = new QValueSpaceItem("/usr/lackey/subdir", uuid, this);
             connect(item, SIGNAL(contentsChanged()), this, SLOT(changes()));
 
             QTimer::singleShot(TIMEOUT, this, SLOT(proceed()));
             break;
-        case IpcSetValue:
-            item = new QValueSpaceItem("/usr/lackey", this);
-            if (item->setValue("changeRequests/value", 501)) {
-                QTimer::singleShot(TIMEOUT, this, SLOT(setValueNextStep()));
-            } else {
-                abortCode = ERROR_SETVALUE_NOT_SUPPORTED;
-                QTimer::singleShot(0, this, SLOT(abort()));
-            }
-            break;
         case IpcInterestNotification:
-            object = new QValueSpaceObject("/ipcInterestNotification", QUuid(), this);
-            connect(object, SIGNAL(itemNotify(QByteArray,bool)),
-                    this, SLOT(itemNotify(QByteArray,bool)));
+            object = new QValueSpaceObject("/ipcInterestNotification", uuid, this);
+            connect(object, SIGNAL(attributeInterestChanged(QString,bool)),
+                    this, SLOT(attributeInterestChanged(QString,bool)));
             break;
         case IpcRemoveKey:
-            object = new QValueSpaceObject("/ipcRemoveKey", QUuid(), this);
+            object = new QValueSpaceObject("/ipcRemoveKey", uuid, this);
             object->setAttribute("value", 100);
             object->sync();
             QTimer::singleShot(TIMEOUT, this, SLOT(removeKey()));
@@ -91,44 +84,11 @@ public:
     }
 
 private slots:
-    void setValueNextStep()
-    {
-        switch(index) {
-            case 0:
-                item->setValue(QByteArray("changeRequests/value"), 502);
-                break;
-            case 1:
-                item->remove("changeRequests/value");
-                break;
-            case 2:
-                item->setValue(QString("changeRequests/value"), 503);
-                break;
-            case 3:
-                item->remove(QString("changeRequests/value"));
-                break;
-            case 4:
-                item->remove(QByteArray("changeRequests/value"));
-                break;
-            case 5:
-                item->remove("changeRequests/test");
-                break;
-            case 6:
-                item->remove();
-                break;
-        }
-        index++;
-        item->sync();
-        if (index == 7)
-            QTimer::singleShot(TIMEOUT, qApp, SLOT(quit()));
-        else
-            QTimer::singleShot(TIMEOUT, this, SLOT(setValueNextStep()));
-    }
-
     void proceed() {
         switch(index) {
             case 0:
                 //qDebug() << "Setting 101";
-                object->setAttribute(QByteArray("value"), 101);
+                object->setAttribute("value", 101);
                 break;
             case 1:
                 //qDebug() << "Removing";
@@ -136,12 +96,17 @@ private slots:
                 break;
             case 2:
                 //qDebug() << "Setting 102";
-                object->setAttribute(QString("value"), 102);
+                object->setAttribute("value", 102);
+                break;
+            case 3:
+                qDebug() << "Removing";
+                object->removeAttribute("value");
                 break;
         }
-        index++;
         object->sync();
-        if (index == 3)
+
+        index++;
+        if (index == 4)
             QTimer::singleShot(TIMEOUT, qApp, SLOT(quit()));
         else
             QTimer::singleShot(TIMEOUT, this, SLOT(proceed()));
@@ -151,24 +116,19 @@ private slots:
         qApp->exit(abortCode);
     }
 
-    void itemSetValue(const QByteArray& /*path*/, const QVariant& /*variant*/ )
-    {
-        //qDebug() << sender()->objectName() << path << variant.toInt();
-    }
-
     void changes()
     {
         //qDebug() << "changes:" << item->value("mine", 6).toInt();
     }
 
-    void itemNotify(const QByteArray &path, bool interested)
+    void attributeInterestChanged(const QString &attribute, bool interested)
     {
-        qDebug() << Q_FUNC_INFO << path << interested;
+        //qDebug() << Q_FUNC_INFO << path << interested;
         if (interested) {
-            if (path == "/value")
-                object->setAttribute(path, 5);
+            if (attribute == "/value")
+                object->setAttribute(attribute, 5);
         } else {
-            object->removeAttribute(path);
+            object->removeAttribute(attribute);
         }
     }
 
@@ -178,6 +138,7 @@ private slots:
             delete object;
             object = 0;
         }
+
         QTimer::singleShot(TIMEOUT, qApp, SLOT(quit()));
     }
 
@@ -194,23 +155,27 @@ int main(int argc, char** argv)
     QStringList arguments = app.arguments();
     arguments.takeFirst();
 
-    Controller::Function function = Controller::IpcTests;
+    if (arguments.count() != 2) {
+        qWarning("lackey expects 2 arguments.");
+        return 1;
+    }
 
-    while (!arguments.isEmpty()) {
-        QString arg = arguments.takeFirst();
-        if (arg == "-ipcSetValue") {
-            function = Controller::IpcSetValue;
-            break;
+    Controller::Function function = Controller::Invalid;
+    {
+        const QString arg = arguments.takeFirst();
+
+        if (arg == "-ipcTests") {
+            function = Controller::IpcTests;
         } else if (arg == "-ipcInterestNotification") {
             function = Controller::IpcInterestNotification;
-            break;
         } else if (arg == "-ipcRemoveKey") {
             function = Controller::IpcRemoveKey;
-            break;
         }
     }
 
-    Controller controler(function);;
+    QUuid uuid(arguments.takeFirst());
+
+    Controller controler(function, uuid);
     qDebug() << "Starting lackey";
     return app.exec();
 }

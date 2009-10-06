@@ -74,23 +74,21 @@ public:
     void ls();
     void dump();
     void pwdCmd();
-    void ls(const QByteArray &abs, bool);
+    void ls(const QString &abs, bool);
     void subscribe();
     void unsubscribe();
     void quit();
     void suppress();
     void listwatchers();
-    void watch(const QByteArray &);
-    void unwatch(const QByteArray &);
-    void write(const QByteArray &, const QString &);
-    void remove(const QByteArray &);
-    void set(const QByteArray &, const QString &);
-    void clear(const QByteArray &);
+    void watch(const QString &);
+    void unwatch(const QString &);
+    void set(const QString &, const QString &);
+    void clear(const QString &);
     void subscriptions();
 
-    QByteArray itemName() const
+    QString path() const
     {
-        return pwd.itemName().toAscii();
+        return pwd.path();
     }
 
 public slots:
@@ -98,8 +96,7 @@ public slots:
 
 private slots:
     void contentsChanged();
-    void removed(const QByteArray &attribute);
-    void written(const QByteArray &attribute, const QVariant &newData);
+    void interestChanged(const QString &attribute, bool interested);
 
 private:
     void lsPath(QValueSpaceItem *, int = 0, bool = false);
@@ -156,14 +153,14 @@ VSExplorer::VSExplorer()
 {
 }
 
-void VSExplorer::removed(const QByteArray &attribute)
+void VSExplorer::interestChanged(const QString &attribute, bool interested)
 {
     Q_ASSERT(sender());
 
-    if(!isSuppress) {
-        QValueSpaceObject * obj = static_cast<QValueSpaceObject *>(sender());
-        fprintf(stdout, "\nRemoved: %s ... %s\n",
-                obj->objectPath().toAscii().constData(), attribute.constData());
+    if (!isSuppress) {
+        QValueSpaceObject *obj = static_cast<QValueSpaceObject *>(sender());
+        fprintf(stdout, "\nInterest Changed: %s ... %s %d\n",
+                qPrintable(obj->path()), qPrintable(attribute), interested);
     }
 }
 
@@ -175,25 +172,13 @@ static QString variantToString( const QVariant& var )
         return var.toString();
 }
 
-void VSExplorer::written(const QByteArray &attribute, const QVariant &newData)
-{
-    Q_ASSERT(sender());
-    if(!isSuppress) {
-        QValueSpaceObject * obj = static_cast<QValueSpaceObject *>(sender());
-        fprintf(stdout, "\nWritten: %s ... %s to '%s' (%s)\n",
-                obj->objectPath().toAscii().constData(),
-                attribute.constData(), variantToString(newData).toAscii().constData(),
-                newData.typeName());
-    }
-}
-
 void VSExplorer::contentsChanged()
 {
     Q_ASSERT(sender());
 
     if(!isSuppress) {
         QValueSpaceItem * item = static_cast<QValueSpaceItem *>(sender());
-        fprintf(stdout, "\nChanged: %s\n", item->itemName().toAscii().constData());
+        fprintf(stdout, "\nChanged: %s\n", item->path().toAscii().constData());
     }
 }
 
@@ -214,8 +199,6 @@ void VSExplorer::printHelp()
     fprintf(stdout, "suppress: Toggle suppression of publish messages\n");
     fprintf(stdout, "subscriptions: List current subscriptions\n");
     fprintf(stdout, "set <key> <value>: Set app layer<key> to <value>\n");
-    fprintf(stdout, "write <key> <value>: Set <key> to <value>\n");
-    fprintf(stdout, "remove <key>: Clear <key>\n");
     fprintf(stdout, "clear <key>: Clear app layer <key>\n");
     fprintf(stdout, "cd <path>: Change working path\n");
     fprintf(stdout, "watch <path>: Add a watch for the path\n");
@@ -230,7 +213,7 @@ void VSExplorer::ls()
     fflush(stdout);
 }
 
-void VSExplorer::ls(const QByteArray &abs, bool all)
+void VSExplorer::ls(const QString &abs, bool all)
 {
     QValueSpaceItem item(abs);
     lsPath(&item, 0, all);
@@ -240,7 +223,7 @@ void VSExplorer::ls(const QByteArray &abs, bool all)
 
 void VSExplorer::lsPath(QValueSpaceItem * p, int indent, bool showHidden)
 {
-    QList<QString> paths = p->subPaths();
+    QStringList paths = p->subPaths();
 
     QVariant var = p->value();
     bool spaceRequired = false;
@@ -283,7 +266,7 @@ void VSExplorer::listwatchers()
     } else {
         fprintf(stdout, "Current watchers:\n");
         foreach(QValueSpaceObject *obj, watchers)
-            fprintf(stdout, "\t%s\n", obj->objectPath().toAscii().constData());
+            fprintf(stdout, "\t%s\n", obj->path().toAscii().constData());
     }
 
     fflush(stdout);
@@ -297,7 +280,7 @@ void VSExplorer::subscriptions()
         fprintf(stdout, "Current subscriptions:\n");
 
         foreach(QValueSpaceItem *item, subs)
-            fprintf(stdout, "\t%s\n", item->itemName().toAscii().constData());
+            fprintf(stdout, "\t%s\n", item->path().toAscii().constData());
     }
 
     fflush(stdout);
@@ -305,7 +288,8 @@ void VSExplorer::subscriptions()
 
 void VSExplorer::subscribe()
 {
-    QValueSpaceItem *item = new QValueSpaceItem(pwd);
+    QValueSpaceItem *item = new QValueSpaceItem;
+    item->setPath(&pwd);
     QObject::connect(item, SIGNAL(contentsChanged()),
                      this, SLOT(contentsChanged()));
     subs.insert(item);
@@ -317,7 +301,7 @@ void VSExplorer::subscribe()
 void VSExplorer::unsubscribe()
 {
     foreach(QValueSpaceItem *item, subs) {
-        if(item->itemName() == pwd.itemName()) {
+        if(item->path() == pwd.path()) {
             subs.remove(item);
             delete item;
             fprintf(stdout, "OK\n");
@@ -337,24 +321,23 @@ void VSExplorer::quit()
     terminateRequested = true;
 }
 
-void VSExplorer::watch(const QByteArray &path)
+void VSExplorer::watch(const QString &path)
 {
-    foreach(QValueSpaceObject *obj, watchers) {
-        if(obj->objectPath().toUtf8() == path)
+    foreach (QValueSpaceObject *obj, watchers) {
+        if (obj->path() == path)
             return;
     }
+
     QValueSpaceObject * newObject = new QValueSpaceObject(path);
     watchers.insert(newObject);
-    QObject::connect(newObject, SIGNAL(itemRemove(QByteArray)),
-                     this, SLOT(removed(QByteArray)));
-    QObject::connect(newObject, SIGNAL(itemSetValue(QByteArray,QVariant)),
-                     this, SLOT(written(QByteArray,QVariant)));
+    QObject::connect(newObject, SIGNAL(attributeInterestChanged(QString,bool)),
+                     this, SLOT(interestChanged(QString,bool)));
 }
 
-void VSExplorer::unwatch(const QByteArray &path)
+void VSExplorer::unwatch(const QString &path)
 {
-    foreach(QValueSpaceObject *obj, watchers) {
-        if(obj->objectPath().toUtf8() == path) {
+    foreach (QValueSpaceObject *obj, watchers) {
+        if (obj->path() == path) {
             watchers.remove(obj);
             delete obj;
             return;
@@ -364,7 +347,7 @@ void VSExplorer::unwatch(const QByteArray &path)
 
 void VSExplorer::suppress()
 {
-    if(isSuppress) {
+    if (isSuppress) {
         isSuppress = false;
         fprintf(stdout, "Suppression off.\n");
     } else {
@@ -374,36 +357,24 @@ void VSExplorer::suppress()
     fflush(stdout);
 }
 
-void VSExplorer::write(const QByteArray &name, const QString &value)
-{
-    pwd.setValue(name, value);
-    pwd.sync();
-}
-
-void VSExplorer::set(const QByteArray &name, const QString &value)
+void VSExplorer::set(const QString &name, const QString &value)
 {
     if('/' == *name.constData())
         prov.setAttribute(name, value);
-    else if(pwd.itemName().endsWith("/"))
-        prov.setAttribute(pwd.itemName() + name, value);
+    else if(pwd.path().endsWith("/"))
+        prov.setAttribute(pwd.path() + name, value);
     else
-        prov.setAttribute(pwd.itemName() + "/" + name, value);
+        prov.setAttribute(pwd.path() + "/" + name, value);
 }
 
-void VSExplorer::remove(const QByteArray &name)
-{
-    pwd.remove(name);
-    pwd.sync();
-}
-
-void VSExplorer::clear(const QByteArray &name)
+void VSExplorer::clear(const QString &name)
 {
     if('/' == *name.constData())
         prov.removeAttribute(name);
-    else if(pwd.itemName().endsWith("/"))
-        prov.removeAttribute(pwd.itemName() + name);
+    else if(pwd.path().endsWith("/"))
+        prov.removeAttribute(pwd.path() + name);
     else
-        prov.removeAttribute(pwd.itemName() + "/" + name);
+        prov.removeAttribute(pwd.path() + "/" + name);
 }
 
 void VSExplorer::processLine(const QString &line)
@@ -435,11 +406,11 @@ void VSExplorer::processLine(const QString &line)
             newPath = newPath.left(newPath.length() - 1);
         }
         if(newPath.isEmpty()) {
-            ls(pwd.itemName().toAscii(), lsAll);
+            ls(pwd.path().toAscii(), lsAll);
         } else if(newPath.startsWith("/")) {
             ls(newPath.toAscii(), lsAll);
         } else {
-            QString oldPath = pwd.itemName();
+            QString oldPath = pwd.path();
             if(!oldPath.endsWith("/"))
                 oldPath.append("/");
             oldPath.append(newPath);
@@ -456,14 +427,14 @@ void VSExplorer::processLine(const QString &line)
             newPath = newPath.left(newPath.length() - 1);
         }
         if(newPath.startsWith("/")) {
-            pwd = QValueSpaceItem(newPath.toAscii());
+            pwd.setPath(newPath);
         } else {
-            QString oldPath = pwd.itemName();
+            QString oldPath = pwd.path();
             if(!oldPath.endsWith("/"))
                 oldPath.append("/");
             oldPath.append(newPath);
             oldPath = QDir::cleanPath(oldPath);
-            pwd = QValueSpaceItem(oldPath.toAscii());
+            pwd.setPath(oldPath);
         }
     } else if(cmd == "unwatch" && 2 <= cmds.count()) {
         QStringList newCmds = cmds;
@@ -475,14 +446,14 @@ void VSExplorer::processLine(const QString &line)
             newPath = newPath.left(newPath.length() - 1);
         }
         if(newPath.startsWith("/")) {
-            finalPath = QValueSpaceItem(newPath.toAscii()).itemName();
+            finalPath = QValueSpaceItem(newPath).path();
         } else {
-            QString oldPath = pwd.itemName();
+            QString oldPath = pwd.path();
             if(!oldPath.endsWith("/"))
                 oldPath.append("/");
             oldPath.append(newPath);
             oldPath = QDir::cleanPath(oldPath);
-            finalPath = QValueSpaceItem(oldPath.toAscii()).itemName();
+            finalPath = QValueSpaceItem(oldPath).path();
         }
         unwatch(finalPath.toUtf8());
     } else if(cmd == "watch" && 2 <= cmds.count()) {
@@ -495,24 +466,20 @@ void VSExplorer::processLine(const QString &line)
             newPath = newPath.left(newPath.length() - 1);
         }
         if(newPath.startsWith("/")) {
-            finalPath = QValueSpaceItem(newPath.toAscii()).itemName();
+            finalPath = QValueSpaceItem(newPath).path();
         } else {
-            QString oldPath = pwd.itemName();
+            QString oldPath = pwd.path();
             if(!oldPath.endsWith("/"))
                 oldPath.append("/");
             oldPath.append(newPath);
             oldPath = QDir::cleanPath(oldPath);
-            finalPath = QValueSpaceItem(oldPath.toAscii()).itemName();
+            finalPath = QValueSpaceItem(oldPath).path();
         }
         watch(finalPath.toUtf8());
-    } else if(cmd == "write" && 3 == cmds.count()) {
-        write(cmds.at(1).trimmed().toAscii(), cmds.at(2).trimmed());
-    } else if(cmd == "remove" && 2 == cmds.count()) {
-        remove(cmds.at(1).trimmed().toAscii());
     } else if(cmd == "set" && 3 == cmds.count()) {
-        set(cmds.at(1).trimmed().toAscii(), cmds.at(2).trimmed());
+        set(cmds.at(1).trimmed(), cmds.at(2).trimmed());
     } else if(cmd == "clear" && 2 == cmds.count()) {
-        clear(cmds.at(1).trimmed().toAscii());
+        clear(cmds.at(1).trimmed());
     } else if((cmd == "subscribe" || cmd == "sub") && 1 == cmds.count()) {
         subscribe();
     } else if((cmd == "unsubscribe" || cmd == "unsub") && 1 == cmds.count()) {
@@ -558,14 +525,14 @@ LineInput::LineInput()
     QObject::connect(this, SIGNAL(terminated()), qApp, SLOT(quit()));
     start();
 
-    fprintf(stdout, "%s > ", vse->itemName().constData());
+    fprintf(stdout, "%s > ", vse->path().constData());
     fflush(stdout);
 #else
     ts.open(stdin, QIODevice::ReadOnly);
     sock = new QSocketNotifier(ts.handle(), QSocketNotifier::Read, this);
     QObject::connect(sock, SIGNAL(activated(int)), this, SLOT(readyRead()));
 
-    fprintf(stdout, "%s > ", vse->itemName().constData());
+    fprintf(stdout, "%s > ", qPrintable(vse->path()));
     fflush(stdout);
 #endif
 }
@@ -575,12 +542,12 @@ void LineInput::readyRead()
 {
     QByteArray line = ts.readLine();
 
-    emit this->line(line);
+    emit this->line(QString::fromLocal8Bit(line));
 
     if(terminateRequested)
         exit(0);
 
-    fprintf(stdout, "%s > ", vse->itemName().constData());
+    fprintf(stdout, "%s > ", qPrintable(vse->path()));
     fflush(stdout);
 }
 #endif
@@ -636,19 +603,19 @@ char * command_generator(const char * t, int num)
         children.clear();
 
         // Command
-        static char * commands[] = { "help ",
-                                     "quit ",
-                                     "pwd ",
-                                     "ls ",
-                                     "subscribe ",
-                                     "unsubscribe ",
-                                     "suppress ",
-                                     "subscriptions ",
-                                     "set ",
-                                     "clear ",
-                                     "cd " };
+        static const char * commands[] = { "help ",
+                                           "quit ",
+                                           "pwd ",
+                                           "ls ",
+                                           "subscribe ",
+                                           "unsubscribe ",
+                                           "suppress ",
+                                           "subscriptions ",
+                                           "set ",
+                                           "clear ",
+                                           "cd " };
 
-        for(int ii = 0; ii < sizeof(commands) / sizeof(char *); ++ii)
+        for(unsigned int ii = 0; ii < sizeof(commands) / sizeof(char *); ++ii)
             if(0 == ::strncmp(commands[ii], t, strlen(t)))
                 children.append(commands[ii]);
     }
@@ -665,7 +632,7 @@ char * command_generator(const char * t, int num)
 
 char * item_generator(const char * t, int num)
 {
-    static QList<QByteArray> children;
+    static QStringList children;
 
     rl_filename_completion_desired = 1;
     rl_filename_quoting_desired = 1;
@@ -674,9 +641,9 @@ char * item_generator(const char * t, int num)
         children.clear();
 
         // Path
-        QByteArray text = t;
-        QByteArray textExt;
-        QByteArray textBase;
+        QString text = QString::fromLocal8Bit(t);
+        QString textExt;
+        QString textBase;
 
         int last = text.lastIndexOf('/');
         if(-1 == last) {
@@ -686,10 +653,10 @@ char * item_generator(const char * t, int num)
             textExt = text.mid(last + 1);
         }
 
-        QByteArray vsBase;
+        QString vsBase;
 
         if(*textBase.constData() != '/') {
-            QByteArray in = vse->itemName();
+            QString in = vse->path();
             if(!in.endsWith("/"))
                 vsBase = in + "/" + textBase;
             else
@@ -700,11 +667,11 @@ char * item_generator(const char * t, int num)
 
         QValueSpaceItem item(vsBase);
 
-        QList<QString> schildren = item.subPaths();
+        QStringList schildren = item.subPaths();
 
         foreach(QString child, schildren) {
             if(child.startsWith(textExt)) {
-                QByteArray completion;
+                QString completion;
                 completion.append(textBase);
                 if(!completion.isEmpty())
                     completion.append("/");
@@ -718,9 +685,9 @@ char * item_generator(const char * t, int num)
     if(children.isEmpty())
         return 0;
 
-    char * rv = (char *)malloc(children.at(0).length() + 1);
-    ::memcpy(rv, children.at(0).constData(), children.at(0).length() + 1);
-    children.removeFirst();
+    QByteArray child = children.takeFirst().toLocal8Bit();
+    char *rv = (char *)malloc(child.length() + 1);
+    ::memcpy(rv, child.constData(), child.length() + 1);
 
     return rv;
 }
@@ -731,10 +698,10 @@ void LineInput::run()
     while(true) {
         /* Get a line from the user. */
         mutex.lock();
-        QByteArray prompt = vse->itemName();
+        QString prompt = vse->path();
         prompt.append(" > ");
         mutex.unlock();
-        char *line_read = readline (prompt.constData());
+        char *line_read = readline (prompt.toLocal8Bit().constData());
 
         /* If the line has any text in it,
            save it on the history. */
@@ -759,7 +726,7 @@ void LineInput::run()
 void LineInput::run()
 {
     while (!terminateRequested) {
-        fprintf(stdout, "%s > ", vse->itemName().constData());
+        fprintf(stdout, "%s > ", vse->path().constData());
         fflush(stdout);
 
         QByteArray l = ts.readLine();
@@ -779,30 +746,34 @@ void usage(char * app)
 
 void dodump(QValueSpaceItem * item)
 {
-    QList<QString> children = item->subPaths();
-    foreach(QString child, children) {
-        if ( child.isEmpty() )
+    foreach (const QString &child, item->subPaths()) {
+        if (child.isEmpty())
             continue;
-        QValueSpaceItem subitem(*item, child);
-        dodump(&subitem);
+
+        QValueSpaceItem subItem;
+        subItem.setPath(item);
+        subItem.cd(child);
+        dodump(&subItem);
     }
+
     QVariant var = item->value();
     fprintf(stdout, "%s '%s' %s\n",
-            item->itemName().toAscii().constData(),
+            item->path().toAscii().constData(),
             variantToString(var).toAscii().constData(),
             var.typeName());
 }
 
 void VSExplorer::dump()
 {
-    QValueSpaceItem item(pwd);
+    QValueSpaceItem item;
+    item.setPath(&pwd);
     dodump(&item);
     fflush(stdout);
 }
 
 void VSExplorer::pwdCmd()
 {
-    fprintf(stdout, "Working directory: %s\n", pwd.itemName().toLatin1().constData());
+    fprintf(stdout, "Working directory: %s\n", pwd.path().toLatin1().constData());
     fflush(stdout);
 }
 
@@ -823,7 +794,7 @@ int main(int argc, char ** argv)
     }
 
     if(manager)
-        QValueSpace::initValueSpaceManager();
+        QValueSpace::initValueSpaceServer();
 
     if(dump) {
         QValueSpaceItem item("/");

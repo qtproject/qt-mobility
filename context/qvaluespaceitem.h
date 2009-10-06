@@ -35,9 +35,11 @@
 #define QVALUESPACEITEM_H
 
 #include "qcontextglobal.h"
+#include "qvaluespace.h"
 
 #include <QObject>
 #include <QVariant>
+#include <QStringList>
 
 QT_BEGIN_HEADER
 
@@ -46,41 +48,38 @@ QT_BEGIN_NAMESPACE
 struct QValueSpaceItemPrivate;
 class Q_CFW_EXPORT QValueSpaceItem : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
+
+    Q_PROPERTY(QString path READ path WRITE setPath);
+    Q_PROPERTY(QVariant value READ valuex NOTIFY contentsChanged);
 
 public:
-    QValueSpaceItem(const QValueSpaceItem &base, const QByteArray &path, QObject *parent = 0);
-    QValueSpaceItem(const QValueSpaceItem &base, const QString &path, QObject *parent = 0);
-    QValueSpaceItem(const QValueSpaceItem &base, const char * path, QObject *parent = 0);
-    QValueSpaceItem(const QValueSpaceItem &other, QObject *parent = 0);
-    explicit QValueSpaceItem(const QByteArray &path, QObject *parent = 0);
+    explicit QValueSpaceItem(QObject *parent = 0);
     explicit QValueSpaceItem(const QString &path, QObject *parent = 0);
     explicit QValueSpaceItem(const char *path, QObject *parent = 0);
-    explicit QValueSpaceItem(QObject *parent = 0);
+
+    QValueSpaceItem(const QString &path, QValueSpace::LayerOptions filter, QObject *parent = 0);
+    QValueSpaceItem(const char *path, QValueSpace::LayerOptions filter, QObject *parent = 0);
+
+    QValueSpaceItem(const QString &path, const QUuid &uuid, QObject *parent = 0);
+    QValueSpaceItem(const char *path, const QUuid &uuid, QObject *parent = 0);
+
     virtual ~QValueSpaceItem();
 
-    QString itemName() const;
+    void setPath(const QString &path);
+    void setPath(QValueSpaceItem *item);
+    QString path() const;
 
-    QList<QString> subPaths() const;
+    void cd(const QString &path);
+    void cdUp();
 
-    bool remove();
-    bool remove(const QByteArray &subPath);
-    bool remove(const char *subPath);
-    bool remove(const QString &subPath);
+    bool isConnected() const;
 
-    bool setValue(const QVariant &value);
-    bool setValue(const QByteArray &subPath, const QVariant &value);
-    bool setValue(const char *subPath, const QVariant &value);
-    bool setValue(const QString &subPath, const QVariant &value);
+    QStringList subPaths() const;
 
-    bool sync();
-
-    QVariant value(const QByteArray &subPath = QByteArray(),
-                   const QVariant &def = QVariant()) const;
+    QVariant value(const QString &subPath = QString(), const QVariant &def = QVariant()) const;
     QVariant value(const char *subPath, const QVariant &def = QVariant()) const;
-    QVariant value(const QString &subPath, const QVariant &def = QVariant()) const;
 
-    QValueSpaceItem &operator=(const QValueSpaceItem &other);
 
 signals:
     void contentsChanged();
@@ -90,6 +89,10 @@ protected:
     virtual void disconnectNotify(const char *signal);
 
 private:
+    QVariant valuex(const QVariant &def = QVariant()) const;
+
+private:
+    Q_DISABLE_COPY(QValueSpaceItem)
     QValueSpaceItemPrivate *d;
 };
 

@@ -66,6 +66,7 @@ void ConsumerDialog::changeEvent(QEvent *e)
     }
 }
 
+//! [0]
 void ConsumerDialog::createNewItem()
 {
     if (item)
@@ -78,12 +79,14 @@ void ConsumerDialog::createNewItem()
     connect(item, SIGNAL(contentsChanged()), this, SLOT(itemChanged()));
     itemChanged();
 }
+//! [0]
 
+//! [1]
 void ConsumerDialog::itemChanged()
 {
     ui->values->clearContents();
 
-    QList<QString> subPaths = item->subPaths();
+    QStringList subPaths = item->subPaths();
     ui->values->setRowCount(subPaths.count());
 
     for (int i = 0; i < subPaths.count(); ++i) {
@@ -97,3 +100,4 @@ void ConsumerDialog::itemChanged()
         ui->values->setItem(i, 2, typeItem);
     }
 }
+//! [1]

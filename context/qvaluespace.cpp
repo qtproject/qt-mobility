@@ -38,7 +38,6 @@
 #include "qvaluespaceobject.h"
 #include "qpacketprotocol_p.h"
 
-#include <QByteArray>
 #include <QObject>
 #include <QMap>
 #include <QPair>
@@ -52,30 +51,33 @@
 
 QT_BEGIN_NAMESPACE
 
-void QAbstractValueSpaceLayer::emitItemRemove(QValueSpaceObject *object, const QByteArray &path)
-{
-   emit object->itemRemove(path);
-}
-
-void QAbstractValueSpaceLayer::emitItemSetValue(QValueSpaceObject *object, const QByteArray &path, const QVariant &data)
-{
-   emit object->itemSetValue(path, data);
-}
-
-void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const QByteArray &path, bool interested)
-{
-    emit object->itemNotify(path, interested);
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-// Layer plug-in interface documentation
-///////////////////////////////////////////////////////////////////////////////
-
 /*!
     \class QAbstractValueSpaceLayer
     \brief The QAbstractValueSpaceLayer class provides support for adding new logical data layers
-    to the Qt Value Space.
+           to the Qt Value Space.
+
+    To create a new layer in the Value Space subclass this class and reimplement all of the virtual
+    functions.  The new layer is installed by either calling QValueSpace::installLayer() or by
+    adding the QVALUESPACE_AUTO_INSTALL_LAYER() macro in your implementation file.
+*/
+
+/*!
+    \enum QValueSpace::LayerOption
+
+    This enum describes the behaviour of the Value Space layer.  In addition this enum is used as
+    a filter when constructing a QValueSpaceObject or QValueSpaceItem.
+
+    \value UnspecifiedLayer     Used as a filter to specify that any layer should be used.
+    \value PermanentLayer       Indicates that the layer uses a permanent backing store.  When used
+                                as a filter only layers that use a permanent backing store will be
+                                used.
+    \value NonPermanentLayer    Indicates that the layer does not use a permanent backing store.
+                                When used as a filter only layers that do not use permanent backing
+                                stores will be used.
+    \value WriteableLayer       Indicates that the layer can update its contents.  When used as a
+                                filter only layers that are writeable will be used.
+    \value NonWriteableLayer    Indicates that the layer cannot update its contents.  When used as
+                                a filter only layers that are read-only will be used.
 */
 
 /*!
@@ -86,6 +88,12 @@ void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const Q
     This macro installs new value space layer. \a className is the name of the class implementing
     the new layer.
 
+    The method \c {className *className::instance()} must exist and return a pointer to an instance
+    of the layer to install.  This method will only be invoked \i {after} QApplication has been
+    constructed, making it safe to use any Qt class in your layer's constructor.
+
+    This macro can only be used once for any given class and it should be used where the
+    implementation is written rather than in a header file.
 */
 
 /*!
@@ -95,7 +103,7 @@ void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const Q
     value space layers.  Handles are only ever created by QAbstractValueSpaceLayer::item() and are
     always released by calls to QAbstractValueSpaceLayer::removeHandle().  The special value,
     \c {InvalidHandle} is reserved to represent an invalid handle.
- */
+*/
 
 /*!
     \enum QAbstractValueSpaceLayer::Type
@@ -107,7 +115,7 @@ void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const Q
 
     \value Server The layer is being initialized in the "server" context.
     \value Client The layer is being initialized in the "client" context.
- */
+*/
 
 /*!
     \enum QAbstractValueSpaceLayer::Properties
@@ -139,16 +147,9 @@ void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const Q
 */
 
 /*!
-    \fn void QAbstractValueSpaceLayer::shutdown()
-
-    Called by the Value Space system to uninitialize each layer.  The shutdown call can be used to
-    release any resources in use by the layer.
-*/
-
-/*!
     \fn QUuid QAbstractValueSpaceLayer::id()
 
-    Return a globally unique id for the layer.  This id is used to break ordering ties.
+    Returns a globally unique identifier for the layer.  This id is used to break ordering ties.
 */
 
 /*!
@@ -160,10 +161,10 @@ void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const Q
 */
 
 /*!
-    \fn Handle QAbstractValueSpaceLayer::item(Handle parent, const QByteArray &subPath)
+    \fn Handle QAbstractValueSpaceLayer::item(Handle parent, const QString &subPath)
 
     Returns a new opaque handle for the requested \a subPath of \a parent.  If \a parent is an
-    InvalidHandle, \a subPath is an absolute path.
+    InvalidHandle, \a subPath is interpreted as an absolute path.
 
     The caller should call removeHandle() to free resources used by the handle when it is no longer
     required.
@@ -189,14 +190,14 @@ void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const Q
 */
 
 /*!
-    \fn bool QAbstractValueSpaceLayer::value(Handle handle, const QByteArray &subPath, QVariant *data)
+    \fn bool QAbstractValueSpaceLayer::value(Handle handle, const QString &subPath, QVariant *data)
 
     Returns the value for a particular \a subPath of \a handle.  If a value is available, the
     layer will set \a data and return true.  If no value is available, false is returned.
 */
 
 /*!
-    \fn QSet<QByteArray> QAbstractValueSpaceLayer::children(Handle handle)
+    \fn QSet<QString> QAbstractValueSpaceLayer::children(Handle handle)
 
     Returns the set of children of \a handle.  For example, in a layer providing the following
     items:
@@ -212,39 +213,17 @@ void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const Q
 */
 
 /*!
-    \fn bool QAbstractValueSpaceLayer::supportsRequests()
+    \fn QValueSpace::LayerOptions QAbstractValueSpaceLayer::layerOptions() const
 
-    Returns true if the layer supports sending requests via the requestSetValue() and
-    requestRemoveValue() functions; otherwise returns false.
+    Returns the QValueSpace::LayerOptions describing this layer.
+
+    \sa QValueSpace::LayerOption
 */
 
 /*!
-    \fn bool QAbstractValueSpaceLayer::requestSetValue(Handle handle, const QVariant &value)
+    \fn bool QAbstractValueSpaceLayer::supportsInterestNotification() const
 
-    Process a client side QValueSpaceItem::setValue() call by sending a request to the provider of
-    the value space item identified by \a handle to set it to \a value.
-
-    Returns true if the request was successfully sent; otherwise returns false.
-
-    \sa handleChanged()
-*/
-
-/*!
-    \fn bool QAbstractValueSpaceLayer::requestSetValue(Handle handle, const QByteArray &subPath, const QVariant &value)
-
-    Process a client side QValueSpaceItem::setValue() call by sending a request to the provider of
-    the value space item identified by \a handle and \a subPath to set the value to \a value.
-
-    Returns true if the request was successfully sent; otherwise returns false.
-*/
-
-/*!
-    \fn bool QAbstractValueSpaceLayer::requestRemoveValue(Handle handle, const QByteArray &subPath)
-
-    Process a client side QValueSpaceItem::remove() call by sending a request to the provider of
-    the value space item identified by \a handle and \a subPath to remove the item.
-
-    Returns true if the request was successfully sent; otherwise returns false.
+    Returns true if the layer supports interest notifications; otherwise returns false.
 */
 
 /*!
@@ -260,15 +239,7 @@ void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const Q
 */
 
 /*!
-    \fn bool QAbstractValueSpaceLayer::syncRequests()
-
-    Commit any pending request made through call to requestSetValue() and requestRemoveValue().
-
-    Returns true on success; otherwise returns false.
-*/
-
-/*!
-    \fn bool QAbstractValueSpaceLayer::setValue(QValueSpaceObject *creator, Handle handle, const QByteArray &subPath, const QVariant &value)
+    \fn bool QAbstractValueSpaceLayer::setValue(QValueSpaceObject *creator, Handle handle, const QString &subPath, const QVariant &value)
 
     Process calls to QValueSpaceObject::setAttribute() by setting the value specified by the
     \a subPath under \a handle to \a value.  Ownership of the value space item is assigned to
@@ -278,7 +249,7 @@ void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const Q
 */
 
 /*!
-    \fn bool QAbstractValueSpaceLayer::removeValue(QValueSpaceObject *creator, Handle handle, const QByteArray &subPath)
+    \fn bool QAbstractValueSpaceLayer::removeValue(QValueSpaceObject *creator, Handle handle, const QString &subPath)
 
     Process calls to QValueSpaceObject::removeAttribute() by removing the value space item
     identified by \a handle and \a subPath and created by \a creator.
@@ -300,7 +271,7 @@ void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const Q
 
     Registers \a creator for change notifications to values under \a handle.
 
-    \sa removeWatches(), emitItemRemove(), emitItemSetValue()
+    \sa removeWatches()
 */
 
 /*!
@@ -308,7 +279,7 @@ void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const Q
 
     Removes all registered change notifications for \a creator under \a parent.
 
-    \sa addWatch(), emitItemRemove(), emitItemSetValue()
+    \sa addWatch()
 */
 
 /*!
@@ -318,22 +289,16 @@ void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const Q
 */
 
 /*!
-    \fn void QAbstractValueSpaceLayer::emitItemRemove(QValueSpaceObject *object, const QByteArray &path)
-
-    Emits the QValueSpaceObject::itemRemove() signal on \a object with \a path.
+    Emits the QValueSpaceObject::attributeInterestChanged() signal on \a object with \a path and
+    \a interested.
 */
 
-/*!
-    \fn void QAbstractValueSpaceLayer::emitItemSetValue(QValueSpaceObject *object, const QByteArray &path, const QVariant &data)
-
-    Emits the QValueSpaceObject::itemSetValue() signal on \a object with \a path and \a data.
-*/
-
-/*!
-    \fn void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const QByteArray &path, bool interested)
-
-    Emits the QValueSpaceObject::itemNotify() signal on \a object with \a path and \a interested.
-*/
+void QAbstractValueSpaceLayer::emitAttributeInterestChanged(QValueSpaceObject *object,
+                                                            const QString &path,
+                                                            bool interested)
+{
+    emit object->attributeInterestChanged(path, interested);
+}
 
 /*!
     \fn void QAbstractValueSpaceLayer::handleChanged(quintptr handle)
@@ -341,54 +306,59 @@ void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object, const Q
     Emitted whenever the \a handle's value, or any sub value, changes.
 */
 
-///////////////////////////////////////////////////////////////////////////////
-// define QValueSpace
-///////////////////////////////////////////////////////////////////////////////
-/*!
-  \namespace QValueSpace
-
-  \brief The QValueSpace namespace provides methods that are useful to Value
-  Space layer implementors.
-
-  Value Space layers that are available at link time can be automatically
-  installed using QVALUESPACE_AUTO_INSTALL_LAYER() macro.  The method
-  \c {QAbstractValueSpaceLayer * name::instance()} must exist and return a pointer to
-  the layer to install.  The QVALUESPACE_AUTO_INSTALL_LAYER() macro
-  will only invoke this method \i {after} QApplication has been constructed,
-  making it safe to use any Qt class in your layer's constructor.
- */
 
 /*!
-  \typedef QValueSpace::LayerCreateFunc
-  \internal
-  */
-/*!
-  \class QValueSpace::AutoInstall
+    \namespace QValueSpace
 
-  \internal
-  */
+    \brief The QValueSpace namespace provides methods that are useful to Value Space layer
+           implementors.
+
+    Value Space layers that are available at link time can be automatically installed using
+    QVALUESPACE_AUTO_INSTALL_LAYER() macro.  Value Space layers that are only available at run-time
+    can be installed using installLayer().
+*/
+
 /*!
-  Initialize the value space.  This method only needs to be called by the value
-  space manager process, and should be called before any process in the system
-  uses a value space class.
- */
-void QValueSpace::initValueSpaceManager()
+    \typedef QValueSpace::LayerCreateFunc
+    \internal
+
+    Support type used by the QVALUESPACE_AUTO_INSTALL_LAYER() macro.
+*/
+
+/*!
+    \class QValueSpace::AutoInstall
+    \internal
+
+    Support class used by the QVALUESPACE_AUTO_INSTALL_LAYER() macro.
+*/
+
+/*!
+    Initialize the value space manager as the server.  This method only needs to be called by the
+    process acting as the server and should be called before any process in the system uses a value
+    space class.
+*/
+void QValueSpace::initValueSpaceServer()
 {
     QValueSpaceManager::instance()->initServer();
 }
 
 /*!
-  Used by value space layer implementations to install themselves into the
-  system.  \a layer should be a pointer to the layer to install.
-  */
-void QValueSpace::installLayer(QAbstractValueSpaceLayer * layer)
+    Used by value space layer implementations to install themselves into the system.  \a layer
+    should be a pointer to the layer to install.
+
+    \sa QVALUESPACE_AUTO_INSTALL_LAYER()
+*/
+void QValueSpace::installLayer(QAbstractValueSpaceLayer *layer)
 {
     QValueSpaceManager::instance()->install(layer);
 }
 
 /*!
-  \internal
-  */
+    \internal
+
+    Called by the QVALUESPACE_AUTO_INSTALL_LAYER() macro to install the layer at static
+    initialization time.
+*/
 void QValueSpace::installLayer(LayerCreateFunc func)
 {
     QValueSpaceManager::instance()->install(func);
@@ -409,22 +379,37 @@ void QValueSpace::installLayer(LayerCreateFunc func)
 */
 
 /*!
-    \macro QVALUESPACE_REGISTRY_LAYER
+    \macro QVALUESPACE_VOLATILEREGISTRY_LAYER
     \relates QValueSpace
 
-    The UUID of the Registry Layer as a QUuid.  The actual UUID value is
+    The UUID of the Volatile Registry Layer as a QUuid.  The actual UUID value is
     {8ceb5811-4968-470f-8fc2-264767e0bbd9}.
 
     This value can be passed to the constructor of QValueSpaceObject to force the constructed value
-    space object to publish its values in the Registry Layer.
+    space object to publish its values in the Volatile Registry Layer.
 
-    You can test if the Registry Layer is available by checking if the list returned by
-    QValueSpace::availableLayers() contains this value.  The Registry Layer is only available on
-    Windows platforms.
+    You can test if the Volatile Registry Layer is available by checking if the list returned by
+    QValueSpace::availableLayers() contains this value.  The Volatile Registry Layer is only
+    available on Windows platforms.
 */
 
 /*!
-    Returns a List of QUuids of the available layers.
+    \macro QVALUESPACE_NONVOLATILEREGISTRY_LAYER
+    \relates QValueSpace
+
+    The UUID of the Non-Volatile Registry Layer as a QUuid.  The actual UUID value is
+    {8e29561c-a0f0-4e89-ba56-080664abc017}.
+
+    This value can be passed to the constructor of QValueSpaceObject to force the constructed value
+    space object to publish its values in the Non-Volatile Registry Layer.
+
+    You can test if the Non-Volatile Registry Layer is available by checking if the list returned
+    by QValueSpace::availableLayers() contains this value.  The Non-Volatile Registry Layer is only
+    available on Windows platforms.
+*/
+
+/*!
+    Returns a list of QUuids of all of the available layers.
 */
 QList<QUuid> QValueSpace::availableLayers()
 {
@@ -438,22 +423,27 @@ QList<QUuid> QValueSpace::availableLayers()
     return uuids;
 }
 
-QByteArray qCanonicalPath(const QByteArray &path)
+/*!
+    \internal
+
+    Returns \a path with all duplicate '/' characters removed.
+*/
+QString qCanonicalPath(const QString &path)
 {
-    QByteArray result;
+    QString result;
     result.resize(path.length());
-    const char *from = path.constData();
-    const char *fromend = from + path.length();
+    const QChar *from = path.constData();
+    const QChar *fromend = from + path.length();
     int outc=0;
-    char *to = result.data();
+    QChar *to = result.data();
     do {
-        to[outc++] = '/';
-        while (from!=fromend && *from == '/')
+        to[outc++] = QLatin1Char('/');
+        while (from!=fromend && *from == QLatin1Char('/'))
             ++from;
-        while (from!=fromend && *from != '/')
+        while (from!=fromend && *from != QLatin1Char('/'))
             to[outc++] = *from++;
     } while (from != fromend);
-    if (outc > 1 && to[outc-1] == '/')
+    if (outc > 1 && to[outc-1] == QLatin1Char('/'))
         --outc;
     result.resize(outc);
     return result;

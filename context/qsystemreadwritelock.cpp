@@ -68,9 +68,9 @@ public:
 };
 
 QSystemReadWriteLockPrivate::QSystemReadWriteLockPrivate(const QString &key, QSystemReadWriteLock::AccessMode mode)
-    :m_key(key), m_counts(key + "_counts"),
-    m_readerWait(key + "_readerWait", 0, (mode==QSystemReadWriteLock::Create)?QSystemSemaphore::Create:QSystemSemaphore::Open),
-    m_writerWait(key + "_writerWait", 0, (mode==QSystemReadWriteLock::Create)?QSystemSemaphore::Create:QSystemSemaphore::Open),
+    :m_key(key), m_counts(key + QLatin1String("_counts")),
+    m_readerWait(key + QLatin1String("_readerWait"), 0, (mode==QSystemReadWriteLock::Create)?QSystemSemaphore::Create:QSystemSemaphore::Open),
+    m_writerWait(key + QLatin1String("_writerWait"), 0, (mode==QSystemReadWriteLock::Create)?QSystemSemaphore::Create:QSystemSemaphore::Open),
     m_isInitialized(false), m_error(QSystemReadWriteLock::NoError), m_errorString(QString())
 {
     bool isAttached = false;

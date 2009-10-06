@@ -16,6 +16,7 @@
 <pre>    TEMPLATE = app
     TARGET = battery-provider
     INCLUDEPATH += ../../../context
+    DEPENDPATH += ../../../context
 
     HEADERS = batteryprovider.h
 
@@ -24,7 +25,7 @@
 
     FORMS = batteryprovider.ui
 
-    include(../../../common.pri)
+    include(../../examples.pri)
     qtAddLibrary(QtContextFramework)</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

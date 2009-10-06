@@ -1,5 +1,6 @@
 TARGET = tst_qvaluespaceobject
 INCLUDEPATH += ../../../context
+DEPENDPATH += ../../../context
 
 CONFIG+=testcase
 
@@ -14,4 +15,8 @@ qtAddLibrary(QtContextFramework)
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
+}
+
+win32 {
+    !wince*:LIBS += -ladvapi32
 }

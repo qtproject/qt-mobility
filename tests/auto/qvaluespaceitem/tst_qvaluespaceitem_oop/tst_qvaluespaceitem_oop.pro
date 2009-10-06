@@ -1,5 +1,6 @@
 TARGET = tst_qvaluespaceitem_oop
 INCLUDEPATH += ../../../../context
+DEPENDPATH += ../../../../context
 
 CONFIG+=testcase
 
@@ -22,3 +23,12 @@ symbian {
     TARGET.CAPABILITY = ALL -TCB
 }
 
+win32 {
+    !wince*:LIBS += -ladvapi32
+}
+
+wince* {
+    DEPLOYLACKEY.sources = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/vsiTestLackey.exe
+    DEPLOYLACKEY.path = .
+    DEPLOYMENT += DEPLOYLACKEY
+}

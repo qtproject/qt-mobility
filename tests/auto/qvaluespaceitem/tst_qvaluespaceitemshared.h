@@ -32,38 +32,51 @@
 ****************************************************************************/
 
 #include <QObject>
+#include <QMap>
 
 class QValueSpaceObject;
+class QAbstractValueSpaceLayer;
 
 class tst_QValueSpaceItem : public QObject
 {
     Q_OBJECT
 
+public:
+    enum Type { CharStar, String };
+
 private slots:
     void initTestCase();
     void cleanupTestCase();
-    void init();
 
-    void testConstructor();
     void testConstructor_data();
-    void testAssignmentOperator();
+    void testConstructor();
+    void testFilterConstructor_data();
+    void testFilterConstructor();
+
+    void testPathChanges();
+
     void contentsChanged_data();
     void contentsChanged();
     void dataVersatility_data();
     void dataVersatility();
+
+    void value_data();
     void value();
+
+    void ipcTests_data();
     void ipcTests();
-    void setValue();
-    void copySetValue();
-    void ipcSetValue();
-    void removeValue();
+
+    void ipcRemoveKey_data();
     void ipcRemoveKey();
+
     void interestNotification_data();
     void interestNotification();
+    void ipcInterestNotification_data();
     void ipcInterestNotification();
+
     void clientServer();
 
 private:
-    QValueSpaceObject *root;
-    QValueSpaceObject *busy;
+    QMap<QAbstractValueSpaceLayer *, QValueSpaceObject *> roots;
+    QMap<QAbstractValueSpaceLayer*, QValueSpaceObject *> busys;
 };

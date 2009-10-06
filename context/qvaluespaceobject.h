@@ -35,6 +35,7 @@
 #define QVALUESPACEOBJECT_H
 
 #include "qcontextglobal.h"
+#include "qvaluespace.h"
 
 #include <QObject>
 #include <QUuid>
@@ -51,30 +52,32 @@ class Q_CFW_EXPORT QValueSpaceObject : public QObject
     Q_OBJECT
 
 public:
-    explicit QValueSpaceObject(const char *objectPath, const QUuid &layer = QUuid(), QObject *parent = 0);
-    explicit QValueSpaceObject(const QString &objectPath, const QUuid &layer = QUuid(), QObject *parent = 0);
-    explicit QValueSpaceObject(const QByteArray &objectPath, const QUuid &layer = QUuid(), QObject *parent = 0);
-    ~QValueSpaceObject();
+    explicit QValueSpaceObject(const QString &path, QObject *parent = 0);
+    explicit QValueSpaceObject(const char *path, QObject *parent = 0);
 
-    QString objectPath() const;
-    bool isValid() const;
+    QValueSpaceObject(const QString &path, QValueSpace::LayerOptions filter, QObject *parent = 0);
+    QValueSpaceObject(const char *path, QValueSpace::LayerOptions filter, QObject *parent = 0);
 
-    bool supportsRequests() const;
+    QValueSpaceObject(const QString &objectPath, const QUuid &uuid, QObject *parent = 0);
+    QValueSpaceObject(const char *objectPath, const QUuid &uuid, QObject *parent = 0);
+
+    virtual ~QValueSpaceObject();
+
+    QString path() const;
+
+    bool isConnected() const;
 
     static void sync();
 
 signals:
-    void itemRemove(const QByteArray &attribute);
-    void itemSetValue(const QByteArray &attribute, const QVariant &value);
-    void itemNotify(const QByteArray &path, bool interested);
+    void attributeInterestChanged(const QString &attribute, bool interested);
 
 public slots:
-    void setAttribute(const char *attribute, const QVariant &data);
-    void removeAttribute(const char *attribute);
     void setAttribute(const QString &attribute, const QVariant &data);
+    void setAttribute(const char *attribute, const QVariant &data);
+
     void removeAttribute(const QString &attribute);
-    void setAttribute(const QByteArray &attribute, const QVariant &data);
-    void removeAttribute(const QByteArray &attribute);
+    void removeAttribute(const char *attribute);
 
 protected:
     virtual void connectNotify(const char *);

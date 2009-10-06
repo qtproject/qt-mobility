@@ -172,6 +172,5 @@
     app does not need to be concerned with the underlying protocol, where the
     servers are, the hardware peculiarities with networking and other low
     level details.
-
 */
 

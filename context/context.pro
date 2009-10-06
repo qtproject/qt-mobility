@@ -15,7 +15,7 @@ PUBLIC_HEADERS += qcontextglobal.h \
 PRIVATE_HEADERS += qpacketprotocol_p.h \
            qmallocpool_p.h \
            qvaluespace_p.h \
-           qvaluespacemanager_p.h \
+           qvaluespacemanager_p.h
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
@@ -32,17 +32,21 @@ symbian {
     exportheaders.path = epoc32/include
     DEPLOYMENT += exportheaders
 }
+
 unix {
     HEADERS += qsystemreadwritelock_p.h
-
     SOURCES += sharedmemorylayer.cpp \
                qsystemreadwritelock.cpp
 }
 
 win32 {
-    SOURCES += registrylayer_win.cpp
+    HEADERS += qsystemreadwritelock_p.h
+    SOURCES += sharedmemorylayer.cpp \
+               qsystemreadwritelock.cpp \
+               registrylayer_win.cpp
 
-    LIBS += -ladvapi32
+    !wince*:LIBS += -ladvapi32
+    wince*:LIBS += -ltoolhelp
 }
 
 include(../features/deploy.pri)

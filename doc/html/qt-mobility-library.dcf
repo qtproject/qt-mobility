@@ -7,10 +7,6 @@
         <keyword ref="qcontactdetaildefinition-field.html#operator-eq-eq">operator==</keyword>
         <section ref="qcontactdetaildefinition-field-members.html" title="List of all members"/>
     </section>
-    <section ref="qmallocpool-memorystats.html" title="MemoryStats Class Reference">
-        <keyword ref="qmallocpool-memorystats.html">MemoryStats</keyword>
-        <section ref="qmallocpool-memorystats-members.html" title="List of all members"/>
-    </section>
     <section ref="qabstractmediacontrol.html" title="QAbstractMediaControl Class Reference">
         <keyword ref="qabstractmediacontrol.html">QAbstractMediaControl</keyword>
         <section ref="qabstractmediacontrol-members.html" title="List of all members"/>
@@ -125,12 +121,11 @@
         <keyword ref="qabstractvaluespacelayer.html#Type-enum">QAbstractValueSpaceLayer::Client</keyword>
         <keyword ref="qabstractvaluespacelayer.html#addWatch">addWatch</keyword>
         <keyword ref="qabstractvaluespacelayer.html#children">children</keyword>
-        <keyword ref="qabstractvaluespacelayer.html#emitItemNotify">emitItemNotify</keyword>
-        <keyword ref="qabstractvaluespacelayer.html#emitItemRemove">emitItemRemove</keyword>
-        <keyword ref="qabstractvaluespacelayer.html#emitItemSetValue">emitItemSetValue</keyword>
+        <keyword ref="qabstractvaluespacelayer.html#emitAttributeInterestChanged">emitAttributeInterestChanged</keyword>
         <keyword ref="qabstractvaluespacelayer.html#handleChanged">handleChanged</keyword>
         <keyword ref="qabstractvaluespacelayer.html#id">id</keyword>
         <keyword ref="qabstractvaluespacelayer.html#item">item</keyword>
+        <keyword ref="qabstractvaluespacelayer.html#layerOptions">layerOptions</keyword>
         <keyword ref="qabstractvaluespacelayer.html#name">name</keyword>
         <keyword ref="qabstractvaluespacelayer.html#notifyInterest">notifyInterest</keyword>
         <keyword ref="qabstractvaluespacelayer.html#order">order</keyword>
@@ -138,15 +133,11 @@
         <keyword ref="qabstractvaluespacelayer.html#removeSubTree">removeSubTree</keyword>
         <keyword ref="qabstractvaluespacelayer.html#removeValue">removeValue</keyword>
         <keyword ref="qabstractvaluespacelayer.html#removeWatches">removeWatches</keyword>
-        <keyword ref="qabstractvaluespacelayer.html#requestRemoveValue">requestRemoveValue</keyword>
-        <keyword ref="qabstractvaluespacelayer.html#requestSetValue">requestSetValue</keyword>
         <keyword ref="qabstractvaluespacelayer.html#setProperty">setProperty</keyword>
         <keyword ref="qabstractvaluespacelayer.html#setValue">setValue</keyword>
-        <keyword ref="qabstractvaluespacelayer.html#shutdown">shutdown</keyword>
         <keyword ref="qabstractvaluespacelayer.html#startup">startup</keyword>
-        <keyword ref="qabstractvaluespacelayer.html#supportsRequests">supportsRequests</keyword>
+        <keyword ref="qabstractvaluespacelayer.html#supportsInterestNotification">supportsInterestNotification</keyword>
         <keyword ref="qabstractvaluespacelayer.html#sync">sync</keyword>
-        <keyword ref="qabstractvaluespacelayer.html#syncRequests">syncRequests</keyword>
         <keyword ref="qabstractvaluespacelayer.html#value">value</keyword>
         <keyword ref="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER">QVALUESPACE_AUTO_INSTALL_LAYER</keyword>
         <section ref="qabstractvaluespacelayer-members.html" title="List of all members"/>
@@ -1334,21 +1325,6 @@
         <keyword ref="qimageprocessingcontrol.html#whiteBalanceMode">whiteBalanceMode</keyword>
         <section ref="qimageprocessingcontrol-members.html" title="List of all members"/>
     </section>
-    <section ref="qmallocpool.html" title="QMallocPool Class Reference">
-        <keyword ref="qmallocpool.html">QMallocPool</keyword>
-        <keyword ref="qmallocpool.html#PoolType-enum">PoolType</keyword>
-        <keyword ref="qmallocpool.html#PoolType-enum">QMallocPool::NewShared</keyword>
-        <keyword ref="qmallocpool.html#PoolType-enum">QMallocPool::Owned</keyword>
-        <keyword ref="qmallocpool.html#PoolType-enum">QMallocPool::Shared</keyword>
-        <keyword ref="qmallocpool.html#calloc">calloc</keyword>
-        <keyword ref="qmallocpool.html#free">free</keyword>
-        <keyword ref="qmallocpool.html#isValid">isValid</keyword>
-        <keyword ref="qmallocpool.html#malloc">malloc</keyword>
-        <keyword ref="qmallocpool.html#memoryStatistics">memoryStatistics</keyword>
-        <keyword ref="qmallocpool.html#realloc">realloc</keyword>
-        <keyword ref="qmallocpool.html#size_of">size_of</keyword>
-        <section ref="qmallocpool-members.html" title="List of all members"/>
-    </section>
     <section ref="qmediaplayer.html" title="QMediaPlayer Class Reference">
         <keyword ref="qmediaplayer.html">QMediaPlayer</keyword>
         <keyword ref="qmediaplayer.html#Error-enum">Error</keyword>
@@ -2082,26 +2058,6 @@
         <keyword ref="qnmeapositioninfosource.html#updateMode">updateMode</keyword>
         <section ref="qnmeapositioninfosource-members.html" title="List of all members"/>
     </section>
-    <section ref="qpacket.html" title="QPacket Class Reference">
-        <keyword ref="qpacket.html">QPacket</keyword>
-        <keyword ref="qpacket.html#clear">clear</keyword>
-        <keyword ref="qpacket.html#isEmpty">isEmpty</keyword>
-        <section ref="qpacket-members.html" title="List of all members"/>
-    </section>
-    <section ref="qpacketprotocol.html" title="QPacketProtocol Class Reference">
-        <keyword ref="qpacketprotocol.html">QPacketProtocol</keyword>
-        <keyword ref="qpacketprotocol.html#clear">clear</keyword>
-        <keyword ref="qpacketprotocol.html#device">device</keyword>
-        <keyword ref="qpacketprotocol.html#invalidPacket">invalidPacket</keyword>
-        <keyword ref="qpacketprotocol.html#maximumPacketSize">maximumPacketSize</keyword>
-        <keyword ref="qpacketprotocol.html#packetWritten">packetWritten</keyword>
-        <keyword ref="qpacketprotocol.html#packetsAvailable">packetsAvailable</keyword>
-        <keyword ref="qpacketprotocol.html#read">read</keyword>
-        <keyword ref="qpacketprotocol.html#readyRead">readyRead</keyword>
-        <keyword ref="qpacketprotocol.html#send">send</keyword>
-        <keyword ref="qpacketprotocol.html#setMaximumPacketSize">setMaximumPacketSize</keyword>
-        <section ref="qpacketprotocol-members.html" title="List of all members"/>
-    </section>
     <section ref="qradioplayer.html" title="QRadioPlayer Class Reference">
         <keyword ref="qradioplayer.html">QRadioPlayer</keyword>
         <keyword ref="qradioplayer.html#Band-enum">Band</keyword>
@@ -2426,32 +2382,38 @@
     </section>
     <section ref="qvaluespace.html" title="QValueSpace Namespace Reference">
         <keyword ref="qvaluespace.html">QValueSpace</keyword>
-        <keyword ref="qvaluespace.html#QVALUESPACE_REGISTRY_LAYER">QVALUESPACE_REGISTRY_LAYER</keyword>
+        <keyword ref="qvaluespace.html#LayerOption-enum">LayerOption</keyword>
+        <keyword ref="qvaluespace.html#LayerOption-enum">LayerOptions</keyword>
+        <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::UnspecifiedLayer</keyword>
+        <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::WriteableLayer</keyword>
+        <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::PermanentLayer</keyword>
+        <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::NonWriteableLayer</keyword>
+        <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::NonPermanentLayer</keyword>
+        <keyword ref="qvaluespace.html#QVALUESPACE_NONVOLATILEREGISTRY_LAYER">QVALUESPACE_NONVOLATILEREGISTRY_LAYER</keyword>
         <keyword ref="qvaluespace.html#QVALUESPACE_SHAREDMEMORY_LAYER">QVALUESPACE_SHAREDMEMORY_LAYER</keyword>
+        <keyword ref="qvaluespace.html#QVALUESPACE_VOLATILEREGISTRY_LAYER">QVALUESPACE_VOLATILEREGISTRY_LAYER</keyword>
     </section>
     <section ref="qvaluespaceitem.html" title="QValueSpaceItem Class Reference">
         <keyword ref="qvaluespaceitem.html">QValueSpaceItem</keyword>
+        <keyword ref="qvaluespaceitem.html#path-prop">path</keyword>
+        <keyword ref="qvaluespaceitem.html#path-prop">setPath</keyword>
+        <keyword ref="qvaluespaceitem.html#value-prop">value</keyword>
+        <keyword ref="qvaluespaceitem.html#cd">cd</keyword>
+        <keyword ref="qvaluespaceitem.html#cdUp">cdUp</keyword>
         <keyword ref="qvaluespaceitem.html#contentsChanged">contentsChanged</keyword>
-        <keyword ref="qvaluespaceitem.html#itemName">itemName</keyword>
-        <keyword ref="qvaluespaceitem.html#remove">remove</keyword>
-        <keyword ref="qvaluespaceitem.html#setValue">setValue</keyword>
+        <keyword ref="qvaluespaceitem.html#isConnected">isConnected</keyword>
         <keyword ref="qvaluespaceitem.html#subPaths">subPaths</keyword>
-        <keyword ref="qvaluespaceitem.html#sync">sync</keyword>
         <keyword ref="qvaluespaceitem.html#value">value</keyword>
-        <keyword ref="qvaluespaceitem.html#operator-eq">operator=</keyword>
         <section ref="qvaluespaceitem-members.html" title="List of all members"/>
     </section>
     <section ref="qvaluespaceobject.html" title="QValueSpaceObject Class Reference">
         <keyword ref="qvaluespaceobject.html">QValueSpaceObject</keyword>
+        <keyword ref="qvaluespaceobject.html#attributeInterestChanged">attributeInterestChanged</keyword>
         <keyword ref="qvaluespaceobject.html#connectNotify">connectNotify</keyword>
-        <keyword ref="qvaluespaceobject.html#isValid">isValid</keyword>
-        <keyword ref="qvaluespaceobject.html#itemNotify">itemNotify</keyword>
-        <keyword ref="qvaluespaceobject.html#itemRemove">itemRemove</keyword>
-        <keyword ref="qvaluespaceobject.html#itemSetValue">itemSetValue</keyword>
-        <keyword ref="qvaluespaceobject.html#objectPath">objectPath</keyword>
+        <keyword ref="qvaluespaceobject.html#isConnected">isConnected</keyword>
+        <keyword ref="qvaluespaceobject.html#path">path</keyword>
         <keyword ref="qvaluespaceobject.html#removeAttribute">removeAttribute</keyword>
         <keyword ref="qvaluespaceobject.html#setAttribute">setAttribute</keyword>
-        <keyword ref="qvaluespaceobject.html#supportsRequests">supportsRequests</keyword>
         <keyword ref="qvaluespaceobject.html#sync">sync</keyword>
         <section ref="qvaluespaceobject-members.html" title="List of all members"/>
     </section>

@@ -45,11 +45,15 @@ ProviderDialog::ProviderDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    //! [1]
     connect(ui->connectButton, SIGNAL(clicked()), this, SLOT(createNewObject()));
     connect(ui->intValue, SIGNAL(valueChanged(int)), this, SLOT(intValueChanged(int)));
     connect(ui->setButton, SIGNAL(clicked()), this, SLOT(setStringValue()));
+    //! [1]
 
+    //! [3]
     createNewObject();
+    //! [3]
 }
 
 ProviderDialog::~ProviderDialog()
@@ -70,6 +74,7 @@ void ProviderDialog::changeEvent(QEvent *e)
     }
 }
 
+//! [0]
 void ProviderDialog::intValueChanged(int value)
 {
     object->setAttribute("intValue", value);
@@ -79,7 +84,9 @@ void ProviderDialog::setStringValue()
 {
     object->setAttribute("stringValue", ui->stringValue->text());
 }
+//! [0]
 
+//! [2]
 void ProviderDialog::createNewObject()
 {
     if (object)
@@ -89,3 +96,4 @@ void ProviderDialog::createNewObject()
     intValueChanged(ui->intValue->value());
     setStringValue();
 }
+//! [2]

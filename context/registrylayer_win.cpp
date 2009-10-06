@@ -31,13 +31,18 @@
 **
 ****************************************************************************/
 
-#include "qvaluespace.h"
+#include "qvaluespace_p.h"
 #include "qvaluespaceobject.h"
 
 #include <QSet>
 #include <QStringList>
 #include <QEventLoop>
 #include <QTimer>
+#include <QVariant>
+
+#ifdef Q_OS_WINCE
+#include <QThread>
+#endif
 
 #include <QDebug>
 
@@ -45,74 +50,151 @@
 #define _WIN32_WINNT 0x0500
 #include <windows.h>
 
+#ifdef Q_OS_WINCE
+#include <regext.h>
+#define RegistryCallback REGISTRYNOTIFYCALLBACK
+#else
+#define RegistryCallback WAITORTIMERCALLBACK
+#endif
+
 QT_BEGIN_NAMESPACE
+
+#ifdef Q_OS_WINCE
+class QWindowsCENotify : public QThread
+{
+    Q_OBJECT
+
+public:
+    QWindowsCENotify(QObject *parent = 0);
+    ~QWindowsCENotify();
+
+    void addHandle(HANDLE handle);
+    void removeHandle(HANDLE handle);
+
+protected:
+    void run();
+
+signals:
+    void eventSignaled(void *handle);
+
+private:
+    HANDLE wakeUp;
+    QSet<HANDLE> handles;
+};
+
+QWindowsCENotify::QWindowsCENotify(QObject *parent)
+:   QThread(parent)
+{
+    wakeUp = CreateEvent(0, false, false, 0);
+}
+
+QWindowsCENotify::~QWindowsCENotify()
+{
+    CloseHandle(wakeUp);
+    wakeUp = INVALID_HANDLE_VALUE;
+    wait();
+}
+
+void QWindowsCENotify::addHandle(HANDLE handle)
+{
+    handles.insert(handle);
+
+    SetEvent(wakeUp);
+}
+
+void QWindowsCENotify::removeHandle(HANDLE handle)
+{
+    handles.remove(handle);
+
+    SetEvent(wakeUp);
+}
+
+void QWindowsCENotify::run()
+{
+    while (wakeUp != INVALID_HANDLE_VALUE) {
+        ResetEvent(wakeUp);
+
+        QVector<HANDLE> waitHandles = handles.toList().toVector();
+        waitHandles.append(wakeUp);
+        DWORD index = WaitForMultipleObjects(waitHandles.count(), waitHandles.data(),
+                                             false, INFINITE);
+
+        if (index >= WAIT_OBJECT_0 && index < WAIT_OBJECT_0 + waitHandles.count()) {
+            if (index - WAIT_OBJECT_0 != waitHandles.count() - 1) {
+                handles.remove(waitHandles.at(index - WAIT_OBJECT_0));
+                emit eventSignaled(waitHandles.at(index - WAIT_OBJECT_0));
+            }
+        } else if (index >= WAIT_ABANDONED_0 && index < WAIT_ABANDONED_0 + waitHandles.count()) {
+            //qDebug() << "woke up because of abandoned index" << index - WAIT_ABANDONED_0;
+        } else {
+            qDebug() << "WaitForMultipleObjects failed with error" << GetLastError();
+        }
+    }
+}
+#endif
 
 class RegistryLayer : public QAbstractValueSpaceLayer
 {
     Q_OBJECT
 
 public:
-    RegistryLayer();
+    RegistryLayer(const QString &basePath, bool volatileKeys, RegistryCallback callback);
     ~RegistryLayer();
 
     /* Common functions */
-    QString name();
-
     bool startup(Type t);
-    void shutdown();
 
-    QUuid id();
-    unsigned int order();
-
-    Handle item(Handle parent, const QByteArray &path);
+    Handle item(Handle parent, const QString &path);
     void removeHandle(Handle handle);
     void setProperty(Handle handle, Properties);
 
     bool value(Handle handle, QVariant *data);
-    bool value(Handle handle, const QByteArray &subPath, QVariant *data);
-    QSet<QByteArray> children(Handle handle);
+    bool value(Handle handle, const QString &subPath, QVariant *data);
+    QSet<QString> children(Handle handle);
 
     /* QValueSpaceItem functions */
-    bool supportsRequests() { return false; }
-    bool requestSetValue(Handle handle, const QVariant &data);
-    bool requestSetValue(Handle handle, const QByteArray &path, const QVariant &data);
-    bool requestRemoveValue(Handle handle, const QByteArray &path);
+    bool supportsInterestNotification() const;
     bool notifyInterest(Handle handle, bool interested);
-    bool syncRequests();
 
     /* QValueSpaceObject functions */
     bool setValue(QValueSpaceObject *creator, Handle handle, const QVariant &data);
-    bool setValue(QValueSpaceObject *creator, Handle handle, const QByteArray &path, const QVariant &data);
-    bool removeValue(QValueSpaceObject *creator, Handle handle, const QByteArray &subPath);
+    bool setValue(QValueSpaceObject *creator, Handle handle, const QString &path,
+                  const QVariant &data);
+    bool removeValue(QValueSpaceObject *creator, Handle handle, const QString &subPath);
     bool removeSubTree(QValueSpaceObject *creator, Handle parent);
     void addWatch(QValueSpaceObject *creator, Handle handle);
     void removeWatches(QValueSpaceObject *creator, Handle parent);
     void sync();
 
-    /* Private implementation functions */
-    void emitHandleChanged(HKEY key);
-
-    static RegistryLayer *instance();
+public slots:
+    void emitHandleChanged(void *hkey);
+#ifdef Q_OS_WINCE
+    void eventSignaled(void *handle);
+#endif
 
 private:
     struct RegistryHandle {
-        RegistryHandle(const QByteArray &p)
+        RegistryHandle(const QString &p)
         :   path(p), valueHandle(false), refCount(1)
         {
         }
 
-        QByteArray path;
+        QString path;
         bool valueHandle;
         unsigned int refCount;
     };
 
     void openRegistryKey(RegistryHandle *handle);
     bool createRegistryKey(RegistryHandle *handle);
-    bool removeRegistryValue(RegistryHandle *handle, const QByteArray &path);
+    bool removeRegistryValue(RegistryHandle *handle, const QString &path);
     void closeRegistryKey(RegistryHandle *handle);
     void pruneEmptyKeys(RegistryHandle *handle);
 
-    QHash<QByteArray, RegistryHandle *> handles;
+    QString m_basePath;
+    bool m_volatileKeys;
+    RegistryCallback m_callback;
+
+    QHash<QString, RegistryHandle *> handles;
 
     RegistryHandle *registryHandle(Handle handle)
     {
@@ -129,39 +211,187 @@ private:
     QMap<RegistryHandle *, HKEY> hKeys;
     QMultiMap<RegistryHandle *, RegistryHandle *> notifyProxies;
     QMap<HKEY, QPair<::HANDLE, ::HANDLE> > waitHandles;
+#ifdef Q_OS_WINCE
+    QWindowsCENotify *notifyThread;
+#endif
 
-    QMap<QValueSpaceObject *, QList<QByteArray> > creators;
+    QMap<QValueSpaceObject *, QList<QString> > creators;
 };
 
-#include <registrylayer_win.moc>
-
-Q_GLOBAL_STATIC(RegistryLayer, registryLayer);
-QVALUESPACE_AUTO_INSTALL_LAYER(RegistryLayer);
-
-void CALLBACK qRegistryLayerCallback(PVOID lpParameter, BOOLEAN)
+class VolatileRegistryLayer : public RegistryLayer
 {
-    registryLayer()->emitHandleChanged(reinterpret_cast<HKEY>(lpParameter));
+    Q_OBJECT
+
+public:
+    VolatileRegistryLayer();
+    ~VolatileRegistryLayer();
+
+    /* Common functions */
+    QString name();
+
+    QUuid id();
+    unsigned int order();
+
+    QValueSpace::LayerOptions layerOptions() const;
+
+    static VolatileRegistryLayer *instance();
+};
+
+Q_GLOBAL_STATIC(VolatileRegistryLayer, volatileRegistryLayer);
+QVALUESPACE_AUTO_INSTALL_LAYER(VolatileRegistryLayer);
+
+class NonVolatileRegistryLayer : public RegistryLayer
+{
+    Q_OBJECT
+
+public:
+    NonVolatileRegistryLayer();
+    ~NonVolatileRegistryLayer();
+
+    /* Common functions */
+    QString name();
+
+    QUuid id();
+    unsigned int order();
+
+    QValueSpace::LayerOptions layerOptions() const;
+
+    static NonVolatileRegistryLayer *instance();
+};
+
+Q_GLOBAL_STATIC(NonVolatileRegistryLayer, nonVolatileRegistryLayer);
+QVALUESPACE_AUTO_INSTALL_LAYER(NonVolatileRegistryLayer);
+
+#ifdef Q_OS_WINCE
+void qVolatileRegistryLayerCallback(HREGNOTIFY hNotify, DWORD dwUserData,
+                                    const PBYTE pData, const UINT cbdata)
+{
 }
 
-static QString qConvertPath(const QByteArray &path)
+void qNonVolatileRegistryLayerCallback(HREGNOTIFY hNotify, DWORD dwUserData,
+                                    const PBYTE pData, const UINT cbdata)
 {
-    QString fixedPath = QString::fromUtf8(path.constData(), path.length());
+}
 
-    while (fixedPath.endsWith(QChar('/')))
+#else
+void CALLBACK qVolatileRegistryLayerCallback(PVOID lpParameter, BOOLEAN)
+{
+    QMetaObject::invokeMethod(volatileRegistryLayer(), "emitHandleChanged", Qt::QueuedConnection,
+                              Q_ARG(void *, lpParameter));
+}
+
+void CALLBACK qNonVolatileRegistryLayerCallback(PVOID lpParameter, BOOLEAN)
+{
+    QMetaObject::invokeMethod(nonVolatileRegistryLayer(), "emitHandleChanged",
+                              Qt::QueuedConnection, Q_ARG(void *, lpParameter));
+}
+#endif
+
+static QString qConvertPath(const QString &path)
+{
+    QString fixedPath(path);
+
+    while (fixedPath.endsWith(QLatin1Char('/')))
         fixedPath.chop(1);
 
-    fixedPath.replace(QChar('/'), QChar('\\'));
+    fixedPath.replace(QLatin1Char('/'), QLatin1Char('\\'));
 
     return fixedPath;
 }
 
-RegistryLayer::RegistryLayer()
+VolatileRegistryLayer::VolatileRegistryLayer()
+:   RegistryLayer(QLatin1String("Software/Nokia/QtMobility/volatileContext"), true,
+                  &qVolatileRegistryLayerCallback)
 {
+}
+
+VolatileRegistryLayer::~VolatileRegistryLayer()
+{
+}
+
+QString VolatileRegistryLayer::name()
+{
+    return QLatin1String("Volatile Registry Layer");
+}
+
+QUuid VolatileRegistryLayer::id()
+{
+    return QUuid(0x8ceb5811, 0x4968, 0x470f, 0x8f, 0xc2,
+                 0x26, 0x47, 0x67, 0xe0, 0xbb, 0xd9);
+}
+
+unsigned int VolatileRegistryLayer::order()
+{
+    return 0x1000;
+}
+
+QValueSpace::LayerOptions VolatileRegistryLayer::layerOptions() const
+{
+    return QValueSpace::NonPermanentLayer | QValueSpace::WriteableLayer;
+}
+
+VolatileRegistryLayer *VolatileRegistryLayer::instance()
+{
+    return volatileRegistryLayer();
+}
+
+NonVolatileRegistryLayer::NonVolatileRegistryLayer()
+:   RegistryLayer(QLatin1String("Software/Nokia/QtMobility/nonVolatileContext"), false,
+                  &qNonVolatileRegistryLayerCallback)
+{
+}
+
+NonVolatileRegistryLayer::~NonVolatileRegistryLayer()
+{
+}
+
+QString NonVolatileRegistryLayer::name()
+{
+    return QLatin1String("Non-Volatile Registry Layer");
+}
+
+QUuid NonVolatileRegistryLayer::id()
+{
+    return QUuid(0x8e29561c, 0xa0f0, 0x4e89, 0xba, 0x56,
+                 0x08, 0x06, 0x64, 0xab, 0xc0, 0x17);
+}
+
+unsigned int NonVolatileRegistryLayer::order()
+{
+    return 0;
+}
+
+QValueSpace::LayerOptions NonVolatileRegistryLayer::layerOptions() const
+{
+    return QValueSpace::PermanentLayer | QValueSpace::WriteableLayer;
+}
+
+NonVolatileRegistryLayer *NonVolatileRegistryLayer::instance()
+{
+    return nonVolatileRegistryLayer();
+}
+
+RegistryLayer::RegistryLayer(const QString &basePath, bool volatileKeys, RegistryCallback callback)
+:   m_basePath(basePath), m_volatileKeys(volatileKeys), m_callback(callback)
+{
+    // Ensure that the m_basePath key exists and is non-volatile.
+    HKEY key;
+    RegCreateKeyEx(HKEY_CURRENT_USER, qConvertPath(m_basePath).utf16(),
+                   0, 0, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, 0, &key, 0);
+
+    RegCloseKey(key);
+
+#ifdef Q_OS_WINCE
+    notifyThread = new QWindowsCENotify(this);
+    connect(notifyThread, SIGNAL(eventSignaled(void*)),
+            this, SLOT(eventSignaled(void*)), Qt::QueuedConnection);
+    notifyThread->start();
+#endif
 }
 
 RegistryLayer::~RegistryLayer()
 {
-    QMutableHashIterator<QByteArray, RegistryHandle *> i(handles);
+    QMutableHashIterator<QString, RegistryHandle *> i(handles);
     while (i.hasNext()) {
         i.next();
 
@@ -179,29 +409,9 @@ RegistryLayer::~RegistryLayer()
     }
 }
 
-QString RegistryLayer::name()
-{
-    return QLatin1String("Registry Layer");
-}
-
 bool RegistryLayer::startup(Type)
 {
     return true;
-}
-
-void RegistryLayer::shutdown()
-{
-}
-
-QUuid RegistryLayer::id()
-{
-    return QUuid(0x8ceb5811, 0x4968, 0x470f, 0x8f, 0xc2,
-                 0x26, 0x47, 0x67, 0xe0, 0xbb, 0xd9);
-}
-
-unsigned int RegistryLayer::order()
-{
-    return 0;
 }
 
 bool RegistryLayer::value(Handle handle, QVariant *data)
@@ -213,28 +423,28 @@ bool RegistryLayer::value(Handle handle, QVariant *data)
     return value(InvalidHandle, rh->path, data);
 }
 
-bool RegistryLayer::value(Handle handle, const QByteArray &subPath, QVariant *data)
+bool RegistryLayer::value(Handle handle, const QString &subPath, QVariant *data)
 {
     if (handle != InvalidHandle && !registryHandle(handle))
         return false;
 
-    QByteArray path(subPath);
-    while (path.endsWith('/'))
+    QString path(subPath);
+    while (path.endsWith(QLatin1Char('/')))
         path.chop(1);
     if (handle != InvalidHandle)
-        while (path.startsWith('/'))
+        while (path.startsWith(QLatin1Char('/')))
             path = path.mid(1);
 
-    int index = path.lastIndexOf('/', -1);
+    int index = path.lastIndexOf(QLatin1Char('/'), -1);
 
     bool createdHandle = false;
 
     QString value;
     if (index == -1) {
-        value = QString::fromUtf8(path.constData(), path.length());
+        value = path;
     } else {
         // want a value that is in a sub path under handle
-        value = QString::fromUtf8(path.constData() + (index + 1), path.length() - (index + 1));
+        value = path.mid(index + 1);
         path.truncate(index);
 
         handle = item(handle, path);
@@ -326,16 +536,16 @@ bool RegistryLayer::value(Handle handle, const QByteArray &subPath, QVariant *da
 
 #define MAX_KEY_LENGTH 255
 #define MAX_NAME_LENGTH 16383
-QSet<QByteArray> RegistryLayer::children(Handle handle)
+QSet<QString> RegistryLayer::children(Handle handle)
 {
-    QSet<QByteArray> foundChildren;
+    QSet<QString> foundChildren;
 
     RegistryHandle *rh = registryHandle(handle);
     if (!rh)
         return foundChildren;
 
     openRegistryKey(rh);
-    if (!hKeys.contains(rh))
+    if (rh->valueHandle || !hKeys.contains(rh))
         return foundChildren;
 
     HKEY key = hKeys.value(rh);
@@ -349,7 +559,7 @@ QSet<QByteArray> RegistryLayer::children(Handle handle)
         if (result == ERROR_NO_MORE_ITEMS)
             break;
 
-        foundChildren << QString::fromWCharArray(subKey, subKeySize).toUtf8();
+        foundChildren << QString::fromWCharArray(subKey, subKeySize);
         ++i;
     } while (result == ERROR_SUCCESS);
 
@@ -362,19 +572,19 @@ QSet<QByteArray> RegistryLayer::children(Handle handle)
         if (result == ERROR_NO_MORE_ITEMS)
             break;
 
-        foundChildren << QString::fromWCharArray(valueName, valueNameSize).toUtf8();
+        foundChildren << QString::fromWCharArray(valueName, valueNameSize);
         ++i;
     } while (result == ERROR_SUCCESS);
 
     return foundChildren;
 }
 
-QAbstractValueSpaceLayer::Handle RegistryLayer::item(Handle parent, const QByteArray &path)
+QAbstractValueSpaceLayer::Handle RegistryLayer::item(Handle parent, const QString &path)
 {
-    QByteArray fullPath;
+    QString fullPath;
 
     // Fail on invalid path.
-    if (path.isEmpty() || path.contains("//"))
+    if (path.isEmpty() || path.contains(QLatin1String("//")))
         return InvalidHandle;
 
     if (parent == InvalidHandle) {
@@ -384,12 +594,12 @@ QAbstractValueSpaceLayer::Handle RegistryLayer::item(Handle parent, const QByteA
         if (!rh)
             return InvalidHandle;
 
-        if (path == "/") {
+        if (path == QLatin1String("/")) {
             fullPath = rh->path;
-        } else if (rh->path.endsWith('/') && path.startsWith('/'))
+        } else if (rh->path.endsWith(QLatin1Char('/')) && path.startsWith(QLatin1Char('/')))
             fullPath = rh->path + path.mid(1);
-        else if (!rh->path.endsWith('/') && !path.startsWith('/'))
-            fullPath = rh->path + '/' + path;
+        else if (!rh->path.endsWith(QLatin1Char('/')) && !path.startsWith(QLatin1Char('/')))
+            fullPath = rh->path + QLatin1Char('/') + path;
         else
             fullPath = rh->path + path;
     }
@@ -418,7 +628,7 @@ void RegistryLayer::setProperty(Handle handle, Properties properties)
         openRegistryKey(rh);
         if (!hKeys.contains(rh)) {
             // The key does not exist. Temporarily use the parent key as a proxy.
-            QByteArray path = rh->path;
+            QString path = rh->path;
             while (!path.isEmpty()) {
                 rh = registryHandle(item(InvalidHandle, path));
                 openRegistryKey(rh);
@@ -428,11 +638,16 @@ void RegistryLayer::setProperty(Handle handle, Properties properties)
                 }
                 removeHandle(Handle(rh));
 
-                int index = path.lastIndexOf('/');
-                path.truncate(index);
+                // root path doesn't exists
+                if (path.length() == 1)
+                    return;
+
+                int index = path.lastIndexOf(QLatin1Char('/'));
+                if (index == 0)
+                    path.truncate(1);
+                else
+                    path.truncate(index);
             }
-            if (path.isEmpty())
-                return;
         }
 
         HKEY key = hKeys.value(rh);
@@ -440,6 +655,18 @@ void RegistryLayer::setProperty(Handle handle, Properties properties)
         if (waitHandles.contains(key))
             return;
 
+#ifdef Q_OS_WINCE
+        DWORD filter = REG_NOTIFY_CHANGE_NAME | REG_NOTIFY_CHANGE_LAST_SET;
+        ::HANDLE event = CeFindFirstRegChange(key, true, filter);
+        if (event == INVALID_HANDLE_VALUE) {
+            qDebug() << "CeFindFirstRegChange failed with error" << GetLastError();
+            return;
+        }
+
+        notifyThread->addHandle(event);
+
+        waitHandles.insert(key, QPair<::HANDLE, ::HANDLE>(event, INVALID_HANDLE_VALUE));
+#else
         ::HANDLE event = CreateEvent(0, false, false, 0);
         if (event == 0) {
             qDebug() << "CreateEvent failed with error" << GetLastError();
@@ -455,13 +682,14 @@ void RegistryLayer::setProperty(Handle handle, Properties properties)
         }
 
         ::HANDLE waitHandle;
-        bool ret = RegisterWaitForSingleObject(&waitHandle, event, &qRegistryLayerCallback, key, INFINITE, WT_EXECUTEDEFAULT);
-        if (!ret) {
+        if (!RegisterWaitForSingleObject(&waitHandle, event, m_callback, key,
+                                         INFINITE, WT_EXECUTEDEFAULT)) {
             qDebug() << "RegisterWaitForSingleObject failed with error" << GetLastError();
             return;
         }
 
         waitHandles.insert(key, QPair<::HANDLE, ::HANDLE>(event, waitHandle));
+#endif
     }
     if (!(properties & QAbstractValueSpaceLayer::Publish)) {
         // Disable change notification for handle
@@ -470,12 +698,17 @@ void RegistryLayer::setProperty(Handle handle, Properties properties)
 
         HKEY key = hKeys.value(rh);
 
-        QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
-        ::HANDLE event = wait.first;
-        ::HANDLE waitHandle = wait.second;
+        if (waitHandles.contains(key)) {
+            QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
 
-        UnregisterWait(waitHandle);
-        CloseHandle(event);
+#ifdef Q_OS_WINCE
+            notifyThread->removeHandle(wait.first);
+#else
+            UnregisterWait(wait.second);
+#endif
+
+            CloseHandle(wait.first);
+        }
     }
 }
 
@@ -487,6 +720,12 @@ void RegistryLayer::removeHandle(Handle handle)
 
     if (--rh->refCount)
         return;
+
+    QList<RegistryHandle *> proxies = notifyProxies.keys(rh);
+    while (!proxies.isEmpty()) {
+        notifyProxies.remove(proxies.first(), rh);
+        removeHandle(Handle(proxies.takeFirst()));
+    }
 
     handles.remove(rh->path);
 
@@ -506,10 +745,17 @@ void RegistryLayer::closeRegistryKey(RegistryHandle *handle)
     if (!hKeys.keys(key).isEmpty())
         return;
 
-    QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
+    if (waitHandles.contains(key)) {
+        QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
 
-    UnregisterWait(wait.second);
-    CloseHandle(wait.first);
+#ifdef Q_OS_WINCE
+        notifyThread->removeHandle(wait.first);
+#else
+        UnregisterWait(wait.second);
+#endif
+
+        CloseHandle(wait.first);
+    }
 
     RegCloseKey(key);
 }
@@ -544,13 +790,13 @@ static LONG qRegDeleteTree(HKEY hKey, LPCTSTR lpSubKey)
     return RegDeleteKey(hKey, lpSubKey);
 }
 
-bool RegistryLayer::removeRegistryValue(RegistryHandle *handle, const QByteArray &subPath)
+bool RegistryLayer::removeRegistryValue(RegistryHandle *handle, const QString &subPath)
 {
-    QByteArray path(subPath);
-    while (path.endsWith('/'))
+    QString path(subPath);
+    while (path.endsWith(QLatin1Char('/')))
         path.chop(1);
 
-    int index = path.lastIndexOf('/', -1);
+    int index = path.lastIndexOf(QLatin1Char('/'), -1);
 
     bool createdHandle = false;
 
@@ -561,15 +807,31 @@ bool RegistryLayer::removeRegistryValue(RegistryHandle *handle, const QByteArray
         value = path;
     } else {
         // want a value that is in a sub path under handle
-        value = QString::fromUtf8(path.constData() + (index + 1), path.length() - (index + 1));
+        value = path.mid(index + 1);
         path.truncate(index);
         if (path.isEmpty())
-            path.append('/');
+            path.append(QLatin1Char('/'));
 
         rh = registryHandle(item(handle ? Handle(handle) : InvalidHandle, path));
 
         createdHandle = true;
     }
+
+#ifdef Q_OS_WINCE
+    QList<RegistryHandle *> deletedKeys;
+    QString fullPath;
+    if (rh && rh->path != QLatin1String("/"))
+        fullPath = rh->path + QLatin1Char('/') + value;
+    else
+        fullPath = QLatin1Char('/') + value;
+
+    foreach (RegistryHandle *h, hKeys.keys()) {
+        if (h->path.startsWith(fullPath)) {
+            deletedKeys.append(h);
+            closeRegistryKey(h);
+        }
+    }
+#endif
 
     openRegistryKey(rh);
     if (!hKeys.contains(rh)) {
@@ -585,11 +847,11 @@ bool RegistryLayer::removeRegistryValue(RegistryHandle *handle, const QByteArray
     if (result == ERROR_FILE_NOT_FOUND) {
         result = qRegDeleteTree(key, value.utf16());
         if (result == ERROR_SUCCESS) {
-            const QByteArray rootPath = rh->path;
+            const QString rootPath = rh->path;
 
-            QList<QByteArray> paths = handles.keys();
+            QList<QString> paths = handles.keys();
             while (!paths.isEmpty()) {
-                QByteArray p = paths.takeFirst();
+                QString p = paths.takeFirst();
 
                 if (p.startsWith(rootPath))
                     closeRegistryKey(handles.value(p));
@@ -601,6 +863,11 @@ bool RegistryLayer::removeRegistryValue(RegistryHandle *handle, const QByteArray
         qDebug() << "RegDeleteValue failed with error" << result;
     }
 
+#ifdef Q_OS_WINCE
+    while (!deletedKeys.isEmpty())
+        emit handleChanged(Handle(deletedKeys.takeFirst()));
+#endif
+
     if (createdHandle)
         removeHandle(Handle(rh));
 
@@ -609,20 +876,21 @@ bool RegistryLayer::removeRegistryValue(RegistryHandle *handle, const QByteArray
 
 bool RegistryLayer::setValue(QValueSpaceObject *creator, Handle handle, const QVariant &data)
 {
-    return setValue(creator, handle, QByteArray(), data);
+    return setValue(creator, handle, QString(), data);
 }
 
-bool RegistryLayer::setValue(QValueSpaceObject *creator, Handle handle, const QByteArray &subPath, const QVariant &data)
+bool RegistryLayer::setValue(QValueSpaceObject *creator, Handle handle, const QString &subPath,
+                             const QVariant &data)
 {
     RegistryHandle *rh = registryHandle(handle);
     if (!rh)
         return false;
 
-    QByteArray path(subPath);
-    while (path.endsWith('/'))
+    QString path(subPath);
+    while (path.endsWith(QLatin1Char('/')))
         path.chop(1);
 
-    int index = path.lastIndexOf('/', -1);
+    int index = path.lastIndexOf(QLatin1Char('/'), -1);
 
     bool createdHandle = false;
 
@@ -631,11 +899,11 @@ bool RegistryLayer::setValue(QValueSpaceObject *creator, Handle handle, const QB
         value = path;
     } else {
         // want a value that is in a sub path under handle
-        value = QString::fromUtf8(path.constData() + (index + 1), path.length() - (index + 1));
+        value = path.mid(index + 1);
         path.truncate(index);
 
         if (path.isEmpty())
-            path.append('/');
+            path.append(QLatin1Char('/'));
 
         rh = registryHandle(item(Handle(rh), path));
         createdHandle = true;
@@ -688,7 +956,7 @@ bool RegistryLayer::setValue(QValueSpaceObject *creator, Handle handle, const QB
     }
     case QVariant::StringList: {
         regType = REG_MULTI_SZ;
-        QString joined = data.toStringList().join(QChar('\0'));
+        QString joined = data.toStringList().join(QString(QLatin1Char('\0')));
         int length = joined.length() + 2;
         wchar_t *temp = new wchar_t[length];
         joined.toWCharArray(temp);
@@ -720,7 +988,12 @@ bool RegistryLayer::setValue(QValueSpaceObject *creator, Handle handle, const QB
 
     long result = RegSetValueEx(key, value.utf16(), 0, regType, regData, regSize);
 
-    const QByteArray fullPath = rh->path + '/' + value.toUtf8();
+    QString fullPath(rh->path);
+    if (fullPath != QLatin1String("/"))
+        fullPath.append(QLatin1Char('/'));
+
+    fullPath.append(value);
+
     if (!creators[creator].contains(fullPath))
         creators[creator].append(fullPath);
 
@@ -755,14 +1028,23 @@ void RegistryLayer::sync()
     }
 }
 
-void RegistryLayer::emitHandleChanged(HKEY key)
+void RegistryLayer::emitHandleChanged(void *k)
 {
+    HKEY key = reinterpret_cast<HKEY>(k);
+
     QList<RegistryHandle *> changedHandles = hKeys.keys(key);
     if (changedHandles.isEmpty()) {
-        QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
-        UnregisterWait(wait.second);
-        CloseHandle(wait.first);
-        return;
+        if (waitHandles.contains(key)) {
+            QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
+
+#ifdef Q_OS_WINCE
+            notifyThread->removeHandle(wait.first);
+#else
+            UnregisterWait(wait.second);
+#endif
+            CloseHandle(wait.first);
+            return;
+        }
     }
 
     while (!changedHandles.isEmpty()) {
@@ -782,51 +1064,90 @@ void RegistryLayer::emitHandleChanged(HKEY key)
         }
     }
 
-    QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
+    if (waitHandles.contains(key)) {
+        QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
 
-    ::HANDLE event = wait.first;
-    ::HANDLE waitHandle = wait.second;
+        ::HANDLE event = wait.first;
 
-    UnregisterWait(waitHandle);
+#ifdef Q_OS_WINCE
+        notifyThread->removeHandle(event);
+#else
+        UnregisterWait(wait.second);
+#endif
 
-    long result = RegNotifyChangeKeyValue(key, true, REG_NOTIFY_CHANGE_NAME |
-                                                     REG_NOTIFY_CHANGE_ATTRIBUTES |
-                                                     REG_NOTIFY_CHANGE_LAST_SET,
-                                          event, true);
+#ifdef Q_OS_WINCE
+        if (!CeFindNextRegChange(event)) {
+            long result = GetLastError();
+            if (result == ERROR_KEY_DELETED) {
+                CloseHandle(event);
 
-    if (result != ERROR_SUCCESS) {
-        if (result == ERROR_KEY_DELETED) {
-            CloseHandle(event);
+                QList<RegistryHandle *> changedHandles = hKeys.keys(key);
 
-            QList<RegistryHandle *> changedHandles = hKeys.keys(key);
+                for (int i = 0; i < changedHandles.count(); ++i)
+                    hKeys.remove(changedHandles.at(i));
 
-            for (int i = 0; i < changedHandles.count(); ++i)
-                hKeys.remove(changedHandles.at(i));
+                RegCloseKey(key);
 
-            RegCloseKey(key);
+                for (int i = 0; i < changedHandles.count(); ++i)
+                    setProperty(Handle(changedHandles.at(i)), Publish);
+            } else {
+                qDebug() << "CeFindNextRegChange failed with error" << result;
+            }
 
-            for (int i = 0; i < changedHandles.count(); ++i)
-                setProperty(Handle(changedHandles.at(i)), Publish);
-        } else {
-            qDebug() << "RegNotifyChangeKeyValue failed with error" << result;
+            return;
         }
 
-        return;
-    }
+        notifyThread->addHandle(event);
 
-    bool ret = RegisterWaitForSingleObject(&waitHandle, event, &qRegistryLayerCallback, key, INFINITE, WT_EXECUTEDEFAULT);
-    if (!ret) {
-      qDebug() << "RegisterWaitForSingleObject failed with error" << GetLastError();
-      return;
-    }
+        waitHandles.insert(key, QPair<::HANDLE, ::HANDLE>(event, INVALID_HANDLE_VALUE));
+#else
+        long result = RegNotifyChangeKeyValue(key, true, REG_NOTIFY_CHANGE_NAME |
+                                              REG_NOTIFY_CHANGE_ATTRIBUTES |
+                                              REG_NOTIFY_CHANGE_LAST_SET,
+                                              event, true);
 
-    waitHandles.insert(key, QPair<::HANDLE, ::HANDLE>(event, waitHandle));
+        if (result != ERROR_SUCCESS) {
+            if (result == ERROR_KEY_DELETED || result == ERROR_INVALID_PARAMETER) {
+                CloseHandle(event);
+
+                QList<RegistryHandle *> changedHandles = hKeys.keys(key);
+
+                for (int i = 0; i < changedHandles.count(); ++i)
+                    hKeys.remove(changedHandles.at(i));
+
+                RegCloseKey(key);
+
+                for (int i = 0; i < changedHandles.count(); ++i)
+                    setProperty(Handle(changedHandles.at(i)), Publish);
+            } else {
+                qDebug() << "RegNotifyChangeKeyValue failed with error" << result;
+            }
+
+            return;
+        }
+
+        ::HANDLE waitHandle;
+
+        if (!RegisterWaitForSingleObject(&waitHandle, event, m_callback, key,
+                                         INFINITE, WT_EXECUTEDEFAULT)) {
+            qDebug() << "RegisterWaitForSingleObject failed with error" << GetLastError();
+            return;
+        }
+
+        waitHandles.insert(key, QPair<::HANDLE, ::HANDLE>(event, waitHandle));
+#endif
+    }
 }
 
-RegistryLayer *RegistryLayer::instance()
+#ifdef Q_OS_WINCE
+void RegistryLayer::eventSignaled(void *handle)
 {
-    return registryLayer();
+    HKEY key = waitHandles.key(QPair<::HANDLE, ::HANDLE>(handle, INVALID_HANDLE_VALUE), 0);
+
+    if (key != 0)
+        emitHandleChanged(key);
 }
+#endif
 
 void RegistryLayer::openRegistryKey(RegistryHandle *handle)
 {
@@ -837,8 +1158,7 @@ void RegistryLayer::openRegistryKey(RegistryHandle *handle)
     if (hKeys.contains(handle))
         return;
 
-    const QString fullPath =
-        qConvertPath(QByteArray("Software/Nokia/QtMobility/context") + handle->path);
+    const QString fullPath = qConvertPath(m_basePath + handle->path);
 
     // Attempt to open registry key path
     HKEY key;
@@ -849,10 +1169,10 @@ void RegistryLayer::openRegistryKey(RegistryHandle *handle)
         hKeys.insert(handle, key);
     } else if (result == ERROR_FILE_NOT_FOUND) {
         // Key for handle does not exist in Registry, check if it is a value handle.
-        int index = handle->path.lastIndexOf('/', -1);
+        int index = handle->path.lastIndexOf(QLatin1Char('/'), -1);
 
-        QByteArray parentPath = handle->path.left(index);
-        QByteArray valueName = handle->path.mid(index + 1);
+        const QString parentPath = handle->path.left(index);
+        const QString valueName = handle->path.mid(index + 1);
 
         RegistryHandle *parentHandle = registryHandle(item(InvalidHandle, parentPath));
         if (!parentHandle)
@@ -884,14 +1204,14 @@ bool RegistryLayer::createRegistryKey(RegistryHandle *handle)
     if (hKeys.contains(handle))
         return false;
 
-    const QString fullPath =
-        qConvertPath(QByteArray("Software/Nokia/QtMobility/context") + handle->path);
+    const QString fullPath = qConvertPath(m_basePath + handle->path);
 
     // Attempt to open registry key path
     HKEY key;
     DWORD disposition;
     long result = RegCreateKeyEx(HKEY_CURRENT_USER, fullPath.utf16(),
-                                 0, 0, REG_OPTION_VOLATILE,
+                                 0, 0,
+                                 (m_volatileKeys ? REG_OPTION_VOLATILE : REG_OPTION_NON_VOLATILE),
                                  KEY_ALL_ACCESS, 0, &key, &disposition);
 
     if (result == ERROR_SUCCESS)
@@ -906,17 +1226,17 @@ bool RegistryLayer::removeSubTree(QValueSpaceObject *creator, Handle handle)
     if (!rh)
         return false;
 
-    QList<QByteArray> paths = creators.value(creator);
+    QList<QString> paths = creators.value(creator);
 
     while (!paths.isEmpty()) {
-        QByteArray item = paths.takeFirst();
+        QString item = paths.takeFirst();
         if (!item.startsWith(rh->path))
             continue;
 
         removeRegistryValue(0, item);
         creators[creator].removeOne(item);
 
-        int index = item.lastIndexOf('/');
+        int index = item.lastIndexOf(QLatin1Char('/'));
         if (index == -1)
             continue;
 
@@ -935,17 +1255,16 @@ void RegistryLayer::pruneEmptyKeys(RegistryHandle *handle)
     if (!children(Handle(handle)).isEmpty())
         return;
 
-    QByteArray path = handle->path;
+    QString path = handle->path;
 
-    while (path != "/") {
-        int index = path.lastIndexOf('/', -1);
+    while (path != QLatin1String("/")) {
+        int index = path.lastIndexOf(QLatin1Char('/'), -1);
 
-        QString value =
-            QString::fromUtf8(path.constData() + (index + 1), path.length() - (index + 1));
+        QString value = path.mid(index + 1);
 
         path.truncate(index);
         if (path.isEmpty())
-            path.append('/');
+            path.append(QLatin1Char('/'));
 
         RegistryHandle *rh = registryHandle(item(InvalidHandle, path));
 
@@ -959,13 +1278,11 @@ void RegistryLayer::pruneEmptyKeys(RegistryHandle *handle)
 
         long result = RegDeleteKey(key, value.utf16());
         if (result == ERROR_SUCCESS) {
-            const QByteArray rootPath = rh->path;
-
-            QList<QByteArray> paths = handles.keys();
+            QList<QString> paths = handles.keys();
             while (!paths.isEmpty()) {
-                QByteArray p = paths.takeFirst();
+                const QString p = paths.takeFirst();
 
-                if (p.startsWith(rootPath))
+                if (p.startsWith(path))
                     closeRegistryKey(handles.value(p));
             }
         } else if (result != ERROR_FILE_NOT_FOUND) {
@@ -981,18 +1298,29 @@ void RegistryLayer::pruneEmptyKeys(RegistryHandle *handle)
     }
 }
 
-bool RegistryLayer::removeValue(QValueSpaceObject *creator, Handle handle, const QByteArray &subPath)
+bool RegistryLayer::removeValue(QValueSpaceObject *creator, Handle handle, const QString &subPath)
 {
-    RegistryHandle *rh = registryHandle(handle);
-    if (!rh)
-        return false;
+    QString fullPath;
 
-    QByteArray fullPath = rh->path;
-    if (!subPath.startsWith('/'))
-        fullPath.append('/');
-    fullPath.append(subPath);
+    if (handle == InvalidHandle) {
+        fullPath = subPath;
+    } else {
+        RegistryHandle *rh = registryHandle(handle);
+        if (!rh)
+            return false;
 
-    if (!creators[creator].contains(fullPath))
+        if (subPath == QLatin1String("/"))
+            fullPath = rh->path;
+        else if (rh->path.endsWith(QLatin1Char('/')) && subPath.startsWith(QLatin1Char('/')))
+            fullPath = rh->path + subPath.mid(1);
+        else if (!rh->path.endsWith(QLatin1Char('/')) && !subPath.startsWith(QLatin1Char('/')))
+            fullPath = rh->path + QLatin1Char('/') + subPath;
+        else
+            fullPath = rh->path + subPath;
+    }
+
+    // permanent layer always removes items even if our records show that creator does not own it.
+    if (!creators[creator].contains(fullPath) && (layerOptions() & QValueSpace::NonPermanentLayer))
         return false;
 
     removeRegistryValue(0, fullPath);
@@ -1009,17 +1337,7 @@ void RegistryLayer::removeWatches(QValueSpaceObject *, Handle)
 {
 }
 
-bool RegistryLayer::requestSetValue(Handle, const QVariant &)
-{
-    return false;
-}
-
-bool RegistryLayer::requestSetValue(Handle, const QByteArray &, const QVariant &)
-{
-    return false;
-}
-
-bool RegistryLayer::requestRemoveValue(Handle, const QByteArray &)
+bool RegistryLayer::supportsInterestNotification() const
 {
     return false;
 }
@@ -1029,9 +1347,7 @@ bool RegistryLayer::notifyInterest(Handle, bool)
     return false;
 }
 
-bool RegistryLayer::syncRequests()
-{
-    return true;
-}
-
 QT_END_NAMESPACE
+
+#include <registrylayer_win.moc>
+

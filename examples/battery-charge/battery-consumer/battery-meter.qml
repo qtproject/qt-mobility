@@ -1,5 +1,4 @@
 import Qt 4.6
-import Example 1.0
 
 Rectangle {
     color: "white"
@@ -21,13 +20,15 @@ Rectangle {
     }
 
     Rectangle {
+        //! [1]
         id: visualCharge
         x: 12
         y: 22 + 196 - height
         width: 76
-        height: 196 * battery.charge / 100
+        height: 196 * batteryCharge.value / 100
         clip: true
         color: "green"
+        //! [1]
 
         Particles {
             id: Bubbles
@@ -36,7 +37,7 @@ Rectangle {
             source: "bubble.png"
             emitting: false
             streamIn: true
-            count: battery.charge / 5
+            count: batteryCharge.value / 5
             velocity: 30
             velocityDeviation: 10
             angle: -90
@@ -45,22 +46,26 @@ Rectangle {
         }
 
         states: [
+        //! [3]
         State {
             name: "charging"
-            when: battery.charging
+            when: batteryCharging.value
             PropertyChanges {
                 target: Bubbles
                 emitting: true
             }
         },
+        //! [3]
+        //! [2]
         State {
             name: "low"
-            when: battery.charge < 25 && !battery.charging
+            when: batteryCharge.value < 25 && !batteryCharging.value
             PropertyChanges {
                 target: visualCharge
                 color: "red"
             }
         }
+        //! [2]
         ]
 
         transitions: [
@@ -75,8 +80,14 @@ Rectangle {
         ]
     }
 
-    BatteryCharge {
-        id: battery
-        path: "/power/battery"
+    //! [0]
+    ValueSpaceItem {
+        id: batteryCharge
+        path: "/power/battery/charge"
     }
+    ValueSpaceItem {
+        id: batteryCharging
+        path: "/power/battery/charging"
+    }
+    //! [0]
 }

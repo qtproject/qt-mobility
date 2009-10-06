@@ -45,7 +45,7 @@
 // We mean it.
 //
 
-#include "qvaluespace.h"
+#include "qvaluespace_p.h"
 
 QT_BEGIN_NAMESPACE
 

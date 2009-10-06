@@ -1,5 +1,6 @@
 TARGET = tst_qsystemreadwritelock
 INCLUDEPATH += ../../../../context
+DEPENDPATH += ../../../../context
 
 CONFIG+=testcase
 
@@ -15,11 +16,3 @@ qtAddLibrary(QtContextFramework)
 symbian {
     TARGET.CAPABILITY = ALL -TCB
 }
-
-wince*: {
-	externApp.sources = ../process/vsextern.exe
-	externApp.path = vsextern
-	DEPLOYMENT += externApp
-
-}
-

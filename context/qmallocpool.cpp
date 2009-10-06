@@ -42,6 +42,11 @@ static void* qmallocpool_sbrk(intptr_t increment);
 #define MORECORE qmallocpool_sbrk
 #define HAVE_MMAP 0
 #define __STD_C 1
+#ifdef Q_OS_WINCE
+#define WIN32
+#define LACKS_ERRNO_H
+#define MALLOC_FAILURE_ACTION
+#endif
 
 struct malloc_state;
 static QMallocPoolPrivate * qmallocpool_instance = 0;
@@ -129,6 +134,7 @@ struct QMallocPtr
 
 /*!
   \class QMallocPool
+  \internal
 
   \brief The QMallocPool class allows management of allocations within a
   designated memory region.
@@ -148,8 +154,7 @@ struct QMallocPtr
   projects, including several versions of Linux libc.
 
   QMallocPool is not thread safe.
-
- */
+*/
 
 /*!
   \enum QMallocPool::PoolType
@@ -254,7 +259,7 @@ void *QMallocPool::malloc(size_t size)
 /*!
   Frees the memory space pointed to by \a ptr, which must  have  been returned
   by a previous call to malloc(), calloc() or realloc().  Otherwise, or  if
-  \c {free(ptr)}  has  already  been  called  before,  undefined behaviour
+  \c {free(ptr)}  has  already  been  called  before,  undefined behavior
   occurs.  If \a ptr is 0, no operation is performed.
  */
 void QMallocPool::free(void *ptr)
