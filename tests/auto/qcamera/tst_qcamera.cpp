@@ -38,6 +38,7 @@
 #include <multimedia/qcameracontrol.h>
 #include <multimedia/qcameraexposurecontrol.h>
 #include <multimedia/qcamerafocuscontrol.h>
+#include <multimedia/qimagecapturecontrol.h>
 #include <multimedia/qmediaservice.h>
 #include <multimedia/qcamera.h>
 
@@ -59,6 +60,28 @@ public:
     QCamera::State state() const { return m_state; }
 
     QCamera::State m_state;
+};
+
+class MockCaptureControl : public QImageCaptureControl
+{
+    Q_OBJECT
+public:
+    MockCaptureControl(QObject *parent = 0)
+        :QImageCaptureControl(parent)
+    {
+    }
+
+    ~MockCaptureControl()
+    {
+    }
+
+    bool isReadyForCapture() const { return true; }
+
+    void capture(const QString &fileName)
+    {
+        emit imageCaptured(fileName, QImage());
+    }
+
 };
 
 class MockCameraExposureControl : public QCameraExposureControl
@@ -367,6 +390,7 @@ public:
         mockControl = new MockCameraControl(this);
         mockExposureControl = new MockCameraExposureControl(this);
         mockFocusControl = new MockCameraFocusControl(this);
+        mockCaptureControl = new MockCaptureControl(this);
     }
 
     ~MockCameraService()
@@ -384,10 +408,14 @@ public:
         if (qstrcmp(iid, QCameraFocusControl_iid) == 0)
             return mockFocusControl;
 
+        if (qstrcmp(iid, QImageCaptureControl_iid) == 0)
+            return mockCaptureControl;
+
         return 0;
     }
 
     MockCameraControl *mockControl;
+    MockCaptureControl *mockCaptureControl;
     MockCameraExposureControl *mockExposureControl;
     MockCameraFocusControl *mockFocusControl;
 };
@@ -424,6 +452,7 @@ private slots:
 
     void testCameraExposure();
     void testCameraFocus();
+    void testCameraCapture();
 
 private:
     MockSimpleCameraService  *mockSimpleCameraService;
@@ -435,6 +464,8 @@ void tst_QCamera::initTestCase()
     provider = new MockProvider;
     mockSimpleCameraService = new MockSimpleCameraService;
     provider->service = mockSimpleCameraService;
+
+    qRegisterMetaType<QCamera::Error>();
 }
 
 void tst_QCamera::cleanupTestCase()
@@ -557,6 +588,20 @@ void tst_QCamera::testSimpleCameraCapture()
     camera.capture(QString::fromLatin1("/dev/null"));
     QCOMPARE(errorSignal.size(), 1);
     QCOMPARE(camera.error(), QCamera::NotReadyToCaptureError);
+}
+
+void tst_QCamera::testCameraCapture()
+{
+    MockCameraService service;
+    provider->service = &service;
+    QCamera camera(0, provider);
+
+    QVERIFY(camera.isReadyForCapture());
+
+    QSignalSpy capturedSignal(&camera, SIGNAL(imageCaptured(QString,QImage)));
+    camera.capture(QString::fromLatin1("/dev/null"));
+    QCOMPARE(capturedSignal.size(), 1);
+    QCOMPARE(camera.error(), QCamera::NoError);
 }
 
 void tst_QCamera::testCameraExposure()
