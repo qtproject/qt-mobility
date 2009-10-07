@@ -58,13 +58,6 @@
 #include <winsock2.h>
 #include <mswsock.h>
 
-#ifdef Q_CC_MSVC
-#include <Wlanapi.h>
-#include <ntddndis.h>
-#else
-#include <ddk/ntddndis.h>
-#endif
-
 #include <QBasicTimer>
 
 
