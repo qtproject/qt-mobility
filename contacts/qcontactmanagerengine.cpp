@@ -1216,6 +1216,7 @@ int QContactManagerEngine::compareVariant(const QVariant& first, const QVariant&
             return 0;
     }
 }
+
 /*!
  * Returns true if the supplied \a filter matches the supplied \a contact.
  *
@@ -1402,7 +1403,38 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
 
         case QContactFilter::RelationshipFilter:
             {
-                // TODO
+                QContactManager::Error error = QContactManager::NoError;
+
+                // first, build contact's uri
+                QPair<QString, QUniqueId> contactUriOne = QPair<QString, QUniqueId>(QString(), contact.id());
+                QPair<QString, QUniqueId> contactUriTwo = QPair<QString, QUniqueId>(QString(QLatin1String("TODO!getUri")), contact.id());
+
+                const QContactRelationshipFilter rf(filter);
+                QPair<QString, QUniqueId> participant = QPair<QString, QUniqueId>(rf.otherParticipantManagerUri(), rf.otherParticipantId());
+                QList<QContactRelationship> allRelationships;
+                //allRelationships = relationships(rf.type(), participant, error); // static problem...
+                if (error != QContactManager::NoError)
+                    return false; // returning false is probably the wrong thing to do.. we don't want to assert that it doesn't match...
+
+                // now check to see that the role is correct.
+                foreach (const QContactRelationship& rel, allRelationships) {
+                    if (rf.role() == QContactRelationshipFilter::Source) {
+                        if (rel.sourceContact() == contact.id()) {
+                            return true;
+                        }
+                    } else if (rf.role() == QContactRelationshipFilter::Either) {
+                        if (rel.sourceContact() == contact.id() || rel.destinationContacts().contains(contactUriOne) || rel.destinationContacts().contains(contactUriTwo)) {
+                            return true;
+                        }
+                    } else if (rf.role() == QContactRelationshipFilter::Destination) {
+                        if (rel.destinationContacts().contains(contactUriOne) || rel.destinationContacts().contains(contactUriTwo)) {
+                            return true;
+                        }
+                    }
+                }
+
+                // if not found by now, it doesn't match the filter.
+                return false;
             }
             break;
 

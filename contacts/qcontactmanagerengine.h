@@ -69,7 +69,7 @@ public:
     /* Contacts - Accessors and Mutators */
     virtual QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     virtual QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
-    QList<QUniqueId> contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    virtual QList<QUniqueId> contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
 
     virtual bool saveContact(QContact* contact, QContactManager::Error& error);
     virtual QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
@@ -81,17 +81,17 @@ public:
     virtual QString synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
 
     /* "Self" contact id (MyCard) */
-    bool setSelfContactId(const QUniqueId& contactId, QContactManager::Error& error);
-    QUniqueId selfContactId(QContactManager::Error& error) const;
+    virtual bool setSelfContactId(const QUniqueId& contactId, QContactManager::Error& error);
+    virtual QUniqueId selfContactId(QContactManager::Error& error) const;
 
     /* Relationships between contacts */
-    QList<QContactRelationship> relationships(const QUniqueId& sourceId, const QString& relationshipType, QContactManager::Error& error);
-    QList<QContactRelationship> relationships(const QString& relationshipType, const QPair<QString, QUniqueId>& participantUri, QContactManager::Error& error);
-    QList<QContactRelationship> relationships(const QPair<QString, QUniqueId>& participantUri, QContactManager::Error& error);
-    bool saveRelationship(QContactRelationship* relationship, QContactManager::Error& error);
-    QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error);
-    bool removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error);
-    QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error);
+    virtual QList<QContactRelationship> relationships(const QUniqueId& sourceId, const QString& relationshipType, QContactManager::Error& error);
+    virtual QList<QContactRelationship> relationships(const QString& relationshipType, const QPair<QString, QUniqueId>& participantUri, QContactManager::Error& error);
+    virtual QList<QContactRelationship> relationships(const QPair<QString, QUniqueId>& participantUri, QContactManager::Error& error);
+    virtual bool saveRelationship(QContactRelationship* relationship, QContactManager::Error& error);
+    virtual QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error);
+    virtual bool removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error);
+    virtual QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error);
 
     /* Validation for saving */
     virtual bool validateContact(const QContact& contact, QContactManager::Error& error) const;
