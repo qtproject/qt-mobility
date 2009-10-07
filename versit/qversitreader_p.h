@@ -32,59 +32,32 @@
 ****************************************************************************/
 
 
-#include "qversitreader.h"
-#include "qversitreader_p.h"
+#ifndef QVERSITREADER_P_H
+#define QVERSITREADER_P_H
 
-/*!
- * \class QVersitReader
- *
- * \brief The QVersitReader class provides an interface 
- * for parsing versit documents such as vCards from a stream. 
- *
- * \sa
- */
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
+#include <QIODevice>
+#include <QList>
+#include "qversitdocument.h"
 
-/*! Construct a reader. */
-QVersitReader::QVersitReader() : d(new QVersitReaderPrivate)
+class QVersitReaderPrivate
 {
-}
-    
-/*! Destroy a reader. */    
-QVersitReader::~QVersitReader()
-{
-    delete d;
-}
+public:
+    QVersitReaderPrivate() : m_iodevice(0) { } 
+    ~QVersitReaderPrivate() {}
 
-/*!
- * Sets the \a device used for parsing input. 
- */
-void QVersitReader::setDevice(QIODevice* device)
-{
-    d->m_iodevice = device;
-}
+    QIODevice* m_iodevice;
+    QList<QVersitDocument> m_versitDocuments;
+};
 
-/*!
- * Returns the \a device used for parsing input. 
- */
-QIODevice* QVersitReader::device() const
-{
-    return d->m_iodevice;
-}
-
-/*!
- * Starts parsing the input. 
- */
-bool QVersitReader::start()
-{
-    return false;
-}
-
-/*!
- * Returns the parsing result or an empty list 
- * if the parsing was not completed successfully. 
- */
-QList<QVersitDocument> QVersitReader::result() const
-{
-    return d->m_versitDocuments;
-}
+#endif // QVERSITREADER_P_H

@@ -46,19 +46,20 @@ class QVersitReader : public QObject
     Q_OBJECT
 
 public:
-    QVersitReader() : QObject() {}
-    ~QVersitReader() {}
+    QVersitReader();
+    ~QVersitReader();
 
     // async read / write operation
-    virtual bool setDevice(QIODevice* device) = 0;
-    virtual QIODevice* device() const = 0;
-    virtual bool start() = 0;
+    void setDevice(QIODevice* device);
+    QIODevice* device() const;
+    bool start();
 
     // output:
-    virtual QVersitDocument result() const = 0;
+    QList<QVersitDocument> result() const;
 
 signals:
     void progress(bool finished);
+
 private:
     QVersitReaderPrivate* d;
 };
