@@ -146,6 +146,11 @@ private:
     QNetworkManagerInterfaceAccessPoint *accessPointIface;
 
     void setupNmConnections();
+    QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
+    int getBluetoothRssi();
+    QString getBluetoothInfo(const QString &file);
+    bool isDefaultInterface(const QString &device);
+
 private Q_SLOTS:
     void nmPropertiesChanged( const QString &, QMap<QString,QVariant>);
     void nmAPPropertiesChanged( const QString &, QMap<QString,QVariant>);
@@ -230,9 +235,11 @@ private:
 #if !defined(QT_NO_DBUS)
     QHalInterface *halIface;
     QHalDeviceInterface *halIfaceDevice;
+    void setupBluetooth();
 
 private Q_SLOTS:
     void halChanged(int,QVariantList);
+    void bluezPropertyChanged(const QString&, QDBusVariant);
 #endif
 };
 
