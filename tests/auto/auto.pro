@@ -8,12 +8,16 @@ SUBDIRS = \
         qmediaplayer \
         qmediaplaylist \
         qmediaplaylistnavigator \
+        qmediapluginloader \
         qmediarecorder \
         qmediaresource \
         qmediaservice \
+        qmediaserviceprovider \
         qmediacontent \
         qradioplayer \
-        qvideowidget \
-        qmediapluginloader \
-        qmediaserviceprovider
+        qvideowidget
 
+contains(QT_CONFIG, multimedia) {
+    SUBDIRS += \
+            qgraphicsvideoitem
+}
