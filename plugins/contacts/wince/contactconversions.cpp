@@ -1397,6 +1397,7 @@ QList<QUniqueId> QContactWinCEEngine::contacts(const QContactFilter& filter, con
     QString query = convertFilterToQueryString(filter);
 
     if (!query.isEmpty()) {
+        error = QContactManager::NoError;
         //Filtering contacts with POOM API
         SimpleComPointer<IPOutlookItemCollection> collection;
         HRESULT hr = d->m_collection->Restrict((BSTR)(query.constData()), &collection);
@@ -1421,7 +1422,6 @@ QList<QUniqueId> QContactWinCEEngine::contacts(const QContactFilter& filter, con
         } else {
             //Should we fail back to generic filtering here?
             qDebug() << "Can't filter contacts with query string:" << query << ", HRESULT=" << HRESULT_CODE(hr);
-            error = QContactManager::UnspecifiedError;
         }
     }
     //Fail back to generic filtering
@@ -1431,11 +1431,12 @@ QList<QUniqueId> QContactWinCEEngine::contacts(const QContactFilter& filter, con
 QList<QUniqueId> QContactWinCEEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     QList<QUniqueId> ids;
+    error = QContactManager::NoError;
     if (sortOrders.isEmpty()) {
         ids = d->m_ids;
     } else {
         SimpleComPointer<IPOutlookItemCollection> newCollection;
-        HRESULT hr = d->m_collection->Restrict(TEXT("[Oid <> 0]"), &newCollection);
+        HRESULT hr = d->m_collection->Restrict(TEXT("[Oid] <> 0"), &newCollection);
 
         if (SUCCEEDED(hr)) {
             //Try native sorting first...

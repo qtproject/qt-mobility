@@ -1755,7 +1755,6 @@ void tst_QContactManagerFiltering::sorting()
     ids = cm->contacts(s);
     QString output = convertIds(contacts, ids);
     QCOMPARE(output, expected);
-
     /* Now do a check with a filter involved; the filter should not affect the sort order */
     QContactDetailFilter presenceName;
     presenceName.setDetailDefinitionName(QContactName::DefinitionName);
@@ -2009,20 +2008,21 @@ void tst_QContactManagerFiltering::actionFiltering()
     QFETCH(int, version);
     QFETCH(QVariant, value);
     QFETCH(QString, expected);
-
+    
     /* Load the definition and field names for the various variant types for the current manager */
     defAndFieldNamesForTypeForActions = defAndFieldNamesForTypePerManager.value(cm);
+    if (!defAndFieldNamesForTypeForActions.isEmpty()) {
+        QContactActionFilter af;
+        af.setActionName(actionName);
+        af.setValue(value);
+        af.setVendor(vendorName, version);
 
-    QContactActionFilter af;
-    af.setActionName(actionName);
-    af.setValue(value);
-    af.setVendor(vendorName, version);
+        QList<QUniqueId> ids = cm->contacts(af);
+        QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
 
-    QList<QUniqueId> ids = cm->contacts(af);
-    QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
-
-    QString output = convertIds(contacts, ids);
-    QCOMPARE(output, expected);
+        QString output = convertIds(contacts, ids);
+        QCOMPARE(output, expected);
+    }
 }
 
 void tst_QContactManagerFiltering::idListFiltering_data()
@@ -2348,78 +2348,100 @@ QList<QUniqueId> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
 
     /* String */
     defAndFieldNames = definitionAndField(cm, QVariant::String, &nativelyFilterable);
-    definitionDetails.insert("String", defAndFieldNames);
-    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        definitionDetails.insert("String", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    }
     defAndFieldNames.first = QString();
     defAndFieldNames.second = QString();
 
     /* Integer */
     defAndFieldNames = definitionAndField(cm, QVariant::Int, &nativelyFilterable);
-    definitionDetails.insert("Integer", defAndFieldNames);
-    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        definitionDetails.insert("Integer", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    }
     defAndFieldNames.first = QString();
     defAndFieldNames.second = QString();
 
     /* Date time detail */
     defAndFieldNames = definitionAndField(cm, QVariant::DateTime, &nativelyFilterable);
-    definitionDetails.insert("DateTime", defAndFieldNames);
-    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        definitionDetails.insert("DateTime", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    }
     defAndFieldNames.first = QString();
     defAndFieldNames.second = QString();
 
     /* double detail */
     defAndFieldNames = definitionAndField(cm, QVariant::Double, &nativelyFilterable);
-    definitionDetails.insert("Double", defAndFieldNames);
-    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        definitionDetails.insert("Double", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    }
     defAndFieldNames.first = QString();
     defAndFieldNames.second = QString();
 
     /* bool */
     defAndFieldNames = definitionAndField(cm, QVariant::Bool, &nativelyFilterable);
-    definitionDetails.insert("Bool", defAndFieldNames);
-    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        definitionDetails.insert("Bool", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    }
     defAndFieldNames.first = QString();
     defAndFieldNames.second = QString();
 
     /* long long */
     defAndFieldNames = definitionAndField(cm, QVariant::LongLong, &nativelyFilterable);
-    definitionDetails.insert("LongLong", defAndFieldNames);
-    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        definitionDetails.insert("LongLong", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    }
     defAndFieldNames.first = QString();
     defAndFieldNames.second = QString();
 
     /* unsigned long long */
     defAndFieldNames = definitionAndField(cm, QVariant::ULongLong, &nativelyFilterable);
-    definitionDetails.insert("ULongLong", defAndFieldNames);
-    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        definitionDetails.insert("ULongLong", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    }
     defAndFieldNames.first = QString();
     defAndFieldNames.second = QString();
 
     /* date */
     defAndFieldNames = definitionAndField(cm, QVariant::Date, &nativelyFilterable);
-    definitionDetails.insert("Date", defAndFieldNames);
-    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        definitionDetails.insert("Date", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    }
     defAndFieldNames.first = QString();
     defAndFieldNames.second = QString();
 
     /* time */
     defAndFieldNames = definitionAndField(cm, QVariant::Time, &nativelyFilterable);
-    definitionDetails.insert("Time", defAndFieldNames);
-    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        definitionDetails.insert("Time", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    }
     defAndFieldNames.first = QString();
     defAndFieldNames.second = QString();
 
     /* uint */
     defAndFieldNames = definitionAndField(cm, QVariant::UInt, &nativelyFilterable);
-    definitionDetails.insert("UInt", defAndFieldNames);
-    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        definitionDetails.insert("UInt", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    }
     defAndFieldNames.first = QString();
     defAndFieldNames.second = QString();
 
     /* char */
     defAndFieldNames = definitionAndField(cm, QVariant::Char, &nativelyFilterable);
-    definitionDetails.insert("Char", defAndFieldNames);
-    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        definitionDetails.insert("Char", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    }
     defAndFieldNames.first = QString();
     defAndFieldNames.second = QString();
 
