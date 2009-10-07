@@ -36,16 +36,9 @@ using namespace SopranoLive;
 #include "qcontactmanagerenginefactory.h"
 #include "qtrackercontactasyncrequest.h"
 
+#include "qtrackercontactslive.h"
+
 class QContactAbstractRequest;
-
-namespace ContactContext {
-    typedef enum Location {
-        Unknown = 0,
-        Home,
-        Work
-    };
-}
-
 
 class QContactTrackerEngineData : public QSharedData
 {
@@ -70,24 +63,6 @@ public:
     mutable QUniqueId m_lastUsedId;
     mutable QMap<QString, QContactDetailDefinition> m_definitions;
     mutable QMap<QContactAbstractRequest*, QTrackerContactAsyncRequest*> m_requests;
-
-
-    /**
-     * Return a nco::Contact that is either a nco::Affiliation or
-     * nco::PersonContact depending on the context (work or home) for the given contact detail.
-     *
-     * \param det The contact detail that we are currently interested in and which
-     *            context we are examining.
-     * \param ncoContact The nco::PersonContact that we want to store the contact
-     *                    detail for.
-     * \return Returns a nco::Affiliation is the QContactDetail context is
-     *         work. Otherwise returns nco::PersonContact.
-     */
-    Live<nco::Role> contactByContext(const QContactDetail& det, const Live<nco::PersonContact>& ncoContact);
-
-private:
-    ContactContext::Location locationContext(const QContactDetail& det) const;
-    // all contacts - query instantiated on start to receive signals about added, removed and changed contacts
 };
 
 class QTCONTACTS_EXPORT QContactTrackerEngine : public QContactManagerEngine
@@ -155,7 +130,8 @@ private:
     void saveContactDetails( RDFServicePtr service,
                              Live<nco::PersonContact>& ncoContact,
                              QContact* contact,
-                             QContactManager::Error& error );
+                             QContactManager::Error& error,
+                             QTrackerContactsLive& cLive);
     //called from both constructors, connecting to all contact NodeList changes signals
     void connectToSignals();
     RDFVariable contactDetail2Rdf(const RDFVariable& rdfContact, const QString& definitionName, const QString& fieldName) const;

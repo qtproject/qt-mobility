@@ -10,12 +10,6 @@
 
 #include "qcontacttrackerbackend_p.h"
 
-#include "qcontact_p.h"
-#include "qcontactgroup_p.h"
-#include "qcontactmanager.h"
-#include "qcontactmanager_p.h"
-#include "commonfilters.h"
-
 #include <QtTracker/Tracker>
 #include <QtTracker/ontologies/nco.h>
 #include <QtTracker/ontologies/nie.h>
@@ -25,27 +19,13 @@
 #include <QFile>
 #include <QSet>
 
+#include "qcontact_p.h"
+#include "qcontactgroup_p.h"
+#include "qcontactmanager.h"
+#include "qcontactmanager_p.h"
+#include "commonfilters.h"
+
 #include "trackerchangelistener.h"
-
-Live<nco::Role> QContactTrackerEngineData::contactByContext(const QContactDetail& det, const Live<nco::PersonContact>& ncoContact) {
-    if (locationContext(det) == ContactContext::Work) {
-        // For "work" properties, we need to get the affiliation containing job related contact data
-        // #135682 bug this doesnt work - always return like there something existing  and then not saving anything
-        return ncoContact->getHasAffiliation();
-    } else {   // Assume home context.
-        // Tracker will return the same contact as we are editing - we want to add "home" properties to it.
-        return ncoContact;
-    }
-}
-
-ContactContext::Location QContactTrackerEngineData::locationContext(const QContactDetail& det) const {
-    if (det.contexts().contains(QContactDetail::ContextHome)) {
-        return ContactContext::Home;
-    } else if(det.contexts().contains(QContactDetail::ContextWork)) {
-        return ContactContext::Work;
-    }
-    return ContactContext::Unknown;
-}
 
 QContactManagerEngine* ContactTrackerFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
 {
@@ -430,7 +410,6 @@ bool QContactTrackerEngine::saveContact( QContact* contact,
                                          QSet<QUniqueId>& groupsChanged,
                                          QContactManager::Error& error)
 {
-    //::tracker()->setVerbosity(3);
     groupsChanged.clear(); // TODO not yet supported
     contactsAdded.clear();
     contactsChanged.clear();
@@ -447,28 +426,23 @@ bool QContactTrackerEngine::saveContact( QContact* contact,
         return false;
     }
 
-    RDFTransactionPtr transaction = ::tracker()->initiateTransaction();
-
-    RDFServicePtr service;
-    if(transaction)
-        // if transaction was obtained, grab the service from inside it and use it
-        service = transaction->service();
-    else
-        // otherwise, use tracker directly, with no transactions.
-        service = ::tracker();
-
+    QTrackerContactsLive cLive;
     Live<nco::PersonContact> ncoContact;
+    RDFServicePtr service = cLive.service();
     bool newContact = false;
     if(contact->id() == 0) {
         // Save new contact
         newContact = true;
+
         d->m_lastUsedId += 1;
         ncoContact = service->liveNode(QUrl("contact:"+(QString::number(d->m_lastUsedId))));
-        QSettings definitions(QSettings::IniFormat, QSettings::UserScope, "Nokia", "Trackerplugin");
         contact->setId(d->m_lastUsedId);
         ncoContact->setContactUID(QString::number(d->m_lastUsedId));
         ncoContact->setContentCreated(QDateTime::currentDateTime());
+
+        QSettings definitions(QSettings::IniFormat, QSettings::UserScope, "Nokia", "Trackerplugin");
         definitions.setValue("nextAvailableContactId", QString::number(d->m_lastUsedId));
+
         contactsAdded << contact->id();
     }  else {
         ncoContact = service->liveNode(QUrl("contact:"+QString::number(contact->id())));
@@ -476,28 +450,50 @@ bool QContactTrackerEngine::saveContact( QContact* contact,
         //  ncoContact->setContentLastModified(QDateTime::currentDateTime());
         contactsChanged << contact->id();
     }
+
+    cLive.setLiveContact(ncoContact);
+    cLive.setQContact(*contact);
+
+    // TODO There is no error handling nor reporting
+    error = QContactManager::NoError;
+    QStringList detailDefinitionsToSave = detailsDefinitionsInContact(*contact);
+
+    foreach(QString definition, detailDefinitionsToSave) {
+        QList<QContactDetail> details = contact->details(definition);
+        Q_ASSERT(!details.isEmpty());
+
+        if( definition == QContactName::DefinitionName ||
+            definition == QContactNickname::DefinitionName ) {
+            cLive.saveName();
+        }
+    }
+
+
     // if there are work related details, need to be saved to Affiliation.
     if( contactHasWorkRelatedDetails(*contact))
         createAffiliationIfItDoesntExist(contact->id());
 
     // Add a special tag for contact added from addressbook, not from fb, telepathy etc.
-    RDFVariable rdfContact = RDFVariable::fromType<nco::PersonContact>();
+    // TODO: Is this still needed?
+/*    RDFVariable rdfContact = RDFVariable::fromType<nco::PersonContact>();
     rdfContact.property<nco::contactUID>() = LiteralValue(QString::number(contact->id()));
     addTag(service, rdfContact, "addressbook");
-
-    saveContactDetails( service, ncoContact, contact, error );
+*/
+    saveContactDetails( service, ncoContact, contact, error, cLive );
 
     // remember to commit the transaction, otherwise all changes will be rolled back.
-    if(transaction)
-        transaction->commit();
+    cLive.commit();
+
     error = QContactManager::NoError;
+
     return true;
 }
 
 void QContactTrackerEngine::saveContactDetails( RDFServicePtr service,
                                                 Live<nco::PersonContact>& ncoContact,
                                                 QContact* contact,
-                                                QContactManager::Error& error )
+                                                QContactManager::Error& error,
+                                                QTrackerContactsLive& cLive)
 {
     // TODO There is no error handling nor reporting
     error = QContactManager::NoError;
@@ -514,23 +510,6 @@ void QContactTrackerEngine::saveContactDetails( RDFServicePtr service,
     {
         QList<QContactDetail> details = contact->details(definition);
         Q_ASSERT(!details.isEmpty());
-
-        if(definition == QContactName::DefinitionName) {
-            QContactDetail detail;
-            detail = details[0];
-            ncoContact->setNameHonorificPrefix(detail.value(QContactName::FieldPrefix));
-            ncoContact->setNameGiven(detail.value(QContactName::FieldFirst));
-            ncoContact->setNameAdditional(detail.value(QContactName::FieldMiddle));
-            ncoContact->setNameFamily(detail.value(QContactName::FieldLast));
-            continue;
-        }
-
-        if(definition == QContactNickname::DefinitionName) {
-            QContactDetail detail;
-            detail = details[0];
-            ncoContact->setNickname(detail.value(QContactNickname::FieldNickname));
-            continue;
-        }
 
         RDFUpdate updateQuery;
         RDFVariable rdfAffiliation;
@@ -578,7 +557,7 @@ void QContactTrackerEngine::saveContactDetails( RDFServicePtr service,
             foreach(const QContactUrl& contacturl, filterByDetailType<QContactUrl>(details))
             {
                 QUrl url = contacturl.value(QContactUrl::FieldUrl);
-                Live<nco::Role> contact = d->contactByContext(contacturl, ncoContact);
+                Live<nco::Role> contact = cLive.contactByContext(contacturl, ncoContact);
 
                 if (contacturl.subType() == QContactUrl::SubTypeHomePage ){
                     Live< rdfs::Resource > liveUrl = contact->addWebsiteUrl();
@@ -608,7 +587,7 @@ void QContactTrackerEngine::saveContactDetails( RDFServicePtr service,
                     // TODO parse URI, once it is defined
                     QString account = det.value("Account");
                     QString serviceName = det.value("ServiceName");
-                    Live<nco::Role> contact = d->contactByContext(det, ncoContact);
+                    Live<nco::Role> contact = cLive.contactByContext(det, ncoContact);
                     Live<nco::IMAccount> liveIMAccount = contact->firstHasIMAccount();
                     if (0 == liveIMAccount)
                     {

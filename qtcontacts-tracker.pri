@@ -1,5 +1,4 @@
 message("qtcontacts-tracker.pri")
-
 !contains(DEFINES, QTCONTACTS_TRACKER_PRI) {
 message(" ^ including")
 DEFINES += QTCONTACTS_TRACKER_PRI
@@ -11,10 +10,11 @@ LIBS += -lQtContacts
 
 HEADERS += $$PWD/qcontacttrackerbackend_p.h \
            $$PWD/qtrackercontactasyncrequest.h \
-           $$PWD/trackerchangelistener.h 
-           
+           $$PWD/trackerchangelistener.h \
+           $$PWD/qtrackercontactslive.h
 
 SOURCES += $$PWD/qcontacttrackerbackend.cpp \
            $$PWD/qtrackercontactasyncrequest.cpp \
-           $$PWD/trackerchangelistener.cpp
+           $$PWD/trackerchangelistener.cpp \
+           $$PWD/qtrackercontactslive.cpp 
 }
