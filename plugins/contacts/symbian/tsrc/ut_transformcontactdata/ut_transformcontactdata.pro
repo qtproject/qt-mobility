@@ -33,7 +33,8 @@ symbian:
 				../../inc/transformorganisation.h \
 				../../inc/transformavatar.h \
 				../../inc/transformsynctarget.h \
-                ../../inc/transformgender.h
+                ../../inc/transformgender.h \
+                ../../inc/transformanniversary.h
 	
 	SOURCES += ut_transformcontactdata.cpp \ 
 				../../src/transformcontactdata.cpp \
@@ -48,7 +49,8 @@ symbian:
 				../../src/transformorganisation.cpp \
 				../../src/transformavatar.cpp \
 				../../src/transformsynctarget.cpp \
-				../../src/transformgender.cpp
+				../../src/transformgender.cpp \
+				../../src/transformanniversary.cpp
 
 	TARGET.CAPABILITY = ALL -TCB
   

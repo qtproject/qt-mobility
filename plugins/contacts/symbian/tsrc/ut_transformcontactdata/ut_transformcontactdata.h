@@ -57,6 +57,7 @@ private slots:
 	void executeTransformAvatar();
 	void executeTransformSyncTarget();
 	void executeTransformGender();
+	void executeTransformAnniversary();
 	
 private:
     void validateTransformEmail(TPtrC16 field, QString detail);
@@ -82,5 +83,6 @@ private:
     void validateTransformAvatar(TPtrC16 field, QString detail);
     void validateTransformSyncTarget(TPtrC16 field, QString detail);
     void validateTransformGender(TPtrC16 field, QString detail);
+    void validateTransformAnniversary(TPtrC16 field, QDate dateDetail, QString eventDetail);
     void validateContexts(TransformContactData* transformContactData) const; 
 };

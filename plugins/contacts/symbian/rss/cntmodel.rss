@@ -852,7 +852,16 @@ RESOURCE ARRAY r_cntui_new_field_defns
       vCardMapping=KIntContactFieldVCardMapUnknown;
       category=EContactCategoryNone;
       fieldName=STRING_r_cntui_new_field_defns14;
+      },
+    FIELD // Anniversary
+      {
+      fieldStorageType=KStorageTypeText;
+      contactFieldType=KUidContactFieldAnniversaryValue;
+      vCardMapping=KIntContactFieldVCardMapAnniversary;
+      category=EContactCategoryOther;
+      fieldName=STRING_r_cntui_new_field_defns66;
       }  
+
     };
  }
 

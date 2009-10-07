@@ -45,6 +45,7 @@
 #include "transformavatar.h"
 #include "transformsynctarget.h"
 #include "transformgender.h"
+#include "transformanniversary.h"
 
 #include <QtTest/QtTest>
 
@@ -151,6 +152,13 @@ void TestTransformContactData::executeTransformGender()
 {
     validateTransformGender(_L("dummygender"), QString("dummygender"));
     validateTransformGender(_L(""), QString(""));
+}
+
+void TestTransformContactData::executeTransformAnniversary()
+{
+    QDate dateDetail(2009, 9, 28);
+    validateTransformAnniversary(_L("2009-09-28,dummyevent"), dateDetail, QString("dummyevent"));
+    validateTransformAnniversary(_L("dummyevent"), QDate(), QString("dummyevent"));
 }
 
 void TestTransformContactData::validateTransformEmail(TPtrC16 field, QString detail)
@@ -990,6 +998,39 @@ void TestTransformContactData::validateTransformGender(TPtrC16 field, QString de
     delete contactDetail;
     delete newField;
     delete transformGender;
+}
+
+void TestTransformContactData::validateTransformAnniversary(TPtrC16 field, QDate dateDetail, QString eventDetail)
+{
+    TransformContactData* transformAnniversary = new TransformAnniversary();
+    QVERIFY(transformAnniversary != 0);
+    QVERIFY(transformAnniversary->supportsField(KUidContactFieldAnniversary.iUid));
+    QVERIFY(transformAnniversary->supportsDetail(QContactAnniversary::DefinitionName));
+    
+    validateContexts(transformAnniversary);
+    
+    QContactAnniversary anniversary;
+    anniversary.setOriginalDate(dateDetail);
+    anniversary.setEvent(eventDetail);
+    QList<CContactItemField *> fields = transformAnniversary->transformDetailL(anniversary);
+    QVERIFY(fields.count() == 1);
+    QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldAnniversary));
+    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
+    
+    CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldAnniversary);
+    newField->TextStorage()->SetTextL(field);
+    QContact contact;
+    QContactDetail* contactDetail = transformAnniversary->transformItemField(*newField, contact);
+    const QContactAnniversary* anniversaryInfo(static_cast<const QContactAnniversary*>(contactDetail));
+    QCOMPARE(anniversaryInfo->event(), eventDetail);
+    if (dateDetail.isValid()) {
+        QCOMPARE(anniversaryInfo->originalDate(), dateDetail);
+    }
+        
+    delete contactDetail;
+    delete newField;
+    delete transformAnniversary;  
 }
 
 void TestTransformContactData::validateContexts(TransformContactData* transformContactData) const
