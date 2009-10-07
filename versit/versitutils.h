@@ -31,37 +31,44 @@
 **
 ****************************************************************************/
 
-#include "testresultxmlparser.h"
-#include "ut_qversitcontactgenerator.h"
-#include "ut_versitutils.h"
 
-#include <QtTest/QtTest>
+#ifndef VERSITUTILS_H
+#define VERSITUTILS_H
 
-int main(int /*argc*/, char* /*argv[]*/) 
+#include <QByteArray>
+#include <QPair>
+#include <QMultiMap>
+
+
+class VersitUtils                
 {
-    printf("Running tests...\n");
-    TestResultXmlParser parser;
-    QStringList args("ut_versit");
-    args << "-xml" << "-o";
-
-    UT_QVersitContactGenerator ut_versitContactGenerator;
-    QString resultFileName = "c:/ut_versitContactGenerator.xml";
-    args << resultFileName;    
-    QTest::qExec(&ut_versitContactGenerator, args);
-    parser.parseAndPrintResults(resultFileName); 
-
-    UT_VersitUtils ut_versitUtils;
-    resultFileName = "c:/ut_versitUtils.xml";
-    args.replace(args.count()-1,resultFileName);    
-    QTest::qExec(&ut_versitUtils, args);
-    parser.parseAndPrintResults(resultFileName,true);    
+public:
+    static QByteArray unfold(QByteArray& text);
+    static bool parseVersitDocument(QByteArray& text);
+    static QPair<QByteArray,QByteArray> parseNextVersitProperty(QByteArray& text);  
+    static bool containsSpecialChars(const QByteArray& text);
+    static QByteArray encodeQuotedPrintable(QByteArray& text);
+    static QByteArray decodeQuotedPrintable(QByteArray& text);
+    static QByteArray extractPropertyName(const QByteArray& property);
+    static QByteArray extractPropertyValue(const QByteArray& property);
+    static QMultiMap<QByteArray,QByteArray> extractPropertyParams(
+        const QByteArray& property);
     
-    printf("Press any key...\n");
-    getchar(); 
+private:
+    
+    static void addParam(
+        QMultiMap<QByteArray,QByteArray>& params,
+        const QByteArray& originalString,
+        int startPosition, 
+        int length=-1);    
+    static QByteArray paramName(const QByteArray& parameter);
+    static QByteArray paramValue(const QByteArray& parameter);
+    static int findHardLineBreakInQuotedPrintable(const QByteArray& encoded);
+    static int countLeadingWhiteSpaces(const QByteArray& text, int pos=0);
 
-    return 0;   
-}
+private:
+    
+    friend class UT_VersitUtils;
+};
 
-
-
- 
+#endif VERSITUTILS_H

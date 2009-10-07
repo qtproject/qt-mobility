@@ -31,37 +31,32 @@
 **
 ****************************************************************************/
 
-#include "testresultxmlparser.h"
-#include "ut_qversitcontactgenerator.h"
-#include "ut_versitutils.h"
+#ifndef UT_VERSITUTILS_H
+#define UT_VERSITUTILS_H
 
-#include <QtTest/QtTest>
+#include <QObject>
 
-int main(int /*argc*/, char* /*argv[]*/) 
+
+class UT_VersitUtils : public QObject                 
 {
-    printf("Running tests...\n");
-    TestResultXmlParser parser;
-    QStringList args("ut_versit");
-    args << "-xml" << "-o";
-
-    UT_QVersitContactGenerator ut_versitContactGenerator;
-    QString resultFileName = "c:/ut_versitContactGenerator.xml";
-    args << resultFileName;    
-    QTest::qExec(&ut_versitContactGenerator, args);
-    parser.parseAndPrintResults(resultFileName); 
-
-    UT_VersitUtils ut_versitUtils;
-    resultFileName = "c:/ut_versitUtils.xml";
-    args.replace(args.count()-1,resultFileName);    
-    QTest::qExec(&ut_versitUtils, args);
-    parser.parseAndPrintResults(resultFileName,true);    
+     Q_OBJECT
     
-    printf("Press any key...\n");
-    getchar(); 
+private slots:
 
-    return 0;   
-}
+    void testCountLeadingWhiteSpaces();
+    void testFindHardLineBreakInQuotedPrintable();
+    void testParamName();
+    void testParamValue();
+    void testAddParam();
+    void testUnfold();
+    void testContainsSpecialChars();
+    void testEncodeQuotedPrintable();
+    void testDecodeQuotedPrintable();
+    void testExtractPropertyName();
+    void testExtractPropertyValue();
+    void testExtractPropertyParams();
+    void testParseNextVersitProperty();
+    void testParseVersitDocument();
+};
 
-
-
- 
+#endif // UT_VERSITUTILS_H
