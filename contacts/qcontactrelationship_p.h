@@ -45,6 +45,8 @@
 // We mean it.
 //
 
+#include <QList>
+#include <QPair>
 #include <QString>
 #include <QSharedData>
 
@@ -55,20 +57,15 @@ class QContactRelationshipPrivate : public QSharedData
 public:
     QContactRelationshipPrivate()
             : QSharedData(),
-            m_leftId(0),
-            m_rightId(0),
-            m_priority(0)
+            m_sourceId(0)
     {
     }
 
     QContactRelationshipPrivate(const QContactRelationshipPrivate& other)
             : QSharedData(other),
-            m_leftId(other.m_leftId),
-            m_rightId(other.m_rightId),
-            m_leftManagerUri(other.m_leftManagerUri),
-            m_rightManagerUri(other.m_rightManagerUri),
-            m_relationshipType(other.m_relationshipType),
-            m_priority(other.m_priority)
+            m_sourceId(other.m_sourceId),
+            m_involved(other.m_involved),
+            m_relationshipType(other.m_relationshipType)
     {
     }
 
@@ -76,12 +73,9 @@ public:
     {
     }
 
-    QUniqueId m_leftId;
-    QUniqueId m_rightId;
-    QString m_leftManagerUri;
-    QString m_rightManagerUri;
+    QUniqueId m_sourceId;
+    QList<QPair<QString, QUniqueId> > m_involved;
     QString m_relationshipType;
-    int m_priority;
 };
 
 #endif

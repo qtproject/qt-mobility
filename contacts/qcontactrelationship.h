@@ -36,6 +36,8 @@
 #define QCONTACTRELATIONSHIP_H
 
 #include <QString>
+#include <QList>
+#include <QPair>
 #include <QSharedDataPointer>
 
 #include "qtcontactsglobal.h"
@@ -53,8 +55,8 @@ public:
     const char* RelationshipTypeManager;
     const char* RelationshipTypeSpouse;
 #else
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeIsMemberOf, "IsMemberOf");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeIsAggregatedBy, "IsAggregatedBy");
+    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeHasMember, "HasMember");
+    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeIsAggregates, "Aggregates");
     Q_DECLARE_LATIN1_LITERAL(RelationshipTypeIs, "Is");
     Q_DECLARE_LATIN1_LITERAL(RelationshipTypeAssistant, "Assistant");
     Q_DECLARE_LATIN1_LITERAL(RelationshipTypeManager, "Manager");
@@ -69,19 +71,13 @@ public:
     bool operator==(const QContactRelationship &other) const;
     bool operator!=(const QContactRelationship &other) const { return !(*this==other); }
 
-    QUniqueId leftId() const;
-    QUniqueId rightId() const;
-    QString leftManagerUri() const;
-    QString rightManagerUri() const;
+    QUniqueId sourceId() const;
+    QList<QPair<QString, QUniqueId> > involved() const;
     QString relationshipType() const;
-    int priority() const;
 
-    void setLeftId(const QUniqueId& id);
-    void setRightId(const QUniqueId& id);
-    void setLeftManagerUri(const QString& uri = QString());
-    void setRightManagerUri(const QString& uri = QString());
+    void setSourceId(const QUniqueId& id);
+    void setInvolved(const QList<QPair<QString, QUniqueId> >& involvedContacts);
     void setRelationshipType(const QString& relationshipType);
-    void setPriority(int priority);
 
 private:
     QSharedDataPointer<QContactRelationshipPrivate> d;

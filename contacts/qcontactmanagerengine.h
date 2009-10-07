@@ -85,9 +85,9 @@ public:
     QUniqueId selfContactId(QContactManager::Error& error) const;
 
     /* Relationships between contacts */
-    QList<QContactRelationship> relationships(const QUniqueId& leftId, const QString& relationshipType, const QUniqueId& rightId, QContactManager::Error& error);
-    QList<QContactRelationship> relationships(const QString& relationshipType, const QUniqueId& participantId, QContactManager::Error& error);
-    QList<QContactRelationship> relationships(const QUniqueId& participantId, QContactManager::Error& error);
+    QList<QContactRelationship> relationships(const QUniqueId& sourceId, const QString& relationshipType, QContactManager::Error& error);
+    QList<QContactRelationship> relationships(const QString& relationshipType, const QPair<QString, QUniqueId>& participantUri, QContactManager::Error& error);
+    QList<QContactRelationship> relationships(const QPair<QString, QUniqueId>& participantUri, QContactManager::Error& error);
     bool saveRelationship(QContactRelationship* relationship, QContactManager::Error& error);
     QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error);
     bool removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error);

@@ -111,9 +111,9 @@ public:
     QUniqueId selfContactId() const;
 
     /* Relationships */
-    QList<QContactRelationship> relationships(const QUniqueId& leftId, const QString& relationshipType, const QUniqueId& rightId);
-    QList<QContactRelationship> relationships(const QString& relationshipType = QString(), const QUniqueId& participantId = QUniqueId(0));
-    QList<QContactRelationship> relationships(const QUniqueId& participantId);
+    QList<QContactRelationship> relationships(const QUniqueId& sourceId, const QString& relationshipType = QString());
+    QList<QContactRelationship> relationships(const QString& relationshipType, const QPair<QString, QUniqueId>& participantUri = (QPair<QString, QUniqueId>()));
+    QList<QContactRelationship> relationships(const QPair<QString, QUniqueId>& participantUri);
     bool saveRelationship(QContactRelationship* relationship);
     QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships);
     bool removeRelationship(const QContactRelationship& relationship);

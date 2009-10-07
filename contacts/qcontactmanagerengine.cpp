@@ -247,45 +247,43 @@ QUniqueId QContactManagerEngine::selfContactId(QContactManager::Error& error) co
 }
 
 /*!
- * Returns all relationships of the given \a relationshipType which the contact identified by \a leftId has with the contact identified by \a rightId.
- * If the \a leftId is the zero id, a list of all of the relationships of the given \a relationshipType where the contact identified by \a rightId is
- * the right participant is returned.  If the \a rightId is the zero id, a list of all of the relationships of the given \a relationshipType where the
- * contact identified by \a leftId is the left participant is returned.  If the \a relationshipType is empty, relationships of any type are returned.
+ * Returns all relationships of the given \a relationshipType which the contact identified by \a sourceId has.
+ * If the \a source is the zero id, a list of all of the relationships of the given \a relationshipType is returned.
+ * If the \a relationshipType is empty, relationships of any type are returned.
  * If no relationships are found, \a error is set to \c QContactManager::DoesNotExistError; if the operation completes successfully, \a error is set
  * to \c QContactManager::NoError.
  */
-QList<QContactRelationship> QContactManagerEngine::relationships(const QUniqueId& leftId, const QString& relationshipType, const QUniqueId& rightId, QContactManager::Error& error)
+QList<QContactRelationship> QContactManagerEngine::relationships(const QUniqueId& sourceId, const QString& relationshipType, QContactManager::Error& error)
 {
-    Q_UNUSED(leftId);
+    Q_UNUSED(sourceId);
     Q_UNUSED(relationshipType);
-    Q_UNUSED(rightId);
     error = QContactManager::DoesNotExistError;
     return QList<QContactRelationship>();
 }
 
 /*!
- * Returns all relationships of the specified \a relationshipType in which the contact identified by \a participantId is a left or right participant.
- * If \a participantId is the zero id, all relationships of the given \a relationshipType are returned.  If the \a relationshipType
- * is empty, all relationships in which the contact identified by \a participantId is a left or right participant are returned.
+ * Returns all relationships of the specified \a relationshipType in which the contact identified by \a participantUri is a source or involved participant.
+ * If \a participantUri consists of an empty manager URI and the zero id, all relationships of the given \a relationshipType are returned.  If the \a relationshipType
+ * is empty, all relationships in which the contact identified by \a participantUri is a source or involved participant are returned.
  * If no relationships are found, \a error is set to \c QContactManager::DoesNotExistError; if the operation completes successfully, \a error is set
  * to \c QContactManager::NoError.
  */
-QList<QContactRelationship> QContactManagerEngine::relationships(const QString& relationshipType, const QUniqueId& participantId, QContactManager::Error& error)
+QList<QContactRelationship> QContactManagerEngine::relationships(const QString& relationshipType, const QPair<QString, QUniqueId>& participantUri, QContactManager::Error& error)
 {
     Q_UNUSED(relationshipType);
-    Q_UNUSED(participantId);
+    Q_UNUSED(participantUri);
     error = QContactManager::DoesNotExistError;
     return QList<QContactRelationship>();
 }
 
 /*!
- * Returns all relationships of any type in which the contact identified by \a participantId is a left or right participant.
+ * Returns all relationships of any type in which the contact identified by \a participantUri is a source or involved participant.
  * If no relationships are found, \a error is set to \c QContactManager::DoesNotExistError; if the operation completes successfully, \a error is set
  * to \c QContactManager::NoError.
  */
-QList<QContactRelationship> QContactManagerEngine::relationships(const QUniqueId& participantId, QContactManager::Error& error)
+QList<QContactRelationship> QContactManagerEngine::relationships(const QPair<QString, QUniqueId>& participantUri, QContactManager::Error& error)
 {
-    Q_UNUSED(participantId);
+    Q_UNUSED(participantUri);
     error = QContactManager::DoesNotExistError;
     return QList<QContactRelationship>();
 }

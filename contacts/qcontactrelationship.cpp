@@ -37,46 +37,44 @@
 
 /*!
  * \class QContactRelationship
- * \brief Describes a relationship between two contacts.
+ * \brief Describes a one-to-many relationship between a locally-stored contact and a list of other (possibly remote) contacts.
  *
- * Each relationship is uniquely identified by the combination of the
- * left contact id, the left contact manager uri, the relationship type, the right contact id and the right contact manager uri.
- * That is, the priority of a relationship is not a defining datum.
+ * Each relationship is uniquely identified by the combination of the source id and the relationship type.
  */
 
 /*!
- * \variable QContactRelationship::RelationshipTypeIsMemberOf
- * The relationship type which identifies the left contact as a member of the group described by the right contact
+ * \variable QContactRelationship::RelationshipTypeHasMember
+ * The relationship type which identifies the source contact as being a group which includes each of the involved contacts
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeIsMemberOf, "IsMemberOf");
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeHasMember, "HasMember");
 
 /*!
- * \variable QContactRelationship::RelationshipTypeIsAggregatedBy
- * The relationship type which identifies the left contact as being aggregated by the metacontact described by the right contact
+ * \variable QContactRelationship::RelationshipTypeAggregates
+ * The relationship type which identifies the source contact as aggregating the involved contacts into a metacontact
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeIsAggregatedBy, "IsAggregatedBy");
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeIsAggregates, "Aggregates");
 
 /*!
  * \variable QContactRelationship::RelationshipTypeIs
- * The relationship type which identifies the left contact as being the same contact as the right contact
+ * The relationship type which identifies the source contact as being the same contact as the involved contacts
  */
 Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeIs, "Is");
 
 /*!
  * \variable QContactRelationship::RelationshipTypeAssistant
- * The relationship type which identifies the left contact as being the assistant of the right contact
+ * The relationship type which identifies the source contact as being the assistant of the involved contacts
  */
 Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeAssistant, "Assistant");
 
 /*!
  * \variable QContactRelationship::RelationshipTypeManager
- * The relationship type which identifies the left contact as being the manager of the right contact
+ * The relationship type which identifies the source contact as being the manager of the involved contacts
  */
 Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeManager, "Manager");
 
 /*!
  * \variable QContactRelationship::RelationshipTypeSpouse
- * The relationship type which identifies the left contact as being the spouse of the right contact
+ * The relationship type which identifies the source contact as being the spouse of the involved contacts
  */
 Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeSpouse, "Spouse");
 
@@ -114,17 +112,12 @@ QContactRelationship& QContactRelationship::operator=(const QContactRelationship
 
 /*!
  * Returns true if this relationship is equal to the \a other relationship, otherwise returns false.
- * Ignores the priority of the relationship when calculating equality.
  */
 bool QContactRelationship::operator==(const QContactRelationship &other) const
 {
-    if (d->m_leftId != other.d->m_leftId)
+    if (d->m_sourceId != other.d->m_sourceId)
         return false;
-    if (d->m_rightId != other.d->m_rightId)
-        return false;
-    if (d->m_leftManagerUri != other.d->m_leftManagerUri)
-        return false;
-    if (d->m_rightManagerUri != other.d->m_rightManagerUri)
+    if (d->m_involved != other.d->m_involved)
         return false;
     if (d->m_relationshipType != other.d->m_relationshipType)
         return false;
@@ -132,43 +125,25 @@ bool QContactRelationship::operator==(const QContactRelationship &other) const
 }
 
 /*!
- * Returns the id of the contact which has a relationship of the given type with the right contact
- * \sa relationshipType(), rightId(), setLeftId()
+ * Returns the id of the locally-stored contact which has a relationship of the given type with the involved contacts
+ * \sa relationshipType(), involved(), setSourceId()
  */
-QUniqueId QContactRelationship::leftId() const
+QUniqueId QContactRelationship::sourceId() const
 {
-    return d->m_leftId;
+    return d->m_sourceId;
 }
 
 /*!
  * Returns the id of the contact with which the left contact has a relationship of the given type
- * \sa relationshipType(), leftId(), setRightId()
+ * \sa relationshipType(), sourceId(), setInvolved()
  */
-QUniqueId QContactRelationship::rightId() const
+QList<QPair<QString, QUniqueId> > QContactRelationship::involved() const
 {
-    return d->m_rightId;
+    return d->m_involved;
 }
 
 /*!
- * Returns the URI of the manager in which the left contact is stored
- * \sa setLeftManagerUri()
- */
-QString QContactRelationship::leftManagerUri() const
-{
-    return d->m_leftManagerUri;
-}
-
-/*!
- * Returns the URI of the manager in which the right contact is stored
- * \sa setRightManagerUri()
- */
-QString QContactRelationship::rightManagerUri() const
-{
-    return d->m_rightManagerUri;
-}
-
-/*!
- * Returns the type of relationship which the left contact has with the right contact
+ * Returns the type of relationship which the source contact has with the involved contacts
  * \sa setRelationshipType()
  */
 QString QContactRelationship::relationshipType() const
@@ -177,62 +152,28 @@ QString QContactRelationship::relationshipType() const
 }
 
 /*!
- * Returns the priority of the relationship.  The priority of the relationship determines how important
- * the relationship is in comparison with other relationships.  A relationship with higher priority
- * is more important than a relationship with a lower priority.
- * \sa setPriority()
- */
-int QContactRelationship::priority() const
-{
-    return d->m_priority;
-}
-
-/*!
- * Sets the id of the left contact in the relationship to \a id.  This contact has
- * a relationship of the specified type with the right contact.
+ * Sets the id of the source contact in the relationship to \a id.  This contact
+ * must be stored in the manager in which the relationship is stored, and has
+ * a relationship of the specified type with the involved contacts.
  * \sa leftId()
  */
-void QContactRelationship::setLeftId(const QUniqueId& id)
+void QContactRelationship::setSourceId(const QUniqueId& id)
 {
-    d->m_leftId = id;
+    d->m_sourceId = id;
 }
 
 /*!
- * Sets the id of the right contact in the relationship to \a id.  The left contact
- * has a relationship of the specified type with this contact.
- * \sa rightId()
+ * Sets the involved contacts in the relationship to \a involvedContacts.  The source contact
+ * has a relationship of the specified type with these contacts.
+ * \sa involved()
  */
-void QContactRelationship::setRightId(const QUniqueId& id)
+void QContactRelationship::setInvolved(const QList<QPair<QString, QUniqueId> >& involvedContacts)
 {
-    d->m_rightId = id;
+    d->m_involved = involvedContacts;
 }
 
 /*!
- * Sets the URI of the manager in which the left contact is stored to \a uri.
- * If the \a uri is empty, or if this function is not called prior to saving
- * the relationship in a manager, the manager will assume that the left contact
- * is stored by it.
- * \sa leftManagerUri()
- */
-void QContactRelationship::setLeftManagerUri(const QString& uri)
-{
-    d->m_leftManagerUri = uri;
-}
-
-/*!
- * Sets the URI of the manager in which the right contact is stored to \a uri.
- * If the \a uri is empty, or if this function is not called prior to saving
- * the relationship in a manager, the manager will assume that the right contact
- * is stored by it.
- * \sa rightManagerUri()
- */
-void QContactRelationship::setRightManagerUri(const QString& uri)
-{
-    d->m_rightManagerUri = uri;
-}
-
-/*!
- * Sets the type of relationship that the left contact has with the right relationship,
+ * Sets the type of relationship that the source contact has with the involved contacts
  * to \a relationshipType.
  * \sa relationshipType()
  */
@@ -241,11 +182,3 @@ void QContactRelationship::setRelationshipType(const QString& relationshipType)
     d->m_relationshipType = relationshipType;
 }
 
-/*!
- * Sets the priority of the relationship to \a priority.
- * \sa priority()
- */
-void QContactRelationship::setPriority(int priority)
-{
-    d->m_priority = priority;
-}

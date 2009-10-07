@@ -64,15 +64,11 @@ public:
     void setFixedUri(const QString& fixedUri);
     void setFixedId(const QUniqueId& fixedId);
     void setRelationshipType(const QString& relationshipType);
-    void setMinimumPriority(int min);
-    void setMaximumPriority(int max);
 
     Side side() const;
     QString fixedUri() const;
     QUniqueId fixedId() const;
     QString relationshipType() const;
-    int minimumPriority() const;
-    int maximumPriority() const;
 
 private:
     Q_DECLARE_CONTACTFILTER_PRIVATE(QContactRelationshipFilter)
