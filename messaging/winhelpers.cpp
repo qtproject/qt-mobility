@@ -1284,6 +1284,10 @@ MapiFolderPtr MapiFolder::nextSubFolder(QMessageStore::ErrorCode *lastError, con
             } else {
                 // We have retrieved all rows
                 FreeProws(rows);
+
+                // Release the subfolders, and allow the traversal to restart
+                mapiRelease(_subFolders);
+                _init = false;
                 break;
             }
         } else {

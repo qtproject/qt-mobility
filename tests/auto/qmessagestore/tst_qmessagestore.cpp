@@ -82,7 +82,6 @@ public slots:
     void messageAdded(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &filterIds)
     {
         added.append(qMakePair(id, filterIds));
-        //qDebug() << "message added:" << QMessage(id).subject();
     }
 
     void messageUpdated(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &filterIds)
@@ -511,14 +510,17 @@ void tst_QMessageStore::testMessage()
     QVERIFY(messageId.isValid());
     QVERIFY(messageId != QMessageId());
     QCOMPARE(QMessageStore::instance()->countMessages(), originalCount + 1);
-    
+
     while (QCoreApplication::hasPendingEvents())
         QCoreApplication::processEvents();
 
     QCOMPARE(catcher.added.count(), 1);
     QCOMPARE(catcher.added.first().first, messageId);
+#ifndef Q_OS_WIN
+    // Filters not yet implemented on windows
     QCOMPARE(catcher.added.first().second.count(), 2);
     QCOMPARE(catcher.added.first().second, QSet<QMessageStore::NotificationFilterId>() << filter2 << filter3);
+#endif
 
     QMessage message(messageId);
     QCOMPARE(message.id(), messageId);
@@ -590,6 +592,8 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(body.textContent(), replacementText);
     QAPPROXIMATECOMPARE(body.size(), 72u, 36u);
 
+#ifndef Q_OS_WIN
+    // Update not yet implemented on windows
     QMessageStore::instance()->updateMessage(&message);
     QCOMPARE(QMessageStore::instance()->lastError(), QMessageStore::NoError);
 
@@ -598,8 +602,11 @@ void tst_QMessageStore::testMessage()
 
     QCOMPARE(catcher.updated.count(), 1);
     QCOMPARE(catcher.updated.first().first, messageId);
+#ifndef Q_OS_WIN
+    // Filters not yet implemented on windows
     QCOMPARE(catcher.updated.first().second.count(), 2);
     QCOMPARE(catcher.updated.first().second, QSet<QMessageStore::NotificationFilterId>() << filter2 << filter3);
+#endif
 
     QMessage updated(message.id());
 
@@ -617,6 +624,7 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), replacementText);
     QAPPROXIMATECOMPARE(body.size(), 72u, 36u);
+#endif
 
     QMessageStore::instance()->removeMessage(message.id());
     QCOMPARE(QMessageStore::instance()->lastError(), QMessageStore::NoError);
@@ -627,8 +635,11 @@ void tst_QMessageStore::testMessage()
 
     QCOMPARE(removeCatcher.removed.count(), 1);
     QCOMPARE(removeCatcher.removed.first().first, messageId);
+#ifndef Q_OS_WIN
+    // Filters not yet implemented on windows
     QCOMPARE(removeCatcher.removed.first().second.count(), 1);
     QCOMPARE(removeCatcher.removed.first().second, QSet<QMessageStore::NotificationFilterId>() << filter3);
+#endif
 
     QMessageStore::instance()->unregisterNotificationFilter(filter1);
     QMessageStore::instance()->unregisterNotificationFilter(filter2);

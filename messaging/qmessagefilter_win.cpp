@@ -78,32 +78,35 @@ MapiFolderIterator::MapiFolderIterator(MapiStorePtr store, MapiFolderPtr root, Q
 MapiFolderPtr MapiFolderIterator::next()
 {
     while (_store && _store->isValid() && !_folders.isEmpty()) {
-        if (!_folders.back()->isValid()) {
-            _folders.pop_back();
-            continue;
-        }
+        if (_folders.back()->isValid()) {
+            // Get the next subfolder of this folder
+            QMessageStore::ErrorCode ignored(QMessageStore::NoError);
+            MapiFolderPtr folder(_folders.back()->nextSubFolder(&ignored, *_store));
+            if (ignored == QMessageStore::NoError) {
+                if (folder && folder->isValid()) {
+                    // Descend into the subfolder
+                    _folders.append(folder);
 
-        QMessageStore::ErrorCode ignored(QMessageStore::NoError);
-        MapiFolderPtr folder(_folders.back()->nextSubFolder(&ignored, *_store));
-        if ((!folder || !folder->isValid()) && (ignored == QMessageStore::NoError)) {
-            _folders.pop_back(); // No more subfolders
-            continue;
-        }
-        if (ignored != QMessageStore::NoError) {
-            continue; // Bad subfolder, skip it
-        }
-        if (folder && folder->isValid()) {
-            _folders.append(folder);
-            QMessage::StandardFolder folderType(folder->standardFolder());
-            if ((_standardFoldersInclude.isEmpty() || _standardFoldersInclude.contains(folderType))
-                && (_standardFoldersExclude.isEmpty() || !_standardFoldersExclude.contains(folderType))) {
-                return folder;
+                    QMessage::StandardFolder folderType(folder->standardFolder());
+                    if ((_standardFoldersInclude.isEmpty() || _standardFoldersInclude.contains(folderType))
+                        && (_standardFoldersExclude.isEmpty() || !_standardFoldersExclude.contains(folderType))) {
+                        // This folder is the next one
+                        return folder;
+                    }
+                } else {
+                    if (folder) {
+                        qWarning() << "Invalid subfolder:" << folder->name();
+                    }
+                    _folders.pop_back(); // No more subfolders in the current folder
+                }
             } else {
-                continue;
+                qWarning() << "Error getting next subfolder...";
+                _folders.pop_back();
             }
+        } else {
+            qWarning() << "Invalid folder:" << _folders.back()->name();
+            _folders.pop_back();
         }
-        _folders.pop_back();
-        continue;
     }
 
     return MapiFolderPtr();
