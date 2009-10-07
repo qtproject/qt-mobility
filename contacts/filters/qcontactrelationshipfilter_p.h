@@ -48,6 +48,8 @@
 #include "qcontactfilter_p.h"
 #include "qcontactfilter.h"
 
+#include "qcontactrelationshipfilter.h"
+
 #include <QString>
 #include <QStringList>
 #include <QList>
@@ -57,52 +59,40 @@ class QContactRelationshipFilterPrivate : public QContactFilterPrivate
 public:
     QContactRelationshipFilterPrivate()
         : QContactFilterPrivate(),
-        m_minimumPriority(-1),
-        m_maximumPriority(-1)
+        m_roleInRelationship(QContactRelationshipFilter::Either),
+        m_otherParticipantId(0)
     {
     }
 
     QContactRelationshipFilterPrivate(const QContactRelationshipFilterPrivate& other)
         : QContactFilterPrivate(other),
-        m_leftIds(other.m_leftIds),
-        m_rightIds(other.m_rightIds),
-        m_leftManagerUris(other.m_leftManagerUris),
-        m_rightManagerUris(other.m_rightManagerUris),
-        m_relationshipTypes(other.m_relationshipTypes),
-        m_minimumPriority(other.m_minimumPriority),
-        m_maximumPriority(other.m_maximumPriority)
+        m_roleInRelationship(other.m_roleInRelationship),
+        m_otherParticipantId(other.m_otherParticipantId),
+        m_otherParticipantManagerUri(other.m_otherParticipantManagerUri),
+        m_relationshipType(other.m_relationshipType)
     {
     }
 
     virtual bool compare(const QContactFilterPrivate* other) const
     {
         const QContactRelationshipFilterPrivate *od = static_cast<const QContactRelationshipFilterPrivate*>(other);
-        if (m_leftIds != od->m_leftIds)
+        if (m_roleInRelationship != od->m_roleInRelationship)
             return false;
-        if (m_rightIds != od->m_rightIds)
+        if (m_otherParticipantId != od->m_otherParticipantId)
             return false;
-        if (m_leftManagerUris != od->m_leftManagerUris)
+        if (m_otherParticipantManagerUri != od->m_otherParticipantManagerUri)
             return false;
-        if (m_rightManagerUris != od->m_rightManagerUris)
-            return false;
-        if (m_relationshipTypes != od->m_relationshipTypes)
-            return false;
-        if (m_minimumPriority != od->m_minimumPriority)
-            return false;
-        if (m_maximumPriority != od->m_maximumPriority)
+        if (m_relationshipType != od->m_relationshipType)
             return false;
         return true;
     }
 
     Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactRelationshipFilter, QContactFilter::RelationshipFilter)
 
-    QList<QUniqueId> m_leftIds;
-    QList<QUniqueId> m_rightIds;
-    QStringList m_leftManagerUris;
-    QStringList m_rightManagerUris;
-    QStringList m_relationshipTypes;
-    int m_minimumPriority;
-    int m_maximumPriority;
+    QContactRelationshipFilter::Role m_roleInRelationship;
+    QUniqueId m_otherParticipantId;
+    QString m_otherParticipantManagerUri;
+    QString m_relationshipType;
 };
 
 #endif

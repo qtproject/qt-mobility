@@ -57,14 +57,14 @@ class QContactRelationshipPrivate : public QSharedData
 public:
     QContactRelationshipPrivate()
             : QSharedData(),
-            m_sourceId(0)
+            m_sourceContact(0)
     {
     }
 
     QContactRelationshipPrivate(const QContactRelationshipPrivate& other)
             : QSharedData(other),
-            m_sourceId(other.m_sourceId),
-            m_involved(other.m_involved),
+            m_sourceContact(other.m_sourceContact),
+            m_destinationContacts(other.m_destinationContacts),
             m_relationshipType(other.m_relationshipType)
     {
     }
@@ -73,8 +73,8 @@ public:
     {
     }
 
-    QUniqueId m_sourceId;
-    QList<QPair<QString, QUniqueId> > m_involved;
+    QUniqueId m_sourceContact;
+    QList<QPair<QString, QUniqueId> > m_destinationContacts;
     QString m_relationshipType;
 };
 

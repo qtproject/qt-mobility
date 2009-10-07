@@ -71,12 +71,12 @@ public:
     bool operator==(const QContactRelationship &other) const;
     bool operator!=(const QContactRelationship &other) const { return !(*this==other); }
 
-    QUniqueId sourceId() const;
-    QList<QPair<QString, QUniqueId> > involved() const;
+    QUniqueId sourceContact() const;
+    QList<QPair<QString, QUniqueId> > destinationContacts() const;
     QString relationshipType() const;
 
-    void setSourceId(const QUniqueId& id);
-    void setInvolved(const QList<QPair<QString, QUniqueId> >& involvedContacts);
+    void setSourceContact(const QUniqueId& id);
+    void setDestinationContacts(const QList<QPair<QString, QUniqueId> >& contacts);
     void setRelationshipType(const QString& relationshipType);
 
 private:

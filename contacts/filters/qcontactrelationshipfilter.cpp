@@ -57,46 +57,81 @@ QContactRelationshipFilter::QContactRelationshipFilter()
 {
 }
 
-void QContactRelationshipFilter::takeSide(QContactRelationshipFilter::Side side)
+/*!
+ * Sets the role in the relationship that a contact must be in order to match this filter to \a roleInRelationship
+ */
+void QContactRelationshipFilter::setRole(QContactRelationshipFilter::Role roleInRelationship)
 {
-    // TODO
+    Q_D(QContactRelationshipFilter);
+    d->m_roleInRelationship = roleInRelationship;
 }
 
-void QContactRelationshipFilter::setFixedUri(const QString& fixedUri)
+/*!
+ * Sets the type of relationship which a contact must have in order to match this filter to \a relationshipType
+ */
+void QContactRelationshipFilter::setType(const QString& relationshipType)
 {
-    // TODO
+    Q_D(QContactRelationshipFilter);
+    d->m_relationshipType;
 }
 
-void QContactRelationshipFilter::setFixedId(const QUniqueId& fixedId)
+/*!
+ * Sets the manager URI and contact id of the other participant which must be present in the relationship with
+ * the contact in order for the contact to match the filter to be \a managerUri and \a id respectively.
+ * If the manager URI is the empty string, it denotes a contact in the manager in which the relationship is stored.
+ */
+void QContactRelationshipFilter::setOtherParticipant(const QString& managerUri, const QUniqueId& id)
 {
-    // TODO
+    Q_D(QContactRelationshipFilter);
+    d->m_otherParticipantId = id;
+    d->m_otherParticipantManagerUri = managerUri;
 }
 
-void QContactRelationshipFilter::setRelationshipType(const QString& relationshipType)
+/*!
+ * Sets the contact id of the other participant which must be present in the relationship with the contact
+ * in order for the contact to match the filter to be \a id, and sets the manager URI of the participant
+ * to the empty string, which denotes the manager in which the relationship is stored.
+ */
+void QContactRelationshipFilter::setOtherParticipant(const QUniqueId& id)
 {
-    // TODO
+    Q_D(QContactRelationshipFilter);
+    d->m_otherParticipantId = id;
+    d->m_otherParticipantManagerUri = QString();
 }
 
-QContactRelationshipFilter::Side QContactRelationshipFilter::side() const
+/*!
+ * Returns the role that a contact must have in a relationship in order to match the filter
+ */
+QContactRelationshipFilter::Role QContactRelationshipFilter::role() const
 {
-    // TODO
-    return QContactRelationshipFilter::Left;
+    Q_D(const QContactRelationshipFilter);
+    return d->m_roleInRelationship;
 }
 
-QString QContactRelationshipFilter::fixedUri() const
+/*!
+ * Returns the type of relationship that a contact must have in order to match the filter
+ */
+QString QContactRelationshipFilter::type() const
 {
-    // TODO
-    return QString();
+    Q_D(const QContactRelationshipFilter);
+    return d->m_relationshipType;
 }
 
-QUniqueId QContactRelationshipFilter::fixedId() const
+/*!
+ * Returns the URI of the manager which must store the other participant for the contact to match the filter.
+ * An empty URI denotes that the other participant must be stored in the manager that stores the relationship.
+ */
+QString QContactRelationshipFilter::otherParticipantManagerUri() const
 {
-    // TODO
-    return QUniqueId();
+    Q_D(const QContactRelationshipFilter);
+    return d->m_otherParticipantManagerUri;
 }
 
-QString QContactRelationshipFilter::relationshipType() const
+/*!
+ * Returns the id of another contact with whom a contact must have a relationship in order to match the filter
+ */
+QUniqueId QContactRelationshipFilter::otherParticipantId() const
 {
-    // TODO
-    return QString();
+    Q_D(const QContactRelationshipFilter);
+    return d->m_otherParticipantId;
 }

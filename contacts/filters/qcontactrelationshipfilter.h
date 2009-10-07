@@ -54,21 +54,21 @@ public:
 //QCRF { 0, 0, 0, left}         -> only local contacts that are on the left hand side of a relationship
 //QCRF { mgr, id, 0, left }     -> only local contacts that are on the left hand side of a relationship, with mgr:id being on the right
 
-    enum Side {
-        Left = 0,
-        Right,
+    enum Role {
+        Source = 0,
+        Destination,
         Either
     };
 
-    void takeSide(QContactRelationshipFilter::Side side);
-    void setFixedUri(const QString& fixedUri);
-    void setFixedId(const QUniqueId& fixedId);
-    void setRelationshipType(const QString& relationshipType);
+    void setRole(QContactRelationshipFilter::Role roleInRelationship);
+    void setType(const QString& relationshipType);
+    void setOtherParticipant(const QString& managerUri, const QUniqueId& id);
+    void setOtherParticipant(const QUniqueId& id);
 
-    Side side() const;
-    QString fixedUri() const;
-    QUniqueId fixedId() const;
-    QString relationshipType() const;
+    QContactRelationshipFilter::Role role() const;
+    QString type() const;
+    QString otherParticipantManagerUri() const;
+    QUniqueId otherParticipantId() const;
 
 private:
     Q_DECLARE_CONTACTFILTER_PRIVATE(QContactRelationshipFilter)
