@@ -325,7 +325,8 @@ bool QPainterVideoSurface::start(const QVideoSurfaceFormat &format)
                 } else {
                     const GLubyte* errorString = glGetString(GL_PROGRAM_ERROR_STRING_ARB);
 
-                    qWarning("QPainterVideoSurface: Shader compile error %s", reinterpret_cast<const char *>(errorString));
+                    qWarning("QPainterVideoSurface: Shader compile error %s",
+                             reinterpret_cast<const char *>(errorString));
                     glDeleteProgramsARB(1, &m_shaderId);
 
                     m_textureCount = 0;
@@ -339,7 +340,8 @@ bool QPainterVideoSurface::start(const QVideoSurfaceFormat &format)
     #endif
         const QImage::Format imageFormat = QVideoFrame::equivalentImageFormat(format.pixelFormat());
 
-        if (imageFormat == QImage::Format_Invalid) {
+        if (imageFormat == QImage::Format_Invalid
+                || format.handleType() != QAbstractVideoBuffer::NoHandle) {
             setError(UnsupportedFormatError);
         } else {
             m_handleType = format.handleType();

@@ -118,51 +118,6 @@ private:
 Q_DECLARE_METATYPE(QVideoWidget::AspectRatioMode)
 Q_DECLARE_METATYPE(const uchar *)
 
-class QtTestEventCounter : public QObject
-{
-public:
-    QtTestEventCounter(QObject *object, QEvent::Type type)
-        : m_type(type)
-        , m_maximum(0)
-        , m_count(0)
-    {
-        object->installEventFilter(this);
-    }
-
-    int count() const { return m_count; }
-
-    bool eventFilter(QObject *, QEvent *e)
-    {
-        if (e->type() == m_type) {
-            if (++m_count == m_maximum)
-                QTestEventLoop::instance().exitLoop();
-        }
-        return false;
-    }
-
-    static bool waitForEvent(QObject *object, QEvent::Type type, int secs, int count = 1)
-    {
-        QtTestEventCounter counter(object, type, count);
-
-        QTestEventLoop::instance().enterLoop(secs);
-
-        return counter.m_count >= counter.m_maximum;
-    }
-
-private:
-    QtTestEventCounter(QObject *object, QEvent::Type type, int maximum)
-        : m_type(type)
-        , m_maximum(maximum)
-        , m_count(0)
-    {
-        object->installEventFilter(this);
-    }
-
-    QEvent::Type m_type;
-    int m_maximum;
-    int m_count;
-};
-
 class QtTestOutputControl : public QVideoOutputControl
 {
 public:
@@ -395,6 +350,38 @@ public:
     QtTestVideoService *testService;
 };
 
+class QtTestVideoWidget : public QVideoWidget
+{
+public:
+    QtTestVideoWidget(QMediaObject *object, QWidget *parent = 0)
+        : QVideoWidget(object, parent)
+        , m_paintCount(0)
+    {
+    }
+
+    bool waitForPaint(int secs)
+    {
+        const int paintCount = m_paintCount;
+
+        QTestEventLoop::instance().enterLoop(secs);
+
+        return m_paintCount != paintCount;
+    }
+
+protected:
+    void paintEvent(QPaintEvent *event)
+    {
+        ++m_paintCount;
+
+        QTestEventLoop::instance().exitLoop();
+
+        QVideoWidget::paintEvent(event);
+    }
+
+private:
+    int m_paintCount;
+};
+
 void tst_QVideoWidget::nullObject()
 {
     QVideoWidget widget(0);
@@ -575,7 +562,7 @@ void tst_QVideoWidget::showWindowControl()
     QtTestVideoObject object(new QtTestWindowControl, 0, 0);
     object.testService->windowControl->setNativeSize(QSize(240, 180));
 
-    QVideoWidget widget(&object);
+    QtTestVideoWidget widget(&object);
 
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
 
@@ -584,7 +571,7 @@ void tst_QVideoWidget::showWindowControl()
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::WindowOutput);
     QVERIFY(object.testService->windowControl->winId() != 0);
 
-    if (!QtTestEventCounter::waitForEvent(&widget, QEvent::Paint, 1))
+    if (!widget.waitForPaint(1))
         QSKIP("Didn't receive a paint event in a timely fashion", SkipSingle);
 
     QVERIFY(object.testService->windowControl->repaintCount() > 0);
@@ -1653,7 +1640,7 @@ void tst_QVideoWidget::rendererPresent()
 
     QtTestVideoObject object(0, 0, new QtTestRendererControl);
 
-    QVideoWidget widget(&object);
+    QtTestVideoWidget widget(&object);
     widget.show();
 
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::RendererOutput);

@@ -49,6 +49,8 @@ public:
     QGraphicsVideoItemPrivate()
         : q_ptr(0)
         , surface(0)
+        , outputControl(0)
+        , rendererControl(0)
     {
     }
 
@@ -104,22 +106,24 @@ QGraphicsVideoItem::QGraphicsVideoItem(QMediaObject *object, QGraphicsItem *pare
 
     Q_D(QGraphicsVideoItem);
 
-    if (QMediaService *service = object->service()) {
-        d->outputControl = qobject_cast<QVideoOutputControl *>(
-                service->control(QVideoOutputControl_iid));
-        d->rendererControl = qobject_cast<QVideoRendererControl *>(
-                service->control(QVideoRendererControl_iid));
+    if (object) {
+        if (QMediaService *service = object->service()) {
+            d->outputControl = qobject_cast<QVideoOutputControl *>(
+                    service->control(QVideoOutputControl_iid));
+            d->rendererControl = qobject_cast<QVideoRendererControl *>(
+                    service->control(QVideoRendererControl_iid));
 
-        if (d->outputControl != 0 && d->rendererControl != 0) {
-            d->surface = new QPainterVideoSurface;
+            if (d->outputControl != 0 && d->rendererControl != 0) {
+                d->surface = new QPainterVideoSurface;
 
-            connect(d->surface, SIGNAL(frameChanged()), this, SLOT(_q_present()));
-            connect(d->surface, SIGNAL(surfaceFormatChanged(QVideoSurfaceFormat)),
-                    this, SLOT(_q_formatChanged(QVideoSurfaceFormat)));
-            connect(service, SIGNAL(destroyed()), this, SLOT(_q_serviceDestroyed()));
+                connect(d->surface, SIGNAL(frameChanged()), this, SLOT(_q_present()));
+                connect(d->surface, SIGNAL(surfaceFormatChanged(QVideoSurfaceFormat)),
+                        this, SLOT(_q_formatChanged(QVideoSurfaceFormat)));
+                connect(service, SIGNAL(destroyed()), this, SLOT(_q_serviceDestroyed()));
 
-            d->rendererControl->setSurface(d->surface);
-            d->outputControl->setOutput(QVideoOutputControl::RendererOutput);
+                d->rendererControl->setSurface(d->surface);
+                d->outputControl->setOutput(QVideoOutputControl::RendererOutput);
+            }
         }
     }
 }
