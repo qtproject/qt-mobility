@@ -72,7 +72,7 @@ void QContactRelationshipFilter::setRole(QContactRelationshipFilter::Role roleIn
 void QContactRelationshipFilter::setType(const QString& relationshipType)
 {
     Q_D(QContactRelationshipFilter);
-    d->m_relationshipType;
+    d->m_relationshipType = relationshipType;
 }
 
 /*!

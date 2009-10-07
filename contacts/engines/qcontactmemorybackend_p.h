@@ -70,9 +70,10 @@ class QContactMemoryEngineData : public QSharedData
 {
 public:
     QContactMemoryEngineData()
-    : m_refCount(QAtomicInt(1)),
-    m_nextContactId(1),
-    m_anonymous(false)
+        : QSharedData(),
+        m_refCount(QAtomicInt(1)),
+        m_nextContactId(1),
+        m_anonymous(false)
     {
     }
 
@@ -93,6 +94,7 @@ public:
 
     QList<QContact> m_contacts;                    // list of contacts
     QList<QUniqueId> m_contactIds;                 // list of contact Id's
+    QList<QContactRelationship> m_relationships;   // list of contact relationships
     QList<QString> m_definitionIds;                // list of definition types (id's)
     mutable QMap<QString, QContactDetailDefinition> m_definitions; // list of definitions.
     mutable QSet<QString> m_createOnlyIds; // a list of create only ids.
@@ -122,6 +124,15 @@ public:
     bool saveContact(QContact* contact, QContactManager::Error& error);
     QList<QContactManager::Error> removeContacts(QList<QUniqueId>* contactIds, QContactManager::Error& error);
     bool removeContact(const QUniqueId& contactId, QContactManager::Error& error);
+
+    /* Relationships - Accessors and Mutators */
+    QList<QContactRelationship> relationships(const QUniqueId& sourceId, const QString& relationshipType, QContactManager::Error& error) const;
+    QList<QContactRelationship> relationships(const QString& relationshipType, const QPair<QString, QUniqueId>& participantUri, QContactManager::Error& error) const;
+    QList<QContactRelationship> relationships(const QPair<QString, QUniqueId>& participantUri, QContactManager::Error& error) const;
+    bool saveRelationship(QContactRelationship* relationship, QContactManager::Error& error);
+    QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error);
+    bool removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error);
+    QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error);
 
     /* Definitions - Accessors and Mutators */
     QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;

@@ -255,7 +255,7 @@ QUniqueId QContactManagerEngine::selfContactId(QContactManager::Error& error) co
  * If no relationships are found, \a error is set to \c QContactManager::DoesNotExistError; if the operation completes successfully, \a error is set
  * to \c QContactManager::NoError.
  */
-QList<QContactRelationship> QContactManagerEngine::relationships(const QUniqueId& sourceId, const QString& relationshipType, QContactManager::Error& error)
+QList<QContactRelationship> QContactManagerEngine::relationships(const QUniqueId& sourceId, const QString& relationshipType, QContactManager::Error& error) const
 {
     Q_UNUSED(sourceId);
     Q_UNUSED(relationshipType);
@@ -270,7 +270,7 @@ QList<QContactRelationship> QContactManagerEngine::relationships(const QUniqueId
  * If no relationships are found, \a error is set to \c QContactManager::DoesNotExistError; if the operation completes successfully, \a error is set
  * to \c QContactManager::NoError.
  */
-QList<QContactRelationship> QContactManagerEngine::relationships(const QString& relationshipType, const QPair<QString, QUniqueId>& participantUri, QContactManager::Error& error)
+QList<QContactRelationship> QContactManagerEngine::relationships(const QString& relationshipType, const QPair<QString, QUniqueId>& participantUri, QContactManager::Error& error) const
 {
     Q_UNUSED(relationshipType);
     Q_UNUSED(participantUri);
@@ -283,7 +283,7 @@ QList<QContactRelationship> QContactManagerEngine::relationships(const QString& 
  * If no relationships are found, \a error is set to \c QContactManager::DoesNotExistError; if the operation completes successfully, \a error is set
  * to \c QContactManager::NoError.
  */
-QList<QContactRelationship> QContactManagerEngine::relationships(const QPair<QString, QUniqueId>& participantUri, QContactManager::Error& error)
+QList<QContactRelationship> QContactManagerEngine::relationships(const QPair<QString, QUniqueId>& participantUri, QContactManager::Error& error) const
 {
     Q_UNUSED(participantUri);
     error = QContactManager::DoesNotExistError;

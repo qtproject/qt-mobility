@@ -327,6 +327,157 @@ QList<QContactManager::Error> QContactMemoryEngine::removeContacts(QList<QUnique
 }
 
 /*! \reimp */
+QList<QContactRelationship> QContactMemoryEngine::relationships(const QUniqueId& sourceId, const QString& relationshipType, QContactManager::Error& error) const
+{
+    QList<QContactRelationship> retn;
+    foreach (const QContactRelationship& rel, d->m_relationships) {
+        if ((rel.sourceContact() == sourceId || sourceId == QUniqueId(0))
+                && (rel.relationshipType() == relationshipType || relationshipType.isEmpty())) {
+            retn.append(rel);
+        }
+    }
+
+    error = QContactManager::NoError;
+    if (retn.size() == 0)
+        error = QContactManager::DoesNotExistError;
+    return retn;
+}
+
+/*! \reimp */
+QList<QContactRelationship> QContactMemoryEngine::relationships(const QString& relationshipType, const QPair<QString, QUniqueId>& participantUri, QContactManager::Error& error) const
+{
+    QString myUri = QString(QLatin1String("memory")); // TODO! - get the real URI (trampoline?)
+
+    QList<QContactRelationship> retn;
+    QPair<QString, QUniqueId> participant = participantUri;
+    if (participant.first.isEmpty())
+        participant.first = myUri;
+
+    foreach (const QContactRelationship& rel, d->m_relationships) {
+        if ((rel.relationshipType() == relationshipType || relationshipType.isEmpty())
+                && ((rel.destinationContacts().contains(participant) || rel.destinationContacts().contains(participantUri))
+                    || ((participantUri.first.isEmpty() || participantUri.first == myUri) && rel.sourceContact() == participantUri.second))) {
+            retn.append(rel);
+        }
+    }
+
+    error = QContactManager::NoError;
+    if (retn.size() == 0)
+        error = QContactManager::DoesNotExistError;
+    return retn;
+}
+
+/*! \reimp */
+QList<QContactRelationship> QContactMemoryEngine::relationships(const QPair<QString, QUniqueId>& participantUri, QContactManager::Error& error) const
+{
+    // convenience function.
+    return relationships(QString(), participantUri, error);
+}
+
+/*! \reimp */
+bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, QContactManager::Error& error)
+{
+    // the primary key is the source contact id + relationship type.
+    error = QContactManager::NoError;
+    QList<QContactRelationship> allRelationships = d->m_relationships;
+    for (int i = 0; i < allRelationships.size(); i++) {
+        QContactRelationship curr = allRelationships.at(i);
+        if (curr.sourceContact() == relationship->sourceContact() && curr.relationshipType() == relationship->relationshipType()) {
+            d->m_relationships.removeAt(i);
+            d->m_relationships.insert(i, *relationship);
+            return true;
+        }
+    }
+
+    // no matching relationship; must be new.  Attempt to validate the relationship.
+    // first, check that the source contact exists
+    if (!d->m_contactIds.contains(relationship->sourceContact())) {
+        error = QContactManager::DoesNotExistError;
+        return false;
+    }
+
+    // second, check that the local destination contacts exist; we cannot check other managers' contacts.
+    QString myUri = QString(QLatin1String("memory")); // TODO! - get the real URI (trampoline?)
+    QList<QPair<QString, QUniqueId> > dests = relationship->destinationContacts();
+    for (int i = 0; i < dests.size(); i++) {
+        QPair<QString, QUniqueId> curr = dests.at(i);
+        if (curr.first.isEmpty() || curr.first == myUri) {
+            // this entry in the destination list is supposedly stored in this manager.
+            if (!d->m_contactIds.contains(curr.second)) {
+                error = QContactManager::DoesNotExistError;
+                return false;
+            }
+        }
+    }
+
+    // everything checks out fine - save the relationship and return.  First, we synthesise any empty manager URIs.
+    QList<QPair<QString, QUniqueId> > updatedDests;
+    for (int i = 0; i < dests.size(); i++) {
+        QPair<QString, QUniqueId> curr = dests.at(i);
+        if (curr.first.isEmpty()) {
+            // need to update the URI
+            curr.first = myUri;
+        }
+        updatedDests.append(curr);
+    }
+
+    relationship->setDestinationContacts(updatedDests);
+    d->m_relationships.append(*relationship);
+    return true;
+}
+
+/*! \reimp */
+QList<QContactManager::Error> QContactMemoryEngine::saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error)
+{
+    QContactManager::Error functionError;
+    QList<QContactManager::Error> retn;
+    for (int i = 0; i < relationships->size(); i++) {
+        QContactRelationship curr = relationships->at(i);
+        saveRelationship(&curr, functionError);
+        retn.append(functionError);
+
+        // and replace the current relationship with the updated version.
+        relationships->replace(i, curr);
+
+        // also, update the total error if it did not succeed.
+        if (functionError != QContactManager::NoError)
+            error = functionError;
+    }
+
+    return retn;
+}
+
+/*! \reimp */
+bool QContactMemoryEngine::removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error)
+{
+    if (!d->m_relationships.removeOne(relationship)) {
+        error = QContactManager::DoesNotExistError;
+        return false;
+    }
+
+    error = QContactManager::NoError;
+    return true;
+}
+
+/*! \reimp */
+QList<QContactManager::Error> QContactMemoryEngine::removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error)
+{
+    QList<QContactManager::Error> retn;
+    QContactManager::Error functionError;
+    for (int i = 0; i < relationships.size(); i++) {
+        removeRelationship(relationships.at(i), functionError);
+        retn.append(functionError);
+
+        // update the total error if it did not succeed.
+        if (functionError != QContactManager::NoError) {
+            error = functionError;
+        }
+    }
+
+    return retn;
+}
+
+/*! \reimp */
 QMap<QString, QContactDetailDefinition> QContactMemoryEngine::detailDefinitions(QContactManager::Error& error) const
 {
     // lazy initialisation of schema definitions.

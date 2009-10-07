@@ -374,7 +374,7 @@ QUniqueId QContactManager::selfContactId() const
  * If the \a source is the zero id, a list of all of the relationships of the given \a relationshipType is returned.
  * If the \a relationshipType is empty, relationships of any type are returned.
  */
-QList<QContactRelationship> QContactManager::relationships(const QUniqueId& sourceId, const QString& relationshipType)
+QList<QContactRelationship> QContactManager::relationships(const QUniqueId& sourceId, const QString& relationshipType) const
 {
     return d->m_engine->relationships(sourceId, relationshipType, d->m_error);
 }
@@ -384,7 +384,7 @@ QList<QContactRelationship> QContactManager::relationships(const QUniqueId& sour
  * If \a participantUri consists of an empty manager URI and the zero id, all relationships of the given \a relationshipType are returned.  If the \a relationshipType
  * is empty, all relationships in which the contact identified by \a participantUri is a source or involved participant are returned.
  */
-QList<QContactRelationship> QContactManager::relationships(const QString& relationshipType, const QPair<QString, QUniqueId>& participantUri)
+QList<QContactRelationship> QContactManager::relationships(const QString& relationshipType, const QPair<QString, QUniqueId>& participantUri) const
 {
     return d->m_engine->relationships(relationshipType, participantUri, d->m_error);
 }
@@ -392,7 +392,7 @@ QList<QContactRelationship> QContactManager::relationships(const QString& relati
 /*!
  * Returns all relationships of any type in which the contact identified by \a participantUri is a source or involved participant.
  */
-QList<QContactRelationship> QContactManager::relationships(const QPair<QString, QUniqueId>& participantUri)
+QList<QContactRelationship> QContactManager::relationships(const QPair<QString, QUniqueId>& participantUri) const
 {
     return d->m_engine->relationships(participantUri, d->m_error);
 }
