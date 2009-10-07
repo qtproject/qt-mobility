@@ -149,8 +149,11 @@ QContact QContactMemoryEngine::contact(const QUniqueId& contactId, QContactManag
 {
     int index = d->m_contactIds.indexOf(contactId);
     if (index != -1) {
+        // found the contact successfully.
         error = QContactManager::NoError;
         QContact retn = d->m_contacts.at(index);
+
+        // synthesise the display label if we need to.
         QContactDisplayLabel dl = retn.detail(QContactDisplayLabel::DefinitionName);
         if (dl.label().isEmpty()) {
             QContactManager::Error synthError;
@@ -159,6 +162,13 @@ QContact QContactMemoryEngine::contact(const QUniqueId& contactId, QContactManag
             retn.saveDetail(&dl);
         }
 
+        // also, retrieve the current relationships the contact is involved with.
+        QContactManager::Error relationshipError;
+        QPair<QString, QUniqueId> participantUri = QPair<QString, QUniqueId>(QString(), contactId);
+        QList<QContactRelationship> relationshipCache = relationships(participantUri, relationshipError);
+        QContactManagerEngine::setContactRelationships(&retn, relationshipCache);
+
+        // and return the contact
         return retn;
     }
 
