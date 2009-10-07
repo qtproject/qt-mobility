@@ -1,8 +1,8 @@
 message("qtcontacts-tracker.pri")
 
-!contains(DEFINES, QTCONTACTS-TRACKER_PRI) {
+!contains(DEFINES, QTCONTACTS_TRACKER_PRI) {
 message(" ^ including")
-DEFINES += QTCONTACTS-TRACKER_PRI
+DEFINES += QTCONTACTS_TRACKER_PRI
 
 INCLUDEPATH += /usr/include/qt4/QtContacts
 
