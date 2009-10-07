@@ -102,22 +102,18 @@ S60VideoPlayerSession::~S60VideoPlayerSession()
 
 void S60VideoPlayerSession::load(const QUrl &url)
 {
-/*    m_url = url;
-    if (m_playbin) {
-        m_tags.clear();
-        emit tagsChanged();
-
-        g_object_set(G_OBJECT(m_playbin), "uri", m_url.toString().toLocal8Bit().constData(), NULL);
-    }*/
+    //m_player->OpenFileL(file));
 }
 
 qint64 S60VideoPlayerSession::duration() const
 {
+    //m_player->DurationL(); 
     return m_duration;
 }
 
 qint64 S60VideoPlayerSession::position() const
 {
+    //m_player->PositionL()
    /* GstFormat   format = GST_FORMAT_TIME;
     gint64      position = 0;
 
@@ -125,6 +121,7 @@ qint64 S60VideoPlayerSession::position() const
         return position / 1000000;
     else
         return 0;*/
+    return 0;
 }
 
 qreal S60VideoPlayerSession::playbackRate() const
@@ -530,10 +527,21 @@ void S60VideoPlayerSession::getStreamsInfo()
 
 void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
 {
+    m_player->Prepare();
 }
 
 void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
 {
+    m_player->Play();
+    //User::LeaveIfError(aError);
+
+    // Get frame size
+    //TSize size;
+    //m_player->VideoFrameSizeL(size);
+    //m_frameSize = QSize(size.iWidth, size.iHeight);
+
+    // Get duration
+    //m_totalTime = toMilliSeconds(m_player->DurationL());
 }
 
 void S60VideoPlayerSession::MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError)

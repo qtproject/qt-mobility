@@ -40,14 +40,14 @@
 
 #include <multimedia/qmediaservice.h>
 
-#include "s60videooutputcontrol.h"
+#include "s60videoplayeroutputcontrol.h"
 
 class QMediaMetaData;
 class QMediaPlayerControl;
 class QMediaPlaylist;
 
 class S60VideoMetaData;
-class S60VideoOutputControl;
+class S60VideoPlayerOutputControl;
 class S60VideoPlayerSession;
 class S60VideoPlayerControl;
 class S60VideoMetaDataProvider;
@@ -74,7 +74,7 @@ private slots:
 
 private:
     S60VideoPlayerControl *m_control;
-    S60VideoOutputControl *m_videoOutput;
+    S60VideoPlayerOutputControl *m_videoOutput;
     S60VideoPlayerSession *m_session;
     S60VideoMetaDataProvider *m_metaData;   
 //#ifndef QT_NO_MULTIMEDIA

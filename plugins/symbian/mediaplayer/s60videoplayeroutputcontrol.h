@@ -32,16 +32,16 @@
 **
 ****************************************************************************/
 
-#ifndef S60VIDEOOUTPUTCONTROL_H
-#define S60VIDEOOUTPUTCONTROL_H
+#ifndef S60VIDEOPLAYEROUTPUTCONTROL_H
+#define S60VIDEOPLAYEROUTPUTCONTROL_H
 
 #include <multimedia/qvideooutputcontrol.h>
 
-class S60VideoOutputControl : public QVideoOutputControl
+class S60VideoPlayerOutputControl : public QVideoOutputControl
 {
     Q_OBJECT
 public:
-    S60VideoOutputControl(QObject *parent = 0);
+    S60VideoPlayerOutputControl(QObject *parent = 0);
 
     QList<Output> availableOutputs() const;
     void setAvailableOutputs(const QList<Output> &outputs);
@@ -57,4 +57,4 @@ private:
     Output m_output;
 };
 
-#endif // S60VIDEOOUTPUTCONTROL_H
+#endif // S60VIDEOPLAYEROUTPUTCONTROL_H

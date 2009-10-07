@@ -32,30 +32,30 @@
 **
 ****************************************************************************/
 
-#include "s60videooutputcontrol.h"
+#include "s60videoplayeroutputcontrol.h"
 
-S60VideoOutputControl::S60VideoOutputControl(QObject *parent)
+S60VideoPlayerOutputControl::S60VideoPlayerOutputControl(QObject *parent)
     : QVideoOutputControl(parent)
     , m_output(NoOutput)
 {
 }
 
-QList<QVideoOutputControl::Output> S60VideoOutputControl::availableOutputs() const
+QList<QVideoOutputControl::Output> S60VideoPlayerOutputControl::availableOutputs() const
 {
     return m_outputs;
 }
 
-void S60VideoOutputControl::setAvailableOutputs(const QList<Output> &outputs)
+void S60VideoPlayerOutputControl::setAvailableOutputs(const QList<Output> &outputs)
 {
     emit availableOutputsChanged(m_outputs = outputs);
 }
 
-QVideoOutputControl::Output S60VideoOutputControl::output() const
+QVideoOutputControl::Output S60VideoPlayerOutputControl::output() const
 {
     return m_output;
 }
 
-void S60VideoOutputControl::setOutput(Output output)
+void S60VideoPlayerOutputControl::setOutput(Output output)
 {
     if (!m_outputs.contains(output))
         output = NoOutput;
