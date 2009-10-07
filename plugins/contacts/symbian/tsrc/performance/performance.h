@@ -64,6 +64,5 @@ private slots:  // Test cases
 
 private:
     QContactManager     *mCntMng;
-    QList<QUniqueId>    mContactList;
     QTime               mTime;
 };

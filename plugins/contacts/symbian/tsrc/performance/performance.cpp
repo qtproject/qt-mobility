@@ -68,9 +68,8 @@ void SymbianPluginPerfomance::createSimpleContacts()
         alice.saveDetail(&aliceName);
 
         contactsList.append(alice);
-        mContactList.append(alice.id());
     }
-    
+
     // Save the contacts
     mTime.start();
     mCntMng->saveContacts(&contactsList);
@@ -82,13 +81,12 @@ void SymbianPluginPerfomance::createSimpleContacts()
 void SymbianPluginPerfomance::removeSimpleContacts()
 {
     // Remove N contacts
+    QList<QUniqueId> cnt_ids = mCntMng->contacts();
     mTime.restart();
-    mCntMng->removeContacts(&mContactList);
+    mCntMng->removeContacts(&cnt_ids);
     int elapsed = mTime.elapsed();
-    qDebug() << "Removed " << mContactList.count() << " simple contacts in" 
+    qDebug() << "Removed " << cnt_ids.count() << " simple contacts in" 
         << elapsed / 1000 << "s" << elapsed % 1000 << "ms";
-    
-    mContactList.clear();
 }
 
 void SymbianPluginPerfomance::createComplexContacts()
@@ -131,6 +129,7 @@ void SymbianPluginPerfomance::createComplexContacts()
         add.setPostcode("10087");
         add.setRegion("New York");
         add.setCountry("United States");
+        add.setSubTypes(QContactAddress::SubTypeDomestic);
         alice.saveDetail(&add);
         
         QContactGender gender;
@@ -158,7 +157,6 @@ void SymbianPluginPerfomance::createComplexContacts()
         alice.saveDetail(&email);
         
         contactsList.append(alice);
-        mContactList.append(alice.id());
     }
     // Save the contacts
     mTime.restart();    
@@ -194,7 +192,7 @@ void SymbianPluginPerfomance::sortContacts()
     mTime.restart();
     cnt_ids = mCntMng->contacts(filter, sortOrders);
     int elapsed = mTime.elapsed();
-    qDebug() << "First name last name sort order with " << mContactList.count() << "contacts: "
+    qDebug() << "First name last name sort order with " << mCntMng->contacts().count() << "contacts: "
         << elapsed / 1000 << "s" << elapsed % 1000 << "ms";
     
     cnt_ids.clear();
@@ -205,67 +203,66 @@ void SymbianPluginPerfomance::sortContacts()
     mTime.restart();
     cnt_ids = mCntMng->contacts(filter, sortOrders);
     elapsed = mTime.elapsed();
-    qDebug() << "Last name first name sort order with " << mContactList.count() << "contacts: "
+    qDebug() << "Last name first name sort order with " << mCntMng->contacts().count() << "contacts: "
         << elapsed / 1000 << "s" << elapsed % 1000 << "ms";
 }
 
 void SymbianPluginPerfomance::filterContacts()
 {
     QList<QUniqueId> cnt_ids;
-    QContactUnionFilter unionFilter;
+    QContactIntersectionFilter intersectionFilter;
     
     // Landline
     QContactDetailFilter landlineFilter;
     landlineFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldSubTypes); 
     landlineFilter.setValue(QLatin1String(QContactPhoneNumber::SubTypeLandline));
     
-    // Address
-    QContactDetailFilter addFilter;
-    addFilter.setDetailDefinitionName(QContactAddress::DefinitionName, QContactAddress::FieldSubTypes); 
-    addFilter.setValue(QLatin1String(QContactAddress::SubTypeInternational));
-    
-    // Combine both filters in an intersection filter
-    QContactIntersectionFilter intersectionFilter1;
-    intersectionFilter1.append(landlineFilter);
-    intersectionFilter1.append(addFilter);
-    
     // Mobile
     QContactDetailFilter mobileFilter;
     mobileFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldSubTypes); 
     mobileFilter.setValue(QLatin1String(QContactPhoneNumber::SubTypeMobile));
+
+    // Combine both filters in an intersection filter
+    QContactUnionFilter unionFilter1;
+    unionFilter1.append(landlineFilter);
+    unionFilter1.append(mobileFilter);
+
+    // Int Address
+    QContactDetailFilter intAddFilter;
+    intAddFilter.setDetailDefinitionName(QContactAddress::DefinitionName, QContactAddress::FieldSubTypes); 
+    intAddFilter.setValue(QLatin1String(QContactAddress::SubTypeInternational));
     
-    // Address
-    QContactDetailFilter addFilter2;
-    addFilter2.setDetailDefinitionName(QContactAddress::DefinitionName, QContactAddress::FieldSubTypes); 
-    addFilter2.setValue(QLatin1String(QContactAddress::SubTypeDomestic));
+    // Dom Address
+    QContactDetailFilter domAddFilter;
+    domAddFilter.setDetailDefinitionName(QContactAddress::DefinitionName, QContactAddress::FieldSubTypes); 
+    domAddFilter.setValue(QLatin1String(QContactAddress::SubTypeDomestic));
     
     // Combine both filters in an intersection filter
-    QContactIntersectionFilter intersectionFilter2;
-    intersectionFilter2.append(mobileFilter);
-    intersectionFilter2.append(addFilter);
+    QContactUnionFilter unionFilter2;
+    unionFilter2.append(intAddFilter);
+    unionFilter2.append(domAddFilter);
     
     // Add intersection filters to a union filter
-    unionFilter.append(intersectionFilter1);
-    unionFilter.append(intersectionFilter2);
+    intersectionFilter.append(unionFilter1);
+    intersectionFilter.append(unionFilter2);
 
     mTime.restart();
-    cnt_ids = mCntMng->contacts(unionFilter);
+    cnt_ids = mCntMng->contacts(intersectionFilter);
     int elapsed = mTime.elapsed();
-    qDebug() << "( Landline || International address ) && ( Mobile || Domestic address ) filter from" 
-            << mContactList.count() << "contacts results:" << cnt_ids.count();        
-    qDebug() << "Time taken:" << elapsed / 1000 << "s" << elapsed % 1000 << "ms";
+    qDebug() << "( Landline || Mobile ) && ( International address || Domestic address ) filter from" 
+            << mCntMng->contacts().count() << "contacts results:" << cnt_ids.count() 
+            << "Time taken:" << elapsed / 1000 << "s" << elapsed % 1000 << "ms";
 }
 
 void SymbianPluginPerfomance::removeComplexContacts()
 {
     // Remove N contacts
+    QList<QUniqueId> cnt_ids = mCntMng->contacts();
     mTime.restart();
-    mCntMng->removeContacts(&mContactList);
+    mCntMng->removeContacts(&cnt_ids);
     int elapsed = mTime.elapsed();
-    qDebug() << "Removed " << mContactList.count() << " simple contacts in" 
+    qDebug() << "Removed " << cnt_ids.count() << " simple contacts in" 
         << elapsed / 1000 << "s" << elapsed % 1000 << "ms";
-    
-    mContactList.clear();
 }
 
 QTEST_MAIN(SymbianPluginPerfomance);
