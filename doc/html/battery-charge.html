@@ -28,13 +28,13 @@
 <pre>    /power/battery/charge
     /power/battery/charging</pre>
 <p>and provides controls for modifying their values.</p>
-<p align="center"><img src="images/battery-provider.png" /></p><p>The second program, battery-consumer, is implemented in QML with some C++ code to display the QML and make <a href="qvaluespaceitem.html">QValueSpaceItem</a> available from within QML.</p>
+<p align="center"><img src="images/battery-provider.png" /></p><p>The second program, battery-consumer, is implemented in QML with some C++ code to display the QML and make <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> available from within QML.</p>
 <p>The user interface of the battery consumer program is described in QML. It has the following features: A rectangular area representing the percent charge of the battery. It indicates a low battery state by changing the color to red, it is green otherwise. An animation is shown to indicate that the battery is being recharged.</p>
 <p align="center"><img src="images/battery-consumer.png" /></p><a name="battery-consumer"></a>
 <h2>Battery Consumer</h2>
-<p>The first step is to make <a href="qvaluespaceitem.html">QValueSpaceItem</a> available from within QML so that our QML code can access the keys published by the battery-provider. This is achieved by using the QML_DECLARE_TYPE() and QML_DEFINE_TYPE() macros. The following code makes <a href="qvaluespaceitem.html">QValueSpaceItem</a> available from within QML as ValueSpaceItem.</p>
-<pre>    QML_DECLARE_TYPE(QValueSpaceItem);
-    QML_DEFINE_TYPE(Qt, 4, 6, (QT_VERSION&amp;0x00ff00)&gt;&gt;8, ValueSpaceItem, QValueSpaceItem);</pre>
+<p>The first step is to make <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> available from within QML so that our QML code can access the keys published by the battery-provider. This is achieved by using the QML_DECLARE_TYPE() and QML_DEFINE_TYPE() macros. The following code makes <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> available from within QML as ValueSpaceItem.</p>
+<pre>    QML_DECLARE_TYPE(QValueSpaceSubscriber);
+    QML_DEFINE_TYPE(Qt, 4, 6, (QT_VERSION&amp;0x00ff00)&gt;&gt;8, ValueSpaceItem, QValueSpaceSubscriber);</pre>
 <a name="qml"></a>
 <h3>QML</h3>
 <p>Two ValueSpaceItem instances are created, one for each of the battery values. We give each object a unique id so that we can reference it from elsewhere in the QML. We set the <i>path</i> properties to the Value Space path of the keys. Finally we set the <i>notify</i> properties to true to enable the emission of change notification signals.</p>

@@ -32,8 +32,8 @@
 ****************************************************************************/
 
 #include <qvaluespace_p.h>
-#include <qvaluespaceitem.h>
-#include <qvaluespaceobject.h>
+#include <qvaluespacesubscriber.h>
+#include <qvaluespaceprovider.h>
 
 #include <QtTest/QTest>
 #include <QSet>
@@ -64,16 +64,17 @@ public:
 
     QValueSpace::LayerOptions layerOptions() const;
 
-    /* QValueSpaceItem functions */
+    /* QValueSpaceSubscriber functions */
     bool supportsInterestNotification() const;
     bool notifyInterest(Handle handle, bool interested);
 
-    /* QValueSpaceObject functions */
-    bool setValue(QValueSpaceObject *creator, Handle handle, const QString &subPath, const QVariant &value);
-    bool removeValue(QValueSpaceObject *creator, Handle handle, const QString &subPath);
-    bool removeSubTree(QValueSpaceObject *creator, Handle handle);
-    void addWatch(QValueSpaceObject *creator, Handle handle);
-    void removeWatches(QValueSpaceObject *creator, Handle parent);
+    /* QValueSpaceProvider functions */
+    bool setValue(QValueSpaceProvider *creator, Handle handle,
+                  const QString &subPath, const QVariant &value);
+    bool removeValue(QValueSpaceProvider *creator, Handle handle, const QString &subPath);
+    bool removeSubTree(QValueSpaceProvider *creator, Handle handle);
+    void addWatch(QValueSpaceProvider *creator, Handle handle);
+    void removeWatches(QValueSpaceProvider *creator, Handle parent);
     void sync() { }
 
     QStringList testErrors();
@@ -196,7 +197,7 @@ bool FakeLayer::notifyInterest(Handle handle, bool interested)
     return true;
 }
 
-bool FakeLayer::setValue(QValueSpaceObject *creator, Handle handle,
+bool FakeLayer::setValue(QValueSpaceProvider *creator, Handle handle,
                          const QString &subPath, const QVariant &)
 {
     if (!creator)
@@ -210,7 +211,7 @@ bool FakeLayer::setValue(QValueSpaceObject *creator, Handle handle,
     return true;
 }
 
-bool FakeLayer::removeValue(QValueSpaceObject *creator, Handle handle, const QString &subPath)
+bool FakeLayer::removeValue(QValueSpaceProvider *creator, Handle handle, const QString &subPath)
 {
     if (!creator)
         m_testErrors << QLatin1String("creator is null");
@@ -223,7 +224,7 @@ bool FakeLayer::removeValue(QValueSpaceObject *creator, Handle handle, const QSt
     return true;
 }
 
-bool FakeLayer::removeSubTree(QValueSpaceObject *creator, Handle handle)
+bool FakeLayer::removeSubTree(QValueSpaceProvider *creator, Handle handle)
 {
     if (!creator)
         m_testErrors << QLatin1String("creator is null");
@@ -234,7 +235,7 @@ bool FakeLayer::removeSubTree(QValueSpaceObject *creator, Handle handle)
     return true;
 }
 
-void FakeLayer::addWatch(QValueSpaceObject *creator, Handle handle)
+void FakeLayer::addWatch(QValueSpaceProvider *creator, Handle handle)
 {
     if (!creator)
         m_testErrors << QLatin1String("creator is null");
@@ -243,7 +244,7 @@ void FakeLayer::addWatch(QValueSpaceObject *creator, Handle handle)
         m_testErrors << QLatin1String("Unknown handle");
 }
 
-void FakeLayer::removeWatches(QValueSpaceObject *creator, Handle parent)
+void FakeLayer::removeWatches(QValueSpaceProvider *creator, Handle parent)
 {
     if (!creator)
         m_testErrors << QLatin1String("creator is null");
@@ -363,30 +364,30 @@ void tst_QValueSpace::layerInterface()
     QFETCH(QString, path);
     QFETCH(QString, attribute);
 
-    QValueSpaceItem *item;
+    QValueSpaceSubscriber *subscriber;
 
-    CHECK_ERRORS(item = new QValueSpaceItem(path));
+    CHECK_ERRORS(subscriber = new QValueSpaceSubscriber(path));
 
-    CHECK_ERRORS(item->value(attribute));
-    CHECK_ERRORS(item->children());
+    CHECK_ERRORS(subscriber->value(attribute));
+    CHECK_ERRORS(subscriber->children());
 
-    CHECK_ERRORS(delete item);
+    CHECK_ERRORS(delete subscriber);
 
 
-    QValueSpaceObject *object;
+    QValueSpaceProvider *provider;
 
-    CHECK_ERRORS(object = new QValueSpaceObject(path, fakeLayer->id()));
+    CHECK_ERRORS(provider = new QValueSpaceProvider(path, fakeLayer->id()));
 
-    QVERIFY(object->isConnected());
+    QVERIFY(provider->isConnected());
 
-    CHECK_ERRORS(object->setAttribute(attribute, 10));
-    CHECK_ERRORS(object->removeAttribute(attribute));
+    CHECK_ERRORS(provider->setAttribute(attribute, 10));
+    CHECK_ERRORS(provider->removeAttribute(attribute));
 
     SignalSink sink;
-    CHECK_ERRORS(connect(object, SIGNAL(attributeInterestChanged(QString,bool)),
+    CHECK_ERRORS(connect(provider, SIGNAL(attributeInterestChanged(QString,bool)),
                          &sink, SLOT(slot())));
 
-    CHECK_ERRORS(delete object);
+    CHECK_ERRORS(delete provider);
 }
 
 QTEST_MAIN(tst_QValueSpace)

@@ -1,4 +1,4 @@
-TARGET = tst_qvaluespaceobject
+TARGET = tst_qvaluespaceprovider
 INCLUDEPATH += ../../../context
 DEPENDPATH += ../../../context
 
@@ -9,7 +9,7 @@ QT = core
 include(../../../common.pri)
 
 # Input 
-SOURCES += tst_qvaluespaceobject.cpp
+SOURCES += tst_qvaluespaceprovider.cpp
 
 qtAddLibrary(QtContextFramework)
 

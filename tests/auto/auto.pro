@@ -25,9 +25,9 @@ SUBDIRS += qgeocoordinate \                 #Location
           qnmeapositioninfosource 
 symbian:SUBDIRS += qgeopositioninfosource_s60 
 
-!wince:SUBDIRS += qvaluespace \                    #Publish and Subscribe
-           qvaluespaceobject \
-           qvaluespaceitem \
+SUBDIRS += qvaluespace \                           #Publish and Subscribe
+           qvaluespaceprovider \
+           qvaluespacesubscriber \
            qmallocpool \
            qpacket \
            qpacketprotocol \

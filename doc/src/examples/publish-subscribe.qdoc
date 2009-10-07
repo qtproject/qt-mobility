@@ -66,7 +66,7 @@
     \section2 Provider
 
     When acting as a provider of Value Space content the program creates a ProviderDialog.  This
-    dialog contains a widget for setting the base path of the QValueSpaceObject and
+    dialog contains a widget for setting the base path of the QValueSpaceProvider and
     widgets for setting the value of the two fixed attributes 'intValue' and 'stringValue'.
 
     \image publish-subscribe-provider.png
@@ -79,36 +79,36 @@
 
     \snippet publish-subscribe/providerdialog.cpp 1
 
-    To publish values in the Value Space we first need to create a QValueSpaceObject.  We do this
+    To publish values in the Value Space we first need to create a QValueSpaceProvider.  We do this
     in the \c {createNewObject()} slot, which is also used to handle changes in the base path.
     After the object is constructed we publish the initial values by explicitly calling the other
     two slots.
 
     \snippet publish-subscribe/providerdialog.cpp 2
 
-    We use QValueSpaceObject::setAttribute() to set the values in response to dialog input.
+    We use QValueSpaceProvider::setAttribute() to set the values in response to dialog input.
 
     \snippet publish-subscribe/providerdialog.cpp 0
 
     As a final step in the constructor we explicitly call the \c {createNewObject()} slot to create
-    an initial QValueSpaceObject.
+    an initial QValueSpaceProvider.
 
     \snippet publish-subscribe/providerdialog.cpp 3
 
     \section2 Consumer
 
     When acting as a consumer of Value Space content the program creates a ConsumerDialog.  This
-    dialog contains a widget for setting the base path of the QValueSpaceItem and a table for
+    dialog contains a widget for setting the base path of the QValueSpaceSubscriber and a table for
     displaying all of the values directly under base path in the Value Space.
 
     \image publish-subscribe-consumer.png
 
     We declare two slots to propagate values from the Value Space to the dialog in response to
-    change notifications from QValueSpaceItem.
+    change notifications from QValueSpaceSubscriber.
 
     \snippet publish-subscribe/consumerdialog.h 0
 
-    To read values from the Value Space we first create a QValueSpaceItem and connect to the
+    To read values from the Value Space we first create a QValueSpaceSubscriber and connect to the
     \c {contentsChanged()} signal.
 
     We explicitly call our \c {itemChanged()} slot to populate the table with the initial values.

@@ -34,7 +34,7 @@
 #include "batteryprovider.h"
 #include "ui_batteryprovider.h"
 
-#include <qvaluespaceobject.h>
+#include <qvaluespaceprovider.h>
 
 #include <QTimer>
 
@@ -45,7 +45,7 @@ BatteryProvider::BatteryProvider(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    object = new QValueSpaceObject("/power/battery");
+    provider = new QValueSpaceProvider("/power/battery");
 
     connect(ui->batteryCharge, SIGNAL(valueChanged(int)),
             this, SLOT(chargeChanged(int)));
@@ -58,7 +58,7 @@ BatteryProvider::BatteryProvider(QWidget *parent) :
 BatteryProvider::~BatteryProvider()
 {
     delete ui;
-    delete object;
+    delete provider;
 }
 
 void BatteryProvider::changeEvent(QEvent *e)
@@ -84,13 +84,13 @@ void BatteryProvider::timerEvent(QTimerEvent *)
 
 void BatteryProvider::chargeChanged(int newCharge)
 {
-    object->setAttribute("charge", newCharge);
+    provider->setAttribute("charge", newCharge);
 }
 
 void BatteryProvider::chargingToggled(bool charging)
 {
     ui->batteryCharge->setEnabled(!charging);
-    object->setAttribute("charging", charging);
+    provider->setAttribute("charging", charging);
 
     if (charging)
         chargeTimer = startTimer(2000);

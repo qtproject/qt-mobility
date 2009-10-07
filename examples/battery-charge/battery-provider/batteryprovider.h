@@ -40,7 +40,7 @@ namespace Ui {
     class BatteryProvider;
 }
 
-class QValueSpaceObject;
+class QValueSpaceProvider;
 
 class BatteryProvider : public QDialog
 {
@@ -60,7 +60,7 @@ private slots:
 
 private:
     Ui::BatteryProvider *ui;
-    QValueSpaceObject *object;
+    QValueSpaceProvider *provider;
     int chargeTimer;
 };
 

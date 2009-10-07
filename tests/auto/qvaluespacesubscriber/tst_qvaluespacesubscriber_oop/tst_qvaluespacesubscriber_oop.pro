@@ -1,4 +1,4 @@
-TARGET = tst_qvaluespaceitem_oop
+TARGET = tst_qvaluespacesubscriber_oop
 INCLUDEPATH += ../../../../context
 DEPENDPATH += ../../../../context
 
@@ -13,9 +13,9 @@ DEPENDPATH += ..
 INCLUDEPATH += ..
 
 # Input
-SOURCES += tst_qvaluespaceitem_oop.cpp \
-           tst_qvaluespaceitemshared.cpp
-HEADERS += tst_qvaluespaceitemshared.h
+SOURCES += tst_qvaluespacesubscriber_oop.cpp \
+           tst_qvaluespacesubscribershared.cpp
+HEADERS += tst_qvaluespacesubscribershared.h
 
 qtAddLibrary(QtContextFramework)
 

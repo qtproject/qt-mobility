@@ -50,7 +50,7 @@
     \image battery-provider.png
 
     The second program, battery-consumer, is implemented in QML with some C++ code to display the
-    QML and make QValueSpaceItem available from within QML.
+    QML and make QValueSpaceSubscriber available from within QML.
 
     The user interface of the battery consumer program is described in QML.  It has the following
     features: A rectangular area representing the percent charge of the battery.  It indicates a
@@ -61,9 +61,9 @@
 
     \section2 Battery Consumer
 
-    The first step is to make QValueSpaceItem available from within QML so that our QML code can
+    The first step is to make QValueSpaceSubscriber available from within QML so that our QML code can
     access the keys published by the battery-provider.  This is achieved by using the
-    QML_DECLARE_TYPE() and QML_DEFINE_TYPE() macros.  The following code makes QValueSpaceItem
+    QML_DECLARE_TYPE() and QML_DEFINE_TYPE() macros.  The following code makes QValueSpaceSubscriber
     available from within QML as ValueSpaceItem.
 
     \snippet battery-charge/battery-consumer/main.cpp 0

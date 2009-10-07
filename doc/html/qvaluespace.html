@@ -39,7 +39,7 @@
 <hr />
 <h2>Type Documentation</h2>
 <h3 class="flags"><a name="LayerOption-enum"></a>enum QValueSpace::LayerOption<br />flags QValueSpace::LayerOptions</h3>
-<p>This enum describes the behaviour of the Value Space layer. In addition this enum is used as a filter when constructing a <a href="qvaluespaceobject.html">QValueSpaceObject</a> or <a href="qvaluespaceitem.html">QValueSpaceItem</a>.</p>
+<p>This enum describes the behaviour of the Value Space layer. In addition this enum is used as a filter when constructing a <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> or <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a>.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QValueSpace::UnspecifiedLayer</tt></td><td align="center" valign="top"><tt>0x0000</tt></td><td valign="top">Used as a filter to specify that any layer should be used.</td></tr>
@@ -53,15 +53,15 @@
 <h2>Macro Documentation</h2>
 <h3 class="fn"><a name="QVALUESPACE_NONVOLATILEREGISTRY_LAYER"></a>QVALUESPACE_NONVOLATILEREGISTRY_LAYER</h3>
 <p>The UUID of the Non-Volatile Registry Layer as a <a href="http://qt.nokia.com/doc/4.5/quuid.html">QUuid</a>. The actual UUID value is {8e29561c-a0f0-4e89-ba56-080664abc017}.</p>
-<p>This value can be passed to the constructor of <a href="qvaluespaceobject.html">QValueSpaceObject</a> to force the constructed value space object to publish its values in the Non-Volatile Registry Layer.</p>
+<p>This value can be passed to the constructor of <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> to force the constructed value space provider to publish its values in the Non-Volatile Registry Layer.</p>
 <p>You can test if the Non-Volatile Registry Layer is available by checking if the list returned by QValueSpace::availableLayers() contains this value. The Non-Volatile Registry Layer is only available on Windows platforms.</p>
 <h3 class="fn"><a name="QVALUESPACE_SHAREDMEMORY_LAYER"></a>QVALUESPACE_SHAREDMEMORY_LAYER</h3>
 <p>The UUID of the Shared Memory Layer as a <a href="http://qt.nokia.com/doc/4.5/quuid.html">QUuid</a>. The actual UUID value is {d81199c1-6f60-4432-934e-0ce4d37ef252}.</p>
-<p>This value can be passed to the constructor of <a href="qvaluespaceobject.html">QValueSpaceObject</a> to force the constructed value space object to publish its values in the Shared Memory Layer.</p>
+<p>This value can be passed to the constructor of <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> to force the constructed value space provider to publish its values in the Shared Memory Layer.</p>
 <p>You can test if the Shared Memory Layer is available by checking if the list returned by QValueSpace::availableLayers() contains this value.</p>
 <h3 class="fn"><a name="QVALUESPACE_VOLATILEREGISTRY_LAYER"></a>QVALUESPACE_VOLATILEREGISTRY_LAYER</h3>
 <p>The UUID of the Volatile Registry Layer as a <a href="http://qt.nokia.com/doc/4.5/quuid.html">QUuid</a>. The actual UUID value is {8ceb5811-4968-470f-8fc2-264767e0bbd9}.</p>
-<p>This value can be passed to the constructor of <a href="qvaluespaceobject.html">QValueSpaceObject</a> to force the constructed value space object to publish its values in the Volatile Registry Layer.</p>
+<p>This value can be passed to the constructor of <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> to force the constructed value space provider to publish its values in the Volatile Registry Layer.</p>
 <p>You can test if the Volatile Registry Layer is available by checking if the list returned by QValueSpace::availableLayers() contains this value. The Volatile Registry Layer is only available on Windows platforms.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

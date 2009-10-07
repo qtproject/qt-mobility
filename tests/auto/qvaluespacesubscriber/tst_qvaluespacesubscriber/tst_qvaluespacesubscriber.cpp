@@ -31,8 +31,8 @@
 **
 ****************************************************************************/
 
-#include "tst_qvaluespaceitemshared.h"
+#include "tst_qvaluespacesubscribershared.h"
 
 #include <QTest>
 
-QTEST_MAIN(tst_QValueSpaceItem)
+QTEST_MAIN(tst_QValueSpaceSubscriber)

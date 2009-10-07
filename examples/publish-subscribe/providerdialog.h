@@ -36,7 +36,7 @@
 
 #include <QDialog>
 
-class QValueSpaceObject;
+class QValueSpaceProvider;
 
 namespace Ui {
     class ProviderDialog;
@@ -62,7 +62,7 @@ private slots:
 
 private:
     Ui::ProviderDialog *ui;
-    QValueSpaceObject *object;
+    QValueSpaceProvider *provider;
 };
 
 #endif // PROVIDERDIALOG_H
