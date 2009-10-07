@@ -453,11 +453,14 @@ void S60CameraSession::setVFProcessor(MVFProcessor* VFProcessor)
 // For S60Cameravideodevicecontrol
 int S60CameraSession::deviceCount() const
 {
-    TInt camerasAavaiable = 0;
-    if (iCameraEngine) {
-        camerasAavaiable = iCameraEngine->CamerasAvailable();
-    }
-    return camerasAavaiable;
+    TInt camerasAvailable = 0;
+    camerasAvailable = 1;
+   
+/*    if (iCameraEngine) {
+           camerasAvailable = iCameraEngine->CamerasAvailable();
+       }
+  */ 
+    return camerasAvailable;
 }
 /**
  * Some names for cameras with index
@@ -519,6 +522,22 @@ int S60CameraSession::selectedDevice() const
 {
     return m_deviceIndex;
 }
+void S60CameraSession::setSelectedDevice(int index)
+{
+    // check whether we have camera at index in use already and we have enough cameras 
+    if (m_deviceIndex != index && deviceCount() >= index) {
+
+        delete iCameraEngine;
+        iCameraEngine = NULL;
+        TRAP(iError, iCameraEngine = CCameraEngine::NewL(index, 0, this));
+        iCameraEngine->ReserveAndPowerOn();
+        iError = KErrNone;
+        m_deviceIndex = index;
+        
+    }
+        
+}
+
 /*
  * Queries all kinds of camera properties
  * Results are returned to member variable m_info

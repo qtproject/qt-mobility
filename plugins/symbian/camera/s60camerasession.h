@@ -141,6 +141,7 @@ public:
     QIcon icon(int index) const;
     int defaultDevice() const;
     int selectedDevice() const;
+    void setSelectedDevice(int index);
     
     //void setDevice(const QString &device);
     

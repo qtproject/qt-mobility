@@ -58,30 +58,45 @@ S60CameraVideoDeviceControl::~S60CameraVideoDeviceControl()
 
 int S60CameraVideoDeviceControl::deviceCount() const
 {
+	if (m_session) {
+		m_session->deviceCount();
+	}
 }
 
 QString S60CameraVideoDeviceControl::name(int index) const
 {
-
+	if (m_session) {
+		return m_session->name(index);
+	}
 }
 QString S60CameraVideoDeviceControl::description(int index) const
 {
-
+	if (m_session) {
+		return m_session->description(index);
+	}
 }
 QIcon S60CameraVideoDeviceControl::icon(int index) const
 {
-
+	if (m_session) {
+		return m_session->icon(index);
+	}
 }
 int S60CameraVideoDeviceControl::defaultDevice() const
 {
-
+    if (m_session) {
+            return m_session->defaultDevice();
+        }
 }
 int S60CameraVideoDeviceControl::selectedDevice() const
 {
-
+    if (m_session) {
+            return m_session->selectedDevice();
+        }
 }
 //public Q_SLOTS:
 void S60CameraVideoDeviceControl::setSelectedDevice(int index)
 {
-
+    if (m_session) {
+            m_session->setSelectedDevice(index);
+        }
 }

@@ -20,5 +20,5 @@ load(data_caging_paths)
     pluginDep.path = $$QT_PLUGINS_BASE_DIR\mediaservice    
     DEPLOYMENT += pluginDep    
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.CAPABILITY = ALL -TCB
+    TARGET.CAPABILITY = ALL -TCB -DRM
     MMP_RULES += EXPORTUNFROZEN
