@@ -178,6 +178,7 @@ private slots:
     void testValid();
     void testMedia();
     void testDuration();
+    void testSeekRange();
     void testPosition();
     void testVolume();
     void testMuted();
@@ -283,6 +284,24 @@ void tst_QMediaPlayer::testDuration()
 
     mockService->setDuration(duration);
     QVERIFY(player->duration() == duration);
+}
+
+void tst_QMediaPlayer::testSeekRange()
+{
+    QFETCH_GLOBAL(qint64, duration);
+    QMediaPlayerControl *control = mockService->mockControl;
+
+    mockService->setDuration(duration);
+
+    mockService->setSeekable(false);
+
+    QCOMPARE(control->seekRange().first, qint64(0));
+    QCOMPARE(control->seekRange().second, qint64(0));
+
+    mockService->setSeekable(true);
+
+    QCOMPARE(control->seekRange().first, qint64(0));
+    QCOMPARE(control->seekRange().second, duration);
 }
 
 void tst_QMediaPlayer::testPosition()

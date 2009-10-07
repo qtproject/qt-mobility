@@ -38,6 +38,8 @@
 #include <multimedia/qmediacontrol.h>
 #include <multimedia/qmediaplayer.h>
 
+#include <QtCore/qpair.h>
+
 class QMediaPlaylist;
 
 class Q_MEDIA_EXPORT QMediaPlayerControl : public QMediaControl
@@ -67,6 +69,7 @@ public:
     virtual bool isVideoAvailable() const = 0;
 
     virtual bool isSeekable() const = 0;
+    virtual QPair<qint64,qint64> seekRange() const;
 
     virtual qreal playbackRate() const = 0;
     virtual void setPlaybackRate(qreal rate) = 0;
@@ -90,6 +93,7 @@ Q_SIGNALS:
     void videoAvailabilityChanged(bool videoAvailable);
     void bufferStatusChanged(int percentFilled);
     void seekableChanged(bool);
+    void seekRangeChanged(const QPair<qint64,qint64>&);
     void playbackRateChanged(qreal rate);
     void error(int error, const QString &errorString);
 
