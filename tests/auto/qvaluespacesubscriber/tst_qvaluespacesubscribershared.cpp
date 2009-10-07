@@ -429,7 +429,10 @@ void tst_QValueSpaceSubscriber::testConstructor()
     QValueSpaceSubscriber *subscriber = qvariant_cast<QValueSpaceSubscriber*>(testItem);
     QCOMPARE(subscriber->parent(), this);
     QCOMPARE(subscriber->value(), value);
-    QCOMPARE(subscriber->subPaths().toSet(), subPaths.toSet());
+    QStringList list = subscriber->subPaths();
+    qDebug() << "Expected:" << subPaths.toSet();
+    qDebug() << "Actual:" << list.toSet();
+    QCOMPARE(list.toSet(), subPaths.toSet());
     QCOMPARE(subscriber->path(), path);
     QCOMPARE(subscriber->value(relItemPath, 100).toInt(), expectedValue);
 }
@@ -510,7 +513,10 @@ void tst_QValueSpaceSubscriber::testPathChanges()
                   << "double" << "float" << "QChar";
 
     QCOMPARE(subscriber.path(), QLatin1String("/"));
-    QCOMPARE(subscriber.subPaths().toSet(), rootPaths.toSet());
+    QStringList list = subscriber.subPaths();
+    qDebug() << "Expected:" << rootPaths.toSet();
+    qDebug() << "Actual:" << list.toSet();
+    QCOMPARE(list.toSet(), rootPaths.toSet());
 
     subscriber.cd("home");
     QCOMPARE(subscriber.path(), QLatin1String("/home"));
