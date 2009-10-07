@@ -45,6 +45,7 @@
 #include "transformavatar.h"
 #include "transformsynctarget.h"
 #include "transformgender.h"
+#include "transformanniversary.h"
 
 #include <qtcontacts.h>
 #include <cntfldst.h>
@@ -78,6 +79,7 @@ void TransformContact::initializeTransformContactData()
 	m_transformContactData.insert(Avatar, new TransformAvatar);
 	m_transformContactData.insert(SyncTarget, new TransformSyncTarget);
 	m_transformContactData.insert(Gender, new TransformGender);
+	m_transformContactData.insert(Anniversary, new TransformAnniversary);
 }
 
 
