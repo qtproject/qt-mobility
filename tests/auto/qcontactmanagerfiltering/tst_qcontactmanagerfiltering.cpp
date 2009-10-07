@@ -1954,11 +1954,22 @@ void tst_QContactManagerFiltering::actionFiltering_data()
 
         QPair<QString, QString> booleanDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Bool");
         QPair<QString, QString> integerDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Integer");
-        QTest::newRow("empty (any action matches)") << manager << es << es << -1 << ev << "abcd";
+
         newMRow("bad actionname", manager) << manager << "No such action" << es << -1 << ev << es;
         newMRow("bad vendor", manager) << manager << es << "Vendor missing" << -1 << ev << es;
-        /* versions are ignored if vendors are not specified */
-        newMRow("ignored version", manager) << manager << es << es << 793434 << ev << "abcd";
+
+        /* some backend (wince..) has no valid Integer and Boolean actions yet*/
+        if ( (!integerDefAndFieldNames.first.isEmpty() && !integerDefAndFieldNames.second.isEmpty()) 
+             ||
+             (!booleanDefAndFieldNames.first.isEmpty() && !booleanDefAndFieldNames.second.isEmpty()) ){
+            QTest::newRow("empty (any action matches)") << manager << es << es << -1 << ev << "abcd";
+            /* versions are ignored if vendors are not specified */
+            newMRow("ignored version", manager) << manager << es << es << 793434 << ev << "abcd";
+        } else {
+            QTest::newRow("empty (any action matches)") << manager << es << es << -1 << ev << es;
+            /* versions are ignored if vendors are not specified */
+            newMRow("ignored version", manager) << manager << es << es << 793434 << ev << es;
+        }
 
         if (!integerDefAndFieldNames.first.isEmpty() && !integerDefAndFieldNames.second.isEmpty()) {
             newMRow("Number", manager) << manager << "Number" << es << -1 << ev << "abcd";
@@ -1993,10 +2004,10 @@ void tst_QContactManagerFiltering::actionFiltering_data()
             QTest::newRow("BooleanCo (bad version)") << manager << es << "BooleanCo" << 3234243 << ev << es;
         }
 
-        /* Value filtering */
-        QTest::newRow("Any action matching 20") << manager << es << es << -1 << QVariant(20) << "b";
-        QTest::newRow("Any action matching 4.0") << manager << es << es << -1 << QVariant(4.0) << "bc";
         if (!integerDefAndFieldNames.first.isEmpty() && !integerDefAndFieldNames.second.isEmpty()) {
+            /* Value filtering */
+            QTest::newRow("Any action matching 20") << manager << es << es << -1 << QVariant(20) << "b";
+            QTest::newRow("Any action matching 4.0") << manager << es << es << -1 << QVariant(4.0) << "bc";
             QTest::newRow("NumberCo with 20") << manager << es << "NumberCo" << -1 << QVariant(20) << "b";
             QTest::newRow("NumberCo with 4.0") << manager << es << "NumberCo" << -1 << QVariant(4.0) << "bc";
             QTest::newRow("IntegerCo with 20") << manager << es << "IntegerCo" << -1 << QVariant(20) << "b";
