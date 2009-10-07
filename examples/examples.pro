@@ -30,7 +30,7 @@ SUBDIRS += samplephonebook \
 }
 
 #System Information
-!symbian:SUBDIRS += sysinfo
+!symbian:!wince*:SUBDIRS += sysinfo
 
 #Multimedia
 SUBDIRS += player \

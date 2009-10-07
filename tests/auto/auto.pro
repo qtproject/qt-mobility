@@ -39,7 +39,7 @@ unix:SUBDIRS += qpacket \
                 qsystemreadwritelock \
                 qsystemreadwritelock_oop
 
-!symbian:SUBDIRS += qsysteminfo \                    #SystemInformation
+!symbian:!wince*:SUBDIRS += qsysteminfo \                    #SystemInformation
           qsystemdeviceinfo \
           qsystemdisplayinfo \
           qsystemstorageinfo \
