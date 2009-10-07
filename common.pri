@@ -57,7 +57,7 @@ CONFIG(debug, debug|release) {
 !testcase {
     OBJECTS_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET
     !plugin {
-        contains(TEMPLATE, lib):DESTDIR = $$OUTPUT_DIR/lib
+        contains(TEMPLATE,.*lib):DESTDIR = $$OUTPUT_DIR/lib
         else:DESTDIR = $$OUTPUT_DIR/bin
     } else {
         testplugin:DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/$$PLUGIN_TYPE
