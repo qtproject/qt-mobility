@@ -385,12 +385,12 @@ void tst_QContactManagerFiltering::detailVariantFiltering_data()
         /*
          * Dates
          * A has QDate(1988, 1, 26)
-         * B has QDate(1492, 5, 5)
-         * D has QDate(1770, 10, 1)
+         * B has QDate(2492, 5, 5)
+         * D has QDate(2770, 10, 1)
          */
         const QDate ad(1988, 1, 26);
-        const QDate bd(1492, 5, 5);
-        const QDate dd(1770, 10, 1);
+        const QDate bd(2492, 5, 5);
+        const QDate dd(2770, 10, 1);
 
         defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Date");
         if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
@@ -1954,6 +1954,7 @@ void tst_QContactManagerFiltering::actionFiltering_data()
 
         QPair<QString, QString> booleanDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Bool");
         QPair<QString, QString> integerDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Integer");
+        QPair<QString, QString> dateDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Date");
 
         newMRow("bad actionname", manager) << manager << "No such action" << es << -1 << ev << es;
         newMRow("bad vendor", manager) << manager << es << "Vendor missing" << -1 << ev << es;
@@ -2525,7 +2526,7 @@ QList<QUniqueId> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
     boool.setValue(definitionDetails.value("Bool").second, false);
     ullong.setValue(definitionDetails.value("ULongLong").second, (qulonglong) 80000000000LL); // 80B
     uintt.setValue(definitionDetails.value("UInt").second, 4000000000u); // 4B
-    date.setValue(definitionDetails.value("Date").second, QDate(1492, 5, 5));
+    date.setValue(definitionDetails.value("Date").second, QDate(2492, 5, 5));
     time.setValue(definitionDetails.value("Time").second, QTime(15,52,23,0));
     charr.setValue(definitionDetails.value("Char").second, QVariant(QChar('b')));
 
@@ -2582,7 +2583,7 @@ QList<QUniqueId> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
     dubble.setValue(definitionDetails.value("Double").second, -128.0);
     llong.setValue(definitionDetails.value("LongLong").second, (qlonglong)-14000000000LL);
     uintt.setValue(definitionDetails.value("UInt").second, 3000000000u); // 3B
-    date.setValue(definitionDetails.value("Date").second, QDate(1770, 10, 1));
+    date.setValue(definitionDetails.value("Date").second, QDate(2770, 10, 1));
 
     d.saveDetail(&name);
     if (!definitionDetails.value("String").first.isEmpty() && !definitionDetails.value("String").second.isEmpty())

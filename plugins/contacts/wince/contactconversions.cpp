@@ -128,7 +128,7 @@ static CEPROPVAL convertToCEPropVal(const CEPROPID& id, const QDateTime& value)
 
 // Our fields to POOM
 // QMap<definition, {QMap<field, poomid>, datatype, maxnumber}>
-typedef void (*processContactPoomElement)(const QContactDetail& detail, QVector<CEPROPVAL>& props);
+typedef bool (*processContactPoomElement)(const QContactDetail& detail, QVector<CEPROPVAL>& props);
 
 // POOM to us
 // something like
@@ -505,49 +505,69 @@ static void addIfNotEmpty(const CEPROPID& id, const QString& value, QVector<CEPR
         props.append(convertToCEPropVal(id, value));
 }
 
-static void processQName(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+static bool processQName(const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
     addIfNotEmpty(PIMPR_TITLE, detail.value(QContactName::FieldPrefix), props);
     addIfNotEmpty(PIMPR_FIRST_NAME, detail.value(QContactName::FieldFirst), props);
     addIfNotEmpty(PIMPR_MIDDLE_NAME, detail.value(QContactName::FieldMiddle), props);
     addIfNotEmpty(PIMPR_LAST_NAME, detail.value(QContactName::FieldLast), props);
     addIfNotEmpty(PIMPR_SUFFIX, detail.value(QContactName::FieldSuffix), props);
+    return true;
 }
 
-static void processQLabel(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+static bool processQLabel(const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
     props.append(convertToCEPropVal(PIMPR_FILEAS, detail.value(QContactDisplayLabel::FieldLabel)));
+    return true;
 }
 
-static void processQBirthday(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+static bool validateDate(const QVariant& val)
 {
-    if (detail.variantValue(QContactBirthday::FieldBirthday).isValid())
+    /*POOM only support date from 1900 to 2999: http://msdn.microsoft.com/en-us/library/aa910841.aspx */
+    QDate date = val.toDate();
+    return date.year() >= 1900 && date.year() <= 2999;
+}
+
+static bool processQBirthday(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+{
+    if (detail.variantValue(QContactBirthday::FieldBirthday).isValid()) {
+        if (!validateDate(detail.variantValue(QContactBirthday::FieldBirthday)))
+            return false;
         props.append(convertToCEPropVal(PIMPR_BIRTHDAY, detail.variantValue(QContactBirthday::FieldBirthday).toDateTime()));
+    }
+    return true;
 }
 
-static void processQAnniversary(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+static bool processQAnniversary(const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
-    if (detail.variantValue(QContactAnniversary::FieldOriginalDate).isValid())
+    if (detail.variantValue(QContactAnniversary::FieldOriginalDate).isValid()) {
+        if (!validateDate(detail.variantValue(QContactAnniversary::FieldOriginalDate)))
+            return false;
         props.append(convertToCEPropVal(PIMPR_ANNIVERSARY, detail.variantValue(QContactAnniversary::FieldOriginalDate).toDateTime()));
+    }
+    return true;
 }
 
-static void processQNickname(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+static bool processQNickname(const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
     addIfNotEmpty(PIMPR_NICKNAME, detail.value(QContactNickname::FieldNickname), props);
+    return true;
 }
 
-static void processQOrganisation(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+static bool processQOrganisation(const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
     QContactOrganization org(detail);
 
     addIfNotEmpty(PIMPR_COMPANY_NAME, org.name(), props);
+    return true;
 }
 
-static void processQWebpage(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+static bool processQWebpage(const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
     QContactUrl url(detail);
 
     addIfNotEmpty(PIMPR_WEB_PAGE, url.url(), props);
+    return true;
 }
 
 /* Bulk setters */
@@ -861,7 +881,10 @@ bool QContactWinCEEngine::convertFromQContact(const QContact& contact, IItem* it
     foreach (const QContactDetail& detail, details) {
         func = transforms.value(detail.definitionName());
         if (func) {
-            func(detail, props);
+            if (!func(detail, props)) {
+                error = QContactManager::InvalidDetailError;
+                return false;
+            }
         }
     }
 
