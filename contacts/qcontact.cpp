@@ -436,6 +436,12 @@ QList<QContactDetail> QContact::detailsWithAction(const QString& actionName) con
     return retn;
 }
 
+/*! Returns a list of relationships in which the contact was a participant at the time that it was retrieved from the manager */
+QList<QContactRelationship> QContact::relationships() const
+{
+    return d->m_relationships;
+}
+
 /*! Return a list of actions available to be performed on this contact */
 QStringList QContact::availableActions() const
 {

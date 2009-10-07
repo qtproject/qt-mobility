@@ -67,6 +67,7 @@ public:
         : QSharedData(other),
         m_id(other.m_id),
         m_details(other.m_details),
+        m_relationships(other.m_relationships),
         m_preferences(other.m_preferences),
         m_nextDetailId(other.m_nextDetailId)
     {
@@ -76,6 +77,7 @@ public:
 
     QUniqueId m_id;
     QList<QContactDetail> m_details;
+    QList<QContactRelationship> m_relationships;
     QMap<QString, quint32> m_preferences;
     quint32 m_nextDetailId;
 };

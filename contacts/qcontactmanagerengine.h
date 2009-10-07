@@ -136,6 +136,7 @@ public:
     static int compareVariant(const QVariant& first, const QVariant& second, Qt::CaseSensitivity sensitivity);
     static bool testFilter(const QContactFilter& filter, const QContact& contact);
     static bool validateActionFilter(const QContactFilter& filter);
+    static void setContactRelationships(QContact* contact, const QList<QContactRelationship>& relationships);
 
 private:
     /* QContactChangeSet is a utility class used to emit the appropriate signals */

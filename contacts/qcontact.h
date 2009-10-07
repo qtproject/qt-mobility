@@ -47,6 +47,7 @@
 #include "qcontactdetail.h"
 #include "qcontactdetaildefinition.h"
 #include "qcontactdisplaylabel.h"
+#include "qcontactrelationship.h"
 #include "qcontacttype.h"
 
 class QContactManager;
@@ -121,6 +122,9 @@ public:
     /* generic detail addition/removal functions */
     bool saveDetail(QContactDetail* detail);   // modifies the detail - sets its ID if detail already exists
     bool removeDetail(QContactDetail* detail); // modifies the detail - unsets its ID
+
+    /* Relationships that this contact was involved in when it was retrieved from the manager */
+    QList<QContactRelationship> relationships() const;
     
     /* Actions available to be performed on this contact */
     QStringList availableActions() const;
@@ -133,6 +137,7 @@ public:
 private:
     friend class QContactManager;
     friend class QContactManagerData;
+    friend class QContactManagerEngine;
 
     QSharedDataPointer<QContactData> d;
 };

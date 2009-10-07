@@ -44,6 +44,8 @@
 #include "qcontactrequests.h"
 #include "qcontactrequests_p.h"
 
+#include "qcontact_p.h"
+
 #include <QDebug>
 
 /*!
@@ -1403,18 +1405,14 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
 
         case QContactFilter::RelationshipFilter:
             {
-                QContactManager::Error error = QContactManager::NoError;
-
-                // first, build contact's uri
+                // first, build contact's uri - FIXME
                 QPair<QString, QUniqueId> contactUriOne = QPair<QString, QUniqueId>(QString(), contact.id());
-                QPair<QString, QUniqueId> contactUriTwo = QPair<QString, QUniqueId>(QString(QLatin1String("TODO!getUri")), contact.id());
+                QPair<QString, QUniqueId> contactUriTwo = QPair<QString, QUniqueId>(QString(QLatin1String("thisEngineUri")), contact.id()); // TODO!
 
                 const QContactRelationshipFilter rf(filter);
                 QPair<QString, QUniqueId> participant = QPair<QString, QUniqueId>(rf.otherParticipantManagerUri(), rf.otherParticipantId());
                 QList<QContactRelationship> allRelationships;
-                //allRelationships = relationships(rf.type(), participant, error); // static problem...
-                if (error != QContactManager::NoError)
-                    return false; // returning false is probably the wrong thing to do.. we don't want to assert that it doesn't match...
+                allRelationships = contact.relationships();
 
                 // now check to see that the role is correct.
                 foreach (const QContactRelationship& rel, allRelationships) {
@@ -1549,6 +1547,14 @@ bool QContactManagerEngine::validateActionFilter(const QContactFilter& filter)
     }
 
     return true;
+}
+
+/*!
+ * Sets the relationship cache in the given \a contact to \a relationships
+ */
+void QContactManagerEngine::setContactRelationships(QContact* contact, const QList<QContactRelationship>& relationships)
+{
+    contact->d->m_relationships = relationships;
 }
 
 
