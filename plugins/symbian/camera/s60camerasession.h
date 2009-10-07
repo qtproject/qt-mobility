@@ -39,6 +39,7 @@
 #include <QSocketNotifier>
 #include <QTime>
 #include <QUrl>
+#include <QtGui/qicon.h>
 
 #include "qcamera.h"
 #include <QtMultimedia/qvideoframe.h>
@@ -80,8 +81,7 @@ public:
 
     bool deviceReady();
 
-    // camera controls
-
+    // camera image properties
     int framerate() const;
     void setFrameRate(int rate);
     int brightness() const;
@@ -109,14 +109,13 @@ public:
 
     QSize frameSize() const;
     void setFrameSize(const QSize& s);
-    void setDevice(const QString &device);
+
     QList<QVideoFrame::PixelFormat> supportedPixelFormats();
     QVideoFrame::PixelFormat pixelFormat() const;
     void setPixelFormat(QVideoFrame::PixelFormat fmt);
     QList<QSize> supportedResolutions();
 
     // media control
-
     bool setSink(const QUrl &sink);
     QUrl sink() const;
     qint64 position() const;
@@ -134,6 +133,16 @@ public:
     void startRecording();
     void pauseRecording();
     void stopRecording();
+
+    //videodevicecontrol
+    int deviceCount() const;
+    QString name(int index) const;
+    QString description(int index) const;
+    QIcon icon(int index) const;
+    int defaultDevice() const;
+    int selectedDevice() const;
+    
+    //void setDevice(const QString &device);
     
 protected:
     void MceoCameraReady();
@@ -145,9 +154,12 @@ protected:
     
 private:
     void setVFProcessor(MVFProcessor* VFProcessor);
-
+    bool queryCurrentCameraInfo();
+    
 Q_SIGNALS:
     void stateChanged(QCamera::State);
+    void readyForCaptureChanged(bool);
+    void imageCaptured(const QString &fileName, const QImage &preview);
 
 private Q_SLOTS:
     void captureFrame();
@@ -160,7 +172,6 @@ private:
     QTime timeStamp;
     bool available;
     QCamera::State m_state;
-    QByteArray m_device;
     QUrl m_sink;
     QVideoFrame::PixelFormat pixelF;
     QSize m_windowSize;
@@ -172,8 +183,10 @@ private:
     QSize iCaptureSize;
     QSize iViewFinderSize;
     MVFProcessor* iVFProcessor;
-    TInt iIndex;
+    TInt m_deviceIndex; //index indication chosen camera device
     mutable int iError;
+    // information about camera
+    TCameraInfo m_info;
     
 };
 

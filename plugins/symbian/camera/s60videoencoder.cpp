@@ -6,10 +6,15 @@
 S60VideoEncoder::S60VideoEncoder(QObject *parent)
     :QVideoEncoderControl(parent)
 {
-    m_session = qobject_cast<S60CameraSession*>(parent);
+}
+
+S60VideoEncoder::S60VideoEncoder(QObject *session, QObject *parent)
+   :QVideoEncoderControl(parent)
+{
+    // use cast if we want to change session class later on..
+    m_session = qobject_cast<S60CameraSession*>(session);
 
     m_frameRate = qMakePair<int,int>(-1,1);
-
     m_codecs.clear();
     QList<QVideoFrame::PixelFormat> formats = m_session->supportedPixelFormats();
     if(formats.contains(QVideoFrame::Format_YUYV)) {

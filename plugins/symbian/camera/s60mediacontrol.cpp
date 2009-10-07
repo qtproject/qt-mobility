@@ -41,7 +41,13 @@
 S60MediaControl::S60MediaControl(QObject *parent)
     :QMediaRecorderControl(parent)
 {
-    m_session = qobject_cast<S60CameraSession*>(parent);
+}
+
+S60MediaControl::S60MediaControl(QObject *session, QObject *parent)
+   :QMediaRecorderControl(parent)
+{
+    // use cast if we want to change session class later on..
+    m_session = qobject_cast<S60CameraSession*>(session);
 }
 
 S60MediaControl::~S60MediaControl()

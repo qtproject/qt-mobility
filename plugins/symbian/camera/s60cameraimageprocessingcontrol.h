@@ -46,7 +46,7 @@ class S60CameraImageProcessingControl : public QImageProcessingControl
     Q_OBJECT
 public:
     S60CameraImageProcessingControl(QObject *parent = 0);
-    S60CameraImageProcessingControl(S60CameraService *service, QObject *parent = 0);
+    S60CameraImageProcessingControl(QObject *session, QObject *parent = 0);
     ~S60CameraImageProcessingControl();
 
     QCamera::WhiteBalanceMode whiteBalanceMode() const;

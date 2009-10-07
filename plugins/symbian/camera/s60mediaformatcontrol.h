@@ -45,7 +45,8 @@ class S60MediaFormatControl : public QMediaFormatControl
 {
 Q_OBJECT
 public:
-    S60MediaFormatControl(QObject *parent);
+    S60MediaFormatControl(QObject *parent = 0);
+    S60MediaFormatControl(QObject *session, QObject *parent = 0);
     virtual ~S60MediaFormatControl() {};
 
     virtual QStringList supportedFormats() const { return m_supportedFormats; }

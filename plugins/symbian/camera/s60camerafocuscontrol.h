@@ -46,7 +46,7 @@ class S60CameraFocusControl : public QCameraFocusControl
     Q_OBJECT
 public:
     S60CameraFocusControl(QObject *parent = 0);
-    S60CameraFocusControl(S60CameraService *service, QObject *parent = 0);
+    S60CameraFocusControl(QObject *session, QObject *parent = 0);
     ~S60CameraFocusControl();
 
     QCamera::FocusMode focusMode() const;

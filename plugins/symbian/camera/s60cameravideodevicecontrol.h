@@ -32,40 +32,43 @@
 **
 ****************************************************************************/
 
-#ifndef S60MEDIACONTROL_H
-#define S60MEDIACONTROL_H
+#ifndef S60CAMERAVIDEODEVICECONTROL_H
+#define S60CAMERAVIDEODEVICECONTROL_H
 
-#include <QtCore/qobject.h>
-#include <QUrl>
-
-#include "qmediarecorder.h"
-#include "qmediarecordercontrol.h"
-#include "qcameracontrol.h"
-
+#include "qvideodevicecontrol.h"
 class S60CameraSession;
+class QString;
+class QIcon;
 
-class S60MediaControl : public QMediaRecorderControl
+class S60CameraVideoDeviceControl : public QVideoDeviceControl
 {
     Q_OBJECT
 public:
-    S60MediaControl(QObject *parent = 0);
-    S60MediaControl(QObject *session, QObject *parent = 0);
-    ~S60MediaControl();
+    S60CameraVideoDeviceControl(QObject *parent);
+    S60CameraVideoDeviceControl(QObject *session, QObject *parent = 0);
+    virtual ~S60CameraVideoDeviceControl();
 
-    QUrl sink() const;
-    bool setSink(const QUrl &sink);
+    int deviceCount() const;
 
-    QMediaRecorder::State state() const;
+    QString name(int index) const;
+    QString description(int index) const;
+    QIcon icon(int index) const;
 
-    qint64 duration() const;
+    int defaultDevice() const;
+    int selectedDevice() const;
 
-public slots:
-    void record();
-    void pause();
-    void stop();
+public Q_SLOTS:
+    void setSelectedDevice(int index);
+
+/*Q_SIGNALS:
+    void selectedDeviceChanged(int index);
+    void selectedDeviceChanged(const QString &deviceName);
+    void devicesChanged();
+  */
 
 private:
     S60CameraSession* m_session;
+
 };
 
 #endif

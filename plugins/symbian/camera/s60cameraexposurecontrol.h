@@ -46,7 +46,7 @@ class S60CameraExposureControl : public QCameraExposureControl
     Q_OBJECT
 public:
     S60CameraExposureControl(QObject *parent = 0);
-    S60CameraExposureControl(S60CameraService *service, QObject *parent = 0);
+    S60CameraExposureControl(QObject *session, QObject *parent = 0);
     ~S60CameraExposureControl();
 
     QCamera::FlashMode flashMode() const;

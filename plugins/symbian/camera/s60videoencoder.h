@@ -11,7 +11,8 @@ class S60VideoEncoder : public QVideoEncoderControl
 {
     Q_OBJECT
 public:
-    S60VideoEncoder(QObject *parent);
+    S60VideoEncoder(QObject *parent = 0);
+    S60VideoEncoder(QObject *session, QObject *parent = 0);
     virtual ~S60VideoEncoder();
 
     QSize resolution() const;

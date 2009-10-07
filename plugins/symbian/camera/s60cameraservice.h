@@ -42,11 +42,14 @@
 class S60MediaFormatControl;
 class S60VideoEncoder;
 class S60CameraControl;
+class S60CameraVideoDeviceControl;
 class S60MediaControl;
 class S60CameraSession;
 class S60VideoOutputControl;
 class S60CameraFocusControl;
 class S60CameraExposureControl;
+class S60CameraImageProcessingControl;
+class S60CameraImageCaptureControl;
 
 class S60CameraService : public QMediaService
 {
@@ -56,18 +59,33 @@ public:
     ~S60CameraService();
 
     QMediaControl *control(const char *name) const;
-    
+/*
+    virtual bool isEndpointSupported(QMediaService::MediaEndpoint endpointType);
 
+    virtual void setInputStream(QIODevice* stream);
+    virtual QIODevice* inputStream() const;
+
+    virtual void setOutputStream(QIODevice* stream);
+    virtual QIODevice* outputStream() const;
+
+    virtual QList<QString> activeEndpoints(QMediaService::MediaEndpoint endpointType);
+    virtual bool setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
+    virtual QString endpointDescription(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
+    virtual QList<QString> supportedEndpoints(QMediaService::MediaEndpoint endpointType) const;
+*/
 private:
-    
+
+    S60CameraSession *m_session;
     S60MediaFormatControl *m_mediaFormat;
     S60VideoEncoder *m_videoEncoder;
     S60CameraControl *m_control;
+    S60CameraVideoDeviceControl *m_videoDeviceControl;
     S60CameraFocusControl *m_focusControl;
     S60CameraExposureControl *m_exposureControl;
-    S60MediaControl  *m_media;
-    S60CameraSession *m_session;
+    S60CameraImageProcessingControl *m_imageProccessingControl;
+    S60CameraImageCaptureControl *m_imageCaptureControl;
     S60VideoOutputControl *m_videoOutput;
+    S60MediaControl  *m_media;
 };
 
 #endif

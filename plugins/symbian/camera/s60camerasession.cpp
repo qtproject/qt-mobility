@@ -33,6 +33,7 @@
 ****************************************************************************/
 
 #include <QtCore/qdebug.h>
+#include <QtCore/qstring.h>
 #include <QWidget>
 
 #include "s60camerasession.h"
@@ -58,6 +59,7 @@ S60CameraSession::~S60CameraSession()
 }
 bool S60CameraSession::startCamera(int index)
 {
+    
     /*
      * Try to start camera.
      */
@@ -67,7 +69,7 @@ bool S60CameraSession::startCamera(int index)
         }
         iCameraEngine->ReserveAndPowerOn();
         iError = KErrNone;
-        iIndex = index;
+        m_deviceIndex = index;
     }
     else
         iError = KErrNotSupported;
@@ -95,7 +97,8 @@ void S60CameraSession::capture()
     if (iCameraEngine)
     {
         TSize size(iCaptureSize.width(), iCaptureSize.height());
-        if(iIndex == 0)
+        // TODO check supported formats
+        if(m_deviceIndex == 0)
         {
             iCameraEngine->PrepareL(size);
             iCameraEngine->CaptureL();
@@ -259,15 +262,6 @@ void S60CameraSession::setFrameSize(const QSize& s)
 //        m_output->setFrameSize(s);
 }
 
-void S60CameraSession::setDevice(const QString &device)
-{
-    available = true;
-    //FIXME: Symbian camerawrapper does not support naming of devices
-    
-//    m_state = QCamera::StoppedState;
-//    m_device = QByteArray(device.toLocal8Bit().constData());
-
-}
 
 QList<QVideoFrame::PixelFormat> S60CameraSession::supportedPixelFormats()
 {
@@ -426,8 +420,11 @@ void S60CameraSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
                 format );
         
         aBitmap = NULL;
+
+        emit imageCaptured(m_sink.toLocalFile(), *snapImage);
         
     }
+    //todo error handling
 }
 
 void S60CameraSession::MceoViewFinderFrameReady(CFbsBitmap& aFrame)
@@ -453,3 +450,97 @@ void S60CameraSession::setVFProcessor(MVFProcessor* VFProcessor)
 {
     iVFProcessor = VFProcessor;
 }
+// For S60Cameravideodevicecontrol
+int S60CameraSession::deviceCount() const
+{
+    TInt camerasAavaiable = 0;
+    if (iCameraEngine) {
+        camerasAavaiable = iCameraEngine->CamerasAvailable();
+    }
+    return camerasAavaiable;
+}
+/**
+ * Some names for cameras with index
+ */
+QString S60CameraSession::name(int index) const
+{
+    // From where does the naming index start
+    QString cameraName;
+    switch (index) {
+        case 0:
+            cameraName = QLatin1String("Primary camera");
+        break;
+        case 1:
+            cameraName = QLatin1String("Secondary camera");
+        break;
+        case 2:
+            cameraName = QLatin1String("Tertiary camera");
+        break;
+        default:
+            cameraName = QLatin1String("Default camera");
+        break;
+    }
+    return cameraName;
+}
+QString S60CameraSession::description(int index) const
+{
+    // what information is wanted throuhg this call?
+    QString cameraDesc;
+    switch (index) {
+        case 0:
+            cameraDesc = QLatin1String("Primary camera description");
+        break;
+        case 1:
+            cameraDesc = QLatin1String("Secondary camera description");
+        break;
+        case 2:
+            cameraDesc = QLatin1String("Tertiary camera description");
+        break;
+        default:
+            cameraDesc = QLatin1String("Default camera description");
+        break;
+    }
+    return cameraDesc;
+}
+QIcon S60CameraSession::icon(int index) const
+{
+    // TODO what icons should returned here?
+    // \epoc32\release\winscw\udeb\z\resource\apps\camcorder_aif.mif
+    Q_UNUSED(index);
+    QString filename = QLatin1String("resource\\apps\\camcorder_aif.mif");
+    return QIcon( filename );
+    //return icon;
+}
+int S60CameraSession::defaultDevice() const
+{
+    return 0;
+}
+int S60CameraSession::selectedDevice() const
+{
+    return m_deviceIndex;
+}
+/*
+ * Queries all kinds of camera properties
+ * Results are returned to member variable m_info
+ * @return boolean indicating if querying the info was a success
+ */
+bool S60CameraSession::queryCurrentCameraInfo()
+{
+    /** Version number and name of camera hardware. */
+    //TVersion iHardwareVersion;
+    /** Version number and name of camera software (device driver). */
+    //TVersion iSoftwareVersion;
+    /** Orientation of this particular camera device. */
+    //TCameraOrientation iOrientation;
+    bool returnValue = false;
+
+    if (iCameraEngine) {
+        CCamera *camera = iCameraEngine->Camera();
+        if (camera) {
+            camera->CameraInfo(m_info);
+        }
+        returnValue = true;
+    }
+    return returnValue;
+}
+// End for S60Cameravideodevicecontrol

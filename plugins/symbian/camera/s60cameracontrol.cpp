@@ -43,13 +43,13 @@
 S60CameraControl::S60CameraControl(QObject *parent)
     :QCameraControl(parent)
 {
-    m_session = qobject_cast<S60CameraSession*>(parent);
 }
 
-S60CameraControl::S60CameraControl(S60CameraService *service, QObject *parent)
-   :QCameraControl(parent), m_service(service)
+S60CameraControl::S60CameraControl(QObject *session, QObject *parent)
+   :QCameraControl(parent)
 {
-    m_session = qobject_cast<S60CameraSession*>(parent);
+    // use cast if we want to change session class later on..
+    m_session = qobject_cast<S60CameraSession*>(session);
 }
 
 S60CameraControl::~S60CameraControl()

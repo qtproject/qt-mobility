@@ -40,8 +40,11 @@
 
 #include "S60cameraservice.h"
 #include "S60cameracontrol.h"
+#include "S60cameravideodevicecontrol.h"
 #include "S60camerafocuscontrol.h"
 #include "S60cameraexposurecontrol.h"
+#include "S60cameraimageprocessingcontrol.h"
+#include "s60cameraimagecapturecontrol.h"
 #include "S60mediacontrol.h"
 #include "S60camerasession.h"
 //#include "S60videowidget.h"
@@ -52,13 +55,19 @@
 S60CameraService::S60CameraService(QObject *parent)
     : QMediaService(parent)
 {
+    // session class is the main symbian backend class
     m_session = new S60CameraSession(this);
-    m_control = new S60CameraControl(this,m_session);
-    m_focusControl = new S60CameraFocusControl(this, m_session);
-    m_exposureControl = new S60CameraExposureControl(this, m_session);
-    m_media = new S60MediaControl(m_session);
-    m_mediaFormat = new S60MediaFormatControl(m_session);
-    m_videoEncoder = new S60VideoEncoder(m_session);
+    // different control classes which use session class to do the work
+    m_control = new S60CameraControl(m_session, this);
+    m_videoDeviceControl = new S60CameraVideoDeviceControl(m_session, this);
+    m_focusControl = new S60CameraFocusControl(m_session, this);
+    m_exposureControl = new S60CameraExposureControl(m_session, this);
+    m_imageProccessingControl = new S60CameraImageProcessingControl(m_session, this);
+    m_imageCaptureControl = new S60CameraImageCaptureControl(m_session, this);
+
+    m_media = new S60MediaControl(m_session, this);
+    m_mediaFormat = new S60MediaFormatControl(m_session, this);
+    m_videoEncoder = new S60VideoEncoder(m_session, this);
     m_videoOutput = new S60VideoOutputControl(m_session);
 
 }
@@ -69,24 +78,14 @@ S60CameraService::~S60CameraService()
     delete m_control;
     delete m_focusControl;
     delete m_exposureControl;
+    delete m_imageProccessingControl;
+    delete m_imageCaptureControl;
     delete m_session;
     delete m_videoEncoder;
     delete m_mediaFormat;
     delete m_videoOutput;
+    delete m_videoDeviceControl;
 }
-
-
-/*
-void S60CameraService::setVideoOutput(QObject *output)
-{
-    S60VideoWidget *videoWidget = qobject_cast<S60VideoWidget*>(output);
-    if (videoWidget) {
-        m_session->setVideoOutput(videoWidget);
-    }
-
-    QAbstractMediaService::setVideoOutput(output);
-}
-*/
 
 QMediaControl *S60CameraService::control(const char *name) const
 {
@@ -111,15 +110,58 @@ QMediaControl *S60CameraService::control(const char *name) const
     if(qstrcmp(name,QCameraFocusControl_iid) == 0)
         return m_focusControl;
 
-    return 0;
-}
-/*
-QObject *S60CameraService::createEndpoint(const char *interface)
-{
-    if (qstrcmp(interface, QMediaWidgetEndpoint_iid) == 0) {
-        return new VideoWidget;
-    }
+    if(qstrcmp(name,QImageProcessingControl_iid) == 0)
+        return m_imageProccessingControl;
+
+    if(qstrcmp(name,QImageCaptureControl_iid) == 0)
+        return m_imageCaptureControl;
+
+    if(qstrcmp(name,QVideoDeviceControl_iid) == 0)
+        return m_videoDeviceControl;
+
 
     return 0;
 }
+
+/*
+bool S60CameraService::isEndpointSupported(QMediaService::MediaEndpoint endpointType)
+{
+    return false;
+}
+
+void S60CameraService::setInputStream(QIODevice* stream)
+{
+}
+
+QIODevice* S60CameraService::inputStream() const
+{
+    return 0;
+}
+
+void S60CameraService::setOutputStream(QIODevice* stream)
+{
+}
+
+QIODevice* S60CameraService::outputStream() const
+{
+    return 0;
+}
+
+QString S60CameraService::activeEndpoint(QMediaService::MediaEndpoint endpointType)
+{
+    return QByteArray();
+}
+
+bool S60CameraService::setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint)
+{
+    return true;
+}
+
+QList<QString> S60CameraService::supportedEndpoints(QMediaService::MediaEndpoint endpointType) const
+{
+    QList<QString> list;
+    //TODO
+    return list;
+}
 */
+

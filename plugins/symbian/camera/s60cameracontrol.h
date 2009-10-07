@@ -46,7 +46,7 @@ class S60CameraControl : public QCameraControl
     Q_OBJECT
 public:
     S60CameraControl(QObject *parent = 0);
-    S60CameraControl(S60CameraService *service, QObject *parent = 0);
+    S60CameraControl(QObject *session, QObject *parent = 0);
     ~S60CameraControl();
 
     void start();
@@ -55,7 +55,6 @@ public:
 
 private:
     S60CameraSession *m_session;
-    S60CameraService *m_service;
 };
 
 #endif

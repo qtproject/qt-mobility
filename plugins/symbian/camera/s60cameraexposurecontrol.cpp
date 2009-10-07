@@ -43,13 +43,13 @@
 S60CameraExposureControl::S60CameraExposureControl(QObject *parent)
     :QCameraExposureControl(parent)
 {
-    m_session = qobject_cast<S60CameraSession*>(parent);
 }
 
-S60CameraExposureControl::S60CameraExposureControl(S60CameraService *service, QObject *parent)
-   :QCameraExposureControl(parent), m_service(service)
+S60CameraExposureControl::S60CameraExposureControl(QObject *session, QObject *parent)
+   :QCameraExposureControl(parent)
 {
-    m_session = qobject_cast<S60CameraSession*>(parent);
+    // use cast if we want to change session class later on..
+    m_session = qobject_cast<S60CameraSession*>(session);
 }
 
 S60CameraExposureControl::~S60CameraExposureControl()

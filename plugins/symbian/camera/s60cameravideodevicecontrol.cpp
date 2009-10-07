@@ -32,40 +32,56 @@
 **
 ****************************************************************************/
 
-#ifndef S60MEDIACONTROL_H
-#define S60MEDIACONTROL_H
+#include "s60cameravideodevicecontrol.h"
+#include "s60camerasession.h"
 
-#include <QtCore/qobject.h>
-#include <QUrl>
+#include <QtCore/qdebug.h>
+#include <QtCore/qstring.h>
+#include <QtGui/qicon.h>
 
-#include "qmediarecorder.h"
-#include "qmediarecordercontrol.h"
-#include "qcameracontrol.h"
-
-class S60CameraSession;
-
-class S60MediaControl : public QMediaRecorderControl
+S60CameraVideoDeviceControl::S60CameraVideoDeviceControl(QObject *parent)
+    :QVideoDeviceControl(parent)
 {
-    Q_OBJECT
-public:
-    S60MediaControl(QObject *parent = 0);
-    S60MediaControl(QObject *session, QObject *parent = 0);
-    ~S60MediaControl();
+}
 
-    QUrl sink() const;
-    bool setSink(const QUrl &sink);
+S60CameraVideoDeviceControl::S60CameraVideoDeviceControl(QObject *session, QObject *parent)
+   :QVideoDeviceControl(parent)
+{
+    // use cast if we want to change session class later on..
+    m_session = qobject_cast<S60CameraSession*>(session);
+}
 
-    QMediaRecorder::State state() const;
 
-    qint64 duration() const;
+S60CameraVideoDeviceControl::~S60CameraVideoDeviceControl()
+{
+}
 
-public slots:
-    void record();
-    void pause();
-    void stop();
+int S60CameraVideoDeviceControl::deviceCount() const
+{
+}
 
-private:
-    S60CameraSession* m_session;
-};
+QString S60CameraVideoDeviceControl::name(int index) const
+{
 
-#endif
+}
+QString S60CameraVideoDeviceControl::description(int index) const
+{
+
+}
+QIcon S60CameraVideoDeviceControl::icon(int index) const
+{
+
+}
+int S60CameraVideoDeviceControl::defaultDevice() const
+{
+
+}
+int S60CameraVideoDeviceControl::selectedDevice() const
+{
+
+}
+//public Q_SLOTS:
+void S60CameraVideoDeviceControl::setSelectedDevice(int index)
+{
+
+}
