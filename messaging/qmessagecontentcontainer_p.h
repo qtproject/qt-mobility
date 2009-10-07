@@ -221,7 +221,11 @@ public:
         setContentType(type, subType, charset);
 
         _textContent = content;
-        _size = content.length() * sizeof(TCHAR);
+        _size = content.length();
+#ifdef Q_OS_WIN
+        // Approximate size in bytes, not chars
+        _size *= sizeof(TCHAR);
+#endif
         _available = true;
     }
 
