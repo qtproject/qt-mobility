@@ -38,9 +38,11 @@
 
 #ifdef USE_QMF_IMPLEMENTATION
 #include "qmfhelpers_p.h"
-#elif defined(Q_OS_WIN)
+#else
 #include "qmessage_p.h"
+#if defined(Q_OS_WIN)
 #include "winhelpers_p.h"
+#endif
 #endif
 
 #include <QSharedData>
@@ -241,7 +243,9 @@ public:
     QMessageContentContainer *attachment(const QMessageContentContainerId &id)
     {
         if (isMessage()) {
+#ifdef Q_OS_WIN
             _message->d_ptr->ensureAttachmentsPresent(_message);
+#endif
 
             if (id == bodyContentId()) {
                 return _message;
@@ -260,7 +264,9 @@ public:
     const QMessageContentContainer *attachment(const QMessageContentContainerId &id) const
     {
         if (isMessage()) {
+#ifdef Q_OS_WIN
             _message->d_ptr->ensureAttachmentsPresent(_message);
+#endif
 
             if (id == bodyContentId()) {
                 return _message;
