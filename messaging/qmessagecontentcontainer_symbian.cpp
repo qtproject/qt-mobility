@@ -139,9 +139,3 @@ void QMessageContentContainer::setDerivedMessage(QMessage *derived)
 {
     Q_UNUSED(derived)
 }
-
-void QMessageContentContainer::removeContent(const QMessageContentContainerId &id)
-{
-    Q_UNUSED(id)
-}
-
