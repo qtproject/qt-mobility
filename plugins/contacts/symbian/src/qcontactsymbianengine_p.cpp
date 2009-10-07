@@ -31,14 +31,17 @@
 **
 ****************************************************************************/
 
-#include "qcontactsymbianengine_p.h" 
+#include "qcontactsymbianengine_p.h"
 #include "qcontact_p.h"
 
 #include <cntfldst.h>
+#include <cntfield.h>
 
 #include <qtcontacts.h>
 #include <QSet>
 #include "qcontactchangeset.h"
+#include "qcontactsymbianfilterdbms.h"
+#include "qcontactsymbianfiltersql.h"
 
 #include <QDebug>
 
@@ -62,17 +65,18 @@ QContactSymbianEngineData::QContactSymbianEngineData() :
     m_transformContact(0)
 {
     QT_TRAP_THROWING(m_contactDatabase = CContactDatabase::OpenL());
-    
+
     // In pre 10.1 platforms the AddObserverL & RemoveObserver functions are not
     // exported so we need to use CContactChangeNotifier.
     // TODO: Is it ok to use __SYMBIAN_CNTMODEL_USE_SQLITE__ flag for this?
-#ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__ 
+#ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
     QT_TRAP_THROWING(m_contactChangeNotifier = CContactChangeNotifier::NewL(*m_contactDatabase, this));
 #else
     QT_TRAP_THROWING(m_contactDatabase->AddObserverL(*this));
 #endif
-	
+
 	m_transformContact = new TransformContact;
+    m_contactFilter = new QContactSymbianFilter(*m_contactDatabase);
 }
 
 QContactSymbianEngineData::~QContactSymbianEngineData()
@@ -84,39 +88,29 @@ QContactSymbianEngineData::~QContactSymbianEngineData()
 	    m_contactDatabase->RemoveObserver(*this);
 	}
 #endif
+	// m_contactFilter needs to be deleted before m_contactDatabase
+    delete m_contactFilter;
 	delete m_contactDatabase;
 	delete m_transformContact;
 }
 
 /* Access */
-QList<QUniqueId> QContactSymbianEngineData::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) 
+QList<QUniqueId> QContactSymbianEngineData::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
-	QList<QUniqueId> matches;
-	
-	if (filter.type() == QContactFilter::ContactDetailFilter)
-	{
-		const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
-		
-		if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName)
-		{
-			QString communicationAddress("CALL");
-			//QString number("132");
-			QString number((detailFilter.value()).toString());
-			
-			matches = matchCommunicationAddress(communicationAddress, number);
-		}
-	}
-	
-	return matches;
+    return m_contactFilter->contacts(filter, sortOrders, error);
 }
 
+bool QContactSymbianEngineData::filterSupported(const QContactFilter& filter) const
+{
+    return m_contactFilter->filterSupported(filter);
+}
 
 /*!
  * Read a contact from the contact database.
- * 
- * Internal implementation to read a conact, called by 
+ *
+ * Internal implementation to read a conact, called by
  * QContactManager::contact().
- * 
+ *
  * \param contactId The Id of the contact to be retrieved.
  * \param qtError Qt error code.
  * \return A QContact for the requested QUniquId value or 0 if the read
@@ -135,10 +129,10 @@ QContact QContactSymbianEngineData::contact(const QUniqueId& contactId, QContact
 /*!
  * Check how many contacts are in the database. This is an internal
  * wrapper function for CContactDatabase::CountL().
- * 
+ *
  * If an error occurs, count will contain the error code and will be
  * less than zero.
- * 
+ *
  * \return Number of contacts in database or an error code.
  */
 int QContactSymbianEngineData::count() const
@@ -147,23 +141,23 @@ int QContactSymbianEngineData::count() const
 	int count(0);
 	// countL() can't throw c++ exception
 	TRAPD(err, count = countL());
-	
+
 	// If there was a problem, return the negative value as the
 	// error code.
 	if (err != KErrNone) {
 		count = err;
 	}
-	
+
 	return count;
 }
 
 /*!
  * Complete list of contact IDs in database is needed until we
  * do something with views so that QContactModel can function.
- * 
+ *
  * It works by retrieving a list of contact IDs changed since
  * epoch, as this API does not exist "properly" in CNTMODEL.
- * 
+ *
  * \param qtError Qt error code.
  * \return List of all IDs for contact entries in the database,
  *  or an empty list if there was a problem or the database is
@@ -174,11 +168,11 @@ QList<QUniqueId> QContactSymbianEngineData::contacts(QContactManager::Error& qtE
     // Create an empty list
     // See QT_TRYCATCH_LEAVING note at the begginning of this file
     QUniqueIdList *ids = new QUniqueIdList();
-    
+
     // Attempt to read from database, leaving the list empty if
     // there was a problem
     TRAPD(err, QT_TRYCATCH_LEAVING(*ids = contactsL()));
-    
+
     transformError(err, qtError);
 
     return *QScopedPointer<QUniqueIdList>(ids);
@@ -188,7 +182,7 @@ QList<QUniqueId> QContactSymbianEngineData::contacts(QContactManager::Error& qtE
 
 /*!
  * Add the specified contact item to the persistent contacts store.
- * 
+ *
  * \param contact The QContact to be saved.
  * \param id The Id of new contact
  * \param qtError Qt error code.
@@ -214,9 +208,9 @@ bool QContactSymbianEngineData::addContact(QContact& contact, QContactChangeSet&
 
 /*!
  * Update an existing contact entry in the database.
- * 
+ *
  * \param contact The contact to update in the database.
- * \param qtError Qt error code. 
+ * \param qtError Qt error code.
  * \return Error status.
  */
 bool QContactSymbianEngineData::updateContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError)
@@ -236,14 +230,14 @@ bool QContactSymbianEngineData::updateContact(QContact& contact, QContactChangeS
 
 /*!
  * Remove the specified contact object from the database.
- * 
+ *
  * The removal of contacts from the underlying contacts model database
  * is performed in transactions of maximum 50 items at a time. E.g.
  * deleting 177 contacts would be done in 3 transactions of 50 and a
- * final transaction of 27. 
- * 
+ * final transaction of 27.
+ *
  * \param contact The QContact to be removed.
- * \param qtError Qt error code. 
+ * \param qtError Qt error code.
  * \return Error status.
  */
 bool QContactSymbianEngineData::removeContact(const QUniqueId &id, QContactChangeSet& changeSet, QContactManager::Error& qtError)
@@ -260,35 +254,12 @@ bool QContactSymbianEngineData::removeContact(const QUniqueId &id, QContactChang
 	return (err==KErrNone);
 }
 
-/* match */
-
-/*!
- * Find a contact entry in the database with the given communication address.
- * 
- * \param communicationType The kind of communication address to look for; e.g.
- *  telephone numbers or email etc.
- * \param communicationAddress The address to search for in the contacts database.
- * 
- * \return A list of QContact objects with the specificed communication address.
- */
-QList<QUniqueId> QContactSymbianEngineData::matchCommunicationAddress(const QString &communicationType, const QString &communicationAddress)
-{
-    // Create an empty list to return on failure
-    // See QT_TRYCATCH_LEAVING note at the begginning of this file
-    QUniqueIdList *matches = new QUniqueIdList();
-    
-    // Attempt to match address, list will remain empty if there's an error
-    TRAP_IGNORE(QT_TRYCATCH_LEAVING(*matches = matchCommunicationAddressL(communicationType, communicationAddress)));
-    
-    return *QScopedPointer<QUniqueIdList>(matches);
-}
-
 /* groups */
 
 /*!
  * Return a list of group UIDs.
- *  
- * \param qtError Qt error code. 
+ *
+ * \param qtError Qt error code.
  * \return List of group IDs.
  */
 QList<QUniqueId> QContactSymbianEngineData::groups(QContactManager::Error& qtError) const
@@ -302,9 +273,9 @@ QList<QUniqueId> QContactSymbianEngineData::groups(QContactManager::Error& qtErr
 
 /*!
  * Retrieve a contact group object corresponding to the supplied UID.
- *  
+ *
  * \param groupId The id of the contact to be retrieved.
- * \param qtError Qt error code. 
+ * \param qtError Qt error code.
  * \return The contact group object.
  */
 QContactGroup QContactSymbianEngineData::group(const QUniqueId& groupId, QContactManager::Error& qtError) const
@@ -318,10 +289,10 @@ QContactGroup QContactSymbianEngineData::group(const QUniqueId& groupId, QContac
 
 /*!
  * Add the supplied contact group to the database.
- * 
+ *
  * \param group The contact group object to be saved.
  * \changeSet The ids for the contacts and groups that were modified.
- * \param qtError Qt error code. 
+ * \param qtError Qt error code.
  * \return a bool indicating whether the operation was successful.
  */
 bool QContactSymbianEngineData::addGroup(QContactGroup& group, QContactChangeSet& changeSet, QContactManager::Error& qtError)
@@ -335,15 +306,15 @@ bool QContactSymbianEngineData::addGroup(QContactGroup& group, QContactChangeSet
         m_contactsAddedEmitted.append(group.id());
     }
 	transformError(err, qtError);
-	return (err==KErrNone); 
+	return (err==KErrNone);
 }
 
 /*!
  * Update the contact group data to the database.
- * 
+ *
  * \param group The contact group object to be updated.
  * \changeSet The ids for the contacts and groups that were modified.
- * \param qtError Qt error code. 
+ * \param qtError Qt error code.
  * \return a bool indicating whether the operation was successful.
  */
 bool QContactSymbianEngineData::updateGroup(QContactGroup& group, QContactChangeSet& changeSet, QContactManager::Error& qtError)
@@ -357,12 +328,12 @@ bool QContactSymbianEngineData::updateGroup(QContactGroup& group, QContactChange
         m_contactsChangedEmitted.append(group.id());
     }
     transformError(err, qtError);
-    return (err==KErrNone); 
+    return (err==KErrNone);
 }
 
 /*!
  * Remove the contact group corresponding to the supplied UID from the database.
- * 
+ *
  * \param groupId The id of contact group to be removed.
  * \changeSet The ids for the contacts and groups that were modified.
  * \param qtError Qt error code.
@@ -384,7 +355,7 @@ bool QContactSymbianEngineData::removeGroup(const QUniqueId& groupId, QContactCh
 
 /*!
  * Return the contact group ID of the built-in SIM phonebook contacts group
- * 
+ *
  * \return a unique id relating the SIM phonebook group or 0 if it fails
  */
 QUniqueId QContactSymbianEngineData::simPhonebookGroupId() const
@@ -397,7 +368,7 @@ QUniqueId QContactSymbianEngineData::simPhonebookGroupId() const
 
 /*!
  * Assigns some contact to be a "my card" contact
- * 
+ *
  * \param contactId The id of contact to be set up as a "my card" contact.
  * \param qtError Qt error code.
  * \return Operation success status.
@@ -417,7 +388,7 @@ bool QContactSymbianEngineData::setSelfContactId(const QUniqueId& contactId, QCo
 
 /*!
  * Returns an Id of the "my card" contact
- * 
+ *
  * \param qtError Qt error code.
  * \return Id of the "my card" contact.
  */
@@ -431,7 +402,7 @@ QUniqueId QContactSymbianEngineData::selfContactId(QContactManager::Error& qtErr
 /*!
  * Respond to a contacts database event, delegating this event to
  * an appropriate signal as required.
- * 
+ *
  * \param aEvent Contacts database event describing the change to the
  *  database.
  */
@@ -484,7 +455,7 @@ void QContactSymbianEngineData::HandleDatabaseEventL(TContactDbObserverEvent aEv
 	}
 }
 
-/*! Transform a Symbian contact error id to QContactManager::Error. 
+/*! Transform a Symbian contact error id to QContactManager::Error.
  *
  * \param symbianError Symbian error.
  * \param QtError Qt error.
@@ -532,7 +503,7 @@ void QContactSymbianEngineData::transformError(TInt symbianError, QContactManage
         {
             qtError = QContactManager::BadArgumentError;
             break;
-        }        
+        }
 		default:
 		{
 			qtError = QContactManager::UnspecifiedError;
@@ -556,7 +527,7 @@ QContact QContactSymbianEngineData::contactL(const QUniqueId &contactId) const
 	TContactItemId id(contactId);
 	CContactItem* symContact = m_contactDatabase->ReadContactL(id);
 	CleanupStack::PushL(symContact);
-	
+
 	// Convert to a QContact
 	QContact contact = m_transformContact->transformContactL(*symContact, *m_contactDatabase);
 
@@ -576,36 +547,40 @@ QList<QUniqueId> QContactSymbianEngineData::contactsL() const
 {
 	TTime epoch(0);
 	QList<QUniqueId> qIds;
-	
-    // Populate the ID array, returns the coontact ids + group ids 
+
+    // Populate the ID array, returns the coontact ids + group ids
 	CContactIdArray *ids = m_contactDatabase->ContactsChangedSinceL(epoch);
 	CleanupStack::PushL(ids);
-	
-	// If there was a problem, return an empty list, otherwise
-	// copy the IDs to the QUniqueId list. Note that this works
-	// while QUniqueId is a typedef to quint32.
-	const int idCount(ids->Count());
-	for (int i(0); i < idCount; ++i) {
+
+    // remove templates from the list
+    CContactIdArray *templateIds = m_contactDatabase->GetCardTemplateIdListL();
+    CleanupStack::PushL(templateIds);
+    for(TInt i(0); i < templateIds->Count(); i++) {
+        TContactItemId id = (*templateIds)[i];
+        TInt index = ids->Find(id);
+        if(index > KErrNotFound)
+            ids->Remove(index);
+    }
+
+    // Remove groups from the list
+    CContactIdArray *groupIds = m_contactDatabase->GetGroupIdListL();
+    CleanupStack::PushL(groupIds);
+    for(TInt i(0); i < groupIds->Count(); i++) {
+        TContactItemId id = (*groupIds)[i];
+        TInt index = ids->Find(id);
+        if(index > KErrNotFound)
+            ids->Remove(index);
+    }
+
+    // Add the contact ids to the returned QList
+	for (TInt i(0); i < ids->Count(); i++) {
 		qIds.append((*ids)[i]);
 	}
-	
-	CleanupStack::PopAndDestroy(ids);
-	
-	//remove the groups from the list
-	QContactManager::Error err = QContactManager::NoError;
-	QList<QUniqueId> groupIds = groups(err);
-	int indexOf(0);
-	
-	if (err==QContactManager::NoError) {
-        for(int i = (groupIds.count() - 1); i >= 0; i-- ) {
-            indexOf = qIds.lastIndexOf( groupIds.at(i));
-        
-            if(indexOf != -1){
-                qIds.removeAt(indexOf);
-            }
-        }
-	}
-	
+
+    CleanupStack::PopAndDestroy(groupIds);
+    CleanupStack::PopAndDestroy(templateIds);
+    CleanupStack::PopAndDestroy(ids);
+
 	return qIds;
 }
 
@@ -618,12 +593,12 @@ int QContactSymbianEngineData::countL() const
 	int count(0);
 	count = m_contactDatabase->CountL();
 
-	return count;	
+	return count;
 }
 
 /*!
  * Private leaving implementation for addContact()
- * 
+ *
  * \param contact The contact item to save in the database.
  * \return The new contact ID.
  */
@@ -648,7 +623,7 @@ int QContactSymbianEngineData::addContactL(QContact &contact)
 
 /*!
  * Private leaving implementation for updateContact()
- * 
+ *
  * \param contact The contact to update in the database.
  */
 void QContactSymbianEngineData::updateContactL(QContact &contact)
@@ -660,17 +635,17 @@ void QContactSymbianEngineData::updateContactL(QContact &contact)
 
     // Copy the data from QContact to CContactItem
     m_transformContact->transformContactL(contact, *contactItem);
-    
+
     // Write the entry using the converted  contact
     // note commitContactL removes empty fields from the contact
     m_contactDatabase->CommitContactL(*contactItem);
 
     // retrieve the contact in case of empty fields that have been removed, this could also be handled in transformcontact.
     contact = contactL(contact.id());
-    
+
     // Update group memberships to contact database
     updateMemberOfGroupsL(contact);
-    
+
     CleanupStack::PopAndDestroy(contactItem);
     CleanupStack::PopAndDestroy(1); // commit lock
 }
@@ -678,9 +653,9 @@ void QContactSymbianEngineData::updateContactL(QContact &contact)
 /*!
  * Updates group memberships of a QContact to the contact database.
  * Does not change anything in the contact database if the group memberships have not changed.
- * 
+ *
  * \param contact The contact to update.
- * 
+ *
  */
 void QContactSymbianEngineData::updateMemberOfGroupsL(QContact contact)
 {
@@ -699,32 +674,8 @@ void QContactSymbianEngineData::updateMemberOfGroupsL(QContact contact)
     foreach (QUniqueId groupId, membersToAdd)
     {
         m_contactDatabase->AddContactToGroupL(TContactItemId(contact.id()), TContactItemId(groupId));
-    }    
+    }
 }
-
-/*!
- * Private leaving implementation for matchCommunicationAddress()
- */
-QList<QUniqueId> QContactSymbianEngineData::matchCommunicationAddressL( const QString &/*communicationType*/, const QString &communicationAddress )
-{
-	QList<QUniqueId> contactIds;
-	
-	//TODO - for now assume matching is done only for phone numbers and there is a 7bit wide match
-	TPtrC commPtr(reinterpret_cast<const TUint16*>(communicationAddress.utf16()));
-	CContactIdArray* idsArray = m_contactDatabase->MatchPhoneNumberL(commPtr, 7);
-	CleanupStack::PushL( idsArray );
-	
-	const int noContacts = idsArray->Count();
-	for(int loop = 0; loop < noContacts; ++loop)
-	{
-        contactIds.append(QUniqueId((*idsArray)[loop]));
-	}
-	
-	CleanupStack::PopAndDestroy( idsArray );
-	
-	return contactIds;
-}
-
 
 /*!
  * Private leaving implementation for removeContact
@@ -757,7 +708,7 @@ int QContactSymbianEngineData::removeContactL(QUniqueId id)
  */
 QList<QUniqueId> QContactSymbianEngineData::groupsL() const
 {
-	QList<QUniqueId> list; 
+	QList<QUniqueId> list;
 	CContactIdArray* cIdList = m_contactDatabase->GetGroupIdListL();
 	CleanupStack::PushL(cIdList);
 	const int count = cIdList->Count();
@@ -780,10 +731,10 @@ QContactGroup QContactSymbianEngineData::groupL(const QUniqueId& groupId) const
 	{
 		User::Leave(KErrNotFound);
 	}
-	
+
 	QContactGroup qGroup;
 	qGroup.setId(groupId);
-	
+
 	// set name, it has one
 	if (cGroup->HasItemLabelField())
 	{
@@ -799,7 +750,7 @@ QContactGroup QContactSymbianEngineData::groupL(const QUniqueId& groupId) const
 	{
 		qGroup.addMember(QUniqueId((*members)[i]));
 	}
-	
+
 	return qGroup;
 }
 
@@ -885,14 +836,14 @@ void QContactSymbianEngineData::updateGroupL(QContactGroup& group)
     }
     CleanupStack::PopAndDestroy(oldIds);
     oldIds = NULL;
-    
+
     //remove old members from the database that no longer are in the group
     QSet<QUniqueId> membersToDelete = oldMembers - newMembers;
     foreach (QUniqueId id, membersToDelete)
     {
         m_contactDatabase->RemoveContactFromGroupL(TContactItemId(id), TContactItemId(group.id()));
     }
-    
+
     // get a list of the new members that need adding
     // we can ignore members that haven't changed -- i.e. intersection(oldMembers, newMembers)
     membersToAdd = newMembers - oldMembers;
@@ -927,7 +878,7 @@ QUniqueId QContactSymbianEngineData::simPhonebookGroupIdL() const
 }
 
 /*!
- * Lists groups the contact is member of currently in the contact database. 
+ * Lists groups the contact is member of currently in the contact database.
  */
 QList<QUniqueId> QContactSymbianEngineData::memberOfGroupsL(
         const TContactItemId contactId) const
@@ -951,9 +902,9 @@ QList<QUniqueId> QContactSymbianEngineData::memberOfGroupsL(
 
 /* Utility functions */
 
-/*! 
+/*!
  * Fetches a CContactGroup from the database
- * 
+ *
  * @param id an id of a prospective group
  * @return a pointer to a CContactGroup or NULL if it's not a group
  */
@@ -972,8 +923,8 @@ CContactGroup* QContactSymbianEngineData::fetchCGroup(const QUniqueId& id) const
 
 /*!
  * Checks an id is a contact group in the database
- * 
- * @param id an id of a prospective group 
+ *
+ * @param id an id of a prospective group
  * @return bool indicating whether it a group
  */
 bool QContactSymbianEngineData::isGroup(const QUniqueId& id) const

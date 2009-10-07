@@ -44,7 +44,10 @@ symbian: {
       inc/transformorganisation.h \
       inc/transformavatar.h \
       inc/transformsynctarget.h \
-      inc/transformgender.h
+      inc/transformgender.h \
+      inc/qabstractcontactfilter.h \
+      inc/qcontactsymbianfilterdbms.h \
+      inc/qcontactsymbianfiltersql.h
       
   SOURCES += \
   		src/qcontactsymbianbackend.cpp \
@@ -62,7 +65,9 @@ symbian: {
       src/transformorganisation.cpp \
       src/transformavatar.cpp \
       src/transformsynctarget.cpp \
-      src/transformgender.cpp
+      src/transformgender.cpp \
+      src/qcontactsymbianfilterdbms.cpp \
+      src/qcontactsymbianfiltersql.cpp
       
   LIBS += \
   				-lcntmodel \

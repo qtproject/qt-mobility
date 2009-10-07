@@ -71,7 +71,7 @@ public:
     ~QContactSymbianEngine();
     QContactSymbianEngine& operator=(const QContactSymbianEngine& other);
     void deref();
-    
+
     /* Contacts - Accessors and Mutators */
     QList<QUniqueId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
@@ -92,11 +92,12 @@ public:
 
     /* Capabilities reporting */
     bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;
+    bool filterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
 
     /* Synthesise the display label of a contact */
-    virtual QString synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
-    
+    QString synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+
     /* "Self" contact id (MyCard) */
     bool setSelfContactId(const QUniqueId& contactId, QContactManager::Error& error);
     QUniqueId selfContactId(QContactManager::Error& error) const;
@@ -108,7 +109,7 @@ private slots:
 	void eventGroupAdded(const QUniqueId &groupId);
 	void eventGroupRemoved(const QUniqueId &groupId);
 	void eventGroupChanged(const QUniqueId &groupId);
-    
+
 private:
     bool doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error& error);
     void updateDisplayLabel(QContact& contact) const;
