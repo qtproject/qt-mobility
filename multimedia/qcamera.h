@@ -53,7 +53,7 @@ class Q_MEDIA_EXPORT QCamera : public QMediaObject
 {
     Q_OBJECT
 
-    Q_ENUMS(State)
+    Q_ENUMS(State Error FocusStatus)
 
 public:
     enum State { ActiveState, StoppedState };
@@ -232,6 +232,7 @@ Q_SIGNALS:
 private:
     Q_DISABLE_COPY(QCamera)
     Q_DECLARE_PRIVATE(QCamera)
+    Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &))
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::FlashModes)
@@ -239,5 +240,9 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::FocusModes)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::WhiteBalanceModes)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::MeteringModes)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::ExposureModes)
+
+Q_DECLARE_METATYPE(QCamera::State)
+Q_DECLARE_METATYPE(QCamera::Error)
+Q_DECLARE_METATYPE(QCamera::FocusStatus)
 
 #endif  // QCAMERA_H

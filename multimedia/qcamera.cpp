@@ -56,6 +56,8 @@
 
 class QCameraPrivate : public QMediaObjectPrivate
 {
+    Q_DECLARE_PUBLIC(QCamera)
+
 public:
     QCameraControl *control;
     QCameraExposureControl *exposureControl;
@@ -65,7 +67,19 @@ public:
 
     QCamera::Error error;
     QString errorString;
+
+    void _q_error(int error, const QString &errorString);
 };
+
+void QCameraPrivate::_q_error(int error, const QString &errorString)
+{
+    Q_Q(QCamera);
+
+    this->error = QCamera::Error(error);
+    this->errorString = errorString;
+
+    emit q->error(this->error);
+}
 
 /*!
     Construct a QCamera from service \a provider and \a parent.
@@ -84,12 +98,18 @@ QCamera::QCamera(QObject *parent, QMediaServiceProvider *provider):
         d->captureControl = qobject_cast<QImageCaptureControl *>(d->service->control(QImageCaptureControl_iid));
 
         connect(d->control, SIGNAL(stateChanged(QCamera::State)), this, SIGNAL(stateChanged(QCamera::State)));
+        connect(d->control, SIGNAL(error(int,QString)), SLOT(_q_error(int,QString)));
+
+        d->error = NoError;
     } else {
         d->control = 0;
         d->exposureControl = 0;
         d->focusControl = 0;
         d->imageControl = 0;
         d->captureControl = 0;
+
+        d->error = ServiceMissingError;
+        d->errorString = tr("The camera service is missing");
     }
 
     if (d->exposureControl) {
@@ -150,6 +170,7 @@ void QCamera::start()
     if (d->control)
         d->control->start();
     else {
+        d->errorString = tr("The camera service is missing");
         QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
                                     Q_ARG(QCamera::Error, QCamera::ServiceMissingError));
     }
@@ -824,3 +845,5 @@ void QCamera::capture(const QString &file)
     Signal emitted when error state changes to \a value.
 */
 
+
+#include "moc_qcamera.cpp"
