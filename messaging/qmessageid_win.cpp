@@ -62,7 +62,7 @@ MapiEntryId QMessageIdPrivate::entryId(const QMessageId &id)
 MapiRecordKey QMessageIdPrivate::messageRecordKey(const QMessageId &id)
 {
     if (id.isValid()) {
-        if (id.d_ptr->_messageRecordKey.isEmpty()) {
+        if (!id.d_ptr->_messageRecordKey.isEmpty()) {
             return id.d_ptr->_messageRecordKey;
         } else {
             // Look up the record key for this ID
@@ -80,7 +80,7 @@ MapiRecordKey QMessageIdPrivate::messageRecordKey(const QMessageId &id)
 MapiRecordKey QMessageIdPrivate::folderRecordKey(const QMessageId &id)
 {
     if (id.isValid()) {
-        if (id.d_ptr->_folderRecordKey.isEmpty()) {
+        if (!id.d_ptr->_folderRecordKey.isEmpty()) {
             return id.d_ptr->_folderRecordKey;
         } else {
             // Look up the folder record key for this ID
@@ -156,7 +156,8 @@ bool QMessageId::operator==(const QMessageId& other) const
         if (other.isValid()) {
             bool result(true);
             result &= (d_ptr->_storeRecordKey == other.d_ptr->_storeRecordKey);
-            result &= (d_ptr->_entryId == other.d_ptr->_entryId);
+            result &= (QMessageIdPrivate::messageRecordKey(*this) == QMessageIdPrivate::messageRecordKey(other));
+            result &= (QMessageIdPrivate::folderRecordKey(*this) == QMessageIdPrivate::folderRecordKey(other));
             return result;
         }
         return false;
@@ -178,6 +179,12 @@ QString QMessageId::toString() const
 {
     if (!isValid())
         return QString();
+
+    if (d_ptr->_messageRecordKey.isEmpty())
+        d_ptr->_messageRecordKey = QMessageIdPrivate::messageRecordKey(*this);
+
+    if (d_ptr->_folderRecordKey.isEmpty())
+        d_ptr->_folderRecordKey = QMessageIdPrivate::folderRecordKey(*this);
 
     QByteArray encodedId;
     QDataStream encodedIdStream(&encodedId, QIODevice::WriteOnly);
