@@ -447,7 +447,7 @@ bool QContactTrackerEngine::saveContact( QContact* contact,
         return false;
     }
 
-    RDFTransactionPtr transaction = RDFTransactionPtr();// doesnt work with 1.6.0.2 ::tracker()->initiateTransaction();
+    RDFTransactionPtr transaction = ::tracker()->initiateTransaction();
 
     RDFServicePtr service;
     if(transaction)
@@ -472,7 +472,8 @@ bool QContactTrackerEngine::saveContact( QContact* contact,
         contactsAdded << contact->id();
     }  else {
         ncoContact = service->liveNode(QUrl("contact:"+QString::number(contact->id())));
-        ncoContact->setContentLastModified(QDateTime::currentDateTime());
+        //  disabled because of 141727 - it breaks the transaction
+        //  ncoContact->setContentLastModified(QDateTime::currentDateTime());
         contactsChanged << contact->id();
     }
     // if there are work related details, need to be saved to Affiliation.
