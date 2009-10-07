@@ -51,10 +51,10 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo -release .......... Build without debugging symbols
     echo -tests ............ Build unit tests (not build by default)
     echo -examples ......... Build example applications
-    echo "-contact-src <backend> ..."
-    echo "                   Compile the specified contacts API backend. Not selecting any backend"
-    echo "                   will result in default selection for build platform"
-    echo "                   options: symbian, wince, kabc, memory"
+    echo -contact-src (backend) ...
+    echo                    Compile the specified contacts API backend. Not selecting any backend
+    echo                    will result in default selection for build platform
+    echo                    options: symbian, wince, kabc, memory
 
 
 del config.in
