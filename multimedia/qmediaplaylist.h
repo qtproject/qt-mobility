@@ -47,7 +47,6 @@ class QMediaPlaylistPrivate;
 class Q_MEDIA_EXPORT QMediaPlaylist : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QMediaPlaylistProvider* playlistProvider READ playlistProvider WRITE setPlaylistProvider NOTIFY playlistProviderChanged)
     Q_PROPERTY(QMediaPlaylist::PlaybackMode playbackMode READ playbackMode WRITE setPlaybackMode NOTIFY playbackModeChanged)
     Q_PROPERTY(QMediaContent currentMedia READ currentMedia NOTIFY currentMediaChanged)
     Q_PROPERTY(int currentPosition READ currentPosition WRITE setCurrentPosition NOTIFY playlistPositionChanged)
@@ -58,9 +57,6 @@ public:
 
     QMediaPlaylist(QMediaObject *mediaObject = 0, QObject *parent = 0);
     virtual ~QMediaPlaylist();
-
-    QMediaPlaylistProvider* playlistProvider() const;
-    bool setPlaylistProvider(QMediaPlaylistProvider *playlist);
 
     PlaybackMode playbackMode() const;
     void setPlaybackMode(PlaybackMode mode);
@@ -97,8 +93,6 @@ public Q_SLOTS:
     void setCurrentPosition(int position);
 
 Q_SIGNALS:
-    void playlistProviderChanged();
-
     void playlistPositionChanged(int position);
     void playbackModeChanged(QMediaPlaylist::PlaybackMode mode);
     void currentMediaChanged(const QMediaContent&);

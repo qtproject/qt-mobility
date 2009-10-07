@@ -115,8 +115,6 @@ QMediaPlaylist::QMediaPlaylist(QMediaObject *mediaObject, QObject *parent)
 
     connect(d->control, SIGNAL(playbackModeChanged(QMediaPlaylist::PlaybackMode)),
             this, SIGNAL(playbackModeChanged(QMediaPlaylist::PlaybackMode)));
-    connect(d->control, SIGNAL(playlistProviderChanged()),
-            this, SIGNAL(playlistProviderChanged()));
     connect(d->control, SIGNAL(playlistPositionChanged(int)),
             this, SIGNAL(playlistPositionChanged(int)));
     connect(d->control, SIGNAL(currentMediaChanged(QMediaContent)),
@@ -132,28 +130,6 @@ QMediaPlaylist::QMediaPlaylist(QMediaObject *mediaObject, QObject *parent)
 QMediaPlaylist::~QMediaPlaylist()
 {
     delete d_ptr;
-}
-
-/*!
-  Returns the playlist used by this media player.
-*/
-QMediaPlaylistProvider* QMediaPlaylist::playlistProvider() const
-{
-    return d_func()->playlist();
-}
-
-/*!
-  Set the playlist of this media player to \a mediaPlaylist.
-
-  In many cases it is possible just to use the playlist
-  constructed by player, but sometimes replacing the whole
-  playlist allows to avoid copyting of all the items bettween playlists.
-
-  Returns true if player can use this passed playlist; otherwise returns false.
-*/
-bool QMediaPlaylist::setPlaylistProvider(QMediaPlaylistProvider *playlist)
-{
-    return d_func()->control->setPlaylistProvider(playlist);
 }
 
 /*!
@@ -416,8 +392,6 @@ bool QMediaPlaylist::save(QIODevice * device, const char *format)
     Q_D(QMediaPlaylist);
     if (d->playlist()->save(device,format))
         return true;
-
-    //qDebug() << "playlist io loaders:" << playlistIOLoader()->keys();
 
     foreach (QString const& key, playlistIOLoader()->keys()) {
         QMediaPlaylistIOInterface* plugin = qobject_cast<QMediaPlaylistIOInterface*>(playlistIOLoader()->instance(key));
