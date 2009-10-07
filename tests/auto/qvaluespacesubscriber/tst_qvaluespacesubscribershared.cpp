@@ -41,6 +41,7 @@
 #include <QSet>
 #include <QSignalSpy>
 #include <QProcess>
+#include <QFile>
 
 #include <QDebug>
 
@@ -98,6 +99,10 @@ void tst_QValueSpaceSubscriber::initTestCase()
 
         RegCloseKey(key);
     }
+#endif
+
+#if defined(Q_OS_UNIX) && defined(QT_START_VALUESPACE)
+    QFile::remove("/tmp/qt-0/valuespace_shmlayer");
 #endif
 
 #if defined(QT_START_VALUESPACE)

@@ -37,6 +37,7 @@
 
 #include <QtTest/QTest>
 #include <QSet>
+#include <QFile>
 
 #include <QDebug>
 
@@ -279,6 +280,10 @@ private:
 
 void tst_QValueSpace::initTestCase()
 {
+#ifdef Q_OS_UNIX
+    QFile::remove("/tmp/qt-0/valuespace_shmlayer");
+#endif
+
     qRegisterMetaType<QVariant>("QVariant");
 
     fakeLayer = new FakeLayer;

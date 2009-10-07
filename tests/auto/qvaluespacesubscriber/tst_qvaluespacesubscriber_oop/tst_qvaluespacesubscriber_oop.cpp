@@ -39,6 +39,7 @@
 #include <QProcess>
 #include <QCoreApplication>
 #include <QTest>
+#include <QFile>
 
 class ShutdownControl : public QObject
 {
@@ -77,6 +78,9 @@ int main(int argc, char** argv)
         tst_QValueSpaceSubscriberOop test;
         return QTest::qExec(&test, argc-1, argv);
     } else {
+#ifdef Q_OS_UNIX
+    QFile::remove("/tmp/qt-0/valuespace_shmlayer");
+#endif
         QValueSpace::initValueSpaceServer();
         QProcess process;
         ShutdownControl control(&process);
