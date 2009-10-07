@@ -1951,7 +1951,7 @@ void tst_QContactManagerFiltering::actionFiltering_data()
 
     for (int i = 0; i < managers.size(); i++) {
         QContactManager *manager = managers.at(i);
-
+        if (manager->managerName() != "wince") continue;
         QPair<QString, QString> booleanDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Bool");
         QPair<QString, QString> integerDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Integer");
         QPair<QString, QString> dateDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Date");
@@ -1959,18 +1959,21 @@ void tst_QContactManagerFiltering::actionFiltering_data()
         newMRow("bad actionname", manager) << manager << "No such action" << es << -1 << ev << es;
         newMRow("bad vendor", manager) << manager << es << "Vendor missing" << -1 << ev << es;
 
-        /* some backend (wince..) has no valid Integer and Boolean actions yet*/
+        QString expected;
         if ( (!integerDefAndFieldNames.first.isEmpty() && !integerDefAndFieldNames.second.isEmpty()) 
              ||
              (!booleanDefAndFieldNames.first.isEmpty() && !booleanDefAndFieldNames.second.isEmpty()) ){
-            QTest::newRow("empty (any action matches)") << manager << es << es << -1 << ev << "abcd";
-            /* versions are ignored if vendors are not specified */
-            newMRow("ignored version", manager) << manager << es << es << 793434 << ev << "abcd";
+                 expected = "abcd";
+        } else if (!dateDefAndFieldNames.first.isEmpty() && !dateDefAndFieldNames.second.isEmpty()) {
+            expected = "abd";
         } else {
-            QTest::newRow("empty (any action matches)") << manager << es << es << -1 << ev << es;
-            /* versions are ignored if vendors are not specified */
-            newMRow("ignored version", manager) << manager << es << es << 793434 << ev << es;
+            /* contact a,b have phone number, so at least phone number action can match them */
+            expected = "ab";
         }
+
+        QTest::newRow("empty (any action matches)") << manager << es << es << -1 << ev << expected;
+        /* versions are ignored if vendors are not specified */
+        newMRow("ignored version", manager) << manager << es << es << 793434 << ev << expected;
 
         if (!integerDefAndFieldNames.first.isEmpty() && !integerDefAndFieldNames.second.isEmpty()) {
             newMRow("Number", manager) << manager << "Number" << es << -1 << ev << "abcd";
@@ -2823,6 +2826,85 @@ public:
     }
 };
 
+/* Static actions for testing matching */
+class QPhoneNumberAction : public QContactAction
+{
+    Q_OBJECT
+
+public:
+    QPhoneNumberAction() {}
+    ~QPhoneNumberAction() {}
+
+    QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("PhoneNumber", "PhoneNumberCo", 4); }
+    QVariantMap metadata() const {return QVariantMap();}
+
+    QContactFilter contactFilter(const QVariant& value) const
+    {
+        QContactDetailFilter df;
+        df.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
+        df.setValue(value);
+        return df;
+    }
+    bool supportsDetail(const QContactDetail& detail) const
+    {
+        return detail.definitionName() == QContactPhoneNumber::DefinitionName
+                && !detail.variantValue(QContactPhoneNumber::FieldNumber).isNull();
+    }
+
+    void invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
+    {
+        Q_UNUSED(contact);
+        Q_UNUSED(detail);
+        // Well, do something
+        emit progress(QContactAction::Finished, QVariantMap());
+    }
+
+    QVariantMap result() const
+    {
+        return QVariantMap();
+    }
+};
+
+/* Static actions for testing matching */
+class QDateAction : public QContactAction
+{
+    Q_OBJECT
+
+public:
+    QDateAction() {}
+    ~QDateAction() {}
+
+    QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Date", "DateCo", 9); }
+    QVariantMap metadata() const {return QVariantMap();}
+
+    QContactFilter contactFilter(const QVariant& value) const
+    {
+        QContactDetailFilter df;
+        QPair<QString, QString> defAndFieldName = defAndFieldNamesForTypeForActions.value("Date");
+        df.setDetailDefinitionName(defAndFieldName.first, defAndFieldName.second);
+        df.setValue(value);
+        return df;
+    }
+    bool supportsDetail(const QContactDetail& detail) const
+    {
+        return detail.definitionName() == defAndFieldNamesForTypeForActions.value("Date").first
+                && !detail.variantValue(defAndFieldNamesForTypeForActions.value("Date").second).isNull();
+    }
+
+    void invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
+    {
+        Q_UNUSED(contact);
+        Q_UNUSED(detail);
+        // Well, do something
+        emit progress(QContactAction::Finished, QVariantMap());
+    }
+
+    QVariantMap result() const
+    {
+        return QVariantMap();
+    }
+};
+
 class QNumberAction : public QContactAction
 {
     Q_OBJECT
@@ -3078,6 +3160,8 @@ public:
         ret << QContactActionDescriptor("Number", "NumberCo", 42)
                 << QContactActionDescriptor("Number", "IntegerCo", 5)
                 << QContactActionDescriptor("Boolean", "BooleanCo", 3)
+                << QContactActionDescriptor("Date", "DateCo", 9)
+                << QContactActionDescriptor("PhoneNumber", "PhoneNumberCo", 4)
                 << QContactActionDescriptor("Recursive", "RecursiveCo", 3)
                 << QContactActionDescriptor("Recursive", "RecursiveCo", 4)
                 << QContactActionDescriptor("PairRecursive", "RecursiveCo", 3)
@@ -3097,6 +3181,10 @@ public:
                 return new QNumberAction;
         } else if (descriptor.actionName() == "Boolean") {
             return new QBooleanAction;
+        } else if (descriptor.actionName() == "Date") {
+            return new QDateAction;
+        } else if (descriptor.actionName() == "PhoneNumber") {
+            return new QPhoneNumberAction;
         } else if (descriptor.actionName() == "Recursive") {
             if (descriptor.implementationVersion() == 3)
                 return new RecursiveAction;
