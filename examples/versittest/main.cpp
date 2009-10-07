@@ -31,26 +31,39 @@
 **
 ****************************************************************************/
 
+#include "performancetest.h"
 #include "versittest.h"
 #include "testresultxmlparser.h"
 
 #include <QtTest/QtTest>
 
 int main(int argc, char *argv[]) 
-{
-    printf("Running tests...\n");
-    
+{   
     QApplication app(argc, argv);
     TestResultXmlParser parser;
-    VersitTest versitTest;
-    QString resultFileName = "c:/QVersitTestResults.xml";
-    QStringList args( "versittest");
-    args << "-xml" << "-o" << resultFileName;
-    QTest::qExec(&versitTest, args);
-    parser.parseAndPrintResults(resultFileName,true); 
+    QString resultFileName;
+    QStringList args;
+    bool performance = ( argc >= 2 && QString::fromUtf8(argv[1]) == "p" )? true : false;
+    if( !performance)
+    {
+        printf("Running tests...\n");
+        VersitTest versitTest;
+        resultFileName = "c:/QVersitTestResults.xml";
+        args << "qtversittest" << "-xml" << "-o" << resultFileName;
+        QTest::qExec(&versitTest, args);
+    }
+    else
+    {
+        printf("Running performance tests...\n");
+        PerformanceTest performanceTest;
+        resultFileName = "c:/QVersitParserPerformanceBenchmark.xml";
+        args << "qtversitbenchmarktest" << "-xml" << "-o" << resultFileName;
+        QTest::qExec(&performanceTest, args);
+    }
+    parser.parseAndPrintResults(resultFileName,true);
 
     printf("Press any key...\n");
-    getchar(); 
+    getchar();
 
     return 0;   
 }
