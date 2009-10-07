@@ -38,7 +38,7 @@ class QFile;
 
 #define NO_OF_CONTACTS 1000
 
-class tst_SymbianPluginPerfomance : public QObject
+class SymbianPluginPerfomance : public QObject
 {
     Q_OBJECT
 
@@ -47,10 +47,12 @@ private slots:  // Init & cleanup
 	void cleanupTestCase();
 
 private slots:  // Test cases
-	void simpleContactsTestCase();
-	void complexContactsTestCase();
-	/*
+	void createSimpleContacts();
+	void removeSimpleContacts();
+	void createComplexContacts();
 	void sortContacts();
+	void filterContacts();
+	/*
 	void createViews();
 	void operation1();
 	void operation2();
@@ -58,13 +60,10 @@ private slots:  // Test cases
 	void asyncOperation2();
 	// feel free to add more...
 	*/
-
-private:    // Logging
-    QDebug log();
+	void removeComplexContacts();
 
 private:
     QContactManager     *mCntMng;
     QList<QUniqueId>    mContactList;
-    QDebug              *mDebug;
-    QFile               *mFile;
+    QTime               mTime;
 };
