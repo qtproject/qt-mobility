@@ -1417,15 +1417,18 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                 // now check to see that the role is correct.
                 foreach (const QContactRelationship& rel, allRelationships) {
                     if (rf.role() == QContactRelationshipFilter::Source) {
-                        if (rel.sourceContact() == contact.id()) {
+                        if (rel.relationshipType() == rf.type() && rel.sourceContact() == contact.id() && rel.destinationContacts().contains(participant)) {
                             return true;
                         }
                     } else if (rf.role() == QContactRelationshipFilter::Either) {
-                        if (rel.sourceContact() == contact.id() || rel.destinationContacts().contains(contactUriOne) || rel.destinationContacts().contains(contactUriTwo)) {
+                        if (rel.relationshipType() == rf.type()
+                                && ((rel.sourceContact() == contact.id() && rel.destinationContacts().contains(participant))
+                                    || (rel.destinationContacts().contains(contactUriOne) || rel.destinationContacts().contains(contactUriTwo)))) {
                             return true;
                         }
                     } else if (rf.role() == QContactRelationshipFilter::Destination) {
-                        if (rel.destinationContacts().contains(contactUriOne) || rel.destinationContacts().contains(contactUriTwo)) {
+                        if (rel.relationshipType() == rf.type()
+                                && (rel.destinationContacts().contains(contactUriOne) || rel.destinationContacts().contains(contactUriTwo))) {
                             return true;
                         }
                     }
