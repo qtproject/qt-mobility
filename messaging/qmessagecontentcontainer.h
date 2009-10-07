@@ -39,6 +39,7 @@
 #include <QDataStream>
 #include <QList>
 #include <QString>
+#include <QStringList>
 #include <QTextStream>
 
 #ifdef Q_OS_WIN
