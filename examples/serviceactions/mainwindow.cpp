@@ -218,7 +218,9 @@ void ComposeSendWidget::updateAccountsStarted()
     m_accountsCombo->clear();
     m_layoutStack->setCurrentWidget(m_busyLabel);
     m_composeWidget->setEnabled(false);
+#ifndef _WIN32_WCE
     setCursor(Qt::BusyCursor);
+#endif
 }
 
 void ComposeSendWidget::updateAccountsFinished()
@@ -230,8 +232,10 @@ void ComposeSendWidget::updateAccountsFinished()
 
     m_composeWidget->setEnabled(true);
     m_layoutStack->setCurrentWidget(m_composeWidget);
+#ifndef _WIN32_WCE
     setCursor(Qt::ArrowCursor);
     m_loadedAccounts = true;
+#endif
 }
 
 void ComposeSendWidget::updateAccountsAborted()
@@ -241,7 +245,9 @@ void ComposeSendWidget::updateAccountsAborted()
     m_accountsCombo->clear();
 
     m_layoutStack->setCurrentWidget(m_composeWidget);
+#ifndef _WIN32_WCE
     setCursor(Qt::ArrowCursor);
+#endif
 }
 
 void ComposeSendWidget::setupUi()
@@ -431,7 +437,9 @@ void ShowWidget::updateMessageListStarted()
 {
     m_showWidget->setEnabled(false);
     m_layoutStack->setCurrentWidget(m_busyLabel);
+#ifndef _WIN32_WCE
     setCursor(Qt::BusyCursor);
+#endif
 }
 
 void ShowWidget::updateMessageListFinished()
@@ -450,7 +458,9 @@ void ShowWidget::updateMessageListFinished()
 
     m_showWidget->setEnabled(true);
     m_layoutStack->setCurrentWidget(m_showWidget);
+#ifndef _WIN32_WCE
     setCursor(Qt::ArrowCursor);
+#endif
 }
 
 void ShowWidget::setupUi()
