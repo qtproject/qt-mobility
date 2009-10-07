@@ -50,7 +50,7 @@ void S60VideoOutputControl::setAvailableOutputs(const QList<Output> &outputs)
     emit availableOutputsChanged(m_outputs = outputs);
 }
 
-S60VideoOutputControl::Output QWmpVideoOutputControl::output() const
+QVideoOutputControl::Output S60VideoOutputControl::output() const
 {
     return m_output;
 }

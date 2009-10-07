@@ -32,8 +32,7 @@
 **
 ****************************************************************************/
 
-#include "s60mediaplayersession.h"
-//#include "qgstreamerbushelper.h"
+#include "s60videoplayersession.h"
 
 //#include "qgstreamervideorendererinterface.h"
 
@@ -42,31 +41,34 @@
 #include <QtCore/qdatetime.h>
 #include <QtCore/qdebug.h>
 
-S60MediaPlayerSession::S60MediaPlayerSession(QObject *parent)
+S60VideoPlayerSession::S60VideoPlayerSession(QObject *parent)
     :QObject(parent),
      m_state(QMediaPlayer::StoppedState),
      m_mediaStatus(QMediaPlayer::UnknownMediaStatus),
-     m_busHelper(0),
-     m_playbin(0),
-     m_bus(0),
-     m_renderer(0),
+     //m_busHelper(0),
+     //m_playbin(0),
+     //m_bus(0),
+     //m_renderer(0),
      m_volume(100),
      m_playbackRate(1.0),
      m_muted(false),
      m_videoAvailable(false),
      m_seekable(false),
      m_lastPosition(0),
-     m_duration(-1)
+     m_duration(-1),
+     m_wsSession(0),
+     m_screenDevice(0),
+     m_window(0)
 {
     //TRACE_CONTEXT(VideoPlayer::VideoPlayer, EVideoApi);
     //TRACE_ENTRY_0();
 
-    if (!m_videoOutput) {
+    /*if (!m_videoOutput) {
         m_dummyVideoOutput.reset(new VideoOutput(0));
     }
 
     videoOutput().setObserver(this);
-
+    */
     const TInt priority = 0;
     const TMdaPriorityPreference preference = EMdaPriorityPreferenceNone;
 
@@ -81,93 +83,90 @@ S60MediaPlayerSession::S60MediaPlayerSession(QObject *parent)
     // visible.  If this is the case, we should set m_mmfOutputChangePending
     // and respond to future showEvents from the videoOutput widget.
     
-    TRAPD(err,
-        CVideoPlayerUtility::NewL(*this, priority, preference, *m_wsSession, *m_screenDevice, *m_window, m_windowRect, m_clipRect)
+    TRAPD(err, 
+        CVideoPlayerUtility::NewL(*this, 
+                                  priority, 
+                                  preference, 
+                                  *m_wsSession, 
+                                  *m_screenDevice, 
+                                  *m_window, 
+                                  m_windowRect, 
+                                  m_clipRect)
          );
-
-    if (KErrNone != err) {
-        //changeState(ErrorState);
-    }
 }
 
-S60MediaPlayerSession::~S60MediaPlayerSession()
+S60VideoPlayerSession::~S60VideoPlayerSession()
 {
-/*    if (m_playbin) {
-        stop();
-
-        delete m_busHelper;
-        gst_object_unref(GST_OBJECT(m_bus));
-        gst_object_unref(GST_OBJECT(m_playbin));
-    }
-    */
+    delete m_player;
 }
 
-void S60MediaPlayerSession::load(const QUrl &url)
+void S60VideoPlayerSession::load(const QUrl &url)
 {
-    m_url = url;
+/*    m_url = url;
     if (m_playbin) {
         m_tags.clear();
         emit tagsChanged();
 
         g_object_set(G_OBJECT(m_playbin), "uri", m_url.toString().toLocal8Bit().constData(), NULL);
-    }
+    }*/
 }
 
-qint64 S60MediaPlayerSession::duration() const
+qint64 S60VideoPlayerSession::duration() const
 {
     return m_duration;
 }
 
-qint64 S60MediaPlayerSession::position() const
+qint64 S60VideoPlayerSession::position() const
 {
-    GstFormat   format = GST_FORMAT_TIME;
+   /* GstFormat   format = GST_FORMAT_TIME;
     gint64      position = 0;
 
     if ( m_playbin && gst_element_query_position(m_playbin, &format, &position))
         return position / 1000000;
     else
-        return 0;
+        return 0;*/
 }
 
-qreal S60MediaPlayerSession::playbackRate() const
+qreal S60VideoPlayerSession::playbackRate() const
 {
     return m_playbackRate;
 }
 
-void S60MediaPlayerSession::setPlaybackRate(qreal rate)
+void S60VideoPlayerSession::setPlaybackRate(qreal rate)
 {
     m_playbackRate = rate;
-
+/*
     if (m_playbin) {
         gst_element_seek(m_playbin, rate, GST_FORMAT_TIME,
                          GstSeekFlags(GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_SEGMENT),
                          GST_SEEK_TYPE_NONE,0,
                          GST_SEEK_TYPE_NONE,0 );
     }
+    */
 
 }
 
-bool S60MediaPlayerSession::isBuffering() const
+bool S60VideoPlayerSession::isBuffering() const
 {
     return false;
 }
 
-int S60MediaPlayerSession::bufferingProgress() const
+int S60VideoPlayerSession::bufferingProgress() const
 {
     return 0;
 }
 
-int S60MediaPlayerSession::volume() const
+int S60VideoPlayerSession::volume() const
 {
     return m_volume;
 }
 
-bool S60MediaPlayerSession::isMuted() const
+bool S60VideoPlayerSession::isMuted() const
 {
     return m_muted;
 }
 
-void S60MediaPlayerSession::setVideoRenderer(QObject *videoOutput)
+void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
 {
    /* m_renderer = qobject_cast<QGstreamerVideoRendererInterface*>(videoOutput);
     if (m_renderer)
@@ -176,17 +175,17 @@ void S60MediaPlayerSession::setVideoRenderer(QObject *videoOutput)
         g_object_set(G_OBJECT(m_playbin), "video-sink", 0, NULL);*/
 }
 
-bool S60MediaPlayerSession::isVideoAvailable() const
+bool S60VideoPlayerSession::isVideoAvailable() const
 {
     return m_videoAvailable;
 }
 
-bool S60MediaPlayerSession::isSeekable() const
+bool S60VideoPlayerSession::isSeekable() const
 {
     return m_seekable;
 }
 
-void S60MediaPlayerSession::play()
+void S60VideoPlayerSession::play()
 {
     /*if (m_playbin) {
         if (gst_element_set_state(m_playbin, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE) {
@@ -200,13 +199,13 @@ void S60MediaPlayerSession::play()
     }*/
 }
 
-void S60MediaPlayerSession::pause()
+void S60VideoPlayerSession::pause()
 {
     /*if (m_playbin)
         gst_element_set_state(m_playbin, GST_STATE_PAUSED);*/
 }
 
-void S60MediaPlayerSession::stop()
+void S60VideoPlayerSession::stop()
 {
     /*if (m_playbin) {
         gst_element_set_state(m_playbin, GST_STATE_NULL);
@@ -217,7 +216,7 @@ void S60MediaPlayerSession::stop()
     }*/
 }
 
-void S60MediaPlayerSession::seek(qint64 ms)
+void S60VideoPlayerSession::seek(qint64 ms)
 {
     /*if (m_playbin) {
         gint64  position = (gint64)ms * 1000000;
@@ -225,7 +224,7 @@ void S60MediaPlayerSession::seek(qint64 ms)
     }*/
 }
 
-void S60MediaPlayerSession::setVolume(int volume)
+void S60VideoPlayerSession::setVolume(int volume)
 {
     /*m_volume = volume;
     emit volumeChanged(m_volume);
@@ -235,7 +234,7 @@ void S60MediaPlayerSession::setVolume(int volume)
     */
 }
 
-void S60MediaPlayerSession::setMuted(bool muted)
+void S60VideoPlayerSession::setMuted(bool muted)
 {
     /*m_muted = muted;
     g_object_set(G_OBJECT(m_playbin), "volume", (m_muted ? 0 : m_volume/100.0), NULL);
@@ -303,7 +302,7 @@ static void addTagToMap(const GstTagList *list,
     g_value_unset(&val);
 }*/
 
-void S60MediaPlayerSession::setSeekable(bool seekable)
+void S60VideoPlayerSession::setSeekable(bool seekable)
 {
     if (seekable != m_seekable) {
         m_seekable = seekable;
@@ -311,7 +310,7 @@ void S60MediaPlayerSession::setSeekable(bool seekable)
     }
 }
 
-void S60MediaPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)
+void S60VideoPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)
 {
     if (m_mediaStatus != status) {
         m_mediaStatus = status;
@@ -485,7 +484,7 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
 }
 */
 
-void S60MediaPlayerSession::getStreamsInfo()
+void S60VideoPlayerSession::getStreamsInfo()
 {
     /*GstFormat   format = GST_FORMAT_TIME;
     gint64      duration = 0;
@@ -528,3 +527,59 @@ void S60MediaPlayerSession::getStreamsInfo()
         emit videoAvailabilityChanged(m_videoAvailable);
     }*/
 }
+
+void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
+{
+}
+
+void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
+{
+}
+
+void S60VideoPlayerSession::MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError)
+{
+}
+
+void S60VideoPlayerSession::MvpuoPlayComplete(TInt aError)
+{
+}
+
+void S60VideoPlayerSession::MvpuoEvent(const TMMFEvent &aEvent)
+{
+}
+
+/*
+    TRACE_CONTEXT(VideoPlayer::getNativeWindowSystemHandles, EVideoInternal);
+    TRACE_ENTRY_0();
+
+    VideoOutput& output = videoOutput();
+    CCoeControl* const control = output.winId();
+
+    CCoeEnv* const coeEnv = control->ControlEnv();
+    m_wsSession = &(coeEnv->WsSession());
+    m_screenDevice = coeEnv->ScreenDevice();
+    m_window = control->DrawableWindow();
+
+#ifdef _DEBUG
+    QScopedPointer<ObjectDump::QDumper> dumper(new ObjectDump::QDumper);
+    dumper->setPrefix("Phonon::MMF"); // to aid searchability of logs
+    ObjectDump::addDefaultAnnotators(*dumper);
+    TRACE_0("Dumping VideoOutput:");
+    dumper->dumpObject(output);
+#endif
+
+    m_windowRect = TRect(
+        control->DrawableWindow()->AbsPosition(),
+        control->DrawableWindow()->Size());
+    
+    m_clipRect = m_windowRect;
+
+    TRACE("windowRect            %d %d - %d %d",
+        m_windowRect.iTl.iX, m_windowRect.iTl.iY,
+        m_windowRect.iBr.iX, m_windowRect.iBr.iY);
+    TRACE("clipRect              %d %d - %d %d",
+        m_clipRect.iTl.iX, m_clipRect.iTl.iY,
+        m_clipRect.iBr.iX, m_clipRect.iBr.iY);
+    
+    TRACE_EXIT_0();
+*/

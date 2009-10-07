@@ -32,16 +32,16 @@
 **
 ****************************************************************************/
 
-#include "qgstreamermetadataprovider.h"
-#include "qgstreamerplayersession.h"
+#include "s60videometadataprovider.h"
+#include "s60videoplayersession.h"
 #include <QDebug>
 
-struct QGstreamerMetaDataKeyLookup
+struct S60VideoMetaDataKeyLookup
 {
     QMediaObject::MetaData key;
     const char *token;
 };
-
+/*
 static const QGstreamerMetaDataKeyLookup qt_gstreamerMetaDataKeys[] =
 {
     { QMediaObject::Title, GST_TAG_TITLE },
@@ -107,30 +107,31 @@ static const QGstreamerMetaDataKeyLookup qt_gstreamerMetaDataKeys[] =
     //{ QMediaObject::CameraModel, 0 },
     //{ QMediaObject::Event, 0 },
     //{ QMediaObject::Subject, 0 }
-};
+};*/
 
-QGstreamerMetaDataProvider::QGstreamerMetaDataProvider(QGstreamerPlayerSession *session, QObject *parent)
-    :QMetaDataProviderControl(parent), m_session(session)
+S60VideoMetaDataProvider::S60VideoMetaDataProvider(S60VideoPlayerSession *session, QObject *parent)
+    : QMetaDataProviderControl(parent), m_session(session)
 {
     connect(m_session, SIGNAL(tagsChanged()), SLOT(updateTags()));
 }
 
-QGstreamerMetaDataProvider::~QGstreamerMetaDataProvider()
+S60VideoMetaDataProvider::~S60VideoMetaDataProvider()
 {
 }
 
-bool QGstreamerMetaDataProvider::isMetaDataAvailable() const
+bool S60VideoMetaDataProvider::isMetaDataAvailable() const
 {
     return !m_session->tags().isEmpty();
 }
 
-bool QGstreamerMetaDataProvider::isWritable() const
+bool S60VideoMetaDataProvider::isWritable() const
 {
     return false;
 }
 
-QVariant QGstreamerMetaDataProvider::metaData(QMediaObject::MetaData key) const
+QVariant S60VideoMetaDataProvider::metaData(QMediaObject::MetaData key) const
 {
+/*
     static const int count = sizeof(qt_gstreamerMetaDataKeys) / sizeof(QGstreamerMetaDataKeyLookup);
 
     for (int i = 0; i < count; ++i) {
@@ -138,28 +139,29 @@ QVariant QGstreamerMetaDataProvider::metaData(QMediaObject::MetaData key) const
             return m_session->tags().value(QByteArray(qt_gstreamerMetaDataKeys[i].token));
         }
     }
+*/
     return QVariant();
 }
 
-void QGstreamerMetaDataProvider::setMetaData(QMediaObject::MetaData key, QVariant const &value)
+void S60VideoMetaDataProvider::setMetaData(QMediaObject::MetaData key, QVariant const &value)
 {
     Q_UNUSED(key);
     Q_UNUSED(value);
 }
 
-QVariant QGstreamerMetaDataProvider::extendedMetaData(const QString &key) const
+QVariant S60VideoMetaDataProvider::extendedMetaData(const QString &key) const
 {
     return m_session->tags().value(key.toLatin1());
 }
 
-void QGstreamerMetaDataProvider::setExtendedMetaData(const QString &key, QVariant const &value)
+void S60VideoMetaDataProvider::setExtendedMetaData(const QString &key, QVariant const &value)
 {
     Q_UNUSED(key);
     Q_UNUSED(value);
 }
 
 
-void QGstreamerMetaDataProvider::updateTags()
+void S60VideoMetaDataProvider::updateTags()
 {
     emit metaDataChanged();
 }

@@ -94,8 +94,11 @@ private:
     bool openFifo();
     void closeFifo();
 */
+private:
     S60VideoPlayerSession *m_session;
     QMediaSource m_currentResource;
+    
+    QIODevice *m_stream;
 };
 
 #endif

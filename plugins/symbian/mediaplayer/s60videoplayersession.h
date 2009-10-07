@@ -37,6 +37,7 @@
 
 #include <QObject>
 #include <QUrl>
+#include <QSize>
 #include "s60videoplayercontrol.h"
 #include <multimedia/qmediaplayer.h>
 #include <VideoPlayer.h>
@@ -77,7 +78,7 @@ public:
     int streamCount() const { return m_streamProperties.count(); }
 
 
-    // MVideoPlayerUtilityObserver
+    // From MVideoPlayerUtilityObserver
     virtual void MvpuoOpenComplete(TInt aError);
     virtual void MvpuoPrepareComplete(TInt aError);
     virtual void MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError);
@@ -111,7 +112,6 @@ signals:
     void seekableChanged(bool);
 
 private slots:
-    //void busMessage(const QGstreamerMessage &message);
     void getStreamsInfo();
     void setSeekable(bool);
 
@@ -119,14 +119,19 @@ private:
     void setMediaStatus(QMediaPlayer::MediaStatus);
 
     CVideoPlayerUtility *m_player;
+    
+    RWsSession*                         m_wsSession;
+    CWsScreenDevice*                    m_screenDevice;
+    RWindowBase*                        m_window;
+    TRect                               m_windowRect;
+    TRect                               m_clipRect;
+        
+    QSize                               m_frameSize;
+    qint64                              m_totalTime;
+    
     QUrl m_url;
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_mediaStatus;
-    //QGstreamerBusHelper* m_busHelper;
-    //GstElement* m_playbin;
-    //GstBus* m_bus;
-    //QGstreamerVideoRendererInterface *m_renderer;
-
     QMap<QByteArray, QVariant> m_tags;
     QList< QMap<QString,QVariant> > m_streamProperties;
 
