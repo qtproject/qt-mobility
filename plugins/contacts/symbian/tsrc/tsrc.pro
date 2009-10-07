@@ -4,3 +4,4 @@ TARGET =
 CONFIG += ordered
 
 SUBDIRS += ut_transformcontactdata
+SUBDIRS += performance
