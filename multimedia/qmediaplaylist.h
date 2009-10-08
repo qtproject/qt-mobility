@@ -50,10 +50,11 @@ class Q_MEDIA_EXPORT QMediaPlaylist : public QObject
     Q_PROPERTY(QMediaPlaylist::PlaybackMode playbackMode READ playbackMode WRITE setPlaybackMode NOTIFY playbackModeChanged)
     Q_PROPERTY(QMediaContent currentMedia READ currentMedia NOTIFY currentMediaChanged)
     Q_PROPERTY(int currentPosition READ currentPosition WRITE setCurrentPosition NOTIFY playlistPositionChanged)
-    Q_ENUMS(PlaybackMode)
+    Q_ENUMS(PlaybackMode Error)
 
 public:
     enum PlaybackMode { CurrentItemOnce, CurrentItemInLoop, Linear, Loop, Random };
+    enum Error { NoError, FormatError, FormatNotSupportedError, NetworkError, AccessDeniedError };
 
     QMediaPlaylist(QMediaObject *mediaObject = 0, QObject *parent = 0);
     virtual ~QMediaPlaylist();
@@ -79,10 +80,14 @@ public:
     bool removeItems(int start, int end);
     bool clear();
 
-    bool load(const QUrl &location, const char *format = 0);
-    bool load(QIODevice * device, const char *format = 0);
+    void load(const QUrl &location, const char *format = 0);
+    void load(QIODevice * device, const char *format = 0);
+
     bool save(const QUrl &location, const char *format = 0);
     bool save(QIODevice * device, const char *format);
+
+    Error error() const;
+    QString errorString() const;
 
 public Q_SLOTS:
     void shuffle();
@@ -103,11 +108,18 @@ Q_SIGNALS:
     void itemsRemoved(int start, int end);
     void itemsChanged(int start, int end);
 
+    void loaded();
+    void loadFailed();
+
 protected:
     QMediaPlaylistPrivate *d_ptr;
 
 private:
     Q_DECLARE_PRIVATE(QMediaPlaylist)
+    Q_PRIVATE_SLOT(d_func(), void _q_loadFailed(QMediaPlaylist::Error, const QString &))
 };
+
+Q_DECLARE_METATYPE(QMediaPlaylist::PlaybackMode)
+Q_DECLARE_METATYPE(QMediaPlaylist::Error)
 
 #endif  // QMEDIAPLAYLIST_H

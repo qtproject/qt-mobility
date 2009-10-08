@@ -93,7 +93,8 @@ QMediaPlaylistProvider::~QMediaPlaylistProvider()
   QMediaPlaylist uses QMediaPlaylistProvider to load/save playlists first,
   than it tries available playlist I/O plugins.
 
-  Returns true if playlist was loaded succesfully, otherwise returns false.
+  Returns true if provider supports loading of location URL protocol and passed format,
+  otherwise returns false.
 */
 bool QMediaPlaylistProvider::load(const QUrl &location, const char *format)
 {
@@ -108,7 +109,8 @@ bool QMediaPlaylistProvider::load(const QUrl &location, const char *format)
 
   New items are appended to playlist.
 
-  Returns true if playlist was loaded succesfully, otherwise returns false.
+  Returns true if provider supports loading of location URL protocol and passed format,
+  otherwise returns false.
 */
 bool QMediaPlaylistProvider::load(QIODevice * device, const char *format)
 {

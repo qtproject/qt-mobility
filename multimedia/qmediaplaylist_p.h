@@ -65,17 +65,29 @@ class QMediaPlaylistPrivate
     Q_DECLARE_PUBLIC(QMediaPlaylist)
 public:
     QMediaPlaylistPrivate()
-        :control(0)
+        :control(0),
+        error(QMediaPlaylist::NoError)
     {
     }
 
     virtual ~QMediaPlaylistPrivate() {}
+
+    void _q_loadFailed(QMediaPlaylist::Error error, const QString &errorString)
+    {
+        this->error = error;
+        this->errorString = errorString;
+
+        emit q_ptr->loadFailed();
+    }
 
     QMediaPlaylistControl *control;
     QMediaPlaylistProvider *playlist() const { return control->playlistProvider(); }
 
     bool readItems(QMediaPlaylistReader *reader);
     bool writeItems(QMediaPlaylistWritter *writter);
+
+    QMediaPlaylist::Error error;
+    QString errorString;
 
     QMediaPlaylist *q_ptr;
 };

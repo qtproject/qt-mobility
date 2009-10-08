@@ -38,6 +38,7 @@
 #include <QObject>
 
 #include <multimedia/qmediacontent.h>
+#include <multimedia/qmediaplaylist.h>
 
 class QString;
 
@@ -76,6 +77,9 @@ Q_SIGNALS:
     void itemsRemoved(int start, int end);
 
     void itemsChanged(int start, int end);
+
+    void loaded();
+    void loadFailed(QMediaPlaylist::Error, const QString& errorMessage);
 
 protected:
     QMediaPlaylistProviderPrivate *d_ptr;

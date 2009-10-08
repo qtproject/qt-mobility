@@ -106,12 +106,16 @@ QMediaPlaylist::QMediaPlaylist(QMediaObject *mediaObject, QObject *parent)
         d->control = new QLocalMediaPlaylistControl(this);
 
     QMediaPlaylistProvider *playlist = d->control->playlistProvider();
+    connect(playlist, SIGNAL(loadFailed(QMediaPlaylist::Error,QString)),
+            this, SLOT(_q_loadFailed(QMediaPlaylist::Error,QString)));
 
     connect(playlist, SIGNAL(itemsChanged(int,int)), this, SIGNAL(itemsChanged(int,int)));
     connect(playlist, SIGNAL(itemsAboutToBeInserted(int,int)), this, SIGNAL(itemsAboutToBeInserted(int,int)));
     connect(playlist, SIGNAL(itemsInserted(int,int)), this, SIGNAL(itemsInserted(int,int)));
     connect(playlist, SIGNAL(itemsAboutToBeRemoved(int,int)), this, SIGNAL(itemsAboutToBeRemoved(int,int)));
     connect(playlist, SIGNAL(itemsRemoved(int,int)), this, SIGNAL(itemsRemoved(int,int)));
+
+    connect(playlist, SIGNAL(loaded()), this, SIGNAL(loaded()));
 
     connect(d->control, SIGNAL(playbackModeChanged(QMediaPlaylist::PlaybackMode)),
             this, SIGNAL(playbackModeChanged(QMediaPlaylist::PlaybackMode)));
@@ -312,11 +316,15 @@ bool QMediaPlaylistPrivate::writeItems(QMediaPlaylistWritter *writter)
 
   Returns true if playlist was loaded succesfully, otherwise returns false.
 */
-bool QMediaPlaylist::load(const QUrl &location, const char *format)
+void QMediaPlaylist::load(const QUrl &location, const char *format)
 {
     Q_D(QMediaPlaylist);
+
+    d->error = NoError;
+    d->errorString.clear();
+
     if (d->playlist()->load(location,format))
-        return true;
+        return;
 
     foreach (QString const& key, playlistIOLoader()->keys()) {
         QMediaPlaylistIOInterface* plugin = qobject_cast<QMediaPlaylistIOInterface*>(playlistIOLoader()->instance(key));
@@ -324,13 +332,17 @@ bool QMediaPlaylist::load(const QUrl &location, const char *format)
             QMediaPlaylistReader *reader = plugin->createReader(location,QByteArray(format));
             if (reader && d->readItems(reader)) {
                 delete reader;
-                return true;
+                return;
             }
             delete reader;
         }
     }
 
-    return false;
+    d->error = FormatNotSupportedError;
+    d->errorString = tr("Playlist format is not supported");
+    emit loadFailed();
+
+    return;
 }
 
 /*!
@@ -341,11 +353,15 @@ bool QMediaPlaylist::load(const QUrl &location, const char *format)
 
   Returns true if playlist was loaded succesfully, otherwise returns false.
 */
-bool QMediaPlaylist::load(QIODevice * device, const char *format)
+void QMediaPlaylist::load(QIODevice * device, const char *format)
 {
     Q_D(QMediaPlaylist);
+
+    d->error = NoError;
+    d->errorString.clear();
+
     if (d->playlist()->load(device,format))
-        return true;
+        return;
 
     foreach (QString const& key, playlistIOLoader()->keys()) {
         QMediaPlaylistIOInterface* plugin = qobject_cast<QMediaPlaylistIOInterface*>(playlistIOLoader()->instance(key));
@@ -353,13 +369,17 @@ bool QMediaPlaylist::load(QIODevice * device, const char *format)
             QMediaPlaylistReader *reader = plugin->createReader(device,QByteArray(format));
             if (reader && d->readItems(reader)) {
                 delete reader;
-                return true;
+                return;
             }
             delete reader;
         }
     }
 
-    return false;
+    d->error = FormatNotSupportedError;
+    d->errorString = tr("Playlist format is not supported");
+    emit loadFailed();
+
+    return;
 }
 
 /*!
@@ -371,15 +391,22 @@ bool QMediaPlaylist::load(QIODevice * device, const char *format)
 bool QMediaPlaylist::save(const QUrl &location, const char *format)
 {
     Q_D(QMediaPlaylist);
+
+    d->error = NoError;
+    d->errorString.clear();
+
     if (d->playlist()->save(location,format))
         return true;
 
     QFile file(location.toLocalFile());
 
-    if (file.open(QIODevice::WriteOnly | QIODevice::Truncate))
-        return save(&file, format);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        d->error = AccessDeniedError;
+        d->errorString = tr("The file could not be accessed.");
+        return false;
+    }
 
-    return false;
+    return save(&file, format);
 }
 
 /*!
@@ -390,6 +417,10 @@ bool QMediaPlaylist::save(const QUrl &location, const char *format)
 bool QMediaPlaylist::save(QIODevice * device, const char *format)
 {
     Q_D(QMediaPlaylist);
+
+    d->error = NoError;
+    d->errorString.clear();
+
     if (d->playlist()->save(device,format))
         return true;
 
@@ -405,7 +436,26 @@ bool QMediaPlaylist::save(QIODevice * device, const char *format)
         }
     }
 
+    d->error = FormatNotSupportedError;
+    d->errorString = tr("Playlist format is not supported.");
+
     return false;
+}
+
+/*!
+    Returns the last error condition.
+*/
+QMediaPlaylist::Error QMediaPlaylist::error() const
+{
+    return d_func()->error;
+}
+
+/*!
+    Returns the string describing the last error condition.
+*/
+QString QMediaPlaylist::errorString() const
+{
+    return d_func()->errorString;
 }
 
 /*!
