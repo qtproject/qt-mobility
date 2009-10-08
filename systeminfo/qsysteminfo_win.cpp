@@ -69,6 +69,7 @@
 #include <Dshow.h>
 #endif
 #endif
+#endif
 
 #include <Wtsapi32.h>
 
@@ -738,7 +739,6 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
         break;
     case QSystemNetworkInfo::EthernetMode:
         {
-//           qWarning() << "checking ethernet signal";
 #if !defined( Q_CC_MINGW) || !defined( Q_OS_WINCE)
             WMIHelper *wHelper;
             wHelper = new WMIHelper(this);
