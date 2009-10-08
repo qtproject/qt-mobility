@@ -1766,6 +1766,19 @@ void tst_QContactManagerFiltering::sorting()
     presenceName.setDetailDefinitionName(QContactName::DefinitionName);
     ids = cm->contacts(presenceName, s);
     output = convertIds(contacts, ids);
+
+    // It's possible to get some contacts back in an arbitrary order (since we single sort)
+    // so we need to handle the case where e, f & g come back in any order
+
+    // so we just make sure that e,f,g appear once in the output, and remove f,g from both strings
+    QVERIFY(output.count('e') == 1);
+    QVERIFY(output.count('f') == 1);
+    QVERIFY(output.count('g') == 1);
+    output.remove('f');
+    output.remove('g');
+    expected.remove('f');
+    expected.remove('g');
+
     QCOMPARE(output, expected);
 }
 
