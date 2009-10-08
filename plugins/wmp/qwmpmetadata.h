@@ -40,6 +40,7 @@
 
 #include <wmp.h>
 
+class QMediaContent;
 class QWmpEvents;
 
 class QWmpMetaData : public QMetaDataControl
