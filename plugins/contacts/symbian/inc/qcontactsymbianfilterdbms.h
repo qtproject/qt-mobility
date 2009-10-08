@@ -60,14 +60,16 @@ public:
     QList<QUniqueId> contacts(
             const QContactFilter& filter,
             const QList<QContactSortOrder>& sortOrders,
-            QContactManager::Error& error) const;
-    bool filterSupported(const QContactFilter& filter) const;
+            QContactManager::Error& error);
+    bool filterSupported(const QContactFilter& filter);
 
 private:
-    CContactIdArray* findContactsLC(const TDesC& text) const;
-    CContactIdArray* matchContactsLC(
+    TInt findContacts(CContactIdArray*& idArray, const TDesC& text) const;
+    CContactIdArray* findContactsL( const TDesC& text) const;
+    TInt matchContacts(
+            CContactIdArray*& idArray,
             const TDesC& phoneNumber,
-            const TInt matchLength) const;
+            const TInt matchLength);
     CContactDatabase& m_contactDatabase;
 };
 

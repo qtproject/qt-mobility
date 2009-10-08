@@ -54,9 +54,9 @@ public:
     virtual QList<QUniqueId> contacts(
             const QContactFilter& filter,
             const QList<QContactSortOrder>& sortOrders,
-            QContactManager::Error& error) const = 0;
+            QContactManager::Error& error) = 0;
 
-    virtual bool filterSupported(const QContactFilter& filter) const = 0;
+    virtual bool filterSupported(const QContactFilter& filter) = 0;
 };
 
 #endif /* QABSTRACTCONTACTFILTER_H */

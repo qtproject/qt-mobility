@@ -42,6 +42,11 @@
 #ifdef __SYMBIAN_CNTMODEL_USE_SQLITE__
 
 #include "qcontactsymbianfiltersql.h"
+#include "qcontactdetailfilter.h"
+#include "qcontactphonenumber.h"
+
+#include <e32cmn.h>
+#include <cntdb.h>
 
 QContactSymbianFilter::QContactSymbianFilter(CContactDatabase& contactDatabase):
     m_contactDatabase(contactDatabase)
@@ -55,7 +60,7 @@ QContactSymbianFilter::~QContactSymbianFilter()
 QList<QUniqueId> QContactSymbianFilter::contacts(
             const QContactFilter& filter,
             const QList<QContactSortOrder>& sortOrders,
-            QContactManager::Error& error) const
+            QContactManager::Error& error)
 {
     QList<QUniqueId> matches;
 
@@ -63,20 +68,16 @@ QList<QUniqueId> QContactSymbianFilter::contacts(
     {
         const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
 
-        if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName)
-        {
+        if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName) {
             QString number((detailFilter.value()).toString());
             TPtrC commPtr(reinterpret_cast<const TUint16*>(number.utf16()));
-            CContactIdArray* idArray(0);
             // TODO: Leaving code in a non-leaving function!!!
             CContactIdArray* idArray = m_contactDatabase.MatchPhoneNumberL(commPtr, 7);
             CleanupStack::PushL(idArray);
-            for(int i(0); i < idArray->Count(); i++) {
+            for(int i(0); i < idArray->Count(); i++)
                 matches.append(QUniqueId((*idArray)[i]));
             CleanupStack::PopAndDestroy(idArray);
-        }
-        else
-        {
+        } else {
             error = QContactManager::NotSupportedError;
         }
     }
@@ -87,7 +88,7 @@ QList<QUniqueId> QContactSymbianFilter::contacts(
     return matches;
 }
 
-bool QContactSymbianFilter::filterSupported(const QContactFilter& filter) const
+bool QContactSymbianFilter::filterSupported(const QContactFilter& filter)
 {
     // TODO: return either true or false, depending on the supported filters
     TBool supported(false);
