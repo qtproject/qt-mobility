@@ -40,6 +40,8 @@
 class QComboBox;
 class QListView;
 class QTabWidget;
+class QMenuBar;
+class QStackedWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -50,10 +52,12 @@ public:
 
 private slots:
     void serviceStateChanged(QMessageServiceAction::State state);
+	void viewSelected();
 
 private:
     QTabWidget* m_tabWidget;
     QMessageServiceAction* m_serviceAction;
+	QStackedWidget* m_widgetStack;
 };
 
 #endif
