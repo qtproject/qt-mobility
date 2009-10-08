@@ -115,7 +115,7 @@ public:
     QContactRelationship relationship(const QUniqueId& sourceId, const QString& relationshipType = QString()) const;
     QList<QContactRelationship> relationships(const QUniqueId& sourceId, const QString& relationshipType = QString()) const;
     QList<QContactRelationship> relationships(const QString& relationshipType, const QPair<QString, QUniqueId>& participantUri = (QPair<QString, QUniqueId>())) const;
-    QList<QContactRelationship> relationships(const QPair<QString, QUniqueId>& participantUri) const;
+    QList<QContactRelationship> relationships(const QPair<QString, QUniqueId>& participantUri = (QPair<QString, QUniqueId>())) const;
     bool saveRelationship(QContactRelationship* relationship);
     QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships);
     bool removeRelationship(const QContactRelationship& relationship);

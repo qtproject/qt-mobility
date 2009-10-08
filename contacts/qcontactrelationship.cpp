@@ -63,7 +63,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeHasMember, "HasMem
  * \variable QContactRelationship::RelationshipTypeAggregates
  * The relationship type which identifies the source contact as aggregating the destination contacts into a metacontact
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeIsAggregates, "Aggregates");
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeAggregates, "Aggregates");
 
 /*!
  * \variable QContactRelationship::RelationshipTypeIs
@@ -72,22 +72,22 @@ Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeIsAggregates, "Agg
 Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeIs, "Is");
 
 /*!
- * \variable QContactRelationship::RelationshipTypeAssistant
+ * \variable QContactRelationship::RelationshipTypeIsAssistantOf
  * The relationship type which identifies the source contact as being the assistant of the destination contacts
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeAssistant, "Assistant");
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeIsAssistantOf, "IsAssistantOf");
 
 /*!
- * \variable QContactRelationship::RelationshipTypeManager
+ * \variable QContactRelationship::RelationshipTypeIsManagerOf
  * The relationship type which identifies the source contact as being the manager of the destination contacts
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeManager, "Manager");
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeIsManagerOf, "IsManagerOf");
 
 /*!
- * \variable QContactRelationship::RelationshipTypeSpouse
+ * \variable QContactRelationship::RelationshipTypeIsSpouseOf
  * The relationship type which identifies the source contact as being the spouse of the destination contacts
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeSpouse, "Spouse");
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeIsSpouseOf, "IsSpouseOf");
 
 /*!
  * Constructs a new relationship
@@ -231,4 +231,13 @@ void QContactRelationship::insertDestinationContact(int position, const QPair<QS
 void QContactRelationship::appendDestinationContact(const QPair<QString, QUniqueId>& contact)
 {
     d->m_destinationContacts.append(contact);
+}
+
+/*!
+ * Appends a contact in the relationship's manager identified by the given \a contactId onto the list of destination contacts.
+ */
+void QContactRelationship::appendDestinationContact(const QUniqueId& contactId)
+{
+    QPair<QString, QUniqueId> contact = QPair<QString, QUniqueId>(QString, contactId);
+    appendDestinationContact(contact);
 }

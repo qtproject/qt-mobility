@@ -56,11 +56,11 @@ public:
     const char* RelationshipTypeSpouse;
 #else
     Q_DECLARE_LATIN1_LITERAL(RelationshipTypeHasMember, "HasMember");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeIsAggregates, "Aggregates");
+    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeAggregates, "Aggregates");
     Q_DECLARE_LATIN1_LITERAL(RelationshipTypeIs, "Is");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeAssistant, "Assistant");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeManager, "Manager");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeSpouse, "Spouse");
+    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeIsAssistantOf, "IsAssistantOf");
+    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeIsManagerOf, "IsManagerOf");
+    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeIsSpouseOf, "IsSpouseOf");
 #endif
 
     QContactRelationship();
@@ -84,6 +84,7 @@ public:
     bool removeDestinationContact(const QPair<QString, QUniqueId>& contact);
     void insertDestinationContact(int position, const QPair<QString, QUniqueId>& contact);
     void appendDestinationContact(const QPair<QString, QUniqueId>& contact);
+    void appendDestinationContact(const QUniqueId& contactId);
 
 private:
     QSharedDataPointer<QContactRelationshipPrivate> d;
