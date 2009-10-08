@@ -32,8 +32,8 @@
 **
 ****************************************************************************/
 
-#ifndef QAUDIOSOURCE_H
-#define QAUDIOSOURCE_H
+#ifndef QAUDIOCAPTURESOURCE_H
+#define QAUDIOCAPTURESOURCE_H
 
 #include <QtCore/qstringlist.h>
 #include <QtCore/qpair.h>
@@ -52,15 +52,15 @@
 
 #include <multimedia/qmediaserviceprovider.h>
 
-class QAudioSourcePrivate;
+class QAudioCaptureSourcePrivate;
 
-class Q_MEDIA_EXPORT QAudioSource : public QMediaObject
+class Q_MEDIA_EXPORT QAudioCaptureSource : public QMediaObject
 {
     Q_OBJECT
 
 public:
-    QAudioSource(QObject *parent = 0, QMediaServiceProvider *service = QMediaServiceProvider::defaultServiceProvider());
-    ~QAudioSource();
+    QAudioCaptureSource(QObject *parent = 0, QMediaServiceProvider *service = QMediaServiceProvider::defaultServiceProvider());
+    ~QAudioCaptureSource();
 
     int deviceCount() const;
 
@@ -80,7 +80,7 @@ Q_SIGNALS:
     void devicesChanged();
 
 private:
-    Q_DECLARE_PRIVATE(QAudioSource)
+    Q_DECLARE_PRIVATE(QAudioCaptureSource)
 };
 
-#endif  // QAUDIOSOURCE_H
+#endif  // QAUDIOCAPTURESOURCE_H

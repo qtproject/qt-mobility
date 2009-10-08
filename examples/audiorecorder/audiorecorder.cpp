@@ -34,7 +34,7 @@
 
 #include <QtGui>
 
-#include <multimedia/qaudiosource.h>
+#include <multimedia/qaudiocapturesource.h>
 #include <multimedia/qmediarecorder.h>
 #include <multimedia/qmediaservice.h>
 
@@ -49,7 +49,7 @@
 
 AudioRecorder::AudioRecorder()
 {
-    audiosource = new QAudioSource;
+    audiosource = new QAudioCaptureSource;
     capture = new QMediaRecorder(audiosource);
 
     // set a default file

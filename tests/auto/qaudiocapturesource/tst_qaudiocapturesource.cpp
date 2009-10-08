@@ -36,7 +36,7 @@
 #include <QDebug>
 #include <QAudioFormat>
 
-#include <multimedia/qaudiosource.h>
+#include <multimedia/qaudiocapturesource.h>
 #include <multimedia/qaudioencodercontrol.h>
 #include <multimedia/qmediarecordercontrol.h>
 #include <multimedia/qaudiodevicecontrol.h>
@@ -249,7 +249,7 @@ public:
 };
 
 
-class tst_QAudioSource: public QObject
+class tst_QAudioCaptureSource: public QObject
 {
     Q_OBJECT
 
@@ -263,31 +263,31 @@ private slots:
     void testDevices();
 
 private:
-    QAudioSource *audiosource;
+    QAudioCaptureSource *audiosource;
     MockAudioSourceService  *mockAudioSourceService;
     MockProvider *mockProvider;
 };
 
-void tst_QAudioSource::initTestCase()
+void tst_QAudioCaptureSource::initTestCase()
 {
     mockAudioSourceService = new MockAudioSourceService;
     mockProvider = new MockProvider(mockAudioSourceService);
 }
 
-void tst_QAudioSource::cleanupTestCase()
+void tst_QAudioCaptureSource::cleanupTestCase()
 {
     delete audiosource;
     delete mockProvider;
 }
 
-void tst_QAudioSource::testAudioSource()
+void tst_QAudioCaptureSource::testAudioSource()
 {
-    audiosource = new QAudioSource(0, mockProvider);
+    audiosource = new QAudioCaptureSource(0, mockProvider);
 
     QCOMPARE(audiosource->service(), mockAudioSourceService);
 }
 
-void tst_QAudioSource::testOptions()
+void tst_QAudioCaptureSource::testOptions()
 {
     QStringList options = mockAudioSourceService->mockAudioEncoderControl->supportedEncodingOptions();
     QVERIFY(options.count() == 1);
@@ -295,7 +295,7 @@ void tst_QAudioSource::testOptions()
     QVERIFY(mockAudioSourceService->mockAudioEncoderControl->encodingOption(options.first()).toInt() == 8000);
 }
 
-void tst_QAudioSource::testDevices()
+void tst_QAudioCaptureSource::testDevices()
 {
     int devices = audiosource->deviceCount();
     QVERIFY(devices > 0);
@@ -310,6 +310,6 @@ void tst_QAudioSource::testDevices()
     QVERIFY(checkSignal.count() == 1);
 }
 
-QTEST_MAIN(tst_QAudioSource)
+QTEST_MAIN(tst_QAudioCaptureSource)
 
-#include "tst_qaudiosource.moc"
+#include "tst_qaudiocapturesource.moc"

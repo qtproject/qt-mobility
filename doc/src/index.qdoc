@@ -29,7 +29,7 @@ To build the library, run \tt qmake and \tt make.
     \o \l{QMediaPlaylist}
     \o \l{QCamera}
     \o \l{QMediaImageViewer}
-    \o \l{QAudioSource}
+    \o \l{QAudioCaptureSource}
 \endlist
 
 \section2 Classes for service implementers.

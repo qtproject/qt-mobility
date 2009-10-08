@@ -1,7 +1,7 @@
 TEMPLATE = subdirs
 
 SUBDIRS = \
-        qaudiosource \
+        qaudiocapturesource \
         qcamera \
         qmediaimageviewer \
         qmediaobject \

@@ -51,7 +51,7 @@ HEADERS = \
     qvideoencodercontrol.h \
     qimageencodercontrol.h \
     qimagecapturecontrol.h \
-    qaudiosource.h \
+    qaudiocapturesource.h \
     qcamera.h \
     qcameracontrol.h \
     qcameraexposurecontrol.h \
@@ -92,7 +92,7 @@ SOURCES = qmediacontrol.cpp \
     qvideoencodercontrol.cpp \
     qimageencodercontrol.cpp \
     qimagecapturecontrol.cpp \
-    qaudiosource.cpp \
+    qaudiocapturesource.cpp \
     qcamera.cpp \
     qcameracontrol.cpp \
     qcameraexposurecontrol.cpp \
