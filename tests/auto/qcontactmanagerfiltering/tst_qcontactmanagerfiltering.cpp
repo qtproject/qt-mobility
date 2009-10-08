@@ -1760,12 +1760,6 @@ void tst_QContactManagerFiltering::sorting()
 
     ids = cm->contacts(s);
     QString output = convertIds(contacts, ids);
-    QCOMPARE(output, expected);
-    /* Now do a check with a filter involved; the filter should not affect the sort order */
-    QContactDetailFilter presenceName;
-    presenceName.setDetailDefinitionName(QContactName::DefinitionName);
-    ids = cm->contacts(presenceName, s);
-    output = convertIds(contacts, ids);
 
     // It's possible to get some contacts back in an arbitrary order (since we single sort)
     // so we need to handle the case where e, f & g come back in any order [with first name]
@@ -1779,6 +1773,22 @@ void tst_QContactManagerFiltering::sorting()
         output.remove('g');
         expected.remove('f');
         expected.remove('g');
+    }
+
+    QCOMPARE(output, expected);
+
+    /* Now do a check with a filter involved; the filter should not affect the sort order */
+    QContactDetailFilter presenceName;
+    presenceName.setDetailDefinitionName(QContactName::DefinitionName);
+    ids = cm->contacts(presenceName, s);
+    output = convertIds(contacts, ids);
+
+    if (defname == QContactName::DefinitionName && fieldname == QContactName::FieldFirst) {
+        QVERIFY(output.count('e') == 1);
+        QVERIFY(output.count('f') == 1);
+        QVERIFY(output.count('g') == 1);
+        output.remove('f');
+        output.remove('g');
     }
 
     QCOMPARE(output, expected);
