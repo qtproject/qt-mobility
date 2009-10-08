@@ -400,6 +400,7 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
     // second, check that the local destination contacts exist; we cannot check other managers' contacts.
     QString myUri = QString(QLatin1String("memory")); // TODO! - get the real URI (trampoline?)
     QList<QPair<QString, QUniqueId> > dests = relationship->destinationContacts();
+    QList<QPair<QString, QUniqueId> > checkDuplicates;
     for (int i = 0; i < dests.size(); i++) {
         QPair<QString, QUniqueId> curr = dests.at(i);
         if (curr.first.isEmpty() || curr.first == myUri) {
@@ -410,6 +411,18 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
                 return false;
             }
         }
+
+        // check for duplicates.
+        if (curr.first.isEmpty())
+            curr.first = myUri;
+        if (checkDuplicates.contains(curr)) {
+            // contains a duplicate entry.
+            error = QContactManager::InvalidRelationshipError;
+            return false;
+        }
+
+        // fine; add the entry to our list to check duplicates.
+        checkDuplicates.append(curr);
     }
 
     // the relationship is valid.  We need to update any empty manager URIs in the destination contacts to our URI.

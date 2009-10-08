@@ -44,6 +44,13 @@
  * \brief Describes a one-to-many relationship between a locally-stored contact and a list of other (possibly remote) contacts.
  *
  * Each relationship is uniquely identified by the combination of the source contact id and the relationship type.
+ *
+ * A relationship should not contain a destination contact which is the same as the source contact, nor should it contain
+ * duplicate destination contacts.  Finally, any local contacts which are referenced in the relationship (that is, any
+ * source contact, or any destination contact whose manager URI is left empty or whose manager URI references the manager
+ * that stores the source contact, and in which the relationship will be saved) should exist.
+ * If any of these requirements are not met, validation of the relationship may fail when attempting to save the relationship
+ * in a QContactManager.
  */
 
 /*!
