@@ -1972,12 +1972,14 @@ void tst_QContactManager::signalEmission()
     batchAdd << c << c2 << c3;
     m1->saveContacts(&batchAdd);
 
+    sigids.clear();
     QTRY_WAIT( while(spyCM.size() > 0) {sigids += spyCM.takeFirst().at(0).value<QList<QUniqueId> >(); }, sigids.contains(c.id()) && sigids.contains(c2.id()) && sigids.contains(c3.id()));
 
     /* Batch removes */
     batchRemove << c.id() << c2.id() << c3.id();
     m1->removeContacts(&batchRemove);
 
+    sigids.clear();
     QTRY_WAIT( while(spyCR.size() > 0) {sigids += spyCR.takeFirst().at(0).value<QList<QUniqueId> >(); }, sigids.contains(c.id()) && sigids.contains(c2.id()) && sigids.contains(c3.id()));
 
     QTRY_COMPARE(spyCA.count(), 0);
