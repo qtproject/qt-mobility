@@ -14,7 +14,7 @@ SUBDIRS = \
         qmediaservice \
         qmediaserviceprovider \
         qmediacontent \
-        qradioplayer \
+        qradiotuner \
         qvideowidget
 
 contains(QT_CONFIG, multimedia) {

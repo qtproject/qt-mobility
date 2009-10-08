@@ -38,12 +38,12 @@
 
 Radio::Radio()
 {
-    player = new QRadioPlayer;
-    connect(player,SIGNAL(frequencyChanged(int)),this,SLOT(freqChanged(int)));
-    connect(player,SIGNAL(signalStrengthChanged(int)),this,SLOT(signalChanged(int)));
+    radio = new QRadioTuner;
+    connect(radio,SIGNAL(frequencyChanged(int)),this,SLOT(freqChanged(int)));
+    connect(radio,SIGNAL(signalStrengthChanged(int)),this,SLOT(signalChanged(int)));
 
-    if(player->isSupportedBand(QRadioPlayer::FM))
-        player->setBand(QRadioPlayer::FM);
+    if(radio->isBandSupported(QRadioTuner::FM))
+        radio->setBand(QRadioTuner::FM);
     else {
         qWarning()<<"Currently only works for FM";
         exit(0);
@@ -57,7 +57,7 @@ Radio::Radio()
     layout->addLayout(topBar);
 
     freq = new QLabel;
-    freq->setText(QString("%1 kHz").arg(player->frequency()/1000));
+    freq->setText(QString("%1 kHz").arg(radio->frequency()/1000));
     topBar->addWidget(freq);
 
     signal = new QLabel;
@@ -66,8 +66,8 @@ Radio::Radio()
 
     volumeSlider = new QSlider(Qt::Vertical,this);
     volumeSlider->setRange(0,100);
-    qWarning()<<player->volume();
-    volumeSlider->setValue(player->volume());
+    qWarning()<<radio->volume();
+    volumeSlider->setValue(radio->volume());
     connect(volumeSlider,SIGNAL(valueChanged(int)),this,SLOT(updateVolume(int)));
     topBar->addWidget(volumeSlider);
 
@@ -96,6 +96,8 @@ Radio::Radio()
     window->setLayout(layout);
     setCentralWidget(window);
     window->show();
+
+    radio->start();
 }
 
 Radio::~Radio()
@@ -104,36 +106,36 @@ Radio::~Radio()
 
 void Radio::freqUp()
 {
-    int f = player->frequency();
-    f = f + 5000;
-    player->setFrequency(f);
+    int f = radio->frequency();
+    f = f + radio->frequencyStep(QRadioTuner::FM);
+    radio->setFrequency(f);
 }
 
 void Radio::freqDown()
 {
-    int f = player->frequency();
-    f = f - 5000;
-    player->setFrequency(f);
+    int f = radio->frequency();
+    f = f - radio->frequencyStep(QRadioTuner::FM);
+    radio->setFrequency(f);
 }
 
 void Radio::searchUp()
 {
-    player->searchForward();
+    radio->searchForward();
 }
 
 void Radio::searchDown()
 {
-    player->searchBackward();
+    radio->searchBackward();
 }
 
 void Radio::freqChanged(int)
 {
-    freq->setText(QString("%1 kHz").arg(player->frequency()/1000));
+    freq->setText(QString("%1 kHz").arg(radio->frequency()/1000));
 }
 
 void Radio::signalChanged(int)
 {
-    if(player->signalStrength() > 25)
+    if(radio->signalStrength() > 25)
         signal->setText(tr("Got Signal"));
     else
         signal->setText(tr("No Signal"));
@@ -141,6 +143,6 @@ void Radio::signalChanged(int)
 
 void Radio::updateVolume(int v)
 {
-    player->setVolume(v);
+    radio->setVolume(v);
 }
 

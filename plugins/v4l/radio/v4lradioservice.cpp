@@ -59,11 +59,14 @@ QMediaControl *V4LRadioService::control(const char* name) const
 
 bool V4LRadioService::isEndpointSupported(QMediaService::MediaEndpoint endpointType)
 {
+    Q_UNUSED(endpointType)
+
     return false;
 }
 
 void V4LRadioService::setInputStream(QIODevice* stream)
 {
+    Q_UNUSED(stream)
 }
 
 QIODevice* V4LRadioService::inputStream() const
@@ -73,6 +76,7 @@ QIODevice* V4LRadioService::inputStream() const
 
 void V4LRadioService::setOutputStream(QIODevice* stream)
 {
+    Q_UNUSED(stream)
 }
 
 QIODevice* V4LRadioService::outputStream() const
@@ -82,17 +86,24 @@ QIODevice* V4LRadioService::outputStream() const
 
 QList<QString> V4LRadioService::activeEndpoints(QMediaService::MediaEndpoint endpointType)
 {
+    Q_UNUSED(endpointType)
+
     QList<QString> list;
     return list;
 }
 
 bool V4LRadioService::setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint)
 {
+    Q_UNUSED(endpointType)
+    Q_UNUSED(endpoint)
+
     return true;
 }
 
 QList<QString> V4LRadioService::supportedEndpoints(QMediaService::MediaEndpoint endpointType) const
 {
+    Q_UNUSED(endpointType)
+
     QList<QString> list;
     //TODO
     return list;
@@ -100,6 +111,9 @@ QList<QString> V4LRadioService::supportedEndpoints(QMediaService::MediaEndpoint 
 
 QString V4LRadioService::endpointDescription(QMediaService::MediaEndpoint endpointType, const QString& endpoint)
 {
+    Q_UNUSED(endpointType)
+    Q_UNUSED(endpoint)
+
     return QString();
 }
 

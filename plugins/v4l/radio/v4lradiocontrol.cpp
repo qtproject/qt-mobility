@@ -50,14 +50,15 @@
 #include <unistd.h>
 
 V4LRadioControl::V4LRadioControl(QObject *parent)
-    :QRadioPlayerControl(parent)
+    :QRadioTunerControl(parent)
 {
     fd = -1;
     initRadio();
     muted = false;
     stereo = false;
+    m_error = false;
     sig = 0;
-    currentBand = QRadioPlayer::FM;
+    currentBand = QRadioTuner::FM;
     step = 100000;
     scanning = false;
     playTime.restart();
@@ -75,23 +76,23 @@ V4LRadioControl::~V4LRadioControl()
         ::close(fd);
 }
 
-QRadioPlayer::Band V4LRadioControl::band() const
+QRadioTuner::Band V4LRadioControl::band() const
 {
     return currentBand;
 }
 
-bool V4LRadioControl::isSupportedBand(QRadioPlayer::Band b) const
+bool V4LRadioControl::isBandSupported(QRadioTuner::Band b) const
 {
-    QRadioPlayer::Band bnd = (QRadioPlayer::Band)b;
+    QRadioTuner::Band bnd = (QRadioTuner::Band)b;
     switch(bnd) {
-        case QRadioPlayer::FM:
+        case QRadioTuner::FM:
             if(freqMin <= 87500000 && freqMax >= 108000000)
                 return true;
             break;
-        case QRadioPlayer::LW:
+        case QRadioTuner::LW:
             if(freqMin <= 148500 && freqMax >= 283500)
                 return true;
-        case QRadioPlayer::AM:
+        case QRadioTuner::AM:
             if(freqMin <= 520000 && freqMax >= 1610000)
                 return true;
         default:
@@ -102,29 +103,29 @@ bool V4LRadioControl::isSupportedBand(QRadioPlayer::Band b) const
     return false;
 }
 
-void V4LRadioControl::setBand(QRadioPlayer::Band b)
+void V4LRadioControl::setBand(QRadioTuner::Band b)
 {
-    if(freqMin <= 87500000 && freqMax >= 108000000 && b == QRadioPlayer::FM) {
+    if(freqMin <= 87500000 && freqMax >= 108000000 && b == QRadioTuner::FM) {
         // FM 87.5 to 108.0 MHz, except Japan 76-90 MHz
-        currentBand =  (QRadioPlayer::Band)b;
+        currentBand =  (QRadioTuner::Band)b;
         step = 100000; // 100kHz steps
         emit bandChanged(currentBand);
 
-    } else if(freqMin <= 148500 && freqMax >= 283500 && b == QRadioPlayer::LW) {
+    } else if(freqMin <= 148500 && freqMax >= 283500 && b == QRadioTuner::LW) {
         // LW 148.5 to 283.5 kHz, 9kHz channel spacing (Europe, Africa, Asia)
-        currentBand =  (QRadioPlayer::Band)b;
+        currentBand =  (QRadioTuner::Band)b;
         step = 1000; // 1kHz steps
         emit bandChanged(currentBand);
 
-    } else if(freqMin <= 520000 && freqMax >= 1610000 && b == QRadioPlayer::AM) {
+    } else if(freqMin <= 520000 && freqMax >= 1610000 && b == QRadioTuner::AM) {
         // AM 520 to 1610 kHz, 9 or 10kHz channel spacing, extended 1610 to 1710 kHz
-        currentBand =  (QRadioPlayer::Band)b;
+        currentBand =  (QRadioTuner::Band)b;
         step = 1000; // 1kHz steps
         emit bandChanged(currentBand);
 
-    } else if(freqMin <= 1711000 && freqMax >= 30000000 && b == QRadioPlayer::SW) {
+    } else if(freqMin <= 1711000 && freqMax >= 30000000 && b == QRadioTuner::SW) {
         // SW 1.711 to 30.0 MHz, divided into 15 bands. 5kHz channel spacing
-        currentBand =  (QRadioPlayer::Band)b;
+        currentBand =  (QRadioTuner::Band)b;
         step = 500; // 500Hz steps
         emit bandChanged(currentBand);
     }
@@ -134,6 +135,36 @@ void V4LRadioControl::setBand(QRadioPlayer::Band b)
 int V4LRadioControl::frequency() const
 {
     return currentFreq;
+}
+
+int V4LRadioControl::frequencyStep(QRadioTuner::Band b) const
+{
+    int step = 0;
+
+    if(b == QRadioTuner::FM)
+        step = 100000; // 100kHz steps
+    else if(b == QRadioTuner::LW)
+        step = 1000; // 1kHz steps
+    else if(b == QRadioTuner::AM)
+        step = 1000; // 1kHz steps
+    else if(b == QRadioTuner::SW)
+        step = 500; // 500Hz steps
+
+    return step;
+}
+
+QPair<int,int> V4LRadioControl::frequencyRange(QRadioTuner::Band b) const
+{
+    if(b == QRadioTuner::AM)
+        return qMakePair<int,int>(520000,1710000);
+    else if(b == QRadioTuner::FM)
+        return qMakePair<int,int>(87500000,108000000);
+    else if(b == QRadioTuner::SW)
+        return qMakePair<int,int>(1711111,30000000);
+    else if(b == QRadioTuner::LW)
+        return qMakePair<int,int>(148500,283500);
+
+    return qMakePair<int,int>(0,0);
 }
 
 void V4LRadioControl::setFrequency(int frequency)
@@ -173,8 +204,18 @@ bool V4LRadioControl::isStereo() const
     return stereo;
 }
 
-void V4LRadioControl::setStereo(bool stereo)
+QRadioTuner::StereoMode V4LRadioControl::stereoMode() const
 {
+    return QRadioTuner::Auto;
+}
+
+void V4LRadioControl::setStereoMode(QRadioTuner::StereoMode mode)
+{
+    bool stereo = true;
+
+    if(mode == QRadioTuner::ForceMono)
+        stereo = false;
+
     v4l2_tuner tuner;
 
     memset( &tuner, 0, sizeof( tuner ) );
@@ -208,11 +249,6 @@ int V4LRadioControl::signalStrength() const
     }
 
     return 0;
-}
-
-qint64 V4LRadioControl::duration() const
-{
-    return playTime.elapsed();
 }
 
 int V4LRadioControl::volume() const
@@ -315,6 +351,27 @@ void V4LRadioControl::searchBackward()
     timer->start();
 }
 
+void V4LRadioControl::start()
+{
+}
+
+void V4LRadioControl::stop()
+{
+}
+
+QRadioTuner::Error V4LRadioControl::error() const
+{
+    if(m_error)
+        return QRadioTuner::OpenError;
+
+    return QRadioTuner::NoError;
+}
+
+QString V4LRadioControl::errorString() const
+{
+    return QString();
+}
+
 void V4LRadioControl::search()
 {
     int signal = signalStrength();
@@ -322,7 +379,6 @@ void V4LRadioControl::search()
         sig = signal;
         emit signalStrengthChanged(sig);
     }
-    emit durationChanged(playTime.elapsed());
 
     if(!scanning) return;
 
@@ -412,6 +468,8 @@ bool V4LRadioControl::initRadio()
 
         return true;
     }
+    m_error = true;
+    emit error();
 
     return false;
 }

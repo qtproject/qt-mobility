@@ -39,34 +39,34 @@
 #include <multimedia/qmediaobject.h>
 #include <multimedia/qmediacontrol.h>
 #include <multimedia/qmediaservice.h>
-#include <multimedia/qradioplayercontrol.h>
-#include <multimedia/qradioplayer.h>
+#include <multimedia/qradiotunercontrol.h>
+#include <multimedia/qradiotuner.h>
 
-class MockControl : public QRadioPlayerControl
+class MockControl : public QRadioTunerControl
 {
     Q_OBJECT
 
 public:
     MockControl(QObject *parent):
-        QRadioPlayerControl(parent),
+        QRadioTunerControl(parent),
         m_searching(false),m_muted(false),m_stereo(true),
         m_volume(100),m_signal(0),m_frequency(0),
-        m_duration(0),m_band(QRadioPlayer::FM) {}
+        m_band(QRadioTuner::FM) {}
 
-    QRadioPlayer::Band band() const
+    QRadioTuner::Band band() const
     {
         return m_band;
     }
 
-    void setBand(QRadioPlayer::Band b)
+    void setBand(QRadioTuner::Band b)
     {
         m_band = b;
         emit bandChanged(m_band);
     }
 
-    bool isSupportedBand(QRadioPlayer::Band b) const
+    bool isBandSupported(QRadioTuner::Band b) const
     {
-        if(b == QRadioPlayer::FM || b == QRadioPlayer::AM) return true;
+        if(b == QRadioTuner::FM || b == QRadioTuner::AM) return true;
 
         return false;
     }
@@ -76,14 +76,15 @@ public:
         return m_frequency;
     }
 
+    QPair<int,int> frequencyRange() const
+    {
+        return qMakePair<int,int>(1,2);
+    }
+
     void setFrequency(int frequency)
     {
         m_frequency = frequency;
         emit frequencyChanged(m_frequency);
-        //NOTE: for testing emit duration change on freq set
-        // this would normally be done on a time interval from the backend.
-        m_duration+=1000; // add 1 sec
-        emit durationChanged(m_duration);
     }
 
     bool isStereo() const
@@ -91,20 +92,24 @@ public:
         return m_stereo;
     }
 
-    void setStereo(bool stereo)
+    void setStereoMode(QRadioTunerControl::StereoMode mode)
     {
-        m_stereo = stereo;
-        emit stereoStatusChanged(m_stereo);
+        emit stereoStatusChanged(true);
+    }
+
+    QRadioTuner::Error error() const
+    {
+        return QRadioTuner::NoError;
+    }
+
+    QString errorString() const
+    {
+        return QString();
     }
 
     int signalStrength() const
     {
         return m_signal;
-    }
-
-    qint64 duration() const
-    {
-        return m_duration;
     }
 
     int volume() const
@@ -159,8 +164,7 @@ public:
     int  m_volume;
     int  m_signal;
     int  m_frequency;
-    qint64 m_duration;
-    QRadioPlayer::Band m_band;
+    QRadioTuner::Band m_band;
 };
 
 class MockService : public QMediaService
@@ -203,7 +207,7 @@ public:
     MockService *mockService;
 };
 
-class tst_QRadioPlayer: public QObject
+class tst_QRadioTuner: public QObject
 {
     Q_OBJECT
 
@@ -214,55 +218,53 @@ public slots:
 private slots:
     void testBand();
     void testFrequency();
-    void testStereo();
     void testMute();
     void testSearch();
     void testVolume();
     void testSignal();
-    void testDuration();
 
 private:
     MockObject      *object;
     MockControl     *mock;
     MockService     *service;
     MockProvider    *provider;
-    QRadioPlayer    *radio;
+    QRadioTuner    *radio;
 };
 
-void tst_QRadioPlayer::init()
+void tst_QRadioTuner::init()
 {
-    qRegisterMetaType<QRadioPlayer::Band>("QRadioPlayer::Band");
+    qRegisterMetaType<QRadioTuner::Band>("QRadioTuner::Band");
 
     mock = new MockControl(this);
     service = new MockService(this, mock);
     object = new MockObject(this, service,  mock);
     provider = new MockProvider(service);
-    radio = new QRadioPlayer(0,provider);
+    radio = new QRadioTuner(0,provider);
     QVERIFY(radio->service() != 0);
 }
 
-void tst_QRadioPlayer::cleanup()
+void tst_QRadioTuner::cleanup()
 {
     delete radio;
     delete service;
     delete provider;
 }
 
-void tst_QRadioPlayer::testBand()
+void tst_QRadioTuner::testBand()
 {
-    QVERIFY(radio->isSupportedBand(QRadioPlayer::FM));
-    QVERIFY(!radio->isSupportedBand(QRadioPlayer::SW));
+    QVERIFY(radio->isBandSupported(QRadioTuner::FM));
+    QVERIFY(!radio->isBandSupported(QRadioTuner::SW));
 
-    if(radio->isSupportedBand(QRadioPlayer::AM)) {
-        QSignalSpy readSignal(radio, SIGNAL(bandChanged(QRadioPlayer::Band)));
-        radio->setBand(QRadioPlayer::AM);
+    if(radio->isBandSupported(QRadioTuner::AM)) {
+        QSignalSpy readSignal(radio, SIGNAL(bandChanged(QRadioTuner::Band)));
+        radio->setBand(QRadioTuner::AM);
         QTestEventLoop::instance().enterLoop(1);
-        QVERIFY(radio->band() == QRadioPlayer::AM);
+        QVERIFY(radio->band() == QRadioTuner::AM);
         QVERIFY(readSignal.count() == 1);
     }
 }
 
-void tst_QRadioPlayer::testFrequency()
+void tst_QRadioTuner::testFrequency()
 {
     QSignalSpy readSignal(radio, SIGNAL(frequencyChanged(int)));
     radio->setFrequency(104500000);
@@ -271,16 +273,7 @@ void tst_QRadioPlayer::testFrequency()
     QVERIFY(readSignal.count() == 1);
 }
 
-void tst_QRadioPlayer::testStereo()
-{
-    QSignalSpy readSignal(radio, SIGNAL(stereoStatusChanged(bool)));
-    radio->setStereo(false);
-    QTestEventLoop::instance().enterLoop(1);
-    QVERIFY(!radio->isStereo());
-    QVERIFY(readSignal.count() == 1);
-}
-
-void tst_QRadioPlayer::testMute()
+void tst_QRadioTuner::testMute()
 {
     QSignalSpy readSignal(radio, SIGNAL(mutingChanged(bool)));
     radio->setMuted(true);
@@ -289,7 +282,7 @@ void tst_QRadioPlayer::testMute()
     QVERIFY(readSignal.count() == 1);
 }
 
-void tst_QRadioPlayer::testSearch()
+void tst_QRadioTuner::testSearch()
 {
     QSignalSpy readSignal(radio, SIGNAL(searchingStatusChanged(bool)));
     QVERIFY(!radio->isSearching());
@@ -313,7 +306,7 @@ void tst_QRadioPlayer::testSearch()
     QVERIFY(!radio->isSearching());
 }
 
-void tst_QRadioPlayer::testVolume()
+void tst_QRadioTuner::testVolume()
 {
     QVERIFY(radio->volume() == 100);
     QSignalSpy readSignal(radio, SIGNAL(volumeChanged(int)));
@@ -323,23 +316,12 @@ void tst_QRadioPlayer::testVolume()
     QVERIFY(readSignal.count() == 1);
 }
 
-void tst_QRadioPlayer::testSignal()
+void tst_QRadioTuner::testSignal()
 {
     QVERIFY(radio->signalStrength() == 0);
     // There is no set of this only a get, do nothing else.
 }
 
-void tst_QRadioPlayer::testDuration()
-{
-    QVERIFY(radio->duration() == 0);
-    QSignalSpy readSignal(radio, SIGNAL(durationChanged(qint64)));
-    radio->setFrequency(104500000);
-    QTestEventLoop::instance().enterLoop(2);
-    QVERIFY(readSignal.count() > 0);
-    QVERIFY(radio->duration() > 0);
-}
+QTEST_MAIN(tst_QRadioTuner)
 
-
-QTEST_MAIN(tst_QRadioPlayer)
-
-#include "tst_qradioplayer.moc"
+#include "tst_qradiotuner.moc"
