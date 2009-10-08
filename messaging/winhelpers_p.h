@@ -168,7 +168,7 @@ public:
 
     LPMAPITABLE subFolders(QMessageStore::ErrorCode *lastError) { if (!_init) findSubFolders(lastError); return _subFolders; }
     IMessage *createMessage(QMessageStore::ErrorCode* lastError);
-    IMessage *createMessage(const QMessage& source, const MapiSessionPtr session, QMessageStore::ErrorCode* lastError, PostSendAction postSendAction = MoveAfterSend );
+    IMessage *createMessage(QMessageStore::ErrorCode* lastError, const QMessage& source, const MapiSessionPtr session, PostSendAction postSendAction = MoveAfterSend );
 
     IMessage *openMessage(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId);
 
@@ -300,6 +300,8 @@ public:
     QByteArray attachmentData(QMessageStore::ErrorCode *lastError, const QMessageId& id, ULONG number) const;
 
     QMessageIdList queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const;
+
+    void updateMessage(QMessageStore::ErrorCode* lastError, const QMessage& source);
 
     void removeMessages(QMessageStore::ErrorCode *lastError, const QMessageIdList &ids);
 

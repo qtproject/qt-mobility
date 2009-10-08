@@ -276,7 +276,7 @@ bool QMessageStore::addMessage(QMessage *message)
         d_ptr->p_ptr->lastError = QMessageStore::NoError;
     }
 
-    if (!message || !message->id().isValid()) {
+    if (message && !message->id().isValid()) {
         QMessageStore::ErrorCode* lError = &d_ptr->p_ptr->lastError;
 
         MapiStorePtr mapiStore = d_ptr->p_ptr->session->findStore(lError,message->parentAccountId(),false);
@@ -292,14 +292,8 @@ bool QMessageStore::addMessage(QMessage *message)
             }
 
             if (*lError == QMessageStore::NoError && !mapiFolder.isNull()) {
-                IMessage* mapiMessage = mapiFolder->createMessage(*message,d_ptr->p_ptr->session,lError,MapiFolder::DoNothing);
-                if (*lError == QMessageStore::NoError && mapiMessage) {
-                    if (FAILED(mapiMessage->SaveChanges(0))) {
-                        qWarning() << "Unable to save changes on message.";
-                        mapiRelease(mapiMessage);
-                        return false;
-                    }
-
+                IMessage* mapiMessage = mapiFolder->createMessage(lError, *message, d_ptr->p_ptr->session, MapiFolder::DoNothing);
+                if (*lError == QMessageStore::NoError) {
                     //set the new QMessageId
                     //we can only be guaranteed of an entry id after IMessage->SaveChanges has been called
 
@@ -314,19 +308,15 @@ bool QMessageStore::addMessage(QMessage *message)
                         message->d_ptr->_modified = false;
 
                         MAPIFreeBuffer(properties);
-                    }
-                    else
-                    {
+                    } else {
                         qWarning() << "Unable to set the new ID in message.";
                         result = false;
                     }
 
                     mapiMessage->Release();
-
                     result = true;
-
                 } else {
-                    qWarning() << "Cannot CreateMessage";
+                    qWarning() << "Cannot createMessage";
                 }
             } else {
                 qWarning() << "Cannot get MAPI folder from store";
@@ -340,10 +330,31 @@ bool QMessageStore::addMessage(QMessage *message)
     return result;
 }
 
-bool QMessageStore::updateMessage(QMessage *m)
+bool QMessageStore::updateMessage(QMessage *message)
 {
-    Q_UNUSED(m)
-    return true; // stub
+    bool result(false);
+
+    if (!d_ptr->p_ptr->session) {
+        d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
+        return result;
+    } else {
+        d_ptr->p_ptr->lastError = QMessageStore::NoError;
+    }
+
+    if (message && !message->id().isValid()) {
+        QMessageStore::ErrorCode* lError = &d_ptr->p_ptr->lastError;
+
+        d_ptr->p_ptr->session->updateMessage(lError, *message);
+        if (*lError == QMessageStore::NoError) {
+            result = true;
+        } else {
+            qWarning() << "Cannot updateMessage";
+        }
+    } else {
+        qWarning() << "Invalid message ID at update";
+    }
+
+    return result;
 }
 
 QMessage QMessageStore::message(const QMessageId& id) const
