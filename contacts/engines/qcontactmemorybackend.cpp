@@ -290,7 +290,28 @@ bool QContactMemoryEngine::removeContact(const QUniqueId& contactId, QContactCha
         return false;
     }
 
-    // remove the contact from the lists.
+    // remove the contact from any relationships it was in.
+    QPair<QString, QUniqueId> thisContactUri = QPair<QString, QUniqueId>(QString(), contactId);
+    QList<QContactRelationship> allRelationships = relationships(thisContactUri, error);
+    if (error != QContactManager::NoError && error != QContactManager::DoesNotExistError) {
+        error = QContactManager::UnspecifiedError; // failed to clean up relationships
+        return false;
+    }
+
+    // this is meant to be a transaction, so if any of these fail, we're in BIG TROUBLE.
+    // a real backend will use DBMS transactions to ensure database integrity.
+    for (int i = 0; i < allRelationships.size(); i++) {
+        QContactRelationship currRel = allRelationships.at(i);
+        if (currRel.sourceContact() == contactId) {
+            removeRelationship(currRel, error);
+            continue;
+        }
+
+        currRel.removeDestinationContact(thisContactUri);
+        saveRelationship(&currRel, error);
+    }
+
+    // having cleaned up the relationships, remove the contact from the lists.
     d->m_contacts.removeAt(index);
     d->m_contactIds.removeAt(index);
     error = QContactManager::NoError;

@@ -1013,7 +1013,8 @@ bool QContactManagerEngine::validateDefinition(const QContactDetailDefinition& d
 }
 
 /*!
- * Remove the contact identified by \a contactId from the database.
+ * Remove the contact identified by \a contactId from the database,
+ * and removes the contact from any relationships in which it was involved.
  * Returns true if the contact was removed successfully, otherwise
  * returns false.
  *
@@ -1154,6 +1155,9 @@ QList<QContactManager::Error> QContactManagerEngine::saveContacts(QList<QContact
  * For each contact that was removed succesfully, the corresponding
  * id in the list will be retained but set to zero.  The id of contacts
  * that were not successfully removed will be left alone.
+ *
+ * Any contact that was removed successfully will have been removed from
+ * any relationships in which it was involved.
  *
  * The backend must emit the appropriate signals to inform clients of changes
  * to the database resulting from this operation.
