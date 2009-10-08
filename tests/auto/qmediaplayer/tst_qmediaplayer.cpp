@@ -33,7 +33,8 @@
 ****************************************************************************/
 
 #include <QtTest/QtTest>
-#include <QDebug>
+#include <QtCore/qdebug.h>
+#include <QtCore/qbuffer.h>
 
 #include <multimedia/qmediaplayercontrol.h>
 #include <multimedia/qmediaservice.h>
@@ -72,8 +73,8 @@ public:
     void setPlaybackRate(qreal rate) { if (rate != _playbackRate) emit playbackRateChanged(_playbackRate = rate); }
 
     QMediaContent media() const { return _media; }
-    void setMedia(const QMediaContent &content, QIODevice *stream) { Q_UNUSED(stream); _media = content; }
-    QIODevice *mediaStream() const { return 0; }
+    void setMedia(const QMediaContent &content, QIODevice *stream) { _media = content; _stream = stream; }
+    QIODevice *mediaStream() const { return _stream; }
 
     void play() { if (_isValid && !_media.isNull() && _state != QMediaPlayer::PlayingState) emit stateChanged(_state = QMediaPlayer::PlayingState); }
     void pause() { if (_isValid && !_media.isNull() && _state != QMediaPlayer::PausedState && _state != QMediaPlayer::StoppedState) emit stateChanged(_state = QMediaPlayer::PausedState); }
@@ -91,6 +92,7 @@ public:
     bool _isSeekable;
     qreal _playbackRate;
     QMediaContent _media;
+    QIODevice *_stream;
     bool _isValid;
     QString _errorString;
 };
@@ -142,6 +144,7 @@ public:
         mockControl->_isSeekable = false;
         mockControl->_playbackRate = 0.0;
         mockControl->_media = QMediaContent();
+        mockControl->_stream = 0;
         mockControl->_isValid = false;
         mockControl->_errorString = QString();
     }
@@ -275,7 +278,12 @@ void tst_QMediaPlayer::testMedia()
     QFETCH_GLOBAL(QMediaContent, mediaContent);
 
     mockService->setMedia(mediaContent);
-    QVERIFY(player->media() == mediaContent);
+    QCOMPARE(player->media(), mediaContent);
+
+    QBuffer stream;
+    player->setMedia(mediaContent, &stream);
+    QCOMPARE(player->media(), mediaContent);
+    QCOMPARE(player->mediaStream(), &stream);
 }
 
 void tst_QMediaPlayer::testDuration()
