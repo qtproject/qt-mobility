@@ -99,6 +99,8 @@ SOURCES += qmessageid_symbian.cpp \
            qmessageordering_symbian.cpp \
            qmessagestore_symbian.cpp \
            qmessageserviceaction_symbian.cpp 
+
+MMP_RULES += "EXPORTUNFROZEN"
 }
 
 win32 {
