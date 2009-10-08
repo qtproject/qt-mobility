@@ -69,6 +69,20 @@
     } while(0)
 #endif
 
+
+#define QTRY_WAIT(code, __expr) \
+        do { \
+        const int __step = 50; \
+        const int __timeout = 5000; \
+        if (!(__expr)) { \
+            QTest::qWait(0); \
+        } \
+        for (int __i = 0; __i < __timeout && !(__expr); __i+=__step) { \
+            do { code } while(0); \
+            QTest::qWait(__step); \
+        } \
+    } while(0)
+
 //TESTED_CLASS=
 //TESTED_FILES=
 
@@ -1942,17 +1956,12 @@ void tst_QContactManager::signalEmission()
     c2 = batchAdd.at(1);
     c3 = batchAdd.at(2);
 
-    QTRY_COMPARE(spyCA.count(), 1); // XXX coalesced updates - not mandatory!!
+    /* We basically loop, processing events, until we've seen an Add signal for each contact */
+    sigids.clear();
+
+    QTRY_WAIT( while(spyCA.size() > 0) {sigids += spyCA.takeFirst().at(0).value<QList<QUniqueId> >(); }, sigids.contains(c.id()) && sigids.contains(c2.id()) && sigids.contains(c3.id()));
     QTRY_COMPARE(spyCM.count(), 0);
     QTRY_COMPARE(spyCR.count(), 0);
-    args = spyCA.takeFirst();
-    QVERIFY(args.size() == 1);
-    sigids = args.at(0).value<QList<QUniqueId> >();
-    QVERIFY(sigids.count() == 3);
-    // The order is indeterminate
-    QVERIFY(sigids.contains(c.id()));
-    QVERIFY(sigids.contains(c2.id()));
-    QVERIFY(sigids.contains(c3.id()));
 
     /* Batch modifies */
     c.setDisplayLabel("This is modified number 1");
@@ -1962,30 +1971,17 @@ void tst_QContactManager::signalEmission()
     batchAdd.clear();
     batchAdd << c << c2 << c3;
     m1->saveContacts(&batchAdd);
-    QTRY_COMPARE(spyCA.count(), 0);
-    QTRY_COMPARE(spyCM.count(), 1); // 1 signal only
-    QTRY_COMPARE(spyCR.count(), 0);
-    args = spyCM.takeFirst();
-    QVERIFY(args.size() == 1);
-    sigids = args.at(0).value<QList<QUniqueId> >();
-    QVERIFY(sigids.count() == 3);
-    QVERIFY(sigids.contains(c.id()));
-    QVERIFY(sigids.contains(c2.id()));
-    QVERIFY(sigids.contains(c3.id()));
+
+    QTRY_WAIT( while(spyCM.size() > 0) {sigids += spyCM.takeFirst().at(0).value<QList<QUniqueId> >(); }, sigids.contains(c.id()) && sigids.contains(c2.id()) && sigids.contains(c3.id()));
 
     /* Batch removes */
     batchRemove << c.id() << c2.id() << c3.id();
     m1->removeContacts(&batchRemove);
+
+    QTRY_WAIT( while(spyCR.size() > 0) {sigids += spyCR.takeFirst().at(0).value<QList<QUniqueId> >(); }, sigids.contains(c.id()) && sigids.contains(c2.id()) && sigids.contains(c3.id()));
+
     QTRY_COMPARE(spyCA.count(), 0);
     QTRY_COMPARE(spyCM.count(), 0);
-    QTRY_COMPARE(spyCR.count(), 1); // 1 signal only
-    args = spyCR.takeFirst();
-    QVERIFY(args.size() == 1);
-    sigids = args.at(0).value<QList<QUniqueId> >();
-    QVERIFY(sigids.count() == 3);
-    QVERIFY(sigids.contains(c.id()));
-    QVERIFY(sigids.contains(c2.id()));
-    QVERIFY(sigids.contains(c3.id()));
 
     /* Now some cross manager testing */
     if (!m1->information()->hasFeature(QContactManagerInfo::Anonymous)) {
