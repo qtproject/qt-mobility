@@ -99,7 +99,8 @@ public:
     mutable QMap<QString, QContactDetailDefinition> m_definitions; // list of definitions.
     mutable QSet<QString> m_createOnlyIds; // a list of create only ids.
     QUniqueId m_nextContactId;
-    bool m_anonymous;                               // Is this backend ever shared?
+    bool m_anonymous;                              // Is this backend ever shared?
+    QString m_engineName;                          // name of this engine as supplied by factory (memory)
 
     QQueue<QContactAbstractRequest*> m_asynchronousOperations; // async requests to be performed.
 };
@@ -114,8 +115,9 @@ public:
     static QContactMemoryEngine *createMemoryEngine(const QMap<QString, QString>& parameters);
     void deref();
 
-    /* Parameter Reporting */
-    QMap<QString, QString> parameters() const;
+    /* URI reporting */
+    QString managerName() const;
+    QMap<QString, QString> managerParameters() const;
 
     /* Contacts - Accessors and Mutators */
     QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;

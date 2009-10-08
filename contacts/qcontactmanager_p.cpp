@@ -88,14 +88,13 @@ static void qContactsCleanEngines()
 
 void QContactManagerData::createEngine(const QString& managerName, const QMap<QString, QString>& parameters)
 {
-    m_managerName = managerName.isEmpty() ? QContactManager::availableManagers().value(0) : managerName;
-
-    if (m_managerName == QLatin1String("memory"))
+    QString builtManagerName = managerName.isEmpty() ? QContactManager::availableManagers().value(0) : managerName;
+    if (builtManagerName == QLatin1String("memory"))
         m_engine = QContactMemoryEngine::createMemoryEngine(parameters);
     else {
         /* Look for a factory */
         loadFactories();
-        QContactManagerEngineFactory *factory = m_engines.value(managerName);
+        QContactManagerEngineFactory *factory = m_engines.value(builtManagerName);
         m_error = QContactManager::NoError;
         if (factory)
             m_engine = factory->engine(parameters, m_error);
@@ -103,14 +102,11 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
             m_engine = 0;
 
         if (!m_engine) {
-            m_managerName = QLatin1String("invalid");
             if (m_error == QContactManager::NoError)
                 m_error = QContactManager::DoesNotExistError;
             m_engine = new QContactInvalidEngine(); // XXX share
         }
     }
-    m_params = m_engine->parameters();
-    m_uri = QContactManager::buildUri(m_managerName, parameters);
 }
 
 /* Plugin loader */

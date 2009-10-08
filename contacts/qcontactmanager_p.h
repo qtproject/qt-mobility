@@ -84,10 +84,6 @@ public:
     static QContactAction* action(const QContactActionDescriptor& actionDescriptor);
 
     QContactManagerEngine* m_engine;
-    QString m_managerName;
-    QMap<QString, QString> m_params;
-    QString m_uri;
-
     QContactManager::Error m_error;
 
     /* Information object */

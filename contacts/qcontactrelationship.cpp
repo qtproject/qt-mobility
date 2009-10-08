@@ -238,6 +238,6 @@ void QContactRelationship::appendDestinationContact(const QPair<QString, QUnique
  */
 void QContactRelationship::appendDestinationContact(const QUniqueId& contactId)
 {
-    QPair<QString, QUniqueId> contact = QPair<QString, QUniqueId>(QString, contactId);
+    QPair<QString, QUniqueId> contact = QPair<QString, QUniqueId>(QString(), contactId);
     appendDestinationContact(contact);
 }

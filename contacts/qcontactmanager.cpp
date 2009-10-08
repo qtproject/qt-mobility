@@ -507,23 +507,22 @@ QContactManagerInfo* QContactManager::information() const
     return d->m_info;
 }
 
-/*! Returns the manager id for this QContactManager */
+/*! Returns the manager name for this QContactManager */
 QString QContactManager::managerName() const
 {
-    return d->m_managerName;
+    return d->m_engine->managerName();
 }
 
-/*! Return the parameters supplied to this QContactManager */
+/*! Return the parameters relevant to the creation of this QContactManager */
 QMap<QString, QString>QContactManager::managerParameters() const
 {
-    return d->m_params;
+    return d->m_engine->managerParameters();
 }
 
 /*!
- * Return the uri describing this QContactManager, including
- * managerName, managerStoreId and any parameters.
+ * Return the uri describing this QContactManager, consisting of the manager name and any parameters.
  */
 QString QContactManager::managerUri() const
 {
-    return d->m_uri;
+    return d->m_engine->managerUri();
 }

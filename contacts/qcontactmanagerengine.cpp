@@ -143,14 +143,29 @@
  * \sa dataChanged()
  */
 
+/*! Returns the manager name for this QContactManagerEngine */
+QString QContactManagerEngine::managerName() const
+{
+    return QString(QLatin1String("base"));
+}
+
 /*!
  * Returns the parameters with which this engine was constructed.  Note that
  * the engine may have discarded unused or invalid parameters at the time of
  * construction, and these will not be returned.
  */
-QMap<QString, QString> QContactManagerEngine::parameters() const
+QMap<QString, QString> QContactManagerEngine::managerParameters() const
 {
     return QMap<QString, QString>(); // default implementation requires no parameters.
+}
+
+/*!
+ * Returns the unique URI of this manager, which is built from the manager name and the parameters
+ * used to construct it.
+ */
+QString QContactManagerEngine::managerUri() const
+{
+    return QContactManager::buildUri(managerName(), managerParameters());
 }
 
 /*!

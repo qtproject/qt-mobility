@@ -60,8 +60,10 @@ public:
     QContactManagerEngine() {}
     virtual void deref() = 0;
 
-    /* Parameters reporting */
-    virtual QMap<QString, QString> parameters() const;
+    /* URI reporting */
+    virtual QString managerName() const;                       // e.g. "Symbian"
+    virtual QMap<QString, QString> managerParameters() const;  // e.g. "filename=private.db"
+    QString managerUri() const;
 
     /* Filtering */
     virtual QList<QUniqueId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;

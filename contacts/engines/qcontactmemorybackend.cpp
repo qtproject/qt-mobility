@@ -93,6 +93,7 @@ QContactMemoryEngine* QContactMemoryEngine::createMemoryEngine(const QMap<QStrin
         return engine;
     } else {
         QContactMemoryEngine *engine = new QContactMemoryEngine(parameters);
+        engine->d->m_engineName = QString(QLatin1String("memory"));
         engine->d->m_id = idValue;
         engine->d->m_anonymous = anonymous;
         engines.insert(idValue, engine);
@@ -123,7 +124,13 @@ void QContactMemoryEngine::deref()
 }
 
 /*! \reimp */
-QMap<QString, QString> QContactMemoryEngine::parameters() const
+QString QContactMemoryEngine::managerName() const
+{
+    return d->m_engineName;
+}
+
+/*! \reimp */
+QMap<QString, QString> QContactMemoryEngine::managerParameters() const
 {
     QMap<QString, QString> params;
     params.insert(QLatin1String("id"), d->m_id);
@@ -291,7 +298,7 @@ bool QContactMemoryEngine::removeContact(const QUniqueId& contactId, QContactCha
     }
 
     // remove the contact from any relationships it was in.
-    QPair<QString, QUniqueId> thisContactUri = QPair<QString, QUniqueId>(QString(), contactId);
+    QPair<QString, QUniqueId> thisContactUri = QPair<QString, QUniqueId>(managerUri(), contactId);
     QList<QContactRelationship> allRelationships = relationships(thisContactUri, error);
     if (error != QContactManager::NoError && error != QContactManager::DoesNotExistError) {
         error = QContactManager::UnspecifiedError; // failed to clean up relationships
@@ -377,17 +384,19 @@ QList<QContactRelationship> QContactMemoryEngine::relationships(const QUniqueId&
 /*! \reimp */
 QList<QContactRelationship> QContactMemoryEngine::relationships(const QString& relationshipType, const QPair<QString, QUniqueId>& participantUri, QContactManager::Error& error) const
 {
-    QString myUri = QString(QLatin1String("memory")); // TODO! - get the real URI (trampoline?)
+    // convenience function checking - if participant is blank, they want all relationships of the given type
+    if (participantUri.first.isEmpty() && (participantUri.second == QUniqueId(0)))
+        return relationships(QUniqueId(0), relationshipType, error);
 
     QList<QContactRelationship> retn;
     QPair<QString, QUniqueId> participant = participantUri;
     if (participant.first.isEmpty())
-        participant.first = myUri;
+        participant.first = managerUri();
 
     foreach (const QContactRelationship& rel, d->m_relationships) {
         if ((rel.relationshipType() == relationshipType || relationshipType.isEmpty())
                 && ((rel.destinationContacts().contains(participant) || rel.destinationContacts().contains(participantUri))
-                    || ((participantUri.first.isEmpty() || participantUri.first == myUri) && rel.sourceContact() == participantUri.second))) {
+                    || ((participantUri.first.isEmpty() || participantUri.first == managerUri()) && rel.sourceContact() == participantUri.second))) {
             retn.append(rel);
         }
     }
@@ -414,13 +423,17 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
     // Attempt to validate the relationship.
     // first, check that the source contact exists
     if (!d->m_contactIds.contains(relationship->sourceContact())) {
+qDebug() << "relationship source contact doesn't exist!";
         error = QContactManager::InvalidRelationshipError;
         return false;
     }
 
     // second, check that the local destination contacts exist; we cannot check other managers' contacts.
-    QString myUri = QString(QLatin1String("memory")); // TODO! - get the real URI (trampoline?)
+    QString myUri = managerUri();
     QList<QPair<QString, QUniqueId> > dests = relationship->destinationContacts();
+
+qDebug() << "allDestinations =" << dests;
+
     QList<QPair<QString, QUniqueId> > checkDuplicates;
     for (int i = 0; i < dests.size(); i++) {
         QPair<QString, QUniqueId> curr = dests.at(i);
@@ -428,6 +441,7 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
             // this entry in the destination list is supposedly stored in this manager.
             // check that it exists, and that it isn't the source contact (circular)
             if (!d->m_contactIds.contains(curr.second) || curr.second == relationship->sourceContact()) {
+qDebug() << "relationship destination contact doesn't exist or is the source contact!";
                 error = QContactManager::InvalidRelationshipError;
                 return false;
             }
@@ -438,6 +452,7 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
             curr.first = myUri;
         if (checkDuplicates.contains(curr)) {
             // contains a duplicate entry.
+qDebug() << "relationship contains a duplicate entry!";
             error = QContactManager::InvalidRelationshipError;
             return false;
         }
@@ -454,6 +469,8 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
             // need to update the URI
             curr.first = myUri;
         }
+
+qDebug() << "updated dest:" << curr;
         updatedDests.append(curr);
     }
     relationship->setDestinationContacts(updatedDests);
@@ -884,7 +901,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
             }
 
             // third criteria: participant must be empty or must match (including role in relationship)
-            QString myUri = QString(QLatin1String("memory")); // TODO
+            QString myUri = managerUri();
             QPair<QString, QUniqueId> anonymousParticipant = QPair<QString, QUniqueId>(QString(), QUniqueId(0));
             if (r->participant() != anonymousParticipant) {
                 allRelationships = requestedRelationships;
