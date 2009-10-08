@@ -7,6 +7,10 @@ DEPENDPATH += .
 INCLUDEPATH += . ../../
 
 HEADERS += testresultxmlparser.h \
+    ../../qversitproperty.h \
+    ut_qversitproperty.h \
+    ../../qversitproperty_p.h \
+    ut_qversitproperty_p.h \
     ../../qversitcontactgenerator.h \
     ut_qversitcontactgenerator.h \
     ../../qversitcontactgenerator_p.h \
@@ -17,6 +21,8 @@ HEADERS += testresultxmlparser.h \
 
 SOURCES += main.cpp \
     testresultxmlparser.cpp \
+    ../../qversitproperty.cpp \
+    ut_qversitproperty.cpp \
     ../../qversitcontactgenerator.cpp \
     ut_qversitcontactgenerator.cpp \
     ../../qversitcontactgenerator_p.cpp \

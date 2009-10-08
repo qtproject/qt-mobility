@@ -31,36 +31,58 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITPROPERTY_H
-#define QVERSITPROPERTY_H
+#include "ut_qversitproperty.h"
+#include "qversitproperty.h"
+#include "qversitproperty_p.h"
 
-#include <QString>
-#include <QStringList>
-#include <QByteArray>
+#include <QtTest/QtTest>
 
-class QVersitDocument;
-class QVersitPropertyPrivate;
-
-class QVersitProperty
+void UT_QVersitProperty::init()
 {
-public:
-    QVersitProperty();
-    ~QVersitProperty();
+    mVersitProperty = new QVersitProperty();
+    QVERIFY(mVersitProperty);
+}
 
-    void setName(const QString& name);
-    QString name() const;
+void UT_QVersitProperty::cleanup()
+{
+   delete mVersitProperty;
+}
 
-    void addParameter(const QString& name, const QString& value);
-    QStringList parameterValues(const QString& name);
+void UT_QVersitProperty::testName()
+{
+    QString name("TEL");
+    mVersitProperty->setName(name);
+    QCOMPARE(mVersitProperty->name(), name);
+}
+
+void UT_QVersitProperty::testParameter()
+{
+    QString name("TYPE");
+    QString value("HOME");
+    mVersitProperty->addParameter(name, value);
+    QStringList paramValues = mVersitProperty->parameterValues(name);
+    QVERIFY(!paramValues.isEmpty());
+    QCOMPARE(paramValues.size(), 1);
+    QCOMPARE(paramValues[0], value);
     
-    void setValue(const QByteArray& value);
-    QByteArray value() const;
+    QString value1("VOICE");
+    mVersitProperty->addParameter(name, value1);
+    paramValues = mVersitProperty->parameterValues(name);
+    QCOMPARE(paramValues.size(), 2);
+    QCOMPARE(paramValues[0], value1);
+    QCOMPARE(paramValues[1], value);
+}
 
-    void setEmbeddedDocument(QVersitDocument* document);
-    const QVersitDocument* embeddedDocument() const;
+void UT_QVersitProperty::testValue()
+{
+    QByteArray value("050484747");
+    mVersitProperty->setValue(value);
+    QCOMPARE(mVersitProperty->value(), value);
+}
 
-private:
-    QVersitPropertyPrivate* d;
-};
-
-#endif
+void UT_QVersitProperty::testEmbeddedDocument()
+{
+    QVersitDocument document;
+    mVersitProperty->setEmbeddedDocument(&document);
+    QVERIFY(mVersitProperty->embeddedDocument());
+}

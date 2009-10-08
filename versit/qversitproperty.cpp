@@ -31,19 +31,79 @@
 **
 ****************************************************************************/
 
+#include "qversitproperty.h"
+#include "qversitproperty_p.h"
+
+QVersitProperty::QVersitProperty()
+{
+    d = new QVersitPropertyPrivate();
+}
+
+QVersitProperty::~QVersitProperty()
+{
+    delete d;
+}
+
 /*!
- * \class QContact
- *
- * \brief The QContact class provides an addressbook contact.
- *
- * A QContact consists of zero or more details.
- *
- * An instance of the QContact class represents an in-memory contact,
- * and may not reflect the state of that contact found in persistent
- * storage until the appropriate synchronisation method is called
- * on the QContactManager (i.e., saveContact, removeContact).
- *
- * \sa QContactManager, QContactDetail
+ * Sets the name of the property
  */
+void QVersitProperty::setName(const QString& name)
+{
+    d->mName = name;
+}
 
+/*!
+ * Retreives the name of the property
+ */
+QString QVersitProperty::name() const
+{
+    return d->mName;
+}
 
+/*!
+ * Sets the parameter name and value
+ */
+void QVersitProperty::addParameter(const QString& name, const QString& value)
+{
+    d->mParameterValues.insert(name,value);
+}
+
+/*!
+ * Returns the list of values of a certain parameter
+ */
+QStringList QVersitProperty::parameterValues(const QString& name)
+{
+    return d->mParameterValues.values(name);
+}
+
+/*!
+ * Sets the value of the property
+ */
+void QVersitProperty::setValue(const QByteArray& value)
+{
+    d->mValue = value;
+}
+
+/*!
+ * Returns the parameter value
+ */
+QByteArray QVersitProperty::value() const
+{
+    return d->mValue;
+}
+
+/*!
+ * Sets the embedded document of the property
+ */
+void QVersitProperty::setEmbeddedDocument(QVersitDocument* document)
+{
+    d->mDocument = document;
+}
+
+/*!
+ * Returns the embedded document from the property
+ */
+const QVersitDocument* QVersitProperty::embeddedDocument() const
+{
+    return d->mDocument;
+}

@@ -31,36 +31,32 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITPROPERTY_H
-#define QVERSITPROPERTY_H
+#ifndef UT_QVERSITPROPERTY_H
+#define UT_QVERSITPROPERTY_H
 
-#include <QString>
-#include <QStringList>
-#include <QByteArray>
+#include <QObject>
 
-class QVersitDocument;
-class QVersitPropertyPrivate;
+class QVersitProperty;
 
-class QVersitProperty
+class UT_QVersitProperty : public QObject
 {
-public:
-    QVersitProperty();
-    ~QVersitProperty();
+    Q_OBJECT
 
-    void setName(const QString& name);
-    QString name() const;
-
-    void addParameter(const QString& name, const QString& value);
-    QStringList parameterValues(const QString& name);
+private slots:
     
-    void setValue(const QByteArray& value);
-    QByteArray value() const;
+    void init();
+    void cleanup();
 
-    void setEmbeddedDocument(QVersitDocument* document);
-    const QVersitDocument* embeddedDocument() const;
+private slots: //test methods
+
+    void testName();
+    void testParameter();
+    void testValue();
+    void testEmbeddedDocument();
 
 private:
-    QVersitPropertyPrivate* d;
+    QVersitProperty* mVersitProperty;
+
 };
 
-#endif
+#endif //UT_QVERSITPROPERTY_H

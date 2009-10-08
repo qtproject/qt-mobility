@@ -33,6 +33,7 @@
 
 #include "testresultxmlparser.h"
 #include "ut_qversitcontactgenerator.h"
+#include "ut_qversitproperty.h"
 #include "ut_versitutils.h"
 #include "ut_qversitreader.h"
 
@@ -47,21 +48,27 @@ int main(int /*argc*/, char* /*argv[]*/)
 
     UT_QVersitContactGenerator ut_versitContactGenerator;
     QString resultFileName = "c:/ut_versitContactGenerator.xml";
-    args << resultFileName;    
+    args << resultFileName;
     QTest::qExec(&ut_versitContactGenerator, args);
-    parser.parseAndPrintResults(resultFileName); 
+	parser.parseAndPrintResults(resultFileName);
 
+    UT_QVersitProperty ut_qVersitProperty;
+    resultFileName = "c:/ut_versitProperty.xml";
+    args.replace(args.count()-1,resultFileName);
+    QTest::qExec(&ut_qVersitProperty, args);
+    parser.parseAndPrintResults(resultFileName);
+	
     UT_VersitUtils ut_versitUtils;
     resultFileName = "c:/ut_versitUtils.xml";
     args.replace(args.count()-1,resultFileName);    
     QTest::qExec(&ut_versitUtils, args);
-    parser.parseAndPrintResults(resultFileName);    
+    parser.parseAndPrintResults(resultFileName);
     
     UT_QVersitReader ut_versitReader;
     resultFileName = "c:/ut_versitReader.xml";
     args.replace(args.count()-1,resultFileName);    
     QTest::qExec(&ut_versitReader, args);
-    parser.parseAndPrintResults(resultFileName,true);    
+    parser.parseAndPrintResults(resultFileName,true);
     
     printf("Press any key...\n");
     getchar(); 
