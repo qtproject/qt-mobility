@@ -30,35 +30,31 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QVERSITDOCUMENT_H
-#define QVERSITDOCUMENT_H
+#ifndef QVERSITDOCUMENT_P_H
+#define QVERSITDOCUMENT_P_H
 
+#include <QString>
 #include <QList>
+#include "qversitdocument.h"
 #include "qversitproperty.h"
 
-class QVersitDocumentPrivate;
 class QVersitProperty;
 
-class QVersitDocument
+class QVersitDocumentPrivate 
 {
 public:
-    QVersitDocument();
-    ~QVersitDocument();
+    QVersitDocumentPrivate() 
+        : mVersitType(QVersitDocument::VCard21)
+    {
+    }
+    
+    ~QVersitDocumentPrivate()
+    {
+    }
 
-    enum VersitType {
-        VCard21 = 0
-    };
-
-    // metadata about the versit document itself.
-    void setVersitType(VersitType type);
-    VersitType versitType() const;
-
-    void addProperty(const QVersitProperty& property);
-    QList<QVersitProperty> properties() const;
-
-
-private:
-    QVersitDocumentPrivate* d;
+    // Data Container
+    QVersitDocument::VersitType mVersitType;
+    QList<QVersitProperty> mProperties;
 };
 
 #endif

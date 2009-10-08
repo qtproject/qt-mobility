@@ -32,18 +32,63 @@
 ****************************************************************************/
 
 /*!
- * \class QContact
+ * \class QVersitDocument
  *
- * \brief The QContact class provides an addressbook contact.
+ * \brief The QVersitDocument class is container class for versit properties.
  *
- * A QContact consists of zero or more details.
+ * A QVersitDocument consists of zero or more properties.
  *
- * An instance of the QContact class represents an in-memory contact,
- * and may not reflect the state of that contact found in persistent
- * storage until the appropriate synchronisation method is called
- * on the QContactManager (i.e., saveContact, removeContact).
- *
- * \sa QContactManager, QContactDetail
+ * \sa QVersitProperty
  */
 
+#include "qversitdocument.h"
+#include "qversitdocument_p.h"
+
+
+/*!
+ * Constructs a new versit document
+ */
+QVersitDocument::QVersitDocument()
+    : d(new QVersitDocumentPrivate())
+{
+}
+
+/*!
+ * Frees any memory in use by this versit document
+ */
+QVersitDocument::~QVersitDocument()
+{
+}
+
+/*!
+ * Set versit document type
+ */
+void QVersitDocument::setVersitType(VersitType type)
+{
+    d->mVersitType = type;
+}
+
+/*!
+ * Obtain versit document type
+ */
+QVersitDocument::VersitType QVersitDocument::versitType() const
+{
+   return d->mVersitType;
+}
+
+/*!
+ * Obtain the properties list contained in versit document
+ */
+QList<QVersitProperty> QVersitDocument::properties() const
+{
+    return d->mProperties;  
+}
+
+/*!
+ * Add property to the properties list
+ */
+void QVersitDocument::addProperty(const QVersitProperty& property)
+{
+    d->mProperties.append(property);
+}
 

@@ -36,6 +36,7 @@
 #include "ut_qversitproperty.h"
 #include "ut_versitutils.h"
 #include "ut_qversitreader.h"
+#include "ut_qversitdocument.h"
 
 #include <QtTest/QtTest>
 
@@ -58,6 +59,12 @@ int main(int /*argc*/, char* /*argv[]*/)
     QTest::qExec(&ut_qVersitProperty, args);
     parser.parseAndPrintResults(resultFileName);
 	
+    UT_QVersitDocument ut_qVersitDocument;
+    resultFileName = "c:/ut_versitDocument.xml";
+    args.replace(args.count()-1,resultFileName);
+    QTest::qExec(&ut_qVersitDocument, args);
+    parser.parseAndPrintResults(resultFileName);
+    
     UT_VersitUtils ut_versitUtils;
     resultFileName = "c:/ut_versitUtils.xml";
     args.replace(args.count()-1,resultFileName);    

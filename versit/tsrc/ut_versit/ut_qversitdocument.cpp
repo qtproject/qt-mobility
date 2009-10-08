@@ -30,35 +30,55 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QVERSITDOCUMENT_H
-#define QVERSITDOCUMENT_H
 
-#include <QList>
+
+#include <QString>
+#include <QtTest/QtTest>
+
+#include "ut_qversitdocument.h"
+#include "qversitdocument.h"
 #include "qversitproperty.h"
 
-class QVersitDocumentPrivate;
-class QVersitProperty;
 
-class QVersitDocument
+
+void UT_QVersitDocument::init()
 {
-public:
-    QVersitDocument();
-    ~QVersitDocument();
+    mVersitDocument = new QVersitDocument();
+    QVERIFY(mVersitDocument);
+}
 
-    enum VersitType {
-        VCard21 = 0
-    };
-
-    // metadata about the versit document itself.
-    void setVersitType(VersitType type);
-    VersitType versitType() const;
-
-    void addProperty(const QVersitProperty& property);
-    QList<QVersitProperty> properties() const;
+void UT_QVersitDocument::cleanup()
+{
+    delete mVersitDocument;
+}
 
 
-private:
-    QVersitDocumentPrivate* d;
-};
+void UT_QVersitDocument::constructor()
+{
+    QCOMPARE(QVersitDocument::VCard21, mVersitDocument->versitType());
+}
 
-#endif
+void UT_QVersitDocument::setVersitType()
+{
+    mVersitDocument->setVersitType(QVersitDocument::VCard21);
+    QCOMPARE(QVersitDocument::VCard21, mVersitDocument->versitType());
+}
+
+void UT_QVersitDocument::versitType()
+{
+    QCOMPARE(QVersitDocument::VCard21, mVersitDocument->versitType());
+}
+
+
+void UT_QVersitDocument::addProperty()
+{
+    QCOMPARE(0, mVersitDocument->properties().count());
+    QVersitProperty property;
+    mVersitDocument->addProperty(property);
+    QCOMPARE(1, mVersitDocument->properties().count());
+}
+
+void UT_QVersitDocument::properties()
+{
+    QCOMPARE(0, mVersitDocument->properties().count());
+}
