@@ -134,14 +134,7 @@ void GroupDetailsDialog::groupItemChanged(QListWidgetItem * item)
     if (item->checkState() == Qt::Checked) {
         if (!currentGroups.contains(id)) {
             // add it to the group.
-            QList<QContactRelationship> thisGroupRel = cm->relationships(id, QContactRelationship::RelationshipTypeHasMember);
-            QContactRelationship newRelationship;
-            if (thisGroupRel.size() > 0) {
-                newRelationship = thisGroupRel.at(0);
-            } else {
-                newRelationship.setSourceContact(id);
-                newRelationship.setRelationshipType(QContactRelationship::RelationshipTypeHasMember);
-            }
+            QContactRelationship newRelationship = cm->relationship(id, QContactRelationship::RelationshipTypeHasMember);
             QList<QPair<QString, QUniqueId> > destinationContacts = newRelationship.destinationContacts();
             destinationContacts.append(localContactUri);
             newRelationship.setDestinationContacts(destinationContacts);
