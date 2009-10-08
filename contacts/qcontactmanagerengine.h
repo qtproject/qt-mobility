@@ -85,6 +85,7 @@ public:
     virtual QUniqueId selfContactId(QContactManager::Error& error) const;
 
     /* Relationships between contacts */
+    virtual QContactRelationship relationship(const QUniqueId& sourceId, const QString& relationshipType, QContactManager::Error& error) const;
     virtual QList<QContactRelationship> relationships(const QUniqueId& sourceId, const QString& relationshipType, QContactManager::Error& error) const;
     virtual QList<QContactRelationship> relationships(const QString& relationshipType, const QPair<QString, QUniqueId>& participantUri, QContactManager::Error& error) const;
     virtual QList<QContactRelationship> relationships(const QPair<QString, QUniqueId>& participantUri, QContactManager::Error& error) const;

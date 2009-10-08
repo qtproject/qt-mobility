@@ -370,6 +370,21 @@ QUniqueId QContactManager::selfContactId() const
 }
 
 /*!
+ * Returns the first relationship of the given \a relationshipType which has the specified \a sourceId contact.
+ * If \a sourceId is the zero id, the first relationship of the given \a relationshipType will be returned.
+ * If \a relationshipType is empty, the first relationship with the given \a sourceId will be returned.
+ * If \a sourceId is the zero id and \a relationshipType is empty, the first relationship in the database
+ * will be returned.
+ *
+ * If no matching relationships are managed by this manager, a new relationship with the given \a sourceId and
+ * \a relationshipType set (but no destination contacts) will be returned.
+ */
+QContactRelationship QContactManager::relationship(const QUniqueId& sourceId, const QString& relationshipType) const
+{
+    return d->m_engine->relationship(sourceId, relationshipType, d->m_error);
+}
+
+/*!
  * Returns all relationships of the given \a relationshipType which the contact identified by \a sourceId has.
  * If the \a source is the zero id, a list of all of the relationships of the given \a relationshipType is returned.
  * If the \a relationshipType is empty, relationships of any type are returned.

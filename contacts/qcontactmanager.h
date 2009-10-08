@@ -111,6 +111,7 @@ public:
     QUniqueId selfContactId() const;
 
     /* Relationships */
+    QContactRelationship relationship(const QUniqueId& sourceId, const QString& relationshipType = QString()) const;
     QList<QContactRelationship> relationships(const QUniqueId& sourceId, const QString& relationshipType = QString()) const;
     QList<QContactRelationship> relationships(const QString& relationshipType, const QPair<QString, QUniqueId>& participantUri = (QPair<QString, QUniqueId>())) const;
     QList<QContactRelationship> relationships(const QPair<QString, QUniqueId>& participantUri) const;

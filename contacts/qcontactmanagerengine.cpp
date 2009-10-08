@@ -249,6 +249,33 @@ QUniqueId QContactManagerEngine::selfContactId(QContactManager::Error& error) co
 }
 
 /*!
+ * Returns the first relationship of the given \a relationshipType which has the specified \a sourceId contact.
+ * If \a sourceId is the zero id, the first relationship of the given \a relationshipType will be returned.
+ * If \a relationshipType is empty, the first relationship with the given \a sourceId will be returned.
+ * If \a sourceId is the zero id and \a relationshipType is empty, the first relationship in the database
+ * will be returned.
+ *
+ * If no matching relationships are managed by this manager, a new relationship with the given \a sourceId and
+ * \a relationshipType set (but no destination contacts) will be returned, and \a error will be set to
+ * \c QContactManager::DoesNotExistError.
+ */
+QContactRelationship QContactManagerEngine::relationship(const QUniqueId& sourceId, const QString& relationshipType, QContactManager::Error& error) const
+{
+    QList<QContactRelationship> matchingRelationships = relationships(sourceId, relationshipType, error);
+    if (matchingRelationships.isEmpty()) {
+        // found no matching relationships.  synthesise one and return it.
+        QContactRelationship retnRelationship;
+        retnRelationship.setSourceContact(sourceId);
+        retnRelationship.setRelationshipType(relationshipType);
+        error = QContactManager::DoesNotExistError;
+        return retnRelationship;
+    }
+
+    // found at least one match.  Return the first one.
+    return matchingRelationships.at(0);
+}
+
+/*!
  * Returns all relationships of the given \a relationshipType which the contact identified by \a sourceId has.
  * If the \a source is the zero id, a list of all of the relationships of the given \a relationshipType is returned.
  * If the \a relationshipType is empty, relationships of any type are returned.
