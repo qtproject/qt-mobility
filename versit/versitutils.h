@@ -36,7 +36,6 @@
 #define VERSITUTILS_H
 
 #include <QByteArray>
-#include <QPair>
 #include <QMultiMap>
 
 
@@ -44,11 +43,11 @@ class VersitUtils
 {
 public:
     static QByteArray unfold(QByteArray& text);
-    static bool parseVersitDocument(QByteArray& text);
-    static QPair<QByteArray,QByteArray> parseNextVersitProperty(QByteArray& text);  
+    static int countLeadingWhiteSpaces(const QByteArray& text, int pos=0);
     static bool containsSpecialChars(const QByteArray& text);
     static QByteArray encodeQuotedPrintable(QByteArray& text);
     static QByteArray decodeQuotedPrintable(QByteArray& text);
+    static int findHardLineBreakInQuotedPrintable(const QByteArray& encoded);
     static QByteArray extractPropertyName(const QByteArray& property);
     static QByteArray extractPropertyValue(const QByteArray& property);
     static QMultiMap<QByteArray,QByteArray> extractPropertyParams(
@@ -63,12 +62,10 @@ private:
         int length=-1);    
     static QByteArray paramName(const QByteArray& parameter);
     static QByteArray paramValue(const QByteArray& parameter);
-    static int findHardLineBreakInQuotedPrintable(const QByteArray& encoded);
-    static int countLeadingWhiteSpaces(const QByteArray& text, int pos=0);
-
+    
 private:
     
     friend class UT_VersitUtils;
 };
 
-#endif VERSITUTILS_H
+#endif // VERSITUTILS_H

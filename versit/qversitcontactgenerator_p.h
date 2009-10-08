@@ -39,10 +39,8 @@
 class QVersitContactGeneratorPrivate
 {
 public:
-    QVersitContactGeneratorPrivate();
-    ~QVersitContactGeneratorPrivate();
-    QList<QContact> generateContacts(const QVersitDocument& versitDocument);
-private:
+    QVersitContactGeneratorPrivate() {}
+    ~QVersitContactGeneratorPrivate() {}
 };
 
 #endif // QVERSITCONTACTGENERATOR_P_H

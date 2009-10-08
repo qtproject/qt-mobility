@@ -55,8 +55,6 @@ private slots:
     void testExtractPropertyName();
     void testExtractPropertyValue();
     void testExtractPropertyParams();
-    void testParseNextVersitProperty();
-    void testParseVersitDocument();
 };
 
 #endif // UT_VERSITUTILS_H

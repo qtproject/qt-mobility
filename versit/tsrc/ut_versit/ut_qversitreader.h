@@ -48,6 +48,8 @@ private slots: // Tests
     void init();
     void cleanup();
 
+    void testParseNextVersitProperty();
+    void testParseVersitDocument();    
     void testDevice();
     void testStart();
     void testResult();

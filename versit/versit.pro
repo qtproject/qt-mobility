@@ -30,7 +30,6 @@ SOURCES += qversitdocument.cpp \
     qversitwriter.cpp \
     qversitcontactconverter.cpp \
     qversitcontactgenerator.cpp \
-    qversitcontactgenerator_p.cpp
 
 LIBS += -lQtContacts
 

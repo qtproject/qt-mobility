@@ -66,57 +66,23 @@ QByteArray VersitUtils::unfold(QByteArray& text)
 }
 
 /*!
- * Parses a versit document and returns whether parsing succeeded.
+ * Returns the count of leading whitespaces in /a text
+ * starting from /a pos.
  */
-bool VersitUtils::parseVersitDocument(QByteArray& text)
+int VersitUtils::countLeadingWhiteSpaces(const QByteArray& text, int pos)
 {
-    // TODO: Store the properties to a QVersitDocument
-    text = text.mid(countLeadingWhiteSpaces(text));
-    QPair<QByteArray,QByteArray> nameAndValue = parseNextVersitProperty(text);
-    if (nameAndValue.first != "BEGIN" || 
-        nameAndValue.second.trimmed() != "VCARD")
-        return false;
-    while (nameAndValue.first.length() > 0 && nameAndValue.first != "END") {
-        nameAndValue = parseNextVersitProperty(text);
-        if (nameAndValue.first == "VERSION" && nameAndValue.second != "2.1")
-            return false;
-    }
-    return (nameAndValue.first == "END");
-}
-
-/*!
- * Parses a versit document and returns whether parsing succeeded.
- */
-QPair<QByteArray,QByteArray> VersitUtils::parseNextVersitProperty(
-    QByteArray& text)
-{
-    QPair<QByteArray,QByteArray> nameAndValue;
-    nameAndValue.first = extractPropertyName(text);
-    QMultiMap<QByteArray,QByteArray> params = extractPropertyParams(text);
-    text = extractPropertyValue(text); 
-    if (nameAndValue.first == "AGENT") {
-        if (VersitUtils::parseVersitDocument(text)) {
-            // TODO: Store the property if parsing was successful
-        }
-    }
-    else {
-        int crlfPos = -1;
-        if (params.contains("ENCODING","QUOTED-PRINTABLE")) {
-            crlfPos = findHardLineBreakInQuotedPrintable(text);
-            nameAndValue.second = text.left(crlfPos);
-            decodeQuotedPrintable(nameAndValue.second);
-            // TODO: Set the name and value to QVersitProperty
-            // TODO: Remove the ENCODING=QUOTED-PRINTABLE parameter
+    int whiteSpaceCount = 0;
+    bool nonWhiteSpaceFound = false;
+    for (int i=pos; i<text.length() && !nonWhiteSpaceFound; i++) {
+        QChar currentChar(text[i]);
+        if (currentChar.isSpace()) {
+            whiteSpaceCount++;
         }
         else {
-            crlfPos = text.indexOf("\r\n");
-            nameAndValue.second = text.left(crlfPos);
-            // TODO: Set the name and value to QVersitProperty
+            nonWhiteSpaceFound = true;
         }
-        text = text.mid(crlfPos+2); // +2 is for skipping the CRLF
     }
-    // TODO: Set the parameters to QVersitProperty
-    return nameAndValue;
+    return whiteSpaceCount;
 }
 
 /*!
@@ -211,6 +177,21 @@ QByteArray VersitUtils::decodeQuotedPrintable(QByteArray& text)
     
     text = textAsString.toAscii();
     return text;
+}
+
+/*!
+ * Finds the position of the first non-soft line break 
+ * in a Quoted-Printable encoded string.
+ */
+int VersitUtils::findHardLineBreakInQuotedPrintable(const QByteArray& encoded)
+{
+    int crlfIndex = encoded.indexOf("\r\n");
+    if (crlfIndex <= 0)
+        return -1;
+    while (crlfIndex > 0 && encoded[crlfIndex-1] == '=') {
+        crlfIndex = encoded.indexOf("\r\n",crlfIndex+2);
+    }
+    return crlfIndex;
 }
 
 /*!
@@ -324,39 +305,4 @@ QByteArray VersitUtils::paramValue(const QByteArray& parameter)
         }    
     }
     return value;
-}
-
-/*!
- * Finds the position of the first non-soft line break 
- * in a Quoted-Printable encoded string.
- */
-int VersitUtils::findHardLineBreakInQuotedPrintable(const QByteArray& encoded)
-{
-    int crlfIndex = encoded.indexOf("\r\n");
-    if (crlfIndex <= 0)
-        return -1;
-    while (crlfIndex > 0 && encoded[crlfIndex-1] == '=') {
-        crlfIndex = encoded.indexOf("\r\n",crlfIndex+2);
-    }
-    return crlfIndex;
-}
-
-/*!
- * Returns the count of leading whitespaces in /a text
- * starting from /a pos.
- */
-int VersitUtils::countLeadingWhiteSpaces(const QByteArray& text, int pos)
-{
-    int whiteSpaceCount = 0;
-    bool nonWhiteSpaceFound = false;
-    for (int i=pos; i<text.length() && !nonWhiteSpaceFound; i++) {
-        QChar currentChar(text[i]);
-        if (currentChar.isSpace()) {
-            whiteSpaceCount++;
-        }
-        else {
-            nonWhiteSpaceFound = true;
-        }
-    }
-    return whiteSpaceCount;
 }

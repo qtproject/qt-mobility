@@ -34,6 +34,7 @@
 
 #include "qversitreader.h"
 #include "qversitreader_p.h"
+#include "versitutils.h"
 
 /*!
  * \class QVersitReader
@@ -87,4 +88,59 @@ bool QVersitReader::start()
 QList<QVersitDocument> QVersitReader::result() const
 {
     return d->m_versitDocuments;
+}
+
+/*!
+ * Parses a versit document and returns whether parsing succeeded.
+ */
+bool QVersitReader::parseVersitDocument(QByteArray& text)
+{
+    // TODO: Store the properties to a QVersitDocument
+    text = text.mid(VersitUtils::countLeadingWhiteSpaces(text));
+    QPair<QByteArray,QByteArray> nameAndValue = parseNextVersitProperty(text);
+    if (nameAndValue.first != "BEGIN" || 
+        nameAndValue.second.trimmed() != "VCARD")
+        return false;
+    while (nameAndValue.first.length() > 0 && nameAndValue.first != "END") {
+        nameAndValue = parseNextVersitProperty(text);
+        if (nameAndValue.first == "VERSION" && nameAndValue.second != "2.1")
+            return false;
+    }
+    return (nameAndValue.first == "END");
+}
+
+/*!
+ * Parses a versit document and returns whether parsing succeeded.
+ */
+QPair<QByteArray,QByteArray> QVersitReader::parseNextVersitProperty(
+    QByteArray& text)
+{
+    QPair<QByteArray,QByteArray> nameAndValue;
+    nameAndValue.first = VersitUtils::extractPropertyName(text);
+    QMultiMap<QByteArray,QByteArray> params = 
+        VersitUtils::extractPropertyParams(text);
+    text = VersitUtils::extractPropertyValue(text); 
+    if (nameAndValue.first == "AGENT") {
+        if (parseVersitDocument(text)) {
+            // TODO: Store the property if parsing was successful
+        }
+    }
+    else {
+        int crlfPos = -1;
+        if (params.contains("ENCODING","QUOTED-PRINTABLE")) {
+            crlfPos = VersitUtils::findHardLineBreakInQuotedPrintable(text);
+            nameAndValue.second = text.left(crlfPos);
+            VersitUtils::decodeQuotedPrintable(nameAndValue.second);
+            // TODO: Set the name and value to QVersitProperty
+            // TODO: Remove the ENCODING=QUOTED-PRINTABLE parameter
+        }
+        else {
+            crlfPos = text.indexOf("\r\n");
+            nameAndValue.second = text.left(crlfPos);
+            // TODO: Set the name and value to QVersitProperty
+        }
+        text = text.mid(crlfPos+2); // +2 is for skipping the CRLF
+    }
+    // TODO: Set the parameters to QVersitProperty
+    return nameAndValue;
 }

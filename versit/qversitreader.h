@@ -36,6 +36,8 @@
 
 #include <QObject>
 #include <QIODevice>
+#include <QByteArray>
+#include <QPair>
 
 #include "qversitdocument.h"
 
@@ -61,7 +63,15 @@ signals:
     void progress(bool finished);
 
 private:
+    
+    bool parseVersitDocument(QByteArray& text);
+    QPair<QByteArray,QByteArray> parseNextVersitProperty(QByteArray& text);    
+    
+private: // Data
     QVersitReaderPrivate* d;
+    
+private:
+    friend class UT_QVersitReader;    
 };
 
-#endif
+#endif // QVERSITREADER_H

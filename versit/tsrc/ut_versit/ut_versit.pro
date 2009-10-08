@@ -25,8 +25,6 @@ SOURCES += main.cpp \
     ut_qversitdocument.cpp \
     ../../qversitcontactgenerator.cpp \
     ut_qversitcontactgenerator.cpp \
-    ../../qversitcontactgenerator_p.cpp \
-    ut_qversitcontactgenerator_p.cpp \
     ../../versitutils.cpp \
     ut_versitutils.cpp \
     ../../qversitreader.cpp \
