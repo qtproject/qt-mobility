@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 #include "transformanniversary.h"
-char separator = ',';
+const char separator = ',';
 
 QList<CContactItemField *> TransformAnniversary::transformDetailL(const QContactDetail &detail)
 {
