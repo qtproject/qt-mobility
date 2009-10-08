@@ -39,6 +39,8 @@
 #include <Wbemidl.h>
 #include <Oleauto.h>
 #include <QStringList>
+#include <QtCore/qmutex.h>
+#include <QtCore/private/qmutexpool_p.h>
 
 WMIHelper::WMIHelper(QObject * parent)
         : QObject(parent)
@@ -48,8 +50,6 @@ WMIHelper::WMIHelper(QObject * parent)
 
 WMIHelper::~WMIHelper()
 {
-    wbemServices->Release();
-    wbemLocator->Release();
     CoUninitialize();
 }
 
@@ -106,6 +106,7 @@ void WMIHelper::initializeWMI(const QString &wmiNamespace)
 
 QVariant WMIHelper::getWMIData(const QString &wmiNamespace, const QString &className, const QStringList &classProperty)
 {
+
     if(!initializedNamespaces.contains(wmiNamespace)) {
         initializeWMI(wmiNamespace);
     }
@@ -165,6 +166,8 @@ QVariant WMIHelper::getWMIData(const QString &wmiNamespace, const QString &class
     }
 
     wbemEnumerator->Release();
+    wbemLocator->Release();
+    wbemServices->Release();
     return returnVariant;
 }
 
