@@ -89,6 +89,7 @@ private slots:
     void actionPreferences();
     void selfContactId();
     void detailOrders();
+    void relationships();
 
     /* Tests that take no data */
     void contactValidation();
@@ -112,6 +113,7 @@ private slots:
     void actionPreferences_data() {addManagers();}
     void selfContactId_data() {addManagers();}
     void detailOrders_data() {addManagers();}
+    void relationships_data() {addManagers();}
 };
 
 tst_QContactManager::tst_QContactManager()
@@ -384,28 +386,35 @@ void tst_QContactManager::ctors()
     QContactManager cm4(cm.managerUri()); // should fail
 
     QContactManager* cm5 = QContactManager::fromUri(QContactManager::buildUri(defaultStore, QMap<QString, QString>()));
-    QContactManager* cm6 = QContactManager::fromUri(cm.managerUri());
+    QContactManager* cm6 = QContactManager::fromUri(cm.managerUri()); // uri is not a name; should fail.
     QContactManager* cm9 = QContactManager::fromUri(QString(), &parent);
 
     QVERIFY(cm9->parent() == &parent);
 
-    QCOMPARE(cm.managerUri(), cm2.managerUri());
-    QCOMPARE(cm.managerUri(), cm3.managerUri());
-    QCOMPARE(cm.managerUri(), cm5->managerUri());
-    QCOMPARE(cm.managerUri(), cm6->managerUri());
-    QCOMPARE(cm.managerUri(), cm9->managerUri());
+    /* OLD TEST WAS THIS: */
+    //QCOMPARE(cm.managerUri(), cm2.managerUri());
+    //QCOMPARE(cm.managerUri(), cm3.managerUri());
+    //QCOMPARE(cm.managerUri(), cm5->managerUri());
+    //QCOMPARE(cm.managerUri(), cm6->managerUri());
+    //QCOMPARE(cm.managerUri(), cm9->managerUri());
+    /* NEW TEST IS THIS: Test that the names of the managers are the same */
+    QCOMPARE(cm.managerName(), cm2.managerName());
+    QCOMPARE(cm.managerName(), cm3.managerName());
+    QCOMPARE(cm.managerName(), cm5->managerName());
+    QCOMPARE(cm.managerName(), cm6->managerName());
+    QCOMPARE(cm.managerName(), cm9->managerName());
 
     QVERIFY(cm.managerUri() != cm4.managerUri()); // don't pass a uri to the ctor
 
     /* Test that we get invalid stores when we do silly things */
     QContactManager em("non existent");
     QContactManager em2("non existent", QMap<QString, QString>());
-    QContactManager em3("non existent", randomParameters);
+    QContactManager em3("memory", randomParameters);
 
     /* Also invalid, since we don't have one of these anyway */
     QContactManager* em4 = QContactManager::fromUri("invalid uri");
     QContactManager* em5 = QContactManager::fromUri(QContactManager::buildUri("nonexistent", QMap<QString, QString>()));
-    QContactManager* em6 = QContactManager::fromUri(QContactManager::buildUri("nonexistent", randomParameters));
+    QContactManager* em6 = QContactManager::fromUri(em3.managerUri());
 
 
     /*
@@ -431,16 +440,15 @@ void tst_QContactManager::ctors()
     /* now the components */
     QCOMPARE(em.managerName(), QString("invalid"));
     QCOMPARE(em2.managerName(), QString("invalid"));
-    QCOMPARE(em3.managerName(), QString("invalid"));
+    QCOMPARE(em3.managerName(), QString("memory"));
     QCOMPARE(em4->managerName(), QString("invalid"));
     QCOMPARE(em5->managerName(), QString("invalid"));
-    QCOMPARE(em6->managerName(), QString("invalid"));
+    QCOMPARE(em6->managerName(), QString("memory"));
     QCOMPARE(em.managerParameters(), tst_QContactManager_QStringMap());
     QCOMPARE(em2.managerParameters(), tst_QContactManager_QStringMap());
-    QCOMPARE(em3.managerParameters(), tst_QContactManager_QStringMap()); // invalid engine discards params.
     QCOMPARE(em4->managerParameters(), tst_QContactManager_QStringMap());
     QCOMPARE(em5->managerParameters(), tst_QContactManager_QStringMap());
-    QCOMPARE(em6->managerParameters(), tst_QContactManager_QStringMap()); // invalid engine discards params.
+    QCOMPARE(em3.managerParameters(), em6->managerParameters()); // memory engine discards the given params, replaces with id.
 
 
     /* Cleanse */
@@ -2141,5 +2149,83 @@ void tst_QContactManager::detailOrders()
     QVERIFY(cm->removeContact(a.id()));
     QVERIFY(cm->error() == QContactManager::NoError);
 }
+
+void tst_QContactManager::relationships()
+{
+    QFETCH(QString, uri);
+    QContactManager* cm = QContactManager::fromUri(uri);
+
+    int totalRelationships = cm->relationships().size();
+    int totalManagerRelationships = cm->relationships(QContactRelationship::RelationshipTypeIsManagerOf).size();
+
+    QContact source;
+    QContact dest1, dest2, dest3;
+
+    source.setDisplayLabel("Source");
+    dest1.setDisplayLabel("Destination One");
+    dest2.setDisplayLabel("Destination Two");
+    dest3.setDisplayLabel("Destination Three");
+
+    cm->saveContact(&source);
+    cm->saveContact(&dest1);
+    cm->saveContact(&dest2);
+    cm->saveContact(&dest3);
+
+    QPair<QString, QUniqueId> dest1Uri = QPair<QString, QUniqueId>(cm->managerUri(), dest1.id());
+    QPair<QString, QUniqueId> dest1EmptyUri = QPair<QString, QUniqueId>(QString(), dest1.id());
+    QPair<QString, QUniqueId> dest2Uri = QPair<QString, QUniqueId>(cm->managerUri(), dest2.id());
+    QPair<QString, QUniqueId> dest3Uri = QPair<QString, QUniqueId>(cm->managerUri(), dest3.id());
+    QPair<QString, QUniqueId> dest3EmptyUri = QPair<QString, QUniqueId>(QString(), dest3.id());
+
+    // build our relationship - source is the manager all of the dest contacts.
+    QContactRelationship customRelationshipOne;
+    customRelationshipOne.setSourceContact(source.id());
+    QVERIFY(customRelationshipOne.sourceContact() == source.id());
+    customRelationshipOne.appendDestinationContact(dest1.id());
+    customRelationshipOne.appendDestinationContact(dest2Uri);
+    QList<QPair<QString, QUniqueId> > dests = customRelationshipOne.destinationContacts();
+
+    QCOMPARE(dests.value(0), dest1EmptyUri); // it was saved with the id-only convenience
+    QCOMPARE(dests.value(1), dest2Uri);
+    customRelationshipOne.insertDestinationContact(1, dest3EmptyUri);
+    dests = customRelationshipOne.destinationContacts();
+    QCOMPARE(dests.value(0), dest1EmptyUri);
+    QCOMPARE(dests.value(1), dest3EmptyUri); // inserted at this position.
+    QCOMPARE(dests.value(2), dest2Uri);
+    customRelationshipOne.setRelationshipType(QContactRelationship::RelationshipTypeIsManagerOf);
+    QVERIFY(customRelationshipOne.relationshipType() == QString(QLatin1String(QContactRelationship::RelationshipTypeIsManagerOf)));
+
+    // save the relationship
+    QVERIFY(cm->saveRelationship(&customRelationshipOne));
+    // test that the empty manager URI has been updated.
+    dests = customRelationshipOne.destinationContacts();
+    QCOMPARE(dests.value(0), dest1Uri); // updated with correct manager URI
+    QCOMPARE(dests.value(1), dest3Uri); // updated with correct manager URI
+    QCOMPARE(dests.value(2), dest2Uri);
+
+    // remove the dest3 contact, should be removed from the relationship
+    cm->removeContact(dest3.id());
+    customRelationshipOne = cm->relationship(source.id(), QContactRelationship::RelationshipTypeIsManagerOf);
+    dests = customRelationshipOne.destinationContacts();
+    QCOMPARE(dests.value(0), dest1Uri);
+    QCOMPARE(dests.value(1), dest2Uri);
+    QCOMPARE(dests.size(), 2);
+
+    // test our accessors.
+    QCOMPARE(cm->relationships(QContactRelationship::RelationshipTypeIsManagerOf).size(), (totalManagerRelationships + 1));
+    QVERIFY(cm->relationships(source.id()).size() == 1);
+
+    // removing the dest1 contact should result in removal of the relationship.
+    QCOMPARE(cm->relationships().size(), (totalRelationships + 1));
+    QVERIFY(cm->removeContact(source.id()));
+    QCOMPARE(cm->relationships().size(), totalRelationships); // the relationship should have been removed.
+
+    // TODO: negative tests (ie, circular relationships, duplicates, etc.. should result in error)
+
+    // now clean up and remove our dests.
+    cm->removeContact(dest1.id());
+    cm->removeContact(dest2.id());
+}
+
 QTEST_MAIN(tst_QContactManager)
 #include "tst_qcontactmanager.moc"

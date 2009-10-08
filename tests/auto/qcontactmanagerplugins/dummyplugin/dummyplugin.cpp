@@ -53,6 +53,7 @@ public:
     DummyEngine& operator=(const DummyEngine& other);
     QContactManagerEngine* clone();
     void deref();
+    QString managerName() const;
 
     /* Contacts - Accessors and Mutators */
     QList<QUniqueId> contacts(QContactManager::Error& error) const;
@@ -121,6 +122,15 @@ QContactManagerEngine* DummyEngine::clone()
 void DummyEngine::deref()
 {
     delete this;
+}
+
+QString DummyEngine::managerName() const
+{
+#ifdef DUMMYPLUGINNAME
+    return QString(makename(DUMMYPLUGINNAME));
+#else
+    return QString();
+#endif
 }
 
 QList<QUniqueId> DummyEngine::contacts(QContactManager::Error& error) const

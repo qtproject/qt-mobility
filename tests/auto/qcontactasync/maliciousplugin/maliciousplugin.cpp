@@ -65,6 +65,11 @@ QString MaliciousAsyncManagerEngine::synthesiseDisplayLabel(const QContact& cont
     return QString();
 }
 
+QString MaliciousAsyncManagerEngine::managerName() const
+{
+    return QString(makename(MALICIOUSPLUGINNAME));
+}
+
 bool MaliciousAsyncManagerEngine::startRequest(QContactAbstractRequest* req)
 {
     QContactManager::Error errorResult = QContactManager::NoError;
