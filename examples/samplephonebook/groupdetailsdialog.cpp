@@ -135,18 +135,14 @@ void GroupDetailsDialog::groupItemChanged(QListWidgetItem * item)
         if (!currentGroups.contains(id)) {
             // add it to the group.
             QContactRelationship newRelationship = cm->relationship(id, QContactRelationship::RelationshipTypeHasMember);
-            QList<QPair<QString, QUniqueId> > destinationContacts = newRelationship.destinationContacts();
-            destinationContacts.append(localContactUri);
-            newRelationship.setDestinationContacts(destinationContacts);
+            newRelationship.appendDestinationContact(localContactUri);
             cm->saveRelationship(&newRelationship);
         }
     } else {
         if (currentGroups.contains(id)) {
             // remove any membership in that group
             QContactRelationship currRel = cm->relationship(id, QContactRelationship::RelationshipTypeHasMember);
-            QList<QPair<QString, QUniqueId> > destinationContacts = currRel.destinationContacts();
-            destinationContacts.removeOne(localContactUri);
-            currRel.setDestinationContacts(destinationContacts);
+            currRel.removeDestinationContact(localContactUri);
             cm->saveRelationship(&currRel);
         }
     }
