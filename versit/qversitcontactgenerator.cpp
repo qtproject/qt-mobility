@@ -61,6 +61,7 @@ QVersitContactGenerator::~QVersitContactGenerator()
 
 QList<QContact> QVersitContactGenerator::generateContacts(const QVersitDocument& versitDocument)
 {
+    Q_UNUSED(versitDocument);
     return QList<QContact>();
 }
 

@@ -120,7 +120,8 @@ AGENT:BEGIN:VCARD\r\nN:Marge\r\nEND:VCARD\r\n\
 EMAIL;ENCODING=QUOTED-PRINTABLE:homer=40simp=\r\nsons.com\r\n\
 END:VCARD\r\n";
     QByteArray vCard(validCard);
-    QVERIFY(m_reader->parseVersitDocument(vCard));
+    QVersitDocument document = m_reader->parseVersitDocument(vCard);
+    QCOMPARE(document.properties().count(),3);
     
     // No BEGIN found
     const char beginMissing[] = 
@@ -129,13 +130,16 @@ VERSION:2.1\r\n\
 N:Nobody\r\n\
 END:VCARD\r\n";
     vCard = beginMissing;
-    QVERIFY(!m_reader->parseVersitDocument(vCard));
+    document = m_reader->parseVersitDocument(vCard);
+    QCOMPARE(document.properties().count(),0);
     
+    // Wrong card type
     const char wrongType[] = 
 "BEGIN:VCAL\r\n\
 END:VCAL\r\n";
     vCard = wrongType;
-    QVERIFY(!m_reader->parseVersitDocument(vCard));    
+    document = m_reader->parseVersitDocument(vCard);
+    QCOMPARE(document.properties().count(),0);
     
     // Wrong version
     const char wrongVersion[] = 
@@ -144,14 +148,6 @@ VERSION:3.0\r\n\
 N:Nobody\r\n\
 END:VCARD\r\n";
     vCard = wrongVersion;
-    QVERIFY(!m_reader->parseVersitDocument(vCard));    
-    
-    // No END found
-    const char endMissing[] = 
-"BEGIN:VCARD\r\n\
-VERSION:2.1\r\n\
-N:Nobody\r\n\
-VCARD\r\n";
-    vCard = endMissing;
-    QVERIFY(!m_reader->parseVersitDocument(vCard));    
+    document = m_reader->parseVersitDocument(vCard);
+    QCOMPARE(document.properties().count(),0);
 }

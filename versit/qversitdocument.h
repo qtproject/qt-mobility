@@ -34,6 +34,7 @@
 #define QVERSITDOCUMENT_H
 
 #include <QList>
+#include <QSharedDataPointer>
 
 class QVersitDocumentPrivate;
 class QVersitProperty;
@@ -42,8 +43,11 @@ class QVersitDocument
 {
 public:
     QVersitDocument();
+    QVersitDocument(const QVersitDocument& other);
     ~QVersitDocument();
 
+    QVersitDocument& operator=(const QVersitDocument& other);
+    
     enum VersitType {
         VCard21 = 0
     };
@@ -55,9 +59,9 @@ public:
     void addProperty(const QVersitProperty& property);
     QList<QVersitProperty> properties() const;
 
-
 private:
-    QVersitDocumentPrivate* d;
+    
+    QSharedDataPointer<QVersitDocumentPrivate> d;
 };
 
-#endif
+#endif // QVERSITDOCUMENT_H

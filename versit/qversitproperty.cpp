@@ -34,18 +34,22 @@
 #include "qversitproperty.h"
 #include "qversitproperty_p.h"
 
+/*! Constructs a new empty property */
 QVersitProperty::QVersitProperty() : d(new QVersitPropertyPrivate())
 {
 }
 
+/*! Constructs a property that is a copy of \a other */
 QVersitProperty::QVersitProperty(const QVersitProperty& other) : d(other.d)
 {
 }
 
+/*! Frees the memory used by the property */
 QVersitProperty::~QVersitProperty()
 {
 }
 
+/*! Assigns this property to \a other */
 QVersitProperty& QVersitProperty::operator=(const QVersitProperty& other)
 {
     if (this != &other)

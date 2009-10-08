@@ -11,6 +11,7 @@ HEADERS += testresultxmlparser.h \
     ../../qversitproperty_p.h \
     ut_qversitproperty.h \
     ../../qversitdocument.h \
+    ../../qversitdocument_p.h \
     ut_qversitdocument.h \
     ../../qversitcontactgenerator.h \
     ut_qversitcontactgenerator.h \

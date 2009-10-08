@@ -45,19 +45,27 @@
 #include "qversitdocument_p.h"
 
 
-/*!
- * Constructs a new versit document
- */
-QVersitDocument::QVersitDocument()
-    : d(new QVersitDocumentPrivate())
+/*! Constructs a new empty document */
+QVersitDocument::QVersitDocument() : d(new QVersitDocumentPrivate())
 {
 }
 
-/*!
- * Frees any memory in use by this versit document
- */
+/*! Constructs a document that is a copy of \a other */
+QVersitDocument::QVersitDocument(const QVersitDocument& other) : d(other.d)
+{
+}
+
+/*! Frees the memory used by the document */
 QVersitDocument::~QVersitDocument()
 {
+}
+
+/*! Assigns this document to \a other */
+QVersitDocument& QVersitDocument::operator=(const QVersitDocument& other)
+{
+    if (this != &other)
+        d = other.d;
+    return *this;    
 }
 
 /*!
@@ -91,4 +99,3 @@ void QVersitDocument::addProperty(const QVersitProperty& property)
 {
     d->mProperties.append(property);
 }
-

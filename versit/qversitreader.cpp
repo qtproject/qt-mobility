@@ -91,22 +91,25 @@ QList<QVersitDocument> QVersitReader::result() const
 }
 
 /*!
- * Parses a versit document and returns whether parsing succeeded.
+ * Parses a versit document and returns the resulting document object
  */
-bool QVersitReader::parseVersitDocument(QByteArray& text)
+QVersitDocument QVersitReader::parseVersitDocument(QByteArray& text)
 {
-    // TODO: Store the properties to a QVersitDocument
+    QVersitDocument document;
     text = text.mid(VersitUtils::countLeadingWhiteSpaces(text));
     QVersitProperty property = parseNextVersitProperty(text);
-    if (property.name() != "BEGIN" || 
-        property.value().trimmed() != "VCARD")
-        return false;
-    while (property.name().length() > 0 && property.name() != "END") {
-        property = parseNextVersitProperty(text);
-        if (property.name() == "VERSION" && property.value() != "2.1")
-            return false;
+    if (property.name() == "BEGIN" && property.value().trimmed() == "VCARD") {
+        while (property.name().length() > 0 && property.name() != "END") {
+            property = parseNextVersitProperty(text);   
+            if (property.name() == "VERSION" && 
+                property.value().trimmed() != "2.1")
+                return QVersitDocument(); // return an empty document
+            if (property.name() != "VERSION" && 
+                property.name() != "END")
+                document.addProperty(property);
+        }
     }
-    return (property.name() == "END");
+    return document;
 }
 
 /*!
@@ -119,9 +122,7 @@ QVersitProperty QVersitReader::parseNextVersitProperty(QByteArray& text)
     property.setParameters(VersitUtils::extractPropertyParams(text));
     text = VersitUtils::extractPropertyValue(text); 
     if (property.name() == "AGENT") {
-        if (parseVersitDocument(text)) {
-            // TODO: Store the property if parsing was successful
-        }
+        property.setEmbeddedDocument(parseVersitDocument(text));
     }
     else {
         int crlfPos = -1;

@@ -33,28 +33,34 @@
 #ifndef QVERSITDOCUMENT_P_H
 #define QVERSITDOCUMENT_P_H
 
-#include <QString>
+#include <QSharedData>
 #include <QList>
 #include "qversitdocument.h"
 #include "qversitproperty.h"
 
-class QVersitProperty;
 
-class QVersitDocumentPrivate 
+class QVersitDocumentPrivate : public QSharedData
 {
 public:
     QVersitDocumentPrivate() 
-        : mVersitType(QVersitDocument::VCard21)
+        : QSharedData(),
+        mVersitType(QVersitDocument::VCard21)
     {
     }
+    
+    QVersitDocumentPrivate(const QVersitDocumentPrivate& other) 
+        : QSharedData(other),
+        mVersitType(other.mVersitType),
+        mProperties(other.mProperties)
+    {
+    }    
     
     ~QVersitDocumentPrivate()
     {
     }
 
-    // Data Container
     QVersitDocument::VersitType mVersitType;
     QList<QVersitProperty> mProperties;
 };
 
-#endif
+#endif // QVERSITDOCUMENT_P_H
