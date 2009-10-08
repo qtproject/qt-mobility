@@ -76,7 +76,7 @@ QVariant PlaylistModel::data(const QModelIndex &index, int role) const
     if (index.isValid() && role == Qt::DisplayRole) {
         QVariant value = m_data[index];
         if (!value.isValid() && index.column() == Title) {
-            QUrl location = m_playlist->media(index.row()).contentUri();
+            QUrl location = m_playlist->media(index.row()).canonicalUri();
             return QFileInfo(location.path()).fileName();
         }
 

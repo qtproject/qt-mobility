@@ -61,7 +61,7 @@ public:
     static QStringList keys(IWMPMedia *media);
     static QVariant value(IWMPMedia *media, BSTR key);
     static void setValue(IWMPMedia *media, BSTR key, const QVariant &value);
-    static QMediaResourceList resources(IWMPMedia *media);
+    static QMediaContent resources(IWMPMedia *media);
     static QVariant convertVariant(const VARIANT &variant);
     static QVariant albumArtUri(IWMPMedia *media, const char *suffix);
 

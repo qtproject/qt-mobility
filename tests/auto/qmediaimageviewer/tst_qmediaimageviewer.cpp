@@ -141,26 +141,29 @@ void tst_QMediaImageViewer::setMedia_data()
                 << contentResource;
     } {
         QMediaResource contentResource(imageUri("song.mp3"));
-        QMediaResource coverArtResource(imageUri("coverart.png"), QMediaResource::CoverArtRole);
-        QMediaContent source(QMediaResourceList() << contentResource << coverArtResource);
+        QMediaResource coverArtResource(imageUri("coverart.png"));
+        QMediaContent source(contentResource);
+        source.setCoverArtUriLarge(coverArtResource.uri());
 
         QTest::newRow("png cover art")
                 << source
                 << coverArtResource;
     } {
         QMediaResource contentResource(imageUri("movie.mp4"));
-        QMediaResource posterResource(imageUri("poster.png"), QMediaResource::PosterRole);
-        QMediaContent source(QMediaResourceList() << contentResource << posterResource);
+        QMediaResource posterResource(imageUri("poster.png"));
+        QMediaContent source(contentResource);
+        source.setPosterUri(posterResource.uri());
 
         QTest::newRow("png poster")
                 << source
                 << posterResource;
     } {
         QMediaResource contentResource(imageUri("image.png"));
-        QMediaResource coverArtResource(imageUri("coverart.png"), QMediaResource::CoverArtRole);
-        QMediaResource posterResource(imageUri("poster.png"), QMediaResource::PosterRole);
-        QMediaContent source(QMediaResourceList()
-                << contentResource << coverArtResource << posterResource);
+        QMediaResource coverArtResource(imageUri("coverart.png"));
+        QMediaResource posterResource(imageUri("poster.png"));
+        QMediaContent source(contentResource);
+        source.setCoverArtUriLarge(coverArtResource.uri());
+        source.setPosterUri(posterResource.uri());
 
         QTest::newRow("png image with cover art and poster")
                 << source

@@ -56,23 +56,23 @@ void tst_QMediaContent::testNull()
     QMediaContent media;
 
     QCOMPARE(media.isNull(), true);
-    QCOMPARE(media.contentUri(), QUrl());
-    QCOMPARE(media.contentResource(), QMediaResource());
+    QCOMPARE(media.canonicalUri(), QUrl());
+    QCOMPARE(media.canonicalResource(), QMediaResource());
 }
 
 void tst_QMediaContent::testUriCtor()
 {
     QMediaContent media(QUrl("http://example.com/movie.mov"));
 
-    QCOMPARE(media.contentUri(), QUrl("http://example.com/movie.mov"));
-    QCOMPARE(media.contentResource().uri(), QUrl("http://example.com/movie.mov"));
+    QCOMPARE(media.canonicalUri(), QUrl("http://example.com/movie.mov"));
+    QCOMPARE(media.canonicalResource().uri(), QUrl("http://example.com/movie.mov"));
 }
 
 void tst_QMediaContent::testResourceCtor()
 {
     QMediaContent media(QMediaResource(QUrl("http://example.com/movie.mov")));
 
-    QCOMPARE(media.contentResource(), QMediaResource(QUrl("http://example.com/movie.mov")));
+    QCOMPARE(media.canonicalResource(), QMediaResource(QUrl("http://example.com/movie.mov")));
 }
 
 void tst_QMediaContent::testResourceListCtor()
@@ -82,8 +82,8 @@ void tst_QMediaContent::testResourceListCtor()
 
     QMediaContent        media(resourceList);
 
-    QCOMPARE(media.contentUri(), QUrl("http://example.com/movie.mov"));
-    QCOMPARE(media.contentResource().uri(), QUrl("http://example.com/movie.mov"));
+    QCOMPARE(media.canonicalUri(), QUrl("http://example.com/movie.mov"));
+    QCOMPARE(media.canonicalResource().uri(), QUrl("http://example.com/movie.mov"));
 }
 
 void tst_QMediaContent::testCopy()
@@ -138,21 +138,12 @@ void tst_QMediaContent::testResources()
 
     resourceList << QMediaResource(QUrl("http://example.com/movie-main.mov"));
     resourceList << QMediaResource(QUrl("http://example.com/movie-big.mov"));
-    resourceList << QMediaResource(QUrl("http://example.com/movie-little.mov"), QMediaResource::PreviewRole);
-    resourceList << QMediaResource(QUrl("http://example.com/movie-poster.jpg"), QMediaResource::PosterRole);
-
     QMediaContent    media(resourceList);
 
-    QMediaResourceList  res = media.resources(QMediaResource::ContentRole);
+    QMediaResourceList  res = media.resources();
     QCOMPARE(res.size(), 2);
     QCOMPARE(res[0], QMediaResource(QUrl("http://example.com/movie-main.mov")));
     QCOMPARE(res[1], QMediaResource(QUrl("http://example.com/movie-big.mov")));
-
-    QCOMPARE(media.resources(QMediaResource::PreviewRole)[0].uri(), QUrl("http://example.com/movie-little.mov"));
-    QCOMPARE(media.resources(QMediaResource::PosterRole)[0].uri(), QUrl("http://example.com/movie-poster.jpg"));
-
-    QCOMPARE(media.resources(QMediaResource::CoverArtRole).size(), 0);
-    QCOMPARE(media.resources(QMediaResource::ThumbnailRole).size(), 0);
 }
 
 QTEST_MAIN(tst_QMediaContent)

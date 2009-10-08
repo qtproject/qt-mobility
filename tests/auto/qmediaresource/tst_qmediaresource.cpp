@@ -56,7 +56,6 @@ void tst_QMediaResource::constructNull()
     QCOMPARE(resource.isNull(), true);
     QCOMPARE(resource.uri(), QUrl());
     QCOMPARE(resource.mimeType(), QString());
-    QCOMPARE(resource.role(), QMediaResource::ContentRole);
     QCOMPARE(resource.language(), QString());
     QCOMPARE(resource.audioCodec(), QString());
     QCOMPARE(resource.videoCodec(), QString());
@@ -74,7 +73,6 @@ void tst_QMediaResource::construct_data()
 {
     QTest::addColumn<QUrl>("uri");
     QTest::addColumn<QString>("mimeType");
-    QTest::addColumn<QMediaResource::ResourceRole>("role");
     QTest::addColumn<QString>("language");
     QTest::addColumn<QString>("audioCodec");
     QTest::addColumn<QString>("videoCodec");
@@ -90,7 +88,6 @@ void tst_QMediaResource::construct_data()
     QTest::newRow("audio content")
             << QUrl(QString::fromLatin1("http:://test.com/test.mp3"))
             << QString::fromLatin1("audio/mpeg")
-            << QMediaResource::ContentRole
             << QString::fromLatin1("eng")
             << QString::fromLatin1("mp3")
             << QString()
@@ -105,7 +102,6 @@ void tst_QMediaResource::construct_data()
     QTest::newRow("image content")
             << QUrl(QString::fromLatin1("http:://test.com/test.jpg"))
             << QString::fromLatin1("image/jpeg")
-            << QMediaResource::ContentRole
             << QString()
             << QString()
             << QString()
@@ -120,7 +116,6 @@ void tst_QMediaResource::construct_data()
     QTest::newRow("video content")
             << QUrl(QString::fromLatin1("http:://test.com/test.mp4"))
             << QString::fromLatin1("video/mp4")
-            << QMediaResource::ContentRole
             << QString()
             << QString::fromLatin1("aac")
             << QString::fromLatin1("h264")
@@ -135,7 +130,6 @@ void tst_QMediaResource::construct_data()
     QTest::newRow("thumbnail")
             << QUrl(QString::fromLatin1("file::///thumbs/test.png"))
             << QString::fromLatin1("image/png")
-            << QMediaResource::ThumbnailRole
             << QString()
             << QString()
             << QString()
@@ -153,7 +147,6 @@ void tst_QMediaResource::construct()
 {
     QFETCH(QUrl, uri);
     QFETCH(QString, mimeType);
-    QFETCH(QMediaResource::ResourceRole, role);
     QFETCH(QString, language);
     QFETCH(QString, audioCodec);
     QFETCH(QString, videoCodec);
@@ -167,12 +160,11 @@ void tst_QMediaResource::construct()
     QFETCH(QSize, resolution);
 
     {
-        QMediaResource resource(uri, role);
+        QMediaResource resource(uri);
 
         QCOMPARE(resource.isNull(), false);
         QCOMPARE(resource.uri(), uri);
         QCOMPARE(resource.mimeType(), QString());
-        QCOMPARE(resource.role(), role);
         QCOMPARE(resource.language(), QString());
         QCOMPARE(resource.audioCodec(), QString());
         QCOMPARE(resource.videoCodec(), QString());
@@ -186,12 +178,11 @@ void tst_QMediaResource::construct()
         QCOMPARE(resource.resolution(), QSize());
     }
     {
-        QMediaResource resource(uri, mimeType, role);
+        QMediaResource resource(uri, mimeType);
 
         QCOMPARE(resource.isNull(), false);
         QCOMPARE(resource.uri(), uri);
         QCOMPARE(resource.mimeType(), mimeType);
-        QCOMPARE(resource.role(), role);
         QCOMPARE(resource.language(), QString());
         QCOMPARE(resource.audioCodec(), QString());
         QCOMPARE(resource.videoCodec(), QString());
@@ -234,8 +225,7 @@ void tst_QMediaResource::setResolution()
 {
     QMediaResource resource(
             QUrl(QString::fromLatin1("file::///thumbs/test.png")),
-            QString::fromLatin1("image/png"),
-            QMediaResource::ThumbnailRole);
+            QString::fromLatin1("image/png"));
 
     QCOMPARE(resource.resolution(), QSize());
 
@@ -286,20 +276,17 @@ void tst_QMediaResource::equality()
 {
     QMediaResource resource1(
             QUrl(QString::fromLatin1("http://test.com/test.mp4")),
-            QString::fromLatin1("video/mp4"),
-            QMediaResource::ContentRole);
+            QString::fromLatin1("video/mp4"));
     QMediaResource resource2(
             QUrl(QString::fromLatin1("http://test.com/test.mp4")),
-            QString::fromLatin1("video/mp4"),
-            QMediaResource::ContentRole);
+            QString::fromLatin1("video/mp4"));
     QMediaResource resource3(
-            QUrl(QString::fromLatin1("file:///thumbs/test.jpg")), QMediaResource::ThumbnailRole);
+            QUrl(QString::fromLatin1("file:///thumbs/test.jpg")));
     QMediaResource resource4(
-            QUrl(QString::fromLatin1("file:///thumbs/test.jpg")), QMediaResource::ThumbnailRole);
+            QUrl(QString::fromLatin1("file:///thumbs/test.jpg")));
     QMediaResource resource5(
             QUrl(QString::fromLatin1("http://test.com/test.mp3")),
-            QString::fromLatin1("audio/mpeg"),
-            QMediaResource::ContentRole);
+            QString::fromLatin1("audio/mpeg"));
 
     QCOMPARE(resource1 == resource2, true);
     QCOMPARE(resource1 != resource2, false);
@@ -433,20 +420,18 @@ void tst_QMediaResource::copy()
 {
     const QUrl uri(QString::fromLatin1("http://test.com/test.mp4"));
     const QString mimeType(QLatin1String("video/mp4"));
-    const QMediaResource::ResourceRole role = QMediaResource::PreviewRole;
     const QString amrCodec(QLatin1String("amr"));
     const QString mp3Codec(QLatin1String("mp3"));
     const QString aacCodec(QLatin1String("aac"));
     const QString h264Codec(QLatin1String("h264"));
 
-    QMediaResource original(uri, mimeType, role);
+    QMediaResource original(uri, mimeType);
     original.setAudioCodec(amrCodec);
 
     QMediaResource copy(original);
 
     QCOMPARE(copy.uri(), uri);
     QCOMPARE(copy.mimeType(), mimeType);
-    QCOMPARE(copy.role(), role);
     QCOMPARE(copy.audioCodec(), amrCodec);
 
     QCOMPARE(original == copy, true);
@@ -463,7 +448,6 @@ void tst_QMediaResource::copy()
 
     QCOMPARE(copy.uri(), uri);
     QCOMPARE(copy.mimeType(), mimeType);
-    QCOMPARE(copy.role(), role);
 
     QCOMPARE(original.audioCodec(), mp3Codec);
 }
@@ -472,7 +456,6 @@ void tst_QMediaResource::assign()
 {
     const QUrl uri(QString::fromLatin1("http://test.com/test.mp4"));
     const QString mimeType(QLatin1String("video/mp4"));
-    const QMediaResource::ResourceRole role = QMediaResource::PreviewRole;
     const QString amrCodec(QLatin1String("amr"));
     const QString mp3Codec(QLatin1String("mp3"));
     const QString aacCodec(QLatin1String("aac"));
@@ -480,14 +463,13 @@ void tst_QMediaResource::assign()
 
     QMediaResource copy(QUrl(QString::fromLatin1("file:///thumbs/test.jpg")));
 
-    QMediaResource original(uri, mimeType, role);
+    QMediaResource original(uri, mimeType);
     original.setAudioCodec(amrCodec);
 
     copy = original;
 
     QCOMPARE(copy.uri(), uri);
     QCOMPARE(copy.mimeType(), mimeType);
-    QCOMPARE(copy.role(), role);
     QCOMPARE(copy.audioCodec(), amrCodec);
 
     QCOMPARE(original == copy, true);
@@ -504,7 +486,6 @@ void tst_QMediaResource::assign()
 
     QCOMPARE(copy.uri(), uri);
     QCOMPARE(copy.mimeType(), mimeType);
-    QCOMPARE(copy.role(), role);
 
     QCOMPARE(original.audioCodec(), mp3Codec);
 }
