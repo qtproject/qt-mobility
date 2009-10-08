@@ -54,7 +54,7 @@ struct Q_MEDIA_EXPORT QMediaServiceProviderFactoryInterface : public QFactoryInt
 Q_DECLARE_INTERFACE(QMediaServiceProviderFactoryInterface, QMediaServiceProviderFactoryInterface_iid)
 
 
-struct Q_MEDIA_EXPORT QMediaServiceProviderSupportedFormatsInterface : public QFactoryInterface
+struct Q_MEDIA_EXPORT QMediaServiceProviderSupportedFormatsInterface
 {
     virtual QMediaServiceProvider::SupportEstimate canPlay(const QString &mimeType, const QStringList& codecs) const = 0;
 };
@@ -63,7 +63,7 @@ struct Q_MEDIA_EXPORT QMediaServiceProviderSupportedFormatsInterface : public QF
 Q_DECLARE_INTERFACE(QMediaServiceProviderSupportedFormatsInterface, QMediaServiceProviderSupportedFormatsInterface_iid)
 
 
-struct Q_MEDIA_EXPORT QMediaServiceProviderSupportedDevicesInterface : public QFactoryInterface
+struct Q_MEDIA_EXPORT QMediaServiceProviderSupportedDevicesInterface
 {
     virtual QList<QByteArray> devices() const = 0;
     virtual QString deviceDescription(const QByteArray &device) = 0;
@@ -71,6 +71,14 @@ struct Q_MEDIA_EXPORT QMediaServiceProviderSupportedDevicesInterface : public QF
 #define QMediaServiceProviderSupportedDevicesInterface_iid \
     "com.nokia.Qt.QMediaServiceProviderSupportedDevicesInterface/1.0"
 Q_DECLARE_INTERFACE(QMediaServiceProviderSupportedDevicesInterface, QMediaServiceProviderSupportedDevicesInterface_iid)
+
+struct Q_MEDIA_EXPORT QMediaServiceProviderSupportedControlsInterface
+{
+    virtual QList<QByteArray> supportedControls() const = 0;
+};
+#define QMediaServiceProviderSupportedControlsInterface_iid \
+    "com.nokia.Qt.QMediaServiceProviderSupportedControlsInterface/1.0"
+Q_DECLARE_INTERFACE(QMediaServiceProviderSupportedControlsInterface, QMediaServiceProviderSupportedControlsInterface_iid)
 
 
 class Q_MEDIA_EXPORT QMediaServiceProviderPlugin : public QObject, public QMediaServiceProviderFactoryInterface

@@ -45,10 +45,11 @@ class QMediaServiceProviderHintPrivate;
 class Q_MEDIA_EXPORT QMediaServiceProviderHint
 {
 public:
-    enum Type { Null, ContentType, Device };
+    enum Type { Null, ContentType, Device, SupportedControls };
     QMediaServiceProviderHint();
     QMediaServiceProviderHint(const QString &mimeType, const QStringList& codecs);
     QMediaServiceProviderHint(const QByteArray &device);
+    QMediaServiceProviderHint(const QList<QByteArray> &controls);
     QMediaServiceProviderHint(const QMediaServiceProviderHint &other);
     ~QMediaServiceProviderHint();
 
@@ -65,6 +66,8 @@ public:
     QStringList codecs() const;
 
     QByteArray device() const;
+
+    QList<QByteArray> controls() const;
 
     //to be extended, if necessary
 

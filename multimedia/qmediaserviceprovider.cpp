@@ -66,6 +66,7 @@ public:
     QByteArray device;
     QString mimeType;
     QStringList codecs;
+    QList<QByteArray> controls;
 };
 
 /*!
@@ -101,6 +102,17 @@ QMediaServiceProviderHint::QMediaServiceProviderHint(const QByteArray &device)
     :d(new QMediaServiceProviderHintPrivate(Device))
 {
     d->device = device;
+}
+
+/*!
+  Constructs the supported controls related media service provider hint.
+  Passing this hint to the service provider allows it to choose the service
+  providing optional controls.
+*/
+QMediaServiceProviderHint::QMediaServiceProviderHint(const QList<QByteArray> &controls)
+    :d(new QMediaServiceProviderHintPrivate(SupportedControls))
+{
+    d->controls = controls;
 }
 
 /*!
@@ -214,6 +226,9 @@ public:
 
             switch (hint.type()) {
             case QMediaServiceProviderHint::Null:
+                plugin = plugins[0];
+                break;
+            case QMediaServiceProviderHint::SupportedControls:
                 plugin = plugins[0];
                 break;
             case QMediaServiceProviderHint::Device: {
