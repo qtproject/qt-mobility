@@ -31,15 +31,17 @@
 **
 ****************************************************************************/
 #include "transformgeolocation.h"
+#include "cntmodelextuids.hrh"
+
 const char separator = ',';
 
 QList<CContactItemField *> TransformGeolocation::transformDetailL(const QContactDetail &detail)
 {
-	QList<CContactItemField *> fieldList; 
-	
+	QList<CContactItemField *> fieldList;
+
 	//cast to geolocation
 	const QContactGeolocation &geolocation(static_cast<const QContactGeolocation&>(detail));
-	
+
 	//create new field
 	QString formattedGeolocation;
 	if (geolocation.latitude() >= 0.0) {
@@ -49,7 +51,7 @@ QList<CContactItemField *> TransformGeolocation::transformDetailL(const QContact
     if (geolocation.longitude() >= 0.0) {
          formattedGeolocation.append(QString::number(geolocation.longitude()));
     }
-    
+
     if (formattedGeolocation.length() > 1) {
         TPtrC fieldText(reinterpret_cast<const TUint16*>(formattedGeolocation.utf16()));
         CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldGEO);
@@ -58,24 +60,24 @@ QList<CContactItemField *> TransformGeolocation::transformDetailL(const QContact
 
         //contexts
         setContextsL(geolocation, *newField);
-        
+
         fieldList.append(newField);
         CleanupStack::Pop(newField);
     }
-        
+
 	return fieldList;
 }
 
 QContactDetail *TransformGeolocation::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	Q_UNUSED(contact);
-	
+
 	QContactGeolocation *geolocation = new QContactGeolocation();
-	
+
 	CContactTextField* storage = field.TextStorage();
 	QString unformattedGeolocation = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
 	int separatorPos = unformattedGeolocation.indexOf(separator);
-	
+
 	// parse latitude
 	bool latitudeSet = false;
 	if (separatorPos > 0) {
@@ -87,9 +89,9 @@ QContactDetail *TransformGeolocation::transformItemField(const CContactItemField
         }
 	}
 	if (!latitudeSet) {
-        geolocation->setLatitude(-1);   
+        geolocation->setLatitude(-1);
 	}
-	
+
 	// parse longitude
 	bool longitudeSet = false;
 	if (separatorPos >= 0 && separatorPos != unformattedGeolocation.length()-1) {
@@ -98,17 +100,17 @@ QContactDetail *TransformGeolocation::transformItemField(const CContactItemField
         if (ok) {
             geolocation->setLongitude(longitude);
             longitudeSet = true;
-        }   
+        }
 	}
 	if (!longitudeSet) {
-        geolocation->setLongitude(-1);   
+        geolocation->setLongitude(-1);
 	}
-	
+
     // set context
     for (int i = 0; i < field.ContentType().FieldTypeCount(); i++) {
         setContexts(field.ContentType().FieldType(i), *geolocation);
     }
-	
+
 	return geolocation;
 }
 

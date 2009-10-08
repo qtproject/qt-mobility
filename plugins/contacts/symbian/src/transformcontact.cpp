@@ -53,6 +53,7 @@
 #include <cntdb.h>
 #include <cntdbobs.h>
 #include <cntitem.h>
+#include <cntdef.hrh> // explicitly included because of KUidContactFieldGEOValue
 
 #include <QDebug>
 
@@ -81,7 +82,11 @@ void TransformContact::initializeTransformContactData()
 	m_transformContactData.insert(SyncTarget, new TransformSyncTarget);
 	m_transformContactData.insert(Gender, new TransformGender);
 	m_transformContactData.insert(Anniversary, new TransformAnniversary);
+#ifdef USE_CUSTOM_CNT_MODEL_FIELDS
+	// TODO: what are the other fields to be hidden behind the custom field flag?
+	// i.e. the fields that are not supported in pre-10.1 platforms?
 	m_transformContactData.insert(Geolocation, new TransformGeolocation);
+#endif
 }
 
 
@@ -90,37 +95,37 @@ QContact TransformContact::transformContactL(CContactItem &contact, CContactData
 		// Create a new QContact
 		QContact newQtContact;
 		newQtContact.setId(contact.Id());
-		
+
 		// Iterate through the CContactItemFieldSet, creating
 		// new fields for the QContact
 		CContactItemFieldSet& fields(contact.CardFields());
-		
+
 		const int numFields(fields.Count());
-		
-		for(int i(0); i < numFields; ++i) 
+
+		for(int i(0); i < numFields; ++i)
 		{
 			QContactDetail *detail = transformItemField( fields[i], newQtContact );
-			
+
 			if(detail)
 			{
-				newQtContact.saveDetail(detail);	
+				newQtContact.saveDetail(detail);
 			}
 		}
-		
+
 		// Add contact's UID
 	    QContactDetail *detailUid = transformGuidItemFieldL(contact, contactDatabase);
         if(detailUid)
         {
-	        newQtContact.saveDetail(detailUid);    
+	        newQtContact.saveDetail(detailUid);
 	    }
 
         // Add contact's timestamp
         QContactDetail *detailTimestamp = transformTimestampItemFieldL(contact, contactDatabase);
         if(detailTimestamp)
         {
-            newQtContact.saveDetail(detailTimestamp);    
+            newQtContact.saveDetail(detailTimestamp);
         }
-        
+
 		return newQtContact;
 }
 
@@ -136,37 +141,37 @@ void TransformContact::transformContactL(
 {
 	//Create a new fieldSet
 	CContactItemFieldSet *fieldSet = CContactItemFieldSet::NewLC();
-	
+
 	// Copy all fields to the Symbian contact.
 	QList<QContactDetail> detailList(contact.details());
-	
+
 	// Iterate through the contact details in the QContact
 	const int detailCount(detailList.count());
-	
-	for(int i(0); i < detailCount; ++i) 
+
+	for(int i(0); i < detailCount; ++i)
 	{
 		QList<CContactItemField *> fieldList = transformDetailL( detailList.at(i) );
 		int fieldCount = fieldList.count();
-		
+
 		for (int j = 0; j < fieldCount; j++)
         {
 			//Add field to fieldSet
 			fieldSet->AddL(*fieldList.at(j));
 		}
-		
+
 		// Add contact's UID - just ignored silently since it's read only
 		//if (detailList.at(i).definitionName() == QContactGuid::DefinitionName)
 		//{
         //    transformGuidDetailL(detailList.at(i), contactItem);
 		//}
-		
+
 	    // Add contact's timestamp - just ignored silently since it's read only
 	    //if (detailList.at(i).definitionName() == QContactTimestamp::DefinitionName)
 	    //{
         //    transformTimestampDetailL(detailList.at(i), contactItem);
 	    //}
 	}
-	
+
 	contactItem.UpdateFieldSet(fieldSet);
 	CleanupStack::Pop(fieldSet);
 }
@@ -175,16 +180,16 @@ QList<CContactItemField *> TransformContact::transformDetailL(const QContactDeta
 {
 	QList<CContactItemField *> itemFieldList;
 	QString detailName(detail.definitionName());
-	
+
 	QMap<ContactData, TransformContactData*>::const_iterator i = m_transformContactData.constBegin();
 	while (i != m_transformContactData.constEnd()) {
-        if (i.value()->supportsDetail(detailName)) { 
+        if (i.value()->supportsDetail(detailName)) {
             itemFieldList = i.value()->transformDetailL(detail);
             break;
 	    }
         ++i;
     }
-	
+
 	return itemFieldList;
 }
 
@@ -192,10 +197,10 @@ QContactDetail *TransformContact::transformItemField(const CContactItemField& fi
 {
 	QContactDetail *detail(0);
 	TUint32 fieldType(field.ContentType().FieldType(0).iUid);
-	
+
 	QMap<ContactData, TransformContactData*>::const_iterator i = m_transformContactData.constBegin();
 	while (i != m_transformContactData.constEnd()) {
-        if (i.value()->supportsField(fieldType)) { 
+        if (i.value()->supportsField(fieldType)) {
             detail = i.value()->transformItemField(field, contact);
             break;
         }
@@ -204,7 +209,7 @@ QContactDetail *TransformContact::transformItemField(const CContactItemField& fi
 
 	return detail;
 }
-	
+
 QContactDetail* TransformContact::transformGuidItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const
 {
     QContactGuid *guidDetail = 0;
@@ -215,7 +220,7 @@ QContactDetail* TransformContact::transformGuidItemFieldL(CContactItem &contactI
         guidDetail = new QContactGuid();
         guidDetail->setGuid(guid);
     }
-    return guidDetail; 
+    return guidDetail;
 }
 
 void TransformContact::transformGuidDetailL(const QContactDetail &guidDetail, CContactItem &contactItem) const
@@ -231,7 +236,7 @@ void TransformContact::transformGuidDetailL(const QContactDetail &guidDetail, CC
 QContactDetail* TransformContact::transformTimestampItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const
 {
     QContactTimestamp *timestampDetail = 0;
-    
+
     // NOTE: In S60 3.1 we cannot use ContactGuid::GetCreationDate() because
     // it is not exported.
     // TODO: Make sure SYMBIAN_CNTMODEL_V2 is the right flag for this.
@@ -247,7 +252,7 @@ QContactDetail* TransformContact::transformTimestampItemFieldL(CContactItem &con
             if (lex.Val(timeValue, EHex) == 0)
             {
                 timestampDetail = new QContactTimestamp();
-                
+
                 //creation date
                 TTime timeCreation(timeValue);
                 TDateTime dateCreation = timeCreation.DateTime();
@@ -255,7 +260,7 @@ QContactDetail* TransformContact::transformTimestampItemFieldL(CContactItem &con
                 QTime qTimeCreation(dateCreation.Hour(), dateCreation.Minute(), dateCreation.Second(), dateCreation.MicroSecond()/1000);
                 QDateTime qDateTimeCreation(qDateCreation, qTimeCreation);
                 timestampDetail->setCreated(qDateTimeCreation);
-                
+
                 //last modified date
                 TTime timeModified = contactItem.LastModified();
                 TDateTime dateModified = timeModified.DateTime();
@@ -268,7 +273,7 @@ QContactDetail* TransformContact::transformTimestampItemFieldL(CContactItem &con
     }
     CleanupStack::PopAndDestroy(guidBuf);
 #endif
-    return timestampDetail;      
+    return timestampDetail;
 }
 
 void TransformContact::transformTimestampDetailL(const QContactDetail &guidDetail, CContactItem &contactItem) const
