@@ -79,33 +79,33 @@ END:VCARD\r\n";
     
     QByteArray vCard(vCardData);
     
-    QPair<QByteArray,QByteArray> nameAndValue = 
+    QPair<QString,QByteArray> nameAndValue = 
         m_reader->parseNextVersitProperty(vCard);
-    QCOMPARE(nameAndValue.first,QByteArray("BEGIN"));
+    QCOMPARE(nameAndValue.first,QString("BEGIN"));
     QCOMPARE(nameAndValue.second,QByteArray("VCARD"));
     
     nameAndValue = m_reader->parseNextVersitProperty(vCard);
-    QCOMPARE(nameAndValue.first,QByteArray("VERSION"));
+    QCOMPARE(nameAndValue.first,QString("VERSION"));
     QCOMPARE(nameAndValue.second,QByteArray("2.1"));
     
     nameAndValue = m_reader->parseNextVersitProperty(vCard);
-    QCOMPARE(nameAndValue.first,QByteArray("N"));
+    QCOMPARE(nameAndValue.first,QString("N"));
     QCOMPARE(nameAndValue.second,QByteArray("Homer"));
     
     nameAndValue = m_reader->parseNextVersitProperty(vCard);
-    QCOMPARE(nameAndValue.first,QByteArray("EMAIL"));
+    QCOMPARE(nameAndValue.first,QString("EMAIL"));
     QCOMPARE(nameAndValue.second,QByteArray("homer@simpsons.com"));
     
     nameAndValue = m_reader->parseNextVersitProperty(vCard);
-    QCOMPARE(nameAndValue.first,QByteArray("AGENT"));
+    QCOMPARE(nameAndValue.first,QString("AGENT"));
     QCOMPARE(nameAndValue.second,QByteArray());
     
     nameAndValue = m_reader->parseNextVersitProperty(vCard);
-    QCOMPARE(nameAndValue.first,QByteArray("END"));
+    QCOMPARE(nameAndValue.first,QString("END"));
     QCOMPARE(nameAndValue.second,QByteArray("VCARD"));
     
     nameAndValue = m_reader->parseNextVersitProperty(vCard);
-    QCOMPARE(nameAndValue.first,QByteArray());
+    QCOMPARE(nameAndValue.first,QString());
     QCOMPARE(nameAndValue.second,QByteArray());
 }
 

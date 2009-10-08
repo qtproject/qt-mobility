@@ -97,7 +97,7 @@ bool QVersitReader::parseVersitDocument(QByteArray& text)
 {
     // TODO: Store the properties to a QVersitDocument
     text = text.mid(VersitUtils::countLeadingWhiteSpaces(text));
-    QPair<QByteArray,QByteArray> nameAndValue = parseNextVersitProperty(text);
+    QPair<QString,QByteArray> nameAndValue = parseNextVersitProperty(text);
     if (nameAndValue.first != "BEGIN" || 
         nameAndValue.second.trimmed() != "VCARD")
         return false;
@@ -112,12 +112,12 @@ bool QVersitReader::parseVersitDocument(QByteArray& text)
 /*!
  * Parses a versit document and returns whether parsing succeeded.
  */
-QPair<QByteArray,QByteArray> QVersitReader::parseNextVersitProperty(
+QPair<QString,QByteArray> QVersitReader::parseNextVersitProperty(
     QByteArray& text)
 {
-    QPair<QByteArray,QByteArray> nameAndValue;
+    QPair<QString,QByteArray> nameAndValue;
     nameAndValue.first = VersitUtils::extractPropertyName(text);
-    QMultiMap<QByteArray,QByteArray> params = 
+    QMultiMap<QString,QString> params = 
         VersitUtils::extractPropertyParams(text);
     text = VersitUtils::extractPropertyValue(text); 
     if (nameAndValue.first == "AGENT") {

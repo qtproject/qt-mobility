@@ -197,7 +197,7 @@ int VersitUtils::findHardLineBreakInQuotedPrintable(const QByteArray& encoded)
 /*!
  * Extracts the name of the property.
  */
-QByteArray VersitUtils::extractPropertyName(const QByteArray& property)
+QString VersitUtils::extractPropertyName(const QByteArray& property)
 {
     QByteArray name;
     int nameLength = 0;
@@ -213,7 +213,7 @@ QByteArray VersitUtils::extractPropertyName(const QByteArray& property)
     }
     if (nameLength > 0)
         name = property.left(nameLength).trimmed();
-    return name;
+    return QString(name);
 }
 
 /*!
@@ -233,10 +233,10 @@ QByteArray VersitUtils::extractPropertyValue(const QByteArray& property)
  * Extracts the property parameters as a QMultiMap.
  * The parameters without names are added as "TYPE" parameters.
  */
-QMultiMap<QByteArray,QByteArray> VersitUtils::extractPropertyParams(
+QMultiMap<QString,QString> VersitUtils::extractPropertyParams(
     const QByteArray& property)
 {
-    QMultiMap<QByteArray,QByteArray> params;    
+    QMultiMap<QString,QString> params;    
     int colonIndex = property.indexOf(':');
     if (colonIndex > 0) {
         QByteArray nameAndParamsString = property.left(colonIndex);
@@ -262,7 +262,7 @@ QMultiMap<QByteArray,QByteArray> VersitUtils::extractPropertyParams(
  * limited by /a startPosition and /a length
  */
 void VersitUtils::addParam(
-    QMultiMap<QByteArray,QByteArray>& params,
+    QMultiMap<QString,QString>& params,
     const QByteArray& originalString, 
     int startPosition, 
     int length)
@@ -278,22 +278,22 @@ void VersitUtils::addParam(
  * Extracts the name of the parameter.
  * No name is interpreted as an implicit "TYPE".
  */
-QByteArray VersitUtils::paramName(const QByteArray& parameter)
+QString VersitUtils::paramName(const QByteArray& parameter)
 {
      if (parameter.trimmed().length() == 0)
-         return QByteArray();
+         return QString();
      int equalsIndex = parameter.indexOf('=');
      if (equalsIndex > 0)
-         return parameter.left(equalsIndex).trimmed();
-     return QByteArray(typeParameterName);
+         return QString(parameter.left(equalsIndex).trimmed());
+     return QString(typeParameterName);
 }
 
 /*!
  * Extracts the value of the parameter
  */
-QByteArray VersitUtils::paramValue(const QByteArray& parameter)
+QString VersitUtils::paramValue(const QByteArray& parameter)
 {
-    QByteArray value(parameter);
+    QString value(parameter);
     int equalsIndex = parameter.indexOf('=');
     if (equalsIndex > 0) {
         if (equalsIndex == parameter.length()-1) {

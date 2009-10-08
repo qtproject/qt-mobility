@@ -48,20 +48,20 @@ public:
     static QByteArray encodeQuotedPrintable(QByteArray& text);
     static QByteArray decodeQuotedPrintable(QByteArray& text);
     static int findHardLineBreakInQuotedPrintable(const QByteArray& encoded);
-    static QByteArray extractPropertyName(const QByteArray& property);
+    static QString extractPropertyName(const QByteArray& property);
     static QByteArray extractPropertyValue(const QByteArray& property);
-    static QMultiMap<QByteArray,QByteArray> extractPropertyParams(
+    static QMultiMap<QString,QString> extractPropertyParams(
         const QByteArray& property);
     
 private:
     
     static void addParam(
-        QMultiMap<QByteArray,QByteArray>& params,
+        QMultiMap<QString,QString>& params,
         const QByteArray& originalString,
         int startPosition, 
         int length=-1);    
-    static QByteArray paramName(const QByteArray& parameter);
-    static QByteArray paramValue(const QByteArray& parameter);
+    static QString paramName(const QByteArray& parameter);
+    static QString paramValue(const QByteArray& parameter);
     
 private:
     

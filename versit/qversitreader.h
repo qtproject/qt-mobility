@@ -65,7 +65,7 @@ signals:
 private:
     
     bool parseVersitDocument(QByteArray& text);
-    QPair<QByteArray,QByteArray> parseNextVersitProperty(QByteArray& text);    
+    QPair<QString,QByteArray> parseNextVersitProperty(QByteArray& text);    
     
 private: // Data
     QVersitReaderPrivate* d;
