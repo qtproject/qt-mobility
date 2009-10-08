@@ -46,6 +46,7 @@
 #include "transformsynctarget.h"
 #include "transformgender.h"
 #include "transformanniversary.h"
+#include "transformgeolocation.h"
 
 #include <qtcontacts.h>
 #include <cntfldst.h>
@@ -80,6 +81,7 @@ void TransformContact::initializeTransformContactData()
 	m_transformContactData.insert(SyncTarget, new TransformSyncTarget);
 	m_transformContactData.insert(Gender, new TransformGender);
 	m_transformContactData.insert(Anniversary, new TransformAnniversary);
+	m_transformContactData.insert(Geolocation, new TransformGeolocation);
 }
 
 

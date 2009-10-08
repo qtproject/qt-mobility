@@ -46,6 +46,7 @@
 #include "transformsynctarget.h"
 #include "transformgender.h"
 #include "transformanniversary.h"
+#include "transformgeolocation.h"
 
 #include <QtTest/QtTest>
 
@@ -159,6 +160,14 @@ void TestTransformContactData::executeTransformAnniversary()
     QDate dateDetail(2009, 9, 28);
     validateTransformAnniversary(_L("2009-09-28,dummyevent"), dateDetail, QString("dummyevent"));
     validateTransformAnniversary(_L("dummyevent"), QDate(), QString("dummyevent"));
+}
+
+void TestTransformContactData::executeTransformGeolocation()
+{
+    validateTransformGeolocation(_L("123.45,765.88"), 123.45, 765.88);
+    validateTransformGeolocation(_L("123.45,"), 123.45, -1);
+    validateTransformGeolocation(_L(",765.88"), -1, 765.88);
+    validateTransformGeolocation(_L(""), -1, -1);
 }
 
 void TestTransformContactData::validateTransformEmail(TPtrC16 field, QString detail)
@@ -1031,6 +1040,53 @@ void TestTransformContactData::validateTransformAnniversary(TPtrC16 field, QDate
     delete contactDetail;
     delete newField;
     delete transformAnniversary;  
+}
+
+void TestTransformContactData::validateTransformGeolocation(TPtrC16 field, double latitudeDetail, double longitudeDetail)
+{
+    TransformContactData* transformGeolocation = new TransformGeolocation();
+    QVERIFY(transformGeolocation != 0);
+    QVERIFY(transformGeolocation->supportsField(KUidContactFieldGEO.iUid));
+    QVERIFY(transformGeolocation->supportsDetail(QContactGeolocation::DefinitionName));
+    
+    validateContexts(transformGeolocation);
+    
+    QContactGeolocation geolocation;
+    geolocation.setLatitude(latitudeDetail);
+    geolocation.setLongitude(longitudeDetail);
+    QList<CContactItemField *> fields = transformGeolocation->transformDetailL(geolocation);
+    if (latitudeDetail >= 0.0 || longitudeDetail >= 0.0) {
+        QVERIFY(fields.count() == 1);
+        QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+        QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldGEO));
+        QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
+    }
+    else {
+        QVERIFY(fields.count() == 0);
+    }
+    
+    CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldGEO);
+    newField->TextStorage()->SetTextL(field);
+    QContact contact;
+    QContactDetail* contactDetail = transformGeolocation->transformItemField(*newField, contact);
+    const QContactGeolocation* geolocationInfo(static_cast<const QContactGeolocation*>(contactDetail));
+    if (latitudeDetail >= 0.0 ) {
+        QCOMPARE(geolocationInfo->latitude(), latitudeDetail);
+    }
+    else {
+        QCOMPARE(geolocationInfo->latitude(), -1.0);
+    }
+
+    if (longitudeDetail > 0.0) {
+        QCOMPARE(geolocationInfo->longitude(), longitudeDetail);
+    }
+    else {
+        QCOMPARE(geolocationInfo->longitude(), -1.0);
+    }
+    
+    delete contactDetail;
+    delete newField;
+    delete transformGeolocation; 
 }
 
 void TestTransformContactData::validateContexts(TransformContactData* transformContactData) const

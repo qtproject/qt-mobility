@@ -58,6 +58,7 @@ private slots:
 	void executeTransformSyncTarget();
 	void executeTransformGender();
 	void executeTransformAnniversary();
+	void executeTransformGeolocation();
 	
 private:
     void validateTransformEmail(TPtrC16 field, QString detail);
@@ -84,5 +85,6 @@ private:
     void validateTransformSyncTarget(TPtrC16 field, QString detail);
     void validateTransformGender(TPtrC16 field, QString detail);
     void validateTransformAnniversary(TPtrC16 field, QDate dateDetail, QString eventDetail);
+    void validateTransformGeolocation(TPtrC16 field, double latitudeDetail, double longitudeDetail);
     void validateContexts(TransformContactData* transformContactData) const; 
 };
