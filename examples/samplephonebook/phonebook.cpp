@@ -149,6 +149,7 @@ void PhoneBook::backendChanged(const QList<QUniqueId>& changes)
     contacts.clear();
     foreach (const QUniqueId cid, contactIds)
         contacts.append(cm->contact(cid));
+qDebug() << "backend changed, and now have" << contactIds.size() << "contacts which are TypeContact!";
 
     // if there are no contacts in the backend any more, we add a new, unsaved contact
     // otherwise, display the current one.  Either way, need to repopulate the list.
@@ -316,14 +317,6 @@ QContact PhoneBook::buildContact() const
     if (!address.street().isEmpty())
         c.saveDetail(&address);
 
-    foreach (const QUniqueId& gid, contactGroups) {
-        QContactRelationship groupRelationship;
-        QContact currGroup = cm->contact(gid);
-        groupRelationship.setRelatedContactId(gid);
-        groupRelationship.setRelatedContactLabel(currGroup.displayLabel().label());
-        c.saveDetail(&groupRelationship);
-    }
-
     return c;
 }
 
@@ -332,11 +325,12 @@ void PhoneBook::displayContact()
     QContact c = contacts.value(currentIndex);
     c = cm->contact(c.id()); // this removes any unsaved information.
 
-    QList<QContactDetail> relationships = c.details(QContactRelationship::DefinitionName);
+    QPair<QString, QUniqueId> contactUri = QPair<QString, QUniqueId>(cm->managerUri(), c.id());
+    QList<QContactRelationship> relationships = cm->relationships(QContactRelationship::RelationshipTypeHasMember, contactUri);
     QList<QUniqueId> currentGroups;
     foreach (const QContactRelationship& currRel, relationships) {
-        if (currRel.relationshipType() == QContactRelationship::RelationshipTypeIsMemberOf) {
-            currentGroups.append(currRel.relatedContactId());
+        if (currRel.destinationContacts().contains(contactUri)) {
+            currentGroups.append(currRel.sourceContact());
         }
     }
     contactGroups = currentGroups;

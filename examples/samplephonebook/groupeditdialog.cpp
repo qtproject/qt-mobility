@@ -108,6 +108,7 @@ void GroupEditDialog::addButtonClicked()
 {
     if (!groupNameEdit->text().isEmpty()){
         QContact grp;
+        grp.setType(QContactType::TypeGroup);
         bool result;
         grp.setDisplayLabel(groupNameEdit->text());
         result = cm->saveContact(&grp);
