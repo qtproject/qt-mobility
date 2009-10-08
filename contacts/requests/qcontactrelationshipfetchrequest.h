@@ -31,24 +31,48 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTREQUESTS_H
-#define QCONTACTREQUESTS_H
+#ifndef QCONTACTRELATIONSHIPFETCHREQUEST_H
+#define QCONTACTRELATIONSHIPFETCHREQUEST_H
 
-// this file includes all of the asynchronous request
-// leaf classes that are included in the public API
+#include "qtcontactsglobal.h"
+#include "qcontactabstractrequest.h"
+#include "qcontactrelationship.h"
+#include "qcontactrelationshipfilter.h"
 
-#include "qcontactdetaildefinitionfetchrequest.h"
-#include "qcontactdetaildefinitionremoverequest.h"
-#include "qcontactdetaildefinitionsaverequest.h"
+#include <QList>
+#include <QPair>
+#include <QString>
 
-#include "qcontactrelationshipfetchrequest.h"
-#include "qcontactrelationshipremoverequest.h"
-#include "qcontactrelationshipsaverequest.h"
+class QContactRelationshipFetchRequestPrivate;
+class QTCONTACTS_EXPORT QContactRelationshipFetchRequest : public QContactAbstractRequest
+{
+    Q_OBJECT
 
-#include "qcontactfetchrequest.h"
-#include "qcontactidfetchrequest.h"
-#include "qcontactremoverequest.h"
-#include "qcontactsaverequest.h"
+public:
+    QContactRelationshipFetchRequest();
+    ~QContactRelationshipFetchRequest();
+
+    /* Selection */
+    void setSourceContact(const QUniqueId& contactId);
+    QUniqueId sourceContact() const;
+
+    void setRelationshipType(const QString& relationshipType);
+    QString relationshipType() const;
+
+    void setParticipant(const QPair<QString, QUniqueId>& participantUri, QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either);
+    QPair<QString, QUniqueId> participant() const;
+    QContactRelationshipFilter::Role participantRole() const;
+
+    /* Results */
+    QList<QContactRelationship> relationships() const;
+
+signals:
+    void progress(QContactRelationshipFetchRequest* self, bool appendOnly);
+
+private:
+    Q_DISABLE_COPY(QContactRelationshipFetchRequest)
+    friend class QContactManagerEngine;
+    Q_DECLARE_PRIVATE_D(d_ptr, QContactRelationshipFetchRequest)
+};
 
 #endif
-

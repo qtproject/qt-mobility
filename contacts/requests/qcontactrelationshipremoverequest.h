@@ -31,24 +31,37 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTREQUESTS_H
-#define QCONTACTREQUESTS_H
+#ifndef QCONTACTRELATIONSHIPREMOVEREQUEST_H
+#define QCONTACTRELATIONSHIPREMOVEREQUEST_H
 
-// this file includes all of the asynchronous request
-// leaf classes that are included in the public API
+#include "qtcontactsglobal.h"
+#include "qcontactabstractrequest.h"
 
-#include "qcontactdetaildefinitionfetchrequest.h"
-#include "qcontactdetaildefinitionremoverequest.h"
-#include "qcontactdetaildefinitionsaverequest.h"
+#include <QString>
 
-#include "qcontactrelationshipfetchrequest.h"
-#include "qcontactrelationshipremoverequest.h"
-#include "qcontactrelationshipsaverequest.h"
+class QContactRelationshipRemoveRequestPrivate;
+class QTCONTACTS_EXPORT QContactRelationshipRemoveRequest : public QContactAbstractRequest
+{
+    Q_OBJECT
 
-#include "qcontactfetchrequest.h"
-#include "qcontactidfetchrequest.h"
-#include "qcontactremoverequest.h"
-#include "qcontactsaverequest.h"
+public:
+    QContactRelationshipRemoveRequest();
+    ~QContactRelationshipRemoveRequest();
+
+    /* Selection */
+    void setSourceContact(const QUniqueId& contactId);
+    QUniqueId sourceContact() const;
+
+    void setRelationshipType(const QString& relationshipType);
+    QString relationshipType() const;
+
+signals:
+    void progress(QContactRelationshipRemoveRequest* self);
+
+private:
+    Q_DISABLE_COPY(QContactRelationshipRemoveRequest)
+    friend class QContactManagerEngine;
+    Q_DECLARE_PRIVATE_D(d_ptr, QContactRelationshipRemoveRequest)
+};
 
 #endif
-

@@ -47,6 +47,7 @@
 
 #include "qcontactabstractrequest_p.h"
 #include "qcontactfilter.h"
+#include "qcontactrelationshipfilter.h"
 #include "qcontactsortorder.h"
 #include "qcontact.h"
 #include "qtcontactsglobal.h"
@@ -200,6 +201,76 @@ public:
     }
 
     QStringList m_names;
+};
+
+///////////////////////
+
+class QContactRelationshipFetchRequestPrivate : public QContactAbstractRequestPrivate
+{
+public:
+    QContactRelationshipFetchRequestPrivate()
+        : QContactAbstractRequestPrivate(),
+        m_sourceContact(0),
+        m_role(QContactRelationshipFilter::Either)
+    {
+    }
+
+    ~QContactRelationshipFetchRequestPrivate()
+    {
+    }
+
+    QContactAbstractRequest::RequestType type() const
+    {
+        return QContactAbstractRequest::RelationshipFetchRequest;
+    }
+
+    QUniqueId m_sourceContact;
+    QString m_relationshipType;
+    QPair<QString, QUniqueId> m_participantUri;
+    QContactRelationshipFilter::Role m_role;
+    QList<QContactRelationship> m_relationships;
+};
+
+class QContactRelationshipSaveRequestPrivate : public QContactAbstractRequestPrivate
+{
+public:
+    QContactRelationshipSaveRequestPrivate()
+        : QContactAbstractRequestPrivate()
+    {
+    }
+
+    ~QContactRelationshipSaveRequestPrivate()
+    {
+    }
+
+    QContactAbstractRequest::RequestType type() const
+    {
+        return QContactAbstractRequest::RelationshipSaveRequest;
+    }
+
+    QList<QContactRelationship> m_relationships;
+};
+
+class QContactRelationshipRemoveRequestPrivate : public QContactAbstractRequestPrivate
+{
+public:
+    QContactRelationshipRemoveRequestPrivate()
+        : QContactAbstractRequestPrivate(),
+        m_sourceContact(0)
+    {
+    }
+
+    ~QContactRelationshipRemoveRequestPrivate()
+    {
+    }
+
+    QContactAbstractRequest::RequestType type() const
+    {
+        return QContactAbstractRequest::RelationshipRemoveRequest;
+    }
+
+    QUniqueId m_sourceContact;
+    QString m_relationshipType;
 };
 
 #endif

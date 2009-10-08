@@ -829,6 +829,107 @@ void QContactMemoryEngine::performAsynchronousOperation()
         }
         break;
 
+        case QContactAbstractRequest::RelationshipFetchRequest:
+        {
+            QContactRelationshipFetchRequest* r = static_cast<QContactRelationshipFetchRequest*>(currentRequest);
+            QContactManager::Error operationError = QContactManager::NoError;
+            QList<QContactManager::Error> operationErrors;
+            QList<QContactRelationship> allRelationships = relationships(QUniqueId(0), QString(), operationError);
+            QList<QContactRelationship> requestedRelationships;
+
+            // first criteria: source contact id must be empty or must match
+            if (r->sourceContact() == QUniqueId(0)) {
+                // all relationships match this criteria (zero id denotes "any")
+                requestedRelationships = allRelationships;
+            } else {
+                for (int i = 0; i < allRelationships.size(); i++) {
+                    QContactRelationship currRelationship = allRelationships.at(i);
+                    if (r->sourceContact() == currRelationship.sourceContact()) {
+                        requestedRelationships.append(currRelationship);
+                    }
+                }
+            }
+
+            // second criteria: relationship type must be empty or must match
+            if (!r->relationshipType().isEmpty()) {
+                allRelationships = requestedRelationships;
+                requestedRelationships.clear();
+                for (int i = 0; i < allRelationships.size(); i++) {
+                    QContactRelationship currRelationship = allRelationships.at(i);
+                    if (r->relationshipType() == QString() || r->relationshipType() == currRelationship.relationshipType()) {
+                        requestedRelationships.append(currRelationship);
+                    }
+                }
+            }
+
+            // third criteria: participant must be empty or must match (including role in relationship)
+            QString myUri = QString(QLatin1String("memory")); // TODO
+            QPair<QString, QUniqueId> anonymousParticipant = QPair<QString, QUniqueId>(QString(), QUniqueId(0));
+            if (r->participant() != anonymousParticipant) {
+                allRelationships = requestedRelationships;
+                requestedRelationships.clear();
+                for (int i = 0; i < allRelationships.size(); i++) {
+                    QContactRelationship currRelationship = allRelationships.at(i);
+                    if ((r->participantRole() == QContactRelationshipFilter::Either || r->participantRole() == QContactRelationshipFilter::Destination)
+                            && currRelationship.destinationContacts().contains(r->participant())) {
+                        requestedRelationships.append(currRelationship);
+                    } else if ((r->participantRole() == QContactRelationshipFilter::Either || r->participantRole() == QContactRelationshipFilter::Source)
+                            && (currRelationship.sourceContact() == r->participant().second && r->participant().first == myUri)) {
+                        requestedRelationships.append(currRelationship);
+                    }
+                }
+            }
+
+            // update the request with the results.
+            updateRequest(currentRequest, requestedRelationships, operationError, operationErrors, QContactAbstractRequest::Finished);
+        }
+        break;
+
+        case QContactAbstractRequest::RelationshipRemoveRequest:
+        {
+            QContactRelationshipRemoveRequest* r = static_cast<QContactRelationshipRemoveRequest*>(currentRequest);
+            QContactManager::Error operationError = QContactManager::NoError;
+            QList<QContactManager::Error> operationErrors;
+            QList<QContactRelationship> matchingRelationships = relationships(r->sourceContact(), r->relationshipType(), operationError);
+
+            for (int i = 0; i < matchingRelationships.size(); i++) {
+                QContactManager::Error tempError;
+                removeRelationship(matchingRelationships.at(i), tempError);
+                operationErrors.append(tempError);
+
+                if (tempError != QContactManager::NoError)
+                    operationError = tempError;
+            }
+
+            // there are no results, so just update the status with the error.
+            updateRequestStatus(currentRequest, operationError, operationErrors, QContactAbstractRequest::Finished);
+        }
+        break;
+
+        case QContactAbstractRequest::RelationshipSaveRequest:
+        {
+            QContactRelationshipSaveRequest* r = static_cast<QContactRelationshipSaveRequest*>(currentRequest);
+            QContactManager::Error operationError = QContactManager::NoError;
+            QList<QContactManager::Error> operationErrors;
+            QList<QContactRelationship> requestRelationships = r->relationships();
+            QList<QContactRelationship> savedRelationships;
+
+            QContactManager::Error tempError;
+            for (int i = 0; i < requestRelationships.size(); i++) {
+                QContactRelationship current = requestRelationships.at(i);
+                saveRelationship(&current, tempError);
+                savedRelationships.append(current);
+                operationErrors.append(tempError);
+
+                if (tempError != QContactManager::NoError)
+                    operationError = tempError;
+            }
+
+            // update the request with the results.
+            updateRequest(currentRequest, savedRelationships, operationError, operationErrors, QContactAbstractRequest::Finished);
+        }
+        break;
+
         default: // unknown request type.
         break;
     }
