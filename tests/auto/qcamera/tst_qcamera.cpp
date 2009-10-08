@@ -584,10 +584,14 @@ void tst_QCamera::testSimpleCameraCapture()
 
     QVERIFY(!camera.isReadyForCapture());
 
+    QCOMPARE(camera.error(), QCamera::NoError);
+    QVERIFY(camera.errorString().isEmpty());
+
     QSignalSpy errorSignal(&camera, SIGNAL(error(QCamera::Error)));
     camera.capture(QString::fromLatin1("/dev/null"));
     QCOMPARE(errorSignal.size(), 1);
     QCOMPARE(camera.error(), QCamera::NotReadyToCaptureError);
+    QVERIFY(!camera.errorString().isEmpty());
 }
 
 void tst_QCamera::testCameraCapture()
