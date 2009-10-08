@@ -3015,59 +3015,24 @@ bool SharedMemoryLayer::doRemItems(NodeOwner owner, const QByteArray &path)
     return rv;
 }
 
-#ifdef Q_WS_X11
-#include <QX11Info>
-#include <X11/Xlib.h>
-#undef Unsorted
-#endif
-
-int display_id()
-{
-#if defined(Q_WS_QWS)
-    extern int qws_display_id;
-    return qws_display_id;
-#elif defined(Q_WS_X11)
-    Display *dpy = QX11Info::display();
-    QString name;
-    if ( dpy ) {
-        name = QString::fromLatin1(DisplayString(dpy));
-    } else {
-        const char *d = getenv("DISPLAY");
-        if ( !d )
-            return 0;
-        name = QString::fromLatin1(d);
-    }
-    int index = name.indexOf(QLatin1Char(':'));
-    if ( index >= 0 )
-        return name.mid(index + 1).toInt();
-    else
-        return 0;
-#else
-    return 0;
-#endif
-}
-#
-
-static QString qtTempDir()
-{
-    QString result;
-
-    result = QString::fromLatin1("/tmp/qt-%1/").arg(QString::number(display_id()));
-
-    //works for unix only
-    static bool pipePathExists = false;
-    if (!pipePathExists) {
-        QDir dir;
-        if (dir.mkpath(result)) {
-            pipePathExists = true;
-        }
-    }
-    return result;
-}
-
 QString SharedMemoryLayer::socket() const
 {
-    const QString socketPath = qtTempDir() + QLatin1String("valuespace_shmlayer");
+    QString socketPath(QLatin1String("qt/"));
+
+#ifdef Q_OS_UNIX
+    static bool pipePathExists = false;
+    if (!pipePathExists) {
+        if (QDir::temp().mkpath(socketPath))
+            pipePathExists = true;
+    }
+    socketPath = QDir::temp().absoluteFilePath(socketPath);
+#endif
+
+    QByteArray key = qgetenv("QT_VALUESPACE_SHMLAYER");
+    if (!key.isEmpty())
+        socketPath.append(QString::fromLocal8Bit(key.constData(), key.length()));
+    else
+        socketPath.append(QLatin1String("valuespace_shmlayer"));
 
     return socketPath;
 }
