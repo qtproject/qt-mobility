@@ -58,8 +58,8 @@ public:
     QList<QUniqueId> contacts(
             const QContactFilter& filter,
             const QList<QContactSortOrder>& sortOrders,
-            QContactManager::Error& error) const;
-    bool filterSupported(const QContactFilter& filter) const;
+            QContactManager::Error& error);
+    bool filterSupported(const QContactFilter& filter);
 
 private:
     CContactDatabase& m_contactDatabase;

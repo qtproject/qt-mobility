@@ -77,11 +77,12 @@ QContactSymbianFilter::~QContactSymbianFilter()
 QList<QUniqueId> QContactSymbianFilter::contacts(
             const QContactFilter& filter,
             const QList<QContactSortOrder>& sortOrders,
-            QContactManager::Error& error) const
+            QContactManager::Error& error)
 {
     // TODO: handle also sort orders
 
     QList<QUniqueId> matches;
+    CContactIdArray* idArray(0);
 
     if (filter.type() == QContactFilter::ContactDetailFilter)
     {
@@ -91,9 +92,8 @@ QList<QUniqueId> QContactSymbianFilter::contacts(
         {
             QString number((detailFilter.value()).toString());
             TPtrC commPtr(reinterpret_cast<const TUint16*>(number.utf16()));
-            CContactIdArray* idArray(0);
-            TRAPD(err, idArray = matchContactsLC(commPtr, 7));
-            if(err != KErrNone || !idArray )
+            TInt err = matchContacts(idArray, commPtr, 7);
+            if(err != KErrNone)
             {
                 // TODO: error code
                 error = QContactManager::UnspecifiedError;
@@ -103,18 +103,17 @@ QList<QUniqueId> QContactSymbianFilter::contacts(
                 for(int i(0); i < idArray->Count(); i++) {
                     matches.append(QUniqueId((*idArray)[i]));
                 }
-                CleanupStack::PopAndDestroy(idArray);
             }
         }
         else if (detailFilter.detailDefinitionName() == QContactName::DefinitionName
+                && detailFilter.detailFieldName() == QContactName::FieldFirst
                 && detailFilter.matchFlags() == Qt::MatchContains)
         {
             QString name((detailFilter.value()).toString());
             // TODO: this looks ugly
             TPtrC namePtr(reinterpret_cast<const TUint16*>(name.utf16()));
-            CContactIdArray* idArray(0);
-            TRAPD(err, idArray = findContactsLC(namePtr));
-            if(err != KErrNone || !idArray )
+            TInt err = findContacts(idArray, namePtr);
+            if(err != KErrNone)
             {
                 // TODO: map error code
                 error = QContactManager::UnspecifiedError;
@@ -124,7 +123,6 @@ QList<QUniqueId> QContactSymbianFilter::contacts(
                 for(int i = 0; i < idArray->Count(); i++) {
                     matches.append(QUniqueId((*idArray)[i]));
                 }
-                CleanupStack::PopAndDestroy(idArray);
             }
         }
         else
@@ -136,6 +134,9 @@ QList<QUniqueId> QContactSymbianFilter::contacts(
     {
         error = QContactManager::NotSupportedError;
     }
+
+    delete idArray;
+
     return matches;
 }
 
@@ -144,7 +145,7 @@ QList<QUniqueId> QContactSymbianFilter::contacts(
  * QContactManager::filterSupported function.
  * \a filter The QContactFilter to be checked.
  */
-bool QContactSymbianFilter::filterSupported(const QContactFilter& filter) const
+bool QContactSymbianFilter::filterSupported(const QContactFilter& filter)
 {
     TBool supported(false);
     if (filter.type() == QContactFilter::ContactDetailFilter) {
@@ -152,16 +153,28 @@ bool QContactSymbianFilter::filterSupported(const QContactFilter& filter) const
         if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName)
             supported = true;
         else if(detailFilter.detailDefinitionName() == QContactName::DefinitionName
+                && detailFilter.detailFieldName() == QContactName::FieldFirst
                 && detailFilter.matchFlags() == Qt::MatchContains)
             supported = true;
     }
     return supported;
 }
 
+TInt QContactSymbianFilter::findContacts(CContactIdArray*& idArray, const TDesC& text) const
+{
+    CContactIdArray* idArrayTmp(0);
+    TRAPD( err, idArrayTmp = findContactsL(text));
+    if(err == KErrNone)
+    {
+        idArray = idArrayTmp;
+    }
+    return err;
+}
+
 /*!
  * \a text The text to be searched for.
  */
-CContactIdArray* QContactSymbianFilter::findContactsLC(const TDesC& text) const
+CContactIdArray* QContactSymbianFilter::findContactsL(const TDesC& text) const
 {
     CContactItemFieldDef* fieldDef = new (ELeave) CContactItemFieldDef();
     CleanupStack::PushL(fieldDef);
@@ -174,27 +187,23 @@ CContactIdArray* QContactSymbianFilter::findContactsLC(const TDesC& text) const
     //uid.iUid = KUidContactFieldFamilyNameValue;
     //fieldDef->AppendL(uid);
     CContactIdArray* idsArray = m_contactDatabase.FindLC(text, fieldDef);
-    CleanupStack::Pop(idsArray);
+    CleanupStack::Pop(idsArray); // Ownership transferred
     CleanupStack::PopAndDestroy(fieldDef);
-    CleanupStack::PushL(idsArray);
     return idsArray;
 }
 
-/*!
- * \a phoneNumber The phone number to be searched for.
- * \a matchLength The match length from right.
- */
-CContactIdArray* QContactSymbianFilter::matchContactsLC(
+TInt QContactSymbianFilter::matchContacts(
+        CContactIdArray*& idArray,
         const TDesC& phoneNumber,
-        const TInt matchLength) const
+        const TInt matchLength)
 {
-    // TODO: Read phonenumber match length setting?
-    //CRepository* repository = CRepository::NewL(KMyRepositoryUid);
-    //CleanupStack::PushL(repository);
-    //CleanupStack::PopAndDestroy(repository;
-    CContactIdArray* idArray = m_contactDatabase.MatchPhoneNumberL(phoneNumber, matchLength);
-    CleanupStack::PushL(idArray);
-    return idArray;
+    CContactIdArray* idArrayTmp(0);
+    TRAPD( err, idArrayTmp = m_contactDatabase.MatchPhoneNumberL(phoneNumber, matchLength));
+    if(err == KErrNone)
+    {
+        idArray = idArrayTmp;
+    }
+    return err;
 }
 
 #endif
