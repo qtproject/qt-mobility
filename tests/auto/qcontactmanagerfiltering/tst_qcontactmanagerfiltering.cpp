@@ -1799,6 +1799,7 @@ void tst_QContactManagerFiltering::multiSorting_data()
     QTest::addColumn<int>("ssdirectioni");
 
     QTest::addColumn<QString>("expected");
+    QTest::addColumn<bool>("efgunstable");
 
 
     QString es;
@@ -1816,61 +1817,61 @@ void tst_QContactManagerFiltering::multiSorting_data()
         QTest::newRow("1") << manager
                            << true << namedef << firstname << (int)(Qt::AscendingOrder)
                            << true << namedef << lastname << (int)(Qt::AscendingOrder)
-                           << "abcdefg";
+                           << "abcdefg" << false;
         QTest::newRow("2") << manager
                            << true << namedef << firstname << (int)(Qt::AscendingOrder)
                            << true << namedef << lastname << (int)(Qt::DescendingOrder)
-                           << "abcdgfe";
+                           << "abcdgfe" << false;
         QTest::newRow("3") << manager
                            << true << namedef << firstname << (int)(Qt::DescendingOrder)
                            << true << namedef << lastname << (int)(Qt::AscendingOrder)
-                           << "efgdcba";
+                           << "efgdcba" << false;
         QTest::newRow("4") << manager
                            << true << namedef << firstname << (int)(Qt::DescendingOrder)
                            << true << namedef << lastname << (int)(Qt::DescendingOrder)
-                           << "gfedcba";
+                           << "gfedcba" << false;
 
         QTest::newRow("5") << manager
                            << true << namedef << firstname << (int)(Qt::AscendingOrder)
                            << false << namedef << lastname << (int)(Qt::AscendingOrder)
-                           << "abcdefg";
+                           << "abcdefg" << true;
 
         QTest::newRow("5b") << manager
                            << true << namedef << firstname << (int)(Qt::AscendingOrder)
                            << true << es << es << (int)(Qt::AscendingOrder)
-                           << "abcdefg";
+                           << "abcdefg" << true;
 
         QTest::newRow("6") << manager
                            << false << namedef << firstname << (int)(Qt::AscendingOrder)
                            << true << namedef << lastname << (int)(Qt::AscendingOrder)
-                           << "bacdefg";
+                           << "bacdefg" << false;
 
         QTest::newRow("7") << manager
                            << false << namedef << firstname << (int)(Qt::AscendingOrder)
                            << false << namedef << lastname << (int)(Qt::AscendingOrder)
-                           << "abcdefg";
+                           << "abcdefg" << false; // XXX Isn't this totally unstable?
 
         if (!stringDefAndFieldNames.first.isEmpty() && !stringDefAndFieldNames.second.isEmpty()) {
             QTest::newRow("8") << manager
                                << true << stringDefAndFieldNames.first << stringDefAndFieldNames.second << (int)(Qt::AscendingOrder)
                                << false << stringDefAndFieldNames.first << stringDefAndFieldNames.second << (int)(Qt::DescendingOrder)
-                               << "eabcdgf";
+                               << "eabcdgf" << false;
 
             QTest::newRow("8b") << manager
                                << true << stringDefAndFieldNames.first << stringDefAndFieldNames.second << (int)(Qt::AscendingOrder)
                                << false << es << es << (int)(Qt::DescendingOrder)
-                               << "eabcdgf";
+                               << "eabcdgf" << false;
         }
 
         QTest::newRow("9") << manager
                            << true << phonedef << numberfield << (int)(Qt::AscendingOrder)
                            << true << namedef << lastname << (int)(Qt::DescendingOrder)
-                           << "abgfedc";
+                           << "abgfedc" << false;
 
         QTest::newRow("10") << manager
                             << true << namedef << firstname << (int)(Qt::AscendingOrder)
                             << true << namedef << firstname << (int)(Qt::DescendingOrder)
-                            << "abcdefg";
+                            << "abcdefg" << true;
 
     }
 }
@@ -1887,6 +1888,7 @@ void tst_QContactManagerFiltering::multiSorting()
     QFETCH(QString, ssfieldname);
     QFETCH(int, ssdirectioni);
     QFETCH(QString, expected);
+    QFETCH(bool, efgunstable);
 
     Qt::SortOrder fsdirection = (Qt::SortOrder)fsdirectioni;
     Qt::SortOrder ssdirection = (Qt::SortOrder)ssdirectioni;
@@ -1908,6 +1910,19 @@ void tst_QContactManagerFiltering::multiSorting()
 
     QList<QUniqueId> ids = cm->contacts(sortOrders);
     QString output = convertIds(contacts, ids);
+
+    // Just like the single sort test, we might get some contacts back in indeterminate order
+    // (but their relative position with other contacts should not change)
+    if (efgunstable) {
+        QVERIFY(output.count('e') == 1);
+        QVERIFY(output.count('f') == 1);
+        QVERIFY(output.count('g') == 1);
+        output.remove('f');
+        output.remove('g');
+        expected.remove('f');
+        expected.remove('g');
+    }
+
     QCOMPARE(output, expected);
 }
 
