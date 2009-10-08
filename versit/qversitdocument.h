@@ -34,7 +34,6 @@
 #define QVERSITDOCUMENT_H
 
 #include <QList>
-#include "qversitproperty.h"
 
 class QVersitDocumentPrivate;
 class QVersitProperty;

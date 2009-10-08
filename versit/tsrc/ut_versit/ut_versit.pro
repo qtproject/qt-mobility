@@ -8,6 +8,7 @@ INCLUDEPATH += . ../../
 
 HEADERS += testresultxmlparser.h \
     ../../qversitproperty.h \
+    ../../qversitproperty_p.h \
     ut_qversitproperty.h \
     ../../qversitdocument.h \
     ut_qversitdocument.h \

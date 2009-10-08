@@ -34,7 +34,7 @@
 #include "ut_qversitproperty.h"
 #include "qversitproperty.h"
 #include "qversitproperty_p.h"
-
+#include "qversitdocument.h"
 #include <QtTest/QtTest>
 
 void UT_QVersitProperty::init()
@@ -55,22 +55,30 @@ void UT_QVersitProperty::testName()
     QCOMPARE(mVersitProperty->name(), name);
 }
 
-void UT_QVersitProperty::testParameter()
+void UT_QVersitProperty::testParameters()
 {
     QString name("TYPE");
-    QString value("HOME");
-    mVersitProperty->addParameter(name, value);
-    QStringList paramValues = mVersitProperty->parameterValues(name);
-    QVERIFY(!paramValues.isEmpty());
-    QCOMPARE(paramValues.size(), 1);
-    QCOMPARE(paramValues[0], value);
+    QString value1("HOME");
+    mVersitProperty->addParameter(name,value1);
+    QMultiMap<QString,QString> params = mVersitProperty->parameters();
+    QCOMPARE(params.count(), 1);
+    QVERIFY(params.contains(name,value1));
     
-    QString value1("VOICE");
-    mVersitProperty->addParameter(name, value1);
-    paramValues = mVersitProperty->parameterValues(name);
-    QCOMPARE(paramValues.size(), 2);
-    QCOMPARE(paramValues[0], value1);
-    QCOMPARE(paramValues[1], value);
+    QString value2("VOICE");
+    mVersitProperty->addParameter(name,value2);
+    params = mVersitProperty->parameters();
+    QCOMPARE(params.count(), 2);
+    QVERIFY(params.contains(name,value1));
+    QVERIFY(params.contains(name,value2));
+    
+    mVersitProperty->removeParameter(name,value1);
+    params = mVersitProperty->parameters();
+    QCOMPARE(params.count(), 1);
+    QVERIFY(params.contains(name,value2));
+    
+    mVersitProperty->removeParameter(name,value2);
+    params = mVersitProperty->parameters();
+    QCOMPARE(params.count(), 0);    
 }
 
 void UT_QVersitProperty::testValue()
@@ -83,6 +91,6 @@ void UT_QVersitProperty::testValue()
 void UT_QVersitProperty::testEmbeddedDocument()
 {
     QVersitDocument document;
-    mVersitProperty->setEmbeddedDocument(&document);
-    QVERIFY(mVersitProperty->embeddedDocument());
+    mVersitProperty->setEmbeddedDocument(document);
+    //QVERIFY(document == mVersitProperty->embeddedDocument());
 }

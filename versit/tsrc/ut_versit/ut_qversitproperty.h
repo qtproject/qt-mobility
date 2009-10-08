@@ -50,7 +50,7 @@ private slots:
 private slots: //test methods
 
     void testName();
-    void testParameter();
+    void testParameters();
     void testValue();
     void testEmbeddedDocument();
 

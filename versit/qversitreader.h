@@ -37,12 +37,12 @@
 #include <QObject>
 #include <QIODevice>
 #include <QByteArray>
-#include <QPair>
-
 #include "qversitdocument.h"
+#include "qversitproperty.h"
+
+class QVersitReaderPrivate;
 
 // reads QVersitDocument from iodevice
-class QVersitReaderPrivate;
 class QVersitReader : public QObject
 {
     Q_OBJECT
@@ -65,7 +65,7 @@ signals:
 private:
     
     bool parseVersitDocument(QByteArray& text);
-    QPair<QString,QByteArray> parseNextVersitProperty(QByteArray& text);    
+    QVersitProperty parseNextVersitProperty(QByteArray& text);    
     
 private: // Data
     QVersitReaderPrivate* d;

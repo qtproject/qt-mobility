@@ -34,29 +34,35 @@
 #ifndef QVERSITPROPERTY_P_H
 #define QVERSITPROPERTY_P_H
 
-#include <QMap>
+#include "qversitdocument.h"
+#include <QSharedData>
+#include <QString>
+#include <QMultiMap>
+#include <QByteArray>
 
-#include "qversitproperty.h"
-#include "qversitdocument.h" 
 
-class QVersitDocument;
-
-class QVersitPropertyPrivate
+class QVersitPropertyPrivate : public QSharedData
 {
 public:
-    QVersitPropertyPrivate() :
-        mName(QString()),
-        mValue(QByteArray()),
-        mDocument(0)
+    QVersitPropertyPrivate() : QSharedData() 
     {
-    };
+    }   
     
-    ~QVersitPropertyPrivate() {};
+    QVersitPropertyPrivate(const QVersitPropertyPrivate& other) 
+        : QSharedData(other),
+        mName(other.mName),
+        mParameters(other.mParameters),
+        mValue(other.mValue),
+        mDocument(other.mDocument)
+    {
+    }     
+    
+    ~QVersitPropertyPrivate() {}
     
     QString mName;
-    QMultiMap<QString,QString> mParameterValues;
+    QMultiMap<QString,QString> mParameters;
     QByteArray mValue;
-    QVersitDocument* mDocument;
+    QVersitDocument mDocument;
 };
 
-#endif
+#endif // QVERSITPROPERTY_P_H

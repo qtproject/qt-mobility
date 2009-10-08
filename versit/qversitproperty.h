@@ -34,33 +34,40 @@
 #ifndef QVERSITPROPERTY_H
 #define QVERSITPROPERTY_H
 
+#include "qversitdocument.h"
 #include <QString>
-#include <QStringList>
+#include <QMultiMap>
 #include <QByteArray>
+#include <QSharedDataPointer>
 
-class QVersitDocument;
 class QVersitPropertyPrivate;
 
 class QVersitProperty
 {
 public:
     QVersitProperty();
+    QVersitProperty(const QVersitProperty& other);
     ~QVersitProperty();
+    
+    QVersitProperty& operator=(const QVersitProperty& other);
 
     void setName(const QString& name);
     QString name() const;
 
     void addParameter(const QString& name, const QString& value);
-    QStringList parameterValues(const QString& name);
+    void removeParameter(const QString& name, const QString& value);
+    void setParameters(const QMultiMap<QString,QString>& parameters);
+    QMultiMap<QString,QString> parameters() const;
     
     void setValue(const QByteArray& value);
     QByteArray value() const;
 
-    void setEmbeddedDocument(QVersitDocument* document);
-    const QVersitDocument* embeddedDocument() const;
+    void setEmbeddedDocument(const QVersitDocument& document);
+    QVersitDocument embeddedDocument() const;
 
 private:
-    QVersitPropertyPrivate* d;
+    
+    QSharedDataPointer<QVersitPropertyPrivate> d;
 };
 
 #endif

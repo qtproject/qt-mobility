@@ -97,50 +97,47 @@ bool QVersitReader::parseVersitDocument(QByteArray& text)
 {
     // TODO: Store the properties to a QVersitDocument
     text = text.mid(VersitUtils::countLeadingWhiteSpaces(text));
-    QPair<QString,QByteArray> nameAndValue = parseNextVersitProperty(text);
-    if (nameAndValue.first != "BEGIN" || 
-        nameAndValue.second.trimmed() != "VCARD")
+    QVersitProperty property = parseNextVersitProperty(text);
+    if (property.name() != "BEGIN" || 
+        property.value().trimmed() != "VCARD")
         return false;
-    while (nameAndValue.first.length() > 0 && nameAndValue.first != "END") {
-        nameAndValue = parseNextVersitProperty(text);
-        if (nameAndValue.first == "VERSION" && nameAndValue.second != "2.1")
+    while (property.name().length() > 0 && property.name() != "END") {
+        property = parseNextVersitProperty(text);
+        if (property.name() == "VERSION" && property.value() != "2.1")
             return false;
     }
-    return (nameAndValue.first == "END");
+    return (property.name() == "END");
 }
 
 /*!
  * Parses a versit document and returns whether parsing succeeded.
  */
-QPair<QString,QByteArray> QVersitReader::parseNextVersitProperty(
-    QByteArray& text)
+QVersitProperty QVersitReader::parseNextVersitProperty(QByteArray& text)
 {
-    QPair<QString,QByteArray> nameAndValue;
-    nameAndValue.first = VersitUtils::extractPropertyName(text);
-    QMultiMap<QString,QString> params = 
-        VersitUtils::extractPropertyParams(text);
+    QVersitProperty property;
+    property.setName(VersitUtils::extractPropertyName(text));
+    property.setParameters(VersitUtils::extractPropertyParams(text));
     text = VersitUtils::extractPropertyValue(text); 
-    if (nameAndValue.first == "AGENT") {
+    if (property.name() == "AGENT") {
         if (parseVersitDocument(text)) {
             // TODO: Store the property if parsing was successful
         }
     }
     else {
         int crlfPos = -1;
-        if (params.contains("ENCODING","QUOTED-PRINTABLE")) {
+        if (property.parameters().contains("ENCODING","QUOTED-PRINTABLE")) {
             crlfPos = VersitUtils::findHardLineBreakInQuotedPrintable(text);
-            nameAndValue.second = text.left(crlfPos);
-            VersitUtils::decodeQuotedPrintable(nameAndValue.second);
-            // TODO: Set the name and value to QVersitProperty
-            // TODO: Remove the ENCODING=QUOTED-PRINTABLE parameter
+            QByteArray value = text.left(crlfPos);
+            VersitUtils::decodeQuotedPrintable(value);
+            // Remove the encoding parameter as the value is now decoded
+            property.removeParameter("ENCODING","QUOTED-PRINTABLE");
+            property.setValue(value);
         }
         else {
             crlfPos = text.indexOf("\r\n");
-            nameAndValue.second = text.left(crlfPos);
-            // TODO: Set the name and value to QVersitProperty
+            property.setValue(text.left(crlfPos));
         }
         text = text.mid(crlfPos+2); // +2 is for skipping the CRLF
     }
-    // TODO: Set the parameters to QVersitProperty
-    return nameAndValue;
+    return property;
 }

@@ -79,34 +79,34 @@ END:VCARD\r\n";
     
     QByteArray vCard(vCardData);
     
-    QPair<QString,QByteArray> nameAndValue = 
-        m_reader->parseNextVersitProperty(vCard);
-    QCOMPARE(nameAndValue.first,QString("BEGIN"));
-    QCOMPARE(nameAndValue.second,QByteArray("VCARD"));
+    QVersitProperty property = m_reader->parseNextVersitProperty(vCard);
+    QCOMPARE(property.name(),QString("BEGIN"));
+    QCOMPARE(property.value(),QByteArray("VCARD"));
     
-    nameAndValue = m_reader->parseNextVersitProperty(vCard);
-    QCOMPARE(nameAndValue.first,QString("VERSION"));
-    QCOMPARE(nameAndValue.second,QByteArray("2.1"));
+    property = m_reader->parseNextVersitProperty(vCard);
+    QCOMPARE(property.name(),QString("VERSION"));
+    QCOMPARE(property.value(),QByteArray("2.1"));
     
-    nameAndValue = m_reader->parseNextVersitProperty(vCard);
-    QCOMPARE(nameAndValue.first,QString("N"));
-    QCOMPARE(nameAndValue.second,QByteArray("Homer"));
+    property = m_reader->parseNextVersitProperty(vCard);
+    QCOMPARE(property.name(),QString("N"));
+    QCOMPARE(property.value(),QByteArray("Homer"));
     
-    nameAndValue = m_reader->parseNextVersitProperty(vCard);
-    QCOMPARE(nameAndValue.first,QString("EMAIL"));
-    QCOMPARE(nameAndValue.second,QByteArray("homer@simpsons.com"));
+    property = m_reader->parseNextVersitProperty(vCard);
+    QCOMPARE(property.name(),QString("EMAIL"));
+    QCOMPARE(0,property.parameters().count());
+    QCOMPARE(property.value(),QByteArray("homer@simpsons.com"));
     
-    nameAndValue = m_reader->parseNextVersitProperty(vCard);
-    QCOMPARE(nameAndValue.first,QString("AGENT"));
-    QCOMPARE(nameAndValue.second,QByteArray());
+    property = m_reader->parseNextVersitProperty(vCard);
+    QCOMPARE(property.name(),QString("AGENT"));
+    QCOMPARE(property.value(),QByteArray());
     
-    nameAndValue = m_reader->parseNextVersitProperty(vCard);
-    QCOMPARE(nameAndValue.first,QString("END"));
-    QCOMPARE(nameAndValue.second,QByteArray("VCARD"));
+    property = m_reader->parseNextVersitProperty(vCard);
+    QCOMPARE(property.name(),QString("END"));
+    QCOMPARE(property.value(),QByteArray("VCARD"));
     
-    nameAndValue = m_reader->parseNextVersitProperty(vCard);
-    QCOMPARE(nameAndValue.first,QString());
-    QCOMPARE(nameAndValue.second,QByteArray());
+    property = m_reader->parseNextVersitProperty(vCard);
+    QCOMPARE(property.name(),QString());
+    QCOMPARE(property.value(),QByteArray());
 }
 
 void UT_QVersitReader::testParseVersitDocument()

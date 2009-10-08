@@ -34,14 +34,23 @@
 #include "qversitproperty.h"
 #include "qversitproperty_p.h"
 
-QVersitProperty::QVersitProperty()
+QVersitProperty::QVersitProperty() : d(new QVersitPropertyPrivate())
 {
-    d = new QVersitPropertyPrivate();
+}
+
+QVersitProperty::QVersitProperty(const QVersitProperty& other) : d(other.d)
+{
 }
 
 QVersitProperty::~QVersitProperty()
 {
-    delete d;
+}
+
+QVersitProperty& QVersitProperty::operator=(const QVersitProperty& other)
+{
+    if (this != &other)
+        d = other.d;
+    return *this;    
 }
 
 /*!
@@ -61,19 +70,35 @@ QString QVersitProperty::name() const
 }
 
 /*!
- * Sets the parameter name and value
+ * Replaces all the parameters
  */
-void QVersitProperty::addParameter(const QString& name, const QString& value)
+void QVersitProperty::setParameters(const QMultiMap<QString,QString>& parameters)
 {
-    d->mParameterValues.insert(name,value);
+    d->mParameters = parameters;
 }
 
 /*!
- * Returns the list of values of a certain parameter
+ * Adds a new parameter with \a name and \a value
  */
-QStringList QVersitProperty::parameterValues(const QString& name)
+void QVersitProperty::addParameter(const QString& name, const QString& value)
 {
-    return d->mParameterValues.values(name);
+    d->mParameters.insert(name,value);
+}
+
+/*!
+ * Removes a parameter with \a name and \a value
+ */
+void QVersitProperty::removeParameter(const QString& name, const QString& value)
+{
+    d->mParameters.remove(name,value);
+}
+
+/*!
+ * Returns the contained list of parameters
+ */
+QMultiMap<QString,QString> QVersitProperty::parameters() const
+{
+    return d->mParameters;
 }
 
 /*!
@@ -95,7 +120,7 @@ QByteArray QVersitProperty::value() const
 /*!
  * Sets the embedded document of the property
  */
-void QVersitProperty::setEmbeddedDocument(QVersitDocument* document)
+void QVersitProperty::setEmbeddedDocument(const QVersitDocument& document)
 {
     d->mDocument = document;
 }
@@ -103,7 +128,7 @@ void QVersitProperty::setEmbeddedDocument(QVersitDocument* document)
 /*!
  * Returns the embedded document from the property
  */
-const QVersitDocument* QVersitProperty::embeddedDocument() const
+QVersitDocument QVersitProperty::embeddedDocument() const
 {
     return d->mDocument;
 }
