@@ -79,6 +79,12 @@ public:
     void setDestinationContacts(const QList<QPair<QString, QUniqueId> >& contacts);
     void setRelationshipType(const QString& relationshipType);
 
+    // convenience accessors and mutators for destination contacts
+    bool removeDestinationContact(int position);
+    bool removeDestinationContact(const QPair<QString, QUniqueId>& contact);
+    void insertDestinationContact(int position, const QPair<QString, QUniqueId>& contact);
+    void appendDestinationContact(const QPair<QString, QUniqueId>& contact);
+
 private:
     QSharedDataPointer<QContactRelationshipPrivate> d;
 };

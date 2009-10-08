@@ -389,20 +389,11 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
 {
     // the primary key is the source contact id + relationship type.
     error = QContactManager::NoError;
-    QList<QContactRelationship> allRelationships = d->m_relationships;
-    for (int i = 0; i < allRelationships.size(); i++) {
-        QContactRelationship curr = allRelationships.at(i);
-        if (curr.sourceContact() == relationship->sourceContact() && curr.relationshipType() == relationship->relationshipType()) {
-            d->m_relationships.removeAt(i);
-            d->m_relationships.insert(i, *relationship);
-            return true;
-        }
-    }
 
-    // no matching relationship; must be new.  Attempt to validate the relationship.
+    // Attempt to validate the relationship.
     // first, check that the source contact exists
     if (!d->m_contactIds.contains(relationship->sourceContact())) {
-        error = QContactManager::DoesNotExistError;
+        error = QContactManager::InvalidRelationshipError;
         return false;
     }
 
@@ -413,14 +404,15 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
         QPair<QString, QUniqueId> curr = dests.at(i);
         if (curr.first.isEmpty() || curr.first == myUri) {
             // this entry in the destination list is supposedly stored in this manager.
-            if (!d->m_contactIds.contains(curr.second)) {
-                error = QContactManager::DoesNotExistError;
+            // check that it exists, and that it isn't the source contact (circular)
+            if (!d->m_contactIds.contains(curr.second) || curr.second == relationship->sourceContact()) {
+                error = QContactManager::InvalidRelationshipError;
                 return false;
             }
         }
     }
 
-    // everything checks out fine - save the relationship and return.  First, we synthesise any empty manager URIs.
+    // the relationship is valid.  We need to update any empty manager URIs in the destination contacts to our URI.
     QList<QPair<QString, QUniqueId> > updatedDests;
     for (int i = 0; i < dests.size(); i++) {
         QPair<QString, QUniqueId> curr = dests.at(i);
@@ -430,8 +422,20 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
         }
         updatedDests.append(curr);
     }
-
     relationship->setDestinationContacts(updatedDests);
+
+    // check to see if the relationship already exists in the database.  If so, replace.
+    QList<QContactRelationship> allRelationships = d->m_relationships;
+    for (int i = 0; i < allRelationships.size(); i++) {
+        QContactRelationship curr = allRelationships.at(i);
+        if (curr.sourceContact() == relationship->sourceContact() && curr.relationshipType() == relationship->relationshipType()) {
+            d->m_relationships.removeAt(i);
+            d->m_relationships.insert(i, *relationship);
+            return true;
+        }
+    }
+
+    // no matching relationship; must be new.
     d->m_relationships.append(*relationship);
     return true;
 }

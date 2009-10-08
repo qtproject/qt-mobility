@@ -318,14 +318,18 @@ QList<QContactRelationship> QContactManagerEngine::relationships(const QPair<QSt
 }
 
 /*!
- * Saves the given \a relationship in the database.  If the relationship already exists in the database, but the priority
- * of the relationship has changed, the relationship in the database will be updated with the new priority.  If the relationship
- * already exists in the database, and the priority is the same, this function will return \c false and the \a error will be set
+ * Saves the given \a relationship in the database.  If the relationship already exists in the database, but the destination
+ * contacts in the relationship have changed, the relationship in the database will be updated with the new information.
+ * If the relationship already exists in the database with no differences this function will return \c false and the \a error will be set
  * to \c QContactManager::AlreadyExistsError.  If the relationship is saved or updated successfully, this function will return
- * \c true and \a error will be set to \c QContactManager::NoError.  If the given relationship could not be saved in the database
+ * \c true and \a error will be set to \c QContactManager::NoError.
+ * The given relationship is invalid if it is circular (one of the destination contacts is also the source contact), or
+ * if it references a non-existent local contact (either source or destination).  If the given \a relationship is invalid,
+ * the function will return \c false and the \a error will be set to \c QContactManager::InvalidRelationshipError.
+ * If the given \a relationship could not be saved in the database (due to backend limitations)
  * the function will return \c false and \a error will be set to \c QContactManager::NotSupportedError.
  *
- * If the left contact manager URI or the right contact manager URI is not set in the \a relationship, these will be
+ * If any destination contact manager URI is not set in the \a relationship, these will be
  * automatically set to the URI of this manager, before the relationship is saved.
  */
 bool QContactManagerEngine::saveRelationship(QContactRelationship* relationship, QContactManager::Error& error)

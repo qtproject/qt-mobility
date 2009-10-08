@@ -35,6 +35,10 @@
 #include "qcontactrelationship_p.h"
 #include "qtcontactsglobal.h"
 
+#include <QList>
+#include <QPair>
+#include <QString>
+
 /*!
  * \class QContactRelationship
  * \brief Describes a one-to-many relationship between a locally-stored contact and a list of other (possibly remote) contacts.
@@ -182,3 +186,42 @@ void QContactRelationship::setRelationshipType(const QString& relationshipType)
     d->m_relationshipType = relationshipType;
 }
 
+/*!
+ * Removes the destination contact found at the given \a position in the list of destination contacts if it exists.
+ * Returns true if the destination contact was removed from the list successfully, false if it did not exist or
+ * \a position is not a valid index position in the list.
+ */
+bool QContactRelationship::removeDestinationContact(int position)
+{
+    if (position < 0 || position >= d->m_destinationContacts.size())
+        return false;
+    d->m_destinationContacts.removeAt(position);
+    return true;
+}
+
+/*!
+ * Removes the given destination \a contact from the list of destination contacts if it exists.
+ * Returns true if the destination contact was removed from the list successfully, false if it did not exist.
+ */
+bool QContactRelationship::removeDestinationContact(const QPair<QString, QUniqueId>& contact)
+{
+    return d->m_destinationContacts.removeOne(contact);
+}
+
+/*!
+ * Inserts the destination \a contact into the list of destination contacts at the specified \a position.
+ * If \a position is 0, the \a contact will be inserted at the head of the list.  If \a position is greater
+ * than or equal to the size of the list of destination contacts, it will be append to the end of the list.
+ */
+void QContactRelationship::insertDestinationContact(int position, const QPair<QString, QUniqueId>& contact)
+{
+    d->m_destinationContacts.insert(position, contact);
+}
+
+/*!
+ * Appends the given \a contact onto the list of destination contacts.
+ */
+void QContactRelationship::appendDestinationContact(const QPair<QString, QUniqueId>& contact)
+{
+    d->m_destinationContacts.append(contact);
+}

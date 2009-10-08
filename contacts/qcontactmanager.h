@@ -79,6 +79,7 @@ public:
         DoesNotExistError,
         AlreadyExistsError,
         InvalidDetailError,
+        InvalidRelationshipError,
         LockedError,
         DetailAccessError,
         PermissionsError,

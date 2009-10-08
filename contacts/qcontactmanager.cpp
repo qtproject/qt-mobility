@@ -221,6 +221,7 @@ QContactManager::~QContactManager()
  * \value DoesNotExistError The most recent operation failed because the requested contact or detail definition does not exist
  * \value AlreadyExistsError The most recent operation failed because the specified contact or detail definition already exists
  * \value InvalidDetailError The most recent operation failed because the specified contact contains details which do not conform to their definition
+ * \value InvalidRelationshipError The most recent operation failed because the specified relationship is circular or references an invalid local contact
  * \value LockedError The most recent operation failed because the datastore specified is currently locked
  * \value DetailAccessError The most recent operation failed because a detail was modified or removed and its access method does not allow that
  * \value PermissionsError The most recent operation failed because the caller does not have permission to perform the operation
@@ -413,14 +414,18 @@ QList<QContactRelationship> QContactManager::relationships(const QPair<QString, 
 }
 
 /*!
- * Saves the given \a relationship in the database.  If the relationship already exists in the database, but the priority
- * of the relationship has changed, the relationship in the database will be updated with the new priority.  If the relationship
- * already exists in the database, and the priority is the same, this function will return \c false and the error will be set
+ * Saves the given \a relationship in the database.  If the relationship already exists in the database, but the destination
+ * contacts in the relationship have changed, the relationship in the database will be updated with the new information.
+ * If the relationship already exists in the database with no differences this function will return \c false and the error will be set
  * to \c QContactManager::AlreadyExistsError.  If the relationship is saved or updated successfully, this function will return
- * \c true and error will be set to \c QContactManager::NoError.  If the given relationship could not be saved in the database
+ * \c true and error will be set to \c QContactManager::NoError.
+ * The given relationship is invalid if it is circular (one of the destination contacts is also the source contact), or
+ * if it references a non-existent local contact (either source or destination).  If the given \a relationship is invalid,
+ * the function will return \c false and the error will be set to \c QContactManager::InvalidRelationshipError.
+ * If the given \a relationship could not be saved in the database (due to backend limitations)
  * the function will return \c false and error will be set to \c QContactManager::NotSupportedError.
  *
- * If the left contact manager URI or the right contact manager URI is not set in the \a relationship, these will be
+ * If any destination contact manager URI is not set in the \a relationship, these will be
  * automatically set to the URI of this manager, before the relationship is saved.
  */
 bool QContactManager::saveRelationship(QContactRelationship* relationship)
