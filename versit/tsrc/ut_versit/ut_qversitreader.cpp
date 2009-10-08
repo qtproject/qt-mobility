@@ -59,7 +59,41 @@ void UT_QVersitReader::testDevice()
 
 void UT_QVersitReader::testStart()
 {
+    // No I/O device set
     QVERIFY(!m_reader->start());
+    
+    // Device set, not open
+    QBuffer buffer;
+    m_reader->setDevice(&buffer);
+    QVERIFY(!m_reader->start());
+    
+    // Device set, opened, no data
+    buffer.open(QBuffer::ReadWrite);
+    QVERIFY(!m_reader->start());
+    
+    // Device ready, invalid data
+    const QByteArray& invalidData = 
+        "BEGIN:VCARD\r\nVERSION:2.1\r\nEND:VCARD\r\n";
+    buffer.write(invalidData);
+    buffer.seek(0);
+    QVERIFY(!m_reader->start());
+
+    // Device set, one document
+    const QByteArray& oneDocument = 
+        "BEGIN:VCARD\r\nVERSION:2.1\r\nN:Homer\r\nEND:VCARD\r\n";
+    buffer.write(oneDocument);
+    buffer.seek(0);
+    QVERIFY(m_reader->start());
+    QCOMPARE(m_reader->result().count(),1);
+    
+    // Two documents
+    const QByteArray& twoDocuments = 
+        "BEGIN:VCARD\r\nN:Marge\r\nEND:VCARD\r\nBEGIN:VCARD\r\nN:Bart\r\nEND:VCARD\r\n";
+    buffer.reset();
+    buffer.write(twoDocuments);
+    buffer.seek(0);
+    QVERIFY(m_reader->start());
+    QCOMPARE(m_reader->result().count(),3);
 }
 
 void UT_QVersitReader::testResult()

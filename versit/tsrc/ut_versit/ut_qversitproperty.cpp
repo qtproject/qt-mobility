@@ -91,6 +91,11 @@ void UT_QVersitProperty::testValue()
 void UT_QVersitProperty::testEmbeddedDocument()
 {
     QVersitDocument document;
+    QVersitProperty property;
+    property.setName(QString("X-tension"));
+    document.addProperty(property);
     mVersitProperty->setEmbeddedDocument(document);
-    //QVERIFY(document == mVersitProperty->embeddedDocument());
+    
+    QCOMPARE(mVersitProperty->embeddedDocument().properties().count(),1);
+    QCOMPARE(mVersitProperty->embeddedDocument().properties()[0].name(),QString("X-tension"));
 }

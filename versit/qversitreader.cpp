@@ -78,7 +78,16 @@ QIODevice* QVersitReader::device() const
  */
 bool QVersitReader::start()
 {
-    return false;
+    if (d->m_iodevice) {
+        QByteArray input = d->m_iodevice->readAll();
+        VersitUtils::unfold(input);
+        while (input.length() > 0) {
+            QVersitDocument document = parseVersitDocument(input);
+            if (document.properties().count() > 0)
+                d->m_versitDocuments.append(document);
+        }
+    }
+    return (d->m_versitDocuments.count() > 0);
 }
 
 /*!
