@@ -140,12 +140,11 @@ void SymbianPluginPerfomance::createComplexContacts()
         bday.setDate(QDate(25,10,1978));
         alice.saveDetail(&bday);
         
-        // Not implemented yet
-        /*
         QContactOnlineAccount acc;
         acc.setAccountUri("sips:alice.jones@nokia.com");
+        acc.setSubTypes(QContactOnlineAccount::SubTypeSip);
         alice.saveDetail(&acc);
-        */
+        
         QContactEmailAddress email;
         email.setEmailAddress("mailto:alice.jones@nokia.com");
         alice.saveDetail(&email);
