@@ -80,13 +80,16 @@ symbian: {
 	target.path = /sys/bin
 	INSTALLS += target
 
+    exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
+        DEFINES += USE_CUSTOM_CNT_MODEL_FIELDS
+        cntmodelResourceFile = \
+            "START RESOURCE ../rss/cntmodel.rss" \
+            "TARGETPATH CONTACTS_RESOURCE_DIR" \
+            "END"
+        MMP_RULES += cntmodelResourceFile
+    }
 
-  cntmodelResourceFile = \
-      "START RESOURCE ../rss/cntmodel.rss" \
-      "TARGETPATH CONTACTS_RESOURCE_DIR" \
-      "END"
-  MMP_RULES += cntmodelResourceFile   
-  
+ 
 	symbianplugin.sources = $${TARGET}.dll
 	symbianplugin.path = /resource/qt/plugins/contacts
 	DEPLOYMENT += symbianplugin

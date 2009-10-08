@@ -11,7 +11,7 @@
 *
 * Contributors:
 *
-* Description: 
+* Description:
 *     This file contains private declarations for resources of PbkEng.dll.
 *     The file can be included in C++ or resource file.
 *
@@ -21,10 +21,10 @@
 #ifndef CNTMODELEXTUIDS_HRH
 #define CNTMODELEXTUIDS_HRH
 
-//  CONSTANTS  
+//  CONSTANTS
 
 /**
- * Storage type for thumbnail fields. 
+ * Storage type for thumbnail fields.
  * Currently filename link is the default.
  */
 #define KPbkThumbnailFieldStorageType KStorageTypeStore
@@ -68,6 +68,7 @@
 // !! In case this is undefined on earlier platforms
 #ifndef KUidContactFieldGEOValue
 #define KUidContactFieldGEOValue            0x10274DB2
+const TUid KUidContactFieldGEO = {KUidContactFieldGEOValue};
 #endif
 
 #endif // CNTMODELEXTUIDS_HRH
