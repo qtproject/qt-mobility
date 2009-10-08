@@ -18,3 +18,9 @@ include(../../common.pri)
 LIBS += -lQtBearer
 
 CONFIG += console
+
+symbian {
+    BEARERLIB.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/QtBearer.dll
+    BEARERLIB.path = .
+    DEPLOYMENT += BEARERLIB
+}

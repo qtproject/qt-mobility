@@ -32,16 +32,14 @@
 ****************************************************************************/
 #include <QApplication>
 
-#include "bearerdialog.h"
+#include "bearermonitor.h"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    BearerDialog dialog;
-    QObject::connect(&dialog, SIGNAL(accepted()), &app, SLOT(quit()));
-
-    dialog.show();
+    BearerMonitor monitor;
+    monitor.show();
 
     return app.exec();
 }
