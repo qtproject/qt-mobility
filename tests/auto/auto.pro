@@ -1,7 +1,7 @@
 TEMPLATE = subdirs
 
 SUBDIRS = \
-        qaudiosource \
+        qaudiocapturesource \
         qcamera \
         qmediaimageviewer \
         qmediaobject \
@@ -14,7 +14,7 @@ SUBDIRS = \
         qmediaservice \
         qmediaserviceprovider \
         qmediacontent \
-        qradioplayer \
+        qradiotuner \
         qvideowidget
 
 contains(QT_CONFIG, multimedia) {

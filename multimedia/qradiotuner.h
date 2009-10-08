@@ -32,51 +32,60 @@
 **
 ****************************************************************************/
 
-#ifndef QRADIOPLAYER_H
-#define QRADIOPLAYER_H
+#ifndef QRADIOTUNER_H
+#define QRADIOTUNER_H
 
 #include <QtCore/qobject.h>
 
 #include <multimedia/qmediaobject.h>
 #include <multimedia/qmediaserviceprovider.h>
 
+#include <QPair>
 
-class QRadioPlayerPrivate;
-class Q_MEDIA_EXPORT QRadioPlayer : public QMediaObject
+class QRadioTunerPrivate;
+class Q_MEDIA_EXPORT QRadioTuner : public QMediaObject
 {
     Q_OBJECT
     Q_PROPERTY(Band band READ band WRITE setBand NOTIFY bandChanged)
     Q_PROPERTY(int frequency READ frequency WRITE setFrequency NOTIFY frequencyChanged)
-    Q_PROPERTY(bool stereo READ isStereo WRITE setStereo NOTIFY stereoStatusChanged)
+    Q_PROPERTY(bool stereo READ isStereo NOTIFY stereoStatusChanged)
     Q_PROPERTY(int signalStrength READ signalStrength NOTIFY signalStrengthChanged)
-    Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
     Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutingChanged)
     Q_PROPERTY(bool searching READ isSearching NOTIFY searchingStatusChanged)
     Q_ENUMS(Band)
+    Q_ENUMS(Error)
+    Q_ENUMS(StereoMode)
 
 public:
     enum Band { AM, FM, SW, LW };
+    enum Error { NoError, ResourceError, OpenError, OutOfRangeError };
+    enum StereoMode { ForceStereo, ForceMono, Auto };
 
-    QRadioPlayer(QObject *parent = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
-    ~QRadioPlayer();
+    QRadioTuner(QObject *parent = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
+    ~QRadioTuner();
 
     Band band() const;
 
-    bool isSupportedBand(Band b) const;
+    bool isBandSupported(Band b) const;
 
     int frequency() const;
+    int frequencyStep(Band band) const;
+    QPair<int,int> frequencyRange(Band band) const;
 
     bool isStereo() const;
+    void setStereoMode(QRadioTuner::StereoMode mode);
+    StereoMode stereoMode() const;
 
     int signalStrength() const;
-
-    qint64 duration() const;
 
     int volume() const;
     bool isMuted() const;
 
     bool isSearching() const;
+
+    Error error() const;
+    QString errorString() const;
 
 public Q_SLOTS:
     void searchForward();
@@ -85,24 +94,26 @@ public Q_SLOTS:
 
     void setBand(Band band);
     void setFrequency(int frequency);
-    void setStereo(bool stereo);
 
     void setVolume(int volume);
     void setMuted(bool muted);
 
+    void start();
+    void stop();
+
 Q_SIGNALS:
-    void bandChanged(QRadioPlayer::Band band);
+    void bandChanged(QRadioTuner::Band band);
     void frequencyChanged(int frequency);
     void stereoStatusChanged(bool stereo);
     void searchingStatusChanged(bool searching);
     void signalStrengthChanged(int signalStrength);
-    void durationChanged(qint64 duration);
     void volumeChanged(int volume);
     void mutingChanged(bool muted);
+    void error(Error err);
 
 private:
-    Q_DISABLE_COPY(QRadioPlayer)
-    Q_DECLARE_PRIVATE(QRadioPlayer)
+    Q_DISABLE_COPY(QRadioTuner)
+    Q_DECLARE_PRIVATE(QRadioTuner)
 };
 
 #endif  // QRADIOPLAYER_H

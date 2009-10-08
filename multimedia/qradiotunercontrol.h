@@ -32,32 +32,33 @@
 **
 ****************************************************************************/
 
-#ifndef QRADIOPLAYERCONTROL_H
-#define QRADIOPLAYERCONTROL_H
+#ifndef QRADIOTUNERCONTROL_H
+#define QRADIOTUNERCONTROL_H
 
 #include <multimedia/qmediacontrol.h>
-#include <multimedia/qradioplayer.h>
+#include <multimedia/qradiotuner.h>
 
-class Q_MEDIA_EXPORT QRadioPlayerControl : public QMediaControl
+class Q_MEDIA_EXPORT QRadioTunerControl : public QMediaControl
 {
     Q_OBJECT
 
 public:
-    ~QRadioPlayerControl();
+    ~QRadioTunerControl();
 
-    virtual QRadioPlayer::Band band() const = 0;
-    virtual void setBand(QRadioPlayer::Band b) = 0;
-    virtual bool isSupportedBand(QRadioPlayer::Band b) const = 0;
+    virtual QRadioTuner::Band band() const = 0;
+    virtual void setBand(QRadioTuner::Band b) = 0;
+    virtual bool isBandSupported(QRadioTuner::Band b) const = 0;
 
     virtual int frequency() const = 0;
+    virtual int frequencyStep(QRadioTuner::Band b) const = 0;
+    virtual QPair<int,int> frequencyRange(QRadioTuner::Band b) const = 0;
     virtual void setFrequency(int frequency) = 0;
 
     virtual bool isStereo() const = 0;
-    virtual void setStereo(bool stereo) = 0;
+    virtual QRadioTuner::StereoMode stereoMode() const = 0;
+    virtual void setStereoMode(QRadioTuner::StereoMode mode) = 0;
 
     virtual int signalStrength() const = 0;
-
-    virtual qint64 duration() const = 0;
 
     virtual int volume() const = 0;
     virtual void setVolume(int volume) = 0;
@@ -71,21 +72,27 @@ public:
     virtual void searchBackward() = 0;
     virtual void cancelSearch() = 0;
 
+    virtual void start() = 0;
+    virtual void stop() = 0;
+
+    virtual QRadioTuner::Error error() const = 0;
+    virtual QString errorString() const = 0;
+
 Q_SIGNALS:
-    void bandChanged(QRadioPlayer::Band band);
+    void bandChanged(QRadioTuner::Band band);
     void frequencyChanged(int frequency);
     void stereoStatusChanged(bool stereo);
     void searchingStatusChanged(bool stereo);
     void signalStrengthChanged(int signalStrength);
-    void durationChanged(qint64 durattion);
     void volumeChanged(int volume);
     void mutingChanged(bool muted);
+    void error(QRadioTuner::Error err);
 
 protected:
-    QRadioPlayerControl(QObject *parent = 0);
+    QRadioTunerControl(QObject *parent = 0);
 };
 
-#define QRadioPlayerControl_iid "com.nokia.Qt.QRadioPlayerControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QRadioPlayerControl, QRadioPlayerControl_iid)
+#define QRadioTunerControl_iid "com.nokia.Qt.QRadioTunerControl/1.0"
+Q_MEDIA_DECLARE_CONTROL(QRadioTunerControl, QRadioTunerControl_iid)
 
-#endif  // QRADIOPLAYERCONTROL_H
+#endif  // QRADIOTUNERCONTROL_H

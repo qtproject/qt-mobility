@@ -39,8 +39,8 @@ HEADERS = \
     qmetadatacontrol.h \
     qmediastreamscontrol.h \
     qmultimediaglobal.h \
-    qradioplayer.h \
-    qradioplayercontrol.h \
+    qradiotuner.h \
+    qradiotunercontrol.h \
     qtmedianamespace.h \
     qvideooutputcontrol.h \
     qvideowidget.h \
@@ -51,7 +51,7 @@ HEADERS = \
     qvideoencodercontrol.h \
     qimageencodercontrol.h \
     qimagecapturecontrol.h \
-    qaudiosource.h \
+    qaudiocapturesource.h \
     qcamera.h \
     qcameracontrol.h \
     qcameraexposurecontrol.h \
@@ -82,8 +82,8 @@ SOURCES = qmediacontrol.cpp \
     qmediaserviceprovider.cpp \
     qmetadatacontrol.cpp \
     qmediastreamscontrol.cpp \
-    qradioplayer.cpp \
-    qradioplayercontrol.cpp \
+    qradiotuner.cpp \
+    qradiotunercontrol.cpp \
     qvideooutputcontrol.cpp \
     qvideowidget.cpp \
     qvideowindowcontrol.cpp \
@@ -92,7 +92,7 @@ SOURCES = qmediacontrol.cpp \
     qvideoencodercontrol.cpp \
     qimageencodercontrol.cpp \
     qimagecapturecontrol.cpp \
-    qaudiosource.cpp \
+    qaudiocapturesource.cpp \
     qcamera.cpp \
     qcameracontrol.cpp \
     qcameraexposurecontrol.cpp \

@@ -1,8 +1,8 @@
-TARGET = tst_qaudiosource
+TARGET = tst_qradiotuner
 
 CONFIG += testcase
 
-SOURCES += tst_qaudiosource.cpp
+SOURCES += tst_qradiotuner.cpp
 
 include (../../../common.pri)
 

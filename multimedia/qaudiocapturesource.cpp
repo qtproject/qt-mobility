@@ -34,27 +34,27 @@
 
 #include <QIcon>
 #include <multimedia/qmediaobject_p.h>
-#include <multimedia/qaudiosource.h>
+#include <multimedia/qaudiocapturesource.h>
 #include <multimedia/qaudiodevicecontrol.h>
 
 /*!
-    \class QAudioSource
-    \brief The QAudioSource class provides an interface to query and select an audio input device.
+    \class QAudioCaptureSource
+    \brief The QAudioCaptureSource class provides an interface to query and select an audio input device.
     \ingroup multimedia
 
     \preliminary
 
-    QAudioSource provides access to the audio audio devices available on your system.
+    QAudioCaptureSource provides access to the audio audio devices available on your system.
 
     You can query these devices and select one to use.
 
     A typical implementation example:
     \code
-        QAudioSource* audiosource = new QAudioSource;
-        QMediaRecorder* capture = new QMediaRecorder(audiosource);
+        QAudioCaptureSource* audiocapturesource = new QAudioCaptureSource;
+        QMediaRecorder* capture = new QMediaRecorder(audiocapturesource);
     \endcode
 
-    The audiosource interface is then used to:
+    The audiocapturesource interface is then used to:
 
     - Get and Set the audio device to use.
 
@@ -69,22 +69,22 @@
     \sa QMediaRecorder
 */
 
-class QAudioSourcePrivate : public QMediaObjectPrivate
+class QAudioCaptureSourcePrivate : public QMediaObjectPrivate
 {
 public:
-    QAudioSourcePrivate():provider(0), audioDeviceControl(0) {}
+    QAudioCaptureSourcePrivate():provider(0), audioDeviceControl(0) {}
     QMediaServiceProvider *provider;
     QAudioDeviceControl   *audioDeviceControl;
 };
 
 /*!
-    Construct a QAudioSource using the QMediaService from \a provider, with \a parent.
+    Construct a QAudioCaptureSource using the QMediaService from \a provider, with \a parent.
 */
 
-QAudioSource::QAudioSource(QObject *parent, QMediaServiceProvider *provider):
-    QMediaObject(*new QAudioSourcePrivate, parent, provider->requestService("audiosource"))
+QAudioCaptureSource::QAudioCaptureSource(QObject *parent, QMediaServiceProvider *provider):
+    QMediaObject(*new QAudioCaptureSourcePrivate, parent, provider->requestService("audiosource"))
 {
-    Q_D(QAudioSource);
+    Q_D(QAudioCaptureSource);
 
     d->provider = provider;
 
@@ -99,12 +99,12 @@ QAudioSource::QAudioSource(QObject *parent, QMediaServiceProvider *provider):
 }
 
 /*!
-    Destroys the audiosource object.
+    Destroys the audiocapturesource object.
 */
 
-QAudioSource::~QAudioSource()
+QAudioCaptureSource::~QAudioCaptureSource()
 {
-    Q_D(QAudioSource);
+    Q_D(QAudioCaptureSource);
 
     d->provider->releaseService(d->service);
 }
@@ -113,9 +113,9 @@ QAudioSource::~QAudioSource()
     Returns the number of audio input devices available.
 */
 
-int QAudioSource::deviceCount() const
+int QAudioCaptureSource::deviceCount() const
 {
-    Q_D(const QAudioSource);
+    Q_D(const QAudioCaptureSource);
 
     if(d->audioDeviceControl)
         return d->audioDeviceControl->deviceCount();
@@ -127,9 +127,9 @@ int QAudioSource::deviceCount() const
     Returns the name of the audio input device at \a index.
 */
 
-QString QAudioSource::name(int index) const
+QString QAudioCaptureSource::name(int index) const
 {
-    Q_D(const QAudioSource);
+    Q_D(const QAudioCaptureSource);
 
     QString text;
 
@@ -143,9 +143,9 @@ QString QAudioSource::name(int index) const
     Returns the description of the audio input device at \a index.
 */
 
-QString QAudioSource::description(int index) const
+QString QAudioCaptureSource::description(int index) const
 {
-    Q_D(const QAudioSource);
+    Q_D(const QAudioCaptureSource);
 
     QString text;
 
@@ -159,9 +159,9 @@ QString QAudioSource::description(int index) const
     Returns the icon for the audio input device at \a index.
 */
 
-QIcon QAudioSource::icon(int index) const
+QIcon QAudioCaptureSource::icon(int index) const
 {
-    Q_D(const QAudioSource);
+    Q_D(const QAudioCaptureSource);
 
     if(d->audioDeviceControl)
         return d->audioDeviceControl->icon(index);
@@ -173,9 +173,9 @@ QIcon QAudioSource::icon(int index) const
     Returns the default audio input devices index.
 */
 
-int QAudioSource::defaultDevice() const
+int QAudioCaptureSource::defaultDevice() const
 {
-    Q_D(const QAudioSource);
+    Q_D(const QAudioCaptureSource);
 
     if(d->audioDeviceControl)
         return d->audioDeviceControl->defaultDevice();
@@ -187,9 +187,9 @@ int QAudioSource::defaultDevice() const
     Returns the index of the currently selected audio input device.
 */
 
-int QAudioSource::selectedDevice() const
+int QAudioCaptureSource::selectedDevice() const
 {
-    Q_D(const QAudioSource);
+    Q_D(const QAudioCaptureSource);
 
     if(d->audioDeviceControl)
         return d->audioDeviceControl->selectedDevice();
@@ -201,28 +201,28 @@ int QAudioSource::selectedDevice() const
     Sets the audio input device to \a index.
 */
 
-void QAudioSource::setSelectedDevice(int index)
+void QAudioCaptureSource::setSelectedDevice(int index)
 {
-    Q_D(const QAudioSource);
+    Q_D(const QAudioCaptureSource);
 
     if(d->audioDeviceControl)
         d->audioDeviceControl->setSelectedDevice(index);
 }
 
 /*!
-    \fn QAudioSource::selectedDeviceChanged(int index)
+    \fn QAudioCaptureSource::selectedDeviceChanged(int index)
 
     Signal emitted when selected audio device changes to \a index.
 */
 
 /*!
-    \fn QAudioSource::selectedDeviceChanged(const QString &deviceName)
+    \fn QAudioCaptureSource::selectedDeviceChanged(const QString &deviceName)
 
     Signal emitted when selected audio device changes to \a deviceName.
 */
 
 /*!
-    \fn QAudioSource::devicesChanged()
+    \fn QAudioCaptureSource::devicesChanged()
 
     Signal is emitted when the available audio input devices has changed.
 */

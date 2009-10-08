@@ -37,7 +37,7 @@
 
 #include <QtGui>
 
-#include <multimedia/qradioplayer.h>
+#include <multimedia/qradiotuner.h>
 
 class QLabel;
 class QPushButton;
@@ -67,7 +67,7 @@ private:
     QPushButton* searchLeft;
     QPushButton* searchRight;
     QSlider* volumeSlider;
-    QRadioPlayer* player;
+    QRadioTuner* radio;
 };
 
 #endif

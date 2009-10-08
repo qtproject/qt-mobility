@@ -25,11 +25,11 @@ To build the library, run \tt qmake and \tt make.
     \o \l{QMediaPlayer}
     \o \l{QVideoWidget}
     \o \l{QMediaRecorder}
-    \o \l{QRadioPlayer}
+    \o \l{QRadioTuner}
     \o \l{QMediaPlaylist}
     \o \l{QCamera}
     \o \l{QMediaImageViewer}
-    \o \l{QAudioSource}
+    \o \l{QAudioCaptureSource}
 \endlist
 
 \section2 Classes for service implementers.
@@ -42,7 +42,7 @@ To build the library, run \tt qmake and \tt make.
     \o \l{QMediaPlayerControl}
     \o \l{QMediaRecorderControl}
     \o \l{QMetaDataControl}
-    \o \l{QRadioPlayerControl}
+    \o \l{QRadioTunerControl}
     \o \l{QCameraControl}
 \endlist
 */

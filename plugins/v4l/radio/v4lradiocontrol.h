@@ -39,32 +39,33 @@
 #include <QtCore/qtimer.h>
 #include <QtCore/qdatetime.h>
 
-#include <multimedia/qradioplayercontrol.h>
+#include <multimedia/qradiotunercontrol.h>
 
 #include "linux/videodev2.h"
 
 class V4LRadioService;
 
-class V4LRadioControl : public QRadioPlayerControl
+class V4LRadioControl : public QRadioTunerControl
 {
     Q_OBJECT
 public:
     V4LRadioControl(QObject *parent = 0);
     ~V4LRadioControl();
 
-    QRadioPlayer::Band band() const;
-    void setBand(QRadioPlayer::Band b);
-    bool isSupportedBand(QRadioPlayer::Band b) const;
+    QRadioTuner::Band band() const;
+    void setBand(QRadioTuner::Band b);
+    bool isBandSupported(QRadioTuner::Band b) const;
 
     int frequency() const;
+    int frequencyStep(QRadioTuner::Band b) const;
+    QPair<int,int> frequencyRange(QRadioTuner::Band b) const;
     void setFrequency(int frequency);
 
     bool isStereo() const;
-    void setStereo(bool stereo);
+    QRadioTuner::StereoMode stereoMode() const;
+    void setStereoMode(QRadioTuner::StereoMode mode);
 
     int signalStrength() const;
-
-    qint64 duration() const;
 
     int volume() const;
     void setVolume(int volume);
@@ -78,6 +79,12 @@ public:
     void searchForward();
     void searchBackward();
 
+    void start();
+    void stop();
+
+    QRadioTuner::Error error() const;
+    QString errorString() const;
+
 private slots:
     void search();
 
@@ -88,6 +95,7 @@ private:
 
     int fd;
 
+    bool m_error;
     bool muted;
     bool stereo;
     bool low;
@@ -99,7 +107,7 @@ private:
     bool scanning;
     bool forward;
     QTimer* timer;
-    QRadioPlayer::Band   currentBand;
+    QRadioTuner::Band   currentBand;
     qint64 freqMin;
     qint64 freqMax;
     qint64 currentFreq;
