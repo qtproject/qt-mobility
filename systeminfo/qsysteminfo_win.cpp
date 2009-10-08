@@ -69,7 +69,7 @@
 #include <Dshow.h>
 #endif
 #endif
-#endif
+
 
 #include <Wtsapi32.h>
 
