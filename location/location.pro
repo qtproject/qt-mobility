@@ -56,5 +56,9 @@ symbian {
     exportheaders.sources = $$PUBLIC_HEADERS
     exportheaders.path = epoc32/include
     DEPLOYMENT += exportheaders
+
+    QtLocationDeployment.sources = QtLocation.dll
+    QtLocationDeployment.path = /sys/bin
+    DEPLOYMENT += QtLocationDeployment
 }
 
