@@ -76,9 +76,14 @@ public:
         return m_frequency;
     }
 
-    QPair<int,int> frequencyRange() const
+    QPair<int,int> frequencyRange(QRadioTuner::Band) const
     {
         return qMakePair<int,int>(1,2);
+    }
+
+    int frequencyStep(QRadioTuner::Band) const
+    {
+        return 1;
     }
 
     void setFrequency(int frequency)
@@ -92,9 +97,20 @@ public:
         return m_stereo;
     }
 
-    void setStereoMode(QRadioTunerControl::StereoMode mode)
+    void setStereo(bool stereo)
     {
-        emit stereoStatusChanged(true);
+        emit stereoStatusChanged(m_stereo = stereo);
+    }
+
+
+    QRadioTuner::StereoMode stereoMode() const
+    {
+        return m_stereoMode;
+    }
+
+    void setStereoMode(QRadioTuner::StereoMode mode)
+    {
+        m_stereoMode = mode;
     }
 
     QRadioTuner::Error error() const
@@ -157,6 +173,14 @@ public:
         emit searchingStatusChanged(m_searching);
     }
 
+    void start()
+    {
+    }
+
+    void stop()
+    {
+    }
+
 public:
     bool m_searching;
     bool m_muted;
@@ -164,6 +188,7 @@ public:
     int  m_volume;
     int  m_signal;
     int  m_frequency;
+    QRadioTuner::StereoMode m_stereoMode;
     QRadioTuner::Band m_band;
 };
 

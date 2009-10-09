@@ -233,7 +233,7 @@ const QIODevice *QWmpPlayerControl::mediaStream() const
 void QWmpPlayerControl::setMedia(const QMediaContent &content, QIODevice *stream)
 {
     if (!content.isNull() && !stream)
-        setUrl(content.contentUri());
+        setUrl(content.canonicalUri());
     else
         setUrl(QUrl());
 }

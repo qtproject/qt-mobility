@@ -317,16 +317,16 @@ void QWmpMetaData::setValue(IWMPMedia *media, BSTR key, const QVariant &value)
         media->setItemInfo(key, QAutoBStr(value.toString()));
 }
 
-QMediaResourceList QWmpMetaData::resources(IWMPMedia *media)
+QMediaContent QWmpMetaData::resources(IWMPMedia *media)
 {
-    QMediaResourceList resources;
+    QMediaContent content;
 
     BSTR string = 0;
     if (media->get_sourceURL(&string) == S_OK) {
         QString uri = QString::fromWCharArray(static_cast<const wchar_t *>(string));
         ::SysFreeString(string);
 
-        resources.append(QMediaResource(QUrl(uri)));
+        content = QMediaContent(QUrl(uri));
 
         if (media->getItemInfo(QAutoBStr(L"WM/WMCollectionGroupID"), &string) == S_OK) {
             QString uuid = QString::fromWCharArray(static_cast<const wchar_t *>(string));
@@ -337,29 +337,15 @@ QMediaResourceList QWmpMetaData::resources(IWMPMedia *media)
 
             QDir dir = QFileInfo(uri).absoluteDir();
 
-            if (dir.exists(albumArtLarge)) {
-                QMediaResource resource(
-                        QUrl(dir.absoluteFilePath(albumArtLarge)),
-                        QLatin1String("image/jpeg"),
-                        QMediaResource::CoverArtRole);
-                resource.setResolution(QSize(200, 200));
+            if (dir.exists(albumArtLarge))
+                content.setCoverArtUriLarge(QUrl(dir.absoluteFilePath(albumArtLarge)));
 
-                resources.append(resource);
-            }
-
-            if (dir.exists(albumArtSmall)) {
-                QMediaResource resource(
-                        QUrl(dir.absoluteFilePath(albumArtSmall)),
-                        QLatin1String("image/jpeg"),
-                        QMediaResource::CoverArtRole);
-                resource.setResolution(QSize(75, 75));
-
-                resources.append(resource);
-            }
+            if (dir.exists(albumArtSmall))
+                content.setCoverArtUriSmall(QUrl(dir.absoluteFilePath(albumArtSmall)));
         }
     }
 
-    return resources;
+    return content;
 }
 
 QVariant QWmpMetaData::convertVariant(const VARIANT &variant)

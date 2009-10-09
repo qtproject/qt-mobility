@@ -566,11 +566,20 @@ void QMediaImageViewerControl::showMedia(const QMediaContent &media)
         emit currentMediaChanged(d->currentMedia);
         emit mediaStatusChanged(d->status);
     } else {
-        d->possibleResources
-                = media.resources(QMediaResource::ContentRole)
-                + media.resources(QMediaResource::PreviewRole)
-                + media.resources(QMediaResource::PosterRole)
-                + media.resources(QMediaResource::CoverArtRole);
+        d->possibleResources = media.resources();
+
+        QUrl posterUri = media.posterUri();
+        if (!posterUri.isEmpty())
+            d->possibleResources << QMediaResource(posterUri);
+
+        QUrl coverUriLarge = media.coverArtUriLarge();
+        if (!coverUriLarge.isEmpty())
+            d->possibleResources << QMediaResource(coverUriLarge);
+
+        QUrl coverUriSmall = media.coverArtUriSmall();
+        if (!coverUriSmall.isEmpty())
+            d->possibleResources << QMediaResource(coverUriSmall);
+
         d->loadImage();
     }
 }

@@ -43,18 +43,8 @@
 class Q_MEDIA_EXPORT QMediaResource
 {
 public:
-    enum ResourceRole
-    {
-        ContentRole,
-        PreviewRole,
-        PosterRole,
-        CoverArtRole,
-        ThumbnailRole
-    };
-
     QMediaResource();
-    QMediaResource(const QUrl &uri, ResourceRole role = ContentRole);
-    QMediaResource(const QUrl &uri, const QString &type, ResourceRole role = ContentRole);
+    QMediaResource(const QUrl &uri, const QString &mimeType = QString());
     QMediaResource(const QMediaResource &other);
     QMediaResource &operator =(const QMediaResource &other);
     ~QMediaResource();
@@ -65,7 +55,6 @@ public:
     bool operator !=(const QMediaResource &other) const;
 
     QUrl uri() const;
-    ResourceRole role() const;
     QString mimeType() const;
 
     QString language() const;
@@ -108,7 +97,6 @@ private:
     {
         Uri,
         MimeType,
-        Role,
         Language,
         AudioCodec,
         VideoCodec,
@@ -126,7 +114,6 @@ private:
 
 typedef QList<QMediaResource> QMediaResourceList;
 
-Q_DECLARE_METATYPE(QMediaResource::ResourceRole)
 Q_DECLARE_METATYPE(QMediaResource)
 Q_DECLARE_METATYPE(QMediaResourceList)
 

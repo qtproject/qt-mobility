@@ -33,6 +33,7 @@
 ****************************************************************************/
 
 #include <QtCore/qurl.h>
+#include <QtCore/qvariant.h>
 
 #include <multimedia/qmediacontent.h>
 
@@ -43,8 +44,7 @@ public:
     QMediaContentPrivate() {}
     QMediaContentPrivate(const QMediaResourceList &r):
         resources(r) {}
-    /*
-       Uncomment if QMediaContent acquires mutating members.
+
     QMediaContentPrivate(const QMediaContentPrivate &other):
         QSharedData(other),
         resources(other.resources) {}
@@ -54,9 +54,13 @@ public:
         resources = other.resources;
         return *this;
     }
-    */
 
     QMediaResourceList  resources;
+    QUrl posterUri;
+    QUrl coverArtUriSmall;
+    QUrl coverArtUriLarge;
+    QUrl thumbnailUriSmall;
+    QUrl thumbnailUriLarge;
 };
 
 
@@ -71,8 +75,8 @@ public:
     the primary stream, or extended meta-data such as a Poster for a movie.
 
     A non-null QMediaContent will always have a primary or canonical reference to
-    the content available through the contentUri() or contentResource()
-    methods, all other resources are optional.
+    the content available through the canonicalUri() or canonicalResource()
+    methods, any additional resources are optional.
 */
 
 
@@ -85,23 +89,23 @@ QMediaContent::QMediaContent()
 }
 
 /*!
-    Constructs a media source with \a contentUri providing a reference to the content.
+    Constructs a media source with \a uri providing a reference to the content.
 */
 
-QMediaContent::QMediaContent(const QUrl &contentUri):
+QMediaContent::QMediaContent(const QUrl &uri):
     d(new QMediaContentPrivate)
 {
-    d->resources << QMediaResource(contentUri);
+    d->resources << QMediaResource(uri);
 }
 
 /*!
-    Constructs a media source with \a contentResource providing a reference to the content.
+    Constructs a media source with \a resource providing a reference to the content.
 */
 
-QMediaContent::QMediaContent(const QMediaResource &contentResource):
+QMediaContent::QMediaContent(const QMediaResource &resource):
     d(new QMediaContentPrivate)
 {
-    d->resources << contentResource;
+    d->resources << resource;
 }
 
 /*!
@@ -170,47 +174,137 @@ bool QMediaContent::isNull() const
 }
 
 /*!
-    Returns a QUrl that represents that canonical content resource for this media content.
+    Returns a QUrl that represents that canonical resource for this media content.
 */
 
-QUrl QMediaContent::contentUri() const
+QUrl QMediaContent::canonicalUri() const
 {
-    return contentResource().uri();
+    return canonicalResource().uri();
 }
 
 /*!
-    Returns a QMediaResource that represents that canonical content resource for this media content.
+    Returns a QMediaResource that represents that canonical resource for this media content.
 */
 
-QMediaResource QMediaContent::contentResource() const
+QMediaResource QMediaContent::canonicalResource() const
 {
-    if (d.constData() != 0) {
-        foreach (const QMediaResource &resource, d->resources) {
-            if (resource.role() == QMediaResource::ContentRole)
-                return resource;
-        }
-    }
-
-    return QMediaResource();
+    return d.constData() != 0
+            ?  d->resources.value(0)
+            : QMediaResource();
 }
 
 /*!
-    Returns a QMediaResourceList that contains all the QMediaResources that match the resource \a role.
-
-    \sa QMediaResource::ResourceRole
+    Returns a list of alternative resources for this media content.  The first item in this list
+    is always the canonical resource.
 */
 
-QMediaResourceList QMediaContent::resources(QMediaResource::ResourceRole role) const
+QMediaResourceList QMediaContent::resources() const
 {
-    QMediaResourceList rc;
-
-    if (d.constData() != 0) {
-        foreach (const QMediaResource &resource, d->resources) {
-            if (resource.role() == role)
-                rc << resource;
-        }
-    }
-
-    return rc;
+    return d.constData() != 0
+            ? d->resources
+            : QMediaResourceList();
 }
 
+/*!
+    Returns the URI of a poster image for this media content.
+*/
+
+QUrl QMediaContent::posterUri() const
+{
+    return d.constData() != 0
+            ? d->posterUri
+            : QUrl();
+}
+
+/*!
+    Sets the \a uri of a poster image for this media content.
+*/
+
+void QMediaContent::setPosterUri(const QUrl &uri)
+{
+    if (d.constData() != 0)
+        d->posterUri = uri;
+}
+
+/*!
+    Returns the URI of a small cover art image for this media content.
+*/
+QUrl QMediaContent::coverArtUriSmall() const
+{
+    return d.constData() != 0
+            ? d->coverArtUriSmall
+            : QUrl();
+}
+
+/*!
+    Sets the \a uri of a small cover art image for this media content.
+*/
+
+void QMediaContent::setCoverArtUriSmall(const QUrl &uri)
+{
+    if (d.constData() != 0)
+        d->coverArtUriSmall = uri;
+}
+
+/*!
+    Returns the URI of a large cover art image for this media content.
+*/
+
+QUrl QMediaContent::coverArtUriLarge() const
+{
+    return d.constData() != 0
+            ? d->coverArtUriLarge
+            : QUrl();
+}
+
+/*!
+    Sets the \a uri of a large cover art image for this media content.
+*/
+
+void QMediaContent::setCoverArtUriLarge(const QUrl &uri)
+{
+    if (d.constData() != 0)
+        d->coverArtUriLarge = uri;
+}
+
+/*!
+    Returns the URI of a small thumbnail image for this media content.
+*/
+
+QUrl QMediaContent::thumbnailUriSmall() const
+{
+    return d.constData() != 0
+            ? d->thumbnailUriSmall
+            : QUrl();
+}
+
+/*!
+    Sets the \a uri of a small thumbanil image for this media content.
+*/
+
+void QMediaContent::setThumbnailUriSmall(const QUrl &uri)
+{
+    if (d.constData() != 0)
+        d->thumbnailUriSmall = uri;
+}
+
+/*!
+    Returns the URI of a large thumbnail image for this media content.
+*/
+
+QUrl QMediaContent::thumbnailUriLarge() const
+{
+    return d.constData() != 0
+            ? d->thumbnailUriLarge
+            : QUrl();
+}
+
+/*!
+    Sets the \a uri of a large thumbnail image for this media content.
+*/
+
+void QMediaContent::setThumbnailUriLarge(const QUrl &uri)
+{
+    if (d.constData() != 0)
+        d->thumbnailUriLarge = uri;
+}

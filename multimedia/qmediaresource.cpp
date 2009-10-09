@@ -45,19 +45,6 @@
 */
 
 /*!
-    \enum QMediaResource::ResourceRole
-
-    Identifies the role of a resource in relation to a media item.
-
-    \value ContentRole The resource refers to the content of a media item.
-    \value PreviewRole The resource refers to a preview of a media item.
-    \value PosterRole The resource refers to a still image to be displayed in place of an unloaded
-    video.
-    \value CoverArtRole The resource refers to cover art for a media item.
-    \value ThumbnailRole The resource refers to a thumbnail image for a media item.
-*/
-
-/*!
     \typedef QMediaResourceList
 
     Synonym for \c QList<QMediaResource>
@@ -71,22 +58,12 @@ QMediaResource::QMediaResource()
 }
 
 /*!
-    Constructs a media resource with the given \a role from a \a uri.
+    Constructs a media resource with the given \a mimeType from a \a uri.
 */
-QMediaResource::QMediaResource(const QUrl &uri, ResourceRole role)
+QMediaResource::QMediaResource(const QUrl &uri, const QString &mimeType)
 {
     values.insert(Uri, qVariantFromValue(uri));
-    values.insert(Role, int(role));
-}
-
-/*!
-    Constructs a media resource with the given \a role and MIME \a type from a \a uri.
-*/
-QMediaResource::QMediaResource(const QUrl &uri, const QString &type, ResourceRole role)
-{
-    values.insert(Uri, qVariantFromValue(uri));
-    values.insert(MimeType, type);
-    values.insert(Role, int(role));
+    values.insert(MimeType, mimeType);
 }
 
 /*!
@@ -151,14 +128,6 @@ bool QMediaResource::isNull() const
 QUrl QMediaResource::uri() const
 {
     return qvariant_cast<QUrl>(values.value(Uri));
-}
-
-/*!
-    Returns the role of a media resource.
-*/
-QMediaResource::ResourceRole QMediaResource::role() const
-{
-    return ResourceRole(values.value(Role, int(ContentRole)).toInt());
 }
 
 /*!
