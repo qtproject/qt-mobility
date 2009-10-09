@@ -111,16 +111,18 @@ QVersitDocument QVersitReader::parseVersitDocument(QByteArray& text)
     QVersitDocument document;
     text = text.mid(VersitUtils::countLeadingWhiteSpaces(text));
     QVersitProperty property = parseNextVersitProperty(text);
-    if (property.name() == "BEGIN" && property.value().trimmed() == "VCARD") {
-        while (property.name().length() > 0 && property.name() != "END") {
+    if (property.name() == QString::fromAscii("BEGIN") && 
+        property.value().trimmed() == "VCARD") {
+        while (property.name().length() > 0 && 
+               property.name() != QString::fromAscii("END")) {
             property = parseNextVersitProperty(text);   
-            if (property.name() == "VERSION" && 
+            if (property.name() == QString::fromAscii("VERSION") && 
                 property.value().trimmed() != "2.1") {
                 d->m_DocumentNestingLevel--;
                 return QVersitDocument(); // return an empty document
             }
-            if (property.name() != "VERSION" && 
-                property.name() != "END")
+            if (property.name() != QString::fromAscii("VERSION") && 
+                property.name() != QString::fromAscii("END"))
                 document.addProperty(property);
         }
     }
@@ -137,19 +139,21 @@ QVersitProperty QVersitReader::parseNextVersitProperty(QByteArray& text)
     property.setName(VersitUtils::extractPropertyName(text));
     property.setParameters(VersitUtils::extractPropertyParams(text));
     text = VersitUtils::extractPropertyValue(text); 
-    if (property.name() == "AGENT") {
+    if (property.name() == QString::fromAscii("AGENT")) {
         if (d->m_DocumentNestingLevel >= MAX_VERSIT_DOCUMENT_NESTING_DEPTH)
             return property; // To prevent infinite recursion
         property.setEmbeddedDocument(parseVersitDocument(text));
     }
     else {
         int crlfPos = -1;
-        if (property.parameters().contains("ENCODING","QUOTED-PRINTABLE")) {
+        QString encoding(QString::fromAscii("ENCODING"));
+        QString quotedPrintable(QString::fromAscii("QUOTED-PRINTABLE"));
+        if (property.parameters().contains(encoding,quotedPrintable)) {
             crlfPos = VersitUtils::findHardLineBreakInQuotedPrintable(text);
             QByteArray value = text.left(crlfPos);
             VersitUtils::decodeQuotedPrintable(value);
             // Remove the encoding parameter as the value is now decoded
-            property.removeParameter("ENCODING","QUOTED-PRINTABLE");
+            property.removeParameter(encoding,quotedPrintable);
             property.setValue(value);
         }
         else {

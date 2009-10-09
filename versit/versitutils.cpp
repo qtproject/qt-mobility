@@ -34,28 +34,26 @@
 #include "versitutils.h"
 #include <QRegExp>
 
-const char typeParameterName[] = "TYPE";
-
 /*!
  * Unfolds \a text by removing all the CRLFs followed immediately 
  * by any number of whitespaces.
  */
 QByteArray VersitUtils::unfold(QByteArray& text)
 {
-    QChar previousChar;
-    QChar previousOfThePreviousChar;
+    char previousChar = 0;
+    char previousOfThePreviousChar = 0;
     for (int i=0; i<text.length(); i++) {
-        QChar currentChar(text[i]);
-        if (currentChar.isSpace() 
-            && previousChar == '\n' 
-            && previousOfThePreviousChar == '\r') {
+        char currentChar = text[i];
+        if ((currentChar == ' ' || currentChar == '\t') && 
+            previousChar == '\n' && 
+            previousOfThePreviousChar == '\r') {
             
             int countOfCharsToBeRemoved = 2; // CRLF
             countOfCharsToBeRemoved += countLeadingWhiteSpaces(text,i);
-            text.remove(i-2,countOfCharsToBeRemoved);
-            previousChar = QChar();
-            previousOfThePreviousChar = QChar();
-            i -= 2;
+            text.replace(i-2,countOfCharsToBeRemoved,QByteArray(" "));
+            previousChar = 0;
+            previousOfThePreviousChar = 0;
+            i--;
         }
         else {
             previousOfThePreviousChar = previousChar;
@@ -74,8 +72,11 @@ int VersitUtils::countLeadingWhiteSpaces(const QByteArray& text, int pos)
     int whiteSpaceCount = 0;
     bool nonWhiteSpaceFound = false;
     for (int i=pos; i<text.length() && !nonWhiteSpaceFound; i++) {
-        QChar currentChar(text[i]);
-        if (currentChar.isSpace()) {
+        char currentChar = text[i];
+        if (currentChar == ' ' || 
+            currentChar == '\t' || 
+            currentChar == '\r' || 
+            currentChar == '\n') {
             whiteSpaceCount++;
         }
         else {
@@ -92,7 +93,7 @@ int VersitUtils::countLeadingWhiteSpaces(const QByteArray& text, int pos)
 bool VersitUtils::containsSpecialChars(const QByteArray& text)
 {
     for (int i=0; i<text.length(); i++) {
-        QChar currentChar(text[i]);
+        char currentChar = text[i];
         if (currentChar == '\n' || 
             currentChar == '\r' || 
             currentChar == '!' || 
@@ -122,7 +123,7 @@ bool VersitUtils::containsSpecialChars(const QByteArray& text)
  */
 QByteArray VersitUtils::encodeQuotedPrintable(QByteArray& text)
 {
-    QMap<QChar,QByteArray> encodingMap;
+    QMap<char,QByteArray> encodingMap;
     encodingMap.insert('\n', "=0A");
     encodingMap.insert('\r', "=0D");
     encodingMap.insert('!', "=21");
@@ -142,7 +143,7 @@ QByteArray VersitUtils::encodeQuotedPrintable(QByteArray& text)
     encodingMap.insert('~', "=7E");
     
     for (int i=0; i<text.length(); i++) {
-        QChar currentChar(text[i]);
+        char currentChar = text[i];
         QByteArray mappedString = encodingMap.value(currentChar);
         if (mappedString.length() > 0) {
             text.replace(i,1,mappedString);
@@ -158,14 +159,15 @@ QByteArray VersitUtils::encodeQuotedPrintable(QByteArray& text)
 QByteArray VersitUtils::decodeQuotedPrintable(QByteArray& text)
 {
     // QString needed instead of QByteArray to use QRegExp
-    QString textAsString(text);
+    QString textAsString(QString::fromAscii(text));
     
     // Replace soft line breaks
-    QRegExp softLineBreaks("(=\\r\\n)"); 
-    textAsString.replace(softLineBreaks,QByteArray());
+    QRegExp softLineBreaks(QString::fromAscii("(=\\r\\n)")); 
+    textAsString.remove(softLineBreaks);
 
     // Other encoded characters
-    QRegExp encodedChars("(=\\d[A-F]|=\\d\\d)",Qt::CaseInsensitive); 
+    QRegExp encodedChars(
+        QString::fromAscii("(=\\d[A-F]|=\\d\\d)"),Qt::CaseInsensitive);
     int pos = 0;    
     while ((pos = encodedChars.indexIn(textAsString,pos)) >= 0) {
         QString encodedCharAsString(encodedChars.cap(1));
@@ -199,11 +201,11 @@ int VersitUtils::findHardLineBreakInQuotedPrintable(const QByteArray& encoded)
  */
 QString VersitUtils::extractPropertyName(const QByteArray& property)
 {
-    QByteArray name;
+    QString name;
     int nameLength = 0;
-    QChar previousChar;
+    char previousChar = 0;
     for (int i=0; i < property.length(); i++) {
-        QChar currentChar = property[i];
+        char currentChar = property[i];
         if ((currentChar == ';' && previousChar != '\\') || 
             currentChar == ':') {
             nameLength = i;
@@ -212,8 +214,8 @@ QString VersitUtils::extractPropertyName(const QByteArray& property)
         previousChar = currentChar;
     }
     if (nameLength > 0)
-        name = property.left(nameLength).trimmed();
-    return QString(name);
+        name = QString::fromAscii(property.left(nameLength).trimmed());
+    return name;
 }
 
 /*!
@@ -241,9 +243,9 @@ QMultiMap<QString,QString> VersitUtils::extractPropertyParams(
     if (colonIndex > 0) {
         QByteArray nameAndParamsString = property.left(colonIndex);
         int paramStartIndex = -1;
-        QChar previousChar;
+        char previousChar = 0;
         for (int i=0; i < nameAndParamsString.length(); i++) {
-            QChar currentChar = nameAndParamsString[i];
+            char currentChar = nameAndParamsString[i];
             if (currentChar == ';' && previousChar != '\\') {
                 int length = i-paramStartIndex;
                 addParam(params,nameAndParamsString,paramStartIndex,length);
@@ -284,8 +286,8 @@ QString VersitUtils::paramName(const QByteArray& parameter)
          return QString();
      int equalsIndex = parameter.indexOf('=');
      if (equalsIndex > 0)
-         return QString(parameter.left(equalsIndex).trimmed());
-     return QString(typeParameterName);
+         return QString::fromAscii(parameter.left(equalsIndex).trimmed());
+     return QString::fromAscii("TYPE");
 }
 
 /*!
@@ -293,15 +295,15 @@ QString VersitUtils::paramName(const QByteArray& parameter)
  */
 QString VersitUtils::paramValue(const QByteArray& parameter)
 {
-    QString value(parameter);
+    QString value(QString::fromAscii(parameter));
     int equalsIndex = parameter.indexOf('=');
     if (equalsIndex > 0) {
         if (equalsIndex == parameter.length()-1) {
-            value = "";
+            value = QString();
         }
         else {
             int valueLength = parameter.length() - (equalsIndex + 1);
-            value = parameter.right(valueLength).trimmed();
+            value = QString::fromAscii(parameter.right(valueLength).trimmed());
         }    
     }
     return value;

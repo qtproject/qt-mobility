@@ -171,13 +171,12 @@ void UT_VersitUtils::testAddParam()
 
 void UT_VersitUtils::testUnfold()
 {
-    QByteArray unfolded("unfolded\r\n");
-
     // No folding
-    QCOMPARE(unfolded, unfolded);
+    QCOMPARE(QByteArray("no folding\r\n"), QByteArray("no folding\r\n"));
     
     // Single space
     QByteArray folded("unfol\r\n ded\r\n");
+    QByteArray unfolded("unfol ded\r\n");
     QCOMPARE(unfolded, VersitUtils::unfold(folded));
 
     // Multiple spaces
@@ -206,15 +205,17 @@ void UT_VersitUtils::testUnfold()
     
     // Two foldings
     folded = "un\r\n\tfol\r\n ded\r\n";
+    unfolded = "un fol ded\r\n";
     QCOMPARE(unfolded, VersitUtils::unfold(folded));
 
     // Three foldings
     folded = "un\r\n fol\r\n\tde\r\n \t d\r\n";
+    unfolded = "un fol de d\r\n";
     QCOMPARE(unfolded, VersitUtils::unfold(folded));
     
     // Two actual lines containing foldings
-    unfolded = "line1\r\nline2\r\n";
     folded = "li\r\n\tne1\r\nl\r\n ine2\r\n";
+    unfolded = "li ne1\r\nl ine2\r\n";
     QCOMPARE(unfolded, VersitUtils::unfold(folded));     
 }
 
