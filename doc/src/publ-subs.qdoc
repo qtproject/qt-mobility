@@ -173,13 +173,28 @@ changed" messages.  Nodes within the shared memory region are versioned, which
 allows clients to quickly determine exactly what has changed without the need
 for a bulkier change notification protocol.
 
-\section1 Examples
-\section2 Publish and Subscribe
-    \l{publish-subscribe}{Publish and Subscribe}
 
-\section2 Using Publish and Subscribe from QML
-    \l{battery-charge}{Accessing Publish and Subscribe from QML}
+\section1 Example: Publish and Subscribe
+
+In the example \l{publish-subscribe}{Publish and Subscribe} the Qt Value Space
+is used as a method of communicating changes in one dialog (the provider) to 
+another dialog (the consumer).
+
+\section1 Example: Battery Charging - Accessing Publish and Subscribe from QML
+
+In the example \l{battery-charge}{Accessing Publish and Subscribe from QML} the
+\l{publish-subscribe}{Publish and Subscribe} concept is now extended to make
+the provider an input of the level of charge in a battery. A slider on the 
+provider dialog represents the modifiable level of charge. The Qt Value Space 
+acts as a communications medium between the provider dialog and the consumer graphical
+battery animation. The battery is implemented in QML and C++ with Qt Value Space 
+supplying the charge level for the animation to represent.
+
 
 \section1 Classes
     \annotatedlist  context
+
+
+\sa QValueSpaceSubscriber, QValueSpaceProvider, QValueSpace, QAbstractValueSpaceLayer
 */
+
