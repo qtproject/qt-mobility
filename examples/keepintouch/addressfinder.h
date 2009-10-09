@@ -40,12 +40,14 @@
 #include <QObject>
 #include <QSet>
 #include <QWidget>
+#include <QMainWindow>
 
 class QComboBox;
 class QListWidget;
 class QPushButton;
+class QTabWidget;
 
-class AddressFinder : public QWidget
+class AddressFinder : public QMainWindow
 {
     Q_OBJECT
 
@@ -60,13 +62,22 @@ private slots:
     void stateChanged(QMessageServiceAction::State a);
     void messagesFound(const QMessageIdList &ids);
     void continueSearch();
+#ifdef _WIN32_WCE
+	void tabChanged(int index);
+#endif
 
 private:
+	void setupUi();
+    void setSearchActionEnabled(bool val);
+
+private:
+	QTabWidget* tabWidget;
     QComboBox *includePeriod;
     QComboBox *excludePeriod;
+    QAction* searchAction;
     QPushButton *searchButton;
 
-    QListWidget *addressList;
+	QComboBox*  addressCombo;
     QListWidget *messageList;
 
     QMessageServiceAction service;
