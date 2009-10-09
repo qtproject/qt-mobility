@@ -57,7 +57,7 @@ QT_BEGIN_NAMESPACE
 
     \code
     /Device/Buttons = 3
-    /Device/Buttons/1/Name = Context
+    /Device/Buttons/1/Name = Menu
     /Device/Buttons/1/Usable = true
     /Device/Buttons/2/Name = Select
     /Device/Buttons/2/Usable = false

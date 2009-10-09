@@ -11,7 +11,7 @@ include(../../../../common.pri)
 # Input 
 SOURCES += ../tst_qsystemreadwritelock.cpp
 
-LIBS += -lQtContextFramework
+LIBS += -lQtPublishSubscribe
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

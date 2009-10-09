@@ -17,7 +17,7 @@ SOURCES += tst_qvaluespacesubscriber_oop.cpp \
            tst_qvaluespacesubscribershared.cpp
 HEADERS += tst_qvaluespacesubscribershared.h
 
-LIBS += -lQtContextFramework
+LIBS += -lQtPublishSubscribe
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
