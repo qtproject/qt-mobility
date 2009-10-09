@@ -108,8 +108,9 @@ static PWLAN_CONNECTION_ATTRIBUTES  getWifiConnectionAttributes()
     PWLAN_INTERFACE_INFO_LIST interfacesInfoList = NULL;
     result = WlanOpenHandle( 2, NULL, &version, &clientHandle );
     if( result != ERROR_SUCCESS) {
-        qWarning() << "Error opening Wlanapi" << result ;
+       qWarning() << "Error opening Wlanapi" << result ;
         WlanFreeMemory(connAtts);
+        WlanCloseHandle(clientHandle,  0);
         return NULL;
     }
     result = WlanEnumInterfaces(clientHandle, NULL, &interfacesInfoList);
@@ -504,7 +505,7 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
      DWORD result;
      result = WlanOpenHandle(2, NULL, &version, &hWlan );
      if( result != ERROR_SUCCESS ) {
-         qWarning() << "Error opening Wlanapi" << result ;
+         qWarning() << "Error opening Wlanapi 2" << result ;
          return ;
      }
      if( result != ERROR_SUCCESS) {
@@ -519,12 +520,12 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
          qWarning() << "failed";
      }
      QTimer::singleShot(2000, this, SLOT(networkStrengthTimeout()));
-}
+ }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
     if(hWlan != 0)
-       WlanCloseHandle(hWlan, 0);
+         WlanCloseHandle(hWlan, 0);
 
 }
 
@@ -682,25 +683,28 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
         break;
     case QSystemNetworkInfo::WlanMode:
         {
-
+            
 #if !defined( Q_CC_MINGW) || !defined( Q_OS_WINCE)
 #ifndef QT_NO_THREAD
-        QMutexLocker locker(QMutexPool::globalInstanceGet(&WlanOpenHandle));
+            QMutexLocker locker(QMutexPool::globalInstanceGet(&WlanOpenHandle));
 #endif
             DWORD version =  0;
-            HANDLE clientHandle = NULL;
             DWORD result;
-
+            
             PWLAN_INTERFACE_INFO_LIST interfacesInfoList = NULL;
-            result = WlanOpenHandle( 2, NULL, &version, &clientHandle );
-            if( result != ERROR_SUCCESS ) {
-                qWarning() << "Error opening Wlanapi" << result ;
-                return 0;
+            if (hWlan ==0) {
+                result = WlanOpenHandle( 2, NULL, &version, &hWlan );
+                if( result != ERROR_SUCCESS ) {
+                    qWarning() << "Error opening Wlanapi 3" << result ;
+                    WlanCloseHandle(hWlan,  0);
+                    return 0;
+                }
             }
-            result = WlanEnumInterfaces(clientHandle, NULL, &interfacesInfoList);
+            result = WlanEnumInterfaces(hWlan, NULL, &interfacesInfoList);
 
             if( result != ERROR_SUCCESS) {
                 qWarning() << "Error in enumerating wireless interfaces" << result;
+                WlanCloseHandle(hWlan,  0);
                 return 0;
             }
 
@@ -716,7 +720,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
 
                 ULONG size = 0;
                 PWLAN_CONNECTION_ATTRIBUTES  connAtts = NULL;
-                result = WlanQueryInterface( clientHandle, &guid,  wlan_intf_opcode_current_connection, NULL, &size, (PVOID*) &connAtts, NULL );
+                result = WlanQueryInterface( hWlan, &guid,  wlan_intf_opcode_current_connection, NULL, &size, (PVOID*) &connAtts, NULL );
 
                 if( result != ERROR_SUCCESS ) {
 //                    qWarning() << "Error querying wireless interfaces"<< result ;
@@ -731,9 +735,9 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
                    qWarning() << "signal strength changed" << sig;
                    wifiStrength = sig;
                 }
-
                 return sig;
             }
+
 #endif
         }
         break;
