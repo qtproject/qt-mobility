@@ -66,7 +66,7 @@ class QNetworkConfigurationManagerPrivate : public QObject
     Q_OBJECT
 public:
     QNetworkConfigurationManagerPrivate()
-    :   QObject(0), capFlags(0), firstUpdate(true)
+    :   QObject(0), capFlags(0), firstUpdate(true), onlineConfigurations(0)
     {
         registerPlatformCapabilities();
         updateConfigurations();
@@ -112,6 +112,7 @@ public:
     QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > snapConfigurations;
     QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > userChoiceConfigurations;
     bool firstUpdate;
+    int onlineConfigurations;
     friend class IapMonitor;
     void cleanup();
     void deleteConfiguration(QString &iap_id);
@@ -119,6 +120,7 @@ public:
     void configurationChanged(QNetworkConfigurationPrivate *ptr);
     uint32_t getNetworkAttrs(bool is_iap_id, QString& iap_id,
 			     QString& iap_type, QString security_method);
+    void configChanged(QNetworkConfigurationPrivate *ptr, bool added);
 
 public slots:
     void updateConfigurations();

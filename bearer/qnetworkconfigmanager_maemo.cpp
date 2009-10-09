@@ -45,7 +45,6 @@
 
 #include <QDebug>
 #include <QtDBus>
-#include <QRegExp>
 #include <QHash>
 
 #include <wlancond.h>
@@ -55,9 +54,6 @@
 #include <iapmonitor.h>
 
 QT_BEGIN_NAMESPACE
-
-class IapMonitor;
-static IapMonitor &iapMonitor();
 
 #define IAP "/system/osso/connectivity/IAP"
 static int iap_prefix_len;
@@ -139,6 +135,7 @@ void IapAddTimer::removeAll()
     timers.clear();
 }
 
+
 void IapAddTimer::add(QString& iap_id, QNetworkConfigurationManagerPrivate *d)
 {
     if (timers.contains(iap_id)) {
@@ -163,16 +160,15 @@ void IapAddTimer::del(QString& iap_id)
 class IapMonitor
 {
 public:
+    IapMonitor() : first_call(true) { }
     friend void notify_iap(GConfClient *, guint,
 			GConfEntry *entry, gpointer user_data);
 
-    friend IapMonitor &iapMonitor();
     void setup(QNetworkConfigurationManagerPrivate *d);
     void cleanup();
 
 private:
     bool first_call;
-    IapMonitor() : first_call(true) { }
 
     void iapAdded(const char *key, GConfEntry *entry);
     void iapDeleted(const char *key, GConfEntry *entry);
@@ -182,12 +178,7 @@ private:
     IapAddTimer timers;
 };
 
-
-static IapMonitor &iapMonitor()
-{ 
-    static IapMonitor iap_monitor;
-    return iap_monitor;
-}
+Q_GLOBAL_STATIC(IapMonitor, iapMonitor);
 
 
 /* Notify func that is called when IAP is added or deleted */
@@ -302,7 +293,7 @@ void QNetworkConfigurationManagerPrivate::deleteConfiguration(QString& iap_id)
      */
     if (accessPointConfigurations.contains(iap_id)) {
 	QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.take(iap_id);
-	if (priv) {
+	if (priv.data()) {
 	    priv->isValid = false;
 #ifdef BEARER_MANAGEMENT_DEBUG
 	    qDebug() << "IAP" << iap_id << "was removed from storage.";
@@ -311,6 +302,7 @@ void QNetworkConfigurationManagerPrivate::deleteConfiguration(QString& iap_id)
 	    QNetworkConfiguration item;
 	    item.d = priv;
 	    emit configurationRemoved(item);
+	    configChanged(priv.data(), false);
 	} else
 	    qWarning("Configuration not found for IAP %s", iap_id.toAscii().data());
     } else {
@@ -368,8 +360,6 @@ uint32_t QNetworkConfigurationManagerPrivate::getNetworkAttrs(bool is_iap_id,
 
 void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
 {
-    const QRegExp wlan = QRegExp("WLAN.*");
-
     if (!accessPointConfigurations.contains(iap_id)) {
 	Maemo::IAPConf saved_iap(iap_id);
 	QString iap_type = saved_iap.value("type").toString();
@@ -384,7 +374,7 @@ void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
 	    cpPriv->network_attrs = getNetworkAttrs(true, iap_id, iap_type, QString());
 	    cpPriv->service_id = saved_iap.value("service_id").toString();
 	    cpPriv->service_type = saved_iap.value("service_type").toString();
-	    if (iap_type.contains(wlan)) {
+	    if (iap_type.startsWith("WLAN")) {
 		QByteArray ssid = saved_iap.value("wlan_ssid").toByteArray();
 		if (ssid.isEmpty()) {
 		    qWarning() << "Cannot get ssid for" << iap_id;
@@ -403,6 +393,7 @@ void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
 	    QNetworkConfiguration item;
 	    item.d = ptr;
 	    emit configurationAdded(item);
+	    configChanged(ptr.data(), true);
 	} else {
 	    qWarning("IAP %s does not have \"type\" field defined, skipping this IAP.", iap_id.toAscii().data());
 	}
@@ -415,7 +406,7 @@ void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
 	 * accordingly
 	 */
 	QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr = accessPointConfigurations.take(iap_id);
-	if (ptr) {
+	if (ptr.data()) {
 	    Maemo::IAPConf changed_iap(iap_id);
 	    QString iap_type = changed_iap.value("type").toString();
 	    bool update_needed = false; /* if IAP type or ssid changed, we need to change the state */
@@ -433,7 +424,7 @@ void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
 		    ptr->iap_type = iap_type;
 		    update_needed = true;
 		}
-		if (iap_type.contains(wlan)) {
+		if (iap_type.startsWith("WLAN")) {
 		    QByteArray ssid = changed_iap.value("wlan_ssid").toByteArray();
 		    if (ssid.isEmpty()) {
 			qWarning() << "Cannot get ssid for" << iap_id;
@@ -467,10 +458,8 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
     /* All the scanned access points */
     QList<Maemo::IcdScanResult> scanned;
 
-    const QRegExp wlan = QRegExp("WLAN.*");
-
     /* Turn on IAP monitoring */
-    iapMonitor().setup(this);
+    iapMonitor()->setup(this);
 
     if (firstUpdate) {
 	/* We create a default configuration which is a pseudo config */
@@ -510,7 +499,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	}
 
 	QString iap_type = saved_ap.value("type").toString();
-	if (iap_type.contains(wlan)) {
+	if (iap_type.startsWith("WLAN")) {
 	    ssid = saved_ap.value("wlan_ssid").toByteArray();
 	    if (ssid.isEmpty()) {
 		qWarning() << "Cannot get ssid for" << iap_id;
@@ -592,7 +581,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	    /* The network_id is IAP id, so the IAP is a known one */
 	    QString iapid = ap.scan.network_id.data();
 	    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.take(iapid);
-	    if (priv) {
+	    if (priv.data()) {
 		priv->state = QNetworkConfiguration::Discovered; /* Defined is set automagically */
 		priv->network_attrs = ap.scan.network_attrs;
 		priv->service_id = ap.scan.service_id;
@@ -605,7 +594,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 		qDebug("IAP: %s, ssid: %s, discovered", iapid.toAscii().data(), priv->network_id.data());
 #endif
 
-		if (!ap.scan.network_type.contains(wlan))
+		if (!ap.scan.network_type.startsWith("WLAN"))
 		    continue; // not a wlan AP
 
 		/* Remove scanned AP from known configurations so that we can
@@ -679,7 +668,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	    //qDebug() << i.key() << ": " << iap_id;
 
 	    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.take(iap_id);
-	    if (priv) {
+	    if (priv.data()) {
 		priv->isValid = false;
 #ifdef BEARER_MANAGEMENT_DEBUG
 		qDebug() << "IAP" << iap_id << "was removed as it was not found in scan.";
@@ -688,6 +677,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 		QNetworkConfiguration item;
 		item.d = priv;
 		emit configurationRemoved(item);
+		configChanged(priv.data(), false);
 
 		//if we would have SNAP support we would have to remove the references
 		//from existing ServiceNetworks to the removed access point configuration
@@ -732,8 +722,29 @@ void QNetworkConfigurationManagerPrivate::performAsyncConfigurationUpdate()
 
 void QNetworkConfigurationManagerPrivate::cleanup()
 {
-    iapMonitor().cleanup();
+    iapMonitor()->cleanup();
 }
+
+
+void QNetworkConfigurationManagerPrivate::configChanged(QNetworkConfigurationPrivate *ptr, bool added)
+{
+    if (added) {
+	if (ptr && ptr->state == QNetworkConfiguration::Active) {
+	    onlineConfigurations++;
+	    if (!firstUpdate && onlineConfigurations == 1)
+		emit onlineStateChanged(true);
+	}
+    } else {
+	if (ptr && ptr->state == QNetworkConfiguration::Active) {
+	    onlineConfigurations--;
+	    if (!firstUpdate && onlineConfigurations == 0)
+		emit onlineStateChanged(false);
+	    if (onlineConfigurations < 0)
+		onlineConfigurations = 0;
+	}
+    }
+}
+
 
 #include "qnetworkconfigmanager_maemo.moc"
 

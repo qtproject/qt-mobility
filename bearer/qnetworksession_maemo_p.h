@@ -59,6 +59,8 @@
 #include <QNetworkInterface>
 #include <QDateTime>
 
+#include <icd/dbus_api.h>
+
 QT_BEGIN_NAMESPACE
 
 class QNetworkSessionPrivate : public QObject
@@ -66,7 +68,8 @@ class QNetworkSessionPrivate : public QObject
     Q_OBJECT
 public:
     QNetworkSessionPrivate() : 
-        tx_data(0), rx_data(0), m_activeTime(0), isActive(false)
+	    tx_data(0), rx_data(0), m_activeTime(0), isActive(false),
+	    connectFlags(ICD_CONNECTION_FLAG_USER_EVENT)
     {
     }
 
@@ -111,6 +114,8 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void do_open();
+    void networkConfigurationsChanged();
+    void configurationChanged(const QNetworkConfiguration &config);
 
 private:
     QNetworkConfigurationManager manager;
@@ -133,6 +138,8 @@ private:
 
     QNetworkSession::State state;
     bool isActive;
+    bool opened;
+    icd_connection_flags connectFlags;
 
     QNetworkSession::SessionError lastError;
 

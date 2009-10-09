@@ -1,3 +1,23 @@
+libbearer (0.25) unstable; urgency=low
+
+  * Default configuration (publicConfig) handling in maemo session class is
+    now done same way as in generic session class.
+  * Maemo session class close() and stop() work now like in generic
+    session class.
+  * When maemo session is created, current network status is fetched from icd.
+  * Multiple simultaneous Maemo::Icd class instances are supported (requires
+    libconninet v0.21).
+  * Background connection supported. You can set "ConnectBackground"
+    session property to true before calling session open.
+
+ -- Jukka Rissanen <jukka.rissanen@nokia.com>  Tue,  6 Oct 2009 12:41:56 +0300
+
+libbearer (0.24) unstable; urgency=low
+
+  * Emit onlineStateChanged signal.
+
+ -- Jukka Rissanen <jukka.rissanen@nokia.com>  Thu,  1 Oct 2009 13:39:36 +0300
+
 libbearer (0.23) unstable; urgency=low
 
   * Fixes: NB#132694 - Connecting to specific IAP does not work.
