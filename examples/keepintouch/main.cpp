@@ -38,8 +38,15 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    AddressFinder finder;
+
+	AddressFinder finder;
+
+#ifdef _WIN32_WCE
+	app.setKeypadNavigationEnabled(true);
+	finder.showMaximized();
+#else
     finder.show();
+#endif
+
     return app.exec();
 }
-

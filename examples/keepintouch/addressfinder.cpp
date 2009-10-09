@@ -33,7 +33,6 @@
 
 #include "addressfinder.h"
 #include "addresshelper.h"
-
 #include <QComboBox>
 #include <QDateTime>
 #include <QGroupBox>
@@ -43,6 +42,9 @@
 #include <QPushButton>
 #include <QTimer>
 #include <QDebug>
+#include <QApplication>
+#include <QMenuBar>
+#include <QTabWidget>
 
 void parseAddress(const QString& addressText, QString *name, QString *address)
 {
@@ -69,87 +71,18 @@ void parseAddress(const QString& addressText, QString *name, QString *address)
 }
 
 AddressFinder::AddressFinder(QWidget *parent, Qt::WindowFlags flags)
-    : QWidget(parent, flags),
+    : QMainWindow(parent, flags),
       includePeriod(0),
       excludePeriod(0),
+      searchAction(0),
       searchButton(0),
-      addressList(0),
-      messageList(0)
+	  addressCombo(0),
+      messageList(0),
+	  tabWidget(0)
 {
-    setWindowTitle(tr("Keep In Touch"));
+	setupUi();
 
-    excludePeriod = new QComboBox;
-    excludePeriod ->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-    includePeriod = new QComboBox;
-    excludePeriod ->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    includePeriod->addItem(tr("Year"));
-    includePeriod->addItem(tr("9 Months"));
-    includePeriod->addItem(tr("6 Months"));
-    includePeriod->addItem(tr("3 Months"));
-    includePeriod->addItem(tr("Month"));
-    includePeriod->addItem(tr("Week"));
-
-    includePeriodChanged(0);
-
-    connect(includePeriod, SIGNAL(currentIndexChanged(int)), this, SLOT(includePeriodChanged(int)));
-
-    QLabel *includeLabel = new QLabel(tr("Contacted within the last"));
-
-    QLabel *excludeLabel = new QLabel(tr("But not the last"));
-
-    QGridLayout *filterLayout = new QGridLayout;
-    filterLayout->addWidget(includeLabel, 0, 0);
-    filterLayout->setAlignment(includeLabel, Qt::AlignRight);
-    filterLayout->addWidget(excludeLabel, 1, 0);
-    filterLayout->setAlignment(excludeLabel, Qt::AlignRight);
-    filterLayout->addWidget(includePeriod, 0, 1);
-    filterLayout->addWidget(excludePeriod, 1, 1);
-
-    QGroupBox *inputGroup = new QGroupBox(tr("Find addresses"));
-    inputGroup->setLayout(filterLayout);
-    inputGroup->setAlignment(Qt::AlignLeft);
-
-    searchButton = new QPushButton(tr("Search"));
-    searchButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-    connect(searchButton, SIGNAL(clicked()), this, SLOT(searchMessages()), Qt::QueuedConnection);
-
-    QHBoxLayout *inputLayout = new QHBoxLayout;
-    inputLayout->addWidget(inputGroup);
-    inputLayout->setStretchFactor(inputGroup, 2);
-    inputLayout->addWidget(searchButton);
-    inputLayout->setStretchFactor(searchButton, 1);
-    inputLayout->setAlignment(searchButton, Qt::AlignLeft | Qt::AlignBottom);
-    inputLayout->addStretch(1);
-
-    addressList = new QListWidget;
-    addressList ->setSelectionMode(QAbstractItemView::SingleSelection);
-
-    connect(addressList, SIGNAL(currentTextChanged(QString)), this, SLOT(addressSelected(QString)));
-
-    QGroupBox *addressGroup = new QGroupBox(tr("Address"));
-    addressGroup->setAlignment(Qt::AlignLeft);
-    addressGroup->setLayout(new QHBoxLayout);
-    addressGroup->layout()->addWidget(addressList);
-
-    messageList = new QListWidget;
-    messageList->setSelectionMode(QAbstractItemView::NoSelection);
-
-    QGroupBox *messageGroup = new QGroupBox(tr("Messages"));
-    messageGroup->setAlignment(Qt::AlignLeft);
-    messageGroup->setLayout(new QHBoxLayout);
-    messageGroup->layout()->addWidget(messageList);
-
-    QHBoxLayout *outputLayout = new QHBoxLayout;
-    outputLayout->addWidget(addressGroup);
-    outputLayout->addWidget(messageGroup);
-
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
-    mainLayout->addLayout(inputLayout);
-    mainLayout->addLayout(outputLayout);
-
-    connect(&service, SIGNAL(stateChanged(QMessageServiceAction::State)), this, SLOT(stateChanged(QMessageServiceAction::State)));
+	connect(&service, SIGNAL(stateChanged(QMessageServiceAction::State)), this, SLOT(stateChanged(QMessageServiceAction::State)));
     connect(&service, SIGNAL(messagesFound(QMessageIdList)), this, SLOT(messagesFound(QMessageIdList)));
 }
 
@@ -189,9 +122,9 @@ void AddressFinder::addressSelected(const QString &address)
 
 void AddressFinder::searchMessages()
 {
-    searchButton->setEnabled(false);
+    setSearchActionEnabled(false);
 
-    addressList->clear();
+	addressCombo->clear();
     messageList->clear();
     excludedAddresses.clear();
     includedAddresses.clear();
@@ -225,7 +158,7 @@ void AddressFinder::searchMessages()
     QMessageFilter excludeFilter(QMessageFilter::byTimeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual));
     // Would be faster and more accurate to just examine the sent folder, outgoingFilter also includes drafts.
     QMessageFilter outgoingFilter(QMessageFilter::byStatus(QMessage::Incoming, QMessageDataComparator::Excludes));
-    
+
     // Search for messages containing addresses to exclude
     service.queryMessages(outgoingFilter & excludeFilter);
 
@@ -245,12 +178,13 @@ void AddressFinder::stateChanged(QMessageServiceAction::State s)
             if (!inclusionMessages.isEmpty()) {
                 QTimer::singleShot(0, this, SLOT(continueSearch()));
             } else {
+                searchAction->setEnabled(true);
                 searchButton->setEnabled(true);
             }
         }
     } else if (s == QMessageServiceAction::Failed) {
         qWarning() << "Search failed!";
-        searchButton->setEnabled(true);
+        setSearchActionEnabled(true);
     }
 }
 
@@ -296,7 +230,7 @@ void AddressFinder::continueSearch()
                 qDebug() << "Exclude" << addressOnly;
                 QStringList &messages = addressMessages[addressOnly];
                 if (messages.isEmpty()) {
-                    addressList->addItem(recipient);
+					addressCombo->addItem(recipient);
                 }
                 messages.append(details);
             }
@@ -306,7 +240,121 @@ void AddressFinder::continueSearch()
     if (!exclusionMessages.isEmpty() || !inclusionMessages.isEmpty()) {
         QTimer::singleShot(0, this, SLOT(continueSearch()));
     } else {
-        searchButton->setEnabled(true);
+        setSearchActionEnabled(true);
+#ifdef _WIN32_WCE
+		tabChanged(1);
+#endif
+        addressSelected(addressCombo->currentText());
     }
 }
 
+#ifdef _WIN32_WCE
+void AddressFinder::tabChanged(int index)
+{
+	QWidget* currentTab = tabWidget->currentWidget();
+	QAction* action = 0;
+	if(currentTab && !currentTab->actions().isEmpty())
+		action = currentTab->actions().first();
+    menuBar()->setDefaultAction(action);
+}
+#endif
+
+void AddressFinder::setupUi()
+{
+	setWindowTitle(tr("Keep In Touch"));
+
+#ifdef _WIN32_WCE
+	tabWidget = new QTabWidget(this);
+	setCentralWidget(tabWidget);
+	connect(tabWidget,SIGNAL(currentChanged(int)),this,SLOT(tabChanged(int)));
+#else
+    QWidget* centralWidget = new QWidget(this);
+    setCentralWidget(centralWidget);
+    QVBoxLayout* centralLayout = new QVBoxLayout(centralWidget);
+#endif
+
+	QGroupBox *inputGroup = new QGroupBox(tr("Find addresses"));
+    inputGroup->setAlignment(Qt::AlignLeft);
+#ifdef _WIN32_WCE
+	tabWidget->addTab(inputGroup,"Search");
+#else
+    centralLayout->addWidget(inputGroup);
+#endif
+
+	QGridLayout *filterLayout = new QGridLayout(inputGroup);
+
+	QLabel *includeLabel = new QLabel(tr("Contacted this"));
+	filterLayout->addWidget(includeLabel, 0, 0);
+	filterLayout->setAlignment(includeLabel, Qt::AlignRight);
+
+    QLabel *excludeLabel = new QLabel(tr("But not last"));
+	filterLayout->addWidget(excludeLabel, 1, 0);
+	filterLayout->setAlignment(excludeLabel, Qt::AlignRight);
+
+    includePeriod = new QComboBox;
+    filterLayout->addWidget(includePeriod, 0, 1);
+	includePeriod ->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	includePeriod->addItem(tr("Year"));
+    includePeriod->addItem(tr("9 Months"));
+    includePeriod->addItem(tr("6 Months"));
+    includePeriod->addItem(tr("3 Months"));
+    includePeriod->addItem(tr("Month"));
+    includePeriod->addItem(tr("Week"));
+	connect(includePeriod, SIGNAL(currentIndexChanged(int)), this, SLOT(includePeriodChanged(int)));
+
+	excludePeriod = new QComboBox;
+    excludePeriod ->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    filterLayout->addWidget(excludePeriod, 1, 1);
+
+#ifndef _WIN32_WCE
+    searchButton = new QPushButton(tr("Search"));
+    searchButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	filterLayout->addWidget(searchButton,0,2,2,1,Qt::AlignVCenter | Qt::AlignHCenter);
+    connect(searchButton, SIGNAL(clicked()), this, SLOT(searchMessages()), Qt::QueuedConnection);
+#endif
+
+	addressCombo = new QComboBox(this);
+    connect(addressCombo, SIGNAL(activated(QString)), this, SLOT(addressSelected(QString)));
+
+#ifdef _WIN32_WCE
+	QWidget* resultsWidget = new QWidget(this);
+	QVBoxLayout* resultsLayout = new QVBoxLayout(resultsWidget);
+	tabWidget->addTab(resultsWidget,"Results");
+#else
+    QVBoxLayout* resultsLayout = centralLayout;
+#endif
+
+    QGroupBox *addressGroup = new QGroupBox(tr("Address"));
+    addressGroup->setAlignment(Qt::AlignLeft);
+    addressGroup->setLayout(new QVBoxLayout);
+	addressGroup->layout()->addWidget(addressCombo);
+	resultsLayout->addWidget(addressGroup);
+
+    QGroupBox *messageGroup = new QGroupBox(tr("Messages"));
+    messageGroup->setAlignment(Qt::AlignLeft);
+    messageGroup->setLayout(new QHBoxLayout);
+	resultsLayout->addWidget(messageGroup);
+
+	messageList = new QListWidget;
+    messageList->setSelectionMode(QAbstractItemView::NoSelection);
+	messageGroup->layout()->addWidget(messageList);
+
+    searchAction = new QAction("Search",this);
+	inputGroup->addAction(searchAction);
+    connect(searchAction,SIGNAL(triggered()),this,SLOT(searchMessages()),Qt::QueuedConnection);
+    QAction* quitAction = menuBar()->addAction("Quit");
+    connect(quitAction,SIGNAL(triggered()),qApp,SLOT(quit()));
+
+	includePeriodChanged(0);
+#ifdef _WIN32_WCE
+	tabChanged(0);
+#endif
+}
+
+void AddressFinder::setSearchActionEnabled(bool val)
+{
+    searchAction->setEnabled(val);
+#ifndef _WIN32_WCE
+    searchButton->setEnabled(val);
+#endif
+}
