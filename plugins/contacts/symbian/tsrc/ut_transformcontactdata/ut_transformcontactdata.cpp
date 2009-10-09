@@ -47,6 +47,7 @@
 #include "transformgender.h"
 #include "transformanniversary.h"
 #include "transformgeolocation.h"
+#include "transformnote.h"
 
 #include <QtTest/QtTest>
 
@@ -168,6 +169,12 @@ void TestTransformContactData::executeTransformGeolocation()
     validateTransformGeolocation(_L("123.45,"), 123.45, -1);
     validateTransformGeolocation(_L(",765.88"), -1, 765.88);
     validateTransformGeolocation(_L(""), -1, -1);
+}
+
+void TestTransformContactData::executeTransformNote()
+{
+    validateTransformNote(_L("dummynote"), QString("dummynote"));
+    validateTransformNote(_L(""), QString(""));
 }
 
 void TestTransformContactData::validateTransformEmail(TPtrC16 field, QString detail)
@@ -1087,6 +1094,36 @@ void TestTransformContactData::validateTransformGeolocation(TPtrC16 field, doubl
     delete contactDetail;
     delete newField;
     delete transformGeolocation; 
+}
+
+void TestTransformContactData::validateTransformNote(TPtrC16 field, QString detail)
+{
+    TransformContactData* transformNote = new TransformNote();
+    QVERIFY(transformNote != 0);
+    QVERIFY(transformNote->supportsField(KUidContactFieldNote.iUid));
+    QVERIFY(transformNote->supportsDetail(QContactNote::DefinitionName));
+    
+    validateContexts(transformNote);
+    
+    QContactNote note;
+    note.setNote(detail);
+    QList<CContactItemField *> fields = transformNote->transformDetailL(note);
+    QVERIFY(fields.count() == 1);
+    QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldNote));
+    QVERIFY(fields.at(0)->ContentType().Mapping() == KUidContactFieldVCardMapNOTE);
+    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
+    
+    CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldNote);
+    newField->TextStorage()->SetTextL(field);
+    QContact contact;
+    QContactDetail* contactDetail = transformNote->transformItemField(*newField, contact);
+    const QContactNote* noteInfo(static_cast<const QContactNote*>(contactDetail));
+    QCOMPARE(noteInfo->note(), detail);
+        
+    delete contactDetail;
+    delete newField;
+    delete transformNote;
 }
 
 void TestTransformContactData::validateContexts(TransformContactData* transformContactData) const

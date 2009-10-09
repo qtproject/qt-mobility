@@ -30,61 +30,54 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include "transformnote.h"
 
-#ifndef TRANSFORMCONCTACT_H
-#define TRANSFORMCONCTACT_H
-
-#include <qtcontacts.h>
-
-#include <cntfldst.h>
-#include <cntdb.h>
-#include <cntdef.h>
-#include <cntitem.h>
-
-class TransformContactData;
-class TransformContact
+QList<CContactItemField *> TransformNote::transformDetailL(const QContactDetail &detail)
 {
-public:
-	TransformContact();
-	virtual ~TransformContact();
-
-public:
-	QContact transformContactL(CContactItem &contact, CContactDatabase &contactDatabase) const;
-	void transformContactL(
-	        QContact &contact,
-	        CContactItem &contactItem) const;
-
-private:
-	enum ContactData
-	{
-		Name = 0,
-		Nickname,
-		PhoneNumber,
-		EmailAddress,
-		Address,
-		URL,
-		OnlineAccount,
-		Birthday,
-		Organisation,
-		Avatar,
-		SyncTarget,
-		Gender,
-		Anniversary,
-		Geolocation,
-		Note
-	};
+	QList<CContactItemField *> fieldList; 
 	
-	void initializeTransformContactData();
-	QList<CContactItemField *> transformDetailL(const QContactDetail &detail) const;
-	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact) const;
+	//cast to note
+	const QContactNote &note(static_cast<const QContactNote&>(detail));
 	
-	QContactDetail *transformGuidItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const;
-	void transformGuidDetailL(const QContactDetail &guidDetail, CContactItem &contactItem) const;
-	QContactDetail *transformTimestampItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const;
-	void transformTimestampDetailL(const QContactDetail &guidDetail, CContactItem &contactItem) const;
-	
-private:
-	QMap<ContactData, TransformContactData*> m_transformContactData;
-};
+	//create new field
+	TPtrC fieldText(reinterpret_cast<const TUint16*>(note.note().utf16()));
+	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldNote);
+ 	newField->TextStorage()->SetTextL(fieldText);
+	newField->SetMapping(KUidContactFieldVCardMapNOTE);
 
-#endif /* TRANSFORMCONCTACT_H_ */
+	fieldList.append(newField);
+	CleanupStack::Pop(newField);
+		
+	return fieldList;
+}
+
+QContactDetail *TransformNote::transformItemField(const CContactItemField& field, const QContact &contact)
+{
+	Q_UNUSED(contact);
+	
+	QContactNote *note = new QContactNote();
+	
+	CContactTextField* storage = field.TextStorage();
+	QString noteString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
+	
+	note->setNote(noteString);
+	return note;
+}
+
+bool TransformNote::supportsField(TUint32 fieldType) const
+{
+    bool ret = false;
+    if (fieldType == KUidContactFieldNote.iUid) {
+        ret = true;
+    }
+    return ret;
+}
+
+bool TransformNote::supportsDetail(QString detailName) const
+{
+    bool ret = false;
+    if (detailName == QContactNote::DefinitionName) {
+        ret = true;
+    }
+    return ret;
+}
