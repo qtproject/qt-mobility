@@ -40,7 +40,7 @@ class QMessageAccountIdPrivate;
 
 class Q_MESSAGING_EXPORT QMessageAccountId 
 {
-    Q_DECLARE_PRIVATE(QMessageAccountId)
+    friend class QMessageAccountIdPrivate;
 
 public:
     QMessageAccountId();
@@ -53,10 +53,14 @@ public:
     bool operator==(const QMessageAccountId &other) const;
     bool operator!=(const QMessageAccountId &other) const;
 
+    bool operator<(const QMessageAccountId &other) const;
+
     QString toString() const;
     bool isValid() const;
 
 private:
+    friend Q_MESSAGING_EXPORT uint qHash(const QMessageAccountId &id);
+
     QMessageAccountIdPrivate *d_ptr;
 };
 

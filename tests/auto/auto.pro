@@ -25,21 +25,18 @@ SUBDIRS += qgeocoordinate \                 #Location
           qnmeapositioninfosource 
 symbian:SUBDIRS += qgeopositioninfosource_s60 
 
-!wince:SUBDIRS += qvaluespace \                    #Publish and Subscribe
-           qvaluespaceobject \
-           qvaluespaceitem \
+SUBDIRS += qvaluespace \                           #Publish and Subscribe
+           qvaluespaceprovider \
+           qvaluespacesubscriber \
            qmallocpool \
            qpacket \
-           qpacketprotocol \
-           qsystemreadwritelock \
-           qsystemreadwritelock_oop
+           qpacketprotocol
 
-unix:SUBDIRS += qpacket \
-                qpacketprotocol \
+unix:!symbian:SUBDIRS += \
                 qsystemreadwritelock \
                 qsystemreadwritelock_oop
 
-!symbian:SUBDIRS += qsysteminfo \                    #SystemInformation
+!symbian:!wince*:SUBDIRS += qsysteminfo \                    #SystemInformation
           qsystemdeviceinfo \
           qsystemdisplayinfo \
           qsystemstorageinfo \

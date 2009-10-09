@@ -37,8 +37,9 @@
 
 class QMessageAccountOrderingPrivate;
 
-class Q_MESSAGING_EXPORT QMessageAccountOrdering {
-    Q_DECLARE_PRIVATE(QMessageAccountOrdering)
+class Q_MESSAGING_EXPORT QMessageAccountOrdering
+{
+    friend class QMessageAccountOrderingPrivate;
 
 public:
     QMessageAccountOrdering();

@@ -36,7 +36,7 @@
 
 #include <QDialog>
 
-class QValueSpaceItem;
+class QValueSpaceSubscriber;
 
 namespace Ui {
     class ConsumerDialog;
@@ -55,13 +55,13 @@ protected:
 
 //! [0]
 private slots:
-    void createNewItem();
-    void itemChanged();
+    void changeSubscriberPath();
+    void subscriberChanged();
 //! [0]
 
 private:
     Ui::ConsumerDialog *ui;
-    QValueSpaceItem *item;
+    QValueSpaceSubscriber *subscriber;
 };
 
 #endif // CONSUMERDIALOG_H

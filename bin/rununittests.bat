@@ -34,8 +34,9 @@ tst_qmallocpool.exe
 tst_qpacket.exe
 tst_qpacketprotocol.exe
 tst_qvaluespace.exe
-tst_qvaluespaceobject.exe
-tst_qvaluespaceitem.exe
+tst_qvaluespaceprovider.exe
+tst_qvaluespacesubscriber.exe
+tst_qvaluespacesubscriber_oop.exe
 tst_qsystemreadwritelock.exe
 tst_qsystemreadwritelock_oop.exe
 

@@ -39,6 +39,7 @@
 #include <QDataStream>
 #include <QList>
 #include <QString>
+#include <QStringList>
 #include <QTextStream>
 
 #ifdef Q_OS_WIN
@@ -50,7 +51,7 @@ class QMessageContentContainerPrivate;
 
 class Q_MESSAGING_EXPORT QMessageContentContainer
 {
-    Q_DECLARE_PRIVATE(QMessageContentContainer)
+    friend class QMessageContentContainerPrivate;
 
 public:
     QMessageContentContainer();
@@ -58,9 +59,6 @@ public:
     virtual ~QMessageContentContainer();
 
     QMessageContentContainer& operator=(const QMessageContentContainer &other);
-
-    QMessageContentContainerId containerId() const;
-    QMessageId messageId() const;
 
     QByteArray contentType() const;
     QByteArray contentSubType() const;
@@ -94,7 +92,6 @@ private:
 #endif
 
     void setDerivedMessage(QMessage *derived);
-    void applyPendingChanges() const;
 
     QMessageContentContainerPrivate* d_ptr;
 };

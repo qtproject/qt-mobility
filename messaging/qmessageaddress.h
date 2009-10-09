@@ -38,8 +38,9 @@
 
 class QMessageAddressPrivate;
 
-class Q_MESSAGING_EXPORT QMessageAddress {
-    Q_DECLARE_PRIVATE(QMessageAddress)
+class Q_MESSAGING_EXPORT QMessageAddress
+{
+    friend class QMessageAddressPrivate;
 
 public:
     enum Type {

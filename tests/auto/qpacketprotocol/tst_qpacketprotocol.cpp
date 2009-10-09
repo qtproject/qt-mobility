@@ -80,7 +80,7 @@ void tst_QPacketProtocol::constructor()
     {
         QPacketProtocol protocol(&buffer);
 
-        QCOMPARE(protocol.device(), &buffer);
+        QCOMPARE(protocol.device(), (QIODevice*)&buffer);
     }
 }
 

@@ -62,6 +62,11 @@ bool QMessageId::operator==(const QMessageId& other) const
     return false; // stub
 }
 
+bool QMessageId::operator<(const QMessageId& other) const
+{
+    return false; // stub
+}
+
 QString QMessageId::toString() const
 {
     return QString::null; // stub

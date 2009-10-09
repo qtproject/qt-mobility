@@ -42,7 +42,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QValueSpaceObject;
+class QValueSpaceProvider;
 
 QString qCanonicalPath(const QString &path);
 
@@ -75,23 +75,23 @@ public:
 
     virtual QValueSpace::LayerOptions layerOptions() const = 0;
 
-    /* QValueSpaceItem functions */
+    /* QValueSpaceSubscriber functions */
     virtual bool supportsInterestNotification() const = 0;
     virtual bool notifyInterest(Handle handle, bool interested) = 0;
 
-    /* QValueSpaceObject functions */
-    virtual bool setValue(QValueSpaceObject *creator, Handle handle,
+    /* QValueSpaceProvider functions */
+    virtual bool setValue(QValueSpaceProvider *creator, Handle handle,
                           const QString &subPath, const QVariant &value) = 0;
-    virtual bool removeValue(QValueSpaceObject *creator, Handle handle,
+    virtual bool removeValue(QValueSpaceProvider *creator, Handle handle,
                              const QString &subPath) = 0;
-    virtual bool removeSubTree(QValueSpaceObject *creator, Handle handle) = 0;
-    virtual void addWatch(QValueSpaceObject *creator, Handle handle) = 0;
-    virtual void removeWatches(QValueSpaceObject *creator, Handle parent) = 0;
+    virtual bool removeSubTree(QValueSpaceProvider *creator, Handle handle) = 0;
+    virtual void addWatch(QValueSpaceProvider *creator, Handle handle) = 0;
+    virtual void removeWatches(QValueSpaceProvider *creator, Handle parent) = 0;
     virtual void sync() = 0;
 
 protected:
-    /* QValueSpaceObject functions */
-    void emitAttributeInterestChanged(QValueSpaceObject *object, const QString &attribute,
+    /* QValueSpaceProvider functions */
+    void emitAttributeInterestChanged(QValueSpaceProvider *provider, const QString &attribute,
                                       bool interested);
 
 signals:

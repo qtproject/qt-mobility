@@ -18,6 +18,7 @@
 <tr><td width="45%" valign="top"><ul>
 <li><div class="fn">enum <b><a href="qmessagestore.html#ErrorCode-enum">ErrorCode</a></b></div></li>
 <li><div class="fn">typedef <b><a href="qmessagestore.html#NotificationFilterId-typedef">NotificationFilterId</a></b></div></li>
+<li><div class="fn">typedef <b><a href="qmessagestore.html#NotificationFilterIdSet-typedef">NotificationFilterIdSet</a></b></div></li>
 <li><div class="fn">enum <b><a href="qmessagestore.html#RemovalOption-enum">RemovalOption</a></b></div></li>
 <li><div class="fn"><b><a href="qmessagestore.html#account">account</a></b> ( const QMessageAccountId &amp; ) const : QMessageAccount</div></li>
 <li><div class="fn"><b><a href="qmessagestore.html#addMessage">addMessage</a></b> ( QMessage * ) : bool</div></li>
@@ -28,7 +29,6 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#connect-2">connect</a></b> ( const QObject *, const char *, const char *, Qt::ConnectionType ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#connectNotify">connectNotify</a></b> ( const char * )</div></li>
 <li><div class="fn"><b><a href="qmessagestore.html#countAccounts">countAccounts</a></b> ( const QMessageAccountFilter &amp; ) const : int</div></li>
-<li><div class="fn"><b><a href="qmessagestore.html#countMessages">countMessages</a></b> ( const QMessageFilter &amp; ) const : int</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#customEvent">customEvent</a></b> ( QEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#d_ptr-var">d_ptr</a></b> : </div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#deleteLater">deleteLater</a></b> ()</div></li>
@@ -48,22 +48,20 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#inherits">inherits</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#installEventFilter">installEventFilter</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="qmessagestore.html#instance">instance</a></b> () : QMessageStore *</div></li>
-<li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#isWidgetType">isWidgetType</a></b> () const</div></li>
 </ul></td><td valign="top"><ul>
+<li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#isWidgetType">isWidgetType</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#killTimer">killTimer</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="qmessagestore.html#lastError">lastError</a></b> () const : QMessageStore::ErrorCode</div></li>
 <li><div class="fn"><b><a href="qmessagestore.html#message">message</a></b> ( const QMessageId &amp; ) const : QMessage</div></li>
-<li><div class="fn"><b><a href="qmessagestore.html#messageAdded">messageAdded</a></b> ( const QMessageId &amp;, const QSet&lt;QMessageStore::NotificationFilterId&gt; &amp; )</div></li>
-<li><div class="fn"><b><a href="qmessagestore.html#messageRemoved">messageRemoved</a></b> ( const QMessageId &amp;, const QSet&lt;QMessageStore::NotificationFilterId&gt; &amp; )</div></li>
-<li><div class="fn"><b><a href="qmessagestore.html#messageUpdated">messageUpdated</a></b> ( const QMessageId &amp;, const QSet&lt;QMessageStore::NotificationFilterId&gt; &amp; )</div></li>
+<li><div class="fn"><b><a href="qmessagestore.html#messageAdded">messageAdded</a></b> ( const QMessageId &amp;, const QMessageStore::NotificationFilterIdSet &amp; )</div></li>
+<li><div class="fn"><b><a href="qmessagestore.html#messageRemoved">messageRemoved</a></b> ( const QMessageId &amp;, const QMessageStore::NotificationFilterIdSet &amp; )</div></li>
+<li><div class="fn"><b><a href="qmessagestore.html#messageUpdated">messageUpdated</a></b> ( const QMessageId &amp;, const QMessageStore::NotificationFilterIdSet &amp; )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#metaObject">metaObject</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#moveToThread">moveToThread</a></b> ( QThread * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#objectName-prop">objectName</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#parent">parent</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#property">property</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="qmessagestore.html#queryAccounts">queryAccounts</a></b> ( const QMessageAccountFilter &amp;, const QMessageAccountOrdering &amp;, uint, uint ) const : QMessageAccountIdList</div></li>
-<li><div class="fn"><b><a href="qmessagestore.html#queryMessages">queryMessages</a></b> ( const QMessageFilter &amp;, const QMessageOrdering &amp;, uint, uint ) const : QMessageIdList</div></li>
-<li><div class="fn"><b><a href="qmessagestore.html#queryMessages-2">queryMessages</a></b> ( const QMessageFilter &amp;, const QString &amp;, QMessageDataComparator::Options, const QMessageOrdering &amp;, uint, uint ) const : QMessageIdList</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#receivers">receivers</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="qmessagestore.html#registerNotificationFilter">registerNotificationFilter</a></b> ( const QMessageFilter &amp; ) : NotificationFilterId</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#removeEventFilter">removeEventFilter</a></b> ( QObject * )</div></li>

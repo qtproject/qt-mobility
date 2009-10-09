@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 
-#include "qvaluespaceobject.h"
+#include "qvaluespaceprovider.h"
 #include "qvaluespace.h"
 #include "qvaluespace_p.h"
 #include "qvaluespacemanager_p.h"
@@ -44,17 +44,17 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \class QValueSpaceObject
+    \class QValueSpaceProvider
 
-    \brief The QValueSpaceObject class allows applications to add entries to the Value Space.
+    \brief The QValueSpaceProvider class allows applications to add entries to the Value Space.
 
-    For an overview of the Qt Value Space, please see the QValueSpaceItem documentation.
+    For an overview of the Qt Value Space, please see the QValueSpaceSubscriber documentation.
 
-    The QValueSpaceObject class allows applications to write entries into the
-    Value Space that are automatically removed when the QValueSpaceObject is
+    The QValueSpaceProvider class allows applications to write entries into the
+    Value Space that are automatically removed when the QValueSpaceProvider is
     destroyed, or the application exits either cleanly or abnormally.  All
     applications in the system will have access to the data set through
-    QValueSpaceObject and, if desired, can be notified when the data changes.
+    QValueSpaceProvider and, if desired, can be notified when the data changes.
 
     Although, logically, the Value Space is a simple collection of
     hierarchical paths, these paths can conceptually be visualized as a set of
@@ -79,60 +79,62 @@ QT_BEGIN_NAMESPACE
     it can be thought of as describing two Value Space objects,
     \c { { /Device/Network/Interfaces/eth0, /Device/Network/Interfaces/ppp0 } },
     each with the six attributes \c { {Name, Type, Status, BytesSent,
-    BytesReceived, Time} }.  The QValueSpaceObject class encapsulates this
+    BytesReceived, Time} }.  The QValueSpaceProvider class encapsulates this
     abstraction.
 
     In the case of two or more applications creating an application object with
     overlapping attributes, only the first is visible to observers in the system.
     The other attributes are not discarded, but are buffered until the first
     releases its hold on the attribute, either by manually removing it, destroying
-    the QValueSpaceObject or by terminating.  For example:
+    the QValueSpaceProvider or by terminating.  For example:
 
     \code
-    QValueSpaceObject *object1 = new QValueSpaceObject("/Device");
+    QValueSpaceProvider *object1 = new QValueSpaceProvider("/Device");
     object1->setAttribute("Buttons", 2);
 
-    // QValueSpaceItem("/Device/Buttons").value() == QVariant(2)
+    // QValueSpaceSubscriber("/Device/Buttons").value() == QVariant(2)
 
-    QValueSpaceObject *object2 = new QValueSpaceObject("/Device");
+    QValueSpaceProvider *object2 = new QValueSpaceProvider("/Device");
     object2->setAttribute("Buttons", 3);
 
-    // QValueSpaceItem("/Device/Buttons").value() == QVariant(2)
+    // QValueSpaceSubscriber("/Device/Buttons").value() == QVariant(2)
 
     object2->removeAttribute("Buttons");
-    // QValueSpaceItem("/Device/Buttons").value() == QVariant(3)
+    // QValueSpaceSubscriber("/Device/Buttons").value() == QVariant(3)
     \endcode
 
     For performance reasons the setting of and removing of attributes is buffered
-    internally by the QValueSpaceObject and applied as a batch sometime later.
+    internally by the QValueSpaceProvider and applied as a batch sometime later.
     Normally this occurs the next time the application enters the Qt event loop,
     but this behavior should not be relied upon.  If an application must
-    synchronize application objects with others, the QValueSpaceObject::sync()
+    synchronize application objects with others, the QValueSpaceProvider::sync()
     method can be used to force the application of changes.  This call is
     generally unnecessary, and should be used sparingly to prevent unnecessary
     load on the system.
 
-    \i {Note:} The QValueSpaceObject class is not thread safe and may only be used from
+    \i {Note:} The QValueSpaceProvider class is not thread safe and may only be used from
     an application's main thread.
 
-    \sa QValueSpaceItem
+    \sa QValueSpaceSubscriber
 */
 
 /*!
-    \fn void QValueSpaceObject::attributeInterestChanged(const QString &attribute, bool interested)
+    \fn void QValueSpaceProvider::attributeInterestChanged(const QString &attribute,
+                                                           bool interested)
 
     Signal that is emitted when interest in \a attribute changes.  If \a interested is true at
-    least on QValueSpaceItem is interested in the value of \a attribute.
+    least on QValueSpaceSubscriber is interested in the value of \a attribute.
 */
 
-#define VS_CALL_ASSERT Q_ASSERT(!QCoreApplication::instance() || QCoreApplication::instance()->thread() == QThread::currentThread());
+#define VS_CALL_ASSERT Q_ASSERT(!QCoreApplication::instance() || \
+                       QCoreApplication::instance()->thread() == QThread::currentThread());
 
-class QValueSpaceObjectPrivate
+class QValueSpaceProviderPrivate
 {
 public:
-    QValueSpaceObjectPrivate(const QString &objectPath,
-                             QValueSpace::LayerOptions filter = QValueSpace::UnspecifiedLayer);
-    QValueSpaceObjectPrivate(const QString &objectPath, const QUuid &uuid);
+    QValueSpaceProviderPrivate(const QString &_path,
+                               QValueSpace::LayerOptions filter = QValueSpace::UnspecifiedLayer);
+    QValueSpaceProviderPrivate(const QString &_path, const QUuid &uuid);
 
     QString path;
 
@@ -143,11 +145,11 @@ public:
     bool hasWatch;
 };
 
-QValueSpaceObjectPrivate::QValueSpaceObjectPrivate(const QString &objectPath,
-                                                   QValueSpace::LayerOptions filter)
+QValueSpaceProviderPrivate::QValueSpaceProviderPrivate(const QString &_path,
+                                                       QValueSpace::LayerOptions filter)
 :   layer(0), handle(QAbstractValueSpaceLayer::InvalidHandle), hasSet(false), hasWatch(false)
 {
-    path = qCanonicalPath(objectPath);
+    path = qCanonicalPath(_path);
 
     if ((filter & QValueSpace::PermanentLayer &&
          filter & QValueSpace::NonPermanentLayer) ||
@@ -173,10 +175,10 @@ QValueSpaceObjectPrivate::QValueSpaceObjectPrivate(const QString &objectPath,
     }
 }
 
-QValueSpaceObjectPrivate::QValueSpaceObjectPrivate(const QString &objectPath, const QUuid &uuid)
+QValueSpaceProviderPrivate::QValueSpaceProviderPrivate(const QString &_path, const QUuid &uuid)
 :   layer(0), handle(QAbstractValueSpaceLayer::InvalidHandle), hasSet(false), hasWatch(false)
 {
-    path = qCanonicalPath(objectPath);
+    path = qCanonicalPath(_path);
 
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
 
@@ -192,12 +194,12 @@ QValueSpaceObjectPrivate::QValueSpaceObjectPrivate(const QString &objectPath, co
 /*!
     \overload
 
-    Constructs a QValueSpaceObject with the specified \a parent that publishes values under
+    Constructs a QValueSpaceProvider with the specified \a parent that publishes values under
     \a path.  This constructor is equivalent to calling
-    \c {QValueSpaceItem(path.toUtf8(), parent)}.
+    \c {QValueSpaceSubscriber(path.toUtf8(), parent)}.
 */
-QValueSpaceObject::QValueSpaceObject(const QString &path, QObject *parent)
-:   QObject(parent), d(new QValueSpaceObjectPrivate(path))
+QValueSpaceProvider::QValueSpaceProvider(const QString &path, QObject *parent)
+:   QObject(parent), d(new QValueSpaceProviderPrivate(path))
 {
     VS_CALL_ASSERT;
     QValueSpaceManager::instance()->init();
@@ -206,12 +208,12 @@ QValueSpaceObject::QValueSpaceObject(const QString &path, QObject *parent)
 /*!
     \overload
 
-    Constructs a QValueSpaceObject with the specified \a parent that publishes values under
+    Constructs a QValueSpaceProvider with the specified \a parent that publishes values under
     \a path.  This constructor is equivalent to calling
-    \c {QValueSpaceItem(QString(path), parent)}.
+    \c {QValueSpaceSubscriber(QString(path), parent)}.
 */
-QValueSpaceObject::QValueSpaceObject(const char *path, QObject *parent)
-:   QObject(parent), d(new QValueSpaceObjectPrivate(QString::fromLatin1(path)))
+QValueSpaceProvider::QValueSpaceProvider(const char *path, QObject *parent)
+:   QObject(parent), d(new QValueSpaceProviderPrivate(QString::fromLatin1(path)))
 {
     VS_CALL_ASSERT;
     QValueSpaceManager::instance()->init();
@@ -220,24 +222,24 @@ QValueSpaceObject::QValueSpaceObject(const char *path, QObject *parent)
 /*!
     \overload
 
-    Constructs a QValueSpaceObject with the specified \a parent that publishes values under
-    \a path.  The \a filter parameter is used to limit which layer this QValueSpaceObject will
+    Constructs a QValueSpaceProvider with the specified \a parent that publishes values under
+    \a path.  The \a filter parameter is used to limit which layer this QValueSpaceProvider will
     access.  This constructor is equivalent to calling
-    \c {QValueSpaceObject(path.toUtf8(), filter, parent)}.
+    \c {QValueSpaceProvider(path.toUtf8(), filter, parent)}.
 
-    The constructed Value Space object will access the \l {QAbstractValueSpaceLayer}{layer} with
+    The constructed Value Space provier will access the \l {QAbstractValueSpaceLayer}{layer} with
     the highest \l {QAbstractValueSpaceLayer::order()}{order} that matches \a filter and for which
     \a path is a valid path.
 
-    If no suitable \l {QAbstractValueSpaceLayer}{layer} is found, the constructed QValueSpaceObject
-    will be unconnected.
+    If no suitable \l {QAbstractValueSpaceLayer}{layer} is found, the constructed
+    QValueSpaceProvider will be unconnected.
 
     \sa isConnected()
 */
-QValueSpaceObject::QValueSpaceObject(const QString &path,
-                                     QValueSpace::LayerOptions filter,
-                                     QObject *parent)
-:   QObject(parent), d(new QValueSpaceObjectPrivate(path, filter))
+QValueSpaceProvider::QValueSpaceProvider(const QString &path,
+                                         QValueSpace::LayerOptions filter,
+                                         QObject *parent)
+:   QObject(parent), d(new QValueSpaceProviderPrivate(path, filter))
 {
     VS_CALL_ASSERT;
     QValueSpaceManager::instance()->init();
@@ -246,24 +248,24 @@ QValueSpaceObject::QValueSpaceObject(const QString &path,
 /*!
     \overload
 
-    Constructs a QValueSpaceObject with the specified \a parent that publishes values under
-    \a path.  The \a filter parameter is used to limit which layer this QValueSpaceObject will
+    Constructs a QValueSpaceProvider with the specified \a parent that publishes values under
+    \a path.  The \a filter parameter is used to limit which layer this QValueSpaceProvider will
     access.  This constructor is equivalent to calling
-    \c {QValueSpaceObject(QString::fromLatin1(path), filter, parent)}.
+    \c {QValueSpaceProvider(QString::fromLatin1(path), filter, parent)}.
 
-    The constructed Value Space object will access the \l {QAbstractValueSpaceLayer}{layer} with
+    The constructed Value Space provider will access the \l {QAbstractValueSpaceLayer}{layer} with
     the highest \l {QAbstractValueSpaceLayer::order()}{order} that matches \a filter and for which
     \a path is a valid path.
 
-    If no suitable \l {QAbstractValueSpaceLayer}{layer} is found, the constructed QValueSpaceObject
-    will be unconnected.
+    If no suitable \l {QAbstractValueSpaceLayer}{layer} is found, the constructed
+    QValueSpaceProvider will be unconnected.
 
     \sa isConnected()
 */
-QValueSpaceObject::QValueSpaceObject(const char *path,
-                                     QValueSpace::LayerOptions filter,
-                                     QObject *parent)
-:   QObject(parent), d(new QValueSpaceObjectPrivate(QString::fromLatin1(path), filter))
+QValueSpaceProvider::QValueSpaceProvider(const char *path,
+                                         QValueSpace::LayerOptions filter,
+                                         QObject *parent)
+:   QObject(parent), d(new QValueSpaceProviderPrivate(QString::fromLatin1(path), filter))
 {
     VS_CALL_ASSERT;
     QValueSpaceManager::instance()->init();
@@ -272,21 +274,21 @@ QValueSpaceObject::QValueSpaceObject(const char *path,
 /*!
     \overload
 
-    Constructs a QValueSpaceObject with the specified \a parent that publishes values under
-    \a path.  Only the layer identified by \a uuid will be accessed by this object.  This
-    constructor is equivalent to calling \c {QValueSpaceObject(path.toUtf8(), uuid, parent)}.
+    Constructs a QValueSpaceProvider with the specified \a parent that publishes values under
+    \a path.  Only the layer identified by \a uuid will be accessed by this provider.  This
+    constructor is equivalent to calling \c {QValueSpaceProvider(path.toUtf8(), uuid, parent)}.
 
     Use of this constructor is not platform agnostic.  If possible use one of the constructors that
     take a QAbstractValueSpaceLayer::LayerOptions parameter instead.
 
-    If a layer with a matching \a uuid is not found, the constructed QValueSpaceObject will be
+    If a layer with a matching \a uuid is not found, the constructed QValueSpaceProvider will be
     unconnected.
 
     \sa isConnected()
 */
 
-QValueSpaceObject::QValueSpaceObject(const QString &path, const QUuid &uuid, QObject *parent)
-:   QObject(parent), d(new QValueSpaceObjectPrivate(path, uuid))
+QValueSpaceProvider::QValueSpaceProvider(const QString &path, const QUuid &uuid, QObject *parent)
+:   QObject(parent), d(new QValueSpaceProviderPrivate(path, uuid))
 {
     VS_CALL_ASSERT;
     QValueSpaceManager::instance()->init();
@@ -295,30 +297,30 @@ QValueSpaceObject::QValueSpaceObject(const QString &path, const QUuid &uuid, QOb
 /*!
     \overload
 
-    Constructs a QValueSpaceObject with the specified \a parent that publishes values under
-    \a path.  Only the layer identified by \a uuid will be accessed by this object.  This
-    constructor is equivalent to calling \c {QValueSpaceObject(QString(path), uuid, parent)}.
+    Constructs a QValueSpaceProvider with the specified \a parent that publishes values under
+    \a path.  Only the layer identified by \a uuid will be accessed by this provider.  This
+    constructor is equivalent to calling \c {QValueSpaceProvider(QString(path), uuid, parent)}.
 
     Use of this constructor is not platform agnostic.  If possible use one of the constructors that
     take a QAbstractValueSpaceLayer::LayerOptions parameter instead.
 
-    If a layer with a matching \a uuid is not found, the constructed QValueSpaceObject will be
+    If a layer with a matching \a uuid is not found, the constructed QValueSpaceProvider will be
     unconnected.
 
     \sa isConnected()
 */
-QValueSpaceObject::QValueSpaceObject(const char *path, const QUuid &uuid, QObject *parent)
-:   QObject(parent), d(new QValueSpaceObjectPrivate(QString::fromLatin1(path), uuid))
+QValueSpaceProvider::QValueSpaceProvider(const char *path, const QUuid &uuid, QObject *parent)
+:   QObject(parent), d(new QValueSpaceProviderPrivate(QString::fromLatin1(path), uuid))
 {
     VS_CALL_ASSERT;
     QValueSpaceManager::instance()->init();
 }
 
 /*!
-    Destroys the QValueSpaceObject.  This will remove the object and all its attributes from the
-    Value Space.
+    Destroys the QValueSpaceProvider.  This will remove the values set by this provider in all
+    \l {QValueSpace::NonPermanentLayer}{non-permanent} layers.
 */
-QValueSpaceObject::~QValueSpaceObject()
+QValueSpaceProvider::~QValueSpaceProvider()
 {
     VS_CALL_ASSERT;
 
@@ -335,35 +337,35 @@ QValueSpaceObject::~QValueSpaceObject()
 }
 
 /*!
-    Returns the path that this QValueSpaceObject refers to.
+    Returns the path that this QValueSpaceProvider refers to.
 */
-QString QValueSpaceObject::path() const
+QString QValueSpaceProvider::path() const
 {
     VS_CALL_ASSERT;
     return d->path;
 }
 
 /*!
-    Returns true if this QValueSpaceObject is connected to an available layer; otherwise returns
+    Returns true if this QValueSpaceProvider is connected to an available layer; otherwise returns
     false.
 */
-bool QValueSpaceObject::isConnected() const
+bool QValueSpaceProvider::isConnected() const
 {
     return (d->layer && d->handle != QAbstractValueSpaceLayer::InvalidHandle);
 }
 
 /*!
-    Forcibly sync all Value Space objects.
+    Forcibly sync all Value Space providers.
 
     For performance reasons attribute changes are batched internally by
-    QValueSpaceObject instances.  In cases where the visibility of changes must
-    be synchronized with other processes, calling QValueSpaceObject::sync() will
+    QValueSpaceProvider instances.  In cases where the visibility of changes must
+    be synchronized with other processes, calling QValueSpaceProvider::sync() will
     flush these batches.  By the time sync() returns, all other processes in the
     system will be able to see the attribute changes.
 
     In the common asynchronous case, calling sync() is unnecessary.
 */
-void QValueSpaceObject::sync()
+void QValueSpaceProvider::sync()
 {
     VS_CALL_ASSERT;
 
@@ -372,25 +374,25 @@ void QValueSpaceObject::sync()
 }
 
 /*!
-    Set an \a attribute on the object to \a data.  If attribute is empty, this call will set the
-    object's value.
+    Set an \a attribute on the provider to \a data.  If attribute is empty, this call will set the
+    value of this providers path.
 
     For example:
 
     \code
-        QValueSpaceObject object("/Device");
-        object.setAttribute("State", "Starting");
-        object.sync();
+        QValueSpaceProvider provider("/Device");
+        provider.setAttribute("State", "Starting");
+        provider.sync();
 
-        // QValueSpaceItem("/Device/State").value() == QVariant("Starting")
+        // QValueSpaceSubscriber("/Device/State").value() == QVariant("Starting")
     \endcode
 */
-void QValueSpaceObject::setAttribute(const QString &attribute, const QVariant &data)
+void QValueSpaceProvider::setAttribute(const QString &attribute, const QVariant &data)
 {
     VS_CALL_ASSERT;
 
     if (!isConnected()) {
-        qWarning("setAttribute called on unconnected QValueSpaceObject.");
+        qWarning("setAttribute called on unconnected QValueSpaceProvider.");
         return;
     }
 
@@ -404,36 +406,36 @@ void QValueSpaceObject::setAttribute(const QString &attribute, const QVariant &d
     This is a convenience overload and is equivalent to
     \c {setAttribute(QString(attribute), data)}.
 */
-void QValueSpaceObject::setAttribute(const char *attribute, const QVariant &data)
+void QValueSpaceProvider::setAttribute(const char *attribute, const QVariant &data)
 {
     VS_CALL_ASSERT;
     setAttribute(QString::fromLatin1(attribute), data);
 }
 
 /*!
-    Removes the object \a attribute and all sub-attributes from the system.
+    Removes the proivder \a attribute and all sub-attributes from the system.
 
     For example:
     \code
-        QValueSpaceObject object("/Device");
-        object.setAttribute("State", "Starting");
-        object.setAttribute("State/Memory", "1000");
-        object.sync();
-        // QValueSpaceItem("/Device/State").value() == QVariant("Starting")
-        // QValueSpaceItem("/Device/State/Memory").value() == QVariant("1000")
+        QValueSpaceProvider provider("/Device");
+        provider.setAttribute("State", "Starting");
+        provider.setAttribute("State/Memory", "1000");
+        provider.sync();
+        // QValueSpaceSubscriber("/Device/State").value() == QVariant("Starting")
+        // QValueSpaceSubscriber("/Device/State/Memory").value() == QVariant("1000")
 
-        object.removeAttribute("State");
-        object.sync();
-        // QValueSpaceItem("/Device/State").value() == QVariant();
-        // QValueSpaceItem("/Device/State/Memory").value() == QVariant();
+        provider.removeAttribute("State");
+        provider.sync();
+        // QValueSpaceSubscriber("/Device/State").value() == QVariant();
+        // QValueSpaceSubscriber("/Device/State/Memory").value() == QVariant();
     \endcode
 */
-void QValueSpaceObject::removeAttribute(const QString &attribute)
+void QValueSpaceProvider::removeAttribute(const QString &attribute)
 {
     VS_CALL_ASSERT;
 
     if (!isConnected()) {
-        qWarning("removeAttribute called on unconnected QValueSpaceObject.");
+        qWarning("removeAttribute called on unconnected QValueSpaceProvider.");
         return;
     }
 
@@ -445,15 +447,15 @@ void QValueSpaceObject::removeAttribute(const QString &attribute)
 
     This is a convenience overload and is equivalent to \c {removeAttribute(QString(attribute))}.
 */
-void QValueSpaceObject::removeAttribute(const char *attribute)
+void QValueSpaceProvider::removeAttribute(const char *attribute)
 {
     VS_CALL_ASSERT;
     removeAttribute(QString::fromLatin1(attribute));
 }
 
 /*!
-    Registers this QValueSpaceObject for notifications when requests to set or remove value space
-    items under objectPath() are received by the underlying QAbstractValueSpaceLayer.
+    Registers this QValueSpaceProvider for notifications when QValueSpaceSubscribers are interested
+    in values under path().
 
     Generally you do not need to call this function as it is automatically called when
     connections are made to this classes signals.  \a member is the signal that has been connected.
@@ -463,7 +465,7 @@ void QValueSpaceObject::removeAttribute(const char *attribute)
 
     \sa attributeInterestChanged()
 */
-void QValueSpaceObject::connectNotify(const char *member)
+void QValueSpaceProvider::connectNotify(const char *member)
 {
     VS_CALL_ASSERT;
 

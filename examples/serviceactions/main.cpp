@@ -38,8 +38,13 @@ int main(int argc, char** argv)
 {
     QApplication app(argc,argv);
 
-    MainWindow mainwindow;
-    mainwindow.show();
+	MainWindow mainwindow;
 
+#ifdef _WIN32_WCE
+	app.setKeypadNavigationEnabled(true);
+	mainwindow.showMaximized();
+#else
+	mainwindow.show();
+#endif
     app.exec();
 }

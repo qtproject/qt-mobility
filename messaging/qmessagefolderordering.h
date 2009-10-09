@@ -38,8 +38,9 @@
 
 class QMessageFolderOrderingPrivate;
 
-class Q_MESSAGING_EXPORT QMessageFolderOrdering {
-    Q_DECLARE_PRIVATE(QMessageFolderOrdering)
+class Q_MESSAGING_EXPORT QMessageFolderOrdering
+{
+    friend class QMessageFolderOrderingPrivate;
 
 public:
     QMessageFolderOrdering();

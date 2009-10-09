@@ -41,7 +41,7 @@ class QMessageFolderIdPrivate;
 
 class Q_MESSAGING_EXPORT QMessageFolderId 
 {
-    Q_DECLARE_PRIVATE(QMessageFolderId)
+    friend class QMessageFolderIdPrivate;
 
 public:
     QMessageFolderId();
@@ -54,10 +54,14 @@ public:
     bool operator==(const QMessageFolderId &other) const;
     bool operator!=(const QMessageFolderId &other) const;
 
+    bool operator<(const QMessageFolderId &other) const;
+
     QString toString() const;
     bool isValid() const;
 
 private:
+    friend Q_MESSAGING_EXPORT uint qHash(const QMessageFolderId &id);
+
     QMessageFolderIdPrivate *d_ptr;
 };
 

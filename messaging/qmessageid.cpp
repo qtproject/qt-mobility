@@ -96,6 +96,11 @@ bool QMessageId::operator!=(const QMessageId &other) const
 }
 
 /*!
+    \internal
+    \fn bool QMessageId::operator<(const QMessageId &other) const
+*/
+
+/*!
     \fn bool QMessageId::toString() const
 
     Returns the string representation of this identifier.
@@ -117,3 +122,4 @@ bool QMessageId::operator!=(const QMessageId &other) const
     Qt-style synonym for QList<QMessageId>
 */
 
+static const int registrationId = qRegisterMetaType<QMessageId>();

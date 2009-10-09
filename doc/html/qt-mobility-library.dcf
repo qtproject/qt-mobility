@@ -1798,7 +1798,6 @@
     </section>
     <section ref="qmessagecontentcontainer.html" title="QMessageContentContainer Class Reference">
         <keyword ref="qmessagecontentcontainer.html">QMessageContentContainer</keyword>
-        <keyword ref="qmessagecontentcontainer.html#containerId">containerId</keyword>
         <keyword ref="qmessagecontentcontainer.html#contains">contains</keyword>
         <keyword ref="qmessagecontentcontainer.html#content">content</keyword>
         <keyword ref="qmessagecontentcontainer.html#contentCharset">contentCharset</keyword>
@@ -1810,7 +1809,6 @@
         <keyword ref="qmessagecontentcontainer.html#headerFieldValues">headerFieldValues</keyword>
         <keyword ref="qmessagecontentcontainer.html#headerFields">headerFields</keyword>
         <keyword ref="qmessagecontentcontainer.html#isContentAvailable">isContentAvailable</keyword>
-        <keyword ref="qmessagecontentcontainer.html#messageId">messageId</keyword>
         <keyword ref="qmessagecontentcontainer.html#size">size</keyword>
         <keyword ref="qmessagecontentcontainer.html#suggestedFileName">suggestedFileName</keyword>
         <keyword ref="qmessagecontentcontainer.html#textContent">textContent</keyword>
@@ -1926,13 +1924,13 @@
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::ConstraintFailure</keyword>
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::ContentInaccessible</keyword>
         <keyword ref="qmessagestore.html#NotificationFilterId-typedef">NotificationFilterId</keyword>
+        <keyword ref="qmessagestore.html#NotificationFilterIdSet-typedef">NotificationFilterIdSet</keyword>
         <keyword ref="qmessagestore.html#RemovalOption-enum">RemovalOption</keyword>
         <keyword ref="qmessagestore.html#RemovalOption-enum">QMessageStore::RemoveLocalCopyOnly</keyword>
         <keyword ref="qmessagestore.html#RemovalOption-enum">QMessageStore::RemoveOnOriginatingServer</keyword>
         <keyword ref="qmessagestore.html#account">account</keyword>
         <keyword ref="qmessagestore.html#addMessage">addMessage</keyword>
         <keyword ref="qmessagestore.html#countAccounts">countAccounts</keyword>
-        <keyword ref="qmessagestore.html#countMessages">countMessages</keyword>
         <keyword ref="qmessagestore.html#instance">instance</keyword>
         <keyword ref="qmessagestore.html#lastError">lastError</keyword>
         <keyword ref="qmessagestore.html#message">message</keyword>
@@ -1940,7 +1938,6 @@
         <keyword ref="qmessagestore.html#messageRemoved">messageRemoved</keyword>
         <keyword ref="qmessagestore.html#messageUpdated">messageUpdated</keyword>
         <keyword ref="qmessagestore.html#queryAccounts">queryAccounts</keyword>
-        <keyword ref="qmessagestore.html#queryMessages">queryMessages</keyword>
         <keyword ref="qmessagestore.html#registerNotificationFilter">registerNotificationFilter</keyword>
         <keyword ref="qmessagestore.html#removeMessage">removeMessage</keyword>
         <keyword ref="qmessagestore.html#removeMessages">removeMessages</keyword>
@@ -2408,29 +2405,29 @@
         <keyword ref="qvaluespace.html#QVALUESPACE_SHAREDMEMORY_LAYER">QVALUESPACE_SHAREDMEMORY_LAYER</keyword>
         <keyword ref="qvaluespace.html#QVALUESPACE_VOLATILEREGISTRY_LAYER">QVALUESPACE_VOLATILEREGISTRY_LAYER</keyword>
     </section>
-    <section ref="qvaluespaceitem.html" title="QValueSpaceItem Class Reference">
-        <keyword ref="qvaluespaceitem.html">QValueSpaceItem</keyword>
-        <keyword ref="qvaluespaceitem.html#path-prop">path</keyword>
-        <keyword ref="qvaluespaceitem.html#path-prop">setPath</keyword>
-        <keyword ref="qvaluespaceitem.html#value-prop">value</keyword>
-        <keyword ref="qvaluespaceitem.html#cd">cd</keyword>
-        <keyword ref="qvaluespaceitem.html#cdUp">cdUp</keyword>
-        <keyword ref="qvaluespaceitem.html#contentsChanged">contentsChanged</keyword>
-        <keyword ref="qvaluespaceitem.html#isConnected">isConnected</keyword>
-        <keyword ref="qvaluespaceitem.html#subPaths">subPaths</keyword>
-        <keyword ref="qvaluespaceitem.html#value">value</keyword>
-        <section ref="qvaluespaceitem-members.html" title="List of all members"/>
+    <section ref="qvaluespaceprovider.html" title="QValueSpaceProvider Class Reference">
+        <keyword ref="qvaluespaceprovider.html">QValueSpaceProvider</keyword>
+        <keyword ref="qvaluespaceprovider.html#attributeInterestChanged">attributeInterestChanged</keyword>
+        <keyword ref="qvaluespaceprovider.html#connectNotify">connectNotify</keyword>
+        <keyword ref="qvaluespaceprovider.html#isConnected">isConnected</keyword>
+        <keyword ref="qvaluespaceprovider.html#path">path</keyword>
+        <keyword ref="qvaluespaceprovider.html#removeAttribute">removeAttribute</keyword>
+        <keyword ref="qvaluespaceprovider.html#setAttribute">setAttribute</keyword>
+        <keyword ref="qvaluespaceprovider.html#sync">sync</keyword>
+        <section ref="qvaluespaceprovider-members.html" title="List of all members"/>
     </section>
-    <section ref="qvaluespaceobject.html" title="QValueSpaceObject Class Reference">
-        <keyword ref="qvaluespaceobject.html">QValueSpaceObject</keyword>
-        <keyword ref="qvaluespaceobject.html#attributeInterestChanged">attributeInterestChanged</keyword>
-        <keyword ref="qvaluespaceobject.html#connectNotify">connectNotify</keyword>
-        <keyword ref="qvaluespaceobject.html#isConnected">isConnected</keyword>
-        <keyword ref="qvaluespaceobject.html#path">path</keyword>
-        <keyword ref="qvaluespaceobject.html#removeAttribute">removeAttribute</keyword>
-        <keyword ref="qvaluespaceobject.html#setAttribute">setAttribute</keyword>
-        <keyword ref="qvaluespaceobject.html#sync">sync</keyword>
-        <section ref="qvaluespaceobject-members.html" title="List of all members"/>
+    <section ref="qvaluespacesubscriber.html" title="QValueSpaceSubscriber Class Reference">
+        <keyword ref="qvaluespacesubscriber.html">QValueSpaceSubscriber</keyword>
+        <keyword ref="qvaluespacesubscriber.html#path-prop">path</keyword>
+        <keyword ref="qvaluespacesubscriber.html#path-prop">setPath</keyword>
+        <keyword ref="qvaluespacesubscriber.html#value-prop">value</keyword>
+        <keyword ref="qvaluespacesubscriber.html#cd">cd</keyword>
+        <keyword ref="qvaluespacesubscriber.html#cdUp">cdUp</keyword>
+        <keyword ref="qvaluespacesubscriber.html#contentsChanged">contentsChanged</keyword>
+        <keyword ref="qvaluespacesubscriber.html#isConnected">isConnected</keyword>
+        <keyword ref="qvaluespacesubscriber.html#subPaths">subPaths</keyword>
+        <keyword ref="qvaluespacesubscriber.html#value">value</keyword>
+        <section ref="qvaluespacesubscriber-members.html" title="List of all members"/>
     </section>
     <section ref="qvideodevicecontrol.html" title="QVideoDeviceControl Class Reference">
         <keyword ref="qvideodevicecontrol.html">QVideoDeviceControl</keyword>

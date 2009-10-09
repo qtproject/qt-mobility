@@ -13,6 +13,8 @@ HEADERS += \
 
 symbian|win32 {
     symbian {
+        MMP_RULES += "EXPORTUNFROZEN"
+
         SOURCES += \
             support_symbian.cpp
     }

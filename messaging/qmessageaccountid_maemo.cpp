@@ -62,6 +62,11 @@ QMessageAccountId& QMessageAccountId::operator=(const QMessageAccountId& other)
     return *this; // stub
 }
 
+bool QMessageAccountId::operator<(const QMessageAccountId& other) const
+{
+    return false; // stub
+}
+
 QString QMessageAccountId::toString() const
 {
     return QString::null; // stub

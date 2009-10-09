@@ -81,11 +81,11 @@ Rectangle {
     }
 
     //! [0]
-    ValueSpaceItem {
+    ValueSpaceSubscriber {
         id: batteryCharge
         path: "/power/battery/charge"
     }
-    ValueSpaceItem {
+    ValueSpaceSubscriber {
         id: batteryCharging
         path: "/power/battery/charging"
     }

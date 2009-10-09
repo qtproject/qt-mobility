@@ -102,6 +102,8 @@ SOURCES += qmessageid_symbian.cpp \
            qmessageordering_symbian.cpp \
            qmessagestore_symbian.cpp \
            qmessageserviceaction_symbian.cpp 
+
+MMP_RULES += "EXPORTUNFROZEN"
 }
 
 win32 {
@@ -132,7 +134,7 @@ wince* {
     LIBS += cemapi.lib strmiids.lib uuid.lib
 }
 else {
-    LIBS += mapi32.lib shlwapi.lib
+    LIBS += mapi32.lib shlwapi.lib user32.lib
 }
 
 }

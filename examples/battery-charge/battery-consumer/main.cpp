@@ -31,6 +31,8 @@
 **
 ****************************************************************************/
 
+#include <qvaluespacesubscriber.h>
+
 #include <QApplication>
 #include <QObject>
 #include <QmlView>
@@ -39,11 +41,10 @@
 #include <QPushButton>
 #include <QUrl>
 #include <qml.h>
-#include <qvaluespaceitem.h>
 
 //! [0]
-QML_DECLARE_TYPE(QValueSpaceItem);
-QML_DEFINE_TYPE(Qt, 4, 6, (QT_VERSION&0x00ff00)>>8, ValueSpaceItem, QValueSpaceItem);
+QML_DECLARE_TYPE(QValueSpaceSubscriber);
+QML_DEFINE_TYPE(Qt, 4, 6, (QT_VERSION&0x00ff00)>>8, ValueSpaceSubscriber, QValueSpaceSubscriber);
 //! [0]
 
 class MainWidget : public QWidget

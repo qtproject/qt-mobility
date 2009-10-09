@@ -93,6 +93,11 @@ bool QMessageId::operator==(const QMessageId& other) const
     }
 }
 
+bool QMessageId::operator<(const QMessageId& other) const
+{
+    return (d_ptr->_id < other.d_ptr->_id);
+}
+
 QString QMessageId::toString() const
 {
     return (isValid() ? QString::number(d_ptr->_id.toULongLong()) : QString());

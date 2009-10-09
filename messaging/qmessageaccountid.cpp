@@ -91,6 +91,11 @@ bool QMessageAccountId::operator!=(const QMessageAccountId &other) const
 }
 
 /*!
+    \internal
+    \fn bool QMessageAccountId::operator<(const QMessageAccountId &other) const
+*/
+
+/*!
     \fn QMessageAccountId& QMessageAccountId::operator=(const QMessageAccountId &other)
 
     Assigns \a other to this identifier and returns a reference to this identifier.

@@ -40,7 +40,7 @@ class QMessageAccountFilterPrivate;
 
 class Q_MESSAGING_EXPORT QMessageAccountFilter
 {
-    Q_DECLARE_PRIVATE(QMessageAccountFilter)
+    friend class QMessageAccountFilterPrivate;
 
 public:
     QMessageAccountFilter();

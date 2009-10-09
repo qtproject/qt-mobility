@@ -44,8 +44,9 @@ LD_LIBRARY_PATH=$shell_path/../lib:$LD_LIBRARY_PATH
 ./tst_qpacket
 ./tst_qpacketprotocol
 ./tst_qvaluespace
-./tst_qvaluespaceobject
-./tst_qvaluespaceitem
+./tst_qvaluespaceprovider
+./tst_qvaluespacesubscriber
+./tst_qvaluespacesubscriber_oop
 ./tst_qsystemreadwritelock
 ./tst_qsystemreadwritelock_oop
 

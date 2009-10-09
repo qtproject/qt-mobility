@@ -79,8 +79,7 @@
     audio recording, and the playing of music or video clips.
         \o Location will make the device aware of its geographical location
     to support GIS applications.
-        \o Context layer will enable a flexible behavior for changed
-    circumstances.
+        \o Publish-Subscribe enables a flexible behavior for changed circumstances.
         \endlist
 
     \section1 Bearer Management
@@ -124,7 +123,7 @@
     It includes the ability to create, edit, list, delete and lookup contact
     information whether it is stored locally or remotely.
 
-    \section1 Context (Publish and Subscribe)
+    \section1 Publish and Subscribe
 
     Enables context sensitive access to information. Data is organized as a tree, with
     data being able to 'shadow' other data with the 'same key', a string

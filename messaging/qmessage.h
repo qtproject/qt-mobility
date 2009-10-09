@@ -44,8 +44,9 @@
 
 class QMessagePrivate;
 
-class Q_MESSAGING_EXPORT QMessage : public QMessageContentContainer {
-    Q_DECLARE_PRIVATE(QMessage)
+class Q_MESSAGING_EXPORT QMessage : public QMessageContentContainer
+{
+    friend class QMessagePrivate;
 
 public:
     enum Type

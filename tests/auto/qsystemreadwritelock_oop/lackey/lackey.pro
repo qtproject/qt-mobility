@@ -12,5 +12,5 @@ CONFIG+= testcase
 
 include(../../../../common.pri)
 
-qtAddLibrary(QtContextFramework)
+qtAddLibrary(QtPublishSubscribe)
 

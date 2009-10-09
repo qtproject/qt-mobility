@@ -11,4 +11,4 @@ SOURCES = main.cpp \
 FORMS = batteryprovider.ui
 
 include(../../examples.pri)
-qtAddLibrary(QtContextFramework)
+qtAddLibrary(QtPublishSubscribe)

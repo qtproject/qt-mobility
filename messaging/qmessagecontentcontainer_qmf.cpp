@@ -111,24 +111,6 @@ QMessageContentContainer::~QMessageContentContainer()
     delete d_ptr;
 }
 
-QMessageContentContainerId QMessageContentContainer::containerId() const
-{
-    if (d_ptr->_container == &d_ptr->_part) {
-        return convert(d_ptr->_part.location());
-    } else {
-        return QmfHelpers::bodyId(convert(d_ptr->_message)->id());
-    }
-}
-
-QMessageId QMessageContentContainer::messageId() const
-{
-    if (d_ptr->_container == &d_ptr->_part) {
-        return convert(d_ptr->_part.location().containingMessageId());
-    } else {
-        return convert(convert(d_ptr->_message)->id());
-    }
-}
-
 QByteArray QMessageContentContainer::contentType() const
 {
     if (!d_ptr->_type.isEmpty()) {
@@ -173,8 +155,6 @@ bool QMessageContentContainer::isContentAvailable() const
 
 uint QMessageContentContainer::size() const
 {
-    applyPendingChanges();
-
     if (d_ptr->_container->hasBody()) {
         return d_ptr->_container->body().length();
     }
@@ -187,19 +167,16 @@ uint QMessageContentContainer::size() const
 
 QString QMessageContentContainer::textContent() const
 {
-    applyPendingChanges();
     return d_ptr->_container->body().data();
 }
 
 QByteArray QMessageContentContainer::content() const
 {
-    applyPendingChanges();
     return d_ptr->_container->body().data(QMailMessageBody::Decoded);
 }
 
 void QMessageContentContainer::writeTextContentTo(QTextStream& out) const
 {
-    applyPendingChanges();
     if (d_ptr->_container->hasBody()) {
         d_ptr->_container->body().toStream(out);
     }
@@ -207,7 +184,6 @@ void QMessageContentContainer::writeTextContentTo(QTextStream& out) const
 
 void QMessageContentContainer::writeContentTo(QDataStream& out) const
 {
-    applyPendingChanges();
     if (d_ptr->_container->hasBody()) {
         d_ptr->_container->body().toStream(out, QMailMessageBody::Decoded);
     }
@@ -289,7 +265,3 @@ void QMessageContentContainer::setDerivedMessage(QMessage *derived)
     d_ptr->setDerivedMessage(derived);
 }
 
-void QMessageContentContainer::applyPendingChanges() const
-{
-    d_ptr->applyPendingChanges();
-}
