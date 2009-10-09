@@ -73,8 +73,8 @@
     </section>
 </section>
 <section ref="overviews.html" title="Overviews">
-    <section ref="index.html" title="Qt Context Framework Developer Resources">
-        <keyword ref="index.html">Qt Context Framework Developer Resources</keyword>
+    <section ref="index.html" title="Qt Publish and Subscribe Developer Resources">
+        <keyword ref="index.html">Qt Publish and Subscribe Developer Resources</keyword>
     </section>
 </section>
 <section ref="examples.html" title="Tutorial &amp; Examples">

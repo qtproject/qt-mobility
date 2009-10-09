@@ -2,12 +2,12 @@
 
 \page index.html
 
-\title Qt Context Framework Developer Resources
+\title Qt Publish and Subscribe Developer Resources
 
 \brief The Qt Value Space allows inter-process publication of hierarchical
 data.
 
-The Qt Context Framework allows developers to construct context sensitive trees
+The Qt Publish and Subscribe allows developers to construct context sensitive trees
 of data by means of the Qt Value Space. This allows a variety of different 
 context dependent uses, for example, the data may be strings for a context 
 sensitive help system, or perhaps a context sensitive remap of buttons.
@@ -23,7 +23,7 @@ serialized version of a simple example Value Space might look like this.
 
 \code
 /Device/Buttons = 3
-/Device/Buttons/1/Name = Context
+/Device/Buttons/1/Name = Menu
 /Device/Buttons/1/Usable = true
 /Device/Buttons/2/Name = Select
 /Device/Buttons/2/Usable = false

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- index.qdoc -->
 <head>
-  <title>Qt Context Framework Developer Resources</title>
+  <title>Qt Publish and Subscribe Developer Resources</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -12,9 +12,9 @@
 <tr>
 <td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Qt Context Framework Developer Resources<br /><span class="subtitle"></span>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Qt Publish and Subscribe Developer Resources<br /><span class="subtitle"></span>
 </h1>
-<p>The Qt Context Framework allows developers to construct context sensitive trees of data by means of the Qt Value Space. This allows a variety of different context dependent uses, for example, the data may be strings for a context sensitive help system, or perhaps a context sensitive remap of buttons.</p>
+<p>The Qt Publish and Subscribe allows developers to construct context sensitive trees of data by means of the Qt Value Space. This allows a variety of different context dependent uses, for example, the data may be strings for a context sensitive help system, or perhaps a context sensitive remap of buttons.</p>
 <ul><li><a href="#qt-value-space">Qt Value Space</a></li>
 <ul><li><a href="#architecture">Architecture</a></li>
 <ul><li><a href="#shared-memory-layer">Shared Memory Layer</a></li>
@@ -28,7 +28,7 @@
 <h3>Qt Value Space</h3>
 <p>The Qt Value Space unifies various sources of hierarchical data into a single consistent model. Conceptually the Value Space is a hierarchical tree of which each node or leaf can optionally contain a <a href="http://qt.nokia.com/doc/4.5/porting4.html">QVariant</a> value. A serialized version of a simple example Value Space might look like this.</p>
 <pre>    /Device/Buttons = 3
-    /Device/Buttons/1/Name = Context
+    /Device/Buttons/1/Name = Menu
     /Device/Buttons/1/Usable = true
     /Device/Buttons/2/Name = Select
     /Device/Buttons/2/Usable = false

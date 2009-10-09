@@ -220,7 +220,7 @@
             <page access="public" status="commendable" name="battery-charge/battery-consumer/battery-consumer.qrc" href="battery-charge-battery-consumer-battery-consumer-qrc.html" subtype="file" title="" fulltitle="battery-consumer.qrc Example File" subtitle="battery-charge/battery-consumer/battery-consumer.qrc" location=""/>
             <page access="public" status="commendable" name="battery-charge/battery-provider/battery-provider.pro" href="battery-charge-battery-provider-battery-provider-pro.html" subtype="file" title="" fulltitle="battery-provider.pro Example File" subtitle="battery-charge/battery-provider/battery-provider.pro" location=""/>
         </page>
-        <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Context Framework Developer Resources" fulltitle="Qt Context Framework Developer Resources" subtitle="" location="index.qdoc">
+        <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Publish and Subscribe Developer Resources" fulltitle="Qt Publish and Subscribe Developer Resources" subtitle="" location="index.qdoc">
             <contents name="qt-value-space" title="Qt Value Space" level="1"/>
             <contents name="architecture" title="Architecture" level="2"/>
             <contents name="shared-memory-layer" title="Shared Memory Layer" level="3"/>
