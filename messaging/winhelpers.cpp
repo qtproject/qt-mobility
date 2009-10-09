@@ -1080,13 +1080,6 @@ namespace {
         QMessageFilter _filter;
         MapiStorePtr _store;
         MapiFolderPtr _folder;
-        MapiRecordKey _key;
-        MapiRecordKey _parentStoreKey;
-        MapiEntryId _parentStoreEntryId;
-        QString _name;
-        MapiEntryId _entryId;
-        bool _hasSubFolders;
-        uint _messageCount;
         uint _offset; // TODO replace this with LPMAPITABLE for efficiency
         QMessage _front;
     };
@@ -1095,13 +1088,6 @@ namespace {
         : _filter(filter),
           _store(store),
           _folder(folder),
-          _key(folder->recordKey()),
-          _parentStoreKey(folder->storeKey()),
-          _parentStoreEntryId(store->entryId()),
-          _name(folder->name()),
-          _entryId(folder->entryId()),
-          _hasSubFolders(folder->hasSubFolders()),
-          _messageCount(folder->messageCount()),
           _offset(0)
     {
     }
@@ -1132,7 +1118,7 @@ namespace {
         foreach (const FolderHeapNodePtr &folder, protoHeap) {
             FolderHeapNodePtr node(folder);
             if (!node->_folder) {
-                qWarning() << "Unable to access folder:" << node->_name;
+                qWarning() << "Unable to access folder:" << node->_folder->name();
                 continue;
             }
 
@@ -1161,16 +1147,8 @@ namespace {
         QMessage result(_heap[0]->_front);
 
         FolderHeapNodePtr node(_heap[0]);
-
-        MapiStorePtr store = _mapiSession->openStore(lastError, node->_parentStoreEntryId);
-        if (*lastError != QMessageStore::NoError)
-            return result;
-
-        node->_folder = store->openFolder(lastError, node->_entryId);
-        if (*lastError != QMessageStore::NoError)
-            return result;
-
         ++node->_offset;
+
         // TODO: Would be more efficient to use a LPMAPITABLE directly instead of calling MapiFolder queryMessages and message functions.
         QMessageIdList messageIdList(node->_folder->queryMessages(lastError, node->_filter, _ordering, 1, node->_offset));
         if (*lastError != QMessageStore::NoError)
@@ -1547,8 +1525,12 @@ MapiFolderPtr MapiFolder::nextSubFolder(QMessageStore::ErrorCode *lastError, con
 {
     MapiFolderPtr result;
 
-    if (!_init)
+    if (!_init) {
         findSubFolders(lastError);
+        if (*lastError != QMessageStore::NoError) {
+            qWarning() << "Unable to find sub folders.";
+        }
+    }
 
     if (!_hasSubFolders)
         return result;
@@ -1893,6 +1875,7 @@ IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const Q
         if (!setMapiProperty(mapiMessage, PR_MESSAGE_FLAGS, flags)) {
             *lastError = QMessageStore::FrameworkFault;
             qWarning() << "Unable to set flags in message.";
+            qWarning() << "rv:" << hex << (ULONG)rv;
         }
 
         // Store the message properties
@@ -2186,8 +2169,7 @@ MapiFolderPtr MapiStore::openFolder(QMessageStore::ErrorCode *lastError, const M
             uint messageCount = properties[2].Value.ul;
             bool hasSubFolders = properties[3].Value.b;
 
-            MapiStorePtr self(_session->openStore(lastError, _entryId, _cachedMode));
-            MapiFolderPtr folderPtr = MapiFolder::createFolder(lastError, self, folder, recordKey, name, entryId, hasSubFolders, messageCount);
+            MapiFolderPtr folderPtr = MapiFolder::createFolder(lastError, _self.toStrongRef(), folder, recordKey, name, entryId, hasSubFolders, messageCount);
             if (*lastError == QMessageStore::NoError) {
                 result = folderPtr;
 
@@ -2202,6 +2184,8 @@ MapiFolderPtr MapiStore::openFolder(QMessageStore::ErrorCode *lastError, const M
             qWarning() << "Unable to access folder properties";
             mapiRelease(folder);
         }
+    } else {
+        qWarning() << "Unable to open folder.";
     }
 
     return result;
@@ -3730,7 +3714,6 @@ void MapiSession::notify(MapiStore *store, ULONG notificationCount, NOTIFICATION
 
         if (notification.ulEventType == fnevNewMail) {
             NEWMAIL_NOTIFICATION &newmail(notification.info.newmail);
-            //qDebug() << "new mail";
         } else {
             OBJECT_NOTIFICATION &object(notification.info.obj);
 
@@ -3745,27 +3728,22 @@ void MapiSession::notify(MapiStore *store, ULONG notificationCount, NOTIFICATION
                     switch (notification.ulEventType)
                     {
                     case fnevObjectCopied:
-                        qDebug() << "copied";
                         notifyIds.append(qMakePair(messageId, Added));
                         break;
 
                     case fnevObjectCreated:
-                        qDebug() << "created";
                         notifyIds.append(qMakePair(messageId, Added));
                         break;
 
                     case fnevObjectDeleted:
-                        qDebug() << "deleted";
                         notifyIds.append(qMakePair(messageId, Removed));
                         break;
 
                     case fnevObjectModified:
-                        qDebug() << "modified";
                         notifyIds.append(qMakePair(messageId, Updated));
                         break;
 
                     case fnevObjectMoved:
-                        qDebug() << "moved";
                         notifyIds.append(qMakePair(messageId, Updated));
                         break;
                     }
