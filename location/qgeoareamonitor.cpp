@@ -124,6 +124,9 @@ QGeoCoordinate QGeoAreaMonitor::center() const
     \property QGeoAreaMonitor::radius
     \brief This property holds the radius of the area to be monitored, in meters.
 
+    If the specified radius is less than the minimum supported radius, the
+    radius is set to the minimum radius.
+
     When this property is set, if the center coordinate has already been set and
     the current position is within the monitored area, areaEntered()
     is emitted immediately.
