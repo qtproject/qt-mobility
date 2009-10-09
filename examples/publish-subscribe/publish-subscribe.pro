@@ -15,4 +15,4 @@ FORMS = providerdialog.ui \
         consumerdialog.ui
 
 include(../examples.pri)
-qtAddLibrary(QtContextFramework)
+qtAddLibrary(QtPublishSubscribe)

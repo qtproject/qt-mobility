@@ -38,6 +38,7 @@
 #include <QTest>
 #include <QDebug>
 #include <QSignalSpy>
+#include <QFile>
 
 #ifdef Q_OS_WIN
 #define _WIN32_WINNT 0x0500
@@ -113,6 +114,10 @@ void tst_QValueSpaceProvider::initTestCase()
 
         RegCloseKey(key);
     }
+#endif
+
+#ifdef Q_OS_UNIX
+    QFile::remove("/tmp/qt-0/valuespace_shmlayer");
 #endif
 
     QValueSpace::initValueSpaceServer();

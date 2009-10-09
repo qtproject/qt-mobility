@@ -19,7 +19,7 @@ HEADERS += tst_qvaluespacesubscribershared.h
 
 DEFINES += QT_START_VALUESPACE
 
-qtAddLibrary(QtContextFramework)
+qtAddLibrary(QtPublishSubscribe)
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

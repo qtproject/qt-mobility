@@ -8,6 +8,6 @@ include(../../../common.pri)
 # Input
 SOURCES += tst_qpacketprotocol.cpp
 
-qtAddLibrary(QtContextFramework)
+qtAddLibrary(QtPublishSubscribe)
 symbian:TARGET.CAPABILITY = ALL \
     -TCB

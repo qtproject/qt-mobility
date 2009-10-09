@@ -15,6 +15,6 @@ SOURCES=\
 
 include(../../common.pri)
 
-qtAddLibrary(QtContextFramework)
+qtAddLibrary(QtPublishSubscribe)
 
 include(../../features/deploy.pri)

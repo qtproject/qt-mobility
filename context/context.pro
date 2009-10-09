@@ -1,6 +1,6 @@
 TEMPLATE = lib
-TARGET = QtContextFramework
-QT = core network gui
+TARGET = QtPublishSubscribe
+QT = core network
 
 include(../common.pri)
 
