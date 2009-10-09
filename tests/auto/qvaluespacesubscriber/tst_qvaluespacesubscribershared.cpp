@@ -432,7 +432,7 @@ void tst_QValueSpaceSubscriber::testConstructor()
     QFETCH(int, expectedValue);
 
     QValueSpaceSubscriber *subscriber = qvariant_cast<QValueSpaceSubscriber*>(testItem);
-    QCOMPARE(subscriber->parent(), this);
+    QCOMPARE(subscriber->parent(), (QObject*)this);
     QCOMPARE(subscriber->value(), value);
     QStringList list = subscriber->subPaths();
     qDebug() << "Expected:" << subPaths.toSet();

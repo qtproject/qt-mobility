@@ -31,6 +31,8 @@ symbian {
     exportheaders.sources = $$PUBLIC_HEADERS
     exportheaders.path = epoc32/include
     DEPLOYMENT += exportheaders
+
+    MMP_RULES += "EXPORTUNFROZEN"
 }
 
 unix:!symbian {
