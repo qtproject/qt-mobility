@@ -30,6 +30,7 @@
 
 const QString inputDirPath = "c:\\data\\vcard";
 const QString excludeFieldsFileName = "c:\\data\\vcard\\excludefields.txt";
+const QString outputDirPath = "c:\\data\\vcard\\out";
 
 void PerformanceTest::initTestCase()
 {
@@ -71,7 +72,10 @@ void PerformanceTest::performanceTest()
         QFETCH(QString, InFile);
         QFile in(InFile);
         QVERIFY(in.open(QIODevice::ReadOnly));
-        QBuffer out;
+        QDir dir;
+        if(!dir.exists(outputDirPath))dir.mkdir(outputDirPath);
+        QFileInfo fInfo = in.fileName();
+        QFile out(outputDirPath+"\\"+fInfo.fileName());
         QVERIFY(out.open(QIODevice::ReadWrite));
         executeTest(in,out);
         in.close();

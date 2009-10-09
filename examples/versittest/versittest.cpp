@@ -45,6 +45,7 @@
 
 const QString inputDirPath = "c:\\data\\testvcards";
 const QString excludeFieldsFileName = "c:\\data\\testvcards\\excludefields.txt";
+const QString outputDirPath = "c:\\data\\vcard\\out";
 
 void VersitTest::initTestCase()
 {
@@ -86,7 +87,10 @@ void VersitTest::test()
         QFETCH(QString, InFile);
         QFile in(InFile);
         QVERIFY(in.open(QIODevice::ReadOnly));        
-        QBuffer out;
+        QDir dir;
+        if(!dir.exists(outputDirPath))dir.mkdir(outputDirPath);
+        QFileInfo fInfo = in.fileName();
+        QFile out(outputDirPath+"\\"+fInfo.fileName());
         QVERIFY(out.open(QIODevice::ReadWrite));
         executeTest(in,out);
         in.close();
