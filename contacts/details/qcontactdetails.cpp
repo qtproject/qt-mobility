@@ -89,6 +89,11 @@
  */
 
 /*!
+ * \class QContactNote
+ * \brief A note associated with a contact
+ */
+
+/*!
  * \class QContactOnlineAccount
  * \brief An online account which the contact uses to communicate with friends and family
  */
@@ -144,6 +149,12 @@ Q_DEFINE_LATIN1_LITERAL(QContactName::DefinitionName, "Name");
  * The constant string which identifies the definition of details which are nicknames
  */
 Q_DEFINE_LATIN1_LITERAL(QContactNickname::DefinitionName, "Nickname");
+
+/*!
+ * \variable QContactNote::DefinitionName
+ * The constant string which identifies the definition of details which are notes
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactNote::DefinitionName, "Note");
 
 /*!
  * \variable QContactAvatar::DefinitionName
@@ -326,6 +337,12 @@ Q_DEFINE_LATIN1_LITERAL(QContactName::FieldSuffix, "Suffix");
  * The constant key for which the nickname value is stored in details of the QContactNickname type
  */
 Q_DEFINE_LATIN1_LITERAL(QContactNickname::FieldNickname, "Nickname");
+
+/*!
+ * \variable QContactNote::FieldNote
+ * The constant key for which the note value is stored in details of the QContactNote type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactNote::FieldNote, "Note");
 
 /*!
  * \variable QContactAddress::FieldStreet
@@ -1195,6 +1212,16 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
 /*!
  * \fn QContactNickname::nickname() const
  * Returns the nickname of the contact which is stored in this detail
+ */
+
+/*!
+ * \fn QContactNote::setNote(const QString& note)
+ * Sets a note associated with a contact to \a note.
+ */
+
+/*!
+ * \fn QContactNote::note() const
+ * Returns a string for a note associated with a contact.
  */
 
 /*!

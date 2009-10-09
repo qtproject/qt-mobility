@@ -56,6 +56,7 @@
 #include "qcontactguid.h"
 #include "qcontactname.h"
 #include "qcontactnickname.h"
+#include "qcontactnote.h"
 #include "qcontactonlineaccount.h"
 #include "qcontactorganization.h"
 #include "qcontactphonenumber.h"
