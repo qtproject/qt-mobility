@@ -567,6 +567,23 @@ void tst_QContactDetails::organization()
     QCOMPARE(o1.name(), QString("organization one"));
     QCOMPARE(o1.value(QContactOrganization::FieldName), QString("organization one"));
 
+    o1.setDepartment("department one");
+    QCOMPARE(o1.department(), QString("department one"));
+    QCOMPARE(o1.value(QContactOrganization::FieldDepartment), QString("department one"));
+
+    o1.setLocation("location one");
+    QCOMPARE(o1.location(), QString("location one"));
+    QCOMPARE(o1.value(QContactOrganization::FieldLocation), QString("location one"));
+
+    o1.setLogo("logo one");
+    QCOMPARE(o1.logo(), QString("logo one"));
+    QCOMPARE(o1.value(QContactOrganization::FieldLogo), QString("logo one"));
+
+    o1.setTitle("title one");
+    QCOMPARE(o1.title(), QString("title one"));
+    QCOMPARE(o1.value(QContactOrganization::FieldTitle), QString("title one"));
+
+
     // test property add
     QVERIFY(c.saveDetail(&o1));
     QCOMPARE(c.details(QContactOrganization::DefinitionName).count(), 1);
