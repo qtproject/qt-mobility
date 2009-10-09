@@ -39,32 +39,27 @@
 
 int main(int argc, char *argv[]) 
 {   
-    QApplication app(argc, argv);
     TestResultXmlParser parser;
     QString resultFileName;
     QStringList args;
-    bool performance = ( argc >= 2 && QString::fromUtf8(argv[1]) == "p" )? true : false;
-    if( !performance)
-    {
+    bool performanceTest = ( argc >= 2 && QString::fromUtf8(argv[1]) == "p" );
+    if (!performanceTest) {
         printf("Running tests...\n");
         VersitTest versitTest;
         resultFileName = "c:/QVersitTestResults.xml";
-        args << "qtversittest" << "-xml" << "-o" << resultFileName;
+        args << "versittest" << "-xml" << "-o" << resultFileName;
         QTest::qExec(&versitTest, args);
     }
-    else
-    {
+    else {
         printf("Running performance tests...\n");
         PerformanceTest performanceTest;
         resultFileName = "c:/QVersitParserPerformanceBenchmark.xml";
-        args << "qtversitbenchmarktest" << "-xml" << "-o" << resultFileName;
+        args << "versittest" << "-xml" << "-o" << resultFileName;
         QTest::qExec(&performanceTest, args);
     }
     parser.parseAndPrintResults(resultFileName,true);
-
     printf("Press any key...\n");
     getchar();
-
     return 0;   
 }
 

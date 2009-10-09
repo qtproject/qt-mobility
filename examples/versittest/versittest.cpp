@@ -40,6 +40,8 @@
 #include <QBuffer>
 #include <QList>
 #include <QtTest/QtTest>
+#include <qversitreader.h>
+#include <qversitdocument.h>
 
 const QString inputDirPath = "c:\\data\\testvcards";
 const QString excludeFieldsFileName = "c:\\data\\testvcards\\excludefields.txt";
@@ -69,12 +71,12 @@ void VersitTest::cleanupTestCase()
 
 void VersitTest::init()
 {
-
+    mReader = new QVersitReader;
 }
 
 void VersitTest::cleanup()
 {
-
+    delete mReader;
 }
 
 void VersitTest::test()
@@ -85,7 +87,8 @@ void VersitTest::test()
         QFile in(InFile);
         QVERIFY(in.open(QIODevice::ReadOnly));        
         QBuffer out;
-        QVERIFY(out.open(QIODevice::ReadWrite));        
+        QVERIFY(out.open(QIODevice::ReadWrite));
+        executeTest(in,out);
         in.close();
         out.close();        
     }
@@ -102,9 +105,10 @@ void VersitTest::test_data()
     }
 }
 
-void VersitTest::executeTest(QIODevice& in, QIODevice& out)
+void VersitTest::executeTest(QFile& in, QIODevice& out)
 {    
-
+    mReader->setDevice(&in);
+    QVERIFY2(mReader->start(), in.fileName().toAscii().constData());
 }
 
 

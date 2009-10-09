@@ -36,8 +36,9 @@
 #include <QObject>
 #include <QStringList>
 
+class QFile;
 class QIODevice;
-
+class QVersitReader;
 
 class VersitTest : public QObject
 {
@@ -56,12 +57,13 @@ private slots:
 
 private:
     
-    void executeTest(QIODevice& in, QIODevice& out);
+    void executeTest(QFile& in, QIODevice& out);
     
 private:
  
     QStringList* mExcludedFields;    
     QStringList mFiles;
+    QVersitReader* mReader; 
 };
 
 #endif // VERSITTEST_H
