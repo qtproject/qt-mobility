@@ -30,12 +30,9 @@ SUBDIRS += qvaluespace \                           #Publish and Subscribe
            qvaluespacesubscriber \
            qmallocpool \
            qpacket \
-           qpacketprotocol \
-           qsystemreadwritelock \
-           qsystemreadwritelock_oop
+           qpacketprotocol
 
-unix:SUBDIRS += qpacket \
-                qpacketprotocol \
+unix:!symbian:SUBDIRS += \
                 qsystemreadwritelock \
                 qsystemreadwritelock_oop
 

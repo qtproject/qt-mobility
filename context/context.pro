@@ -33,7 +33,7 @@ symbian {
     DEPLOYMENT += exportheaders
 }
 
-unix {
+unix:!symbian {
     HEADERS += qsystemreadwritelock_p.h
     SOURCES += sharedmemorylayer.cpp \
                qsystemreadwritelock.cpp
