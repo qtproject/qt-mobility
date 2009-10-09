@@ -15,7 +15,7 @@ LIBS += -lQtContacts
 symbian:QCONTACTASYNC_PLUGINS_DEPLOY.sources = contacts_maliciousplugin.dll
 wince* {
     DLL_SUFFIX = ".dll"
-    CONFIG(debug, debug|release): DLL_SUFFIX="d.dll"
+    CONFIG(debug, debug|release): debug_and_release: DLL_SUFFIX="d.dll"
     QCONTACTASYNC_PLUGINS_DEPLOY.sources = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/plugins/contacts/contacts_maliciousplugin$$DLL_SUFFIX
 }
 QCONTACTASYNC_PLUGINS_DEPLOY.path = ./plugins/contacts
