@@ -48,9 +48,13 @@ SOURCE_DIR = $$PWD
     UI_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/ui
     LIBS += -L$$OUTPUT_DIR/build/$$SUBDIRPART/bin  #link against library that we test
     INCLUDEPATH += $$MOC_DIR
-    !contains(TARGET, ^tst_.*):TARGET = $$join(TARGET,,"tst_")
 }
 
+wince* {
+    LOCATION.sources = $OUTPUT_DIR/lib/QtLocation.dll
+    LOCATION.path = .
+    DEPLOYMENT += LOCATION
+}
 
 # Add the output dirs to the link path too
 LIBS += -L$$DESTDIR

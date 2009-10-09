@@ -1,6 +1,7 @@
 TEMPLATE = app
 CONFIG+=testcase
 QT += network
+TARGET=tst_qnmeapositioninfosource
 
 include (../../../common.pri)
 
