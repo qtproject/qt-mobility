@@ -831,23 +831,47 @@ const QMessageFilter& QMessageFilter::operator&=(const QMessageFilter& other)
     if (!d_ptr->_complex && !other.d_ptr->_complex) {
         // A&B
         // intersect includes and union excludes
-        result.d_ptr->_standardFoldersInclude = this->d_ptr->_standardFoldersInclude;
-        if (!other.d_ptr->_standardFoldersInclude.isEmpty())
-            result.d_ptr->_standardFoldersInclude &= other.d_ptr->_standardFoldersInclude;
+
+        // empty include set means include all
+        if (this->d_ptr->_standardFoldersInclude.isEmpty()) {
+            result.d_ptr->_standardFoldersInclude = other.d_ptr->_standardFoldersInclude;
+        } else {
+            result.d_ptr->_standardFoldersInclude = this->d_ptr->_standardFoldersInclude;
+            if (!other.d_ptr->_standardFoldersInclude.isEmpty())
+                result.d_ptr->_standardFoldersInclude &= other.d_ptr->_standardFoldersInclude;
+        }
         result.d_ptr->_standardFoldersExclude = this->d_ptr->_standardFoldersExclude;
         result.d_ptr->_standardFoldersExclude |= other.d_ptr->_standardFoldersExclude;
-        result.d_ptr->_accountsInclude = this->d_ptr->_accountsInclude;
-        if (!other.d_ptr->_accountsInclude.isEmpty())
-            result.d_ptr->_accountsInclude &= other.d_ptr->_accountsInclude;
+        if (this->d_ptr->_accountsInclude.isEmpty()) {
+            result.d_ptr->_accountsInclude = other.d_ptr->_accountsInclude;
+        } else {
+            result.d_ptr->_accountsInclude = this->d_ptr->_accountsInclude;
+            if (!other.d_ptr->_accountsInclude.isEmpty())
+                result.d_ptr->_accountsInclude &= other.d_ptr->_accountsInclude;
+        }
         result.d_ptr->_accountsExclude = this->d_ptr->_accountsExclude;
         result.d_ptr->_accountsExclude |= other.d_ptr->_accountsExclude;
 
-        QMessageFilter *left(new QMessageFilter(this->d_ptr->nonContainerFiltersPart()));
-        QMessageFilter *right(new QMessageFilter(other.d_ptr->nonContainerFiltersPart()));
-        *this = result;
-        d_ptr->_left = left;
-        d_ptr->_right = right;
-        d_ptr->_operator = QMessageFilterPrivate::And;
+        if (this->d_ptr->nonContainerFiltersPart().isEmpty() 
+            || other.d_ptr->nonContainerFiltersPart().isEmpty()) {
+            // Degenerate case, empty this or other nonContainerFiltersPart can be thrown away
+            if (this->d_ptr->nonContainerFiltersPart().isEmpty()) {
+                *this = other;
+            } // else throw away empty other nonContainerFiltersPart
+
+            // Just update the containerFiltersPart
+            d_ptr->_standardFoldersInclude = result.d_ptr->_standardFoldersInclude;
+            d_ptr->_standardFoldersExclude = result.d_ptr->_standardFoldersExclude;
+            d_ptr->_accountsInclude = result.d_ptr->_accountsInclude;
+            d_ptr->_accountsExclude = result.d_ptr->_accountsExclude;
+        } else {
+            QMessageFilter *left(new QMessageFilter(this->d_ptr->nonContainerFiltersPart()));
+            QMessageFilter *right(new QMessageFilter(other.d_ptr->nonContainerFiltersPart()));
+            *this = result;
+            d_ptr->_left = left;
+            d_ptr->_right = right;
+            d_ptr->_operator = QMessageFilterPrivate::And;
+        }
     } else if (d_ptr->_complex) { // other maybe complex
         // (X|Y)&Z -> X&Z | Y&Z  Query optimizer is not a priority
         result.d_ptr->_left = new QMessageFilter(*this->d_ptr->_left & other); // recursive evaluation
@@ -1105,10 +1129,11 @@ QMessageFilter QMessageFilter::bySize(int value, QMessageDataComparator::Relatio
 
 QMessageFilter QMessageFilter::byParentAccountId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
 {
-    // Not implemented
-    QMessageFilter result(QMessageFilterPrivate::from(QMessageFilterPrivate::ParentAccountId, QVariant(id.toString()), cmp));
-    // Not natively implementable?
-    result.d_ptr->_valid = false;
+    QMessageFilter result;
+    if (cmp == QMessageDataComparator::Equal)
+        result.d_ptr->_accountsInclude += id;
+    else
+        result.d_ptr->_accountsExclude += id;
     return result;
 }
 
