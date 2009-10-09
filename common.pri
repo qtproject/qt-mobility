@@ -50,6 +50,11 @@ SOURCE_DIR = $$PWD
     INCLUDEPATH += $$MOC_DIR
 }
 
+wince* {
+    LOCATION.sources = $OUTPUT_DIR/lib/QtLocation.dll
+    LOCATION.path = .
+    DEPLOYMENT += LOCATION
+}
 
 # Add the output dirs to the link path too
 LIBS += -L$$DESTDIR
