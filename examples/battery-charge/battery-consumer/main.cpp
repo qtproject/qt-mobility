@@ -44,7 +44,7 @@
 
 //! [0]
 QML_DECLARE_TYPE(QValueSpaceSubscriber);
-QML_DEFINE_TYPE(Qt, 4, 6, (QT_VERSION&0x00ff00)>>8, ValueSpaceItem, QValueSpaceSubscriber);
+QML_DEFINE_TYPE(Qt, 4, 6, (QT_VERSION&0x00ff00)>>8, ValueSpaceSubscriber, QValueSpaceSubscriber);
 //! [0]
 
 class MainWidget : public QWidget

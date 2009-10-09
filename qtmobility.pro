@@ -61,3 +61,5 @@ qtmheaders.path = $${QT_MOBILITY_INCLUDE}
 qtmheaders.files = include/*
 
 unix:INSTALLS += qtmheaders
+
+OTHER_FILES += doc/src/*.qdoc doc/src/examples/*.qdoc

@@ -61,19 +61,19 @@
 
     \section2 Battery Consumer
 
-    The first step is to make QValueSpaceSubscriber available from within QML so that our QML code can
-    access the keys published by the battery-provider.  This is achieved by using the
-    QML_DECLARE_TYPE() and QML_DEFINE_TYPE() macros.  The following code makes QValueSpaceSubscriber
-    available from within QML as ValueSpaceItem.
+    The first step is to make QValueSpaceSubscriber available from within QML so that our QML code
+    can access the keys published by the battery-provider.  This is achieved by using the
+    QML_DECLARE_TYPE() and QML_DEFINE_TYPE() macros.  The following code makes
+    QValueSpaceSubscriber available from within QML as ValueSpaceSubscriber.
 
     \snippet battery-charge/battery-consumer/main.cpp 0
 
     \section3 QML
 
-    Two ValueSpaceItem instances are created, one for each of the battery values.  We give each
-    object a unique id so that we can reference it from elsewhere in the QML.  We set the \i path
-    properties to the Value Space path of the keys.  Finally we set the \i notify properties to
-    true to enable the emission of change notification signals.
+    Two ValueSpaceSubscriber instances are created, one for each of the battery values.  We give
+    each object a unique id so that we can reference it from elsewhere in the QML.  We set the
+    \i path properties to the Value Space path of the keys.  Finally we set the \i notify
+    properties to true to enable the emission of change notification signals.
 
     \snippet battery-charge/battery-consumer/battery-meter.qml 0
 
