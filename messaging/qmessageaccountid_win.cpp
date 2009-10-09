@@ -103,6 +103,15 @@ QMessageAccountId& QMessageAccountId::operator=(const QMessageAccountId& other)
     return *this;
 }
 
+bool QMessageAccountId::operator<(const QMessageAccountId& other) const
+{
+    if (d_ptr && other.d_ptr) {
+        return (d_ptr->_storeRecordKey < other.d_ptr->_storeRecordKey);
+    }
+
+    return false;
+}
+
 QString QMessageAccountId::toString() const
 {
     if (!isValid())
@@ -120,7 +129,6 @@ bool QMessageAccountId::isValid() const
 
 uint qHash(const QMessageAccountId &id)
 {
-    Q_UNUSED(id)
-    return 0; // stub
+    return qHash(id.d_ptr->_storeRecordKey);
 }
 

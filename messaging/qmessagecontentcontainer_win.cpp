@@ -114,16 +114,6 @@ QMessageContentContainer::~QMessageContentContainer()
     delete d_ptr;
 }
 
-QMessageContentContainerId QMessageContentContainer::containerId() const
-{
-    return d_ptr->_id;
-}
-
-QMessageId QMessageContentContainer::messageId() const
-{
-    return d_ptr->_messageId;
-}
-
 QByteArray QMessageContentContainer::contentType() const
 {
     if (d_ptr->isMessage()) {
@@ -229,7 +219,7 @@ QMessageContentContainerIdList QMessageContentContainer::contentIds() const
 
     if (d_ptr->isMessage()) {
         foreach (const QMessageContentContainer &container, d_ptr->_attachments) {
-            ids.append(container.containerId());
+            ids.append(container.d_ptr->_id);
         }
     }
 
@@ -302,6 +292,3 @@ void QMessageContentContainer::setDerivedMessage(QMessage *derived)
     d_ptr->setDerivedMessage(derived);
 }
 
-void QMessageContentContainer::applyPendingChanges() const
-{
-}

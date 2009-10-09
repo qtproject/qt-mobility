@@ -38,9 +38,11 @@
 
 #ifdef USE_QMF_IMPLEMENTATION
 #include "qmfhelpers_p.h"
-#elif defined(Q_OS_WIN)
+#else
 #include "qmessage_p.h"
+#if defined(Q_OS_WIN)
 #include "winhelpers_p.h"
+#endif
 #endif
 
 #include <QSharedData>
@@ -77,64 +79,6 @@ public:
         _message = derived;
         _part = QMailMessagePart();
         _container = QmfHelpers::convert(_message);
-    }
-
-    void clearContents()
-    {
-        _type = QByteArray("text");
-        _subType = QByteArray("plain");
-        _charset = QByteArray();
-        _name = QByteArray();
-        _content = QByteArray();
-        _textContent = QString();
-        _filename = QString();
-    }
-
-    void setContentType(const QByteArray &type, const QByteArray &subType, const QByteArray &charset)
-    {
-        clearContents();
-
-        _type = type;
-        _subType = subType;
-        _charset = charset;
-    }
-
-    void setContent(const QString &content, const QByteArray &type, const QByteArray &subType, const QByteArray &charset)
-    {
-        setContentType(type, subType, charset);
-
-        _textContent = content;
-    }
-
-    QMailMessageContentType contentType() const 
-    {
-        QMailMessageContentType ct;
-        ct.setType(_type);
-        ct.setSubType(_subType);
-
-        if (!_name.isEmpty()) {
-            ct.setName(_name);
-        }
-        if (!_charset.isEmpty()) {
-            ct.setCharset(_charset);
-        }
-
-        return ct;
-    }
-    
-    void applyPendingChanges() const
-    {
-        if (!_content.isEmpty()) {
-            _container->setBody(QMailMessageBody::fromData(_content, contentType(), QMailMessageBody::Base64, QMailMessageBody::RequiresEncoding));
-        } else if (!_textContent.isEmpty()) {
-            _container->setBody(QMailMessageBody::fromData(_textContent, contentType(), QMailMessageBody::Base64));
-        } else if (!_filename.isEmpty()) {
-            _container->setBody(QMailMessageBody::fromFile(_filename, contentType(), QMailMessageBody::Base64, QMailMessageBody::RequiresEncoding));
-        } else {
-            if (contentType().type() == "multipart") {
-                _container->setMultipartType(QMailMessagePartContainer::multipartTypeForName(_subType));
-            }
-        }
     }
 };
 
@@ -277,7 +221,11 @@ public:
         setContentType(type, subType, charset);
 
         _textContent = content;
-        _size = content.length() * sizeof(TCHAR);
+        _size = content.length();
+#ifdef Q_OS_WIN
+        // Approximate size in bytes, not chars
+        _size *= sizeof(TCHAR);
+#endif
         _available = true;
     }
 
@@ -299,13 +247,15 @@ public:
     QMessageContentContainer *attachment(const QMessageContentContainerId &id)
     {
         if (isMessage()) {
+#ifdef Q_OS_WIN
             _message->d_ptr->ensureAttachmentsPresent(_message);
+#endif
 
             if (id == bodyContentId()) {
                 return _message;
             } else {
                 foreach (const QMessageContentContainer &container, _attachments) {
-                    if (container.containerId() == id) {
+                    if (container.d_ptr->_id == id) {
                         return const_cast<QMessageContentContainer*>(&container);
                     }
                 }
@@ -318,13 +268,15 @@ public:
     const QMessageContentContainer *attachment(const QMessageContentContainerId &id) const
     {
         if (isMessage()) {
+#ifdef Q_OS_WIN
             _message->d_ptr->ensureAttachmentsPresent(_message);
+#endif
 
             if (id == bodyContentId()) {
                 return _message;
             } else {
                 foreach (const QMessageContentContainer &container, _attachments) {
-                    if (container.containerId() == id) {
+                    if (container.d_ptr->_id == id) {
                         return &container;
                     }
                 }
@@ -365,7 +317,11 @@ public:
         QByteArray mimeType;
 
         QString extension(fi.suffix());
+#ifdef Q_OS_WIN
         mimeType = WinHelpers::contentTypeFromExtension(extension);
+#else
+        // TODO
+#endif
         int index = mimeType.indexOf("/");
         if (index != -1) {
             _type = mimeType.left(index).trimmed();

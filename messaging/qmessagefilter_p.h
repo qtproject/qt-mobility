@@ -35,30 +35,31 @@
 #include "qmessagestore.h"
 #include "winhelpers_p.h"
 #include <qvariant.h>
+#include <qset.h>
 #endif
 
 #if defined(Q_OS_WIN)
 class MapiFolderIterator {
 public:
     MapiFolderIterator();
-    MapiFolderIterator(MapiStorePtr store, MapiFolderPtr root);
-    MapiFolderIterator(MapiStorePtr store, QMessageFolderIdList ids);
+    MapiFolderIterator(MapiStorePtr store, MapiFolderPtr root, QSet<QMessage::StandardFolder> standardFoldersInclude, QSet<QMessage::StandardFolder> standardFoldersExclude);
     MapiFolderPtr next();
 private:
     QList<MapiFolderPtr> _folders; 
-#ifdef QMESSAGING_OPTIONAL_FOLDER
     MapiStorePtr _store;
-    QMessageFolderIdList _ids;
-#endif
+    QSet<QMessage::StandardFolder> _standardFoldersInclude;
+    QSet<QMessage::StandardFolder> _standardFoldersExclude;
 };
 
 class MapiStoreIterator {
 public:
     MapiStoreIterator();
-    MapiStoreIterator(QList<MapiStorePtr> stores);
+    MapiStoreIterator(QList<MapiStorePtr> stores, QSet<QMessageAccountId> accountsInclude, QSet<QMessageAccountId> accountsExclude);
     MapiStorePtr next();
 private:
     QList<MapiStorePtr> _stores; 
+    QSet<QMessageAccountId> _accountsInclude;
+    QSet<QMessageAccountId> _accountsExclude;
 };
 #endif
 
@@ -87,12 +88,26 @@ public:
     wchar_t *_buffer2;
     bool _valid;
 
+    QSet<QMessage::StandardFolder> _standardFoldersInclude; // only match messages directly in one of these folders
+    QSet<QMessage::StandardFolder> _standardFoldersExclude; // only match messages not directly in any of these folders
+    QSet<QMessageAccountId> _accountsInclude; // only match messages in one of these accounts
+    QSet<QMessageAccountId> _accountsExclude; // only match messages not in any of these accounts
+    bool _complex; // true iff operator is Or and left or right terms contain non-null containerFilters
+
+    bool containerFiltersAreEmpty(); // returns true IFF above QSets are empty
+    bool nonContainerFiltersAreEmpty();
+    QMessageFilter containerFiltersPart(); // returns a filter comprised of just the container filters
+    QMessageFilter nonContainerFiltersPart(); // returns a filter comprised of everything but the container filters
+
     static void filterTable(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter, LPMAPITABLE);
     static QMessageFilter from(QMessageFilterPrivate::Field field, const QVariant &value, QMessageDataComparator::EqualityComparator cmp);
     static QMessageFilter from(QMessageFilterPrivate::Field field, const QVariant &value, QMessageDataComparator::RelationComparator cmp);
     static QMessageFilter from(QMessageFilterPrivate::Field field, const QVariant &value, QMessageDataComparator::InclusionComparator cmp);
     static QMessageFilterPrivate* implementation(const QMessageFilter &filter);
+
     static MapiFolderIterator folderIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, MapiStorePtr store);
     static MapiStoreIterator storeIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, MapiSessionPtr session);
+
+
 #endif
 };

@@ -35,10 +35,8 @@
 <p>An API to access messaging services to send messages and retrieve message data is provided, as well as messaging services to compose, reply to, forward and show messages using a native application.</p>
 <p>Notifications of addition, removal and updating of stored messages can be enabled.</p>
 <p>The library provides unified access to the messaging data on a device including concurrent access to messaging data by multiple applications, and independence from the mechanism used to store the messaging data on the device.</p>
-<p>This library requires Qt 4.5 to be installed.</p>
 <p>On Microsoft Windows, MAPI header files are required to be installed, we recommend installing Visual Studio Express for this purpose.</p>
 <p>On Linux QMF is required to be installed and the QMF_INCLUDEDIR and QMF_LIBDIR environment variables set to the messagingframework/src/libraries/qtopiamail and build/messagingframework/image/lib directories respectively.</p>
-<p>To build the library, run qmake and make.</p>
 <a name="reference-documentation"></a>
 <h3>Reference documentation</h3>
 <a name="main-classes"></a>
@@ -122,6 +120,7 @@
 <h3>Messaging Services</h3>
 <p>The library provides the <a href="qmessageserviceaction.html">QMessageServiceAction</a> class, which provides an interface to communicate with the system's native messaging services, including sending messages, retrieving message data, and composing or showing a message using a native application.</p>
 <p>Service actions communciate their operational status by emitting signals.</p>
+<p>Functions outside the <a href="qmessageserviceaction.html">QMessageServiceAction</a> class should not invoke network activity. That is only <a href="qmessageserviceaction.html">QMessageServiceAction</a> functions should be responsible for initiating network activity.</p>
 <a name="concurrent-access-to-messaging-data"></a>
 <h3>Concurrent Access to Messaging Data</h3>
 <p>The library provides a level of concurrent access to messaging data by multiple clients.</p>

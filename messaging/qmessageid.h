@@ -34,13 +34,14 @@
 #define QMESSAGEID_H
 #include <QString>
 #include <QList>
+#include <QMetaType>
 #include <qmessageglobal.h>
 
 class QMessageIdPrivate;
 
 class Q_MESSAGING_EXPORT QMessageId 
 {
-    Q_DECLARE_PRIVATE(QMessageId)
+    friend class QMessageIdPrivate;
 
 public:
     QMessageId();
@@ -53,12 +54,18 @@ public:
     bool operator==(const QMessageId &other) const;
     bool operator!=(const QMessageId &other) const;
 
+    bool operator<(const QMessageId &other) const;
+
     QString toString() const;
     bool isValid() const;
 
 private:
+    friend Q_MESSAGING_EXPORT uint qHash(const QMessageId &id);
+
     QMessageIdPrivate *d_ptr;
 };
+
+Q_DECLARE_METATYPE(QMessageId)
 
 typedef QList<QMessageId> QMessageIdList;
 

@@ -145,7 +145,7 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
         }
     }
 
-    IMessage* mapiMessage = mapiFolder->createMessage(outgoing,mapiSession,&_lastError);
+    IMessage* mapiMessage = mapiFolder->createMessage(&_lastError, outgoing, mapiSession);
 
     if(!mapiMessage || _lastError != QMessageStore::NoError)
     {

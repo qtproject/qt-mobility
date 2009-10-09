@@ -63,6 +63,11 @@ bool QMessageFolderId::operator==(const QMessageFolderId& other) const
     return false; // stub
 }
 
+bool QMessageFolderId::operator<(const QMessageFolderId& other) const
+{
+    return false; // stub
+}
+
 QString QMessageFolderId::toString() const
 {
     return QString::null; // stub

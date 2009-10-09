@@ -40,8 +40,9 @@
 
 class QMessageFolderPrivate;
 
-class Q_MESSAGING_EXPORT QMessageFolder {
-    Q_DECLARE_PRIVATE(QMessageFolder)
+class Q_MESSAGING_EXPORT QMessageFolder
+{
+    friend class QMessageFolderPrivate;
 
 public:
     QMessageFolder();

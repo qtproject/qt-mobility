@@ -32,6 +32,9 @@
 ****************************************************************************/
 
 #include "support.h"
+#include <qmessageaccountid.h>
+#include <qmessagefolderid.h>
+#include <qmessageid.h>
 
 namespace Support {
 

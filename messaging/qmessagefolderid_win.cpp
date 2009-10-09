@@ -129,6 +129,19 @@ bool QMessageFolderId::operator==(const QMessageFolderId& other) const
     }
 }
 
+bool QMessageFolderId::operator<(const QMessageFolderId& other) const
+{
+    if (d_ptr && other.d_ptr) {
+        if (d_ptr->_storeRecordKey == other.d_ptr->_storeRecordKey) {
+            return (d_ptr->_folderRecordKey < other.d_ptr->_folderRecordKey);
+        }
+
+        return (d_ptr->_storeRecordKey < other.d_ptr->_storeRecordKey);
+    }
+
+    return false;
+}
+
 QString QMessageFolderId::toString() const
 {
     if (!isValid())
@@ -149,8 +162,7 @@ bool QMessageFolderId::isValid() const
 
 uint qHash(const QMessageFolderId &id)
 {
-    Q_UNUSED(id)
-    return 0; // stub
+    return (qHash(id.d_ptr->_folderRecordKey) ^ qHash(id.d_ptr->_storeRecordKey));
 }
 
 #endif

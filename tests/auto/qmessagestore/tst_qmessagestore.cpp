@@ -37,6 +37,10 @@
 #include "qtmessaging.h"
 #include "../support/support.h"
 
+#if defined(Q_OS_SYMBIAN)
+# define TESTDATA_DIR "."
+#endif
+
 //TESTED_CLASS=
 //TESTED_FILES=
 
@@ -68,24 +72,24 @@ class SignalCatcher : public QObject
     Q_OBJECT
     
 public:
-    typedef QPair<QMessageId, QSet<QMessageStore::NotificationFilterId> > Notification;
+    typedef QPair<QMessageId, QMessageStore::NotificationFilterIdSet> Notification;
 
     QList<Notification> added;
     QList<Notification> updated;
     QList<Notification> removed;
 
 public slots:
-    void messageAdded(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &filterIds)
+    void messageAdded(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &filterIds)
     {
         added.append(qMakePair(id, filterIds));
     }
 
-    void messageUpdated(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &filterIds)
+    void messageUpdated(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &filterIds)
     {
         updated.append(qMakePair(id, filterIds));
     }
 
-    void messageRemoved(const QMessageId &id, const QSet<QMessageStore::NotificationFilterId> &filterIds)
+    void messageRemoved(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &filterIds)
     {
         removed.append(qMakePair(id, filterIds));
     }
@@ -453,11 +457,11 @@ void tst_QMessageStore::testMessage()
 #endif
 
     SignalCatcher catcher;
-    connect(QMessageStore::instance(), SIGNAL(messageAdded(QMessageId, QSet<QMessageStore::NotificationFilterId>)), &catcher, SLOT(messageAdded(QMessageId, QSet<QMessageStore::NotificationFilterId>)));
-    connect(QMessageStore::instance(), SIGNAL(messageUpdated(QMessageId, QSet<QMessageStore::NotificationFilterId>)), &catcher, SLOT(messageUpdated(QMessageId, QSet<QMessageStore::NotificationFilterId>)));
+    connect(QMessageStore::instance(), SIGNAL(messageAdded(QMessageId, QMessageStore::NotificationFilterIdSet)), &catcher, SLOT(messageAdded(QMessageId, QMessageStore::NotificationFilterIdSet)));
+    connect(QMessageStore::instance(), SIGNAL(messageUpdated(QMessageId, QMessageStore::NotificationFilterIdSet)), &catcher, SLOT(messageUpdated(QMessageId, QMessageStore::NotificationFilterIdSet)));
 
     SignalCatcher removeCatcher;
-    connect(QMessageStore::instance(), SIGNAL(messageRemoved(QMessageId, QSet<QMessageStore::NotificationFilterId>)), &removeCatcher, SLOT(messageRemoved(QMessageId, QSet<QMessageStore::NotificationFilterId>)));
+    connect(QMessageStore::instance(), SIGNAL(messageRemoved(QMessageId, QMessageStore::NotificationFilterIdSet)), &removeCatcher, SLOT(messageRemoved(QMessageId, QMessageStore::NotificationFilterIdSet)));
 
     QMessageStore::NotificationFilterId filter1 = QMessageStore::instance()->registerNotificationFilter(QMessageFilter::byParentAccountId(QMessageAccountId()));
     QMessageStore::NotificationFilterId filter2 = QMessageStore::instance()->registerNotificationFilter(QMessageFilter::byParentAccountId(testAccountId));
@@ -494,7 +498,7 @@ void tst_QMessageStore::testMessage()
     if (!attachments.isEmpty()) {
         QStringList attachmentPaths;
         foreach (const QString &fileName, attachments) {
-            attachmentPaths.append(SRCDIR "/testdata/" + fileName);
+            attachmentPaths.append(TESTDATA_DIR "/testdata/" + fileName);
         }
         p.insert("attachments", attachmentPaths.join("\n"));
         p.insert("status-hasAttachments", "true");
@@ -506,11 +510,17 @@ void tst_QMessageStore::testMessage()
     QVERIFY(messageId.isValid());
     QVERIFY(messageId != QMessageId());
     QCOMPARE(QMessageStore::instance()->countMessages(), originalCount + 1);
-    
+
+    while (QCoreApplication::hasPendingEvents())
+        QCoreApplication::processEvents();
+
     QCOMPARE(catcher.added.count(), 1);
     QCOMPARE(catcher.added.first().first, messageId);
+#ifndef Q_OS_WIN
+    // Filters not yet implemented on windows
     QCOMPARE(catcher.added.first().second.count(), 2);
     QCOMPARE(catcher.added.first().second, QSet<QMessageStore::NotificationFilterId>() << filter2 << filter3);
+#endif
 
     QMessage message(messageId);
     QCOMPARE(message.id(), messageId);
@@ -542,8 +552,6 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(QMessageContentContainerId(bodyId.toString()), bodyId);
 
     QMessageContentContainer body(message.find(bodyId));
-    // Note: this is not true, which is somewhat counter-intuitive:
-    //QVERIFY(body.containerId().isValid());
 
     QCOMPARE(body.contentType().toLower(), bodyType.toLower());
     QCOMPARE(body.contentSubType().toLower(), bodySubType.toLower());
@@ -584,13 +592,21 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(body.textContent(), replacementText);
     QAPPROXIMATECOMPARE(body.size(), 72u, 36u);
 
+#ifndef Q_OS_WIN
+    // Update not yet implemented on windows
     QMessageStore::instance()->updateMessage(&message);
     QCOMPARE(QMessageStore::instance()->lastError(), QMessageStore::NoError);
 
+    while (QCoreApplication::hasPendingEvents())
+        QCoreApplication::processEvents();
+
     QCOMPARE(catcher.updated.count(), 1);
     QCOMPARE(catcher.updated.first().first, messageId);
+#ifndef Q_OS_WIN
+    // Filters not yet implemented on windows
     QCOMPARE(catcher.updated.first().second.count(), 2);
     QCOMPARE(catcher.updated.first().second, QSet<QMessageStore::NotificationFilterId>() << filter2 << filter3);
+#endif
 
     QMessage updated(message.id());
 
@@ -608,15 +624,22 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), replacementText);
     QAPPROXIMATECOMPARE(body.size(), 72u, 36u);
+#endif
 
     QMessageStore::instance()->removeMessage(message.id());
     QCOMPARE(QMessageStore::instance()->lastError(), QMessageStore::NoError);
     QCOMPARE(QMessageStore::instance()->countMessages(), originalCount);
 
+    while (QCoreApplication::hasPendingEvents())
+        QCoreApplication::processEvents();
+
     QCOMPARE(removeCatcher.removed.count(), 1);
     QCOMPARE(removeCatcher.removed.first().first, messageId);
+#ifndef Q_OS_WIN
+    // Filters not yet implemented on windows
     QCOMPARE(removeCatcher.removed.first().second.count(), 1);
     QCOMPARE(removeCatcher.removed.first().second, QSet<QMessageStore::NotificationFilterId>() << filter3);
+#endif
 
     QMessageStore::instance()->unregisterNotificationFilter(filter1);
     QMessageStore::instance()->unregisterNotificationFilter(filter2);

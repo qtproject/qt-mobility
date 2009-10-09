@@ -96,6 +96,11 @@ bool QMessageFolderId::operator!=(const QMessageFolderId &other) const
 }
 
 /*!
+    \internal
+    \fn bool QMessageFolderId::operator<(const QMessageFolderId &other) const
+*/
+
+/*!
     \fn bool QMessageFolderId::toString() const
 
     Returns the string representation of this identifier.

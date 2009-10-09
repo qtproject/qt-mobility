@@ -1783,7 +1783,6 @@
     </section>
     <section ref="qmessagecontentcontainer.html" title="QMessageContentContainer Class Reference">
         <keyword ref="qmessagecontentcontainer.html">QMessageContentContainer</keyword>
-        <keyword ref="qmessagecontentcontainer.html#containerId">containerId</keyword>
         <keyword ref="qmessagecontentcontainer.html#contains">contains</keyword>
         <keyword ref="qmessagecontentcontainer.html#content">content</keyword>
         <keyword ref="qmessagecontentcontainer.html#contentCharset">contentCharset</keyword>
@@ -1795,7 +1794,6 @@
         <keyword ref="qmessagecontentcontainer.html#headerFieldValues">headerFieldValues</keyword>
         <keyword ref="qmessagecontentcontainer.html#headerFields">headerFields</keyword>
         <keyword ref="qmessagecontentcontainer.html#isContentAvailable">isContentAvailable</keyword>
-        <keyword ref="qmessagecontentcontainer.html#messageId">messageId</keyword>
         <keyword ref="qmessagecontentcontainer.html#size">size</keyword>
         <keyword ref="qmessagecontentcontainer.html#suggestedFileName">suggestedFileName</keyword>
         <keyword ref="qmessagecontentcontainer.html#textContent">textContent</keyword>
@@ -1911,13 +1909,13 @@
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::ConstraintFailure</keyword>
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::ContentInaccessible</keyword>
         <keyword ref="qmessagestore.html#NotificationFilterId-typedef">NotificationFilterId</keyword>
+        <keyword ref="qmessagestore.html#NotificationFilterIdSet-typedef">NotificationFilterIdSet</keyword>
         <keyword ref="qmessagestore.html#RemovalOption-enum">RemovalOption</keyword>
         <keyword ref="qmessagestore.html#RemovalOption-enum">QMessageStore::RemoveLocalCopyOnly</keyword>
         <keyword ref="qmessagestore.html#RemovalOption-enum">QMessageStore::RemoveOnOriginatingServer</keyword>
         <keyword ref="qmessagestore.html#account">account</keyword>
         <keyword ref="qmessagestore.html#addMessage">addMessage</keyword>
         <keyword ref="qmessagestore.html#countAccounts">countAccounts</keyword>
-        <keyword ref="qmessagestore.html#countMessages">countMessages</keyword>
         <keyword ref="qmessagestore.html#instance">instance</keyword>
         <keyword ref="qmessagestore.html#lastError">lastError</keyword>
         <keyword ref="qmessagestore.html#message">message</keyword>
@@ -1925,7 +1923,6 @@
         <keyword ref="qmessagestore.html#messageRemoved">messageRemoved</keyword>
         <keyword ref="qmessagestore.html#messageUpdated">messageUpdated</keyword>
         <keyword ref="qmessagestore.html#queryAccounts">queryAccounts</keyword>
-        <keyword ref="qmessagestore.html#queryMessages">queryMessages</keyword>
         <keyword ref="qmessagestore.html#registerNotificationFilter">registerNotificationFilter</keyword>
         <keyword ref="qmessagestore.html#removeMessage">removeMessage</keyword>
         <keyword ref="qmessagestore.html#removeMessages">removeMessages</keyword>

@@ -93,6 +93,11 @@ bool QMessageFolderId::operator==(const QMessageFolderId& other) const
     }
 }
 
+bool QMessageFolderId::operator<(const QMessageFolderId& other) const
+{
+    return (d_ptr->_id < other.d_ptr->_id);
+}
+
 QString QMessageFolderId::toString() const
 {
     return (isValid() ? QString::number(d_ptr->_id.toULongLong()) : QString());
