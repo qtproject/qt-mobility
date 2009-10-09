@@ -36,6 +36,7 @@
 QT_BEGIN_NAMESPACE
 /*!
     \class QServicePluginInterface
+    \ingroup servicefw
     \brief The QServicePluginInterface class defines the interface
     that every plug-in based service must implement.
 */

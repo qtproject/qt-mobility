@@ -37,6 +37,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QServiceContext
+    \ingroup servicefw
     \brief The QServiceContext class provides context information to 
     services.
 
