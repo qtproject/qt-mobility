@@ -5187,7 +5187,7 @@
             <contents name="overview" title="Overview" level="1"/>
             <contents name="bearer-management" title="Bearer Management" level="1"/>
             <contents name="contacts" title="Contacts" level="1"/>
-            <contents name="context-publish-and-subscribe" title="Context (Publish and Subscribe)" level="1"/>
+            <contents name="publish-and-subscribe" title="Publish and Subscribe" level="1"/>
             <contents name="location" title="Location" level="1"/>
             <contents name="messaging" title="Messaging" level="1"/>
             <contents name="multimedia" title="Multimedia" level="1"/>
