@@ -341,7 +341,7 @@ bool QMessageStore::updateMessage(QMessage *message)
         d_ptr->p_ptr->lastError = QMessageStore::NoError;
     }
 
-    if (message && !message->id().isValid()) {
+    if (message && message->id().isValid()) {
         QMessageStore::ErrorCode* lError = &d_ptr->p_ptr->lastError;
 
         d_ptr->p_ptr->session->updateMessage(lError, *message);

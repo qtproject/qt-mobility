@@ -580,20 +580,18 @@ void tst_QMessageStore::testMessage()
     QVERIFY(messageIds.contains(messageId));
 
     // Update the message to contain new text
-    QString replacementText("This is replacement text.");
+    QString replacementText("<html>This is replacement text.</html>");
 
-    message.setBody(replacementText, "text/fancy; charset=" + alternateCharset);
+    message.setBody(replacementText, "text/html; charset=" + alternateCharset);
     body = message.find(bodyId);
 
     QCOMPARE(body.contentType().toLower(), QByteArray("text"));
-    QCOMPARE(body.contentSubType().toLower(), QByteArray("fancy"));
+    QCOMPARE(body.contentSubType().toLower(), QByteArray("html"));
     QCOMPARE(body.contentCharset().toLower(), alternateCharset.toLower());
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), replacementText);
     QAPPROXIMATECOMPARE(body.size(), 72u, 36u);
 
-#ifndef Q_OS_WIN
-    // Update not yet implemented on windows
     QMessageStore::instance()->updateMessage(&message);
     QCOMPARE(QMessageStore::instance()->lastError(), QMessageStore::NoError);
 
@@ -618,13 +616,16 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(bodyId != QMessageContentContainerId(), true);
     QCOMPARE(QMessageContentContainerId(bodyId.toString()), bodyId);
 
+    body = updated.find(bodyId);
     QCOMPARE(body.contentType().toLower(), QByteArray("text"));
-    QCOMPARE(body.contentSubType().toLower(), QByteArray("fancy"));
+    QCOMPARE(body.contentSubType().toLower(), QByteArray("html"));
+#if !defined(Q_OS_WIN)
+    // Original charset is not preserved on windows
     QCOMPARE(body.contentCharset().toLower(), alternateCharset.toLower());
+#endif
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), replacementText);
     QAPPROXIMATECOMPARE(body.size(), 72u, 36u);
-#endif
 
     QMessageStore::instance()->removeMessage(message.id());
     QCOMPARE(QMessageStore::instance()->lastError(), QMessageStore::NoError);
