@@ -125,8 +125,6 @@ QMediaImageViewer::QMediaImageViewer(QObject *parent)
 
     connect(d->viewerControl, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)),
             this, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)));
-    connect(d->viewerControl, SIGNAL(currentMediaChanged(QMediaResource)),
-            this, SIGNAL(currentMediaChanged(QMediaResource)));
 }
 
 /*!
@@ -207,22 +205,6 @@ void QMediaImageViewer::setMedia(const QMediaContent &media)
     \fn QMediaImageViewer::mediaChanged(const QMediaContent &media)
 
     Signals that the \a media a slide show is presenting.
-*/
-
-/*!
-    \property QMediaImageViewer::currentMedia
-    \brief the actual media resource the slide show is currently displaying.
-*/
-
-QMediaResource QMediaImageViewer::currentMedia() const
-{
-    return d_func()->viewerControl->currentMedia();
-}
-
-/*!
-    \fn QMediaImageViewer::currentMediaChanged(const QMediaResource &media)
-
-    Signals that the \a media resource a slide show is presenting has changed.
 */
 
 /*!

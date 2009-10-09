@@ -456,8 +456,6 @@ void QMediaImageViewerControlPrivate::loadImage()
 
     if (status != currentStatus)
         emit q_func()->mediaStatusChanged(status);
-
-    emit q_func()->currentMediaChanged(currentMedia);
 }
 
 void QMediaImageViewerControlPrivate::cancelRequests()
@@ -563,7 +561,6 @@ void QMediaImageViewerControl::showMedia(const QMediaContent &media)
 
         d->status = QMediaImageViewer::NoMedia;
 
-        emit currentMediaChanged(d->currentMedia);
         emit mediaStatusChanged(d->status);
     } else {
         d->possibleResources = media.resources();
@@ -584,13 +581,5 @@ void QMediaImageViewerControl::showMedia(const QMediaContent &media)
     }
 }
 
-QMediaResource QMediaImageViewerControl::currentMedia() const
-{
-    return d_func()->currentMedia;
-}
-
-/*!
-    \fn QMediaImageViewerControl::currentMediaChanged(const QMediaResource &media)
-*/
 
 #include "moc_qmediaimageviewerservice_p.cpp"

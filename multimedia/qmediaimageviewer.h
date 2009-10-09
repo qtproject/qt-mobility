@@ -46,7 +46,6 @@ class Q_MEDIA_EXPORT QMediaImageViewer : public QMediaObject
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(MediaStatus mediaStatus READ mediaStatus NOTIFY mediaStatusChanged)
     Q_PROPERTY(QMediaContent media READ media WRITE setMedia NOTIFY mediaChanged)
-    Q_PROPERTY(QMediaResource currentMedia READ currentMedia NOTIFY currentMediaChanged)
     Q_PROPERTY(int timeout READ timeout WRITE setTimeout)
     Q_ENUMS(State MediaStatus)
 
@@ -73,7 +72,6 @@ public:
     MediaStatus mediaStatus() const;
 
     QMediaContent media() const;
-    QMediaResource currentMedia() const;
 
     int timeout() const;
 
@@ -92,8 +90,6 @@ Q_SIGNALS:
     void stateChanged(QMediaImageViewer::State state);
     void mediaStatusChanged(QMediaImageViewer::MediaStatus status);
     void mediaChanged(const QMediaContent &media);
-    void currentMediaChanged(const QMediaResource &media);
-
 protected:
     void timerEvent(QTimerEvent *event);
 

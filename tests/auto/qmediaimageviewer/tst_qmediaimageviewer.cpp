@@ -198,7 +198,6 @@ void tst_QMediaImageViewer::setMedia()
     QTestEventLoop::instance().enterLoop(2);
 
     QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadedMedia);
-    QCOMPARE(viewer.currentMedia(), currentMedia);
 }
 
 void tst_QMediaImageViewer::setInvalidMedia()
@@ -216,7 +215,6 @@ void tst_QMediaImageViewer::setInvalidMedia()
 
         QTestEventLoop::instance().enterLoop(2);
         QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::InvalidMedia);
-        QCOMPARE(viewer.currentMedia(), QMediaResource());
         QCOMPARE(viewer.media(), source);
     } {
         QMediaContent source(imageUri("deleted.png"));
@@ -226,7 +224,6 @@ void tst_QMediaImageViewer::setInvalidMedia()
 
         QTestEventLoop::instance().enterLoop(2);
         QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::InvalidMedia);
-        QCOMPARE(viewer.currentMedia(), QMediaResource());
         QCOMPARE(viewer.media(), source);
     } {
         QMediaResource invalidResource(imageUri("invalid.png"));
@@ -238,7 +235,6 @@ void tst_QMediaImageViewer::setInvalidMedia()
 
         QTestEventLoop::instance().enterLoop(2);
         QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::InvalidMedia);
-        QCOMPARE(viewer.currentMedia(), QMediaResource());
         QCOMPARE(viewer.media(), source);
     } {
         QMediaResource resource(imageUri("image.png"), QLatin1String("audio/mpeg"));
@@ -246,7 +242,6 @@ void tst_QMediaImageViewer::setInvalidMedia()
 
         viewer.setMedia(source);
         QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::InvalidMedia);
-        QCOMPARE(viewer.currentMedia(), QMediaResource());
         QCOMPARE(viewer.media(), source);
     } {
         QMediaResource audioResource(imageUri("image.png"), QLatin1String("audio/mpeg"));
@@ -258,7 +253,6 @@ void tst_QMediaImageViewer::setInvalidMedia()
 
         QTestEventLoop::instance().enterLoop(2);
         QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::InvalidMedia);
-        QCOMPARE(viewer.currentMedia(), QMediaResource());
         QCOMPARE(viewer.media(), source);
     }
 }

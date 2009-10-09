@@ -80,10 +80,7 @@ public:
 
     void showMedia(const QMediaContent &media);
 
-    QMediaResource currentMedia() const;
-
 Q_SIGNALS:
-    void currentMediaChanged(const QMediaResource &media);
     void mediaStatusChanged(QMediaImageViewer::MediaStatus status);
 
 private:
