@@ -108,6 +108,18 @@ void tst_QContactDetails::address()
     QCOMPARE(a1.street(), QString("68 Imaginary Avenue"));
     a1.setStreet("1234");
     QCOMPARE(a1.street(), QString("1234"));
+    a1.setPostOfficeBox("PO Box 5678");
+    QCOMPARE(a1.postOfficeBox(), QString("PO Box 5678"));
+
+
+    // Sub types
+    a1.setSubTypes(QContactAddress::SubTypeDomestic);
+    QCOMPARE(a1.subTypes(), QStringList() << QLatin1String(QContactAddress::SubTypeDomestic));
+
+    QStringList sl;
+    sl << QLatin1String(QContactAddress::SubTypeParcel) << QLatin1String(QContactAddress::SubTypePostal);
+    a1.setSubTypes(sl);
+    QCOMPARE(a1.subTypes(), sl);
 
     // test property add
     QVERIFY(c.saveDetail(&a1));
@@ -174,6 +186,9 @@ void tst_QContactDetails::anniversary()
     a1.setOriginalDate(currDate);
     QCOMPARE(a1.originalDate(), currDate);
     QCOMPARE(a1.value<QDate>(QContactAnniversary::FieldOriginalDate), currDate);
+    a1.setSubType(QContactAnniversary::SubTypeWedding);
+    QCOMPARE(a1.subType(), QString(QLatin1String(QContactAnniversary::SubTypeWedding)));
+    QCOMPARE(a1.value(QContactAnniversary::FieldSubType), QString(QLatin1String(QContactAnniversary::SubTypeWedding)));
 
     // test property add
     QVERIFY(c.saveDetail(&a1));
@@ -207,6 +222,9 @@ void tst_QContactDetails::avatar()
     a1.setAvatar("1234");
     QCOMPARE(a1.avatar(), QString("1234"));
     QCOMPARE(a1.value(QContactAvatar::FieldAvatar), QString("1234"));
+    a1.setSubType(QContactAvatar::SubTypeAudioRingtone);
+    QCOMPARE(a1.subType(), QString(QLatin1String(QContactAvatar::SubTypeAudioRingtone)));
+    QCOMPARE(a1.value(QContactAvatar::FieldSubType), QString(QLatin1String(QContactAvatar::SubTypeAudioRingtone)));
 
     // test property add
     QVERIFY(c.saveDetail(&a1));
@@ -392,6 +410,9 @@ void tst_QContactDetails::geolocation()
     g1.setTimestamp(current);
     QCOMPARE(g1.timestamp(), current);
     QCOMPARE(g1.variantValue(QContactGeolocation::FieldTimestamp), QVariant(current));
+    g1.setSpeed(3.8);
+    QCOMPARE(g1.speed(), 3.8);
+    QCOMPARE(g1.variantValue(QContactGeolocation::FieldSpeed), QVariant(3.8));
 
     // test property add
     QVERIFY(c.saveDetail(&g1));
@@ -534,6 +555,15 @@ void tst_QContactDetails::onlineAccount()
     QCOMPARE(o1.accountUri(), QString("test@nokia.com"));
     QCOMPARE(o1.value(QContactOnlineAccount::FieldAccountUri), QString("test@nokia.com"));
 
+    // Sub types
+    o1.setSubTypes(QContactOnlineAccount::SubTypeSip);
+    QCOMPARE(o1.subTypes(), QStringList() << QLatin1String(QContactOnlineAccount::SubTypeSip));
+
+    QStringList sl;
+    sl << QLatin1String(QContactOnlineAccount::SubTypeXmpp) << QLatin1String(QContactOnlineAccount::SubTypeH323);
+    o1.setSubTypes(sl);
+    QCOMPARE(o1.subTypes(), sl);
+
     // test property add
     QVERIFY(c.saveDetail(&o1));
     QCOMPARE(c.details(QContactOnlineAccount::DefinitionName).count(), 1);
@@ -614,6 +644,15 @@ void tst_QContactDetails::phoneNumber()
     p1.setNumber("1234");
     QCOMPARE(p1.number(), QString("1234"));
     QCOMPARE(p1.value(QContactPhoneNumber::FieldNumber), QString("1234"));
+
+    // Sub types
+    p1.setSubTypes(QContactPhoneNumber::SubTypeCar);
+    QCOMPARE(p1.subTypes(), QStringList() << QLatin1String(QContactPhoneNumber::SubTypeCar));
+
+    QStringList sl;
+    sl << QLatin1String(QContactPhoneNumber::SubTypeMobile) << QLatin1String(QContactPhoneNumber::SubTypeFacsimile);
+    p1.setSubTypes(sl);
+    QCOMPARE(p1.subTypes(), sl);
 
     // test property add
     QVERIFY(c.saveDetail(&p1));
@@ -793,6 +832,10 @@ void tst_QContactDetails::url()
     u1.setUrl("1234");
     QCOMPARE(u1.url(), QString("1234"));
     QCOMPARE(u1.value(QContactUrl::FieldUrl), QString("1234"));
+
+    u1.setSubType(QContactUrl::SubTypeHomePage);
+    QCOMPARE(u1.subType(), QString(QLatin1String(QContactUrl::SubTypeHomePage)));
+    QCOMPARE(u1.value(QContactUrl::FieldSubType), QString(QLatin1String(QContactUrl::SubTypeHomePage)));
 
     // test property add
     QVERIFY(c.saveDetail(&u1));
