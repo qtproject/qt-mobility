@@ -4,6 +4,7 @@ message(" ^ including")
 DEFINES += QTCONTACTS_TRACKER_PRI
 
 INCLUDEPATH += /usr/include/qt4/QtContacts
+INCLUDEPATH += $$PWD
 
 LIBS += -lqttracker
 LIBS += -lQtContacts
