@@ -67,7 +67,9 @@ public:
      */
     void saveName();
 
+private:
     /**
+     * \deprecated. soon to be removed. \sa method implementation comment
      * Return a nco::Contact that is either a nco::Affiliation or
      * nco::PersonContact depending on the context (work or home) for the given contact detail.
      *
@@ -81,7 +83,10 @@ public:
     // TODO: We need to make these private once all savings are done using this class.
     Live<nco::Role> contactByContext(const QContactDetail&, const Live<nco::PersonContact>&);
 
+
     /**
+     * \deprecated. soon to be removed. \sa method implementation comment
+     *
      * This will look at the context of the QContactDetail and return the data if this is
      * home or work context.
      *

@@ -5,7 +5,6 @@
 # include version number for the plugin
 include(../../version.pri)
 
-include(../../common/commonfilters.pri)
 include(qtcontacts-tracker.pri)
 
 TEMPLATE = lib

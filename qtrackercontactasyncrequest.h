@@ -21,15 +21,25 @@ class QContactManagerEngine;
 
 /*!
  * Current implementation only server get all contacts requests.
- * TODO refactor for other requests
  * This class is a link between QtMobility async request and tracker signals
  */
-class QTrackerContactAsyncRequest : public QObject
+class QTrackerContactAsyncRequest
+{
+public:
+    QTrackerContactAsyncRequest(QContactAbstractRequest* req);
+    virtual ~QTrackerContactAsyncRequest();
+
+protected:
+    QContactAbstractRequest* req;
+};
+
+
+class QTrackerContactFetchRequest : public QObject, public QTrackerContactAsyncRequest
 {
     Q_OBJECT
 public:
-    QTrackerContactAsyncRequest(QContactAbstractRequest* req, QContactManagerEngine* parent);
-    virtual ~QTrackerContactAsyncRequest();
+    QTrackerContactFetchRequest(QContactAbstractRequest* req, QContactManagerEngine* parent);
+    virtual ~QTrackerContactFetchRequest();
 public slots:
     void modelUpdated();
     void contactsReady();
@@ -44,7 +54,6 @@ private:
     void processQueryIMAccounts(SopranoLive::LiveNodes queryIMAccounts, QList<QContact>& contacts, bool affiliationAccounts);
 
 protected:
-    QContactAbstractRequest* req;
     SopranoLive::LiveNodes query;
 
     QList<SopranoLive::LiveNodes> queryPhoneNumbersNodes; // 2 - one for affiliations and another one for PersonContact

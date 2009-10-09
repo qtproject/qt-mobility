@@ -36,8 +36,6 @@ using namespace SopranoLive;
 #include "qcontactmanagerenginefactory.h"
 #include "qtrackercontactasyncrequest.h"
 
-#include "qtrackercontactslive.h"
-
 class QContactAbstractRequest;
 
 class QContactTrackerEngineData : public QSharedData
@@ -79,11 +77,11 @@ public:
 
     /* Filtering */
     QList<QUniqueId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-    
+
     /* Contacts - Accessors and Mutators */
     QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
-    
+
     bool saveContact(QContact* contact,
                      QSet<QUniqueId>& contactsAdded,
                      QSet<QUniqueId>& contactsChanged,
@@ -91,7 +89,7 @@ public:
                      QContactManager::Error& error);
 
     QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error);
-    
+
     bool removeContact(const QUniqueId& contactId, QSet<QUniqueId>& contactsRemoved, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error);
     QList<QContactManager::Error> removeContacts(QList<QUniqueId>* contactIds, QSet<QUniqueId>& contactsRemoved, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error);
 
@@ -110,28 +108,15 @@ public:
     /* Asynchronous Request Support */
     void requestDestroyed(QContactAbstractRequest* req);
     bool startRequest(QContactAbstractRequest* req);
+    bool waitForRequestFinished(QContactAbstractRequest* req, int msecs);
 
     /* Capabilities reporting */
     QStringList capabilities() const;
     QStringList fastFilterableDefinitions() const;
     QList<QVariant::Type> supportedDataTypes() const;
 
-private slots:
-/*    void modelUpdated();
-    void rowsUpdated(int row, int count, QModelIndex const &parent);
-    void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
-    void rowsInserted(const QModelIndex &parent, int first, int last);
-    void rowsRemoved(const QModelIndex &parent, int first, int last);
-*/
-
-
 
 private:
-    void saveContactDetails( RDFServicePtr service,
-                             Live<nco::PersonContact>& ncoContact,
-                             QContact* contact,
-                             QContactManager::Error& error,
-                             QTrackerContactsLive& cLive);
     //called from both constructors, connecting to all contact NodeList changes signals
     void connectToSignals();
     RDFVariable contactDetail2Rdf(const RDFVariable& rdfContact, const QString& definitionName, const QString& fieldName) const;
@@ -140,7 +125,7 @@ private:
 private:
     QSharedDataPointer<QContactTrackerEngineData> d;
     const QString contactArchiveFile;
-    const QString contactArchiveDir;    
+    const QString contactArchiveDir;
     friend class ut_qtcontacts_trackerplugin;
 };
 

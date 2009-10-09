@@ -150,15 +150,29 @@ RDFSelect prepareIMAccountsQuery(RDFVariable &rdfcontact1, bool forAffiliations)
 }
 
 
+QTrackerContactAsyncRequest::QTrackerContactAsyncRequest(QContactAbstractRequest* request)
+: req(request)
+{
+}
+
+QTrackerContactAsyncRequest::~QTrackerContactAsyncRequest()
+{
+
+}
 
 
-QTrackerContactAsyncRequest::QTrackerContactAsyncRequest(
+QTrackerContactFetchRequest::QTrackerContactFetchRequest(
         QContactAbstractRequest* request, QContactManagerEngine* parent) :
-    QObject(parent),
+    QObject(parent),QTrackerContactAsyncRequest(request),
     queryPhoneNumbersNodesReady(false),
     queryEmailAddressNodesReady(false)
 {
-    req = request;
+    Q_ASSERT(req);
+    Q_ASSERT(parent);
+    QList<QContactManager::Error> dummy;
+    parent->updateRequestStatus(request, QContactManager::NoError, dummy,
+            QContactAbstractRequest::Active);
+
     switch (req->type())
     {
         case QContactAbstractRequest::ContactIdFetch:
@@ -272,7 +286,9 @@ QTrackerContactAsyncRequest::QTrackerContactAsyncRequest(
             if (r->definitionRestrictions().contains(QContactUrl::DefinitionName))
             {
                 quer.addColumn("homepage", RDFContact.optional().property<nco::websiteUrl>());
+                quer.addColumn("url", RDFContact.optional().property<nco::url>());
                 quer.addColumn("work_homepage", RDFContact.optional().property<nco::hasAffiliation>().property<nco::websiteUrl>());
+                quer.addColumn("work_url", RDFContact.optional().property<nco::hasAffiliation>().property<nco::url>());
             }
             if (r->definitionRestrictions().contains(QContactBirthday::DefinitionName))
             {
@@ -302,11 +318,10 @@ QTrackerContactAsyncRequest::QTrackerContactAsyncRequest(
                     else if( sort.detailFieldName() == QContactName::FieldLast)
                         quer.orderBy(lastname);
                     else
-                        qWarning()<<"QTrackerContactAsyncRequest"<<"sorting by"<<sort.detailDefinitionName()<<sort.detailFieldName()<<"is not yet supported";
+                        qWarning()<<"QTrackerContactFetchRequest"<<"sorting by"<<sort.detailDefinitionName()<<sort.detailFieldName()<<"is not yet supported";
                 }else
-                    qWarning()<<"QTrackerContactAsyncRequest"<<"sorting by"<<sort.detailDefinitionName()<<"is not yet supported";
+                    qWarning()<<"QTrackerContactFetchRequest"<<"sorting by"<<sort.detailDefinitionName()<<"is not yet supported";
             }
-
             query = ::tracker()->modelQuery(quer);
             // need to store LiveNodes in order to receive notification from model
             QObject::connect(query.model(), SIGNAL(modelUpdated()), this,
@@ -316,19 +331,19 @@ QTrackerContactAsyncRequest::QTrackerContactAsyncRequest(
 
             break;
         }
-
-            // implement the rest
         default:
-            break;
+            Q_ASSERT_X(false, Q_FUNC_INFO, "Unsupported request type");
+
     }
 }
 
-QTrackerContactAsyncRequest::~QTrackerContactAsyncRequest()
+QTrackerContactFetchRequest::~QTrackerContactFetchRequest()
 {
-
 }
 
-void QTrackerContactAsyncRequest::modelUpdated()
+
+
+void QTrackerContactFetchRequest::modelUpdated()
 {
     // fastest way to get this working. refactor
     QContactManagerEngine *engine = qobject_cast<QContactManagerEngine *> (
@@ -364,7 +379,7 @@ bool detailExisting(const QString &definitionName, const QContact &contact, cons
     return false;
 }
 
-void QTrackerContactAsyncRequest::contactsReady()
+void QTrackerContactFetchRequest::contactsReady()
 {
     QContactFetchRequest* request = (req->type() == QContactAbstractRequest::ContactFetch)?
             static_cast<QContactFetchRequest*> (req):0;
@@ -442,33 +457,38 @@ void QTrackerContactAsyncRequest::contactsReady()
                     contact.saveDetail(&a);
             }
         }
-        /*
-        if (request->definitionRestrictions().contains(QContactEmailAddress::DefinitionName))
-        {
-            // no office mails yet
-            QContactEmailAddress mail; // constraint here for start only one email
-            mail.setEmailAddress(query->index(i, column++).data().toString());
-            if( !mail.emailAddress().isEmpty() )
-            {
-                if( !detailExisting(QContactEmailAddress::DefinitionName, contact, mail) )
-                {
-                    contact.saveDetail(&mail);
-                }
-            }
-            }*/
         if (request->definitionRestrictions().contains(QContactUrl::DefinitionName))
         {
+            // check query preparation (at the moment in constructor TODO refactor)
+            // home website
+            // if it is websiteUrl then interpret as homepage, if it is nco:url then fovourite url
             QContactUrl url;
+            url.setSubType(QContactUrl::SubTypeHomePage);
+            url.setContexts(QContactUrl::ContextHome);
             url.setUrl(query->index(i, column++).data().toString());
-            if(!url.url().isEmpty())
-                if( !detailExisting(QContactUrl::DefinitionName, contact, url) )
-                    contact.saveDetail(&url);
+            if( url.url().isEmpty() )
+            {
+                // website url is at the same time url, so we handle duplication here
+                // if only url then set it as favourite
+                url.setUrl(query->index(i, column++).data().toString());
+                url.setSubType(QContactUrl::SubTypeFavourite);
+            }
+
+            if(!url.url().isEmpty() && !detailExisting(QContactUrl::DefinitionName, contact, url) )
+                contact.saveDetail(&url);
+
+            // office website
             QContactUrl workurl;
             workurl.setContexts(QContactUrl::ContextWork);
+            workurl.setSubType(QContactUrl::SubTypeHomePage);
             workurl.setUrl(query->index(i, column++).data().toString());
-            if(!workurl.url().isEmpty())
-                if( !detailExisting(QContactUrl::DefinitionName, contact, workurl) )
-                    contact.saveDetail(&workurl);
+            if(workurl.url().isEmpty())
+            {
+                workurl.setUrl(query->index(i, column++).data().toString());
+                workurl.setSubType(QContactUrl::SubTypeFavourite);
+            }
+            if(!workurl.url().isEmpty() && !detailExisting(QContactUrl::DefinitionName, contact, workurl) )
+                contact.saveDetail(&workurl);
 
         }
         if (request->definitionRestrictions().contains(QContactBirthday::DefinitionName))
@@ -540,17 +560,17 @@ void QTrackerContactAsyncRequest::contactsReady()
                 true);
 }
 
-void QTrackerContactAsyncRequest::phoneNumbersReady()
+void QTrackerContactFetchRequest::phoneNumbersReady()
 {
     queryPhoneNumbersNodesReady++;
 }
 
-void QTrackerContactAsyncRequest::emailAddressesReady()
+void QTrackerContactFetchRequest::emailAddressesReady()
 {
     queryEmailAddressNodesReady++;
 }
 
-void QTrackerContactAsyncRequest::iMAcountsReady()
+void QTrackerContactFetchRequest::iMAcountsReady()
 {
     queryIMAccountNodesReady++;
     // now we know that the query is ready before get all contacts, check how it works with transactions
@@ -583,7 +603,7 @@ const QString rdfPhoneType2QContactSubtype(const QString rdfPhoneType)
     return "";
 }
 
-void QTrackerContactAsyncRequest::processQueryPhoneNumbers(SopranoLive::LiveNodes queryPhoneNumbers,
+void QTrackerContactFetchRequest::processQueryPhoneNumbers(SopranoLive::LiveNodes queryPhoneNumbers,
                                                            QList<QContact>& contacts,
                                                            bool affiliationNumbers )
 {
@@ -621,7 +641,7 @@ void QTrackerContactAsyncRequest::processQueryPhoneNumbers(SopranoLive::LiveNode
     }
 }
 
-void QTrackerContactAsyncRequest::processQueryEmailAddresses( SopranoLive::LiveNodes queryEmailAddresses,
+void QTrackerContactFetchRequest::processQueryEmailAddresses( SopranoLive::LiveNodes queryEmailAddresses,
                                                               QList<QContact>& contacts,
                                                               bool affiliationEmails)
 {
@@ -664,7 +684,7 @@ void QTrackerContactAsyncRequest::processQueryEmailAddresses( SopranoLive::LiveN
     }
 }
 
-void QTrackerContactAsyncRequest::processQueryIMAccounts(SopranoLive::LiveNodes queryIMAccounts,
+void QTrackerContactFetchRequest::processQueryIMAccounts(SopranoLive::LiveNodes queryIMAccounts,
                                                          QList<QContact>& contacts,
                                                          bool affiliationAccounts )
 {
