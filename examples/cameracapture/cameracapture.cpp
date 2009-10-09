@@ -37,10 +37,6 @@
 
 #include <multimedia/qmediaservice.h>
 #include <multimedia/qmediarecorder.h>
-#include <multimedia/qaudiodevicecontrol.h>
-#include <multimedia/qaudioencodercontrol.h>
-#include <multimedia/qvideoencodercontrol.h>
-#include <multimedia/qmediaformatcontrol.h>
 #include <multimedia/qcamera.h>
 #include <multimedia/qvideowidget.h>
 
