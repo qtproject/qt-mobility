@@ -63,6 +63,7 @@ private slots:
     void guid();
     void name();
     void nickname();
+    void note();
     void onlineAccount();
     void organization();
     void phoneNumber();
@@ -827,6 +828,39 @@ void tst_QContactDetails::custom()
     QCOMPARE(c.details("mycustom").count(), 0);
     QVERIFY(c.removeDetail(&c2) == false);
     QCOMPARE(c.details("mycustom").count(), 0);
+}
+
+void tst_QContactDetails::note()
+{
+    QContact c;
+    QContactNote n1, n2;
+
+    // test property set
+    n1.setNote("lorem ipsum");
+    QCOMPARE(n1.note(), QString("lorem ipsum"));
+    QCOMPARE(n1.value(QContactNote::FieldNote), QString("lorem ipsum"));
+
+    // test property add
+    QVERIFY(c.saveDetail(&n1));
+    QCOMPARE(c.details(QContactNote::DefinitionName).count(), 1);
+    QCOMPARE(QContactNote(c.details(QContactNote::DefinitionName).value(0)).note(), n1.note());
+
+    // test property update
+    n1.setValue("label","label1");
+    n1.setNote("orange gypsum");
+    QVERIFY(c.saveDetail(&n1));
+    QCOMPARE(c.details(QContactNote::DefinitionName).value(0).value("label"), QString("label1"));
+    QCOMPARE(c.details(QContactNote::DefinitionName).value(0).value(QContactNote::FieldNote), QString("orange gypsum"));
+
+    // test property remove
+    QVERIFY(c.removeDetail(&n1));
+    QCOMPARE(c.details(QContactNote::DefinitionName).count(), 0);
+    QVERIFY(c.saveDetail(&n2));
+    QCOMPARE(c.details(QContactNote::DefinitionName).count(), 1);
+    QVERIFY(c.removeDetail(&n2));
+    QCOMPARE(c.details(QContactNote::DefinitionName).count(), 0);
+    QVERIFY(c.removeDetail(&n2) == false);
+    QCOMPARE(c.details(QContactNote::DefinitionName).count(), 0);
 }
 
 

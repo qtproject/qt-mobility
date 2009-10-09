@@ -565,6 +565,20 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
+    // note
+    fields.clear();
+    f.dataType = QVariant::String;
+    f.allowableValues = QVariantList();
+    d.setName(QContactNote::DefinitionName);
+    fields.insert(QContactNote::FieldNote, f);
+    f.dataType = QVariant::StringList;
+    f.allowableValues = contexts;
+    fields.insert(QContactDetail::FieldContext, f);
+    d.setFields(fields);
+    d.setUnique(false);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+    retn.insert(d.name(), d);
+
     // url
     fields.clear();
     f.dataType = QVariant::String;
