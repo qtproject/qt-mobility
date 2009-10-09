@@ -772,6 +772,8 @@ namespace {
                             *lastError = QMessageStore::ContentInaccessible;
                             qWarning() << "Unable to set columns for recipient table";
                         }
+
+                        destroyAddressList(list, QList<LPTSTR>());
                     } else {
                         qWarning() << "Unable to allocate address list for message.";
                         *lastError = QMessageStore::FrameworkFault;
@@ -1620,59 +1622,69 @@ QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, co
         return result;
     }
 
-    LPMAPITABLE messagesTable;
-    if (_folder->GetContentsTable(MAPI_UNICODE, &messagesTable) != S_OK) {
+    LPMAPITABLE messagesTable(0);
+    HRESULT rv = _folder->GetContentsTable(MAPI_UNICODE, &messagesTable);
+    if (HR_SUCCEEDED(rv)) {
+        // TODO remove flags, sender, subject, they are just used for debugging
+        SizedSPropTagArray(5, columns) = {5, {PR_ENTRYID, PR_RECORD_KEY, PR_MESSAGE_FLAGS, PR_SENDER_NAME, PR_SUBJECT}};
+        rv = messagesTable->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0);
+        if (HR_SUCCEEDED(rv)) {
+            if (!ordering.isEmpty()) {
+                QMessageOrderingPrivate::sortTable(lastError, ordering, messagesTable);
+            }
+
+            if (*lastError == QMessageStore::NoError) {
+                QMessageFilterPrivate::filterTable(lastError, filter, messagesTable);
+            }
+
+            if (*lastError == QMessageStore::NoError) {
+                uint workingLimit(limit);
+                LPSRowSet rows(0);
+                LONG ignored;
+                rv = messagesTable->SeekRow(BOOKMARK_BEGINNING, offset, &ignored);
+                if (HR_SUCCEEDED(rv)) {
+                    while (true) {
+                        rv = messagesTable->QueryRows(1, 0, &rows);
+                        if (HR_SUCCEEDED(rv)) {
+                            if (rows->cRows == 1) {
+                                if (limit) {
+                                    --workingLimit;
+                                }
+
+                                LPSPropValue entryIdProp(&rows->aRow[0].lpProps[0]);
+                                LPSPropValue recordKeyProp(&rows->aRow[0].lpProps[1]);
+                                MapiRecordKey recordKey(recordKeyProp->Value.bin.lpb, recordKeyProp->Value.bin.cb);
+                                MapiEntryId entryId(entryIdProp->Value.bin.lpb, entryIdProp->Value.bin.cb);
+
+                                result.append(QMessageIdPrivate::from(_store->recordKey(), entryId, recordKey, _key));
+
+                                FreeProws(rows);
+                                if (limit && !workingLimit)
+                                    break;
+                            } else {
+                                // We have retrieved all rows
+                                FreeProws(rows);
+                                break;
+                            }
+                        } else {
+                            *lastError = QMessageStore::ContentInaccessible;
+                            qWarning() << "Unable to query rows in message table.";
+                        }
+                    }
+                } else {
+                    *lastError = QMessageStore::ContentInaccessible;
+                    qWarning() << "Unable to seek to offset in message table.";
+                }
+            }
+        } else {
+            *lastError = QMessageStore::ContentInaccessible;
+            return QMessageIdList();
+        }
+
+        mapiRelease(messagesTable);
+    } else {
         *lastError = QMessageStore::ContentInaccessible;
         return QMessageIdList(); // TODO set last error to content inaccessible, and review all != S_OK result handling
-    }
-
-    // TODO remove flags, sender, subject, they are just used for debugging
-    const int nCols(5);
-    enum { entryIdColumn = 0, recordKeyColumn, flagsColumn, senderColumn, subjectColumn };
-    SizedSPropTagArray(nCols, columns) = {nCols, {PR_ENTRYID, PR_RECORD_KEY, PR_MESSAGE_FLAGS, PR_SENDER_NAME, PR_SUBJECT}};
-    if (messagesTable->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0) != S_OK) {
-        *lastError = QMessageStore::ContentInaccessible;
-        return QMessageIdList();
-    }
-
-    if (!ordering.isEmpty()) {
-        QMessageOrderingPrivate::sortTable(lastError, ordering, messagesTable);
-        if (*lastError != QMessageStore::NoError)
-            return QMessageIdList();
-    }
-
-    QMessageFilterPrivate::filterTable(lastError, filter, messagesTable);
-    if (*lastError != QMessageStore::NoError)
-        return QMessageIdList();
-
-    LPSRowSet rows(0);
-    uint workingLimit(limit);
-    HRESULT hres;
-    LONG ignored;
-    if (messagesTable->SeekRow(BOOKMARK_BEGINNING, offset, &ignored) != S_OK) {
-        *lastError = QMessageStore::ContentInaccessible;
-        return QMessageIdList();
-    }
-
-    while ((hres = messagesTable->QueryRows(1, 0, &rows)) == S_OK) {
-        ULONG cRows(rows->cRows);
-        if (cRows == 1) {
-            if (limit)
-                --workingLimit;
-            LPSPropValue entryIdProp(&rows->aRow[0].lpProps[entryIdColumn]);
-            LPSPropValue recordKeyProp(&rows->aRow[0].lpProps[recordKeyColumn]);
-            MapiRecordKey recordKey(recordKeyProp->Value.bin.lpb, recordKeyProp->Value.bin.cb);
-            MapiEntryId entryId(entryIdProp->Value.bin.lpb, entryIdProp->Value.bin.cb);
-            result.append(QMessageIdPrivate::from(_store->recordKey(), entryId, recordKey, _key));
-        }
-        FreeProws(rows);
-        if (limit && !workingLimit)
-            break;
-        if (cRows != 1)
-            break;
-    }
-    if (hres != S_OK) {
-        *lastError = QMessageStore::ContentInaccessible;
     }
 
     return result;
@@ -1753,49 +1765,53 @@ MapiEntryId MapiFolder::messageEntryId(QMessageStore::ErrorCode *lastError, cons
     MapiEntryId result;
     MapiRecordKey key(messageKey);
 
-    LPMAPITABLE messagesTable;
-    if (_folder->GetContentsTable(MAPI_UNICODE, &messagesTable) != S_OK) {
-        *lastError = QMessageStore::ContentInaccessible;
-        return result; // TODO set last error to content inaccessible, and review all != S_OK result handling
-    }
+    IMAPITable *messagesTable(0);
+    HRESULT rv = _folder->GetContentsTable(MAPI_UNICODE, &messagesTable);
+    if (HR_SUCCEEDED(rv)) {
+        SPropValue keyProp;
+        keyProp.ulPropTag = PR_RECORD_KEY;
+        keyProp.Value.bin.cb = key.count();
+        keyProp.Value.bin.lpb = reinterpret_cast<LPBYTE>(key.data());
 
-    SRestriction restriction;
-    SPropValue keyProp;
-    restriction.rt = RES_PROPERTY;
-    restriction.res.resProperty.relop = RELOP_EQ;
-    restriction.res.resProperty.ulPropTag = PR_RECORD_KEY;
-    restriction.res.resProperty.lpProp = &keyProp;
+        SRestriction restriction;
+        restriction.rt = RES_PROPERTY;
+        restriction.res.resProperty.relop = RELOP_EQ;
+        restriction.res.resProperty.ulPropTag = PR_RECORD_KEY;
+        restriction.res.resProperty.lpProp = &keyProp;
 
-    keyProp.ulPropTag = PR_RECORD_KEY;
-    keyProp.Value.bin.cb = key.count();
-    keyProp.Value.bin.lpb = reinterpret_cast<LPBYTE>(key.data());
-
-    ULONG flags(0);
-    if (messagesTable->Restrict(&restriction, flags) != S_OK) {
-        *lastError = QMessageStore::ContentInaccessible;
-        return result; // TODO error handling, framework fault
-    }
-
-    const int nCols(2);
-    enum { entryIdColumn = 0, recordKeyColumn };
-    SizedSPropTagArray(nCols, columns) = {nCols, {PR_ENTRYID, PR_RECORD_KEY}};
-    if (messagesTable->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0) != S_OK) {
-        *lastError = QMessageStore::ContentInaccessible;
-        return result; // TODO error handling, framework fault
-    }
-
-    LPSRowSet rows(0);
-    if (messagesTable->QueryRows(1, 0, &rows) == S_OK) {
-        if (rows->cRows == 1) {
-            LPSPropValue entryIdProp(&rows->aRow[0].lpProps[entryIdColumn]);
-            MapiEntryId entryId(entryIdProp->Value.bin.lpb, entryIdProp->Value.bin.cb);
-            result = entryId;
+        ULONG flags(0);
+        rv = messagesTable->Restrict(&restriction, flags);
+        if (HR_SUCCEEDED(rv)) {
+            SizedSPropTagArray(1, columns) = {1, {PR_ENTRYID}};
+            rv = messagesTable->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0);
+            if (HR_SUCCEEDED(rv)) {
+                LPSRowSet rows(0);
+                rv = messagesTable->QueryRows(1, 0, &rows);
+                if (HR_SUCCEEDED(rv)) {
+                    if (rows->cRows == 1) {
+                        LPSPropValue entryIdProp(&rows->aRow[0].lpProps[0]);
+                        result = MapiEntryId(entryIdProp->Value.bin.lpb, entryIdProp->Value.bin.cb);
+                    } else {
+                        *lastError = QMessageStore::InvalidId;
+                    }
+                    FreeProws(rows);
+                } else {
+                    *lastError = QMessageStore::ContentInaccessible;
+                    qWarning() << "Unable to query rows from message table.";
+                }
+            } else {
+                *lastError = QMessageStore::ContentInaccessible;
+                qWarning() << "Unable to set columns on message table.";
+            }
         } else {
-            *lastError = QMessageStore::InvalidId;
+            *lastError = QMessageStore::ContentInaccessible;
+            qWarning() << "Unable to restrict content table.";
         }
-        FreeProws(rows);
+
+        mapiRelease(messagesTable);
     } else {
-        *lastError = QMessageStore::InvalidId;
+        *lastError = QMessageStore::ContentInaccessible;
+        qWarning() << "Unable to get contents table for folder.";
     }
 
     return result;
@@ -2751,7 +2767,7 @@ IMessage *MapiSession::openMapiMessage(QMessageStore::ErrorCode *lastError, cons
         message = mapiStore->openMessage(lastError, entryId);
         if (*lastError != QMessageStore::NoError) {
             qWarning() << "Invalid message entryId:" << entryId.toBase64();
-            message = 0;
+            mapiRelease(message);
         }
     } else {
         qWarning() << "Invalid store recordKey:" << storeRecordKey.toBase64();
@@ -3402,7 +3418,6 @@ bool MapiSession::updateMessageAttachments(QMessageStore::ErrorCode *lastError, 
 
                 // Find any attachments for this message
                 IMAPITable *attachmentsTable(0);
-
                 HRESULT rv = message->GetAttachmentTable(0, &attachmentsTable);
                 if (HR_SUCCEEDED(rv)) {
                     // Find the properties of these attachments
@@ -3413,8 +3428,6 @@ bool MapiSession::updateMessageAttachments(QMessageStore::ErrorCode *lastError, 
                                                            PR_ATTACH_CONTENT_ID,
                                                            PR_ATTACH_SIZE,
                                                            PR_RENDERING_POSITION }};
-
-
 
                     QueryAllRows qar(attachmentsTable, reinterpret_cast<LPSPropTagArray>(&attCols), NULL, NULL);
                     while(qar.query()) {
@@ -3495,12 +3508,13 @@ bool MapiSession::updateMessageAttachments(QMessageStore::ErrorCode *lastError, 
                         *lastError = qar.lastError();
                     else
                         result = true;
+
+                    mapiRelease(attachmentsTable);
                 }
                 else
                     *lastError = QMessageStore::ContentInaccessible;
 
                 mapiRelease(message);
-
             }
         }
     }
