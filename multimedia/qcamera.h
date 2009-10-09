@@ -78,8 +78,10 @@ public:
 
     enum FocusMode {
         ManualFocus = 0x1,
-        AutoFocus = 0x2,
-        ContinuousFocus = 0x4
+        HyperfocalFocus = 0x02,
+        InfinityFocus = 0x04,
+        AutoFocus = 0x8,
+        ContinuousFocus = 0x10
     };
     Q_DECLARE_FLAGS(FocusModes, FocusMode)
 
