@@ -1,7 +1,8 @@
 set DEPOT="%CD%"
 
 IF NOT EXIST bearermanagement.pro GOTO NOSOURCE
-set CETESTCOMMAND=cetest -cache %QTDIR%\.qmake.cache -libpath \Windows 
+IF EXIST %QTDIR%\.qmake.cache set CETESTCOMMAND=cetest -cache %QTDIR%\.qmake.cache -libpath \Windows 
+IF NOT EXIST %QTDIR%\.qmake.cache set CETESTCOMMAND=cetest -libpath \Windows 
 
 IF NOT EXIST %DEPOT%\..\..\qa-dungeon\mainline\tests\wince\deploy\ GOTO SKIPDEPLOY
 cd %DEPOT%\..\..\qa-dungeon\mainline\tests\wince\deploy\
