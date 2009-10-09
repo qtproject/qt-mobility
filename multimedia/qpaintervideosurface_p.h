@@ -108,8 +108,8 @@ private:
 protected:
     explicit QPainterVideoSurface(const QGLContext *context, QObject *parent = 0);
 
-    virtual void makeCurrent();
-    virtual void doneCurrent();
+    virtual void makeCurrent() {}
+    virtual void doneCurrent() {}
 
 private:
     void initRgbTextureInfo(GLenum internalFormat, GLuint format, const QSize &size);

@@ -47,12 +47,33 @@ public:
 
     QMediaContentPrivate(const QMediaContentPrivate &other):
         QSharedData(other),
-        resources(other.resources) {}
+        resources(other.resources),
+        posterUri(other.posterUri),
+        coverArtUriSmall(other.coverArtUriSmall),
+        coverArtUriLarge(other.coverArtUriLarge),
+        thumbnailUriSmall(other.thumbnailUriSmall),
+        thumbnailUriLarge(other.thumbnailUriLarge)
+    {}
 
     QMediaContentPrivate& operator=(const QMediaContentPrivate &other)
     {
         resources = other.resources;
+        posterUri = other.posterUri;
+        coverArtUriSmall = other.coverArtUriSmall;
+        coverArtUriLarge = other.coverArtUriLarge;
+        thumbnailUriSmall = other.thumbnailUriSmall;
+        thumbnailUriLarge = other.thumbnailUriLarge;
         return *this;
+    }
+
+    bool operator ==(const QMediaContentPrivate &other) const
+    {
+        return resources == other.resources
+                && posterUri == other.posterUri
+                && coverArtUriSmall == other.coverArtUriSmall
+                && coverArtUriLarge == other.coverArtUriLarge
+                && thumbnailUriSmall == other.thumbnailUriSmall
+                && thumbnailUriLarge == other.thumbnailUriLarge;
     }
 
     QMediaResourceList  resources;
@@ -152,7 +173,7 @@ bool QMediaContent::operator==(const QMediaContent &other) const
 {
     return (d.constData() == 0 && other.d.constData() == 0) ||
             (d.constData() != 0 && other.d.constData() != 0 &&
-             d->resources == other.d->resources);
+             *d.constData() == *other.d.constData());
 }
 
 /*!

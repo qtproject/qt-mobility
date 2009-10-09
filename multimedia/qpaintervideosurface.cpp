@@ -624,14 +624,6 @@ void QPainterVideoSurface::paint(QPainter *painter, const QRect &rect)
 
 #ifndef QT_NO_OPENGL
 
-void QPainterVideoSurface::makeCurrent()
-{
-}
-
-void QPainterVideoSurface::doneCurrent()
-{
-}
-
 void QPainterVideoSurface::initRgbTextureInfo(
         GLenum internalFormat, GLuint format, const QSize &size)
 {

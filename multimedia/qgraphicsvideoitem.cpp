@@ -44,7 +44,6 @@
 
 class QGraphicsVideoItemPrivate
 {
-    Q_DECLARE_PUBLIC(QGraphicsVideoItem)
 public:
     QGraphicsVideoItemPrivate()
         : q_ptr(0)
@@ -68,12 +67,12 @@ public:
 
 void QGraphicsVideoItemPrivate::_q_present()
 {
-    q_func()->update(boundingRect);
+    q_ptr->update(boundingRect);
 }
 
 void QGraphicsVideoItemPrivate::_q_formatChanged(const QVideoSurfaceFormat &format)
 {
-    q_func()->prepareGeometryChange();
+    q_ptr->prepareGeometryChange();
 
     boundingRect = QRect(QPoint(0, 0), format.sizeHint());
     boundingRect.moveCenter(QPoint(0, 0));
