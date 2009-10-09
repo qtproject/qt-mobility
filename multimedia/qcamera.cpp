@@ -115,6 +115,15 @@ QCamera::QCamera(QObject *parent, QMediaServiceProvider *provider):
     if (d->exposureControl) {
         connect(d->exposureControl, SIGNAL(flashReady(bool)), this, SIGNAL(flashReady(bool)));
         connect(d->exposureControl, SIGNAL(exposureLocked()), this, SIGNAL(exposureLocked()));
+
+        connect(d->exposureControl, SIGNAL(apertureChanged(qreal)),
+                this, SIGNAL(apertureChanged(qreal)));
+        connect(d->exposureControl, SIGNAL(apertureRangeChanged()),
+                this, SIGNAL(apertureRangeChanged()));
+        connect(d->exposureControl, SIGNAL(shutterSpeedChanged(qreal)),
+                this, SIGNAL(shutterSpeedChanged(qreal)));
+        connect(d->exposureControl, SIGNAL(isoSensitivityChanged(int)),
+                this, SIGNAL(isoSensitivityChanged(int)));
     }
 
     if (d->focusControl) {
@@ -520,12 +529,29 @@ int QCamera::isoSensitivity() const
 }
 
 /*!
-    Returns the sensitivity ranges available.
+    Returns the smallest supported ISO sensitivity.
 */
-
-QPair<int, int> QCamera::supportedIsoSensitivityRange() const
+int QCamera::minimumIsoSensitivity() const
 {
-    return d_func()->exposureControl ? d_func()->exposureControl->supportedIsoSensitivityRange() : QPair<int,int>(-1,-1);
+    return d_func()->exposureControl ? d_func()->exposureControl->minimumIsoSensitivity() : -1;
+}
+
+/*!
+    Returns the largest supported ISO sensitivity.
+*/
+int QCamera::maximumIsoSensitivity() const
+{
+    return d_func()->exposureControl ? d_func()->exposureControl->maximumIsoSensitivity() : -1;
+}
+
+/*!
+    Returns the list of ISO senitivities if camera supports
+    only fixed set of ISO sensitivity values, otherwise returns an empty list.
+*/
+QList<int> QCamera::supportedIsoSenitivities() const
+{
+    return d_func()->exposureControl ? d_func()->exposureControl->supportedIsoSenitivities()
+                                     : QList<int>();
 }
 
 /*!
@@ -549,7 +575,7 @@ void QCamera::setAutoIsoSensitivity()
 }
 
 /*!
-    Returns the current aperture.
+    Returns the current aperture as n F number.
 */
 
 qreal QCamera::aperture() const
@@ -558,12 +584,36 @@ qreal QCamera::aperture() const
 }
 
 /*!
-    Returns the supported aperture ranges available.
+    Returns the smallest supported aperture as an F number,
+    corresponding to wide open lens.
+    For example if the camera lenses supports aperture range from
+    F/1.4 to F/32, the minumum aperture value will be 1.4,
+    the maximum - 32
 */
-
-QPair<qreal, qreal> QCamera::supportedApertureRange() const
+qreal QCamera::minimumAperture() const
 {
-    return d_func()->exposureControl ? d_func()->exposureControl->supportedApertureRange() : qMakePair<qreal,qreal>(-1,-1);
+    return d_func()->exposureControl ? d_func()->exposureControl->minimumAperture() : -1.0;
+}
+
+/*!
+    Returns the largest supported aperture.
+
+    \sa minimumAperture()
+    \sa aperture()
+*/
+qreal QCamera::maximumAperture() const
+{
+    return d_func()->exposureControl ? d_func()->exposureControl->maximumAperture() : -1.0;
+}
+
+/*!
+    Returns the list of apertures if camera supports
+    only fixed set of aperture values, otherwise returns an empty list.
+*/
+QList<qreal> QCamera::supportedApertures() const
+{
+    return d_func()->exposureControl ? \
+           d_func()->exposureControl->supportedApertures() : QList<qreal>();
 }
 
 /*!
@@ -587,7 +637,7 @@ void QCamera::setAutoAperture()
 }
 
 /*!
-    Return the current shutter speed.
+    Return the current shutter speed in seconds.
 */
 
 qreal QCamera::shutterSpeed() const
@@ -595,13 +645,33 @@ qreal QCamera::shutterSpeed() const
     return d_func()->exposureControl ? d_func()->exposureControl->shutterSpeed() : -1;
 }
 
-/*!
-    Return the shutter speed ranges available.
-*/
 
-QPair<qreal, qreal> QCamera::supportedShutterSpeedRange() const
+/*!
+    Returns the smallest supported shutter speed.
+*/
+qreal QCamera::minimumShutterSpeed() const
 {
-    return d_func()->exposureControl ? d_func()->exposureControl->supportedShutterSpeedRange() : qMakePair<qreal,qreal>(-1,-1);
+    return d_func()->exposureControl ? d_func()->exposureControl->minimumShutterSpeed() : -1.0;
+}
+
+/*!
+    Returns the largest supported shutter speed.
+
+    \sa shutterSpeed()
+*/
+qreal QCamera::maximumShutterSpeed() const
+{
+    return d_func()->exposureControl ? d_func()->exposureControl->maximumShutterSpeed() : -1.0;
+}
+
+/*!
+    Returns the list of shutter speed values if camera supports
+    only fixed set of shutter speed values, otherwise returns an empty list.
+*/
+QList<qreal> QCamera::supportedShutterSpeeds() const
+{
+    return d_func()->exposureControl ?
+            d_func()->exposureControl->supportedShutterSpeeds() : QList<qreal>();
 }
 
 /*!

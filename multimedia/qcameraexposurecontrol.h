@@ -43,7 +43,6 @@
 class Q_MEDIA_EXPORT QCameraExposureControl : public QMediaControl
 {
     Q_OBJECT
-
 public:
     ~QCameraExposureControl();
 
@@ -64,17 +63,23 @@ public:
     virtual QCamera::MeteringModes supportedMeteringModes() const = 0;
 
     virtual int isoSensitivity() const = 0;
-    virtual QPair<int, int> supportedIsoSensitivityRange() const = 0;
+    virtual int minimumIsoSensitivity() const = 0;
+    virtual int maximumIsoSensitivity() const = 0;
+    virtual QList<int> supportedIsoSenitivities() const = 0;
     virtual void setManualIsoSensitivity(int iso) = 0;
     virtual void setAutoIsoSensitivity() = 0;
 
     virtual qreal aperture() const = 0;
-    virtual QPair<qreal, qreal> supportedApertureRange() const = 0;
+    virtual qreal minimumAperture() const = 0;
+    virtual qreal maximumAperture() const = 0;
+    virtual QList<qreal> supportedApertures() const = 0;
     virtual void setManualAperture(qreal aperture) = 0;
     virtual void setAutoAperture() = 0;
 
     virtual qreal shutterSpeed() const = 0;
-    virtual QPair<qreal, qreal> supportedShutterSpeedRange() const = 0;
+    virtual qreal minimumShutterSpeed() const = 0;
+    virtual qreal maximumShutterSpeed() const = 0;
+    virtual QList<qreal> supportedShutterSpeeds() const = 0;
     virtual void setManualShutterSpeed(qreal seconds) = 0;
     virtual void setAutoShutterSpeed() = 0;
 
@@ -87,6 +92,11 @@ public Q_SLOTS:
 Q_SIGNALS:
     void exposureLocked();
     void flashReady(bool);
+
+    void apertureChanged(qreal);
+    void apertureRangeChanged();
+    void shutterSpeedChanged(qreal);
+    void isoSensitivityChanged(int);
 
 protected:
     QCameraExposureControl(QObject* parent);

@@ -55,6 +55,10 @@ class Q_MEDIA_EXPORT QCamera : public QMediaObject
 
     Q_ENUMS(State Error FocusStatus)
 
+    Q_PROPERTY(qreal aperture READ aperture WRITE setManualAperture NOTIFY apertureChanged)
+    Q_PROPERTY(qreal shutterSpeed READ shutterSpeed WRITE setManualShutterSpeed NOTIFY shutterSpeedChanged)
+    Q_PROPERTY(int isoSensitivity READ isoSensitivity WRITE setManualIsoSensitivity NOTIFY isoSensitivityChanged)
+
 public:
     enum State { ActiveState, StoppedState };
 
@@ -182,17 +186,23 @@ public:
     void setManualWhiteBalance(int colorTemperature);
 
     int isoSensitivity() const;
-    QPair<int, int> supportedIsoSensitivityRange() const;
+    int minimumIsoSensitivity() const;
+    int maximumIsoSensitivity() const;
+    QList<int> supportedIsoSenitivities() const;
     void setManualIsoSensitivity(int iso);
     void setAutoIsoSensitivity();
 
     qreal aperture() const;
-    QPair<qreal, qreal> supportedApertureRange() const;
+    qreal minimumAperture() const;
+    qreal maximumAperture() const;
+    QList<qreal> supportedApertures() const;
     void setManualAperture(qreal aperture);
     void setAutoAperture();
 
     qreal shutterSpeed() const;
-    QPair<qreal, qreal> supportedShutterSpeedRange() const;
+    qreal minimumShutterSpeed() const;
+    qreal maximumShutterSpeed() const;
+    QList<qreal> supportedShutterSpeeds() const;
     void setManualShutterSpeed(qreal seconds);
     void setAutoShutterSpeed();
 
@@ -222,6 +232,12 @@ Q_SIGNALS:
     void flashReady(bool);
     void focusStatusChanged(QCamera::FocusStatus);
     void zoomValueChanged(qreal);
+
+    void apertureChanged(qreal);
+    void apertureRangeChanged();
+    void shutterSpeedChanged(qreal);
+    void isoSensitivityChanged(int);
+
     void exposureLocked();
     void focusLocked();
 
