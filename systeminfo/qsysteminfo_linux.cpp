@@ -49,7 +49,7 @@
 
 #if !defined(QT_NO_DBUS)
 #include <qhalservice_linux_p.h>
-#include "qnetworkmanagerservice_linux_p.h"
+#include <qnetworkmanagerservice_linux_p.h>
 #include <QtDBus>
 #include <QDBusConnection>
 #include <QDBusError>

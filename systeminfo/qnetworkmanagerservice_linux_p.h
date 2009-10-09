@@ -43,9 +43,7 @@
 // version without notice, or even be removed.
 //
 // We mean it.
-//
 
-#include <NetworkManager/NetworkManager.h>
 #include <QtDBus>
 #include <QDBusConnection>
 #include <QDBusError>
@@ -59,6 +57,45 @@
 #include <QDBusObjectPath>
 #include <QDBusContext>
 #include <QMap>
+typedef enum NMDeviceType
+{
+    DEVICE_TYPE_UNKNOWN = 0,
+    DEVICE_TYPE_802_3_ETHERNET,
+    DEVICE_TYPE_802_11_WIRELESS,
+    DEVICE_TYPE_GSM,
+    DEVICE_TYPE_CDMA
+} NMDeviceType;
+
+typedef enum
+{
+    NM_DEVICE_STATE_UNKNOWN = 0,
+    NM_DEVICE_STATE_UNMANAGED,
+    NM_DEVICE_STATE_UNAVAILABLE,
+    NM_DEVICE_STATE_DISCONNECTED,
+    NM_DEVICE_STATE_PREPARE,
+    NM_DEVICE_STATE_CONFIG,
+    NM_DEVICE_STATE_NEED_AUTH,
+    NM_DEVICE_STATE_IP_CONFIG,
+    NM_DEVICE_STATE_ACTIVATED,
+    NM_DEVICE_STATE_FAILED
+} NMDeviceState;
+
+#define	NM_DBUS_SERVICE			"org.freedesktop.NetworkManager"
+
+#define	NM_DBUS_PATH				        "/org/freedesktop/NetworkManager"
+#define	NM_DBUS_INTERFACE			        "org.freedesktop.NetworkManager"
+#define	NM_DBUS_INTERFACE_DEVICE	        NM_DBUS_INTERFACE ".Device"
+#define NM_DBUS_INTERFACE_DEVICE_WIRED      NM_DBUS_INTERFACE_DEVICE ".Wired"
+#define NM_DBUS_INTERFACE_DEVICE_WIRELESS   NM_DBUS_INTERFACE_DEVICE ".Wireless"
+#define NM_DBUS_PATH_ACCESS_POINT           NM_DBUS_PATH "/AccessPoint"
+#define NM_DBUS_INTERFACE_ACCESS_POINT      NM_DBUS_INTERFACE ".AccessPoint"
+
+#define NM_DBUS_PATH_SETTINGS             "/org/freedesktop/NetworkManagerSettings"
+
+#define NM_DBUS_IFACE_SETTINGS_CONNECTION "org.freedesktop.NetworkManagerSettings.Connection"
+#define NM_DBUS_IFACE_SETTINGS            "org.freedesktop.NetworkManagerSettings"
+#define NM_DBUS_INTERFACE_ACTIVE_CONNECTION NM_DBUS_INTERFACE ".Connection.Active"
+#define NM_DBUS_INTERFACE_IP4_CONFIG        NM_DBUS_INTERFACE ".IP4Config"
 
 typedef QMap< QString, QMap<QString,QVariant> > QNmSettingsMap;
 Q_DECLARE_METATYPE(QNmSettingsMap)
