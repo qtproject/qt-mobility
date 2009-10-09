@@ -185,27 +185,30 @@ QAudioEncoderControl::~QAudioEncoderControl()
 
 
 /*!
-  Returns the list of codec specific audio encoding options.
+  Returns the list of \a codec specific audio encoding options.
 */
-QStringList QAudioEncoderControl::supportedEncodingOptions() const
+QStringList QAudioEncoderControl::supportedEncodingOptions(const QString &codec) const
 {
+    Q_UNUSED(codec);
     return QStringList();
 }
 
 /*!
    Returns value of audio encoding \a option.
 */
-QVariant QAudioEncoderControl::encodingOption(const QString &option) const
+QVariant QAudioEncoderControl::encodingOption(const QString &codec, const QString &option) const
 {
+    Q_UNUSED(codec);
     Q_UNUSED(option);
     return QVariant();
 }
 
 /*!
-  Set the codec specific \a option to \a value.
+  Set the \a codec specific \a option to \a value.
 */
-void QAudioEncoderControl::setEncodingOption(const QString &option, const QVariant &value)
+void QAudioEncoderControl::setEncodingOption(const QString &codec, const QString &option, const QVariant &value)
 {
+    Q_UNUSED(codec);
     Q_UNUSED(option);
     Q_UNUSED(value);
 }

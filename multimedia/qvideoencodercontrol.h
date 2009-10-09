@@ -75,9 +75,9 @@ public:
     virtual QMediaRecorder::EncodingQuality quality() const = 0;
     virtual void setQuality(QMediaRecorder::EncodingQuality) = 0;
 
-    virtual QStringList supportedEncodingOptions() const;
-    virtual QVariant encodingOption(const QString &name) const;
-    virtual void setEncodingOption(const QString &name, const QVariant &value);
+    virtual QStringList supportedEncodingOptions(const QString &codec) const;
+    virtual QVariant encodingOption(const QString &codec, const QString &name) const;
+    virtual void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);
 
 protected:
     QVideoEncoderControl(QObject *parent);

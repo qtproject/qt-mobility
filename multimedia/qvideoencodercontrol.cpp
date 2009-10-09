@@ -166,29 +166,32 @@ QVideoEncoderControl::~QVideoEncoderControl()
 
 
 /*!
-  Returns the list of supported video encoding options.
+  Returns the list of supported video \a codec encoding options.
 
-  The list and meaninng of options is codec and system depended.
+  The list and meaninng of options is system depended.
 */
-QStringList QVideoEncoderControl::supportedEncodingOptions() const
+QStringList QVideoEncoderControl::supportedEncodingOptions(const QString &codec) const
 {
+    Q_UNUSED(codec);
     return QStringList();
 }
 
 /*!
-  Returns value of encoder \a option.
+  Returns value of video \a codec \a option.
 */
-QVariant QVideoEncoderControl::encodingOption(const QString &option) const
+QVariant QVideoEncoderControl::encodingOption(const QString &codec, const QString &option) const
 {
+    Q_UNUSED(codec);
     Q_UNUSED(option);
     return QVariant();
 }
 
 /*!
-  Set the codec specific \a option to \a value.
+  Set the \a codec specific \a option to \a value.
 */
-void QVideoEncoderControl::setEncodingOption(const QString &option, const QVariant &value)
+void QVideoEncoderControl::setEncodingOption(const QString &codec, const QString &option, const QVariant &value)
 {
+    Q_UNUSED(codec);
     Q_UNUSED(option);
     Q_UNUSED(value);
 }
