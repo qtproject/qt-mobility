@@ -53,11 +53,12 @@
 class QVersitReaderPrivate
 {
 public:
-    QVersitReaderPrivate() : m_iodevice(0) { } 
+    QVersitReaderPrivate() : m_iodevice(0), m_DocumentNestingLevel(0) { } 
     ~QVersitReaderPrivate() {}
 
     QIODevice* m_iodevice;
     QList<QVersitDocument> m_versitDocuments;
+    int m_DocumentNestingLevel; // Depth in parsing nested versit documents
 };
 
 #endif // QVERSITREADER_P_H

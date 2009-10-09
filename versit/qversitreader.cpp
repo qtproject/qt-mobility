@@ -36,6 +36,9 @@
 #include "qversitreader_p.h"
 #include "versitutils.h"
 
+// Some big enough value for nested versit documents to prevent infite recursion
+#define MAX_VERSIT_DOCUMENT_NESTING_DEPTH 20
+
 /*!
  * \class QVersitReader
  *
@@ -104,6 +107,7 @@ QList<QVersitDocument> QVersitReader::result() const
  */
 QVersitDocument QVersitReader::parseVersitDocument(QByteArray& text)
 {
+    d->m_DocumentNestingLevel++;
     QVersitDocument document;
     text = text.mid(VersitUtils::countLeadingWhiteSpaces(text));
     QVersitProperty property = parseNextVersitProperty(text);
@@ -111,13 +115,16 @@ QVersitDocument QVersitReader::parseVersitDocument(QByteArray& text)
         while (property.name().length() > 0 && property.name() != "END") {
             property = parseNextVersitProperty(text);   
             if (property.name() == "VERSION" && 
-                property.value().trimmed() != "2.1")
+                property.value().trimmed() != "2.1") {
+                d->m_DocumentNestingLevel--;
                 return QVersitDocument(); // return an empty document
+            }
             if (property.name() != "VERSION" && 
                 property.name() != "END")
                 document.addProperty(property);
         }
     }
+    d->m_DocumentNestingLevel--;
     return document;
 }
 
@@ -131,6 +138,8 @@ QVersitProperty QVersitReader::parseNextVersitProperty(QByteArray& text)
     property.setParameters(VersitUtils::extractPropertyParams(text));
     text = VersitUtils::extractPropertyValue(text); 
     if (property.name() == "AGENT") {
+        if (d->m_DocumentNestingLevel >= MAX_VERSIT_DOCUMENT_NESTING_DEPTH)
+            return property; // To prevent infinite recursion
         property.setEmbeddedDocument(parseVersitDocument(text));
     }
     else {

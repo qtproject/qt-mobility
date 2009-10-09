@@ -33,6 +33,7 @@
 
 #include "ut_qversitreader.h"
 #include "qversitreader.h"
+#include "qversitreader_p.h"
 #include <QtTest/QtTest>
 #include <QBuffer>
 
@@ -103,14 +104,16 @@ void UT_QVersitReader::testResult()
 
 void UT_QVersitReader::testParseNextVersitProperty()
 {
+    // Test a valid card with properties having separate handling: 
+    // AGENT property, some property with parameter ENCODING=QUOTED-PRINTABLE 
+    // and some other property without this parameter
     const char vCardData[] = 
 "BEGIN:VCARD\r\n\
 VERSION:2.1\r\n\
 N:Homer\r\n\
 EMAIL;ENCODING=QUOTED-PRINTABLE:homer=40simp=\r\nsons.com\r\n\
-AGENT:\r\nBEGIN:VCARD\r\nN:Marge\r\nEND:VCARD\r\n\
+AGENT:\r\nBEGIN:VCARD\r\nN:Marge\r\nEND:VCARD\r\n\r\n
 END:VCARD\r\n";
-    
     QByteArray vCard(vCardData);
     
     QVersitProperty property = m_reader->parseNextVersitProperty(vCard);
@@ -133,6 +136,7 @@ END:VCARD\r\n";
     property = m_reader->parseNextVersitProperty(vCard);
     QCOMPARE(property.name(),QString("AGENT"));
     QCOMPARE(property.value(),QByteArray());
+    QCOMPARE(property.embeddedDocument().properties().count(),1);
     
     property = m_reader->parseNextVersitProperty(vCard);
     QCOMPARE(property.name(),QString("END"));
@@ -141,6 +145,15 @@ END:VCARD\r\n";
     property = m_reader->parseNextVersitProperty(vCard);
     QCOMPARE(property.name(),QString());
     QCOMPARE(property.value(),QByteArray());
+    
+    // Simulate a situation where the document nesting level is exceeded
+    // In practice this would mean a big number of nested AGENT properties
+    m_reader->d->m_DocumentNestingLevel = 20;
+    QByteArray agentProperty = "AGENT:BEGIN:VCARD\r\nN:Marge\r\nEND:VCARD\r\n\r\n";
+    property = m_reader->parseNextVersitProperty(agentProperty);
+    QCOMPARE(property.name(),QString("AGENT"));
+    QCOMPARE(property.embeddedDocument().properties().count(),0);
+    QCOMPARE(property.value(),QByteArray());    
 }
 
 void UT_QVersitReader::testParseVersitDocument()
@@ -156,6 +169,7 @@ END:VCARD\r\n";
     QByteArray vCard(validCard);
     QVersitDocument document = m_reader->parseVersitDocument(vCard);
     QCOMPARE(document.properties().count(),3);
+    QCOMPARE(m_reader->d->m_DocumentNestingLevel,0);
     
     // No BEGIN found
     const char beginMissing[] = 
@@ -166,6 +180,7 @@ END:VCARD\r\n";
     vCard = beginMissing;
     document = m_reader->parseVersitDocument(vCard);
     QCOMPARE(document.properties().count(),0);
+    QCOMPARE(m_reader->d->m_DocumentNestingLevel,0);
     
     // Wrong card type
     const char wrongType[] = 
@@ -174,6 +189,7 @@ END:VCAL\r\n";
     vCard = wrongType;
     document = m_reader->parseVersitDocument(vCard);
     QCOMPARE(document.properties().count(),0);
+    QCOMPARE(m_reader->d->m_DocumentNestingLevel,0);
     
     // Wrong version
     const char wrongVersion[] = 
@@ -184,4 +200,5 @@ END:VCARD\r\n";
     vCard = wrongVersion;
     document = m_reader->parseVersitDocument(vCard);
     QCOMPARE(document.properties().count(),0);
+    QCOMPARE(m_reader->d->m_DocumentNestingLevel,0);
 }
