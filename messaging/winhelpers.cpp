@@ -1867,17 +1867,6 @@ IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const Q
     IMessage* mapiMessage(0);
     HRESULT rv = _folder->CreateMessage(0, 0, &mapiMessage);
     if (HR_SUCCEEDED(rv)) {
-        // Set the flags for this message
-        LONG flags = (MSGFLAG_UNSENT | MSGFLAG_UNMODIFIED | MSGFLAG_FROMME);
-        if (source.status() & QMessage::HasAttachments) {
-            flags |= MSGFLAG_HASATTACH;
-        }
-        if (!setMapiProperty(mapiMessage, PR_MESSAGE_FLAGS, flags)) {
-            *lastError = QMessageStore::FrameworkFault;
-            qWarning() << "Unable to set flags in message.";
-            qWarning() << "rv:" << hex << (ULONG)rv;
-        }
-
         // Store the message properties
         if (*lastError == QMessageStore::NoError) {
             storeMessageProperties(lastError, source, mapiMessage);
@@ -3561,27 +3550,6 @@ void MapiSession::updateMessage(QMessageStore::ErrorCode* lastError, const QMess
 {
     IMessage *mapiMessage = openMapiMessage(lastError, source.id());
     if (*lastError == QMessageStore::NoError) {
-        // Ensure the HasAttachments flag is up to date
-        LONG flags(0);
-        if (!getMapiProperty(mapiMessage, PR_MESSAGE_FLAGS, &flags)) {
-            *lastError = QMessageStore::ContentInaccessible;
-            qWarning() << "Unable to get flags from message.";
-        } else {
-            LONG updatedFlags(flags);
-            if ((source.status() & QMessage::HasAttachments) && !(flags & MSGFLAG_HASATTACH))  {
-                updatedFlags |= MSGFLAG_HASATTACH;
-            } else if (!(source.status() & QMessage::HasAttachments) && (flags & MSGFLAG_HASATTACH))  {
-                updatedFlags &= ~MSGFLAG_HASATTACH;
-            }
-
-            if (updatedFlags != flags) {
-                if (!setMapiProperty(mapiMessage, PR_MESSAGE_FLAGS, updatedFlags)) {
-                    *lastError = QMessageStore::FrameworkFault;
-                    qWarning() << "Unable to set flags in message.";
-                }
-            }
-        }
-
         // Update the stored properties
         if (*lastError == QMessageStore::NoError) {
             storeMessageProperties(lastError, source, mapiMessage);
