@@ -34,7 +34,8 @@
 #ifndef QVERSITPROPERTY_H
 #define QVERSITPROPERTY_H
 
-#include "qversitdocument.h"
+#include <qtversitglobal.h>
+#include <qversitdocument.h>
 #include <QString>
 #include <QMultiMap>
 #include <QByteArray>
@@ -42,7 +43,7 @@
 
 class QVersitPropertyPrivate;
 
-class QVersitProperty
+class QTVERSIT_EXPORT QVersitProperty
 {
 public:
     QVersitProperty();

@@ -1,8 +1,8 @@
 TEMPLATE = app
 TARGET = 
-QT += testlib \
-    xml
+QT += testlib xml
 CONFIG += qtestlib
+DEFINES += BUILD_QTVERSIT
 DEPENDPATH += .
 INCLUDEPATH += . ../../
 

@@ -42,4 +42,4 @@
 #define QTVERSIT_EXPORT Q_DECL_IMPORT
 #endif
 
-#endif
+#endif // QTVERSITGLOBAL_H

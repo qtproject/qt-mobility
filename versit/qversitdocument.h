@@ -33,13 +33,14 @@
 #ifndef QVERSITDOCUMENT_H
 #define QVERSITDOCUMENT_H
 
+#include <qtversitglobal.h>
 #include <QList>
 #include <QSharedDataPointer>
 
 class QVersitDocumentPrivate;
 class QVersitProperty;
 
-class QVersitDocument
+class QTVERSIT_EXPORT QVersitDocument
 {
 public:
     QVersitDocument();

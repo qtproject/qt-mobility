@@ -1,5 +1,5 @@
 # #####################################################################
-# Contacts Mobility API
+# Versit API
 # #####################################################################
 TEMPLATE = lib
 TARGET = QtVersit
@@ -20,8 +20,6 @@ PUBLIC_HEADERS += qtversitglobal.h \
 PRIVATE_HEADERS += qversitdocument_p.h \
     qversitproperty_p.h \
     qversitreader_p.h \
-    qversitwriter_p.h \
-    qversitcontactconverter_p.h \
     qversitcontactgenerator_p.h
 
 SOURCES += qversitdocument.cpp \
@@ -30,6 +28,11 @@ SOURCES += qversitdocument.cpp \
     qversitwriter.cpp \
     qversitcontactconverter.cpp \
     qversitcontactgenerator.cpp \
+    versitutils.cpp
+
+HEADERS += \
+    $$PUBLIC_HEADERS \
+    $$PRIVATE_HEADERS
 
 LIBS += -lQtContacts
 

@@ -35,18 +35,19 @@
 #define QVERSITREADER_H
 
 #include <QObject>
-#include <QIODevice>
-#include <QByteArray>
-#include "qversitdocument.h"
-#include "qversitproperty.h"
+#include <qtversitglobal.h>
+#include <qversitdocument.h>
+#include <qversitproperty.h>
 
+class QIODevice;
+class QByteArray;
 class QVersitReaderPrivate;
 
 // reads QVersitDocument from iodevice
-class QVersitReader : public QObject
+class QTVERSIT_EXPORT QVersitReader : public QObject
 {
-    Q_OBJECT
-
+    Q_OBJECT  
+    
 public:
     QVersitReader();
     ~QVersitReader();
