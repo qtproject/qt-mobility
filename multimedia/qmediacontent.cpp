@@ -55,17 +55,6 @@ public:
         thumbnailUriLarge(other.thumbnailUriLarge)
     {}
 
-    QMediaContentPrivate& operator=(const QMediaContentPrivate &other)
-    {
-        resources = other.resources;
-        posterUri = other.posterUri;
-        coverArtUriSmall = other.coverArtUriSmall;
-        coverArtUriLarge = other.coverArtUriLarge;
-        thumbnailUriSmall = other.thumbnailUriSmall;
-        thumbnailUriLarge = other.thumbnailUriLarge;
-        return *this;
-    }
-
     bool operator ==(const QMediaContentPrivate &other) const
     {
         return resources == other.resources
@@ -82,6 +71,9 @@ public:
     QUrl coverArtUriLarge;
     QUrl thumbnailUriSmall;
     QUrl thumbnailUriLarge;
+
+private:
+    QMediaContentPrivate& operator=(const QMediaContentPrivate &other);
 };
 
 
