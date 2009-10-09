@@ -25,7 +25,7 @@
 ** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
 ** package.
 **
-** If you have questions regarding the use of this file, please
+** If you have questions regarding the user of this file, please
 ** contact Nokia at http://qt.nokia.com/contact.
 ** $QT_END_LICENSE$
 **
@@ -721,8 +721,10 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         break;
         case QSystemNetworkInfo::BluetoothMode:
         {
+#if !defined(QT_NO_DBUS)
             return getBluetoothNetStatus();
-        }
+#endif
+       }
         break;
     default:
         break;
@@ -807,7 +809,9 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
         break;
         case QSystemNetworkInfo::BluetoothMode:
         {
+#if !defined(QT_NO_DBUS)
             return getBluetoothRssi();
+#endif
         }
         break;
     default:
@@ -918,8 +922,10 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
     break;
         case QSystemNetworkInfo::BluetoothMode:
             {
-            netname = getBluetoothInfo("name");
-        }
+    #if !defined(QT_NO_DBUS)
+        netname = getBluetoothInfo("name");
+#endif
+    }
         break;
     default:
         break;
@@ -974,7 +980,9 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
         break;
         case QSystemNetworkInfo::BluetoothMode:
         {
+#if !defined(QT_NO_DBUS)
             return getBluetoothInfo("address");
+#endif
         }
         break;
     default:
@@ -985,7 +993,7 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
 
 QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
-#if defined(QT_NO_DBUS)
+#if !defined(QT_NO_DBUS)
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
         {
@@ -1413,7 +1421,9 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
 {
     halIsAvailable = halAvailable();
     setConnection();
+ #if !defined(QT_NO_DBUS)
     setupBluetooth();
+#endif
 }
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
@@ -1887,9 +1897,9 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
         return QSystemDeviceInfo::WallPower;
  }
 
+#if !defined(QT_NO_DBUS)
  void QSystemDeviceInfoPrivate::setupBluetooth()
  {
-#if !defined(QT_NO_DBUS)
      QDBusConnection dbusConnection = QDBusConnection::systemBus();
      QDBusInterface *connectionInterface;
      connectionInterface = new QDBusInterface("org.bluez",
@@ -1916,16 +1926,16 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
              }
          }
      }
-#endif
  }
+#endif
 
+#if !defined(QT_NO_DBUS)
  void QSystemDeviceInfoPrivate::bluezPropertyChanged(const QString &str, QDBusVariant v)
  {
-#if !defined(QT_NO_DBUS)
      qWarning() << str << v.variant().toBool();
      emit bluetoothStateChanged(v.variant().toBool());
-#endif
  }
+#endif
 
  //////////////
  ///////
