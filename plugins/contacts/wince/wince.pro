@@ -10,7 +10,8 @@ SOURCES += qcontactwincebackend.cpp
 
 INCLUDEPATH += $$SOURCE_DIR/contacts $$SOURCE_DIR/contacts/details $$SOURCE_DIR/contacts/filters $$SOURCE_DIR/contacts/requests
 
-LIBS += -lQtContacts pimstore.lib -lole32
+qtAddLibrary(QtContacts)
+LIBS += pimstore.lib -lole32
 
 target.path=$$QT_MOBILITY_PREFIX/plugins/contacts
 INSTALLS+=target
