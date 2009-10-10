@@ -63,21 +63,21 @@ private slots:
     void messagesFound(const QMessageIdList &ids);
     void continueSearch();
 #ifdef _WIN32_WCE
-	void tabChanged(int index);
+    void tabChanged(int index);
 #endif
 
 private:
-	void setupUi();
+    void setupUi();
     void setSearchActionEnabled(bool val);
 
 private:
-	QTabWidget* tabWidget;
+    QTabWidget* tabWidget;
     QComboBox *includePeriod;
     QComboBox *excludePeriod;
     QAction* searchAction;
     QPushButton *searchButton;
 
-	QComboBox*  addressCombo;
+    QComboBox*  addressCombo;
     QListWidget *messageList;
 
     QMessageServiceAction service;

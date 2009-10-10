@@ -185,7 +185,7 @@ void qParseMailbox(QString& input, QString& name, QString& address, QString& suf
     {
         name = address = input.trimmed();
     }
-    else 
+    else
     {
         if (delimiters.first == -1)
         {
@@ -202,7 +202,7 @@ void qParseMailbox(QString& input, QString& name, QString& address, QString& suf
                 address = input.mid(delimiters.first + 1, (delimiters.second - delimiters.first - 1)).trimmed();
         }
 
-        if ( name.isEmpty() ) 
+        if ( name.isEmpty() )
             name = address;
-    } 
+    }
 }

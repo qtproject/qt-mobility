@@ -52,12 +52,12 @@ public:
 
 private slots:
     void serviceStateChanged(QMessageServiceAction::State state);
-	void viewSelected();
+    void viewSelected();
 
 private:
     QTabWidget* m_tabWidget;
     QMessageServiceAction* m_serviceAction;
-	QStackedWidget* m_widgetStack;
+    QStackedWidget* m_widgetStack;
 };
 
 #endif
