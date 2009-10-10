@@ -206,7 +206,6 @@ bool QMessageId::operator==(const QMessageId& other) const
             bool result(true);
             result &= (d_ptr->_storeRecordKey == other.d_ptr->_storeRecordKey);
             result &= (QMessageIdPrivate::messageRecordKey(*this) == QMessageIdPrivate::messageRecordKey(other));
-            result &= (QMessageIdPrivate::folderRecordKey(*this) == QMessageIdPrivate::folderRecordKey(other));
             return result;
         }
         return false;

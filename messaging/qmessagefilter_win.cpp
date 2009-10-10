@@ -36,6 +36,7 @@
 #include "qdebug.h"
 #include "winhelpers_p.h"
 #include "qmessageaccountid_p.h"
+#include "qmessageid_p.h"
 
 // Not sure if this will work on WinCE
 #ifndef PR_SMTP_ADDRESS
@@ -199,6 +200,9 @@ private:
     SPropValue _keyProp2;
     SRestriction *_notRestriction;
     SRestriction *_recipientRestriction;
+    SPropValue *_keyProps;
+    SRestriction *_restrictions;
+    MapiRecordKey *_recordKeys;
     bool _valid;
     bool _empty;
     MapiRestriction *_left;
@@ -207,7 +211,10 @@ private:
 
 MapiRestriction::MapiRestriction(const QMessageFilter &filter)
     :_notRestriction(0),
-    _recipientRestriction(0),
+     _recipientRestriction(0),
+     _keyProps(0),
+     _restrictions(0),
+     _recordKeys(0),
      _valid(false),
      _empty(false),
      _left(0),
@@ -387,6 +394,28 @@ MapiRestriction::MapiRestriction(const QMessageFilter &filter)
                 _notRestriction->res.resNot.lpRes = &_restriction;
             }
         }
+        if (d_ptr->_field == QMessageFilterPrivate::Id) {
+            QStringList ids(d_ptr->_value.toStringList());
+            _recordKeys = new MapiRecordKey[ids.count()];
+            _keyProps = new SPropValue[ids.count()];
+            _restrictions = new SRestriction[ids.count()];
+
+            _restriction.rt = RES_OR;
+            _restriction.res.resOr.cRes = ids.count();
+            _restriction.res.resOr.lpRes = &_restrictions[0];
+            for (int i = 0; i < ids.count(); ++i) {
+                _recordKeys[i] = QMessageIdPrivate::messageRecordKey(QMessageId(ids[i]));
+                _keyProps[i].ulPropTag = PR_RECORD_KEY;
+                _keyProps[i].Value.bin.cb = _recordKeys[i].count();
+                _keyProps[i].Value.bin.lpb = reinterpret_cast<LPBYTE>(const_cast<char*>(_recordKeys[i].data()));
+                _restrictions[i].rt = RES_PROPERTY;
+                _restrictions[i].res.resProperty.relop = RELOP_EQ;
+                _restrictions[i].res.resProperty.ulPropTag = PR_RECORD_KEY;
+                _restrictions[i].res.resProperty.lpProp = &_keyProps[i];
+            }
+            _valid = true;
+            return;
+        }
         if (d_ptr->_field == QMessageFilterPrivate::Status) {
             _restriction.rt = RES_BITMASK;
             QMessage::Status status(static_cast<QMessage::Status>(d_ptr->_value.toUInt()));
@@ -532,6 +561,12 @@ MapiRestriction::~MapiRestriction()
     _notRestriction = 0;
     delete _recipientRestriction;
     _recipientRestriction = 0;
+    delete [] _recordKeys;
+    _recordKeys = 0;
+    delete [] _keyProps;
+    _keyProps = 0;
+    delete [] _restrictions;
+    _restrictions = 0;
     delete _left;
     _left = 0;
     delete _right;
@@ -979,19 +1014,34 @@ bool QMessageFilter::operator==(const QMessageFilter& other) const
 
 QMessageFilter QMessageFilter::byId(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp)
 {
-    // Not implemented
-    QMessageFilter result(QMessageFilterPrivate::from(QMessageFilterPrivate::Id, QVariant(id.toString()), cmp)); // stub
-    result.d_ptr->_valid = false;
-    return result;
+    QMessageDataComparator::InclusionComparator inclCmp(QMessageDataComparator::Includes);
+    if (cmp == QMessageDataComparator::NotEqual)
+        inclCmp = QMessageDataComparator::Excludes;
+    QMessageIdList ids;
+    ids << id;
+
+    return QMessageFilter::byId(ids, inclCmp);
 }
 
 QMessageFilter QMessageFilter::byId(const QMessageIdList &ids, QMessageDataComparator::InclusionComparator cmp)
 {
-    // Not implemented
-    QStringList idList;
+    QMessageFilter result;
+
+    if (ids.isEmpty())
+        return ~result; // match nothing;
+
+    QMap<MapiRecordKey, QStringList> storeIds;
     foreach(QMessageId id, ids)
-        idList << id.toString();
-    QMessageFilter result(QMessageFilterPrivate::from(QMessageFilterPrivate::Id, QVariant(idList), cmp)); // stub
+        storeIds[QMessageIdPrivate::storeRecordKey(id)].append(id.toString());
+
+    QMapIterator<MapiRecordKey, QStringList> i(storeIds);
+    while (i.hasNext()) {
+        i.next();
+        QMessageFilter tmp(QMessageFilter::byParentAccountId(QMessageAccountIdPrivate::from(i.key())));
+        tmp &= QMessageFilterPrivate::from(QMessageFilterPrivate::Id, QVariant(i.value()), cmp);
+        result |= tmp;
+    }
+    
     result.d_ptr->_valid = false;
     return result;
 }
