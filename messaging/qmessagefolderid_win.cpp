@@ -37,6 +37,28 @@
 #include <QDataStream>
 #include <MAPIUtil.h>
 
+#ifdef _WIN32_WCE
+
+QMessageFolderId QMessageFolderIdPrivate::from(const MapiRecordKey &folderKey, const MapiEntryId &storeKey, const MapiEntryId &entryId)
+{
+    QMessageFolderId result;
+    if (!result.d_ptr)
+        result.d_ptr = new QMessageFolderIdPrivate(&result);
+    result.d_ptr->_folderRecordKey = folderKey;
+    result.d_ptr->_storeRecordKey = storeKey;
+    result.d_ptr->_entryId = entryId;
+    return result;
+}
+
+MapiEntryId QMessageFolderIdPrivate::storeRecordKey(const QMessageFolderId &id)
+{
+    if (id.d_ptr)
+        return id.d_ptr->_storeRecordKey;
+    return MapiEntryId();
+}
+
+#else
+
 QMessageFolderId QMessageFolderIdPrivate::from(const MapiRecordKey &folderKey, const MapiRecordKey &storeKey, const MapiEntryId &entryId)
 {
     QMessageFolderId result;
@@ -48,17 +70,19 @@ QMessageFolderId QMessageFolderIdPrivate::from(const MapiRecordKey &folderKey, c
     return result;
 }
 
-MapiRecordKey QMessageFolderIdPrivate::folderRecordKey(const QMessageFolderId &id)
-{
-    if (id.d_ptr)
-        return id.d_ptr->_folderRecordKey;
-    return MapiRecordKey();
-}
-
 MapiRecordKey QMessageFolderIdPrivate::storeRecordKey(const QMessageFolderId &id)
 {
     if (id.d_ptr)
         return id.d_ptr->_storeRecordKey;
+    return MapiRecordKey();
+}
+
+#endif
+
+MapiRecordKey QMessageFolderIdPrivate::folderRecordKey(const QMessageFolderId &id)
+{
+    if (id.d_ptr)
+        return id.d_ptr->_folderRecordKey;
     return MapiRecordKey();
 }
 

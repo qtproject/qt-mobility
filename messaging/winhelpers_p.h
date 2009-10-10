@@ -74,13 +74,20 @@ public:
     MapiEntryId(LPBYTE mapiEntryId, ULONG entryIdLength)
     :
     QByteArray(reinterpret_cast<const char*>(mapiEntryId),entryIdLength){}
-
-    MapiEntryId(const QByteArray& source)
-    :
-    QByteArray(source){}
 };
 
-typedef MapiEntryId MapiRecordKey;
+class MapiRecordKey : public QByteArray
+{
+public:
+    MapiRecordKey():QByteArray(){}
+    MapiRecordKey(LPENTRYID mapiRecordKey, ULONG entryIdLength)
+    :
+    QByteArray(reinterpret_cast<const char*>(mapiRecordKey),entryIdLength){}
+
+    MapiRecordKey(LPBYTE mapiRecordKey, ULONG entryIdLength)
+    :
+    QByteArray(reinterpret_cast<const char*>(mapiRecordKey),entryIdLength){}
+};
 
 class MapiFolder;
 class MapiStore;
@@ -152,7 +159,7 @@ public:
     uint countMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter = QMessageFilter()) const;
 
     void removeMessages(QMessageStore::ErrorCode *lastError, const QMessageIdList &ids);
-    MapiEntryId messageEntryId(QMessageStore::ErrorCode *lastError, const MapiRecordKey &messagekey);
+//    MapiEntryId messageEntryId(QMessageStore::ErrorCode *lastError, const MapiRecordKey &messagekey);
 #ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolderId id() const;
 #endif
@@ -161,6 +168,9 @@ public:
     IMAPIFolder* folder() const { return _folder; }
     MapiRecordKey recordKey() const { return _key; }
     MapiRecordKey storeKey() const;
+#ifdef _WIN32_WCE
+    MapiEntryId storeEntryId() const;
+#endif
     QString name() const { return _name; }
     MapiEntryId entryId() const { return _entryId; }
     bool hasSubFolders() const { return _hasSubFolders; }
@@ -288,6 +298,10 @@ public:
 
     MapiRecordKey messageRecordKey(QMessageStore::ErrorCode *lastError, const QMessageId &id);
     MapiRecordKey folderRecordKey(QMessageStore::ErrorCode *lastError, const QMessageId &id);
+
+#ifdef _WIN32_WCE
+    MapiEntryId folderEntryId(QMessageStore::ErrorCode *lastError, const QMessageId &id);
+#endif
 
     QMessageFolder folder(QMessageStore::ErrorCode *lastError, const QMessageFolderId& id) const;
     QMessage message(QMessageStore::ErrorCode *lastError, const QMessageId& id) const;

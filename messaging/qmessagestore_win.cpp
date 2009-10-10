@@ -56,7 +56,7 @@ public:
 };
 
 QMessageStorePrivatePlatform::QMessageStorePrivatePlatform(QMessageStorePrivate *d, QMessageStore *q)
-    :d_ptr(d), 
+    :d_ptr(d),
      q_ptr(q),
      lastError(QMessageStore::NoError),
      session(MapiSession::createSession(&lastError))
@@ -304,7 +304,11 @@ bool QMessageStore::addMessage(QMessage *message)
                     if (HR_SUCCEEDED(rv) && (properties[0].ulPropTag == PR_RECORD_KEY) && (properties[1].ulPropTag == PR_ENTRYID)) {
                         MapiRecordKey recordKey(properties[0].Value.bin.lpb, properties[0].Value.bin.cb);
                         MapiEntryId entryId(properties[1].Value.bin.lpb, properties[1].Value.bin.cb);
+#ifdef _WIN32_WCE
+                        message->d_ptr->_id = QMessageIdPrivate::from(mapiFolder->storeEntryId(), entryId, recordKey, mapiFolder->entryId());
+#else
                         message->d_ptr->_id = QMessageIdPrivate::from(mapiFolder->storeKey(), entryId, recordKey, mapiFolder->recordKey());
+#endif
                         message->d_ptr->_modified = false;
 
                         MAPIFreeBuffer(properties);

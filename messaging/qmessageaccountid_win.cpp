@@ -35,6 +35,26 @@
 #include <QDataStream>
 #include <MAPIUtil.h>
 
+#ifdef _WIN32_WCE
+
+QMessageAccountId QMessageAccountIdPrivate::from(const MapiEntryId &storeKey)
+{
+    QMessageAccountId result;
+    if (!result.d_ptr)
+        result.d_ptr = new QMessageAccountIdPrivate(&result);
+    result.d_ptr->_storeRecordKey = storeKey;
+    return result;
+}
+
+MapiEntryId QMessageAccountIdPrivate::storeRecordKey(const QMessageAccountId &id)
+{
+    if (id.d_ptr)
+        return id.d_ptr->_storeRecordKey;
+    return MapiEntryId();
+}
+
+#else
+
 QMessageAccountId QMessageAccountIdPrivate::from(const MapiRecordKey &storeKey)
 {
     QMessageAccountId result;
@@ -50,6 +70,10 @@ MapiRecordKey QMessageAccountIdPrivate::storeRecordKey(const QMessageAccountId &
         return id.d_ptr->_storeRecordKey;
     return MapiRecordKey();
 }
+
+#endif
+
+
 
 QMessageAccountId::QMessageAccountId()
     : d_ptr(0)

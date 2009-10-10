@@ -125,7 +125,11 @@ MapiStorePtr MapiStoreIterator::next()
 {
     while (!_stores.isEmpty()) {
         MapiStorePtr store(_stores.takeFirst());
+#ifdef _WIN32_WCE
+        QMessageAccountId key(QMessageAccountIdPrivate::from(store->entryId()));
+#else
         QMessageAccountId key(QMessageAccountIdPrivate::from(store->recordKey()));
+#endif
         if ((_accountsInclude.isEmpty() || _accountsInclude.contains(key))
             && (_accountsExclude.isEmpty() || !_accountsExclude.contains(key))) {
             return store;
@@ -266,7 +270,7 @@ MapiRestriction::MapiRestriction(const QMessageFilter &filter)
             _right = new MapiRestriction(*d_ptr->_right);
             _subRestriction[0] = *_left->sRestriction();
             _subRestriction[1] = *_right->sRestriction();
-            _restriction.rt = RES_OR; 
+            _restriction.rt = RES_OR;
             _restriction.res.resOr.cRes = 2;
             _restriction.res.resOr.lpRes = &_subRestriction[0];
             _valid = true;
@@ -339,7 +343,7 @@ MapiRestriction::MapiRestriction(const QMessageFilter &filter)
             _restriction.res.resProperty.ulPropTag = PR_SUBJECT;
             _keyProp.ulPropTag = PR_SUBJECT;
             QString subj(d_ptr->_value.toString());
-            QStringToWCharArray(subj, &d_ptr->_buffer); 
+            QStringToWCharArray(subj, &d_ptr->_buffer);
             _keyProp.Value.LPSZ = d_ptr->_buffer;
             _valid = true;
             break;

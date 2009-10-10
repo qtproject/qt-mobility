@@ -204,8 +204,13 @@ bool QMessageServiceActionPrivate::show(const QMessageId& messageId)
     //messageId -> IMessage
 
     MapiEntryId entryId = QMessageIdPrivate::entryId(messageId);
+#ifdef _WIN32_WCE
+    MapiEntryId folderRecordKey = QMessageIdPrivate::folderRecordKey(messageId);
+    MapiEntryId storeRecordKey = QMessageIdPrivate::storeRecordKey(messageId);
+#else
     MapiRecordKey folderRecordKey = QMessageIdPrivate::folderRecordKey(messageId);
     MapiRecordKey storeRecordKey = QMessageIdPrivate::storeRecordKey(messageId);
+#endif
 
     MapiStorePtr mapiStore = mapiSession->findStore(&_lastError,QMessageAccountIdPrivate::from(storeRecordKey));
 
@@ -215,7 +220,11 @@ bool QMessageServiceActionPrivate::show(const QMessageId& messageId)
         return false;
     }
 
+#ifdef _WIN32_WCE
     MapiFolderPtr mapiFolder = mapiStore->openFolder(&_lastError,folderRecordKey);
+#else
+    MapiFolderPtr mapiFolder = mapiStore->openFolderWithKey(&_lastError,folderRecordKey);
+#endif
 
     if( mapiFolder.isNull() || _lastError != QMessageStore::NoError ) {
         qWarning() << "Unable to get folder for the message";
