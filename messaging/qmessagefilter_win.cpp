@@ -1030,11 +1030,19 @@ QMessageFilter QMessageFilter::byId(const QMessageIdList &ids, QMessageDataCompa
     if (ids.isEmpty())
         return ~result; // match nothing;
 
+#ifdef _WIN32_WCE
+    QMap<MapiEntryId, QStringList> storeIds;
+    foreach(QMessageId id, ids)
+        storeIds[QMessageIdPrivate::storeRecordKey(id)].append(id.toString());
+
+    QMapIterator<MapiEntryId, QStringList> i(storeIds);
+#else
     QMap<MapiRecordKey, QStringList> storeIds;
     foreach(QMessageId id, ids)
         storeIds[QMessageIdPrivate::storeRecordKey(id)].append(id.toString());
 
     QMapIterator<MapiRecordKey, QStringList> i(storeIds);
+#endif
     while (i.hasNext()) {
         i.next();
         QMessageFilter tmp(QMessageFilter::byParentAccountId(QMessageAccountIdPrivate::from(i.key())));
