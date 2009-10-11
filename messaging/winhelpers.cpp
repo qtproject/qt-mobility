@@ -1206,6 +1206,7 @@ namespace {
     QMessageIdList filterMessages(QMessageStore::ErrorCode *lastError, const QList<FolderHeapNodePtr> &folderNodes, const QMessageOrdering &ordering, uint limit, uint offset, MapiSessionPtr session)
     {
         QMessageIdList result;
+        QHash<QMessageId, bool> avoidDuplicates; // For complex filters it's necessary to check for duplicates
 
         FolderHeap folderHeap(lastError, session, folderNodes, ordering);
         if (*lastError != QMessageStore::NoError)
@@ -1221,10 +1222,14 @@ namespace {
             if (*lastError != QMessageStore::NoError)
                 return result;
 
-            if (count >= 0) {
-                result.append(front.id());
+            if (!avoidDuplicates.contains(front.id())) {
+                avoidDuplicates.insert(front.id(), true);
+                if (count >= 0) {
+                    result.append(front.id());
+                }
+    
+                ++count;
             }
-            ++count;
         }
 
         if (offset) {
@@ -3613,14 +3618,16 @@ QMessageIdList MapiSession::queryMessages(QMessageStore::ErrorCode *lastError, c
 
     MapiSessionPtr session(_self.toStrongRef());
 
-    MapiStoreIterator storeIt(QMessageFilterPrivate::storeIterator(filter, lastError, session));
-    for (MapiStorePtr store(storeIt.next()); store && store->isValid(); store = storeIt.next()) {
-        MapiFolderIterator folderIt(QMessageFilterPrivate::folderIterator(filter, lastError, store));
-        for (MapiFolderPtr folder(folderIt.next()); folder && folder->isValid(); folder = folderIt.next()) {
-            QList<QMessageFilter> orderingFilters;
-            orderingFilters.append(filter);
-            foreach(QMessageFilter orderingFilter, QMessageOrderingPrivate::normalize(orderingFilters, ordering)) {
-                folderNodes.append(FolderHeapNodePtr(new FolderHeapNode(store, folder, orderingFilter)));
+    foreach (QMessageFilter subFilter, QMessageFilterPrivate::subFilters(filter)) {
+        MapiStoreIterator storeIt(QMessageFilterPrivate::storeIterator(subFilter, lastError, session));
+        for (MapiStorePtr store(storeIt.next()); store && store->isValid(); store = storeIt.next()) {
+            MapiFolderIterator folderIt(QMessageFilterPrivate::folderIterator(subFilter, lastError, store));
+            for (MapiFolderPtr folder(folderIt.next()); folder && folder->isValid(); folder = folderIt.next()) {
+                QList<QMessageFilter> orderingFilters;
+                orderingFilters.append(subFilter);
+                foreach(QMessageFilter orderingFilter, QMessageOrderingPrivate::normalize(orderingFilters, ordering)) {
+                    folderNodes.append(FolderHeapNodePtr(new FolderHeapNode(store, folder, orderingFilter)));
+                }
             }
         }
     }
