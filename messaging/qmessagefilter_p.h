@@ -30,6 +30,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QMESSAGEFILTERPRIVATE_H
+#define QMESSAGEFILTERPRIVATE_H
 #include "qmessagefilter.h"
 #if defined(Q_OS_WIN)
 #include "qmessagestore.h"
@@ -99,7 +101,6 @@ public:
     QMessageFilter containerFiltersPart(); // returns a filter comprised of just the container filters
     QMessageFilter nonContainerFiltersPart(); // returns a filter comprised of everything but the container filters
 
-    static void filterTable(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter, LPMAPITABLE);
     static QMessageFilter from(QMessageFilterPrivate::Field field, const QVariant &value, QMessageDataComparator::EqualityComparator cmp);
     static QMessageFilter from(QMessageFilterPrivate::Field field, const QVariant &value, QMessageDataComparator::RelationComparator cmp);
     static QMessageFilter from(QMessageFilterPrivate::Field field, const QVariant &value, QMessageDataComparator::InclusionComparator cmp);
@@ -111,3 +112,30 @@ public:
 
 #endif
 };
+
+#if defined(Q_OS_WIN)
+class MapiRestriction {
+public:
+    MapiRestriction(const QMessageFilter &filter);
+    ~MapiRestriction();
+    SRestriction *sRestriction();
+    bool isValid() { return _valid; }
+    bool isEmpty() { return _empty; }
+
+private:
+    SRestriction _restriction;
+    SRestriction _subRestriction[2];
+    SPropValue _keyProp;
+    SPropValue _keyProp2;
+    SRestriction *_notRestriction;
+    SRestriction *_recipientRestriction;
+    SPropValue *_keyProps;
+    SRestriction *_restrictions;
+    MapiRecordKey *_recordKeys;
+    bool _valid;
+    bool _empty;
+    MapiRestriction *_left;
+    MapiRestriction *_right;
+};
+#endif
+#endif

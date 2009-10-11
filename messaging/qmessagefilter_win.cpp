@@ -196,36 +196,13 @@ QList<QMessageFilter> QMessageFilterPrivate::subFilters(const QMessageFilter &fi
             result.append(top);
             continue;
         }
-        // Complex so must consist of two subfitlers or'd together and an empty containerFiltersPart
+        // Complex so must consist of two subfilters or'd together and an empty containerFiltersPart
         queue.append(*top.d_ptr->_left);
         queue.append(*top.d_ptr->_right);
     }
     return result;
 }
 
-class MapiRestriction {
-public:
-    MapiRestriction(const QMessageFilter &filter);
-    ~MapiRestriction();
-    SRestriction *sRestriction();
-    bool isValid() { return _valid; }
-    bool isEmpty() { return _empty; }
-
-private:
-    SRestriction _restriction;
-    SRestriction _subRestriction[2];
-    SPropValue _keyProp;
-    SPropValue _keyProp2;
-    SRestriction *_notRestriction;
-    SRestriction *_recipientRestriction;
-    SPropValue *_keyProps;
-    SRestriction *_restrictions;
-    MapiRecordKey *_recordKeys;
-    bool _valid;
-    bool _empty;
-    MapiRestriction *_left;
-    MapiRestriction *_right;
-};
 
 MapiRestriction::MapiRestriction(const QMessageFilter &filter)
     :_notRestriction(0),
@@ -596,19 +573,6 @@ SRestriction *MapiRestriction::sRestriction()
     if (_notRestriction)
         return _notRestriction;
     return &_restriction;
-}
-
-void QMessageFilterPrivate::filterTable(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter, LPMAPITABLE messagesTable)
-{
-    MapiRestriction restriction(filter);
-    if (!restriction.isValid())
-        return;
-    if (restriction.isEmpty())
-        return; // nothing to do
-
-    ULONG flags(0);
-    if (messagesTable->Restrict(restriction.sRestriction(), flags) != S_OK)
-        *lastError = QMessageStore::ConstraintFailure;
 }
 
 QMessageFilterPrivate::QMessageFilterPrivate(QMessageFilter *messageFilter)

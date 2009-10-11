@@ -1615,6 +1615,12 @@ QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, co
         return result;
     }
 
+    MapiRestriction restriction(filter);
+    if (!restriction.isValid()) {
+        *lastError = QMessageStore::ConstraintFailure;
+        return result;
+    }
+
     LPMAPITABLE messagesTable(0);
     HRESULT rv = _folder->GetContentsTable(MAPI_UNICODE, &messagesTable);
     if (HR_SUCCEEDED(rv)) {
@@ -1627,7 +1633,11 @@ QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, co
             }
 
             if (*lastError == QMessageStore::NoError) {
-                QMessageFilterPrivate::filterTable(lastError, filter, messagesTable);
+                if (!restriction.isEmpty()) {
+                    ULONG flags(0);
+                    if (messagesTable->Restrict(restriction.sRestriction(), flags) != S_OK)
+                        *lastError = QMessageStore::ConstraintFailure;
+                }
             }
 
             if (*lastError == QMessageStore::NoError) {
@@ -1696,10 +1706,20 @@ uint MapiFolder::countMessages(QMessageStore::ErrorCode *lastError, const QMessa
         return result;
     }
 
+    MapiRestriction restriction(filter);
+    if (!restriction.isValid()) {
+        *lastError = QMessageStore::ConstraintFailure;
+        return result;
+    }
+
     IMAPITable *messagesTable(0);
     HRESULT rv = _folder->GetContentsTable(MAPI_UNICODE, &messagesTable);
     if (HR_SUCCEEDED(rv)) {
-        QMessageFilterPrivate::filterTable(lastError, filter, messagesTable);
+        if (!restriction.isEmpty()) {
+            ULONG flags(0);
+            if (messagesTable->Restrict(restriction.sRestriction(), flags) != S_OK)
+                *lastError = QMessageStore::ConstraintFailure;
+        }
         if (*lastError == QMessageStore::NoError) {
             ULONG count(0);
             rv = messagesTable->GetRowCount(0, &count);
