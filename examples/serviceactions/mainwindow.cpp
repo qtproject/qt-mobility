@@ -81,6 +81,7 @@ private:
 public:
     AccountsWidget(QWidget* parent = 0);
     QMessageAccountId currentAccount() const;
+    bool isEmpty() const;
 
 protected:
     void showEvent(QShowEvent* e);
@@ -144,6 +145,12 @@ QMessageAccountId AccountsWidget::currentAccount() const
 
     return result;
 }
+
+bool AccountsWidget::isEmpty() const
+{
+	return m_accountsCombo->count() == 0;
+}
+
 void AccountsWidget::showEvent(QShowEvent* e)
 {
     load();
@@ -411,7 +418,6 @@ private:
     QLabel* m_busyLabel;
     QMessageServiceAction* m_service;
     AccountsWidget* m_accountsWidget;
-    QMessageAccountIdList m_availableAccounts;
     QLineEdit* m_toEdit;
     QLineEdit* m_subjectEdit;
     QTextEdit* m_bodyEdit;
@@ -499,7 +505,7 @@ QMessage ComposeSendWidget::constructQMessage() const
 {
     QMessage message;
 
-    if(m_availableAccounts.isEmpty())
+    if(m_accountsWidget->isEmpty())
     {
         QMessageBox::critical(const_cast<ComposeSendWidget*>(this),"No Accounts","Cannot send a message without any available accounts");
         return message;

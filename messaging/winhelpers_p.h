@@ -146,6 +146,7 @@ public:
 class MapiFolder {
 
 public:
+    enum SaveOption { DontSaveMessage = 0, SaveMessage };
     enum PostSendAction { DoNothing = 0, DeleteAfterSend, MoveAfterSend };
 
 public:
@@ -178,7 +179,7 @@ public:
 
     LPMAPITABLE subFolders(QMessageStore::ErrorCode *lastError) { if (!_init) findSubFolders(lastError); return _subFolders; }
     IMessage *createMessage(QMessageStore::ErrorCode* lastError);
-    IMessage *createMessage(QMessageStore::ErrorCode* lastError, const QMessage& source, const MapiSessionPtr session, PostSendAction postSendAction = MoveAfterSend );
+    IMessage *createMessage(QMessageStore::ErrorCode* lastError, const QMessage& source, const MapiSessionPtr session, PostSendAction postSendAction = MoveAfterSend, SaveOption saveOption = SaveMessage );
 
     IMessage *openMessage(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId);
 

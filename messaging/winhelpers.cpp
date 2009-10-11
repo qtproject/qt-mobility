@@ -919,7 +919,7 @@ namespace {
         }
     }
 
-    void replaceMessageAttachments(QMessageStore::ErrorCode *lastError, const QMessage &source, IMessage *message)
+    void replaceMessageAttachments(QMessageStore::ErrorCode *lastError, const QMessage &source, IMessage *message, MapiFolder::SaveOption saveOption = MapiFolder::SaveMessage )
     {
         // Find any existing attachments and remove them
         IMAPITable *attachmentsTable(0);
@@ -955,7 +955,7 @@ namespace {
                         }
                     }
 
-                    if (*lastError == QMessageStore::NoError) {
+                    if (*lastError == QMessageStore::NoError && saveOption == MapiFolder::SaveMessage ) {
                         if (HR_FAILED(message->SaveChanges(KEEP_OPEN_READWRITE))) {
                             qWarning() << "Unable to save changes to message";
                             *lastError = QMessageStore::FrameworkFault;
@@ -1884,7 +1884,7 @@ IMessage *MapiFolder::createMessage(QMessageStore::ErrorCode* lastError)
     return message;
 }
 
-IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const QMessage& source, const MapiSessionPtr session, PostSendAction postSendAction)
+IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const QMessage& source, const MapiSessionPtr session, PostSendAction postSendAction, SaveOption saveOption )
 {
     IMessage* mapiMessage(0);
     HRESULT rv = _folder->CreateMessage(0, 0, &mapiMessage);
@@ -1918,9 +1918,9 @@ IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const Q
             replaceMessageBody(lastError, source, mapiMessage);
         }
         if (*lastError == QMessageStore::NoError) {
-            replaceMessageAttachments(lastError, source, mapiMessage);
+            replaceMessageAttachments(lastError, source, mapiMessage, saveOption );
         }
-        if (*lastError == QMessageStore::NoError) {
+        if (*lastError == QMessageStore::NoError && saveOption == SaveMessage ) {
             if (HR_FAILED(mapiMessage->SaveChanges(0))) {
                 qWarning() << "Unable to save changes for message.";
             }
