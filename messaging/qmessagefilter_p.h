@@ -107,7 +107,7 @@ public:
 
     static MapiFolderIterator folderIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, MapiStorePtr store);
     static MapiStoreIterator storeIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, MapiSessionPtr session);
-
+    static QList<QMessageFilter> subFilters(const QMessageFilter &filter);
 
 #endif
 };

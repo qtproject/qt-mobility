@@ -185,6 +185,24 @@ MapiStoreIterator QMessageFilterPrivate::storeIterator(const QMessageFilter &fil
     return MapiStoreIterator(session->allStores(lastError), filter.d_ptr->_accountsInclude, filter.d_ptr->_accountsExclude);
 }
 
+QList<QMessageFilter> QMessageFilterPrivate::subFilters(const QMessageFilter &filter)
+{
+    QList<QMessageFilter> result;
+    QList<QMessageFilter> queue;
+    queue.append(filter);
+    while (!queue.isEmpty()) {
+        QMessageFilter top(queue.takeFirst());
+        if (!top.d_ptr->_complex) {
+            result.append(top);
+            continue;
+        }
+        // Complex so must consist of two subfitlers or'd together and an empty containerFiltersPart
+        queue.append(*top.d_ptr->_left);
+        queue.append(*top.d_ptr->_right);
+    }
+    return result;
+}
+
 class MapiRestriction {
 public:
     MapiRestriction(const QMessageFilter &filter);
