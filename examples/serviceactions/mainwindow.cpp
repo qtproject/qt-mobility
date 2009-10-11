@@ -356,7 +356,7 @@ void RecentMessagesWidget::loadFinished()
         return;
     }
 
-    for(int index = lastTenMessages.count()-1; index >= 0; index--)
+    for(int index =  0 ; index <= lastTenMessages.count()-1; index++)
     {
         IdSubjectPair result(lastTenMessages[index]);
         QListWidgetItem* newItem = new QListWidgetItem(result.second);
