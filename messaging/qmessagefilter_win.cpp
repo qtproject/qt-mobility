@@ -1025,14 +1025,18 @@ QMessageFilter QMessageFilter::byId(const QMessageIdList &ids, QMessageDataCompa
 
     QMapIterator<MapiRecordKey, QStringList> i(storeIds);
 #endif
+    bool first(true);
     while (i.hasNext()) {
         i.next();
         QMessageFilter tmp(QMessageFilter::byParentAccountId(QMessageAccountIdPrivate::from(i.key())));
         tmp &= QMessageFilterPrivate::from(QMessageFilterPrivate::Id, QVariant(i.value()), cmp);
-        result |= tmp;
+        if (first)
+            result = tmp;
+        else
+            result |= tmp;
+        first = false;
     }
     
-    result.d_ptr->_valid = false;
     return result;
 }
 
