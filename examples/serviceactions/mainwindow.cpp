@@ -513,12 +513,12 @@ QMessage ComposeSendWidget::constructQMessage() const
 
     QMessageAccountId selectedAccountId = m_accountsWidget->currentAccount();
 
+    QMessageAddressList toList;
+
     foreach(QString s, m_toEdit->text().split(QRegExp("\\s")))
-    {
-        QMessageAddressList toList;
         toList.append(QMessageAddress(s,QMessageAddress::Email));
-        message.setTo(toList);
-    }
+
+    message.setTo(toList);
 
     message.setParentAccountId(selectedAccountId);
     message.setSubject(m_subjectEdit->text());
