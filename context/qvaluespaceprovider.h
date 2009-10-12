@@ -31,8 +31,8 @@
 **
 ****************************************************************************/
 
-#ifndef QVALUESPACEOBJECT_H
-#define QVALUESPACEOBJECT_H
+#ifndef QVALUESPACEPROVIDER_H
+#define QVALUESPACEPROVIDER_H
 
 #include "qcontextglobal.h"
 #include "qvaluespace.h"
@@ -93,4 +93,4 @@ QT_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif // QVALUESPACEOBJECT_H
+#endif // QVALUESPACEPROVIDER_H
