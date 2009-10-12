@@ -9,15 +9,12 @@ include(../../../../common.pri)
 
 SOURCES  += tst_qcontactasync.cpp
 
-LIBS += -lQtContacts
+qtAddLibrary(QtContacts)
 
 # App local deployment
 symbian:QCONTACTASYNC_PLUGINS_DEPLOY.sources = contacts_maliciousplugin.dll
-wince* {
-    DLL_SUFFIX = ".dll"
-    CONFIG(debug, debug|release): debug_and_release: DLL_SUFFIX="d.dll"
-    QCONTACTASYNC_PLUGINS_DEPLOY.sources = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/plugins/contacts/contacts_maliciousplugin$$DLL_SUFFIX
-}
+wince*: QCONTACTASYNC_PLUGINS_DEPLOY.sources = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/plugins/contacts/$$mobilityDeployFilename(contacts_maliciousplugin)
+
 QCONTACTASYNC_PLUGINS_DEPLOY.path = ./plugins/contacts
 
 DEPLOYMENT += QCONTACTASYNC_PLUGINS_DEPLOY

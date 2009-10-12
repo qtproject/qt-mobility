@@ -10,7 +10,8 @@ DEPENDPATH += .
 INCLUDEPATH += .
 INCLUDEPATH += ../testmodel
 VPATH += ../testmodel
-LIBS += -lQtContacts
+
+qtAddLibrary(QtContacts)
 
 include(../../common.pri)
 
